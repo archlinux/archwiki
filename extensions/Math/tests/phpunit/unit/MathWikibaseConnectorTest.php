@@ -289,7 +289,6 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$site_mock->method( 'getPageUrl' )->willReturn( null );
 		$reflection = new \ReflectionClass( $wikibaseConnector );
 		$reflection_property = $reflection->getProperty( 'site' );
-		$reflection_property->setAccessible( true );
 		$reflection_property->setValue( $wikibaseConnector, $site_mock );
 		$output = $wikibaseConnector->getUrlFromSymbol( 'Q1', 'en' );
 		self::assertEqualsCanonicalizing( [ 0 => [ 'url' => '', 'title' => 'energy' ],

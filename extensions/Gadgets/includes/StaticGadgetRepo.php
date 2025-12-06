@@ -10,12 +10,9 @@ use InvalidArgumentException;
 class StaticGadgetRepo extends GadgetRepo {
 
 	/**
-	 * @var Gadget[]
+	 * @param Gadget[] $gadgets
 	 */
-	private array $gadgets;
-
-	public function __construct( array $gadgets ) {
-		$this->gadgets = $gadgets;
+	public function __construct( private readonly array $gadgets ) {
 	}
 
 	public function getGadgetIds(): array {

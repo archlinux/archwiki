@@ -5,12 +5,13 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Ext\AsyncResult;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Fragments\DomPFragment;
 use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
@@ -18,7 +19,7 @@ use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -33,7 +34,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 /**
  * Template and template argument handling.
  */
-class TemplateHandler extends TokenHandler {
+class TemplateHandler extends XMLTagBasedHandler {
 	/**
 	 * @var bool Should we wrap template tokens with template meta tags?
 	 */
@@ -82,7 +83,7 @@ class TemplateHandler extends TokenHandler {
 		// return" below.
 		$this->atMaxArticleSize = !$this->env->compareWt2HtmlLimit(
 			'wikitextSize',
-			strlen( $this->env->topFrame->getSrcText() )
+			strlen( $this->env->topFrame->getSource()->getSrcText() )
 		);
 	}
 
@@ -128,7 +129,7 @@ class TemplateHandler extends TokenHandler {
 	 *     [ "uc:foo ", [ wikilink-token, " ", template-token, " bar" ] ]
 	 *
 	 * @param array<string|Token> $tokens
-	 * @return array first element is always a string
+	 * @return list{string, ?array<Token|string>} first element is always a string
 	 */
 	private function processToString( array $tokens ): array {
 		$maybeTarget = TokenUtils::tokensToString( $tokens, true, [ 'retainNLs' => true ] );
@@ -156,7 +157,7 @@ class TemplateHandler extends TokenHandler {
 						if ( $ntt->getName() === 'mw-quote' ) {
 							$buf .= $ntt->getAttributeV( 'value' );
 						} elseif (
-							!TokenUtils::isEmptyLineMetaToken( $ntt ) &&
+							!( $ntt instanceof EmptyLineTk ) &&
 							$ntt->getName() !== 'template' &&
 							$ntt->getName() !== 'templatearg' &&
 							// Ignore annotations in template targets
@@ -250,7 +251,8 @@ class TemplateHandler extends TokenHandler {
 	 * @param TemplateEncapsulator $state
 	 * @param string|Token|array $targetToks
 	 * @param SourceRange $srcOffsets
-	 * @return array|null
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @return ?array{magicWordType: '!'|null, name: string, title: Title, isVariable?: true, pfArg?: string|list<string|Token>, srcOffsets?: SourceRange, isParserFunction?: true, localName?: string, haveColon?: bool, handler?: \Wikimedia\Parsoid\Ext\PFragmentHandler, handlerOptions?: array}
 	 */
 	private function resolveTemplateTarget(
 		TemplateEncapsulator $state, $targetToks, $srcOffsets
@@ -270,7 +272,7 @@ class TemplateHandler extends TokenHandler {
 		$prefix = trim( $pieces[0] );
 
 		// Parser function names usually (not always) start with a hash
-		$hasHash = substr( $target, 0, 1 ) === '#';
+		$hasHash = str_starts_with( $target, '#' );
 		// String found after the colon will be the parser function arg
 		$haveColon = count( $pieces ) > 1;
 
@@ -329,7 +331,8 @@ class TemplateHandler extends TokenHandler {
 				'pfArg' => $pfArg,
 				'srcOffsets' => new SourceRange(
 					$srcOffsets->start + strlen( $untrimmedPrefix ) + ( $haveColon ? 1 : 0 ),
-					$srcOffsets->end ),
+					$srcOffsets->end,
+					$srcOffsets->source ),
 			];
 		}
 
@@ -369,7 +372,8 @@ class TemplateHandler extends TokenHandler {
 				'haveColon' => $haveColon, // FIXME: T391063
 				'srcOffsets' => new SourceRange(
 					$srcOffsets->start + strlen( $untrimmedPrefix ) + ( $haveColon ? 1 : 0 ),
-					$srcOffsets->end ),
+					$srcOffsets->end,
+					$srcOffsets->source ),
 			];
 
 			// Check if we have a Parsoid PFragment handler for this parser func
@@ -382,7 +386,7 @@ class TemplateHandler extends TokenHandler {
 				$ret['handlerOptions'] = $siteConfig->getPFragmentHandlerConfig(
 					$canonicalFunctionName
 				)['options'] ?? [];
-				$state->isV3ParserFunction = true;
+				$state->isOldParserFunction = false;
 			}
 			return $ret;
 		}
@@ -400,10 +404,9 @@ class TemplateHandler extends TokenHandler {
 
 		// Resolve a possibly relative link and
 		// normalize the target before template processing.
-		$title = null;
 		try {
 			$title = $env->resolveTitle( $target );
-		} catch ( TitleException $e ) {
+		} catch ( TitleException ) {
 			// Invalid template target!
 			return null;
 		}
@@ -438,7 +441,7 @@ class TemplateHandler extends TokenHandler {
 		$tsr = $token->dataParsoid->tsr;
 		$src = substr( $token->dataParsoid->src, 1, -1 );
 		$startOffset = $tsr->start + 1;
-		$srcOffsets = new SourceRange( $startOffset, $startOffset + strlen( $src ) );
+		$srcOffsets = new SourceRange( $startOffset, $startOffset + strlen( $src ), $tsr->source );
 
 		$toks = PipelineUtils::processContentInPipeline(
 			$this->env, $frame, $src, [
@@ -464,7 +467,8 @@ class TemplateHandler extends TokenHandler {
 	 * @param mixed $target
 	 * @param Title $title
 	 * @param bool $ignoreLoop
-	 * @return ?array<string|Token>
+	 *
+	 * @return ?list<string|Token>
 	 */
 	private function enforceTemplateConstraints( $target, Title $title, bool $ignoreLoop ): ?array {
 		$error = $this->manager->getFrame()->loopAndDepthCheck(
@@ -573,6 +577,8 @@ class TemplateHandler extends TokenHandler {
 
 	/**
 	 * Process a fetched template source to a token stream.
+	 *
+	 * @return list<string|Token>
 	 */
 	private function processTemplateSource(
 		Frame $frame, Token $token, array $tplArgs, string $src,
@@ -699,21 +705,6 @@ class TemplateHandler extends TokenHandler {
 	}
 
 	/**
-	 * @param array<string|Token> $tokens
-	 * @return bool
-	 */
-	private static function hasTemplateToken( $tokens ): bool {
-		if ( is_array( $tokens ) ) {
-			foreach ( $tokens as $t ) {
-				if ( TokenUtils::isTemplateToken( $t ) ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Process the special magic word as specified by $resolvedTgt['magicWordType'].
 	 * ```
 	 * magicWordType === '!' => {{!}} is the magic word
@@ -725,9 +716,6 @@ class TemplateHandler extends TokenHandler {
 	private function processSpecialMagicWord(
 		TemplateEncapsulator $state, array $resolvedTgt
 	): TemplateExpansionResult {
-		$env = $this->env;
-		$tplToken = $state->token;
-
 		// Special case for {{!}} magic word.
 		//
 		// If we tokenized as a magic word, we meant for it to expand to a
@@ -766,10 +754,11 @@ class TemplateHandler extends TokenHandler {
 		// if the template name is templated, use our copy of AttributeExpander
 		// to process the first attribute to tokens, and force reprocessing of this
 		// template token since we will then know the actual template target.
-		if ( $expandTemplates && self::hasTemplateToken( $token->attribs[0]->k ) ) {
-			$toks = $this->ae->expandFirstAttribute( $token );
-			Assert::invariant( $toks && count( $toks ) === 1 && $toks[0] === $token,
+		if ( $expandTemplates && TokenUtils::hasTemplateToken( $token->attribs[0]->k ) ) {
+			$ret = $this->ae->expandFirstAttribute( $token );
+			Assert::invariant( $ret === [ $token ],
 				"Expected only the input token as the return value." );
+			// $token is modified in place and $ret is unused after this.
 		}
 
 		if ( $this->atMaxArticleSize ) {
@@ -792,7 +781,6 @@ class TemplateHandler extends TokenHandler {
 			return $this->convertToString( $token );
 		}
 
-		$toks = null;
 		$text = $token->dataParsoid->src ?? '';
 
 		$tgt = $this->resolveTemplateTarget(
@@ -840,32 +828,17 @@ class TemplateHandler extends TokenHandler {
 			$fragment = $handler->sourceToFragment(
 				$extApi,
 				$arguments,
-				false /* this is using {{ ... }} syntax */
+				tagSyntax: false /* this is using {{ ... }} syntax */
 			);
 			if ( $fragment instanceof AsyncResult ) {
 				Assert::invariant(
 					$hasAsyncContent,
 					"returning async result without declaration"
 				);
-				$env->getMetadata()->setOutputFlag( 'async-not-ready' );
-				$fragment = $fragment->fallbackContent( $extApi );
-				if ( $fragment === null ) {
-					// Create localized fallback message
-					$doc = $env->getTopLevelDoc();
-					$msg = $doc->createDocumentFragment();
-					$span = $doc->createElement( 'span' );
-					$span->setAttribute( 'class', 'mw-async-not-ready' );
-					DOMCompat::append(
-						$span,
-						WTUtils::createPageContentI18nFragment(
-							$doc,
-							$env->getSiteConfig()->getAsyncFallbackMessageKey(),
-							null
-						)
-					);
-					$msg->appendChild( $span );
-					$fragment = DomPFragment::newFromDocumentFragment( $msg, null );
-				}
+				$fragment = PipelineUtils::handleAsyncResult(
+					$extApi, $fragment,
+					DomSourceRange::fromTsr( $token->dataParsoid->tsr )
+				);
 			}
 			// Map fragment to parsoid wikitext + embedded markers
 			[
@@ -888,8 +861,9 @@ class TemplateHandler extends TokenHandler {
 				],
 				$wikitext,
 				[
-					// We need to expand embedded {{#parsoid-fragment}}
-					// markers still (T385806)
+					// PFragmentHandlers are expressly allowed to request
+					// template expansion.  This supports the lazy
+					// evaluation of arguments and other fun features.
 					'expandTemplates' => true,
 				] + $this->options
 			);
@@ -950,90 +924,60 @@ class TemplateHandler extends TokenHandler {
 				return new TemplateExpansionResult( $error );
 			}
 
-			if ( str_starts_with( $text, PipelineUtils::PARSOID_FRAGMENT_PREFIX ) ) {
-				// See PipelineUtils::pFragmentToParsoidFragmentMarkers()
-				// This is an atomic DOM subtree/forest, and so we're going
-				// to process it all the way to DOM.  Contrast with our
-				// handling of a PFragment return value from a parser
-				// function below, which process to tokens only.
-				$pFragment = $env->getPFragment( $text );
-				$domFragment = $pFragment->asDom(
-					new ParsoidExtensionAPI(
-						$env, [
-							'wt2html' => [
-								'frame' => $this->manager->getFrame(),
-								'parseOpts' => [
-									// This fragment comes from a template and it is important to set
-									// the 'inTemplate' parse option for it.
-									'inTemplate' => true,
-									// There might be translcusions within this fragment and we want
-									// to expand them. Ex: {{1x|<ref>{{my-tpl}}foo</ref>}}
-									'expandTemplates' => true
-								] + $this->options
-							]
-						]
-					)
+			// Fetch and process the template expansion
+			$error = false;
+			$fragment = Wikitext::preprocessFragment(
+				$env, WikitextPFragment::newFromWt( $text, null ), $error
+			);
+			if ( $error ) {
+				return new TemplateExpansionResult(
+					[ $fragment->killMarkers() ], false, $this->wrapTemplates
 				);
-				$toks = PipelineUtils::tunnelDOMThroughTokens( $env, $token, $domFragment, [] );
-				$toks = $this->processTemplateTokens( $toks );
-				// This is an internal strip marker, it should be wrapped at a
-				// higher level and we don't need to wrap it again.
-				$wrapTemplates = false;
-				return new TemplateExpansionResult( $toks, true, $wrapTemplates );
 			} else {
-				// Fetch and process the template expansion
-				$error = false;
-				$fragment = Wikitext::preprocessFragment(
-					$env, WikitextPFragment::newFromWt( $text, null ), $error
-				);
-				if ( $error ) {
-					return new TemplateExpansionResult(
-						[ $fragment->killMarkers() ], false, $this->wrapTemplates
-					);
+				if (
+					$fragment instanceof WikitextPFragment &&
+					!$fragment->containsMarker() &&
+					$fragment->getSrcOffsets() !== null
+				) {
+					// Optimize simple case
+					$wikitext = $fragment->killMarkers();
+					$srcOffsets = $fragment->getSrcOffsets();
 				} else {
-					if (
-						$fragment instanceof WikitextPFragment &&
-						!$fragment->containsMarker()
-					) {
-						// Optimize simple case
-						$wikitext = $fragment->killMarkers();
-						$expandTemplates = false;
-					} else {
-						// This is a mixed expansion which contains wikitext and
-						// atomic PFragments.  Process this to tokens.
-						// (Contrast with the processing of {{#parsoid-fragment}}
-						// above, which represents an atomic PFragment.)
-						[
-							'wikitext' => $wikitext,
-						] = PipelineUtils::preparePFragment(
-							$env,
-							$this->manager->getFrame(),
-							$fragment,
-							[
-								// options
-							]
-						);
-						// We need to expand embedded {{#parsoid-fragment}}
-						// markers still (T385806)
-						$expandTemplates = true;
-					}
-					$tplToks = $this->processTemplateSource(
+					// This is a mixed expansion which contains wikitext and
+					// atomic PFragments.  Process this to tokens.
+					// (Contrast with the processing of {{#parsoid-fragment}}
+					// above, which represents an atomic PFragment.)
+					[
+						'wikitext' => $wikitext,
+						'srcOffsets' => $srcOffsets,
+					] = PipelineUtils::preparePFragment(
+						$env,
 						$this->manager->getFrame(),
-						$token,
+						$fragment,
 						[
-							'name' => $templateName,
-							'title' => $templateTitle,
-							'attribs' => $attribs
-						],
-						$wikitext,
-						[
-							'expandTemplates' => $expandTemplates,
-						] + $this->options
-					);
-					return new TemplateExpansionResult(
-						$tplToks, true, $this->wrapTemplates
+							// options
+						]
 					);
 				}
+				$tplToks = $this->processTemplateSource(
+					$this->manager->getFrame(),
+					$token,
+					[
+						'name' => $templateName,
+						'title' => $templateTitle,
+						'attribs' => $attribs
+					],
+					$wikitext,
+					[
+						// Template like content returned from the
+						// preprocessor should not be further expanded
+						'expandTemplates' => false,
+						'srcOffsets' => $srcOffsets,
+					] + $this->options
+				);
+				return new TemplateExpansionResult(
+					$tplToks, true, $this->wrapTemplates
+				);
 			}
 		} else {
 			// We don't perform recursive template expansion- something
@@ -1052,7 +996,7 @@ class TemplateHandler extends TokenHandler {
 	 * processes the template.
 	 * @return array<string|Token>
 	 */
-	private function onTemplate( Token $token ): array {
+	private function onTemplate( XMLTagTk $token ): array {
 		$state = new TemplateEncapsulator(
 			$this->env, $this->manager->getFrame(), $token, 'mw:Transclusion'
 		);
@@ -1073,7 +1017,7 @@ class TemplateHandler extends TokenHandler {
 	 * Expand template arguments with tokens from the containing frame.
 	 * @return array<string|Token>
 	 */
-	private function onTemplateArg( Token $token ): array {
+	private function onTemplateArg( XMLTagTk $token ): array {
 		$toks = $this->manager->getFrame()->expandTemplateArg( $token );
 
 		if ( $this->wrapTemplates && $this->options['expandTemplates'] ) {
@@ -1094,7 +1038,7 @@ class TemplateHandler extends TokenHandler {
 	}
 
 	/** @inheritDoc */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		switch ( $token->getName() ) {
 			case "template":
 				return $this->onTemplate( $token );

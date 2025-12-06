@@ -12,7 +12,8 @@
 			"Mannivu",
 			"Sakretsu",
 			"Superpes15",
-			"Valepert"
+			"Valepert",
+			"Dream Indigo"
 		]
 	},
 	"thanks-desc": "Aggiunge un collegamento per ringraziare gli utenti per modifiche, commenti, ecc.",
@@ -35,10 +36,10 @@
 	"echo-pref-subscription-edit-thank": "Mi ringrazia per una mia modifica",
 	"echo-pref-tooltip-edit-thank": "Avvisami quando qualcuno mi ringrazia per una modifica che ho fatto.",
 	"echo-category-title-edit-thank": "Ringraziamenti",
-	"notification-header-rev-thank": "$1 {{GENDER:$4|ti}} {{GENDER:$2|ha ringraziato}} per la tua modifica su <strong>$3</strong>.",
+	"notification-header-rev-thank": "$1 ti ha ringraziat{{GENDER:$4|o|a|o/a}} per la tua modifica su <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 ti {{GENDER:$2|ha}} {{GENDER:$4|ringraziato|ringraziata|ringraziato/a}} per aver creato la pagina <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|ti}} ha {{GENDER:$4|ringraziato|ringraziata|ringraziato/a}} per la tua azione su <strong>$3</strong>.",
-	"notification-compact-header-edit-thank": "$1 {{GENDER:$3|ti}} {{GENDER:$2|ha ringraziato}}.",
+	"notification-compact-header-edit-thank": "$1 ti ha ringraziat{{GENDER:$3|o|a|o/a}}.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Una persona ti ha|$1 persone ti hanno|100=Più di 99 persone ti hanno}} {{GENDER:$3|ringraziato|ringraziata|ringraziato/a}} per la tua modifica su <strong>$2</strong>.",
 	"notification-bundle-header-log-thank": "{{PLURAL:$1|Una persona ti ha|$1 persone ti hanno|100=Più di 99 persone ti hanno}} {{GENDER:$3|ringraziato|ringraziata|ringraziato/a}} per la tua azione su <strong>$2</strong>.",
 	"log-name-thanks": "Ringraziamenti",
@@ -52,8 +53,8 @@
 	"thanks-error-invalidpostid": "ID messaggio non è valido.",
 	"flow-thanks-confirmation-special": "Vuoi ringraziare pubblicamente per questo commento?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Hai ringraziato}} $1 per {{GENDER:$2|il suo}} commento.",
-	"notification-header-flow-thank": "$1 {{GENDER:$5|ti}} {{GENDER:$2|ha ringraziato}} per il tuo commento in \"<strong>$3</strong>\".",
-	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|ti}} {{GENDER:$2|ha ringraziato}}.",
+	"notification-header-flow-thank": "$1 ti ha ringraziat{{GENDER:$5|o|a|o/a}} per il tuo commento su \"<strong>$3</strong>\".",
+	"notification-compact-header-flow-thank": "$1 ti ha ringraziat{{GENDER:$3|o|a|o/a}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Una persona ti ha|$1 persone ti hanno|100=Più di 99 persone ti hanno}} {{GENDER:$3|ringraziato|ringraziata|ringraziato/a}} per il tuo commento in \"<strong>$2</strong>\".",
 	"ipb-action-thanks": "Invio di ringraziamenti"
 }

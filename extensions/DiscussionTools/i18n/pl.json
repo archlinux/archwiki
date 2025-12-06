@@ -8,7 +8,8 @@
 			"Openbk",
 			"Rail",
 			"The Polish",
-			"Woytecr"
+			"Woytecr",
+			"IOIOI"
 		]
 	},
 	"discussiontools": "Narzędzia dyskusji",
@@ -28,7 +29,7 @@
 	"discussiontools-emptystate-desc-self-temp": "Użytkownicy {{GRAMMAR:D.lp|{{SITENAME}}}} mogą używać tej [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|strony dyskusji]], aby zamieścić publiczną wiadomość do {{GENDER:|Ciebie}}. Otrzymasz powiadomienie, kiedy ktoś tu coś napisze.\n\nZa jakiś czas [[{{MediaWiki:tempuser-helppage}}|ta strona wygaśnie]]. Aby nadal otrzymywać powiadomienia i uzyskać dostęp do większej liczby funkcji, [$1 utwórz konto] lub [$2 zaloguj się].",
 	"discussiontools-emptystate-desc-user": "Na [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|stronach dyskusji]] rozmawiamy o tym, jak sprawić, aby artykuły {{GRAMMAR:D.lp|{{SITENAME}}}} były jak najlepsze. Tutaj możesz rozpocząć dyskusję na wspólny temat z {{GENDER:{{PAGENAME}}|użytkownikiem|użytkowniczką|użytkownikiem/użytkowniczką}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Wasze komentarze będą widoczne dla innych użytkowników.",
 	"discussiontools-emptystate-desc-user-anon": "Na [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|stronach dyskusji]] rozmawiamy o tym, jak sprawić, aby artykuły {{GRAMMAR:D.lp|{{SITENAME}}}} były jak najlepsze. Tutaj możesz rozpocząć dyskusję na temat edycji dokonanych z tego adresu IP. Twoje komentarze będą widoczne dla innych użytkowników. Adresy IP mogą się zmieniać i często używane są przez wiele osób.",
-	"discussiontools-emptystate-desc-user-temp": "Na [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|stronach dyskusji]] rozmawiamy o tym, jak sprawić, aby artykuły {{GRAMMAR:D.lp|{{SITENAME}}}} były jak najlepsze. Tutaj możesz rozpocząć dyskusję {{GENDER:{{PAGENAME}}|użytkownikiem|użytkowniczką|użytkownikiem(-czką)}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Wasze komentarze będą widoczne dla innych użytkowników. Z uwagi na to, że [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] korzysta z [[{{MediaWiki:tempuser-helppage}}|konta tymczasowego]], niniejsza strona dyskusji wygaśnie za jakiś czas. [[{{MediaWiki:tempuser-helppage}}|Dowiedz się więcej]].",
+	"discussiontools-emptystate-desc-user-temp": "Na [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|stronach dyskusji]] rozmawiamy o tym, jak sprawić, aby artykuły {{GRAMMAR:D.lp|{{SITENAME}}}} były jak najlepsze. Tutaj możesz rozpocząć dyskusję z {{GENDER:{{PAGENAME}}|użytkownikiem|użytkowniczką|użytkownikiem(-czką)}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Wasze komentarze będą widoczne dla innych użytkowników. Z uwagi na to, że [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] korzysta z [[{{MediaWiki:tempuser-helppage}}|konta tymczasowego]], niniejsza strona dyskusji wygaśnie za jakiś czas. [[{{MediaWiki:tempuser-helppage}}|Dowiedz się więcej]].",
 	"discussiontools-emptystate-title": "Rozpocznij dyskusję o stronie „{{SUBJECTPAGENAME}}”",
 	"discussiontools-emptystate-title-self": "Witaj na swojej stronie dyskusji",
 	"discussiontools-emptystate-title-self-anon": "Witaj na stronie dyskusji",

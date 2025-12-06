@@ -20,7 +20,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Blocking
  * @group Database
- * @coversDefaultClass \MediaWiki\Specials\SpecialBlock
+ * @covers \MediaWiki\Specials\SpecialBlock
  */
 class SpecialBlockTest extends SpecialPageTestBase {
 	use MockAuthorityTrait;
@@ -41,13 +41,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 	}
 
-	/**
-	 * @covers ::getFormFields
-	 */
 	public function testGetFormFields() {
 		$this->overrideConfigValues( [
 			MainConfigNames::BlockAllowsUTEdit => true,
-			MainConfigNames::EnablePartialActionBlocks => true,
 			MainConfigNames::UseCodexSpecialBlock => false,
 		] );
 		$page = $this->newSpecialPage();
@@ -72,15 +68,109 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	}
 
 	/**
+	 * @dataProvider provideGetFormFieldsForDefaultExpiry
+	 */
+	public function testGetFormFieldsForDefaultExpiry( $defaultExpiryMessageText, $expectedDefaultExpiry ) {
+		// Define an override for the ipb-default-expiry message
+		$this->overrideConfigValue( MainConfigNames::UseDatabaseMessages, true );
+		$this->editPage( Title::newFromText( 'ipb-default-expiry', NS_MEDIAWIKI ), $defaultExpiryMessageText );
+
+		// Execute the special page and check the default expiry is as expected
+		$page = $this->newSpecialPage();
+		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
+		$fields = $wrappedPage->getFormFields();
+		$this->assertArrayHasKey( 'Expiry', $fields );
+		$this->assertArrayHasKey( 'default', $fields['Expiry'] );
+		$this->assertSame( $expectedDefaultExpiry, $fields['Expiry']['default'] );
+		$this->assertSame( $expectedDefaultExpiry, $wrappedPage->codexFormData['blockExpiryDefault'] );
+	}
+
+	public static function provideGetFormFieldsForDefaultExpiry(): array {
+		return [
+			'The expiry default is empty' => [ '', '' ],
+			'The expiry default is infinite' => [ 'infinite', 'infinite' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetFormFieldsForDefaultExpiryWhenTargetIsIP
+	 */
+	public function testGetFormFieldsForDefaultExpiryWhenTargetIsIP(
+		$defaultExpiryMessageText, $defaultIPExpiryMessage, $expectedDefaultExpiry
+	) {
+		$this->overrideConfigValue( MainConfigNames::UseCodexSpecialBlock, true );
+		$context = RequestContext::getMain();
+		$context->setTitle( Title::newFromText( 'Block', NS_SPECIAL ) );
+		$context->setUser( $this->getTestSysop()->getUser() );
+
+		// Define an override for the ipb-default-expiry and ipb-default-expiry-ip messages
+		// We have to do this by editing a MediaWiki page because there isn't an easier way to override message
+		// text for a test.
+		$this->overrideConfigValue( MainConfigNames::UseDatabaseMessages, true );
+		$this->editPage( Title::newFromText( 'ipb-default-expiry', NS_MEDIAWIKI ), $defaultExpiryMessageText );
+		$this->editPage( Title::newFromText( 'ipb-default-expiry-ip', NS_MEDIAWIKI ), $defaultIPExpiryMessage );
+
+		// Execute the special page and check the default expiry is as expected in the codex data (we checked that
+		// the non-codex field has the correct expiry set in other situations above).
+		$page = $this->newSpecialPage();
+		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
+		$wrappedPage->execute( '1.2.3.4' );
+		$actualJsConfigVars = $wrappedPage->getOutput()->getJsConfigVars();
+		$this->assertSame( $expectedDefaultExpiry, $actualJsConfigVars['blockExpiryDefault'] );
+	}
+
+	public static function provideGetFormFieldsForDefaultExpiryWhenTargetIsIP(): array {
+		return [
+			'All default expiries are empty' => [ '', '-', '' ],
+			'The default IP expiry is empty' => [ '3 days', '-', '3 days' ],
+			'The default IP expiry is defined' => [ '3 days', '5 days', '5 days' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetFormFieldsForDefaultExpiryWhenTargetIsTemporaryAccount
+	 */
+	public function testGetFormFieldsForDefaultExpiryWhenTargetIsTemporaryAccount(
+		$defaultExpiryMessageText, $defaultTemporaryAccountExpiryMessage, $expectedDefaultExpiry
+	) {
+		$this->overrideConfigValue( MainConfigNames::UseCodexSpecialBlock, true );
+		$context = RequestContext::getMain();
+		$context->setTitle( Title::newFromText( 'Block', NS_SPECIAL ) );
+		$context->setUser( $this->getTestSysop()->getUser() );
+
+		// Define an override for the ipb-default-expiry and ipb-default-expiry-temporary-account messages
+		// We have to do this by editing a MediaWiki page because there isn't an easier way to override message
+		// text for a test.
+		$this->overrideConfigValue( MainConfigNames::UseDatabaseMessages, true );
+		$this->editPage( Title::newFromText( 'ipb-default-expiry', NS_MEDIAWIKI ), $defaultExpiryMessageText );
+		$this->editPage(
+			Title::newFromText( 'ipb-default-expiry-temporary-account', NS_MEDIAWIKI ),
+			$defaultTemporaryAccountExpiryMessage
+		);
+
+		// Execute the special page and check the default expiry is as expected in the codex data (we checked that
+		// the non-codex field has the correct expiry set in other situations above).
+		$page = $this->newSpecialPage();
+		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
+		$wrappedPage->execute( '~2025-1' );
+		$actualJsConfigVars = $wrappedPage->getOutput()->getJsConfigVars();
+		$this->assertSame( $expectedDefaultExpiry, $actualJsConfigVars['blockExpiryDefault'] );
+	}
+
+	public static function provideGetFormFieldsForDefaultExpiryWhenTargetIsTemporaryAccount(): array {
+		return [
+			'All default expiries are empty' => [ '', '', '' ],
+			'The default Temporary Account expiry is empty' => [ '3 days', '', '3 days' ],
+			'The default Temporary Account expiry is defined' => [ 'infinite', '5 days', '5 days' ],
+		];
+	}
+
+	/**
 	 * @dataProvider provideGetFormFieldsCodex
-	 * @covers ::getFormFields
-	 * @covers ::execute
-	 * @covers ::validateTarget
 	 */
 	public function testCodexFormData( array $params, array $expected, bool $multiblocks = false ): void {
 		$this->overrideConfigValues( [
 			MainConfigNames::BlockAllowsUTEdit => true,
-			MainConfigNames::EnablePartialActionBlocks => true,
 			MainConfigNames::UseCodexSpecialBlock => true,
 			MainConfigNames::EnableMultiBlocks => $multiblocks,
 		] );
@@ -131,20 +221,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		];
 	}
 
-	/**
-	 * @covers ::getFormFields
-	 */
-	public function testGetFormFieldsActionRestrictionDisabled() {
-		$this->overrideConfigValue( MainConfigNames::EnablePartialActionBlocks, false );
-		$page = $this->newSpecialPage();
-		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
-		$fields = $wrappedPage->getFormFields();
-		$this->assertArrayNotHasKey( 'ActionRestrictions', $fields );
-	}
-
-	/**
-	 * @covers ::maybeAlterFormDefaults
-	 */
 	public function testMaybeAlterFormDefaults() {
 		$this->overrideConfigValues( [
 			MainConfigNames::BlockAllowsUTEdit => true,
@@ -172,12 +248,8 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertSame( 'infinite', $fields['Expiry']['default'] );
 	}
 
-	/**
-	 * @covers ::maybeAlterFormDefaults
-	 */
 	public function testMaybeAlterFormDefaultsPartial() {
 		$this->overrideConfigValues( [
-			MainConfigNames::EnablePartialActionBlocks => true,
 			MainConfigNames::UseCodexSpecialBlock => false,
 			MainConfigNames::EnableMultiBlocks => false,
 		] );
@@ -223,9 +295,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertSame( [ $actionId ], $fields['ActionRestrictions']['default'] );
 	}
 
-	/**
-	 * @covers ::onSubmit
-	 */
 	public function testProcessForm() {
 		$badActor = $this->getTestUser()->getUserIdentity();
 		$context = RequestContext::getMain();
@@ -259,9 +328,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertSame( $expiry, $block->getExpiry() );
 	}
 
-	/**
-	 * @covers ::onSubmit
-	 */
 	public function testProcessFormExisting() {
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
@@ -306,12 +372,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $block->isAutoblocking() );
 	}
 
-	/**
-	 * @covers ::onSubmit
-	 */
 	public function testProcessFormRestrictions() {
-		$this->overrideConfigValue( MainConfigNames::EnablePartialActionBlocks, true );
-
 		$badActor = $this->getTestUser()->getUser();
 		$context = RequestContext::getMain();
 		$context->setUser( $this->getTestSysop()->getUser() );
@@ -363,9 +424,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		] ) );
 	}
 
-	/**
-	 * @covers ::onSubmit
-	 */
 	public function testProcessFormRestrictionsChange() {
 		$badActor = $this->getTestUser()->getUser();
 		$context = RequestContext::getMain();
@@ -469,7 +527,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 	/**
 	 * @dataProvider provideProcessFormUserTalkEditFlag
-	 * @covers ::onSubmit
 	 */
 	public function testProcessFormUserTalkEditFlag( $options, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, $options['configAllowsUserTalkEdit'] );
@@ -575,7 +632,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 	/**
 	 * @dataProvider provideProcessFormErrors
-	 * @covers ::onSubmit
 	 */
 	public function testProcessFormErrors( $data, $expected, $options = [] ) {
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, true );
@@ -684,7 +740,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 	/**
 	 * @dataProvider provideProcessFormErrorsReblock
-	 * @covers ::onSubmit
 	 */
 	public function testProcessFormErrorsReblock( $data, $permissions, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::BlockAllowsUTEdit, true );
@@ -767,7 +822,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 	/**
 	 * @dataProvider provideProcessFormErrorsHideUser
-	 * @covers ::onSubmit
 	 */
 	public function testProcessFormErrorsHideUser( $data, $permissions, $expected ) {
 		$performer = $this->getTestSysop()->getUser();
@@ -828,9 +882,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		];
 	}
 
-	/**
-	 * @covers ::onSubmit
-	 */
 	public function testProcessFormErrorsHideUserProlific() {
 		$this->overrideConfigValue( MainConfigNames::HideUserContribLimit, 0 );
 
@@ -873,7 +924,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 
 	/**
 	 * @dataProvider provideGetTargetInternal
-	 * @covers ::getTargetInternal
 	 */
 	public function testGetTargetInternal( $par, $requestData, $expectedTarget ) {
 		$request = new FauxRequest( $requestData );
@@ -935,10 +985,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		];
 	}
 
-	/**
-	 * @covers ::validateTarget
-	 * @covers ::getTargetInternal
-	 */
 	public function testValidateTargetFromId(): void {
 		$badActor = $this->getTestUser()->getUser();
 		$block = $this->blockStore->insertBlockWithParams( [

@@ -3,6 +3,7 @@
 namespace MediaWiki\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
+use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
@@ -18,6 +19,9 @@ use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
+/**
+ * @deprecated since 1.45. Please use the batch endpoint instead.
+ */
 class TemporaryAccountRevisionHandler extends AbstractTemporaryAccountNameHandler {
 
 	use TemporaryAccountRevisionTrait;
@@ -34,8 +38,9 @@ class TemporaryAccountRevisionHandler extends AbstractTemporaryAccountNameHandle
 		BlockManager $blockManager,
 		RevisionStore $revisionStore,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode,
-		CheckUserTemporaryAccountAutoRevealLookup $checkUserTemporaryAccountAutoRevealLookup
+		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		TemporaryAccountLoggerFactory $loggerFactory,
+		ReadOnlyMode $readOnlyMode
 	) {
 		parent::__construct(
 			$config,
@@ -46,8 +51,9 @@ class TemporaryAccountRevisionHandler extends AbstractTemporaryAccountNameHandle
 			$actorStore,
 			$blockManager,
 			$checkUserPermissionsManager,
-			$readOnlyMode,
-			$checkUserTemporaryAccountAutoRevealLookup
+			$autoRevealLookup,
+			$loggerFactory,
+			$readOnlyMode
 		);
 		$this->revisionStore = $revisionStore;
 	}

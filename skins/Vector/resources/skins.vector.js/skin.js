@@ -1,10 +1,6 @@
 const languageButton = require( './languageButton.js' ),
 	pinnableElement = require( './pinnableElement.js' ),
 	searchToggle = require( './searchToggle.js' ),
-	echo = require( './echo.js' ),
-	initExperiment = require( './AB.js' ),
-	ABTestConfig = require( /** @type {string} */ ( './activeABTest.json' ) ),
-	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
 	portletsManager = require( './portlets.js' ),
 	dropdownMenus = require( './dropdownMenus.js' ).dropdownMenus,
 	tables = require( './tables.js' ).init,
@@ -53,9 +49,7 @@ function enableCssAnimations( document ) {
  */
 function main( window ) {
 	enableCssAnimations( window.document );
-	initSearchLoader( document );
 	languageButton();
-	echo();
 	portletsManager.main();
 	watchstar();
 	// Initialize the search toggle for the main header only. The sticky header
@@ -140,9 +134,6 @@ function init( window ) {
 }
 
 init( window );
-if ( ABTestConfig.enabled && !mw.user.isAnon() ) {
-	initExperiment( ABTestConfig, String( mw.user.getId() ) );
-}
 if ( document.readyState === 'interactive' || document.readyState === 'complete' ) {
 	main( window );
 } else {

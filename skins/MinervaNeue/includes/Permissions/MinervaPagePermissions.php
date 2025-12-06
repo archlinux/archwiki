@@ -206,8 +206,6 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 
 	/**
 	 * Checks whether the editor can handle the existing content handler type.
-	 *
-	 * @return bool
 	 */
 	protected function isCurrentPageContentModelEditable(): bool {
 		if ( !$this->contentHandler ) {
@@ -222,17 +220,12 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 		}
 
 		// For content types with custom action=edit handlers, let them do their thing
-		if ( array_key_exists( 'edit', $this->contentHandler->getActionOverrides() ?? [] ) ) {
-			return true;
-		}
-
-		return false;
+		return array_key_exists( 'edit', $this->contentHandler->getActionOverrides() ?? [] );
 	}
 
 	/**
 	 * Returns true if $title page exists and is editable or is creatable by $user as determined by
 	 * quick checks.
-	 * @return bool
 	 */
 	private function canEditOrCreate(): bool {
 		if ( !$this->title ) {
@@ -257,8 +250,6 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 
 	/**
 	 * Checks whether the user has the permissions to move the current page.
-	 *
-	 * @return bool
 	 */
 	private function canMove(): bool {
 		if ( !$this->title ) {
@@ -271,8 +262,6 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 
 	/**
 	 * Checks whether the user has the permissions to delete the current page.
-	 *
-	 * @return bool
 	 */
 	private function canDelete(): bool {
 		if ( !$this->title ) {
@@ -285,8 +274,6 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 
 	/**
 	 * Checks whether the user has the permissions to change the protections status of the current page.
-	 *
-	 * @return bool
 	 */
 	private function canProtect(): bool {
 		if ( !$this->title ) {

@@ -130,7 +130,7 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 	public static function provideAddLogEntryTimestamp() {
 		return [
 			[ '1653047635' ],
-			[ '1653042345' ]
+			[ '1653042345' ],
 		];
 	}
 
@@ -248,11 +248,11 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 			'Single IP notated as a /32 range' => [ '1.2.3.4/32', 'ip', '01020304', '01020304' ],
 			'Single IPv6' => [ '::e:f:2001', 'ip',
 				'v6-00000000000000000000000E000F2001',
-				'v6-00000000000000000000000E000F2001'
+				'v6-00000000000000000000000E000F2001',
 			],
 			'/96 IPv6 range' => [ '::e:f:2001/96', 'range',
 				'v6-00000000000000000000000E00000000',
-				'v6-00000000000000000000000EFFFFFFFF'
+				'v6-00000000000000000000000EFFFFFFFF',
 			],
 		];
 	}
@@ -263,21 +263,20 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 				return [
 					"(cul_target_hex = '$start' OR " .
 					"(cul_range_end >= '$start' AND " .
-					"cul_range_start <= '$start'))"
+					"cul_range_start <= '$start'))",
 				];
 			case 'range':
 				return [
 					"((cul_target_hex >= '$start' AND " .
 					"cul_target_hex <= '$end') OR " .
 					"(cul_range_end >= '$start' AND " .
-					"cul_range_start <= '$end'))"
+					"cul_range_start <= '$end'))",
 				];
 			case 'user':
 				if ( $id === null ) {
 					return null;
 				}
 				return [
-					'cul_type' => [ 'userips', 'useredits', 'investigate' ],
 					'cul_target_id' => $id,
 				];
 			default:

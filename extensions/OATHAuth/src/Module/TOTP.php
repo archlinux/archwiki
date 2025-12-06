@@ -3,21 +3,19 @@
 namespace MediaWiki\Extension\OATHAuth\Module;
 
 use MediaWiki\Context\IContextSource;
-use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\OATHAuth\Auth\TOTPSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
-use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPDisableForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\TOTPEnableForm;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Extension\OATHAuth\Special\OATHManage;
+use MediaWiki\Message\Message;
+use UnexpectedValueException;
 
 class TOTP implements IModule {
 	public const MODULE_NAME = "totp";
-
-	private OATHUserRepository $userRepository;
 
 	/**
 	 * @return TOTPKey[]
@@ -27,8 +25,9 @@ class TOTP implements IModule {
 		return $user->getKeysForModule( self::MODULE_NAME );
 	}
 
-	public function __construct( OATHUserRepository $userRepository ) {
-		$this->userRepository = $userRepository;
+	public function __construct(
+		private readonly OATHUserRepository $userRepository,
+	) {
 	}
 
 	/** @inheritDoc */
@@ -43,14 +42,11 @@ class TOTP implements IModule {
 
 	/**
 	 * @inheritDoc
-	 * @throws MWException
+	 * @throws UnexpectedValueException
 	 */
 	public function newKey( array $data ) {
-		if ( !isset( $data['secret'] ) || !isset( $data['scratch_tokens'] ) ) {
-			throw new MWException( 'oathauth-invalid-data-format' );
-		}
-		if ( is_string( $data['scratch_tokens' ] ) ) {
-			$data['scratch_tokens'] = explode( ',', $data['scratch_tokens'] );
+		if ( !isset( $data['secret'] ) ) {
+			throw new UnexpectedValueException( 'oathauth-invalid-data-format' );
 		}
 
 		return TOTPKey::newFromArray( $data );
@@ -66,12 +62,7 @@ class TOTP implements IModule {
 		);
 	}
 
-	/**
-	 * @param OATHUser $user
-	 * @param array $data
-	 * @return bool
-	 * @throws MWException
-	 */
+	/** @inheritDoc */
 	public function verify( OATHUser $user, array $data ): bool {
 		if ( !isset( $data['token'] ) ) {
 			return false;
@@ -88,9 +79,6 @@ class TOTP implements IModule {
 
 	/**
 	 * Is this module currently enabled for the given user?
-	 *
-	 * @param OATHUser $user
-	 * @return bool
 	 */
 	public function isEnabled( OATHUser $user ): bool {
 		return (bool)self::getTOTPKeys( $user );
@@ -101,35 +89,42 @@ class TOTP implements IModule {
 	 * @param OATHUser $user
 	 * @param OATHUserRepository $repo
 	 * @param IContextSource $context
-	 * @return IManageForm|null
+	 * @return IManageForm|TOTPEnableForm|null
 	 */
 	public function getManageForm(
 		$action,
 		OATHUser $user,
 		OATHUserRepository $repo,
 		IContextSource $context
-	): ?IManageForm {
-		$hasTOTPKey = $this->isEnabled( $user );
-		if ( $action === OATHManage::ACTION_ENABLE && !$hasTOTPKey ) {
+	) {
+		if ( $action === OATHManage::ACTION_ENABLE ) {
 			return new TOTPEnableForm( $user, $repo, $this, $context );
-		}
-		if ( $action === OATHManage::ACTION_DISABLE && $hasTOTPKey ) {
-			return new TOTPDisableForm( $user, $repo, $this, $context );
 		}
 		return null;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getDescriptionMessage() {
 		return wfMessage( 'oathauth-totp-description' );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function getDisableWarningMessage() {
 		return wfMessage( 'oathauth-totp-disable-warning' );
+	}
+
+	/** @inheritDoc */
+	public function getAddKeyMessage(): Message {
+		return wfMessage( 'oathauth-totp-add-key' );
+	}
+
+	/** @inheritDoc */
+	public function getLoginSwitchButtonMessage() {
+		return wfMessage( 'oathauth-auth-switch-module-label' );
+	}
+
+	/** @inheritDoc */
+	public function isSpecial(): bool {
+		return false;
 	}
 }

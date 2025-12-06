@@ -9,7 +9,6 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
@@ -17,6 +16,9 @@ use Wikimedia\Parsoid\Utils\WTUtils;
 
 class LiFixups {
 
+	/**
+	 * @return array{tplRoot: ?Element, migratable: bool}
+	 */
 	private static function getMigrationInfo( Node $c ): array {
 		$tplRoot = WTUtils::findFirstEncapsulationWrapperNode( $c );
 		if ( $tplRoot !== null ) {
@@ -24,7 +26,7 @@ class LiFixups {
 			$prev = $tplRoot->previousSibling;
 			while ( $c !== $prev ) {
 				if ( !WTUtils::isSolTransparentLink( $c ) &&
-					!( DOMCompat::nodeName( $c ) === 'span' && preg_match( '/^\s*$/D', $c->textContent ) )
+					!( DOMUtils::nodeName( $c ) === 'span' && preg_match( '/^\s*$/D', $c->textContent ) )
 				) {
 					return [ 'tplRoot' => $tplRoot, 'migratable' => false ];
 				}
@@ -36,6 +38,9 @@ class LiFixups {
 		return [ 'tplRoot' => $tplRoot, 'migratable' => true ];
 	}
 
+	/**
+	 * @return Comment|Text|null
+	 */
 	private static function findLastMigratableNode( Node $li ): ?Node {
 		$sentinel = null;
 		$c = DiffDOMUtils::lastNonSepChild( $li );
@@ -104,13 +109,22 @@ class LiFixups {
 
 			// Find the outermost list -- content will be moved after it
 			$outerList = $li->parentNode;
+			// Expected that $outerList is a list container (ul/dl/ol),
+			// and we're checking whether its parent is a list *item* (li/dd/etc)
 			while ( DOMUtils::isListItem( $outerList->parentNode ) ) {
+				// if so, $p will be another list item...
 				$p = $outerList->parentNode;
 				// Bail if we find ourself on a path that is not the rightmost path.
 				if ( $p->nextSibling !== null ) {
 					return true;
 				}
+				// ...and we expect that $p->parentNode will be a list
+				// container. (Bail if it's not)
+				if ( !DOMUtils::isList( $p->parentNode ) ) {
+					break;
+				}
 				$outerList = $p->parentNode;
+				// Now $outerList->parentNode might be a list item again.
 			}
 
 			// Find last migratable node
@@ -169,7 +183,7 @@ class LiFixups {
 			$list = null;
 			while ( $outerList !== $list ) {
 				$list = $li->parentNode;
-				DOMUtils::assertElt( $list );
+				'@phan-var Element $list'; // @var Element $list
 
 				$liDp = DOMDataUtils::getDataParsoid( $li );
 				if ( !empty( $liDp->dsr ) ) {

@@ -10,9 +10,11 @@ use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script that recomputes notification counts
@@ -55,14 +57,14 @@ class RecomputeNotifCounts extends Maintenance {
 				$this->getBatchSize()
 			);
 			$userIterator->addJoinConditions( [
-				'echo_notification' => [ 'INNER JOIN', 'notification_event=event_id' ]
+				'echo_notification' => [ 'INNER JOIN', 'notification_event=event_id' ],
 			] );
 			$userIterator->addConditions( [
 				'event_type' => $notifTypes,
-				'notification_read_timestamp' => null
+				'notification_read_timestamp' => null,
 			] );
 			$userIterator->addOptions( [
-				'GROUP BY' => 'notification_user'
+				'GROUP BY' => 'notification_user',
 			] );
 			$userIterator->setCaller( __METHOD__ );
 		} else {
@@ -93,5 +95,7 @@ class RecomputeNotifCounts extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RecomputeNotifCounts::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

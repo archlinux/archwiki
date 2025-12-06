@@ -94,7 +94,7 @@
 	"discussiontools-permalink-comment-copied": "Врска до коментар копиран во меѓускладот.",
 	"discussiontools-postedit-confirmation-published": "Вашиот коментар е објавен.",
 	"discussiontools-postedit-confirmation-topicadded": "Вашата тема е додадена.",
-	"discussiontools-preference-autotopicsub": "Автоматски претплаќај не на теми",
+	"discussiontools-preference-autotopicsub": "Автоматски претплаќај ме на теми",
 	"discussiontools-preference-autotopicsub-help": "Кога ќе {{GENDER:|почнете}} нов разговор или ќе коментирате на постоечки, ќе бидете автоматски известувани кога другите ќе коментираат на нив.",
 	"discussiontools-preference-description": "Овозможува експериментални можности за разговорни страници:\n* [https://www.mediawiki.org/wiki/Talk_pages_project/Usability Приказ на метаподатоци] за секој разговор и овозможува нов распоред на страница.\n\nМожете да ги прилагодите овие можности во вашите [[Special:Preferences#mw-prefsection-editing-discussion|нагодувања]].\n\nИзвестувањата за новини ќе се објавуваат на [https://www.mediawiki.org/wiki/Talk_pages_project/Updates соодветната страница на проектот за разговорни страници].\n\nНапомена:\n* Со време ќе се додаваат нови можности.\n* Некои од можностите може сè уште да не се достапни на вашето вики.",
 	"discussiontools-preference-gadget-conflict": "За да овозможите брзо одговарање, најпрвин ќе треба да  [[$1|ја оневозможите алатката Згодни разговори]] во вашите нагодувања.",

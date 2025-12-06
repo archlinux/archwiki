@@ -2,26 +2,15 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -42,10 +31,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	 */
 	private $rootTitle;
 
-	/**
-	 * @var LinksMigration
-	 */
-	private $linksMigration;
+	private LinksMigration $linksMigration;
 
 	/** @var array */
 	private $params;
@@ -60,6 +46,8 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	private string $bl_table;
 	private string $bl_code;
 	private string $bl_title;
+	/** @var string|false */
+	private $virtual_domain;
 	private bool $hasNS;
 
 	/** @var string */
@@ -86,22 +74,29 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 			'prefix' => 'pl',
 			'linktbl' => 'pagelinks',
 			'helpurl' => 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Backlinks',
+			'virtualdomain' => PageLinksTable::VIRTUAL_DOMAIN,
 		],
 		'embeddedin' => [
 			'code' => 'ei',
 			'prefix' => 'tl',
 			'linktbl' => 'templatelinks',
 			'helpurl' => 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Embeddedin',
+			'virtualdomain' => TemplateLinksTable::VIRTUAL_DOMAIN,
 		],
 		'imageusage' => [
 			'code' => 'iu',
 			'prefix' => 'il',
 			'linktbl' => 'imagelinks',
 			'helpurl' => 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Imageusage',
+			'virtualdomain' => ImageLinksTable::VIRTUAL_DOMAIN,
 		]
 	];
 
-	public function __construct( ApiQuery $query, string $moduleName, LinksMigration $linksMigration ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		LinksMigration $linksMigration
+	) {
 		$settings = $this->backlinksSettings[$moduleName];
 		$prefix = $settings['prefix'];
 		$code = $settings['code'];
@@ -125,16 +120,19 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->bl_from_ns = $prefix . '_from_namespace';
 		$this->bl_code = $code;
 		$this->helpUrl = $settings['helpurl'];
+		$this->virtual_domain = $settings['virtualdomain'];
 	}
 
 	public function execute() {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -196,7 +194,9 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addOption( 'STRAIGHT_JOIN' );
 
+		$this->setVirtualDomain( $this->virtual_domain );
 		$res = $this->select( __METHOD__ );
+		$this->resetVirtualDomain();
 
 		if ( $resultPageSet === null ) {
 			$this->executeGenderCacheFromResultWrapper( $res, __METHOD__ );
@@ -560,6 +560,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$retval = [
 			'title' => [
@@ -605,6 +606,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		return $retval;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -632,6 +634,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		return $examples[$this->getModuleName()];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return $this->helpUrl;
 	}

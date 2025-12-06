@@ -65,7 +65,7 @@ class SpecialInvestigateBlockTest extends FormSpecialPageTestCase {
 	public static function provideMultiBlocksOption() {
 		return [
 			'single blocks' => [ false ],
-			'multiblocks' => [ true ]
+			'multiblocks' => [ true ],
 		];
 	}
 
@@ -399,7 +399,7 @@ class SpecialInvestigateBlockTest extends FormSpecialPageTestCase {
 		$this->getServiceContainer()->getDatabaseBlockStore()
 			->insertBlockWithParams( [
 				'targetUser' => $targetUser,
-				'by' => $testPerformer
+				'by' => $testPerformer,
 			] );
 		$fauxRequest = new FauxRequest(
 			[

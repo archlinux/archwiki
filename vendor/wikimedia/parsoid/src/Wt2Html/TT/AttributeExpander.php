@@ -8,11 +8,14 @@ use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwAttrib;
+use Wikimedia\Parsoid\Tokens\CompoundTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
@@ -25,7 +28,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 /**
  * Generic attribute expansion handler.
  */
-class AttributeExpander extends TokenHandler {
+class AttributeExpander extends UniversalTokenHandler {
 	private const META_TYPE_MATCHER = '#(mw:(LanguageVariant|Transclusion|Param|Includes|Annotation/)(.*)$)#D';
 
 	/**
@@ -88,13 +91,16 @@ class AttributeExpander extends TokenHandler {
 		return -1;
 	}
 
+	/**
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @return array{metaTokens: list{0?: SelfclosingTagTk}, preNLBuf: list<string|Token>, postNLBuf: list<string|Token>}
+	 */
 	private static function splitTokens(
-		Frame $frame, Token $token, int $nlTkPos, array $tokens, bool $wrapTemplates
+		Frame $frame, XMLTagTk $token, int $nlTkPos, array $tokens, bool $wrapTemplates
 	): array {
 		$preNLBuf = [];
-		$postNLBuf = null;
+		$postNLBuf = [];
 		$startMeta = null;
-		$metaTokens = null;
 
 		// Split the token array around the first newline token.
 		$startMetaIndex = null;
@@ -123,50 +129,57 @@ class AttributeExpander extends TokenHandler {
 			}
 		}
 
-		// Clear $startMeta from $preNLBuf - setting to '' is sufficient.
-		if ( $startMeta ) {
-			$preNLBuf[$startMetaIndex] = '';
-		}
-
 		// We split the token into pieces.
 		// Since we no longer know where this token now ends tsr-wise,
 		// set tsr->end to null
 		$token->dataParsoid->tsr->end = null;
+		$token->dataParsoid->getTemp()->attrSrc = '';
 
 		if ( $startMeta ) {
-			// Support template wrapping with the following steps:
-			// - Hoist the transclusion start-meta from the first line
-			//   to before the token.
-			// - Update the start-meta tsr to that of the token.
-			// - Record the wikitext between the token and the transclusion
-			//   as an unwrappedWT data-parsoid attribute of the start-meta.
-			$dp = $startMeta->dataParsoid;
-			$dp->unwrappedWT = substr( $frame->getSrcText(), $token->dataParsoid->tsr->start,
-				$dp->tsr->start - $token->dataParsoid->tsr->start );
+			if ( count( $preNLBuf ) === 1 ) {
+				// Nothing to do since all real content (except the meta token)
+				// is after the newline.
+				return [ 'metaTokens' => [], 'preNLBuf' => [], 'postNLBuf' => $tokens ];
+			} else {
+				// Clear $startMeta from $preNLBuf - setting to '' is sufficient.
+				$preNLBuf[$startMetaIndex] = '';
 
-			// unwrappedWT will be added to the data-mw.parts array which makes
-			// this a multi-template-content-block.
-			// Record the first wikitext node of this block (required by html->wt serialization)
+				// Support template wrapping with the following steps:
+				// - Hoist the transclusion start-meta from the first line
+				//   to before the token.
+				// - Update the start-meta tsr to that of the token.
+				// - Record the wikitext between the token and the transclusion
+				//   as an unwrappedWT data-parsoid attribute of the start-meta.
+				$dp = $startMeta->dataParsoid;
+				$source = $dp->tsr->source ?? $frame->getSource();
+				$dp->unwrappedWT = PHPUtils::safeSubstr(
+					$source->getSrcText(), $token->dataParsoid->tsr->start,
+					$dp->tsr->start - $token->dataParsoid->tsr->start );
 
-			// FIXME spec-compliant values would be upper-case, this is just a workaround
-			// for current PHP DOM implementation and could be removed in the future
-			$tokenName = mb_strtoupper( $token->getName() );
+				// unwrappedWT will be added to the data-mw.parts array which makes
+				// this a multi-template-content-block.
+				// Record the first wikitext node of this block (required by html->wt serialization)
 
-			$dp->firstWikitextNode = isset( $token->dataParsoid->stx ) ?
-				$tokenName . '_' . $token->dataParsoid->stx : $tokenName;
+				// FIXME spec-compliant values would be upper-case, this is just a workaround
+				// for current PHP DOM implementation and could be removed in the future
+				$tokenName = mb_strtoupper( $token->getName() );
 
-			// Update tsr->start only. Unless the end-meta token is moved as well,
-			// updating tsr->end can introduce bugs in cases like:
-			//
-			//   {|
-			//   |{{singlechart|Australia|93|artist=Madonna|album=Girls Gone Wild}}|x
-			//   |}
-			//
-			// which can then cause dirty diffs (the "|" before the x gets dropped).
-			$dp->tsr->start = $token->dataParsoid->tsr->start;
-			$metaTokens = [ $startMeta ];
+				$dp->firstWikitextNode = isset( $token->dataParsoid->stx ) ?
+					$tokenName . '_' . $token->dataParsoid->stx : $tokenName;
 
-			return [ 'metaTokens' => $metaTokens, 'preNLBuf' => $preNLBuf, 'postNLBuf' => $postNLBuf ];
+				// Update tsr->start only. Unless the end-meta token is moved as well,
+				// updating tsr->end can introduce bugs in cases like:
+				//
+				//   {|
+				//   |{{singlechart|Australia|93|artist=Madonna|album=Girls Gone Wild}}|x
+				//   |}
+				//
+				// which can then cause dirty diffs (the "|" before the x gets dropped).
+				$dp->tsr->start = $token->dataParsoid->tsr->start;
+				$metaTokens = [ $startMeta ];
+
+				return [ 'metaTokens' => $metaTokens, 'preNLBuf' => $preNLBuf, 'postNLBuf' => $postNLBuf ];
+			}
 		} else {
 			return [ 'metaTokens' => [], 'preNLBuf' => $tokens, 'postNLBuf' => [] ];
 		}
@@ -179,7 +192,8 @@ class AttributeExpander extends TokenHandler {
 	 * @param Env $env
 	 * @param array $tokens
 	 * @param bool $wrapTemplates
-	 * @return array
+	 *
+	 * @return array{hasGeneratedContent: bool, annotationType: list<string>, value: list<Token|string>}
 	 */
 	private static function stripMetaTags(
 		Env $env, array $tokens, bool $wrapTemplates
@@ -233,27 +247,36 @@ class AttributeExpander extends TokenHandler {
 	}
 
 	/**
+	 * This receives tokens from the PegTokenizer whose input itself
+	 * is preprocessed wikitext. So, templates and include directives
+	 * have all been processed and comments have been dropped.
+	 * Anything left behind (directives, template tokens, template args)
+	 * should just be converted to a plain string.
+	 *
 	 * @param mixed $a
-	 * @return mixed
 	 */
-	private static function tplToksToString( $a ) {
+	private static function tplToksToString( $a ): string {
 		if ( !is_array( $a ) ) {
 			return $a;
 		}
-		$ret = [];
+		$buf = "";
 		foreach ( $a as $t ) {
-			$ret[] = TokenUtils::isTemplateToken( $t ) ? $t->dataParsoid->src : $t;
+			if ( is_string( $t ) ) {
+				$buf .= $t;
+			} else {
+				$buf .= $t->dataParsoid->src ?? ''; /* drop it if dp->src is missing */
+			}
 		}
-		return $ret;
+		return $buf;
 	}
 
 	/**
 	 * Callback for attribute expansion in AttributeTransformManager
-	 * @param Token $token
+	 * @param XMLTagTk $token
 	 * @param KV[] $expandedAttrs
 	 * @return array<string|Token>
 	 */
-	private function buildExpandedAttrs( Token $token, array $expandedAttrs ) {
+	private function buildExpandedAttrs( XMLTagTk $token, array $expandedAttrs ): array {
 		// If we're not in a template, we'll be doing template wrapping in dom
 		// post-processing (same conditional there), so take care of meta markers
 		// found while processing tokens.
@@ -263,12 +286,19 @@ class AttributeExpander extends TokenHandler {
 		$postNLToks = [];
 		$tmpDataMW = null;
 		$oldAttrs = $token->attribs;
+		$tokenName = $token->getName();
 		// Build newAttrs lazily (on-demand) to avoid creating
 		// objects in the common case where nothing of significance
 		// happens in this code.
 		$newAttrs = null;
-		$nlTkPos = -1;
-		$nlTkOkay = TokenUtils::isHTMLTag( $token ) || !TokenUtils::isTableTag( $token );
+		// FIXME: td/th/caption need different handling.
+		// For now, we are limiting this to table & tr tags because
+		// the code below uses 'table_attributes' to reparse the string
+		// which is only valid for table & tr tokens. The fix for td/th/caption
+		// may be as simple as using the 'row_syntax_table_args' rule. To be
+		// investigated and fixed.
+		$nlTkOkay = TokenUtils::isHTMLTag( $token ) ||
+			( $tokenName !== 'table' && $tokenName !== 'tr' );
 		$annotationTypes = [];
 
 		// Identify attributes that were generated in full or in part using templates
@@ -375,6 +405,7 @@ class AttributeExpander extends TokenHandler {
 						// We split up this attribute's key into pieces.
 						if ( $expandedA->srcOffsets->key ) {
 							$expandedA->srcOffsets->key->end = null;
+							$expandedA->ksrc = null;
 						}
 					} else {
 						// Maybe scenario 2 from the documentation comment above.
@@ -465,6 +496,7 @@ class AttributeExpander extends TokenHandler {
 						// We split up this attribute's value into pieces.
 						if ( $expandedA->srcOffsets->value ) {
 							$expandedA->srcOffsets->value->end = null;
+							$expandedA->vsrc = null;
 						}
 					} else {
 						// Maybe scenario 2 from the documentation comment above.
@@ -596,7 +628,7 @@ class AttributeExpander extends TokenHandler {
 			//
 			// Template tokens are omitted because the attribute expander is
 			// just being used to resolve the template target.
-			if ( $token->getName() !== 'template' ) {
+			if ( $tokenName !== 'template' ) {
 				$token->addAttribute( 'about', $this->env->newAboutId() );
 				$token->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 				foreach ( $annotationTypes as $annotationType ) {
@@ -613,10 +645,10 @@ class AttributeExpander extends TokenHandler {
 	 * Processes any attribute keys and values that are not simple strings.
 	 * (Ex: Templated styles)
 	 *
-	 * @param Token $token Token whose attrs being expanded.
+	 * @param XMLTagTk $token Token whose attrs being expanded.
 	 * @return ?array<string|Token>
 	 */
-	private function processComplexAttributes( Token $token ): ?array {
+	private function processComplexAttributes( XMLTagTk $token ): ?array {
 		$expandedAttrs = AttributeTransformManager::process(
 			$this->manager->getFrame(),
 			[
@@ -626,6 +658,15 @@ class AttributeExpander extends TokenHandler {
 			$token->attribs
 		);
 
+		// detection for linting (
+		if ( $token->getName() === 'urllink' || $token->getName() === 'extlink' ) {
+			/** @var null|array<Token> $hrefAttr */
+			$hrefAttr = $token->getAttributeV( "href" );
+			if ( TokenUtils::hasTemplateToken( $hrefAttr ) ) {
+				$token->dataParsoid->getTemp()->linkContainsTemplate = true;
+			}
+		}
+
 		// null signifies unmodified token
 		return $expandedAttrs ? $this->buildExpandedAttrs( $token, $expandedAttrs ) : null;
 	}
@@ -634,10 +675,10 @@ class AttributeExpander extends TokenHandler {
 	 * Expand the first attribute of the token -- usually needed to support
 	 * tempate tokens where the template target itself is a complex attribute.
 	 *
-	 * @param Token $token Token whose first attribute is being expanded.
+	 * @param XMLTagTK $token Token whose first attribute is being expanded.
 	 * @return ?array<string|Token>
 	 */
-	public function expandFirstAttribute( Token $token ): ?array {
+	public function expandFirstAttribute( XMLTagTk $token ): ?array {
 		$expandedAttrs = AttributeTransformManager::process(
 			$this->manager->getFrame(),
 			[
@@ -657,11 +698,18 @@ class AttributeExpander extends TokenHandler {
 		}
 	}
 
+	/** @inheritDoc */
+	public function onCompoundTk( CompoundTk $ctk, TokenHandler $tokensHandler ): ?array {
+		if ( $ctk instanceof EmptyLineTk ) {
+			return null;
+		} else {
+			// default handling: in this case throws exception!
+			return parent::onCompoundTk( $ctk, $tokensHandler );
+		}
+	}
+
 	/**
-	 * Token handler.
-	 *
-	 * For tokens that might have complex attributes, this handler
-	 * processes / expands them.
+	 * For tokens that might have complex attributes, this handler processes / expands them.
 	 * (Ex: Templated styles)
 	 *
 	 * @inheritDoc

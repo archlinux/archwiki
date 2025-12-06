@@ -7,12 +7,14 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\DOM\CharacterData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\DOMParser;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\HTMLDocument;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat\TokenList;
-use Wikimedia\Parsoid\Wt2Html\TreeBuilder\DOMBuilder;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\TreeBuilder\ParsoidDOMFragmentBuilder;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
@@ -44,7 +46,6 @@ use Wikimedia\Zest\Zest;
  * HTML-standards-compliant.
  */
 class DOMCompat {
-
 	/**
 	 * Tab, LF, FF, CR, space
 	 * @see https://infra.spec.whatwg.org/#ascii-whitespace
@@ -52,28 +53,85 @@ class DOMCompat {
 	private const ASCII_WHITESPACE = "\t\r\f\n ";
 
 	/**
-	 * Create a new empty document.
-	 * This is abstracted because the process is a little different depending
-	 * on whether we're using Dodo or DOMDocument, and phan gets a little
-	 * confused by this.
-	 * @param bool $isHtml
+	 * @param Node|null $node If present, we'll use the type of the given node
+	 *  to determine whether to use standards mode.
+	 * @return bool When false, we'll use DOMDocument workarounds.
+	 */
+	public static function isStandardsMode( $node = null ): bool {
+		if ( $node !== null ) {
+			return !( $node instanceof \DOMNode );
+		}
+		return self::isUsingDodo() || self::isUsing84Dom();
+	}
+
+	private static function zestOptions(): array {
+		return self::isUsingDodo() ? [ 'standardsMode' => true, ] : [];
+	}
+
+	/**
+	 * @param Node|null $node If present, we'll use the type of the given node
+	 *   to determine whether we're using Dodo.
+	 * @return bool When true, we're using the Dodo DOM implementation.
+	 * @internal
+	 */
+	public static function isUsingDodo( $node = null ): bool {
+		if ( $node !== null ) {
+			return is_a( $node, '\Wikimedia\Dodo\Node', false );
+		}
+		// Change this to switch to using Dodo for Parsoid.
+		return false;
+	}
+
+	/**
+	 * @param Node|null $node If present, we'll use the type of the given node
+	 *   to determine whether we're using the PHP 8.4 DOM implementation.
+	 * @return bool When true, we're using the PHP 8.4 DOM implementation.
+	 * @internal
+	 */
+	public static function isUsing84Dom( $node = null ): bool {
+		if ( $node !== null ) {
+			return is_a( $node, '\Dom\Node', false );
+		}
+		// Defaults to using \Dom\Document on PHP 8.4 (unless we're using Dodo)
+		return !self::isUsingDodo() && class_exists( '\Dom\Document' );
+	}
+
+	/**
+	 * Create a new empty HTML document using the preferred DOM
+	 * implementation.
+	 * @param bool $isHtml (optional) Should always be true.
 	 * @return Document
 	 */
-	public static function newDocument( bool $isHtml ) {
-		// @phan-suppress-next-line PhanParamTooMany,PhanTypeInstantiateInterface
-		return new Document( "1.0", "UTF-8" );
+	public static function newDocument( bool $isHtml = true ): Document {
+		Assert::invariant( $isHtml, "only HTML documents are supported" );
+		if ( self::isUsingDodo() ) {
+			$doc = ( new DOMParser() )->parseFromString(
+				'<div></div>', 'text/html'
+			);
+		} elseif ( self::isUsing84Dom() ) {
+			$doc = HTMLDocument::createEmpty( "UTF-8" );
+		} else {
+			// @phan-suppress-next-line PhanParamTooMany,PhanTypeInstantiateInterface
+			$doc = new Document( "1.0", "UTF-8" );
+		}
+		'@phan-var Document $doc';
+		// Remove doctype, head, body, etc for compat w/ PHP
+		while ( $doc->firstChild !== null ) {
+			$doc->removeChild( $doc->firstChild );
+		}
+		return $doc;
 	}
 
 	/**
 	 * Return the lower-case version of the node name.
-	 * FIXME: HTML says this should be capitalized, but we are tailoring
-	 * this to the DOM libraries that Parsoid uses that return lower-case names.
+	 *
+	 * @deprecated since 0.22; does not return the standards-compliant
+	 *   value, which would be uppercase.  The return value will
+	 *   change in the future to be standards-compliant.
 	 */
 	public static function nodeName( Node $node ): string {
-		// If we change DOM libraries that defaults to upper-case per HTML spec,
-		// we will probably flip this condition and change rest of Parsoid to
-		// compare against upper-case strings.
-		return $node instanceof \DOMNode ? $node->nodeName : strtolower( $node->nodeName );
+		PHPUtils::deprecated( __METHOD__, "0.22" );
+		return DOMUtils::nodeName( $node );
 	}
 
 	/**
@@ -84,6 +142,10 @@ class DOMCompat {
 	 * @see https://html.spec.whatwg.org/multipage/dom.html#dom-document-body
 	 */
 	public static function getBody( $document ) {
+		if ( self::isStandardsMode( $document ) ) {
+			return $document->body;
+		}
+		// Use an undeclared dynamic property as a cache.
 		// WARNING: this will not be updated if (for some reason) the
 		// document body changes.
 		if ( $document->body !== null ) {
@@ -92,9 +154,9 @@ class DOMCompat {
 		if ( $document->documentElement === null ) {
 			return null;
 		}
-		foreach ( $document->documentElement->childNodes as $element ) {
+		foreach ( DOMUtils::childNodes( $document->documentElement ) as $element ) {
 			/** @var Element $element */
-			$nodeName = self::nodeName( $element );
+			$nodeName = DOMUtils::nodeName( $element );
 			if ( $nodeName === 'body' || $nodeName === 'frameset' ) {
 				// Caching!
 				$document->body = $element;
@@ -113,6 +175,9 @@ class DOMCompat {
 	 * @see https://html.spec.whatwg.org/multipage/dom.html#dom-document-head
 	 */
 	public static function getHead( $document ) {
+		if ( self::isStandardsMode( $document ) ) {
+			return $document->head;
+		}
 		// Use an undeclared dynamic property as a cache.
 		// WARNING: this will not be updated if (for some reason) the
 		// document head changes.
@@ -122,9 +187,9 @@ class DOMCompat {
 		if ( $document->documentElement === null ) {
 			return null;
 		}
-		foreach ( $document->documentElement->childNodes as $element ) {
+		foreach ( DOMUtils::childNodes( $document->documentElement ) as $element ) {
 			/** @var Element $element */
-			if ( self::nodeName( $element ) === 'head' ) {
+			if ( DOMUtils::nodeName( $element ) === 'head' ) {
 				$document->head = $element; // Caching!
 				// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 				return $element;
@@ -198,7 +263,7 @@ class DOMCompat {
 			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument Zest is declared to take DOMDocument\DOMElement
-		$elements = Zest::getElementsById( $node, $id );
+		$elements = Zest::getElementsById( $node, $id, self::zestOptions() );
 		// @phan-suppress-next-line PhanTypeMismatchReturn
 		return $elements[0] ?? null;
 	}
@@ -240,7 +305,7 @@ class DOMCompat {
 			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument Zest is declared to take DOMDocument\DOMElement
-		$result = Zest::getElementsByTagName( $node, $tagName );
+		$result = Zest::getElementsByTagName( $node, $tagName, self::zestOptions() );
 		'@phan-var array<Element> $result'; // @var array<Element> $result
 		return $result;
 	}
@@ -301,6 +366,9 @@ class DOMCompat {
 	 * @see https://dom.spec.whatwg.org/#dom-parentnode-queryselector
 	 */
 	public static function querySelector( $node, string $selector ) {
+		if ( self::isUsingDodo( $node ) ) {
+			return $node->querySelector( $selector );
+		}
 		foreach ( self::querySelectorAll( $node, $selector ) as $el ) {
 			return $el;
 		}
@@ -316,6 +384,9 @@ class DOMCompat {
 	 *   (which cannot be freely constructed in PHP), just a traversable containing Elements.
 	 */
 	public static function querySelectorAll( $node, string $selector ): iterable {
+		if ( self::isUsingDodo( $node ) ) {
+			return $node->querySelectorAll( $selector );
+		}
 		Assert::parameterType( [
 				Document::class, DocumentFragment::class, Element::class,
 				// For compatibility with code which might call this from
@@ -324,7 +395,7 @@ class DOMCompat {
 			],
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument DOMNode
-		return Zest::find( $selector, $node );
+		return Zest::find( $selector, $node, self::zestOptions() );
 	}
 
 	/**
@@ -420,7 +491,10 @@ class DOMCompat {
 	 * @see https://w3c.github.io/DOM-Parsing/#dom-innerhtml-innerhtml
 	 */
 	public static function getInnerHTML( $element ): string {
-		return XMLSerializer::serialize( $element, [ 'innerXML' => true ] )['html'];
+		// Always use Parsoid's serializer even in standards mode,
+		// since the "standard" DOM spec isn't quite the same as Parsoid
+		// expects w/r/t quoting etc.
+		return XHtmlSerializer::serialize( $element, [ 'innerXML' => true ] )['html'];
 	}
 
 	/**
@@ -431,22 +505,24 @@ class DOMCompat {
 	 * @param string $html
 	 */
 	public static function setInnerHTML( $element, string $html ): void {
-		$domBuilder = new DOMBuilder; // Our version, not Remex's
+		// Always use Remex for parsing, even in standards mode.
+		$domBuilder = new ParsoidDOMFragmentBuilder( $element->ownerDocument );
 		$treeBuilder = new TreeBuilder( $domBuilder );
 		$dispatcher = new Dispatcher( $treeBuilder );
 		$tokenizer = new Tokenizer( $dispatcher, $html, [ 'ignoreErrors' => true ] );
 
 		$tokenizer->execute( [
 			'fragmentNamespace' => HTMLData::NS_HTML,
-			'fragmentName' => self::nodeName( $element ),
+			// Note that fragmentName *should* be lowercase.
+			'fragmentName' => DOMUtils::nodeName( $element ),
 		] );
 
 		// Empty the element
 		self::replaceChildren( $element );
 
 		$frag = $domBuilder->getFragment();
-		'@phan-var Node $frag'; // @var Node $frag
-		DOMUtils::migrateChildrenBetweenDocs(
+		'@phan-var DocumentFragment $frag'; // @var DocumentFragment $frag
+		DOMUtils::migrateChildren(
 			$frag, $element
 		);
 	}
@@ -458,7 +534,7 @@ class DOMCompat {
 	 * @see https://w3c.github.io/DOM-Parsing/#dom-element-outerhtml
 	 */
 	public static function getOuterHTML( $element ): string {
-		return XMLSerializer::serialize( $element, [ 'addDoctype' => false ] )['html'];
+		return XHtmlSerializer::serialize( $element, [ 'addDoctype' => false ] )['html'];
 	}
 
 	/**
@@ -480,6 +556,36 @@ class DOMCompat {
 			return null;
 		}
 		return $element->getAttribute( $attributeName );
+	}
+
+	/**
+	 * Get an associative array of attributes, suitable for serialization.
+	 *
+	 * Add the xmlns attribute if available, to workaround PHP's surprising
+	 * behavior with the xmlns attribute: HTML is *not* an XML document,
+	 * but various parts of PHP pretend that it is, sort of.
+	 *
+	 * @param Element $element
+	 * @return array<string,string>
+	 * @see https://phabricator.wikimedia.org/T235295
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/attributes
+	 * @note Note that unlike the spec this method returns an associative
+	 *  array, not a NamedNodeMap, and as such is not an exact replacement
+	 *  for the DOM `attributes` property.
+	 */
+	public static function attributes( Element $element ): array {
+		$result = [];
+		if ( !self::isStandardsMode( $element ) ) {
+			// The 'xmlns' attribute is "invisible" T235295
+			$xmlns = self::getAttribute( $element, 'xmlns' );
+			if ( $xmlns !== null ) {
+				$result['xmlns'] = $xmlns;
+			}
+		}
+		foreach ( $element->attributes as $attr ) {
+			$result[$attr->name] = $attr->value;
+		}
+		return $result;
 	}
 
 	/**

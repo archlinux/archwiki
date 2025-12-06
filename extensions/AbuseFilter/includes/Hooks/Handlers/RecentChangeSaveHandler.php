@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
@@ -10,9 +9,6 @@ class RecentChangeSaveHandler implements RecentChange_saveHook {
 	/** @var ChangeTagger */
 	private $changeTagger;
 
-	/**
-	 * @param ChangeTagger $changeTagger
-	 */
 	public function __construct( ChangeTagger $changeTagger ) {
 		$this->changeTagger = $changeTagger;
 	}

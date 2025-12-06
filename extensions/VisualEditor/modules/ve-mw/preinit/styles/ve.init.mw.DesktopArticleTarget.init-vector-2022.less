@@ -7,7 +7,6 @@
 
 // Temporarily disable TOC in edit mode until TOC
 // works with both visual and source editors (T294950)
-/* stylelint-disable-next-line selector-class-pattern */
 .ve-activated .vector-toc {
 	display: none;
 }
@@ -15,7 +14,8 @@
 .ve-init-mw-desktopArticleTarget-toolbar,
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder,
 .ve-ui-overlay-local,
-.ve-ui-overlay-global {
+.ve-ui-overlay-global,
+.ve-ui-sidebarDialogWindowManager {
 	font-size: 0.875rem;
 }
 
@@ -38,6 +38,8 @@
 
 		.mw-body-content {
 			grid-area: content;
+			font-size: var( --font-size-medium );
+			line-height: var( --line-height-content );
 		}
 	}
 
@@ -52,13 +54,19 @@
 	min-height: 15em;
 }
 
-// Vector 2022 has no side borders, so there's no need for side padding in toolbar dialogs
-.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-above.ve-ui-toolbarDialog-padded .oo-ui-window-body,
-.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-below.ve-ui-toolbarDialog-padded .oo-ui-window-body {
-	padding-left: 0;
-	padding-right: 0;
-}
+.ve-init-mw-desktopArticleTarget-toolbar {
+	// Vector 2022 has no side borders, so there's no need for side padding in toolbar dialogs
+	.ve-ui-toolbarDialog-position-above,
+	.ve-ui-toolbarDialog-position-below {
+		&.ve-ui-toolbarDialog-padded .oo-ui-window-body {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 
-.ve-init-mw-desktopArticleTarget-toolbar .ve-ui-toolbarDialog-position-side.ve-ui-toolbarDialog-padded .oo-ui-window-body {
-	padding-right: 0;
+	.ve-ui-toolbarDialog-position-side {
+		&.ve-ui-toolbarDialog-padded .oo-ui-window-body {
+			padding-right: 0;
+		}
+	}
 }

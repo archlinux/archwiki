@@ -264,6 +264,7 @@
 	"visualeditor-includes-includeonly-description": "כאשר תוכן מהדף הזה משמש בדף אחר, התוכן הנוסף הבא ייכלל כאן:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion מידע נוסף על הכללה חלקית]",
 	"visualeditor-languages-tool": "שפות",
+	"visualeditor-linkcontext-uneditable": "מצטערים, בינתיים ניתן לערוך את הקישור הזה רק במצב \"קוד מקור\".",
 	"visualeditor-linkinspector-button-link-external": "אתר חיצוני",
 	"visualeditor-linkinspector-button-link-internal": "חיפוש בדפים פנימיים",
 	"visualeditor-linkinspector-convert-link-isbn": "המרה לקישור ISBN",

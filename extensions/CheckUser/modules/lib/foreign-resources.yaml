@@ -1,0 +1,6 @@
+d3:
+  # built manually to reduce size, copied from GrowthExperiments extension
+  license: ISC
+  homepage: https://d3js.org/
+  version: 7.6.1
+  type: doc-only

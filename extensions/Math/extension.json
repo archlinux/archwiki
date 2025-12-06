@@ -6,14 +6,15 @@
 		"Moritz Schubotz",
 		"Derk-Jan Hartman",
 		"André Greiner-Petter",
-		"Johannes Stegmüller"
+		"Johannes Stegmüller",
+		"Frederik Hennecke"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Math",
 	"descriptionmsg": "math-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -22,7 +23,7 @@
 		"DummyPropertyDataTypeLookup": "tests/phpunit/DummyPropertyDataTypeLookup.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathWikibaseConnectorTestFactory": "tests/phpunit/unit/MathWikibaseConnectorTestFactory.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathMockHttpTrait": "tests/phpunit/MathMockHttpTrait.php",
-		"MediaWiki\\Extension\\Math\\Tests\\WikiTexVC\\MathServiceContainerTrait": "tests/phpunit/unit/WikiTexVC/MathServiceContainerTrait.php",
+		"MediaWiki\\Extension\\Math\\Tests\\HookIntegrationSetupTrait": "tests/phpunit/HookIntegrationSetupTrait.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLTestUtilHTML": "tests/phpunit/unit/WikiTexVC/MMLTestUtilHTML.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLTestUtil": "tests/phpunit/unit/WikiTexVC/MMLTestUtil.php",
 		"MediaWiki\\Extension\\Math\\WikiTexVC\\MMLmappings\\Util\\MMLComparator": "tests/phpunit/unit/WikiTexVC/MMLComparator.php"
@@ -126,8 +127,8 @@
 			"value": 400
 		},
 		"MathTexVCService": {
-			"description": "Determine which TexVC variant is used, currently available: 'mathoid', 'restbase' (default) and 'local'.",
-			"value": "restbase"
+			"description": "Determine which TexVC variant is used, currently available: 'mathoid', 'restbase' and 'local' (default).",
+			"value": "local"
 		},
 		"MathSvgRenderer": {
 			"description": "Determine which SVG rendering service is used. Currently available 'mathoid', 'restbase'.",
@@ -147,14 +148,17 @@
 		},
 		"MathUseInternalRestbasePath": {
 			"description": "Whether to allow to use of internal RESTBase path instead of $wgMathFullRestbaseURL. Set false if you want to use external RESTBase in any case.",
-			"value": true,
-			"public": true
+			"value": true
 		},
 		"MathInternalRestbaseURL": {
 			"value": null
 		},
 		"MathFullRestbaseURL": {
 			"value": "https://wikimedia.org/api/rest_"
+		},
+		"MathHTTPProxy": {
+			"description": "The HTTP proxy used for contacting RESTBase.",
+			"value": null
 		},
 		"MathConcurrentReqs": {
 			"value": 50

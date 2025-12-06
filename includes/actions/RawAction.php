@@ -7,21 +7,7 @@
  *
  * Based on HistoryAction and SpecialExport
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @author Gabriel Wicke <wicke@wikidev.net>
  * @file
  */
@@ -38,9 +24,9 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserRigorOptions;
 
@@ -89,10 +75,12 @@ class RawAction extends FormlessAction {
 		return 'raw';
 	}
 
+	/** @inheritDoc */
 	public function requiresWrite() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return false;
 	}
@@ -103,6 +91,7 @@ class RawAction extends FormlessAction {
 	 */
 	public function onView() {
 		$this->getOutput()->disable();
+		ContentSecurityPolicy::sendRestrictiveHeader();
 		$request = $this->getRequest();
 		$response = $request->response();
 		$config = $this->context->getConfig();
@@ -140,7 +129,7 @@ class RawAction extends FormlessAction {
 		// Output may contain user-specific data;
 		// vary generated content for open sessions on private wikis
 		$privateCache = !$this->permissionManager->isEveryoneAllowed( 'read' ) &&
-			( $smaxage === 0 || SessionManager::getGlobalSession()->isPersistent() );
+			( $smaxage === 0 || $request->getSession()->isPersistent() );
 		// Don't accidentally cache cookies if the user is registered (T55032)
 		$privateCache = $privateCache || $this->getUser()->isRegistered();
 		$mode = $privateCache ? 'private' : 'public';

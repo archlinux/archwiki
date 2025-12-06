@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -432,22 +418,7 @@ class SiteConfiguration {
 	 * @param string $wiki
 	 * @param array $params
 	 */
-	public function extractGlobalSetting( $setting, $wiki, $params ) {
-		if ( !is_string( $setting ) ) {
-			wfDeprecated( __METHOD__ . ' with non-string $setting', '1.44' );
-			$setting = (string)$setting;
-		}
-		if ( $wiki === null ) {
-			wfDeprecated( __METHOD__ . ' with null $wiki', '1.44' );
-		}
-		if ( !is_string( $wiki ) ) {
-			wfDeprecated( __METHOD__ . ' with non-string $wiki', '1.44' );
-		}
-		$wiki = (string)$wiki;
-		if ( !is_array( $params ) ) {
-			wfDeprecated( __METHOD__ . ' with non-array $params', '1.44' );
-			$params = (array)$params;
-		}
+	private function extractGlobalSetting( $setting, $wiki, $params ) {
 		$overrides = $this->settings[$setting] ?? null;
 		$value = $overrides ? $this->processSetting( $overrides, $wiki, $params['tags'] ) : null;
 		if ( !array_key_exists( '@replaceableSettings', $this->settings )
@@ -502,8 +473,8 @@ class SiteConfiguration {
 			$wikiTags = (array)$wikiTags;
 		}
 		$params = $this->mergeParams( $wiki, $site, $params, $wikiTags );
-		foreach ( $this->settings as $varName => $setting ) {
-			$this->extractGlobalSetting( $varName, $wiki, $params );
+		foreach ( $this->settings as $setting => $overrides ) {
+			$this->extractGlobalSetting( $setting, $wiki, $params );
 		}
 	}
 
@@ -580,7 +551,6 @@ class SiteConfiguration {
 		// Optimization: For hot getAll() code path, precompute replacements to re-use
 		// over hundreds of processSetting() calls.
 		$ret['replacements'] = [];
-		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 		foreach ( $ret['params'] as $key => $value ) {
 			$ret['replacements']['$' . $key] = $value;
 		}

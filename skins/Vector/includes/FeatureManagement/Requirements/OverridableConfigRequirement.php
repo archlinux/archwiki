@@ -158,7 +158,6 @@ class OverridableConfigRequirement implements Requirement {
 
 	/**
 	 * Check if user has enabled the Vector 2022 beta features
-	 * @return bool
 	 */
 	public function isVector2022BetaFeatureEnabled(): bool {
 		return ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) &&

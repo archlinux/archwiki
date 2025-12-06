@@ -4,5 +4,6 @@
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 ALTER TABLE cu_log
   ADD cul_result_id BIGINT DEFAULT 0 NOT NULL;
+
 ALTER TABLE cu_log
   ADD cul_result_plaintext_id BIGINT DEFAULT 0 NOT NULL;

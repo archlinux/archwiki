@@ -6,9 +6,6 @@ window.matchMedia = window.matchMedia || function () {
 };
 
 const { test } = require( '../../../resources/skins.vector.js/setupIntersectionObservers.js' );
-const {
-	STICKY_HEADER_EXPERIMENT_NAME
-} = require( '../../../resources/skins.vector.js/stickyHeader.js' );
 describe( 'main.js', () => {
 	it( 'getHeadingIntersectionHandler', () => {
 		const content = document.createElement( 'div' );
@@ -18,24 +15,16 @@ describe( 'main.js', () => {
 		parserOutput.setAttribute( 'class', 'mw-parser-output' );
 		content.appendChild( parserOutput );
 
-		const headingOld = document.createElement( 'h2' );
-		const headlineOld = document.createElement( 'span' );
-		headlineOld.classList.add( 'mw-headline' );
-		headlineOld.setAttribute( 'id', 'headline-old' );
-		headingOld.appendChild( headlineOld );
-		parserOutput.appendChild( headingOld );
-
-		const headingNew = document.createElement( 'div' );
-		headingNew.classList.add( 'mw-heading' );
-		const headlineNew = document.createElement( 'h2' );
-		headlineNew.setAttribute( 'id', 'headline-new' );
-		headingNew.appendChild( headlineNew );
-		parserOutput.appendChild( headingNew );
+		const heading = document.createElement( 'div' );
+		heading.classList.add( 'mw-heading' );
+		const headline = document.createElement( 'h2' );
+		headline.setAttribute( 'id', 'headline' );
+		heading.appendChild( headline );
+		parserOutput.appendChild( heading );
 
 		[
 			[ content, 'toc-mw-content-text' ],
-			[ headingOld, 'toc-headline-old' ],
-			[ headingNew, 'toc-headline-new' ]
+			[ heading, 'toc-headline' ]
 		].forEach( ( testCase ) => {
 			const node = /** @type {HTMLElement} */ ( testCase[ 0 ] );
 			const fn = jest.fn();
@@ -43,72 +32,6 @@ describe( 'main.js', () => {
 			handler( node );
 			expect( fn ).toHaveBeenCalledWith( testCase[ 1 ] );
 		} );
-	} );
-
-	it( 'initStickyHeaderABTests', () => {
-		const STICKY_HEADER_AB = {
-			name: STICKY_HEADER_EXPERIMENT_NAME,
-			enabled: true
-		};
-		[
-			{
-				abConfig: STICKY_HEADER_AB,
-				isEnabled: false, // sticky header unavailable
-				isUserInTreatmentBucket: false, // not in treatment bucket
-				expectedResult: {
-					showStickyHeader: false
-				}
-			},
-			{
-				abConfig: STICKY_HEADER_AB,
-				isEnabled: true, // sticky header available
-				isUserInTreatmentBucket: false, // not in treatment bucket
-				expectedResult: {
-					showStickyHeader: false
-				}
-			},
-			{
-				abConfig: STICKY_HEADER_AB,
-				isEnabled: false, // sticky header is not available
-				isUserInTreatmentBucket: true, // but the user is in the treatment bucket
-				expectedResult: {
-					showStickyHeader: false
-				}
-			},
-			{
-				abConfig: STICKY_HEADER_AB,
-				isEnabled: true,
-				isUserInTreatmentBucket: true,
-				expectedResult: {
-					showStickyHeader: true
-				}
-			}
-		].forEach(
-			( {
-				abConfig,
-				isEnabled,
-				isUserInTreatmentBucket,
-				expectedResult
-			} ) => {
-				document.documentElement.classList.add( 'vector-sticky-header-enabled' );
-				const result = test.initStickyHeaderABTests(
-					abConfig,
-					// isStickyHeaderFeatureAllowed
-					isEnabled,
-					( experiment ) => ( {
-						name: experiment.name,
-						isInBucket: () => true,
-						isInSample: () => true,
-						getBucket: () => 'bucket',
-						isInTreatmentBucket: () => isUserInTreatmentBucket
-					} )
-				);
-				expect( result ).toMatchObject( expectedResult );
-				// Check that there are no side effects
-				expect(
-					document.documentElement.classList.contains( 'vector-sticky-header-enabled' )
-				).toBe( true );
-			} );
 	} );
 } );
 

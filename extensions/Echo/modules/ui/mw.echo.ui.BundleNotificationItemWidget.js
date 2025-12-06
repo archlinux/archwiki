@@ -38,8 +38,8 @@ mw.echo.ui.BundleNotificationItemWidget = function MwEchoUiBundleNotificationIte
 			classes: [ 'mw-echo-ui-bundleNotificationItemWidget-group' ],
 			timestamp: this.getTimestamp(),
 			$overlay: this.$overlay,
-			animated: !!config.animateSorting
-		}
+			animated: !!config.animateSorting,
+		},
 	);
 
 	this.listWidget.$element
@@ -62,7 +62,7 @@ mw.echo.ui.BundleNotificationItemWidget = function MwEchoUiBundleNotificationIte
 	this.toggleExpandButton = new OO.ui.ButtonOptionWidget( {
 		icon: 'expand',
 		framed: false,
-		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-button' ]
+		classes: [ 'mw-echo-ui-notificationItemWidget-content-actions-button' ],
 	} );
 	this.updateExpandButton();
 	this.actionsButtonSelectWidget.addItems( [ this.toggleExpandButton ], 0 );
@@ -85,7 +85,7 @@ mw.echo.ui.BundleNotificationItemWidget = function MwEchoUiBundleNotificationIte
 		.append(
 			$( '<div>' )
 				.addClass( 'mw-echo-ui-bundleNotificationItemWidget-separator' ),
-			this.listWidget.$element
+			this.listWidget.$element,
 		);
 
 	// Events
@@ -118,8 +118,8 @@ mw.echo.ui.BundleNotificationItemWidget.prototype.populateFromModel = function (
 		singleNotifModel,
 		{
 			$overlay: this.$overlay,
-			bundle: true
-		}
+			bundle: true,
+		},
 	) ) );
 };
 
@@ -179,12 +179,12 @@ mw.echo.ui.BundleNotificationItemWidget.prototype.updateExpandButton = function 
 	this.toggleExpandButton.setLabel(
 		this.expanded ?
 			mw.msg( 'notification-link-text-collapse-all' ) :
-			mw.msg( 'notification-link-text-expand-all' )
+			mw.msg( 'notification-link-text-expand-all' ),
 	);
 	this.toggleExpandButton.setIcon(
 		this.expanded ?
 			'collapse' :
-			'expand'
+			'expand',
 	);
 	// T258706
 	this.toggleExpandButton.setActive( false );

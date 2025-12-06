@@ -4,5 +4,7 @@
 			"Mahaveer Indra"
 		]
 	},
-	"checkuser-showlog": "ಇಂಚಪ ತೂತಿನ"
+	"checkuser-showlog": "ಇಂಚಪ ತೂತಿನ",
+	"checkuser-ip-auto-reveal-on-dialog-text": "ಈ ವೈಶಿಷ್ಟ್ಯೊನು ಸಕ್ರಿಯ ಮಲ್ತ್ಂಡ ಒಂತೆ ಸಮಯೊಗು ಮಾತಾ ಟೆಂಪರರಿ ಖಾತೆದ ಐಪಿ ವಿಳಾಸೊಲೆನ್ ಸ್ವಯಂಚಾಲಿತವಾದ್ ತೋಜಾವುಂಡು.[https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/Temporary_Accounts/Access_to_IP#Automatically_showing_IPs_for_temporary_accounts]",
+	"checkuser-ip-auto-reveal-off-dialog-text-info": "ಗೌಪ್ಯತೆದ ಕಾರಣೊಗು, ಈ ವೈಶಿಷ್ಟ್ಯ ಅವಧಿ ಮುಗಿನಗ ಸ್ವಯಂಚಾಲಿತವಾದ್ ಬಂದ್ ಆಪುಂಡು.[https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/Temporary_Accounts/Access_to_IP#Automatically_showing_IPs_for_temporary_accounts]"
 }

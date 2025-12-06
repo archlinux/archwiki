@@ -63,10 +63,10 @@ class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {
 						'fcm',
 						[
 							'deviceTokens' => [ "JKL123", 'DEF456' ],
-							'messageType' => 'checkEchoV1'
-						]
-					]
-				]
+							'messageType' => 'checkEchoV1',
+						],
+					],
+				],
 			],
 			[
 				2,
@@ -76,19 +76,19 @@ class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {
 						'fcm',
 						[
 							'deviceTokens' => [ "JKL123", 'DEF456' ],
-							'messageType' => 'checkEchoV1'
-						]
+							'messageType' => 'checkEchoV1',
+						],
 					],
 					[
 						'apns',
 						[
 							'deviceTokens' => [ 'GHI789' ],
 							'messageType' => 'checkEchoV1',
-							'topic' => 'test'
-						]
-					]
-				]
-			]
+							'topic' => 'test',
+						],
+					],
+				],
+			],
 		];
 	}
 

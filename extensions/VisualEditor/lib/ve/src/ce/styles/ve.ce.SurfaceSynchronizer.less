@@ -1,0 +1,31 @@
+/*!
+ * VisualEditor ContentEditable SurfaceSynchronizer styles.
+ *
+ * @copyright See AUTHORS.txt
+ */
+
+.ve-ce-surface-selections-otherUserSelection {
+	.ve-ce-surface-selection-rects,
+	.ve-ce-surface-selection-cursor,
+	.ve-ce-surface-selection-label {
+		transition: opacity 250ms;
+	}
+
+	.ve-ce-surface-selection-rects {
+		opacity: 0.5;
+	}
+
+	&-inactive {
+		.ve-ce-surface-selection-rects {
+			opacity: 0.25;
+		}
+
+		.ve-ce-surface-selection-cursor {
+			opacity: 0.5;
+		}
+
+		.ve-ce-surface-selection-label {
+			opacity: 0;
+		}
+	}
+}

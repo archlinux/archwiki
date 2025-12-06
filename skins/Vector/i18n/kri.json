@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"122112ê",
-			"Protostar"
+			"Protostar",
+			"AmazingJus"
 		]
 	},
 	"vector-languages": "Langwejdɛm",
@@ -31,12 +32,12 @@
 	"skin-theme-night-label": "Dak",
 	"skin-theme-os-label": "Ɔtɔmatik",
 	"skin-theme-exclusion-notice": "Dis pej de na layt mod ɔltɛm .",
-	"vector-searchsuggest-containing": "Sach fɔ pejdɛm we gɛt<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Kòntèntdèm",
 	"vector-toc-beginning": "Bigin",
 	"vector-main-menu-label": "Men mɛnyu",
 	"vector-feature-custom-font-size-exclusion-notice": "Dis pej de yuz smɔl fɔnt sayz ɔltɛm",
 	"vector-page-tools-label": "Tuldɛm",
 	"vector-page-tools-general-label": "Jɛnɛral",
+	"vector-page-tools-actions-label": "Akshɔn dɛn",
 	"vector-unpin-element-label": "ayd"
 }

@@ -16,20 +16,18 @@ class Hooks implements
 	\MediaWiki\Hook\ParserFirstCallInitHook,
 	\MediaWiki\Hook\ParserTestGlobalsHook
 {
-	private Config $config;
-	private ParserFunctions $parserFunctions;
+	private readonly ParserFunctions $parserFunctions;
 
 	public function __construct(
-		Config $config,
+		private readonly Config $config,
 		HookContainer $hookContainer,
 		LanguageConverterFactory $languageConverterFactory,
 		LanguageFactory $languageFactory,
 		LanguageNameUtils $languageNameUtils,
 		LinkCache $linkCache,
 		RepoGroup $repoGroup,
-		SpecialPageFactory $specialPageFactory
+		SpecialPageFactory $specialPageFactory,
 	) {
-		$this->config = $config;
 		$this->parserFunctions = new ParserFunctions(
 			$config,
 			$hookContainer,

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bilykralik16",
 			"Martin Urbanec",
 			"Matěj Suchánek",
 			"WikipedistaOndra"
@@ -8,6 +9,11 @@
 	},
 	"editcheck-dialog-action-no": "Ne",
 	"editcheck-dialog-action-yes": "Ano",
+	"editcheck-dialog-action-decline": "Zamítnout",
+	"editcheck-dialog-action-revise": "Revidovat",
+	"editcheck-dialog-action-recheck": "Znovu zkontrolovat",
+	"editcheck-dialog-action-back": "Zpět",
+	"editcheck-dialog-action-submit": "Odeslat",
 	"editcheck-dialog-addref-description": "Pomozte čtenářům pochopit, odkud vámi přidaná informace pochází tím, že přidáte referenci.",
 	"editcheck-dialog-addref-reject-question": "Z jakého důvodu nepřidáváte žádnou referenci?",
 	"editcheck-dialog-addref-reject-description": "Ostatní wikipedisté by rádi věděli více o tom, proč jste se {{GENDER:|rozhodl|rozhodla|rozhodl(a)}} nepřidat žádnou referenci.",
@@ -19,6 +25,10 @@
 	"editcheck-dialog-addref-title": "Přidat referenci",
 	"editcheck-dialog-title": "Před zveřejněním",
 	"editcheck-copyvio-title": "Vložený obsah",
+	"editcheck-copyvio-prompt": "Napsal jste tento text?",
+	"editcheck-copyvio-action-keep": "Ano, ponechat",
+	"editcheck-copyvio-action-remove": "Ne, odstranit",
+	"editcheck-tone-reject-other": "Další",
 	"tag-editcheck-reference-decline-common-knowledge": "Kontrola editace (reference) odmítnuta (všeobecné znalosti)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Kontrola editace (reference) odmítnuta jako všeobecná znalost",
 	"tag-editcheck-reference-decline-irrelevant": "Kontrola editace (reference) odmítnuta (irelevantní)",

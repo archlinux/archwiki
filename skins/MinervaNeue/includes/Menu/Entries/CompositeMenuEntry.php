@@ -21,9 +21,6 @@ abstract class CompositeMenuEntry implements IMenuEntry {
 	/** @var IMenuEntry[] */
 	private array $entries;
 
-	/**
-	 * @param array $entries
-	 */
 	public function __construct( array $entries ) {
 		$this->entries = $entries;
 	}

@@ -13,6 +13,7 @@ use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\Core\SourceString;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -116,13 +117,14 @@ class ParsoidExtensionAPI {
 	 * with the localized message.  See T266666
 	 *
 	 * @unstable
-	 * @param string $key
+	 * @param DataMwError|string $key
 	 * @param mixed ...$params
 	 * @return DocumentFragment
 	 */
-	public function pushError( string $key, ...$params ): DocumentFragment {
-		$this->errors[] = new DataMwError( $key, $params );
-		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $key, $params );
+	public function pushError( DataMwError|string $key, ...$params ): DocumentFragment {
+		$err = $key instanceof DataMwError ? $key : new DataMwError( $key, $params );
+		$this->errors[] = $err;
+		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $err->key, $params );
 	}
 
 	/**
@@ -199,6 +201,7 @@ class ParsoidExtensionAPI {
 	 * The use of this method is discouraged; use ::addPageContentI18nAttribute(...) and
 	 * ::addInterfaceI18nAttribute(...) where possible rather than, respectively,
 	 * ::addLangI18nAttribute(..., $wgContLang, ...) and ::addLangI18nAttribute(..., $wgLang, ...).
+	 *
 	 * @param Element $element element on which to add internationalization information
 	 * @param Bcp47Code $lang language in which the  attribute will be localized
 	 * @param string $name name of the attribute whose value will be localized
@@ -207,7 +210,7 @@ class ParsoidExtensionAPI {
 	 */
 	public function addLangI18nAttribute(
 		Element $element, Bcp47Code $lang, string $name, string $key, array $params
-	) {
+	): void {
 		WTUtils::addLangI18nAttribute( $element, $lang, $name, $key, $params );
 	}
 
@@ -237,7 +240,7 @@ class ParsoidExtensionAPI {
 	 * @return string
 	 */
 	public function newAboutId(): string {
-		return $this->env->newAboutId();
+		return DOMDataUtils::getBag( $this->getTopLevelDoc() )->newAboutId();
 	}
 
 	/**
@@ -308,6 +311,7 @@ class ParsoidExtensionAPI {
 	/**
 	 * Are we parsing for a preview?
 	 * FIXME: Right now, we never do; when we do, this needs to be modified to reflect reality
+	 *
 	 * @unstable
 	 * @return bool
 	 */
@@ -336,16 +340,45 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * Get the content DOM corresponding to an id
-	 * @param string $contentId
+	 * Get the content DOM corresponding to an id or an Element
+	 * @param string|Element $contentIdOrElement
 	 * @return DocumentFragment
 	 */
-	public function getContentDOM( string $contentId ): DocumentFragment {
-		return $this->env->getDOMFragment( $contentId );
+	public function getContentDOM( $contentIdOrElement ): DocumentFragment {
+		if ( $contentIdOrElement instanceof Element ) {
+			return DOMDataUtils::getDataParsoid( $contentIdOrElement )->html;
+		}
+		// Back-compat for old code which passes a string ID.
+		$bag = DOMDataUtils::getBag( $this->getTopLevelDoc() );
+		$nd = $bag->getObject( (int)$contentIdOrElement );
+		return $nd->parsoid->html;
 	}
 
+	/**
+	 * @deprecated since 0.22; use ::clearContentId() instead
+	 */
 	public function clearContentDOM( string $contentId ): void {
-		$this->env->removeDOMFragment( $contentId );
+		// Can't hard-deprecate this until Cite is rewritten to use
+		// getContentDOM/clearContentId instead of
+		// getContentId/clearContentDOM.
+		/* does nothing */
+	}
+
+	/**
+	 * Get an ID from a Node which is storing a DOMFragment, which can
+	 * be passed to ::getContentDOM() to retrieve the DOMFragment.
+	 * @deprecated since 0.22; use ::getContentDOM() instead
+	 */
+	public function getContentId( Element $node ): string {
+		return DOMCompat::getAttribute( $node, DOMDataUtils::DATA_OBJECT_ATTR_NAME );
+	}
+
+	/**
+	 * Remove the DOMFragment referenced from this node.
+	 */
+	public function clearContentId( Element $node ): void {
+		$dp = DOMDataUtils::getDataParsoid( $node );
+		unset( $dp->html );
 	}
 
 	/**
@@ -417,7 +450,7 @@ class ParsoidExtensionAPI {
 			}
 
 			if ( $dsrFn ) {
-				ContentUtils::shiftDSR( $this->env, $domFragment, $dsrFn, $this );
+				ContentUtils::shiftDSR( $this->env, $domFragment, $dsrFn );
 			}
 		}
 		return $domFragment;
@@ -472,7 +505,7 @@ class ParsoidExtensionAPI {
 				DOMDataUtils::getDataParsoid( $wrapper )->empty = true;
 			}
 
-			if ( !empty( $this->extTag->isSelfClosed() ) ) {
+			if ( $this->extTag->isSelfClosed() ) {
 				DOMDataUtils::getDataParsoid( $wrapper )->selfClose = true;
 			}
 		}
@@ -621,46 +654,6 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * Normalizes spaces from extension tag arguments, except for those keyed by values in $exceptions
-	 * @param KV[] &$extArgs Array of extension args
-	 * @param array[] $action array that is either empty or has one key, 'except' or 'only', which defines the
-	 * attributes that should be respectively excluded or only included from the normalization
-	 */
-	public function normalizeWhiteSpaceInArgs( array &$extArgs, array $action = [] ) {
-		$except = $action['except'] ?? null;
-		$only = $action['only'] ?? null;
-
-		if ( $except && $only ) {
-			$this->log( 'warn', 'normalizeWhiteSpaceInArgs should not have both except and only parameters' );
-			return;
-		}
-
-		if ( $except ) {
-			$closure = static function ( $key, $value ) use ( $except ) {
-				if ( in_array( strtolower( trim( $key ) ), $except, true ) ) {
-					return $value;
-				} else {
-					return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
-				}
-			};
-		} elseif ( $only ) {
-			$closure = static function ( $key, $value ) use ( $only ) {
-				if ( in_array( strtolower( trim( $key ) ), $only, true ) ) {
-					return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
-				} else {
-					return $value;
-				}
-			};
-		} else {
-			$closure = static function ( $key, $value ) {
-				return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) );
-			};
-		}
-
-		$this->updateAllArgs( $extArgs, $closure );
-	}
-
-	/**
 	 * This method adds a new argument to the extension args array
 	 * @param KV[] &$extArgs
 	 * @param string $key
@@ -688,8 +681,7 @@ class ParsoidExtensionAPI {
 	 *
 	 * Ex: inline media captions that aren't rendered, language variant markup,
 	 *     attributes that are transcluded. More scenarios might be added later.
-	 * @deprecated
-	 * Don't use this directly: use ::processAttributeEmbeddedDom().
+	 * @deprecated since 0.21; use ::processAttributeEmbeddedDom().
 	 * This method may omit content which is embedded natively as
 	 * DocumentFragments instead of as HTML strings.
 	 *
@@ -700,6 +692,7 @@ class ParsoidExtensionAPI {
 	 *        and is expected to return a possibly modified string.
 	 */
 	public function processAttributeEmbeddedHTML( Element $elt, Closure $proc ): void {
+		$this->getSiteConfig()->deprecated( __METHOD__, "0.21" );
 		// @phan-suppress-next-line PhanDeprecatedFunction
 		ContentUtils::processAttributeEmbeddedHTML( $this, $elt, $proc );
 	}
@@ -718,11 +711,11 @@ class ParsoidExtensionAPI {
 	 *        and is expected to return true if that fragment was modified.
 	 */
 	public function processAttributeEmbeddedDom( Element $elt, callable $proc ): void {
-		ContentUtils::processAttributeEmbeddedDom( $this, $elt, $proc );
+		ContentUtils::processAttributeEmbeddedDom( $this->getSiteConfig(), $elt, $proc );
 	}
 
 	/**
-	 * Copy $from->childNodes to $to and clone the data attributes of $from
+	 * Copy childNodes of $from to $to and clone the data attributes of $from
 	 * to $to.
 	 *
 	 * @param Element $from
@@ -753,9 +746,10 @@ class ParsoidExtensionAPI {
 	 *  - 'src' expanded wikitext OR error message to print
 	 *     FIXME: Maybe error message should be localizable
 	 *  - 'fragment' Optional fragment (wikitext plus strip state)
-	 * @deprecated Use ::preprocessFragment instead
+	 * @deprecated since 0.21; use ::preprocessFragment instead
 	 */
 	public function preprocessWikitext( string $wikitext ) {
+		$this->getSiteConfig()->deprecated( __METHOD__, "0.21" );
 		$error = false;
 		$result = $this->preprocessFragment(
 			WikitextPFragment::newFromWt( $wikitext, null ),
@@ -845,9 +839,10 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * FIXME: This is a bit broken - shouldn't be needed ideally
+	 *
 	 * @param string $flag
 	 */
-	public function setHtml2wtStateFlag( string $flag ) {
+	public function setHtml2wtStateFlag( string $flag ): void {
 		$this->serializerState->{$flag} = true;
 	}
 
@@ -1000,7 +995,7 @@ class ParsoidExtensionAPI {
 	 *   the latter of which can signify that the value came from source.
 	 *   Where,
 	 *     [0] is the fully-constructed image option
-	 *     [1] is the full wikitext source offset for it
+	 *     [1] is the full wikitext SourceRange for it
 	 * @param ?string &$error Error string is set when the return is null.
 	 * @param ?bool $forceBlock Forces the media to be rendered in a figure as
 	 *   opposed to a span.
@@ -1017,7 +1012,8 @@ class ParsoidExtensionAPI {
 
 		$fileNs = $this->getSiteConfig()->canonicalNamespaceId( 'file' );
 
-		$title = $this->makeTitle( $titleStr, 0 );
+		$decodedTitleStr = Utils::decodeWtEntities( $titleStr );
+		$title = $this->makeTitle( $decodedTitleStr, 0 );
 		if ( $title === null || $title->getNamespace() !== $fileNs ) {
 			$error = "{$extTagName}_no_image";
 			return null;
@@ -1043,7 +1039,7 @@ class ParsoidExtensionAPI {
 
 		$pieces[] = ']]';
 
-		$shiftOffset = static function ( int $offset ) use ( $pieces ): ?int {
+		$shiftOffset = static function ( int $offset ) use ( $pieces ): ?SourceRange {
 			foreach ( $pieces as $p ) {
 				if ( is_string( $p ) ) {
 					$offset -= strlen( $p );
@@ -1052,7 +1048,13 @@ class ParsoidExtensionAPI {
 					}
 				} else {
 					if ( $offset <= strlen( $p[0] ) && isset( $p[1] ) ) {
-						return $p[1] + $offset;
+						if ( $p[1] instanceof SourceRange ) {
+							return $p[1]->offset( $offset );
+						} else {
+							// Deprecated: source information missing.
+							return ( new SourceRange( $p[1], $p[1] ) )
+								->offset( $offset );
+						}
 					}
 					$offset -= strlen( $p[0] );
 					if ( $offset <= 0 ) {
@@ -1068,6 +1070,9 @@ class ParsoidExtensionAPI {
 			$imageWt .= ( is_string( $p ) ? $p : $p[0] );
 		}
 
+		// Create a new source, because this assembled wikitext doesn't
+		// literally appear on the page.
+		$source = new SourceString( $imageWt );
 		$domFragment = $this->wikitextToDOM(
 			$imageWt,
 			[
@@ -1076,9 +1081,7 @@ class ParsoidExtensionAPI {
 					'extTagOpts' => $extTagOpts,
 					'context' => 'inline',
 				],
-				// Create new frame, because $pieces doesn't literally appear
-				// on the page, it has been hand-crafted here
-				'processInNewFrame' => true,
+				'srcOffsets' => SourceRange::fromSource( $source ),
 				// Shift the DSRs in the DOM by startOffset, and strip DSRs
 				// for bits which aren't the caption or file, since they
 				// don't refer to actual source wikitext
@@ -1093,7 +1096,9 @@ class ParsoidExtensionAPI {
 						return null;
 					}
 					return new DomSourceRange(
-						$start, $end, $dsr->openWidth, $dsr->closeWidth
+						$start?->start, $end?->start,
+						$dsr->openWidth, $dsr->closeWidth,
+						source: $start?->source
 					);
 				},
 			],
@@ -1109,11 +1114,11 @@ class ParsoidExtensionAPI {
 		if ( !$forceBlock ) {
 			$validWrappers[] = 'span';
 		}
-		if ( !in_array( DOMCompat::nodeName( $thumb ), $validWrappers, true ) ) {
+		if ( !in_array( DOMUtils::nodeName( $thumb ), $validWrappers, true ) ) {
 			$error = "{$extTagName}_invalid_image";
 			return null;
 		}
-		DOMUtils::assertElt( $thumb );
+		'@phan-var Element $thumb'; // @var Element $thumb
 
 		// Detach the $thumb since the $domFragment is going out of scope
 		// See https://bugs.php.net/bug.php?id=39593
@@ -1143,7 +1148,7 @@ class ParsoidExtensionAPI {
 	 * The converse to ::renderMedia.
 	 *
 	 * @param MediaStructure $ms
-	 * @return array Where,
+	 * @return array{0:string,1:string} Where,
 	 *   [0] is the media title string
 	 *   [1] is the string of media options
 	 */
@@ -1161,17 +1166,21 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * @param array $modules
-	 * @deprecated Use ::getMetadata()->appendOutputStrings( MODULE, ...) instead.
+	 *
+	 * @deprecated since 0.20; use ::getMetadata()->appendOutputStrings( MODULE, ...) instead.
 	 */
-	public function addModules( array $modules ) {
+	public function addModules( array $modules ): void {
+		$this->getSiteConfig()->deprecated( __METHOD__, "0.20" );
 		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE, $modules );
 	}
 
 	/**
 	 * @param array $modulestyles
-	 * @deprecated Use ::getMetadata()->appendOutputStrings(MODULE_STYLE, ...) instead.
+	 *
+	 * @deprecated since 0.20; use ::getMetadata()->appendOutputStrings(MODULE_STYLE, ...) instead.
 	 */
-	public function addModuleStyles( array $modulestyles ) {
+	public function addModuleStyles( array $modulestyles ): void {
+		$this->getSiteConfig()->deprecated( __METHOD__, "0.20" );
 		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, $modulestyles );
 	}
 

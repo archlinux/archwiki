@@ -1,24 +1,16 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\MediaWikiServices;
@@ -314,9 +306,6 @@ class RefreshLinks extends Maintenance {
 	 * @param int $batchSize The size of deletion batches
 	 */
 	private function dfnCheckInterval( $start = null, $end = null, $batchSize = 100 ) {
-		$dbw = $this->getPrimaryDB();
-		$dbr = $this->getDB( DB_REPLICA, [ 'vslow' ] );
-
 		$linksTables = [
 			// table name => page_id field
 			'pagelinks' => 'pl_from',
@@ -330,7 +319,20 @@ class RefreshLinks extends Maintenance {
 			'page_props' => 'pp_page',
 		];
 
+		$domains = [
+			'categorylinks' => CategoryLinksTable::VIRTUAL_DOMAIN,
+			'externallinks' => ExternalLinksTable::VIRTUAL_DOMAIN,
+			'imagelinks' => ImageLinksTable::VIRTUAL_DOMAIN,
+			'iwlinks' => InterwikiLinksTable::VIRTUAL_DOMAIN,
+			'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
+			'templatelinks' => TemplateLinksTable::VIRTUAL_DOMAIN,
+		];
+
 		foreach ( $linksTables as $table => $field ) {
+			$domain = $domains[$table] ?? false;
+			$dbw = $this->getServiceContainer()->getConnectionProvider()->getPrimaryDatabase( $domain );
+			$dbr = $this->getServiceContainer()->getConnectionProvider()->getReplicaDatabase( $domain, 'vslow' );
+
 			$this->output( "    $table: 0" );
 			$tableStart = $start;
 			$counter = 0;
@@ -417,7 +419,8 @@ class RefreshLinks extends Maintenance {
 		$this->output( "Refreshing pages in category '{$category->getText()}'...\n" );
 
 		$builder->join( 'categorylinks', null, 'page_id=cl_from' )
-			->andWhere( [ 'cl_to' => $category->getDBkey() ] );
+			->join( 'linktarget', null, 'lt_id=cl_target_id' )
+			->andWhere( [ 'lt_title' => $category->getDBkey(), 'lt_namespace' => NS_CATEGORY ] );
 		$this->doRefreshLinks( $builder, false, [ 'cl_timestamp', 'cl_from' ] );
 	}
 

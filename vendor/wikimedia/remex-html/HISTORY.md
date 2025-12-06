@@ -1,5 +1,43 @@
 # Release History
 
+## RemexHtml 5.1.0 (2025-08-14)
+* Further bug-fixes for PHP 8.4 Dom\Document.
+  - It is recommended to set `suppressHtmlNamespace=true` for
+    DOMBuilder if you are using the old `\DOMImplementation`, and set
+    `suppressHtmlNamespace=false` for the new PHP 8.4
+    \Dom\Implementation.
+  - This will be the default in the next major release; in this
+    release the existing default has remained unchanged
+    (`suppressHtmlNamespace` always defaults to `false`), but beware
+    that with `suppressHtmlNamespace=false` and `\DOMImplementation`,
+    tags like `<mw:section>` will not be parsed consistent with the
+    HTML spec, since `\DOMImplementation` makes it impossible to
+    create a tag with the HTML namespace and with a colon in the tag
+    name.  We've elected to preserve the correct prefix (`null`) and
+    local name (`mw:section`) but omit the HTML namespace in this
+    situation.
+* New class `Wikimedia\RemexHtml\DOM\DOMFragmentBuilder` to facilitate
+  building a `DocumentFragment` with a pre-existing `Document`.
+* Drop support for PHP < 8.1.
+
+## RemexHtml 5.0.0 (2025-06-04)
+* Bug fixes for PHP 8.4 Dom\Document compatibility.
+* New options and defaults for DOMBuilder:
+  - 'domImplementationClass' defaults to \Dom\Implementation on PHP 8.4.
+    This is a change from prior versions, which always defaulted to
+    \DOMImplementation.
+  - 'coercionWorkaround' selects the workaround for
+    element/attribute/doctype character set mismatches between the
+    HTML parser spec and the DOM spec.  Defaults to 'coerce' on PHP < 8.4,
+    which matches the previous default.  When using
+    \Dom\Implementation on PHP 8.4, defaults to using the PHP 8.4 HTML
+    parser to avoid coercion.
+* The method signature for the DOMFormatter class has changed.
+* HTMLData properties were converted to constants in the previous
+  release; the compatibility properties have now been dropped.
+* HTMLData::TAGS has been added to make HTML tag properties (the set
+  of void, raw text, and "line feed inserting" tags) generally available.
+
 ## RemexHtml 4.1.2 (2025-04-23)
 * Turn off "lazy attribute" creation in Tokenizer by default in order
   to eliminate a memory hotspot.  Add 'lazyAttributes' option to

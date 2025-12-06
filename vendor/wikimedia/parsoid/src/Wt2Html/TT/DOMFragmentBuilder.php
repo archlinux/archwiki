@@ -4,16 +4,13 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
-use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
-use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
-class DOMFragmentBuilder extends TokenHandler {
+class DOMFragmentBuilder extends XMLTagBasedHandler {
 	/**
 	 * @param TokenHandlerPipeline $manager manager environment
 	 * @param array $options options
@@ -28,43 +25,40 @@ class DOMFragmentBuilder extends TokenHandler {
 	 * 2. In some cases, if templates need not be nested entirely within the
 	 *    boundary of the token, we cannot process the contents in a new scope.
 	 * @param array $toks
-	 * @param Token $contextTok
+	 * @param bool $isLinkContext
 	 * @return bool
 	 */
-	private function subpipelineUnnecessary( array $toks, Token $contextTok ): bool {
-		for ( $i = 0, $n = count( $toks );  $i < $n;  $i++ ) {
-			$t = $toks[$i];
+	private function processContentInOwnPipeline( array $toks, bool $isLinkContext ): bool {
+		// For wikilinks and extlinks, templates should be properly nested
+		// in the content section. So, we can process them in sub-pipelines.
+		// But, for other context-toks, we should back out. FIXME: Can be smarter and
+		// detect proper template nesting, but, that can be a later enhancement
+		// when dom-scope-tokens are used in other contexts.
+		Assert::invariant( $isLinkContext, 'A link context is assumed.' );
 
-			// For wikilinks and extlinks, templates should be properly nested
-			// in the content section. So, we can process them in sub-pipelines.
-			// But, for other context-toks, we back out. FIXME: Can be smarter and
-			// detect proper template nesting, but, that can be a later enhancement
-			// when dom-scope-tokens are used in other contexts.
-			if ( $contextTok && $contextTok->getName() !== 'wikilink' &&
-				$contextTok->getName() !== 'extlink' &&
-				$t instanceof SelfclosingTagTk &&
-				 $t->getName() === 'meta' && TokenUtils::hasTypeOf( $t, 'mw:Transclusion' )
-			) {
-				return true;
-			} elseif ( $t instanceof TagTk || $t instanceof EndTagTk || $t instanceof SelfclosingTagTk ) {
+		foreach ( $toks as $t ) {
+			if ( $t instanceof XMLTagTk ) {
 				// Since we encountered a complex token, we'll process this
 				// in a subpipeline.
-				return false;
+				return true;
 			}
 		}
 
 		// No complex tokens at all -- no need to spin up a new pipeline
-		return true;
+		return false;
 	}
 
 	/**
 	 * @return array<string|Token>
 	 */
 	private function buildDOMFragment( Token $scopeToken ): array {
+		$contextTokName = $scopeToken->getAttributeV( 'contextTokName' );
+		$linkContext = $contextTokName === 'wikilink' || $contextTokName === 'extlink';
+
 		$contentKV = $scopeToken->getAttributeKV( 'content' );
 		$content = $contentKV->v;
-		if ( is_string( $content ) ||
-			$this->subpipelineUnnecessary( $content, $scopeToken->getAttributeV( 'contextTok' ) )
+		if (
+			is_string( $content ) || !$this->processContentInOwnPipeline( $content, $linkContext )
 		) {
 			// New pipeline not needed. Pass them through
 			return is_string( $content ) ? [ $content ] : $content;
@@ -116,7 +110,7 @@ class DOMFragmentBuilder extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		return $token->getName() === 'mw:dom-fragment-token' ?
 			$this->buildDOMFragment( $token ) : null;
 	}

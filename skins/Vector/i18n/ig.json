@@ -4,6 +4,7 @@
 			"Edith Nwobu",
 			"Goodymeraj",
 			"Ifexin",
+			"Iwuala Lucy",
 			"Karen",
 			"King ChristLike",
 			"Oby Ezeilo",
@@ -12,15 +13,12 @@
 			"Timzy D'Great",
 			"Tochiprecious",
 			"Ukabia",
-			"Uzoma Ozurumba",
-			"Iwuala Lucy"
+			"Uzoma Ozurumba"
 		]
 	},
 	"vector-skin-desc": "Na-enye akpụkpọ anụ vector 2: * 2011 - MonoBook nke ọgbara ọhụrụ nwere anya dị ọhụrụ yana ọtụtụ nkwalite ojiji.\n* 2022 - Vector wuru dị ka akụkụ nke ọrụ WMF [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
 	"prefs-vector-enable-vector-1-label": "Jiri Vector Legacy",
 	"prefs-vector-enable-vector-1-help": "N'ime afọ ole na ole sochirinụ, anyị ga-eji nwayọọ nwayọọ na-emelite akpụkpọ anụ Vector. Legacy Vector ga-enye gị ohere ịlele ụdị Vector ochie (dịka nke Disemba 2019). Iji mụtakwuo maka mmelite ndị a, gaa na [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements project page].",
-	"vector-opt-out": "Banye na anya ochie",
-	"vector-opt-out-tooltip": "Gbanwee ntọala gị ka ịlaghachi na ọdịdị akpụkpọ ahụ ochie (Legacy Vector)",
 	"vector-action-toggle-sidebar": "Gbanwee ogwe akụkụ",
 	"vector-languages": "Asụsụ",
 	"vector-language-button-aria-label": "Gaa na akụkọ na asụsụ ọzọ. Dị na {{PLURAL:$1|$1 asụsụ|$1 asụsụ}}",
@@ -59,8 +57,6 @@
 	"skin-theme-night-label": "Gbara ọchịchịrị",
 	"skin-theme-os-label": "Akpaaka",
 	"skin-theme-exclusion-notice": "Ibé a na-adị adị na ọdịdị ìhè  mgbe niile",
-	"vector-search-loader": "Na-ebunye ntụnye ọchụchọ",
-	"vector-searchsuggest-containing": "Chọọ peeji ndị gụnyere <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Enyemaka:Okwu mmalite",
 	"vector-toc-label": "Ndịna",
 	"vector-toc-beginning": "Mmalite",

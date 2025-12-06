@@ -2,21 +2,7 @@
 /**
  * Copyright 2015 Ori Livneh
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -35,14 +21,15 @@ use Liuggio\StatsdClient\Factory\StatsdDataFactory;
  * over a single connection.
  *
  * These buffers are sent from MediaWikiEntryPoint::emitBufferedStats. For web requests,
- * this happens post-send. For command-line scripts, this happens periodically from a database
- * callback (see MWLBFactory::applyGlobalState).
+ * this happens post-send. For command-line scripts, this happens periodically from calls
+ * to Maintenance::commitTransaction() and Maintenance::commitTransactionRound().
  *
  * @todo Evaluate upstream's StatsdService class, which implements similar buffering logic
  * and was released in statsd-php-client 1.0.13, shortly after we implemented this here
  * for statsd-php-client 1.0.12 at the time.
  *
  * @since 1.25
+ * @deprecated since 1.45, use https://www.mediawiki.org/wiki/Manual:Stats
  * @method StatsdData produceStatsdDataEntity() We use StatsdData::setKey, which is not in
  *  StatsdDataInterface https://gerrit.wikimedia.org/r/643976
  */
@@ -54,7 +41,7 @@ class BufferingStatsdDataFactory extends StatsdDataFactory implements IBuffering
 	/** @var string */
 	private $prefix;
 
-	public function __construct( $prefix ) {
+	public function __construct( string $prefix ) {
 		parent::__construct();
 		$this->prefix = $prefix;
 	}
@@ -158,6 +145,7 @@ class BufferingStatsdDataFactory extends StatsdDataFactory implements IBuffering
 		return strtr( $key, [ '..' => '.' ] );
 	}
 
+	/** @inheritDoc */
 	public function produceStatsdData(
 		$key, $value = 1, $metric = StatsdDataInterface::STATSD_METRIC_COUNT
 	) {
@@ -179,6 +167,7 @@ class BufferingStatsdDataFactory extends StatsdDataFactory implements IBuffering
 	// Methods for IBufferingStatsdDataFactory
 	//
 
+	/** @inheritDoc */
 	public function hasData() {
 		return (bool)$this->buffer;
 	}
@@ -203,14 +192,17 @@ class BufferingStatsdDataFactory extends StatsdDataFactory implements IBuffering
 		return $data;
 	}
 
+	/** @inheritDoc */
 	public function clearData() {
 		$this->buffer = [];
 	}
 
+	/** @inheritDoc */
 	public function getDataCount() {
 		return count( $this->buffer );
 	}
 
+	/** @inheritDoc */
 	public function setEnabled( $enabled ) {
 		$this->enabled = $enabled;
 	}

@@ -1,44 +1,35 @@
 'use strict';
 
-( function () {
+{
 	QUnit.module( 've.ui.MWReferenceSearchWidget (Cite)', ve.test.utils.newMwEnvironment() );
 
-	function getDocRefsMock( hasNode ) {
+	/**
+	 * @param {boolean} [hasNode=false]
+	 * @return {ve.dm.MWDocumentReferences}
+	 */
+	const getDocumentReferencesMock = ( hasNode ) => {
 		const listKey = 'literal/foo';
 		const node = hasNode ? {
-			getAttribute: ( name ) => {
-				switch ( name ) {
-					case 'listKey': return listKey;
-					default: return undefined;
-				}
-			},
+			getAttribute: ( name ) => ( { listKey }[ name ] ),
 			getAttributes: () => ( {} ),
 			getInternalItem: () => ( {} ),
-			getDocument: () => ( new ve.dm.Document() )
-		} : {};
-		const groups = hasNode ? {
-			'mwReference/': {
-				indexOrder: [ 0 ],
-				firstNodes: [ node ],
-				keyedNodes: { [ listKey ]: [ node ] }
-			}
-		} : {};
-		const docRefsMock = {
-			getAllGroupNames: () => ( Object.keys( groups ) ),
-			getIndexLabel: () => ( '1' ),
-			getItemNode: () => ( node ),
-			getGroupRefs: ( groupName ) => ( ve.dm.MWGroupReferences.static.makeGroupRefs(
-				groups[ groupName ]
-			) ),
-			hasRefs: () => ( !!hasNode )
+			getDocument: () => new ve.dm.Document(),
+			setGroupIndex: () => {}
+		} : undefined;
+		const nodeGroup = new ve.dm.InternalListNodeGroup();
+		nodeGroup.appendNode( listKey, node );
+		return {
+			getAllGroupNames: () => [ 'mwReference/' ],
+			getIndexLabel: () => '1',
+			getItemNode: () => node,
+			getGroupRefs: () => ve.dm.MWGroupReferences.static.makeGroupRefs( nodeGroup ),
+			hasRefs: () => !!hasNode
 		};
-
-		return docRefsMock;
-	}
+	};
 
 	QUnit.test( 'buildIndex', ( assert ) => {
 		const widget = new ve.ui.MWReferenceSearchWidget();
-		widget.setDocumentRefs( getDocRefsMock() );
+		widget.setDocumentRefs( getDocumentReferencesMock() );
 
 		assert.strictEqual( widget.index, null );
 		widget.buildIndex();
@@ -47,7 +38,7 @@
 
 	QUnit.test( 'buildSearchIndex when empty', ( assert ) => {
 		const widget = new ve.ui.MWReferenceSearchWidget();
-		widget.setDocumentRefs( getDocRefsMock() );
+		widget.setDocumentRefs( getDocumentReferencesMock() );
 
 		const index = widget.buildSearchIndex();
 		assert.deepEqual( index, [] );
@@ -55,7 +46,7 @@
 
 	QUnit.test( 'buildSearchIndex', ( assert ) => {
 		const widget = new ve.ui.MWReferenceSearchWidget();
-		widget.setDocumentRefs( getDocRefsMock( true ) );
+		widget.setDocumentRefs( getDocumentReferencesMock( true ) );
 
 		const index = widget.buildSearchIndex();
 		assert.deepEqual( index.length, 1 );
@@ -66,10 +57,10 @@
 
 	QUnit.test( 'isIndexEmpty', ( assert ) => {
 		const widget = new ve.ui.MWReferenceSearchWidget();
-		widget.setDocumentRefs( getDocRefsMock() );
+		widget.setDocumentRefs( getDocumentReferencesMock() );
 		assert.true( widget.isIndexEmpty() );
 
-		widget.setDocumentRefs( getDocRefsMock( true ) );
+		widget.setDocumentRefs( getDocumentReferencesMock( true ) );
 		assert.false( widget.isIndexEmpty() );
 	} );
 
@@ -82,4 +73,4 @@
 		assert.strictEqual( results.length, 1 );
 		assert.strictEqual( results[ 0 ].getData(), 'model-a' );
 	} );
-}() );
+}

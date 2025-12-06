@@ -29,7 +29,6 @@ use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\Rdbms\IConnectionProvider;
-use Wikimedia\TestingAccessWrapper;
 
 /**
  * @author Taavi Väänänen <hi@taavi.wtf>
@@ -99,14 +98,7 @@ class OATHUserRepositoryTest extends MediaWikiIntegrationTestCase {
 		// Test looking it up again from the database
 		$this->assertArrayEquals( [ $key ], $repository->findByUser( $user )->getKeys() );
 
-		// Use a scratch code, which causes the key to be updated.
-		TestingAccessWrapper::newFromObject( $key )->recoveryCodes = [ 'new scratch tokens' ];
 		$repository->updateKey( $oathUser, $key );
-
-		$this->assertEquals(
-			[ 'new scratch tokens' ],
-			$repository->findByUser( $user )->getKeys()[0]->getScratchTokens()
-		);
 
 		$repository->removeKey(
 			$oathUser,

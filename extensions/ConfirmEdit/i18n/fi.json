@@ -28,7 +28,7 @@
 	"captcha-id-label": "CAPTCHA-tunnus",
 	"captcha-id-help": "Tämä arvo pitäisi lähettää takaisin muuttumattomana.",
 	"captcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille.\nSuojataksemme wikiä automatisoituja mainoslinkkejä vastaan, pyydämme sinua ratkaisemaan alla olevan tehtävän ja kirjoittamaan vastauksen kenttään, jotta voit tallentaa muokkauksesi ([[Special:Captcha/help|lisätietoja]]):",
-	"captcha-badlogin": "Suojataksemme wikiä automatisoidulta salasanojen murtamiselta pyydämme sinua ratkaisemaan alla olevan tehtävän ja kirjoittamaan vastauksen kenttään  ([[Special:Captcha/help|lisätietoja]]):",
+	"captcha-badlogin": "Suojataksemme wikiä automatisoidulta salasanojen murtamiselta pyydämme sinua ratkaisemaan alla olevan tehtävän ja kirjoittamaan vastauksen kenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"captcha-createaccount": "Suojataksemme wikiä automatisoidulta käyttäjätunnusten luonnilta pyydämme sinua ratkaisemaan alla olevan tehtävän ja kirjoittamaan vastauksen kenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"captcha-createaccount-fail": "Virheellinen tai puuttuva CAPTCHA.",
 	"captcha-create": "Ratkaise alla oleva tehtävä ja kirjoita vastaus kenttään luodaksesi tämän sivun ([[Special:Captcha/help|lisätietoja]]):",

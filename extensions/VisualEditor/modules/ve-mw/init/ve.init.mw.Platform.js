@@ -104,8 +104,9 @@ ve.init.mw.Platform.prototype.formatNumber = function ( number ) {
 /**
  * @inheritdoc
  */
-ve.init.mw.Platform.prototype.getHtmlMessage = function () {
-	return mw.message.apply( mw.message, arguments ).parseDom().toArray();
+ve.init.mw.Platform.prototype.getHtmlMessage = function ( key, ...args ) {
+	// eslint-disable-next-line mediawiki/msg-doc
+	return mw.message( key, ...args ).parseDom().toArray();
 };
 
 /**

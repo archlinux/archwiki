@@ -24,6 +24,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use StatusValue;
@@ -41,43 +42,18 @@ class FilteredActionsHandler implements
 	UploadStashFileHook,
 	ParserOutputStashForEditHook
 {
-	private IBufferingStatsdDataFactory $statsDataFactory;
-	private FilterRunnerFactory $filterRunnerFactory;
-	private VariableGeneratorFactory $variableGeneratorFactory;
-	private EditRevUpdater $editRevUpdater;
-	private PermissionManager $permissionManager;
-	private IBlockedDomainFilter $blockedDomainFilter;
-	private TitleFactory $titleFactory;
-	private UserFactory $userFactory;
 
-	/**
-	 * @param IBufferingStatsdDataFactory $statsDataFactory
-	 * @param FilterRunnerFactory $filterRunnerFactory
-	 * @param VariableGeneratorFactory $variableGeneratorFactory
-	 * @param EditRevUpdater $editRevUpdater
-	 * @param IBlockedDomainFilter $blockedDomainFilter
-	 * @param PermissionManager $permissionManager
-	 * @param TitleFactory $titleFactory
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
-		IBufferingStatsdDataFactory $statsDataFactory,
-		FilterRunnerFactory $filterRunnerFactory,
-		VariableGeneratorFactory $variableGeneratorFactory,
-		EditRevUpdater $editRevUpdater,
-		IBlockedDomainFilter $blockedDomainFilter,
-		PermissionManager $permissionManager,
-		TitleFactory $titleFactory,
-		UserFactory $userFactory
+		private IBufferingStatsdDataFactory $statsDataFactory,
+		private FilterRunnerFactory $filterRunnerFactory,
+		private VariableGeneratorFactory $variableGeneratorFactory,
+		private EditRevUpdater $editRevUpdater,
+		private IBlockedDomainFilter $blockedDomainFilter,
+		private PermissionManager $permissionManager,
+		private TitleFactory $titleFactory,
+		private UserFactory $userFactory,
+		private TempUserConfig $tempUserConfig,
 	) {
-		$this->statsDataFactory = $statsDataFactory;
-		$this->filterRunnerFactory = $filterRunnerFactory;
-		$this->variableGeneratorFactory = $variableGeneratorFactory;
-		$this->editRevUpdater = $editRevUpdater;
-		$this->blockedDomainFilter = $blockedDomainFilter;
-		$this->permissionManager = $permissionManager;
-		$this->titleFactory = $titleFactory;
-		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -318,6 +294,14 @@ class FilteredActionsHandler implements
 	 * @inheritDoc
 	 */
 	public function onParserOutputStashForEdit( $page, $content, $output, $summary, $user ) {
+		// If temporary accounts are enabled, we can't reuse stashed filter matches for unregistered
+		// performers, as the actual save attempt would result in a new temporary account being created,
+		// thereby changing some of the input variables and potentially leading to a different outcome.
+		// (T402298)
+		if ( !$user->isRegistered() && $this->tempUserConfig->isEnabled() ) {
+			return;
+		}
+
 		// XXX: This makes the assumption that this method is only ever called for the main slot.
 		// Which right now holds true, but any more fancy MCR stuff will likely break here...
 		$slot = SlotRecord::MAIN;

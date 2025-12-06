@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -56,6 +42,7 @@ class CategoryPager extends AlphabeticPager {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [
 			'tables' => [ 'category' ],
@@ -64,10 +51,12 @@ class CategoryPager extends AlphabeticPager {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return 'cat_title';
 	}
 
+	/** @inheritDoc */
 	public function getDefaultQuery() {
 		parent::getDefaultQuery();
 		unset( $this->mDefaultQuery['from'] );
@@ -75,7 +64,10 @@ class CategoryPager extends AlphabeticPager {
 		return $this->mDefaultQuery;
 	}
 
-	/* Override getBody to apply LinksBatch on resultset before actually outputting anything. */
+	/**
+	 * Override getBody to apply LinksBatch on resultset before actually outputting anything.
+	 * @inheritDoc
+	 */
 	public function getBody() {
 		$batch = $this->linkBatchFactory->newLinkBatch();
 
@@ -90,6 +82,7 @@ class CategoryPager extends AlphabeticPager {
 		return parent::getBody();
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $result ) {
 		$title = new TitleValue( NS_CATEGORY, $result->cat_title );
 		$text = $title->getText();
@@ -99,6 +92,7 @@ class CategoryPager extends AlphabeticPager {
 		return Html::rawElement( 'li', [], $this->getLanguage()->specialList( $link, $count ) ) . "\n";
 	}
 
+	/** @inheritDoc */
 	public function getStartForm( $from ) {
 		$formDescriptor = [
 			'from' => [

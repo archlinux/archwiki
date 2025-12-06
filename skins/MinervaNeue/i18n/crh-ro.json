@@ -8,7 +8,9 @@
 	"mobile-frontend-home-button": "Baş Sayipa",
 	"mobile-frontend-language-article-heading": "Tíl",
 	"mobile-frontend-main-menu-login": "Kíríş",
+	"mobile-frontend-main-menu-nearby": "Yakînda",
 	"mobile-frontend-main-menu-settings": "Sazlamalar",
 	"mobile-frontend-placeholder": "{{SITENAME}} íşínde kîdîr",
-	"mobile-frontend-random-button": "Rastkele"
+	"mobile-frontend-random-button": "Rastkele",
+	"minerva-page-actions-overflow": "Taa kóp"
 }

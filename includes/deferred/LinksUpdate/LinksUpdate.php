@@ -2,21 +2,7 @@
 /**
  * Updater for link tracking tables after a page edit.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -49,7 +35,7 @@ use Wikimedia\ScopedCallback;
 /**
  * Class the manages updates of *_link tables as well as similar extension-managed tables
  *
- * @note: LinksUpdate is managed by DeferredUpdates::execute(). Do not run this in a transaction.
+ * @note LinksUpdate is managed by DeferredUpdates::execute(). Do not run this in a transaction.
  *
  * See docs/deferred.txt
  */
@@ -123,6 +109,7 @@ class LinksUpdate extends DataUpdate {
 		$this->dbProvider = $services->getDBLoadBalancerFactory();
 	}
 
+	/** @inheritDoc */
 	public function setTransactionTicket( $ticket ) {
 		parent::setTransactionTicket( $ticket );
 		$this->tableFactory->setTransactionTicket( $ticket );
@@ -206,7 +193,7 @@ class LinksUpdate extends DataUpdate {
 	 */
 	public static function acquirePageLock( IDatabase $dbw, $pageId, $why = 'atomicity' ) {
 		$key = "{$dbw->getDomainID()}:LinksUpdate:$why:pageid:$pageId"; // per-wiki
-		$scopedLock = $dbw->getScopedLockAndFlush( $key, __METHOD__, 15 );
+		$scopedLock = $dbw->getScopedLockAndFlush( $key, __METHOD__, 1 );
 		if ( !$scopedLock ) {
 			$logger = LoggerFactory::getInstance( 'SecondaryDataUpdate' );
 			$logger->info( "Could not acquire lock '{key}' for page ID '{page_id}'.", [

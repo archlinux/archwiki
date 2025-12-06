@@ -91,7 +91,10 @@ class ClientHints implements SpecialPageBeforeExecuteHook, BeforePageDisplayHook
 			}
 		}
 
-		if ( $this->config->get( 'CheckUserClientHintsUnsetHeaderWhenPossible' ) ) {
+		if ( $this->config->get( 'CheckUserAlwaysSetClientHintHeaders' ) ) {
+			$request = $out->getRequest();
+			$request->response()->header( $this->getClientHintsHeaderString() );
+		} elseif ( $this->config->get( 'CheckUserClientHintsUnsetHeaderWhenPossible' ) ) {
 			$request = $out->getRequest();
 			$request->response()->header( $this->getEmptyClientHintsHeaderString() );
 		}

@@ -5,19 +5,29 @@ namespace MediaWiki\CheckUser\Services;
 use GlobalPreferences\GlobalPreferencesFactory;
 use GlobalPreferences\Storage;
 use MediaWiki\CheckUser\HookHandler\Preferences;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Preferences\PreferencesFactory;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class CheckUserTemporaryAccountAutoRevealLookup {
 
+	/**
+	 * @internal For use by ServiceWiring
+	 */
+	public const CONSTRUCTOR_OPTIONS = [ 'CheckUserAutoRevealMaximumExpiry' ];
+
+	private ServiceOptions $options;
 	private PreferencesFactory $preferencesFactory;
 	private CheckUserPermissionManager $checkUserPermissionManager;
 
 	public function __construct(
+		ServiceOptions $options,
 		PreferencesFactory $preferencesFactory,
 		CheckUserPermissionManager $checkUserPermissionManager
 	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
 		$this->preferencesFactory = $preferencesFactory;
 		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
@@ -34,7 +44,7 @@ class CheckUserTemporaryAccountAutoRevealLookup {
 
 	/**
 	 * Check whether the expiry time for auto-reveal mode is valid. A valid expiry is in the future
-	 * and less than 1 day in the future.
+	 * and less than the maximum expiry.
 	 *
 	 * @param mixed $expiry Expiry should be in a UNIX timestamp format
 	 * @return bool Expiry is valid
@@ -46,9 +56,9 @@ class CheckUserTemporaryAccountAutoRevealLookup {
 
 		$expiry = intval( $expiry );
 		$nowInSeconds = ConvertibleTimestamp::time();
-		$oneDayInSeconds = 86400;
+		$maxExpiry = $this->options->get( 'CheckUserAutoRevealMaximumExpiry' );
 		return ( $expiry > ConvertibleTimestamp::time() ) &&
-			( $expiry <= ( $nowInSeconds + $oneDayInSeconds ) );
+			( $expiry <= ( $nowInSeconds + $maxExpiry ) );
 	}
 
 	/**

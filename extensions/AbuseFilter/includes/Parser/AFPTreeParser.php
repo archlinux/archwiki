@@ -113,8 +113,6 @@ class AFPTreeParser {
 	/**
 	 * setState() function allows parser state to be rollbacked to several tokens
 	 * back.
-	 *
-	 * @param AFPParserState $state
 	 */
 	private function setState( AFPParserState $state ) {
 		$this->mCur = $state->token;
@@ -136,9 +134,6 @@ class AFPTreeParser {
 		return $this->buildSyntaxTree();
 	}
 
-	/**
-	 * @return AFPSyntaxTree
-	 */
 	private function buildSyntaxTree(): AFPSyntaxTree {
 		$startTime = microtime( true );
 		$root = $this->doLevelEntry();

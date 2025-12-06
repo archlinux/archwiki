@@ -222,7 +222,7 @@ class NotificationController {
 		$job = new NotificationDeleteJob(
 			$event->getTitle() ?: Title::newMainPage(),
 			[
-				'userIds' => $userIds
+				'userIds' => $userIds,
 			],
 			$jobQueueGroup
 		);
@@ -282,7 +282,7 @@ class NotificationController {
 				'Delayed jobs are not enabled. Skipping enqueuing event {id} of type {type}.',
 				[
 					'id' => $event->getId(),
-					'type' => $event->getType()
+					'type' => $event->getType(),
 				]
 			);
 			return;
@@ -293,7 +293,7 @@ class NotificationController {
 
 	/**
 	 * Implements blacklist per active wiki expected to be initialized
-	 * from InitializeSettings.php
+	 * from WMF configuration system: wmf-config/InitialiseSettings.php
 	 *
 	 * @param Event $event The event to test for exclusion
 	 * @param User $user recipient of the notification for per-user blacklists

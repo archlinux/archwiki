@@ -12,23 +12,11 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class NukeAssociatedQueryBuilder {
 
-	private IReadableDatabase $readableDatabase;
-	private Config $config;
-	private NamespaceInfo $namespaceInfo;
-
-	/**
-	 * @param IReadableDatabase $readableDatabase
-	 * @param Config $config
-	 * @param NamespaceInfo $namespaceInfo
-	 */
 	public function __construct(
-		IReadableDatabase $readableDatabase,
-		Config $config,
-		NamespaceInfo $namespaceInfo
+		private readonly IReadableDatabase $readableDatabase,
+		private readonly Config $config,
+		private readonly NamespaceInfo $namespaceInfo,
 	) {
-		$this->readableDatabase = $readableDatabase;
-		$this->config = $config;
-		$this->namespaceInfo = $namespaceInfo;
 	}
 
 	/**
@@ -45,7 +33,7 @@ class NukeAssociatedQueryBuilder {
 		foreach ( $pages as $page ) {
 			try {
 				$talkNamespace = $this->namespaceInfo->getTalk( $page->getNamespace() );
-			} catch ( MWException $e ) {
+			} catch ( MWException ) {
 				continue;
 			}
 			$byNamespace[ $talkNamespace ][] = $page->getDBkey();

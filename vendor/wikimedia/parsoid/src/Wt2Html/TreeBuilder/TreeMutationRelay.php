@@ -8,11 +8,12 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\RemexHtml\DOM\DOMBuilder;
 use Wikimedia\RemexHtml\TreeBuilder\Element;
 use Wikimedia\RemexHtml\TreeBuilder\RelayTreeHandler;
 
 /**
- * This is a stage inserted between RemexHtml's TreeBuilder and our DOMBuilder
+ * This is a stage inserted between RemexHtml's TreeBuilder and our ParsoidDOMBuilder
  * subclass. Any code that needs to modify the tree mutation event stream
  * should go here. It's currently used for auto-insert detection.
  */
@@ -109,7 +110,7 @@ class TreeMutationRelay extends RelayTreeHandler {
 	 */
 	public function insertElement(
 		$preposition, $ref, Element $element, $void, $sourceStart, $sourceLength
-	) {
+	): void {
 		// Elements can be inserted twice due to reparenting by the adoption
 		// agency algorithm. If this is a reparenting, we don't want to
 		// override autoInsertedStart flag set the first time around.
@@ -144,7 +145,7 @@ class TreeMutationRelay extends RelayTreeHandler {
 	 * @param int $sourceStart
 	 * @param int $sourceLength
 	 */
-	public function endTag( Element $element, $sourceStart, $sourceLength ) {
+	public function endTag( Element $element, $sourceStart, $sourceLength ): void {
 		$this->nextHandler->endTag( $element, $sourceStart, $sourceLength );
 
 		if ( $sourceLength === $this->matchEndLength ) {
@@ -196,7 +197,7 @@ class TreeMutationRelay extends RelayTreeHandler {
 	 * @param Element $newParent
 	 * @param int $sourceStart
 	 */
-	public function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
+	public function reparentChildren( Element $element, Element $newParent, $sourceStart ): void {
 		$this->nextHandler->reparentChildren( $element, $newParent, $sourceStart );
 		if ( $this->isMarkable( $newParent ) ) {
 			/** @var DOMElement $node */

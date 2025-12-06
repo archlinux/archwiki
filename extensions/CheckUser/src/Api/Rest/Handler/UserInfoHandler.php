@@ -9,15 +9,19 @@ use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\TokenAwareHandlerTrait;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
- * REST endpoint for /checkuser/v0/userinfo/{id} to return data for the UserInfoCard feature (T384725)
+ * REST endpoint for /checkuser/v0/userinfo to return data for the
+ * UserInfoCard feature (T384725)
  */
 class UserInfoHandler extends SimpleHandler {
 
 	use TokenAwareHandlerTrait;
+
+	private const USERNAME_PARAM_NAME = 'username';
 
 	private CheckUserUserInfoCardService $userInfoCardService;
 	private UserFactory $userFactory;
@@ -30,43 +34,73 @@ class UserInfoHandler extends SimpleHandler {
 		$this->userFactory = $userFactory;
 	}
 
-	public function run( int $id ): Response {
-		$this->validateToken();
-		if ( !$this->getAuthority()->isNamed() ) {
-			throw new LocalizedHttpException(
-				new MessageValue( 'checkuser-rest-access-denied' ),
-				401
-			);
+	/**
+	 * @throws LocalizedHttpException
+	 * @throws HttpException
+	 */
+	public function run(): Response {
+		$this->assertHasAccess();
+
+		$body = $this->getValidatedBody() ?? [];
+		$username = $body[ self::USERNAME_PARAM_NAME ];
+		$user = $this->userFactory->newFromName( $username );
+
+		if ( $user instanceof UserIdentity ) {
+			$user->load();
 		}
-		$performingUser = $this->userFactory->newFromUserIdentity( $this->getAuthority()->getUser() );
-		if ( $performingUser->pingLimiter( 'checkuser-userinfo' ) ) {
-			throw new HttpException( 'Too many requests to user info data', 429 );
+
+		// If the user exists, is hidden, and the authority doesn't have the `hideuser`
+		// right, then pretend that the user doesn't exist
+		if ( $user && $user->isHidden() && !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
+			$user = null;
 		}
-		$user = $this->userFactory->newFromId( $id );
-		$user->load();
-		if ( !$user->getId() ) {
+
+		if ( $user === null || !$user->getId() ) {
 			throw new LocalizedHttpException(
 				new MessageValue( 'checkuser-rest-userinfo-user-not-found' ),
 				404
 			);
 		}
-		$userInfo = $this->userInfoCardService->getUserInfo( $user );
+
+		$userInfo = $this->userInfoCardService->getUserInfo(
+			$this->getAuthority(),
+			$user
+		);
 
 		return $this->getResponseFactory()->createJson( $userInfo );
 	}
 
-	/** @inheritDoc */
-	public function getParamSettings() {
-		return [
-			'id' => [
-				self::PARAM_SOURCE => 'path',
-				ParamValidator::PARAM_TYPE => 'integer',
+	public function getBodyParamSettings(): array {
+		return $this->getTokenParamDefinition() + [
+			self::USERNAME_PARAM_NAME => [
+				self::PARAM_SOURCE => 'body',
+				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_REQUIRED => true,
-			]
+			],
 		];
 	}
 
-	public function getBodyParamSettings(): array {
-		return $this->getTokenParamDefinition();
+	/**
+	 * @throws HttpException
+	 * @throws LocalizedHttpException
+	 */
+	private function assertHasAccess(): void {
+		$this->validateToken();
+
+		$authority = $this->getAuthority();
+		if ( !$authority->isNamed() ) {
+			throw new LocalizedHttpException(
+				new MessageValue( 'checkuser-rest-access-denied' ),
+				401
+			);
+		}
+
+		$performingUser = $this->userFactory->newFromUserIdentity(
+			$authority->getUser()
+		);
+
+		if ( $performingUser->pingLimiter( 'checkuser-userinfo' ) ) {
+			throw new HttpException( 'Too many requests to user info data', 429 );
+		}
 	}
 }

@@ -23,15 +23,17 @@ use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
 class AddMediaInfo implements Wt2HtmlDOMProcessor {
+	// phpcs:disable Generic.Files.LineLength.TooLong
+
 	/**
 	 * Extract the dimensions for media.
 	 *
 	 * @param Env $env
-	 * @param array $attrs
-	 * @param array $info
-	 * @phan-param array{size:array{height?:int,width?:int},format:string} $attrs
-	 * @return array
+	 * @param array{dims:array{height?:int,width?:int},format:string} $attrs
+	 * @param array{height:int,width:int,thumburl?:string,thumbheight?:int,thumbwidth?:int,mediatype:string,mustRender?:mixed} $info
+	 * @return array{height: int, width: int}
 	 */
+	// phpcs:enable Generic.Files.LineLength.TooLong
 	private static function handleSize( Env $env, array $attrs, array $info ): array {
 		$height = $info['height'];
 		$width = $info['width'];
@@ -422,7 +424,9 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$errs = array_merge( $dataMw->errors, $errs );
 		}
 		$dataMw->errors = $errs;
-		if ( $alt !== null ) {
+		// Looks like $alt is "" for scenarios where the only
+		// content there is rendering-transparent
+		if ( $alt !== null && $alt !== "" ) {
 			DOMCompat::replaceChildren( $span, $span->ownerDocument->createTextNode( $alt ) );
 		}
 	}
@@ -439,16 +443,16 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 	}
 
 	private static function replaceAnchor(
-		Env $env, PegTokenizer $urlParser, Element $container,
+		Env $env, PegTokenizer $urlParser, array $errs,
 		Element $oldAnchor, array $attrs, DataMw $dataMw, bool $isImage,
 		?string $captionText, int $page, string $lang
 	): Element {
 		$doc = $oldAnchor->ownerDocument;
 		$attr = WTSUtils::getAttrFromDataMw( $dataMw, 'link', true );
 
-		if ( $isImage ) {
+		if ( $isImage || $errs ) {
 			$anchor = $doc->createElement( 'a' );
-			$addDescriptionLink = static function ( Title $title ) use ( $env, $anchor, $page, $lang ) {
+			$addDescriptionLink = static function ( Title $title ) use ( $env, $anchor, $page, $lang ): void {
 				$href = $env->makeLink( $title );
 				$qs = [];
 				if ( $page > 0 ) {
@@ -464,7 +468,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				$anchor->setAttribute( 'class', 'mw-file-description' );
 			};
 			if ( $attr !== null ) {
-				$discard = true;
+				$discard = !$errs;
 				$val = $attr->value['txt'];
 				if ( $val === '' ) {
 					// No href if link= was specified
@@ -551,7 +555,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				// during treebuiling.  Try to be a little lenient about that
 				// instead of bailing out
 				$anchor = $anchor->firstChild;
-				$anchorNodeName = DOMCompat::nodeName( $anchor );
+				$anchorNodeName = DOMUtils::nodeName( $anchor );
 				if ( $anchorNodeName !== 'a' ) {
 					$reopenedAFE[] = $anchor;
 				}
@@ -564,13 +568,13 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				continue;
 			}
 			$span = $anchor->firstChild;
-			if ( !( $span instanceof Element && DOMCompat::nodeName( $span ) === 'span' ) ) {
+			if ( !( $span instanceof Element && DOMUtils::nodeName( $span ) === 'span' ) ) {
 				$env->log( 'error', 'Unexpected structure when adding media info.' );
 				continue;
 			}
 			$caption = $anchor->nextSibling;
 			$isInlineMedia = WTUtils::isInlineMedia( $container );
-			if ( !$isInlineMedia && DOMCompat::nodeName( $caption ) !== 'figcaption' ) {
+			if ( !$isInlineMedia && DOMUtils::nodeName( $caption ) !== 'figcaption' ) {
 				$env->log( 'error', 'Unexpected structure when adding media info.' );
 				continue;
 			}
@@ -708,8 +712,10 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 
 			$hasThumb = $hasThumb || DOMUtils::hasTypeOf( $container, 'mw:File/Thumb' );
 
+			$broken = false;
 			$info = $files[$c['infoKey']];
 			if ( !$info ) {
+				$broken = true;
 				$env->getDataAccess()->addTrackingCategory(
 					$env->getPageConfig(),
 					$env->getMetadata(),
@@ -720,8 +726,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				$errs[] = self::makeErr( 'apierror-unknownerror', $info['thumberror'] );
 			}
 
-			// FIXME: Should we fallback to $info if there are errors with $manualinfo?
-			// What does the legacy parser do?
 			if ( $c['manualKey'] !== null ) {
 				$manualinfo = $files[$c['manualKey']];
 				if ( !$manualinfo ) {
@@ -750,8 +754,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 						$caption->firstChild &&
 						DOMUtils::hasTypeOf( $caption->firstChild, 'mw:DOMFragment' )
 					) {
-						$id = DOMDataUtils::getDataParsoid( $caption->firstChild )->html;
-						$caption = $env->getDOMFragment( $id );
+						$caption = DOMDataUtils::getDataParsoid( $caption->firstChild )->html;
 					}
 				}
 				$captionText = trim( WTUtils::textContentFromCaption( $caption ) );
@@ -799,26 +802,30 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			// Add mw:Error to the RDFa type.
 			if ( $errs ) {
 				self::handleErrors( $container, $span, $errs, $dataMw, $alt );
+				$elt = $span;
+			} else {
+				$elt = self::$handler( $env, $span, $attrs, $info, $dataMw, $container, $alt );
+				DOMCompat::getClassList( $elt )->add( 'mw-file-element' );
+			}
+
+			if ( $broken ) {
 				continue;
 			}
 
-			$needsTMHModules = $needsTMHModules || !$isImage;
+			$anchor = self::replaceAnchor(
+				$env, $urlParser, $errs, $anchor, $attrs, $dataMw, $isImage, $captionText,
+				(int)( $attrs['dims']['page'] ?? 0 ),
+				$attrs['dims']['lang'] ?? ''
+			);
+			$anchor->appendChild( $elt );
+
+			$needsTMHModules = $needsTMHModules || ( !$isImage && !$errs );
 
 			$env->getMetadata()->addImage(
 				$attrs['title'],
 				$info['timestamp'] ?? null,
 				$info['sha1'] ?? null,
 			);
-
-			$elt = self::$handler( $env, $span, $attrs, $info, $dataMw, $container, $alt );
-			DOMCompat::getClassList( $elt )->add( 'mw-file-element' );
-
-			$anchor = self::replaceAnchor(
-				$env, $urlParser, $container, $anchor, $attrs, $dataMw, $isImage, $captionText,
-				(int)( $attrs['dims']['page'] ?? 0 ),
-				$attrs['dims']['lang'] ?? ''
-			);
-			$anchor->appendChild( $elt );
 
 			if ( isset( $dataMw->attribs ) && count( $dataMw->attribs ) === 0 ) {
 				unset( $dataMw->attribs );

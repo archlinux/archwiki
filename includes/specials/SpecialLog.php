@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -36,11 +22,13 @@ use MediaWiki\Pager\LogPager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorNormalization;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -62,13 +50,16 @@ class SpecialLog extends SpecialPage {
 
 	private LogFormatterFactory $logFormatterFactory;
 
+	private TempUserConfig $tempUserConfig;
+
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		IConnectionProvider $dbProvider,
 		ActorNormalization $actorNormalization,
 		UserIdentityLookup $userIdentityLookup,
 		UserNameUtils $userNameUtils,
-		LogFormatterFactory $logFormatterFactory
+		LogFormatterFactory $logFormatterFactory,
+		?TempUserConfig $tempUserConfig = null
 	) {
 		parent::__construct( 'Log' );
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -77,8 +68,14 @@ class SpecialLog extends SpecialPage {
 		$this->userIdentityLookup = $userIdentityLookup;
 		$this->userNameUtils = $userNameUtils;
 		$this->logFormatterFactory = $logFormatterFactory;
+		if ( $tempUserConfig instanceof TempUserConfig ) {
+			$this->tempUserConfig = $tempUserConfig;
+		} else {
+			$this->tempUserConfig = MediaWikiServices::getInstance()->getTempUserConfig();
+		}
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -89,7 +86,7 @@ class SpecialLog extends SpecialPage {
 		$opts = new FormOptions;
 		$opts->add( 'type', '' );
 		$opts->add( 'user', '' );
-		$opts->add( 'page', '' );
+		$opts->add( 'page', [] );
 		$opts->add( 'pattern', false );
 		$opts->add( 'year', null, FormOptions::INTNULL );
 		$opts->add( 'month', null, FormOptions::INTNULL );
@@ -113,7 +110,7 @@ class SpecialLog extends SpecialPage {
 		if ( $dateString ) {
 			try {
 				$dateStamp = MWTimestamp::getInstance( $dateString . ' 00:00:00' );
-			} catch ( TimestampException $e ) {
+			} catch ( TimestampException ) {
 				// If users provide an invalid date, silently ignore it
 				// instead of letting an exception bubble up (T201411)
 				$dateStamp = false;
@@ -149,6 +146,44 @@ class SpecialLog extends SpecialPage {
 				$qc = [ '1=0' ];
 			}
 		} else {
+			if ( $this->tempUserConfig->isKnown() ) {
+				// See T398423
+				// Three cases possible:
+				// 1. Special:Log/newusers is loaded as-is. The checkbox will be shown checked by default
+				// but have no value and is expected to exclude temporary accounts
+				// 2. form submitted, exclude temp accounts
+				// 3. form submitted, include temp accounts
+				// Check for cases 1 and 2 and omit temporary accounts in the pager query.
+				$formWasSubmitted = $this->getRequest()->getVal( 'wpFormIdentifier' ) === 'logeventslist';
+				if (
+					(
+						!$formWasSubmitted &&
+						!$this->getRequest()->getVal( 'excludetempacct' )
+					) ||
+					(
+						$formWasSubmitted &&
+						$this->getRequest()->getVal( 'excludetempacct' )
+					)
+				) {
+					$dbr = $this->dbProvider->getReplicaDatabase();
+					if ( $opts->getValue( 'type' ) === '' ) {
+						// Support excluding temporary account creations on Special:Log
+						$qc = [
+							$dbr->expr( 'log_type', '!=', 'newusers' )->orExpr(
+								$dbr->expr( 'log_type', '=', 'newusers' )
+									->andExpr( $this->tempUserConfig
+									->getMatchCondition( $dbr, 'logging_actor.actor_name', IExpression::NOT_LIKE ) )
+							)
+						];
+					} elseif ( $opts->getValue( 'type' ) === 'newusers' ) {
+						$qc = [
+							$this->tempUserConfig
+								->getMatchCondition( $dbr, 'logging_actor.actor_name', IExpression::NOT_LIKE )
+						];
+					}
+				}
+			}
+
 			// Allow extensions to add relations to their search types
 			$this->getHookRunner()->onSpecialLogAddLogSearchRelations(
 				$opts->getValue( 'type' ), $this->getRequest(), $qc );
@@ -159,31 +194,42 @@ class SpecialLog extends SpecialPage {
 		# only the username instead of the full title 'User:username'. This part try
 		# to lookup for a user by that name and eventually fix user input. See T3697.
 		if ( in_array( $opts->getValue( 'type' ), self::getLogTypesOnUser( $this->getHookRunner() ) ) ) {
-			# ok we have a type of log which expect a user title.
-			$page = $opts->getValue( 'page' );
-			$target = Title::newFromText( $page );
-			if ( $target && $target->getNamespace() === NS_MAIN ) {
-				if ( IPUtils::isValidRange( $target->getText() ) ) {
-					$page = IPUtils::sanitizeRange( $target->getText() );
-				}
-				# User forgot to add 'User:', we are adding it for them
-				$target = Title::makeTitleSafe( NS_USER, $page );
-			} elseif ( $target && $target->getNamespace() === NS_USER
-				&& IPUtils::isValidRange( $target->getText() )
-			) {
-				$ipOrRange = IPUtils::sanitizeRange( $target->getText() );
-				if ( $ipOrRange !== $target->getText() ) {
-					$target = Title::makeTitleSafe( NS_USER, $ipOrRange );
+			$pages = [];
+			foreach ( $opts->getValue( 'page' ) as $page ) {
+				$page = $this->normalizeUserPage( $page );
+				if ( $page !== null ) {
+					$pages[] = $page->getPrefixedText();
 				}
 			}
-			if ( $target !== null ) {
-				$page = $target->getPrefixedText();
-				$opts->setValue( 'page', $page );
-				$this->getRequest()->setVal( 'page', $page );
-			}
+			$opts->setValue( 'page', $pages );
 		}
 
 		$this->show( $opts, $qc );
+	}
+
+	/**
+	 * Add the namespace prefix to a user page and validate it
+	 *
+	 * @param string $page
+	 * @return Title|null
+	 */
+	private function normalizeUserPage( $page ) {
+		$target = Title::newFromText( $page );
+		if ( $target && $target->getNamespace() === NS_MAIN ) {
+			if ( IPUtils::isValidRange( $target->getText() ) ) {
+				$page = IPUtils::sanitizeRange( $target->getText() );
+			}
+			# User forgot to add 'User:', we are adding it for them
+			$target = Title::makeTitleSafe( NS_USER, $page );
+		} elseif ( $target && $target->getNamespace() === NS_USER
+			&& IPUtils::isValidRange( $target->getText() )
+		) {
+			$ipOrRange = IPUtils::sanitizeRange( $target->getText() );
+			if ( $ipOrRange !== $target->getText() ) {
+				$target = Title::makeTitleSafe( NS_USER, $ipOrRange );
+			}
+		}
+		return $target;
 	}
 
 	/**
@@ -235,19 +281,55 @@ class SpecialLog extends SpecialPage {
 	 * @param string $par
 	 */
 	private function parseParams( string $par ) {
-		# Get parameters
-		$parms = explode( '/', $par, 2 );
-		$symsForAll = [ '*', 'all' ];
-		if ( $parms[0] !== '' &&
-			( in_array( $parms[0], LogPage::validTypes() ) || in_array( $parms[0], $symsForAll ) )
-		) {
-			$this->getRequest()->setVal( 'type', $parms[0] );
-			if ( count( $parms ) === 2 ) {
-				$this->getRequest()->setVal( 'user', $parms[1] );
+		$params = explode( '/', $par, 2 );
+		$logType = $this->resolveLogType( $params );
+
+		if ( $logType ) {
+			$this->getRequest()->setVal( 'type', $logType );
+			if ( count( $params ) === 2 ) {
+				$this->getRequest()->setVal( 'user', $params[1] );
 			}
 		} elseif ( $par !== '' ) {
 			$this->getRequest()->setVal( 'user', $par );
 		}
+	}
+
+	/**
+	 * Determines the requested log type based on the parameters from the
+	 * requested URL, which are obtained by splitting the path by the slash
+	 * character.
+	 *
+	 * This method returns the requested type, if one is provided and is '*',
+	 * 'all', or is included in the values from LogPage::validTypes(); or an
+	 * empty string otherwise.
+	 *
+	 * Extensions may modify the requested type by implementing the
+	 * SpecialLogResolveLogType hook, which may be used to change the log type
+	 * obtained from the URL and other request parameters.
+	 *
+	 * @param array $params Values resulting from splitting the URL by '/'.
+	 * @return string The requested type if valid, or an empty string otherwise.
+	 */
+	private function resolveLogType( array $params ): string {
+		// Mechanism for changing the parameters of Special:Log
+		// from extensions (T381875)
+		$logType = $params[0] ?? null;
+
+		$this->getHookRunner()->onSpecialLogResolveLogType(
+			$params,
+			$logType
+		);
+
+		if ( $logType !== '' ) {
+			$symsForAll = [ '*', 'all' ];
+			$allowedTypes = array_merge( LogPage::validTypes(), $symsForAll );
+
+			if ( in_array( $logType, $allowedTypes ) ) {
+				return $logType;
+			}
+		}
+
+		return '';
 	}
 
 	private function show( FormOptions $opts, array $extraConds ) {
@@ -372,6 +454,7 @@ class SpecialLog extends SpecialPage {
 		return $s;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'changes';
 	}

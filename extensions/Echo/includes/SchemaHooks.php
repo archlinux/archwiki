@@ -82,7 +82,7 @@ class SchemaHooks implements LoadExtensionSchemaUpdatesHook {
 		// Following tables should only be created if both cluster and database are false.
 		// Otherwise, they are not created in the place they are accesses, because
 		// DatabaseUpdater does not support other databases other than the main wiki schema.
-		if ( $wgEchoSharedTrackingCluster === false && $wgEchoSharedTrackingDB === false ) {
+		if ( !$wgEchoSharedTrackingCluster && !$wgEchoSharedTrackingDB ) {
 			$updater->addExtensionTable( 'echo_unread_wikis', "$dir/$dbType/tables-sharedtracking-generated.sql" );
 		}
 

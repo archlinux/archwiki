@@ -128,7 +128,7 @@ class Util {
 			$urangeHack = max( $urangeHack, $prev->urangeHack() );
 
 			if ( --$urangeHack <= 0 && Token::separate( $prev, $token ) ) {
-				// Per https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#serialization
+				// Per https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#serialization
 				$ret .= '/**/';
 			}
 			$ret .= (string)$token;

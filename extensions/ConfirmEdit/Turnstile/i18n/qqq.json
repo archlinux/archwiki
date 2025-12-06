@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"turnstile-name": "{{notranslate}}",
 	"turnstile-desc": "{{desc}}",
 	"turnstile-edit": "Message above the CAPTCHA for edit action.\n{{related|ConfirmEdit-edit}}",
 	"turnstile-addurl": "Message above the CAPTCHA for addurl (user added new external links to the page) action.\n{{related|ConfirmEdit-addurl}}",

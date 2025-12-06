@@ -14,8 +14,8 @@ class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 	private string $type;
 	private string $name;
 	private string $id;
-	private ?DatabaseThreadItem $parent;
-	/** @var DatabaseThreadItem[] */
+	private ?self $parent;
+	/** @var self[] */
 	private array $replies = [];
 	/** @var string|bool */
 	private $transcludedFrom;
@@ -27,13 +27,13 @@ class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 	 * @param string $type
 	 * @param string $name
 	 * @param string $id
-	 * @param DatabaseThreadItem|null $parent
+	 * @param self|null $parent
 	 * @param bool|string $transcludedFrom
 	 * @param int $level
 	 */
 	public function __construct(
 		ProperPageIdentity $page, RevisionRecord $rev,
-		string $type, string $name, string $id, ?DatabaseThreadItem $parent, $transcludedFrom, int $level
+		string $type, string $name, string $id, ?self $parent, $transcludedFrom, int $level
 	) {
 		$this->page = $page;
 		$this->rev = $rev;
@@ -61,9 +61,9 @@ class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 	}
 
 	/**
-	 * @param DatabaseThreadItem $reply Reply comment
+	 * @param self $reply Reply comment
 	 */
-	public function addReply( DatabaseThreadItem $reply ): void {
+	public function addReply( self $reply ): void {
 		$this->replies[] = $reply;
 	}
 
@@ -83,7 +83,7 @@ class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 
 	/**
 	 * @inheritDoc
-	 * @return DatabaseThreadItem|null
+	 * @return self|null
 	 */
 	public function getParent(): ?ThreadItem {
 		return $this->parent;
@@ -91,7 +91,7 @@ class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 
 	/**
 	 * @inheritDoc
-	 * @return DatabaseThreadItem[]
+	 * @return self[]
 	 */
 	public function getReplies(): array {
 		return $this->replies;

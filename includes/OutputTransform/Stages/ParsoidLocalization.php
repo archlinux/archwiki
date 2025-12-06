@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\OutputTransform\Stages;
 
@@ -40,33 +41,34 @@ class ParsoidLocalization extends ContentDOMTransformStage {
 	}
 
 	public function transformDOM(
-		Document $doc, ParserOutput $po, ?ParserOptions $popts, array &$options
-	): Document {
+		DocumentFragment $df, ParserOutput $po, ?ParserOptions $popts, array &$options
+	): DocumentFragment {
 		$poLang = $po->getLanguage();
 		if ( $poLang == null ) {
 			$this->logger->warning( 'Localization pass started on ParserOutput without defined language',
 				[
 					'pass' => 'Localization',
 				] );
-			return $doc;
+			return $df;
 		}
 
 		$pageReference = $this->getPageReference( $po );
 
 		// TODO this traversal will need to also traverse rich attributes
 		$traverser = new DOMTraverser( false, false );
-		$traverser->addHandler( null, function ( $node ) use ( $doc, $poLang, $pageReference ) {
+		$traverser->addHandler( null, function ( $node ) use ( $poLang, $pageReference ) {
 			if ( $node instanceof Element ) {
-				return $this->localizeElement( $node, $poLang, $doc, $pageReference );
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable ownerDocument is not null
+				return $this->localizeElement( $node, $poLang, $node->ownerDocument, $pageReference );
 			}
 			return true;
 		} );
-		$traverser->traverse( null, $doc );
-		return $doc;
+		$traverser->traverse( null, $df );
+		return $df;
 	}
 
 	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
-		return ( $options['isParsoidContent'] ?? false );
+		return $po->getContentHolder()->isParsoidContent();
 	}
 
 	/**
@@ -97,13 +99,15 @@ class ParsoidLocalization extends ContentDOMTransformStage {
 		}
 
 		if (
-			( $node->tagName === 'span' || $node->tagName === 'div' )
+			( DOMUtils::nodeName( $node ) === 'span' || DOMUtils::nodeName( $node ) === 'div' )
 			&& DOMUtils::hasTypeOf( $node, 'mw:I18n' )
 		) {
 			$i18n = DOMDataUtils::getDataNodeI18n( $node );
 			if ( $i18n !== null ) {
-				$frag = $this->localizeI18n( $i18n, $lang, $doc, $node->tagName === 'span', $pageRef );
-				$node->appendChild( $frag );
+				$frag = $this->localizeI18n( $i18n, $lang, $doc, DOMUtils::nodeName( $node ) === 'span', $pageRef );
+				if ( $frag->hasChildNodes() ) {
+					$node->appendChild( $frag );
+				}
 			} else {
 				$this->logger->warning( 'element with mw:I18n typeof does not contain i18n data', [
 					'pass' => 'Localization',
@@ -128,7 +132,11 @@ class ParsoidLocalization extends ContentDOMTransformStage {
 		} else {
 			$msg = $msg->inLanguage( new Bcp47CodeValue( $i18n->lang ) );
 		}
-		$txt = $inline ? $msg->parse() : $msg->parseAsBlock();
+		if ( $msg->isDisabled() ) {
+			$txt = '';
+		} else {
+			$txt = $inline ? $msg->parse() : $msg->parseAsBlock();
+		}
 
 		return ContentUtils::createAndLoadDocumentFragment( $doc, $txt );
 	}
@@ -148,7 +156,7 @@ class ParsoidLocalization extends ContentDOMTransformStage {
 		$pageRef = $this->titleFactory->newFromDBkey( $titleDbKey );
 		if ( !$pageRef ) {
 			$this->logger->error( __METHOD__ . ": Bad title information in ParserOutput" );
-			$pageRef = new PageReferenceValue( NS_SPECIAL, 'BadTitle/Localization', false );
+			$pageRef = PageReferenceValue::localReference( NS_SPECIAL, 'BadTitle/Localization' );
 		}
 		return $pageRef;
 	}

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,7 +24,7 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 	private $siteLookup;
 
 	/**
-	 * @var Interwiki[]|null associative array mapping interwiki prefixes to Interwiki objects
+	 * @var array<string,Interwiki>|null associative array mapping interwiki prefixes to Interwiki objects
 	 */
 	private $interwikiMap;
 
@@ -119,7 +105,7 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 		// Reload the interwiki
 		$site = $this->siteLookup->getSites()->getSite( $globalId );
 		$interwikis = $this->getSiteInterwikis( $site );
-		$this->interwikiMap = array_merge( $this->interwikiMap, [ $interwikis[$prefix] ] );
+		$this->interwikiMap[$prefix] = $interwikis[$prefix];
 	}
 
 	/**
@@ -138,9 +124,9 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 	/**
 	 * Get interwikiMap attribute, load if needed.
 	 *
-	 * @return Interwiki[]
+	 * @return array<string,Interwiki>
 	 */
-	private function getInterwikiMap() {
+	private function getInterwikiMap(): array {
 		if ( $this->interwikiMap === null ) {
 			$this->loadInterwikiMap();
 		}
@@ -151,9 +137,9 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 	 * Load interwikis for the given site
 	 *
 	 * @param Site $site
-	 * @return Interwiki[]
+	 * @return array<string,Interwiki>
 	 */
-	private function getSiteInterwikis( Site $site ) {
+	private function getSiteInterwikis( Site $site ): array {
 		$url = $site->getPageUrl();
 		if ( $site instanceof MediaWikiSite ) {
 			$path = $site->getFileUrl( 'api.php' );

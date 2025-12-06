@@ -5,6 +5,8 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmsub;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmunder;
@@ -22,16 +24,10 @@ class DQ extends TexNode {
 		$this->down = $down;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getBase(): TexNode {
 		return $this->base;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getDown(): TexNode {
 		return $this->down;
 	}
@@ -42,38 +38,36 @@ class DQ extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function renderMML( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ) {
 		if ( array_key_exists( "limits", $state ) ) {
 			// A specific DQ case with preceding limits, just invoke the limits parsing manually.
 			return BaseParsing::limits( $this, $arguments, $state, "" );
 		}
 
-		if ( !$this->isEmpty() ) {
-			if ( $this->getBase()->containsFunc( "\underbrace" ) ) {
-				$outer = new MMLmunder();
-			} else {
-				$outer = new MMLmsub();
-				if ( ( $state['styleargs']['displaystle'] ?? 'true' ) === 'true' ) {
-					$tu = TexUtil::getInstance();
-					if ( $tu->operator( trim( $this->base->render() ) ) ) {
-						$outer = new MMLmunder();
-					}
+		if ( $this->isEmpty() ) {
+			return null;
+		}
+		if ( $this->getBase()->containsFunc( "\underbrace" ) ) {
+			$outer = new MMLmunder();
+		} else {
+			$outer = new MMLmsub();
+			if ( ( $state['styleargs']['displaystle'] ?? 'true' ) === 'true' ) {
+				$tu = TexUtil::getInstance();
+				if ( $tu->operator( trim( $this->base->render() ) ) ) {
+					$outer = new MMLmunder();
 				}
 			}
-			// Otherwise use default fallback
-			$mmlMrow = new MMLmrow();
-			$inner_state = [ 'styleargs' => $state['styleargs'] ?? [] ];
-			$baseRendering = $this->base->renderMML( $arguments, $inner_state );
-			// In cases with empty curly preceding like: "{}_pF_q" or _{1}
-			if ( trim( $baseRendering ) === "" ) {
-				$baseRendering = ( new MMLmrow() )->getEmpty();
-			}
-			return $outer->encapsulateRaw(
-				$baseRendering .
-				$mmlMrow->encapsulateRaw( $this->down->renderMML( $arguments, $state ) ) );
 		}
-
-		return "";
+		// Otherwise use default fallback
+		$inner_state = [ 'styleargs' => $state['styleargs'] ?? [] ];
+		$baseRendering = $this->base->toMMLTree( $arguments, $inner_state );
+		// In cases with empty curly preceding like: "{}_pF_q" or _{1}
+		if ( $baseRendering == null || $baseRendering === " " ||
+			( $baseRendering instanceof MMLarray && !$baseRendering->hasChildren() ) ) {
+			$baseRendering = new MMLmrow();
+		}
+		return $outer::newSubtree( $baseRendering, new MMLmrow( TexClass::ORD, [], $this->down->toMMLTree(
+			$arguments, $state ) ) );
 	}
 
 	/** @inheritDoc */

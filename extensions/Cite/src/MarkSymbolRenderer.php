@@ -14,28 +14,43 @@ class MarkSymbolRenderer {
 	/** @var array<string,string[]> In-memory cache for the cite_link_label_group-… link label lists */
 	private array $legacyLinkLabels = [];
 
-	private ReferenceMessageLocalizer $messageLocalizer;
-
 	public function __construct(
-		ReferenceMessageLocalizer $messageLocalizer
-	) {
 		// TODO: deprecate the i18n mechanism.
-		$this->messageLocalizer = $messageLocalizer;
+		private readonly ReferenceMessageLocalizer $messageLocalizer,
+	) {
 	}
 
-	public function makeLabel( string $group, int $number, ?int $extendsIndex = null ): string {
+	/**
+	 * Render the footnote marker symbols
+	 *
+	 * These are usually a number like "1" or "2.1", unless there is a custom
+	 * group with overridden symbols eg "å".
+	 *
+	 * Uncustomized groups will include the group name to distinguish between eg.
+	 * "1" and "g 1".
+	 */
+	public function renderFootnoteMarkLabel( string $group, int $number, ?int $extendsIndex = null ): string {
+		return $this->makeLabel( $group, $number, $extendsIndex, false );
+	}
+
+	/**
+	 * Render the footnote number with no group name
+	 *
+	 * Uncustomized groups will not include the group name, eg. "1" for group "g".
+	 */
+	public function renderFootnoteNumber( string $group, int $number, ?int $extendsIndex = null ): string {
+		return $this->makeLabel( $group, $number, $extendsIndex, true );
+	}
+
+	private function makeLabel( string $group, int $number, ?int $extendsIndex, bool $suppressGroupName ): string {
 		$label = $this->fetchLegacyCustomLinkLabel( $group, $number ) ??
-		$this->makeDefaultLabel( $group, $number );
+			( $suppressGroupName || $group === Cite::DEFAULT_GROUP ? '' : "$group " ) .
+				$this->messageLocalizer->localizeDigits( (string)$number );
 		if ( $extendsIndex !== null ) {
 			// TODO: design better behavior, especially when using custom group markers.
 			$label .= '.' . $this->messageLocalizer->localizeDigits( (string)$extendsIndex );
 		}
 		return $label;
-	}
-
-	private function makeDefaultLabel( string $group, int $number ): string {
-		$label = $this->messageLocalizer->localizeDigits( (string)$number );
-		return $group === Cite::DEFAULT_GROUP ? $label : "$group $label";
 	}
 
 	/**

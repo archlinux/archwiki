@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -170,11 +156,7 @@ abstract class BagOStuff implements
 	public const WRITE_CACHE_ONLY = 8;
 	/** Allow partitioning of the value if it is a large string */
 	public const WRITE_ALLOW_SEGMENTS = 16;
-	/**
-	 * Delete all the segments if the value is partitioned
-	 * @deprecated since 1.43 Use WRITE_ALLOW_SEGMENTS instead.
-	 */
-	public const WRITE_PRUNE_SEGMENTS = self::WRITE_ALLOW_SEGMENTS;
+
 	/**
 	 * If supported, do not block on write operation completion; instead, treat writes as
 	 * succesful based on whether they could be buffered. When using this flag with methods
@@ -578,10 +560,8 @@ abstract class BagOStuff implements
 	 *
 	 * @see BagOStuff::makeKeyInternal
 	 * @since 1.27
-	 *
 	 * @param string $keygroup Key group component, should be under 48 characters.
 	 * @param string|int ...$components Additional, ordered, key components for entity IDs
-	 *
 	 * @return string Colon-separated, keyspace-prepended, ordered list of encoded components
 	 */
 	public function makeGlobalKey( $keygroup, ...$components ) {
@@ -609,10 +589,8 @@ abstract class BagOStuff implements
 	 *
 	 * @see BagOStuff::makeKeyInternal
 	 * @since 1.27
-	 *
 	 * @param string $keygroup Key group component, should be under 48 characters.
 	 * @param string|int ...$components Additional, ordered, key components for entity IDs
-	 *
 	 * @return string Colon-separated, keyspace-prepended, ordered list of encoded components
 	 */
 	public function makeKey( $keygroup, ...$components ) {
@@ -623,7 +601,6 @@ abstract class BagOStuff implements
 	 * Check whether a cache key is in the global keyspace
 	 *
 	 * @param string $key
-	 *
 	 * @return bool
 	 * @since 1.35
 	 */
@@ -724,6 +701,38 @@ abstract class BagOStuff implements
 		foreach ( $components as $component ) {
 			// Escape delimiter (":") and escape ("%") characters
 			$key .= ':' . strtr( $component ?? '', [ '%' => '%25', ':' => '%3A' ] );
+		}
+
+		return $key;
+	}
+
+	/**
+	 * Re-format a cache key that is too long.
+	 *
+	 * @since 1.45
+	 * @see BagOStuff::makeKeyInternal
+	 * @param string $key
+	 * @param int $maxLength
+	 * @return string
+	 */
+	protected function makeFallbackKey( string $key, int $maxLength ) {
+		if ( strlen( $key ) > $maxLength ) {
+			// Components are "<0=keyspace>:<1=keygroup>:<others...>"
+			$components = str_replace( [ '%3A', '%25' ], [ ':', '%' ], explode( ':', $key ) );
+			if ( count( $components ) < 2 ) {
+				throw new InvalidArgumentException( 'Key lacks keyspace' );
+			}
+
+			// Prefer to preserve the keygroup for statistics.
+			// Try "mywiki:mykeygroup:#<64-char hash>"
+			// This gives 138 chars (205-64-3) for the keyspace and keygroup.
+			$hash = hash( 'sha256', $key );
+			$key = $components[0] . ':' . $components[1] . ':#' . $hash;
+			if ( strlen( $key ) > $maxLength ) {
+				// Try "mywiki:BagOStuff-long-key:##<64-char hash>"
+				// Might be legacy code that passes a long string as the key without a keygroup.
+				$key = $components[0] . ':BagOStuff-long-key:##' . $hash;
+			}
 		}
 
 		return $key;

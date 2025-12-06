@@ -23,6 +23,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
 use UnexpectedValueException;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -280,7 +281,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			'afl_id',
 			'afl_user',
 			'afl_user_text',
-			'afl_ip',
+			'afl_ip_hex',
 			'afl_action',
 			'afl_actions',
 			'afl_var_dump',
@@ -311,6 +312,8 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 				} catch ( UnsetVariableException $_ ) {
 					$accountName = null;
 				}
+
+				$formattedIP = $row->afl_ip_hex ? IPUtils::formatHex( $row->afl_ip_hex ) : '';
 				$results[] = [
 					'id' => $row->afl_id,
 					'actions' => $currentReversibleActions,
@@ -319,7 +322,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 						$row->afl_action,
 						new TitleValue( (int)$row->afl_namespace, $row->afl_title ),
 						$this->userFactory->newFromAnyId( (int)$row->afl_user, $row->afl_user_text ),
-						$row->afl_ip,
+						$formattedIP,
 						$accountName
 					),
 					'timestamp' => $row->afl_timestamp

@@ -107,3 +107,16 @@ mrow.menclose-downdiagonalstrike {
 	background-color: currentcolor;
 	clip-path: polygon( 0 0, 0.05em 0, 100% 100%, calc( 100% - 0.05em ) 100% );
 }
+
+/* Polyfill for columnalign elements attribute menclose https://github.com/w3c/mathml-core/issues/268 */
+mtd.mwe-math-columnalign-l {
+	text-align: left;
+	text-align: -webkit-left;
+	padding-left: 0;
+}
+
+mtd.mwe-math-columnalign-r {
+	text-align: right;
+	text-align: -webkit-right;
+	padding-right: 0;
+}

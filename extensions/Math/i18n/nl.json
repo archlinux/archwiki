@@ -82,6 +82,7 @@
 	"math_invalidresponse": "$1: Ongeldig antwoord (\"$3\") van server \"$2\":",
 	"math_invalidxml": "MathML of SVG is ongeldige XML.",
 	"math_mathoid_error": "Conversiefout. De server (\"$1\") heeft gemeld: \"$2\"",
+	"math_other_error": "Andere fout: $1",
 	"math-status-introduction": "Deze pagina geeft informatie weer over de ingeschakelde weergave{{PLURAL:$1|modus|modi}} voor wiskundige formules.\n\nDe volgende weergave{{PLURAL:$1|modus is|modi zijn}} ingeschakeld:",
 	"math_syntax_error": "syntactische fout",
 	"math_timeout": "Time-out $1-verwerking op \"$2\".",

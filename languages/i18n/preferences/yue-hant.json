@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"H78c67c",
+			"JeffreyKim",
 			"Juwan",
 			"Ktchankt",
 			"Winston Sung",
 			"Yueman",
-			"Z423x5c6",
-			"JeffreyKim"
+			"Z423x5c6"
 		]
 	},
 	"preferences": "喜好設定",
@@ -200,6 +200,8 @@
 	"rcfilters-watchlist-preference-label": "用非 JavaScript 嘅介面",
 	"rcfilters-watchlist-preference-help": "載入冇篩選搜尋或標示功能嘅[[{{#special:Watchlist}}|監視清單]]。",
 	"prefs-changeswatchlist": "顯示變更",
+	"tog-watchstar-expiry": "手動增加版面到監視清單嘅預設監視時長：",
+	"tog-watch-expiry": "預設監視時長：",
 	"tog-watchlisthideminor": "響監視清單度隱藏細修改",
 	"tog-watchlisthidebots": "響監視清單度隱藏機械人嘅編輯",
 	"tog-watchlisthideown": "響監視清單度隱藏我嘅修改",

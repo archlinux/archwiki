@@ -64,15 +64,11 @@ class FeatureManager {
 	 */
 	private $requirements = [];
 
-	private UserOptionsLookup $userOptionsLookup;
-	private IContextSource $context;
-
 	public function __construct(
-		UserOptionsLookup $userOptionsLookup,
-		IContextSource $context
+		private readonly ConfigHelper $configHelper,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly IContextSource $context,
 	) {
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->context = $context;
 	}
 
 	/**
@@ -183,7 +179,7 @@ class FeatureManager {
 				// This feature has 3 possible states: 0, 1, 2 and -excluded.
 				// It persists for all users.
 				case CONSTANTS::FEATURE_FONT_SIZE:
-					if ( ConfigHelper::shouldDisable(
+					if ( $this->configHelper->shouldDisable(
 						$config->get( 'VectorFontSizeConfigurableOptions' ), $request, $title
 					) ) {
 						return $prefix . 'clientpref--excluded';
@@ -195,7 +191,11 @@ class FeatureManager {
 				// It persists for all users.
 				case CONSTANTS::PREF_NIGHT_MODE:
 					// if night mode is disabled for the page, add the exclude class instead and return early
-					if ( ConfigHelper::shouldDisable( $config->get( 'VectorNightModeOptions' ), $request, $title ) ) {
+					if ( $this->configHelper->shouldDisable(
+						$config->get( 'VectorNightModeOptions' ),
+						$request,
+						$title
+					) ) {
 						// The additional "-" prefix, makes this an invalid client preference for anonymous users.
 						return 'skin-theme-clientpref--excluded';
 					}

@@ -3,21 +3,7 @@
  * Rebuild recent changes from scratch.  This takes several hours,
  * depending on the database size and server configuration.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  * @todo Document
@@ -169,7 +155,6 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_title' => $row->page_title,
 					'rc_minor' => $row->rev_minor_edit,
 					'rc_bot' => 0,
-					'rc_new' => $row->page_is_new,
 					'rc_cur_id' => $row->page_id,
 					'rc_this_oldid' => $row->rev_id,
 					'rc_last_oldid' => 0, // is this ok?
@@ -194,7 +179,7 @@ class RebuildRecentchanges extends Maintenance {
 
 	/**
 	 * Rebuild pass 2: Enhance entries for page revisions with references to the previous revision
-	 * (rc_last_oldid, rc_new etc.) and size differences (rc_old_len, rc_new_len).
+	 * (rc_last_oldid etc.) and size differences (rc_old_len, rc_new_len).
 	 */
 	private function rebuildRecentChangesTablePass2() {
 		$dbw = $this->getPrimaryDB();
@@ -254,7 +239,6 @@ class RebuildRecentchanges extends Maintenance {
 					->update( 'recentchanges' )
 					->set( [
 						'rc_last_oldid' => $lastOldId,
-						'rc_new' => $new,
 						'rc_type' => $new ? RC_NEW : RC_EDIT,
 						'rc_source' => $new === 1 ? RecentChange::SRC_NEW : RecentChange::SRC_EDIT,
 						'rc_old_len' => $lastSize,
@@ -340,7 +324,6 @@ class RebuildRecentchanges extends Maintenance {
 					'rc_minor' => 0,
 					'rc_bot' => 0,
 					'rc_patrolled' => $row->log_type == 'upload' ? 0 : 2,
-					'rc_new' => 0,
 					'rc_this_oldid' => 0,
 					'rc_last_oldid' => 0,
 					'rc_type' => RC_LOG,

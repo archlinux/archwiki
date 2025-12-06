@@ -37,7 +37,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 
 	public static function provideMergeAttribs() {
 		yield [ new TitleValue( NS_SPECIAL, 'BlankPage' ) ];
-		yield [ new PageReferenceValue( NS_SPECIAL, 'BlankPage', PageReference::LOCAL ) ];
+		yield [ PageReferenceValue::localReference( NS_SPECIAL, 'BlankPage' ) ];
 	}
 
 	/**
@@ -64,7 +64,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 
 	public static function provideMakeKnownLink() {
 		yield [ new TitleValue( NS_MAIN, 'Foobar' ) ];
-		yield [ new PageReferenceValue( NS_MAIN, 'Foobar', PageReference::LOCAL ) ];
+		yield [ PageReferenceValue::localReference( NS_MAIN, 'Foobar' ) ];
 	}
 
 	/**
@@ -104,8 +104,8 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 			new TitleValue( NS_SPECIAL, 'Foobar' )
 		];
 		yield [
-			new PageReferenceValue( NS_MAIN, 'Foobar', PageReference::LOCAL ),
-			new PageReferenceValue( NS_SPECIAL, 'Foobar', PageReference::LOCAL )
+			PageReferenceValue::localReference( NS_MAIN, 'Foobar' ),
+			PageReferenceValue::localReference( NS_SPECIAL, 'Foobar' )
 		];
 	}
 
@@ -153,8 +153,8 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 			new TitleValue( NS_SPECIAL, 'BlankPage' )
 		];
 		yield [
-			new PageReferenceValue( NS_SPECIAL, 'Foobar', PageReference::LOCAL ),
-			new PageReferenceValue( NS_SPECIAL, 'BlankPage', PageReference::LOCAL )
+			PageReferenceValue::localReference( NS_SPECIAL, 'Foobar' ),
+			PageReferenceValue::localReference( NS_SPECIAL, 'BlankPage' )
 		];
 	}
 
@@ -199,14 +199,14 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 				[
 					'title' => 'Main_Page',
 				],
-				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a class="new" title="Main Page (page does not exist)">Main Page</a></li></ul></div><link rel="mw:PageProp/redirect">'
+				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/wiki/Main_Page" class="new" title="Main Page (page does not exist)">Main Page</a></li></ul></div><link rel="mw:PageProp/redirect" href="/wiki/Main_Page">'
 			],
 			[
 				[
 					'title' => 'Redirect',
 					'redirect' => true,
 				],
-				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a class="new" title="Redirect (page does not exist)">Redirect</a></li></ul></div><link rel="mw:PageProp/redirect">'
+				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/wiki/Redirect" class="new" title="Redirect (page does not exist)">Redirect</a></li></ul></div><link rel="mw:PageProp/redirect" href="/wiki/Redirect">'
 			],
 			// Test 'addLinkTag' => false
 			[
@@ -215,7 +215,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 					'redirect' => true,
 					'addLinkTag' => false,
 				],
-				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a class="new" title="Redirect (page does not exist)">Redirect</a></li></ul></div>'
+				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/wiki/Redirect" class="new" title="Redirect (page does not exist)">Redirect</a></li></ul></div>'
 			],
 			// Test "forceKnown"; change namespace to NS_SPECIAL so we don't
 			// have to mock the LinkCache.
@@ -225,7 +225,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 					'namespace' => NS_SPECIAL,
 					'forceKnown' => true,
 				],
-				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a title="Special:Main Page">Special:Main Page</a></li></ul></div><link rel="mw:PageProp/redirect">',
+				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/wiki/Special:Main_Page" title="Special:Main Page">Special:Main Page</a></li></ul></div><link rel="mw:PageProp/redirect" href="/wiki/Special:Main_Page">',
 			],
 			[
 				[
@@ -234,7 +234,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 					'redirect' => true,
 					'forceKnown' => true,
 				],
-				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/w/index.php?title=Special:Redirect&amp;redirect=no" title="Special:Redirect">Special:Redirect</a></li></ul></div><link rel="mw:PageProp/redirect">',
+				'<div class="redirectMsg"><p>Redirect to:</p><ul class="redirectText"><li><a href="/w/index.php?title=Special:Redirect&amp;redirect=no" title="Special:Redirect">Special:Redirect</a></li></ul></div><link rel="mw:PageProp/redirect" href="/wiki/Special:Redirect">',
 			],
 		];
 	}
@@ -263,9 +263,9 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 			new TitleValue( NS_USER, 'Someuser' )
 		];
 		yield [
-			new PageReferenceValue( NS_MAIN, 'FooBar', PageReference::LOCAL ),
-			new PageReferenceValue( NS_MAIN, 'Redirect', PageReference::LOCAL ),
-			new PageReferenceValue( NS_USER, 'Someuser', PageReference::LOCAL )
+			PageReferenceValue::localReference( NS_MAIN, 'FooBar' ),
+			PageReferenceValue::localReference( NS_MAIN, 'Redirect' ),
+			PageReferenceValue::localReference( NS_USER, 'Someuser' )
 		];
 	}
 

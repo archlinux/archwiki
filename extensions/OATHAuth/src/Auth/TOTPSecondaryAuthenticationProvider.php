@@ -37,12 +37,10 @@ use MediaWiki\User\User;
  * @see https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
  */
 class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationProvider {
-	private TOTP $module;
-	private OATHUserRepository $userRepository;
-
-	public function __construct( TOTP $module, OATHUserRepository $userRepository ) {
-		$this->module = $module;
-		$this->userRepository = $userRepository;
+	public function __construct(
+		private readonly TOTP $module,
+		private readonly OATHUserRepository $userRepository,
+	) {
 	}
 
 	/**
@@ -78,7 +76,6 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 	}
 
 	/**
-	 * Verify the second factor.
 	 * @inheritDoc
 	 */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {

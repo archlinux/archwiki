@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace MediaWiki\ResourceLoader;
@@ -61,10 +47,6 @@ class SkinModule extends LessVarFileModule {
 	 *
 	 * "content-media":
 	 *     Styles for thumbnails and floated elements.
-	 *     Will add styles for the new media structure on wikis where $wgParserEnableLegacyMediaDOM is disabled,
-	 *     or $wgUseContentMediaStyles is enabled.
-	 *     See https://www.mediawiki.org/wiki/Parsing/Media_structure
-	 *
 	 *     Compatibility aliases: "content", "content-thumbnails".
 	 *
 	 * "content-media-dark":
@@ -433,26 +415,21 @@ class SkinModule extends LessVarFileModule {
 							$defaultRemoteBasePath
 						);
 					}
-					if (
-						!$this->getConfig()->get( MainConfigNames::ParserEnableLegacyMediaDOM ) ||
-						$this->getConfig()->get( MainConfigNames::UseContentMediaStyles )
-					) {
-						$featureFilePaths['all'][] = new FilePath(
-							'resources/src/mediawiki.skinning/content.media-common.less',
-							$defaultLocalBasePath,
-							$defaultRemoteBasePath
-						);
-						$featureFilePaths['screen'][] = new FilePath(
-							'resources/src/mediawiki.skinning/content.media-screen.less',
-							$defaultLocalBasePath,
-							$defaultRemoteBasePath
-						);
-						$featureFilePaths['print'][] = new FilePath(
-							'resources/src/mediawiki.skinning/content.media-print.less',
-							$defaultLocalBasePath,
-							$defaultRemoteBasePath
-						);
-					}
+					$featureFilePaths['all'][] = new FilePath(
+						'resources/src/mediawiki.skinning/content.media-common.less',
+						$defaultLocalBasePath,
+						$defaultRemoteBasePath
+					);
+					$featureFilePaths['screen'][] = new FilePath(
+						'resources/src/mediawiki.skinning/content.media-screen.less',
+						$defaultLocalBasePath,
+						$defaultRemoteBasePath
+					);
+					$featureFilePaths['print'][] = new FilePath(
+						'resources/src/mediawiki.skinning/content.media-print.less',
+						$defaultLocalBasePath,
+						$defaultRemoteBasePath
+					);
 				}
 			}
 		}
@@ -777,6 +754,7 @@ class SkinModule extends LessVarFileModule {
 		return $lessVars;
 	}
 
+	/** @inheritDoc */
 	public function getDefinitionSummary( Context $context ) {
 		$summary = parent::getDefinitionSummary( $context );
 		$summary[] = [

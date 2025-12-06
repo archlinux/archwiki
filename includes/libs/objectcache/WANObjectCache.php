@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -188,8 +174,6 @@ class WANObjectCache implements
 	protected $useInterimHoldOffCaching = true;
 	/** @var float Unix timestamp of the oldest possible valid values */
 	protected $epoch;
-	/** @var string Stable secret used for hashing long strings into key components */
-	protected $secret;
 	/** @var int Scheme to use for key coalescing (Hash Tags or Hash Stops) */
 	protected $coalesceScheme;
 
@@ -289,7 +273,7 @@ class WANObjectCache implements
 	public const KEY_TTL = 'ttl';
 	/** Remaining TTL attribute for a key; keep value for b/c (< 1.36) */
 	public const KEY_CUR_TTL = 'curTTL';
-	/** Tomstone timestamp attribute for a key; keep value for b/c (< 1.36) */
+	/** Tombstone timestamp attribute for a key; keep value for b/c (< 1.36) */
 	public const KEY_TOMB_AS_OF = 'tombAsOf';
 	/** Highest "check" key timestamp for a key; keep value for b/c (< 1.36) */
 	public const KEY_CHECK_AS_OF = 'lastCKPurge';
@@ -302,7 +286,7 @@ class WANObjectCache implements
 	private const RES_AS_OF = 2;
 	/** Logical TTL attribute for a key */
 	private const RES_TTL = 3;
-	/** Tomstone timestamp attribute for a key */
+	/** Tombstone timestamp attribute for a key */
 	private const RES_TOMB_AS_OF = 4;
 	/** Highest "check" key timestamp for a key */
 	private const RES_CHECK_AS_OF = 5;
@@ -358,7 +342,6 @@ class WANObjectCache implements
 	 *       See also <https://github.com/facebook/mcrouter/wiki/Multi-cluster-broadcast-setup>.
 	 *       This is required when using mcrouter as a multi-region backing store proxy. [optional]
 	 *   - epoch: lowest UNIX timestamp a value/tombstone must have to be valid. [optional]
-	 *   - secret: stable secret used for hashing long strings into key components. [optional]
 	 *   - coalesceScheme: which key scheme to use in order to encourage the backend to place any
 	 *       "helper" keys for a "value" key within the same cache server. This reduces network
 	 *       overhead and reduces the chance the single downed cache server causes disruption.
@@ -369,7 +352,6 @@ class WANObjectCache implements
 		$this->cache = $params['cache'];
 		$this->broadcastRoute = $params['broadcastRoutingPrefix'] ?? null;
 		$this->epoch = $params['epoch'] ?? 0;
-		$this->secret = $params['secret'] ?? (string)$this->epoch;
 		if ( ( $params['coalesceScheme'] ?? '' ) === 'hash_tag' ) {
 			// https://redis.io/topics/cluster-spec
 			// https://github.com/twitter/twemproxy/blob/v0.4.1/notes/recommendation.md#hash-tags
@@ -394,10 +376,8 @@ class WANObjectCache implements
 
 	/**
 	 * Get an instance that wraps EmptyBagOStuff
-	 *
-	 * @return WANObjectCache
 	 */
-	public static function newEmpty() {
+	public static function newEmpty(): static {
 		return new static( [ 'cache' => new EmptyBagOStuff() ] );
 	}
 
@@ -828,7 +808,6 @@ class WANObjectCache implements
 		$this->stats->getCounter( 'wanobjectcache_set_total' )
 			->setLabel( 'keygroup', $keygroup )
 			->setLabel( 'result', ( $ok ? 'ok' : 'error' ) )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.set." . ( $ok ? 'ok' : 'error' ) )
 			->increment();
 
 		return $ok;
@@ -1094,7 +1073,6 @@ class WANObjectCache implements
 		$this->stats->getCounter( 'wanobjectcache_delete_total' )
 			->setLabel( 'keygroup', $keygroup )
 			->setLabel( 'result', ( $ok ? 'ok' : 'error' ) )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.delete." . ( $ok ? 'ok' : 'error' ) )
 			->increment();
 
 		return $ok;
@@ -1272,7 +1250,6 @@ class WANObjectCache implements
 		$this->stats->getCounter( 'wanobjectcache_check_total' )
 			->setLabel( 'keygroup', $keygroup )
 			->setLabel( 'result', ( $ok ? 'ok' : 'error' ) )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.ck_touch." . ( $ok ? 'ok' : 'error' ) )
 			->increment();
 
 		return $ok;
@@ -1317,7 +1294,6 @@ class WANObjectCache implements
 		$this->stats->getCounter( 'wanobjectcache_reset_total' )
 			->setLabel( 'keygroup', $keygroup )
 			->setLabel( 'result', ( $ok ? 'ok' : 'error' ) )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.ck_reset." . ( $ok ? 'ok' : 'error' ) )
 			->increment();
 
 		return $ok;
@@ -1615,9 +1591,11 @@ class WANObjectCache implements
 	 *      most sense for values that are moderately to highly expensive to regenerate and easy
 	 *      to query for dependency timestamps. The use of "pcTTL" reduces timestamp queries.
 	 *      Default: null.
+	 *   - segmentable: Allow partitioning of the value if it is a large string. Default: false.
+	 *
 	 * @param array $cbParams Custom field/value map to pass to the callback (since 1.35)
 	 * @phpcs:ignore Generic.Files.LineLength
-	 * @phan-param array{checkKeys?:string[],graceTTL?:int,lockTSE?:int,busyValue?:mixed,pcTTL?:int,pcGroup?:string,version?:int,minAsOf?:float|int,hotTTR?:int,lowTTL?:int,ageNew?:int,staleTTL?:int,touchedCallback?:callable} $opts
+	 * @phan-param array{checkKeys?:string[],graceTTL?:int,lockTSE?:int,busyValue?:mixed,pcTTL?:int,pcGroup?:string,version?:int,minAsOf?:float|int,hotTTR?:int,lowTTL?:int,ageNew?:int,staleTTL?:int,touchedCallback?:callable,segmentable?:bool} $opts
 	 * @return mixed Value found or written to the key
 	 * @note Options added in 1.28: version, busyValue, hotTTR, ageNew, pcGroup, minAsOf
 	 * @note Options added in 1.31: staleTTL, graceTTL
@@ -1709,7 +1687,6 @@ class WANObjectCache implements
 					->setLabel( 'keygroup', $keygroup )
 					->setLabel( 'result', 'hit' )
 					->setLabel( 'reason', 'good' )
-					->copyToStatsdAt( "wanobjectcache.$keygroup.hit.good" )
 					->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 				return [ $curValue, $curState[self::RES_VERSION], $curState[self::RES_AS_OF] ];
@@ -1720,7 +1697,6 @@ class WANObjectCache implements
 					->setLabel( 'keygroup', $keygroup )
 					->setLabel( 'result', 'hit' )
 					->setLabel( 'reason', 'refresh' )
-					->copyToStatsdAt( "wanobjectcache.$keygroup.hit.refresh" )
 					->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 				return [ $curValue, $curState[self::RES_VERSION], $curState[self::RES_AS_OF] ];
@@ -1765,7 +1741,6 @@ class WANObjectCache implements
 				->setLabel( 'keygroup', $keygroup )
 				->setLabel( 'result', 'hit' )
 				->setLabel( 'reason', 'volatile' )
-				->copyToStatsdAt( "wanobjectcache.$keygroup.hit.volatile" )
 				->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 			return [ $volValue, $volState[self::RES_VERSION], $curState[self::RES_AS_OF] ];
@@ -1813,7 +1788,6 @@ class WANObjectCache implements
 					->setLabel( 'keygroup', $keygroup )
 					->setLabel( 'result', 'hit' )
 					->setLabel( 'reason', 'stale' )
-					->copyToStatsdAt( "wanobjectcache.$keygroup.hit.stale" )
 					->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 				return [ $volValue, $volState[self::RES_VERSION], $curState[self::RES_AS_OF] ];
@@ -1825,7 +1799,6 @@ class WANObjectCache implements
 					->setLabel( 'keygroup', $keygroup )
 					->setLabel( 'result', $miss )
 					->setLabel( 'reason', 'busy' )
-					->copyToStatsdAt( "wanobjectcache.$keygroup.$miss.busy" )
 					->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 				$placeholderValue = ( $busyValue instanceof Closure ) ? $busyValue() : $busyValue;
@@ -1859,7 +1832,6 @@ class WANObjectCache implements
 
 		$this->stats->getTiming( 'wanobjectcache_regen_seconds' )
 			->setLabel( 'keygroup', $keygroup )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.regen_walltime" )
 			->observe( 1e3 * $walltime );
 
 		// Attempt to save the newly generated value if applicable
@@ -1910,7 +1882,6 @@ class WANObjectCache implements
 			->setLabel( 'keygroup', $keygroup )
 			->setLabel( 'result', $miss )
 			->setLabel( 'reason', 'compute' )
-			->copyToStatsdAt( "wanobjectcache.$keygroup.$miss.compute" )
 			->observe( 1e3 * ( $this->getCurrentTime() - $startTime ) );
 
 		return [ $value, $version, $curState[self::RES_AS_OF] ];
@@ -2056,7 +2027,7 @@ class WANObjectCache implements
 	 *             'pcGroup' => 'file-versions:500'
 	 *         ]
 	 *     );
-	 *     $files = array_map( [ __CLASS__, 'newFromRow' ], $rows );
+	 *     $files = array_map( [ self::class, 'newFromRow' ], $rows );
 	 * @endcode
 	 *
 	 * @param ArrayIterator $keyedIds Result of WANObjectCache::makeMultiKeys()
@@ -2166,7 +2137,7 @@ class WANObjectCache implements
 	 *         },
 	 *         ]
 	 *     );
-	 *     $files = array_map( [ __CLASS__, 'newFromRow' ], $rows );
+	 *     $files = array_map( [ self::class, 'newFromRow' ], $rows );
 	 * @endcode
 	 *
 	 * @param ArrayIterator $keyedIds Result of WANObjectCache::makeMultiKeys()
@@ -2295,32 +2266,22 @@ class WANObjectCache implements
 	}
 
 	/**
-	 * Hash a possibly long string into a suitable component for makeKey()/makeGlobalKey()
-	 *
-	 * @param string $component A raw component used in building a cache key
-	 * @return string 64 character HMAC using a stable secret for public collision resistance
-	 * @since 1.34
-	 */
-	public function hash256( $component ) {
-		return hash_hmac( 'sha256', $component, $this->secret );
-	}
-
-	/**
 	 * Get an iterator of (cache key => entity ID) for a list of entity IDs
 	 *
 	 * The $callback argument expects a function that returns the key for an entity ID via
 	 * makeKey()/makeGlobalKey(). There should be no network nor filesystem I/O used in the
-	 * callback. The entity ID/key mapping must be 1:1 or an exception will be thrown. Use
-	 * the hash256() method for any hashing. The callback takes the following arguments:
+	 * callback. The entity ID/key mapping must be 1:1 or an exception will be thrown.
+	 *
+	 * The callback takes the following arguments:
 	 *   - $id: An entity ID
 	 *   - $cache: This WANObjectCache instance
 	 *
 	 * Example usage for the default keyspace:
 	 * @code
 	 *     $keyedIds = $cache->makeMultiKeys(
-	 *         $modules,
-	 *         function ( $module, $cache ) {
-	 *             return $cache->makeKey( 'example-module', $module );
+	 *         $urls,
+	 *         function ( $url, $cache ) {
+	 *             return $cache->makeKey( 'example-url', $url );
 	 *         }
 	 *     );
 	 * @endcode
@@ -2337,19 +2298,8 @@ class WANObjectCache implements
 	 *     );
 	 * @endcode
 	 *
-	 * Example usage with hashing:
-	 * @code
-	 *     $keyedIds = $cache->makeMultiKeys(
-	 *         $urls,
-	 *         function ( $url, $cache ) {
-	 *             return $cache->makeKey( 'example-url', $cache->hash256( $url ) );
-	 *         }
-	 *     );
-	 * @endcode
-	 *
 	 * @see WANObjectCache::makeKey()
 	 * @see WANObjectCache::makeGlobalKey()
-	 * @see WANObjectCache::hash256()
 	 *
 	 * @param string[]|int[] $ids List of entity IDs
 	 * @param callable $keyCallback Function returning makeKey()/makeGlobalKey() on the input ID
@@ -2359,10 +2309,6 @@ class WANObjectCache implements
 	final public function makeMultiKeys( array $ids, $keyCallback ) {
 		$idByKey = [];
 		foreach ( $ids as $id ) {
-			// Discourage triggering of automatic makeKey() hashing in some backends
-			if ( strlen( $id ) > 64 ) {
-				$this->logger->warning( __METHOD__ . ": long ID '$id'; use hash256()" );
-			}
 			$key = $keyCallback( $id, $this );
 			// Edge case: ignore key collisions due to duplicate $ids like "42" and 42
 			if ( !isset( $idByKey[$key] ) ) {

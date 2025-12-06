@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -119,14 +105,17 @@ class JobQueueRedis extends JobQueue {
 		$this->logger = LoggerFactory::getInstance( 'redis' );
 	}
 
+	/** @inheritDoc */
 	protected function supportedOrders() {
 		return [ 'timestamp', 'fifo' ];
 	}
 
+	/** @inheritDoc */
 	protected function optimalOrder() {
 		return 'fifo';
 	}
 
+	/** @inheritDoc */
 	protected function supportsDelayedJobs() {
 		return true;
 	}
@@ -301,22 +290,22 @@ class JobQueueRedis extends JobQueue {
 				pushed = pushed + 1
 			end
 		end
-		-- Mark this queue as having jobs
-		redis.call('sAdd',kQwJobs,queueId)
+		if pushed > 0 then
+			-- Mark this queue as having jobs
+			redis.call('sAdd',kQwJobs,queueId)
+		end
 		return pushed
 LUA;
 		return $conn->luaEval( $script,
-			array_merge(
-				[
-					$this->getQueueKey( 'l-unclaimed' ), # KEYS[1]
-					$this->getQueueKey( 'h-sha1ById' ), # KEYS[2]
-					$this->getQueueKey( 'h-idBySha1' ), # KEYS[3]
-					$this->getQueueKey( 'z-delayed' ), # KEYS[4]
-					$this->getQueueKey( 'h-data' ), # KEYS[5]
-					$this->getGlobalKey( 's-queuesWithJobs' ), # KEYS[6]
-				],
-				$args
-			),
+			[
+				$this->getQueueKey( 'l-unclaimed' ), # KEYS[1]
+				$this->getQueueKey( 'h-sha1ById' ), # KEYS[2]
+				$this->getQueueKey( 'h-idBySha1' ), # KEYS[3]
+				$this->getQueueKey( 'z-delayed' ), # KEYS[4]
+				$this->getQueueKey( 'h-data' ), # KEYS[5]
+				$this->getGlobalKey( 's-queuesWithJobs' ), # KEYS[6]
+				...$args
+			],
 			6 # number of first argument(s) that are keys
 		);
 	}
@@ -606,14 +595,17 @@ LUA;
 		);
 	}
 
+	/** @inheritDoc */
 	public function getCoalesceLocationInternal() {
 		return "RedisServer:" . $this->server;
 	}
 
+	/** @inheritDoc */
 	protected function doGetSiblingQueuesWithJobs( array $types ) {
 		return array_keys( array_filter( $this->doGetSiblingQueueSizes( $types ) ) );
 	}
 
+	/** @inheritDoc */
 	protected function doGetSiblingQueueSizes( array $types ) {
 		$sizes = []; // (type => size)
 		$types = array_values( $types ); // reindex

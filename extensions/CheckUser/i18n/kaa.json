@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Ajiniyaz Nurniyazov",
-			"Nurlan",
-			"Janabaevazizbek"
+			"Janabaevazizbek",
+			"Nurlan"
 		]
 	},
 	"group-checkuser": "Paydalanıwshılardı tekseriwshiler",
 	"group-checkuser-member": "paydalanıwshılardı tekseriwshi",
+	"group-temporary-account-viewer": "Waqıtsha esap IP kóriwshileri",
 	"group-temporary-account-viewer-member": "{{GENDER:$1|waqtınsha esap IP kóriwshisi}}",
 	"grouppage-checkuser": "{{ns:project}}:Paydalanıwshılardı tekseriwshi",
 	"checkuser-period": "Dawamlılıq:",
@@ -18,5 +19,13 @@
 	"checkuser-helper-user": "Paydalanıwshı",
 	"checkuser-investigate-subtitle-cancel-button-label": "Biykar etiw",
 	"checkuser-investigate-preliminary-table-header-registration": "Tirkelgen waqıt",
-	"checkuser-global-contributions-link-sidebar": "Globallıq úlesler"
+	"checkuser-global-contributions-link-sidebar": "Globallıq úlesler",
+	"checkuser-userinfocard-joined": "{{GENDER:$3|Qosılǵan sánesi}}: $1 ($2)",
+	"checkuser-userinfocard-active-wikis-label": "Belsendi bolǵan wikiler",
+	"checkuser-userinfocard-global-edits": "Globallıq redaktorlawlar sanı: $1",
+	"checkuser-userinfocard-local-edits-reverts-unknown": "Jergilikli redaktorlawlar sanı: $1",
+	"checkuser-userinfocard-thanks": "Qabıllanǵan minnetdarshılıqlar: $1 (jiberilgen: $2)",
+	"checkuser-userinfocard-activity-chart-label": "Aqırǵı 60 kúndegi redaktorlaw iskerligi ({{PLURAL:$1|$1 redaktorlaw|$1 edits|0=redaktorlamaǵan}})",
+	"checkuser-userinfocard-last-edit-timestamp-label": "Aqırǵı redaktorlaw: $1",
+	"checkuser-userinfocard-groups": "<strong>Toparlar</strong>: $1"
 }

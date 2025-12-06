@@ -15,10 +15,9 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
  * @license GPL-2.0-or-later
  */
 class CiteDocumentPostProcessor extends DOMProcessor {
-	private Config $mainConfig;
-
-	public function __construct( Config $mainConfig ) {
-		$this->mainConfig = $mainConfig;
+	public function __construct(
+		private readonly Config $mainConfig,
+	) {
 	}
 
 	/**

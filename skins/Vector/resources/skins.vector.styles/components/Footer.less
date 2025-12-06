@@ -44,7 +44,14 @@
 #footer-info {
 	li {
 		line-height: @line-height-footer-info;
+		display: inline-block;
 	}
+
+	/* stylelint-disable selector-max-specificity */
+	#footer-info-copyright {
+		display: block;
+	}
+	/* stylelint-enable selector-max-specificity */
 }
 
 #footer-places {

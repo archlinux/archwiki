@@ -28,8 +28,7 @@
  * @param {Object} [config] Configuration options
  * @param {Object} [config.toolbarConfig] Configuration options for the toolbar
  */
-ve.init.sa.Target = function VeInitSaTarget( config ) {
-	config = config || {};
+ve.init.sa.Target = function VeInitSaTarget( config = {} ) {
 	config.toolbarConfig = ve.extendObject( { shadow: true, floatable: true }, config.toolbarConfig );
 
 	// Parent constructor
@@ -43,6 +42,10 @@ ve.init.sa.Target = function VeInitSaTarget( config ) {
 /* Inheritance */
 
 OO.inheritClass( ve.init.sa.Target, ve.init.Target );
+
+/* Static properties */
+
+ve.init.sa.Target.static.annotateImportedData = true;
 
 /* Methods */
 

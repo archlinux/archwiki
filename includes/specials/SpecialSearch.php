@@ -2,21 +2,7 @@
 /**
  * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -228,6 +214,9 @@ class SpecialSearch extends SpecialPage {
 					[ 'class' => 'mw-searchdisabled' ],
 					$this->msg( 'searchdisabled', [ 'mw:Special:MyLanguage/Manual:$wgSearchForwardUrl' ] )->parse()
 				) ) );
+				$titleNs = count( $this->namespaces ) === 1 ? reset( $this->namespaces ) : null;
+				$title = Title::newFromText( $term, $titleNs );
+				$this->showCreateLink( $title, 0, null, null );
 			}
 
 			return;
@@ -411,7 +400,8 @@ class SpecialSearch extends SpecialPage {
 			return;
 		}
 
-		$title = Title::newFromText( $term );
+		$titleNs = count( $this->namespaces ) === 1 ? reset( $this->namespaces ) : null;
+		$title = Title::newFromText( $term, $titleNs );
 		$languageConverter = $this->languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 		if ( $languageConverter->hasVariants() ) {
 			// findVariantLink will replace the link arg as well but we want to keep our original
@@ -423,22 +413,21 @@ class SpecialSearch extends SpecialPage {
 		$showSuggestion = $title === null || !$title->isKnown();
 		$engine->setShowSuggestion( $showSuggestion );
 
-		$rewritten = $engine->replacePrefixes( $term );
-		if ( $rewritten !== $term ) {
-			wfDeprecatedMsg( 'SearchEngine::replacePrefixes()  was overridden by ' .
-				get_class( $engine ) . ', this is deprecated since MediaWiki 1.32',
-				'1.32', false, false );
-		}
-
 		// fetch search results
-		$titleMatches = $engine->searchTitle( $rewritten );
-		$textMatches = $engine->searchText( $rewritten );
+		$titleMatches = $engine->searchTitle( $term );
+		$textMatches = $engine->searchText( $term );
 
 		$textStatus = null;
 		if ( $textMatches instanceof Status ) {
 			$textStatus = $textMatches;
 			$textMatches = $textStatus->getValue();
 		}
+
+		if ( $textMatches && $textMatches->numRows() ) {
+			$engine->augmentSearchResults( $textMatches );
+		}
+
+		$this->getHookRunner()->onSpecialSearchResults( $term, $titleMatches, $textMatches );
 
 		// Get number of results
 		$titleMatchesNum = $textMatchesNum = $numTitleMatches = $numTextMatches = 0;
@@ -452,9 +441,6 @@ class SpecialSearch extends SpecialPage {
 			$textMatchesNum = $textMatches->numRows();
 			$numTextMatches = $textMatches->getTotalHits();
 			$approxTotalRes = $approxTotalRes || $textMatches->isApproximateTotalHits();
-			if ( $textMatchesNum > 0 ) {
-				$engine->augmentSearchResults( $textMatches );
-			}
 		}
 		$num = $titleMatchesNum + $textMatchesNum;
 		$totalRes = $numTitleMatches + $numTextMatches;
@@ -520,8 +506,6 @@ class SpecialSearch extends SpecialPage {
 		// Show the create link ahead
 		$this->showCreateLink( $title, $num, $titleMatches, $textMatches );
 
-		$this->getHookRunner()->onSpecialSearchResults( $term, $titleMatches, $textMatches );
-
 		// Close <div class='mw-search-results-info'>
 		$out->addHTML( '</div>' );
 
@@ -543,7 +527,7 @@ class SpecialSearch extends SpecialPage {
 			$sidebarResultWidget,
 			$linkRenderer,
 			$this->interwikiLookup,
-			$engine->getFeatureData( 'show-multimedia-search-results' )
+			$engine->getFeatureData( 'show-multimedia-search-results' ) ?? false
 		);
 
 		$widget = new BasicSearchResultSetWidget( $this, $mainResultWidget, $sidebarResultsWidget );
@@ -590,8 +574,19 @@ class SpecialSearch extends SpecialPage {
 
 		if ( !$title->isExternal() ) {
 			if ( $title->isKnown() ) {
-				$messageName = 'searchmenu-exists';
-				$linkClass = 'mw-search-exists';
+				$firstTitle = null;
+				if ( $titleMatches && $titleMatches->numRows() > 0 ) {
+					$firstTitle = $titleMatches->extractTitles()[0] ?? null;
+				} elseif ( $textMatches && $textMatches->numRows() > 0 ) {
+					$firstTitle = $textMatches->extractTitles()[0] ?? null;
+				}
+
+				if ( $firstTitle && $title->isSamePageAs( $firstTitle ) ) {
+					$messageName = '';
+				} else {
+					$messageName = 'searchmenu-exists';
+					$linkClass = 'mw-search-exists';
+				}
 			} elseif (
 				$this->contentHandlerFactory->getContentHandler( $title->getContentModel() )
 					->supportsDirectEditing()
@@ -611,12 +606,8 @@ class SpecialSearch extends SpecialPage {
 		$this->getHookRunner()->onSpecialSearchCreateLink( $title, $params );
 
 		// Extensions using the hook might still return an empty $messageName
-		// @phan-suppress-next-line PhanRedundantCondition Might be unset by hook
 		if ( $messageName ) {
 			$this->getOutput()->wrapWikiMsg( "<p class=\"$linkClass\">\n$1</p>", $params );
-		} else {
-			// preserve the paragraph for margins etc...
-			$this->getOutput()->addHTML( '<p></p>' );
 		}
 	}
 
@@ -694,7 +685,7 @@ class SpecialSearch extends SpecialPage {
 	 */
 	protected function powerSearch( &$request ) {
 		$arr = [];
-		foreach ( $this->searchConfig->searchableNamespaces() as $ns => $name ) {
+		foreach ( $this->searchConfig->searchableNamespaces() as $ns => $_ ) {
 			if ( $request->getCheck( 'ns' . $ns ) ) {
 				$arr[] = $ns;
 			}
@@ -898,6 +889,7 @@ class SpecialSearch extends SpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pages';
 	}

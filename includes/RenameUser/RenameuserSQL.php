@@ -9,7 +9,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Session\SessionManager;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Specials\SpecialLog;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFactory;
@@ -176,7 +176,7 @@ class RenameuserSQL {
 		$this->hookRunner->onRenameUserSQL( $this );
 	}
 
-	protected function debug( $msg ) {
+	protected function debug( string $msg ) {
 		if ( $this->debugPrefix ) {
 			$msg = "{$this->debugPrefix}: $msg";
 		}
@@ -257,7 +257,7 @@ class RenameuserSQL {
 		$user = $this->userFactory->newFromId( $this->uid );
 
 		$user->load( IDBAccessObject::READ_LATEST );
-		SessionManager::singleton()->invalidateSessionsForUser( $user );
+		MediaWikiServices::getInstance()->getSessionManager()->invalidateSessionsForUser( $user );
 
 		// Purge user cache
 		$user->invalidateCache();
@@ -304,7 +304,7 @@ class RenameuserSQL {
 				->update( 'recentchanges' )
 				->set( [ 'rc_title' => $newTitle->getDBkey() ] )
 				->where( [
-					'rc_type' => RC_LOG,
+					'rc_source' => RecentChange::SRC_LOG,
 					'rc_log_type' => $logTypesOnUser,
 					'rc_namespace' => NS_USER,
 					'rc_title' => $oldTitle->getDBkey()

@@ -20,7 +20,8 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Escargot bleu"
 		]
 	},
 	"linterrors": "Erreurs d’analyse Lint",
@@ -95,7 +96,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|erreur|erreurs}})",
 	"linter-page-edit": "modifier",
 	"linter-page-history": "historique",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "voir la source",
 	"linter-pager-bogus-image-options-details": "Option de fichier erronée",
 	"linter-pager-category-header": "Catégorie",

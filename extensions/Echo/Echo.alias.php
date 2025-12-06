@@ -280,6 +280,13 @@ $specialPageAliases['vi'] = [
 	'Notifications' => [ 'Thông_báo' ],
 ];
 
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'Notifications' => [ 'Notifications' ],
+	'DisplayNotificationsConfiguration' => [ 'DisplayNotificationsConfiguration' ],
+	'NotificationsMarkRead' => [ 'NotificationsMarkRead' ],
+];
+
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Notifications' => [ '通知' ],

@@ -7,6 +7,7 @@
 			"Shirayuki"
 		]
 	},
+	"questycaptcha-name": "{{notranslate}}",
 	"questycaptcha-desc": "{{desc}}",
 	"questycaptcha-addurl": "{{Related|ConfirmEdit-addurl}}",
 	"questycaptcha-badlogin": "{{Related|ConfirmEdit-badlogin}}",

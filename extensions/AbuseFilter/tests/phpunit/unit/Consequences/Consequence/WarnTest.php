@@ -12,7 +12,6 @@ use MediaWiki\Session\Session;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -54,39 +53,39 @@ class WarnTest extends MediaWikiUnitTestCase {
 		$warn->execute();
 	}
 
-	public function provideWarnsAndSuccess() {
-		$mockSession = $this->createMock( Session::class );
-		$noKeyWarn = new Warn(
-			$this->getParamsAndWarnKey()[0],
-			'some-msg',
-			$mockSession
-		);
-		yield 'should warn' => [ $noKeyWarn, true, $mockSession ];
+	public static function provideWarnsAndSuccess() {
+		yield 'should warn' => [ false, true ];
+		yield 'already warned' => [ true, false ];
+	}
 
+	private function getMocks( bool $keyExists ): array {
 		[ $params, $key ] = $this->getParamsAndWarnKey();
-		$keySession = $this->createMock( Session::class );
-		$keySession->method( 'offsetExists' )->with( $key )->willReturn( true );
-		$keySession->method( 'offsetGet' )->with( $key )->willReturn( true );
-
-		$keyWarn = new Warn(
+		$session = $this->createMock( Session::class );
+		if ( $keyExists ) {
+			$session->method( 'offsetExists' )->with( $key )->willReturn( true );
+			$session->method( 'offsetGet' )->with( $key )->willReturn( true );
+		}
+		$warn = new Warn(
 			$params,
 			'some-msg',
-			$keySession
+			$session
 		);
-		yield 'already warned' => [ $keyWarn, false, $keySession ];
+		return [ $warn, $session ];
 	}
 
 	/**
 	 * @dataProvider provideWarnsAndSuccess
 	 */
-	public function testShouldDisableOtherConsequences( Warn $warn, bool $shouldDisable ) {
+	public function testShouldDisableOtherConsequences( bool $keyExists, bool $shouldDisable ) {
+		[ $warn ] = $this->getMocks( $keyExists );
 		$this->assertSame( $shouldDisable, $warn->shouldDisableOtherConsequences() );
 	}
 
 	/**
 	 * @dataProvider provideWarnsAndSuccess
 	 */
-	public function testExecute( Warn $warn, bool $shouldDisable, MockObject $session ) {
+	public function testExecute( bool $keyExists, bool $shouldDisable ) {
+		[ $warn, $session ] = $this->getMocks( $keyExists );
 		$session->expects( $this->once() )
 			->method( 'offsetSet' )
 			->with( $this->anything(), $shouldDisable );
@@ -97,7 +96,8 @@ class WarnTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideGetMessageParameters
 	 */
-	public function testGetMessage( Parameters $params ) {
+	public function testGetMessage( callable $params ) {
+		$params = $params( $this );
 		$msg = 'some-warning-message';
 		$rangeBlock = new Warn( $params, $msg, $this->createMock( Session::class ) );
 		$this->doTestGetMessage( $rangeBlock, $params, $msg );

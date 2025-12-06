@@ -198,7 +198,9 @@ const ApiSandbox = {
 	 *   The form fields will be updated to match.
 	 */
 	sendRequest: function ( params ) {
-		let method = 'get';
+		let method = 'get',
+			infoMessage;
+
 		const paramsAreForced = !!params,
 			deferreds = [],
 			displayParams = {},
@@ -229,6 +231,7 @@ const ApiSandbox = {
 			checkPage.getQueryParams( params, displayParams, ajaxOptions );
 			if ( checkPage.paramInfo.mustbeposted !== undefined ) {
 				method = 'post';
+				infoMessage = mw.message( 'apisandbox-request-post' ).parseDom();
 			}
 			const subpages = checkPage.getSubpages();
 			subpages.forEach( ( subpage ) => {
@@ -303,17 +306,23 @@ const ApiSandbox = {
 			if ( params.format === undefined ) {
 				// While not required by the API, the sandbox UI makes the 'format' parameter required.
 				// If we reach this point without any value for it, that's a bug, so stop here
-				// (it would result in incorrect formatting on the results panel).
+				// (it would result in incorrect formatting on the results panel) (T395063).
 				throw new Error( "'format' parameter is required" );
 			}
 			if ( params.action === undefined ) {
 				// While not required by the API, the sandbox UI makes the 'action' parameter required.
 				// If we reach this point without any value for it, that's a bug, so stop here
-				// (it would result in dumping the entire HTML help output on the results panel).
+				// (it would result in dumping the entire HTML help output on the results panel) (T395063).
 				throw new Error( "'action' parameter is required" );
 			}
 
 			const query = $.param( displayParams );
+
+			// Force POST if we have huge payload (T406283)
+			if ( method !== 'post' && query.length > 7500 ) {
+				method = 'post';
+				infoMessage = mw.message( 'apisandbox-request-post2' ).parseDom();
+			}
 
 			const formatItems = Util.formatRequest( displayParams, params, method, ajaxOptions );
 
@@ -322,7 +331,7 @@ const ApiSandbox = {
 				if ( Object.prototype.hasOwnProperty.call( ApiSandbox.availableFormats, params.format + 'fm' ) ) {
 					params.format = params.format + 'fm';
 				}
-				if ( params.format.slice( -2 ) === 'fm' ) {
+				if ( params.format.endsWith( 'fm' ) ) {
 					params.wrappedhtml = 1;
 				}
 			}
@@ -372,7 +381,7 @@ const ApiSandbox = {
 
 			if ( method === 'post' ) {
 				page.$element.append( new OO.ui.LabelWidget( {
-					label: mw.message( 'apisandbox-request-post' ).parseDom(),
+					label: infoMessage,
 					classes: [ 'oo-ui-inline-help' ]
 				} ).$element );
 			}

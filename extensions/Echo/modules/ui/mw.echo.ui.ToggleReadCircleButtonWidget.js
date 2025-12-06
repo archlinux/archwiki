@@ -16,7 +16,7 @@ mw.echo.ui.ToggleReadCircleButtonWidget = function MwEchoUiToggleReadCircleButto
 	mw.echo.ui.ToggleReadCircleButtonWidget.super.call( this, Object.assign( {
 		invisibleLabel: true,
 		// Set a dummy icon so we get focus styles
-		icon: '_'
+		icon: '_',
 	}, config ) );
 
 	this.$circle = $( '<div>' )

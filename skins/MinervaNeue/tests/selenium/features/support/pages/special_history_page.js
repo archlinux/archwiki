@@ -1,5 +1,3 @@
-'use strict';
-
 const { Page } = require( './mw_core_pages' );
 /**
  * Represents the mobile-first Special:History page

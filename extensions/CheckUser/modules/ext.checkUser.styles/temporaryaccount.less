@@ -78,3 +78,21 @@ span.ext-checkuser-tempaccount-reveal-ip-button,
 		}
 	}
 }
+
+.mw-special-GlobalContributions {
+	.mw-contributions-list {
+		// In some cases, the contributions are contained in a pager having the
+		// "plainlinks" class, which makes links to temp accounts inherit a rule
+		// that removes the gray background highlighting them as temp accounts:
+		// The rule here takes precedence over "plainlinks" and puts back the
+		// background in the same way linker.styles.less does (T389474).
+		.mw-tempuserlink {
+			// The rules here are declared as !important as plainlinks sets
+			// it's rules as !important
+			/* stylelint-disable-next-line declaration-no-important */
+			background: @background-color-interactive !important;
+			/* stylelint-disable-next-line declaration-no-important */
+			outline: 2px solid @background-color-interactive !important;
+		}
+	}
+}

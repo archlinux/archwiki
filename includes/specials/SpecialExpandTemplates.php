@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -149,7 +135,7 @@ class SpecialExpandTemplates extends SpecialPage {
 	 * @param array $values The values submitted to the HTMLForm
 	 * @return Status
 	 */
-	public function onSubmitInput( array $values ) {
+	private function onSubmitInput( array $values ) {
 		$status = Status::newGood();
 		if ( $values['Input'] === '' ) {
 			$status = Status::newFatal( 'expand_templates_input_missing' );
@@ -205,7 +191,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			->setSubmitTextMsg( 'expand_templates_ok' )
 			->setWrapperLegendMsg( 'expandtemplates' )
 			->setHeaderHtml( $this->msg( 'expand_templates_intro' )->parse() )
-			->setSubmitCallback( [ $this, 'onSubmitInput' ] )
+			->setSubmitCallback( $this->onSubmitInput( ... ) )
 			->showAlways();
 	}
 
@@ -222,7 +208,8 @@ class SpecialExpandTemplates extends SpecialPage {
 			'output',
 			$output,
 			[
-				'id' => 'output',
+				// #output is used by CodeMirror (T384148)
+				'id' => $heading === 'expand_templates_output' ? 'output' : $heading,
 				'cols' => 10,
 				'rows' => 10,
 				'readonly' => 'readonly',
@@ -276,6 +263,7 @@ class SpecialExpandTemplates extends SpecialPage {
 		$out->addCategoryLinks( $pout->getCategoryMap() );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'wiki';
 	}

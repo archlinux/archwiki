@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
+ * @license GPL-2.0-or-later
  */
 
 /**
@@ -31,7 +18,7 @@ class Deflate {
 	 * @return bool
 	 */
 	public static function isDeflated( string $data ): bool {
-		return substr( $data, 0, 11 ) === 'rawdeflate,';
+		return str_starts_with( $data, 'rawdeflate,' );
 	}
 
 	/**
@@ -47,7 +34,7 @@ class Deflate {
 	 * @endcode
 	 *
 	 * @param string $data Deflated data
-	 * @return StatusValue Inflated data will be set as the value
+	 * @return StatusValue<string> Inflated data will be set as the value
 	 * @throws InvalidArgumentException If the data wasn't deflated
 	 */
 	public static function inflate( string $data ): StatusValue {

@@ -3,7 +3,7 @@ QUnit.module( 'ext.echo.dm - NotificationsList' );
 QUnit.test.each( 'Constructing the model', {
 	'Empty config': {
 		config: {},
-		expected: {}
+		expected: {},
 	},
 	'Prefilled data': {
 		config: {
@@ -11,7 +11,7 @@ QUnit.test.each( 'Constructing the model', {
 			name: 'local_demo',
 			source: 'hewiki',
 			sourceURL: 'http://he.wiki.local.wmftest.net:8080/wiki/$1',
-			timestamp: '20160916171300'
+			timestamp: '20160916171300',
 		},
 		expected: {
 			getTitle: 'Some title',
@@ -19,9 +19,9 @@ QUnit.test.each( 'Constructing the model', {
 			getSource: 'hewiki',
 			getSourceURL: 'http://he.wiki.local.wmftest.net:8080/wiki/$1',
 			getTimestamp: '20160916171300',
-			isForeign: true
-		}
-	}
+			isForeign: true,
+		},
+	},
 }, ( assert, data ) => {
 	const defaultValues = {
 		getAllItemIds: [],
@@ -33,7 +33,7 @@ QUnit.test.each( 'Constructing the model', {
 		getTimestamp: 0,
 		getCount: 0,
 		hasUnseen: false,
-		isForeign: false
+		isForeign: false,
 	};
 	const expected = $.extend( true, {}, defaultValues, data.expected );
 	const model = new mw.echo.dm.NotificationsList( data.config );
@@ -45,7 +45,7 @@ QUnit.test.each( 'Constructing the model', {
 			// Expected value
 			expected[ method ],
 			// Message
-			method
+			method,
 		);
 	}
 } );
@@ -58,51 +58,51 @@ QUnit.test( 'Handling notification items', ( assert ) => {
 		new mw.echo.dm.NotificationItem( 2, { type: 'alert', timestamp: '201609190200', read: true, seen: true } ),
 		new mw.echo.dm.NotificationItem( 3, { type: 'message', timestamp: '201609190300', read: true, seen: true } ),
 		new mw.echo.dm.NotificationItem( 4, { type: 'alert', timestamp: '201609190400', read: true, seen: true } ),
-		new mw.echo.dm.NotificationItem( 5, { type: 'message', timestamp: '201609190500', read: true, seen: false } )
+		new mw.echo.dm.NotificationItem( 5, { type: 'message', timestamp: '201609190500', read: true, seen: false } ),
 	];
 
 	assert.strictEqual(
 		model.getCount(),
 		0,
-		'Model list starts empty'
+		'Model list starts empty',
 	);
 	assert.strictEqual(
 		model.getTimestamp(),
 		'200101010000',
-		'Model timestamp is its default'
+		'Model timestamp is its default',
 	);
 
 	model.setItems( items );
 	assert.strictEqual(
 		model.getCount(),
 		6,
-		'Item list setup'
+		'Item list setup',
 	);
 	assert.strictEqual(
 		model.getTimestamp(),
 		'201609190100',
-		'Model timestamp is the latest unread item\'s timestamp'
+		'Model timestamp is the latest unread item\'s timestamp',
 	);
 	assert.deepEqual(
 		model.getAllItemIds(),
 		[ 1, 0, 5, 4, 3, 2 ],
-		'getAllItemIds (sorted)'
+		'getAllItemIds (sorted)',
 	);
 	assert.deepEqual(
 		[
 			model.getAllItemIdsByType( 'alert' ),
-			model.getAllItemIdsByType( 'message' )
+			model.getAllItemIdsByType( 'message' ),
 		],
 		[
 			[ 0, 4, 2 ],
-			[ 1, 5, 3 ]
+			[ 1, 5, 3 ],
 		],
-		'getAllItemIdsByType (sorted)'
+		'getAllItemIdsByType (sorted)',
 	);
 	assert.deepEqual(
 		model.findByIds( [ 1, 2 ] ),
 		[ items[ 1 ], items[ 2 ] ],
-		'findByIds'
+		'findByIds',
 	);
 
 	// Change item state (trigger resort)
@@ -112,7 +112,7 @@ QUnit.test( 'Handling notification items', ( assert ) => {
 	assert.deepEqual(
 		model.getAllItemIds(),
 		[ 3, 0, 5, 4, 2, 1 ],
-		'getAllItemIds (re-sorted)'
+		'getAllItemIds (re-sorted)',
 	);
 
 	// Discard items
@@ -121,18 +121,18 @@ QUnit.test( 'Handling notification items', ( assert ) => {
 	assert.deepEqual(
 		model.getAllItemIds(),
 		[ 3, 0, 4, 1 ],
-		'getAllItemIds (discarded items)'
+		'getAllItemIds (discarded items)',
 	);
 	assert.deepEqual(
 		[
 			model.getAllItemIdsByType( 'alert' ),
-			model.getAllItemIdsByType( 'message' )
+			model.getAllItemIdsByType( 'message' ),
 		],
 		[
 			[ 0, 4 ],
-			[ 3, 1 ]
+			[ 3, 1 ],
 		],
-		'getAllItemIdsByType (discarded items)'
+		'getAllItemIdsByType (discarded items)',
 	);
 
 } );
@@ -146,7 +146,7 @@ QUnit.test( 'Intercepting events', ( assert ) => {
 		new mw.echo.dm.NotificationItem( 2, { timestamp: '201609190200', read: true, seen: true } ),
 		new mw.echo.dm.NotificationItem( 3, { timestamp: '201609190300', read: true, seen: true } ),
 		new mw.echo.dm.NotificationItem( 4, { timestamp: '201609190400', read: true, seen: true } ),
-		new mw.echo.dm.NotificationItem( 5, { timestamp: '201609190500', read: true, seen: true } )
+		new mw.echo.dm.NotificationItem( 5, { timestamp: '201609190500', read: true, seen: true } ),
 	];
 
 	// Listen to events
@@ -174,6 +174,6 @@ QUnit.test( 'Intercepting events', ( assert ) => {
 		// Expected:
 		[ 'update:6', 'discard:5', 'itemUpdate:0', 'itemUpdate:1' ],
 		// Message
-		'Events emitted correctly'
+		'Events emitted correctly',
 	);
 } );

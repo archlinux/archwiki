@@ -27,7 +27,7 @@ class GenerateStatsAboutClientHintsDataTest extends MaintenanceBaseTestCase {
 			[
 				'totalRowCount' => [
 					'cu_useragent_clienthints_map' => 68,
-					'cu_useragent_clienthints' => 15
+					'cu_useragent_clienthints' => 15,
 				],
 				'invalidMapRowsCount' => 1,
 				// This is ((11 * 5) + (4 * 3) + 1)/8
@@ -61,7 +61,7 @@ class GenerateStatsAboutClientHintsDataTest extends MaintenanceBaseTestCase {
 					'mobile' => 1,
 					'platform' => 1,
 					'platformVersion' => 1,
-				]
+				],
 			],
 			$returnArray,
 			false,
@@ -84,8 +84,8 @@ class GenerateStatsAboutClientHintsDataTest extends MaintenanceBaseTestCase {
 			[
 				[
 					"brand" => "Testing",
-					"version" => 8.7
-				]
+					"version" => 8.7,
+				],
 			],
 			[],
 			true,

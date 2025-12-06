@@ -55,7 +55,6 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 	 * @param bool $includeUser
 	 * @param array $expected
 	 * @dataProvider provideDumpAllVars
-	 *
 	 */
 	public function testDumpAllVars(
 		VariableHolder $holder,
@@ -160,21 +159,23 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param VariablesManager $manager
-	 * @param VariableHolder $holder
-	 * @param string $name
-	 * @param int $flags
-	 * @param AFPData|string $expected String if expecting an exception
-	 *
 	 * @dataProvider provideGetVar
 	 */
 	public function testGetVar(
-		VariablesManager $manager,
+		?callable $lazyComputeCallback,
 		VariableHolder $holder,
 		string $name,
 		int $flags,
 		$expected
 	) {
+		if ( $lazyComputeCallback !== null ) {
+			$lazyComputer = $this->createMock( LazyVariableComputer::class );
+			$lazyComputer->method( 'compute' )->willReturnCallback( $lazyComputeCallback );
+		} else {
+			$lazyComputer = null;
+		}
+		$manager = $this->getManager( $lazyComputer );
+
 		if ( is_string( $expected ) ) {
 			$this->expectException( $expected );
 			$manager->getVar( $holder, $name, $flags );
@@ -183,53 +184,46 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	/**
-	 * @todo make static
-	 * @return Generator|array
-	 */
-	public function provideGetVar() {
+	public static function provideGetVar(): iterable {
 		$vars = new VariableHolder();
 
 		$name = 'foo';
 		$expected = new AFPData( AFPData::DSTRING, 'foobarbaz' );
-		$computer = $this->createMock( LazyVariableComputer::class );
-		$computer->method( 'compute' )->willReturn( $expected );
+		$computeCallback = static function () use ( $expected ) {
+			return $expected;
+		};
 		$afcv = new LazyLoadedVariable( '', [] );
 		$vars->setVar( $name, $afcv );
-		yield 'set, lazy-loaded' => [ $this->getManager( $computer ), $vars, $name, 0, $expected ];
+		yield 'set, lazy-loaded' => [ $computeCallback, $vars, $name, 0, $expected ];
 
 		$alreadySetName = 'first-var';
 		$firstValue = new AFPData( AFPData::DSTRING, 'expected value' );
 		$setVars = VariableHolder::newFromArray( [ 'first-var' => $firstValue ] );
-		$computer = $this->createMock( LazyVariableComputer::class );
-		$computer->method( 'compute' )->willReturnCallback(
-			static function ( $var, $vars, $cb ) use ( $alreadySetName ) {
-				return $cb( $alreadySetName );
-			}
-		);
+		$computeCallback = static function ( $var, $vars, $cb ) use ( $alreadySetName ) {
+			return $cb( $alreadySetName );
+		};
 		$name = 'second-var';
-		$manager = $this->getManager( $computer );
 		$lazyVar = new LazyLoadedVariable( '', [] );
 		$setVars->setVar( $name, $lazyVar );
-		yield 'set, lazy-loaded with callback' => [ $manager, $setVars, $name, 0, $firstValue ];
+		yield 'set, lazy-loaded with callback' => [ $computeCallback, $setVars, $name, 0, $firstValue ];
 
 		$name = 'afpd';
 		$afpd = new AFPData( AFPData::DINT, 42 );
 		$vars->setVar( $name, $afpd );
-		yield 'set, AFPData' => [ $this->getManager(), $vars, $name, 0, $afpd ];
+		yield 'set, AFPData' => [ null, $vars, $name, 0, $afpd ];
 
 		$name = 'not-set';
 		$expected = new AFPData( AFPData::DUNDEFINED );
-		yield 'unset, lax' => [ $this->getManager(), $vars, $name, VariablesManager::GET_LAX, $expected ];
+		yield 'unset, lax' => [ null, $vars, $name, VariablesManager::GET_LAX, $expected ];
 		yield 'unset, strict' => [
-			$this->getManager(),
+			null,
 			$vars,
 			$name,
 			VariablesManager::GET_STRICT,
 			UnsetVariableException::class
 		];
 		yield 'unset, bc' => [
-			$this->getManager(),
+			null,
 			$vars,
 			$name,
 			VariablesManager::GET_BC,

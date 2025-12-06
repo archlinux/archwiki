@@ -1,25 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Preferences;
 
+use MediaWiki\Actions\WatchAction;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
 use MediaWiki\Config\ServiceOptions;
@@ -157,6 +144,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		MainConfigNames::SkinsPreferred,
 		MainConfigNames::ThumbLimits,
 		MainConfigNames::ThumbnailNamespaces,
+		MainConfigNames::WatchlistExpiry,
 	];
 
 	/**
@@ -1476,6 +1464,15 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			];
 		}
 
+		if ( $this->options->get( 'WatchlistExpiry' ) ) {
+			$defaultPreferences["watchstar-expiry"] = [
+				'type' => 'select',
+				'options' => WatchAction::getExpiryOptionsFromMessage( $context ),
+				'label-message' => "tog-watchstar-expiry",
+				'section' => 'watchlist/pageswatchlist',
+			];
+		}
+
 		$watchTypes = [
 			'edit' => 'watchdefault',
 			'move' => 'watchmoves',
@@ -1496,13 +1493,26 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		foreach ( $watchTypes as $action => $pref ) {
 			if ( $user->isAllowed( $action ) ) {
 				// Messages:
-				// tog-watchdefault, tog-watchmoves, tog-watchdeletion, tog-watchcreations, tog-watchuploads
-				// tog-watchrollback
+				// tog-watchdefault, tog-watchmoves, tog-watchdeletion,
+				// tog-watchcreations, tog-watchuploads, tog-watchrollback
 				$defaultPreferences[$pref] = [
 					'type' => 'toggle',
 					'section' => 'watchlist/pageswatchlist',
 					'label-message' => "tog-$pref",
 				];
+
+				if ( in_array( $action, [ 'edit', 'read', 'rollback' ] ) &&
+					$this->options->get( 'WatchlistExpiry' )
+				) {
+					$defaultPreferences["$pref-expiry"] = [
+						'type' => 'select',
+						'options' => WatchAction::getExpiryOptionsFromMessage( $context ),
+						'label-message' => "tog-watch-expiry",
+						'section' => 'watchlist/pageswatchlist',
+						'hide-if' => [ '!==', $pref, '1' ],
+						'cssclass' => 'mw-prefs-indent',
+					];
+				}
 			}
 		}
 
@@ -1605,7 +1615,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		}
 	}
 
-	/*
+	/**
 	 * Custom skin string comparison function that takes into account current and preferred skins.
 	 *
 	 * @param string $a
@@ -1907,7 +1917,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	/**
 	 * @param User $user
 	 * @param IContextSource $context
-	 * @param string $formClass
+	 * @param class-string<PreferencesFormOOUI> $formClass
 	 * @param array $remove Array of items to remove
 	 * @return HTMLForm
 	 */
@@ -2103,6 +2113,12 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		return ( $res === true ? Status::newGood() : $res );
 	}
 
+	/**
+	 * @param User $user
+	 * @param IContextSource $context
+	 * @param array|null $options
+	 * @return string[]
+	 */
 	public function getResetKinds(
 		User $user, IContextSource $context, $options = null
 	): array {
@@ -2180,7 +2196,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		return $mapping;
 	}
 
-	public function listResetKinds() {
+	public function listResetKinds(): array {
 		return [
 			'registered',
 			'registered-multiselect',
@@ -2191,6 +2207,12 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		];
 	}
 
+	/**
+	 * @param User $user
+	 * @param IContextSource $context
+	 * @param string|string[] $kinds
+	 * @return string[]
+	 */
 	public function getOptionNamesForReset( User $user, IContextSource $context, $kinds ) {
 		$oldOptions = $this->userOptionsManager->loadUserOptions( $user, IDBAccessObject::READ_LATEST );
 

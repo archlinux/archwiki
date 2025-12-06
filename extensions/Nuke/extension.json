@@ -8,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -22,12 +22,16 @@
 	"HookHandlers": {
 		"main": {
 			"class": "MediaWiki\\Extension\\Nuke\\Hooks"
+		},
+		"nukeTagFix": {
+			"class": "MediaWiki\\Extension\\Nuke\\HookHandler\\NukeTagFix"
 		}
 	},
 	"Hooks": {
 		"ContributionsToolLinks": "main",
 		"ListDefinedTags": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags",
-		"ChangeTagsListActive": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags"
+		"ChangeTagsListActive": "MediaWiki\\Extension\\Nuke\\Hooks::onRegisterTags",
+		"LoadExtensionSchemaUpdates": "nukeTagFix"
 	},
 	"config": {
 		"NukeMaxAge": {
@@ -47,8 +51,9 @@
 			]
 		},
 		"ext.nuke.fields.NukeDateTimeField": {
+			"localBasePath": "modules/ext.nuke.fields.NukeDateTimeField",
 			"packageFiles": [
-				"ext.nuke.fields.NukeDateTimeField/init.js"
+				"init.js"
 			],
 			"messages": [
 				"nuke-date-limited"
@@ -56,6 +61,37 @@
 			"dependencies": [
 				"moment",
 				"mediawiki.widgets.DateInputWidget"
+			]
+		},
+		"ext.nuke.codex.styles": {
+			"localBasePath": "modules/ext.nuke.codex.styles",
+			"styles": [
+				"nuke.less"
+			]
+		},
+		"ext.nuke.codex": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"localBasePath": "modules/ext.nuke.codex",
+			"packageFiles": [
+				"init.js",
+				"components/NukeNamespaceLookup.vue",
+				"components/NukeTargetLookup.vue"
+			],
+			"messages": [
+				"blanknamespace",
+				"nuke-namespace",
+				"nuke-userorip",
+				"nuke-namespace-invalid",
+				"mw-widgets-titlesmultiselect-placeholder"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.util"
+			],
+			"codexComponents": [
+				"CdxField",
+				"CdxMultiselectLookup",
+				"CdxLookup"
 			]
 		}
 	},
@@ -97,11 +133,16 @@
 			]
 		}
 	},
+	"load_composer_autoloader": true,
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Nuke\\": "includes/"
 	},
+	"AutoloadClasses": {
+		"MediaWiki\\Extension\\Nuke\\Maintenance\\NormalizeNukeTags": "maintenance/normalizeNukeTags.php"
+	},
 	"TestAutoloadNamespaces": {
-		"MediaWiki\\Extension\\Nuke\\Test\\": "tests/phpunit/"
+		"MediaWiki\\Extension\\Nuke\\Test\\": "tests/phpunit/",
+		"MediaWiki\\Extension\\Nuke\\Test\\Integration\\": "tests/phpunit/integration/"
 	},
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"

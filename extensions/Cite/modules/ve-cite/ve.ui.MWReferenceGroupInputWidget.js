@@ -53,3 +53,5 @@ ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( groups ) {
 	} );
 	this.menu.clearItems().addItems( items ).toggle( false );
 };
+
+module.exports = ve.ui.MWReferenceGroupInputWidget;

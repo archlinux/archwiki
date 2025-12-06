@@ -8,7 +8,10 @@ use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\AbuseFilterProtectedVariablesLookup;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\User\TempUser\TempUserConfig;
 
 /**
  * This class simplifies the interactions between the AbuseFilter code and Authority, knowing
@@ -24,14 +27,20 @@ class AbuseFilterPermissionManager {
 
 	private MapCacheLRU $canViewProtectedVariablesCache;
 
+	private TempUserConfig $tempUserConfig;
+	private ExtensionRegistry $extensionRegistry;
 	private RuleCheckerFactory $ruleCheckerFactory;
 	private AbuseFilterHookRunner $hookRunner;
 
 	public function __construct(
+		TempUserConfig $tempUserConfig,
+		ExtensionRegistry $extensionRegistry,
 		AbuseFilterProtectedVariablesLookup $protectedVariablesLookup,
 		RuleCheckerFactory $ruleCheckerFactory,
 		AbuseFilterHookRunner $hookRunner
 	) {
+		$this->tempUserConfig = $tempUserConfig;
+		$this->extensionRegistry = $extensionRegistry;
 		$this->protectedVariables = $protectedVariablesLookup->getAllProtectedVariables();
 		$this->ruleCheckerFactory = $ruleCheckerFactory;
 		$this->hookRunner = $hookRunner;
@@ -39,10 +48,6 @@ class AbuseFilterPermissionManager {
 		$this->canViewProtectedVariablesCache = new MapCacheLRU( 10 );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canEdit( Authority $performer ): bool {
 		$block = $performer->getBlock();
 		return (
@@ -51,10 +56,6 @@ class AbuseFilterPermissionManager {
 		);
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canEditGlobal( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-modify-global' );
 	}
@@ -83,10 +84,6 @@ class AbuseFilterPermissionManager {
 		return $performer->isAllowed( 'abusefilter-modify-restricted' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canViewPrivateFilters( Authority $performer ): bool {
 		$block = $performer->getBlock();
 		return (
@@ -224,37 +221,60 @@ class AbuseFilterPermissionManager {
 		return $this->protectedVariables;
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canViewPrivateFiltersLogs( Authority $performer ): bool {
 		return $this->canViewPrivateFilters( $performer ) ||
 			$performer->isAllowed( 'abusefilter-log-private' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canViewAbuseLog( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-log' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canHideAbuseLog( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-hide-log' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canRevertFilterActions( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-revert' );
+	}
+
+	/**
+	 * Check whether an authority can view temporary account IP addresses, as determined
+	 * by the CheckUser extension (if loaded). If they can, this overrides any restrictions
+	 * on seeing IP addresses due to not having the necessary AbuseFilter permissions.
+	 */
+	private function canViewTemporaryAccountIPs( Authority $performer ): bool {
+		return $this->extensionRegistry->isLoaded( 'CheckUser' ) &&
+			MediaWikiServices::getInstance()->getService( 'CheckUserPermissionManager' )
+				->canAccessTemporaryAccountIPAddresses( $performer )->isGood();
+	}
+
+	/**
+	 * Check whether an authority can see IP addresses for logs of a given filter. This may
+	 * differ depending on whether the log entry performer is a temporary user.
+	 *
+	 * @param Authority $performer
+	 * @param AbstractFilter $filter
+	 * @param string $userName Name of the performing user for the log entry
+	 * @return bool
+	 */
+	public function canSeeIPForFilterLog(
+		Authority $performer,
+		AbstractFilter $filter,
+		string $userName
+	) {
+		if ( $this->canSeeLogDetailsForFilter( $performer, $filter ) ) {
+			return true;
+		}
+
+		if (
+			$this->tempUserConfig->isTempName( $userName ) &&
+			$this->canViewTemporaryAccountIPs( $performer )
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -287,34 +307,18 @@ class AbuseFilterPermissionManager {
 		return true;
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canSeeLogDetails( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-log-detail' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canSeePrivateDetails( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-privatedetails' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canSeeHiddenLogEntries( Authority $performer ): bool {
 		return $performer->isAllowed( 'abusefilter-hidden-log' );
 	}
 
-	/**
-	 * @param Authority $performer
-	 * @return bool
-	 */
 	public function canUseTestTools( Authority $performer ): bool {
 		// TODO: make independent
 		return $this->canViewPrivateFilters( $performer );

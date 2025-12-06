@@ -1,7 +1,8 @@
 !! Version 2
-# Force the test runner to ensure the extension is loaded
+# Force the test runner to ensure the extension and its dependency are loaded
 !! hooks
 inputbox
+extension:MediaSearch
 !! endhooks
 
 !! test
@@ -11,7 +12,7 @@ InputBox type=search
 type=search
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-not-set" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end
 
 !! test
@@ -191,10 +192,32 @@ type=comment
 !! end
 
 !! test
+InputBox type=comment with preloadtitle
+!! wikitext
+<inputbox>
+type=comment
+preloadtitle=My title
+</inputbox>
+!! html
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input type="hidden" value="My title" name="preloadtitle" /><input type="hidden" value="new" name="section" /><div class="cdx-text-input"><input name="title" class="mw-inputbox-input mw-inputbox-createbox cdx-text-input__input" placeholder="" required="" size="50" dir="ltr" /></div><br /><input type="submit" name="create" value="New section" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
+!! end
+
+!! test
 InputBox type=commenttitle
 !! wikitext
 <inputbox>
 type=commenttitle
+</inputbox>
+!! html
+<div class="mw-inputbox-centered" style=""><form name="commentbox" class="commentbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="preloadtitle" class="mw-inputbox-input commentboxInput cdx-text-input__input" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="new" name="section" /><input type="hidden" name="title" /><br /><input type="submit" name="create" value="New section" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
+!! end
+
+!! test
+InputBox type=commenttitle with preloadtitle
+!! wikitext
+<inputbox>
+type=commenttitle
+preloadtitle=This should be ignored
 </inputbox>
 !! html
 <div class="mw-inputbox-centered" style=""><form name="commentbox" class="commentbox mw-inputbox-form" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><div class="cdx-text-input"><input name="preloadtitle" class="mw-inputbox-input commentboxInput cdx-text-input__input" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="new" name="section" /><input type="hidden" name="title" /><br /><input type="submit" name="create" value="New section" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" /></form></div>
@@ -207,7 +230,7 @@ InputBox type=fulltext
 type=fulltext
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="fulltext" value="Search full text" class="cdx-button" /><input type="hidden" value="Search" name="fulltext" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-not-set" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="fulltext" value="Search full text" class="cdx-button" /><input type="hidden" value="Search" name="fulltext" /></form></div>
 !! end
 
 !! test
@@ -228,7 +251,7 @@ type=search
 tour=test
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="test" name="tour" /><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-not-set" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><input type="hidden" value="test" name="tour" /><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end
 
 !! test
@@ -253,5 +276,28 @@ type=search
 arialabel=Search this wiki
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" aria-label="Search this wiki" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-not-set" action="/wiki/Special:Search"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" aria-label="Search this wiki" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
+!! end
+
+!! test
+InputBox with different search-special-page preference value
+!! config
+wgDefaultUserOptions={"search-special-page": "MediaSearch"}
+!! wikitext
+<inputbox>
+type=search
+</inputbox>
+!! html
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-not-set" action="/wiki/Special:MediaSearch"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
+!! end
+
+!! test
+InputBox searchengine
+!! wikitext
+<inputbox>
+type=search
+searchengine=MediaSearch
+</inputbox>
+!! html
+<div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox mw-inputbox-form inputbox-searchengine-set" action="/wiki/Special:MediaSearch"><div class="cdx-text-input"><input class="mw-inputbox-input mw-searchInput searchboxInput cdx-text-input__input" name="search" placeholder="" size="50" dir="ltr" /></div><br /><input type="submit" name="go" value="Try exact match" class="cdx-button" />&#160;<input type="submit" name="fulltext" value="Search full text" class="cdx-button" /></form></div>
 !! end

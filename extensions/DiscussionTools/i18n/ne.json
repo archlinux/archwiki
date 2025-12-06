@@ -5,11 +5,11 @@
 			"CAPTAIN MEDUSA",
 			"Ed g2s",
 			"Matma Rex",
+			"Nirajan pant",
 			"Woytecr",
 			"पर्वत सुबेदी",
 			"बडा काजी",
-			"हिमाल सुबेदी",
-			"Nirajan pant"
+			"हिमाल सुबेदी"
 		]
 	},
 	"discussiontools": "छलफल उपकरण",
@@ -70,7 +70,6 @@
 	"discussiontools-notification-removed-topic-disabled-body": "तपाईं यसलाई [[Special:Preferences#mw-prefsection-echo-echosubscriptions|आफ्नो अभिरुचिहरूमा]] परिवर्तन गर्न सक्नुहुन्छ।",
 	"discussiontools-notification-subscribed-new-comment-header": "$1ले \"<strong>$4</strong>\"मा {{GENDER:$2|जवाफ}} दिनुभयो।",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"$3\"मा $1 {{PLURAL:$1|एउटा नयाँ टिप्पणी|$1 नयाँ टिप्पणीहरू|100=९९+ नयाँ जवाफहरू}}।",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "सामग्री हेर्नुहोस्",
 	"discussiontools-pageframe-latestcomment": "पछिल्लो टिप्पणी: $1 $2द्वारा विषय $3मा",
 	"discussiontools-pageframe-latestcomment-notopic": "पछिल्लो टिप्पणी: \"$1\" $2द्वारा लेखिएको थियो",
@@ -99,7 +98,7 @@
 	"discussiontools-preference-topicsubscription-help": "यसले तपाईंलाई व्यक्तिगत विषयहरूमा टिप्पणीहरूको बारेमा सूचनाहरू प्राप्त गर्न सदस्यता लिन अनुमति दिनेछ।",
 	"discussiontools-preference-visualenhancements": "छलफल गतिविधि देखाउनुहोस्",
 	"discussiontools-preference-visualenhancements-help": "यसले प्रत्येक छलफल भित्रको गतिविधिको बारेमा जानकारी समावेश गर्ने नयाँ वार्ता पृष्ठको उपस्थिति सक्षम गर्नेछ।",
-	"discussiontools-replybutton": "{{GENDER:|जवाफ दिनुहोस्}}",
+	"discussiontools-replybutton": "{{GENDER:|जवाफ}}",
 	"discussiontools-replylink": "{{GENDER:|जवाफ दिनुहोस्}}",
 	"discussiontools-replywidget-abandon": "तपाईंले लेख्नु भएको टिप्पणी खारेज गर्न चाहनुहुन्छ?",
 	"discussiontools-replywidget-abandon-discard": "टिप्पणी खारेज गर्नुहोस्",

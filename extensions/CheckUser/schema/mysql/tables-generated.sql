@@ -24,6 +24,9 @@ CREATE TABLE /*_*/cu_changes (
   INDEX cuc_xff_hex_time (cuc_xff_hex, cuc_timestamp),
   INDEX cuc_timestamp (cuc_timestamp),
   INDEX cuc_actor_ip_time (cuc_actor, cuc_ip, cuc_timestamp),
+  INDEX cuc_actor_ip_hex_time (
+    cuc_actor, cuc_ip_hex, cuc_timestamp
+  ),
   PRIMARY KEY(cuc_id)
 ) /*$wgDBTableOptions*/;
 
@@ -44,6 +47,9 @@ CREATE TABLE /*_*/cu_log_event (
   INDEX cule_timestamp (cule_timestamp),
   INDEX cule_actor_ip_time (
     cule_actor, cule_ip, cule_timestamp
+  ),
+  INDEX cule_actor_ip_hex_time (
+    cule_actor, cule_ip_hex, cule_timestamp
   ),
   PRIMARY KEY(cule_id)
 ) /*$wgDBTableOptions*/;
@@ -72,6 +78,9 @@ CREATE TABLE /*_*/cu_private_event (
   INDEX cupe_timestamp (cupe_timestamp),
   INDEX cupe_actor_ip_time (
     cupe_actor, cupe_ip, cupe_timestamp
+  ),
+  INDEX cupe_actor_ip_hex_time (
+    cupe_actor, cupe_ip_hex, cupe_timestamp
   ),
   PRIMARY KEY(cupe_id)
 ) /*$wgDBTableOptions*/;
@@ -121,9 +130,7 @@ CREATE TABLE /*_*/cu_log (
   cul_range_start VARBINARY(255) DEFAULT '' NOT NULL,
   cul_range_end VARBINARY(255) DEFAULT '' NOT NULL,
   INDEX cul_actor_time (cul_actor, cul_timestamp),
-  INDEX cul_type_target (
-    cul_type, cul_target_id, cul_timestamp
-  ),
+  INDEX cul_target (cul_target_id, cul_timestamp),
   INDEX cul_target_hex (cul_target_hex, cul_timestamp),
   INDEX cul_range_start (cul_range_start, cul_timestamp),
   INDEX cul_timestamp (cul_timestamp),

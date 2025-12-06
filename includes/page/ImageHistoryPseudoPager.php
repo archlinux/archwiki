@@ -1,26 +1,11 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Page;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
@@ -78,7 +63,7 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		$this->mRange = [ 0, 0 ]; // display range
 
 		// Only display 10 revisions at once by default, otherwise the list is overwhelming
-		$this->mLimitsShown = array_merge( [ 10 ], $this->mLimitsShown );
+		array_unshift( $this->mLimitsShown, 10 );
 		$this->mDefaultLimit = 10;
 		[ $this->mLimit, /* $offset */ ] =
 			$this->mRequest->getLimitOffsetForUser(
@@ -96,6 +81,7 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		return $this->mTitle;
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [];
 	}
@@ -195,7 +181,7 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 		if ( $this->mOffset !== null ) {
 			try {
 				$this->mDb->timestamp( $this->mOffset );
-			} catch ( TimestampException $e ) {
+			} catch ( TimestampException ) {
 				$this->mOffset = null;
 			}
 		}
@@ -206,7 +192,7 @@ class ImageHistoryPseudoPager extends ReverseChronologicalPager {
 			// The current rev may not meet the offset/limit
 			$numRows = count( $this->mHist );
 			if ( $numRows <= $this->mLimit && $this->mImg->getTimestamp() > $this->mOffset ) {
-				$this->mHist = array_merge( [ $this->mImg ], $this->mHist );
+				array_unshift( $this->mHist, $this->mImg );
 			}
 		} else {
 			// The current rev may not meet the offset

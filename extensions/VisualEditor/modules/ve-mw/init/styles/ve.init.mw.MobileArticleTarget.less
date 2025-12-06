@@ -57,9 +57,12 @@
 }
 /* stylelint-enable selector-class-pattern */
 
-.ve-init-mw-mobileArticleTarget .ve-ui-overlay-local {
-	// Reset line height set by .content
-	line-height: 1.4;
+.ve-init-mw-mobileArticleTarget {
+	.ve-ui-overlay-local,
+	.ve-ui-sidebarDialogWindowManager {
+		// Reset line height set by .content
+		line-height: 1.4;
+	}
 }
 
 .oo-ui-windowManager-ios-modal-ready .ve-init-mw-mobileArticleTarget {

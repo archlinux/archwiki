@@ -23,6 +23,8 @@
  * @author Tyler Romeo <tylerromeo@gmail.com>
  */
 
+// @codeCoverageIgnoreStart
+
 /**
  * Unix time - the number of seconds since 1970-01-01 00:00:00 UTC
  */
@@ -76,3 +78,5 @@ define( 'TS_ISO_8601_BASIC', 9 );
  * UNIX time with microseconds
  */
 define( 'TS_UNIX_MICRO', 10 );
+
+// @codeCoverageIgnoreEnd

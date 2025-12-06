@@ -5,21 +5,7 @@
  *
  * Copyright © 2009 Roan Kattouw <roan.kattouw@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,9 +14,10 @@ namespace MediaWiki\Api;
 use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
-use MediaWiki\Specials\SpecialUserRights;
 use MediaWiki\Title\Title;
+use MediaWiki\User\MultiFormatUserIdentityLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\UserGroupAssignmentService;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
@@ -51,6 +38,8 @@ class ApiUserrights extends ApiBase {
 
 	private UserGroupManager $userGroupManager;
 	private WatchedItemStoreInterface $watchedItemStore;
+	private UserGroupAssignmentService $userGroupAssignmentService;
+	private MultiFormatUserIdentityLookup $multiFormatUserIdentityLookup;
 
 	public function __construct(
 		ApiMain $mainModule,
@@ -58,7 +47,9 @@ class ApiUserrights extends ApiBase {
 		UserGroupManager $userGroupManager,
 		WatchedItemStoreInterface $watchedItemStore,
 		WatchlistManager $watchlistManager,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		UserGroupAssignmentService $userGroupAssignmentService,
+		MultiFormatUserIdentityLookup $multiFormatUserIdentityLookup,
 	) {
 		parent::__construct( $mainModule, $moduleName );
 		$this->userGroupManager = $userGroupManager;
@@ -70,6 +61,8 @@ class ApiUserrights extends ApiBase {
 			$this->getConfig()->get( MainConfigNames::WatchlistExpiryMaxDuration );
 		$this->watchlistManager = $watchlistManager;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->userGroupAssignmentService = $userGroupAssignmentService;
+		$this->multiFormatUserIdentityLookup = $multiFormatUserIdentityLookup;
 	}
 
 	public function execute() {
@@ -107,7 +100,7 @@ class ApiUserrights extends ApiBase {
 		$groupExpiries = [];
 		foreach ( $expiry as $index => $expiryValue ) {
 			$group = $add[$index];
-			$groupExpiries[$group] = SpecialUserRights::expiryToTimestamp( $expiryValue );
+			$groupExpiries[$group] = UserGroupAssignmentService::expiryToTimestamp( $expiryValue );
 
 			if ( $groupExpiries[$group] === false ) {
 				$this->dieWithError( [ 'apierror-invalidexpiry', wfEscapeWikiText( $expiryValue ) ] );
@@ -131,24 +124,23 @@ class ApiUserrights extends ApiBase {
 			}
 		}
 
-		$form = new SpecialUserRights();
-		$form->setContext( $this->getContext() );
 		$r = [];
 		$r['user'] = $user->getName();
 		$r['userid'] = $user->getId( $user->getWikiId() );
-		[ $r['added'], $r['removed'] ] = $form->doSaveUserGroups(
+		[ $r['added'], $r['removed'] ] = $this->userGroupAssignmentService->saveChangesToUserGroups(
+			$this->getUser(),
 			$user,
 			$add,
-			// Don't pass null to doSaveUserGroups() for array params, cast to empty array
+			// Don't pass null to saveChangesToUserGroups() for array params, cast to empty array
 			(array)$params['remove'],
+			$groupExpiries,
 			$params['reason'],
-			(array)$tags,
-			$groupExpiries
+			(array)$tags
 		);
 
-		$watchlistExpiry = $this->getExpiryFromParams( $params );
-		$watchuser = $params['watchuser'];
 		$userPage = Title::makeTitle( NS_USER, $user->getName() );
+		$watchlistExpiry = $this->getExpiryFromParams( $params, $userPage, $this->getUser() );
+		$watchuser = $params['watchuser'];
 		if ( $watchuser && $user->getWikiId() === UserIdentity::LOCAL ) {
 			$this->setWatch( 'watch', $userPage, $this->getUser(), null, $watchlistExpiry );
 		} else {
@@ -181,28 +173,37 @@ class ApiUserrights extends ApiBase {
 
 		$this->requireOnlyOneParameter( $params, 'user', 'userid' );
 
-		$user = $params['user'] ?? '#' . $params['userid'];
-
-		$form = new SpecialUserRights();
-		$form->setContext( $this->getContext() );
-		$status = $form->fetchUser( $user );
+		$userDesignator = $params['user'] ?? '#' . $params['userid'];
+		$status = $this->multiFormatUserIdentityLookup->getUserIdentity( $userDesignator, $this->getAuthority() );
 		if ( !$status->isOK() ) {
 			$this->dieStatus( $status );
 		}
 
-		$this->mUser = $status->value;
+		$user = $status->value;
+		$canHaveRights = $this->userGroupAssignmentService->targetCanHaveUserGroups( $user );
+		if ( !$canHaveRights ) {
+			// Return different errors for anons and temp. accounts to keep consistent behavior
+			$this->dieWithError(
+				$user->isRegistered() ? [ 'userrights-no-group', $user->getName() ] : 'nosuchusershort'
+			);
+		}
 
-		return $status->value;
+		$this->mUser = $user;
+
+		return $user;
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams( $flags = 0 ) {
 		$allGroups = $this->userGroupManager->listAllGroups();
 
@@ -262,14 +263,17 @@ class ApiUserrights extends ApiBase {
 		return $params;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'userrights';
 	}
 
+	/** @inheritDoc */
 	protected function getWebUITokenSalt( array $params ) {
 		return $this->getUrUser( $params )->getName();
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=userrights&user=FooBot&add=bot&remove=sysop|bureaucrat&token=123ABC'
@@ -281,6 +285,7 @@ class ApiUserrights extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:User_group_membership';
 	}

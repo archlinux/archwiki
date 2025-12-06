@@ -101,7 +101,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 			json_encode( [
 				"value" => $handler->getResponseFactory()->formatMessage(
 					new MessageValue( 'checkuser-api-useragent-clienthints-explanation' )
-				)
+				),
 			], JSON_UNESCAPED_SLASHES ),
 			$response->getBody()->getContents()
 		);

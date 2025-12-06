@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.44",
+		"MediaWiki": ">= 1.45",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -46,7 +46,8 @@
 		"thanks/*": {
 			"class": "MediaWiki\\Extension\\Thanks\\ThanksLogFormatter",
 			"services": [
-				"NamespaceInfo"
+				"NamespaceInfo",
+				"UserFactory"
 			]
 		}
 	},
@@ -189,21 +190,68 @@
 		},
 		"ThanksAllowedLogTypes": {
 			"value": [
+				"abusefilter",
 				"contentmodel",
 				"create",
 				"delete",
+				"gblrename",
+				"gblrights",
 				"import",
 				"merge",
 				"move",
 				"pagelang",
+				"pagetranslation",
 				"patrol",
 				"protect",
+				"renameuser",
+				"stable",
 				"tag",
 				"upload",
 				"managetags",
 				"rights/rights",
 				"lock"
 			]
+		}
+	},
+	"attributes": {
+		"Echo": {
+			"NotificationCategories": {
+				"edit-thank": {
+					"priority": 3,
+					"title": "echo-category-title-edit-thank",
+					"tooltip": "echo-pref-tooltip-edit-thank"
+				}
+			},
+			"Notifications": {
+				"edit-thank": {
+					"category": "edit-thank",
+					"group": "positive",
+					"section": "message",
+					"presentation-model": "MediaWiki\\Extension\\Thanks\\EchoCoreThanksPresentationModel",
+					"bundle": {
+						"web": true,
+						"expandable": true
+					}
+				},
+				"flow-thank": {
+					"category": "edit-thank",
+					"group": "positive",
+					"section": "message",
+					"presentation-model": "MediaWiki\\Extension\\Thanks\\EchoFlowThanksPresentationModel",
+					"bundle": {
+						"web": true,
+						"expandable": true
+					}
+				}
+			},
+			"NotificationIcons": {
+				"thanks": {
+					"path": {
+						"ltr": "Thanks/modules/userTalk-constructive-ltr.svg",
+						"rtl": "Thanks/modules/userTalk-constructive-rtl.svg"
+					}
+				}
+			}
 		}
 	},
 	"manifest_version": 2

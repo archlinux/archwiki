@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sfic",
-			"Saurmandal"
+			"Saurmandal",
+			"Sfic"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "इस CAPTCHA का उत्तर दें",

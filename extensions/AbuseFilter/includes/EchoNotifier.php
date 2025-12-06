@@ -6,6 +6,7 @@ use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Title\Title;
 
 /**
@@ -38,38 +39,27 @@ class EchoNotifier {
 		$this->isEchoLoaded = $isEchoLoaded;
 	}
 
-	/**
-	 * @param int $filter
-	 * @return Title
-	 */
 	private function getTitleForFilter( int $filter ): Title {
 		return SpecialAbuseFilter::getTitleForSubpage( (string)$filter );
 	}
 
-	/**
-	 * @param int $filter
-	 * @return ExistingFilter
-	 */
 	private function getFilterObject( int $filter ): ExistingFilter {
 		return $this->filterLookup->getFilter( $filter, false );
 	}
 
 	/**
-	 * @internal
-	 * @param int $filter
+	 * @param ExistingFilter $filterObj
 	 * @return array
 	 */
-	public function getDataForEvent( int $filter ): array {
-		$filterObj = $this->getFilterObject( $filter );
+	private function getDataForEvent( ExistingFilter $filterObj ): array {
 		$throttledActionNames = array_intersect(
 			$filterObj->getActionsNames(),
 			$this->consequencesRegistry->getDangerousActionNames()
 		);
 		return [
 			'type' => self::EVENT_TYPE,
-			'title' => $this->getTitleForFilter( $filter ),
+			'title' => $this->getTitleForFilter( $filterObj->getID() ),
 			'extra' => [
-				'user' => $filterObj->getUserID(),
 				'throttled-actions' => $throttledActionNames,
 			],
 		];
@@ -83,7 +73,11 @@ class EchoNotifier {
 	 */
 	public function notifyForFilter( int $filter ) {
 		if ( $this->isEchoLoaded ) {
-			return Event::create( $this->getDataForEvent( $filter ) );
+			$filterObj = $this->getFilterObject( $filter );
+			return Event::create(
+				$this->getDataForEvent( $filterObj ),
+				new RecipientSet( $filterObj->getUserIdentity() )
+			);
 		}
 		return false;
 	}

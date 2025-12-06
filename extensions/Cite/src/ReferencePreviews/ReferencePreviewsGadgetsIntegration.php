@@ -17,18 +17,17 @@ class ReferencePreviewsGadgetsIntegration {
 	public const CONFIG_NAVIGATION_POPUPS_NAME = 'CiteReferencePreviewsConflictingNavPopupsGadgetName';
 	public const CONFIG_REFERENCE_TOOLTIPS_NAME = 'CiteReferencePreviewsConflictingRefTooltipsGadgetName';
 
-	private ?GadgetRepo $gadgetRepo;
-
 	private string $navPopupsGadgetName;
 	private string $refTooltipsGadgetName;
 
-	public function __construct( Config $config, ?GadgetRepo $gadgetRepo ) {
+	public function __construct(
+		Config $config,
+		private readonly ?GadgetRepo $gadgetRepo,
+	) {
 		$this->navPopupsGadgetName = $this->sanitizeGadgetName(
 			$config->get( self::CONFIG_NAVIGATION_POPUPS_NAME ) );
 		$this->refTooltipsGadgetName = $this->sanitizeGadgetName(
 			$config->get( self::CONFIG_REFERENCE_TOOLTIPS_NAME ) );
-
-		$this->gadgetRepo = $gadgetRepo;
 	}
 
 	private function sanitizeGadgetName( string $gadgetName ): string {
@@ -41,7 +40,7 @@ class ReferencePreviewsGadgetsIntegration {
 				try {
 					return $this->gadgetRepo->getGadget( $gadgetName )
 						->isEnabled( $user );
-				} catch ( InvalidArgumentException $e ) {
+				} catch ( InvalidArgumentException ) {
 					return false;
 				}
 			}

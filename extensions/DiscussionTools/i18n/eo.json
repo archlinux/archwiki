@@ -5,6 +5,7 @@
 			"Javiero",
 			"NMaia",
 			"Robin van der Vliet",
+			"Tymewalk",
 			"Wierzbowski",
 			"Ziko"
 		]
@@ -37,7 +38,7 @@
 	"discussiontools-error-comment-is-transcluded": "La ligilo \"{{int:discussiontools-replylink}}\" ne povas esti uzata por respondi al ĉi tiu komento. Por respondi, bonvolu {{GENDER:|uz}} la plenan paĝan redaktilon premante \"$1\".",
 	"discussiontools-error-comment-is-transcluded-title": "La ligilo \"{{int:discussiontools-replylink}}\" ne povas esti uzata por respondi al ĉi tiu komento ĉar ĝi estas ŝargita de alia paĝo. Por respondi, bonvolu {{GENDER:|iri}} ĉi tien: [[$1]].",
 	"discussiontools-error-lint": "Komentoj sur ĉi tiu paĝo ne povas esti responditaj pro eraro en la vikiteksto. {{GENDER:|Vi}} povas lerni pri ĉi tiu eraro [$1 legante la dokumentaron], peti helpon per [$2 afiŝado ĉi tie] aŭ ripari la eraron [$3 malfermante la plenan paĝan redaktilon].",
-	"discussiontools-newtopic-placeholder-title": "Titolo",
+	"discussiontools-newtopic-placeholder-title": "Temo",
 	"discussiontools-postedit-confirmation-published": "Via komento estis publikigita.",
 	"discussiontools-replylink": "{{GENDER:|respondi}}",
 	"discussiontools-replywidget-advanced": "Altnivela",

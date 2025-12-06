@@ -653,7 +653,7 @@
 				key = testCase[ 0 ],
 				input = testCase[ 1 ],
 				output = testCase[ 2 ],
-				paramHref = key.slice( 0, 8 ) === 'wikilink' ? 'Example' : 'http://example.com',
+				paramHref = key.startsWith( 'wikilink' ) ? 'Example' : 'http://example.com',
 				paramText = 'Text';
 			mw.messages.set( key, input );
 			assert.htmlEqual(
@@ -1158,13 +1158,6 @@
 			'Nonsupported unclosed tags are escaped'
 		);
 
-		mw.messages.set( 'jquerymsg-self-closing-tag', 'Foo<tag/>bar' );
-		assert.htmlEqual(
-			formatParse( 'jquerymsg-self-closing-tag' ),
-			'Foo&lt;tag/&gt;bar',
-			'Self-closing tags don\'t cause a parse error'
-		);
-
 		mw.messages.set( 'jquerymsg-asciialphabetliteral-regression', '<b >>>="dir">asd</b>' );
 		assert.htmlEqual(
 			formatParse( 'jquerymsg-asciialphabetliteral-regression' ),
@@ -1209,6 +1202,57 @@
 			'<i title="A&amp;rarr;B"></i>',
 			'"&rarr;" entity is double-escaped in attribute'
 		);
+
+		mw.messages.set( 'jquerymsg-valid-self-closing-tags-1', '<br><wbr><hr>' );
+		mw.messages.set( 'jquerymsg-valid-self-closing-tags-2', '<br/><wbr/><hr/>' );
+		mw.messages.set( 'jquerymsg-valid-self-closing-tags-3', '<br /><wbr  /><hr   />' );
+		mw.messages.set( 'jquerymsg-valid-self-closing-tags-4', '<br class="test" />' );
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-valid-self-closing-tags-1' ),
+			'<br><wbr><hr>',
+			'Valid self-closing tags without slashes are turned into HTML'
+		);
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-valid-self-closing-tags-2' ),
+			'<br><wbr><hr>',
+			'Valid self-closing tags with slashes are turned into HTML'
+		);
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-valid-self-closing-tags-3' ),
+			'<br><wbr><hr>',
+			'Valid self-closing tags with whitespace and slashes are turned into HTML'
+		);
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-valid-self-closing-tags-4' ),
+			'<br class="test">',
+			'Valid self-closing tags with attributes are turned into HTML'
+		);
+
+		mw.messages.set( 'jquerymsg-invalid-self-closing-tags-1', '<div/>' );
+		mw.messages.set( 'jquerymsg-invalid-self-closing-tags-2', '<foo/>' );
+		mw.messages.set( 'jquerymsg-invalid-self-closing-tags-3', '<br onclick="alert(1)">' );
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-invalid-self-closing-tags-1' ),
+			'&lt;div/&gt;',
+			'Self-closing syntax on an allowed tag that is not self-closing escapes the tag'
+		);
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-invalid-self-closing-tags-2' ),
+			'&lt;foo/&gt;',
+			'Self-closing syntax on a disallowed tag escapes the tag'
+		);
+		assert.htmlEqual(
+			formatParse( 'jquerymsg-invalid-self-closing-tags-3' ),
+			'&lt;br onclick="alert(1)"&gt;',
+			'Self-closing tags with disallowed attributes are escaped'
+		);
+
+		mw.messages.set( 'jquery-mixed-self-closing-tags', '<div><br></div>' );
+		assert.htmlEqual(
+			formatParse( 'jquery-mixed-self-closing-tags' ),
+			'<div><br></div>',
+			'Self-closing tags inside other tags are turned into HTML'
+		);
 	} );
 
 	QUnit.test( 'Nowiki', ( assert ) => {
@@ -1240,9 +1284,8 @@
 		this.suppressWarnings();
 		const logSpy = this.sandbox.spy( mw.log, 'warn' );
 
-		assert.strictEqual(
+		assert.false(
 			mw.message( 'invalid-wikitext' ).isParseable(),
-			false,
 			'Invalid wikitext: reported as not parseable'
 		);
 
@@ -1381,9 +1424,8 @@
 			'jQuery plugin $.fn.msg() works correctly'
 		);
 
-		assert.strictEqual(
+		assert.true(
 			mw.message( 'integration-test' ).isParseable(),
-			true,
 			'mw.message().isParseable() works correctly'
 		);
 

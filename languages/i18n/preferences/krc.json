@@ -196,6 +196,8 @@
 	"rcfilters-watchlist-preference-label": "JavaScript болмагъан интерфейс хайырланыгъыз",
 	"rcfilters-watchlist-preference-help": "Фильтре бла излеу неда чертиу мадары болмагъанлай [[{{#special:Watchlist}}|ызлау тизмени]] джюклер.",
 	"prefs-changeswatchlist": "Кёргюзтюлген тюрлениуле",
+	"tog-watchstar-expiry": "Къол бла къошулгъан бетле ючюн кёзде тутуу тизмедеги тынгылау бла заман аралыкъ:",
+	"tog-watch-expiry": "Тынгылау бла заман аралыкъ:",
 	"tog-watchlisthideminor": "Гитче тюрлендириулени кёзде тургъан бетден джашыр",
 	"tog-watchlisthidebots": "Кёзюмде тургъан бетден ботланы тюрлендириулерин джашыр",
 	"tog-watchlisthideown": "Кёзюмде тургъан бетден мени тюрлендириулерими джашыр",

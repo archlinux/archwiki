@@ -47,7 +47,7 @@ class ParserEditTests extends Maintenance {
 	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		// Some methods which are discouraged for normal code throw exceptions unless
 		// we declare this is just a test.
-		define( 'MW_PARSER_TEST', true );
+		define( 'MW_PHPUNIT_TEST', true );
 
 		parent::finalSetup( $settingsBuilder );
 		TestSetup::applyInitialConfig();
@@ -64,7 +64,6 @@ class ParserEditTests extends Maintenance {
 		} else {
 			$this->session = [ 'options' => [] ];
 		}
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable options always set
 		$this->runner = new ParserTestRunner( $this->recorder, $this->session['options'] );
 
 		$this->runTests();
@@ -91,11 +90,11 @@ class ParserEditTests extends Maintenance {
 		}
 	}
 
-	protected function getTestDesc( ParserTest $test ) {
-		return $test->testName; // could include mode here too
+	protected function getTestDesc( ParserTest $test ): string {
+		return $test->testName ?? ''; // could include mode here too
 	}
 
-	protected function getResultSection( ParserTest $test ) {
+	protected function getResultSection( ParserTest $test ): string {
 		// This used to switch between html and html+tidy, but we
 		// got rid of the "notidy" support some time ago.
 		// This should probably eventually support html+standalone
@@ -200,13 +199,13 @@ class ParserEditTests extends Maintenance {
 			print "Could not find the test after a restart, did you rename it?";
 			unset( $this->session['startFile'] );
 			unset( $this->session['startTest'] );
-			// @phan-suppress-next-line PhanPossiblyInfiniteRecursionSameParams
+			// @phan-suppress-next-line PhanPossiblyInfiniteRecursionSameParams We've changed the data before re-calling ourselves
 			$this->showResults();
 		}
 		print "All done\n";
 	}
 
-	protected function heading( $text ) {
+	protected function heading( string $text ): string {
 		$term = new AnsiTermColorer;
 		$heading = "─── $text ";
 		$heading .= str_repeat( '─', $this->termWidth - mb_strlen( $heading ) );
@@ -214,14 +213,14 @@ class ParserEditTests extends Maintenance {
 		return $heading;
 	}
 
-	protected function unifiedDiff( $left, $right ) {
+	protected function unifiedDiff( string $left, string $right ): string {
 		$fromLines = explode( "\n", $left );
 		$toLines = explode( "\n", $right );
 		$formatter = new UnifiedDiffFormatter;
 		return $formatter->format( new Diff( $fromLines, $toLines ) );
 	}
 
-	protected function handleFailure( $index, $testInfo, $result ) {
+	protected function handleFailure( int $index, ParserTest $testInfo, ParserTestResult $result ) {
 		$term = new AnsiTermColorer;
 		$div1 = $term->color( '34' ) . str_repeat( '━', $this->termWidth ) .
 			$term->reset() . "\n";
@@ -322,7 +321,7 @@ class ParserEditTests extends Maintenance {
 		} while ( !$cmdResult );
 	}
 
-	protected function dwdiff( $expected, $actual ) {
+	protected function dwdiff( string $expected, string $actual ): string|false {
 		if ( !is_executable( '/usr/bin/dwdiff' ) ) {
 			return false;
 		}
@@ -354,7 +353,7 @@ class ParserEditTests extends Maintenance {
 		return $result;
 	}
 
-	protected function alternatingAligned( $expectedStr, $actualStr ) {
+	protected function alternatingAligned( string $expectedStr, string $actualStr ): string {
 		$expectedLines = explode( "\n", $expectedStr );
 		$actualLines = explode( "\n", $actualStr );
 		$maxLines = max( count( $expectedLines ), count( $actualLines ) );
@@ -400,7 +399,7 @@ class ParserEditTests extends Maintenance {
 		return $result;
 	}
 
-	protected function reload( $testInfo ) {
+	protected function reload( ParserTest $testInfo ): bool {
 		global $argv;
 		pcntl_exec( PHP_BINARY, [
 			$argv[0],
@@ -414,7 +413,11 @@ class ParserEditTests extends Maintenance {
 		return false;
 	}
 
-	protected function findTest( $file, $testInfo ) {
+	/**
+	 * @param resource $file
+	 * @param ParserTest $testInfo
+	 */
+	protected function findTest( $file, ParserTest $testInfo ): array|false {
 		$initialPart = '';
 		for ( $i = 1; $i < $testInfo->lineNumStart; $i++ ) {
 			$line = fgets( $file );
@@ -442,7 +445,7 @@ class ParserEditTests extends Maintenance {
 		return [ $initialPart, $testPart ];
 	}
 
-	protected function getOutputFileName( $inputFileName ) {
+	protected function getOutputFileName( string $inputFileName ): string {
 		if ( is_writable( $inputFileName ) ) {
 			$outputFileName = $inputFileName;
 		} else {
@@ -452,11 +455,11 @@ class ParserEditTests extends Maintenance {
 		return $outputFileName;
 	}
 
-	protected function editTest( $fileName, $deletions, $changes ) {
+	protected function editTest( string $fileName, array $deletions, array $changes ) {
 		$text = file_get_contents( $fileName );
 		if ( $text === false ) {
 			print "Unable to open test file!";
-			return false;
+			return;
 		}
 		$result = TestFileEditor::edit( $text, $deletions, $changes,
 			static function ( $msg ) {
@@ -475,7 +478,7 @@ class ParserEditTests extends Maintenance {
 		}
 	}
 
-	protected function update( $testInfo, $result ) {
+	protected function update( ParserTest $testInfo, ParserTestResult $result ): bool {
 		$resultSection = $this->getResultSection( $testInfo );
 		$this->editTest( $testInfo->filename,
 			[], // deletions
@@ -491,7 +494,7 @@ class ParserEditTests extends Maintenance {
 		return false;
 	}
 
-	protected function deleteTest( $testInfo ) {
+	protected function deleteTest( ParserTest $testInfo ): bool {
 		$this->editTest( $testInfo->filename,
 			[ $testInfo->testName ], // deletions
 			[] // changes
@@ -499,7 +502,7 @@ class ParserEditTests extends Maintenance {
 		return false;
 	}
 
-	protected function switchTidy( $testInfo ) {
+	protected function switchTidy( ParserTest $testInfo ): bool {
 		$resultSection = $this->getResultSection( $testInfo );
 		if ( in_array( $resultSection, [ 'html/php' ] ) ) {
 			$newSection = 'html/php';
@@ -524,7 +527,7 @@ class ParserEditTests extends Maintenance {
 		return false;
 	}
 
-	protected function deleteSubtest( $testInfo ) {
+	protected function deleteSubtest( ParserTest $testInfo ): bool {
 		$resultSection = $this->getResultSection( $testInfo );
 		$this->editTest( $testInfo->filename,
 			[], // deletions

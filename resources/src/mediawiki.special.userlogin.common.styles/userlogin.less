@@ -1,14 +1,13 @@
 /* User login and signup forms */
 @import 'mediawiki.skin.variables.less';
-@import 'mediawiki.mixins.less';
 
-@defaultFormWidth: 290px;
+@width-login-form: @size-2800;
 
 .mw-htmlform {
 	box-sizing: border-box;
 
 	@media ( min-width: @min-width-breakpoint-tablet ) {
-		width: @defaultFormWidth;
+		width: @width-login-form;
 	}
 }
 
@@ -62,13 +61,6 @@
 	width: 100%;
 	box-sizing: border-box;
 	background-color: @background-color-base;
-}
-
-/* stylelint-disable-next-line selector-class-pattern */
-.fancycaptcha-captcha-container .mw-ui-input {
-	margin-top: @position-offset-border-width-base;
-	border-color: @border-color-subtle;
-	border-radius: 0 0 @border-radius-base @border-radius-base;
 }
 
 /* Make the fancycaptcha-image-container full-width within its parent. */

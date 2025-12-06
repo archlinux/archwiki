@@ -4,11 +4,13 @@ declare( strict_types = 1 );
 namespace Test\Parsoid\Wt2Html\DOM\Processors;
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\Parsoid\Mocks\LinterTag;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter;
 
 /**
  * Test cases for the linter
@@ -25,6 +27,7 @@ class LinterTest extends TestCase {
 			'linterOverrides' => $linterOverrides,
 		];
 		$siteConfig = new MockSiteConfig( $siteOptions );
+		$siteConfig->registerExtensionModule( LinterTag::class );
 
 		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
@@ -35,6 +38,11 @@ class LinterTest extends TestCase {
 		);
 
 		return $parsoid->wikitext2lint( $pageConfig, [] );
+	}
+
+	protected function setUp(): void {
+		parent::setUp();
+		Linter::$enableTemplateInsideLink = true;
 	}
 
 	private function filterLints( array $result, string $cat ): array {
@@ -505,6 +513,20 @@ class LinterTest extends TestCase {
 		$this->assertEquals( [ 0, 51, 9, 10 ], $result[0]['dsr'], $desc );
 		$this->assertTrue( isset( $result[0]['params'] ), $desc );
 		$this->assertEquals( '500px', $result[0]['params']['items'][0], $desc );
+
+		$desc = 'should lint bogus image options in embedded content';
+		$result = $this->wtToLint( '<indicator name="test">[[File:a.jpg|foo|bar]]</indicator>' );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'bogus-image-options', $result[0]['type'], $desc );
+		$this->assertEquals( [ 23, 45, null, null ], $result[0]['dsr'], $desc );
+		$this->assertEquals( 'foo', $result[0]['params']['items'][0] ?? '', $desc );
+
+		$desc = 'should lint bogus image options in embedded content in template';
+		$result = $this->wtToLint( '{{1x|<indicator name="test">[[File:a.jpg|foo|bar]]</indicator>}}' );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'bogus-image-options', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 64, null, null ], $result[0]['dsr'], $desc );
+		$this->assertEquals( 'foo', $result[0]['params']['items'][0] ?? '', $desc );
 	}
 
 	/**
@@ -1121,119 +1143,135 @@ class LinterTest extends TestCase {
 
 	/**
 	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter::lintWikilinksInExtlink
+	 * @dataProvider provideWikilinkInExternalLink
 	 */
-	public function testWikilinkInExternalLink(): void {
-		$desc = "should lint wikilink in external link correctly";
-		$result = $this->wtToLint( "[http://google.com This is [[Google]]'s search page]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 52, 19, 1 ], $result[0]['dsr'], $desc );
+	public function testWikilinkInExternalLink(
+		string $wikitext, ?array $dsr, bool $filterLints = false,
+		?callable $extraAssertions = null
+	): void {
+		$result = $this->wtToLint( $wikitext );
+		if ( $filterLints ) {
+			$result = $this->filterLints( $result, 'wikilink-in-extlink' );
+		}
+		if ( $dsr === null ) {
+			$this->assertCount( 0, $result );
+		} else {
+			$this->assertCount( 1, $result );
+			$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'] );
+			$this->assertEquals( $dsr, $result[0]['dsr'] );
+		}
+		if ( $extraAssertions ) {
+			$extraAssertions( $this, $result );
+		}
+	}
 
-		$desc = "should lint wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"[http://stackexchange.com is the official website for [[Stack Exchange]]]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 73, 26, 1 ], $result[0]['dsr'], $desc );
+	public static function provideWikilinkInExternalLink() {
+		yield "should lint wikilink in external link correctly (1)" => [
+			"[http://google.com This is [[Google]]'s search page]",
+			[ 0, 52, 19, 1 ],
+		];
 
-		$desc = "should lint wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"{{1x|foo <div> and [http://google.com [[Google]] bar] baz </div>}}" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 66, null, null ], $result[0]['dsr'], $desc );
-		$this->assertTrue( isset( $result[0]['templateInfo'] ), $desc );
-		$this->assertEquals( 'Template:1x', $result[0]['templateInfo']['name'], $desc );
+		yield "should lint wikilink in external link correctly (2)" => [
+			"[http://stackexchange.com is the official website for [[Stack Exchange]]]",
+			[ 0, 73, 26, 1 ],
+		];
 
-		$desc = "should lint wikilink set in italics in external link correctly";
-		$result = $this->wtToLint(
-			"[http://stackexchange.com is the official website for ''[[Stack Exchange]]'']" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 77, 26, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint wikilink in external link correctly (3)" => [
+			"{{1x|foo <div> and [http://google.com [[Google]] bar] baz </div>}}",
+			[ 0, 66, null, null ],
+			false,
+			static function ( $testCase, $result ) {
+				$testCase->assertTrue( isset( $result[0]['templateInfo'] ) );
+				$testCase->assertEquals( 'Template:1x', $result[0]['templateInfo']['name'] );
+			},
+		];
 
-		$desc = "should lint wikilink set in bold in external link correctly";
-		$result = $this->wtToLint(
-			"[http://stackexchange.com is the official website for '''[[Stack Exchange]]''']" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 79, 26, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint wikilink set in italics in external link correctly" => [
+			"[http://stackexchange.com is the official website for ''[[Stack Exchange]]'']",
+			[ 0, 77, 26, 1 ],
+		];
 
-		$desc = "should lint wikilink set in italics and bold in external link correctly";
-		$result = $this->wtToLint(
-			"[http://stackexchange.com is the official website for '''''[[Stack Exchange]]''''']" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 83, 26, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint wikilink set in bold in external link correctly" => [
+			"[http://stackexchange.com is the official website for '''[[Stack Exchange]]''']",
+			[ 0, 79, 26, 1 ],
+		];
 
-		$desc = "should lint figure wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/some.link [[File:Foobar.jpg|scale=0.5]] image]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 62, 26, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint wikilink set in italics and bold in external link correctly" => [
+			"[http://stackexchange.com is the official website for '''''[[Stack Exchange]]''''']",
+			[ 0, 83, 26, 1 ],
+		];
 
-		$desc = "should lint image wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link [[File:Foobar.jpg|thumb]] image]" );
-		$result = $this->filterLints( $result, 'wikilink-in-extlink' );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 59, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint figure wikilink in external link correctly" => [
+			"[http://foo.bar/some.link [[File:Foobar.jpg|scale=0.5]] image]",
+			[ 0, 62, 26, 1 ],
+		];
 
-		$desc = "should lint image wikilink in external link with |link= correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link [[File:Foobar.jpg|link=]] image]" );
-		$result = $this->filterLints( $result, 'wikilink-in-extlink' );
-		$this->assertCount( 0, $result, $desc );
+		yield "should lint image wikilink in external link correctly" => [
+			"[http://foo.bar/other.link [[File:Foobar.jpg|thumb]] image]",
+			[ 0, 59, 27, 1 ],
+			true,
+		];
 
-		$desc = "should not generate lint error for image wikilink following external link";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link testing123][[File:Foobar.jpg]]" );
-		$result = $this->filterLints( $result, 'wikilink-in-extlink' );
-		$this->assertCount( 0, $result, $desc );
+		yield "should lint image wikilink in external link with |link= correctly" => [
+			"[http://foo.bar/other.link [[File:Foobar.jpg|link=]] image]",
+			null, // no lints
+			true,
+		];
 
-		$desc = "should lint audio wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link [[File:Audio.oga]] audio]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 52, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should not generate lint error for image wikilink following external link" => [
+			"[http://foo.bar/other.link testing123][[File:Foobar.jpg]]",
+			null, // no lints
+			true,
+		];
 
-		$desc = "should lint video wikilink in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link [[File:Video.ogv]] video]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 52, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint audio wikilink in external link correctly" => [
+			"[http://foo.bar/other.link [[File:Audio.oga]] audio]",
+			[ 0, 52, 27, 1 ],
+		];
 
-		$desc = "should lint audio wikilink with preceding text in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link first_child [[File:Audio.oga]] audio]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 64, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint video wikilink in external link correctly" => [
+			"[http://foo.bar/other.link [[File:Video.ogv]] video]",
+			[ 0, 52, 27, 1 ],
+		];
 
-		$desc = "should lint video wikilink with prededing bold text in external link correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link '''first_child''' [[File:Video.ogv]] video]" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 70, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint audio wikilink with preceding text in external link correctly" => [
+			"[http://foo.bar/other.link first_child [[File:Audio.oga]] audio]",
+			[ 0, 64, 27, 1 ],
+		];
 
-		$desc = "should lint audio wikilink in extlink followed by span correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link [[File:Audio.oga]] audio]<span>this is an Element</span>" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 52, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint video wikilink with prededing bold text in external link correctly" => [
+			"[http://foo.bar/other.link '''first_child''' [[File:Video.ogv]] video]",
+			[ 0, 70, 27, 1 ],
+		];
 
-		$desc = "should lint audio wikilink in extlink with preceding text followed by span correctly";
-		$result = $this->wtToLint(
-			"[http://foo.bar/other.link text content [[File:Audio.oga]] audio]<span>this is an Element</span>" );
-		$this->assertCount( 1, $result, $desc );
-		$this->assertEquals( 'wikilink-in-extlink', $result[0]['type'], $desc );
-		$this->assertEquals( [ 0, 65, 27, 1 ], $result[0]['dsr'], $desc );
+		yield "should lint audio wikilink in extlink followed by span correctly" => [
+			"[http://foo.bar/other.link [[File:Audio.oga]] audio]<span>this is an Element</span>",
+			[ 0, 52, 27, 1 ],
+		];
+
+		yield "should lint audio wikilink in extlink with preceding text followed by span correctly" => [
+			"[http://foo.bar/other.link text content [[File:Audio.oga]] audio]<span>this is an Element</span>",
+			[ 0, 65, 27, 1 ],
+		];
+
+		yield "should lint template-generated wikilink in external link" => [
+			'[http://google.com {{1x|[[Google]]}}]',
+			[ 0, 37, 19, 1 ],
+			false,
+			static function ( $testCase, $result ) {
+				$testCase->assertFalse( isset( $result[0]['templateInfo'] ) );
+			},
+		];
+
+		yield "should lint template-generated link-in-link not at top level" => [
+			'foo {{1x|foo [http://google.com [[Google]]] bar}} bar',
+			[ 4, 49, null, null ],
+			false,
+			static function ( $testCase, $result ) {
+				$testCase->assertTrue( isset( $result[0]['templateInfo'] ) );
+				$testCase->assertEquals( 'Template:1x', $result[0]['templateInfo']['name'] );
+			},
+		];
 	}
 
 	/**
@@ -1736,6 +1774,10 @@ class LinterTest extends TestCase {
 		$result = $this->wtToLint( "== Hi ho ==\n== Hi ho ==" );
 		$this->assertCount( 0, $result, $desc );
 
+		$desc = 'should not lint duplicate ids from headings with fallback ids';
+		$result = $this->wtToLint( "== Hi 'ho' ==\n== Hi 'ho' ==" );
+		$this->assertCount( 0, $result, $desc );
+
 		$desc = 'should maybe lint ids that would conflict with headings';
 		$result = $this->wtToLint( "==hi==\n<div id='hi'>ho</div>" );
 		$this->assertCount( 0, $result, $desc );
@@ -1779,6 +1821,58 @@ class LinterTest extends TestCase {
 		$this->assertCount( 2, $result, $desc );
 		$this->assertEquals( 'empty-heading', $result[0]['type'], $desc );
 		$this->assertEquals( 'empty-heading', $result[1]['type'], $desc );
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Ext\ExtensionTagHandler::lintHandler
+	 */
+	public function testLintHandler(): void {
+		$desc = "should skip node when linting";
+		$result = $this->wtToLint(
+			"<linter>" .
+			"[[File:Foobar.jpg|bogus|caption]]" .
+			"<div class='skip'>[[File:Foobar.jpg|bogus|caption]]</div>" .
+			"</linter>"
+		);
+		$this->assertCount( 2, $result, $desc );
+		$this->assertEquals( 'bogus-image-options', $result[0]['type'], $desc );
+		$this->assertEquals( [ 8, 41, null, null ], $result[0]['dsr'], $desc );
+	}
+
+	public function testLintLinksContainsTemplate(): void {
+		$desc = "should not lint link contains template (autolink)";
+		$result = $this->wtToLint(
+			"http://wikimedia.org https://wikimedia.org {{1x|test.com"
+			. "}}smtp://wikimedia.org/test/;{{1x|https://wikipedia.org}}"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint link contains template (extlink)";
+		$result = $this->wtToLint(
+			"[http://wikimedia.org] [wikimedia.org/test description] [https://wikimedia.org {{1x|wikimedia.org}}]"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should lint link contains template (extlink)";
+		$result = $this->wtToLint(
+			"text[https://wikimedia.org/wiki/{{1x|Mathematics}}][https://wikimedia.org{{1x|/test}} link]"
+		);
+		$this->assertCount( 2, $result, $desc );
+		$this->assertEquals( 'extlink-contains-template', $result[0]['type'], $desc );
+		$this->assertEquals( [ 4, 51, 46, 1 ], $result[0]['dsr'], $desc );
+		$this->assertEquals( 'extlink-contains-template', $result[1]['type'], $desc );
+		$this->assertEquals( [ 51, 91, 35, 1 ], $result[1]['dsr'], $desc );
+
+		$desc = "should lint link contains template (autolink)";
+		$result = $this->wtToLint(
+			"text https://wikimedia.org/wiki/{{1x|Mathematics}} https://wikimedia.org{{1x|/test}}"
+			. "https://wikimedia.org {{1x|/test}}"
+		);
+		$this->assertCount( 2, $result, $desc );
+		$this->assertEquals( 'extlink-contains-template', $result[0]['type'], $desc );
+		$this->assertEquals( [ 5, 50, 0, 0 ], $result[0]['dsr'], $desc );
+		$this->assertEquals( 'extlink-contains-template', $result[1]['type'], $desc );
+		$this->assertEquals( [ 51, 105, 0, 0 ], $result[1]['dsr'], $desc );
 	}
 
 }

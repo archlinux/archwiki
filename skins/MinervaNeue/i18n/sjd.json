@@ -21,11 +21,5 @@
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Се̄брэ}} $1",
 	"minerva-page-actions-editfull": "Воа̄йхэ о̄ммп лыст",
 	"minerva-page-actions-language-switcher": "Кӣл",
-	"minerva-page-actions-history": "Исторья",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 секунда|$1 секунда|$1 секундэдтӭ}} маӈас",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 минута|$1 минута|$1 минутэдтӭ}} маӈас",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ча̄сс|$1 ча̄сс|$1 ча̄ссэ}} маӈас",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 пе̄ййв|$1 пе̄йв|$1 пе̄ййвэ}} маӈас",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 ма̄нн|$1 ма̄н|$1 ма̄ннэ}} маӈас",
-	"skin-minerva-time-ago-years": "$1 {{PLURAL:$1|ыгкь|ыгь|ыгке}} маӈас"
+	"minerva-page-actions-history": "Исторья"
 }

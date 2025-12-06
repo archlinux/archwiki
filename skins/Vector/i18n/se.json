@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ed g2s",
 			"Gálaniitoluodda",
 			"Jeblad",
 			"Kimberli Mäkäräinen (WMNO)",
@@ -15,8 +16,6 @@
 	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [[mw:Desktop Improvements|Desktop Improvements]] -prošeavtta áigge.",
 	"prefs-vector-enable-vector-1-label": "Ane klassihkalaš Vectora",
 	"prefs-vector-enable-vector-1-help": "Daid boahttevaš jagiid mii áigot ceahkkálaga ođasmahttit Vector hámi. Klassihkalaš Vector čájeha dutnje dan boares Vector veršuvnna (juovlamánnu 2019) Deaddil [[mw:Reading/Web/Desktop_Improvements|project page]] vai oahpat eambbo.",
-	"vector-opt-out": "Molsso ovdalaš hápmái ",
-	"vector-opt-out-tooltip": "Lonut iežat ásahusaid molsun dihte boares hápmái (klassihkalaš Vector) ",
 	"vector-action-toggle-sidebar": "Čájet/čiega siidofealta",
 	"vector-languages": "Gielat",
 	"vector-language-button-aria-label": "Geahča artihkkala eará gillii. Olámuttos {{PLURAL:$1|$1 gillii}}",
@@ -49,11 +48,9 @@
 	"vector-feature-custom-font-size-2-label": "Stuoris",
 	"skin-theme-name": "Ivdni",
 	"skin-theme-description": "[Geahččalanveršuvdna, hui sihkkarit leat váttisvuođat] Unnit čuovgga mii boahtá ovttadaga šearpmas.",
-	"skin-theme-day-label": "Čuovga",
+	"skin-theme-day-label": "Čuvges fárda",
 	"skin-theme-os-label": "Automáhtalaš",
 	"skin-theme-exclusion-notice": "Dát siidu lea álo beaivemodusis.",
-	"vector-search-loader": "Viežžamin ohcanevttohusaid",
-	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Oahpisdeapmi",
 	"vector-toc-label": "Sisdoallu",
 	"vector-toc-beginning": "Álgu",

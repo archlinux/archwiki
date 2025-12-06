@@ -88,6 +88,7 @@
 	"math_invalidresponse": "$1: Geçersiz yanıt (\"$3\") sunucu \"$2\":",
 	"math_invalidxml": "MathML veya SVG geçersiz XML.",
 	"math_mathoid_error": "Dönüştürme hatası. Sunucu (\"$1\") bildirdi: \"$2\"",
+	"math_other_error": "Diğer hata: $1",
 	"math-status-introduction": "Bu sayfa {{PLURAL:$1|modu}} işleme etkin matematik hakkında bilgi görüntüler.\n\nAşağıda işleme {{PLURAL:$1|modu}} etkin:",
 	"math_syntax_error": "sözdizim hatası",
 	"math_timeout": "$1 \"$2\" üzerinden zaman aşımına uğradı.",

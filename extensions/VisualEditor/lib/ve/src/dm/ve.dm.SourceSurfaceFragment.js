@@ -25,7 +25,7 @@ OO.inheritClass( ve.dm.SourceSurfaceFragment, ve.dm.SurfaceFragment );
 /**
  * @inheritdoc
  */
-ve.dm.SourceSurfaceFragment.prototype.annotateContent = function () {
+ve.dm.SourceSurfaceFragment.prototype.annotateContent = function ( ...args ) {
 	const text = this.getText( true );
 
 	this.pushPending( this.convertFromSource( text ).then( ( selectionDocument ) => {
@@ -34,7 +34,7 @@ ve.dm.SourceSurfaceFragment.prototype.annotateContent = function () {
 			// TODO: Find content offsets
 			selectionDocument.getDocumentRange()
 		);
-		tempFragment.annotateContent.apply( tempFragment, arguments );
+		tempFragment.annotateContent( ...args );
 
 		this.clearPending();
 		this.insertDocument( tempFragment.getDocument() );
@@ -55,7 +55,7 @@ ve.dm.SourceSurfaceFragment.prototype.getAnnotations = function () {
 /**
  * @inheritdoc
  */
-ve.dm.SourceSurfaceFragment.prototype.convertNodes = function () {
+ve.dm.SourceSurfaceFragment.prototype.convertNodes = function ( ...args ) {
 	const text = this.getText( true );
 
 	this.pushPending( this.convertFromSource( text ).then( ( selectionDocument ) => {
@@ -64,7 +64,7 @@ ve.dm.SourceSurfaceFragment.prototype.convertNodes = function () {
 			// TODO: Find content offsets
 			selectionDocument.getDocumentRange()
 		);
-		tempFragment.convertNodes.apply( tempFragment, arguments );
+		tempFragment.convertNodes( ...args );
 
 		this.clearPending();
 		this.insertDocument( tempFragment.getDocument() );
@@ -79,7 +79,7 @@ ve.dm.SourceSurfaceFragment.prototype.convertNodes = function () {
  */
 ve.dm.SourceSurfaceFragment.prototype.insertContent = function ( content, annotate ) {
 	if ( typeof content !== 'string' ) {
-		const data = new ve.dm.ElementLinearData( new ve.dm.HashValueStore(), content );
+		const data = new ve.dm.LinearData( new ve.dm.HashValueStore(), content );
 		// Pass `annotate` as `ignoreCoveringAnnotations`. If matching the target annotation (plain text) strip covering annotations.
 		if ( !data.isPlainText( null, false, [ 'paragraph' ], annotate ) ) {
 			this.insertDocument( new ve.dm.Document( content.concat( { type: 'internalList' }, { type: '/internalList' } ) ) );
@@ -184,12 +184,11 @@ ve.dm.SourceSurfaceFragment.prototype.wrapAllNodes = function ( wrapOuter, wrapE
 	const nodes = this.getSelectedLeafNodes();
 
 	const content = wrapOuter.map( getOpening );
-	for ( let i = 0; i < nodes.length; i++ ) {
-		const node = nodes[ i ];
+	nodes.forEach( ( node ) => {
 		ve.batchPush( content, wrapEach.map( getOpening ) );
 		ve.batchPush( content, this.getSurface().getLinearFragment( node.getRange() ).getText().split( '' ) );
 		ve.batchPush( content, wrapEach.reverse().map( getClosing ) );
-	}
+	} );
 	ve.batchPush( content, wrapOuter.reverse().map( getClosing ) );
 
 	this.insertContent( content );

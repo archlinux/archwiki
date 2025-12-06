@@ -36,28 +36,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 /**
  * @group Preferences
  * @group Database
- * @coversDefaultClass \MediaWiki\Preferences\DefaultPreferencesFactory
+ * @covers \MediaWiki\Preferences\DefaultPreferencesFactory
  */
 class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
@@ -81,9 +67,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->config = $this->getServiceContainer()->getMainConfig();
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct() {
 		// Make sure if the optional services are not provided, stuff still works, so that
 		// the GlobalPreferences extension isn't broken
@@ -185,10 +168,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::getForm
-	 * @covers ::searchPreferences
-	 */
 	public function testGetForm() {
 		$this->setTemporaryHook( 'GetPreferences', HookContainer::NOOP );
 
@@ -199,9 +178,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertCount( 6, $form->getPreferenceSections() );
 	}
 
-	/**
-	 * @covers ::sortSkinNames
-	 */
 	public function testSortSkinNames() {
 		/** @var DefaultPreferencesFactory $factory */
 		$factory = TestingAccessWrapper::newFromObject(
@@ -236,7 +212,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 	 * CSS classes for emailauthentication preference field when there's no email.
 	 * @see https://phabricator.wikimedia.org/T36302
 	 *
-	 * @covers ::profilePreferences
 	 * @dataProvider emailAuthenticationProvider
 	 */
 	public function testEmailAuthentication( $user, $cssClass ) {
@@ -248,9 +223,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertEquals( $cssClass, $prefs['emailauthentication']['cssclass'] );
 	}
 
-	/**
-	 * @covers ::renderingPreferences
-	 */
 	public function testShowRollbackConfIsHiddenForUsersWithoutRollbackRights() {
 		$userMock = $this->createMock( User::class );
 		$userMock->method( 'isAllowed' )->willReturnCallback(
@@ -267,9 +239,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertArrayNotHasKey( 'showrollbackconfirmation', $prefs );
 	}
 
-	/**
-	 * @covers ::renderingPreferences
-	 */
 	public function testShowRollbackConfIsShownForUsersWithRollbackRights() {
 		$userMock = $this->createMock( User::class );
 		$userMock->method( 'isAllowed' )->willReturnCallback(
@@ -311,7 +280,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 	 *  - formData and User object have set up new properties
 	 *
 	 * @see https://phabricator.wikimedia.org/T169365
-	 * @covers ::submitForm
 	 */
 	public function testPreferencesFormPreSaveHookHasCorrectData() {
 		$oldOptions = [
@@ -387,8 +355,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * The rclimit preference should accept non-integer input and filter it to become an integer.
-	 *
-	 * @covers ::saveFormData
 	 */
 	public function testIntvalFilter() {
 		// Test a string with leading zeros (i.e. not octal) and spaces.
@@ -402,9 +368,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertEquals( 12, $userOptionsLookup->getOption( $user, 'rclimit' ) );
 	}
 
-	/**
-	 * @covers ::profilePreferences
-	 */
 	public function testVariantsSupport() {
 		$userMock = $this->createMock( User::class );
 		$userMock->method( 'isAllowed' )->willReturn( true );
@@ -426,9 +389,6 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertEquals( 'sr', $prefs['variant']['default'] );
 	}
 
-	/**
-	 * @covers ::profilePreferences
-	 */
 	public function testUserGroupMemberships() {
 		$userMock = $this->createMock( User::class );
 		$userMock->method( 'isAllowed' )->willReturn( true );

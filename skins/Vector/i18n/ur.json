@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"BukhariSaeed",
 			"Calak",
 			"Istabani",
 			"Muhammad Shuaib",
@@ -9,8 +10,7 @@
 			"Tahir mq",
 			"عثمان خان شاہ",
 			"عرفان ارشد",
-			"محبوب عالم",
-			"BukhariSaeed"
+			"محبوب عالم"
 		]
 	},
 	"skinname-vector": "ویکٹر قدیم (2010ء)",
@@ -18,7 +18,6 @@
 	"vector-specialversion-name": "ویکٹر",
 	"vector-skin-desc": "مونوبک کا جدید نسخہ (ورژن) مع شائستہ صورت اور کئی افادیت میں بہتریاں",
 	"prefs-vector-enable-vector-1-label": "قدیم ویکٹر استعمال کریں",
-	"vector-opt-out": "پرانی وضع پر واپس جائیں",
 	"vector-action-toggle-sidebar": "بغلی پٹی کو بدلیں",
 	"vector-languages": "زبانیں",
 	"vector-language-button-label": "{{PLURAL:$1|$1 زبان|$1 زبانیں}}",
@@ -53,7 +52,6 @@
 	"skin-theme-night-label": "تاریک",
 	"skin-theme-os-label": "خودکار",
 	"skin-theme-exclusion-notice": "یہ صفحہ ہمیشہ روشن موڈ میں ہوتا ہے۔",
-	"vector-search-loader": "تجاویزِ تلاش کھل رہی ہیں",
 	"vector-intro-page": "Help:تعارف",
 	"vector-toc-label": "مندرجات",
 	"vector-toc-beginning": "دیباچہ",

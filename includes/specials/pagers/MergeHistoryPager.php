@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -45,9 +31,8 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 	public array $mConds;
 	private int $articleID;
-	private string $maxTimestamp;
-	private int $maxRevId;
 	private string $mergePointTimestamp;
+	private string $mergePointTimestampOld;
 
 	/** @var int[] */
 	public array $prevId;
@@ -65,29 +50,18 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		RevisionStore $revisionStore,
 		CommentFormatter $commentFormatter,
 		ChangeTagsStore $changeTagsStore,
-		$conds,
+		array $conds,
 		PageIdentity $source,
 		PageIdentity $dest,
-		string $mergePointTimestamp
+		string $mergePointTimestamp,
+		string $mergePointTimestampOld
 	) {
 		$this->mConds = $conds;
 		$this->articleID = $source->getId();
 
 		$dbr = $dbProvider->getReplicaDatabase();
-		$maxtimestamp = $dbr->newSelectQueryBuilder()
-			->select( 'MIN(rev_timestamp)' )
-			->from( 'revision' )
-			->where( [ 'rev_page' => $dest->getId() ] )
-			->caller( __METHOD__ )->fetchField();
-		$maxRevId = $dbr->newSelectQueryBuilder()
-			->select( "MIN(rev_id)" )
-			->from( 'revision' )
-			->where( [ 'rev_page' => $dest->getId() ] )
-			->where( [ 'rev_timestamp' => $maxtimestamp ] )
-			->caller( __METHOD__ )->fetchField();
-		$this->maxTimestamp = $maxtimestamp;
-		$this->maxRevId = (int)$maxRevId;
 		$this->mergePointTimestamp = $mergePointTimestamp;
+		$this->mergePointTimestampOld = $mergePointTimestampOld;
 
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbr;
@@ -98,6 +72,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		$this->changeTagsStore = $changeTagsStore;
 	}
 
+	/** @inheritDoc */
 	protected function doBatchLookups() {
 		# Do a link batch query
 		$this->mResult->seek( 0 );
@@ -127,7 +102,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 	 * @inheritDoc
 	 */
 	protected function getStartBody() {
-		return "<section class='mw-pager-body'>\n";
+		return "<section id='mw-mergehistory-list' class='mw-pager-body'>\n";
 	}
 
 	/**
@@ -137,6 +112,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		return "</section>\n";
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $row ) {
 		$revRecord = $this->revisionStore->newRevisionFromRow( $row );
 
@@ -147,11 +123,17 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 		$ts = wfTimestamp( TS_MW, $row->rev_timestamp );
 		$tsWithId = $ts . "|" . $row->rev_id;
-		$checkBox = Html::radio(
-			'mergepoint',
-			$this->mergePointTimestamp === $ts || $this->mergePointTimestamp === $tsWithId,
+		$oldCheckBox = Html::radio(
+			'mergepointold',
+			$this->mergePointTimestampOld === $tsWithId,
 			[ 'value' => $tsWithId ]
 		);
+		$newCheckBox = Html::radio(
+				'mergepoint',
+				$this->mergePointTimestamp === $ts || $this->mergePointTimestamp === $tsWithId,
+				[ 'value' => $tsWithId ]
+		);
+		$cbs = $oldCheckBox . $newCheckBox;
 
 		$user = $this->getUser();
 
@@ -198,9 +180,10 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 		return Html::rawElement( 'li', $classes,
 			$this->msg( 'mergehistory-revisionrow' )
-				->rawParams( $checkBox, $last, $pageLink, $userLink, $stxt, $comment, $tagSummary )->escaped() );
+				->rawParams( $cbs, $last, $pageLink, $userLink, $stxt, $comment, $tagSummary )->escaped() );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$dbr = $this->getDatabase();
 		$queryBuilder = $this->revisionStore->newSelectQueryBuilder( $dbr )
@@ -210,18 +193,13 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 			->where( $this->mConds )
 			->andWhere( [
 				'rev_page' => $this->articleID,
-				$dbr->buildComparison( "<",
-					[
-						"rev_timestamp" => $this->maxTimestamp,
-						"rev_id" => $this->maxRevId
-					]
-				)
 			] );
 		$this->changeTagsStore->modifyDisplayQueryBuilder( $queryBuilder, 'revision' );
 
 		return $queryBuilder->getQueryInfo( 'join_conds' );
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'rev_timestamp', 'rev_id' ] ];
 	}

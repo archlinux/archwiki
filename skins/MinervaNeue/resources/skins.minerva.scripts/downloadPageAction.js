@@ -15,30 +15,6 @@ function isIos( userAgent ) {
 }
 
 /**
- * Helper function to retrieve the Android version
- *
- * @ignore
- * @param {string} userAgent User Agent
- * @return {number|boolean} Integer version number, or false if not found
- */
-function getAndroidVersion( userAgent ) {
-	const match = userAgent.toLowerCase().match( /android\s(\d\.]*)/ );
-	return match ? parseInt( match[ 1 ] ) : false;
-}
-
-/**
- * Helper function to retrieve the Chrome/Chromium version
- *
- * @ignore
- * @param {string} userAgent User Agent
- * @return {number|boolean} Integer version number, or false if not found
- */
-function getChromeVersion( userAgent ) {
-	const match = userAgent.toLowerCase().match( /chrom(e|ium)\/(\d+)\./ );
-	return match ? parseInt( match[ 2 ] ) : false;
-}
-
-/**
  * Checks whether DownloadIcon is available for given user agent
  *
  * @memberof DownloadIcon
@@ -50,9 +26,6 @@ function getChromeVersion( userAgent ) {
  * @return {boolean}
  */
 function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
-	const androidVersion = getAndroidVersion( userAgent );
-	const chromeVersion = getChromeVersion( userAgent );
-
 	if ( typeof window.print !== 'function' ) {
 		// T309591: No window.print support
 		return false;
@@ -67,13 +40,8 @@ function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
 		return false;
 	}
 
-	if ( isIos( userAgent ) || chromeVersion === false ||
-		windowObj.chrome === undefined
-	) {
-		// we support only chrome/chromium on desktop/android
-		return false;
-	}
-	if ( ( androidVersion && androidVersion < 5 ) || chromeVersion < 41 ) {
+	if ( isIos( userAgent ) ) {
+		// iOS devices have known issues with window.print
 		return false;
 	}
 	return true;

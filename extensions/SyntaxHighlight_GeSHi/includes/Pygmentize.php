@@ -97,6 +97,7 @@ class Pygmentize {
 	 * Shell out to get installed pygments version
 	 *
 	 * @internal For use by WANObjectCache/BagOStuff only
+	 * @throws PygmentsException
 	 */
 	public static function fetchVersion(): string {
 		$result = self::boxedCommand()
@@ -138,6 +139,7 @@ class Pygmentize {
 	 * Shell out to get generated CSS from pygments
 	 *
 	 * @internal Only public for updateCSS.php
+	 * @throws PygmentsException
 	 */
 	public static function fetchGeneratedCSS(): string {
 		$lightModeRun = self::boxedCommand()
@@ -221,6 +223,7 @@ class Pygmentize {
 	 *
 	 * @internal Only public for updateLexerList.php
 	 * @return array<string,true>
+	 * @throws PygmentsException
 	 */
 	public static function fetchLexers(): array {
 		$cliParams = [ self::getPath(), '-L', 'lexer' ];
@@ -253,6 +256,7 @@ class Pygmentize {
 	 *
 	 * @param string $output JSON formatted output of pygments lexers list
 	 * @return array
+	 * @throws PygmentsException
 	 */
 	private static function parseLexersFromJson( $output ): array {
 		$data = json_decode( $output, true );
@@ -297,6 +301,7 @@ class Pygmentize {
 	 * @param string $code Code to highlight
 	 * @param array $options Options to pass to pygments
 	 * @return string
+	 * @throws PygmentsException
 	 */
 	public static function highlight( $lexer, $code, array $options ): string {
 		$optionPairs = [];

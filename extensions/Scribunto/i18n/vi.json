@@ -4,9 +4,11 @@
 			"Max20091",
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Nvdtn19"
 		]
 	},
+	"content-model-scribunto": "Mô đun Scribunto",
 	"scribunto-desc": "Nền tảng đế nhúng ngôn ngữ kịch bản vào các trang MediaWiki",
 	"scribunto-line": "tại dòng $1",
 	"scribunto-module-line": "trong $1 tại dòng $2",
@@ -32,7 +34,7 @@
 	"scribunto-common-timeout": "Đã hết thời gian dành để chạy kịch bản.",
 	"scribunto-common-oom": "Đã vượt quá lượng bộ nhớ dành để chạy kịch bản.",
 	"scribunto-common-backtrace": "Danh sách ngăn xếp:",
-	"scribunto-common-no-details": "Không có thêm chi tiết.",
+	"scribunto-common-no-details": "Không có chi tiết về vị trí mã có sẵn.",
 	"scribunto-lua-in-function": "trong hàm “$1”",
 	"scribunto-lua-in-main": "trong đoạn chính",
 	"scribunto-lua-in-function-at": "trong hàm tại $1:$2",
@@ -40,6 +42,7 @@
 	"scribunto-lua-error-location": "Lỗi Lua $1: $2.",
 	"scribunto-lua-error": "Lỗi Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Lỗi kịch bản: Mô đun cho ra giá trị $2. Nó cần phải cho ra một bảng xuất khẩu.",
+	"scribunto-lua-warning": "Cảnh báo kịch bản: $1",
 	"scribunto-luastandalone-proc-error": "Lỗi Lua: Không thể tạo ra quá trình.",
 	"scribunto-luastandalone-proc-error-msg": "Lỗi Lua: Không thể tạo quá trình: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lỗi Lua: Không thể tạo quá trình: proc_open không có sẵn. Hãy kiểm tra chỉ thị cấu hình “disable_functions” của PHP.",
@@ -63,5 +66,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Nhật trình Lua",
 	"nstab-module": "Mô đun",
-	"tooltip-ca-nstab-module": "Xem trang mô đun"
+	"tooltip-ca-nstab-module": "Xem trang mô đun",
+	"namespaceinfo-description-ns828": "Không gian tên cho mã mô đun Lua, có thể được gọi từ các trang wiki, và các trang tài liệu của chúng",
+	"namespaceinfo-description-ns829": "Trang thảo luận cho các mô đun và tài liệu"
 }

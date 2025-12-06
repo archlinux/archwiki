@@ -65,7 +65,12 @@ div.editOptions {
 }
 
 // Modify forms that are not either OOUI or Codex.
-form:not( .oo-ui-layout ):not( .mw-htmlform-codex ) {
+// We also exclude #search (from AdvancedSearch) and #powerSearch (default UI
+// when you click "Advanced") since their styling looks fine and this kinda
+// breaks it. Additionally, we use :where so we avoid giving this specificity
+// over #searchButton styling that happens later. (T403355)
+// (Also sorry I can't get this line to wrap without stylelint being upset.)
+form:not( .oo-ui-layout ):not( .mw-htmlform-codex ):not( :where( #search, #powersearch ) ) {
 	textarea,
 	input {
 		border: solid 1px @base70;

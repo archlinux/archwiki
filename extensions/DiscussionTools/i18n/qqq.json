@@ -5,6 +5,7 @@
 			"Amire80",
 			"Beginneruser",
 			"Biyolojiyabikurdi",
+			"Jon Harald Søby",
 			"Matma Rex",
 			"Omotecho",
 			"Raymond",
@@ -13,8 +14,7 @@
 			"Tacsipacsi",
 			"Umherirrender",
 			"Verdy p",
-			"Vriullop",
-			"Jon Harald Søby"
+			"Vriullop"
 		]
 	},
 	"discussiontools": "{{name}}\nThe name of the extension",
@@ -85,7 +85,7 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Title of notification shown when a user unsubscribes from notifications about new topics on this page.",
 	"discussiontools-notification-added-topic-header": "Notification header for when a new topic has been started on a page. Parameters:\n* $1 - the formatted username of the user who started the topic\n* $2 - the username for gender purposes\n* $3 - title of the page\n* $4 - title of the topic",
 	"discussiontools-notification-added-topic-header-bundled": "Notification header for when multiple new topics have been started on a page. Parameters:\n* $1 - the number of topics added\n* $2 - title of the page",
-	"discussiontools-notification-added-topic-header-compact": "Notification compact header for when a new topic has been started on a page. Parameters:\n* $1 - the formatted username of the user who started the topic (unused)\n* $2 - the username for gender purposes (unused)\n* $3 - title of the topic\n* $4 - excerpt of the topic's first comment",
+	"discussiontools-notification-added-topic-header-compact": "{{optional}}\nNotification compact header for when a new topic has been started on a page. Parameters:\n* $1 - the formatted username of the user who started the topic (unused)\n* $2 - the username for gender purposes (unused)\n* $3 - title of the topic\n* $4 - excerpt of the topic's first comment",
 	"discussiontools-notification-added-topic-view": "Label for button to view topic that was just posted.",
 	"discussiontools-notification-comment-thank-header": "Notification header for when you have been thanked for a comment. Parameters:\n* $1 is the username of the user sending the thanks (not suitable for GENDER).\n* $2 is the thanking user's name for use in GENDER.\n* $3 is the topic in which the thanked comment was posted.\n* $4 is the username of the user being thanked, for use in GENDER.",
 	"discussiontools-notification-comment-thank-header-bundled": "Notification header for when you have received multiple thanks for a comment. Parameters:\n* $1 is the number of users who sent thanks for the same comment. When used with PLURAL, the value 100 represents more than 99.\n* $2 is the topic in which the thanked comment was posted.\n* $3 is the username of the user being thanked, for use in GENDER.",
@@ -101,7 +101,7 @@
 	"discussiontools-notification-topic-hidden": "Text shown instead of topic title when the topic title has been hidden and context user does not have permission to see it",
 	"discussiontools-notification-subscribed-new-comment-header": "Notification header text for when there is a reply on a topic. Parameters:\n* $1 - the formatted username of the user who replied to the topic\n* $2 - the username for gender purposes\n* $3 - title of the page\n* $4 - title of the topic.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "Notification header text for when there is a multiple replies on a topic. Parameters:\n* $1 - the number of replies for display\n* $2 - the raw number of replies, for PLURAL\n* $3 - title of the topic.\n{{Related|discussiontools-notification-bundle}}",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "{{optional}}\nNotification compact header text for when there is a reply on a topic. Parameters:\n* $1 - the formatted username of the user who replied to the topic\n* $2 - the username for gender purposes\n* $3 - excerpt of the reply.\n{{Related|discussiontools-notification-header-flow}}",
+	"discussiontools-notification-subscribed-new-comment-header-compact": "{{optional}}\nNotification compact header text for when there is a reply on a topic Parameters:\n* $1 - the formatted username of the user who replied to the topic\n* $2 - the username for gender purposes\n* $3 - excerpt of the reply\n{{Related|discussiontools-notification-header-flow}}",
 	"discussiontools-notification-subscribed-new-comment-view": "Label for button to view a comment that was just posted.",
 	"discussiontools-pageframe-latestcomment": "Label showing when the most recent comment was posted on a page. Parameters:\n* $1 – When the comment was posted, e.g. '1 hour ago'. This text is a link to the comment.\n* $2 – The user who posted the comment. This is not a link, and can be used for GENDER: markup.\n* $3 – The title of the topic they posted in. This text is a link to the topic.\n\nSee also: {{mw-msg|discussiontools-pageframe-latestcomment-notopic}}",
 	"discussiontools-pageframe-latestcomment-notopic": "Label showing when the most recent comment was posted on a page, but in a section with no topic heading. Parameters:\n* $1 – When the comment was posted, e.g. '1 hour ago'. This text is a link to the comment.\n* $2 – The user who posted the comment. This is not a link, and can be used for GENDER: markup.\n\nSee also: {{mw-msg|discussiontools-pageframe-latestcomment}}",

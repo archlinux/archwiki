@@ -30,7 +30,6 @@
 	"echo-category-title-mention": "Fejn {{PLURAL:$1|issemmejt}}",
 	"echo-category-title-other": "{{PLURAL:$1|Ieħor/Oħra|Oħrajn}}",
 	"echo-category-title-system": "{{PLURAL:$1|Sistema}}",
-	"echo-pref-tooltip-edit-user-talk": "Għarrafni meta xi ħadd jiktibli messaġġ jew iweġibni fuq il-paġna tad-diskussjoni tiegħi.",
 	"echo-pref-tooltip-article-linked": "Għarrafni meta xi ħadd joħloq ħolqa minn artiklu għal xi paġna li ħlaqt jien.",
 	"echo-pref-tooltip-reverted": "Għarrafni meta xi ħadd permezz tal-għodda tal-annullament (undo) jew tat-treġġigħ lura (rollback) jannulla xi modifika li għamilt jien.",
 	"echo-pref-tooltip-mention": "Għarrafni meta xi ħadd joħloq ħolqa minn xi paġna tad-diskussjoni għall-paġna tal-utent tiegħi.",

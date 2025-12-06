@@ -30,8 +30,6 @@
 	"tooltip-pt-notifications-alert": "{{GENDER:|अहाँक}} सूचना",
 	"tooltip-pt-notifications": "आपने के अधिसूचना",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "स्वचालित रुपसँ सक्षम करी",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "वर्तमान प्रयोगकर्तासभ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "नव प्रयोगकर्तासभ",
 	"echo-specialpage": "अधिसूचनासभ",
 	"echo-specialpage-section-markread": "समूहके पढल चिह्नित करी",
 	"echo-specialpage-markasread": "सूचना: पढल गेल चिन्हित करी",

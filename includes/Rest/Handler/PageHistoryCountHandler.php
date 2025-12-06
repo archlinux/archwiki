@@ -19,8 +19,6 @@ use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\Message\ParamType;
-use Wikimedia\Message\ScalarParam;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -155,18 +153,14 @@ class PageHistoryCountHandler extends SimpleHandler {
 
 		if ( !$page ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-nonexistent-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ]
-				),
+				( new MessageValue( 'rest-nonexistent-title' ) )->plaintextParams( $title ),
 				404
 			);
 		}
 
 		if ( !$this->getAuthority()->authorizeRead( 'read', $page ) ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-permission-denied-title',
-					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ]
-				),
+				( new MessageValue( 'rest-permission-denied-title' ) )->plaintextParams( $title ),
 				403
 			);
 		}
@@ -291,9 +285,8 @@ class PageHistoryCountHandler extends SimpleHandler {
 
 			default:
 				throw new LocalizedHttpException(
-					new MessageValue( 'rest-pagehistorycount-type-unrecognized',
-						[ new ScalarParam( ParamType::PLAINTEXT, $type ) ]
-					),
+					( new MessageValue( 'rest-pagehistorycount-type-unrecognized' ) )
+						->plaintextParams( $type ),
 					500
 				);
 		}
@@ -575,7 +568,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 		foreach ( ChangeTags::REVERT_TAGS as $tagName ) {
 			try {
 				$tagIds[] = $this->changeTagDefStore->getId( $tagName );
-			} catch ( NameTableAccessException $e ) {
+			} catch ( NameTableAccessException ) {
 				// If no revisions are tagged with a name, no tag id will be present
 			}
 		}
@@ -689,6 +682,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 		return [ $fromRev, $toRev ];
 	}
 
+	/** @inheritDoc */
 	public function needsWriteAccess() {
 		return false;
 	}
@@ -697,13 +691,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 		return 'includes/Rest/Handler/Schema/PageHistoryCount.json';
 	}
 
-	protected function generateResponseSpec( string $method ): array {
-		$spec = parent::generateResponseSpec( $method );
-
-		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-		return $spec;
-	}
-
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'title' => [

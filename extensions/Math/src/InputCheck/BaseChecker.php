@@ -80,6 +80,8 @@ abstract class BaseChecker {
 			}
 
 			return Message::newFromKey( 'math_syntax_error' );
+		} elseif ( isset( $e->error->details ) ) {
+			return Message::newFromKey( 'math_other_error', $e->error->details );
 		}
 
 		return Message::newFromKey( 'math_unknown_error' );

@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Aotake",
+			"Foomin10",
 			"Fryed-peach",
 			"JtFuruhata",
 			"Ohgi",
 			"Shirayuki",
 			"Waki285",
-			"青子守歌",
-			"Foomin10"
+			"青子守歌"
 		]
 	},
 	"pfunc_desc": "パーサーに論理関数を追加して拡張する",

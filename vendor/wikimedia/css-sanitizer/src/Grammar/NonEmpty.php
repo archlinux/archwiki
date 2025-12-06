@@ -10,7 +10,7 @@ use Wikimedia\CSS\Objects\ComponentValueList;
 
 /**
  * Matcher that requires its sub-Matcher has only non-empty matches ("!" multiplier)
- * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-req
+ * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-req
  */
 class NonEmpty extends Matcher {
 	/** @var Matcher */

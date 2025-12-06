@@ -18,15 +18,13 @@
  * @param {Object} [config] Configuration options
  * @param {boolean} [config.sourceMode=false] Source editing mode
  */
-ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config ) {
+ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config = {} ) {
 	// Support old (doc, config) argument order
 	// TODO: Remove this once all callers are updated
-	if ( !config && ve.isPlainObject( attachedRoot ) ) {
+	if ( ve.isPlainObject( attachedRoot ) ) {
 		config = attachedRoot;
 		attachedRoot = undefined;
 	}
-
-	config = config || {};
 
 	attachedRoot = attachedRoot || doc.getDocumentNode();
 	if ( !( attachedRoot instanceof ve.dm.BranchNode ) ) {
@@ -227,7 +225,7 @@ ve.dm.Surface.prototype.isMultiUser = function () {
  * @param {string} documentId Document ID
  * @param {Object} [config] Configuration options
  */
-ve.dm.Surface.prototype.createSynchronizer = function ( documentId, config ) {
+ve.dm.Surface.prototype.createSynchronizer = function ( documentId, config = {} ) {
 	if ( this.synchronizer ) {
 		throw new Error( 'Synchronizer already set' );
 	}
@@ -716,53 +714,6 @@ ve.dm.Surface.prototype.setNullSelection = function () {
 };
 
 /**
- * Grows a range so that any partially selected links are totally selected
- *
- * @param {ve.Range} range The range to regularize
- * @return {ve.Range} Regularized range, possibly object-identical to the original
- */
-ve.dm.Surface.prototype.fixupRangeForLinks = function ( range ) {
-	if ( range.isCollapsed() ) {
-		return range;
-	}
-
-	const linearData = this.getDocument().data;
-
-	function getLinks( offset ) {
-		return linearData.getAnnotationsFromOffset( offset ).filter( ( ann ) => ann.name === 'link' );
-	}
-
-	// Search for links at start/end that don't cover the whole range.
-	// Assume at most one such link at each end.
-	let start = range.start;
-	let end = range.end;
-	const rangeAnnotations = linearData.getAnnotationsFromRange( range );
-	const startLink = getLinks( start ).diffWith( rangeAnnotations ).getHash( 0 );
-	const endLink = getLinks( end ).diffWith( rangeAnnotations ).getHash( 0 );
-
-	if ( startLink === undefined && endLink === undefined ) {
-		return range;
-	}
-
-	if ( startLink !== undefined ) {
-		while ( start > 0 && getLinks( start - 1 ).containsHash( startLink ) ) {
-			start--;
-		}
-	}
-	if ( endLink !== undefined ) {
-		while ( end < linearData.getLength() && getLinks( end ).containsHash( endLink ) ) {
-			end++;
-		}
-	}
-
-	if ( range.isBackwards() ) {
-		return new ve.Range( end, start );
-	} else {
-		return new ve.Range( start, end );
-	}
-};
-
-/**
  * Change the selection
  *
  * @param {ve.dm.Selection} selection New selection
@@ -1216,11 +1167,9 @@ ve.dm.Surface.prototype.onDocumentPreCommit = function ( tx ) {
  * @param {boolean} [options.excludeAttributes] Exclude attribute changes
  * @return {ve.Range[]} Modified ranges
  */
-ve.dm.Surface.prototype.getModifiedRanges = function ( options ) {
+ve.dm.Surface.prototype.getModifiedRanges = function ( options = {} ) {
 	const doc = this.getDocument();
 	const ranges = [];
-
-	options = options || {};
 
 	this.getHistory().forEach( ( stackItem ) => {
 		stackItem.transactions.forEach( ( tx ) => {
@@ -1547,13 +1496,12 @@ ve.dm.Surface.prototype.updateDocState = function ( state ) {
 /**
  * Update the expiry value of keys in use
  *
- * @param {string[]} [skipKeys] Keys to skip (because they have just been updated)
+ * @param {string[]} [skipKeys=[]] Keys to skip (because they have just been updated)
  */
-ve.dm.Surface.prototype.updateExpiry = function ( skipKeys ) {
+ve.dm.Surface.prototype.updateExpiry = function ( skipKeys = [] ) {
 	if ( !this.storageExpiry ) {
 		return;
 	}
-	skipKeys = skipKeys || [];
 	[ 've-docstate', 've-dochtml', 've-selection', 've-changes' ].forEach( ( key ) => {
 		if ( !skipKeys.includes( key ) ) {
 			this.storage.setExpires( this.autosavePrefix + key, this.storageExpiry );

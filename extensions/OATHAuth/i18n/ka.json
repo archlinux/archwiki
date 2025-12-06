@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"David1010",
-			"Otogi"
+			"Otogi",
+			"Mehman97"
 		]
 	},
 	"oathauth-account": "ორფაქტორიანი ანგარიშის სახელი:",
@@ -23,6 +24,7 @@
 	"oathauth-module-totp-label": "TOTP (ერთჯერადი ტოკენი)",
 	"oathauth-ui-manage": "მართვა",
 	"oathmanage": "ორფაქტორიანი ავთენტიფიკაციის მართვა",
+	"accountsecurity": "ანგარიშის უსაფრთხოება",
 	"oathauth-enable-generic": "ჩართვა",
 	"oathauth-disable-generic": "გამორთვა",
 	"oathauth-ui-available-modules": "ხელმისაწვდომი მეთოდები"

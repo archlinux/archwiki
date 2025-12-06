@@ -56,9 +56,6 @@ class VectorComponentTableOfContents implements VectorComponent {
 		);
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isPinned(): bool {
 		return $this->isPinned;
 	}

@@ -7,6 +7,8 @@
  * @license MIT
  */
 
+const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
+
 /**
  * ContentEditable MediaWiki references list node.
  *
@@ -106,6 +108,7 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
 	// Parent method
 	ve.ce.MWReferencesListNode.super.prototype.onTeardown.call( this );
 
+	// The model is potentially gone after .destroy() was called
 	if ( !this.getModel() || !this.getModel().getDocument() ) {
 		return;
 	}
@@ -124,6 +127,7 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
  * @param {string[]} groupsChanged A list of groups which have changed in this transaction
  */
 ve.ce.MWReferencesListNode.prototype.onInternalListUpdate = function ( groupsChanged ) {
+	// The model is potentially gone after .destroy() was called
 	if ( !this.getModel() ) {
 		return;
 	}
@@ -180,16 +184,14 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 
 	const refGroup = model.getAttribute( 'refGroup' );
 
-	const docRefs = ve.dm.MWDocumentReferences.static.refsForDoc( model.getDocument() );
+	const docRefs = MWDocumentReferences.static.refsForDoc( model.getDocument() );
 	const groupRefs = docRefs.getGroupRefs( refGroup );
 	const hasModelReferences = !groupRefs.isEmpty();
 
-	let emptyText;
-	if ( refGroup !== '' ) {
-		emptyText = ve.msg( 'cite-ve-referenceslist-isempty', refGroup );
-	} else {
-		emptyText = ve.msg( 'cite-ve-referenceslist-isempty-default' );
-	}
+	const emptyText = ve.msg(
+		refGroup ? 'cite-ve-referenceslist-isempty' : 'cite-ve-referenceslist-isempty-default',
+		refGroup
+	);
 
 	let originalDomElements;
 	if ( model.getElement().originalDomElementsHash ) {
@@ -227,11 +229,11 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 	// Copy CSS to dynamic ref list
 	if ( originalDomElements ) {
 		// Get first container, e.g. skipping TemplateStyles
-		const divs = originalDomElements.filter( ( element ) => element.tagName === 'DIV' );
-		if ( divs.length ) {
+		const div = originalDomElements.find( ( element ) => element.tagName === 'DIV' );
+		if ( div ) {
 			// eslint-disable-next-line mediawiki/class-doc
-			this.$element.addClass( divs[ 0 ].getAttribute( 'class' ) );
-			this.$element.attr( 'style', divs[ 0 ].getAttribute( 'style' ) );
+			this.$element.addClass( div.getAttribute( 'class' ) );
+			this.$element.attr( 'style', div.getAttribute( 'style' ) );
 		}
 	}
 
@@ -289,10 +291,10 @@ ve.ce.MWReferencesListNode.prototype.renderListItem = function ( groupRefs, refG
 			$li.on( 'mousedown', ( e ) => {
 				if ( ve.isUnmodifiedLeftClick( e ) ) {
 					const node = groupRefs.getRefNode( key );
-					const items = ve.ui.contextItemFactory.getRelatedItems( [ node ] )
-						.filter( ( item ) => item.name !== 'mobileActions' );
-					if ( items.length ) {
-						const contextItem = ve.ui.contextItemFactory.lookup( items[ 0 ].name );
+					const firstItem = ve.ui.contextItemFactory.getRelatedItems( [ node ] )
+						.find( ( item ) => item.name !== 'mobileActions' );
+					if ( firstItem ) {
+						const contextItem = ve.ui.contextItemFactory.lookup( firstItem.name );
 						if ( contextItem ) {
 							const command = surface.commandRegistry
 								.lookup( contextItem.static.commandName );
@@ -320,8 +322,8 @@ ve.ce.MWReferencesListNode.prototype.renderListItem = function ( groupRefs, refG
 		$li.append(
 			$( '<span>' )
 				.addClass( 've-ce-mwReferencesListNode-muted' )
-				.text( subrefs.length ? ve.msg( 'cite-ve-referenceslist-missing-parent' ) :
-					ve.msg( 'cite-ve-referenceslist-missingref-in-list' ) )
+				.text( ve.msg( subrefs.length ? 'cite-ve-referenceslist-missing-parent' :
+					'cite-ve-referenceslist-missingref-in-list' ) )
 		).addClass( 've-ce-mwReferencesListNode-missingRef' );
 	}
 
@@ -378,6 +380,4 @@ ve.ce.MWReferencesListNode.prototype.renderBacklinks = function ( keyedNodes, re
 	return $refSpan;
 };
 
-/* Registration */
-
-ve.ce.nodeFactory.register( ve.ce.MWReferencesListNode );
+module.exports = ve.ce.MWReferencesListNode;

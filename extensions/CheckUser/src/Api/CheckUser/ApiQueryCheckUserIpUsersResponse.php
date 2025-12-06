@@ -63,7 +63,7 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 					'end' => ConvertibleTimestamp::convert( TS_ISO_8601, $row->timestamp ),
 					'editcount' => 1,
 					'ips' => [ $ip ],
-					'agents' => [ $agent ]
+					'agents' => [ $agent ],
 				];
 			} else {
 				$users[$user]['start'] = ConvertibleTimestamp::convert( TS_ISO_8601, $row->timestamp );

@@ -67,7 +67,7 @@ class License {
 	 * @return {boolean}
 	 */
 	isCc() {
-		return this.internalName ? this.internalName.slice( 0, 2 ) === 'cc' : false;
+		return !!this.internalName && this.internalName.startsWith( 'cc' );
 	}
 
 	/**

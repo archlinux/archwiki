@@ -32,9 +32,7 @@ OO.inheritClass( ve.ui.MWUseExistingReferenceCommand, ve.ui.Command );
  */
 ve.ui.MWUseExistingReferenceCommand.prototype.isExecutable = function ( fragment ) {
 	return ve.ui.MWUseExistingReferenceCommand.super.prototype.isExecutable.apply( this, arguments ) &&
-		ve.dm.MWDocumentReferences.static.refsForDoc( fragment.getDocument() ).hasRefs();
+		fragment.getDocument().getInternalList().getItemNodeCount() > 0;
 };
 
-/* Registration */
-
-ve.ui.commandRegistry.register( new ve.ui.MWUseExistingReferenceCommand() );
+module.exports = ve.ui.MWUseExistingReferenceCommand;

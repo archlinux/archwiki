@@ -27,33 +27,28 @@ function initDesktop() {
 		const maxNotificationCount = require( './config.json' ).EchoMaxNotificationCount,
 			pollingRate = require( './config.json' ).EchoPollForUpdates,
 			documentTitle = document.title,
-			$existingAlertLink = $( '#pt-notifications-alert a' ),
-			$existingMessageLink = $( '#pt-notifications-notice a' ),
-			numAlerts = $existingAlertLink.attr( 'data-counter-num' ),
-			numMessages = $existingMessageLink.attr( 'data-counter-num' ),
-			badgeLabelAlerts = $existingAlertLink.attr( 'data-counter-text' ),
-			badgeLabelMessages = $existingMessageLink.attr( 'data-counter-text' ),
-			// eslint-disable-next-line no-jquery/no-class-state
-			hasUnseenAlerts = $existingAlertLink.hasClass( 'mw-echo-unseen-notifications' ),
-			// eslint-disable-next-line no-jquery/no-class-state
-			hasUnseenMessages = $existingMessageLink.hasClass( 'mw-echo-unseen-notifications' ),
-			// latestMessageNotifTime is the time of most recent notification that came when we called showNotificationSnippet last
-			// the function showNotificationSnippet returns the time of the latest notification and latestMessageNotifTime is updated
-			// Store links
-			links = {
-				notifications: $existingAlertLink.attr( 'href' ) || mw.util.getUrl( 'Special:Notifications' ),
-				preferences: ( $( '#pt-preferences a' ).attr( 'href' ) || mw.util.getUrl( 'Special:Preferences' ) ) +
-					'#mw-prefsection-echo'
-			};
-		let alertController, messageController,
-			latestMessageNotifTime = new Date(),
-			latestAlertNotifTime = new Date(),
-			alertCount = parseInt( numAlerts ),
-			messageCount = parseInt( numMessages ),
-			loadingPromise = null;
+			$allNotifBadges = $( 'a[data-mw-notifications-section]' );
 
-		function updateDocumentTitleWithNotificationCount( totalAlertCount, totalMessageCount ) {
-			const totalCount = totalAlertCount + totalMessageCount;
+		let loadingPromise = null;
+		let anyHasUnseen = false;
+		const badgeControllers = {};
+		const notificationCounts = {};
+
+		$allNotifBadges.each( ( i, el ) => {
+			const $badge = $( el );
+			const section = $badge.attr( 'data-mw-notifications-section' );
+			const numItems = $badge.attr( 'data-counter-num' );
+			// eslint-disable-next-line no-jquery/no-class-state
+			const hasUnseen = $badge.hasClass( 'mw-echo-unseen-notifications' );
+			notificationCounts[ section ] = parseInt( numItems );
+			anyHasUnseen = anyHasUnseen || hasUnseen;
+		} );
+
+		function updateDocumentTitleWithNotificationCount( counts ) {
+			let totalCount = 0;
+			for ( const section in counts ) {
+				totalCount += counts[ section ];
+			}
 
 			let newTitle = documentTitle;
 			if ( totalCount > 0 ) {
@@ -83,7 +78,7 @@ function initDesktop() {
 						mw.notify( $.parseHTML( notificationItem.content.header ), { title: mw.msg( 'echo-displaysnippet-title' ) } );
 					}
 				}
-			}
+			},
 			);
 			return highestTime;
 		}
@@ -92,7 +87,7 @@ function initDesktop() {
 		 * Change the seen state of badges if there are any unseen notifications.
 		 *
 		 * @param {mw.echo.dm.ModelManager} modelManager
-		 * @param {mw.echo.ui.NotificationBadgeWidget} badgeWidget
+		 * @param {mw.echo.ui.NotificationBadgeController} badgeWidget
 		 */
 		function updateBadgeState( modelManager, badgeWidget ) {
 			modelManager.getLocalNotifications().forEach( ( notificationItem ) => {
@@ -119,7 +114,7 @@ function initDesktop() {
 
 		// Change document title on initialization only when polling rate feature flag is non-zero.
 		if ( isLivePollingFeatureEnabledOnWiki() && userHasOptedInToLiveNotifications() ) {
-			updateDocumentTitleWithNotificationCount( alertCount, messageCount );
+			updateDocumentTitleWithNotificationCount( notificationCounts );
 		}
 
 		function loadEcho() {
@@ -130,96 +125,78 @@ function initDesktop() {
 			const echoApi = new mw.echo.api.EchoApi();
 
 			loadingPromise = mw.loader.using( 'ext.echo.ui.desktop' ).then( () => {
-
 				// Overlay
 				mw.echo.ui.$overlay.appendTo( document.body );
 
-				const unreadAlertCounter = new mw.echo.dm.UnreadNotificationCounter( echoApi, 'alert', maxNotificationCount );
-				const alertModelManager = new mw.echo.dm.ModelManager( unreadAlertCounter, { type: 'alert' } );
-				alertController = new mw.echo.Controller( echoApi, alertModelManager );
+				$allNotifBadges.each( ( i, el ) => {
+					const $badge = $( el );
+					const section = $badge.attr( 'data-mw-notifications-section' );
 
-				mw.echo.ui.alertWidget = new mw.echo.ui.NotificationBadgeWidget(
-					alertController,
-					alertModelManager,
-					links,
-					{
-						numItems: Number( numAlerts ),
-						convertedNumber: badgeLabelAlerts,
-						hasUnseen: hasUnseenAlerts,
-						badgeIcon: 'bell',
-						$overlay: mw.echo.ui.$overlay,
-						href: $existingAlertLink.attr( 'href' )
-					}
-				);
+					const numItems = $badge.attr( 'data-counter-num' );
+					const convertedNumber = $badge.attr( 'data-counter-text' );
+					// eslint-disable-next-line no-jquery/no-class-state
+					const hasUnseen = $badge.hasClass( 'mw-echo-unseen-notifications' );
+					const badgeIcon = $badge.attr( 'data-badge-icon' );
 
-				// Replace the link button with the ooui button
-				$existingAlertLink.parent().replaceWith( mw.echo.ui.alertWidget.$element );
+					const unreadCounter = new mw.echo.dm.UnreadNotificationCounter( echoApi, section, maxNotificationCount );
+					const modelManager = new mw.echo.dm.ModelManager( unreadCounter, { type: section } );
+					const controller = new mw.echo.Controller( echoApi, modelManager );
+					const links = {
+						notifications: $badge.attr( 'href' ) || mw.util.getUrl( 'Special:Notifications' ),
+						preferences: ( $( '#pt-preferences a' ).attr( 'href' ) || mw.util.getUrl( 'Special:Preferences' ) ) +
+							'#mw-prefsection-echo',
+					};
 
-				alertModelManager.on( 'allTalkRead', () => {
-					// If there was a talk page notification, get rid of it
-					$( '#pt-talk-alert' ).remove();
-				} );
-
-				// listen to event countChange and change title only if polling rate is non-zero
-				if ( isLivePollingFeatureEnabledOnWiki() ) {
-					alertModelManager.getUnreadCounter().on( 'countChange', ( count ) => {
-						alertController.fetchLocalNotifications().then( () => {
-							updateBadgeState( alertModelManager, mw.echo.ui.alertWidget );
-							if ( userHasOptedInToLiveNotifications() ) {
-								latestAlertNotifTime = showNotificationSnippet( alertModelManager, latestAlertNotifTime );
-								alertCount = count;
-								updateDocumentTitleWithNotificationCount( count, messageCount );
-							}
-						} );
-					} );
-				}
-
-				// Load message button and popup if messages exist
-				if ( $existingMessageLink.length ) {
-					const unreadMessageCounter = new mw.echo.dm.UnreadNotificationCounter( echoApi, 'message', maxNotificationCount );
-					const messageModelManager = new mw.echo.dm.ModelManager( unreadMessageCounter, { type: 'message' } );
-					messageController = new mw.echo.Controller( echoApi, messageModelManager );
-
-					mw.echo.ui.messageWidget = new mw.echo.ui.NotificationBadgeWidget(
-						messageController,
-						messageModelManager,
+					const badgeController = new mw.echo.ui.NotificationBadgeController(
+						controller,
+						modelManager,
 						links,
 						{
+							numItems: Number( numItems ),
+							convertedNumber: convertedNumber,
+							hasUnseen: hasUnseen,
+							badgeIcon: badgeIcon,
 							$overlay: mw.echo.ui.$overlay,
-							numItems: Number( numMessages ),
-							hasUnseen: hasUnseenMessages,
-							badgeIcon: 'tray',
-							convertedNumber: badgeLabelMessages,
-							href: $existingMessageLink.attr( 'href' )
-						}
+							$badge: $badge,
+						},
 					);
+					badgeControllers[ section ] = badgeController;
 
-					// Replace the link button with the ooui button
-					$existingMessageLink.parent().replaceWith( mw.echo.ui.messageWidget.$element );
+					modelManager.on( 'allTalkRead', () => {
+						// If there was a talk page notification, get rid of it
+						$( '#pt-talk-alert' ).remove();
+					} );
 
 					// listen to event countChange and change title only if polling rate is non-zero
 					if ( isLivePollingFeatureEnabledOnWiki() ) {
-						messageModelManager.getUnreadCounter().on( 'countChange', ( count ) => {
-							messageController.fetchLocalNotifications().then( () => {
-								updateBadgeState( messageModelManager, mw.echo.ui.messageWidget );
+						// latestNotifTime is the time of most recent notification that came when we called showNotificationSnippet last
+						// the function showNotificationSnippet returns the time of the latest notification and latestNotifTime is updated
+						let latestNotifTime = new Date();
+						modelManager.getUnreadCounter().on( 'countChange', ( count ) => {
+							controller.fetchLocalNotifications().then( () => {
+								updateBadgeState( modelManager, badgeController );
 								if ( userHasOptedInToLiveNotifications() ) {
-									latestMessageNotifTime = showNotificationSnippet( messageModelManager, latestMessageNotifTime );
-									messageCount = count;
-									updateDocumentTitleWithNotificationCount( alertCount, count );
+									latestNotifTime = showNotificationSnippet( modelManager, latestNotifTime );
+									notificationCounts[ section ] = count;
+									updateDocumentTitleWithNotificationCount( notificationCounts );
 								}
 							} );
 						} );
 					}
-				}
+
+					$badge.removeClass( 'mw-echo-notifications-badge-dimmed' );
+				} );
+
+				$allNotifBadges.off( 'click', badgeFirstClick );
 			} );
 			return loadingPromise;
 		}
 
 		// Respond to click on the notification button and load the UI on demand
-		$( '.mw-echo-notification-badge-nojs' ).on( 'click', function ( e ) {
+		function badgeFirstClick( e ) {
 			const timeOfClick = mw.now(),
 				$badge = $( this ),
-				clickedSection = $badge.parent().prop( 'id' ) === 'pt-notifications-alert' ? 'alert' : 'message';
+				clickedSection = $( e.target ).closest( 'a' ).data( 'mw-notifications-section' );
 			if ( e.which !== 1 || $badge.data( 'clicked' ) ) {
 				// Do not return false (as that calls stopPropagation)
 				e.preventDefault();
@@ -237,7 +214,7 @@ function initDesktop() {
 				.then( ( data ) => {
 					const now = mw.now();
 					mw.track( 'stats.mediawiki_echo_overlay_seconds', now - timeOfClick, {
-						component: 'api'
+						component: 'api',
 					} );
 					// TODO remove graphite compatible call once new dashboards are created, T359347
 					mw.track( 'timing.MediaWiki.echo.overlay.api', now - timeOfClick );
@@ -246,12 +223,12 @@ function initDesktop() {
 
 			loadEcho().then( () => {
 				// Now that the module loaded, show the popup
-				const selectedWidget = clickedSection === 'alert' ? mw.echo.ui.alertWidget : mw.echo.ui.messageWidget;
+				const selectedWidget = badgeControllers[ clickedSection ];
 				selectedWidget.once( 'finishLoading', () => {
 					// Log timing after notifications are shown
 					const notificationsLoadedTime = mw.now();
 					mw.track( 'stats.mediawiki_echo_overlay_seconds', notificationsLoadedTime - timeOfClick, {
-						component: 'none'
+						component: 'none',
 					} );
 					// TODO remove graphite compatible call once new dashboards are created, T359347
 					mw.track( 'timing.MediaWiki.echo.overlay', notificationsLoadedTime - timeOfClick );
@@ -259,12 +236,12 @@ function initDesktop() {
 				selectedWidget.popup.toggle( true );
 				const now = mw.now();
 				mw.track( 'stats.mediawiki_echo_overlay_seconds', now - timeOfClick, {
-					component: 'ooui'
+					component: 'ooui',
 				} );
 				// TODO remove graphite compatible call once new dashboards are created, T359347
 				mw.track( 'timing.MediaWiki.echo.overlay.ooui', now - timeOfClick );
 
-				if ( hasUnseenAlerts || hasUnseenMessages ) {
+				if ( anyHasUnseen ) {
 					// Clicked on the flyout due to having unread notifications
 					// This is part of tracking how likely users are to click a badge with unseen notifications.
 					// The other part is the 'echo.unseen' counter, see EchoHooks::onSkinTemplateNavigationUniversal().
@@ -274,7 +251,7 @@ function initDesktop() {
 					mw.track( 'stats.mediawiki_echo_unseen_click_total', 1, {
 						wiki: mw.config.get( 'wgDBname' ),
 						// eslint-disable-next-line camelcase
-						user_type: getUserTypeForStats()
+						user_type: getUserTypeForStats(),
 					} );
 				}
 			}, () => {
@@ -283,11 +260,13 @@ function initDesktop() {
 			} );
 			// Prevent default. Do not return false (as that calls stopPropagation)
 			e.preventDefault();
-		} );
+		}
+		$allNotifBadges.on( 'click', badgeFirstClick );
 
 		function pollForNotificationCountUpdates() {
-			alertController.refreshUnreadCount();
-			messageController.refreshUnreadCount();
+			for ( const section in badgeControllers ) {
+				badgeControllers[ section ].controller.refreshUnreadCount();
+			}
 			// Make notification update after n*pollingRate(time in secs) where n depends on document.hidden
 			setTimeout( pollForNotificationCountUpdates, ( document.hidden ? 5 : 1 ) * pollingRate * 1000 );
 		}
@@ -337,10 +316,6 @@ $( () => {
 	if ( mw.config.get( 'wgMFMode' ) ) {
 		initMobile();
 	} else {
-		// Echo is intentionally disable for the Minerva desktop skin (https://phabricator.wikimedia.org/T343839)
-		// The suggested fix is documented in https://phabricator.wikimedia.org/T343838,
-		if ( mw.config.get( 'skin' ) !== 'minerva' ) {
-			initDesktop();
-		}
+		initDesktop();
 	}
 } );

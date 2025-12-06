@@ -4,6 +4,7 @@
  * Return a temporary user link with the correct class and text.
  *
  * @param {string} username The temporary user's name
+ * @return {jQuery}
  */
 function makeTempUserLink( username ) {
 	return $( '<a>' )

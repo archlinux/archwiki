@@ -20,10 +20,12 @@ class CreateExternalDomainsTask extends Task {
 	/** @var \ExternalStoreFactory */
 	private $esFactory;
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'external-domains';
 	}
 
+	/** @inheritDoc */
 	public function getDependencies() {
 		return [ 'VirtualDomains', 'services' ];
 	}
@@ -83,7 +85,7 @@ class CreateExternalDomainsTask extends Task {
 
 				$conn = $lb->getMaintenanceConnectionRef( DB_PRIMARY, [], $domainId );
 				$conn->setSchemaVars( $this->getContext()->getSchemaVars() );
-				if ( !$conn->tableExists( $store->getTable( $cluster ) ) ) {
+				if ( !$conn->tableExists( $store->getTable( $cluster ), __METHOD__ ) ) {
 					$store->initializeTable( $cluster );
 				}
 			}

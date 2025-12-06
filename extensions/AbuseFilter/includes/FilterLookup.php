@@ -10,6 +10,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
+use MediaWiki\User\UserIdentityValue;
 use RuntimeException;
 use stdClass;
 use Wikimedia\ObjectCache\WANObjectCache;
@@ -373,14 +374,13 @@ class FilterLookup implements IDBAccessObject {
 	private function getGlobalRulesKey( string $group ): string {
 		if ( !$this->centralDBManager->filterIsCentral() ) {
 			return $this->wanCache->makeGlobalKey(
-				'abusefilter',
-				'rules',
+				'abusefilter-rules',
 				$this->centralDBManager->getCentralDBName(),
 				$group
 			);
 		}
 
-		return $this->wanCache->makeKey( 'abusefilter', 'rules', $group );
+		return $this->wanCache->makeKey( 'abusefilter-rules', $group );
 	}
 
 	/**
@@ -409,6 +409,7 @@ class FilterLookup implements IDBAccessObject {
 		$actionsRaw = unserialize( $row->afh_actions );
 		$actions = is_array( $actionsRaw ) ? $actionsRaw : [];
 		$flags = $row->afh_flags ? explode( ',', $row->afh_flags ) : [];
+
 		return new HistoryFilter(
 			new Specs(
 				trim( $row->afh_pattern ),
@@ -427,8 +428,7 @@ class FilterLookup implements IDBAccessObject {
 			),
 			$actions,
 			new LastEditInfo(
-				(int)$row->afh_user,
-				$row->afh_user_text,
+				new UserIdentityValue( (int)$row->afh_user, (string)$row->afh_user_text ),
 				$row->afh_timestamp
 			),
 			(int)$row->afh_filter,
@@ -463,8 +463,7 @@ class FilterLookup implements IDBAccessObject {
 			),
 			$actions,
 			new LastEditInfo(
-				(int)$row->af_user,
-				$row->af_user_text,
+				new UserIdentityValue( (int)$row->af_user, (string)$row->af_user_text ),
 				$row->af_timestamp
 			),
 			(int)$row->af_id,

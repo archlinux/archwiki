@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -33,7 +19,6 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Diff\ArrayDiffFormatter;
 use Wikimedia\Diff\ComplexityException;
 use Wikimedia\Diff\Diff;
-use Wikimedia\Stats\NullStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
 
 // @codeCoverageIgnoreStart
@@ -97,14 +82,13 @@ class CompareLanguageConverterOutput extends Maintenance {
 	private function newPageRestHelperFactory(): PageRestHelperFactory {
 		$services = $this->getServiceContainer();
 
-		$factory = new PageRestHelperFactory(
+		return new PageRestHelperFactory(
 			new ServiceOptions( PageRestHelperFactory::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
 			$services->getRevisionLookup(),
 			$services->getRevisionRenderer(),
 			$services->getTitleFormatter(),
 			$services->getPageStore(),
 			$services->getParsoidOutputStash(),
-			new NullStatsdDataFactory(),
 			$services->getParserOutputAccess(),
 			$services->getParsoidSiteConfig(),
 			$services->getHtmlTransformFactory(),
@@ -117,7 +101,6 @@ class CompareLanguageConverterOutput extends Maintenance {
 			$services->getChangeTagsStore(),
 			StatsFactory::newNull()
 		);
-		return $factory;
 	}
 
 	private function getParserOptions( Language $language ): ParserOptions {
@@ -227,7 +210,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 	}
 
 	// Inspired from: https://stackoverflow.com/a/55927237/903324
-	private function mb_sprintf( string $format, ...$args ): string {
+	private function mb_sprintf( string $format, string ...$args ): string {
 		$params = $args;
 
 		return sprintf(

@@ -12,18 +12,6 @@ use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
  * @author Johannes Stegmüller
  */
 class MMLutil {
-	/**
-	 * Splits a regular expression in the form '\operatorname {someparams}
-	 * Also recognizes succeeding parentheses '\operatorname (' as params
-	 * @param string $input tex expression
-	 * @return array|null found groups or null
-	 */
-	public static function initalParseLiteralExpression( $input ): ?array {
-		$pattern = "/([\\a-zA-Z\s]+)\{([^}]+)\}/";
-		$matches = [];
-		$matched = preg_match_all( $pattern, $input, $matches );
-		return $matched ? $matches : null;
-	}
 
 	/**
 	 * Recognize if input is a Unicode string "\\u1235"

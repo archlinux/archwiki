@@ -94,7 +94,7 @@ class PreliminaryCheckService {
 	 */
 	protected function buildUserConds( array $users, string $field ): array {
 		if ( !$users ) {
-			return [ 0 ];
+			return [ '1=0' ];
 		}
 		return [ $field => array_map( 'strval', $users ) ];
 	}

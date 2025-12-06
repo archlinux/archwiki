@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bananax47",
+			"Derugon",
+			"Escargot bleu",
+			"Gomoko",
+			"McDutchie",
+			"Thibaut120094",
+			"Verdy p",
+			"Wladek92"
+		]
+	},
+	"hcaptcha-desc": "Module [https://www.hcaptcha.com/ hCaptcha] pour la confirmation humaine des modifications",
+	"hcaptcha-edit": "Pour protéger le wiki contre le pollupostage automatisé de modifications, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",
+	"hcaptcha-addurl": "Votre modification inclut de nouveaux liens externes. Pour protéger le wiki contre le pollupostage automatisé, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",
+	"hcaptcha-badlogin": "Pour protéger le wiki contre le cassage automatisé des mots de passe, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",
+	"hcaptcha-createaccount": "Pour protéger le wiki contre la création automatisée de comptes, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",
+	"hcaptcha-createaccount-fail": "Il semble que vous n’ayez pas résolu le hCAPTCHA.",
+	"hcaptcha-create": "Afin de protéger le wiki contre la création automatisée de pages, nous vous demandons de bien vouloir résoudre le hCaptcha suivant :",
+	"hcaptcha-help": "Veuillez résoudre un défi hCaptcha et renvoyer la valeur de la réponse comme captchaWord.",
+	"hcaptcha-privacy-policy": "Ce site est protégé par hCaptcha et sa [https://www.hcaptcha.com/privacy politique de confidentialité], ses [https://www.hcaptcha.com/terms conditions d'utilisation] s'appliquent.",
+	"hcaptcha-challenge-closed": "Pour continuer, veuillez compléter le captcha.",
+	"hcaptcha-challenge-expired": "Le délai pour résoudre le hCaptcha est expiré. Veuillez réessayer.",
+	"hcaptcha-generic-error": "Une erreur est survenue lors du chargement du formulaire. Rechargez la page pour continuer.",
+	"hcaptcha-loading-indicator-label": "Veuillez patienter : initialisation du formulaire en cours…",
+	"hcaptcha-missing-token": "Le formulaire est toujours en cours de chargement. Attendez quelques secondes avant de réessayer.",
+	"hcaptcha-noscript": "JavaScript est obligatoire pour continuer. Activez JavaScript dans les paramètres de votre navigateur et actualisez la page."
+}

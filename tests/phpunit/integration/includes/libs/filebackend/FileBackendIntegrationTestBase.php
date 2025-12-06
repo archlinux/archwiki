@@ -71,8 +71,6 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		$props2 = $this->backend->getFileProps( [ 'src' => $dest ] );
 		$this->assertEquals( $props1, $props2,
 			"Source and destination have the same props ($backendName)." );
-
-		$this->assertBackendPathsConsistent( [ $dest ], true );
 	}
 
 	public static function provider_testStore() {
@@ -97,7 +95,7 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 	/**
 	 * @dataProvider provider_testCopy
 	 */
-	public function testCopy( $op, $srcContent, $dstContent, $okStatus, $okSyncStatus ) {
+	public function testCopy( $op, $srcContent, $dstContent, $okStatus ) {
 		$backendName = $this->backendClass();
 
 		$source = $op['src'];
@@ -172,12 +170,10 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 				(bool)$this->backend->fileExists( [ 'src' => $dest ] ),
 				"Destination file $dest exists after copy ($backendName)." );
 		}
-
-		$this->assertBackendPathsConsistent( [ $source, $dest ], $okSyncStatus );
 	}
 
 	/**
-	 * @return array (op, source exists, dest exists, op succeeds, sync check succeeds)
+	 * @return array (op, source exists, dest exists, op succeeds)
 	 */
 	public static function provider_testCopy() {
 		$cases = [];
@@ -187,44 +183,44 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		$opBase = [ 'op' => 'copy', 'src' => $source, 'dst' => $dest ];
 
 		$op = $opBase;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwrite'] = true;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwrite'] = true;
-		$cases[] = [ $op, 'yyy', 'xxx', true, true ];
+		$cases[] = [ $op, 'yyy', 'xxx', true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', 'yyy', true, true ];
+		$cases[] = [ $op, 'yyy', 'yyy', true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', 'zzz', false, true ];
+		$cases[] = [ $op, 'yyy', 'zzz', false ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, 'xxx', false, true, true ];
+		$cases[] = [ $op, 'xxx', false, true ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, false, true, true ];
+		$cases[] = [ $op, false, false, true ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, 'xxx', true, true ];
+		$cases[] = [ $op, false, 'xxx', true ];
 
 		$op = $opBase;
 		$op['src'] = 'mwstore://wrongbackend/unittest-cont1/e/file.txt';
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, false, false, false ];
+		$cases[] = [ $op, false, false, false ];
 
 		return $cases;
 	}
@@ -232,7 +228,7 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 	/**
 	 * @dataProvider provider_testMove
 	 */
-	public function testMove( $op, $srcContent, $dstContent, $okStatus, $okSyncStatus ) {
+	public function testMove( $op, $srcContent, $dstContent, $okStatus ) {
 		$backendName = $this->backendClass();
 
 		$source = $op['src'];
@@ -307,12 +303,10 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 				(bool)$this->backend->fileExists( [ 'src' => $dest ] ),
 				"Destination file $dest exists after move ($backendName)." );
 		}
-
-		$this->assertBackendPathsConsistent( [ $source, $dest ], $okSyncStatus );
 	}
 
 	/**
-	 * @return array (op, source exists, dest exists, op succeeds, sync check succeeds)
+	 * @return array (op, source exists, dest exists, op succeeds)
 	 */
 	public static function provider_testMove() {
 		$cases = [];
@@ -322,44 +316,44 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		$opBase = [ 'op' => 'move', 'src' => $source, 'dst' => $dest ];
 
 		$op = $opBase;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwrite'] = true;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwrite'] = true;
-		$cases[] = [ $op, 'yyy', 'xxx', true, true ];
+		$cases[] = [ $op, 'yyy', 'xxx', true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', false, true, true ];
+		$cases[] = [ $op, 'yyy', false, true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', 'yyy', true, true ];
+		$cases[] = [ $op, 'yyy', 'yyy', true ];
 
 		$op = $opBase;
 		$op['overwriteSame'] = true;
-		$cases[] = [ $op, 'yyy', 'zzz', false, true ];
+		$cases[] = [ $op, 'yyy', 'zzz', false ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, 'xxx', false, true, true ];
+		$cases[] = [ $op, 'xxx', false, true ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, false, true, true ];
+		$cases[] = [ $op, false, false, true ];
 
 		$op = $opBase;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, 'xxx', true, true ];
+		$cases[] = [ $op, false, 'xxx', true ];
 
 		$op = $opBase;
 		$op['src'] = 'mwstore://wrongbackend/unittest-cont1/e/file.txt';
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, false, false, false ];
+		$cases[] = [ $op, false, false, false ];
 
 		return $cases;
 	}
@@ -367,7 +361,7 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 	/**
 	 * @dataProvider provider_testDelete
 	 */
-	public function testDelete( $op, $srcContent, $okStatus, $okSyncStatus ) {
+	public function testDelete( $op, $srcContent, $okStatus ) {
 		$backendName = $this->backendClass();
 
 		$source = $op['src'];
@@ -403,12 +397,10 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		$this->assertFalse(
 			$props1['fileExists'],
 			"Source file $source does not exist according to props ($backendName)." );
-
-		$this->assertBackendPathsConsistent( [ $source ], $okSyncStatus );
 	}
 
 	/**
-	 * @return array (op, source content, op succeeds, sync check succeeds)
+	 * @return array (op, source content, op succeeds)
 	 */
 	public static function provider_testDelete() {
 		$cases = [];
@@ -417,23 +409,23 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		$baseOp = [ 'op' => 'delete', 'src' => $source ];
 
 		$op = $baseOp;
-		$cases[] = [ $op, 'xxx', true, true ];
+		$cases[] = [ $op, 'xxx', true ];
 
 		$op = $baseOp;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, 'xxx', true, true ];
+		$cases[] = [ $op, 'xxx', true ];
 
 		$op = $baseOp;
-		$cases[] = [ $op, false, false, true ];
+		$cases[] = [ $op, false, false ];
 
 		$op = $baseOp;
 		$op['ignoreMissingSource'] = true;
-		$cases[] = [ $op, false, true, true ];
+		$cases[] = [ $op, false, true ];
 
 		$op = $baseOp;
 		$op['ignoreMissingSource'] = true;
 		$op['src'] = 'mwstore://wrongbackend/unittest-cont1/e/file.txt';
-		$cases[] = [ $op, false, false, false ];
+		$cases[] = [ $op, false, false ];
 
 		return $cases;
 	}
@@ -484,8 +476,6 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 			$this->assertStatusNotOK( $status,
 				"Describe of file at $source failed ($backendName)." );
 		}
-
-		$this->assertBackendPathsConsistent( [ $source ], true );
 	}
 
 	private function assertHasHeaders( array $headers, array $attr ) {
@@ -571,8 +561,6 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 				$this->backend->getFileSize( [ 'src' => $dest ] ),
 				"Destination file $dest has original size according to props ($backendName)." );
 		}
-
-		$this->assertBackendPathsConsistent( [ $dest ], true );
 	}
 
 	/**
@@ -2113,8 +2101,4 @@ abstract class FileBackendIntegrationTestBase extends MediaWikiIntegrationTestCa
 		}
 		$this->backend->clean( [ 'dir' => "$base/$container", 'recursive' => 1 ] );
 	}
-
-	protected function assertBackendPathsConsistent( array $paths, $okSyncStatus ) {
-	}
-
 }

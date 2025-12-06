@@ -90,9 +90,6 @@ class FilterProfiler {
 		];
 	}
 
-	/**
-	 * @param int $filter
-	 */
 	public function resetFilterProfile( int $filter ): void {
 		$writer = $this->statsFactory->createWriter(
 			$this->statsSpecs,

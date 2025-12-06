@@ -6,7 +6,6 @@
 			"Wilfredor"
 		]
 	},
-	"vector-opt-out": "Awanajaa sünainmüin sukuwa'ipaka paalainka",
 	"vector-languages": "Anüikii",
 	"vector-language-button-label": "{{PLURAL:$1|$1 anüikii|$1 anüikikalüirua}}",
 	"vector-no-language-button-label": "Supushuwa'a anüikikalüirua",
@@ -20,7 +19,6 @@
 	"vector-view-view": "Aashaje'eraa",
 	"vector-view-viewsource": "Anüliaa eejeetülee",
 	"vector-more-actions": "Soo'omüin",
-	"vector-searchsuggest-containing": "Achajaa sulu'u tü ee'iyalayaaka kalu'uko <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Sulujunaa",
 	"vector-toc-beginning": "O'ttia",
 	"vector-page-tools-label": "A’yataayaapala",

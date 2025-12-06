@@ -5,21 +5,7 @@
  * Copyright © 2003 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -30,7 +16,6 @@ use MediaWiki;
 use MediaWiki\Exception\MWException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Session\SessionManager;
 
 /**
  * WebRequest clone which takes values from a provided array.
@@ -66,9 +51,11 @@ class FauxRequest extends WebRequest {
 		$this->data = $data;
 		$this->wasPosted = $wasPosted;
 		if ( $session instanceof MediaWiki\Session\Session ) {
+			$this->session = $session;
 			$this->sessionId = $session->getSessionId();
 		} elseif ( is_array( $session ) ) {
-			$mwsession = SessionManager::singleton()->getEmptySession( $this );
+			$mwsession = MediaWikiServices::getInstance()->getSessionManager()->getEmptySession( $this );
+			$this->session = $mwsession;
 			$this->sessionId = $mwsession->getSessionId();
 			foreach ( $session as $key => $value ) {
 				$mwsession->set( $key, $value );
@@ -115,10 +102,12 @@ class FauxRequest extends WebRequest {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getQueryValuesOnly() {
 		return $this->getQueryValues();
 	}
 
+	/** @inheritDoc */
 	public function getMethod() {
 		return $this->wasPosted ? 'POST' : 'GET';
 	}
@@ -130,6 +119,7 @@ class FauxRequest extends WebRequest {
 		return $this->wasPosted;
 	}
 
+	/** @inheritDoc */
 	public function getCookie( $key, $prefix = null, $default = null ) {
 		if ( $prefix === null ) {
 			$cookiePrefix = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::CookiePrefix );
@@ -235,6 +225,7 @@ class FauxRequest extends WebRequest {
 		return $this->requestUrl !== null;
 	}
 
+	/** @inheritDoc */
 	protected function getServerInfo( $name, $default = null ): ?string {
 		return $this->serverInfo[$name] ?? $default;
 	}
@@ -257,6 +248,7 @@ class FauxRequest extends WebRequest {
 		return $this->requestUrl;
 	}
 
+	/** @inheritDoc */
 	public function getProtocol() {
 		return $this->protocol;
 	}
@@ -290,6 +282,7 @@ class FauxRequest extends WebRequest {
 		return null;
 	}
 
+	/** @inheritDoc */
 	public function getPostValues() {
 		return $this->wasPosted ? $this->data : [];
 	}

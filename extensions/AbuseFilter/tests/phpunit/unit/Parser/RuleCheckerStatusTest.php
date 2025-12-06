@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Parser;
 
-use MediaWiki\Extension\AbuseFilter\Parser\Exception\ExceptionBase;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\InternalException;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
@@ -33,18 +32,18 @@ class RuleCheckerStatusTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideToArrayException() {
-		yield 'exception instance' => [ new InternalException() ];
+		yield 'exception instance' => [ InternalException::class ];
 		yield 'null' => [ null ];
 	}
 
 	/**
 	 * @dataProvider provideToArrayException
 	 */
-	public function testToArrayRoundTrip( ?ExceptionBase $exception ) {
+	public function testToArrayRoundTrip( ?string $exception ) {
 		$status = new RuleCheckerStatus(
 			true,
 			false,
-			$exception,
+			$exception ? new $exception() : null,
 			[ new UserVisibleWarning( 'foo', 1, [] ) ],
 			42
 		);
@@ -52,7 +51,7 @@ class RuleCheckerStatusTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $status->getResult(), $newStatus->getResult() );
 		$this->assertSame( $status->getWarmCache(), $newStatus->getWarmCache() );
 		if ( $exception !== null ) {
-			$this->assertInstanceOf( get_class( $exception ), $newStatus->getException() );
+			$this->assertInstanceOf( $exception, $newStatus->getException() );
 		} else {
 			$this->assertNull( $newStatus->getException() );
 		}

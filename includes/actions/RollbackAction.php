@@ -2,20 +2,7 @@
 /**
  * Edit rollback user interface
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  */
@@ -82,30 +69,37 @@ class RollbackAction extends FormAction {
 		$this->commentFormatter = $commentFormatter;
 	}
 
+	/** @inheritDoc */
 	public function getName() {
 		return 'rollback';
 	}
 
+	/** @inheritDoc */
 	public function getRestriction() {
 		return 'rollback';
 	}
 
+	/** @inheritDoc */
 	protected function usesOOUI() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getDescription() {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function onSuccess() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( $data ) {
 		return false;
 	}
@@ -244,6 +238,7 @@ class RollbackAction extends FormAction {
 
 		$currentUser = $current->getUser( RevisionRecord::FOR_THIS_USER, $user );
 		$targetUser = $target->getUser( RevisionRecord::FOR_THIS_USER, $user );
+		$userOptionsLookup = $this->userOptionsLookup;
 		$this->getOutput()->addHTML(
 			$this->msg( 'rollback-success' )
 				->rawParams( $old, $new )
@@ -263,14 +258,18 @@ class RollbackAction extends FormAction {
 			'wgPostEditConfirmationDisabled' => true,
 		] );
 
-		if ( $this->userOptionsLookup->getBoolOption( $user, 'watchrollback' ) ) {
-			$this->watchlistManager->addWatchIgnoringRights( $user, $this->getTitle() );
+		// Watch the page for the user-chosen period of time, unless the page is already watched.
+		if ( $userOptionsLookup->getBoolOption( $user, 'watchrollback' ) &&
+			!$this->watchlistManager->isWatchedIgnoringRights( $user, $this->getTitle() )
+		) {
+			$this->watchlistManager->addWatchIgnoringRights( $user, $this->getTitle(),
+				$userOptionsLookup->getOption( $user, 'watchrollback-expiry' ) );
 		}
 
 		$this->getOutput()->returnToMain( false, $this->getTitle() );
 
 		if ( !$request->getBool( 'hidediff', false ) &&
-			!$this->userOptionsLookup->getBoolOption( $this->getUser(), 'norollbackdiff' )
+			!$userOptionsLookup->getBoolOption( $this->getUser(), 'norollbackdiff' )
 		) {
 			$contentModel = $current->getMainContentModel();
 			$contentHandler = $this->contentHandlerFactory->getContentHandler( $contentModel );
@@ -315,6 +314,7 @@ class RollbackAction extends FormAction {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [
 			'intro' => [

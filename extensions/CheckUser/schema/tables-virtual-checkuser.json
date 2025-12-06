@@ -1,0 +1,107 @@
+[
+	{
+		"name": "cusi_case",
+		"comment": "A table used to store suggested investigations to be shown to a checkuser. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "sic_id",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "sic_status",
+				"comment": "Integer acting as an enum, which represents the status of this case. Open is 0, Closed as resolved is 1, Closed as invalid is 2",
+				"type": "mwtinyint",
+				"options": { "unsigned": true, "notnull": true, "default": 0 }
+			},
+			{
+				"name": "sic_status_reason",
+				"comment": "The reason given for changing sic_status to either closed as resolved (1) or closed as invalid (2).",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "sic_created_timestamp",
+				"comment": "The timestamp representing when the case was created by the system.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "sic_status_created_timestamp_id",
+				"columns": [ "sic_status", "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used for several things. Allows sorting and paging the Codex table by the 'Status' column (the created timestamp and ID are used to ensure unique paging). Also allows the system to find the newest open case given a pre-determined list of sic_id values, so the system can add new users to an existing case."
+			},
+			{
+				"name": "sic_created_timestamp_id",
+				"columns": [ "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used to sort and page cases by their creation timestamp (the ID makes paging consistent in case two cases have the same creation timestamp) for the Codex table on the Special page for Suggested investigations."
+			}
+		],
+		"pk": [ "sic_id" ]
+	},
+	{
+		"name": "cusi_user",
+		"comment": "A table which represents the accounts in each suggested investigation (a suggested investigation is a row in the cusi_case table). A user can be associated with more than one cusi_case row. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "siu_user_id",
+				"comment": "Part of composite primary key. The user ID of the suspicious account this row represents.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "siu_sic_id",
+				"comment": "Part of composite primary key. The cusi_case row (suggested investigation) that this user is associated with.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "siu_user_id",
+				"columns": [ "siu_user_id" ],
+				"unique": false,
+				"comment": "Used to find which cusi_case rows that a given user ID is associated with"
+			}
+		],
+		"pk": [ "siu_sic_id", "siu_user_id" ]
+	},
+	{
+		"name": "cusi_signal",
+		"comment": "A table that represents a distinct signal-value pair. A signal is used to determine that an account may need investigation and the value is used to group users with the same value. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "sis_sic_id",
+				"comment": "Foreign key to the cusi_case row. Used in the composite primary key.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "sis_name",
+				"comment": "The name of the signal. Used in the composite primary key.",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "sis_value",
+				"comment": "The value associated with the signal. Used in the composite primary key.",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "sis_sic_id",
+				"columns": [ "sis_sic_id" ],
+				"unique": false,
+				"comment": "Used to find cusi_signal rows for a given cusi_case row, when displaying cusi_case rows in the UI."
+			}
+		],
+		"pk": [ "sis_name", "sis_value", "sis_sic_id" ]
+	}
+]

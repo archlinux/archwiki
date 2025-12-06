@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,7 +9,6 @@ use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\DBReadOnlyRoleError;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\Rdbms\LoadMonitorNull;
@@ -216,12 +201,14 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function newMultiServerLocalLoadBalancer(
-		$lbExtra = [], $srvExtra = [], $masterOnly = false
+		$lbExtra = [], $srvExtra = [], $masterOnly = false, $largeGroup = false
 	) {
 		global $wgDBserver, $wgDBport, $wgDBuser, $wgDBpassword, $wgDBtype;
 		global $wgDBname, $wgDBmwschema;
 		global $wgSQLiteDataDir;
 
+		// Many hosts need 'is static' since otherwise LB actually ignores
+		// them due to "high lag".
 		$servers = [
 			// Primary DB
 			0 => $srvExtra + [
@@ -248,6 +235,7 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
 					'load' => $masterOnly ? 0 : 100,
+					'is static' => true
 				],
 			2 => $srvExtra + [
 					'serverName' => 'db2',
@@ -260,8 +248,9 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
 					'load' => $masterOnly ? 0 : 100,
+					'is static' => true
 				],
-			// RC replica DBs
+			// dump
 			3 => $srvExtra + [
 					'serverName' => 'db3',
 					'host' => $wgDBserver,
@@ -272,13 +261,12 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'password' => $wgDBpassword,
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
-					'load' => 0,
+					'load' => $largeGroup ? 100 : 0,
 					'groupLoads' => [
-						'foo' => 100,
-						'bar' => 100
+						'dump' => 100
 					],
+					'is static' => true
 				],
-			// Logging replica DBs
 			4 => $srvExtra + [
 					'serverName' => 'db4',
 					'host' => $wgDBserver,
@@ -289,10 +277,11 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'password' => $wgDBpassword,
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
-					'load' => 0,
+					'load' => $largeGroup ? 100 : 0,
 					'groupLoads' => [
-						'baz' => 100
+						'vslow' => 100
 					],
+					'is static' => true
 				],
 			5 => $srvExtra + [
 					'serverName' => 'db5',
@@ -304,12 +293,12 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'password' => $wgDBpassword,
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
-					'load' => 0,
+					'load' => $largeGroup ? 100 : 0,
 					'groupLoads' => [
-						'baz' => 100
+						'vslow' => 100
 					],
+					'is static' => true
 				],
-			// Maintenance query replica DBs
 			6 => $srvExtra + [
 					'serverName' => 'db6',
 					'host' => $wgDBserver,
@@ -320,10 +309,7 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'password' => $wgDBpassword,
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
-					'load' => 0,
-					'groupLoads' => [
-						'vslow' => 100
-					],
+					'load' => $largeGroup ? 100 : 0,
 				],
 			// Replica DB that only has a copy of some static tables
 			7 => $srvExtra + [
@@ -336,10 +322,7 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 					'password' => $wgDBpassword,
 					'type' => $wgDBtype,
 					'dbDirectory' => $wgSQLiteDataDir,
-					'load' => 0,
-					'groupLoads' => [
-						'archive' => 100
-					],
+					'load' => $largeGroup ? 100 : 0,
 					'is static' => true
 				]
 		];
@@ -349,7 +332,9 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 			'localDomain' => new DatabaseDomain( $wgDBname, $wgDBmwschema, self::dbPrefix() ),
 			'logger' => MediaWiki\Logger\LoggerFactory::getInstance( 'rdbms' ),
 			'loadMonitor' => [ 'class' => LoadMonitorNull::class ],
-			'clusterName' => 'main-test-cluster'
+			'clusterName' => 'main-test-cluster',
+			'uniqueIdentifier' => 'very-unique-ip-v6',
+			'shuffleSharding' => true,
 		] );
 	}
 
@@ -682,25 +667,6 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 		$rConn->insert( 'test', [ 't' => 1 ], __METHOD__ );
 	}
 
-	public function testGetConnectionRefDefaultGroup() {
-		$lb = $this->newMultiServerLocalLoadBalancer( [ 'defaultGroup' => 'vslow' ] );
-		$lbWrapper = TestingAccessWrapper::newFromObject( $lb );
-
-		$rVslow = $lb->getConnection( DB_REPLICA );
-		$vslowIndexPicked = $rVslow->getLBInfo( 'serverIndex' );
-
-		$this->assertSame( $vslowIndexPicked, $lbWrapper->getExistingReaderIndex( 'vslow' ) );
-	}
-
-	public function testGetConnectionRefUnknownDefaultGroup() {
-		$lb = $this->newMultiServerLocalLoadBalancer( [ 'defaultGroup' => 'invalid' ] );
-
-		$this->assertInstanceOf(
-			IDatabase::class,
-			$lb->getConnection( DB_REPLICA )
-		);
-	}
-
 	public function testQueryGroupIndex() {
 		$lb = $this->newMultiServerLocalLoadBalancer( [ 'defaultGroup' => false ] );
 		/** @var LoadBalancer $lbWrapper */
@@ -722,33 +688,23 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 				"Main index unchanged" );
 		}
 
-		$rRC = $lb->getConnection( DB_REPLICA, [ 'foo' ] );
-		$rWL = $lb->getConnection( DB_REPLICA, [ 'bar' ] );
-		$rRCMaint = $lb->getMaintenanceConnectionRef( DB_REPLICA, [ 'foo' ] );
-		$rWLMaint = $lb->getMaintenanceConnectionRef( DB_REPLICA, [ 'bar' ] );
+		$rRC = $lb->getConnection( DB_REPLICA, [ 'dump' ] );
+		$rRCMaint = $lb->getMaintenanceConnectionRef( DB_REPLICA, [ 'dump' ] );
 
 		$this->assertSame( 3, $rRC->getLBInfo( 'serverIndex' ) );
-		$this->assertSame( 3, $rWL->getLBInfo( 'serverIndex' ) );
 		$this->assertSame( 3, $rRCMaint->getLBInfo( 'serverIndex' ) );
-		$this->assertSame( 3, $rWLMaint->getLBInfo( 'serverIndex' ) );
 
-		$rLog = $lb->getConnection( DB_REPLICA, [ 'baz', 'bar' ] );
-		$logIndexPicked = $rLog->getLBInfo( 'serverIndex' );
-
-		$this->assertSame( $logIndexPicked, $lbWrapper->getExistingReaderIndex( 'baz' ) );
-		$this->assertContains( $logIndexPicked, [ 4, 5 ] );
-
-		for ( $i = 0; $i < 300; ++$i ) {
-			$rLog = $lb->getConnection( DB_REPLICA, [ 'baz', 'bar' ] );
-			$this->assertSame(
-				$logIndexPicked, $rLog->getLBInfo( 'serverIndex' ), "Index unchanged" );
-		}
-
-		$rVslow = $lb->getConnection( DB_REPLICA, [ 'vslow', 'baz' ] );
+		$rVslow = $lb->getConnection( DB_REPLICA, [ 'vslow' ] );
 		$vslowIndexPicked = $rVslow->getLBInfo( 'serverIndex' );
 
 		$this->assertSame( $vslowIndexPicked, $lbWrapper->getExistingReaderIndex( 'vslow' ) );
-		$this->assertSame( 6, $vslowIndexPicked );
+		$this->assertContains( $vslowIndexPicked, [ 4, 5 ] );
+
+		for ( $i = 0; $i < 10; ++$i ) {
+			$rVslow = $lb->getConnection( DB_REPLICA, [ 'vslow' ] );
+			$this->assertSame(
+				$vslowIndexPicked, $rVslow->getLBInfo( 'serverIndex' ), "Index unchanged" );
+		}
 	}
 
 	public function testNonZeroMasterLoad() {
@@ -794,5 +750,18 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 			'clusterName' => null
 		] );
 		$this->assertSame( 'testhost', $lb2->getClusterName() );
+	}
+
+	public function testShuffleSharding() {
+		$lb = $this->newMultiServerLocalLoadBalancer( [ 'defaultGroup' => false ], [], false, true );
+		$lbObj = TestingAccessWrapper::newFromObject( $lb );
+		for ( $i = 0; $i < 300; ++$i ) {
+			$rLog = $lbObj->getConnection( DB_REPLICA );
+			$indexPicked = $rLog->getLBInfo( 'serverIndex' );
+			$lbObj->closeAll();
+			$lbObj->readIndexByGroup = [];
+
+			$this->assertContains( $indexPicked, [ 1, 4, 6 ] );
+		}
 	}
 }

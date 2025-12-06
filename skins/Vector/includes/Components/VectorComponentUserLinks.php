@@ -91,7 +91,7 @@ class VectorComponentUserLinks implements VectorComponent {
 		}
 
 		$tooltip = Html::expandAttributes( [
-			'title' => $this->msg( 'vector-personal-tools-tooltip' ),
+			'title' => $this->msg( 'vector-personal-tools-tooltip' )->text(),
 		] );
 		$icon = $this->userIcon;
 		if ( $icon === '' && $userLinksCount ) {
@@ -152,7 +152,7 @@ class VectorComponentUserLinks implements VectorComponent {
 					$anonUserMenuData['html-label'] = $this->msg( 'vector-anon-user-menu-pages' )->escaped() .
 						" " . $anonEditorLabelLinkHtml;
 					$anonUserMenuData['label'] = null;
-				} catch ( MalformedTitleException $e ) {
+				} catch ( MalformedTitleException ) {
 					// ignore (T340220)
 				}
 				$dropdownMenus[] = new VectorComponentMenu( $anonUserMenuData );
@@ -275,10 +275,6 @@ class VectorComponentUserLinks implements VectorComponent {
 				static function ( $item ) {
 					// Since we're creating duplicate icons
 					$item['id'] .= '-2';
-					// Restore icon removed in hooks.
-					if ( $item['name'] === 'watchlist' ) {
-						$item['icon'] = 'watchlist';
-					}
 					return $item;
 				},
 				// array_filter preserves keys so use array_values to restore array.
@@ -287,11 +283,14 @@ class VectorComponentUserLinks implements VectorComponent {
 						$portletData['data-user-menu']['array-items'] ?? [],
 						static function ( $item ) {
 							// Only certain items get promoted to the overflow menu:
+							// * readinglist
 							// * watchlist
 							// * login
 							// * create account
+							// * donate
 							$name = $item['name'];
 							return in_array( $name, [
+								'readinglists',
 								'watchlist',
 								'createaccount',
 								'login',

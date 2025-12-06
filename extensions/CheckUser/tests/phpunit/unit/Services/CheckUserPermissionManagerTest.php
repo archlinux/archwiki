@@ -71,25 +71,25 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 		yield 'missing permissions' => [
 			new SimpleAuthority( $actor, [] ),
 			true,
-			CheckUserPermissionStatus::newPermissionError( 'checkuser-temporary-account' )
+			CheckUserPermissionStatus::newPermissionError( 'checkuser-temporary-account' ),
 		];
 
 		yield 'authorized but agreement not accepted' => [
 			new SimpleAuthority( $actor, [ 'checkuser-temporary-account' ] ),
 			false,
-			CheckUserPermissionStatus::newFatal( 'checkuser-tempaccount-reveal-ip-permission-error-description' )
+			CheckUserPermissionStatus::newFatal( 'checkuser-tempaccount-reveal-ip-permission-error-description' ),
 		];
 
 		yield 'authorized to view data without accepting agreement' => [
 			new SimpleAuthority( $actor, [ 'checkuser-temporary-account-no-preference' ] ),
 			false,
-			CheckUserPermissionStatus::newGood()
+			CheckUserPermissionStatus::newGood(),
 		];
 
 		yield 'authorized and agreement accepted' => [
 			new SimpleAuthority( $actor, [ 'checkuser-temporary-account' ] ),
 			true,
-			CheckUserPermissionStatus::newGood()
+			CheckUserPermissionStatus::newGood(),
 		];
 	}
 
@@ -331,7 +331,7 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 				'authorityIsRegistered' => true,
 				'hasTargetIdentity' => true,
 				'targetIdentityIsRegistered' => true,
-				'centralAuthUserExists' => true
+				'centralAuthUserExists' => true,
 			],
 			'When the target identity can\'t be retrieved' => [
 				// This happens, for example, when providing an invalid username
@@ -340,21 +340,21 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 				'authorityIsRegistered' => true,
 				'hasTargetIdentity' => false,
 				'targetIdentityIsRegistered' => false,
-				'centralAuthUserExists' => true
+				'centralAuthUserExists' => true,
 			],
 			'When the user identity GC is requested for is not registered' => [
 				'errorMessage' => 'checkuser-global-contributions-no-results-no-central-user',
 				'authorityIsRegistered' => true,
 				'hasTargetIdentity' => true,
 				'targetIdentityIsRegistered' => false,
-				'centralAuthUserExists' => true
+				'centralAuthUserExists' => true,
 			],
 			'When the CentralAuthUser does not exist' => [
 				'errorMessage' => 'checkuser-global-contributions-no-results-no-central-user',
 				'authorityIsRegistered' => true,
 				'hasTargetIdentity' => true,
 				'targetIdentityIsRegistered' => true,
-				'centralAuthUserExists' => false
+				'centralAuthUserExists' => false,
 			],
 		];
 	}

@@ -20,18 +20,16 @@
 
 namespace MediaWiki\Extension\ImageMap;
 
-use DOMDocumentFragment;
 use DOMElement;
 use MediaWiki\Config\Config;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Hook\ParserFirstCallInitHook;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
-use MediaWiki\Xml\Xml;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -82,7 +80,6 @@ class ImageMap implements ParserFirstCallInitHook {
 		}
 
 		$urlProtocols = $this->config->get( MainConfigNames::UrlProtocols );
-		$enableLegacyMediaDOM = $this->config->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 
 		$lines = explode( "\n", $input );
 
@@ -131,11 +128,9 @@ class ImageMap implements ParserFirstCallInitHook {
 				// Parse the options so we can use links and the like in the caption
 				$parsedOptions = $options === '' ? '' : $parser->recursiveTagParse( $options );
 
-				if ( !$enableLegacyMediaDOM ) {
-					$explicitNone = preg_match( '/(^|\|)none(\||$)/D', $parsedOptions );
-					if ( !$explicitNone ) {
-						$parsedOptions .= '|none';
-					}
+				$explicitNone = preg_match( '/(^|\|)none(\||$)/D', $parsedOptions );
+				if ( !$explicitNone ) {
+					$parsedOptions .= '|none';
 				}
 
 				$imageHTML = $parser->makeImage( $imageTitle, $parsedOptions );
@@ -291,7 +286,7 @@ class ImageMap implements ParserFirstCallInitHook {
 				$defaultLinkAttribs = $attribs;
 			} else {
 				// @phan-suppress-next-line SecurityCheck-DoubleEscaped
-				$mapHTML .= Xml::element( 'area', $attribs ) . "\n";
+				$mapHTML .= Html::element( 'area', $attribs ) . "\n";
 			}
 			if ( $externLink ) {
 				$extLinks[] = $title;
@@ -330,159 +325,76 @@ class ImageMap implements ParserFirstCallInitHook {
 
 		$div = null;
 
-		if ( $enableLegacyMediaDOM ) {
-			// Add a surrounding div, remove the default link to the description page
-			$anchor = $imageNode->parentNode;
-			$parent = $anchor->parentNode;
-			'@phan-var DOMElement $anchor';
+		$anchor = $imageNode->parentNode;
+		$wrapper = $anchor->parentNode;
+		Assert::precondition( $wrapper instanceof DOMElement, 'Anchor node has a parent' );
+		'@phan-var DOMElement $anchor';
 
-			// Handle cases where there are no anchors, like `|link=`
-			if ( $anchor instanceof DOMDocumentFragment ) {
-				$parent = $anchor;
-				$anchor = $imageNode;
-			}
+		$classes = $wrapper->getAttribute( 'class' );
 
-			$div = $domDoc->createElement( 'div' );
-			$parent->insertBefore( $div, $anchor );
-			$div->setAttribute( 'class', 'noresize' );
-			if ( $defaultLinkAttribs ) {
-				$defaultAnchor = $domDoc->createElement( 'a' );
-				$div->appendChild( $defaultAnchor );
-				foreach ( $defaultLinkAttribs as $name => $value ) {
-					$defaultAnchor->setAttribute( $name, $value );
-				}
-				$imageParent = $defaultAnchor;
-			} else {
-				$imageParent = $div;
-			}
+		// For T22030
+		$classes .= ( $classes ? ' ' : '' ) . 'noresize';
 
-			// Add the map HTML to the div
-			if ( isset( $mapNode ) ) {
-				$div->appendChild( $mapNode );
-			}
-
-			$imageParent->appendChild( $imageNode->cloneNode( true ) );
-			$parent->removeChild( $anchor );
-		} else {
-			$anchor = $imageNode->parentNode;
-			$wrapper = $anchor->parentNode;
-			Assert::precondition( $wrapper instanceof DOMElement, 'Anchor node has a parent' );
-			'@phan-var DOMElement $anchor';
-
-			$classes = $wrapper->getAttribute( 'class' );
-
-			// For T22030
-			$classes .= ( $classes ? ' ' : '' ) . 'noresize';
-
-			// Remove that class if it was only added while forcing a block
-			if ( !$explicitNone ) {
-				$classes = trim( preg_replace( '/ ?mw-halign-none/', '', $classes ) );
-			}
-
-			$wrapper->setAttribute( 'class', $classes );
-
-			if ( $defaultLinkAttribs ) {
-				$imageParent = $domDoc->createElement( 'a' );
-				foreach ( $defaultLinkAttribs as $name => $value ) {
-					$imageParent->setAttribute( $name, $value );
-				}
-			} else {
-				$imageParent = $domDoc->createElement( 'span' );
-			}
-			$wrapper->insertBefore( $imageParent, $anchor );
-
-			if ( !WTUtils::hasVisibleCaption( $wrapper ) ) {
-				$caption = DOMCompat::querySelector( $domFragment, 'figcaption' );
-				$captionText = trim( WTUtils::textContentFromCaption( $caption ) );
-				if ( $captionText ) {
-					$imageParent->setAttribute( 'title', $captionText );
-				}
-			}
-
-			if ( isset( $mapNode ) ) {
-				$wrapper->insertBefore( $mapNode, $anchor );
-			}
-
-			$imageParent->appendChild( $imageNode->cloneNode( true ) );
-			$wrapper->removeChild( $anchor );
+		// Remove that class if it was only added while forcing a block
+		if ( !$explicitNone ) {
+			$classes = trim( preg_replace( '/ ?mw-halign-none/', '', $classes ) );
 		}
+
+		$wrapper->setAttribute( 'class', $classes );
+
+		if ( $defaultLinkAttribs ) {
+			$imageParent = $domDoc->createElement( 'a' );
+			foreach ( $defaultLinkAttribs as $name => $value ) {
+				$imageParent->setAttribute( $name, $value );
+			}
+		} else {
+			$imageParent = $domDoc->createElement( 'span' );
+		}
+		$wrapper->insertBefore( $imageParent, $anchor );
+
+		if ( !WTUtils::hasVisibleCaption( $wrapper ) ) {
+			$caption = DOMCompat::querySelector( $domFragment, 'figcaption' );
+			$captionText = trim( WTUtils::textContentFromCaption( $caption ) );
+			if ( $captionText ) {
+				$imageParent->setAttribute( 'title', $captionText );
+			}
+		}
+
+		if ( isset( $mapNode ) ) {
+			$wrapper->insertBefore( $mapNode, $anchor );
+		}
+
+		$imageParent->appendChild( $imageNode->cloneNode( true ) );
+		$wrapper->removeChild( $anchor );
 
 		$parserOutput = $parser->getOutput();
 
-		if ( $enableLegacyMediaDOM ) {
-			// Determine whether a "magnify" link is present
-			$magnify = DOMCompat::querySelector( $domFragment, '.magnify' );
-			if ( !$magnify && $descType !== self::NONE ) {
-				// Add image description link
-				if ( $descType === self::TOP_LEFT || $descType === self::BOTTOM_LEFT ) {
-					$marginLeft = 0;
-				} else {
-					$marginLeft = $thumbWidth - 20;
-				}
-				if ( $descType === self::TOP_LEFT || $descType === self::TOP_RIGHT ) {
-					$marginTop = -$thumbHeight;
-					// 1px hack for IE, to stop it poking out the top
-					$marginTop++;
-				} else {
-					$marginTop = -20;
-				}
-				$div->setAttribute( 'style', "height: {$thumbHeight}px; width: {$thumbWidth}px; " );
-				$descWrapper = $domDoc->createElement( 'div' );
-				$div->appendChild( $descWrapper );
-				$descWrapper->setAttribute( 'style',
-					"margin-left: {$marginLeft}px; " .
-						"margin-top: {$marginTop}px; " .
-						"text-align: left;"
-				);
-
-				$descAnchor = $domDoc->createElement( 'a' );
-				$descWrapper->appendChild( $descAnchor );
-				$descAnchor->setAttribute( 'href', $imageTitle->getLocalURL() );
-				$descAnchor->setAttribute(
-					'title',
-					wfMessage( 'imagemap_description' )->inContentLanguage()->text()
-				);
-				$descImg = $domDoc->createElement( 'img' );
-				$descAnchor->appendChild( $descImg );
-				$descImg->setAttribute(
-					'alt',
-					wfMessage( 'imagemap_description' )->inContentLanguage()->text()
-				);
-				$url = $this->config->get( MainConfigNames::ExtensionAssetsPath ) . '/ImageMap/resources/desc-20.png';
-				$descImg->setAttribute(
-					'src',
-					OutputPage::transformResourcePath( $this->config, $url )
-				);
-				$descImg->setAttribute( 'style', 'border: none;' );
+		'@phan-var DOMElement $wrapper';
+		$typeOf = $wrapper->getAttribute( 'typeof' );
+		if ( preg_match( '#\bmw:File/Thumb\b#', $typeOf ) ) {
+			// $imageNode was cloned above
+			$img = $imageParent->firstChild;
+			'@phan-var DOMElement $img';
+			if ( !$img->hasAttribute( 'resource' ) ) {
+				$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
 			}
-		} else {
-			'@phan-var DOMElement $wrapper';
-			$typeOf = $wrapper->getAttribute( 'typeof' );
-			if ( preg_match( '#\bmw:File/Thumb\b#', $typeOf ) ) {
-				// $imageNode was cloned above
-				$img = $imageParent->firstChild;
-				'@phan-var DOMElement $img';
-				if ( !$img->hasAttribute( 'resource' ) ) {
-					$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
-				}
-			} elseif ( $descType !== self::NONE ) {
-				// The following classes are used here:
-				// * mw-ext-imagemap-desc-top-right
-				// * mw-ext-imagemap-desc-bottom-right
-				// * mw-ext-imagemap-desc-bottom-left
-				// * mw-ext-imagemap-desc-top-left
-				DOMCompat::getClassList( $wrapper )->add(
-					'mw-ext-imagemap-desc-' . self::DESC_TYPE_MAP[$descType]
-				);
-				// $imageNode was cloned above
-				$img = $imageParent->firstChild;
-				'@phan-var DOMElement $img';
-				if ( !$img->hasAttribute( 'resource' ) ) {
-					$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
-				}
-				$parserOutput->addModules( [ 'ext.imagemap' ] );
-				$parserOutput->addModuleStyles( [ 'ext.imagemap.styles' ] );
+		} elseif ( $descType !== self::NONE ) {
+			// The following classes are used here:
+			// * mw-ext-imagemap-desc-top-right
+			// * mw-ext-imagemap-desc-bottom-right
+			// * mw-ext-imagemap-desc-bottom-left
+			// * mw-ext-imagemap-desc-top-left
+			DOMCompat::getClassList( $wrapper )->add(
+				'mw-ext-imagemap-desc-' . self::DESC_TYPE_MAP[$descType]
+			);
+			// $imageNode was cloned above
+			$img = $imageParent->firstChild;
+			'@phan-var DOMElement $img';
+			if ( !$img->hasAttribute( 'resource' ) ) {
+				$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
 			}
+			$parserOutput->addModules( [ 'ext.imagemap' ] );
+			$parserOutput->addModuleStyles( [ 'ext.imagemap.styles' ] );
 		}
 
 		// Output the result (XHTML-compliant)

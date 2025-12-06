@@ -24,8 +24,6 @@
 	"echo-category-title-system-emailonly": "{{PLURAL:$1|سسٹم}}",
 	"notifications": "اطلاع نامے",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Your}} الرٹس",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "موجودہ ورتݨ آلے",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "نویں ورتݨ آلے",
 	"echo-specialpage": "اطلاع نامے",
 	"echo-specialpage-markasread-invalid-id": "غلط ایونٹ آئی ڈی",
 	"echo-specialpage-pagefilters-title": "حالیہ سرگرمی",

@@ -33,6 +33,7 @@ class CompareHandler extends Handler {
 		$this->parserFactory = $parserFactory;
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$fromRev = $this->getRevisionOrThrow( 'from' );
 		$toRev = $this->getRevisionOrThrow( 'to' );
@@ -133,10 +134,10 @@ class CompareHandler extends Handler {
 						),
 						400 );
 				}
-			} catch ( SuppressedDataException $e ) {
+			} catch ( SuppressedDataException ) {
 				throw new LocalizedHttpException(
 					new MessageValue( 'rest-compare-inaccessible', [ $paramName ] ), 403 );
-			} catch ( RevisionAccessException $e ) {
+			} catch ( RevisionAccessException ) {
 				throw new LocalizedHttpException(
 					new MessageValue( 'rest-compare-nonexistent', [ $paramName ] ), 404 );
 			}
@@ -192,13 +193,7 @@ class CompareHandler extends Handler {
 		return 'includes/Rest/Handler/Schema/RevisionCompare.json';
 	}
 
-	protected function generateResponseSpec( string $method ): array {
-		$spec = parent::generateResponseSpec( $method );
-		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-
-		return $spec;
-	}
-
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'from' => [

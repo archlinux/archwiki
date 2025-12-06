@@ -30,6 +30,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 			$services->getUserFactory(),
 			$services->getUserIdentityLookup(),
 			$services->getDatabaseBlockStore(),
+			$services->getUserGroupAssignmentService(),
 			$services->getTempUserConfig()
 		);
 	}

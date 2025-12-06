@@ -2,66 +2,57 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Filter;
 
+use MediaWiki\User\UserIdentity;
+
 /**
  * (Mutable) value object that holds information about the last edit to a filter.
  */
 class LastEditInfo {
-	/** @var int */
-	private $userID;
-	/** @var string */
-	private $userName;
+	/** @var UserIdentity */
+	private $userIdentity;
+
 	/** @var string */
 	private $timestamp;
 
 	/**
-	 * @param int $userID
-	 * @param string $userName
+	 * @param UserIdentity $identity
 	 * @param string $timestamp
 	 */
-	public function __construct( int $userID, string $userName, string $timestamp ) {
-		$this->userID = $userID;
-		$this->userName = $userName;
+	public function __construct( UserIdentity $identity, string $timestamp ) {
+		$this->userIdentity = $identity;
 		$this->timestamp = $timestamp;
 	}
 
 	/**
-	 * @return int
+	 * Set the UserIdentity
+	 *
+	 * @param UserIdentity $identity
 	 */
-	public function getUserID(): int {
-		return $this->userID;
+	public function setUserIdentity( UserIdentity $identity ): void {
+		$this->userIdentity = $identity;
 	}
 
 	/**
-	 * @param int $id
+	 * Get the UserIdentity object
+	 *
+	 * @return UserIdentity
 	 */
-	public function setUserID( int $id ): void {
-		$this->userID = $id;
+	public function getUserIdentity(): UserIdentity {
+		return $this->userIdentity;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getUserName(): string {
-		return $this->userName;
+		return $this->userIdentity->getName();
 	}
 
-	/**
-	 * @param string $name
-	 */
-	public function setUserName( string $name ): void {
-		$this->userName = $name;
+	public function getUserID(): int {
+		return $this->userIdentity->getId();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getTimestamp(): string {
 		return $this->timestamp;
 	}
 
-	/**
-	 * @param string $timestamp
-	 */
 	public function setTimestamp( string $timestamp ): void {
 		$this->timestamp = $timestamp;
 	}

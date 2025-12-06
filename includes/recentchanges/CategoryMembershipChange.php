@@ -1,26 +1,11 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\RecentChanges;
 
-use LogicException;
 use MediaWiki\Cache\BacklinkCache;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
@@ -67,48 +52,35 @@ class CategoryMembershipChange {
 	 */
 	private $numTemplateLinks = 0;
 
-	/**
-	 * @var callable|null
-	 */
-	private $newForCategorizationCallback = null;
-
-	/** @var BacklinkCache */
-	private $backlinkCache;
+	private BacklinkCache $backlinkCache;
+	private RecentChangeFactory $recentChangeFactory;
 
 	/**
 	 * @param Title $pageTitle Title instance of the categorized page
 	 * @param BacklinkCache $backlinkCache
 	 * @param RevisionRecord $revision Latest revision of the categorized page.
+	 * @param RecentChangeFactory $recentChangeFactory
 	 * @param bool $forImport Whether this was caused by an import
 	 */
 	public function __construct(
-		Title $pageTitle, BacklinkCache $backlinkCache, RevisionRecord $revision, bool $forImport
+		Title $pageTitle,
+		BacklinkCache $backlinkCache,
+		RevisionRecord $revision,
+		RecentChangeFactory $recentChangeFactory,
+		bool $forImport
 	) {
 		$this->pageTitle = $pageTitle;
 		$this->revision = $revision;
+		$this->recentChangeFactory = $recentChangeFactory;
 
 		// Use the current timestamp for creating the RC entry when dealing with imported revisions,
 		// since their timestamp may be significantly older than the current time.
 		// This ensures the resulting RC entry won't be immediately reaped by probabilistic RC purging if
 		// the imported revision is older than $wgRCMaxAge (T377392).
 		$this->timestamp = $forImport ? wfTimestampNow() : $revision->getTimestamp();
-		$this->newForCategorizationCallback = [ RecentChange::class, 'newForCategorization' ];
+
 		$this->backlinkCache = $backlinkCache;
 		$this->forImport = $forImport;
-	}
-
-	/**
-	 * Overrides the default new for categorization callback
-	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
-	 *
-	 * @param callable $callback
-	 * @see RecentChange::newForCategorization for callback signiture
-	 */
-	public function overrideNewForCategorizationCallback( callable $callback ) {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new LogicException( 'Cannot override newForCategorization callback in operation.' );
-		}
-		$this->newForCategorizationCallback = $callback;
 	}
 
 	/**
@@ -149,7 +121,6 @@ class CategoryMembershipChange {
 				$this->numTemplateLinks
 			),
 			$this->pageTitle,
-			$this->getPreviousRevisionTimestamp(),
 			$this->revision,
 			$this->forImport,
 			$type === self::CATEGORY_ADDITION
@@ -162,7 +133,6 @@ class CategoryMembershipChange {
 	 * @param UserIdentity|null $user User object of the user that made the change
 	 * @param string $comment Change summary
 	 * @param PageIdentity $page Page that is being added or removed
-	 * @param string $lastTimestamp Parent revision timestamp of this change in TS_MW format
 	 * @param RevisionRecord $revision
 	 * @param bool $forImport Whether the associated revision was imported
 	 * @param bool $added true, if the category was added, false for removed
@@ -173,7 +143,6 @@ class CategoryMembershipChange {
 		?UserIdentity $user,
 		$comment,
 		PageIdentity $page,
-		$lastTimestamp,
 		RevisionRecord $revision,
 		bool $forImport,
 		$added
@@ -199,8 +168,7 @@ class CategoryMembershipChange {
 			$lastRevId = $correspondingRc->getAttribute( 'rc_last_oldid' ) ?: 0;
 		}
 
-		/** @var RecentChange $rc */
-		$rc = ( $this->newForCategorizationCallback )(
+		$rc = $this->recentChangeFactory->createCategorizationRecentChange(
 			$timestamp,
 			$categoryPage,
 			$user,
@@ -208,14 +176,13 @@ class CategoryMembershipChange {
 			$page,
 			$lastRevId,
 			$newRevId,
-			$lastTimestamp,
 			$bot,
 			$ip,
 			$deleted,
 			$added,
 			$forImport
 		);
-		$rc->save();
+		$this->recentChangeFactory->insertRecentChange( $rc );
 	}
 
 	/**
@@ -258,25 +225,6 @@ class CategoryMembershipChange {
 
 		return wfMessage( $msgKey, $prefixedText )->inContentLanguage()->text();
 	}
-
-	/**
-	 * Returns the timestamp of the page's previous revision or null if the latest revision
-	 * does not refer to a parent revision
-	 *
-	 * @return null|string
-	 */
-	private function getPreviousRevisionTimestamp() {
-		$rl = MediaWikiServices::getInstance()->getRevisionLookup();
-		$latestRev = $rl->getRevisionByTitle( $this->pageTitle );
-		if ( $latestRev ) {
-			$previousRev = $rl->getPreviousRevision( $latestRev );
-			if ( $previousRev ) {
-				return $previousRev->getTimestamp();
-			}
-		}
-		return null;
-	}
-
 }
 
 /** @deprecated class alias since 1.44 */

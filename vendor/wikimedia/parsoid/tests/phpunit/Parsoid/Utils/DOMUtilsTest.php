@@ -1,14 +1,21 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Test\Parsoid\Utils;
 
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
  * @coversDefaultClass  \Wikimedia\Parsoid\Utils\DOMUtils
  */
 class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
+
+	protected function tearDown(): void {
+		PHPUtils::clearDeprecationFilters();
+	}
 
 	/**
 	 * Test node properties methods.
@@ -190,10 +197,11 @@ class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
 	 * @dataProvider provideElementProperties
 	 */
 	public function testElementProperties( string $html, array $props ) {
+		PHPUtils::filterDeprecationForTest( '/DOMUtils::attributes/' );
 		$doc = DOMUtils::parseHTML( $html );
 		$sel = $props['selector'] ?? 'body > *';
 		$node = DOMCompat::querySelector( $doc, $sel );
-		DOMUtils::assertElt( $node );
+		'@phan-var Element $node'; // @var Element $node
 
 		$methods = [
 			'attributes',
@@ -281,19 +289,19 @@ class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'bar' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, '0' ) );
 		$this->assertNotNull( DOMUtils::$matchMethod( $el, '/^(fo|ba|0)/' ) );
-		$this->assertSame( [ 'foo bar 0' ], array_values( DOMUtils::attributes( $el ) ) );
+		$this->assertSame( [ 'foo bar 0' ], array_values( DOMCompat::attributes( $el ) ) );
 		DOMUtils::$addMethod( $el, ' ' ); # should be a no-op
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'foo' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'bar' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, '0' ) );
 		$this->assertNotNull( DOMUtils::$matchMethod( $el, '/^(fo|ba|0)/' ) );
-		$this->assertSame( [ 'foo bar 0' ], array_values( DOMUtils::attributes( $el ) ) );
+		$this->assertSame( [ 'foo bar 0' ], array_values( DOMCompat::attributes( $el ) ) );
 		DOMUtils::$removeMethod( $el, '' ); # should be a no-op
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'foo' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'bar' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, '0' ) );
 		$this->assertNotNull( DOMUtils::$matchMethod( $el, '/^(fo|ba|0)/' ) );
-		$this->assertSame( [ 'foo bar 0' ], array_values( DOMUtils::attributes( $el ) ) );
+		$this->assertSame( [ 'foo bar 0' ], array_values( DOMCompat::attributes( $el ) ) );
 		DOMUtils::$removeMethod( $el, ' ' ); # should be a no-op
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'foo' ) );
 		$this->assertSame( true, DOMUtils::$hasMethod( $el, 'bar' ) );
@@ -314,7 +322,7 @@ class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( false, DOMUtils::$hasMethod( $el, 'bar' ) );
 		$this->assertSame( false, DOMUtils::$hasMethod( $el, '0' ) );
 		$this->assertSame( null, DOMUtils::$matchMethod( $el, '/^(fo|ba|0)/' ) );
-		$this->assertSame( [], DOMUtils::attributes( $el ) );
+		$this->assertSame( [], DOMCompat::attributes( $el ) );
 	}
 
 	public static function provideMultivalAttr() {
@@ -327,22 +335,22 @@ class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
 	public function testAddTypeOfPrepend() {
 		$doc = DOMUtils::parseHtml( '<span>' );
 		$el = DOMCompat::querySelector( $doc, 'span' );
-		$this->assertSame( [], DOMUtils::attributes( $el ) );
+		$this->assertSame( [], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, 'foo' );
-		$this->assertSame( [ 'typeof' => 'foo' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'foo' ], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, 'bar' );
-		$this->assertSame( [ 'typeof' => 'foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'foo bar' ], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, 'bat', true /* prepend */ );
-		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMCompat::attributes( $el ) );
 		# these should all be no-ops
 		DOMUtils::addTypeOf( $el, '' );
-		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, " \t " );
-		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, '', true );
-		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMCompat::attributes( $el ) );
 		DOMUtils::addTypeOf( $el, " \t ", true );
-		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMUtils::attributes( $el ) );
+		$this->assertSame( [ 'typeof' => 'bat foo bar' ], DOMCompat::attributes( $el ) );
 	}
 
 	/**
@@ -354,4 +362,13 @@ class DOMUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertTrue( DOMUtils::hasClass( $el, '\\d' ) );
 	}
 
+	/**
+	 * @covers ::parseHTML
+	 */
+	public function testParseHTML() {
+		$doc = DOMUtils::parseHtml( '<mw:editsection>foo</mw:editsection>' );
+		$body = DOMCompat::getBody( $doc );
+		$html = XHtmlSerializer::serialize( $body, [ 'innerXML' => true ] )['html'];
+		$this->assertEquals( '<mw:editsection>foo</mw:editsection>', $html );
+	}
 }

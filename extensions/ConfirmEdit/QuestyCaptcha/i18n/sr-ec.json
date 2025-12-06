@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Milicevic01",
-			"Rancher",
-			"Aca"
+			"Rancher"
 		]
 	},
 	"questycaptcha-desc": "Стварач сликовног кода за потврду уређивања",

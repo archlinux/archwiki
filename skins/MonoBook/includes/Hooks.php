@@ -28,9 +28,6 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinTemplate;
 
-/**
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
- */
 class Hooks implements
 	OutputPageBodyAttributesHook,
 	SkinTemplateNavigation__UniversalHook

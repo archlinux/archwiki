@@ -1,6 +1,14 @@
 # Release History
 
-## 4.2.0 (2025-03-24)
+## 4.3.0 (2025-05-27)
+* Improve function documentation in BoxedExecutorTestTrait
+* Stop building PHP 7.4-based images (T377038)
+* Remove PHP 7.4-based image variants (T377038)
+* build: Updating mediawiki/mediawiki-codesniffer to 47.0.0
+* Allow the use of wikimedia/wikipeg 5.0.0
+* Add PEGParser to phan's exclude_file_list
+
+## 4.2.0 (2025-03-27)
 * build: Updating mediawiki/mediawiki-phan-config to 0.15.1
 * Replace call_user_func_array with dynamic function call
 * tests: Use coversNothing annotation

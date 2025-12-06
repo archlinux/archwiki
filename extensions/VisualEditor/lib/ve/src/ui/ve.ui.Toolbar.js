@@ -13,9 +13,7 @@
  * @constructor
  * @param {Object} [config] Configuration options
  */
-ve.ui.Toolbar = function VeUiToolbar( config ) {
-	config = config || {};
-
+ve.ui.Toolbar = function VeUiToolbar( config = {} ) {
 	// Parent constructor
 	ve.ui.Toolbar.super.call( this, ve.ui.toolFactory, ve.ui.toolGroupFactory, config );
 
@@ -132,7 +130,7 @@ ve.ui.Toolbar.prototype.setup = function ( groups, surface ) {
 	// instrumentation
 	this.items.forEach( ( item ) => {
 		if ( item instanceof OO.ui.ToolGroup ) {
-			const name = ( ve.entries( this.groupsByName ).find( ( entry ) => entry[ 1 ] === item ) || [] )[ 0 ];
+			const name = ( Object.entries( this.groupsByName ).find( ( entry ) => entry[ 1 ] === item ) || [] )[ 0 ];
 			if ( name ) {
 				item.on( 'active', ( isActive ) => {
 					if ( isActive ) {

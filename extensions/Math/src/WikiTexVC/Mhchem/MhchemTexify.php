@@ -44,14 +44,12 @@ class MhchemTexify {
 		}
 		$res = "";
 		$cee = false;
-		for ( $i = 0; $i < count( $input ); $i++ ) {
-			$inputI = $input[$i];
-
-			if ( is_string( $inputI ) ) {
-				$res .= $inputI;
+		foreach ( $input as $val ) {
+			if ( is_string( $val ) ) {
+				$res .= $val;
 			} else {
-				$res .= self::go2( $inputI );
-				if ( $inputI["type_"] === '1st-level escape' ) {
+				$res .= $this->go2( $val );
+				if ( $val["type_"] === '1st-level escape' ) {
 					$cee = true;
 				}
 			}
@@ -63,7 +61,7 @@ class MhchemTexify {
 	}
 
 	private function goInner( array $input ): string {
-		return self::go( $input, false );
+		return $this->go( $input, false );
 	}
 
 	private function strReplaceFirst( string $search, string $replace, string $subject ): string {
@@ -75,12 +73,12 @@ class MhchemTexify {
 			case 'chemfive':
 				$res = "";
 				$b5 = [
-					"a" => self::goInner( $buf["a"] ),
-					"b" => self::goInner( $buf["b"] ),
-					"p" => self::goInner( $buf["p"] ),
-					"o" => self::goInner( $buf["o"] ),
-					"q" => self::goInner( $buf["q"] ),
-					"d" => self::goInner( $buf["d"] )
+					"a" => $this->goInner( $buf["a"] ),
+					"b" => $this->goInner( $buf["b"] ),
+					"p" => $this->goInner( $buf["p"] ),
+					"o" => $this->goInner( $buf["o"] ),
+					"q" => $this->goInner( $buf["q"] ),
+					"d" => $this->goInner( $buf["d"] )
 				];
 				if ( MU::issetJS( $b5["a"] ) ) {
 					if ( preg_match( "/^[+\-]/", $b5["a"] ) ) {
@@ -139,21 +137,22 @@ class MhchemTexify {
 				break;
 			case 'text':
 				if ( preg_match( "/[\^_]/", $buf["p1"] ) ) {
-					$buf["p1"] = self::strReplaceFirst( "-", "\\text{-}",
-						self::strReplaceFirst( " ", "~", $buf["p1"] ) );
+					$buf["p1"] = $this->strReplaceFirst( "-", "\\text{-}",
+						$this->strReplaceFirst( " ", "~", $buf["p1"] )
+					);
 					$res = "\\mathrm{" . $buf["p1"] . "}";
 				} else {
 					$res = "\\text{" . $buf["p1"] . "}";
 				}
 				break;
 			case 'state of aggregation':
-				$res = ( !$this->optimizeForTexVC ? "\\mskip2mu " : "\\mskip{2mu} " ) . self::goInner( $buf["p1"] );
+				$res = ( !$this->optimizeForTexVC ? "\\mskip2mu " : "\\mskip{2mu} " ) . $this->goInner( $buf["p1"] );
 				break;
 			case 'state of aggregation subscript':
-				$res = ( !$this->optimizeForTexVC ? "\\mskip1mu " : "\\mskip{1mu} " ) . self::goInner( $buf["p1"] );
+				$res = ( !$this->optimizeForTexVC ? "\\mskip1mu " : "\\mskip{1mu} " ) . $this->goInner( $buf["p1"] );
 				break;
 			case 'bond':
-				$res = self::getBond( $buf["kind_"] );
+				$res = $this->getBond( $buf["kind_"] );
 				if ( !$res ) {
 					throw new RuntimeException( "MhchemErrorBond: mhchem Error. Unknown bond type ("
 						. $buf["kind_"] . ")" );
@@ -164,7 +163,7 @@ class MhchemTexify {
 				$res = "\\mathchoice{\\textstyle" . $c . "}{" . $c . "}{" . $c . "}{" . $c . "}";
 				break;
 			case 'pu-frac':
-				$d = "\\frac{" . self::goInner( $buf["p1"] ) . "}{" . self::goInner( $buf["p2"] ) . "}";
+				$d = "\\frac{" . $this->goInner( $buf["p1"] ) . "}{" . $this->goInner( $buf["p2"] ) . "}";
 				$res = "\\mathchoice{\\textstyle" . $d . "}{" . $d . "}{" . $d . "}{" . $d . "}";
 				break;
 			case '1st-level escape':
@@ -172,29 +171,29 @@ class MhchemTexify {
 				$res = $buf["p1"] . " ";
 				break;
 			case 'frac-ce':
-				$res = "\\frac{" . self::goInner( $buf["p1"] ) . "}{" . self::goInner( $buf["p2"] ) . "}";
+				$res = "\\frac{" . $this->goInner( $buf["p1"] ) . "}{" . $this->goInner( $buf["p2"] ) . "}";
 				break;
 			case 'overset':
-				$res = "\\overset{" . self::goInner( $buf["p1"] ) . "}{" . self::goInner( $buf["p2"] ) . "}";
+				$res = "\\overset{" . $this->goInner( $buf["p1"] ) . "}{" . $this->goInner( $buf["p2"] ) . "}";
 				break;
 			case 'underset':
-				$res = "\\underset{" . self::goInner( $buf["p1"] ) . "}{" . self::goInner( $buf["p2"] ) . "}";
+				$res = "\\underset{" . $this->goInner( $buf["p1"] ) . "}{" . $this->goInner( $buf["p2"] ) . "}";
 				break;
 			case 'underbrace':
-				$res = "\\underbrace{" . self::goInner( $buf["p1"] ) . "}_{" . self::goInner( $buf["p2"] ) . "}";
+				$res = "\\underbrace{" . $this->goInner( $buf["p1"] ) . "}_{" . $this->goInner( $buf["p2"] ) . "}";
 				break;
 			case 'color':
-				$res = "{\\color{" . $buf["color1"] . "}{" . self::goInner( $buf["color2"] ) . "}}";
+				$res = "{\\color{" . $buf["color1"] . "}{" . $this->goInner( $buf["color2"] ) . "}}";
 				break;
 			case 'color0':
 				$res = "\\color{" . $buf["color"] . "}";
 				break;
 			case 'arrow':
 				$b6 = [
-					"rd" => self::goInner( $buf["rd"] ),
-					"rq" => self::goInner( $buf["rq"] )
+					"rd" => $this->goInner( $buf["rd"] ),
+					"rq" => $this->goInner( $buf["rq"] )
 				];
-				$arrow = self::getArrow( $buf["r"] );
+				$arrow = $this->getArrow( $buf["r"] );
 				if ( MU::issetJS( $b6["rd"] ) || MU::issetJS( $b6["rq"] ) ) {
 					if ( $buf["r"] === "<=>" || $buf["r"] === "<=>>" || $buf["r"] === "<<=>" || $buf["r"] === "<-->" ) {
 						$arrow = "\\long" . $arrow;
@@ -226,7 +225,7 @@ class MhchemTexify {
 				$res = $arrow;
 				break;
 			case 'operator':
-				$res = self::getOperator( $buf["kind_"] );
+				$res = $this->getOperator( $buf["kind_"] );
 				break;
 			default:
 				$res = null;
@@ -235,178 +234,95 @@ class MhchemTexify {
 			return $res;
 		}
 
-		switch ( $buf["type_"] ) {
-			case 'space':
-				$res = " ";
-				break;
-			case 'tinySkip':
-				$res = !$this->optimizeForTexVC ? '\\mkern2mu' : '\\mkern{2mu}';
-				break;
-			case 'pu-space-1':
-			case 'entitySkip':
-				$res = "~";
-				break;
-			case 'pu-space-2':
-				$res = !$this->optimizeForTexVC ? "\\mkern3mu " : "\\mkern{3mu} ";
-				break;
-			case '1000 separator':
-				$res = !$this->optimizeForTexVC ? "\\mkern2mu " : "\\mkern{2mu} ";
-				break;
-			case 'commaDecimal':
-				$res = "{,}";
-				break;
-			case 'comma enumeration L':
-				$res = "{" . $buf["p1"] . "}" . ( !$this->optimizeForTexVC ? "\\mkern6mu " : "\\mkern{6mu} " );
-				break;
-			case 'comma enumeration M':
-				$res = "{" . $buf["p1"] . "}" . ( !$this->optimizeForTexVC ? "\\mkern3mu " : "\\mkern{3mu} " );
-				break;
-			case 'comma enumeration S':
-				$res = "{" . $buf["p1"] . "}" . ( !$this->optimizeForTexVC ? "\\mkern1mu " : "\\mkern{1mu} " );
-				break;
-			case 'hyphen':
-				$res = "\\text{-}";
-				break;
-			case 'addition compound':
-				$res = "\\,{\\cdot}\\,";
-				break;
-			case 'electron dot':
-				$res = !$this->optimizeForTexVC ?
-					"\\mkern1mu \\bullet\\mkern1mu " : "\\mkern{1mu} \\bullet\\mkern{1mu} ";
-				break;
-			case 'KV x':
-				$res = "{\\times}";
-				break;
-			case 'prime':
-				$res = "\\prime ";
-				break;
-			case 'cdot':
-				$res = "\\cdot ";
-				break;
-			case 'tight cdot':
-				$res = !$this->optimizeForTexVC ? "\\mkern1mu{\\cdot}\\mkern1mu " : "\\mkern{1mu}{\\cdot}\\mkern{1mu} ";
-				break;
-			case 'times':
-				$res = "\\times ";
-				break;
-			case 'circa':
-				$res = "{\\sim}";
-				break;
-			case '^':
-				$res = "uparrow";
-				break;
-			case 'v':
-				$res = "downarrow";
-				break;
-			case 'ellipsis':
-				$res = "\\ldots ";
-				break;
-			case '/':
-				$res = "/";
-				break;
-			case ' / ':
-				$res = "\\,/\\,";
-				break;
-			default:
-				throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." );
-		}
-		return $res;
+		return match ( $buf["type_"] ) {
+			'space' => " ",
+			'tinySkip' => !$this->optimizeForTexVC ? '\\mkern2mu' : '\\mkern{2mu}',
+			'pu-space-1', 'entitySkip' => "~",
+			'pu-space-2' => !$this->optimizeForTexVC ? "\\mkern3mu " : "\\mkern{3mu} ",
+			'1000 separator' => !$this->optimizeForTexVC ? "\\mkern2mu " : "\\mkern{2mu} ",
+			'commaDecimal' => "{,}",
+			'comma enumeration L' => "{" .
+				$buf["p1"] .
+				"}" .
+				( !$this->optimizeForTexVC ? "\\mkern6mu " : "\\mkern{6mu} " ),
+			'comma enumeration M' => "{" .
+				$buf["p1"] .
+				"}" .
+				( !$this->optimizeForTexVC ? "\\mkern3mu " : "\\mkern{3mu} " ),
+			'comma enumeration S' => "{" .
+				$buf["p1"] .
+				"}" .
+				( !$this->optimizeForTexVC ? "\\mkern1mu " : "\\mkern{1mu} " ),
+			'hyphen' => "\\text{-}",
+			'addition compound' => "\\,{\\cdot}\\,",
+			'electron dot' => !$this->optimizeForTexVC ? "\\mkern1mu \\bullet\\mkern1mu "
+				: "\\mkern{1mu} \\bullet\\mkern{1mu} ",
+			'KV x' => "{\\times}",
+			'prime' => "\\prime ",
+			'cdot' => "\\cdot ",
+			'tight cdot' => !$this->optimizeForTexVC ? "\\mkern1mu{\\cdot}\\mkern1mu "
+				: "\\mkern{1mu}{\\cdot}\\mkern{1mu} ",
+			'times' => "\\times ",
+			'circa' => "{\\sim}",
+			'^' => "uparrow",
+			'v' => "downarrow",
+			'ellipsis' => "\\ldots ",
+			'/' => "/",
+			' / ' => "\\,/\\,",
+			default => throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." ),
+		};
 	}
 
 	private function getArrow( string $a ): string {
-		switch ( $a ) {
-			case "\u2192":
-			case "\u27F6":
-			case "->":
-				return "rightarrow";
-			case "<-":
-				return "leftarrow";
-			case "<->":
-				return "leftrightarrow";
-			case "<-->":
-				return "leftrightarrows";
-			case "\u21CC":
-			case "<=>":
-				return "rightleftharpoons";
-			case "<=>>":
-				return "Rightleftharpoons";
-			case "<<=>":
-				return "Leftrightharpoons";
-			default:
-				throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." );
-		}
+		return match ( $a ) {
+			"\u2192", "\u27F6", "->" => "rightarrow",
+			"<-" => "leftarrow",
+			"<->" => "leftrightarrow",
+			"<-->" => "leftrightarrows",
+			"\u21CC", "<=>" => "rightleftharpoons",
+			"<=>>" => "Rightleftharpoons",
+			"<<=>" => "Leftrightharpoons",
+			default => throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." ),
+		};
 	}
 
 	private function getBond( string $a ): string {
-		switch ( $a ) {
-			case "1":
-			case "-":
-				return "{-}";
-			case "2":
-			case "=":
-				return "{=}";
-			case "3":
-			case "#":
-				return "{\\equiv}";
-			case "~":
-				return "{\\tripledash}";
-			case "~-":
-				return !$this->optimizeForTexVC ? "{\\rlap{\\lower.1em{-}}\\raise.1em{\\tripledash}}"
-					: "{\\rlap{\\lower{.1em}{-}}\\raise{.1em}{\\tripledash}}";
-			case "~--":
-			case "~=":
-				return !$this->optimizeForTexVC ? "{\\rlap{\\lower.2em{-}}\\rlap{\\raise.2em{\\tripledash}}-}"
-					: "{\\rlap{\\lower{.2em}{-}}\\rlap{\\raise{.2em}{\\tripledash}}-}";
-			case "-~-":
-				return !$this->optimizeForTexVC ? "{\\rlap{\\lower.2em{-}}\\rlap{\\raise.2em{-}}\\tripledash}"
-					: "{\\rlap{\\lower{.2em}{-}}\\rlap{\\raise{.2em}{-}}\\tripledash}";
-			case "...":
-				return "{{\\cdot}{\\cdot}{\\cdot}}";
-			case "....":
-				return "{{\\cdot}{\\cdot}{\\cdot}{\\cdot}}";
-			case "->":
-				return "{\\rightarrow}";
-			case "<-":
-				return "{\\leftarrow}";
-			case "<":
-				return "{<}";
-			case ">":
-				return "{>}";
-			default:
-				throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." );
-		}
+		return match ( $a ) {
+			"1", "-" => "{-}",
+			"2", "=" => "{=}",
+			"3", "#" => "{\\equiv}",
+			"~" => "{\\tripledash}",
+			"~-" => !$this->optimizeForTexVC ? "{\\rlap{\\lower.1em{-}}\\raise.1em{\\tripledash}}"
+				: "{\\rlap{\\lower{.1em}{-}}\\raise{.1em}{\\tripledash}}",
+			"~--", "~=" => !$this->optimizeForTexVC ? "{\\rlap{\\lower.2em{-}}\\rlap{\\raise.2em{\\tripledash}}-}"
+				: "{\\rlap{\\lower{.2em}{-}}\\rlap{\\raise{.2em}{\\tripledash}}-}",
+			"-~-" => !$this->optimizeForTexVC ? "{\\rlap{\\lower.2em{-}}\\rlap{\\raise.2em{-}}\\tripledash}"
+				: "{\\rlap{\\lower{.2em}{-}}\\rlap{\\raise{.2em}{-}}\\tripledash}",
+			"..." => "{{\\cdot}{\\cdot}{\\cdot}}",
+			"...." => "{{\\cdot}{\\cdot}{\\cdot}{\\cdot}}",
+			"->" => "{\\rightarrow}",
+			"<-" => "{\\leftarrow}",
+			"<" => "{<}",
+			">" => "{>}",
+			default => throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." ),
+		};
 	}
 
 	private function getOperator( string $a ): string {
-		switch ( $a ) {
-			case "+":
-				return " {}+{} ";
-			case "-":
-				return " {}-{} ";
-			case "=":
-				return " {}={} ";
-			case "<":
-				return " {}<{} ";
-			case ">":
-				return " {}>{} ";
-			case "<<":
-				return " {}\\ll{} ";
-			case ">>":
-				return " {}\\gg{} ";
-			case "\\pm":
-				return " {}\\pm{} ";
-			case "$\\approx$":
-			case "\\approx":
-				return " {}\\approx{} ";
-			case "(v)":
-			case "v":
-				return " \\downarrow{} ";
-			case "(^)":
-			case "^":
-				return " \\uparrow{} ";
-			default:
-				throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." );
-		}
+		return match ( $a ) {
+			"+" => " {}+{} ",
+			"-" => " {}-{} ",
+			"=" => " {}={} ",
+			"<" => " {}<{} ",
+			">" => " {}>{} ",
+			"<<" => " {}\\ll{} ",
+			">>" => " {}\\gg{} ",
+			"\\pm" => " {}\\pm{} ",
+			"$\\approx$", "\\approx" => " {}\\approx{} ",
+			"(v)", "v" => " \\downarrow{} ",
+			"(^)", "^" => " \\uparrow{} ",
+			default => throw new RuntimeException( "MhchemBugT: mhchem bug T. Please report." ),
+		};
 	}
 
 }

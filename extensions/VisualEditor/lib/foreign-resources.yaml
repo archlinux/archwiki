@@ -4,7 +4,6 @@
 # - jquery.i18n
 # - oojs
 # - oojs-ui
-# - unicodejs
 
 Color Picker:
   license: MIT
@@ -67,6 +66,13 @@ Tree Differ:
   homepage: https://github.com/tchanders/treeDiffer.js
   authors: Thalia Chan
   version: 1.0.2
+  type: doc-only
+
+UnicodeJS:
+  license: MIT
+  homepage: https://gerrit.wikimedia.org/g/unicodejs
+  authors: Ed Sanders, David Chan and other contributors
+  version: 15.0.0
   type: doc-only
 
 Universal Language Selector data:

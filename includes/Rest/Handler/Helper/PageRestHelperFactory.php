@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Rest\Handler\Helper;
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
@@ -46,7 +45,6 @@ class PageRestHelperFactory {
 	private TitleFormatter $titleFormatter;
 	private PageLookup $pageLookup;
 	private ParsoidOutputStash $parsoidOutputStash;
-	private StatsdDataFactoryInterface $stats;
 	private ParserOutputAccess $parserOutputAccess;
 	private ParsoidSiteConfig $parsoidSiteConfig;
 	private HtmlTransformFactory $htmlTransformFactory;
@@ -66,7 +64,6 @@ class PageRestHelperFactory {
 		TitleFormatter $titleFormatter,
 		PageLookup $pageLookup,
 		ParsoidOutputStash $parsoidOutputStash,
-		StatsdDataFactoryInterface $statsDataFactory,
 		ParserOutputAccess $parserOutputAccess,
 		ParsoidSiteConfig $parsoidSiteConfig,
 		HtmlTransformFactory $htmlTransformFactory,
@@ -85,7 +82,6 @@ class PageRestHelperFactory {
 		$this->titleFormatter = $titleFormatter;
 		$this->pageLookup = $pageLookup;
 		$this->parsoidOutputStash = $parsoidOutputStash;
-		$this->stats = $statsDataFactory;
 		$this->parserOutputAccess = $parserOutputAccess;
 		$this->parsoidSiteConfig = $parsoidSiteConfig;
 		$this->htmlTransformFactory = $htmlTransformFactory;
@@ -191,6 +187,14 @@ class PageRestHelperFactory {
 		return new HtmlMessageOutputHelper( $page );
 	}
 
+	/**
+	 * @param array $envOptions
+	 * @param ?PageIdentity $page
+	 * @param array|string|null $body
+	 * @param array $parameters
+	 * @param RevisionRecord|null $originalRevision
+	 * @param Bcp47Code|null $pageLanguage
+	 */
 	public function newHtmlInputTransformHelper(
 		$envOptions = [],
 		?PageIdentity $page = null,

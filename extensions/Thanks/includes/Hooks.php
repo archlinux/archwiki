@@ -1,6 +1,11 @@
 <?php
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+/**
+ * Hooks for Thanks extension
+ *
+ * @file
+ * @ingroup Extensions
+ */
 
 namespace MediaWiki\Extension\Thanks;
 
@@ -43,12 +48,6 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 
-/**
- * Hooks for Thanks extension
- *
- * @file
- * @ingroup Extensions
- */
 class Hooks implements
 	ApiMain__moduleManagerHook,
 	BeforePageDisplayHook,
@@ -63,27 +62,14 @@ class Hooks implements
 	PageHistoryPager__doBatchLookupsHook,
 	ChangesListInitRowsHook
 {
-	private Config $config;
-	private GenderCache $genderCache;
-	private PermissionManager $permissionManager;
-	private RevisionLookup $revisionLookup;
-	private UserFactory $userFactory;
-	private UserOptionsManager $userOptionsManager;
-
 	public function __construct(
-		Config $config,
-		GenderCache $genderCache,
-		PermissionManager $permissionManager,
-		RevisionLookup $revisionLookup,
-		UserFactory $userFactory,
-		UserOptionsManager $userOptionsManager
+		private readonly Config $config,
+		private readonly GenderCache $genderCache,
+		private readonly PermissionManager $permissionManager,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly UserFactory $userFactory,
+		private readonly UserOptionsManager $userOptionsManager,
 	) {
-		$this->config = $config;
-		$this->genderCache = $genderCache;
-		$this->permissionManager = $permissionManager;
-		$this->revisionLookup = $revisionLookup;
-		$this->userFactory = $userFactory;
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	/**
@@ -128,7 +114,7 @@ class Hooks implements
 		}
 
 		$this->insertThankLink( $revisionRecord,
-			$links, $userIdentity, true );
+			$links, $userIdentity, false );
 	}
 
 	/**
@@ -248,9 +234,11 @@ class Hooks implements
 		// Check if the user has already thanked for this revision or log entry.
 		// Session keys are backwards-compatible, and are also used in the ApiCoreThank class.
 		$sessionKey = ( $type === 'revision' ) ? $id : $type . $id;
-		$class = $useCodex ? 'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled' : '';
+		$class = $useCodex ?
+			'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive' :
+			'';
 		if ( $isPrimaryButton && $useCodex ) {
-			$class .= ' cdx-button--weight-primary cdx-button--action-progressive';
+			$class .= ' cdx-button--weight-primary';
 		}
 		if ( $sender->getRequest()->getSessionData( "thanks-thanked-$sessionKey" ) ) {
 			$class .= ' mw-thanks-thanked';
@@ -418,7 +406,7 @@ class Hooks implements
 						"ThanksLogStore",
 						"NotificationService",
 						"UserFactory",
-					]
+					],
 				]
 			);
 		}

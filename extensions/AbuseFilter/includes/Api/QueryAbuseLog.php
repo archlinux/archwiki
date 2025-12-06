@@ -125,7 +125,7 @@ class QueryAbuseLog extends ApiQueryBase {
 			foreach ( $params['filter'] as $filter ) {
 				try {
 					$searchFilters[] = GlobalNameUtils::splitGlobalName( $filter );
-				} catch ( InvalidArgumentException $e ) {
+				} catch ( InvalidArgumentException ) {
 					$foundInvalid = true;
 					continue;
 				}
@@ -157,14 +157,25 @@ class QueryAbuseLog extends ApiQueryBase {
 					);
 				}
 
-				if (
-					$filter->isProtected() &&
-					!$this->afPermManager->canViewProtectedVariables( $performer, $usedVariables )->isGood()
-				) {
-					$this->dieWithError(
-						[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-protected' ) ],
-						'permissiondenied'
-					);
+				if ( $filter->isProtected() ) {
+					$protectedVariableAccessStatus = $this->afPermManager
+						->canViewProtectedVariables( $performer, $usedVariables );
+					if ( !$protectedVariableAccessStatus->isGood() ) {
+						if ( $protectedVariableAccessStatus->getBlock() ) {
+							$this->dieWithError( 'apierror-blocked', 'blocked' );
+						}
+						if ( $protectedVariableAccessStatus->getPermission() ) {
+							$this->dieWithError(
+								[
+									'apierror-permissiondenied',
+									$this->msg( "action-{$protectedVariableAccessStatus->getPermission()}" )->plain()
+								],
+								'permissiondenied'
+							);
+						}
+
+						$this->dieStatus( $protectedVariableAccessStatus );
+					}
 				}
 			}
 
@@ -182,7 +193,7 @@ class QueryAbuseLog extends ApiQueryBase {
 		$this->addFields( 'afl_deleted' );
 		$this->addFields( 'afl_filter_id' );
 		$this->addFields( 'afl_global' );
-		$this->addFields( 'afl_ip' );
+		$this->addFields( 'afl_ip_hex' );
 		$this->addFieldsIf( 'afl_id', $fld_ids );
 		$this->addFieldsIf( 'afl_user_text', $fld_user );
 		$this->addFieldsIf( [ 'afl_namespace', 'afl_title' ], $fld_title );

@@ -1,5 +1,3 @@
-'use strict';
-
 const { ArticlePageWithEditorOverlay, ArticlePage } = require( '../support/world.js' );
 
 const iClickTheEditButton = async () => {

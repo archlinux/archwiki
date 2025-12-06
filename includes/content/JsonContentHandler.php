@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -24,6 +10,8 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
+use MediaWiki\Title\TitleFactory;
 use StatusValue;
 
 /**
@@ -39,12 +27,23 @@ use StatusValue;
  */
 class JsonContentHandler extends CodeContentHandler {
 
+	private ParsoidParserFactory $parsoidParserFactory;
+	private TitleFactory $titleFactory;
+	private const WIKITEXT_SIZE_BYTES = 200000; // 200 KB
+
 	/**
-	 * @param string $modelId
 	 * @stable to call
 	 */
-	public function __construct( $modelId = CONTENT_MODEL_JSON ) {
+	public function __construct(
+		string $modelId = CONTENT_MODEL_JSON,
+		?ParsoidParserFactory $parsoidParserFactory = null,
+		?TitleFactory $titleFactory = null
+	) {
 		parent::__construct( $modelId, [ CONTENT_FORMAT_JSON ] );
+		$this->parsoidParserFactory = $parsoidParserFactory ??
+			MediaWikiServices::getInstance()->getParsoidParserFactory();
+		$this->titleFactory = $titleFactory ??
+			MediaWikiServices::getInstance()->getTitleFactory();
 	}
 
 	/**
@@ -54,6 +53,7 @@ class JsonContentHandler extends CodeContentHandler {
 		return JsonContent::class;
 	}
 
+	/** @inheritDoc */
 	public function makeEmptyContent() {
 		$class = $this->getContentClass();
 		return new $class( '{}' );
@@ -124,10 +124,8 @@ class JsonContentHandler extends CodeContentHandler {
 			if ( $content->isValid() ) {
 				$parserOptions = $cpoParams->getParserOptions();
 				if ( $cpoParams->getParserOptions()->getUseParsoid() ) {
-					$title = MediaWikiServices::getInstance()->getTitleFactory()
-						->newFromPageReference( $cpoParams->getPage() );
-					$parser = MediaWikiServices::getInstance()->getParsoidParserFactory()
-						->create();
+					$title = $this->titleFactory->newFromPageReference( $cpoParams->getPage() );
+					$parser = $this->parsoidParserFactory->create();
 					$parserOutput = $parser->parse(
 						// It is necessary to pass a Content rather than a
 						// string in order for Parsoid to handle the
@@ -139,7 +137,21 @@ class JsonContentHandler extends CodeContentHandler {
 					// we have a new $parserOutput now.
 					$parserOptions->getUseParsoid();
 				} else {
-					$parserOutput->setRawText( $content->rootValueTable( $content->getData()->getValue() ) );
+					$pageText = $content->getText();
+					$pageSize = strlen( $pageText );
+					if ( $pageSize > self::WIKITEXT_SIZE_BYTES ) {
+						// T344505: For big pages, output plain text wrapped in <pre> tags.
+						// Browsers render this quickly, avoiding performance issues.
+						$html = htmlspecialchars( $content->getText(), ENT_COMPAT );
+						$html = "<pre>$html</pre>";
+						$parserOutput->setRawText( $html );
+					} else {
+						// Output an HTML table, which is a little bit easier to read for
+						// non-programmers. Browsers render this slowly, but the page is small
+						// enough that this isn't a problem.
+						$html = $content->rootValueTable( $content->getData()->getValue() );
+						$parserOutput->setRawText( $html );
+					}
 				}
 			} else {
 				$error = wfMessage( 'invalid-json-data' )->parse();

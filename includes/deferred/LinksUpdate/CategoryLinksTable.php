@@ -3,14 +3,16 @@
 namespace MediaWiki\Deferred\LinksUpdate;
 
 use Collation;
+use MediaWiki\Category\Category;
 use MediaWiki\Config\Config;
-use MediaWiki\Config\ServiceOptions;
-use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\JobQueue\JobQueueGroup;
+use MediaWiki\JobQueue\Jobs\CategoryCountUpdateJob;
 use MediaWiki\JobQueue\Utils\PurgeJobUtils;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\ParserOutput;
@@ -33,6 +35,8 @@ use Wikimedia\Rdbms\IResultWrapper;
  * @since 1.38
  */
 class CategoryLinksTable extends TitleLinksTable {
+	public const VIRTUAL_DOMAIN = 'virtual-categorylinks';
+
 	/**
 	 * @var array Associative array of new links, with the category name in the
 	 *   key. The value is a list consisting of the sort key prefix and the sort
@@ -76,14 +80,9 @@ class CategoryLinksTable extends TitleLinksTable {
 	/** @var WikiPageFactory */
 	private $wikiPageFactory;
 
-	private const CONSTRUCTOR_OPTIONS = [
-		MainConfigNames::CategoryLinksSchemaMigrationStage,
-	];
-
-	/** @var int */
-	private $migrationStage;
-
 	private NameTableStore $collationNameStore;
+	private JobQueueGroup $jobQueueGroup;
+	private HookRunner $hookRunner;
 
 	/**
 	 * @param LanguageConverterFactory $converterFactory
@@ -92,6 +91,8 @@ class CategoryLinksTable extends TitleLinksTable {
 	 * @param ILoadBalancer $loadBalancer
 	 * @param WANObjectCache $WANObjectCache
 	 * @param Config $config
+	 * @param JobqueueGroup $jobQueueGroup
+	 * @param HookContainer $hookContainer
 	 * @param Collation $collation
 	 * @param string $collationName
 	 * @param string $tableName
@@ -104,6 +105,8 @@ class CategoryLinksTable extends TitleLinksTable {
 		ILoadBalancer $loadBalancer,
 		WANObjectCache $WANObjectCache,
 		Config $config,
+		JobqueueGroup $jobQueueGroup,
+		HookContainer $hookContainer,
 		Collation $collation,
 		$collationName,
 		$tableName,
@@ -113,14 +116,12 @@ class CategoryLinksTable extends TitleLinksTable {
 		$this->namespaceInfo = $namespaceInfo;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->collation = $collation;
+		$this->jobQueueGroup = $jobQueueGroup;
+		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->collationName = $collationName;
 		$this->tableName = $tableName;
 		$this->isTempTable = $isTempTable;
 
-		$options = new ServiceOptions( self::CONSTRUCTOR_OPTIONS, $config );
-		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-
-		$this->migrationStage = $options->get( MainConfigNames::CategoryLinksSchemaMigrationStage );
 		$this->collationNameStore = new NameTableStore(
 			$loadBalancer,
 			$WANObjectCache,
@@ -182,23 +183,24 @@ class CategoryLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getTableName() {
 		return $this->tableName;
 	}
 
+	/** @inheritDoc */
 	protected function getFromField() {
 		return 'cl_from';
 	}
 
+	/** @inheritDoc */
 	protected function getExistingFields() {
-		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
-			$fields = [ 'cl_to', 'cl_sortkey_prefix' ];
-		} else {
-			$fields = [ 'lt_title', 'cl_sortkey_prefix' ];
-		}
+		$fields = [ 'lt_title', 'cl_sortkey_prefix' ];
+
 		if ( $this->needForcedLinkRefresh() ) {
 			$fields[] = 'cl_timestamp';
 		}
+
 		return $fields;
 	}
 
@@ -222,14 +224,9 @@ class CategoryLinksTable extends TitleLinksTable {
 		$this->savedTimestamps = [];
 		$force = $this->needForcedLinkRefresh();
 		foreach ( $this->fetchExistingRows() as $row ) {
-			if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
-				$title = $row->cl_to;
-			} else {
-				$title = $row->lt_title;
-			}
-			$this->existingLinks[$title] = $row->cl_sortkey_prefix;
+			$this->existingLinks[$row->lt_title] = $row->cl_sortkey_prefix;
 			if ( $force ) {
-				$this->savedTimestamps[$title] = $row->cl_timestamp;
+				$this->savedTimestamps[$row->lt_title] = $row->cl_timestamp;
 			}
 		}
 	}
@@ -263,18 +260,21 @@ class CategoryLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function isExisting( $linkId ) {
 		$links = $this->getExistingLinks();
 		[ $name, $prefix ] = $linkId;
 		return \array_key_exists( $name, $links ) && $links[$name] === $prefix;
 	}
 
+	/** @inheritDoc */
 	protected function isInNewSet( $linkId ) {
 		[ $name, $prefix ] = $linkId;
 		return \array_key_exists( $name, $this->newLinks )
 			&& $this->newLinks[$name][0] === $prefix;
 	}
 
+	/** @inheritDoc */
 	protected function insertLink( $linkId ) {
 		[ $name, $prefix ] = $linkId;
 		$sortKey = $this->newLinks[$name][1];
@@ -284,52 +284,47 @@ class CategoryLinksTable extends TitleLinksTable {
 		$timestamp = $this->getDB()->timestamp( $savedTimestamps[$name] ?? 0 );
 
 		$targetFields = [];
-		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_NEW ) {
-			$targetFields['cl_target_id'] = $this->linkTargetLookup->acquireLinkTargetId(
-				$this->makeTitle( $linkId ),
-				$this->getDB()
-			);
-			$targetFields['cl_collation_id'] = $this->collationNameStore->acquireId( $this->collationName );
-		}
-		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
-			$targetFields['cl_to'] = $name;
-			$targetFields['cl_collation'] = $this->collationName;
-		}
+		$targetFields['cl_target_id'] = $this->linkTargetLookup->acquireLinkTargetId(
+			$this->makeTitle( $linkId ),
+			$this->getDB()
+		);
+		$targetFields['cl_collation_id'] = $this->collationNameStore->acquireId( $this->collationName );
 
-		$this->insertRow( array_merge( [
+		$this->insertRow( $targetFields + [
 			'cl_sortkey' => $sortKey,
 			'cl_timestamp' => $timestamp,
 			'cl_sortkey_prefix' => $prefix,
 			'cl_type' => $this->categoryType,
-		], $targetFields ) );
+		] );
 	}
 
+	/** @inheritDoc */
 	protected function deleteLink( $linkId ) {
-		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
-			$this->deleteRow( [ 'cl_to' => $linkId[0] ] );
-		} else {
-			$this->deleteRow( [
-				'cl_target_id' => $this->linkTargetLookup->acquireLinkTargetId(
-					$this->makeTitle( $linkId ),
-					$this->getDB()
-				)
-			] );
-		}
+		$this->deleteRow( [
+			'cl_target_id' => $this->linkTargetLookup->acquireLinkTargetId(
+				$this->makeTitle( $linkId ),
+				$this->getDB()
+			)
+		] );
 	}
 
+	/** @inheritDoc */
 	protected function needForcedLinkRefresh() {
 		// cl_sortkey and possibly cl_type will change if it is a page move
 		return $this->isMove();
 	}
 
+	/** @inheritDoc */
 	protected function makePageReferenceValue( $linkId ): PageReferenceValue {
-		return new PageReferenceValue( NS_CATEGORY, $linkId[0], WikiAwareEntity::LOCAL );
+		return PageReferenceValue::localReference( NS_CATEGORY, $linkId[0] );
 	}
 
+	/** @inheritDoc */
 	protected function makeTitle( $linkId ): Title {
 		return Title::makeTitle( NS_CATEGORY, $linkId[0] );
 	}
 
+	/** @inheritDoc */
 	protected function deduplicateLinkIds( $linkIds ) {
 		$seen = [];
 		foreach ( $linkIds as $linkId ) {
@@ -354,7 +349,28 @@ class CategoryLinksTable extends TitleLinksTable {
 		$deletedLinks = array_diff( $allDeletedLinks, $allInsertedLinks );
 
 		$this->invalidateCategories( $insertedLinks, $deletedLinks );
-		$this->updateCategoryCounts( $insertedLinks, $deletedLinks );
+		if ( $insertedLinks || $deletedLinks ) {
+			$this->jobQueueGroup->lazyPush(
+				CategoryCountUpdateJob::newSpec(
+					$this->getSourcePage(),
+					$insertedLinks,
+					$deletedLinks,
+					$this->getBatchSize()
+				)
+			);
+		}
+
+		$wp = $this->wikiPageFactory->newFromTitle( $this->getSourcePage() );
+
+		foreach ( $insertedLinks as $catName ) {
+			$cat = Category::newFromName( $catName );
+			$this->hookRunner->onCategoryAfterPageAdded( $cat, $wp );
+		}
+
+		foreach ( $deletedLinks as $catName ) {
+			$cat = Category::newFromName( $catName );
+			$this->hookRunner->onCategoryAfterPageRemoved( $cat, $wp, $this->getSourcePage()->getId() );
+		}
 	}
 
 	private function invalidateCategories( array $insertedLinks, array $deletedLinks ) {
@@ -366,66 +382,21 @@ class CategoryLinksTable extends TitleLinksTable {
 			$this->getDB(), NS_CATEGORY, $changedCategoryNames );
 	}
 
-	/**
-	 * Update all the appropriate counts in the category table.
-	 * @param array $insertedLinks
-	 * @param array $deletedLinks
-	 */
-	private function updateCategoryCounts( array $insertedLinks, array $deletedLinks ) {
-		if ( !$insertedLinks && !$deletedLinks ) {
-			return;
-		}
-
-		$domainId = $this->getDB()->getDomainID();
-		$wp = $this->wikiPageFactory->newFromTitle( $this->getSourcePage() );
-		$lbf = $this->getLBFactory();
-		$size = $this->getBatchSize();
-		// T163801: try to release any row locks to reduce contention
-		$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
-
-		if ( count( $insertedLinks ) + count( $deletedLinks ) < $size ) {
-			$wp->updateCategoryCounts(
-				$insertedLinks,
-				$deletedLinks,
-				$this->getSourcePageId()
-			);
-			$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
-		} else {
-			$addedChunks = array_chunk( $insertedLinks, $size );
-			foreach ( $addedChunks as $chunk ) {
-				$wp->updateCategoryCounts( $chunk, [], $this->getSourcePageId() );
-				if ( count( $addedChunks ) > 1 ) {
-					$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
-				}
-			}
-
-			$deletedChunks = array_chunk( $deletedLinks, $size );
-			foreach ( $deletedChunks as $chunk ) {
-				$wp->updateCategoryCounts( [], $chunk, $this->getSourcePageId() );
-				if ( count( $deletedChunks ) > 1 ) {
-					$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
-				}
-			}
-
-		}
+	protected function linksTargetNormalizationStage(): int {
+		return SCHEMA_COMPAT_NEW;
 	}
 
-	protected function linksTargetNormalizationStage(): int {
-		return $this->migrationStage;
+	/** @inheritDoc */
+	protected function virtualDomain(): string {
+		return self::VIRTUAL_DOMAIN;
 	}
 
 	protected function fetchExistingRows(): IResultWrapper {
-		$queryBuilder = $this->getDB()->newSelectQueryBuilder()
+		return $this->getDB()->newSelectQueryBuilder()
 			->select( $this->getExistingFields() )
 			->from( $this->getTableName() )
-			->where( $this->getFromConds() );
-
-		// This read is for updating, it's conceptually better to use the write config
-		if ( !( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) ) {
-			$queryBuilder->join( 'linktarget', null, [ 'cl_target_id=lt_id' ] );
-		}
-
-		return $queryBuilder
+			->join( 'linktarget', null, [ 'cl_target_id=lt_id' ] )
+			->where( $this->getFromConds() )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 	}

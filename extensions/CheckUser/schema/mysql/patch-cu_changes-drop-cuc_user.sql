@@ -3,6 +3,7 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX cuc_user_ip_time ON /*_*/cu_changes;
+
 ALTER TABLE /*_*/cu_changes
   DROP cuc_user,
   DROP cuc_user_text;

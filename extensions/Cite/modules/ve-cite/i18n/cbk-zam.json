@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aristorkle",
-			"Noooote"
+			"Noooote",
+			"SaldırganSincap"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
@@ -22,8 +23,13 @@
 	"cite-ve-citationneeded-reason": "Ya dale razon:",
 	"cite-ve-citationneeded-title": "Ta necesita citacion",
 	"cite-ve-dialog-reference-contextitem-extends": "Re-used edte reference que tiene maga detalle adicional:",
+	"cite-ve-dialog-reference-editing-add-details": "Ta aumenta tu detalle para con este referencia:",
+	"cite-ve-dialog-reference-editing-edit-details": "Ta hace tu edit maga detalle de este referencia:",
+	"cite-ve-dialog-reference-editing-add-details-placeholder": "Escribi o pega el de tuyo maga detalle adicional aqui, por ejemplo un especifico numero dd pagina o quote.",
+	"cite-ve-dialog-reference-editing-reused-short": "Ya usa {{PLURAL:$1|una vez|2= veces|$1 veces}}",
 	"cite-ve-dialog-reference-editing-reused": "Este referencia usao {{PLURAL:$1|una vez|2=veces|$1 veces}} na este pagina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Este referencia usao {{PLURAL:$1|una vez|2=veces|$1 veces}} na este pagina. El maga cambio que ya hace aqui el queda aplicao na todo lugar donde este referencia ya hace reuse.",
+	"cite-ve-dialog-reference-editing-details-placeholder": "Ya aumenta contenido na campo el aparece aqui.",
 	"cite-ve-dialog-reference-missing-parent-ref": "Linked este maga detalle na un falta referencia. Por favor quita con estos estaba na msga pagina y compone el problema na source code.",
 	"cite-ve-dialog-reference-options-group-label": "Usa con este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referencia de todo-todo",
@@ -31,7 +37,12 @@
 	"cite-ve-dialog-reference-options-section": "Maga opcion",
 	"cite-ve-dialog-reference-placeholder": "Escribi o pega con el de tuyo referencia aqui, o inserta un template de citacion.",
 	"cite-ve-dialog-reference-title": "Referencia",
-	"cite-ve-dialog-reference-title-add-details": "Aumenta con el maga detalle na referencia",
+	"cite-ve-dialog-reference-add-details-button": "Aumenta maga detalle",
+	"cite-ve-dialog-subreference-help-dialog-title": "Maga detalle",
+	"cite-ve-dialog-subreference-help-dialog-head": "Nuevo: Aumenta un detalle para na un re-used referencia",
+	"cite-ve-dialog-subreference-help-dialog-content": "Cuando ta man re-use con un referencia, puede tu ahora aumenta maga otro-otro detalles como el nombre de pagina o quote sin repiti con el entero referencia.<p><b>Usa con este cuando:</b></p><ul><li>Ta hace cita otro-otro pagina o maga volume de un libro</li><li>\nEspecificada de un timestamp na un cited podcast</li><li>Aumentada de un relevante quote estaba na un source</li></ul>",
+	"cite-ve-dialog-subreference-help-dialog-link-label": "Aprende mas acerca del aumentada maga detalles na un referencia",
+	"cite-ve-dialog-reference-title-details": "Maga detalles",
 	"cite-ve-dialog-reference-useexisting-tool": "Re-use",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista del maga referencia de todo-todo",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista del maga referencia para na grupo \"$1\"",

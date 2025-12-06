@@ -6,7 +6,7 @@ QUnit.test( 'Constructing the model', ( assert ) => {
 	assert.strictEqual(
 		model.getTimestamp(),
 		0,
-		'Empty group has timestamp 0'
+		'Empty group has timestamp 0',
 	);
 } );
 
@@ -17,57 +17,57 @@ QUnit.test( 'Managing lists', ( assert ) => {
 			name: 'foo',
 			sourceData: {
 				title: 'Foo Wiki',
-				base: 'http://foo.wiki.sample/$1'
+				base: 'http://foo.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 0 ),
 				new mw.echo.dm.NotificationItem( 1 ),
-				new mw.echo.dm.NotificationItem( 2 )
-			]
+				new mw.echo.dm.NotificationItem( 2 ),
+			],
 		},
 		{
 			name: 'bar',
 			sourceData: {
 				title: 'Bar Wiki',
-				base: 'http://bar.wiki.sample/$1'
+				base: 'http://bar.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 3 ),
 				new mw.echo.dm.NotificationItem( 4 ),
 				new mw.echo.dm.NotificationItem( 5 ),
-				new mw.echo.dm.NotificationItem( 6 )
-			]
+				new mw.echo.dm.NotificationItem( 6 ),
+			],
 		},
 		{
 			name: 'baz',
 			sourceData: {
 				title: 'Baz Wiki',
-				base: 'http://baz.wiki.sample/$1'
+				base: 'http://baz.wiki.sample/$1',
 			},
 			items: [
-				new mw.echo.dm.NotificationItem( 7 )
-			]
-		}
+				new mw.echo.dm.NotificationItem( 7 ),
+			],
+		},
 	];
 
 	groupDefinitions.forEach( ( def, i ) => {
 		model.addGroup(
 			def.name,
 			def.sourceData,
-			def.items
+			def.items,
 		);
 
 		assert.strictEqual(
 			model.getItemCount(),
 			i + 1,
-			'Group number increases after addGroup ("' + def.name + '")'
+			'Group number increases after addGroup ("' + def.name + '")',
 		);
 
 		const result = model.getGroupByName( def.name );
 		assert.strictEqual(
 			result.getName(),
 			def.name,
-			'Group exists after addGroup ("' + def.name + '")'
+			'Group exists after addGroup ("' + def.name + '")',
 		);
 	} );
 
@@ -77,12 +77,12 @@ QUnit.test( 'Managing lists', ( assert ) => {
 	assert.strictEqual(
 		model.getItemCount(),
 		groupDefinitions.length - 1,
-		'Group number decreased after removeGroup'
+		'Group number decreased after removeGroup',
 	);
 	assert.strictEqual(
 		model.getGroupByName( groupDefinitions[ 0 ] ),
 		null,
-		'Removed group is no longer in the list'
+		'Removed group is no longer in the list',
 	);
 
 	// Removing the last item from a group should remove the group
@@ -91,7 +91,7 @@ QUnit.test( 'Managing lists', ( assert ) => {
 	assert.strictEqual(
 		model.getGroupByName( 'baz' ),
 		null,
-		'Empty group is no longer in the list'
+		'Empty group is no longer in the list',
 	);
 } );
 
@@ -102,21 +102,21 @@ QUnit.test( 'Emitting discard event', ( assert ) => {
 		first: [
 			new mw.echo.dm.NotificationItem( 0 ),
 			new mw.echo.dm.NotificationItem( 1 ),
-			new mw.echo.dm.NotificationItem( 2 )
+			new mw.echo.dm.NotificationItem( 2 ),
 		],
 		second: [
 			new mw.echo.dm.NotificationItem( 3 ),
 			new mw.echo.dm.NotificationItem( 4 ),
-			new mw.echo.dm.NotificationItem( 5 )
+			new mw.echo.dm.NotificationItem( 5 ),
 		],
 		third: [
 			new mw.echo.dm.NotificationItem( 6 ),
-			new mw.echo.dm.NotificationItem( 7 )
+			new mw.echo.dm.NotificationItem( 7 ),
 		],
 		fourth: [
 			new mw.echo.dm.NotificationItem( 8 ),
-			new mw.echo.dm.NotificationItem( 9 )
-		]
+			new mw.echo.dm.NotificationItem( 9 ),
+		],
 	};
 
 	// Listen to the event
@@ -146,6 +146,6 @@ QUnit.test( 'Emitting discard event', ( assert ) => {
 		// Expected:
 		[ 'first', 'fourth', 'third' ],
 		// Message
-		'Discard events emitted'
+		'Discard events emitted',
 	);
 } );

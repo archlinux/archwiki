@@ -1,6 +1,8 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 use MediaWiki\Maintenance\Maintenance;
@@ -156,5 +158,7 @@ class GenerateDoc extends Maintenance {
 			}, $this->sets ) ) );
 	}
 }
+// @codeCoverageIgnoreStart
 $maintClass = GenerateDoc::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

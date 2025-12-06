@@ -12,18 +12,11 @@ use MediaWiki\User\User;
  */
 class ReferencePreviewsContext {
 
-	private Config $config;
-	private ReferencePreviewsGadgetsIntegration $gadgetsIntegration;
-	private UserOptionsLookup $userOptionsLookup;
-
 	public function __construct(
-		Config $config,
-		ReferencePreviewsGadgetsIntegration $gadgetsIntegration,
-		UserOptionsLookup $userOptionsLookup
+		private readonly Config $config,
+		private readonly ReferencePreviewsGadgetsIntegration $gadgetsIntegration,
+		private readonly UserOptionsLookup $userOptionsLookup,
 	) {
-		$this->config = $config;
-		$this->gadgetsIntegration = $gadgetsIntegration;
-		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -35,7 +28,7 @@ class ReferencePreviewsContext {
 	/**
 	 * If the client-side code for Reference Previews should continue loading
 	 * (see isReferencePreviewsEnabled.js), incorporating decisions we can only make after the
-	 * ResourceLoader module was registered via {@see CiteHooks::onResourceLoaderRegisterModules}.
+	 * ResourceLoader module was registered via {@see ReferencePreviewsHooks::onResourceLoaderRegisterModules}.
 	 */
 	public function isReferencePreviewsEnabled( User $user, Skin $skin ): bool {
 		if (

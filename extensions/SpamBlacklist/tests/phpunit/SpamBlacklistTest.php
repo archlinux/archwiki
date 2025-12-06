@@ -178,7 +178,6 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 		// That only works if the spam blacklist is really reset
 		$instance = BaseBlacklist::getInstance( 'spam' );
 		$reflProp = new ReflectionProperty( $instance, 'regexes' );
-		$reflProp->setAccessible( true );
 		$reflProp->setValue( $instance, false );
 	}
 

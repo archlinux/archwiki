@@ -35,7 +35,7 @@ mw.echo.ui.DatedSubGroupListWidget = function MwEchoUiDatedSubGroupListWidget( c
 
 			// Fallback on IDs
 			return b.getId() - a.getId();
-		}
+		},
 	}, config ) );
 
 	// Round all dates to the day they're in, as if they all happened at 00:00h

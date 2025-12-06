@@ -51,6 +51,7 @@ class Fragment {
 	 * @param string $message
 	 *
 	 * @throws Error
+	 * @return never
 	 */
 	public function error( $message ) {
 		$text = $this->getText();

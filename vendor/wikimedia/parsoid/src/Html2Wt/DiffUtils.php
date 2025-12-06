@@ -37,7 +37,7 @@ class DiffUtils {
 		return self::getDiffMark( $node ) !== null || self::isDiffMarker( $node );
 	}
 
-	public static function hasDiffMark( Node $node, string $mark ): bool {
+	public static function hasDiffMark( Node $node, DiffMarkers $mark ): bool {
 		// For 'deletion' and 'insertion' markers on non-element nodes,
 		// a mw:DiffMarker meta is added
 		if ( $mark === DiffMarkers::DELETED || ( $mark === DiffMarkers::INSERTED && !( $node instanceof Element ) ) ) {
@@ -90,16 +90,16 @@ class DiffUtils {
 		return $dmark->hasOnlyDiffMarkers( DiffMarkers::MODIFIED_WRAPPER );
 	}
 
-	public static function addDiffMark( Node $node, Env $env, string $mark ): ?Element {
+	public static function addDiffMark( Node $node, Env $env, DiffMarkers $mark ): ?Element {
 		static $ignoreableNodeTypes = [ XML_DOCUMENT_NODE, XML_DOCUMENT_TYPE_NODE, XML_DOCUMENT_FRAG_NODE ];
 
 		if ( $mark === DiffMarkers::DELETED || $mark === DiffMarkers::MOVED ) {
-			return self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
+			return self::prependTypedMeta( $node, "mw:DiffMarker/{$mark->value}" );
 		} elseif ( $node instanceof Text || $node instanceof Comment ) {
 			if ( $mark !== DiffMarkers::INSERTED ) {
-				$env->log( 'error', 'BUG! CHANGE-marker for ', $node->nodeType, ' node is: ', $mark );
+				$env->log( 'error', 'BUG! CHANGE-marker for ', $node->nodeType, ' node is: ', $mark->value );
 			}
-			return self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
+			return self::prependTypedMeta( $node, "mw:DiffMarker/{$mark->value}" );
 		} elseif ( $node instanceof Element ) {
 			self::setDiffMark( $node, $mark );
 		} elseif ( !in_array( $node->nodeType, $ignoreableNodeTypes, true ) ) {
@@ -111,11 +111,8 @@ class DiffUtils {
 
 	/**
 	 * Set a diff marker on a node.
-	 *
-	 * @param Node $node
-	 * @param string $change
 	 */
-	private static function setDiffMark( Node $node, string $change ): void {
+	private static function setDiffMark( Node $node, DiffMarkers $change ): void {
 		if ( !( $node instanceof Element ) ) {
 			return;
 		}
@@ -137,19 +134,27 @@ class DiffUtils {
 		return $meta;
 	}
 
+	/**
+	 * @param Element $node
+	 * @param string[] $ignoreableAttribs
+	 * @return array<string,mixed>
+	 */
 	private static function getAttributes( Element $node, array $ignoreableAttribs ): array {
-		$h = DOMUtils::attributes( $node );
-		foreach ( $h as $name => $value ) {
+		$h = DOMCompat::attributes( $node );
+		foreach ( $h as $name => $_value ) {
 			if ( in_array( $name, $ignoreableAttribs, true ) ) {
 				unset( $h[$name] );
 			}
 		}
 		// If there's no special attribute handler, we want a straight
 		// comparison of these.
+		// XXX This has the side-effect of allocating empty DataParsoid/DataMw
+		// on each node; also we should ideally treat all rich attributes
+		// consistently.
 		if ( !in_array( 'data-parsoid', $ignoreableAttribs, true ) ) {
 			$h['data-parsoid'] = DOMDataUtils::getDataParsoid( $node );
 		}
-		if ( !in_array( 'data-mw', $ignoreableAttribs, true ) && !DOMDataUtils::getDataMw( $node )->isEmpty() ) {
+		if ( !in_array( 'data-mw', $ignoreableAttribs, true ) ) {
 			$h['data-mw'] = DOMDataUtils::getDataMw( $node );
 		}
 		return $h;
@@ -160,8 +165,8 @@ class DiffUtils {
 	 *
 	 * @param Element $nodeA
 	 * @param Element $nodeB
-	 * @param array $ignoreableAttribs
-	 * @param array $specializedAttribHandlers
+	 * @param string[] $ignoreableAttribs
+	 * @param array<string,callable(Element,mixed,Element,mixed):bool> $specializedAttribHandlers
 	 * @return bool
 	 */
 	public static function attribsEquals(
@@ -184,10 +189,16 @@ class DiffUtils {
 				return false;
 			}
 
+			// Use a specialized compare function, if provided
 			$attribEquals = $specializedAttribHandlers[$k] ?? null;
 			if ( $attribEquals ) {
-				// Use a specialized compare function, if provided
-				if ( !$hA[$k] || !$hB[$k] || !$attribEquals( $nodeA, $hA[$k], $nodeB, $hB[$k] ) ) {
+				if ( $hA[$k] === null && $hB[$k] === null ) {
+					/* two nulls count as equal */
+				} elseif ( $hA[$k] === null || $hB[$k] === null ) {
+					/* only one null => not equal */
+					return false;
+				// only invoke attribute comparator when both are non-null
+				} elseif ( !$attribEquals( $nodeA, $hA[$k], $nodeB, $hB[$k] ) ) {
 					return false;
 				}
 			} elseif ( $hA[$k] !== $hB[$k] ) {
@@ -200,22 +211,18 @@ class DiffUtils {
 
 	/**
 	 * Check a node to see whether it's a diff marker.
-	 *
-	 * @param ?Node $node
-	 * @param ?string $mark
-	 * @return bool
 	 */
 	public static function isDiffMarker(
-		?Node $node, ?string $mark = null
+		?Node $node, ?DiffMarkers $mark = null
 	): bool {
 		if ( !$node ) {
 			return false;
 		}
 
-		if ( $mark ) {
-			return DOMUtils::isMarkerMeta( $node, 'mw:DiffMarker/' . $mark );
+		if ( $mark !== null ) {
+			return DOMUtils::isMarkerMeta( $node, "mw:DiffMarker/{$mark->value}" );
 		} else {
-			return DOMCompat::nodeName( $node ) === 'meta' &&
+			return DOMUtils::nodeName( $node ) === 'meta' &&
 				DOMUtils::matchTypeOf( $node, '#^mw:DiffMarker/#' );
 		}
 	}

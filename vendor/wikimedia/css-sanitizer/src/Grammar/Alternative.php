@@ -11,7 +11,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Matcher that matches one out of a set of Matchers ("|" combiner).
- * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#comb-one
+ * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#comb-one
  */
 class Alternative extends Matcher {
 	/** @var Matcher[] */

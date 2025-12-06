@@ -160,7 +160,7 @@ class NotifUserTest extends MediaWikiIntegrationTestCase {
 
 	public function mockUserNotificationGateway( array $dbResult = [] ) {
 		$dbResult += [
-			'markRead' => true
+			'markRead' => true,
 		];
 		$gateway = $this->createMock( UserNotificationGateway::class );
 		$gateway->method( 'markRead' )

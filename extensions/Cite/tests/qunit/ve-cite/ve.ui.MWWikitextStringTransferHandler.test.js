@@ -31,7 +31,6 @@ QUnit.test( 'convert', function ( assert ) {
 					<li about="#cite_note-1" id="cite_note-1">↑ <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>
 				</ol>
 			`,
-			annotations: [],
 			expectedData: [
 				{ type: 'paragraph' },
 				{
@@ -65,7 +64,6 @@ QUnit.test( 'convert', function ( assert ) {
 					<li>Reference list</li>
 				</ol>
 			`,
-			annotations: [],
 			expectedData: [
 				{ type: 'paragraph' },
 				{

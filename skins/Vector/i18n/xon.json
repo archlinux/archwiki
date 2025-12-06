@@ -2,15 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Abdul Fatawu 352",
-			"Hasslaebetch",
 			"Alidu Yakubu",
 			"Andani Inusah",
+			"Hasslaebetch",
 			"Nurul deen"
 		]
 	},
 	"vector-languages": "Bɔɔlɛŋtɔɔ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 n-yɛli|$1 n-yɛli kpaleŋ}}",
-	"vector-no-language-button-label": "“Suŋ n-yɛli” ✅",
+	"vector-no-language-button-label": "Suŋ n-yɛli",
 	"vector-action-addsection": "Yiŋ taali yɛlbuŋ",
 	"vector-action-delete": "Kpɛŋ",
 	"vector-action-move": "Bɔŋ",

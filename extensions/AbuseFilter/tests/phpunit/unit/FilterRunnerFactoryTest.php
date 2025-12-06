@@ -22,7 +22,7 @@ use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\ObjectCache\HashBagOStuff;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
+use Wikimedia\Stats\NullStatsdDataFactory;
 
 /**
  * @group Test
@@ -55,7 +55,7 @@ class FilterRunnerFactoryTest extends MediaWikiUnitTestCase {
 			new HashBagOStuff(),
 			new NullLogger(),
 			new NullLogger(),
-			$this->createMock( IBufferingStatsdDataFactory::class ),
+			new NullStatsdDataFactory(),
 			$opts
 		);
 

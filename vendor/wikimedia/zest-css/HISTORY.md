@@ -1,5 +1,26 @@
 # Release History
 
+## zest-css 4.1.0 (2025-08-15)
+* Drop support for PHP < 8.1
+* Update wikimedia/remex-html to 5.0.0 || 5.1.0 (dev dependency)
+* Update mediawiki/mediawiki-phan-config to 0.17.0
+
+## zest-css 4.0.0 (2025-06-05)
+* Update wikimedia/remex-html to 4.1.2 || 5.0.0 (dev dependency)
+* Update phpunit/phpunit to 9.6.21
+* Update mediawiki/mediawiki-phan-config to 0.15.1
+* Update mediawiki/mediawiki-codesniffer to 47.0.0
+* Code style improvements: replace call_user_func, add @covers, type
+  declarations and function documentation.
+* PHP 8.4 Dom\Document compatibility
+* The signature of protected ZestInst::isStandardsMode() has changed.
+
+## zest-css 3.0.4 (2025-06-05)
+* This release is identical to 3.0.2.
+
+## zest-css 3.0.3 (2025-06-05)
+* This release was retracted.
+
 ## zest-css 3.0.2 (2024-11-09)
 * Update wikimedia/remex-html to 4.1.0 (dev dependency)
 

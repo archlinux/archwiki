@@ -2,9 +2,7 @@
 
 namespace MediaWiki\CheckUser\Investigate;
 
-use MediaWiki\CheckUser\GuidedTour\TourLauncher;
 use MediaWiki\CheckUser\Hook\CheckUserSubtitleLinksHook;
-use MediaWiki\CheckUser\HookHandler\Preferences;
 use MediaWiki\CheckUser\Investigate\Pagers\ComparePager;
 use MediaWiki\CheckUser\Investigate\Pagers\PagerFactory;
 use MediaWiki\CheckUser\Investigate\Pagers\PreliminaryCheckPager;
@@ -52,7 +50,6 @@ class SpecialInvestigate extends FormSpecialPage {
 	private TokenQueryManager $tokenQueryManager;
 	private DurationManager $durationManager;
 	private EventLogger $eventLogger;
-	private TourLauncher $tourLauncher;
 	private CheckUserSubtitleLinksHook $subtitleLinksHookRunner;
 	private PermissionManager $permissionManager;
 	private CheckUserLogService $checkUserLogService;
@@ -72,14 +69,8 @@ class SpecialInvestigate extends FormSpecialPage {
 	/** @var string|null */
 	private $tokenWithoutPaginationData;
 
-	/** @var int */
-	private const MAX_TARGETS = 10;
-
-	/** @var string */
-	public const TOUR_INVESTIGATE = 'checkuserinvestigate';
-
-	/** @var string */
-	public const TOUR_INVESTIGATE_FORM = 'checkuserinvestigateform';
+	/** @var int Maximum number of targets that can be entered into the first search form on Special:Investigate */
+	public const MAX_TARGETS = 10;
 
 	public function __construct(
 		LinkRenderer $linkRenderer,
@@ -87,11 +78,10 @@ class SpecialInvestigate extends FormSpecialPage {
 		UserOptionsManager $userOptionsManager,
 		PagerFactory $preliminaryCheckPagerFactory,
 		PagerFactory $comparePagerFactory,
-		PagerFactory $timelinePagerFactory,
+		TimelinePagerFactory $timelinePagerFactory,
 		TokenQueryManager $tokenQueryManager,
 		DurationManager $durationManager,
 		EventLogger $eventLogger,
-		TourLauncher $tourLauncher,
 		CheckUserSubtitleLinksHook $subtitleLinksHookRunner,
 		PermissionManager $permissionManager,
 		CheckUserLogService $checkUserLogService,
@@ -109,7 +99,6 @@ class SpecialInvestigate extends FormSpecialPage {
 		$this->tokenQueryManager = $tokenQueryManager;
 		$this->durationManager = $durationManager;
 		$this->eventLogger = $eventLogger;
-		$this->tourLauncher = $tourLauncher;
 		$this->subtitleLinksHookRunner = $subtitleLinksHookRunner;
 		$this->permissionManager = $permissionManager;
 		$this->checkUserLogService = $checkUserLogService;
@@ -165,8 +154,6 @@ class SpecialInvestigate extends FormSpecialPage {
 			$this->addBlockForm();
 			$this->addTabs( $par )->addTabContent( $par );
 			$this->getOutput()->addHTML( $this->getLayout() );
-		} else {
-			$this->launchTour( self::TOUR_INVESTIGATE_FORM );
 		}
 
 		// Add the links after any previous HTML has been cleared.
@@ -322,7 +309,7 @@ class SpecialInvestigate extends FormSpecialPage {
 					$message = $this->msg( 'checkuser-investigate-preliminary-notice-ip-targets', $link )->parse();
 					$this->addHTML( new MessageWidget( [
 						'type' => 'notice',
-						'label' => new HtmlSnippet( $message )
+						'label' => new HtmlSnippet( $message ),
 					] ) );
 				}
 
@@ -360,13 +347,9 @@ class SpecialInvestigate extends FormSpecialPage {
 						)->parse();
 						$this->addHTML( new MessageWidget( [
 							'type' => 'warning',
-							'label' => new HtmlSnippet( $message )
+							'label' => new HtmlSnippet( $message ),
 						] ) );
 					}
-
-					// Only start the tour if there are results on the page.
-					$this->launchTour( self::TOUR_INVESTIGATE );
-
 					$this->addParserOutput( $pager->getFullOutput() );
 				} else {
 					$messageKey = $this->usingFilters() ?
@@ -375,7 +358,7 @@ class SpecialInvestigate extends FormSpecialPage {
 					$message = $this->msg( $messageKey )->parse();
 					$this->addHTML( new MessageWidget( [
 						'type' => 'warning',
-						'label' => new HtmlSnippet( $message )
+						'label' => new HtmlSnippet( $message ),
 					] ) );
 				}
 
@@ -402,7 +385,7 @@ class SpecialInvestigate extends FormSpecialPage {
 					$message = $this->msg( $messageKey )->parse();
 					$this->addHTML( new MessageWidget( [
 						'type' => 'warning',
-						'label' => new HtmlSnippet( $message )
+						'label' => new HtmlSnippet( $message ),
 					] ) );
 				}
 
@@ -516,8 +499,8 @@ class SpecialInvestigate extends FormSpecialPage {
 					'align' => 'top',
 					'infusable' => true,
 					'classes' => [
-						'ext-checkuser-investigate-subtitle-targets-layout'
-					]
+						'ext-checkuser-investigate-subtitle-targets-layout',
+					],
 				]
 			);
 			if ( $userCanBlock ) {
@@ -545,8 +528,8 @@ class SpecialInvestigate extends FormSpecialPage {
 							'items' => [
 								$blockAccountsButton,
 								$blockIpsButton,
-							]
-						] )
+							],
+						] ),
 					] ),
 					[
 						'align' => 'top',
@@ -557,9 +540,9 @@ class SpecialInvestigate extends FormSpecialPage {
 
 			$blockFieldset = new FieldsetLayout( [
 				'classes' => [
-					'ext-checkuser-investigate-subtitle-fieldset'
+					'ext-checkuser-investigate-subtitle-fieldset',
 				],
-				'items' => $items
+				'items' => $items,
 			] );
 
 			$this->getOutput()->prependHTML(
@@ -679,6 +662,7 @@ class SpecialInvestigate extends FormSpecialPage {
 		// Filters for both Compare & Timeline
 		$compareTab = $this->getTabParam( 'compare' );
 		$timelineTab = $this->getTabParam( 'timeline' );
+		$filterTempAccounts = (bool)$data['FilterTempAccounts'];
 
 		// Filters for both Compare & Timeline
 		if ( in_array( $this->par, [ $compareTab, $timelineTab ], true ) ) {
@@ -696,6 +680,13 @@ class SpecialInvestigate extends FormSpecialPage {
 				],
 			];
 			$fields['Duration'] = $duration;
+			$fields['FilterTempAccounts'] = [
+				'type' => 'check',
+				'name' => 'filter-temp-accounts',
+				'label-message' => 'checkuser-investigate-filters-exclude-temp-accounts-label',
+				'required' => false,
+				'default' => $filterTempAccounts,
+			];
 		}
 
 		if ( $this->par === $compareTab ) {
@@ -750,6 +741,7 @@ class SpecialInvestigate extends FormSpecialPage {
 	 */
 	public function onSubmit( array $data ) {
 		$update = [
+			'FilterTempAccounts' => isset( $data['FilterTempAccounts'] ) && $data['FilterTempAccounts'],
 			'offset' => null,
 		];
 
@@ -903,7 +895,10 @@ class SpecialInvestigate extends FormSpecialPage {
 	 * @return bool
 	 */
 	private function usingFilters(): bool {
-		return count( $this->getTokenData()['exclude-targets'] ?? [] ) > 0
+		$tokenData = $this->getTokenData();
+
+		return count( $tokenData['exclude-targets'] ?? [] ) > 0
+			|| ( $tokenData['FilterTempAccounts'] ?? false )
 			|| $this->getDuration() !== '';
 	}
 
@@ -917,46 +912,15 @@ class SpecialInvestigate extends FormSpecialPage {
 	}
 
 	/**
-	 * Launches the tour unless the user has already completed or canceled it.
-	 *
-	 * @param string $tour
-	 * @return void
-	 */
-	private function launchTour( string $tour ): void {
-		$user = $this->getUser();
-
-		switch ( $tour ) {
-			case self::TOUR_INVESTIGATE_FORM:
-				$preference = Preferences::INVESTIGATE_FORM_TOUR_SEEN;
-				$step = 'targets';
-				break;
-			case self::TOUR_INVESTIGATE:
-				$preference = Preferences::INVESTIGATE_TOUR_SEEN;
-				$step = 'useragents';
-				break;
-			default:
-				return;
-		}
-
-		if ( $this->userOptionsManager->getOption( $user, $preference ) ) {
-			return;
-		}
-
-		$this->tourLauncher->launchTour( $tour, $step );
-	}
-
-	/**
 	 * Add the subtitle to the page.
 	 */
 	private function addSubtitle(): void {
 		$subpage = false;
 		$token = null;
-		$tour = self::TOUR_INVESTIGATE_FORM;
 
 		if ( $this->getTokenData() !== [] ) {
 			$token = $this->getTokenWithoutPaginationData();
 			$subpage = $this->getTabParam( 'compare' );
-			$tour = self::TOUR_INVESTIGATE;
 		}
 
 		$links = [
@@ -964,17 +928,17 @@ class SpecialInvestigate extends FormSpecialPage {
 				self::getTitleValueFor( 'CheckUser' ),
 				$this->msg( 'checkuser-showmain' )->text()
 			),
-			$this->tourLauncher->makeTourLink(
-				$tour,
-				$this->getPageTitle( $subpage ),
-				$this->msg( 'checkuser-investigate-subtitle-link-restart-tour' )->text(),
-				[],
-				[
-					'token' => $token,
-					'duration' => $this->getDuration() ?: null,
-				]
-			),
 		];
+
+		if (
+			$this->getConfig()->get( 'CheckUserSuggestedInvestigationsEnabled' ) &&
+			!$this->getConfig()->get( 'CheckUserSuggestedInvestigationsHidden' )
+		) {
+			$links[] = $this->getLinkRenderer()->makeKnownLink(
+				self::getTitleValueFor( 'SuggestedInvestigations' ),
+				$this->msg( 'checkuser-show-suggestedinvestigations' )->text()
+			);
+		}
 
 		$this->subtitleLinksHookRunner->onCheckUserSubtitleLinks( $this->getContext(), $links );
 

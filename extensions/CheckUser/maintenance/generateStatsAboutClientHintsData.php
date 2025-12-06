@@ -6,11 +6,13 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\WikiMap\WikiMap;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Generates statistics about the Client Hints data in cu_useragent_clienthints
@@ -133,5 +135,7 @@ class GenerateStatsAboutClientHintsData extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GenerateStatsAboutClientHintsData::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

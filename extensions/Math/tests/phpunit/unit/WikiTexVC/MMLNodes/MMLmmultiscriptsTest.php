@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmmultiscripts;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmprescripts;
@@ -22,9 +23,9 @@ class MMLmmultiscriptsTest extends MediaWikiUnitTestCase {
 	private MMLbase $preSuper;
 
 	public function testConstructor() {
-		$mmultiscripts = new MMLmmultiscripts( '', [ 'mathvariant' => 'bold' ] );
+		$mmultiscripts = new MMLmmultiscripts( '', [ 'mathvariant' => Variants::BOLD ] );
 		$this->assertEquals( 'mmultiscripts', $mmultiscripts->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $mmultiscripts->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mmultiscripts->getAttributes() );
 	}
 
 	protected function setUp(): void {

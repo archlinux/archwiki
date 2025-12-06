@@ -32,21 +32,7 @@
  * - complex expansion of site configuration defaults (those that require
  *   calling into MediaWikiServices, global functions, or other classes.).
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -69,6 +55,7 @@ use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Registration\MissingExtensionException;
 use MediaWiki\Request\HeaderCallback;
+use MediaWiki\Session\SessionManager;
 use MediaWiki\Settings\DynamicDefaultValues;
 use MediaWiki\Settings\LocalSettingsLoader;
 use MediaWiki\Settings\SettingsBuilder;
@@ -95,12 +82,6 @@ use Wikimedia\Telemetry\TracerState;
 // This file must be included from a valid entry point (e.g. WebStart.php, Maintenance.php)
 if ( !defined( 'MEDIAWIKI' ) ) {
 	exit( 1 );
-}
-
-// PHP must not be configured to overload mbstring functions. (T5782, T122807)
-// This was deprecated by upstream in PHP 7.2 and was removed in PHP 8.0.
-if ( ini_get( 'mbstring.func_overload' ) ) {
-	die( 'MediaWiki does not support installations where mbstring.func_overload is non-zero.' );
 }
 
 // The MW_ENTRY_POINT constant must always exists, to make it safe to access.
@@ -314,13 +295,22 @@ if ( defined( 'MW_FINAL_SETUP_CALLBACK' ) ) {
 // Config can no longer be changed.
 $wgSettings->enterReadOnlyStage();
 
-// Set an appropriate locale (T291234)
-// setlocale() will return the locale name actually set.
+// Determine an appropriate locale (T291234)
+// As of version 8, php no longer inherits the platform's locale so there
+// shouldn't be a need to set a locale.  However, setlocale is used to
+// determine if the locale is available.  macOS is avoided because setting
+// it to C.UTF-8 changes pcre character classes on that platform.
+if ( PHP_OS_FAMILY !== 'Darwin' && setlocale( LC_ALL, 'C.UTF-8' ) ) {
+	$locale = 'C.UTF-8';
+} else {
+	$locale = 'C';
+}
 // The putenv() is meant to propagate the choice of locale to shell commands
 // so that they will interpret UTF-8 correctly. If you have a problem with a
 // shell command and need to send a special locale, you can override the locale
 // with Command::environment().
-putenv( "LC_ALL=" . setlocale( LC_ALL, 'C.UTF-8', 'C' ) );
+putenv( "LC_ALL={$locale}" );
+unset( $locale );
 
 // Set PHP runtime to the desired timezone
 date_default_timezone_set( $wgLocaltimezone );
@@ -411,7 +401,7 @@ if ( !$wgNoReplyAddress ) {
 
 // Non-trivial expansion of: $wgSecureLogin
 // (due to calling wfWarn).
-if ( $wgSecureLogin && substr( $wgServer, 0, 2 ) !== '//' ) {
+if ( $wgSecureLogin && !str_starts_with( $wgServer, '//' ) ) {
 	$wgSecureLogin = false;
 	wfWarn( 'Secure login was enabled on a server that only supports '
 		. 'HTTP or HTTPS. Disabling secure login.' );
@@ -441,7 +431,7 @@ if ( $wgSharedDB && $wgSharedTables ) {
 wfMemoryLimit( $wgMemoryLimit );
 
 // Explicit globals, so this works with bootstrap.php
-global $wgRequest, $wgInitialSessionId;
+global $wgRequest;
 
 // Initialize the request object in $wgRequest
 $wgRequest = RequestContext::getMain()->getRequest(); // BackCompat
@@ -490,10 +480,6 @@ if ( MW_ENTRY_POINT === 'index' ) {
 	$wgRequest->interpolateTitle();
 }
 
-/**
- * @var MediaWiki\Session\SessionId|null $wgInitialSessionId The persistent session ID (if any) loaded at startup
- */
-$wgInitialSessionId = null;
 if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	// If session.auto_start is there, we can't touch session name
 	if ( $wgPHPSessionHandling !== 'disable' && !wfIniGetBool( 'session.auto_start' ) ) {
@@ -505,15 +491,17 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	// unless we're specifically asked not to.
 	if ( !defined( 'MW_NO_SESSION_HANDLER' ) ) {
 		MediaWiki\Session\PHPSessionHandler::install(
-			MediaWiki\Session\SessionManager::singleton()
+			MediaWikiServices::getInstance()->getSessionManager()
 		);
+		// @phan-suppress-next-line PhanUndeclaredMethod shutdown() is not part of the public interface
+		register_shutdown_function( MediaWikiServices::getInstance()->getSessionManager()->shutdown( ... ) );
 	}
 
 	$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 
 	// Initialize the session
 	try {
-		$session = MediaWiki\Session\SessionManager::getGlobalSession();
+		$session = RequestContext::getMain()->getRequest()->getSession();
 	} catch ( MediaWiki\Session\SessionOverflowException $ex ) {
 		// The exception is because the request had multiple possible
 		// sessions tied for top priority. Report this to the user.
@@ -528,10 +516,6 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	}
 
 	unset( $contLang );
-
-	if ( $session->isPersistent() ) {
-		$wgInitialSessionId = $session->getSessionId();
-	}
 
 	$session->renew();
 	if ( MediaWiki\Session\PHPSessionHandler::isEnabled() &&
@@ -556,8 +540,10 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	// handler unless specifically requested not to.
 	if ( !defined( 'MW_NO_SESSION_HANDLER' ) ) {
 		MediaWiki\Session\PHPSessionHandler::install(
-			MediaWiki\Session\SessionManager::singleton()
+			MediaWikiServices::getInstance()->getSessionManager()
 		);
+		// @phan-suppress-next-line PhanUndeclaredMethod shutdown() is not part of the public interface
+		register_shutdown_function( MediaWikiServices::getInstance()->getSessionManager()->shutdown( ... ) );
 	}
 }
 
@@ -604,7 +590,7 @@ unset( $func ); // no global pollution; destroy reference
 // If the session user has a 0 id but a valid name, that means we need to
 // autocreate it.
 if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
-	$sessionUser = MediaWiki\Session\SessionManager::getGlobalSession()->getUser();
+	$sessionUser = RequestContext::getMain()->getRequest()->getSession()->getUser();
 	if ( $sessionUser->getId() === 0 &&
 		MediaWikiServices::getInstance()->getUserNameUtils()->isValid( $sessionUser->getName() )
 	) {
@@ -649,5 +635,8 @@ $wgFullyInitialised = true;
 
 // T264370
 if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
-	MediaWiki\Session\SessionManager::singleton()->logPotentialSessionLeakage();
+	$manager = MediaWikiServices::getInstance()->getSessionManager();
+	if ( $manager instanceof SessionManager ) {
+		$manager->logPotentialSessionLeakage();
+	}
 }

@@ -2,21 +2,7 @@
 /**
  * File backend registration handling.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -131,7 +117,8 @@ class FileBackendGroup {
 			$repoName = $info['name'];
 			// Local vars that used to be FSRepo members...
 			$directory = $info['directory'];
-			$deletedDir = $info['deletedDir'] ?? false; // deletion disabled
+			// file deletion is disabled not set
+			$deletedDir = $info['deletedDir'] ?? false;
 			$thumbDir = $info['thumbDir'] ?? "{$directory}/thumb";
 			$transcodedDir = $info['transcodedDir'] ?? "{$directory}/transcoded";
 			$lockManager = $info['lockManager'] ?? 'fsLockManager';
@@ -233,12 +220,12 @@ class FileBackendGroup {
 		return array_merge(
 			// Default backend parameters
 			[
-				'mimeCallback' => [ $this, 'guessMimeInternal' ],
+				'mimeCallback' => $this->guessMimeInternal( ... ),
 				'obResetFunc' => 'wfResetOutputBuffers',
-				'asyncHandler' => [ DeferredUpdates::class, 'addCallableUpdate' ],
-				'streamMimeFunc' => [ StreamFile::class, 'contentTypeFromPath' ],
+				'asyncHandler' => DeferredUpdates::addCallableUpdate( ... ),
+				'streamMimeFunc' => StreamFile::contentTypeFromPath( ... ),
 				'tmpFileFactory' => $this->tmpFileFactory,
-				'statusWrapper' => [ Status::class, 'wrap' ],
+				'statusWrapper' => Status::wrap( ... ),
 				'wanCache' => $this->wanCache,
 				'srvCache' => $this->srvCache,
 				'logger' => LoggerFactory::getInstance( 'FileOperation' ),

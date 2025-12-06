@@ -9,8 +9,7 @@ use MediaWiki\Content\JsonContent;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
-use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Page\RollbackPage;
@@ -21,7 +20,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
-use MediaWiki\Tests\recentchanges\ChangeTrackingUpdateSpyTrait;
+use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
 use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
@@ -38,7 +37,7 @@ use Wikimedia\Rdbms\ReadOnlyMode;
 /**
  * @group Database
  * @covers \MediaWiki\Page\RollbackPage
- * @coversDefaultClass \MediaWiki\Page\RollbackPage
+ * @covers \MediaWiki\Page\RollbackPage
  * @method RollbackPage newServiceInstance(string $serviceClass, array $parameterOverrides)
  */
 class RollbackPageTest extends MediaWikiIntegrationTestCase {
@@ -77,7 +76,6 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::authorizeRollback
 	 * @dataProvider provideAuthorize
 	 */
 	public function testAuthorize( $authoritySpec, bool $expect ) {
@@ -89,7 +87,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()
 				->getRollbackPageFactory()
 				->newRollbackPage(
-					new PageIdentityValue( 10, NS_MAIN, 'Test', PageIdentity::LOCAL ),
+					PageIdentityValue::localIdentity( 10, NS_MAIN, 'Test' ),
 					$authority,
 					new UserIdentityValue( 0, '127.0.0.1' )
 				)
@@ -108,9 +106,6 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusNotOk( $rollback->authorizeRollback() );
 	}
 
-	/**
-	 * @covers ::authorizeRollback
-	 */
 	public function testAuthorizePingLimiter() {
 		$performer = $this->mockRegisteredUltimateAuthority();
 		$userMock = $this->createMock( User::class );
@@ -283,7 +278,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		$rollbackStatus = $this->getServiceContainer()
 			->getRollbackPageFactory()
 			->newRollbackPage(
-				new PageIdentityValue( 0, NS_MAIN, __METHOD__, PageIdentityValue::LOCAL ),
+				PageIdentityValue::localIdentity( 0, NS_MAIN, __METHOD__ ),
 				$this->mockRegisteredUltimateAuthority(),
 				new UserIdentityValue( 0, '127.0.0.1' )
 			)
@@ -535,11 +530,11 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		$this->runJobs();
 
 		$this->expectDomainEvent(
-			PageRevisionUpdatedEvent::TYPE, 1,
-			static function ( PageRevisionUpdatedEvent $event ) use ( $admin ) {
+			PageLatestRevisionChangedEvent::TYPE, 1,
+			static function ( PageLatestRevisionChangedEvent $event ) use ( $admin ) {
 				Assert::assertTrue(
-					$event->hasCause( PageRevisionUpdatedEvent::CAUSE_ROLLBACK ),
-					PageRevisionUpdatedEvent::CAUSE_ROLLBACK
+					$event->hasCause( PageLatestRevisionChangedEvent::CAUSE_ROLLBACK ),
+					PageLatestRevisionChangedEvent::CAUSE_ROLLBACK
 				);
 
 				Assert::assertTrue( $event->isRevert(), 'isRevert' );

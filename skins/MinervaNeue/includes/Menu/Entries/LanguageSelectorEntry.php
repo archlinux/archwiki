@@ -34,7 +34,6 @@ class LanguageSelectorEntry implements IMenuEntry {
 	private string $label;
 
 	/**
-	 * LanguageSelectorEntry constructor.
 	 * @param Title $title Current Title
 	 * @param bool $doesPageHaveLanguages Whether the page is also available in other
 	 * languages or variants

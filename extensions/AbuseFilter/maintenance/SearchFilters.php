@@ -105,5 +105,7 @@ class SearchFilters extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = SearchFilters::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

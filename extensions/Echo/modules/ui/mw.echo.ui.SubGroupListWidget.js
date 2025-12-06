@@ -44,8 +44,8 @@ mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller,
 		// Config
 		{
 			$overlay: this.$overlay,
-			animated: config.animateSorting
-		}
+			animated: config.animateSorting,
+		},
 	);
 
 	const sourceURL = this.model.getSourceURL() ?
@@ -56,16 +56,16 @@ mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller,
 			framed: false,
 			classes: [
 				'mw-echo-ui-subGroupListWidget-header-row-title',
-				'mw-echo-ui-subGroupListWidget-header-row-cell'
+				'mw-echo-ui-subGroupListWidget-header-row-cell',
 			],
-			href: sourceURL
+			href: sourceURL,
 		} );
 	} else {
 		this.title = new OO.ui.LabelWidget( {
 			classes: [
 				'mw-echo-ui-subGroupListWidget-header-row-title',
-				'mw-echo-ui-subGroupListWidget-header-row-cell'
-			]
+				'mw-echo-ui-subGroupListWidget-header-row-cell',
+			],
 		} );
 	}
 
@@ -81,8 +81,8 @@ mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller,
 		label: mw.msg( 'echo-specialpage-section-markread' ),
 		classes: [
 			'mw-echo-ui-subGroupListWidget-header-row-markAllReadButton',
-			'mw-echo-ui-subGroupListWidget-header-row-cell'
-		]
+			'mw-echo-ui-subGroupListWidget-header-row-cell',
+		],
 	} );
 
 	// Events
@@ -94,7 +94,7 @@ mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller,
 		// it is re-added again
 		discard: 'onModelDiscardItems',
 		// Update all items
-		update: 'resetItemsFromModel'
+		update: 'resetItemsFromModel',
 	} );
 	this.model.connect( this, { itemUpdate: 'toggleMarkAllReadButton' } );
 	this.markAllReadButton.connect( this, { click: 'onMarkAllReadButtonClick' } );
@@ -110,10 +110,10 @@ mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller,
 					.addClass( 'mw-echo-ui-subGroupListWidget-header-row' )
 					.append(
 						this.title.$element,
-						this.markAllReadButton.$element
-					)
+						this.markAllReadButton.$element,
+					),
 			),
-			this.listWidget.$element
+			this.listWidget.$element,
 		);
 
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -141,11 +141,11 @@ mw.echo.ui.SubGroupListWidget.prototype.resizeHeader = function () {
 	// Screen too narrow, put the button under the date
 	this.title.$element.toggleClass(
 		'mw-echo-ui-subGroupListWidget-header-row-cell',
-		!screenTooNarrow
+		!screenTooNarrow,
 	);
 	this.markAllReadButton.$element.toggleClass(
 		'mw-echo-ui-subGroupListWidget-header-row-cell',
-		!screenTooNarrow
+		!screenTooNarrow,
 	);
 };
 
@@ -198,8 +198,8 @@ mw.echo.ui.SubGroupListWidget.prototype.resetItemsFromModel = function ( items )
 			items[ i ],
 			{
 				$overlay: this.$overlay,
-				bundle: items[ i ].isBundled()
-			}
+				bundle: items[ i ].isBundled(),
+			},
 		);
 		itemWidgets.push( widget );
 		$elements = $elements.add( widget.$element );

@@ -5,6 +5,7 @@
 ALTER TABLE cu_log
   ALTER cul_reason_id
   DROP DEFAULT;
+
 ALTER TABLE cu_log
   ALTER cul_reason_plaintext_id
   DROP DEFAULT;

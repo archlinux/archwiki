@@ -137,4 +137,52 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 			true, false, false,
 		];
 	}
+
+	/** @dataProvider provideSuggestedInvestigationsRegistered */
+	public function testSuggestedInvestigationsRegistered(
+		bool $enabled, bool $hidden, bool $siExpected
+	) {
+		// Normally we could switch these using methods from SuggestedInvestigationsTestTrait, but
+		// these tests create mock of the config object, so we need to set the values this way.
+		$this->config->method( 'get' )
+			->willReturnCallback( static fn ( $key ) => match ( $key ) {
+				'CheckUserSuggestedInvestigationsEnabled' => $enabled,
+				'CheckUserSuggestedInvestigationsHidden' => $hidden,
+				default => null,
+			} );
+
+		$list = [];
+		$this->handler->onSpecialPage_initList( $list );
+
+		if ( $siExpected ) {
+			$this->assertArrayHasKey( 'SuggestedInvestigations', $list );
+		} else {
+			$this->assertArrayNotHasKey( 'SuggestedInvestigations', $list );
+		}
+	}
+
+	public static function provideSuggestedInvestigationsRegistered() {
+		return [
+			'Feature disabled, not hidden' => [
+				'enabled' => false,
+				'hidden' => false,
+				'siExpected' => false,
+			],
+			'Feature enabled, not hidden' => [
+				'enabled' => true,
+				'hidden' => false,
+				'siExpected' => true,
+			],
+			'Feature disabled, hidden' => [
+				'enabled' => false,
+				'hidden' => true,
+				'siExpected' => false,
+			],
+			'Feature enabled, hidden' => [
+				'enabled' => true,
+				'hidden' => true,
+				'siExpected' => false,
+			],
+		];
+	}
 }

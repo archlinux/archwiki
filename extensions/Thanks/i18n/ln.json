@@ -4,5 +4,5 @@
 			"Lydie maliki"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1| {{GENDER:$2| matondi}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|matondi}}}}"
 }

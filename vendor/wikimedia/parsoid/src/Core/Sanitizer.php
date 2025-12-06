@@ -18,7 +18,7 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\KV;
-use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -754,7 +754,7 @@ class Sanitizer {
 		$foundStart = false;
 		$encStart = preg_quote( $startDelim, '!' );
 		$encEnd = preg_quote( $endDelim, '!' );
-		$strcmp = strpos( $flags, 'i' ) === false ? 'strcmp' : 'strcasecmp';
+		$strcmp = !str_contains( $flags, 'i' ) ? 'strcmp' : 'strcasecmp';
 		$endLength = strlen( $endDelim );
 		$m = [];
 		while ( $inputPos < strlen( $subject ) &&
@@ -896,12 +896,13 @@ class Sanitizer {
 	/**
 	 * @param SiteConfig $siteConfig
 	 * @param ?string $tagName
-	 * @param ?Token $token
+	 * @param ?XMLTagTk $token
 	 * @param array $attrs
-	 * @return array
+	 *
+	 * @return array<string, list{?string, mixed, mixed}>
 	 */
 	public static function sanitizeTagAttrs(
-		SiteConfig $siteConfig, ?string $tagName, ?Token $token, array $attrs
+		SiteConfig $siteConfig, ?string $tagName, ?XMLTagTk $token, array $attrs
 	): array {
 		$tag = $tagName ?: $token->getName();
 
@@ -1076,7 +1077,7 @@ class Sanitizer {
 	public static function applySanitizedArgs(
 		SiteConfig $siteConfig, Element $wrapper, array $attrs
 	): void {
-		$nodeName = DOMCompat::nodeName( $wrapper );
+		$nodeName = DOMUtils::nodeName( $wrapper );
 		$sanitizedAttrs = self::sanitizeTagAttrs( $siteConfig, $nodeName, null, $attrs );
 		foreach ( $sanitizedAttrs as $k => $v ) {
 			if ( isset( $v[0] ) ) {
@@ -1093,7 +1094,7 @@ class Sanitizer {
 		$text = self::normalizeCss( $text );
 		// \000-\010\013\016-\037\177 are the octal escape sequences
 		if ( preg_match( '/[\000-\010\013\016-\037\177]/', $text )
-			|| strpos( $text, self::UTF8_REPLACEMENT ) !== false
+			|| str_contains( $text, self::UTF8_REPLACEMENT )
 		) {
 			return '/* invalid control char */';
 		} elseif ( preg_match( self::INSECURE_RE, $text ) ) {

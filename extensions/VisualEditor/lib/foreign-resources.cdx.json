@@ -1,0 +1,288 @@
+{
+    "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.6",
+    "serialNumber": "urn:uuid:bda6e0a4-167c-4d6a-afcc-da695c943a8b",
+    "version": 1,
+    "components": [
+        {
+            "type": "library",
+            "name": "Color Picker",
+            "version": "1.3.5",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Taufik Nurrohman and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://tovic.github.io/color-picker",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "Diff Match and Patch",
+            "version": "—",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "Apache-2.0"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Google"
+                },
+                {
+                    "name": "Inc."
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://code.google.com/p/google-diff-match-patch/",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "DOMPurify",
+            "version": "2.4.4",
+            "licenses": [
+                {
+                    "expression": "MPL-2.0 OR Apache-2.0"
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Mario Heiderich and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/cure53/DOMPurify",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "jsdifflib",
+            "version": 1,
+            "licenses": [
+                {
+                    "license": {
+                        "id": "BSD-3-Clause"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Snowtide Informatics Systems"
+                },
+                {
+                    "name": "Inc."
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "http://snowtide.com/jsdifflib",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "PapaParse",
+            "version": "5.3.2",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Matthew Holt and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "http://papaparse.com",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "RangeFix",
+            "version": "0.2.10",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Ed Sanders and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/edg2s/rangefix",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "socket.io-client",
+            "version": "4.4.0",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Guillermo Rauch and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/socketio/socket.io-client",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "spark-md5",
+            "version": "3.0.0",
+            "licenses": [
+                {
+                    "expression": "WTFPL OR MIT"
+                }
+            ],
+            "authors": [
+                {
+                    "name": "André Cruz"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/satazor/js-spark-md5",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "Tree Differ",
+            "version": "1.0.2",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Thalia Chan"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/tchanders/treeDiffer.js",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "UnicodeJS",
+            "version": "15.0.0",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Ed Sanders"
+                },
+                {
+                    "name": "David Chan and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://gerrit.wikimedia.org/g/unicodejs",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "Universal Language Selector data",
+            "version": "—",
+            "licenses": [
+                {
+                    "expression": "MIT OR GPL-2.0+"
+                }
+            ],
+            "authors": [
+                {
+                    "name": "Wikimedia Language Engineering Team and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://github.com/wikimedia/jquery.uls",
+                    "type": "website"
+                }
+            ]
+        },
+        {
+            "type": "library",
+            "name": "VisualEditor",
+            "version": "Development branch",
+            "licenses": [
+                {
+                    "license": {
+                        "id": "MIT"
+                    }
+                }
+            ],
+            "authors": [
+                {
+                    "name": "VisualEditor Team and other contributors"
+                }
+            ],
+            "externalReferences": [
+                {
+                    "url": "https://www.mediawiki.org/wiki/VisualEditor",
+                    "type": "website"
+                }
+            ]
+        }
+    ]
+}

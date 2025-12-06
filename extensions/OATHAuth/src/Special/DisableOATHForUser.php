@@ -5,8 +5,6 @@ namespace MediaWiki\Extension\OATHAuth\Special;
 use MediaWiki\CheckUser\Hooks as CheckUserHooks;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Exception\MWException;
-use MediaWiki\Exception\UserBlockedError;
-use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Logger\LoggerFactory;
@@ -20,30 +18,17 @@ use MediaWiki\User\UserFactory;
 
 class DisableOATHForUser extends FormSpecialPage {
 
-	private OATHUserRepository $userRepo;
-
-	private UserFactory $userFactory;
-
-	private CentralIdLookup $centralIdLookup;
-
-	/**
-	 * @param OATHUserRepository $userRepo
-	 * @param UserFactory $userFactory
-	 * @param CentralIdLookup $centralIdLookup
-	 */
-	public function __construct( $userRepo, $userFactory, $centralIdLookup ) {
+	public function __construct(
+		private readonly OATHUserRepository $userRepo,
+		private readonly UserFactory $userFactory,
+		private readonly CentralIdLookup $centralIdLookup,
+	) {
 		// messages used: disableoathforuser (display "name" on Special:SpecialPages),
 		// right-oathauth-disable-for-user, action-oathauth-disable-for-user
 		parent::__construct( 'DisableOATHForUser', 'oathauth-disable-for-user' );
-
-		$this->userRepo = $userRepo;
-		$this->userFactory = $userFactory;
-		$this->centralIdLookup = $centralIdLookup;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'users';
 	}
@@ -72,42 +57,30 @@ class DisableOATHForUser extends FormSpecialPage {
 		$form->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-disable-for-user' ) );
 	}
 
-	/**
-	 * @return string
-	 */
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
 
-	/**
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return false;
 	}
 
-	/**
-	 * @param User $user
-	 * @throws UserBlockedError
-	 * @throws UserNotLoggedIn
-	 */
+	/** @inheritDoc */
 	protected function checkExecutePermissions( User $user ) {
 		$this->requireNamedUser();
 
 		parent::checkExecutePermissions( $user );
 	}
 
-	/**
-	 * @param string $par
-	 */
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->getOutput()->disallowUserJs();
 		parent::execute( $par );
 	}
 
-	/**
-	 * @return array[]
-	 */
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [
 			'user' => [

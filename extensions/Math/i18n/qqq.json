@@ -83,6 +83,7 @@
 	"math_invalidresponse": "Used as error message.\n\nFollows the message {{msg-mw|Math failure}}.\n\nParameters:\n* $1 - rendering type (either LaTeXML or Mathoid)\n* $2 - hostname\n* $3 - error message",
 	"math_invalidxml": "Used as error message.\n\nThis message follows the message {{msg-mw|Math failure}}.",
 	"math_mathoid_error": "Used as error message.\n\nFollows the message {{msg-mw|Math failure}}.\n\nParameters:\n* $1 - hostname\n* $2 - error message retrieved from the server",
+	"math_other_error": "Used as error message. \n\n Has one parameter:\n* $1 - english error message",
 	"math-status-introduction": "Used as special-page text.\n\nParameters:\n* $1 mode count",
 	"math_syntax_error": "Used as error message for a texvc syntax error.\n\nThis message follows the message {{msg-mw|Math failure}}.\n{{Identical|Syntax error}}",
 	"math_timeout": "Used as error message.\n\nParameters:\n* $1 - rendering type (either LaTeXML or Mathoid)\n* $2 - hostname or URL",

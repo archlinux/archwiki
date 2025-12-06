@@ -50,6 +50,8 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		parent::setUp();
 		// Set a fake time to avoid the tests breaking due to 'cutimecond' being a relative time.
 		ConvertibleTimestamp::setFakeTime( '20230406060708' );
+		// Make the API be enabled for these tests so that they work.
+		$this->overrideConfigValue( 'CheckUserDisableCheckUserAPI', false );
 	}
 
 	/**
@@ -145,7 +147,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		$this->doCheckUserApiRequest(
 			[
 				'curequest' => 'actions',
-				'cutarget' => $this->getTestUser()->getUserIdentity()->getName()
+				'cutarget' => $this->getTestUser()->getUserIdentity()->getName(),
 			]
 		);
 	}
@@ -209,6 +211,16 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		];
 	}
 
+	public function testWhenApiIsDisabled() {
+		$this->overrideConfigValue( 'CheckUserDisableCheckUserAPI', true );
+		$this->expectApiErrorCode( 'disabled' );
+		$this->doCheckUserApiRequest(
+			[ 'curequest' => 'userips', 'cutarget' => 'CheckUserAPITestUser1', 'cutimecond' => '-3 months' ],
+			null,
+			$this->getTestUser( [ 'checkuser' ] )->getAuthority()
+		);
+	}
+
 	/** @dataProvider provideExpectedApiResponses */
 	public function testResponseFromApi(
 		$requestType, $expectedRequestTypeInResponse, $target, $timeCond, $xff, $expectedData
@@ -264,7 +276,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'editcount' => 1,
 						'address' => '127.0.0.1',
 					],
-				]
+				],
 			],
 			'ipusers check on 127.0.0.1/24' => [
 				'ipusers', 'ipusers', '127.0.0.1/24', '-3 months', null,
@@ -275,7 +287,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'editcount' => 2,
 						'agents' => [ 'user-agent-for-edits', 'user-agent-for-logs' ],
 						'ips' => [ '127.0.0.2', '127.0.0.1' ],
-						'start' => '2023-04-05T06:07:08Z'
+						'start' => '2023-04-05T06:07:08Z',
 					],
 					[
 						'name' => 'CheckUserAPITestUser1',
@@ -283,9 +295,9 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'editcount' => 2,
 						'agents' => [ 'user-agent-for-edits', 'user-agent-for-logs' ],
 						'ips' => [ '127.0.0.2', '127.0.0.1' ],
-						'start' => '2023-04-05T06:07:07Z'
+						'start' => '2023-04-05T06:07:07Z',
 					],
-				]
+				],
 			],
 			'ipusers XFF check on 127.2.3.4' => [
 				'ipusers', 'ipusers', '127.2.3.4', '-3 months', true,
@@ -296,9 +308,9 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'editcount' => 2,
 						'agents' => [ 'user-agent-for-logout', 'user-agent-for-edits' ],
 						'ips' => [ '1.2.3.4' ],
-						'start' => '2023-04-05T06:07:11Z'
+						'start' => '2023-04-05T06:07:11Z',
 					],
-				]
+				],
 			],
 			'actions XFF check on 127.2.3.4' => [
 				'actions', 'edits', '127.2.3.4', '-3 months', true,
@@ -323,7 +335,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'summary' => 'Test1233',
 						'xff' => '127.2.3.4',
 					],
-				]
+				],
 			],
 			'actions check on CheckUserAPITestUser2' => [
 				'actions', 'edits', 'CheckUserAPITestUser2', '2023-04-05T06:07:09Z', true,
@@ -338,7 +350,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'summary' => 'Test1232',
 						'minor' => 'm',
 					],
-				]
+				],
 			],
 			'actions on 1.2.3.5 (IP performer when temporary accounts are enabled)' => [
 				'actions',
@@ -359,7 +371,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 							[ '', '', '', 'CheckUserAPITestUser1' ]
 						)->text(),
 					],
-				]
+				],
 			],
 			'ipusers on 1.2.3.5 (IP performer when temporary accounts are enabled)' => [
 				'ipusers',
@@ -375,7 +387,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 						'agents' => [ 'user-agent-for-password-reset' ],
 						'name' => '1.2.3.5',
 					],
-				]
+				],
 			],
 		];
 	}
@@ -440,7 +452,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 					'editcount' => 2,
 					'agents' => [ 'user-agent-for-logout', 'user-agent-for-edits' ],
 					'ips' => [ '1.2.3.4' ],
-					'start' => '2023-04-05T06:07:11Z'
+					'start' => '2023-04-05T06:07:11Z',
 				],
 			]
 		);
@@ -549,6 +561,32 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 				"The message key $messageKey does not exist."
 			);
 		}
+	}
+
+	/** @dataProvider provideGetSummaryMessage */
+	public function testGetSummaryMessage( $isCheckUserAPIDisabled, $expectedSummaryMessageKey ) {
+		$this->overrideConfigValue( 'CheckUserDisableCheckUserAPI', $isCheckUserAPIDisabled );
+		$this->assertSame( $expectedSummaryMessageKey, $this->setUpObject( 'checkuser' )->getSummaryMessage() );
+	}
+
+	public static function provideGetSummaryMessage() {
+		return [
+			'When CheckUser API is disabled' => [ true, 'apihelp-query+checkuser-summary-api-disabled' ],
+			'When CheckUser API is enabled' => [ false, 'apihelp-query+checkuser-summary' ],
+		];
+	}
+
+	/** @dataProvider provideIsDeprecated */
+	public function testIsDeprecated( $isCheckUserAPIDisabled ) {
+		$this->overrideConfigValue( 'CheckUserDisableCheckUserAPI', $isCheckUserAPIDisabled );
+		$this->assertSame( $isCheckUserAPIDisabled, $this->setUpObject()->isDeprecated() );
+	}
+
+	public static function provideIsDeprecated() {
+		return [
+			'When CheckUser API is disabled' => [ true ],
+			'When CheckUser API is enabled' => [ false ],
+		];
 	}
 
 	public function testExecuteOnUnrecognisedRequestTypeFromRequestFactory() {

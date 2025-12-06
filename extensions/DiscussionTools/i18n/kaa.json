@@ -4,7 +4,8 @@
 			"Ajiniyaz Nurniyazov",
 			"Inabat Allanova",
 			"Nurlan",
-			"Woytecr"
+			"Woytecr",
+			"Janabaevazizbek"
 		]
 	},
 	"discussiontools": "Talqılaw quralları",
@@ -14,7 +15,7 @@
 	"discussiontoolsdebug-pagetitle": "Bet ataması",
 	"discussiontools-desc": "Talqılaw betlerin jaqsılaytuǵın qurallar.",
 	"discussiontools-emptystate-button": "Talqılawdı baslaw",
-	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Talqılaw betlerin]] paydalanıwshılar {{SITENAME}} saytındaǵı kontentti ilajı barınsha eń jaqsı kóriniske alıp keliw ushın pikir almasıw maydanı sıpatında qollanadı. Siz bul talqılaw betin [[:{{SUBJECTPAGENAME}}]] maqalasın qalay rawajlandırıw haqqında basqalar menen dodalawdı baslaw ushın qollana alasız.",
+	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Talqılaw betlerin]] paydalanıwshılar {{SITENAME}} saytındaǵı kontentti ilajı barınsha eń jaqsı kóriniske alıp keliw ushın pikir almasıw maydanı sıpatında qollanadı. Siz bul talqılaw betin [[:{{SUBJECTPAGENAME}}]] maqalasın qalay rawajlandırıw haqqında basqalar menen dodalawdı baslaw ushın paydalana alasız.",
 	"discussiontools-emptystate-desc-self": "{{SITENAME}} saytındaǵı adamlar siz ushın bárshege kórinetuǵın xabarlardı usı [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|talqılaw betinde]] jaza aladı hámde sizge eskertpe jiberedi.",
 	"discussiontools-emptystate-desc-self-anon": "{{SITENAME}} saytındaǵı adamlar bul [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|talqılaw betin]] siz házir paydalanıp atırǵan IP adresten orınlanǵan ózgerisler haqqında hámmege kórinetuǵın xabarlardı jazıw ushın qollana aladı.\n\nKópshilik IP adresler waqtı-waqtı menen ózgerip turadı hám kóbinese birneshe adamlar tárepinen paydalanıladı. Siz keleshekte ózińizdiń hám sistemadan shıqqan basqa paydalanıwshılardıń IP adresleri menen bolıwı múmkin bolǵan aljasıqlardıń aldın alıw ushın [$1 akkaunt jaratıwıńız] yamasa [$2 sistemaǵa kiriwińiz] múmkin.",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Talqılaw betlerin]] paydalanıwshılar {{SITENAME}} saytındaǵı kontentti ilajı barınsha eń jaqsı kóriniske alıp keliw ushın pikir almasıw maydanı sıpatında qollanadı. Siz [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] atlı paydalanıwshı menen baylanısıw hám pikirlesiw ushın jańa talqılaw baslawıńız múmkin.",

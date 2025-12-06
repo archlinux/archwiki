@@ -2,14 +2,13 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * Shared code for pagelinks and templatelinks. They are very similar tables
- * since they both link to an arbitrary page identified by namespace and title.
+ * Shared code for pagelinks, templatelinks and existencelinks. These tables
+ * all link to an arbitrary page identified by namespace and title.
  *
  * Link ID format: string[]:
  *   - 0: namespace ID
@@ -56,10 +55,11 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 	abstract protected function getTargetIdField();
 
 	/**
-	 * @return mixed
+	 * @return string|null
 	 */
 	abstract protected function getFromNamespaceField();
 
+	/** @inheritDoc */
 	protected function getExistingFields() {
 		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
 			return [
@@ -105,6 +105,7 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 			->fetchResultSet();
 	}
 
+	/** @inheritDoc */
 	protected function getNewLinkIDs() {
 		foreach ( $this->newLinks as $ns => $links ) {
 			foreach ( $links as $dbk => $unused ) {
@@ -113,6 +114,7 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getExistingLinkIDs() {
 		foreach ( $this->getExistingLinks() as $ns => $links ) {
 			foreach ( $links as $dbk => $unused ) {
@@ -121,20 +123,25 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function isExisting( $linkId ) {
 		[ $ns, $dbk ] = $linkId;
 		return isset( $this->getExistingLinks()[$ns][$dbk] );
 	}
 
+	/** @inheritDoc */
 	protected function isInNewSet( $linkId ) {
 		[ $ns, $dbk ] = $linkId;
 		return isset( $this->newLinks[$ns][$dbk] );
 	}
 
+	/** @inheritDoc */
 	protected function insertLink( $linkId ) {
-		$row = [
-			$this->getFromNamespaceField() => $this->getSourcePage()->getNamespace(),
-		];
+		$row = [];
+		$fromNamespaceField = $this->getFromNamespaceField();
+		if ( $fromNamespaceField !== null ) {
+			$row[$fromNamespaceField] = $this->getSourcePage()->getNamespace();
+		}
 		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
 			$row[$this->getNamespaceField()] = $linkId[0];
 			$row[$this->getTitleField()] = $linkId[1];
@@ -148,6 +155,7 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 		$this->insertRow( $row );
 	}
 
+	/** @inheritDoc */
 	protected function deleteLink( $linkId ) {
 		if ( $this->linksTargetNormalizationStage() & SCHEMA_COMPAT_WRITE_OLD ) {
 			$this->deleteRow( [
@@ -164,18 +172,22 @@ abstract class GenericPageLinksTable extends TitleLinksTable {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function needForcedLinkRefresh() {
 		return $this->isCrossNamespaceMove();
 	}
 
+	/** @inheritDoc */
 	protected function makePageReferenceValue( $linkId ): PageReferenceValue {
-		return new PageReferenceValue( $linkId[0], $linkId[1], WikiAwareEntity::LOCAL );
+		return PageReferenceValue::localReference( $linkId[0], $linkId[1] );
 	}
 
+	/** @inheritDoc */
 	protected function makeTitle( $linkId ): Title {
 		return Title::makeTitle( $linkId[0], $linkId[1] );
 	}
 
+	/** @inheritDoc */
 	protected function deduplicateLinkIds( $linkIds ) {
 		$seen = [];
 		foreach ( $linkIds as $linkId ) {

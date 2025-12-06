@@ -1,5 +1,5 @@
 <?php
-/** Minnan (Pe̍h-ōe-jī) (Bân-lâm-gú (Pe̍h-ōe-jī))
+/** Minnan (Pe̍h-ōe-jī) (Bân-lâm-gí (Pe̍h-ōe-jī))
  *
  * @file
  * @ingroup Languages
@@ -10,7 +10,7 @@
  * @author Winston Sung
  */
 
-$fallback = 'nan-latn, nan-latn-tailo, nan, nan-hant, cdo, zh-hant, zh, zh-hans';
+$fallback = 'nan-latn, nan-latn-tailo, nan, nan-hant, cdo-hant, zh-hant, zh, zh-hans';
 
 $namespaceNames = [
 	NS_MEDIA            => 'Mûi-thé',

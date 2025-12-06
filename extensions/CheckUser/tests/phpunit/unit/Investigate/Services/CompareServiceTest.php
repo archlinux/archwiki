@@ -5,6 +5,7 @@ namespace MediaWiki\CheckUser\Tests\Unit\Investigate\Services;
 use MediaWiki\CheckUser\Investigate\Services\CompareService;
 use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -30,6 +31,7 @@ class CompareServiceTest extends MediaWikiUnitTestCase {
 			$mockConnectionProvider,
 			$this->createMock( UserIdentityLookup::class ),
 			$this->createMock( CheckUserLookupUtils::class ),
+			$this->createMock( TempUserConfig::class ),
 		);
 		$targets = $compareService->getTargetsOverLimit( [ '1.2.3.4' ], [], '' );
 		$this->assertCount(

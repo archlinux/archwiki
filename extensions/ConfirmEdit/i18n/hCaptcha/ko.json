@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bisang",
+			"Tensama0415",
+			"Ykhwong",
+			"Revi"
+		]
+	},
+	"hcaptcha-desc": "Confirm Edit용 [https://www.hcaptcha.com/ hCaptcha] 모듈",
+	"hcaptcha-edit": "자동 편집 스팸으로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-addurl": "편집에 새로운 외부 링크가 포함되어 있습니다. 자동화된 스팸으로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-badlogin": "자동화된 비밀번호 깨기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-createaccount": "자동 계정 만들기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-createaccount-fail": "hCaptcha를 풀지 못하신 것 같습니다.",
+	"hcaptcha-create": "자동 문서 만들기로부터 위키를 보호하기 위해, 다음 hCaptcha를 풀어주세요:",
+	"hcaptcha-help": "hCaptcha 도전을 풀고 응답 값을 captchaWord로 반환해 주세요.",
+	"hcaptcha-privacy-policy": "이 사이트는 hCaptcha의 보호를 받으며 hCaptcha의 [https://www.hcaptcha.com/privacy 개인정보처리방침]과 [https://www.hcaptcha.com/terms 이용 약관]이 적용됩니다.",
+	"hcaptcha-challenge-closed": "계속하려면 캡차를 완료해야 합니다.",
+	"hcaptcha-challenge-expired": "캡차를 완료할 수 있는 제한 시간이 초과되었습니다. 다시 시도해 주세요.",
+	"hcaptcha-generic-error": "양식을 로드하는 중 오류가 발생했습니다. 계속하셔면 문서를 새로 고쳐야 합니다.",
+	"hcaptcha-loading-indicator-label": "양식을 로드하는 동안 잠시 기다려 주세요...",
+	"hcaptcha-missing-token": "양식을 아직 로딩하지 않았습니다. 잠시 기다린 후 다시 시도해 주세요.",
+	"hcaptcha-noscript": "계속하려면 자바스크립트가 필요합니다. 브라우저 설정에서 자바스크립트를 활성화한 후 문서를 새로고침하세요."
+}

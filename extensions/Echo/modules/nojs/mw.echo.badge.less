@@ -29,7 +29,7 @@
 			outline: @outline-base--focus;
 		}
 
-		&:focus {
+		&:focus-visible {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #36c;
 			opacity: 1;
 
@@ -81,7 +81,6 @@
 		}
 	}
 
-	&.oo-ui-flaggedElement-unseen,
 	&.mw-echo-unseen-notifications {
 		#pt-notifications-alert &::after {
 			background-color: @background-color-destructive;

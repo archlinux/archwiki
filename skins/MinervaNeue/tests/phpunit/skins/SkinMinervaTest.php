@@ -108,7 +108,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		if ( $context ) {
 			$permissions->setContext( $context );
 		}
-		return new SkinMinerva(
+		$skin = new SkinMinerva(
 			$services->getGenderCache(),
 			$services->getLinkRenderer(),
 			$services->getService( 'Minerva.LanguagesHelper' ),
@@ -120,8 +120,14 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 			$services->getNamespaceInfo(),
 			$services->getRevisionLookup(),
 			$services->getUserIdentityUtils(),
-			$services->getUserOptionsManager()
+			$services->getUserOptionsManager(),
+			$services->getService( 'Vector.ConfigHelper' )
 		);
+		if ( $context ) {
+			$skin->setContext( $context );
+			$context->setSkin( $skin );
+		}
+		return $skin;
 	}
 
 	private function overrideSkinOptions( array $options ): void {
@@ -151,8 +157,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setTitle( Title::makeTitle( $namespace, $title ) );
 		$context->setActionName( $action );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$this->assertEquals( $expected, TestingAccessWrapper::newFromObject( $skin )->hasPageActions() );
 	}
@@ -200,8 +205,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		// hasPageTabs gets the action directly from the request rather than the context so we set it here as well
 		$context->getRequest()->setVal( 'action', $action );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$this->assertEquals( $expected, TestingAccessWrapper::newFromObject( $skin )->hasPageTabs() );
 	}
@@ -213,8 +217,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context = new RequestContext();
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'test' ) );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$contentNavigationUrls = [
 			'main' => [
@@ -252,8 +255,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) );
 		$context->setActionName( 'view' );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$contentNavigationUrls = [ 'associated-pages' => [ 'testkey' => 'testvalue' ] ];
 		$associatedPages = [ 'id' => 'test' ];
@@ -269,8 +271,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context = new RequestContext();
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'test' ) );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$contentNavigationUrls = [];
 		$associatedPages = [ 'id' => 'test' ];
@@ -286,8 +287,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context = new RequestContext();
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'test' ) );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$item = [
 			'class' => 'hi',
@@ -309,8 +309,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context = new RequestContext();
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'test' ) );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$portletData = [
 			'id' => 'nav',
@@ -347,6 +346,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 				'icon' => 'home',
 				'href' => '/wiki/Home',
 				'rel' => 'main',
+				'array-attributes' => [],
 			]
 		], $data );
 	}
@@ -381,8 +381,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$request = $context->getRequest();
 		$request->setVal( 'minervanightmode', '1' );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$classes = $skin->getHtmlElementAttributes()['class'];
 		$this->assertStringContainsString( 'skin-theme-clientpref-night', $classes );
@@ -396,8 +395,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$request = $context->getRequest();
 		$request->setVal( 'minervanightmode', '3' );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$classes = $skin->getHtmlElementAttributes()['class'];
 		$this->assertStringContainsString( 'skin-theme-clientpref-day', $classes );
@@ -428,8 +426,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$request = $context->getRequest();
 		$request->setVal( 'minervanightmode', '3' );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$user = $skin->getUser();
 		$this->getServiceContainer()->getUserOptionsManager()->setOption( $user, 'minerva-theme', 'day' );
@@ -454,8 +451,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
 		$context->setOutput( $outputPage );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 		$skin = TestingAccessWrapper::newFromObject( $skin );
 
 		$this->assertFalse( $skin->hasCategoryLinks() );
@@ -480,8 +476,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
 		$context->setOutput( $outputPage );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 
 		$skin = TestingAccessWrapper::newFromObject( $skin );
 
@@ -532,7 +527,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 				[
 					'tag-name' => 'a',
 					'classes' => 'mw-echo-notifications-badge mw-echo-notification-badge-nojs '
-						. ' mw-echo-unseen-notifications',
+						. 'mw-echo-unseen-notifications',
 					'array-attributes' => [
 						self::ATTRIBUTE_NOTIFICATION_HREF,
 						self::ATTRIBUTE_NOTIFICATION_DATA_COUNTER_TEXT,
@@ -563,8 +558,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 									self::ATTRIBUTE_NOTIFICATION_TITLE,
 									[
 										'key' => 'class',
-										'value' => 'mw-echo-notifications-badge '
-											. 'mw-echo-notification-badge-nojs oo-ui-icon-bellOutline '
+										'value' => 'mw-echo-notifications-badge mw-echo-notification-badge-nojs '
 											. 'mw-echo-unseen-notifications',
 									],
 								],
@@ -650,8 +644,7 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setUser( $this->getTestUser()->getUser() );
 		$context->setLanguage( 'qqx' );
 
-		$skin = $this->newSkinMinerva();
-		$skin->setContext( $context );
+		$skin = $this->newSkinMinerva( $context );
 		$skin->getOutput()->setProperty( 'wgMFDescription', 'A description' );
 		$data = $skin->getTemplateData();
 
@@ -711,10 +704,27 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( 'pt-preferences', $data['data-minerva-main-menu']['groups'][2]['id'] );
 		$this->assertEquals( '<div class="tagline">A description</div>', $data['html-minerva-tagline'] );
 		$this->assertTrue( isset( $data['html-minerva-user-menu'] ) );
-		$this->assertFalse( $data['is-minerva-beta'] );
-		$this->assertEquals( [
-			'id' => 'p-associated-pages',
-			'items' => [
+
+		$minervaTabs = $data['data-minerva-tabs'];
+
+		// extract array-attributes since they may or may not be red links
+		// so direct comparisons can't reliably be made and we only want to
+		// check the shape.
+		$tabItemsWithoutAttributes = array_map( static function ( $item ) {
+			unset( $item['array-attributes'] );
+			return $item;
+		}, $minervaTabs['items'] );
+		$minervaTabAttributes = array_map( static function ( $item ) {
+			return array_map( static function ( $attr ) {
+				return $attr[ 'key' ];
+			}, $item['array-attributes'] );
+		}, $minervaTabs['items'] );
+		$this->assertEquals(
+			'p-associated-pages',
+			$minervaTabs['id']
+		);
+		$this->assertEquals(
+			[
 				[
 					'class' => 'selected mw-list-item',
 					'text' => '(nstab-main)',
@@ -730,10 +740,15 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 					'href' => $title->getTalkPage()->getLocalURL(
 						'action=edit&redlink=1'
 					),
-					'rel' => 'discussion'
+					'rel' => 'discussion',
 				]
 			],
-		], $data['data-minerva-tabs'] );
+			$tabItemsWithoutAttributes
+		);
+		$this->assertContains( 'title', $minervaTabAttributes[ 0 ], 'title found in attributes' );
+		$this->assertContains( 'accesskey', $minervaTabAttributes[ 0 ], 'accesskey found in attributes' );
+		$this->assertContains( 'title', $minervaTabAttributes[ 1 ], 'title found in attributes' );
+		$this->assertContains( 'accesskey', $minervaTabAttributes[ 1 ], 'accesskey found in attributes' );
 		$this->assertEquals( self::PAGE_ACTIONS, $data['data-minerva-page-actions'] );
 		$this->assertEquals( [], $data['data-minerva-secondary-actions'] );
 		$this->assertSame( '', $data['html-minerva-subject-link'] );
@@ -767,8 +782,6 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		$context->setAuthority( $authority );
 		$context->setUser( $this->getTestUser()->getUser() );
 		$skin = $this->newSkinMinerva( $context );
-		$context->setSkin( $skin );
-		$skin->setContext( $context );
 		$skin = TestingAccessWrapper::newFromObject( $context->getSkin() );
 		$contentNavigationUrls = [
 			'talk' => [

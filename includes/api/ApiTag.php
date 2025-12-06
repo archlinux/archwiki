@@ -1,21 +1,7 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,7 +9,7 @@ namespace MediaWiki\Api;
 
 use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\ChangeTags\ChangeTagsStore;
-use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Revision\RevisionStore;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -40,18 +26,21 @@ class ApiTag extends ApiBase {
 	private IDatabase $dbr;
 	private RevisionStore $revisionStore;
 	private ChangeTagsStore $changeTagsStore;
+	private RecentChangeLookup $recentChangeLookup;
 
 	public function __construct(
 		ApiMain $main,
 		string $action,
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
-		ChangeTagsStore $changeTagsStore
+		ChangeTagsStore $changeTagsStore,
+		RecentChangeLookup $recentChangeLookup
 	) {
 		parent::__construct( $main, $action );
 		$this->dbr = $dbProvider->getReplicaDatabase();
 		$this->revisionStore = $revisionStore;
 		$this->changeTagsStore = $changeTagsStore;
+		$this->recentChangeLookup = $recentChangeLookup;
 	}
 
 	public function execute() {
@@ -98,7 +87,7 @@ class ApiTag extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $ret );
 	}
 
-	protected function validateLogId( $logid ) {
+	protected function validateLogId( int $logid ): bool {
 		$result = $this->dbr->newSelectQueryBuilder()
 			->select( 'log_id' )
 			->from( 'logging' )
@@ -107,7 +96,7 @@ class ApiTag extends ApiBase {
 		return (bool)$result;
 	}
 
-	protected function processIndividual( $type, $params, $id ) {
+	protected function processIndividual( string $type, array $params, int $id ): array {
 		$user = $this->getUser();
 		$idResult = [ $type => $id ];
 
@@ -115,7 +104,7 @@ class ApiTag extends ApiBase {
 		$valid = false;
 		switch ( $type ) {
 			case 'rcid':
-				$valid = RecentChange::newFromId( $id );
+				$valid = $this->recentChangeLookup->getRecentChangeById( $id );
 				// TODO: replace use of PermissionManager
 				if ( $valid && $this->getPermissionManager()->isBlockedFrom( $user, $valid->getTitle() ) ) {
 					$idResult['status'] = 'error';
@@ -195,14 +184,17 @@ class ApiTag extends ApiBase {
 		return $idResult;
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'rcid' => [
@@ -236,10 +228,12 @@ class ApiTag extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=tag&revid=123&add=vandalism&token=123ABC'
@@ -249,6 +243,7 @@ class ApiTag extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Tag';
 	}

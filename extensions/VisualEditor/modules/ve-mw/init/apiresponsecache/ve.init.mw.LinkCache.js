@@ -67,19 +67,23 @@ ve.init.mw.LinkCache.static.processPage = function ( page ) {
  * @param {string} title
  * @param {jQuery} $element Element to style
  * @param {boolean} [hasFragment=false] Whether the link goes to a fragment
+ * @param {boolean} [useMissing=true] Use the "missing link" chache if available. Only applies the "new"
+ *  style but this cache is more likely to be populated. In the case of a cache miss the full cache is used.
  */
-ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFragment ) {
-	const cachedMissingData = this.getCached( '_missing/' + title );
+ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFragment, useMissing ) {
+	if ( useMissing !== false ) {
+		const cachedMissingData = this.getCached( '_missing/' + title );
 
-	let promise;
-	// Use the synchronous missing link cache data if it exists
-	if ( cachedMissingData ) {
-		promise = ve.createDeferred().resolve( cachedMissingData ).promise();
-	} else {
-		promise = this.get( title );
+		// Use the synchronous missing link cache data if it exists
+		if ( cachedMissingData ) {
+			if ( cachedMissingData.missing && !cachedMissingData.known ) {
+				$element.addClass( 'new' );
+			}
+			return;
+		}
 	}
 
-	promise.done( ( data ) => {
+	this.get( title ).then( ( data ) => {
 		// eslint-disable-next-line mediawiki/class-doc
 		$element.addClass( data.linkclasses );
 		if ( data.missing && !data.known ) {
@@ -89,10 +93,6 @@ ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFra
 			if ( !hasFragment && this.constructor.static.normalizeTitle( title ) === this.constructor.static.normalizeTitle( mw.config.get( 'wgRelevantPageName' ) ) ) {
 				$element.addClass( 'mw-selflink' );
 			}
-
-			// The following two classes should already be added by data.linkclasses
-			// TODO: Decide if the linkclasses or the pageprop is canonical, and only use one.
-
 			// Provided by core MediaWiki, no styles by default.
 			if ( data.redirect ) {
 				$element.addClass( 'mw-redirect' );

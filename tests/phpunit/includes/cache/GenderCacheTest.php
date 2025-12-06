@@ -1,8 +1,10 @@
 <?php
 
 use MediaWiki\Cache\GenderCache;
+use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @covers \MediaWiki\Cache\GenderCache
  * @group Database
  * @group Cache
  */
@@ -37,29 +39,26 @@ class GenderCacheTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * test usernames
-	 *
 	 * @dataProvider provideUserGenders
-	 * @covers \MediaWiki\Cache\GenderCache::getGenderOf
 	 */
 	public function testUserName( $userKey, $expectedGender ) {
-		$genderCache = $this->getServiceContainer()->getGenderCache();
 		$username = self::$nameMap[$userKey] ?? $userKey;
+
+		$genderCache = $this->getServiceContainer()->getGenderCache();
 		$gender = $genderCache->getGenderOf( $username );
-		$this->assertEquals( $expectedGender, $gender, "GenderCache normal" );
+		$this->assertEquals( $expectedGender, $gender );
 	}
 
 	/**
-	 * genderCache should work with user objects, too
-	 *
 	 * @dataProvider provideUserGenders
-	 * @covers \MediaWiki\Cache\GenderCache::getGenderOf
 	 */
 	public function testUserObjects( $userKey, $expectedGender ) {
 		$username = self::$nameMap[$userKey] ?? $userKey;
+		$user = User::newFromName( $username );
+
 		$genderCache = $this->getServiceContainer()->getGenderCache();
-		$gender = $genderCache->getGenderOf( $username );
-		$this->assertEquals( $expectedGender, $gender, "GenderCache normal" );
+		$gender = $genderCache->getGenderOf( $user );
+		$this->assertEquals( $expectedGender, $gender );
 	}
 
 	public static function provideUserGenders() {
@@ -75,11 +74,9 @@ class GenderCacheTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * test strip of subpages to avoid unnecessary queries
-	 * against the never existing username
+	 * Strip subpages to avoid unnecessary queries against the never existing username
 	 *
 	 * @dataProvider provideUserGenders
-	 * @covers \MediaWiki\Cache\GenderCache::getGenderOf
 	 */
 	public function testStripSubpages( $userKey, $expectedGender ) {
 		$username = self::$nameMap[$userKey] ?? $userKey;
@@ -88,9 +85,59 @@ class GenderCacheTest extends MediaWikiLangTestCase {
 		$this->assertEquals( $expectedGender, $gender, "GenderCache must strip of subpages" );
 	}
 
+	public function testDoLinkBatch() {
+		$users = self::provideUserGenders();
+		$batch = [];
+		$expected = [];
+		foreach ( $users as [ $id, $gender ] ) {
+			$name = self::$nameMap[$id] ?? $id;
+			$batch[NS_USER][$name] = true;
+			$expected[$name] = $gender;
+		}
+		$genderCache = $this->getServiceContainer()->getGenderCache();
+		$genderCache->doLinkBatch( $batch );
+		$this->assertSame(
+			$expected,
+			TestingAccessWrapper::newFromObject( $genderCache )->cache
+		);
+	}
+
+	public function testDoTitlesArray() {
+		$users = self::provideUserGenders();
+		$batch = [];
+		$expected = [];
+		foreach ( $users as [ $id, $gender ] ) {
+			$name = self::$nameMap[$id] ?? $id;
+			$batch[] = new TitleValue( NS_USER, $name );
+			$expected[$name] = $gender;
+		}
+		$genderCache = $this->getServiceContainer()->getGenderCache();
+		$genderCache->doTitlesArray( $batch );
+		$this->assertSame(
+			$expected,
+			TestingAccessWrapper::newFromObject( $genderCache )->cache
+		);
+	}
+
+	public function testDoPageRows() {
+		$users = self::provideUserGenders();
+		$batch = [];
+		$expected = [];
+		foreach ( $users as [ $id, $gender ] ) {
+			$name = self::$nameMap[$id] ?? $id;
+			$batch[] = (object)[ 'page_namespace' => NS_USER, 'page_title' => $name ];
+			$expected[$name] = $gender;
+		}
+		$genderCache = $this->getServiceContainer()->getGenderCache();
+		$genderCache->doPageRows( $batch );
+		$this->assertSame(
+			$expected,
+			TestingAccessWrapper::newFromObject( $genderCache )->cache
+		);
+	}
+
 	/**
 	 * GenderCache must work without database (like Installer)
-	 * @coversNothing
 	 */
 	public function testWithoutDB() {
 		$this->overrideMwServices();

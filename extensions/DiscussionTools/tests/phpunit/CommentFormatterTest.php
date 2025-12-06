@@ -2,10 +2,12 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
+use ExtMobileFrontend;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\DiscussionTools\BatchModifyElements;
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Parser\ParserOutput;
@@ -55,7 +57,12 @@ class CommentFormatterTest extends IntegrationTestCase {
 		string $name, string $titleText, string $dom, string $expected, string $config, string $data,
 		bool $isMobile, bool $useButtons
 	): void {
+		if ( $isMobile ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'MobileFrontend' );
+		}
+
 		$this->setService( 'GenderCache', $this->createNoOpMock( GenderCache::class ) );
+
 		$dom = static::getHtml( $dom );
 		$expectedPath = $expected;
 		$expected = static::getText( $expectedPath );
@@ -72,6 +79,11 @@ class CommentFormatterTest extends IntegrationTestCase {
 		] );
 
 		$title = Title::newFromText( $titleText );
+		$wrappedTitle = TestingAccessWrapper::newFromObject( $title );
+		// Mock values which would otherwise trigger a DB lookup
+		$wrappedTitle->mContentModel = CONTENT_MODEL_WIKITEXT;
+		$wrappedTitle->mLatestID = 1;
+
 		$subscriptionStore = new MockSubscriptionStore();
 		$user = $this->createMock( User::class );
 		$qqxLang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
@@ -82,7 +94,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$outputPage->method( 'getUser' )->willReturn( $user );
 		$outputPage->method( 'getLanguage' )->willReturn( $qqxLang );
 		$outputPage->method( 'getSkin' )->willReturn( $skin );
-		$outputPage->method( 'msg' )->willReturn( 'a label' );
+		$outputPage->method( 'msg' )->willReturn( new RawMessage( 'a label' ) );
 
 		MockCommentFormatter::$parser = $this->createParser( $config, $data );
 		$commentFormatter = TestingAccessWrapper::newFromClass( MockCommentFormatter::class );
@@ -100,6 +112,12 @@ class CommentFormatterTest extends IntegrationTestCase {
 			 "isEmptyTalkPage\n" : '' ) .
 			FormatJson::encode( $pout->getJsConfigVars(), "\t", FormatJson::ALL_OK ) .
 			"\n</pre>";
+
+		if ( $isMobile ) {
+			$preprocessed = ExtMobileFrontend::domParseMobile( $outputPage, $preprocessed );
+			// MobileFormatter render time is non-deterministic, so strip from test output
+			$preprocessed = preg_replace( '/<!-- MobileFormatter took [^-]*-->/', '', $preprocessed );
+		}
 
 		OutputPage::setupOOUI();
 

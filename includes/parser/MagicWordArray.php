@@ -1,27 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Parser;
 
 use LogicException;
-use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -199,7 +184,7 @@ class MagicWordArray {
 	 * Parse a match array from preg_match
 	 *
 	 * @param array<string|int,string> $matches
-	 * @return array{0:string,1:string|false} Pair of (magic word ID, parameter value),
+	 * @return array{0:string,1:string,2:string|false} Tuple of (magic word ID, magic word alias, parameter value),
 	 *  where the latter is instead false if there is no parameter value.
 	 */
 	private function parseMatch( array $matches ): array {
@@ -211,7 +196,7 @@ class MagicWordArray {
 				//     n                 => 'matchedSynonym (again)',
 				//     n + 1             => 'parameterValue',
 				// … ]
-				return [ $magicName, $matches[$key + 1] ?? false ];
+				return [ $magicName, $match, $matches[$key + 1] ?? false ];
 			}
 			// Skip the initial full match and any non-matching group
 			if ( $match !== '' && $key !== 0 ) {
@@ -237,7 +222,8 @@ class MagicWordArray {
 		foreach ( $regexes as $regex ) {
 			$m = [];
 			if ( preg_match( $regex, $text, $m ) ) {
-				return $this->parseMatch( $m );
+				[ $id, $alias, $param ] = $this->parseMatch( $m );
+				return [ $id, $param ];
 			}
 		}
 		return [ false, false ];
@@ -267,30 +253,21 @@ class MagicWordArray {
 	 *
 	 * @see MagicWord::matchAndRemove
 	 * @param string &$text
-	 * @return array<string,false> Keyed by magic word ID
+	 * @param bool $returnAlias When true, returns the localized alias as
+	 *   the value in the returned array. When false (the default), the
+	 *   value in the returned array is `false`.
+	 * @return array<string,string|false> Keyed by magic word ID
 	 */
-	public function matchAndRemove( &$text ): array {
+	public function matchAndRemove( &$text, bool $returnAlias = false ): array {
 		$found = [];
 		$regexes = $this->getRegex();
-		$res = preg_replace_callback( $regexes, function ( $m ) use ( &$found ) {
-			[ $name, $param ] = $this->parseMatch( $m );
-			$found[$name] = $param;
+		$res = preg_replace_callback( $regexes, function ( $m ) use ( &$found, $returnAlias ) {
+			[ $name, $alias, $param ] = $this->parseMatch( $m );
+			$found[$name] = $returnAlias ? $alias : $param;
 			return '';
 		}, $text );
 		// T321234: Don't try to fix old revisions with broken UTF-8, just return $text as is
-		if ( $res === null ) {
-			$error = preg_last_error();
-			$errorText = preg_last_error_msg();
-			LoggerFactory::getInstance( 'parser' )->warning( 'preg_match_all error: {code} {errorText}', [
-				'code' => $error,
-				'regex' => $regexes,
-				'text' => $text,
-				'errorText' => $errorText
-			] );
-			if ( $error !== PREG_BAD_UTF8_ERROR ) {
-				throw new LogicException( "preg_match_all error $error: $errorText" );
-			}
-		} else {
+		if ( $res !== null ) {
 			$text = $res;
 		}
 		return $found;

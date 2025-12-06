@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -91,40 +77,6 @@ abstract class ContentHandler {
 	use ProtectedHookAccessorTrait;
 
 	/**
-	 * Convenience function for getting flat text from a Content object. This
-	 * should only be used in the context of backwards compatibility with code
-	 * that is not yet able to handle Content objects!
-	 *
-	 * If $content is null, this method returns the empty string.
-	 *
-	 * If $content is an instance of TextContent, this method returns the flat
-	 * text as returned by $content->getText().
-	 *
-	 * If $content is not a TextContent object, this method returns null.
-	 *
-	 * @since 1.21
-	 *
-	 * @deprecated since 1.37, use Content::getText() for TextContent instances
-	 * instead. Hard deprecated since 1.43.
-	 *
-	 * @param Content|null $content
-	 * @return string|null Textual form of the content, if available.
-	 */
-	public static function getContentText( ?Content $content = null ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		if ( $content === null ) {
-			return '';
-		}
-
-		if ( $content instanceof TextContent ) {
-			return $content->getText();
-		}
-
-		wfDebugLog( 'ContentHandler', 'Accessing ' . $content->getModel() . ' content as text!' );
-		return null;
-	}
-
-	/**
 	 * Convenience function for creating a Content object from a given textual
 	 * representation.
 	 *
@@ -160,105 +112,6 @@ abstract class ContentHandler {
 	}
 
 	/**
-	 * Returns the name of the default content model to be used for the page
-	 * with the given title.
-	 *
-	 * Note: There should rarely be need to call this method directly.
-	 * To determine the actual content model for a given page, use
-	 * Title::getContentModel().
-	 *
-	 * Which model is to be used by default for the page is determined based
-	 * on several factors:
-	 * - The global setting $wgNamespaceContentModels specifies a content model
-	 *   per namespace.
-	 * - The hook ContentHandlerDefaultModelFor may be used to override the page's default
-	 *   model.
-	 * - Pages in NS_MEDIAWIKI and NS_USER default to the CSS or JavaScript
-	 *   model if they end in .js or .css, respectively.
-	 * - Pages in NS_MEDIAWIKI default to the wikitext model otherwise.
-	 * - The hook TitleIsCssOrJsPage may be used to force a page to use the CSS
-	 *   or JavaScript model. This is a compatibility feature. The ContentHandlerDefaultModelFor
-	 *   hook should be used instead if possible.
-	 * - The hook TitleIsWikitextPage may be used to force a page to use the
-	 *   wikitext model. This is a compatibility feature. The ContentHandlerDefaultModelFor
-	 *   hook should be used instead if possible.
-	 *
-	 * If none of the above applies, the wikitext model is used.
-	 *
-	 * @since 1.21
-	 * @deprecated since 1.33, use SlotRoleHandler::getDefaultModel() together with
-	 *   SlotRoleRegistry::getRoleHandler(). Hard deprecated since 1.43.
-	 *
-	 * @param Title $title
-	 *
-	 * @return string Default model name for the page given by $title
-	 */
-	public static function getDefaultModelFor( Title $title ) {
-		wfDeprecated( __METHOD__, '1.33' );
-		$slotRoleregistry = MediaWikiServices::getInstance()->getSlotRoleRegistry();
-		$mainSlotHandler = $slotRoleregistry->getRoleHandler( 'main' );
-		return $mainSlotHandler->getDefaultModel( $title );
-	}
-
-	/**
-	 * Returns the appropriate ContentHandler singleton for the given Content
-	 * object.
-	 *
-	 * @deprecated since 1.35, instead use
-	 *   ContentHandlerFactory::getContentHandler( $content->getModel() ).
-	 *   Hard deprecated since 1.43.
-	 *
-	 * @since 1.21
-	 *
-	 * @param Content $content
-	 *
-	 * @return ContentHandler
-	 * @throws MWUnknownContentModelException
-	 */
-	public static function getForContent( Content $content ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return MediaWikiServices::getInstance()
-			->getContentHandlerFactory()
-			->getContentHandler( $content->getModel() );
-	}
-
-	/**
-	 * Returns the ContentHandler singleton for the given model ID. Use the
-	 * CONTENT_MODEL_XXX constants to identify the desired content model.
-	 *
-	 * ContentHandler singletons are taken from the global $wgContentHandlers
-	 * array. Keys in that array are model names, the values are either
-	 * ContentHandler singleton objects, or strings specifying the appropriate
-	 * subclass of ContentHandler.
-	 *
-	 * If a class name is encountered when looking up the singleton for a given
-	 * model name, the class is instantiated and the class name is replaced by
-	 * the resulting singleton in $wgContentHandlers.
-	 *
-	 * If no ContentHandler is defined for the desired $modelId, the
-	 * ContentHandler may be provided by the ContentHandlerForModelID hook.
-	 * If no ContentHandler can be determined, an MWUnknownContentModelException is raised.
-	 *
-	 * @since 1.21
-	 *
-	 * @deprecated since 1.35, use ContentHandlerFactory::getContentHandler
-	 *   Hard deprecated since 1.43.
-	 * @see  ContentHandlerFactory::getContentHandler()
-	 *
-	 * @param string $modelId The ID of the content model for which to get a
-	 *    handler. Use CONTENT_MODEL_XXX constants.
-	 *
-	 * @throws MWUnknownContentModelException If no handler is known for the model ID.
-	 * @return ContentHandler The ContentHandler singleton for handling the model given by the ID.
-	 */
-	public static function getForModelID( $modelId ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return MediaWikiServices::getInstance()
-			->getContentHandlerFactory()
-			->getContentHandler( $modelId );
-	}
-
-	/**
 	 * Returns the localized name for a given content model.
 	 *
 	 * Model names are localized using system messages. Message keys
@@ -282,30 +135,6 @@ abstract class ContentHandler {
 		}
 
 		return $msg->exists() ? $msg->plain() : $name;
-	}
-
-	/**
-	 * @deprecated since 1.35, use ContentHandlerFactory::getContentModels
-	 *   Hard deprecated since 1.43.
-	 * @see ContentHandlerFactory::getContentModels
-	 *
-	 * @return string[]
-	 */
-	public static function getContentModels() {
-		wfDeprecated( __METHOD__, '1.35' );
-		return MediaWikiServices::getInstance()->getContentHandlerFactory()->getContentModels();
-	}
-
-	/**
-	 * @return string[]
-	 *
-	 * @deprecated since 1.35, use ContentHandlerFactory::getAllContentFormats
-	 *   Hard deprecated since 1.43.
-	 * @see ContentHandlerFactory::getAllContentFormats
-	 */
-	public static function getAllContentFormats() {
-		wfDeprecated( __METHOD__, '1.35' );
-		return MediaWikiServices::getInstance()->getContentHandlerFactory()->getAllContentFormats();
 	}
 
 	// ------------------------------------------------------------------------
@@ -1232,7 +1061,7 @@ abstract class ContentHandler {
 				// doing that will be confusing.
 				$this->checkModelID( $undoAfterContent->getModel() );
 			}
-		} catch ( MWException $e ) {
+		} catch ( MWException ) {
 			// If the revisions have different content models
 			// just return false
 			return false;
@@ -1728,6 +1557,8 @@ abstract class ContentHandler {
 		// Initialize to the page language
 		$po->setLanguage( $title->getPageLanguage() );
 
+		// Necessary use of a reference, because the fillParserOutput() call below also uses
+		// pass-by-reference and may reassign $po (5c9322ae06384a8845962ba7e3c499731110e7f0).
 		$parserOptions->registerWatcher( [ &$po, 'recordOption' ] );
 		if ( $hookRunner->onContentGetParserOutput(
 			// FIXME $cpoParams->getRevId() may be null here?

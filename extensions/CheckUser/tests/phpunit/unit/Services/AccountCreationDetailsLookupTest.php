@@ -35,7 +35,7 @@ class AccountCreationDetailsLookupTest extends MediaWikiUnitTestCase {
 				[
 					'cule_ip_hex' => 'C0A80105',
 					'cule_agent' => 'Junk User Agent',
-				]
+				],
 			] ) );
 
 		$result = $lookup->getAccountCreationIPAndUserAgent( 'JunkUserName', $mockDB );

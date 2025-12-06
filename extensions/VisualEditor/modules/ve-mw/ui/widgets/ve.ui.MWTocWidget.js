@@ -198,6 +198,8 @@ ve.ui.MWTocWidget.prototype.build = function () {
 		// * toclevel-1, toclevel-2, ...
 		// * tocsection-1, tocsection-2, ...
 		const $item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
+		// Disable security warning as url is not from user input
+		// eslint-disable-next-line local/no-unsanitized-href
 		const $link = $( '<a>' ).attr( 'href', url.toString() ).append(
 			$( '<span>' ).addClass( 'tocnumber' ).text( tocNumber )
 		);

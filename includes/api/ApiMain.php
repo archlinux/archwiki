@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @defgroup API API
  */
@@ -44,20 +30,20 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebRequestUpload;
 use MediaWiki\Rest\HeaderParser\Origin;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\UserRigorOptions;
-use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 use Profiler;
 use Throwable;
 use UnexpectedValueException;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -180,6 +166,7 @@ class ApiMain extends ApiBase {
 				'UserFactory',
 				'UrlUtils',
 				'TitleFormatter',
+				'JsonCodec',
 			]
 		],
 		'stashedit' => [
@@ -297,6 +284,7 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'RollbackPageFactory',
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 			]
 		],
@@ -305,6 +293,7 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'RepoGroup',
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 				'DeletePageFactory',
 			]
@@ -313,6 +302,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiUndelete::class,
 			'services' => [
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 				'UndeletePageFactory',
 				'WikiPageFactory',
@@ -322,6 +312,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiProtect::class,
 			'services' => [
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 				'RestrictionStore',
 			]
@@ -360,6 +351,7 @@ class ApiMain extends ApiBase {
 				'MovePageFactory',
 				'RepoGroup',
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 			]
 		],
@@ -382,6 +374,7 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'JobQueueGroup',
 				'WatchlistManager',
+				'WatchedItemStore',
 				'UserOptionsLookup',
 			]
 		],
@@ -409,6 +402,8 @@ class ApiMain extends ApiBase {
 			'class' => ApiPatrol::class,
 			'services' => [
 				'RevisionStore',
+				'PatrolManager',
+				'RecentChangeLookup',
 			]
 		],
 		'import' => [
@@ -430,6 +425,8 @@ class ApiMain extends ApiBase {
 				'WatchedItemStore',
 				'WatchlistManager',
 				'UserOptionsLookup',
+				'UserGroupAssignmentService',
+				'MultiFormatUserIdentityLookup',
 			]
 		],
 		'options' => [
@@ -459,6 +456,7 @@ class ApiMain extends ApiBase {
 				'DBLoadBalancerFactory',
 				'RevisionStore',
 				'ChangeTagsStore',
+				'RecentChangeLookup',
 			]
 		],
 		'mergehistory' => [
@@ -658,7 +656,7 @@ class ApiMain extends ApiBase {
 				global $wgLang;
 				$wgLang = $derivativeContext->getLanguage();
 				RequestContext::getMain()->setLanguage( $wgLang );
-				// phpcs:enable MediaWiki.Usage.ExtendClassUsage.FunctionVarUsage
+				// phpcs:enable
 			}
 		}
 
@@ -872,6 +870,7 @@ class ApiMain extends ApiBase {
 		$this->mCacheMode = $mode;
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode() {
 		return $this->mCacheMode;
 	}
@@ -953,8 +952,13 @@ class ApiMain extends ApiBase {
 				->setLabel( 'module', $this->mModule->getModuleName() )
 				->copyToStatsdAt( 'api.' . $this->mModule->getModuleName() . '.executeTiming' )
 				->observe( 1000 * $runTime );
+
+			$this->recordUnifiedMetrics( $runTime );
+
 		} catch ( Throwable $e ) {
-			$this->handleException( $e );
+			// If executeAction threw before the time was set, reset it
+			$runTime ??= microtime( true ) - $t;
+			$this->handleException( $e, $runTime );
 			$this->logRequest( microtime( true ) - $t, $e );
 			$isError = true;
 		}
@@ -965,7 +969,7 @@ class ApiMain extends ApiBase {
 			$this->mCacheMode === 'private'
 			|| (
 				$this->mCacheMode === 'anon-public-user-private'
-				&& SessionManager::getGlobalSession()->isPersistent()
+				&& $this->getRequest()->getSession()->isPersistent()
 			)
 		) {
 			$this->getContext()->getOutput()->disableClientCache();
@@ -991,8 +995,18 @@ class ApiMain extends ApiBase {
 	 *
 	 * @since 1.23
 	 * @param Throwable $e
+	 * @param float $latency Optional value for process runtime, in microseconds, for metrics
 	 */
-	protected function handleException( Throwable $e ) {
+	protected function handleException( Throwable $e, $latency = 0 ) {
+		$statsModuleName = $this->mModule ? $this->mModule->getModuleName() : 'main';
+
+		// Collect stats on errors (T396613).
+		// NOTE: We only count fatal errors, a mere call to addError() or
+		// addWarning() does not count towards these states. That could
+		// be added in the future, but should use a different stats key.
+		$stats = $this->statsFactory->getCounter( 'api_errors' )
+			->setLabel( 'module', $statsModuleName );
+
 		// T65145: Rollback any open database transactions
 		if ( !$e instanceof ApiUsageException ) {
 			// ApiUsageExceptions are intentional, so don't rollback if that's the case
@@ -1000,6 +1014,9 @@ class ApiMain extends ApiBase {
 				$e,
 				MWExceptionHandler::CAUGHT_BY_ENTRYPOINT
 			);
+			$stats->setLabel( 'exception_cause', 'server-error' );
+		} else {
+			$stats->setLabel( 'exception_cause', 'client-error' );
 		}
 
 		// Allow extra cleanup and logging
@@ -1010,6 +1027,7 @@ class ApiMain extends ApiBase {
 		// handler will process and log it.
 
 		$errCodes = $this->substituteResultWithError( $e );
+		sort( $errCodes );
 
 		// Error results should not be cached
 		$this->setCacheMode( 'private' );
@@ -1023,6 +1041,17 @@ class ApiMain extends ApiBase {
 
 		// Printer may not be initialized if the extractRequestParams() fails for the main module
 		$this->createErrorPrinter();
+
+		$stats->setLabel( 'error_code', implode( '_', $errCodes ) );
+		$stats->increment();
+
+		// Unified metrics
+		$this->recordUnifiedMetrics(
+			$latency,
+			[
+				'status' => implode( '_', $errCodes ), // Failure codes
+			]
+		);
 
 		// Get desired HTTP code from an ApiUsageException. Don't use codes from other
 		// exception types, as they are unlikely to be intended as an HTTP code.
@@ -1039,7 +1068,7 @@ class ApiMain extends ApiBase {
 			foreach ( $ex->getStatusValue()->getMessages() as $error ) {
 				try {
 					$this->mPrinter->addWarning( $error );
-				} catch ( Throwable $ex2 ) {
+				} catch ( Throwable ) {
 					// WTF?
 					$this->addWarning( $error );
 				}
@@ -1074,7 +1103,7 @@ class ApiMain extends ApiBase {
 			$main = new self( RequestContext::getMain(), false );
 			$main->handleException( $e );
 			$main->logRequest( 0, $e );
-		} catch ( Throwable $e2 ) {
+		} catch ( Throwable ) {
 			// Nope, even that didn't work. Punt.
 			throw $e;
 		}
@@ -1308,7 +1337,7 @@ class ApiMain extends ApiBase {
 		if ( $this->mCacheMode == 'anon-public-user-private' ) {
 			$out->addVaryHeader( 'Cookie' );
 			$response->header( $out->getVaryHeader() );
-			if ( SessionManager::getGlobalSession()->isPersistent() ) {
+			if ( $this->getRequest()->getSession()->isPersistent() ) {
 				// Logged in or otherwise has session (e.g. anonymous users who have edited)
 				// Mark request private
 				$response->header( "Cache-Control: $privateCache" );
@@ -1746,7 +1775,7 @@ class ApiMain extends ApiBase {
 
 			if ( $value !== '' ) {
 				try {
-					$ts = new MWTimestamp( $value );
+					$ts = new ConvertibleTimestamp( $value );
 					if (
 						// RFC 7231 IMF-fixdate
 						$ts->getTimestamp( TS_RFC2822 ) === $value ||
@@ -1777,7 +1806,7 @@ class ApiMain extends ApiBase {
 							$return304 = wfTimestamp( TS_MW, $lastMod ) <= $ts->getTimestamp( TS_MW );
 						}
 					}
-				} catch ( TimestampException $e ) {
+				} catch ( TimestampException ) {
 					// Invalid timestamp, ignore it
 				}
 			}
@@ -2062,7 +2091,6 @@ class ApiMain extends ApiBase {
 				'request_id' => WebRequest::getRequestId(),
 				'id' => MediaWikiServices::getInstance()
 					->getGlobalIdGenerator()->newUUIDv4(),
-				'dt' => wfTimestamp( TS_ISO_8601 ),
 				'domain' => $this->getConfig()->get( MainConfigNames::ServerName ),
 				// If using the EventBus extension (as intended) with this log channel,
 				// this stream name will map to a Kafka topic.
@@ -2249,7 +2277,7 @@ class ApiMain extends ApiBase {
 		if ( count( $unusedParams ) ) {
 			$this->addWarning( [
 				'apierror-unrecognizedparams',
-				Message::listParam( array_map( 'wfEscapeWikiText', $unusedParams ), 'comma' ),
+				Message::listParam( array_map( 'wfEscapeWikiText', $unusedParams ), ListType::COMMA ),
 				count( $unusedParams )
 			] );
 		}
@@ -2518,6 +2546,82 @@ class ApiMain extends ApiBase {
 
 		return $agent;
 	}
+
+	/**
+	 * Record unified metrics for the API
+	 *
+	 * @param float $latency Optional value for process runtime, in microseconds, for metrics
+	 * @param array $detailLabels Additional or override labels for the metrics
+	 */
+	protected function recordUnifiedMetrics( $latency, $detailLabels = [] ) {
+		// The concept of "module" is different in Action API and REST API
+		// in REST API, it represents the "collection" of endpoints
+		// in Action API, it represents the "module" of the API (or an endpoint)
+		// In order to make the metrics consistent, we want the module to also reflect
+		// the "collection" of endpoints. The closest we can get is to use the namespace
+		// of the API module, and get the area of the code or extension it belongs to.
+		$module = __NAMESPACE__;
+
+		// Get the endpoint representation, which for the moment is the module name.
+		// However, there may be cases (in error states) where the module name is not
+		// yet set; for those cases, we will use 'main', as is used in the handleException method.
+		// The module path is still stored in `path` label, which should be enough to
+		// get information about the endpoint even in those cases.
+		$endpoint = $this->mModule ? $this->mModule->getModuleName() : 'main';
+
+		// The "path" should give us useful and consistent information about the endpoint.
+		// The ->getModulePath() method is calculating the module parents' names, and those
+		// aren't always available, and may miss some of the separation of props in the query
+		// that may result in the same endpoint being represented differently.
+		// So in order to be able to get consistent information about the endpoint, we will use
+		// the "path" label to represent the query parameters and their values.
+		// This will also allow us to use regular expressions to match whatever module we are
+		// interested in for dashboards or alerts more consistently.
+		$params = $this->extractRequestParams( [ 'safeMode' => true ] );
+		$path = implode(
+			'&',
+			array_map(
+				static function ( $key, $value ): string	 {
+					return $key . '=' . $value;
+				},
+				array_keys( $params ),
+				$params
+			)
+		);
+
+		// Unified metrics
+		$metricsLabels = array_merge( [
+			// This should represent the "collection" of endpoints
+			'api_module' => $module,
+			// This is the endpoint that is being executed
+			'api_endpoint' => $endpoint,
+			'path' => $path,
+			'method' => $this->getRequest()->getMethod(),
+			'status' => "200", // Success
+		], $detailLabels );
+
+		// Hit metrics
+		$metricHitStats = $this->statsFactory->getCounter( 'action_api_modules_hit_total' )
+			->setLabel( 'api_type', 'ACTION_API' );
+		foreach ( $metricsLabels as $label => $value ) {
+			if ( $value ) {
+				$metricHitStats->setLabel( $label, $value );
+			}
+		}
+
+		// Latency metrics
+		$metricLatencyStats = $this->statsFactory->getTiming( 'action_api_modules_latency' )
+			->setLabel( 'api_type', 'ACTION_API' );
+		foreach ( $metricsLabels as $label => $value ) {
+			if ( $value ) {
+				$metricLatencyStats->setLabel( $label, $value );
+			}
+		}
+		$metricLatencyStats->observeNanoseconds( $latency );
+
+		$metricHitStats->increment();
+	}
+
 }
 
 /**

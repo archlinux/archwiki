@@ -130,7 +130,7 @@ class WikitextPFragment extends PFragment {
 	 * and optional source offsets.
 	 *
 	 * Unlike LiteralStringPFragment, the resulting fragment is
-	 * non-atomic -- it will not be an opaque strip marked but instead
+	 * non-atomic -- it will not be an opaque strip marker but instead
 	 * will consists of escaped wikitext that will evaluate to the
 	 * desired string value.
 	 *
@@ -172,8 +172,8 @@ class WikitextPFragment extends PFragment {
 	}
 
 	/** @inheritDoc */
-	public function asDom( ParsoidExtensionAPI $ext, bool $release = false ): DocumentFragment {
-		return $ext->wikitextToDOM( $this, [], true );
+	public function asDom( ParsoidExtensionAPI $extApi, bool $release = false ): DocumentFragment {
+		return $extApi->wikitextToDOM( $this, [], true );
 	}
 
 	/** @inheritDoc */

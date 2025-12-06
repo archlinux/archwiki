@@ -65,6 +65,7 @@ class StringDef extends TypeDef {
 		$this->allowEmptyWhenRequired = !empty( $options[ self::OPT_ALLOW_EMPTY ] );
 	}
 
+	/** @inheritDoc */
 	public function validate( $name, $value, array $settings, array $options ) {
 		$allowEmptyWhenRequired = $options[ self::OPT_ALLOW_EMPTY ]
 			?? $this->allowEmptyWhenRequired;
@@ -101,12 +102,12 @@ class StringDef extends TypeDef {
 		return $value;
 	}
 
+	/** @inheritDoc */
 	public function checkSettings( string $name, $settings, array $options, array $ret ): array {
 		$ret = parent::checkSettings( $name, $settings, $options, $ret );
 
-		$ret['allowedKeys'] = array_merge( $ret['allowedKeys'], [
-			self::PARAM_MAX_BYTES, self::PARAM_MAX_CHARS,
-		] );
+		$ret['allowedKeys'][] = self::PARAM_MAX_BYTES;
+		$ret['allowedKeys'][] = self::PARAM_MAX_CHARS;
 
 		$maxb = $settings[self::PARAM_MAX_BYTES] ?? PHP_INT_MAX;
 		if ( !is_int( $maxb ) ) {
@@ -138,6 +139,7 @@ class StringDef extends TypeDef {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function getParamInfo( $name, array $settings, array $options ) {
 		$info = parent::getParamInfo( $name, $settings, $options );
 
@@ -147,6 +149,7 @@ class StringDef extends TypeDef {
 		return $info;
 	}
 
+	/** @inheritDoc */
 	public function getHelpInfo( $name, array $settings, array $options ) {
 		$info = parent::getHelpInfo( $name, $settings, $options );
 

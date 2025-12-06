@@ -2,7 +2,7 @@
 
 namespace MediaWiki\HTMLForm;
 
-/*
+/**
  * @stable to extend
  */
 class HTMLFormActionFieldLayout extends \OOUI\ActionFieldLayout {
@@ -19,6 +19,7 @@ class HTMLFormActionFieldLayout extends \OOUI\ActionFieldLayout {
 		$this->initializeHTMLFormElement( $config );
 	}
 
+	/** @inheritDoc */
 	protected function getJavaScriptClassName() {
 		return 'mw.htmlform.ActionFieldLayout';
 	}

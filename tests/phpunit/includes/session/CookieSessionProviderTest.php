@@ -4,22 +4,30 @@ namespace MediaWiki\Tests\Session;
 
 use InvalidArgumentException;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Json\JwtCodec;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Request\WebResponse;
 use MediaWiki\Session\CookieSessionProvider;
 use MediaWiki\Session\SessionBackend;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Session\SessionInfo;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Tests\Json\PlainJsonJwtCodec;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
+use MediaWiki\Utils\UrlUtils;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TestLogger;
 use Wikimedia\ArrayUtils\ArrayUtils;
+use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group Session
@@ -28,6 +36,18 @@ use Wikimedia\TestingAccessWrapper;
  */
 class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 	use SessionProviderTestTrait;
+
+	/** Value of `$request->response()->getCookie()` when the cookie was deleted. */
+	private const DELETED = '';
+	/** Value of `$request->response()->getCookie()` when the cookie was unchanged. */
+	private const UNCHANGED = null;
+
+	public static function provideUseSessionCookieJwt() {
+		return [
+			'no JWT' => [ false ],
+			'JWT' => [ true ],
+		];
+	}
 
 	private function getConfig() {
 		return new HashConfig( [
@@ -38,25 +58,20 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::CookieHttpOnly => true,
 			MainConfigNames::CookieSameSite => '',
 			MainConfigNames::SessionName => false,
+			MainConfigNames::ObjectCacheSessionExpiry => 50,
 			MainConfigNames::CookieExpiration => 100,
 			MainConfigNames::ExtendedLoginCookieExpiration => 200,
+			MainConfigNames::SessionCookieJwtExpiration => 10,
 			MainConfigNames::ForceHTTPS => false,
 		] );
 	}
 
-	/**
-	 * Provider for testing both values of $wgForceHTTPS
-	 */
-	public static function provideForceHTTPS() {
-		return [
-			[ false ],
-			[ true ]
-		];
-	}
-
 	public function testConstructor() {
 		try {
-			new CookieSessionProvider();
+			new CookieSessionProvider(
+				$this->createNoOpMock( JwtCodec::class ),
+				$this->createNoOpMock( UrlUtils::class )
+			);
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame(
@@ -66,7 +81,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		}
 
 		try {
-			new CookieSessionProvider( [ 'priority' => 'foo' ] );
+			new CookieSessionProvider(
+				$this->createNoOpMock( JwtCodec::class ),
+				$this->createNoOpMock( UrlUtils::class ),
+				[ 'priority' => 'foo' ]
+			);
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame(
@@ -75,7 +94,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			);
 		}
 		try {
-			new CookieSessionProvider( [ 'priority' => SessionInfo::MIN_PRIORITY - 1 ] );
+			new CookieSessionProvider(
+				$this->createNoOpMock( JwtCodec::class ),
+				$this->createNoOpMock( UrlUtils::class ),
+				[ 'priority' => SessionInfo::MIN_PRIORITY - 1 ]
+			);
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame(
@@ -84,7 +107,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			);
 		}
 		try {
-			new CookieSessionProvider( [ 'priority' => SessionInfo::MAX_PRIORITY + 1 ] );
+			new CookieSessionProvider(
+				$this->createNoOpMock( JwtCodec::class ),
+				$this->createNoOpMock( UrlUtils::class ),
+				[ 'priority' => SessionInfo::MAX_PRIORITY + 1 ]
+			);
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame(
@@ -94,7 +121,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		}
 
 		try {
-			new CookieSessionProvider( [ 'priority' => 1, 'cookieOptions' => null ] );
+			new CookieSessionProvider(
+				$this->createNoOpMock( JwtCodec::class ),
+				$this->createNoOpMock( UrlUtils::class ),
+				[ 'priority' => 1, 'cookieOptions' => null ]
+			);
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame(
@@ -104,7 +135,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$config = $this->getConfig();
-		$provider = new CookieSessionProvider( [ 'priority' => 1 ] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[ 'priority' => 1 ]
+		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$this->initProvider( $provider, new TestLogger(), $config );
 		$this->assertSame( 1, $providerPriv->priority );
@@ -121,7 +156,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		], $providerPriv->cookieOptions );
 
 		$config->set( MainConfigNames::SessionName, 'SessionName' );
-		$provider = new CookieSessionProvider( [ 'priority' => 3 ] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[ 'priority' => 3 ]
+		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$this->initProvider( $provider, new TestLogger(), $config );
 		$this->assertEquals( 3, $providerPriv->priority );
@@ -137,18 +176,22 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'sameSite' => '',
 		], $providerPriv->cookieOptions );
 
-		$provider = new CookieSessionProvider( [
-			'priority' => 10,
-			'cookieOptions' => [
-				'prefix' => 'XPrefix',
-				'path' => 'XPath',
-				'domain' => 'XDomain',
-				'secure' => 'XSecure',
-				'httpOnly' => 'XHttpOnly',
-				'sameSite' => 'XSameSite',
-			],
-			'sessionName' => 'XSession',
-		] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 10,
+				'cookieOptions' => [
+					'prefix' => 'XPrefix',
+					'path' => 'XPath',
+					'domain' => 'XDomain',
+					'secure' => 'XSecure',
+					'httpOnly' => 'XHttpOnly',
+					'sameSite' => 'XSameSite',
+				],
+				'sessionName' => 'XSession',
+			]
+		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$this->initProvider( $provider, new TestLogger(), $config );
 		$this->assertEquals( 10, $providerPriv->priority );
@@ -166,7 +209,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testBasics() {
-		$provider = new CookieSessionProvider( [ 'priority' => 10 ] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[ 'priority' => 10 ]
+		);
 
 		$this->assertTrue( $provider->persistsSessionId() );
 		$this->assertTrue( $provider->canChangeUser() );
@@ -184,26 +231,49 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'sessionprovider-nocookies', $msg->getKey() );
 	}
 
-	public function testProvideSessionInfo() {
+	/**
+	 * @dataProvider provideUseSessionCookieJwt
+	 */
+	public function testProvideSessionInfo( bool $useSessionCookieJwt ) {
+		$startTime = 1_000_000;
+		$jwtExpiry = $this->getConfig()->get( MainConfigNames::SessionCookieJwtExpiration );
+		ConvertibleTimestamp::setFakeTime( $startTime );
+		$centralIdMap = &$this->mockCentralIdLookup();
+		$logger = new TestLogger( true );
+		$logger2 = new TestLogger( true, static function ( string $message ) {
+			if ( str_starts_with( $message, 'Session store:' ) ) {
+				return null;
+			}
+			return $message;
+		} );
 		$params = [
 			'priority' => 20,
 			'sessionName' => 'session',
 			'cookieOptions' => [ 'prefix' => 'x' ],
 		];
-		$provider = new CookieSessionProvider( $params );
-		$logger = new TestLogger( true );
-		$this->initProvider( $provider, $logger, $this->getConfig(), new SessionManager() );
+		$provider = new CookieSessionProvider(
+			new PlainJsonJwtCodec(),
+			$this->getMockUrlUtils( canonicalServer: 'http://example.org' ),
+			$params
+		);
+		$config = $this->getConfig();
+		$config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
+		$this->initProvider(
+			$provider, $logger, $config, $this->getServiceContainer()->getSessionManager()
+		);
+		$this->setLogger( 'session-sampled', $logger2 );
 
 		$user = static::getTestSysop()->getUser();
 		$id = $user->getId();
 		$name = $user->getName();
 		$token = $user->getToken( true );
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+		$centralIdMap = [ $user->getName() => 123 ];
 
 		// No data
 		$request = new FauxRequest();
 		$info = $provider->provideSessionInfo( $request );
-		$this->assertNull( $info );
+		$this->assertNull( $info?->__toString() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
 
@@ -211,13 +281,15 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request = new FauxRequest();
 		$request->setCookies( [
 			'session' => $sessionId,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
 		$this->assertSame( $sessionId, $info->getId() );
 		$this->assertNotNull( $info->getUserInfo() );
 		$this->assertSame( 0, $info->getUserInfo()->getId() );
+		// With JWTs enabled, the missing JWT cookie should force a refresh
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertNull( $info->getUserInfo()->getName() );
 		$this->assertFalse( $info->forceHTTPS() );
 		$this->assertSame( [
@@ -233,7 +305,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request->setCookies( [
 			'xUserID' => $id,
 			'xToken' => $token,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
@@ -241,6 +313,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $info->getUserInfo() );
 		$this->assertSame( $id, $info->getUserInfo()->getId() );
 		$this->assertSame( $name, $info->getUserInfo()->getName() );
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertFalse( $info->forceHTTPS() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
@@ -251,7 +324,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'session' => $sessionId,
 			'xUserID' => $id,
 			'xToken' => $token,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
@@ -259,6 +332,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $info->getUserInfo() );
 		$this->assertSame( $id, $info->getUserInfo()->getId() );
 		$this->assertSame( $name, $info->getUserInfo()->getName() );
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertFalse( $info->forceHTTPS() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
@@ -269,9 +343,9 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'session' => $sessionId,
 			'xUserID' => $id,
 			'xToken' => 'BADTOKEN',
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
-		$this->assertNull( $info );
+		$this->assertNull( $info?->__toString() );
 		$this->assertSame( [
 			[
 				LogLevel::WARNING,
@@ -285,7 +359,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request->setCookies( [
 			'session' => $sessionId,
 			'xUserID' => $id,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
@@ -294,6 +368,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $info->getUserInfo()->isVerified() );
 		$this->assertSame( $id, $info->getUserInfo()->getId() );
 		$this->assertSame( $name, $info->getUserInfo()->getName() );
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertFalse( $info->forceHTTPS() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
@@ -301,9 +376,9 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request = new FauxRequest();
 		$request->setCookies( [
 			'xUserID' => $id,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
-		$this->assertNull( $info );
+		$this->assertNull( $info?->__toString() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
 
@@ -314,7 +389,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'xUserID' => $id,
 			'xToken' => $token,
 			'forceHTTPS' => true,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
@@ -322,6 +397,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $info->getUserInfo() );
 		$this->assertSame( $id, $info->getUserInfo()->getId() );
 		$this->assertSame( $name, $info->getUserInfo()->getName() );
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertTrue( $info->forceHTTPS() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
@@ -331,9 +407,9 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request->setCookies( [
 			'session' => $sessionId,
 			'xUserID' => '-1',
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
-		$this->assertNull( $info );
+		$this->assertNull( $info?->__toString() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
 
@@ -343,7 +419,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'session' => $sessionId,
 			'xUserID' => $id,
 			'xUserName' => $name,
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
 		$this->assertNotNull( $info );
 		$this->assertSame( $params['priority'], $info->getPriority() );
@@ -352,6 +428,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $info->getUserInfo()->isVerified() );
 		$this->assertSame( $id, $info->getUserInfo()->getId() );
 		$this->assertSame( $name, $info->getUserInfo()->getName() );
+		$this->assertSame( $useSessionCookieJwt, $info->needsRefresh() );
 		$this->assertFalse( $info->forceHTTPS() );
 		$this->assertSame( [], $logger->getBuffer() );
 		$logger->clearBuffer();
@@ -362,9 +439,9 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'session' => $sessionId,
 			'xUserID' => $id,
 			'xUserName' => 'Wrong',
-		], '' );
+		], prefix: '' );
 		$info = $provider->provideSessionInfo( $request );
-		$this->assertNull( $info );
+		$this->assertNull( $info?->__toString() );
 		$this->assertSame( [
 			[
 				LogLevel::WARNING,
@@ -372,28 +449,239 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			],
 		], $logger->getBuffer() );
 		$logger->clearBuffer();
+
+		if ( $useSessionCookieJwt ) {
+			$codec = new PlainJsonJwtCodec();
+			$defaultClaims = [
+				'jti' => 'random123',
+				'iss' => 'http://example.org',
+				'sxp' => $startTime + $jwtExpiry,
+				'sub' => 'mw:mock::123',
+			];
+
+			// User with mismatching central ID
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( [ 'sub' => 'mw:mock::456' ] + $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			// avoid printing a hundred-line diff when this assertion fails
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [ [ LogLevel::INFO, 'JWT validation failed: JWT error: wrong user ID' ] ],
+				$logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// User with mismatching issuer
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( [ 'iss' => 'http://evil.com' ] + $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [ [ LogLevel::INFO, 'JWT validation failed: JWT error: wrong issuer' ] ],
+				$logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// Anon JWT for non-anon user
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( [ 'sub' => 'mw:' . SessionManager::JWT_SUB_ANON ] + $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [ [ LogLevel::INFO, 'JWT validation failed: JWT error: wrong subject' ] ],
+				$logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// User with valid JWT
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNotNull( $info );
+			$this->assertSame( $sessionId, $info->getId() );
+			$this->assertNotNull( $info->getUserInfo() );
+			$this->assertFalse( $info->getUserInfo()->isVerified() );
+			$this->assertSame( $id, $info->getUserInfo()->getId() );
+			$this->assertSame( $name, $info->getUserInfo()->getName() );
+			$this->assertFalse( $info->needsRefresh() );
+			$this->assertFalse( $info->forceHTTPS() );
+			$this->assertSame( [], $logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// User with JWT only
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'sessionJwt' => $codec->create( $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [], $logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// Anon user, non-anon JWT
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'sessionJwt' => $codec->create( $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [
+				[ LogLevel::DEBUG, 'Session "{session}" requested without UserID cookie' ],
+				[ LogLevel::INFO, 'JWT validation failed: JWT error: wrong subject' ],
+			], $logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// Anon user, anon JWT
+			// Note that we don't actually set JWT cookies for anon users. But it's conceptually
+			// possible to have a valid JWT describing an anonymous user, so let's cover that scenario.
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'sessionJwt' => $codec->create( [ 'sub' => 'mw:' . SessionManager::JWT_SUB_ANON ] + $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNotNull( $info );
+			$this->assertSame( $sessionId, $info->getId() );
+			$this->assertNotNull( $info->getUserInfo() );
+			$this->assertTrue( $info->getUserInfo()->isAnon() );
+			$this->assertSame( 0, $info->getUserInfo()->getId() );
+			$this->assertNull( $info->getUserInfo()->getName() );
+			$this->assertFalse( $info->needsRefresh() );
+			$this->assertFalse( $info->forceHTTPS() );
+			$this->assertFalse( $info->forceHTTPS() );
+			$this->assertSame( [ [ LogLevel::DEBUG, 'Session "{session}" requested without UserID cookie' ] ],
+				$logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// (soft-)expired JWT
+			ConvertibleTimestamp::setFakeTime( $startTime + $jwtExpiry + ExpirationAwareness::TTL_MINUTE + 1 );
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNotNull( $info );
+			$this->assertSame( $sessionId, $info->getId() );
+			$this->assertNotNull( $info->getUserInfo() );
+			$this->assertFalse( $info->getUserInfo()->isVerified() );
+			$this->assertSame( $id, $info->getUserInfo()->getId() );
+			$this->assertSame( $name, $info->getUserInfo()->getName() );
+			$this->assertTrue( $info->needsRefresh() );
+			$this->assertSame( [], $logger->getBuffer() );
+			$logger->clearBuffer();
+			$this->assertSame( [ [ LogLevel::WARNING, 'Soft-expired JWT cookie' ] ], $logger2->getBuffer() );
+			$logger2->clearBuffer();
+
+			// near-expired JWT
+			ConvertibleTimestamp::setFakeTime( $startTime + $jwtExpiry - 1 );
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( $defaultClaims ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNotNull( $info );
+			$this->assertSame( $sessionId, $info->getId() );
+			$this->assertNotNull( $info->getUserInfo() );
+			$this->assertFalse( $info->getUserInfo()->isVerified() );
+			$this->assertSame( $id, $info->getUserInfo()->getId() );
+			$this->assertSame( $name, $info->getUserInfo()->getName() );
+			$this->assertTrue( $info->needsRefresh() );
+			$this->assertSame( [], $logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// JWT with valid hard-expiry
+			ConvertibleTimestamp::setFakeTime( $startTime );
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( $defaultClaims + [
+					'exp' => $startTime + $jwtExpiry + ExpirationAwareness::TTL_MINUTE,
+				] ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNotNull( $info );
+			$this->assertSame( $sessionId, $info->getId() );
+			$this->assertNotNull( $info->getUserInfo() );
+			$this->assertFalse( $info->getUserInfo()->isVerified() );
+			$this->assertSame( $id, $info->getUserInfo()->getId() );
+			$this->assertSame( $name, $info->getUserInfo()->getName() );
+			$this->assertFalse( $info->needsRefresh() );
+			$this->assertFalse( $info->forceHTTPS() );
+			$this->assertSame( [], $logger->getBuffer() );
+			$logger->clearBuffer();
+
+			// JWT with expired hard-expiry
+			ConvertibleTimestamp::setFakeTime( $startTime + $jwtExpiry + ExpirationAwareness::TTL_MINUTE + 1 );
+			$request = new FauxRequest();
+			$request->setCookies( [
+				'session' => $sessionId,
+				'xUserID' => $id,
+				'sessionJwt' => $codec->create( $defaultClaims + [
+					'exp' => $startTime + $jwtExpiry + ExpirationAwareness::TTL_MINUTE,
+				] ),
+			], prefix: '' );
+			$info = $provider->provideSessionInfo( $request );
+			$this->assertNull( $info?->__toString() );
+			$this->assertSame( [ [ LogLevel::INFO, 'JWT validation failed: JWT error: hard-expired' ] ], $logger->getBuffer() );
+			$logger->clearBuffer();
+		}
 	}
 
-	public function testGetVaryCookies() {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'MyCookiePrefix' ],
-		] );
-		$this->assertArrayEquals( [
+	/**
+	 * @dataProvider provideUseSessionCookieJwt
+	 */
+	public function testGetVaryCookies( bool $useSessionCookieJwt ) {
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'MyCookiePrefix' ],
+			]
+		);
+		$config = $this->getConfig();
+		$config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
+		$this->initProvider( $provider, null, $config );
+
+		$expectedCookies = [
 			'MyCookiePrefixToken',
 			'MyCookiePrefixLoggedOut',
 			'MySessionName',
 			'forceHTTPS',
-		], $provider->getVaryCookies() );
+		];
+		if ( $useSessionCookieJwt ) {
+			$expectedCookies[] = 'sessionJwt';
+		}
+		$this->assertArrayEquals( $expectedCookies, $provider->getVaryCookies() );
 	}
 
 	public function testSuggestLoginUsername() {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
 		$this->initProvider(
 			$provider, null, $this->getConfig(), null, null, $this->getServiceContainer()->getUserNameUtils()
 		);
@@ -403,21 +691,37 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 		$request->setCookies( [
 			'xUserName' => 'Example',
-		], '' );
+		], prefix: '' );
 		$this->assertEquals( 'Example', $provider->suggestLoginUsername( $request ) );
 	}
 
-	/** @dataProvider provideForceHTTPS */
-	public function testPersistSession( $forceHTTPS ) {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+	/** @dataProvider providePersistSession */
+	public function testPersistSession( bool $forceHTTPS, bool $useSessionCookieJwt ) {
+		$startTime = 1_000_000;
+		$jwtExpiry = $this->getConfig()->get( MainConfigNames::SessionCookieJwtExpiration );
+		ConvertibleTimestamp::setFakeTime( $startTime );
+		$centralIdMap = &$this->mockCentralIdLookup();
+		$hookContainer = $this->createHookContainer();
+		$provider = new CookieSessionProvider(
+			new PlainJsonJwtCodec(),
+			$this->getMockUrlUtils( canonicalServer: 'http://example.org' ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
 		$config = $this->getConfig();
 		$config->set( MainConfigNames::ForceHTTPS, $forceHTTPS );
-		$hookContainer = $this->createHookContainer();
+		$config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
 		$this->initProvider( $provider, new TestLogger(), $config, SessionManager::singleton(), $hookContainer );
+
+		$jwtDefaults = [
+			'iss' => 'http://example.org',
+			'iat' => $startTime,
+			'sxp' => $startTime + $jwtExpiry,
+			'exp' => null,
+		];
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 		$store = new TestBagOStuff();
@@ -436,7 +740,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 				'persisted' => true,
 				'idIsSafe' => true,
 			] ),
-			$store,
+			$this->getServiceContainer()->getSessionStore(),
 			new NullLogger(),
 			$hookContainer,
 			10
@@ -450,17 +754,24 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request = new FauxRequest();
 		$provider->persistSession( $backend, $request );
 		$this->assertSame( $sessionId, $request->response()->getCookie( 'MySessionName' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'xUserID' ) );
-		$this->assertSame( null, $request->response()->getCookie( 'xUserName' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'xToken' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'xUserID' ) );
+		$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'xUserName' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'xToken' ) );
 		if ( $forceHTTPS ) {
-			$this->assertSame( null, $request->response()->getCookie( 'forceHTTPS' ) );
+			$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'forceHTTPS' ) );
 		} else {
-			$this->assertSame( '', $request->response()->getCookie( 'forceHTTPS' ) );
+			$this->assertSame( self::DELETED, $request->response()->getCookie( 'forceHTTPS' ) );
 		}
+		if ( $useSessionCookieJwt ) {
+			$expectedJwtCookie = self::DELETED;
+		} else {
+			$expectedJwtCookie = self::UNCHANGED;
+		}
+		$this->assertJwtMatches( $expectedJwtCookie, $request->response()->getCookie( 'sessionJwt' ) );
 		$this->assertSame( [], $backend->getData() );
 
 		// Logged-in user, no remember
+		$centralIdMap = [ $user->getName() => 123 ];
 		$backend->setUser( $user );
 		$backend->setRememberUser( false );
 		$backend->setForceHTTPS( false );
@@ -469,15 +780,22 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $sessionId, $request->response()->getCookie( 'MySessionName' ) );
 		$this->assertSame( (string)$user->getId(), $request->response()->getCookie( 'xUserID' ) );
 		$this->assertSame( $user->getName(), $request->response()->getCookie( 'xUserName' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'xToken' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'xToken' ) );
 		if ( $forceHTTPS ) {
-			$this->assertSame( null, $request->response()->getCookie( 'forceHTTPS' ) );
+			$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'forceHTTPS' ) );
 		} else {
-			$this->assertSame( '', $request->response()->getCookie( 'forceHTTPS' ) );
+			$this->assertSame( self::DELETED, $request->response()->getCookie( 'forceHTTPS' ) );
 		}
+		if ( $useSessionCookieJwt ) {
+			$expectedJwtCookie = [ 'sub' => 'mw:mock::123' ] + $jwtDefaults;
+		} else {
+			$expectedJwtCookie = self::UNCHANGED;
+		}
+		$this->assertJwtMatches( $expectedJwtCookie, $request->response()->getCookie( 'sessionJwt' ) );
 		$this->assertSame( [], $backend->getData() );
 
 		// Logged-in user, remember
+		$centralIdMap = [ $user->getName() => 123 ];
 		$backend->setUser( $user );
 		$backend->setRememberUser( true );
 		$backend->setForceHTTPS( true );
@@ -488,39 +806,93 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $user->getName(), $request->response()->getCookie( 'xUserName' ) );
 		$this->assertSame( $user->getToken(), $request->response()->getCookie( 'xToken' ) );
 		if ( $forceHTTPS ) {
-			$this->assertSame( null, $request->response()->getCookie( 'forceHTTPS' ) );
+			$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'forceHTTPS' ) );
 		} else {
 			$this->assertSame( 'true', $request->response()->getCookie( 'forceHTTPS' ) );
 		}
+		if ( $useSessionCookieJwt ) {
+			$expectedJwtCookie = [ 'sub' => 'mw:mock::123' ] + $jwtDefaults;
+		} else {
+			$expectedJwtCookie = self::UNCHANGED;
+		}
+		$this->assertJwtMatches( $expectedJwtCookie, $request->response()->getCookie( 'sessionJwt' ) );
 		$this->assertSame( [], $backend->getData() );
+
+		// Multiple persists should not result in duplicated Set-Cookie headers
+		$cookies = [];
+		$expectedCookies = [ 'xUserID', 'xUserName', 'xToken' ];
+		WebResponse::resetCookieCache();
+		if ( $useSessionCookieJwt ) {
+			$expectedCookies[] = 'sessionJwt';
+		}
+		$centralIdMap = [ $user->getName() => 123 ];
+		$backend->setUser( $user );
+		$backend->setRememberUser( true );
+		$backend->setForceHTTPS( true );
+		$response = $this->createPartialMock( WebResponse::class, [ 'actuallySetCookie' ] );
+		$response->method( 'actuallySetCookie' )->willReturnCallback(
+			function ( string $func, string $prefixedName, string $value, array $setOptions ) use ( &$cookies ): void {
+				if ( array_key_exists( $prefixedName, $cookies ) ) {
+					$this->fail( 'Cookie set twice: ' . $prefixedName );
+				}
+				$cookies[$prefixedName] = true;
+			}
+		);
+		$request = $this->createPartialMock( WebRequest::class, [ 'response' ] );
+		$request->method( 'response' )->willReturn( $response );
+		$provider->persistSession( $backend, $request );
+		$provider->persistSession( $backend, $request );
+		$provider->persistSession( $backend, $request );
+		$this->assertArrayContains( $expectedCookies, array_keys( $cookies ) );
+	}
+
+	public static function providePersistSession() {
+		return [
+			'default' => [ false, false ],
+			'force HTTPS' => [ true, false ],
+			'use session cookie JWT' => [ false, true ],
+		];
 	}
 
 	/**
 	 * @dataProvider provideCookieData
-	 * @param bool $secure
-	 * @param bool $remember
-	 * @param bool $forceHTTPS
 	 */
-	public function testCookieData( $secure, $remember, $forceHTTPS ) {
+	public function testCookieData( bool $secure, bool $remember, bool $forceHTTPS, bool $useSessionCookieJwt ) {
+		$startTime = 1_000_000;
+		$sessionStoreExpiry = $this->getConfig()->get( MainConfigNames::ObjectCacheSessionExpiry );
+		$normalCookieExpiry = $this->getConfig()->get( MainConfigNames::CookieExpiration );
+		$extendedCookieExpiry = $this->getConfig()->get( MainConfigNames::ExtendedLoginCookieExpiration );
+		$extendedCookieExpiry = (int)( $extendedCookieExpiry ?? 0 );
+		$jwtExpiry = $this->getConfig()->get( MainConfigNames::SessionCookieJwtExpiration );
+		ConvertibleTimestamp::setFakeTime( $startTime );
 		$this->overrideConfigValues( [
 			MainConfigNames::SecureLogin => false,
 			MainConfigNames::ForceHTTPS => $forceHTTPS,
 		] );
+		// match WebRespose::clearCookie()
+		$deletedTime = $startTime - ExpirationAwareness::TTL_YEAR;
+		$centralIdMap = &$this->mockCentralIdLookup();
 
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+		$provider = new CookieSessionProvider(
+			new PlainJsonJwtCodec(),
+			$this->getMockUrlUtils( canonicalServer: 'http://example.org' ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
 		$config = $this->getConfig();
 		$config->set( MainConfigNames::CookieSecure, $secure );
 		$config->set( MainConfigNames::ForceHTTPS, $forceHTTPS );
+		$config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
 		$hookContainer = $this->createHookContainer();
 		$this->initProvider( $provider, new TestLogger(), $config, SessionManager::singleton(), $hookContainer );
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 		$user = static::getTestSysop()->getUser();
 		$this->assertSame( $user->requiresHTTPS(), $forceHTTPS );
+		$centralIdMap = [ $user->getName() => 123 ];
 
 		$backend = new SessionBackend(
 			new SessionId( $sessionId ),
@@ -530,21 +902,20 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 				'persisted' => true,
 				'idIsSafe' => true,
 			] ),
-			new TestBagOStuff(),
+			$this->getServiceContainer()->getSessionStore(),
 			new NullLogger(),
 			$hookContainer,
-			10
+			$sessionStoreExpiry
 		);
 		TestingAccessWrapper::newFromObject( $backend )->usePhpSessionHandling = false;
 		$backend->setUser( $user );
 		$backend->setRememberUser( $remember );
 		$backend->setForceHTTPS( $secure );
 		$request = new FauxRequest();
-		$time = time();
 		$provider->persistSession( $backend, $request );
 
 		$defaults = [
-			'expire' => (int)100,
+			'expire' => $startTime + $normalCookieExpiry,
 			'path' => $config->get( MainConfigNames::CookiePath ),
 			'domain' => $config->get( MainConfigNames::CookieDomain ),
 			'secure' => $secure || $forceHTTPS,
@@ -552,9 +923,6 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			'raw' => false,
 		];
 
-		$normalExpiry = $config->get( MainConfigNames::CookieExpiration );
-		$extendedExpiry = $config->get( MainConfigNames::ExtendedLoginCookieExpiration );
-		$extendedExpiry = (int)( $extendedExpiry ?? 0 );
 		$expect = [
 			'MySessionName' => [
 				'value' => (string)$sessionId,
@@ -562,31 +930,37 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 			] + $defaults,
 			'xUserID' => [
 				'value' => (string)$user->getId(),
-				'expire' => $remember ? $extendedExpiry : $normalExpiry,
+				'expire' => $startTime + ( $remember ? $extendedCookieExpiry : $normalCookieExpiry ),
 			] + $defaults,
 			'xUserName' => [
 				'value' => $user->getName(),
-				'expire' => $remember ? $extendedExpiry : $normalExpiry
+				'expire' => $startTime + ( $remember ? $extendedCookieExpiry : $normalCookieExpiry )
 			] + $defaults,
 			'xToken' => [
 				'value' => $remember ? $user->getToken() : '',
-				'expire' => $remember ? $extendedExpiry : -31536000,
+				'expire' => $remember ? $startTime + $extendedCookieExpiry : $deletedTime,
 			] + $defaults
 		];
 		if ( !$forceHTTPS ) {
 			$expect['forceHTTPS'] = [
 				'value' => $secure ? 'true' : '',
 				'secure' => false,
-				'expire' => $secure ? ( $remember ? $defaults['expire'] : 0 ) : -31536000,
+				'expire' => $secure ? ( $remember ? $defaults['expire'] : 0 ) : $deletedTime,
 			] + $defaults;
 		}
 		foreach ( $expect as $key => $value ) {
 			$actual = $request->response()->getCookieData( $key );
-			if ( $actual && $actual['expire'] > 0 ) {
-				// Round expiry so we don't randomly fail if the seconds ticked during the test.
-				$actual['expire'] = round( $actual['expire'] - $time, -2 );
-			}
 			$this->assertEquals( $value, $actual, "Cookie $key" );
+		}
+		if ( !$useSessionCookieJwt ) {
+			$this->assertNull( $request->response()->getCookieData( 'sessionJwt' ) );
+		} else {
+			$cookieData = $request->response()->getCookieData( 'sessionJwt' );
+			// no need to repeat here the check from testPersistSession()
+			unset( $cookieData['value'] );
+			$this->assertSame( [
+				'expire' => $startTime + $jwtExpiry,
+			] + $defaults, $cookieData );
 		}
 	}
 
@@ -594,7 +968,8 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		return ArrayUtils::cartesianProduct(
 			[ false, true ], // $secure
 			[ false, true ], // $remember
-			[ false, true ] // $forceHTTPS
+			[ false, true ], // $forceHTTPS
+			[ false, true ], // $useSessionCookieJwt
 		);
 	}
 
@@ -613,33 +988,50 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		return $sentRequest;
 	}
 
-	public function testUnpersistSession() {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+	/**
+	 * @dataProvider provideUseSessionCookieJwt
+	 */
+	public function testUnpersistSession( bool $useSessionCookieJwt ) {
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
+		$config = $this->getConfig();
+		$config->set( MainConfigNames::UseSessionCookieJwt, $useSessionCookieJwt );
 		$this->initProvider(
-			$provider, null, $this->getConfig(), SessionManager::singleton(), $this->createHookContainer()
+			$provider, null, $config, SessionManager::singleton(), $this->createHookContainer()
 		);
 
 		$request = new FauxRequest();
 		$provider->unpersistSession( $request );
-		$this->assertSame( '', $request->response()->getCookie( 'MySessionName' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'xUserID' ) );
-		$this->assertSame( null, $request->response()->getCookie( 'xUserName' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'xToken' ) );
-		$this->assertSame( '', $request->response()->getCookie( 'forceHTTPS' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'MySessionName' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'xUserID' ) );
+		$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'xUserName' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'xToken' ) );
+		$this->assertSame( self::DELETED, $request->response()->getCookie( 'forceHTTPS' ) );
+		$this->assertSame(
+			$useSessionCookieJwt ? self::DELETED : self::UNCHANGED,
+			$request->response()->getCookie( 'sessionJwt' )
+		);
 
 		$provider->unpersistSession( $this->getSentRequest() );
 	}
 
 	public function testSetLoggedOutCookie() {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$this->initProvider(
 			$provider, null, $this->getConfig(), SessionManager::singleton(), $this->createHookContainer()
@@ -656,23 +1048,27 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		// Too old
 		$request = new FauxRequest();
 		$providerPriv->setLoggedOutCookie( $t2, $request );
-		$this->assertSame( null, $request->response()->getCookie( 'xLoggedOut' ) );
+		$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'xLoggedOut' ) );
 
 		// Don't reset if it's already set
 		$request = new FauxRequest();
 		$request->setCookies( [
 			'xLoggedOut' => $t1,
-		], '' );
+		], prefix: '' );
 		$providerPriv->setLoggedOutCookie( $t1, $request );
-		$this->assertSame( null, $request->response()->getCookie( 'xLoggedOut' ) );
+		$this->assertSame( self::UNCHANGED, $request->response()->getCookie( 'xLoggedOut' ) );
 	}
 
 	public function testGetCookie() {
-		$provider = new CookieSessionProvider( [
-			'priority' => 1,
-			'sessionName' => 'MySessionName',
-			'cookieOptions' => [ 'prefix' => 'x' ],
-		] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[
+				'priority' => 1,
+				'sessionName' => 'MySessionName',
+				'cookieOptions' => [ 'prefix' => 'x' ],
+			]
+		);
 		$this->initProvider(
 			$provider, null, $this->getConfig(), SessionManager::singleton(), $this->createHookContainer()
 		);
@@ -682,7 +1078,7 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$request->setCookies( [
 			'xFoo' => 'foo!',
 			'xBar' => 'deleted',
-		], '' );
+		], prefix: '' );
 		$this->assertSame( 'foo!', $provider->getCookie( $request, 'Foo', 'x' ) );
 		$this->assertNull( $provider->getCookie( $request, 'Bar', 'x' ) );
 		$this->assertNull( $provider->getCookie( $request, 'Baz', 'x' ) );
@@ -690,7 +1086,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetRememberUserDuration() {
 		$config = $this->getConfig();
-		$provider = new CookieSessionProvider( [ 'priority' => 10 ] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[ 'priority' => 10 ]
+		);
 		$this->initProvider( $provider, null, $config, SessionManager::singleton(), $this->createHookContainer() );
 
 		$this->assertSame( 200, $provider->getRememberUserDuration() );
@@ -706,9 +1106,11 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetLoginCookieExpiration() {
 		$config = $this->getConfig();
-		$provider = new CookieSessionProvider( [
-			'priority' => 10
-		] );
+		$provider = new CookieSessionProvider(
+			$this->createNoOpMock( JwtCodec::class ),
+			$this->createNoOpMock( UrlUtils::class ),
+			[ 'priority' => 10 ]
+		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$this->initProvider( $provider, null, $config, SessionManager::singleton(), $this->createHookContainer() );
 
@@ -727,5 +1129,55 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 100, $providerPriv->getLoginCookieExpiration( 'Token', false ) );
 		$this->assertSame( 100, $providerPriv->getLoginCookieExpiration( 'User', false ) );
+	}
+
+	private function getMockUrlUtils( string $canonicalServer ): UrlUtils {
+		$urlUtils = $this->createNoOpMock( UrlUtils::class, [ 'getCanonicalServer' ] );
+		$urlUtils->method( 'getCanonicalServer' )->willReturn( $canonicalServer );
+		return $urlUtils;
+	}
+
+	/**
+	 * @param string|array|null $expectedCookie self::DELETED, self::UNCHANGED or a set of claims to check
+	 * @param string|null $actualCookie
+	 */
+	private function assertJwtMatches( $expectedCookie, ?string $actualCookie ): void {
+		if ( $expectedCookie === self::UNCHANGED
+			|| $expectedCookie === self::DELETED
+		) {
+			$this->assertSame( $expectedCookie, $actualCookie );
+		} else {
+			$this->assertNotNull( $actualCookie );
+			$claims = json_decode( $actualCookie, true, 512, JSON_THROW_ON_ERROR );
+			$this->assertIsArray( $claims );
+			foreach ( $expectedCookie as $expectedClaim => $expectedValue ) {
+				if ( $expectedValue === null ) {
+					$this->assertArrayNotHasKey( $expectedClaim, $claims );
+				} else {
+					$this->assertArrayHasKey( $expectedClaim, $claims );
+					$this->assertSame( $expectedValue, $claims[$expectedClaim] );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create a CentralIdLookup with mocked lookupOwnedUserNames / getScope / getProviderId methods.
+	 * @return array A reference to the username => ID map.
+	 */
+	private function &mockCentralIdLookup(): array {
+		$centralIdMap = [];
+		// the class is abstract but the mocked methods aren't and that apparently breaks createNoOpAbstractMock
+		$lookup = $this->createNoOpMock( CentralIdLookup::class,
+			[ 'lookupOwnedUserNames', 'getScope', 'getProviderId' ] );
+		$lookup->method( 'lookupOwnedUserNames' )->willReturnCallback(
+			static function ( $nameToId ) use ( &$centralIdMap ) {
+				return array_intersect_key( $centralIdMap, $nameToId );
+			}
+		);
+		$lookup->method( 'getScope' )->willReturn( 'mock:' );
+		$lookup->method( 'getProviderId' )->willReturn( 'mock' );
+		$this->setService( 'CentralIdLookup', $lookup );
+		return $centralIdMap;
 	}
 }

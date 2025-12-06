@@ -60,6 +60,7 @@ if ( OO.ui.isMobile() ) {
 		},
 		{
 			name: 'editMode',
+			excludeFromTargetWidget: true,
 			type: 'list',
 			icon: 'edit',
 			title: OO.ui.deferMsg( 'visualeditor-mweditmode-tooltip' ),
@@ -144,8 +145,14 @@ CommentTarget.prototype.getSurfaceConfig = function ( config ) {
 	}, config ) );
 };
 
-CommentTarget.prototype.editSource = function () {
+CommentTarget.prototype.switchToWikitextEditor = function () {
 	this.replyWidget.switch( 'source' );
+};
+
+// Deprecated alias
+CommentTarget.prototype.editSource = function () {
+	OO.ui.warnDeprecation( 'CommentTarget#editSource: Use #switchToWikitextEditor instead.' );
+	this.switchToWikitextEditor( ...arguments );
 };
 
 CommentTarget.prototype.switchToVisualEditor = function () {

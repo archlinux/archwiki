@@ -15,6 +15,9 @@ class DropdownInputWidget extends InputWidget {
 	 */
 	protected $options = [];
 
+	/** @var Widget */
+	protected $downIndicator;
+
 	/**
 	 * @param array $config Configuration options
 	 *      - array[] $config['options'] Array of menu options in the format
@@ -30,9 +33,10 @@ class DropdownInputWidget extends InputWidget {
 		);
 
 		// Initialization
+		$this->downIndicator = new IndicatorWidget( [ 'indicator' => 'down' ] );
 		$this->setOptions( $config['options'] ?? [] );
 		$this->addClasses( [ 'oo-ui-dropdownInputWidget', 'oo-ui-dropdownInputWidget-php' ] );
-		$this->input->addClasses( [ 'oo-ui-indicator-down' ] );
+		$this->appendContent( $this->downIndicator );
 	}
 
 	/** @inheritDoc */

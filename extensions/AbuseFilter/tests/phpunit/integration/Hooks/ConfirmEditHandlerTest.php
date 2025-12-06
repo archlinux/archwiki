@@ -7,9 +7,10 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\ConfirmEditHandler;
 use MediaWiki\Extension\ConfirmEdit\AbuseFilter\CaptchaConsequence;
+use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Status\Status;
-use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 
@@ -25,15 +26,25 @@ class ConfirmEditHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	protected function tearDown(): void {
-		Hooks::getInstance()->setForceShowCaptcha( false );
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'ConfirmEdit' ) ) {
+			Hooks::getInstance()->setForceShowCaptcha( false );
+		}
 		parent::tearDown();
 	}
 
 	public function testOnEditFilterMergedContent() {
+		$this->markTestSkipped( 'Can be unskipped after I71d9894a908469c5f4e191ce36406b9e1a8113b2' );
+		$this->overrideConfigValue(
+			'CaptchaTriggers',
+			[ 'edit' => [
+				'trigger' => true,
+				'class' => 'QuestyCaptcha',
+			] ]
+		);
+		$this->editPage( 'Test', 'Foo' );
 		$confirmEditHandler = new ConfirmEditHandler();
 		$status = Status::newGood();
-		$title = $this->createMock( Title::class );
-		$title->method( 'canExist' )->willReturn( true );
+		$title = $this->getServiceContainer()->getTitleFactory()->newFromText( 'Test' );
 		$context = RequestContext::getMain();
 		$context->setTitle( $title );
 		$confirmEditHandler->onEditFilterMergedContent(
@@ -46,10 +57,12 @@ class ConfirmEditHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertStatusGood( $status, 'The default is to not show a CAPTCHA' );
 
-		$simpleCaptcha = Hooks::getInstance();
+		$simpleCaptcha = Hooks::getInstance( CaptchaTriggers::EDIT );
 		$simpleCaptcha->setEditFilterMergedContentHandlerInvoked();
-		$simpleCaptcha->setAction( 'edit' );
-		$captchaConsequence = new CaptchaConsequence( $this->createMock( Parameters::class ) );
+		$simpleCaptcha->setAction( CaptchaTriggers::EDIT );
+		$parameters = $this->createMock( Parameters::class );
+		$parameters->method( 'getAction' )->willReturn( 'edit' );
+		$captchaConsequence = new CaptchaConsequence( $parameters );
 		$captchaConsequence->execute();
 		$confirmEditHandler->onEditFilterMergedContent(
 			$context,

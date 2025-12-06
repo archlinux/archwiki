@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -218,13 +204,14 @@ class WikiFilePage extends WikiPage {
 		/** @var LocalRepo $repo */
 		$repo = $file->getRepo();
 		$dbr = $repo->getReplicaDB();
-
 		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'page_title' => 'cl_to', 'page_namespace' => (string)NS_CATEGORY ] )
+			->select( [ 'page_title' => 'lt_title', 'page_namespace' => (string)NS_CATEGORY ] )
 			->from( 'page' )
 			->join( 'categorylinks', null, 'page_id = cl_from' )
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
 			->where( [ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey(), ] )
-			->caller( __METHOD__ )->fetchResultSet();
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		return $titleFactory->newTitleArrayFromResult( $res );
 	}

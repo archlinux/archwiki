@@ -12,12 +12,12 @@
 			"Patrik L.",
 			"Paucabot",
 			"Skurz0",
+			"Sma1997",
 			"Solde",
 			"Toniher",
 			"Vriullop",
 			"Woytecr",
-			"Xavier Dengra",
-			"Sma1997"
+			"Xavier Dengra"
 		]
 	},
 	"discussiontools": "Eines de discussió",
@@ -77,7 +77,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Heu}} cancel·lat la subscripció.",
 	"discussiontools-notification-added-topic-header": "Nou tema «<strong>$4</strong>» creat a <strong>$3</strong> per $2.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Un nou tema|$1 nous temes|100=Més de 100 temes nous}} a «<strong>$2</strong>».",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Mostra el tema",
 	"discussiontools-notification-removed-topic-body": "{{GENDER:|Podríeu}} no rebre més notificacions sobre {{PLURAL:$1|aquest tema|aquests temes}}.",
 	"discussiontools-notification-removed-topic-header": "El tema «<strong>$4</strong>» ha estat arxivat o eliminat de $3.",
@@ -89,7 +88,6 @@
 	"discussiontools-notification-removed-topic-disabled-body": "Podeu canviar-ho a [[Special:Preferences#mw-prefsection-echo-echosubscriptions|les vostres preferències]].",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 ha {{GENDER:$2|respost}} a «<strong>$4</strong>».",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Una nova resposta|$1 noves respostes|100=99+ noves respostes}} a «<strong>$3</strong>».",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Mostra el comentari",
 	"discussiontools-pageframe-latestcomment": "Darrer comentari: $1 per $2 sobre el tema $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Darrer comentari: $1 per $2",

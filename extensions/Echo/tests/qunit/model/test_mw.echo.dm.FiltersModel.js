@@ -3,27 +3,27 @@ QUnit.module( 'ext.echo.dm - FiltersModel' );
 QUnit.test.each( 'Constructing the model', {
 	'Empty config': {
 		config: {},
-		expected: {}
+		expected: {},
 	},
 	'Readstate: unread': {
 		config: {
-			readState: 'unread'
+			readState: 'unread',
 		},
 		expected: {
-			getReadState: 'unread'
-		}
+			getReadState: 'unread',
+		},
 	},
 	'Readstate: read': {
 		config: {
-			readState: 'read'
+			readState: 'read',
 		},
 		expected: {
-			getReadState: 'read'
-		}
-	}
+			getReadState: 'read',
+		},
+	},
 }, ( assert, data ) => {
 	const defaultValues = {
-		getReadState: 'all'
+		getReadState: 'all',
 	};
 	const expected = $.extend( true, {}, defaultValues, data.expected );
 
@@ -36,7 +36,7 @@ QUnit.test.each( 'Constructing the model', {
 			// Expected value
 			expected[ method ],
 			// Message
-			method
+			method,
 		);
 	}
 } );
@@ -47,28 +47,28 @@ QUnit.test( 'Changing filters', ( assert ) => {
 	assert.strictEqual(
 		model.getReadState(),
 		'all',
-		'Initial value: all'
+		'Initial value: all',
 	);
 
 	model.setReadState( 'unread' );
 	assert.strictEqual(
 		model.getReadState(),
 		'unread',
-		'Changing state (unread)'
+		'Changing state (unread)',
 	);
 
 	model.setReadState( 'read' );
 	assert.strictEqual(
 		model.getReadState(),
 		'read',
-		'Changing state (read)'
+		'Changing state (read)',
 	);
 
 	model.setReadState( 'foo' );
 	assert.strictEqual(
 		model.getReadState(),
 		'read',
-		'Ignoring invalid state (foo)'
+		'Ignoring invalid state (foo)',
 	);
 } );
 
@@ -95,6 +95,6 @@ QUnit.test( '.setReadState() events', ( assert ) => {
 		// Expected:
 		[ 'read', 'unread', 'all', 'unread' ],
 		// Message
-		'Update events emitted'
+		'Update events emitted',
 	);
 } );

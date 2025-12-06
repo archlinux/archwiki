@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\OutputTransform\Stages;
 
@@ -13,7 +14,7 @@ use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -49,10 +50,10 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 	) {
 		$this->setUserLang( $userlang );
 		$loc = $this->createStage();
-		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle( new PageBundle( $input ) );
+		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle( new HtmlPageBundle( $input ) );
 		$po->setLanguage( new Bcp47CodeValue( $pagelang ) );
 		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
-		$opts = [ 'isParsoidContent' => true ];
+		$opts = [];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
 		self::assertEquals( $expected, TestUtils::stripParsoidIds( $res ), $message );
@@ -69,10 +70,10 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 		$p = DOMCompat::querySelector( $doc, 'p' );
 		$p->appendChild( WTUtils::createInterfaceI18nFragment( $doc, $key, $params ) );
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
-			new PageBundle( ContentUtils::ppToXML( $doc ) ) );
+			new HtmlPageBundle( ContentUtils::ppToXML( $doc ) ) );
 		$po->setLanguage( new Bcp47CodeValue( 'en' ) );
 		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
-		$opts = [ 'isParsoidContent' => true ];
+		$opts = [];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
 		$this->assertEquals( $expected, TestUtils::stripParsoidIds( $res ), $message );
@@ -88,10 +89,10 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 		WTUtils::addInterfaceI18nAttribute( $a, 'title', $key, $params );
 
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
-			new PageBundle( ContentUtils::ppToXML( $doc ) ) );
+			new HtmlPageBundle( ContentUtils::ppToXML( $doc ) ) );
 		$po->setLanguage( new Bcp47CodeValue( 'fr' ) );
 		$po->setExtensionData( ParsoidParser::PARSOID_TITLE_KEY, 'Test_page' );
-		$opts = [ 'isParsoidContent' => true ];
+		$opts = [];
 		$transf = $loc->transform( $po, null, $opts );
 		$res = $transf->getContentHolderText();
 		$this->assertEquals( $expected, TestUtils::stripParsoidIds( $res ), $message );
@@ -145,8 +146,8 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'testparam',
-				[ new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, 'hello' ) ] ) ) ] ) ],
-				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testparam","params":{"0":{"text":{"key":"testparam","params":{"0":{"text":"hello","_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'>english english english hello</span></p>',
+				[ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new MessageValue( 'testparam', [ 'hello' ] ) ] ) ) ],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":[{"text":{"key":"testparam","params":[{"text":{"key":"testparam","params":["hello"]}}]}}]}}\'>english english english hello</span></p>',
 				'Span with nested message'
 			],
 			[
@@ -158,8 +159,8 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'testparam',
-				[ new MessageValue( 'testlink', [] ) ],
-				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testlink","params":[],"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'>english english <a href="/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a></span></p>',
+				[ new ScalarParam( ParamType::TEXT, new MessageValue( 'testlink', [] ) ) ],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testparam","params":[{"text":{"key":"testlink","params":[]}}]}}\'>english english <a href="/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a></span></p>',
 				'span with link in the parameter'
 			],
 			[
@@ -167,6 +168,18 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 				[],
 				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testpagename","params":[]}}\'>Test page</span></p>',
 				'{{PAGENAME}} should resolve'
+			],
+			[
+				'testblank',
+				[],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testblank","params":[]}}\'></span></p>',
+				'blank message should resolve'
+			],
+			[
+				'testdisabled',
+				[],
+				'<p><span typeof="mw:I18n" data-mw-i18n=\'{"/":{"lang":"x-user","key":"testdisabled","params":[]}}\'></span></p>',
+				'disabled message should resolve to empty'
 			]
 		];
 	}
@@ -199,9 +212,21 @@ class ParsoidLocalizationTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'testparam',
-				[ new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new ScalarParam( ParamType::TEXT, 'hello' ) ] ) ) ] ) ],
-				'<a typeof="mw:LocalizedAttrs" title="english english english hello" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testparam","params":{"0":{"key":"testparam","params":{"0":{"text":{"key":"testparam","params":{"0":{"text":"hello","_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"Wikimedia\\\\Message\\\\ScalarParam"},"_type_":"array"},"_type_":"Wikimedia\\\\Message\\\\MessageValue"},"_type_":"array"}}}\'></a>',
+				[ new ScalarParam( ParamType::TEXT, new MessageValue( 'testparam', [ new MessageValue( 'testparam', [ 'hello' ] ) ] ) ) ],
+				'<a typeof="mw:LocalizedAttrs" title="english english english hello" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testparam","params":[{"text":{"key":"testparam","params":[{"text":{"key":"testparam","params":["hello"]}}]}}]}}\'></a>',
 				'Attr with nested message'
+			],
+			[
+				'testblank',
+				[],
+				'<a typeof="mw:LocalizedAttrs" title="" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testblank","params":[]}}\'></a>',
+				'blank attribute should resolve'
+			],
+			[
+				'testdisabled',
+				[],
+				'<a typeof="mw:LocalizedAttrs" title="" data-mw-i18n=\'{"title":{"lang":"x-user","key":"testdisabled","params":[]}}\'></a>',
+				'disabled attribute should resolve to empty'
 			]
 		];
 	}

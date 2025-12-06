@@ -3,8 +3,6 @@
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use Exception;
-use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
-use MediaWiki\Extension\Scribunto\Scribunto;
 use MediaWiki\Extension\Scribunto\ScribuntoContent;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
@@ -16,6 +14,7 @@ use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\PPNode;
 use MediaWiki\Title\Title;
 use RuntimeException;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\ScopedCallback;
 
 abstract class LuaEngine extends ScribuntoEngineBase {
@@ -33,6 +32,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		'mw.text' => TextLibrary::class,
 		'mw.html' => HtmlLibrary::class,
 		'mw.hash' => HashLibrary::class,
+		'mw.svg' => SvgLibrary::class,
 	];
 
 	/**
@@ -71,31 +71,12 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @var array<string,array|class-string<LibraryBase>>
 	 */
 	protected $availableLibraries = [];
+	/**
+	 * @var int The amount of warnings that were added using mw.addWarning
+	 */
+	protected $addedScriptWarnings = 0;
 
 	private const MAX_EXPAND_CACHE_SIZE = 100;
-
-	/**
-	 * If luasandbox is installed and usable then use it,
-	 * otherwise
-	 *
-	 * @param array $options
-	 * @return LuaEngine
-	 */
-	public static function newAutodetectEngine( array $options ) {
-		$engineConf = MediaWikiServices::getInstance()->getMainConfig()->get( 'ScribuntoEngineConf' );
-		$engine = 'luastandalone';
-		try {
-			LuaSandboxInterpreter::checkLuaSandboxVersion();
-			$engine = 'luasandbox';
-		} catch ( LuaInterpreterNotFoundError | LuaInterpreterBadVersionError $e ) {
-			// pass
-		}
-
-		unset( $options['factory'] );
-
-		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
-		return Scribunto::newEngine( $options + $engineConf[$engine] );
-	}
 
 	/**
 	 * Create a new interpreter object
@@ -325,7 +306,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		try {
 			$log = $this->getInterpreter()->callFunction( $this->mw['getLogBuffer'] );
 			return $log[0];
-		} catch ( ScribuntoException $ex ) {
+		} catch ( ScribuntoException ) {
 			// Probably time expired, ignore it.
 			return '';
 		}
@@ -404,6 +385,11 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 	/** @inheritDoc */
 	public function getCodeEditorLanguage() {
+		return 'lua';
+	}
+
+	/** @inheritDoc */
+	public function getCodeMirrorLanguage() {
 		return 'lua';
 	}
 
@@ -514,26 +500,24 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Instantiate and register a library.
 	 * @param string $name
-	 * @param array|class-string<LibraryBase> $def
-	 * @param bool $loadDeferred
+	 * @param array|class-string<LibraryBase> $spec
+	 * @param bool $isDeferredLoad
 	 * @return array|null
 	 */
-	private function instantiatePHPLibrary( $name, $def, $loadDeferred ) {
-		$def = $this->availableLibraries[$name];
-		if ( is_string( $def ) ) {
-			/** @var LibraryBase $class */
-			$class = new $def( $this );
-		} else {
-			if ( !$loadDeferred && !empty( $def['deferLoad'] ) ) {
-				return null;
-			}
-			if ( isset( $def['class'] ) ) {
-				/** @var LibraryBase $class */
-				$class = new $def['class']( $this );
-			} else {
-				throw new RuntimeException( "No class for library \"$name\"" );
-			}
+	private function instantiatePHPLibrary( $name, $spec, $isDeferredLoad ) {
+		// If it's _not_ a deferred load, and that the library is to be loaded
+		// as deferred (i.e. when explicitly `require`d), do not load the library.
+		if ( !$isDeferredLoad && ( $spec['deferLoad'] ?? false ) ) {
+			return null;
 		}
+
+		/** @var LibraryBase $class */
+		$class = MediaWikiServices::getInstance()->getObjectFactory()
+			->createObject( $spec, [
+				'allowClassName' => true,
+				'extraArgs' => [ $this ],
+				'assertClass' => LibraryBase::class,
+			] );
 		return $class->register();
 	}
 
@@ -765,7 +749,6 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param array $args
 	 * @throws LuaError
 	 * @return array
-	 * @suppress PhanImpossibleCondition
 	 */
 	public function callParserFunction( $frameId, $function, $args ) {
 		$frame = $this->getFrameById( $frameId );
@@ -898,9 +881,10 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		$this->checkString( 'addWarning', [ $text ], 0 );
 
 		// Message localization has to happen on the Lua side
-		$this->getParser()->getOutput()->addWarningMsg(
-			'scribunto-lua-warning',
-			$text
+		$this->getParser()->getOutput()->addWarningMsgVal(
+			MessageValue::new( 'scribunto-lua-warning', [ $text ] ),
+			// T398390: specify deduplication key so multiple script warnings won't override each other
+			'scribunto-lua-warning-' . ++$this->addedScriptWarnings
 		);
 	}
 

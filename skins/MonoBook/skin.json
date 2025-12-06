@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"ValidSkinNames": {
 		"monobook": {
@@ -19,7 +19,6 @@
 			"args": [
 				{
 					"name": "monobook",
-					"supportsMwHeading": true,
 					"responsive": true,
 					"templateDirectory": "templates/",
 					"scripts": [

@@ -103,7 +103,6 @@ class MathLaTeXML extends MathMathML {
 
 	/**
 	 * Does the actual web request to convert TeX to MathML.
-	 * @return StatusValue
 	 */
 	protected function doRender(): StatusValue {
 		if ( trim( $this->getTex() ) === '' ) {

@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\Source;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
@@ -33,8 +34,7 @@ class Frame {
 	/** @var Params */
 	private $args;
 
-	/** @var string */
-	private $srcText;
+	private Source $source;
 
 	/** @var int */
 	private $depth;
@@ -43,17 +43,17 @@ class Frame {
 	 * @param Title $title
 	 * @param Env $env
 	 * @param KV[] $args
-	 * @param string $srcText
+	 * @param Source $source
 	 * @param ?Frame $parentFrame
 	 */
 	public function __construct(
-		Title $title, Env $env, array $args, string $srcText,
+		Title $title, Env $env, array $args, Source $source,
 		?Frame $parentFrame = null
 	) {
 		$this->title = $title;
 		$this->env = $env;
 		$this->args = new Params( $args );
-		$this->srcText = $srcText;
+		$this->source = $source;
 
 		if ( $parentFrame ) {
 			$this->parentFrame = $parentFrame;
@@ -76,26 +76,28 @@ class Frame {
 		return $this->args;
 	}
 
-	public function getSrcText(): string {
-		return $this->srcText;
+	// XXX: T405759: Frame should be decoupled from Source; try to avoid
+	// using this method.
+	public function getSource(): Source {
+		return $this->source;
 	}
 
 	/**
 	 * Create a new child frame.
 	 * @param Title $title
 	 * @param KV[] $args
-	 * @param string $srcText
+	 * @param string|Source $srcText
 	 * @return Frame
 	 */
-	public function newChild( Title $title, array $args, string $srcText ): Frame {
+	public function newChild( Title $title, array $args, string|Source $srcText ): Frame {
 		return new Frame( $title, $this->env, $args, $srcText, $this );
 	}
 
 	/**
 	 * Expand / convert a thunk (a chunk of tokens not yet fully expanded).
-	 * @param array<Token|string> $chunk
-	 * @param array $options
-	 * @return array<Token|string>
+	 * @param list<Token|string> $chunk
+	 * @param array{expandTemplates:bool,inTemplate:bool,attrExpansion?:bool,srcOffsets?:?SourceRange} $options
+	 * @return list<Token|string>
 	 */
 	public function expand( array $chunk, array $options ): array {
 		$this->env->log( 'debug', 'Frame.expand', $chunk );
@@ -167,7 +169,8 @@ class Frame {
 	/**
 	 * @param mixed $arg
 	 * @param SourceRange $srcOffsets
-	 * @return array
+	 *
+	 * @return list<Token|string>
 	 */
 	private function expandArg( $arg, SourceRange $srcOffsets ): array {
 		if ( is_string( $arg ) ) {

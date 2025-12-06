@@ -5,30 +5,18 @@ namespace MediaWiki\HTMLForm;
 /**
  * HTML form generation and submission handling, vertical-form style.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 
 /**
  * Compact stacked vertical format for forms.
  *
  * @stable to extend
+ * @deprecated since 1.45
  */
 class VFormHTMLForm extends HTMLForm {
 	/**
@@ -40,6 +28,13 @@ class VFormHTMLForm extends HTMLForm {
 	/** @inheritDoc */
 	protected $displayFormat = 'vform';
 
+	/** @inheritDoc */
+	public function __construct( $descriptor, IContextSource $context, $messagePrefix = '' ) {
+		wfDeprecated( __CLASS__, '1.45' );
+		parent::__construct( $descriptor, $context, $messagePrefix );
+	}
+
+	/** @inheritDoc */
 	public static function loadInputFromParameters( $fieldname, $descriptor,
 		?HTMLForm $parent = null
 	) {
@@ -48,6 +43,7 @@ class VFormHTMLForm extends HTMLForm {
 		return $field;
 	}
 
+	/** @inheritDoc */
 	public function getHTML( $submitResult ) {
 		$this->getOutput()->addModuleStyles( [
 			'mediawiki.ui',
@@ -66,11 +62,13 @@ class VFormHTMLForm extends HTMLForm {
 		return $field->getVForm( $value );
 	}
 
+	/** @inheritDoc */
 	protected function getFormAttributes() {
 		return [ 'class' => [ 'mw-htmlform', 'mw-ui-vform', 'mw-ui-container' ] ] +
 			parent::getFormAttributes();
 	}
 
+	/** @inheritDoc */
 	public function wrapForm( $html ) {
 		// Always discard $this->mWrapperLegend
 		return Html::rawElement( 'form', $this->getFormAttributes(), $html );

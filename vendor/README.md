@@ -19,14 +19,14 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 2.8.1 of composer via `composer --version`.
+1. Ensure you're using version 2.9.1 of composer via `composer --version`.
    Everyone using the same version means that diffs from the autoloader are
    minimal and so easier to validate and manually rebase. You can typically
-   do this by running `composer self-update 2.8.1` (possibly with sudo).
+   do this by running `composer self-update 2.9.1` (possibly with sudo).
    If you want to avoid running untrusted code, you can use Docker; for
    example, to run `composer update --no-dev` do:
    ```
-   docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD/.git:/src/.git:ro" -v "$PWD:/src" -w /src docker-registry.wikimedia.org/releng/composer-php74:7.4.33 update --no-dev
+   docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD/.git:/src/.git:ro" -v "$PWD:/src" -w /src docker-registry.wikimedia.org/releng/composer-php82:8.2.29 update --no-dev
    ```
 2. Edit the composer.json file to add/update the libraries you want to change.
    It is recommended that you use `composer require <package> <version>
@@ -34,8 +34,13 @@ Adding or updating libraries
    composer.json file.
 3. Run `composer update --no-dev` to download files and update the autoloader.
 4. Add all the new dependencies that got installed to composer.json as well,
-   so that everything has their version pinned. (You can look at the changes
-   in composer.lock or composer/installed.json to see what they are.)
+   so that everything has their version pinned. You can look at the changes
+   in composer.lock or composer/installed.json to see what they are, e.g. with
+   ```
+   git diff \
+       <(git show @{u}:composer/installed.json | jq --raw-output '.packages[] | "\(.name): \(.version)"') \
+       <(jq --raw-output '.packages[] | "\(.name): \(.version)"' composer/installed.json)
+   ```
 5. In some cases, the libraries might include not needed files (e.g. test files,
    project files, etc). If you cannot exclude them from library's archive
    (e.g. by `export-ignore`ing unwanted files in library's `.gitattributes`

@@ -20,6 +20,7 @@
 			"Linforest",
 			"LittlePaw365",
 			"Liuxinyu970226",
+			"Peterxy12",
 			"PhiLiP",
 			"Shizhao",
 			"SolidBlock",
@@ -33,8 +34,7 @@
 			"Yfdyh000",
 			"乌拉跨氪",
 			"沈澄心",
-			"铁桶",
-			"Peterxy12"
+			"铁桶"
 		]
 	},
 	"preferences": "参数设置",
@@ -227,6 +227,8 @@
 	"rcfilters-watchlist-preference-label": "使用不含JavaScript的界面",
 	"rcfilters-watchlist-preference-help": "加载不含过滤搜索或高亮功能的[[{{#special:Watchlist}}|监视列表]]。",
 	"prefs-changeswatchlist": "展示的更改类型",
+	"tog-watchstar-expiry": "监视列表中手动添加页面的默认时间段：",
+	"tog-watch-expiry": "默认时间段：",
 	"tog-watchlisthideminor": "在监视列表中隐藏小编辑",
 	"tog-watchlisthidebots": "在监视列表中隐藏机器人编辑",
 	"tog-watchlisthideown": "在监视列表中隐藏我的编辑",

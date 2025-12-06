@@ -5,21 +5,7 @@ namespace MediaWiki\HTMLForm;
 /**
  * HTML form generation and submission handling, OOUI style.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -53,6 +39,7 @@ class OOUIHTMLForm extends HTMLForm {
 	/** @inheritDoc */
 	protected $displayFormat = 'ooui';
 
+	/** @inheritDoc */
 	public static function loadInputFromParameters( $fieldname, $descriptor,
 		?HTMLForm $parent = null
 	) {
@@ -61,6 +48,7 @@ class OOUIHTMLForm extends HTMLForm {
 		return $field;
 	}
 
+	/** @inheritDoc */
 	public function getButtons() {
 		$buttons = '';
 
@@ -246,6 +234,7 @@ class OOUIHTMLForm extends HTMLForm {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function getHeaderHtml( $section = null ) {
 		if ( $section === null ) {
 			// We handle $this->mHeader elsewhere, in getBody()
@@ -255,7 +244,7 @@ class OOUIHTMLForm extends HTMLForm {
 		}
 	}
 
-	protected function formatFormHeader() {
+	protected function formatFormHeader(): string {
 		if ( !( $this->mHeader || $this->oouiErrors || $this->oouiWarnings ) ) {
 			return '';
 		}
@@ -281,10 +270,12 @@ class OOUIHTMLForm extends HTMLForm {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getBody() {
 		return $this->formatFormHeader() . parent::getBody();
 	}
 
+	/** @inheritDoc */
 	public function wrapForm( $html ) {
 		if ( is_string( $this->mWrapperLegend ) ) {
 			$phpClass = $this->mCollapsible ? CollapsibleFieldsetLayout::class : \OOUI\FieldsetLayout::class;

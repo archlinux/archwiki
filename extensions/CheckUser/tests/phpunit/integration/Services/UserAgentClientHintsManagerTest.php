@@ -64,7 +64,7 @@ class UserAgentClientHintsManagerTest extends MediaWikiIntegrationTestCase {
 			'Number of rows in cu_useragent_clienthints_map table after insertion of data is not as expected'
 		);
 		$referenceIdsForDeletion = new ClientHintsReferenceIds( [
-			UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => $referenceIdsToDelete
+			UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => $referenceIdsToDelete,
 		] );
 		$this->assertSame(
 			$expectedMappingRowCount - $expectedMappingRowCountAfterDeletion,
@@ -112,36 +112,36 @@ class UserAgentClientHintsManagerTest extends MediaWikiIntegrationTestCase {
 					[
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"brand" => "Edge",
-							"version" => "114"
-						]
+							"version" => "114",
+						],
 					],
 					[
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8.0.0.0"
+							"version" => "8.0.0.0",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Edge",
-							"version" => "114.0.5735.198"
-						]
+							"version" => "114.0.5735.198",
+						],
 					],
 					true,
 					"",
 					"Windows",
 					"14.0.0"
-				)
+				),
 			],
 			// Reference IDs for the client hint data
 			[ 123, 12345 ],

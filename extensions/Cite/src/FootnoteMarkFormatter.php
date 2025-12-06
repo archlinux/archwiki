@@ -12,18 +12,11 @@ use MediaWiki\Parser\Sanitizer;
  */
 class FootnoteMarkFormatter {
 
-	private AnchorFormatter $anchorFormatter;
-	private MarkSymbolRenderer $markSymbolRenderer;
-	private ReferenceMessageLocalizer $messageLocalizer;
-
 	public function __construct(
-		AnchorFormatter $anchorFormatter,
-		MarkSymbolRenderer $markSymbolRenderer,
-		ReferenceMessageLocalizer $messageLocalizer
+		private readonly AnchorFormatter $anchorFormatter,
+		private readonly MarkSymbolRenderer $markSymbolRenderer,
+		private readonly ReferenceMessageLocalizer $messageLocalizer,
 	) {
-		$this->anchorFormatter = $anchorFormatter;
-		$this->markSymbolRenderer = $markSymbolRenderer;
-		$this->messageLocalizer = $messageLocalizer;
 	}
 
 	/**
@@ -34,11 +27,12 @@ class FootnoteMarkFormatter {
 	 * @return string Wikitext
 	 */
 	public function linkRef( ReferenceStackItem $ref ): string {
-		$label = $this->markSymbolRenderer->makeLabel( $ref->group, $ref->numberInGroup, $ref->subrefIndex );
+		$label = $this->markSymbolRenderer->renderFootnoteMarkLabel(
+			$ref->group, $ref->numberInGroup, $ref->subrefIndex );
 		return $this->messageLocalizer->msg(
 			'cite_reference_link',
-			$this->anchorFormatter->backLinkTarget( $ref->name, $ref->globalId, $ref->count ),
-			$this->anchorFormatter->jumpLink( $ref->name, $ref->globalId ),
+			$this->anchorFormatter->backlinkTarget( $ref->name, $ref->globalId, $ref->count ),
+			$this->anchorFormatter->wikitextSafeNoteLink( $ref->name, $ref->globalId ),
 			Sanitizer::safeEncodeAttribute( $label )
 		)->plain();
 	}

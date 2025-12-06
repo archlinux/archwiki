@@ -127,12 +127,8 @@ class ApiDiscussionToolsCompare extends ApiBase {
 	protected function addResult(
 		RevisionRecord $fromRev, RevisionRecord $toRev, array $removedComments = [], array $addedComments = []
 	) {
-		$fromTitle = Title::newFromLinkTarget(
-			$fromRev->getPageAsLinkTarget()
-		);
-		$toTitle = Title::newFromLinkTarget(
-			$toRev->getPageAsLinkTarget()
-		);
+		$fromTitle = Title::newFromPageIdentity( $fromRev->getPage() );
+		$toTitle = Title::newFromPageIdentity( $toRev->getPage() );
 		$result = [
 			'fromrevid' => $fromRev->getId(),
 			'fromtitle' => $fromTitle->getPrefixedText(),

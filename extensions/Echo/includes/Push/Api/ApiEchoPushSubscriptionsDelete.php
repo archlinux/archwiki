@@ -15,9 +15,6 @@ class ApiEchoPushSubscriptionsDelete extends ApiBase {
 	/** @var ApiBase */
 	private $parent;
 
-	/** @var SubscriptionManager */
-	private $subscriptionManager;
-
 	/**
 	 * Static entry point for initializing the module
 	 * @param ApiBase $parent Parent module
@@ -34,10 +31,9 @@ class ApiEchoPushSubscriptionsDelete extends ApiBase {
 	public function __construct(
 		ApiMain $mainModule,
 		string $moduleName,
-		SubscriptionManager $subscriptionManager
+		private readonly SubscriptionManager $subscriptionManager,
 	) {
 		parent::__construct( $mainModule, $moduleName );
-		$this->subscriptionManager = $subscriptionManager;
 	}
 
 	/**
@@ -54,7 +50,7 @@ class ApiEchoPushSubscriptionsDelete extends ApiBase {
 		// Restrict deletion to the user's own token(s) if not a push subscription manager
 		try {
 			$this->checkUserRightsAny( 'manage-all-push-subscriptions' );
-		} catch ( ApiUsageException $e ) {
+		} catch ( ApiUsageException ) {
 			$userId = Utils::getPushUserId( $this->getUser() );
 		}
 
@@ -86,7 +82,7 @@ class ApiEchoPushSubscriptionsDelete extends ApiBase {
 	protected function getExamplesMessages(): array {
 		return [
 			"action=echopushsubscriptions&command=delete&providertoken=ABC123" =>
-				"apihelp-echopushsubscriptions+delete-example"
+				"apihelp-echopushsubscriptions+delete-example",
 		];
 	}
 

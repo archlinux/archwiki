@@ -4,6 +4,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
+use MediaWiki\User\UserIdentityValue;
 
 /**
  * This trait contains some Filter <-> db_row correspondences, and can be used to avoid long test
@@ -75,8 +76,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 				),
 				array_fill_keys( $actionKeys, [] ),
 				new LastEditInfo(
-					$row->af_user,
-					$row->af_user_text,
+					UserIdentityValue::newRegistered( $row->af_user, $row->af_user_text ),
 					$row->af_timestamp
 				),
 				$row->af_id,
@@ -123,8 +123,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					new Flags( true, false, true, false ),
 					[ 'warn' => [] ],
 					new LastEditInfo(
-						1,
-						'FilterTester',
+						UserIdentityValue::newRegistered( 1, 'FilterTester' ),
 						'20190826000000'
 					),
 					333,
@@ -161,8 +160,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					new Flags( false, true, true, true ),
 					[],
 					new LastEditInfo(
-						1,
-						'FilterTester',
+						UserIdentityValue::newRegistered( 1, 'FilterTester' ),
 						'20190826000000'
 					),
 					1000
@@ -199,8 +197,7 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					new Flags( false, true, true, true ),
 					[],
 					new LastEditInfo(
-						1,
-						'FilterTester',
+						UserIdentityValue::newRegistered( 1, 'FilterTester' ),
 						'20190826000000'
 					),
 					1000,

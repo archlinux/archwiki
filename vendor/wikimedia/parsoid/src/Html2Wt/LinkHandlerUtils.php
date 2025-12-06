@@ -118,15 +118,27 @@ class LinkHandlerUtils {
 	private static function escapeLinkTarget( string $linkTarget, SerializerState $state ): stdClass {
 		// Entity-escape the content.
 		$linkTarget = Utils::escapeWtEntities( $linkTarget );
+		// Split fragment (the part after #) from target and test individually
+		[ $linkTarget, $hash ] = array_pad( preg_split( '/#/', $linkTarget, 2 ), 2, null );
+		// Is this a valid link?
+		// ('isValidLinkTarget' ignores fragments, so providing the split
+		// form is fine -- but '#foo' is also a valid link)
+		$validLink = ( $linkTarget === '' && $hash !== null ) ||
+			$state->getEnv()->isValidLinkTarget( $linkTarget );
+		if ( $validLink && $hash !== null ) {
+			// URL Encode the hash to ensure it is a valid wikilink
+			// (If this is not valid, it will be emitted as plain text,
+			// so we skip the encoding to keep it readable.)
+			$legal = $state->getEnv()->getSiteConfig()->legalTitleChars();
+			$hash = preg_replace_callback( '/[^' . $legal . ']/', static fn ( $m )=>urlencode( $m[0] ), $hash );
+		}
+		if ( $hash !== null ) {
+			$linkTarget = "{$linkTarget}#{$hash}";
+		}
 		return (object)[
 			'linkTarget' => $linkTarget,
 			// Is this an invalid link?
-			'invalidLink' => !$state->getEnv()->isValidLinkTarget( $linkTarget ) ||
-				// `isValidLinkTarget` omits fragments (the part after #) so,
-				// even though "|" is an invalid character, we still need to ensure
-				// it doesn't appear in there.  The percent encoded version is fine
-				// in the fragment, since it won't break the parse.
-				strpos( $linkTarget, '|' ) !== false,
+			'invalidLink' => !$validLink,
 		];
 	}
 
@@ -227,7 +239,7 @@ class LinkHandlerUtils {
 		// handling code.)
 		if ( $rtData->type === 'mw:WikiLink' &&
 			( preg_match( '#^(\w+:)?//#', $rtData->href ) ||
-				substr( $rtData->origHref ?? '', 0, 1 ) === '/' )
+				str_starts_with( $rtData->origHref ?? '', '/' ) )
 		) {
 			$rtData->type = 'mw:ExtLink';
 		}
@@ -326,7 +338,7 @@ class LinkHandlerUtils {
 			// but gets percent encoded on the way out since it has special
 			// semantics in a url.  That will break the url we're serializing, so
 			// protect it.
-			strpos( $targetForQmarkCheck, '?' ) === false &&
+			!str_contains( $targetForQmarkCheck, '?' ) &&
 			// Ensure we have a valid link target, otherwise falling back to extlink
 			// is preferable, since it won't serialize as a link.
 			(
@@ -510,7 +522,7 @@ class LinkHandlerUtils {
 	 * @return bool
 	 */
 	private static function hasAutoUrlTerminatingChars( string $url ): bool {
-		$sep = TokenizerUtils::getAutoUrlTerminatingChars( strpos( $url, '(' ) !== false );
+		$sep = TokenizerUtils::getAutoUrlTerminatingChars( str_contains( $url, '(' ) );
 		return str_contains( $sep, substr( $url, -1 ) );
 	}
 
@@ -623,7 +635,6 @@ class LinkHandlerUtils {
 	private static function serializeAsWikiLink(
 		Element $node, SerializerState $state, stdClass $linkData
 	): void {
-		$contentParts = null;
 		$contentSrc = '';
 		$isPiped = false;
 		$needsEscaping = true;
@@ -711,7 +722,7 @@ class LinkHandlerUtils {
 						// in which case we don't want the ':'.
 						$nextNode = $node->nextSibling;
 						if ( !(
-							$nextNode instanceof Element && DOMCompat::nodeName( $nextNode ) === 'link' &&
+							$nextNode instanceof Element && DOMUtils::nodeName( $nextNode ) === 'link' &&
 							DOMUtils::hasRel( $nextNode, 'mw:PageProp/Category' ) &&
 							DOMCompat::getAttribute( $nextNode, 'href' ) === DOMCompat::getAttribute( $node, 'href' )
 						) ) {
@@ -830,7 +841,6 @@ class LinkHandlerUtils {
 			$state->redirectText = 'unbuffered';
 		}
 
-		$pipedText = null;
 		if ( $escapedTgt && $escapedTgt->invalidLink ) {
 			// If the link target was invalid, instead of emitting an invalid link,
 			// omit the link and serialize just the content instead. But, log the
@@ -897,7 +907,7 @@ class LinkHandlerUtils {
 
 		$siteConfig = $state->getEnv()->getSiteConfig();
 
-		$pureHashMatch = substr( $urlStr, 0, 1 ) === '#';
+		$pureHashMatch = str_starts_with( $urlStr, '#' );
 		// Fully serialize the content
 		$contentStr = $state->serializeLinkChildrenToString(
 			$node,
@@ -906,8 +916,6 @@ class LinkHandlerUtils {
 
 		// serialize as auto-numbered external link
 		// [http://example.com]
-		$linktext = null;
-		$class = null;
 		// If it's just anchor text, serialize as an internal link.
 		if ( $pureHashMatch ) {
 			$class = WikiLinkText::class;
@@ -990,7 +998,7 @@ class LinkHandlerUtils {
 			];
 
 			$isComplexLink = false;
-			foreach ( DOMUtils::attributes( $node ) as $name => $value ) {
+			foreach ( DOMCompat::attributes( $node ) as $name => $_value ) {
 				// XXX: Don't drop rel and class in every case once a tags are
 				// actually supported in the MW default config?
 				if ( !isset( $safeAttr[$name] ) ) {
@@ -1018,7 +1026,6 @@ class LinkHandlerUtils {
 			$hrefStr = self::escapeExtLinkURL( self::getHref( $env, $node ) );
 			$handler = [ $state->serializer->wteHandlers, 'aHandler' ];
 			$str = $state->serializeLinkChildrenToString( $node, $handler );
-			$chunk = null;
 			if ( !$hrefStr ) {
 				// Without an href, we just emit the string as text.
 				// However, to preserve targets for anchor links,
@@ -1143,7 +1150,6 @@ class LinkHandlerUtils {
 		};
 
 		// Try to identify the local title to use for the link.
-		$link = null;
 
 		$linkFromDataMw = WTSUtils::getAttrFromDataMw( $outerDMW, 'link', true );
 		if ( $linkFromDataMw !== null ) {
@@ -1228,7 +1234,7 @@ class LinkHandlerUtils {
 
 		// Ok, start assembling options, beginning with link & alt & lang
 		// Other media don't have links in output.
-		$linkCond = DOMCompat::nodeName( $elt ) === 'img';
+		$linkCond = DOMUtils::nodeName( $elt ) === 'img';
 		if ( $linkCond && $link ) {
 			// Check whether the link goes to the default place, in which
 			// case an explicit link tag isn't needed.
@@ -1249,7 +1255,7 @@ class LinkHandlerUtils {
 		}
 
 		// "alt" for non-image is handle below
-		$altCond = $alt['value'] !== null && DOMCompat::nodeName( $elt ) === 'img';
+		$altCond = $alt['value'] !== null && DOMUtils::nodeName( $elt ) === 'img';
 
 		// This loop handles media options which *mostly* correspond 1-1 with
 		// HTML attributes.  `img_$name` is the name of the media option,
@@ -1299,7 +1305,6 @@ class LinkHandlerUtils {
 		// can also be "extra" classes added by `img_class` as well.)
 		$classes = DOMCompat::getClassList( $outerElt );
 		$extra = []; // 'extra' classes
-		$val = null;
 
 		foreach ( $classes as $c ) {
 			switch ( $c ) {
@@ -1372,7 +1377,7 @@ class LinkHandlerUtils {
 		// `img_link` and `img_alt` are only surfaced as HTML attributes
 		// for image media. For all other media we treat them as set only
 		// from data-mw.
-		if ( DOMCompat::nodeName( $elt ) !== 'img' ) {
+		if ( DOMUtils::nodeName( $elt ) !== 'img' ) {
 			$mwParams[] = [ 'prop' => 'link', 'ck' => 'link', 'alias' => 'img_link' ];
 			$mwParams[] = [ 'prop' => 'alt', 'ck' => 'alt', 'alias' => 'img_alt' ];
 		}
@@ -1505,7 +1510,7 @@ class LinkHandlerUtils {
 					// present, a defined height for audio is ignored while parsing,
 					// so this only has the effect of modifying the width.
 					(
-						DOMCompat::nodeName( $elt ) !== 'audio' ||
+						DOMUtils::nodeName( $elt ) !== 'audio' ||
 						!DOMUtils::hasClass( $outerElt, 'mw-default-audio-height' )
 					)
 				) {

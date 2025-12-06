@@ -30,8 +30,6 @@ use MockTitleTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\Message\ParamType;
-use Wikimedia\Message\ScalarParam;
 use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
@@ -586,10 +584,8 @@ class UpdateHandlerTest extends MediaWikiLangTestCase {
 				Status::newFatal( 'apierror-badtoken', Message::plaintextParam( 'BAD' ) )
 			),
 			new LocalizedHttpException(
-				new MessageValue(
-					'apierror-badtoken',
-					[ new ScalarParam( ParamType::PLAINTEXT, 'BAD' ) ]
-				), 403
+				( new MessageValue( 'apierror-badtoken' ) )->plaintextParams( 'BAD' ),
+				403
 			),
 		];
 
@@ -669,7 +665,7 @@ class UpdateHandlerTest extends MediaWikiLangTestCase {
 
 		$apiUsageException = new ApiUsageException( null, Status::newFatal( 'apierror-editconflict' ) );
 		$handler = $this->newHandler( [], $apiUsageException );
-		$handler->setJsonDiffFunction( [ $this, 'fakeJsonDiff' ] );
+		$handler->setJsonDiffFunction( $this->fakeJsonDiff( ... ) );
 
 		$exception = $this->executeHandlerAndGetHttpException( $handler, $request );
 
@@ -682,7 +678,7 @@ class UpdateHandlerTest extends MediaWikiLangTestCase {
 			],
 			'remote' => [
 				'from' => 'Content of revision 17',
-				'to' => 'Current content of 0:Foo',
+				'to' => 'Current content of Foo',
 			],
 			'base' => 17,
 			'current' => 1234

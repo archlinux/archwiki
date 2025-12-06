@@ -74,6 +74,15 @@ return more than one matching element.
 This is equivalent to the standard DOM method [`Element#getElementsByTagName()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName),
 although you can use a `DocumentFragment` as the `$contextNode`.
 
+## Compatibility with alternative DOM implementations
+
+Although the phpdoc declares `\DOMNode`, `\DOMElement`, etc as types,
+these are not enforced by type hints and so Zest will work with any
+standards-compliant DOM implementation (see the `standardsMode`
+option flag above).  This includes the new `\Dom\Document` classes
+in PHP 8.4, for which Zest defines appropriate workarounds for
+correct function.
+
 ## Extension
 
 It is possible to add your own selectors, operators, or combinators.

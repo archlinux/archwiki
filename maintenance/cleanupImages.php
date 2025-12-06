@@ -5,27 +5,14 @@
  * Copyright © 2005-2006 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Brooke Vibber <bvibber@wikimedia.org>
  * @ingroup Maintenance
  */
 
 use MediaWiki\FileRepo\LocalRepo;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -41,23 +28,46 @@ require_once __DIR__ . '/TableCleanup.php';
  */
 class CleanupImages extends TableCleanup {
 	/** @inheritDoc */
-	protected $defaultParams = [
-		'table' => 'image',
-		'conds' => [],
-		'index' => 'img_name',
-		'callback' => 'processRow',
-	];
+	protected $defaultParams;
 
 	/** @var LocalRepo|null */
 	private $repo;
 
+	/** @var int file table schema migration stage */
+	private $migrationStage;
+
 	public function __construct() {
 		parent::__construct();
+
+		$this->migrationStage = $this->getServiceContainer()->getMainConfig()->get(
+			MainConfigNames::FileSchemaMigrationStage
+		);
+
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			$this->defaultParams = [
+				'table' => 'image',
+				'conds' => [],
+				'index' => 'img_name',
+				'callback' => 'processRow',
+			];
+		} else {
+			$this->defaultParams = [
+				'table' => 'file',
+				'conds' => [],
+				'index' => 'file_name',
+				'callback' => 'processRow',
+			];
+		}
+
 		$this->addDescription( 'Script to clean up broken, unparseable upload filenames' );
 	}
 
 	protected function processRow( \stdClass $row ) {
-		$source = $row->img_name;
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			$source = $row->img_name;
+		} else {
+			$source = $row->file_name;
+		}
 		if ( $source == '' ) {
 			// Ye olde empty rows. Just kill them.
 			$this->killRow( $source );
@@ -118,11 +128,20 @@ class CleanupImages extends TableCleanup {
 		} else {
 			$this->output( "deleting bogus row '$name'\n" );
 			$db = $this->getPrimaryDB();
-			$db->newDeleteQueryBuilder()
-				->deleteFrom( 'image' )
-				->where( [ 'img_name' => $name ] )
-				->caller( __METHOD__ )
-				->execute();
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$db->newDeleteQueryBuilder()
+					->deleteFrom( 'image' )
+					->where( [ 'img_name' => $name ] )
+					->caller( __METHOD__ )
+					->execute();
+			}
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+				$db->newDeleteQueryBuilder()
+					->deleteFrom( 'file' )
+					->where( [ 'file_name' => $name ] )
+					->caller( __METHOD__ )
+					->execute();
+			}
 		}
 	}
 
@@ -139,10 +158,18 @@ class CleanupImages extends TableCleanup {
 	}
 
 	private function imageExists( string $name, IReadableDatabase $db ): bool {
+		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
+			return (bool)$db->newSelectQueryBuilder()
+				->select( '1' )
+				->from( 'image' )
+				->where( [ 'img_name' => $name ] )
+				->caller( __METHOD__ )
+				->fetchField();
+		}
 		return (bool)$db->newSelectQueryBuilder()
 			->select( '1' )
-			->from( 'image' )
-			->where( [ 'img_name' => $name ] )
+			->from( 'file' )
+			->where( [ 'file_name' => $name ] )
 			->caller( __METHOD__ )
 			->fetchField();
 	}
@@ -197,18 +224,28 @@ class CleanupImages extends TableCleanup {
 			$this->output( "renaming $path to $finalPath\n" );
 			// @todo FIXME: Should this use File::move()?
 			$this->beginTransaction( $db, __METHOD__ );
-			$db->newUpdateQueryBuilder()
-				->update( 'image' )
-				->set( [ 'img_name' => $final ] )
-				->where( [ 'img_name' => $orig ] )
-				->caller( __METHOD__ )
-				->execute();
-			$db->newUpdateQueryBuilder()
-				->update( 'oldimage' )
-				->set( [ 'oi_name' => $final ] )
-				->where( [ 'oi_name' => $orig ] )
-				->caller( __METHOD__ )
-				->execute();
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$db->newUpdateQueryBuilder()
+					->update( 'image' )
+					->set( [ 'img_name' => $final ] )
+					->where( [ 'img_name' => $orig ] )
+					->caller( __METHOD__ )
+					->execute();
+				$db->newUpdateQueryBuilder()
+					->update( 'oldimage' )
+					->set( [ 'oi_name' => $final ] )
+					->where( [ 'oi_name' => $orig ] )
+					->caller( __METHOD__ )
+					->execute();
+			}
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+				$db->newUpdateQueryBuilder()
+					->update( 'file' )
+					->set( [ 'file_name' => $final ] )
+					->where( [ 'file_name' => $orig ] )
+					->caller( __METHOD__ )
+					->execute();
+			}
 			$db->newUpdateQueryBuilder()
 				->update( 'page' )
 				->set( [ 'page_title' => $final ] )
@@ -242,7 +279,7 @@ class CleanupImages extends TableCleanup {
 	private function buildSafeTitle( string $name ) {
 		$x = preg_replace_callback(
 			'/([^' . Title::legalChars() . ']|~)/',
-			[ $this, 'hexChar' ],
+			$this->hexChar( ... ),
 			$name );
 
 		$test = Title::makeTitleSafe( NS_FILE, $x );

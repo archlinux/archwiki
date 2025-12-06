@@ -22,7 +22,7 @@ use PageImages\PageImages;
  */
 class PageImagesTest extends MediaWikiIntegrationTestCase {
 
-	private function getInstance() {
+	private function getInstance(): PageImages {
 		$services = $this->getServiceContainer();
 		return $services->getService( 'PageImages.PageImages' );
 	}
@@ -40,6 +40,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 	public function testGivenNonExistingPageGetPageImageReturnsFalse() {
 		$title = $this->newTitle();
 		$this->assertNull( $this->getInstance()->getImage( $title ) );
+		$this->hideDeprecated( PageImages::class . '::getPageImage' );
 		$this->assertFalse( PageImages::getPageImage( $title ) );
 	}
 
@@ -107,11 +108,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 		$this->getInstance()->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
-	/**
-	 * @param array $config
-	 * @return OutputPage
-	 */
-	private function mockOutputPage( $config ) {
+	private function mockOutputPage( array $config ): OutputPage {
 		$context = $this->createMock( IContextSource::class );
 		$context->method( 'getTitle' )
 			->willReturn( $this->newTitle() );
@@ -129,10 +126,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 		return $outputPage;
 	}
 
-	/**
-	 * @return Title
-	 */
-	private function newTitle() {
+	private function newTitle(): Title {
 		$title = Title::newFromText( 'New' );
 		$title->resetArticleID( 0 );
 		return $title;

@@ -23,7 +23,6 @@ class AbstractMapperTest extends MediaWikiUnitTestCase {
 
 		$class = new ReflectionClass( EchoAbstractMapperStub::class );
 		$property = $class->getProperty( 'listeners' );
-		$property->setAccessible( true );
 		$listeners = $property->getValue( $mapper );
 
 		$this->assertArrayHasKey( 'testMethod', $listeners );

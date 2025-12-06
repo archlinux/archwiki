@@ -5,6 +5,8 @@
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Notification\Notification;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -12,11 +14,13 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\IDBAccessObject;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * A maintenance script that generates sample notifications for testing purposes.
@@ -37,6 +41,7 @@ class GenerateSampleNotifications extends Maintenance {
 		'edit-thanks',
 		'edu',
 		'page-connection',
+		'verify-email-reminder',
 	];
 
 	/** @var int */
@@ -145,6 +150,10 @@ class GenerateSampleNotifications extends Maintenance {
 
 		if ( $this->shouldGenerate( 'page-connection', $types ) ) {
 			$this->generateWikibase( $user, $agent );
+		}
+
+		if ( $this->shouldGenerate( 'verify-email-reminder', $types ) ) {
+			$this->generateVerifyEmailReminder( $user );
 		}
 
 		$this->output( "Completed \n" );
@@ -345,12 +354,11 @@ class GenerateSampleNotifications extends Maintenance {
 		Event::create( [
 			'type' => 'emailuser',
 			'extra' => [
-				Event::RECIPIENTS_IDX => [ $user->getId() ],
 				'subject' => 'Long time no see',
 			],
 			'agent' => $agent,
 			'timestamp' => $this->getTimestamp(),
-		] );
+		], new RecipientSet( $user ) );
 	}
 
 	private function generateUserRights( User $user, User $agent ) {
@@ -371,11 +379,10 @@ class GenerateSampleNotifications extends Maintenance {
 					'add' => $add,
 					'remove' => $remove,
 					'reason' => 'This is the [[reason]] for changing your user rights.',
-					Event::RECIPIENTS_IDX => [ $user->getId() ],
 				],
 				'agent' => $agent,
 				'timestamp' => $this->getTimestamp(),
-			]
+			], new RecipientSet( $user )
 		);
 	}
 
@@ -389,11 +396,8 @@ class GenerateSampleNotifications extends Maintenance {
 			Event::create(
 				[
 					'type' => $eventType,
-					'extra' => [
-						'recipient' => $user->getId(),
-					],
 					'timestamp' => $this->getTimestamp(),
-				]
+				], new RecipientSet( $user )
 			);
 		}
 
@@ -401,11 +405,10 @@ class GenerateSampleNotifications extends Maintenance {
 			[
 				'type' => 'cx-suggestions-available',
 				'extra' => [
-					'recipient' => $user->getId(),
-					'lastTranslationTitle' => 'History of the People\'s Republic of China'
+					'lastTranslationTitle' => 'History of the People\'s Republic of China',
 				],
 				'timestamp' => $this->getTimestamp(),
-			]
+			], new RecipientSet( $user )
 		);
 	}
 
@@ -526,6 +529,16 @@ class GenerateSampleNotifications extends Maintenance {
 		$this->output( "$output\n" );
 	}
 
+	private function generateVerifyEmailReminder( User $user ) {
+		$notificationService = $this->getServiceContainer()->getNotificationService();
+		$notificationService->notify(
+			new Notification( 'verify-email-reminder' ),
+			new RecipientSet( $user )
+		);
+		$output = $this->addTimestampToOutput( "System message for verify-email-reminder sent to {$user->getName()}" );
+		$this->output( "$output\n" );
+	}
+
 	private function generateEducationProgram( User $user, User $agent ) {
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'EducationProgram' ) ) {
 			$this->output( "Skipping EducationProgram. Extension not installed.\n" );
@@ -590,5 +603,7 @@ class GenerateSampleNotifications extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = GenerateSampleNotifications::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

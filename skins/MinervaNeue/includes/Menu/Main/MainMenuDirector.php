@@ -29,8 +29,6 @@ final class MainMenuDirector {
 
 	/**
 	 * Director responsible for Main Menu building
-	 *
-	 * @param IMainMenuBuilder $builder
 	 */
 	public function __construct( IMainMenuBuilder $builder ) {
 		$this->builder = $builder;

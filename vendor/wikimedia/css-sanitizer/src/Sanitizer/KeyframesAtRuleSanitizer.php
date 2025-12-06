@@ -18,7 +18,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Sanitizes a CSS \@keyframes rule
- * @see https://www.w3.org/TR/2018/WD-css-animations-1-20181011/#keyframes
+ * @see https://www.w3.org/TR/2023/WD-css-animations-1-20230302/#keyframes
  */
 class KeyframesAtRuleSanitizer extends RuleSanitizer {
 

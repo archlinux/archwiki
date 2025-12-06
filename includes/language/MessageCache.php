@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -599,7 +585,7 @@ class MessageCache implements LoggerAwareInterface {
 				$text = $this->getMessageTextFromContent( $content );
 			} catch ( TimeoutException $e ) {
 				throw $e;
-			} catch ( Exception $ex ) {
+			} catch ( Exception ) {
 				$text = false;
 			}
 
@@ -666,7 +652,7 @@ class MessageCache implements LoggerAwareInterface {
 		$name = $this->contLang->lcfirst( $name );
 		// Include common conversion table pages. This also avoids problems with
 		// Installer::parse() bailing out due to disallowed DB queries (T207979).
-		if ( strpos( $name, 'conversiontable/' ) === 0 ) {
+		if ( str_starts_with( $name, 'conversiontable/' ) ) {
 			return true;
 		}
 		$msg = preg_replace( '/\/[a-z0-9-]{2,}$/', '', $name );
@@ -721,7 +707,7 @@ class MessageCache implements LoggerAwareInterface {
 		}
 
 		[ $msg, $code ] = $this->figureMessage( $title );
-		if ( strpos( $title, '/' ) !== false && $code === $this->contLangCode ) {
+		if ( str_contains( $title, '/' ) && $code === $this->contLangCode ) {
 			// Content language overrides do not use the /<code> suffix
 			return;
 		}
@@ -952,7 +938,7 @@ class MessageCache implements LoggerAwareInterface {
 			return '';
 		}
 		$lckey = strtr( $key, ' ', '_' );
-		if ( ord( $lckey ) < 128 ) {
+		if ( ord( $lckey[0] ) < 128 ) {
 			$lckey[0] = strtolower( $lckey[0] );
 		} else {
 			$lckey = $this->contLang->lcfirst( $lckey );
@@ -997,7 +983,7 @@ class MessageCache implements LoggerAwareInterface {
 			// Fix numerical strings that somehow become ints on their way here
 			$key = (string)$key;
 		} elseif ( !is_string( $key ) ) {
-			throw new TypeError( 'Message key must be a string' );
+			throw new InvalidArgumentException( 'Message key must be a string' );
 		} elseif ( $key === '' ) {
 			// Shortcut: the empty key is always missing
 			return false;
@@ -1101,6 +1087,8 @@ class MessageCache implements LoggerAwareInterface {
 		if ( is_object( $lang ) ) {
 			StubObject::unstub( $lang );
 			if ( $lang instanceof Language ) {
+				wfDeprecatedMsg( 'Calling MessageCache::get with a Language object ' .
+					'was deprecated in MediaWiki 1.44', '1.44' );
 				return $lang->getCode();
 			} else {
 				throw new InvalidArgumentException( 'Invalid language object of class ' .
@@ -1287,7 +1275,7 @@ class MessageCache implements LoggerAwareInterface {
 
 		if ( $entry !== null ) {
 			// Message page exists as an override of a software messages
-			if ( substr( $entry, 0, 1 ) === ' ' ) {
+			if ( str_starts_with( $entry, ' ' ) ) {
 				// The message exists and is not '!TOO BIG' or '!ERROR'
 				return substr( $entry, 1 );
 			} elseif ( $entry === '!NONEXISTENT' ) {
@@ -1313,7 +1301,7 @@ class MessageCache implements LoggerAwareInterface {
 					$this->cache->getField( $code, 'HASH' )
 				);
 			}
-			if ( $entry === null || substr( $entry, 0, 1 ) !== ' ' ) {
+			if ( $entry === null || !str_starts_with( $entry, ' ' ) ) {
 				// Message does not have a MediaWiki page definition; try hook handlers
 				$message = false;
 				// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
@@ -1328,7 +1316,7 @@ class MessageCache implements LoggerAwareInterface {
 			}
 		}
 
-		if ( $entry !== false && substr( $entry, 0, 1 ) === ' ' ) {
+		if ( $entry !== false && str_starts_with( $entry, ' ' ) ) {
 			if ( $this->isCacheVolatile[$code] ) {
 				// Make sure that individual keys respect the WAN cache holdoff period too
 				$this->logger->debug(

@@ -516,7 +516,7 @@ class AllTest extends MediaWikiUnitTestCase {
 				if ( $d === '\\uarr' ) {
 					$d = '\\uparrow';
 				}
-				if ( substr( $d, 0, 1 ) === '\\' && strlen( $d ) > 2 ) {
+				if ( strlen( $d ) > 2 && str_starts_with( $d, '\\' ) ) {
 					$d = $d . ' ';
 				}
 				return '{\\' . $b . ' ' . $d . '}';

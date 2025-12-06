@@ -28,7 +28,6 @@
 	"echo-category-title-reverted": "ସଂପାଦନା {{PLURAL:$1|ପଶ୍ଚାତକରଣ|ଏକାଧିକ ପଶ୍ଚାତକରଣ}}",
 	"echo-category-title-other": "{{PLURAL:$1|ଅନ୍ୟାନ୍ୟ}}",
 	"echo-category-title-system": "{{PLURAL:$1|ସିଷ୍ଟମ}}",
-	"echo-pref-tooltip-edit-user-talk": "ମୋ ଆଲୋଚନା ପୃଷ୍ଠାରେ କେହି ବାର୍ତ୍ତା ପଠାଇଲେ କିମ୍ବା ଉତ୍ତର ଦେଲେ ମୋତେ ସୂଚିତ କରନ୍ତୁ",
 	"echo-pref-tooltip-article-linked": "ମୁଁ ତିଆରି କରିଥିବା ପୃଷ୍ଠାକୁ କେହି ପ୍ରସଙ୍ଗ ପୃଷ୍ଠାରେ ସଂଯୋଗ କଲେ ମୋତେ ସୂଚିତ କରନ୍ତୁ",
 	"echo-pref-tooltip-reverted": "ମୋର ସଂପାଦନାକୁ କେହି ରୋଲବ୍ୟାକ ଟୁଲ ବା ପଛକୁ ଫେରାଇବା ଟୁଲ ବ୍ୟବହାର କରି ପଶ୍ଚାତକରଣ କଲେ ମୋତେ ସୂଚନା ଦିଅନ୍ତୁ",
 	"echo-pref-tooltip-mention": "ମୋର ବ୍ୟବହାରକାରୀ ପୃଷ୍ଠାକୁ କେହି ଜଣେ କୌଣସି ଆଲୋଚନା ପୃଷ୍ଠାରୁ ସଂଯୋଗ କଲେ ମୋତେ ସୂଚୀତ କରନ୍ତୁ",

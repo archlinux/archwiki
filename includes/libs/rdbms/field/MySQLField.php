@@ -2,13 +2,13 @@
 
 namespace Wikimedia\Rdbms;
 
+use stdClass;
+
 class MySQLField implements Field {
 	private string $name;
 	private string $tablename;
 	/** @var mixed */
 	private $default;
-	/** @var int */
-	private $max_length;
 	private bool $nullable;
 	private bool $is_pk;
 	private bool $is_unique;
@@ -21,11 +21,10 @@ class MySQLField implements Field {
 	private bool $is_unsigned;
 	private bool $is_zerofill;
 
-	public function __construct( $info ) {
+	public function __construct( stdClass $info ) {
 		$this->name = $info->name;
 		$this->tablename = $info->table;
 		$this->default = $info->def;
-		$this->max_length = $info->max_length;
 		$this->nullable = !$info->not_null;
 		$this->is_pk = $info->primary_key;
 		$this->is_unique = $info->unique_key;
@@ -67,6 +66,9 @@ class MySQLField implements Field {
 		return $this->nullable;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function defaultValue() {
 		return $this->default;
 	}

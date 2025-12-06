@@ -7,8 +7,8 @@
 			"Dars",
 			"Ice bulldog",
 			"Piramidion",
-			"Ата",
-			"Serhio Magpie"
+			"Serhio Magpie",
+			"Ата"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",

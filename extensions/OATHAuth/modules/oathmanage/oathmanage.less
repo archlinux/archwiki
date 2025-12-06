@@ -1,0 +1,89 @@
+@import 'mediawiki.skin.variables.less';
+
+.mw-special-OATHManage {
+	&-password {
+		&__form {
+			border: @border-subtle;
+			border-radius: @border-radius-base;
+			padding: @spacing-75;
+		}
+
+		// Higher specificity needed to override margins set on .mw-body p
+		& &__label {
+			color: @color-subtle;
+			margin-top: 0;
+		}
+	}
+
+	&-password,
+	&-authmethods {
+		margin-bottom: @spacing-150;
+	}
+
+	&-authmethods {
+		// On wide screens, put the actions buttons side by side;
+		// on narrow screens, put them below each other
+		&__method-actions {
+			display: flex;
+			gap: @spacing-75;
+
+			@media ( max-width: @max-width-breakpoint-mobile ) {
+				flex-direction: column;
+			}
+		}
+
+		// Put the add buttons below each other, regardless of screen width
+		&__addform .cdx-button {
+			display: flex;
+			margin-top: @spacing-75;
+		}
+
+		// Higher specificity needed to override margins set on .mw-body p
+		& &__placeholder {
+			color: @color-subtle;
+			margin-top: 0;
+		}
+
+		&--no-keys &__addform {
+			border: @border-subtle;
+			padding: @spacing-75;
+		}
+
+		// TODO use outlined accordions once those are available in Codex
+		.cdx-accordion {
+			border: @border-subtle;
+		}
+
+		.cdx-accordion + .cdx-accordion {
+			margin-top: -@spacing-12;
+		}
+	}
+
+	.mw-oathauth-recoverycodes-copy-button.cdx-button {
+		// HACK: Override margin-right from ext.oath.recovery.less
+		// We use the copy+delete buttons a little differently here than on TOTPAddForm,
+		// and that's causing styling discrepancies. We should clean that up so that we
+		// can use the same styling in both places
+		margin: 0;
+	}
+
+	&-delete-warning__actions {
+		// On wide screens, put the "delete" and "cancel" buttons side by side;
+		// on narrow screens, put them below each other
+		display: flex;
+		gap: @spacing-75;
+		margin-top: @spacing-125;
+
+		@media ( max-width: @max-width-breakpoint-mobile ) {
+			flex-direction: column;
+		}
+	}
+
+	@media ( max-width: @max-width-breakpoint-mobile ) {
+		// On narrow screens, make all buttons full width
+		.cdx-button {
+			display: flex;
+			width: 100%;
+		}
+	}
+}

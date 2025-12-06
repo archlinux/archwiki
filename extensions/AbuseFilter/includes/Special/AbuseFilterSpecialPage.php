@@ -34,26 +34,18 @@ abstract class AbuseFilterSpecialPage extends SpecialPage {
 	 * @inheritDoc
 	 */
 	public function getShortDescription( string $path = '' ): string {
-		switch ( $path ) {
-			case 'AbuseFilter':
-				return $this->msg( 'abusefilter-topnav-home' )->text();
-			case 'AbuseFilter/history':
-				return $this->msg( 'abusefilter-topnav-recentchanges' )->text();
-			case 'AbuseFilter/examine':
-				return $this->msg( 'abusefilter-topnav-examine' )->text();
-			case 'AbuseFilter/test':
-				return $this->msg( 'abusefilter-topnav-test' )->text();
-			case 'AbuseFilter/tools':
-				return $this->msg( 'abusefilter-topnav-tools' )->text();
-			default:
-				return parent::getShortDescription( $path );
-		}
+		return match ( $path ) {
+			'AbuseFilter' => $this->msg( 'abusefilter-topnav-home' )->text(),
+			'AbuseFilter/history' => $this->msg( 'abusefilter-topnav-recentchanges' )->text(),
+			'AbuseFilter/examine' => $this->msg( 'abusefilter-topnav-examine' )->text(),
+			'AbuseFilter/test' => $this->msg( 'abusefilter-topnav-test' )->text(),
+			'AbuseFilter/tools' => $this->msg( 'abusefilter-topnav-tools' )->text(),
+			default => parent::getShortDescription( $path ),
+		};
 	}
 
 	/**
 	 * Get topbar navigation links definitions
-	 *
-	 * @return array
 	 */
 	private function getNavigationLinksInternal(): array {
 		$performer = $this->getAuthority();

@@ -5,17 +5,18 @@
 			"Amazigh84",
 			"Belkacem77",
 			"Bilalbill",
+			"ButterflyOfFire",
 			"K Messaoudi",
 			"Mmistmurt",
 			"Salem333",
 			"Sayem AtVkm",
-			"SlimaneAmiri",
-			"ButterflyOfFire"
+			"SlimaneAmiri"
 		]
 	},
 	"preferences": "Ismenyifen",
 	"prefsnologintext2": "Ttxilek(m) qqen aken ad snifleḍ ismenyifen inek(m).",
-	"saveprefs": "Smekti",
+	"searchprefs-results": "$1 {{PLURAL:$1|n ugmud|n igmad}}",
+	"saveprefs": "Sekles",
 	"tooltip-preferences-save": "Sekles ismenyifen",
 	"savedprefs": "Ismenyifen-ik ttwaskelsen.",
 	"prefs-tabs-navigation-hint": "Taxbalut : Tzemreḍ ad seqdeceḍ tineccabin n uzelmaḍ d uyeffus iwakken ad ssileleḍ gar iccaren.",

@@ -439,10 +439,10 @@ class ParamValidator {
 		}
 
 		if ( !empty( $settings[self::PARAM_ISMULTI] ) ) {
-			$allowedKeys = array_merge( $allowedKeys, [
-				self::PARAM_ISMULTI_LIMIT1, self::PARAM_ISMULTI_LIMIT2,
-				self::PARAM_ALL, self::PARAM_ALLOW_DUPLICATES
-			] );
+			$allowedKeys[] = self::PARAM_ISMULTI_LIMIT1;
+			$allowedKeys[] = self::PARAM_ISMULTI_LIMIT2;
+			$allowedKeys[] = self::PARAM_ALL;
+			$allowedKeys[] = self::PARAM_ALLOW_DUPLICATES;
 
 			$limit1 = $settings[self::PARAM_ISMULTI_LIMIT1] ?? $this->ismultiLimit1;
 			$limit2 = $settings[self::PARAM_ISMULTI_LIMIT2] ?? $this->ismultiLimit2;
@@ -592,7 +592,7 @@ class ParamValidator {
 
 		// Non-multi
 		if ( empty( $settings[self::PARAM_ISMULTI] ) ) {
-			if ( is_string( $value ) && substr( $value, 0, 1 ) === "\x1f" ) {
+			if ( is_string( $value ) && str_starts_with( $value, "\x1f" ) ) {
 				throw new ValidationException(
 					DataMessageValue::new( 'paramvalidator-notmulti', [], 'badvalue' )
 						->plaintextParams( $name, $value ),
@@ -863,7 +863,7 @@ class ParamValidator {
 			return [];
 		}
 
-		if ( substr( $value, 0, 1 ) === "\x1f" ) {
+		if ( str_starts_with( $value, "\x1f" ) ) {
 			$sep = "\x1f";
 			$value = substr( $value, 1 );
 		} else {
@@ -887,7 +887,7 @@ class ParamValidator {
 		}
 
 		foreach ( $value as $v ) {
-			if ( strpos( $v, '|' ) !== false ) {
+			if ( str_contains( $v, '|' ) ) {
 				return "\x1f" . implode( "\x1f", $value );
 			}
 		}

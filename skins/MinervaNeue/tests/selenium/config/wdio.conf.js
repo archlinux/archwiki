@@ -2,8 +2,6 @@
  * Extending the Mediawiki core webdriver config
  */
 
-'use strict';
-
 const path = require( 'path' ),
 	coreConfig = require( '../wdio.conf' ),
 	relPath = ( foo ) => path.resolve( __dirname, '../..', foo ),

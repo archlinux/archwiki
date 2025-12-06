@@ -12,8 +12,9 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\NodeData\DataMw;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -50,7 +51,7 @@ class DOMDiff {
 	public $extApi;
 
 	/**
-	 * @var array
+	 * @var array<string,callable(Element,mixed,Element,mixed):bool>
 	 */
 	public $specializedAttribHandlers;
 
@@ -67,7 +68,9 @@ class DOMDiff {
 		$this->env = $env;
 		$this->extApi = new ParsoidExtensionAPI( $env );
 		$this->specializedAttribHandlers = [
-			'data-mw' => function ( $nodeA, $dmwA, $nodeB, $dmwB ) {
+			'data-mw' => function (
+				Element $nodeA, DataMw $dmwA, Element $nodeB, DataMw $dmwB
+			): bool {
 				if ( isset( $dmwA->caption ) && isset( $dmwB->caption ) ) {
 					if ( !$this->treeEquals( $dmwA->caption, $dmwB->caption, true ) ) {
 						return false;
@@ -77,9 +80,13 @@ class DOMDiff {
 					unset( $dmwA['caption'] );
 					unset( $dmwB['caption'] );
 				}
+				// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
 				return $dmwA == $dmwB;
 			},
-			'data-parsoid' => static function ( $nodeA, $dpA, $nodeB, $dpB ) {
+			'data-parsoid' => static function (
+				Element $nodeA, DataParsoid $dpA, Element $nodeB, DataParsoid $dpB
+			): bool {
+				// @phan-suppress-next-line PhanPluginComparisonObjectEqualityNotStrict
 				return $dpA == $dpB;
 			},
 		];
@@ -91,7 +98,8 @@ class DOMDiff {
 	 *
 	 * @param Element $nodeA
 	 * @param Element $nodeB
-	 * @return array
+	 *
+	 * @return array{isEmpty: bool}
 	 */
 	public function diff( Element $nodeA, Element $nodeB ): array {
 		Assert::invariant(
@@ -137,7 +145,7 @@ class DOMDiff {
 				// Compare node name and attribute length
 				if (
 					!( $nodeB instanceof Element ) ||
-					DOMCompat::nodeName( $nodeA ) !== DOMCompat::nodeName( $nodeB ) ||
+					DOMUtils::nodeName( $nodeA ) !== DOMUtils::nodeName( $nodeB ) ||
 					!DiffUtils::attribsEquals(
 						$nodeA,
 						$nodeB,
@@ -151,8 +159,6 @@ class DOMDiff {
 
 			// Passed all tests, node itself is equal.
 			if ( $deep ) {
-				$childA = null;
-				$childB = null;
 				// Compare # of children, since that's fast.
 				// (Avoid de-optimizing DOM by using node#childNodes)
 				for ( $childA = $nodeA->firstChild, $childB = $nodeB->firstChild;
@@ -207,7 +213,6 @@ class DOMDiff {
 		// marking using heuristics like look-ahead on siblings.
 		$baseNode = $baseParentNode->firstChild;
 		$newNode = $newParentNode->firstChild;
-		$lookaheadNode = null;
 		$foundDiffOverall = false;
 
 		while ( $baseNode && $newNode ) {
@@ -282,7 +287,7 @@ class DOMDiff {
 							WTUtils::isBlockNodeWithVisibleWT( $baseNode )
 						);
 					} elseif ( $baseNode instanceof Element &&
-						DOMCompat::nodeName( $savedNewNode ) === DOMCompat::nodeName( $baseNode ) &&
+						DOMUtils::nodeName( $savedNewNode ) === DOMUtils::nodeName( $baseNode ) &&
 						( DOMDataUtils::getDataParsoid( $savedNewNode )->stx ?? null ) ===
 						( DOMDataUtils::getDataParsoid( $baseNode )->stx ?? null )
 					) {
@@ -409,7 +414,7 @@ class DOMDiff {
 		return $subtreeDiffers;
 	}
 
-	private function markNode( Node $node, string $mark, bool $blockNodeDeleted = false ): void {
+	private function markNode( Node $node, DiffMarkers $mark, bool $blockNodeDeleted = false ): void {
 		$meta = DiffUtils::addDiffMark( $node, $this->env, $mark );
 
 		if ( $meta && $blockNodeDeleted ) {

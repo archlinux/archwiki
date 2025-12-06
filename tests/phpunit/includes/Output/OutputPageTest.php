@@ -22,7 +22,6 @@ use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
-use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
@@ -828,7 +827,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	public function testSetRedirectedFrom() {
 		$op = $this->newInstance();
 
-		$op->setRedirectedFrom( new PageReferenceValue( NS_TALK, 'Some page', PageReference::LOCAL ) );
+		$op->setRedirectedFrom( PageReferenceValue::localReference( NS_TALK, 'Some page' ) );
 		$this->assertSame( 'Talk:Some_page', $op->getJSVars()['wgRedirectedFrom'] );
 	}
 
@@ -895,11 +894,10 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		// HTML escaped before becoming the <title> element.
 		$this->assertSame( $this->getMsgText( $op, 'pagetitle', 'nope:<span></span> yes:!' ), $op->getHTMLTitle() );
 
-		// deprecated ::setPageTitle(Message), doesn't escape either
-		// the localized message or the plaintext parameters
-		$this->filterDeprecated( '/OutputPage::setPageTitle with Message argument/' );
+		// disallowed ::setPageTitle(Message)
+		$this->expectException( Wikimedia\Assert\ParameterTypeException::class );
+		$this->expectExceptionMessage( '$name' );
 		$op->setPageTitle( $msg );
-		$this->assertSame( "nope:<span></span> yes:<span>!</span>", $op->getPageTitle() );
 	}
 
 	public function testSetTitle() {
@@ -989,7 +987,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	public static function provideBacklinkSubtitle() {
 		$page1title = [ 'Page 1', [ 'redirect' => true ] ];
-		$page1ref = new PageReferenceValue( NS_MAIN, 'Page 1', PageReference::LOCAL );
+		$page1ref = PageReferenceValue::localReference( NS_MAIN, 'Page 1' );
 
 		$row = [
 			'page_id' => 28,
@@ -1003,7 +1001,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		];
 		$page2rec = new PageStoreRecord( (object)$row, PageReference::LOCAL );
 
-		$special = new PageReferenceValue( NS_SPECIAL, 'BlankPage', PageReference::LOCAL );
+		$special = PageReferenceValue::localReference( NS_SPECIAL, 'BlankPage' );
 
 		return [
 			[
@@ -1192,6 +1190,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->assertSame( [ 'fr:A#x', 'it:B', 'de:C', 'es:D' ], $op->getLanguageLinks() );
 
+		$this->filterDeprecated( '/OutputPage::setLanguageLinks was deprecated/' );
 		$op->setLanguageLinks( [ TitleValue::tryNew( NS_MAIN, 'E', '', 'pt' ) ] );
 		$this->assertSame( [ 'pt:E' ], $op->getLanguageLinks() );
 
@@ -1686,7 +1685,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 * Second argument is an array of parser flags for which ::getOutputFlag()
 	 * should return 'TRUE'.
 	 * @param array $retVals
-	 * @param array $flags
+	 * @param array<ParserOutputFlags> $flags
 	 * @return ParserOutput
 	 */
 	private function createParserOutputStubWithFlags( array $retVals, array $flags ): ParserOutput {
@@ -1728,6 +1727,9 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$pOut->method( 'getOutputFlag' )->willReturnCallback( static function ( $name ) use ( $flags ) {
+			if ( is_string( $name ) ) {
+				$name = ParserOutputFlags::from( $name );
+			}
 			return in_array( $name, $flags, true );
 		} );
 
@@ -1735,6 +1737,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testTemplateIds() {
+		$this->filterDeprecated( '/ParserOutput::getTemplateIds was deprecated/' );
 		$op = $this->newInstance();
 		$this->assertSame( [], $op->getTemplateIds() );
 
@@ -1744,22 +1747,45 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( [], $op->getTemplateIds() );
 
 		// Test with some arbitrary template id's
+		$mkList = static function ( $ids, $pageid ) {
+			$list = [];
+			foreach ( $ids as $ns => $arr ) {
+				foreach ( $arr as $dbkey => $revid ) {
+					$list[] = [
+						'link' => new TitleValue( $ns, (string)$dbkey ),
+						'pageid' => $pageid,
+						'revid' => $revid,
+					];
+				}
+			}
+			return $list;
+		};
+		$mkGetLinkList = static fn ( $ids, $pageid ) => static fn ( $lt ) =>
+			match ( $lt ) {
+			ParserOutputLinkTypes::TEMPLATE => $mkList( $ids, $pageid ),
+			default => [],
+			};
+
 		$ids = [
 			NS_MAIN => [ 'A' => 3, 'B' => 17 ],
 			NS_TALK => [ 'C' => 31 ],
 			NS_MEDIA => [ 'D' => -1 ],
 		];
-
-		$stubPO1 = $this->createParserOutputStub( 'getTemplateIds', $ids );
+		$stubPO1 = $this->createParserOutputStub(
+			'getLinkList', $mkGetLinkList( $ids, 42 )
+		);
 
 		$op->addParserOutputMetadata( $stubPO1 );
 		$this->assertSame( $ids, $op->getTemplateIds() );
 
 		// Test merging with a second set of id's
-		$stubPO2 = $this->createParserOutputStub( 'getTemplateIds', [
-			NS_MAIN => [ 'E' => 1234 ],
-			NS_PROJECT => [ 'F' => 5678 ],
-		] );
+		$ids2 = [
+				NS_MAIN => [ 'E' => 1234 ],
+				NS_PROJECT => [ 'F' => 5678 ],
+		];
+		$stubPO2 = $this->createParserOutputStub(
+			'getLinkList', $mkGetLinkList( $ids2, 4242 )
+		);
 
 		$finalIds = [
 			NS_MAIN => [ 'E' => 1234, 'A' => 3, 'B' => 17 ],
@@ -1769,11 +1795,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		];
 
 		$op->addParserOutput( $stubPO2, ParserOptions::newFromAnon() );
-		$this->assertSame( $finalIds, $op->getTemplateIds() );
+		$this->assertEqualsCanonicalizing( $finalIds, $op->getTemplateIds() );
 
 		// Test merging with an empty set of id's
 		$op->addParserOutputMetadata( $stubPOEmpty );
-		$this->assertSame( $finalIds, $op->getTemplateIds() );
+		$this->assertEqualsCanonicalizing( $finalIds, $op->getTemplateIds() );
 	}
 
 	public function testFileSearchOptions() {
@@ -1786,34 +1812,54 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->addParserOutputMetadata( $stubPOEmpty );
 		$this->assertSame( [], $op->getFileSearchOptions() );
 
+		// Test with some arbitrary template id's
+		$mkList = static function ( $ids ) {
+			$list = [];
+			foreach ( $ids as $dbkey => $arr ) {
+				$list[] = [
+					'link' => new TitleValue( NS_FILE, (string)$dbkey ),
+				] + $arr;
+			}
+			return $list;
+		};
+		$mkGetLinkList = static fn ( $ids ) => static fn ( $lt ) =>
+			match ( $lt ) {
+			ParserOutputLinkTypes::MEDIA => $mkList( $ids ),
+			default => [],
+			};
+
 		// Test with some arbitrary files
 		$files1 = [
-			'A' => [ 'time' => null, 'sha1' => '' ],
+			'A' => [ 'time' => null, 'sha1' => null ],
 			'B' => [
 				'time' => '12211221123321',
 				'sha1' => 'bf3ffa7047dc080f5855377a4f83cd18887e3b05',
 			],
 		];
 
-		$stubPO1 = $this->createParserOutputStub( 'getFileSearchOptions', $files1 );
+		$stubPO1 = $this->createParserOutputStub(
+			'getLinkList', $mkGetLinkList( $files1 )
+		);
 
 		$op->addParserOutput( $stubPO1, ParserOptions::newFromAnon() );
 		$this->assertSame( $files1, $op->getFileSearchOptions() );
 
 		// Test merging with a second set of files
 		$files2 = [
-			'C' => [ 'time' => null, 'sha1' => '' ],
-			'B' => [ 'time' => null, 'sha1' => '' ],
+			'C' => [ 'time' => null, 'sha1' => null ],
+			'B' => [ 'time' => null, 'sha1' => null ],
 		];
 
-		$stubPO2 = $this->createParserOutputStub( 'getFileSearchOptions', $files2 );
+		$stubPO2 = $this->createParserOutputStub(
+			'getLinkList', $mkGetLinkList( $files2 )
+		);
 
 		$op->addParserOutputMetadata( $stubPO2 );
-		$this->assertSame( array_merge( $files1, $files2 ), $op->getFileSearchOptions() );
+		$this->assertEqualsCanonicalizing( array_merge( $files2, $files1 ), $op->getFileSearchOptions() );
 
 		// Test merging with an empty set of files
 		$op->addParserOutput( $stubPOEmpty, ParserOptions::newFromAnon() );
-		$this->assertSame( array_merge( $files1, $files2 ), $op->getFileSearchOptions() );
+		$this->assertEqualsCanonicalizing( array_merge( $files2, $files1 ), $op->getFileSearchOptions() );
 	}
 
 	/**
@@ -1831,12 +1877,16 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$args[2] = $op->getTitle();
 		}
 
+		if ( $method === 'wrapWikiTextAsInterface' ) {
+			$this->expectDeprecationAndContinue( '/wrapWikiTextAsInterface/' );
+		}
+
 		$op->$method( ...$args );
 		$this->assertSame( $expected, $op->getHTML() );
 	}
 
 	public static function provideAddWikiText() {
-		$somePageRef = new PageReferenceValue( NS_TALK, 'Some page', PageReference::LOCAL );
+		$somePageRef = PageReferenceValue::localReference( NS_TALK, 'Some page' );
 
 		$tests = [
 			'addWikiTextAsInterface' => [
@@ -2597,15 +2647,12 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::LoadScript => 'http://127.0.0.1:8080/w/load.php',
 			MainConfigNames::CSPReportOnlyHeader => true,
 		] );
-		$class = new ReflectionClass( OutputPage::class );
-		$method = $class->getMethod( 'makeResourceLoaderLink' );
-		$method->setAccessible( true );
 		$ctx = new RequestContext();
 		$skinFactory = $this->getServiceContainer()->getSkinFactory();
 		$ctx->setSkin( $skinFactory->makeSkin( 'fallback' ) );
 		$ctx->setLanguage( 'en' );
-		$out = new OutputPage( $ctx );
-		$reflectCSP = new ReflectionClass( ContentSecurityPolicy::class );
+		/** @var OutputPage $out */
+		$out = TestingAccessWrapper::newFromObject( new OutputPage( $ctx ) );
 		$rl = $out->getResourceLoader();
 		$rl->setMessageBlobStore( $this->createMock( RL\MessageBlobStore::class ) );
 		$rl->setDependencyStore( $this->createMock( DependencyStore::class ) );
@@ -2647,7 +2694,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				'group' => 'bar',
 			],
 		] );
-		$links = $method->invokeArgs( $out, $args );
+		$links = $out->makeResourceLoaderLink( ...$args );
 		$actualHtml = strval( $links );
 		$this->assertEquals( $expectedHtml, $actualHtml );
 	}
@@ -3424,8 +3471,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		?Authority $performer = null
 	): OutputPage {
 		$this->overrideConfigValues( [
-			// Avoid configured skin affecting the headings
-			MainConfigNames::ParserEnableLegacyHeadingDOM => false,
+			// Avoid configured skin affecting anything
 			MainConfigNames::DefaultSkin => 'fallback',
 			MainConfigNames::HiddenPrefs => [ 'skin' ],
 		] );

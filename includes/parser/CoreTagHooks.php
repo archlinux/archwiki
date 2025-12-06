@@ -2,21 +2,7 @@
 /**
  * Tag hooks provided by MediaWiki core
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Parser
  */
@@ -55,13 +41,13 @@ class CoreTagHooks {
 	public static function register( Parser $parser, ServiceOptions $options ) {
 		$options->assertRequiredOptions( self::REGISTER_OPTIONS );
 		$rawHtml = $options->get( MainConfigNames::RawHtml );
-		$parser->setHook( 'pre', [ __CLASS__, 'pre' ] );
-		$parser->setHook( 'nowiki', [ __CLASS__, 'nowiki' ] );
-		$parser->setHook( 'gallery', [ __CLASS__, 'gallery' ] );
-		$parser->setHook( 'indicator', [ __CLASS__, 'indicator' ] );
-		$parser->setHook( 'langconvert', [ __CLASS__, 'langconvert' ] );
+		$parser->setHook( 'pre', [ self::class, 'pre' ] );
+		$parser->setHook( 'nowiki', [ self::class, 'nowiki' ] );
+		$parser->setHook( 'gallery', [ self::class, 'gallery' ] );
+		$parser->setHook( 'indicator', [ self::class, 'indicator' ] );
+		$parser->setHook( 'langconvert', [ self::class, 'langconvert' ] );
 		if ( $rawHtml ) {
-			$parser->setHook( 'html', [ __CLASS__, 'html' ] );
+			$parser->setHook( 'html', [ self::class, 'html' ] );
 		}
 	}
 

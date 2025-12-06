@@ -64,7 +64,6 @@ class VariableHolderTest extends MediaWikiUnitTestCase {
 	 * @param mixed $expected
 	 *
 	 * @dataProvider provideSetVar
-	 *
 	 */
 	public function testSetVar( string $name, $val, $expected ) {
 		$vars = new VariableHolder();
@@ -131,7 +130,6 @@ class VariableHolderTest extends MediaWikiUnitTestCase {
 	 * @param array $expected
 	 * @param VariableHolder ...$holders
 	 * @dataProvider provideHoldersForAddition
-	 *
 	 */
 	public function testAddHolders( array $expected, VariableHolder ...$holders ) {
 		$actual = new VariableHolder();

@@ -1,6 +1,6 @@
 <?php
 
-namespace phpunit\integration;
+namespace MediaWiki\Extension\Gadgets\Tests;
 
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;

@@ -10,10 +10,7 @@ use MediaWiki\User\User;
 
 class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 
-	/**
-	 * @var EchoPresentationModelSection
-	 */
-	protected $section;
+	protected EchoPresentationModelSection $section;
 
 	/**
 	 * @inheritDoc
@@ -38,7 +35,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		return [
 			// Need FullURL so the section is included
 			'url' => $this->section->getTitleWithSection()->getFullURL(),
-			'label' => $this->msg( 'notification-link-text-view-message' )->text()
+			'label' => $this->msg( 'notification-link-text-view-message' )->text(),
 		];
 	}
 
@@ -49,7 +46,7 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 			'label' => $this->msg( 'notification-link-text-view-changes', $this->getViewingUserForGender() )->text(),
 			'description' => '',
 			'icon' => 'changes',
-			'prioritized' => true
+			'prioritized' => true,
 		];
 
 		if ( $this->isBundled() ) {

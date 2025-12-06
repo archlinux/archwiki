@@ -38,7 +38,7 @@ CREATE TABLE /*_*/abuse_filter_log (
   afl_filter_id BIGINT UNSIGNED NOT NULL,
   afl_user BIGINT UNSIGNED NOT NULL,
   afl_user_text VARBINARY(255) NOT NULL,
-  afl_ip VARCHAR(255) NOT NULL,
+  afl_ip_hex VARCHAR(255) NOT NULL,
   afl_action VARBINARY(255) NOT NULL,
   afl_actions VARBINARY(255) NOT NULL,
   afl_var_dump BLOB NOT NULL,
@@ -58,9 +58,13 @@ CREATE TABLE /*_*/abuse_filter_log (
   INDEX afl_page_timestamp (
     afl_namespace, afl_title, afl_timestamp
   ),
-  INDEX afl_ip_timestamp (afl_ip, afl_timestamp),
+  INDEX afl_ip_hex_timestamp (afl_ip_hex, afl_timestamp),
   INDEX afl_rev_id (afl_rev_id),
   INDEX afl_wiki_timestamp (afl_wiki, afl_timestamp),
+  INDEX afl_var_dump_timestamp (
+    afl_var_dump(4),
+    afl_timestamp
+  ),
   PRIMARY KEY(afl_id)
 ) /*$wgDBTableOptions*/;
 

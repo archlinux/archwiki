@@ -4,11 +4,11 @@
 			"Alsandro",
 			"David1010",
 			"Mehman (WMF)",
+			"Mehman97",
 			"Tar Lócesilion",
 			"გიორგიმელა",
 			"Გიო ოქრო",
-			"Იო ოქრო",
-			"Mehman97"
+			"Იო ოქრო"
 		]
 	},
 	"skinname-vector": "ვექტორული (2010)",
@@ -17,8 +17,6 @@
 	"vector-skin-desc": "ითვალისწინებს 2 ვექტორულ იერსახეს:\n* 2011 — მონობუკის თანამედროვე ვერსია სრულად ახალი იერითა და მრავალი გამოყენებადი გაუმჯობესებით.\n* 2022 — ვექტორული იერსახე, რომელიც ფონდი ვიკიმედიის პროექტის „[https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements]“ ფარგლებში შეიქმნა.",
 	"prefs-vector-enable-vector-1-label": "Legacy Vector-ის გამოყენება",
 	"prefs-vector-enable-vector-1-help": "მომდევნო რამდენიმე წელში ჩვენ თანდათან ვანახლებთ ვექტორულ გარეკანს. Legacy Vector ძველი იერსახის აღდგენის შესაძლებლობას მოგცემთ (2019 წლის დეკემბრის მდგომარეობით). განახლებებზე მეტის გასაგებად, ეწვიეთ [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements პროექტის გვერდს].",
-	"vector-opt-out": "ძველი იერსახის აღდგენა",
-	"vector-opt-out-tooltip": "შეცვალეთ თქვენი კონფიგურაცია, რათა დაუბრუნდეთ გვერდების ძველ იერსახეს",
 	"vector.css": "/* აქ მოცემული ყველა CSS ჩაიტვირთება ვექტორული გარეკანის ყველა მომხმარებლისათვის */",
 	"vector.js": "/* აქ მოცემული ყველა JavaScript ჩაიტვირთება ვექტორული გარეკანის ყველა მომხმარებლისათვის */",
 	"vector-action-toggle-sidebar": "გვერდითა პანელის გადართვა",
@@ -59,8 +57,6 @@
 	"skin-theme-night-label": "ბნელი",
 	"skin-theme-os-label": "ავტომატური",
 	"skin-theme-exclusion-notice": "ეს გვერდი ყოველთვის ღია რეჟიმშია.",
-	"vector-search-loader": "იტვირთვება ძიების შეთავაზებები",
-	"vector-searchsuggest-containing": "გვერდების მოძებნა, რომლებიც შეიცავენ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>-ს",
 	"vector-intro-page": "ვიკიპედია:დახმარება",
 	"vector-toc-label": "სარჩევი",
 	"vector-toc-beginning": "შესავალი",

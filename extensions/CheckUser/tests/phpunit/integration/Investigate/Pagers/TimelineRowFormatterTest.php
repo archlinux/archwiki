@@ -74,7 +74,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 				[
 					// All edit-specific links / flags should be empty for a log action.
-					'links' => [ 'minorFlag' => '', 'newPageFlag' => '', 'historyLink' => '', 'diffLink' => '', ],
+					'links' => [ 'minorFlag' => '', 'newPageFlag' => '', 'historyLink' => '', 'diffLink' => '' ],
 					'info' => [
 						'userAgent' => 'Test',
 						// The IP address should be in lower-case with shortened form.
@@ -213,7 +213,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 				'user_text' => $hiddenUser->getName(),
 				'user' => $hiddenUser->getId(),
 				'actor' => $hiddenUser->getActorId(),
-				'type' => RC_EDIT
+				'type' => RC_EDIT,
 			]
 		);
 		// Assert that the userLinks contain the rev-deleted-user message and not the username,
@@ -253,7 +253,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 				'user' => $testUser->getId(),
 				'actor' => $testUser->getActorId(),
 				'type' => RC_EDIT,
-				'this_oldid' => $revId
+				'this_oldid' => $revId,
 			]
 		);
 		$actualTimelineFormattedRowItems = $objectUnderTest->getFormattedRowItems( (object)$row );

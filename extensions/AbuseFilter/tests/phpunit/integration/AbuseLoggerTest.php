@@ -66,7 +66,7 @@ class AbuseLoggerTest extends MediaWikiIntegrationTestCase {
 
 		// Assert that the log for the first filter has all the variables used in the first filter.
 		$logsForFirstFilter = $this->newSelectQueryBuilder()
-			->select( [ 'afl_var_dump', 'afl_ip' ] )
+			->select( [ 'afl_var_dump', 'afl_ip_hex' ] )
 			->from( 'abuse_filter_log' )
 			->where( [ 'afl_filter_id' => 1 ] )
 			->caller( __METHOD__ )
@@ -82,7 +82,7 @@ class AbuseLoggerTest extends MediaWikiIntegrationTestCase {
 		// Assert that the log for the second filter does not have user_unnamed_ip in the var dump, as it
 		// is a protected variable that was not used in the second filter.
 		$logsForSecondFilter = $this->newSelectQueryBuilder()
-			->select( [ 'afl_var_dump', 'afl_ip' ] )
+			->select( [ 'afl_var_dump', 'afl_ip_hex' ] )
 			->from( 'abuse_filter_log' )
 			->where( [ 'afl_filter_id' => 2 ] )
 			->caller( __METHOD__ )

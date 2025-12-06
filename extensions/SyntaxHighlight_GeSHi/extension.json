@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.44",
+		"MediaWiki": ">= 1.45",
 		"platform": {
 			"ability-shell": true
 		}
@@ -26,6 +26,9 @@
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\SyntaxHighlight\\": "includes/",
+		"MediaWiki\\SyntaxHighlight\\Maintenance\\": "maintenance/"
+	},
+	"TestAutoloadNamespaces": {
 		"MediaWiki\\SyntaxHighlight\\Tests\\": "tests/phpunit/"
 	},
 	"ResourceFileModulePaths": {
@@ -87,8 +90,6 @@
 		"main": {
 			"class": "MediaWiki\\SyntaxHighlight\\Hooks",
 			"services": [
-				"MainConfig",
-				"ParserFactory",
 				"SyntaxHighlight.SyntaxHighlight"
 			]
 		}

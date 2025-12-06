@@ -26,10 +26,12 @@ class ApiParamValidatorCallbacks implements Callbacks {
 		$this->apiMain = $main;
 	}
 
+	/** @inheritDoc */
 	public function hasParam( $name, array $options ) {
 		return $this->apiMain->getCheck( $name );
 	}
 
+	/** @inheritDoc */
 	public function getValue( $name, $default, array $options ) {
 		$value = $this->apiMain->getVal( $name, $default );
 		$request = $this->apiMain->getRequest();
@@ -41,7 +43,7 @@ class ApiParamValidatorCallbacks implements Callbacks {
 		}
 		if ( is_string( $rawValue ) ) {
 			// Preserve U+001F for multi-values
-			if ( substr( $rawValue, 0, 1 ) === "\x1f" ) {
+			if ( str_starts_with( $rawValue, "\x1f" ) ) {
 				// This loses the potential checkTitleEncoding() transformation done by
 				// WebRequest for $_GET. Let's call that a feature.
 				$value = implode( "\x1f", $request->normalizeUnicode( explode( "\x1f", $rawValue ) ) );
@@ -56,10 +58,12 @@ class ApiParamValidatorCallbacks implements Callbacks {
 		return $value;
 	}
 
+	/** @inheritDoc */
 	public function hasUpload( $name, array $options ) {
 		return $this->getUploadedFile( $name, $options ) !== null;
 	}
 
+	/** @inheritDoc */
 	public function getUploadedFile( $name, array $options ) {
 		$upload = $this->apiMain->getUpload( $name );
 		if ( !$upload->exists() ) {
@@ -74,6 +78,7 @@ class ApiParamValidatorCallbacks implements Callbacks {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function recordCondition(
 		DataMessageValue $message, $name, $value, array $settings, array $options
 	) {
@@ -130,6 +135,7 @@ class ApiParamValidatorCallbacks implements Callbacks {
 		}
 	}
 
+	/** @inheritDoc */
 	public function useHighLimits( array $options ) {
 		return $this->apiMain->canApiHighLimits();
 	}

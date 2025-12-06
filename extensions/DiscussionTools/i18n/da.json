@@ -56,7 +56,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Du}} har afmeldt abonnementet.",
 	"discussiontools-notification-added-topic-header": "Ny diskussion \"<strong>$4</strong>\" er oprettet på <strong>$3</strong> af $2.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|En ny diskussion|$1 nye diskussioner|100=99+ nye diskussioner}} på \"<strong>$2</strong>\".",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Vis diskussion",
 	"discussiontools-notification-removed-topic-body": "{{GENDER:|You}} modtager muligvis ikke beskeder vedrørende {{PLURAL:$1|denne diskussion|disse diskussioner}}.",
 	"discussiontools-notification-removed-topic-header": "Diskussionen \"<strong>$4</strong>\" blev arkiveret eller fjernet fra $3.",

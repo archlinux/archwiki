@@ -12,7 +12,7 @@ use Wikimedia\CSS\Objects\CSSFunction;
 use Wikimedia\CSS\Objects\Token;
 
 /**
- * Matcher that matches a CSSFunction for a URL or a T_URL token
+ * Matcher that matches a CSSFunction for a URL function or a T_URL token
  */
 class UrlMatcher extends FunctionMatcher {
 	/** @var callable|null */
@@ -41,7 +41,12 @@ class UrlMatcher extends FunctionMatcher {
 		] );
 
 		$this->urlCheck = $urlCheck;
-		parent::__construct( 'url', $funcContents );
+		parent::__construct(
+			static function ( $name ) {
+				return in_array( strtolower( $name ), [ 'url', 'src' ], true );
+			},
+			$funcContents
+		);
 	}
 
 	/**
@@ -61,7 +66,7 @@ class UrlMatcher extends FunctionMatcher {
 		$cv = $values[$start] ?? null;
 		if ( $cv instanceof Token && $cv->type() === Token::T_URL ) {
 			$url = $cv->value();
-			if ( !$this->urlCheck || call_user_func( $this->urlCheck, $url, [] ) ) {
+			if ( !$this->urlCheck || ( $this->urlCheck )( $url, [] ) ) {
 				$match = new GrammarMatch( $values, $start, 1, 'url' );
 				yield $this->makeMatch( $values, $start, $this->next( $values, $start, $options ), $match );
 			}
@@ -85,7 +90,7 @@ class UrlMatcher extends FunctionMatcher {
 					}
 				}
 			}
-			if ( $url && ( !$this->urlCheck || call_user_func( $this->urlCheck, $url, $modifiers ) ) ) {
+			if ( $url && ( !$this->urlCheck || ( $this->urlCheck )( $url, $modifiers ) ) ) {
 				yield $match;
 			}
 		}

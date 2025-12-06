@@ -11,20 +11,11 @@ use MediaWiki\FileRepo\File\File;
  */
 class PageImageCandidate implements JsonSerializable {
 
-	/** @var string */
-	private $fileName;
-
-	/** @var int */
-	private $fullWidth = 0;
-
-	/** @var int */
-	private $fullHeight = 0;
-
-	/** @var int */
-	private $handlerWidth = 0;
-
-	/** @var string */
-	private $frameClass = '';
+	private string $fileName;
+	private int $fullWidth = 0;
+	private int $fullHeight = 0;
+	private int $handlerWidth = 0;
+	private string $frameClass = '';
 
 	/**
 	 * Private constructor.
@@ -36,7 +27,7 @@ class PageImageCandidate implements JsonSerializable {
 	/**
 	 * @param File $file
 	 * @param array $fileParams from ParserMakeImageParams hook.
-	 * @return PageImageCandidate
+	 * @return self
 	 */
 	public static function newFromFileAndParams( File $file, array $fileParams ): self {
 		$instance = new self();
@@ -56,8 +47,6 @@ class PageImageCandidate implements JsonSerializable {
 	/**
 	 * Instantiate PageImageCandidate from $json created with self::jsonSerialize
 	 *
-	 * @param array $array
-	 * @return PageImageCandidate
 	 * @internal
 	 */
 	public static function newFromArray( array $array ): self {
@@ -74,44 +63,28 @@ class PageImageCandidate implements JsonSerializable {
 		return $instance;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getFileName(): string {
 		return $this->fileName;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getFullWidth(): int {
 		return $this->fullWidth;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getFullHeight(): int {
 		return $this->fullHeight;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getHandlerWidth(): int {
 		return $this->handlerWidth;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getFrameClass(): string {
 		return $this->frameClass;
 	}
 
 	/**
 	 * @internal
-	 * @return array
 	 */
 	public function jsonSerialize(): array {
 		return [

@@ -24,7 +24,7 @@ class ApiQueryCheckUserActionsResponseTest extends MediaWikiIntegrationTestCase 
 		$mockApiQueryCheckUser = $this->createMock( ApiQueryCheckUser::class );
 		$mockApiQueryCheckUser->method( 'extractRequestParams' )
 			->willReturn( [
-				'request' => 'actions', 'target' => 'Test', 'reason' => '', 'timecond' => '-3 months', 'limit' => '50'
+				'request' => 'actions', 'target' => 'Test', 'reason' => '', 'timecond' => '-3 months', 'limit' => '50',
 			] );
 		/** @var ApiQueryCheckUserResponseFactory $responseFactory */
 		$responseFactory = $this->getServiceContainer()->get( 'ApiQueryCheckUserResponseFactory' );
@@ -78,7 +78,7 @@ class ApiQueryCheckUserActionsResponseTest extends MediaWikiIntegrationTestCase 
 			'Normal log parameters' => [
 				[ '4::target' => 'Testing', '5::noredir' => '0' ],
 				LogEntryBase::makeParamBlob( [ '4::target' => 'Testing', '5::noredir' => '0' ] ),
-			]
+			],
 		];
 	}
 

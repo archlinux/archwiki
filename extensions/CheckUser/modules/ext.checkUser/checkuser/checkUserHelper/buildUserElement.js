@@ -55,7 +55,7 @@ function buildUserElement( userName, userData ) {
 }
 
 /**
- * @return HTMLSpanElement
+ * @return {HTMLSpanElement}
  */
 function getTooltip() {
 	const tooltip = document.createElement( 'span' );
@@ -70,7 +70,7 @@ function getTooltip() {
 }
 
 /**
- * @return string
+ * @return {string}
  */
 function getTooltipMessage() {
 	return mw.message( 'tempuser-expired-link-tooltip' ).escaped();

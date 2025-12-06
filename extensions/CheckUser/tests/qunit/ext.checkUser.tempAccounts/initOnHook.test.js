@@ -1,8 +1,8 @@
 'use strict';
 
-const initOnHook = require( '../../../modules/ext.checkUser.tempAccounts/initOnHook.js' );
+const initOnHook = require( 'ext.checkUser.tempAccounts/initOnHook.js' );
 const { makeTempUserLink, waitUntilElementCount } = require( './utils.js' );
-const Utils = require( '../../../modules/ext.checkUser.tempAccounts/ipRevealUtils.js' );
+const Utils = require( 'ext.checkUser.tempAccounts/ipRevealUtils.js' );
 
 const originalSetAutoRevealStatus = Utils.setAutoRevealStatus;
 let server;

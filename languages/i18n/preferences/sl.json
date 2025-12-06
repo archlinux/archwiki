@@ -199,6 +199,8 @@
 	"rcfilters-watchlist-preference-label": "Uporabi vmesnik brez JavaScripta",
 	"rcfilters-watchlist-preference-help": "Naloži [[{{#special:Watchlist}}|nadzorni seznam]] brez filtrov iskanja in možnosti označevanja.",
 	"prefs-changeswatchlist": "Prikazane spremembe",
+	"tog-watchstar-expiry": "Privzeto časovno obdobje na nadzornem seznamu za ročno dodane strani:",
+	"tog-watch-expiry": "Privzeto časovno obdobje:",
 	"tog-watchlisthideminor": "Na nadzornem seznamu skrij manjša urejanja",
 	"tog-watchlisthidebots": "Na nadzornem seznamu skrij urejanja botov",
 	"tog-watchlisthideown": "Na nadzornem seznamu skrij moja urejanja",

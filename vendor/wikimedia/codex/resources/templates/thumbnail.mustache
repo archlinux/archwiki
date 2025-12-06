@@ -1,0 +1,19 @@
+<span class="{{#coreClass}}{{ coreClass }} {{/coreClass}}cdx-thumbnail{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{!
+  }}{{#id}} id="{{ id }}"{{/id}}{{!
+  }}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}>
+  {{#backgroundImage}}
+  <span class="cdx-thumbnail__image" style="background-image: url('{{ backgroundImage }}');"></span>
+  {{/backgroundImage}}
+  {{^backgroundImage}}
+  {{#placeholderClass}}
+  <span class="cdx-thumbnail__placeholder">
+    <span class="{{ placeholderClass }}"></span>
+  </span>
+  {{/placeholderClass}}
+  {{^placeholderClass}}
+  <span class="cdx-thumbnail__placeholder">
+    <span class="cdx-thumbnail__placeholder__icon"></span>
+  </span>
+  {{/placeholderClass}}
+  {{/backgroundImage}}
+</span>

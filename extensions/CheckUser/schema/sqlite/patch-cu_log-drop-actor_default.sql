@@ -17,27 +17,29 @@ SELECT
   cul_range_start,
   cul_range_end
 FROM /*_*/cu_log;
+
 DROP TABLE /*_*/cu_log;
 
 
 CREATE TABLE /*_*/cu_log (
-    cul_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    cul_timestamp BLOB NOT NULL, cul_actor BIGINT UNSIGNED NOT NULL,
-    cul_reason BLOB DEFAULT '' NOT NULL,
-    cul_reason_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-    cul_reason_plaintext_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-    cul_type BLOB NOT NULL, cul_target_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-    cul_target_text BLOB NOT NULL, cul_target_hex BLOB DEFAULT '' NOT NULL,
-    cul_range_start BLOB DEFAULT '' NOT NULL,
-    cul_range_end BLOB DEFAULT '' NOT NULL
-  );
+  cul_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  cul_timestamp BLOB NOT NULL, cul_actor BIGINT UNSIGNED NOT NULL,
+  cul_reason BLOB DEFAULT '' NOT NULL,
+  cul_reason_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  cul_reason_plaintext_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  cul_type BLOB NOT NULL, cul_target_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
+  cul_target_text BLOB NOT NULL, cul_target_hex BLOB DEFAULT '' NOT NULL,
+  cul_range_start BLOB DEFAULT '' NOT NULL,
+  cul_range_end BLOB DEFAULT '' NOT NULL
+);
+
 INSERT INTO /*_*/cu_log (
-    cul_id, cul_timestamp, cul_actor,
-    cul_reason, cul_reason_id, cul_reason_plaintext_id,
-    cul_type, cul_target_id, cul_target_text,
-    cul_target_hex, cul_range_start,
-    cul_range_end
-  )
+  cul_id, cul_timestamp, cul_actor,
+  cul_reason, cul_reason_id, cul_reason_plaintext_id,
+  cul_type, cul_target_id, cul_target_text,
+  cul_target_hex, cul_range_start,
+  cul_range_end
+)
 SELECT
   cul_id,
   cul_timestamp,
@@ -53,13 +55,14 @@ SELECT
   cul_range_end
 FROM
   /*_*/__temp__cu_log;
+
 DROP TABLE /*_*/__temp__cu_log;
 
 CREATE INDEX cul_actor_time ON /*_*/cu_log (cul_actor, cul_timestamp);
 
 CREATE INDEX cul_type_target ON /*_*/cu_log (
-    cul_type, cul_target_id, cul_timestamp
-  );
+  cul_type, cul_target_id, cul_timestamp
+);
 
 CREATE INDEX cul_target_hex ON /*_*/cu_log (cul_target_hex, cul_timestamp);
 

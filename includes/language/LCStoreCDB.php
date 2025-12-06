@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 use Cdb\Exception as CdbException;
@@ -47,10 +33,11 @@ class LCStoreCDB implements LCStore {
 	/** @var string Cache directory */
 	private $directory;
 
-	public function __construct( $conf = [] ) {
+	public function __construct( array $conf = [] ) {
 		$this->directory = $conf['directory'];
 	}
 
+	/** @inheritDoc */
 	public function get( $code, $key ) {
 		if ( !isset( $this->readers[$code] ) ) {
 			$fileName = $this->getFileName( $code );
@@ -59,7 +46,7 @@ class LCStoreCDB implements LCStore {
 			if ( is_file( $fileName ) ) {
 				try {
 					$this->readers[$code] = Reader::open( $fileName );
-				} catch ( CdbException $e ) {
+				} catch ( CdbException ) {
 					wfDebug( __METHOD__ . ": unable to open cdb file for reading" );
 				}
 			}
@@ -83,6 +70,7 @@ class LCStoreCDB implements LCStore {
 		}
 	}
 
+	/** @inheritDoc */
 	public function startWrite( $code ) {
 		if ( !is_dir( $this->directory ) && !wfMkdirParents( $this->directory, null, __METHOD__ ) ) {
 			throw new RuntimeException( "Unable to create the localisation store " .
@@ -105,6 +93,7 @@ class LCStoreCDB implements LCStore {
 		$this->currentLang = null;
 	}
 
+	/** @inheritDoc */
 	public function set( $key, $value ) {
 		if ( $this->writer === null ) {
 			throw new LogicException( __CLASS__ . ': must call startWrite() before calling set()' );
@@ -112,8 +101,12 @@ class LCStoreCDB implements LCStore {
 		$this->writer->set( $key, serialize( $value ) );
 	}
 
+	/**
+	 * @param string|null $code
+	 * @return string
+	 */
 	protected function getFileName( $code ) {
-		if ( strval( $code ) === '' || strpos( $code, '/' ) !== false ) {
+		if ( strval( $code ) === '' || str_contains( $code, '/' ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ": Invalid language \"$code\"" );
 		}
 

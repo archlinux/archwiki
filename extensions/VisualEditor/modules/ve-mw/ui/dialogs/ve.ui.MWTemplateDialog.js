@@ -250,11 +250,8 @@ ve.ui.MWTemplateDialog.prototype.getPageFromPart = function ( part ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWTemplateDialog.prototype.getSelectedNode = function ( data ) {
+ve.ui.MWTemplateDialog.prototype.getSelectedNode = function ( data = {} ) {
 	const selectedNode = ve.ui.MWTemplateDialog.super.prototype.getSelectedNode.call( this );
-
-	// Data initialization
-	data = data || {};
 
 	// Require template to match if specified
 	if ( selectedNode && data.template && !selectedNode.isSingleTemplate( data.template ) ) {
@@ -360,7 +357,7 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'done' ) {
 		return new OO.ui.Process( () => {
 			const deferred = ve.createDeferred();
-			this.checkRequiredParameters().done( () => {
+			this.checkRequiredParameters().then( () => {
 				const surfaceModel = this.getFragment().getSurface(),
 					obj = this.transclusionModel.getPlainObject();
 
@@ -413,8 +410,7 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data = {} ) {
 	return ve.ui.MWTemplateDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( () => {
 			let promise;

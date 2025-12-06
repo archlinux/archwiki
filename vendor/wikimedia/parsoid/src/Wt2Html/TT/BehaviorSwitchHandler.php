@@ -6,12 +6,13 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 /**
  * Handler for behavior switches, like '__TOC__' and similar.
  */
-class BehaviorSwitchHandler extends TokenHandler {
+class BehaviorSwitchHandler extends XMLTagBasedHandler {
 
 	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
@@ -34,11 +35,12 @@ class BehaviorSwitchHandler extends TokenHandler {
 	/**
 	 * Main handler.
 	 * See {@link TokenHandlerPipeline#addTransform}'s transformation parameter.
-	 * @return array<Token>
+	 *
+	 * @return list<SelfclosingTagTk>
 	 */
 	public function onBehaviorSwitch( Token $token ): array {
 		$env = $this->env;
-		$magicWord = $env->getSiteConfig()->getMagicWordForBehaviorSwitch( $token->attribs[0]->v );
+		$magicWord = $token->attribs[0]->v;
 		$env->setBehaviorSwitch( $magicWord, true );
 		if ( isset( self::OUTPUT_FLAG_FROM_BEHAVIOR_SWITCH[$magicWord] ) ) {
 			$env->getMetadata()->setOutputFlag(
@@ -66,7 +68,7 @@ class BehaviorSwitchHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		return $token->getName() === 'behavior-switch' ? $this->onBehaviorSwitch( $token ) : null;
 	}
 }

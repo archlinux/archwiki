@@ -32,8 +32,8 @@
 		assert.strictEqual( spec.getDescription(), null, 'getDescription' );
 		assert.deepEqual( spec.getDocumentedParameterOrder(), [], 'getDocumentedParameterOrder' );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [], 'getUndocumentedParameterNames' );
-		assert.strictEqual( spec.isKnownParameterOrAlias( 'unknown' ), false, 'isKnownParameterOrAlias' );
-		assert.strictEqual( spec.isParameterAlias( 'unknown' ), false, 'isParameterAlias' );
+		assert.false( spec.isKnownParameterOrAlias( 'unknown' ), 'isKnownParameterOrAlias' );
+		assert.false( spec.isParameterAlias( 'unknown' ), 'isParameterAlias' );
 		assert.strictEqual( spec.getParameterLabel( 'unknown' ), 'unknown', 'getParameterLabel' );
 		assert.strictEqual( spec.getParameterDescription( 'unknown' ), null, 'getParameterDescription' );
 		assert.deepEqual( spec.getParameterSuggestedValues( 'unknown' ), [], 'getParameterSuggestedValues' );
@@ -43,9 +43,9 @@
 		assert.strictEqual( spec.getParameterType( 'unknown' ), 'string', 'getParameterType' );
 		assert.deepEqual( spec.getParameterAliases( 'unknown' ), [], 'getParameterAliases' );
 		assert.strictEqual( spec.getPrimaryParameterName( 'unknown' ), 'unknown', 'getPrimaryParameterName' );
-		assert.strictEqual( spec.isParameterRequired( 'unknown' ), false, 'isParameterRequired' );
-		assert.strictEqual( spec.isParameterSuggested( 'unknown' ), false, 'isParameterSuggested' );
-		assert.strictEqual( spec.isParameterDeprecated( 'unknown' ), false, 'isParameterDeprecated' );
+		assert.false( spec.isParameterRequired( 'unknown' ), 'isParameterRequired' );
+		assert.false( spec.isParameterSuggested( 'unknown' ), 'isParameterSuggested' );
+		assert.false( spec.isParameterDeprecated( 'unknown' ), 'isParameterDeprecated' );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'unknown' ), '', 'getParameterDeprecationDescription' );
 		assert.deepEqual( spec.getKnownParameterNames(), [], 'getKnownParameterNames' );
 		assert.deepEqual( spec.getParameterSets(), [], 'getParameterSets' );
@@ -60,8 +60,8 @@
 		assert.strictEqual( spec.getDescription(), null, 'getDescription' );
 		assert.deepEqual( spec.getDocumentedParameterOrder(), [], 'getDocumentedParameterOrder' );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [ 'p1', 'p2' ], 'getUndocumentedParameterNames' );
-		assert.strictEqual( spec.isKnownParameterOrAlias( 'p2' ), true, 'isKnownParameterOrAlias' );
-		assert.strictEqual( spec.isParameterAlias( 'p2' ), false, 'isParameterAlias' );
+		assert.true( spec.isKnownParameterOrAlias( 'p2' ), 'isKnownParameterOrAlias' );
+		assert.false( spec.isParameterAlias( 'p2' ), 'isParameterAlias' );
 		assert.strictEqual( spec.getParameterLabel( 'p2' ), 'p2', 'getParameterLabel' );
 		assert.strictEqual( spec.getParameterDescription( 'p2' ), null, 'getParameterDescription' );
 		assert.deepEqual( spec.getParameterSuggestedValues( 'p2' ), [], 'getParameterSuggestedValues' );
@@ -71,9 +71,9 @@
 		assert.strictEqual( spec.getParameterType( 'p2' ), 'string', 'getParameterType' );
 		assert.deepEqual( spec.getParameterAliases( 'p2' ), [], 'getParameterAliases' );
 		assert.strictEqual( spec.getPrimaryParameterName( 'p2' ), 'p2', 'getPrimaryParameterName' );
-		assert.strictEqual( spec.isParameterRequired( 'p2' ), false, 'isParameterRequired' );
-		assert.strictEqual( spec.isParameterSuggested( 'p2' ), false, 'isParameterSuggested' );
-		assert.strictEqual( spec.isParameterDeprecated( 'p2' ), false, 'isParameterDeprecated' );
+		assert.false( spec.isParameterRequired( 'p2' ), 'isParameterRequired' );
+		assert.false( spec.isParameterSuggested( 'p2' ), 'isParameterSuggested' );
+		assert.false( spec.isParameterDeprecated( 'p2' ), 'isParameterDeprecated' );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'p2' ), '', 'getParameterDeprecationDescription' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p1', 'p2' ], 'getKnownParameterNames' );
 		assert.deepEqual( spec.getParameterSets(), [], 'getParameterSets' );
@@ -91,8 +91,8 @@
 		assert.strictEqual( spec.getDescription(), null, 'getDescription' );
 		assert.deepEqual( spec.getDocumentedParameterOrder(), [], 'getDocumentedParameterOrder' );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [ 'p1', 'p2' ], 'getUndocumentedParameterNames' );
-		assert.strictEqual( spec.isKnownParameterOrAlias( 'p2' ), true, 'isKnownParameterOrAlias' );
-		assert.strictEqual( spec.isParameterAlias( 'p2' ), false, 'isParameterAlias' );
+		assert.true( spec.isKnownParameterOrAlias( 'p2' ), 'isKnownParameterOrAlias' );
+		assert.false( spec.isParameterAlias( 'p2' ), 'isParameterAlias' );
 		assert.strictEqual( spec.getParameterLabel( 'p2' ), 'p2', 'getParameterLabel' );
 		assert.strictEqual( spec.getParameterDescription( 'p2' ), null, 'getParameterDescription' );
 		assert.deepEqual( spec.getParameterSuggestedValues( 'p2' ), [], 'getParameterSuggestedValues' );
@@ -102,9 +102,9 @@
 		assert.strictEqual( spec.getParameterType( 'p2' ), 'string', 'getParameterType' );
 		assert.deepEqual( spec.getParameterAliases( 'p2' ), [], 'getParameterAliases' );
 		assert.strictEqual( spec.getPrimaryParameterName( 'p2' ), 'p2', 'getPrimaryParameterName' );
-		assert.strictEqual( spec.isParameterRequired( 'p2' ), false, 'isParameterRequired' );
-		assert.strictEqual( spec.isParameterSuggested( 'p2' ), false, 'isParameterSuggested' );
-		assert.strictEqual( spec.isParameterDeprecated( 'p2' ), false, 'isParameterDeprecated' );
+		assert.false( spec.isParameterRequired( 'p2' ), 'isParameterRequired' );
+		assert.false( spec.isParameterSuggested( 'p2' ), 'isParameterSuggested' );
+		assert.false( spec.isParameterDeprecated( 'p2' ), 'isParameterDeprecated' );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'p2' ), '', 'getParameterDeprecationDescription' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p1', 'p2' ], 'getKnownParameterNames' );
 		assert.deepEqual( spec.getParameterSets(), [], 'getParameterSets' );
@@ -148,9 +148,9 @@
 			assert.strictEqual( spec.getParameterAutoValue( 'p' ), '', 'getParameterAutoValue' );
 			assert.strictEqual( spec.getParameterType( 'p' ), 'string', 'getParameterType' );
 			assert.deepEqual( spec.getParameterAliases( 'p' ), [], 'getParameterAliases' );
-			assert.strictEqual( spec.isParameterRequired( 'p' ), false, 'isParameterRequired' );
-			assert.strictEqual( spec.isParameterSuggested( 'p' ), false, 'isParameterSuggested' );
-			assert.strictEqual( spec.isParameterDeprecated( 'p' ), false, 'isParameterDeprecated' );
+			assert.false( spec.isParameterRequired( 'p' ), 'isParameterRequired' );
+			assert.false( spec.isParameterSuggested( 'p' ), 'isParameterSuggested' );
+			assert.false( spec.isParameterDeprecated( 'p' ), 'isParameterDeprecated' );
 			assert.strictEqual( spec.getParameterDeprecationDescription( 'p' ), '', 'getParameterDeprecationDescription' );
 		} )
 	);
@@ -165,8 +165,8 @@
 		assert.strictEqual( spec.getDescription(), null, 'getDescription' );
 		assert.deepEqual( spec.getDocumentedParameterOrder(), [ 'p2' ], 'getDocumentedParameterOrder' );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [ 'p1' ], 'getUndocumentedParameterNames' );
-		assert.strictEqual( spec.isKnownParameterOrAlias( 'p2' ), true, 'isKnownParameterOrAlias' );
-		assert.strictEqual( spec.isParameterAlias( 'p2' ), false, 'isParameterAlias' );
+		assert.true( spec.isKnownParameterOrAlias( 'p2' ), 'isKnownParameterOrAlias' );
+		assert.false( spec.isParameterAlias( 'p2' ), 'isParameterAlias' );
 		assert.strictEqual( spec.getParameterLabel( 'p2' ), 'p2', 'getParameterLabel' );
 		assert.strictEqual( spec.getParameterDescription( 'p2' ), null, 'getParameterDescription' );
 		assert.deepEqual( spec.getParameterSuggestedValues( 'p2' ), [], 'getParameterSuggestedValues' );
@@ -176,9 +176,9 @@
 		assert.strictEqual( spec.getParameterType( 'p2' ), 'string', 'getParameterType' );
 		assert.deepEqual( spec.getParameterAliases( 'p2' ), [], 'getParameterAliases' );
 		assert.strictEqual( spec.getPrimaryParameterName( 'p2' ), 'p2', 'getPrimaryParameterName' );
-		assert.strictEqual( spec.isParameterRequired( 'p2' ), false, 'isParameterRequired' );
-		assert.strictEqual( spec.isParameterSuggested( 'p2' ), false, 'isParameterSuggested' );
-		assert.strictEqual( spec.isParameterDeprecated( 'p2' ), false, 'isParameterDeprecated' );
+		assert.false( spec.isParameterRequired( 'p2' ), 'isParameterRequired' );
+		assert.false( spec.isParameterSuggested( 'p2' ), 'isParameterSuggested' );
+		assert.false( spec.isParameterDeprecated( 'p2' ), 'isParameterDeprecated' );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'p2' ), '', 'getParameterDeprecationDescription' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p1', 'p2' ], 'getKnownParameterNames' );
 		assert.deepEqual( spec.getParameterSets(), [], 'getParameterSets' );
@@ -215,8 +215,8 @@
 		assert.strictEqual( spec.getDescription(), 'TemplateDescription', 'getDescription' );
 		assert.deepEqual( spec.getDocumentedParameterOrder(), [ 'DummyOrder' ], 'getDocumentedParameterOrder' );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [], 'getUndocumentedParameterNames' );
-		assert.strictEqual( spec.isKnownParameterOrAlias( 'a' ), true, 'isKnownParameterOrAlias' );
-		assert.strictEqual( spec.isParameterAlias( 'a' ), true, 'isParameterAlias' );
+		assert.true( spec.isKnownParameterOrAlias( 'a' ), 'isKnownParameterOrAlias' );
+		assert.true( spec.isParameterAlias( 'a' ), 'isParameterAlias' );
 		assert.strictEqual( spec.getParameterLabel( 'a' ), 'ParamLabel', 'getParameterLabel' );
 		assert.strictEqual( spec.getParameterDescription( 'a' ), 'ParamDescription', 'getParameterDescription' );
 		assert.deepEqual( spec.getParameterSuggestedValues( 'a' ), [ 'SuggestedValue' ], 'getParameterSuggestedValues' );
@@ -226,9 +226,9 @@
 		assert.strictEqual( spec.getParameterType( 'a' ), 'DummyType', 'getParameterType' );
 		assert.deepEqual( spec.getParameterAliases( 'a' ), [ 'a' ], 'getParameterAliases' );
 		assert.strictEqual( spec.getPrimaryParameterName( 'a' ), 'p', 'getPrimaryParameterName' );
-		assert.strictEqual( spec.isParameterRequired( 'a' ), true, 'isParameterRequired' );
-		assert.strictEqual( spec.isParameterSuggested( 'a' ), true, 'isParameterSuggested' );
-		assert.strictEqual( spec.isParameterDeprecated( 'a' ), true, 'isParameterDeprecated' );
+		assert.true( spec.isParameterRequired( 'a' ), 'isParameterRequired' );
+		assert.true( spec.isParameterSuggested( 'a' ), 'isParameterSuggested' );
+		assert.true( spec.isParameterDeprecated( 'a' ), 'isParameterDeprecated' );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'a' ), 'DeprecationText', 'getParameterDeprecationDescription' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p' ], 'getKnownParameterNames' );
 		assert.deepEqual( spec.getParameterSets(), [ 'DummySet' ], 'getParameterSets' );
@@ -239,14 +239,14 @@
 		const template = createTemplateMock( [ 'p0', 'p1-alias', 'p2' ] ),
 			spec = new ve.dm.MWTemplateSpecModel( template );
 
-		assert.strictEqual( spec.isParameterAlias( 'p1-alias' ), false );
+		assert.false( spec.isParameterAlias( 'p1-alias' ) );
 		assert.strictEqual( spec.getParameterLabel( 'p1-alias' ), 'p1-alias' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p0', 'p1-alias', 'p2' ] );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [ 'p0', 'p1-alias', 'p2' ], 'getUndocumentedParameterNames' );
 
 		spec.setTemplateData( { params: { p1: { aliases: [ 'p1-alias' ] } } } );
 
-		assert.strictEqual( spec.isParameterAlias( 'p1-alias' ), true );
+		assert.true( spec.isParameterAlias( 'p1-alias' ) );
 		assert.strictEqual( spec.getParameterLabel( 'p1-alias' ), 'p1-alias' );
 		assert.deepEqual( spec.getKnownParameterNames(), [ 'p0', 'p1', 'p2' ] );
 		assert.deepEqual( spec.getUndocumentedParameterNames(), [ 'p0', 'p2' ], 'getUndocumentedParameterNames' );
@@ -334,7 +334,7 @@
 
 		spec.setTemplateData( { params: { p: { deprecated: '' } } } );
 
-		assert.strictEqual( spec.isParameterDeprecated( 'p' ), true );
+		assert.true( spec.isParameterDeprecated( 'p' ) );
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'p' ), '' );
 	} );
 

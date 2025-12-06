@@ -1,6 +1,6 @@
 'use strict';
 
-const specialBlock = require( '../../../modules/ext.checkUser.tempAccounts/SpecialBlock.js' );
+const specialBlock = require( 'ext.checkUser.tempAccounts/SpecialBlock.js' );
 const { waitUntilElementDisappears, waitUntilElementAppears } = require( './utils.js' );
 
 let server;

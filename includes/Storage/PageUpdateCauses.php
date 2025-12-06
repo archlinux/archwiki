@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -27,9 +13,9 @@ namespace MediaWiki\Storage;
  *
  * This is modeled as an interface to provide easy access to these constants to
  * both the emitter and the subscriber of events, without creating unnecessary
- * dependencies: Since PageUpdater and PageRevisionUpdatedEvent both implement this
- * interface, callers of PageUpdater do not need to know about PageRevisionUpdatedEvent,
- * and subscribers of PageRevisionUpdatedEvent do not need to know about PageUpdater.
+ * dependencies: Since PageUpdater and PageLatestRevisionChangedEvent both implement this
+ * interface, callers of PageUpdater do not need to know about PageLatestRevisionChangedEvent,
+ * and subscribers of PageLatestRevisionChangedEvent do not need to know about PageUpdater.
  *
  * @unstable until 1.45
  */

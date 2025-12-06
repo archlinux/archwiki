@@ -65,6 +65,13 @@ class TemporaryAccountLogFormatter extends LogFormatter {
 				$params[2] = Message::rawParam(
 					Linker::userLink( 0, $this->userFactory->newUnsavedTempUser( $tempUserName ) )
 				);
+
+				$entryParams = $this->entry->getParameters();
+				if ( isset( $entryParams['variables'] ) && count( $entryParams['variables'] ) > 0 ) {
+					// Add the number of variables viewed and their names
+					$params[3] = count( $entryParams['variables'] );
+					$params[4] = $this->formatParameterValue( 'list', $entryParams['variables'] );
+				}
 			}
 		}
 
@@ -82,6 +89,15 @@ class TemporaryAccountLogFormatter extends LogFormatter {
 			} elseif ( $params[3] === TemporaryAccountLogger::ACTION_AUTO_REVEAL_DISABLED ) {
 				return 'logentry-checkuser-temporary-account-disable-auto-reveal';
 			}
+		} elseif (
+			MediaWikiServices::getInstance()->getExtensionRegistry()->isLoaded( 'Abuse Filter' ) &&
+			$this->entry->getSubtype() === 'af-' . ProtectedVarsAccessLogger::ACTION_VIEW_PROTECTED_VARIABLE_VALUE
+		) {
+			$params = $this->entry->getParameters();
+			if ( isset( $params['variables'] ) && count( $params['variables'] ) > 0 ) {
+				return 'logentry-checkuser-temporary-account-af-view-protected-var-value-varnames';
+			}
+			return parent::getMessageKey();
 		} else {
 			return parent::getMessageKey();
 		}

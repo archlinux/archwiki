@@ -155,8 +155,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		];
 
 		yield 'valid ES2017 async-await' => [
-			"var foo = async function(x) { return await x.fetch(); }",
-			'Parse error: Unexpected: function on line 1 in input.js'
+			"var foo = async function(x) { return await x.fetch(); }"
 		];
 
 		yield 'valid ES2018 spread in object literal' => [
@@ -261,9 +260,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 
 	public function testPlaceholderize() {
 		$getRelativePaths = new ReflectionMethod( Module::class, 'getRelativePaths' );
-		$getRelativePaths->setAccessible( true );
 		$expandRelativePaths = new ReflectionMethod( Module::class, 'expandRelativePaths' );
-		$expandRelativePaths->setAccessible( true );
 
 		$this->setMwGlobals( [
 			'IP' => '/srv/example/mediawiki/core',
@@ -327,48 +324,6 @@ class ModuleTest extends ResourceLoaderTestCase {
 			$module->getHeaders( $context ),
 			'Preload two resources'
 		);
-	}
-
-	public static function provideGetDeprecationWarning() {
-		return [
-			[
-				null,
-				'normalModule',
-				null,
-			],
-			[
-				true,
-				'deprecatedModule',
-				'This page is using the deprecated ResourceLoader module "deprecatedModule".',
-			],
-			[
-				'Will be removed tomorrow.',
-				'deprecatedTomorrow',
-				"This page is using the deprecated ResourceLoader module \"deprecatedTomorrow\".\n" .
-				"Will be removed tomorrow.",
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider provideGetDeprecationWarning
-	 *
-	 * @param string|bool|null $deprecated
-	 * @param string $name
-	 * @param string $expected
-	 */
-	public function testGetDeprecationWarning( $deprecated, $name, $expected ) {
-		$module = new ResourceLoaderTestModule( [ 'deprecated' => $deprecated ] );
-		$module->setName( $name );
-		$this->assertSame( $expected, $module->getDeprecationWarning() );
-
-		$this->hideDeprecated( 'MediaWiki\ResourceLoader\Module::getDeprecationInformation' );
-		$info = $module->getDeprecationInformation( $this->getResourceLoaderContext() );
-		if ( !$expected ) {
-			$this->assertSame( '', $info );
-		} else {
-			$this->assertSame( 'mw.log.warn(' . json_encode( $expected ) . ');', $info );
-		}
 	}
 
 }

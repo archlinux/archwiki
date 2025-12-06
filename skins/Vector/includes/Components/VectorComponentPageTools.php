@@ -56,8 +56,6 @@ class VectorComponentPageTools implements VectorComponent {
 
 	/**
 	 * Revises the labels of the p-tb and p-cactions menus.
-	 *
-	 * @return array
 	 */
 	private function getMenus(): array {
 		return array_map( function ( $menu ) {

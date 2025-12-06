@@ -253,6 +253,7 @@
 	"visualeditor-includes-includeonly-description": "Apabila kandungan daripada laman ini digunakan pada laman lain, kandungan tambahan berikut akan disertakan di sini:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Ketahui lebih lanjut tentang transklusi separa]",
 	"visualeditor-languages-tool": "Bahasa",
+	"visualeditor-linkcontext-uneditable": "Minta maaf, elemen ini boleh disunting dalam mod “sunting sumber” sahaja buat masa sekarang.",
 	"visualeditor-linkinspector-button-link-external": "Tapak luar",
 	"visualeditor-linkinspector-button-link-internal": "Cari laman dalaman",
 	"visualeditor-linkinspector-convert-link-isbn": "Tukarkan ke pautan ISBN",

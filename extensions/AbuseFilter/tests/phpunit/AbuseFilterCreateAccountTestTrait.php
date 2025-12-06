@@ -5,6 +5,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\User;
 use Wikimedia\Stats\NullStatsdDataFactory;
 
@@ -15,18 +16,29 @@ use Wikimedia\Stats\NullStatsdDataFactory;
  */
 trait AbuseFilterCreateAccountTestTrait {
 	/**
-	 * @param string $accountName
+	 * @param string|null $accountName Can be null to indicate a temporary user.
+	 * If null, TempUserConfig::isEnabled must return true.
 	 * @param bool $autocreate
 	 * @param User|null $creator Defaults to the newly created user
 	 * @return StatusValue
 	 */
 	protected function createAccount(
-		string $accountName,
+		?string $accountName,
 		bool $autocreate = false,
 		?User $creator = null
 	): StatusValue {
-		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
-		$user = $userFactory->newFromName( $accountName );
+		$services = MediaWikiServices::getInstance();
+		$userFactory = $services->getUserFactory();
+		if ( $accountName === null && $services->getTempUserConfig()->isEnabled() ) {
+			$user = $services->getTempUserCreator()->create( null, new FauxRequest() )->getUser();
+			$accountName = $user->getName();
+		} elseif ( $accountName ) {
+			$user = $userFactory->newFromName( $accountName );
+		} else {
+			throw new InvalidArgumentException(
+				'$accountName is nullable only if temporary account creation is enabled'
+			);
+		}
 		$creator ??= $user;
 
 		$provider = new AbuseFilterPreAuthenticationProvider(

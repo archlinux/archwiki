@@ -15,7 +15,7 @@
 	"wikieditor-toolbar-tool-link-ext-target": "URL baylantîsî:",
 	"wikieditor-toolbar-tool-link-ext-text": "Baylantî metíní:",
 	"wikieditor-toolbar-tool-link-insert": "Baylantî koş",
-	"wikieditor-toolbar-tool-link-cancel": "Wazkeş",
+	"wikieditor-toolbar-tool-link-cancel": "Aradanşîk",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Tîş baylantî",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Sayt íşínde baylantî",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Tîş baylantî",
@@ -24,7 +24,7 @@
 	"wikieditor-toolbar-file-target": "Dosiya atî:",
 	"wikieditor-toolbar-file-size": "Balabanlîk:",
 	"wikieditor-toolbar-tool-file-insert": "Koş",
-	"wikieditor-toolbar-tool-file-cancel": "Wazkeş",
+	"wikieditor-toolbar-tool-file-cancel": "Aradanşîk",
 	"wikieditor-toolbar-tool-file-upload": "Ğúkle",
 	"wikieditor-toolbar-tool-signature": "İmza we tarih",
 	"wikieditor-toolbar-section-advanced": "Kelíşmíş",
@@ -38,7 +38,7 @@
 	"wikieditor-toolbar-tool-subscript-example": "Astîndan ğazmalî metín",
 	"wikieditor-toolbar-tool-table-example": "Órnek",
 	"wikieditor-toolbar-tool-table-insert": "Koş",
-	"wikieditor-toolbar-tool-table-cancel": "Wazkeş",
+	"wikieditor-toolbar-tool-table-cancel": "Aradanşîk",
 	"wikieditor-toolbar-help-page-file": "Dosiyalar",
 	"wikieditor-toolbar-help-page-discussion": "Muhabbet",
 	"wikieditor-toolbar-help-content-italic-description": "Kursiv",
@@ -51,5 +51,5 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "İmza we tarih",
 	"wikieditor-toolbar-help-content-signature-description": "İmza",
 	"wikieditor-toolbar-help-content-signature-example": "[[$1:$3|$3]] ([[$2:$3|muhabbet]])",
-	"wikieditor-toolbar-help-content-signature-username": "Kullanuwşî atî"
+	"wikieditor-toolbar-help-content-signature-username": "Kullanuwğî atî"
 }

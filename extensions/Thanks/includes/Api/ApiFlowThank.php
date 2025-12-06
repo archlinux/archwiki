@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * API module to send Flow thanks notifications
+ *
+ * This API does not prevent sending thanks using post IDs that refer to topic
+ * titles, though Thank buttons are only shown for comments in the UI.
+ *
+ * @ingroup API
+ * @ingroup Extensions
+ */
+
 namespace MediaWiki\Extension\Thanks\Api;
 
 use Flow\Container;
@@ -19,32 +29,17 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
-/**
- * API module to send Flow thanks notifications
- *
- * This API does not prevent sending thanks using post IDs that refer to topic
- * titles, though Thank buttons are only shown for comments in the UI.
- *
- * @ingroup API
- * @ingroup Extensions
- */
-
 class ApiFlowThank extends ApiThank {
-
-	private NotificationService $notifications;
-	private UserFactory $userFactory;
 
 	public function __construct(
 		ApiMain $main,
 		string $action,
 		PermissionManager $permissionManager,
 		LogStore $storage,
-		NotificationService $notifications,
-		UserFactory $userFactory
+		private readonly NotificationService $notifications,
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct( $main, $action, $permissionManager, $storage );
-		$this->notifications = $notifications;
-		$this->userFactory = $userFactory;
 	}
 
 	public function execute() {
@@ -56,7 +51,7 @@ class ApiFlowThank extends ApiThank {
 
 		try {
 			$postId = UUID::create( $params['postid'] );
-		} catch ( FlowException $e ) {
+		} catch ( FlowException ) {
 			$this->dieWithError( 'thanks-error-invalidpostid', 'invalidpostid' );
 		}
 
@@ -118,7 +113,7 @@ class ApiFlowThank extends ApiThank {
 
 		try {
 			$data = $rootPostLoader->getWithRoot( $postId );
-		} catch ( FlowException $e ) {
+		} catch ( FlowException ) {
 			$this->dieWithError( 'thanks-error-invalidpostid', 'invalidpostid' );
 		}
 

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -8,8 +9,7 @@
 			"Obsuser",
 			"Prevodim",
 			"Zoranzoki21",
-			"Михајло Анђелковић",
-			"Aca"
+			"Михајло Анђелковић"
 		]
 	},
 	"minerva-last-modified-date": "Последњи пут уређено на датум $1 у $2",
@@ -35,7 +35,6 @@
 	"mobile-frontend-meta-data-issues-categories": "О овој категорији",
 	"mobile-frontend-meta-data-issues-header": "Проблеми странице",
 	"minerva-meta-data-issues-section-header": "Проблеми одељка",
-	"mobile-frontend-pageaction-edit-tooltip": "Уредите уводни одељак ове странице",
 	"mobile-frontend-placeholder": "Претражите {{SITENAME}}",
 	"mobile-frontend-random-button": "Случајна",
 	"mobile-frontend-redirected-from": "Преусмерено са „[[$1]]”",
@@ -58,12 +57,6 @@
 	"skinname-minerva": "Минерва (ново)",
 	"minerva-skin-desc": "Одзивна тема првенствено за употребу на мобилним уређајима",
 	"skin-minerva-issue-learn-more": "Сазнајте више",
-	"skin-minerva-time-ago-seconds": "пре {{PLURAL:$1|$1 сек.}}",
-	"skin-minerva-time-ago-minutes": "пре {{PLURAL:$1|$1 минут|$1 минута}}",
-	"skin-minerva-time-ago-hours": "пре {{PLURAL:$1|$1 сат|$1 сата}}",
-	"skin-minerva-time-ago-days": "пре {{PLURAL:$1|$1 дан|$1 дана}}",
-	"skin-minerva-time-ago-months": "пре $1 {{PLURAL:$1|месец|месеца|месеци}}",
-	"skin-minerva-time-ago-years": "пре {{PLURAL:$1|$1 године|$1 година}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категорије",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Приказује категорије страница",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Груписање резултата по страници није доступно на мобилним уређајима. Ако желите да користите функцију, посетите сајт за рачунаре.",

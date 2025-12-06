@@ -35,23 +35,23 @@ class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 			[
 				'foo',
 				'bar',
-				false
+				false,
 			],
 			[
 				[ 'foo', 'bar' ],
 				'foo',
-				false
+				false,
 			],
 			[
 				"foo\nbar",
 				'bar',
-				true
+				true,
 			],
 			[
 				'{"foo":"bar"}',
 				'bar',
-				false
-			]
+				false,
+			],
 
 		];
 	}

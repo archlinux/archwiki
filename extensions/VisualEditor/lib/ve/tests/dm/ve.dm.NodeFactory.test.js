@@ -66,9 +66,8 @@ QUnit.test( 'canNodeHaveChildren', ( assert ) => {
 		'throws an exception when checking if a node of an unregistered type can have children'
 	);
 	factory.register( ve.dm.NodeFactoryNodeStub );
-	assert.strictEqual(
+	assert.false(
 		factory.canNodeHaveChildren( 'node-factory-node-stub' ),
-		false,
 		'gets child rules for registered nodes'
 	);
 } );
@@ -83,19 +82,16 @@ QUnit.test( 'canNodeTakeAnnotation', ( assert ) => {
 		'throws an exception when checking if a node of an unregistered type can have children'
 	);
 	factory.register( ve.dm.NodeFactoryNodeStub );
-	assert.strictEqual(
+	assert.false(
 		factory.canNodeTakeAnnotation( 'node-factory-node-stub', new ve.dm.LinkAnnotation() ),
-		false,
 		'can\'t take link annotation'
 	);
-	assert.strictEqual(
+	assert.false(
 		factory.canNodeTakeAnnotation( 'node-factory-node-stub', new ve.dm.ItalicAnnotation() ),
-		false,
 		'can\'t take italic annotation'
 	);
-	assert.strictEqual(
+	assert.true(
 		factory.canNodeTakeAnnotation( 'node-factory-node-stub', new ve.dm.BoldAnnotation() ),
-		true,
 		'can take bold annotation'
 	);
 } );
@@ -110,15 +106,48 @@ QUnit.test( 'canNodeHaveChildrenNotContent', ( assert ) => {
 		'throws an exception when checking if a node of an unregistered type can have grandchildren'
 	);
 	factory.register( ve.dm.NodeFactoryNodeStub );
-	assert.strictEqual(
+	assert.false(
 		factory.canNodeHaveChildrenNotContent( 'node-factory-node-stub' ),
-		false,
 		'gets grandchild rules for registered nodes'
 	);
 } );
 
 QUnit.test( 'initialization', ( assert ) => {
 	assert.true( ve.dm.nodeFactory instanceof ve.dm.NodeFactory, 'factory is initialized at ve.dm.nodeFactory' );
+} );
+
+QUnit.test( 'Unknown node type', ( assert ) => {
+	const factory = ve.dm.nodeFactory;
+	[
+		'getDataElement',
+		'getChildNodeTypes',
+		'getParentNodeTypes',
+		'getSuggestedParentNodeTypes',
+		'canNodeHaveChildren',
+		'canNodeHaveChildrenNotContent',
+		'isNodeWrapped',
+		'isNodeUnwrappable',
+		'isMetaData',
+		'isRemovableMetaData',
+		'canNodeContainContent',
+		'canNodeTakeAnnotation',
+		'isNodeContent',
+		'canNodeSerializeAsContent',
+		'isNodeFocusable',
+		'doesNodeHaveSignificantWhitespace',
+		'doesNodeHandleOwnChildren',
+		'shouldIgnoreChildren',
+		'isNodeInternal',
+		'isNodeDeletable'
+	].forEach( ( method ) => {
+		assert.throws(
+			() => {
+				factory[ method ]( 'node-type-does-not-exist' );
+			},
+			/Unknown node type/,
+			`Throws an exception when calling ${ method } on an unregistered node type`
+		);
+	} );
 } );
 
 // TODO: getDataElement

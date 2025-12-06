@@ -2,21 +2,7 @@
 /**
  * Cache for outputs of the PHP parser
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Cache Parser
  */
@@ -46,9 +32,6 @@ class RevisionOutputCache {
 	/** @var string The name of this cache. Used as a root of the cache key. */
 	private $name;
 
-	/** @var WANObjectCache */
-	private $cache;
-
 	/**
 	 * Anything cached prior to this is invalidated
 	 *
@@ -63,17 +46,6 @@ class RevisionOutputCache {
 	 */
 	private $cacheExpiry;
 
-	/** @var JsonCodec */
-	private $jsonCodec;
-
-	/** @var StatsFactory */
-	private $stats;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	private GlobalIdGenerator $globalIdGenerator;
-
 	/**
 	 * @param string $name
 	 * @param WANObjectCache $cache
@@ -86,22 +58,17 @@ class RevisionOutputCache {
 	 */
 	public function __construct(
 		string $name,
-		WANObjectCache $cache,
+		private readonly WANObjectCache $cache,
 		int $cacheExpiry,
 		string $cacheEpoch,
-		JsonCodec $jsonCodec,
-		StatsFactory $stats,
-		LoggerInterface $logger,
-		GlobalIdGenerator $globalIdGenerator
+		private readonly JsonCodec $jsonCodec,
+		private readonly StatsFactory $stats,
+		private readonly LoggerInterface $logger,
+		private readonly GlobalIdGenerator $globalIdGenerator,
 	) {
 		$this->name = $name;
-		$this->cache = $cache;
 		$this->cacheExpiry = $cacheExpiry;
 		$this->cacheEpoch = $cacheEpoch;
-		$this->jsonCodec = $jsonCodec;
-		$this->stats = $stats;
-		$this->logger = $logger;
-		$this->globalIdGenerator = $globalIdGenerator;
 	}
 
 	/**

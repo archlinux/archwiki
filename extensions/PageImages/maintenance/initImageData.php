@@ -6,6 +6,7 @@ if ( $IP === false ) {
 }
 require_once "$IP/maintenance/Maintenance.php";
 
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
@@ -47,8 +48,9 @@ class InitImageData extends Maintenance {
 		}
 
 		do {
-			$dbr = $this->getServiceContainer()->getDBLoadBalancerFactory()
-				->getReplicaDatabase();
+			$dbr = $this->getServiceContainer()
+				->getConnectionProvider()
+				->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN );
 			$queryBuilder = $dbr->newSelectQueryBuilder()
 				->select( 'page_id' )
 				->from( 'page' )
@@ -104,7 +106,7 @@ class InitImageData extends Maintenance {
 	 *  jobs that can exist when returning
 	 * @param bool $isQuiet When false report on job queue pressure every 10s
 	 */
-	private function waitForMaxPressure( JobQueueGroup $queue, $maxPressure, $isQuiet ) {
+	private function waitForMaxPressure( JobQueueGroup $queue, $maxPressure, $isQuiet ): void {
 		$group = $queue->get( 'InitImageDataJob' );
 		$i = 0;
 		do {

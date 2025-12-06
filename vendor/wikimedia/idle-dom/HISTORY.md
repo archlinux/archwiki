@@ -1,5 +1,9 @@
 # Release History
 
+## IDLeDOM 2.1.0 (2025-08-15)
+* Drop support for PHP < 8.1
+* Update dependencies.
+
 ## IDLeDOM 2.0.1 (2024-11-09)
 * Use UnexpectedValueException instead of Exception in tooling.
 * Update dependencies.

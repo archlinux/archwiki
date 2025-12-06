@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Gadgets;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\CodeEditor\Hooks\CodeEditorGetPageLanguageHook;
 use MediaWiki\Title\Title;
 
@@ -9,6 +10,14 @@ use MediaWiki\Title\Title;
  * Hooks for optional integration with the CodeEditor extension.
  */
 class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
+
+	private readonly bool $useCodeEditor;
+
+	public function __construct(
+		Config $config
+	) {
+		$this->useCodeEditor = $config->get( 'GadgetsDefinitionsUseCodeEditor' );
+	}
 
 	/**
 	 * Set the CodeEditor language for GadgetDefinition pages.
@@ -25,7 +34,14 @@ class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 	 * @return bool
 	 */
 	public function onCodeEditorGetPageLanguage( Title $title, ?string &$lang, string $model, string $format ) {
-		if ( $title->hasContentModel( 'GadgetDefinition' ) ) {
+		if ( $title->hasContentModel( 'GadgetDefinition' ) && (
+				$this->useCodeEditor ||
+				// Temporary code while CodeMirror is still in beta (T373711#11018957).
+				// If the beta feature is disabled, we want to fallback to using CodeEditor.
+				// Temporary while CodeMirror is still in beta (T373711#11018957).
+				!( \MediaWiki\Extension\CodeEditor\Hooks::tempIsCodeMirrorEnabled() )
+			)
+		) {
 			$lang = 'json';
 			return false;
 		}

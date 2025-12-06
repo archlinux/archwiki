@@ -5,11 +5,13 @@ namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
 use InvalidArgumentException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\Context\RequestContext;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Html\Html;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
@@ -26,7 +28,9 @@ class FancyCaptcha extends SimpleCaptcha {
 	 * @var string used for fancycaptcha-edit, fancycaptcha-addurl, fancycaptcha-badlogin,
 	 * fancycaptcha-accountcreate, fancycaptcha-create, fancycaptcha-sendemail via getMessage()
 	 */
-	protected static $messagePrefix = 'fancycaptcha-';
+	protected static $messagePrefix = 'fancycaptcha';
+
+	private ?FSFileBackend $backend = null;
 
 	/**
 	 * @return FileBackend
@@ -39,9 +43,8 @@ class FancyCaptcha extends SimpleCaptcha {
 				->get( $wgCaptchaFileBackend );
 		}
 
-		static $backend = null;
-		if ( !$backend ) {
-			$backend = new FSFileBackend( [
+		if ( !$this->backend ) {
+			$this->backend = new FSFileBackend( [
 				'name'           => 'captcha-backend',
 				'wikiId'         => WikiMap::getCurrentWikiId(),
 				'lockManager'    => new NullLockManager( [] ),
@@ -52,7 +55,7 @@ class FancyCaptcha extends SimpleCaptcha {
 			] );
 		}
 
-		return $backend;
+		return $this->backend;
 	}
 
 	/**
@@ -89,11 +92,17 @@ class FancyCaptcha extends SimpleCaptcha {
 		$digest = $wgCaptchaSecret . $info['salt'] . $answer . $wgCaptchaSecret . $info['salt'];
 		$answerHash = substr( md5( $digest ), 0, 16 );
 
+		$logger = LoggerFactory::getInstance( 'captcha' );
 		if ( $answerHash == $info['hash'] ) {
-			wfDebug( "FancyCaptcha: answer hash matches expected {$info['hash']}\n" );
+			$logger->debug(
+				'FancyCaptcha: answer hash matches expected {expected_hash}', [ 'expected_hash' => $info['hash'] ]
+			);
 			return true;
 		} else {
-			wfDebug( "FancyCaptcha: answer hashes to $answerHash, expected {$info['hash']}\n" );
+			$logger->debug(
+				'FancyCaptcha: answer hashes to {answer_hash}, expected {expected_hash}',
+				[ 'answer_hash' => $answerHash, 'expected_hash' => $info['hash'] ]
+			);
 			return false;
 		}
 	}
@@ -109,13 +118,13 @@ class FancyCaptcha extends SimpleCaptcha {
 		}
 		$index = $this->storeCaptcha( $info );
 		$title = SpecialPage::getTitleFor( 'Captcha', 'image' );
-		$resultArr['captcha'] = $this->describeCaptchaType();
+		$resultArr['captcha'] = $this->describeCaptchaType( $this->action );
 		$resultArr['captcha']['id'] = $index;
 		$resultArr['captcha']['url'] = $title->getLocalURL( 'wpCaptchaId=' . urlencode( $index ) );
 	}
 
 	/** @inheritDoc */
-	public function describeCaptchaType() {
+	public function describeCaptchaType( ?string $action = null ) {
 		return [
 			'type' => 'image',
 			'mime' => 'image/png',
@@ -123,7 +132,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/** @inheritDoc */
-	public function getFormInformation( $tabIndex = 1 ) {
+	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
 		$title = SpecialPage::getTitleFor( 'Captcha', 'image' );
 		$info = $this->getCaptcha();
 		$index = $this->storeCaptcha( $info );
@@ -381,10 +390,9 @@ class FancyCaptcha extends SimpleCaptcha {
 	}
 
 	/**
-	 * @return bool
+	 * Shows the image associated with the given captcha index for the user
 	 */
-	public function showImage() {
-		$context = RequestContext::getMain();
+	public function showImage( IContextSource $context ): bool {
 		$context->getOutput()->disable();
 
 		$index = $context->getRequest()->getVal( 'wpCaptchaId' );
@@ -498,8 +506,11 @@ class FancyCaptcha extends SimpleCaptcha {
 	) {
 		/** @var CaptchaAuthenticationRequest $req */
 		$req =
-			AuthenticationRequest::getRequestByClass( $requests,
-				CaptchaAuthenticationRequest::class, true );
+			AuthenticationRequest::getRequestByClass(
+				$requests,
+				CaptchaAuthenticationRequest::class,
+				true
+			);
 		if ( !$req ) {
 			return;
 		}
@@ -518,5 +529,3 @@ class FancyCaptcha extends SimpleCaptcha {
 		] + $formDescriptor['captchaWord'];
 	}
 }
-
-class_alias( FancyCaptcha::class, 'FancyCaptcha' );

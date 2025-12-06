@@ -195,6 +195,8 @@
 	"rcfilters-watchlist-preference-label": "Použiť rozhranie bez JavaScriptu",
 	"rcfilters-watchlist-preference-help": "Načíta Sledované stránky bez vyhľadávania filtrov alebo zvýrazňovania.",
 	"prefs-changeswatchlist": "Zobrazené zmeny",
+	"tog-watchstar-expiry": "Manuálne pridané stránky do zoznamu sledovaných zostanú v zozname predvolene:",
+	"tog-watch-expiry": "Predvolené časové obdobie:",
 	"tog-watchlisthideminor": "Skryť drobné úpravy zo zoznamu sledovaných",
 	"tog-watchlisthidebots": "Skryť úpravy botov zo zoznamu sledovaných",
 	"tog-watchlisthideown": "Skryť moje úpravy zo zoznamu sledovaných",

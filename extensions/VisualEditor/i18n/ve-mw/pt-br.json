@@ -274,6 +274,7 @@
 	"visualeditor-includes-includeonly-description": "Quando o conteúdo desta página é usado por outra página, o seguinte conteúdo adicional será incluído aqui:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Saiba mais sobre a transclusão parcial]",
 	"visualeditor-languages-tool": "Idiomas",
+	"visualeditor-linkcontext-uneditable": "Desculpe, mas, por enquanto, esse link só pode ser editado no modo de código-fonte.",
 	"visualeditor-linkinspector-button-link-external": "Site externo",
 	"visualeditor-linkinspector-button-link-internal": "Pesquisar páginas internas",
 	"visualeditor-linkinspector-convert-link-isbn": "Converter para ligação de ISBN",

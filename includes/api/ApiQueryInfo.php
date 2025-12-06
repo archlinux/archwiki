@@ -2,27 +2,15 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\EditPage\IntroMessageBuilder;
 use MediaWiki\EditPage\PreloadedContentBuilder;
 use MediaWiki\Language\ILanguageConverter;
@@ -614,7 +602,6 @@ class ApiQueryInfo extends ApiQueryBase {
 	 */
 	private function getProtectionInfo() {
 		$this->protections = [];
-		$db = $this->getDB();
 
 		// Get normal protections for existing titles
 		if ( count( $this->titles ) ) {
@@ -646,7 +633,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			$lb = $this->linkBatchFactory->newLinkBatch( $this->missing );
 			$this->addTables( 'protected_titles' );
 			$this->addFields( [ 'pt_title', 'pt_namespace', 'pt_create_perm', 'pt_expiry' ] );
-			$this->addWhere( $lb->constructSet( 'pt', $db ) );
+			$this->addWhere( $lb->constructSet( 'pt', $this->getDB() ) );
 			$res = $this->select( __METHOD__ );
 			foreach ( $res as $row ) {
 				$this->protections[$row->pt_namespace][$row->pt_title][] = [
@@ -671,55 +658,90 @@ class ApiQueryInfo extends ApiQueryBase {
 				array_values( $this->restrictionStore->listApplicableRestrictionTypes( $page ) );
 		}
 
-		[ $blNamespace, $blTitle ] = $this->linksMigration->getTitleFields( 'templatelinks' );
-		$queryInfo = $this->linksMigration->getQueryInfo( 'templatelinks' );
-
 		if ( count( $others ) ) {
-			// Non-images: check templatelinks
-			$lb = $this->linkBatchFactory->newLinkBatch( $others );
 			$this->resetQueryParams();
-			$this->addTables( array_merge( [ 'page_restrictions', 'page' ], $queryInfo['tables'] ) );
-			// templatelinks must use PRIMARY index and not the tl_target_id.
-			$this->addOption( 'USE INDEX', [ 'templatelinks' => 'PRIMARY' ] );
+			$this->addTables( [ 'page_restrictions', 'page' ] );
 			$this->addFields( [ 'pr_type', 'pr_level', 'pr_expiry',
-				'page_title', 'page_namespace',
-				$blNamespace, $blTitle ] );
-			$this->addWhere( $lb->constructSet( 'tl', $db ) );
+				'page_title', 'page_namespace', 'page_id' ] );
 			$this->addWhere( 'pr_page = page_id' );
-			$this->addWhere( 'pr_page = tl_from' );
 			$this->addWhereFld( 'pr_cascade', 1 );
-			$this->addJoinConds( $queryInfo['joins'] );
 
 			$res = $this->select( __METHOD__ );
+
+			$protectedPages = [];
 			foreach ( $res as $row ) {
-				$this->protections[$row->$blNamespace][$row->$blTitle][] = [
+				$protectedPages[$row->page_id] = [
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
 					'expiry' => ApiResult::formatExpiry( $row->pr_expiry ),
 					'source' => $this->titleFormatter->formatTitle( $row->page_namespace, $row->page_title ),
 				];
 			}
+
+			if ( $protectedPages ) {
+				$this->setVirtualDomain( TemplateLinksTable::VIRTUAL_DOMAIN );
+
+				$lb = $this->linkBatchFactory->newLinkBatch( $others );
+
+				$queryInfo = $this->linksMigration->getQueryInfo( 'templatelinks' );
+				$res = $this->getDB()->newSelectQueryBuilder()
+					->select( [ 'tl_from', 'lt_namespace', 'lt_title' ] )
+					->tables( $queryInfo['tables'] )
+					->joinConds( $queryInfo['joins'] )
+					->where( [ 'tl_from' => array_keys( $protectedPages ) ] )
+					->andWhere( $lb->constructSet( 'tl', $this->getDB() ) )
+					->useIndex( [ 'templatelinks' => 'PRIMARY' ] )
+					->caller( __METHOD__ )
+					->fetchResultSet();
+
+				foreach ( $res as $row ) {
+					$protection = $protectedPages[$row->tl_from];
+					$this->protections[$row->lt_namespace][$row->lt_title][] = $protection;
+				}
+
+				$this->resetVirtualDomain();
+			}
 		}
 
 		if ( count( $images ) ) {
-			// Images: check imagelinks
 			$this->resetQueryParams();
-			$this->addTables( [ 'page_restrictions', 'page', 'imagelinks' ] );
+			$this->addTables( [ 'page_restrictions', 'page' ] );
 			$this->addFields( [ 'pr_type', 'pr_level', 'pr_expiry',
-				'page_title', 'page_namespace', 'il_to' ] );
+				'page_title', 'page_namespace', 'page_id' ] );
 			$this->addWhere( 'pr_page = page_id' );
-			$this->addWhere( 'pr_page = il_from' );
 			$this->addWhereFld( 'pr_cascade', 1 );
-			$this->addWhereFld( 'il_to', $images );
 
 			$res = $this->select( __METHOD__ );
+
+			$protectedPages = [];
 			foreach ( $res as $row ) {
-				$this->protections[NS_FILE][$row->il_to][] = [
+				$protectedPages[$row->page_id] = [
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
 					'expiry' => ApiResult::formatExpiry( $row->pr_expiry ),
 					'source' => $this->titleFormatter->formatTitle( $row->page_namespace, $row->page_title ),
 				];
+			}
+
+			if ( $protectedPages ) {
+				$this->setVirtualDomain( ImageLinksTable::VIRTUAL_DOMAIN );
+
+				$res = $this->getDB()->newSelectQueryBuilder()
+					->select( [ 'il_from', 'il_to' ] )
+					->from( 'imagelinks' )
+					->where( [
+						'il_from' => array_keys( $protectedPages ),
+						'il_to' => $images
+					] )
+					->caller( __METHOD__ )
+					->fetchResultSet();
+
+				foreach ( $res as $row ) {
+					$protection = $protectedPages[$row->il_from];
+					$this->protections[NS_FILE][$row->il_to][] = $protection;
+				}
+
+				$this->resetVirtualDomain();
 			}
 		}
 	}
@@ -991,6 +1013,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		// Other props depend on something about the current user
 		$publicProps = [
@@ -1015,6 +1038,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'prop' => [
@@ -1097,6 +1121,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -1109,6 +1134,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Info';
 	}

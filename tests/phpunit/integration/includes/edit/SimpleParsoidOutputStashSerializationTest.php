@@ -11,7 +11,7 @@ use MediaWiki\Edit\SelserContext;
 use MediaWiki\Json\JsonCodec;
 use MediaWikiIntegrationTestCase;
 use Psr\Container\ContainerInterface;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Tests\SerializationTestTrait;
 
 /**
@@ -33,7 +33,7 @@ class SimpleParsoidOutputStashSerializationTest extends MediaWikiIntegrationTest
 		return [
 			'basic' => [
 				'instance' => new SelserContext(
-					new PageBundle(
+					new HtmlPageBundle(
 						'<b>html</b>',
 						[
 							'counter' => 1234,
@@ -89,6 +89,7 @@ class SimpleParsoidOutputStashSerializationTest extends MediaWikiIntegrationTest
 
 	public static function getSupportedSerializationFormats(): array {
 		$mockServices = new class implements ContainerInterface {
+			/** @var array */
 			private $contents = [];
 
 			public function get( $id ) {

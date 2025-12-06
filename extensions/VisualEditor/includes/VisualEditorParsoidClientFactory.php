@@ -16,12 +16,9 @@ class VisualEditorParsoidClientFactory {
 	 */
 	public const SERVICE_NAME = 'VisualEditor.ParsoidClientFactory';
 
-	private PageRestHelperFactory $pageRestHelperFactory;
-
 	public function __construct(
-		PageRestHelperFactory $pageRestHelperFactory
+		private readonly PageRestHelperFactory $pageRestHelperFactory,
 	) {
-		$this->pageRestHelperFactory = $pageRestHelperFactory;
 	}
 
 	/**

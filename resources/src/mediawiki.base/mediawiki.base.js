@@ -3,7 +3,14 @@
 const slice = Array.prototype.slice;
 
 // Apply site-level data
-mw.config.set( require( './config.json' ) );
+// Allow page-specific configs (which were already set in startup.js)
+// to take precedence over site configs (T380552, T393256)
+const config = require( './config.json' );
+for ( const key in config ) {
+	if ( !mw.config.exists( key ) ) {
+		mw.config.set( key, config[ key ] );
+	}
+}
 
 require( './log.js' );
 
@@ -412,7 +419,7 @@ mw.trackSubscribe = function ( topic, callback ) {
 	function handler( trackQueue ) {
 		for ( ; seen < trackQueue.length; seen++ ) {
 			const event = trackQueue[ seen ];
-			if ( event.topic.indexOf( topic ) === 0 ) {
+			if ( event.topic.startsWith( topic ) ) {
 				callback( event.topic, ...event.args );
 			}
 		}
@@ -519,19 +526,19 @@ mw.hook = function ( name ) {
 			/**
 			 * Register a hook handler.
 			 *
-			 * @param {...Function} handler Function to bind.
+			 * @param {...Function} handlers Function(s) to bind.
 			 * @memberof Hook
 			 * @return {Hook}
 			 */
-			add: function () {
+			add: function ( ...handlers ) {
 				if ( deprecated ) {
 					deprecated();
 				}
-				for ( let i = 0; i < arguments.length; i++ ) {
-					fns.push( arguments[ i ] );
-					if ( memory ) {
+				fns.push( ...handlers );
+				if ( memory ) {
+					for ( const handler of handlers ) {
 						try {
-							arguments[ i ].apply( null, memory );
+							handler( ...memory );
 						} catch ( e ) {
 							rethrow( e );
 						}
@@ -542,14 +549,14 @@ mw.hook = function ( name ) {
 			/**
 			 * Unregister a hook handler.
 			 *
-			 * @param {...Function} handler Function to unbind.
+			 * @param {...Function} handlers Function(s) to unbind.
 			 * @memberof Hook
 			 * @return {Hook}
 			 */
-			remove: function () {
-				for ( let i = 0; i < arguments.length; i++ ) {
+			remove: function ( ...handlers ) {
+				for ( const handler of handlers ) {
 					let j;
-					while ( ( j = fns.indexOf( arguments[ i ] ) ) !== -1 ) {
+					while ( ( j = fns.indexOf( handler ) ) !== -1 ) {
 						fns.splice( j, 1 );
 					}
 				}
@@ -589,19 +596,19 @@ mw.hook = function ( name ) {
 			 * @return {Hook}
 			 * @chainable
 			 */
-			fire: function () {
+			fire: function ( ...data ) {
 				if ( deprecated && fns.length ) {
 					deprecated();
 				}
 
-				for ( let i = 0; i < fns.length; i++ ) {
+				for ( const fn of fns ) {
 					try {
-						fns[ i ].apply( null, arguments );
+						fn.apply( null, arguments );
 					} catch ( e ) {
 						rethrow( e );
 					}
 				}
-				memory = slice.call( arguments );
+				memory = data;
 
 				return this;
 			}

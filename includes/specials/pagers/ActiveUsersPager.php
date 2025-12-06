@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -29,6 +15,7 @@ use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserGroupManager;
@@ -45,6 +32,8 @@ use Wikimedia\Rdbms\Subquery;
  * @ingroup Pager
  */
 class ActiveUsersPager extends UsersPager {
+	private RecentChangeLookup $recentChangeLookup;
+
 	/**
 	 * @var FormOptions
 	 */
@@ -75,6 +64,7 @@ class ActiveUsersPager extends UsersPager {
 		UserIdentityLookup $userIdentityLookup,
 		HideUserUtils $hideUserUtils,
 		TempUserConfig $tempUserConfig,
+		RecentChangeLookup $recentChangeLookup,
 		FormOptions $opts
 	) {
 		parent::__construct(
@@ -90,6 +80,7 @@ class ActiveUsersPager extends UsersPager {
 			null
 		);
 
+		$this->recentChangeLookup = $recentChangeLookup;
 		$this->RCMaxAge = $this->getConfig()->get( MainConfigNames::ActiveUserDays );
 		$this->requestedUser = '';
 
@@ -112,10 +103,12 @@ class ActiveUsersPager extends UsersPager {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return 'qcc_title';
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo( $data = null ) {
 		$dbr = $this->getDatabase();
 
@@ -177,18 +170,18 @@ class ActiveUsersPager extends UsersPager {
 			'conds' => [],
 			'join_conds' => [ 'recentchanges' => [ 'LEFT JOIN', [
 				'rc_actor = actor_id',
-				$dbr->expr( 'rc_type', '!=', RC_EXTERNAL ), // Don't count wikidata.
-				$dbr->expr( 'rc_type', '!=', RC_CATEGORIZE ), // Don't count categorization changes.
+				$dbr->expr( 'rc_source', '=', $this->recentChangeLookup->getPrimarySources() ),
 				$dbr->expr( 'rc_log_type', '=', null )->or( 'rc_log_type', '!=', 'newusers' ),
 				$dbr->expr( 'rc_timestamp', '>=', $timestamp ),
 			] ] ],
 		];
 	}
 
+	/** @inheritDoc */
 	protected function buildQueryInfo( $offset, $limit, $order ) {
 		$fname = __METHOD__ . ' (' . $this->getSqlComment() . ')';
 
-		$sortColumns = array_merge( [ $this->mIndexField ], $this->mExtraSortFields );
+		$sortColumns = [ $this->mIndexField, ...$this->mExtraSortFields ];
 		if ( $order === self::QUERY_ASCENDING ) {
 			$dir = 'ASC';
 			$orderBy = $sortColumns;
@@ -237,7 +230,10 @@ class ActiveUsersPager extends UsersPager {
 			] )
 			->from( 'block_target' )
 			->join( 'block', null, 'bl_target=bt_id' )
-			->where( [ 'bt_user' => $uids ] )
+			->where( [
+				'bt_user' => $uids,
+				$dbr->expr( 'bl_expiry', '>=', $dbr->timestamp() ),
+			] )
 			->groupBy( [ 'bt_user' ] )
 			->caller( __METHOD__ )->fetchResultSet();
 		$this->blockStatusByUid = [];
@@ -250,6 +246,7 @@ class ActiveUsersPager extends UsersPager {
 		$this->mResult->seek( 0 );
 	}
 
+	/** @inheritDoc */
 	public function formatRow( $row ) {
 		$userName = $row->user_name;
 

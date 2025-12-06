@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\CodeEditor;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Extension\BetaFeatures\BetaFeatures;
@@ -17,26 +18,21 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 
-/**
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
- */
 class Hooks implements
 	GetPreferencesHook,
 	EditPage__showEditForm_initialHook,
 	EditPage__showReadOnlyForm_initialHook
 {
-	private UserOptionsLookup $userOptionsLookup;
-	private HookRunner $hookRunner;
-	private array $enabledContentModels;
+	private readonly HookRunner $hookRunner;
+	private readonly array $enabledModes;
 
 	public function __construct(
-		UserOptionsLookup $userOptionsLookup,
+		private readonly UserOptionsLookup $userOptionsLookup,
 		HookContainer $hookContainer,
-		Config $config
+		Config $config,
 	) {
-		$this->userOptionsLookup = $userOptionsLookup;
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->enabledContentModels = $config->get( 'CodeEditorContentModels' );
+		$this->enabledModes = $config->get( 'CodeEditorEnabledModes' );
 	}
 
 	private function getPageLanguage( Title $title, string $model, string $format ): ?string {
@@ -46,6 +42,8 @@ class Hooks implements
 			return 'css';
 		} elseif ( $model === CONTENT_MODEL_JSON ) {
 			return 'json';
+		} elseif ( $model === CONTENT_MODEL_VUE ) {
+			return 'vue';
 		}
 
 		// Give extensions a chance
@@ -73,19 +71,19 @@ class Hooks implements
 	 */
 	public function onEditPage__showEditForm_initial( $editpage, $output ) {
 		$model = $editpage->contentModel;
-		if ( ( $this->enabledContentModels[ $model ] ?? true ) === false || (
-				// TODO: Remove after CodeMirror is out of Beta
-				ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) &&
-				BetaFeatures::isFeatureEnabled( $output->getUser(), 'codemirror-beta-feature-enable' )
-			)
+		$title = $editpage->getContextTitle();
+		$format = $editpage->contentFormat;
+		$lang = $this->getPageLanguage( $title, $model, $format );
+
+		if ( $lang &&
+			// @phan-suppress-next-line PhanAccessReadOnlyProperty
+			isset( $this->enabledModes[$lang] ) &&
+			$this->enabledModes[$lang] === false &&
+			self::tempIsCodeMirrorEnabled()
 		) {
 			return;
 		}
 
-		$title = $editpage->getContextTitle();
-		$format = $editpage->contentFormat;
-
-		$lang = $this->getPageLanguage( $title, $model, $format );
 		if ( $lang && $this->userOptionsLookup->getOption( $output->getUser(), 'usebetatoolbar' ) ) {
 			$output->addModules( 'ext.codeEditor' );
 			$output->addModuleStyles( 'ext.codeEditor.styles' );
@@ -108,5 +106,34 @@ class Hooks implements
 	 */
 	public function onEditPage__showReadOnlyForm_initial( $editpage, $output ) {
 		$this->onEditPage__showEditForm_initial( $editpage, $output );
+	}
+
+	/**
+	 * Temporary code while CodeMirror is still in beta. This should be checked
+	 * against in every CodeEditorGetPageLanguageHook implementation where the
+	 * extension has CodeMirror integration (via the CodeMirrorGetMode hook).
+	 *
+	 * In such cases, we want to fallback to using CodeEditor.
+	 * Set $wgCodeEditorEnabledModes for the content model to false if you
+	 * do not want to use CodeEditor or CodeMirror for that mode.
+	 *
+	 * See T373711#11018957
+	 *
+	 * @return bool
+	 */
+	public static function tempIsCodeMirrorEnabled(): bool {
+		$extensionRegistry = ExtensionRegistry::getInstance();
+		$requestContext = RequestContext::getMain();
+		return $extensionRegistry->isLoaded( 'CodeMirror' ) && (
+			// $wgCodeMirrorV6 is explicitly set
+			$requestContext->getConfig()->get( 'CodeMirrorV6' ) ||
+			// ?cm6enable=1 URL parameter is set
+			$requestContext->getRequest()->getBool( 'cm6enable' ) ||
+			// Beta feature is enabled for the user
+			(
+				$extensionRegistry->isLoaded( 'BetaFeatures' ) &&
+				BetaFeatures::isFeatureEnabled( $requestContext->getUser(), 'codemirror-beta-feature-enable' )
+			)
+		);
 	}
 }

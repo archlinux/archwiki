@@ -126,7 +126,8 @@ class RangeBlockTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideGetMessageParameters
 	 */
-	public function testGetMessage( Parameters $params ) {
+	public function testGetMessage( callable $params ) {
+		$params = $params( $this );
 		$rangeBlock = new RangeBlock(
 			$params,
 			'0',

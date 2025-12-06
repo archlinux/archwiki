@@ -5,6 +5,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Verificar qual nomines de usator usa un adresse IP date o qual adresses IP usa un nomine de usator date.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''Iste API ha essite disactivate per le administratores del sito. Le consultas del API non restituera alcun datos.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Typo de demanda CheckUser:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Obtener le adresse IP del usator.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Obtener actiones effectuate per le adresse o intervallo IP fornite.",
@@ -36,6 +37,7 @@
 	"apierror-checkuser-timelimit": "Tu debe usar un limite de tempore correcte (in anglese, como \"-2 weeks\" or \"2 weeks ago\").",
 	"apierror-checkuser-invalidmode": "Modo de requesta invalide",
 	"apierror-checkuser-nosuchuser": "Non existe un usator con iste nomine",
+	"apierror-checkuser-disabled": "Le API de consulta ‘checkuser’ ha essite disactivate per le administratores del sito.",
 	"checkuser-api-help-param-direction": "In qual direction enumerar:",
 	"checkuser-api-help-paramvalue-direction-newer": "Listar le plus vetules primo. Nota: $1from debe esser ante $1to.",
 	"checkuser-api-help-paramvalue-direction-older": "Listar le plus noves primo (option predefinite). Nota: $1from debe esser post $1to.",
@@ -46,5 +48,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} collige datos sur \"user-agent client hints\" pro adjutar a moderar vandalismo e abuso sur projectos Wikimedia. Vide https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints pro plus detalios.",
 	"apihelp-logout-param-checkuserclienthints": "Datos “client hint” fornite con requestas a ApiLogout. Pro uso interne solmente.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "Le expiration de auto-revelation fornite non es valide.",
-	"checkuser-ip-auto-reveal-missing-permission": "Tu non ha le permission necessari pro usar le auto-revelation de adresses IP."
+	"checkuser-ip-auto-reveal-missing-permission": "Tu non ha le permission necessari pro usar le auto-revelation de adresses IP.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "Le ID de caso fornite non existe",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "Le functionalitate de investigationes suggerite non es activate"
 }

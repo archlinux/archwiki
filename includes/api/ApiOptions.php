@@ -2,21 +2,7 @@
 /**
  * Copyright © 2012 Szymon Świerkosz beau@adres.pl
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,6 +11,7 @@ namespace MediaWiki\Api;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\User\Options\UserOptionsManager;
+use MediaWiki\User\User;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -40,22 +27,33 @@ class ApiOptions extends ApiOptionsBase {
 		?UserOptionsManager $userOptionsManager = null,
 		?PreferencesFactory $preferencesFactory = null
 	) {
-		/**
-		 * This class is extended by GlobalPreferences extension.
-		 * So it falls back to the global state.
-		 */
-		$services = MediaWikiServices::getInstance();
-		$userOptionsManager ??= $services->getUserOptionsManager();
-		$preferencesFactory ??= $services->getPreferencesFactory();
+		if ( $userOptionsManager === null || $preferencesFactory === null ) {
+			wfDeprecatedMsg(
+				__METHOD__ . ': calling without $userOptionsManager and $preferencesFactory is deprecated',
+				'1.45'
+			);
+			$services = MediaWikiServices::getInstance();
+			$userOptionsManager ??= $services->getUserOptionsManager();
+			$preferencesFactory ??= $services->getPreferencesFactory();
+		}
 		parent::__construct( $main, $action, $userOptionsManager, $preferencesFactory );
 	}
 
+	/**
+	 * @param User $user
+	 * @param array $changes
+	 * @param string[] $resetKinds
+	 */
 	protected function runHook( $user, $changes, $resetKinds ) {
 		$this->getHookRunner()->onApiOptions( $this, $user, $changes, $resetKinds );
 	}
 
+	/**
+	 * @param string $key
+	 * @return bool
+	 */
 	protected function shouldIgnoreKey( $key ) {
-		$user = $this->getUserForUpdates();
+		$user = $this->getUserFromPrimary();
 		$manager = $this->getUserOptionsManager();
 		if ( $this->getGlobalParam() === 'ignore' && $manager->isOptionGlobal( $user, $key ) ) {
 			$this->addWarning( $this->msg( 'apiwarn-global-option-ignored', $key ) );
@@ -66,19 +64,24 @@ class ApiOptions extends ApiOptionsBase {
 
 	protected function resetPreferences( array $kinds ) {
 		$optionNames = $this->getPreferencesFactory()->getOptionNamesForReset(
-			$this->getUserForUpdates(), $this->getContext(), $kinds );
-		$this->getUserOptionsManager()->resetOptionsByName( $this->getUserForUpdates(), $optionNames );
+			$this->getUserFromPrimary(), $this->getContext(), $kinds );
+		$this->getUserOptionsManager()->resetOptionsByName( $this->getUserFromPrimary(), $optionNames );
 	}
 
+	/**
+	 * @param string $preference
+	 * @param mixed $value
+	 */
 	protected function setPreference( $preference, $value ) {
 		$globalUpdateType = [
 			'ignore' => UserOptionsManager::GLOBAL_IGNORE,
 			'update' => UserOptionsManager::GLOBAL_UPDATE,
-			'override' => UserOptionsManager::GLOBAL_OVERRIDE
+			'override' => UserOptionsManager::GLOBAL_OVERRIDE,
+			'create' => UserOptionsManager::GLOBAL_CREATE,
 		][ $this->getGlobalParam() ];
 
 		$this->getUserOptionsManager()->setOption(
-			$this->getUserForUpdates(),
+			$this->getUserFromPrimary(),
 			$preference,
 			$value,
 			$globalUpdateType
@@ -90,14 +93,16 @@ class ApiOptions extends ApiOptionsBase {
 	}
 
 	protected function commitChanges() {
-		$this->getUserForUpdates()->saveSettings();
+		$this->getUserOptionsManager()->saveOptions( $this->getUserFromPrimary() );
 	}
 
-	public function getHelpUrls() {
+	/** @codeCoverageIgnore Merely declarative */
+	public function getHelpUrls(): string {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Options';
 	}
 
-	protected function getExamplesMessages() {
+	/** @codeCoverageIgnore Merely declarative */
+	protected function getExamplesMessages(): array {
 		return [
 			'action=options&reset=&token=123ABC'
 				=> 'apihelp-options-example-reset',
@@ -109,10 +114,11 @@ class ApiOptions extends ApiOptionsBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return parent::getAllowedParams() + [
 			'global' => [
-				ParamValidator::PARAM_TYPE => [ 'ignore', 'update', 'override' ],
+				ParamValidator::PARAM_TYPE => [ 'ignore', 'update', 'override', 'create' ],
 				ParamValidator::PARAM_DEFAULT => 'ignore'
 			]
 		];

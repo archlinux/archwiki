@@ -71,13 +71,17 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 	 * @param UserIdentity $performer The performer of the action that was logged to a local CheckUser result table
 	 * @param string|null $ip The IP address used to perform the action
 	 * @param string $domainID The domain ID for the wiki where the action was performed
-	 * @param string $timestamp When the action was performed, as a TS_MW timestamp
+	 * @param string $timestamp When the action was performed, in any format accepted by {@link ConvertibleTimestamp}
 	 * @param bool $hasRevisionId Whether the given action has a revision ID (i.e. is an edit)
 	 * @return void
 	 */
 	public function recordActionInCentralIndexes(
 		UserIdentity $performer, ?string $ip, string $domainID, string $timestamp, bool $hasRevisionId
 	) {
+		// Convert the timestamp to TS_MW format in case we are running on a postgres DB. This is a no-op on other
+		// DB types.
+		$timestamp = ConvertibleTimestamp::convert( TS_MW, $timestamp );
+
 		// Don't record data when the user does not exist locally or is an IP address, as for the user central index
 		// we need a central ID and for the temp edit index the performer has to be a temporary account.
 		if ( !$performer->isRegistered() ) {
@@ -328,7 +332,7 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 				'cite_ciwm_id' => $wikiId,
 				'cite_ip_hex' => $row->cite_ip_hex,
 				// Use the timestamp as a CAS check to prevent races with concurrent updates to these rows
-				'cite_timestamp' => $row->cite_timestamp
+				'cite_timestamp' => $row->cite_timestamp,
 			] );
 		}
 
@@ -355,7 +359,7 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 				'ciu_ciwm_id' => $wikiId,
 				'ciu_central_id' => $row->ciu_central_id,
 				// Use the timestamp as a CAS check to prevent races with concurrent updates to these rows
-				'ciu_timestamp' => $row->ciu_timestamp
+				'ciu_timestamp' => $row->ciu_timestamp,
 			] );
 		}
 

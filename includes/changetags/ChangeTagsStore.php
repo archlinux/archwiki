@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -513,6 +499,25 @@ class ChangeTagsStore {
 	}
 
 	/**
+	 * Get tag IDs given a list of tag names. If any name is invalid, its ID
+	 * will be omitted from the return value.
+	 *
+	 * @since 1.45
+	 * @param string[] $tagNames
+	 * @return array<string,int>
+	 */
+	public function getTagIdsFromNames( $tagNames ) {
+		$tagIds = [];
+		foreach ( $tagNames as $name ) {
+			try {
+				$tagIds[$name] = $this->changeTagDefStore->getId( $name );
+			} catch ( NameTableAccessException ) {
+			}
+		}
+		return $tagIds;
+	}
+
+	/**
 	 * Add and remove tags to/from a change given its rc_id, rev_id and/or log_id,
 	 * without verifying that the tags exist or are valid. If a tag is present in
 	 * both $tagsToAdd and $tagsToRemove, it will be removed.
@@ -793,7 +798,6 @@ class ChangeTagsStore {
 	 * @param string|array &$options Options, see Database::select
 	 * @param string|array|false|null $filter_tag Tag(s) to select on (OR)
 	 * @param bool $exclude If true, exclude tag(s) from $filter_tag (NOR)
-	 *
 	 */
 	public function modifyDisplayQuery( &$tables, &$fields, &$conds,
 		&$join_conds, &$options, $filter_tag = '', bool $exclude = false
@@ -836,13 +840,7 @@ class ChangeTagsStore {
 		if ( $filter_tag !== [] && $filter_tag !== '' ) {
 			// Somebody wants to filter on a tag.
 			// Add an INNER JOIN on change_tag
-			$filterTagIds = [];
-			foreach ( (array)$filter_tag as $filterTagName ) {
-				try {
-					$filterTagIds[] = $this->changeTagDefStore->getId( $filterTagName );
-				} catch ( NameTableAccessException $exception ) {
-				}
-			}
+			$filterTagIds = array_values( $this->getTagIdsFromNames( (array)$filter_tag ) );
 
 			if ( $exclude ) {
 				if ( $filterTagIds !== [] ) {
@@ -888,7 +886,6 @@ class ChangeTagsStore {
 	 * @param string $table Table name. Must be either of 'recentchanges', 'logging', 'revision', or 'archive'
 	 * @param string|array|false|null $filter_tag Tag(s) to select on (OR)
 	 * @param bool $exclude If true, exclude tag(s) from $filter_tag (NOR)
-	 *
 	 */
 	public function modifyDisplayQueryBuilder(
 		SelectQueryBuilder $queryBuilder,
@@ -927,13 +924,7 @@ class ChangeTagsStore {
 		if ( $filter_tag !== [] && $filter_tag !== '' ) {
 			// Somebody wants to filter on a tag.
 			// Add an INNER JOIN on change_tag
-			$filterTagIds = [];
-			foreach ( (array)$filter_tag as $filterTagName ) {
-				try {
-					$filterTagIds[] = $this->changeTagDefStore->getId( $filterTagName );
-				} catch ( NameTableAccessException $exception ) {
-				}
-			}
+			$filterTagIds = array_values( $this->getTagIdsFromNames( (array)$filter_tag ) );
 
 			if ( $exclude ) {
 				if ( $filterTagIds !== [] ) {

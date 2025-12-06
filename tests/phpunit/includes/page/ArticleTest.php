@@ -193,16 +193,16 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 			->with(
 				$this->anything(),
 				$this->callback( function ( ParserOptions $parserOptions ) use ( &$beforePreWarm ) {
-					$expectedReason = $beforePreWarm ? 'page-view' : 'view';
+					$expectedReason = $beforePreWarm ? 'page_view' : 'view';
 					$this->assertSame( $expectedReason, $parserOptions->getRenderReason() );
 					return true;
 				} ),
 				$this->anything(),
 				$this->callback( function ( $options ) use ( &$beforePreWarm ) {
 					if ( $beforePreWarm ) {
-						$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_NO_CHECK_CACHE ),
+						$this->assertTrue( $options[ ParserOutputAccess::OPT_NO_CHECK_CACHE ] ?? false,
 							"The cache is not checked again" );
-						$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_LINKS_UPDATE ),
+						$this->assertTrue( $options[ ParserOutputAccess::OPT_LINKS_UPDATE ] ?? false,
 							"WikiPage::triggerOpportunisticLinksUpdate is attempted" );
 					}
 					return true;

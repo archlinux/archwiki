@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Samatics",
-			"Pingponging"
+			"Pingponging",
+			"Samatics"
 		]
 	},
 	"vector-languages": "Langwej-dem",
@@ -30,7 +30,6 @@
 	"skin-theme-night-label": "Dak",
 	"skin-theme-os-label": "Otomatik",
 	"skin-theme-exclusion-notice": "Dis pej dey olwez bi for lait mod.",
-	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Wetin dey hie",
 	"vector-toc-beginning": "Stat",
 	"vector-anon-user-menu-pages": "Pej dem wey dey for editos wey no dey insaid",

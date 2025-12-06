@@ -5,21 +5,7 @@
  * Copyright © 2002, 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -30,7 +16,6 @@ use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
-use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\StubObject\StubUserLang;
@@ -108,12 +93,14 @@ class LogPage {
 	 * @return int The log_id of the inserted log entry
 	 */
 	protected function saveContent() {
-		$logRestrictions = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::LogRestrictions );
-
-		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+		$services = MediaWikiServices::getInstance();
+		$logRestrictions = $services->getMainConfig()->get( MainConfigNames::LogRestrictions );
+		$recentChangeStore = $services->getRecentChangeStore();
+		$recentChangeRCFeedNotifier = $services->getRecentChangeRCFeedNotifier();
+		$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
 
 		$now = wfTimestampNow();
-		$actorId = MediaWikiServices::getInstance()->getActorNormalization()
+		$actorId = $services->getActorNormalization()
 			->acquireActorId( $this->performer, $dbw );
 		$data = [
 			'log_type' => $this->type,
@@ -125,7 +112,7 @@ class LogPage {
 			'log_page' => $this->target->getArticleID(),
 			'log_params' => $this->params
 		];
-		$data += MediaWikiServices::getInstance()->getCommentStore()->insert(
+		$data += $services->getCommentStore()->insert(
 			$dbw,
 			'log_comment',
 			$this->comment
@@ -136,30 +123,30 @@ class LogPage {
 			->caller( __METHOD__ )->execute();
 		$newId = $dbw->insertId();
 
-		# And update recentchanges
+		// Don't add private logs to RC or send them to UDP
+		if ( isset( $logRestrictions[$this->type] ) && $logRestrictions[$this->type] != '*' ) {
+			return $newId;
+		}
+
 		if ( $this->updateRecentChanges ) {
 			$titleObj = SpecialPage::getTitleFor( 'Log', $this->type );
 
-			RecentChange::notifyLog(
+			$recentChange = $recentChangeStore->createLogRecentChange(
 				$now, $titleObj, $this->performer, $this->getRcComment(), '',
 				$this->type, $this->action, $this->target, $this->comment,
 				$this->params, $newId, $this->getRcCommentIRC()
 			);
+			$recentChangeStore->insertRecentChange( $recentChange );
 		} elseif ( $this->sendToUDP ) {
-			# Don't send private logs to UDP
-			if ( isset( $logRestrictions[$this->type] ) && $logRestrictions[$this->type] != '*' ) {
-				return $newId;
-			}
-
 			// Notify external application via UDP.
 			// We send this to IRC but do not want to add it the RC table.
 			$titleObj = SpecialPage::getTitleFor( 'Log', $this->type );
-			$rc = RecentChange::newLogEntry(
+			$recentChange = $recentChangeStore->createLogRecentChange(
 				$now, $titleObj, $this->performer, $this->getRcComment(), '',
 				$this->type, $this->action, $this->target, $this->comment,
 				$this->params, $newId, $this->getRcCommentIRC()
 			);
-			$rc->notifyRCFeeds();
+			$recentChangeRCFeedNotifier->notifyRCFeeds( $recentChange );
 		}
 
 		return $newId;

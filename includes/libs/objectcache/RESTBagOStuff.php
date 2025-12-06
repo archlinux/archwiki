@@ -24,12 +24,12 @@ use Wikimedia\Http\MultiHttpClient;
  *
  *   There is not currently an agreed protocol for sending this to a
  *   server. This class is written for use with MediaWiki\Session\SessionManager
- *   and Kask/Cassanda at WMF, which does not expose a customizable expiry.
+ *   and Kask/Cassandra at WMF, which does not expose a customizable expiry.
  *
  *   As such, it is not recommended to use RESTBagOStuff to back a general
  *   purpose cache type (such as MediaWiki's main cache, or main stash).
- *   Instead, it is only supported toMediaWiki features where a cache type can
- *   be pointed for a narrow set of keys that naturally share the same TTL
+ *   Instead, it is only supported for MediaWiki features where a cache type
+ *   can be pointed to a narrow set of keys that naturally share the same TTL
  *   anyway, or where the feature behaves correctly even if the logical expiry
  *   is longer than specified (e.g. immutable keys, or value verification)
  *
@@ -137,7 +137,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	 */
 	private $extendedErrorBodyFields;
 
-	public function __construct( $params ) {
+	public function __construct( array $params ) {
 		$params['segmentationSize'] ??= INF;
 		if ( empty( $params['url'] ) ) {
 			throw new InvalidArgumentException( 'URL parameter is required' );
@@ -181,6 +181,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		$this->client->setLogger( $logger );
 	}
 
+	/** @inheritDoc */
 	protected function doGet( $key, $flags = 0, &$casToken = null ) {
 		$getToken = ( $casToken === self::PASS_BY_REF );
 		$casToken = null;
@@ -193,7 +194,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 
 		$value = false;
 		$valueSize = false;
-		[ $rcode, , $rhdrs, $rbody, $rerr ] = $this->client->run( $req );
+		[ $rcode, , , $rbody, $rerr ] = $this->client->run( $req );
 		if ( $rcode === 200 && is_string( $rbody ) ) {
 			$value = $this->decodeBody( $rbody );
 			$valueSize = strlen( $rbody );
@@ -202,7 +203,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				$casToken = $rbody;
 			}
 		} elseif ( $rcode === 0 || ( $rcode >= 400 && $rcode != 404 ) ) {
-			$this->handleError( 'Failed to fetch {cacheKey}', $rcode, $rerr, $rhdrs, $rbody,
+			$this->handleError( 'Failed to fetch {cacheKey}', $rcode, $rerr, $rbody,
 				[ 'cacheKey' => $key ] );
 		}
 
@@ -211,6 +212,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		return $value;
 	}
 
+	/** @inheritDoc */
 	protected function doSet( $key, $value, $exptime = 0, $flags = 0 ) {
 		$req = [
 			'method' => $this->httpParams['writeMethod'],
@@ -219,10 +221,10 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 			'headers' => $this->httpParams['writeHeaders'],
 		];
 
-		[ $rcode, , $rhdrs, $rbody, $rerr ] = $this->client->run( $req );
+		[ $rcode, , , $rbody, $rerr ] = $this->client->run( $req );
 		$res = ( $rcode === 200 || $rcode === 201 || $rcode === 204 );
 		if ( !$res ) {
-			$this->handleError( 'Failed to store {cacheKey}', $rcode, $rerr, $rhdrs, $rbody,
+			$this->handleError( 'Failed to store {cacheKey}', $rcode, $rerr, $rbody,
 				[ 'cacheKey' => $key ] );
 		}
 
@@ -231,6 +233,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	protected function doAdd( $key, $value, $exptime = 0, $flags = 0 ) {
 		// NOTE: This is non-atomic
 		if ( $this->get( $key ) === false ) {
@@ -241,6 +244,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function doDelete( $key, $flags = 0 ) {
 		$req = [
 			'method' => 'DELETE',
@@ -248,10 +252,10 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 			'headers' => $this->httpParams['deleteHeaders'],
 		];
 
-		[ $rcode, , $rhdrs, $rbody, $rerr ] = $this->client->run( $req );
+		[ $rcode, , , $rbody, $rerr ] = $this->client->run( $req );
 		$res = in_array( $rcode, [ 200, 204, 205, 404, 410 ] );
 		if ( !$res ) {
-			$this->handleError( 'Failed to delete {cacheKey}', $rcode, $rerr, $rhdrs, $rbody,
+			$this->handleError( 'Failed to delete {cacheKey}', $rcode, $rerr, $rbody,
 				[ 'cacheKey' => $key ] );
 		}
 
@@ -260,6 +264,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	protected function doIncrWithInit( $key, $exptime, $step, $init, $flags ) {
 		// NOTE: This is non-atomic
 		$curValue = $this->doGet( $key );
@@ -352,11 +357,10 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	 * @param string $msg Error message
 	 * @param int $rcode Error code from client
 	 * @param string $rerr Error message from client
-	 * @param array $rhdrs Response headers
 	 * @param string $rbody Error body from client (if any)
 	 * @param array $context Error context for PSR-3 logging
 	 */
-	protected function handleError( $msg, $rcode, $rerr, $rhdrs, $rbody, $context = [] ) {
+	private function handleError( $msg, $rcode, $rerr, $rbody, $context = [] ): void {
 		$message = "$msg : ({code}) {error}";
 		$context = [
 			'code' => $rcode,

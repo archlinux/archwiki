@@ -41,7 +41,7 @@ class ParamValidatorTest extends TestCase {
 		try {
 			$validator->addTypeDef( 'baz', [] );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 		}
 		$validator->overrideTypeDef( 'bar', null );
 		$validator->overrideTypeDef( 'baz', [] );
@@ -111,8 +111,6 @@ class ParamValidatorTest extends TestCase {
 		$this->assertSame( $def2, $validator->getTypeDef( 'bar' ) );
 	}
 
-	/**
-	 */
 	public function testGetTypeDef_error() {
 		$validator = new ParamValidator(
 			new SimpleCallbacks( [] ),
@@ -120,8 +118,7 @@ class ParamValidatorTest extends TestCase {
 			[ 'typeDefs' => [ 'foo' => [ 'class' => stdClass::class ] ] ]
 		);
 		$this->expectException( UnexpectedValueException::class );
-		$this->expectExceptionMessage(
-			"Expected instance of Wikimedia\ParamValidator\TypeDef, got stdClass" );
+		$this->expectExceptionMessage( "Expected instance of Wikimedia\ParamValidator\TypeDef, got stdClass" );
 		$validator->getTypeDef( 'foo' );
 	}
 

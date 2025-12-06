@@ -11,7 +11,7 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:InputBox",
 	"descriptionmsg": "inputbox-desc",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"license-name": "MIT",
 	"type": "parserhook",
@@ -24,6 +24,11 @@
 		"MediaWiki\\Extension\\InputBox\\": "includes/"
 	},
 	"ResourceModules": {
+		"ext.inputBox": {
+			"packageFiles": [
+				"ext.inputBox.js"
+			]
+		},
 		"ext.inputBox.styles": {
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"codexStyleOnly": true,
@@ -55,7 +60,8 @@
 		"main": {
 			"class": "MediaWiki\\Extension\\InputBox\\InputBoxHooks",
 			"services": [
-				"MainConfig"
+				"MainConfig",
+				"ExtensionRegistry"
 			]
 		}
 	},

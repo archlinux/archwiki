@@ -4,6 +4,7 @@ namespace MediaWiki\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
 use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
@@ -21,9 +22,9 @@ use Wikimedia\Rdbms\ReadOnlyMode;
 abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAccountHandler {
 
 	use TemporaryAccountNameTrait;
-	use TemporaryAccountAutoRevealTrait;
 
-	protected CheckUserTemporaryAccountAutoRevealLookup $checkUserTemporaryAccountAutoRevealLookup;
+	protected CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
+	protected TemporaryAccountLoggerFactory $loggerFactory;
 
 	public function __construct(
 		Config $config,
@@ -34,8 +35,9 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 		ActorStore $actorStore,
 		BlockManager $blockManager,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode,
-		CheckUserTemporaryAccountAutoRevealLookup $checkUserTemporaryAccountAutoRevealLookup
+		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		TemporaryAccountLoggerFactory $loggerFactory,
+		ReadOnlyMode $readOnlyMode
 	) {
 		parent::__construct(
 			$config,
@@ -48,7 +50,8 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 			$checkUserPermissionsManager,
 			$readOnlyMode
 		);
-		$this->checkUserTemporaryAccountAutoRevealLookup = $checkUserTemporaryAccountAutoRevealLookup;
+		$this->autoRevealLookup = $autoRevealLookup;
+		$this->loggerFactory = $loggerFactory;
 	}
 
 	/**
@@ -59,7 +62,12 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 		$actorId = $this->getTemporaryAccountActorId( $identifier );
 
 		$results = $this->getData( $actorId, $dbr );
-		$this->addAutoRevealStatusToResults( $results );
+		if ( $this->autoRevealLookup->isAutoRevealAvailable() ) {
+			$results['autoReveal'] = $this->autoRevealLookup->isAutoRevealOn(
+				$this->getAuthority()
+			);
+		}
+
 		return $results;
 	}
 
@@ -68,6 +76,24 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 	 */
 	protected function getLogType(): string {
 		return TemporaryAccountLogger::ACTION_VIEW_IPS;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function makeLog( $identifier ) {
+		if ( $this->autoRevealLookup->isAutoRevealOn( $this->getAuthority() ) ) {
+			$logger = $this->loggerFactory->getLogger();
+			$performerName = $this->getAuthority()->getUser()->getName();
+
+			$logger->logViewIPsWithAutoReveal(
+				$performerName,
+				$this->urlEncodeTitle( $identifier )
+			);
+			return;
+		}
+
+		parent::makeLog( $identifier );
 	}
 
 	/**
@@ -116,9 +142,5 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 	 */
 	protected function getPermissionManager(): PermissionManager {
 		return $this->permissionManager;
-	}
-
-	protected function getCheckUserAutoRevealLookup(): CheckUserTemporaryAccountAutoRevealLookup {
-		return $this->checkUserTemporaryAccountAutoRevealLookup;
 	}
 }

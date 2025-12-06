@@ -1,0 +1,15 @@
+<{{ tag }} class="cdx-card{{! }}{{#url}} cdx-card--is-link{{/url}}{{! }}{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{! }}{{#id}} id="{{ id }}"{{/id}}{{! }}{{#url}} href="{{ url }}"{{/url}}{{! }}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}>
+{{#thumbnail}}
+  {{> thumbnail}}
+{{/thumbnail}}
+  {{#iconClass}}
+  <span class="cdx-card__icon {{ iconClass }}"></span>
+  {{/iconClass}}
+  <span class="cdx-card__text">
+    <span class="cdx-card__text__title">{{ title }}</span>{{!
+    }}{{#description}}
+    <span class="cdx-card__text__description">{{ description }}</span>{{/description}}{{!
+    }}{{#supportingText}}
+    <span class="cdx-card__text__supporting-text">{{ supportingText }}</span>{{/supportingText}}
+  </span>
+</{{ tag }}>

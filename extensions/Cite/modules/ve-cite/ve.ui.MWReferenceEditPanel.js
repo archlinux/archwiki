@@ -7,23 +7,21 @@
  * @license MIT
  */
 
+const MWReferenceGroupInputWidget = require( './ve.ui.MWReferenceGroupInputWidget.js' );
+
 /**
  * Creates a ve.ui.MWReferenceEditPanel object.
  *
  * @constructor
  * @extends OO.ui.PanelLayout
- * @param {Object} config
- * @param {jQuery} config.$overlay Layer to render options dropdown outside of the parent dialog
+ * @param {Object} [config={}]
+ * @param {jQuery} [config.$overlay] Layer to render options dropdown outside of the parent dialog
  */
 ve.ui.MWReferenceEditPanel = function VeUiMWReferenceEditPanel( config ) {
-	// Configuration initialization
-	config = Object.assign( {
-		scrollable: true,
-		padded: true
-	}, config );
+	config = config || {};
 
 	// Parent constructor
-	ve.ui.MWReferenceEditPanel.super.call( this, { scrollable: true, padded: true } );
+	ve.ui.MWReferenceEditPanel.super.call( this, { scrollable: true } );
 
 	// Initialization
 	this.$element.addClass( 've-ui-mwReferenceEditPanel' );
@@ -41,13 +39,6 @@ ve.ui.MWReferenceEditPanel = function VeUiMWReferenceEditPanel( config ) {
 	 * @member {string|null}
 	 */
 	this.originalGroup = null;
-	/**
-	 * If the edit panel is used to insert a sub-reference
-	 *
-	 * @member {boolean}
-	 * @private
-	 */
-	this.isInsertingSubRef = false;
 
 	// Create content editor
 	this.referenceTarget = ve.init.target.createTargetWidget(
@@ -69,7 +60,7 @@ ve.ui.MWReferenceEditPanel = function VeUiMWReferenceEditPanel( config ) {
 		label: ve.msg( 'cite-ve-dialog-reference-options-section' ),
 		icon: 'settings'
 	} );
-	this.referenceGroupInput = new ve.ui.MWReferenceGroupInputWidget( {
+	this.referenceGroupInput = new MWReferenceGroupInputWidget( {
 		$overlay: config.$overlay,
 		emptyGroupName: ve.msg( 'cite-ve-dialog-reference-options-group-placeholder' )
 	} );
@@ -79,28 +70,59 @@ ve.ui.MWReferenceEditPanel = function VeUiMWReferenceEditPanel( config ) {
 	} );
 	this.optionsFieldset.addItems( [ this.referenceGroupField ] );
 
-	// Create warning messages
+	this.referenceListPreview = new OO.ui.Layout( {
+		classes: [ 've-ui-mwReferenceDialog-referencePreview' ]
+	} );
+
+	this.referenceListFieldset = new OO.ui.FieldsetLayout( {
+		classes: [ 've-ui-mwReferenceDialog-referencePreview-fieldset' ],
+		items: [ this.referenceListPreview ]
+	} );
+
 	this.reuseWarning = new OO.ui.MessageWidget( {
 		icon: 'alert',
 		inline: true,
 		classes: [ 've-ui-mwReferenceDialog-reuseWarning' ]
 	} );
 
-	this.extendsWarning = new OO.ui.MessageWidget( {
-		icon: 'alert',
-		inline: true,
-		classes: [ 've-ui-mwReferenceDialog-extendsWarning' ]
+	this.helpLink = new OO.ui.LabelWidget( {
+		classes: [
+			// Needed for the external link icon
+			'mw-parser-output',
+			've-ui-mwReferenceDialog-helpLink'
+		],
+		label: $( '<a>' )
+			.addClass( 'external' )
+			.attr( {
+				href: ve.msg( 'cite-ve-dialog-subreference-help-dialog-link-ve' ),
+				target: '_blank'
+			} )
+			.text( ve.msg( 'cite-ve-dialog-subreference-help-dialog-link-label' ) )
+			.on( 'click', () => {
+				// Phabricator T403720
+				ve.track( 'activity.subReference', { action: 'subref-edit-help-click' } );
+			} )
 	} );
 
 	this.referenceTarget.connect( this, { change: 'onInputChange' } );
 	this.referenceGroupInput.connect( this, { change: 'onInputChange' } );
 
+	this.previewPanel = new OO.ui.Layout( { classes: [ 've-ui-mwReference-details-preview-panel' ] } );
+	this.previewPanel.$element.append(
+		this.referenceListFieldset.$element
+	);
+	this.editPanel = new OO.ui.Layout();
+	this.editPanel.$element.append(
+		this.reuseWarning.$element,
+		this.contentFieldset.$element,
+		this.optionsFieldset.$element,
+		this.helpLink.$element
+	);
+
 	// Append to panel element
 	this.$element.append(
-		this.reuseWarning.$element,
-		this.extendsWarning.$element,
-		this.contentFieldset.$element,
-		this.optionsFieldset.$element
+		this.previewPanel.$element,
+		this.editPanel.$element
 	);
 };
 
@@ -157,8 +179,9 @@ ve.ui.MWReferenceEditPanel.static.excludeCommands = [
  * @return {string[]} List of commands to exclude
  */
 ve.ui.MWReferenceEditPanel.static.getExcludeCommands = function () {
-	const citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry )
-		.filter( ( command ) => command.includes( 'cite-' ) );
+	// Naming scheme for commands from MediaWiki:cite-tool-definition.json is "cite-…"
+	const citeCommands = ve.init.target.getSurface().commandRegistry.getNames()
+		.filter( ( name ) => name.includes( 'cite-' ) );
 
 	return ve.ui.MWReferenceEditPanel.static.excludeCommands.concat( citeCommands );
 };
@@ -221,11 +244,17 @@ ve.ui.MWReferenceEditPanel.prototype.setDocumentReferences = function ( docRefs 
  */
 ve.ui.MWReferenceEditPanel.prototype.setReferenceForEditing = function ( ref ) {
 	this.referenceModel = ref;
-	this.isInsertingSubRef = ref.extendsRef && !ref.getDocument().data.hasContent();
+	const isInsertingSubRef = ref.isSubRef() && !this.documentHasContent();
+
+	this.referenceListFieldset.setLabel( ve.msg( isInsertingSubRef ?
+		'cite-ve-dialog-reference-editing-add-details' :
+		'cite-ve-dialog-reference-editing-edit-details'
+	) );
 
 	this.setFormFieldsFromRef( ref );
 	this.updateReuseWarningFromRef( ref );
-	this.updateExtendsWarningFromRef( ref );
+	this.updatePreviewFromRef( ref );
+	this.helpLink.toggle( ref.isSubRef() );
 };
 
 /**
@@ -246,13 +275,12 @@ ve.ui.MWReferenceEditPanel.prototype.getReferenceFromEditing = function () {
 ve.ui.MWReferenceEditPanel.prototype.setFormFieldsFromRef = function ( ref ) {
 	this.referenceTarget.setDocument( ref.getDocument() );
 
-	if ( this.isInsertingSubRef ) {
+	if ( ref.isSubRef() ) {
 		this.referenceTarget.getSurface().setPlaceholder(
 			ve.msg( 'cite-ve-dialog-reference-editing-add-details-placeholder' )
 		);
 	}
-
-	this.optionsFieldset.toggle( !ref.extendsRef );
+	this.optionsFieldset.toggle( !ref.isSubRef() );
 
 	this.originalGroup = ref.getGroup();
 
@@ -267,11 +295,13 @@ ve.ui.MWReferenceEditPanel.prototype.setFormFieldsFromRef = function ( ref ) {
  * @param {ve.dm.MWReferenceModel} ref
  */
 ve.ui.MWReferenceEditPanel.prototype.updateReuseWarningFromRef = function ( ref ) {
-	const totalUsageCount = this.docRefs
-		.getGroupRefs( ref.getListGroup() )
+	// Note: listGroup is only available after a (possibly new) ref has been registered via
+	// ve.dm.MWReferenceModel.insertInternalItem
+	const totalUsageCount = this.docRefs.getGroupRefs( ref.getGroup() )
 		.getTotalUsageCount( ref.getListKey() );
 	this.reuseWarning
-		.toggle( totalUsageCount > 1 )
+		// Don't show the reuse warning when it's a sub-ref, these currently split on edit
+		.toggle( totalUsageCount > 1 && !ref.mainRefKey )
 		.setLabel( ve.msg( 'cite-ve-dialog-reference-editing-reused-long', totalUsageCount ) );
 };
 
@@ -279,29 +309,34 @@ ve.ui.MWReferenceEditPanel.prototype.updateReuseWarningFromRef = function ( ref 
  * @private
  * @param {ve.dm.MWReferenceModel} ref
  */
-ve.ui.MWReferenceEditPanel.prototype.updateExtendsWarningFromRef = function ( ref ) {
-	if ( ref.extendsRef ) {
-		const parentNode = this.docRefs
-			.getGroupRefs( ref.getListGroup() )
-			.getInternalModelNode( ref.extendsRef );
-		this.extendsWarning.setLabel(
-			$( '<p>' )
-				.text( ve.msg( this.isInsertingSubRef ?
-					'cite-ve-dialog-reference-editing-add-details' :
-					'cite-ve-dialog-reference-editing-extends'
-				) )
-				.append( parentNode ?
-					new ve.ui.MWPreviewElement( parentNode, { useView: true } ).$element :
-					$( '<div>' )
+ve.ui.MWReferenceEditPanel.prototype.updatePreviewFromRef = function ( ref ) {
+	if ( ref.isSubRef() ) {
+		// Note: listGroup is only available after a (possibly new) ref has been registered via
+		// ve.dm.MWReferenceModel.insertInternalItem
+		const mainRefNode = this.docRefs.getGroupRefs( ref.getGroup() )
+			.getInternalModelNode( ref.mainRefKey );
+		this.referenceListPreview.$element.empty()
+			.append( mainRefNode ?
+				$( '<div>' )
+					.append( new ve.ui.MWPreviewElement( mainRefNode, { useView: true } ).$element ) :
+				$( '<div>' )
+					.addClass( 've-ui-mwReferenceContextItem-muted' )
+					.text( ve.msg( 'cite-ve-dialog-reference-missing-parent-ref' ) )
+			)
+			.append( $( '<div>' )
+				.addClass( 've-ui-mwReference-details-preview-item' )
+				.append(
+					$( '<span>' )
+						.addClass( 've-ui-mwReference-icon-newline' )
+						// Extra <span> needed because the RTL CSS uses scaleX() as well
+						.append( $( '<span>' ) ),
+					$( '<span>' )
 						.addClass( 've-ui-mwReferenceContextItem-muted' )
-						.text( ve.msg( 'cite-ve-dialog-reference-missing-parent-ref' ) )
+						.text( ve.msg( 'cite-ve-dialog-reference-editing-details-placeholder' ) )
 				)
-		);
-		this.extendsWarning.setIcon( this.isInsertingSubRef ? null : 'alert' );
-		this.extendsWarning.toggle( true );
-	} else {
-		this.extendsWarning.toggle( false );
+			);
 	}
+	this.previewPanel.toggle( ref.isSubRef() );
 };
 
 /**
@@ -358,3 +393,5 @@ ve.ui.MWReferenceEditPanel.prototype.clear = function () {
 	this.referenceTarget.clear();
 	this.referenceModel = null;
 };
+
+module.exports = ve.ui.MWReferenceEditPanel;

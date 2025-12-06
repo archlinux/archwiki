@@ -4,7 +4,31 @@
 			"Ahiise2"
 		]
 	},
+	"wikieditor": "Intafeesi y'okugorra kwa wikihandiiko y'amakiza",
+	"wikieditor-desc": "Kiheereza intafeesi y'okugorra kwa wikihandiiko y'okwongerwa y'amakiza",
+	"wikieditor-toolbar": "Omusorongo gw'okugorra",
+	"wikieditor-toolbar-preference": "Sobozesa omusorongo gw'okugorra",
+	"wikieditor-toolbar-tool-bold": "Eky'omukoba",
+	"wikieditor-toolbar-tool-bold-example": "Ekihandiiko ky'omukoba",
+	"wikieditor-toolbar-tool-italic": "Ekirukweculika",
+	"wikieditor-toolbar-tool-italic-example": "Ekihandiiko ekyeculika",
 	"wikieditor-toolbar-tool-link-ext-target": "URL y'ekiyunganiza:",
 	"wikieditor-toolbar-tool-link-ext-text": "Ekihandiiko ky'ekiyunganiza:",
-	"wikieditor-toolbar-tool-link-cancel": "Dibya"
+	"wikieditor-toolbar-tool-link-cancel": "Dibya",
+	"wikieditor-toolbar-tool-heading-1": "Orulengo 1",
+	"wikieditor-toolbar-tool-heading-2": "Orulengo 2",
+	"wikieditor-toolbar-tool-heading-3": "Orulengo 3",
+	"wikieditor-toolbar-tool-heading-4": "Orulengo 4",
+	"wikieditor-toolbar-tool-heading-5": "Orulengo 5",
+	"wikieditor-toolbar-tool-superscript": "Ekya haruguru",
+	"wikieditor-toolbar-tool-superscript-example": "Ekihandiiko haruguru",
+	"wikieditor-toolbar-tool-table-dimensions-columns": "Emisorongo y'obusimba",
+	"wikieditor-toolbar-tool-table-preview": "Ebirukwija",
+	"wikieditor-toolbar-tool-table-cancel": "Dibya",
+	"wikieditor-toolbar-help-page-list": "Emisorongo",
+	"wikieditor-toolbar-help-page-file": "Fayiro",
+	"wikieditor-toolbar-help-page-discussion": "Okucika",
+	"wikieditor-toolbar-help-content-ulist-example": "Ekintu ky'omusorongo",
+	"wikieditor-toolbar-help-content-olist-example": "Ekintu ky'omusorongo",
+	"wikieditor-toolbar-help-content-signature-username": "Ibara ly'omukozesa"
 }

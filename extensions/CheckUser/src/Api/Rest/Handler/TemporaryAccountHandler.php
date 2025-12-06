@@ -35,7 +35,7 @@ class TemporaryAccountHandler extends AbstractTemporaryAccountNameHandler implem
 			ParamValidator::PARAM_REQUIRED => false,
 			ParamValidator::PARAM_DEFAULT => $this->config->get( 'CheckUserMaximumRowCount' ),
 			IntegerDef::PARAM_MAX => $this->config->get( 'CheckUserMaximumRowCount' ),
-			IntegerDef::PARAM_MIN => 1
+			IntegerDef::PARAM_MIN => 1,
 		];
 		return $settings;
 	}

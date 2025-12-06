@@ -313,7 +313,10 @@ class PageHooks implements
 			CommentFormatter::removeVisualEnhancements( $batchModifyElements );
 		}
 
-		$text = $batchModifyElements->apply( $text );
+		// Optimization: Only parse and process the HTML if it seems to contain our tags (T400115)
+		if ( str_contains( $text, '<mw:dt-' ) ) {
+			$text = $batchModifyElements->apply( $text );
+		}
 
 		// Append empty state if the OutputPageParserOutput hook decided that we should.
 		// This depends on the order in which the hooks run. Hopefully it doesn't change.
@@ -448,7 +451,6 @@ class PageHooks implements
 	 * Generate HTML markup for the new topic tool's empty state, shown on talk pages that don't exist
 	 * or have no topics.
 	 *
-	 * @param IContextSource $context
 	 * @return string HTML
 	 */
 	private function getEmptyStateHtml( IContextSource $context ): string {
@@ -561,8 +563,6 @@ class PageHooks implements
 	/**
 	 * @param SkinTemplate $sktemplate
 	 * @param array &$links
-	 * @return void
-	 * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
 	 */
 	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
 		$output = $sktemplate->getOutput();
@@ -581,6 +581,14 @@ class PageHooks implements
 			];
 
 			$output->addModules( [ 'ext.discussionTools.init' ] );
+		}
+
+		if (
+			$sktemplate->getSkinName() === 'minerva' &&
+			HookUtils::isFeatureEnabledForOutput( $output, HookUtils::NEWTOPICTOOL )
+		) {
+			// Remove duplicate add topic button from page actions (T395980)
+			unset( $links[ 'views' ][ 'addsection' ] );
 		}
 	}
 

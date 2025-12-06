@@ -14,6 +14,8 @@
 	"tag-editcheck-references-activated-description": "EditCheck arvab, et vaja võis olla viidet ning näidati selle kasutajaliidest.",
 	"tag-editcheck-references-shown": "Muudatuse kontroll (viited) näidatud",
 	"tag-editcheck-references-shown-description": "EditCheck arvab, et vaja võis olla viidet ning näidati selle kasutajaliidest.",
+	"tag-editcheck-tone-shown": "Muudatuse kontroll (toon) näidatud",
+	"tag-editcheck-tone-shown-description": "EditCheck arvab, et osa sisu toon võis vajada kohandamist ning näidati selle kasutajaliidest",
 	"tag-visualeditor": "Visuaalmuudatus",
 	"tag-visualeditor-description": "Muudatus tehtud [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuaaltoimetiga]]",
 	"tag-visualeditor-needcheck": "Visuaalmuudatus: kontrollida",

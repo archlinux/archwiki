@@ -1,5 +1,5 @@
 <template>
-	<div class="ext-checkuser-temp-account-onboarding-dialog-step">
+	<div :class="rootClasses">
 		<div
 			:class="imageClasses"
 			role="img"
@@ -37,6 +37,13 @@ module.exports = exports = {
 		imageClasses() {
 			return 'ext-checkuser-temp-account-onboarding-dialog-image ' +
 				'ext-checkuser-image-temp-accounts-onboarding-' + this.stepName;
+		},
+		/**
+		 * @return {string} The CSS classes for the root element of the step
+		 */
+		rootClasses() {
+			return 'ext-checkuser-temp-account-onboarding-dialog-step ' +
+				'ext-checkuser-temp-account-onboarding-dialog-' + this.stepName + '-step';
 		}
 	}
 };

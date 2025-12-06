@@ -2,20 +2,7 @@
 /**
  * Base classes for actions done on pages.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -420,13 +407,7 @@ abstract class Action implements MessageLocalizer {
 	protected function setHeaders() {
 		$out = $this->getOutput();
 		$out->setRobotPolicy( 'noindex,nofollow' );
-		$title = $this->getPageTitle();
-		if ( is_string( $title ) ) {
-			// T343849: deprecated
-			wfDeprecated( 'string return from Action::getPageTitle()', '1.41' );
-			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
-		}
-		$out->setPageTitleMsg( $title );
+		$out->setPageTitleMsg( $this->getPageTitle() );
 		$out->setSubtitle( $this->getDescription() );
 		$out->setArticleRelated( true );
 	}
@@ -434,10 +415,10 @@ abstract class Action implements MessageLocalizer {
 	/**
 	 * Returns the name that goes in the `<h1>` page title.
 	 *
-	 * Since 1.41, returning a string from this method has been deprecated.
+	 * Since 1.45, returning a string from this method is no longer allowed.
 	 *
 	 * @stable to override
-	 * @return string|Message
+	 * @return Message
 	 */
 	protected function getPageTitle() {
 		return ( new RawMessage( '$1' ) )->plaintextParams( $this->getTitle()->getPrefixedText() );

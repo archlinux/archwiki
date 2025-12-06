@@ -30,13 +30,13 @@ mw.echo.ui.PaginationWidget = function MwEchoUiPaginationWidget( paginationModel
 
 	// Pagination elements
 	this.labelWidget = new OO.ui.LabelWidget( {
-		classes: [ 'mw-echo-ui-paginationWidget-label' ]
+		classes: [ 'mw-echo-ui-paginationWidget-label' ],
 	} );
 
 	this.startButton = new OO.ui.ButtonWidget( {
 		classes: [ 'mw-echo-ui-paginationWidget-start' ],
 		label: config.startButtonLabel || mw.msg( 'notification-timestamp-today' ),
-		data: 'start'
+		data: 'start',
 	} );
 
 	this.dirSelectWidget = new OO.ui.ButtonSelectWidget( {
@@ -44,13 +44,13 @@ mw.echo.ui.PaginationWidget = function MwEchoUiPaginationWidget( paginationModel
 		items: [
 			new OO.ui.ButtonOptionWidget( {
 				icon: 'previous',
-				data: 'prev'
+				data: 'prev',
 			} ),
 			new OO.ui.ButtonOptionWidget( {
 				icon: 'next',
-				data: 'next'
-			} )
-		]
+				data: 'next',
+			} ),
+		],
 	} );
 
 	// Events
@@ -68,8 +68,8 @@ mw.echo.ui.PaginationWidget = function MwEchoUiPaginationWidget( paginationModel
 				.append(
 					this.labelWidget.$element,
 					this.startButton.$element,
-					this.dirSelectWidget.$element
-				)
+					this.dirSelectWidget.$element,
+				),
 		);
 };
 
@@ -115,7 +115,7 @@ mw.echo.ui.PaginationWidget.prototype.updateWidgetState = function () {
 
 	this.startButton.toggle(
 		!this.isDisabled() &&
-		this.model.getCurrPageIndex() >= this.showFirstButtonAfter
+		this.model.getCurrPageIndex() >= this.showFirstButtonAfter,
 	);
 
 	// Only show pagination buttons if there's anywhere to go
@@ -163,13 +163,13 @@ mw.echo.ui.PaginationWidget.prototype.updateLabel = function () {
 	} else if ( !this.model.hasPrevPage() && !this.model.hasNextPage() ) {
 		label = mw.msg(
 			'echo-specialpage-pagination-numnotifications',
-			mw.language.convertNumber( itemsInPage )
+			mw.language.convertNumber( itemsInPage ),
 		);
 	} else {
 		label = mw.msg(
 			'echo-specialpage-pagination-range',
 			mw.language.convertNumber( firstNotifNum + 1 ),
-			mw.language.convertNumber( lastNotifNum )
+			mw.language.convertNumber( lastNotifNum ),
 		);
 	}
 

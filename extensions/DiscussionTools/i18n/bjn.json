@@ -36,7 +36,6 @@
 	"discussiontools-error-comment-is-transcluded-title": "Tautan \"{{int:discussiontools-replylink}}\" kada kawa dipakai gasan mambalas kumintar ini maraga kumitarnya dimuat matan laman lain. Gasan mambalas, silakan baampah ka: [[$1]].",
 	"discussiontools-newtopic-missing-title": "Tulung julungakan judul pada tupik bacangkurah {{GENDER:|Pian}}. Amun Pian manikin \"{{int:discussiontools-replywidget-newtopic}}\", tupik Pian pacangan ditambahakan kada pakai judul.",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Balangganan",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Janaki tupik",
 	"discussiontools-notification-subscribed-new-comment-view": "Janaki kumintar",
 	"discussiontools-pageframe-latestcomment": "Kumintar pahanyarnya: $1 ulih $2 pada tupik $3",

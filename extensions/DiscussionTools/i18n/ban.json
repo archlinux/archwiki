@@ -27,7 +27,6 @@
 	"discussiontools-newtopic-placeholder-title": "Parihindik",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|kacawis}} ring \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|acawisan anyar|$1 cawisan anyar|100=99+ cawisan anyar}} ring \"<strong>$3</strong>\".",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Cingak penampen",
 	"discussiontools-postedit-confirmation-published": "Panampén ragané sampun kawedar.",
 	"discussiontools-postedit-confirmation-topicadded": "Topik ragané sampun kawewehin.",

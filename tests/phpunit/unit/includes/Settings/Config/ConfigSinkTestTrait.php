@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic -- Test traits are not excluded
+
 namespace MediaWiki\Tests\Unit\Settings\Config;
 
 use MediaWiki\Settings\Config\ConfigBuilder;
@@ -9,7 +11,7 @@ trait ConfigSinkTestTrait {
 
 	abstract protected function getConfigSink(): ConfigBuilder;
 
-	abstract protected function assertKeyHasValue( string $key, $value );
+	abstract protected function assertKeyHasValue( string $key, mixed $value ): void;
 
 	public function testSet() {
 		$this->getConfigSink()
@@ -58,7 +60,7 @@ trait ConfigSinkTestTrait {
 		$this->assertKeyHasValue( 'TestDefaultKey2', 'bar' );
 	}
 
-	public function provideSetNewValue() {
+	public static function provideSetNewValue() {
 		yield 'replace 1 with 2' => [ 1, 2, null, 2 ];
 		yield 'replace 1 with 0' => [ 1, 0, null, 0 ];
 		yield 'replace 1 with null' => [ 1, null, null, null ];
@@ -116,7 +118,7 @@ trait ConfigSinkTestTrait {
 		$this->assertKeyHasValue( 'TestNewValueKeyMulti', $expected );
 	}
 
-	public function provideSetDefaultValue() {
+	public static function provideSetDefaultValue() {
 		yield 'do not replace 1 with 2' => [ 1, 2, null, 1 ];
 		yield 'do not replace 0 with 2' => [ 0, 2, null, 0 ];
 		yield 'do not replace null with 2' => [ null, 2, null, null ];

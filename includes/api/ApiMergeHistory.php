@@ -2,21 +2,7 @@
 /**
  * Copyright © 2015 Geoffrey Mon <geofbot@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -79,11 +65,12 @@ class ApiMergeHistory extends ApiBase {
 		}
 
 		$reason = $params['reason'];
-		$timestamp = $params['timestamp'];
+		$timestamp = $params['timestamp'] ?? '';
+		$startTimestamp = $params['starttimestamp'] ?? '';
 
 		// Merge!
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable,PhanPossiblyUndeclaredVariable T240141
-		$status = $this->merge( $fromTitle, $toTitle, $timestamp, $reason );
+		$status = $this->merge( $fromTitle, $toTitle, $timestamp, $reason, $startTimestamp );
 		if ( !$status->isOK() ) {
 			$this->dieStatus( $status );
 		}
@@ -93,7 +80,7 @@ class ApiMergeHistory extends ApiBase {
 			'from' => $fromTitle->getPrefixedText(),
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable T240141
 			'to' => $toTitle->getPrefixedText(),
-			'timestamp' => wfTimestamp( TS_ISO_8601, $params['timestamp'] ),
+			'timestamp' => $params['timestamp'],
 			'reason' => $params['reason']
 		];
 		$result = $this->getResult();
@@ -106,22 +93,26 @@ class ApiMergeHistory extends ApiBase {
 	 * @param PageIdentity $to
 	 * @param string $timestamp
 	 * @param string $reason
+	 * @param string $startTimestamp
 	 * @return Status
 	 */
-	protected function merge( PageIdentity $from, PageIdentity $to, $timestamp, $reason ) {
-		$mh = $this->mergeHistoryFactory->newMergeHistory( $from, $to, $timestamp );
+	protected function merge( PageIdentity $from, PageIdentity $to, $timestamp, $reason, $startTimestamp ) {
+		$mh = $this->mergeHistoryFactory->newMergeHistory( $from, $to, $timestamp, $startTimestamp );
 
 		return $mh->merge( $this->getAuthority(), $reason );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'from' => null,
@@ -132,17 +123,19 @@ class ApiMergeHistory extends ApiBase {
 			'toid' => [
 				ParamValidator::PARAM_TYPE => 'integer'
 			],
-			'timestamp' => [
-				ParamValidator::PARAM_TYPE => 'timestamp'
-			],
+			// This can either be a timestamp or a timestamp-with-ID pair; don't reject the latter in validation
+			'timestamp' => null,
 			'reason' => '',
+			'starttimestamp' => null
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=mergehistory&from=Oldpage&to=Newpage&token=123ABC&' .
@@ -154,6 +147,7 @@ class ApiMergeHistory extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Mergehistory';
 	}

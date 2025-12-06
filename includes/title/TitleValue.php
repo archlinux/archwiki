@@ -2,21 +2,7 @@
 /**
  * Representation of a page title within MediaWiki.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Daniel Kinzler
  */
@@ -82,7 +68,7 @@ class TitleValue implements Stringable, LinkTarget {
 	 *   No validation or normalization is applied.
 	 * @param string $interwiki The interwiki component.
 	 *   No validation or normalization is applied.
-	 * @return TitleValue|null
+	 * @return static|null
 	 */
 	public static function tryNew( $namespace, $title, $fragment = '', $interwiki = '' ) {
 		if ( !is_int( $namespace ) ) {
@@ -91,7 +77,7 @@ class TitleValue implements Stringable, LinkTarget {
 
 		try {
 			return new static( $namespace, $title, $fragment, $interwiki );
-		} catch ( ParameterAssertionException $ex ) {
+		} catch ( ParameterAssertionException ) {
 			return null;
 		}
 	}
@@ -168,7 +154,9 @@ class TitleValue implements Stringable, LinkTarget {
 		self::assertValidSpec( $namespace, $title, $fragment, $interwiki );
 
 		$this->namespace = $namespace;
-		$this->dbkey = strtr( $title, ' ', '_' );
+		$this->dbkey = $interwiki === '' ? strtr( $title, ' ', '_' ) :
+			// Preserve spaces in interwiki links
+			$title;
 		$this->fragment = $fragment;
 		$this->interwiki = $interwiki;
 	}

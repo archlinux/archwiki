@@ -4,20 +4,7 @@
  *
  * Copyright © 2011 Alexandre Emsenhuber
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Actions
  */
@@ -28,6 +15,7 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Category\Category;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\EditPage\TemplatesOnThisPageFormatter;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Html\Html;
@@ -970,11 +958,12 @@ class InfoAction extends FormlessAction {
 						+ $result['subpages']['nonredirects'];
 				}
 
+				$dbrTemplateLinks = $this->dbProvider->getReplicaDatabase( TemplateLinksTable::VIRTUAL_DOMAIN );
 				// Counts for the number of transclusion links (to/from)
 				if ( $config->get( MainConfigNames::MiserMode ) ) {
 					$result['transclusion']['to'] = 0;
 				} else {
-					$result['transclusion']['to'] = (int)$dbr->newSelectQueryBuilder()
+					$result['transclusion']['to'] = (int)$dbrTemplateLinks->newSelectQueryBuilder()
 						->select( 'COUNT(tl_from)' )
 						->from( 'templatelinks' )
 						->where( $this->linksMigration->getLinksConditions( 'templatelinks', $title ) )
@@ -982,7 +971,7 @@ class InfoAction extends FormlessAction {
 						->fetchField();
 				}
 
-				$result['transclusion']['from'] = (int)$dbr->newSelectQueryBuilder()
+				$result['transclusion']['from'] = (int)$dbrTemplateLinks->newSelectQueryBuilder()
 					->select( 'COUNT(*)' )
 					->from( 'templatelinks' )
 					->where( [ 'tl_from' => $title->getArticleID() ] )
@@ -997,7 +986,7 @@ class InfoAction extends FormlessAction {
 	/**
 	 * Returns the name that goes in the "<h1>" page title.
 	 *
-	 * @return string
+	 * @return Message
 	 */
 	protected function getPageTitle() {
 		return $this->msg( 'pageinfo-title' )->plaintextParams( $this->getTitle()->getPrefixedText() );

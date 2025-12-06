@@ -28,7 +28,6 @@
 	"echo-category-title-mention": "{{PLURAL:$1|Naspomnjenje|Naspomnjeni|Naspomnjenja}}",
 	"echo-category-title-other": "{{PLURAL:$1|Druha|Druhej|Druhe}}",
 	"echo-category-title-system": "{{PLURAL:$1|System|Systemaj|Systemy}}",
-	"echo-pref-tooltip-edit-user-talk": "Informuj mje, hdyž něchtó powěsć abo wotmołwu na mojej diskusijnej stronje zawostaja.",
 	"echo-pref-tooltip-article-linked": "Informuj mje, hdyž něchtó na stronu wotkazuje, kotruž sym z nastawka wutworił.",
 	"echo-pref-tooltip-reverted": "Informuj mje, hdyž něchtó z pomocu cofnjenja abo nastroja změnu anuluje, kotruž sym činił.",
 	"echo-pref-tooltip-mention": "Informuj mje, hdyž něchtó z někajkeje diskusijneje strony k mojej wužiwarskej stronje wotkazuje.",

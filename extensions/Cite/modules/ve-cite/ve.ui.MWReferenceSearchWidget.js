@@ -7,6 +7,10 @@
  * @license MIT
  */
 
+const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
+const MWReferenceModel = require( './ve.dm.MWReferenceModel.js' );
+const MWReferenceResultWidget = require( './ve.ui.MWReferenceResultWidget.js' );
+
 /**
  * Creates an ve.ui.MWReferenceSearchWidget object.
  *
@@ -36,10 +40,6 @@ ve.ui.MWReferenceSearchWidget = function VeUiMWReferenceSearchWidget( config ) {
 	this.$results.on( 'scroll', this.trackActiveUsage.bind( this ) );
 	this.getResults().connect( this, { choose: 'onChoose' } );
 
-	// FIXME: T375053 Should just be temporary to test some UI changes
-	if ( mw.config.get( 'wgCiteSubReferencing' ) ) {
-		this.$element.addClass( 've-ui-mwReferenceSearchReuseHacks' );
-	}
 };
 
 /* Inheritance */
@@ -52,14 +52,7 @@ OO.inheritClass( ve.ui.MWReferenceSearchWidget, OO.ui.SearchWidget );
  * User chose a ref for reuse
  *
  * @event ve.ui.MWReferenceSearchWidget#reuse
- * @param {ve.dm.MWReferenceModel} ref
- */
-
-/**
- * Extends popup menu item was clicked
- *
- * @event ve.ui.MWReferenceSearchWidget#extends
- * @param {ve.dm.MWReferenceModel} ref
+ * @param {MWReferenceModel} ref
  */
 
 /* Methods */
@@ -76,6 +69,14 @@ ve.ui.MWReferenceSearchWidget.prototype.onQueryChange = function () {
  * @param {jQuery.Event} e Key down event
  */
 ve.ui.MWReferenceSearchWidget.prototype.onQueryKeydown = function ( e ) {
+	if ( e.which === OO.ui.Keys.TAB && !e.shiftKey &&
+		!this.results.isEmpty() &&
+		!this.results.findHighlightedItem()
+	) {
+		this.results.highlightItem( this.results.findFirstSelectableItem() );
+		e.preventDefault();
+	}
+
 	// Parent method
 	ve.ui.MWReferenceSearchWidget.super.prototype.onQueryKeydown.call( this, e );
 
@@ -107,7 +108,7 @@ ve.ui.MWReferenceSearchWidget.prototype.onChoose = function ( item ) {
 /**
  * Set the internal list and check if it contains any references
  *
- * @param {ve.dm.MWDocumentReferences} docRefs handle to all refs in the original document
+ * @param {MWDocumentReferences} docRefs handle to all refs in the original document
  */
 ve.ui.MWReferenceSearchWidget.prototype.setDocumentRefs = function ( docRefs ) {
 	this.results.unselectItem();
@@ -122,7 +123,7 @@ ve.ui.MWReferenceSearchWidget.prototype.setDocumentRefs = function ( docRefs ) {
  * @param {ve.dm.InternalList} internalList
  */
 ve.ui.MWReferenceSearchWidget.prototype.setInternalList = function ( internalList ) {
-	this.setDocumentRefs( ve.dm.MWDocumentReferences.static.refsForDoc( internalList.getDocument() ) );
+	this.setDocumentRefs( MWDocumentReferences.static.refsForDoc( internalList.getDocument() ) );
 };
 
 /**
@@ -147,13 +148,13 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
 	let index = [];
 	for ( let i = 0; i < groupNames.length; i++ ) {
 		const groupName = groupNames[ i ];
-		if ( groupName.indexOf( 'mwReference/' ) !== 0 ) {
+		if ( !groupName.startsWith( 'mwReference/' ) ) {
 			// FIXME: Should be impossible to reach
 			continue;
 		}
 		const groupRefs = this.docRefs.getGroupRefs( groupName );
-		const flatNodes = groupRefs.getAllRefsInDocumentOrder()
-			.filter( ( node ) => !filterExtends || !node.getAttribute( 'extendsRef' ) );
+		const flatNodes = groupRefs.getAllRefsInReflistOrder()
+			.filter( ( node ) => !filterExtends || !node.getAttribute( 'mainRefKey' ) );
 
 		index = index.concat( flatNodes.map( ( node ) => {
 			const listKey = node.getAttribute( 'listKey' );
@@ -184,13 +185,12 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
 			}
 
 			return {
-				$refContent: $refContent,
+				$refContent,
 				searchableText: refText.toLowerCase(),
 				// TODO: return a simple node
-				reference: ve.dm.MWReferenceModel.static.newFromReferenceNode( node ),
-				footnoteLabel: footnoteLabel,
-				isSubRef: !!node.getAttribute( 'extendsRef' ),
-				name: name
+				reference: MWReferenceModel.static.newFromReferenceNode( node ),
+				footnoteLabel,
+				name
 			};
 		} ) );
 	}
@@ -207,55 +207,8 @@ ve.ui.MWReferenceSearchWidget.prototype.isIndexEmpty = function () {
 
 /**
  * @private
- * @param {ve.dm.MWReferenceModel} ref
- * @return {OO.ui.ButtonMenuSelectWidget}
- */
-ve.ui.MWReferenceSearchWidget.prototype.buildReuseOptionsMenu = function ( ref ) {
-	// TODO: Select the row on menu button click, so we don't have to wire ref
-	// through the closure.
-	const reuseOptionsMenu = new OO.ui.ButtonMenuSelectWidget( {
-		classes: [ 've-ui-mwReferenceResultsReuseOptions' ],
-		framed: false,
-		icon: 'ellipsis',
-		// TODO: The […] button should have its own title, see T375053
-		title: '',
-		invisibleLabel: true,
-		menu: {
-			classes: [ 've-ui-mwReferenceResultsReuseOptionsItem' ],
-			horizontalPosition: 'end',
-			items: [
-				new OO.ui.MenuOptionWidget( {
-					data: 'reuse',
-					label: ve.msg( 'cite-ve-dialog-reference-useexisting-long-tool' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'extends',
-					label: ve.msg( 'cite-ve-dialog-reference-extend-long-tool' )
-				} )
-			]
-		},
-		// FIXME: Overlay clips to the dialog, should be full-screen.
-		$overlay: this.$overlay
-	} );
-
-	// Hack to prevent a menu button click from being handled by the top-level
-	// select item.
-	reuseOptionsMenu.$element.on( 'mousedown', ( e ) => {
-		e.stopPropagation();
-	} );
-
-	reuseOptionsMenu.getMenu().on( 'choose', ( menuOption ) => {
-		// Emit 'reuse' or 'extends' events, with the chosen ref.
-		this.emit( menuOption.getData(), ref );
-	} );
-
-	return reuseOptionsMenu;
-};
-
-/**
- * @private
  * @param {string} query
- * @return {ve.ui.MWReferenceResultWidget[]}
+ * @return {MWReferenceResultWidget[]}
  */
 ve.ui.MWReferenceSearchWidget.prototype.buildSearchResults = function ( query ) {
 	query = query.trim().toLowerCase();
@@ -265,17 +218,13 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchResults = function ( query ) 
 		this.index = this.buildSearchIndex();
 	}
 
-	for ( let i = 0; i < this.index.length; i++ ) {
-		const item = this.index[ i ];
+	this.index.forEach( ( item ) => {
 		if ( item.searchableText.includes( query ) ) {
-			results.push(
-				new ve.ui.MWReferenceResultWidget( {
-					item: item,
-					reuseMenu: item.isSubRef ? undefined : this.buildReuseOptionsMenu( item.reference )
-				} )
-			);
+			results.push( new MWReferenceResultWidget( { item } ) );
 		}
-	}
+	} );
 
 	return results;
 };
+
+module.exports = ve.ui.MWReferenceSearchWidget;

@@ -9,6 +9,7 @@
 			"Macofe",
 			"Maroen1990",
 			"Meno25",
+			"Mohammed Qays",
 			"Shbib Al-Subaie",
 			"Super ninja2",
 			"XIDME",
@@ -19,13 +20,12 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي",
-			"Mohammed Qays"
+			"مشعل الحربي"
 		]
 	},
 	"thanks-desc": "تضيف وصلات لشكر المستخدمين على التعديلات والتعليقات، إلخ.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|شكر}}}}",
-	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|شَكَرته|شَكَرتها}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|شَكَرتَ|شَكَرتِ}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|شكر}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|شَكَرتَ|شَكَرتِ}}}}",
 	"thanks-error-undefined": "فشل الشكر، (رمز العطل: $1) {{GENDER:|حاول|حاولي|حاولوا}} مجددًا.",

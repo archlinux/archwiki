@@ -40,15 +40,15 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 		return [
 			'Empty reference IDs list' => [
 				new ClientHintsReferenceIds(),
-				[]
+				[],
 			],
 			'Reference IDs for just cu_changes' => [
 				new ClientHintsReferenceIds( [
 					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 123, 456 ],
-					UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => []
+					UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [],
 				] ),
 				// Expected array returned by ::prepareFirstResultsArray
-				[ UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 123 => [], 456 => [] ] ]
+				[ UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 123 => [], 456 => [] ] ],
 			],
 			'Reference IDs for all three reference types' => [
 				new ClientHintsReferenceIds( [
@@ -62,8 +62,8 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 123 => [], 4567 => [] ],
 					UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [ 678 => [], 101 => [] ],
 					UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT => [ 1234 => [], 56 => [] ],
-				]
-			]
+				],
+			],
 		];
 	}
 
@@ -76,7 +76,6 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 		// T287318 - TestingAccessWrapper::__call does not support pass-by-reference
 		$classReflection = new ReflectionClass( $objectUnderTest );
 		$methodReflection = $classReflection->getMethod( 'generateUniqueClientHintsIdCombinations' );
-		$methodReflection->setAccessible( true );
 
 		$this->assertArrayEquals(
 			$expectedReturnArray,
@@ -105,49 +104,49 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 				// to ::generateUniqueClientHintsIdCombinations
 				[],
 				// Expected return array from ::generateUniqueClientHintsIdCombinations
-				[]
+				[],
 			],
 			'Reference IDs for just cu_log_event' => [
 				// Initial array value for $referenceIdsToClientHintIds
 				// that is passed by reference
 				[ UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [
-					123 => [ 1, 2, 3 ], 456 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ]
+					123 => [ 1, 2, 3 ], 456 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ],
 				] ],
 				// Value of $referenceIdsToClientHintIds after the call
 				// to ::generateUniqueClientHintsIdCombinations
 				[ UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [
-					123 => 0, 456 => 1, 567 => 0
+					123 => 0, 456 => 1, 567 => 0,
 				] ],
 				// Expected return array from ::generateUniqueClientHintsIdCombinations
 				// which is the sorted and unique combinations of uach_ids from the initial
 				// $referenceIdsToClientHintIds array.
-				[ [ 1, 2, 3 ], [ 1, 3, 4 ] ]
+				[ [ 1, 2, 3 ], [ 1, 3, 4 ] ],
 			],
 			'Reference IDs for all reference types' => [
 				// Initial array value for $referenceIdsToClientHintIds
 				// that is passed by reference
 				[
 					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [
-						123 => [ 1, 2, 4 ], 456 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ]
+						123 => [ 1, 2, 4 ], 456 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ],
 					],
 					UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [
-						123 => [ 1, 2, 5 ], 4567 => [ 1, 3, 4 ], 567 => [ 4, 2, 3 ]
+						123 => [ 1, 2, 5 ], 4567 => [ 1, 3, 4 ], 567 => [ 4, 2, 3 ],
 					],
 					UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT => [
-						123 => [ 3, 2, 4 ], 234 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ]
+						123 => [ 3, 2, 4 ], 234 => [ 1, 3, 4 ], 567 => [ 1, 2, 3 ],
 					],
 				],
 				// Value of $referenceIdsToClientHintIds after the call
 				// to ::generateUniqueClientHintsIdCombinations
 				[
 					UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [
-						123 => 0, 456 => 1, 567 => 2
+						123 => 0, 456 => 1, 567 => 2,
 					],
 					UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT => [
-						123 => 3, 4567 => 1, 567 => 4
+						123 => 3, 4567 => 1, 567 => 4,
 					],
 					UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT => [
-						123 => 4, 234 => 1, 567 => 2
+						123 => 4, 234 => 1, 567 => 2,
 					],
 				],
 				// Expected return array from ::generateUniqueClientHintsIdCombinations
@@ -159,7 +158,7 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 					[ 1, 2, 3 ],
 					[ 1, 2, 5 ],
 					[ 2, 3, 4 ],
-				]
+				],
 			],
 		];
 	}
@@ -215,7 +214,7 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 			->willReturn( 'makeWhereFrom2d result' );
 		/** @var UserAgentClientHintsLookup $objectUnderTest */
 		$objectUnderTest = $this->newServiceInstance( UserAgentClientHintsLookup::class, [
-			'dbr' => $dbrMock
+			'dbr' => $dbrMock,
 		] );
 		$returnValue = $objectUnderTest->getClientHintsByReferenceIds( $referenceIds );
 		$this->assertInstanceOf(

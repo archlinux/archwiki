@@ -5,8 +5,6 @@
 			"Ssemmanda will"
 		]
 	},
-	"vector-opt-out": "Kyusa odde ku ndabika enkadde",
-	"vector-opt-out-tooltip": "Kyusa ensengeka zo okudda ku ndabika ya Wiki enkadde (legacy Vector)",
 	"vector-languages": "Ennimi",
 	"vector-no-language-button-label": "Gattako ennimi endala",
 	"vector-action-addsection": "Tandikawo emboozi endala",
@@ -32,7 +30,6 @@
 	"skin-theme-day-label": "Entangaavu",
 	"skin-theme-night-label": "Enzirugavu",
 	"skin-theme-exclusion-notice": "Omuko guno bulijjo gubeera mu mbeera entangaavu.",
-	"vector-searchsuggest-containing": "Okunoonya empapula ezirimu <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Ebirimu",
 	"vector-toc-beginning": "W'otandikira",
 	"vector-anon-user-menu-pages": "Eby'abasunsuzi abaafuluma Wiki",

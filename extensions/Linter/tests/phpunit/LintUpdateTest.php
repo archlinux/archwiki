@@ -34,6 +34,7 @@ use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @group Database
@@ -215,8 +216,8 @@ class LintUpdateTest extends MediaWikiIntegrationTestCase {
 	private function newLintUpdate( RenderedRevision $renderedRevision ) {
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 		$parserOutputAccess = $this->getServiceContainer()->getParserOutputAccess();
-
 		return new LintUpdate(
+			StatsFactory::newNull(),
 			$wikiPageFactory,
 			$parserOutputAccess,
 			$renderedRevision

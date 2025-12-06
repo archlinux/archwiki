@@ -168,8 +168,28 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 		}
 
 		DeferredUpdates::doUpdates();
-		$rc = RecentChange::newFromConds( $rcConds, __METHOD__, DB_PRIMARY );
+		$rc = $services->getRecentChangeLookup()->getRecentChangeByConds( $rcConds, __METHOD__, true );
 		$this->assertNotNull( $rc, 'RC item found' );
+
+		$accountCreationHookCalled = false;
+		if ( $type === 'newusers' ) {
+			// Verify that the AbuseFilterGenerateAccountCreationVars hook is called and provides the expected
+			// data to the handlers.
+			$this->setTemporaryHook(
+				'AbuseFilterGenerateAccountCreationVars',
+				function (
+					$actualVars, UserIdentity $actualCreator, UserIdentity $actualCreatedUser, bool $autocreated,
+					?RecentChange $actualRc
+				) use ( &$accountCreationHookCalled, $user, $action, $rc ) {
+					$this->assertTrue( $user->equals( $actualCreator ) );
+					$this->assertSame( 'AbuseFilter dummy user', $actualCreatedUser->getName() );
+					$this->assertSame( $action === 'autocreateaccount', $autocreated );
+					$this->assertSame( $rc, $actualRc );
+
+					$accountCreationHookCalled = true;
+				}
+			);
+		}
 
 		$varGenerator = AbuseFilterServices::getVariableGeneratorFactory()->newRCGenerator(
 			$rc,
@@ -191,6 +211,12 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 
 		// Not assertSame because we're comparing different AFPData objects
 		$this->assertEquals( $expected, $actual );
+
+		$this->assertSame(
+			$type === 'newusers',
+			$accountCreationHookCalled,
+			'AbuseFilterGenerateAccountCreationVars hook should be run only if the type is "newusers"'
+		);
 	}
 
 	/**
@@ -236,10 +262,10 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 		/** @var RevisionRecord $revRecord */
 		$revRecord = $status->value['revision-record'];
 
-		$rc = RecentChange::newFromConds(
+		$rc = $this->getServiceContainer()->getRecentChangeLookup()->getRecentChangeByConds(
 			[ 'rc_this_oldid' => $revRecord->getId() ],
 			__METHOD__,
-			DB_PRIMARY
+			true
 		);
 		$this->assertNotNull( $rc, 'RC item found' );
 
@@ -263,7 +289,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 			'new_wikitext' => $newText,
 			'new_size' => strlen( $newText ),
 			'new_content_model' => 'wikitext',
-			'all_links' => [ "https://en.wikipedia.org/" ],
+			'new_links' => [ "https://en.wikipedia.org/" ],
 			'timestamp' => (string)$timestamp,
 		];
 		foreach ( $expected as $var => $value ) {
@@ -290,16 +316,16 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 			throw new LogicException( "Cannot upload file:\n$status" );
 		}
 
-		$rc = RecentChange::newFromConds(
+		$rc = $this->getServiceContainer()->getRecentChangeLookup()->getRecentChangeByConds(
 			[
 				'rc_namespace' => $destTitle->getNamespace(),
 				'rc_title' => $destTitle->getDbKey(),
-				'rc_type' => RC_LOG,
+				'rc_source' => RecentChange::SRC_LOG,
 				'rc_log_type' => 'upload',
 				'rc_log_action' => 'upload',
 			],
 			__METHOD__,
-			DB_PRIMARY
+			true
 		);
 		$this->assertNotNull( $rc, 'RC item found' );
 

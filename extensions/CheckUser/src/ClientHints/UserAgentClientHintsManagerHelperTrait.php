@@ -51,7 +51,7 @@ trait UserAgentClientHintsManagerHelperTrait {
 					$clientHintsData, $eventId, $eventType
 				);
 			}
-		} catch ( TypeError $e ) {
+		} catch ( TypeError ) {
 			$clientHintsHeaders = [];
 			foreach ( array_keys( ClientHintsData::HEADER_TO_CLIENT_HINTS_DATA_PROPERTY_NAME ) as $header ) {
 				$headerValue = $request->getHeader( $header );

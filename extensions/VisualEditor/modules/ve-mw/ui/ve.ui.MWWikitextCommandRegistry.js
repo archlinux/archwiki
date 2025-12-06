@@ -199,7 +199,7 @@ ve.ui.wikitextCommandRegistry.register(
 
 	function unlist( keepType, text ) {
 		let matches;
-		if ( ( matches = text.match( /^[*#] */ ) ) && text.slice( 0, 1 ) !== keepType ) {
+		if ( ( matches = text.match( /^[*#] */ ) ) && !text.startsWith( keepType ) ) {
 			return [ matches[ 0 ].length, 0 ];
 		}
 	}

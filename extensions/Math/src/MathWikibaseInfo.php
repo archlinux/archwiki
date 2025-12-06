@@ -33,7 +33,7 @@ class MathWikibaseInfo {
 	private $symbol;
 
 	/**
-	 * @var MathWikibaseInfo[]
+	 * @var self[]
 	 */
 	private $hasParts = [];
 
@@ -77,10 +77,7 @@ class MathWikibaseInfo {
 		$this->symbol = $symbol;
 	}
 
-	/**
-	 * @param MathWikibaseInfo $info
-	 */
-	public function addHasPartElement( MathWikibaseInfo $info ) {
+	public function addHasPartElement( self $info ) {
 		$this->hasParts[] = $info;
 	}
 
@@ -92,7 +89,7 @@ class MathWikibaseInfo {
 	}
 
 	/**
-	 * @param MathWikibaseInfo[] $infos
+	 * @param self[] $infos
 	 */
 	public function addHasPartElements( $infos ) {
 		array_push( $this->hasParts, ...$infos );
@@ -138,7 +135,7 @@ class MathWikibaseInfo {
 	}
 
 	/**
-	 * @return MathWikibaseInfo[] hasparts
+	 * @return self[] hasparts
 	 */
 	public function getParts() {
 		return $this->hasParts;

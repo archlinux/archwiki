@@ -113,6 +113,9 @@
 	"templatedata-modal-title-templateformatstring": "Kohandatud vormingusõne",
 	"templatedata-modal-title-templateparam-details": "Parameetri üksikasjad: $1",
 	"templatedata-modal-title-templateparams": "Malli parameetrid",
+	"templatedata-search-description": "Otsi malli",
+	"templatedata-search-placeholder": "Sisesta malli nimi",
+	"templatedata-search-placeholder-cirrussearch": "Sisesta malli nimi või võtmesõnad",
 	"templatedata-search-list-header": "Lemmikud",
 	"templatedata-search-list-empty": "Siia ilmuvad mallid, mille märgid lemmikuks.",
 	"templatedata-favorite-disabled": "Pead olema sisse loginud, et mall lemmikuks märkida",
@@ -120,5 +123,17 @@
 	"templatedata-favorite-added": "Mall lisatud lemmikutesse.",
 	"templatedata-favorite-remove": "Eemalda mall lemmikutest",
 	"templatedata-favorite-removed": "Mall lemmikutest eemaldatud.",
-	"templatedata-favorite-maximum-reached": "Oled lisanud suurima lubatud arvu ($1) lemmikmalle. Palun eemalda enda loendist mõned, enne kui lisad malle juurde."
+	"templatedata-favorite-maximum-reached": "Oled lisanud suurima lubatud arvu ($1) lemmikmalle. Palun eemalda enda loendist mõned, enne kui lisad malle juurde.",
+	"templatedata-category-browser-header": "Kategooriad",
+	"templatedata-category-switch-label": "Juurtaseme kategooria:",
+	"templatedata-category-rootcat": "Mallid",
+	"templatedata-category-switch-button": "Sirvi",
+	"templatedata-category-column-empty": "Järgmises kategoorias ei leidu malle ega alamkategooriaid: [[$1]]",
+	"templatedata-category-browser-loadmore": "…laadi veel",
+	"templatedata-category-use-template": "Kasuta seda malli",
+	"templatedata-category-categories": "Teised kategooriad",
+	"templatedata-category-no-cats": "puuduvad",
+	"templatedata-featured-list-header": "Esile tõstetud",
+	"templatedata-featured-list-config-link": "Muuda esiletõstmise loendit",
+	"templatedata-favorite-count": "Sul on $1 lemmikmalli $2 võimalikust."
 }

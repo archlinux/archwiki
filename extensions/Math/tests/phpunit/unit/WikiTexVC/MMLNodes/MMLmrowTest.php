@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
@@ -20,10 +21,10 @@ class MMLmrowTest extends MediaWikiUnitTestCase {
 		$mi = new MMLmi( '', [], 'x' );
 		$mo = new MMLmo( '', [], '+' );
 		$mn = new MMLmn( '', [], '5' );
-		$mrow = new MMLmrow( '', [ 'mathvariant' => 'bold' ], $mi, $mo, $mn );
+		$mrow = new MMLmrow( '', [ 'mathvariant' => Variants::BOLD ], $mi, $mo, $mn );
 
 		$this->assertEquals( 'mrow', $mrow->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $mrow->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mrow->getAttributes() );
 		$this->assertEquals( $mrow->getChildren(), [ $mi, $mo, $mn ] );
 	}
 }

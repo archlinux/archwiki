@@ -1,22 +1,6 @@
 <?php
 /**
- * Parent class for all special pages.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
@@ -34,7 +18,6 @@ use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\Language;
-use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -206,7 +189,7 @@ class SpecialPage implements MessageLocalizer {
 	 *
 	 * @param string $name Name of the special page, as seen in links and URLs
 	 * @param string $restriction User right required, e.g. "block" or "delete"
-	 * @param bool $listed Whether the page is listed in Special:Specialpages
+	 * @param bool $listed Whether the page is listed in Special:SpecialPages
 	 * @param callable|bool $function Unused
 	 * @param string $file Unused
 	 * @param bool $includable Whether the page can be included in normal pages
@@ -261,8 +244,8 @@ class SpecialPage implements MessageLocalizer {
 	/**
 	 * How long to cache page when it is being included.
 	 *
-	 * @note If cache time is not 0, then the current user becomes an anon
-	 *   if you want to do any per-user customizations, than this method
+	 * @note If cache time is not 0, then the current user becomes an anon.
+	 *   If you want to do any per-user customizations, then this method
 	 *   must be overridden to return 0.
 	 * @since 1.26
 	 * @stable to override
@@ -449,7 +432,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @param string $titleMsg [optional] Passed on to UserNotLoggedIn constructor. Default 'exception-nologin'
 	 *    which is used when $titleMsg is null.
 	 * @param bool $alwaysRedirectToLoginPage [optional] Should the redirect always go to Special:UserLogin?
-	 *    If false (the default), the redirect will be to Special:CreateAccount when the user is logged in to
+	 *    If false (the default), the redirect will go to Special:CreateAccount when the user is logged-in to
 	 *    a temporary account.
 	 * @throws UserNotLoggedIn
 	 */
@@ -467,7 +450,7 @@ class SpecialPage implements MessageLocalizer {
 	 * authentication framework.
 	 * @stable to override
 	 * @return string|false False or the argument for AuthManager::securitySensitiveOperationStatus().
-	 *   Typically a special page needing elevated security would return its name here.
+	 *   Typically, a special page needing elevated security would return its name here.
 	 */
 	protected function getLoginSecurityLevel() {
 		return false;
@@ -575,7 +558,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @since 1.36
 	 * @param AuthManager $authManager
 	 */
-	final protected function setAuthManager( AuthManager $authManager ) {
+	final protected function setAuthManager( AuthManager $authManager ): void {
 		$this->authManager = $authManager;
 	}
 
@@ -703,13 +686,7 @@ class SpecialPage implements MessageLocalizer {
 		$out = $this->getOutput();
 		$out->setArticleRelated( false );
 		$out->setRobotPolicy( $this->getRobotPolicy() );
-		$title = $this->getDescription();
-		// T343849
-		if ( is_string( $title ) ) {
-			wfDeprecated( "string return from {$this->getName()}::getDescription()", '1.41' );
-			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
-		}
-		$out->setPageTitleMsg( $title );
+		$out->setPageTitleMsg( $this->getDescription() );
 	}
 
 	/**
@@ -738,7 +715,7 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
-	 * Gets called before @see SpecialPage::execute.
+	 * Gets called before {@link execute}.
 	 * Return false to prevent calling execute() (since 1.27+).
 	 *
 	 * @stable to override
@@ -752,7 +729,7 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
-	 * Gets called after @see SpecialPage::execute.
+	 * Gets called after {@link execute}.
 	 *
 	 * @stable to override
 	 * @since 1.20
@@ -807,23 +784,23 @@ class SpecialPage implements MessageLocalizer {
 
 	/**
 	 * Returns the name that goes in the \<h1\> in the special page itself, and
-	 * also the name that will be listed in Special:Specialpages
+	 * also the name that will be listed in Special:SpecialPages
 	 *
 	 * Derived classes can override this, but usually it is easier to keep the
 	 * default behavior.
 	 *
-	 * Returning a string from this method has been deprecated since 1.41.
+	 * Since 1.45, returning a string from this method is no longer allowed.
 	 *
 	 * @stable to override
 	 *
-	 * @return string|Message
+	 * @return Message
 	 */
 	public function getDescription() {
 		return $this->msg( strtolower( $this->mName ) );
 	}
 
 	/**
-	 * Similar to getDescription, but takes into account subpages and designed for display
+	 * Similar to SpecialPage::getDescription, but takes into account subpages and designed for display
 	 * in tabs.
 	 *
 	 * @since 1.39
@@ -1156,7 +1133,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @param int $offset
 	 * @param int $limit
 	 * @param array $query Optional URL query parameter string
-	 * @param bool $atend Optional param for specified if this is the last page
+	 * @param bool $atEnd Optional param for specified if this is the last page
 	 * @param string|false $subpage Optional param for specifying subpage
 	 * @return string
 	 */
@@ -1164,7 +1141,7 @@ class SpecialPage implements MessageLocalizer {
 		$offset,
 		$limit,
 		array $query = [],
-		$atend = false,
+		$atEnd = false,
 		$subpage = false
 	) {
 		$navBuilder = new PagerNavigationBuilder( $this );
@@ -1180,7 +1157,7 @@ class SpecialPage implements MessageLocalizer {
 		if ( $offset > 0 ) {
 			$navBuilder->setPrevLinkQuery( [ 'offset' => (string)max( $offset - $limit, 0 ) ] );
 		}
-		if ( !$atend ) {
+		if ( !$atEnd ) {
 			$navBuilder->setNextLinkQuery( [ 'offset' => (string)( $offset + $limit ) ] );
 		}
 

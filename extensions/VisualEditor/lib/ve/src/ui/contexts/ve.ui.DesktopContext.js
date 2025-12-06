@@ -16,9 +16,7 @@
  * @param {jQuery} [config.$popupContainer] Clipping container for context popup
  * @param {number} [config.popupPadding=10] Padding between popup and $popupContainer, can be negative
  */
-ve.ui.DesktopContext = function VeUiDesktopContext( surface, config ) {
-	config = config || {};
-
+ve.ui.DesktopContext = function VeUiDesktopContext( surface, config = {} ) {
 	// Parent constructor
 	ve.ui.DesktopContext.super.apply( this, arguments );
 
@@ -111,10 +109,12 @@ ve.ui.DesktopContext.prototype.onUnsuppress = function () {
 };
 
 /**
- * Handle cursor position change event.
+ * Handle surface position change event.
+ *
+ * @param {boolean} [passive=false]
  */
-ve.ui.DesktopContext.prototype.onPosition = function () {
-	if ( this.isVisible() ) {
+ve.ui.DesktopContext.prototype.onPosition = function ( passive ) {
+	if ( this.isVisible() && !passive ) {
 		this.updateDimensionsDebounced();
 	}
 };

@@ -7,7 +7,7 @@
 	"categorytree": "Structura d’âbro de les catègories",
 	"categorytree-portlet": "Catègories",
 	"categorytree-legend": "Vêre la structura d’âbro de la catègorie",
-	"categorytree-desc": "Outil basâ dessus AJAX por afichiér la [[Special:CategoryTree|structura de la catègorie]] d’un vouiqui",
+	"categorytree-desc": "Navegue dinamicament l’[[Special:CategoryTree|estructura de les catègories]]",
 	"categorytree-header": "Buchiéd un nom de catègorie por vêre son contegnu en structura d’âbro.\nCen utilise des fonccionalitâts JavaScript avanciês cognues desot lo nom d’AJAX.\nSe vos avéd un rudo viely navigator ou ben se vos éd pas activâ la fonccionalitât JavaScript, cen fonccionerat pas.",
 	"categorytree-category": "Catègorie :",
 	"categorytree-go": "Fâre vêre la structura d’âbro",

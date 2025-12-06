@@ -7,7 +7,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Gebruik ou Vector-vel",
-	"vector-opt-out": "Skakel oor na ou voorkoms",
 	"vector-action-toggle-sidebar": "Wissel kantbalk",
 	"vector-languages": "Tale",
 	"vector-language-button-aria-label": "Gaan na 'n artikel in 'n ander taal. Beskikbaar in {{PLURAL:$1|$1 taal|$1 tale}}",
@@ -43,8 +42,6 @@
 	"skin-theme-night-label": "Donker",
 	"skin-theme-os-label": "Outomaties",
 	"skin-theme-exclusion-notice": "Hierdie bladsy is altyd in ligte modus.",
-	"vector-search-loader": "Laai tans soekvoorstelle",
-	"vector-searchsuggest-containing": "Soek vir bladsye wat <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> bevat",
 	"vector-intro-page": "Help:Inleiding",
 	"vector-toc-label": "Inhoud",
 	"vector-toc-beginning": "Inleiding",

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Jeeputer",
@@ -9,8 +10,7 @@
 			"Obsuser",
 			"Zenfiric",
 			"Милан Јелисавчић",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"templatedata-desc": "Омогућава чување података о параметрима шаблона (користећи JSON)",
@@ -119,9 +119,21 @@
 	"templatedata-modal-title-templateformatstring": "Ниска прилагођеног формата",
 	"templatedata-modal-title-templateparam-details": "Детаљи параметра: $1",
 	"templatedata-modal-title-templateparams": "Параметри шаблона",
+	"templatedata-search-description": "Претрага шаблона",
+	"templatedata-search-placeholder": "Унесите назив странице",
 	"templatedata-search-list-header": "Омиљено",
+	"templatedata-search-list-empty": "Шаблони које означите омиљеним ће се појавити овде",
+	"templatedata-search-list-empty-anon": "Молимо пријавите се да означите шаблон омиљеним",
 	"templatedata-favorite-add": "Додај шаблон у омиљене",
 	"templatedata-favorite-added": "Шаблон додат у омиљене",
 	"templatedata-favorite-remove": "Уклони шаблон из омиљених",
-	"templatedata-favorite-removed": "Шаблон уклоњен из омиљених"
+	"templatedata-favorite-removed": "Шаблон уклоњен из омиљених",
+	"templatedata-category-browser-header": "Категорије",
+	"templatedata-category-rootcat": "Шаблони",
+	"templatedata-category-browser-loadmore": "…учитај још",
+	"templatedata-category-column-error": "Дошло је до грешке",
+	"templatedata-category-categories": "Остале категорије",
+	"templatedata-category-no-cats": "Нема.",
+	"templatedata-featured-list-header": "Изабрани",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Истакнути шаблони"
 }

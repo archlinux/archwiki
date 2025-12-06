@@ -3,12 +3,15 @@
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\SiteLibrary;
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Title\Title;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\TitleLibrary
@@ -44,6 +47,17 @@ class TitleLibraryTest extends LuaEngineTestBase {
 			] ] ),
 		] );
 
+		// Set up restricted namespaces
+		$this->overrideConfigValues( [
+			MainConfigNames::ExtraNamespaces => [
+				100 => 'Test',
+				101 => 'Test talk',
+			],
+			MainConfigNames::NonincludableNamespaces => [ 100, 101 ],
+		] );
+		// Refresh cached namespace info
+		TestingAccessWrapper::newFromClass( SiteLibrary::class )->namespacesCache = null;
+
 		$editor = self::getTestSysop()->getUser();
 
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
@@ -58,6 +72,13 @@ class TitleLibraryTest extends LuaEngineTestBase {
 			'Summary'
 		);
 		$this->testPageId = $page->getId();
+
+		$page = $wikiPageFactory->newFromTitle( Title::newFromText( 'Test:Restricted' ) );
+		$page->doUserEditContent(
+			new WikitextContent( 'Some secret.' ),
+			$editor,
+			'Summary'
+		);
 
 		// Pages for redirectTarget tests
 		$page = $wikiPageFactory->newFromTitle( Title::newFromText( 'ScribuntoTestRedirect' ) );
@@ -158,33 +179,41 @@ class TitleLibraryTest extends LuaEngineTestBase {
 		];
 	}
 
+	private function getLinkTitles( $parser, $type ) {
+		$links = $parser->getOutput()->getLinkList( $type );
+		$titles = [];
+		foreach ( $links as $link ) {
+			$titles[] = (string)$link['link'];
+		}
+		return $titles;
+	}
+
 	public function testAddsLinks() {
 		$engine = $this->getEngine();
+		$parser = $engine->getParser();
 		$interpreter = $engine->getInterpreter();
 
-		// Loading a title should create a link
-		$links = $engine->getParser()->getOutput()->getLinks();
-		$this->assertFalse( isset( $links[NS_PROJECT]['Referenced_from_Lua'] ) );
+		// Loading a title should create an existence dependency
+		$links = $this->getLinkTitles( $parser, ParserOutputLinkTypes::EXISTENCE );
+		$this->assertNotContains( NS_PROJECT . ':Referenced_from_Lua', $links );
 
 		$interpreter->callFunction( $interpreter->loadString(
 			'local _ = mw.title.new( "Project:Referenced from Lua" ).id', 'reference title'
 		) );
 
-		$links = $engine->getParser()->getOutput()->getLinks();
-		$this->assertArrayHasKey( NS_PROJECT, $links );
-		$this->assertArrayHasKey( 'Referenced_from_Lua', $links[NS_PROJECT] );
+		$links = $this->getLinkTitles( $parser, ParserOutputLinkTypes::EXISTENCE );
+		$this->assertContains( NS_PROJECT . ':Referenced_from_Lua', $links );
 
 		// Loading the page content should create a templatelink
-		$templates = $engine->getParser()->getOutput()->getTemplates();
-		$this->assertFalse( isset( $links[NS_PROJECT]['Loaded_from_Lua'] ) );
+		$templates = $this->getLinkTitles( $parser, ParserOutputLinkTypes::TEMPLATE );
+		$this->assertNotContains( NS_PROJECT . ':Loaded_from_Lua', $templates );
 
 		$interpreter->callFunction( $interpreter->loadString(
 			'mw.title.new( "Project:Loaded from Lua" ):getContent()', 'load title'
 		) );
 
-		$templates = $engine->getParser()->getOutput()->getTemplates();
-		$this->assertArrayHasKey( NS_PROJECT, $templates );
-		$this->assertArrayHasKey( 'Loaded_from_Lua', $templates[NS_PROJECT] );
+		$templates = $this->getLinkTitles( $parser, ParserOutputLinkTypes::TEMPLATE );
+		$this->assertContains( NS_PROJECT . ':Loaded_from_Lua', $templates );
 	}
 
 	/**

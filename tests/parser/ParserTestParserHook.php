@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Copyright © 2005, 2006 Ævar Arnfjörð Bjarmason
+ *
+ * @license GPL-2.0-or-later
+ * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+ */
+
 use MediaWiki\Html\Html;
 use MediaWiki\Parser\Parser;
 
@@ -7,38 +14,18 @@ use MediaWiki\Parser\Parser;
  * A basic extension that's used by the parser tests to test whether input and
  * arguments are passed to extensions properly.
  *
- * Copyright © 2005, 2006 Ævar Arnfjörð Bjarmason
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  * @ingroup Testing
- * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
-
 class ParserTestParserHook {
 
 	/** Set up extension tags and parser functions for parser tests. */
 	public static function setup( Parser $parser ): bool {
 		// Install a magic word.
-		$parser->setHook( 'tag', [ __CLASS__, 'dumpHook' ] );
-		$parser->setHook( 'tåg', [ __CLASS__, 'dumpHook' ] );
-		$parser->setHook( 'statictag', [ __CLASS__, 'staticTagHook' ] );
-		$parser->setHook( 'asidetag', [ __CLASS__, 'asideTagHook' ] );
-		$parser->setHook( 'pwraptest', [ __CLASS__, 'pWrapTestHook' ] );
+		$parser->setHook( 'tag', [ self::class, 'dumpHook' ] );
+		$parser->setHook( 'tåg', [ self::class, 'dumpHook' ] );
+		$parser->setHook( 'statictag', [ self::class, 'staticTagHook' ] );
+		$parser->setHook( 'asidetag', [ self::class, 'asideTagHook' ] );
+		$parser->setHook( 'pwraptest', [ self::class, 'pWrapTestHook' ] );
 		foreach ( [ 'div', 'span' ] as $tag ) {
 			// spantag, divtag
 			$parser->setHook( $tag . 'tag', static function ( $in, $argv, $parser ) use ( $tag ) {
@@ -53,7 +40,7 @@ class ParserTestParserHook {
 		return true;
 	}
 
-	public static function dumpHook( $in, $argv ) {
+	public static function dumpHook( ?string $in, array $argv ): string {
 		// @phan-suppress-next-line SecurityCheck-XSS
 		return "<pre>\n" .
 			var_export( $in, true ) . "\n" .

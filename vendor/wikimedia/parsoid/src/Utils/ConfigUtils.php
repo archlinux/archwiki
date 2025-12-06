@@ -12,7 +12,8 @@ class ConfigUtils {
 	 * configured or obtaianed via an API)
 	 *
 	 * @param array $iwData
-	 * @return array
+	 *
+	 * @return array<array>
 	 */
 	public static function computeInterwikiMap( array $iwData ): array {
 		$interwikiMap = [];
@@ -26,9 +27,6 @@ class ConfigUtils {
 			'extralanglink' => true,
 			'linktext' => true,
 		];
-		$cb = static function ( $v ) {
-			return $v !== false;
-		};
 		foreach ( $iwData as $iwEntry ) {
 			$iwEntry['language'] = isset( $iwEntry['language'] );
 			// Fix up broken interwiki hrefs that are missing a $1 placeholder
@@ -38,11 +36,13 @@ class ConfigUtils {
 
 			// Not sure why Phan thinks $iwEntry['url'] is a bool
 			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
-			if ( strpos( $iwEntry['url'], '$1' ) === false ) {
+			if ( !str_contains( $iwEntry['url'], '$1' ) ) {
 				$iwEntry['url'] .= '$1';
 			}
 			$iwEntry = array_intersect_key( $iwEntry, $keys );
-			$interwikiMap[$iwEntry['prefix']] = array_filter( $iwEntry, $cb );
+			$interwikiMap[$iwEntry['prefix']] = array_filter(
+				$iwEntry, static fn ( $v ) => $v !== false
+			);
 		}
 
 		return $interwikiMap;

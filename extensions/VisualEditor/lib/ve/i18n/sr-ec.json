@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -116,7 +117,7 @@
 	"visualeditor-diff-no-changes": "Нема измена",
 	"visualeditor-diff-timed-out": "Учитавање Ваших измена је трајало предуго, па опис испод можда није оптималан.",
 	"visualeditor-dimensionswidget-height": "висина",
-	"visualeditor-dimensionswidget-px": "п",
+	"visualeditor-dimensionswidget-px": "px",
 	"visualeditor-dimensionswidget-width": "ширина",
 	"visualeditor-find-and-replace-diacritic": "Неосетљиво на дијакритике",
 	"visualeditor-find-and-replace-done": "Готово",
@@ -182,7 +183,7 @@
 	"visualeditor-rebase-client-author-name": "Ваше име",
 	"visualeditor-rebase-client-connecting": "Повезивање…",
 	"visualeditor-rebase-client-document-create-edit": "Направи/уреди",
-	"visualeditor-rebase-client-document-name": "Име документа (опционално)",
+	"visualeditor-rebase-client-document-name": "Име документа (необавезно)",
 	"visualeditor-rebase-corrupted-document-error": "Документ је постао оштећен: $1",
 	"visualeditor-rebase-corrupted-document-title": "Оштећен документ",
 	"visualeditor-rebase-missing-document-error": "Документ недостаје на серверу. Да бисте избегли губитак података, копирајте и налепите садржај.",

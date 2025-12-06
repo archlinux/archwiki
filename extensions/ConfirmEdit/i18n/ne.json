@@ -2,10 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Nirajan pant",
-			"बिप्लब आनन्द"
+			"बिप्लब आनन्द",
+			"बडा काजी"
 		]
 	},
+	"captcha-edit": "यो पृष्ठ सम्पादन गर्न, कृपया तलको कार्य समाधान गर्नुहोस् र बक्समा उत्तर प्रविष्ट गर्नुहोस् ([[Special:Captcha/help|थप जानकारी]]):",
+	"captcha-edit-fail": "क्याप्चा गलत छ वा छुटेको छ।",
+	"captcha-desc": "स्प्याम र पासवर्ड-अनुमान विरुद्ध सुरक्षा गर्न क्याप्चा प्रविधिहरू प्रदान गर्दछ",
 	"captcha-label": "क्याप्चा",
+	"captcha-help": "क्याप्चाको समाधान।",
+	"captcha-info-help": "क्याप्चाको विवरण।",
+	"captcha-id-label": "क्याप्चा आईडी",
+	"captcha-id-help": "यो मान अपरिवर्तित फिर्ता पठाउनु पर्छ।",
+	"captcha-createaccount-fail": "क्याप्चा गलत छ वा छुटेको छ।",
+	"captcha-sendemail-fail": "क्याप्चा गलत छ वा छुटेको छ।",
 	"captchahelp-title": "क्याप्चा सहायता",
 	"confirmedit-preview-line": "हरफ सङ्ख्या",
 	"confirmedit-preview-content": "सामाग्री",

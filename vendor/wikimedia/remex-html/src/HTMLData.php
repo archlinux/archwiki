@@ -14,8 +14,6 @@ class HTMLData {
 	public const NS_XML = 'http://www.w3.org/XML/1998/namespace';
 	public const NS_XMLNS = 'http://www.w3.org/2000/xmlns/';
 
-	/** @deprecated Use HTMLData::SPECIAL instead */
-	public static $special = self::SPECIAL;
 	public const SPECIAL = [
 		'http://www.w3.org/1999/xhtml' => [
 			'address' => true,
@@ -115,8 +113,49 @@ class HTMLData {
 		],
 	];
 
-	/** @deprecated Use HTMLData::NAMED_ENTITY_REGEX instead */
-	public static $namedEntityRegex = self::NAMED_ENTITY_REGEX;
+	/**
+	 * Properties of HTML tags.  Note that these sets are a union of
+	 * the W3C and WHATWG definitions, which differ slightly.
+	 */
+	public const TAGS = [
+		'void' => [
+			'area' => true,
+			'base' => true,
+			'basefont' => true,
+			'bgsound' => true,
+			'br' => true,
+			'col' => true,
+			'embed' => true,
+			'frame' => true,
+			'hr' => true,
+			'img' => true,
+			'input' => true,
+			'keygen' => true,
+			'link' => true,
+			'menuitem' => true,
+			'meta' => true,
+			'param' => true,
+			'source' => true,
+			'spacer' => true,
+			'track' => true,
+			'wbr' => true,
+		],
+		'prefixLF' => [
+			'pre' => true,
+			'textarea' => true,
+			'listing' => true,
+		],
+		'rawText' => [
+			'style' => true,
+			'script' => true,
+			'xmp' => true,
+			'iframe' => true,
+			'noembed' => true,
+			'noframes' => true,
+			'plaintext' => true,
+		],
+	];
+
 	public const NAMED_ENTITY_REGEX = '
 		CounterClockwiseContourIntegral;|
 		ClockwiseContourIntegral;|
@@ -2350,8 +2389,6 @@ class HTMLData {
 		gt|
 		lt';
 
-	/** @deprecated Use HTMLData::CHAR_REF_REGEX instead */
-	public static $charRefRegex = self::CHAR_REF_REGEX;
 	public const CHAR_REF_REGEX = '~
 				( .*? )                      # 1. prefix
 				&
@@ -4607,8 +4644,6 @@ class HTMLData {
 				# A = anchor, to avoid unnecessary movement of the whole pattern on failure
 				~xAsS';
 
-	/** @deprecated Use HTMLData::NAMED_ENTITY_TRANSLATION instead */
-	public static $namedEntityTranslations = self::NAMED_ENTITY_TRANSLATION;
 	public const NAMED_ENTITY_TRANSLATION = [
 		'Aacute;' => 'Á',
 		'Aacute' => 'Á',
@@ -6844,8 +6879,6 @@ class HTMLData {
 		'zwnj;' => '‌',
 	];
 
-	/** @deprecated Use HTMLData::LEGACY_NUMERIC_ENTITIES instead */
-	public static $legacyNumericEntities = self::LEGACY_NUMERIC_ENTITIES;
 	public const LEGACY_NUMERIC_ENTITIES = [
 		0 => '�',
 		128 => '€',
@@ -6877,8 +6910,6 @@ class HTMLData {
 		159 => 'Ÿ',
 	];
 
-	/** @deprecated Use HTMLData::QUIRKY_PREFIX_REGEX instead */
-	public static $quirkyPrefixRegex = self::QUIRKY_PREFIX_REGEX;
 	public const QUIRKY_PREFIX_REGEX = '~
 		//Silmaril//dtd html Pro v0r11 19970101//|
 		//AS//DTD HTML 3\\.0 asWedit \\+ extensions//|
@@ -6936,8 +6967,6 @@ class HTMLData {
 		//WebTechs//DTD Mozilla HTML 2\\.0//|
 		//WebTechs//DTD Mozilla HTML//~xAi';
 
-	/** @deprecated Use self::NAME_START_CHAR_CONV_TABLE instead */
-	public static $nameStartCharConvTable = self::NAME_START_CHAR_CONV_TABLE;
 	public const NAME_START_CHAR_CONV_TABLE = [
 		0, 64, 0, 16777215,
 		91, 94, 0, 16777215,
@@ -7146,8 +7175,6 @@ class HTMLData {
 		40870, 44031, 0, 16777215,
 		55204, 1114111, 0, 16777215 ];
 
-	/** @deprecated Use HTMLData::NAME_CHAR_CONV_TABLE instead */
-	public static $nameCharConvTable = self::NAME_CHAR_CONV_TABLE;
 	public const NAME_CHAR_CONV_TABLE = [
 		0, 44, 0, 16777215,
 		47, 47, 0, 16777215,

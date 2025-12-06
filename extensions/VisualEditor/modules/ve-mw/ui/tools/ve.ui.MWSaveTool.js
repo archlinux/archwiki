@@ -18,8 +18,16 @@ ve.ui.MWSaveTool = function VeUiMWSaveTool() {
 
 	if ( this.toolbar instanceof ve.ui.TargetToolbar ) {
 		if ( ve.msg( 'accesskey-save' ) !== '-' && ve.msg( 'accesskey-save' ) !== '' ) {
+			const accessKeySelector = `[accesskey="${ ve.msg( 'accesskey-save' ) }"]`;
+			let $accessKey;
+			try {
+				$accessKey = $( accessKeySelector );
+			} catch ( e ) {
+				mw.log.error( '`accesskey-save` message produced an invalid CSS selector:', accessKeySelector );
+				return;
+			}
 			// FlaggedRevs tries to use this - it's useless on VE pages because all that stuff gets hidden, but it will still conflict so get rid of it
-			this.toolbar.target.$saveAccessKeyElements = $( '[accesskey="' + ve.msg( 'accesskey-save' ) + '"]' ).removeAttr( 'accesskey' );
+			this.toolbar.target.$saveAccessKeyElements = $accessKey.removeAttr( 'accesskey' );
 			this.$link.attr( 'accesskey', ve.msg( 'accesskey-save' ) );
 		}
 

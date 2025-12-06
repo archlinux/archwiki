@@ -10,7 +10,8 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLnodes;
  */
 class MMLmpadded extends MMLbase {
 
-	public function __construct( string $texclass = "", array $attributes = [], MMLbase ...$children ) {
+	/** @inheritDoc */
+	public function __construct( string $texclass = "", array $attributes = [], ...$children ) {
 		parent::__construct( "mpadded", $texclass, $attributes, ...$children );
 	}
 }

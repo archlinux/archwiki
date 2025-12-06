@@ -14,8 +14,6 @@ use MediaWiki\User\UserIdentity;
  */
 class UserRightsNotification extends Notification implements AgentAware {
 
-	private UserIdentity $agent;
-
 	/**
 	 * Create new notification
 	 *
@@ -23,13 +21,16 @@ class UserRightsNotification extends Notification implements AgentAware {
 	 * @param UserIdentity $agent
 	 * @param string $reason
 	 */
-	public function __construct( UserIdentity $target, UserIdentity $agent, string $reason ) {
+	public function __construct(
+		UserIdentity $target,
+		private readonly UserIdentity $agent,
+		string $reason,
+	) {
 		parent::__construct( 'user-rights', [
 			// user is required in presentation
 			'user' => $target->getId(),
 			'reason' => $reason,
 		] );
-		$this->agent = $agent;
 	}
 
 	/**

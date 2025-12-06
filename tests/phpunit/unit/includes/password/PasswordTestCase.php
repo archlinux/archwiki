@@ -1,28 +1,14 @@
 <?php
 /**
- * Testing framework for the password hashes
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 use MediaWiki\Password\PasswordFactory;
 
 /**
+ * Testing framework for the password hashes
+ *
  * @since 1.24
  */
 abstract class PasswordTestCase extends MediaWikiUnitTestCase {
@@ -35,7 +21,7 @@ abstract class PasswordTestCase extends MediaWikiUnitTestCase {
 		parent::setUp();
 
 		$this->passwordFactory = new PasswordFactory();
-		foreach ( $this->getTypeConfigs() as $type => $config ) {
+		foreach ( static::getTypeConfigs() as $type => $config ) {
 			$this->passwordFactory->register( $type, $config );
 		}
 	}
@@ -45,7 +31,7 @@ abstract class PasswordTestCase extends MediaWikiUnitTestCase {
 	 *
 	 * @return array[]
 	 */
-	abstract protected function getTypeConfigs();
+	abstract protected static function getTypeConfigs();
 
 	/**
 	 * An array of tests in the form of (bool, string, string), where the first
@@ -86,16 +72,14 @@ abstract class PasswordTestCase extends MediaWikiUnitTestCase {
 		$this->assertFalse( $invalid->verify( $hash ) );
 	}
 
-	protected function getValidTypes() {
-		return array_keys( $this->getTypeConfigs() );
+	protected static function getValidTypes() {
+		return array_keys( static::getTypeConfigs() );
 	}
 
-	public function provideTypes() {
-		$params = [];
-		foreach ( $this->getValidTypes() as $type ) {
-			$params[] = [ $type ];
+	public static function provideTypes() {
+		foreach ( static::getValidTypes() as $type ) {
+			yield [ $type ];
 		}
-		return $params;
 	}
 
 	/**

@@ -17,7 +17,6 @@ interface ThreadItemSet {
 	public function addThreadItem( ThreadItem $item );
 
 	/**
-	 * @return bool
 	 * @internal Only used by CommentParser
 	 */
 	public function isEmpty(): bool;

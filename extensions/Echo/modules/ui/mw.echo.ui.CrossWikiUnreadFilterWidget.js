@@ -33,7 +33,7 @@ mw.echo.ui.CrossWikiUnreadFilterWidget = function MwEchoUiCrossWikiUnreadFilterW
 			return b.getSource() - a.getSource();
 		},
 		// Config
-		config
+		config,
 	);
 	// Mixin
 	OO.ui.mixin.PendingElement.call( this, config );
@@ -44,11 +44,11 @@ mw.echo.ui.CrossWikiUnreadFilterWidget = function MwEchoUiCrossWikiUnreadFilterW
 
 	const titleWidget = new OO.ui.LabelWidget( {
 		classes: [ 'mw-echo-ui-crossWikiUnreadFilterWidget-title' ],
-		label: mw.msg( 'echo-specialpage-pagefilters-title' )
+		label: mw.msg( 'echo-specialpage-pagefilters-title' ),
 	} );
 	const subtitleWidget = new OO.ui.LabelWidget( {
 		classes: [ 'mw-echo-ui-crossWikiUnreadFilterWidget-subtitle' ],
-		label: mw.msg( 'echo-specialpage-pagefilters-subtitle' )
+		label: mw.msg( 'echo-specialpage-pagefilters-subtitle' ),
 	} );
 
 	// Events
@@ -61,7 +61,7 @@ mw.echo.ui.CrossWikiUnreadFilterWidget = function MwEchoUiCrossWikiUnreadFilterW
 			titleWidget.$element,
 			subtitleWidget.$element,
 			this.$group
-				.addClass( 'mw-echo-ui-crossWikiUnreadFilterWidget-group' )
+				.addClass( 'mw-echo-ui-crossWikiUnreadFilterWidget-group' ),
 		);
 };
 
@@ -142,8 +142,8 @@ mw.echo.ui.CrossWikiUnreadFilterWidget.prototype.populateDataFromModel = functio
 			{
 				title: sourcePageModel.getSourceTitle( source ),
 				unreadCount: sourcePageModel.getSourceTotalCount( source ),
-				initialSelection: this.previousPageSelected && this.previousPageSelected.getData()
-			}
+				initialSelection: this.previousPageSelected && this.previousPageSelected.getData(),
+			},
 		);
 
 		widgets.push( widget );

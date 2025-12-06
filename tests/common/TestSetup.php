@@ -46,6 +46,7 @@ class TestSetup {
 		global $wgSearchType;
 		global $wgDevelopmentWarnings;
 		global $wgSessionProviders, $wgSessionPbkdf2Iterations;
+		global $wgCentralIdLookupProvider;
 		global $wgJobTypeConf;
 		global $wgMWLoggerDefaultSpi;
 		global $wgAuthManagerConfig;
@@ -120,11 +121,18 @@ class TestSetup {
 				'args' => [ [
 					'priority' => 30,
 				] ],
+				'services' => [
+					'JwtCodec',
+					'UrlUtils',
+				],
 			],
 		];
 
 		// Single-iteration PBKDF2 session secret derivation, for speed.
 		$wgSessionPbkdf2Iterations = 1;
+
+		// T277470
+		$wgCentralIdLookupProvider = 'local';
 
 		// Generic AuthManager configuration for testing
 		$wgAuthManagerConfig = [

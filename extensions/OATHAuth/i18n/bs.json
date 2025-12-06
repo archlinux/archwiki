@@ -10,9 +10,9 @@
 	"oathauth-secret": "Tajni ključ za potvrdu u 2 koraka:",
 	"oathauth-enable": "Uključi potvrdu u 2 koraka",
 	"oathauth-recoverycodes": "Sljedeći spisak sadrži žetone za jednokratnu upotrebu. Mogu se koristiti samo jednom i to u hitnim slučajevima. Zapišite i čuvajte ih na sigurnom mjestu. Ako izgubite telefon, jedino će oni moći spasiti Vaš račun. '''Ovi žetoni više se nikad neće prikazati'''.",
+	"oathauth-failedtovalidateoath": "Ne mogu potvrditi dvofaktorske podatke",
 	"oathauth-disable": "Isključi potvrdu u 2 koraka",
 	"oathauth-validatedoath": "Podaci potvrđeni. Odsad će se provoditi potvrda u 2 koraka.",
-	"oathauth-failedtovalidateoath": "Ne mogu potvrditi dvofaktorske podatke",
 	"oathauth-disabledoath": "Potvrda u 2 koraka isključena.",
 	"oathauth-prefs-label": "Potvrda u dva koraka:",
 	"oathauth-step1": "1. korak: Preuzmite program za potvrdu u 2 koraka",
@@ -38,5 +38,6 @@
 	"oathauth-disable-generic": "Isključi",
 	"oathauth-ui-available-modules": "Dostupne metode",
 	"oathauth-totp-description": "Jednokratni algoritam zasnovan na vremenu (TOTP) proširenje je algoritma zasnovanog na HMAC-u (HOTP) i stvara jednokratnu lozinku uzimajući jedinstvenost trenutnog vremena.",
-	"oathauth-invalidrequest": "Nevažeći zahtjev"
+	"oathauth-invalidrequest": "Nevažeći zahtjev",
+	"group-oathauth-twofactorauth-member": "Korisnik koji može koristiti dvofaktorsku autentifikaciju"
 }

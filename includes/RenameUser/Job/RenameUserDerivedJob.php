@@ -34,7 +34,7 @@ class RenameUserDerivedJob extends Job {
 
 	public function __construct(
 		Title $title,
-		$params,
+		array $params,
 		RenameUserFactory $renameUserFactory,
 		UserFactory $userFactory
 		) {
@@ -44,6 +44,7 @@ class RenameUserDerivedJob extends Job {
 		$this->userFactory = $userFactory;
 	}
 
+	/** @inheritDoc */
 	public function run() {
 		$oldName = $this->params['oldname'];
 		$newName = $this->params['newname'];

@@ -19,7 +19,6 @@
 	"gadgetusage-usercount": "Vartotojų skaičius",
 	"gadgetusage-noresults": "Priemonių nerasta.",
 	"gadgetusage-intro": "Ši lentelė nurodo skaičių naudotojų, kurie įgalino kiekvieną įrankį šiame viki. Kaip aktyvus naudotojas skaičiuojamas tada, kai atliko pakeitimą per {{PLURAL:$1|pastarąją dieną|pastarąsias $1 dienas}}. Šiame sąraše nėra įrankių įgalintų visiems pagal numatytuosius nustatymus ir gali būti įtrauktos ir priemonės, kurios nebėra prieinamos.",
-	"gadgetusage-intro-noactive": "Ši lentelė nurodo skaičių naudotojų, kurie įgalino priemones šiame vikyje. Šiame sąraše nėra statistikos priemonių, įgalintų visiems numatytuoju būdu ir gali būti įtrauktos priemonės, kurios jau nebeprieinamos.",
 	"gadgetusage-activeusers": "Aktyvūs naudotojai",
 	"gadgetusage-default": "Numatytasis",
 	"gadgets-title": "Priemonės",

@@ -10,7 +10,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"type": "other",
 	"ContentHandlers": {
@@ -79,12 +79,22 @@
 			]
 		},
 		"GadgetCodeEditorHooks": {
-			"class": "MediaWiki\\Extension\\Gadgets\\CodeEditorHooks"
+			"class": "MediaWiki\\Extension\\Gadgets\\CodeEditorHooks",
+			"services": [
+				"MainConfig"
+			]
+		},
+		"GadgetCodeMirrorHooks": {
+			"class": "MediaWiki\\Extension\\Gadgets\\CodeMirrorHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "GadgetHooks",
 		"CodeEditorGetPageLanguage": "GadgetCodeEditorHooks",
+		"CodeMirrorGetMode": "GadgetCodeMirrorHooks",
 		"ContentHandlerDefaultModelFor": "GadgetHooks",
 		"UserGetDefaultOptions": "GadgetHooks",
 		"GetPreferences": "GadgetHooks",
@@ -112,10 +122,16 @@
 	],
 	"config": {
 		"GadgetsRepo": {
-			"value": "definition"
+			"value": "definition",
+			"description": "When set to `definition`, gadgets are managed via MediaWiki:Gadgets-definition. When set to `json`, they're managed via JSON subpages of MediaWiki:Gadgets/. It can also be set to `json+definition` to allow both, enabling migration from one to the other."
 		},
-		"SpecialGadgetUsageActiveUsers": {
-			"value": true
+		"GadgetsDefinitionsUseCodeEditor": {
+			"value": true,
+			"description": "Use CodeEditor for editing JSON gadget definition pages."
+		},
+		"GadgetsDefinitionsUseCodeMirror": {
+			"value": false,
+			"description": "Use CodeMirror for editing JSON gadget definition pages."
 		}
 	},
 	"manifest_version": 2

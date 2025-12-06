@@ -2,21 +2,7 @@
 /**
  * Copyright © 2017 Justin Du "<justin.d128@gmail.com>"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -53,8 +39,9 @@ class ApiSetPageLanguage extends ApiBase {
 		$this->languageNameUtils = $languageNameUtils;
 	}
 
-	// Check if change language feature is enabled
+	/** @inheritDoc */
 	protected function getExtendedDescription() {
+		// Check if change language feature is enabled
 		if ( !$this->getConfig()->get( MainConfigNames::PageLanguageUseDB ) ) {
 			return 'apihelp-setpagelanguage-extended-description-disabled';
 		}
@@ -122,14 +109,17 @@ class ApiSetPageLanguage extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $r );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'title' => null,
@@ -137,13 +127,13 @@ class ApiSetPageLanguage extends ApiBase {
 				ParamValidator::PARAM_TYPE => 'integer'
 			],
 			'lang' => [
-				ParamValidator::PARAM_TYPE => array_merge(
-					[ 'default' ],
-					array_keys( $this->languageNameUtils->getLanguageNames(
+				ParamValidator::PARAM_TYPE => [
+					'default',
+					...array_keys( $this->languageNameUtils->getLanguageNames(
 						LanguageNameUtils::AUTONYMS,
 						LanguageNameUtils::SUPPORTED
 					) )
-				),
+				],
 				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'reason' => null,
@@ -154,10 +144,12 @@ class ApiSetPageLanguage extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -170,6 +162,7 @@ class ApiSetPageLanguage extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:SetPageLanguage';
 	}

@@ -16,10 +16,7 @@
  * @param {Object} [config] Configuration options
  * @param {string} [config.orientation='vertical']
  */
-ve.ui.MWGalleryGroupWidget = function VeUiMWGalleryGroupWidget( config ) {
-	// Configuration initialization
-	config = config || {};
-
+ve.ui.MWGalleryGroupWidget = function VeUiMWGalleryGroupWidget( config = {} ) {
 	// Parent constructor
 	ve.ui.MWGalleryGroupWidget.super.apply( this, arguments );
 

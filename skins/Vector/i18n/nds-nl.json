@@ -5,8 +5,6 @@
 		]
 	},
 	"vector-skin-desc": "Moderne versy van MonoBook mid een fris uterlik en verbeateringen up et gebeed van gebruuksvrendelikheid",
-	"vector-opt-out": "Oavergån up olde formgeaving",
-	"vector-opt-out-tooltip": "Wysig juw instellingen üm weader nå de olde formgeaving te gån (Legacy Vector)",
 	"vector-languages": "Språken",
 	"vector-no-language-button-label": "Språken tovogen",
 	"vector-action-addsection": "Ny underwarp",
@@ -37,7 +35,6 @@
 	"skin-theme-night-label": "Dunker",
 	"skin-theme-os-label": "Automatisk",
 	"skin-theme-exclusion-notice": "Disse syde is altyd in de lichte modus.",
-	"vector-search-loader": "Söökvöärstellen an et laden",
 	"vector-toc-label": "Inhold",
 	"vector-toc-beginning": "Inleiding",
 	"vector-anon-user-menu-pages-learn": "meyr leasen",

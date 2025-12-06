@@ -2,26 +2,15 @@
 /**
  * Copyright © 2003-2008 Brooke Vibber <bvibber@wikimedia.org>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Export\WikiExporterFactory;
 use MediaWiki\HTMLForm\Field\HTMLTextAreaField;
 use MediaWiki\HTMLForm\HTMLForm;
@@ -29,6 +18,7 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
@@ -66,6 +56,7 @@ class SpecialExport extends SpecialPage {
 		$this->linksMigration = $linksMigration;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -208,6 +199,7 @@ class SpecialExport extends SpecialPage {
 			wfResetOutputBuffers();
 			$request->response()->header( 'Content-type: application/xml; charset=utf-8' );
 			$request->response()->header( 'X-Robots-Tag: noindex,nofollow' );
+			ContentSecurityPolicy::sendRestrictiveHeader();
 
 			if ( $request->getCheck( 'wpDownload' ) ) {
 				// Provide a sensible filename suggestion
@@ -445,23 +437,19 @@ class SpecialExport extends SpecialPage {
 	 */
 	protected function getPagesFromCategory( PageIdentity $page ) {
 		$maxPages = $this->getConfig()->get( MainConfigNames::ExportPagelistLimit );
-		$categoryLinksMigrationStage = $this->getConfig()->get( MainConfigNames::CategoryLinksSchemaMigrationStage );
 
 		$name = $page->getDBkey();
 
-		$dbr = $this->dbProvider->getReplicaDatabase();
-		$queryBuilder = $dbr->newSelectQueryBuilder()
+		$dbr = $this->dbProvider->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
+		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title' ] )
 			->from( 'page' )
 			->join( 'categorylinks', null, 'cl_from=page_id' )
-			->limit( $maxPages );
-		if ( $categoryLinksMigrationStage & SCHEMA_COMPAT_READ_OLD ) {
-			$queryBuilder->where( [ 'cl_to' => $name ] );
-		} else {
-			$queryBuilder->join( 'linktarget', null, 'cl_target_id = lt_id' )
-				->where( [ 'lt_title' => $name, 'lt_namespace' => NS_CATEGORY ] );
-		}
-		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
+			->where( [ 'lt_title' => $name, 'lt_namespace' => NS_CATEGORY ] )
+			->limit( $maxPages )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$pages = [];
 
@@ -505,7 +493,7 @@ class SpecialExport extends SpecialPage {
 	protected function getTemplates( $inputPages, $pageSet ) {
 		[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( 'templatelinks' );
 		$queryInfo = $this->linksMigration->getQueryInfo( 'templatelinks' );
-		$dbr = $this->dbProvider->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase( TemplateLinksTable::VIRTUAL_DOMAIN );
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->caller( __METHOD__ )
 			->select( [ 'namespace' => $nsField, 'title' => $titleField ] )
@@ -568,7 +556,7 @@ class SpecialExport extends SpecialPage {
 		for ( ; $depth > 0; --$depth ) {
 			[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( 'pagelinks' );
 			$queryInfo = $this->linksMigration->getQueryInfo( 'pagelinks' );
-			$dbr = $this->dbProvider->getReplicaDatabase();
+			$dbr = $this->dbProvider->getReplicaDatabase( PageLinksTable::VIRTUAL_DOMAIN );
 			$queryBuilder = $dbr->newSelectQueryBuilder()
 				->caller( __METHOD__ )
 				->select( [ 'namespace' => $nsField, 'title' => $titleField ] )
@@ -614,6 +602,7 @@ class SpecialExport extends SpecialPage {
 		return $pageSet;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

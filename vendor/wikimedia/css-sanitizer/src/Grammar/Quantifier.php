@@ -14,7 +14,7 @@ use Wikimedia\CSS\Objects\Token;
 /**
  * Matcher that matches a sub-Matcher a certain number of times
  * ("?", "*", "+", "#", "{A,B}" multipliers)
- * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#component-multipliers
+ * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#component-multipliers
  */
 class Quantifier extends Matcher {
 	/** @var Matcher */
@@ -44,7 +44,7 @@ class Quantifier extends Matcher {
 
 	/**
 	 * Implements "?": 0 or 1 matches
-	 * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-opt
+	 * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-opt
 	 * @param Matcher $matcher
 	 * @return static
 	 */
@@ -54,7 +54,7 @@ class Quantifier extends Matcher {
 
 	/**
 	 * Implements "*": 0 or more matches
-	 * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-zero-plus
+	 * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-zero-plus
 	 * @param Matcher $matcher
 	 * @return static
 	 */
@@ -64,7 +64,7 @@ class Quantifier extends Matcher {
 
 	/**
 	 * Implements "+": 1 or more matches
-	 * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-one-plus
+	 * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-one-plus
 	 * @param Matcher $matcher
 	 * @return static
 	 */
@@ -74,7 +74,7 @@ class Quantifier extends Matcher {
 
 	/**
 	 * Implements "{A,B}": Between A and B matches
-	 * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-num-range
+	 * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-num-range
 	 * @param Matcher $matcher
 	 * @param int|float $min Minimum number of matches
 	 * @param int|float $max Maximum number of matches
@@ -86,7 +86,7 @@ class Quantifier extends Matcher {
 
 	/**
 	 * Implements "#" and "#{A,B}": Between A and B matches, comma-separated
-	 * @see https://www.w3.org/TR/2019/CR-css-values-3-20190606/#mult-comma
+	 * @see https://www.w3.org/TR/2024/WD-css-values-4-20240312/#mult-comma
 	 * @param Matcher $matcher
 	 * @param int|float $min Minimum number of matches
 	 * @param int|float $max Maximum number of matches

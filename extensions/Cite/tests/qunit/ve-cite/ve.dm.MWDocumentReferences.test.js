@@ -14,7 +14,7 @@ QUnit.test( 'first simple test', ( assert ) => {
 } );
 
 QUnit.test( 'extends test', ( assert ) => {
-	const doc = ve.dm.citeExample.createExampleDocument( 'extends' );
+	const doc = ve.dm.citeExample.createExampleDocument( 'subReferencing' );
 	const docRefs = ve.dm.MWDocumentReferences.static.refsForDoc( doc );
 
 	assert.strictEqual( docRefs.getIndexLabel( '', 'auto/0' ), '1.1' );

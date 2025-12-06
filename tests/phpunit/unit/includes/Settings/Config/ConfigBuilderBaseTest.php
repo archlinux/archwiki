@@ -27,6 +27,7 @@ class ConfigBuilderBaseTest extends TestCase {
 		// Similar to ArrayConfigBuilder, but without optimizations,
 		// so we can use the generic implementations.
 		$this->builder = new class() extends ConfigBuilderBase {
+			/** @var array */
 			private $config = [];
 
 			public function build(): Config {
@@ -51,7 +52,7 @@ class ConfigBuilderBaseTest extends TestCase {
 		return $this->builder;
 	}
 
-	protected function assertKeyHasValue( string $key, $value ) {
+	protected function assertKeyHasValue( string $key, mixed $value ): void {
 		$this->assertSame( $value, $this->builder->get( $key ) );
 	}
 

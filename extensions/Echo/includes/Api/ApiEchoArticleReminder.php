@@ -55,7 +55,7 @@ class ApiEchoArticleReminder extends ApiBase {
 		);
 		MediaWikiServices::getInstance()->getJobQueueGroup()->push( $job );*/
 		$result += [
-			'result' => 'success'
+			'result' => 'success',
 		];
 		$this->getResult()->addValue( 'query', $this->getModuleName(), $result );
 	}

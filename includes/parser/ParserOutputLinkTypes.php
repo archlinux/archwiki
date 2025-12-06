@@ -4,21 +4,7 @@
  * Registry of flags used with ParserOutput::{getLinkList,appendLink}()
  * within MediaWiki core.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @since 1.43
  *
  * @file
@@ -35,69 +21,70 @@ namespace MediaWiki\Parser;
  *
  * @package MediaWiki\Parser
  */
-class ParserOutputLinkTypes {
+enum ParserOutputLinkTypes: string {
 
 	/**
-	 * @var string Category links
+	 * Category links
 	 * @see ParserOutput::addCategory
 	 * @see ParserOutput::getCategoryMap
 	 * @see ParserOutput::getCategoryNames
 	 */
-	public const CATEGORY = 'category';
+	case CATEGORY = 'category';
 
 	/**
-	 * @var string Interwiki links
+	 * Interwiki links
 	 * @see ParserOutput::addInterwikiLink
-	 * @see ParserOutput::getInterwikiLinks
 	 */
-	public const INTERWIKI = 'interwiki';
+	case INTERWIKI = 'interwiki';
 
 	/**
-	 * @var string Language links
+	 * Language links
 	 * @see ParserOutput::addLanguageLink
 	 * @see ParserOutput::getLanguageLinks
 	 */
-	public const LANGUAGE = 'language';
+	case LANGUAGE = 'language';
 
 	/**
 	 * @var string Local links
 	 * @see ParserOutput::addLink
 	 * @see ParserOutput::getLinks
 	 */
-	public const LOCAL = 'local';
+	case LOCAL = 'local';
 
 	/**
-	 * @var string Links to media
+	 * Links to media
 	 * @see ParserOutput::addImage
 	 * @see ParserOutput::getImages
 	 * @see ParserOutput::getFileSearchOptions
 	 */
-	public const MEDIA = 'media';
+	case MEDIA = 'media';
 
 	/**
-	 * @var string Links to special pages
+	 * Links to special pages
 	 * @see ParserOutput::addLink
 	 * @see ParserOutput::getLinksSpecial
 	 */
-	public const SPECIAL = 'special';
+	case SPECIAL = 'special';
 
 	/**
-	 * @var string Links to templates
+	 * Links to templates
 	 * @see ParserOutput::addTemplate
 	 * @see ParserOutput::getTemplates
 	 * @see ParserOutput::getTemplateIds
 	 */
-	public const TEMPLATE = 'template';
+	case TEMPLATE = 'template';
 
-	public static function cases(): array {
-		return [
-			self::CATEGORY,
-			self::INTERWIKI,
-			self::LANGUAGE,
-			self::LOCAL,
-			self::MEDIA,
-			self::SPECIAL,
-			self::TEMPLATE,
-		];
+	/**
+	 * #ifexist references
+	 * @see ParserOutput::addExistenceDependency
+	 */
+	case EXISTENCE = 'existence';
+
+	/**
+	 * Return the ParserOutputLinkTypes, as an array of string flag values.
+	 * @return list<string>
+	 */
+	public static function values(): array {
+		return array_column( self::cases(), 'value' );
 	}
 }

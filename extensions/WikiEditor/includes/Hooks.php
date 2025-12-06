@@ -17,6 +17,7 @@ use MediaWiki\Content\Content;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\ConfirmEdit\Hooks as ConfirmEditHooks;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Hook\EditPage__attemptSave_afterHook;
 use MediaWiki\Hook\EditPage__attemptSaveHook;
@@ -43,9 +44,6 @@ use MobileContext;
 use MWCryptRand;
 use WikimediaEvents\WikimediaEventsHooks;
 
-/**
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
- */
 class Hooks implements
 	EditPage__showEditForm_initialHook,
 	EditPage__showEditForm_fieldsHook,
@@ -64,21 +62,12 @@ class Hooks implements
 	/** @var string[] */
 	private static $tags = [ 'wikieditor' ];
 
-	private Config $config;
-	private UserEditTracker $userEditTracker;
-	private UserOptionsLookup $userOptionsLookup;
-	private ?MobileContext $mobileContext;
-
 	public function __construct(
-		Config $config,
-		UserEditTracker $userEditTracker,
-		UserOptionsLookup $userOptionsLookup,
-		?MobileContext $mobileContext
+		private readonly Config $config,
+		private readonly UserEditTracker $userEditTracker,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly ?MobileContext $mobileContext,
 	) {
-		$this->config = $config;
-		$this->userEditTracker = $userEditTracker;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->mobileContext = $mobileContext;
 	}
 
 	/**
@@ -398,7 +387,7 @@ class Hooks implements
 	 * @return string
 	 */
 	private static function getSignatureMessage( MessageLocalizer $ml, bool $raw = false ): string {
-		$msg = $ml->msg( 'sig-text' )->params( '~~~~' )->inContentLanguage();
+		$msg = $ml->msg( 'sig-text', '~~~~' )->inContentLanguage();
 		return $raw ? $msg->plain() : $msg->text();
 	}
 

@@ -100,7 +100,7 @@ class MathParserIntegrationTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusGood( $renderStatus );
 		$this->assertStringContainsString(
 			"<render>latexml:TEST_FORMULA</render>",
-			$renderStatus->getValue()->getText()
+			$renderStatus->getValue()->getRawText()
 		);
 
 		// Fetch from cache with source

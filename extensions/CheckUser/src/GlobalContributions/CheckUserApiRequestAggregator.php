@@ -13,7 +13,7 @@ use MediaWiki\Session\SessionManager;
 use MediaWiki\Site\MediaWikiSite;
 use MediaWiki\Site\SiteLookup;
 use MediaWiki\User\CentralId\CentralIdLookup;
-use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
 
@@ -31,7 +31,7 @@ class CheckUserApiRequestAggregator {
 	private ExtensionRegistry $extensionRegistry;
 	private SiteLookup $siteLookup;
 	private LoggerInterface $logger;
-	private User $user;
+	private UserIdentity $userIdentity;
 	private array $params;
 	private array $wikis;
 	private int $authenticate;
@@ -56,8 +56,8 @@ class CheckUserApiRequestAggregator {
 	/**
 	 * Execute the request.
 	 *
-	 * @internal For use by GlobalContributionsPager.
-	 * @param User $user
+	 * @internal For use by CheckUserGlobalContributionsLookup.
+	 * @param UserIdentity $userIdentity
 	 * @param array $params API request parameters
 	 * @param string[] $wikis Wikis to send the request to
 	 * @param WebRequest $originalRequest Original request data to be sent with these requests
@@ -65,13 +65,13 @@ class CheckUserApiRequestAggregator {
 	 * @return array[] [ wiki => result ] for all the wikis that returned results
 	 */
 	public function execute(
-		User $user,
+		UserIdentity $userIdentity,
 		array $params,
 		array $wikis,
 		WebRequest $originalRequest,
 		int $authenticate = self::AUTHENTICATE_NONE
 	) {
-		$this->user = $user;
+		$this->userIdentity = $userIdentity;
 		$this->params = $params;
 		$this->wikis = $wikis;
 		$this->authenticate = $authenticate;
@@ -94,7 +94,7 @@ class CheckUserApiRequestAggregator {
 	 * @return int
 	 */
 	private function getCentralId() {
-		return $this->centralIdLookup->centralIdFromLocalUser( $this->user, CentralIdLookup::AUDIENCE_RAW );
+		return $this->centralIdLookup->centralIdFromLocalUser( $this->userIdentity, CentralIdLookup::AUDIENCE_RAW );
 	}
 
 	/**
@@ -117,7 +117,7 @@ class CheckUserApiRequestAggregator {
 	 */
 	private function getCentralAuthToken() {
 		return CentralAuthServices::getApiTokenGenerator()->getToken(
-			$this->user,
+			$this->userIdentity,
 			SessionManager::getGlobalSession()->getId(),
 			WikiMap::getCurrentWikiId()
 		);

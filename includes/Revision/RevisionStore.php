@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * Attribution notice: when this file was created, much of its content was taken
  * from the Revision.php file as present in release 1.30. Refer to the history
  * of that file for original authorship (that file was removed entirely in 1.37,
@@ -38,14 +24,13 @@ use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\LegacyArticleIdAccess;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Storage\BadBlobException;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
@@ -66,6 +51,7 @@ use StatusValue;
 use stdClass;
 use Traversable;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\PreconditionException;
 use Wikimedia\IPUtils;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
@@ -112,58 +98,20 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 */
 	private $wikiId;
 
-	/**
-	 * @var ILoadBalancer
-	 */
-	private $loadBalancer;
-
-	/**
-	 * @var WANObjectCache
-	 */
-	private $cache;
-
-	/**
-	 * @var BagOStuff
-	 */
-	private $localCache;
-
-	/**
-	 * @var CommentStore
-	 */
-	private $commentStore;
-
-	/** @var ActorStore */
-	private $actorStore;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
-	/**
-	 * @var NameTableStore
-	 */
-	private $contentModelStore;
-
-	/**
-	 * @var NameTableStore
-	 */
-	private $slotRoleStore;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var PageStore */
-	private $pageStore;
-
-	/** @var TitleFactory */
-	private $titleFactory;
+	private ILoadBalancer $loadBalancer;
+	private WANObjectCache $cache;
+	private BagOStuff $localCache;
+	private CommentStore $commentStore;
+	private ActorStore $actorStore;
+	private LoggerInterface $logger;
+	private NameTableStore $contentModelStore;
+	private NameTableStore $slotRoleStore;
+	private SlotRoleRegistry $slotRoleRegistry;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private HookRunner $hookRunner;
+	private PageStore $pageStore;
+	private TitleFactory $titleFactory;
+	private RecentChangeLookup $recentChangeLookup;
 
 	/**
 	 * @param ILoadBalancer $loadBalancer
@@ -184,10 +132,10 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @param PageStore $pageStore
 	 * @param TitleFactory $titleFactory
 	 * @param HookContainer $hookContainer
+	 * @param RecentChangeLookup $recentChangeLookup
 	 * @param false|string $wikiId Relevant wiki id or WikiAwareEntity::LOCAL for the current one
 	 *
 	 * @todo $blobStore should be allowed to be any BlobStore!
-	 *
 	 */
 	public function __construct(
 		ILoadBalancer $loadBalancer,
@@ -203,6 +151,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		PageStore $pageStore,
 		TitleFactory $titleFactory,
 		HookContainer $hookContainer,
+		RecentChangeLookup $recentChangeLookup,
 		$wikiId = WikiAwareEntity::LOCAL
 	) {
 		Assert::parameterType( [ 'string', 'false' ], $wikiId, '$wikiId' );
@@ -222,6 +171,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		$this->pageStore = $pageStore;
 		$this->titleFactory = $titleFactory;
 		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->recentChangeLookup = $recentChangeLookup;
 	}
 
 	public function setLogger( LoggerInterface $logger ): void {
@@ -1125,23 +1075,21 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @return null|RecentChange
 	 */
 	public function getRecentChange( RevisionRecord $rev, $flags = 0 ) {
-		if ( ( $flags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
-			$dbType = DB_PRIMARY;
-		} else {
-			$dbType = DB_REPLICA;
+		if ( $this->wikiId !== RevisionRecord::LOCAL ) {
+			throw new PreconditionException( 'RecentChangeLookup is only available for the local wiki' );
 		}
 
-		$rc = RecentChange::newFromConds(
+		$rc = $this->recentChangeLookup->getRecentChangeByConds(
 			[
 				'rc_this_oldid' => $rev->getId( $this->wikiId ),
 				// rc_this_oldid does not have to be unique,
 				// in particular, it is shared with categorization
 				// changes. Prefer the original change because callers
 				// often expect a change for patrolling.
-				'rc_type' => [ RC_EDIT, RC_NEW, RC_LOG ],
+				'rc_source' => [ RecentChange::SRC_EDIT, RecentChange::SRC_NEW, RecentChange::SRC_LOG ],
 			],
 			__METHOD__,
-			$dbType
+			( $flags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST
 		);
 
 		// XXX: cache this locally? Glue it to the RevisionRecord?
@@ -1277,14 +1225,13 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @return RevisionRecord|null
 	 */
 	public function getRevisionByTitle( $page, $revId = 0, $flags = 0 ) {
-		$conds = [
-			'page_namespace' => $page->getNamespace(),
-			'page_title' => $page->getDBkey()
-		];
-
-		if ( $page instanceof LinkTarget ) {
-			// Only resolve LinkTarget to a Title when operating in the context of the local wiki (T248756)
-			$page = $this->wikiId === WikiAwareEntity::LOCAL ? Title::castFromLinkTarget( $page ) : null;
+		$conds = $this->getPageConditions( $page );
+		if ( !$conds ) {
+			return null;
+		}
+		if ( !( $page instanceof PageIdentity ) ) {
+			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			$page = null;
 		}
 
 		if ( $revId ) {
@@ -1367,20 +1314,18 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		string $timestamp,
 		int $flags = IDBAccessObject::READ_NORMAL
 	): ?RevisionRecord {
-		if ( $page instanceof LinkTarget ) {
-			// Only resolve LinkTarget to a Title when operating in the context of the local wiki (T248756)
-			$page = $this->wikiId === WikiAwareEntity::LOCAL ? Title::castFromLinkTarget( $page ) : null;
+		$conds = $this->getPageConditions( $page );
+		if ( !$conds ) {
+			return null;
 		}
+		if ( !( $page instanceof PageIdentity ) ) {
+			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			$page = null;
+		}
+
 		$db = $this->getDBConnectionRefForQueryFlags( $flags );
-		return $this->newRevisionFromConds(
-			[
-				'rev_timestamp' => $db->timestamp( $timestamp ),
-				'page_namespace' => $page->getNamespace(),
-				'page_title' => $page->getDBkey()
-			],
-			$flags,
-			$page
-		);
+		$conds['rev_timestamp'] = $db->timestamp( $timestamp );
+		return $this->newRevisionFromConds( $conds, $flags, $page );
 	}
 
 	/**
@@ -1397,10 +1342,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			return $this->constructSlotRecords( $revId, $res, $queryFlags, $page );
 		}
 
-		$ttl = MediaWikiServices::getInstance()
-			->getMainConfig()
-			->get( MainConfigNames::RevisionSlotsCacheExpiry );
-
 		// TODO: These caches should not be needed. See T297147#7563670
 		$res = $this->localCache->getWithSetCallback(
 			$this->localCache->makeKey(
@@ -1409,8 +1350,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 				$page->getId( $page->getWikiId() ),
 				$revId
 			),
-			$ttl['local'] ?? $this->localCache::TTL_UNCACHEABLE,
-			function () use ( $revId, $queryFlags, $page, $ttl ) {
+			$this->localCache::TTL_HOUR,
+			function () use ( $revId, $queryFlags, $page ) {
 				return $this->cache->getWithSetCallback(
 					$this->cache->makeKey(
 						'revision-slots',
@@ -1418,7 +1359,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 						$page->getId( $page->getWikiId() ),
 						$revId
 					),
-					$ttl['WAN'] ?? WANObjectCache::TTL_UNCACHEABLE,
+					WANObjectCache::TTL_DAY,
 					function () use ( $revId, $queryFlags, $page ) {
 						$res = $this->loadSlotRecordsFromDb( $revId, $queryFlags, $page );
 						if ( !$res ) {
@@ -1925,8 +1866,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *        If this parameter is given and any of the rows has a rev_page_id that is different
 	 *        from Article Id associated with the page, an InvalidArgumentException is thrown.
 	 *
-	 * @return StatusValue a status with a RevisionRecord[] of successfully fetched revisions
-	 *                     and an array of errors for the revisions failed to fetch.
+	 * @return StatusValue<array<int,?RevisionRecord>> a status with an array of successfully fetched revisions
+	 *                     (keyed by revision IDs) and with warnings for the revisions failed to fetch.
 	 */
 	public function newRevisionsFromBatch(
 		$rows,
@@ -2024,8 +1965,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 
 		// which method to use for creating RevisionRecords
 		$newRevisionRecord = $archiveMode
-			? [ $this, 'newRevisionFromArchiveRowAndSlots' ]
-			: [ $this, 'newRevisionFromRowAndSlots' ];
+			? $this->newRevisionFromArchiveRowAndSlots( ... )
+			: $this->newRevisionFromRowAndSlots( ... );
 
 		if ( !isset( $options['slots'] ) ) {
 			$result->setResult(
@@ -2127,7 +2068,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *
 	 * @param Traversable|array $rowsOrIds list of revision ids, or revision or archive rows
 	 *        from a db query.
-	 * @param array $options Supports the following options:
+	 * @param array{slots?: string[], blobs?: bool} $options Supports the following options:
 	 *               'slots' - a list of slot role names to fetch. If omitted or true or null,
 	 *                         all slots are fetched
 	 *               'blobs' - whether the serialized content of each slot should be loaded.
@@ -2135,7 +2076,8 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *                        in the blob_data field.
 	 * @param int $queryFlags
 	 *
-	 * @return StatusValue a status containing, if isOK() returns true, a two-level nested
+	 * @return StatusValue<array<int,array<string,stdClass>>>
+	 *         a status containing, if isOK() returns true, a two-level nested
 	 *         associative array, mapping from revision ID to an associative array that maps from
 	 *         role name to a database row object. The database row object will contain the fields
 	 *         defined by getSlotQueryInfo() with the 'content' flag set, plus the blob_data field
@@ -2174,7 +2116,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			foreach ( $options['slots'] as $slot ) {
 				try {
 					$slotIds[] = $this->slotRoleStore->getId( $slot );
-				} catch ( NameTableAccessException $exception ) {
+				} catch ( NameTableAccessException ) {
 					// Do not fail when slot has no id (unused slot)
 					// This also means for this slot are never data in the database
 				}
@@ -2252,10 +2194,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * slots, or content objects should use newRevisionsFromBatch() instead.
 	 *
 	 * @param Traversable|array $rowsOrIds list of revision ids, or revision rows from a db query.
-	 * @param array|null $slots the role names for which to get slots.
+	 * @param string[]|null $slots the role names for which to get slots.
 	 * @param int $queryFlags
 	 *
-	 * @return StatusValue a status containing, if isOK() returns true, a two-level nested
+	 * @return StatusValue<array<int,array<string,stdClass>>>
+	 *         a status containing, if isOK() returns true, a two-level nested
 	 *         associative array, mapping from revision ID to an associative array that maps from
 	 *         role name to an anonymous object containing two fields:
 	 *         - model_name: the name of the content's model
@@ -2476,9 +2419,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 
 		if ( in_array( 'user', $options, true ) ) {
 			$ret['tables'][] = 'user';
-			$ret['fields'] = array_merge( $ret['fields'], [
-				'user_name',
-			] );
+			$ret['fields'][] = 'user_name';
 			$ret['joins']['user'] = [
 				'LEFT JOIN',
 				[ 'actor_rev_user.actor_user != 0', 'user_id = actor_rev_user.actor_user' ]
@@ -3023,29 +2964,16 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		$page,
 		int $flags = IDBAccessObject::READ_NORMAL
 	): ?RevisionRecord {
-		if ( $page instanceof LinkTarget ) {
-			// Only resolve LinkTarget to a Title when operating in the context of the local wiki (T248756)
-			$page = $this->wikiId === WikiAwareEntity::LOCAL ? Title::castFromLinkTarget( $page ) : null;
-		}
-
-		if ( $page && !$page->exists() ) {
-			// Protect against T380677#10461083:
-			// During a page move, we are creating a new page with the name of a
-			// page that we just renamed. If we look up revisions by name on a
-			// stale replica/snapshot, we may find the revisions of the old page,
-			// while the new page doesn't exist yet.
-			// This is a work-around. Ideally, we'd just do the lookup based on page ID,
-			// or make sure we are not running into replication lag or stale snapshots.
+		$conds = $this->getPageConditions( $page );
+		if ( !$conds ) {
 			return null;
 		}
+		if ( !( $page instanceof PageIdentity ) ) {
+			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			$page = null;
+		}
 
-		return $this->newRevisionFromConds(
-			[
-				'page_namespace' => $page->getNamespace(),
-				'page_title' => $page->getDBkey()
-			],
-			$flags,
-			$page,
+		return $this->newRevisionFromConds( $conds, $flags, $page,
 			[
 				'ORDER BY' => [ 'rev_timestamp ASC', 'rev_id ASC' ],
 				'IGNORE INDEX' => [ 'revision' => 'rev_timestamp' ], // See T159319
@@ -3089,6 +3017,25 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 					"Revision {$rev->getId( $this->wikiId )} doesn't belong to page {$pageId}"
 				);
 			}
+		}
+	}
+
+	/**
+	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @return array|null
+	 */
+	private function getPageConditions( object $page ): ?array {
+		if ( $page instanceof PageIdentity ) {
+			return $page->exists() ? [ 'page_id' => $page->getId( $this->wikiId ) ] : null;
+		} else {
+			// Only resolve LinkTarget when operating in the context of the local wiki (T248756)
+			if ( $this->wikiId !== WikiAwareEntity::LOCAL ) {
+				throw new InvalidArgumentException( 'Cannot use non-local LinkTarget' );
+			}
+			return [
+				'page_namespace' => $page->getNamespace(),
+				'page_title' => $page->getDBkey(),
+			];
 		}
 	}
 
@@ -3366,13 +3313,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		}
 
 		$dbr = $this->getReplicaConnection();
-		$conds = array_merge(
-			[
-				'rev_page' => $pageId,
-				$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_TEXT ) . " = 0"
-			],
-			$this->getRevisionLimitConditions( $dbr, $old, $new, $options )
-		);
+		$conds = [
+			'rev_page' => $pageId,
+			$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_TEXT ) . ' = 0',
+			...$this->getRevisionLimitConditions( $dbr, $old, $new, $options ),
+		];
 		if ( $max !== null ) {
 			return $dbr->newSelectQueryBuilder()
 				->select( '1' )
@@ -3407,8 +3352,21 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	): ?RevisionRecord {
 		$revision->assertWiki( $this->wikiId );
 		$db = $this->getReplicaConnection();
-		$subquery = $this->newSelectQueryBuilder( $db )
-			->joinComment()
+
+		// Build the target slot role ID => sha1 array from the provided revision
+		// (this is seemingly necessary *before* fetching the candidate revisions: T406027)
+		$searchedSlotHashes = [];
+		$slots = $revision->getSlots()->getPrimarySlots();
+		foreach ( $slots as $slot ) {
+			$roleId = $this->slotRoleStore->acquireId( $slot->getRole() );
+			$searchedSlotHashes[$roleId] = $slot->getSha1();
+		}
+		ksort( $searchedSlotHashes );
+
+		// First fetch the IDs of the most recent revisions for this page, limited by the search limit.
+		$candidateRevIds = $db->newSelectQueryBuilder()
+			->select( 'rev_id' )
+			->from( 'revision' )
 			->where( [ 'rev_page' => $revision->getPageId( $this->wikiId ) ] )
 			// Include 'rev_id' in the ordering in case there are multiple revs with same timestamp
 			->orderBy( [ 'rev_timestamp', 'rev_id' ], SelectQueryBuilder::SORT_DESC )
@@ -3417,14 +3375,48 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			->limit( $searchLimit )
 			// skip the most recent edit, we can't revert to it anyway
 			->offset( 1 )
-			->caller( __METHOD__ );
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 
-		// fetchRow effectively uses LIMIT 1 clause, returning only the first result
-		$revisionRow = $db->newSelectQueryBuilder()
-			->select( '*' )
-			->from( $subquery, 'recent_revs' )
-			->where( [ 'rev_sha1' => $revision->getSha1() ] )
-			->caller( __METHOD__ )->fetchRow();
+		if ( $candidateRevIds === [] ) {
+			return null;
+		}
+
+		// Then, for only those revisions, fetch their slot role ID => sha1 data.
+		$candidateRevisions = $db->newSelectQueryBuilder()
+			->select( [ 'slot_revision_id', 'slot_role_id', 'content_sha1' ] )
+			->from( 'slots' )
+			->join( 'content', null, 'content_id = slot_content_id' )
+			->where( [ 'slot_revision_id' => $candidateRevIds ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
+
+		// Build a map of candidate revisions to their slot role ID => sha1 arrays
+		$candidateSlotHashes = [];
+		foreach ( $candidateRevisions as $candidate ) {
+			$candidateSlotHashes[$candidate->slot_revision_id][$candidate->slot_role_id] = $candidate->content_sha1;
+		}
+
+		// Find the first revision that has the same slot role ID => sha1 array as the provided revision.
+		// We use $candidateRevIds, which are ordered by the revision timestamps, to ensure we return
+		// the most recent revision that matches.
+		$matchRevId = null;
+		foreach ( $candidateRevIds as $revId ) {
+			ksort( $candidateSlotHashes[$revId] );
+			if ( $candidateSlotHashes[$revId] === $searchedSlotHashes ) {
+				$matchRevId = $revId;
+				break;
+			}
+		}
+
+		$revisionRow = null;
+		if ( $matchRevId !== null ) {
+			$revisionRow = $this->newSelectQueryBuilder( $db )
+				->joinComment()
+				->where( [ 'rev_id' => $matchRevId ] )
+				->caller( __METHOD__ )
+				->fetchRow();
+		}
 
 		return $revisionRow ? $this->newRevisionFromRow( $revisionRow ) : null;
 	}

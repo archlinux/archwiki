@@ -9,7 +9,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\MetadataMergeException;
 use MediaWiki\Session\SessionInfo;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\SessionProvider;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
@@ -26,12 +25,7 @@ class SessionProviderTest extends MediaWikiIntegrationTestCase {
 	use SessionProviderTestTrait;
 
 	public function testBasics() {
-		$this->hideDeprecated( 'MediaWiki\Session\SessionProvider::setConfig' );
-		$this->hideDeprecated( 'MediaWiki\Session\SessionProvider::setLogger' );
-		$this->hideDeprecated( 'MediaWiki\Session\SessionProvider::setManager' );
-		$this->hideDeprecated( 'MediaWiki\Session\SessionProvider::setHookContainer' );
-
-		$manager = new SessionManager();
+		$manager = $this->getServiceContainer()->getSessionManager();
 		$logger = new TestLogger();
 		$config = new HashConfig();
 		$hookContainer = $this->createHookContainer();
@@ -47,21 +41,17 @@ class SessionProviderTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $manager, $provider->getManager() );
 		$this->assertSame( $hookContainer, $priv->getHookContainer() );
 		$this->assertSame( $userNameUtils, $priv->userNameUtils );
-		$provider->setConfig( $config );
 		$this->assertSame( $config, $priv->getConfig() );
-		$provider->setLogger( $logger );
 		$this->assertSame( $logger, $priv->logger );
-		$provider->setManager( $manager );
 		$this->assertSame( $manager, $priv->manager );
 		$this->assertSame( $manager, $provider->getManager() );
-		$provider->setHookContainer( $hookContainer );
 		$this->assertSame( $hookContainer, $priv->getHookContainer() );
 
 		$provider->invalidateSessionsForUser( new User );
 
 		$this->assertSame( [], $provider->getVaryHeaders() );
 		$this->assertSame( [], $provider->getVaryCookies() );
-		$this->assertSame( null, $provider->suggestLoginUsername( new FauxRequest ) );
+		$this->assertNull( $provider->suggestLoginUsername( new FauxRequest ) );
 
 		$this->assertSame( get_class( $provider ), (string)$provider );
 
@@ -86,7 +76,7 @@ class SessionProviderTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $ok Whether a SessionInfo is provided
 	 */
 	public function testNewSessionInfo( $persistId, $persistUser, $ok ) {
-		$manager = new SessionManager();
+		$manager = $this->getServiceContainer()->getSessionManager();
 
 		$provider = $this->getMockBuilder( SessionProvider::class )
 			->onlyMethods( [ 'canChangeUser', 'persistsSessionId' ] )
@@ -164,7 +154,7 @@ class SessionProviderTest extends MediaWikiIntegrationTestCase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( BadMethodCallException $ex ) {
 			$this->assertSame(
-				'MediaWiki\\Session\\SessionProvider::preventSessionsForUser must be implemented ' .
+				$provider::class . '::preventSessionsForUser must be implemented ' .
 					'when canChangeUser() is false',
 				$ex->getMessage()
 			);

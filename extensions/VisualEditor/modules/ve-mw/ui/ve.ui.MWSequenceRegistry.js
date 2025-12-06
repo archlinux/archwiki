@@ -40,6 +40,10 @@ ve.ui.sequenceRegistry.register(
 ve.ui.sequenceRegistry.register(
 	new ve.ui.Sequence( 'wikitextComment', 'comment', '<!--', 4 )
 );
+ve.ui.sequenceRegistry.register(
+	// This will open the settings dialog, and conveniently the redirect checkbox is focused by default
+	new ve.ui.Sequence( 'wikitextRedirect', 'meta/settings', [ { type: 'paragraph' }, '#', 'r', 'e', 'd', 'i', 'r', 'e', 'c', 't' ], 9 )
+);
 
 /* Help registrations */
 

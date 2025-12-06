@@ -106,9 +106,6 @@ abstract class EditBoxBuilder {
 		return $output;
 	}
 
-	/**
-	 * @return DropdownInputWidget
-	 */
 	private function getSuggestionsDropdown(): DropdownInputWidget {
 		$rawDropdown = $this->keywordsManager->getBuilderValues();
 
@@ -162,8 +159,6 @@ abstract class EditBoxBuilder {
 	/**
 	 * Get an additional widget that "controls" the editor, and is placed next to it
 	 * Precondition: the user has full rights.
-	 *
-	 * @return Widget
 	 */
 	protected function getEditorControls(): Widget {
 		return new ButtonWidget(

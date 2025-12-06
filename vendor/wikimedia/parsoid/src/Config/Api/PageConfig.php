@@ -65,7 +65,7 @@ class PageConfig extends IPageConfig {
 		$this->title = $opts['title'];
 		$this->revid = $opts['revid'] ?? null;
 		# pageLanguage can/should be passed as a Bcp47Code object
-		$this->pagelanguage = !empty( $opts['pageLanguage'] ) ?
+		$this->pagelanguage = isset( $opts['pageLanguage'] ) ?
 			Utils::mwCodeToBcp47( $opts['pageLanguage'] ) : null;
 		$this->pagelanguageDir = $opts['pageLanguageDir'] ?? null;
 
@@ -102,7 +102,7 @@ class PageConfig extends IPageConfig {
 		}
 	}
 
-	private function loadData() {
+	private function loadData(): void {
 		if ( $this->page !== null ) {
 			return;
 		}
@@ -114,7 +114,7 @@ class PageConfig extends IPageConfig {
 			'rvslots' => '*',
 		];
 
-		if ( !empty( $this->revid ) ) {
+		if ( $this->revid !== null ) {
 			$params['revids'] = $this->revid;
 		} else {
 			$params['titles'] = $this->title->getPrefixedDBKey();

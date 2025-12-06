@@ -3,6 +3,7 @@
 namespace Wikimedia\RequestTimeout\Detail;
 
 use ExcimerTimer;
+use Wikimedia\RequestTimeout\EmergencyTimeoutException;
 use Wikimedia\RequestTimeout\RequestTimeoutException;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -22,7 +23,13 @@ class ExcimerTimerWrapper {
 	/** @var int The next critical section ID to use */
 	private $nextCriticalId = 1;
 
-	/** @var CriticalSection[] */
+	/** @var ExcimerTimer[] */
+	private $emergencyTimers = [];
+
+	/** @var bool[] */
+	private $emergencyRunning = [];
+
+	/** @var int[] The active critical section IDs */
 	private $criticalSections = [];
 
 	/** @var array|null Data about the pending timeout, or null if no timeout is pending */
@@ -38,9 +45,30 @@ class ExcimerTimerWrapper {
 	 * @return int
 	 */
 	public function enterCriticalSection( $name, $emergencyLimit, $emergencyCallback ) {
+		if ( !$emergencyCallback ) {
+			/** @return never */
+			$emergencyCallback = static function () use ( $name, $emergencyLimit ) {
+				throw new EmergencyTimeoutException( $name, $emergencyLimit );
+			};
+		}
+
 		$id = $this->nextCriticalId++;
-		$this->criticalSections[$id] = new CriticalSection(
-			$name, $emergencyLimit, $emergencyCallback );
+
+		// Appending to the array in the usual way causes it to skip unset
+		// indexes at the end. Use array_key_last() so that indexes will be
+		// densely assigned.
+		$lastIndex = array_key_last( $this->criticalSections );
+		$curIndex = $lastIndex === null ? 0 : $lastIndex + 1;
+		$this->criticalSections[$curIndex] = $id;
+
+		if ( $emergencyLimit > 0 && $emergencyLimit !== INF ) {
+			$emergencyTimer = $this->getEmergencyTimer( $curIndex );
+			$emergencyTimer->setInterval( $emergencyLimit );
+			$emergencyTimer->setCallback( $emergencyCallback );
+			$emergencyTimer->start();
+			$this->emergencyRunning[$curIndex] = true;
+		}
+
 		return $id;
 	}
 
@@ -49,11 +77,16 @@ class ExcimerTimerWrapper {
 	 * @throws TimeoutException
 	 */
 	public function exitCriticalSection( $id ) {
-		if ( isset( $this->criticalSections[$id] ) ) {
-			$this->criticalSections[$id]->stop();
-			unset( $this->criticalSections[$id] );
+		$stackIndex = array_search( $id, $this->criticalSections );
+		if ( $stackIndex !== false ) {
+			unset( $this->criticalSections[$stackIndex] );
+			// TODO: add ExcimerTimer::isRunning()
+			if ( !empty( $this->emergencyRunning[$stackIndex] ) ) {
+				$this->emergencyTimers[$stackIndex]->stop();
+				$this->emergencyRunning[$stackIndex] = false;
+			}
 		}
-		if ( $this->pending ) {
+		if ( !count( $this->criticalSections ) && $this->pending ) {
 			$limit = $this->pending['limit'];
 			$this->pending = null;
 			throw new RequestTimeoutException( $limit );
@@ -128,5 +161,24 @@ class ExcimerTimerWrapper {
 			$this->timer->stop();
 		}
 		$this->timer = null;
+
+		foreach ( $this->emergencyTimers as $timer ) {
+			$timer->stop();
+		}
+		$this->emergencyTimers = [];
+		$this->emergencyRunning = [];
+	}
+
+	/**
+	 * Keep a pool of emergency timers, since timer creation is slow after T391426
+	 *
+	 * @param int $stackIndex
+	 * @return ExcimerTimer
+	 */
+	private function getEmergencyTimer( $stackIndex ) {
+		if ( !isset( $this->emergencyTimers[$stackIndex] ) ) {
+			$this->emergencyTimers[$stackIndex] = new ExcimerTimer;
+		}
+		return $this->emergencyTimers[$stackIndex];
 	}
 }

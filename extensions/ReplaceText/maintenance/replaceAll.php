@@ -355,7 +355,9 @@ EOF;
 				'use_regex'       => $useRegex,
 				'user_id'         => $this->user->getId(),
 				'edit_summary'    => $this->getSummary( $target, $replacement ),
-				'botEdit'         => $this->botEdit
+				'botEdit'         => $this->botEdit,
+				'namespace'       => $title->getNamespace(),
+				'title'           => $title->getDBkey(),
 			];
 
 			if ( $rename ) {
@@ -365,14 +367,8 @@ EOF;
 			}
 
 			$this->output( "Replacing on $title... " );
-			$services = $this->getServiceContainer();
-			$job = new Job( $title, $params,
-				$services->getMovePageFactory(),
-				$services->getPermissionManager(),
-				$services->getUserFactory(),
-				$services->getWatchlistManager(),
-				$services->getWikiPageFactory()
-			);
+			$job = $this->getServiceContainer()->getJobFactory()
+				->newJob( 'replaceText', $params );
 			if ( !$job->run() ) {
 				$this->error( "Trouble on the page '$title'." );
 			}

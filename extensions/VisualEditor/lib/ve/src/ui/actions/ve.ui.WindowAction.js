@@ -38,8 +38,11 @@ ve.ui.WindowAction.static.methods = [ 'open', 'close', 'toggle' ];
  * @param {string} [action] Action to execute after opening, or immediately if the window is already open
  * @return {boolean|jQuery.Promise} Action was executed; if a Promise, it'll resolve once the action is finished executing
  */
-ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
-	data = data || {};
+ve.ui.WindowAction.prototype.open = function ( name, data = {}, action = null ) {
+	if ( !data ) {
+		data = {};
+		OO.ui.warnDeprecation( 'WindowAction#open data argument must be undefined or object' );
+	}
 	const windowType = this.getWindowType( name ),
 		windowManager = this.getWindowManager( windowType ),
 		currentWindow = windowManager.getCurrentWindow(),
@@ -115,6 +118,16 @@ ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
 
 		ve.promiseAll( autoClosePromises ).always( () => {
 			windowManager.getWindow( name ).then( ( win ) => {
+				if ( windowManager.getCurrentWindow() === win ) {
+					// If the window was already open we are just passing a command
+					// to it, e.g. 'findNext' in FindAndReplaceDialog, so there is
+					// no need to touch the selection.
+					if ( action ) {
+						win.executeAction( action );
+					}
+					return;
+				}
+
 				const instance = windowManager.openWindow( win, data );
 
 				if ( sourceMode ) {

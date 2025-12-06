@@ -36,7 +36,7 @@ class TargetPageTest extends MediaWikiUnitTestCase {
 	public function testNewFromRow() {
 		$row = (object)[
 			'etp_page' => 2,
-			'etp_event' => 3
+			'etp_event' => 3,
 		];
 		$obj = TargetPage::newFromRow( $row );
 		$this->assertInstanceOf( TargetPage::class, $obj );
@@ -46,7 +46,7 @@ class TargetPageTest extends MediaWikiUnitTestCase {
 
 	public function testNewFromRowWithException() {
 		$row = (object)[
-			'etp_event' => 3
+			'etp_event' => 3,
 		];
 		$this->expectException( InvalidArgumentException::class );
 		TargetPage::newFromRow( $row );

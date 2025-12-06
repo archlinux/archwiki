@@ -2,21 +2,23 @@
 
 namespace MediaWiki\Page\Event;
 
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\PageUpdateCauses;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Domain event representing page deletion.
  *
  * @see PageCreatedEvent
  *
- * @unstable until 1.45
+ * @since 1.45
  */
-class PageDeletedEvent extends PageStateEvent {
+class PageDeletedEvent extends PageRecordChangedEvent {
 
 	public const TYPE = 'PageDeleted';
 
@@ -29,7 +31,19 @@ class PageDeletedEvent extends PageStateEvent {
 	private RevisionRecord $latestRevisionBefore;
 	private string $reason;
 	private int $archivedRevisionCount;
+	private ?LinkTarget $redirectTarget;
 
+	/**
+	 * @param ExistingPageRecord $pageRecordBefore
+	 * @param RevisionRecord $latestRevisionBefore
+	 * @param UserIdentity $performer
+	 * @param array<string> $tags
+	 * @param array<string,bool> $flags
+	 * @param string|ConvertibleTimestamp|false $timestamp
+	 * @param string $reason
+	 * @param int $archivedRevisionCount
+	 * @param ?LinkTarget $redirectTarget
+	 */
 	public function __construct(
 		ExistingPageRecord $pageRecordBefore,
 		RevisionRecord $latestRevisionBefore,
@@ -38,7 +52,8 @@ class PageDeletedEvent extends PageStateEvent {
 		array $flags,
 		$timestamp,
 		string $reason,
-		int $archivedRevisionCount
+		int $archivedRevisionCount,
+		?LinkTarget $redirectTarget = null
 	) {
 		parent::__construct(
 			PageUpdateCauses::CAUSE_DELETE,
@@ -60,6 +75,8 @@ class PageDeletedEvent extends PageStateEvent {
 		$this->latestRevisionBefore = $latestRevisionBefore;
 		$this->reason = $reason;
 		$this->archivedRevisionCount = $archivedRevisionCount;
+
+		$this->redirectTarget = $redirectTarget;
 	}
 
 	/**
@@ -122,9 +139,29 @@ class PageDeletedEvent extends PageStateEvent {
 	/**
 	 * Whether the deleted revisions and log have been suppressed, so they
 	 * are not visible in the regular deletion log.
+	 *
+	 * @note Listeners should use this information to protect information from
+	 * suppressed deletions from access by unauthorized users.
 	 */
 	public function isSuppressed(): bool {
 		return $this->hasFlag( self::FLAG_SUPPRESSED );
+	}
+
+	/**
+	 * Whether the deleted page was a redirect.
+	 * @return bool
+	 */
+	public function wasRedirect(): bool {
+		return $this->redirectTarget !== null;
+	}
+
+	/**
+	 * Returns the redirect destination of the page before the change,
+	 *  or null if the page was not a redirect.
+	 * @return LinkTarget|null
+	 */
+	public function getRedirectTargetBefore(): ?LinkTarget {
+		return $this->redirectTarget;
 	}
 
 }

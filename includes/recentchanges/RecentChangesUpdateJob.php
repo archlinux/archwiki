@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -68,6 +54,7 @@ class RecentChangesUpdateJob extends Job {
 		);
 	}
 
+	/** @inheritDoc */
 	public function run() {
 		if ( $this->params['type'] === 'purge' ) {
 			$this->purgeExpiredRows();
@@ -95,28 +82,49 @@ class RecentChangesUpdateJob extends Job {
 			return;
 		}
 		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
-		$hookRunner = new HookRunner( $services->getHookContainer() );
+		$hookContainer = $services->getHookContainer();
+		$hookRunner = new HookRunner( $hookContainer );
 		$cutoff = $dbw->timestamp( ConvertibleTimestamp::time() - $rcMaxAge );
-		$rcQuery = RecentChange::getQueryInfo();
-		do {
-			$rcIds = [];
-			$rows = [];
-			$res = $dbw->newSelectQueryBuilder()
-				->queryInfo( $rcQuery )
+		$hasLegacyHook = $hookContainer->isRegistered( 'RecentChangesPurgeRows' );
+		if ( $hasLegacyHook ) {
+			$query = $dbw->newSelectQueryBuilder()
+				->queryInfo( RecentChange::getQueryInfo( RecentChange::STRAIGHT_JOIN_ACTOR ) )
 				->where( $dbw->expr( 'rc_timestamp', '<', $cutoff ) )
 				->limit( $updateRowsPerQuery )
-				->caller( __METHOD__ )
-				->fetchResultSet();
-			foreach ( $res as $row ) {
-				$rcIds[] = $row->rc_id;
-				$rows[] = $row;
-			}
-			if ( $rcIds ) {
+				->caller( __METHOD__ );
+		} else {
+			$query = $dbw->newSelectQueryBuilder()
+				->select( 'rc_id' )
+				->from( 'recentchanges' )
+				->where( $dbw->expr( 'rc_timestamp', '<', $cutoff ) )
+				->limit( $updateRowsPerQuery )
+				->caller( __METHOD__ );
+		}
+		$callbacks = [];
+		$hookRunner->onRecentChangesPurgeQuery( $query, $callbacks );
+		do {
+			$res = $query->fetchResultSet();
+			$rcIds = [];
+			if ( $res->numRows() ) {
+				$rows = [];
+				foreach ( $res as $row ) {
+					$rcIds[] = $row->rc_id;
+					if ( $hasLegacyHook ) {
+						$rows[] = $row;
+					}
+				}
+
 				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'recentchanges' )
 					->where( [ 'rc_id' => $rcIds ] )
 					->caller( __METHOD__ )->execute();
-				$hookRunner->onRecentChangesPurgeRows( $rows );
+
+				foreach ( $callbacks as $callback ) {
+					$callback( $res );
+				}
+				if ( $hasLegacyHook ) {
+					$hookRunner->onRecentChangesPurgeRows( $rows );
+				}
 				// There might be more, so try waiting for replica DBs
 				if ( !$dbProvider->commitAndWaitForReplication(
 					__METHOD__, $ticket, [ 'timeout' => 3 ]
@@ -131,7 +139,8 @@ class RecentChangesUpdateJob extends Job {
 	}
 
 	protected function updateActiveUsers() {
-		$activeUserDays = MediaWikiServices::getInstance()->getMainConfig()->get(
+		$services = MediaWikiServices::getInstance();
+		$activeUserDays = $services->getMainConfig()->get(
 			MainConfigNames::ActiveUserDays );
 
 		// Users that made edits at least this many days ago are "active"
@@ -139,7 +148,8 @@ class RecentChangesUpdateJob extends Job {
 		// Pull in the full window of active users in this update
 		$window = $activeUserDays * 86400;
 
-		$dbProvider = MediaWikiServices::getInstance()->getConnectionProvider();
+		$rcLookup = $services->getRecentChangeLookup();
+		$dbProvider = $services->getConnectionProvider();
 		$dbw = $dbProvider->getPrimaryDatabase();
 		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
 
@@ -175,7 +185,7 @@ class RecentChangesUpdateJob extends Job {
 			->join( 'actor', null, 'actor_id=rc_actor' )
 			->where( [
 				$dbw->expr( 'actor_user', '!=', null ), // actual accounts
-				$dbw->expr( 'rc_type', '!=', RC_EXTERNAL ), // no wikidata
+				$dbw->expr( 'rc_source', '=', $rcLookup->getPrimarySources() ),
 				$dbw->expr( 'rc_log_type', '=', null )->or( 'rc_log_type', '!=', 'newusers' ),
 				$dbw->expr( 'rc_timestamp', '>=', $dbw->timestamp( $sTimestamp ) ),
 				$dbw->expr( 'rc_timestamp', '<=', $dbw->timestamp( $eTimestamp ) ),
@@ -253,7 +263,7 @@ class RecentChangesUpdateJob extends Job {
 			] )
 			->caller( __METHOD__ )->execute();
 
-		if ( !MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::MiserMode ) ) {
+		if ( !$services->getMainConfig()->get( MainConfigNames::MiserMode ) ) {
 			SiteStatsUpdate::cacheUpdate( $dbw );
 		}
 

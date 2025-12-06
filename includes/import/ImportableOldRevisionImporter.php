@@ -3,7 +3,7 @@
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -32,7 +32,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 	private UserFactory $userFactory;
 
 	public function __construct(
-		$doUpdates,
+		bool $doUpdates,
 		LoggerInterface $logger,
 		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
@@ -133,7 +133,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 
 		try {
 			$revUser = $this->userFactory->newFromAnyId( $userId, $userText );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 			$revUser = RequestContext::getMain()->getUser();
 		}
 		$revisionRecord->setUser( $revUser );
@@ -196,8 +196,8 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 			// countable/oldcountable stuff is handled in WikiImporter::finishImportPage
 
 			$options = [
-				PageRevisionUpdatedEvent::FLAG_SILENT => true,
-				PageRevisionUpdatedEvent::FLAG_IMPLICIT => true,
+				PageLatestRevisionChangedEvent::FLAG_SILENT => true,
+				PageLatestRevisionChangedEvent::FLAG_IMPLICIT => true,
 				'created' => $mustCreatePage,
 				'oldcountable' => 'no-change',
 			];

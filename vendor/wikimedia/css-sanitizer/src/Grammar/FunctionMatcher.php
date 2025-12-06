@@ -51,7 +51,7 @@ class FunctionMatcher extends Matcher {
 	protected function generateMatches( ComponentValueList $values, $start, array $options ) {
 		$cv = $values[$start] ?? null;
 		if ( $cv instanceof CSSFunction &&
-			( !$this->nameCheck || call_user_func( $this->nameCheck, $cv->getName() ) )
+			( !$this->nameCheck || ( $this->nameCheck )( $cv->getName() ) )
 		) {
 			// To successfully match, our sub-Matcher needs to match the whole
 			// content of the function.

@@ -39,7 +39,7 @@ class Expression extends Fragment {
 	 * @param string $type
 	 * @return bool
 	 */
-	public function isType( $type ) {
+	public function isType( $type ): bool {
 		if ( $type === 'range' && ( $this->type === 'range' || $this->type === 'number' ) ) {
 			return true;
 		}

@@ -75,10 +75,10 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 			],
 			'Invalid IP address' => [ 'abcedf', CheckUserQueryInterface::CHANGES_TABLE, false, null ],
 			'IPv4 address with CIDR lower than the limit' => [
-				'0.17.184.5/15', CheckUserQueryInterface::CHANGES_TABLE, false, null
+				'0.17.184.5/15', CheckUserQueryInterface::CHANGES_TABLE, false, null,
 			],
 			'IPv6 address with CIDR lower than the limit' => [
-				'2000::/18', CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, true, null
+				'2000::/18', CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, true, null,
 			],
 		];
 	}

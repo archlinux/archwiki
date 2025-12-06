@@ -6,12 +6,14 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\ExtensionError;
 use Wikimedia\Parsoid\Ext\ExtensionTag;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwError;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
@@ -20,13 +22,13 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
-class ExtensionHandler extends TokenHandler {
+class ExtensionHandler extends XMLTagBasedHandler {
 
 	public function __construct( TokenHandlerPipeline $manager, array $options ) {
 		parent::__construct( $manager, $options );
 	}
 
-	private static function normalizeExtOptions( array $options, string $normalizeFlag ): array {
+	private static function normalizeExtOptions( array $options, string $defaultNorm, array $exceptions ): array {
 		// Mimics Sanitizer::decodeTagAttributes from the PHP parser
 		//
 		// Extension options should always be interpreted as plain text. The
@@ -39,6 +41,12 @@ class ExtensionHandler extends TokenHandler {
 			// string, as it can be a token stream if the parser has recognized it
 			// as a directive.
 			$v = $o->vsrc ?? TokenUtils::tokensToString( $o->v, false, [ 'includeEntities' => true ] );
+
+			if ( is_string( $o->k ) ) {
+				$normalizeFlag = $exceptions[$o->k] ?? $defaultNorm;
+			} else {
+				$normalizeFlag = $defaultNorm;
+			}
 
 			// Let extensions decide which format they want their options in; by default they are interpreted as
 			// with normalized spaces and trimmed.
@@ -62,7 +70,6 @@ class ExtensionHandler extends TokenHandler {
 	private function onExtension( Token $token ): array {
 		$env = $this->env;
 		$siteConfig = $env->getSiteConfig();
-		$pageConfig = $env->getPageConfig();
 		$extensionName = $token->getAttributeV( 'name' );
 		$extConfig = $env->getSiteConfig()->getExtTagConfig( $extensionName );
 
@@ -91,8 +98,9 @@ class ExtensionHandler extends TokenHandler {
 
 		$nativeExt = $siteConfig->getExtTagImpl( $extensionName );
 		$options = $token->getAttributeV( 'options' );
-		$normalizeFlag = $extConfig['options']['wt2html']['attributeWSNormalizationPref'] ?? 'normalize';
-		$token->setAttribute( 'options', self::normalizeExtOptions( $options, $normalizeFlag ) );
+		$normalizeFlag = $extConfig['options']['wt2html']['attributeWSNormalizationDefault'] ?? 'normalize';
+		$normalizeExceptions = $extConfig['options']['wt2html']['attributeWSNormalization'] ?? [];
+		$token->setAttribute( 'options', self::normalizeExtOptions( $options, $normalizeFlag, $normalizeExceptions ) );
 
 		// Call after normalizing extension options, since that can affect the result
 		$dataMw = Utils::getExtArgInfo( $token );
@@ -117,13 +125,16 @@ class ExtensionHandler extends TokenHandler {
 				$errors = $extApi->getErrors();
 				if ( $extConfig['options']['wt2html']['customizesDataMw'] ?? false ) {
 					$firstNode = $domFragment->firstChild;
-					DOMUtils::assertElt( $firstNode );
+					'@phan-var Element $firstNode'; // @var Element $firstNode
 					$dataMw = DOMDataUtils::getDataMw( $firstNode );
 				}
 			} catch ( ExtensionError $e ) {
 				$domFragment = WTUtils::createInterfaceI18nFragment(
 					$env->getTopLevelDoc(), $e->err->key, $e->err->params ?: null
 				);
+				$i18nFrag = $domFragment->firstChild;
+				'@phan-var Element $i18nFrag'; // @var Element $firstNode
+				$i18nFrag->setAttribute( 'class', 'error' );
 				$errors = [ $e->err ];
 				// FIXME: Should we include any errors collected
 				// from $extApi->getErrors() here?  Also, what's the correct $dataMw
@@ -213,19 +224,19 @@ class ExtensionHandler extends TokenHandler {
 		if ( $extensionName !== 'nowiki' ) {
 			if ( !$domFragment->hasChildNodes() ) {
 				// RT extensions expanding to nothing.
-				$domFragment->appendChild(
-					$domFragment->ownerDocument->createElement( 'link' )
-				);
+				$link = $domFragment->ownerDocument->createElement( 'link' );
+				DOMDataUtils::getDataParsoid( $link )->getTemp()->empty = true;
+				$domFragment->appendChild( $link );
 			}
 
 			// Wrap the top-level nodes so that we have a firstNode element
 			// to annotate with the typeof and to apply about ids.
-			PipelineUtils::addSpanWrappers( $domFragment->childNodes );
+			PipelineUtils::addSpanWrappers( DOMUtils::childNodes( $domFragment ) );
 
 			// Now get the firstNode
 			$firstNode = $domFragment->firstChild;
 
-			DOMUtils::assertElt( $firstNode );
+			'@phan-var Element $firstNode'; // @var Element $firstNode
 
 			// Adds the wrapper attributes to the first element
 			DOMUtils::addTypeOf( $firstNode, "mw:Extension/{$extensionName}" );
@@ -270,7 +281,7 @@ class ExtensionHandler extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ): ?array {
+	public function onTag( XMLTagTk $token ): ?array {
 		return $token->getName() === 'extension' ? $this->onExtension( $token ) : null;
 	}
 

@@ -4,6 +4,14 @@
 @font-size-description: 12px;
 @line-height-description: 1.2;
 
+.ext-templatedata-search-field {
+	margin-bottom: @spacing-150;
+
+	.oo-ui-fieldLayout-header .oo-ui-labelElement-label {
+		font-weight: @font-weight-bold;
+	}
+}
+
 .ext-templatedata-search {
 	// Max width to match .oo-ui-actionFieldLayout.oo-ui-fieldLayout-align-top
 	max-width: 50em;
@@ -37,9 +45,26 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
+		// Don't use a pointer cursor on items which are not draggable.
+		cursor: default;
+
+		.oo-ui-draggableElement-handle {
+			visibility: hidden;
+		}
+
+		&:hover .oo-ui-draggableElement-handle {
+			visibility: visible;
+		}
+
+		&.oo-ui-draggableElement-placeholder {
+			background-color: @background-color-interactive-subtle--hover;
+		}
 
 		.oo-ui-buttonElement-button {
 			padding: 0;
+			// Duplicate min sizes from OOUI's WikimediaUI theme because Apex is different.
+			min-width: 32px;
+			min-height: 32px;
 		}
 	}
 
@@ -53,22 +78,35 @@
 	.oo-ui-textInputWidget.oo-ui-widget-enabled:hover .oo-ui-menuSelectWidget .oo-ui-inputWidget-input {
 		border-color: transparent;
 		background: none;
+		box-shadow: none;
 	}
 
 	.oo-ui-indexLayout-stackLayout > .oo-ui-panelLayout {
 		padding: 0;
 	}
 
-	.ext-templatedata-TemplateList-tabIcon {
+	.ext-templatedata-templateDiscovery-tabIcon {
 		margin-bottom: @spacing-35;
 	}
 
-	.ext-templatedata-TemplateList-empty {
-		color: @color-subtle;
+	.ext-templatedata-TemplateList-empty.oo-ui-messageWidget.oo-ui-messageWidget-block.oo-ui-flaggedElement-notice {
+		margin-top: @spacing-50;
+		border-width: 0;
+		background: none;
+	}
+
+	.ext-templatedata-TemplateList-count.oo-ui-messageWidget.oo-ui-messageWidget-block.oo-ui-flaggedElement-notice {
+		margin-top: @spacing-50;
+		border-width: 0;
+		background: none;
 	}
 
 	.ext-templatedata-TemplateMenuItem-removed {
 		opacity: 0.5;
 		text-decoration: line-through;
 	}
+}
+
+.ext-templatedata-TemplateList-configLink {
+	text-align: right;
 }

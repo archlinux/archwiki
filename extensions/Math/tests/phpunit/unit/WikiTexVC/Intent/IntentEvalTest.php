@@ -26,4 +26,21 @@ final class IntentEvalTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( "C", $resultT["status"] );
 		$this->assertStringContainsString( "virtual intent package required", $resultT["details"] );
 	}
+
+	public function testIntentFailure() {
+		$texVC = new TexVC();
+		$resultT = $texVC->check( "\\intent{\\binom{n}{k}}{intent='bino?mial(\$n,\$k)'}", [
+			'useintent' => true,
+		] );
+		$this->assertEquals( 'S', $resultT['status' ] );
+	}
+
+	public function testIntentFailure2() {
+		$texVC = new TexVC();
+		$resultT = $texVC->check( "\\intent{\\binom{n}{k}}{intent='binomial(\$n,\$k)',arg='n,k'}", [
+			'useintent' => true,
+		] );
+		$this->assertEquals( 'I', $resultT['status' ] );
+		$this->assertEquals( 'intent check failed.', $resultT['details' ] );
+	}
 }

@@ -24,7 +24,7 @@ ve.dm.MWReferenceModel = function VeDmMWReferenceModel( parentDoc ) {
 	OO.EventEmitter.call( this );
 
 	// Properties
-	this.extendsRef = null;
+	this.mainRefKey = null;
 	this.listKey = '';
 	this.listGroup = '';
 	this.listIndex = null;
@@ -57,7 +57,7 @@ ve.dm.MWReferenceModel.static.newFromReferenceNode = function ( node ) {
 	const attributes = node.getAttributes();
 	const ref = new ve.dm.MWReferenceModel();
 
-	ref.extendsRef = attributes.extendsRef;
+	ref.mainRefKey = attributes.mainRefKey;
 	ref.listKey = attributes.listKey;
 	ref.listGroup = attributes.listGroup;
 	ref.listIndex = attributes.listIndex;
@@ -68,6 +68,23 @@ ve.dm.MWReferenceModel.static.newFromReferenceNode = function ( node ) {
 	};
 
 	return ref;
+};
+
+/**
+ * Create a copy of a sub-reference when reusing.
+ * TODO might be removed again when we merge sub-ref reuse in reader view see T385666
+ *
+ * @param {ve.dm.MWReferenceModel} subRef The sub-reference to copy
+ * @param {ve.dm.Document} doc The Document we can use to clone the content
+ * @return {ve.dm.MWReferenceModel}
+ */
+ve.dm.MWReferenceModel.static.copySubReference = function ( subRef, doc ) {
+	const newSubRef = new ve.dm.MWReferenceModel();
+	newSubRef.setDocument( doc.cloneWithData( subRef.getDocument().getData() ) );
+	newSubRef.mainRefKey = subRef.mainRefKey;
+	newSubRef.setGroup( subRef.getGroup() );
+
+	return newSubRef;
 };
 
 /* Methods */
@@ -133,9 +150,7 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
 	if ( this.listGroup !== listGroup ) {
 		// Get all reference nodes with the same group and key
 		const group = internalList.getNodeGroup( this.listGroup );
-		const refNodes = group.keyedNodes[ this.listKey ] ?
-			group.keyedNodes[ this.listKey ].slice() :
-			[ group.firstNodes[ this.listIndex ] ];
+		const refNodes = group.getAllReuses( this.listKey );
 		// Check for name collision when moving items between groups
 		const keyIndex = internalList.getKeyIndex( this.listGroup, this.listKey );
 		if ( keyIndex !== undefined ) {
@@ -148,7 +163,7 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
 			txs.push( ve.dm.TransactionBuilder.static.newFromAttributeChanges(
 				doc,
 				refNodes[ i ].getOuterRange().start,
-				{ refGroup: this.group, listGroup: listGroup }
+				{ refGroup: this.group, listGroup }
 			) );
 		}
 		surfaceModel.change( txs );
@@ -169,14 +184,15 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
  * if needed.
  *
  * @param {ve.dm.SurfaceFragment} surfaceFragment Surface fragment to insert at
+ * @param {boolean} [contentsUsed] If the new node should get the contentsUsed flag
  */
-ve.dm.MWReferenceModel.prototype.insertIntoFragment = function ( surfaceFragment ) {
+ve.dm.MWReferenceModel.prototype.insertIntoFragment = function ( surfaceFragment, contentsUsed ) {
 	const surfaceModel = surfaceFragment.getSurface();
 
 	if ( !this.findInternalItem( surfaceModel ) ) {
 		this.insertInternalItem( surfaceModel );
 	}
-	this.insertReferenceNode( surfaceFragment );
+	this.insertReferenceNode( surfaceFragment, false, contentsUsed );
 };
 
 /**
@@ -184,10 +200,11 @@ ve.dm.MWReferenceModel.prototype.insertIntoFragment = function ( surfaceFragment
  *
  * @param {ve.dm.SurfaceFragment} surfaceFragment Surface fragment to insert at
  * @param {boolean} [placeholder] Reference is a placeholder for staging purposes
+ * @param {boolean} [contentsUsed] If the new node should get the contentsUsed flag
  */
-ve.dm.MWReferenceModel.prototype.insertReferenceNode = function ( surfaceFragment, placeholder ) {
+ve.dm.MWReferenceModel.prototype.insertReferenceNode = function ( surfaceFragment, placeholder, contentsUsed ) {
 	const attributes = {
-		extendsRef: this.extendsRef,
+		mainRefKey: this.mainRefKey,
 		listKey: this.listKey,
 		listGroup: this.listGroup,
 		listIndex: this.listIndex,
@@ -196,11 +213,14 @@ ve.dm.MWReferenceModel.prototype.insertReferenceNode = function ( surfaceFragmen
 	if ( placeholder ) {
 		attributes.placeholder = true;
 	}
+	if ( contentsUsed ) {
+		attributes.contentsUsed = true;
+	}
 	surfaceFragment
 		.insertContent( [
 			{
 				type: 'mwReference',
-				attributes: attributes,
+				attributes,
 				// See ve.dm.MWReferenceNode.static.cloneElement
 				originalDomElementsHash: Math.random()
 			},
@@ -259,6 +279,13 @@ ve.dm.MWReferenceModel.prototype.getDocument = function () {
 };
 
 /**
+ * @return {boolean}
+ */
+ve.dm.MWReferenceModel.prototype.isSubRef = function () {
+	return !!this.mainRefKey;
+};
+
+/**
  * Set the name of the group a reference is in.
  *
  * @param {string} group Reference's group
@@ -275,3 +302,5 @@ ve.dm.MWReferenceModel.prototype.setGroup = function ( group ) {
 ve.dm.MWReferenceModel.prototype.setDocument = function ( doc ) {
 	this.doc = doc;
 };
+
+module.exports = ve.dm.MWReferenceModel;

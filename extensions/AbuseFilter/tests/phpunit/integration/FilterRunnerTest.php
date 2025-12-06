@@ -16,7 +16,7 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
-use MediaWiki\Request\WebRequest;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
@@ -54,8 +54,8 @@ class FilterRunnerTest extends MediaWikiIntegrationTestCase {
 			$cache = $this->createMock( EditStashCache::class );
 			$cache->method( 'seek' )->willReturn( false );
 		}
-		$request = $this->createMock( WebRequest::class );
-		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
+		$request = new FauxRequest();
+		$request->setIP( '127.0.0.1' );
 		$user = $this->createMock( User::class );
 		$user->method( 'getRequest' )->willReturn( $request );
 		return new FilterRunner(

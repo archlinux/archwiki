@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Dungodung",
@@ -14,8 +15,7 @@
 			"Srdjan m",
 			"Zoranzoki21",
 			"Михајло Анђелковић",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"echo-desc": "Систем за обавештавање корисника о догађајима и порукама",
@@ -66,19 +66,17 @@
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|Прекретница|Прекретнице}} измена",
 	"echo-category-title-watchlist": "Измена надгледане странице",
 	"echo-category-title-minor-watchlist": "Мања измена надгледане странице",
-	"echo-pref-tooltip-edit-user-talk": "Обавештава вас када неко измени вашу страницу за разговор.",
-	"echo-pref-tooltip-edit-user-page": "Када неко уреди моју страницу за разговор.",
+	"echo-category-title-verify-email-reminder": "Непотврђеност имејл адресе",
 	"echo-pref-tooltip-article-linked": "Обавештава вас када неко повеже страницу који сте направили са неком другом страницом.",
 	"echo-pref-tooltip-reverted": "Обавештава вас када неко врати измену коју сте направили помоћу алатке за поништавање или враћање измена.",
 	"echo-pref-tooltip-mention": "Обавештава вас када неко дода везу ка вашој корисничкој страници.",
 	"echo-pref-tooltip-mention-failure": "Обавештава вас када некоме не можете да пошаљете помињање.",
 	"echo-pref-tooltip-mention-success": "Обавештава вас када некоме пошаљете помињање.",
-	"echo-pref-tooltip-user-rights": "Обавештава вас када неко промени ваша корисничка права.",
-	"echo-pref-tooltip-emailuser": "Обавештава вас када вам неко пошаље е-поруку.",
 	"echo-pref-tooltip-article-reminder": "Обавештава вас о овој страници када затражите.",
 	"echo-pref-tooltip-thank-you-edit": "Обавештава вас када достигнете прву, десету, стоту… измену.",
 	"echo-pref-tooltip-watchlist": "Обавештава вас када неко направи (немању) измену странице на списку надгледања.",
 	"echo-pref-tooltip-minor-watchlist": "Обавештава вас када неко направи мању измену странице на списку надгледања.",
+	"echo-pref-tooltip-verify-email-reminder": "Подсетник да потврдите своју имејл адресу, ако то већ нисте учинили.",
 	"notifications": "Обавештења",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Ваша}} обавештења",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Ваша}} ситна обавештења",
@@ -91,8 +89,7 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Дозвољени начини за обавештавање",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Који начини за обавештавање су подржани за сваку категорију",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Подразумевано омогућено",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Постојећи корисници",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Нови корисници",
+	"echo-displaynotificationsconfiguration-enabled-default-legend": "Подразумеване опције",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Обавезне методе за обавештавање",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Које методе за обавештавање су обавезне за сваку категорију",
 	"echo-specialpage": "Обавештења",
@@ -250,5 +247,9 @@
 	"right-echo-create": "слање обавештења другима",
 	"action-echo-create": "шаљете обавештења другима",
 	"group-push-subscription-manager": "Менаџери претплата за обавештења",
-	"group-push-subscription-manager-member": "{{GENDER:$1|менаџер претплата за обавештења}}"
+	"group-push-subscription-manager-member": "{{GENDER:$1|менаџер претплата за обавештења}}",
+	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|Потврдите}} Ваш имејл",
+	"notification-header-verify-email-reminder": "Молимо <strong>потврдите {{GENDER:$1|своју}} имејл адресу</strong>. Да би били сигурни да имејл адреса на Вашем налогу припада Вама.",
+	"notification-link-text-verify-email-reminder": "Имејл подешавања",
+	"notification-verify-email-reminder-link-label": "Потврдите имејл"
 }

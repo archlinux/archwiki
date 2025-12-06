@@ -9,7 +9,7 @@ use MediaWiki\Title\TitleValue;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 
 /**
- * @coversDefaultClass \MediaWiki\Page\File\BadFileLookup
+ * @covers \MediaWiki\Page\File\BadFileLookup
  */
 class BadFileLookupTest extends MediaWikiUnitTestCase {
 	use DummyServicesTrait;
@@ -77,14 +77,12 @@ WIKITEXT;
 	protected function setUp(): void {
 		parent::setUp();
 		$this->hookContainer = $this->createHookContainer( [
-			'BadImage' => __CLASS__ . '::badImageHook'
+			'BadImage' => [ self::class, 'badImageHook' ]
 		] );
 	}
 
 	/**
 	 * @dataProvider provideIsBadFile
-	 * @covers ::__construct
-	 * @covers ::isBadFile
 	 */
 	public function testIsBadFile( $name, $title, $expected ) {
 		$bfl = new BadFileLookup(
@@ -102,8 +100,6 @@ WIKITEXT;
 
 	/**
 	 * @dataProvider provideIsBadFile
-	 * @covers ::__construct
-	 * @covers ::isBadFile
 	 */
 	public function testIsBadFile_nullRepoGroup( $name, $title, $expected ) {
 		$nullRepoGroup = $this->createNoOpMock( RepoGroup::class, [ 'findFile' ] );

@@ -15,7 +15,8 @@
 			"Vlad5250",
 			"Ypryima",
 			"Ата",
-			"Тест"
+			"Тест",
+			"MonX94"
 		]
 	},
 	"math-desc": "Відображає математичні формули у тегах <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -87,8 +88,8 @@
 	"math-test-equals-diff": "Виведений рядок $1 відрізняється від очікуваного рядка $2.",
 	"math-tracking-category-error": "Сторінки з математичними помилками",
 	"math-tracking-category-error-desc": "Сторінки в цій категорії мають помилки у використанні математичних тегів.",
-	"math-tracking-category-mhchem-deprecation": "Сторінки, які використовують хімічні теги у застарілому форматі",
-	"math-tracking-category-mhchem-deprecation-desc": "Сторінки в цій категорії використовують хімічні теги у застарілому форматі",
+	"math-tracking-category-mhchem-deprecation": "Сторінки, які використовують хімічні теги в застарілому форматі",
+	"math-tracking-category-mhchem-deprecation-desc": "Сторінки в цій категорії використовують хімічні теги в застарілому форматі",
 	"math-tracking-category-texvc-deprecation": "Сторінки, що використовують застарілий формат математичних тегів",
 	"math-tracking-category-texvc-deprecation-desc": "Сторінки цієї категорії використовують застарілий формат математичних тегів",
 	"math-tracking-category-render-error": "Сторінки з помилками відтворення математичних формул",

@@ -9,13 +9,6 @@ use MediaWiki\Tests\Api\ApiTestCase;
  */
 class TemplateDataApiTest extends ApiTestCase {
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function setUp(): void {
-		parent::setUp();
-	}
-
 	public function testMissingTemplateData() {
 		// Create a test template
 		$testTemplateTitle = 'Template:WithoutTemplateData';

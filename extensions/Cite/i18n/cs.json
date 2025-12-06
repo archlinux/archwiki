@@ -43,7 +43,6 @@
 	"cite_references_link_many_accessibility_label": "Skočit nahoru k:",
 	"cite_references_link_accessibility_back_label": "Skočit zpátky nahoru",
 	"cite_section_preview_references": "Náhled referencí",
-	"cite_warning": "Upozornění k citaci: $1",
 	"cite_warning_sectionpreview_no_text": "Nelze zobrazit náhled značky <code>&lt;ref&gt;</code> se jménem <code>$1</code>, protože je definována mimo aktuální sekci nebo není definována vůbec.",
 	"cite-wikieditor-tool-reference": "Reference",
 	"cite-wikieditor-help-page-references": "Reference",

@@ -104,6 +104,12 @@ update version:
 		git submodule set-branch --branch REL${branch/./_} "${module}"
 	done
 
+	# Fix the autoloader to work with PHP 8.5
+	sed -i '/^[[:space:]]*\$loader->setClassMapAuthoritative(true);$/d' vendor/composer/autoload_real.php
+
+	# Remove test certificates GitLab would reject
+	find . -type f -name "*.pem" -delete
+
 	git add -u
 	git add .
 	git commit -am"Update to MediaWiki {{version}}"

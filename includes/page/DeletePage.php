@@ -19,7 +19,6 @@ use MediaWiki\DomainEvent\DomainEventDispatcher;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\JobQueue\JobQueueGroup;
-use MediaWiki\JobQueue\Jobs\DeletePageJob;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
@@ -47,6 +46,7 @@ use Wikimedia\RequestTimeout\TimeoutException;
  * Backend logic for performing a page delete action.
  *
  * @since 1.37
+ * @ingroup Page
  */
 class DeletePage {
 	/**
@@ -325,7 +325,7 @@ class DeletePage {
 	 * Same as deleteUnsafe, but checks permissions.
 	 *
 	 * @param string $reason
-	 * @return StatusValue
+	 * @return StatusValue<never>
 	 */
 	public function deleteIfAllowed( string $reason ): StatusValue {
 		$this->setDeletionAttempted();
@@ -404,8 +404,8 @@ class DeletePage {
 	 * @note This method doesn't check user permissions. Use deleteIfAllowed for that.
 	 *
 	 * @param string $reason Delete reason for deletion log
-	 * @return Status Status object:
-	 *   - If successful (or scheduled), a good Status
+	 * @return Status<never> Status object:
+	 *   - If successful (or scheduled), a good Status with no value
 	 *   - If a page couldn't be deleted because it wasn't found, a Status with a non-fatal 'cannotdelete' error.
 	 *   - A fatal Status otherwise.
 	 */
@@ -441,7 +441,7 @@ class DeletePage {
 	/**
 	 * @param WikiPage $page
 	 * @param string &$reason
-	 * @return Status
+	 * @return Status<never>
 	 */
 	private function runPreDeleteHooks( WikiPage $page, string &$reason ): Status {
 		$status = Status::newGood();
@@ -488,7 +488,7 @@ class DeletePage {
 	 * @param string $reason
 	 * @param string|null $webRequestId
 	 * @param mixed|null $ticket Result of ILBFactory::getEmptyTransactionTicket() or null
-	 * @return Status
+	 * @return Status<never>
 	 */
 	public function deleteInternal(
 		WikiPage $page,
@@ -637,7 +637,8 @@ class DeletePage {
 			[ PageDeletedEvent::FLAG_SUPPRESSED => $this->suppress ],
 			$logEntry->getTimestamp(),
 			$reason,
-			$archivedRevisionCount
+			$archivedRevisionCount,
+			$pageBeforeDelete->isRedirect() ? $this->redirectStore->getRedirectTarget( $page ) : null
 		), $this->lbFactory );
 
 		$dbw->endAtomic( __METHOD__ );
@@ -814,7 +815,7 @@ class DeletePage {
 			$countable = $pageBeforeDelete->isCountable();
 		} catch ( TimeoutException $e ) {
 			throw $e;
-		} catch ( Exception $ex ) {
+		} catch ( Exception ) {
 			// fallback for deleting broken pages for which we cannot load the content for
 			// some reason. Note that doDeleteArticleReal() already logged this problem.
 			$countable = false;

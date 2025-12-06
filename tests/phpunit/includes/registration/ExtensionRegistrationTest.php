@@ -89,31 +89,23 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function setExtensionRegistry( ExtensionRegistry $registry ) {
-		$class = new \ReflectionClass( ExtensionRegistry::class );
+		$staticExtReg = TestingAccessWrapper::newFromClass( ExtensionRegistry::class );
 
 		if ( !$this->originalExtensionRegistry ) {
-			$this->originalExtensionRegistry = $class->getStaticPropertyValue( 'instance' );
+			$this->originalExtensionRegistry = $staticExtReg->instance;
 		}
 
-		$class->setStaticPropertyValue( 'instance', $registry );
-	}
-
-	public static function onAnEvent() {
-		// no-op
-	}
-
-	public static function onBooEvent() {
-		// no-op
+		$staticExtReg->instance = $registry;
 	}
 
 	public function testExportHooks() {
 		$manifest = [
 			'Hooks' => [
-				'AnEvent' => self::class . '::onAnEvent',
+				'AnEvent' => ExtensionRegistrationHookHandler::class . '::onAnEvent',
 				'BooEvent' => 'main',
 			],
 			'HookHandlers' => [
-				'main' => [ 'class' => self::class ]
+				'main' => [ 'class' => ExtensionRegistrationHookHandler::class ]
 			],
 		];
 
@@ -134,7 +126,6 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	public function testRegisterDomainEventListeners() {
 		$subscriber = [
 			'events' => [ 'AnEvent', 'BooEvent' ],
-			'factory' => [ self::class, 'newSubscriber' ]
 		];
 
 		$manifest = [
@@ -247,7 +238,7 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 	public function testRunCallbacks() {
 		$manifest = [
 			'name' => 'CallbackTest',
-			'callback' => [ __CLASS__, 'callbackForTest' ],
+			'callback' => [ self::class, 'callbackForTest' ],
 		];
 
 		$file = $this->makeManifestFile( $manifest );
@@ -711,6 +702,18 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			class_exists( 'Test\\MediaWiki\\AutoLoader\\TestFooBar' ),
 			"Registry initializes Autoloader from AutoloadNamespaces"
 		);
+	}
+
+}
+
+class ExtensionRegistrationHookHandler {
+
+	public static function onAnEvent() {
+		// no-op
+	}
+
+	public static function onBooEvent() {
+		// no-op
 	}
 
 }

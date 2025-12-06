@@ -31,11 +31,6 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 class ApiQueryLintErrors extends ApiQueryBase {
 	private CategoryManager $categoryManager;
 
-	/**
-	 * @param ApiQuery $queryModule
-	 * @param string $moduleName
-	 * @param CategoryManager $categoryManager
-	 */
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,

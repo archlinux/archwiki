@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Variables;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
@@ -13,7 +14,7 @@ use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Storage\BlobStoreFactory;
 use MediaWikiUnitTestCase;
-use stdClass;
+use Wikimedia\IPUtils;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -25,7 +26,8 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 
 	private function getStore(
 		?BlobStoreFactory $blobStoreFactory = null,
-		?BlobStore $blobStore = null
+		?BlobStore $blobStore = null,
+		?AbuseFilterPermissionManager $permissionManager = null
 	): VariablesBlobStore {
 		$manager = $this->createMock( VariablesManager::class );
 		$manager->method( 'dumpAllVars' )->willReturnCallback( static function ( VariableHolder $holder ) {
@@ -46,8 +48,17 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 				}
 			}
 		} );
+		$manager->method( 'getVar' )
+			->willReturnCallback( static function ( VariableHolder $holder, string $varName ) {
+				if ( $holder->varIsSet( $varName ) ) {
+					return $holder->getVarThrow( $varName );
+				} else {
+					return new AFPData( AFPData::DUNDEFINED );
+				}
+			} );
 		return new VariablesBlobStore(
 			$manager,
+			$permissionManager ?? $this->createMock( AbuseFilterPermissionManager::class ),
 			$blobStoreFactory ?? $this->createMock( BlobStoreFactory::class ),
 			$blobStore ?? $this->createMock( BlobStore::class ),
 			null
@@ -65,14 +76,16 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testLoadVarDump() {
-		$vars = [ 'foo-variable' => 42 ];
-		$blob = FormatJson::encode( $vars );
 		$blobStore = $this->createMock( BlobStore::class );
-		$blobStore->expects( $this->once() )->method( 'getBlob' )->willReturn( $blob );
+		$blobStore->expects( $this->once() )
+			->method( 'getBlob' )
+			->with( 'tt:3456' )
+			->willReturn( FormatJson::encode( [ 'foo-variable' => 42 ] ) );
 
-		$row = new stdClass;
-		$row->afl_var_dump = $blob;
-		$row->afl_ip = '';
+		$row = (object)[
+			'afl_var_dump' => 'tt:3456',
+			'afl_ip_hex' => '',
+		];
 		$varBlobStore = $this->getStore( null, $blobStore );
 		$loadedVars = $varBlobStore->loadVarDump( $row )->getVars();
 		$this->assertArrayHasKey( 'foo-variable', $loadedVars );
@@ -83,20 +96,22 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideLoadVarDumpVarTransformation
 	 */
 	public function testLoadVarDumpVarTransformation( $data, $expected ) {
-		$vars = [
-			'user_unnamed_ip' => $data[ 'user_unnamed_ip' ]
-		];
+		$blobStore = $this->createMock( BlobStore::class );
+		$blobStore->expects( $this->once() )
+			->method( 'getBlob' )
+			->with( 'tt:3456' )
+			->willReturn( FormatJson::encode( [ 'user_unnamed_ip' => $data[ 'user_unnamed_ip' ] ] ) );
 
 		$manager = $this->createMock( VariablesManager::class );
 		$manager->method( 'getVar' )->willReturn( AFPData::newFromPHPVar( $data['user_unnamed_ip'] ) );
-		$blob = FormatJson::encode( $vars );
-		$blobStore = $this->createMock( BlobStore::class );
-		$blobStore->expects( $this->once() )->method( 'getBlob' )->willReturn( $blob );
-		$row = new stdClass;
-		$row->afl_var_dump = $blob;
-		$row->afl_ip = $data[ 'afl_ip' ];
+
+		$row = (object)[
+			'afl_var_dump' => 'tt:3456',
+			'afl_ip_hex' => $data[ 'afl_ip_hex' ],
+		];
 		$varBlobStore = new VariablesBlobStore(
 			$manager,
+			$this->createMock( AbuseFilterPermissionManager::class ),
 			$this->createMock( BlobStoreFactory::class ),
 			$blobStore,
 			null
@@ -116,21 +131,21 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 			'ip visible, ip available' => [
 				[
 					'user_unnamed_ip' => true,
-					'afl_ip' => '1.2.3.4',
+					'afl_ip_hex' => IPUtils::toHex( '1.2.3.4' )
 				],
 				'1.2.3.4'
 			],
 			'ip visible, ip cleared' => [
 				[
 					'user_unnamed_ip' => true,
-					'afl_ip' => '',
+					'afl_ip_hex' => '',
 				],
 				''
 			],
 			'ip not visible, ip available' => [
 				[
 					'user_unnamed_ip' => null,
-					'afl_ip' => '1.2.3.4',
+					'afl_ip_hex' => IPUtils::toHex( '1.2.3.4' )
 				],
 				null
 			]
@@ -141,19 +156,20 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 		$blobStore = $this->createMock( BlobStore::class );
 		$blobStore->expects( $this->once() )->method( 'getBlob' )->willThrowException( new BlobAccessException );
 		$varBlobStore = $this->getStore( null, $blobStore );
-		$row = new stdClass;
-		$row->afl_var_dump = '';
-		$row->afl_ip = '';
+		$row = (object)[
+			'afl_var_dump' => '',
+			'afl_ip_hex' => '',
+		];
 		$this->assertCount( 0, $varBlobStore->loadVarDump( $row )->getVars() );
 
-		$row = new stdClass;
+		$row = (object)[];
 		$this->expectException( InvalidArgumentException::class );
 		$varBlobStore->loadVarDump( $row )->getVars();
 	}
 
 	private function getBlobStore(): BlobStore {
 		return new class implements BlobStore {
-			private $blobs;
+			private array $blobs = [];
 
 			private function getKey( string $data ) {
 				return md5( $data );
@@ -180,17 +196,44 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideVariables
 	 */
-	public function testRoundTrip( array $toStore, ?array $expected = null ) {
+	public function testRoundTrip( array $toStore, ?array $expected = null, string $ipHex = '' ) {
+		$protectedVariables = [ 'user_unnnamed_ip', 'other_protected_variable' ];
+		$permissionManager = $this->createMock( AbuseFilterPermissionManager::class );
+		$permissionManager->method( 'getUsedProtectedVariables' )
+			->willReturnCallback( static function ( $usedVariables ) use ( $protectedVariables ) {
+				return array_intersect( $protectedVariables, $usedVariables );
+			} );
+
 		$blobStore = $this->getBlobStore();
 		$blobStoreFactory = $this->createMock( BlobStoreFactory::class );
 		$blobStoreFactory->method( 'newBlobStore' )->willReturn( $blobStore );
-		$varBlobStore = $this->getStore( $blobStoreFactory, $blobStore );
+		$varBlobStore = $this->getStore( $blobStoreFactory, $blobStore, $permissionManager );
 
-		$storeID = $varBlobStore->storeVarDump( VariableHolder::newFromArray( $toStore ) );
-		$this->assertIsString( $storeID );
-		$row = new stdClass;
-		$row->afl_var_dump = $storeID;
-		$row->afl_ip = '';
+		$aflVarDumpValue = $varBlobStore->storeVarDump( VariableHolder::newFromArray( $toStore ) );
+		$this->assertIsString( $aflVarDumpValue );
+
+		// Verify that the blob store address is storing no protected variable values
+		// (empty values are expected though).
+		if ( array_intersect_key( $toStore, array_flip( $protectedVariables ) ) ) {
+			$blobId = FormatJson::decode( $aflVarDumpValue, true )['_blob'];
+		} else {
+			$blobId = $aflVarDumpValue;
+		}
+		$blobData = $blobStore->getBlob( $blobId );
+		$this->assertIsString( $blobId );
+		$blobDataAsArray = FormatJson::decode( $blobData, true );
+
+		foreach ( $protectedVariables as $protectedVariable ) {
+			if ( array_key_exists( $protectedVariable, $toStore ) ) {
+				$this->assertArrayHasKey( $protectedVariable, $blobDataAsArray );
+				$this->assertSame( true, $blobDataAsArray[$protectedVariable] );
+			}
+		}
+
+		$row = (object)[
+			'afl_var_dump' => $aflVarDumpValue,
+			'afl_ip_hex' => $ipHex,
+		];
 		$loadedVars = $varBlobStore->loadVarDump( $row )->getVars();
 		$nativeLoadedVars = array_map( static function ( AFPData $el ) {
 			return $el->toNative();
@@ -242,7 +285,7 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 					'action' => 'move',
 					'old_wikitext' => 'Old text',
 					'new_wikitext' => 'New text',
-					'all_links' => [ 'https://en.wikipedia.org' ],
+					'new_links' => [ 'https://en.wikipedia.org' ],
 					'moved_to_id' => 156,
 					'moved_to_prefixedtitle' => 'MediaWiki:Foobar.js',
 					'new_content_model' => CONTENT_MODEL_JAVASCRIPT
@@ -272,14 +315,16 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 					'accountname' => 'XXX'
 				]
 			],
-			'User IP' => [
-				[
-					'user_unnamed_ip' => '1.2.3.4'
-				],
-				[
-					'user_unnamed_ip' => true
-				]
+			'Has user_unnamed_ip when afl_ip_hex is empty' => [
+				[ 'user_unnamed_ip' => '1.2.3.4' ],
+				[ 'user_unnamed_ip' => '' ],
 			],
+			'Has user_unnamed_ip when afl_ip_hex is an IP' => [
+				[ 'user_unnamed_ip' => '1.2.3.4' ],
+				null,
+				IPUtils::toHex( '1.2.3.4' )
+			],
+			'Has other_protected_variable' => [ [ 'other_protected_variable' => 'abc' ] ],
 		];
 	}
 }

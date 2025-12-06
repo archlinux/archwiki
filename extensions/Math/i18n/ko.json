@@ -18,7 +18,8 @@
 			"Tensama0415",
 			"YeBoy371",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Ellif"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> 태그 사이에 수학 수식을 렌더합니다",
@@ -84,6 +85,7 @@
 	"math_invalidresponse": "$1: \"$2\" 서버에서 잘못된 응답 ('$3'):",
 	"math_invalidxml": "MathML 또는 SVG는 잘못된 XML입니다.",
 	"math_mathoid_error": "변환 오류. 서버 (\"$1\")가 보고했습니다: \"$2\"",
+	"math_other_error": "다른 오류: $1",
 	"math-status-introduction": "이 문서는 활성화된 수식 렌더링 모드에 대한 정보를 보여줍니다.\n\n다음과 같은 렌더링 {{PLURAL:$1|모드}}가 활성화되었습니다:",
 	"math_syntax_error": "구문 오류",
 	"math_timeout": "\"$2\"에서의 $1 타임아웃.",

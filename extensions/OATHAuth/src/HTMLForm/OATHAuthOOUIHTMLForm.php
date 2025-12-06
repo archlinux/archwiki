@@ -17,14 +17,6 @@ use Psr\Log\LoggerInterface;
 
 abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm {
 	/**
-	 * @var OATHUser
-	 */
-	protected $oathUser;
-	/**
-	 * @var OATHUserRepository
-	 */
-	protected $oathRepo;
-	/**
 	 * @var IModule
 	 */
 	protected $module;
@@ -51,39 +43,25 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 	 */
 	protected $panelFramed = true;
 
-	/**
-	 * Initialize the form
-	 *
-	 * @param OATHUser $oathUser
-	 * @param OATHUserRepository $oathRepo
-	 * @param IModule $module
-	 * @param IContextSource $context
-	 */
 	public function __construct(
-		OATHUser $oathUser,
-		OATHUserRepository $oathRepo,
+		protected readonly OATHUser $oathUser,
+		protected readonly OATHUserRepository $oathRepo,
 		IModule $module,
 		IContextSource $context
 	) {
-		$this->oathUser = $oathUser;
-		$this->oathRepo = $oathRepo;
 		$this->module = $module;
 		$this->logger = $this->getLogger();
 
 		parent::__construct( $this->getDescriptors(), $context, "oathauth" );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function show( $layout = null ) {
 		$this->layoutContainer = $layout;
 		return parent::show();
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function displayForm( $submitResult ) {
 		if ( !$this->layoutContainer instanceof Layout ) {
 			parent::displayForm( $submitResult );
@@ -106,9 +84,7 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 		return LoggerFactory::getInstance( 'authentication' );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	protected function wrapFieldSetSection( $legend, $section, $attributes, $isRoot ) {
 		// to get a user visible effect, wrap the fieldset into a framed panel layout
 		$layout = new PanelLayout( [

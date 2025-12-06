@@ -44,23 +44,14 @@ class ActionSpecifier {
 		$this->accountName = $accountName;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getAction(): string {
 		return $this->action;
 	}
 
-	/**
-	 * @return LinkTarget
-	 */
 	public function getTitle(): LinkTarget {
 		return $this->title;
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	public function getUser(): UserIdentity {
 		return $this->user;
 	}
@@ -73,9 +64,6 @@ class ActionSpecifier {
 		return $this->requestIP;
 	}
 
-	/**
-	 * @return string|null
-	 */
 	public function getAccountName(): ?string {
 		return $this->accountName;
 	}

@@ -10,21 +10,7 @@
 /**
  * Base class for all file backends.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileBackend
  */
@@ -257,6 +243,9 @@ abstract class FileBackend implements LoggerAwareInterface {
 		}
 	}
 
+	/**
+	 * @param string $header
+	 */
 	protected function header( $header ) {
 		( $this->headerFunc )( $header );
 	}
@@ -1455,7 +1444,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	 * @return StatusValue
 	 */
 	final public function lockFiles( array $paths, $type, $timeout = 0 ) {
-		$paths = array_map( [ __CLASS__, 'normalizeStoragePath' ], $paths );
+		$paths = array_map( [ self::class, 'normalizeStoragePath' ], $paths );
 
 		return $this->wrapStatus( $this->lockManager->lock( $paths, $type, $timeout ) );
 	}
@@ -1468,7 +1457,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	 * @return StatusValue
 	 */
 	final public function unlockFiles( array $paths, $type ) {
-		$paths = array_map( [ __CLASS__, 'normalizeStoragePath' ], $paths );
+		$paths = array_map( [ self::class, 'normalizeStoragePath' ], $paths );
 
 		return $this->wrapStatus( $this->lockManager->unlock( $paths, $type ) );
 	}
@@ -1494,10 +1483,10 @@ abstract class FileBackend implements LoggerAwareInterface {
 	) {
 		if ( $type === 'mixed' ) {
 			foreach ( $paths as &$typePaths ) {
-				$typePaths = array_map( [ __CLASS__, 'normalizeStoragePath' ], $typePaths );
+				$typePaths = array_map( [ self::class, 'normalizeStoragePath' ], $typePaths );
 			}
 		} else {
-			$paths = array_map( [ __CLASS__, 'normalizeStoragePath' ], $paths );
+			$paths = array_map( [ self::class, 'normalizeStoragePath' ], $paths );
 		}
 
 		return ScopedLock::factory( $this->lockManager, $paths, $type, $status, $timeout );
@@ -1573,7 +1562,7 @@ abstract class FileBackend implements LoggerAwareInterface {
 	 * @return bool
 	 */
 	final public static function isStoragePath( $path ) {
-		return ( strpos( $path ?? '', 'mwstore://' ) === 0 );
+		return ( str_starts_with( $path ?? '', 'mwstore://' ) );
 	}
 
 	/**
@@ -1714,14 +1703,14 @@ abstract class FileBackend implements LoggerAwareInterface {
 		// Remove any leading directory separator
 		$path = ltrim( $path, '/' );
 		// Use the same traversal protection as Title::secureAndSplit()
-		if ( strpos( $path, '.' ) !== false ) {
+		if ( str_contains( $path, '.' ) ) {
 			if (
 				$path === '.' ||
 				$path === '..' ||
-				strpos( $path, './' ) === 0 ||
-				strpos( $path, '../' ) === 0 ||
-				strpos( $path, '/./' ) !== false ||
-				strpos( $path, '/../' ) !== false
+				str_starts_with( $path, './' ) ||
+				str_starts_with( $path, '../' ) ||
+				str_contains( $path, '/./' ) ||
+				str_contains( $path, '/../' )
 			) {
 				return null;
 			}

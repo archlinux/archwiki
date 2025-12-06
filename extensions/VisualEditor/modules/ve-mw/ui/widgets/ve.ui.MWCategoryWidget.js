@@ -19,9 +19,6 @@
  * @param {jQuery} [config.$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWCategoryWidget = function VeUiMWCategoryWidget( config ) {
-	// Config initialization
-	config = config || {};
-
 	// Parent constructor
 	ve.ui.MWCategoryWidget.super.call( this, config );
 
@@ -114,7 +111,7 @@ ve.ui.MWCategoryWidget.prototype.onInputChoose = function ( item ) {
 	if ( value && value !== '' ) {
 		// Add new item
 		const categoryItem = this.getCategoryItemFromValue( value );
-		this.queryCategoryStatus( [ categoryItem.name ] ).done( () => {
+		this.queryCategoryStatus( [ categoryItem.name ] ).then( () => {
 			// Remove existing items by name
 			const toRemove = mw.Title.newFromText( categoryItem.name ).getMainText();
 			if ( Object.prototype.hasOwnProperty.call( this.categories, toRemove ) ) {

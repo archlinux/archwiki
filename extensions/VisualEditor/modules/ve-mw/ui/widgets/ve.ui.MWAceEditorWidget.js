@@ -31,9 +31,6 @@
  * autocomplete to
  */
 ve.ui.MWAceEditorWidget = function VeUiMWAceEditorWidget( config ) {
-	// Configuration
-	config = config || {};
-
 	this.autocomplete = config.autocomplete || 'none';
 	this.autocompleteWordList = config.autocompleteWordList || null;
 
@@ -79,7 +76,7 @@ ve.ui.MWAceEditorWidget.prototype.setup = function () {
 			ve.createDeferred().reject().promise();
 		// Resolved promises will run synchronously, so ensure #setupEditor
 		// runs after this.loadingPromise is stored.
-		this.loadingPromise.done( this.setupEditor.bind( this ) );
+		this.loadingPromise.then( this.setupEditor.bind( this ) );
 	}
 };
 
@@ -87,7 +84,7 @@ ve.ui.MWAceEditorWidget.prototype.setup = function () {
  * Destroy the Ace editor instance
  */
 ve.ui.MWAceEditorWidget.prototype.teardown = function () {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.$input.removeClass( 'oo-ui-element-hidden' );
 		this.editor.destroy();
 		this.editor = null;
@@ -104,7 +101,7 @@ ve.ui.MWAceEditorWidget.prototype.teardown = function () {
 ve.ui.MWAceEditorWidget.prototype.setupEditor = function () {
 	let basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
 
-	if ( basePath.slice( 0, 2 ) === '//' ) {
+	if ( basePath.startsWith( '//' ) ) {
 		// ACE uses web workers, which have importScripts, which don't like relative links.
 		basePath = window.location.protocol + basePath;
 	}
@@ -150,7 +147,7 @@ ve.ui.MWAceEditorWidget.prototype.setupEditor = function () {
  */
 ve.ui.MWAceEditorWidget.prototype.setAutocomplete = function ( mode ) {
 	this.autocomplete = mode;
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.renderer.setOptions( {
 			enableBasicAutocompletion: this.autocomplete !== 'none',
 			enableLiveAutocompletion: this.autocomplete === 'live'
@@ -198,7 +195,7 @@ ve.ui.MWAceEditorWidget.prototype.setEditorValue = function ( value ) {
  */
 ve.ui.MWAceEditorWidget.prototype.setMinRows = function ( minRows ) {
 	this.minRows = minRows;
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.setOptions( {
 			minLines: this.minRows || 3,
 			maxLines: this.autosize ? this.maxRows : this.minRows || 3
@@ -216,7 +213,7 @@ ve.ui.MWAceEditorWidget.prototype.setReadOnly = function ( readOnly ) {
 	// Parent method
 	ve.ui.MWAceEditorWidget.super.prototype.setReadOnly.call( this, readOnly );
 
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.setReadOnly( this.isReadOnly() );
 	} );
 
@@ -262,7 +259,7 @@ ve.ui.MWAceEditorWidget.prototype.getRange = function () {
  */
 ve.ui.MWAceEditorWidget.prototype.selectRange = function ( from, to ) {
 	this.focus();
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		const doc = this.editor.getSession().getDocument(),
 			lines = doc.getAllLines();
 
@@ -289,7 +286,7 @@ ve.ui.MWAceEditorWidget.prototype.selectRange = function ( from, to ) {
 		range.setStart( fromOffset.row, fromOffset.column );
 		range.setEnd( toOffset.row, toOffset.column );
 		selection.setSelectionRange( range );
-	} ).fail( () => {
+	}, () => {
 		ve.ui.MWAceEditorWidget.super.prototype.selectRange.call( this, from, to );
 	} );
 	return this;
@@ -320,7 +317,7 @@ ve.ui.MWAceEditorWidget.prototype.onEditorResize = function () {
  * @chainable
  */
 ve.ui.MWAceEditorWidget.prototype.clearUndoStack = function () {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.session.setUndoManager(
 			new ace.UndoManager()
 		);
@@ -336,7 +333,7 @@ ve.ui.MWAceEditorWidget.prototype.clearUndoStack = function () {
  * @chainable
  */
 ve.ui.MWAceEditorWidget.prototype.toggleLineNumbers = function ( visible ) {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.setOption( 'showLineNumbers', visible );
 	} );
 	return this;
@@ -350,7 +347,7 @@ ve.ui.MWAceEditorWidget.prototype.toggleLineNumbers = function ( visible ) {
  * @chainable
  */
 ve.ui.MWAceEditorWidget.prototype.togglePrintMargin = function ( visible ) {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.renderer.setShowPrintMargin( visible );
 	} );
 	return this;
@@ -364,7 +361,7 @@ ve.ui.MWAceEditorWidget.prototype.togglePrintMargin = function ( visible ) {
  * @chainable
  */
 ve.ui.MWAceEditorWidget.prototype.setLanguage = function ( lang ) {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		ace.config.loadModule( 'ace/ext/modelist', ( modelist ) => {
 			if ( !modelist || !modelist.modesByName[ lang ] ) {
 				lang = 'text';
@@ -382,9 +379,9 @@ ve.ui.MWAceEditorWidget.prototype.setLanguage = function ( lang ) {
  * @chainable
  */
 ve.ui.MWAceEditorWidget.prototype.focus = function () {
-	this.loadingPromise.done( () => {
+	this.loadingPromise.then( () => {
 		this.editor.focus();
-	} ).fail( () => {
+	}, () => {
 		ve.ui.MWAceEditorWidget.super.prototype.focus.call( this );
 	} );
 	return this;
@@ -398,12 +395,11 @@ ve.ui.MWAceEditorWidget.prototype.adjustSize = function ( force ) {
 	// If the editor has loaded, resize events are emitted from #onEditorResize
 	// so do nothing here unless this is a user triggered resize, otherwise call the parent method.
 	if ( force ) {
-		this.loadingPromise.done( () => {
-
+		this.loadingPromise.then( () => {
 			this.editor.resize();
 		} );
 	}
-	this.loadingPromise.fail( () => {
+	this.loadingPromise.then( null, () => {
 		// Parent method
 		ve.ui.MWAceEditorWidget.super.prototype.adjustSize.call( this );
 	} );

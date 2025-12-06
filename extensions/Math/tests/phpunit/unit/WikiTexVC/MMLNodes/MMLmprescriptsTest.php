@@ -1,6 +1,6 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmprescripts;
 use MediaWikiUnitTestCase;

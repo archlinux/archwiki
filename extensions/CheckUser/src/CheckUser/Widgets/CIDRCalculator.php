@@ -85,10 +85,10 @@ class CIDRCalculator {
 		] );
 		$items[] = $input;
 		$items[] = new LabelWidget( [
-			'classes' => [ 'mw-checkuser-cidr-tool-links' ]
+			'classes' => [ 'mw-checkuser-cidr-tool-links' ],
 		] );
 		$items[] = new LabelWidget( [
-			'classes' => [ 'mw-checkuser-cidr-ipnote' ]
+			'classes' => [ 'mw-checkuser-cidr-ipnote' ],
 		] );
 		// From OOUIForm but modified.
 		if ( is_string( $this->mWrapperLegend ) ) {
@@ -104,7 +104,7 @@ class CIDRCalculator {
 			}
 		} else {
 			$content = new Widget( [
-				'content' => $items
+				'content' => $items,
 			] );
 		}
 		return ( new PanelLayout( [
@@ -125,10 +125,6 @@ class CIDRCalculator {
 	 * @return string
 	 */
 	public function __toString() {
-		try {
-			return $this->toString();
-		} catch ( \Exception $ex ) {
-			trigger_error( (string)$ex, E_USER_ERROR );
-		}
+		return $this->toString();
 	}
 }

@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\DiscussionTools\Tests;
 use MediaWiki\Extension\DiscussionTools\CommentModifier;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
  * @group DiscussionTools
@@ -154,7 +154,7 @@ class CommentModifierTest extends IntegrationTestCase {
 
 		static::assertEquals(
 			$expected,
-			XMLSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'],
+			XHtmlSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'],
 			$msg
 		);
 	}
@@ -185,7 +185,7 @@ class CommentModifierTest extends IntegrationTestCase {
 
 		static::assertEquals(
 			$expected,
-			XMLSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'],
+			XHtmlSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'],
 			$msg
 		);
 	}

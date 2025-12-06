@@ -185,7 +185,7 @@ class Less_Cache {
 	}
 
 	public static function CheckCacheDir() {
-		self::$cache_dir = str_replace( '\\', '/', self::$cache_dir );
+		self::$cache_dir = Less_Parser::WinPath( self::$cache_dir );
 		self::$cache_dir = rtrim( self::$cache_dir, '/' ) . '/';
 
 		if ( !file_exists( self::$cache_dir ) ) {

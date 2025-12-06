@@ -25,6 +25,20 @@
 	.vector-dropdown-content .mw-list-item {
 		margin: 0;
 	}
+
+	// <T400946>
+	// Our header currently doesn't support having reading list AND watchlist icons
+	// To be revisited at later date.
+	// stylelint-disable selector-max-specificity, declaration-no-important
+	#pt-readinglists-2 ~ #pt-watchlist-2 {
+		display: none !important;
+	}
+
+	#pt-readinglists ~ #pt-watchlist {
+		display: block !important;
+	}
+	// stylelint-enable selector-max-specificity, declaration-no-important
+	// </T400946>
 }
 
 /**
@@ -85,11 +99,19 @@
 	display: block;
 
 	a::before {
+		// Support: Chrome <= 76, Firefox <= 127, Safari <= 17.3.
 		content: '@{msg-parentheses-start}';
+		// Add alternative empty text for generated parentheses in assistive technology.
+		// Support: modern browsers.
+		// Refer to https://caniuse.com/mdn-css_properties_content_alt_text
+		content: '@{msg-parentheses-start}' / '';
 	}
 
 	a::after {
+		// Support: Chrome <= 76, Firefox <= 127, Safari <= 17.3.
 		content: '@{msg-parentheses-end}';
+		// Support: modern browsers.
+		content: '@{msg-parentheses-end}' / '';
 	}
 }
 

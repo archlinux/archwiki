@@ -1,5 +1,3 @@
-@import 'mediawiki.mixins.rotation.less';
-
 /* Watch/Unwatch Icon Styling */
 /* Only use icon if the menu item is not collapsed into the "More" dropdown
  * (in which case it is inside `.vector-menu-dropdown` instead of `.vector-menu-tabs`). */
@@ -60,11 +58,21 @@
 	// Loading watchstar link class.
 	#ca-unwatch.icon .loading::before,
 	#ca-watch.icon .loading::before {
-		.rotation( 700ms );
 		/* Suppress the hilarious rotating focus outline on Firefox */
 		outline: 0;
 		cursor: default;
 		pointer-events: none;
+		animation: rotate 700ms infinite linear;
 		transform-origin: 50% 50%;
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate( 0deg );
+	}
+
+	to {
+		transform: rotate( 360deg );
 	}
 }

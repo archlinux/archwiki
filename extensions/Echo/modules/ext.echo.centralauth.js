@@ -6,6 +6,6 @@ mw.hook( 'centralauth-p-personal-reset' ).add( () => {
 		'ext.echo.init',
 		'ext.echo.styles.badge',
 		'oojs-ui.styles.icons-alerts',
-		'ext.echo.styles.alert'
+		'ext.echo.styles.alert',
 	] );
 } );

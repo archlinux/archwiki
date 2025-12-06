@@ -56,10 +56,6 @@ class EvalExpression extends ApiBase {
 		}
 	}
 
-	/**
-	 * @param string $expr
-	 * @return Status
-	 */
 	private function evaluateExpression( string $expr ): Status {
 		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
 		if ( !$ruleChecker->checkSyntax( $expr )->isValid() ) {

@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\Content\CssContent;
-use MediaWiki\Content\CssContentHandler;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 
@@ -18,7 +17,8 @@ class CssContentHandlerTest extends MediaWikiLangTestCase {
 			MainConfigNames::Server => '//example.org',
 			MainConfigNames::Script => '/w/index.php',
 		] );
-		$ch = new CssContentHandler();
+		$ch = $this->getServiceContainer()->getContentHandlerFactory()
+			->getContentHandler( CONTENT_MODEL_CSS );
 		$content = $ch->makeRedirectContent( Title::makeTitle( $namespace, $title ) );
 		$this->assertInstanceOf( CssContent::class, $content );
 		$this->assertEquals( $expected, $content->serialize( CONTENT_FORMAT_CSS ) );
@@ -45,6 +45,5 @@ class CssContentHandlerTest extends MediaWikiLangTestCase {
 				'/* #REDIRECT */@import url(//example.org/w/index.php?title=User:%F0%9F%98%82/unicode.css&action=raw&ctype=text/css);'
 			],
 		];
-		// phpcs:enable
 	}
 }

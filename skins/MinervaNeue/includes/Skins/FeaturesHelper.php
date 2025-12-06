@@ -8,6 +8,14 @@ use MediaWiki\Title\Title;
 
 class FeaturesHelper {
 
+	private ?ConfigHelper $configHelper;
+
+	public function __construct(
+		?ConfigHelper $configHelper
+	) {
+		$this->configHelper = $configHelper;
+	}
+
 	/**
 	 * Per the $options configuration (for use with $wgMinervaNightModeOptions)
 	 * determine whether Night Mode should be disabled on the page.
@@ -28,8 +36,9 @@ class FeaturesHelper {
 	 * @internal only for use inside tests.
 	 */
 	public function shouldDisableNightMode( array $options, WebRequest $request, ?Title $title = null ): bool {
-		return class_exists( ConfigHelper::class ) ?
-			ConfigHelper::shouldDisable( $options, $request, $title ) :
-			false;
+		if ( $this->configHelper ) {
+			return $this->configHelper->shouldDisable( $options, $request, $title );
+		}
+		return false;
 	}
 }

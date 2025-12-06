@@ -4,21 +4,7 @@
  *
  * @see /img_auth.php The web entry point.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup entrypoint
  */
@@ -30,6 +16,7 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiEntryPoint;
+use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Title\Title;
 use Wikimedia\FileBackend\HTTPFileStreamer;
 use Wikimedia\Message\MessageParam;
@@ -80,7 +67,7 @@ class AuthenticatedFileEntryPoint extends MediaWikiEntryPoint {
 		$pathMap = $this->getConfig( MainConfigNames::ImgAuthUrlPathMap );
 		foreach ( $pathMap as $prefix => $storageDir ) {
 			$prefix = rtrim( $prefix, '/' ) . '/'; // implicit trailing slash
-			if ( strpos( $path, $prefix ) === 0 ) {
+			if ( str_starts_with( $path, $prefix ) ) {
 				$be = $services->getFileBackendGroup()->backendFromPath( $storageDir );
 				$filename = $storageDir . substr( $path, strlen( $prefix ) ); // strip prefix
 				// Check basic user authorization
@@ -157,9 +144,6 @@ class AuthenticatedFileEntryPoint extends MediaWikiEntryPoint {
 				return;
 			}
 
-			// Check user authorization for this title
-			// Checks Whitelist too
-
 			if ( !$permissionManager->userCan( 'read', $user, $title ) ) {
 				$this->forbidden( 'img-auth-accessdenied', 'img-auth-noread', $name );
 				return;
@@ -178,6 +162,11 @@ class AuthenticatedFileEntryPoint extends MediaWikiEntryPoint {
 
 		if ( $request->getCheck( 'download' ) ) {
 			$headers['Content-Disposition'] = 'attachment';
+		}
+
+		$cspHeader = ContentSecurityPolicy::getMediaHeader( $filename );
+		if ( $cspHeader ) {
+			$headers['Content-Security-Policy'] = $cspHeader;
 		}
 
 		// Allow modification of headers before streaming a file

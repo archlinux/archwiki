@@ -17,7 +17,6 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ConstrainedText;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -114,12 +113,6 @@ class SerializerState {
 	 * @var bool
 	 */
 	public $inIndentPre = false;
-
-	/**
-	 * Is the serializer currently handling a html-pre tag?
-	 * @var bool
-	 */
-	public $inHTMLPre = false;
 
 	/**
 	 * Is the serializer currently handling a tag that the PHP parser
@@ -347,7 +340,7 @@ class SerializerState {
 		$this->sep->lastSourceNode = $node;
 	}
 
-	private function resetSep() {
+	private function resetSep(): void {
 		$this->sep = (object)[
 			'constraints' => null,
 			'src' => null,
@@ -393,8 +386,9 @@ class SerializerState {
 			// can deliberately set DSR to point outside page source.
 			$sr->start <= strlen( $this->selserData->revText )
 		) {
-			// XXX should use $frame->getSrcText() like WTUtils::getWTSource
-			return $sr->substr( $this->selserData->revText );
+			// XXX T405759 We should initialize $sr->source properly.
+			$srcText = $sr->source?->getSrcText() ?? $this->selserData->revText;
+			return $sr->substr( $srcText );
 		} else {
 			return null;
 		}
@@ -420,7 +414,7 @@ class SerializerState {
 		}
 		// check the UTF-8 ranges.
 		$src = $this->selserData->revText;
-		$check = static function ( $start, $end ) use ( $src ) {
+		$check = static function ( int $start, int $end ) use ( $src ): bool {
 			if ( $start === $end ) {
 				// zero-length string is always ok
 				return true;
@@ -497,7 +491,7 @@ class SerializerState {
 		// Don't get tripped by newlines in comments!  Be wary of nowikis added
 		// by makeSepIndentPreSafe on the last line.
 		$nonCommentSep = preg_replace( Utils::COMMENT_REGEXP, '', $sep );
-		if ( substr( $nonCommentSep, -1 ) === "\n" ) {
+		if ( str_ends_with( $nonCommentSep, "\n" ) ) {
 			$this->onSOL = true;
 		}
 
@@ -510,10 +504,11 @@ class SerializerState {
 
 	/**
 	 * Accumulates chunks on the current line.
+	 *
 	 * @param ConstrainedText $chunk
 	 * @param string $logPrefix
 	 */
-	private function pushToCurrLine( ConstrainedText $chunk, string $logPrefix ) {
+	private function pushToCurrLine( ConstrainedText $chunk, string $logPrefix ): void {
 		// Emitting text that has not been escaped
 		$this->currLine->text .= $chunk->text;
 
@@ -684,7 +679,7 @@ class SerializerState {
 
 		$needsEscaping = $this->needsEscaping;
 		if ( $needsEscaping && $this->currNode instanceof Text ) {
-			$needsEscaping = !$this->inHTMLPre && ( $this->onSOL || !$this->currNodeUnmodified );
+			$needsEscaping = ( $this->onSOL || !$this->currNodeUnmodified );
 		}
 
 		// Escape 'res' if necessary
@@ -728,7 +723,7 @@ class SerializerState {
 				// same line as the block tag) => we can save some effort by eliminating
 				// scenarios where 'this.prevNodeUnmodified' is true.
 				 && !$this->prevNodeUnmodified
-				&& DOMCompat::nodeName( $node ) === 'p' && !WTUtils::isLiteralHTMLNode( $node )
+				&& DOMUtils::nodeName( $node ) === 'p' && !WTUtils::isLiteralHTMLNode( $node )
 			) {
 				$pChild = DiffDOMUtils::firstNonSepChild( $node );
 				// If a text node, we have to make sure that the text doesn't
@@ -830,7 +825,7 @@ class SerializerState {
 	private function serializeChildrenToString(
 		Node $node, ?callable $wtEscaper, string $inState
 	): string {
-		$states = [ 'inLink', 'inCaption', 'inIndentPre', 'inHTMLPre', 'inPHPBlock', 'inAttribute' ];
+		$states = [ 'inLink', 'inCaption', 'inIndentPre', 'inPHPBlock', 'inAttribute' ];
 		Assert::parameter( in_array( $inState, $states, true ), '$inState', 'Must be one of: '
 			. implode( ', ', $states ) );
 		// FIXME: Make sure that the separators emitted here conform to the
@@ -911,18 +906,20 @@ class SerializerState {
 
 	/**
 	 * Take notes of the open annotation ranges and whether they have been extended.
+	 *
 	 * @param string $ann
 	 * @param bool $extended
 	 */
-	public function openAnnotationRange( string $ann, bool $extended ) {
+	public function openAnnotationRange( string $ann, bool $extended ): void {
 		$this->openAnnotations[$ann] = $extended;
 	}
 
 	/**
 	 * Removes the corresponding annotation range from the list of open ranges.
+	 *
 	 * @param string $ann
 	 */
-	public function closeAnnotationRange( string $ann ) {
+	public function closeAnnotationRange( string $ann ): void {
 		unset( $this->openAnnotations[$ann] );
 	}
 

@@ -14,7 +14,7 @@ QUnit.test( 'getDocument', ( assert ) => {
 	assert.deepEqual( internalList.getDocument(), doc, 'Returns original document' );
 } );
 
-QUnit.test( 'queueItemHtml/getItemHtmlQueue', ( assert ) => {
+QUnit.test( 'queueItemHtml', ( assert ) => {
 	const doc = ve.dm.example.createExampleDocument(),
 		internalList = doc.getInternalList();
 	assert.deepEqual(
@@ -41,7 +41,7 @@ QUnit.test( 'queueItemHtml/getItemHtmlQueue', ( assert ) => {
 		'Third queued item is new because existing data in queue was empty'
 	);
 
-	assert.deepEqual( internalList.getItemHtmlQueue(), [ 'Bar', 'Baz', 'Quux' ], 'getItemHtmlQueue returns stored HTML items' );
+	assert.deepEqual( internalList.itemHtmlQueue, [ 'Bar', 'Baz', 'Quux' ], 'queue contains stored HTML items' );
 } );
 
 QUnit.test( 'convertToData', ( assert ) => {
@@ -63,17 +63,17 @@ QUnit.test( 'convertToData', ( assert ) => {
 			{ type: '/internalList' }
 		];
 
-	// Mimic convert state setup (as done in ve.dm.Converter#getDataFromDom)
-	// TODO: The test should not (directly) reference the global instance
-	ve.dm.converter.doc = htmlDoc;
-	ve.dm.converter.store = doc.getStore();
-	ve.dm.converter.internalList = internalList;
-	ve.dm.converter.contextStack = [];
+	// Mimic converter state setup (as done in ve.dm.ModelFromDomConverter#getDataFromDom)
+	const converter = new ve.dm.ModelFromDomConverter( ve.dm.modelRegistry, ve.dm.nodeFactory, ve.dm.annotationFactory );
+	converter.doc = htmlDoc;
+	converter.store = doc.getStore();
+	converter.internalList = internalList;
+	converter.contextStack = [];
 
 	internalList.queueItemHtml( 'reference', 'foo', 'Bar' );
 	internalList.queueItemHtml( 'reference', 'bar', 'Baz' );
-	assert.deepEqual( internalList.convertToData( ve.dm.converter, htmlDoc ), expectedData, 'Data matches' );
-	assert.deepEqual( internalList.getItemHtmlQueue(), [], 'Items html is emptied after conversion' );
+	assert.deepEqual( internalList.convertToData( converter, htmlDoc ), expectedData, 'Data matches' );
+	assert.strictEqual( internalList.itemHtmlQueue.length, 0, 'queue is emptied after conversion' );
 } );
 
 QUnit.test( 'clone', ( assert ) => {
@@ -93,4 +93,55 @@ QUnit.test( 'clone', ( assert ) => {
 	assert.strictEqual( internalList.getNextUniqueNumber(), 3, 'Original internal list has nextUniqueNumber = 3' );
 	assert.strictEqual( internalListClone.getNextUniqueNumber(), 4, 'Clone from original document has nextUniqueNumber = 4' );
 	assert.strictEqual( internalListClone2.getNextUniqueNumber(), 0, 'Clone with different document has nextUniqueNumber = 0' );
+} );
+
+QUnit.test( 'getItemInsertion', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument();
+	const internalList = doc.getInternalList();
+
+	let insertion = internalList.getItemInsertion( 'group', 'literal/key', [] );
+	const index = internalList.getItemNodeCount();
+	assert.strictEqual( insertion.index, index, 'Insertion creates a new reference' );
+	assert.deepEqual(
+		insertion.transaction.getOperations(),
+		[
+			{ type: 'retain', length: 62 },
+			{
+				type: 'replace',
+				remove: [],
+				insert: [
+					{ type: 'internalItem' },
+					{ type: '/internalItem' }
+				]
+			},
+			{ type: 'retain', length: 1 }
+		],
+		'New reference operations match' );
+
+	insertion = internalList.getItemInsertion( 'group', 'literal/key', [] );
+	assert.strictEqual( insertion.index, index, 'Insertion with duplicate key reuses old index' );
+	assert.strictEqual( insertion.transaction, null, 'Insertion with duplicate key has null transaction' );
+} );
+
+QUnit.test( 'getUniqueListKey', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument( 'references' );
+	const internalList = doc.getInternalList();
+
+	let generatedName;
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/0', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:0', '0 maps to 0' );
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/1', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:1', '1 maps to 1' );
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/2', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:2', '2 maps to 2' );
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/3', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:4', '3 maps to 4 (because a literal :3 is present)' );
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/4', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:5', '4 maps to 5' );
+
+	generatedName = internalList.getUniqueListKey( 'g1', 'auto/0', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:0', 'Reusing a key reuses the name' );
+
+	generatedName = internalList.getUniqueListKey( 'g2', 'auto/4', 'literal/:' );
+	assert.strictEqual( generatedName, 'literal/:0', 'Different groups are treated separately' );
 } );

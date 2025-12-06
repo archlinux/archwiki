@@ -25,6 +25,7 @@
 			"Lakejason0",
 			"Liflon",
 			"Liuxinyu970226",
+			"LowensteinYang",
 			"LuciferianThomas",
 			"Luuva",
 			"Qiyue2001",
@@ -44,8 +45,7 @@
 			"列维劳德",
 			"和平奮鬥救地球",
 			"捍粵者",
-			"烈羽",
-			"LowensteinYang"
+			"烈羽"
 		]
 	},
 	"collabpad-doctitle": "CollabPad：$1",
@@ -287,6 +287,7 @@
 	"visualeditor-includes-includeonly-description": "當來自此頁面的內容被使用在另一個頁面時，以下額外內容會包含在此：",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion 了解有關部分嵌入的更多資訊]",
 	"visualeditor-languages-tool": "語言",
+	"visualeditor-linkcontext-uneditable": "很抱歉，此連結目前只能在原始碼模式下編輯。",
 	"visualeditor-linkinspector-button-link-external": "外部站台",
 	"visualeditor-linkinspector-button-link-internal": "搜尋內部頁面",
 	"visualeditor-linkinspector-convert-link-isbn": "轉換為 ISBN 連結",
@@ -391,7 +392,7 @@
 	"visualeditor-special-characters-group-other": "經常使用",
 	"visualeditor-templatesused-tool": "使用的模板",
 	"visualeditor-title-error": "無效標題。",
-	"visualeditor-toload": "現在將載入編輯器，若您再幾秒過後仍看到此訊息，請[$1 重新載入頁面]。",
+	"visualeditor-toload": "編輯器即將載入，若您再幾秒過後仍看到此訊息，請[$1 刷新頁面]。",
 	"visualeditor-tooltip-non-breaking-space": "不換行空格",
 	"visualeditor-version-label": "版本",
 	"visualeditor-wikitext-progress": "wikitext 轉換中",

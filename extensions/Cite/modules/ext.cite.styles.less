@@ -41,9 +41,14 @@ ol.references {
 	}
 
 	.mw-subreference-list {
-		list-style: none;
-		margin-left: 2em;
+		margin-left: 1em;
 		padding: 0;
+
+		// As in resources/src/mediawiki.skinning/i18n-ordered-lists.less we must reset this on the
+		// <li> level, not <ol>
+		li {
+			list-style: none;
+		}
 	}
 }
 

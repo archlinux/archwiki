@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -26,6 +12,7 @@ use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Message\Message;
+use Wikimedia\Message\ListType;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -108,7 +95,7 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 				$this->addWarning( [
 					'apiwarn-unrecognizedvalues',
 					$this->encodeParamName( 'code' ),
-					Message::listParam( $unrecognizedCodes, 'comma' ),
+					Message::listParam( $unrecognizedCodes, ListType::COMMA ),
 					count( $unrecognizedCodes ),
 				] );
 			}
@@ -206,10 +193,12 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'prop' => [
@@ -237,6 +226,7 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$pathUrl = 'action=' . $this->getQuery()->getModuleName() .
 			'&meta=' . $this->getModuleName();

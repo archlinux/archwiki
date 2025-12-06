@@ -13,7 +13,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Sanitizes the margin at-rules inside a CSS \@page rule
- * @see https://www.w3.org/TR/2018/WD-css-page-3-20181018/
+ * @see https://www.w3.org/TR/2023/WD-css-page-3-20230914/
  */
 class MarginAtRuleSanitizer extends RuleSanitizer {
 

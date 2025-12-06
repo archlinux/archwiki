@@ -501,6 +501,11 @@ $specialPageAliases['yi'] = [
 	'CategoryTree' => [ 'קאטעגאריע_בוים' ],
 ];
 
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'CategoryTree' => [ 'CategoryTree' ],
+];
+
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'CategoryTree' => [ '分类树' ],

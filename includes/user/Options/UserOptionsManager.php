@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -219,12 +205,14 @@ class UserOptionsManager extends UserOptionsLookup {
 		return $options;
 	}
 
+	/** @inheritDoc */
 	public function isOptionGlobal( UserIdentity $user, string $key ) {
 		$this->getOptions( $user );
 		$source = $this->cache[ $this->getCacheKey( $user ) ]->sources[$key] ?? self::LOCAL_STORE_KEY;
 		return $source !== self::LOCAL_STORE_KEY;
 	}
 
+	/** @inheritDoc */
 	public function getOptionBatchForUserNames( array $users, string $key ) {
 		if ( !$users ) {
 			return [];
@@ -626,13 +614,13 @@ class UserOptionsManager extends UserOptionsLookup {
 	private function getStores() {
 		if ( !$this->stores ) {
 			$stores = [
-				self::LOCAL_STORE_KEY => new LocalUserOptionsStore( $this->dbProvider )
+				self::LOCAL_STORE_KEY => new LocalUserOptionsStore( $this->dbProvider, $this->hookRunner )
 			];
 			foreach ( $this->storeProviders as $name => $spec ) {
-				$store = $this->objectFactory->createObject( $spec );
-				if ( !$store instanceof UserOptionsStore ) {
-					throw new \RuntimeException( "Invalid type for extension store \"$name\"" );
-				}
+				$store = $this->objectFactory->createObject(
+					$spec,
+					[ 'assertClass' => UserOptionsStore::class ]
+				);
 				$stores[$name] = $store;
 			}
 			// Query global providers first, preserve keys

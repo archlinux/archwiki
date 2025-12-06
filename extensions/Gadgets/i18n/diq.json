@@ -22,7 +22,6 @@
 	"gadgetusage-usercount": "Amarê karberan",
 	"gadgetusage-noresults": "Hacet nivineya.",
 	"gadgetusage-intro": "Bu tablo, bu küçük araçtaki her bir küçük aracı etkinleştiren kullanıcıların sayısını gösterir. Aktif bir kullanıcı, son {{PLURAL:$1|gün|$1 gün}} düzenleme yapan biri olarak sayılır. Bu liste, varsayılan olarak herkes için etkin olan küçük araçların istatistiklerini hariç tutar ve artık bulunmayan küçük araçları içerebilir.",
-	"gadgetusage-intro-noactive": "Bu tablo, bu küçük araçtaki her bir küçük aracı etkinleştiren kullanıcıların sayısını gösterir. Bu liste, varsayılan olarak herkes için etkin olan küçük aracın istatistiklerini hariç tutar ve artık bulunmayan küçük araçları içerebilir.",
 	"gadgetusage-activeusers": "Karberê aktivi",
 	"gadgetusage-default": "Hesabyaye",
 	"gadgets-title": "Hacetê werdi",

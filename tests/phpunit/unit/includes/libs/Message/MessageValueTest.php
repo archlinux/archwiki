@@ -4,6 +4,7 @@ namespace Wikimedia\Tests\Message;
 
 use MediaWiki\Json\JsonCodec;
 use MediaWikiUnitTestCase;
+use Wikimedia\Message\ListParam;
 use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
@@ -33,6 +34,17 @@ class MessageValueTest extends MediaWikiUnitTestCase {
 				[ 'key', [ new ScalarParam( ParamType::BITRATE, 100 ) ] ],
 				'<message key="key"><bitrate>100</bitrate></message>'
 			],
+			'withListParam' => [
+				[ 'key', [ new ListParam( ListType::COMMA, [
+					new ScalarParam( ParamType::NUM, 1 ),
+					new ScalarParam( ParamType::NUM, 2 ),
+				] ) ] ],
+				'<message key="key"><list listType="comma"><num>1</num><num>2</num></list></message>'
+			],
+			'withMessageValue' => [
+				[ 'key', [ new MessageValue( 'key2', [ 'a' ] ) ] ],
+				'<message key="key"><text><message key="key2"><text>a</text></message></text></message>'
+			],
 		];
 	}
 
@@ -45,8 +57,7 @@ class MessageValueTest extends MediaWikiUnitTestCase {
 		$serialized = $codec->serialize( $obj );
 		$newObj = $codec->deserialize( $serialized );
 
-		// XXX: would be nice to have a proper ::equals() method.
-		$this->assertEquals( $obj->dump(), $newObj->dump() );
+		$this->assertTrue( $obj->isSameAs( $newObj ), $newObj->dump() );
 	}
 
 	/** @dataProvider provideConstruct */

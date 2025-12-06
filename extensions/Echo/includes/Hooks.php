@@ -2,15 +2,11 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use EmailNotification;
 use LogicException;
-use MailAddress;
 use MediaWiki\Api\ApiModuleManager;
 use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Config\Config;
-use MediaWiki\Content\Content;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksTable;
@@ -22,7 +18,6 @@ use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
-use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\Notifications\UserRightsNotification;
 use MediaWiki\Extension\Notifications\Push\Api\ApiEchoPushSubscriptions;
 use MediaWiki\Hook\EmailUserCompleteHook;
@@ -31,22 +26,20 @@ use MediaWiki\Hook\LinksUpdateCompleteHook;
 use MediaWiki\Hook\LoginFormValidErrorMessagesHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\RecentChange_saveHook;
-use MediaWiki\Hook\SendWatchlistEmailNotificationHook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Hook\SpecialMuteModifyFormFieldsHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HTMLForm\Field\HTMLCheckMatrix;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\Logging\LogEntry;
+use MediaWiki\Mail\MailAddress;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Notification\NotificationService;
 use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook;
 use MediaWiki\Output\OutputPage;
-use MediaWiki\Page\Hook\ArticleDeleteCompleteHook;
 use MediaWiki\Page\Hook\ArticleUndeleteHook;
 use MediaWiki\Page\Hook\RollbackCompleteHook;
 use MediaWiki\Page\WikiPage;
@@ -61,12 +54,9 @@ use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Storage\EditResult;
-use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\CentralId\CentralIdLookup;
@@ -87,11 +77,8 @@ use MobileContext;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Stats\StatsFactory;
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
-
 class Hooks implements
 	ApiMain__moduleManagerHook,
-	ArticleDeleteCompleteHook,
 	ArticleUndeleteHook,
 	BeforePageDisplayHook,
 	EmailUserCompleteHook,
@@ -99,16 +86,13 @@ class Hooks implements
 	GetPreferencesHook,
 	LinksUpdateCompleteHook,
 	LoadUserOptionsHook,
-	LocalUserCreatedHook,
 	LoginFormValidErrorMessagesHook,
 	OutputPageCheckLastModifiedHook,
-	PageSaveCompleteHook,
 	PreferencesGetIconHook,
 	RecentChange_saveHook,
 	ResourceLoaderRegisterModulesHook,
 	RollbackCompleteHook,
 	SaveUserOptionsHook,
-	SendWatchlistEmailNotificationHook,
 	SkinTemplateNavigation__UniversalHook,
 	UserClearNewTalkNotificationHook,
 	UserGetDefaultOptionsHook,
@@ -116,56 +100,28 @@ class Hooks implements
 	UserSaveSettingsHook,
 	SpecialMuteModifyFormFieldsHook
 {
-	private AuthManager $authManager;
-	private CentralIdLookup $centralIdLookup;
-	private Config $config;
-	private AttributeManager $attributeManager;
-	private HookContainer $hookContainer;
-	private Language $contentLanguage;
-	private LinkRenderer $linkRenderer;
-	private NamespaceInfo $namespaceInfo;
-	private PermissionManager $permissionManager;
-	private RevisionStore $revisionStore;
-	private StatsFactory $statsFactory;
-	private TalkPageNotificationManager $talkPageNotificationManager;
-	private UserEditTracker $userEditTracker;
-	private UserFactory $userFactory;
-	private UserOptionsManager $userOptionsManager;
+	private readonly StatsFactory $statsFactory;
 
 	private static array $revertedRevIds = [];
 
 	public function __construct(
-		AuthManager $authManager,
-		CentralIdLookup $centralIdLookup,
-		Config $config,
-		AttributeManager $attributeManager,
-		HookContainer $hookContainer,
-		Language $contentLanguage,
-		LinkRenderer $linkRenderer,
-		NamespaceInfo $namespaceInfo,
-		PermissionManager $permissionManager,
-		RevisionStore $revisionStore,
+		private readonly AuthManager $authManager,
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly Config $config,
+		private readonly AttributeManager $attributeManager,
+		private readonly HookContainer $hookContainer,
+		private readonly Language $contentLanguage,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly NotificationService $notificationService,
+		private readonly PermissionManager $permissionManager,
 		StatsFactory $statsFactory,
-		TalkPageNotificationManager $talkPageNotificationManager,
-		UserEditTracker $userEditTracker,
-		UserFactory $userFactory,
-		UserOptionsManager $userOptionsManager
+		private readonly TalkPageNotificationManager $talkPageNotificationManager,
+		private readonly UserEditTracker $userEditTracker,
+		private readonly UserFactory $userFactory,
+		private readonly UserOptionsManager $userOptionsManager,
 	) {
-		$this->authManager = $authManager;
-		$this->centralIdLookup = $centralIdLookup;
-		$this->config = $config;
-		$this->attributeManager = $attributeManager;
-		$this->hookContainer = $hookContainer;
-		$this->contentLanguage = $contentLanguage;
-		$this->linkRenderer = $linkRenderer;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->permissionManager = $permissionManager;
-		$this->revisionStore = $revisionStore;
 		$this->statsFactory = $statsFactory->withComponent( 'Echo' );
-		$this->talkPageNotificationManager = $talkPageNotificationManager;
-		$this->userEditTracker = $userEditTracker;
-		$this->userFactory = $userFactory;
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	/**
@@ -211,6 +167,13 @@ class Hooks implements
 				// emails are sent only if sender also sets the API option, which is disabled by default
 				'email' => true,
 			],
+			'verify-email-reminder' => [
+				'web' => true,
+				// Echo emails are generally not sent if the user doesn't have a confirmed email
+				// address, but we special case this notification type because of its
+				// account security implications, see Notifier::notifyWithEmail
+				'email' => true,
+			],
 		];
 
 		$echoPushEnabled = $this->config->get( ConfigNames::EnablePush );
@@ -250,7 +213,12 @@ class Hooks implements
 			$wgEchoWatchlistNotifications, $wgEchoSeenTimeCacheType, $wgMainStash, $wgEnableEmail,
 			$wgEnableUserEmail, $wgEchoEnableApiEvents;
 
-		// allow extensions to define their own event
+		// add events defined in extension attributes (extension.json)
+		$exReg = ExtensionRegistry::getInstance();
+		$wgEchoNotifications += $exReg->getAttribute( 'EchoNotifications' );
+		$wgEchoNotificationCategories += $exReg->getAttribute( 'EchoNotificationCategories' );
+		$wgEchoNotificationIcons += $exReg->getAttribute( 'EchoNotificationIcons' );
+		// allow extensions to define their events dynamically, or modify existing ones (deprecated)
 		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onBeforeCreateEchoEvent(
 			$wgEchoNotifications, $wgEchoNotificationCategories, $wgEchoNotificationIcons );
 
@@ -295,14 +263,14 @@ class Hooks implements
 			'icons' => $this->config->get( ConfigNames::NotificationIcons ),
 			'selector' => '.mw-echo-icon-{name}',
 			'localBasePath' => $this->config->get( MainConfigNames::ExtensionDirectory ),
-			'remoteExtPath' => 'Echo/modules'
+			'remoteExtPath' => 'Echo/modules',
 		] );
 		$resourceLoader->register( 'ext.echo.secondaryicons', [
 			'class' => ResourceLoaderEchoImageModule::class,
 			'icons' => $this->config->get( ConfigNames::SecondaryIcons ),
 			'selector' => '.mw-echo-icon-{name}',
 			'localBasePath' => $this->config->get( MainConfigNames::ExtensionDirectory ),
-			'remoteExtPath' => 'Echo/modules'
+			'remoteExtPath' => 'Echo/modules',
 		] );
 	}
 
@@ -336,7 +304,7 @@ class Hooks implements
 			// The following message is generated upstrem:
 			// * prefs-emailsettings
 			'section' => 'echo/emailsettings',
-			'options-messages' => $freqOptions
+			'options-messages' => $freqOptions,
 		];
 
 		$preferences['echo-dont-email-read-notifications'] = [
@@ -345,7 +313,7 @@ class Hooks implements
 			// The following message is generated upstrem:
 			// * prefs-emailsettings
 			'section' => 'echo/emailsettings',
-			'hide-if' => [ 'OR', [ '===', 'echo-email-frequency', '-1' ], [ '===', 'echo-email-frequency', '0' ] ]
+			'hide-if' => [ 'OR', [ '===', 'echo-email-frequency', '-1' ], [ '===', 'echo-email-frequency', '0' ] ],
 		];
 
 		// Display information about the user's currently set email address
@@ -373,7 +341,7 @@ class Hooks implements
 			'label-message' => 'echo-pref-send-to',
 			// The following message is generated upstrem:
 			// * prefs-emailsettings
-			'section' => 'echo/emailsettings'
+			'section' => 'echo/emailsettings',
 		];
 
 		// Only show this option if html email is allowed, otherwise it is always plain text format
@@ -388,7 +356,7 @@ class Hooks implements
 				'options-messages' => [
 					'echo-pref-email-format-html' => EmailFormat::HTML,
 					'echo-pref-email-format-plain-text' => EmailFormat::PLAIN_TEXT,
-				]
+				],
 			];
 		}
 
@@ -433,10 +401,13 @@ class Hooks implements
 		$tooltips = [];
 		$notificationCategories = $this->config->get( ConfigNames::NotificationCategories );
 		foreach ( $validSortedCategories as $category ) {
-			$categoryMessage = wfMessage( 'echo-category-title-' . $category )->numParams( 1 )->escaped();
+			$categoryTitle = $this->attributeManager->getCategoryTitle( $category );
+			$categoryTooltip = $this->attributeManager->getCategoryTooltip( $category );
+
+			$categoryMessage = wfMessage( $categoryTitle )->numParams( 1 )->escaped();
 			$rows[$categoryMessage] = $category;
-			if ( isset( $notificationCategories[$category]['tooltip'] ) ) {
-				$tooltips[$categoryMessage] = wfMessage( $notificationCategories[$category]['tooltip'] )->text();
+			if ( $categoryTooltip ) {
+				$tooltips[$categoryMessage] = wfMessage( $categoryTooltip )->text();
 			}
 		}
 
@@ -481,7 +452,7 @@ class Hooks implements
 				'label-message' => 'echo-pref-cross-wiki-notifications',
 				// The following message is generated upstrem:
 				// * prefs-echocrosswiki
-				'section' => 'echo/echocrosswiki'
+				'section' => 'echo/echocrosswiki',
 			];
 		}
 
@@ -492,7 +463,7 @@ class Hooks implements
 				'help-message' => 'echo-pref-show-poll-updates-help',
 				// The following message is generated upstrem:
 				// * prefs-echopollupdates
-				'section' => 'echo/echopollupdates'
+				'section' => 'echo/echopollupdates',
 			];
 		}
 
@@ -534,7 +505,7 @@ class Hooks implements
 				'section' => 'echo/mutedpageslist',
 				'showMissing' => false,
 				'excludeDynamicNamespaces' => true,
-				'filter' => new MultiTitleFilter()
+				'filter' => new MultiTitleFilter(),
 			];
 		}
 	}
@@ -554,145 +525,6 @@ class Hooks implements
 	 */
 	private function isEmailChangeAllowed() {
 		return $this->authManager->allowsPropertyChange( 'emailaddress' );
-	}
-
-	/**
-	 * Handler for PageSaveComplete hook
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageSaveComplete
-	 *
-	 * @param WikiPage $wikiPage modified WikiPage
-	 * @param UserIdentity $userIdentity User who edited
-	 * @param string $summary Edit summary
-	 * @param int $flags Edit flags
-	 * @param RevisionRecord $revisionRecord RevisionRecord for the revision that was created
-	 * @param EditResult $editResult
-	 */
-	public function onPageSaveComplete(
-		$wikiPage,
-		$userIdentity,
-		$summary,
-		$flags,
-		$revisionRecord,
-		$editResult
-	) {
-		if ( $editResult->isNullEdit() ) {
-			return;
-		}
-
-		$title = $wikiPage->getTitle();
-		$isRevert = $editResult->getRevertMethod() === EditResult::REVERT_UNDO ||
-			$editResult->getRevertMethod() === EditResult::REVERT_ROLLBACK;
-
-		// Save the revert status for the LinksUpdateComplete hook
-		if ( $isRevert ) {
-			self::$revertedRevIds[$revisionRecord->getId()] = true;
-		}
-
-		// Try to do this after the HTTP response
-		DeferredUpdates::addCallableUpdate( static function () use ( $revisionRecord, $isRevert ) {
-			DiscussionParser::generateEventsForRevision( $revisionRecord, $isRevert );
-		} );
-
-		// If the user is not an IP and this is not a null edit,
-		// test for them reaching a congratulatory threshold
-		$thresholds = [ 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000 ];
-		if ( $userIdentity->isRegistered() ) {
-			$thresholdCount = $this->getPredictedEditCount( $userIdentity );
-			if ( in_array( $thresholdCount, $thresholds ) ) {
-				DeferredUpdates::addCallableUpdate( static function () use (
-					$revisionRecord, $userIdentity, $title, $thresholdCount
-				) {
-					$notificationMapper = new NotificationMapper();
-					$notifications = $notificationMapper->fetchByUser( $userIdentity, 10, null, [ 'thank-you-edit' ] );
-					/** @var Notification $notification */
-					foreach ( $notifications as $notification ) {
-						if ( $notification->getEvent()->getExtraParam( 'editCount' ) === $thresholdCount ) {
-							LoggerFactory::getInstance( 'Echo' )->debug(
-								'{user} (id: {id}) has already been thanked for their {count} edit',
-								[
-									'user' => $userIdentity->getName(),
-									'id' => $userIdentity->getId(),
-									'count' => $thresholdCount,
-								]
-							);
-							return;
-						}
-					}
-
-					Event::create( [
-						'type' => 'thank-you-edit',
-						'title' => $title,
-						'agent' => $userIdentity,
-						// Edit threshold notifications are sent to the agent
-						'extra' => [
-							'editCount' => $thresholdCount,
-							'revid' => $revisionRecord->getId(),
-						]
-					] );
-				} );
-			}
-		}
-
-		// Handle the case of someone undoing an edit, either through the
-		// 'undo' link in the article history or via the API.
-		// Reverts through the 'rollback' link (EditResult::REVERT_ROLLBACK)
-		// are handled in ::onRollbackComplete().
-		if ( $editResult->getRevertMethod() === EditResult::REVERT_UNDO ) {
-			$undidRevId = $editResult->getUndidRevId();
-			$undidRevision = $this->revisionStore->getRevisionById( $undidRevId );
-			if ( $undidRevision && $undidRevision->getPage()->isSamePageAs( $title ) ) {
-				$revertedUser = $undidRevision->getUser();
-				// No notifications for anonymous users
-				if ( $revertedUser && $revertedUser->getId() ) {
-					Event::create( [
-						'type' => 'reverted',
-						'title' => $title,
-						'extra' => [
-							'revid' => $revisionRecord->getId(),
-							'reverted-user-id' => $revertedUser->getId(),
-							'reverted-revision-id' => $undidRevId,
-							'method' => 'undo',
-							'summary' => $summary,
-						],
-						'agent' => $userIdentity,
-					] );
-				}
-			}
-		}
-	}
-
-	/**
-	 * Get the predicted edit count after a page save hook
-	 *
-	 * @param UserIdentity $user
-	 * @return int
-	 */
-	private function getPredictedEditCount( UserIdentity $user ) {
-		$editCount = $this->userEditTracker->getUserEditCount( $user ) ?: 0;
-		// When this code runs, the deferred update that increments the edit count
-		// will still be pending.
-
-		return $editCount + 1;
-	}
-
-	/**
-	 * Handler for LocalUserCreated hook.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LocalUserCreated
-	 * @param User $user User object that was created.
-	 * @param bool $autocreated True when account was auto-created
-	 */
-	public function onLocalUserCreated( $user, $autocreated ) {
-		if ( !$autocreated ) {
-			Event::create( [
-				'type' => 'welcome',
-				'agent' => $user,
-			] );
-		}
-
-		$seenTime = SeenTime::newFromUser( $user );
-
-		// Set seen time to UNIX epoch, so initially all notifications are unseen.
-		$seenTime->setTime( wfTimestamp( TS_MW, 1 ), 'all' );
 	}
 
 	/**
@@ -745,7 +577,7 @@ class Hooks implements
 				$user, $performer, $reason, $expiryChanged
 			);
 
-			MediaWikiServices::getInstance()->getNotificationService()->notify(
+			$this->notificationService->notify(
 				$notification, new RecipientSet( [ $user ] )
 			);
 		}
@@ -754,7 +586,7 @@ class Hooks implements
 			$notification = UserRightsNotification::newForRightsChange(
 				$user, $performer, $reason, $reallyAdded, $remove
 			);
-			MediaWikiServices::getInstance()->getNotificationService()->notify(
+			$this->notificationService->notify(
 				$notification, new RecipientSet( [ $user ] )
 			);
 		}
@@ -793,6 +625,9 @@ class Hooks implements
 		$revRecord = $linksUpdate->getRevisionRecord();
 		$revid = $revRecord ? $revRecord->getId() : null;
 		$user = $revRecord ? $revRecord->getUser() : null;
+		if ( $user && $user->getName() === User::MAINTENANCE_SCRIPT_USER ) {
+			$user = null;
+		}
 
 		// link notification is boundless as you can include infinite number of links in a page
 		// db insert is expensive, limit it to a reasonable amount, we can increase this limit
@@ -821,7 +656,7 @@ class Hooks implements
 						'target-page' => $linkFromPageId,
 						'link-from-page-id' => $linkFromPageId,
 						'revid' => $revid,
-					]
+					],
 				] );
 				$max--;
 			}
@@ -857,14 +692,14 @@ class Hooks implements
 		// Load the styles for the Notifications badge
 		$out->addModuleStyles( [
 			'ext.echo.styles.badge',
-			'oojs-ui.styles.icons-alerts'
+			'oojs-ui.styles.icons-alerts',
 		] );
 	}
 
 	private function processMarkAsRead( User $user, WebRequest $request, Title $title ): array {
 		$subtractions = [
 			AttributeManager::ALERT => 0,
-			AttributeManager::MESSAGE => 0
+			AttributeManager::MESSAGE => 0,
 		];
 
 		// Attempt to mark a notification as read when visiting a page
@@ -982,8 +817,7 @@ class Hooks implements
 
 		// Add notifications items to personal URLs
 		// (On mobile, they're combined into one for reasons lost to mists of time)
-		// TODO: Make this a skin option, and remove other Minerva special-cases below. Currently it's
-		// not fully supported by the JS flyout code, so it can't be enabled on other skins.
+		// TODO: Make this a skin option (T299229), and remove other Minerva special-cases below.
 		$isMobile = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
 			// @phan-suppress-next-line PhanUndeclaredClassMethod
 			MobileContext::singleton()->shouldDisplayMobileView();
@@ -1090,7 +924,7 @@ class Hooks implements
 		$icons = [
 			AttributeManager::ALERT => 'bell',
 			AttributeManager::MESSAGE => 'tray',
-			AttributeManager::ALL => $skinName === 'minerva' && $hasUnseen ? 'circle' : 'bellOutline',
+			AttributeManager::ALL => 'bellOutline',
 		];
 		// This item used to be part of personal tools, and much CSS relies on it using this id.
 		$ids = [
@@ -1107,6 +941,8 @@ class Hooks implements
 				'link-class' => $linksClasses[$section],
 				'icon' => $icons[$section],
 				'data' => [
+					'mw-notifications-section' => $section,
+					'badge-icon' => $icons[$section],
 					// FIXME: What is this for and why is it like this?
 					'event-name' => $section === AttributeManager::MESSAGE ? null : 'ui.notifications',
 					'counter-num' => $counts[$section],
@@ -1143,42 +979,6 @@ class Hooks implements
 			return 'registered';
 		}
 		return 'unknown';
-	}
-
-	/**
-	 * Handler for AbortWatchlistEmailNotification hook.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/AbortWatchlistEmailNotification
-	 * @param User $targetUser
-	 * @param Title $title
-	 * @param EmailNotification $emailNotification The email notification object that sends non-echo notifications
-	 * @return bool
-	 */
-	public function onSendWatchlistEmailNotification( $targetUser, $title, $emailNotification ) {
-		if ( $this->config->get( ConfigNames::WatchlistNotifications ) &&
-			isset( $this->config->get( ConfigNames::Notifications )["watchlist-change"] )
-		) {
-			// Let echo handle watchlist notifications entirely
-			return false;
-		}
-		$eventName = false;
-		// The edit-user-talk and edit-user-page events effectively duplicate watchlist notifications.
-		// If we are sending Echo notification emails, suppress the watchlist notifications.
-		if ( $title->inNamespace( NS_USER_TALK ) && $targetUser->getTalkPage()->equals( $title ) ) {
-			$eventName = 'edit-user-talk';
-		} elseif ( $title->inNamespace( NS_USER ) && $targetUser->getUserPage()->equals( $title ) ) {
-			$eventName = 'edit-user-page';
-		}
-
-		if ( $eventName !== false ) {
-			$events = $this->attributeManager->getUserEnabledEvents( $targetUser, 'email' );
-			if ( in_array( $eventName, $events ) ) {
-				// Do not send watchlist email notification, the user will receive an Echo notification
-				return false;
-			}
-		}
-
-		// Proceed to send watchlist email notification
-		return true;
 	}
 
 	/**
@@ -1301,10 +1101,10 @@ class Hooks implements
 	 * Some of Echo's subscription user preferences are mapped to existing user preferences defined in
 	 * core MediaWiki. This returns the map of Echo preference names to core preference names.
 	 *
+	 * @param Config $config
 	 * @return array
 	 */
-	public static function getVirtualUserOptions() {
-		$config = MediaWikiServices::getInstance()->getMainConfig();
+	public static function getVirtualUserOptions( Config $config ) {
 		$options = [];
 		$options['echo-subscriptions-email-edit-user-talk'] = 'enotifusertalkpages';
 		if ( $config->get( ConfigNames::WatchlistNotifications ) ) {
@@ -1321,7 +1121,7 @@ class Hooks implements
 	 * @param array &$options Options can be modified
 	 */
 	public function onLoadUserOptions( UserIdentity $user, &$options ): void {
-		foreach ( self::getVirtualUserOptions() as $echoPref => $mwPref ) {
+		foreach ( self::getVirtualUserOptions( $this->config ) as $echoPref => $mwPref ) {
 			// Use the existing core option's value for the Echo option
 			if ( isset( $options[ $mwPref ] ) ) {
 				$options[ $echoPref ] = $options[ $mwPref ];
@@ -1337,7 +1137,7 @@ class Hooks implements
 	 * @param array $originalOptions
 	 */
 	public function onSaveUserOptions( UserIdentity $user, array &$modifiedOptions, array $originalOptions ) {
-		foreach ( self::getVirtualUserOptions() as $echoPref => $mwPref ) {
+		foreach ( self::getVirtualUserOptions( $this->config ) as $echoPref => $mwPref ) {
 			// Save virtual option values in corresponding real option values
 			if ( isset( $modifiedOptions[ $echoPref ] ) ) {
 				$modifiedOptions[ $mwPref ] = $modifiedOptions[ $echoPref ];
@@ -1410,11 +1210,10 @@ class Hooks implements
 		Event::create( [
 			'type' => 'emailuser',
 			'extra' => [
-				Event::RECIPIENTS_IDX => [ $userTo->getId() ],
 				'preview' => $preview,
 			],
 			'agent' => $userFrom,
-		] );
+		], new RecipientSet( $userTo ) );
 	}
 
 	/**
@@ -1427,33 +1226,8 @@ class Hooks implements
 	public static function getConfigVars( RL\Context $context, Config $config ): array {
 		return [
 			'EchoMaxNotificationCount' => NotifUser::MAX_BADGE_COUNT,
-			'EchoPollForUpdates' => $config->get( ConfigNames::PollForUpdates )
+			'EchoPollForUpdates' => $config->get( ConfigNames::PollForUpdates ),
 		];
-	}
-
-	/**
-	 * @param WikiPage $article
-	 * @param User $user
-	 * @param string $reason
-	 * @param int $articleId
-	 * @param Content|null $content
-	 * @param LogEntry $logEntry
-	 * @param int $archivedRevisionCount
-	 */
-	public function onArticleDeleteComplete(
-		$article,
-		$user,
-		$reason,
-		$articleId,
-		$content,
-		$logEntry,
-		$archivedRevisionCount
-	) {
-		DeferredUpdates::addCallableUpdate( static function () use ( $articleId ) {
-			$eventMapper = new EventMapper();
-			$eventIds = $eventMapper->fetchIdsByPage( $articleId );
-			ModerationController::moderate( $eventIds, true );
-		} );
 	}
 
 	/**
@@ -1492,7 +1266,7 @@ class Hooks implements
 				'type' => 'check',
 				'label-message' => [
 					'echo-specialmute-label-mute-notifications',
-					$target ? $target->getName() : ''
+					$target ? $target->getName() : '',
 				],
 				'default' => in_array( $id, $list, true ),
 			];
@@ -1505,6 +1279,12 @@ class Hooks implements
 	 */
 	public function onRecentChange_save( $change ) {
 		if ( !$this->config->get( 'EchoWatchlistNotifications' ) ) {
+			return;
+		}
+		if ( !$change->isInternal() ) {
+			// Ignore external changes (e.g. Wikidata), as Echo events can't have agents that correspond
+			// to actors but are not local users (T387050, see also T286153).
+			// Also ignore Flow edits, as Flow generates Echo events on its own.
 			return;
 		}
 		if ( $change->getAttribute( 'rc_minor' ) ) {
@@ -1535,7 +1315,7 @@ class Hooks implements
 	 *  anymore.
 	 * @param ApiModuleManager $moduleManager
 	 */
-	public function onApiMain__ModuleManager( $moduleManager ) {
+	public function onApiMain__moduleManager( $moduleManager ) {
 		$pushEnabled = $this->config->get( 'EchoEnablePush' );
 		if ( $pushEnabled ) {
 			$moduleManager->addModule(
@@ -1543,6 +1323,19 @@ class Hooks implements
 				'action',
 				ApiEchoPushSubscriptions::class
 			);
+		}
+	}
+
+	/**
+	 *  Save the revert status for the LinksUpdateComplete hook
+	 * TODO: Deprecate this when LinksUpdateComplete is migrated to it's corresponding
+	 * Domain event
+	 * @param bool $isRevert
+	 * @param RevisionRecord $revisionRecord
+	 */
+	public static function setRevertStatus( bool $isRevert, $revisionRecord ) {
+		if ( $isRevert ) {
+			self::$revertedRevIds[$revisionRecord->getId()] = true;
 		}
 	}
 

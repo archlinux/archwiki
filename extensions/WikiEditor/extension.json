@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -243,7 +243,9 @@
 				"wikieditor-toolbar-file-format",
 				"wikieditor-toolbar-tool-file-insert",
 				"wikieditor-toolbar-tool-file-cancel",
-				"wikieditor-toolbar-tool-file-upload"
+				"wikieditor-toolbar-tool-file-upload",
+				"word-separator",
+				"brackets"
 			],
 			"dependencies": [
 				"mediawiki.cookie",

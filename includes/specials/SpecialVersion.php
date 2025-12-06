@@ -2,21 +2,7 @@
 /**
  * Copyright © 2005 Ævar Arnfjörð Bjarmason
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -1021,7 +1007,9 @@ class SpecialVersion extends SpecialPage {
 		);
 
 		$moduleNames = array_map(
-			static fn ( $m )=>Html::element( 'code', [], $m->getConfig()['name'] ),
+			static fn ( $m )=>Html::element( 'code', [
+				'title' => $m->getConfig()['extension-name'] ?? null,
+			], $m->getConfig()['name'] ),
 			$modules
 		);
 
@@ -1045,7 +1033,7 @@ class SpecialVersion extends SpecialPage {
 		if ( $creditsGroup ) {
 			$out .= $this->openExtType( $text, 'credits-' . $type );
 
-			usort( $creditsGroup, [ $this, 'compare' ] );
+			usort( $creditsGroup, $this->compare( ... ) );
 
 			foreach ( $creditsGroup as $extension ) {
 				$out .= $this->getCreditsForExtension( $type, $extension );
@@ -1063,7 +1051,7 @@ class SpecialVersion extends SpecialPage {
 	 * @param array $b
 	 * @return int
 	 */
-	public function compare( $a, $b ) {
+	private function compare( $a, $b ) {
 		return $this->getLanguage()->lc( $a['name'] ) <=> $this->getLanguage()->lc( $b['name'] );
 	}
 
@@ -1092,12 +1080,12 @@ class SpecialVersion extends SpecialPage {
 		// ... such as extension names and links
 		if ( isset( $extension['namemsg'] ) ) {
 			// Localized name of extension
-			$extensionName = $this->msg( $extension['namemsg'] );
+			$extensionName = $this->msg( $extension['namemsg'] )->text();
 		} elseif ( isset( $extension['name'] ) ) {
 			// Non localized version
 			$extensionName = $extension['name'];
 		} else {
-			$extensionName = $this->msg( 'version-no-ext-name' );
+			$extensionName = $this->msg( 'version-no-ext-name' )->text();
 		}
 
 		if ( isset( $extension['url'] ) ) {
@@ -1138,9 +1126,9 @@ class SpecialVersion extends SpecialPage {
 			$memcKey = $cache->makeKey(
 				'specialversion-ext-version-text', $extension['path'], $this->coreId
 			);
-			[ $vcsVersion, $vcsLink, $vcsDate ] = $cache->get( $memcKey );
+			$res = $cache->get( $memcKey );
 
-			if ( !$vcsVersion ) {
+			if ( $res === false ) {
 				wfDebug( "Getting VCS info for extension {$extension['name']}" );
 				$gitInfo = new GitInfo( $extensionPath );
 				$vcsVersion = $gitInfo->getHeadSHA1();
@@ -1152,6 +1140,7 @@ class SpecialVersion extends SpecialPage {
 				$cache->set( $memcKey, [ $vcsVersion, $vcsLink, $vcsDate ], 60 * 60 * 24 );
 			} else {
 				wfDebug( "Pulled VCS info for extension {$extension['name']} from cache" );
+				[ $vcsVersion, $vcsLink, $vcsDate ] = $res;
 			}
 		}
 
@@ -1467,7 +1456,7 @@ class SpecialVersion extends SpecialPage {
 		}
 
 		return $this->getLanguage()
-			->listToText( array_map( [ __CLASS__, 'arrayToString' ], $list ) );
+			->listToText( array_map( [ self::class, 'arrayToString' ], $list ) );
 	}
 
 	/**
@@ -1583,6 +1572,7 @@ class SpecialVersion extends SpecialPage {
 		return $out;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'wiki';
 	}

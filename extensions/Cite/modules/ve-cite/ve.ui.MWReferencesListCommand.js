@@ -7,6 +7,8 @@
  * @license MIT
  */
 
+const MWReferencesListNode = require( './ve.dm.MWReferencesListNode.js' );
+
 /**
  * References list command.
  *
@@ -37,7 +39,7 @@ ve.ui.MWReferencesListCommand.prototype.execute = function ( surface ) {
 	const fragment = surface.getModel().getFragment();
 	const selectedNode = fragment.getSelectedNode();
 	const isReflistNodeSelected = selectedNode &&
-		selectedNode instanceof ve.dm.MWReferencesListNode;
+		selectedNode instanceof MWReferencesListNode;
 
 	if ( isReflistNodeSelected ) {
 		return surface.execute( 'window', 'open', 'referencesList' );
@@ -57,6 +59,4 @@ ve.ui.MWReferencesListCommand.prototype.execute = function ( surface ) {
 	}
 };
 
-/* Registration */
-
-ve.ui.commandRegistry.register( new ve.ui.MWReferencesListCommand() );
+module.exports = ve.ui.MWReferencesListCommand;

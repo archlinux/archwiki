@@ -56,8 +56,9 @@ final class PageActionsDirector {
 	 * @return array
 	 */
 	public function buildMenu( array $toolbox, array $actions, array $views ): array {
-		$toolbar = $this->toolbarBuilder->getGroup( $actions, $views );
-		$overflowMenu = $this->overflowBuilder->getGroup( $toolbox, $actions );
+		$isBookmarkEnabled = isset( $views['bookmark'] );
+		$toolbar = $this->toolbarBuilder->getGroup( $actions, $views, $isBookmarkEnabled );
+		$overflowMenu = $this->overflowBuilder->getGroup( $toolbox, $actions, $isBookmarkEnabled );
 
 		$menu = [
 			'toolbar' => $toolbar->getEntries()

@@ -298,7 +298,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "नया पृष्ठ विकिलेख, सम्पादन के बाद",
 	"abusefilter-edit-builder-vars-added-links": "सम्पादन में जोड़ी गई सभी बाहरी कड़ियाँ",
 	"abusefilter-edit-builder-vars-removed-links": "सम्पादन में हटाई गई सभी बाहरी कड़ियाँ",
-	"abusefilter-edit-builder-vars-all-links": "नए टेक्स्ट में सभी बाहरी कड़ियाँ",
+	"abusefilter-edit-builder-vars-old-links": "सम्पादन से पहले पृष्ठ में कड़ियाँ",
 	"abusefilter-edit-builder-vars-new-pst": "नए पष्ठ का विकि-पाठ, सहेजने से पूर्व तबदील",
 	"abusefilter-edit-builder-vars-diff-pst": "सम्पादन से हुए बदलावों का एकत्रित अंतर, सहेजने से पूर्व तबदील",
 	"abusefilter-edit-builder-vars-addedlines-pst": "सम्पादन में वाक्य जोड़े गए, सहेजने से पूर्व तबदील",
@@ -310,7 +310,6 @@
 	"abusefilter-edit-builder-vars-restrictions-upload": "इस फ़ाइल का सुरक्षा स्तर अपलोड करें",
 	"abusefilter-edit-builder-vars-recent-contributors": "पृष्ठ पर योगदान देने वाले अंतिम दस सदस्य",
 	"abusefilter-edit-builder-vars-first-contributor": "पृष्ठ पर योगदान देने वाला पहला सदस्य",
-	"abusefilter-edit-builder-vars-old-links": "सम्पादन से पहले पृष्ठ में कड़ियाँ",
 	"abusefilter-edit-builder-vars-file-sha1": "फ़ाइल सामग्री की SHA1 hash",
 	"abusefilter-edit-builder-vars-file-size": "बाइट्स में फाइल का आकार",
 	"abusefilter-edit-builder-vars-old-text": "पुराने पृष्ठ का पाठ, किसी भी मार्क-अप से खाली",
@@ -432,5 +431,7 @@
 	"right-abusefilter-bypass-blocked-external-domains": "अवरोधित बाहरी डोमेन्स बाइपास करना",
 	"action-abusefilter-bypass-blocked-external-domains": "अवरोधित बाहरी डोमेन्स बाइपास करने",
 	"right-abusefilter-access-protected-vars": "सुरक्षित वेरिएबलों का उपयोग करने वाले दुरुपयोग फ़िल्टर्स देखना और सम्पादित करना",
-	"action-abusefilter-access-protected-vars": "सुरक्षित वेरिएबलों का उपयोग करने वाले दुरुपयोग फ़िल्टर्स देखने और सम्पादित करने"
+	"action-abusefilter-access-protected-vars": "सुरक्षित वेरिएबलों का उपयोग करने वाले दुरुपयोग फ़िल्टर्स देखने और सम्पादित करने",
+	"right-abusefilter-blocked-external-domains-log": "दुरुपयोग फ़िल्टर का बाहरी डोमेनों का हिट लॉग देखना",
+	"action-abusefilter-blocked-external-domains-log": "दुरुपयोग फ़िल्टर का बाहरी डोमेनों का हिट लॉग देखने"
 }

@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -27,16 +27,15 @@
 		"APIQuerySiteInfoGeneralInfo": "main",
 		"CommunityConfigurationProvider_initList": "communityconfiguration",
 		"ContentHandlerDefaultModelFor": "main",
-		"GetPreferences": "main",
+		"GetPreferences": "referencepreviews",
 		"ParserAfterParse": "parser",
 		"ParserClearState": "parser",
-		"ParserCloned": "parser",
 		"ParserFirstCallInit": "parser",
 		"EditPage::showEditForm:initial": "main",
-		"MakeGlobalVariablesScript": "main",
+		"MakeGlobalVariablesScript": "referencepreviews",
 		"ResourceLoaderGetConfigVars": "main",
-		"ResourceLoaderRegisterModules": "main",
-		"UserGetDefaultOptions": "main"
+		"ResourceLoaderRegisterModules": "referencepreviews",
+		"UserGetDefaultOptions": "referencepreviews"
 	},
 	"HookHandlers": {
 		"communityconfiguration": {
@@ -45,15 +44,21 @@
 		"main": {
 			"class": "Cite\\Hooks\\CiteHooks",
 			"services": [
-				"Cite.ReferencePreviewsContext",
-				"Cite.GadgetsIntegration",
 				"UserOptionsLookup"
 			]
 		},
 		"parser": {
 			"class": "Cite\\Hooks\\CiteParserHooks",
 			"services": [
-				"MainConfig"
+				"Cite.CiteFactory"
+			]
+		},
+		"referencepreviews": {
+			"class": "Cite\\Hooks\\ReferencePreviewsHooks",
+			"services": [
+				"ExtensionRegistry",
+				"Cite.ReferencePreviewsContext",
+				"Cite.GadgetsIntegration"
 			]
 		}
 	},
@@ -66,7 +71,8 @@
 				}
 			},
 			"skinStyles": {
-				"minerva": "ext.cite.styles.minerva.less"
+				"minerva": "ext.cite.styles.minerva.less",
+				"vector-2022": "ext.cite.styles.vector2022.less"
 			}
 		},
 		"ext.cite.parsoid.styles": {
@@ -78,10 +84,14 @@
 				"minerva": "ext.cite.parsoid.styles.minerva.less"
 			}
 		},
-		"ext.cite.visualEditor.core": {
+		"ext.cite.visualEditor": {
 			"localBasePath": "modules/ve-cite",
 			"remoteExtPath": "Cite/modules/ve-cite",
-			"scripts": [
+			"packageFiles": [
+				{
+					"name": "init.js",
+					"main": true
+				},
 				"ve.dm.MWDocumentReferences.js",
 				"ve.dm.MWGroupReferences.js",
 				"ve.dm.MWReferenceModel.js",
@@ -89,41 +99,23 @@
 				"ve.dm.MWReferenceNode.js",
 				"ve.ce.MWReferencesListNode.js",
 				"ve.ce.MWReferenceNode.js",
-				"ve.ui.MWReferencesListCommand.js"
-			],
-			"styles": [
-				"ve.ce.MWReferenceNode.less",
-				"ve.ce.MWReferencesListNode.less"
-			],
-			"dependencies": [
-				"ext.visualEditor.mwcore",
-				"ext.visualEditor.mwtransclusion"
-			],
-			"messages": [
-				"cite-ve-referenceslist-isempty",
-				"cite-ve-referenceslist-isempty-default",
-				"cite-ve-referenceslist-missing-parent",
-				"cite-ve-referenceslist-missingref",
-				"cite-ve-referenceslist-missingref-in-list",
-				"cite-ve-referenceslist-missingreflist"
-			]
-		},
-		"ext.cite.visualEditor": {
-			"localBasePath": "modules/ve-cite",
-			"remoteExtPath": "Cite/modules/ve-cite",
-			"scripts": [
 				{
-					"name": "ve.ui.MWCitationTools.js",
-					"callback": "Cite\\ResourceLoader\\CitationToolDefinition::makeScript"
+					"name": "ve.ui.MWCitationTools.json",
+					"callback": "Cite\\ResourceLoader\\CitationToolDefinition::getTools"
 				},
 				"ve.ui.MWReferenceGroupInputWidget.js",
 				"ve.ui.MWReferenceSearchWidget.js",
 				"ve.ui.MWReferenceResultWidget.js",
 				"ve.ui.MWUseExistingReferenceCommand.js",
 				"ve.ui.MWCitationDialog.js",
+				"ve.ui.MWReferencesListCommand.js",
 				"ve.ui.MWReferencesListDialog.js",
 				"ve.ui.MWReferenceDialog.js",
 				"ve.ui.MWReferenceDialogTool.js",
+				"ve.ui.MWSubReferenceHelpDialog.js",
+				"ve.ui.MWSubReferenceHelpDialogOptions.js",
+				"ve.ui.MWUseExistingReferenceDialogTool.js",
+				"ve.ui.MWReferencesListDialogTool.js",
 				"ve.ui.MWReferenceEditPanel.js",
 				"ve.ui.MWCitationDialogTool.js",
 				"ve.ui.MWReferenceContextItem.js",
@@ -133,11 +125,20 @@
 				"ve.ui.MWReference.init.js",
 				"ve.ui.MWCitationNeededContextItem.js",
 				{
-					"name": "ve.ui.contentLanguage.js",
-					"callback": "Cite\\ResourceLoader\\ContentLanguage::makeScript"
+					"name": "ve.ui.contentLanguage.json",
+					"callback": "Cite\\ResourceLoader\\ContentLanguage::getJsData"
+				},
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconNewLine"
+					]
 				}
 			],
 			"styles": [
+				"ve.ce.MWReferenceNode.less",
+				"ve.ce.MWReferencesListNode.less",
 				"ve.ui.MWReferenceDialog.less",
 				"ve.ui.MWReferenceContextItem.less",
 				"ve.ui.MWReferenceResultWidget.less",
@@ -147,12 +148,13 @@
 				"oojs-ui.styles.icons-alerts",
 				"oojs-ui.styles.icons-editing-citation",
 				"oojs-ui.styles.icons-interactions",
-				"ext.cite.visualEditor.core",
+				"ext.visualEditor.mwcore",
 				"ext.cite.parsoid.styles",
 				"ext.cite.styles",
 				"ext.visualEditor.mwtransclusion",
 				"ext.visualEditor.base",
-				"ext.visualEditor.mediawiki"
+				"ext.visualEditor.mediawiki",
+				"mediawiki.jqueryMsg"
 			],
 			"messages": [
 				"cite-ve-changedesc-ref-group-both",
@@ -169,11 +171,12 @@
 				"cite-ve-citationneeded-title",
 				"cite-ve-dialog-reference-contextitem-extends",
 				"cite-ve-dialog-reference-editing-add-details",
+				"cite-ve-dialog-reference-editing-edit-details",
 				"cite-ve-dialog-reference-editing-add-details-placeholder",
+				"cite-ve-dialog-reference-editing-reused-short",
 				"cite-ve-dialog-reference-editing-reused",
 				"cite-ve-dialog-reference-editing-reused-long",
-				"cite-ve-dialog-reference-editing-extends",
-				"cite-ve-dialog-reference-extend-long-tool",
+				"cite-ve-dialog-reference-editing-details-placeholder",
 				"cite-ve-dialog-reference-missing-parent-ref",
 				"cite-ve-dialog-reference-options-group-label",
 				"cite-ve-dialog-reference-options-group-placeholder",
@@ -181,10 +184,15 @@
 				"cite-ve-dialog-reference-options-section",
 				"cite-ve-dialog-reference-placeholder",
 				"cite-ve-dialog-reference-title",
-				"cite-ve-dialog-reference-title-add-details",
-				"cite-ve-dialog-reference-title-edit-details",
+				"cite-ve-dialog-reference-add-details-button",
+				"cite-ve-dialog-reference-title-details",
+				"cite-ve-dialog-subreference-help-dialog-title",
+				"cite-ve-dialog-subreference-help-dialog-head",
+				"cite-ve-dialog-subreference-help-dialog-content",
+				"cite-ve-dialog-subreference-help-dialog-link",
+				"cite-ve-dialog-subreference-help-dialog-link-ve",
+				"cite-ve-dialog-subreference-help-dialog-link-label",
 				"cite-ve-dialog-reference-useexisting-tool",
-				"cite-ve-dialog-reference-useexisting-long-tool",
 				"cite-ve-dialog-referenceslist-contextitem-description-general",
 				"cite-ve-dialog-referenceslist-contextitem-description-named",
 				"cite-ve-dialog-referenceslist-title",
@@ -195,41 +203,16 @@
 				"cite-ve-dialogbutton-reference-title",
 				"cite-ve-dialogbutton-referenceslist-tooltip",
 				"cite-ve-reference-input-placeholder",
+				"cite-ve-referenceslist-isempty",
+				"cite-ve-referenceslist-isempty-default",
+				"cite-ve-referenceslist-missing-parent",
+				"cite-ve-referenceslist-missingref",
+				"cite-ve-referenceslist-missingref-in-list",
+				"cite-ve-referenceslist-missingreflist",
 				"cite-ve-toolbar-group-label",
 				"cite-ve-othergroup-item",
 				"parentheses",
 				"word-separator"
-			]
-		},
-		"ext.cite.wikiEditor": {
-			"localBasePath": "modules",
-			"remoteExtPath": "Cite/modules",
-			"scripts": [
-				"ext.cite.wikiEditor.js"
-			],
-			"dependencies": [
-				"ext.wikiEditor",
-				"mediawiki.jqueryMsg",
-				"mediawiki.language"
-			],
-			"messages": [
-				"cite-wikieditor-tool-reference",
-				"cite-wikieditor-help-page-references",
-				"cite-wikieditor-help-content-reference-example-text1",
-				"cite-wikieditor-help-content-reference-example-text2",
-				"cite-wikieditor-help-content-reference-example-text3",
-				"cite-wikieditor-help-content-reference-example-ref-id",
-				"cite-wikieditor-help-content-reference-example-extra-details",
-				"cite-wikieditor-help-content-reference-example-ref-normal",
-				"cite-wikieditor-help-content-reference-example-ref-named",
-				"cite-wikieditor-help-content-reference-example-ref-reuse",
-				"cite-wikieditor-help-content-reference-example-ref-result",
-				"cite-wikieditor-help-content-reference-example-reflist",
-				"cite-wikieditor-help-content-reference-description",
-				"cite-wikieditor-help-content-named-reference-description",
-				"cite-wikieditor-help-content-rereference-description",
-				"cite-wikieditor-help-content-showreferences-description",
-				"cite_reference_backlink_symbol"
 			]
 		},
 		"ext.cite.ux-enhancements": {
@@ -237,8 +220,7 @@
 			"remoteExtPath": "Cite/modules",
 			"scripts": [
 				"ext.cite.a11y.js",
-				"ext.cite.highlighting.js",
-				"ext.cite.tracking.js"
+				"ext.cite.highlighting.js"
 			],
 			"styles": [
 				"ext.cite.a11y.less",
@@ -304,40 +286,55 @@
 		"localBasePath": "tests/qunit",
 		"remoteExtPath": "Cite/tests/qunit",
 		"scripts": [
-			"ve-cite/ve.dm.citeExample.js",
-			"ve-cite/ve.dm.Converter.test.js",
-			"ve-cite/ve.dm.MWDocumentReferences.test.js",
-			"ve-cite/ve.dm.MWGroupReferences.test.js",
-			"ve-cite/ve.dm.InternalList.test.js",
-			"ve-cite/ve.dm.MWReferenceModel.test.js",
-			"ve-cite/ve.dm.MWReferenceNode.test.js",
-			"ve-cite/ve.dm.MWReferencesListNode.test.js",
-			"ve-cite/ve.dm.Transaction.test.js",
-			"ve-cite/ve.ce.ClipboardHandler.test.js",
-			"ve-cite/ve.ui.DiffElement.test.js",
-			"ve-cite/ve.ui.MWCitationDialogTool.test.js",
-			"ve-cite/ve.ui.MWReferenceContextItem.test.js",
-			"ve-cite/ve.ui.MWReferenceEditPanel.test.js",
-			"ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
-			"ve-cite/ve.ui.MWReferenceResultWidget.test.js",
-			"ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
-			"ve-cite/ve.ui.MWReferencesListDialog.test.js",
-			"ve-cite/ve.ui.MWUseExistingReferenceCommand.test.js",
-			"ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js",
 			"ext.cite.referencePreviews/createReferenceGateway.test.js",
 			"ext.cite.referencePreviews/isReferencePreviewsEnabled.test.js",
 			"ext.cite.referencePreviews/renderer.test.js",
 			"ext.cite.highlighting.test.js"
 		],
 		"dependencies": [
-			"ext.cite.ux-enhancements",
-			"ext.cite.visualEditor",
-			"test.VisualEditor"
+			"ext.cite.ux-enhancements"
 		],
-		"optionalDependencies": {
-			"Popups": "ext.cite.referencePreviews"
+		"optional": {
+			"Popups": {
+				"dependencies": [
+					"ext.cite.referencePreviews"
+				]
+			},
+			"VisualEditor": {
+				"scripts": [
+					"ve-cite/ve.dm.citeExample.js",
+					"ve-cite/converter/ve.dm.Converter.test.js",
+					"ve-cite/converter/ve.dm.ConverterIntegrationTestCases.js",
+					"ve-cite/converter/ve.dm.ConverterStoreTestCases.js",
+					"ve-cite/converter/ve.dm.ConverterSubReferenceTestCases.js",
+					"ve-cite/converter/ve.dm.ConverterTestCases.js",
+					"ve-cite/ve.dm.MWDocumentReferences.test.js",
+					"ve-cite/ve.dm.MWGroupReferences.test.js",
+					"ve-cite/ve.dm.InternalList.test.js",
+					"ve-cite/ve.dm.MWReferenceModel.test.js",
+					"ve-cite/ve.dm.MWReferenceNode.test.js",
+					"ve-cite/ve.dm.MWReferencesListNode.test.js",
+					"ve-cite/ve.dm.Transaction.test.js",
+					"ve-cite/ve.ce.ClipboardHandler.test.js",
+					"ve-cite/ve.ui.DiffElement.test.js",
+					"ve-cite/ve.ui.MWCitationDialogTool.test.js",
+					"ve-cite/ve.ui.MWReferenceContextItem.test.js",
+					"ve-cite/ve.ui.MWReferenceEditPanel.test.js",
+					"ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
+					"ve-cite/ve.ui.MWReferenceResultWidget.test.js",
+					"ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
+					"ve-cite/ve.ui.MWReferencesListDialog.test.js",
+					"ve-cite/ve.ui.MWUseExistingReferenceCommand.test.js",
+					"ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js"
+				],
+				"dependencies": [
+					"ext.cite.visualEditor",
+					"test.VisualEditor"
+				]
+
+			}
 		},
-		"factory": "Cite\\ResourceLoader\\OptionalLoader::addOptionalDependencies"
+		"factory": "Cite\\ResourceLoader\\OptionalLoader::addOptional"
 	},
 	"attributes": {
 		"CodeMirror": {
@@ -352,7 +349,7 @@
 					"class": "Cite\\Config\\CiteEditorCapability",
 					"services": [
 						"Cite.AlphabetsProvider",
-						"CommunityConfiguration.MediaWikiConfigReader",
+						"MainConfig",
 						"ContentLanguage",
 						"LinkRenderer"
 					]
@@ -379,11 +376,6 @@
 				}
 			}
 		},
-		"EventLogging": {
-			"Schemas": {
-				"ReferencePreviewsPopups": "/analytics/legacy/referencepreviewspopups/1.1.0"
-			}
-		},
 		"Popups": {
 			"PluginModules": [
 				"ext.cite.referencePreviews"
@@ -396,27 +388,27 @@
 		}
 	},
 	"ConfigRegistry": {
-		"cite": "GlobalVarConfig::newInstance"
+		"cite": "MediaWiki\\Config\\GlobalVarConfig::newInstance"
 	},
 	"config": {
 		"CiteSubReferencing": {
 			"description": "Temporary feature flag while the sub-referencing feature (a way to nest citations and e.g. reference pages in a book) is in development.",
-			"public": true,
+			"value": false
+		},
+		"CiteSubRefMergeInDevelopment": {
+			"description": "Dev-only feature flag to temporarily hide risky parts of the feature to merge (i.e. \"reuse\") identical sub-references (see T406453). This might affect how sub-references are numbered, e.g. later sub-references get lower numbers when earlier ones are merged. It might also affect the behavior of VisualEditor.",
 			"value": false
 		},
 		"CiteVisualEditorOtherGroup": {
 			"description": "If VisualEditor should list the citation features as part of the existing \"Insert\" drop-down menu instead of a top-level \"Cite\" toolbar button.",
-			"public": true,
 			"value": false
 		},
 		"CiteResponsiveReferences": {
 			"description": "If long <references /> lists with more than $wgCiteResponsiveReferencesThreshold references should behave responsive by default and be displayed in two or more columns. This can also be toggled individually with <references responsive /> to enable and <references responsive=\"0\" /> to disable it.",
-			"public": true,
 			"value": true
 		},
 		"CiteResponsiveReferencesThreshold": {
 			"description": "The number of references at which CiteResponsiveReferences is enabled.",
-			"public": true,
 			"value": 10
 		},
 		"CiteReferencePreviews": {
@@ -433,17 +425,14 @@
 		},
 		"CiteUseLegacyBacklinkLabels": {
 			"description": "Feature flag switching between numeric and legacy i18n backlink labels (true) and new-style Community Configuration and CLDR alphabet sequences (false).",
-			"public": true,
 			"value": true
 		},
 		"CiteBacklinkCommunityConfiguration": {
 			"description": "Feature flag to enable the Cite community configuration.",
-			"public": true,
 			"value": false
 		},
 		"CiteDefaultBacklinkAlphabet": {
 			"description": "List of letters in the Alphabet to be used to auto-generate backlink labels. Separated by spaces. Defaults to English Alphabet \"a\" to \"z\" when not specified. Currently only used when CiteUseLegacyBacklinkLabels is set to false.",
-			"public": true,
 			"value": null
 		}
 	},

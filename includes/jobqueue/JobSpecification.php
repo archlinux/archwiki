@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -103,24 +89,29 @@ class JobSpecification implements IJobSpecification {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getType() {
 		return $this->type;
 	}
 
+	/** @inheritDoc */
 	public function getParams() {
 		return $this->params;
 	}
 
+	/** @inheritDoc */
 	public function getReleaseTimestamp() {
 		return isset( $this->params['jobReleaseTimestamp'] )
 			? wfTimestampOrNull( TS_UNIX, $this->params['jobReleaseTimestamp'] )
 			: null;
 	}
 
+	/** @inheritDoc */
 	public function ignoreDuplicates() {
 		return !empty( $this->opts['removeDuplicates'] );
 	}
 
+	/** @inheritDoc */
 	public function getDeduplicationInfo() {
 		$info = [
 			'type' => $this->getType(),
@@ -144,6 +135,7 @@ class JobSpecification implements IJobSpecification {
 		return $info;
 	}
 
+	/** @inheritDoc */
 	public function getRootJobParams() {
 		return [
 			'rootJobSignature' => $this->params['rootJobSignature'] ?? null,
@@ -151,31 +143,15 @@ class JobSpecification implements IJobSpecification {
 		];
 	}
 
+	/** @inheritDoc */
 	public function hasRootJobParams() {
 		return isset( $this->params['rootJobSignature'] )
 			&& isset( $this->params['rootJobTimestamp'] );
 	}
 
+	/** @inheritDoc */
 	public function isRootJob() {
 		return $this->hasRootJobParams() && !empty( $this->params['rootJobIsSelf'] );
-	}
-
-	/**
-	 * @deprecated since 1.41
-	 * @return array Field/value map that can immediately be serialized
-	 * @since 1.25
-	 */
-	public function toSerializableArray() {
-		wfDeprecated( __METHOD__, '1.41' );
-		return [
-			'type'   => $this->type,
-			'params' => $this->params,
-			'opts'   => $this->opts,
-			'title'  => [
-				'ns'  => $this->page->getNamespace(),
-				'key' => $this->page->getDBkey()
-			]
-		];
 	}
 
 	/**

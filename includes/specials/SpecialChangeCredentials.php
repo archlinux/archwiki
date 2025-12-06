@@ -33,29 +33,36 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 
 	/** @var bool Change action needs user data; remove action does not */
 	protected static $loadUserData = true;
+	private SessionManager $sessionManager;
 
-	public function __construct( AuthManager $authManager ) {
+	public function __construct( AuthManager $authManager, SessionManager $sessionManager ) {
 		parent::__construct( 'ChangeCredentials', 'editmyprivateinfo' );
 		$this->setAuthManager( $authManager );
+		$this->sessionManager = $sessionManager;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'login';
 	}
 
+	/** @inheritDoc */
 	public function isListed() {
 		$this->loadAuth( '' );
 		return (bool)$this->authRequests;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getDefaultAction( $subPage ) {
 		return AuthManager::ACTION_CHANGE;
 	}
 
+	/** @inheritDoc */
 	public function execute( $subPage ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -97,6 +104,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function loadAuth( $subPage, $authAction = null, $reset = false ) {
 		parent::loadAuth( $subPage, $authAction );
 		if ( $subPage ) {
@@ -148,6 +156,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getAuthFormDescriptor( $requests, $action ) {
 		if ( !static::$loadUserData ) {
 			return [];
@@ -175,6 +184,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		return $descriptor;
 	}
 
+	/** @inheritDoc */
 	protected function getAuthForm( array $requests, $action ) {
 		$form = parent::getAuthForm( $requests, $action );
 		$req = reset( $requests );
@@ -196,12 +206,14 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		return $form;
 	}
 
+	/** @inheritDoc */
 	protected function needsSubmitButton( array $requests ) {
 		// Change/remove forms show are built from a single AuthenticationRequest and do not allow
 		// for redirect flow; they always need a submit button.
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function handleFormSubmit( $data ) {
 		// remove requests do not accept user input
 		$requests = $this->authRequests;
@@ -256,7 +268,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		$returnUrl = $this->getReturnUrl();
 
 		// change user token and update the session
-		SessionManager::singleton()->invalidateSessionsForUser( $user );
+		$this->sessionManager->invalidateSessionsForUser( $user );
 		$session->setUser( $user );
 		$session->resetId();
 
@@ -289,6 +301,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		return Title::newFromText( $returnTo )->getFullUrlForRedirect( $returnToQuery );
 	}
 
+	/** @inheritDoc */
 	protected function getRequestBlacklist() {
 		return $this->getConfig()->get( MainConfigNames::ChangeCredentialsBlacklist );
 	}

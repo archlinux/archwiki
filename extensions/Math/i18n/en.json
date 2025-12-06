@@ -82,6 +82,7 @@
 	"math_invalidresponse": "$1: Invalid response (\"$3\") from server \"$2\":",
 	"math_invalidxml": "MathML or SVG is invalid XML.",
 	"math_mathoid_error": "Conversion error. Server (\"$1\") reported: \"$2\"",
+	"math_other_error": "Other error: $1",
 	"math-status-introduction": "This page displays information about the enabled math rendering {{PLURAL:$1|mode|modes}}.\n\nThe following rendering {{PLURAL:$1|mode is|modes are}} enabled:",
 	"math_syntax_error": "syntax error",
 	"math_timeout": "$1 timeout from \"$2\".",

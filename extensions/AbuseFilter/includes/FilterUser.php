@@ -36,16 +36,10 @@ class FilterUser {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * @return Authority
-	 */
 	public function getAuthority(): Authority {
 		return $this->getUser();
 	}
 
-	/**
-	 * @return UserIdentity
-	 */
 	public function getUserIdentity(): UserIdentity {
 		return $this->getUser();
 	}
@@ -80,8 +74,6 @@ class FilterUser {
 
 	/**
 	 * Gets the username for the FilterUser.
-	 *
-	 * @return string
 	 */
 	private function getFilterUserName(): string {
 		$username = $this->messageLocalizer->msg( 'abusefilter-blocker' )->inContentLanguage()->text();

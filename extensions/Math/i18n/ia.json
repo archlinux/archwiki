@@ -70,6 +70,7 @@
 	"math_invalidresponse": "$1: Responsa invalide (\"$3\") del servitor \"$2\":",
 	"math_invalidxml": "MathML o SVG non es XML valide.",
 	"math_mathoid_error": "Error de conversion. Le servitor (\"$1\") reporta: \"$2\"",
+	"math_other_error": "Altere error: $1",
 	"math-status-introduction": "Iste pagina monstra information sur le modo{{PLURAL:$1||s}} active de representation mathematic.\n\nLe sequente modo{{PLURAL:$1||s}} de representation es active:",
 	"math_syntax_error": "error de syntaxe",
 	"math_timeout": "$1 ha expirate sur \"$2\".",

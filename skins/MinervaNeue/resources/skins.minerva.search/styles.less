@@ -1,0 +1,33 @@
+@import '../../minerva.less/minerva.variables.less';
+
+.minerva-cdxTypeaheadOverlay {
+	.cdx-menu {
+		display: block !important;
+		top: @height-site-header;
+		left: 0;
+		right: 0;
+		position: fixed;
+		bottom: 0;
+		margin-top: -1px;
+	}
+}
+
+// Override list styles defined in lists.less, which isn't meant to affect TAHS
+.content {
+	ul.cdx-menu__listbox {
+		padding-left: 0;
+	}
+
+	li.cdx-menu-item:last-child {
+		margin-bottom: 0;
+	}
+}
+
+body.cdx-dialog-open {
+	// Needed to prevent background scrolling in iOS
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+}

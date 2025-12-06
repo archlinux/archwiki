@@ -1,6 +1,5 @@
 @import 'mediawiki.skin.variables.less';
 @import '../../minerva.less/minerva.variables.less';
-// stylelint-disable selector-max-id
 
 // The top level user account button in the upper right near the notifications button.
 .minerva-user-navigation {
@@ -31,13 +30,6 @@
 		/* Will be leveraged by future Echo version. */
 		li {
 			position: relative;
-		}
-
-		// Hide notices for Minerva mobile mode.
-		#pt-notifications-notice {
-			.mw-mf & {
-				display: none;
-			}
 		}
 	}
 }

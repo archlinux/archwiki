@@ -20,9 +20,8 @@ abstract class LocalCache {
 
 	/**
 	 * Target object cache
-	 * @var MapCacheLRU
 	 */
-	protected $targets;
+	protected MapCacheLRU $targets;
 
 	/**
 	 * Lookup ids that have not been resolved for a target

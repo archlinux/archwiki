@@ -41,8 +41,15 @@ class SiteConfig extends ApiSiteConfig {
 	/** @var LoggerInterface */
 	public $suppressLogger;
 
-	/** If set, generate experimental Parsoid HTML v3 parser function output
-	 * Individual parser tests could change this
+	/**
+	 * If set, generate Parsoid v3 parser function output for all parser
+	 * functions, not just for the output of PFragmentHandlers.
+	 *
+	 * Individual parser tests can change this using:
+	 * ```
+	 * !!config
+	 * wgParsoidExperimentalParserFunctionOutput=true
+	 * ```
 	 */
 	public bool $v3pf;
 
@@ -73,7 +80,7 @@ class SiteConfig extends ApiSiteConfig {
 		return ParserHook::getParserTestConfigFileName();
 	}
 
-	public function reset() {
+	public function reset(): void {
 		parent::reset();
 
 		// adjust config to match that used for PHP tests
@@ -266,11 +273,11 @@ class SiteConfig extends ApiSiteConfig {
 	/**
 	 * Register an extension for use in parser tests
 	 * @param class-string<ExtensionModule> $extClass
-	 * @return callable a cleanup function to unregister this extension
+	 * @return callable():void a cleanup function to unregister this extension
 	 */
 	public function registerParserTestExtension( string $extClass ): callable {
 		$extId = $this->registerExtensionModule( $extClass );
-		return function () use ( $extId ) {
+		return function () use ( $extId ): void {
 			$this->unregisterExtensionModule( $extId );
 		};
 	}

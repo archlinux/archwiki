@@ -63,11 +63,9 @@ ve.dm.TableRowNode.static.toDomElements = function ( dataElement, doc ) {
  * @param {number} [options.cellCount=1] Number of cells to create
  * @param {ve.dm.TableRowNode} [options.clonedRow] Copy certain attributes from this row
  * @param {ve.dm.TableCellNode[]} [options.clonedCells] Copy certain attributes from these cells (the array needs to be of size cellCount)
- * @return {Array} Model data for a new table row
+ * @return {ve.dm.LinearData.Item[]} Model data for a new table row
  */
-ve.dm.TableRowNode.static.createData = function ( options ) {
-	options = options || {};
-
+ve.dm.TableRowNode.static.createData = function ( options = {} ) {
 	const cellCount = options.cellCount || 1;
 
 	const opening = { type: 'tableRow' };
@@ -94,17 +92,21 @@ ve.dm.TableRowNode.static.createData = function ( options ) {
 
 /**
  * Handle splicing of child nodes
+ *
+ * @param {number} index
+ * @param {number} deleteCount
+ * @param {...ve.dm.Node} [nodes]
  */
-ve.dm.TableRowNode.prototype.onSplice = function () {
+ve.dm.TableRowNode.prototype.onSplice = function ( index, deleteCount, ...nodes ) {
 	if ( this.getRoot() ) {
 		this.getParent().getParent().getMatrix().invalidate();
 	}
-	const nodes = Array.prototype.slice.call( arguments, 2 );
-	for ( let i = 0; i < nodes.length; i++ ) {
-		nodes[ i ].connect( this, {
-			attributeChange: [ 'onCellAttributeChange', nodes[ i ] ]
+
+	nodes.forEach( ( node ) => {
+		node.connect( this, {
+			attributeChange: [ 'onCellAttributeChange', node ]
 		} );
-	}
+	} );
 };
 
 /**

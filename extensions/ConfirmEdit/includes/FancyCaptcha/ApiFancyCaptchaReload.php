@@ -27,12 +27,18 @@ class ApiFancyCaptchaReload extends ApiBase {
 		$result->addValue( null, $this->getModuleName(), [ 'index' => $captchaIndex ] );
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
 	public function isInternal() {
 		return true;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
 	public function getAllowedParams() {
 		return [];
 	}
@@ -40,6 +46,7 @@ class ApiFancyCaptchaReload extends ApiBase {
 	/**
 	 * @see ApiBase::getExamplesMessages()
 	 * @return array
+	 * @codeCoverageIgnore Merely declarative
 	 */
 	protected function getExamplesMessages() {
 		return [

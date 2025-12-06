@@ -2,59 +2,42 @@
 namespace MediaWiki\Search;
 
 use ISearchResultSet;
-use MediaWiki\Config\ServiceOptions;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
 use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\MainConfigNames;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
-use MediaWiki\User\UserNameUtils;
 use SearchNearMatchResultSet;
+use UtfNormal\Validator;
 
 /**
  * Service implementation of near match title search.
  */
 class TitleMatcher {
-	/**
-	 * @internal For use by ServiceWiring.
-	 */
-	public const CONSTRUCTOR_OPTIONS = [
-		MainConfigNames::EnableSearchContributorsByIP,
-	];
 
-	private ServiceOptions $options;
 	private Language $language;
 	private ILanguageConverter $languageConverter;
 	private HookRunner $hookRunner;
 	private WikiPageFactory $wikiPageFactory;
-	private UserNameUtils $userNameUtils;
 	private RepoGroup $repoGroup;
 	private TitleFactory $titleFactory;
 
 	public function __construct(
-		ServiceOptions $options,
 		Language $contentLanguage,
 		LanguageConverterFactory $languageConverterFactory,
 		HookContainer $hookContainer,
 		WikiPageFactory $wikiPageFactory,
-		UserNameUtils $userNameUtils,
 		RepoGroup $repoGroup,
 		TitleFactory $titleFactory
 	) {
-		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-
 		$this->language = $contentLanguage;
 		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $contentLanguage );
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->wikiPageFactory = $wikiPageFactory;
-		$this->userNameUtils = $userNameUtils;
 		$this->repoGroup = $repoGroup;
 		$this->titleFactory = $titleFactory;
 	}
@@ -139,16 +122,34 @@ class TitleMatcher {
 				return $title;
 			}
 
-			# Now try all lower case (i.e. first letter capitalized)
+			# Now try all lower case (=> first letter capitalized on some wikis)
 			$title = $this->titleFactory->newFromText( $this->language->lc( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
+			}
+
+			# Now try normalized lowercase (if it's different)
+			$normTerm = Validator::toNFKC( $term );
+			$normDiff = $normTerm !== $term;
+			if ( $normDiff ) {
+				$title = $this->titleFactory->newFromText( $this->language->lc( $normTerm ) );
+				if ( $title && $title->exists() ) {
+					return $title;
+				}
 			}
 
 			# Now try capitalized string
 			$title = $this->titleFactory->newFromText( $this->language->ucwords( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
+			}
+
+			# Now try normalized capitalized (if it's different)
+			if ( $normDiff ) {
+				$title = $this->titleFactory->newFromText( $this->language->ucwords( $normTerm ) );
+				if ( $title && $title->exists() ) {
+					return $title;
+				}
 			}
 
 			# Now try all upper case
@@ -172,14 +173,6 @@ class TitleMatcher {
 		}
 
 		$title = $this->titleFactory->newFromTextThrow( $searchterm );
-
-		# Entering an IP address goes to the contributions page
-		if ( $this->options->get( MainConfigNames::EnableSearchContributorsByIP ) ) {
-			if ( ( $title->getNamespace() === NS_USER && $this->userNameUtils->isIP( $title->getText() ) )
-				|| $this->userNameUtils->isIP( trim( $searchterm ) ) ) {
-				return SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() );
-			}
-		}
 
 		# Entering a user goes to the user page whether it's there or not
 		if ( $title->getNamespace() === NS_USER ) {

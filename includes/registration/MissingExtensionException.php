@@ -47,7 +47,6 @@ class MissingExtensionException extends Exception {
 	 *
 	 * Avoid relying on MW stuff, as it might not be setup yet.
 	 * We don't bother translating, as the user may not have even set lang yet.
-	 *
 	 */
 	private function renderHtml() {
 		if ( !headers_sent() ) {
@@ -91,15 +90,15 @@ class MissingExtensionException extends Exception {
 	 *
 	 * @return never
 	 */
-	public function render() {
+	public function render(): never {
 		if ( wfIsCli() ) {
 			$this->renderText();
 		} else {
 			$this->renderHtml();
 		}
 		// Make sure that the error gets into logs.
-		// This will also stop execution.
-		trigger_error( $this->getMessage(), E_USER_ERROR );
+		error_log( $this->getMessage() );
+		exit( 1 );
 	}
 
 	/**

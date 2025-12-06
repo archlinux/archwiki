@@ -45,37 +45,22 @@ class AbstractFilter {
 		}
 	}
 
-	/**
-	 * @return Specs
-	 */
 	public function getSpecs(): Specs {
 		return clone $this->specs;
 	}
 
-	/**
-	 * @return Flags
-	 */
 	public function getFlags(): Flags {
 		return clone $this->flags;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getRules(): string {
 		return $this->specs->getRules();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getComments(): string {
 		return $this->specs->getComments();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getName(): string {
 		return $this->specs->getName();
 	}
@@ -88,51 +73,30 @@ class AbstractFilter {
 		return $this->specs->getActionsNames();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getGroup(): string {
 		return $this->specs->getGroup();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isEnabled(): bool {
 		return $this->flags->getEnabled();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isDeleted(): bool {
 		return $this->flags->getDeleted();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isHidden(): bool {
 		return $this->flags->getHidden();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isProtected(): bool {
 		return $this->flags->getProtected();
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getPrivacyLevel(): int {
 		return $this->flags->getPrivacyLevel();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isGlobal(): bool {
 		return $this->flags->getGlobal();
 	}
@@ -149,9 +113,6 @@ class AbstractFilter {
 		return $this->actions;
 	}
 
-	/**
-	 * @param array $actions
-	 */
 	protected function setActions( array $actions ): void {
 		$this->actions = $actions;
 		$this->specs->setActionsNames( array_keys( $actions ) );

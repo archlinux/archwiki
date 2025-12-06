@@ -5,26 +5,13 @@
  * Copyright © 2010 Sam Reed
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\UrlUtils;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -39,7 +26,11 @@ class ApiQueryIWLinks extends ApiQueryBase {
 
 	private UrlUtils $urlUtils;
 
-	public function __construct( ApiQuery $query, string $moduleName, UrlUtils $urlUtils ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		UrlUtils $urlUtils
+	) {
 		parent::__construct( $query, $moduleName, 'iw' );
 
 		$this->urlUtils = $urlUtils;
@@ -71,20 +62,20 @@ class ApiQueryIWLinks extends ApiQueryBase {
 			$prop = [ 'url' => 1 ];
 		}
 
+		$this->setVirtualDomain( InterwikiLinksTable::VIRTUAL_DOMAIN );
+
 		$this->addFields( [
 			'iwl_from',
 			'iwl_prefix',
 			'iwl_title'
 		] );
-
 		$this->addTables( 'iwlinks' );
 		$this->addWhereFld( 'iwl_from', array_keys( $pages ) );
 
 		if ( $params['continue'] !== null ) {
 			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string', 'string' ] );
 			$op = $params['dir'] == 'descending' ? '<=' : '>=';
-			$db = $this->getDB();
-			$this->addWhere( $db->buildComparison( $op, [
+			$this->addWhere( $this->getDB()->buildComparison( $op, [
 				'iwl_from' => $cont[0],
 				'iwl_prefix' => $cont[1],
 				'iwl_title' => $cont[2],
@@ -151,10 +142,12 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'prop' => [
@@ -190,6 +183,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -200,6 +194,7 @@ class ApiQueryIWLinks extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Iwlinks';
 	}

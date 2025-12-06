@@ -66,12 +66,25 @@ class VariableGeneratorTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param string $prefix
-	 * @param Title $title
-	 * @param array $expected
 	 * @dataProvider provideTitleVarsNotLazy
 	 */
-	public function testAddTitleVars_notLazy( string $prefix, Title $title, array $expected ) {
+	public function testAddTitleVars_notLazy( string $prefix ) {
+		$title = $this->createMock( Title::class );
+		$id = 12345;
+		$title->method( 'getArticleID' )->willReturn( $id );
+		$namespace = NS_HELP;
+		$title->method( 'getNamespace' )->willReturn( $namespace );
+		$titleText = 'Foobar';
+		$title->method( 'getText' )->willReturn( $titleText );
+		$prefixedTitle = 'Help:Foobar';
+		$title->method( 'getPrefixedText' )->willReturn( $prefixedTitle );
+		$expected = [
+			"{$prefix}_id" => $id,
+			"{$prefix}_namespace" => $namespace,
+			"{$prefix}_title" => $titleText,
+			"{$prefix}_prefixedtitle" => $prefixedTitle,
+		];
+
 		$generator = new VariableGenerator(
 			$this->createMock( AbuseFilterHookRunner::class ),
 			$this->createMock( UserFactory::class )
@@ -86,26 +99,12 @@ class VariableGeneratorTest extends MediaWikiUnitTestCase {
 		$this->assertArrayEquals( $expected, $computedVars );
 	}
 
-	public function provideTitleVarsNotLazy(): Generator {
-		$prefixes = [ 'page', 'moved_from', 'moved_to' ];
-		foreach ( $prefixes as $prefix ) {
-			$title = $this->createMock( Title::class );
-			$id = 12345;
-			$title->method( 'getArticleID' )->willReturn( $id );
-			$namespace = NS_HELP;
-			$title->method( 'getNamespace' )->willReturn( $namespace );
-			$titleText = 'Foobar';
-			$title->method( 'getText' )->willReturn( $titleText );
-			$prefixedTitle = 'Help:Foobar';
-			$title->method( 'getPrefixedText' )->willReturn( $prefixedTitle );
-			$expected = [
-				"{$prefix}_id" => $id,
-				"{$prefix}_namespace" => $namespace,
-				"{$prefix}_title" => $titleText,
-				"{$prefix}_prefixedtitle" => $prefixedTitle,
-			];
-			yield $prefix => [ $prefix, $title, $expected ];
-		}
+	public static function provideTitleVarsNotLazy(): iterable {
+		return [
+			[ 'page' ],
+			[ 'moved_from' ],
+			[ 'moved_to' ],
+		];
 	}
 
 	/**
@@ -178,7 +177,7 @@ class VariableGeneratorTest extends MediaWikiUnitTestCase {
 			'added_lines',
 			'removed_lines',
 			'added_lines_pst',
-			'all_links',
+			'new_links',
 			'old_links',
 			'added_links',
 			'removed_links',

@@ -4,6 +4,7 @@ namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
 
 use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
 use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**
@@ -24,7 +25,7 @@ class MoveLogEntriesFromCuChangesWithoutReadOldColumnTest extends MaintenanceBas
 		// Insert one testing row to cu_changes to skip the empty table check.
 		$expectedRow = [];
 		$this->commonTestsUpdateCheckUserData(
-			array_merge( self::getDefaultRecentChangeAttribs(), [ 'rc_type' => RC_EDIT ] ),
+			array_merge( self::getDefaultRecentChangeAttribs(), [ 'rc_source' => RecentChange::SRC_EDIT ] ),
 			[],
 			$expectedRow
 		);

@@ -17,16 +17,10 @@ class SpecsFormatter {
 	/** @var MessageLocalizer */
 	private $messageLocalizer;
 
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 */
 	public function __construct( MessageLocalizer $messageLocalizer ) {
 		$this->messageLocalizer = $messageLocalizer;
 	}
 
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 */
 	public function setMessageLocalizer( MessageLocalizer $messageLocalizer ): void {
 		$this->messageLocalizer = $messageLocalizer;
 	}
@@ -45,10 +39,6 @@ class SpecsFormatter {
 		return $msg->isDisabled() ? htmlspecialchars( $action ) : $msg->escaped();
 	}
 
-	/**
-	 * @param string $action
-	 * @return Message
-	 */
 	public function getActionMessage( string $action ): Message {
 		// Give grep a chance to find the usages:
 		// abusefilter-action-tag, abusefilter-action-throttle, abusefilter-action-warn,

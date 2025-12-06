@@ -138,7 +138,7 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 		);
 		DeferredUpdates::doUpdates();
 		$result = $this->doCheckUserLogApiRequest( [
-			'culreason' => $reasonToSearchFor
+			'culreason' => $reasonToSearchFor,
 		] )[0]['query']['checkuserlog']['entries'];
 		if ( $shouldSeeEntry ) {
 			$this->assertCount( 1, $result, 'A search for the reason should show one entry.' );
@@ -146,7 +146,7 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 			$this->assertCount( 0, $result, 'A search for the reason should show no entries.' );
 		}
 		$result = $this->doCheckUserLogApiRequest( [
-			'culreason' => $checkUserLogService->getPlaintextReason( $reasonToSearchFor )
+			'culreason' => $checkUserLogService->getPlaintextReason( $reasonToSearchFor ),
 		] )[0]['query']['checkuserlog']['entries'];
 		if ( $shouldSeeEntry ) {
 			$this->assertCount(
@@ -186,7 +186,7 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 				'checkuser' => $this->getTestSysop()->getUserIdentity()->getName(),
 				'type' => $logType,
 				'reason' => $reason,
-				'target' => $target
+				'target' => $target,
 			],
 			$result[0],
 			'CheckUserLog entry returned was not correct.'
@@ -211,7 +211,7 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 		);
 		DeferredUpdates::doUpdates();
 		$result = $this->doCheckUserLogApiRequest( [
-			'cultarget' => $target
+			'cultarget' => $target,
 		] )[0]['query']['checkuserlog']['entries'];
 		$this->assertCount(
 			1,
@@ -230,7 +230,7 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 		);
 		DeferredUpdates::doUpdates();
 		$result = $this->doCheckUserLogApiRequest( [
-			'cultarget' => $target
+			'cultarget' => $target,
 		] )[0]['query']['checkuserlog']['entries'];
 		$this->assertCount(
 			1,

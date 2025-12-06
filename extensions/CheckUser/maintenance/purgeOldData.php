@@ -12,12 +12,14 @@ use MediaWiki\Maintenance\Maintenance;
 use PurgeRecentChanges;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
+// @codeCoverageIgnoreStart
 if ( getenv( 'MW_INSTALL_PATH' ) ) {
 	$IP = getenv( 'MW_INSTALL_PATH' );
 } else {
 	$IP = dirname( __DIR__, 3 );
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 class PurgeOldData extends Maintenance {
 	public function __construct() {
@@ -108,5 +110,7 @@ class PurgeOldData extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PurgeOldData::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

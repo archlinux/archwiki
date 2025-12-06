@@ -32,12 +32,9 @@ class CategoryCache {
 	/** @var (?Category)[] Keys are category database names, values are either a Category object or null */
 	private array $cache = [];
 
-	private IConnectionProvider $dbProvider;
-
 	public function __construct(
-		IConnectionProvider $dbProvider
+		private readonly IConnectionProvider $dbProvider,
 	) {
-		$this->dbProvider = $dbProvider;
 	}
 
 	/**

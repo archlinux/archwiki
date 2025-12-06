@@ -7,10 +7,12 @@ use MediaWiki\Parser\ParserOutput;
 
 class DummyContentHandlerForTesting extends ContentHandler {
 
+	/** @inheritDoc */
 	public function __construct( $dataModel, $formats = [ DummyContentForTesting::MODEL_ID ] ) {
 		parent::__construct( $dataModel, $formats );
 	}
 
+	/** @inheritDoc */
 	protected function getContentClass() {
 		return DummyContentForTesting::class;
 	}
@@ -53,8 +55,6 @@ class DummyContentHandlerForTesting extends ContentHandler {
 
 	/**
 	 * @see ContentHandler::fillParserOutput()
-	 *
-	 * @since 1.38
 	 * @param Content $content
 	 * @param ContentParseParams $cpoParams
 	 * @param ParserOutput &$output The output object to fill (reference).

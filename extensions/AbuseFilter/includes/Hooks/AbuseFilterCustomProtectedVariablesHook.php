@@ -11,6 +11,9 @@ interface AbuseFilterCustomProtectedVariablesHook {
 	 * Using this hook has the advantage of enforcing that the variable is always protected, even if
 	 * it is removed from $wgAbuseFilterProtectedVariables.
 	 *
+	 * The values of protected variables are purged after $wgAbuseFilterLogProtectedVariablesMaxAge seconds.
+	 * If the config is set to 0, then the protected variables are never purged.
+	 *
 	 * @since 1.44
 	 * @param string[] &$variables The variables which should be protected variables.
 	 */

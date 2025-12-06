@@ -117,13 +117,14 @@ abstract class PFragmentHandler {
 	 */
 	public function lintHandler(
 		ParsoidExtensionAPI $extApi, Element $rootNode, callable $defaultHandler
-	) {
+	): bool {
 		/* Use default linter */
 		return false;
 	}
 
 	/**
 	 * Serialize a DOM node created by this extension to wikitext.
+	 *
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param Element $node
 	 * @param bool $wrapperUnmodified
@@ -158,5 +159,5 @@ abstract class PFragmentHandler {
 		return false;
 	}
 }
-/** @deprecated */
+/** @deprecated since 0.21 */
 class_alias( PFragmentHandler::class, '\Wikimedia\Parsoid\Ext\FragmentHandler' );

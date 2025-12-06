@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
+use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
@@ -11,19 +13,20 @@ use MediaWiki\User\User;
 
 class EchoHtmlDigestEmailFormatter extends EchoEventDigestFormatter {
 
-	/**
-	 * @var string 'daily' or 'weekly'
-	 */
-	protected $digestMode;
+	private readonly AttributeManager $attributeManager;
 
 	/**
 	 * @param User $user
 	 * @param Language $language
-	 * @param string $digestMode
+	 * @param string $digestMode 'daily' or 'weekly'
 	 */
-	public function __construct( User $user, Language $language, $digestMode ) {
+	public function __construct(
+		User $user,
+		Language $language,
+		protected string $digestMode,
+	) {
 		parent::__construct( $user, $language );
-		$this->digestMode = $digestMode;
+		$this->attributeManager = Services::getInstance()->getAttributeManager();
 	}
 
 	/**
@@ -148,12 +151,12 @@ EOF;
 	}
 
 	/**
-	 * @param string $type Notification type
-	 * @param int $count Number of notifications in this type's section
+	 * @param string $category Notification category
+	 * @param int $count Number of notifications in this category's section
 	 * @return string Formatted category section title
 	 */
-	private function getCategoryTitle( $type, $count ) {
-		return $this->msg( "echo-category-title-$type" )
+	private function getCategoryTitle( $category, $count ) {
+		return $this->msg( $this->attributeManager->getCategoryTitle( $category ) )
 			->numParams( $count )
 			->parse();
 	}

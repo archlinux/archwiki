@@ -3,9 +3,10 @@
  * To simplify imports in world.js.
  */
 
-'use strict';
+import ArticlePage from './article_page.js';
+import ArticlePageWithEditorOverlay from './article_page_with_editor_overlay.js';
 
-module.exports = {
-	ArticlePage: require( './article_page' ),
-	ArticlePageWithEditorOverlay: require( './article_page_with_editor_overlay' )
+export default {
+	ArticlePage,
+	ArticlePageWithEditorOverlay
 };

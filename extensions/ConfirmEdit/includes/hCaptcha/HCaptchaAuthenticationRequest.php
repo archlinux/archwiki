@@ -26,7 +26,9 @@ class HCaptchaAuthenticationRequest extends CaptchaAuthenticationRequest {
 		];
 
 		// Only display if there's potentially a captcha to solve or interact with...
-		if ( !MediaWikiServices::getInstance()->getMainConfig()->get( 'HCaptchaPassiveMode' ) ) {
+
+		if ( defined( 'MW_API' ) ||
+			!MediaWikiServices::getInstance()->getMainConfig()->get( 'HCaptchaInvisibleMode' ) ) {
 			$fieldInfo = parent::getFieldInfo();
 			$ret['captchaWord']['label'] = $fieldInfo['captchaWord']['label'];
 			$ret['captchaWord']['help'] = \wfMessage( 'hcaptcha-help' );

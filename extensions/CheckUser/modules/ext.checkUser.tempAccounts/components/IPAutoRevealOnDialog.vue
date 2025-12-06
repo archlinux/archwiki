@@ -9,9 +9,7 @@
 		@default="open = false"
 		@primary="onSubmit"
 	>
-		<p>
-			{{ $i18n( 'checkuser-ip-auto-reveal-on-dialog-text' ).text() }}
-		</p>
+		<p v-i18n-html:checkuser-ip-auto-reveal-on-dialog-text></p>
 		<cdx-field>
 			<template #label>
 				{{ $i18n( 'checkuser-ip-auto-reveal-on-dialog-select-label' ).text() }}
@@ -25,13 +23,21 @@
 			>
 			</cdx-select>
 		</cdx-field>
+		<cdx-message
+			v-if="enableError !== ''"
+			type="error"
+			:inline="true"
+		>
+			<p>{{ enableError }}</p>
+		</cdx-message>
 	</cdx-dialog>
 </template>
 
 <script>
 const { ref } = require( 'vue' );
-const { CdxDialog, CdxField, CdxSelect } = require( '@wikimedia/codex' );
+const { CdxDialog, CdxField, CdxSelect, CdxMessage } = require( '@wikimedia/codex' );
 const { enableAutoReveal } = require( './../ipReveal.js' );
+const useInstrument = require( '../useInstrument.js' );
 
 // The duration messages for the select were translated using PHP's Message::durationParams.
 const durations = require( './../durations.json' );
@@ -42,17 +48,27 @@ module.exports = exports = {
 	components: {
 		CdxDialog,
 		CdxField,
-		CdxSelect
+		CdxSelect,
+		CdxMessage
 	},
-	setup() {
+	props: {
+		toolLink: {
+			type: Object,
+			required: true
+		}
+	},
+	setup( props ) {
+		const logEvent = useInstrument();
+
 		const open = ref( true );
 		const selected = ref( null );
+		const enableError = ref( '' );
 
 		const defaultAction = {
-			label: mw.message( 'checkuser-ip-auto-reveal-on-dialog-default-action' ).text()
+			label: mw.msg( 'checkuser-ip-auto-reveal-on-dialog-default-action' )
 		};
 		const primaryAction = ref( {
-			label: mw.message( 'checkuser-ip-auto-reveal-on-dialog-primary-action' ).text(),
+			label: mw.msg( 'checkuser-ip-auto-reveal-on-dialog-primary-action' ),
 			actionType: 'progressive',
 			disabled: !selected.value
 		} );
@@ -67,17 +83,30 @@ module.exports = exports = {
 		}
 
 		function onSubmit() {
-			enableAutoReveal( selected.value );
-			open.value = false;
+			enableAutoReveal( selected.value ).then(
+				() => {
+					open.value = false;
 
-			mw.notify( mw.message( 'checkuser-ip-auto-reveal-notification-on' ), {
-				classes: [ 'ext-checkuser-ip-auto-reveal-notification-on' ],
-				type: 'success'
-			} );
+					props.toolLink.text(
+						mw.message( 'checkuser-ip-auto-reveal-link-sidebar-on' )
+					);
+
+					logEvent( 'session_start', { sessionLength: Number( selected.value ) } );
+
+					mw.notify( mw.message( 'checkuser-ip-auto-reveal-notification-on' ), {
+						classes: [ 'ext-checkuser-ip-auto-reveal-notification-on' ],
+						type: 'success'
+					} );
+				},
+				( error ) => {
+					enableError.value = error;
+				}
+			);
 		}
 
 		return {
 			open,
+			enableError,
 			defaultAction,
 			primaryAction,
 			menuItems,

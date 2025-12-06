@@ -3,21 +3,7 @@
 /**
  * HTML form generation using Codex components.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,6 +24,7 @@ class CodexHTMLForm extends HTMLForm {
 	/** @inheritDoc */
 	protected $displayFormat = 'codex';
 
+	/** @inheritDoc */
 	public static function loadInputFromParameters( $fieldname, $descriptor,
 		?HTMLForm $parent = null
 	) {
@@ -46,6 +33,7 @@ class CodexHTMLForm extends HTMLForm {
 		return $field;
 	}
 
+	/** @inheritDoc */
 	public function getHTML( $submitResult ) {
 		$this->getOutput()->addModuleStyles( [
 			'mediawiki.htmlform.codex.styles',
@@ -61,16 +49,19 @@ class CodexHTMLForm extends HTMLForm {
 		return $field->getCodex( $value );
 	}
 
+	/** @inheritDoc */
 	protected function getFormAttributes() {
 		$attribs = parent::getFormAttributes();
 		$attribs['class'] = [ 'mw-htmlform', 'mw-htmlform-codex' ];
 		return $attribs;
 	}
 
+	/** @inheritDoc */
 	public function wrapForm( $html ) {
 		return Html::rawElement( 'form', $this->getFormAttributes(), $html );
 	}
 
+	/** @inheritDoc */
 	protected function wrapFieldSetSection( $legend, $section, $attributes, $isRoot ) {
 		$attributes['class'] = 'cdx-field cdx-field--is-fieldset';
 		$legendElement = Html::rawElement( 'legend', [ 'class' => [ 'cdx-label' ] ], $legend );
@@ -128,6 +119,7 @@ class CodexHTMLForm extends HTMLForm {
 		) . $descriptionMarkup;
 	}
 
+	/** @inheritDoc */
 	protected function formatSection( array $fieldsHtml, $sectionName, $anyFieldHasLabel ) {
 		if ( !$fieldsHtml ) {
 			// Do not generate any wrappers for empty sections. Sections may be empty if they only

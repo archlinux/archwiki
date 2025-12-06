@@ -137,7 +137,7 @@ class EchoCoreThanksPresentationModel extends EchoEventPresentationModel {
 		} else {
 			$url = $this->event->getTitle()->getLocalURL( [
 				'oldid' => 'prev',
-				'diff' => $this->event->getExtraParam( 'revid' )
+				'diff' => $this->event->getExtraParam( 'revid' ),
 			] );
 			$label = 'notification-link-text-view-edit';
 		}

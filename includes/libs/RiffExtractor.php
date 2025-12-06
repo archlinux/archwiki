@@ -1,28 +1,20 @@
 <?php
 /**
- * Extractor for the Resource Interchange File Format
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
+ * @license GPL-2.0-or-later
  * @author Bryan Tong Minh
- * @ingroup Media
  */
 
+/**
+ * Extractor for the Resource Interchange File Format
+ *
+ * @ingroup Media
+ */
 class RiffExtractor {
+	/**
+	 * @param string $filename
+	 * @param int $maxChunks
+	 * @return array|false
+	 */
 	public static function findChunksFromFile( $filename, $maxChunks = -1 ) {
 		$file = fopen( $filename, 'rb' );
 		$info = self::findChunks( $file, $maxChunks );
@@ -30,6 +22,11 @@ class RiffExtractor {
 		return $info;
 	}
 
+	/**
+	 * @param resource $file
+	 * @param int $maxChunks
+	 * @return array|false
+	 */
 	public static function findChunks( $file, $maxChunks = -1 ) {
 		$riff = fread( $file, 4 );
 		if ( $riff !== 'RIFF' ) {

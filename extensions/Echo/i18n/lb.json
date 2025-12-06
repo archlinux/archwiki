@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"GilPe",
 			"Les Meloures",
 			"Macofe",
 			"Robby",
 			"Soued031",
-			"Volvox",
-			"GilPe"
+			"Volvox"
 		]
 	},
 	"echo-desc": "System fir Benotzer iwwer Evenementer a Messagen z'informéieren",
@@ -58,20 +58,18 @@
 	"echo-category-title-watchlist": "Ännerung op enger iwwerwaachter Säit",
 	"echo-category-title-minor-watchlist": "Kleng Ännerung op enger iwwerwaachter Säit",
 	"echo-category-title-api-triggered": "Vun der API ausgeléist Notifikatiounen",
-	"echo-pref-tooltip-edit-user-talk": "Informéiert mech, wann een eppes op meng Diskussiounssäit setzt.",
-	"echo-pref-tooltip-edit-user-page": "Mech informéieren, wann een eng Ännerung u menger Benotzersäit mécht.",
+	"echo-category-title-verify-email-reminder": "E-Mail-Confirmatiouns-Erënnerungen",
 	"echo-pref-tooltip-article-linked": "Mech informéieren, wann ee vun enger anerer Säit aus op eng Säit verlinkt, déi ech ugeluecht hunn.",
 	"echo-pref-tooltip-reverted": "Mech informéiere wann ee meng Ännerung zerécksetzt oder wann de 'Rollback'-Tool benotzt gëtt.",
 	"echo-pref-tooltip-mention": "Mech informéieren, wann een e Link op meng Benotzersäit mécht.",
 	"echo-pref-tooltip-mention-failure": "Mech informéieren, wann ech engem eng Mentioun net schécke konnt.",
 	"echo-pref-tooltip-mention-success": "Mech informéieren, wann ech engem eng Mentioun geschéckt hunn.",
-	"echo-pref-tooltip-user-rights": "Mech informéieren, wann ee meng Benotzerrechter ännert.",
-	"echo-pref-tooltip-emailuser": "Mech informéieren, wann ee mir eng E-Mail schéckt.",
 	"echo-pref-tooltip-article-reminder": "Mech iwwer dës Säit notifiéieren wann ech froen.",
 	"echo-pref-tooltip-thank-you-edit": "Mech informéieren, wann ech meng éischt, zéngt, honnertst... Ännerung gemaach hunn.",
 	"echo-pref-tooltip-watchlist": "Mech informéieren, wann een eng (net-kleng) Ännerung op enger Säit mécht, déi op menger Iwwerwaachungslëscht steet.",
 	"echo-pref-tooltip-minor-watchlist": "Mech informéieren, wann een eng kleng Ännerung op enger Säit mécht, déi op menger Iwwerwaachungslëscht steet.",
 	"echo-pref-tooltip-api-triggered": "Schéckt mir Notifikatiounen, déi vu Botten oder Gadgeten iwwer d'API ausgeléist goufen.",
+	"echo-pref-tooltip-verify-email-reminder": "Erënnert mech dru fir meng E-Mail-Adress ze confirméieren, falls se nach net confirméiert gouf.",
 	"notifications": "Notifikatiounen",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Är}} Meldungen",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Är}} Notifikatiounen",
@@ -84,8 +82,8 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Erlaabt Methode fir Notifikatiounen",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Wat fir eng Notifikatunsmethode fir jidder Kategorie ënnerstëtzt ginn",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Als Standard aktivéiert",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Lëscht vun de Benotzer",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Nei Benotzer",
+	"echo-displaynotificationsconfiguration-enabled-default-legend": "Standardoptiounen",
+	"echo-displaynotificationsconfiguration-enabled-default-conditional-legend": "Optioune fir Benotzer, déi dës Konditiounen erfëllen: $1",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Obligatoresch Notifikatiounsmethoden",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Wat fir eng Notifikatiounsmethode fir jidder Kategorie obligatoresch sinn",
 	"echo-specialpage": "Notifikatiounen",
@@ -245,5 +243,9 @@
 	"action-manage-all-push-subscriptions": "all Push-Abonementer ze verwalten",
 	"group-push-subscription-manager": "Push-Abonement-Verwalter",
 	"group-push-subscription-manager-member": "{{GENDER:$1|Push-Abonement-Verwalter|Push-Abonement-Verwalterin}}",
-	"grouppage-push-subscription-manager": "{{ns:project}}:Push-Abonement-Verwalter"
+	"grouppage-push-subscription-manager": "{{ns:project}}:Push-Abonement-Verwalter",
+	"notification-subject-email-verify-email-reminder": "Confirméiert {{GENDER:$1|Är}} E-Mail-Adress",
+	"notification-header-verify-email-reminder": "<strong>Verifizéiert wgl. {{GENDER:$1|Är}} E-Mail-Adress</strong>, fir datt mir wëssen, datt d'E-Mail-Adress vun {{GENDER:$1|Ärem}} Kont {{GENDER:$1|Iech}} gehéiert.",
+	"notification-link-text-verify-email-reminder": "E-Mail-Astellunge geréieren",
+	"notification-verify-email-reminder-link-label": "E-Mail-Adress confirméieren"
 }

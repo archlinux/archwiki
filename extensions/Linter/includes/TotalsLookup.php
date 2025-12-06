@@ -41,13 +41,6 @@ class TotalsLookup {
 	private CategoryManager $categoryManager;
 	private Database $database;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param WANObjectCache $cache
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
-	 * @param CategoryManager $categoryManager
-	 * @param Database $database
-	 */
 	public function __construct(
 		ServiceOptions $options,
 		WANObjectCache $cache,
@@ -63,18 +56,14 @@ class TotalsLookup {
 		$this->database = $database;
 	}
 
-	/**
-	 * @param string $cat
-	 * @return string
-	 */
-	private function makeKey( $cat ) {
+	private function makeKey( string $cat ): string {
 		return $this->cache->makeKey( 'linter', 'total', $cat );
 	}
 
 	/**
 	 * Get the totals for every category in the database
 	 *
-	 * @return array
+	 * @return array<string,int>
 	 */
 	public function getTotals(): array {
 		$cats = $this->categoryManager->getVisibleCategories();

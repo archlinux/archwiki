@@ -37,12 +37,17 @@ class LinksTableGroup {
 				'WikiPageFactory',
 				'DBLoadBalancer',
 				'MainWANObjectCache',
-				'MainConfig'
+				'MainConfig',
+				'JobQueueGroup',
+				'HookContainer',
 			],
 			'needCollation' => true,
 		],
 		'externallinks' => [
 			'class' => ExternalLinksTable::class,
+		],
+		'existencelinks' => [
+			'class' => ExistenceLinksTable::class,
 		],
 		'imagelinks' => [
 			'class' => ImageLinksTable::class
@@ -55,9 +60,6 @@ class LinksTableGroup {
 		],
 		'pagelinks' => [
 			'class' => PageLinksTable::class,
-			'services' => [
-				'MainConfig'
-			],
 		],
 		'page_props' => [
 			'class' => PagePropsTable::class,
@@ -256,7 +258,10 @@ class LinksTableGroup {
 				$extraArgs = [];
 			}
 			/** @var LinksTable $table */
-			$table = $this->objectFactory->createObject( $spec, [ 'extraArgs' => $extraArgs ] );
+			$table = $this->objectFactory->createObject(
+				$spec,
+				[ 'extraArgs' => $extraArgs, 'assertClass' => LinksTable::class ]
+			);
 			$table->injectBaseDependencies(
 				$this->lbFactory,
 				$this->linkTargetLookup,

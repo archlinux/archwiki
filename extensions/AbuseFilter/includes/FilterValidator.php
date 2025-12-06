@@ -10,6 +10,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Message\Message;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
+use Wikimedia\Message\ListType;
 
 /**
  * This class validates filters, e.g. before saving.
@@ -43,6 +44,7 @@ class FilterValidator {
 		AbuseFilterPermissionManager $permManager,
 		ServiceOptions $options
 	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->changeTagValidator = $changeTagValidator;
 		$this->ruleCheckerFactory = $ruleCheckerFactory;
 		$this->permManager = $permManager;
@@ -129,10 +131,6 @@ class FilterValidator {
 		return Status::newGood();
 	}
 
-	/**
-	 * @param AbstractFilter $filter
-	 * @return Status
-	 */
 	public function checkValidSyntax( AbstractFilter $filter ): Status {
 		$ret = Status::newGood();
 		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
@@ -147,10 +145,6 @@ class FilterValidator {
 		return $ret;
 	}
 
-	/**
-	 * @param AbstractFilter $filter
-	 * @return Status
-	 */
 	public function checkRequiredFields( AbstractFilter $filter ): Status {
 		$ret = Status::newGood();
 		$missing = [];
@@ -163,16 +157,12 @@ class FilterValidator {
 		if ( count( $missing ) !== 0 ) {
 			$ret->error(
 				'abusefilter-edit-missingfields',
-				Message::listParam( $missing, 'comma' )
+				Message::listParam( $missing, ListType::COMMA )
 			);
 		}
 		return $ret;
 	}
 
-	/**
-	 * @param AbstractFilter $filter
-	 * @return Status
-	 */
 	public function checkConflictingFields( AbstractFilter $filter ): Status {
 		$ret = Status::newGood();
 		// Don't allow setting as deleted an active filter
@@ -309,10 +299,6 @@ class FilterValidator {
 		return Status::newGood();
 	}
 
-	/**
-	 * @param AbstractFilter $filter
-	 * @return Status
-	 */
 	public function checkMessagesOnGlobalFilters( AbstractFilter $filter ): Status {
 		$ret = Status::newGood();
 		$actions = $filter->getActions();
@@ -376,7 +362,8 @@ class FilterValidator {
 		) {
 			$ret->error(
 				'abusefilter-edit-protected-variable-not-protected',
-				Message::listParam( $usedProtectedVariables )
+				Message::listParam( $usedProtectedVariables ),
+				Message::numParam( count( $usedProtectedVariables ) )
 			);
 		}
 
@@ -399,10 +386,6 @@ class FilterValidator {
 		return $ret;
 	}
 
-	/**
-	 * @param AbstractFilter $filter
-	 * @return Status
-	 */
 	public function checkGroup( AbstractFilter $filter ): Status {
 		$ret = Status::newGood();
 		$group = $filter->getGroup();

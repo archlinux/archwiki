@@ -129,7 +129,6 @@ class VectorComponentMainMenuTest extends MediaWikiUnitTestCase {
 		// Assert the structure and types of expected keys
 		$this->assertIsArray( $templateData['data-portlets-first'] );
 		$this->assertIsArray( $templateData['array-portlets-rest'] );
-		$this->assertNull( $templateData['data-main-menu-action'] );
 
 		// Assert data-pinnable-header
 		$this->assertIsArray( $templateData['data-pinnable-header'] );
@@ -138,7 +137,6 @@ class VectorComponentMainMenuTest extends MediaWikiUnitTestCase {
 		// Assert the structure and types of expected keys
 		$this->assertArrayHasKey( 'data-portlets-first', $templateData );
 		$this->assertArrayHasKey( 'array-portlets-rest', $templateData );
-		$this->assertArrayHasKey( 'data-main-menu-action', $templateData );
 		$this->assertArrayHasKey( 'data-pinnable-header', $templateData );
 		$this->assertArrayHasKey( 'data-languages', $templateData );
 	}

@@ -5,6 +5,8 @@
 			"Wutkh"
 		]
 	},
+	"cdx-breadcrumb-navigation-label": "เมนูนำทาง",
+	"cdx-breadcrumb-overflow-label": "ตัวเลือกการนำทางเพิ่มเติม",
 	"cdx-chip-input-chip-added": "ชิป $1 ถูกเพิ่มแล้ว",
 	"cdx-chip-input-chip-removed": "ชิป $1 ถูกนำออกแล้ว",
 	"cdx-input-chip-aria-description": "กด Enter เพื่อแก้ไข หรือ Delete เพื่อลบ",

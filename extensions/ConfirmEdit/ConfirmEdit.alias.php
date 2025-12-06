@@ -118,6 +118,11 @@ $specialPageAliases['yue'] = [
 	'Captcha' => [ '驗證碼' ],
 ];
 
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'Captcha' => [ 'Captcha' ],
+];
+
 /** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Captcha' => [ '验证码' ],

@@ -41,7 +41,6 @@ class PoolCounterTest extends MediaWikiUnitTestCase {
 		$poolCounter = $this->createMock( PoolCounterAbstractMock::class );
 
 		$hashKeyIntoSlots = new ReflectionMethod( $poolCounter, 'hashKeyIntoSlots' );
-		$hashKeyIntoSlots->setAccessible( true );
 
 		$keysWithTwoSlots = $keysWithFiveSlots = [];
 		foreach ( range( 1, 100 ) as $i ) {
@@ -69,9 +68,11 @@ class PoolCounterTest extends MediaWikiUnitTestCase {
 	}
 }
 
-// We will use this class with getMockForAbstractClass to create a concrete mock class.
-// That call will die if the contructor is not public, unless we use disableOriginalConstructor(),
-// in which case we could not test the constructor.
+/**
+ * We will use this class with getMockForAbstractClass to create a concrete mock class.
+ * That call will die if the contructor is not public, unless we use disableOriginalConstructor(),
+ * in which case we could not test the constructor.
+ */
 abstract class PoolCounterAbstractMock extends PoolCounter {
 	public function __construct( ...$args ) {
 		parent::__construct( ...$args );

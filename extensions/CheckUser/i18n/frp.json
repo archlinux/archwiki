@@ -10,13 +10,13 @@
 	"checkuser": "Controlor d’usanciér",
 	"checkuserlog": "Jornal des contrôlos d’usanciérs",
 	"checkuser-contribs": "controlar les adrèces IP ux usanciérs",
-	"group-checkuser": "Controlors d’usanciér",
-	"group-checkuser-member": "controlo{{GENDER:$1|r|sa}} d’usanciér",
-	"right-checkuser": "Controlar les adrèces IP ux usanciérs et ôtres enformacions",
+	"group-checkuser": "Controlors d’utilisators",
+	"group-checkuser-member": "controlo{{GENDER:$1|r|sa}} d’utilisators",
+	"right-checkuser": "Controlar les adrèces IP et pués d’ôtres enformacions d’un utilisator",
 	"right-checkuser-log": "Vêre lo jornal des contrôlos d’usanciérs",
-	"action-checkuser": "controlar les adrèces IP ux usanciérs et ôtres enformacions",
+	"action-checkuser": "controlar les adrèces IP et pués d’ôtres enformacions d’un utilisator",
 	"action-checkuser-log": "vêre lo jornal des contrôlos d’usanciérs",
-	"grouppage-checkuser": "{{ns:project}}:Controlors d’usanciér",
+	"grouppage-checkuser": "{{ns:project}}:Controlors d’utilisators",
 	"checkuser-reason": "Rêson :",
 	"checkuser-reason-api": "API : $1",
 	"checkuser-showlog": "Afichiér lo jornal",
@@ -48,5 +48,7 @@
 	"checkuser-ipeditcount": "~$1 per tôs los usanciérs",
 	"checkuser-showmain": "Tornar u formulèro principâl du contrôlo d’usanciér",
 	"logentry-checkuser-private-event-autocreate-account": "at étâ fêt ôtomaticament",
-	"logentry-checkuser-private-event-create-account": "at étâ fêt"
+	"logentry-checkuser-private-event-create-account": "at étâ fêt",
+	"group-checkuser.css": "/* Lo code CSS betâ ique afècterat ren que los membros de la tropa « Controlors d’utilisators » */",
+	"group-checkuser.js": "/* Lo code JavaScript betâ ique afècterat ren que los membros de la tropa « Controlors d’utilisators » */"
 }

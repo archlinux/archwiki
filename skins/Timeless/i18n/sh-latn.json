@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Vlad5250",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
+	"timeless-prefs-talkpage": "[[mw:Skin talk:Timeless|razgovor}]]",
+	"skinname-timeless": "Timeless",
 	"timeless-anonymous": "Neprijavljen",
 	"timeless-loggedinas": "Prijavljeni ste kao '''$1'''",
 	"timeless-notloggedin": "Niste prijavljeni",

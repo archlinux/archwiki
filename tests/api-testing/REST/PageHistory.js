@@ -232,9 +232,8 @@ describe( 'Page History', () => {
 		it( 'Should return 400 for invalid parameter', async () => {
 			const res = await client.get( `/v1/page/${ title }/history/counts/editts` );
 			assert.equal( res.status, 400 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
 
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should return 404 for title that does not exist', async () => {
@@ -242,8 +241,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title2 }/history/counts/edits` );
 
 			assert.equal( res.status, 404 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 
 		} );
 
@@ -274,11 +273,9 @@ describe( 'Page History', () => {
 		it( 'Should return 404 for deleted page', async () => {
 			await mindy.action( 'delete', { title: titleToDelete, token: await mindy.token() }, 'POST' );
 			const res = await client.get( `/v1/page/${ titleToDelete }/history/counts/edits` );
-			const { status: editsStatus } = res;
-			assert.equal( editsStatus, 404 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+			assert.equal( res.status, 404 );
 
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 	} );
 
@@ -338,8 +335,8 @@ describe( 'Page History', () => {
 			const { status: editorsStatus, header: editorsHeader } = res;
 			assert.equal( editorsStatus, 404 );
 			assert.match( editorsHeader[ 'content-type' ], /^application\/json/ );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should get total number of unique editors', async () => {
@@ -439,8 +436,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title }/history`, { filter: 'anon' } );
 
 			assert.equal( res.status, 400 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should return 404 for title that does not exist', async () => {
@@ -448,8 +445,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title2 }/history`, { filter: 'bot' } );
 
 			assert.equal( res.status, 404 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should update cache control headers', async () => {
@@ -536,8 +533,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title }/history`, { newer_than: -1 } );
 
 			assert.equal( res.status, 400 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should return 400 when using both newer_than and older_than', async () => {
@@ -546,8 +543,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title }/history`, { newer_than: id1, older_than: id2 } );
 
 			assert.equal( res.status, 400 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 
 		it( 'Should return 404 for a revision that does not exist for a specified page', async () => {
@@ -557,8 +554,8 @@ describe( 'Page History', () => {
 			const res = await client.get( `/v1/page/${ title }/history`, { newer_than: edit.newrevid } );
 
 			assert.equal( res.status, 404 );
-			// eslint-disable-next-line no-unused-expressions
-			expect( res ).to.satisfyApiSpec;
+
+			expect( res.text ).to.satisfySchemaInApiSpec( 'GenericErrorResponseModel' );
 		} );
 	} );
 } );

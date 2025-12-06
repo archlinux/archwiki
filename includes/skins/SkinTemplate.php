@@ -2,21 +2,7 @@
 /**
  * Copyright © Gabriel Wicke -- http://www.aulinx.de/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -91,7 +77,7 @@ class SkinTemplate extends Skin {
 	 * and eventually it spits out some HTML. Should have interface
 	 * roughly equivalent to PHPTAL 0.7.
 	 *
-	 * @param string $classname
+	 * @param class-string<QuickTemplate> $classname
 	 * @return QuickTemplate
 	 */
 	protected function setupTemplate( $classname ) {
@@ -1138,6 +1124,7 @@ class SkinTemplate extends Skin {
 					$content_navigation['views']['view']['text'] = $this->getSkinNavOverrideableLabel(
 						'view-view'
 					);
+					$content_navigation['views']['view']['icon'] = 'eye';
 					// signal to hide this from simple content_actions
 					$content_navigation['views']['view']['redundant'] = true;
 				}
@@ -1152,6 +1139,7 @@ class SkinTemplate extends Skin {
 						'text' => $this->getSkinNavOverrideableLabel(
 							'view-foreign', $page->getWikiDisplayName()
 						),
+						'icon' => 'eye',
 						'href' => $page->getSourceURL(),
 						'primary' => false,
 					];
@@ -1188,6 +1176,7 @@ class SkinTemplate extends Skin {
 							? 'selected'
 							: null
 						) . $isTalkClass,
+						'icon' => 'edit',
 						'text' => $this->getSkinNavOverrideableLabel(
 							"view-$msgKey"
 						),
@@ -1205,6 +1194,7 @@ class SkinTemplate extends Skin {
 							'text' => $this->getSkinNavOverrideableLabel(
 								"action-addsection"
 							),
+							'icon' => 'speechBubbleAdd',
 							'href' => $title->getLocalURL( 'action=edit&section=new' )
 						];
 					}
@@ -1216,6 +1206,7 @@ class SkinTemplate extends Skin {
 						'text' => $this->getSkinNavOverrideableLabel(
 							"action-viewsource"
 						),
+						'icon' => 'editLock',
 						'href' => $title->getLocalURL( $this->editUrlOptions() ),
 						'primary' => true, // don't collapse this in vector
 					];
@@ -1229,6 +1220,7 @@ class SkinTemplate extends Skin {
 						'text' => $this->getSkinNavOverrideableLabel(
 							'view-history'
 						),
+						'icon' => 'history',
 						'href' => $title->getLocalURL( 'action=history' ),
 					];
 
@@ -1366,7 +1358,7 @@ class SkinTemplate extends Skin {
 			// If it's not content, and a request URL is set it's got to be a special page
 			try {
 				$url = $request->getRequestURL();
-			} catch ( MWException $e ) {
+			} catch ( MWException ) {
 				$url = false;
 			}
 			$namespaces['special'] = [
@@ -1490,7 +1482,7 @@ class SkinTemplate extends Skin {
 				// so the xmlID based id is much closer to the actual $key that we want
 				// for that reason we'll just strip out the ca- if present and use
 				// the latter potion of the "id" as the $key
-				if ( isset( $value['id'] ) && substr( $value['id'], 0, 3 ) == 'ca-' ) {
+				if ( isset( $value['id'] ) && str_starts_with( $value['id'], 'ca-' ) ) {
 					$key = substr( $value['id'], 3 );
 				}
 

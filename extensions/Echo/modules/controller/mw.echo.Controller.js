@@ -126,8 +126,8 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 		{
 			continue: continueValue,
 			readState: filters.getReadState(),
-			titles: filters.getSourcePagesModel().getGroupedPagesForCurrentTitle()
-		}
+			titles: filters.getSourcePagesModel().getGroupedPagesForCurrentTitle(),
+		},
 	)
 		.then( ( data ) => {
 			const dateItemIds = {},
@@ -151,7 +151,7 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 				const maxSeenTime = data.seenTime.alert < data.seenTime.notice ?
 					data.seenTime.notice : data.seenTime.alert;
 				this.manager.getSeenTimeModel().setSeenTime(
-					maxSeenTime
+					maxSeenTime,
 				);
 
 				// Collect common data
@@ -165,7 +165,7 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 					// Single notifications
 					const itemModel = new mw.echo.dm.NotificationItem(
 						notifData.id,
-						newNotifData
+						newNotifData,
 					);
 
 					dateItems[ localizedDate ] = dateItems[ localizedDate ] || [];
@@ -199,7 +199,7 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 
 						// Fallback on IDs
 						return b.getId() - a.getId();
-					}
+					},
 				} );
 				models[ symbolicName ].setItems( dateItems[ date ] );
 			}
@@ -220,10 +220,10 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 		} )
 		.then(
 			null,
-			( errCode, errObj ) => ( {
+			( errCode, errObj ) => $.Deferred().reject( {
 				errCode: errCode,
-				errInfo: OO.getProp( errObj, 'error', 'info' )
-			} )
+				errInfo: OO.getProp( errObj, 'error', 'info' ),
+			} ),
 		);
 };
 /**
@@ -238,7 +238,7 @@ mw.echo.Controller.prototype.fetchLocalNotificationsByDate = function ( page ) {
 mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 	// Create a new local list model
 	const localListModel = new mw.echo.dm.NotificationsList( {
-			type: this.manager.getTypes()
+			type: this.manager.getTypes(),
 		} ),
 		localItems = [],
 		idArray = [];
@@ -261,7 +261,7 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 						bundleNotifData.modelName = modelName;
 						return new mw.echo.dm.NotificationItem(
 							rawBundledNotifData.id,
-							bundleNotifData
+							bundleNotifData,
 						);
 					};
 
@@ -278,7 +278,7 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 								data.seenTime.alert < data.seenTime.notice ?
 									data.seenTime.notice : data.seenTime.alert
 							) :
-							data.seenTime[ this.getTypeString() ]
+							data.seenTime[ this.getTypeString() ],
 					);
 
 					// Collect common data
@@ -296,7 +296,7 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 						for ( const source in notifData.sources ) {
 							foreignListModel.getList().addGroup(
 								source,
-								notifData.sources[ source ]
+								notifData.sources[ source ],
 							);
 						}
 
@@ -306,14 +306,14 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 						const itemModel = new mw.echo.dm.BundleNotificationItem(
 							notifData.id,
 							newNotifData.bundledNotifications.map( createBundledNotification.bind( null, newNotifData.modelName ) ),
-							newNotifData
+							newNotifData,
 						);
 						allModels[ newNotifData.modelName ] = itemModel;
 					} else {
 						// Local single notifications
 						const itemModel = new mw.echo.dm.NotificationItem(
 							notifData.id,
-							newNotifData
+							newNotifData,
 						);
 
 						idArray.push( notifData.id );
@@ -324,7 +324,7 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 							// but is not an array. We should log this in the console
 							mw.log.warn(
 								'newNotifData.bundledNotifications is expected to be an array,' +
-								'but instead received "' + typeof newNotifData.bundledNotifications + '"'
+								'but instead received "' + typeof newNotifData.bundledNotifications + '"',
 							);
 						}
 					}
@@ -345,11 +345,11 @@ mw.echo.Controller.prototype.fetchLocalNotifications = function ( isForced ) {
 					// Update the this
 					this.manager.setNotificationModels( { local: localListModel } );
 				}
-				return {
+				return $.Deferred().reject( {
 					errCode: errCode,
-					errInfo: OO.getProp( errObj, 'error', 'info' )
-				};
-			}
+					errInfo: OO.getProp( errObj, 'error', 'info' ),
+				} );
+			},
 		);
 };
 
@@ -388,14 +388,14 @@ mw.echo.Controller.prototype.createNotificationData = function ( apiData ) {
 		content: {
 			header: content.header,
 			compactHeader: content.compactHeader,
-			body: content.body
+			body: content.body,
 		},
 		iconUrl: content.iconUrl,
 		iconType: content.icon,
 		primaryUrl: OO.getProp( content.links, 'primary', 'url' ),
 		secondaryUrls: OO.getProp( content.links, 'secondary' ) || [],
 		bundledIds: apiData.bundledIds,
-		bundledNotifications: apiData.bundledNotifications
+		bundledNotifications: apiData.bundledNotifications,
 	};
 };
 
@@ -469,11 +469,11 @@ mw.echo.Controller.prototype.markAllRead = function ( source ) {
 	localCounter.estimateChange( -itemIds.length );
 	return this.api.markAllRead(
 		source,
-		this.getTypes()
+		this.getTypes(),
 	).then(
-		this.refreshUnreadCount.bind( this )
+		this.refreshUnreadCount.bind( this ),
 	).then(
-		localCounter.update.bind( localCounter, true )
+		localCounter.update.bind( localCounter, true ),
 	);
 };
 
@@ -543,20 +543,20 @@ mw.echo.Controller.prototype.fetchCrossWikiNotifications = function () {
 								modelName: 'xwiki',
 								source: group,
 								bundled: true,
-								foreign: true
-							} ) )
+								foreign: true,
+							} ) ),
 						);
 					}
 					// Add items
 					listModel.setItems( items );
 				}
 			},
-			( errCode, errObj ) => ( {
+			( errCode, errObj ) => $.Deferred().reject( {
 				errCode: errCode,
 				errInfo: errCode === 'http' ?
 					mw.msg( 'echo-api-failure-cross-wiki' ) :
-					OO.getProp( errObj, 'error', 'info' )
-			} )
+					OO.getProp( errObj, 'error', 'info' ),
+			} ),
 		);
 };
 
@@ -680,7 +680,7 @@ mw.echo.Controller.prototype.markEntireCrossWikiItemAsRead = function () {
 
 				// Mark items as read in the API
 				promises.push(
-					this.api.markItemsRead( idArray, listModel.getName(), true )
+					this.api.markItemsRead( idArray, listModel.getName(), true ),
 				);
 			}
 
@@ -688,7 +688,7 @@ mw.echo.Controller.prototype.markEntireCrossWikiItemAsRead = function () {
 			this.removeCrossWikiItem();
 
 			return mw.echo.api.NetworkHandler.static.waitForAllPromises( promises ).then(
-				this.refreshUnreadCount.bind( this )
+				this.refreshUnreadCount.bind( this ),
 			);
 		} );
 };
@@ -721,7 +721,7 @@ mw.echo.Controller.prototype.updateSeenTime = function () {
 		this.getTypes(),
 		// For consistency, use current source, though seenTime
 		// will be updated globally
-		this.manager.getFiltersModel().getSourcePagesModel().getCurrentSource()
+		this.manager.getFiltersModel().getSourcePagesModel().getCurrentSource(),
 	)
 		.then( ( time ) => {
 			this.manager.getSeenTimeModel().setSeenTime( time );

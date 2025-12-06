@@ -39,7 +39,7 @@
 		windowManager.addWindows( [ dialog ] );
 		const windowInstance = windowManager.openWindow( dialog, fragment );
 
-		windowInstance.opened.done( () => {
+		windowInstance.opened.then( () => {
 			const transclusion = dialog.transclusionModel;
 			// mock api call with template data for Test
 			const templateData = {
@@ -79,7 +79,7 @@
 			// change transclusion model (onReplacePart happens automatically)
 			const promise = transclusion.addPart( template );
 
-			promise.done( () => {
+			promise.then( () => {
 				// checking for parameter checkboxes
 				// (should be 3 because of 2 predefined and 1 undocumented)
 				assert.strictEqual(
@@ -88,7 +88,7 @@
 				dialog.close();
 			} );
 
-		} ).fail( () => {
+		}, () => {
 			assert.true( false );
 			finishTest();
 		} );

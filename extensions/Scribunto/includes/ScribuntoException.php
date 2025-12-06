@@ -11,24 +11,18 @@ use MediaWiki\Title\Title;
  * normally abort the request, instead it is caught and shown to the user.
  */
 class ScribuntoException extends Exception {
-	/**
-	 * @var string
-	 */
-	public $messageName;
+
+	public string $messageName;
+	public array $messageArgs;
 
 	/**
-	 * @var array
+	 * @var array{args?: array, module?: string, line?: string, title?: Title, trace?: array}
 	 */
-	public $messageArgs;
-
-	/**
-	 * @var array
-	 */
-	public $params;
+	public array $params;
 
 	/**
 	 * @param string $messageName
-	 * @param array $params
+	 * @param array{args?: array, module?: string, line?: string, title?: Title, trace?: array} $params
 	 */
 	public function __construct( $messageName, $params = [] ) {
 		$this->messageArgs = $params['args'] ?? [];
@@ -63,10 +57,7 @@ class ScribuntoException extends Exception {
 		$this->params = $params;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getMessageName() {
+	public function getMessageName(): string {
 		return $this->messageName;
 	}
 

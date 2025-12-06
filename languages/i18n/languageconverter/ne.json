@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nirjal stha",
+			"RajeshPandey",
+			"पर्वत सुबेदी",
+			"बडा काजी"
+		]
+	},
+	"variantname-zh": "चिनियाँ",
+	"converter-manual-rule-error": "म्यानुअल भाषा रूपान्तरण नियममा त्रुटि पत्ता लाग्यो",
+	"language-converter-depth-warning": "भाषा रूपान्तरण गहिराई सीमा नाघ्यो ($1)"
+}

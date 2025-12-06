@@ -11,7 +11,8 @@
 			"LordProfo",
 			"Omidh",
 			"Reza1615",
-			"Wayiran"
+			"Wayiran",
+			"Jeeputer"
 		]
 	},
 	"replacetext": "جایگزینی متن",
@@ -49,5 +50,7 @@
 	"replacetext_reminder": "برای اینکه پیوند‌ها به این صفحه را در صفحات دیگر نیز جایگزین کنید، به $1بروید.",
 	"replacetext_cfg_error": "خطای پیکربندی ReplaceText",
 	"right-replacetext": "انجام جایگزین کردن رشته در تمام ویکی",
-	"action-replacetext": "ساختن جایگزین کردن رشته در تمام ویکی"
+	"action-replacetext": "ساختن جایگزین کردن رشته در تمام ویکی",
+	"tag-replacetext": "[[Special:ReplaceText|جایگزینی متن]]",
+	"tag-replacetext-description": "ویرایش‌های خودکار انجام‌شده به‌واسطهٔ [[{{#Special:ReplaceText}}]]."
 }

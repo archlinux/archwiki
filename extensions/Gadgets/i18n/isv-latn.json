@@ -15,7 +15,6 @@
 	"gadgetusage-usercount": "Kolikost koristnikov",
 	"gadgetusage-noresults": "Ne najden nijedin gadžet.",
 	"gadgetusage-intro": "Tuta tabela pokazyvaje kolikost koristnikov, ktori imajut vključeny dany gadžet v tutoj viki. Aktivnym koristnikom uznavaje se někto, ktory v tečenju {{PLURAL:$1|poslědnjego dnja|poslědnjih $1 dnjev}} sdělal pravku. Spisok izključaje statistiky za gadžety, ktore sut standardno vključene za vsih, a može vključiti gadžety, ktore uže ne sut dostupne.",
-	"gadgetusage-intro-noactive": "Tuta tabela pokazyvaje kolikost koristnikov, ktori imajut vključeny dany gadžet v tutoj viki. Spisok izključaje statistiky za gadžety, ktore sut standardno vključene za vsih, a može vključiti gadžety, ktore uže ne sut dostupne.",
 	"gadgetusage-activeusers": "Aktivni koristniki",
 	"gadgetusage-default": "Standardno",
 	"gadgets-title": "Gadžety",

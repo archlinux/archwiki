@@ -5,6 +5,7 @@
 			"Umherirrender"
 		]
 	},
+	"renocaptcha-name": "{{notranslate}}",
 	"renocaptcha-desc": "{{desc}}",
 	"renocaptcha-edit": "Message above the CAPTCHA for edit action.\n{{related|ConfirmEdit-edit}}",
 	"renocaptcha-addurl": "Message above the CAPTCHA for addurl (user added new external links to the page) action.\n{{related|ConfirmEdit-addurl}}",

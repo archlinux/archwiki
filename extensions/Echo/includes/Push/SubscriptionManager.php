@@ -9,21 +9,6 @@ use Wikimedia\Rdbms\IDatabase;
 
 class SubscriptionManager extends AbstractMapper {
 
-	/** @var IDatabase */
-	private $dbw;
-
-	/** @var IDatabase */
-	private $dbr;
-
-	/** @var NameTableStore */
-	private $pushProviderStore;
-
-	/** @var NameTableStore */
-	private $pushTopicStore;
-
-	/** @var int */
-	private $maxSubscriptionsPerUser;
-
 	/**
 	 * @param IDatabase $dbw primary DB connection (for writes)
 	 * @param IDatabase $dbr replica DB connection (for reads)
@@ -32,18 +17,13 @@ class SubscriptionManager extends AbstractMapper {
 	 * @param int $maxSubscriptionsPerUser
 	 */
 	public function __construct(
-		IDatabase $dbw,
-		IDatabase $dbr,
-		NameTableStore $pushProviderStore,
-		NameTableStore $pushTopicStore,
-		int $maxSubscriptionsPerUser
+		private readonly IDatabase $dbw,
+		private readonly IDatabase $dbr,
+		private readonly NameTableStore $pushProviderStore,
+		private readonly NameTableStore $pushTopicStore,
+		private readonly int $maxSubscriptionsPerUser,
 	) {
 		parent::__construct();
-		$this->dbw = $dbw;
-		$this->dbr = $dbr;
-		$this->pushProviderStore = $pushProviderStore;
-		$this->pushTopicStore = $pushTopicStore;
-		$this->maxSubscriptionsPerUser = $maxSubscriptionsPerUser;
 	}
 
 	/**
@@ -79,7 +59,7 @@ class SubscriptionManager extends AbstractMapper {
 				'eps_token_sha256' => hash( 'sha256', $token ),
 				'eps_data' => null,
 				'eps_topic' => $topicId,
-				'eps_updated' => $this->dbw->timestamp()
+				'eps_updated' => $this->dbw->timestamp(),
 			] )
 			->caller( __METHOD__ )
 			->execute();

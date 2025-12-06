@@ -228,7 +228,7 @@ class EventMapper extends AbstractMapper {
 			->where( [
 				'event_id' => $eventIds,
 				'notification_timestamp' => null,
-				'eeb_user_id' => null
+				'eeb_user_id' => null,
 			] )
 			->caller( __METHOD__ )
 			->fetchFieldValues();

@@ -30,6 +30,10 @@ CREATE INDEX cuc_timestamp ON /*_*/cu_changes (cuc_timestamp);
 
 CREATE INDEX cuc_actor_ip_time ON /*_*/cu_changes (cuc_actor, cuc_ip, cuc_timestamp);
 
+CREATE INDEX cuc_actor_ip_hex_time ON /*_*/cu_changes (
+  cuc_actor, cuc_ip_hex, cuc_timestamp
+);
+
 
 CREATE TABLE /*_*/cu_log_event (
   cule_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -52,6 +56,10 @@ CREATE INDEX cule_timestamp ON /*_*/cu_log_event (cule_timestamp);
 
 CREATE INDEX cule_actor_ip_time ON /*_*/cu_log_event (
   cule_actor, cule_ip, cule_timestamp
+);
+
+CREATE INDEX cule_actor_ip_hex_time ON /*_*/cu_log_event (
+  cule_actor, cule_ip_hex, cule_timestamp
 );
 
 
@@ -83,6 +91,10 @@ CREATE INDEX cupe_timestamp ON /*_*/cu_private_event (cupe_timestamp);
 
 CREATE INDEX cupe_actor_ip_time ON /*_*/cu_private_event (
   cupe_actor, cupe_ip, cupe_timestamp
+);
+
+CREATE INDEX cupe_actor_ip_hex_time ON /*_*/cu_private_event (
+  cupe_actor, cupe_ip_hex, cupe_timestamp
 );
 
 
@@ -131,9 +143,7 @@ CREATE TABLE /*_*/cu_log (
 
 CREATE INDEX cul_actor_time ON /*_*/cu_log (cul_actor, cul_timestamp);
 
-CREATE INDEX cul_type_target ON /*_*/cu_log (
-  cul_type, cul_target_id, cul_timestamp
-);
+CREATE INDEX cul_target ON /*_*/cu_log (cul_target_id, cul_timestamp);
 
 CREATE INDEX cul_target_hex ON /*_*/cu_log (cul_target_hex, cul_timestamp);
 

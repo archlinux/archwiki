@@ -1,21 +1,7 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Installer
  */
@@ -191,7 +177,7 @@ abstract class WebInstallerPage {
 		$this->addHTML(
 			'<div id="config-spinner" style="display:none;">' .
 			'<img src="images/ajax-loader.gif" /></div>' .
-			'<script>jQuery( "#config-spinner" ).show();</script>' .
+			$this->inlineScript( 'jQuery( "#config-spinner" ).show();' ) .
 			'<div id="config-live-log">' .
 			'<textarea name="LiveLog" rows="10" cols="30" readonly="readonly">'
 		);
@@ -202,9 +188,21 @@ abstract class WebInstallerPage {
 	 * Opposite to WebInstallerPage::startLiveBox
 	 */
 	protected function endLiveBox() {
-		$this->addHTML( '</textarea></div>
-<script>jQuery( "#config-spinner" ).hide()</script>' );
+		$this->addHTML(
+			'</textarea></div>' .
+			$this->inlineScript( 'jQuery( "#config-spinner" ).hide()' )
+		);
 		$this->parent->output->flush();
 	}
 
+	/**
+	 * Javascript to include inline. Handles addings CSP nonce.
+	 *
+	 * @since 1.45
+	 * @param string $script Script, not including <script> tag
+	 * @return string HTML to output
+	 */
+	protected function inlineScript( $script ) {
+		return Html::inlineScript( $script, $this->parent->output->getCSPNonce() );
+	}
 }

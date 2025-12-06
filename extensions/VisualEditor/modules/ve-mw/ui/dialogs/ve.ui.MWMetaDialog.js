@@ -213,8 +213,7 @@ ve.ui.MWMetaDialog.prototype.getActionProcess = function ( action ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data = {} ) {
 	return ve.ui.MWMetaDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( () => {
 			const surfaceModel = this.getFragment().getSurface(),
@@ -269,8 +268,7 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWMetaDialog.prototype.getReadyProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWMetaDialog.prototype.getReadyProcess = function ( data = {} ) {
 	return ve.ui.MWMetaDialog.super.prototype.getReadyProcess.call( this, data )
 		.next( () => {
 			if ( data.page && this.bookletLayout.getPage( data.page ) ) {
@@ -282,8 +280,7 @@ ve.ui.MWMetaDialog.prototype.getReadyProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWMetaDialog.prototype.getTeardownProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWMetaDialog.prototype.getTeardownProcess = function ( data = {} ) {
 	return ve.ui.MWMetaDialog.super.prototype.getTeardownProcess.call( this, data )
 		.first( () => {
 			// Let each page tear itself down ('languages' page doesn't need this yet)

@@ -1,0 +1,269 @@
+{
+	"before": {
+		"name": "abuse_filter_log",
+		"columns": [
+			{
+				"name": "afl_id",
+				"type": "bigint",
+				"options": { "notnull": true, "autoincrement": true, "unsigned": true }
+			},
+			{
+				"name": "afl_global",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1 }
+			},
+			{
+				"name": "afl_filter_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_ip",
+				"type": "string",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "afl_ip_hex",
+				"comment": "The IP address (in hexadecimal form) being used to perform the action that tripped a filter. May be an empty string if it has been purged or $wgAbuseFilterLogIP is false.",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_action",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_actions",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_var_dump",
+				"type": "blob",
+				"comment": "Either: A blob store address or JSON containing protected variable values along with a blob store address",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "afl_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_namespace",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_wiki",
+				"type": "binary",
+				"options": { "notnull": false, "length": 64 }
+			},
+			{
+				"name": "afl_deleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "afl_rev_id",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "afl_filter_timestamp_full",
+				"columns": [ "afl_global", "afl_filter_id", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_user_timestamp",
+				"columns": [ "afl_user", "afl_user_text", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_timestamp",
+				"columns": [ "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_page_timestamp",
+				"columns": [ "afl_namespace", "afl_title", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_ip_timestamp",
+				"columns": [ "afl_ip", "afl_timestamp" ],
+				"unique": false,
+				"comment": "Used to find rows in abuse_filter_log which need to have the IP address purged as the row is older than $wgAbuseFilterLogIPMaxAge."
+			},
+			{
+				"name": "afl_ip_hex_timestamp",
+				"columns": [ "afl_ip_hex", "afl_timestamp" ],
+				"unique": false,
+				"comment": "Used to find rows in abuse_filter_log which need to have the IP address purged as the row is older than $wgAbuseFilterLogIPMaxAge."
+			},
+			{
+				"name": "afl_rev_id",
+				"columns": [ "afl_rev_id" ],
+				"unique": false
+			},
+			{
+				"name": "afl_wiki_timestamp",
+				"columns": [ "afl_wiki", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_var_dump_timestamp",
+				"columns": [ "afl_var_dump", "afl_timestamp" ],
+				"unique": false,
+				"options": { "lengths": [ 4, null ] },
+				"comment": "Used to find rows which have afl_var_dump with JSON objects in them (by looking for the '{' character at the start of the blob). Rows which have this as JSON and are old enough need to be converted to just use a blob store address, because the protected variables need to be purged (T390873)."
+			}
+		],
+		"pk": [ "afl_id" ]
+	},
+	"after": {
+		"name": "abuse_filter_log",
+		"columns": [
+			{
+				"name": "afl_id",
+				"type": "bigint",
+				"options": { "notnull": true, "autoincrement": true, "unsigned": true }
+			},
+			{
+				"name": "afl_global",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1 }
+			},
+			{
+				"name": "afl_filter_id",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user",
+				"type": "bigint",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "afl_user_text",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_ip_hex",
+				"comment": "The IP address (in hexadecimal form) being used to perform the action that tripped a filter. May be an empty string if it has been purged or $wgAbuseFilterLogIP is false.",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_action",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_actions",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_var_dump",
+				"type": "blob",
+				"comment": "Either: A blob store address or JSON containing protected variable values along with a blob store address",
+				"options": { "notnull": true, "length": 65530 }
+			},
+			{
+				"name": "afl_timestamp",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_namespace",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "afl_title",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "afl_wiki",
+				"type": "binary",
+				"options": { "notnull": false, "length": 64 }
+			},
+			{
+				"name": "afl_deleted",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
+			},
+			{
+				"name": "afl_rev_id",
+				"type": "integer",
+				"options": { "notnull": false, "unsigned": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "afl_filter_timestamp_full",
+				"columns": [ "afl_global", "afl_filter_id", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_user_timestamp",
+				"columns": [ "afl_user", "afl_user_text", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_timestamp",
+				"columns": [ "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_page_timestamp",
+				"columns": [ "afl_namespace", "afl_title", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_ip_hex_timestamp",
+				"columns": [ "afl_ip_hex", "afl_timestamp" ],
+				"unique": false,
+				"comment": "Used to find rows in abuse_filter_log which need to have the IP address purged as the row is older than $wgAbuseFilterLogIPMaxAge."
+			},
+			{
+				"name": "afl_rev_id",
+				"columns": [ "afl_rev_id" ],
+				"unique": false
+			},
+			{
+				"name": "afl_wiki_timestamp",
+				"columns": [ "afl_wiki", "afl_timestamp" ],
+				"unique": false
+			},
+			{
+				"name": "afl_var_dump_timestamp",
+				"columns": [ "afl_var_dump", "afl_timestamp" ],
+				"unique": false,
+				"options": { "lengths": [ 4, null ] },
+				"comment": "Used to find rows which have afl_var_dump with JSON objects in them (by looking for the '{' character at the start of the blob). Rows which have this as JSON and are old enough need to be converted to just use a blob store address, because the protected variables need to be purged (T390873)."
+			}
+		],
+		"pk": [ "afl_id" ]
+	}
+}

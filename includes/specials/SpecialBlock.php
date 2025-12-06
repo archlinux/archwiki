@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -101,9 +87,6 @@ class SpecialBlock extends FormSpecialPage {
 	 */
 	protected $preErrors = [];
 
-	protected bool $useCodex = false;
-	protected bool $useMultiblocks = false;
-
 	/**
 	 * @var array <mixed,mixed> An associative array used to pass vars to Codex form
 	 */
@@ -135,14 +118,11 @@ class SpecialBlock extends FormSpecialPage {
 		$this->namespaceInfo = $namespaceInfo;
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->watchlistManager = $watchlistManager;
-		$this->useCodex = $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ||
-			$this->getRequest()->getBool( 'usecodex' );
-		$this->useMultiblocks = $this->getConfig()->get( MainConfigNames::EnableMultiBlocks ) ||
-			$this->getRequest()->getBool( 'multiblocks' );
 	}
 
 	public function getDescription(): Message {
-		return $this->msg( $this->useMultiblocks ? 'block-manage-blocks' : 'block' );
+		return $this->msg( $this->getConfig()->get( MainConfigNames::EnableMultiBlocks )
+			? 'block-manage-blocks' : 'block' );
 	}
 
 	/**
@@ -151,10 +131,14 @@ class SpecialBlock extends FormSpecialPage {
 	public function execute( $par ) {
 		parent::execute( $par );
 
-		if ( $this->useCodex ) {
+		if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock )
+			|| $this->getRequest()->getBool( 'usecodex' )
+		) {
 			// Ensure wgUseCodexSpecialBlock is set when ?usecodex=1 is used.
 			$this->codexFormData[ 'wgUseCodexSpecialBlock' ] = true;
-			$this->codexFormData[ 'blockEnableMultiblocks' ] = $this->useMultiblocks;
+			$this->codexFormData[ 'blockEnableMultiblocks' ] =
+				$this->getConfig()->get( MainConfigNames::EnableMultiBlocks ) ||
+				$this->getRequest()->getBool( 'multiblocks' );
 			$this->codexFormData[ 'blockTargetUser' ] =
 				$this->target ? $this->target->toString() : null;
 			$this->codexFormData[ 'blockId' ] =
@@ -163,6 +147,7 @@ class SpecialBlock extends FormSpecialPage {
 			$this->codexFormData[ 'blockShowSuppressLog' ] = $authority->isAllowed( 'suppressionlog' );
 			$this->codexFormData[ 'blockCanDeleteLogEntry' ] = $authority->isAllowed( 'deletelogentry' );
 			$this->codexFormData[ 'blockCanEditInterface' ] = $authority->isAllowed( 'editinterface' );
+			$this->codexFormData[ 'blockCIDRLimit' ] = $this->getConfig()->get( MainConfigNames::BlockCIDRLimit );
 			$this->getOutput()->addJsConfigVars( $this->codexFormData );
 		}
 	}
@@ -223,7 +208,7 @@ class SpecialBlock extends FormSpecialPage {
 			->newFromString( $request->getVal( 'wpPreviousTarget' ) );
 		$this->requestedHideUser = $request->getBool( 'wpHideUser' );
 
-		if ( $this->useCodex ) {
+		if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) || $request->getBool( 'usecodex' ) ) {
 			// Parse wpExpiry param
 			$givenExpiry = $request->getVal( 'wpExpiry', '' );
 			if ( wfIsInfinity( $givenExpiry ) ) {
@@ -302,14 +287,17 @@ class SpecialBlock extends FormSpecialPage {
 		$msg = $this->alreadyBlocked ? 'ipb-change-block' : 'ipbsubmit';
 		$form->setSubmitTextMsg( $msg );
 
-		$this->addHelpLink( $this->useCodex ? 'Help:Manage blocks' : 'Help:Blocking users' );
+		$useCodex = $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock )
+			|| $this->getRequest()->getBool( 'usecodex' );
+
+		$this->addHelpLink( $useCodex ? 'Help:Manage blocks' : 'Help:Blocking users' );
 
 		// Don't need to do anything if the form has been posted, or if there were no pre-errors.
 		if ( $this->getRequest()->wasPosted() || !$this->preErrors ) {
 			return;
 		}
 
-		if ( $this->useCodex ) {
+		if ( $useCodex ) {
 			$this->codexFormData[ 'blockPreErrors' ] = array_map( function ( $errMsg ) {
 				return $this->msg( $errMsg )->parse();
 			}, $this->preErrors );
@@ -346,7 +334,8 @@ class SpecialBlock extends FormSpecialPage {
 	 * @inheritDoc
 	 */
 	protected function getDisplayFormat() {
-		return $this->useCodex ? 'codex' : 'ooui';
+		return $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ||
+			$this->getRequest()->getBool( 'usecodex' ) ? 'codex' : 'ooui';
 	}
 
 	/**
@@ -356,8 +345,9 @@ class SpecialBlock extends FormSpecialPage {
 	protected function getFormFields() {
 		$conf = $this->getConfig();
 		$blockAllowsUTEdit = $conf->get( MainConfigNames::BlockAllowsUTEdit );
+		$useCodex = $conf->get( MainConfigNames::UseCodexSpecialBlock ) || $this->getRequest()->getBool( 'usecodex' );
 
-		if ( !$this->useCodex ) {
+		if ( !$useCodex ) {
 			$this->getOutput()->enableOOUI();
 		}
 
@@ -387,7 +377,7 @@ class SpecialBlock extends FormSpecialPage {
 			'section' => 'target',
 		];
 
-		$editingRestrictionOptions = $this->useCodex ?
+		$editingRestrictionOptions = $useCodex ?
 			// If we're using Codex, use the option-descriptions feature, which is only supported by Codex
 			[
 				'options-messages' => [
@@ -450,24 +440,22 @@ class SpecialBlock extends FormSpecialPage {
 			'section' => 'actions',
 		];
 
-		if ( $conf->get( MainConfigNames::EnablePartialActionBlocks ) ) {
-			$blockActions = $this->blockActionInfo->getAllBlockActions();
-			$optionMessages = array_combine(
-				array_map( static function ( $action ) {
-					return "ipb-action-$action";
-				}, array_keys( $blockActions ) ),
-				$blockActions
-			);
+		$blockActions = $this->blockActionInfo->getAllBlockActions();
+		$optionMessages = array_combine(
+			array_map( static function ( $action ) {
+				return "ipb-action-$action";
+			}, array_keys( $blockActions ) ),
+			$blockActions
+		);
 
-			$this->codexFormData[ 'partialBlockActionOptions'] = $optionMessages;
+		$this->codexFormData[ 'partialBlockActionOptions'] = $optionMessages;
 
-			$a['ActionRestrictions'] = [
-				'type' => 'multiselect',
-				'cssclass' => 'mw-htmlform-checkradio-indent mw-block-partial-restriction mw-block-action-restriction',
-				'options-messages' => $optionMessages,
-				'section' => 'actions',
-			];
-		}
+		$a['ActionRestrictions'] = [
+			'type' => 'multiselect',
+			'cssclass' => 'mw-htmlform-checkradio-indent mw-block-partial-restriction mw-block-action-restriction',
+			'options-messages' => $optionMessages,
+			'section' => 'actions',
+		];
 
 		$a['CreateAccount'] = [
 			'type' => 'check',
@@ -509,6 +497,15 @@ class SpecialBlock extends FormSpecialPage {
 			if ( !$defaultExpiryIP->isDisabled() ) {
 				$defaultExpiry = $defaultExpiryIP;
 			}
+		} elseif (
+			$this->target instanceof UserBlockTarget &&
+			$this->userNameUtils->isTemp( $this->target->getUserIdentity()->getName() )
+		) {
+			$defaultExpiryTemporaryAccount = $this->msg( 'ipb-default-expiry-temporary-account' )
+				->inContentLanguage();
+			if ( !$defaultExpiryTemporaryAccount->isDisabled() ) {
+				$defaultExpiry = $defaultExpiryTemporaryAccount;
+			}
 		}
 
 		$a['Expiry'] = [
@@ -533,7 +530,7 @@ class SpecialBlock extends FormSpecialPage {
 			'help-message' => 'block-reason-help',
 		];
 
-		if ( $this->useCodex ) {
+		if ( $useCodex ) {
 			$blockReasonOptions = Html::listDropdownOptionsCodex(
 				Html::listDropdownOptions( $this->msg( 'ipbreason-dropdown' )->inContentLanguage()->plain(),
 					[ 'other' => $this->msg( 'htmlform-selectorother-other' )->text() ]
@@ -601,14 +598,16 @@ class SpecialBlock extends FormSpecialPage {
 
 		// (T382496) Only load the modified defaults from a previous
 		// block if multiblocks are not enabled
-		if ( !$this->useMultiblocks ) {
+		if ( !$this->getConfig()->get( MainConfigNames::EnableMultiBlocks )
+			|| $this->getRequest()->getBool( 'multiblocks' )
+		) {
 			$this->maybeAlterFormDefaults( $a );
 		}
 
 		// Allow extensions to add more fields
 		$this->getHookRunner()->onSpecialBlockModifyFormFields( $this, $a );
 
-		if ( $this->useCodex ) {
+		if ( $useCodex ) {
 			$default = (string)$this->target;
 			$a['Target']['default'] = $default;
 			$a['Target']['disabled'] = true;
@@ -642,9 +641,9 @@ class SpecialBlock extends FormSpecialPage {
 			$this->preErrors = array_merge( $this->preErrors, $errors );
 
 			// Remove top-level errors that are later handled per-field in Codex.
-			if ( $this->useCodex ) {
+			if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) || $request->getBool( 'usecodex' ) ) {
 				$this->preErrors = array_filter( $this->preErrors, function ( $error ) {
-					if ( $error->getKey() === 'nosuchusershort' ) {
+					if ( $error->getKey() === 'nosuchusershort' || $error->getKey() === 'ip_range_toolarge' ) {
 						// Avoids us having to re-query the API to validate the user.
 						$this->codexFormData[ 'blockTargetExists' ] = false;
 						return false;
@@ -746,15 +745,13 @@ class SpecialBlock extends FormSpecialPage {
 				$fields['NamespaceRestrictions']['default'] =
 					$this->codexFormData[ 'blockNamespaceRestrictions' ] = implode( "\n", $namespaceRestrictions );
 
-				if ( $this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks ) ) {
-					$actionRestrictions = [];
-					foreach ( $block->getRestrictions() as $restriction ) {
-						if ( $restriction instanceof ActionRestriction ) {
-							$actionRestrictions[] = $restriction->getValue();
-						}
+				$actionRestrictions = [];
+				foreach ( $block->getRestrictions() as $restriction ) {
+					if ( $restriction instanceof ActionRestriction ) {
+						$actionRestrictions[] = $restriction->getValue();
 					}
-					$fields['ActionRestrictions']['default'] = $actionRestrictions;
 				}
+				$fields['ActionRestrictions']['default'] = $actionRestrictions;
 			}
 
 			$this->alreadyBlocked = true;
@@ -809,7 +806,9 @@ class SpecialBlock extends FormSpecialPage {
 	 */
 	protected function preHtml() {
 		$this->getOutput()->addModuleStyles( [ 'mediawiki.special' ] );
-		if ( $this->useCodex ) {
+		if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock )
+			|| $this->getRequest()->getBool( 'usecodex' )
+		) {
 			$this->getOutput()->addModules( [ 'mediawiki.special.block.codex' ] );
 			$this->getOutput()->addElement( 'noscript', [],
 				$this->msg( 'block-javascript-required' )->text()
@@ -1002,14 +1001,13 @@ class SpecialBlock extends FormSpecialPage {
 	 * @return bool|string|array|Status As documented for HTMLForm::trySubmit.
 	 */
 	public function onSubmit( array $data, ?HTMLForm $form = null ) {
-		if ( $this->useCodex ) {
+		if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock )
+			|| $this->getRequest()->getBool( 'usecodex' )
+		) {
 			// Treat as no submission for the JS-only Codex form.
 			// This happens if the form is submitted before any JS is loaded.
 			return false;
 		}
-		// Temporarily access service container until the feature flag is removed: T280532
-		$enablePartialActionBlocks = $this->getConfig()
-			->get( MainConfigNames::EnablePartialActionBlocks );
 
 		$isPartialBlock = isset( $data['EditingRestriction'] ) &&
 			$data['EditingRestriction'] === 'partial';
@@ -1067,11 +1065,7 @@ class SpecialBlock extends FormSpecialPage {
 					return new NamespaceRestriction( 0, (int)$id );
 				}, explode( "\n", $data['NamespaceRestrictions'] ) );
 			}
-			if (
-				$enablePartialActionBlocks &&
-				isset( $data['ActionRestrictions'] ) &&
-				$data['ActionRestrictions'] !== ''
-			) {
+			if ( isset( $data['ActionRestrictions'] ) && $data['ActionRestrictions'] !== '' ) {
 				$actionRestrictions = array_map( static function ( $id ) {
 					return new ActionRestriction( 0, $id );
 				}, $data['ActionRestrictions'] );
@@ -1120,7 +1114,7 @@ class SpecialBlock extends FormSpecialPage {
 
 		try {
 			$status = $blockUser->placeBlock( $doReblock );
-		} catch ( MultiblocksException $e ) {
+		} catch ( MultiblocksException ) {
 			$status = Status::newFatal( 'block-reblock-multi-legacy' );
 		}
 

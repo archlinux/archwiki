@@ -15,7 +15,7 @@
  * @param {ve.dm.Model} model Model to observe
  * @param {Object} [config] Configuration options
  */
-ve.ce.View = function VeCeView( model, config ) {
+ve.ce.View = function VeCeView( model, config = {} ) {
 	// Setting this property before calling the parent constructor allows overridden #getTagName
 	// methods in view classes to have access to the model when they are called for the first time
 	// inside of OO.ui.Element
@@ -110,7 +110,7 @@ ve.ce.View.prototype.initialize = function () {
 	if ( this.model.element && this.model.element.originalDomElementsHash !== undefined ) {
 		// Render attributes from original DOM elements
 		ve.dm.Converter.static.renderHtmlAttributeList(
-			this.model.getOriginalDomElements( this.model.getStore() ),
+			this.model.getOriginalDomElements(),
 			this.$element,
 			this.constructor.static.renderHtmlAttributes,
 			// Computed

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -64,6 +50,7 @@ class UploadStashPager extends TablePager {
 		$this->localRepo = $localRepo;
 	}
 
+	/** @inheritDoc */
 	protected function getFieldNames() {
 		if ( !$this->mFieldNames ) {
 			$this->mFieldNames = [
@@ -77,10 +64,12 @@ class UploadStashPager extends TablePager {
 		return $this->mFieldNames;
 	}
 
+	/** @inheritDoc */
 	protected function isFieldSortable( $field ) {
 		return in_array( $field, [ 'us_timestamp', 'us_key' ] );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		return [
 			'tables' => [ 'uploadstash' ],
@@ -92,6 +81,7 @@ class UploadStashPager extends TablePager {
 				'us_path',
 				'us_sha1',
 				'us_mime',
+				'us_status',
 			],
 			'conds' => [ 'us_user' => $this->getUser()->getId() ],
 			'options' => [],
@@ -99,10 +89,12 @@ class UploadStashPager extends TablePager {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ [ 'us_timestamp', 'us_id' ] ];
 	}
 
+	/** @inheritDoc */
 	public function getDefaultSort() {
 		return 'us_timestamp';
 	}
@@ -120,10 +112,22 @@ class UploadStashPager extends TablePager {
 				// We may want to make this a link to the "old" version when displaying old files
 				return htmlspecialchars( $this->getLanguage()->userTimeAndDate( $value, $this->getUser() ) );
 			case 'us_key':
-				return $this->getLinkRenderer()->makeKnownLink(
+				$linkRenderer = $this->getLinkRenderer();
+				$html = $linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( 'UploadStash', "file/$value" ),
 					$value
 				);
+				if ( $this->mCurrentRow->us_status === 'finished' ) {
+					$html .= '<br />' . Html::rawElement( 'span', [ 'class' => 'mw-uploadstash-tryagain' ],
+						$this->msg( 'parentheses' )->rawParams( $linkRenderer->makeKnownLink(
+							SpecialPage::getTitleFor( 'Upload' ),
+							$this->msg( 'uploadstash-pager-tryagain' )->text(),
+							[],
+							[ 'wpSourceType' => 'Stash', 'wpSessionKey' => $value ]
+						) )->escaped()
+					);
+				}
+				return $html;
 			case 'thumb':
 				$file = $this->getCurrentFile();
 				if ( $file->allowInlineDisplay() ) {
@@ -172,6 +176,7 @@ class UploadStashPager extends TablePager {
 		return $result;
 	}
 
+	/** @inheritDoc */
 	public function getForm() {
 		$formDescriptor = [];
 		$formDescriptor['limit'] = [
@@ -193,14 +198,17 @@ class UploadStashPager extends TablePager {
 			->displayForm( '' );
 	}
 
+	/** @inheritDoc */
 	protected function getTableClass() {
 		return parent::getTableClass() . ' uploadstash';
 	}
 
+	/** @inheritDoc */
 	protected function getNavClass() {
 		return parent::getNavClass() . ' uploadstash_nav';
 	}
 
+	/** @inheritDoc */
 	protected function getSortHeaderClass() {
 		return parent::getSortHeaderClass() . ' uploadstash_sort';
 	}

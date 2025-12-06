@@ -9,6 +9,8 @@
 			"Crochet.david",
 			"DavidL",
 			"Dereckson",
+			"Derugon",
+			"Escargot bleu",
 			"Framafan",
 			"Gomoko",
 			"Guillom",
@@ -37,9 +39,7 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"아라",
-			"Derugon",
-			"Escargot bleu"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck pense que du nouveau contenu a été ajouté à la page",
@@ -49,6 +49,11 @@
 	"tag-editcheck-references-activated-description": "EditCheck pense qu’une référence peut être nécessaire, et l’IHM a été affichée",
 	"tag-editcheck-references-shown": "Vérification de modification (références) affichées",
 	"tag-editcheck-references-shown-description": "EditCheck pense qu’une référence peut être nécessaire, et l’IHM a été affichée",
+	"tag-editcheck-tone-description": "EditCheck a détecté un problème potentiel avec le ton de certains contenus ajoutés",
+	"tag-editcheck-tone-shown": "Modifier la vérification (tonalité) affichée",
+	"tag-editcheck-tone-shown-description": "EditCheck pense qu'un ajustement du ton de certains contenus aurait pu être nécessaire, et l'interface utilisateur a été affichée",
+	"tag-editcheck-paste-shown": "Vérification des modifications (copier-coller) affichée",
+	"tag-editcheck-paste-shown-description": "La vérification des modifications a demandé des éclaircissements sur le contenu collé par l'éditeur, que celui-ci a supprimé ou jugé comme étant autorisé.",
 	"tag-visualeditor": "Éditeur visuel",
 	"tag-visualeditor-description": "Modification effectuée avec l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|éditeur visuel]]",
 	"tag-visualeditor-needcheck": "Éditeur visuel : à vérifier",

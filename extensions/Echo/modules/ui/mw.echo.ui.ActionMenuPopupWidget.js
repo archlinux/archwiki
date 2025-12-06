@@ -34,7 +34,7 @@ mw.echo.ui.ActionMenuPopupWidget = function MwEchoUiActionMenuPopupWidget( confi
 		$floatableContainer: this.$element,
 		horizontalPosition: this.customMenuPosition ? config.horizontalPosition : 'start',
 		classes: [ 'mw-echo-ui-actionMenuPopupWidget-menu' ],
-		widget: this
+		widget: this,
 	} );
 	this.$overlay.append( this.menu.$element );
 
@@ -43,7 +43,7 @@ mw.echo.ui.ActionMenuPopupWidget = function MwEchoUiActionMenuPopupWidget( confi
 	this.getMenu().connect( this, {
 		remove: 'decideToggle',
 		add: 'decideToggle',
-		clear: 'decideToggle'
+		clear: 'decideToggle',
 	} );
 	// Initialization
 	this.$element

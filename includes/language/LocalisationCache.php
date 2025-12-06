@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -964,10 +950,16 @@ class LocalisationCache {
 
 		return [
 			'core' => "$IP/languages/i18n",
+			'botpasswords' => "$IP/languages/i18n/botpasswords",
 			'codex' => "$IP/languages/i18n/codex",
 			'datetime' => "$IP/languages/i18n/datetime",
 			'exif' => "$IP/languages/i18n/exif",
+			'languageconverter' => "$IP/languages/i18n/languageconverter",
+			'interwiki' => "$IP/languages/i18n/interwiki",
 			'preferences' => "$IP/languages/i18n/preferences",
+
+			'nontranslatable' => "$IP/languages/i18n/nontranslatable",
+
 			'api' => "$IP/includes/api/i18n",
 			'rest' => "$IP/includes/Rest/i18n",
 			'oojs-ui' => "$IP/resources/lib/ooui/i18n",
@@ -1086,7 +1078,7 @@ class LocalisationCache {
 		$deps = $coreData['deps'];
 		$coreData += $this->readPluralFilesAndRegisterDeps( $code, $deps );
 
-		$codeSequence = array_merge( [ $code ], $coreData['fallbackSequence'] );
+		$codeSequence = [ $code, ...$coreData['fallbackSequence'] ];
 		$messageDirs = $this->getMessagesDirs();
 		$translationAliasesDirs = $this->options->get( MainConfigNames::TranslationAliasesDirs );
 

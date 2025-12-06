@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -36,12 +22,11 @@ class UnicodeConstraint implements IEditConstraint {
 	public const VALID_UNICODE = 'ℳ𝒲♥𝓊𝓃𝒾𝒸ℴ𝒹ℯ';
 
 	/**
-	 * Unicode string provided, to compare
+	 * @param string $input Unicode string provided, to compare
 	 */
-	private string $input;
-
-	public function __construct( string $inputUnicode ) {
-		$this->input = $inputUnicode;
+	public function __construct(
+		private readonly string $input,
+	) {
 	}
 
 	public function checkConstraint(): string {

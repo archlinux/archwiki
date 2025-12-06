@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -22,7 +8,6 @@ namespace MediaWiki\User;
 
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\Throttler;
-use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
@@ -33,7 +18,6 @@ use MediaWiki\Password\PasswordError;
 use MediaWiki\Password\PasswordFactory;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\BotPasswordSessionProvider;
-use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
 use MWRestrictions;
 use stdClass;
@@ -239,7 +223,7 @@ class BotPassword {
 		$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 		try {
 			return $passwordFactory->newFromCiphertext( $password );
-		} catch ( PasswordError $ex ) {
+		} catch ( PasswordError ) {
 			return PasswordFactory::newInvalidPassword();
 		}
 	}
@@ -326,10 +310,10 @@ class BotPassword {
 
 	/**
 	 * Returns a (raw, unhashed) random password string.
-	 * @param Config $config
+	 *
 	 * @return string
 	 */
-	public static function generatePassword( $config ) {
+	public static function generatePassword() {
 		return PasswordFactory::generateRandomPasswordString( self::PASSWORD_MINLENGTH );
 	}
 
@@ -363,21 +347,24 @@ class BotPassword {
 
 	/**
 	 * Try to log the user in
-	 * @param string $username Combined user name and app ID
+	 * @param string $username Combined username and app ID
 	 * @param string $password Supplied password
 	 * @param WebRequest $request
 	 * @return Status On success, the good status's value is the new Session object
 	 */
 	public static function login( $username, $password, WebRequest $request ) {
-		$enableBotPasswords = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::EnableBotPasswords );
-		$passwordAttemptThrottle = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::PasswordAttemptThrottle );
+		$services = MediaWikiServices::getInstance();
+		$sessionManager = $services->getSessionManager();
+		$config = $services->getMainConfig();
+		$enableBotPasswords = $config->get( MainConfigNames::EnableBotPasswords );
+		$passwordAttemptThrottle = $config->get( MainConfigNames::PasswordAttemptThrottle );
 		if ( !$enableBotPasswords ) {
 			return Status::newFatal( 'botpasswords-disabled' );
 		}
 
-		$provider = SessionManager::singleton()->getProvider( BotPasswordSessionProvider::class );
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		$provider = $sessionManager->getProvider( BotPasswordSessionProvider::class );
+
 		if ( !$provider ) {
 			return Status::newFatal( 'botpasswords-no-provider' );
 		}
@@ -406,8 +393,7 @@ class BotPassword {
 		if ( $passwordAttemptThrottle ) {
 			$throttle = new Throttler( $passwordAttemptThrottle, [
 				'type' => 'botpassword',
-				'cache' => MediaWikiServices::getInstance()->getObjectCacheFactory()
-					->getLocalClusterInstance(),
+				'cache' => $services->getObjectCacheFactory()->getLocalClusterInstance(),
 			] );
 			$result = $throttle->increase( $user->getName(), $request->getIP(), __METHOD__ );
 			if ( $result ) {
@@ -445,7 +431,6 @@ class BotPassword {
 			$throttle->clear( $user->getName(), $request->getIP() );
 		}
 		return self::loginHook( $user, $bp, $performer,
-			// @phan-suppress-next-line PhanUndeclaredMethod
 			Status::newGood( $provider->newSessionForRequest( $user, $bp, $request ) ) );
 	}
 

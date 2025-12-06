@@ -8,7 +8,8 @@
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
 			"सरोज कुमार ढकाल",
-			"हिमाल सुबेदी"
+			"हिमाल सुबेदी",
+			"Nirajan pant"
 		]
 	},
 	"thanks-desc": "प्रयोगकर्ताहरूलाई तिनीहरूको सम्पादन, टिप्पणी आदिको लागि धन्यवाद दिने लिङ्क जोड्ने।",
@@ -29,7 +30,7 @@
 	"thanks-thank-tooltip-no": "धन्यवाद सूचनालाई {{GENDER:$1|रद्द गर्नुहोस्}}",
 	"thanks-thank-tooltip-yes": "धन्यवाद सूचना {{GENDER:$1|पठाउनुहोस्}}",
 	"thanks-confirmation2": "के तपाईंले सार्वजनिक रूपमा धन्यवाद {{GENDER:$1|पठाउन}} चाहनुहुन्छ?",
-	"thanks-thanked-notice": "तपाईंलाई {{GENDER:$2|उसले|उनले|उनिहरूले}} गरेको सम्पादन मन परेको छ भन्ने सूचना $1लाई पठाइएको छ ।",
+	"thanks-thanked-notice": "{{GENDER:$3|तपाईंले}} {{GENDER:$2|$1}}लाई धन्यवाद दिनुभयो।",
 	"thanks": "धन्यवाद पठाउनुहोस्",
 	"thanks-submit": "धन्यवाद पठाउनुहोस्",
 	"echo-pref-subscription-edit-thank": "मेरो सम्पादनको लागि धन्यवाद",
@@ -43,14 +44,14 @@
 	"log-description-thanks": "अन्य प्रयोगकर्ताहरूद्वारा धन्यवाद पाउने प्रयोगकर्ताहरूको सूची निम्न रहेको छ।",
 	"logentry-thanks-thank": "$1ले {{GENDER:$4|$3}}लाई {{GENDER:$2|धन्यवाद दिनुभएको छ}}",
 	"logeventslist-thanks-log": "धन्यवाद अभिलेखहरू",
-	"thanks-error-no-id-specified": "धन्यवाद गर्नको लागि तपाईंलाई कुनै एक पुनरीक्षण ठेगाना निर्दिष्ट गर्नु पर्ने हो।",
+	"thanks-error-no-id-specified": "धन्यवाद पठाउनको लागि तपाईंले संशोधन वा लग आईडी खुलाउनु पर्दछ।",
 	"thanks-confirmation-special-log": "के तपाईं सार्वजनिक रूपमा धन्यवाद पठाउन चाहनुहुन्छ?",
 	"thanks-confirmation-special-rev": "के तपाईं सार्वजनिक रूपमा यो सम्पादनको लागि धन्यवाद पठाउन चाहनुहुन्छ?",
 	"notification-link-text-view-post": "टिप्पणी हेर्ने",
 	"notification-link-text-view-logentry": "अभिलेख प्रविष्टि हेर्नुहोस्",
 	"thanks-error-invalidpostid": "पोस्ट ठेगाना अमान्य छ।",
 	"flow-thanks-confirmation-special": "के तपाईं यस प्रतिक्रियाको लागि धन्यवाद पठाउन चाहनुहुन्छ?",
-	"flow-thanks-thanked-notice": "तपाईंलाई {{GENDER:$2|उसले|उनले|उनिहरूले}} दिएको प्रतिक्रिया मन परेको छ भन्ने सूचना $1लाई पठाइएको छ ।",
+	"flow-thanks-thanked-notice": "{{GENDER:$3|तपाईंले}} $1लाई {{GENDER:$2|उनको|उनीको|उनीहरूको}} टिप्पणीको लागि धन्यवाद दिनुभयो।",
 	"notification-header-flow-thank": " \"<strong>$3</strong>\" मा तपाईँको प्रतिक्रियाको लागि $1 ले {{GENDER:$5|तपाईँलाई}} {{GENDER:$2|धन्यवाद}} दिनुभो ।",
 	"notification-compact-header-flow-thank": "$1ले {{GENDER:$3|तपाईं}}लाई {{GENDER:$2|धन्यवाद}} दिनुभो।",
 	"ipb-action-thanks": "धन्यवाद पठाउँदै"

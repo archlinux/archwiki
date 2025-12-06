@@ -301,7 +301,7 @@ class NotificationMapper extends AbstractMapper {
 			->join( 'echo_event', null, 'notification_event=event_id' )
 			->where( [
 				'notification_user' => $userIdentity->getId(),
-				'notification_event' => $eventIds
+				'notification_event' => $eventIds,
 			] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
@@ -408,7 +408,7 @@ class NotificationMapper extends AbstractMapper {
 			->distinct()
 			->from( 'echo_notification' )
 			->where( [
-				'notification_event' => $eventIds
+				'notification_event' => $eventIds,
 			] )
 			->caller( __METHOD__ )
 			->fetchFieldValues();

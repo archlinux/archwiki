@@ -23,6 +23,7 @@ use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeStore;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use OOUI;
@@ -63,6 +64,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	private $varGeneratorFactory;
 
 	private AbuseLoggerFactory $abuseLoggerFactory;
+	private RecentChangeStore $recentChangeStore;
 
 	/**
 	 * @param LBFactory $lbFactory
@@ -74,6 +76,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 * @param VariablesManager $varManager
 	 * @param VariableGeneratorFactory $varGeneratorFactory
 	 * @param AbuseLoggerFactory $abuseLoggerFactory
+	 * @param RecentChangeStore $recentChangeStore
 	 * @param IContextSource $context
 	 * @param LinkRenderer $linkRenderer
 	 * @param string $basePageName
@@ -89,6 +92,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		VariablesManager $varManager,
 		VariableGeneratorFactory $varGeneratorFactory,
 		AbuseLoggerFactory $abuseLoggerFactory,
+		RecentChangeStore $recentChangeStore,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
@@ -104,6 +108,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$this->varManager = $varManager;
 		$this->varGeneratorFactory = $varGeneratorFactory;
 		$this->abuseLoggerFactory = $abuseLoggerFactory;
+		$this->recentChangeStore = $recentChangeStore;
 	}
 
 	/**
@@ -201,6 +206,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$pager = new AbuseFilterExaminePager(
 			$changesList,
 			$this->linkRenderer,
+			$this->recentChangeStore,
 			$dbr,
 			$this->getTitle( 'examine' ),
 			$conds
@@ -221,7 +227,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 */
 	public function showExaminerForRC( $rcid ) {
 		// Get data
-		$rc = RecentChange::newFromId( $rcid );
+		$rc = $this->recentChangeStore->getRecentChangeById( $rcid );
 		$out = $this->getOutput();
 		if ( !$rc ) {
 			$out->addWikiMsg( 'abusefilter-examine-notfound' );
@@ -295,7 +301,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$row = $dbr->newSelectQueryBuilder()
 			->select( [
 				'afl_deleted',
-				'afl_ip',
+				'afl_ip_hex',
 				'afl_var_dump',
 				'afl_rev_id',
 				'afl_filter_id',
@@ -341,12 +347,32 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 
 		// Check that the user can see the protected variables that are being examined if the filter is protected.
 		$userAuthority = $this->getAuthority();
-		if (
-			$filter->isProtected() &&
-			!$this->afPermManager->canViewProtectedVariables( $userAuthority, array_keys( $vars->getVars() ) )->isGood()
-		) {
-			$out->addWikiMsg( 'abusefilter-examine-protected-vars-permission' );
-			return;
+		if ( $filter->isProtected() ) {
+			$permStatus = $this->afPermManager->canViewProtectedVariables(
+				$userAuthority, array_keys( $vars->getVars() )
+			);
+			if ( !$permStatus->isGood() ) {
+				if ( $permStatus->getPermission() ) {
+					$out->addWikiMsg(
+						$this->msg(
+							'abusefilter-examine-error-protected-due-to-permission',
+							$this->msg( "action-{$permStatus->getPermission()}" )->plain()
+						)
+					);
+					return;
+				}
+
+				// Add any messages in the status after a generic error message.
+				$additional = '';
+				foreach ( $permStatus->getMessages() as $message ) {
+					$additional .= $this->msg( $message )->parseAsBlock();
+				}
+
+				$out->addWikiMsg(
+					$this->msg( 'abusefilter-examine-error-protected' )->rawParams( $additional )
+				);
+				return;
+			}
 		}
 
 		// AbuseFilter logs created before T390086 may have protected variables present in the variable dump
@@ -388,9 +414,6 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$this->showExaminer( $vars );
 	}
 
-	/**
-	 * @param VariableHolder $vars
-	 */
 	public function showExaminer( VariableHolder $vars ) {
 		$output = $this->getOutput();
 		$output->enableOOUI();

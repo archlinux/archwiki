@@ -18,8 +18,7 @@
  * @param {Object} [config.toolbarConfig]
  * @param {boolean} [config.register=true]
  */
-ve.init.mw.ArticleTarget = function VeInitMwArticleTarget( config ) {
-	config = config || {};
+ve.init.mw.ArticleTarget = function VeInitMwArticleTarget( config = {} ) {
 	config.toolbarConfig = ve.extendObject( {
 		shadow: true,
 		actions: true,
@@ -248,6 +247,8 @@ ve.init.mw.ArticleTarget.static.buildRedirectSub = function () {
 ve.init.mw.ArticleTarget.static.buildRedirectMsg = function ( title ) {
 	const $link = $( '<a>' )
 		.attr( {
+			// Redirect target is safe
+			// eslint-disable-next-line local/no-unsanitized-href
 			href: mw.Title.newFromText( title ).getUrl(),
 			title: mw.msg( 'visualeditor-redirect-description', title )
 		} )
@@ -778,7 +779,7 @@ ve.init.mw.ArticleTarget.prototype.saveFail = function ( doc, saveData, code, da
 	let handled = false;
 	// Handle empty response
 	if ( !data ) {
-		this.saveErrorEmpty();
+		this.showSaveError( this.extractErrorMessages( null ) );
 		handled = true;
 	}
 
@@ -796,20 +797,22 @@ ve.init.mw.ArticleTarget.prototype.saveFail = function ( doc, saveData, code, da
 						this.saveErrorNewUser( username );
 					}
 				}, () => {
-					this.saveErrorUnknown( data );
+					this.showSaveError( this.extractErrorMessages( data ) );
 				} );
 				handled = true;
 			} else if ( error.code === 'editconflict' ) {
 				this.editConflict();
 				handled = true;
 			} else if ( error.code === 'pagedeleted' ) {
-				this.saveErrorPageDeleted();
+				this.pageDeletedWarning = true;
+				// The API error message 'apierror-pagedeleted' is poor, make our own
+				this.showSaveError( mw.msg( 'visualeditor-recreate', mw.msg( 'ooui-dialog-process-continue' ) ), true );
 				handled = true;
 			} else if ( error.code === 'hookaborted' ) {
 				this.saveErrorHookAborted( data );
 				handled = true;
 			} else if ( error.code === 'readonly' ) {
-				this.saveErrorReadOnly( data );
+				this.showSaveError( this.extractErrorMessages( data ), true );
 				handled = true;
 			}
 		}
@@ -828,7 +831,7 @@ ve.init.mw.ArticleTarget.prototype.saveFail = function ( doc, saveData, code, da
 
 	// Handle (other) unknown and/or unrecoverable errors
 	if ( !handled ) {
-		this.saveErrorUnknown( data );
+		this.showSaveError( this.extractErrorMessages( data ) );
 		handled = true;
 	}
 
@@ -845,7 +848,7 @@ ve.init.mw.ArticleTarget.prototype.saveFail = function ( doc, saveData, code, da
 };
 
 /**
- * Show an save process error message
+ * Show a save process error message
  *
  * @param {string|jQuery|Node[]} msg Message content (string of HTML, jQuery object or array of
  *  Node objects)
@@ -869,14 +872,8 @@ ve.init.mw.ArticleTarget.prototype.extractErrorMessages = function ( data ) {
 };
 
 /**
- * Handle general save error
- */
-ve.init.mw.ArticleTarget.prototype.saveErrorEmpty = function () {
-	this.showSaveError( this.extractErrorMessages( null ) );
-};
-
-/**
- * Handle hook abort save error
+ * Handle hook abort save error. Intended to be overridden by extensions implementing the
+ * VisualEditorApiVisualEditorEditPreSave hook.
  *
  * @param {Object} data API response data
  */
@@ -901,33 +898,6 @@ ve.init.mw.ArticleTarget.prototype.saveErrorNewUser = function ( username ) {
 	).parseDom();
 
 	this.showSaveError( $msg, true );
-};
-
-/**
- * Handle unknown save error
- *
- * @param {Object|null} data API response data
- */
-ve.init.mw.ArticleTarget.prototype.saveErrorUnknown = function ( data ) {
-	this.showSaveError( this.extractErrorMessages( data ) );
-};
-
-/**
- * Handle page deleted error
- */
-ve.init.mw.ArticleTarget.prototype.saveErrorPageDeleted = function () {
-	this.pageDeletedWarning = true;
-	// The API error message 'apierror-pagedeleted' is poor, make our own
-	this.showSaveError( mw.msg( 'visualeditor-recreate', mw.msg( 'ooui-dialog-process-continue' ) ), true );
-};
-
-/**
- * Handle read only error
- *
- * @param {Object} data API response data
- */
-ve.init.mw.ArticleTarget.prototype.saveErrorReadOnly = function ( data ) {
-	this.showSaveError( this.extractErrorMessages( data ), true );
 };
 
 /**
@@ -1153,9 +1123,10 @@ ve.init.mw.ArticleTarget.prototype.load = function ( dataPromise ) {
 	} );
 
 	this.loading = dataPromise;
-	dataPromise
-		.done( this.loadSuccess.bind( this ) )
-		.fail( this.loadFail.bind( this ) );
+	dataPromise.then(
+		this.loadSuccess.bind( this ),
+		this.loadFail.bind( this )
+	);
 
 	return dataPromise;
 };
@@ -1187,18 +1158,6 @@ ve.init.mw.ArticleTarget.prototype.clearState = function () {
 	this.localNoticeMessages = [];
 	this.recovered = false;
 	this.teardownPromise = null;
-};
-
-/**
- * Switch to edit source mode
- *
- * Opens a confirmation dialog if the document is modified or VE wikitext mode
- * is not available.
- */
-ve.init.mw.ArticleTarget.prototype.editSource = function () {
-	const modified = this.fromEditedState || this.getSurface().getModel().hasBeenModified();
-
-	this.switchToWikitextEditor( modified );
 };
 
 /**
@@ -1497,6 +1456,7 @@ ve.init.mw.ArticleTarget.prototype.getSaveOptions = function () {
 			wpSummary: 'summary',
 			wpMinoredit: 'minor',
 			wpWatchthis: 'watchlist',
+			wpWatchlistExpiry: 'watchlistexpiry',
 			wpCaptchaId: 'captchaid',
 			wpCaptchaWord: 'captchaword'
 		};
@@ -1585,12 +1545,13 @@ ve.init.mw.ArticleTarget.prototype.save = function ( doc, options ) {
 
 	data.vetags = taglist.join( ',' );
 
-	const promise = this.saving = this.tryWithPreparedCacheKey( doc, data, 'save' )
-		.done( this.saveComplete.bind( this ) )
-		.fail( this.saveFail.bind( this, doc, data ) )
-		.always( () => {
-			this.saving = null;
-		} );
+	const promise = this.saving = this.tryWithPreparedCacheKey( doc, data, 'save' );
+	promise.then(
+		this.saveComplete.bind( this ),
+		this.saveFail.bind( this, doc, data )
+	).always( () => {
+		this.saving = null;
+	} );
 
 	return promise;
 };
@@ -1643,9 +1604,10 @@ ve.init.mw.ArticleTarget.prototype.getWikitextDiffPromise = function ( doc ) {
 			}
 			return data.diff;
 		} );
-		this.wikitextDiffPromise
-			.done( this.emit.bind( this, 'showChanges' ) )
-			.fail( this.emit.bind( this, 'showChangesError' ) );
+		this.wikitextDiffPromise.then(
+			this.emit.bind( this, 'showChanges' ),
+			this.emit.bind( this, 'showChangesError' )
+		);
 	}
 	return this.wikitextDiffPromise;
 };
@@ -1724,12 +1686,13 @@ ve.init.mw.ArticleTarget.prototype.serialize = function ( doc, callback ) {
 		page: this.getPageName(),
 		oldid: this.revid,
 		etag: this.etag
-	}, 'serialize' )
-		.done( this.emit.bind( this, 'serializeComplete' ) )
-		.fail( this.emit.bind( this, 'serializeError' ) )
-		.always( () => {
-			this.serializing = null;
-		} );
+	}, 'serialize' );
+	promise.then(
+		this.emit.bind( this, 'serializeComplete' ),
+		this.emit.bind( this, 'serializeError' )
+	).always( () => {
+		this.serializing = null;
+	} );
 
 	if ( callback ) {
 		OO.ui.warnDeprecation( 'Passing a callback to ve.init.mw.ArticleTarget#serialize is deprecated. Use the returned promise instead.' );
@@ -1763,7 +1726,7 @@ ve.init.mw.ArticleTarget.prototype.track = function ( name ) {
 /**
  * @inheritdoc
  */
-ve.init.mw.ArticleTarget.prototype.createSurface = function ( dmDoc, config ) {
+ve.init.mw.ArticleTarget.prototype.createSurface = function ( dmDoc, config = {} ) {
 	const sections = dmDoc.getNodesByType( 'section' );
 	let attachedRoot;
 	if ( sections.length && sections.length === 1 ) {
@@ -2000,7 +1963,9 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 	const currentWindow = this.getSurface().getDialogs().getCurrentWindow();
 	if ( currentWindow && currentWindow.constructor.static.name === 'mwSave' && ( action === 'save' || action === null ) ) {
 		// The current window is the save dialog, and we've gotten here via
-		// the save action. Trigger a save. We're doing this here instead of
+		// the save action. Trigger a save action on the dialog, which will
+		// either switch to the save panel or immediately save depending on
+		// the currently active panel. We're doing this here instead of
 		// relying on an accesskey on the save button, because that has some
 		// cross-browser issues that makes it not work in Firefox.
 		currentWindow.executeAction( 'save' );
@@ -2013,7 +1978,7 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 
 	this.emit( 'saveWorkflowBegin' );
 
-	this.preSaveProcess.execute().done( () => {
+	this.preSaveProcess.execute().then( () => {
 		if ( this.deactivating || !this.active ) {
 			// It's possible to trigger deactivating VE during the
 			// preSaveProcess (e.g. by clicking the "read" tab), and in that
@@ -2024,7 +1989,7 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 		this.prepareCacheKey( this.getDocToSave() );
 
 		// Get the save dialog
-		this.getSurface().getDialogs().getWindow( 'mwSave' ).done( ( win ) => {
+		this.getSurface().getDialogs().getWindow( 'mwSave' ).then( ( win ) => {
 			const windowAction = ve.ui.actionFactory.create( 'window', this.getSurface() );
 
 			if ( !this.saveDialog ) {
@@ -2087,7 +2052,7 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 				} );
 			}
 		} );
-	} ).fail( () => {
+	}, () => {
 		this.saveDialogIsOpening = false;
 	} );
 };
@@ -2273,9 +2238,12 @@ ve.init.mw.ArticleTarget.prototype.getSectionHashFromPage = function () {
 /**
  * Switches to the wikitext editor, either keeping (default) or discarding changes.
  *
- * @param {boolean} [modified=false] Whether there were any changes at all.
+ * @param {boolean} [modified] Whether there were any changes at all, will be evaluated if not provided
  */
 ve.init.mw.ArticleTarget.prototype.switchToWikitextEditor = function ( modified ) {
+	if ( modified === undefined ) {
+		modified = this.fromEditedState || this.getSurface().getModel().hasBeenModified();
+	}
 	// When switching with changes we always pass the full page as changes in visual section mode
 	// can still affect the whole document (e.g. removing a reference)
 	if ( modified ) {
@@ -2292,6 +2260,12 @@ ve.init.mw.ArticleTarget.prototype.switchToWikitextEditor = function ( modified 
 	} else {
 		this.switchToFallbackWikitextEditor( modified );
 	}
+};
+
+// Deprecated alias
+ve.init.mw.ArticleTarget.prototype.editSource = function () {
+	OO.ui.warnDeprecation( 'ArticleTarget#editSource: Use #switchToWikitextEditor instead.' );
+	this.switchToWikitextEditor( ...arguments );
 };
 
 /**
@@ -2496,7 +2470,7 @@ ve.init.mw.ArticleTarget.prototype.renderCategories = function ( categoryItems )
 	categoryItems.forEach( ( categoryItem, index ) => {
 		const attributes = ve.copy( ve.getProp( categoryItem, 'element', 'attributes' ) );
 		attributes.index = index;
-		promises.push( ve.init.platform.linkCache.get( attributes.category ).done( ( result ) => {
+		promises.push( ve.init.platform.linkCache.get( attributes.category ).then( ( result ) => {
 			const group = result.hidden ? categories.hidden : categories.normal;
 			// In case of duplicates, first entry wins (like in MediaWiki)
 			if ( !group[ attributes.category ] || group[ attributes.category ].index > attributes.index ) {
@@ -2507,8 +2481,9 @@ ve.init.mw.ArticleTarget.prototype.renderCategories = function ( categoryItems )
 	return ve.promiseAll( promises ).then( () => {
 		const $output = $( '<div>' ).addClass( 'catlinks' );
 		function renderPageLink( page ) {
-			const title = mw.Title.newFromText( page ),
-				$link = $( '<a>' ).attr( 'rel', 'mw:WikiLink' ).attr( 'href', title.getUrl() ).text( title.getMainText() );
+			const title = mw.Title.newFromText( page );
+			const $link = $( '<a>' ).attr( 'rel', 'mw:WikiLink' ).text( title.getMainText() );
+			ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl() );
 			// Style missing links. The data should already have been fetched
 			// as part of the earlier processing of categoryItems.
 			ve.init.platform.linkCache.styleElement( title.getPrefixedText(), $link, false );

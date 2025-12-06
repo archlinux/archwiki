@@ -3,13 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use DOMException;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\DOMException;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
@@ -68,7 +68,7 @@ class WTUtils {
 	}
 
 	public static function isZeroWidthWikitextElt( Node $node ): bool {
-		return isset( Consts::$ZeroWidthWikitextTags[DOMCompat::nodeName( $node )] ) &&
+		return isset( Consts::$ZeroWidthWikitextTags[DOMUtils::nodeName( $node )] ) &&
 			!self::isLiteralHTMLNode( $node );
 	}
 
@@ -88,7 +88,7 @@ class WTUtils {
 	 * anymore since mw:ExtLink is used for all the three link syntaxes.
 	 */
 	public static function isATagFromWikiLinkSyntax( Element $node ): bool {
-		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
+		if ( DOMUtils::nodeName( $node ) !== 'a' ) {
 			return false;
 		}
 
@@ -103,7 +103,7 @@ class WTUtils {
 	 * multiple link types
 	 */
 	public static function isATagFromExtLinkSyntax( Element $node ): bool {
-		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
+		if ( DOMUtils::nodeName( $node ) !== 'a' ) {
 			return false;
 		}
 
@@ -118,7 +118,7 @@ class WTUtils {
 	 * multiple link types
 	 */
 	public static function isATagFromURLLinkSyntax( Element $node ): bool {
-		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
+		if ( DOMUtils::nodeName( $node ) !== 'a' ) {
 			return false;
 		}
 
@@ -133,7 +133,7 @@ class WTUtils {
 	 * multiple link types
 	 */
 	public static function isATagFromMagicLinkSyntax( Element $node ): bool {
-		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
+		if ( DOMUtils::nodeName( $node ) !== 'a' ) {
 			return false;
 		}
 
@@ -235,11 +235,11 @@ class WTUtils {
 	 * Check whether a pre is caused by indentation in the original wikitext.
 	 */
 	public static function isIndentPre( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === "pre" && !self::isLiteralHTMLNode( $node );
+		return DOMUtils::nodeName( $node ) === "pre" && !self::isLiteralHTMLNode( $node );
 	}
 
 	public static function isInlineMedia( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === 'span' &&
+		return DOMUtils::nodeName( $node ) === 'span' &&
 			self::isGeneratedFigure( $node );
 	}
 
@@ -285,7 +285,7 @@ class WTUtils {
 	 */
 	public static function isRedirectLink( ?Node $node ): bool {
 		return $node instanceof Element &&
-			DOMCompat::nodeName( $node ) === 'link' &&
+			DOMUtils::nodeName( $node ) === 'link' &&
 			DOMUtils::matchRel( $node, '#\bmw:PageProp/redirect\b#' ) !== null;
 	}
 
@@ -294,7 +294,7 @@ class WTUtils {
 	 */
 	public static function isCategoryLink( ?Node $node ): bool {
 		return $node instanceof Element &&
-			DOMCompat::nodeName( $node ) === 'link' &&
+			DOMUtils::nodeName( $node ) === 'link' &&
 			DOMUtils::matchRel( $node, '#\bmw:PageProp/Category\b#' ) !== null;
 	}
 
@@ -303,8 +303,10 @@ class WTUtils {
 	 */
 	public static function isSolTransparentLink( ?Node $node ): bool {
 		return $node instanceof Element &&
-			DOMCompat::nodeName( $node ) === 'link' &&
-			DOMUtils::matchRel( $node, TokenUtils::SOL_TRANSPARENT_LINK_REGEX ) !== null;
+			DOMUtils::nodeName( $node ) === 'link' &&
+			( DOMUtils::matchRel( $node, TokenUtils::SOL_TRANSPARENT_LINK_REGEX ) !== null ||
+				// Empty extension content are given a synthetic link for roundtripping.
+				( DOMDataUtils::getDataParsoid( $node )->getTemp()->empty ?? false ) );
 	}
 
 	/**
@@ -350,14 +352,15 @@ class WTUtils {
 		// FIXME: Can we change this entire thing to
 		// $node instanceof Comment ||
 		// DOMUtils::getDataParsoid($node).stx !== 'html' &&
-		// (DOMCompat::nodeName($node) === 'meta' || DOMCompat::nodeName($node) === 'link')
+		// (DOMUtils::nodeName($node) === 'meta' || DOMUtils::nodeName($node) === 'link')
 		//
 		return $node instanceof Comment ||
 			self::isSolTransparentLink( $node ) || (
 				// Catch-all for everything else.
 				$node instanceof Element &&
-				DOMCompat::nodeName( $node ) === 'meta' &&
+				DOMUtils::nodeName( $node ) === 'meta' &&
 				!self::isMarkerAnnotation( $node ) &&
+				!DOMUtils::hasTypeOf( $node, 'mw:DOMFragment' ) &&
 				( DOMDataUtils::getDataParsoid( $node )->stx ?? '' ) !== 'html'
 			) || self::isFallbackIdSpan( $node );
 	}
@@ -371,7 +374,7 @@ class WTUtils {
 		while ( DOMUtils::isTableTag( $p ) ) {
 			if ( self::isLiteralHTMLNode( $p ) ) {
 				return true;
-			} elseif ( DOMCompat::nodeName( $p ) === 'table' ) {
+			} elseif ( DOMUtils::nodeName( $p ) === 'table' ) {
 				// Don't cross <table> boundaries
 				return false;
 			}
@@ -379,6 +382,13 @@ class WTUtils {
 		}
 
 		return false;
+	}
+
+	public static function serializeChildTableTagAsHTML( Element $elt ): bool {
+		$name = DOMUtils::nodeName( $elt );
+		return isset( Consts::$HTML['ChildTableTags'][$name] ) &&
+			!isset( Consts::$ZeroWidthWikitextTags[$name] ) &&
+			self::inHTMLTableTag( $elt );
 	}
 
 	/**
@@ -441,7 +451,7 @@ class WTUtils {
 	 * Is $node a Parsoid-generated <section> tag?
 	 */
 	public static function isParsoidSectionTag( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === 'section' &&
+		return DOMUtils::nodeName( $node ) === 'section' &&
 			// @phan-suppress-next-line PhanUndeclaredMethod
 			$node->hasAttribute( 'data-mw-section-id' );
 	}
@@ -487,7 +497,7 @@ class WTUtils {
 		// FIXME: We could probably change the null return to ''
 		// Just need to verify that code that uses this won't break
 		return Utils::isValidDSR( $dsr ) ?
-			$dsr->substr( $frame->getSrcText() ) : null;
+			$dsr->substr( $frame->getSource() ) : null;
 	}
 
 	/**
@@ -499,10 +509,6 @@ class WTUtils {
 	 * transclusion/extension content is a forest of dom-trees formed
 	 * by adjacent dom-nodes.  This is the contract that template
 	 * encapsulation, dom-reuse, and VE code all have to abide by.
-	 *
-	 * The only exception to this adjacency rule is IEW nodes in
-	 * fosterable positions (in tables) which are not span-wrapped to
-	 * prevent them from getting fostered out.
 	 *
 	 * @param Node $node
 	 * @param ?string $about
@@ -516,10 +522,7 @@ class WTUtils {
 		}
 
 		$node = $node->nextSibling;
-		while ( $node && (
-			( $node instanceof Element && DOMCompat::getAttribute( $node, 'about' ) === $about ) ||
-			( DOMUtils::isFosterablePosition( $node ) && DOMUtils::isIEW( $node ) )
-		) ) {
+		while ( $node instanceof Element && DOMCompat::getAttribute( $node, 'about' ) === $about ) {
 			$nodes[] = $node;
 			$node = $node->nextSibling;
 		}
@@ -641,7 +644,7 @@ class WTUtils {
 		// that the string "-->" never shows up.  (See above.)
 		return preg_replace_callback( '/--(&(amp;)*gt;|>)/', static function ( $m ) {
 			$s = $m[0];
-				return $s === '-->' ? '--&gt;' : '--&amp;' . substr( $s, 3 );
+			return $s === '-->' ? '--&gt;' : '--&amp;' . substr( $s, 3 );
 		}, $trueValue );
 	}
 
@@ -880,7 +883,7 @@ class WTUtils {
 	 * Check whether a node is a meta signifying the start of an annotated part of the DOM
 	 */
 	public static function isAnnotationStartMarkerMeta( Node $node ): bool {
-		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
+		if ( !$node instanceof Element || DOMUtils::nodeName( $node ) !== 'meta' ) {
 			return false;
 		}
 		$isStart = false;
@@ -892,7 +895,7 @@ class WTUtils {
 	 * Check whether a node is a meta signifying the end of an annotated part of the DOM
 	 */
 	public static function isAnnotationEndMarkerMeta( Node $node ): bool {
-		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
+		if ( !$node instanceof Element || DOMUtils::nodeName( $node ) !== 'meta' ) {
 			return false;
 		}
 		$isStart = false;

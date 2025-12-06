@@ -2,7 +2,7 @@
 ( function () {
 	const showResults = function ( size, cidr, $form, hasCheckUserRight, hasCheckUserLogRight ) {
 		if ( cidr.toString() === '!' ) {
-			cidr = mw.message( 'checkuser-cidr-too-small' ).text();
+			cidr = mw.msg( 'checkuser-cidr-too-small' );
 		}
 		$( '.mw-checkuser-cidr-res input', $form ).val( cidr );
 		if ( mw.util.isIPAddress( cidr, true ) ) {
@@ -20,7 +20,7 @@
 			$( '.mw-checkuser-cidr-tool-links', $form ).addClass( 'mw-checkuser-cidr-tool-links-hidden' );
 		}
 		$( '.mw-checkuser-cidr-ipnote', $form ).text(
-			mw.message( 'checkuser-cidr-affected-ips' ).text() + ' ' + size.toLocaleString()
+			mw.msg( 'checkuser-cidr-affected-ips' ) + ' ' + size.toLocaleString()
 		);
 	};
 

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -66,6 +52,7 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		$this->identityUtils = $identityUtils;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -89,18 +76,22 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getLoginSecurityLevel() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getDefaultAction( $subPage ) {
 		return AuthManager::ACTION_CREATE;
 	}
 
+	/** @inheritDoc */
 	public function getDescription() {
 		return $this->msg( 'createaccount' );
 	}
 
+	/** @inheritDoc */
 	protected function isSignup() {
 		return true;
 	}
@@ -121,15 +112,6 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 			# Only save preferences if the user is not creating an account for someone else.
 			if ( !$this->proxyAccountCreation ) {
 				$this->getHookRunner()->onAddNewAccount( $user, false );
-
-				// If the user does not have a session cookie at this point, they probably need to
-				// do something to their browser.
-				if ( !$this->hasSessionCookie() ) {
-					$this->mainLoginForm( [ /*?*/ ], $session->getProvider()->whyNoSession() );
-					// TODO something more specific? This used to use nocookiesnew
-					// FIXME should redirect to login page instead?
-					return;
-				}
 			} else {
 				$byEmail = false; // FIXME no way to set this
 
@@ -172,6 +154,7 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 			$welcome_creation_msg, $injected_html, $extraMessages );
 	}
 
+	/** @inheritDoc */
 	protected function getToken() {
 		return $this->getRequest()->getSession()->getToken( '', 'createaccount' );
 	}
@@ -180,14 +163,17 @@ class SpecialCreateAccount extends LoginSignupSpecialPage {
 		$this->getRequest()->getSession()->resetToken( 'createaccount' );
 	}
 
+	/** @inheritDoc */
 	protected function getTokenName() {
 		return 'wpCreateaccountToken';
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'users';
 	}
 
+	/** @inheritDoc */
 	protected function logAuthResult( $success, UserIdentity $performer, $status = null ) {
 		LoggerFactory::getInstance( 'authevents' )->info( 'Account creation attempt', [
 			'event' => 'accountcreation',

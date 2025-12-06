@@ -5,21 +5,7 @@
  * Copyright © 2003,2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup SpecialPage
  */
@@ -172,11 +158,11 @@ class WikiImporter {
 		$this->openReader();
 
 		// Default callbacks
-		$this->setPageCallback( [ $this, 'beforeImportPage' ] );
-		$this->setRevisionCallback( [ $this, "importRevision" ] );
-		$this->setUploadCallback( [ $this, 'importUpload' ] );
-		$this->setLogItemCallback( [ $this, 'importLogItem' ] );
-		$this->setPageOutCallback( [ $this, 'finishImportPage' ] );
+		$this->setPageCallback( $this->beforeImportPage( ... ) );
+		$this->setRevisionCallback( $this->importRevision( ... ) );
+		$this->setUploadCallback( $this->importUpload( ... ) );
+		$this->setLogItemCallback( $this->importLogItem( ... ) );
+		$this->setPageOutCallback( $this->finishImportPage( ... ) );
 
 		$this->importTitleFactory = new NaiveImportTitleFactory(
 			$this->contentLanguage,
@@ -488,7 +474,7 @@ class WikiImporter {
 
 		try {
 			return $revision->importOldRevision();
-		} catch ( MWContentSerializationException $ex ) {
+		} catch ( MWContentSerializationException ) {
 			$this->notice( 'import-error-unserialize',
 				$revision->getTitle()->getPrefixedText(),
 				$revision->getID(),
@@ -1296,21 +1282,14 @@ class WikiImporter {
 		// phpcs:ignore Generic.PHP.NoSilencedErrors -- suppress deprecation per T268847
 		$oldDisable = @libxml_disable_entity_loader( false );
 
-		if ( PHP_VERSION_ID >= 80000 ) {
-			// A static call is now preferred, and avoids https://github.com/php/php-src/issues/11548
-			$reader = XMLReader::open(
-				'uploadsource://' . $this->sourceAdapterId, null, LIBXML_PARSEHUGE );
-			if ( $reader instanceof XMLReader ) {
-				$this->reader = $reader;
-				$status = true;
-			} else {
-				$status = false;
-			}
+		// A static call, to avoid https://github.com/php/php-src/issues/11548
+		$reader = XMLReader::open(
+			'uploadsource://' . $this->sourceAdapterId, null, LIBXML_PARSEHUGE );
+		if ( $reader instanceof XMLReader ) {
+			$this->reader = $reader;
+			$status = true;
 		} else {
-			// A static call generated a deprecation warning prior to PHP 8.0
-			$this->reader = new XMLReader;
-			$status = $this->reader->open(
-				'uploadsource://' . $this->sourceAdapterId, null, LIBXML_PARSEHUGE );
+			$status = false;
 		}
 		if ( !$status ) {
 			$error = libxml_get_last_error();

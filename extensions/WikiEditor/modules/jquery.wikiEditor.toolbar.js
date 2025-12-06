@@ -298,7 +298,7 @@ const toolbarModule = {
 							framed: false,
 							classes: [ 'tool' ],
 							icon: tool.oouiIcon,
-							title: label
+							title: this.buildShortcutLabel( label, tool.hotkey )
 						};
 						let oouiButton;
 						if ( tool.type === 'button' ) {
@@ -597,6 +597,9 @@ const toolbarModule = {
 		buildHeading: function ( context, headings ) {
 			const $row = $( '<tr>' );
 			for ( let i = 0; i < headings.length; i++ ) {
+				if ( !headings[ i ].msg ) {
+					mw.log.warn( 'The toolbar headings must use a `msg` key with a `mw.Message` key as value. Other keys are deprecated.' );
+				}
 				$row.append(
 					headings[ i ].msg ?
 						// eslint-disable-next-line mediawiki/msg-doc
@@ -881,19 +884,40 @@ const toolbarModule = {
 		},
 		ctrlShortcuts: {},
 		setupShortcuts: function ( context ) {
-			const platform = $.client.profile().platform;
-			const platformModifier = platform === 'mac' ? 'metaKey' : 'ctrlKey';
-			const otherModifier = platform === 'mac' ? 'ctrlKey' : 'metaKey';
-
 			context.$textarea.on( 'keydown', ( e ) => {
+				const modifier = this.modifierForKey( e.key );
+				const otherModifier = modifier === 'ctrlKey' ? 'metaKey' : 'ctrlKey';
 				// Check if the primary modifier key is pressed and that others aren't
-				const target = e[ platformModifier ] && !e[ otherModifier ] && !e.altKey && !e.shiftKey &&
-					toolbarModule.fn.ctrlShortcuts[ e.which ];
+				const target = e[ modifier ] && !e[ otherModifier ] && !e.altKey && !e.shiftKey &&
+					( toolbarModule.fn.ctrlShortcuts[ e.key ] || toolbarModule.fn.ctrlShortcuts[ e.which ] );
 				if ( target ) {
 					e.preventDefault();
 					toolbarModule.fn.doAction( context, target.action );
 				}
 			} );
+		},
+		buildShortcutLabel: function ( label, key ) {
+			if ( typeof key !== 'string' ) {
+				return label;
+			}
+			const modifier = this.modifierForKey( key ) === 'ctrlKey' ? 'ctrl+' : '⌘';
+
+			// see: jquery.accessKeyLabel.updateTooltipOnElement
+			const separatorMsg = mw.message( 'word-separator' ).plain();
+			const parts = ( separatorMsg + mw.message( 'brackets' ).plain() ).split( '$1' );
+
+			const regexp = new RegExp( parts.map( mw.util.escapeRegExp ).join( '.*?' ) + '$' );
+
+			return label.replace( regexp, '' ) + separatorMsg + mw.message( 'brackets', modifier + key ).plain();
+		},
+		modifierForKey: function ( key ) {
+			const profile = $.client.profile();
+			if ( profile.name === 'safari' && key === ',' ) {
+				// Safari doesn't let you override some macOS system-level
+				// shortcuts, so they should fall back to using a different modifier.
+				return 'ctrlKey';
+			}
+			return profile.platform === 'mac' ? 'metaKey' : 'ctrlKey';
 		},
 		handleKeyDown: function ( $element, event, $parent ) {
 			const $currentItem = $element.find( '.wikiEditor-character-highlighted' ),

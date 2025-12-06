@@ -1,0 +1,8 @@
+@import '../minerva.less/minerva.variables.less';
+
+.mw-temp-user-banner {
+	// MinervaNeue relocates notifications to bottom of page and
+	// dialogs are always full screen, so the banner should always appear
+	// under dialogs. Refer to T407549.
+	z-index: @z-index-above-content;
+}

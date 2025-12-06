@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,6 +11,7 @@ use ExecutableFinder;
 use Generator;
 use MediaWiki;
 use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Debug\MWDebug;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
@@ -494,9 +481,8 @@ abstract class Maintenance {
 		// This is sometimes called very early, before Setup.php is included.
 		if ( defined( 'MW_SERVICE_BOOTSTRAP_COMPLETE' ) ) {
 			// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
-			$stats = $this->getServiceContainer()->getStatsdDataFactory();
 			$statsFactory = $this->getServiceContainer()->getStatsFactory();
-			MediaWiki::emitBufferedStats( $statsFactory, $stats, $this->getConfig() );
+			MediaWiki::emitBufferedStats( $statsFactory );
 		}
 
 		if ( $this->mQuiet ) {
@@ -759,7 +745,7 @@ abstract class Maintenance {
 	 *
 	 * Callers are expected to run the returned maintenance script instance by calling {@link Maintenance::execute}
 	 *
-	 * @param string $maintClass A name of a child maintenance class
+	 * @param class-string<Maintenance> $maintClass A name of a child maintenance class
 	 * @param string|null $classFile Full path of where the child is
 	 * @stable to override
 	 * @return Maintenance The created instance, which the caller is expected to run by calling
@@ -804,11 +790,16 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * Normally we disable the memory_limit when running admin scripts.
-	 * Some scripts may wish to actually set a limit, however, to avoid
-	 * blowing up unexpectedly.
+	 * Override memory_limit from php.ini on maintenance scripts.
+	 *
+	 * This defaults to max/unlimited, but some scripts may wish to set a lower limit,
+	 * to avoid blowing up unexpectedly and/or taking available memory for other
+	 * processes.
+	 *
 	 * @stable to override
-	 * @return string
+	 * @return string|int Must be a shorthand string like "50M", or a number of bytes
+	 * (-1 for unlimited) passed to `ini_set( 'memory_limit' )`, or a keyword like "max"
+	 * (alias for -1) or "default" (alias for leaving memory_limit from php.ini unchanged).
 	 */
 	public function memoryLimit() {
 		return 'max';
@@ -949,7 +940,6 @@ abstract class Maintenance {
 	 * Handle some last-minute setup here.
 	 *
 	 * @stable to override
-	 *
 	 * @param SettingsBuilder $settingsBuilder
 	 */
 	public function finalSetup( SettingsBuilder $settingsBuilder ) {
@@ -974,19 +964,6 @@ abstract class Maintenance {
 		}
 		if ( $this->mDbPass ) {
 			$overrides['DBadminpassword'] = $this->mDbPass;
-		}
-		if ( $this->hasOption( 'dbgroupdefault' ) ) {
-			$overrides['DBDefaultGroup'] = $this->getOption( 'dbgroupdefault', null );
-			// TODO: once MediaWikiServices::getInstance() starts throwing exceptions
-			// and not deprecation warnings for premature access to service container,
-			// we can remove this line. This method is called before Setup.php,
-			// so it would be guaranteed DBLoadBalancerFactory is not yet initialized.
-			if ( MediaWikiServices::hasInstance() ) {
-				$service = $this->getServiceContainer()->peekService( 'DBLoadBalancerFactory' );
-				if ( $service ) {
-					$service->destroy();
-				}
-			}
 		}
 
 		if ( $this->getDbType() == self::DB_ADMIN && isset( $overrides[ 'DBadminuser' ] ) ) {
@@ -1044,6 +1021,11 @@ abstract class Maintenance {
 	 * @author Rob Church <robchur@gmail.com>
 	 */
 	public function purgeRedundantText( $delete = true ) {
+		if ( $this->getConfig()->get( MainConfigNames::MiserMode ) ) {
+			// Don't even try to run this on large wikis where it will hang ...
+			$this->output( "Not trying to purge text records on miser-mode wiki.\n" );
+			return;
+		}
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
@@ -1128,8 +1110,7 @@ abstract class Maintenance {
 	 */
 	protected function getDB( $db, $groups = [], $dbDomain = false ) {
 		if ( $this->mDb === null ) {
-			return $this->getServiceContainer()
-				->getDBLoadBalancerFactory()
+			return $this->getLBFactory()
 				->getMainLB( $dbDomain )
 				->getMaintenanceConnectionRef( $db, $groups, $dbDomain );
 		}
@@ -1176,7 +1157,14 @@ abstract class Maintenance {
 	 * @return ILBFactory Injected LBFactory, if any, the service instance, otherwise
 	 */
 	private function getLBFactory() {
-		$this->lbFactory ??= $this->getServiceContainer()->getDBLoadBalancerFactory();
+		if ( $this->lbFactory === null ) {
+			$this->lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
+			if ( $this->hasOption( 'dbgroupdefault' ) ) {
+				$this->lbFactory->setDefaultGroupName(
+					$this->getOption( 'dbgroupdefault', '' )
+				);
+			}
+		}
 
 		return $this->lbFactory;
 	}
@@ -1244,6 +1232,28 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * If possible, apply changes to the database configuration.
+	 * The primary use case for this is taking replicas out of rotation.
+	 * Long-running scripts may otherwise keep connections to
+	 * de-pooled database hosts, and may even re-connect to them.
+	 * If no config callback was configured, this has no effect.
+	 */
+	private function autoReconfigure( ILBFactory $lbFactory ): void {
+		static $failedReconfigureCount = 0;
+
+		try {
+			$lbFactory->autoReconfigure();
+			$failedReconfigureCount = 0;
+		} catch ( ConfigException $e ) {
+			$failedReconfigureCount++;
+			if ( $failedReconfigureCount >= 10 ) {
+				throw $e;
+			}
+			// Otherwise, try to keep going with the old config (T346971)
+		}
+	}
+
+	/**
 	 * Wait for replica DB servers to catch up
 	 *
 	 * Use this method after performing a batch of autocommit writes inscripts with direct,
@@ -1263,20 +1273,13 @@ abstract class Maintenance {
 		);
 		$this->lastReplicationWait = microtime( true );
 
-		// If possible, apply changes to the database configuration.
-		// The primary use case for this is taking replicas out of rotation.
-		// Long-running scripts may otherwise keep connections to
-		// de-pooled database hosts, and may even re-connect to them.
-		// If no config callback was configured, this has no effect.
-		$lbFactory->autoReconfigure();
+		$this->autoReconfigure( $lbFactory );
 
 		// Periodically run any deferred updates that accumulate
 		DeferredUpdates::tryOpportunisticExecute();
 		// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
 		MediaWikiEntryPoint::emitBufferedStats(
-			$this->getServiceContainer()->getStatsFactory(),
-			$this->getServiceContainer()->getStatsdDataFactory(),
-			$this->getConfig()
+			$this->getServiceContainer()->getStatsFactory()
 		);
 
 		return $waitSucceeded;
@@ -1331,17 +1334,10 @@ abstract class Maintenance {
 		DeferredUpdates::tryOpportunisticExecute();
 		// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
 		MediaWikiEntryPoint::emitBufferedStats(
-			$this->getServiceContainer()->getStatsFactory(),
-			$this->getServiceContainer()->getStatsdDataFactory(),
-			$this->getConfig()
+			$this->getServiceContainer()->getStatsFactory()
 		);
 
-		// If possible, apply changes to the database configuration.
-		// The primary use case for this is taking replicas out of rotation.
-		// Long-running scripts may otherwise keep connections to
-		// de-pooled database hosts, and may even re-connect to them.
-		// If no config callback was configured, this has no effect.
-		$lbFactory->autoReconfigure();
+		$this->autoReconfigure( $lbFactory );
 
 		return $waitSucceeded;
 	}

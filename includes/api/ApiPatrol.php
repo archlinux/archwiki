@@ -4,28 +4,15 @@
  *
  * Copyright © 2008 Soxred93 soxred93@gmail.com,
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
 use MediaWiki\ChangeTags\ChangeTags;
-use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\PatrolManager;
+use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Revision\RevisionStore;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -35,14 +22,21 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiPatrol extends ApiBase {
 	private RevisionStore $revisionStore;
+	private PatrolManager $patrolManager;
+	private RecentChangeLookup $recentChangeLookup;
 
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		RevisionStore $revisionStore
+		RevisionStore $revisionStore,
+		PatrolManager $patrolManager,
+		RecentChangeLookup $recentChangeLookup
 	) {
 		parent::__construct( $main, $action );
+
 		$this->revisionStore = $revisionStore;
+		$this->patrolManager = $patrolManager;
+		$this->recentChangeLookup = $recentChangeLookup;
 	}
 
 	/**
@@ -53,7 +47,7 @@ class ApiPatrol extends ApiBase {
 		$this->requireOnlyOneParameter( $params, 'rcid', 'revid' );
 
 		if ( isset( $params['rcid'] ) ) {
-			$rc = RecentChange::newFromId( $params['rcid'] );
+			$rc = $this->recentChangeLookup->getRecentChangeById( $params['rcid'] );
 			if ( !$rc ) {
 				$this->dieWithError( [ 'apierror-nosuchrcid', $params['rcid'] ] );
 			}
@@ -79,7 +73,7 @@ class ApiPatrol extends ApiBase {
 			}
 		}
 
-		$status = $rc->markPatrolled( $user, $tags );
+		$status = $this->patrolManager->markPatrolled( $rc, $user, $tags );
 
 		if ( !$status->isGood() ) {
 			$this->dieStatus( $status );
@@ -90,14 +84,17 @@ class ApiPatrol extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'rcid' => [
@@ -113,10 +110,12 @@ class ApiPatrol extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'patrol';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=patrol&token=123ABC&rcid=230672766'
@@ -126,6 +125,7 @@ class ApiPatrol extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Patrol';
 	}

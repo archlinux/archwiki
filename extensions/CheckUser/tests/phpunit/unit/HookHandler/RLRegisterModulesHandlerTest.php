@@ -2,7 +2,9 @@
 
 namespace MediaWiki\CheckUser\Tests\Unit\HookHandler;
 
+use MediaWiki\CheckUser\Hook\HookRunner;
 use MediaWiki\CheckUser\HookHandler\RLRegisterModulesHandler;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWikiUnitTestCase;
@@ -19,7 +21,11 @@ class RLRegisterModulesHandlerTest extends MediaWikiUnitTestCase {
 		$mockExtensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$mockExtensionRegistry->method( 'isLoaded' )
 			->willReturnMap( $extensionRegistryReturnMap );
-		$handler = new RLRegisterModulesHandler( $mockExtensionRegistry );
+		$handler = new RLRegisterModulesHandler(
+			$mockExtensionRegistry,
+			$this->createMock( HookRunner::class ),
+			new HashConfig( [ 'CheckUserSuggestedInvestigationsEnabled' => false ] )
+		);
 
 		// Run hook and save modules loaded to an array to check against in the assertion
 		$rlModules = [];

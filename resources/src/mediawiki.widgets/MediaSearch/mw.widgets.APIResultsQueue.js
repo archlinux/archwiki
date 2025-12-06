@@ -18,9 +18,7 @@
 	 *  that the queue should always strive to have on top of the
 	 *  individual requests for items.
 	 */
-	mw.widgets.APIResultsQueue = function MwWidgetsAPIResultsQueue( config ) {
-		config = config || {};
-
+	mw.widgets.APIResultsQueue = function MwWidgetsAPIResultsQueue( config = {} ) {
 		this.fileRepoPromise = null;
 		this.providers = [];
 		this.providerPromises = [];
@@ -69,7 +67,7 @@
 			fetchingPromise = this.queryProviders( howMany + this.threshold )
 				.then( ( items ) => {
 					// Add to the queue
-					this.queue = this.queue.concat.apply( this.queue, items );
+					this.queue = this.queue.concat( ...items );
 				} );
 		}
 

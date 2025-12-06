@@ -15,9 +15,12 @@ const FavoriteButton = require( './FavoriteButton.js' );
 function TemplateMenuItem( config, favoritesStore ) {
 	config = Object.assign( {
 		classes: [ 'ext-templatedata-TemplateMenuItem' ],
-		$label: $( '<a>' )
+		$label: $( '<a>' ),
+		icon: config.draggable ? 'draggable' : null
 	}, config );
 	TemplateMenuItem.super.call( this, config );
+	OO.ui.mixin.DraggableElement.call( this, $.extend( { $handle: this.$icon } ), config );
+	OO.EventEmitter.call( this );
 
 	this.data = config.data;
 	if ( config.data.redirecttitle ) {
@@ -57,11 +60,15 @@ function TemplateMenuItem( config, favoritesStore ) {
 		this.favoriteButton.setDisabled( true );
 		this.$label.addClass( 'new' );
 	}
+	// Set draggable state based on the config, or false.
+	this.toggleDraggable( config.draggable || false );
 }
 
 /* Setup */
 
 OO.inheritClass( TemplateMenuItem, OO.ui.MenuOptionWidget );
+OO.mixinClass( TemplateMenuItem, OO.ui.mixin.DraggableElement );
+OO.mixinClass( TemplateMenuItem, OO.EventEmitter );
 
 /* Events */
 
@@ -71,15 +78,38 @@ OO.inheritClass( TemplateMenuItem, OO.ui.MenuOptionWidget );
  * @event choose
  * @param {Object} The template data of the chosen template.
  */
+/**
+ * aa
+ *
+ * @event drop
+ * @param {Object} The template data of the chosen template.
+ */
 
 /* Methods */
 
 TemplateMenuItem.prototype.onClick = function ( event ) {
-	// Only handle click events that do not belong to the favorite button.
-	if ( !this.favoriteButton.$element[ 0 ].contains( event.target ) ) {
+	// Only handle click events that do not belong to the favorite button or the drag-handle icon.
+	if ( !this.favoriteButton.$element[ 0 ].contains( event.target ) &&
+		!this.$icon[ 0 ].contains( event.target )
+	) {
 		event.preventDefault();
 		this.emit( 'choose', this.data );
 	}
+};
+
+TemplateMenuItem.prototype.onDrop = function () {
+	this.emit( 'drop', {
+		index: this.index,
+		data: this.data
+	} );
+};
+
+/**
+ * @param {boolean} isFavorite
+ */
+TemplateMenuItem.prototype.toggleFavorited = function ( isFavorite ) {
+	this.$element.toggleClass( 'ext-templatedata-TemplateMenuItem-removed', !isFavorite );
+	this.favoriteButton.setFavoriteState( isFavorite );
 };
 
 module.exports = TemplateMenuItem;

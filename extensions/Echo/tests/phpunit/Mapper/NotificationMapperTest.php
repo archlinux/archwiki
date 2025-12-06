@@ -38,7 +38,7 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 				'notification_timestamp' => '20140615101010',
 				'notification_read_timestamp' => null,
 				'notification_bundle_hash' => 'testhash',
-			]
+			],
 		];
 		$notifMapper = new NotificationMapper( $this->mockDbFactory( [ 'select' => $dbResult ] ) );
 		$res = $notifMapper->fetchUnreadByUser( $this->mockUser(), 10, null, '', [] );
@@ -67,7 +67,7 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 				'notification_timestamp' => '20140615101010',
 				'notification_read_timestamp' => '20140616101010',
 				'notification_bundle_hash' => 'testhash',
-			]
+			],
 		];
 
 		$notifMapper = new NotificationMapper( $this->mockDbFactory( [ 'select' => $notifDbResult ] ) );
@@ -165,7 +165,7 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			[
 				'echo_target_page',
 				[ 'etp_event' => [ 55 ] ],
-			]
+			],
 		];
 		$mockDb->expects( $this->exactly( count( $expectedArgs ) ) )
 			->method( 'delete' )
@@ -238,7 +238,7 @@ class NotificationMapperTest extends MediaWikiIntegrationTestCase {
 			'insert' => '',
 			'select' => [],
 			'selectRow' => '',
-			'delete' => ''
+			'delete' => '',
 		];
 
 		$db = $this->createMock( IDatabase::class );

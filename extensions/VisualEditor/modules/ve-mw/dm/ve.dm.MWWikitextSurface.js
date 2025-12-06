@@ -16,7 +16,7 @@
  */
 ve.dm.MWWikitextSurface = function VeDmMwWikitextSurface( doc, config ) {
 	// Parent constructors
-	ve.dm.MWWikitextSurface.super.call( this, doc, ve.extendObject( config, { sourceMode: true } ) );
+	ve.dm.MWWikitextSurface.super.call( this, doc, null, ve.extendObject( config, { sourceMode: true } ) );
 };
 
 /* Inheritance */

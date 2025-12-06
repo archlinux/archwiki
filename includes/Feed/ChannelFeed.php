@@ -4,21 +4,7 @@
  * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -48,7 +34,6 @@ abstract class ChannelFeed extends FeedItem {
 	 * @param string $date Feed's date
 	 * @param string $author Author's user name
 	 * @param string $comments
-	 *
 	 */
 	public function __construct(
 		$title, $description, $url, $date = '', $author = '', $comments = ''
@@ -101,6 +86,9 @@ abstract class ChannelFeed extends FeedItem {
 		$wgOut->disable();
 		$mimetype = $this->contentType();
 		header( "Content-type: $mimetype; charset=UTF-8" );
+		// @todo Maybe set a CSP header here at some point as defense in depth.
+		// need to figure out how that interacts with browser display of article
+		// snippets.
 
 		// Set a sensible filename
 		$mimeAnalyzer = MediaWikiServices::getInstance()->getMimeAnalyzer();

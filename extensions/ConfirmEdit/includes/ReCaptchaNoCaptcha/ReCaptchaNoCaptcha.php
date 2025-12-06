@@ -12,6 +12,7 @@ use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
@@ -21,17 +22,13 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 	 * @var string used for renocaptcha-edit, renocaptcha-addurl, renocaptcha-badlogin, renocaptcha-createaccount,
 	 * renocaptcha-create, renocaptcha-sendemail via getMessage()
 	 */
-	protected static $messagePrefix = 'renocaptcha-';
+	protected static $messagePrefix = 'renocaptcha';
 
 	/** @var string|null */
 	private $error = null;
 
-	/**
-	 * Get the captcha form.
-	 * @param int $tabIndex
-	 * @return array
-	 */
-	public function getFormInformation( $tabIndex = 1 ) {
+	/** @inheritDoc */
+	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
 		global $wgReCaptchaSiteKey, $wgLang;
 		$lang = htmlspecialchars( urlencode( $wgLang->getCode() ) );
 
@@ -166,14 +163,14 @@ HTML;
 	 * @param array &$resultArr
 	 */
 	protected function addCaptchaAPI( &$resultArr ) {
-		$resultArr['captcha'] = $this->describeCaptchaType();
+		$resultArr['captcha'] = $this->describeCaptchaType( $this->action );
 		$resultArr['captcha']['error'] = $this->error;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function describeCaptchaType() {
+	public function describeCaptchaType( ?string $action = null ) {
 		global $wgReCaptchaSiteKey;
 		return [
 			'type' => 'recaptchanocaptcha',
@@ -255,14 +252,18 @@ HTML;
 	) {
 		global $wgReCaptchaSiteKey;
 
-		$req = AuthenticationRequest::getRequestByClass( $requests,
-			CaptchaAuthenticationRequest::class, true );
+		/** @var CaptchaAuthenticationRequest $req */
+		$req = AuthenticationRequest::getRequestByClass(
+			$requests,
+			CaptchaAuthenticationRequest::class,
+			true
+		);
 		if ( !$req ) {
 			return;
 		}
 
 		// ugly way to retrieve error information
-		$captcha = Hooks::getInstance();
+		$captcha = Hooks::getInstance( $req->getAction() );
 
 		$formDescriptor['captchaWord'] = [
 			'class' => HTMLReCaptchaNoCaptchaField::class,

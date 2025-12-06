@@ -12,7 +12,7 @@
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.44",
+		"MediaWiki": ">= 1.45",
 		"extensions": {
 			"VisualEditor": "*",
 			"Linter": "*"
@@ -46,21 +46,13 @@
 				"controller.js",
 				"highlighter.js",
 				"permalinks.js",
-				"topicsubscriptions.js",
-				"mobile.js",
 				"overflowMenu.js",
-				"thanks.js",
 				"LedeSectionDialog.js",
 				{
-					"name": "controller/contLangMessages.json",
+					"name": "contLangMessages.json",
 					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getContentLanguageMessages",
 					"callbackParam": [
-						"discussiontools-defaultsummary-reply",
-						"newsectionsummary",
-						"discussiontools-replywidget-feedback-link",
-						"discussiontools-replywidget-feedback-link-newtopic",
-						"discussiontools-replywidget-mention-prefix",
-						"discussiontools-replywidget-mention-suffix"
+						"newsectionsummary"
 					]
 				},
 				{
@@ -111,14 +103,9 @@
 			"messages": [
 				"discussiontools-postedit-confirmation-published",
 				"discussiontools-postedit-confirmation-topicadded",
-				"discussiontools-autotopicsubpopup-title",
-				"discussiontools-autotopicsubpopup-body",
-				"discussiontools-autotopicsubpopup-dismiss",
-				"discussiontools-autotopicsubpopup-preferences",
 				"discussiontools-error-comment-conflict",
 				"discussiontools-error-comment-disappeared",
 				"discussiontools-error-comment-disappeared-reload",
-				"discussiontools-error-comment-not-saved",
 				"discussiontools-error-comment-is-transcluded",
 				"discussiontools-error-comment-is-transcluded-title",
 				"discussiontools-error-lint",
@@ -131,14 +118,6 @@
 				"discussiontools-newtopic-placeholder-title",
 				"discussiontools-newtopic-missing-title",
 				"discussiontools-newtopic-missing-title-prompt",
-				"discussiontools-newtopicssubscription-button-subscribe-label",
-				"discussiontools-newtopicssubscription-button-subscribe-tooltip",
-				"discussiontools-newtopicssubscription-button-unsubscribe-label",
-				"discussiontools-newtopicssubscription-button-unsubscribe-tooltip",
-				"discussiontools-newtopicssubscription-notify-subscribed-body",
-				"discussiontools-newtopicssubscription-notify-subscribed-title",
-				"discussiontools-newtopicssubscription-notify-unsubscribed-body",
-				"discussiontools-newtopicssubscription-notify-unsubscribed-title",
 				"discussiontools-pagetitle-newtopic",
 				"discussiontools-pagetitle-reply",
 				"discussiontools-permalink-comment-copied",
@@ -150,24 +129,57 @@
 				"discussiontools-target-comments-missing",
 				"discussiontools-target-comment-found-moved",
 				"discussiontools-target-heading-found-moved",
-				"discussiontools-topicsubscription-button-subscribe",
-				"discussiontools-topicsubscription-button-subscribe-label",
-				"discussiontools-topicsubscription-button-subscribe-tooltip",
-				"discussiontools-topicsubscription-button-unsubscribe",
-				"discussiontools-topicsubscription-button-unsubscribe-label",
-				"discussiontools-topicsubscription-button-unsubscribe-tooltip",
-				"discussiontools-topicsubscription-notify-subscribed-body",
-				"discussiontools-topicsubscription-notify-subscribed-title",
-				"discussiontools-topicsubscription-notify-unsubscribed-body",
-				"discussiontools-topicsubscription-notify-unsubscribed-title",
-				"pagetitle",
-				"skin-view-edit",
-				"cancel",
-				"thanks-button-thank",
-				"thanks-button-thanked",
-				"thanks-confirmation2",
-				"thanks-thanked-notice"
-			]
+				"pagetitle"
+			],
+			"optional": {
+				"Thanks": {
+					"packageFiles": [
+						"thanks.js"
+					],
+					"messages": [
+						"cancel",
+						"thanks-button-thank",
+						"thanks-button-thanked",
+						"thanks-confirmation2",
+						"thanks-thanked-notice"
+					]
+				},
+				"Echo": {
+					"packageFiles": [
+						"topicsubscriptions.js"
+					],
+					"messages": [
+						"discussiontools-autotopicsubpopup-title",
+						"discussiontools-autotopicsubpopup-body",
+						"discussiontools-autotopicsubpopup-dismiss",
+						"discussiontools-autotopicsubpopup-preferences",
+						"discussiontools-newtopicssubscription-button-subscribe-label",
+						"discussiontools-newtopicssubscription-button-subscribe-tooltip",
+						"discussiontools-newtopicssubscription-button-unsubscribe-label",
+						"discussiontools-newtopicssubscription-button-unsubscribe-tooltip",
+						"discussiontools-newtopicssubscription-notify-subscribed-body",
+						"discussiontools-newtopicssubscription-notify-subscribed-title",
+						"discussiontools-newtopicssubscription-notify-unsubscribed-body",
+						"discussiontools-newtopicssubscription-notify-unsubscribed-title",
+						"discussiontools-topicsubscription-button-subscribe",
+						"discussiontools-topicsubscription-button-subscribe-label",
+						"discussiontools-topicsubscription-button-subscribe-tooltip",
+						"discussiontools-topicsubscription-button-unsubscribe",
+						"discussiontools-topicsubscription-button-unsubscribe-label",
+						"discussiontools-topicsubscription-button-unsubscribe-tooltip",
+						"discussiontools-topicsubscription-notify-subscribed-body",
+						"discussiontools-topicsubscription-notify-subscribed-title",
+						"discussiontools-topicsubscription-notify-unsubscribed-body",
+						"discussiontools-topicsubscription-notify-unsubscribed-title"
+					]
+				},
+				"MobileFrontend": {
+					"packageFiles": [
+						"mobile.js"
+					]
+				}
+			},
+			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptional"
 		},
 		"ext.discussionTools.minervaicons": {
 			"selectorWithoutVariant": ".minerva-icon--{name}",
@@ -203,6 +215,11 @@
 					"name": "contLangMessages.json",
 					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getContentLanguageMessages",
 					"callbackParam": [
+						"discussiontools-defaultsummary-reply",
+						"discussiontools-replywidget-feedback-link",
+						"discussiontools-replywidget-feedback-link-newtopic",
+						"discussiontools-replywidget-mention-prefix",
+						"discussiontools-replywidget-mention-suffix",
 						"tempuser-helppage"
 					]
 				},
@@ -227,6 +244,7 @@
 				"dt-ve/CommentTargetWidget.less"
 			],
 			"messages": [
+				"discussiontools-error-comment-disappeared",
 				"discussiontools-replywidget-abandon",
 				"discussiontools-replywidget-abandon-discard",
 				"discussiontools-replywidget-abandon-keep",
@@ -258,9 +276,6 @@
 				"discussiontools-replywidget-summary",
 				"discussiontools-replywidget-transcluded",
 				"ooui-popup-widget-close-button-aria-label",
-				"visualeditor-key-ctrl",
-				"visualeditor-key-enter",
-				"visualeditor-key-escape",
 				"visualeditor-mweditmode-tooltip"
 			],
 			"dependencies": [
@@ -278,10 +293,12 @@
 				"oojs-ui-widgets",
 				"oojs-ui.styles.indicators"
 			],
-			"optionalDependencies": {
-				"ConfirmEdit": "ext.confirmEdit.CaptchaInputWidget"
+			"optional": {
+				"ConfirmEdit": {
+					"dependencies": "ext.confirmEdit.CaptchaInputWidget"
+				}
 			},
-			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptionalDependencies"
+			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptional"
 		}
 	},
 	"ForeignResourcesDir": "modules/lib",
@@ -358,8 +375,7 @@
 		"discussiontoolsgetsubscriptions": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsGetSubscriptions",
 			"services": [
-				"DiscussionTools.SubscriptionStore",
-				"ConfigFactory"
+				"DiscussionTools.SubscriptionStore"
 			]
 		},
 		"discussiontoolspageinfo": {
@@ -383,8 +399,7 @@
 		"discussiontoolssubscribe": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsSubscribe",
 			"services": [
-				"DiscussionTools.SubscriptionStore",
-				"ConfigFactory"
+				"DiscussionTools.SubscriptionStore"
 			]
 		}
 	},
@@ -493,7 +508,8 @@
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\DiscussionToolsHooks",
 			"services": [
 				"ConfigFactory",
-				"UserNameUtils"
+				"UserNameUtils",
+				"UserOptionsLookup"
 			]
 		},
 		"tags": {
@@ -611,7 +627,7 @@
 		}
 	},
 	"ConfigRegistry": {
-		"discussiontools": "GlobalVarConfig::newInstance"
+		"discussiontools": "MediaWiki\\Config\\GlobalVarConfig::newInstance"
 	},
 	"type": "other"
 }

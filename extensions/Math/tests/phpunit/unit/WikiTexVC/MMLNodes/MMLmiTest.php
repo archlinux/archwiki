@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 
 /**
@@ -11,7 +12,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
  */
 class MMLmiTest extends MediaWikiUnitTestCase {
 	public function testConstructor() {
-		$mi = new MMLmi( '', [ 'mathvariant' => 'bold' ], 'x' );
+		$mi = new MMLmi( '', [ 'mathvariant' => Variants::BOLD ], 'x' );
 		$this->assertEquals( "mi", $mi->getName() );
 		$this->assertEquals( "x", $mi->getText() );
 	}

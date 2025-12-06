@@ -57,7 +57,7 @@ function init() {
 					href: '#/notifications-filter',
 					classes: [ 'mw-echo-ui-notificationsInboxWidget-main-toolbar-nav-filter-placeholder' ],
 					icon: 'funnel',
-					label: mw.msg( 'echo-mobile-notifications-filter-title' )
+					label: mw.msg( 'echo-mobile-notifications-filter-title' ),
 				} );
 
 			// eslint-disable-next-line no-jquery/no-global-selector
@@ -65,7 +65,7 @@ function init() {
 				$( '<div>' )
 					.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-nav-filter' )
 					.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
-					.append( filterStatusButton.$element )
+					.append( filterStatusButton.$element ),
 			);
 		}
 
@@ -98,7 +98,7 @@ function init() {
 						exit();
 					},
 					$notifReadState: $notifReadState,
-					$crossWikiUnreadFilter: $crossWikiUnreadFilter
+					$crossWikiUnreadFilter: $crossWikiUnreadFilter,
 				} );
 			} );
 			initialized = true;

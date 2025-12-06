@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abijeet Patro",
 			"Ankita-ks",
 			"Ansumang",
 			"AnupamM",
@@ -19,8 +20,7 @@
 			"Siddhartha Ghai",
 			"Venky2834",
 			"Wikiuser13",
-			"संजीव कुमार",
-			"Abijeet Patro"
+			"संजीव कुमार"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तक",
@@ -48,6 +48,8 @@
 	"cite-ve-dialog-reference-options-section": "विकल्प",
 	"cite-ve-dialog-reference-placeholder": "अपना सन्दर्भ यहाँ लिखें या चिपकाएँ, या फिर उद्धरण साँचा जोड़ें।",
 	"cite-ve-dialog-reference-title": "सन्दर्भ",
+	"cite-ve-dialog-subreference-help-dialog-title": "विवरण",
+	"cite-ve-dialog-reference-title-details": "विवरण",
 	"cite-ve-dialog-reference-useexisting-tool": "पुनः उपयोग करें",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "साधारण सन्दर्भों की सूची",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "समूह \"$1\" के लिए सन्दर्भों की सूची",

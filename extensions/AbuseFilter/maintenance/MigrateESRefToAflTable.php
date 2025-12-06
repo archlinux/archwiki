@@ -223,5 +223,7 @@ class MigrateESRefToAflTable extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = MigrateESRefToAflTable::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

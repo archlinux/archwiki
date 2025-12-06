@@ -1,10 +1,8 @@
-'use strict';
-
-const MWBot = require( 'mwbot' ),
-	Api = require( 'wdio-mediawiki/Api' ),
-	ArticlePageWithOverlay = require( '../support/pages/article_page_with_overlay' ),
-	Util = require( 'wdio-mediawiki/Util' ),
-	{ ArticlePage, UserLoginPage } = require( '../support/world.js' );
+import MWBot from 'mwbot';
+import { mwbot } from 'wdio-mediawiki/Api.js';
+import ArticlePageWithOverlay from '../support/pages/article_page_with_overlay.js';
+import { waitForModuleState } from 'wdio-mediawiki/Util.js';
+import { ArticlePage, UserLoginPage } from '../support/world.js';
 
 const createPages = async ( pages ) => {
 	const summary = 'edit by selenium test';
@@ -28,7 +26,7 @@ const createPages = async ( pages ) => {
 };
 
 const createPage = async ( title, wikitext ) => {
-	const bot = await Api.bot();
+	const bot = await mwbot();
 	await bot.edit( title, wikitext );
 };
 
@@ -43,7 +41,7 @@ const iAmInBetaMode = async () => {
 const iAmOnPage = async ( article ) => {
 	await ArticlePage.open( article );
 	// Make sure the article opened and JS loaded.
-	await Util.waitForModuleState( 'skins.minerva.scripts' );
+	await waitForModuleState( 'skins.minerva.scripts' );
 };
 
 const iAmLoggedIn = async () => {
@@ -80,7 +78,7 @@ const iShouldSeeAToastNotification = async () => {
 const iShouldSeeAToastNotificationWithMessage = async ( msg ) => {
 	await iShouldSeeAToastNotification();
 	const notificationBody = await ArticlePage.notification_element.$( '.mw-notification-content' );
-	await expect( notificationBody ).toHaveTextContaining( msg );
+	await expect( notificationBody ).toHaveText( expect.stringContaining( msg ) );
 };
 
 const iClickTheBrowserBackButton = async () => {
@@ -96,7 +94,7 @@ const iAmUsingMobileScreenResolution = async () => {
 	await browser.setWindowSize( 320, 480 );
 };
 
-module.exports = {
+export {
 	iAmUsingMobileScreenResolution,
 	iClickTheOverlayCloseButton,
 	iClickTheBrowserBackButton,

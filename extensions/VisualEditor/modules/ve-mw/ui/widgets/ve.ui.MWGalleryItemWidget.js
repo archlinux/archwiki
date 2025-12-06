@@ -18,10 +18,12 @@
  * @param {boolean} [config.isMobile=false]
  * @param {boolean} [config.draggable=true]
  */
-ve.ui.MWGalleryItemWidget = function VeUiMWGalleryItemWidget( imageInfo, config ) {
+ve.ui.MWGalleryItemWidget = function VeUiMWGalleryItemWidget( imageInfo, config = {} ) {
 	this.resource = imageInfo.resource;
 	this.altText = imageInfo.altText || '';
 	this.altTextSame = imageInfo.altTextSame;
+	// `this` is not a DOM node
+	// eslint-disable-next-line local/no-unsanitized-href
 	this.href = imageInfo.href;
 	// Keep the original value which may be null
 	this.originalAltText = imageInfo.altText;
@@ -38,9 +40,6 @@ ve.ui.MWGalleryItemWidget = function VeUiMWGalleryItemWidget( imageInfo, config 
 	this.mw = imageInfo.mw;
 	this.mediaClass = imageInfo.mediaClass;
 	this.mediaTag = imageInfo.mediaTag;
-
-	// Configuration initialization
-	config = config || {};
 
 	// Parent constructor
 	ve.ui.MWGalleryItemWidget.super.call( this, config );

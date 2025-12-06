@@ -97,10 +97,13 @@ const dialogsModule = {
 			// The jQuery UI Dialog Widget option title (https://api.jqueryui.com/dialog/#option-title)
 			// is specified as string but also accepts DOM elements like other jQuery functions.
 			// Therefor use .parseDom() instead of .parse().
-			configuration.title = module.title instanceof mw.Message ?
-				module.title.parseDom() :
+			if ( module.title instanceof mw.Message ) {
+				configuration.title = module.title.parseDom();
+			} else {
 				// Deprecated backward compatibility
-				module.title;
+				mw.log.warn( 'The dialog title must be a mw.Message object. Other types are deprecated.' );
+				configuration.title = module.title;
+			}
 			// Transform messages in keys
 			// Stupid JS won't let us do stuff like
 			// foo = { mw.msg( 'bar' ): baz }

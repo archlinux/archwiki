@@ -50,8 +50,7 @@ ve.ui.MWExtensionInspector.prototype.initialize = function () {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionInspector.prototype.getSetupProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionInspector.prototype.getSetupProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionInspector.super.prototype.getSetupProcess.call( this, data );
 	// Mixin process
@@ -61,8 +60,7 @@ ve.ui.MWExtensionInspector.prototype.getSetupProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionInspector.prototype.getReadyProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionInspector.prototype.getReadyProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionInspector.super.prototype.getReadyProcess.call( this, data );
 	// Mixin process
@@ -75,8 +73,7 @@ ve.ui.MWExtensionInspector.prototype.getReadyProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionInspector.prototype.getTeardownProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionInspector.prototype.getTeardownProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionInspector.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process

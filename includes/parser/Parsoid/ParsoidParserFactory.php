@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Parser\Parsoid;
 
@@ -19,35 +20,18 @@ use Wikimedia\Parsoid\Parsoid;
  * @since 1.41
  * @internal May be combined with \ParserFactory or otherwise refactored
  *
- * @file
  * @ingroup Parser
+ *
+ * @note Eventually this may extend \ParserFactory
  */
-class ParsoidParserFactory /* eventually this may extend \ParserFactory */ {
-	private SiteConfig $siteConfig;
-	private DataAccess $dataAccess;
-	private PageConfigFactory $pageConfigFactory;
-	private LanguageConverterFactory $languageConverterFactory;
-	private ParserFactory $legacyParserFactory;
-
-	/**
-	 * @param SiteConfig $siteConfig
-	 * @param DataAccess $dataAccess
-	 * @param PageConfigFactory $pageConfigFactory
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param ParserFactory $legacyParserFactory
-	 */
+class ParsoidParserFactory {
 	public function __construct(
-		SiteConfig $siteConfig,
-		DataAccess $dataAccess,
-		PageConfigFactory $pageConfigFactory,
-		LanguageConverterFactory $languageConverterFactory,
-		ParserFactory $legacyParserFactory
+		private readonly SiteConfig $siteConfig,
+		private readonly DataAccess $dataAccess,
+		private readonly PageConfigFactory $pageConfigFactory,
+		private readonly LanguageConverterFactory $languageConverterFactory,
+		private readonly ParserFactory $legacyParserFactory,
 	) {
-		$this->siteConfig = $siteConfig;
-		$this->dataAccess = $dataAccess;
-		$this->pageConfigFactory = $pageConfigFactory;
-		$this->languageConverterFactory = $languageConverterFactory;
-		$this->legacyParserFactory = $legacyParserFactory;
 	}
 
 	/**

@@ -27,6 +27,10 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 		$isCUInstalled = $updater->tableExists( 'cu_changes' );
 
 		$updater->addExtensionTable( 'cu_changes', "$base/$dbType/tables-generated.sql" );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addTable', 'cusi_case',
+			"$base/$dbType/tables-virtual-checkuser-generated.sql", true,
+		] );
 
 		// Added 1.43, but will need to remain here forever as it creates tables which are not in tables-generated.sql
 		$updater->addExtensionUpdateOnVirtualDomain( [
@@ -43,13 +47,6 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 		] );
 
 		if ( $dbType === 'mysql' ) {
-			// 1.35
-			$updater->modifyExtensionField(
-				'cu_changes',
-				'cuc_id',
-				"$base/$dbType/patch-cu_changes-cuc_id-unsigned.sql"
-			);
-
 			// 1.38
 			$updater->addExtensionIndex(
 				'cu_changes',
@@ -388,6 +385,45 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 
 		// 1.44
 		$updater->addPostDatabaseUpdateMaintenance( MigrateTemporaryAccountIPViewerGroup::class );
+
+		// 1.45
+		$updater->addExtensionIndex(
+			'cu_changes',
+			'cuc_actor_ip_hex_time',
+			"$base/$dbType/patch-cu_changes-add-index-cuc_actor_ip_hex_time.sql"
+		);
+		$updater->addExtensionIndex(
+			'cu_log_event',
+			'cule_actor_ip_hex_time',
+			"$base/$dbType/patch-cu_log_event-add-index-cule_actor_ip_hex_time.sql"
+		);
+		$updater->addExtensionIndex(
+			'cu_private_event',
+			'cupe_actor_ip_hex_time',
+			"$base/$dbType/patch-cu_private_event-add-index-cupe_actor_ip_hex_time.sql"
+		);
+		$updater->addExtensionIndex(
+			'cu_log',
+			'cul_target',
+			"$base/$dbType/patch-cu_log-add-index-cul_target.sql"
+		);
+		$updater->dropExtensionIndex(
+			'cu_log',
+			'cul_type_target',
+			"$base/$dbType/patch-cu_log-drop-index-cul_type_target.sql"
+		);
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addTable', 'cusi_case',
+			"$base/$dbType/patch-cusi_case-def.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addTable', 'cusi_user',
+			"$base/$dbType/patch-cusi_user-def.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addTable', 'cusi_signal',
+			"$base/$dbType/patch-cusi_signal-def.sql", true,
+		] );
 
 		if ( !$isCUInstalled ) {
 			// First time so populate the CheckUser result tables with recentchanges data.

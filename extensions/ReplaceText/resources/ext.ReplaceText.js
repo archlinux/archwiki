@@ -30,7 +30,7 @@
 	}
 
 	$( () => {
-		$( '.ext-replacetext-invert' ).on( 'click', invertSelections );
+		$( '.ext-replacetext-invert button' ).on( 'click', invertSelections );
 
 		// Attach handler for check all/none buttons
 		const $checkboxes = $( '#powersearch input[id^="mw-search-ns"]' );

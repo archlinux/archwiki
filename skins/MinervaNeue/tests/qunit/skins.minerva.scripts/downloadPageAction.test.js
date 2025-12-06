@@ -142,22 +142,13 @@
 		assert.false( this.isAvailable( 'ipad' ) );
 	} );
 
-	QUnit.test( 'isAvailable() uses window.chrome to filter certain chrome-like browsers', function ( assert ) {
-		// Dolphin
-		assert.false( this.notChromeIsAvailable( ' Mozilla/5.0 (Linux; Android 7.0; SM-G950U1 Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/61.0.3163.98 Mobile Safari/537.36' ) );
-		// Opera
-		assert.false( this.notChromeIsAvailable( 'Mozilla/5.0 (Linux; Android 7.0; SM-G950U1 Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.116 Mobile Safari/537.36 OPR/44.1.2246.123029' ) );
-		// Maxthon
-		assert.false( this.notChromeIsAvailable( 'Mozilla/5.0 (Linux; Android 7.0; SM-G950U1 Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/63.0.3239.111 Mobile Safari/537.36 MxBrowser/4.5.10.1300' ) );
-	} );
-
 	QUnit.test( 'isAvailable() handles properly browsers', function ( assert ) {
 		// IPhone 6 Safari
 		assert.false( this.isAvailable( 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_0_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13A405 Safari/601.1' ) );
 		// Nokia Lumia 930 Windows Phone 8.1
 		assert.false( this.isAvailable( 'Mozilla/5.0 (Mobile; Windows Phone 8.1; Android 4.0; ARM; Trident/7.0; Touch; rv:11.0; IEMobile/11.0; Microsoft; Virtual) like iPhone OS 7_0_3 Mac OS X AppleWebKit/537 (KHTML, like Gecko) Mobile Safari/537' ) );
 		// Firefox @ Ubuntu
-		assert.false( this.isAvailable( 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' ) );
+		assert.true( this.isAvailable( 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' ) );
 	} );
 
 	QUnit.test( 'isAvailable() handles properly non-chrome browsers', function ( assert ) {
@@ -166,16 +157,7 @@
 		// Nokia Lumia 930 Windows Phone 8.1
 		assert.false( this.notChromeIsAvailable( 'Mozilla/5.0 (Mobile; Windows Phone 8.1; Android 4.0; ARM; Trident/7.0; Touch; rv:11.0; IEMobile/11.0; Microsoft; Virtual) like iPhone OS 7_0_3 Mac OS X AppleWebKit/537 (KHTML, like Gecko) Mobile Safari/537' ) );
 		// Firefox @ Ubuntu
-		assert.false( this.notChromeIsAvailable( 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' ) );
-	} );
-
-	QUnit.test( 'isAvailable() handles properly old devices', function ( assert ) {
-		// Samsung Galaxy S5, Android 4.4, Chrome 28
-		assert.false( this.isAvailable( 'Mozilla/5.0 (Linux; Android 4.4.2; en-us; SAMSUNG SM-G900F Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.6 Chrome/28.0.1500.94 Mobile Safari/537.36' ) );
-		// Samsung Galaxyu S1, Android 4.2.2 Cyanogenmod + built in Samsung Browser
-		assert.false( this.isAvailable( 'Mozilla/5.0 (Linux; U; Android 4.2.2; en-ca; GT-I9000 Build/JDQ39E) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30 CyanogenMod/10.1.0/galaxysmtd' ) );
-		// Samsung Galaxy S3
-		assert.false( this.isAvailable( 'Mozilla/5.0 (Linux; Android 4.3; GT-I9300 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36' ) );
+		assert.true( this.notChromeIsAvailable( 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0' ) );
 	} );
 
 	QUnit.test( 'isAvailable() handles properly supported browsers', function ( assert ) {

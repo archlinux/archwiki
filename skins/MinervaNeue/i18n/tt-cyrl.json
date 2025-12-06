@@ -5,8 +5,8 @@
 			"Don Alessandro",
 			"Ilnur efende",
 			"Ерней",
-			"Ильнар",
-			"Ильгиз"
+			"Ильгиз",
+			"Ильнар"
 		]
 	},
 	"mobile-frontend-editor-edit": "Үзгәртү",
@@ -26,7 +26,6 @@
 	"mobile-frontend-meta-data-issues": "Бит буенча сораулар",
 	"mobile-frontend-meta-data-issues-categories": "Бу төркем турында",
 	"mobile-frontend-meta-data-issues-header": "Бит мәсьәләсе",
-	"mobile-frontend-pageaction-edit-tooltip": "Битнең төп бүлеген үзгәртү",
 	"mobile-frontend-placeholder": "{{SITENAME}} эчендә эзлә",
 	"mobile-frontend-random-button": "Очраклы",
 	"mobile-frontend-redirected-from": "«[[$1]]» битеннән юнәлтелде",

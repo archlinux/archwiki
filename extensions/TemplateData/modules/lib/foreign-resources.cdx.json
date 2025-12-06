@@ -1,0 +1,32 @@
+{
+	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.6",
+	"serialNumber": "urn:uuid:c3ae4a71-3219-41d5-864b-b7e300cf557d",
+	"version": 1,
+	"components": [
+		{
+			"type": "library",
+			"name": "jquery.uls",
+			"version": "000727d9354ddb6c848146561749ef1080f1da29",
+			"licenses": [
+				{
+					"license": {
+						"id": "GPL-2.0"
+					}
+				}
+			],
+			"authors": [
+				{
+					"name": "Wikimedia contributors"
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://github.com/wikimedia/jquery.uls",
+					"type": "website"
+				}
+			]
+		}
+	]
+}

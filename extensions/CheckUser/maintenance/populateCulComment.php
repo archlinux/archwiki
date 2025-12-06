@@ -25,11 +25,13 @@ use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use Psr\Log\NullLogger;
 use Wikimedia\Services\NoSuchServiceException;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for filling up cul_reason_id
@@ -67,7 +69,7 @@ class PopulateCulComment extends LoggedUpdateMaintenance {
 		try {
 			/** @var CheckUserLogService $checkUserLogService */
 			$checkUserLogService = $services->get( 'CheckUserLogService' );
-		} catch ( NoSuchServiceException $ex ) {
+		} catch ( NoSuchServiceException ) {
 			# CheckUser ServiceWiring files may not loaded until
 			#  postDatabaseUpdateMaintenance is run.
 			# If this is the case, manually get the service.
@@ -165,5 +167,7 @@ class PopulateCulComment extends LoggedUpdateMaintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PopulateCulComment::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

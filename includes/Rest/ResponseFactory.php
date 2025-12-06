@@ -4,6 +4,7 @@ namespace MediaWiki\Rest;
 
 use InvalidArgumentException;
 use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\Http\Telemetry;
 use MediaWiki\Language\LanguageCode;
 use stdClass;
 use Throwable;
@@ -196,10 +197,17 @@ class ResponseFactory {
 		if ( $errorCode < 400 || $errorCode >= 600 ) {
 			throw new InvalidArgumentException( 'error code must be 4xx or 5xx' );
 		}
-		$response = $this->createJson( $bodyData + [
+		$extra = [
 			'httpCode' => $errorCode,
 			'httpReason' => HttpStatus::getMessage( $errorCode )
-		] );
+		];
+
+		if ( $errorCode >= 500 ) {
+			$extra['reqId'] = Telemetry::getInstance()->getRequestId();
+		}
+
+		$response = $this->createJson( $bodyData + $extra );
+
 		// TODO add link to error code documentation
 		$response->setStatus( $errorCode );
 		return $response;
@@ -252,10 +260,7 @@ class ResponseFactory {
 			} else {
 				$response = $this->createHttpError(
 					$exception->getCode(),
-					array_merge(
-						[ 'message' => $exception->getMessage() ],
-						$exception->getErrorData()
-					)
+					$exception->getErrorData() + [ 'message' => $exception->getMessage() ]
 				);
 			}
 		} elseif ( $this->showExceptionDetails ) {
@@ -272,6 +277,7 @@ class ResponseFactory {
 		} else {
 			$response = $this->createHttpError( 500, [
 				'message' => 'Error: exception of type ' . get_class( $exception ),
+				'reqId' => Telemetry::getInstance()->getRequestId(),
 			] );
 		}
 		return $response;

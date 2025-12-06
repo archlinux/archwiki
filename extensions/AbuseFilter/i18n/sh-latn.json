@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Vlad5250",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"abusefilter-desc": "Izvršava automatsko heurističko filtriranje u izmenama",
@@ -21,7 +21,7 @@
 	"abusefilter-blockreason": "Automatski blokirano od strane filtera za zloupoterbu. Opis povrijeđenog pravila: $1",
 	"abusefilter-degroupreason": "Prava su automatski oduzeta od strane filtera za zloupotrebu. Opis pravila: $1",
 	"abusefilter-blockautopromotereason": "Samounapređivanje je automatski odloženo od strane filtera za zloupotrebu.\nOpis pravila: $1",
-	"abusefilter-accountreserved": "Ovaj korisnički račun je rezervisan za upotrebu od strane filtera za zloupotrebu.",
+	"abusefilter-accountreserved": "Ovaj korisnički račun rezerviran je za upotrebu od strane filtera za zloupotrebu.",
 	"right-abusefilter-modify": "Pravljenje ili mijenjanje filterâ zloupotreba",
 	"right-abusefilter-view": "Pregledanje filterâ zloupotreba",
 	"right-abusefilter-log": "Pregledanje dnevnika zloupotreba",
@@ -95,7 +95,7 @@
 	"abusefilter-log-linkoncontribs": "dnevnik zloupotreba",
 	"abusefilter-log-linkoncontribs-text": "Dnevnik zloupotreba {{GENDER:$1|ovog korisnika|ove korisnice}}",
 	"abusefilter-log-linkonhistory": "dnevnik zloupotreba",
-	"abusefilter-log-linkonhistory-text": "Pogledajte dnevnik zloupotrebe ove stranice",
+	"abusefilter-log-linkonhistory-text": "Pogledajte dnevnik zloupotrebe za ovu stranicu",
 	"abusefilter-log-linkonundelete": "dnevnik zloupotreba",
 	"abusefilter-log-linkonundelete-text": "Pogledajte dnevnik zloupotrebe ove stranice",
 	"abusefilter-log-hidden-implicit": "(sakriveno jer je izmjena obrisana)",
@@ -390,7 +390,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "Novi wikitekst nakon uređivanja",
 	"abusefilter-edit-builder-vars-added-links": "Sve vanjske veze dodane uređivanjem",
 	"abusefilter-edit-builder-vars-removed-links": "Sve vanjske veze uklonjene uređivanjem",
-	"abusefilter-edit-builder-vars-all-links": "Sve vanjske veze u novom tekstu",
+	"abusefilter-edit-builder-vars-old-links": "Veze na stranici, prije izmjene ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "Wikitekst za novu stranicu, prilagođen za sačuvanje",
 	"abusefilter-edit-builder-vars-diff-pst": "Zajedničke razlike uređivanjem, prilagođene za sačuvanje",
 	"abusefilter-edit-builder-vars-addedlines-pst": "Dodani redovi u uređivanju, pretvoreni prije spremanja",
@@ -414,7 +414,6 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "Zaštita postavljanja odredišne stranice",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "Posljednjih deset doprinositelja u odredišnoj stranici",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "Prvi doprinositelj u odredišnoj stranici",
-	"abusefilter-edit-builder-vars-old-links": "Veze na stranici, prije izmjene ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1-taraba sadržaja datoteke",
 	"abusefilter-edit-builder-vars-file-size": "Veličina datoteke u bajtovima",
 	"abusefilter-edit-builder-vars-file-mime": "MIME-tip datoteke",
@@ -424,9 +423,9 @@
 	"abusefilter-edit-builder-vars-file-bits-per-channel": "Bitovi po kanalu boje datoteke",
 	"abusefilter-edit-builder-vars-wiki-name": "Ime baze podataka wikija",
 	"abusefilter-edit-builder-vars-wiki-language": "Jezički kod wikija",
-	"abusefilter-edit-builder-vars-old-text": "Tekst stare stranice, s uklonjenim oznakama (izvan upotrebe)",
-	"abusefilter-edit-builder-vars-old-html": "Wikitekst stare stranice, raščlanjen u HTML (izvan upotrebe)",
-	"abusefilter-edit-builder-vars-minor-edit": "Je li izmjena označena kao manja (izvan upotrebe)",
+	"abusefilter-edit-builder-vars-old-text": "Tekst stare stranice, s uklonjenim oznakama (van upotrebe)",
+	"abusefilter-edit-builder-vars-old-html": "Wikitekst stare stranice, raščlanjen u HTML (van upotrebe)",
+	"abusefilter-edit-builder-vars-minor-edit": "Je li izmjena označena kao manja (van upotrebe)",
 	"abusefilter-edit-builder-vars-timestamp-expanded": "Vrijeme i datum dnevnika",
 	"abusefilter-filter-log": "Nedavne promjene u filtrima",
 	"abusefilter-history": "Historija izmjena filtera #$1",

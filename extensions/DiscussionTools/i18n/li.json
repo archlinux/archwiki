@@ -5,6 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Antjwaord",
+	"discussiontools-replywidget-advanced": "Oetgebreid",
 	"discussiontools-replywidget-cancel": "Braek aaf",
 	"discussiontools-replywidget-mode-source": "Brón",
 	"discussiontools-replywidget-mode-visual": "Visueel",
@@ -13,6 +14,7 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|Reageer}}",
 	"discussiontools-replywidget-summary": "Samevatting",
 	"discussiontools-replywidget-watchthis": "Veug dees pagina toe aan dien [[Special:Watchlist|volglies]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|miens|luuj}} in 't euverligk",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Doe}} kriegs meljinge van nuuj antjwäörd op dit köpke.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Doe}} höbs dich geabonneerd!"
 }

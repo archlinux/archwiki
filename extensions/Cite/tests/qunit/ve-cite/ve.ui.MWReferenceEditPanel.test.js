@@ -1,9 +1,13 @@
 'use strict';
 
-( function () {
+{
 	QUnit.module( 've.ui.MWReferenceEditPanel (Cite)', ve.test.utils.newMwEnvironment() );
 
-	function getSimpleNode( doc ) {
+	/**
+	 * @param {ve.dm.Document} doc
+	 * @return {ve.dm.MWReferenceNode}
+	 */
+	const getSimpleNode = ( doc ) => {
 		const node = new ve.dm.MWReferenceNode( {
 			type: 'mwReference',
 			attributes: {
@@ -13,10 +17,16 @@
 		} );
 		node.setDocument( doc );
 		return node;
-	}
+	};
 
-	function getDocRefsMock( node, reUse ) {
-		const groupRefs = {
+	/**
+	 * @param {ve.dm.MWReferenceNode|null} [node]
+	 * @param {boolean} [reUse=false]
+	 * @return {ve.dm.MWDocumentReferences}
+	 */
+	const getDocumentReferencesMock = ( node, reUse ) => ( {
+		getAllGroupNames: () => [ 'mwReference/' ],
+		getGroupRefs: () => ( {
 			getRefUsages: () => ( reUse ? [ node, node ] : [] ),
 			getInternalModelNode: () => ( node ),
 			getTotalUsageCount: () => {
@@ -24,18 +34,14 @@
 				const subRefsCount = reUse ? 1 : 0;
 				return mainRefsCount + subRefsCount;
 			}
-		};
-		return {
-			getAllGroupNames: () => ( [ 'mwReference/' ] ),
-			getGroupRefs: () => ( groupRefs )
-		};
-	}
+		} )
+	} );
 
 	QUnit.test( 'setting and getting a reference', ( assert ) => {
-		ve.init.target.surface = { commandRegistry: { registry: {} } };
+		ve.init.target.surface = { commandRegistry: { getNames: () => [] } };
 		const editPanel = new ve.ui.MWReferenceEditPanel();
 		const ref = new ve.dm.MWReferenceModel( new ve.dm.Document( [] ) );
-		editPanel.setDocumentReferences( getDocRefsMock() );
+		editPanel.setDocumentReferences( getDocumentReferencesMock() );
 
 		const changeHandlerSpy = sinon.spy();
 		editPanel.connect( null, { change: changeHandlerSpy } );
@@ -50,7 +56,7 @@
 		// interface setup correctly
 		assert.false( editPanel.referenceGroupInput.isDisabled() );
 		assert.false( editPanel.reuseWarning.isVisible() );
-		assert.false( editPanel.extendsWarning.isVisible() );
+		assert.false( editPanel.previewPanel.isVisible() );
 
 		// change handler triggered
 		const expectedChange = {
@@ -65,41 +71,41 @@
 	} );
 
 	QUnit.test( 're-used references', ( assert ) => {
-		ve.init.target.surface = { commandRegistry: { registry: {} } };
+		ve.init.target.surface = { commandRegistry: { getNames: () => [] } };
 		const editPanel = new ve.ui.MWReferenceEditPanel();
 		const ref = new ve.dm.MWReferenceModel( new ve.dm.Document( [] ) );
-		editPanel.setDocumentReferences( getDocRefsMock( null, true ) );
+		editPanel.setDocumentReferences( getDocumentReferencesMock( null, true ) );
 		editPanel.setReferenceForEditing( ref );
 
 		// interface setup correctly
 		assert.true( editPanel.reuseWarning.isVisible() );
-		assert.false( editPanel.extendsWarning.isVisible() );
+		assert.false( editPanel.previewPanel.isVisible() );
 	} );
 
 	QUnit.test( 'sub-references', ( assert ) => {
-		ve.init.target.surface = { commandRegistry: { registry: {} } };
+		ve.init.target.surface = { commandRegistry: { getNames: () => [] } };
 		const editPanel = new ve.ui.MWReferenceEditPanel();
 		const doc = new ve.dm.Document( [] );
 		const ref = new ve.dm.MWReferenceModel( doc );
 
 		// does exist in the example document
-		ref.extendsRef = 'literal/bar';
-		editPanel.setDocumentReferences( getDocRefsMock( getSimpleNode( doc ) ) );
+		ref.mainRefKey = 'literal/bar';
+		editPanel.setDocumentReferences( getDocumentReferencesMock( getSimpleNode( doc ) ) );
 		editPanel.setReferenceForEditing( ref );
 
 		assert.false( editPanel.reuseWarning.isVisible() );
-		assert.true( editPanel.extendsWarning.isVisible() );
-		assert.false( editPanel.extendsWarning.getLabel().text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
+		assert.true( editPanel.previewPanel.isVisible() );
+		assert.false( editPanel.referenceListPreview.$element.text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
 		// TODO improve node mock to check content insertion for the parent
-		// assert.true( editPanel.extendsWarning.getLabel().text().indexOf( 'Bar' ) !== -1 );
+		// assert.true( editPanel.referenceListPreview.$element.text().indexOf( 'Bar' ) !== -1 );
 
 		// test sub ref with missing main ref
-		ref.extendsRef = 'literal/notexist';
-		editPanel.setDocumentReferences( getDocRefsMock() );
+		ref.mainRefKey = 'literal/notexist';
+		editPanel.setDocumentReferences( getDocumentReferencesMock() );
 		editPanel.setReferenceForEditing( ref );
 
 		assert.false( editPanel.reuseWarning.isVisible() );
-		assert.true( editPanel.extendsWarning.isVisible() );
-		assert.true( editPanel.extendsWarning.getLabel().text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
+		assert.true( editPanel.previewPanel.isVisible() );
+		assert.true( editPanel.referenceListPreview.$element.text().includes( 'cite-ve-dialog-reference-missing-parent-ref' ) );
 	} );
-}() );
+}

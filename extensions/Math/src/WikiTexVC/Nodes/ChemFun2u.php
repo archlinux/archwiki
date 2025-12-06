@@ -13,9 +13,6 @@ class ChemFun2u extends TexNode {
 	/** @var TexNode */
 	private $right;
 
-	/**
-	 * @return string
-	 */
 	public function getFname(): string {
 		return $this->fname;
 	}
@@ -27,16 +24,10 @@ class ChemFun2u extends TexNode {
 		$this->right = $right;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getLeft(): TexNode {
 		return $this->left;
 	}
 
-	/**
-	 * @return TexNode
-	 */
 	public function getRight(): TexNode {
 		return $this->right;
 	}

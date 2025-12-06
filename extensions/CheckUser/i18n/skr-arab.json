@@ -66,5 +66,8 @@
 	"checkuser-tempaccount-reveal-ip-button-label": "آئی پی ݙکھاؤ",
 	"checkuser-tempaccount-reveal-ip-missing": "دستیاب کائنی",
 	"checkuser-tempaccount-reveal-ip-error": "خرابی",
-	"log-action-filter-checkuser-temporary-account": "عمل دی قسم:"
+	"log-action-filter-checkuser-temporary-account": "عمل دی قسم:",
+	"checkuser-userinfocard-close-button-aria-label": "بند کرو",
+	"checkuser-suggestedinvestigations-header-status": "حیثیت",
+	"checkuser-suggestedinvestigations-header-notes": "نوٹس"
 }

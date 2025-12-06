@@ -42,7 +42,7 @@ class PopulateCulCommentTest extends MaintenanceBaseTestCase {
 				'cul_target_text' => $testTarget->getName(),
 				'cul_reason' => $reason,
 				'cul_reason_id' => 0,
-				'cul_reason_plaintext_id' => 0
+				'cul_reason_plaintext_id' => 0,
 			] )
 			->execute();
 		// Run the maintenance script

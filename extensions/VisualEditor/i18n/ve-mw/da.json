@@ -21,9 +21,9 @@
 			"Sarrus",
 			"Simeondahl",
 			"SimmeD",
+			"Steenth",
 			"Tehnix",
-			"Weblars",
-			"Steenth"
+			"Weblars"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -265,6 +265,7 @@
 	"visualeditor-includes-includeonly-description": "Når indhold fra denne side bruges af en anden side, vil følgende yderligere indhold blive inkluderet her:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Lær mere om delvis transklusion]",
 	"visualeditor-languages-tool": "Sprog",
+	"visualeditor-linkcontext-uneditable": "Beklager, dette link kan kun redigeres i kildetilstand for nu.",
 	"visualeditor-linkinspector-button-link-external": "Ekstern hjemmeside",
 	"visualeditor-linkinspector-button-link-internal": "Søg interne sider",
 	"visualeditor-linkinspector-convert-link-isbn": "Konvertér til ISBN-link",

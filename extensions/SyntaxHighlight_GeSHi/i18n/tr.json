@@ -3,12 +3,12 @@
 		"authors": [
 			"BaRaN6161 TURK",
 			"Erkan Yilmaz",
+			"Gadir",
 			"Joseph",
 			"McAang",
 			"McDutchie",
 			"SaldırganSincap",
-			"Vito Genovese",
-			"Gadir"
+			"Vito Genovese"
 		]
 	},
 	"syntaxhighlight-desc": "[https://pygments.org/ Pygments - Python sözdizimi vurgulayıcısı] kullanarak <code>&lt;syntaxhighlight&gt;</code> öğesini vurgulayarak sözdizimi sağlar",

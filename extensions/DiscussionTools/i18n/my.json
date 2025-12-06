@@ -48,7 +48,6 @@
 	"discussiontools-notification-removed-topic-disabled-body": "၄င်းကို [[Special:Preferences#mw-prefsection-echo-echosubscriptions|သင်၏ ရွေးချယ်စရာများ]]ထဲတွင် ပြောင်းလဲနိုင်ပါသည်။",
 	"discussiontools-notification-subscribed-new-comment-header": "\"<strong>$4</strong>\" တွင် $1 က {{GENDER:$2|အကြောင်းပြန်ခဲ့သည်}}။",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"<strong>$3</strong>\" တွင် {{PLURAL:$1|အကြောင်းပြန်မှု အသစ်တစ်ခု|အကြောင်းပြန်မှု အသစ် $1 ခု|100=အကြောင်းပြန်မှု အသစ် ၉၉+ ခု}} ရှိနေသည်။",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "မှတ်ချက်ကြည့်ရန်",
 	"discussiontools-postedit-confirmation-published": "သင်၏သုံးသပ်ချက်ကို လွှင့်တင်ပြီးဖြစ်သည်။",
 	"discussiontools-postedit-confirmation-topicadded": "သင့်အကြောင်းအရာအား ထည့်သွင်းပြီး ဖြစ်သည်။",

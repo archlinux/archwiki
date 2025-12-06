@@ -12,7 +12,6 @@
 	"gadgetusage-usercount": "Foydalanuvchilar soni",
 	"gadgetusage-noresults": "Hech qanday gadjet topilmadi.",
 	"gadgetusage-intro": "Bu jadvalda ushbu vikidagi gadjetlarning har biridan nechta foydalanuvchi foydalanishi haqidagi statistika koʻrsatilgan. Faol foydalanuvchi deganda, oxirgi {{PLURAL:$1|kun|$1 kun}}da kamida bitta tahrir qilgan foydalanuvchi nazarda tutilgan. Shuni ham unutmangki, quyidagi jadvalda sukut boʻyicha barcha uchun yoniq boʻlgan gadjetlar statistikasi koʻrsatilinmagan.",
-	"gadgetusage-intro-noactive": "Bu jadvalda ushbu vikidagi gadjetlarning har biridan nechta foydalanuvchi foydalanishi haqidagi statistika koʻrsatilgan. Sukut boʻyicha barcha uchun yoniq boʻlgan gadjetlar statistikasi esa koʻrsatilinmagan.",
 	"gadgetusage-activeusers": "Faol foydalanuvchilar",
 	"gadgetusage-default": "Sukut boʻyicha",
 	"gadgets-title": "Gadjetlar",

@@ -1,0 +1,33 @@
+{
+	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.6",
+	"serialNumber": "urn:uuid:0a34b5c5-de1c-4d86-a244-15e4426eed5d",
+	"version": 1,
+	"components": [
+		{
+			"type": "library",
+			"name": "ace",
+			"version": "1.39.1",
+			"licenses": [
+				{
+					"license": {
+						"id": "BSD-3-Clause"
+					}
+				}
+			],
+			"purl": "pkg:github/ajaxorg/ace-builds@1.39.1",
+			"authors": [
+				{
+					"name": "Ace authors – https://ace.c9.io/"
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://github.com/ajaxorg/ace-builds",
+					"type": "website"
+				}
+			]
+		}
+	]
+}

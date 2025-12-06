@@ -85,6 +85,7 @@
 	"math_invalidresponse": "$1：從伺服器 \"$2\" 收到無效的回應 (\"$3\")。",
 	"math_invalidxml": " MathML 或 SVG 是無效的 XML。",
 	"math_mathoid_error": "轉換錯誤。 伺服器 (\"$1\") 己回報：\"$2\"",
+	"math_other_error": "其他錯誤：$1",
 	"math-status-introduction": "此頁面顯示有關已開啟的數學繪圖{{PLURAL:$1|模式}}資訊。\n\n下列繪圖{{PLURAL:$1|模式}}已開啟：",
 	"math_syntax_error": "語法錯誤",
 	"math_timeout": "\"$2\" 的 $1 逾時。",

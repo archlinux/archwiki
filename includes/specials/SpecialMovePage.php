@@ -1,29 +1,15 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Actions\WatchAction;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
-use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\ThrottledError;
@@ -45,6 +31,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\Watchlist\WatchedItemStore;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWiki\Widget\ComplexTitleInputWidget;
 use OOUI\ButtonInputWidget;
@@ -58,6 +45,7 @@ use OOUI\PanelLayout;
 use OOUI\TextInputWidget;
 use SearchEngineFactory;
 use StatusValue;
+use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
@@ -111,6 +99,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 	private WikiPageFactory $wikiPageFactory;
 	private SearchEngineFactory $searchEngineFactory;
 	private WatchlistManager $watchlistManager;
+	private WatchedItemStore $watchedItemStore;
 	private RestrictionStore $restrictionStore;
 	private TitleFactory $titleFactory;
 	private DeletePageFactory $deletePageFactory;
@@ -127,6 +116,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		WikiPageFactory $wikiPageFactory,
 		SearchEngineFactory $searchEngineFactory,
 		WatchlistManager $watchlistManager,
+		WatchedItemStore $watchedItemStore,
 		RestrictionStore $restrictionStore,
 		TitleFactory $titleFactory,
 		DeletePageFactory $deletePageFactory
@@ -143,15 +133,18 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->searchEngineFactory = $searchEngineFactory;
 		$this->watchlistManager = $watchlistManager;
+		$this->watchedItemStore = $watchedItemStore;
 		$this->restrictionStore = $restrictionStore;
 		$this->titleFactory = $titleFactory;
 		$this->deletePageFactory = $deletePageFactory;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->useTransactionalTimeLimit();
 		$this->checkReadOnly();
@@ -217,7 +210,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			$permStatus = $this->permManager->getPermissionStatus( 'move', $user, $this->oldTitle,
 				PermissionManager::RIGOR_SECURE );
 			// If the account is "hard" blocked, auto-block IP
-			DeferredUpdates::addCallableUpdate( [ $user, 'spreadAnyEditBlock' ] );
+			$user->scheduleSpreadBlock();
 			if ( !$permStatus->isGood() ) {
 				throw new PermissionsError( 'move', $permStatus );
 			}
@@ -227,7 +220,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 			$permStatus = $this->permManager->getPermissionStatus( 'move', $user, $this->oldTitle,
 				PermissionManager::RIGOR_FULL );
 			if ( !$permStatus->isGood() ) {
-				DeferredUpdates::addCallableUpdate( [ $user, 'spreadAnyEditBlock' ] );
+				$user->scheduleSpreadBlock();
 				throw new PermissionsError( 'move', $permStatus );
 			}
 			$this->showForm();
@@ -577,6 +570,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 				new CheckboxInputWidget( [
 					'name' => 'wpWatch',
 					'id' => 'watch', # ew
+					'infusable' => true,
 					'value' => '1',
 					'selected' => $watchChecked,
 				] ),
@@ -585,6 +579,34 @@ class SpecialMovePage extends UnlistedSpecialPage {
 					'align' => 'inline',
 				]
 			);
+
+			# Add a dropdown for watchlist expiry times in the form, T261230
+			if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
+				$expiryOptions = WatchAction::getExpiryOptions(
+					$this->getContext(),
+					$this->watchedItemStore->getWatchedItem( $user, $this->oldTitle )
+				);
+				# Reformat the options to match what DropdownInputWidget wants.
+				$options = [];
+				foreach ( $expiryOptions['options'] as $label => $value ) {
+					$options[] = [ 'data' => $value, 'label' => $label ];
+				}
+
+				$fields[] = new FieldLayout(
+					new DropdownInputWidget( [
+						'name' => 'wpWatchlistExpiry',
+						'id' => 'wpWatchlistExpiry',
+						'infusable' => true,
+						'options' => $options,
+					] ),
+					[
+						'label' => $this->msg( 'confirm-watch-label' )->text(),
+						'id' => 'wpWatchlistExpiryLabel',
+						'infusable' => true,
+						'align' => 'inline',
+					]
+				);
+			}
 		}
 
 		$hiddenFields = '';
@@ -810,15 +832,11 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		$oldText = $ot->getPrefixedText();
 		$newText = $nt->getPrefixedText();
 
-		if ( $status->getValue()['redirectRevision'] !== null ) {
-			$msgName = 'movepage-moved-redirect';
-		} else {
-			$msgName = 'movepage-moved-noredirect';
-		}
-
 		$out->addHTML( $this->msg( 'movepage-moved' )->rawParams( $oldLink,
 			$newLink )->params( $oldText, $newText )->parseAsBlock() );
-		$out->addWikiMsg( $msgName );
+		$out->addWikiMsg( isset( $status->getValue()['redirectRevision'] ) ?
+			'movepage-moved-redirect' :
+			'movepage-moved-noredirect' );
 
 		$this->getHookRunner()->onSpecialMovepageAfterMove( $this, $ot, $nt );
 
@@ -959,8 +977,27 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		}
 
 		# Deal with watches (we don't watch subpages)
-		$this->watchlistManager->setWatch( $this->watch, $this->getAuthority(), $ot );
-		$this->watchlistManager->setWatch( $this->watch, $this->getAuthority(), $nt );
+		# Get text from expiry selection dropdown, T261230
+		$expiry = $this->getRequest()->getText( 'wpWatchlistExpiry' );
+		if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) && $expiry !== '' ) {
+			$expiry = ExpiryDef::normalizeExpiry( $expiry, TS_ISO_8601 );
+		} else {
+			$expiry = null;
+		}
+
+		$this->watchlistManager->setWatch(
+			$this->watch,
+			$this->getAuthority(),
+			$ot,
+			$expiry
+		);
+
+		$this->watchlistManager->setWatch(
+			$this->watch,
+			$this->getAuthority(),
+			$nt,
+			$expiry
+		);
 	}
 
 	private function showLogFragment( Title $title ) {
@@ -1065,6 +1102,7 @@ class SpecialMovePage extends UnlistedSpecialPage {
 		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

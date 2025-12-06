@@ -11,7 +11,6 @@
 	"echo-category-title-system": "{{PLURAL:$1|ꯊꯧꯁꯤꯜ}}",
 	"echo-category-title-system-noemail": "{{PLURAL:$1|ꯊꯧꯁꯤꯜ}}",
 	"tooltip-pt-notifications-alert": "{{GENDER:|ꯅꯪꯒꯤ}} ꯈꯪꯍꯟꯕꯥ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ꯑꯅꯧꯕ ꯁꯤꯖꯤꯟꯅꯔꯤꯕꯁꯤꯡ",
 	"echo-notification-markasread": "ꯄꯥꯔꯦ ꯍꯥꯏꯅꯥ ꯎꯠꯂꯣ",
 	"echo-notification-markasunread": "ꯄꯥꯗꯀꯤ ꯍꯥꯏꯅꯥ ꯎꯠꯂꯣ",
 	"echo-notification-markasread-tooltip": "ꯄꯥꯔꯦ ꯍꯥꯏꯅꯥ ꯎꯠꯂꯣ",

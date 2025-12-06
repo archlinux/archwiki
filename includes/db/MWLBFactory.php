@@ -2,27 +2,20 @@
 /**
  * Generator of database load balancing objects.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Database
  */
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Debug\MWDebug;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ExistenceLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\Exception\MWExceptionRenderer;
 use MediaWiki\Logger\LoggerFactory;
@@ -33,6 +26,7 @@ use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\ILBFactory;
+use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Telemetry\TracerInterface;
@@ -52,6 +46,13 @@ class MWLBFactory {
 		'virtual-botpasswords',
 		'virtual-interwiki',
 		'virtual-interwiki-interlanguage',
+		ExternalLinksTable::VIRTUAL_DOMAIN,
+		TemplateLinksTable::VIRTUAL_DOMAIN,
+		ImageLinksTable::VIRTUAL_DOMAIN,
+		ExistenceLinksTable::VIRTUAL_DOMAIN,
+		InterwikiLinksTable::VIRTUAL_DOMAIN,
+		PageLinksTable::VIRTUAL_DOMAIN,
+		CategoryLinksTable::VIRTUAL_DOMAIN,
 	];
 
 	/**
@@ -59,7 +60,6 @@ class MWLBFactory {
 	 */
 	public const APPLY_DEFAULT_CONFIG_OPTIONS = [
 		MainConfigNames::DBcompress,
-		MainConfigNames::DBDefaultGroup,
 		MainConfigNames::DBmwschema,
 		MainConfigNames::DBname,
 		MainConfigNames::DBpassword,
@@ -89,6 +89,7 @@ class MWLBFactory {
 	private TracerInterface $tracer;
 	/** @var string[] */
 	private array $virtualDomains;
+	private ?string $uniqueIdentifier;
 
 	/**
 	 * @param ServiceOptions $options
@@ -100,6 +101,7 @@ class MWLBFactory {
 	 * @param StatsFactory $statsFactory
 	 * @param string[] $virtualDomains
 	 * @param TracerInterface $tracer
+	 * @param ?string $uniqueIdentifier
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -110,7 +112,8 @@ class MWLBFactory {
 		CriticalSectionProvider $csProvider,
 		StatsFactory $statsFactory,
 		array $virtualDomains,
-		TracerInterface $tracer
+		TracerInterface $tracer,
+		?string $uniqueIdentifier = null
 	) {
 		$this->options = $options;
 		$this->readOnlyMode = $readOnlyMode;
@@ -121,6 +124,7 @@ class MWLBFactory {
 		$this->statsFactory = $statsFactory;
 		$this->virtualDomains = $virtualDomains;
 		$this->tracer = $tracer;
+		$this->uniqueIdentifier = $uniqueIdentifier;
 	}
 
 	/**
@@ -154,8 +158,8 @@ class MWLBFactory {
 			'statsFactory' => $this->statsFactory,
 			'cliMode' => MW_ENTRY_POINT === 'cli',
 			'readOnlyReason' => $this->readOnlyMode->getReason(),
-			'defaultGroup' => $this->options->get( MainConfigNames::DBDefaultGroup ),
 			'criticalSectionProvider' => $this->csProvider,
+			'uniqueIdentifier' => $this->uniqueIdentifier,
 		];
 
 		$serversCheck = [];
@@ -311,7 +315,7 @@ class MWLBFactory {
 	 * @param string $dbType Database type
 	 * @return never
 	 */
-	private function reportIfPrefixSet( string $prefix, string $dbType ) {
+	private function reportIfPrefixSet( string $prefix, string $dbType ): never {
 		$e = new UnexpectedValueException(
 			"\$wgDBprefix is set to '$prefix' but the database type is '$dbType'. " .
 			"MediaWiki does not support using a table prefix with this RDBMS type."
@@ -325,7 +329,7 @@ class MWLBFactory {
 	 * @param string $ldDB Local DB domain database
 	 * @return never
 	 */
-	private function reportMismatchedDBs( string $srvDB, string $ldDB ) {
+	private function reportMismatchedDBs( string $srvDB, string $ldDB ): never {
 		$e = new UnexpectedValueException(
 			"\$wgDBservers has dbname='$srvDB' but \$wgDBname='$ldDB'. " .
 			"Set \$wgDBname to the database used by this wiki project. " .
@@ -343,7 +347,7 @@ class MWLBFactory {
 	 * @param string $ldTP Local DB domain database
 	 * @return never
 	 */
-	private function reportMismatchedPrefixes( string $srvTP, string $ldTP ) {
+	private function reportMismatchedPrefixes( string $srvTP, string $ldTP ): never {
 		$e = new UnexpectedValueException(
 			"\$wgDBservers has tablePrefix='$srvTP' but \$wgDBprefix='$ldTP'. " .
 			"Set \$wgDBprefix to the table prefix used by this wiki project. " .
@@ -361,7 +365,7 @@ class MWLBFactory {
 	 *
 	 * @internal For use by ServiceWiring
 	 * @param array $config (e.g. $wgLBFactoryConf)
-	 * @return string Class name
+	 * @return class-string<LBFactory>
 	 */
 	public function getLBFactoryClass( array $config ): string {
 		$compat = [

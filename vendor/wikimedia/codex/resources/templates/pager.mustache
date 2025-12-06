@@ -1,0 +1,43 @@
+<div class="cdx-table-pager cdx-table__pagination--{{ position }}{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{! }}{{#id}} id="{{ id }}"{{/id}}>
+  <div class="cdx-table-pager__start">
+    {{{ select }}}
+  </div>
+   <div class="cdx-table-pager__status">
+        {{#isPending}}
+            {{#i18n}}cdx-table-pagination-status-message-pending{{/i18n}}
+        {{/isPending}}
+        {{^isPending}}
+            {{#hasTotalResults}}
+                {{#i18n}}cdx-table-pagination-status-message-determinate-long
+                    |{{startOrdinal}}
+                    |{{endOrdinal}}
+                    |{{totalResults}}
+                {{/i18n}}
+            {{/hasTotalResults}}
+            {{^hasTotalResults}}
+                {{#i18n}}
+                    cdx-table-pagination-status-message-indeterminate-long
+                    |{{startOrdinal}}
+                    |{{endOrdinal}}
+                {{/i18n}}
+            {{/hasTotalResults}}
+        {{/isPending}}
+    </div>
+  <div class="cdx-table-pager__end">
+    {{#firstButton}}
+      {{> button }}
+    {{/firstButton}}
+    {{#prevButton}}
+      {{> button }}
+    {{/prevButton}}
+    {{#nextButton}}
+      {{> button }}
+    {{/nextButton}}
+    {{#lastButton}}
+      {{> button }}
+    {{/lastButton}}
+  </div>
+  {{#hiddenFields}}
+    <input type="hidden" name="{{ key }}" value="{{ value }}">
+  {{/hiddenFields}}
+</div>

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": []
 	},
+	"renocaptcha-name": "reCAPTCHA NoCAPTCHA",
 	"renocaptcha-desc": "reCAPTCHA NoCAPTCHA module for Confirm Edit",
 	"renocaptcha-edit": "To protect the wiki against automated edit spam, we kindly ask you to solve the following CAPTCHA:",
 	"renocaptcha-addurl": "Your edit includes new external links. To protect the wiki against automated spam, we kindly ask you to solve the following CAPTCHA:",

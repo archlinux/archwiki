@@ -6,6 +6,7 @@
 			"Bencmq",
 			"Demmy",
 			"Diskdance",
+			"GuoPC",
 			"Hydra",
 			"Hzy980512",
 			"Liangent",
@@ -21,8 +22,7 @@
 			"Zhangjintao",
 			"乌拉跨氪",
 			"星海",
-			"아라",
-			"GuoPC"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "编辑检查发现页面中添加了新的内容",
@@ -32,6 +32,11 @@
 	"tag-editcheck-references-activated-description": "编辑检查认为可能需要参考资料，并显示了UI",
 	"tag-editcheck-references-shown": "编辑检查（参考资料）已显示",
 	"tag-editcheck-references-shown-description": "编辑检查认为可能需要参考资料，并显示了UI",
+	"tag-editcheck-tone-description": "编辑检查检测到部分添加内容的语气可能存在问题",
+	"tag-editcheck-tone-shown": "编辑检查（语气）已显示",
+	"tag-editcheck-tone-shown-description": "编辑检查认为部分内容的语气可能需要调整，并显示了UI",
+	"tag-editcheck-paste-shown": "编辑检查（粘贴）已显示",
+	"tag-editcheck-paste-shown-description": "编辑检查要求编辑者澄清其粘贴的内容，然后移除或确认允许该内容",
 	"tag-visualeditor": "可视化编辑",
 	"tag-visualeditor-description": "使用[[{{MediaWiki:visualeditor-descriptionpagelink}}|可视化编辑器]]进行的编辑",
 	"tag-visualeditor-needcheck": "可视化编辑：需检查",

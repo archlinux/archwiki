@@ -33,12 +33,12 @@ class ThankYouEditTest extends MediaWikiIntegrationTestCase {
 	public static function provideFirstEditRequestModes() {
 		return [
 			[ 'web' ],
-			[ 'cli' ]
+			[ 'cli' ],
 		];
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\Notifications\Hooks::onPageSaveComplete
+	 * @covers \MediaWiki\Extension\Notifications\MediaWikiEventIngress\PageEventIngress
 	 * @dataProvider provideFirstEditRequestModes
 	 * @param string $mode
 	 */
@@ -82,12 +82,12 @@ class ThankYouEditTest extends MediaWikiIntegrationTestCase {
 	public static function provideTenthEditRequestModes() {
 		return [
 			[ 'web' ],
-			[ 'cli' ]
+			[ 'cli' ],
 		];
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\Notifications\Hooks::onPageSaveComplete
+	 * @covers \MediaWiki\Extension\Notifications\MediaWikiEventIngress\PageEventIngress
 	 * @dataProvider provideTenthEditRequestModes
 	 * @param string $mode
 	 */

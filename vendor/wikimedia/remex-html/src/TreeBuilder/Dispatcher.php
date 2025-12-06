@@ -79,6 +79,14 @@ class Dispatcher implements TokenHandler {
 		self::IN_TEXTAREA => InTextarea::class,
 	];
 
+	private const TABLE_MODES = [
+		self::IN_TABLE => true,
+		self::IN_CAPTION => true,
+		self::IN_TABLE_BODY => true,
+		self::IN_ROW => true,
+		self::IN_CELL => true,
+	];
+
 	// Public shortcuts for "using the rules for" actions
 
 	/** @var InHead */
@@ -206,13 +214,7 @@ class Dispatcher implements TokenHandler {
 	 * @return bool
 	 */
 	public function isInTableMode() {
-		static $tableModes = [
-			self::IN_TABLE => true,
-			self::IN_CAPTION => true,
-			self::IN_TABLE_BODY => true,
-			self::IN_ROW => true,
-			self::IN_CELL => true ];
-		return isset( $tableModes[$this->mode] );
+		return isset( self::TABLE_MODES[$this->mode] );
 	}
 
 	/**

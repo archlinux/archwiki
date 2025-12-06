@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -54,6 +40,7 @@ use UnexpectedValueException;
 use UploadBase;
 use UploadForm;
 use UploadFromStash;
+use UploadStashException;
 
 /**
  * Form for uploading media files.
@@ -67,8 +54,6 @@ class SpecialUpload extends SpecialPage {
 	private UserOptionsLookup $userOptionsLookup;
 	private NamespaceInfo $nsInfo;
 	private WatchlistManager $watchlistManager;
-	/** @var bool wether uploads by url should be asynchronous or not */
-	public bool $allowAsync;
 	private JobQueueGroup $jobQueueGroup;
 	private LoggerInterface $log;
 
@@ -87,10 +72,6 @@ class SpecialUpload extends SpecialPage {
 		$this->userOptionsLookup = $userOptionsLookup ?? $services->getUserOptionsLookup();
 		$this->nsInfo = $nsInfo ?? $services->getNamespaceInfo();
 		$this->watchlistManager = $watchlistManager ?? $services->getWatchlistManager();
-		$this->allowAsync = (
-			$this->getConfig()->get( MainConfigNames::EnableAsyncUploads ) &&
-			$this->getConfig()->get( MainConfigNames::EnableAsyncUploadsByURL )
-		);
 		$this->log = LoggerFactory::getInstance( 'SpecialUpload' );
 	}
 
@@ -98,6 +79,7 @@ class SpecialUpload extends SpecialPage {
 		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -220,7 +202,9 @@ class SpecialUpload extends SpecialPage {
 	 * @return bool
 	 */
 	protected function isAsyncUpload() {
-		return ( $this->mSourceType === 'url' && $this->allowAsync );
+		return $this->mSourceType === 'url'
+			&& $this->getConfig()->get( MainConfigNames::EnableAsyncUploads )
+			&& $this->getConfig()->get( MainConfigNames::EnableAsyncUploadsByURL );
 	}
 
 	/**
@@ -272,7 +256,12 @@ class SpecialUpload extends SpecialPage {
 		# Check whether we actually want to allow changing stuff
 		$this->checkReadOnly();
 
-		$this->loadRequest();
+		try {
+			$this->loadRequest();
+		} catch ( UploadStashException $e ) {
+			$this->showUploadError( $this->msg( 'upload-stash-error', $e->getMessageObject() )->escaped() );
+			return;
+		}
 
 		# Unsave the temporary file in case this was a cancelled upload
 		if ( $this->mCancelUpload && !$this->unsaveUploadedFile() ) {
@@ -302,7 +291,7 @@ class SpecialUpload extends SpecialPage {
 
 				return;
 			}
-			$this->showUploadForm( $this->getUploadForm() );
+			$this->showUploadForm( $this->getUploadForm( '', $this->mUpload?->getStashFile()?->getFileKey() ) );
 		}
 
 		# Cleanup
@@ -582,9 +571,15 @@ class SpecialUpload extends SpecialPage {
 	 * @param string $message HTML message to be passed to mainUploadForm
 	 */
 	protected function showRecoverableUploadError( $message ) {
-		$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
-		if ( $stashStatus->isGood() ) {
-			$sessionKey = $stashStatus->getValue()->getFileKey();
+		$stashFile = $this->mUpload->getStashFile();
+		if ( !$stashFile ) {
+			$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
+			if ( $stashStatus->isGood() ) {
+				$stashFile = $stashStatus->getValue();
+			}
+		}
+		if ( $stashFile ) {
+			$sessionKey = $stashFile->getFileKey();
 			$uploadWarning = 'upload-tryagain';
 		} else {
 			$sessionKey = null;
@@ -620,9 +615,15 @@ class SpecialUpload extends SpecialPage {
 		}
 
 		if ( $this->mUpload ) {
-			$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
-			if ( $stashStatus->isGood() ) {
-				$sessionKey = $stashStatus->getValue()->getFileKey();
+			$stashFile = $this->mUpload->getStashFile();
+			if ( !$stashFile ) {
+				$stashStatus = $this->mUpload->tryStashFile( $this->getUser() );
+				if ( $stashStatus->isGood() ) {
+					$stashFile = $stashStatus->getValue();
+				}
+			}
+			if ( $stashFile ) {
+				$sessionKey = $stashFile->getFileKey();
 				$uploadWarning = 'uploadwarning-text';
 			} else {
 				$sessionKey = null;
@@ -1163,6 +1164,7 @@ class SpecialUpload extends SpecialPage {
 			$gallery->toHTML() . "</li>\n";
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'media';
 	}

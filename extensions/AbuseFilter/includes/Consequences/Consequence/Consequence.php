@@ -11,9 +11,6 @@ abstract class Consequence {
 	/** @var Parameters */
 	protected $parameters;
 
-	/**
-	 * @param Parameters $parameters
-	 */
 	public function __construct( Parameters $parameters ) {
 		$this->parameters = $parameters;
 	}

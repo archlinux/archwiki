@@ -72,18 +72,16 @@
  * @param {ve.dm.HashValueStore[]} [stores] For each transaction, a collection of new store items
  * @param {Object} [selections={}] For each author ID (key), latest ve.dm.Selection
  */
-ve.dm.Change = function VeDmChange( start, transactions, stores, selections ) {
-	this.start = start || 0;
-	this.transactions = transactions || [];
+ve.dm.Change = function VeDmChange( start = 0, transactions = [], stores = [], selections = {} ) {
+	this.start = start;
+	this.transactions = transactions;
 	this.store = new ve.dm.HashValueStore();
 	this.storeLengthAtTransaction = [];
-	if ( stores ) {
-		stores.forEach( ( store ) => {
-			this.store.merge( store );
-			this.storeLengthAtTransaction.push( this.store.getLength() );
-		} );
-	}
-	this.selections = selections || {};
+	stores.forEach( ( store ) => {
+		this.store.merge( store );
+		this.storeLengthAtTransaction.push( this.store.getLength() );
+	} );
+	this.selections = selections;
 };
 
 /* Static methods */
@@ -179,6 +177,10 @@ ve.dm.Change.static.unsafeDeserialize = function ( data ) {
 	return this.deserialize( data, false, true );
 };
 
+/**
+ * @param {any} value
+ * @return {{type: string, value: any}}
+ */
 ve.dm.Change.static.serializeValue = function ( value ) {
 	if ( value instanceof ve.dm.Annotation ) {
 		return { type: 'annotation', value: value.element };
@@ -189,6 +191,11 @@ ve.dm.Change.static.serializeValue = function ( value ) {
 	}
 };
 
+/**
+ * @param {{type: string, value: any}} serialized
+ * @param {boolean} unsafe
+ * @return {any}
+ */
 ve.dm.Change.static.deserializeValue = function ( serialized, unsafe ) {
 	if ( serialized.type === 'annotation' ) {
 		return ve.dm.annotationFactory.createFromElement( serialized.value );
@@ -212,7 +219,7 @@ ve.dm.Change.static.deserializeValue = function ( serialized, unsafe ) {
 /**
  * Rebase parallel transactions transactionA and transactionB onto each other
  *
- * Recalling that a transaction is a mapping from one ve.dm.ElementLinearData state to another,
+ * Recalling that a transaction is a mapping from one ve.dm.LinearData state to another,
  * suppose we have two parallel transactions, i.e.:
  *
  * - transactionA mapping docstate0 to some docstateA, and
@@ -474,8 +481,8 @@ ve.dm.Change.static.rebaseUncommittedChange = function ( history, uncommitted ) 
  * @return {ve.dm.Change.TransactionInfo|null} Info about the transaction if a simple replacement, else null
  */
 ve.dm.Change.static.getTransactionInfo = function ( tx ) {
-	// Copy of ve.dm.ElementLinearData.static.getAnnotationHashesFromItem, but we
-	// don't want to load all of ElementLinearData and its dependencies on the server-side.
+	// Copy of ve.dm.LinearData.static.getAnnotationHashesFromItem, but we
+	// don't want to load all of LinearData and its dependencies on the server-side.
 	function getAnnotations( item ) {
 		if ( typeof item === 'string' ) {
 			return [];

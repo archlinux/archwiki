@@ -17,31 +17,34 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger
  */
 class ChangeTaggerTest extends MediaWikiUnitTestCase {
-	/**
-	 * @return ChangeTagger
-	 */
+
 	private function getTagger(): ChangeTagger {
 		$manager = $this->createMock( ChangeTagsManager::class );
 		$manager->method( 'getCondsLimitTag' )->willReturn( 'tag' );
 		return new ChangeTagger( $manager );
 	}
 
-	/**
-	 * @return Generator
-	 */
-	public function provideActionData(): Generator {
+	private function prepareMocks( array $actionSpecs, array $rcAttribs ): array {
+		$rc = $this->createMock( RecentChange::class );
+		$rc->method( 'getAttribute' )->willReturnCallback(
+			static function ( $name ) use ( $rcAttribs ) {
+				return $rcAttribs[$name];
+			}
+		);
+		$actionSpecifier = new ActionSpecifier(
+			$actionSpecs['action'],
+			$actionSpecs['target'],
+			new UserIdentityValue( 42, $actionSpecs['username'] ),
+			$actionSpecs['ip'],
+			$actionSpecs['accountname'] ?? null
+		);
+		return [ $actionSpecifier, $rc ];
+	}
+
+	public static function provideActionData(): Generator {
 		$titleText = 'FOO';
 		$title = new TitleValue( NS_MAIN, $titleText );
 		$userName = 'Foobar';
-		$getRCFromAttribs = function ( array $attribs ): RecentChange {
-			$rc = $this->createMock( RecentChange::class );
-			$rc->method( 'getAttribute' )->willReturnCallback(
-				static function ( $name ) use ( $attribs ) {
-					return $attribs[$name];
-				}
-			);
-			return $rc;
-		};
 		$baseAttribs = [
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => $titleText,
@@ -49,37 +52,24 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 			'rc_user_text' => $userName,
 			'rc_ip' => '127.0.0.1',
 		];
-		$specifierFromArray = static function ( array $specs ): ActionSpecifier {
-			return new ActionSpecifier(
-				$specs['action'],
-				$specs['target'],
-				new UserIdentityValue( 42, $specs['username'] ),
-				$specs['ip'],
-				$specs['accountname'] ?? null
-			);
-		};
 		$baseSpecs = [ 'username' => $userName, 'target' => $title, 'ip' => '127.0.0.1' ];
 
 		$rcAttribs = [ 'rc_log_type' => null ] + $baseAttribs;
 		yield 'edit' => [
-			'specifier' => $specifierFromArray( [ 'action' => 'edit' ] + $baseSpecs ),
-			'recentchange' => $getRCFromAttribs( $rcAttribs )
+			'specifier' => [ 'action' => 'edit' ] + $baseSpecs,
+			'recentchange' => $rcAttribs
 		];
 
 		$rcAttribs = [ 'rc_log_type' => 'newusers', 'rc_log_action' => 'create2' ] + $baseAttribs;
 		yield 'createaccount' => [
-			'specifier' => $specifierFromArray(
-				[ 'action' => 'createaccount', 'accountname' => $userName ] + $baseSpecs
-			),
-			'recentchange' => $getRCFromAttribs( $rcAttribs )
+			'specifier' => [ 'action' => 'createaccount', 'accountname' => $userName ] + $baseSpecs,
+			'recentchange' => $rcAttribs
 		];
 
 		$rcAttribs = [ 'rc_log_type' => 'newusers', 'rc_log_action' => 'autocreate' ] + $baseAttribs;
 		yield 'autocreate' => [
-			'specifier' => $specifierFromArray(
-				[ 'action' => 'autocreateaccount', 'accountname' => $userName ] + $baseSpecs
-			),
-			'recentchange' => $getRCFromAttribs( $rcAttribs )
+			'specifier' => [ 'action' => 'autocreateaccount', 'accountname' => $userName ] + $baseSpecs,
+			'recentchange' => $rcAttribs
 		];
 	}
 
@@ -91,11 +81,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testTagsToSetWillNotContainDuplicates( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testTagsToSetWillNotContainDuplicates( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$iterations = 3;
@@ -106,11 +95,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testClearBuffer( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testClearBuffer( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$tagger->addTags( $specifier, [ 'a', 'b', 'c' ] );
@@ -119,11 +107,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testAddConditionsLimitTag( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testAddConditionsLimitTag( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$tagger->addConditionsLimitTag( $specifier );
@@ -131,11 +118,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testAddGetTags( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testAddGetTags( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$expected = [ 'foo', 'bar', 'baz' ];
@@ -144,11 +130,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testAddTags_multiple( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testAddTags_multiple( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$expected = [ 'foo', 'bar', 'baz' ];
@@ -159,11 +144,10 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ActionSpecifier $specifier
-	 * @param RecentChange $rc
 	 * @dataProvider provideActionData
 	 */
-	public function testGetTags_clear( ActionSpecifier $specifier, RecentChange $rc ) {
+	public function testGetTags_clear( array $actionSpecs, array $rcAttribs ) {
+		[ $specifier, $rc ] = $this->prepareMocks( $actionSpecs, $rcAttribs );
 		$tagger = $this->getTagger();
 
 		$expected = [ 'foo', 'bar', 'baz' ];

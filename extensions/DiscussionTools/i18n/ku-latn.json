@@ -52,7 +52,6 @@
 	"discussiontools-notification-removed-topic-disabled-body": "Hûn dikarin vê di [[Special:Preferences#mw-prefsection-echo-echosubscriptions|tercihên xwe]] de biguherînin.",
 	"discussiontools-notification-subscribed-new-comment-header": "$1{{GENDER:$2|î|ê|î}} di \"<strong>$4</strong>\" de {{GENDER:$2|bersiv da}}.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Bersiveke|$1 bersivên|100=99+ bersivên}} nû di \"<strong>$3</strong>\" de.",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Şîroveyê bibîne",
 	"discussiontools-pageframe-latestcomment": "Şiroveya dawî: $1 ji aliyê $2 ve di mijara $3 de",
 	"discussiontools-pageframe-latestcomment-notopic": "Şiroveya dawî: $1 ji aliye $2 ve",

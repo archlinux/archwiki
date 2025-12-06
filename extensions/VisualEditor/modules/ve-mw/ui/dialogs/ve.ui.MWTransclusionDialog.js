@@ -100,7 +100,7 @@ ve.ui.MWTransclusionDialog.prototype.onOutlineControlsMove = function ( places )
 	const promise = this.transclusionModel.addPart( part, newPlace );
 	if ( this.loaded && !this.preventReselection ) {
 		// FIXME: Should be handled internally {@see ve.ui.MWTwoPaneTransclusionDialogLayout}
-		promise.done( this.bookletLayout.focusPart.bind( this.bookletLayout, part.getId() ) );
+		promise.then( this.bookletLayout.focusPart.bind( this.bookletLayout, part.getId() ) );
 	}
 };
 
@@ -426,7 +426,7 @@ ve.ui.MWTransclusionDialog.prototype.addPart = function ( part ) {
 	// Add the part, and if dialog is loaded switch to part page
 	const promise = this.transclusionModel.addPart( part, index );
 	if ( this.loaded && !this.preventReselection ) {
-		promise.done( this.bookletLayout.focusPart.bind( this.bookletLayout, part.getId() ) );
+		promise.then( this.bookletLayout.focusPart.bind( this.bookletLayout, part.getId() ) );
 	}
 };
 
@@ -526,7 +526,7 @@ ve.ui.MWTransclusionDialog.prototype.resetDialog = function () {
 	this.bookletLayout.clearPages();
 	const placeholderPage = new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel );
 	this.transclusionModel.addPart( placeholderPage )
-		.done( () => {
+		.then( () => {
 			this.bookletLayout.focusPart( placeholderPage.getId() );
 			this.autoExpandSidebar();
 		} );

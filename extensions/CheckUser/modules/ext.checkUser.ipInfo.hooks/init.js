@@ -7,9 +7,9 @@
 	 */
 	const target = mw.config.get( 'wgRelevantUserName' );
 	const pageName = mw.config.get( 'wgCanonicalSpecialPageName' );
-	mw.hook( 'ext.ipinfo.infobox.widget' ).add( ( $info ) => {
+	mw.hook( 'ext.ipinfo.infobox.widget' ).add( ( $info, info, generateMarkup ) => {
 		// Definition imported by module registration in RLRegisterModulesHandler
 		// eslint-disable-next-line no-undef
-		addSpecialGlobalContributionsLink( $info, target, pageName );
+		addSpecialGlobalContributionsLink( $info, info, generateMarkup, target, pageName );
 	} );
 }() );

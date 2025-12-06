@@ -224,7 +224,6 @@
 	"ns-specialprotected": "Ní féidir leathanaigh speisialta a chur in eagar.",
 	"titleprotected": "Tá an teideal seo cosanta ar chruthú le [[User:$1|$1]].\nAn fáth ná <em>$2</em>.",
 	"virus-scanfailed": "theip an scan (cód $1)",
-	"virus-unknownscanner": "frithvíreas anaithnid:",
 	"logouttext": "'''Tá tú logáilte amach anois.'''\n\nIs féidir leat an {{SITENAME}} a úsáid fós gan ainm, nó is féidir leat <span class='plainlinks'>[$1 logáil isteach arís]</span> mar an úsáideoir céanna, nó mar úsáideoir eile.\nTabhair faoi deara go taispeáinfear roinnt leathanaigh mar atá tú logáilte isteach fós, go dtí go ghlanfá amach do taisce líonleitheora.",
 	"welcomeuser": "Fáilte, $1!",
 	"welcomecreation-msg": "Cruthaíodh do chuntas.",
@@ -267,7 +266,6 @@
 	"userexists": "Tá an ainm úsáideora sin in úsáid cheana féin.<br />\nRoghnaigh ainm eile agus bain triail eile as.",
 	"loginerror": "Earráid leis an logáil isteach",
 	"createaccounterror": "Theip ar an cuntas a chruthú: $1",
-	"nocookiesnew": "Cruthaíodh an cuntas úsáideora, ach níl tú logáilte isteach.\n\nÚsáideann {{SITENAME}} fianáin chun úsáideoirí a logáil isteach.\nTá fianáin díchumasaithe agat.\nCumasaigh iad le do thoil, agus ansin logáil isteach le d'ainm úsáideora agus d'fhocal faire úrnua.",
 	"nocookieslogin": "Úsáideann {{SITENAME}} fianáin chun úsáideoirí a logáil isteach.\nTá fianáin díchumasaithe agat.\nCumasaigh iad agus bain triail eile as, le do thoil.",
 	"noname": "Níor thug tú ainm úsáideora bailí.",
 	"loginsuccesstitle": "Logáilte isteach",
@@ -281,7 +279,6 @@
 	"mailmypassword": "Focal faire a athshocrú",
 	"passwordremindertitle": "Cuimneachán an fhocail faire ó {{SITENAME}}",
 	"passwordremindertext": "D'iarr duine éigin (tusa de réir cosúlachta, ón seoladh IP $1) go sheolfaimis focal faire {{GRAMMAR:genitive|{{SITENAME}}}} nua  ($4).\n\"$3\" an focal faire don úsáideoir \"$2\" anois. Ba chóir duit lógail isteach anois agus d'fhocal faire a athrú.\n\nRachaidh d'fhocail faire sealadach as feidhm i gceann {{PLURAL:$5|lá amháin|$5 lae}}.",
-	"noemail": "Níl aon seoladh ríomhphoist i gcuntas don úsáideoir \"$1\".",
 	"noemailcreate": "Caithfidh tú ríomhphost bailí a thabhairt",
 	"passwordsent": "Cuireadh focal nua faire chuig an ríomhsheoladh atá cláraithe do \"$1\".\nNuair atá sé agat, logáil isteach arís chun fíordheimhniu a dhéanamh.",
 	"eauthentsent": "Cuireadh teachtaireacht ríomhphoist chuig an seoladh\nchun fíordheimhniú a dhéanamh. Chun fíordheimhniú a dhéanamh gur leatsa an cuntas, caithfidh tú glac leis an teachtaireacht sin nó ní sheolfar aon rud eile chuig do chuntas.",
@@ -1186,7 +1183,7 @@
 	"metadata-help": "Tá breis eolais sa comhad seo, curtha, is dócha, as ceamara digiteach ná scanóir a chruthaigh ná a digitigh é.\nMá tá an comhad mionathraithe as an bunleagan, b'fhéidir nach mbeidh ceann de na sonraí fágtha sa comhad atá athruithe.",
 	"metadata-expand": "Taispeáin sonraí sínte",
 	"metadata-collapse": "Folaigh sonraí síneadh",
-	"metadata-fields": "Beidh na meiteasonraí EXIF seo a leanas dá dtaispeáint ar an leathanach íomhá nuair atá an clár meiteasonraí ceilte.\nBeidh na cinn eile ceilte de réir réamhshocraithe.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
+	"metadata-fields": "Beidh na meiteasonraí EXIF seo a leanas dá dtaispeáint ar an leathanach íomhá nuair atá an clár meiteasonraí ceilte.\nBeidh na cinn eile ceilte de réir réamhshocraithe.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname\n* digitalsourcetype",
 	"namespacesall": "uile",
 	"monthsall": "gach mí",
 	"confirmemail": "Deimhnigh do ríomhsheoladh",
@@ -1283,7 +1280,5 @@
 	"renameuserold": "Ainm reatha úsáideora:",
 	"renameusernew": "Ainm nua úsáideora:",
 	"renameusersuccess": "Athainmníodh úsáideoir \"<nowiki>$1</nowiki>\" mar \"<nowiki>$2</nowiki>\"",
-	"renameuser-page-exists": "Tá leathanach \"$1\" ann chean féin; ní féidir ábhar a scríobh thairis go huathoibríoch.",
-	"interwiki_edit": "Cuir in eagar",
-	"interwiki_reasonfield": "Fáth:"
+	"renameuser-page-exists": "Tá leathanach \"$1\" ann chean féin; ní féidir ábhar a scríobh thairis go huathoibríoch."
 }

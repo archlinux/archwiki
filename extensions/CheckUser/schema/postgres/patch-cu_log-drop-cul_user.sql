@@ -3,7 +3,9 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX cul_user;
+
 ALTER TABLE cu_log
   DROP cul_user;
+
 ALTER TABLE cu_log
   DROP cul_user_text;

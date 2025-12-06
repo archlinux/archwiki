@@ -111,7 +111,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 								namespaceId === wgNamespaceIds.file ||
 								namespaceId === wgNamespaceIds.category
 							) &&
-							matches[ 1 ].indexOf( ':' ) !== 0
+							!matches[ 1 ].startsWith( ':' )
 						)
 					) {
 						linkMatches = matches;
@@ -257,8 +257,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 /**
  * @inheritdoc
  */
-ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function ( data = {} ) {
 	// Call grand-parent
 	return ve.ui.FragmentInspector.prototype.getTeardownProcess.call( this, data )
 		.first( () => {
@@ -305,7 +304,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 
 					fragment.insertContent( '[[' + prefix + targetText + labelText + ']]' );
 				} else if ( annotation instanceof ve.dm.MWExternalLinkAnnotation ) {
-					if ( this.initialAnnotation.element.type === 'link/mwMagic' ) {
+					if ( this.initialAnnotation && this.initialAnnotation.element.type === 'link/mwMagic' ) {
 						fragment.insertContent( annotation.element.attributes.href );
 					} else {
 						let labelText = '';

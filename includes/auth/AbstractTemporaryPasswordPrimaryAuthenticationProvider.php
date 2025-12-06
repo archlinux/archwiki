@@ -1,22 +1,7 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Auth
  */
 
 namespace MediaWiki\Auth;
@@ -96,6 +81,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 			$this->config->get( MainConfigNames::PasswordReminderResendTime );
 	}
 
+	/** @inheritDoc */
 	protected function getPasswordResetData( $username, $data ) {
 		// Always reset
 		return (object)[
@@ -104,6 +90,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		];
 	}
 
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		switch ( $action ) {
 			case AuthManager::ACTION_LOGIN:
@@ -135,6 +122,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		}
 	}
 
+	/** @inheritDoc */
 	public function beginPrimaryAuthentication( array $reqs ) {
 		$req = AuthenticationRequest::getRequestByClass( $reqs, PasswordAuthenticationRequest::class );
 		if ( !$req || $req->username === null || $req->password === null ) {
@@ -179,6 +167,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		return AuthenticationResponse::newPass( $username );
 	}
 
+	/** @inheritDoc */
 	public function testUserCanAuthenticate( $username ) {
 		$username = $this->userNameUtils->getCanonical( $username, UserRigorOptions::RIGOR_USABLE );
 		if ( $username === false ) {
@@ -191,6 +180,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 			$this->isTimestampValid( $tempPassTime );
 	}
 
+	/** @inheritDoc */
 	public function providerAllowsAuthenticationDataChange(
 		AuthenticationRequest $req, $checkData = true
 	) {
@@ -283,10 +273,12 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		}
 	}
 
+	/** @inheritDoc */
 	public function accountCreationType() {
 		return self::TYPE_CREATE;
 	}
 
+	/** @inheritDoc */
 	public function testForAccountCreation( $user, $creator, array $reqs ) {
 		/** @var TemporaryPasswordAuthenticationRequest $req */
 		$req = AuthenticationRequest::getRequestByClass(
@@ -310,6 +302,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	public function beginPrimaryAccountCreation( $user, $creator, array $reqs ) {
 		/** @var TemporaryPasswordAuthenticationRequest $req */
 		$req = AuthenticationRequest::getRequestByClass(
@@ -334,6 +327,7 @@ abstract class AbstractTemporaryPasswordPrimaryAuthenticationProvider
 		return AuthenticationResponse::newAbstain();
 	}
 
+	/** @inheritDoc */
 	public function finishAccountCreation( $user, $creator, AuthenticationResponse $res ) {
 		/** @var TemporaryPasswordAuthenticationRequest $req */
 		$req = $res->createRequest;

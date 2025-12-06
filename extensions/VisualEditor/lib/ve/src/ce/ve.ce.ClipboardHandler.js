@@ -114,8 +114,7 @@ ve.ce.ClipboardHandler.static.pasteSourceDetectors = {
  * @param {Object} [beforePasteData] Paste information, including leftText and rightText to strip
  * @return {string} Hash
  */
-ve.ce.ClipboardHandler.static.getClipboardHash = function ( $elements, beforePasteData ) {
-	beforePasteData = beforePasteData || {};
+ve.ce.ClipboardHandler.static.getClipboardHash = function ( $elements, beforePasteData = {} ) {
 	return $elements.text()
 		.slice(
 			beforePasteData.leftText ? beforePasteData.leftText.length : 0,
@@ -257,11 +256,15 @@ ve.ce.ClipboardHandler.prototype.onCopy = function ( e, selection ) {
 /**
  * Get the annotation set that was a the user focus before a paste started
  *
+ * Returns annotations with applyToInsertedContent set (e.g. not importedData).
+ *
  * @return {ve.dm.AnnotationSet} Annotation set
  */
 ve.ce.ClipboardHandler.prototype.getBeforePasteAnnotationSet = function () {
 	const store = this.getSurface().getModel().getDocument().getStore();
-	const dmAnnotations = this.beforePasteAnnotationsAtFocus.map( ( view ) => view.getModel() );
+	const dmAnnotations = this.beforePasteAnnotationsAtFocus
+		.map( ( view ) => view.getModel() )
+		.filter( ( ann ) => ann.constructor.static.applyToInsertedContent );
 	return new ve.dm.AnnotationSet( store, store.hashAll( dmAnnotations ) );
 };
 
@@ -468,6 +471,7 @@ ve.ce.ClipboardHandler.prototype.beforePaste = function ( e ) {
  *
  * @param {jQuery.Event} e Paste event
  * @return {jQuery.Promise} Promise which resolves when the content has been pasted
+ * @fires ve.ce.Surface#paste
  */
 ve.ce.ClipboardHandler.prototype.afterPaste = function () {
 	const surface = this.getSurface(),
@@ -541,6 +545,11 @@ ve.ce.ClipboardHandler.prototype.afterPaste = function () {
 			targetFragment.collapseToEnd().select();
 			surface.findAndExecuteSequences( /* isPaste */ true );
 		}
+
+		surface.emit( 'paste', {
+			source: beforePasteData.source,
+			fragment: fragment
+		} );
 	} );
 };
 
@@ -684,7 +693,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteAddToFragmentFromInternal = function 
 	if ( isMultiline ) {
 		// Take a copy to prevent the data being annotated a second time in the balanced data path
 		// and to prevent actions in the data model affecting view.clipboard
-		linearData = new ve.dm.ElementLinearData(
+		linearData = new ve.dm.LinearData(
 			slice.getStore(),
 			ve.copy( slice.getOriginalData() )
 		);
@@ -702,7 +711,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteAddToFragmentFromInternal = function 
 	// Balanaced data
 	if ( !insertionPromise ) {
 		// Take a copy to prevent actions in the data model affecting view.clipboard
-		linearData = new ve.dm.ElementLinearData(
+		linearData = new ve.dm.LinearData(
 			slice.getStore(),
 			ve.copy( slice.getBalancedData() )
 		);
@@ -730,7 +739,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteAddToFragmentFromInternal = function 
  * Insert some pasted data from an internal source
  *
  * @param {ve.dm.SurfaceFragment} targetFragment Fragment to insert into
- * @param {Array} data Data to insert
+ * @param {ve.dm.LinearData.Item[]} data Data to insert
  * @return {jQuery.Promise} Promise which resolves when the content has been inserted
  */
 ve.ce.ClipboardHandler.prototype.afterPasteInsertInternalData = function ( targetFragment, data ) {
@@ -1000,7 +1009,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteFromExternalContextRange = function (
 	const data = pastedDocumentModel.data,
 		documentRange = pastedDocumentModel.getDocumentRange(),
 		beforePasteData = this.beforePasteData || {},
-		context = new ve.dm.ElementLinearData(
+		context = new ve.dm.LinearData(
 			pastedDocumentModel.getStore(),
 			ve.copy( beforePasteData.context )
 		);
@@ -1014,7 +1023,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteFromExternalContextRange = function (
 	let left = 0;
 	while (
 		context.getLength() &&
-		ve.dm.ElementLinearData.static.compareElementsUnannotated(
+		ve.dm.LinearData.static.compareElementsUnannotated(
 			data.getData( left ),
 			data.isElementData( left ) ? context.getData( 0 ) : leftText
 		)
@@ -1032,7 +1041,7 @@ ve.ce.ClipboardHandler.prototype.afterPasteFromExternalContextRange = function (
 	while (
 		right > 0 &&
 		context.getLength() &&
-		ve.dm.ElementLinearData.static.compareElementsUnannotated(
+		ve.dm.LinearData.static.compareElementsUnannotated(
 			data.getData( right - 1 ),
 			data.isElementData( right - 1 ) ? context.getData( context.getLength() - 1 ) : rightText
 		)

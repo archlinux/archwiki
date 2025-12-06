@@ -19,7 +19,6 @@
 	"gadgetusage-usercount": "Használók száma",
 	"gadgetusage-noresults": "Nem található segédeszköz.",
 	"gadgetusage-intro": "Ez a táblázat azt mutatja, hogy hányan engedélyezték az egyes segédeszközöket ezen a wikin. Aktívnak számít valaki, aki szerkesztett a legutóbbi $1 napon. A lista nem tartalmaz statisztikát alapértelmezetten mindenkinek bekapcsolt segédeszközökhöz, de tartalmazhat már nem elérhetőeket is.",
-	"gadgetusage-intro-noactive": "Ez a táblázat azt mutatja, hogy hányan engedélyezték az egyes segédeszközöket ezen a wikin. A lista nem tartalmaz statisztikát alapértelmezetten mindenkinek bekapcsolt segédeszközökhöz, de tartalmazhat már nem elérhetőeket is.",
 	"gadgetusage-activeusers": "Aktív szerkesztők",
 	"gadgetusage-default": "Alapértelmezett",
 	"gadgets-title": "Segédeszközök",

@@ -33,7 +33,7 @@ mw.echo.api.EchoApi.prototype.registerForeignSources = function ( sources, unrea
 	for ( const s in sources ) {
 		this.network.setApiHandler( s, new mw.echo.api.ForeignAPIHandler( sources[ s ].url, {
 			unreadOnly: !!unreadOnly,
-			limit: limit
+			limit: limit,
 		} ) );
 	}
 };
@@ -157,7 +157,7 @@ mw.echo.api.EchoApi.prototype.fetchNotificationsFromRemoteSource = function ( ty
 		// For the remote source, we are fetching 'local' notifications
 		'local',
 		!!isForced,
-		this.convertFiltersToAPIParams( filters )
+		this.convertFiltersToAPIParams( filters ),
 	) )
 		.then( ( result ) => OO.getProp( result.query, 'notifications' ) );
 };
@@ -184,7 +184,7 @@ mw.echo.api.EchoApi.prototype.fetchNotifications = function ( type, sources, isF
 		type,
 		sources,
 		isForced,
-		this.convertFiltersToAPIParams( filters )
+		this.convertFiltersToAPIParams( filters ),
 	) )
 		.then( ( result ) => OO.getProp( result.query, 'notifications' ) );
 };

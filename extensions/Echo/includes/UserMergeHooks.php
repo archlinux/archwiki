@@ -14,6 +14,10 @@ class UserMergeHooks implements
 	MergeAccountFromToHook,
 	AccountDeleteTablesHook
 {
+	public function __construct(
+		private readonly AttributeManager $attributeManager,
+	) {
+	}
 
 	/**
 	 * For integration with the UserMerge extension.
@@ -28,11 +32,10 @@ class UserMergeHooks implements
 
 	public function onMergeAccountFromTo( User &$oldUser, User &$newUser ) {
 		$method = __METHOD__;
-		DeferredUpdates::addCallableUpdate( static function () use ( $oldUser, $newUser, $method ) {
+		DeferredUpdates::addCallableUpdate( function () use ( $oldUser, $newUser, $method ) {
 			if ( $newUser->isRegistered() ) {
 				// Select notifications that are now sent to the same user
 				$dbw = DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
-				$attributeManager = Services::getInstance()->getAttributeManager();
 				$selfIds = $dbw->newSelectQueryBuilder()
 					->select( 'event_id' )
 					->from( 'echo_notification' )
@@ -40,7 +43,7 @@ class UserMergeHooks implements
 					->where( [
 						'notification_user' => $newUser->getId(),
 						'notification_user = event_agent_id',
-						$dbw->expr( 'event_type', '!=', $attributeManager->getNotifyAgentEvents() ),
+						$dbw->expr( 'event_type', '!=', $this->attributeManager->getNotifyAgentEvents() ),
 					] )
 					->caller( $method )
 					->fetchFieldValues();
@@ -92,7 +95,7 @@ class UserMergeHooks implements
 						->deleteFrom( 'echo_notification' )
 						->where( [
 							'notification_user' => $newUser->getId(),
-							'notification_event' => $ids
+							'notification_event' => $ids,
 						] )
 						->caller( $method )
 						->execute();

@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -122,6 +108,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			'log_deleted',
 		] );
 
+		if ( $params['ids'] ) {
+			$this->addWhereIDsFld( 'logging', 'log_id', $params['ids'] );
+		}
+
 		$user = $params['user'];
 		if ( $this->fld_user || $this->fld_userid || $user !== null ) {
 			$this->addTables( 'actor' );
@@ -172,7 +162,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				[ 'log_id=ct_log_id' ] ] ] );
 			try {
 				$this->addWhereFld( 'ct_tag_id', $this->changeTagDefStore->getId( $params['tag'] ) );
-			} catch ( NameTableAccessException $exception ) {
+			} catch ( NameTableAccessException ) {
 				// Return nothing.
 				$this->addWhere( '1=0' );
 			}
@@ -445,6 +435,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		) );
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		if ( $this->userCanSeeRevDel() ) {
 			return 'private';
@@ -461,6 +452,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams( $flags = 0 ) {
 		$config = $this->getConfig();
 		if ( $flags & ApiBase::GET_VALUES_FOR_HELP ) {
@@ -512,6 +504,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 					'older' => 'api-help-paramvalue-direction-older',
 				],
 			],
+			'ids' => [
+				ParamValidator::PARAM_TYPE => 'integer',
+				ParamValidator::PARAM_ISMULTI => true
+			],
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
 				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
@@ -542,6 +538,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=logevents'
@@ -549,6 +546,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Logevents';
 	}

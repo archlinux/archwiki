@@ -27,8 +27,6 @@ A file for css that optimises the Minerva skin on larger devices.
 	.content {
 		// Classes added by thumbnails
 		// e.g. [[File:Scholars mate animation.gif|frame|left|"[[Scholar's mate]]"]]
-		// We use @noflip because we still want .tleft to be on the left and
-		// .tright to be on the right in RTL languages.
 		figure[ typeof~='mw:File/Thumb' ],
 		figure[ typeof~='mw:File/Frame' ],
 		.thumb {
@@ -40,44 +38,52 @@ A file for css that optimises the Minerva skin on larger devices.
 			margin-left: 1.4em;
 			margin-right: 0;
 			margin-inline: 1.4em 0;
+		}
 
-			&.mw-halign-left,
-			&.tleft {
-				/* @noflip */
-				float: left;
-				/* @noflip */
-				clear: left;
-				/* @noflip */
-				margin-left: 0;
-				/* @noflip */
-				margin-right: 1.4em;
-			}
+		// We use @noflip because we still want .tleft to be on the left and
+		// .tright to be on the right in RTL languages.
+		figure[ typeof~='mw:File/Thumb' ].mw-halign-left,
+		figure[ typeof~='mw:File/Frame' ].mw-halign-left,
+		.thumb.tleft {
+			/* @noflip */
+			float: left;
+			/* @noflip */
+			clear: left;
+			/* @noflip */
+			margin-left: 0;
+			/* @noflip */
+			margin-right: 1.4em;
+		}
 
-			&.mw-halign-right,
-			&.tright {
-				/* @noflip */
-				float: right;
-				/* @noflip */
-				clear: right;
-				/* @noflip */
-				margin-left: 1.4em;
-				/* @noflip */
-				margin-right: 0;
-			}
+		figure[ typeof~='mw:File/Thumb' ].mw-halign-right,
+		figure[ typeof~='mw:File/Frame' ].mw-halign-right,
+		.thumb.tright {
+			/* @noflip */
+			float: right;
+			/* @noflip */
+			clear: right;
+			/* @noflip */
+			margin-left: 1.4em;
+			/* @noflip */
+			margin-right: 0;
+		}
 
-			&.mw-halign-none {
-				float: none;
-				clear: none;
-				margin-left: 0;
-				margin-right: 0;
-			}
+		figure[ typeof~='mw:File/Thumb' ].mw-halign-none,
+		figure[ typeof~='mw:File/Frame' ].mw-halign-none,
+		.thumb.tnone {
+			float: none;
+			clear: none;
+			margin-left: 0;
+			margin-right: 0;
+		}
 
-			&.mw-halign-center {
-				float: none;
-				clear: none;
-				margin-left: auto;
-				margin-right: auto;
-			}
+		figure[ typeof~='mw:File/Thumb' ].mw-halign-center,
+		figure[ typeof~='mw:File/Frame' ].mw-halign-center,
+		.thumb.center {
+			float: none;
+			clear: none;
+			margin-left: auto;
+			margin-right: auto;
 		}
 
 		table {

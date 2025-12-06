@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chorobek"
+			"Chorobek",
+			"Bosogo"
 		]
 	},
 	"pdf-desc": "PDF файлдарды сүрөт түрүндө көрсөткүч",
-	"pdf_no_metadata": "PDF-тин метамаалыматтарын алуу мүмкүн эмес"
+	"pdf-file-page-warning-info": "Бул көйгөйдүн чоо-жайы.",
+	"pdf_no_metadata": "PDF'тин метамаалыматын алуу мүмкүн эмес."
 }

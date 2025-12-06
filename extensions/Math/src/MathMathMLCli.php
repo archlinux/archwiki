@@ -43,11 +43,36 @@ class MathMathMLCli extends MathMathML {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public static function isMathoidCliConfigured(): bool {
+		$mathoidCli = self::getMathoidCli();
+		return is_array( $mathoidCli )
+			&& isset( $mathoidCli[0] )
+			&& is_string( $mathoidCli[0] )
+			&& is_executable( $mathoidCli[0] );
+	}
+
+	/**
+	 * @return string[]|false
+	 */
+	private static function getMathoidCli() {
+		global $wgMathoidCli;
+		if ( is_string( $wgMathoidCli ) ) {
+			return [ $wgMathoidCli ];
+		}
+		if ( is_array( $wgMathoidCli ) ) {
+			return $wgMathoidCli;
+		}
+		return false;
+	}
+
+	/**
 	 * @param stdClass $res
 	 * @return bool
 	 */
 	private function initializeFromCliResponse( $res ) {
-		global $wgMathoidCli;
+		$mathoidCli = self::getMathoidCli();
 		if ( !property_exists( $res, $this->getInputHash() ) ) {
 			$this->lastError =
 				$this->getError( 'math_mathoid_error', 'cli',
@@ -67,7 +92,7 @@ class MathMathMLCli extends MathMathML {
 		$this->tex = $response->sanetex;
 		// The host name is only relevant for the debugging. So using file:// to indicate that the
 		// cli interface seems to be OK.
-		$this->processJsonResult( $response, 'file://' . $wgMathoidCli[0] );
+		$this->processJsonResult( $response, 'file://' . $mathoidCli[0] );
 		$this->mathStyle = $response->mathoidStyle;
 		$this->changed = true;
 		return true;
@@ -88,7 +113,7 @@ class MathMathMLCli extends MathMathML {
 				case '-':
 					// we do not know any cases that triggers this error
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// use default error message
 		}
 
@@ -114,10 +139,10 @@ class MathMathMLCli extends MathMathML {
 	 * @return mixed
 	 */
 	private static function evaluateWithCli( $req, &$exitCode = null ) {
-		global $wgMathoidCli;
+		$mathoidCli = self::getMathoidCli();
 		$json_req = json_encode( $req );
 		$cmd = MediaWikiServices::getInstance()->getShellCommandFactory()->create();
-		$cmd->params( $wgMathoidCli );
+		$cmd->params( $mathoidCli );
 		$cmd->input( $json_req );
 		$result = $cmd->execute();
 		if ( $result->getExitCode() != 0 ) {
@@ -125,10 +150,10 @@ class MathMathMLCli extends MathMathML {
 			LoggerFactory::getInstance( 'Math' )->error( 'Can not process {req} with config
 			 {conf} returns {res}', [
 				'req' => $req,
-				'conf' => var_export( $wgMathoidCli, true ),
+				'conf' => var_export( $mathoidCli, true ),
 				'res' => var_export( $result, true ),
 			] );
-			throw new RuntimeException( "Failed to execute Mathoid cli '$wgMathoidCli[0]', reason: $errorMsg" );
+			throw new RuntimeException( "Failed to execute Mathoid cli '$mathoidCli[0]', reason: $errorMsg" );
 		}
 		$res = json_decode( $result->getStdout() );
 		if ( !$res ) {
@@ -140,11 +165,7 @@ class MathMathMLCli extends MathMathML {
 
 	/** @inheritDoc */
 	public function render() {
-		if ( $this->getLastError() ) {
-			return false;
-		}
-
-		return true;
+		return !$this->getLastError();
 	}
 
 	protected function doCheck(): bool {

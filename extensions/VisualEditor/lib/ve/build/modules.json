@@ -293,16 +293,24 @@
 			"src/ve.js"
 		]
 	},
+	"visualEditor.track": {
+		"scripts": [
+			"src/ve.track.js"
+		],
+		"dependencies": [
+			"visualEditor.core.ve"
+		]
+	},
 	"visualEditor.core.utils": {
 		"scripts": [
 			"src/ve.utils.js",
 			"src/ve.TriggerListener.js",
 			{ "file": "src/ve.debug.js", "debug": true },
-			{ "file": "src/ve.freeze.js", "debug": true },
-			"src/ve.track.js"
+			{ "file": "src/ve.freeze.js", "debug": true }
 		],
 		"dependencies": [
-			"visualEditor.core.ve"
+			"visualEditor.core.ve",
+			"visualEditor.track"
 		]
 	},
 	"visualEditor.core.utils.parsing": {
@@ -380,6 +388,7 @@
 			"src/dm/ve.dm.LeafNode.js",
 			"src/dm/ve.dm.Annotation.js",
 			"src/dm/ve.dm.InternalList.js",
+			"src/dm/ve.dm.InternalListNodeGroup.js",
 			"src/dm/ve.dm.MetaItem.js",
 			"src/dm/ve.dm.MetaList.js",
 			"src/dm/ve.dm.TableMatrix.js",
@@ -400,13 +409,13 @@
 			"src/dm/ve.dm.TableSlice.js",
 			"src/dm/ve.dm.LinearData.js",
 			"src/dm/ve.dm.HashValueStore.js",
+			"src/dm/converters/ve.dm.DomFromModelConverter.js",
+			"src/dm/converters/ve.dm.ModelFromDomConverter.js",
 			"src/dm/ve.dm.Converter.js",
 			"src/dm/ve.dm.SourceConverter.js",
 			"src/dm/selections/ve.dm.LinearSelection.js",
 			"src/dm/selections/ve.dm.NullSelection.js",
 			"src/dm/selections/ve.dm.TableSelection.js",
-			"src/dm/lineardata/ve.dm.FlatLinearData.js",
-			"src/dm/lineardata/ve.dm.ElementLinearData.js",
 			"src/dm/nodes/ve.dm.GeneratedContentNode.js",
 			"src/dm/nodes/ve.dm.AlienNode.js",
 			"src/dm/nodes/ve.dm.AlienBlockNode.js",
@@ -428,6 +437,7 @@
 			"src/dm/nodes/ve.dm.ListNode.js",
 			"src/dm/nodes/ve.dm.ParagraphNode.js",
 			"src/dm/nodes/ve.dm.PreformattedNode.js",
+			"src/dm/nodes/ve.dm.ReferenceNode.js",
 			"src/dm/nodes/ve.dm.SectionNode.js",
 			"src/dm/nodes/ve.dm.TableCaptionNode.js",
 			"src/dm/nodes/ve.dm.TableCellNode.js",
@@ -595,7 +605,8 @@
 			"src/ce/styles/nodes/ve.ce.TableCellNode.less",
 			"src/ce/styles/nodes/ve.ce.TableNode.less",
 			"src/ce/styles/ve.ce.less",
-			"src/ce/styles/ve.ce.Surface.less"
+			"src/ce/styles/ve.ce.Surface.less",
+			"src/ce/styles/ve.ce.SelectionManager.less"
 		],
 		"styleGroup": "ve"
 	},
@@ -756,7 +767,8 @@
 			"src/ui/styles/widgets/ve.ui.TargetWidget.less",
 			"src/ui/styles/windowmanagers/ve.ui.SidebarDialogWindowManager.less",
 			"src/ui/styles/ve.ui.TableLineContext.less",
-			"src/ui/styles/ve.ui.Toolbar.less"
+			"src/ui/styles/ve.ui.Toolbar.less",
+			{ "file": "src/ui/styles/ve.ui.DebugBar.less", "debug": true }
 		],
 		"styleGroup": "ve"
 	},
@@ -822,10 +834,12 @@
 			"src/ve.FakePeer.js",
 			"src/dm/ve.dm.RebaseClient.js",
 			"src/dm/ve.dm.SurfaceSynchronizer.js",
+			"src/ce/ve.ce.SurfaceSynchronizer.js",
 			"src/ui/widgets/ve.ui.AuthorItemWidget.js",
 			"src/ui/tools/ve.ui.AuthorListPopupTool.js"
 		],
 		"styles": [
+			"src/ce/styles/ve.ce.SurfaceSynchronizer.less",
 			"src/ui/styles/widgets/ve.ui.AuthorItemWidget.less"
 		],
 		"dependencies": [
@@ -882,6 +896,7 @@
 			"tests/dm/ve.dm.Document.test.js",
 			"tests/dm/ve.dm.HashValueStore.test.js",
 			"tests/dm/ve.dm.InternalList.test.js",
+			"tests/dm/ve.dm.InternalListNodeGroup.test.js",
 			"tests/dm/ve.dm.LinearData.test.js",
 			"tests/dm/ve.dm.Transaction.test.js",
 			"tests/dm/ve.dm.TransactionBuilder.test.js",
@@ -905,8 +920,6 @@
 			"tests/dm/selections/ve.dm.LinearSelection.test.js",
 			"tests/dm/selections/ve.dm.NullSelection.test.js",
 			"tests/dm/selections/ve.dm.TableSelection.test.js",
-			"tests/dm/lineardata/ve.dm.FlatLinearData.test.js",
-			"tests/dm/lineardata/ve.dm.ElementLinearData.test.js",
 			"tests/ce/ve.ce.test.js",
 			"tests/ce/ve.ce.Document.test.js",
 			"tests/ce/ve.ce.ClipboardHandler.test.js",
@@ -995,6 +1008,7 @@
 			"jsdifflib",
 			"qunit",
 			"visualEditor.desktop.standalone.wikimediaui",
+			"visualEditor.mobile.build",
 			"visualEditor.rebase",
 			"visualEditor.collab"
 		]
@@ -1061,8 +1075,7 @@
 			"src/init/sa/ve.init.sa.Target.js"
 		],
 		"styles": [
-			"src/init/sa/styles/ve.init.sa.Platform.less",
-			{ "file": "src/ui/styles/ve.ui.DebugBar.less", "debug": true }
+			"src/init/sa/styles/ve.init.sa.Platform.less"
 		],
 		"dependencies": [
 			"visualEditor.base.build",
@@ -1136,6 +1149,7 @@
 			"rebaser/src/dm/ve.dm.ProtocolServer.js",
 			"src/dm/ve.dm.RebaseClient.js",
 			"src/dm/ve.dm.SurfaceSynchronizer.js",
+			"src/ce/ve.ce.SurfaceSynchronizer.js",
 			"src/ui/widgets/ve.ui.AuthorItemWidget.js",
 			"src/ui/tools/ve.ui.AuthorListPopupTool.js",
 			"src/ve.FakePeer.js",
@@ -1145,6 +1159,7 @@
 			"collab/ve.ui.CollabTool.js"
 		],
 		"styles": [
+			"src/ce/styles/ve.ce.SurfaceSynchronizer.less",
 			"src/ui/styles/widgets/ve.ui.AuthorItemWidget.less"
 		],
 		"styleGroup": "read",

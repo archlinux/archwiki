@@ -104,6 +104,19 @@ class TitleBlacklistEntry {
 			return false;
 		}
 
+		if ( isset( $this->mParams['moveonly'] ) && $action != 'move' ) {
+			return false;
+		}
+		if ( isset( $this->mParams['newaccountonly'] ) && $action != 'new-account' ) {
+			return false;
+		}
+		if ( !isset( $this->mParams['noedit'] ) && $action == 'edit' ) {
+			return false;
+		}
+		if ( isset( $this->mParams['reupload'] ) && $action == 'upload' ) {
+			// Special:Upload also checks 'create' permissions when not reuploading
+			return false;
+		}
 		if ( $action === 'new-account' && !$this->filtersNewAccounts() ) {
 			return false;
 		}
@@ -144,24 +157,7 @@ class TitleBlacklistEntry {
 		);
 		AtEase::restoreWarnings();
 
-		if ( $match ) {
-			if ( isset( $this->mParams['moveonly'] ) && $action != 'move' ) {
-				return false;
-			}
-			if ( isset( $this->mParams['newaccountonly'] ) && $action != 'new-account' ) {
-				return false;
-			}
-			if ( !isset( $this->mParams['noedit'] ) && $action == 'edit' ) {
-				return false;
-			}
-			if ( isset( $this->mParams['reupload'] ) && $action == 'upload' ) {
-				// Special:Upload also checks 'create' permissions when not reuploading
-				return false;
-			}
-			return true;
-		}
-
-		return false;
+		return (bool)$match;
 	}
 
 	/**
@@ -256,7 +252,7 @@ class TitleBlacklistEntry {
 	}
 
 	/**
-	 * @return string Custom message for this entry
+	 * @return string|null Custom message for this entry
 	 */
 	public function getCustomMessage() {
 		return $this->mParams['errmsg'] ?? null;

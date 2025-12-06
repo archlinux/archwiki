@@ -3,8 +3,9 @@
 		"authors": [
 			"Aefgh39622",
 			"Ekminarin",
+			"Electorus",
 			"Patsagorn Y.",
-			"Electorus"
+			"Woraponboonkerd"
 		]
 	},
 	"apihelp-main-param-action": "การกระทำที่ต้องการให้ดำเนินการ",
@@ -20,7 +21,7 @@
 	"apihelp-main-param-uselang": "ภาษาที่จะใช้สำหรับการแปลข้อความ <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo]]</kbd> พร้อม <kbd>siprop=languages</kbd> แสดงรายชื่อรหัสภาษา หรือระบุ <kbd>user</kbd> เพื่อใช้การตั้งค่าภาษาปัจจุบันของผู้ใช้ หรือระบุ <kbd>content</kbd> เพื่อใช้ภาษาเนื้อหาของวิกินี้",
 	"apihelp-main-param-errorsuselocal": "ถ้าระบุไว้ ข้อความระบุข้อผิดพลาดจะใช้ข้อความที่ปรับแต่งเฉพาะที่จากเนมสเปซ {{ns:MediaWiki}}",
 	"apihelp-block-summary": "บล็อกผู้ใช้",
-	"apihelp-block-param-user": "ผู้ใช้ที่จะบล็อก",
+	"apihelp-block-param-user": "ผู้ใช้ที่จะถูกบล็อค ไม่สามารถใช้ร่วมกับ <var>$1ID</var> ได้",
 	"apihelp-block-param-userid": "ไอดีผู้ใช้ที่ต้องการบล็อก ไม่สามารถใช้ร่วมกับ <var>$1user</var> ได้",
 	"apihelp-block-param-expiry": "เวลาหมดอายุ อาจเป็นค่าสัมพัทธ์ (เช่น <kbd>5 months</kbd> หรือ <kbd>2 weeks</kbd>) หรือค่าสัมบูรณ์ (เช่น <kbd>2014-09-18T12:34:56Z</kbd>) ถ้ากำหนดเป็น <kbd>infinite</kbd>, <kbd>indefinite</kbd> หรือ <kbd>never</kbd> การบล็อกจะไม่มีเวลาหมดอายุ",
 	"apihelp-block-param-reason": "เหตุผลสำหรับการบล็อก",
@@ -278,6 +279,9 @@
 	"apihelp-query+siteinfo-example-simple": "ดึงข้อมูลไซต์",
 	"apihelp-query+templates-param-limit": "จำนวนแม่แบบที่จะส่งกลับ",
 	"apihelp-query+tokens-param-type": "ชนิดของโทเค็นที่จะร้องขอ",
+	"apihelp-query+trackingcategories-param-min": "ส่งคืนเฉพาะหมวดหมู่ที่มีอยู่ที่มีสมาชิกอย่างน้อยจำนวนนี้เท่านั้น",
+	"apihelp-query+trackingcategories-paramvalue-prop-size": "เพิ่มจำนวนหน้าในหมวดหมู่",
+	"apihelp-query+trackingcategories-example-size": "รายการหมวดหมู่ที่มีข้อมูลเกี่ยวกับจํานวนหน้าในแต่ละหมวด",
 	"apihelp-query+transcludedin-paramvalue-prop-pageid": "ไอดีหน้าของแต่ละหน้า",
 	"apihelp-query+transcludedin-paramvalue-prop-title": "ชื่อของแต่ละหน้า",
 	"apihelp-query+userinfo-paramvalue-prop-realname": "เพิ่มชื่อจริงของผู้ใช้",

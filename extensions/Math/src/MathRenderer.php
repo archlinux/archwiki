@@ -374,8 +374,6 @@ abstract class MathRenderer {
 
 	/**
 	 * Sets the TeX code
-	 *
-	 * @param ?string $tex
 	 */
 	public function setTex( ?string $tex ) {
 		if ( $this->tex != $tex ) {

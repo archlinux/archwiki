@@ -107,7 +107,7 @@ class SpecialNotifications extends SpecialPage {
 				->setAttributes( [
 					'data-notification-category' => $row['category'],
 					'data-notification-event' => $row['id'],
-					'data-notification-type' => $row['type']
+					'data-notification-type' => $row['type'],
 				] )
 				->appendContent( new OOUI\HtmlSnippet( $row['*'] ) );
 
@@ -159,7 +159,7 @@ class SpecialNotifications extends SpecialPage {
 
 			$dateTitle = new OOUI\LabelWidget( [
 				'classes' => [ 'mw-echo-date-section-text' ],
-				'label' => $section
+				'label' => $section,
 			] );
 
 			$heading->appendContent( $dateTitle );
@@ -255,7 +255,7 @@ class SpecialNotifications extends SpecialPage {
 				'href' => SpecialPage::getTitleFor( 'Preferences', false, 'mw-prefsection-echo' )->getLinkURL(),
 				'id' => 'mw-echo-pref-link',
 				'class' => 'mw-echo-special-header-link',
-				'title' => $this->msg( 'preferences' )->text()
+				'title' => $this->msg( 'preferences' )->text(),
 			],
 			$this->msg( 'preferences' )->text()
 		);

@@ -80,7 +80,6 @@ class CommentModifier {
 	 * @param string $replyIndentation Reply indentation syntax to use, one of:
 	 *   - 'invisible' (use `<dl><dd>` tags to output `:` in wikitext)
 	 *   - 'bullet' (use `<ul><li>` tags to output `*` in wikitext)
-	 * @return Element
 	 */
 	public static function addListItem( ContentThreadItem $comment, string $replyIndentation ): Element {
 		$listTypeMap = [
@@ -305,7 +304,6 @@ class CommentModifier {
 	 *
 	 * @param iterable<Node> $nodes Node list
 	 * @param string $type Element type
-	 * @return bool
 	 */
 	private static function allOfType( iterable $nodes, string $type ): bool {
 		$hasElements = false;

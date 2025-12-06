@@ -83,6 +83,7 @@ function adaptApiResponse( urlGeneratorInstance, query, restResponse, showDescri
 
 /**
  * @typedef {Object} SearchClient
+ * @property {fetchRecommendationByTitle} fetchRecommendationByTitle
  * @property {fetchByTitle} fetchByTitle
  * @property {loadMore} [loadMore]
  */
@@ -90,16 +91,38 @@ function adaptApiResponse( urlGeneratorInstance, query, restResponse, showDescri
 /**
  * @param {string} searchApiUrl
  * @param {UrlGenerator} urlGeneratorInstance
+ * @param {string} recommendationApiUrl
  * @return {SearchClient}
  */
-function restSearchClient( searchApiUrl, urlGeneratorInstance ) {
+function restSearchClient( searchApiUrl, urlGeneratorInstance, recommendationApiUrl = null ) {
 	return {
+		/**
+		 * @type {fetchRecommendationByTitle}
+		 */
+		fetchRecommendationByTitle: recommendationApiUrl ? ( currentTitle, showDescription = true ) => {
+			const result = fetchJson( recommendationApiUrl.replace( /\$1/g, currentTitle ), {
+				headers: {
+					accept: 'application/json'
+				}
+			} );
+			const recommendationResponsePromise = result.fetch
+				.then( ( /** @type {RestResponse} */ res ) => adaptApiResponse(
+					urlGeneratorInstance, '', res, showDescription
+				) );
+			return {
+				abort: result.abort,
+				fetch: recommendationResponsePromise
+			};
+		} : undefined,
 		/**
 		 * @type {fetchByTitle}
 		 */
 		fetchByTitle: ( q, limit = 10, showDescription = true ) => {
 			const params = { q, limit: limit.toString() };
 			const search = new URLSearchParams( params );
+			mw.hook( 'typeaheadSearch.appendUrlParams' ).fire( ( key, value ) => {
+				search.append( key, value );
+			} );
 			const url = `${ searchApiUrl }/v1/search/title?${ search.toString() }`;
 			const result = fetchJson( url, {
 				headers: {

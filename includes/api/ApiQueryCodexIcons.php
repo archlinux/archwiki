@@ -17,6 +17,7 @@ class ApiQueryCodexIcons extends ApiQueryBase {
 		$result->addValue( 'query', $this->getModuleName(), $icons );
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
@@ -29,16 +30,19 @@ class ApiQueryCodexIcons extends ApiQueryBase {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'names' => [
-				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_TYPE => array_keys( CodexModule::getIcons( null, $this->getConfig() ) ),
 				ParamValidator::PARAM_REQUIRED => true,
 				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_ALL => true,
 			]
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=codexicons&names=cdxIconInfo|cdxIconTrash' =>
@@ -46,6 +50,7 @@ class ApiQueryCodexIcons extends ApiQueryBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:CodexIcons';
 	}

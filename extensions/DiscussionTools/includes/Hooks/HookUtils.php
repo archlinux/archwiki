@@ -128,8 +128,6 @@ class HookUtils {
 	 *        May be set to false for batch operations to avoid flooding the cache.
 	 *        Otherwise, it should be set to the name of the calling method (__METHOD__),
 	 *        so we can track what is causing parser cache writes.
-	 *
-	 * @return ContentThreadItemSetStatus
 	 */
 	public static function parseRevisionParsoidHtml(
 		RevisionRecord $revRecord,
@@ -220,7 +218,7 @@ class HookUtils {
 				try {
 					return $gadgetsRepo->getGadget( $gadgetName )
 						->isEnabled( $user );
-				} catch ( \InvalidArgumentException $e ) {
+				} catch ( \InvalidArgumentException ) {
 					return false;
 				}
 			}
@@ -234,7 +232,6 @@ class HookUtils {
 	 * @param UserIdentity $user
 	 * @param string|null $feature Feature to check for (one of static::FEATURES)
 	 *  Null will check for any DT feature.
-	 * @return bool
 	 */
 	public static function isFeatureAvailableToUser( UserIdentity $user, ?string $feature = null ): bool {
 		$services = MediaWikiServices::getInstance();
@@ -284,7 +281,6 @@ class HookUtils {
 	 * @param UserIdentity $user
 	 * @param string|null $feature Feature to check for (one of static::FEATURES)
 	 *  Null will check for any DT feature.
-	 * @return bool
 	 */
 	public static function isFeatureEnabledForUser( UserIdentity $user, ?string $feature = null ): bool {
 		if ( !static::isFeatureAvailableToUser( $user, $feature ) ) {
@@ -319,7 +315,6 @@ class HookUtils {
 	 * @param Title $title
 	 * @param string|null $feature Feature to check for (one of static::FEATURES)
 	 *  Null will check for any DT feature.
-	 * @return bool
 	 */
 	public static function isAvailableForTitle( Title $title, ?string $feature = null ): bool {
 		// Only wikitext pages (e.g. not Flow boards, special pages)
@@ -381,7 +376,6 @@ class HookUtils {
 	 * @param OutputPage $output
 	 * @param string|null $feature Feature to check for (one of static::FEATURES)
 	 *  Null will check for any DT feature.
-	 * @return bool
 	 */
 	public static function isFeatureEnabledForOutput( OutputPage $output, ?string $feature = null ): bool {
 		// Only show on normal page views (not history etc.), and in edit mode for previews
@@ -455,8 +449,13 @@ class HookUtils {
 				$feature === static::NEWTOPICTOOL ||
 				$feature === static::SOURCEMODETOOLBAR ||
 				// Even though mobile ignores user preferences, TOPICSUBSCRIPTION must
-				// still be disabled if the user isn't registered.
-				( $feature === static::TOPICSUBSCRIPTION && $output->getUser()->isNamed() ) ||
+				// still be disabled if the user isn't registered, or
+				// if Echo is disabled
+				(
+					$feature === static::TOPICSUBSCRIPTION &&
+					$output->getUser()->isNamed() &&
+					ExtensionRegistry::getInstance()->isLoaded( 'Echo' )
+				) ||
 				$feature === static::VISUALENHANCEMENTS ||
 				$feature === static::VISUALENHANCEMENTS_REPLY ||
 				$feature === static::VISUALENHANCEMENTS_PAGEFRAME;

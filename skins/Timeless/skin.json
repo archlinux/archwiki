@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -17,7 +17,6 @@
 			"args": [
 				{
 					"name": "timeless",
-					"supportsMwHeading": true,
 					"bodyOnly": true,
 					"template": "MediaWiki\\Skin\\Timeless\\TimelessTemplate",
 					"responsive": true,

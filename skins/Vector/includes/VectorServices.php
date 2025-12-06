@@ -12,11 +12,6 @@ use MediaWiki\Skins\Vector\Services\LanguageService;
  */
 final class VectorServices {
 
-	/**
-	 * Gets the language service.
-	 *
-	 * @return LanguageService
-	 */
 	public static function getLanguageService(): LanguageService {
 		return new LanguageService();
 	}

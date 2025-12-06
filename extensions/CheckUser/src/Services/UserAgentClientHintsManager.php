@@ -102,7 +102,7 @@ class UserAgentClientHintsManager {
 			->table( 'cu_useragent_clienthints_map' )
 			->where( [
 				'uachm_reference_type' => $this->getMapIdByType( $type ),
-				'uachm_reference_id' => $referenceId
+				'uachm_reference_id' => $referenceId,
 			] )
 			->caller( __METHOD__ )
 			->fetchRowCount();
@@ -129,16 +129,12 @@ class UserAgentClientHintsManager {
 	 * @return int One of self::IDENTIFIER_* constants
 	 */
 	private function getMapIdByType( string $type ): int {
-		switch ( $type ) {
-			case 'revision':
-				return self::IDENTIFIER_CU_CHANGES;
-			case 'log':
-				return self::IDENTIFIER_CU_LOG_EVENT;
-			case 'privatelog':
-				return self::IDENTIFIER_CU_PRIVATE_EVENT;
-			default:
-				throw new LogicException( "Invalid type $type" );
-		}
+		return match ( $type ) {
+			'revision' => self::IDENTIFIER_CU_CHANGES,
+			'log' => self::IDENTIFIER_CU_LOG_EVENT,
+			'privatelog' => self::IDENTIFIER_CU_PRIVATE_EVENT,
+			default => throw new LogicException( "Invalid type $type" ),
+		};
 	}
 
 	/**
@@ -151,7 +147,6 @@ class UserAgentClientHintsManager {
 	 * @param string $type
 	 * @return StatusValue
 	 * @see insertClientHintValues, which invokes this method.
-	 *
 	 */
 	private function insertMappingRows(
 		array $clientHintMapping, int $foreignId, string $type

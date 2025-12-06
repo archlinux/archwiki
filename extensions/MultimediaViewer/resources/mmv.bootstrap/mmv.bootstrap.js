@@ -41,6 +41,8 @@ class MultimediaViewerBootstrap {
 		 */
 		this.viewerIsBroken = false;
 
+		this.viewerPromise = null;
+
 		this.thumbsReadyDeferred = $.Deferred();
 		/**
 		 * @property {LightboxImage[]}
@@ -64,7 +66,8 @@ class MultimediaViewerBootstrap {
 	 * @param {string} fileName
 	 */
 	route( fileName ) {
-		this.loadViewer( true ).then( ( viewer ) => {
+		this.viewerPromise = this.loadViewer( true );
+		this.viewerPromise.then( ( viewer ) => {
 			let fileTitle;
 			viewer.comingFromHashChange = true;
 			try {
@@ -82,6 +85,7 @@ class MultimediaViewerBootstrap {
 				// ignore routes to invalid titles
 				mw.log.warn( err );
 			}
+			viewer.comingFromHashChange = false;
 		} );
 	}
 
@@ -92,6 +96,26 @@ class MultimediaViewerBootstrap {
 	 */
 	setupRouter( router ) {
 		router.addRoute( Config.ROUTE_REGEXP, this.route.bind( this ) );
+		// Handle empty hashes, and anchor links (page sections)
+		router.on( 'route', ( ev ) => {
+			if ( ev.path.match( Config.ROUTE_REGEXP ) ) {
+				return;
+			}
+			if ( this.viewerPromise ) {
+				this.viewerPromise.then( ( viewer ) => {
+					if ( viewer.isOpen ) {
+						viewer.comingFromHashChange = true;
+						document.title = viewer.createDocumentTitle( null );
+						if ( viewer.ui ) {
+							// FIXME triggers mmv-close event, which calls viewer.close()
+							viewer.ui.unattach();
+						} else {
+							viewer.close();
+						}
+					}
+				} );
+			}
+		} );
 		this.router = router;
 	}
 

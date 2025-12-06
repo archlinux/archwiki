@@ -243,6 +243,7 @@
 	"visualeditor-includes-includeonly-description": "Kur lënda e kësaj faqeje përdoret nga një faqe tjetër, lënda shtesë e mëposhtme do të përfshihet këtu:",
 	"visualeditor-includes-documentation": "[https://www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Mësoni më tepër mbi ndërpërfshirje të pjesshme]",
 	"visualeditor-languages-tool": "Gjuhë",
+	"visualeditor-linkcontext-uneditable": "Na vjen keq, por kjo lidhje mund të redaktohet vetëm në modalitetin burimor për momentin.",
 	"visualeditor-linkinspector-button-link-external": "Faqe e jashtme",
 	"visualeditor-linkinspector-button-link-internal": "Kërkoni faqe të brendshme",
 	"visualeditor-linkinspector-convert-link-isbn": "Shndërrojeni në lidhje ISBN",

@@ -212,6 +212,8 @@
 	"rcfilters-watchlist-preference-label": "ग़ैर-जावास्क्रिप्ट इंटरफ़ेस का उपयोग करें",
 	"rcfilters-watchlist-preference-help": "[[{{#special:Watchlist}}|ध्यानसूची]] को फ़िल्टर के किए गए खोज या फिर हाइलाइटिंग की कार्यक्षमता के बिना लोड करता है।",
 	"prefs-changeswatchlist": "दर्शाए गए बदलाव",
+	"tog-watchstar-expiry": "हाथ से जोड़े गए पृष्ठों के लिए ध्यानसूची में डिफ़ॉल्ट अवधि:",
+	"tog-watch-expiry": "डिफ़ॉल्ट अवधि:",
 	"tog-watchlisthideminor": "ध्यानसूची से छोटे सम्पादन छिपाएँ",
 	"tog-watchlisthidebots": "ध्यानसूची से बॉट द्वारा किए गए सम्पादन छिपाएँ",
 	"tog-watchlisthideown": "ध्यानसूची से मेरे द्वारा किए गए सम्पादन छिपाएँ",

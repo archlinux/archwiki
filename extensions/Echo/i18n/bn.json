@@ -6,6 +6,7 @@
 			"Aishik Rehman",
 			"Bellayet",
 			"Bodhisattwa",
+			"Borhan",
 			"Jayantanth",
 			"Kayser Ahmad",
 			"Macofe",
@@ -13,8 +14,7 @@
 			"Sayak Sarkar",
 			"Yahya",
 			"আফতাবুজ্জামান",
-			"খাত্তাব হাসান",
-			"Borhan"
+			"খাত্তাব হাসান"
 		]
 	},
 	"echo-desc": "ঘটনা এবং বার্তা সম্পর্কে ব্যবহারকারীদের বিজ্ঞপ্তি দেয়ার জন্য ব্যবস্থা",
@@ -65,15 +65,12 @@
 	"echo-category-title-thank-you-edit": "সম্পাদনা {{PLURAL:$1|মাইলফলক|মাইলফলকগুলি}}",
 	"echo-category-title-watchlist": "নজরে রাখা পাতায় সম্পাদনা",
 	"echo-category-title-minor-watchlist": "নজরে রাখা পাতায় অনুল্লেখ্য সম্পাদনা",
-	"echo-pref-tooltip-edit-user-talk": "আমার আলাপ পাতায় কেউ সম্পাদনা করলে আমাকে বিজ্ঞপ্তি দিন।",
-	"echo-pref-tooltip-edit-user-page": "কেউ আমার ব্যবহারকারী পাতা সম্পাদনা করলে আমাকে বিজ্ঞপ্তি দিন।",
+	"echo-category-title-verify-email-reminder": "ইমেল নিশ্চিতকরণের অনুস্মারক",
 	"echo-pref-tooltip-article-linked": "কেউ অন্য পাতায় আমার তৈরি কোনো পাতার লিঙ্ক প্রদান করলে আমাকে বিজ্ঞপ্তি দিন।",
 	"echo-pref-tooltip-reverted": "পূর্বাবস্থা বা রোলব্যাক সরঞ্জাম দিয়ে কেউ আমার সম্পাদনা ফেরত নিলে আমাকে বিজ্ঞপ্তি দিন।",
 	"echo-pref-tooltip-mention": "কেউ আমার ব্যবহারকারী পাতার লিঙ্ক প্রদান করলে আমাকে বিজ্ঞপ্তি দিন।",
 	"echo-pref-tooltip-mention-failure": "আমি কাউকে উল্লেখ করতে ব্যর্থ হলে আমাকে বিজ্ঞপ্তি দিন।",
 	"echo-pref-tooltip-mention-success": "আমি কাউকে উল্লেখ করলে আমাকে বিজ্ঞপ্তি দিন।",
-	"echo-pref-tooltip-user-rights": "কেউ আমার ব্যবহারকারীর অধিকার পরিবর্তন করলে আমাকে বিজ্ঞপ্তি দিন।",
-	"echo-pref-tooltip-emailuser": "কেউ আমাকে একটি ইমেল প্রেরণ করলে আমাকে বিজ্ঞপ্তি দিন।",
 	"echo-pref-tooltip-article-reminder": "এই পাতা সম্পর্কে আমাকে অবহিত করুন যখন আমি জিজ্ঞেস করব।",
 	"echo-pref-tooltip-thank-you-edit": "আমি ১ম, ১০ম, ১০০তম... সম্পাদনায় পৌঁছলে আমাকে অবহিত করুন।",
 	"echo-pref-tooltip-watchlist": "কেউ আমার নজরে রাখা পাতায় (অনুল্লেখ্য নয় এমন) সম্পাদনা করলে আমাকে অবহিত করুন।",
@@ -90,8 +87,6 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "মঞ্জুরিপ্রাপ্ত বিজ্ঞপ্তির পদ্ধতি",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "প্রতিটি বিষয়শ্রেণীর জন্য যে বিজ্ঞপ্তির পদ্ধতি সমর্থিত",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "পূর্বনির্ধারিত রুপে সক্রিয়",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "বিদ্যমান ব্যবহারকারী",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "নতুন ব্যবহারকারী",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "প্রয়োজনীয় বিজ্ঞপ্তির পদ্ধতি",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "প্রতিটি বিষয়শ্রেণীর জন্য যে বিজ্ঞপ্তির পদ্ধতি আবশ্যিক",
 	"echo-specialpage": "বিজ্ঞপ্তি",
@@ -229,5 +224,8 @@
 	"echo-badge-count": "{{PLURAL:$1|$1|100={{formatnum:99}}+}}",
 	"group-push-subscription-manager": "পুশ সাবস্ক্রিপশন ব্যবস্থাপক",
 	"group-push-subscription-manager-member": "{{GENDER:$1|পুশ সাবস্ক্রিপশন ব্যবস্থাপক}}",
-	"grouppage-push-subscription-manager": "{{ns:project}}:পুশ সাবস্ক্রিপশন ব্যবস্থাপক"
+	"grouppage-push-subscription-manager": "{{ns:project}}:পুশ সাবস্ক্রিপশন ব্যবস্থাপক",
+	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|আপনার}} ইমেইল যাচাই করুন",
+	"notification-link-text-verify-email-reminder": "ইমেইলের পছন্দগুলি পরিচালনা করুন",
+	"notification-verify-email-reminder-link-label": "ইমেইল নিশ্চিত করুন"
 }

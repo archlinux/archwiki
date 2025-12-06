@@ -246,14 +246,14 @@ class DataAccess extends IDataAccess {
 				$this->stripProto( $fileinfo, 'thumburl' );
 				$this->stripProto( $fileinfo, 'descriptionurl' );
 				$this->stripProto( $fileinfo, 'descriptionshorturl' );
-				foreach ( $fileinfo['responsiveUrls'] ?? [] as $density => $url ) {
+				foreach ( $fileinfo['responsiveUrls'] ?? [] as $density => $_url ) {
 					$this->stripProto( $fileinfo['responsiveUrls'], (string)$density );
 				}
 				if ( $prefix === 'vi' ) {
-					foreach ( $fileinfo['thumbdata']['derivatives'] ?? [] as $j => $d ) {
+					foreach ( $fileinfo['thumbdata']['derivatives'] ?? [] as $j => $_d ) {
 						$this->stripProto( $fileinfo['thumbdata']['derivatives'][$j], 'src' );
 					}
-					foreach ( $fileinfo['thumbdata']['timedtext'] ?? [] as $j => $d ) {
+					foreach ( $fileinfo['thumbdata']['timedtext'] ?? [] as $j => $_d ) {
 						$this->stripProto( $fileinfo['thumbdata']['timedtext'][$j], 'src' );
 					}
 				}
@@ -300,17 +300,19 @@ class DataAccess extends IDataAccess {
 				unset( $value['_mw-strategy'] );
 			}
 			if ( $strategy === 'union' ) {
-				foreach ( $value as $item => $ignore ) {
-					$metadata->appendJsConfigVar( $key, $item );
+				// @phan-var array<string|int,true> $value
+				foreach ( $value as $item => $_ignore ) {
+					$metadata->appendJsConfigVar( (string)$key, (string)$item );
 				}
 			} else {
-				$metadata->setJsConfigVar( $key, $value );
+				$metadata->setJsConfigVar( (string)$key, $value );
 			}
 		}
 		foreach ( ( $data['externallinks'] ?? [] ) as $url ) {
 			$metadata->addExternalLink( $url );
 		}
 		foreach ( ( $data['properties'] ?? [] ) as $name => $value ) {
+			$name = (string)$name;
 			if ( is_string( $value ) ) {
 				$metadata->setUnsortedPageProperty( $name, $value );
 			} elseif ( is_numeric( $value ) ) {

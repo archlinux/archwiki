@@ -154,6 +154,7 @@ module.exports = exports = {
 		// Set up the variables needed to perform navigation and also
 		// the associated animations.
 		const initialX = ref( null );
+		const initialY = ref( null );
 		const currentNavigation = ref( null );
 		const computedTransitionSet = computed( () => isRtl.value ?
 			{ next: TRANSITION_NAMES.LEFT, prev: TRANSITION_NAMES.RIGHT } :
@@ -212,19 +213,8 @@ module.exports = exports = {
 		function onTouchStart( e ) {
 			const touchEvent = e.touches[ 0 ];
 			initialX.value = touchEvent.clientX;
+			initialY.value = touchEvent.clientY;
 		}
-
-		/**
-		 * Return if the touch movement was a
-		 * swipe to the left of the screen.
-		 *
-		 * @param {Touch} touch
-		 * @return {boolean}
-		 */
-		const isSwipeToLeft = ( touch ) => {
-			const newX = touch.clientX;
-			return initialX.value > newX;
-		};
 
 		/**
 		 * Handles a user swiping to the right
@@ -257,10 +247,20 @@ module.exports = exports = {
 		 * @param {TouchEvent} e
 		 */
 		function onTouchMove( e ) {
-			if ( !initialX.value ) {
+			if ( !initialX.value || !initialY.value ) {
 				return;
 			}
-			if ( isSwipeToLeft( e.touches[ 0 ] ) ) {
+
+			const newX = e.touches[ 0 ].clientX;
+			const newY = e.touches[ 0 ].clientY;
+
+			// Don't consider a touch movement a swipe to the left or right if the
+			// users' swipe was more up/down instead of left/right.
+			if ( Math.abs( initialX.value - newX ) < Math.abs( initialY.value - newY ) ) {
+				return;
+			}
+
+			if ( initialX.value > newX ) {
 				onSwipeToLeft();
 			} else {
 				onSwipeToRight();
@@ -306,7 +306,7 @@ module.exports = exports = {
 				return;
 			}
 			const api = new mw.Api();
-			api.saveOption( 'checkuser-temporary-accounts-onboarding-dialog-seen', 1 );
+			api.saveOption( 'checkuser-temporary-accounts-onboarding-dialog-seen', 1, { global: 'create' } );
 			dialogOpen.value = false;
 		}
 

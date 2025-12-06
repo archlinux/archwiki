@@ -10,9 +10,9 @@
 	"oathauth-account": "Der Nahme zom Enlogge för de Login-Pröhvong övver zwai Wähje:",
 	"oathauth-secret": "Der jeheime Schößel för de Login-Pröhvong övver zwai Wähje:",
 	"oathauth-enable": "Donn de Login-Pröhvong övver zwai Wähje enschallde",
+	"oathauth-failedtovalidateoath": "De Aanjahbe för de Login-Pröhvong övver zwai Wähje wohre nit joht.",
 	"oathauth-disable": "Donn de Login-Pröhvong övver zwai Wähje ußschallde",
 	"oathauth-validatedoath": "De Aanjahbe för de Login-Pröhvong övver zwai Wähje sin joht, de Login-Pröhvong övver zwai Wähje wehd jäz",
-	"oathauth-failedtovalidateoath": "De Aanjahbe för de Login-Pröhvong övver zwai Wähje wohre nit joht.",
 	"oathauth-disabledoath": "Mer han de Login-Pröhvong övver zwai Wähje ußjeschalldt.",
 	"oathauth-prefs-label": "Login-Pröhvong övver zwai Wähje:"
 }

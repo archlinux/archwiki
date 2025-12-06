@@ -43,21 +43,7 @@ use Wikimedia\ObjectCache\WANObjectCache;
 /**
  * Base code for files.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup FileAbstraction
  */
@@ -83,7 +69,7 @@ use Wikimedia\ObjectCache\WANObjectCache;
  * The convenience services $services->getRepoGroup()->getLocalRepo()->newFile()
  * and $services->getRepoGroup()->findFile() should be sufficient in most cases.
  *
- * @TODO: DI - Instead of using MediaWikiServices::getInstance(), a service should
+ * @todo DI - Instead of using MediaWikiServices::getInstance(), a service should
  * ideally accept a RepoGroup in its constructor and then, use $this->repoGroup->findFile()
  * and $this->repoGroup->getLocalRepo()->newFile().
  *
@@ -774,10 +760,12 @@ abstract class File implements MediaHandlerState {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getHandlerState( string $key ) {
 		return $this->handlerState[$key] ?? null;
 	}
 
+	/** @inheritDoc */
 	public function setHandlerState( string $key, $value ) {
 		$this->handlerState[$key] = $value;
 	}
@@ -1404,20 +1392,13 @@ abstract class File implements MediaHandlerState {
 			$this->generateBucketsIfNeeded( $normalisedParams, $flags );
 		}
 
-		# T367110
-		# Calls to doTransform() can recur back on $this->transform()
-		# depending on implementation. One such example is PagedTiffHandler.
-		# TimingMetric->start() and stop() cannot be used in this situation
-		# so we will track the time manually.
-		$starttime = microtime( true );
+		$timer = $statsFactory->getTiming( 'media_thumbnail_generate_transform_seconds' )->start();
 
 		// Actually render the thumbnail...
 		$thumb = $handler->doTransform( $this, $tmpThumbPath, $thumbUrl, $transformParams );
 		$tmpFile->bind( $thumb ); // keep alive with $thumb
 
-		$statsFactory->getTiming( 'media_thumbnail_generate_transform_seconds' )
-			->copyToStatsdAt( 'media.thumbnail.generate.transform' )
-			->observe( ( microtime( true ) - $starttime ) * 1000 );
+		$timer->stop();
 
 		if ( !$thumb ) { // bad params?
 			$thumb = false;
@@ -2069,10 +2050,7 @@ abstract class File implements MediaHandlerState {
 		return (bool)$this->repo->getHashLevels();
 	}
 
-	/**
-	 * @return never
-	 */
-	protected function readOnlyError() {
+	protected function readOnlyError(): never {
 		throw new LogicException( static::class . ': write operations are not supported' );
 	}
 
@@ -2465,7 +2443,14 @@ abstract class File implements MediaHandlerState {
 	}
 
 	/**
-	 * @return string HTML
+	 * Long description. Shown under image on image description page surrounded by ().
+	 *
+	 * Until MediaWiki 1.45, the return value was poorly documented, and some handlers returned HTML
+	 * while others returned plain text. When calling this method, you should treat it as returning
+	 * unsafe HTML, and call `Sanitizer::removeSomeTags()` on the result.
+	 *
+	 * @return string HTML (possibly unsafe, call `Sanitizer::removeSomeTags()` on the result)
+	 * @return-taint tainted
 	 */
 	public function getLongDesc() {
 		$handler = $this->getHandler();
@@ -2477,7 +2462,14 @@ abstract class File implements MediaHandlerState {
 	}
 
 	/**
-	 * @return string HTML
+	 * Short description. Shown on Special:Search results.
+	 *
+	 * Until MediaWiki 1.45, the return value was poorly documented, and some handlers returned HTML
+	 * while others returned plain text. When calling this method, you should treat it as returning
+	 * unsafe HTML, and call `Sanitizer::removeSomeTags()` on the result.
+	 *
+	 * @return string HTML (possibly unsafe, call `Sanitizer::removeSomeTags()` on the result)
+	 * @return-taint tainted
 	 */
 	public function getShortDesc() {
 		$handler = $this->getHandler();

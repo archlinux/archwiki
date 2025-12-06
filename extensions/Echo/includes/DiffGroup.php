@@ -31,7 +31,7 @@ class DiffGroup {
 	/**
 	 * @var int[] The left and right position this change starts at
 	 */
-	protected $position;
+	protected array $position;
 
 	/**
 	 * @var string[] The lines that have been added

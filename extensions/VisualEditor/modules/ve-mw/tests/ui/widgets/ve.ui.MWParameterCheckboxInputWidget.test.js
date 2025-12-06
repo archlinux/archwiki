@@ -4,7 +4,7 @@ QUnit.test( 'Constructor passes config to parent', ( assert ) => {
 	const widget = new ve.ui.MWParameterCheckboxInputWidget( { selected: true } );
 
 	assert.strictEqual( widget.getValue(), '1' );
-	assert.strictEqual( widget.isSelected(), true );
+	assert.true( widget.isSelected() );
 } );
 
 [

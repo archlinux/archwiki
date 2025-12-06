@@ -4,5 +4,6 @@
 			"Joao Xavier"
 		]
 	},
-	"spam-blacklisted-email": "E-posto adreso nepermisata"
+	"spam-blacklisted-email": "E-posto adreso nepermisata",
+	"log-name-spamblacklist": "Enrejistruro (''log'') pri \"nigra listo\" di spamo"
 }

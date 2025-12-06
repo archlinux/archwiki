@@ -16,7 +16,6 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\Hook\OpportunisticLinksUpdateHook;
-use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\MagicWordFactory;
@@ -61,9 +60,29 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 						'ParsoidParserFactory',
 					],
 				],
-				CONTENT_MODEL_JAVASCRIPT => JavaScriptContentHandler::class,
-				CONTENT_MODEL_JSON => JsonContentHandler::class,
-				CONTENT_MODEL_CSS => CssContentHandler::class,
+				CONTENT_MODEL_JAVASCRIPT => [
+					'class' => JavaScriptContentHandler::class,
+					'services' => [
+						'MainConfig',
+						'ParserFactory',
+						'UserOptionsLookup',
+					],
+				],
+				CONTENT_MODEL_JSON => [
+					'class' => JsonContentHandler::class,
+					'services' => [
+						'ParsoidParserFactory',
+						'TitleFactory',
+					],
+				],
+				CONTENT_MODEL_CSS => [
+					'class' => CssContentHandler::class,
+					'services' => [
+						'MainConfig',
+						'ParserFactory',
+						'UserOptionsLookup',
+					],
+				],
 				CONTENT_MODEL_TEXT => TextContentHandler::class,
 				'testing' => DummyContentHandlerForTesting::class,
 				'testing-callbacks' => static function ( $modelId ) {
@@ -76,43 +95,6 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 	public function addDBDataOnce() {
 		$this->insertPage( 'Not_Main_Page', 'This is not a main page' );
 		$this->insertPage( 'Smithee', 'A smithee is one who smiths. See also [[Alan Smithee]]' );
-	}
-
-	public static function provideGetDefaultModelFor() {
-		return [
-			[ 'Help:Foo', CONTENT_MODEL_WIKITEXT ],
-			[ 'Help:Foo.js', CONTENT_MODEL_WIKITEXT ],
-			[ 'Help:Foo.css', CONTENT_MODEL_WIKITEXT ],
-			[ 'Help:Foo.json', CONTENT_MODEL_WIKITEXT ],
-			[ 'Help:Foo/bar.js', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo.js', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo.css', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo.json', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo/bar.js', CONTENT_MODEL_JAVASCRIPT ],
-			[ 'User:Foo/bar.css', CONTENT_MODEL_CSS ],
-			[ 'User:Foo/bar.json', CONTENT_MODEL_JSON ],
-			[ 'User:Foo/bar.json.nope', CONTENT_MODEL_WIKITEXT ],
-			[ 'User talk:Foo/bar.css', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo/bar.js.xxx', CONTENT_MODEL_WIKITEXT ],
-			[ 'User:Foo/bar.xxx', CONTENT_MODEL_WIKITEXT ],
-			[ 'MediaWiki:Foo.js', CONTENT_MODEL_JAVASCRIPT ],
-			[ 'MediaWiki:Foo.JS', CONTENT_MODEL_WIKITEXT ],
-			[ 'MediaWiki:Foo.css', CONTENT_MODEL_CSS ],
-			[ 'MediaWiki:Foo.css.xxx', CONTENT_MODEL_WIKITEXT ],
-			[ 'MediaWiki:Foo.CSS', CONTENT_MODEL_WIKITEXT ],
-			[ 'MediaWiki:Foo.json', CONTENT_MODEL_JSON ],
-			[ 'MediaWiki:Foo.JSON', CONTENT_MODEL_WIKITEXT ],
-		];
-	}
-
-	/**
-	 * @dataProvider provideGetDefaultModelFor
-	 */
-	public function testGetDefaultModelFor( $title, $expectedModelId ) {
-		$title = Title::newFromText( $title );
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getDefaultModelFor' );
-		$this->assertEquals( $expectedModelId, ContentHandler::getDefaultModelFor( $title ) );
 	}
 
 	public static function provideGetLocalizedName() {
@@ -171,27 +153,6 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertInstanceOf( Language::class, $lang );
 		$this->assertEquals( $expected, $lang->getCode() );
-	}
-
-	public function testGetContentText_Null() {
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getContentText' );
-		$content = null;
-		$text = ContentHandler::getContentText( $content );
-		$this->assertSame( '', $text );
-	}
-
-	public function testGetContentText_TextContent() {
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getContentText' );
-		$content = new WikitextContent( "hello world" );
-		$text = ContentHandler::getContentText( $content );
-		$this->assertEquals( $content->getText(), $text );
-	}
-
-	public function testGetContentText_NonTextContent() {
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getContentText' );
-		$content = new DummyContentForTesting( "hello world" );
-		$text = ContentHandler::getContentText( $content );
-		$this->assertNull( $text );
 	}
 
 	public static function provideMakeContent() {
@@ -427,8 +388,9 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->setTemporaryHook( 'GetContentModels', static function ( &$models ) {
 			$models[] = 'Ferrari';
 		} );
-		$this->hideDeprecated( 'MediaWiki\\Content\\ContentHandler::getContentModels' );
-		$this->assertContains( 'Ferrari', ContentHandler::getContentModels() );
+
+		$contentModels = $this->getServiceContainer()->getContentHandlerFactory()->getContentModels();
+		$this->assertContains( 'Ferrari', $contentModels );
 	}
 
 	public function testGetSlotDiffRenderer_default() {
@@ -589,7 +551,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideValidateSave
 	 */
 	public function testValidateSave( $content, $expectedResult ) {
-		$page = new PageIdentityValue( 0, 1, 'Foo', PageIdentity::LOCAL );
+		$page = PageIdentityValue::localIdentity( 0, 1, 'Foo' );
 		$contentHandlerFactory = $this->getServiceContainer()->getContentHandlerFactory();
 		$contentHandler = $contentHandlerFactory->getContentHandler( $content->getModel() );
 		$validateParams = new ValidationParams( $page, 0 );

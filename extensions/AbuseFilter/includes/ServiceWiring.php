@@ -2,12 +2,16 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterLogDetailsLookup;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager as PermManager;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainConfigProvider;
 use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainFilter;
-use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainStorage;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\BlockedDomainValidator;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\CustomBlockedDomainStorage;
 use MediaWiki\Extension\AbuseFilter\BlockedDomains\IBlockedDomainFilter;
+use MediaWiki\Extension\AbuseFilter\BlockedDomains\IBlockedDomainStorage;
 use MediaWiki\Extension\AbuseFilter\BlockedDomains\NoopBlockedDomainFilter;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagger;
@@ -44,6 +48,7 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
 use MediaWiki\Extension\AbuseFilter\Watcher\UpdateHitCountWatcher;
+use MediaWiki\Extension\CommunityConfiguration\CommunityConfigurationServices;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -75,6 +80,8 @@ return [
 	},
 	PermManager::SERVICE_NAME => static function ( MediaWikiServices $services ): PermManager {
 		return new PermManager(
+			$services->getTempUserConfig(),
+			$services->getExtensionRegistry(),
 			$services->get( AbuseFilterProtectedVariablesLookup::SERVICE_NAME ),
 			$services->get( RuleCheckerFactory::SERVICE_NAME ),
 			$services->get( AbuseFilterHookRunner::SERVICE_NAME )
@@ -277,6 +284,7 @@ return [
 	VariablesBlobStore::SERVICE_NAME => static function ( MediaWikiServices $services ): VariablesBlobStore {
 		return new VariablesBlobStore(
 			$services->get( VariablesManager::SERVICE_NAME ),
+			$services->get( PermManager::SERVICE_NAME ),
 			$services->getBlobStoreFactory(),
 			$services->getBlobStore(),
 			$services->getMainConfig()->get( 'AbuseFilterCentralDB' )
@@ -381,24 +389,45 @@ return [
 			WikiMap::getCurrentWikiDbDomain()->getId()
 		);
 	},
-	BlockedDomainStorage::SERVICE_NAME => static function (
+	IBlockedDomainStorage::SERVICE_NAME => static function (
 		MediaWikiServices $services
-	): BlockedDomainStorage {
-		return new BlockedDomainStorage(
-			$services->getLocalServerObjectCache(),
-			$services->getRevisionLookup(),
-			$services->getUserFactory(),
-			$services->getWikiPageFactory(),
+	): IBlockedDomainStorage {
+		if ( $services->getExtensionRegistry()->isLoaded( 'CommunityConfiguration' ) ) {
+			$provider = CommunityConfigurationServices::wrap( $services )
+				->getConfigurationProviderFactory()
+				->newProvider( BlockedDomainConfigProvider::PROVIDER_ID );
+			if ( !$provider instanceof BlockedDomainConfigProvider ) {
+				throw new LogicException(
+					BlockedDomainConfigProvider::PROVIDER_ID . ' is expected to be ' .
+					'an instance of ' . BlockedDomainConfigProvider::class
+				);
+			}
+			return $provider;
+		} else {
+			return new CustomBlockedDomainStorage(
+				$services->getLocalServerObjectCache(),
+				$services->getRevisionLookup(),
+				$services->getWikiPageFactory(),
+				$services->get( BlockedDomainValidator::SERVICE_NAME )
+			);
+		}
+	},
+	BlockedDomainValidator::SERVICE_NAME => static function (
+		MediaWikiServices $services
+	): BlockedDomainValidator {
+		return new BlockedDomainValidator(
 			$services->getUrlUtils()
 		);
 	},
 	IBlockedDomainFilter::SERVICE_NAME => static function (
 		MediaWikiServices $services
 	): IBlockedDomainFilter {
-		if ( $services->getMainConfig()->get( 'AbuseFilterEnableBlockedExternalDomain' ) ) {
+		if (
+			$services->getMainConfig()->get( 'AbuseFilterEnableBlockedExternalDomain' )
+		) {
 			return new BlockedDomainFilter(
 				$services->get( VariablesManager::SERVICE_NAME ),
-				$services->get( BlockedDomainStorage::SERVICE_NAME )
+				$services->get( IBlockedDomainStorage::SERVICE_NAME )
 			);
 		} else {
 			return new NoopBlockedDomainFilter();
@@ -411,6 +440,13 @@ return [
 				$services->getMainConfig()
 			),
 			$services->get( AbuseFilterHookRunner::SERVICE_NAME )
+		);
+	},
+	AbuseFilterLogDetailsLookup::SERVICE_NAME => static function ( MediaWikiServices $services ) {
+		return new AbuseFilterLogDetailsLookup(
+			$services->getConnectionProvider(),
+			$services->get( PermManager::SERVICE_NAME ),
+			$services->get( FilterLookup::SERVICE_NAME )
 		);
 	},
 	// b/c for extensions

@@ -132,7 +132,7 @@ class ClientHintsLookupResultsTest extends MediaWikiUnitTestCase {
 			[ 0 => [ 1 => 0 ] ],
 			[ $emptyClientHintsDataObject ],
 			new ClientHintsReferenceIds(),
-			[ [], [] ]
+			[ [], [] ],
 		];
 
 		$referenceIdsForOneCuChangesReference = new ClientHintsReferenceIds();
@@ -184,15 +184,15 @@ class ClientHintsLookupResultsTest extends MediaWikiUnitTestCase {
 			[ 2 => [ 123 => 0, 1234 => 1, 12345 => 1 ], 1 => [ 123 => 2, 456 => 2 ], 0 => [ 123 => 2, 33445 => 3 ] ],
 			[
 				$exampleClientHintsDataObject, $emptyClientHintsDataObject,
-				$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject
+				$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject,
 			],
 			$referenceIds,
 			[
 				[ 0 => 1, 1 => 1, 2 => 2 ],
 				[
 					$exampleClientHintsDataObject, $emptyClientHintsDataObject,
-					$otherExampleClientHintsDataObject
-				]
+					$otherExampleClientHintsDataObject,
+				],
 			],
 		];
 
@@ -200,15 +200,15 @@ class ClientHintsLookupResultsTest extends MediaWikiUnitTestCase {
 			[ 2 => [ 123 => 0, 1234 => 1, 12345 => 0 ], 1 => [ 123 => 2, 456 => 2 ], 0 => [ 123 => 2, 3344 => 3 ] ],
 			[
 				$exampleClientHintsDataObject, $emptyClientHintsDataObject,
-				$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject
+				$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject,
 			],
 			null,
 			[
 				[ 0 => 2, 1 => 1, 2 => 3, 3 => 1 ],
 				[
 					$exampleClientHintsDataObject, $emptyClientHintsDataObject,
-					$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject
-				]
+					$otherExampleClientHintsDataObject, $anotherExampleClientHintsDataObject,
+				],
 			],
 		];
 	}
@@ -216,7 +216,7 @@ class ClientHintsLookupResultsTest extends MediaWikiUnitTestCase {
 	public function testGetRawData() {
 		$rawData = [
 			[ UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT => [ 1 => 0 ] ],
-			[ ClientHintsData::newFromJsApi( [] ) ]
+			[ ClientHintsData::newFromJsApi( [] ) ],
 		];
 		$objectUnderTest = new ClientHintsLookupResults( ...$rawData );
 		$this->assertArrayEquals(

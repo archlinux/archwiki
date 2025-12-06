@@ -140,7 +140,6 @@ trait ApiDiscussionToolsTrait {
 
 	/**
 	 * @see VisualEditorParsoidClientFactory
-	 * @return ParsoidClient
 	 */
 	protected function getParsoidClient(): ParsoidClient {
 		return $this->parsoidClientFactory->createParsoidClient(

@@ -5,6 +5,7 @@
 			"Aefgh39622",
 			"Afaz",
 			"Ant176",
+			"Foomin10",
 			"Hzy980512",
 			"Kkairri",
 			"Kokage si",
@@ -17,8 +18,7 @@
 			"Whym",
 			"Yusuke1109",
 			"ひまり",
-			"もなー(偽物)",
-			"Foomin10"
+			"もなー(偽物)"
 		]
 	},
 	"linterrors": "Lint エラー",
@@ -92,7 +92,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|件のエラー}})",
 	"linter-page-edit": "編集",
 	"linter-page-history": "履歴",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "ソースを閲覧",
 	"linter-pager-bogus-image-options-details": "不正なファイルオプション",
 	"linter-pager-category-header": "カテゴリ",

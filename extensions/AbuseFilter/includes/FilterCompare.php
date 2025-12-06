@@ -16,9 +16,6 @@ class FilterCompare {
 	/** @var ConsequencesRegistry */
 	private $consequencesRegistry;
 
-	/**
-	 * @param ConsequencesRegistry $consequencesRegistry
-	 */
 	public function __construct( ConsequencesRegistry $consequencesRegistry ) {
 		$this->consequencesRegistry = $consequencesRegistry;
 	}
@@ -52,16 +49,14 @@ class FilterCompare {
 		$firstActions = $firstFilter->getActions();
 		$secondActions = $secondFilter->getActions();
 		foreach ( $this->consequencesRegistry->getAllEnabledActionNames() as $action ) {
-			if ( !isset( $firstActions[$action] ) && !isset( $secondActions[$action] ) ) {
-				// They're both unset
-			} elseif ( isset( $firstActions[$action] ) && isset( $secondActions[$action] ) ) {
+			if ( isset( $firstActions[$action] ) && isset( $secondActions[$action] ) ) {
 				// They're both set. Double check needed, e.g. per T180194
 				if ( array_diff( $firstActions[$action], $secondActions[$action] ) ||
 					array_diff( $secondActions[$action], $firstActions[$action] ) ) {
 					// Different parameters
 					$differences[] = 'actions';
 				}
-			} else {
+			} elseif ( isset( $firstActions[$action] ) !== isset( $secondActions[$action] ) ) {
 				// One's unset, one's set.
 				$differences[] = 'actions';
 			}

@@ -389,7 +389,7 @@ class Validate implements LoggerAwareInterface {
 		);
 		$offset = (int)substr( $res[7], 1, 2 ) * 60 * 60;
 		$offset += (int)substr( $res[7], 4, 2 ) * 60;
-		if ( substr( $res[7], 0, 1 ) === '-' ) {
+		if ( str_starts_with( $res[7], '-' ) ) {
 			$offset = -$offset;
 		}
 		$val = ConvertibleTimestamp::convert( TS_EXIF, (int)$unix + $offset );

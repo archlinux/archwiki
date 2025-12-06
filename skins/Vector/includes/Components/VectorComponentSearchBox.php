@@ -30,9 +30,6 @@ class VectorComponentSearchBox implements VectorComponent {
 	private const SEARCH_SHOW_THUMBNAIL_CLASS = 'vector-search-box-show-thumbnail';
 	private const SEARCH_AUTO_EXPAND_WIDTH_CLASS = 'vector-search-box-auto-expand-width';
 
-	/**
-	 * @return Config
-	 */
 	private function getConfig(): Config {
 		return $this->config;
 	}
@@ -40,11 +37,10 @@ class VectorComponentSearchBox implements VectorComponent {
 	/**
 	 * Returns `true` if Vue search is enabled to show thumbnails and `false` otherwise.
 	 * Note this is only relevant for Vue search experience (not legacy search).
-	 *
-	 * @return bool
 	 */
 	private function doesSearchHaveThumbnails(): bool {
-		return $this->getConfig()->get( 'VectorWvuiSearchOptions' )['showThumbnail'];
+		$searchOptions = $this->getConfig()->get( 'VectorTypeahead' )['options'];
+		return $searchOptions['showThumbnail'];
 	}
 
 	/**

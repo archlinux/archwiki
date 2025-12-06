@@ -7,66 +7,57 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
+use MediaWiki\Extension\ConfirmEdit\hCaptcha\Services\HCaptchaEnterpriseHealthChecker;
+use MediaWiki\Extension\ConfirmEdit\hCaptcha\Services\HCaptchaOutput;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
-use MediaWiki\Html\Html;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\ContentSecurityPolicy;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Session\SessionManager;
 use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
+use Psr\Log\LoggerInterface;
+use Wikimedia\Stats\StatsFactory;
 
 class HCaptcha extends SimpleCaptcha {
 	/**
 	 * @var string used for hcaptcha-edit, hcaptcha-addurl, hcaptcha-badlogin, hcaptcha-createaccount,
 	 * hcaptcha-create, hcaptcha-sendemail via getMessage()
 	 */
-	protected static $messagePrefix = 'hcaptcha-';
+	protected static $messagePrefix = 'hcaptcha';
 
 	/** @var string|null */
 	private $error = null;
 
-	/** @var Config */
-	private $hCaptchaConfig;
-
-	/** @var string */
-	private $siteKey;
+	private Config $hCaptchaConfig;
+	private HCaptchaOutput $hCaptchaOutput;
+	private StatsFactory $statsFactory;
+	private LoggerInterface $logger;
+	private HCaptchaEnterpriseHealthChecker $healthChecker;
 
 	public function __construct() {
-		$this->hCaptchaConfig = MediaWikiServices::getInstance()->getConfigFactory()
-			->makeConfig( 'hcaptcha' );
-		$this->siteKey = $this->hCaptchaConfig->get( 'HCaptchaSiteKey' );
+		$services = MediaWikiServices::getInstance();
+		$this->hCaptchaConfig = $services->getMainConfig();
+		$this->hCaptchaOutput = $services->get( 'HCaptchaOutput' );
+		$this->statsFactory = $services->getStatsFactory();
+		$this->healthChecker = $services->get( 'HCaptchaEnterpriseHealthChecker' );
+		$this->logger = LoggerFactory::getInstance( 'captcha' );
 	}
 
-	/**
-	 * Get the captcha form.
-	 * @param int $tabIndex
-	 * @return array
-	 */
-	public function getFormInformation( $tabIndex = 1 ) {
-		$output = Html::element( 'div', [
-			'class' => [
-				'h-captcha',
-				'mw-confirmedit-captcha-fail' => (bool)$this->error,
-			],
-			'data-sitekey' => $this->siteKey
-		] );
-
-		if ( $this->hCaptchaConfig->get( 'HCaptchaPassiveMode' ) ) {
-			// Uses hcaptcha-privacy-policy; but not called with hcaptcha-prefix
-			$output .= $this->getMessage( 'privacy-policy' )->parse();
+	/** @inheritDoc */
+	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
+		if ( $out === null ) {
+			$out = RequestContext::getMain()->getOutput();
 		}
 
-		$url = $this->hCaptchaConfig->get( 'HCaptchaApiUrl' );
 		return [
-			'html' => $output,
-			'headitems' => [
-				"<script src=\"$url\" async defer></script>"
-			]
+			'html' => $this->hCaptchaOutput->addHCaptchaToForm( $out, (bool)$this->error ),
 		];
 	}
 
@@ -75,13 +66,7 @@ class HCaptcha extends SimpleCaptcha {
 		return RequestContext::getMain()->getConfig()->get( 'HCaptchaCSPRules' );
 	}
 
-	/**
-	 * Adds the CSP policies that are necessary for the captcha module to work in a CSP enforced
-	 * setup.
-	 *
-	 * @param ContentSecurityPolicy $csp The CSP instance to add the policies to, this is usually to be
-	 * obtained from {@link OutputPage::getCSP()}
-	 */
+	/** @inheritDoc */
 	public static function addCSPSources( ContentSecurityPolicy $csp ) {
 		foreach ( static::getCSPUrls() as $src ) {
 			// Since frame-src is not supported
@@ -91,10 +76,7 @@ class HCaptcha extends SimpleCaptcha {
 		}
 	}
 
-	/**
-	 * @param Status|array|string $info
-	 */
-	protected function logCheckError( $info ) {
+	protected function logCheckError( Status|array|string $info, UserIdentity $userIdentity ): void {
 		if ( $info instanceof Status ) {
 			$errors = $info->getErrorsArray();
 			$error = $errors[0][0];
@@ -104,13 +86,14 @@ class HCaptcha extends SimpleCaptcha {
 			$error = $info;
 		}
 
-		\wfDebugLog( 'captcha', 'Unable to validate response: ' . $error );
+		$this->logger->error( 'Unable to validate response. Error: {error}', [
+			'error' => $error,
+			'user' => $userIdentity->getName(),
+			'captcha_type' => self::$messagePrefix,
+		] );
 	}
 
-	/**
-	 * @param WebRequest $request
-	 * @return array
-	 */
+	/** @inheritDoc */
 	protected function getCaptchaParamsFromRequest( WebRequest $request ) {
 		$response = $request->getVal(
 			'h-captcha-response',
@@ -135,6 +118,7 @@ class HCaptcha extends SimpleCaptcha {
 			'secret' => $this->hCaptchaConfig->get( 'HCaptchaSecretKey' ),
 			'response' => $token,
 		];
+		$data['remoteip'] = '127.0.0.1';
 		if ( $this->hCaptchaConfig->get( 'HCaptchaSendRemoteIP' ) ) {
 			$webRequest = RequestContext::getMain()->getRequest();
 			$data['remoteip'] = $webRequest->getIP();
@@ -143,6 +127,7 @@ class HCaptcha extends SimpleCaptcha {
 		$options = [
 			'method' => 'POST',
 			'postData' => $data,
+			'timeout' => 5,
 		];
 
 		$proxy = $this->hCaptchaConfig->get( 'HCaptchaProxy' );
@@ -153,76 +138,92 @@ class HCaptcha extends SimpleCaptcha {
 		$request = MediaWikiServices::getInstance()->getHttpRequestFactory()
 			->create( $this->hCaptchaConfig->get( 'HCaptchaVerifyUrl' ), $options, __METHOD__ );
 
+		$timer = $this->statsFactory->withComponent( 'ConfirmEdit' )
+			->getTiming( 'hcaptcha_siteverify_call' )
+			->start();
+
 		$status = $request->execute();
+
+		$timer
+			->setLabel( 'status', $status->isOK() ? 'ok' : 'failed' )
+			->stop();
+
 		if ( !$status->isOK() ) {
 			$this->error = 'http';
-			$this->logCheckError( $status );
+			$this->healthChecker->incrementSiteVerifyApiErrorCount();
+			$this->logCheckError( $status, $user );
 			return false;
 		}
 		$json = FormatJson::decode( $request->getContent(), true );
 		if ( !$json ) {
 			$this->error = 'json';
-			$this->logCheckError( $this->error );
+			$this->healthChecker->incrementSiteVerifyApiErrorCount();
+			$this->logCheckError( $this->error, $user );
 			return false;
 		}
 		if ( isset( $json['error-codes'] ) ) {
 			$this->error = 'hcaptcha-api';
-			$this->logCheckError( $json['error-codes'] );
+			$this->logCheckError( $json['error-codes'], $user );
 			return false;
 		}
 
-		LoggerFactory::getInstance( 'captcha' )
-			->debug( 'Captcha solution attempt for {user}', [
-				'event' => 'captcha.solve',
-				'user' => $user->getName(),
-				'hcaptcha_success' => $json['success'],
+		$debugLogContext = [
+			'event' => 'captcha.solve',
+			'user' => $user->getName(),
+			'hcaptcha_success' => $json['success'],
+			'captcha_type' => self::$messagePrefix,
+			'success_message' => $json['success'] ? 'Successful' : 'Failed',
+		];
+		if ( $this->hCaptchaConfig->get( 'HCaptchaDeveloperMode' ) ) {
+			$debugLogContext = array_merge( [
 				'hcaptcha_score' => $json['score'] ?? null,
 				'hcaptcha_score_reason' => $json['score_reason'] ?? null,
 				'hcaptcha_blob' => $json,
-			] );
+			], $debugLogContext );
+		}
+		$this->logger->info( '{success_message} captcha solution attempt for {user}', $debugLogContext );
 
+		if ( $this->hCaptchaConfig->get( 'HCaptchaDeveloperMode' )
+			|| $this->hCaptchaConfig->get( 'HCaptchaUseRiskScore' ) ) {
+			// T398333
+			$this->storeSessionScore( 'hCaptcha-score', $json['score'] ?? null );
+		}
 		return $json['success'];
 	}
 
-	/**
-	 * @param array &$resultArr
-	 */
+	/** @inheritDoc */
 	protected function addCaptchaAPI( &$resultArr ) {
-		$resultArr['captcha'] = $this->describeCaptchaType();
+		$resultArr['captcha'] = $this->describeCaptchaType( $this->action );
 		$resultArr['captcha']['error'] = $this->error;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function describeCaptchaType() {
+	/** @inheritDoc */
+	public function describeCaptchaType( ?string $action = null ) {
 		return [
 			'type' => 'hcaptcha',
 			'mime' => 'application/javascript',
-			'key' => $this->siteKey,
+			'key' => $this->getConfig()['HCaptchaSiteKey'] ?? $this->hCaptchaConfig->get( 'HCaptchaSiteKey' ),
 		];
 	}
 
-	/**
-	 * Show a message asking the user to enter a captcha on edit
-	 * The result will be treated as wiki text
-	 *
-	 * @param string $action Action being performed
-	 * @return Message
-	 */
+	/** @inheritDoc */
 	public function getMessage( $action ) {
-		$msg = parent::getMessage( $action );
 		if ( $this->error ) {
-			$msg = new RawMessage( '<div class="error">$1</div>', [ $msg ] );
+			$msg = parent::getMessage( $action );
+			return new RawMessage( '<div class="error">$1</div>', [ $msg ] );
 		}
-		return $msg;
+
+		// For edit action, hide the prompt if there's no error
+		if ( $action === CaptchaTriggers::EDIT ) {
+			return new RawMessage( '' );
+		}
+
+		return parent::getMessage( $action );
 	}
 
 	/**
-	 * @param ApiBase $module
-	 * @param array &$params
-	 * @param int $flags
-	 * @return bool
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
 	 */
 	public function apiGetAllowedParams( ApiBase $module, &$params, $flags ) {
 		return true;
@@ -233,20 +234,50 @@ class HCaptcha extends SimpleCaptcha {
 		return $this->error;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
 	public function storeCaptcha( $info ) {
 		// hCaptcha is stored externally, the ID will be generated at that time as well, and
 		// the one returned here won't be used. Just pretend this worked.
 		return 'not used';
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Store risk score in global session
+	 * @param string $sessionKey
+	 * @param mixed $score
+	 * @return void
+	 */
+	public function storeSessionScore( $sessionKey, $score ) {
+		SessionManager::getGlobalSession()->set( $sessionKey, $score );
+	}
+
+	/**
+	 * Retrieve session score from global session
+	 *
+	 * @stable to call - This may be used by code not visible in codesearch
+	 * @param string $sessionKey
+	 * @return mixed
+	 */
+	public function retrieveSessionScore( $sessionKey ) {
+		return SessionManager::getGlobalSession()->get( $sessionKey );
+	}
+
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
 	public function retrieveCaptcha( $index ) {
 		// Just pretend it worked
 		return [ 'index' => $index ];
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
 	public function getCaptcha() {
 		// hCaptcha is handled by frontend code, and an external provider; nothing to do here.
 		return [];
@@ -259,15 +290,11 @@ class HCaptcha extends SimpleCaptcha {
 		return new HCaptchaAuthenticationRequest();
 	}
 
-	/**
-	 * @param array $requests
-	 * @param array $fieldInfo
-	 * @param array &$formDescriptor
-	 * @param string $action
-	 */
+	/** @inheritDoc */
 	public function onAuthChangeFormFields(
 		array $requests, array $fieldInfo, array &$formDescriptor, $action
 	) {
+		/** @var CaptchaAuthenticationRequest $req */
 		$req = AuthenticationRequest::getRequestByClass(
 			$requests,
 			CaptchaAuthenticationRequest::class,
@@ -278,12 +305,16 @@ class HCaptcha extends SimpleCaptcha {
 		}
 
 		// ugly way to retrieve error information
-		$captcha = Hooks::getInstance();
+		$captcha = Hooks::getInstance( $req->getAction() );
 
 		$formDescriptor['captchaWord'] = [
 			'class' => HTMLHCaptchaField::class,
-			'key' => $this->siteKey,
 			'error' => $captcha->getError(),
 		] + $formDescriptor['captchaWord'];
+	}
+
+	/** @inheritDoc */
+	public function showHelp( OutputPage $out ) {
+		$out->addWikiMsg( 'hcaptcha-privacy-policy' );
 	}
 }

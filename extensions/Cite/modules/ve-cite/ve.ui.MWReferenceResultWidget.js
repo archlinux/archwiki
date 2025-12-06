@@ -17,13 +17,8 @@
  * @param {ve.dm.MWReferenceModel} config.item.reference
  * @param {string} config.item.name
  * @param {string} config.item.footnoteLabel e.g. "note 1"
- * @param {OO.ui.Element} [config.reuseMenu]
  */
 ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
-	config = ve.extendObject( {
-		title: ve.msg( 'cite-ve-dialog-reference-useexisting-long-tool' )
-	}, config );
-
 	// Parent constructor
 	ve.ui.MWReferenceResultWidget.super.apply( this, arguments );
 
@@ -32,7 +27,7 @@ ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
 
 	this.$element
 		.addClass( 've-ui-mwReferenceResultWidget' );
-	if ( item.reference.extendsRef ) {
+	if ( item.reference.mainRefKey ) {
 		this.$element.addClass( 've-ui-mwReferenceResultWidget-sub' );
 	}
 
@@ -48,11 +43,10 @@ ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
 	this.setLabel( $footnoteLabel.add( $name ).add( item.$refContent ) );
 	this.setData( item.reference );
 
-	if ( mw.config.get( 'wgCiteSubReferencing' ) && config.reuseMenu ) {
-		this.$element.append( config.reuseMenu.$element );
-	}
 };
 
 /* Inheritance */
 
 OO.inheritClass( ve.ui.MWReferenceResultWidget, OO.ui.OptionWidget );
+
+module.exports = ve.ui.MWReferenceResultWidget;

@@ -26,7 +26,7 @@
 	"templatestyles-error-at-rule-block-required": "Regel $1, teken $2: blok vereist voor <code>@$3</code>.",
 	"templatestyles-error-bad-character-in-url": "Ongeldig teken in de URL op regel $1, positie $2.",
 	"templatestyles-error-bad-escape": "Regel $1, teken $2: ongeldig teken in escape.",
-	"templatestyles-error-bad-value-for-property": "Ongeldig of niet ondersteunde waarde voor eigenschap <code>$3</code> op regel $1, positie $2.",
+	"templatestyles-error-bad-value-for-property": "Ongeldige of niet ondersteunde waarde voor eigenschap <code>$3</code> op regel $1, teken $2.",
 	"templatestyles-error-expected-at-rule": "<code>@$3</code> ontbreekt op regel $1, positie $2.",
 	"templatestyles-error-expected-colon": "Dubbele punt ontbreekt op regel $1, positie $2.",
 	"templatestyles-error-expected-declaration": "Toewijzing ontbreekt op regel $1, positie $2.",

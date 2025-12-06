@@ -55,18 +55,18 @@
 		const template = newTemplateModel();
 
 		// All parameters are primary as long as the TemplateData documentation isn't known
-		assert.strictEqual( template.hasParameter( 'bar' ), true );
-		assert.strictEqual( template.hasParameter( 'resolved-bar' ), false );
-		assert.strictEqual( template.hasParameter( 'alternative-bar' ), false );
+		assert.true( template.hasParameter( 'bar' ) );
+		assert.false( template.hasParameter( 'resolved-bar' ) );
+		assert.false( template.hasParameter( 'alternative-bar' ) );
 
 		template.getSpec().setTemplateData( { params: {
 			'resolved-bar': { aliases: [ 'bar', 'alternative-bar' ] }
 		} } );
 
 		// Now "bar" and "alternative-bar" are aliases, and "resolved-bar" is the primary name
-		assert.strictEqual( template.hasParameter( 'bar' ), true );
-		assert.strictEqual( template.hasParameter( 'resolved-bar' ), true );
-		assert.strictEqual( template.hasParameter( 'alternative-bar' ), true );
+		assert.true( template.hasParameter( 'bar' ) );
+		assert.true( template.hasParameter( 'resolved-bar' ) );
+		assert.true( template.hasParameter( 'alternative-bar' ) );
 	} );
 
 	QUnit.test( 'getOriginalParameterName', ( assert ) => {

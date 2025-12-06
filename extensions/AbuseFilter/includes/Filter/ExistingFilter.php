@@ -28,9 +28,6 @@ class ExistingFilter extends Filter {
 		parent::__construct( $specs, $flags, $actions, $lastEditInfo, $id, $hitCount, $throttled );
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getID(): int {
 		return $this->id;
 	}

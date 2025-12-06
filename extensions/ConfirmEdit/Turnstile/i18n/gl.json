@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"turnstile-desc": "Engade compatibilidade con Cloudflare Turnstile a ConfirmEdit",
+	"turnstile-edit": "Para protexer o wiki contra edicións de spam automatizadas, resolve o seguinte CAPTCHA:",
+	"turnstile-addurl": "A túa edición inclúe novas ligazóns externas. Para protexer o wiki contra o spam automático, resolve o seguinte CAPTCHA:",
+	"turnstile-badlogin": "Para protexer o wiki contra o descifrado automático de contrasinais, resolve o seguinte CAPTCHA:",
+	"turnstile-createaccount": "Para protexer o wiki contra a creación automática de contas, resolve o seguinte CAPTCHA:",
+	"turnstile-createaccount-fail": "Parece que non resolviches o CAPTCHA.",
+	"turnstile-create": "Para protexer o wiki contra a creación automática de páxinas, resolve o seguinte CAPTCHA:",
+	"turnstile-help": "Resolve un desafío Turnstile e devolve os valores de resposta como captchaWord."
+}

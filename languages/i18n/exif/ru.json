@@ -402,5 +402,14 @@
 	"exif-croppedarealeftpixels": "Обрезание панорамы слева",
 	"exif-croppedareatoppixels": "Обрезание панорамы сверху",
 	"exif-initialcameradolly": "Изначальный вид камеры",
-	"exif-stitchingsoftware": "Программное обеспечение для сшивания"
+	"exif-stitchingsoftware": "Программное обеспечение для сшивания",
+	"exif-digitalsourcetype": "Источник цифрового медиа",
+	"exif-digitalsourcetype-digitalcapture": "Цифровая камера или диктофон",
+	"exif-digitalsourcetype-negativefilm": "Оцифровано с прозрачного негатива",
+	"exif-digitalsourcetype-positivefilm": "Оцифровано с прозрачного позитива",
+	"exif-digitalsourcetype-print": "Оцифровано с непрозрачного носителя",
+	"exif-digitalsourcetype-compositewithtrainedalgorithmicmedia": "Отредактировано с использованием генеративного ИИ",
+	"exif-digitalsourcetype-softwareimage": "Создано программным обеспечением",
+	"exif-digitalsourcetype-trainedalgorithmicmedia": "Создано с использованием генеративного ИИ",
+	"exif-digitalsourcetype-screencapture": "Снимок экрана"
 }

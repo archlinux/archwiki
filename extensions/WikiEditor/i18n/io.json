@@ -63,6 +63,8 @@
 	"wikieditor-toolbar-tool-table-preview": "Previdar",
 	"wikieditor-toolbar-tool-table-insert": "Adjuntar",
 	"wikieditor-toolbar-tool-table-cancel": "Anular",
+	"wikieditor-toolbar-tool-replace": "Serchar e remplasar",
+	"wikieditor-toolbar-tool-replace-title": "Serchar e remplasar",
 	"wikieditor-toolbar-tool-replace-search": "Serchar:",
 	"wikieditor-toolbar-tool-replace-close": "Klozar",
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|remplasigo|remplasigi}} facita.",

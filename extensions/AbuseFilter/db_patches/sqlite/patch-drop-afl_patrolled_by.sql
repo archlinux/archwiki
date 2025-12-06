@@ -20,33 +20,35 @@ SELECT
   afl_deleted,
   afl_rev_id
 FROM /*_*/abuse_filter_log;
+
 DROP TABLE /*_*/abuse_filter_log;
 
 
 CREATE TABLE /*_*/abuse_filter_log (
-    afl_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    afl_global SMALLINT NOT NULL,
-    afl_filter_id BIGINT UNSIGNED NOT NULL,
-    afl_user BIGINT UNSIGNED NOT NULL,
-    afl_user_text BLOB NOT NULL,
-    afl_ip VARCHAR(255) NOT NULL,
-    afl_action BLOB NOT NULL,
-    afl_actions BLOB NOT NULL,
-    afl_var_dump BLOB NOT NULL,
-    afl_timestamp BLOB NOT NULL,
-    afl_namespace INTEGER NOT NULL,
-    afl_title BLOB NOT NULL,
-    afl_wiki BLOB DEFAULT NULL,
-    afl_deleted SMALLINT DEFAULT 0 NOT NULL,
-    afl_rev_id INTEGER UNSIGNED DEFAULT NULL
-  );
+  afl_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  afl_global SMALLINT NOT NULL,
+  afl_filter_id BIGINT UNSIGNED NOT NULL,
+  afl_user BIGINT UNSIGNED NOT NULL,
+  afl_user_text BLOB NOT NULL,
+  afl_ip VARCHAR(255) NOT NULL,
+  afl_action BLOB NOT NULL,
+  afl_actions BLOB NOT NULL,
+  afl_var_dump BLOB NOT NULL,
+  afl_timestamp BLOB NOT NULL,
+  afl_namespace INTEGER NOT NULL,
+  afl_title BLOB NOT NULL,
+  afl_wiki BLOB DEFAULT NULL,
+  afl_deleted SMALLINT DEFAULT 0 NOT NULL,
+  afl_rev_id INTEGER UNSIGNED DEFAULT NULL
+);
+
 INSERT INTO /*_*/abuse_filter_log (
-    afl_id, afl_global, afl_filter_id,
-    afl_user, afl_user_text, afl_ip,
-    afl_action, afl_actions, afl_var_dump,
-    afl_timestamp, afl_namespace, afl_title,
-    afl_wiki, afl_deleted, afl_rev_id
-  )
+  afl_id, afl_global, afl_filter_id,
+  afl_user, afl_user_text, afl_ip,
+  afl_action, afl_actions, afl_var_dump,
+  afl_timestamp, afl_namespace, afl_title,
+  afl_wiki, afl_deleted, afl_rev_id
+)
 SELECT
   afl_id,
   afl_global,
@@ -65,21 +67,22 @@ SELECT
   afl_rev_id
 FROM
   /*_*/__temp__abuse_filter_log;
+
 DROP TABLE /*_*/__temp__abuse_filter_log;
 
 CREATE INDEX afl_filter_timestamp_full ON /*_*/abuse_filter_log (
-    afl_global, afl_filter_id, afl_timestamp
-  );
+  afl_global, afl_filter_id, afl_timestamp
+);
 
 CREATE INDEX afl_user_timestamp ON /*_*/abuse_filter_log (
-    afl_user, afl_user_text, afl_timestamp
-  );
+  afl_user, afl_user_text, afl_timestamp
+);
 
 CREATE INDEX afl_timestamp ON /*_*/abuse_filter_log (afl_timestamp);
 
 CREATE INDEX afl_page_timestamp ON /*_*/abuse_filter_log (
-    afl_namespace, afl_title, afl_timestamp
-  );
+  afl_namespace, afl_title, afl_timestamp
+);
 
 CREATE INDEX afl_ip_timestamp ON /*_*/abuse_filter_log (afl_ip, afl_timestamp);
 

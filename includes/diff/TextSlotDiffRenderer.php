@@ -2,21 +2,7 @@
 /**
  * Renders a slot diff by doing a text diff on the native representation.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup DifferenceEngine
  */
@@ -45,7 +31,7 @@ use Wikimedia\Stats\StatsFactory;
  *
  * If you want to use this without content objects (to call getTextDiff() on some
  * non-content-related texts), obtain an instance with
- *     ContentHandler::getForModelID( CONTENT_MODEL_TEXT )
+ *     ContentHandlerFactory::getContentHandler( CONTENT_MODEL_TEXT )
  *         ->getSlotDiffRenderer( RequestContext::getMain() )
  *
  * @ingroup DifferenceEngine
@@ -248,6 +234,7 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 		return $this->getTextDiff( $oldText, $newText );
 	}
 
+	/** @inheritDoc */
 	public function localizeDiff( $diff, $options = [] ) {
 		return $this->textDiffer->localize( $this->format, $diff, $options );
 	}
@@ -303,16 +290,13 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 	 */
 	public function getTextDiff( string $oldText, string $newText ) {
 		$diff = function () use ( $oldText, $newText ) {
-			$time = microtime( true );
+			$timer = $this->statsFactory?->getTiming( 'diff_text_seconds' )
+				->start();
 
 			$result = $this->getTextDiffInternal( $oldText, $newText );
 
-			$time = intval( ( microtime( true ) - $time ) * 1000 );
-
-			if ( $this->statsFactory ) {
-				$this->statsFactory->getTiming( 'diff_text_seconds' )
-					->copyToStatsdAt( 'diff_time' )
-					->observe( $time );
+			if ( $timer ) {
+				$timer->stop();
 			}
 
 			return $result;
@@ -323,7 +307,7 @@ class TextSlotDiffRenderer extends SlotDiffRenderer {
 		 * @throws FatalError
 		 * @return never
 		 */
-		$error = static function ( $status ) {
+		$error = static function ( $status ): never {
 			throw new FatalError( $status->getWikiText() );
 		};
 

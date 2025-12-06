@@ -4,7 +4,7 @@ namespace MediaWiki\CheckUser\Tests\Unit\ClientHints;
 
 use MediaWiki\CheckUser\ClientHints\ClientHintsData;
 use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
-use MediaWiki\Request\WebRequest;
+use MediaWiki\Request\FauxRequest;
 use MediaWikiUnitTestCase;
 use TypeError;
 
@@ -37,30 +37,30 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 				'brands' => [
 					[
 						"brand" => "Not.A/Brand",
-						"version" => "8"
+						"version" => "8",
 					],
 					[
 						"brand" => "Chromium",
-						"version" => "114"
+						"version" => "114",
 					],
 					[
 						"version" => "114",
-						"brand" => "Google Chrome"
+						"brand" => "Google Chrome",
 					],
 				],
 				'fullVersionList' => [
 					[
 						"brand" => "Not.A/Brand",
-						"version" => "8.0.0.0"
+						"version" => "8.0.0.0",
 					],
 					[
 						"brand" => "Chromium",
-						"version" => "114.0.5735.199"
+						"version" => "114.0.5735.199",
 					],
 					[
 						"version" => "114.0.5735.199",
-						"brand" => "Google Chrome"
-					]
+						"brand" => "Google Chrome",
+					],
 				],
 				'mobile' => false,
 				'model' => "",
@@ -73,39 +73,39 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 				'brands' => [
 					[
 						"brand" => " Not.A/Brand",
-						"version" => "8"
+						"version" => "8",
 					],
 					[
 						"brand" => "Chromium",
-						"version" => "114"
+						"version" => "114",
 					],
 					[
 						"brand" => "Chromium",
-						"version" => "114"
+						"version" => "114",
 					],
 					[
 						"version" => "114",
-						"brand" => "Google Chrome"
-					]
+						"brand" => "Google Chrome",
+					],
 				],
 				'formFactor' => null,
 				'fullVersionList' => [
 					[
 						"brand" => " Not.A/Brand",
-						"version" => "8.0.0.0"
+						"version" => "8.0.0.0",
 					],
 					[
 						"brand" => "Chromium",
-						"version" => "114.0.5735.199"
+						"version" => "114.0.5735.199",
 					],
 					[
 						"brand" => "Google Chrome",
-						"version" => "114.0.5735.199"
+						"version" => "114.0.5735.199",
 					],
 					[
 						"version" => "114.0.5735.199",
-						"brand" => "Google Chrome"
-					]
+						"brand" => "Google Chrome",
+					],
 				],
 				'mobile' => false,
 				'model' => "",
@@ -132,7 +132,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
-				]
+				],
 			],
 			'Example Windows device using Chrome' => [
 				$exampleJsApiData['Example Windows device using Chrome'],
@@ -142,38 +142,38 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'brands' => [
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"version" => "114",
-							"brand" => "Google Chrome"
-						]
+							"brand" => "Google Chrome",
+						],
 					],
 					'formFactor' => null,
 					'fullVersionList' => [
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8.0.0.0"
+							"version" => "8.0.0.0",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"version" => "114.0.5735.199",
-							"brand" => "Google Chrome"
-						]
+							"brand" => "Google Chrome",
+						],
 					],
 					'mobile' => false,
 					'model' => "",
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => null,
-				]
+				],
 			],
 			'Example Windows device using Chrome with duplicated data' => [
 				$exampleJsApiData['Example Windows device using Chrome with duplicated data'],
@@ -183,46 +183,46 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'brands' => [
 						[
 							"brand" => " Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"version" => "114",
-							"brand" => "Google Chrome"
-						]
+							"brand" => "Google Chrome",
+						],
 					],
 					'formFactor' => null,
 					'fullVersionList' => [
 						[
 							"brand" => " Not.A/Brand",
-							"version" => "8.0.0.0"
+							"version" => "8.0.0.0",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Google Chrome",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"version" => "114.0.5735.199",
-							"brand" => "Google Chrome"
-						]
+							"brand" => "Google Chrome",
+						],
 					],
 					'mobile' => false,
 					'model' => "",
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => null,
-				]
+				],
 			],
 			'Client Hints data contains deprecated uaFullVersion' => [
 				[ 'uaFullVersion' => '1.2.3.4' ],
@@ -259,11 +259,8 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider provideNewFromRequestHeaders */
 	public function testNewFromRequestHeaders( $requestHeaders, $expectedJsonArray ) {
-		$request = $this->createMock( WebRequest::class );
-		$request->method( 'getHeader' )
-			->willReturnCallback( static function ( $headerName ) use ( $requestHeaders ) {
-				return $requestHeaders[strtoupper( $headerName )] ?? false;
-			} );
+		$request = new FauxRequest();
+		$request->setHeaders( $requestHeaders );
 		$objectToTest = ClientHintsData::newFromRequestHeaders( $request );
 		$this->assertArrayEquals(
 			$expectedJsonArray,
@@ -289,7 +286,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
-				]
+				],
 			],
 			'Example Windows device using Chrome' => [
 				[
@@ -310,30 +307,30 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'brands' => [
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"version" => "114",
-							"brand" => "Google Chrome"
+							"brand" => "Google Chrome",
 						],
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 					],
 					'formFactor' => null,
 					'fullVersionList' => [
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Google Chrome",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8.0.0.0"
+							"version" => "8.0.0.0",
 						],
 					],
 					'mobile' => false,
@@ -341,7 +338,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => false,
-				]
+				],
 			],
 			'Example Android device using Chrome' => [
 				[
@@ -362,30 +359,30 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'brands' => [
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"version" => "114",
-							"brand" => "Google Chrome"
+							"brand" => "Google Chrome",
 						],
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "99"
+							"version" => "99",
 						],
 					],
 					'formFactor' => null,
 					'fullVersionList' => [
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Google Chrome",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "99.0.0.0"
+							"version" => "99.0.0.0",
 						],
 					],
 					'mobile' => true,
@@ -393,7 +390,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Android",
 					'platformVersion' => "8.0.0",
 					'woW64' => false,
-				]
+				],
 			],
 		];
 	}
@@ -421,7 +418,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 		return [
 			'No client hint data' => [
 				$exampleJsApiData['No client hint data'],
-				[]
+				[],
 			],
 			'Example Windows device using Chrome' => [
 				$exampleJsApiData['Example Windows device using Chrome'],
@@ -437,7 +434,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					[ 'uach_name' => 'mobile', 'uach_value' => '0' ],
 					[ 'uach_name' => 'platform', 'uach_value' => "Windows" ],
 					[ 'uach_name' => 'platformVersion', 'uach_value' => "15.0.0" ],
-				]
+				],
 			],
 			'Example Windows device using Chrome with duplicated data' => [
 				$exampleJsApiData['Example Windows device using Chrome with duplicated data'],
@@ -453,7 +450,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					[ 'uach_name' => 'mobile', 'uach_value' => '0' ],
 					[ 'uach_name' => 'platform', 'uach_value' => "Windows" ],
 					[ 'uach_name' => 'platformVersion', 'uach_value' => "15.0.0" ],
-				]
+				],
 			],
 			'Fake data with too many brands' => [
 				[
@@ -462,47 +459,47 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 						// returned by ::toDatabaseRows.
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"brand" => "Chromium1234",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"brand" => "Google Chrome",
-							"version" => "113"
+							"version" => "113",
 						],
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "9"
+							"version" => "9",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "113"
+							"version" => "113",
 						],
 						[
 							"brand" => "A.Different.Browser",
-							"version" => "113"
+							"version" => "113",
 						],
 						[
 							"brand" => "Google Chrome",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"version" => "10",
-							"brand" => "Not.A/Brand"
+							"brand" => "Not.A/Brand",
 						],
 						[
 							"brand" => "Chromiumabc",
-							"version" => "12345"
+							"version" => "12345",
 						],
 						[
 							"brand" => "Test.Should.not.be.added",
-							"version" => "132323"
+							"version" => "132323",
 						],
 					],
 					'fullVersionList' => [],
@@ -518,7 +515,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					[ 'uach_name' => 'brands', 'uach_value' => 'Google Chrome 114' ],
 					[ 'uach_name' => 'brands', 'uach_value' => 'Not.A/Brand 10' ],
 					[ 'uach_name' => 'brands', 'uach_value' => 'Chromiumabc 12345' ],
-				]
+				],
 			],
 			'Non-array fullVersionList data that includes both valid and invalid types' => [
 				[
@@ -542,7 +539,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					[ 'uach_name' => 'fullVersionList', 'uach_value' => '1' ],
 					[ 'uach_name' => 'fullVersionList', 'uach_value' => '1.1' ],
 					[ 'uach_name' => 'fullVersionList', 'uach_value' => 'testvalue' ],
-				]
+				],
 			],
 		];
 	}

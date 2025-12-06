@@ -3,20 +3,20 @@ QUnit.module( 'ext.echo.dm - PaginationModel' );
 QUnit.test.each( 'Constructing the model', {
 	'Empty config': {
 		config: {},
-		expected: {}
+		expected: {},
 	},
 	'Overriding defaults': {
 		config: {
 			pageNext: 'continueValNext|123',
-			itemsPerPage: 10
+			itemsPerPage: 10,
 		},
 		expected: {
 			getNextPageContinue: 'continueValNext|123',
 			hasNextPage: true,
 			getItemsPerPage: 10,
-			getCurrentPageItemCount: 10
-		}
-	}
+			getCurrentPageItemCount: 10,
+		},
+	},
 }, ( assert, data ) => {
 	const defaultValues = {
 		getPageContinue: undefined,
@@ -27,7 +27,7 @@ QUnit.test.each( 'Constructing the model', {
 		hasPrevPage: false,
 		hasNextPage: false,
 		getCurrentPageItemCount: 25,
-		getItemsPerPage: 25
+		getItemsPerPage: 25,
 	};
 	const expected = $.extend( true, {}, defaultValues, data.expected );
 
@@ -40,7 +40,7 @@ QUnit.test.each( 'Constructing the model', {
 			// Expected value
 			expected[ method ],
 			// Message
-			method
+			method,
 		);
 	}
 } );
@@ -53,7 +53,7 @@ QUnit.test( 'Emitting update event', ( assert ) => {
 	model.on( 'update', () => {
 		results.push( [
 			model.getCurrPageIndex(),
-			model.hasNextPage()
+			model.hasNextPage(),
 		] );
 	} );
 
@@ -77,6 +77,6 @@ QUnit.test( 'Emitting update event', ( assert ) => {
 		// Expected:
 		[ [ 0, true ], [ 0, true ], [ 0, true ], [ 1, true ], [ 2, true ], [ 3, false ], [ 2, true ], [ 2, true ], [ 0, false ] ],
 		// Message
-		'Update events emitted'
+		'Update events emitted',
 	);
 } );

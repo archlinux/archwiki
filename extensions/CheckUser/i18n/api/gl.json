@@ -10,6 +10,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Comprobar que enderezos IP son empregados por un usuario concreto ou que nomes de usuario son empregados por un IP específico.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''A administración do sitio desactivou esta API. As consultas á API non devolverán datos.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Tipo de petición do verificador de usuarios:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Obter o enderezo IP do usuario obxectivo.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Obter as accións feitas polo enderezo IP ou rango obxectivo.",
@@ -17,7 +18,7 @@
 	"apihelp-query+checkuser-param-target": "Nome de usuario, enderezo IP ou rango CIDR a comprobar.",
 	"apihelp-query+checkuser-param-reason": "Motivo para a comprobación.",
 	"apihelp-query+checkuser-param-limit": "Límite de filas.",
-	"apihelp-query+checkuser-param-timecond": "Límite de tempo dos datos de usuario (como \"-2 weeks\" ou \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-timecond": "Límite de tempo dos datos de usuario (como «-2 weeks» ou «2 weeks ago»).",
 	"apihelp-query+checkuser-param-xff": "Usar datos XFF no canto do enderezo IP.",
 	"apihelp-query+checkuser-example-1": "Obter os enderezos IP de [[User:Example]]",
 	"apihelp-query+checkuser-example-2": "Obter as accións feitas por 192.0.2.0/24",
@@ -38,9 +39,10 @@
 	"apihelp-query+globalcontributions-example-1": "Amosar as edicións máis recentes en todos os wikis dun determinado usuario.",
 	"apihelp-query+globalcontributions-example-2": "Amosar as edicións máis recentes en todos os wikis dun determinado usuario desde un desfase de continuación indicado, cun límite personalizado.",
 	"apierror-checkuser-missingsummary": "Debes achegar un motivo para a comprobación.",
-	"apierror-checkuser-timelimit": "Debes usar un límite de tempo correcto (como \"-2 weeks\" ou \"2 weeks ago\").",
+	"apierror-checkuser-timelimit": "Debes usar un límite de tempo correcto (como «-2 weeks» ou «2 weeks ago»).",
 	"apierror-checkuser-invalidmode": "Modo de petición non válido",
 	"apierror-checkuser-nosuchuser": "No existe ningún usuario con ese nome de usuario",
+	"apierror-checkuser-disabled": "A administración do sitio web desactivou a API de consultas «checkuser».",
 	"checkuser-api-help-param-direction": "En que dirección enumerar:",
 	"checkuser-api-help-paramvalue-direction-newer": "Listar os máis antigos primeiro. Nota: $1from ten que ser anterior a $1to.",
 	"checkuser-api-help-paramvalue-direction-older": "Listar os máis novos primeiro (por defecto). Nota: $1from ten que ser posterior a $1to.",
@@ -51,5 +53,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} recolle datos do cliente do usuario para axudar a reducir o vandalismo e os comportamentos abusivos. Consulta https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints para obter máis detalles.",
 	"apihelp-logout-param-checkuserclienthints": "Datos de suxestións do cliente proporcionados xunto coas solicitudes a ApiLogout. Só para uso interno.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "A data de caducidade da revelación automática proporcionada non é válida.",
-	"checkuser-ip-auto-reveal-missing-permission": "Non tes o permiso necesario para usar a revelación automática de enderezos IP."
+	"checkuser-ip-auto-reveal-missing-permission": "Non tes o permiso necesario para usar a revelación automática de enderezos IP.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "O identificador de caso especificado non existe",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "A función de investigacións suxeridas non está activada"
 }

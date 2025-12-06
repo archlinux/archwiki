@@ -1,22 +1,7 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @since 1.42
  */
 
 namespace MediaWiki\Tests\Unit\Content\Renderer;
@@ -25,7 +10,6 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Content\WikitextContentHandler;
-use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
@@ -53,7 +37,7 @@ class ContentRendererTest extends MediaWikiUnitTestCase {
 	 * object with a render ID, cache revision ID, and revision timestamp.
 	 */
 	public function testGetParserOutput() {
-		$page = new PageIdentityValue( 1, NS_MAIN, 'TestPage', WikiAwareEntity::LOCAL );
+		$page = PageIdentityValue::localIdentity( 1, NS_MAIN, 'TestPage' );
 		$parserOptions = $this->createMock( ParserOptions::class );
 		$revision = new MutableRevisionRecord( $page );
 		$revision->setTimestamp( '20230418000000' );
@@ -103,7 +87,7 @@ class ContentRendererTest extends MediaWikiUnitTestCase {
 	 * return a ParserOutput object with a render ID.
 	 */
 	public function testGetParserOutputWithNullRevision() {
-		$page = new PageIdentityValue( 1, NS_MAIN, 'TestPage', WikiAwareEntity::LOCAL );
+		$page = PageIdentityValue::localIdentity( 1, NS_MAIN, 'TestPage' );
 		$parserOptions = $this->createMock( ParserOptions::class );
 
 		$contentHandler = $this->createMock( WikitextContentHandler::class );

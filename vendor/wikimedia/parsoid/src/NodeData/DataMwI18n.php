@@ -38,11 +38,12 @@ class DataMwI18n implements RichCodecable {
 
 	/**
 	 * Get the name of the localized attributes or an empty array if no localized attributes
-	 * @return array
+	 *
+	 * @return list<string>
 	 */
 	public function getAttributeNames(): array {
 		$res = [];
-		foreach ( $this->i18nInfo as $k => $v ) {
+		foreach ( $this->i18nInfo as $k => $_v ) {
 			if ( $k !== '/' ) {
 				$res[] = $k;
 			}
@@ -53,14 +54,14 @@ class DataMwI18n implements RichCodecable {
 	/**
 	 * Defines the internationalization parameters of a string contained in a span.
 	 */
-	public function setSpanInfo( I18nInfo $info ) {
+	public function setSpanInfo( I18nInfo $info ): void {
 		$this->i18nInfo['/'] = $info;
 	}
 
 	/**
 	 * Defines the internationalization parameters of the $name attribute's value.
 	 */
-	public function setAttributeInfo( string $name, I18nInfo $info ) {
+	public function setAttributeInfo( string $name, I18nInfo $info ): void {
 		$this->i18nInfo[$name] = $info;
 	}
 
@@ -84,6 +85,7 @@ class DataMwI18n implements RichCodecable {
 		return new DataMwI18n;
 	}
 
+	/** @return Hint<DataMwI18n> */
 	public static function hint(): Hint {
 		return Hint::build( self::class, Hint::ALLOW_OBJECT );
 	}

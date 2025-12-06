@@ -1,0 +1,50 @@
+{
+	"query": {
+		"allusers": [
+			{
+				"userid": 1,
+				"name": "MediaWiki default"
+			},
+			{
+				"userid": 2,
+				"name": "Example user 1"
+			},
+			{
+				"userid": 3,
+				"name": "Example user 2"
+			},
+			{
+				"userid": 4,
+				"name": "Example user 3"
+			},
+			{
+				"userid": 5,
+				"name": "Example user 4"
+			},
+			{
+				"userid": 6,
+				"name": "Example user 5"
+			},
+			{
+				"userid": 7,
+				"name": "Test user 1"
+			},
+			{
+				"userid": 8,
+				"name": "Test user 2"
+			},
+			{
+				"userid": 9,
+				"name": "Test user 3"
+			},
+			{
+				"userid": 10,
+				"name": "Test user 4"
+			},
+			{
+				"userid": 11,
+				"name": "Test user 5"
+			}
+		]
+	}
+}

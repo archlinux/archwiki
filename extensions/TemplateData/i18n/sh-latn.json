@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"templatedata-desc": "Omogućuje čuvanje podataka za šablonske parametre (koristeći JSON)",
@@ -95,5 +95,6 @@
 	"templatedata-modal-title-templateformat": "Predloženo formatiranje parametara",
 	"templatedata-modal-title-templateformatstring": "Niska prilagođenog formata",
 	"templatedata-modal-title-templateparam-details": "Detalji o parametru: $1",
-	"templatedata-modal-title-templateparams": "Parametri šablona"
+	"templatedata-modal-title-templateparams": "Parametri šablona",
+	"templatedata-favorite-add": "Dodajte šablon u omiljene"
 }

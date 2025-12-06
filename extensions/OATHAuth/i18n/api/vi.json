@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nvdtn19"
+		]
+	},
+	"apihelp-query+oath-summary": "Kiểm tra xem xác thực hai yếu tố (OATH) có được bật cho người dùng hay không.",
+	"apihelp-query+oath-param-user": "Tên người dùng để xem thông tin. Mặc định là người dùng hiện tại.",
+	"apihelp-query+oath-param-reason": "Lý do muốn xem trạng thái OATH.",
+	"apihelp-query+oath-example-1": "Xem thông tin về người dùng hiện tại",
+	"apihelp-query+oath-example-2": "Xem thông tin về người dùng <kbd>Ví dụ</kbd>"
+}

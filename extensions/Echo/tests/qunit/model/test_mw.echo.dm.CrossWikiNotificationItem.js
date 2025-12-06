@@ -4,28 +4,28 @@ QUnit.test.each( 'Constructing the model', {
 	'Default values': {
 		params: {
 			id: -1,
-			config: {}
+			config: {},
 		},
-		expected: {}
+		expected: {},
 	},
 	'Overriding model name': {
 		params: {
 			id: -1,
-			config: { modelName: 'foo' }
+			config: { modelName: 'foo' },
 		},
 		expected: {
-			getModelName: 'foo'
-		}
+			getModelName: 'foo',
+		},
 	},
 	'Overriding model count': {
 		params: {
 			id: -1,
-			config: { count: 10 }
+			config: { count: 10 },
 		},
 		expected: {
-			getCount: 10
-		}
-	}
+			getCount: 10,
+		},
+	},
 }, ( assert, data ) => {
 	const defaults = {
 		getModelName: 'xwiki',
@@ -33,13 +33,13 @@ QUnit.test.each( 'Constructing the model', {
 		getCount: 0,
 		hasUnseen: false,
 		getItems: [],
-		isEmpty: true
+		isEmpty: true,
 	};
 	const expected = $.extend( true, {}, defaults, data.expected );
 
 	const model = new mw.echo.dm.CrossWikiNotificationItem(
 		data.params.id,
-		data.params.config
+		data.params.config,
 	);
 
 	for ( const method in defaults ) {
@@ -49,7 +49,7 @@ QUnit.test.each( 'Constructing the model', {
 			// Expected value
 			expected[ method ],
 			// Message
-			method
+			method,
 		);
 	}
 } );
@@ -61,37 +61,37 @@ QUnit.test( 'Managing notification lists', ( assert ) => {
 			name: 'foo',
 			sourceData: {
 				title: 'Foo Wiki',
-				base: 'http://foo.wiki.sample/$1'
+				base: 'http://foo.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 0, { source: 'foo', read: false, seen: false, timestamp: '201601010100' } ),
 				new mw.echo.dm.NotificationItem( 1, { source: 'foo', read: false, seen: false, timestamp: '201601010200' } ),
-				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } )
-			]
+				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } ),
+			],
 		},
 		{
 			name: 'bar',
 			sourceData: {
 				title: 'Bar Wiki',
-				base: 'http://bar.wiki.sample/$1'
+				base: 'http://bar.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 3, { source: 'bar', read: false, seen: false, timestamp: '201601020000' } ),
 				new mw.echo.dm.NotificationItem( 4, { source: 'bar', read: false, seen: false, timestamp: '201601020100' } ),
 				new mw.echo.dm.NotificationItem( 5, { source: 'bar', read: false, seen: false, timestamp: '201601020200' } ),
-				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } )
-			]
+				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } ),
+			],
 		},
 		{
 			name: 'baz',
 			sourceData: {
 				title: 'Baz Wiki',
-				base: 'http://baz.wiki.sample/$1'
+				base: 'http://baz.wiki.sample/$1',
 			},
 			items: [
-				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } )
-			]
-		}
+				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } ),
+			],
+		},
 	];
 
 	// Add groups to model
@@ -99,19 +99,19 @@ QUnit.test( 'Managing notification lists', ( assert ) => {
 		model.getList().addGroup(
 			def.name,
 			def.sourceData,
-			def.items
+			def.items,
 		);
 	} );
 
 	assert.deepEqual(
 		model.getSourceNames(),
 		[ 'baz', 'bar', 'foo' ],
-		'Model source names exist in order'
+		'Model source names exist in order',
 	);
 	assert.strictEqual(
 		model.hasUnseen(),
 		true,
-		'hasUnseen is true if there are unseen items in any group'
+		'hasUnseen is true if there are unseen items in any group',
 	);
 
 	// Mark all items as seen except one
@@ -124,14 +124,14 @@ QUnit.test( 'Managing notification lists', ( assert ) => {
 	assert.strictEqual(
 		model.hasUnseen(),
 		true,
-		'hasUnseen is true even if only one item in one group is unseen'
+		'hasUnseen is true even if only one item in one group is unseen',
 	);
 
 	groupDefinitions[ 0 ].items[ 0 ].toggleSeen( true );
 	assert.strictEqual(
 		model.hasUnseen(),
 		false,
-		'hasUnseen is false if there are no unseen items in any of the groups'
+		'hasUnseen is false if there are no unseen items in any of the groups',
 	);
 
 	// Discard group
@@ -139,7 +139,7 @@ QUnit.test( 'Managing notification lists', ( assert ) => {
 	assert.deepEqual(
 		model.getSourceNames(),
 		[ 'baz', 'bar' ],
-		'Group discarded successfully'
+		'Group discarded successfully',
 	);
 } );
 
@@ -150,37 +150,37 @@ QUnit.test( 'Update seen state', ( assert ) => {
 			name: 'foo',
 			sourceData: {
 				title: 'Foo Wiki',
-				base: 'http://foo.wiki.sample/$1'
+				base: 'http://foo.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 0, { source: 'foo', read: false, seen: false, timestamp: '201601010100' } ),
 				new mw.echo.dm.NotificationItem( 1, { source: 'foo', read: false, seen: false, timestamp: '201601010200' } ),
-				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } )
-			]
+				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } ),
+			],
 		},
 		{
 			name: 'bar',
 			sourceData: {
 				title: 'Bar Wiki',
-				base: 'http://bar.wiki.sample/$1'
+				base: 'http://bar.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 3, { source: 'bar', read: false, seen: false, timestamp: '201601020000' } ),
 				new mw.echo.dm.NotificationItem( 4, { source: 'bar', read: false, seen: false, timestamp: '201601020100' } ),
 				new mw.echo.dm.NotificationItem( 5, { source: 'bar', read: false, seen: false, timestamp: '201601020200' } ),
-				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } )
-			]
+				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } ),
+			],
 		},
 		{
 			name: 'baz',
 			sourceData: {
 				title: 'Baz Wiki',
-				base: 'http://baz.wiki.sample/$1'
+				base: 'http://baz.wiki.sample/$1',
 			},
 			items: [
-				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } )
-			]
-		}
+				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } ),
+			],
+		},
 	];
 
 	// Count all actual items
@@ -191,7 +191,7 @@ QUnit.test( 'Update seen state', ( assert ) => {
 		model.getList().addGroup(
 			groupDefinitions[ i ].name,
 			groupDefinitions[ i ].sourceData,
-			groupDefinitions[ i ].items
+			groupDefinitions[ i ].items,
 		);
 	}
 
@@ -199,7 +199,7 @@ QUnit.test( 'Update seen state', ( assert ) => {
 	assert.strictEqual(
 		numUnseenItems,
 		numAllItems,
-		'Starting state: all items are unseen'
+		'Starting state: all items are unseen',
 	);
 
 	// Update seen time to be bigger than 'foo' but smaller than the other groups
@@ -209,7 +209,7 @@ QUnit.test( 'Update seen state', ( assert ) => {
 	assert.strictEqual(
 		numUnseenItems,
 		numAllItems - groupDefinitions[ 0 ].items.length,
-		'Only some items are seen'
+		'Only some items are seen',
 	);
 
 	// Update seen time to be bigger than all
@@ -219,7 +219,7 @@ QUnit.test( 'Update seen state', ( assert ) => {
 	assert.strictEqual(
 		numUnseenItems,
 		0,
-		'All items are seen'
+		'All items are seen',
 	);
 } );
 
@@ -231,37 +231,37 @@ QUnit.test( 'Emit discard event', ( assert ) => {
 			name: 'foo',
 			sourceData: {
 				title: 'Foo Wiki',
-				base: 'http://foo.wiki.sample/$1'
+				base: 'http://foo.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 0, { source: 'foo', read: false, seen: false, timestamp: '201601010100' } ),
 				new mw.echo.dm.NotificationItem( 1, { source: 'foo', read: false, seen: false, timestamp: '201601010200' } ),
-				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } )
-			]
+				new mw.echo.dm.NotificationItem( 2, { source: 'foo', read: false, seen: false, timestamp: '201601010300' } ),
+			],
 		},
 		{
 			name: 'bar',
 			sourceData: {
 				title: 'Bar Wiki',
-				base: 'http://bar.wiki.sample/$1'
+				base: 'http://bar.wiki.sample/$1',
 			},
 			items: [
 				new mw.echo.dm.NotificationItem( 3, { source: 'bar', read: false, seen: false, timestamp: '201601020000' } ),
 				new mw.echo.dm.NotificationItem( 4, { source: 'bar', read: false, seen: false, timestamp: '201601020100' } ),
 				new mw.echo.dm.NotificationItem( 5, { source: 'bar', read: false, seen: false, timestamp: '201601020200' } ),
-				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } )
-			]
+				new mw.echo.dm.NotificationItem( 6, { source: 'bar', read: false, seen: false, timestamp: '201601020300' } ),
+			],
 		},
 		{
 			name: 'baz',
 			sourceData: {
 				title: 'Baz Wiki',
-				base: 'http://baz.wiki.sample/$1'
+				base: 'http://baz.wiki.sample/$1',
 			},
 			items: [
-				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } )
-			]
-		}
+				new mw.echo.dm.NotificationItem( 7, { source: 'baz', timestamp: '201601050100' } ),
+			],
+		},
 	];
 
 	// Add groups to model
@@ -269,7 +269,7 @@ QUnit.test( 'Emit discard event', ( assert ) => {
 		model.getList().addGroup(
 			groupDefinitions[ i ].name,
 			groupDefinitions[ i ].sourceData,
-			groupDefinitions[ i ].items
+			groupDefinitions[ i ].items,
 		);
 	}
 
@@ -286,6 +286,6 @@ QUnit.test( 'Emit discard event', ( assert ) => {
 	assert.deepEqual(
 		results,
 		[ 'foo', 'baz' ],
-		'Discard event emitted'
+		'Discard event emitted',
 	);
 } );

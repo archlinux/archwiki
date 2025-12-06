@@ -6,8 +6,6 @@
 			"Jerryjaymi"
 		]
 	},
-	"vector-opt-out": "Dabi tí alù kí eju ñwu de kwobí",
-	"vector-opt-out-tooltip": "Fí settings kpaílo todù kí dabi akwobi",
 	"vector-action-toggle-sidebar": "Sibebar Toggle",
 	"vector-languages": "Amí ichí",
 	"vector-language-button-aria-label": "Lotí articlu efí ichi omone. Kí de efí {{PLURAL:$1|ichi|$1 amí ichi }}",
@@ -28,7 +26,6 @@
 	"vector-more-actions": "Mànyú",
 	"vector-appearance-label": "Egbá ehuté",
 	"vector-feature-custom-font-size-0-label": "Kéké",
-	"vector-searchsuggest-containing": "Téné amí ogbá kí gwonwú <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Èyo ùkóló",
 	"vector-toc-beginning": "Uchane",
 	"vector-anon-user-menu-pages-learn": "Koche tógba",

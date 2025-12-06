@@ -261,6 +261,7 @@
 	"visualeditor-includes-includeonly-description": "Når innhold fra denne siden inkluderes på en annen side vil følgende ekstra innhold inkluderes:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Lær mer om delvis transklusjon]",
 	"visualeditor-languages-tool": "Språk",
+	"visualeditor-linkcontext-uneditable": "Beklager, denne lenka kan for tiden kun endres i kildemodus.",
 	"visualeditor-linkinspector-button-link-external": "Ekstern side",
 	"visualeditor-linkinspector-button-link-internal": "Søk i interne sider",
 	"visualeditor-linkinspector-convert-link-isbn": "Konverter til ISBN-lenke",

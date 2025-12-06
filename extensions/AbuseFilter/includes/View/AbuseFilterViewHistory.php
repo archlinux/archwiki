@@ -84,13 +84,30 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 				$out->addWikiMsg( 'abusefilter-history-error-hidden' );
 				return;
 			}
-			if (
-				$filterObj &&
-				$filterObj->isProtected() &&
-				!$this->afPermManager->canViewProtectedVariablesInFilter( $this->getAuthority(), $filterObj )->isGood()
-			) {
-				$out->addWikiMsg( 'abusefilter-history-error-protected' );
-				return;
+
+			if ( $filterObj && $filterObj->isProtected() ) {
+				$permStatus = $this->afPermManager
+					->canViewProtectedVariablesInFilter( $this->getAuthority(), $filterObj );
+				if ( !$permStatus->isGood() ) {
+					if ( $permStatus->getPermission() ) {
+						$out->addWikiMsg( $this->msg(
+							'abusefilter-history-error-protected-due-to-permission',
+							$this->msg( "action-{$permStatus->getPermission()}" )->plain()
+						) );
+						return;
+					}
+
+					// Add any messages in the status after a generic error message.
+					$additional = '';
+					foreach ( $permStatus->getMessages() as $message ) {
+						$additional .= $this->msg( $message )->parseAsBlock();
+					}
+
+					$out->addWikiMsg(
+						$this->msg( 'abusefilter-history-error-protected' )->rawParams( $additional )
+					);
+					return;
+				}
 			}
 		}
 

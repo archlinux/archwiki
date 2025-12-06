@@ -11,6 +11,7 @@
 			"Kaganer",
 			"Kareyac",
 			"Mariya",
+			"Mitte27",
 			"Movses",
 			"Oashnic",
 			"Okras",
@@ -22,8 +23,7 @@
 			"Stjn",
 			"Striking Blue",
 			"Sunpriat",
-			"UniCollab",
-			"Mitte27"
+			"UniCollab"
 		]
 	},
 	"templatedata-desc": "Реализация хранилища данных для параметров шаблона (с помощью JSON)",
@@ -133,7 +133,9 @@
 	"templatedata-modal-title-templateformatstring": "Нестандартный формат",
 	"templatedata-modal-title-templateparam-details": "Описание параметра: $1",
 	"templatedata-modal-title-templateparams": "Параметры шаблона",
-	"templatedata-search-title": "Поиск шаблона",
+	"templatedata-search-description": "Поиск для шаблона:",
+	"templatedata-search-placeholder": "Введите название шаблона",
+	"templatedata-search-placeholder-cirrussearch": "Введите название шаблона или ключевые слова",
 	"templatedata-search-list-header": "Избранное",
 	"templatedata-search-list-empty": "Здесь появятся шаблоны, которые вы пометили как избранные",
 	"templatedata-template-discovery-disabled": "Обнаружение шаблонов на этом вики-сайте отключено.",
@@ -144,5 +146,21 @@
 	"templatedata-favorite-remove": "Удалить шаблон из избранных",
 	"templatedata-favorite-removed": "Шаблон удалён из избранных",
 	"templatedata-favorite-error": "Невозможно сохранить избранное",
-	"templatedata-favorite-maximum-reached": "Вы достигли максимального количества ($1) избранных шаблонов. Прежде чем добавлять новые, придётся удалить какие-то из своего списка."
+	"templatedata-favorite-maximum-reached": "Вы достигли максимального количества ($1) избранных шаблонов. Прежде чем добавлять новые, придётся удалить какие-то из своего списка.",
+	"templatedata-category-browser-header": "Категории",
+	"templatedata-category-switch-label": "Категория верхнего уровня:",
+	"templatedata-category-switch-button": "Обзор",
+	"templatedata-category-column-empty": "В [[$1]] не найдены шаблоны или подкатегории",
+	"templatedata-category-browser-loadmore": "…загрузить ещё",
+	"templatedata-category-column-error": "Произошла ошибка",
+	"templatedata-category-use-template": "Используйте этот шаблон",
+	"templatedata-category-categories": "Другие категории",
+	"templatedata-category-no-cats": "Ничего.",
+	"templatedata-featured-list-header": "Избранное",
+	"templatedata-featured-list-empty": "Избранные шаблоны — это шаблоны, которые сообщество отметило как полезные. Пока не создано ни одного избранного шаблона.",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Избранные шаблоны",
+	"communityconfiguration-templatedata-featuredtemplates-description": "Избранные шаблоны — это шаблоны, которые сообщество отметило как полезные. Они доступны для использования в инструменте обнаружения шаблонов.",
+	"templatedata-featured-list-config-link": "Изменить список избранных",
+	"templatedata-featured-list-help": "Избранные шаблоны — это шаблоны, которые были отмечены сообществом как полезные.",
+	"templatedata-favorite-count": "Вы используете $1/$2 избранных шаблона"
 }

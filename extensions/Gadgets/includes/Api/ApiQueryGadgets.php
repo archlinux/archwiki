@@ -45,15 +45,12 @@ class ApiQueryGadgets extends ApiQueryBase {
 
 	private bool $listEnabled;
 
-	private GadgetRepo $gadgetRepo;
-
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,
-		GadgetRepo $gadgetRepo
+		private readonly GadgetRepo $gadgetRepo,
 	) {
 		parent::__construct( $queryModule, $moduleName, 'ga' );
-		$this->gadgetRepo = $gadgetRepo;
 	}
 
 	public function execute() {
@@ -155,9 +152,11 @@ class ApiQueryGadgets extends ApiQueryBase {
 				'datas' => $g->getJSONs(),
 				'dependencies' => $g->getDependencies(),
 				'messages' => $g->getMessages(),
+				'codexIcons' => $g->getCodexIcons(),
 				'peers' => $g->getPeers(),
 				'scripts' => $g->getScripts(),
 				'styles' => $g->getStyles(),
+				'vues' => $g->getVues(),
 			]
 		];
 	}
@@ -166,6 +165,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 		static $tagNames = [
 			'actions' => 'action',
 			'categories' => 'category',
+			'codexIcons' => 'codexIcon',
 			'contentModels' => 'contentModel',
 			'datas' => 'data',
 			'dependencies' => 'dependency',
@@ -176,6 +176,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 			'scripts' => 'script',
 			'skins' => 'skin',
 			'styles' => 'style',
+			'vues' => 'vue',
 		];
 
 		foreach ( $metadata as $data ) {

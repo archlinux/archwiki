@@ -39,32 +39,32 @@ trait CheckUserClientHintsCommonTraitTest {
 			$brands = [
 				[
 					"brand" => "Not.A/Brand",
-					"version" => "8"
+					"version" => "8",
 				],
 				[
 					"brand" => "Chromium",
-					"version" => "114"
+					"version" => "114",
 				],
 				[
 					"brand" => "Google Chrome",
-					"version" => "114"
-				]
+					"version" => "114",
+				],
 			];
 		}
 		if ( $fullVersionList === null ) {
 			$fullVersionList = [
 				[
 					"brand" => "Not.A/Brand",
-					"version" => "8.0.0.0"
+					"version" => "8.0.0.0",
 				],
 				[
 					"brand" => "Chromium",
-					"version" => "114.0.5735.199"
+					"version" => "114.0.5735.199",
 				],
 				[
 					"brand" => "Google Chrome",
-					"version" => "114.0.5735.199"
-				]
+					"version" => "114.0.5735.199",
+				],
 			];
 		}
 		return [
@@ -75,7 +75,7 @@ trait CheckUserClientHintsCommonTraitTest {
 			"mobile" => $mobile,
 			"model" => $model,
 			"platform" => $platform,
-			"platformVersion" => $platformVersion
+			"platformVersion" => $platformVersion,
 		];
 	}
 

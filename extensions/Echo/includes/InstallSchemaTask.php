@@ -59,7 +59,7 @@ class InstallSchemaTask extends Task {
 		// Create tables
 		$dbw = $echoLB->getMaintenanceConnectionRef( DB_PRIMARY );
 		$dbw->setSchemaVars( $this->getContext()->getSchemaVars() );
-		if ( !$dbw->tableExists( 'echo_event' ) ) {
+		if ( !$dbw->tableExists( 'echo_event', __METHOD__ ) ) {
 			$status = $this->applySourceFile( $dbw, 'tables-generated.sql' );
 		}
 		return $status;

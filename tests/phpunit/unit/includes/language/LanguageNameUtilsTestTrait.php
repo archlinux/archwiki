@@ -1,6 +1,7 @@
 <?php
 
 // phpcs:disable MediaWiki.Commenting.FunctionComment.MissingParamTag -- Traits are not excluded
+// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic -- Test traits are not excluded
 
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
@@ -14,7 +15,7 @@ const SUPPORTED = LanguageNameUtils::SUPPORTED;
  * @internal For LanguageNameUtilsTest and LanguageIntegrationTest.
  */
 trait LanguageNameUtilsTestTrait {
-	abstract protected function isSupportedLanguage( $code );
+	abstract protected function isSupportedLanguage( string $code ): bool;
 
 	/**
 	 * @dataProvider provideIsSupportedLanguage
@@ -33,7 +34,7 @@ trait LanguageNameUtilsTestTrait {
 		];
 	}
 
-	abstract protected function isValidCode( $code );
+	abstract protected function isValidCode( string $code ): bool;
 
 	/**
 	 * We don't test that the result is cached, because that should only be noticeable if the
@@ -80,7 +81,7 @@ trait LanguageNameUtilsTestTrait {
 		return $ret;
 	}
 
-	abstract protected function isValidBuiltInCode( $code );
+	abstract protected function isValidBuiltInCode( string $code ): bool;
 
 	/**
 	 * @dataProvider provideIsValidBuiltInCode
@@ -108,7 +109,7 @@ trait LanguageNameUtilsTestTrait {
 		];
 	}
 
-	abstract protected function isKnownLanguageTag( $code );
+	abstract protected function isKnownLanguageTag( string $code ): bool;
 
 	/**
 	 * @dataProvider provideIsKnownLanguageTag
@@ -138,19 +139,24 @@ trait LanguageNameUtilsTestTrait {
 	}
 
 	abstract protected function assertGetLanguageNames(
-		array $options, $expected, $code, ...$otherArgs
-	);
+		array $options, string $expected, string $code, ?string ...$otherArgs
+	): void;
 
-	abstract protected function getLanguageNames( ...$args );
+	abstract protected function getLanguageNames( ?string ...$args ): array;
 
-	abstract protected function getLanguageName( ...$args );
+	abstract protected function getLanguageName( ?string ...$args ): string;
 
 	/**
 	 * @dataProvider provideGetLanguageNames
 	 */
 	public function testGetLanguageNames( $expected, $code, ...$otherArgs ) {
 		$this->clearLanguageHook( 'LanguageGetTranslatedLanguageNames' );
-		$this->assertGetLanguageNames( [], $expected, $code, ...$otherArgs );
+		$this->assertGetLanguageNames(
+			[ MainConfigNames::ExtraLanguageNames => [] ],
+			$expected,
+			$code,
+			...$otherArgs
+		);
 	}
 
 	public static function provideGetLanguageNames() {
@@ -398,7 +404,7 @@ trait LanguageNameUtilsTestTrait {
 		);
 	}
 
-	abstract protected function getFileName( ...$args );
+	abstract protected function getFileName( string ...$args ): string;
 
 	/**
 	 * @dataProvider provideGetFileName
@@ -417,7 +423,7 @@ trait LanguageNameUtilsTestTrait {
 		];
 	}
 
-	abstract protected function getMessagesFileName( $code );
+	abstract protected function getMessagesFileName( string $code ): string;
 
 	/**
 	 * @dataProvider provideGetMessagesFileName
@@ -456,7 +462,7 @@ trait LanguageNameUtilsTestTrait {
 		$this->assertSame( 1, $called );
 	}
 
-	abstract protected function getJsonMessagesFileName( $code );
+	abstract protected function getJsonMessagesFileName( string $code ): string;
 
 	public function testGetJsonMessagesFileName() {
 		global $IP;
@@ -478,10 +484,10 @@ trait LanguageNameUtilsTestTrait {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( "Invalid language code \"$code\"" );
 
-		$callback( $code );
+		$callback( $this, $code );
 	}
 
-	public function provideExceptionFromInvalidCode() {
+	public static function provideExceptionFromInvalidCode() {
 		$ret = [];
 		foreach ( static::provideIsValidBuiltInCode() as $desc => [ $code, $valid ] ) {
 			if ( $valid ) {
@@ -491,17 +497,25 @@ trait LanguageNameUtilsTestTrait {
 
 			// For getFileName, we define an anonymous function because of the extra first param
 			$ret["getFileName: $desc"] = [
-				function ( $code ) {
-					return $this->getFileName( 'Messages', $code );
+				static function ( $testCase, $code ) {
+					return $testCase->getFileName( 'Messages', $code );
 				},
 				$code
 			];
 
-			$ret["getMessagesFileName: $desc"] =
-				[ [ $this, 'getMessagesFileName' ], $code ];
+			$ret["getMessagesFileName: $desc"] = [
+				static function ( $testCase, $code ) {
+					return $testCase->getMessagesFileName( $code );
+				},
+				$code
+			];
 
-			$ret["getJsonMessagesFileName: $desc"] =
-				[ [ $this, 'getJsonMessagesFileName' ], $code ];
+			$ret["getJsonMessagesFileName: $desc"] = [
+				static function ( $testCase, $code ) {
+					return $testCase->getJsonMessagesFileName( $code );
+				},
+				$code
+			];
 		}
 		return $ret;
 	}

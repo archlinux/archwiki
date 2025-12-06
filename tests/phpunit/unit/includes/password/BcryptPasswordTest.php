@@ -10,7 +10,7 @@ use MediaWiki\Password\BcryptPassword;
  * @covers \MediaWiki\Password\PasswordFactory
  */
 class BcryptPasswordTest extends PasswordTestCase {
-	protected function getTypeConfigs() {
+	protected static function getTypeConfigs() {
 		return [ 'bcrypt' => [
 			'class' => BcryptPassword::class,
 			'cost' => 4,
@@ -40,6 +40,5 @@ class BcryptPasswordTest extends PasswordTestCase {
 			[ false, ':bcrypt:5$CCCCCCCCCCCCCCCCCCCCC.$E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW', "UXU" ],
 			[ false, ':bcrypt:5$CCCCCCCCCCCCCCCCCCCCC.$E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW', "" ],
 		];
-		// phpcs:enable
 	}
 }

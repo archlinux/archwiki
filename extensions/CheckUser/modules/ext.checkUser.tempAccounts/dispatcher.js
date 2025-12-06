@@ -1,6 +1,9 @@
 ( function () {
 	// Include resources for specific special pages
 	switch ( mw.config.get( 'wgCanonicalSpecialPageName' ) ) {
+		case 'AbuseLog':
+			require( './AbuseLog.js' ).onLoad();
+			break;
 		case 'Block':
 			require( './SpecialBlock.js' ).onLoad();
 			break;
@@ -36,9 +39,12 @@
 		}
 	}
 
-	// Include resources for all but a few specific special pages
-	// and for non-special pages that load this module
+	// Include temporary account IP reveal code for all but a few specific
+	// special pages and for non-special pages that load this module.
+	// Some pages in this list are handled through other page-specific
+	// code defined above that adds IP reveal buttons.
 	let excludePages = [
+		'AbuseLog',
 		'IPContributions',
 		'GlobalContributions',
 		'Contributions',
@@ -47,8 +53,9 @@
 	];
 	excludePages = excludePages.concat( mw.config.get( 'wgCheckUserSpecialPagesWithoutIPRevealButtons', [] ) );
 	if (
-		!mw.config.get( 'wgCanonicalSpecialPageName' ) ||
-		!excludePages.includes( mw.config.get( 'wgCanonicalSpecialPageName' ) )
+		mw.config.get( 'wgCheckUserTemporaryAccountIPRevealAllowed' ) && // T399994
+		( !mw.config.get( 'wgCanonicalSpecialPageName' ) ||
+		!excludePages.includes( mw.config.get( 'wgCanonicalSpecialPageName' ) ) )
 	) {
 		require( './initOnLoad.js' )();
 	}

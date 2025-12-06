@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup RevisionDelete
  */
@@ -27,6 +13,7 @@ use Wikimedia\Rdbms\IDBAccessObject;
  * Item class for a archive table row
  */
 class RevDelArchiveItem extends RevDelRevisionItem {
+	/** @inheritDoc */
 	protected static function initRevisionRecord( $list, $row ) {
 		$revRecord = MediaWikiServices::getInstance()
 			->getRevisionFactory()
@@ -40,31 +27,38 @@ class RevDelArchiveItem extends RevDelRevisionItem {
 		return $revRecord;
 	}
 
+	/** @inheritDoc */
 	public function getIdField() {
 		return 'ar_timestamp';
 	}
 
+	/** @inheritDoc */
 	public function getTimestampField() {
 		return 'ar_timestamp';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorIdField() {
 		return 'ar_user';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorNameField() {
 		return 'ar_user_text';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorActorField() {
 		return 'ar_actor';
 	}
 
+	/** @inheritDoc */
 	public function getId() {
 		# Convert DB timestamp to MW timestamp
 		return $this->revisionRecord->getTimestamp();
 	}
 
+	/** @inheritDoc */
 	public function setBits( $bits ) {
 		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$dbw->newUpdateQueryBuilder()
@@ -83,6 +77,7 @@ class RevDelArchiveItem extends RevDelRevisionItem {
 		return (bool)$dbw->affectedRows();
 	}
 
+	/** @inheritDoc */
 	protected function getRevisionLink() {
 		$date = $this->list->getLanguage()->userTimeAndDate(
 			$this->revisionRecord->getTimestamp(), $this->list->getUser() );
@@ -102,6 +97,7 @@ class RevDelArchiveItem extends RevDelRevisionItem {
 		);
 	}
 
+	/** @inheritDoc */
 	protected function getDiffLink() {
 		if ( $this->isDeleted() && !$this->canViewContent() ) {
 			return $this->list->msg( 'diff' )->escaped();

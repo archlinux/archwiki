@@ -66,6 +66,7 @@ abstract class CheckUserPagerTestBase extends MediaWikiIntegrationTestCase {
 		$opts->add( 'limit', '' );
 		$opts->add( 'dir', '' );
 		$opts->add( 'offset', '' );
+		$opts->add( 'wpHideTemporaryAccounts', false );
 		$specialCheckUser = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getSpecialPageFactory()->getPage( 'CheckUser' )
 		);

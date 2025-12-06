@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -701,7 +687,6 @@ class ChangeTags {
 	 * @param string|array &$options Options, see Database::select
 	 * @param string|array|false|null $filter_tag Tag(s) to select on (OR)
 	 * @param bool $exclude If true, exclude tag(s) from $filter_tag (NOR)
-	 *
 	 */
 	public static function modifyDisplayQuery( &$tables, &$fields, &$conds,
 		&$join_conds, &$options, $filter_tag = '', bool $exclude = false
@@ -1001,8 +986,7 @@ class ChangeTags {
 		// pipe (used as a delimiter between multiple tags in
 		// SpecialRecentchanges and friends), or slashes (would break tag description messages in
 		// MediaWiki namespace)
-		if ( strpos( $tag, ',' ) !== false || strpos( $tag, '|' ) !== false
-			|| strpos( $tag, '/' ) !== false ) {
+		if ( str_contains( $tag, ',' ) || str_contains( $tag, '|' ) || str_contains( $tag, '/' ) ) {
 			return Status::newFatal( 'tags-create-invalid-chars' );
 		}
 

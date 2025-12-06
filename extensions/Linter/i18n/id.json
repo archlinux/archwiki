@@ -37,7 +37,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|galat|galat}})",
 	"linter-page-edit": "sunting",
 	"linter-page-history": "riwayat",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "lihat sumber",
 	"linter-pager-bogus-image-options-details": "Opsi berkas bogus",
 	"linter-pager-category-header": "Kategori",

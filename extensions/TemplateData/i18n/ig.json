@@ -112,7 +112,8 @@
 	"templatedata-modal-title-templateformatstring": "Ahaziri nhazi omenala",
 	"templatedata-modal-title-templateparam-details": "Nkọwa parameter: $1",
 	"templatedata-modal-title-templateparams": "Ụdị ụkpụrụ",
-	"templatedata-search-title": "Nchọchọ ndebiri",
+	"templatedata-search-description": "Chọta template ịchọrọ ịgbakwunye site na ịchọ isi okwu na-amata. O yikarịrị ka ndị na-ede blọgụ nwere ike ịrụ ọrụ nke ọma.",
+	"templatedata-search-placeholder": "Chọta ndebiri",
 	"templatedata-search-list-header": "Ụ́nọkwuobì",
 	"templatedata-search-list-empty": "Ndebiri ị akara dị ka ọkacha mmasị ga-apụta ebe a",
 	"templatedata-template-discovery-disabled": "Agbanyụrụ nchọpụta template na wiki a.",
@@ -123,5 +124,11 @@
 	"templatedata-favorite-remove": "Hichaa ndebiri site na ọkacha mmasị",
 	"templatedata-favorite-removed": "Ewepụrụ ndebiri na ọkacha mmasị",
 	"templatedata-favorite-error": "Agaghị echekwaghị ọkacha mmasị",
-	"templatedata-favorite-maximum-reached": "Ị ruru ọnụ ọgụgụ kachasị elu ($1) nke ndebiri kachasị amasị gị. Biko wepụ ụfọdụ na listi gị tupu ịgbakwunye ndị ọzọ."
+	"templatedata-favorite-maximum-reached": "Ị ruru ọnụ ọgụgụ kachasị elu ($1) nke ndebiri kachasị amasị gị. Biko wepụ ụfọdụ na listi gị tupu ịgbakwunye ndị ọzọ.",
+	"templatedata-category-browser-header": "Ụdàkọ",
+	"templatedata-category-switch-label": "Otu ọkwa dị elu:",
+	"templatedata-category-switch-button": "Garia",
+	"templatedata-category-column-empty": "Enweghị ndebiri ma ọ bụ subcategories achọtara na [[$1]]",
+	"templatedata-category-browser-loadmore": "…bunye ọzọ",
+	"templatedata-category-column-error": "Ndehie mere"
 }

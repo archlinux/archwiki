@@ -1,0 +1,14 @@
+<div class="cdx-checkbox{{!
+  }}{{#isInline}} cdx-checkbox--inline{{/isInline}}{{#renderClasses}}{{wrapperAttributes}}{{/renderClasses}}"{{!
+  }}{{#wrapperId}} id="{{ wrapperId }}"{{/wrapperId}}{{!
+  }}{{#renderAttributes}}{{{ wrapperAttributes }}}{{/renderAttributes}}>
+  <input class="cdx-checkbox__input{{#renderClasses}}{{inputAttributes}}{{/renderClasses}}" type="checkbox"{{#inputId}} id="{{ inputId }}"{{/inputId}} name="{{ name }}" value="{{ value }}"{{!
+    }}{{#isChecked}} checked{{/isChecked}}{{!
+    }}{{#isDisabled}} disabled{{/isDisabled}}{{!
+    }}{{#ariaDescribedby}} aria-describedby="{{ ariaDescribedby }}"{{/ariaDescribedby}}{{!
+    }}{{#renderAttributes}}{{{ inputAttributes }}}{{/renderAttributes}}>
+  <span class="cdx-checkbox__icon"></span>
+  {{#label}}
+    {{> label }}
+  {{/label}}
+</div>

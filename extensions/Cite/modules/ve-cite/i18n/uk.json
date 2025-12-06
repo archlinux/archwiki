@@ -41,7 +41,6 @@
 	"cite-ve-citationneeded-title": "Потрібне посилання на джерело",
 	"cite-ve-dialog-reference-editing-reused": "Ця примітка вживається $1 {{PLURAL:$1|раз|рази|разів}} на цій сторінці.",
 	"cite-ve-dialog-reference-editing-reused-long": "Ця примітка вживається на цій сторінці {{PLURAL:$1|$1 раз|$1 рази|$1 разів}}. Зміни, здійснені тут, буде застосовано в усіх місцях, у яких повторно використовується ця примітка.",
-	"cite-ve-dialog-reference-editing-extends": "Це посилання є повторним використанням із додатковими деталями. Тут ви можете редагувати лише деталі.",
 	"cite-ve-dialog-reference-missing-parent-ref": "Ці деталі стосуються відсутньої примітки. Будь ласка, вилучіть їх зі сторінки або виправте проблему в режимі коду.",
 	"cite-ve-dialog-reference-options-group-label": "Використати цю групу",
 	"cite-ve-dialog-reference-options-group-placeholder": "Загальні посилання",

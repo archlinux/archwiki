@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Kunal Mehta <legoktm@debian.org>
  */
@@ -171,8 +157,8 @@ class LinkRenderer {
 	 * you would like to add title="Text when hovering!", you would set this to [ 'title' => 'Text
 	 * when hovering!' ]
 	 * @param-taint $extraAttribs none
-	 * @param array $query Parameters you would like to add to the URL. For example, if you would
-	 * like to add ?redirect=no&debug=1, you would set this to [ 'redirect' => 'no', 'debug' => '1' ]
+	 * @param array $query Parameters you would like to add to the URL. For example, to
+	 * add `?redirect=no&debug=true`, you would pass `[ 'redirect' => 'no', 'debug' => 'true' ]`
 	 * @param-taint $query none
 	 * @return string HTML
 	 * @return-taint escaped
@@ -223,8 +209,8 @@ class LinkRenderer {
 	 * you would like to add title="Text when hovering!", you would set this to [ 'title' => 'Text
 	 * when hovering!' ]
 	 * @param-taint $extraAttribs none
-	 * @param array $query Parameters you would like to add to the URL. For example, if you would
-	 * like to add ?redirect=no&debug=1, you would set this to [ 'redirect' => 'no', 'debug' => '1' ]
+	 * @param array $query Parameters you would like to add to the URL. For example, to
+	 * add `?redirect=no&debug=true`, you would pass `[ 'redirect' => 'no', 'debug' => 'true' ]`
 	 * @param-taint $query none
 	 * @return string
 	 * @return-taint escaped
@@ -276,8 +262,8 @@ class LinkRenderer {
 	 * you would like to add title="Text when hovering!", you would set this to [ 'title' => 'Text
 	 * when hovering!' ]
 	 * @param-taint $extraAttribs none
-	 * @param array $query Parameters you would like to add to the URL. For example, if you would
-	 * like to add ?redirect=no&debug=1, you would set this to [ 'redirect' => 'no', 'debug' => '1' ]
+	 * @param array $query Parameters you would like to add to the URL. For example, to
+	 * add `?redirect=no&debug=true`, you would pass `[ 'redirect' => 'no', 'debug' => 'true' ]`
 	 * @param-taint $query none
 	 * @return string HTML
 	 * @return-taint escaped
@@ -322,8 +308,8 @@ class LinkRenderer {
 	 * you would like to add title="Text when hovering!", you would set this to [ 'title' => 'Text
 	 * when hovering!' ]
 	 * @param-taint $extraAttribs none
-	 * @param array $query Parameters you would like to add to the URL. For example, if you would
-	 * like to add ?redirect=no&debug=1, you would set this to [ 'redirect' => 'no', 'debug' => '1' ]
+	 * @param array $query Parameters you would like to add to the URL. For example, to
+	 * add `?redirect=no&debug=true`, you would pass `[ 'redirect' => 'no', 'debug' => 'true' ]`
 	 * @param-taint $query none
 	 * @return string
 	 * @return-taint escaped
@@ -474,7 +460,10 @@ class LinkRenderer {
 		$redirectToText = wfMessage( 'redirectto' )->inLanguage( $lang )->escaped();
 		$linkTag = '';
 		if ( $addLinkTag ) {
-			$linkTag = Html::rawElement( 'link', [ 'rel' => 'mw:PageProp/redirect' ] );
+			$linkTag = Html::rawElement( 'link', [
+				'rel' => 'mw:PageProp/redirect',
+				'href' => $this->getLinkURL( $this->normalizeTarget( $target ) ),
+			] );
 		}
 
 		return Html::rawElement(
@@ -528,8 +517,8 @@ class LinkRenderer {
 
 	/**
 	 * @param LinkTarget|PageReference $target Page that will be visited when the user clicks on the link.
-	 * @param array $query Parameters you would like to add to the URL. For example, if you would
-	 * like to add ?redirect=no&debug=1, you would set this to [ 'redirect' => 'no', 'debug' => '1' ]
+	 * @param array $query Parameters you would like to add to the URL. For example, to
+	 * add `?redirect=no&debug=true`, you would pass `[ 'redirect' => 'no', 'debug' => 'true' ]`
 	 * @return string non-escaped text
 	 */
 	private function getLinkURL( $target, $query = [] ) {

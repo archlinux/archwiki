@@ -31,7 +31,7 @@ OO.inheritClass( mw.echo.api.ForeignAPIHandler, mw.echo.api.LocalAPIHandler );
 mw.echo.api.ForeignAPIHandler.prototype.getTypeParams = function ( type ) {
 	let params = {
 		// Backwards compatibility
-		notforn: 1
+		notforn: 1,
 	};
 
 	if ( this.unreadOnly ) {

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
 use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
 
 /**
@@ -74,6 +61,13 @@ class ApiResult implements ApiSerializable {
 	 * @since 1.25
 	 */
 	public const NO_VALIDATE = self::NO_SIZE_CHECK | 8;
+
+	/**
+	 * For addValue(), setValue() and similar functions, do allow override
+	 * of conflicting keys.
+	 * @since 1.45 (also backported to 1.43.6, 1.44.3)
+	 */
+	public const IGNORE_CONFLICT_KEYS = 16;
 
 	/**
 	 * Key for the 'indexed tag name' metadata item. Value is string.
@@ -311,7 +305,7 @@ class ApiResult implements ApiSerializable {
 			}
 		} elseif ( is_array( $arr[$name] ) && is_array( $value ) ) {
 			$conflicts = array_intersect_key( $arr[$name], $value );
-			if ( !$conflicts ) {
+			if ( !$conflicts || ( $flags & self::IGNORE_CONFLICT_KEYS ) ) {
 				$arr[$name] += $value;
 			} else {
 				$keys = implode( ', ', array_keys( $conflicts ) );
@@ -360,7 +354,7 @@ class ApiResult implements ApiSerializable {
 			} elseif ( $value instanceof ScalarParam || $value instanceof ListParam ) {
 				// HACK Support code that puts $msg->getParams() directly into API responses
 				// (e.g. ApiErrorFormatter::formatRawMessage()).
-				$value = $value->getType() === 'text' ? $value->getValue() : $value->toJsonArray();
+				$value = $value->getType() === ParamType::TEXT ? $value->getValue() : $value->toJsonArray();
 			} elseif ( is_callable( [ $value, '__toString' ] ) ) {
 				$value = (string)$value;
 			} else {
@@ -792,10 +786,7 @@ class ApiResult implements ApiSerializable {
 	 * @return bool
 	 */
 	public static function isMetadataKey( $key ) {
-		// Optimization: This is a very hot and highly optimized code path. Note that ord() only
-		// considers the first character and also works with empty strings and integers.
-		// 95 corresponds to the '_' character.
-		return ord( $key ) === 95;
+		return str_starts_with( $key, '_' );
 	}
 
 	/**
@@ -967,10 +958,7 @@ class ApiResult implements ApiSerializable {
 				uksort( $data, static function ( $a, $b ): int {
 					// In a comparison of a number or numeric string with a non-numeric string,
 					// coerce both values into a string prior to comparing and compare the resulting strings.
-					// Note that PHP prior to 8.0 did not consider numeric strings with trailing whitespace
-					// to be numeric, so trim the inputs prior to the numeric checks to make the behavior
-					// consistent across PHP versions.
-					if ( is_numeric( trim( $a ) ) xor is_numeric( trim( $b ) ) ) {
+					if ( is_numeric( $a ) xor is_numeric( $b ) ) {
 						return (string)$a <=> (string)$b;
 					}
 

@@ -27,7 +27,6 @@
 	"mobile-frontend-meta-data-issues": "Problemer mat der Säit",
 	"mobile-frontend-meta-data-issues-categories": "Iwwer dës Kategorie",
 	"mobile-frontend-meta-data-issues-header": "Problemer mat Säiten",
-	"mobile-frontend-pageaction-edit-tooltip": "Ännert den Aleedungs-Abschnitt vun dëser Säit",
 	"mobile-frontend-placeholder": "Op {{SITENAME}} sichen",
 	"mobile-frontend-random-button": "Zoufall",
 	"mobile-frontend-redirected-from": "Virugeleet vu(n) „[[$1]]“",
@@ -48,12 +47,6 @@
 	"minerva-page-actions-history": "Versiounen",
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskussioun]",
 	"skin-minerva-issue-learn-more": "Fir méi ze wëssen",
-	"skin-minerva-time-ago-seconds": "Viru(n) {{PLURAL:$1|$1 Sekonn|$1 Sekonnen}}",
-	"skin-minerva-time-ago-minutes": "Viru(n) {{PLURAL:$1|$1 Minutt|$1 Minutten}}",
-	"skin-minerva-time-ago-hours": "Viru(n) {{PLURAL:$1|$1 Stonn|$1 Stonnen}}",
-	"skin-minerva-time-ago-days": "Viru(n) {{PLURAL:$1|$1 Dag|$1 Deeg}}",
-	"skin-minerva-time-ago-months": "Viru(n) {{PLURAL:$1|$1 Mount|$1 Méint}}",
-	"skin-minerva-time-ago-years": "Viru(n) {{PLURAL:$1|$1 Joer}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorien",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Kategorie vu Säite weisen"
 }

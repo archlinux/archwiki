@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup RevisionDelete
  */
@@ -37,6 +23,7 @@ class RevDelRevisionItem extends RevDelItem {
 	/** @var RevisionRecord */
 	public $revisionRecord;
 
+	/** @inheritDoc */
 	public function __construct( RevisionListBase $list, $row ) {
 		parent::__construct( $list, $row );
 		$this->revisionRecord = static::initRevisionRecord( $list, $row );
@@ -62,26 +49,32 @@ class RevDelRevisionItem extends RevDelItem {
 		return $this->revisionRecord;
 	}
 
+	/** @inheritDoc */
 	public function getIdField() {
 		return 'rev_id';
 	}
 
+	/** @inheritDoc */
 	public function getTimestampField() {
 		return 'rev_timestamp';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorIdField() {
 		return 'rev_user';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorNameField() {
 		return 'rev_user_text';
 	}
 
+	/** @inheritDoc */
 	public function getAuthorActorField() {
 		return 'rev_actor';
 	}
 
+	/** @inheritDoc */
 	public function canView() {
 		return $this->getRevisionRecord()->userCan(
 			RevisionRecord::DELETED_RESTRICTED,
@@ -89,6 +82,7 @@ class RevDelRevisionItem extends RevDelItem {
 		);
 	}
 
+	/** @inheritDoc */
 	public function canViewContent() {
 		return $this->getRevisionRecord()->userCan(
 			RevisionRecord::DELETED_TEXT,
@@ -96,10 +90,12 @@ class RevDelRevisionItem extends RevDelItem {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getBits() {
 		return $this->getRevisionRecord()->getVisibility();
 	}
 
+	/** @inheritDoc */
 	public function setBits( $bits ) {
 		$revRecord = $this->getRevisionRecord();
 
@@ -132,10 +128,14 @@ class RevDelRevisionItem extends RevDelItem {
 		return true;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isDeleted() {
 		return $this->getRevisionRecord()->isDeleted( RevisionRecord::DELETED_TEXT );
 	}
 
+	/** @inheritDoc */
 	public function isHideCurrentOp( $newBits ) {
 		return ( $newBits & RevisionRecord::DELETED_TEXT )
 			&& $this->list->getCurrent() == $this->getId();
@@ -228,6 +228,7 @@ class RevDelRevisionItem extends RevDelItem {
 		return $this->row->ts_tags;
 	}
 
+	/** @inheritDoc */
 	public function getApiData( ApiResult $result ) {
 		$revRecord = $this->getRevisionRecord();
 		$authority = $this->list->getAuthority();

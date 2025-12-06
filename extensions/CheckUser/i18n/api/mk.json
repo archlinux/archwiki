@@ -6,6 +6,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Провери кои IP-адреси ги користи дадено корисничко име или пак кои кориснички имиња ги користи дадена IP-адреса.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''Овој приложник е оневозможен од администраторите. Побарувањата до него нема да дадат податоци.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Тип на барање со CheckUser:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Дај IP-адреса на целен корисник.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Дај дејства извршени од целната IP-адреса или целниот опсег.",
@@ -37,6 +38,7 @@
 	"apierror-checkuser-timelimit": "Ќе треба да употребите исправно временско ограничување (на пр. „-2 weeks“ „2 weeks ago“).",
 	"apierror-checkuser-invalidmode": "Неважечки режим на побарување",
 	"apierror-checkuser-nosuchuser": "Нема таков корисник за ова корисничко име",
+	"apierror-checkuser-disabled": "Приложникот за побаруњвања со „checkuser“ е оневозможена од администраторите на мрежното место.",
 	"checkuser-api-help-param-direction": "Во која насока да се набројува:",
 	"checkuser-api-help-paramvalue-direction-newer": "Дај ги прво најстарите. Напомена: $1from треба да биде пред $1to.",
 	"checkuser-api-help-paramvalue-direction-older": "Дај ги прво најновите (по основно). Напомена: $1from мора да биде подоцна од $1to.",
@@ -47,5 +49,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} ги собира податоците за корисничко-клиентски совети во поддршка на борбата со вандализмот и злоупотребата. Повеќе поединости ќе најдете на https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints.",
 	"apihelp-logout-param-checkuserclienthints": "Податоци за клиентските совети се даваат заедно со барањата до ApiLogout. Само за внатрешна употреба.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "Укажаниот рок на автооткривање е неважечки.",
-	"checkuser-ip-auto-reveal-missing-permission": "Ја немате потребната дозвола за да користите автооткривање на IP-адреси."
+	"checkuser-ip-auto-reveal-missing-permission": "Ја немате потребната дозвола за да користите автооткривање на IP-адреси.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "Укажаната назнака на случајот не постои",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "Предложената функција за иследување не е овозможена"
 }

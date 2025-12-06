@@ -1,4 +1,4 @@
-mw.editcheck.DisambiguationEditCheck = function MWDisambiguationEditCheck( /* config */ ) {
+mw.editcheck.DisambiguationEditCheck = function MWDisambiguationEditCheck() {
 	// Parent constructor
 	mw.editcheck.DisambiguationEditCheck.super.apply( this, arguments );
 };

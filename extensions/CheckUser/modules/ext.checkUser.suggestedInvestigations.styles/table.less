@@ -1,0 +1,34 @@
+@import 'mediawiki.skin.variables.less';
+
+.mw-checkuser-suggestedinvestigations-users {
+	list-style: none;
+	margin: 0;
+}
+
+// The "Show more" button is added by JS, so hide the extra items only if we have JS enabled
+// stylelint-disable-next-line selector-class-pattern
+html.client-js .mw-checkuser-suggestedinvestigations-user-defaulthide {
+	display: none;
+}
+
+.mw-checkuser-suggestedinvestigations-actions {
+	display: flex;
+	gap: @size-25;
+
+	// stylelint-disable-next-line selector-class-pattern
+	.cdx-button--fake-button--disabled {
+		// Codex doesn't specify any cursor for disabled link-buttons,
+		// but Vector does so for all links, so let's reset it here.
+		cursor: default;
+	}
+}
+
+.mw-checkuser-suggestedinvestigations-icon {
+	&--investigate {
+		.cdx-mixin-css-icon( @cdx-icon-search );
+	}
+
+	&--edit {
+		.cdx-mixin-css-icon( @cdx-icon-edit );
+	}
+}

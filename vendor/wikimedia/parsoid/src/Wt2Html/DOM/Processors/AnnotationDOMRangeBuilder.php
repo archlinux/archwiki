@@ -91,14 +91,16 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 	 * Makes the DOM range between $range->startElem and $range->endElem uneditable by wrapping
 	 * it into a <div> (for block ranges) or <span> (for inline ranges) with the mw:ExtendedAnnRange
 	 * type.
+	 *
 	 * @param DOMRangeInfo $range
 	 */
-	private function makeUneditable( DOMRangeInfo $range ) {
+	private function makeUneditable( DOMRangeInfo $range ): void {
 		$startMeta = $range->startElem;
 		$endMeta = $range->endElem;
 
 		$actualRangeStart = DOMDataUtils::getDataParsoid( $startMeta )->dsr->start;
 		$actualRangeEnd = DOMDataUtils::getDataParsoid( $endMeta )->dsr->end;
+		$actualRangeSource = DOMDataUtils::getDataParsoid( $startMeta )->dsr->source;
 
 		$inline = true;
 		$node = $startMeta;
@@ -159,7 +161,10 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 		$dp = new DataParsoid();
 		$dp->autoInsertedStart = true;
 		$dp->autoInsertedEnd = true;
-		$dp->dsr = new DomSourceRange( $actualRangeStart, $actualRangeEnd, 0, 0 );
+		$dp->dsr = new DomSourceRange(
+			$actualRangeStart, $actualRangeEnd, 0, 0,
+			source: $actualRangeSource
+		);
 		DOMDataUtils::setDataParsoid( $wrap, $dp );
 	}
 
@@ -172,7 +177,7 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 		$startMeta = $range->startElem;
 		$startDataParsoid = DOMDataUtils::getDataParsoid( $startMeta );
 		if ( $node instanceof Element ) {
-			if ( DOMCompat::nodeName( $node ) === "p" && $node->firstChild === $startMeta ) {
+			if ( DOMUtils::nodeName( $node ) === "p" && $node->firstChild === $startMeta ) {
 				// If the first child of "p" is the meta, and it gets moved, then it got mistakenly
 				// pulled inside the paragraph, and the paragraph dsr that gets computed includes
 				// it - which may lead to the tag getting duplicated on roundtrip. Hence, we
@@ -215,7 +220,7 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 				$endMeta->setAttribute( "about", $about );
 			}
 
-			if ( ( DOMCompat::nodeName( $node ) === "p" ) && $endMetaWasLastChild ) {
+			if ( ( DOMUtils::nodeName( $node ) === "p" ) && $endMetaWasLastChild ) {
 				// If the last child of "p" is the meta, and it gets moved, then it got mistakenly
 				// pulled inside the paragraph, and the paragraph dsr that gets computed includes
 				// it - which may lead to the tag getting duplicated on roundtrip. Hence, we
@@ -305,7 +310,7 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 	public function execute( Node $root ): void {
 		try {
 			$annRanges = $this->findWrappableMetaRanges( $root );
-		} catch ( RangeBuilderException $e ) {
+		} catch ( RangeBuilderException ) {
 			$this->env->log( 'warn', 'The annotation ranges could not be fully detected. ' .
 				' Annotation processing cancelled. ' );
 			return;

@@ -1,6 +1,11 @@
+const CategoryBrowser = require( './categories/CategoryBrowser.js' );
 const FavoritesStore = require( './FavoritesStore.js' );
 const SearchWidget = require( './SearchWidget.js' );
 const TemplateList = require( './TemplateList.js' );
+const mwConfig = require( './mwConfig.json' );
+const FeaturedTemplatesList = require( './FeaturedTemplatesList.js' );
+const TemplateDiscoveryConfig = require( './config.json' );
+const mwStorage = require( 'mediawiki.storage' ).local;
 
 /**
  * @class
@@ -27,6 +32,7 @@ function TemplateSearchLayout( config ) {
 	const field = new OO.ui.FieldLayout(
 		this.searchWidget,
 		{
+			classes: [ 'ext-templatedata-search-field' ],
 			label: mw.msg( 'templatedata-search-description' ),
 			align: 'top'
 		}
@@ -43,17 +49,37 @@ function TemplateSearchLayout( config ) {
 	templateList.connect( this, { choose: 'onAddTemplate' } );
 	tabLayout.addTabPanels( [ templateList ] );
 
-	const searchFieldset = new OO.ui.FieldsetLayout( {
-		label: mw.msg( 'templatedata-search-title' ),
-		icon: 'puzzle',
-		items: [ field, tabLayout ]
-	} );
+	if ( mwConfig.TemplateDataEnableCategoryBrowser ||
+		( new URLSearchParams( window.location.search ) ).get( 'enablediscovery' ) === '1'
+	) {
+		const categoryBrowser = new CategoryBrowser();
+		categoryBrowser.connect( this, { choose: 'onAddTemplate' } );
+		tabLayout.addTabPanels( [ categoryBrowser ] );
+	}
+
+	// Check if CommunityConfiguration is available
+	// and if TemplateDataEnableFeaturedTemplates is true
+	if ( TemplateDiscoveryConfig.communityConfigurationLoaded &&
+		mwConfig.TemplateDataEnableFeaturedTemplates
+	) {
+		const featuredTemplatesList = new FeaturedTemplatesList(
+			{
+				favoritesStore: favoritesStore
+			}
+		);
+		featuredTemplatesList.connect( this, { choose: 'onAddTemplate' } );
+		tabLayout.addTabPanels( [ featuredTemplatesList ] );
+	}
+
+	this.storageKey = 'templatedata-discovery-tab';
+	this.setupTabStorage( tabLayout );
 
 	this.$element
 		.addClass( 'ext-templatedata-search' )
 		.append( $( '<div>' )
 			.append(
-				searchFieldset.$element
+				field.$element,
+				tabLayout.$element
 			)
 		);
 }
@@ -86,6 +112,29 @@ TemplateSearchLayout.prototype.onAddTemplate = function ( data ) {
 
 TemplateSearchLayout.prototype.focus = function () {
 	this.searchWidget.$input.trigger( 'focus' );
+};
+
+/**
+ * Keep track of the currently-selected tab in a localStorage item,
+ * and restore it when loading the widget.
+ *
+ * @private
+ * @param {OO.ui.IndexLayout} tabLayout
+ */
+TemplateSearchLayout.prototype.setupTabStorage = function ( tabLayout ) {
+	// If there's a stored tab name, switch to it.
+	tabLayout.connect( this, { set: 'onSetTab' } );
+	const storedTab = mwStorage.get( this.storageKey );
+	if ( storedTab && tabLayout.getTabPanel( storedTab ) ) {
+		tabLayout.setTabPanel( storedTab );
+	}
+};
+
+/**
+ * @param {OO.ui.TabPanelLayout} tabPanel
+ */
+TemplateSearchLayout.prototype.onSetTab = function ( tabPanel ) {
+	mwStorage.set( this.storageKey, tabPanel.getName() );
 };
 
 module.exports = TemplateSearchLayout;

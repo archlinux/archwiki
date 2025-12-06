@@ -6,49 +6,49 @@ QUnit.test( 'Constructing the model', ( assert ) => {
 		new mw.echo.dm.NotificationItem( 1, { read: false, seen: false, timestamp: '201601010100' } ),
 		new mw.echo.dm.NotificationItem( 2, { read: false, seen: true, timestamp: '201601010200' } ),
 		new mw.echo.dm.NotificationItem( 3, { read: false, seen: true, timestamp: '201601010300' } ),
-		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } )
+		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } ),
 	];
 	const bundle = new mw.echo.dm.BundleNotificationItem(
 		100,
 		bundledItems,
-		{ modelName: 'foo' }
+		{ modelName: 'foo' },
 	);
 
 	assert.strictEqual(
 		bundle.getCount(),
 		5,
-		'Bundled items added to internal list'
+		'Bundled items added to internal list',
 	);
 
 	assert.strictEqual(
 		bundle.getName(),
 		'foo',
-		'Bundle name stored'
+		'Bundle name stored',
 	);
 
 	assert.deepEqual(
 		bundle.getAllIds(),
 		[ 4, 3, 2, 1, 0 ],
-		'All ids present'
+		'All ids present',
 	);
 
 	assert.strictEqual(
 		bundle.isRead(),
 		false,
-		'Bundle with all unread items is unread'
+		'Bundle with all unread items is unread',
 	);
 
 	assert.strictEqual(
 		bundle.hasUnseen(),
 		true,
-		'Bundle has unseen items'
+		'Bundle has unseen items',
 	);
 
 	const findItems = bundle.findByIds( [ 1, 4 ] ).map( ( item ) => item.getId() );
 	assert.deepEqual(
 		findItems,
 		[ 4, 1 ],
-		'findByIds fetches correct items in the default sorting order'
+		'findByIds fetches correct items in the default sorting order',
 	);
 } );
 
@@ -58,20 +58,20 @@ QUnit.test( 'Managing a list of items', ( assert ) => {
 		new mw.echo.dm.NotificationItem( 1, { read: false, seen: false, timestamp: '201601010100' } ),
 		new mw.echo.dm.NotificationItem( 2, { read: false, seen: true, timestamp: '201601010200' } ),
 		new mw.echo.dm.NotificationItem( 3, { read: false, seen: true, timestamp: '201601010300' } ),
-		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } )
+		new mw.echo.dm.NotificationItem( 4, { read: false, seen: true, timestamp: '201601010400' } ),
 	];
 	const bundle = new mw.echo.dm.BundleNotificationItem(
 		100,
 		bundledItems,
 		{
-			name: 'foo'
-		}
+			name: 'foo',
+		},
 	);
 
 	assert.strictEqual(
 		bundle.hasUnseen(),
 		true,
-		'Bundle has unseen'
+		'Bundle has unseen',
 	);
 
 	// Mark all items as seen
@@ -82,20 +82,20 @@ QUnit.test( 'Managing a list of items', ( assert ) => {
 	assert.strictEqual(
 		bundle.hasUnseen(),
 		false,
-		'Bundle does not have unseen after all items marked as seen'
+		'Bundle does not have unseen after all items marked as seen',
 	);
 
 	assert.strictEqual(
 		bundle.isRead(),
 		false,
-		'Bundle is unread'
+		'Bundle is unread',
 	);
 	// Mark one item as read
 	bundledItems[ 0 ].toggleRead( true );
 	assert.strictEqual(
 		bundle.isRead(),
 		false,
-		'Bundle is still unread if it has some unread items'
+		'Bundle is still unread if it has some unread items',
 	);
 
 	// Mark all items as read
@@ -105,6 +105,6 @@ QUnit.test( 'Managing a list of items', ( assert ) => {
 	assert.strictEqual(
 		bundle.isRead(),
 		true,
-		'Bundle is marked as read if all items are read'
+		'Bundle is marked as read if all items are read',
 	);
 } );

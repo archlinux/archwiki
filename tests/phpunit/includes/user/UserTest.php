@@ -19,9 +19,10 @@ use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @coversDefaultClass \MediaWiki\User\User
+ * @covers \MediaWiki\User\User
  * @group Database
  */
 class UserTest extends MediaWikiIntegrationTestCase {
@@ -102,12 +103,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$request->getSession()->setUser( $user );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isAllowedAny
-	 * @covers \MediaWiki\User\User::isAllowedAll
-	 * @covers \MediaWiki\User\User::isAllowed
-	 * @covers \MediaWiki\User\User::isNewbie
-	 */
 	public function testIsAllowed() {
 		$this->assertFalse(
 			$this->user->isAllowed( 'writetest' ),
@@ -145,11 +140,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::useRCPatrol
-	 * @covers \MediaWiki\User\User::useNPPatrol
-	 * @covers \MediaWiki\User\User::useFilePatrol
-	 */
 	public function testPatrolling() {
 		$user = $this->getTestUser( 'patroller' )->getUser();
 
@@ -162,9 +152,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $this->user->useFilePatrol() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isBot
-	 */
 	public function testBot() {
 		$user = $this->getTestUser( 'bot' )->getUser();
 
@@ -178,9 +165,7 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Test User::editCount
 	 * @group medium
-	 * @covers \MediaWiki\User\User::getEditCount
 	 */
 	public function testGetEditCount() {
 		$user = $this->getMutableTestUser()->getUser();
@@ -215,9 +200,7 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Test User::editCount
 	 * @group medium
-	 * @covers \MediaWiki\User\User::getEditCount
 	 */
 	public function testGetEditCountForAnons() {
 		$user = User::newFromName( 'Anonymous' );
@@ -238,18 +221,12 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getRightDescription
-	 */
 	public function testGetRightDescription() {
 		$key = 'deletechangetags';
 		$parsedDescription = User::getRightDescription( $key );
 		$this->assertMatchesRegularExpression( '/[|]/', $parsedDescription );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getRightDescriptionHtml
-	 */
 	public function testGetParsedRightDescription() {
 		$key = 'deletechangetags';
 		$parsedDescription = User::getRightDescriptionHtml( $key );
@@ -261,8 +238,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	 *	- ensure the password meets the minimal length
 	 *	- ensure the password is not the same as the username
 	 *	- ensure the username/password combo isn't forbidden
-	 * @covers \MediaWiki\User\User::checkPasswordValidity()
-	 * @covers \MediaWiki\User\User::isValidPassword()
 	 */
 	public function testCheckPasswordValidity() {
 		$this->overrideConfigValue(
@@ -342,9 +317,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusWarning( 'password-login-forbidden', $status );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::checkPasswordValidity
-	 */
 	public function testCheckPasswordValidityForTemporaryAccount() {
 		$this->enableAutoCreateTempUser();
 		$user = $this->getServiceContainer()->getTempUserCreator()
@@ -354,9 +326,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::equals
-	 */
 	public function testEquals() {
 		$first = $this->getMutableTestUser()->getUser();
 		$second = User::newFromName( $first->getName() );
@@ -378,10 +347,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $fifth->equals( $sixth ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getId
-	 * @covers \MediaWiki\User\User::setId
-	 */
 	public function testUserId() {
 		$this->assertGreaterThan( 0, $this->user->getId() );
 
@@ -404,11 +369,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isRegistered
-	 * @covers \MediaWiki\User\User::isAnon
-	 * @covers \MediaWiki\User\User::logOut
-	 */
 	public function testIsRegistered() {
 		$user = $this->getMutableTestUser()->getUser();
 		$this->assertTrue( $user->isRegistered() );
@@ -434,10 +394,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $user->isAnon() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::setRealName
-	 * @covers \MediaWiki\User\User::getRealName
-	 */
 	public function testRealName() {
 		$user = $this->getMutableTestUser()->getUser();
 		$realName = 'John Doe';
@@ -460,10 +416,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::checkAndSetTouched
-	 * @covers \MediaWiki\User\User::getDBTouched()
-	 */
 	public function testCheckAndSetTouched() {
 		$user = $this->getMutableTestUser()->getUser();
 		$user = TestingAccessWrapper::newFromObject( $user );
@@ -482,10 +434,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 			$touched, $user->getDBTouched(), "user_touched increased with casOnTouched() #2" );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::validateCache
-	 * @covers \MediaWiki\User\User::getTouched
-	 */
 	public function testValidateCache() {
 		$user = $this->getTestUser()->getUser();
 
@@ -507,9 +455,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::findUsersByGroup
-	 */
 	public function testFindUsersByGroup() {
 		$users = User::findUsersByGroup( [] );
 		$this->assertSame( 0, iterator_count( $users ) );
@@ -540,9 +485,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $user->equals( $users->current() ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getBlock
-	 */
 	public function testSoftBlockRanges() {
 		$this->overrideConfigValue( MainConfigNames::SoftBlockRanges, [ '10.0.0.0/8' ] );
 
@@ -590,7 +532,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsPingLimitable
-	 * @covers \MediaWiki\User\User::isPingLimitable
 	 * @param array $rateLimitExcludeIps
 	 * @param string|null $rightOverride
 	 * @param bool $expected
@@ -631,7 +572,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::getExperienceLevel
 	 * @dataProvider provideExperienceLevel
 	 */
 	public function testExperienceLevel( $editCount, $memberSince, $expLevel ) {
@@ -658,9 +598,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expLevel, $user->getExperienceLevel() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getExperienceLevel
-	 */
 	public function testExperienceLevelAnon() {
 		$user = User::newFromName( '10.11.12.13', false );
 
@@ -674,9 +611,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromId
-	 */
 	public function testNewFromId() {
 		$userId = $this->user->getId();
 		$this->assertGreaterThan(
@@ -692,9 +626,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromActorId
-	 */
 	public function testActorId() {
 		$this->filterDeprecated( '/Passing a parameter to getActorId\(\) is deprecated/', '1.36' );
 
@@ -763,9 +694,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 			'User::newFromActorId works for an anonymous user' );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getActorId
-	 */
 	public function testForeignGetActorId() {
 		$this->filterDeprecated( '/Passing a parameter to getActorId\(\) is deprecated/', '1.36' );
 
@@ -774,17 +702,11 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$user->getActorId( 'Foreign Wiki' );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getWikiId
-	 */
 	public function testGetWiki() {
 		$user = User::newFromName( 'UserTestActorId1' );
 		$this->assertSame( User::LOCAL, $user->getWikiId() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::assertWiki
-	 */
 	public function testAssertWiki() {
 		$user = User::newFromName( 'UserTestActorId1' );
 
@@ -795,9 +717,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$user->assertWiki( 'Foreign Wiki' );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromAnyId
-	 */
 	public function testNewFromAnyId() {
 		$this->disableAutoCreateTempUser();
 		// Registered user
@@ -847,25 +766,22 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		try {
 			User::newFromAnyId( null, null, null );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 		}
 		try {
 			User::newFromAnyId( 0, null, 0 );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 		}
 
 		// Loading remote user by id from remote wiki should fail
 		try {
 			User::newFromAnyId( 123456, null, 654321, 'foo' );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 		}
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromIdentity
-	 */
 	public function testNewFromIdentity() {
 		// Registered user
 		$user = $this->user;
@@ -889,9 +805,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $user->getActorId(), $result->getActorId(), 'Actor' );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromConfirmationCode
-	 */
 	public function testNewFromConfirmationCode() {
 		$user = User::newFromConfirmationCode( 'NotARealConfirmationCode' );
 		$this->assertNull(
@@ -907,12 +820,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::newFromName
-	 * @covers \MediaWiki\User\User::getName
-	 * @covers \MediaWiki\User\User::getUserPage
-	 * @covers \MediaWiki\User\User::getTalkPage
-	 * @covers \MediaWiki\User\User::getTitleKey
-	 * @covers \MediaWiki\User\User::whoIs
 	 * @dataProvider provideNewFromName
 	 */
 	public function testNewFromName( $name, $titleKey ) {
@@ -924,8 +831,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 
 		$status = $user->addToDatabase();
 		$this->assertStatusOK( $status, 'User can be added to the database' );
-		$this->hideDeprecated( User::class . '::whoIs' );
-		$this->assertSame( $name, User::whoIs( $user->getId() ) );
 	}
 
 	public static function provideNewFromName() {
@@ -937,9 +842,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromName
-	 */
 	public function testNewFromName_extra() {
 		$user = User::newFromName( '1.2.3.4' );
 		$this->assertFalse( $user, 'IP addresses are not valid user names' );
@@ -952,10 +854,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromSession
-	 * @covers \MediaWiki\User\User::getRequest
-	 */
 	public function testSessionAndRequest() {
 		$req1 = new WebRequest;
 		$this->setRequest( $req1 );
@@ -983,10 +881,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromRow
-	 * @covers \MediaWiki\User\User::loadFromRow
-	 */
 	public function testNewFromRow() {
 		// TODO: Create real tests here for loadFromRow
 		$row = (object)[];
@@ -994,20 +888,12 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertInstanceOf( User::class, $user, 'newFromRow returns a user object' );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::newFromRow
-	 * @covers \MediaWiki\User\User::loadFromRow
-	 */
 	public function testNewFromRow_bad() {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( '$row must be an object' );
 		User::newFromRow( [] );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getBlock
-	 * @covers \MediaWiki\User\User::isHidden
-	 */
 	public function testBlockInstanceCache() {
 		$this->hideDeprecated( User::class . '::isBlockedFrom' );
 		// First, check the user isn't blocked
@@ -1042,9 +928,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $user->isHidden() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getBlock
-	 */
 	public function testCompositeBlocks() {
 		$user = $this->getMutableTestUser()->getUser();
 		$request = $user->getRequest();
@@ -1071,9 +954,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $block->appliesToNamespace( NS_MAIN ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getBlock
-	 */
 	public function testUserBlock() {
 		$user = $this->getMutableTestUser()->getUser();
 		$request = $user->getRequest();
@@ -1170,8 +1050,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::isBlockedFromEmailuser
-	 * @covers \MediaWiki\User\User::isAllowedToCreateAccount
 	 * @dataProvider provideIsBlockedFromAction
 	 * @param bool $blockFromEmail Whether to block email access.
 	 * @param bool $blockFromAccountCreation Whether to block account creation.
@@ -1204,7 +1082,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::isBlockedFromUpload
 	 * @dataProvider provideIsBlockedFromUpload
 	 * @param bool $sitewide Whether to block sitewide.
 	 * @param bool $expected Whether the user is expected to be blocked from uploads.
@@ -1230,9 +1107,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isSystemUser
-	 */
 	public function testIsSystemUser() {
 		$this->assertFalse( $this->user->isSystemUser(), 'Normal users are not system users' );
 
@@ -1241,7 +1115,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::newSystemUser
 	 * @dataProvider provideNewSystemUser
 	 * @param string $exists How/whether to create the user before calling User::newSystemUser
 	 *  - 'missing': Do not create the user
@@ -1346,10 +1219,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getName
-	 * @covers \MediaWiki\User\User::setName
-	 */
 	public function testUserName() {
 		$user = User::newFromName( 'DannyS712' );
 		$this->assertSame(
@@ -1366,11 +1235,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::getEmail
-	 * @covers \MediaWiki\User\User::setEmail
-	 * @covers \MediaWiki\User\User::invalidateEmail
-	 */
 	public function testUserEmail() {
 		$user = $this->user;
 
@@ -1421,9 +1285,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::setEmailWithConfirmation
-	 */
 	public function testSetEmailWithConfirmation_basic() {
 		$user = $this->getTestUser()->getUser();
 		$startingEmail = 'startingemail@mediawiki.org';
@@ -1456,10 +1317,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isItemLoaded
-	 * @covers \MediaWiki\User\User::setItemLoaded
-	 */
 	public function testItemLoaded() {
 		$user = User::newFromName( 'DannyS712' );
 		$this->assertTrue(
@@ -1478,7 +1335,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::requiresHTTPS
 	 * @dataProvider provideRequiresHTTPS
 	 */
 	public function testRequiresHTTPS( $preference, bool $expected ) {
@@ -1507,9 +1363,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::requiresHTTPS
-	 */
 	public function testRequiresHTTPS_disabled() {
 		$this->overrideConfigValues( [
 			MainConfigNames::SecureLogin => false,
@@ -1532,9 +1385,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::requiresHTTPS
-	 */
 	public function testRequiresHTTPS_forced() {
 		$this->overrideConfigValues( [
 			MainConfigNames::SecureLogin => true,
@@ -1557,9 +1407,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::addToDatabase
-	 */
 	public function testAddToDatabase_bad() {
 		$user = new User();
 		$this->expectException( RuntimeException::class );
@@ -1569,9 +1416,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$user->addToDatabase();
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::pingLimiter
-	 */
 	public function testPingLimiter() {
 		$user = $this->getTestUser()->getUser();
 
@@ -1590,21 +1434,11 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $user->pingLimiter( 'unlimited' ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::loadFromDatabase
-	 * @covers \MediaWiki\User\User::loadDefaults
-	 */
 	public function testBadUserID() {
 		$user = User::newFromId( 999999999 );
 		$this->assertSame( 'Unknown user', $user->getName() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::probablyCan
-	 * @covers \MediaWiki\User\User::definitelyCan
-	 * @covers \MediaWiki\User\User::authorizeRead
-	 * @covers \MediaWiki\User\User::authorizeWrite
-	 */
 	public function testAuthorityMethods() {
 		$user = $this->getTestUser()->getUser();
 		$page = Title::makeTitle( NS_MAIN, 'Test' );
@@ -1620,13 +1454,10 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $user->authorizeWrite( 'create', $page ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isAllowed
-	 * @covers \MediaWiki\User\User::__sleep
-	 */
 	public function testSerializationRoudTripWithAuthority() {
 		$user = $this->getTestUser()->getUser();
-		$isAllowed = $user->isAllowed( 'read' ); // Memoize the Authority
+		// Memoize the Authority
+		$isAllowed = $user->isAllowed( 'read' );
 		$unserializedUser = unserialize( serialize( $user ) );
 		$this->assertSame( $user->getId(), $unserializedUser->getId() );
 		$this->assertSame( $isAllowed, $unserializedUser->isAllowed( 'read' ) );
@@ -1641,7 +1472,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::isTemp
 	 * @dataProvider provideIsTemp
 	 */
 	public function testIsTemp( $name, $expected ) {
@@ -1651,9 +1481,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $user->isTemp() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isTemp
-	 */
 	public function testSetIsTempInLoadDefaults() {
 		$this->enableAutoCreateTempUser();
 		$user = new User();
@@ -1663,9 +1490,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( true, $user->isTemp() );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::isNamed
-	 */
 	public function testIsNamed() {
 		$this->enableAutoCreateTempUser();
 
@@ -1691,7 +1515,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::addToDatabase
 	 * @dataProvider provideAddToDatabase_temp
 	 */
 	public function testAddToDatabase_temp( $name, $expected ) {
@@ -1709,10 +1532,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $field );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::spreadAnyEditBlock
-	 * @covers \MediaWiki\User\User::spreadBlock
-	 */
 	public function testSpreadAnyEditBlockForAnonUser() {
 		$hookCalled = false;
 		$this->setTemporaryHook( 'SpreadAnyEditBlock', static function () use ( &$hookCalled ){
@@ -1725,8 +1544,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\User\User::spreadAnyEditBlock
-	 * @covers \MediaWiki\User\User::spreadBlock
 	 * @dataProvider provideBlockWasSpreadValues
 	 */
 	public function testSpreadAnyEditBlockForUnblockedUser( $mockBlockWasSpreadHookValue ) {
@@ -1752,10 +1569,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::spreadAnyEditBlock
-	 * @covers \MediaWiki\User\User::spreadBlock
-	 */
 	public function testSpreadAnyEditBlockForBlockedUser() {
 		$this->getServiceContainer()->getBlockUserFactory()->newBlockUser(
 			$this->user, $this->getTestSysop()->getAuthority(), 'indefinite', '', [ 'isAutoblocking' => true ]
@@ -1765,10 +1578,6 @@ class UserTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $this->getServiceContainer()->getBlockManager()->getIpBlock( '1.2.3.4', true ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\User\User::spreadAnyEditBlock
-	 * @covers \MediaWiki\User\User::spreadBlock
-	 */
 	public function testSpreadAnyEditBlockWhenMultiblocked() {
 		$this->overrideConfigValue( MainConfigNames::EnableMultiBlocks, true );
 		$this->getServiceContainer()->getBlockUserFactory()->newBlockUser(
@@ -1783,5 +1592,176 @@ class UserTest extends MediaWikiIntegrationTestCase {
 
 		$autoblocks = $this->getServiceContainer()->getBlockManager()->getIpBlock( '1.2.3.4', true );
 		$this->assertCount( 1, $autoblocks->toArray() );
+	}
+
+	public function testScheduleSpreadBlock() {
+		$this->getServiceContainer()->getBlockUserFactory()->newBlockUser(
+			$this->user, $this->getTestSysop()->getAuthority(), 'indefinite', '', [ 'isAutoblocking' => true ]
+		)->placeBlockUnsafe();
+		RequestContext::getMain()->getRequest()->setIP( '1.2.3.4' );
+		$this->user->scheduleSpreadBlock();
+		$this->runDeferredUpdates();
+		$this->assertNotNull( $this->getServiceContainer()->getBlockManager()->getIpBlock( '1.2.3.4', true ) );
+	}
+
+	/**
+	 * @dataProvider provideGetConfirmationToken
+	 *
+	 * @param string|null $curValue The currently stored confirmation token value
+	 * @param string|null $curExpiry The currently stored confirmation token expiry timestamp
+	 * @param int|null $tokenLifeTime The desired lifetime of the new token in seconds, or null for default
+	 * @param string $expectedExpiry The expected expiry timestamp of the new token
+	 * @return void
+	 */
+	public function testGetConfirmationToken(
+		?string $curValue,
+		?string $curExpiry,
+		?int $tokenLifeTime,
+		string $expectedExpiry
+	): void {
+		$this->overrideConfigValue(
+			MainConfigNames::UserEmailConfirmationTokenExpiry,
+			// 7 days
+			7 * 24 * 60 * 60
+		);
+		ConvertibleTimestamp::setFakeTime( '20250503000000' );
+
+		$user = $this->getMutableTestUser()->getUser();
+
+		$this->getDb()->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [
+				'user_email_token' => $curValue,
+				'user_email_token_expires' => $this->getDb()->timestampOrNull( $curExpiry ),
+			] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->caller( __METHOD__ )
+			->execute();
+
+		$user->clearInstanceCache( 'id' );
+
+		$expiration = null;
+		$token = $user->getConfirmationToken( $expiration, $tokenLifeTime );
+
+		$this->assertNotEquals( $curValue, $token, 'A new token should have been generated' );
+		$this->assertMatchesRegularExpression(
+			'/^[a-f0-9]{32}$/',
+			$token,
+			'Token should be an MD5 checksum'
+		);
+		$this->assertSame(
+			$expectedExpiry,
+			$expiration,
+			'Expiration should match the configured expiry time'
+		);
+	}
+
+	public static function provideGetConfirmationToken(): iterable {
+		yield 'no current token' => [
+			'curValue' => null,
+			'curExpiry' => null,
+			'tokenLifeTime' => null,
+			'expectedExpiry' => '20250510000000',
+		];
+
+		yield 'no current token, custom lifetime' => [
+			'curValue' => null,
+			'curExpiry' => null,
+			// 14 days
+			'tokenLifeTime' => 14 * 24 * 60 * 60,
+			'expectedExpiry' => '20250517000000',
+		];
+
+		yield 'expired current token' => [
+			'curValue' => md5( 'foo' ),
+			'curExpiry' => '20250427000000',
+			'tokenLifeTime' => null,
+			'expectedExpiry' => '20250510000000',
+		];
+
+		yield 'expired current token, custom lifetime' => [
+			'curValue' => md5( 'foo' ),
+			'curExpiry' => '20250427000000',
+			// 14 days
+			'tokenLifeTime' => 14 * 24 * 60 * 60,
+			'expectedExpiry' => '20250517000000',
+		];
+
+		yield 'unexpired current token' => [
+			'curValue' => md5( 'foo' ),
+			'curExpiry' => '20250504000000',
+			'tokenLifeTime' => null,
+			'expectedExpiry' => '20250510000000',
+		];
+
+		yield 'unexpired current token, custom lifetime' => [
+			'curValue' => md5( 'foo' ),
+			'curExpiry' => '20250504000000',
+			// 14 days
+			'tokenLifeTime' => 14 * 24 * 60 * 60,
+			'expectedExpiry' => '20250517000000',
+		];
+	}
+
+	/**
+	 * @dataProvider provideTokenUrlLanguageOptions
+	 */
+	public function testGetEmailConfirmationTokenUrl(
+		string $contentLanguageCode
+	): void {
+		$this->runTokenUrlTest( 'ConfirmEmail', $contentLanguageCode );
+	}
+
+	/**
+	 * @dataProvider provideTokenUrlLanguageOptions
+	 */
+	public function testGetInvalidationTokenUrl(
+		string $contentLanguageCode
+	): void {
+		$this->runTokenUrlTest( 'InvalidateEmail', $contentLanguageCode );
+	}
+
+	public static function provideTokenUrlLanguageOptions(): iterable {
+		yield 'English wiki' => [ 'en' ];
+		yield 'non-English wiki' => [ 'de' ];
+	}
+
+	/**
+	 * @dataProvider provideGetTokenUrl
+	 */
+	public function testGetTokenUrl(
+		string $specialPageName,
+		string $contentLanguageCode
+	): void {
+		$this->runTokenUrlTest( $specialPageName, $contentLanguageCode );
+	}
+
+	public static function provideGetTokenUrl(): iterable {
+		yield 'Special:ConfirmEmail, English wiki' => [ 'ConfirmEmail', 'en' ];
+		yield 'Special:InvalidateEmail, non-English wiki' => [ 'InvalidateEmail', 'de' ];
+	}
+
+	/**
+	 * Run a test for verifying token URL construction for a special page.
+	 * @param string $specialPageName The canonical (English) name of the special page.
+	 * @param string $contentLanguageCode The content language code of the current wiki.
+	 * @return void
+	 */
+	private function runTokenUrlTest( string $specialPageName, string $contentLanguageCode ): void {
+		$this->overrideConfigValues( [
+			MainConfigNames::LanguageCode => $contentLanguageCode,
+			MainConfigNames::CanonicalServer => 'https://test.example.org',
+			MainConfigNames::ArticlePath => '/wiki/$1',
+		] );
+
+		$user = $this->getTestUser()->getUser();
+		$url = $user->getTokenUrl( $specialPageName, 'test-token' );
+
+		$this->assertSame(
+			"https://test.example.org/wiki/Special:$specialPageName/test-token",
+			$url,
+			"URL should be constructed using the canonical name of Special:$specialPageName" .
+			' and the provided token as a path parameter'
+		);
 	}
 }

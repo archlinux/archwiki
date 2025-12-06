@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -58,8 +44,6 @@ class SpecialUnblock extends SpecialPage {
 	private UserNamePrefixSearch $userNamePrefixSearch;
 	private WatchlistManager $watchlistManager;
 
-	protected bool $useCodex = false;
-
 	public function __construct(
 		UnblockUserFactory $unblockUserFactory,
 		BlockTargetFactory $blockTargetFactory,
@@ -75,14 +59,14 @@ class SpecialUnblock extends SpecialPage {
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->watchlistManager = $watchlistManager;
-		$this->useCodex = $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock ) ||
-			$this->getRequest()->getBool( 'usecodex' );
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->checkPermissions();
 		$this->checkReadOnly();
@@ -90,7 +74,9 @@ class SpecialUnblock extends SpecialPage {
 		$this->target = $this->getTargetFromRequest( $par, $this->getRequest() );
 
 		// T382539
-		if ( $this->useCodex ) {
+		if ( $this->getConfig()->get( MainConfigNames::UseCodexSpecialBlock )
+			|| $this->getRequest()->getBool( 'usecodex' )
+		) {
 			// If target is null, redirect to Special:Block
 			if ( $this->target === null ) {
 				// Use 301 (Moved Permanently) as this is a deprecation
@@ -230,7 +216,7 @@ class SpecialUnblock extends SpecialPage {
 		return $target;
 	}
 
-	protected function getFields() {
+	protected function getFields(): array {
 		$fields = [
 			'Target' => [
 				'type' => 'text',
@@ -329,6 +315,7 @@ class SpecialUnblock extends SpecialPage {
 			->search( UserNamePrefixSearch::AUDIENCE_PUBLIC, $search, $limit, $offset );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'users';
 	}

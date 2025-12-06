@@ -34,11 +34,11 @@ use MediaWiki\MediaWikiServices;
  */
 class OptionManager {
 	private array $mOptions = [];
-	private Config $config;
 
-	public function __construct( array $options, Config $config ) {
-		$this->config = $config;
-
+	public function __construct(
+		array $options,
+		private readonly Config $config,
+	) {
 		// ensure default values and order of options.
 		// Order may become important, it may influence the cache key!
 		foreach ( $config->get( 'CategoryTreeDefaultOptions' ) as $option => $default ) {
@@ -172,11 +172,8 @@ class OptionManager {
 	 * @return bool
 	 */
 	public static function decodeBoolean( $value ): bool {
-		if ( $value === null ) {
-			return false;
-		}
-		if ( is_bool( $value ) ) {
-			return $value;
+		if ( $value === null || is_bool( $value ) ) {
+			return (bool)$value;
 		}
 		if ( is_int( $value ) ) {
 			return ( $value > 0 );
@@ -187,13 +184,11 @@ class OptionManager {
 			return ( (int)$value > 0 );
 		}
 
-		if ( $value === 'yes' || $value === 'y'
-			|| $value === 'true' || $value === 't' || $value === 'on'
-		) {
-			return true;
-		} else {
-			return false;
-		}
+		return $value === 'yes' ||
+			$value === 'y' ||
+			$value === 'true' ||
+			$value === 't' ||
+			$value === 'on';
 	}
 
 	/**
@@ -277,16 +272,10 @@ class OptionManager {
 	}
 
 	/**
-	 * @param int|null $depth
 	 * @return mixed
 	 */
-	public function getOptionsAsJsStructure( ?int $depth = null ) {
-		$opt = $this->mOptions;
-		if ( $depth !== null ) {
-			$opt['depth'] = $depth;
-		}
-
-		return self::encodeOptions( $opt, 'json' );
+	public function getOptionsAsJsStructure() {
+		return self::encodeOptions( $this->mOptions, 'json' );
 	}
 
 	/**

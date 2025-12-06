@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\ConfirmEdit\Store;
 
 use BadMethodCallException;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\MediaWikiServices;
 
 abstract class CaptchaStore {
 	/**
@@ -44,12 +45,13 @@ abstract class CaptchaStore {
 	 * @return CaptchaStore
 	 */
 	final public static function get() {
-		global $wgCaptchaStorageClass;
 		if ( !self::$instance instanceof self ) {
-			if ( in_array( self::class, class_parents( $wgCaptchaStorageClass ) ) ) {
-				self::$instance = new $wgCaptchaStorageClass;
+			$captchaStorageClass = MediaWikiServices::getInstance()->getMainConfig()
+				->get( 'CaptchaStorageClass' );
+			if ( in_array( self::class, class_parents( $captchaStorageClass ) ) ) {
+				self::$instance = new $captchaStorageClass;
 			} else {
-				throw new ConfigException( "Invalid CaptchaStore class $wgCaptchaStorageClass" );
+				throw new ConfigException( "Invalid CaptchaStore class $captchaStorageClass" );
 			}
 		}
 		return self::$instance;

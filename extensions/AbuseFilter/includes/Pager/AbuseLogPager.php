@@ -291,6 +291,8 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			( $this->isHidingEntry( $row ) === null && $row->afl_deleted )
 		) {
 			$attribs['class'] = 'mw-abusefilter-log-hidden-entry';
+		} else {
+			$attribs['data-afl-log-id'] = $row->afl_id;
 		}
 		if ( self::entryHasAssociatedDeletedRev( $row ) ) {
 			$description .= ' ' .
@@ -358,7 +360,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				'afl_global',
 				'afl_filter_id',
 				'afl_user',
-				'afl_ip',
+				'afl_ip_hex',
 				'afl_user_text',
 				'afl_action',
 				'afl_actions',

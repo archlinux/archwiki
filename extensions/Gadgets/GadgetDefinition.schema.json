@@ -97,6 +97,10 @@
 				"messages": {
 					"type": "array",
 					"description": "Messages this gadget depends upon"
+				},
+				"codexIcons": {
+					"type": "array",
+					"description": "Codex icons included in the gadget module"
 				}
 			}
 		}

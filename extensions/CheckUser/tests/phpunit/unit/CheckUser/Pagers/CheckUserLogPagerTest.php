@@ -58,7 +58,7 @@ class CheckUserLogPagerTest extends MediaWikiUnitTestCase {
 	public static function provideInitiatorNames() {
 		return [
 			'IP' => [ '127.0.0.1' ],
-			'User' => [ 'TestAccount' ]
+			'User' => [ 'TestAccount' ],
 		];
 	}
 
@@ -112,15 +112,15 @@ class CheckUserLogPagerTest extends MediaWikiUnitTestCase {
 				// $objectUnderTest->opts value for the test.
 				[ 'target' => '1.2.3.4', 'initiator' => '', 'reason' => '' ],
 				// The expected array for the 'options' array returned by ::getQueryInfo
-				[ 'USE INDEX' => [ 'cu_log' => 'cul_target_hex' ] ]
+				[ 'USE INDEX' => [ 'cu_log' => 'cul_target_hex' ] ],
 			],
 			'IP range specified as the target' => [
 				[ 'target' => '1.2.3.4/22', 'initiator' => '', 'reason' => '' ],
-				[ 'USE INDEX' => [ 'cu_log' => 'cul_target_hex' ] ]
+				[ 'USE INDEX' => [ 'cu_log' => 'cul_target_hex' ] ],
 			],
 			'User specified as the target' => [
 				[ 'target' => 'Testinguser', 'initiator' => '', 'reason' => '' ],
-				[]
+				[],
 			],
 		];
 	}

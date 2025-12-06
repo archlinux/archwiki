@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\OATHAuth\Key\EncryptionHelper;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Logger\LoggerFactory;
@@ -25,5 +27,13 @@ return [
 			$services->getCentralIdLookupFactory(),
 			LoggerFactory::getInstance( 'authentication' )
 		);
-	}
+	},
+	'OATHAuth.EncryptionHelper' => static function ( MediaWikiServices $services ): EncryptionHelper {
+		return new EncryptionHelper(
+			new ServiceOptions(
+				EncryptionHelper::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig(),
+			),
+		);
+	},
 ];

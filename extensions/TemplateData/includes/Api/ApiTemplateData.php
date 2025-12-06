@@ -17,7 +17,6 @@ use Wikimedia\ParamValidator\ParamValidator;
  * Format JSON only.
  * @license GPL-2.0-or-later
  * @ingroup API
- * @emits error.code templatedata-corrupt
  * @todo Support continuation (see I1a6e51cd)
  */
 class ApiTemplateData extends ApiBase {

@@ -204,7 +204,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		for ( let i = 1; i < els.length; i++ ) {
 			// Wrap plain text nodes so we can give them an attribute
 			els[ i ] = wrapTextNode( els[ i ] );
-			els[ i ].setAttribute( 'data-ve-ignore', 'true' );
+			els[ i ].setAttribute( 'data-ve-ignore', '' );
 		}
 	} else if ( converter.isForPreview() ) {
 		const modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
@@ -491,7 +491,19 @@ ve.dm.MWTransclusionNode.prototype.getPartsList = function () {
  * @return {string} Wikitext
  */
 ve.dm.MWTransclusionNode.prototype.getWikitext = function () {
-	return this.constructor.static.getWikitext( this.getAttribute( 'mw' ) );
+	try {
+		return this.constructor.static.getWikitext( this.getAttribute( 'mw' ) );
+	} catch ( e ) {
+		let message;
+		const originalDomElements = this.getOriginalDomElements( this.getStore() );
+		if ( originalDomElements.length ) {
+			message = originalDomElements.map( ve.getNodeHtml ).join( '' );
+		} else {
+			message = '[DOM elements not found]';
+		}
+		// Temporary logging for T380432
+		throw new Error( `Failed to generate wikitext for MWTransclusionNode: ${ message }` );
+	}
 };
 
 /* Registration */

@@ -95,8 +95,7 @@ function attachHandler( $content ) {
 						'categorytree-collapse'
 				);
 			}
-		} )
-		.addClass( 'CategoryTreeToggleHandlerAttached' );
+		} );
 }
 
 /**

@@ -5,8 +5,8 @@
 			"Elisardojm",
 			"Kscanne",
 			"Toliño",
-			"아라",
-			"Xosecalvo"
+			"Xosecalvo",
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck cre que se engadiu contido novo á páxina",
@@ -16,6 +16,11 @@
 	"tag-editcheck-references-activated-description": "EditCheck cre que podería ser necesaria unha referencia e mostrou a interface de usuario",
 	"tag-editcheck-references-shown": "Verificación de modificacións (referencias) amosada",
 	"tag-editcheck-references-shown-description": "EditCheck cre que podería ser necesaria unha referencia e mostrou a interface de usuario",
+	"tag-editcheck-tone-description": "EditCheck detectou un posible problema co ton dalgúns contidos engadidos",
+	"tag-editcheck-tone-shown": "Verificación de modificacións (ton) amosada",
+	"tag-editcheck-tone-shown-description": "EditCheck cre que podería ser necesario axustar o ton dalgúns contidos e mostrou a interface de usuario",
+	"tag-editcheck-paste-shown": "Verificación de modificacións (pegar) amosada",
+	"tag-editcheck-paste-shown-description": "EditCheck solicitou unha aclaración sobre o contido que o editor pegou e que logo foi eliminado ou confirmado como admisible",
 	"tag-visualeditor": "Edición visual",
 	"tag-visualeditor-description": "Edición feita mediante o [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
 	"tag-visualeditor-needcheck": "Editor visual: Comprobar",

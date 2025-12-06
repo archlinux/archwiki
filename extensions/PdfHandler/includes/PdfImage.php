@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Copyright © 2007 Xarax <jodeldi@gmx.de>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,10 +27,9 @@ use UtfNormal\Validator;
 use Wikimedia\XMPReader\Reader as XMPReader;
 
 /**
- * inspired by djvuimage from Brion Vibber
- * modified and written by xarax
+ * Inspired by djvuimage from Brion Vibber
+ * Modified and written by xarax
  */
-
 class PdfImage {
 
 	/**

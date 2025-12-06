@@ -130,7 +130,7 @@
 		// .vector-sticky-header-visible class to correctly handle situations where the
 		// sticky header isn't visible yet but we still need scroll padding applied
 		// (e.g. when the user navigates to a page with a hash fragment in the URI).
-		scroll-padding-top: ~'calc( @{height-header} + @{scroll-padding-top} )';
+		scroll-padding-top: @height-header;
 
 		.vector-sticky-header-container {
 			// Sticky header is only enabled for js users and when feature flag is enabled

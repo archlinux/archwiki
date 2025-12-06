@@ -46,14 +46,6 @@ class SpecialLintErrors extends SpecialPage {
 	 */
 	private $category;
 
-	/**
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param TitleParser $titleParser
-	 * @param LinkCache $linkCache
-	 * @param PermissionManager $permissionManager
-	 * @param CategoryManager $categoryManager
-	 * @param TotalsLookup $totalsLookup
-	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
 		TitleParser $titleParser,
@@ -71,10 +63,7 @@ class SpecialLintErrors extends SpecialPage {
 		$this->totalsLookup = $totalsLookup;
 	}
 
-	/**
-	 * @param string $titleLabel
-	 */
-	protected function showFilterForm( $titleLabel ) {
+	protected function showFilterForm( string $titleLabel ): void {
 		$selectOptions = [
 			(string)$this->msg( 'linter-form-exact-match' )->escaped() => true,
 			(string)$this->msg( 'linter-form-prefix-match' )->escaped() => false,
@@ -144,11 +133,11 @@ class SpecialLintErrors extends SpecialPage {
 	 * @param array $namespaces
 	 * @return array
 	 */
-	public function cleanTitle( string $title, $namespaces ): array {
+	public function cleanTitle( string $title, array $namespaces ): array {
 		// Check all titles for malformation regardless of exact match or prefix match
 		try {
 			$titleElements = $this->titleParser->parseTitle( $title );
-		} catch ( MalformedTitleException  $e ) {
+		} catch ( MalformedTitleException ) {
 			return [ 'titlefield' => null, 'error' => 'linter-invalid-title' ];
 		}
 
@@ -165,7 +154,7 @@ class SpecialLintErrors extends SpecialPage {
 		$titleNamespace = $titleElements->getNamespace();
 		// Determine if the user entered ':' (resolves to main) as the namespace part of the title,
 		// or was it was set by default by parseTitle() to 0, but the user intended to search across 'all' namespaces.
-		if ( $titleNamespace === 0 && $title[0] !== ':' ) {
+		if ( $titleElements->inNamespace( NS_MAIN ) && !str_starts_with( $title, ':' ) ) {
 			$titleNamespace = null;
 		}
 
@@ -194,11 +183,8 @@ class SpecialLintErrors extends SpecialPage {
 	/**
 	 * Extract namespace settings from the request object,
 	 * returning an array of namespace id numbers
-	 *
-	 * @param WebRequest $request
-	 * @return array
 	 */
-	protected function findNamespaces( $request ) {
+	protected function findNamespaces( WebRequest $request ): array {
 		$namespaceRequestValues = $request->getRawVal( 'wpNamespaceRestrictions' ) ?? '';
 		if ( $namespaceRequestValues === '' ) {
 			return [];
@@ -209,12 +195,8 @@ class SpecialLintErrors extends SpecialPage {
 			array_intersect(
 				// Remove -2 = "media" and -1 = "Special" namespace elements
 				array_filter(
-					array_keys(
-						$this->namespaceInfo->getCanonicalNamespaces()
-					),
-					static function ( $x ) {
-						return $x >= 0;
-					}
+					array_keys( $this->namespaceInfo->getCanonicalNamespaces() ),
+					static fn ( $id ) => $id >= NS_MAIN
 				),
 				array_map( 'intval', explode( "\n", $namespaceRequestValues ) )
 			)
@@ -331,22 +313,20 @@ class SpecialLintErrors extends SpecialPage {
 
 	/**
 	 * @param string $priority
-	 * @param int[] $totals name => count
+	 * @param array<string,int> $totals name => count
 	 * @param string[] $categories
 	 */
-	private function displayList( $priority, $totals, array $categories ) {
+	private function displayList( string $priority, array $totals, array $categories ): void {
 		$out = $this->getOutput();
 		$msgName = 'linter-heading-' . $priority . '-priority';
 		$out->addHTML( Html::element( 'h2', [], $this->msg( $msgName )->text() ) );
 		$out->addHTML( $this->buildCategoryList( $categories, $totals ) );
 	}
 
-	/**
-	 */
 	private function displaySearchPage() {
 		$out = $this->getOutput();
 		$out->addHTML( Html::element( 'h2', [],
-			$this->msg( "linter-lints-prefix-search-page-desc" )->text() ) );
+		$this->msg( "linter-lints-prefix-search-page-desc" )->text() ) );
 		$this->showFilterForm( 'titlesearch' );
 	}
 
@@ -363,10 +343,10 @@ class SpecialLintErrors extends SpecialPage {
 
 	/**
 	 * @param string[] $cats
-	 * @param int[] $totals name => count
+	 * @param array<string,int> $totals name => count
 	 * @return string
 	 */
-	private function buildCategoryList( array $cats, array $totals ) {
+	private function buildCategoryList( array $cats, array $totals ): string {
 		$linkRenderer = $this->getLinkRenderer();
 		$html = Html::openElement( 'ul' ) . "\n";
 		foreach ( $cats as $cat ) {

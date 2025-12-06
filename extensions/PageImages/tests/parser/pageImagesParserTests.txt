@@ -4,8 +4,6 @@
 PageImages with one image
 !! options
 property=page_image_free
-!! config
-wgParserEnableLegacyMediaDOM=false
 !! wikitext
 [[File:Foobar.jpg]]
 !! metadata
@@ -19,8 +17,6 @@ property[page_image_free]=Foobar.jpg
 PageImages with two images
 !! options
 property=page_image_free
-!! config
-wgParserEnableLegacyMediaDOM=false
 !! wikitext
 [[File:Thumb.png]]
 [[File:Foobar.jpg]]
@@ -36,9 +32,6 @@ property[page_image_free]=Foobar.jpg
 PageImages with best excluded by wgPageImagesLeadSectionOnly
 !! options
 property=page_image_free
-!! config
-wgParserEnableLegacyMediaDOM=false
-wgParserEnableLegacyHeadingDOM=false
 !! metadata
 property[page_image_free]=Thumb.png
 !! wikitext
@@ -59,9 +52,6 @@ property[page_image_free]=Thumb.png
 PageImages with toc and image in heading
 !! options
 property=page_image_free
-!! config
-wgParserEnableLegacyMediaDOM=false
-wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 __TOC__
 == Hello [[File:Foobar.jpg]] ==

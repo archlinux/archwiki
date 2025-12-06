@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -31,7 +17,7 @@ use RuntimeException;
  */
 class LoadBalancerDisabled extends LoadBalancer {
 
-	public function __construct( $params = [] ) {
+	public function __construct( array $params = [] ) {
 		parent::__construct( [
 			'servers' => [ [
 				'type' => 'disabled',
@@ -55,7 +41,7 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 *
 	 * @return never
 	 */
-	protected function reallyOpenConnection( $i, DatabaseDomain $domain, array $lbInfo ) {
+	protected function reallyOpenConnection( $i, DatabaseDomain $domain, array $lbInfo ): never {
 		throw new RuntimeException( 'Database backend disabled' );
 	}
 
@@ -67,7 +53,7 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 *
 	 * @return never
 	 */
-	public function getConnection( $i, $groups = [], $domain = false, $flags = 0 ) {
+	public function getConnection( $i, $groups = [], $domain = false, $flags = 0 ): never {
 		throw new RuntimeException( 'Database backend disabled' );
 	}
 
@@ -79,7 +65,7 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 * @param int $flags Bitfield of CONN_* class constants (e.g. CONN_TRX_AUTOCOMMIT)
 	 * @return never
 	 */
-	public function getConnectionInternal( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase {
+	public function getConnectionInternal( $i, $groups = [], $domain = false, $flags = 0 ): never {
 		throw new RuntimeException( 'Database backend disabled' );
 	}
 
@@ -91,19 +77,7 @@ class LoadBalancerDisabled extends LoadBalancer {
 	 *
 	 * @return never
 	 */
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef {
-		throw new RuntimeException( 'Database backend disabled' );
-	}
-
-	/**
-	 * @param int $i Specific (overrides $groups) or virtual (DB_PRIMARY/DB_REPLICA) server index
-	 * @param string[]|string $groups Query group(s) in preference order; [] for the default group
-	 * @param string|false $domain DB domain ID or false for the local domain
-	 * @param int $flags Bitfield of CONN_* class constants
-	 *
-	 * @return never
-	 */
-	public function getMaintenanceConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef {
+	public function getMaintenanceConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): never {
 		throw new RuntimeException( 'Database backend disabled' );
 	}
 

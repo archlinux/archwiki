@@ -84,13 +84,13 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 		return [
 			'Table as null' => [ null, 'timestamp' ],
 			'Table as cu_changes' => [
-				CheckUserQueryInterface::CHANGES_TABLE, 'cuc_timestamp'
+				CheckUserQueryInterface::CHANGES_TABLE, 'cuc_timestamp',
 			],
 			'Table as cu_log_event' => [
-				CheckUserQueryInterface::LOG_EVENT_TABLE, 'cule_timestamp'
+				CheckUserQueryInterface::LOG_EVENT_TABLE, 'cule_timestamp',
 			],
 			'Table as cu_private_event' => [
-				CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, 'cupe_timestamp'
+				CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, 'cupe_timestamp',
 			],
 		];
 	}
@@ -199,21 +199,21 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 						'fields' => [ 'timestamp', 'alias' => 'test' ],
 						'conds' => [ 'cond' => 'test' ],
 						'options' => [],
-						'join_conds' => []
+						'join_conds' => [],
 					],
 					CheckUserQueryInterface::LOG_EVENT_TABLE => [
 						'tables' => [ 'cu_log_event' ],
 						'fields' => [ 'timestamp', 'alias' => 'test2' ],
 						'conds' => [ 'cond' => 'test2' ],
 						'options' => [],
-						'join_conds' => [ 'logging' => 'test' ]
+						'join_conds' => [ 'logging' => 'test' ],
 					],
 					CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE => [
 						'tables' => [ 'cu_private_event' ],
 						'fields' => [ 'timestamp', 'alias' => 'test3' ],
 						'conds' => [ 'cond' => 'test3' ],
 						'options' => [],
-						'join_conds' => []
+						'join_conds' => [],
 					],
 				],
 				[
@@ -253,7 +253,7 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 						// join_conds
 						5 => [],
 					],
-				]
+				],
 			],
 		];
 	}
@@ -273,7 +273,7 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 		$object->expects( $this->once() )
 			->method( 'buildQueryInfo' )
 			->willReturn( [
-				$mockedQueryInfoForCuChanges, $mockedQueryInfoForCuLogEvent, $mockedQueryInfoForCuPrivateEvent
+				$mockedQueryInfoForCuChanges, $mockedQueryInfoForCuLogEvent, $mockedQueryInfoForCuPrivateEvent,
 			] );
 		$mockDb->method( 'newSelectQueryBuilder' )->willReturnCallback( static function () use ( $mockDb ) {
 			return new SelectQueryBuilder( $mockDb );
@@ -348,15 +348,15 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 		# Start test cases
 		return [
 			'Limit 500, order ASC' => [
-				500, IndexPager::QUERY_ASCENDING, $fakeResultsPerTable, $fakeResultsOrderAsc
+				500, IndexPager::QUERY_ASCENDING, $fakeResultsPerTable, $fakeResultsOrderAsc,
 			],
 			'Limit 10, order DESC' => [
 				10, IndexPager::QUERY_DESCENDING,
-				$fakeResultsPerTable, array_slice( $fakeResultsOrderDesc, 0, 10 )
+				$fakeResultsPerTable, array_slice( $fakeResultsOrderDesc, 0, 10 ),
 			],
 			'Limit 10, order ASC' => [
 				10, IndexPager::QUERY_ASCENDING,
-				$fakeResultsPerTable, array_slice( $fakeResultsOrderAsc, 0, 10 )
+				$fakeResultsPerTable, array_slice( $fakeResultsOrderAsc, 0, 10 ),
 			],
 		];
 	}
@@ -391,12 +391,12 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 				],
 				[
 					$currentTimestamp => [
-						(object)[ 'timestamp' => $currentTimestamp, 'id' => 111 ]
+						(object)[ 'timestamp' => $currentTimestamp, 'id' => 111 ],
 					],
 					$otherTimestamp => [
-						(object)[ 'timestamp' => $otherTimestamp, 'id' => 23 ]
+						(object)[ 'timestamp' => $otherTimestamp, 'id' => 23 ],
 					],
-				]
+				],
 			],
 			'Timestamp index field for 3 rows with duplicate timestamps' => [
 				'timestamp',
@@ -413,8 +413,8 @@ class AbstractCheckUserPagerTest extends MediaWikiUnitTestCase {
 					$otherTimestamp => [
 						(object)[ 'timestamp' => $otherTimestamp, 'id' => 2 ],
 					],
-				]
-			]
+				],
+			],
 		];
 	}
 }

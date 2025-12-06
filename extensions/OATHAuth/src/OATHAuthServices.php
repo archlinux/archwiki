@@ -20,6 +20,8 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
+use MediaWiki\Config\Config;
+use MediaWiki\Extension\OATHAuth\Key\EncryptionHelper;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -28,37 +30,28 @@ use MediaWiki\MediaWikiServices;
  * @author Taavi Väänänen <hi@taavi.wtf>
  */
 class OATHAuthServices {
-	/** @var MediaWikiServices */
-	private MediaWikiServices $services;
-
-	/**
-	 * @param MediaWikiServices $services
-	 */
-	public function __construct( MediaWikiServices $services ) {
-		$this->services = $services;
+	public function __construct( private readonly MediaWikiServices $services ) {
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return OATHAuthServices
-	 */
-	public static function getInstance( ?MediaWikiServices $services = null ): OATHAuthServices {
+	public static function getInstance( ?MediaWikiServices $services = null ): self {
 		return new self(
 			$services ?? MediaWikiServices::getInstance(),
 		);
 	}
 
-	/**
-	 * @return OATHAuthModuleRegistry
-	 */
 	public function getModuleRegistry(): OATHAuthModuleRegistry {
 		return $this->services->getService( 'OATHAuthModuleRegistry' );
 	}
 
-	/**
-	 * @return OATHUserRepository
-	 */
 	public function getUserRepository(): OATHUserRepository {
 		return $this->services->getService( 'OATHUserRepository' );
+	}
+
+	public function getEncryptionHelper(): EncryptionHelper {
+		return $this->services->getService( 'OATHAuth.EncryptionHelper' );
+	}
+
+	public function getConfig(): Config {
+		return $this->services->getMainConfig();
 	}
 }

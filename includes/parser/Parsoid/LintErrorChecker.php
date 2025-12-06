@@ -1,10 +1,12 @@
 <?php
+declare( strict_types = 1 );
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 namespace MediaWiki\Parser\Parsoid;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -19,25 +21,13 @@ use Wikimedia\Parsoid\Parsoid;
  * @since 1.43
  */
 class LintErrorChecker {
-	private Parsoid $parsoid;
-	private PageConfigFactory $pageConfigFactory;
-	private TitleFactory $titleFactory;
-	private ExtensionRegistry $extensionRegistry;
-	private Config $mainConfig;
-
 	public function __construct(
-		Parsoid $parsoid,
-		PageConfigFactory $pageConfigFactory,
-		TitleFactory $titleFactory,
-		ExtensionRegistry $extensionRegistry,
-		Config $mainConfig
-
+		private readonly Parsoid $parsoid,
+		private readonly PageConfigFactory $pageConfigFactory,
+		private readonly TitleFactory $titleFactory,
+		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly Config $mainConfig,
 	) {
-		$this->parsoid = $parsoid;
-		$this->pageConfigFactory = $pageConfigFactory;
-		$this->titleFactory = $titleFactory;
-		$this->extensionRegistry = $extensionRegistry;
-		$this->mainConfig = $mainConfig;
 	}
 
 	private function linterOptions( array $disabled ): array {
@@ -85,7 +75,11 @@ class LintErrorChecker {
 		);
 
 		return $this->parsoid->wikitext2lint(
-			$this->pageConfigFactory->create( $title, null, $fakeRevision ),
+			$this->pageConfigFactory->createFromParserOptions(
+				ParserOptions::newFromAnon(),
+				$title,
+				$fakeRevision
+			),
 			$this->linterOptions( $disabled ),
 			new ParserOutput()
 		);

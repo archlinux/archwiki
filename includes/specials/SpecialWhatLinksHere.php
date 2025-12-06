@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -22,6 +8,9 @@ namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinksMigration;
@@ -300,15 +289,27 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		}
 
 		if ( !$hidelinks ) {
-			$plRes = $queryFunc( $dbr, 'pagelinks', 'pl_from' );
+			$plRes = $queryFunc(
+				$this->dbProvider->getReplicaDatabase( PageLinksTable::VIRTUAL_DOMAIN ),
+				'pagelinks',
+				'pl_from'
+			);
 		}
 
 		if ( !$hidetrans ) {
-			$tlRes = $queryFunc( $dbr, 'templatelinks', 'tl_from' );
+			$tlRes = $queryFunc(
+				$this->dbProvider->getReplicaDatabase( TemplateLinksTable::VIRTUAL_DOMAIN ),
+				'templatelinks',
+				'tl_from'
+			);
 		}
 
 		if ( !$hideimages ) {
-			$ilRes = $queryFunc( $dbr, 'imagelinks', 'il_from' );
+			$ilRes = $queryFunc(
+				$this->dbProvider->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN ),
+				'imagelinks',
+				'il_from'
+			);
 		}
 
 		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable $rdRes is declared when fetching redirs
@@ -486,7 +487,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		}
 	}
 
-	protected function listStart( $level ) {
+	protected function listStart( int $level ): string {
 		return Html::openElement( 'ul', ( $level ? [] : [ 'id' => 'mw-whatlinkshere-list' ] ) );
 	}
 
@@ -551,11 +552,11 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 			Html::rawElement( 'li', [], "$link $propsText $wlh" ) . "\n";
 	}
 
-	protected function listEnd() {
+	protected function listEnd(): string {
 		return Html::closeElement( 'ul' );
 	}
 
-	protected function wlhLink( Title $target, $text, $editText ) {
+	protected function wlhLink( Title $target, string $text, string $editText ): string {
 		static $title = null;
 		$title ??= $this->getPageTitle();
 
@@ -628,6 +629,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		return $navBuilder->getHtml();
 	}
 
+	/** @inheritDoc */
 	protected function getFormFields() {
 		$this->addHelpLink( 'Help:What links here' );
 		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
@@ -730,23 +732,28 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 			->setSubmitTextMsg( 'whatlinkshere-submit' );
 	}
 
+	/** @inheritDoc */
 	protected function getShowAlways() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getSubpageField() {
 		return 'target';
 	}
 
+	/** @inheritDoc */
 	public function onSubmit( array $data ) {
 		$this->formData = $data;
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function requiresPost() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
@@ -763,6 +770,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

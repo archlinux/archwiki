@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Athena in Wonderland",
+			"BraunOBruno",
 			"Cainamarques",
 			"Fúlvio",
 			"GoEThe",
@@ -19,8 +20,7 @@
 			"Opraco",
 			"SandroHc",
 			"Toliño",
-			"Vitorvicentevalente",
-			"BraunOBruno"
+			"Vitorvicentevalente"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Livro",
@@ -40,10 +40,13 @@
 	"cite-ve-citationneeded-reason": "Motivo apresentado:",
 	"cite-ve-citationneeded-title": "Citação necessária",
 	"cite-ve-dialog-reference-contextitem-extends": "Esta referência é uma reutilização com detalhes adicionais:",
+	"cite-ve-dialog-reference-editing-add-details": "Está a adicionar detalhes a esta referência:",
+	"cite-ve-dialog-reference-editing-edit-details": "Está a editar os detalhes desta referência:",
+	"cite-ve-dialog-reference-editing-add-details-placeholder": "Escreva ou cole os seus detalhes adicionais aqui, por exemplo, um número de página específico ou uma citação.",
+	"cite-ve-dialog-reference-editing-reused-short": "Utilizado {{PLURAL:$1|uma vez|2=duas vezes|$1 vezes}}",
 	"cite-ve-dialog-reference-editing-reused": "Esta referência é utilizada {{PLURAL:$1|uma vez|2=duas vezes|$1 vezes}} nesta página.",
 	"cite-ve-dialog-reference-editing-reused-long": "Esta referência é utilizada {{PLURAL:$1|uma vez|2=duas vezes|$1 vezes}} nesta página. As alterações efetuadas aqui serão aplicadas em todos os locais onde esta referência é reutilizada.",
-	"cite-ve-dialog-reference-extend-long-tool": "Reutilizar esta referência com detalhes adicionais",
-	"cite-ve-dialog-reference-editing-extends": "Isto é uma extensão de outra referência.",
+	"cite-ve-dialog-reference-editing-details-placeholder": "O conteúdo adicionado ao campo irá aparecer aqui.",
 	"cite-ve-dialog-reference-missing-parent-ref": "Estes detalhes estão interligados a uma referência em falta. Por favor, remova-os da página ou corrija o problema no modo de código.",
 	"cite-ve-dialog-reference-options-group-label": "Utilizar este grupo",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referências gerais",
@@ -51,8 +54,12 @@
 	"cite-ve-dialog-reference-options-section": "Opções",
 	"cite-ve-dialog-reference-placeholder": "Escreva ou cole a sua referência aqui, ou insira um modelo de citação.",
 	"cite-ve-dialog-reference-title": "Referência",
+	"cite-ve-dialog-reference-add-details-button": "Adicionar detalhes",
+	"cite-ve-dialog-subreference-help-dialog-title": "Detalhes",
+	"cite-ve-dialog-subreference-help-dialog-head": "Novo: Adicionar um detalhe a uma referência reutilizada",
+	"cite-ve-dialog-subreference-help-dialog-link-label": "Saiba mais sobre como adicionar detalhes a uma referência",
+	"cite-ve-dialog-reference-title-details": "Detalhes",
 	"cite-ve-dialog-reference-useexisting-tool": "Reutilizar",
-	"cite-ve-dialog-reference-useexisting-long-tool": "Reutilizar esta referência",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista de referências gerais",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista de referências para o grupo \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Lista de referências",

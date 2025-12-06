@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -37,6 +23,12 @@ use UnexpectedValueException;
 class ContentSecurityPolicy {
 	public const REPORT_ONLY_MODE = 1;
 	public const FULL_MODE = 2;
+
+	// Used for uploaded files. Keep in sync with images/.htaccess
+	private const UPLOAD_CSP = "default-src 'none'; style-src 'unsafe-inline' data:;" .
+		"font-src data:; img-src data: 'self'; media-src data: 'self'; sandbox";
+	private const UPLOAD_CSP_PDF = "default-src 'none'; style-src 'unsafe-inline' data:; object-src 'self';" .
+		"font-src data:; img-src data: 'self'; media-src data: 'self';";
 
 	/** @var Config The site configuration object */
 	private $mwConfig;
@@ -192,10 +184,7 @@ class ContentSecurityPolicy {
 		if ( isset( $policyConfig['default-src'] )
 			&& $policyConfig['default-src'] !== false
 		) {
-			$defaultSrc = array_merge(
-				[ "'self'", 'data:', 'blob:' ],
-				$additionalSelfUrls
-			);
+			$defaultSrc = [ "'self'", 'data:', 'blob:', ...$additionalSelfUrls ];
 			if ( is_array( $policyConfig['default-src'] ) ) {
 				foreach ( $policyConfig['default-src'] as $src ) {
 					$defaultSrc[] = $this->escapeUrlForCSP( $src );
@@ -264,7 +253,7 @@ class ContentSecurityPolicy {
 		} else {
 			$objectSrc = (array)( $policyConfig['object-src'] ?: [] );
 		}
-		$objectSrc = array_map( [ $this, 'escapeUrlForCSP' ], $objectSrc );
+		$objectSrc = array_map( $this->escapeUrlForCSP( ... ), $objectSrc );
 
 		$directives = [];
 		if ( $scriptSrc ) {
@@ -335,7 +324,7 @@ class ContentSecurityPolicy {
 			return $url;
 		}
 		$bits = wfGetUrlUtils()->parse( $url );
-		if ( !$bits && strpos( $url, '/' ) === false ) {
+		if ( !$bits && !str_contains( $url, '/' ) ) {
 			// probably something like example.com.
 			// try again protocol-relative.
 			$url = '//' . $url;
@@ -464,7 +453,7 @@ class ContentSecurityPolicy {
 		$additionalUrls = [];
 		$CORSSources = $this->mwConfig->get( MainConfigNames::CrossSiteAJAXdomains );
 		foreach ( $CORSSources as $source ) {
-			if ( strpos( $source, '?' ) !== false ) {
+			if ( str_contains( $source, '?' ) ) {
 				// CSP doesn't support single char wildcard
 				continue;
 			}
@@ -587,5 +576,48 @@ class ContentSecurityPolicy {
 	 */
 	public function addScriptSrc( $source ) {
 		$this->extraScriptSrc[] = $this->prepareUrlForCSP( $source );
+	}
+
+	/**
+	 * Get the CSP header for a specific file
+	 *
+	 * @note Only used in img_auth.php & thumb.php. Normal image serving
+	 * handled by a .htaccess file
+	 *
+	 * @since 1.45
+	 * @param string $filename
+	 * @return string|null CSP header (Without header name prefix)
+	 */
+	public static function getMediaHeader( string $filename ) {
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		if ( !$config->get( MainConfigNames::CSPUploadEntryPoint ) ) {
+			return null;
+		}
+		// Some browsers (Chrome) require allowing objects to
+		// render PDFs. Generally plugins are slightly higher-risk
+		// so only allow it on pdf files.
+		if ( strtolower( substr( $filename, -4 ) ) === '.pdf' ) {
+			return self::UPLOAD_CSP_PDF;
+		}
+		return self::UPLOAD_CSP;
+	}
+
+	/**
+	 * Output a very restrictive CSP header to disallow all active content
+	 *
+	 * This is meant for endpoints that don't output normal wiki content and
+	 * should never have any sort of javascript on them. For example, exceptions
+	 * if output page cannot be used. In the future this might be used for things
+	 * that output non-html mime types like api.php, load.php, etc.
+	 *
+	 * @since 1.45
+	 */
+	public static function sendRestrictiveHeader() {
+		// Intentionally don't use WebResponse, since we want to use this in
+		// exception handler, so avoid unnecessary dependencies. Still allow
+		// default-src of 'self' for favicon and whatnot. This doesn't include
+		// default-src data or style-src 'unsafe-inline', which would be fairly
+		// safe, but we are trying to be minimal here.
+		header( "Content-Security-Policy: default-src 'self'; script-src 'none'; object-src 'none'" );
 	}
 }

@@ -24,7 +24,7 @@ ve.ui.mwWikitextTransferRegistry.register(
 	'[['
 );
 
-ve.init.platform.getInitializedPromise().done( () => {
+ve.init.platform.getInitializedPromise().then( () => {
 	ve.ui.mwWikitextTransferRegistry.register(
 		'externalLink',
 		// [url label]

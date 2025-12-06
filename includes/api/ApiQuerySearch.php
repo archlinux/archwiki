@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -61,6 +47,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -89,13 +76,6 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		// Hint to some SearchEngines about what snippets we would like returned
 		$search->setFeatureData( 'snippets', $this->decideSnippets( $prop ) );
 
-		$nquery = $search->replacePrefixes( $query );
-		if ( $nquery !== $query ) {
-			$query = $nquery;
-			wfDeprecatedMsg( 'SearchEngine::replacePrefixes() is overridden by ' .
-				get_class( $search ) . ', this was deprecated in MediaWiki 1.32',
-				'1.32' );
-		}
 		// Perform the actual search
 		if ( $what == 'text' ) {
 			$matches = $search->searchText( $query );
@@ -208,12 +188,14 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		// Interwiki results inside main result set
 		$canAddInterwiki = (bool)$params['enablerewrites'] && ( $resultPageSet === null );
 		if ( $canAddInterwiki ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$this->addInterwikiResults( $matches, $apiResult, $prop, 'additional',
 				ISearchResultSet::INLINE_RESULTS );
 		}
 
 		// Interwiki results outside main result set
 		if ( $interwiki && $resultPageSet === null ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$this->addInterwikiResults( $matches, $apiResult, $prop, 'interwiki',
 				ISearchResultSet::SECONDARY_RESULTS );
 		}
@@ -390,10 +372,12 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		return $fields;
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$allowedParams = $this->buildCommonApiParams() + [
 			'what' => [
@@ -460,15 +444,23 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		return $allowedParams;
 	}
 
+	/** @inheritDoc */
 	public function getSearchProfileParams() {
 		return [
+			// Query-independent scoring profile (article popularity, quality, etc)
 			'qiprofile' => [
 				'profile-type' => SearchEngine::FT_QUERY_INDEP_PROFILE_TYPE,
 				'help-message' => 'apihelp-query+search-param-qiprofile',
 			],
+			// Query-dependent scoring profile (match strictness, default and/or, etc.)
+			'qdprofile' => [
+				'profile-type' => SearchEngine::FT_QUERY_DEP_PROFILE_TYPE,
+				'help-message' => 'apihelp-query+search-param-qdprofile',
+			],
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=search&srsearch=meaning'
@@ -480,6 +472,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Search';
 	}

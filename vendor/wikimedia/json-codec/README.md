@@ -249,6 +249,13 @@ An example of this can be found in
 and their associated test cases in
 [`tests/JsonCodecTest.php`](./tests/JsonCodecTest.php).
 
+For forward-compatibility with JSON serialized with hints, you
+may specify `Hint::ONLY_FOR_DECODE` to indicate that serialization
+should ignore the hint (encoding full class information) but that
+deserialization should take the hint into account, so that it is
+possible to read encodings produced either with or without a
+future hint.
+
 In some cases, `::jsonClassHintFor()` may be inadequate to describe
 the implicit typing of the JSON; for example tagged union values or
 implicitly-typed objects nested deeply or inside non-homogeneous

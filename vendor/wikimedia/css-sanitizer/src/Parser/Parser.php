@@ -37,7 +37,7 @@ use Wikimedia\CSS\Objects\Token;
  * Parse CSS into a structure for further processing.
  *
  * This implements the CSS Syntax Module Level 3 candidate recommendation.
- * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/
+ * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/
  *
  * The usual entry points are:
  *  - Parser::parseStylesheet() to parse a stylesheet or the contents of a <style> tag.
@@ -160,7 +160,7 @@ class Parser {
 
 	/**
 	 * Parse a stylesheet
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-stylesheet
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-stylesheet
 	 * @return Stylesheet
 	 */
 	public function parseStylesheet() {
@@ -173,7 +173,7 @@ class Parser {
 
 	/**
 	 * Parse a list of rules
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-list-of-rules
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-list-of-rules
 	 * @return RuleList
 	 */
 	public function parseRuleList() {
@@ -184,7 +184,7 @@ class Parser {
 
 	/**
 	 * Parse a rule
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-rule
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-rule
 	 * @return Rule|null
 	 */
 	public function parseRule() {
@@ -223,7 +223,7 @@ class Parser {
 
 	/**
 	 * Parse a declaration
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-declaration
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-declaration
 	 * @return Declaration|null
 	 */
 	public function parseDeclaration() {
@@ -257,7 +257,7 @@ class Parser {
 	/**
 	 * Parse a list of declarations and at-rules
 	 * @note This is the entry point the standard calls "parse a list of declarations"
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-list-of-declarations
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-list-of-declarations
 	 * @return DeclarationOrAtRuleList
 	 */
 	public function parseDeclarationOrAtRuleList() {
@@ -268,7 +268,7 @@ class Parser {
 
 	/**
 	 * Parse a (non-whitespace) component value
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-component-value
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-component-value
 	 * @return ComponentValue|null
 	 */
 	public function parseComponentValue() {
@@ -301,7 +301,7 @@ class Parser {
 
 	/**
 	 * Parse a list of component values
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-list-of-component-values
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-list-of-component-values
 	 * @return ComponentValueList
 	 */
 	public function parseComponentValueList() {
@@ -321,7 +321,7 @@ class Parser {
 
 	/**
 	 * Parse a comma-separated list of component values
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#parse-comma-separated-list-of-component-values
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#parse-comma-separated-list-of-component-values
 	 * @return ComponentValueList[]
 	 */
 	public function parseCommaSeparatedComponentValueList() {
@@ -347,7 +347,7 @@ class Parser {
 
 	/**
 	 * Consume a list of rules
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-list-of-rules
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-list-of-rules
 	 * @param bool $topLevel Determines the behavior when CDO and CDC tokens are encountered
 	 * @return RuleList
 	 */
@@ -393,7 +393,7 @@ class Parser {
 
 	/**
 	 * Consume a list of declarations and at-rules
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-list-of-declarations
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-list-of-declarations
 	 * @param bool $allowAtRules Whether to allow at-rules. This flag is not in
 	 *  the spec and is used to implement the non-spec self::parseDeclarationList().
 	 * @return DeclarationOrAtRuleList|DeclarationList
@@ -468,7 +468,7 @@ class Parser {
 
 	/**
 	 * Consume a declaration
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-declaration
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-declaration
 	 * @return Declaration|null
 	 */
 	protected function consumeDeclaration() {
@@ -508,6 +508,7 @@ class Parser {
 			!strcasecmp( $v2->value(), 'important' )
 		) {
 			// This removes the "!" and "important" (5), and also any whitespace between/after (6)
+			// @phan-suppress-next-line PhanPossiblyInfiniteLoop
 			while ( isset( $value[$l1] ) ) {
 				$value->remove( $l1 );
 			}
@@ -527,7 +528,7 @@ class Parser {
 
 	/**
 	 * Consume an at-rule
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-at-rule
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-at-rule
 	 * @return AtRule
 	 * @suppress PhanPluginNeverReturnMethod due to break 2;
 	 */
@@ -566,7 +567,7 @@ class Parser {
 
 	/**
 	 * Consume a qualified rule
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-qualified-rule
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-qualified-rule
 	 * @return QualifiedRule|null
 	 */
 	protected function consumeQualifiedRule() {
@@ -599,7 +600,7 @@ class Parser {
 
 	/**
 	 * Consume a component value
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-component-value
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-component-value
 	 * @return ComponentValue
 	 */
 	protected function consumeComponentValue() {
@@ -642,7 +643,7 @@ class Parser {
 
 	/**
 	 * Consume a simple block
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-simple-block
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-simple-block
 	 * @return SimpleBlock
 	 * @suppress PhanPluginNeverReturnMethod due to break 2;
 	 */
@@ -675,7 +676,7 @@ class Parser {
 
 	/**
 	 * Consume a function
-	 * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#consume-function
+	 * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#consume-function
 	 * @return CSSFunction
 	 * @suppress PhanPluginNeverReturnMethod due to break 2;
 	 */

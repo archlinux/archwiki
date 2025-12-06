@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aca"
+		]
+	},
+	"echo-pref-tooltip-login-fail": "Obavještava vas o neuspješnim pokušajima prijavljivanja na vaš račun.",
+	"echo-pref-tooltip-login-success": "Obavještava vas kad se netko prijavi na vaš račun s nepoznatog uređaja ili IP adrese."
+}

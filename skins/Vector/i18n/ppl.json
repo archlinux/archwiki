@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"A R King",
-			"TimumachtikanNawat",
 			"AliciaMarroquín",
 			"Jose Antonio Guillen Landaverde",
-			"Luisrr77"
+			"Luisrr77",
+			"TimumachtikanNawat"
 		]
 	},
 	"vector-languages": "Tajtaketzalis",
@@ -35,7 +35,6 @@
 	"skin-theme-night-label": "Kunyua",
 	"skin-theme-os-label": "Isel muchiwa",
 	"skin-theme-exclusion-notice": "Ini amat ishtikaya kipia tawil",
-	"vector-searchsuggest-containing": "Shiktemu amat iwan <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "tajtaketzalis ijtik pal wiki",
 	"vector-toc-beginning": "pewalis",
 	"vector-anon-user-menu-pages": "Ajamat pal ne tamawawasuani ka kisat",

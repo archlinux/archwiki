@@ -19,4 +19,19 @@ class HookRunnerTest extends HookRunnerTestBase {
 		yield HookRunner::class => [ HookRunner::class ];
 		yield RL\HookRunner::class => [ RL\HookRunner::class ];
 	}
+
+	protected static array $unabortableHooksNotReturningVoid = [
+		'onGetAllBlockActions',
+		'onSpecialLogResolveLogType',
+		'onSpecialPrefixIndexGetFormFilters',
+		'onSpecialPrefixIndexQuery',
+		'onSpecialWhatLinksHereQuery',
+	];
+
+	protected static array $voidMethodsNotUnabortableHooks = [
+		'onApiLogFeatureUsage',
+		'onContributeCards',
+		'onRecentChangesPurgeRows',
+	];
+
 }

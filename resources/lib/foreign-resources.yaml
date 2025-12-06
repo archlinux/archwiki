@@ -125,11 +125,11 @@ codex:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.23.0
-  purl: pkg:npm/@wikimedia/codex@1.23.0
+  version: 2.3.2
+  purl: pkg:npm/@wikimedia/codex@2.3.2
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-1.23.0.tgz
-  integrity: sha384-cmoeYhSAHpbpsMfGutyu7XwurDOr99/PUCC/HgEkff41bMxqZwCNBIIEkXYlZrY5
+  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-2.3.2.tgz
+  integrity: sha384-HkMG14/qVTD4yEt6W0qJUoW6Jorjja4oaHxT560RPdE4HLiDaiyc+1DXRDjOl0t6
   dest:
     package/dist/codex.cjs:
     package/dist/codex.js:
@@ -146,11 +146,11 @@ codex-design-tokens:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.23.0
-  purl: pkg:npm/@wikimedia/codex-design-tokens@1.23.0
+  version: 2.3.2
+  purl: pkg:npm/@wikimedia/codex-design-tokens@2.3.2
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-1.23.0.tgz
-  integrity: sha384-H5h3k6xfUFPCynK4LYTPcqR/bvZJlstIQgeZ3jptdDlOIusl5c1aEwIv1d3c6ooa
+  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-2.3.2.tgz
+  integrity: sha384-yNtvAdpM/AHB332n1pR/GZkqT5MatikEnCiQjWCRWqgUsqkBdcuSRnuwF79JGiA8
   dest:
     package/dist/theme-*.less:
     package/dist/theme-wikimedia-ui-root.css:
@@ -162,11 +162,11 @@ codex-icons:
   license: MIT
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 1.23.0
-  purl: pkg:npm/@wikimedia/codex-icons@1.23.0
+  version: 2.3.2
+  purl: pkg:npm/@wikimedia/codex-icons@2.3.2
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-1.23.0.tgz
-  integrity: sha384-Hh/6MP3SarXmPe7HqKyXFUGW4JB9RDqBtkHlH0uPTXfcLqAAylTs/JxlUGnyOAQL
+  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-2.3.2.tgz
+  integrity: sha384-fJmNuSQurBxTkHV126/vxk2XrOpXJH35CtLZG9dFeF2q1DDg4ylyrHWtIbsjZxuc
   dest:
     package/dist/codex-icons.json:
     package/dist/codex-icon-paths.less:
@@ -345,11 +345,11 @@ ooui:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOUI
   authors: OOUI Team and other contributors
-  version: 0.51.7
-  purl: pkg:npm/oojs-ui@0.51.7
+  version: 0.53.0
+  purl: pkg:npm/oojs-ui@0.53.0
   type: tar
-  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.51.7.tgz
-  integrity: sha384-4qCOHXoxweCN6ilkHmm2alWe91hQssdF3tieSwzFVTsPgGn57nNrMm0Zhp70TRvu
+  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.53.0.tgz
+  integrity: sha384-y7oUrg4Fr2pMgJcXX0x77xFpaYRulHBfe1RBHREGylln/aOBMyhZTpqeUYD1eHxs
 
   dest:
     # Main stuff
@@ -468,6 +468,34 @@ vue:
     package/LICENSE:
     package/dist/vue.global.js:
     package/dist/vue.global.prod.js:
+
+vue-test-utils:
+   license: MIT
+   homepage: https://test-utils.vuejs.org/
+   authors: Lachlan Miller
+   version: 2.4.6
+   purl: pkg:npm/@vue/test-utils@2.4.6
+   type: tar
+   src: https://registry.npmjs.org/@vue/test-utils/-/test-utils-2.4.6.tgz
+   integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==
+   dest:
+    package/README.md:
+    package/LICENSE:
+    package/dist/vue-test-utils.browser.js:
+
+vue-compiler-dom:
+  license: MIT
+  homepage: https://vuejs.org/
+  authors: Yuxi (Evan) You
+  version: 3.5.13
+  purl: pkg:npm/@vue/compiler-dom@3.5.13
+  type: tar
+  src: https://registry.npmjs.org/@vue/compiler-dom/-/compiler-dom-3.5.13.tgz
+  integrity: sha512-ZOJ46sMOKUjO3e94wPdCzQ6P1Lx/vhp2RSvfaab88Ajexs0AHeV0uasYhi99WPaogmBlRHNRuly8xV75cNTMDA==
+  dest:
+    package/README.md:
+    package/LICENSE:
+    package/dist/compiler-dom.global.js:
 
 vuex:
   license: MIT

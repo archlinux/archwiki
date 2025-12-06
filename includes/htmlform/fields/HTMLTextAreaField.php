@@ -7,7 +7,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\MediaWikiServices;
 
-/*
+/**
  * @stable to extend
  */
 class HTMLTextAreaField extends HTMLFormField {
@@ -42,14 +42,23 @@ class HTMLTextAreaField extends HTMLFormField {
 		}
 	}
 
+	/**
+	 * @return int
+	 */
 	public function getCols() {
 		return $this->mParams['cols'] ?? static::DEFAULT_COLS;
 	}
 
+	/**
+	 * @return int
+	 */
 	public function getRows() {
 		return $this->mParams['rows'] ?? static::DEFAULT_ROWS;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getSpellCheck() {
 		$val = $this->mParams['spellcheck'] ?? null;
 		if ( is_bool( $val ) ) {
@@ -166,6 +175,7 @@ class HTMLTextAreaField extends HTMLFormField {
 		] + $attribs );
 	}
 
+	/** @inheritDoc */
 	public function getInputCodex( $value, $hasErrors ) {
 		$textareaClasses = [ 'cdx-text-area__textarea' ];
 		if ( $this->mClass !== '' ) {

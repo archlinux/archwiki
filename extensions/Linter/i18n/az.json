@@ -86,6 +86,7 @@
 	"linter-pager-deletable-table-tag-details": "Silinməli olan cədvəl teqi",
 	"linter-pager-details-header": "Əlavə məlumat",
 	"linter-pager-duplicate-ids-details": "Dublikat idlər",
+	"linter-pager-empty-heading-details": "Boş başlıqlar",
 	"linter-pager-fostered-details": "Görünməyən məzmun",
 	"linter-pager-fostered-transparent-details": "Renderdə görünməyən məzmun",
 	"linter-pager-html5-misnesting-details": "Yanlış yerləşdirmə (indi xarabdır)",

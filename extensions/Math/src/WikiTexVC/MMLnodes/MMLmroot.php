@@ -16,14 +16,14 @@ class MMLmroot extends MMLbase {
 
 	/**
 	 * Creates a new subtree element with base and scripts
-	 * @param MMLbase $base Radicand
-	 * @param MMLbase $index Root degree
+	 * @param MMLbase|string $base Radicand
+	 * @param MMLbase|string $index Root degree
 	 * @param string $texclass Optional TeX class for styling
 	 * @param array $attributes Additional HTML attributes for the element
 	 * @return static New instance with children in order: [base, index]
 	 */
-	public static function newSubtree( MMLbase $base,
-									   MMLbase $index,
+	public static function newSubtree( $base,
+									   $index,
 									   string $texclass = "",
 									   array $attributes = [] ) {
 		$instance = new self( $texclass, $attributes );

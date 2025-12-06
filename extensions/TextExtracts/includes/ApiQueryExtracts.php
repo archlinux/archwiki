@@ -36,12 +36,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private $params;
 
-	private Config $config;
-	private WANObjectCache $cache;
-	private LanguageConverterFactory $langConvFactory;
-	private ParserOutputAccess $parserOutputAccess;
-	private WikiPageFactory $wikiPageFactory;
-	private TitleFormatter $titleFormatter;
+	private readonly Config $config;
 
 	// TODO: Allow extensions to hook into this to opt-in.
 	// This is partly for security reasons; see T107170.
@@ -54,19 +49,14 @@ class ApiQueryExtracts extends ApiQueryBase {
 		ApiQuery $query,
 		string $moduleName,
 		ConfigFactory $configFactory,
-		WANObjectCache $cache,
-		LanguageConverterFactory $langConvFactory,
-		ParserOutputAccess $parserOutputAccess,
-		WikiPageFactory $wikiPageFactory,
-		TitleFormatter $titleFormatter
+		private readonly WANObjectCache $cache,
+		private readonly LanguageConverterFactory $langConvFactory,
+		private readonly ParserOutputAccess $parserOutputAccess,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly TitleFormatter $titleFormatter,
 	) {
 		parent::__construct( $query, $moduleName, self::PREFIX );
 		$this->config = $configFactory->makeConfig( 'textextracts' );
-		$this->cache = $cache;
-		$this->langConvFactory = $langConvFactory;
-		$this->parserOutputAccess = $parserOutputAccess;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->titleFormatter = $titleFormatter;
 	}
 
 	/**
@@ -274,14 +264,13 @@ class ApiQueryExtracts extends ApiQueryBase {
 
 	/**
 	 * Converts page HTML into an extract
-	 * @param string $text
+	 * @param string $html
 	 * @return string
 	 */
-	private function convertText( $text ) {
-		$fmt = new ExtractFormatter( $text, $this->params['plaintext'] );
+	private function convertText( $html ) {
+		$fmt = new ExtractFormatter( $html );
 		$fmt->remove( $this->config->get( 'ExtractsRemoveClasses' ) );
-		$text = $fmt->getText();
-		return $text;
+		return $this->params['plaintext'] ? $fmt->getText() : $fmt->getHtml();
 	}
 
 	/**

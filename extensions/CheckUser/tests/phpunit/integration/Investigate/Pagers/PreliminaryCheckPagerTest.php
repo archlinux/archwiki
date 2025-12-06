@@ -25,7 +25,7 @@ class PreliminaryCheckPagerTest extends MediaWikiIntegrationTestCase {
 
 		$tokenQueryManager = $this->createMock( TokenQueryManager::class );
 		$tokenQueryManager->method( 'getDataFromRequest' )->willReturn( [
-			'targets' => [ 'UserA', 'UserB', '1.2.3.4' ]
+			'targets' => [ 'UserA', 'UserB', '1.2.3.4' ],
 		] );
 
 		$preliminaryCheckService = new PreliminaryCheckService(
@@ -54,7 +54,9 @@ class PreliminaryCheckPagerTest extends MediaWikiIntegrationTestCase {
 				'lu_name',
 				'lu_wiki',
 			],
-			'conds' => [ 'lu_name' => [ 'UserA', 'UserB' ] ]
+			'conds' => [
+				'lu_name' => [ 'UserA', 'UserB' ],
+			],
 		];
 		$this->assertSame( $expected, $result );
 	}
@@ -76,13 +78,14 @@ class PreliminaryCheckPagerTest extends MediaWikiIntegrationTestCase {
 	public function testGetIndexFieldGlobal() {
 		$services = $this->getServiceContainer();
 		$pager = $this->getMockBuilder( PreliminaryCheckPager::class )
-			->setConstructorArgs( [ RequestContext::getMain(),
+			->setConstructorArgs( [
+				RequestContext::getMain(),
 				$services->getLinkRenderer(),
 				$services->getNamespaceInfo(),
 				$services->get( 'CheckUserTokenQueryManager' ),
 				$this->createMock( ExtensionRegistry::class ),
 				$this->createMock( PreliminaryCheckService::class ),
-				$services->getUserFactory()
+				$services->getUserFactory(),
 			 ] )
 			->onlyMethods( [ 'isGlobalCheck' ] )
 			->getMock();

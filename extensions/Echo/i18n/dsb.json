@@ -26,7 +26,6 @@
 	"echo-category-title-reverted": "{{PLURAL:$1|Anulěrowanje|Anulěrowani|Anulěrowanja}} změnow",
 	"echo-category-title-mention": "{{PLURAL:$1|Naspomnjenje|Naspomnjeni|Naspomnjenja}}",
 	"echo-category-title-other": "{{PLURAL:$1|Druga|Drugej|Druge}}",
-	"echo-pref-tooltip-edit-user-talk": "Informěruj mě gaž něchten zawóstaja powěsć abo wótegrono na mójom diskusijnem boku.",
 	"echo-pref-tooltip-article-linked": "Informěruj mě, gaž něchten wótkazujo na bok, kótaryž som z nastawka napórał.",
 	"echo-pref-tooltip-reverted": "Informěruj mě, gaž něchten z pomocu anulěrowanja abo rěda anulěrujo změnu, kótaruž som cynił.",
 	"echo-pref-tooltip-mention": "Informěruj mě, gaž něchten wótkazujo z někakego diskusijnego boka k mójomu wužywarskemu bokoju.",

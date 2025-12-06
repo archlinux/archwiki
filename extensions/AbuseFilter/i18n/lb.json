@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"GilPe",
 			"Les Meloures",
 			"Matma Rex",
 			"Robby",
 			"Soued031",
 			"Talex42",
-			"Volvox",
-			"GilPe"
+			"Volvox"
 		]
 	},
 	"abusefilter-desc": "Applizéiert automatesch Heuristiken op Ännerungen",
@@ -314,9 +314,10 @@
 	"abusefilter-edit-builder-vars-user-emailconfirm": "Wéini d'E-Mail-Adress confirméiert gouf ($1)",
 	"abusefilter-edit-builder-vars-old-wikitext": "Ale Wikitext vun der Säit, virun der Ännerung ($1)",
 	"abusefilter-edit-builder-vars-new-wikitext": "Neie Wikitext vun der Säit, no der Ännerung ($1)",
-	"abusefilter-edit-builder-vars-added-links": "All extern Linken, déi bei der Ännerung derbäigesat goufen ($1)",
-	"abusefilter-edit-builder-vars-removed-links": "All extern Linken, déi bei der Ännerung ewechgeholl goufen ($1)",
-	"abusefilter-edit-builder-vars-all-links": "All extern Linken am neien Text ($1)",
+	"abusefilter-edit-builder-vars-added-links": "Extern Linken, déi mat der Ännerung derbäikomm sinn ($1)",
+	"abusefilter-edit-builder-vars-removed-links": "Extern Linken, déi mat der Ännerung ewechgeholl goufen ($1)",
+	"abusefilter-edit-builder-vars-new-links": "Extern Linken am neien Text ($1)",
+	"abusefilter-edit-builder-vars-old-links": "Extern Linken op der Säit, virun der Ännerung ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "Neie Wikitext vun der Säit, virum Späicheren ëmgewandelt ($1)",
 	"abusefilter-edit-builder-vars-addedlines-pst": "Zeilen, déi bei der Ännerung derbäigesat goufen, virum Späicheren ëmgewandelt ($1)",
 	"abusefilter-edit-builder-vars-new-text": "Neien Text vun der Säit ouni iergendwellech Formatéierung ($1)",
@@ -327,7 +328,6 @@
 	"abusefilter-edit-builder-vars-restrictions-upload": "Eroplued-Spär vun dësem Fichier ($1)",
 	"abusefilter-edit-builder-vars-recent-contributors": "Déi lescht zeng Benotzer, déi un dësem Artikel geschafft hunn ($1)",
 	"abusefilter-edit-builder-vars-first-contributor": "Éischte Benotzer, deen un der Säit geschafft huet ($1)",
-	"abusefilter-edit-builder-vars-old-links": "Linken op der Säit, virun der Ännerung ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1-Hash vum Inhalt vum Fichier ($1)",
 	"abusefilter-edit-builder-vars-file-size": "Gréisst vum Fichier a Byte ($1)",
 	"abusefilter-edit-builder-vars-file-mime": "MIME-Typ vum Fichier ($1)",

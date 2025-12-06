@@ -31,6 +31,8 @@
 	"discussiontools-replywidget-mention-prefix": "@",
 	"discussiontools-replywidget-mode-source": "स्रोत",
 	"discussiontools-replywidget-mode-visual": "दृश्य",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|जोड़ौ}} विषय",
+	"discussiontools-replywidget-placeholder-newtopic": "विवरण",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} क {{GENDER:|जवाब}}",
 	"discussiontools-replywidget-preview": "पूर्वावलोकन",
 	"discussiontools-replywidget-reply": "{{GENDER:|उत्तर दौ}}",

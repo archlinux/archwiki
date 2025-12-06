@@ -90,6 +90,7 @@
 	"math_invalidresponse": "$1：从服务器“$2”返回无效的响应（“$3”）：",
 	"math_invalidxml": "MathML或SVG是无效的XML。",
 	"math_mathoid_error": "转换错误。服务器（“$1”）报告：“$2”",
+	"math_other_error": "其他错误：$1",
 	"math-status-introduction": "此页面显示有关已启用的数学渲染{{PLURAL:$1|模式}}的信息。\n\n以下渲染{{PLURAL:$1|模式}}已启用：",
 	"math_syntax_error": "语法错误",
 	"math_timeout": "$1自“$2”起超时。",

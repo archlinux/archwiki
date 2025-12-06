@@ -2,21 +2,7 @@
 /**
  * Cleans up invalid titles in various tables.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
@@ -25,6 +11,10 @@
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
@@ -53,10 +43,11 @@ class CleanupInvalidDbKeys extends Maintenance {
 		// but also usernames or other things like that, so we leave them alone
 
 		// Links tables
-		[ 'pagelinks', 'pl', 'idField' => 'pl_from' ],
-		[ 'templatelinks', 'tl', 'idField' => 'tl_from' ],
-		[ 'categorylinks', 'cl', 'idField' => 'cl_from', 'nsField' => 14, 'titleField' => 'cl_to' ],
-		[ 'imagelinks', 'il', 'idField' => 'il_from', 'nsField' => 6, 'titleField' => 'il_to' ],
+		[ 'pagelinks', 'pl', 'idField' => 'pl_from', 'virtualDomain' => PageLinksTable::VIRTUAL_DOMAIN ],
+		[ 'templatelinks', 'tl', 'idField' => 'tl_from', 'virtualDomain' => TemplateLinksTable::VIRTUAL_DOMAIN ],
+		[ 'categorylinks', 'cl', 'idField' => 'cl_from', 'virtualDomain' => CategoryLinksTable::VIRTUAL_DOMAIN ],
+		[ 'imagelinks', 'il', 'idField' => 'il_from', 'nsField' => 6, 'titleField' => 'il_to',
+			'virtualDomain' => ImageLinksTable::VIRTUAL_DOMAIN ],
 	];
 
 	public function __construct() {
@@ -143,7 +134,15 @@ TEXT
 		// modified after selecting and before deleting/updating, but working on
 		// the hypothesis that invalid rows will be old and in all likelihood
 		// unreferenced, we should be fine to do it like this.
-		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		if ( isset( $tableParams['virtualDomain'] ) ) {
+			$dbr = $this->getServiceContainer()->getConnectionProvider()->getReplicaDatabase(
+				$tableParams['virtualDomain'],
+				'vslow'
+			);
+		} else {
+			$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		}
+
 		$linksMigration = $this->getServiceContainer()->getLinksMigration();
 		$joinConds = [];
 		$tables = [ $table ];
@@ -213,7 +212,14 @@ TEXT
 		$services = $this->getServiceContainer();
 
 		// Fix the bad data, using different logic for the various tables
-		$dbw = $this->getPrimaryDB();
+		if ( isset( $tableParams['virtualDomain'] ) ) {
+			$dbw = $this->getServiceContainer()->getConnectionProvider()->getPrimaryDatabase(
+				$tableParams['virtualDomain']
+			);
+		} else {
+			$dbw = $this->getPrimaryDB();
+		}
+
 		switch ( $table ) {
 			case 'page':
 			case 'redirect':

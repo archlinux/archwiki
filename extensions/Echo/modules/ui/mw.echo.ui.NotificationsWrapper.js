@@ -31,8 +31,8 @@ mw.echo.ui.NotificationsWrapper = function MwEchoUiNotificationsWrapper( control
 			$overlay: config.$overlay,
 			types: this.controller.getTypes(),
 			label: mw.msg( 'notifications' ),
-			icon: 'bell'
-		}
+			icon: 'bell',
+		},
 	);
 
 	// Initialize

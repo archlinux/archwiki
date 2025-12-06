@@ -13,6 +13,7 @@ use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
 use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
@@ -115,6 +116,7 @@ class Event extends AbstractEntity implements Bundleable {
 	/**
 	 * Creates an Event object
 	 * @param array $info Named arguments:
+	 * @param ?RecipientSet $recipients optional, list of recipients
 	 * type (required): The event type;
 	 * agent: The user who caused the event (UserIdentity);
 	 * title: The page on which the event was triggered (PageIdentity);
@@ -134,8 +136,19 @@ class Event extends AbstractEntity implements Bundleable {
 	 *
 	 * @return Event|false False if aborted via hook or Echo DB is read-only
 	 */
-	public static function create( $info = [] ) {
+	public static function create( $info = [], ?RecipientSet $recipients = null ) {
 		global $wgEchoNotifications;
+
+		if ( $recipients !== null ) {
+			$mergedRecipients = [];
+			if ( isset( $info['extra'][ self::RECIPIENTS_IDX ] ) ) {
+				$mergedRecipients = $info['extra'][ self::RECIPIENTS_IDX ];
+			}
+			foreach ( $recipients as $recipient ) {
+				$mergedRecipients[] = $recipient->getId();
+			}
+			$info['extra'][ self::RECIPIENTS_IDX ] = array_unique( $mergedRecipients );
+		}
 
 		$services = MediaWikiServices::getInstance();
 		// Do not create event and notifications if write access is locked
@@ -158,16 +171,7 @@ class Event extends AbstractEntity implements Bundleable {
 		$obj->type = $info['type'];
 		$obj->extra = $info['extra'] ?? [];
 		if ( isset( $info['agent'] ) ) {
-			try {
-				$obj->setAgent( $info['agent'] );
-			} catch ( NormalizedException $e ) {
-				// TODO: when no errors are logged in production, remove this and let the exception happen
-				LoggerFactory::getInstance( 'Echo' )->error(
-					$e->getNormalizedMessage(),
-					[ 'exception' => $e ] + $e->getMessageContext()
-				);
-				return false;
-			}
+			$obj->setAgent( $info['agent'] );
 		}
 		if ( isset( $info['title'] ) ) {
 			// This may modify $obj->extra as well
@@ -184,9 +188,6 @@ class Event extends AbstractEntity implements Bundleable {
 
 			return false;
 		}
-
-		// Temporary measure - Verify if object could be serialized with JsonCodec @see T325703
-		$obj->logWhenExtraIsNotJsonSerializable();
 
 		$hookRunner = new HookRunner( $services->getHookContainer() );
 		if ( !$hookRunner->onBeforeEchoEventInsert( $obj ) ) {
@@ -213,7 +214,7 @@ class Event extends AbstractEntity implements Bundleable {
 		$data = [
 			'event_type' => $this->type,
 			'event_deleted' => $this->deleted,
-			'event_extra' => $this->serializeExtra()
+			'event_extra' => $this->serializeExtra(),
 		];
 		if ( $this->id ) {
 			$data['event_id'] = $this->id;
@@ -365,12 +366,12 @@ class Event extends AbstractEntity implements Bundleable {
 		}
 		try {
 			$this->extra = $row->event_extra ? self::deserializeExtra( $row->event_extra ) : [];
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			// T73489: unserializing can fail for old notifications
 			LoggerFactory::getInstance( 'Echo' )->warning(
 				'Failed to unserialize event {id}',
 				[
-					'id' => $row->event_id
+					'id' => $row->event_id,
 				]
 			);
 			return false;
@@ -493,32 +494,6 @@ class Event extends AbstractEntity implements Bundleable {
 	}
 
 	/**
-	 * The `extra` array is serialized with php serialization mechanism which can lead into severe
-	 * problems when deserializing and also can cause code injection vulnerability. Before we
-	 * switch to JsonCodec, we need to verify if the extra can be serialized with JsonCodec.
-	 *
-	 * This is temporary measure and should be removed when we switch to JsonCodec
-	 * @see T325703
-	 *
-	 * @return void
-	 */
-	private function logWhenExtraIsNotJsonSerializable(): void {
-		if ( $this->extra === null ) {
-			return;
-		}
-		$jsonCodec = MediaWikiServices::getInstance()->getJsonCodec();
-		$path = $jsonCodec->detectNonSerializableData( $this->extra, true );
-		if ( $path !== null ) {
-			LoggerFactory::getInstance( 'Echo' )->warning(
-				'Event Type {type} has non JsonCodec serializable value in extra: {path}', [
-					'path' => $path,
-					'type' => $this->getType()
-				]
-			);
-		}
-	}
-
-	/**
 	 * Since 1.45 Echo stores `extra` as JSON, to be backwards compatible we still support
 	 * deserialization in both formats - JSON, and the legacy php unserialize
 	 *
@@ -538,15 +513,14 @@ class Event extends AbstractEntity implements Bundleable {
 	 * @return string|null
 	 */
 	private function serializeExtra() {
-		if ( is_array( $this->extra ) || is_object( $this->extra ) ) {
-			$extra = serialize( $this->extra );
-		} elseif ( $this->extra === null ) {
-			$extra = null;
-		} else {
-			$extra = serialize( [ $this->extra ] );
+		if ( $this->extra === null ) {
+			return null;
 		}
-
-		return $extra;
+		$extra = $this->extra;
+		if ( !is_array( $extra ) && !is_object( $extra ) ) {
+			$extra = [ $extra ];
+		}
+		return MediaWikiServices::getInstance()->getJsonCodec()->serialize( $extra );
 	}
 
 	/**

@@ -83,7 +83,12 @@ class TestFormatter implements Formatter, DOMFormatter {
 		} else {
 			$contents = '';
 		}
-		if ( $namespace === HTMLData::NS_HTML && $name === 'template' ) {
+		if (
+			// PHP < 8.4 defaults to "suppressHtmlNamespace", in which case
+			// NS_HTML will be represented as `null`
+			( $namespace === HTMLData::NS_HTML || $namespace === null ) &&
+			$name === 'template'
+		) {
 			if ( $contents === '' ) {
 				$contents = "  content\n";
 			} else {
@@ -104,7 +109,7 @@ class TestFormatter implements Formatter, DOMFormatter {
 	}
 
 	/** @inheritDoc */
-	public function formatDOMNode( \DOMNode $node ) {
+	public function formatDOMNode( $node ) {
 		$contents = '';
 		if ( $node->firstChild ) {
 			foreach ( $node->childNodes as $child ) {
@@ -141,7 +146,7 @@ class TestFormatter implements Formatter, DOMFormatter {
 	}
 
 	/** @inheritDoc */
-	public function formatDOMElement( \DOMElement $node, $content ) {
+	public function formatDOMElement( $node, $content ) {
 		$attrs = [];
 		foreach ( $node->attributes as $attr ) {
 			$prefix = null;
@@ -175,6 +180,8 @@ class TestFormatter implements Formatter, DOMFormatter {
 				$attr->localName, $attr->value );
 		}
 
-		return $this->formatElement( $node->namespaceURI, $node->nodeName, $attrs, $content );
+		$qName = $node->prefix ? ( $node->prefix . ':' . $node->localName ) :
+			   $node->localName;
+		return $this->formatElement( $node->namespaceURI, $qName, $attrs, $content );
 	}
 }

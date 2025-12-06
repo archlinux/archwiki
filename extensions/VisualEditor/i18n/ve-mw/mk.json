@@ -247,6 +247,7 @@
 	"visualeditor-includes-includeonly-description": "Кога содржина од оваа страница се користи во друга, овде ќе се вклучи следнава дополнителна содржина:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Дознајте повеќе за делумното превметнување]",
 	"visualeditor-languages-tool": "Јазици",
+	"visualeditor-linkcontext-uneditable": "За жал, оваа врска засега може да се уредува само во изворен режим.",
 	"visualeditor-linkinspector-button-link-external": "Надворешно мреж. место",
 	"visualeditor-linkinspector-button-link-internal": "Пребарај внатрешни страници",
 	"visualeditor-linkinspector-convert-link-isbn": "Претвори во ISBN-врска",

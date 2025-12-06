@@ -1,0 +1,13 @@
+jquery.uls:
+  homepage: https://github.com/wikimedia/jquery.uls
+  license: GPL-2.0
+  authors: Wikimedia contributors
+  version: 000727d9354ddb6c848146561749ef1080f1da29
+  type: zip
+  src: https://codeload.github.com/wikimedia/jquery.uls/zip/000727d9354ddb6c848146561749ef1080f1da29
+  integrity: sha384-KPh9gnlwoxH0p83jhCWpqu2/p+5Ch3laZYXG7pUbkkf+uOtzCPd5lun00dYL1pY5
+  dest:
+    jquery.uls*/src/jquery.uls.data.js: .
+    jquery.uls*/src/jquery.uls.data.utils.js: .
+    jquery.uls*/CREDITS: .
+    jquery.uls*/GPL-LICENSE: .

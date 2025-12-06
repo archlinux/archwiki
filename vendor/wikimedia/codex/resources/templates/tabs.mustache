@@ -1,0 +1,16 @@
+<div class="cdx-tabs{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{! }}{{#id}} id="{{ id }}"{{/id}}{{! }}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}>
+  <form class="cdx-tabs__header" method="get">
+    <div class="cdx-tabs__list" tabindex="-1" role="tablist">
+      {{#tabs}}
+        <button id="{{ name }}-label" class="cdx-tabs__list__item" role="tab" aria-selected="{{#isSelected}}true{{/isSelected}}{{^isSelected}}false{{/isSelected}}" aria-controls="{{ name }}" value="{{ name }}" name="tab" type="submit"{{! }}{{#disabled}} disabled{{/disabled}}>{{ label }}</button>
+      {{/tabs}}
+    </div>
+  </form>
+  <div class="cdx-tabs__content">
+    {{#tabs}}
+      <section id="{{ name }}" aria-hidden="{{#isHidden}}true{{/isHidden}}{{^isHidden}}false{{/isHidden}}" aria-labelledby="{{ name }}-label" class="cdx-tab" role="tabpanel" tabindex="-1">
+        {{{ content-html }}}
+      </section>
+    {{/tabs}}
+  </div>
+</div>

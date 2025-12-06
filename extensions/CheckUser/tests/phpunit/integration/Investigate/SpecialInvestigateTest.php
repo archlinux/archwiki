@@ -5,7 +5,9 @@ namespace MediaWiki\CheckUser\Tests\Integration\Investigate;
 use CentralAuthTestUser;
 use MediaWiki\CheckUser\Investigate\Pagers\PreliminaryCheckPagerFactory;
 use MediaWiki\CheckUser\Investigate\Services\PreliminaryCheckService;
+use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -13,6 +15,7 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Tests\SpecialPage\FormSpecialPageTestCase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
@@ -29,9 +32,13 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  */
 class SpecialInvestigateTest extends FormSpecialPageTestCase {
 
+	use SuggestedInvestigationsTestTrait;
+	use TempUserTestTrait;
+
 	private static User $testCheckUser;
 	private static User $testSuppressor;
 	private static User $firstTestUser;
+	private static User $tempUser;
 
 	protected function newSpecialPage() {
 		return $this->getServiceContainer()->getSpecialPageFactory()->getPage( 'Investigate' );
@@ -67,15 +74,28 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 	 * @param string[] $targets Targets of the check
 	 * @param string[] $excludeTargets Targets to exclude from the check
 	 * @param string $subPage The subpage
+	 * @param bool $filterTempAccounts Whether to filter out results for temporary accounts.
 	 * @return FauxRequest|WebRequest
 	 */
-	private function getValidRequest( array $targets, array $excludeTargets, string $subPage ) {
+	private function getValidRequest(
+		array $targets,
+		array $excludeTargets,
+		string $subPage,
+		bool $filterTempAccounts = false
+	) {
 		$request = RequestContext::getMain()->getRequest();
 		// Generate a valid token and set it in the request.
 		$token = $this->getServiceContainer()->get( 'CheckUserTokenQueryManager' )->updateToken(
 			$request,
-			[ 'offset' => null, 'reason' => 'Test reason', 'targets' => $targets, 'exclude-targets' => $excludeTargets ]
+			[
+				'offset' => null,
+				'reason' => 'Test reason',
+				'targets' => $targets,
+				'exclude-targets' => $excludeTargets,
+				'FilterTempAccounts' => $filterTempAccounts,
+			]
 		);
+		$request->setVal( 'filter-temp-accounts', $filterTempAccounts ? 1 : 0 );
 		$request->setVal( 'token', $token );
 		// The request URL is required to be set, as it is used by SpecialInvestigate::alterForm.
 		$request->setRequestURL(
@@ -91,15 +111,26 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 	 * @param array $targets The targets of the check
 	 * @param string $subPage The value from ::getTabParam for the tab
 	 * @param bool $fullHtml Whether to get the full HTML of the page (true) or just OutputPage::getHTML (false).
+	 * @param bool $filterTempAccounts Whether to filter out results for temporary accounts.
 	 * @return string
 	 */
-	private function getHtmlForTab( array $targets, string $subPage, bool $fullHtml = false ): string {
+	private function getHtmlForTab(
+		array $targets,
+		string $subPage,
+		bool $fullHtml = false,
+		bool $filterTempAccounts = false
+	): string {
 		$testCheckUser = $this->getTestCheckUser();
-		$request = $this->getValidRequest( $targets, [], $subPage );
+		$request = $this->getValidRequest( $targets, [], $subPage, $filterTempAccounts );
 		// Execute the special page and get the HTML output. We need the full HTML to verify that the new investigation
 		// link is shown.
 		[ $html ] = $this->executeSpecialPage( $subPage, $request, null, $testCheckUser, $fullHtml );
 		return $html;
+	}
+
+	public function testViewSpecialPageWhenMissingRequiredRight() {
+		$this->expectException( PermissionsError::class );
+		$this->executeSpecialPage();
 	}
 
 	public function testViewSpecialPageBeforeCheck() {
@@ -161,9 +192,9 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$this->assertStringContainsString( '(checkuser-investigate-timeline-notice-no-results', $html );
 	}
 
-	private function commonTestViewCompareTab( $target ) {
+	private function commonTestViewCompareTab( $target, bool $filterTempAccounts = false ): string {
 		// Get the HTML for the compare tab
-		$html = $this->getHtmlForTab( [ $target ], $this->getTabParam( 'compare' ), true );
+		$html = $this->getHtmlForTab( [ $target ], $this->getTabParam( 'compare' ), true, $filterTempAccounts );
 		// Verify that the HTML includes the form field to exclude a user from the compare results.
 		$this->assertStringContainsString( '(checkuser-investigate-filters-exclude-targets-label', $html );
 		$this->assertStringContainsString( '(checkuser-investigate-filters-legend', $html );
@@ -229,6 +260,20 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$html = $this->commonTestViewCompareTab( '45.6.7.8' );
 		// Verify that the "No results" message is shown as no rows should have been found.
 		$this->assertStringContainsString( '(checkuser-investigate-compare-notice-no-results', $html );
+	}
+
+	public function testViewCompareTabWithResultsForTempUser(): void {
+		$html = $this->commonTestViewCompareTab( '~2025-1' );
+
+		$this->assertStringContainsString( '(checkuser-investigate-compare-table-cell-actions', $html );
+		$this->assertStringContainsString( 'data-value="~2025-1"', $html );
+	}
+
+	public function testViewCompareTabWithTemporaryAccountsFiltered(): void {
+		$html = $this->commonTestViewCompareTab( '~2025-1', true );
+
+		$this->assertStringContainsString( '(checkuser-investigate-compare-notice-no-results', $html );
+		$this->assertStringNotContainsString( 'data-value="~2025-1"', $html );
 	}
 
 	private function commonTestViewAccountInformationTab( $target ) {
@@ -328,6 +373,7 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 			[
 				'targets' => [ '127.0.0.1', 'InvestigateTestUser1' ],
 				'exclude-targets' => [ 'InvestigateTestUser2' ],
+				'FilterTempAccounts' => false,
 			],
 			true
 		);
@@ -335,7 +381,11 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		// Generate a valid token and set it in the request.
 		$token = $this->getServiceContainer()->get( 'CheckUserTokenQueryManager' )->updateToken(
 			$fauxRequest,
-			[ 'offset' => null, 'reason' => 'Test reason', 'targets' => [ '127.0.0.1' ], 'exclude-targets' => [] ]
+			[
+				'offset' => null, 'reason' => 'Test reason',
+				'targets' => [ '127.0.0.1' ], 'exclude-targets' => [],
+				'FilterTempAccounts' => false,
+			]
 		);
 		$fauxRequest->setVal( 'token', $token );
 		// The request URL is required to be set, as it is used by SpecialInvestigate::alterForm.
@@ -362,7 +412,7 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$fauxRequest = new FauxRequest(
 			[
 				'targets' => "127.0.0.1\nInvestigateTestUser1", 'duration' => '',
-				'reason' => 'Test reason',
+				'reason' => 'Test reason', 'FilterTempAccounts' => false,
 			],
 			true,
 			RequestContext::getMain()->getRequest()->getSession()
@@ -386,12 +436,63 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		);
 	}
 
+	/** @dataProvider provideLinkToSuggestedInvestigationsPresent */
+	public function testLinkToSuggestedInvestigationsPresent(
+		bool $enabled, bool $hidden, bool $linkExpected
+	) {
+		if ( $enabled ) {
+			$this->enableSuggestedInvestigations();
+		} else {
+			$this->disableSuggestedInvestigations();
+		}
+		if ( $hidden ) {
+			$this->hideSuggestedInvestigations();
+		} else {
+			$this->unhideSuggestedInvestigations();
+		}
+
+		[ $html ] = $this->executeSpecialPage( '', new FauxRequest(), null, $this->getTestCheckUser(), true );
+
+		if ( $linkExpected ) {
+			$this->assertStringContainsString( '(checkuser-show-suggestedinvestigations', $html );
+		} else {
+			$this->assertStringNotContainsString( '(checkuser-show-suggestedinvestigations', $html );
+		}
+	}
+
+	public static function provideLinkToSuggestedInvestigationsPresent() {
+		return [
+			'Feature disabled, not hidden' => [
+				'enabled' => false,
+				'hidden' => false,
+				'linkExpected' => false,
+			],
+			'Feature enabled, not hidden' => [
+				'enabled' => true,
+				'hidden' => false,
+				'linkExpected' => true,
+			],
+			'Feature disabled, hidden' => [
+				'enabled' => false,
+				'hidden' => true,
+				'linkExpected' => false,
+			],
+			'Feature enabled, hidden' => [
+				'enabled' => true,
+				'hidden' => true,
+				'linkExpected' => false,
+			],
+		];
+	}
+
 	public function addDBDataOnce() {
 		$this->overrideConfigValue( 'CheckUserLogLogins', true );
-		// Create two test users that will be referenced in the tests. These are constructed here to avoid creating the
+		$tempUserCreator = $this->getServiceContainer()->getTempUserCreator();
+		// Create users that will be referenced in the tests. These are constructed here to avoid creating the
 		// users on each test.
 		$firstTestUser = ( new TestUser( 'InvestigateTestUser1' ) )->getUser();
 		$secondTestUser = ( new TestUser( 'InvestigateTestUser2' ) )->getUser();
+		$tempUser = $tempUserCreator->create( '~2025-1', new FauxRequest() )->getUser();
 		// Add some testing entries to the CheckUser result tables to test the Special:Investigate when results are
 		// displayed. More specific tests for the results are written for the pager and services classes.
 		$testPage = $this->getExistingTestPage( 'CheckUserTestPage' )->getTitle();
@@ -406,6 +507,12 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$this->editPage( $testPage, 'Testing23', 'Test23', NS_MAIN, $firstTestUser );
 		ConvertibleTimestamp::setFakeTime( '20230405060708' );
 		$this->editPage( $testPage, 'Testing56', 'Test56', NS_MAIN, $secondTestUser );
+
+		// Insert an edit by a temp user with a different IP
+		RequestContext::getMain()->getRequest()->setIP( '1.2.3.5' );
+		RequestContext::getMain()->getRequest()->setHeader( 'X-Forwarded-For', '127.2.3.5' );
+		ConvertibleTimestamp::setFakeTime( '20230405060709' );
+		$this->editPage( $testPage, 'Testing456', 'Testing456', NS_MAIN, $tempUser );
 
 		// Insert one edit with a different IP and a defined XFF header for the first test user.
 		RequestContext::getMain()->getRequest()->setIP( '1.2.3.4' );
@@ -434,5 +541,6 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		self::$testCheckUser = $this->getTestUser( [ 'checkuser', 'sysop' ] )->getUser();
 		self::$firstTestUser = $firstTestUser;
 		self::$testSuppressor = $this->getTestUser( [ 'suppress', 'sysop' ] )->getUser();
+		self::$tempUser = $tempUser;
 	}
 }

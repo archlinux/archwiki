@@ -45,5 +45,7 @@
 	"replacetext_no_external_stores": "Your wiki will not work with ReplaceText: Text replacements cannot be run if $wgExternalStores is non-empty.",
 	"right-replacetext": "Make string replacements on the entire wiki",
 	"action-replacetext": "make string replacements on the entire wiki",
-	"replacetext-summary-label": "Summary for replacement edits (leave blank to use default summary)"
+	"replacetext-summary-label": "Summary for replacement edits (leave blank to use default summary)",
+	"tag-replacetext": "[[Special:ReplaceText|ReplaceText]]",
+	"tag-replacetext-description": "Automated edits made via [[{{#Special:ReplaceText}}]]."
 }

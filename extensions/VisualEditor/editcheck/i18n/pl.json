@@ -1,15 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"IOIOI",
 			"Msz2001",
 			"Rail",
 			"Tufor2",
-			"Woytecr",
-			"IOIOI"
+			"Woytecr"
 		]
 	},
 	"editcheck-dialog-action-no": "Nie",
 	"editcheck-dialog-action-yes": "Tak",
+	"editcheck-dialog-action-decline": "Odrzuć",
+	"editcheck-dialog-action-recheck": "Sprawdź ponownie",
+	"editcheck-dialog-action-back": "Cofnij",
+	"editcheck-dialog-action-submit": "Wyślij",
 	"editcheck-dialog-addref-description": "Pomóż czytelnikom, dodając przypis, mówiący skąd pochodzą te informacje.",
 	"editcheck-dialog-addref-reject-question": "Dlaczego nie dodajesz przypisu?",
 	"editcheck-dialog-addref-reject-description": "Inni edytorzy docenią informację o tym, dlaczego decydujesz się nie dodawać przypisu.",
@@ -21,7 +25,18 @@
 	"editcheck-dialog-addref-title": "Dodaj przypis",
 	"editcheck-dialog-title": "Przed publikacją",
 	"editcheck-copyvio-title": "Wklejona zawartość",
-	"editcheck-copyvio-description": "Co do zasady, nie kopiuj treści z innych źródeł. Takie działania stanowią zarówno naruszenie praw autorskich, jak i plagiat.",
+	"editcheck-copyvio-description": "Prosimy unikać kopiowania tekstu z innych źródeł, nawet jeśli jest przeformułowany lub cytowany. Może to zostać uznane za [$1 naruszenie praw autorskich lub plagiat] i może skutkować usunięciem treści lub zablokowaniem konta.",
+	"editcheck-copyvio-prompt": "Czy to Ty napisałe(a)ś ten tekst?",
+	"editcheck-copyvio-action-keep": "Tak, zachowaj to",
+	"editcheck-copyvio-action-remove": "Nie, usuń to",
+	"editcheck-copyvio-keep-description": "Pomóż innym redaktorom tego artykułu zrozumieć, dlaczego chcesz zachować wklejony tekst.",
+	"editcheck-copyvio-keep-wrote": "Napisałem tę treść i nie jest ona nigdzie indziej publikowana",
+	"editcheck-copyvio-keep-permission": "Mam pozwolenie na ponowne wykorzystanie tej treści",
+	"editcheck-copyvio-keep-other": "Żadne z powyższych nie ma zastosowania",
+	"editcheck-copyvio-keep-notify": "Dziękujemy za podanie powodu, dla którego zachowałeś wklejony tekst!",
+	"editcheck-copyvio-remove-notify": "Dziękujemy za usunięcie tego tekstu!",
+	"editcheck-tone-description-acted": "Zwróć uwagę na wyrażenia pochlebne, lekceważące, niejasne, banalne lub popierające określony punkt widzenia.",
+	"editcheck-reject-description": "Inni redaktorzy chcieliby dowiedzieć się, dlaczego dokonałeś takiego wyboru.",
 	"editcheck-review-title": "Przejrzyj zmiany",
 	"tag-editcheck-reference-decline-common-knowledge": "Automatyczny pomocnik (przypisy): odrzucono (wiedza powszechna)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Automatyczny pomocnik: użytkownik odrzucił sugestię dodania przypisu, ponieważ uznał informację za wiedzę powszechną",

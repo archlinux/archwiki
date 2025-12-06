@@ -58,7 +58,7 @@
 	"discussiontools-limitreport-errorreqid": "Identificador do pedido do erro de DiscussionTools",
 	"discussiontools-limitreport-timeusage": "Tempo de utilização de DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|segundo|segundos}}",
-	"discussiontools-newtopic-missing-title": "Forneça um título para o seu tópico de discussão, por favor. Se clicar \"{{int:discussiontools-replywidget-newtopic}}\", o seu tópico será adicionado sem um título.",
+	"discussiontools-newtopic-missing-title": "Por favor, forneça um título para o {{GENDER:|seu}} tópico de discussão",
 	"discussiontools-newtopic-placeholder-title": "Assunto",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Subscrever",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Subscrever para receber notificações quando forem iniciados tópicos novos nesta página.",

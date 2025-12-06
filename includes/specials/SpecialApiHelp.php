@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -47,6 +33,7 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 		$this->urlUtils = $urlUtils;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		if ( !$par ) {
@@ -96,7 +83,7 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 		$main = new ApiMain( $this->getContext(), false );
 		try {
 			$module = $main->getModuleFromPath( $moduleName );
-		} catch ( ApiUsageException $ex ) {
+		} catch ( ApiUsageException ) {
 			$this->getOutput()->addHTML( Html::errorBox(
 				$this->msg( 'apihelp-no-such-module', $moduleName )->inContentLanguage()->parse()
 			) );
@@ -106,6 +93,7 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 		ApiHelp::getHelp( $this->getContext(), $module, $options );
 	}
 
+	/** @inheritDoc */
 	public function isIncludable() {
 		return true;
 	}

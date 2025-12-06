@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Tests\OutputTransform\Stages;
 
@@ -23,20 +24,20 @@ class AddWrapperDivClassTest extends OutputTransformStageTestBase {
 		);
 	}
 
-	public function provideShouldRun(): array {
+	public static function provideShouldRun(): array {
 		return( [
 			[ new ParserOutput(), null, [ 'wrapperDivClass' => 'some string' ] ]
 		] );
 	}
 
-	public function provideShouldNotRun(): array {
+	public static function provideShouldNotRun(): array {
 		return( [
 			[ new ParserOutput(), null, [ 'wrapperDivClass' => '' ] ],
 			[ new ParserOutput(), null, [] ]
 		] );
 	}
 
-	public function provideTransform(): array {
+	public static function provideTransform(): array {
 		$opts = [ 'wrapperDivClass' => 'mw-parser-output' ];
 		$po = new ParserOutput( TestUtils::TEST_DOC );
 		$wrappedText = <<<EOF
@@ -49,7 +50,7 @@ class AddWrapperDivClassTest extends OutputTransformStageTestBase {
 <h2 data-mw-anchor="Section_2">Section 2<mw:editsection page="Test Page" section="2">Section 2</mw:editsection></h2>
 <p>Two
 </p>
-<h3 data-mw-anchor="Section_2.1">Section 2.1</h3>
+<h3 data-mw-anchor="Section_2.1"><i>Section 2.1</i></h3>
 <p>Two point one
 </p>
 <h2 data-mw-anchor="Section_3">Section 3<mw:editsection page="Test Page" section="4">Section 3</mw:editsection></h2>

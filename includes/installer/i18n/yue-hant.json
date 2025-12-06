@@ -3,12 +3,12 @@
 		"authors": [
 			"H78c67c",
 			"Hello903hello",
+			"JeffreyKim",
+			"Ktchankt",
 			"Moon0319",
 			"Winston Sung",
 			"Z423x5c6",
-			"捍粵者",
-			"JeffreyKim",
-			"Ktchankt"
+			"捍粵者"
 		]
 	},
 	"config-desc": "MediaWiki安裝程式",
@@ -59,6 +59,9 @@
 	"config-db-type": "資料庫類型：",
 	"config-db-wiki-settings": "辨認呢個 wiki",
 	"config-db-name": "資料庫名（唔要 hyphen）：",
+	"config-dbsupport-mysql": "* [{{int:version-db-mariadb-url}} MariaDB]係MediaWiki嘅主要目標，亦都係最好嘅支援。 媒體維基亦都可以用[{{int:version-db-mysql-url}} MySQL]同埋[{{int:version-db-percona-url}} Percona Server],呢啲係MariaDB兼容嘅。([https://www.php.net/mysqli.installation 點樣用MySQL嚟支援編譯 PHP])",
+	"config-dbsupport-postgres": "* [{{int:version-db-postgres-url}} PostgreSQL]係一個流行嘅開源數據庫系統，作為 MySQL 嘅替代品。([https://www.php.net/pgsql.installation 點樣用PostgreSQL嚟支援編譯PHP])",
+	"config-dbsupport-sqlite": "* [{{int:version-db-sqlite-url}} SQLite]係一個輕量級嘅資料庫系統，支援得好好。 ([https://www.php.net/pdo.installation 點樣用SQLite嚟支援編譯 PHP],用PDO)",
 	"config-admin-box": "管理員户口",
 	"config-admin-name": "你嘅用户名：",
 	"config-admin-password": "密碼：",
@@ -70,6 +73,7 @@
 	"config-license-none": "無授權條款頁尾",
 	"config-license-cc-by-sa": "共享創意姓名標示-相同方式分享",
 	"config-license-cc-by": "共享創意姓名標示",
+	"config-enable-email-help": "如果你想電郵運作，[https://www.php.net/mail.configuration PHP 嘅郵件設定] \n需要正確配置。\n如果你唔想要任何電郵功能，你可以喺呢度停用佢哋。",
 	"config-upload-enable": "容許上傳檔案",
 	"config-install-mainpage-exists": "頭版已經存在，跳緊",
 	"config-install-success": "MediaWiki已經成功安裝咗。你而家可以去 <$1$2> 去睇你嘅wiki。\n如果你有任何問題，請去常見問題一覽：\n<https://www.mediawiki.org/wiki/Manual:FAQ> 或者去嗰版上面任何一個論壇搵幫手。",

@@ -56,11 +56,17 @@ class AbuseFilterHandler implements
 		string $action,
 		bool $shouldDebounce,
 		int $timestamp,
-		array $params
+		array &$params
 	) {
-		// Only divert logs for protected variable value access when the variables included the user_unnamed_ip
-		// variable.
-		if ( isset( $params['variables'] ) && !in_array( 'user_unnamed_ip', $params['variables'] ) ) {
+		if ( !isset( $params['variables'] ) ) {
+			return true;
+		}
+
+		$handledVariables = [ 'user_unnamed_ip' ];
+		$variablesOfInterest = array_intersect( $handledVariables, $params['variables'] );
+
+		if ( count( $variablesOfInterest ) === 0 ) {
+			// No variables of interest, continue with the default logging
 			return true;
 		}
 
@@ -71,18 +77,25 @@ class AbuseFilterHandler implements
 		//  - af-view-protected-var-value
 		$action = 'af-' . $action;
 
+		// Copy the parameters but with only the subset of variables that we're interested in
+		$newParams = $params;
+		$newParams['variables'] = $variablesOfInterest;
+
+		// Keep only the unhandled variables in the log entry handled by AbuseFilter
+		$params['variables'] = array_diff( $params['variables'], $handledVariables );
+
 		$logger = $this->loggerFactory->getLogger();
 		$logger->logFromExternal(
 			$performer,
 			$target,
 			$action,
-			$params,
+			$newParams,
 			$shouldDebounce,
 			$timestamp
 		);
 
-		// Abort further AF logging of this action
-		return false;
+		// Allow AbuseFilter to continue logging if there are remaining variables
+		return true;
 	}
 
 	/**

@@ -8,7 +8,6 @@
 			"Yupik"
 		]
 	},
-	"vector-opt-out": "Molso puáris olgoháámán",
 	"vector-languages": "Kielah",
 	"vector-language-button-label": "{{PLURAL:$1|$1 kielâ|$1 kielâ|$1 kielâ|$1 kiellâd}}",
 	"vector-no-language-button-label": "Lasseet kielâid",
@@ -39,7 +38,6 @@
 	"skin-theme-night-label": "Tevkkâd",
 	"skin-theme-os-label": "Automaatlâš",
 	"skin-theme-exclusion-notice": "Taat siijđo lii ain kuovgâd.",
-	"vector-searchsuggest-containing": "Uusâ siijđoid, moh siskeldeh <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Siskáldâslisto",
 	"vector-toc-beginning": "Algâttâs",
 	"vector-anon-user-menu-pages": "Siijđoh hämmejeijeid kiäh iä lah čáládâttâm siisâ",

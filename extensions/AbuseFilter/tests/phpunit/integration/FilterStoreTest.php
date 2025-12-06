@@ -20,9 +20,6 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 	use FilterFromSpecsTestTrait;
 	use MockAuthorityTrait;
 
-	/**
-	 * @param int $id
-	 */
 	private function createFilter( int $id ): void {
 		$filter = $this->getFilterFromSpecs( [ 'id' => $id ] );
 		$oldFilter = MutableFilter::newDefault();

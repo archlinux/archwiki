@@ -9,6 +9,8 @@
 namespace MediaWiki\Extension\Math;
 
 use DOMDocument;
+use DOMElement;
+use DOMNode;
 use DOMXPath;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\Math\InputCheck\LocalChecker;
@@ -36,7 +38,8 @@ class MathNativeMML extends MathMathML {
 		array &$entry,
 		?MathConfig $mathConfig = null,
 		?HookContainer $hookContainer = null,
-		?Config $config = null ): bool {
+		?Config $config = null,
+		?string $rngFile = null ): bool {
 		$mathConfig ??= Math::getMathConfig();
 		$hookContainer ??= MediaWikiServices::getInstance()->getHookContainer();
 		$config ??= MediaWikiServices::getInstance()->getMainConfig();
@@ -50,6 +53,14 @@ class MathNativeMML extends MathMathML {
 		if ( !$result ) {
 			$entry['skipped'] = true;
 			$entry['error'] = $renderer->getLastError();
+		}
+		if ( $rngFile !== null ) {
+			$validation = $renderer->validateSchema( $rngFile );
+			if ( $validation ) {
+				$entry['core-validation'] = $validation;
+			} else {
+				unset( $entry['core-validation'] );
+			}
 		}
 		return $result;
 	}
@@ -107,11 +118,13 @@ class MathNativeMML extends MathMathML {
 		}
 		if ( $this->getMathStyle() == 'display' ) {
 			$attributes['display'] = 'block';
+			$attributes['class'] .= ' mwe-math-element-block';
+		} else {
+			$attributes['class'] .= ' mwe-math-element-inline';
 		}
-		$root = new MMLmath( "", $attributes );
-		$mathElement = $root->encapsulateRaw( $presentation ?? '' );
+		$mathElement = (string)new MMLmath( "", $attributes, $presentation ?? '' );
 		if ( isset( $this->params['qid'] ) &&
-			preg_match( '/Q\d+/', $this->params['qid'] ) &&
+			preg_match( '/^Q\d+$/', $this->params['qid'] ) &&
 			$config->get( "MathEnableFormulaLinks" ) ) {
 			$this->setMathml( $this->addLinksToMathML(
 				$this->params['qid'],
@@ -154,5 +167,38 @@ class MathNativeMML extends MathMathML {
 
 	private function setChecker( LocalChecker $checker ) {
 		$this->checker = $checker;
+	}
+
+	/**
+	 * Validates the schema of the current MathML document against a Relax NG schema file.
+	 *
+	 * @param string $relaxNGFile The path to the Relax NG (.rng) file used for validation.
+	 * @return array An array containing the validation errors.
+	 */
+	private function validateSchema( string $relaxNGFile ): array {
+		$doc = new DOMDocument();
+		$doc->loadXML( $this->mathml );
+		$this->removeHtmlAttributes( $doc );
+
+		libxml_use_internal_errors( true );
+		libxml_clear_errors();
+
+		$doc->relaxNGValidate( $relaxNGFile );
+
+		return array_count_values( array_map( static fn ( $error ) => $error->message, libxml_get_errors() ) );
+	}
+
+	private function removeHtmlAttributes( DOMNode $n ): void {
+		$htmlAttributes = [ 'style', 'class' ];
+		if ( $n instanceof DOMElement && $n->hasAttributes() ) {
+			foreach ( $n->attributes as $attr ) {
+				if ( str_starts_with( $attr->name, 'data' ) || in_array( $attr->name, $htmlAttributes ) ) {
+					$n->removeAttribute( $attr->name );
+				}
+			}
+		}
+		foreach ( $n->childNodes as $child ) {
+			$this->removeHtmlAttributes( $child );
+		}
 	}
 }

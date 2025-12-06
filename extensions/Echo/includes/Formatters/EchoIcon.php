@@ -78,7 +78,7 @@ class EchoIcon {
 				'modules' => 'ext.echo.emailicons',
 				'image' => $icon,
 				'lang' => $lang,
-				'format' => 'rasterized'
+				'format' => 'rasterized',
 			] );
 		} else {
 			// For icons that are defined by URL

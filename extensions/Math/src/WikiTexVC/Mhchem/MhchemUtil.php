@@ -21,23 +21,20 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Mhchem;
 class MhchemUtil {
 
 	/**
-	 * The input is used as boolean operator in a javascript-type if condition,
+	 * The input is used as a boolean operator in a javascript-type if condition,
 	 * example: "if(input)"
-	 * output has the same boolean results as an if-condition in javascript.
+	 * output has the same boolean results as an if-condition in JavaScript.
 	 * arrays as input have to be used like this "issetJS($arr["b"] ?? null);"
 	 * properties as input have to be used like this "issetJS($inst->prop ?? null);"
 	 * @param mixed|null $input input to be checked in a javascript-type if condition
 	 * @return bool indicator if input is populated
 	 */
 	public static function issetJS( $input ): bool {
-		if ( $input === 0 || $input == "" ) {
-			return false;
-		}
-		return true;
+		return !( $input === 0 || $input == "" );
 	}
 
 	/**
-	 * Checks if the incoming string is containing  a regex pattern.
+	 * Checks if the incoming string is containing a regex pattern.
 	 * @param string $input string to verify
 	 * @param string $subject subject to check, usually empty string
 	 * @return bool true if regex pattern, false if not
@@ -50,7 +47,7 @@ class MhchemUtil {
 		 * See: https://stackoverflow.com/questions/16039362/how-can-i-suppress-phpcs-warnings-using-comments
 		 */
 
-        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		return !( @preg_match( $input, $subject ) === false );
 	}
 

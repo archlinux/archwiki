@@ -25,9 +25,9 @@ namespace Wikimedia\JsonCodec;
 /**
  * This is a simple class codec used for `stdClass` objects.
  * @internal
+ * @todo This class should @implements JsonClassCodec<stdClass> but phan's incomplete
+ * support for generics doesn't allow that yet.
  */
-// This class should @implements JsonClassCodec<stdClass> but phan's incomplete
-// support for generics doesn't allow that yet.
 class JsonStdClassCodec implements JsonClassCodec {
 
 	/**

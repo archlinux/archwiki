@@ -1,20 +1,9 @@
 <?php
+declare( strict_types = 1 );
 /**
  * Copyright (C) 2011-2022 Wikimedia Foundation and others.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Parser\Parsoid\Config;
@@ -47,7 +36,6 @@ use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Fragments\HtmlPFragment;
 use Wikimedia\Parsoid\Fragments\PFragment;
-use Wikimedia\Parsoid\Fragments\WikitextPFragment;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
@@ -61,20 +49,11 @@ class DataAccess extends IDataAccess {
 		MainConfigNames::SVGMaxSize,
 	];
 
-	private RepoGroup $repoGroup;
-	private BadFileLookup $badFileLookup;
-	private HookContainer $hookContainer;
-	private HookRunner $hookRunner;
-	private ContentTransformer $contentTransformer;
-	private TrackingCategories $trackingCategories;
-	private ParserFactory $parserFactory;
+	private readonly HookRunner $hookRunner;
 	/** Lazy-created via self::prepareParser() */
 	private ?Parser $parser = null;
 	private PPFrame $ppFrame;
 	private ?PageConfig $previousPageConfig = null;
-	private ServiceOptions $config;
-	private ReadOnlyMode $readOnlyMode;
-	private LinkBatchFactory $linkBatchFactory;
 	private int $markerIndex = 0;
 
 	/**
@@ -91,29 +70,19 @@ class DataAccess extends IDataAccess {
 	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
-		ServiceOptions $config,
-		RepoGroup $repoGroup,
-		BadFileLookup $badFileLookup,
-		HookContainer $hookContainer,
-		ContentTransformer $contentTransformer,
-		TrackingCategories $trackingCategories,
-		ReadOnlyMode $readOnlyMode,
-		ParserFactory $parserFactory,
-		LinkBatchFactory $linkBatchFactory
+		private readonly ServiceOptions $config,
+		private readonly RepoGroup $repoGroup,
+		private readonly BadFileLookup $badFileLookup,
+		private readonly HookContainer $hookContainer,
+		private readonly ContentTransformer $contentTransformer,
+		private readonly TrackingCategories $trackingCategories,
+		private readonly ReadOnlyMode $readOnlyMode,
+		private readonly ParserFactory $parserFactory,
+		private readonly LinkBatchFactory $linkBatchFactory,
 	) {
 		$config->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->config = $config;
-		$this->repoGroup = $repoGroup;
-		$this->badFileLookup = $badFileLookup;
-		$this->hookContainer = $hookContainer;
-		$this->contentTransformer = $contentTransformer;
-		$this->trackingCategories = $trackingCategories;
-		$this->readOnlyMode = $readOnlyMode;
-		$this->linkBatchFactory = $linkBatchFactory;
-
 		$this->hookRunner = new HookRunner( $hookContainer );
 
-		$this->parserFactory = $parserFactory;
 		$this->previousPageConfig = null; // ensure we initialize parser options
 	}
 
@@ -264,6 +233,7 @@ class DataAccess extends IDataAccess {
 				'mime' => $file->getMimeType(),
 				'url' => $file->getFullUrl(),
 				'mustRender' => $file->mustRender(),
+				'isVectorized' => $file->isVectorized(),
 				'badFile' => $this->badFileLookup->isBadFile( $filename, $page ),
 				'timestamp' => $file->getTimestamp(),
 				'sha1' => $file->getSha1(),
@@ -322,6 +292,10 @@ class DataAccess extends IDataAccess {
 	 * Prepare MediaWiki's parser for preprocessing or extension tag parsing,
 	 * clearing its state if necessary.
 	 *
+	 * @note The caller is expected to call Parser::resetOutput() and
+	 * reset the watcher if needed on $pageConfig->getParserOptions()
+	 * as needed.
+	 *
 	 * @param IPageConfig $pageConfig
 	 * @param int $outputType
 	 * @return Parser
@@ -332,20 +306,25 @@ class DataAccess extends IDataAccess {
 		// be retained. This should also provide better compatibility with extension tags.
 		$clearState = $this->previousPageConfig !== $pageConfig;
 		$this->previousPageConfig = $pageConfig;
+		$parserOptions = $pageConfig->getParserOptions();
+		$oldWatcher = $parserOptions->registerWatcher( null );
 		// Use the same legacy parser object for all calls to extension tag
 		// processing, for greater compatibility.
 		$this->parser ??= $this->parserFactory->create();
 		$this->parser->setStripExtTags( false );
 		$this->parser->startExternalParse(
 			Title::newFromLinkTarget( $pageConfig->getLinkTarget() ),
-			$pageConfig->getParserOptions(),
+			$parserOptions,
 			$outputType, $clearState, $pageConfig->getRevisionId() );
-		$this->parser->resetOutput();
 
 		// Retain a PPFrame object between preprocess requests since it contains
 		// some useful caches.
 		if ( $clearState ) {
 			$this->ppFrame = $this->parser->getPreprocessor()->newFrame();
+			// If $clearState is true, then we've reset the parser output and
+			// clobbered the watcher on the parser options; restore the old
+			// one.
+			$parserOptions->registerWatcher( $oldWatcher );
 		}
 		return $this->parser;
 	}
@@ -356,8 +335,9 @@ class DataAccess extends IDataAccess {
 		ParserOptions $parserOptions,
 		ParserOutput $parserOutput
 	) {
-		$parser = $this->parser ??
-			$this->prepareParser( $pageConfig, Parser::OT_HTML );
+		$parser = $this->prepareParser( $pageConfig, Parser::OT_HTML );
+		// This next call doesn't touch $parser::$mParserOutput so we
+		// don't need to call Parser::resetOutput() here.
 		$parser->makeLimitReport( $parserOptions, $parserOutput );
 	}
 
@@ -367,16 +347,25 @@ class DataAccess extends IDataAccess {
 		ContentMetadataCollector $metadata,
 		string $wikitext
 	): string {
+		'@phan-var PageConfig $pageConfig'; // @var PageConfig $pageConfig
 		$parser = $this->prepareParser( $pageConfig, Parser::OT_HTML );
-		$html = $parser->parseExtensionTagAsTopLevelDoc( $wikitext );
+
 		// XXX: Ideally we will eventually have the legacy parser use our
 		// ContentMetadataCollector instead of having a new ParserOutput
-		// created (implicitly in ::prepareParser()/Parser::resetOutput() )
-		// which we then have to manually merge.
+		// created (in Parser::resetOutput() here) which we then have to
+		// manually merge.  On the other hand, this will let us precisely
+		// identify metadata added by $wikitext.
+		$parserOptions = $pageConfig->getParserOptions();
+		$oldWatcher = $parserOptions->registerWatcher( null );
+		$parser->resetOutput();
+
+		$html = $parser->parseExtensionTagAsTopLevelDoc( $wikitext );
+
 		$out = $parser->getOutput();
-		$out->setRawText( $html );
 		$out->collectMetadata( $metadata ); # merges $out into $metadata
-		return Parser::extractBody( $out->getRawText() );
+		$parserOptions->registerWatcher( $oldWatcher );
+
+		return Parser::extractBody( $html );
 	}
 
 	/** @inheritDoc */
@@ -385,13 +374,23 @@ class DataAccess extends IDataAccess {
 		ContentMetadataCollector $metadata,
 		$wikitext
 	) {
+		'@phan-var PageConfig $pageConfig'; // @var PageConfig $pageConfig
+
 		$parser = $this->prepareParser( $pageConfig, Parser::OT_PREPROCESS );
+
+		// XXX: Ideally we will eventually have the legacy parser use our
+		// ContentMetadataCollector instead of having a new ParserOutput
+		// created (in Parser::resetOutput() here) which we then have to
+		// manually merge.  On the other hand, this will let us precisely
+		// identify metadata added by $wikitext.
+		$parserOptions = $pageConfig->getParserOptions();
+		$oldWatcher = $parserOptions->registerWatcher( null );
+		$parser->resetOutput();
+
 		if ( $wikitext instanceof PFragment ) {
 			$result = [];
 			$index = 1;
-			$split = $wikitext instanceof WikitextPFragment ?
-				$wikitext->split() : [ $wikitext ];
-			foreach ( $split as $fragment ) {
+			foreach ( $wikitext->split() as $fragment ) {
 				if ( is_string( $fragment ) ) {
 					$result[] = $fragment;
 				} else {
@@ -430,6 +429,7 @@ class DataAccess extends IDataAccess {
 					// wikitext (could include extension tag snippets like <tag..>...</tag>)
 					$pieces[$i] = $content;
 				} elseif ( $type === 'parsoid' ) {
+					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 					$pieces[$i] = $pieces[$i]['extra']; // replace w/ fragment
 				} elseif ( $type === 'nowiki' ) {
 					$extra = $pieces[$i]['extra'] ?? null;
@@ -467,12 +467,10 @@ class DataAccess extends IDataAccess {
 			$wikitext = PFragment::fromSplitWt( $result );
 		}
 
-		// XXX: Ideally we will eventually have the legacy parser use our
-		// ContentMetadataCollector instead of having a new ParserOutput
-		// created (implicitly in ::prepareParser()/Parser::resetOutput() )
-		// which we then have to manually merge.
 		$out = $parser->getOutput();
 		$out->collectMetadata( $metadata ); # merges $out into $metadata
+		$parserOptions->registerWatcher( $oldWatcher );
+
 		return $wikitext;
 	}
 

@@ -71,7 +71,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testValidRevRequest() {
-		[ $result,, ] = $this->doApiRequestWithToken( [
+		[ $result ] = $this->doApiRequestWithToken( [
 			'action' => 'thank',
 			'rev' => $this->revId,
 		], null, $this->getTestSysop()->getUser() );
@@ -79,7 +79,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testValidLogRequest() {
-		[ $result,, ] = $this->doApiRequestWithToken( [
+		[ $result ] = $this->doApiRequestWithToken( [
 			'action' => 'thank',
 			'log' => $this->logId,
 		], null, $this->getTestSysop()->getUser() );
@@ -99,8 +99,8 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 		$this->setGroupPermissions( [
 			'logdeleter' => [
 				'read' => true,
-				'deletelogentry' => true
-			]
+				'deletelogentry' => true,
+			],
 		] );
 
 		// Mark our test log entry as deleted.
@@ -123,7 +123,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testValidRequestWithSource() {
-		[ $result,, ] = $this->doApiRequestWithToken( [
+		[ $result ] = $this->doApiRequestWithToken( [
 			'action' => 'thank',
 			'source' => 'someSource',
 			'rev' => $this->revId,

@@ -30,7 +30,6 @@ use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\RecentChanges\RecentChange;
-use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ScopedCallback;
@@ -40,34 +39,23 @@ use Wikimedia\ScopedCallback;
  * - based on /includes/RefreshLinksJob.php
  */
 class Job extends JobParent {
-	private MovePageFactory $movePageFactory;
-	private PermissionManager $permissionManager;
-	private UserFactory $userFactory;
-	private WatchlistManager $watchlistManager;
-	private WikiPageFactory $wikiPageFactory;
-
 	/**
-	 * @param Title $title
-	 * @param array|bool $params Cannot be === true
+	 * @param string $command
+	 * @param array $params
 	 * @param MovePageFactory $movePageFactory
 	 * @param PermissionManager $permissionManager
 	 * @param UserFactory $userFactory
 	 * @param WatchlistManager $watchlistManager
 	 * @param WikiPageFactory $wikiPageFactory
 	 */
-	public function __construct( $title, $params,
-		MovePageFactory $movePageFactory,
-		PermissionManager $permissionManager,
-		UserFactory $userFactory,
-		WatchlistManager $watchlistManager,
-		WikiPageFactory $wikiPageFactory
+	public function __construct( $command, $params,
+		private readonly MovePageFactory $movePageFactory,
+		private readonly PermissionManager $permissionManager,
+		private readonly UserFactory $userFactory,
+		private readonly WatchlistManager $watchlistManager,
+		private readonly WikiPageFactory $wikiPageFactory,
 	) {
-		parent::__construct( 'replaceText', $title, $params );
-		$this->movePageFactory = $movePageFactory;
-		$this->permissionManager = $permissionManager;
-		$this->userFactory = $userFactory;
-		$this->watchlistManager = $watchlistManager;
-		$this->wikiPageFactory = $wikiPageFactory;
+		parent::__construct( 'replaceText', $params );
 	}
 
 	/**
@@ -223,6 +211,7 @@ class Job extends JobParent {
 					$this->permissionManager->userHasRight( $current_user, 'autopatrol' ) ) {
 					$updater->setRcPatrolStatus( RecentChange::PRC_PATROLLED );
 				}
+				$updater->addTag( Hooks::TAG_NAME );
 				$updater->saveRevision( $edit_summary, $flags );
 			}
 		}

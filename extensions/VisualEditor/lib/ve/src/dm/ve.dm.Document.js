@@ -15,7 +15,7 @@
  * @class
  * @extends ve.Document
  * @constructor
- * @param {Array|ve.dm.ElementLinearData} data Raw linear model data or ElementLinearData
+ * @param {ve.dm.LinearData.Item[]|ve.dm.LinearData} data Raw linear model data or LinearData
  * @param {HTMLDocument} [htmlDocument] HTML document the data was converted from, if any.
  *  If omitted, a new document will be created. If data is an HTMLDocument, this parameter is
  *  ignored.
@@ -28,7 +28,10 @@
  * @param {boolean} [sourceMode=false] Document is in source mode
  * @param {Object} [persistentStorage={}] Persistent storage object
  */
-ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, internalList, innerWhitespace, lang, dir, originalDocument, sourceMode, persistentStorage ) {
+ve.dm.Document = function VeDmDocument(
+	data, htmlDocument = ve.createDocumentFromHtml( '' ), parentDocument = null, internalList = null,
+	innerWhitespace = null, lang = 'en', dir = 'ltr', originalDocument = null, sourceMode = false, persistentStorage = {}
+) {
 	// Parent constructor
 	ve.dm.Document.super.call( this, new ve.dm.DocumentNode() );
 
@@ -36,10 +39,10 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 	const doc = parentDocument || this;
 	const root = this.documentNode;
 
-	this.lang = lang || 'en';
-	this.dir = dir || 'ltr';
+	this.lang = lang;
+	this.dir = dir;
 
-	this.sourceMode = !!sourceMode;
+	this.sourceMode = sourceMode;
 
 	this.documentNode.setRoot( root );
 	// ve.Document already called setDocument(), but it could be that doc !== this
@@ -50,8 +53,8 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 	this.metaList = new ve.dm.MetaList( this );
 
 	// Properties
-	this.parentDocument = parentDocument || null;
-	this.originalDocument = originalDocument || null;
+	this.parentDocument = parentDocument;
+	this.originalDocument = originalDocument;
 	this.nodesByType = {};
 	this.origInternalListLength = null;
 	this.readOnly = false;
@@ -60,12 +63,10 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 	// Sparse array
 	this.branchNodeFromOffsetCache = [];
 
-	if ( data instanceof ve.dm.ElementLinearData ) {
+	if ( data instanceof ve.dm.LinearData ) {
 		this.data = data;
-	} else if ( data instanceof ve.dm.FlatLinearData ) {
-		this.data = new ve.dm.ElementLinearData( data.getStore(), data.getData() );
 	} else {
-		this.data = new ve.dm.ElementLinearData(
+		this.data = new ve.dm.LinearData(
 			new ve.dm.HashValueStore(),
 			Array.isArray( data ) ? data : []
 		);
@@ -82,8 +83,8 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 		} ] ) );
 		this.completeHistory.storeLengthAtTransaction.push( this.store.getLength() );
 	}
-	this.htmlDocument = htmlDocument || ve.createDocumentFromHtml( '' );
-	this.persistentStorage = persistentStorage || {};
+	this.htmlDocument = htmlDocument;
+	this.persistentStorage = persistentStorage;
 };
 
 /* Inheritance */
@@ -120,7 +121,7 @@ OO.inheritClass( ve.dm.Document, ve.Document );
  * This method modifies data in place.
  *
  * @static
- * @param {ve.dm.ElementLinearData|Array} data Data to apply annotations to
+ * @param {ve.dm.LinearData.Item[]|ve.dm.LinearData} data Data to apply annotations to
  * @param {ve.dm.AnnotationSet} annotationSet Annotations to apply
  * @param {boolean} [replaceComparable=false] Whether to remove annotations from the data which are comparable to those in annotationSet
  * @param {ve.dm.HashValueStore} [store] Store associated with the data; only needs to be provided if that data is associated with a different store than annotationSet
@@ -139,17 +140,17 @@ ve.dm.Document.static.addAnnotationsToData = function ( data, annotationSet, rep
 	} else {
 		store = annotationSet.getStore();
 	}
-	if ( !( data instanceof ve.dm.ElementLinearData ) ) {
-		data = new ve.dm.ElementLinearData( store, data );
+	if ( !( data instanceof ve.dm.LinearData ) ) {
+		data = new ve.dm.LinearData( store, data );
 	}
 
 	// Apply annotations to data
-	for ( let i = 0, length = data.getLength(); i < length; i++ ) {
+	data.getRange().forEach( ( i ) => {
 		if ( data.isElementData( i ) && ve.dm.nodeFactory.shouldIgnoreChildren( data.getType( i ) ) ) {
 			ignoreChildrenDepth += data.isOpenElementData( i ) ? 1 : -1;
 		}
 		if ( ignoreChildrenDepth ) {
-			continue;
+			return;
 		}
 		const allowedAnnotations = annotationSet.filter( ( ann ) => data.canTakeAnnotationAtOffset( i, ann, true ) );
 		const existingAnnotations = data.getAnnotationsFromOffset( i, true );
@@ -164,7 +165,7 @@ ve.dm.Document.static.addAnnotationsToData = function ( data, annotationSet, rep
 			newAnnotationSet = allowedAnnotations;
 		}
 		data.setAnnotationsAtOffset( i, newAnnotationSet );
-	}
+	} );
 };
 
 /**
@@ -173,10 +174,8 @@ ve.dm.Document.static.addAnnotationsToData = function ( data, annotationSet, rep
  * @param {string} [paragraphType='empty'] Paragraph type: 'empty', 'wrapper' or null for a regular paragraph
  * @return {ve.dm.Document}
  */
-ve.dm.Document.static.newBlankDocument = function ( paragraphType ) {
+ve.dm.Document.static.newBlankDocument = function ( paragraphType = 'empty' ) {
 	const paragraph = { type: 'paragraph' };
-
-	paragraphType = paragraphType === undefined ? 'empty' : paragraphType;
 
 	if ( paragraphType ) {
 		ve.setProp( paragraph, 'internal', 'generated', paragraphType );
@@ -424,7 +423,7 @@ ve.dm.Document.prototype.commit = function ( transaction, isStaging ) {
  *
  * @param {ve.Range} [range] Range of data to get, all data will be given by default
  * @param {boolean} [deep=false] Whether to return a deep copy (WARNING! This may be very slow)
- * @return {Array} Slice or copy of document data
+ * @return {ve.dm.LinearData.Item[]} Slice or copy of document data
  */
 ve.dm.Document.prototype.getData = function ( range, deep ) {
 	return this.data.getDataSlice( range, deep );
@@ -520,10 +519,10 @@ ve.dm.Document.prototype.shallowCloneFromSelection = function ( selection ) {
 	} else if ( selection instanceof ve.dm.TableSelection ) {
 		const data = [];
 		const ranges = selection.getTableSliceRanges( this );
-		for ( let i = 0, l = ranges.length; i < l; i++ ) {
-			ve.batchPush( data, this.data.slice( ranges[ i ].start, ranges[ i ].end ) );
-		}
-		const linearData = new ve.dm.ElementLinearData( this.getStore(), data );
+		ranges.forEach( ( range ) => {
+			ve.batchPush( data, this.data.getDataSlice( range ) );
+		} );
+		const linearData = new ve.dm.LinearData( this.getStore(), data );
 
 		const tableRange = new ve.Range( 0, data.length );
 
@@ -587,7 +586,7 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 		let balancedNodes;
 		if ( selection.length === 0 || range.isCollapsed() ) {
 			// Nothing selected
-			linearData = new ve.dm.ElementLinearData( this.getStore(), [
+			linearData = new ve.dm.LinearData( this.getStore(), [
 				{ type: 'paragraph', internal: { generated: 'empty' } },
 				{ type: '/paragraph' }
 			] );
@@ -643,13 +642,7 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 
 		if ( !balancedRange ) {
 			// Check if any of the balanced siblings need more context for insertion anywhere
-			let needsContext = false;
-			for ( i = balancedNodes.length - 1; i >= 0; i-- ) {
-				if ( nodeNeedsContext( balancedNodes[ i ].node ) ) {
-					needsContext = true;
-					break;
-				}
-			}
+			const needsContext = balancedNodes.some( ( balancedNode ) => nodeNeedsContext( balancedNode.node ) );
 
 			if ( needsContext ) {
 				startNode = balancedNodes[ 0 ].node;
@@ -668,15 +661,15 @@ ve.dm.Document.prototype.shallowCloneFromRange = function ( range ) {
 
 			// Final data:
 			//  contextOpenings + balanceOpenings + data slice + balanceClosings + contextClosings
-			linearData = new ve.dm.ElementLinearData(
+			linearData = new ve.dm.LinearData(
 				this.getStore(),
-				[].concat(
-					contextOpenings.reverse(),
-					balanceOpenings.reverse(),
-					this.data.slice( range.start, range.end ),
-					balanceClosings,
-					contextClosings
-				)
+				[
+					...contextOpenings.reverse(),
+					...balanceOpenings.reverse(),
+					...this.data.slice( range.start, range.end ),
+					...balanceClosings,
+					...contextClosings
+				]
 			);
 			originalRange = new ve.Range(
 				contextOpenings.length + balanceOpenings.length,
@@ -725,14 +718,14 @@ ve.dm.Document.prototype.cloneFromRange = function ( range, detachedCopy, mode )
  * Create a sub-document associated with this document like #cloneFromRange, but without cloning
  * any data from a range in this document: instead, use the specified data.
  *
- * @param {Array|ve.dm.ElementLinearData} data Raw linear model data or ElementLinearData
+ * @param {ve.dm.LinearData.Item[]|ve.dm.LinearData} data Raw linear model data or LinearData
  * @param {boolean} [copyInternalList] Copy the internal list
  * @param {boolean} [detachedCopy] The copy is not intended to be merged into the original
  * @return {ve.dm.Document} New document
  */
 ve.dm.Document.prototype.cloneWithData = function ( data, copyInternalList, detachedCopy ) {
 	if ( Array.isArray( data ) ) {
-		data = new ve.dm.ElementLinearData( this.getStore().slice(), data );
+		data = new ve.dm.LinearData( this.getStore().slice(), data );
 	}
 
 	const newDoc = new this.constructor(
@@ -768,13 +761,14 @@ ve.dm.Document.prototype.cloneWithData = function ( data, copyInternalList, deta
  * @param {ve.Range} [range] Range to get full data for. If omitted, all data will be returned
  * @param {string} [mode] If 'roundTrip', restore load offsets of inlined meta items from unchanged
  * branches. If 'noMetadata', don't include metadata items.
- * @return {Array} Data, with load offset info removed (some items are referenced, others copied)
+ * @return {ve.dm.LinearData.Item[]} Data, with load offset info removed (some items are referenced, others copied)
  */
 ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 	const insertedMetaItems = [],
 		insertions = {},
-		iLen = range ? range.end : this.data.getLength(),
 		result = [];
+
+	range = range || this.data.getRange();
 
 	function stripMetaLoadInfo( element ) {
 		if ( !element || !element.internal ) {
@@ -792,7 +786,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 		return element;
 	}
 
-	for ( let i = range ? range.start : 0; i < iLen; i++ ) {
+	for ( let i = range.start; i < range.end; i++ ) {
 		const item = this.data.getData( i );
 		if (
 			ve.dm.LinearData.static.isOpenElementData( item ) &&
@@ -812,7 +806,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 			i += 1;
 			continue;
 		}
-		let metaItem, metaItems, internal;
+		let metaItems, internal;
 		if (
 			mode === 'roundTrip' &&
 			( internal = item.internal ) &&
@@ -823,8 +817,7 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 					// Re-fetch unfrozen metaItems.
 					metaItems = dataItem.internal.metaItems;
 					// No changes, so restore meta item offsets
-					for ( let j = 0, jLen = metaItems.length; j < jLen; j++ ) {
-						metaItem = metaItems[ j ];
+					metaItems.forEach( ( metaItem ) => {
 						const offset = i + metaItem.internal.loadMetaParentOffset;
 						if ( !insertions[ offset ] ) {
 							insertions[ offset ] = [];
@@ -841,27 +834,24 @@ ve.dm.Document.prototype.getFullData = function ( range, mode ) {
 						}
 						insertions[ offset ].push( stripMetaLoadInfo( metaItem ) );
 						insertedMetaItems.push( metaItem.originalDomElementsHash );
-					}
+					} );
 				} );
 			} else {
 				// Had changes, so remove removable meta items that are out of place now
-				for ( let j = 0, jLen = metaItems.length; j < jLen; j++ ) {
-					metaItem = metaItems[ j ];
+				metaItems.forEach( ( metaItem ) => {
 					if ( ve.dm.nodeFactory.isRemovableMetaData( metaItem.type ) ) {
 						insertedMetaItems.push( metaItem.originalDomElementsHash );
 					}
-				}
+				} );
 			}
 		}
 		result.push( stripMetaLoadInfo( item ) );
 		if ( mode === 'roundTrip' && insertions[ i ] ) {
 			// There are meta items to reinsert outside of ContentBranchNodes.
 			// TODO: we should strip annotations from such meta items
-			for ( let j = 0, jLen = insertions[ i ].length; j < jLen; j++ ) {
-				metaItem = insertions[ i ][ j ];
-				result.push( metaItem );
-				result.push( { type: '/' + metaItem.type } );
-			}
+			insertions[ i ].forEach( ( metaItem ) => {
+				result.push( metaItem, { type: '/' + metaItem.type } );
+			} );
 		}
 	}
 	return result;
@@ -1056,7 +1046,7 @@ ve.dm.Document.prototype.getNearestFocusableNode = function ( offset, direction,
  * @return {number} Nearest offset a cursor can be placed at, or -1 if there are no valid offsets in
  *     data
  */
-ve.dm.Document.prototype.getNearestCursorOffset = function ( offset, direction ) {
+ve.dm.Document.prototype.getNearestCursorOffset = function ( offset, direction = -1 ) {
 	if ( direction === 0 ) {
 		const left = this.getNearestCursorOffset( offset, -1 );
 		const right = this.getNearestCursorOffset( offset, 1 );
@@ -1070,7 +1060,6 @@ ve.dm.Document.prototype.getNearestCursorOffset = function ( offset, direction )
 		return offset - left < right - offset ? left : right;
 	}
 
-	direction = direction > 0 ? 1 : -1;
 	if (
 		this.data.isContentOffset( offset ) ||
 		this.hasSlugAtOffset( offset )
@@ -1137,7 +1126,7 @@ ve.dm.Document.prototype.hasSlugAtOffset = function ( offset ) {
  * Get the content data of a node.
  *
  * @param {ve.dm.Node} node Node to get content data for
- * @return {Array|null} List of content and elements inside node or null if node is not found
+ * @return {ve.dm.LinearData.Item[]|null} List of content and elements inside node or null if node is not found
  */
 ve.dm.Document.prototype.getDataFromNode = function ( node ) {
 	let offset = node.getOffset();
@@ -1268,7 +1257,7 @@ ve.dm.Document.prototype.getNodesByType = function ( type, sort ) {
 /**
  * @typedef FixedInsertion
  * @memberof ve.dm.Document
- * @property {Array} data Possibly modified copy of `data`
+ * @property {ve.dm.LinearData.Item[]} data Possibly modified copy of `data`
  * @property {number} offset Possibly modified offset
  * @property {number} remove Number of elements to remove after the modified `offset`
  * @property {number} [insertedDataOffset] Offset of intended insertion within fixed up data
@@ -1280,7 +1269,7 @@ ve.dm.Document.prototype.getNodesByType = function ( type, sort ) {
  *
  * TODO: this function needs more work but it seems to work, mostly
  *
- * @param {Array} data Snippet of linear model data to insert
+ * @param {ve.dm.LinearData.Item[]} data Snippet of linear model data to insert
  * @param {number} offset Offset in the linear model where the caller wants to insert data
  * @return {ve.dm.Document.FixedInsertion}
  */
@@ -1318,12 +1307,12 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 		isFirstChild = null;
 
 	/**
-	 * Append a linear model element to newData and update the state.
+	 * Append a linear model item to newData and update the state.
 	 *
 	 * This function updates parentNode, parentType, openingStack and closingStack.
 	 *
 	 * @private
-	 * @param {Object|Array|string} element Linear model element
+	 * @param {ve.dm.LinearData.Item[]} element Linear model item
 	 * @param {number} index Index in data that the element came from (for error reporting only)
 	 */
 	function writeElement( element, index ) {
@@ -1399,8 +1388,8 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 	 * This function updates parentNode, parentType, closingStack, reopenElements, and closings.
 	 *
 	 * @private
-	 * @param {Array} closings Closing elements array to be appended to
-	 * @param {Array} reopenElements Opening elements array to be appended to
+	 * @param {ve.dm.LinearData.Element[]} closings Closing elements array to be appended to
+	 * @param {ve.dm.LinearData.Element[]} reopenElements Opening elements array to be appended to
 	 * @param {string} type Current element type we're considering (for error reporting only)
 	 * @param {number} index Current index (for error reporting only)
 	 */
@@ -1527,7 +1516,8 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 				}
 			} while ( !childrenOK );
 
-			for ( let j = 0; j < closings.length; j++ ) {
+			// eslint-disable-next-line no-loop-func
+			closings.forEach( ( closing ) => {
 				// writeElement() would update openingStack/closingStack, but we've already done
 				// that for closings
 				if ( i === 0 ) {
@@ -1535,16 +1525,17 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 				} else {
 					insertedDataLength++;
 				}
-				newData.push( closings[ j ] );
-			}
-			for ( let j = 0; j < openings.length; j++ ) {
+				newData.push( closing );
+			} );
+			// eslint-disable-next-line no-loop-func
+			openings.forEach( ( opening ) => {
 				if ( i === 0 ) {
 					insertedDataOffset++;
 				} else {
 					insertedDataLength++;
 				}
-				writeElement( openings[ j ], i );
-			}
+				writeElement( opening, i );
+			} );
 			writeElement( data[ i ], i );
 			if ( data[ i ].type === undefined ) {
 				// Special treatment for text nodes
@@ -1632,24 +1623,25 @@ ve.dm.Document.prototype.newFromHtml = function ( html, importRules ) {
 /**
  * Find a text string within the document
  *
- * @param {string|RegExp} query Text to find, string or regex with no flags
+ * @param {string|Set<string>|RegExp} query Text to find. Either a string, set of strings, or a RegExp with the /g flag
  * @param {Object} [options] Search options
  * @param {boolean} [options.searchRange] Range to search. Defaults to the attached root.
  * @param {boolean} [options.caseSensitiveString] Case sensitive search for a string query. Ignored by regexes (use 'i' flag).
- * @param {boolean} [options.diacriticInsensitiveString] Diacritic insensitive search for a string query. Ignored by regexes.
+ * @param {boolean} [options.diacriticInsensitiveString] Diacritic insensitive search for a string query. Ignored by regexes and sets of strings.
  *  Only works in browsers which support the Internationalization API
  * @param {boolean} [options.noOverlaps] Avoid overlapping matches
  * @param {boolean} [options.wholeWord] Only match whole-word occurrences
  * @return {ve.Range[]} List of ranges where the string was found
  */
-ve.dm.Document.prototype.findText = function ( query, options ) {
-	options = options || {};
-
+ve.dm.Document.prototype.findText = function ( query, options = {} ) {
 	const data = this.data,
 		searchRange = options.searchRange || this.getAttachedRootRange();
 	let ranges = [];
 
 	if ( query instanceof RegExp ) {
+		if ( !query.global ) {
+			throw new Error( 'The /g flag must be set on the query RegExp' );
+		}
 		// Avoid multi-line matching by only matching within content (text or content elements)
 		data.forEachRunOfContent( searchRange, ( off, line ) => {
 			query.lastIndex = 0;
@@ -1702,6 +1694,40 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 				) );
 				if ( !options.noOverlaps ) {
 					query.lastIndex = match.index + 1;
+				}
+			}
+		} );
+	} else if ( query instanceof Set ) {
+		if ( query.size === 0 ) {
+			return [];
+		}
+
+		if ( !options.caseSensitiveString ) {
+			query = new Set( Array.from( query ).map( ( s ) => s.toLocaleLowerCase( this.lang ) ) );
+		}
+
+		let minLen = Infinity,
+			maxLen = 0;
+		query.forEach( ( s ) => {
+			minLen = Math.min( minLen, s.length );
+			maxLen = Math.max( maxLen, s.length );
+		} );
+
+		data.forEachRunOfContent( searchRange, ( off, line ) => {
+			if ( !options.caseSensitiveString ) {
+				line = line.toLocaleLowerCase( this.lang );
+			}
+
+			// For each possible length, do a sliding window search on the normalized line
+			for ( let len = minLen; len <= maxLen; len++ ) {
+				for ( let i = 0; i <= line.length - len; i++ ) {
+					const substr = line.slice( i, i + len );
+					if ( query.has( substr ) ) {
+						ranges.push( new ve.Range( off + i, off + i + len ) );
+						if ( options.noOverlaps ) {
+							i += len - 1;
+						}
+					}
 				}
 			}
 		} );

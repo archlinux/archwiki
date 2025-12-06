@@ -89,7 +89,8 @@ class TalkPageFunctionalTest extends ApiTestCase {
 
 	protected function assertEventSectionTitle( $sectionTitle, $row ) {
 		$this->assertNotNull( $row->event_extra, 'Event must contain extra data.' );
-		$extra = unserialize( $row->event_extra );
+
+		$extra = $this->getServiceContainer()->getJsonCodec()->deserialize( $row->event_extra );
 		$this->assertArrayHasKey( 'section-title', $extra, 'Extra data must include a section-title key.' );
 		$this->assertEquals( $sectionTitle, $extra['section-title'], 'Detected section title must match' );
 	}

@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Tests\recentchanges;
+namespace MediaWiki\Tests\Recentchanges;
 
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\MainConfigNames;
@@ -47,8 +47,8 @@ trait ChangeTrackingUpdateSpyTrait {
 			'RecentChange_save',
 			static function ( RecentChange $rc ) use ( $rcEditStatus, $rcOtherStatus ) {
 				// Only count types recorded by ChangeTrackingEventIngress
-				$type = (int)$rc->getAttributes()['rc_type'];
-				if ( $type === RC_EDIT || $type === RC_NEW ) {
+				$type = $rc->getAttributes()['rc_source'];
+				if ( $type === RecentChange::SRC_EDIT || $type === RecentChange::SRC_NEW ) {
 					$rcEditStatus->setOK( true );
 				} else {
 					$rcOtherStatus->setOK( true );

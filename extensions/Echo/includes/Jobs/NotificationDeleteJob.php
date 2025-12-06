@@ -21,15 +21,12 @@ use MediaWiki\User\User;
  * queued for them.
  */
 class NotificationDeleteJob extends Job {
-	private JobQueueGroup $jobQueueGroup;
-
 	public function __construct(
 		Title $title,
 		array $params,
-		JobQueueGroup $jobQueueGroup
+		private readonly JobQueueGroup $jobQueueGroup,
 	) {
 		parent::__construct( 'EchoNotificationDeleteJob', $title, $params );
-		$this->jobQueueGroup = $jobQueueGroup;
 	}
 
 	/**

@@ -13,7 +13,9 @@ use MediaWiki\Extension\AbuseFilter\Filter\Specs;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\AbuseFilterProtectedVariablesLookup;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
@@ -25,23 +27,27 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	use GetFilterEvaluatorTestTrait;
 
 	private function getPermMan(): AbuseFilterPermissionManager {
+		$tempUserConfig = $this->createMock( TempUserConfig::class );
+		$extensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$protectedVariablesLookup = $this->createMock( AbuseFilterProtectedVariablesLookup::class );
 		$protectedVariablesLookup->method( 'getAllProtectedVariables' )
 			->willReturn( [ 'user_unnamed_ip' ] );
 		$ruleCheckerFactory = $this->createMock( RuleCheckerFactory::class );
 		$ruleCheckerFactory->method( 'newRuleChecker' )->willReturn( $this->getFilterEvaluator() );
 		$hookRunner = $this->createMock( AbuseFilterHookRunner::class );
-		return new AbuseFilterPermissionManager( $protectedVariablesLookup, $ruleCheckerFactory, $hookRunner );
+		return new AbuseFilterPermissionManager(
+			$tempUserConfig,
+			$extensionRegistry,
+			$protectedVariablesLookup,
+			$ruleCheckerFactory,
+			$hookRunner
+		);
 	}
 
-	public function provideCanEdit(): Generator {
-		$sitewideBlock = $this->createMock( DatabaseBlock::class );
-		$sitewideBlock->method( 'isSiteWide' )->willReturn( true );
-		yield 'blocked sitewide' => [ $sitewideBlock, [], false ];
+	public static function provideCanEdit(): Generator {
+		yield 'blocked sitewide' => [ true, [], false ];
 
-		$partialBlock = $this->createMock( DatabaseBlock::class );
-		$partialBlock->method( 'isSiteWide' )->willReturn( false );
-		yield 'partially blocked' => [ $partialBlock, [], false ];
+		yield 'partially blocked' => [ false, [], false ];
 
 		yield 'unblocked, no right' => [ null, [], false ];
 
@@ -49,13 +55,13 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param ?DatabaseBlock $block
-	 * @param array $rights
-	 * @param bool $expected
 	 * @dataProvider provideCanEdit
 	 */
-	public function testCanEdit( ?DatabaseBlock $block, array $rights, bool $expected ) {
+	public function testCanEdit( $block, array $rights, bool $expected ) {
 		if ( $block !== null ) {
+			$siteWide = $block;
+			$block = $this->createMock( DatabaseBlock::class );
+			$block->method( 'isSiteWide' )->willReturn( $siteWide );
 			$performer = $this->mockUserAuthorityWithBlock(
 				$this->mockRegisteredUltimateAuthority()->getUser(),
 				$block,
@@ -86,21 +92,17 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanEditFilter(): Generator {
-		$localFilter = MutableFilter::newDefault();
-		$localFilter->setGlobal( false );
-		$globalFilter = MutableFilter::newDefault();
-		$globalFilter->setGlobal( true );
-		foreach ( $this->provideCanEdit() as $name => $editArgs ) {
+	public static function provideCanEditFilter(): Generator {
+		foreach ( self::provideCanEdit() as $name => $editArgs ) {
 			foreach ( self::provideCanEditGlobal() as $allowed => $globalArgs ) {
 				yield "can edit: $name; can edit global: $allowed; local filter" => [
-					$localFilter,
+					false,
 					$editArgs[0],
 					array_merge( $editArgs[1], $globalArgs[0] ),
 					$editArgs[2]
 				];
 				yield "can edit: $name; can edit global: $allowed; global filter" => [
-					$globalFilter,
+					true,
 					$editArgs[0],
 					array_merge( $editArgs[1], $globalArgs[0] ),
 					$editArgs[2] && $globalArgs[1]
@@ -110,19 +112,20 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @param AbstractFilter $filter
-	 * @param ?DatabaseBlock $block
-	 * @param array $rights
-	 * @param bool $expected
 	 * @dataProvider provideCanEditFilter
 	 */
 	public function testCanEditFilter(
-		AbstractFilter $filter,
-		?DatabaseBlock $block,
+		$globalFilter,
+		$block,
 		array $rights,
 		bool $expected
 	) {
+		$filter = MutableFilter::newDefault();
+		$filter->setGlobal( $globalFilter );
 		if ( $block !== null ) {
+			$siteWide = $block;
+			$block = $this->createMock( DatabaseBlock::class );
+			$block->method( 'isSiteWide' )->willReturn( $siteWide );
 			$performer = $this->mockUserAuthorityWithBlock(
 				$this->mockRegisteredUltimateAuthority()->getUser(),
 				$block,
@@ -232,26 +235,27 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanViewProtectedVariablesInFilter(): Generator {
-		$block = $this->createMock( DatabaseBlock::class );
-		$block->method( 'isSitewide' )->willReturn( true );
-		yield 'not privileged, blocked' => [ $block, [], false ];
-		yield 'not privileged, not blocked' => [ null, [], false ];
-		yield 'has right, blocked' => [ $block, [ 'abusefilter-access-protected-vars' ], false ];
-		yield 'has right, not blocked' => [ null, [ 'abusefilter-access-protected-vars' ], true ];
+	public static function provideCanViewProtectedVariablesInFilter(): Generator {
+		yield 'not privileged, blocked' => [ true, [], false ];
+		yield 'not privileged, not blocked' => [ false, [], false ];
+		yield 'has right, blocked' => [ true, [ 'abusefilter-access-protected-vars' ], false ];
+		yield 'has right, not blocked' => [ false, [ 'abusefilter-access-protected-vars' ], true ];
 	}
 
 	/**
 	 * @dataProvider provideCanViewProtectedVariablesInFilter
 	 */
-	public function testCanViewProtectedVariablesInFilter( ?DatabaseBlock $block, array $rights, bool $expected ) {
-		if ( $block !== null ) {
+	public function testCanViewProtectedVariablesInFilter( $needsBlock, array $rights, bool $expected ) {
+		if ( $needsBlock ) {
+			$block = $this->createMock( DatabaseBlock::class );
+			$block->method( 'isSitewide' )->willReturn( true );
 			$performer = $this->mockUserAuthorityWithBlock(
 				$this->mockRegisteredUltimateAuthority()->getUser(),
 				$block,
 				$rights
 			);
 		} else {
+			$block = null;
 			$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
 		}
 

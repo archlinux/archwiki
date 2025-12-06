@@ -1,0 +1,21 @@
+<button class="cdx-button{{!
+  }}{{#action}}{{^defaultAction}} cdx-button--action-{{ action }}{{/defaultAction}}{{/action}}{{!
+  }}{{#weight}}{{^defaultWeight}} cdx-button--weight-{{ weight }}{{/defaultWeight}}{{/weight}}{{!
+  }}{{#size}}{{^defaultSize}} cdx-button--size-{{ size }}{{/defaultSize}}{{/size}}{{!
+  }}{{#iconOnly}} cdx-button--icon-only{{/iconOnly}}{{!
+  }}{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{!
+  }}{{#id}} id="{{ id }}"{{/id}}{{!
+  }}{{#type}} type="{{ type }}"{{/type}}{{!
+  }}{{#name}} name="{{ name }}"{{/name}}{{!
+  }}{{#value}} value="{{ value }}"{{/value}}{{!
+  }}{{#ariaLabelKey}} aria-label="{{#i18n}}{{ ariaLabelKey }}{{/i18n}}"{{/ariaLabelKey}}{{!
+  }}{{^ariaLabelKey}}{{#ariaLabel}} aria-label="{{ ariaLabel }}"{{/ariaLabel}}{{/ariaLabelKey}}{{!
+  }}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}{{!
+  }}{{#isDisabled}} disabled{{/isDisabled}}>
+  {{#iconClass}}
+    <span class="cdx-button__icon {{ iconClass }}" aria-hidden="true"></span>
+  {{/iconClass}}
+  {{^iconOnly}}
+    {{ label }}
+  {{/iconOnly}}
+</button>

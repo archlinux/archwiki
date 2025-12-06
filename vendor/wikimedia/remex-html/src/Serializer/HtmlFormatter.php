@@ -14,55 +14,26 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 	 * The elements for which a closing tag is omitted.
 	 *
 	 * @var array<string,bool>
+	 * @deprecated Use HTMLData::TAGS['void'] instead.
 	 */
-	protected $voidElements = [
-		'area' => true,
-		'base' => true,
-		'basefont' => true,
-		'bgsound' => true,
-		'br' => true,
-		'col' => true,
-		'embed' => true,
-		'frame' => true,
-		'hr' => true,
-		'img' => true,
-		'input' => true,
-		'keygen' => true,
-		'link' => true,
-		'menuitem' => true,
-		'meta' => true,
-		'param' => true,
-		'source' => true,
-		'track' => true,
-		'wbr' => true,
-	];
+	protected $voidElements = HTMLData::TAGS['void'];
 
 	/**
 	 * The elements which need a leading newline in their contents to be
 	 * duplicated, since the parser strips a leading newline.
 	 *
 	 * @var array<string,bool>
+	 * @deprecated Use HTMLData::TAGS['prefixLF'] instead.
 	 */
-	protected $prefixLfElements = [
-		'pre' => true,
-		'textarea' => true,
-		'listing' => true
-	];
+	protected $prefixLfElements = HTMLData::TAGS['prefixLF'];
 
 	/**
 	 * The elements which have unescaped contents.
 	 *
 	 * @var array<string,bool>
+	 * @deprecated Use HTMLData::TAGS['rawText'] instead.
 	 */
-	protected $rawTextElements = [
-		'style' => true,
-		'script' => true,
-		'xmp' => true,
-		'iframe' => true,
-		'noembed' => true,
-		'noframes' => true,
-		'plaintext' => true,
-	];
+	protected $rawTextElements = HTMLData::TAGS['rawText'];
 
 	/**
 	 * The escape table for attribute values
@@ -98,10 +69,9 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		HTMLData::NS_SVG => true,
 	];
 
-	/** @var bool */
-	protected $useSourceDoctype;
-	/** @var bool */
-	protected $reverseCoercion;
+	protected bool $useSourceDoctype;
+	protected bool $reverseCoercion;
+	protected bool $scriptingFlag;
 
 	/**
 	 * Constructor.
@@ -119,11 +89,26 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 			'useSourceDoctype' => false,
 			'reverseCoercion' => false,
 		];
+		// Maintain compatibile values for this protected property, though
+		// it is deprecated.
 		if ( $options['scriptingFlag'] ) {
+			// @phan-suppress-next-line PhanDeprecatedProperty
 			$this->rawTextElements['noscript'] = true;
+		} else {
+			// @phan-suppress-next-line PhanDeprecatedProperty
+			unset( $this->rawTextElements['noscript'] );
 		}
 		$this->useSourceDoctype = $options['useSourceDoctype'];
 		$this->reverseCoercion = $options['reverseCoercion'];
+		$this->scriptingFlag = $options['scriptingFlag'];
+	}
+
+	protected function isRawTextElement( string $name ): bool {
+		if ( $name === 'noscript' ) {
+			// 'noscript' is a raw text element iff scriptingFlag is set
+			return $this->scriptingFlag;
+		}
+		return isset( HTMLData::TAGS['rawText'][$name] );
 	}
 
 	/** @inheritDoc */
@@ -135,7 +120,7 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 	public function characters( SerializerNode $parent, $text, $start, $length ) {
 		$text = substr( $text, $start, $length );
 		if ( $parent->namespace !== HTMLData::NS_HTML
-			|| !isset( $this->rawTextElements[$parent->name] )
+			|| !$this->isRawTextElement( $parent->name )
 		) {
 			$text = strtr( $text, $this->textEscapes );
 		}
@@ -153,10 +138,10 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		$s .= '>';
 		if ( $node->namespace === HTMLData::NS_HTML ) {
 			if ( isset( $contents[0] ) && $contents[0] === "\n"
-				&& isset( $this->prefixLfElements[$name] )
+				&& isset( HTMLData::TAGS['prefixLF'][$name] )
 			) {
 				$s .= "\n$contents</$name>";
-			} elseif ( !isset( $this->voidElements[$name] ) ) {
+			} elseif ( !isset( HTMLData::TAGS['void'][$name] ) ) {
 				$s .= "$contents</$name>";
 			}
 		} else {
@@ -207,7 +192,7 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 				$text = $node->data;
 				$parent = $node->parentNode;
 				if ( $parent->namespaceURI !== HTMLData::NS_HTML
-					|| !isset( $this->rawTextElements[$parent->nodeName] )
+					|| !$this->isRawTextElement( $parent->nodeName )
 				) {
 					$text = strtr( $text, $this->textEscapes );
 				}
@@ -295,10 +280,10 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		$s .= '>';
 		if ( $ns === HTMLData::NS_HTML ) {
 			if ( isset( $contents[0] ) && $contents[0] === "\n"
-				&& isset( $this->prefixLfElements[$name] )
+				&& isset( HTMLData::TAGS['prefixLF'][$name] )
 			) {
 				$s .= "\n$contents</$name>";
-			} elseif ( !isset( $this->voidElements[$name] ) ) {
+			} elseif ( !isset( HTMLData::TAGS['void'][$name] ) ) {
 				$s .= "$contents</$name>";
 			}
 		} else {

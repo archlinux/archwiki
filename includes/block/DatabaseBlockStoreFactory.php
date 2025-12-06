@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -23,6 +9,7 @@ namespace MediaWiki\Block;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Session\SessionManagerInterface;
 use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
@@ -53,6 +40,7 @@ class DatabaseBlockStoreFactory {
 	private TempUserConfig $tempUserConfig;
 	private CrossWikiBlockTargetFactory $crossWikiBlockTargetFactory;
 	private AutoblockExemptionList $autoblockExemptionList;
+	private SessionManagerInterface $sessionManager;
 
 	/** @var DatabaseBlockStore[] */
 	private array $storeCache = [];
@@ -69,7 +57,8 @@ class DatabaseBlockStoreFactory {
 		UserFactory $userFactory,
 		TempUserConfig $tempUserConfig,
 		CrossWikiBlockTargetFactory $crossWikiBlockTargetFactory,
-		AutoblockExemptionList $autoblockExemptionList
+		AutoblockExemptionList $autoblockExemptionList,
+		SessionManagerInterface $sessionManager
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 
@@ -85,13 +74,10 @@ class DatabaseBlockStoreFactory {
 		$this->tempUserConfig = $tempUserConfig;
 		$this->crossWikiBlockTargetFactory = $crossWikiBlockTargetFactory;
 		$this->autoblockExemptionList = $autoblockExemptionList;
+		$this->sessionManager = $sessionManager;
 	}
 
-	/**
-	 * @param string|false $wikiId
-	 * @return DatabaseBlockStore
-	 */
-	public function getDatabaseBlockStore( $wikiId = DatabaseBlock::LOCAL ): DatabaseBlockStore {
+	public function getDatabaseBlockStore( string|false $wikiId = DatabaseBlock::LOCAL ): DatabaseBlockStore {
 		if ( is_string( $wikiId ) && $this->loadBalancerFactory->getLocalDomainID() === $wikiId ) {
 			$wikiId = DatabaseBlock::LOCAL;
 		}
@@ -111,6 +97,7 @@ class DatabaseBlockStoreFactory {
 				$this->tempUserConfig,
 				$this->crossWikiBlockTargetFactory->getFactory( $wikiId ),
 				$this->autoblockExemptionList,
+				$this->sessionManager,
 				$wikiId
 			);
 		}

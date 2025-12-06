@@ -6,7 +6,11 @@
 	},
 	"editcheck-dialog-action-no": "ХӀан-хӀа",
 	"editcheck-dialog-action-yes": "ХӀаъ",
+	"editcheck-dialog-action-decline": "Йухатоха",
+	"editcheck-dialog-action-back": "Йуха",
+	"editcheck-dialog-action-submit": "ДӀадахьийта",
 	"editcheck-dialog-addref-reject-other": "Кхийерг",
 	"editcheck-dialog-addref-title": "Хьост тӀетоха",
-	"editcheck-dialog-title": "Публикаци йале"
+	"editcheck-dialog-title": "Публикаци йале",
+	"editcheck-tone-reject-other": "Кхийерг"
 }

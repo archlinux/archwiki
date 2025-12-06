@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Trevor Parscal
  * @author Roan Kattouw
@@ -23,7 +9,6 @@
 namespace MediaWiki\ResourceLoader;
 
 use CSSJanus;
-use Exception;
 use FileContentsHasher;
 use InvalidArgumentException;
 use LogicException;
@@ -34,7 +19,6 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
 use RuntimeException;
 use Wikimedia\Minify\CSSMin;
-use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
  * Module based on local JavaScript/CSS files.
@@ -153,11 +137,6 @@ class FileModule extends Module {
 	 * Used in tests to detect missing dependencies.
 	 */
 	protected $missingLocalFileRefs = [];
-
-	/**
-	 * @var VueComponentParser|null Lazy-created by getVueComponentParser()
-	 */
-	protected $vueComponentParser = null;
 
 	/**
 	 * Construct a new module from an options array.
@@ -323,22 +302,30 @@ class FileModule extends Module {
 		return [ $localBasePath, $remoteBasePath ];
 	}
 
+	/** @inheritDoc */
 	public function getScript( Context $context ) {
 		$packageFiles = $this->getPackageFiles( $context );
 		if ( $packageFiles !== null ) {
-			foreach ( $packageFiles['files'] as &$file ) {
-				if ( $file['type'] === 'script+style' ) {
-					$file['content'] = $file['content']['script'];
-					$file['type'] = 'script';
-				}
-			}
+			// T402278: use array_map() to avoid &references here
+			$packageFiles['files'] = array_map(
+				static function ( array $file ): array {
+					if ( $file['type'] === 'script+style' ) {
+						$file['content'] = $file['content']['script'];
+						$file['type'] = 'script';
+					}
+					return $file;
+				},
+				$packageFiles['files']
+			);
 			return $packageFiles;
 		}
 
 		$files = $this->getScriptFiles( $context );
-		foreach ( $files as &$file ) {
-			$this->readFileInfo( $context, $file );
-		}
+		// T402278: use array_map() to avoid &references here
+		$files = array_map(
+			fn ( $file ) => $this->readFileInfo( $context, $file ),
+			$files
+		);
 		return [ 'plainScripts' => $files ];
 	}
 
@@ -357,6 +344,7 @@ class FileModule extends Module {
 			&& !$this->hasGeneratedScripts();
 	}
 
+	/** @inheritDoc */
 	public function shouldSkipStructureTest() {
 		return $this->skipStructureTest || parent::shouldSkipStructureTest();
 	}
@@ -494,6 +482,7 @@ class FileModule extends Module {
 		return $this->getFileContents( $localPath, 'skip function' );
 	}
 
+	/** @inheritDoc */
 	public function requiresES6() {
 		return true;
 	}
@@ -637,16 +626,6 @@ class FileModule extends Module {
 		}
 
 		return $summary;
-	}
-
-	/**
-	 * @return VueComponentParser
-	 */
-	protected function getVueComponentParser() {
-		if ( $this->vueComponentParser === null ) {
-			$this->vueComponentParser = new VueComponentParser;
-		}
-		return $this->vueComponentParser;
 	}
 
 	/**
@@ -1392,9 +1371,10 @@ class FileModule extends Module {
 		}
 		$expandedPackageFiles = $this->expandPackageFiles( $context ) ?? [];
 
-		foreach ( $expandedPackageFiles['files'] as &$fileInfo ) {
-			$this->readFileInfo( $context, $fileInfo );
-		}
+		// T402278: use array_map() to avoid &references here
+		$expandedPackageFiles['files'] = array_map( function ( array $fileInfo ) use ( $context ): array {
+			return $this->readFileInfo( $context, $fileInfo );
+		}, $expandedPackageFiles['files'] );
 
 		$this->fullyExpandedPackageFiles[ $hash ] = $expandedPackageFiles;
 		return $expandedPackageFiles;
@@ -1402,13 +1382,14 @@ class FileModule extends Module {
 
 	/**
 	 * Given a file info array as returned by expandFileInfo(), expand the file paths and
-	 * remaining callbacks, ensuring that the 'content' element is populated. Modify
-	 * the array by reference, removing intermediate data such as callback parameters.
+	 * remaining callbacks, ensuring that the 'content' element is populated. Return a
+	 * modified copy of the array, removing intermediate data such as callback parameters.
 	 *
 	 * @param Context $context
-	 * @param array &$fileInfo
+	 * @param array $fileInfo
+	 * @return array
 	 */
-	private function readFileInfo( Context $context, array &$fileInfo ) {
+	private function readFileInfo( Context $context, array $fileInfo ): array {
 		// Turn any 'filePath' or 'callback' key into actual 'content',
 		// and remove the key after that. The callback could return a
 		// FilePath object; if that happens, fall through to the 'filePath'
@@ -1442,34 +1423,14 @@ class FileModule extends Module {
 		}
 		if ( $fileInfo['type'] === 'script-vue' ) {
 			try {
-				$parsedComponent = $this->getVueComponentParser()->parse(
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
-					$fileInfo['content'],
-					[ 'minifyTemplate' => !$context->getDebug() ]
-				);
-			} catch ( TimeoutException $e ) {
-				throw $e;
-			} catch ( Exception $e ) {
+				$fileInfo[ 'content' ] = $this->parseVueContent( $context, $fileInfo[ 'content' ] );
+			} catch ( InvalidArgumentException $e ) {
 				$msg = "Error parsing file '{$fileInfo['name']}' in module '{$this->getName()}': " .
-					$e->getMessage();
+					"{$e->getMessage()}";
 				$this->getLogger()->error( $msg );
 				throw new RuntimeException( $msg );
 			}
-			$encodedTemplate = json_encode( $parsedComponent['template'] );
-			if ( $context->getDebug() ) {
-				// Replace \n (backslash-n) with space + backslash-n + backslash-newline in debug mode
-				// The \n has to be preserved to prevent Vue parser issues (T351771)
-				// We only replace \n if not preceded by a backslash, to avoid breaking '\\n'
-				$encodedTemplate = preg_replace( '/(?<!\\\\)\\\\n/', " \\n\\\n", $encodedTemplate );
-				// Expand \t to real tabs in debug mode
-				$encodedTemplate = strtr( $encodedTemplate, [ "\\t" => "\t" ] );
-			}
-			$fileInfo['content'] = [
-				'script' => $parsedComponent['script'] .
-					";\nmodule.exports.template = $encodedTemplate;",
-				'style' => $parsedComponent['style'] ?? '',
-				'styleLang' => $parsedComponent['styleLang'] ?? 'css'
-			];
 			$fileInfo['type'] = 'script+style';
 		}
 		if ( !isset( $fileInfo['content'] ) ) {
@@ -1483,6 +1444,8 @@ class FileModule extends Module {
 		unset( $fileInfo['definitionSummary'] );
 		// Not needed for client response, used by callbacks only.
 		unset( $fileInfo['callbackParam'] );
+
+		return $fileInfo;
 	}
 
 	/**

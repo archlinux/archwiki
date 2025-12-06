@@ -2,15 +2,15 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use MailAddress;
 use MediaWiki\Extension\Notifications\Formatters\EchoHtmlEmailFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoPlainTextEmailFormatter;
 use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
+use MediaWiki\Mail\MailAddress;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\User\User;
-use UserMailer;
 
 class Notifier {
 	/**
@@ -48,13 +48,25 @@ class Notifier {
 		if (
 			// Email is globally disabled
 			!$wgEnableEmail ||
-			// User does not have a valid and confirmed email address
-			!$user->isEmailConfirmed() ||
 			// User has disabled Echo emails
 			$userOptionsLookup->getOption( $user, 'echo-email-frequency' ) < 0 ||
 			// User is blocked and cannot log in (T199993)
 			( $wgBlockDisablesLogin && $user->getBlock() )
 		) {
+			return false;
+		}
+
+		$hasValidEmail = Sanitizer::validateEmail( $user->getEmail() );
+		if ( !$hasValidEmail ) {
+			// Don't attempt to send an email if the user does not have a valid email address.
+			return false;
+		}
+
+		// Allow 'verify-email-reminder' messages to be emailed only if the user has a confirmed email.
+		// Otherwise, disallow all other notifications if the user does not have a valid
+		// and confirmed email address
+		$isEmailConfirmationReminder = $event->getType() === 'verify-email-reminder';
+		if ( $isEmailConfirmationReminder === $user->isEmailConfirmed() ) {
 			return false;
 		}
 
@@ -146,7 +158,11 @@ class Notifier {
 			$body = $email['body'];
 			$options = [ 'replyTo' => $replyAddress ];
 
-			UserMailer::send( $toAddress, $fromAddress, $subject, $body, $options );
+			$bodyText = is_array( $body ) ? $body['text'] : $body;
+			$bodyHtml = is_array( $body ) ? $body['html'] : null;
+
+			$services->getEmailer()
+				->send( $toAddress, $fromAddress, $subject, $bodyText, $bodyHtml, $options );
 		}
 
 		return true;
@@ -214,7 +230,7 @@ class Notifier {
 			$htmlContent = $htmlEmailFormatter->format( $event, 'email' );
 			$multipartBody = [
 				'text' => $content['body'],
-				'html' => $htmlContent['body']
+				'html' => $htmlContent['body'],
 			];
 			$content['body'] = $multipartBody;
 		}

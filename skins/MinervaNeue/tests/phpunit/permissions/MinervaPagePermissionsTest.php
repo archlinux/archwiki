@@ -42,7 +42,7 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $hasOtherLanguagesOrVariants );
 
 		$user ??= $this->mockRegisteredNullAuthority();
-		$contentHandler = $contentHandler ??
+		$contentHandler ??=
 			$this->getMockForAbstractClass( ContentHandler::class, [], '', false );
 		$skinOptions = new SkinOptions(
 			$this->createMock( HookContainer::class ),

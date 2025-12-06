@@ -7,9 +7,10 @@
 			"DannyS712",
 			"Eruedin",
 			"Lydie maliki",
+			"Marphy 123",
 			"Moyogo",
-			"TMg",
-			"Marphy 123"
+			"SaldırganSincap",
+			"TMg"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Katégoli|Katégoli}}",
@@ -168,9 +169,9 @@
 	"createaccountmail": "na mokánda",
 	"createacct-submit": "Salá kɔnti na yo",
 	"createacct-benefit-heading": "{{SITENAME}} esalemi na bato lokola yo.",
-	"createacct-benefit-body1": "{{PLURAL:$1| bobongisi|bobongoli}}",
-	"createacct-benefit-body2": "{{PLURAL:$1| lokasa|nkasa}}",
-	"createacct-benefit-body3": "ya sika {{PLURAL:$1| mopesi maboko|basali}}",
+	"createacct-benefit-text1": "$2 {{PLURAL:$1| bobongisi|bobongoli}}",
+	"createacct-benefit-text2": "$2 {{PLURAL:$1| lokasa|nkasa}}",
+	"createacct-benefit-text3": "$2 ya sika {{PLURAL:$1| mopesi maboko|basali}}",
 	"mailmypassword": "Kotíndisa liloba-nzelá lya sika na mɛ́lɛ",
 	"loginlanguagelabel": "Lokótá: $1",
 	"pt-login": "Komíkitola",
@@ -202,7 +203,7 @@
 	"newarticle": "(Sika)",
 	"newarticletext": "Olandi lien ya lokasa oyo ezali nanu te.\nMpo na kosala lokasa, banda kokoma na esika oyo ezali awa na nse (tala [ lokasa ya lisalisi $1 ] mpo na koyeba makambo mosusu).\nSoki ozali awa na libunga, finá na bouton <strong>ya sima</strong> ya navigateur na yo.",
 	"anontalkpagetext": "----\n <em>Oyo ezali lokasa ya masolo mpo na mosaleli oyo ayebani te oyo asali naino compte te, to oyo azali kosalela yango te.</em> \nNa yango, tosengeli kosalela adresse IP numérique mpo na koyeba bango.\nAdresse IP ya boye ekoki kokabolama na basaleli mingi.\nSoki ozali mosaleli oyo ayebani te mpe ozali komona ete makanisi oyo ezali na ntina te epesameli yo, tosɛngi yo [[Special:CreateAccount|sala compte]] to [[Special:UserLogin|kokɔta]] mpo na koboya mobulungano na mikolo ezali koya na bato mosusu oyo bayebani te basaleli.",
-	"noarticletext": "Sikawa makomi ezali te na lokasa oyo.\nOkoki [[Special:Search/{{PAGENAME}}|koluka motó ya likambo ya lokasa oyo]] na nkasa mosusu,\n <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} luka ba journal oyo etali yango],\nto [{{fullurl:{{FULLPAGENAME}}|action=edit}} sala lokasa oyo]</span> .",
+	"noarticletext": "Sikawa makomi ezali te na lokasa oyo.\nOkoki [[Special:Search/{{PAGENAME}}|koluka motó ya likambo ya lokasa oyo]] na nkasa mosusu,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} luka ba journal oyo etali yango],\nto [{{fullurl:{{FULLPAGENAME}}|action=edit}} sala lokasa oyo]</span>.",
 	"noarticletext-nopermission": "Sikawa makomi ezali te na lokasa oyo.\nOkoki [[Special:Search/{{PAGENAME}}|koluka titre ya lokasa oyo]] na nkasa mosusu, to <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} koluka ba journal oyo etali yango]</span> , kasi ozali na ndingisa te ya kosala lokasa oyo.",
 	"userpage-userdoesnotexist-view": "Compte ya mosaleli \" $1 \" ekomisami na wiki oyo te.",
 	"previewnote": "<strong>Kobosana te ete oyo ezali kaka aperçu.</strong> \nBa changements na bino ebimi nanu te!",
@@ -381,7 +382,6 @@
 	"unusedtemplates": "Bimekoli na mosálá tɛ̂",
 	"randompage": "Lonkásá na mbɛsɛ",
 	"statistics": "Mitúya",
-	"statistics-articles-desc": "Tala [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgArticleCountMethod article count documentation] mpo na koyeba makambo mosusu",
 	"doubleredirects": "Boyendisi mbala míbalé",
 	"nbytes": "$1 {{PLURAL:$1|okté|baokté}}",
 	"nmembers": "{{PLURAL:$1|ekakoli|bikakoli}} $1",
@@ -502,7 +502,6 @@
 	"blockip": "Kotɛ́lɛmisa mosáleli",
 	"ipboptions": "ngonga 2:2 hours, mokɔlɔ 1:1 day, mikɔlɔ 3:3 days,mpɔ́sɔ 1:1 week,mpɔ́sɔ 2:2 weeks,sánzá 1:1 month,sánzá 3:3 months,sánzá 6:6 months,mobú 1:1 year,na nsúka tɛ̂:infinite",
 	"ipblocklist": "Adɛ́lɛsɛ IP mpé basáleli batɛ́lɛmísámí",
-	"blocklist-actions-header": "Misala",
 	"infiniteblock": "oyo ezangi nsuka",
 	"blocklink": "kotɛ́lɛmisa",
 	"unblocklink": "koboma botɛ́lɛmisi",
@@ -598,7 +597,6 @@
 	"htmlform-submit": "Kotínda",
 	"htmlform-selectorother-other": "Mosúsu",
 	"revdelete-content-hid": "makambo oyo ezali na kati oyo ebombami",
-	"logentry-rights-autopromote-kept": "{{GENDER:$2| ebombami}} $1 ebongwanaki te",
 	"searchsuggest-search": "Boluki {{SITENAME}}",
 	"searchsuggest-containing": "Luká nkasa oyo ezali na",
 	"nstab-mainpage": "Lokásá ya libosó",
@@ -613,6 +611,5 @@
 	"blockedtext-intended-blockee": "Blockee oyo ekanamaki: $1",
 	"blockedtext-contact-blocker-admin": "Okoki kokutana na $1 to [[{{MediaWiki:Grouppage-sysop}}|mokambi]] mosusu mpo na kolobela bloc.",
 	"blockedtext-block-ip": "Addresse IP na yo ya lelo ezali $1 .",
-	"blockedtext-include-details-queries": "Tosengi otia makambo nyonso oyo ezali likolo na mituna nyonso oyo okosala.",
-	"renameuser-error-global-detaching": "Moto oyo azali kosalela yango azali na boyokani na mokili mobimba. Salelá CentralAuth mpo na kobenga nkombo ya sika."
+	"blockedtext-include-details-queries": "Tosengi otia makambo nyonso oyo ezali likolo na mituna nyonso oyo okosala."
 }

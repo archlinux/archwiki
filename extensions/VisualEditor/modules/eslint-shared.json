@@ -1,4 +1,5 @@
 {
+	"plugins": [ "local" ],
 	"globals": {
 		"ve": "readonly",
 		"VisualEditorSupportCheck": "readonly",
@@ -7,6 +8,7 @@
 		"Papa": "readonly"
 	},
 	"rules": {
+		"local/no-unsanitized-href": "error",
 		"no-jquery/no-append-html": "error",
 		"no-jquery/no-deferred": "error",
 		"no-jquery/no-extend": "error",

@@ -20,6 +20,7 @@ use MediaWiki\Extension\TorBlock\TorExitNodes;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Navigation\PagerNavigationBuilder;
@@ -31,6 +32,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
@@ -38,6 +40,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\Utils\MWTimestamp;
 use stdClass;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -61,6 +64,15 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 	];
 
 	/**
+	 * Form fields that are used as filters for a returned result as keys and their default value as the value.
+	 * Changing these form fields does not cause a CheckUserLog entry as long as no fields are
+	 * changed in {@link self::TOKEN_MANAGED_FIELDS}
+	 */
+	public const FILTER_FIELDS = [
+		'wpHideTemporaryAccounts' => false,
+	];
+
+	/**
 	 * Null if $target is a user.
 	 * Boolean is $target is a IP / range.
 	 *  - False if XFF is not appended
@@ -77,9 +89,6 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 	protected FormOptions $opts;
 
 	protected UserIdentity $target;
-
-	/** @var bool Should Special:CheckUser display Client Hints data. */
-	protected bool $displayClientHints;
 
 	/**
 	 * @var string one of the SpecialCheckUser::SUBTYPE_... constants used by this abstract pager
@@ -98,6 +107,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 	protected CheckUserLookupUtils $checkUserLookupUtils;
 	private UserOptionsLookup $userOptionsLookup;
 	protected DatabaseBlockStore $blockStore;
+	protected TempUserConfig $tempUserConfig;
 
 	public function __construct(
 		FormOptions $opts,
@@ -114,6 +124,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 		CheckUserLookupUtils $checkUserLookupUtils,
 		UserOptionsLookup $userOptionsLookup,
 		DatabaseBlockStore $blockStore,
+		TempUserConfig $tempUserConfig,
 		?IContextSource $context = null,
 		?LinkRenderer $linkRenderer = null,
 		?int $limit = null
@@ -147,7 +158,6 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 
 		$this->mLimitsShown = array_map( 'ceil', $this->mLimitsShown );
 		$this->mLimitsShown = array_unique( $this->mLimitsShown );
-		$this->displayClientHints = $this->getConfig()->get( 'CheckUserDisplayClientHints' );
 
 		$this->userGroupManager = $userGroupManager;
 		$this->centralIdLookup = $centralIdLookup;
@@ -159,6 +169,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 		$this->checkUserLookupUtils = $checkUserLookupUtils;
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->blockStore = $blockStore;
+		$this->tempUserConfig = $tempUserConfig;
 
 		$this->templateParser = new TemplateParser( __DIR__ . '/../../../templates' );
 
@@ -237,7 +248,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 				[],
 				[
 					'type' => 'block',
-					'page' => $userPage->getPrefixedText()
+					'page' => $userPage->getPrefixedText(),
 				]
 			);
 
@@ -394,7 +405,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 				[
 					'type' => 'block',
 					// @todo Use TitleFormatter and PageReference to avoid the global state
-					'page' => Title::makeTitle( NS_USER, $user->getName() )->getPrefixedText()
+					'page' => Title::makeTitle( NS_USER, $user->getName() )->getPrefixedText(),
 				]
 			);
 			$flags[] = Html::rawElement( 'strong', [ 'class' => 'mw-changeslist-links' ], $blocklog );
@@ -463,7 +474,7 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 				'log_type' => [ 'block', 'suppress' ],
 				'log_action' => 'block',
 				'log_namespace' => $userpage->getNamespace(),
-				'log_title' => $userpage->getDBkey()
+				'log_title' => $userpage->getDBkey(),
 			] )
 			->useIndex( 'log_page_time' )
 			->caller( __METHOD__ )
@@ -576,7 +587,6 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 	}
 
 	/**
-	 *
 	 * Returns a empty HTML OOUI fieldset which is collapsible.
 	 * Used by checkUserHelper.js and it's where the wikitext
 	 *  table is added into the results page.
@@ -590,6 +600,61 @@ abstract class AbstractCheckUserPager extends RangeChronologicalPager implements
 		} else {
 			return '';
 		}
+	}
+
+	/**
+	 * Returns a collapsible form that allows the user to filter out temporary account
+	 * contributions from the results of a Special:CheckUser check
+	 *
+	 * @return string The HTML of the fieldset
+	 */
+	protected function getCheckUserResultsFilterFieldset(): string {
+		$fields = [];
+
+		// Show a filter to remove temporary accounts from the list, as long as the results could contain
+		// temporary accounts.
+		if ( $this->tempUserConfig->isKnown() && IPUtils::isIPAddress( $this->target->getName() ) ) {
+			$fields['HideTemporaryAccounts'] = [
+				'type' => 'check',
+				'label-message' => 'checkuser-filter-hide-temporary-accounts',
+				'default' => false,
+			];
+		}
+
+		// If there are no filters that apply here, then return early to avoid displaying an empty filters form
+		if ( count( $fields ) === 0 ) {
+			return '';
+		}
+
+		// Add the 'token' field which is used to encode the data stored in the main search form in a way which
+		// cannot be tampered with. We need to pass this so that if the user uses the filter form there will be
+		// no additional CheckUserLog entry created.
+		$opts = $this->opts;
+		$tokenManagedFields = array_filter( self::TOKEN_MANAGED_FIELDS, static function ( $field ) use ( $opts ) {
+			return $opts->validateName( $field );
+		} );
+		$fieldData = [];
+		$fieldData['user'] = $this->target->getName();
+		foreach ( $tokenManagedFields as $field ) {
+			$fieldData[$field] = $this->opts->getValue( $field );
+		}
+		$fields['token'] = [
+			'type' => 'hidden',
+			'default' => $this->tokenQueryManager->updateToken( $this->getRequest(), $fieldData ),
+			'name' => 'token',
+		];
+
+		$fields['wpEditToken'] = [
+			'type' => 'hidden',
+			'default' => $this->getCsrfTokenSet()->getToken(),
+			'name' => 'wpEditToken',
+		];
+
+		$filterForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
+		return $filterForm->setWrapperLegendMsg( 'checkuser-filter-title' )
+			->setCollapsibleOptions( true )
+			->prepareForm()
+			->getHTML( false );
 	}
 
 	/**

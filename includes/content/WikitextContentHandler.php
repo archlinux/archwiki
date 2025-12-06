@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -178,6 +164,7 @@ class WikitextContentHandler extends TextContentHandler {
 		);
 	}
 
+	/** @inheritDoc */
 	public function getFieldsForSearchIndex( SearchEngine $engine ) {
 		$fields = parent::getFieldsForSearchIndex( $engine );
 
@@ -198,6 +185,7 @@ class WikitextContentHandler extends TextContentHandler {
 		return array_merge( $fields, $this->getFileHandler()->getFieldsForSearchIndex( $engine ) );
 	}
 
+	/** @inheritDoc */
 	public function getDataForSearchIndex(
 		WikiPage $page,
 		ParserOutput $parserOutput,
@@ -298,9 +286,15 @@ class WikitextContentHandler extends TextContentHandler {
 	 *
 	 * @since 1.41 (used to be a method on WikitextContent since 1.23)
 	 *
+	 * @param WikitextContent $content
+	 * @param bool $allowInvalidTarget Whether to return the target even if it is invalid
+	 *
 	 * @return array List of two elements: LinkTarget|null and WikitextContent object.
 	 */
-	public function extractRedirectTargetAndText( WikitextContent $content ): array {
+	public function extractRedirectTargetAndText(
+		WikitextContent $content,
+		bool $allowInvalidTarget = false
+	): array {
 		$redir = $this->magicWordFactory->get( 'redirect' );
 		$text = ltrim( $content->getText() );
 
@@ -315,7 +309,7 @@ class WikitextContentHandler extends TextContentHandler {
 		if ( preg_match( '!^\s*:?\s*\[{2}(.*?)(?:\|.*?)?\]{2}\s*!', $text, $m ) ) {
 			// Strip preceding colon used to "escape" categories, etc.
 			// and URL-decode links
-			if ( strpos( $m[1], '%' ) !== false ) {
+			if ( str_contains( $m[1], '%' ) ) {
 				// Match behavior of inline link parsing here;
 				$m[1] = rawurldecode( ltrim( $m[1], ':' ) );
 			}
@@ -323,8 +317,9 @@ class WikitextContentHandler extends TextContentHandler {
 			// TODO: Move isValidRedirectTarget() out Title, so we can use a TitleValue here.
 			$title = $this->titleFactory->newFromText( $m[1] );
 
-			// If the title is a redirect to bad special pages or is invalid, return null
-			if ( !$title instanceof Title || !$title->isValidRedirectTarget() ) {
+			// If the title is a redirect to bad special pages
+			// or is invalid and $allowInvalidTarget is false, return null
+			if ( !$title instanceof Title || ( !$allowInvalidTarget && !$title->isValidRedirectTarget() ) ) {
 				return [ null, $content ];
 			}
 

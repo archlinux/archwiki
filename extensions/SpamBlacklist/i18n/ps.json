@@ -4,5 +4,11 @@
 			"شاه زمان پټان"
 		]
 	},
-	"right-sboverride": "ورانکارۍ بنديز لړليک له پامه‌غورځول"
+	"spam-blacklisted-email": "منع‌شوې برېښليک پته",
+	"log-name-spamblacklist": "د چټل‌ليک د بنديز لړليک يادښت",
+	"log-description-spamblacklist": "دا پېښې د چټل‌ليک د بنديز لړليک ليد څاري.",
+	"right-spamblacklistlog": "د چټل‌ليک د بنديز لړليک يادښت کتل",
+	"action-spamblacklistlog": "د چټل‌ليک د بنديز لړليک يادښت کتل",
+	"right-sboverride": "ورانکارۍ بنديز لړليک له پامه‌غورځول",
+	"action-sboverride": "چټل‌ليک بنديز لړليک له پامه‌غورځول"
 }

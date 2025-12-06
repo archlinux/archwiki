@@ -3,28 +3,9 @@ module.exports = function () {
 
 	window.seleniumUtils = {
 		getBoundingRect: function ( elements ) {
-			let boundingRect;
-			for ( let i = 0, l = elements.length; i < l; i++ ) {
-				const rect = elements[ i ].getBoundingClientRect();
-				if ( !boundingRect ) {
-					boundingRect = {
-						left: rect.left,
-						top: rect.top,
-						right: rect.right,
-						bottom: rect.bottom
-					};
-				} else {
-					boundingRect.left = Math.min( boundingRect.left, rect.left );
-					boundingRect.top = Math.min( boundingRect.top, rect.top );
-					boundingRect.right = Math.max( boundingRect.right, rect.right );
-					boundingRect.bottom = Math.max( boundingRect.bottom, rect.bottom );
-				}
-			}
-			if ( boundingRect ) {
-				boundingRect.width = boundingRect.right - boundingRect.left;
-				boundingRect.height = boundingRect.bottom - boundingRect.top;
-			}
-			return boundingRect;
+			return ve.getBoundingRect(
+				elements.map( ( element ) => element.getBoundingClientRect() )
+			);
 		},
 		collapseToolbar: function () {
 			ve.init.target.toolbar.items.forEach( ( group ) => {

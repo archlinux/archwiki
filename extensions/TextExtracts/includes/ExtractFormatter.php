@@ -3,94 +3,122 @@
 namespace MediaWiki\Extension\TextExtracts;
 
 use DOMElement;
-use HtmlFormatter\HtmlFormatter;
+use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
  * Provides text-only or limited-HTML extracts of page HTML
  *
  * @license GPL-2.0-or-later
  */
-class ExtractFormatter extends HtmlFormatter {
+class ExtractFormatter {
 	public const SECTION_MARKER_START = "\1\2";
 	public const SECTION_MARKER_END = "\2\1";
 
 	/**
-	 * @var bool
+	 * @var DOMElement
 	 */
-	private $plainText;
+	private $body;
 
 	/**
-	 * @param string $text Text to convert
-	 * @param bool $plainText Whether extract should be plaintext
+	 * @var string[]
 	 */
-	public function __construct( $text, $plainText ) {
-		parent::__construct( HtmlFormatter::wrapHTML( $text ) );
-		$this->plainText = $plainText;
+	private $itemsToRemove = [
+		'img',
+		'audio',
+		'video',
+	];
 
-		$this->setRemoveMedia( true );
-
-		if ( $plainText ) {
-			$this->flattenAllTags();
-		} else {
-			$this->flatten( [ 'a' ] );
-		}
+	/**
+	 * @param string $html HTML to be formatted
+	 */
+	public function __construct( $html ) {
+		$doc = DOMUtils::parseHTML( $html );
+		$this->body = DOMCompat::getBody( $doc );
 	}
 
 	/**
-	 * Performs final transformations (such as newline replacement for plaintext
-	 * option) and returns resulting HTML.
+	 * Adds one or more selector of content to remove.
 	 *
-	 * @param DOMElement|string|null $element ID of element to get HTML from.
-	 * Ignored
-	 * @return string Processed HTML
+	 * @param string[]|string $selectors Selector(s) of stuff to remove
 	 */
-	public function getText( $element = null ): string {
+	public function remove( $selectors ): void {
+		$this->itemsToRemove = array_merge( $this->itemsToRemove, (array)$selectors );
+	}
+
+	/**
+	 * Get plaintext
+	 *
+	 * @return string
+	 */
+	public function getText(): string {
 		$this->filterContent();
-		$text = parent::getText();
-		if ( $this->plainText ) {
-			$text = html_entity_decode( $text );
-			// replace nbsp with space
-			$text = str_replace( "\u{00A0}", ' ', $text );
-			// for Windows
-			$text = str_replace( "\r", "\n", $text );
-			// normalise newlines
-			$text = preg_replace( "/\n{3,}/", "\n\n", $text );
+
+		// Insert section markers before headings in the DOM
+		$headings = DOMCompat::querySelectorAll( $this->body, 'h1, h2, h3, h4, h5, h6' );
+		foreach ( $headings as $heading ) {
+			$i = substr( $heading->tagName, 1 );
+			$marker = $this->body->ownerDocument->createTextNode(
+				"\n\n" . self::SECTION_MARKER_START . $i . self::SECTION_MARKER_END
+			);
+			$heading->parentNode->insertBefore( $marker, $heading );
 		}
+
+		$text = $this->body->textContent;
+		// Replace nbsp with space
+		$text = str_replace( "\u{00A0}", ' ', $text );
+		// Normalize Windows linebreaks
+		$text = str_replace( "\r", "\n", $text );
+		// Normalize multiple linebreaks
+		$text = preg_replace( "/\n{3,}/", "\n\n", $text );
+
 		return trim( $text );
 	}
 
 	/**
-	 * @param string $html HTML string to process
-	 * @return string Processed HTML
+	 * Get filtered HTML
+	 *
+	 * @return string
 	 */
-	public function onHtmlReady( string $html ): string {
-		if ( $this->plainText ) {
-			$html = preg_replace( '/\s*(<h([1-6])\b)/i',
-				"\n\n" . self::SECTION_MARKER_START . '$2' . self::SECTION_MARKER_END . '$1',
-				$html
-			);
+	public function getHtml(): string {
+		$this->filterContent();
+
+		// Flatten <a> tags
+		$links = DOMCompat::querySelectorAll( $this->body, 'a' );
+		foreach ( $links as $a ) {
+			// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition
+			while ( $child = $a->firstChild ) {
+				$a->parentNode->insertBefore( $child, $a );
+			}
+			$a->parentNode->removeChild( $a );
 		}
-		return $html;
+
+		$html = DOMCompat::getInnerHTML( $this->body );
+
+		return trim( $html );
 	}
 
 	/**
 	 * Removes content we've chosen to remove then removes class and style
 	 * attributes from the remaining span elements.
 	 *
-	 * @return array Array of removed DOMElements
+	 * @return void
 	 */
-	public function filterContent(): array {
-		$removed = parent::filterContent();
+	public function filterContent(): void {
+		foreach ( $this->itemsToRemove as $selector ) {
+			$elements = DOMCompat::querySelectorAll( $this->body, $selector );
+			foreach ( $elements as $el ) {
+				if ( $el->parentNode ) {
+					$el->parentNode->removeChild( $el );
+				}
+			}
+		}
 
-		$doc = $this->getDoc();
-		$spans = $doc->getElementsByTagName( 'span' );
-
-		/** @var DOMElement $span */
+		// Remove class and style attributes from all span elements
+		$spans = $this->body->getElementsByTagName( 'span' );
 		foreach ( $spans as $span ) {
 			$span->removeAttribute( 'class' );
 			$span->removeAttribute( 'style' );
 		}
-
-		return $removed;
 	}
 }

@@ -59,7 +59,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 				$this->createMock( RevisionStore::class ),
 				$this->createMock( UserAgentClientHintsManager::class ),
 				$this->createMock( IConnectionProvider::class ),
-				$this->createMock( ActorStore::class )
+				$this->createMock( ActorStore::class ),
 			] )
 			->onlyMethods( [ 'getValidatedBody' ] )
 			->getMock();
@@ -85,7 +85,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 				$this->createMock( RevisionStore::class ),
 				$this->createMock( UserAgentClientHintsManager::class ),
 				$this->createMock( IConnectionProvider::class ),
-				$this->createMock( ActorStore::class )
+				$this->createMock( ActorStore::class ),
 			] )
 			->onlyMethods( [ 'getValidatedBody' ] )
 			->getMock();
@@ -111,7 +111,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 				$this->createMock( RevisionStore::class ),
 				$this->createMock( UserAgentClientHintsManager::class ),
 				$this->createMock( IConnectionProvider::class ),
-				$this->createMock( ActorStore::class )
+				$this->createMock( ActorStore::class ),
 			] )
 			->onlyMethods( [ 'getValidatedBody' ] )
 			->getMock();
@@ -284,7 +284,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			json_encode( [
 				"value" => $handler->getResponseFactory()->formatMessage(
 					new MessageValue( 'checkuser-api-useragent-clienthints-explanation' )
-				)
+				),
 			], JSON_UNESCAPED_SLASHES ),
 			$response->getBody()->getContents()
 		);
@@ -341,7 +341,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		$this->expectException( LocalizedHttpException::class );
 		$request = new RequestData();
 		$config = [
-			'path' => '/foo'
+			'path' => '/foo',
 		];
 		$this->initHandler( $handler, $request, $config, [], null, $this->getSession( false ) );
 		// Invoking the method to be tested

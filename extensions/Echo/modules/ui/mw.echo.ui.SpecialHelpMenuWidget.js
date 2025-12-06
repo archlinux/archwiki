@@ -17,8 +17,8 @@ mw.echo.ui.SpecialHelpMenuWidget = function MwEchoUiSpecialHelpMenuWidget( manag
 		menu: {
 			classes: [ 'mw-echo-ui-specialHelpMenuWidget-menu' ],
 			horizontalPosition: 'end',
-			width: 'auto'
-		}
+			width: 'auto',
+		},
 	}, config ) );
 
 	this.manager = manager;
@@ -26,9 +26,9 @@ mw.echo.ui.SpecialHelpMenuWidget = function MwEchoUiSpecialHelpMenuWidget( manag
 	this.markAllReadOption = new OO.ui.MenuOptionWidget( {
 		icon: 'checkAll',
 		label: this.getMarkAllReadOptionLabel(
-			this.manager.getPaginationModel().getCurrentPageItemCount()
+			this.manager.getPaginationModel().getCurrentPageItemCount(),
 		),
-		data: 'markAllRead'
+		data: 'markAllRead',
 	} );
 	this.markAllReadOption.toggle( false );
 
@@ -41,14 +41,14 @@ mw.echo.ui.SpecialHelpMenuWidget = function MwEchoUiSpecialHelpMenuWidget( manag
 				$element: $( '<a>' ).attr( 'href', config.prefLink ),
 				icon: 'settings',
 				label: mw.msg( 'mypreferences' ),
-				data: { href: config.prefLink }
-			} )
+				data: { href: config.prefLink },
+			} ),
 		] );
 	}
 
 	// Events
 	this.manager.connect( this, {
-		localCountChange: 'onLocalCountChange'
+		localCountChange: 'onLocalCountChange',
 	} );
 	this.manager.getFiltersModel().getSourcePagesModel().connect( this, { update: 'onSourcePageUpdate' } );
 	this.menu.connect( this, { choose: 'onMenuChoose' } );

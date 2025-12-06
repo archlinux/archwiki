@@ -1,17 +1,19 @@
 <?php
+declare( strict_types = 1 );
 // phpcs:disable Generic.Files.LineLength.TooLong
 
 namespace Test\Parsoid\Utils;
 
 use Wikimedia\Parsoid\Core\DomPageBundle;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Mocks\MockEnv;
+use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
  * @coversDefaultClass  \Wikimedia\Parsoid\Utils\DOMDataUtils
@@ -22,7 +24,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::storeInPageBundle
 	 */
 	public function testStoreInPageBundle() {
-		$dpb = DomPageBundle::fromPageBundle( PageBundle::newEmpty(
+		$dpb = DomPageBundle::fromHtmlPageBundle( HtmlPageBundle::newEmpty(
 			"<p>Hello, world</p>"
 		) );
 		DOMDataUtils::prepareDoc( $dpb->doc );
@@ -30,7 +32,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		DOMDataUtils::storeInPageBundle( $dpb, $p, (object)[
 			'parsoid' => [ 'go' => 'team' ],
 			'mw' => [ 'test' => 'me' ],
-		], DOMDataUtils::usedIdIndex( null, $p->ownerDocument ) );
+		], DOMDataUtils::usedIdIndex( new MockSiteConfig( [] ), $p->ownerDocument ) );
 		$id = DOMCompat::getAttribute( $p, 'id' ) ?? '';
 		$this->assertNotEquals( '', $id );
 		// Use the 'native' getElementById, not DOMCompat::getElementById,
@@ -79,7 +81,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 
 		// Reserialize
 		DOMDataUtils::visitAndStoreDataAttribs( $p, [ 'discardDataParsoid' => true ] );
-		$html = XMLSerializer::serialize( $p )['html'];
+		$html = XHtmlSerializer::serialize( $p )['html'];
 		$this->assertSame(
 			'<p>Hello, world</p>',
 			$html
@@ -107,7 +109,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 
 		// Reserialize
 		DOMDataUtils::visitAndStoreDataAttribs( $p, [ 'discardDataParsoid' => true ] );
-		$html = XMLSerializer::serialize( $p )['html'];
+		$html = XHtmlSerializer::serialize( $p )['html'];
 		$this->assertSame(
 			'<p' .
 			' data-mw=\'{"attribs":[[{"txt":"bar","html":"&lt;b>bar&lt;/b>"},{"html":"xyz"}]]}\'' .
@@ -147,7 +149,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 
 		// Serialize and deserialize
 		DOMDataUtils::visitAndStoreDataAttribs( $p, [ 'discardDataParsoid' => true ] );
-		$html = XMLSerializer::serialize( $p )['html'];
+		$html = XHtmlSerializer::serialize( $p )['html'];
 		$this->assertSame(
 			'<p' .
 			' foo="flattened!"' .
@@ -202,7 +204,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 
 		// Serialize and deserialize
 		DOMDataUtils::visitAndStoreDataAttribs( $p, [ 'discardDataParsoid' => true ] );
-		$html = XMLSerializer::serialize( $p )['html'];
+		$html = XHtmlSerializer::serialize( $p )['html'];
 		$this->assertSame(
 			'<p data-mw-foo=\'{"rich":{"bar":"nested!"}}\' data-mw-bar=\'{"html":{"_h":"Nested and &lt;b>bold&lt;/b>!"}}\'>Hello, world</p>',
 			$html
@@ -276,6 +278,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 			$html = DomPageBundle::fromLoadedDocument( $doc, [
 				'useFragmentBank' => $useFragmentBank,
 				'discardDataParsoid' => true,
+				'siteConfig' => new MockSiteConfig( [] ),
 			] )->toInlineAttributeHtml();
 			$this->assertSame(
 				$useFragmentBank ?
@@ -361,6 +364,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 			$html = DomPageBundle::fromLoadedDocument( $doc, [
 				'useFragmentBank' => $useFragmentBank,
 				'discardDataParsoid' => true,
+				'siteConfig' => new MockSiteConfig( [] ),
 			] )->toInlineAttributeHtml();
 			$this->assertSame(
 				$useFragmentBank ?
@@ -439,6 +443,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		// Serialize
 		$html = DomPageBundle::fromLoadedDocument( $doc, [
 			'useFragmentBank' => $useFragmentBank,
+			'siteConfig' => new MockSiteConfig( [] ),
 		] )->toSingleDocumentHtml();
 		$this->assertSame(
 			$useFragmentBank ?
@@ -486,5 +491,52 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	public static function provideUseFragmentBank() {
 		yield 'fragment bank serialization' => [ true ];
 		yield 'compatible serialization' => [ false ];
+	}
+
+	/**
+	 * @covers ::cloneDocument
+	 */
+	public function testCloneDocument() {
+		// Create a document with some data-parsoid and rich attributes
+		$doc = ContentUtils::createAndLoadDocument(
+			"<p>Hello, world</p>", [ 'markNew' => false, ]
+		);
+		$p = DOMCompat::querySelector( $doc, 'p' );
+		$p_dp = DOMDataUtils::getDataParsoid( $p );
+		$p_dp->src = "test1";
+		$df = DOMDataUtils::getAttributeDomDefault( $p, 'title' );
+		$this->assertSame( $doc, $df->ownerDocument );
+		DOMUtils::setFragmentInnerHTML( $df, '<b>be bold</b>' );
+		$b = DOMCompat::querySelector( $df, 'b' );
+		$b_dp = DOMDataUtils::getDataParsoid( $b );
+		$b_dp->src = "test2";
+		// Now give our rich attribute its own rich attribute
+		$dff = DOMDataUtils::getAttributeDomDefault( $b, 'title' );
+		$this->assertSame( $doc, $dff->ownerDocument );
+		DOMUtils::setFragmentInnerHTML( $dff, '<i>nice!</i>' );
+
+		// Now clone the document!
+		$doc2 = DOMDataUtils::cloneDocument( $doc );
+
+		// And verify that the info is the same, but not reference-equal
+		$this->assertNotSame( $doc, $doc2 );
+		$p2 = DOMCompat::querySelector( $doc2, 'p' );
+		$this->assertNotSame( $p, $p2 );
+		$p2_dp = DOMDataUtils::getDataParsoid( $p2 );
+		$this->assertNotSame( $p_dp, $p2_dp );
+		$this->assertSame( 'test1', $p2_dp->src );
+		$df2 = DOMDataUtils::getAttributeDom( $p2, 'title' );
+		$this->assertSame( $doc2, $df2->ownerDocument );
+		$this->assertNotSame( $df, $df2 );
+		$this->assertStringEndsWith( '>be bold</b>', DOMUtils::getFragmentInnerHTML( $df2 ) );
+		$b2 = DOMCompat::querySelector( $df2, 'b' );
+		$this->assertNotSame( $b, $b2 );
+		$b2_dp = DOMDataUtils::getDataParsoid( $b2 );
+		$this->assertNotSame( $b_dp, $b2_dp );
+		$this->assertSame( 'test2', $b2_dp->src );
+		$dff2 = DOMDataUtils::getAttributeDom( $b2, 'title' );
+		$this->assertSame( $doc2, $dff2->ownerDocument );
+		$this->assertNotSame( $dff, $dff2 );
+		$this->assertSame( '<i>nice!</i>', DOMUtils::getFragmentInnerHTML( $dff2 ) );
 	}
 }

@@ -542,7 +542,7 @@ QUnit.test( 'getSelectionState', ( assert ) => {
 		for ( let i = 0, l = internalListNode.getOuterRange().start; i < l; i++ ) {
 			const node = view.getDocument().getDocumentNode().getNodeFromOffset( i );
 			if ( caseItem.expected[ i ] === null ) {
-				assert.strictEqual( node.isFocusable(), true, 'Focusable node at ' + i );
+				assert.true( node.isFocusable(), 'Focusable node at ' + i );
 			} else {
 				const selection = view.getSelectionState( new ve.Range( i ) );
 				if ( caseItem.expected[ i ] === false ) {
@@ -591,7 +591,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 				...ve.dm.example.blockImage.data,
 				{ type: 'internalList' },
 				{ type: '/internalList' }
-			], null, ve.dm.example.baseUri ),
+			], undefined, ve.dm.example.baseUri ),
 			firstRange: new ve.Range( 14 ),
 			lastRange: new ve.Range( 17 )
 		},
@@ -603,7 +603,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 				...ve.dm.example.complexTable.slice( 0, -2 ),
 				{ type: 'internalList' },
 				{ type: '/internalList' }
-			], null, ve.dm.example.baseUri ),
+			], undefined, ve.dm.example.baseUri ),
 			firstRange: new ve.Range( 52 ),
 			lastRange: new ve.Range( 55 )
 		},
@@ -614,7 +614,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 				...ve.dm.example.blockImage.data,
 				{ type: 'internalList' },
 				{ type: '/internalList' }
-			], null, ve.dm.example.baseUri ),
+			], undefined, ve.dm.example.baseUri ),
 			firstRange: null,
 			lastRange: null
 		},
@@ -622,7 +622,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 			msg: 'Sections (ve.ce.ActiveNode) can take focus',
 			htmlOrDoc: ve.dm.example.createExampleDocumentFromData(
 				ve.dm.example.domToDataCases[ 'article and sections' ].data,
-				null, ve.dm.example.baseUri
+				undefined, ve.dm.example.baseUri
 			),
 			firstRange: new ve.Range( 3 ),
 			lastRange: new ve.Range( 20 )

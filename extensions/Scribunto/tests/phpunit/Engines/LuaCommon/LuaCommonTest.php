@@ -70,6 +70,11 @@ class LuaCommonTest extends LuaEngineTestBase {
 						'class' => LuaCommonTestsLibrary::class,
 						'deferLoad' => true,
 					],
+					'CommonTestsSpecLib' => [
+						'class' => LuaCommonTestsSpecLibrary::class,
+						'args' => [ 'Yay ObjectFactory!' ],
+						'deferLoad' => true,
+					],
 					'CommonTestsFailLib' => [
 						'class' => LuaCommonTestsFailLibrary::class,
 						'deferLoad' => true,
@@ -140,9 +145,14 @@ class LuaCommonTest extends LuaEngineTestBase {
 		$this->extraModules[$title->getFullText()] = '
 			local p = {}
 
-			function p.test()
+			function p.testLib()
 				local lib = require( "CommonTestsLib" )
 				return table.concat( { lib.test() }, "; " )
+			end
+
+			function p.testSpecLib()
+				local lib = require( "CommonTestsSpecLib" )
+				return lib.message()
 			end
 
 			function p.setVal( frame )
@@ -184,9 +194,15 @@ class LuaCommonTest extends LuaEngineTestBase {
 
 		# Test loading
 		$module = $engine->fetchModuleFromParser( $title );
-		$ret = $module->invoke( 'test', $frame->newChild() );
+		$ret = $module->invoke( 'testLib', $frame->newChild() );
 		$this->assertSame( 'Test option; Test function', $ret,
 			'Library can be loaded and called' );
+
+		# Test loading module defined with ObjectFactory
+		$module = $engine->fetchModuleFromParser( $title );
+		$ret = $module->invoke( 'testSpecLib', $frame->newChild() );
+		$this->assertSame( 'Yay ObjectFactory!', $ret,
+			'ObjectFactory library can be loaded and called' );
 
 		# Test package.loaded
 		$module = $engine->fetchModuleFromParser( $title );
@@ -899,5 +915,35 @@ class LuaCommonTest extends LuaEngineTestBase {
 		$text = $parser->getStripState()->unstripBoth( $text );
 		$this->assertSame( '>ok<', $text );
 		$this->assertSame( [ 'Script warning: Don\'t panic!' ], $parser->getOutput()->getWarnings() );
+	}
+
+	public function testAddMultipleWarningsT398390() {
+		$engine = $this->getEngine();
+		$parser = $engine->getParser();
+		$pp = $parser->getPreprocessor();
+
+		$this->extraModules['Module:T398390'] = '
+			local p = {}
+
+			p.foo = function ()
+				mw.addWarning( "First warning!" )
+				mw.addWarning( "Second warning!" )
+				return "ok"
+			end
+
+			return p
+		';
+
+		$frame = $pp->newFrame();
+		$text = $frame->expand( $pp->preprocessToObj( ">{{#invoke:T398390|foo}}<" ) );
+		$text = $parser->getStripState()->unstripBoth( $text );
+		$this->assertSame( '>ok<', $text );
+		$this->assertSame(
+			[
+				'Script warning: First warning!',
+				'Script warning: Second warning!'
+			],
+			$parser->getOutput()->getWarnings()
+		);
 	}
 }

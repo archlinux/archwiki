@@ -1,0 +1,17 @@
+// Hide the user avatar icon added in MinervaNeue, as that is duplicated by the user info card feature.
+/* stylelint-disable-next-line selector-class-pattern */
+.history-user,
+.mw-changeslist,
+.ext-checkuser-userinfocard-header-username,
+/* stylelint-disable-next-line selector-class-pattern */
+td.diff-ntitle {
+	.mw-userlink::before {
+		/* stylelint-disable-next-line declaration-no-important */
+		display: none !important;
+	}
+}
+
+// Without AMC, Minerva sets float:left on the button, which massively reduces vertical spacing on it
+.mw-mf-amc-disabled.mw-special-Watchlist .ext-checkuser-userinfocard-button {
+	float: none;
+}

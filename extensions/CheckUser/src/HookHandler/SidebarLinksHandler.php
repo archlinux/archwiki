@@ -3,9 +3,9 @@
 namespace MediaWiki\CheckUser\HookHandler;
 
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\Hook\SidebarBeforeOutputHook;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\UserIdentity;
@@ -22,16 +22,16 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 
 	private Config $config;
 	private CheckUserPermissionManager $permissionManager;
-	private ExtensionRegistry $extensionRegistry;
+	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
 
 	public function __construct(
 		Config $config,
 		CheckUserPermissionManager $checkUserPermissionManager,
-		ExtensionRegistry $extensionRegistry
+		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup
 	) {
 		$this->config = $config;
 		$this->permissionManager = $checkUserPermissionManager;
-		$this->extensionRegistry = $extensionRegistry;
+		$this->autoRevealLookup = $autoRevealLookup;
 	}
 
 	/** @inheritDoc */
@@ -62,7 +62,8 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 		$globalContributionsLink = [
 			'id' => 't-global-contributions',
 			'text' => $skin->msg( 'checkuser-global-contributions-link-sidebar' )->text(),
-			'href' => $targetTitle->getLocalURL()
+			'href' => $targetTitle->getLocalURL(),
+			'tooltip-params' => [ $name ],
 		];
 
 		// Try to insert the Global Contributions link after the 'contributions' key
@@ -119,14 +120,22 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 
 		$out->addJSConfigVars( [
 			'wgCheckUserTemporaryAccountAutoRevealAllowed' => true,
+			'wgCheckUserAutoRevealMaximumExpiry' => $this->config->get(
+				'CheckUserAutoRevealMaximumExpiry'
+			),
 		] );
+
+		$linkMessageKey = $this->autoRevealLookup->isAutoRevealOn( $skin->getAuthority() ) ?
+			'checkuser-ip-auto-reveal-link-sidebar-on' :
+			'checkuser-ip-auto-reveal-link-sidebar';
 
 		$out->addModules( 'ext.checkUser.tempAccounts' );
 		$sidebar['TOOLBOX'][self::IP_AUTO_REVEAL_KEY] = [
 			'id' => 't-checkuser-ip-auto-reveal',
-			'text' => $skin->msg( 'checkuser-ip-auto-reveal-link-sidebar' )->text(),
+			'text' => $skin->msg( $linkMessageKey )->text(),
 			'href' => '#',
 			'class' => 'checkuser-ip-auto-reveal',
+			'icon' => 'userTemporaryLocation',
 		];
 	}
 
@@ -139,7 +148,7 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 	 * @return bool
 	 */
 	private function shouldAddIPAutoReveal( Skin $skin ) {
-		if ( !$this->extensionRegistry->isLoaded( 'GlobalPreferences' ) ) {
+		if ( !$this->autoRevealLookup->isAutoRevealAvailable() ) {
 			return false;
 		}
 

@@ -41,15 +41,12 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	 */
 	private $neededNames;
 
-	private GadgetRepo $gadgetRepo;
-
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,
-		GadgetRepo $gadgetRepo
+		private readonly GadgetRepo $gadgetRepo,
 	) {
 		parent::__construct( $queryModule, $moduleName, 'gc' );
-		$this->gadgetRepo = $gadgetRepo;
 	}
 
 	public function execute() {

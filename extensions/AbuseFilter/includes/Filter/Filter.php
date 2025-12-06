@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Filter;
 
+use MediaWiki\User\UserIdentity;
+
 /**
  * Immutable value object representing a "complete" filter. This can be used to represent filters
  * that already exist in the database, but you should probably use subclasses for that.
@@ -42,51 +44,40 @@ class Filter extends AbstractFilter {
 		$this->throttled = $throttled;
 	}
 
-	/**
-	 * @return LastEditInfo
-	 */
 	public function getLastEditInfo(): LastEditInfo {
 		return clone $this->lastEditInfo;
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getID(): ?int {
 		return $this->id;
 	}
 
 	/**
-	 * @return int
+	 * @deprecated since 1.45 Use ::getUserIdentity() instead
 	 */
 	public function getUserID(): int {
 		return $this->lastEditInfo->getUserID();
 	}
 
 	/**
-	 * @return string
+	 * @deprecated since 1.45 Use ::getUserIdentity() instead
 	 */
 	public function getUserName(): string {
 		return $this->lastEditInfo->getUserName();
 	}
 
-	/**
-	 * @return string
-	 */
+	public function getUserIdentity(): UserIdentity {
+		return $this->lastEditInfo->getUserIdentity();
+	}
+
 	public function getTimestamp(): string {
 		return $this->lastEditInfo->getTimestamp();
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getHitCount(): ?int {
 		return $this->hitCount;
 	}
 
-	/**
-	 * @return bool|null
-	 */
 	public function isThrottled(): ?bool {
 		return $this->throttled;
 	}

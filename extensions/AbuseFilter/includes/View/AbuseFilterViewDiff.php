@@ -6,6 +6,7 @@ use DifferenceEngine;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\Filter\ClosestFilterVersionNotFoundException;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterVersionNotFoundException;
@@ -157,22 +158,54 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 			return false;
 		}
 
-		if (
-			(
-				$this->oldVersion->isProtected() &&
-				!$this->afPermManager->canViewProtectedVariablesInFilter(
+		if ( $this->oldVersion->isProtected() || $this->newVersion->isProtected() ) {
+			$oldPermissionStatus = AbuseFilterPermissionStatus::newGood();
+			if ( $this->oldVersion->isProtected() ) {
+				$oldPermissionStatus = $this->afPermManager->canViewProtectedVariablesInFilter(
 					$this->getAuthority(), $this->oldVersion
-				)->isGood()
-			) ||
-			(
-				$this->newVersion->isProtected() &&
-				!$this->afPermManager->canViewProtectedVariablesInFilter(
+				);
+			}
+
+			$newPermissionStatus = AbuseFilterPermissionStatus::newGood();
+			if ( $this->newVersion->isProtected() ) {
+				$newPermissionStatus = $this->afPermManager->canViewProtectedVariablesInFilter(
 					$this->getAuthority(), $this->newVersion
-				)->isGood()
-			)
-		) {
-			$this->getOutput()->addWikiMsg( 'abusefilter-history-error-protected' );
-			return false;
+				);
+			}
+
+			if ( !$newPermissionStatus->isGood() || !$oldPermissionStatus->isGood() ) {
+				if ( $oldPermissionStatus->getPermission() || $newPermissionStatus->getPermission() ) {
+					$permission = $oldPermissionStatus->getPermission();
+					if ( !$permission ) {
+						$permission = $newPermissionStatus->getPermission();
+					}
+
+					$this->getOutput()->addWikiMsg( $this->msg(
+						'abusefilter-history-error-protected-due-to-permission',
+						$this->msg( "action-$permission" )->plain()
+					) );
+					return false;
+				}
+
+				// Add any messages in the status after a generic error message.
+				$additional = '';
+				foreach ( $oldPermissionStatus->getMessages() as $message ) {
+					$additional .= $this->msg( $message )->parseAsBlock();
+				}
+				if ( $additional === '' ) {
+					// Only add the error messages for the new version if no messages were present for the old
+					// version. This is done to avoid duplicate error messages that were relevant to both
+					// the old and new version.
+					foreach ( $newPermissionStatus->getMessages() as $message ) {
+						$additional .= $this->msg( $message )->parseAsBlock();
+					}
+				}
+
+				$this->getOutput()->addWikiMsg(
+					$this->msg( 'abusefilter-history-error-protected' )->rawParams( $additional )
+				);
+				return false;
+			}
 		}
 
 		try {

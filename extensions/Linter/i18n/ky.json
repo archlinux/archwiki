@@ -8,5 +8,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|ката}})",
 	"linter-page-edit": "түзөтүү",
 	"linter-page-history": "тарых",
-	"linter-pager-category-header": "Категория"
+	"linter-pager-category-header": "Категория",
+	"linter-pager-title-header": "Барактын аталышы"
 }

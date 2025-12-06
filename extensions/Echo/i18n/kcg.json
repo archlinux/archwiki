@@ -27,8 +27,6 @@
 	"echo-category-title-article-linked": "Page {{PLURAL:$1|a̱fwuop|a̱ka̱fwuop}}",
 	"echo-category-title-other": "{{PLURAL:$1|A̱ghyang}}",
 	"tooltip-pt-notifications-alert": "A̱yaalama {{GENDER:|ang ba}}",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Á̱nietnta̱m ba̱ ka̱n nshyia̱ a̱ni",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Á̱nietnta̱m á̱fai",
 	"echo-specialpage": "Shei li̱lak",
 	"echo-specialpage-section-markread": "Cak sot ji nang si̱ hu nang á̱ ka̱n fang a̱ni",
 	"echo-notification-placeholder": "Shei li̱lak nshyia̱ bah.",

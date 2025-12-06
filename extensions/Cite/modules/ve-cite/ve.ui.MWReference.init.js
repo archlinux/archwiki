@@ -8,10 +8,12 @@
  */
 
 ( function () {
+	const MWCitationContextItem = require( './ve.ui.MWCitationContextItem.js' );
+	const MWCitationDialogTool = require( './ve.ui.MWCitationDialogTool.js' );
+
 	const modifiedToolbarGroups = [];
 
 	mw.hook( 've.newTarget' ).add( ( target ) => {
-
 		if ( ![ 'article', 'cx' ].includes( target.constructor.static.name ) ) {
 			return;
 		}
@@ -63,9 +65,8 @@
 	/**
 	 * Add reference insertion tools from on-wiki data.
 	 *
-	 * By adding a definition in JSON to
-	 * MediaWiki:Visualeditor-cite-tool-definition, the cite menu can be populated
-	 * with tools that create refrences containing a specific templates. The
+	 * By adding a definition in JSON to MediaWiki:Cite-tool-definition.json, the cite menu can
+	 * be populated with tools that create references containing specific templates. The
 	 * content of the definition should be an array containing a series of
 	 * objects, one for each tool. Each object must contain a `name`, `icon` and
 	 * `template` property. An optional `title` property can also be used to
@@ -78,88 +79,84 @@
 	 *
 	 * Example:
 	 * [ { "name": "web", "icon": "browser", "template": "Cite web" }, ... ]
-	 *
 	 */
-	( function () {
-		const deprecatedIcons = {
-				'ref-cite-book': 'book',
-				'ref-cite-journal': 'journal',
-				'ref-cite-news': 'newspaper',
-				'ref-cite-web': 'browser',
-				'reference-existing': 'referenceExisting'
-			},
-			defaultIcons = {
-				book: 'book',
-				journal: 'journal',
-				news: 'newspaper',
-				web: 'browser'
+
+	/** Maps deprecated icon names to supported OOUI icon names */
+	const deprecatedIcons = {
+		'ref-cite-book': 'book',
+		'ref-cite-journal': 'journal',
+		'ref-cite-news': 'newspaper',
+		'ref-cite-web': 'browser',
+		'reference-existing': 'referenceExisting'
+	};
+	/** Maps pre-defined citation tool names to OOUI icon names */
+	const defaultIcons = {
+		book: 'book',
+		journal: 'journal',
+		news: 'newspaper',
+		web: 'browser'
+	};
+
+	// TODO: Replace with require( './ve.ui.MWCitationTools.json' );
+	ve.ui.mwCitationTools.forEach( ( item ) => {
+		const hasOwn = Object.prototype.hasOwnProperty;
+		const data = { template: item.template, title: item.title };
+
+		if ( !item.icon && hasOwn.call( defaultIcons, item.name ) ) {
+			item.icon = defaultIcons[ item.name ];
+		}
+
+		if ( hasOwn.call( deprecatedIcons, item.icon ) ) {
+			item.icon = deprecatedIcons[ item.icon ];
+		}
+
+		// Generate citation tool
+		const name = 'cite-' + item.name;
+		if ( !ve.ui.toolFactory.lookup( name ) ) {
+			const tool = function GeneratedMWCitationDialogTool() {
+				MWCitationDialogTool.apply( this, arguments );
 			};
-
-		// This is assigned server-side by CitationToolDefinition.php, before this file runs.
-		// Ensure it has a fallback, just in case.
-		ve.ui.mwCitationTools = ve.ui.mwCitationTools || [];
-
-		ve.ui.mwCitationTools.forEach( ( item ) => {
-			const hasOwn = Object.prototype.hasOwnProperty;
-			const data = { template: item.template, title: item.title };
-
-			if ( !item.icon && hasOwn.call( defaultIcons, item.name ) ) {
-				item.icon = defaultIcons[ item.name ];
+			OO.inheritClass( tool, MWCitationDialogTool );
+			tool.static.group = 'cite';
+			tool.static.name = name;
+			tool.static.icon = item.icon;
+			if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
+				tool.static.title = mw.msg( 'cite-ve-othergroup-item', item.title );
+			} else {
+				tool.static.title = item.title;
 			}
+			tool.static.commandName = name;
+			tool.static.template = item.template;
+			tool.static.autoAddToCatchall = false;
+			tool.static.autoAddToGroup = true;
+			tool.static.associatedWindows = [ name ];
+			ve.ui.toolFactory.register( tool );
+			ve.ui.commandRegistry.register(
+				new ve.ui.Command(
+					name, 'mwcite', 'open', { args: [ data ], supportedSelections: [ 'linear' ] }
+				)
+			);
+		}
 
-			if ( hasOwn.call( deprecatedIcons, item.icon ) ) {
-				item.icon = deprecatedIcons[ item.icon ];
-			}
-
-			// Generate citation tool
-			const name = 'cite-' + item.name;
-			if ( !ve.ui.toolFactory.lookup( name ) ) {
-				const tool = function GeneratedMWCitationDialogTool() {
-					ve.ui.MWCitationDialogTool.apply( this, arguments );
-				};
-				OO.inheritClass( tool, ve.ui.MWCitationDialogTool );
-				tool.static.group = 'cite';
-				tool.static.name = name;
-				tool.static.icon = item.icon;
-				if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
-					tool.static.title = mw.msg( 'cite-ve-othergroup-item', item.title );
-				} else {
-					tool.static.title = item.title;
-				}
-				tool.static.commandName = name;
-				tool.static.template = item.template;
-				tool.static.autoAddToCatchall = false;
-				tool.static.autoAddToGroup = true;
-				tool.static.associatedWindows = [ name ];
-				ve.ui.toolFactory.register( tool );
-				ve.ui.commandRegistry.register(
-					new ve.ui.Command(
-						name, 'mwcite', 'open', { args: [ data ], supportedSelections: [ 'linear' ] }
-					)
-				);
-			}
-
-			// Generate citation context item
-			if ( !ve.ui.contextItemFactory.lookup( name ) ) {
-				const contextItem = function GeneratedMWCitationContextItem() {
-					// Parent constructor
-					ve.ui.MWCitationContextItem.apply( this, arguments );
-				};
-				OO.inheritClass( contextItem, ve.ui.MWCitationContextItem );
-				contextItem.static.name = name;
-				contextItem.static.icon = item.icon;
-				contextItem.static.label = item.title;
-				contextItem.static.commandName = name;
-				contextItem.static.template = item.template;
-				// If the grand-parent class (ve.ui.MWReferenceContextItem) is extended
-				// and re-registered (e.g. by Citoid), then the inheritance chain is
-				// broken, and the generic 'reference' context item would show. Instead
-				// manually specify that that context should never show when a more
-				// specific context item is shown.
-				contextItem.static.suppresses = [ 'reference' ];
-				ve.ui.contextItemFactory.register( contextItem );
-			}
-		} );
-	}() );
-
+		// Generate citation context item
+		if ( !ve.ui.contextItemFactory.lookup( name ) ) {
+			const contextItem = function GeneratedMWCitationContextItem() {
+				// Parent constructor
+				MWCitationContextItem.apply( this, arguments );
+			};
+			OO.inheritClass( contextItem, MWCitationContextItem );
+			contextItem.static.name = name;
+			contextItem.static.icon = item.icon;
+			contextItem.static.label = item.title;
+			contextItem.static.commandName = name;
+			contextItem.static.template = item.template;
+			// If the grand-parent class (ve.ui.MWReferenceContextItem) is extended
+			// and re-registered (e.g. by Citoid), then the inheritance chain is
+			// broken, and the generic 'reference' context item would show. Instead
+			// manually specify that that context should never show when a more
+			// specific context item is shown.
+			contextItem.static.suppresses = [ 'reference' ];
+			ve.ui.contextItemFactory.register( contextItem );
+		}
+	} );
 }() );

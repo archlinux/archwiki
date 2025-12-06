@@ -79,19 +79,20 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 				// The expected template parameters (other template keys are ignored for this test case).
 				[
 					'showIpCounts' => true,
-					'ipEditCount' => wfMessage( 'checkuser-ipeditcount' )->numParams( 2 )->escaped()
-				]
+					'ipEditCount' => wfMessage( 'checkuser-ipeditcount' )->numParams( 2 )->escaped(),
+				],
 			],
 			'Test edit count' => [ [ 'count' => 555 ], [ 'editCount' => 555 ] ],
 			'Test ip64EditCount' => [
 				[ 'ip' => '2001:db8::1', 'ip_hex' => IPUtils::toHex( '2001:db8::1' ) ],
 				[
 					'showIpCounts' => true,
-					'ip64EditCount' => wfMessage( 'checkuser-ipeditcount-64' )->numParams( 2 )->escaped()
-				]
+					'ip64EditCount' => wfMessage( 'checkuser-ipeditcount-64' )->numParams( 2 )->escaped(),
+				],
 			],
 			'Test toolLinks' => [
-				[], [ 'toolLinks' => wfMessage( 'checkuser-toollinks', urlencode( '127.0.0.1' ) )->parse() ]
+				[],
+				[ 'toolLinks' => wfMessage( 'checkuser-toollinks', urlencode( '127.0.0.1' ) )->parse() ],
 			],
 		];
 	}
@@ -138,11 +139,11 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
 						'USE INDEX' => [ 'cu_changes' => 'cuc_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ]
+						'GROUP BY' => [ 'ip', 'ip_hex' ],
 					],
 					// Verify that fields and join_conds set as arrays, but we are not testing their values.
 					'fields' => [], 'join_conds' => [],
-				]
+				],
 			],
 			'cu_log_event table' => [
 				'cu_log_event',
@@ -151,10 +152,10 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
 						'USE INDEX' => [ 'cu_log_event' => 'cule_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ]
+						'GROUP BY' => [ 'ip', 'ip_hex' ],
 					],
 					'fields' => [], 'join_conds' => [],
-				]
+				],
 			],
 			'cu_private_event table' => [
 				'cu_private_event',
@@ -163,10 +164,10 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
 						'USE INDEX' => [ 'cu_private_event' => 'cupe_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ]
+						'GROUP BY' => [ 'ip', 'ip_hex' ],
 					],
 					'fields' => [], 'join_conds' => [],
-				]
+				],
 			],
 		];
 	}

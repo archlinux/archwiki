@@ -371,8 +371,8 @@ parsoid={ "modes": ["wt2html","wt2wt"] }
 b
 </p>
 !! html/parsoid
-<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArg"},"2":{"wt":"b"},"3":{"wt":"a"}},"i":0}}]}'>b</span>
-<span about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArg"},"2":{"wt":"a"},"3":{"wt":"b"}},"i":0}}]}'>b</span></p>
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArg"},"2":{"wt":"2"},"3":{"wt":"a"},"4":{"wt":"2=b"}},"i":0}}]}'>b</span>
+<span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArg"},"2":{"wt":"2"},"3":{"wt":"2=a"},"4":{"wt":"b"}},"i":0}}]}'>b</span></p>
 !! end
 
 !! test
@@ -387,8 +387,8 @@ parsoid={ "modes": ["wt2html","wt2wt"] }
 1
 </p>
 !! html/parsoid
-<p><span about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArgLength"},"2":{"wt":"2"},"3":{"wt":" x "}},"i":0}}]}'>3</span>
-<span about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArgLength"},"2":{"wt":"x"}},"i":0}}]}'>1</span></p>
+<p><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArgLength"},"2":{"wt":"2"},"3":{"wt":" x "}},"i":0}}]}'>3</span>
+<span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#invoke:test","function":"invoke"},"params":{"1":{"wt":"getArgLength"},"2":{"wt":"2"},"3":{"wt":"2= x "}},"i":0}}]}'>1</span></p>
 !! end
 
 !! test
@@ -430,8 +430,6 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 Scribunto: expandTemplate with headers
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"] }
-!! config
-wgParserEnableLegacyHeadingDOM=false
 !! wikitext
 ==foo==
 {{#invoke:test|testExpandTemplateWithHeaders}}

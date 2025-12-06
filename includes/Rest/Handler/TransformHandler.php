@@ -3,19 +3,7 @@
 /**
  * Copyright (C) 2011-2020 Wikimedia Foundation and others.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Rest\Handler;
@@ -31,12 +19,23 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * Handler for transforming content given in the request.
- * - /v1/transform/{from}/to/html
- * - /v1/transform/{from}/to/wikitext
- * - /v1/transform/{from}/to/html/{title}
- * - /v1/transform/{from}/to/wikitext/{title}
- * - /v1/transform/{from}/to/html/{title}/{revision}
- * - /v1/transform/{from}/to/wikitext/{title}/{revision}
+ *
+ * This handler can provide the intended APIs of restbase V1 routes, such as:
+ * - POST /v1/transform/wikitext/to/html
+ * - POST /v1/transform/html/to/wikitext
+ * - POST /v1/transform/wikitext/to/lint
+ * - POST /v1/transform/wikitext/to/html/{title}
+ * - POST /v1/transform/html/to/wikitext/{title}
+ * - POST /v1/transform/wikitext/to/lint/{title}
+ * - POST /v1/transform/wikitext/to/html/{title}/{revision}
+ * - POST /v1/transform/html/to/wikitext/{title}/{revision}
+ * - POST /v1/transform/wikitext/to/lint/{title}/{revision}
+ *
+ * This class is extended by the Parsoid extension, as CoreTransformHandler.
+ * Be careful with changes, in order to not break Parsoid.
+ *
+ * This handler can also provide the intended APIs of Parsoid V3 routes.
+ * These routes are mentioned in the relevant links below.
  *
  * @see https://www.mediawiki.org/wiki/Parsoid/API#POST
  */
@@ -44,13 +43,7 @@ class TransformHandler extends ParsoidHandler {
 
 	/** @inheritDoc */
 	public function getParamSettings() {
-		return [
-			'from' => [
-				self::PARAM_SOURCE => 'path',
-				ParamValidator::PARAM_TYPE => 'string',
-				ParamValidator::PARAM_REQUIRED => true,
-				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-transform-from' ),
-			],
+		$params = [
 			'title' => [
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'string',
@@ -64,6 +57,17 @@ class TransformHandler extends ParsoidHandler {
 				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-transform-revision' ),
 			],
 		];
+
+		if ( !isset( $this->getConfig()['from'] ) ) {
+			$params['from'] = [
+				self::PARAM_SOURCE => 'path',
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-transform-from' ),
+			];
+		}
+
+		return $params;
 	}
 
 	/**
@@ -83,8 +87,10 @@ class TransformHandler extends ParsoidHandler {
 	protected function getOpts( array $body, RequestInterface $request ): array {
 		return array_merge(
 			$body,
-			array_intersect_key( $request->getPathParams(), [ 'from' => true ] ),
-			[ 'format' => $this->getTargetFormat() ]
+			[
+				'format' => $this->getTargetFormat(),
+				'from' => $this->getFromFormat(),
+			]
 		);
 	}
 
@@ -108,6 +114,11 @@ class TransformHandler extends ParsoidHandler {
 		return $this->getConfig()['format'];
 	}
 
+	private function getFromFormat(): string {
+		$request = $this->getRequest();
+		return $this->getConfig()['from'] ?? $request->getPathParam( 'from' );
+	}
+
 	protected function generateResponseSpec( string $method ): array {
 		// TODO: Consider if we prefer something like (for html and wikitext):
 		//    text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.8.0"
@@ -117,13 +128,18 @@ class TransformHandler extends ParsoidHandler {
 			case 'html':
 				$spec = parent::generateResponseSpec( $method );
 				$spec['200']['content']['text/html']['schema']['type'] = 'string';
-				$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-				$spec['413'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
 				return $spec;
 
 			case 'wikitext':
 				$spec = parent::generateResponseSpec( $method );
 				$spec['200']['content']['text/plain']['schema']['type'] = 'string';
+				return $spec;
+
+			case 'lint':
+				$spec = parent::generateResponseSpec( $method );
+
+				// TODO: define a schema for lint responses
+				$spec['200']['content']['application/json']['schema']['type'] = 'array';
 				return $spec;
 
 			default:
@@ -139,8 +155,7 @@ class TransformHandler extends ParsoidHandler {
 	 * @throws HttpException
 	 */
 	public function execute(): Response {
-		$request = $this->getRequest();
-		$from = $request->getPathParam( 'from' );
+		$from = $this->getFromFormat();
 		$format = $this->getTargetFormat();
 
 		// XXX: Fallback to the default valid transforms in case the request is
@@ -176,7 +191,7 @@ class TransformHandler extends ParsoidHandler {
 				}
 			}
 			// Abort if no wikitext or title.
-			if ( $wikitext === null && empty( $attribs['pageName'] ) ) {
+			if ( $wikitext === null && ( $attribs['pageName'] ?? '' ) === '' ) {
 				throw new LocalizedHttpException( new MessageValue( "rest-transform-missing-title" ), 400 );
 			}
 			$pageConfig = $this->tryToCreatePageConfig( $attribs, $wikitext );

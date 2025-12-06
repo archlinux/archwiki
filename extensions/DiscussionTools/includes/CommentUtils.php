@@ -38,7 +38,6 @@ class CommentUtils {
 	];
 
 	/**
-	 * @param Node $node
 	 * @return bool Node is a block element
 	 */
 	public static function isBlockElement( Node $node ): bool {
@@ -50,7 +49,6 @@ class CommentUtils {
 		'/(?:^|\s)mw:PageProp\/(?:Category|redirect|Language)(?=$|\s)/D';
 
 	/**
-	 * @param Node $node
 	 * @return bool Node is considered a rendering-transparent node in Parsoid
 	 */
 	public static function isRenderingTransparentNode( Node $node ): bool {
@@ -81,7 +79,6 @@ class CommentUtils {
 	}
 
 	/**
-	 * @param Node $node
 	 * @return bool Node was added to the page by DiscussionTools
 	 */
 	public static function isOurGeneratedNode( Node $node ): bool {
@@ -116,7 +113,6 @@ class CommentUtils {
 	];
 
 	/**
-	 * @param Node $node
 	 * @return bool If true, node can't have element children. If false, it's complicated.
 	 */
 	public static function cantHaveElementChildren( Node $node ): bool {
@@ -188,7 +184,6 @@ class CommentUtils {
 	 * Check whether the node is a comment content. It's a little vague what this means…
 	 *
 	 * @param Node $node Node, should be a leaf node (a node with no children)
-	 * @return bool
 	 */
 	public static function isCommentContent( Node $node ): bool {
 		return (
@@ -228,7 +223,6 @@ class CommentUtils {
 	 *
 	 * @param Node $node
 	 * @param string[] $tagNames
-	 * @return Element|null
 	 */
 	public static function closestElement( Node $node, array $tagNames ): ?Element {
 		do {
@@ -248,7 +242,6 @@ class CommentUtils {
 	 *
 	 * @param Node $node
 	 * @param string $direction Can be 'next', 'previous', or 'either'
-	 * @return Element|null
 	 */
 	public static function closestElementWithSibling( Node $node, string $direction ): ?Element {
 		do {
@@ -272,7 +265,6 @@ class CommentUtils {
 	 * 2. Find the main node of the about-group (first sibling with the same 'about' attribute)
 	 * 3. If this is an mw:Transclusion node, return it; otherwise, go to step 1
 	 *
-	 * @param Node $node
 	 * @return Element|null Transclusion node, null if not found
 	 */
 	public static function getTranscludedFromElement( Node $node ): ?Element {
@@ -367,7 +359,6 @@ class CommentUtils {
 	/**
 	 * Get an array of sibling nodes that contain parts of the given range.
 	 *
-	 * @param ImmutableRange $range
 	 * @return Node[]
 	 */
 	public static function getCoveredSiblings( ImmutableRange $range ): array {
@@ -460,7 +451,6 @@ class CommentUtils {
 	 *
 	 * @param string $url Relative URL (from a `href` attribute)
 	 * @param Config $config Config settings needed to resolve the relative URL
-	 * @return string|null
 	 */
 	public static function getTitleFromUrl( string $url, Config $config ): ?string {
 		// Protocol-relative URLs are handled really badly by parse_url()
@@ -560,7 +550,6 @@ class CommentUtils {
 
 	/**
 	 * @param ImmutableRange $range (must not be collapsed)
-	 * @return Node
 	 */
 	public static function getRangeFirstNode( ImmutableRange $range ): Node {
 		Assert::precondition( !$range->collapsed, 'Range is not collapsed' );
@@ -572,7 +561,6 @@ class CommentUtils {
 
 	/**
 	 * @param ImmutableRange $range (must not be collapsed)
-	 * @return Node
 	 */
 	public static function getRangeLastNode( ImmutableRange $range ): Node {
 		Assert::precondition( !$range->collapsed, 'Range is not collapsed' );
@@ -597,8 +585,6 @@ class CommentUtils {
 	 * [before] |             |
 	 *          |             | [after]
 	 *
-	 * @param ImmutableRange $a
-	 * @param ImmutableRange $b
 	 * @return string One of:
 	 *     - 'equal': Ranges A and B are equal
 	 *     - 'contains': Range A contains range B
@@ -665,7 +651,6 @@ class CommentUtils {
 	 * @param ImmutableRange $a
 	 * @param ImmutableRange $b
 	 * @param string $boundary 'start' or 'end'
-	 * @return bool
 	 */
 	private static function compareRangesAlmostEqualBoundaries(
 		ImmutableRange $a, ImmutableRange $b, string $boundary
@@ -685,7 +670,7 @@ class CommentUtils {
 		static::linearWalk(
 			$from,
 			static function ( string $event, Node $n ) use (
-				$from, $to, $boundary, &$skipNode, &$foundContent
+				$to, $boundary, &$skipNode, &$foundContent
 			) {
 				if ( $n === $to && $event === ( $boundary === 'end' ? 'leave' : 'enter' ) ) {
 					return true;

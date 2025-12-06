@@ -11,6 +11,17 @@ module.exports = function ( documentRoot ) {
 		documentRoot = document;
 	}
 
+	const $toolLink = $( '#t-checkuser-ip-auto-reveal span' );
+
+	// Ensure the IP auto-reveal toollink has the correct message, even if the UI is cached
+	getAutoRevealStatus().then( ( expiry ) => {
+		if ( expiry ) {
+			$toolLink.text( mw.message( 'checkuser-ip-auto-reveal-link-sidebar-on' ) );
+		} else {
+			$toolLink.text( mw.message( 'checkuser-ip-auto-reveal-link-sidebar' ) );
+		}
+	} );
+
 	$( '.checkuser-ip-auto-reveal', documentRoot ).on(
 		'click',
 		() => {
@@ -26,7 +37,10 @@ module.exports = function ( documentRoot ) {
 						App = require( './components/IPAutoRevealOnDialog.vue' );
 					}
 					const Vue = require( 'vue' );
-					Vue.createMwApp( App, { expiryTimestamp: expiry } ).mount( '#checkuser-ip-auto-reveal' );
+					Vue.createMwApp( App, {
+						expiryTimestamp: Number( expiry ),
+						toolLink: $toolLink
+					} ).mount( '#checkuser-ip-auto-reveal' );
 				} );
 			} );
 		} );

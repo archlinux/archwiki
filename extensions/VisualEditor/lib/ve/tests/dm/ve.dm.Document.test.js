@@ -76,7 +76,7 @@ QUnit.test( 'constructor', ( assert ) => {
 	doc = new ve.dm.Document( [ ...'abcd' ], htmlDoc );
 	assert.strictEqual( doc.getHtmlDocument(), htmlDoc, 'Provided HTML document is used' );
 
-	const data = new ve.dm.ElementLinearData(
+	const data = new ve.dm.LinearData(
 		new ve.dm.HashValueStore(),
 		[ { type: 'paragraph' }, { type: '/paragraph' } ]
 	);
@@ -978,13 +978,13 @@ QUnit.test( 'getNearestCursorOffset', ( assert ) => {
 
 	cases.forEach( ( caseItem ) => {
 		for ( let dir = -1; dir <= 1; dir += 2 ) {
-			for ( let i = 0; i < caseItem.doc.data.getLength(); i++ ) {
+			caseItem.doc.data.getRange().forEach( ( i ) => {
 				assert.strictEqual(
 					caseItem.doc.getNearestCursorOffset( i, dir ),
 					caseItem.expected[ dir ][ i ],
 					'Document "' + caseItem.name + '" - Direction: ' + dir + ' Offset: ' + i
 				);
-			}
+			} );
 		}
 	} );
 } );
@@ -1097,6 +1097,30 @@ QUnit.test( 'findText (plain text)', ( assert ) => {
 					new ve.Range( 57, 60 ),
 					new ve.Range( 62, 74 ),
 					new ve.Range( 76, 83 )
+				]
+			},
+			{
+				msg: 'Set query: case insensitive',
+				query: new Set( [ 'foo', 'baz' ] ),
+				options: {
+					caseSensitiveString: false
+				},
+				ranges: [
+					new ve.Range( 1, 4 ),
+					new ve.Range( 9, 12 ),
+					new ve.Range( 16, 19 ),
+					new ve.Range( 20, 23 )
+				]
+			},
+			{
+				msg: 'Set query: case sensitive',
+				query: new Set( [ 'Foo', 'baz' ] ),
+				options: {
+					caseSensitiveString: true
+				},
+				ranges: [
+					new ve.Range( 1, 4 ),
+					new ve.Range( 16, 19 )
 				]
 			},
 			{
@@ -1261,7 +1285,7 @@ QUnit.test( 'findText (plain text)', ( assert ) => {
 	cases.forEach( ( caseItem ) => {
 		doc.lang = caseItem.lang || 'en';
 		const ranges = doc.findText( caseItem.query, caseItem.options );
-		assert.deepEqual( ranges, caseItem.ranges, caseItem.msg );
+		assert.deepEqual( ranges.map( ( r ) => r.toJSON() ), caseItem.ranges.map( ( r ) => r.toJSON() ), caseItem.msg );
 	} );
 } );
 
@@ -1339,7 +1363,7 @@ QUnit.test( 'findText (non-text content)', ( assert ) => {
 
 	cases.forEach( ( caseItem ) => {
 		const ranges = doc.findText( caseItem.query, caseItem.options );
-		assert.deepEqual( ranges, caseItem.ranges, caseItem.msg );
+		assert.deepEqual( ranges.map( ( r ) => r.toJSON() ), caseItem.ranges.map( ( r ) => r.toJSON() ), caseItem.msg );
 	} );
 } );
 
@@ -1412,14 +1436,14 @@ QUnit.test( 'read-only and offset caching', ( assert ) => {
 	const doc = ve.dm.example.createExampleDocument(),
 		surface = new ve.dm.Surface( doc );
 
-	assert.strictEqual( doc.isReadOnly(), false, 'New document is not read-only' );
+	assert.false( doc.isReadOnly(), 'New document is not read-only' );
 
 	// Set up offset caching test
 	assert.strictEqual( doc.getDocumentNode().children[ 1 ].getOffset(), 5, 'Second child node has offset 6' );
 	surface.getLinearFragment( new ve.Range( 1 ) ).insertContent( 'Test' );
 
 	doc.setReadOnly( true );
-	assert.strictEqual( doc.isReadOnly(), true, 'Document is read-only' );
+	assert.true( doc.isReadOnly(), 'Document is read-only' );
 
 	// Offset caching test
 	assert.strictEqual( doc.getDocumentNode().children[ 1 ].getOffset(), 9, 'Second child node offset has been translated, not cached from before' );

@@ -4,6 +4,8 @@
 			"Къарачайлы"
 		]
 	},
+	"cdx-breadcrumb-navigation-label": "Навигация сынджыр",
+	"cdx-breadcrumb-overflow-label": "Аслам навигация сайламла",
 	"cdx-chip-input-chip-added": "$1 чип къошулду.",
 	"cdx-chip-input-chip-removed": "$1 чип къооратылды.",
 	"cdx-input-chip-aria-description": "Тюзетир ючюн Enter, къоратыр ючюн Delete типеклеге бас.",

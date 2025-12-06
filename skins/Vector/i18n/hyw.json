@@ -9,7 +9,6 @@
 			"Սերգեյ Սաֆարյան"
 		]
 	},
-	"vector-opt-out": "Անցնիլ հին տեսքին",
 	"vector-languages": "Լեզուներ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 լեզու}}",
 	"vector-no-language-button-label": "Աւելցնել լեզուներ",
@@ -35,7 +34,6 @@
 	"skin-theme-night-label": "Մութ",
 	"skin-theme-os-label": "Ինքնագործ",
 	"skin-theme-exclusion-notice": "Այս էջը միշտ բաց գոյներով է։",
-	"vector-searchsuggest-containing": "Որոնել էջեր որ կը ներառեն <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Բովանդակութիւն",
 	"vector-toc-beginning": "Սկսիլ",
 	"vector-anon-user-menu-pages": "Էջեր չգրանցուած խմբագիրներու համար",

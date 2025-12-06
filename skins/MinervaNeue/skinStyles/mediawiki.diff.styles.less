@@ -100,9 +100,10 @@
 	}
 
 	//
-	// Sticky User box at bottom of page
+	// See T357352 - New sticky User box at bottom of page
 	//
-	#mw-diff-ntitle2 {
+	.mw-diff-mobile-footer {
+		display: flex;
 		text-align: left;
 		position: fixed;
 		height: 8em;
@@ -113,10 +114,24 @@
 		left: 0;
 		right: 0;
 		z-index: @z-index-above-content;
+
+		.mw-userlink {
+			height: 30px;
+		}
+
+		.mw-rollback-link {
+			position: fixed;
+			right: 1em;
+		}
+	}
+
+	// Former sticky User box
+	#mw-diff-ntitle2 {
+		display: none;
 	}
 
 	.mw-diff-tool {
-		bottom: 7em;
+		bottom: 3.5em;
 		position: fixed;
 		z-index: @z-index-stacking-2;
 		right: 8px;
@@ -153,15 +168,26 @@
 	}
 
 	.mw-diff-usermetadata {
-		display: block;
+		display: inline-block;
+		position: fixed;
+		bottom: 4.5em;
+		width: 75%;
 	}
 
 	.mw-diff-userroles {
+		height: 20px;
+		width: 75%;
 		margin-top: 0.7em;
+		overflow: hidden;
+		position: fixed;
+		bottom: 8.5em;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.mw-diff-usereditcount {
-		margin-top: 1.2em;
+		position: fixed;
+		bottom: 4.5em;
 		display: inline-block;
 
 		span {
@@ -207,6 +233,10 @@
 			padding: 0.5em 0;
 			display: block;
 			line-height: 1.6;
+		}
+
+		.mw-diff-tool {
+			display: none;
 		}
 	}
 }

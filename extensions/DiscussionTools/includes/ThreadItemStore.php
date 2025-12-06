@@ -354,7 +354,6 @@ class ThreadItemStore {
 	}
 
 	/**
-	 * @param IResultWrapper $result
 	 * @return stdClass[]
 	 */
 	private function fetchRevisionAndPageForItems( IResultWrapper $result ): array {
@@ -533,7 +532,6 @@ class ThreadItemStore {
 	 * @throws TimestampException
 	 * @throws DBError
 	 * @throws Exception
-	 * @return bool
 	 */
 	public function insertThreadItems( RevisionRecord $rev, ContentThreadItemSet $threadItemSet ): bool {
 		if ( $this->readOnlyMode->isReadOnly() ) {

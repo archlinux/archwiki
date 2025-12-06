@@ -16,10 +16,9 @@ class TemplateDataNormalizer {
 		'string/wiki-file-name' => 'wiki-file-name',
 	];
 
-	private string $contentLanguageCode;
-
-	public function __construct( string $contentLanguageCode ) {
-		$this->contentLanguageCode = $contentLanguageCode;
+	public function __construct(
+		private readonly string $contentLanguageCode,
+	) {
 	}
 
 	/**

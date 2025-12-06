@@ -43,8 +43,8 @@
 	"math_invalidresponse": "$1: Ógilt svar (\"$3\") frá vefþjóninum \"$2\":",
 	"math_invalidxml": "MathML eða SVG inniheldur ógilt XML.",
 	"math_syntax_error": "málskipanarvilla",
-	"math-test-fail": "Próf ''$1'' ''mistókst''.",
-	"math-test-success": "Próf ''$1'' ''tókst''.",
+	"math-test-fail": "Prófun ''$1'' mistókst.",
+	"math-test-success": "Prófun ''$1'' tókst.",
 	"math-tracking-category-error": "Síður með stærðfræðivillur",
 	"math-tracking-category-error-desc": "Síður í þessum flokki hafa villur í notkun stærðfræðimerkja.",
 	"math-tracking-category-mhchem-deprecation": "Síður sem nota úrelt snið chem-merkjanna",
@@ -55,7 +55,9 @@
 	"math-tracking-category-render-error-desc": "Síður í þessum flokki hafa myndgerðarvillur í stærðfræðimerkjum.",
 	"math_unknown_error": "óþekkt villa",
 	"math_unknown_function": "óþekkt aðgerð „$1”",
-	"mw-math-mathml": "SVG með PNG til vara (hægt er að virkja MathML með viðbót fyrir vafra)",
+	"mw-math-mathml": "SVG (hægt er að virkja MathML með viðbót fyrir vafra)",
 	"mw-math-source": "LaTeX uppruni (fyrir textavafra)",
-	"prefs-math": "Stærðfræðiformúlur"
+	"prefs-math": "Stærðfræðiformúlur",
+	"mathwikibase": "Upplýsingar um stærðfræðiformúlur",
+	"math-wikibase-formula-information": "Upplýsingar um stærðfræðiformúlur"
 }

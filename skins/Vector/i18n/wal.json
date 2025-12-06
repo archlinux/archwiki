@@ -5,7 +5,6 @@
 			"Malaalaa"
 		]
 	},
-	"vector-opt-out": "Gal\"a be'uwaassi zaara",
 	"vector-languages": "Doonata",
 	"vector-language-button-label": "{{PLURAL:$1|$1 doonaa|$1 doonata}}",
 	"vector-no-language-button-label": "Doonata gujja",
@@ -37,8 +36,6 @@
 	"skin-theme-night-label": "Xumaa",
 	"skin-theme-os-label": "Awutomaatikiya",
 	"skin-theme-exclusion-notice": "Ha sinttay ubbatookka poo'o hanotata.",
-	"vector-search-loader": "Koshshaa zoreta ehiidi de'ees",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> oyqqida sinttata koyya",
 	"vector-intro-page": "Help:Geluwaa",
 	"vector-toc-label": "Kesota",
 	"vector-toc-beginning": "Doomettaa",

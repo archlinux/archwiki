@@ -38,7 +38,7 @@ class LuaStandaloneEngine extends LuaEngine {
 	public function reportLimitData( ParserOutput $parserOutput ) {
 		try {
 			$this->load();
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			return;
 		}
 		if ( $this->initialStatus ) {

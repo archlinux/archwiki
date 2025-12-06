@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Thanks\Storage;
 
+use InvalidArgumentException;
 use MediaWiki\CheckUser\Hooks;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\InvalidLogType;
@@ -20,20 +21,14 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class LogStore {
 
-	protected IConnectionProvider $conn;
-	protected ActorNormalization $actorNormalization;
 	public const CONSTRUCTOR_OPTIONS = [ 'ThanksLogging', 'ThanksAllowedLogTypes' ];
-	protected ServiceOptions $serviceOptions;
 
 	public function __construct(
-		IConnectionProvider $conn,
-		ActorNormalization $actorNormalization,
-		ServiceOptions $serviceOptions
+		protected readonly IConnectionProvider $conn,
+		protected readonly ActorNormalization $actorNormalization,
+		protected readonly ServiceOptions $serviceOptions,
 	) {
-		$this->conn = $conn;
-		$this->actorNormalization = $actorNormalization;
 		$serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->serviceOptions = $serviceOptions;
 	}
 
 	/**
@@ -43,6 +38,11 @@ class LogStore {
 	 *                         when checking for duplicate thanks
 	 */
 	public function thank( User $user, User $recipient, string $uniqueId ): void {
+		if ( $user->isTemp() ) {
+			throw new InvalidArgumentException(
+				'Temporary accounts may not thank other users.'
+			);
+		}
 		if ( !$this->serviceOptions->get( 'ThanksLogging' ) ) {
 			return;
 		}

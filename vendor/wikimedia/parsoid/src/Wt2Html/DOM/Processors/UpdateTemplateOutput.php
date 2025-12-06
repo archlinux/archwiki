@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\SourceString;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -16,7 +17,6 @@ use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 class UpdateTemplateOutput implements Wt2HtmlDOMProcessor {
 	/**
 	 * FIXME:
-	 * -- mwt-id counter may need to be reset!
 	 * -- We have hardcoded check for Template: in English
 	 * -- We aren't checking for other instances (ex: template args)
 	 * -- We aren't checking for indirect dependencies (ex: nested templates)
@@ -45,11 +45,11 @@ class UpdateTemplateOutput implements Wt2HtmlDOMProcessor {
 			$ti = $dataMw->parts[0] ?? null;
 			if ( !is_string( $ti ) && $ti->href === $tplTitle ) {
 				$dp = DOMDataUtils::getDataParsoid( $tplNode );
-				$wt = $dp->dsr->substr( $selparData->revText );
+				$dp->dsr->source ??= new SourceString( $selparData->revText );
+				$wt = $dp->dsr->substr();
 				$opts = [
 					'pipelineType' => 'selective-update-fragment-wikitext-to-dom',
 					'sol' => false, // FIXME: Not strictly correct
-					'srcText' => $selparData->revText,
 					'pipelineOpts' => [],
 					'srcOffsets' => $dp->dsr,
 				];
@@ -62,8 +62,8 @@ class UpdateTemplateOutput implements Wt2HtmlDOMProcessor {
 				// Pull out only the transclusion marked portion of $frag & strip p-wrapper
 				$newContent = $frag->firstChild;
 				if (
-					DOMCompat::nodeName( $tplNode ) !== 'p' &&
-					DOMCompat::nodeName( $newContent ) === 'p'
+					DOMUtils::nodeName( $tplNode ) !== 'p' &&
+					DOMUtils::nodeName( $newContent ) === 'p'
 				) {
 					$newContent = $newContent->firstChild;
 				}

@@ -5,7 +5,8 @@
 			"Horus",
 			"RidJasper",
 			"Supasate",
-			"Taweetham"
+			"Taweetham",
+			"Wutkh"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "หนังสือ",
@@ -21,7 +22,13 @@
 	"cite-ve-changedesc-reflist-responsive-set": "รายการอ้างอิงเปลี่ยนไปแสดงในคอลัมน์แบบโต้ตอบ",
 	"cite-ve-changedesc-reflist-responsive-unset": "รายการอ้างอิงเปลี่ยนไปแสดงในคอลัมน์เดียวเท่านั้น",
 	"cite-ve-citationneeded-button": "เพิ่มส่วนอ้างอิง",
+	"cite-ve-citationneeded-description": "ผู้แก้ไขระบุว่าข้อกล่าวอ้างนี้ต้องการอ้างอิงจากแหล่งที่เชื่อถือได้",
+	"cite-ve-citationneeded-reason": "เหตุผลที่ให้:",
 	"cite-ve-citationneeded-title": "ต้องการส่วนอ้างอิง",
+	"cite-ve-dialog-reference-contextitem-extends": "การอ้างอิงนี้เป็นการนำกลับมาใช้ใหม่โดยมีรายละเอียดเพิ่มเติม:",
+	"cite-ve-dialog-reference-editing-add-details": "คุณกำลังเพิ่มรายละเอียดในการอ้างอิงนี้:",
+	"cite-ve-dialog-reference-editing-edit-details": "คุณกำลังแก้ไขรายละเอียดของการอ้างอิงนี้:",
+	"cite-ve-dialog-reference-editing-reused-short": "ใช้ไปแล้ว $1 {{PLURAL:$1|ครั้ง}}",
 	"cite-ve-dialog-reference-editing-reused": "แหล่งอ้างอิงนี้ถูกใช้แล้ว $1 {{PLURAL:$1|ครั้ง}}บนหน้านี้",
 	"cite-ve-dialog-reference-editing-reused-long": "แหล่งอ้างอิงนี้ถูกใช้แล้ว $1 {{PLURAL:$1|ครั้ง}}บนหน้านี้ การเปลี่ยนแปลงที่ทำที่นี่จะถูกนำไปใช้กับทุกที่ที่ใช้แหล่งอ้างอิงนี้ซ้ำ",
 	"cite-ve-dialog-reference-options-group-label": "ใช้กลุ่มนี้",

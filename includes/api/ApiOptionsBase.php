@@ -2,21 +2,7 @@
 /**
  * Copyright © 2012 Szymon Świerkosz beau@adres.pl
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -38,8 +24,8 @@ use Wikimedia\ParamValidator\ParamValidator;
  * @ingroup API
  */
 abstract class ApiOptionsBase extends ApiBase {
-	/** @var User User account to modify */
-	private $userForUpdates;
+	/** @var User|null User account to modify */
+	private ?User $userFromPrimary = null;
 
 	private UserOptionsManager $userOptionsManager;
 	private PreferencesFactory $preferencesFactory;
@@ -68,7 +54,7 @@ abstract class ApiOptionsBase extends ApiBase {
 	 * Changes preferences of the current user.
 	 */
 	public function execute() {
-		$user = $this->getUserForUpdatesOrNull();
+		$user = $this->getUserFromPrimaryOrNull();
 		if ( !$user || !$user->isNamed() ) {
 			$this->dieWithError(
 				[ 'apierror-mustbeloggedin', $this->msg( 'action-editmyoptions' ) ], 'notloggedin'
@@ -200,7 +186,7 @@ abstract class ApiOptionsBase extends ApiBase {
 					$field = $this->getHtmlForm()->getField( $key );
 					$validation = $field->validate(
 						$value,
-						$this->userOptionsManager->getOptions( $this->getUserForUpdates() )
+						$this->userOptionsManager->getOptions( $this->getUserFromPrimary() )
 					);
 				}
 				break;
@@ -229,7 +215,7 @@ abstract class ApiOptionsBase extends ApiBase {
 						'OptionValue' => substr( $value ?? '', 0, 255 ),
 						'OptionSize' => strlen( $value ?? '' ),
 						'OptionValidation' => $validation,
-						'UserId' => $this->getUserForUpdates()->getId(),
+						'UserId' => $this->getUserFromPrimary()->getId(),
 						'RequestIP' => $this->getRequest()->getIP(),
 						'RequestUA' => $this->getRequest()->getHeader( 'User-Agent' )
 					]
@@ -258,22 +244,20 @@ abstract class ApiOptionsBase extends ApiBase {
 	 * Load the user from the primary to reduce CAS errors on double post (T95839)
 	 * Will throw if the user is anonymous.
 	 */
-	protected function getUserForUpdates(): User {
+	protected function getUserFromPrimary(): User {
 		// @phan-suppress-next-line PhanTypeMismatchReturnNullable
-		return $this->getUserForUpdatesOrNull();
+		return $this->getUserFromPrimaryOrNull();
 	}
 
 	/**
-	 * Get the user for updates, or null if the user is anonymous
-	 *
-	 * @return User|null
+	 * Get the user from the primary, or null if the user is anonymous
 	 */
-	protected function getUserForUpdatesOrNull(): ?User {
-		if ( !$this->userForUpdates ) {
-			$this->userForUpdates = $this->getUser()->getInstanceForUpdate();
+	protected function getUserFromPrimaryOrNull(): ?User {
+		if ( !$this->userFromPrimary ) {
+			$this->userFromPrimary = $this->getUser()->getInstanceFromPrimary();
 		}
 
-		return $this->userForUpdates;
+		return $this->userFromPrimary;
 	}
 
 	/**
@@ -283,7 +267,7 @@ abstract class ApiOptionsBase extends ApiBase {
 	protected function getPreferences() {
 		if ( !$this->preferences ) {
 			$this->preferences = $this->preferencesFactory->getFormDescriptor(
-				$this->getUserForUpdates(),
+				$this->getUserFromPrimary(),
 				$this->getContext()
 			);
 		}
@@ -318,14 +302,17 @@ abstract class ApiOptionsBase extends ApiBase {
 	 */
 	abstract protected function commitChanges();
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$optionKinds = $this->preferencesFactory->listResetKinds();
 		$optionKinds[] = 'all';
@@ -349,6 +336,7 @@ abstract class ApiOptionsBase extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}

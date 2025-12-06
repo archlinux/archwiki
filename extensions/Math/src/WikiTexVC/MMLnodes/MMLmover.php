@@ -15,14 +15,14 @@ class MMLmover extends MMLbase {
 
 	/**
 	 * Creates a new subtree element with base and scripts
-	 * @param MMLbase $base Main content element
-	 * @param MMLbase $overscript Element placed above the base (overscript)
+	 * @param MMLbase|string $base Main content element
+	 * @param MMLbase|string $overscript Element placed above the base (overscript)
 	 * @param string $texclass Optional TeX class for styling
 	 * @param array $attributes Additional HTML attributes for the element
 	 * @return static New instance with children in order: [base, overscript]
 	 */
-	public static function newSubtree( MMLbase $base,
-									   MMLbase $overscript,
+	public static function newSubtree( $base,
+									   $overscript,
 									   string $texclass = "",
 									   array $attributes = [] ) {
 		$instance = new self( $texclass, $attributes );

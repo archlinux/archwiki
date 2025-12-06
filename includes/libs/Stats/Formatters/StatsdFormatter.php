@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -46,7 +33,7 @@ class StatsdFormatter implements FormatterInterface {
 
 		foreach ( $metric->getSamples() as $sample ) {
 			// dot-separate prefix, component, name, and label values `prefix.component.name.value1.value2`
-			$stat = implode( '.', array_merge( [ $prefix, $metric->getName() ], $sample->getLabelValues() ) );
+			$stat = implode( '.', [ $prefix, $metric->getName(), ...$sample->getLabelValues() ] );
 
 			// merge value with separator `:42`
 			$value = ':' . $sample->getValue();

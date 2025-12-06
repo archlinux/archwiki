@@ -34,13 +34,17 @@
 /** Class is added by UserLinkRenderer::userLink */
 .mw-tempuserlink {
 	background-color: @background-color-interactive;
-	padding: 2px 8px;
+	outline: 2px solid @background-color-interactive;
 	border-radius: @border-radius-base;
+	white-space: nowrap;
 }
 
 /** Class is added by UserLinkRenderer::userLink */
 .mw-tempuserlink-expired {
-	text-decoration: line-through 0.075em;
+	text-decoration: line-through;
+	// Safari does not support thickness as a text-decoration shorthand,
+	// but does support it on its own. T401918
+	text-decoration-thickness: 0.075em;
 	position: relative;
 
 	/** Class is added by UserLinkRenderer::userLink */
@@ -58,13 +62,15 @@
 }
 
 a.mw-tempuserlink-expired:hover {
-	text-decoration: line-through underline 0.075em;
+	text-decoration: line-through underline;
+	// Safari does not support thickness as a text-decoration shorthand,
+	// but does support it on its own. T401918
+	text-decoration-thickness: 0.075em;
 }
 
 /* Comment portions of RC entries, also used by MediaWiki\CommentFormatter\CommentFormatter::formatBlock */
 span.comment {
 	font-style: italic;
-	unicode-bidi: -moz-isolate;
 	unicode-bidi: isolate;
 	// Covering several contexts for breaking up long comments, see T158725.
 	word-wrap: break-word;
@@ -103,11 +109,7 @@ strong.mw-revdelundel-link {
 // normal red links as the contributions page does exist. To be revisited later.
 // More context: T303571#7781282
 .mw-usertoollinks-contribs-no-edits {
-	color: @color-link-new;
-
-	&:visited {
-		color: @color-link-new--visited;
-	}
+	.cdx-mixin-link-red();
 }
 
 .mw-logevent-actionlink,

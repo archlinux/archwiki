@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -25,6 +11,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\User\TempUser\TempUserConfig;
 use RuntimeException;
 use stdClass;
 use Wikimedia\Rdbms\IDatabase;
@@ -35,7 +22,7 @@ use Wikimedia\Rdbms\ILoadBalancer;
 /**
  * Create User objects.
  *
- * This creates User objects, and involves all the same global state,
+ * This creates User objects and involves all the same global state,
  * but wraps it in a service class to avoid static coupling, which
  * eases mocking in unit tests.
  *
@@ -54,23 +41,18 @@ class UserFactory implements UserRigorOptions {
 		MainConfigNames::SharedTables,
 	];
 
-	private ServiceOptions $options;
-	private ILBFactory $loadBalancerFactory;
 	private ILoadBalancer $loadBalancer;
-	private UserNameUtils $userNameUtils;
 
 	private ?User $lastUserFromIdentity = null;
 
 	public function __construct(
-		ServiceOptions $options,
-		ILBFactory $loadBalancerFactory,
-		UserNameUtils $userNameUtils
+		private readonly ServiceOptions $options,
+		private readonly ILBFactory $loadBalancerFactory,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly TempUserConfig $tempUserConfig
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->loadBalancerFactory = $loadBalancerFactory;
 		$this->loadBalancer = $loadBalancerFactory->getMainLB();
-		$this->userNameUtils = $userNameUtils;
 	}
 
 	/**
@@ -135,7 +117,7 @@ class UserFactory implements UserRigorOptions {
 	 *
 	 * If IP is supplied, an anonymous user will be created, otherwise a valid named user.
 	 * If you don't want to have the named user validated, use self::newFromName().
-	 * If you want to create simple anonymous user without providing the IP, use self::newAnonymous()
+	 * If you want to create a simple anonymous user without providing the IP, use self::newAnonymous()
 	 *
 	 * @since 1.44
 	 *
@@ -170,9 +152,6 @@ class UserFactory implements UserRigorOptions {
 	 * Factory method for creation from a given actor ID, replacing User::newFromActorId
 	 *
 	 * @since 1.35
-	 *
-	 * @param int $actorId
-	 * @return User
 	 */
 	public function newFromActorId( int $actorId ): User {
 		$user = new User();
@@ -186,9 +165,6 @@ class UserFactory implements UserRigorOptions {
 	 * Factory method for creation from a given UserIdentity, replacing User::newFromIdentity
 	 *
 	 * @since 1.35
-	 *
-	 * @param UserIdentity $userIdentity
-	 * @return User
 	 */
 	public function newFromUserIdentity( UserIdentity $userIdentity ): User {
 		if ( $userIdentity instanceof User ) {
@@ -296,16 +272,12 @@ class UserFactory implements UserRigorOptions {
 	 * If the code is invalid or has expired, returns null.
 	 *
 	 * @since 1.35
-	 *
-	 * @param string $confirmationCode
-	 * @param int $flags
-	 * @return User|null
 	 */
 	public function newFromConfirmationCode(
 		string $confirmationCode,
 		int $flags = IDBAccessObject::READ_NORMAL
 	): ?User {
-		if ( ( $flags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
+		if ( ( $flags & IDBAccessObject::READ_LATEST ) === IDBAccessObject::READ_LATEST ) {
 			$db = $this->loadBalancer->getConnection( DB_PRIMARY );
 		} else {
 			$db = $this->loadBalancer->getConnection( DB_REPLICA );
@@ -341,8 +313,6 @@ class UserFactory implements UserRigorOptions {
 
 	/**
 	 * @internal for transition from User to Authority as performer concept.
-	 * @param Authority $authority
-	 * @return User
 	 */
 	public function newFromAuthority( Authority $authority ): User {
 		if ( $authority instanceof User ) {
@@ -357,11 +327,10 @@ class UserFactory implements UserRigorOptions {
 	 * is disabled.
 	 *
 	 * @since 1.39
-	 * @return User
 	 */
 	public function newTempPlaceholder(): User {
 		$user = new User();
-		$user->setName( $this->userNameUtils->getTempPlaceholder() );
+		$user->setName( $this->tempUserConfig->getPlaceholderName() );
 		return $user;
 	}
 
@@ -374,14 +343,13 @@ class UserFactory implements UserRigorOptions {
 	 */
 	public function newUnsavedTempUser( ?string $name ): User {
 		$user = new User();
-		$user->setName( $name ?? $this->userNameUtils->getTempPlaceholder() );
+		$user->setName( $name ?? $this->tempUserConfig->getPlaceholderName() );
 		return $user;
 	}
 
 	/**
-	 * Purge user related caches, "touch" the user table to invalidate further caches
+	 * Purge user-related caches, "touch" the user table to invalidate further caches
 	 * @since 1.41
-	 * @param UserIdentity $userIdentity
 	 */
 	public function invalidateCache( UserIdentity $userIdentity ): void {
 		if ( !$userIdentity->isRegistered() ) {
@@ -391,7 +359,7 @@ class UserFactory implements UserRigorOptions {
 		$wikiId = $userIdentity->getWikiId();
 		if ( $wikiId === UserIdentity::LOCAL ) {
 			$legacyUser = $this->newFromUserIdentity( $userIdentity );
-			// Update user_touched within User class to manage state of User::mTouched for CAS check
+			// Update user_touched within User class to manage the state of User::mTouched for CAS check
 			$legacyUser->invalidateCache();
 		} else {
 			// cross-wiki invalidation
@@ -437,7 +405,6 @@ class UserFactory implements UserRigorOptions {
 
 	/**
 	 * Returns if the user table is shared with other wikis.
-	 * @return bool
 	 */
 	public function isUserTableShared(): bool {
 		return $this->options->get( MainConfigNames::SharedDB ) &&

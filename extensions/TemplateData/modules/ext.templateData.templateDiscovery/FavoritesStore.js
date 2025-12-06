@@ -37,21 +37,20 @@ OO.mixinClass( FavoritesStore, OO.EventEmitter );
  * @return {Promise}
  */
 FavoritesStore.prototype.getAllFavoritesDetails = function () {
-	return this.getFavoriteDetail( this.favoritesArray.join( '|' ) );
+	return this.getFavoritesDetails( this.favoritesArray );
 };
 
 /**
- * Get the details of a favorite (or favorites) by page ID(s)
- * pageId can be a number or a string of numbers separated by '|'.
+ * Get the details of some favorites by page ID.
  *
- * @param {number|string} pageId
+ * @param {Array<number|string>} pageIds
  * @return {Promise}
  */
-FavoritesStore.prototype.getFavoriteDetail = function ( pageId ) {
+FavoritesStore.prototype.getFavoritesDetails = function ( pageIds ) {
 	return new mw.Api().get( {
 		action: 'templatedata',
 		includeMissingTitles: 1,
-		pageids: pageId,
+		pageids: pageIds.join( '|' ),
 		lang: mw.config.get( 'wgUserLanguage' ),
 		redirects: 1,
 		formatversion: 2
@@ -69,6 +68,7 @@ FavoritesStore.prototype.getFavoriteDetail = function ( pageId ) {
 			if ( favorite.missing ||
 				!mwConfig.TemplateDataEditorNamespaces.includes( favorite.ns )
 			) {
+				this.favoritesArray.splice( this.favoritesArray.indexOf( parseInt( k ) ), 1 );
 				return;
 			}
 			favorite.pageId = k;
@@ -77,42 +77,14 @@ FavoritesStore.prototype.getFavoriteDetail = function ( pageId ) {
 			}
 			favorites.push( favorite );
 		} );
-		return favorites
-			.sort( ( p1, p2 ) => p1.title === p2.title ? 0 : ( p1.title < p2.title ? -1 : 1 ) );
+		// Return favorites sorted by page id in this.favoritesArray
+		return favorites.sort( ( p1, p2 ) => {
+			const index1 = this.favoritesArray.indexOf( parseInt( p1.pageId ) );
+			const index2 = this.favoritesArray.indexOf( parseInt( p2.pageId ) );
+			return index1 === index2 ? 0 : ( index1 < index2 ? -1 : 1 );
+		} );
 	} );
 };
-
-/**
- * Save the favorites array to the user options
- *
- * @param {Array} favoritesArray
- * @return {Promise}
- */
-function save( favoritesArray ) {
-	const json = JSON.stringify( favoritesArray );
-	return new mw.Api().saveOption( USER_PREFERENCE_NAME, json, { errorsuselocal: 1, errorformat: 'html' } )
-		.then( () => {
-			this.favoritesArray = favoritesArray;
-			mw.user.options.set( USER_PREFERENCE_NAME, json );
-		},
-		( code, response ) => {
-			// The 'notloggedin' error is a special case in mw.Api.saveOptions()
-			if ( code === 'notloggedin' ) {
-				mw.notify( mw.msg( 'notloggedin' ), {
-					type: 'error',
-					title: mw.msg( 'templatedata-favorite-error' )
-				} );
-			} else {
-				for ( const error of response.errors ) {
-					mw.notify( error.html, {
-						type: 'error',
-						title: mw.msg( 'templatedata-favorite-error' )
-					} );
-				}
-			}
-			throw code;
-		} );
-}
 
 /**
  * Parse a page ID to a number, or throw an error
@@ -137,14 +109,14 @@ function parsePageId( pageId ) {
  */
 FavoritesStore.prototype.addFavorite = function ( pageId ) {
 	if ( this.favoritesArray.length < this.maxFavorites ) {
-		const newFavorites = this.favoritesArray;
+		const newFavorites = [ ...this.favoritesArray ];
 		newFavorites.push( parsePageId( pageId ) );
-		return save( newFavorites ).then( () => {
+		return this.saveFavoritesArray( newFavorites ).then( () => {
 			this.emit( 'added', pageId );
 			mw.notify(
 				mw.msg( 'templatedata-favorite-added' ),
 				{
-					type: 'success',
+					type: 'info',
 					tag: 'templatedata-favorite-added'
 				}
 			);
@@ -172,14 +144,14 @@ FavoritesStore.prototype.removeFavorite = function ( pageId ) {
 	if ( index === -1 ) {
 		return Promise.resolve();
 	}
-	const newFavorites = this.favoritesArray;
+	const newFavorites = [ ...this.favoritesArray ];
 	newFavorites.splice( index, 1 );
-	return save( newFavorites ).then( () => {
+	return this.saveFavoritesArray( newFavorites ).then( () => {
 		this.emit( 'removed', pageId );
 		mw.notify(
 			mw.msg( 'templatedata-favorite-removed' ),
 			{
-				type: 'success',
+				type: 'info',
 				tag: 'templatedata-favorite-removed'
 			}
 		);
@@ -198,19 +170,40 @@ FavoritesStore.prototype.isFavorite = function ( pageId ) {
 };
 
 /**
- * Utility function to get the title of a page ID
+ * Save the favorites array to the user options
  *
- * @param {number} pageId
- * @return {jQuery.Promise}
+ * @param {Array} favoritesArray
+ * @return {Promise}
  */
-FavoritesStore.prototype.getFavoriteTitle = function ( pageId ) {
-	// TODO: Should this be cached in some way?
-	return new mw.Api().get( {
-		action: 'query',
-		prop: 'info',
-		pageids: pageId,
-		formatversion: 2
-	} );
+FavoritesStore.prototype.saveFavoritesArray = function ( favoritesArray ) {
+	// Update favoritesArray early, so that subsequent calls to this method use the new value,
+	// but keep the old value available and roll back to it on error.
+	const oldFavoritesArray = [ ...this.favoritesArray ];
+	this.favoritesArray = [ ...favoritesArray ];
+	const json = JSON.stringify( favoritesArray );
+	return new mw.Api().saveOption( USER_PREFERENCE_NAME, json, { errorsuselocal: 1, errorformat: 'html' } )
+		.then( () => {
+			mw.user.options.set( USER_PREFERENCE_NAME, json );
+		},
+		( code, response ) => {
+			// Restore previous value if the new one was not saved.
+			this.favoritesArray = [ ...oldFavoritesArray ];
+			// The 'notloggedin' error is a special case in mw.Api.saveOptions()
+			if ( code === 'notloggedin' ) {
+				mw.notify( mw.msg( 'notloggedin' ), {
+					type: 'error',
+					title: mw.msg( 'templatedata-favorite-error' )
+				} );
+			} else {
+				for ( const error of response.errors ) {
+					mw.notify( error.html, {
+						type: 'error',
+						title: mw.msg( 'templatedata-favorite-error' )
+					} );
+				}
+			}
+			throw code;
+		} );
 };
 
 module.exports = FavoritesStore;

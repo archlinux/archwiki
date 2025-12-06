@@ -1,29 +1,17 @@
 <?php
 /**
- * Packed image gallery. All images adjusted to be same height.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 use MediaWiki\Context\IContextSource;
 use MediaWiki\FileRepo\File\File;
 
+/**
+ * Packed image gallery. All images adjusted to be same height.
+ */
 class PackedImageGallery extends TraditionalImageGallery {
+	/** @inheritDoc */
 	public function __construct( $mode = 'traditional', ?IContextSource $context = null ) {
 		parent::__construct( $mode, $context );
 		// Does not support per row option.
@@ -37,14 +25,17 @@ class PackedImageGallery extends TraditionalImageGallery {
 	 */
 	private const SCALE_FACTOR = 1.5;
 
+	/** @inheritDoc */
 	protected function getVPad( $boxHeight, $thumbHeight ) {
 		return ( $this->getThumbPadding() + $boxHeight - $thumbHeight / self::SCALE_FACTOR ) / 2;
 	}
 
+	/** @inheritDoc */
 	protected function getThumbPadding() {
 		return 0;
 	}
 
+	/** @inheritDoc */
 	protected function getGBPadding() {
 		return 2;
 	}
@@ -69,6 +60,7 @@ class PackedImageGallery extends TraditionalImageGallery {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getThumbDivWidth( $thumbWidth ) {
 		// Require at least 60px wide, so caption is wide enough to work.
 		if ( $thumbWidth < 60 * self::SCALE_FACTOR ) {
@@ -89,6 +81,7 @@ class PackedImageGallery extends TraditionalImageGallery {
 		return $this->getThumbDivWidth( $thumbWidth ) + $this->getGBPadding();
 	}
 
+	/** @inheritDoc */
 	protected function adjustImageParameters( $thumb, &$imageParameters ) {
 		// Re-adjust back to normal size.
 		$imageParameters['override-width'] = ceil( $thumb->getWidth() / self::SCALE_FACTOR );

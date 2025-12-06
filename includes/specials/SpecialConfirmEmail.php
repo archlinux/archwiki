@@ -1,25 +1,12 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
+use LogicException;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\ReadOnlyError;
 use MediaWiki\Exception\UserNotLoggedIn;
@@ -58,6 +45,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		$this->userFactory = $userFactory;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -125,15 +113,12 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 			$form
 				->setAction( $this->getPageTitle()->getLocalURL() )
 				->setSubmitTextMsg( 'confirmemail_send' )
-				->setSubmitCallback( [ $this, 'submitSend' ] );
+				->setSubmitCallback( $this->submitSend( ... ) );
 
 			$retval = $form->show();
 
-			if ( $retval === true ) {
-				// should never happen, but if so, don't let the user without any message
+			if ( $retval === true || ( $retval instanceof Status && $retval->isGood() ) ) {
 				$out->addWikiMsg( 'confirmemail_sent' );
-			} elseif ( $retval instanceof Status && $retval->isGood() ) {
-				$out->addWikiTextAsInterface( $retval->getValue() );
 			}
 		} else {
 			// date and time are separate parameters to facilitate localisation.
@@ -153,10 +138,10 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	 *
 	 * @return Status Status object with the result
 	 */
-	public function submitSend() {
+	private function submitSend() {
 		$status = $this->getUser()->sendConfirmationMail();
 		if ( $status->isGood() ) {
-			return Status::newGood( $this->msg( 'confirmemail_sent' )->text() );
+			return Status::newGood();
 		} else {
 			return Status::newFatal( new RawMessage(
 				$status->getWikiText( 'confirmemail_sendfailed', false, $this->getLanguage() )
@@ -189,7 +174,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		// Enforce permissions, user blocks, and rate limits
 		$this->authorizeAction( 'confirmemail' )->throwErrorPageError();
 
-		$userLatest = $user->getInstanceForUpdate();
+		$userLatest = $user->getInstanceFromPrimary() ?? throw new LogicException( 'No user' );
 		$userLatest->confirmEmail();
 		$userLatest->saveSettings();
 		$message = $this->getUser()->isNamed() ? 'confirmemail_loggedin' : 'confirmemail_success';

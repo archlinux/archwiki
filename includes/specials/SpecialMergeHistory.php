@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -55,6 +41,9 @@ class SpecialMergeHistory extends SpecialPage {
 
 	/** @var string */
 	protected $mTimestamp;
+
+	/** @var string */
+	protected $mTimestampOld;
 
 	/** @var int */
 	protected $mTargetID;
@@ -104,6 +93,7 @@ class SpecialMergeHistory extends SpecialPage {
 		$this->changeTagsStore = $changeTagsStore;
 	}
 
+	/** @inheritDoc */
 	public function doesWrites() {
 		return true;
 	}
@@ -124,6 +114,10 @@ class SpecialMergeHistory extends SpecialPage {
 		if ( $this->mTimestamp === null || !preg_match( '/[0-9]{14}(\|[0-9]+)?/', $this->mTimestamp ) ) {
 			$this->mTimestamp = '';
 		}
+		$this->mTimestampOld = $request->getVal( 'mergepointold' );
+		if ( $this->mTimestampOld === null || !preg_match( '/[0-9]{14}(\|[0-9]+)?/', $this->mTimestamp ) ) {
+			$this->mTimestampOld = '';
+		}
 		$this->mComment = $request->getText( 'wpComment' );
 
 		$this->mMerge = $request->wasPosted()
@@ -139,6 +133,7 @@ class SpecialMergeHistory extends SpecialPage {
 		}
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->useTransactionalTimeLimit();
 
@@ -214,6 +209,11 @@ class SpecialMergeHistory extends SpecialPage {
 				'default' => $this->mTimestamp,
 				'name' => 'mergepoint'
 			],
+			'mergepointold' => [
+				'type' => 'hidden',
+				'default' => $this->mTimestampOld,
+				'name' => 'mergepointold'
+			],
 			'target' => [
 				'type' => 'title',
 				'label-message' => 'mergehistory-from',
@@ -253,7 +253,8 @@ class SpecialMergeHistory extends SpecialPage {
 			[],
 			$this->mTargetObj,
 			$this->mDestObj,
-			$this->mTimestamp
+			$this->mTimestamp,
+			$this->mTimestampOld
 		);
 		$haveRevisions = $revisions->getNumRows() > 0;
 
@@ -262,6 +263,7 @@ class SpecialMergeHistory extends SpecialPage {
 			'mediawiki.interface.helpers.styles',
 			'mediawiki.special'
 		] );
+		$out->addModules( 'mediawiki.special.mergeHistory' );
 		$titleObj = $this->getPageTitle();
 		$action = $titleObj->getLocalURL( [ 'action' => 'submit' ] );
 		# Start the form here
@@ -365,7 +367,12 @@ class SpecialMergeHistory extends SpecialPage {
 		}
 
 		// MergeHistory object
-		$mh = $this->mergeHistoryFactory->newMergeHistory( $targetTitle, $destTitle, $this->mTimestamp );
+		$mh = $this->mergeHistoryFactory->newMergeHistory(
+			$targetTitle,
+			$destTitle,
+			$this->mTimestamp,
+			$this->mTimestampOld
+		);
 
 		// Merge!
 		$mergeStatus = $mh->merge( $this->getAuthority(), $this->mComment );
@@ -397,6 +404,7 @@ class SpecialMergeHistory extends SpecialPage {
 		return true;
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}

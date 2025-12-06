@@ -43,7 +43,7 @@ class EventDispatcherTest extends IntegrationTestCase {
 		$events = $other ? static::getJson( $other, true ) : [];
 
 		$fakeUser = new UserIdentityValue( 0, $authorUsername );
-		$fakeTitle = new PageIdentityValue( 0, NS_TALK, __CLASS__, PageIdentityValue::LOCAL );
+		$fakeTitle = PageIdentityValue::localIdentity( 0, NS_TALK, __CLASS__ );
 		$fakeRevRecord = new MutableRevisionRecord( $fakeTitle );
 		// All mock comments are posted between 00:00 and 00:10 on 2020-01-01
 		$fakeRevRecord->setTimestamp( ( new DateTimeImmutable( '2020-01-01T00:10' ) )->format( 'c' ) );

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -66,13 +52,15 @@ use ReflectionProperty;
 trait DeprecationHelper {
 
 	/**
-	 * List of deprecated properties, in <property name> => [<version>, <class>,
-	 * <component>, <getter>, <setter> ] format where <version> is the MediaWiki version
-	 * where the property got deprecated, <class> is the
-	 * the name of the class defining the property, <component> is the MediaWiki component
-	 * (extension, skin etc.) for use in the deprecation warning) or null if it is MediaWiki.
-	 * E.g. [ 'mNewRev' => [ '1.32', 'DifferenceEngine', null ]
-	 * @var string[][]
+	 * List of deprecated properties, in the format:
+	 *     <property name> => [<version>, <class>, <component>, <getter>, <setter> ]
+	 * where:
+	 * - <version> is the MediaWiki version where the property got deprecated,
+	 * - <class> is the the name of the class defining the property,
+	 * - <component> is the MediaWiki component (extension, skin etc.) for use in the deprecation
+	 *   warning) or false if it is MediaWiki.
+	 * E.g. [ 'mNewRev' => [ '1.32', 'DifferenceEngine', false ]
+	 * @var array<string, array{string, class-string, string|false, callable|string|null, callable|string|null}>
 	 */
 	protected static $deprecatedPublicProperties = [];
 
@@ -109,8 +97,9 @@ trait DeprecationHelper {
 		self::$deprecatedPublicProperties[$property] = [
 			$version,
 			$class ?: __CLASS__,
-			$component,
-			null, null
+			$component ?: false,
+			null,
+			null,
 		];
 	}
 
@@ -145,10 +134,9 @@ trait DeprecationHelper {
 		self::$deprecatedPublicProperties[$property] = [
 			$version,
 			$class ?: __CLASS__,
-			null,
+			$component ?: false,
 			$getter,
 			$setter,
-			$component
 		];
 	}
 
@@ -157,7 +145,7 @@ trait DeprecationHelper {
 	 * are accessed.
 	 *
 	 * @param string $version MediaWiki version where the property became deprecated.
-	 * @param string|null $class The class which has the deprecated property.
+	 * @param class-string|null $class The class which has the deprecated property.
 	 * @param string|null $component
 	 */
 	protected function deprecateDynamicPropertiesAccess(

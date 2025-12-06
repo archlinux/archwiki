@@ -23,6 +23,7 @@ class ApiParseDiscussionToolsTest extends ApiTestCase {
 			'action' => 'parse',
 			'title' => 'Talk:Test',
 			'uselang' => 'en',
+			'useskin' => 'fallback',
 			'text' => "__FORCETOC__\n== foo ==\nbar ~~~~",
 			'pst' => 1,
 			'prop' => 'sections',

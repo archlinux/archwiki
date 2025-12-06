@@ -21,6 +21,7 @@ use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\Utils\UrlUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -51,7 +52,7 @@ class PageImages implements
 	 * Note changing this value is not advised as it will invalidate all
 	 * existing page property names on a production instance
 	 * and cause them to be regenerated.
-	 * @see PageImages::PROP_NAME_FREE
+	 * @see self::PROP_NAME_FREE
 	 */
 	public const PROP_NAME = 'page_image';
 
@@ -63,44 +64,19 @@ class PageImages implements
 	 */
 	public const PROP_NAME_FREE = 'page_image_free';
 
-	/** @var Config */
-	private $config;
+	private static ?MapCacheLRU $cache = null;
 
-	/** @var IConnectionProvider */
-	private $dbProvider;
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var MapCacheLRU */
-	private static $cache = null;
-
-	/**
-	 * @return PageImages
-	 */
 	private static function factory(): self {
 		return MediaWikiServices::getInstance()->getService( 'PageImages.PageImages' );
 	}
 
-	/**
-	 * @param Config $config
-	 * @param IConnectionProvider $dbProvider
-	 * @param RepoGroup $repoGroup
-	 * @param UserOptionsLookup $userOptionsLookup
-	 */
 	public function __construct(
-		Config $config,
-		IConnectionProvider $dbProvider,
-		RepoGroup $repoGroup,
-		UserOptionsLookup $userOptionsLookup
+		private readonly Config $config,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly RepoGroup $repoGroup,
+		private readonly UrlUtils $urlUtils,
+		private readonly UserOptionsLookup $userOptionsLookup,
 	) {
-		$this->config = $config;
-		$this->dbProvider = $dbProvider;
-		$this->repoGroup = $repoGroup;
-		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -129,7 +105,7 @@ class PageImages implements
 	 * @param bool $isFree Whether the image is a free-license image
 	 * @return string
 	 */
-	public static function getPropName( $isFree ) {
+	public static function getPropName( bool $isFree ): string {
 		return $isFree ? self::PROP_NAME_FREE : self::PROP_NAME;
 	}
 
@@ -144,7 +120,7 @@ class PageImages implements
 	 * specifying whether to return the non-free property name or not
 	 * @return string|array
 	 */
-	public static function getPropNames( $license ) {
+	public static function getPropNames( string $license ) {
 		if ( $license === self::LICENSE_FREE ) {
 			return self::getPropName( true );
 		}
@@ -154,10 +130,12 @@ class PageImages implements
 	/**
 	 * Return page image for a given title
 	 *
+	 * @deprecated since 1.45, use getImage instead
 	 * @param Title $title Title to get page image for
 	 * @return File|false
 	 */
 	public static function getPageImage( Title $title ) {
+		wfDeprecated( __METHOD__, '1.45' );
 		// Cast any cacheable null to false
 		return self::factory()->getImage( $title ) ?? false;
 	}
@@ -268,11 +246,7 @@ class PageImages implements
 		$pageIds = array_keys( $results );
 		$data = self::getImages( $pageIds, 50 );
 		foreach ( $pageIds as $id ) {
-			if ( isset( $data[$id]['thumbnail'] ) ) {
-				$results[$id]['image'] = $data[$id]['thumbnail'];
-			} else {
-				$results[$id]['image'] = null;
-			}
+			$results[$id]['image'] = $data[$id]['thumbnail'] ?? null;
 		}
 	}
 
@@ -284,7 +258,7 @@ class PageImages implements
 	 *
 	 * @return array[]
 	 */
-	public static function getImages( array $pageIds, $size = 0 ) {
+	public static function getImages( array $pageIds, int $size = 0 ): array {
 		$ret = [];
 		foreach ( array_chunk( $pageIds, ApiBase::LIMIT_SML1 ) as $chunk ) {
 			$request = [
@@ -322,23 +296,23 @@ class PageImages implements
 		if ( !$imageFile ) {
 			$fallback = $out->getConfig()->get( 'PageImagesOpenGraphFallbackImage' );
 			if ( $fallback ) {
-				$out->addMeta( 'og:image', wfExpandUrl( $fallback, PROTO_CANONICAL ) );
+				$out->addMeta( 'og:image', $this->urlUtils->expand( $fallback, PROTO_CANONICAL ) ?? '' );
 			}
 			return;
 		}
 
 		// Open Graph protocol -- https://ogp.me/
-		// Multiple images are supported according to https://ogp.me/#array
 		// See https://developers.facebook.com/docs/sharing/best-practices?locale=en_US#images
-		// See T282065: WhatsApp expects an image <300kB
-		foreach ( [ 1200, 800, 640 ] as $width ) {
-			$thumb = $imageFile->transform( [ 'width' => $width ] );
-			if ( !$thumb ) {
-				continue;
+		// T295521: Updated in 2025, WhatsApp expects images >300px, but <600KB
+		// See https://developers.facebook.com/docs/whatsapp/link-previews/
+		$thumb = $imageFile->transform( [ 'width' => 1200, 'height' => 1200 ] );
+		if ( $thumb && $thumb->getUrl() ) {
+			$url = $this->urlUtils->expand( $thumb->getUrl(), PROTO_CANONICAL );
+			if ( $url ) {
+				$out->addMeta( 'og:image', $url );
+				$out->addMeta( 'og:image:width', (string)$thumb->getWidth() );
+				$out->addMeta( 'og:image:height', (string)$thumb->getHeight() );
 			}
-			$out->addMeta( 'og:image', wfExpandUrl( $thumb->getUrl(), PROTO_CANONICAL ) );
-			$out->addMeta( 'og:image:width', strval( $thumb->getWidth() ) );
-			$out->addMeta( 'og:image:height', strval( $thumb->getHeight() ) );
 		}
 	}
 

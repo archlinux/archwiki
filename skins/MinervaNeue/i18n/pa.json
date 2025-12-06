@@ -29,7 +29,6 @@
 	"mobile-frontend-meta-data-issues-categories": "ਇਸ ਸ਼੍ਰੇਣੀ ਬਾਰੇ",
 	"mobile-frontend-meta-data-issues-header": "ਸਫ਼ੇ ਦੇ ਮੁੱਦੇ",
 	"minerva-meta-data-issues-section-header": "ਭਾਗ ਦੇ ਮੁੱਦੇ",
-	"mobile-frontend-pageaction-edit-tooltip": "ਇਸ ਸਫ਼ੇ ਦਾ ਅਗੇਤਰਾ ਹਿੱਸਾ ਸੋਧੋ।",
 	"mobile-frontend-placeholder": "{{SITENAME}} 'ਤੇ ਖੋਜੋ",
 	"mobile-frontend-random-button": "ਬੇਤਰਤੀਬ",
 	"mobile-frontend-redirected-from": "\"[[$1]]\" ਤੋਂ ਮੋੜਿਆ ਗਿਆ",
@@ -44,11 +43,5 @@
 	"minerva-page-actions-language-switcher": "ਬੋਲੀਆਂ",
 	"minerva-page-actions-history": "ਅਤੀਤ",
 	"skin-minerva-issue-learn-more": "ਹੋਰ ਸਿੱਖੋ",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 ਸਕਿੰਟ |$1 ਸਕਿੰਟਾਂ}} ਪਹਿਲਾਂ",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 ਮਿੰਟ|$1 ਮਿੰਟਾਂ}} ਪਹਿਲਾਂ",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ਘੰਟਾ|$1 ਘੰਟੇ}} ਪਹਿਲਾਂ",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 ਦਿਨ|$1 ਦਿਨਾਂ}} ਪਹਿਲਾਂ",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 ਮਹੀਨਾ|$1 ਮਹੀਨੇ}} ਪਹਿਲਾਂ",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 ਸਾਲ}} ਪਹਿਲਾਂ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "ਸ਼੍ਰੇਣੀਆਂ"
 }

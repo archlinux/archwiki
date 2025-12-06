@@ -33,7 +33,7 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'halfParsed' )->willReturnCallback(
-			static fn ( $parser, ...$args ) => '(' . implode( '|', $args ) . ')'
+			static fn ( ...$args ) => '(' . implode( '|', $args ) . ')'
 		);
 
 		$referenceStack = new ReferenceStack();
@@ -48,10 +48,13 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$spy->referenceStack = $referenceStack;
 		$spy->errorReporter = $mockErrorReporter;
 		$spy->referenceListFormatter = $formatter;
-		$spy->isSectionPreview = $isSectionPreview;
 
-		$parser = $this->createNoOpMock( Parser::class );
-		$output = $cite->checkRefsNoReferences( $parser, $isSectionPreview );
+		$parserOptions = $this->createNoOpMock( ParserOptions::class, [ 'getIsSectionPreview' ] );
+		$parserOptions->method( 'getIsSectionPreview' )->willReturn( $isSectionPreview );
+		$parser = $this->createNoOpMock( Parser::class, [ 'getOptions' ] );
+		$parser->method( 'getOptions' )->willReturn( $parserOptions );
+
+		$output = $cite->checkRefsNoReferences( $parser );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
@@ -88,15 +91,9 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$language = $this->createMock( Language::class );
 		$language->method( 'getCode' )->willReturn( 'en' );
 
-		$mockOptions = $this->createMock( ParserOptions::class );
-		$mockOptions->method( 'getIsPreview' )->willReturn( false );
-		$mockOptions->method( 'getIsSectionPreview' )->willReturn( false );
-
-		$mockParser = $this->createNoOpMock( Parser::class, [ 'getOptions', 'getContentLanguage' ] );
-		$mockParser->method( 'getOptions' )->willReturn( $mockOptions );
+		$mockParser = $this->createNoOpMock( Parser::class, [ 'getContentLanguage' ] );
 		$mockParser->method( 'getContentLanguage' )->willReturn( $language );
-		$config = $this->getServiceContainer()->getMainConfig();
-		return new Cite( $mockParser, $config );
+		return $this->getServiceContainer()->getService( 'Cite.CiteFactory' )->newCite( $mockParser );
 	}
 
 }

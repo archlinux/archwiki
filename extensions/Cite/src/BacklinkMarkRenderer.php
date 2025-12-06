@@ -16,36 +16,23 @@ use stdClass;
  */
 class BacklinkMarkRenderer {
 
-	/** @var string[] In-memory cache for the alphabet */
-	private array $alphabet;
+	/** @var string[]|null In-memory cache for the alphabet */
+	private ?array $alphabet = null;
 	/** @var string[]|null In-memory cache for the i18n-configured sequence */
-	private ?array $legacySequence;
+	private ?array $legacySequence = null;
 
-	private ReferenceMessageLocalizer $messageLocalizer;
-	private AlphabetsProvider $alphabetsProvider;
 	private ?IConfigurationProvider $configProvider = null;
-	private Config $config;
 
 	public function __construct(
-		string $languageCode,
-		ReferenceMessageLocalizer $messageLocalizer,
-		AlphabetsProvider $alphabetsProvider,
+		private readonly string $languageCode,
+		private readonly ReferenceMessageLocalizer $messageLocalizer,
+		private readonly AlphabetsProvider $alphabetsProvider,
 		?ConfigurationProviderFactory $providerFactory,
-		Config $config
+		private readonly Config $config,
 	) {
-		$this->messageLocalizer = $messageLocalizer;
-		$this->alphabetsProvider = $alphabetsProvider;
-		$this->config = $config;
-
 		if ( $providerFactory && $this->config->get( 'CiteBacklinkCommunityConfiguration' ) ) {
 			$this->configProvider = $providerFactory->newProvider( 'Cite' );
 		}
-
-		$this->alphabet = $this->getBacklinkAlphabet( $languageCode );
-
-		$legacySequenceMessage = $this->messageLocalizer->msg( 'cite_references_link_many_format_backlink_labels' );
-		$this->legacySequence = $legacySequenceMessage->isDisabled()
-			? null : preg_split( '/\s+/', $legacySequenceMessage->plain() );
 	}
 
 	/**
@@ -55,7 +42,19 @@ class BacklinkMarkRenderer {
 	 * @return string rendered marker
 	 */
 	public function getBacklinkMarker( int $reuseIndex ): string {
-		return $this->buildAlphaLabel( $this->alphabet, $reuseIndex );
+		// Lazy initialization only when needed because this is a little expensive
+		$this->alphabet ??= $this->getBacklinkAlphabet( $this->languageCode );
+
+		$radix = count( $this->alphabet );
+		$label = '';
+		while ( $reuseIndex > 0 ) {
+			// Logically, our alphabet is meant to be 1-based but the array is 0-based
+			$reuseIndex--;
+			// Start with the least significant place, walking up from right to left
+			$label = $this->alphabet[$reuseIndex % $radix] . $label;
+			$reuseIndex = (int)( $reuseIndex / $radix );
+		}
+		return $label;
 	}
 
 	/**
@@ -88,6 +87,13 @@ class BacklinkMarkRenderer {
 	 * @return string rendered marker
 	 */
 	public function getLegacyAlphabeticMarker( int $reuseIndex, int $reuseCount, string $parentLabel = '' ): string {
+		if ( $this->legacySequence === null ) {
+			$msg = $this->messageLocalizer->msg( 'cite_references_link_many_format_backlink_labels' );
+			$this->legacySequence = $msg->isDisabled() ?
+				[] :
+				preg_split( '/\s+/', $msg->plain() );
+		}
+
 		return $this->legacySequence[$reuseIndex - 1]
 			?? $this->getLegacyNumericMarker( $reuseIndex, $reuseCount, $parentLabel );
 	}
@@ -112,22 +118,24 @@ class BacklinkMarkRenderer {
 		return $this->messageLocalizer->msg( 'cite_reference_backlink_symbol' )->plain();
 	}
 
-	private function loadCommunityConfig(): ?stdClass {
+	private function loadCommunityConfig(): stdClass {
 		if ( $this->configProvider ) {
 			$status = $this->configProvider->loadValidConfiguration();
-			return $status->isOK() ? $status->getValue() : null;
+			if ( $status->isOK() ) {
+				return $status->getValue();
+			}
 		}
-		return null;
+		return (object)[];
 	}
 
 	/**
 	 * Returns an Alphabet of symbols that can be used to generate backlink markers.
 	 * The Alphabet will either be retrieved from config or the CLDR AlphabetsProvider.
 	 *
-	 * @param string $code
+	 * @param string $languageCode
 	 * @return string[]
 	 */
-	private function getBacklinkAlphabet( string $code ): array {
+	private function getBacklinkAlphabet( string $languageCode ): array {
 		$alphabetString = $this->loadCommunityConfig()->Cite_Settings->backlinkAlphabet ??
 			$this->config->get( 'CiteDefaultBacklinkAlphabet' ) ?? '';
 
@@ -139,7 +147,7 @@ class BacklinkMarkRenderer {
 		);
 
 		if ( !$alphabet ) {
-			$alphabet = $this->alphabetsProvider->getIndexCharacters( $code ) ?? [];
+			$alphabet = $this->alphabetsProvider->getIndexCharacters( $languageCode ) ?? [];
 			$alphabet = array_map( 'mb_strtolower', $alphabet );
 		}
 
@@ -150,30 +158,4 @@ class BacklinkMarkRenderer {
 		return $alphabet;
 	}
 
-	/**
-	 * Recursive method to build a mark using an alphabet, repeating symbols to
-	 * extend the range like "a…z, aa, ab…"
-	 *
-	 * @param string[] $symbols List of alphabet characters as strings
-	 * @param int $number One-based footnote group index
-	 * @param string $result Recursively-constructed output
-	 * @return string Caller sees the final result
-	 */
-	private function buildAlphaLabel( array $symbols, int $number, string $result = '' ): string {
-		// Done recursing?
-		if ( $number <= 0 ) {
-			return $result;
-		}
-		$radix = count( $symbols );
-		// Use a zero-based index as it becomes more convenient for integer
-		// modulo and symbol lookup (though not for division!)
-		$remainder = ( $number - 1 ) % $radix;
-		return $this->buildAlphaLabel(
-			$symbols,
-			// Subtract so the units value is zero and divide, moving to the next place leftwards.
-			( $number - ( $remainder + 1 ) ) / $radix,
-			// Prepend current symbol, moving left.
-			$symbols[ $remainder ] . $result
-		);
-	}
 }

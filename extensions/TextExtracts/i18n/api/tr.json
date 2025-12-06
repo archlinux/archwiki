@@ -11,7 +11,7 @@
 	"apihelp-query+extracts-param-limit": "Geri döndürecek alıntı. (Birden fazla alıntı yalnızca exintro true olarak ayarlanmışsa döndürülebilir.)",
 	"apihelp-query+extracts-param-intro": "Yalnızca ilk bölümden önceki içeriği döndürün.",
 	"apihelp-query+extracts-param-plaintext": "Özetleri sınırlı HTML yerine düz metin olarak döndürün.",
-	"apihelp-query+extracts-param-sectionformat": "Bölümleri düz metin modunda biçimlendirme:\n;plain:Biçimlendirme yok.\n;wiki:Vikimetin tarzı biçimlendirme (== bunun gibi ==).\n;raw:Bu modülün dahili gösterimi (&lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;bölüm düzeyi&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt; önekli bölüm başlıkları).",
+	"apihelp-query+extracts-param-sectionformat": "Bölümler düz metin modunda nasıl biçimlendirilir:",
 	"apihelp-query+extracts-example-1": "175 karakterlik bir alıntı edinin",
 	"apiwarn-textextracts-limit": "<var>exlimit</var>, tüm madde alıntıları isteği için çok büyüktü ve $1 düşürüldü.",
 	"apiwarn-textextracts-unsupportedmodel": "$1, desteklenmeyen $2 içerik modeline sahiptir; boş bir özü döndürme.",

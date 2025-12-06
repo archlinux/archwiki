@@ -20,6 +20,8 @@ function init( $pageContainer ) {
 			}
 		} catch ( err ) {}
 		copyLink( link );
+		location.hash = new URL( link ).hash;
+		return false;
 	} ).attr( 'data-event-name', 'discussiontools.permalink-copied' );
 }
 

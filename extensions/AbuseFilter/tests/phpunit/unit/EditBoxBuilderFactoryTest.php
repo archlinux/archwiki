@@ -18,10 +18,6 @@ use MessageLocalizer;
  */
 class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @param bool $isCodeEditorLoaded
-	 * @return EditBoxBuilderFactory
-	 */
 	private function getFactory( bool $isCodeEditorLoaded ): EditBoxBuilderFactory {
 		return new EditBoxBuilderFactory(
 			$this->createMock( AbuseFilterPermissionManager::class ),

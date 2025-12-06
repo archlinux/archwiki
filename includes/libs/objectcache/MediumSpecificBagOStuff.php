@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\ObjectCache;
@@ -169,6 +155,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	 */
 	abstract protected function doGet( $key, $flags = 0, &$casToken = null );
 
+	/** @inheritDoc */
 	public function set( $key, $value, $exptime = 0, $flags = 0 ) {
 		$entry = $this->makeValueOrSegmentList( $key, $value, $exptime, $flags, $ok );
 
@@ -188,6 +175,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	 */
 	abstract protected function doSet( $key, $value, $exptime = 0, $flags = 0 );
 
+	/** @inheritDoc */
 	public function delete( $key, $flags = 0 ) {
 		if ( !$this->fieldHasFlags( $flags, self::WRITE_ALLOW_SEGMENTS ) ) {
 			return $this->doDelete( $key, $flags );
@@ -223,6 +211,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	 */
 	abstract protected function doDelete( $key, $flags = 0 );
 
+	/** @inheritDoc */
 	public function add( $key, $value, $exptime = 0, $flags = 0 ) {
 		$entry = $this->makeValueOrSegmentList( $key, $value, $exptime, $flags, $ok );
 
@@ -478,6 +467,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return $ok;
 	}
 
+	/** @inheritDoc */
 	public function incrWithInit( $key, $exptime, $step = 1, $init = null, $flags = 0 ) {
 		$step = (int)$step;
 		$init = is_int( $init ) ? $init : $step;
@@ -654,6 +644,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return "$key:lock";
 	}
 
+	/** @inheritDoc */
 	public function deleteObjectsExpiringBefore(
 		$timestamp,
 		?callable $progress = null,
@@ -745,6 +736,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return $res;
 	}
 
+	/** @inheritDoc */
 	public function deleteMulti( array $keys, $flags = 0 ) {
 		if ( $this->fieldHasFlags( $flags, self::WRITE_ALLOW_SEGMENTS ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ' got WRITE_ALLOW_SEGMENTS' );
@@ -997,6 +989,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return ( $value === (string)$integer );
 	}
 
+	/** @inheritDoc */
 	public function getQoS( $flag ) {
 		return $this->attrMap[$flag] ?? self::QOS_UNKNOWN;
 	}
@@ -1161,53 +1154,36 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 			if ( $op === self::METRIC_OP_GET ) {
 				// This operation was either a "hit" or "miss" for this key
 				if ( $rPayloadSize === false ) {
-					$statsdName = "objectcache.{$keygroup}.{$op}_miss_rate";
 					$statsName = "bagostuff_miss_total";
 				} else {
-					$statsdName = "objectcache.{$keygroup}.{$op}_hit_rate";
 					$statsName = "bagostuff_hit_total";
 				}
 			} else {
 				// There is no concept of "hit" or "miss" for this operation
-				$statsdName = "objectcache.{$keygroup}.{$op}_call_rate";
 				$statsName = "bagostuff_call_total";
 			}
-			$deltasByMetric[$statsdName] = [
-				'delta' => ( $deltasByMetric[$statsdName]['delta'] ?? 0 ) + 1,
-				'metric' => $statsName,
-				'keygroup' => $keygroup,
-				'operation' => $op,
-			];
+			$deltasByMetric[$statsName][$keygroup] = ( $deltasByMetric[$statsName][$keygroup] ?? 0 ) + 1;
 
 			if ( $sPayloadSize > 0 ) {
-				$statsdName = "objectcache.{$keygroup}.{$op}_bytes_sent";
 				$statsName = "bagostuff_bytes_sent_total";
-				$deltasByMetric[$statsdName] = [
-					'delta' => ( $deltasByMetric[$statsdName]['delta'] ?? 0 ) + $sPayloadSize,
-					'metric' => $statsName,
-					'keygroup' => $keygroup,
-					'operation' => $op,
-				];
+				$deltasByMetric[$statsName][$keygroup] =
+					( $deltasByMetric[$statsName][$keygroup] ?? 0 ) + $sPayloadSize;
 			}
 
 			if ( $rPayloadSize > 0 ) {
-				$statsdName = "objectcache.{$keygroup}.{$op}_bytes_read";
 				$statsName = "bagostuff_bytes_read_total";
-				$deltasByMetric[$statsdName] = [
-					'delta' => ( $deltasByMetric[$statsdName]['delta'] ?? 0 ) + $rPayloadSize,
-					'metric' => $statsName,
-					'keygroup' => $keygroup,
-					'operation' => $op,
-				];
+				$deltasByMetric[$statsName][$keygroup] =
+					( $deltasByMetric[$statsName][$keygroup] ?? 0 ) + $rPayloadSize;
 			}
 		}
 
-		foreach ( $deltasByMetric as $statsdName => $delta ) {
-			$this->stats->getCounter( $delta['metric'] )
-				->setLabel( 'keygroup', $delta['keygroup'] )
-				->setLabel( 'operation', $delta['operation'] )
-				->copyToStatsdAt( $statsdName )
-				->incrementBy( $delta['delta'] );
+		foreach ( $deltasByMetric as $statsName => $deltaByKeygroup ) {
+			$stats = $this->stats->getCounter( $statsName );
+			foreach ( $deltaByKeygroup as $keygroup => $delta ) {
+				$stats->setLabel( 'keygroup', $keygroup )
+					->setLabel( 'operation', $op )
+					->incrementBy( $delta );
+			}
 		}
 	}
 }

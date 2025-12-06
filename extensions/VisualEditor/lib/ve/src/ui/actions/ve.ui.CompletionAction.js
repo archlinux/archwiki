@@ -74,7 +74,6 @@ ve.ui.CompletionAction.prototype.open = function ( isolateInput ) {
  *
  * @abstract
  * @param {string} input
- * @param {number} [limit=20] Maximum number of results
  * @return {jQuery.Promise} Promise that resolves with list of suggestions.
  *  Suggestions are converted to menu itmes by getMenuItemForSuggestion.
  */
@@ -213,7 +212,7 @@ ve.ui.CompletionAction.prototype.filterSuggestionsForInput = function ( suggesti
 ve.ui.CompletionAction.prototype.compareSuggestionToInput = function ( suggestion, normalizedInput ) {
 	const normalizedSuggestion = suggestion.toLowerCase();
 	return {
-		isMatch: normalizedSuggestion.slice( 0, normalizedInput.length ) === normalizedInput,
+		isMatch: normalizedSuggestion.startsWith( normalizedInput ),
 		isExact: normalizedSuggestion === normalizedInput
 	};
 };

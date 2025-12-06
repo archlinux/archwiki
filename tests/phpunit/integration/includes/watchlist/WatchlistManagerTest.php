@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\UserIdentityValue;
@@ -32,8 +33,9 @@ class WatchlistManagerTest extends MediaWikiIntegrationTestCase {
 			$userIdentity,
 			[ 'editmywatchlist', 'viewmywatchlist' ]
 		);
-		$title = new PageIdentityValue( 100, NS_MAIN, 'Page_db_Key_goesHere', PageIdentityValue::LOCAL );
+		$title = PageIdentityValue::localIdentity( 100, NS_MAIN, 'Page_db_Key_goesHere' );
 
+		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 		$services = $this->getServiceContainer();
 		$watchedItemStore = $services->getWatchedItemStore();
 		$watchlistManager = $services->getWatchlistManager();
@@ -66,7 +68,7 @@ class WatchlistManagerTest extends MediaWikiIntegrationTestCase {
 		$watchlistManager->addWatch( $authority, $title, '2 weeks' );
 		$this->assertTrue( $watchlistManager->isWatched( $authority, $title ), 'The article has been watched' );
 		$this->assertTrue(
-			$watchlistManager->isTempWatched( $authority, $title ), 'The article has been tempoarily watched'
+			$watchlistManager->isTempWatched( $authority, $title ), 'The article has been temporarily watched'
 		);
 
 		$watchlistManager->removeWatch( $authority, $title );
@@ -100,8 +102,9 @@ class WatchlistManagerTest extends MediaWikiIntegrationTestCase {
 	public function testWatchlistNoRights() {
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
 		$authority = $this->mockUserAuthorityWithPermissions( $userIdentity, [] );
-		$title = new PageIdentityValue( 100, NS_MAIN, 'Page_db_Key_goesHere', PageIdentityValue::LOCAL );
+		$title = PageIdentityValue::localIdentity( 100, NS_MAIN, 'Page_db_Key_goesHere' );
 
+		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 		$services = $this->getServiceContainer();
 		$watchedItemStore = $services->getWatchedItemStore();
 		$watchlistManager = $services->getWatchlistManager();
@@ -154,7 +157,7 @@ class WatchlistManagerTest extends MediaWikiIntegrationTestCase {
 	public function testAddWatchUserNotPermittedStatusNotGood() {
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
 		$performer = $this->mockUserAuthorityWithPermissions( $userIdentity, [] );
-		$title = new PageIdentityValue( 100, NS_MAIN, 'Page_db_Key_goesHere', PageIdentityValue::LOCAL );
+		$title = PageIdentityValue::localIdentity( 100, NS_MAIN, 'Page_db_Key_goesHere' );
 
 		$services = $this->getServiceContainer();
 		$watchedItemStore = $services->getWatchedItemStore();
@@ -178,7 +181,7 @@ class WatchlistManagerTest extends MediaWikiIntegrationTestCase {
 	public function testRemoveWatchWithoutRights() {
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
 		$performer = $this->mockUserAuthorityWithPermissions( $userIdentity, [] );
-		$title = new PageIdentityValue( 100, NS_MAIN, 'Page_db_Key_goesHere', PageIdentityValue::LOCAL );
+		$title = PageIdentityValue::localIdentity( 100, NS_MAIN, 'Page_db_Key_goesHere' );
 
 		$services = $this->getServiceContainer();
 		$watchlistManager = $services->getWatchlistManager();

@@ -26,7 +26,7 @@ mw.echo.ui.ConfirmationPopupWidget = function MwEchoUiConfirmationPopupWidget( c
 		.append(
 			$( '<div>' )
 				.addClass( 'mw-echo-ui-confirmationPopupWidget-popup' )
-				.append( this.iconWidget.$element, this.labelWidget.$element )
+				.append( this.iconWidget.$element, this.labelWidget.$element ),
 		)
 		// We're using explicit hide here because the widget uses
 		// animated fadeOut

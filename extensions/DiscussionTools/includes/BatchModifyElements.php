@@ -12,9 +12,6 @@ class BatchModifyElements {
 
 	/**
 	 * Add a modification to the queue.
-	 *
-	 * @param callable $shouldModifyCallback
-	 * @param callable $modifyCallback
 	 */
 	public function add( callable $shouldModifyCallback, callable $modifyCallback ): void {
 		$this->modifications[] = [ $shouldModifyCallback, $modifyCallback ];
@@ -22,10 +19,6 @@ class BatchModifyElements {
 
 	/**
 	 * Apply all modifications to a fragment.
-	 *
-	 * @param string $htmlFragment
-	 * @param bool $html5format
-	 * @return string
 	 */
 	public function apply( string $htmlFragment, bool $html5format = true ): string {
 		if ( !count( $this->modifications ) ) {

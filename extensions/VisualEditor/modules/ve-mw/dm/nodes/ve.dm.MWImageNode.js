@@ -362,10 +362,7 @@ ve.dm.MWImageNode.prototype.getFilename = function () {
  */
 ve.dm.MWImageNode.prototype.getScalable = function () {
 	if ( !this.scalablePromise ) {
-		this.scalablePromise = ve.dm.MWImageNode.static.getScalablePromise( this.getFilename() );
-		// If the promise was already resolved before getScalablePromise returned, then jQuery will execute the done straight away.
-		// So don't just do getScalablePromise( ... ).done because we need to make sure that this.scalablePromise gets set first.
-		this.scalablePromise.done( ( info ) => {
+		this.scalablePromise = ve.dm.MWImageNode.static.getScalablePromise( this.getFilename() ).then( ( info ) => {
 			if ( info ) {
 				this.getScalable().setOriginalDimensions( {
 					width: info.width,

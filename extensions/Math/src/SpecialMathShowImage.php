@@ -26,10 +26,6 @@ class SpecialMathShowImage extends SpecialPage {
 	/** @var RendererFactory */
 	private $rendererFactory;
 
-	/**
-	 * @param MathConfig $mathConfig
-	 * @param RendererFactory $rendererFactory
-	 */
 	public function __construct(
 		MathConfig $mathConfig,
 		RendererFactory $rendererFactory

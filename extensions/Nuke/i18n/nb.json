@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Danmichaelo",
+			"EdoAug",
 			"Event",
 			"Jon Harald Søby",
 			"Kingu",
-			"Nghtwlkr",
-			"EdoAug"
+			"Nghtwlkr"
 		]
 	},
 	"nuke": "Massesletting",
@@ -46,6 +46,7 @@
 	"nuke-not-deleted": "Siden [[:$1]] '''kunne ikke''' slettes.",
 	"nuke-skipped-summary": "{{PLURAL:$1|'''En side'''|'''$1 sider'''}} ble ikke valgt for sletting.",
 	"nuke-delete-more": "[[Special:Nuke|Slett flere sider]]",
+	"nuke-deletemore": "Slett flere sider",
 	"nuke-pattern": "SQL-LIKE-mønster (f.eks. %) for sidenavnet:",
 	"nuke-nolist": "For å fortsette, trykk først på «{{int:nuke-submit-list}}» og velg deretter sidene som skal legges i kø for sletting.",
 	"nuke-nopages-global": "Ingen sider samsvarer med søket.",
@@ -56,6 +57,7 @@
 	"nuke-associated-limited": "Noen sider kunne ikke opplistes fordi inkludering av tilknyttede sider (diskusjonssider, omdirigeringer) hadde gått over grensa.",
 	"nuke-viewchanges": "historikk",
 	"nuke-namespace": "Begrens til navnerom:",
+	"nuke-namespace-invalid": "Dette navnerommet er ugyldig. Velg blant alternativene i menyen.",
 	"nuke-namespace-noscript": "Angi navneroms-ID-er, én på hver linje. La stå tom for å søke alle navnerom. Ugyldige ID-er ignoreres.",
 	"nuke-linkoncontribs": "masseslett",
 	"nuke-linkoncontribs-text": "Masseslett sider der denne {{GENDER:$1|brukeren}} er den eneste forfatteren",

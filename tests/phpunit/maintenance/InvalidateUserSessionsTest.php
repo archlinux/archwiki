@@ -4,7 +4,6 @@ namespace MediaWiki\Tests\Maintenance;
 
 use InvalidateUserSessions;
 use MediaWiki\Session\SessionManager;
-use MediaWiki\Tests\Session\TestUtils;
 use RuntimeException;
 
 /**
@@ -42,14 +41,14 @@ class InvalidateUserSessionsTest extends MaintenanceBaseTestCase {
 
 	/** @dataProvider provideExecute */
 	public function testExecute( $options, $expectedUsernames, $expectedOutputString ) {
-		// Mock the SessionManager::singleton() instance to expect calls to ::invalidateSessionsForUser
+		// Mock the SessionManager service to expect calls to ::invalidateSessionsForUser
 		$mockSessionManager = $this->createMock( SessionManager::class );
 		$mockSessionManager->expects( $this->exactly( count( $expectedUsernames ) ) )
 			->method( 'invalidateSessionsForUser' )
 			->willReturnCallback( function ( $actualUser ) use ( $expectedUsernames ) {
 				$this->assertContains( $actualUser->getName(), $expectedUsernames );
 			} );
-		$resetSingleton = TestUtils::setSessionManagerSingleton( $mockSessionManager );
+		$this->setService( 'SessionManager', $mockSessionManager );
 		// Run the maintenance script
 		foreach ( $options as $name => $value ) {
 			$this->maintenance->setOption( $name, $value );
@@ -82,11 +81,11 @@ class InvalidateUserSessionsTest extends MaintenanceBaseTestCase {
 	}
 
 	public function testExecuteForThrownException() {
-		// Mock the SessionManager::singleton() instance to throw an error when ::invalidateSessionsForUser is called.
+		// Mock the SessionManager service to throw an error when ::invalidateSessionsForUser is called.
 		$mockSessionManager = $this->createMock( SessionManager::class );
 		$mockSessionManager->method( 'invalidateSessionsForUser' )
 			->willThrowException( new RuntimeException( "Testing\nTest" ) );
-		$resetSingleton = TestUtils::setSessionManagerSingleton( $mockSessionManager );
+		$this->setService( 'SessionManager', $mockSessionManager );
 		// Run the maintenance script
 		$this->maintenance->setOption( 'user', 'Testing' );
 		$this->maintenance->execute();

@@ -97,8 +97,7 @@ ve.ui.MWLinkNodeInspector.prototype.getReadyProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWLinkNodeInspector.prototype.getTeardownProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWLinkNodeInspector.prototype.getTeardownProcess = function ( data = {} ) {
 	return ve.ui.MWLinkNodeInspector.super.prototype.getTeardownProcess.call( this, data )
 		.first( () => {
 			let value = this.targetInput.getValue();

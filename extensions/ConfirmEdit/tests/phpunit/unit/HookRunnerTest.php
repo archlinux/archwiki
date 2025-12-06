@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\ConfirmEdit\Test\Unit;
+namespace MediaWiki\Extension\ConfirmEdit\Tests\Unit;
 
 use MediaWiki\Extension\ConfirmEdit\Hooks\HookRunner;
 use MediaWiki\Tests\HookContainer\HookRunnerTestBase;

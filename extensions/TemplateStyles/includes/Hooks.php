@@ -8,11 +8,8 @@ namespace MediaWiki\Extension\TemplateStyles;
  */
 
 use InvalidArgumentException;
-use MapCacheLRU;
 use MediaWiki\Config\Config;
-use MediaWiki\Content\ContentHandler;
 use MediaWiki\Extension\TemplateStyles\Hooks\HookRunner;
-use MediaWiki\Hook\ParserClearStateHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
@@ -20,7 +17,6 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
-use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\CSS\Grammar\CheckedMatcher;
 use Wikimedia\CSS\Grammar\GrammarMatch;
@@ -44,7 +40,6 @@ use Wikimedia\CSS\Sanitizer\SupportsAtRuleSanitizer;
  */
 class Hooks implements
 	ParserFirstCallInitHook,
-	ParserClearStateHook,
 	ContentHandlerDefaultModelForHook
 {
 
@@ -212,8 +207,6 @@ class Hooks implements
 	 */
 	public function onParserFirstCallInit( $parser ) {
 		$parser->setHook( 'templatestyles', [ __CLASS__, 'handleTag' ] );
-		// 100 is arbitrary
-		$parser->extTemplateStylesCache = new MapCacheLRU( 100 );
 	}
 
 	/**
@@ -239,14 +232,6 @@ class Hooks implements
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Clear our cache when the parser is reset
-	 * @param Parser $parser
-	 */
-	public function onParserClearState( $parser ) {
-		$parser->extTemplateStylesCache->clear();
 	}
 
 	/**
@@ -295,8 +280,7 @@ class Hooks implements
 			$revRecord ? $revRecord->getId() : null
 		);
 
-		$content = $revRecord ? $revRecord->getContent( SlotRecord::MAIN ) : null;
-		if ( !$content ) {
+		if ( !$revRecord ) {
 			$titleText = $title->getPrefixedText();
 			return self::formatTagError( $parser, [
 				'templatestyles-bad-src-missing',
@@ -304,76 +288,14 @@ class Hooks implements
 				wfEscapeWikiText( $titleText )
 			] );
 		}
-		if ( !$content instanceof TemplateStylesContent ) {
-			$titleText = $title->getPrefixedText();
-			return self::formatTagError( $parser, [
-				'templatestyles-bad-src',
-				$titleText,
-				wfEscapeWikiText( $titleText ),
-				ContentHandler::getLocalizedName( $content->getModel() )
-			] );
-		}
 
-		// If the revision actually has an ID, cache based on that.
-		// Otherwise, cache by hash.
-		if ( $revRecord->getId() ) {
-			$cacheKey = 'r' . $revRecord->getId();
-		} else {
-			$cacheKey = sha1( $content->getText() );
-		}
+		$contentProvider = MediaWikiServices::getInstance()->get( 'TemplateStyles.ContentProvider' );
 
-		// Include any non-default wrapper class in the cache key too
-		$wrapClass = $parser->getOptions()->getWrapOutputClass();
-		if ( $wrapClass === false ) {
-			// deprecated
-			$wrapClass = 'mw-parser-output';
-		}
-		if ( $wrapClass !== 'mw-parser-output' || $extraWrapper !== null ) {
-			$cacheKey .= '/' . $wrapClass;
-			if ( $extraWrapper !== null ) {
-				$cacheKey .= '/' . $extraWrapper;
-			}
-		}
-
-		// Already cached?
-		if ( $parser->extTemplateStylesCache->has( $cacheKey ) ) {
-			return $parser->extTemplateStylesCache->get( $cacheKey );
-		}
-
-		$targetDir = $parser->getTargetLanguage()->getDir();
-		$contentDir = $parser->getContentLanguage()->getDir();
-
-		$contentHandlerFactory = MediaWikiServices::getInstance()->getContentHandlerFactory();
-		$contentHandler = $contentHandlerFactory->getContentHandler( $content->getModel() );
-		'@phan-var TemplateStylesContentHandler $contentHandler';
-		$status = $contentHandler->sanitize(
-			$content,
-			[
-				'flip' => $targetDir !== $contentDir,
-				'minify' => true,
-				'class' => $wrapClass,
-				'extraWrapper' => $extraWrapper,
-			]
-		);
-		$style = $status->isOk() ? $status->getValue() : '/* Fatal error, no CSS will be output */';
-
-		// Prepend errors. This should normally never happen, but might if an
-		// update or configuration change causes something that was formerly
-		// valid to become invalid or something like that.
+		$status = $contentProvider->getStyle( $revRecord, $parser, $extraWrapper );
 		if ( !$status->isGood() ) {
-			$comment = wfMessage(
-				'templatestyles-errorcomment',
-				$title->getPrefixedText(),
-				$revRecord->getId(),
-				$status->getWikiText( false, 'rawmessage' )
-			)->text();
-			$comment = trim( strtr( $comment, [
-				// Use some lookalike unicode characters to avoid things that might
-				// otherwise confuse browsers.
-				'*' => '•', '-' => '‐', '<' => '⧼', '>' => '⧽',
-			] ) );
-			$style = "/*\n$comment\n*/\n$style";
+			return self::formatTagError( $parser, [ $status->getMessage() ] );
 		}
+		[ $cacheKey, $style ] = $status->getValue();
 
 		// Hide the CSS from Parser::doBlockLevels
 		$marker = Parser::MARKER_PREFIX . '-templatestyles-' .
@@ -385,7 +307,6 @@ class Hooks implements
 		$ret = Html::inlineStyle( $marker, 'all', [
 			'data-mw-deduplicate' => "TemplateStyles:$cacheKey",
 		] );
-		$parser->extTemplateStylesCache->set( $cacheKey, $ret );
 		return $ret;
 	}
 

@@ -7,7 +7,7 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 		content: {
 			header: 'Your edit on <strong>Moai</strong> was reverted.',
 			compactHeader: 'Your edit on <strong>Moai</strong> was reverted.',
-			body: 'undo'
+			body: 'undo',
 		},
 		iconType: 'revert',
 		primaryUrl: 'http://dev.wiki.local.wmftest.net:8080/w/index.php?title=Moai&oldid=prev&diff=1978&markasread=2126',
@@ -15,15 +15,15 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 			{
 				url: 'http://dev.wiki.local.wmftest.net:8080/wiki/User:RandomUser',
 				label: 'RandomUser',
-				icon: 'userAvatar'
+				icon: 'userAvatar',
 			},
 			{
 				url: 'http://dev.wiki.local.wmftest.net:8080/wiki/Talk:Moai',
 				label: 'Moai',
 				tooltip: 'Talk:Moai',
-				icon: 'speechBubbles'
-			}
-		]
+				icon: 'speechBubbles',
+			},
+		],
 	};
 	const now = 1234567890000;
 	const nowFormatted = '2009-02-13T23:31:30Z';
@@ -36,7 +36,7 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 		'Empty data': {
 			params: { id: 0, config: {} },
 			methods: 'all',
-			expected: { getId: 0, getAllIds: [ 0 ] }
+			expected: { getId: 0, getAllIds: [ 0 ] },
 		},
 		'Fake data': {
 			params: { id: 999, config: fakeData },
@@ -56,17 +56,17 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 					{
 						url: 'http://dev.wiki.local.wmftest.net:8080/wiki/User:RandomUser',
 						label: 'RandomUser',
-						icon: 'userAvatar'
+						icon: 'userAvatar',
 					},
 					{
 						url: 'http://dev.wiki.local.wmftest.net:8080/wiki/Talk:Moai',
 						label: 'Moai',
 						tooltip: 'Talk:Moai',
-						icon: 'speechBubbles'
-					}
-				]
-			}
-		}
+						icon: 'speechBubbles',
+					},
+				],
+			},
+		},
 	}, ( assert, data ) => {
 		const defaultValues = {
 			getId: undefined,
@@ -84,13 +84,13 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 			getIconType: undefined,
 			getSecondaryUrls: [],
 			getModelName: 'local',
-			getAllIds: []
+			getAllIds: [],
 		};
 		const expected = $.extend( true, {}, defaultValues, data.expected );
 
 		const itemModel = new mw.echo.dm.NotificationItem(
 			data.params.id,
-			data.params.config
+			data.params.config,
 		);
 
 		const methods = ( data.methods === 'all' ? Object.keys( expected ) : data.methods );
@@ -101,7 +101,7 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 				// Expected result
 				expected[ method ],
 				// Message
-				method
+				method,
 			);
 		} );
 	} );
@@ -114,7 +114,7 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 		itemModel.on( 'update', () => {
 			results.push( [
 				itemModel.isRead(),
-				itemModel.isSeen()
+				itemModel.isSeen(),
 			] );
 		} );
 
@@ -131,7 +131,7 @@ QUnit.module( 'ext.echo.dm - NotificationItem', ( hooks ) => {
 			results,
 			// Expected:
 			[ [ false, true ], [ true, true ], [ false, true ], [ false, false ], [ true, false ] ],
-			'Read and seen changes produced "update" events'
+			'Read and seen changes produced "update" events',
 		);
 	} );
 

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,7 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\RecentChanges\CategoryMembershipChange;
 use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
@@ -53,6 +40,8 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 class CategoryMembershipChangeJob extends Job {
 	/** @var int|null */
 	private $ticket;
+
+	private RecentChangeFactory $recentChangeFactory;
 
 	private const ENQUEUE_FUDGE_SEC = 60;
 
@@ -83,14 +72,21 @@ class CategoryMembershipChangeJob extends Job {
 	 * @note Don't call this when queueing a new instance, use newSpec() instead.
 	 * @param PageIdentity $page the categorized page.
 	 * @param array $params Such latest revision instance of the categorized page.
+	 * @param RecentChangeFactory $recentChangeFactory
 	 */
-	public function __construct( PageIdentity $page, array $params ) {
+	public function __construct(
+		PageIdentity $page,
+		array $params,
+		RecentChangeFactory $recentChangeFactory
+	) {
 		parent::__construct( 'categoryMembershipChange', $page, $params );
+		$this->recentChangeFactory = $recentChangeFactory;
 		// Only need one job per page. Note that ENQUEUE_FUDGE_SEC handles races where an
 		// older revision job gets inserted while the newer revision job is de-duplicated.
 		$this->removeDuplicates = true;
 	}
 
+	/** @inheritDoc */
 	public function run() {
 		$services = MediaWikiServices::getInstance();
 		$lbFactory = $services->getDBLoadBalancerFactory();
@@ -114,7 +110,7 @@ class CategoryMembershipChangeJob extends Job {
 
 		// Use a named lock so that jobs for this page see each others' changes
 		$lockKey = "{$dbw->getDomainID()}:CategoryMembershipChange:{$page->getId()}"; // per-wiki
-		$scopedLock = $dbw->getScopedLockAndFlush( $lockKey, __METHOD__, 3 );
+		$scopedLock = $dbw->getScopedLockAndFlush( $lockKey, __METHOD__, 1 );
 		if ( !$scopedLock ) {
 			$this->setLastError( "Could not acquire lock '$lockKey'" );
 			return false;
@@ -215,7 +211,13 @@ class CategoryMembershipChangeJob extends Job {
 		}
 
 		$blc = $services->getBacklinkCacheFactory()->getBacklinkCache( $title );
-		$catMembChange = new CategoryMembershipChange( $title, $blc, $newRev, $this->params['forImport'] ?? false );
+		$catMembChange = new CategoryMembershipChange(
+			$title,
+			$blc,
+			$newRev,
+			$this->recentChangeFactory,
+			$this->params['forImport'] ?? false
+		);
 		$catMembChange->checkTemplateLinks();
 
 		$batchSize = $services->getMainConfig()->get( MainConfigNames::UpdateRowsPerQuery );
@@ -288,6 +290,7 @@ class CategoryMembershipChangeJob extends Job {
 		return $output->getCategoryNames();
 	}
 
+	/** @inheritDoc */
 	public function getDeduplicationInfo() {
 		$info = parent::getDeduplicationInfo();
 		unset( $info['params']['revTimestamp'] ); // first job wins

@@ -30,6 +30,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
 use Wikimedia\ScopedCallback;
+use XMLParser;
 use XMLReader;
 
 /**
@@ -83,7 +84,7 @@ class Reader implements LoggerAwareInterface {
 	/** @var bool|string Used for lang alts only */
 	private $itemLang = false;
 
-	/** @var resource|null A resource handle for the XML parser */
+	/** @var XMLParser|null A resource handle for the XML parser */
 	private $xmlParser;
 
 	/** @var bool|string Character set like 'UTF-8' */
@@ -162,15 +163,10 @@ class Reader implements LoggerAwareInterface {
 	}
 
 	/**
-	 * free the XML parser.
-	 *
-	 * @note It is unclear to me if we really need to do this ourselves
-	 *  or if php garbage collection will automatically free the xmlParser
-	 *  when it is no longer needed.
+	 * Destroy the XML parser, usually after errors.
 	 */
 	private function destroyXMLParser(): void {
 		if ( $this->xmlParser ) {
-			xml_parser_free( $this->xmlParser );
 			$this->xmlParser = null;
 		}
 	}
@@ -225,16 +221,18 @@ class Reader implements LoggerAwareInterface {
 
 		if ( isset( $data['xmp-special']['AuthorsPosition'] )
 			&& is_string( $data['xmp-special']['AuthorsPosition'] )
-			&& isset( $data['xmp-general']['Artist'][0] )
+			&& isset( $data['xmp-general']['Artist'] )
 		) {
-			// Note, if there is more than one creator,
-			// this only applies to first. This also will
-			// only apply to the dc:Creator prop, not the
-			// exif:Artist prop.
-
-			$data['xmp-general']['Artist'][0] =
-				$data['xmp-special']['AuthorsPosition'] . ', '
-				. $data['xmp-general']['Artist'][0];
+			if ( is_string( $data['xmp-general']['Artist'] ) ) {
+				// Not clear if this is reachable, as simple value Artist
+				// should always be xmp-general not xmp-exif
+				$data['xmp-general']['Artist'] = $data['xmp-special']['AuthorsPosition'] . ', '
+					. $data['xmp-general']['Artist'];
+			} elseif ( isset( $data['xmp-general']['Artist'][0] ) ) {
+				// Note, if there is more than one creator, this only applies to first.
+				$data['xmp-general']['Artist'][0] = $data['xmp-special']['AuthorsPosition'] . ', '
+					. $data['xmp-general']['Artist'][0];
+			}
 		}
 
 		// Go through the LocationShown and LocationCreated
@@ -322,26 +320,14 @@ class Reader implements LoggerAwareInterface {
 				if ( preg_match( '/\xEF\xBB\xBF|\xFE\xFF|\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFF\xFE/',
 					$content, $bom )
 				) {
-					switch ( $bom[0] ) {
-						case "\xFE\xFF":
-							$this->charset = 'UTF-16BE';
-							break;
-						case "\xFF\xFE":
-							$this->charset = 'UTF-16LE';
-							break;
-						case "\x00\x00\xFE\xFF":
-							$this->charset = 'UTF-32BE';
-							break;
-						case "\xFF\xFE\x00\x00":
-							$this->charset = 'UTF-32LE';
-							break;
-						case "\xEF\xBB\xBF":
-							$this->charset = 'UTF-8';
-							break;
-						default:
-							// this should be impossible to get to
-							throw new RuntimeException( "Invalid BOM" );
-					}
+					$this->charset = match ( $bom[0] ) {
+						"\xFE\xFF" => 'UTF-16BE',
+						"\xFF\xFE" => 'UTF-16LE',
+						"\x00\x00\xFE\xFF" => 'UTF-32BE',
+						"\xFF\xFE\x00\x00" => 'UTF-32LE',
+						"\xEF\xBB\xBF" => 'UTF-8',
+						default => throw new RuntimeException( "Invalid BOM" ),
+					};
 				} else {
 					// standard specifically says, if no bom assume utf-8
 					$this->charset = 'UTF-8';
@@ -515,7 +501,7 @@ class Reader implements LoggerAwareInterface {
 	 * <exif:DigitalZoomRatio>0/10</exif:DigitalZoomRatio>
 	 * and are processing the 0/10 bit.
 	 *
-	 * @param resource $parser XMLParser reference to the xml parser
+	 * @param XMLParser $parser XMLParser reference to the xml parser
 	 * @param string $data Character data
 	 * @throws RuntimeException On invalid data
 	 */
@@ -577,13 +563,20 @@ class Reader implements LoggerAwareInterface {
 			return false;
 		}
 
+		// 2.9.0 released Feb 2022 - https://gitlab.gnome.org/GNOME/libxml2/-/releases/v2.9.0
+		// https://www.php.net/manual/en/libxml.requirements.php
+		// > This extension requires » libxml >= 2.9.4 as of PHP 8.4.0, libxml >= 2.9.0
+		// > prior to PHP 8.4.0, and libxml >= 2.6.0 prior to PHP 8.0.0.
+		// So this can probably be removed when we require PHP >= 8.4.0!
 		if ( LIBXML_VERSION < 20900 ) {
+			// @codeCoverageIgnoreStart
 			$oldDisable = libxml_disable_entity_loader( true );
 			/** @noinspection PhpUnusedLocalVariableInspection */
 			$reset = new ScopedCallback(
 				'libxml_disable_entity_loader',
 				[ $oldDisable ]
 			);
+			// @codeCoverageIgnoreEnd
 		}
 
 		$reader->setParserProperty( XMLReader::SUBST_ENTITIES, false );
@@ -697,12 +690,8 @@ class Reader implements LoggerAwareInterface {
 			$info =& $this->items[$ns][$tag];
 			$finalName = $info['map_name'] ?? $tag;
 
-			if ( is_array( $info['validate'] ) ) {
-				$validate = $info['validate'];
-			} else {
-				$validator = new Validate( $this->logger );
-				$validate = [ $validator, $info['validate'] ];
-			}
+			$validator = new Validate( $this->logger );
+			$validate = [ $validator, $info['validate'] ];
 
 			if ( !isset( $this->results['xmp-' . $info['map_group']][$finalName] ) ) {
 				// This can happen if all the members of the struct failed validation.
@@ -710,9 +699,9 @@ class Reader implements LoggerAwareInterface {
 					__METHOD__ . " <$ns:$tag> has no valid members.",
 					[ 'file' => $this->filename ]
 				);
-			} elseif ( is_callable( $validate ) ) {
+			} else {
 				$val =& $this->results['xmp-' . $info['map_group']][$finalName];
-				call_user_func_array( $validate, [ $info, &$val, false ] );
+				$validate( $info, $val, false );
 				if ( $val === null ) {
 					// the idea being the validation function will unset the variable if
 					// its invalid.
@@ -722,12 +711,6 @@ class Reader implements LoggerAwareInterface {
 					);
 					unset( $this->results['xmp-' . $info['map_group']][$finalName] );
 				}
-			} else {
-				$this->logger->warning(
-					__METHOD__ . " Validation function for $finalName (" .
-					get_class( $validate[0] ) . '::' . $validate[1] . '()) is not callable.',
-					[ 'file' => $this->filename ]
-				);
 			}
 		}
 
@@ -803,7 +786,7 @@ class Reader implements LoggerAwareInterface {
 		if ( $elm === self::NS_RDF . ' value' ) {
 			[ $ns, $tag ] = explode( ' ', $this->curItem[0], 2 );
 			$this->saveValue( $ns, $tag, $this->charContent );
-
+			$this->charContent = false;
 			return;
 		}
 
@@ -820,7 +803,7 @@ class Reader implements LoggerAwareInterface {
 	 * Ignores the outer wrapping elements that are optional in
 	 * xmp and have no meaning.
 	 *
-	 * @param resource $parser
+	 * @param XMLParser $parser
 	 * @param string $elm Namespace . ' ' . element name
 	 * @throws RuntimeException
 	 */
@@ -842,7 +825,7 @@ class Reader implements LoggerAwareInterface {
 			);
 		}
 
-		if ( strpos( $elm, ' ' ) === false ) {
+		if ( !str_contains( $elm, ' ' ) ) {
 			// This probably shouldn't happen.
 			// However, there is a bug in an adobe product
 			// that forgets the namespace on some things.
@@ -858,13 +841,17 @@ class Reader implements LoggerAwareInterface {
 		if ( count( $this->mode ) === 0 ) {
 			// This should never ever happen and means
 			// there is a pretty major bug in this class.
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException( 'Encountered end element with no mode' );
+			// @codeCoverageIgnoreEnd
 		}
 
 		if ( count( $this->curItem ) === 0 && $this->mode[0] !== self::MODE_INITIAL ) {
 			// just to be paranoid. Should always have a curItem, except for initially
 			// (aka during MODE_INITIAL).
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException( "Hit end element </$elm> but no curItem" );
+			// @codeCoverageIgnoreEnd
 		}
 
 		switch ( $this->mode[0] ) {
@@ -885,7 +872,9 @@ class Reader implements LoggerAwareInterface {
 				if ( $elm === self::NS_RDF . ' Description' ) {
 					array_shift( $this->mode );
 				} else {
+					// @codeCoverageIgnoreStart
 					throw new RuntimeException( 'Element ended unexpectedly while in MODE_INITIAL' );
+					// @codeCoverageIgnoreEnd
 				}
 				break;
 			case self::MODE_LI:
@@ -896,11 +885,13 @@ class Reader implements LoggerAwareInterface {
 				$this->endElementModeQDesc( $elm );
 				break;
 			default:
+				// @codeCoverageIgnoreStart
 				$this->logger->info(
 					__METHOD__ . " no mode (elm = $elm)",
 					[ 'file' => $this->filename ]
 				);
 				break;
+				// @codeCoverageIgnoreEnd
 		}
 	}
 
@@ -978,7 +969,7 @@ class Reader implements LoggerAwareInterface {
 		if ( $elm === self::NS_RDF . ' Alt' ) {
 			array_unshift( $this->mode, self::MODE_LI_LANG );
 		} else {
-			throw new RuntimeException( "Expected <rdf:Seq> but got $elm." );
+			throw new RuntimeException( "Expected <rdf:Alt> but got $elm." );
 		}
 	}
 
@@ -1040,9 +1031,14 @@ class Reader implements LoggerAwareInterface {
 	 * Called when processing the <rdf:value> or <foo:someQualifier>.
 	 *
 	 * @param string $elm Namespace and tag name separated by a space.
+	 * @param array $attribs Array of attributes
 	 */
-	private function startElementModeQDesc( $elm ): void {
+	private function startElementModeQDesc( $elm, $attribs ): void {
 		if ( $elm === self::NS_RDF . ' value' ) {
+			// URL values use rdf:resource attribute instead of text content.
+			if ( isset( $attribs[ self::NS_RDF . ' resource' ] ) ) {
+				$this->char( $this->xmlParser, $attribs[ self::NS_RDF . ' resource' ] );
+			}
 			// do nothing
 			return;
 		}
@@ -1065,6 +1061,12 @@ class Reader implements LoggerAwareInterface {
 	 * @throws RuntimeException
 	 */
 	private function startElementModeInitial( $ns, $tag, $attribs ): void {
+		if ( $ns === self::NS_RDF && $tag === 'type' ) {
+			// Ignore top level rdf:type. See XMP spec part 1 section 7.9.2.5.
+			array_unshift( $this->mode, self::MODE_IGNORE );
+			array_unshift( $this->curItem, $ns . ' ' . $tag );
+			return;
+		}
 		if ( $ns !== self::NS_RDF ) {
 			if ( isset( $this->items[$ns][$tag] ) ) {
 				if ( isset( $this->items[$ns][$tag]['structPart'] ) ) {
@@ -1092,6 +1094,8 @@ class Reader implements LoggerAwareInterface {
 				if ( $this->charContent !== false ) {
 					// Something weird.
 					// Should not happen in valid XMP.
+					// char() should also throw an exception before
+					// we hit this.
 					throw new RuntimeException( 'tag nested in non-whitespace characters.' );
 				}
 			} else {
@@ -1182,7 +1186,9 @@ class Reader implements LoggerAwareInterface {
 		if ( !isset( $this->mode[1] ) ) {
 			// This should never ever ever happen. Checking for it
 			// to be paranoid.
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException( 'In mode Li, but no 2xPrevious mode!' );
+			// @codeCoverageIgnoreEnd
 		}
 
 		if ( $this->mode[1] === self::MODE_BAGSTRUCT ) {
@@ -1193,7 +1199,9 @@ class Reader implements LoggerAwareInterface {
 
 			if ( !isset( $this->curItem[1] ) ) {
 				// be paranoid.
+				// @codeCoverageIgnoreStart
 				throw new RuntimeException( 'Can not find parent of BAGSTRUCT.' );
+				// @codeCoverageIgnoreEnd
 			}
 			[ $curNS, $curTag ] = explode( ' ', $this->curItem[1] );
 			$this->ancestorStruct = $this->items[$curNS][$curTag]['map_name'] ?? $curTag;
@@ -1249,7 +1257,7 @@ class Reader implements LoggerAwareInterface {
 	 * Generally just calls a helper based on what MODE we're in.
 	 * Also does some initial set up for the wrapper element
 	 *
-	 * @param resource $parser
+	 * @param XMLParser $parser
 	 * @param string $elm Namespace "<space>" element
 	 * @param array $attribs Attribute name => value
 	 * @throws RuntimeException
@@ -1281,7 +1289,7 @@ class Reader implements LoggerAwareInterface {
 			);
 		}
 
-		if ( strpos( $elm, ' ' ) === false ) {
+		if ( !str_contains( $elm, ' ' ) ) {
 			// This probably shouldn't happen.
 			$this->logger->info(
 				__METHOD__ . " Encountered <$elm> which has no namespace. Skipping.",
@@ -1295,8 +1303,10 @@ class Reader implements LoggerAwareInterface {
 
 		if ( count( $this->mode ) === 0 ) {
 			// This should not happen.
+			// @codeCoverageIgnoreStart
 			throw new RuntimeException( 'Error extracting XMP, '
 				. "encountered <$elm> with no mode" );
+			// @codeCoverageIgnoreEnd
 		}
 
 		switch ( $this->mode[0] ) {
@@ -1329,10 +1339,12 @@ class Reader implements LoggerAwareInterface {
 				$this->startElementModeLi( $elm, $attribs );
 				break;
 			case self::MODE_QDESC:
-				$this->startElementModeQDesc( $elm );
+				$this->startElementModeQDesc( $elm, $attribs );
 				break;
 			default:
+				// @codeCoverageIgnoreStart
 				throw new RuntimeException( 'StartElement in unknown mode: ' . $this->mode[0] );
+				// @codeCoverageIgnoreEnd
 		}
 	}
 
@@ -1364,12 +1376,12 @@ class Reader implements LoggerAwareInterface {
 			$this->mode[0] = self::MODE_QDESC;
 		}
 		foreach ( $attribs as $name => $val ) {
-			if ( strpos( $name, ' ' ) === false ) {
+			if ( !str_contains( $name, ' ' ) ) {
 				// This shouldn't happen, but so far some old software forgets namespace
 				// on rdf:about.
 				$this->logger->info(
 					__METHOD__ . ' Encountered non-namespaced attribute: ' .
-					" $name=\"$val\". Skipping. ",
+					" $name=\"$val\". Skipping.",
 					[ 'file' => $this->filename ]
 				);
 				continue;
@@ -1411,31 +1423,19 @@ class Reader implements LoggerAwareInterface {
 		$info =& $this->items[$ns][$tag];
 		$finalName = $info['map_name'] ?? $tag;
 		if ( isset( $info['validate'] ) ) {
-			if ( is_array( $info['validate'] ) ) {
-				$validate = $info['validate'];
-			} else {
-				$validator = new Validate( $this->logger );
-				$validate = [ $validator, $info['validate'] ];
-			}
+			$validator = new Validate( $this->logger );
+			$validate = [ $validator, $info['validate'] ];
 
-			if ( is_callable( $validate ) ) {
-				call_user_func_array( $validate, [ $info, &$val, true ] );
-				// the reasoning behind using &$val instead of using the return value
-				// is to be consistent between here and validating structures.
-				if ( $val === null ) {
-					$this->logger->info(
-						__METHOD__ . " <$ns:$tag> failed validation.",
-						[ 'file' => $this->filename ]
-					);
-
-					return;
-				}
-			} else {
-				$this->logger->warning(
-					__METHOD__ . " Validation function for $finalName (" .
-					get_class( $validate[0] ) . '::' . $validate[1] . '()) is not callable.',
+			$validate( $info, $val, true );
+			// the reasoning behind using &$val instead of using the return value
+			// is to be consistent between here and validating structures.
+			if ( $val === null ) {
+				$this->logger->info(
+					__METHOD__ . " <$ns:$tag> failed validation.",
 					[ 'file' => $this->filename ]
 				);
+
+				return;
 			}
 		}
 

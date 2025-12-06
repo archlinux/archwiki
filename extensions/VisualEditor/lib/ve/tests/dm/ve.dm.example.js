@@ -27,7 +27,7 @@ ve.dm.example.singleLine = function ( strings, ...values ) {
 
 /**
  * Convert arrays of shorthand annotations in a data fragment to AnnotationSets with real
- * annotation objects, and wraps the result in a ve.dm.ElementLinearData object.
+ * annotation objects, and wraps the result in a ve.dm.LinearData object.
  *
  * Shorthand notation for annotations is:
  * [ 'a', [ { type: 'link', attributes: { href: '…' } ] ]
@@ -35,12 +35,12 @@ ve.dm.example.singleLine = function ( strings, ...values ) {
  * The actual storage format has an instance of ve.dm.LinkAnnotation instead of the plain object,
  * and an instance of ve.dm.AnnotationSet instead of the array.
  *
- * @param {Array} data Linear model data
+ * @param {ve.dm.LinearData.Item[]} data Linear model data
  * @param {ve.dm.HashValueStore} [store] Hash-value store to use, creates one if undefined
- * @return {ve.dm.ElementLinearData} Linear data store
+ * @return {ve.dm.LinearData} Linear data store
  * @throws {Error} Example data passed to preprocessAnnotations by reference
  */
-ve.dm.example.preprocessAnnotations = function ( data, store ) {
+ve.dm.example.preprocessAnnotations = function ( data, store = new ve.dm.HashValueStore() ) {
 	let i;
 
 	// Sanity check to make sure ve.dm.example data has not been passed in
@@ -59,7 +59,6 @@ ve.dm.example.preprocessAnnotations = function ( data, store ) {
 		}
 	}
 
-	store = store || new ve.dm.HashValueStore();
 	for ( i = 0; i < data.length; i++ ) {
 		const key = data[ i ].annotations ? 'annotations' : 1;
 		// Check for shorthand annotation objects in array
@@ -69,7 +68,7 @@ ve.dm.example.preprocessAnnotations = function ( data, store ) {
 		}
 		preprocessOriginalDomElements( data[ i ] );
 	}
-	return new ve.dm.ElementLinearData( store, data );
+	return new ve.dm.LinearData( store, data );
 };
 
 /**
@@ -78,10 +77,10 @@ ve.dm.example.preprocessAnnotations = function ( data, store ) {
  * Any annotation that has originalDomElements will be shallow-cloned and have
  * originalDomElements removed.
  *
- * @param {Array} data Linear model data. Will be modified.
+ * @param {ve.dm.LinearData.Item[]} data Linear model data. Will be modified.
  * @param {ve.dm.HashValueStore} store Hash-value store to resolve annotations in
  * @param {boolean} [preserveDomElements] Preserve original DOM elements
- * @return {Array} The given `data` parameter.
+ * @return {ve.dm.LinearData.Item[]} The given `data` parameter.
  */
 ve.dm.example.postprocessAnnotations = function ( data, store, preserveDomElements ) {
 	for ( let i = 0; i < data.length; i++ ) {
@@ -130,6 +129,13 @@ ve.dm.example.createAnnotationSet = function ( store, annotations ) {
 	return new ve.dm.AnnotationSet( store, store.hashAll( annotations ) );
 };
 
+/**
+ * Apply annotation(s) to a text string
+ *
+ * @param {string} text Text to annotate
+ * @param {Object|Object[]} annotationOrAnnotations Annotation data
+ * @return {ve.dm.LinearData.Item[]} Annotated linear data
+ */
 ve.dm.example.annotateText = function ( text, annotationOrAnnotations ) {
 	if ( !Array.isArray( annotationOrAnnotations ) ) {
 		annotationOrAnnotations = [ annotationOrAnnotations ];
@@ -164,6 +170,22 @@ ve.dm.example.annHash = function ( tagName ) {
 	ann.originalDomElementsHash = ve.dm.HashValueStore.prototype.hashOfValue( null, '<' + tagName + '></' + tagName + '>' );
 	return ve.dm.HashValueStore.prototype.hashOfValue( ann );
 };
+
+/**
+ * Get an importedData annotation for a given source.
+ *
+ * Tests using this should mock ve.init.platform.generateUniqueId to return a stable value.
+ *
+ * @param {string|null} [source=null]
+ * @return {Object}
+ */
+ve.dm.example.getImportedAnnotation = ( source = null ) => ( {
+	type: 'meta/importedData',
+	attributes: {
+		source: source,
+		eventId: ve.init.platform.generateUniqueId()
+	}
+} );
 
 // hash = store.hashOfValue( ve.dm.example.bold )
 ve.dm.example.boldHash = 'h49981eab0f8056ff';
@@ -201,36 +223,39 @@ ve.dm.example.commentNodePreview = function ( text ) {
  * Defaults to ve.dm.example.data if no name is supplied.
  *
  * @param {string} [name='data'] Named element of ve.dm.example
- * @param {ve.dm.HashValueStore} [store] A specific hash-value store to use, optionally.
+ * @param {ve.dm.HashValueStore} [store=new ve.dm.HashValueStore()] A specific hash-value store to use, optionally.
  * @param {string} [base=ve.dm.example.baseUri] Base URL to use for the document
  * @return {ve.dm.Document}
  * @throws {Error} Example data not found
  */
-ve.dm.example.createExampleDocument = function ( name, store, base ) {
+ve.dm.example.createExampleDocument = function ( name = 'data', store = new ve.dm.HashValueStore(), base = ve.dm.example.baseUri ) {
 	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.example, base );
 };
 
 /**
  * Helper function for ve.dm.createExampleDocument.
  *
- * @param {string} [name='data'] Named element of ve.dm.example
- * @param {ve.dm.HashValueStore} [store] A specific hash-value store to use, optionally.
+ * @param {string} name Named element of ve.dm.example
+ * @param {ve.dm.HashValueStore} store A specific hash-value store to use, optionally.
  * @param {Object} object Collection of test documents, keyed by name
- * @param {string} [base=ve.dm.example.baseUri] Base URL to use for the document
+ * @param {string} base Base URL to use for the document
  * @return {ve.dm.Document}
  * @throws {Error} Example data not found
  */
 ve.dm.example.createExampleDocumentFromObject = function ( name, store, object, base ) {
-	name = name || 'data';
 	if ( object[ name ] === undefined ) {
 		throw new Error( 'Example data \'' + name + '\' not found' );
 	}
 	return ve.dm.example.createExampleDocumentFromData( object[ name ], store, base );
 };
 
-ve.dm.example.createExampleDocumentFromData = function ( data, store, base ) {
-	store = store || new ve.dm.HashValueStore();
-	base = base || ve.dm.example.baseUri;
+/**
+ * @param {ve.dm.LinearData.Item[]} data
+ * @param {ve.dm.HashValueStore} [store=new ve.dm.HashValueStore()] A specific hash-value store to use, optionally.
+ * @param {string} [base=ve.dm.example.baseUri] Base URL to use for the document
+ * @return {ve.dm.Document}
+ */
+ve.dm.example.createExampleDocumentFromData = function ( data, store = new ve.dm.HashValueStore(), base = ve.dm.example.baseUri ) {
 	const doc = new ve.dm.Document(
 		ve.dm.example.preprocessAnnotations( ve.copy( data ), store )
 	);
@@ -659,6 +684,41 @@ ve.dm.example.internalData = [
 	...'Quux',
 	{ type: '/paragraph' }
 	// 27
+];
+
+ve.dm.example.references = [
+	// 0
+	{ type: 'paragraph' },
+	{ type: 'stubReference', attributes: { listKey: 'literal/:3', listGroup: 'g1' } },
+	{ type: '/stubReference' },
+	{ type: 'stubReference', attributes: { listGroup: 'g2' } },
+	{ type: '/stubReference' },
+	{ type: '/paragraph' },
+	// 6
+	{ type: 'internalList' },
+	// 7
+	{ type: 'internalItem' },
+	// 8
+	{ type: 'paragraph', internal: { generated: 'wrapper' } },
+	...'Bar',
+	{ type: '/paragraph' },
+	// 13
+	{ type: '/internalItem' },
+	// 14
+	{ type: 'internalItem' },
+	// 15
+	{ type: 'paragraph', internal: { generated: 'wrapper' } },
+	...'Baz',
+	{ type: '/paragraph' },
+	// 20
+	{ type: '/internalItem' },
+	// 21
+	{ type: '/internalList' },
+	// 22
+	{ type: 'paragraph' },
+	...'Quux',
+	{ type: '/paragraph' }
+	// 28
 ];
 
 ve.dm.example.internalData.internalItems = [
@@ -1730,8 +1790,8 @@ ve.dm.example.domToDataCases = {
 		`,
 		clipboardBody: ve.dm.example.singleLine`
 			<ul rel="ve:checkList">
-				<li rel="ve:checkList" data-checked="checked" style="list-style: none;"><p><span data-ve-ignore="true">☑</span> foo</p></li>
-				<li rel="ve:checkList" style="list-style: none;"><span data-ve-ignore="true">☐</span> bar</li>
+				<li rel="ve:checkList" data-checked="checked" style="list-style: none;"><p><span data-ve-ignore="">☑</span> foo</p></li>
+				<li rel="ve:checkList" style="list-style: none;"><span data-ve-ignore="">☐</span> bar</li>
 			</ul>
 		`
 	},

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -679,12 +665,12 @@ class MimeAnalyzer implements LoggerAwareInterface {
 		 * 16583).  The heuristic has been cut down to exclude three-character
 		 * strings like "<? ", but should it be axed completely?
 		 */
-		if ( ( strpos( $head, '<?php' ) !== false ) ||
-			( strpos( $head, "<\x00?\x00p\x00h\x00p" ) !== false ) ||
-			( strpos( $head, "<\x00?\x00 " ) !== false ) ||
-			( strpos( $head, "<\x00?\x00\n" ) !== false ) ||
-			( strpos( $head, "<\x00?\x00\t" ) !== false ) ||
-			( strpos( $head, "<\x00?\x00=" ) !== false )
+		if ( str_contains( $head, '<?php' ) ||
+			str_contains( $head, "<\x00?\x00p\x00h\x00p" ) ||
+			str_contains( $head, "<\x00?\x00 " ) ||
+			str_contains( $head, "<\x00?\x00\n" ) ||
+			str_contains( $head, "<\x00?\x00\t" ) ||
+			str_contains( $head, "<\x00?\x00=" )
 		) {
 			$this->logger->info( __METHOD__ . ": recognized $file as application/x-php" );
 			return 'application/x-php';
@@ -975,15 +961,15 @@ class MimeAnalyzer implements LoggerAwareInterface {
 			$head = str_replace( 'ffmpeg2theora', '', strtolower( $head ) );
 
 			// This is an UGLY HACK, file should be parsed correctly
-			if ( strpos( $head, 'theora' ) !== false ) {
+			if ( str_contains( $head, 'theora' ) ) {
 				return MEDIATYPE_VIDEO;
-			} elseif ( strpos( $head, 'vorbis' ) !== false ) {
+			} elseif ( str_contains( $head, 'vorbis' ) ) {
 				return MEDIATYPE_AUDIO;
-			} elseif ( strpos( $head, 'flac' ) !== false ) {
+			} elseif ( str_contains( $head, 'flac' ) ) {
 				return MEDIATYPE_AUDIO;
-			} elseif ( strpos( $head, 'speex' ) !== false ) {
+			} elseif ( str_contains( $head, 'speex' ) ) {
 				return MEDIATYPE_AUDIO;
-			} elseif ( strpos( $head, 'opus' ) !== false ) {
+			} elseif ( str_contains( $head, 'opus' ) ) {
 				return MEDIATYPE_AUDIO;
 			} else {
 				return MEDIATYPE_MULTIMEDIA;
@@ -1040,7 +1026,7 @@ class MimeAnalyzer implements LoggerAwareInterface {
 	 * @return int|string
 	 */
 	private function findMediaType( string $extMime ) {
-		if ( strpos( $extMime, '.' ) === 0 ) {
+		if ( str_starts_with( $extMime, '.' ) ) {
 			// If it's an extension, look up the MIME types
 			$m = $this->getMimeTypesFromExtension( substr( $extMime, 1 ) );
 			if ( !$m ) {

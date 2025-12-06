@@ -16,23 +16,28 @@ class AnchorFormatter {
 	 * Generates identifiers for use in backlinks and their targets to jump from the reference list
 	 * back up to one of possibly many footnote markers in the article.
 	 */
-	public static function getBackLinkIdentifier( ?string $name, int $globalId, int $count ): string {
+	public static function getBacklinkIdentifier( ?string $name, int $globalId, int $count ): string {
 		// This intentionally drops "0" and such, that's invalid anyway
 		if ( $name ) {
 			$id = self::normalizeFragmentIdentifier( "{$name}_$globalId" );
-			// TODO: Can we change this to use the number as it is, without decrementing?
-			$id .= '-' . ( $count - 1 );
 		} else {
 			$id = $globalId;
 		}
+
+		// Skip the "-0" suffix on the first (unnamed) sub-ref, we can't know if it will be reused
+		if ( $name || $count > 1 ) {
+			// TODO: Can we change this to use the number as it is, without decrementing?
+			$id .= '-' . ( $count - 1 );
+		}
+
 		return "cite_ref-$id";
 	}
 
 	/**
 	 * @return string URL and HTML escaped to be used as part of a [[#…]] link in wikitext
 	 */
-	public function backLink( ?string $name, int $globalId, int $count ): string {
-		$id = $this->getBackLinkIdentifier( $name, $globalId, $count );
+	public function wikitextSafeBacklink( ?string $name, int $globalId, int $count ): string {
+		$id = $this->getBacklinkIdentifier( $name, $globalId, $count );
 		// This does both URL encoding (e.g. %A0, which only makes sense in href="…") and HTML
 		// entity encoding (e.g. &#xA0;). The browser will decode in reverse order.
 		return Sanitizer::safeEncodeAttribute( Sanitizer::escapeIdForLink( $id ) );
@@ -41,8 +46,8 @@ class AnchorFormatter {
 	/**
 	 * @return string Already escaped to be used directly in an id="…" attribute
 	 */
-	public function backLinkTarget( ?string $name, int $globalId, int $count ): string {
-		$id = $this->getBackLinkIdentifier( $name, $globalId, $count );
+	public function backlinkTarget( ?string $name, int $globalId, int $count ): string {
+		$id = $this->getBacklinkIdentifier( $name, $globalId, $count );
 		return Sanitizer::safeEncodeAttribute( $id );
 	}
 
@@ -67,7 +72,7 @@ class AnchorFormatter {
 	/**
 	 * @return string URL and HTML escaped to be used as part of a [[#…]] link in wikitext
 	 */
-	public function jumpLink( ?string $name, int $globalId ): string {
+	public function wikitextSafeNoteLink( ?string $name, int $globalId ): string {
 		$id = $this->getNoteIdentifier( $name, $globalId );
 		// This does both URL encoding (e.g. %A0, which only makes sense in href="…") and HTML
 		// entity encoding (e.g. &#xA0;). The browser will decode in reverse order.
@@ -77,7 +82,7 @@ class AnchorFormatter {
 	/**
 	 * @return string Already escaped to be used directly in an id="…" attribute
 	 */
-	public function jumpLinkTarget( ?string $name, int $globalId ): string {
+	public function noteLinkTarget( ?string $name, int $globalId ): string {
 		$id = $this->getNoteIdentifier( $name, $globalId );
 		return Sanitizer::safeEncodeAttribute( $id );
 	}

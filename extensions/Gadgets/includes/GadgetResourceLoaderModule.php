@@ -34,7 +34,7 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 			$repo = MediaWikiServices::getInstance()->getService( 'GadgetsRepo' );
 			try {
 				$this->gadget = $repo->getGadget( $this->id );
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				// Fallback to a placeholder object...
 				$this->gadget = Gadget::newEmptyGadget( $this->id );
 			}
@@ -60,6 +60,9 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 				$pages[$script] = [ 'type' => 'script' ];
 			}
 			if ( $gadget->isPackaged() ) {
+				foreach ( $gadget->getVues() as $vue ) {
+					$pages[$vue] = [ 'type' => 'script-vue' ];
+				}
 				foreach ( $gadget->getJSONs() as $json ) {
 					$pages[$json] = [ 'type' => 'data' ];
 				}
@@ -67,6 +70,22 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 		}
 
 		return $pages;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getScript( RL\Context $context ) {
+		$module = parent::getScript( $context );
+
+		if ( $this->isPackaged() && $this->gadget->getCodexIcons() ) {
+			// Add codex icons to the gadget module
+			$module['files']['icons.json'] = [
+				'type' => 'data',
+				'content' => RL\CodexModule::getIcons( $context, $this->getConfig(), $this->gadget->getCodexIcons() ),
+			];
+		}
+		return $module;
 	}
 
 	/**

@@ -1,13 +1,11 @@
-'use strict';
-
-const Api = require( 'wdio-mediawiki/Api' );
-const MathPage = require( '../pageobjects/math.page' );
+import * as Api from 'wdio-mediawiki/Api.js';
+import MathPage from '../pageobjects/math.page.js';
 
 describe( 'Math', () => {
 	let bot;
 
 	before( async () => {
-		bot = await Api.bot();
+		bot = await Api.mwbot();
 	} );
 
 	it( 'should work for addition', async () => {

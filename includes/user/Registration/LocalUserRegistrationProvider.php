@@ -2,7 +2,6 @@
 
 namespace MediaWiki\User\Registration;
 
-use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IConnectionProvider;
 
@@ -10,24 +9,30 @@ class LocalUserRegistrationProvider implements IUserRegistrationProvider {
 
 	public const TYPE = 'local';
 
-	private UserFactory $userFactory;
-	private IConnectionProvider $connectionProvider;
-
 	public function __construct(
-		UserFactory $userFactory,
-		IConnectionProvider $connectionProvider
+		private readonly IConnectionProvider $connectionProvider
 	) {
-		$this->userFactory = $userFactory;
-		$this->connectionProvider = $connectionProvider;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function fetchRegistration( UserIdentity $user ) {
-		// TODO: Factor this out from User::getRegistration to this method (T352871)
-		$user = $this->userFactory->newFromUserIdentity( $user );
-		return $user->getRegistration();
+		$id = $user->getId();
+
+		if ( $id === 0 ) {
+			return false;
+		}
+
+		$userRegistration = $this->connectionProvider->getReplicaDatabase()
+				->newSelectQueryBuilder()
+				->select( 'user_registration' )
+				->from( 'user' )
+				->where( [ 'user_id' => $id ] )
+				->caller( __METHOD__ )
+				->fetchField();
+
+		return wfTimestampOrNull( TS_MW, $userRegistration );
 	}
 
 	/**

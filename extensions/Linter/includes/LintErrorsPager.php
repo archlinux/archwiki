@@ -54,19 +54,6 @@ class LintErrorsPager extends TablePager {
 	 */
 	private string $throughTemplate;
 
-	/**
-	 * @param IContextSource $context
-	 * @param CategoryManager $categoryManager
-	 * @param LinkCache $linkCache
-	 * @param LinkRenderer $linkRenderer
-	 * @param PermissionManager $permissionManager
-	 * @param ?string $category
-	 * @param array $namespaces
-	 * @param bool $exactMatch
-	 * @param string $title
-	 * @param string $throughTemplate
-	 * @param string $tag
-	 */
 	public function __construct(
 		IContextSource $context,
 		CategoryManager $categoryManager,

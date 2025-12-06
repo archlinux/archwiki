@@ -57,10 +57,10 @@ class CIDRCalculatorTest extends MediaWikiIntegrationTestCase {
 		return [
 			'Config left as the defaults' => [ [], [ '(checkuser-cidr-label)' ], [] ],
 			'Config defines calculator widget as collapsable' => [
-				[ 'collapsable' => true ], [ '(checkuser-cidr-label)', 'collapsibleFieldsetLayout' ], []
+				[ 'collapsable' => true ], [ '(checkuser-cidr-label)', 'collapsibleFieldsetLayout' ], [],
 			],
 			'Config defines has having no wrapper legend text' => [
-				[ 'wrapperLegend' => false ], [], [ '(checkuser-cidr-label)', 'fieldsetLayout' ]
+				[ 'wrapperLegend' => false ], [], [ '(checkuser-cidr-label)', 'fieldsetLayout' ],
 			],
 		];
 	}

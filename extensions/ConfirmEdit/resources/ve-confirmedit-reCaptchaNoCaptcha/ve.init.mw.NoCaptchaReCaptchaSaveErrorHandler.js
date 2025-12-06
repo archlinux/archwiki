@@ -3,7 +3,10 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
 
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler = function () {};
 
-		OO.inheritClass( ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler, ve.init.mw.SaveErrorHandler );
+		OO.inheritClass(
+			ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler,
+			ve.init.mw.SaveErrorHandler
+		);
 
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.static.name = 'confirmEditNoCaptchaReCaptcha';
 
@@ -64,7 +67,9 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( () => {
 				} );
 		};
 
-		ve.init.mw.saveErrorHandlerFactory.register( ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler );
+		ve.init.mw.saveErrorHandlerFactory.register(
+			ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler
+		);
 
 	} );
 } );

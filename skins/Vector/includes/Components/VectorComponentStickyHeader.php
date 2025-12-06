@@ -35,6 +35,15 @@ class VectorComponentStickyHeader implements VectorComponent {
 		// the same markup, so its directly applied to the watchlink element
 		'class' => 'mw-watchlink'
 	];
+	// Event and icon will be updated depending on saved state
+	private const BOOKMARK_ICON = [
+		'id' => 'ca-bookmark-sticky-header',
+		'event' => 'watch-sticky-bookmark',
+		'icon' => 'wikimedia-bookmarkOutline',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'reading-lists-bookmark'
+	];
 	private const EDIT_VE_ICON = [
 		'id' => 'ca-ve-edit-sticky-header',
 		'event' => 've-edit-sticky-header',
@@ -99,6 +108,7 @@ class VectorComponentStickyHeader implements VectorComponent {
 			self::SUBJECT_ICON,
 			self::HISTORY_ICON,
 			self::WATCHSTAR_ICON,
+			self::BOOKMARK_ICON,
 		];
 		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_VE_ICON : self::EDIT_WIKITEXT_ICON;
 		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_WIKITEXT_ICON : self::EDIT_VE_ICON;

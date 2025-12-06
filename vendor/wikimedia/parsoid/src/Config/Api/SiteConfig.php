@@ -105,7 +105,7 @@ class SiteConfig extends ISiteConfig {
 	private bool $featureDetectionDone = false;
 	private bool $hasVideoInfo = false;
 
-	/** If set, generate experimental Parsoid HTML v3 parser function output */
+	/** If set, generate Parsoid v3 parser function output for all parser functions */
 	private bool $v3pf;
 
 	/** @var string[] Base parameters for a siteinfo query */
@@ -145,7 +145,7 @@ class SiteConfig extends ISiteConfig {
 		$this->v3pf = $opts['v3pf'] ?? false;
 	}
 
-	protected function reset() {
+	protected function reset(): void {
 		$this->siteData = null;
 		$this->baseUri = null;
 		$this->relativeLinkPrefix = null;
@@ -276,10 +276,10 @@ class SiteConfig extends ISiteConfig {
 			foreach ( $mw['aliases'] as $alias ) {
 				$this->apiMagicWords[$mwName][] = $alias;
 				// Aliases for double underscore mws include the underscores
-				if ( substr( $alias, 0, 2 ) === '__' && substr( $alias, -2 ) === '__' ) {
+				if ( str_starts_with( $alias, '__' ) && str_ends_with( $alias, '__' ) ) {
 					$bsws[$cs][] = preg_quote( substr( $alias, 2, -2 ), '@' );
 				}
-				if ( strpos( $alias, '$1' ) !== false ) {
+				if ( str_contains( $alias, '$1' ) ) {
 					$pmws[$cs][] = strtr( preg_quote( $alias, '/' ), [ '\\$1' => "(.*?)" ] );
 				}
 				$allMWs[$cs][] = preg_quote( $alias, '/' );
@@ -337,7 +337,7 @@ class SiteConfig extends ISiteConfig {
 		}
 
 		$redirect = '(?i:\#REDIRECT)';
-		$quote = static function ( $s ) {
+		$quote = static function ( string $s ): string {
 			$q = preg_quote( $s, '@' );
 			# Note that PHP < 7.3 doesn't escape # in preg_quote.  That means
 			# that the $redirect regexp will fail if used with the `x` flag.
@@ -387,7 +387,7 @@ class SiteConfig extends ISiteConfig {
 
 		$url = $this->siteData['server'] . $this->siteData['articlepath'];
 
-		if ( substr( $url, -2 ) !== '$1' ) {
+		if ( !str_ends_with( $url, '$1' ) ) {
 			throw new \UnexpectedValueException( "Article path '$url' does not have '$1' at the end" );
 		}
 		$url = substr( $url, 0, -2 );
@@ -720,7 +720,7 @@ class SiteConfig extends ISiteConfig {
 			}
 
 			$syn = $func;
-			if ( substr( $syn, -1 ) === ':' ) {
+			if ( str_ends_with( $syn, ':' ) ) {
 				$syn = substr( $syn, 0, -1 );
 			}
 			if ( !isset( self::$noHashFunctions[$magicword] ) ) {
@@ -858,6 +858,29 @@ class SiteConfig extends ISiteConfig {
 	public function observeTiming( string $name, float $value, array $labels ): void {
 		// We don't use the labels for now, using MockMetrics instead
 		$this->metrics->timing( $name, $value );
+	}
+
+	/**
+	 * Record a histogram metric
+	 * @param string $name
+	 * @param float $value A time value in milliseconds
+	 * @param array $buckets The buckets used in this histogram
+	 * @param array $labels The metric labels
+	 * @return void
+	 */
+	public function observeHistogram( string $name, float $value, array $buckets, array $labels ) {
+		$this->metrics->histogram( $name, $value, $buckets, $labels );
+	}
+
+	/**
+	 * Generate mock histogram buckets
+	 *
+	 * @param float $mean
+	 * @param int $skip
+	 * @return list<float>
+	 */
+	public function getHistogramBuckets( float $mean, int $skip ) {
+		return [ 0., $mean, 2 * $mean ];
 	}
 
 	/** @inheritDoc */

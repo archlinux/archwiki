@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Tag;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmpadded;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
@@ -16,53 +17,61 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
  * for multiple functions.
  */
 class MMLParsingUtil {
-	public static function renderApplyFunction() {
-		$mo = new MMLmo();
-		return $mo->encapsulateRaw( "&#x2061;" );
+	public static function renderApplyFunction(): MMLbase {
+		return new MMLmo( "", [], "&#x2061;" );
 	}
 
 	public static function getFontArgs( string $name, ?string $variant, ?array $passedArgs ): array {
 		$args = [];
-		switch ( $name ) {
+		switch ( trim( $name, " \n\r\t\v\0\\" ) ) {
 			case "cal":
 			case "mathcal":
-				$args = [ Tag::MJXVARIANT => "-tex-calligraphic", "mathvariant" => Variants::SCRIPT ];
+				$args = [ Tag::MJXVARIANT => "-tex-calligraphic", 'mathvariant' => Variants::SCRIPT ];
 				break;
 			case "it":
 			case "mathit":
-				$args = [ Tag::MJXVARIANT => $variant, "mathvariant" => Variants::ITALIC ];
+				$args = [ Tag::MJXVARIANT => $variant, 'mathvariant' => Variants::ITALIC ];
 				break;
 			case "bf":
 			case "mathbf":
-				$args = [ "mathvariant" => $variant ];
+				$args = [ 'mathvariant' => $variant ];
 				break;
 			// Sstatements from here come from other fct ok ? otherwise create second fct
 			case "textit":
-				$args = [ "mathvariant" => Variants::ITALIC ];
+				$args = [ 'mathvariant' => Variants::ITALIC ];
 				break;
 			case "textbf":
-				$args = [ "mathvariant" => Variants::BOLD ];
+				$args = [ 'mathvariant' => Variants::BOLD ];
 				break;
 			case "textsf":
-				$args = [ "mathvariant" => Variants::SANSSERIF ];
+				$args = [ 'mathvariant' => Variants::SANSSERIF ];
 				break;
 			case "texttt":
-				$args = [ "mathvariant" => Variants::MONOSPACE ];
+				$args = [ 'mathvariant' => Variants::MONOSPACE ];
 				break;
 			case "textrm":
 				break;
+			case "mathrm":
+				// Bold always has precedence
+				$passedVariant = $passedArgs['mathvariant'] ?? '';
+				if ( str_contains( $passedVariant, 'bold' ) ) {
+					$args = [ 'mathvariant' => $passedVariant ];
+					break;
+				}
+				$args = [ 'mathvariant' => Variants::NORMAL ];
+				break;
 			case "emph":
 				// Toggle by passed args in emph
-				if ( isset( $passedArgs["mathvariant"] ) ) {
-					if ( $passedArgs["mathvariant"] === Variants::ITALIC ) {
-						$args = [ "mathvariant" => Variants::NORMAL ];
+				if ( isset( $passedArgs['mathvariant'] ) ) {
+					if ( $passedArgs['mathvariant'] === Variants::ITALIC ) {
+						$args = [ 'mathvariant' => Variants::NORMAL ];
 					}
 				} else {
-					$args = [ "mathvariant" => Variants::ITALIC ];
+					$args = [ 'mathvariant' => Variants::ITALIC ];
 				}
 				break;
 			default:
-				$args = [ "mathvariant" => $variant ];
+				$args = [ 'mathvariant' => $variant ];
 
 		}
 		return $args;
@@ -100,110 +109,16 @@ class MMLParsingUtil {
 
 	/**
 	 * Creates a negation block in MathML, usually preceding the negated statement
-	 * @return string negation block as MathML
+	 * @return MMLbase negation block as MathML
 	 */
-	public static function createNot() {
-		$mmlMrow = new MMLmrow( TexClass::REL );
-		$mpadded = new MMLmpadded( "", [ "width" => "0" ] );
-		$mtext = new MMLmtext();
-		return $mmlMrow->encapsulateRaw( $mpadded->encapsulateRaw( $mtext->encapsulateRaw( "&#x29F8;" ) ) );
-	}
-
-	public static function mapToDoubleStruckUnicode( string $inputString ): string {
-		$map = [
-			'0' => '&#x1D7D8;', '1' => '&#x1D7D9;', '2' => '&#x1D7DA;', '3' => '&#x1D7DB;', '4' => '&#x1D7DC;',
-			'5' => '&#x1D7DD;', '6' => '&#x1D7DE;', '7' => '&#x1D7DF;', '8' => '&#x1D7E0;', '9' => '&#x1D7E1;',
-			'A' => '&#x1D538;', 'B' => '&#x1D539;', 'C' => '&#x2102;', 'D' => '&#x1D53B;', 'E' => '&#x1D53C;',
-			'F' => '&#x1D53D;', 'G' => '&#x1D53E;', 'H' => '&#x210D;', 'I' => '&#x1D540;', 'J' => '&#x1D541;',
-			'K' => '&#x1D542;', 'L' => '&#x1D543;', 'M' => '&#x1D544;', 'N' => '&#x2115;', 'O' => '&#x1D546;',
-			'P' => '&#x2119;', 'Q' => '&#x211A;', 'R' => '&#x211D;', 'S' => '&#x1D54A;', 'T' => '&#x1D54B;',
-			'U' => '&#x1D54C;', 'V' => '&#x1D54D;', 'W' => '&#x1D54E;', 'X' => '&#x1D54F;', 'Y' => '&#x1D550;',
-			'Z' => '&#x2124;', 'a' => '&#x1D552;', 'b' => '&#x1D553;', 'c' => '&#x1D554;', 'd' => '&#x1D555;',
-			'e' => '&#x1D556;', 'f' => '&#x1D557;', 'g' => '&#x1D558;', 'h' => '&#x1D559;', 'i' => '&#x1D55A;',
-			'j' => '&#x1D55B;', 'k' => '&#x1D55C;', 'l' => '&#x1D55D;', 'm' => '&#x1D55E;', 'n' => '&#x1D55F;',
-			'o' => '&#x1D560;', 'p' => '&#x1D561;', 'q' => '&#x1D562;', 'r' => '&#x1D563;', 's' => '&#x1D564;',
-			't' => '&#x1D565;', 'u' => '&#x1D566;', 'v' => '&#x1D567;', 'w' => '&#x1D568;', 'x' => '&#x1D569;',
-			'y' => '&#x1D56A;', 'z' => '&#x1D56B;'
-		];
-
-		return self::matchAlphanumeric( $inputString, $map );
-	}
-
-	public static function mapToCaligraphicUnicode( string $inputString ): string {
-		$map = [
-			'0' => '&#x1D7CE;', '1' => '&#x1D7CF;', '2' => '&#x1D7D0;', '3' => '&#x1D7D1;', '4' => '&#x1D7D2;',
-			'5' => '&#x1D7D3;', '6' => '&#x1D7D4;', '7' => '&#x1D7D5;', '8' => '&#x1D7D6;', '9' => '&#x1D7D7;',
-			'A' => '&#x1D49C;', 'B' => '&#x212C;', 'C' => '&#x1D49E;', 'D' => '&#x1D49F;', 'E' => '&#x2130;',
-			'F' => '&#x2131;', 'G' => '&#x1D4A2;', 'H' => '&#x210B;', 'I' => '&#x2110;', 'J' => '&#x1D4A5;',
-			'K' => '&#x1D4A6;', 'L' => '&#x2112;', 'M' => '&#x2133;', 'N' => '&#x1D4A9;', 'O' => '&#x1D4AA;',
-			'P' => '&#x1D4AB;', 'Q' => '&#x1D4AC;', 'R' => '&#x211B;', 'S' => '&#x1D4AE;', 'T' => '&#x1D4AF;',
-			'U' => '&#x1D4B0;', 'V' => '&#x1D4B1;', 'W' => '&#x1D4B2;', 'X' => '&#x1D4B3;', 'Y' => '&#x1D4B4;',
-			'Z' => '&#x1D4B5;', 'a' => '&#x1D4B6;', 'b' => '&#x1D4B7;', 'c' => '&#x1D4B8;', 'd' => '&#x1D4B9;',
-			'e' => '&#x212F;', 'f' => '&#x1D4BB;', 'g' => '&#x210A;', 'h' => '&#x1D4BD;', 'i' => '&#x1D4BE;',
-			'j' => '&#x1D4BF;', 'k' => '&#x1D4C0;', 'l' => '&#x1D4C1;', 'm' => '&#x1D4C2;', 'n' => '&#x1D4C3;',
-			'o' => '&#x2134;', 'p' => '&#x1D4C5;', 'q' => '&#x1D4C6;', 'r' => '&#x1D4C7;', 's' => '&#x1D4C8;',
-			't' => '&#x1D4C9;', 'u' => '&#x1D4CA;', 'v' => '&#x1D4CB;', 'w' => '&#x1D4CC;', 'x' => '&#x1D4CD;',
-			'y' => '&#x1D4CE;', 'z' => '&#x1D4CF;'
-		];
-
-		return self::matchAlphanumeric( $inputString, $map );
-	}
-
-	public static function mapToFrakturUnicode( string $inputString ): string {
-		$res = '';
-		$specialCases = [ 'C' => '&#x0212D;',
-			'H' => '&#x0210C;',
-			'I' => '&#x02111;',
-			'R' => '&#x0211C;',
-			'Z' => '&#x02124;' ];
-		foreach ( mb_str_split( $inputString ) as $chr ) {
-			// see https://www.w3.org/TR/mathml-core/#fraktur-mappings
-			if ( isset( $specialCases[$chr] ) ) {
-				$res .= $specialCases[$chr];
-				continue;
-			}
-			if ( $chr >= 'A' && $chr <= 'Z' ) {
-				$code = self::addToChr( $chr, '1D4C3' );
-				$res .= '&#x' . $code . ';';
-			} elseif ( $chr >= 'a' && $chr <= 'z' ) {
-				$code = self::addToChr( $chr, '1D4BD' );
-				$res .= '&#x' . $code . ';';
-			} else {
-				$res .= $chr;
-			}
-		}
-		return $res;
-	}
-
-	public static function mapToBoldUnicode( string $inputString ): string {
-		$res = '';
-		foreach ( mb_str_split( $inputString ) as $chr ) {
-			// see https://www.w3.org/TR/mathml-core/#bold-mappings
-			if ( $chr >= 'A' && $chr <= 'Z' ) {
-				$code = self::addToChr( $chr, '1D3BF' );
-				$res .= '&#x' . $code . ';';
-			} elseif ( $chr >= 'a' && $chr <= 'z' ) {
-				$code = self::addToChr( $chr, '1D3B9' );
-				$res .= '&#x' . $code . ';';
-			} elseif ( $chr >= '0' && $chr <= '9' ) {
-				$code = self::addToChr( $chr, '1D79E' );
-				$res .= '&#x' . $code . ';';
-			} else {
-				$res .= $chr;
-			}
-		}
-		return $res;
+	public static function createNot(): MMLbase {
+		return new MMLmrow( TexClass::REL, [],
+			new MMLmpadded( "", [ "width" => "0" ], new MMLmtext( "", [], "&#x29F8;" ) )
+		);
 	}
 
 	private static function addToChr( string $chr, string $base ): string {
 		return strtoupper( dechex( mb_ord( $chr ) + hexdec( $base ) ) );
-	}
-
-	public static function matchAlphanumeric( string $inputString, array $map ): string {
-		// Replace each character in the input string with its caligraphic Unicode equivalent
-		return preg_replace_callback( '/[A-Za-z0-9]/u', static function ( $matches ) use ( $map ) {
-			return $map[$matches[0]] ?? $matches[0];
-		}, $inputString );
 	}
 
 	public static function getIntentContent( ?string $input ): ?string {
@@ -232,12 +147,9 @@ class MMLParsingUtil {
 	}
 
 	public static function getIntentArgs( ?string $input ): ?string {
-		if ( !$input ) {
-			return null;
-		}
-		$matchesArgs = [];
-		$matchArg = preg_match( "/arg\s*=\s*[\'\"](.*?)[\'\"]/", $input, $matchesArgs );
-		if ( $matchArg && count( $matchesArgs ) >= 2 ) {
+		if ( $input &&
+			preg_match( "/arg\s*=\s*[\'\"](.*?)[\'\"]/", $input, $matchesArgs )
+		) {
 			return $matchesArgs[1];
 		}
 		return null;

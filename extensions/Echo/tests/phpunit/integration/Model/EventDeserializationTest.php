@@ -19,7 +19,7 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 			'event_page_id' => null,
 			'event_deleted' => false,
 			'event_agent_id' => null,
-			'event_agent_ip' => null
+			'event_agent_ip' => null,
 		];
 	}
 

@@ -3,26 +3,13 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\Parser;
@@ -40,7 +27,11 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 
 	private UrlUtils $urlUtils;
 
-	public function __construct( ApiQuery $query, string $moduleName, UrlUtils $urlUtils ) {
+	public function __construct(
+		ApiQuery $query,
+		string $moduleName,
+		UrlUtils $urlUtils
+	) {
 		parent::__construct( $query, $moduleName, 'eu' );
 
 		$this->urlUtils = $urlUtils;
@@ -50,10 +41,12 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -134,7 +127,9 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 			$this->addWhere( $db->buildComparison( '>=', $conds ) );
 		}
 
+		$this->setVirtualDomain( ExternalLinksTable::VIRTUAL_DOMAIN );
 		$res = $this->select( __METHOD__ );
+		$this->resetVirtualDomain();
 
 		$result = $this->getResult();
 
@@ -198,6 +193,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		$this->setContinueEnumParameter( 'continue', implode( '|', $fields ) );
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$ret = [
 			'prop' => [
@@ -245,6 +241,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&list=exturlusage&euquery=www.mediawiki.org'
@@ -252,6 +249,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Exturlusage';
 	}

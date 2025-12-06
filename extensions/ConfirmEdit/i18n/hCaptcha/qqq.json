@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Umherirrender"
+		]
+	},
+	"hcaptcha-name": "{{notranslate}}\"",
+	"hcaptcha-desc": "{{desc}}",
+	"hcaptcha-edit": "{{notranslate}}",
+	"hcaptcha-addurl": "Message above the CAPTCHA for addurl (user added new external links to the page) action.\n{{related|ConfirmEdit-addurl}}",
+	"hcaptcha-badlogin": "Message above the CAPTCHA for badlogin action.\n{{related|ConfirmEdit-badlogin}}",
+	"hcaptcha-createaccount": "{{notranslate}}",
+	"hcaptcha-createaccount-fail": "Error message, when the CAPTCHA isn't solved correctly.\n{{related|ConfirmEdit-createaccount-fail}}",
+	"hcaptcha-create": "Message above the CAPTCHA for create (user creates a new page) action.\n{{related|ConfirmEdit-create}}",
+	"hcaptcha-help": "Explanation of how to solve the CAPTCHA for API clients.",
+	"hcaptcha-privacy-policy": "Links to hCaptcha Privacy Policy and Terms of Service to be displayed when the hCaptcha could be shown on an action",
+	"hcaptcha-challenge-closed": "Error message shown within a form when a user closes the hCaptcha challenge without completing it.",
+	"hcaptcha-challenge-expired": "Error message shown within a form when a user takes too long to complete the hCaptcha challenge.",
+	"hcaptcha-generic-error": "Error message shown within a form when an unknown error occurs while executing the hCaptcha challenge.",
+	"hcaptcha-loading-indicator-label": "Hidden label value set for accessibility on the loading indicator shown while the hCaptcha code is initializing.",
+	"hcaptcha-missing-token": "Error message shown within a form when it is submitted without hCaptcha having been executed.",
+	"hcaptcha-noscript": "Message displayed to users with JavaScript disabled, informing them that JavaScript is required to complete the hCaptcha."
+}

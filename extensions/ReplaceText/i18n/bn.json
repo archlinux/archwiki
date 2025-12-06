@@ -14,5 +14,6 @@
 	"replacetext_useregex": "রেগুলার এক্সপ্রেশন ব্যবহার করো",
 	"replacetext_optionalfilters": "ঐচ্ছিক ফিল্টার:",
 	"replacetext_categorysearch": "শুধুমাত্র বিষয়শ্রেণীতেই প্রতিস্থাপন করো:",
-	"replacetext_formovedpages": "স্থানান্তরিত পাতাগুলির জন্য:"
+	"replacetext_formovedpages": "স্থানান্তরিত পাতাগুলির জন্য:",
+	"tag-replacetext": "[[Special:ReplaceText|পাঠ্য-প্রতিস্থাপন]]"
 }

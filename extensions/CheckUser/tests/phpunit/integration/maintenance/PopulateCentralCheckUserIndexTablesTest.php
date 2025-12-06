@@ -250,9 +250,13 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			->select( [ 'cite_timestamp', 'cite_ip_hex', 'cite_ciwm_id' ] )
 			->from( 'cuci_temp_edit' )
 			->assertResultSet( [
-				[ '20200101001100', IPUtils::toHex( '1.2.3.4' ), $wikiMapId ],
-				[ '20200101001200', IPUtils::toHex( '1.2.3.5' ), $wikiMapId ],
-				[ '20200101001300', IPUtils::toHex( '2001:0db8:85a3:0000:0000:8a2e:0370:7334' ), $wikiMapId ],
+				[ $this->getDb()->timestamp( '20200101001100' ), IPUtils::toHex( '1.2.3.4' ), $wikiMapId ],
+				[ $this->getDb()->timestamp( '20200101001200' ), IPUtils::toHex( '1.2.3.5' ), $wikiMapId ],
+				[
+					$this->getDb()->timestamp( '20200101001300' ),
+					IPUtils::toHex( '2001:0db8:85a3:0000:0000:8a2e:0370:7334' ),
+					$wikiMapId,
+				],
 			] );
 
 		// Check that the expected rows exist in cuci_user
@@ -260,9 +264,9 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			->select( [ 'ciu_timestamp', 'ciu_central_id', 'ciu_ciwm_id' ] )
 			->from( 'cuci_user' )
 			->assertResultSet( [
-				[ '20220101000000', $testUsers['testUser1']->getId(), $wikiMapId ],
-				[ '20220109000000', $testUsers['testUser2']->getId(), $wikiMapId ],
-				[ '20240109000000', $testUsers['temporaryUser']->getId(), $wikiMapId ],
+				[ $this->getDb()->timestamp( '20220101000000' ), $testUsers['testUser1']->getId(), $wikiMapId ],
+				[ $this->getDb()->timestamp( '20220109000000' ), $testUsers['testUser2']->getId(), $wikiMapId ],
+				[ $this->getDb()->timestamp( '20240109000000' ), $testUsers['temporaryUser']->getId(), $wikiMapId ],
 			] );
 	}
 }

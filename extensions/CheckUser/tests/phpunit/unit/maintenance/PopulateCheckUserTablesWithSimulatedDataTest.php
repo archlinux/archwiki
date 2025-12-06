@@ -70,7 +70,7 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MediaWikiUnitTestCase
 			'Three IPs, one excluded' => [
 				[ '127.0.0.1', '127.0.0.2', '127.0.0.3' ],
 				[ '127.0.0.2' ],
-				[ '127.0.0.1', '127.0.0.3' ]
+				[ '127.0.0.1', '127.0.0.3' ],
 			],
 		];
 	}
@@ -90,7 +90,7 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MediaWikiUnitTestCase
 			'Three IPs, three excluded' => [
 				[ '127.0.0.1', '127.0.0.2', '127.0.0.3' ],
 				[ '127.0.0.1', '127.0.0.2', '127.0.0.3' ],
-			]
+			],
 		];
 	}
 
@@ -218,7 +218,6 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MediaWikiUnitTestCase
 		// T287318 - TestingAccessWrapper::__call does not support pass-by-reference
 		$classReflection = new ReflectionClass( $objectUnderTest->object );
 		$methodReflection = $classReflection->getMethod( 'incrementAndCheck' );
-		$methodReflection->setAccessible( true );
 		$this->assertSame(
 			$expectedReturnValue,
 			$methodReflection->invokeArgs( $objectUnderTest->object, [ &$actionsPerformed, $actionsLeft ] ),
@@ -243,7 +242,6 @@ class PopulateCheckUserTablesWithSimulatedDataTest extends MediaWikiUnitTestCase
 		// T287318 - TestingAccessWrapper::__call does not support pass-by-reference
 		$classReflection = new ReflectionClass( $objectUnderTest->object );
 		$methodReflection = $classReflection->getMethod( 'applyRemainderAction' );
-		$methodReflection->setAccessible( true );
 		$methodReflection->invokeArgs( $objectUnderTest->object, [ &$actionsLeft, &$remainderActions ] );
 		$this->assertSame(
 			$expectedActionsLeftAfterCall,

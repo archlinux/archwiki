@@ -5,6 +5,7 @@
 		]
 	},
 	"apihelp-query+checkuser-summary": "Таллам бе, муьлха IP-адресаш леладо хӀокху декъашхочун цӀарца, йа муьлха декъашхойн цӀераш лелайо дӀаделлачу IP-адресца.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''ХӀара API дӀайайина сайтан администраторша. API дехаро цхьа а хаамаш йухаберзор бац.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "CheckUser дехаран тайпа:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Ӏалашонан декъашхочун IP-адрес схьаэца.",
 	"apihelp-query+checkuser-paramvalue-request-actions": "Ӏалашонан IP-адресца йа диапазонца кхочушбеш болу ардамаш схьаэца.",
@@ -36,6 +37,7 @@
 	"apierror-checkuser-timelimit": "Нийса хан лело йеза (масала, «-2 weeks» йа «2 weeks ago»).",
 	"apierror-checkuser-invalidmode": "Дехаран нийса йоцу раж",
 	"apierror-checkuser-nosuchuser": "Иштта цӀе йолуш декъашхо вац(йац)",
+	"apierror-checkuser-disabled": "«checkuser» API-дехар дӀадаьккхина сайтан администраторша.",
 	"checkuser-api-help-param-direction": "Муьлхачу рогӀехь гайта деза:",
 	"checkuser-api-help-paramvalue-direction-newer": "Хьалха уггаре а ширанаш. Билгалдаккхар: $1from $1to хьалха хила деза.",
 	"checkuser-api-help-paramvalue-direction-older": "Хьалха уггар керланаш (Ӏад йитаран кепаца). Билгалдаккхар: $1from $1to-л тӀаьхьа хила деза.",
@@ -46,5 +48,7 @@
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} гулйо лелоран агентийн клиентийн хьехамийн хаамаш, вандализм а, зедар а нисдарехь гӀо дан. Хьажа https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints.",
 	"apihelp-logout-param-checkuserclienthints": "Клиенто хьехам бо ApiLogout-на дехаршца цхьаьна дӀакхачийна хаамаш. Чоьхьарчу декъашхочун бен.",
 	"checkuser-ip-auto-reveal-expiry-invalid": "Авто гучудаккхаран хан чекхйалар нийса дац.",
-	"checkuser-ip-auto-reveal-missing-permission": "IP-адрес авто гучудаккхар функци лело оьшуш йолу бакъо йац хьан."
+	"checkuser-ip-auto-reveal-missing-permission": "IP-адрес авто гучудаккхар функци лело оьшуш йолу бакъо йац хьан.",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "Билгалдаьккхина гӀуллакхан идентификатор йац",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "Кховдийна талламийн функци дӀахӀоттийна йац"
 }

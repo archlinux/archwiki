@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Config;
 
+use Closure;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
@@ -12,7 +13,6 @@ use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Parsoid\DOM\Document;
-use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Fragments\PFragment;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
@@ -29,6 +29,7 @@ use Wikimedia\Parsoid\Wikitext\ContentModelHandler as WikitextContentModelHandle
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 use Wikimedia\Parsoid\Wt2Html\ParserPipelineFactory;
+use Wikimedia\Parsoid\Wt2Html\PipelineContentCache;
 use Wikimedia\Parsoid\Wt2Html\TreeBuilder\RemexPipeline;
 
 /**
@@ -90,27 +91,10 @@ class Env {
 	private array $behaviorSwitches = [];
 
 	/**
-	 * Maps fragment id to the fragment forest (array of Nodes).
-	 * @var array<string,DocumentFragment>
-	 */
-	private array $fragmentMap = [];
-
-	/**
 	 * Maps pfragment id to a PFragment.
 	 * @var array<string,PFragment>
 	 */
 	private array $pFragmentMap = [];
-
-	/**
-	 * Used to generate fragment ids as needed during parse
-	 */
-	private int $fid = 1;
-
-	/** Used to generate uids as needed during this parse */
-	private int $uid = 1;
-
-	/** Used to generate annotation uids as needed during this parse */
-	private int $annUid = 0;
 
 	/** Lints recorded */
 	private array $lints = [];
@@ -172,6 +156,12 @@ class Env {
 	public array $pageCache = [];
 
 	/**
+	 * Token caches used in the pipeline
+	 * @var array<PipelineContentCache>
+	 */
+	private array $pipelineContentCaches = [];
+
+	/**
 	 * The current top-level document. During wt2html, this will be the document
 	 * associated with the RemexPipeline. During html2wt, this will be the
 	 * input document, typically passed as a constructor option.
@@ -229,7 +219,6 @@ class Env {
 		ContentMetadataCollector $metadata,
 		?array $options = null
 	) {
-		self::checkPlatform();
 		$options ??= [];
 		$this->siteConfig = $siteConfig;
 		$this->pageConfig = $pageConfig;
@@ -250,34 +239,12 @@ class Env {
 		}
 		$this->skipLanguageConversionPass =
 			$options['skipLanguageConversionPass'] ?? false;
-		$this->htmlVariantLanguage = !empty( $options['htmlVariantLanguage'] ) ?
-			Utils::mwCodeToBcp47(
-				$options['htmlVariantLanguage'],
-				// Be strict in what we accept here.
-				true, $this->siteConfig->getLogger()
-			) : null;
-		$this->wtVariantLanguage = !empty( $options['wtVariantLanguage'] ) ?
-			Utils::mwCodeToBcp47(
-				$options['wtVariantLanguage'],
-				// Be strict in what we accept here.
-				true, $this->siteConfig->getLogger()
-			) : null;
+		$this->htmlVariantLanguage = $options['htmlVariantLanguage'] ?? null;
+		$this->wtVariantLanguage = $options['wtVariantLanguage'] ?? null;
 		$this->nativeTemplateExpansion = !empty( $options['nativeTemplateExpansion'] );
 		$this->requestOffsetType = $options['offsetType'] ?? 'byte';
 		$this->logLinterData = !empty( $options['logLinterData'] );
 		$this->linterOverrides = $options['linterOverrides'] ?? [];
-		$this->traceFlags = $options['traceFlags'] ?? [];
-		$this->dumpFlags = $options['dumpFlags'] ?? [];
-		$this->debugFlags = $options['debugFlags'] ?? [];
-		$this->parsoidLogger = new ParsoidLogger( $this->siteConfig->getLogger(), [
-			'logLevels' => $options['logLevels'] ?? [ 'fatal', 'error', 'warn', 'info' ],
-			'debugFlags' => $this->debugFlags,
-			'dumpFlags' => $this->dumpFlags,
-			'traceFlags' => $this->traceFlags
-		] );
-		if ( $this->hasTraceFlag( 'time' ) ) {
-			$this->profiling = true;
-		}
 		$this->setupTopLevelDoc( $options['topLevelDoc'] ?? null );
 		if ( $options['pageBundle'] ?? false ) {
 			$this->pageBundle = DomPageBundle::newEmpty(
@@ -299,32 +266,21 @@ class Env {
 		// Constructing a new Env in both cases could eliminate this issue.
 		$this->metadata->setTOCData( $this->tocData );
 
-		$this->wikitextContentModelHandler = new WikitextContentModelHandler( $this );
-	}
-
-	/**
-	 * Check to see if the PHP platform is sensible
-	 */
-	private static function checkPlatform() {
-		static $checked;
-		if ( !$checked ) {
-			$highBytes =
-				"\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f" .
-				"\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f" .
-				"\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf" .
-				"\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf" .
-				"\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf" .
-				"\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf" .
-				"\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef" .
-				"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff";
-			if ( strtolower( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . $highBytes )
-				!== 'abcdefghijklmnopqrstuvwxyz' . $highBytes
-			) {
-				throw new \RuntimeException( 'strtolower() doesn\'t work -- ' .
-					'please set the locale to C or a UTF-8 variant such as C.UTF-8' );
-			}
-			$checked = true;
+		$this->traceFlags = $options['traceFlags'] ?? [];
+		$this->dumpFlags = $options['dumpFlags'] ?? [];
+		$this->debugFlags = $options['debugFlags'] ?? [];
+		$this->parsoidLogger = new ParsoidLogger( $this->siteConfig->getLogger(), [
+			'logLevels' => $options['logLevels'] ?? [ 'fatal', 'error', 'warn', 'info' ],
+			'debugFlags' => $this->debugFlags,
+			'dumpFlags' => $this->dumpFlags,
+			'traceFlags' => $this->traceFlags,
+			'ownerDoc' => $this->getTopLevelDoc(),
+		] );
+		if ( $this->hasTraceFlag( 'time' ) ) {
+			$this->profiling = true;
 		}
+
+		$this->wikitextContentModelHandler = new WikitextContentModelHandler( $this );
 	}
 
 	/**
@@ -354,7 +310,7 @@ class Env {
 	 */
 	public function pushNewProfile(): Profile {
 		$currProfile = count( $this->profileStack ) > 0 ? $this->getCurrentProfile() : null;
-		$profile = new Profile();
+		$profile = new Profile( $this, isset( $this->debugFlags['oom'] ) );
 		$this->profileStack[] = $profile;
 		if ( $currProfile !== null ) {
 			$currProfile->pushNestedProfile( $profile );
@@ -400,9 +356,10 @@ class Env {
 
 	/**
 	 * Write out a string (because it was requested by dumpFlags)
+	 *
 	 * @param string $str
 	 */
-	public function writeDump( string $str ) {
+	public function writeDump( string $str ): void {
 		$this->log( 'dump', $str );
 	}
 
@@ -451,22 +408,6 @@ class Env {
 	}
 
 	/**
-	 * Get the current uid counter value
-	 * @return int
-	 */
-	public function getUID(): int {
-		return $this->uid;
-	}
-
-	/**
-	 * Get the current fragment id counter value
-	 * @return int
-	 */
-	public function getFID(): int {
-		return $this->fid;
-	}
-
-	/**
 	 * Whether `<section>` wrappers should be added.
 	 * @todo Does this actually belong here? Should it be a behavior switch?
 	 * @return bool
@@ -481,6 +422,23 @@ class Env {
 	 */
 	public function getPipelineFactory(): ParserPipelineFactory {
 		return $this->pipelineFactory;
+	}
+
+	/**
+	 * Get a token cache for a given cache name. A cache is shared across all pipelines
+	 * and processing that happens in the lifetime of this Env object.
+	 * @param string $cacheName Key to retrieve a token cache
+	 * @param array{repeatThreshold:int,cloneValue:bool|Closure} $newCacheOpts Opts for the new cache
+	 */
+	public function getCache( string $cacheName, array $newCacheOpts ): PipelineContentCache {
+		if ( !isset( $this->pipelineContentCaches[$cacheName] ) ) {
+			$this->pipelineContentCaches[$cacheName] = new PipelineContentCache(
+				$newCacheOpts['repeatThreshold'],
+				$newCacheOpts['cloneValue']
+			);
+		}
+
+		return $this->pipelineContentCaches[$cacheName];
 	}
 
 	/**
@@ -513,9 +471,10 @@ class Env {
 	/**
 	 * Update the current offset type. Only
 	 * Parsoid\Wt2Html\DOM\Processors\ConvertOffsets should be doing this.
+	 *
 	 * @param ('byte'|'ucs2'|'char') $offsetType 'byte', 'ucs2', or 'char'
 	 */
-	public function setCurrentOffsetType( string $offsetType ) {
+	public function setCurrentOffsetType( string $offsetType ): void {
 		$this->currentOffsetType = $offsetType;
 	}
 
@@ -545,7 +504,6 @@ class Env {
 		$origName = $str;
 		$str = trim( $str );
 
-		$pageConfig = $this->getPageConfig();
 		$title = $this->getContextTitle();
 
 		// Resolve lonely fragments (important if the current page is a subpage,
@@ -697,27 +655,11 @@ class Env {
 	}
 
 	/**
-	 * Generate a new uid
-	 * @return int
-	 */
-	public function generateUID(): int {
-		return $this->uid++;
-	}
-
-	/**
-	 * Generate a new annotation uid
-	 * @return int
-	 */
-	public function generateAnnotationUID(): int {
-		return $this->annUid++;
-	}
-
-	/**
 	 * Generate a new annotation id
 	 * @return string
 	 */
 	public function newAnnotationId(): string {
-		return "mwa" . $this->generateAnnotationUID();
+		return DOMDataUtils::getBag( $this->topLevelDoc )->newAnnotationId();
 	}
 
 	/**
@@ -725,7 +667,7 @@ class Env {
 	 * @return string
 	 */
 	public function newAboutId(): string {
-		return '#mwt' . $this->generateUID();
+		return DOMDataUtils::getBag( $this->topLevelDoc )->newAboutId();
 	}
 
 	/**
@@ -745,14 +687,6 @@ class Env {
 	}
 
 	/**
-	 * Generate a new fragment id
-	 * @return string
-	 */
-	public function newFragmentId(): string {
-		return "mwf" . (string)$this->fid++;
-	}
-
-	/**
 	 * When an environment is constructed, we initialize a document (and
 	 * RemexPipeline) to be used throughout the parse.
 	 *
@@ -769,8 +703,18 @@ class Env {
 			);
 			$this->topLevelDoc = $topLevelDoc;
 		} else {
+			$this->topLevelDoc = DOMCompat::newDocument( isHtml: true );
+			$documentElement = $this->topLevelDoc->documentElement;
+			if ( !$documentElement ) {
+				$documentElement = $this->topLevelDoc->createElement( 'html' );
+				$this->topLevelDoc->appendChild( $documentElement );
+			}
+			$body = DOMCompat::getBody( $this->topLevelDoc );
+			if ( !$body ) {
+				$body = $this->topLevelDoc->createElement( 'body' );
+				$documentElement->appendChild( $body );
+			}
 			$this->remexPipeline = new RemexPipeline( $this );
-			$this->topLevelDoc = $this->remexPipeline->doc;
 			// Prepare and load.
 			// (Loading should be easy since the doc is expected to be empty.)
 			$options = [
@@ -780,7 +724,7 @@ class Env {
 			];
 			DOMDataUtils::prepareDoc( $this->topLevelDoc );
 			DOMDataUtils::visitAndLoadDataAttribs(
-				DOMCompat::getBody( $this->topLevelDoc ), $options
+				$body, $options
 			);
 			// Mark the document as loaded so we can try to catch errors which
 			// might try to reload this again later.
@@ -805,13 +749,7 @@ class Env {
 		if ( !$toFragment ) {
 			return $this->remexPipeline;
 		} else {
-			$pipeline = new RemexPipeline( $this );
-			// Attach the top-level bag to the document, for the convenience
-			// of code that modifies the data within the RemexHtml TreeBuilder
-			// pipeline, prior to the migration of nodes to the top-level
-			// document.
-			DOMDataUtils::prepareChildDoc( $this->topLevelDoc, $pipeline->doc );
-			return $pipeline;
+			return new RemexPipeline( $this );
 		}
 	}
 
@@ -834,44 +772,6 @@ class Env {
 	 */
 	public function getBehaviorSwitch( string $switch, $default = null ) {
 		return $this->behaviorSwitches[$switch] ?? $default;
-	}
-
-	/**
-	 * @return array<string,DocumentFragment>
-	 */
-	public function getDOMFragmentMap(): array {
-		return $this->fragmentMap;
-	}
-
-	/**
-	 * @param string $id Fragment id
-	 * @return DocumentFragment
-	 */
-	public function getDOMFragment( string $id ): DocumentFragment {
-		return $this->fragmentMap[$id];
-	}
-
-	/**
-	 * @param string $id Fragment id
-	 * @param DocumentFragment $forest DOM forest
-	 *   to store against the fragment id
-	 */
-	public function setDOMFragment(
-		string $id, DocumentFragment $forest
-	): void {
-		Assert::invariant(
-			$forest->ownerDocument === $this->topLevelDoc,
-			"fragment should belong to the top level document"
-		);
-		$this->fragmentMap[$id] = $forest;
-	}
-
-	public function removeDOMFragment( string $id ): void {
-		$domFragment = $this->fragmentMap[$id];
-		Assert::invariant(
-			!$domFragment->hasChildNodes(), 'Fragment should be empty.'
-		);
-		unset( $this->fragmentMap[$id] );
 	}
 
 	public function getPFragment( string $id ): PFragment {
@@ -911,6 +811,11 @@ class Env {
 
 		if ( empty( $lintData['dsr'] ) ) {
 			$this->log( 'error/lint', "Missing DSR; msg=", $lintData );
+			return;
+		}
+		$source = $lintData['dsr']?->source ?? $this->topFrame->getSource();
+		if ( $source !== $this->topFrame->getSource() ) {
+			$this->log( 'error/lint', "Bad source; msg=", $lintData );
 			return;
 		}
 
@@ -1117,6 +1022,8 @@ class Env {
 
 	/**
 	 * Get an array of attributes to apply to an anchor linking to $url
+	 *
+	 * @return array{rel?: list<'nofollow'|'noopener'|'noreferrer'>, target?: string}
 	 */
 	public function getExternalLinkAttribs( string $url ): array {
 		$siteConfig = $this->getSiteConfig();

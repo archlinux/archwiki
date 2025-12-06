@@ -45,7 +45,7 @@ class WikiLinkText extends RegExpConstrainedText {
 			'badSuffix' => ( $noTrails ) ? null : $siteConfig->linkTrailRegex(),
 		] );
 		// We match link trails greedily when they exist.
-		if ( !( $noTrails || substr( $text, -1 ) === ']' ) ) {
+		if ( !( $noTrails || str_ends_with( $text, ']' ) ) ) {
 			$this->greedy = true;
 		}
 	}
@@ -65,7 +65,7 @@ class WikiLinkText extends RegExpConstrainedText {
 	protected static function fromSelSerImpl(
 		string $text, Element $node, DataParsoid $dataParsoid,
 		Env $env, array $opts
-	): ?WikiLinkText {
+	): ?self {
 		$stx = $dataParsoid->stx ?? '';
 		if (
 			DOMUtils::matchRel( $node, '#^mw:WikiLink(/Interwiki)?$#D' ) &&

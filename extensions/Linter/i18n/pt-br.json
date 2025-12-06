@@ -61,7 +61,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|erro|erros}})",
 	"linter-page-edit": "editar",
 	"linter-page-history": "histórico",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "ver código-fonte",
 	"linter-pager-bogus-image-options-details": "Opção de arquivo Bogus",
 	"linter-pager-deletable-table-tag-details": "Etiqueta da tabela que deve ser excluída",

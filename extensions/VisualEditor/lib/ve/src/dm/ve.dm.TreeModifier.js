@@ -46,7 +46,7 @@ ve.dm.TreeModifier = function VeDmTreeModifier() {
 	this.insertions = null;
 
 	/**
-	 * @property {Array} data Live document linear data
+	 * @property {ve.dm.LinearData.Item[]} data Live document linear data
 	 */
 	this.data = null;
 
@@ -109,8 +109,8 @@ ve.dm.TreeModifier.static.applyTreeOperations = function ( isReversed, document,
 /**
  * Throw an exception if two pieces of linear data are not equal
  *
- * @param {Array} actual Document linear data to test
- * @param {Array} expected Expected linear data to test against
+ * @param {ve.dm.LinearData.Item[]} actual Document linear data to test
+ * @param {ve.dm.LinearData.Item[]} expected Expected linear data to test against
  */
 ve.dm.TreeModifier.static.checkEqualData = function ( actual, expected ) {
 	function replacer( name, value ) {
@@ -153,10 +153,10 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		addedNodes = [],
 		changedBranchNodes = [];
 
-	function splice( parentNode ) {
-		const removed = parentNode.splice.apply( parentNode, Array.prototype.slice.call( arguments, 1 ) );
+	function splice( parentNode, offset, deleteCount, ...nodes ) {
+		const removed = parentNode.splice( offset, deleteCount, ...nodes );
 		ve.batchPush( removedNodes, removed );
-		ve.batchPush( addedNodes, Array.prototype.slice.call( arguments, 3 ) );
+		ve.batchPush( addedNodes, nodes );
 		return removed;
 	}
 
@@ -315,7 +315,7 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		}
 	}
 
-	const isTextOp = treeOp.type.slice( -4 ) === 'Text';
+	const isTextOp = treeOp.type.endsWith( 'Text' );
 	const f = treeOp.from && prepareSplice( treeOp.from, treeOp.isContent, isTextOp );
 	const t = treeOp.to && prepareSplice( treeOp.to, treeOp.isContent, isTextOp );
 	// eslint-disable-next-line es-x/no-array-string-prototype-at
@@ -558,7 +558,7 @@ ve.dm.TreeModifier.prototype.processRetain = function ( maxLength ) {
 		inserter = this.inserter;
 
 	if ( this.insertedPositions.length === 0 ) {
-		this.inserter.crossIgnoredNodes();
+		inserter.crossIgnoredNodes();
 	}
 	let removerStep, inserterStep;
 	if ( this.cursorsMatch() ) {
@@ -643,7 +643,7 @@ ve.dm.TreeModifier.prototype.processRetain = function ( maxLength ) {
 /**
  * Process the removal of some items
  *
- * @param {Object|Array} itemOrData An open tag, a close tag, or an array of text items
+ * @param {ve.dm.LinearData.Element|ve.dm.LinearData.Item[]} itemOrData An open tag, a close tag, or an array of text items
  */
 ve.dm.TreeModifier.prototype.processRemove = function ( itemOrData ) {
 	const cursorsMatch = this.cursorsMatch(),
@@ -666,9 +666,9 @@ ve.dm.TreeModifier.prototype.processRemove = function ( itemOrData ) {
 };
 
 /**
- * Process the insertion an open tag, a close tag, or an array of text items
+ * Process the insertion of an open tag, a close tag, or an array of text items
  *
- * @param {Object|Array} itemOrData An open tag, a close tag, or an array of text items
+ * @param {ve.dm.LinearData.Element|ve.dm.LinearData.Item[]} itemOrData An open tag, a close tag, or an array of text items
  */
 ve.dm.TreeModifier.prototype.processInsert = function ( itemOrData ) {
 	const inserter = this.inserter;
@@ -801,7 +801,12 @@ ve.dm.TreeModifier.prototype.pushInsertTextOp = function ( data ) {
 ve.dm.TreeModifier.prototype.pushMoveNodeOp = function ( removerStep ) {
 	const rawRemoverPosition = this.getRawRemoverPosition( removerStep ),
 		rawInserterPosition = this.getRawInserterPosition(),
-		isContent = this.doesTypeTakeContent( removerStep.node.type );
+		isContent = this.doesTypeTakeContent( removerStep.node.type ),
+		inserter = this.inserter;
+
+	if ( inserter.node.type === 'text' ) {
+		inserter.stepOut();
+	}
 
 	this.checkCanInsertNodeType( removerStep.item.type );
 

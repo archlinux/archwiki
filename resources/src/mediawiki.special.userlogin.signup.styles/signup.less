@@ -6,7 +6,13 @@
 	/* Benefits column CSS to the right (if it fits) of the form, otherwise below. */
 	display: flex;
 	flex-wrap: wrap;
-	gap: 50px 100px;
+	gap: @spacing-300;
+
+	.mw-createacct-benefits-container {
+		flex-basis: @size-1200;
+		flex-grow: 1;
+		max-width: max-content;
+	}
 }
 
 .mw-createacct-benefits-heading {
@@ -38,7 +44,7 @@
 /*
  * Special font for numbers in benefits, same as Vector's `@content-heading-font-family`.
  */
-.mw-body-content .mw-number-text span {
+.mw-body-content .mw-number-text strong {
 	color: @color-base;
 	margin: 0;
 	padding: 0;

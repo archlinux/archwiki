@@ -23,12 +23,10 @@ use MediaWiki\Utils\UrlUtils;
 
 class Hooks implements LinkerMakeExternalLinkHook {
 
-	private HSTSPreloadLookup $lookup;
-	private UrlUtils $urlUtils;
-
-	public function __construct( HSTSPreloadLookup $lookup, UrlUtils $urlUtils ) {
-		$this->lookup = $lookup;
-		$this->urlUtils = $urlUtils;
+	public function __construct(
+		private readonly HSTSPreloadLookup $lookup,
+		private readonly UrlUtils $urlUtils,
+	) {
 	}
 
 	/**

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"RFScott"
+			"RFScott",
+			"MiiCii"
 		]
 	},
 	"vector-languages": "Хэсэсэл",
@@ -16,6 +17,8 @@
 	"vector-view-history": "Дюлэ дурун",
 	"vector-view-view": "Холаори",
 	"vector-more-actions": "Гучи",
+	"vector-feature-custom-font-size-0-label": "Нӯчи",
+	"vector-feature-custom-font-size-2-label": "Да̄й",
 	"vector-page-tools-label": "Дебой дяка",
 	"vector-unpin-element-label": "дасиори"
 }

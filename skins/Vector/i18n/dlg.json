@@ -5,8 +5,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Vector-2010 туттуу",
-	"vector-opt-out": "Эргэ көстүүгэ көс",
-	"vector-opt-out-tooltip": "Эргэ көстүүгэ көһөргө настройкаларгын уларыт (эргэ Вектор)",
 	"vector-languages": "Тыллар",
 	"vector-language-button-aria-label": "Атын тылынан һуруллубут һырайга көс. {{PLURAL:$1|$1 тылга}} баар.",
 	"vector-language-button-label": "{{PLURAL:$1|$1 тыл}}",
@@ -45,7 +43,7 @@
 	"skin-theme-exclusion-notice": "Бу һырай биэк һырдык",
 	"vector-intro-page": "Help:Киирии",
 	"vector-toc-label": "Ис коһооно",
-	"vector-toc-beginning": "Һагаланыы",
+	"vector-toc-beginning": "Һагаланыыта",
 	"vector-toc-toggle-button-label": "$1 һалааны көллөр/калкалаа",
 	"vector-anon-user-menu-pages": "Киирбэтэк кыттыылаактар һырайдара",
 	"vector-anon-user-menu-pages-learn": "үгүһү бил",

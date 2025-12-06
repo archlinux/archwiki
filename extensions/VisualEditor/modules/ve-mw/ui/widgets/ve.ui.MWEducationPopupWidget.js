@@ -23,8 +23,6 @@
  * @param {string} [config.trackingName]
  */
 ve.ui.MWEducationPopupWidget = function VeUiMwEducationPopup( $target, config ) {
-	config = config || {};
-
 	// HACK: Do not display on platforms other than desktop
 	if ( !( ve.init.mw.DesktopArticleTarget && ve.init.target instanceof ve.init.mw.DesktopArticleTarget ) ) {
 		return;

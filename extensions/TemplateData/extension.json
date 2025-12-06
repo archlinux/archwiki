@@ -8,6 +8,8 @@
 		"Trevor Parscal",
 		"Bartosz Dziewoński",
 		"Marielle Volz",
+		"Sam Wilson",
+		"[https://www.mediawiki.org/wiki/User:TheresNoTime-WMF Sammy Fox]",
 		"..."
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:TemplateData",
@@ -15,7 +17,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -36,11 +38,18 @@
 		"ParserFetchTemplateData": "main",
 		"OutputPageBeforeHTML": "main",
 		"GetPreferences": "main",
-		"SaveUserOptions": "main"
+		"SaveUserOptions": "main",
+		"CommunityConfigurationProvider_initList": "communityconfig"
 	},
 	"HookHandlers": {
 		"main": {
 			"class": "MediaWiki\\Extension\\TemplateData\\Hooks",
+			"services": [
+				"MainConfig"
+			]
+		},
+		"communityconfig": {
+			"class": "MediaWiki\\Extension\\TemplateData\\CommunityConfigurationHooks",
 			"services": [
 				"MainConfig"
 			]
@@ -55,6 +64,7 @@
 	"ExtensionMessagesFiles": {
 		"TemplateDataAlias": "TemplateData.i18n.alias.php"
 	},
+	"ForeignResourcesDir": "modules/lib",
 	"ResourceModules": {
 		"ext.templateData": {
 			"localBasePath": "modules/ext.templateData",
@@ -235,7 +245,8 @@
 			"localBasePath": "modules/ext.templateData.templateDiscovery",
 			"remoteExtPath": "TemplateData/modules/ext.templateData.templateDiscovery",
 			"styles": [
-				"TemplateSearchLayout.less"
+				"TemplateSearchLayout.less",
+				"categories/CategoryBrowser.less"
 			],
 			"packageFiles": [
 				"init.js",
@@ -246,7 +257,9 @@
 				{
 					"name": "mwConfig.json",
 					"config": [
-						"TemplateDataEditorNamespaces"
+						"TemplateDataEditorNamespaces",
+						"TemplateDataEnableCategoryBrowser",
+						"TemplateDataEnableFeaturedTemplates"
 					]
 				},
 				"TemplateSearchLayout.js",
@@ -255,22 +268,36 @@
 				"TemplateMenuItem.js",
 				"FavoritesStore.js",
 				"FavoriteButton.js",
-				"SpecialPage.js"
+				"SpecialPage.js",
+				"FeaturedTemplatesList.js",
+				"categories/CategoryBrowser.js",
+				"categories/Column.js",
+				"categories/ColumnGroup.js",
+				"categories/ColumnItem.js",
+				"categories/DataStore.js"
 			],
 			"dependencies": [
+				"mediawiki.storage",
+				"mediawiki.widgets",
 				"oojs-ui-core",
 				"oojs-ui-widgets",
 				"oojs-ui.styles.icons-editing-advanced",
 				"oojs-ui.styles.icons-interactions",
+				"oojs-ui.styles.icons-movement",
 				"oojs-ui.styles.icons-moderation"
 			],
 			"messages": [
+				"colon-separator",
+				"semicolon-separator",
 				"notloggedin",
 				"redirectedfrom",
-				"templatedata-search-title",
+				"templatedata-doc-subpage",
+				"templatedata-excluded-subpages",
 				"templatedata-search-description",
 				"templatedata-search-placeholder",
+				"templatedata-search-placeholder-cirrussearch",
 				"templatedata-search-list-empty",
+				"templatedata-search-list-empty-anon",
 				"templatedata-search-list-header",
 				"templatedata-favorite-add",
 				"templatedata-favorite-added",
@@ -278,18 +305,36 @@
 				"templatedata-favorite-error",
 				"templatedata-favorite-remove",
 				"templatedata-favorite-removed",
-				"templatedata-favorite-maximum-reached"
+				"templatedata-favorite-maximum-reached",
+				"templatedata-favorite-add",
+				"templatedata-featured-list-header",
+				"templatedata-featured-list-empty",
+				"templatedata-category-browser-header",
+				"templatedata-category-switch-label",
+				"templatedata-category-switch-button",
+				"templatedata-category-column-empty",
+				"templatedata-category-browser-loadmore",
+				"templatedata-category-use-template",
+				"templatedata-category-categories",
+				"templatedata-category-no-cats",
+				"templatedata-category-column-error",
+				"templatedata-featured-list-config-link",
+				"templatedata-featured-list-help",
+				"templatedata-favorite-count"
 			]
 		}
 	},
 	"QUnitTestModule": {
 		"localBasePath": "tests/qunit",
 		"remoteExtPath": "TemplateData/tests/qunit",
-		"scripts": [
-			"ext.templateData.tests.js"
+		"packageFiles": [
+			"init.js",
+			"ext.templateData.tests.js",
+			"ext.templateData.templateDiscovery/ColumnGroup.tests.js"
 		],
 		"dependencies": [
-			"ext.templateDataGenerator.data"
+			"ext.templateDataGenerator.data",
+			"ext.templateData.templateDiscovery"
 		]
 	},
 	"attributes": {
@@ -297,6 +342,35 @@
 			"PluginModules": [
 				"ext.templateDataGenerator.editPage"
 			]
+		},
+		"CommunityConfiguration": {
+			"Validators": {
+				"FeaturedTemplates": {
+					"class": "MediaWiki\\Extension\\TemplateData\\Config\\FeaturedTemplatesSchemaValidator",
+					"factory": "MediaWiki\\Extension\\TemplateData\\Config\\FeaturedTemplatesSchemaValidator::factory",
+					"services": [
+						"CommunityConfiguration.ValidatorFactory",
+						"MainConfig"
+					],
+					"args": [
+						"MediaWiki\\Extension\\TemplateData\\Schemas\\FeaturedTemplatesSchema"
+					]
+				}
+			},
+			"Providers": {
+				"TemplateData-FeaturedTemplates": {
+					"store": {
+						"type": "wikipage",
+						"args": [
+							"MediaWiki:FeaturedTemplates.json"
+						]
+					},
+					"validator": {
+						"type": "FeaturedTemplates"
+					},
+					"type": "mw-config"
+				}
+			}
 		}
 	},
 	"config": {
@@ -310,12 +384,24 @@
 			"description": "The namespaces in which the template data editor appears when creating or editing a page."
 		},
 		"TemplateDataEnableDiscovery": {
-			"value": false,
+			"value": true,
 			"description": "Enable the template discovery and recall functionality."
 		},
 		"TemplateDataMaxFavorites": {
 			"value": 50,
 			"description": "The maximum number of favorite templates that can be stored."
+		},
+		"TemplateDataEnableCategoryBrowser": {
+			"value": false,
+			"description": "Enable the category browser for the template discovery widget."
+		},
+		"TemplateDataCategoryBrowserItem": {
+			"value": null,
+			"description": "Wikibase entity ID with which to look up the category browser's root category."
+		},
+		"TemplateDataEnableFeaturedTemplates": {
+			"value": false,
+			"description": "Enable the featured templates functionality."
 		}
 	},
 	"DefaultUserOptions": {

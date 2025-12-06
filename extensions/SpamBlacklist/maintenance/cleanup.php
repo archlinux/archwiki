@@ -19,11 +19,13 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\User;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 class Cleanup extends Maintenance {
 	/** @var RevisionLookup */
@@ -137,5 +139,7 @@ class Cleanup extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = Cleanup::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

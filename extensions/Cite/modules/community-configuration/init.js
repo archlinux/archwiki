@@ -1,7 +1,5 @@
-( function () {
-	const Vue = require( 'vue' );
-	const App = require( './components/CommunityConfiguration.vue' );
+const Vue = require( 'vue' );
+const App = require( './components/CommunityConfiguration.vue' );
 
-	Vue.createMwApp( App )
-		.mount( '#ext-cite-configuration-vue-root' );
-}() );
+Vue.createMwApp( App )
+	.mount( '#ext-cite-configuration-vue-root' );

@@ -1,40 +1,98 @@
+/*
+ * `ecenable` query string:
+ *   1: override user eligibility criteria for all checks
+ *   2: also load experimental checks
+ * Can also be a comma-separated series of flags:
+ *   experimental: also load experimental checks
+ *   suggestions: enable suggestions mode
+ */
+const ecenable = mw.libs.ve.initialUrl.searchParams.get( 'ecenable' );
+const abCheck = mw.config.get( 'wgVisualEditorConfig' ).editCheckABTest;
+const abGroup = mw.config.get( 'wgVisualEditorConfig' ).editCheckABTestGroup;
+
 mw.editcheck = {
 	config: require( './config.json' ),
-	ecenable: !!( new URL( location.href ).searchParams.get( 'ecenable' ) || window.MWVE_FORCE_EDIT_CHECK_ENABLED )
+	forceEnable: !!( ecenable || window.MWVE_FORCE_EDIT_CHECK_ENABLED ),
+	experimental: !!( mw.config.get( 'wgVisualEditorConfig' ).editCheckExperimental || ecenable === '2' ),
+	checksShown: {}
 };
 
-require( './EditCheckDialog.js' );
-require( './EditCheckGutterSidebarDialog.js' );
+if ( ecenable && /^[\w,]+$/.test( ecenable ) ) {
+	const ecenableFlags = ecenable.split( ',' );
+	mw.editcheck.experimental = mw.editcheck.experimental || ecenableFlags.includes( 'experimental' );
+	mw.editcheck.suggestions = mw.editcheck.suggestions || ecenableFlags.includes( 'suggestions' );
+}
+
+// Checks which are loaded for logging but shouldn't show by default yet
+const nonDefaultChecks = new Set();
+
+require( './utils.js' );
+require( './EditCheckPreSaveToolbarTools.js' );
 require( './EditCheckFactory.js' );
 require( './EditCheckAction.js' );
-require( './BaseEditCheck.js' );
-
+require( './EditCheckActionWidget.js' );
+require( './EditCheckGutterSectionWidget.js' );
+require( './dialogs/EditCheckDialog.js' );
+require( './dialogs/FixedEditCheckDialog.js' );
+require( './dialogs/SidebarEditCheckDialog.js' );
+require( './dialogs/GutterSidebarEditCheckDialog.js' );
+require( './editchecks/BaseEditCheck.js' );
+require( './editchecks/AsyncTextCheck.js' );
 require( './editchecks/AddReferenceEditCheck.js' );
+require( './editchecks/ToneCheck.js' );
+require( './editchecks/PasteCheck.js' );
 
-if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckExperimental ) {
+nonDefaultChecks.add( 'tone' );
+
+if ( mw.editcheck.experimental ) {
 	mw.loader.using( 'ext.visualEditor.editCheck.experimental' );
+	nonDefaultChecks.clear();
 }
+if ( abGroup === 'test' ) {
+	nonDefaultChecks.delete( abCheck );
+}
+
+for ( const check of nonDefaultChecks ) {
+	mw.editcheck.editCheckFactory.unregister( check );
+}
+
+if ( abCheck === 'paste' ) {
+	// In the a/b test, force-enable/disable the check
+	mw.editcheck.config.paste = ve.extendObject( mw.editcheck.config.paste || {}, { enabled: abGroup === 'test' } );
+}
+
+const isMainNamespace = mw.config.get( 'wgNamespaceNumber' ) === mw.config.get( 'wgNamespaceIds' )[ '' ];
+
+// Helper functions for ve.init.mw.ArticleTarget save-tagging, keep logic
+// in-sync with AddReferenceEditCheck and ToneCheck.
 
 /**
  * Check if the document has content needing a reference, for AddReferenceEditCheck
  *
  * @param {ve.dm.Document} documentModel
- * @param {boolean} includeReferencedContent Include contents that already contains a reference
+ * @param {boolean} includeReferencedContent Include content that already contains a reference
  * @return {boolean}
  */
 mw.editcheck.hasAddedContentNeedingReference = function ( documentModel, includeReferencedContent ) {
-	// helper for ve.init.mw.ArticleTarget save-tagging, keep logic below in-sync with AddReferenceEditCheck.
-	// This is bypassing the normal "should this check apply?" logic for creation, so we need to manually
-	// apply the "only the main namespace" rule.
-	if ( mw.config.get( 'wgNamespaceNumber' ) !== mw.config.get( 'wgNamespaceIds' )[ '' ] ) {
+	// Tag anything in the main namespace, regardless of other eligibility checks
+	if ( !isMainNamespace ) {
 		return false;
 	}
-	const check = mw.editcheck.editCheckFactory.create( 'addReference', null, mw.editcheck.config.addReference );
 	// TODO: This should be factored out into a static method so we don't have to construct a dummy check
+	const check = mw.editcheck.editCheckFactory.create( 'addReference', null, { enabled: true } );
 	return check.findAddedContent( documentModel, includeReferencedContent ).length > 0;
 };
 
-mw.editcheck.refCheckShown = false;
+mw.editcheck.hasFailingToneCheck = function ( surfaceModel ) {
+	// Check might not be registered so we can't use the factory.
+	const check = new mw.editcheck.ToneCheck( null, mw.editcheck.editCheckFactory.buildConfig( 'tone', { enabled: true } ) );
+	// Run actual check eligibility before calling API
+	if ( !check.canBeShown() ) {
+		return ve.createDeferred().resolve( false ).promise();
+	}
+	return Promise.all( check.handleListener( 'onCheckAll', surfaceModel ) )
+		.then( ( results ) => results.some( ( result ) => result !== null ) );
+};
 
 if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
 	mw.hook( 've.activationComplete' ).add( () => {
@@ -49,6 +107,17 @@ if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
 			const group = internalList.getNodeGroup( 'mwReference/' );
 			return group ? group.firstNodes || [] : [];
 		}
+
+		let hasFailingToneCheck = null;
+		target.getPreSaveProcess().first( () => {
+			// Start checking for tone in the pre-save process, but don't block the save dialog
+			// from appearing. If the tone check isn't finished by save time we will just log
+			// an error.
+			hasFailingToneCheck = null;
+			mw.editcheck.hasFailingToneCheck( target.getSurface().getModel() ).then( ( result ) => {
+				hasFailingToneCheck = result;
+			} );
+		} );
 
 		const initLength = getRefNodes().length;
 		target.saveFields.vetags = function () {
@@ -65,8 +134,19 @@ if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
 			if ( newNodesInDoc ) {
 				tags.push( 'editcheck-newreference' );
 			}
-			if ( mw.editcheck.refCheckShown ) {
+			if ( mw.editcheck.checksShown.addReference ) {
 				tags.push( 'editcheck-references-shown' );
+			}
+			if ( mw.editcheck.checksShown.tone ) {
+				tags.push( 'editcheck-tone-shown' );
+			}
+			if ( mw.editcheck.checksShown.paste ) {
+				tags.push( 'editcheck-paste-shown' );
+			}
+			if ( hasFailingToneCheck ) {
+				tags.push( 'editcheck-tone' );
+			} else if ( hasFailingToneCheck === null ) {
+				ve.track( 'activity.editCheck-tone', { action: 'save-before-check-finalized' } );
 			}
 			return tags.join( ',' );
 		};
@@ -77,54 +157,51 @@ if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckTagging ) {
 	} );
 }
 
-if ( mw.config.get( 'wgVisualEditorConfig' ).editCheck || mw.editcheck.ecenable ) {
+if ( mw.config.get( 'wgVisualEditorConfig' ).editCheck || mw.editcheck.forceEnable ) {
 	const Controller = require( './controller.js' ).Controller;
 	mw.hook( 've.newTarget' ).add( ( target ) => {
 		if ( target.constructor.static.name !== 'article' ) {
 			return;
 		}
-		const controller = new Controller( target );
+		const controller = new Controller( target, {
+			suggestions: mw.editcheck.suggestions
+		} );
 		controller.setup();
+
+		target.editcheckController = controller;
+
+		// Temporary logging for T394952
+		if ( abCheck === 'tone' && abGroup === 'control' ) {
+			const checkForTone = function ( listener ) {
+				mw.editcheck.hasFailingToneCheck( controller.surface.getModel() ).then( ( result ) => {
+					if ( result ) {
+						ve.track( 'activity.editCheck-tone', { action: 'check-control-' + listener } );
+					}
+				} );
+			};
+			controller.on( 'branchNodeChange', () => {
+				checkForTone( 'branchNodeChange' );
+			} );
+			controller.on( 'onBeforeSave', () => {
+				checkForTone( 'onBeforeSave' );
+			} );
+		}
+		// Temporary logging for T402460
+		target.on( 'surfaceReady', () => {
+			target.getSurface().getView().on( 'paste', ( data ) => {
+				const defaults = mw.editcheck.editCheckFactory.buildConfig( 'paste' );
+				const check = mw.editcheck.editCheckFactory.create( 'paste', null, { enabled: true } );
+				if ( check.canBeShown() && data.fragment.getSelection().getCoveringRange().getLength() >= check.config.minimumCharacters ) {
+					// The check would be shown for the current viewer, and there's enough content that we care about it:
+					if ( data.source ) {
+						// Known-source pastes that we're not showing regardless of the check being enabled/disabled
+						ve.track( 'activity.editCheck-paste', { action: 'ignored-paste-' + data.source } );
+					} else if ( !defaults.enabled ) {
+						// The check is disabled, and there's no source so we would have shown the check otherwise
+						ve.track( 'activity.editCheck-paste', { action: 'relevant-paste' } );
+					}
+				}
+			} );
+		} );
 	} );
 }
-
-// This is for the toolbar:
-
-ve.ui.EditCheckBack = function VeUiEditCheckBack() {
-	// Parent constructor
-	ve.ui.EditCheckBack.super.apply( this, arguments );
-
-	this.setDisabled( false );
-};
-OO.inheritClass( ve.ui.EditCheckBack, ve.ui.Tool );
-ve.ui.EditCheckBack.static.name = 'editCheckBack';
-ve.ui.EditCheckBack.static.icon = 'previous';
-ve.ui.EditCheckBack.static.autoAddToCatchall = false;
-ve.ui.EditCheckBack.static.autoAddToGroup = false;
-ve.ui.EditCheckBack.static.title =
-	OO.ui.deferMsg( 'visualeditor-backbutton-tooltip' );
-ve.ui.EditCheckBack.prototype.onSelect = function () {
-	const surface = this.toolbar.getSurface();
-	surface.getContext().hide();
-	surface.execute( 'window', 'close', 'fixedEditCheckDialog' );
-	this.setActive( false );
-	ve.track( 'activity.' + this.getName(), { action: 'tool-used' } );
-};
-ve.ui.EditCheckBack.prototype.onUpdateState = function () {
-	this.setDisabled( false );
-};
-ve.ui.toolFactory.register( ve.ui.EditCheckBack );
-
-ve.ui.EditCheckSaveDisabled = function VeUiEditCheckSaveDisabled() {
-	// Parent constructor
-	ve.ui.EditCheckSaveDisabled.super.apply( this, arguments );
-};
-OO.inheritClass( ve.ui.EditCheckSaveDisabled, ve.ui.MWSaveTool );
-ve.ui.EditCheckSaveDisabled.static.name = 'showSaveDisabled';
-ve.ui.EditCheckSaveDisabled.static.autoAddToCatchall = false;
-ve.ui.EditCheckSaveDisabled.static.autoAddToGroup = false;
-ve.ui.EditCheckSaveDisabled.prototype.onUpdateState = function () {
-	this.setDisabled( true );
-};
-
-ve.ui.toolFactory.register( ve.ui.EditCheckSaveDisabled );

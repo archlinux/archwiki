@@ -20,10 +20,7 @@ class CitationToolDefinitionTest extends \MediaWikiUnitTestCase {
 			[ 'name' => 'missing-message', 'title' => 'missing-message' ],
 			[ 'name' => 'n', 'title' => 't' ],
 		];
-		$this->assertSame(
-			've.ui.mwCitationTools = ' . json_encode( $expected ) . ';',
-			CitationToolDefinition::makeScript( $context )
-		);
+		$this->assertSame( $expected, CitationToolDefinition::getTools( $context ) );
 	}
 
 	private function createResourceLoaderContext(): Context {
@@ -52,7 +49,6 @@ class CitationToolDefinitionTest extends \MediaWikiUnitTestCase {
 		$context->method( 'msg' )
 			->willReturnMap( [
 				[ 'cite-tool-definition.json', $msg ],
-				[ 'visualeditor-cite-tool-definition.json', $msg ],
 				[ 'visualeditor-cite-tool-name-missing-message', $disabled ],
 				[ 'visualeditor-cite-tool-name-n', $msg ]
 			] );

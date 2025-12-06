@@ -42,7 +42,6 @@
 	"cite_references_link_many_accessibility_label": "Pārlēkt uz augšu uz:",
 	"cite_references_link_accessibility_back_label": "Atpakaļ uz augšu",
 	"cite_section_preview_references": "Atsauču priekšskats",
-	"cite_warning": "Atsauces brīdinājums: $1",
 	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> iezīmi ar nosaukumu <code>$1</code> nevar priekšskatīt, jo tā ir definēta ārpus šīs sadaļas vai vispār nav definēta.",
 	"cite-wikieditor-tool-reference": "Atsauce",
 	"cite-wikieditor-help-page-references": "Atsauces",

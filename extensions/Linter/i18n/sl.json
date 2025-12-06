@@ -70,7 +70,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|napaka|napaki|napake|napak}})",
 	"linter-page-edit": "uredi",
 	"linter-page-history": "zgodovina",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "ogled vira",
 	"linter-pager-bogus-image-options-details": "Napaka v zapisu datoteke",
 	"linter-pager-category-header": "Kategorija",

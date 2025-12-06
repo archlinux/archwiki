@@ -18,6 +18,7 @@ use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use Profiler;
@@ -51,7 +52,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 				// Check that the parameters are as expected for the call to this method
 				$this->assertTrue( $expectedUserIdentity->equals( $performer ) );
 				$this->assertSame( $this->getDb()->getDomainID(), $domainID );
-				$this->assertSame( $expectedTimestamp, $timestamp );
+				$this->assertSame( $this->getDb()->timestamp( $expectedTimestamp ), $timestamp );
 				$this->assertSame( $expectedHasRevisionId, $hasRevisionId );
 			} );
 		$this->setService( 'CheckUserCentralIndexManager', $mockCheckUserCentralIndexManager );
@@ -88,9 +89,9 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 					'cuc_ip', 'cuc_ip_hex', 'cuc_xff', 'cuc_xff_hex', 'cuc_page_id',
 					'cuc_namespace', 'cuc_minor', 'cuc_title',
 					'cuc_this_oldid', 'cuc_last_oldid', 'cuc_type', 'cuc_agent',
-					'cuc_timestamp'
+					'cuc_timestamp',
 				],
-				[ '127.0.0.1', '7F000001', '', null, 0, NS_MAIN, 0, '', 0, 0, RC_LOG, '', '20240506070809' ]
+				[ '127.0.0.1', '7F000001', '', null, 0, NS_MAIN, 0, '', 0, 0, RC_LOG, '', '20240506070809' ],
 			],
 		];
 	}
@@ -129,13 +130,13 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 				[
 					'cupe_ip', 'cupe_ip_hex', 'cupe_xff', 'cupe_xff_hex', 'cupe_page',
 					'cupe_namespace', 'cupe_log_type', 'cupe_log_action',
-					'cupe_title', 'cupe_params', 'cupe_agent', 'cupe_timestamp'
+					'cupe_title', 'cupe_params', 'cupe_agent', 'cupe_timestamp',
 				],
 				[
 					'127.0.0.1', '7F000001', '', null, 0, NS_MAIN, 'checkuser-private-event',
-					'', '', LogEntryBase::makeParamBlob( [] ), '', '20240506070809'
-				]
-			]
+					'', '', LogEntryBase::makeParamBlob( [] ), '', '20240506070809',
+				],
+			],
 		];
 	}
 
@@ -248,6 +249,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->get( 'CheckUserCentralIndexManager' ),
 			$this->getServiceContainer()->get( 'UserAgentClientHintsManager' ),
 			$this->getServiceContainer()->getJobQueueGroup(),
+			$this->getServiceContainer()->getRecentChangeLookup(),
 			LoggerFactory::getInstance( 'CheckUser' )
 		);
 		if ( $table === 'cu_changes' ) {
@@ -465,37 +467,37 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 		$testCases = [
 			'registered user' => [
 				array_merge( $attribs, [
-					'rc_type' => RC_EDIT,
+					'rc_source' => RecentChange::SRC_EDIT,
 					'rc_user' => $testUser->getId(),
 					'rc_user_text' => $testUser->getName(),
 				] ),
 				'cu_changes',
 				[ 'cuc_actor', 'cuc_type' ],
-				[ $actorId, RC_EDIT ]
+				[ $actorId, RC_EDIT ],
 			],
 			'Log for special title with no log ID' => [
 				array_merge( $attribs, [
 					'rc_namespace' => NS_SPECIAL,
 					'rc_title' => 'Log',
-					'rc_type' => RC_LOG,
-					'rc_log_type' => ''
+					'rc_source' => RecentChange::SRC_LOG,
+					'rc_log_type' => '',
 				] ),
 				'cu_private_event',
 				[ 'cupe_title', 'cupe_timestamp', 'cupe_namespace' ],
-				[ 'Log', $this->getDb()->timestamp( $attribs['rc_timestamp'] ), NS_SPECIAL ]
+				[ 'Log', $this->getDb()->timestamp( $attribs['rc_timestamp'] ), NS_SPECIAL ],
 			],
 			'Log with no log ID and comment ID defined' => [
 				array_merge( $attribs, [
 					'rc_namespace' => NS_SPECIAL,
 					'rc_title' => 'Log',
-					'rc_type' => RC_LOG,
+					'rc_source' => RecentChange::SRC_LOG,
 					'rc_log_type' => '',
 					'rc_comment_id' => $this->getServiceContainer()->getCommentStore()
 						->createComment( $this->getDb(), 'test' )->id,
 				] ),
 				'cu_private_event',
 				[ 'cupe_comment_id' ],
-				[ $this->getServiceContainer()->getCommentStore()->createComment( $this->getDb(), 'test' )->id ]
+				[ $this->getServiceContainer()->getCommentStore()->createComment( $this->getDb(), 'test' )->id ],
 			],
 		];
 		foreach ( $testCases as $values ) {
@@ -509,7 +511,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 				'cu_changes',
 				'cu_private_event',
 				'cu_log_event',
-				'recentchanges'
+				'recentchanges',
 			] );
 		}
 	}
@@ -527,7 +529,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 		$expectedRow[] = $logId;
 		// Pass the expected timestamp through IReadableTimestamp::timestamp to ensure it is in the right format
 		// for the current DB type (T366590).
-		if ( array_key_exists( 'cule_timestamp', $fields ) ) {
+		if ( in_array( 'cule_timestamp', $fields ) ) {
 			$keyForTimestamp = array_search( 'cule_timestamp', $fields );
 			$expectedRow[$keyForTimestamp] = $this->getDb()->timestamp( $expectedRow[$keyForTimestamp] );
 		}
@@ -580,7 +582,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 				new ManualLogEntry( 'newusers', 'create2' ), true, true,
 			],
 			'account creation via existing account, send credentials by email' => [
-				new ManualLogEntry( 'newusers', 'byemail' ), true, true
+				new ManualLogEntry( 'newusers', 'byemail' ), true, true,
 			],
 			'account autocreation' => [
 				new ManualLogEntry( 'newusers', 'autocreate' ), true, true,
@@ -606,7 +608,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 			[
 				'rc_namespace' => NS_SPECIAL,
 				'rc_title' => 'Log',
-				'rc_type' => RC_LOG,
+				'rc_source' => RecentChange::SRC_LOG,
 				'rc_log_type' => '',
 			]
 		);
@@ -625,8 +627,8 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 			array_merge( $attribs, [
 				'rc_namespace' => NS_SPECIAL,
 				'rc_title' => 'Log',
-				'rc_type' => RC_LOG,
-				'rc_log_type' => ''
+				'rc_source' => RecentChange::SRC_LOG,
+				'rc_log_type' => '',
 			] ),
 			'cu_log_event',
 			[ 'cule_timestamp' ],
@@ -640,7 +642,8 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 		return [
 			'external user' => [
 				array_merge( $attribs, [
-					'rc_type' => RC_EXTERNAL,
+					// external source
+					'rc_source' => 'wb',
 					'rc_user' => 0,
 					'rc_user_text' => 'm>External User',
 				] ),
@@ -651,7 +654,7 @@ class CheckUserInsertTest extends MediaWikiIntegrationTestCase {
 				array_merge( $attribs, [
 					'rc_namespace' => NS_MAIN,
 					'rc_title' => '',
-					'rc_type' => RC_CATEGORIZE,
+					'rc_source' => RecentChange::SRC_CATEGORIZE,
 				] ),
 				[ 'cuc_ip' ],
 				[],

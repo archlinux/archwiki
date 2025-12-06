@@ -5,7 +5,6 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences\Consequence;
 use ConsequenceGetMessageTestTrait;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote;
-use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
@@ -28,7 +27,7 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 
 	public function testExecute_anonymous() {
 		$user = new UserIdentityValue( 0, 'Anonymous user' );
-		$params = $this->provideGetMessageParameters( $user )->current()[0];
+		$params = $this->getLocalFilterParams( $user );
 		$blockAutopromoteStore = $this->createMock( BlockAutopromoteStore::class );
 		$blockAutopromoteStore->expects( $this->never() )
 			->method( 'blockAutoPromote' );
@@ -50,7 +49,7 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 		$target = new UserIdentityValue( 1, 'A new user' );
 		$userIdentityUtils = $this->createMock( UserIdentityUtils::class );
 		$userIdentityUtils->method( 'isNamed' )->willReturn( true );
-		$params = $this->provideGetMessageParameters( $target )->current()[0];
+		$params = $this->getLocalFilterParams( $target );
 		$duration = 5 * 86400;
 		$blockAutopromoteStore = $this->createMock( BlockAutopromoteStore::class );
 		$blockAutopromoteStore->expects( $this->once() )
@@ -80,7 +79,7 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	public function testRevert( bool $success ) {
 		$target = new UserIdentityValue( 1, 'A new user' );
 		$performer = new UserIdentityValue( 2, 'Reverting user' );
-		$params = $this->provideGetMessageParameters( $target )->current()[0];
+		$params = $this->getLocalFilterParams( $target );
 		$blockAutopromoteStore = $this->createMock( BlockAutopromoteStore::class );
 		$blockAutopromoteStore->expects( $this->once() )
 			->method( 'unblockAutoPromote' )
@@ -101,7 +100,8 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideGetMessageParameters
 	 */
-	public function testGetMessage( Parameters $params ) {
+	public function testGetMessage( callable $params ) {
+		$params = $params( $this );
 		$userIdentityUtils = $this->createMock( UserIdentityUtils::class );
 		$rangeBlock = new BlockAutopromote(
 			$params,

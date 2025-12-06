@@ -68,6 +68,16 @@ class Hint implements Stringable {
 	 * this case hints will be taken from the superclass's codec.
 	 */
 	public const INHERITED = 5;
+	/**
+	 * Mark the supplied hint for use only during deserialization
+	 * (`JsonCodec::newFromJsonArray`).  The full class information
+	 * will still be recorded during serialization (`::toJsonArray`).
+	 * This allows the hint to be used for forward-compatibility
+	 * with a future release that will utilize implicit class
+	 * information, without harming backward-compatibility by
+	 * (yet) omitting the explicit class information.
+	 */
+	public const ONLY_FOR_DECODE = 6;
 
 	/** @var class-string<T>|Hint<T> */
 	public $parent;

@@ -54,7 +54,7 @@ class ApiEchoMarkRead extends ApiBase {
 		$foreignResults = $this->getFromForeign();
 
 		$result = [
-			'result' => 'success'
+			'result' => 'success',
 		];
 
 		foreach ( $foreignResults as $wiki => $foreignResult ) {
@@ -90,7 +90,7 @@ class ApiEchoMarkRead extends ApiBase {
 			],
 			'all' => [
 				ParamValidator::PARAM_REQUIRED => false,
-				ParamValidator::PARAM_TYPE => 'boolean'
+				ParamValidator::PARAM_TYPE => 'boolean',
 			],
 			'sections' => [
 				ParamValidator::PARAM_TYPE => AttributeManager::$sections,
@@ -98,7 +98,7 @@ class ApiEchoMarkRead extends ApiBase {
 			],
 			'token' => [
 				ParamValidator::PARAM_REQUIRED => true,
-			]
+			],
 		];
 	}
 

@@ -12,10 +12,6 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoMute extends ApiBase {
 
-	private CentralIdLookup $centralIdLookup;
-	private LinkBatchFactory $linkBatchFactory;
-	private UserOptionsManager $userOptionsManager;
-
 	private const MUTE_LISTS = [
 		'user' => [
 			'pref' => 'echo-notifications-blacklist',
@@ -23,27 +19,24 @@ class ApiEchoMute extends ApiBase {
 		],
 		'page-linked-title' => [
 			'pref' => 'echo-notifications-page-linked-title-muted-list',
-			'type' => 'title'
+			'type' => 'title',
 		],
 	];
 
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		CentralIdLookup $centralIdLookup,
-		LinkBatchFactory $linkBatchFactory,
-		UserOptionsManager $userOptionsManager
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly UserOptionsManager $userOptionsManager,
 	) {
 		parent::__construct( $main, $action );
-
-		$this->centralIdLookup = $centralIdLookup;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	public function execute() {
 		$user = $this->getUser();
-		if ( !$user || !$user->isRegistered() ) {
+		// Temporary accounts can't have preferences, so this is irrelevant for them.
+		if ( !$user || !$user->isNamed() ) {
 			$this->dieWithError(
 				[ 'apierror-mustbeloggedin', $this->msg( 'action-editmyoptions' ) ],
 				'notloggedin'
@@ -134,7 +127,7 @@ class ApiEchoMute extends ApiBase {
 			],
 			'unmute' => [
 				ParamValidator::PARAM_ISMULTI => true,
-			]
+			],
 		];
 	}
 

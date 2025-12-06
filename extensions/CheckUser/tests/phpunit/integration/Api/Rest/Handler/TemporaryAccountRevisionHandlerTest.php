@@ -2,9 +2,13 @@
 
 namespace MediaWiki\CheckUser\Tests\Integration\Api\Rest\Handler;
 
+use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountRevisionHandler;
 use MediaWiki\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\CheckUser\HookHandler\Preferences;
 use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
@@ -22,16 +26,20 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use StatusValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group CheckUser
  * @group Database
  * @covers \MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountRevisionHandler
  * @covers \MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountRevisionTrait
+ * @covers \MediaWiki\CheckUser\Api\Rest\Handler\AbstractTemporaryAccountNameHandler
+ * @covers MediaWiki\CheckUser\Logging\TemporaryAccountLogger
  */
 class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 
@@ -92,9 +100,11 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 				'blockManager' => $services->getBlockManager(),
 				'revisionStore' => $mockRevisionStore,
 				'checkUserPermissionManager' => $checkUserPermissionManager,
+				'autoRevealLookup' => $services->get(
+					'CheckUserTemporaryAccountAutoRevealLookup'
+				),
+				'loggerFactory' => $services->get( 'CheckUserTemporaryAccountLoggerFactory' ),
 				'readOnlyMode' => $services->getReadOnlyMode(),
-				'checkUserTemporaryAccountAutoRevealLookup' =>
-					$services->get( 'CheckUserTemporaryAccountAutoRevealLookup' ),
 			],
 			$options
 		) ) );
@@ -226,13 +236,104 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
+	/**
+	 * @dataProvider provideExecuteLogs
+	 */
+	public function testExecuteLogs(
+		int $jobQueueGroupExpects,
+		int $loggerExpects,
+		array $preferences
+	) {
+		$this->markTestSkippedIfExtensionNotLoaded( 'GlobalPreferences' );
+
+		ConvertibleTimestamp::setFakeTime( '20230406060708' );
+
+		$serviceOptions = new ServiceOptions(
+			CheckUserTemporaryAccountAutoRevealLookup::CONSTRUCTOR_OPTIONS,
+			$this->getServiceContainer()->getMainConfig()
+		);
+
+		$checkUserPermissionManager = $this->createMock( CheckUserPermissionManager::class );
+		$checkUserPermissionManager->method( 'canAccessTemporaryAccountIPAddresses' )
+			->willReturn( CheckUserPermissionStatus::newGood() );
+		$checkUserPermissionManager->method( 'canAutoRevealIPAddresses' )
+			->willReturn( CheckUserPermissionStatus::newGood() );
+
+		$preferencesFactory = $this->createMock( GlobalPreferencesFactory::class );
+		$preferencesFactory->method( 'getGlobalPreferencesValues' )
+			->willReturn( $preferences );
+
+		$autoRevealLookup = new CheckUserTemporaryAccountAutoRevealLookup(
+			$serviceOptions, $preferencesFactory, $checkUserPermissionManager
+		);
+
+		$jobQueueGroup = $this->createMock( JobQueueGroup::class );
+		$jobQueueGroup->expects( $this->exactly( $jobQueueGroupExpects ) )
+			->method( 'push' );
+
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->exactly( $loggerExpects ) )
+			->method( 'info' )
+			->with(
+				'{username} viewed IP addresses for {target}',
+				$this->callback( static function ( $context ) {
+					return $context['target'] === '*Unregistered_1';
+				} )
+			);
+		$this->setLogger( 'CheckUser', $logger );
+
+		$data = $this->executeHandlerAndGetBodyData(
+			$this->getTemporaryAccountRevisionHandler( [
+				'autoRevealLookup' => $autoRevealLookup,
+				'jobQueueGroup' => $jobQueueGroup,
+			] ),
+			$this->getRequestData(),
+			[],
+			[],
+			[],
+			[],
+			$this->getAuthorityForSuccess()
+		);
+	}
+
+	public static function provideExecuteLogs() {
+		ConvertibleTimestamp::setFakeTime( '20230406060708' );
+		$timeNow = ConvertibleTimestamp::time();
+		$validFutureTimestamp = $timeNow + 100;
+		$invalidFutureTimestamp = $timeNow + 9999999;
+		$pastTimestamp = $timeNow - 100;
+		ConvertibleTimestamp::setFakeTime( false );
+		return [
+			'The correct logger is called when auto-reveal is on with valid expiry' => [
+				'jobQueueGroupExpects' => 0,
+				'loggerExpects' => 1,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $validFutureTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is on with expiry too far in the future' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $invalidFutureTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is on with expiry in the past' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $pastTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is off' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [],
+			],
+		];
+	}
+
 	public function testFailsWithoutValidToken() {
 		$handler = $this->newServiceInstance( TemporaryAccountRevisionHandler::class, [] );
 		$validator = $this->createMock( Validator::class );
 		$this->expectException( LocalizedHttpException::class );
 		$request = new RequestData();
 		$config = [
-			'path' => '/foo'
+			'path' => '/foo',
 		];
 		$this->initHandler( $handler, $request, $config, [], null, $this->getSession( false ) );
 		// Invoking the method to be tested
@@ -245,7 +346,7 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->executeHandlerAndGetBodyData(
 			$this->getTemporaryAccountRevisionHandler(),
 			$this->getRequestData( [
-				'ids' => []
+				'ids' => [],
 			] ),
 			[],
 			[],
@@ -267,7 +368,7 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 			->willReturn( StatusValue::newGood( [ $mockRevision, $mockRevision ] ) );
 		$data = $this->executeHandlerAndGetBodyData(
 			$this->getTemporaryAccountRevisionHandler( [
-				'revisionStore' => $mockRevisionStore
+				'revisionStore' => $mockRevisionStore,
 			] ),
 			$this->getRequestData( [
 				'name' => '*Unregistered 1',
@@ -304,7 +405,7 @@ class TemporaryAccountRevisionHandlerTest extends MediaWikiIntegrationTestCase {
 			);
 		$data = $this->executeHandlerAndGetBodyData(
 			$this->getTemporaryAccountRevisionHandler( [
-				'revisionStore' => $mockRevisionStore
+				'revisionStore' => $mockRevisionStore,
 			] ),
 			$this->getRequestData( [
 				'name' => '*Unregistered 1',

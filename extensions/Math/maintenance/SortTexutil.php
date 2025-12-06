@@ -1,6 +1,8 @@
 <?php
 
+// @codeCoverageIgnoreStart
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+// @codeCoverageIgnoreEnd
 use MediaWiki\Maintenance\Maintenance;
 
 class SortTexutil extends Maintenance {
@@ -34,5 +36,7 @@ class SortTexutil extends Maintenance {
 		echo "texutil.json successfully sorted.\n";
 	}
 }
+// @codeCoverageIgnoreStart
 $maintClass = SortTexutil::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

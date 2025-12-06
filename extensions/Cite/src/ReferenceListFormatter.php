@@ -13,44 +13,37 @@ use MediaWiki\Parser\Parser;
  */
 class ReferenceListFormatter {
 
-	private ErrorReporter $errorReporter;
-	private AnchorFormatter $anchorFormatter;
-	private ReferenceMessageLocalizer $messageLocalizer;
-	private BacklinkMarkRenderer $backlinkMarkRenderer;
-
 	public function __construct(
-		ErrorReporter $errorReporter,
-		AnchorFormatter $anchorFormatter,
-		BacklinkMarkRenderer $backlinkMarkRenderer,
-		ReferenceMessageLocalizer $messageLocalizer
+		private readonly ErrorReporter $errorReporter,
+		private readonly AnchorFormatter $anchorFormatter,
+		private readonly BacklinkMarkRenderer $backlinkMarkRenderer,
+		private readonly ReferenceMessageLocalizer $messageLocalizer,
 	) {
-		$this->errorReporter = $errorReporter;
-		$this->anchorFormatter = $anchorFormatter;
-		$this->messageLocalizer = $messageLocalizer;
-		$this->backlinkMarkRenderer = $backlinkMarkRenderer;
 	}
 
 	/**
 	 * @param Parser $parser
 	 * @param array<string|int,ReferenceStackItem> $groupRefs
 	 * @param bool $responsive
-	 * @param bool $isSectionPreview
-	 *
 	 * @return string HTML
 	 */
 	public function formatReferences(
 		Parser $parser,
 		array $groupRefs,
-		bool $responsive,
-		bool $isSectionPreview
+		bool $responsive
 	): string {
 		if ( !$groupRefs ) {
 			return '';
 		}
 
-		$wikitext = $this->formatRefsList( $parser, $groupRefs, $isSectionPreview );
+		$wikitext = $this->formatRefsList( $groupRefs );
 		$html = $parser->recursiveTagParse( $wikitext );
-		$html = Html::rawElement( 'ol', [ 'class' => 'references' ], $html );
+
+		$firstRef = reset( $groupRefs );
+		$html = Html::rawElement( 'ol', [
+			'class' => 'references',
+			'data-mw-group' => $firstRef->group === Cite::DEFAULT_GROUP ? null : $firstRef->group,
+		], $html );
 
 		if ( $responsive ) {
 			$wrapClasses = [ 'mw-references-wrap' ];
@@ -66,17 +59,10 @@ class ReferenceListFormatter {
 	}
 
 	/**
-	 * @param Parser $parser
-	 * @param array<string|int,ReferenceStackItem> $groupRefs
-	 * @param bool $isSectionPreview
-	 *
+	 * @param non-empty-array<string|int,ReferenceStackItem> $groupRefs
 	 * @return string Wikitext
 	 */
-	private function formatRefsList(
-		Parser $parser,
-		array $groupRefs,
-		bool $isSectionPreview
-	): string {
+	private function formatRefsList( array $groupRefs ): string {
 		// After sorting the list, we can assume that references are in the same order as their
 		// numbering.  Subreferences will come immediately after their parent.
 		uasort(
@@ -106,7 +92,7 @@ class ReferenceListFormatter {
 				$parserInput .= $this->closeIndention( $indented );
 				$indented = false;
 			}
-			$parserInput .= $this->formatListItem( $parser, $ref, $isSectionPreview ) . "\n";
+			$parserInput .= $this->formatListItem( $ref ) . "\n";
 		}
 		$parserInput .= $this->closeIndention( $indented );
 		return $parserInput;
@@ -126,16 +112,11 @@ class ReferenceListFormatter {
 	}
 
 	/**
-	 * @param Parser $parser
 	 * @param ReferenceStackItem $ref
-	 * @param bool $isSectionPreview
-	 *
 	 * @return string Wikitext, wrapped in a single <li> element
 	 */
-	private function formatListItem(
-		Parser $parser, ReferenceStackItem $ref, bool $isSectionPreview
-	): string {
-		$text = $this->renderTextAndWarnings( $parser, $ref, $isSectionPreview );
+	private function formatListItem( ReferenceStackItem $ref ): string {
+		$text = $this->renderTextAndWarnings( $ref );
 
 		// Special case for an incomplete follow="…". This is valid e.g. in the Page:… namespace on
 		// Wikisource. Note this returns a <p>, not an <li> as expected!
@@ -153,10 +134,10 @@ class ReferenceListFormatter {
 		}
 
 		if ( $ref->count === 1 ) {
-			$backlinkId = $this->anchorFormatter->backLink( $ref->name, $ref->globalId, $ref->count );
+			$backlinkId = $this->anchorFormatter->wikitextSafeBacklink( $ref->name, $ref->globalId, $ref->count );
 			return $this->messageLocalizer->msg(
 				'cite_references_link_one',
-				$this->anchorFormatter->jumpLinkTarget( $ref->name, $ref->globalId ),
+				$this->anchorFormatter->noteLinkTarget( $ref->name, $ref->globalId ),
 				$backlinkId,
 				$text,
 				$extraAttributes
@@ -172,7 +153,7 @@ class ReferenceListFormatter {
 
 				$backlinks[] = $this->messageLocalizer->msg(
 					'cite_references_link_many_format',
-					$this->anchorFormatter->backLink( $ref->name, $ref->globalId, $i + 1 ),
+					$this->anchorFormatter->wikitextSafeBacklink( $ref->name, $ref->globalId, $i + 1 ),
 					$this->backlinkMarkRenderer->getLegacyNumericMarker( $i, $ref->count, $parentLabel ),
 					$this->backlinkMarkRenderer->getLegacyAlphabeticMarker( $i + 1, $ref->count, $parentLabel )
 				)->plain();
@@ -181,7 +162,7 @@ class ReferenceListFormatter {
 
 				$backlinks[] = $this->messageLocalizer->msg(
 					'cite_references_link_many_format',
-					$this->anchorFormatter->backLink( $ref->name, $ref->globalId, $i + 1 ),
+					$this->anchorFormatter->wikitextSafeBacklink( $ref->name, $ref->globalId, $i + 1 ),
 					$backlinkLabel,
 					$backlinkLabel
 				)->plain();
@@ -190,7 +171,7 @@ class ReferenceListFormatter {
 
 		// The parent of a subref might actually be unused and therefore have zero backlinks
 		$linkTargetId = $ref->count > 0 ?
-			$this->anchorFormatter->jumpLinkTarget( $ref->name, $ref->globalId ) : '';
+			$this->anchorFormatter->noteLinkTarget( $ref->name, $ref->globalId ) : '';
 		return $this->messageLocalizer->msg(
 			'cite_references_link_many',
 			$linkTargetId,
@@ -201,28 +182,14 @@ class ReferenceListFormatter {
 	}
 
 	/**
-	 * @param Parser $parser
 	 * @param ReferenceStackItem $ref
-	 * @param bool $isSectionPreview
-	 *
 	 * @return string Wikitext
 	 */
-	private function renderTextAndWarnings(
-		Parser $parser, ReferenceStackItem $ref, bool $isSectionPreview
-	): string {
-		if ( $ref->text === null ) {
-			$ref->warnings[] = [
-				$isSectionPreview
-					? 'cite_warning_sectionpreview_no_text'
-					: 'cite_error_references_no_text',
-				$ref->name
-			];
-		}
-
+	private function renderTextAndWarnings( ReferenceStackItem $ref ): string {
 		$text = $ref->text ?? '';
 		foreach ( $ref->warnings as $warning ) {
 			// @phan-suppress-next-line PhanParamTooFewUnpack
-			$text .= ' ' . $this->errorReporter->plain( $parser, ...$warning );
+			$text .= ' ' . $this->errorReporter->plain( ...$warning );
 			// FIXME: We could use a StatusValue object to get rid of duplicates
 			break;
 		}

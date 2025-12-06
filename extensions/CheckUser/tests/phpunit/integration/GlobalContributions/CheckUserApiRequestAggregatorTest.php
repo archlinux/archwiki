@@ -54,14 +54,14 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 					$this->localWiki => [
 						'response' => [
 							'code' => 200,
-							'body' => '"local results"'
-						]
+							'body' => '"local results"',
+						],
 					],
 					$this->externalWiki => [
 						'response' => [
 							'code' => 200,
-							'body' => '"external results"'
-						]
+							'body' => '"external results"',
+						],
 					],
 				];
 			} );

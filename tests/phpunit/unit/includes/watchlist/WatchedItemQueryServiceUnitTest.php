@@ -2,6 +2,7 @@
 
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Logging\LogPage;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -13,9 +14,12 @@ use MediaWiki\Watchlist\WatchedItemQueryService;
 use MediaWiki\Watchlist\WatchedItemQueryServiceExtension;
 use MediaWiki\Watchlist\WatchedItemStore;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Rdbms\Database\DbQuoter;
+use Wikimedia\Rdbms\Expression;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\TestingAccessWrapper;
@@ -24,6 +28,11 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\Watchlist\WatchedItemQueryService
  */
 class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
+
+	public function setUp(): void {
+		$this->hideDeprecated( WatchedItemQueryService::class .
+			'::getWatchedItemsWithRecentChangeInfo' );
+	}
 
 	/**
 	 * @return MockObject&CommentStore
@@ -70,10 +79,13 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				$this->isType( 'array' ),
 				$this->isType( 'int' )
 			)
-			->willReturnCallback( static function ( $a, $conj ) {
+			->willReturnCallback( function ( $a, $conj ) {
 				$sqlConj = $conj === LIST_AND ? ' AND ' : ' OR ';
 				$conds = [];
 				foreach ( $a as $k => $v ) {
+					if ( $v instanceof IExpression ) {
+						$v = $v->toSql( $this->createMock( DbQuoter::class ) );
+					}
 					if ( is_int( $k ) ) {
 						$conds[] = "($v)";
 					} elseif ( is_array( $v ) ) {
@@ -83,6 +95,18 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					}
 				}
 				return implode( $sqlConj, $conds );
+			} );
+
+		$mock->method( 'expr' )
+			->with(
+				$this->isType( 'string' ),
+				$this->isType( 'string' ),
+				$this->isType( 'string' )
+			)
+			->willReturnCallback( function ( string $field, string $op, string $value ) {
+				$mock = $this->createMock( Expression::class );
+				$mock->method( 'toSql' )->willReturn( "$field $op '$value'" );
+				return $mock;
 			} );
 
 		$mock->method( 'buildComparison' )
@@ -184,6 +208,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title',
 					'rc_timestamp',
 					'rc_type',
+					'rc_source',
 					'rc_deleted',
 					'wl_notificationtimestamp',
 					'rc_cur_id',
@@ -192,7 +217,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				],
 				[
 					'wl_user' => 1,
-					'(rc_this_oldid=page_latest) OR (rc_type=3)',
+					"(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')",
 				],
 				$this->isType( 'string' ),
 				[
@@ -219,6 +244,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title' => 'Foo1',
 					'rc_timestamp' => '20151212010101',
 					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 					'rc_deleted' => 0,
 					'wl_notificationtimestamp' => '20151212010101',
 				],
@@ -228,6 +254,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title' => 'Foo2',
 					'rc_timestamp' => '20151212010102',
 					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 					'rc_deleted' => 0,
 					'wl_notificationtimestamp' => null,
 				],
@@ -237,6 +264,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title' => 'Foo3',
 					'rc_timestamp' => '20151212010103',
 					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 					'rc_deleted' => 0,
 					'wl_notificationtimestamp' => null,
 				],
@@ -269,6 +297,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'rc_title' => 'Foo1',
 				'rc_timestamp' => '20151212010101',
 				'rc_type' => RC_NEW,
+				'rc_source' => RecentChange::SRC_NEW,
 				'rc_deleted' => 0,
 			],
 			$items[0][1]
@@ -285,6 +314,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'rc_title' => 'Foo2',
 				'rc_timestamp' => '20151212010102',
 				'rc_type' => RC_NEW,
+				'rc_source' => RecentChange::SRC_NEW,
 				'rc_deleted' => 0,
 			],
 			$items[1][1]
@@ -305,6 +335,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title',
 					'rc_timestamp',
 					'rc_type',
+					'rc_source',
 					'rc_deleted',
 					'wl_notificationtimestamp',
 					'rc_cur_id',
@@ -314,7 +345,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				],
 				[
 					'wl_user' => 1,
-					'(rc_this_oldid=page_latest) OR (rc_type=3)',
+					"(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')",
 					'extension_dummy_cond',
 				],
 				$this->isType( 'string' ),
@@ -343,6 +374,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title' => 'Foo1',
 					'rc_timestamp' => '20151212010101',
 					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 					'rc_deleted' => 0,
 					'wl_notificationtimestamp' => '20151212010101',
 				],
@@ -352,6 +384,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title' => 'Foo2',
 					'rc_timestamp' => '20151212010102',
 					'rc_type' => RC_NEW,
+					'rc_source' => RecentChange::SRC_NEW,
 					'rc_deleted' => 0,
 					'wl_notificationtimestamp' => null,
 				],
@@ -428,6 +461,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'rc_title' => 'Foo1',
 				'rc_timestamp' => '20151212010101',
 				'rc_type' => RC_NEW,
+				'rc_source' => RecentChange::SRC_NEW,
 				'rc_deleted' => 0,
 				'extension_dummy_field' => 0,
 			],
@@ -445,6 +479,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'rc_title' => 'Foo2',
 				'rc_timestamp' => '20151212010102',
 				'rc_type' => RC_NEW,
+				'rc_source' => RecentChange::SRC_NEW,
 				'rc_deleted' => 0,
 				'extension_dummy_field' => 1,
 			],
@@ -473,7 +508,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 			->with(
 				[ 'recentchanges', 'watchlist', 'page' ],
 				$this->isType( 'array' ),
-				[ 'wl_user' => 1, '(rc_this_oldid=page_latest) OR (rc_type=3)' ],
+				[ 'wl_user' => 1, "(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')" ],
 				$this->isType( 'string' ),
 				$this->isType( 'array' ),
 				$this->isType( 'array' )
@@ -498,7 +533,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'deletedhistory',
 				[],
 				[
-					'(rc_type != ' . RC_LOG . ') OR ((rc_deleted & ' . LogPage::DELETED_ACTION . ') != ' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR ((rc_deleted & " . LogPage::DELETED_ACTION . ") != " .
 						LogPage::DELETED_ACTION . ')'
 				],
 				[],
@@ -508,7 +543,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'suppressrevision',
 				[],
 				[
-					'(rc_type != ' . RC_LOG . ') OR (' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR (" .
 						'(rc_deleted & ' . ( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ') != ' .
 						( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ')'
 				],
@@ -519,7 +554,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				'viewsuppressed',
 				[],
 				[
-					'(rc_type != ' . RC_LOG . ') OR (' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR (" .
 						'(rc_deleted & ' . ( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ') != ' .
 						( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ')'
 				],
@@ -532,7 +567,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				[
 					'watchlist_actor.actor_name' => 'SomeOtherUser',
 					'(rc_deleted & ' . RevisionRecord::DELETED_USER . ') != ' . RevisionRecord::DELETED_USER,
-					'(rc_type != ' . RC_LOG . ') OR ((rc_deleted & ' . LogPage::DELETED_ACTION . ') != ' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR ((rc_deleted & " . LogPage::DELETED_ACTION . ") != " .
 						LogPage::DELETED_ACTION . ')'
 				],
 				[ 'watchlist_actor' => [ 'JOIN', 'actor_id=rc_actor' ] ],
@@ -545,7 +580,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'watchlist_actor.actor_name' => 'SomeOtherUser',
 					'(rc_deleted & ' . ( RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED ) . ') != ' .
 						( RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED ),
-					'(rc_type != ' . RC_LOG . ') OR (' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR (" .
 						'(rc_deleted & ' . ( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ') != ' .
 						( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ')'
 				],
@@ -559,7 +594,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'watchlist_actor.actor_name' => 'SomeOtherUser',
 					'(rc_deleted & ' . ( RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED ) . ') != ' .
 						( RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED ),
-					'(rc_type != ' . RC_LOG . ') OR (' .
+					"(rc_source != '" . RecentChange::SRC_LOG . "') OR (" .
 						'(rc_deleted & ' . ( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ') != ' .
 						( LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED ) . ')'
 				],
@@ -578,7 +613,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		array $expectedExtraConds,
 		array $expectedExtraJoins
 	) {
-		$commonConds = [ 'wl_user' => 1, '(rc_this_oldid=page_latest) OR (rc_type=3)' ];
+		$commonConds = [ 'wl_user' => 1, "(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')" ];
 		$conds = array_merge( $commonConds, $expectedExtraConds );
 
 		$mockDb = $this->getMockDb();
@@ -617,6 +652,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title',
 					'rc_timestamp',
 					'rc_type',
+					'rc_source',
 					'rc_deleted',
 					'wl_notificationtimestamp',
 
@@ -747,11 +783,12 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title',
 					'rc_timestamp',
 					'rc_type',
+					'rc_source',
 					'rc_deleted',
 					'wl_notificationtimestamp',
 					'rc_cur_id',
 				],
-				[ 'wl_user' => 1, '(rc_this_oldid=page_latest) OR (rc_type=3)' ],
+				[ 'wl_user' => 1, "(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')" ],
 				$this->isType( 'string' ),
 				[],
 				[
@@ -793,6 +830,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 					'rc_title',
 					'rc_timestamp',
 					'rc_type',
+					'rc_source',
 					'rc_deleted',
 					'wl_notificationtimestamp',
 					'rc_this_oldid',
@@ -832,7 +870,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 				$this->isType( 'array' ),
 				[
 					'wl_user' => 2,
-					'(rc_this_oldid=page_latest) OR (rc_type=3)',
+					"(rc_this_oldid=page_latest) OR (rc_source = '" . RecentChange::SRC_LOG . "')",
 				],
 				$this->isType( 'string' ),
 				$this->isType( 'array' ),

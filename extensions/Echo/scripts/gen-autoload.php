@@ -11,7 +11,6 @@ require_once getenv( 'MW_INSTALL_PATH' ) !== false
 /**
  * Generates Echo autoload info
  */
-
 class GenerateEchoAutoload extends Maintenance {
 	public function __construct() {
 		parent::__construct();

@@ -1,9 +1,9 @@
 'use strict';
 
-const initOnLoad = require( '../../../modules/ext.checkUser.tempAccounts/initOnLoad.js' );
+const initOnLoad = require( 'ext.checkUser.tempAccounts/initOnLoad.js' );
 const { makeTempUserLink, waitUntilElementCount } = require( './utils.js' );
-const Utils = require( '../../../modules/ext.checkUser.tempAccounts/ipRevealUtils.js' );
-const { getRevisionId, getLogId } = require( '../../../modules/ext.checkUser.tempAccounts/ipReveal.js' );
+const Utils = require( 'ext.checkUser.tempAccounts/ipRevealUtils.js' );
+const { getRevisionId, getLogId } = require( 'ext.checkUser.tempAccounts/ipReveal.js' );
 
 const originalGetAutoRevealStatus = Utils.getAutoRevealStatus;
 let server;

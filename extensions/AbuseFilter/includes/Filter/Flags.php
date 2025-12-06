@@ -38,59 +38,35 @@ class Flags {
 		$this->global = $global;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getEnabled(): bool {
 		return $this->enabled;
 	}
 
-	/**
-	 * @param bool $enabled
-	 */
 	public function setEnabled( bool $enabled ): void {
 		$this->enabled = $enabled;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getDeleted(): bool {
 		return $this->deleted;
 	}
 
-	/**
-	 * @param bool $deleted
-	 */
 	public function setDeleted( bool $deleted ): void {
 		$this->deleted = $deleted;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getHidden(): bool {
 		return $this->hidden;
 	}
 
-	/**
-	 * @param bool $hidden
-	 */
 	public function setHidden( bool $hidden ): void {
 		$this->hidden = $hidden;
 		$this->updatePrivacyLevel();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getProtected(): bool {
 		return $this->protected;
 	}
 
-	/**
-	 * @param bool $protected
-	 */
 	public function setProtected( bool $protected ): void {
 		$this->protected = $protected;
 		$this->updatePrivacyLevel();
@@ -102,23 +78,14 @@ class Flags {
 		$this->privacyLevel = $hidden | $protected;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getPrivacyLevel(): int {
 		return $this->privacyLevel;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function getGlobal(): bool {
 		return $this->global;
 	}
 
-	/**
-	 * @param bool $global
-	 */
 	public function setGlobal( bool $global ): void {
 		$this->global = $global;
 	}

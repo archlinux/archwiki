@@ -33,7 +33,7 @@ class ApiQueryCheckUserAbstractResponseTest extends MediaWikiIntegrationTestCase
 				RequestContext::getMain(),
 				$this->getServiceContainer()->get( 'CheckUserLogService' ),
 				$this->getServiceContainer()->getUserNameUtils(),
-				$this->getServiceContainer()->get( 'CheckUserLookupUtils' )
+				$this->getServiceContainer()->get( 'CheckUserLookupUtils' ),
 			] )->getMockForAbstractClass();
 		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
 		foreach ( $expectedProperties as $property => $value ) {
@@ -109,7 +109,7 @@ class ApiQueryCheckUserAbstractResponseTest extends MediaWikiIntegrationTestCase
 		$mockApiQueryCheckUser = $this->createMock( ApiQueryCheckUser::class );
 		$mockApiQueryCheckUser->method( 'extractRequestParams' )
 			->willReturn( [
-				'request' => 'actions', 'target' => 'Test', 'reason' => '', 'timecond' => '-3 months', 'limit' => '50'
+				'request' => 'actions', 'target' => 'Test', 'reason' => '', 'timecond' => '-3 months', 'limit' => '50',
 			] );
 		$objectUnderTest = $this->getMockBuilder( ApiQueryCheckUserAbstractResponse::class )
 			->setConstructorArgs( [
@@ -119,7 +119,7 @@ class ApiQueryCheckUserAbstractResponseTest extends MediaWikiIntegrationTestCase
 				RequestContext::getMain(),
 				$this->getServiceContainer()->get( 'CheckUserLogService' ),
 				$this->getServiceContainer()->getUserNameUtils(),
-				$this->getServiceContainer()->get( 'CheckUserLookupUtils' )
+				$this->getServiceContainer()->get( 'CheckUserLookupUtils' ),
 			] )->getMockForAbstractClass();
 		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
 		$objectUnderTest->getQueryBuilderForTable( 'invalid_table' );

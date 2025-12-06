@@ -30,15 +30,15 @@ function notificationsList( echo, markAllReadButton, onCountChange ) {
 			echoApi,
 			modelManager,
 			{
-				type: [ 'message', 'alert' ]
-			}
+				type: [ 'message', 'alert' ],
+			},
 		),
 		markAsReadHandler = function () {
 			markAllReadButton.toggle(
-				controller.manager.hasLocalUnread()
+				controller.manager.hasLocalUnread(),
 			);
 			markAllReadButton.setTitle(
-				mw.msg( 'echo-mark-all-as-read', unreadCounter.getCount() )
+				mw.msg( 'echo-mark-all-as-read', unreadCounter.getCount() ),
 			);
 		},
 		// Create a container which will be revealed when "more options" (...)
@@ -49,13 +49,13 @@ function notificationsList( echo, markAllReadButton, onCountChange ) {
 	echo.config.maxPrioritizedActions = 1;
 
 	const wrapperWidget = new echo.ui.NotificationsWrapper( controller, modelManager, {
-		$overlay: $moreOptions
+		$overlay: $moreOptions,
 	} );
 
 	// Events
 	unreadCounter.on( 'countChange', ( count ) => {
 		onCountChange(
-			controller.manager.getUnreadCounter().getCappedNotificationCount( count )
+			controller.manager.getUnreadCounter().getCappedNotificationCount( count ),
 		);
 		markAsReadHandler();
 	} );
@@ -79,7 +79,7 @@ function notificationsList( echo, markAllReadButton, onCountChange ) {
 			// Connect event here as we know that everything loaded correctly
 			modelManager.on( 'update', markAsReadHandler );
 			return View.make( {}, [ wrapperWidget.$element, $moreOptions ] );
-		} )
+		} ),
 	);
 }
 

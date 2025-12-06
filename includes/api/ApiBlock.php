@@ -2,21 +2,7 @@
 /**
  * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -111,6 +97,7 @@ class ApiBlock extends ApiBase {
 		$this->checkUserRightsAny( 'block' );
 		$params = $this->extractRequestParams();
 		$this->requireOnlyOneParameter( $params, 'id', 'user', 'userid' );
+		$this->requireMaxOneParameter( $params, 'newblock', 'reblock' );
 		$this->requireNoConflictingParameters( $params,
 			'id', [ 'newblock', 'reblock' ] );
 
@@ -163,8 +150,8 @@ class ApiBlock extends ApiBase {
 			throw new RuntimeException( "Unexpected block class" );
 		}
 
-		$watchlistExpiry = $this->getExpiryFromParams( $params );
 		$userPage = Title::makeTitle( NS_USER, $block->getTargetName() );
+		$watchlistExpiry = $this->getExpiryFromParams( $params, $userPage, $this->getUser() );
 
 		if ( $params['watchuser'] && $block->getType() !== AbstractBlock::TYPE_RANGE ) {
 			$this->setWatch( 'watch', $userPage, $this->getUser(), null, $watchlistExpiry );
@@ -199,9 +186,7 @@ class ApiBlock extends ApiBase {
 		$res['partial'] = $params['partial'];
 		$res['pagerestrictions'] = $params['pagerestrictions'];
 		$res['namespacerestrictions'] = $params['namespacerestrictions'];
-		if ( $this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks ) ) {
-			$res['actionrestrictions'] = $params['actionrestrictions'];
-		}
+		$res['actionrestrictions'] = $params['actionrestrictions'];
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}
@@ -242,12 +227,10 @@ class ApiBlock extends ApiBase {
 			}, (array)$params['namespacerestrictions'] );
 			$restrictions = array_merge( $pageRestrictions, $namespaceRestrictions );
 
-			if ( $this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks ) ) {
-				$actionRestrictions = array_map( function ( $action ) {
-					return new ActionRestriction( 0, $this->blockActionInfo->getIdFromAction( $action ) );
-				}, (array)$params['actionrestrictions'] );
-				$restrictions = array_merge( $restrictions, $actionRestrictions );
-			}
+			$actionRestrictions = array_map( function ( $action ) {
+				return new ActionRestriction( 0, $this->blockActionInfo->getIdFromAction( $action ) );
+			}, (array)$params['actionrestrictions'] );
+			$restrictions = array_merge( $restrictions, $actionRestrictions );
 		}
 		return $restrictions;
 	}
@@ -308,14 +291,17 @@ class ApiBlock extends ApiBase {
 		)->placeBlock( $params['newblock'] ? BlockUser::CONFLICT_NEW : BlockUser::CONFLICT_FAIL );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$params = [
 			'id' => [ ParamValidator::PARAM_TYPE => 'integer' ],
@@ -379,26 +365,23 @@ class ApiBlock extends ApiBase {
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_TYPE => 'namespace',
 			],
+			'actionrestrictions' => [
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => array_keys(
+					$this->blockActionInfo->getAllBlockActions()
+				),
+			],
 		];
-
-		if ( $this->getConfig()->get( MainConfigNames::EnablePartialActionBlocks ) ) {
-			$params += [
-				'actionrestrictions' => [
-					ParamValidator::PARAM_ISMULTI => true,
-					ParamValidator::PARAM_TYPE => array_keys(
-						$this->blockActionInfo->getAllBlockActions()
-					),
-				],
-			];
-		}
 
 		return $params;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		// phpcs:disable Generic.Files.LineLength
 		return [
@@ -410,6 +393,7 @@ class ApiBlock extends ApiBase {
 		// phpcs:enable
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Block';
 	}

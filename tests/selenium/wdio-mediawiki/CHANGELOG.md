@@ -1,14 +1,86 @@
 # Changelog
 
+## 6.0.0 / 2025-10-20
+
+With wdio-mediawiki 6.0 we replaced mwbot with internal code. This is a breaking change if you use any API functionality in your test and use the API from wdio-mediawiki. If you miss API functionality for your test, please create a task in Phabricator with the Test Platform tag.
+
+The change was done in two steps:
+
+1. mwbot was exposed in the API, meaning you as a user could get hold of the mwbot instance by using something like:
+```
+import { mwbot } from 'wdio-mediawiki/Api.js';
+...
+const bot = await mwbot();
+```
+We changed that to not expose our implementation so it's easier in the future to change API backend. This change removed the exposed mwbot() and made Api.js expose the API functions directly. The change was done in T404596.
+
+2. The next step removed the actual mwbot dependency and implements our own functionality to talk to the API (using built in NodeJS fetch). The change was done in T404361. You can see can see what you need to do to upgrade to 6.0 if you used mwbot in https://gerrit.wikimedia.org/g/mediawiki/extensions/examples.
+
+If you don't pass on any user/password when setting up the API client the `browser.options.capabilities[ 'mw:user' ]` and `browser.options.capabilities[ 'mw:pwd' ]` will be used. For specific functions that need a username, you always need to pass on the username from this version.
+
+There where also a couple of minor changes to make the testing more stable in CI:
+
+* Disable infobars (T403827)
+* Disable settings in Chrome to make it more stable (T403357)
+* Log the URL that we use for the tests (T403004)
+* Wait for mw.loader.using in waitForModuleState() (T397014)
+
+## 5.1.0 / 2025-07-18
+
+* Fix how to count number of tests for Prometheus. (T399677)
+* Get spec test retries in Prometheus per project. (T398782)
+* Tag project/test metrics per beta or ci. (T399685)
+* Throw exception when API response lacks expected field. (T393428)
+
+## 5.0.1 / 2025-07-04
+
+* Use ECMAScript modules in RunJobs.js. (T398046)
+
+## 5.0.0 / 2025-06-26
+
+* Use ECMAScript modules. (T373125)
+
+## 4.1.3 / 2025-06-24
+
+* Update waitForModuleState to use mw.loader.using for wdio 9 (T397014)
+
+## 4.1.2 / 2025-06-17
+
+* Fix skipping tests for PrometheusReporter (T397030)
+
+## 4.1.1 / 2025-06-13
+
+* Use package name as project name for Prometheus (T396710)
+
+## 4.1.0 / 2025-06-12
+
+* Add Prometheus support for CI usage. (T391078)
+
+## 4.0.0 / 2025-06-04
+
+* Upgrade WebdriverIO to v9. (T372633)
+
+## 3.0.1 / 2025-05-28
+
+* Fix specs in configuration file. (T395322)
+
+## 3.0.0 / 2025-05-26
+
+* Pin browser version in CI. (T391320)
+* Upgrade WebdriverIO to v8. (T324766)
+
 ## 2.7.1 / 2025-03-27
+
 * Set `--disable-gpu` Chromium arg when running in Docker. (T389536)
 * Exit the process early from global `uncaughtException`. (T389562)
 * Skip video recording if ffmpeg is unavailable. (T381727)
 
 ## 2.7.0 / 2025-01-22
+
 * Api: Add `api.addUserToGroup()` to add user to a user group.
 
 ## 2.6.0 / 2025-01-09
+
 * Skip wikitext-specific tests if NS_MAIN isn't wikitext. (T358530)
 * Add LoginPage.getActualUsername().
 * Wait for form submission in `LoginPage.login()`.

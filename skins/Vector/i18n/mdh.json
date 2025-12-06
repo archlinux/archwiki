@@ -5,7 +5,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Enggunan su Ligasi Biktur",
-	"vector-opt-out": "Embalingan sa andang a palas",
 	"vector-languages": "Manga basa",
 	"vector-language-button-label": "{{PLURAL:$1|$1 basa|$1 manga basa}}",
 	"vector-no-language-button-label": "Muman sa basa",
@@ -33,7 +32,6 @@
 	"skin-theme-night-label": "Malibuteng",
 	"skin-theme-os-label": "Awtumatik",
 	"skin-theme-exclusion-notice": "Su inia a salekat na tatap sa maputi a mode.",
-	"vector-searchsuggest-containing": "Mangilay sa manga salekat a aden dalem nin a <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Dalem",
 	"vector-toc-beginning": "Ebpunan",
 	"vector-site-nav-label": "Sayt",

@@ -3,9 +3,9 @@
 namespace Wikimedia\WikiPEG;
 
 class SyntaxError extends \Exception implements \JsonSerializable {
-	public $expected;
-	public $found;
-	public $location;
+	public array $expected;
+	public ?string $found;
+	public LocationRange $location;
 
 	/**
 	 * @param string $message
@@ -13,7 +13,7 @@ class SyntaxError extends \Exception implements \JsonSerializable {
 	 * @param string|null $found
 	 * @param LocationRange $location
 	 */
-	public function __construct( string $message, array $expected, $found, LocationRange $location ) {
+	public function __construct( string $message, array $expected, ?string $found, LocationRange $location ) {
 		parent::__construct( $message );
 		$this->expected = $expected;
 		$this->found    = $found;

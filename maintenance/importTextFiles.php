@@ -2,28 +2,13 @@
 /**
  * Import pages from text files
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  */
 
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -109,6 +94,8 @@ class ImportTextFiles extends Maintenance {
 		$skipCount = 0;
 
 		$revLookup = $this->getServiceContainer()->getRevisionLookup();
+		$recentChangeFactory = $this->getServiceContainer()->getRecentChangeFactory();
+
 		foreach ( $files as $file => $text ) {
 			$pageName = $prefix . pathinfo( $file, PATHINFO_FILENAME );
 			$timestamp = $useTimestamp ? wfTimestamp( TS_UNIX, filemtime( $file ) ) : wfTimestampNow();
@@ -176,14 +163,13 @@ class ImportTextFiles extends Maintenance {
 			if ( $rc && $status ) {
 				if ( $exists ) {
 					if ( is_object( $oldRevRecord ) ) {
-						RecentChange::notifyEdit(
+						$recentChange = $recentChangeFactory->createEditRecentChange(
 							$timestamp,
 							$title,
 							$rev->getMinor(),
 							$user,
 							$summary,
 							$oldRevID,
-							$oldRevRecord->getTimestamp(),
 							$bot,
 							'',
 							$oldRevRecord->getSize(),
@@ -192,9 +178,11 @@ class ImportTextFiles extends Maintenance {
 							// the pages don't need to be patrolled
 							1
 						);
+
+						$recentChangeFactory->insertRecentChange( $recentChange );
 					}
 				} else {
-					RecentChange::notifyNew(
+					$recentChange = $recentChangeFactory->createNewPageRecentChange(
 						$timestamp,
 						$title,
 						$rev->getMinor(),
@@ -206,6 +194,8 @@ class ImportTextFiles extends Maintenance {
 						$newId,
 						1
 					);
+
+					$recentChangeFactory->insertRecentChange( $recentChange );
 				}
 			}
 		}

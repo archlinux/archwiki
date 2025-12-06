@@ -54,7 +54,7 @@ ve.dm.mwExample.MWTransclusion = {
 		</span>
 	`,
 	blockContent: '<p about="#mwt1" data-parsoid="{}">Hello, world!</p>',
-	blockContentClipboard: '<p about="#mwt1" data-parsoid="{}" data-ve-ignore="true">Hello, world!</p>',
+	blockContentClipboard: '<p about="#mwt1" data-parsoid="{}" data-ve-ignore="">Hello, world!</p>',
 	inlineOpen: ve.dm.example.singleLine`
 		<span about="#mwt1" typeof="mw:Transclusion"
 			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"1,234"}},"i":0}}]}'>
@@ -101,7 +101,7 @@ ve.dm.mwExample.MWTransclusion = {
 			 data-ve-no-generated-contents="true">
 			&nbsp;
 		</span>
-		<span about="#mwt1" data-ve-ignore="true">Foo</span>
+		<span about="#mwt1" data-ve-ignore="">Foo</span>
 	`,
 	pairOne: ve.dm.example.singleLine`
 		<p about="#mwt1" typeof="mw:Transclusion"
@@ -265,24 +265,6 @@ ve.dm.mwExample.MWInternalSectionLink.absoluteData = {
 	}
 };
 
-ve.dm.mwExample.MWMediaLinkExistsData = {
-	type: 'link/mwInternal',
-	attributes: {
-		lookupTitle: 'Media:Exists.png',
-		normalizedTitle: 'Media:Exists.png',
-		title: 'Media:Exists.png'
-	}
-};
-
-ve.dm.mwExample.MWMediaLinkMissingData = {
-	type: 'link/mwInternal',
-	attributes: {
-		lookupTitle: 'Media:Missing.png',
-		normalizedTitle: 'Media:Missing.png',
-		title: 'Media:Missing.png'
-	}
-};
-
 ve.dm.mwExample.MWBlockImage = {
 	html: ve.dm.example.singleLine`
 		<figure typeof="mw:Image/Thumb" class="mw-halign-right foobar">
@@ -401,13 +383,7 @@ ve.dm.mwExample.mwNowikiAnnotation = {
 ve.dm.mwExample.mwNowiki = [
 	{ type: 'paragraph' },
 	...'Foo',
-	[ '[', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ '[', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ 'B', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ 'a', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ 'r', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ ']', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
-	[ ']', [ ve.dm.mwExample.mwNowikiAnnotation ] ],
+	...ve.dm.example.annotateText( '[[Bar]]', ve.dm.mwExample.mwNowikiAnnotation ),
 	...'Baz',
 	{ type: '/paragraph' },
 	{ type: 'internalList' },
@@ -1259,7 +1235,7 @@ ve.dm.mwExample.domToDataCases = {
 					mediaTag: 'img',
 					mw: {},
 					resource: './Foo',
-					src: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+					src: ve.ce.minImgDataUri,
 					type: 'thumb',
 					width: 300
 				}
@@ -1311,7 +1287,7 @@ ve.dm.mwExample.domToDataCases = {
 					mediaTag: 'img',
 					mw: {},
 					resource: './Foo',
-					src: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+					src: ve.ce.minImgDataUri,
 					type: 'thumb',
 					width: 300
 				}
@@ -1355,7 +1331,7 @@ ve.dm.mwExample.domToDataCases = {
 					mediaTag: 'img',
 					mw: {},
 					resource: './Foo',
-					src: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+					src: ve.ce.minImgDataUri,
 					type: 'thumb',
 					width: 300
 				}
@@ -1392,7 +1368,7 @@ ve.dm.mwExample.domToDataCases = {
 					mediaTag: 'img',
 					mw: {},
 					resource: './Foo',
-					src: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+					src: ve.ce.minImgDataUri,
 					type: 'thumb',
 					width: 300
 				}
@@ -1426,7 +1402,7 @@ ve.dm.mwExample.domToDataCases = {
 					mediaTag: 'img',
 					mw: {},
 					resource: './Foo',
-					src: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+					src: ve.ce.minImgDataUri,
 					type: 'thumb',
 					width: 300
 				}
@@ -1817,26 +1793,64 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: '/internalList' }
 		]
 	},
+	'internal link with template-generated href': {
+		body: '<p><a typeof="mw:ExpandedAttrs" about="#mwt2" rel="mw:WikiLink" href="./Test" title="Test" data-mw="{&quot;attribs&quot;:[[{&quot;txt&quot;:&quot;href&quot;},{&quot;html&quot;:&quot;<span about=\\&quot;#mwt1\\&quot; typeof=\\&quot;mw:Transclusion\\&quot; data-parsoid=\'{\\&quot;pi\\&quot;:[[{\\&quot;k\\&quot;:\\&quot;1\\&quot;}]],\\&quot;dsr\\&quot;:[2,14,null,null]}\' data-mw=\'{\\&quot;parts\\&quot;:[{\\&quot;template\\&quot;:{\\&quot;target\\&quot;:{\\&quot;wt\\&quot;:\\&quot;1x\\&quot;,\\&quot;href\\&quot;:\\&quot;./Template:1x\\&quot;},\\&quot;params\\&quot;:{\\&quot;1\\&quot;:{\\&quot;wt\\&quot;:\\&quot;test\\&quot;}},\\&quot;i\\&quot;:0}}]}\'>test</span>&quot;}]]}">x</a></p>',
+		base: ve.dm.mwExample.baseUri,
+		data: [
+			{ type: 'paragraph' },
+			[
+				'x',
+				[ {
+					type: 'link/mwInternal',
+					attributes: {
+						hasGeneratedHref: true,
+						title: 'Test',
+						normalizedTitle: 'Test',
+						lookupTitle: 'Test'
+					}
+				} ]
+			],
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		],
+		fromDataBody: '<p><a rel="mw:WikiLink" href="./Test">x</a></p>'
+	},
+	'internal link with extension-generated href': {
+		body: '<p><a typeof="mw:ExpandedAttrs mw:Annotation/tvar" about="#mwt2" rel="mw:WikiLink" href="./Test" title="Test" data-mw="{&quot;attribs&quot;:[[{&quot;txt&quot;:&quot;href&quot;},{&quot;html&quot;:&quot;<meta typeof=\\&quot;mw:Annotation/tvar\\&quot; data-parsoid=\'{\\&quot;dsr\\&quot;:[187,200,null,null]}\' data-mw=\'{\\&quot;attrs\\&quot;:{\\&quot;name\\&quot;:\\&quot;a\\&quot;},\\&quot;rangeId\\&quot;:\\&quot;mwa0\\&quot;,\\&quot;extendedRange\\&quot;:false,\\&quot;wtOffsets\\&quot;:[187,200]}\'/>test<meta typeof=\\&quot;mw:Annotation/tvar/End\\&quot; data-parsoid=\'{\\&quot;dsr\\&quot;:[203,210,null,null]}\' data-mw=\'{\\&quot;wtOffsets\\&quot;:[203,210]}\'/>&quot;}]]}">x</a></p>',
+		base: ve.dm.mwExample.baseUri,
+		data: [
+			{ type: 'paragraph' },
+			[
+				'x',
+				[ {
+					type: 'link/mwInternal',
+					attributes: {
+						hasGeneratedHref: true,
+						title: 'Test',
+						normalizedTitle: 'Test',
+						lookupTitle: 'Test'
+					}
+				} ]
+			],
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		],
+		fromDataBody: '<p><a rel="mw:WikiLink" href="./Test">x</a></p>'
+	},
 	'mw:MediaLink (exists)': {
 		body: '<p><a rel="mw:MediaLink" href="//localhost/w/images/x/xx/Exists.png" resource="./Media:Exists.png" title="Exists.png">Media:Exists.png</a></p>',
 		data: [
 			{ type: 'paragraph' },
-			[ 'M', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'e', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'd', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'i', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'a', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ ':', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'E', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'x', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'i', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 's', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 't', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 's', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ '.', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'p', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'n', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
-			[ 'g', [ ve.dm.mwExample.MWMediaLinkExistsData ] ],
+			...ve.dm.example.annotateText( 'Media:Exists.png', {
+				type: 'link/mwInternal',
+				attributes: {
+					lookupTitle: 'Media:Exists.png',
+					normalizedTitle: 'Media:Exists.png',
+					title: 'Media:Exists.png'
+				}
+			} ),
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -1848,23 +1862,14 @@ ve.dm.mwExample.domToDataCases = {
 		body: '<p><a rel="mw:MediaLink" href="./Special:FilePath/Missing.png" resource="./Media:Missing.png" title="Missing.png" typeof="mw:Error" data-mw=\'{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}\'>Media:Missing.png</a></p>',
 		data: [
 			{ type: 'paragraph' },
-			[ 'M', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'e', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'd', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'i', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'a', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ ':', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'M', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'i', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 's', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 's', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'i', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'n', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'g', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ '.', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'p', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'n', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
-			[ 'g', [ ve.dm.mwExample.MWMediaLinkMissingData ] ],
+			...ve.dm.example.annotateText( 'Media:Missing.png', {
+				type: 'link/mwInternal',
+				attributes: {
+					lookupTitle: 'Media:Missing.png',
+					normalizedTitle: 'Media:Missing.png',
+					title: 'Media:Missing.png'
+				}
+			} ),
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
@@ -2179,6 +2184,25 @@ ve.dm.mwExample.domToDataCases = {
 				}
 			},
 			{ type: '/mwDefaultSort' },
+			{ type: 'paragraph', internal: { generated: 'empty' } },
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	'display title': {
+		body: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"}}},"\\n"]}\'></span>',
+		fromDataBody: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"}}},"\\n"]}\'></span>',
+		normalizedBody: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"}}}]}\'></span>',
+		data: [
+			{
+				type: 'mwDisplayTitle',
+				attributes: {
+					content: 'foo',
+					localizedPrefix: 'DISPLAYTITLE'
+				}
+			},
+			{ type: '/mwDisplayTitle' },
 			{ type: 'paragraph', internal: { generated: 'empty' } },
 			{ type: '/paragraph' },
 			{ type: 'internalList' },

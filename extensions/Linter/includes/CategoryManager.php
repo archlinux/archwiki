@@ -36,41 +36,30 @@ class CategoryManager {
 	 * Map of category names to their hardcoded
 	 * numerical ids for use in the database
 	 *
-	 * @var int[]
+	 * @var array<string,int>
 	 */
-	private $categoryIds = [];
+	private array $categoryIds = [];
 
-	/**
-	 * @var string[][]
-	 */
-	private $categories = [
+	/** @var array<string,string[]> */
+	private array $categories = [
 		self::HIGH => [],
 		self::MEDIUM => [],
 		self::LOW => [],
 		self::NONE => [],
 	];
 
-	/**
-	 * @var bool[]
-	 * @phan-var array<string,bool>
-	 */
-	private $hasNameParam = [];
+	/** @var array<string,bool> */
+	private array $hasNameParam = [];
 
-	/**
-	 * @var bool[]
-	 * @phan-var array<string,bool>
-	 */
-	private $hasNoParams = [];
+	/** @var array<string,bool> */
+	private array $hasNoParams = [];
 
-	/**
-	 * @var bool[]
-	 * @phan-var array<string,bool>
-	 */
-	private $isEnabled = [];
+	/** @var array<string,bool> */
+	private array $isEnabled = [];
 
 	/**
 	 * Do not instantiate directly: use MediaWikiServices to fetch.
-	 * @param array $linterCategories
+	 * @param array<string,array> $linterCategories
 	 */
 	public function __construct( array $linterCategories ) {
 		foreach ( $linterCategories as $name => $info ) {

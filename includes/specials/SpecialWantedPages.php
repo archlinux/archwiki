@@ -1,26 +1,13 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Specials;
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\WantedQueryPage;
@@ -46,10 +33,12 @@ class SpecialWantedPages extends WantedQueryPage {
 		$this->linksMigration = $linksMigration;
 	}
 
+	/** @inheritDoc */
 	public function isIncludable() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$inc = $this->including();
 
@@ -61,6 +50,7 @@ class SpecialWantedPages extends WantedQueryPage {
 		parent::execute( $par );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 		$count = $this->getConfig()->get( MainConfigNames::WantedPagesThreshold ) - 1;
@@ -104,6 +94,15 @@ class SpecialWantedPages extends WantedQueryPage {
 		return $query;
 	}
 
+	/** @inheritDoc */
+	protected function getRecacheDB() {
+		return $this->getDatabaseProvider()->getReplicaDatabase(
+			PageLinksTable::VIRTUAL_DOMAIN,
+			'vslow'
+		);
+	}
+
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'maintenance';
 	}

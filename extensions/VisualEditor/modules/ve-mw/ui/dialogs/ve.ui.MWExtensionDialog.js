@@ -49,8 +49,7 @@ ve.ui.MWExtensionDialog.prototype.initialize = function () {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionDialog.prototype.getSetupProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionDialog.prototype.getSetupProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionDialog.super.prototype.getSetupProcess.call( this, data );
 	// Mixin process
@@ -60,8 +59,7 @@ ve.ui.MWExtensionDialog.prototype.getSetupProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionDialog.prototype.getReadyProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionDialog.prototype.getReadyProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionDialog.super.prototype.getReadyProcess.call( this, data );
 	// Mixin process
@@ -71,8 +69,7 @@ ve.ui.MWExtensionDialog.prototype.getReadyProcess = function ( data ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWExtensionDialog.prototype.getTeardownProcess = function ( data ) {
-	data = data || {};
+ve.ui.MWExtensionDialog.prototype.getTeardownProcess = function ( data = {} ) {
 	// Parent process
 	const process = ve.ui.MWExtensionDialog.super.prototype.getTeardownProcess.call( this, data );
 	// Mixin process

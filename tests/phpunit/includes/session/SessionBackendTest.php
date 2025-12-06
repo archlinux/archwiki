@@ -4,11 +4,11 @@ namespace MediaWiki\Tests\Session;
 
 use BadMethodCallException;
 use DummySessionProvider;
+use HashBagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\Session;
@@ -17,13 +17,15 @@ use MediaWiki\Session\SessionId;
 use MediaWiki\Session\SessionInfo;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Session\SessionProvider;
+use MediaWiki\Session\SessionStore;
+use MediaWiki\Session\SingleBackendSessionStore;
 use MediaWiki\Session\UserInfo;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
-use Wikimedia\ObjectCache\CachedBagOStuff;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -33,6 +35,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	use SessionProviderTestTrait;
+	use SessionStoreTestTrait;
 
 	private const SESSIONID = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
@@ -45,19 +48,8 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	/** @var SessionProvider */
 	protected $provider;
 
-	/** @var TestBagOStuff */
-	protected $store;
-
-	/** @var bool */
-	protected $onSessionMetadataCalled = false;
-
-	/**
-	 * @return HookContainer
-	 */
-	private function getHookContainer() {
-		// Need a real HookContainer to support modification of $wgHooks in the test
-		return $this->getServiceContainer()->getHookContainer();
-	}
+	/** @var SessionStore */
+	private $store;
 
 	/**
 	 * Returns a non-persistent backend that thinks it has at least one session active
@@ -70,21 +62,29 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 			$this->config = new HashConfig();
 			$this->manager = null;
 		}
+
 		if ( !$this->store ) {
-			$this->store = new TestBagOStuff();
-			$this->manager = null;
+			$this->store = new SingleBackendSessionStore(
+				new HashBagOStuff(), new NullLogger(), StatsFactory::newNull()
+			);
 		}
 
 		$logger = new NullLogger();
-		if ( !$this->manager ) {
-			$this->manager = new SessionManager( [
-				'store' => $this->store,
-				'logger' => $logger,
-				'config' => $this->config,
-			] );
-		}
+		$hookContainer = $this->getServiceContainer()->getHookContainer();
 
-		$hookContainer = $this->getHookContainer();
+		if ( !$this->manager ) {
+			$this->manager = new SessionManager(
+				$this->config,
+				$logger,
+				$this->getServiceContainer()->getCentralIdLookup(),
+				$hookContainer,
+				$this->getServiceContainer()->getObjectFactory(),
+				$this->getServiceContainer()->getProxyLookup(),
+				$this->getServiceContainer()->getUrlUtils(),
+				$this->getServiceContainer()->getUserNameUtils(),
+				$this->store
+			);
+		}
 
 		if ( !$this->provider ) {
 			$this->provider = new DummySessionProvider();
@@ -109,7 +109,6 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 
 		$manager = TestingAccessWrapper::newFromObject( $this->manager );
 		$manager->allSessionBackends = [ $backend->getId() => $backend ] + $manager->allSessionBackends;
-		$manager->allSessionIds = [ $backend->getId() => $id ] + $manager->allSessionIds;
 		$manager->sessionProviders = [ (string)$this->provider => $this->provider ];
 
 		return $backend;
@@ -129,7 +128,7 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		] );
 		$id = new SessionId( $info->getId() );
 		$logger = new NullLogger();
-		$hookContainer = $this->getHookContainer();
+		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		try {
 			new SessionBackend( $id, $info, $this->store, $logger, $hookContainer, 10 );
 			$this->fail( 'Expected exception not thrown' );
@@ -190,7 +189,7 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $info->forceHTTPS(), $backend->shouldForceHTTPS() );
 
 		$expire = time() + 100;
-		$this->store->setSessionMeta( self::SESSIONID, [ 'expires' => $expire ] );
+		$this->setSessionBlob( [ 'metadata' => [ 'expires' => $expire ] ], $info );
 
 		$info = new SessionInfo( SessionInfo::MIN_PRIORITY, [
 			'provider' => $this->provider,
@@ -256,8 +255,6 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 
 		$session2 = null;
 		$this->assertSame( [], $priv->requests );
-		$this->assertArrayNotHasKey( $backend->getId(), $manager->allSessionBackends );
-		$this->assertArrayHasKey( $backend->getId(), $manager->allSessionIds );
 	}
 
 	public function testSetProviderMetadata() {
@@ -279,21 +276,21 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 			$this->assertSame( '$metadata must be an array or null', $ex->getMessage() );
 		}
 
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertFalse( $this->store->get( $priv->getSessionInfo() ) );
 		$backend->setProviderMetadata( [ 'dummy' ] );
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertFalse( $this->store->get( $priv->getSessionInfo() ) );
 
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertFalse( $this->store->get( $priv->getSessionInfo() ) );
 		$backend->setProviderMetadata( [ 'test' ] );
-		$this->assertNotFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertNotFalse( $this->store->get( $priv->getSessionInfo() ) );
 		$this->assertSame( [ 'test' ], $backend->getProviderMetadata() );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->store->delete( $priv->getSessionInfo() );
 
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertFalse( $this->store->get( $priv->getSessionInfo() ) );
 		$backend->setProviderMetadata( null );
-		$this->assertNotFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertNotFalse( $this->store->get( $priv->getSessionInfo() ) );
 		$this->assertSame( null, $backend->getProviderMetadata() );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 	}
 
 	public function testResetId() {
@@ -326,8 +323,9 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$backend->resetId();
 		$this->assertNotEquals( self::SESSIONID, $backend->getId() );
 		$this->assertSame( $backend->getId(), $sessionId->getId() );
-		$this->assertIsArray( $this->store->getSession( $backend->getId() ) );
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
+		$store = TestingAccessWrapper::newFromObject( $this->store )->store;
+		$this->assertIsArray( $store->get( $store->makeKey( 'MWSession', $backend->getId() ) ) );
+		$this->assertFalse( $this->getSession( self::SESSIONID ) );
 		$this->assertSame( $id, session_id() );
 		$this->assertArrayNotHasKey( self::SESSIONID, $manager->allSessionBackends );
 		$this->assertArrayHasKey( $backend->getId(), $manager->allSessionBackends );
@@ -352,6 +350,15 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$wrap->expires = 0;
 		$backend->persist();
 		$this->assertNotEquals( 0, $wrap->expires );
+
+		$this->provider = $this->getMockBuilder( DummySessionProvider::class )
+			->onlyMethods( [ 'persistSession' ] )->getMock();
+		$this->provider->expects( $this->once() )->method( 'persistSession' );
+		$backend = $this->getBackend();
+		$wrap = TestingAccessWrapper::newFromObject( $backend );
+		$wrap->persist = true;
+		$backend->persist(); // This one shouldn't call $provider->persistSession()
+		$backend->persist( true );
 	}
 
 	public function testUnpersist() {
@@ -360,20 +367,18 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$this->provider->expects( $this->once() )->method( 'unpersistSession' );
 		$backend = $this->getBackend();
 		$wrap = TestingAccessWrapper::newFromObject( $backend );
-		$wrap->store = new CachedBagOStuff( $this->store );
 		$wrap->persist = true;
 		$wrap->dataDirty = true;
+		$sessionStore = TestingAccessWrapper::newFromObject( $wrap->sessionStore );
 
 		$backend->save(); // This one shouldn't call $provider->persistSession(), but should save
 		$this->assertTrue( $backend->isPersistent() );
-		$this->assertNotFalse( $this->store->getSession( self::SESSIONID ) );
+		$this->assertNotFalse( $sessionStore->get( $wrap->getSessionInfo() ) );
 
 		$backend->unpersist();
 		$this->assertFalse( $backend->isPersistent() );
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ) );
-		$this->assertNotFalse(
-			$wrap->store->get( $wrap->store->makeKey( 'MWSession', self::SESSIONID ) )
-		);
+
+		$this->assertNotFalse( $sessionStore->get( $wrap->getSessionInfo() ) );
 	}
 
 	public function testRememberUser() {
@@ -450,7 +455,7 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( [ '???' => '!!!' ], $data );
 
 		$testData = [ 'foo' => 'foo!', 'bar', [ 'baz', null ] ];
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend();
 		$this->assertSame( $testData, $backend->getData() );
 		$this->assertFalse( TestingAccessWrapper::newFromObject( $backend )->dataDirty );
@@ -480,64 +485,76 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testDelaySave() {
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
 		$backend = $this->getBackend();
 		$priv = TestingAccessWrapper::newFromObject( $backend );
 		$priv->persist = true;
 
 		// Saves happen normally when no delay is in effect
-		$this->onSessionMetadataCalled = false;
+		$sessionMetadataCalled = false;
 		$priv->metaDirty = true;
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
+		$this->assertTrue( $sessionMetadataCalled );
 
-		$this->onSessionMetadataCalled = false;
+		$sessionMetadataCalled = false;
 		$priv->metaDirty = true;
 		$priv->autosave();
-		$this->assertTrue( $this->onSessionMetadataCalled );
+		$this->assertTrue( $sessionMetadataCalled );
 
 		$delay = $backend->delaySave();
 
-		// Autosave doesn't happen when no delay is in effect
-		$this->onSessionMetadataCalled = false;
+		// Autosave doesn't happen when delay is in effect
+		$sessionMetadataCalled = false;
 		$priv->metaDirty = true;
 		$priv->autosave();
-		$this->assertFalse( $this->onSessionMetadataCalled );
+		$this->assertFalse( $sessionMetadataCalled );
 
-		// Save still does happen when no delay is in effect
+		// Save still does happen when delay is in effect
 		$priv->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
+		$this->assertTrue( $sessionMetadataCalled );
 
 		// Save happens when delay is consumed
-		$this->onSessionMetadataCalled = false;
+		$sessionMetadataCalled = false;
 		$priv->metaDirty = true;
 		ScopedCallback::consume( $delay );
-		$this->assertTrue( $this->onSessionMetadataCalled );
+		$this->assertTrue( $sessionMetadataCalled );
+
+		// No save happens when there was no autosave during the delay
+		$delay = $backend->delaySave();
+		$sessionMetadataCalled = false;
+		$priv->metaDirty = true;
+		ScopedCallback::consume( $delay );
+		$this->assertFalse( $sessionMetadataCalled );
+		$priv->metaDirty = false;
 
 		// Test multiple delays
 		$delay1 = $backend->delaySave();
 		$delay2 = $backend->delaySave();
 		$delay3 = $backend->delaySave();
-		$this->onSessionMetadataCalled = false;
+		$sessionMetadataCalled = false;
 		$priv->metaDirty = true;
 		$priv->autosave();
-		$this->assertFalse( $this->onSessionMetadataCalled );
+		$this->assertFalse( $sessionMetadataCalled );
 		ScopedCallback::consume( $delay3 );
-		$this->assertFalse( $this->onSessionMetadataCalled );
+		$this->assertFalse( $sessionMetadataCalled );
 		ScopedCallback::consume( $delay1 );
-		$this->assertFalse( $this->onSessionMetadataCalled );
+		$this->assertFalse( $sessionMetadataCalled );
 		ScopedCallback::consume( $delay2 );
-		$this->assertTrue( $this->onSessionMetadataCalled );
+		$this->assertTrue( $sessionMetadataCalled );
 	}
 
 	public function testSave() {
 		$user = static::getTestSysop()->getUser();
-		$this->store = new TestBagOStuff();
+		$this->store = new SingleBackendSessionStore(
+			new TestBagOStuff(), new NullLogger(), StatsFactory::newNull()
+		);
 		$testData = [ 'foo' => 'foo!', 'bar', [ 'baz', null ] ];
-
-		$neverHook = $this->getMockBuilder( __CLASS__ )
-			->onlyMethods( [ 'onSessionMetadata' ] )->getMock();
-		$neverHook->expects( $this->never() )->method( 'onSessionMetadata' );
 
 		$builder = $this->getMockBuilder( DummySessionProvider::class )
 			->onlyMethods( [ 'persistSession', 'unpersistSession' ] );
@@ -548,210 +565,261 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 
 		// Not persistent or dirty
 		$this->provider = $neverProvider;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		$this->assertFalse( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 
 		// (but does unpersist if forced)
 		$this->provider = $builder->getMock();
 		$this->provider->expects( $this->never() )->method( 'persistSession' );
 		$this->provider->expects( $this->atLeastOnce() )->method( 'unpersistSession' );
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = false;
 		TestingAccessWrapper::newFromObject( $backend )->forcePersist = true;
 		$this->assertFalse( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 
 		// (but not to a WebRequest associated with a different session)
 		$this->provider = $neverProvider;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
 		TestingAccessWrapper::newFromObject( $backend )->requests[100]
 			->setSessionId( new SessionId( 'x' ) );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = false;
 		TestingAccessWrapper::newFromObject( $backend )->forcePersist = true;
 		$this->assertFalse( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 
 		// Not persistent, but dirty
 		$this->provider = $neverProvider;
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		$this->assertFalse( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = true;
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $this->getSession( self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
 		$this->assertIsArray( $metadata );
 		$this->assertArrayHasKey( '???', $metadata );
 		$this->assertSame( '!!!', $metadata['???'] );
-		$this->assertFalse( $this->store->getSessionFromBackend( self::SESSIONID ),
-			'making sure it didn\'t save to backend' );
+
+		$timeNow = time() + 100;
+		$store = TestingAccessWrapper::newFromObject( $this->store )->store;
+		// Ensure that we expire items so we don't find them when we look up
+		$store->setMockTime( $timeNow );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save to backend' );
 
 		// Persistent, not dirty
 		$this->provider = $neverProvider;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 
 		// (but will persist if forced)
 		$this->provider = $builder->getMock();
 		$this->provider->expects( $this->atLeastOnce() )->method( 'persistSession' );
 		$this->provider->expects( $this->never() )->method( 'unpersistSession' );
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		TestingAccessWrapper::newFromObject( $backend )->forcePersist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 
 		// Persistent and dirty
 		$this->provider = $neverProvider;
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = true;
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+
+		$timeNow = time() - 100;
+		$store = TestingAccessWrapper::newFromObject( $this->store )->store;
+		// Ensure that we don't expire items, so we find them when we look up
+		$store->setMockTime( $timeNow );
+
+		$blob = $this->getSession( self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
 		$this->assertIsArray( $metadata );
 		$this->assertArrayHasKey( '???', $metadata );
 		$this->assertSame( '!!!', $metadata['???'] );
-		$this->assertIsArray( $this->store->getSessionFromBackend( self::SESSIONID ),
-			'making sure it did save to backend' );
+		$blob = $this->getSession( self::SESSIONID );
+		$this->assertIsArray( $blob, 'making sure it did save to backend' );
 
 		// (also persists if forced)
 		$this->provider = $builder->getMock();
 		$this->provider->expects( $this->atLeastOnce() )->method( 'persistSession' );
 		$this->provider->expects( $this->never() )->method( 'unpersistSession' );
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		TestingAccessWrapper::newFromObject( $backend )->forcePersist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = true;
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $this->getSession( self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
 		$this->assertIsArray( $metadata );
 		$this->assertArrayHasKey( '???', $metadata );
 		$this->assertSame( '!!!', $metadata['???'] );
-		$this->assertIsArray( $this->store->getSessionFromBackend( self::SESSIONID ),
-			'making sure it did save to backend' );
+		$blob = $this->getSession( self::SESSIONID );
+		$this->assertIsArray( $blob, 'making sure it did save to backend' );
 
 		// (also persists if metadata dirty)
 		$this->provider = $builder->getMock();
 		$this->provider->expects( $this->atLeastOnce() )->method( 'persistSession' );
 		$this->provider->expects( $this->never() )->method( 'unpersistSession' );
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = true;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $this->getSession( self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
 		$this->assertIsArray( $metadata );
 		$this->assertArrayHasKey( '???', $metadata );
 		$this->assertSame( '!!!', $metadata['???'] );
-		$this->assertIsArray( $this->store->getSessionFromBackend( self::SESSIONID ),
-			'making sure it did save to backend' );
+		$blob = $this->getSession( self::SESSIONID );
+		$this->assertIsArray( $blob, 'making sure it did save to backend' );
 
 		// Not marked dirty, but dirty data
 		// (e.g. indirect modification from ArrayAccess::offsetGet)
 		$this->provider = $neverProvider;
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = false;
 		TestingAccessWrapper::newFromObject( $backend )->dataHash = 'Doesn\'t match';
 		$backend->save();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $this->getSession( self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
 		$this->assertIsArray( $metadata );
 		$this->assertArrayHasKey( '???', $metadata );
 		$this->assertSame( '!!!', $metadata['???'] );
-		$this->assertIsArray( $this->store->getSessionFromBackend( self::SESSIONID ),
-			'making sure it did save to backend' );
+		$blob = $this->getSession( self::SESSIONID );
+		$this->assertIsArray( $blob, 'making sure it did save to backend' );
 
 		// Bad hook
 		$this->provider = null;
-		$mockHook = $this->getMockBuilder( __CLASS__ )
-			->onlyMethods( [ 'onSessionMetadata' ] )->getMock();
-		$mockHook->method( 'onSessionMetadata' )
-			->willReturnCallback(
-				static function ( SessionBackend $backend, array &$metadata, array $requests ) {
-					$metadata['userId']++;
-				}
-			);
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $mockHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				$metadata['userId']++;
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
 		$backend->dirty();
 		try {
@@ -769,41 +837,53 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 			$user->getName() => true,
 		];
 		$this->provider = $neverProvider;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $neverHook ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) {
+				self::fail( 'Unexpected call to hook SessionMetadata' );
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		TestingAccessWrapper::newFromObject( $backend )->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
 		TestingAccessWrapper::newFromObject( $backend )->metaDirty = true;
 		TestingAccessWrapper::newFromObject( $backend )->dataDirty = true;
 		$backend->save();
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 	}
 
 	public function testRenew() {
 		$user = static::getTestSysop()->getUser();
-		$this->store = new TestBagOStuff();
+		$this->store = new SingleBackendSessionStore(
+			new TestBagOStuff(), new NullLogger(), StatsFactory::newNull()
+		);
 		$testData = [ 'foo' => 'foo!', 'bar', [ 'baz', null ] ];
 
-		// Not persistent
+		// Not persistent, expiring
 		$this->provider = $this->getMockBuilder( DummySessionProvider::class )
 			->onlyMethods( [ 'persistSession' ] )->getMock();
 		$this->provider->expects( $this->never() )->method( 'persistSession' );
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		$wrap = TestingAccessWrapper::newFromObject( $backend );
+		$sessionStore = TestingAccessWrapper::newFromObject( $wrap->sessionStore );
 		$this->assertFalse( $backend->isPersistent() );
 		$wrap->metaDirty = false;
 		$wrap->dataDirty = false;
 		$wrap->forcePersist = false;
 		$wrap->expires = 0;
 		$backend->renew();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $sessionStore->get( $wrap->getSessionInfo(), self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
@@ -812,15 +892,47 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( '!!!', $metadata['???'] );
 		$this->assertNotEquals( 0, $wrap->expires );
 
-		// Persistent
+		// Persistent, not expiring
+		$this->provider = $this->getMockBuilder( DummySessionProvider::class )
+			->onlyMethods( [ 'persistSession' ] )->getMock();
+		$this->provider->expects( $this->never() )->method( 'persistSession' );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
+		$backend = $this->getBackend( $user );
+		$this->deleteSession( self::SESSIONID );
+		$wrap = TestingAccessWrapper::newFromObject( $backend );
+		$wrap->persist = true;
+		$this->assertTrue( $backend->isPersistent() );
+		$wrap->metaDirty = false;
+		$wrap->dataDirty = false;
+		$wrap->forcePersist = false;
+		$expires = time() + $wrap->lifetime + 100;
+		$wrap->expires = $expires;
+		$backend->renew();
+		$this->assertFalse( $sessionMetadataCalled );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertEquals( $expires, $wrap->expires );
+
+		// Persistent, expiring
 		$this->provider = $this->getMockBuilder( DummySessionProvider::class )
 			->onlyMethods( [ 'persistSession' ] )->getMock();
 		$this->provider->expects( $this->atLeastOnce() )->method( 'persistSession' );
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		$wrap = TestingAccessWrapper::newFromObject( $backend );
 		$wrap->persist = true;
 		$this->assertTrue( $backend->isPersistent() );
@@ -829,8 +941,8 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$wrap->forcePersist = false;
 		$wrap->expires = 0;
 		$backend->renew();
-		$this->assertTrue( $this->onSessionMetadataCalled );
-		$blob = $this->store->getSession( self::SESSIONID );
+		$this->assertTrue( $sessionMetadataCalled );
+		$blob = $sessionStore->get( $wrap->getSessionInfo(), self::SESSIONID );
 		$this->assertIsArray( $blob );
 		$this->assertArrayHasKey( 'metadata', $blob );
 		$metadata = $blob['metadata'];
@@ -843,11 +955,16 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$this->provider = $this->getMockBuilder( DummySessionProvider::class )
 			->onlyMethods( [ 'persistSession' ] )->getMock();
 		$this->provider->expects( $this->never() )->method( 'persistSession' );
-		$this->onSessionMetadataCalled = false;
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [ 'SessionMetadata' => [ $this ] ] );
-		$this->store->setSessionData( self::SESSIONID, $testData );
+		$sessionMetadataCalled = false;
+		$this->setTemporaryHook( 'SessionMetadata',
+			static function ( SessionBackend $backend, array &$metadata, array $requests ) use ( &$sessionMetadataCalled ) {
+				$sessionMetadataCalled = true;
+				$metadata['???'] = '!!!';
+			}
+		);
+		$this->setSessionBlob( [ 'data' => $testData ] );
 		$backend = $this->getBackend( $user );
-		$this->store->deleteSession( self::SESSIONID );
+		$this->deleteSession( self::SESSIONID );
 		$wrap = TestingAccessWrapper::newFromObject( $backend );
 		$this->assertFalse( $backend->isPersistent() );
 		$wrap->metaDirty = false;
@@ -856,39 +973,36 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 		$expires = time() + $wrap->lifetime + 100;
 		$wrap->expires = $expires;
 		$backend->renew();
-		$this->assertFalse( $this->onSessionMetadataCalled );
-		$this->assertFalse( $this->store->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
+		$this->assertFalse( $sessionMetadataCalled );
+		$this->assertFalse( $this->getSession( self::SESSIONID ), 'making sure it didn\'t save' );
 		$this->assertEquals( $expires, $wrap->expires );
 	}
 
-	public function onSessionMetadata( SessionBackend $backend, array &$metadata, array $requests ) {
-		$this->onSessionMetadataCalled = true;
-		$metadata['???'] = '!!!';
-	}
-
-	public function testTakeOverGlobalSession() {
-		if ( !PHPSessionHandler::isInstalled() ) {
-			PHPSessionHandler::install( SessionManager::singleton() );
-		}
+	private function ensurePHPSessionHandlerEnabled(): ?ScopedCallback {
+		$scope = null;
 		if ( !PHPSessionHandler::isEnabled() ) {
 			$staticAccess = TestingAccessWrapper::newFromClass( PHPSessionHandler::class );
 			$handler = TestingAccessWrapper::newFromObject( $staticAccess->instance );
-			$resetHandler = new ScopedCallback( static function () use ( $handler ) {
+			$scope = new ScopedCallback( static function () use ( $handler ) {
 				session_write_close();
 				$handler->enable = false;
 			} );
 			$handler->enable = true;
 		}
+		return $scope;
+	}
+
+	public function testTakeOverGlobalSession() {
+		$scope = $this->ensurePHPSessionHandlerEnabled();
 
 		$backend = $this->getBackend( static::getTestSysop()->getUser() );
 		TestingAccessWrapper::newFromObject( $backend )->usePhpSessionHandling = true;
 
-		$resetSingleton = TestUtils::setSessionManagerSingleton( $this->manager );
+		$this->setService( 'SessionManager', $this->manager );
+		PHPSessionHandler::install( $this->manager );
 
 		$manager = TestingAccessWrapper::newFromObject( $this->manager );
 		$request = RequestContext::getMain()->getRequest();
-		$manager->globalSession = $backend->getSession( $request );
-		$manager->globalSessionRequest = $request;
 
 		session_id( '' );
 		TestingAccessWrapper::newFromObject( $backend )->checkPHPSession();
@@ -906,28 +1020,16 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testResetIdOfGlobalSession() {
-		if ( !PHPSessionHandler::isInstalled() ) {
-			PHPSessionHandler::install( SessionManager::singleton() );
-		}
-		if ( !PHPSessionHandler::isEnabled() ) {
-			$staticAccess = TestingAccessWrapper::newFromClass( PHPSessionHandler::class );
-			$handler = TestingAccessWrapper::newFromObject( $staticAccess->instance );
-			$resetHandler = new ScopedCallback( static function () use ( $handler ) {
-				session_write_close();
-				$handler->enable = false;
-			} );
-			$handler->enable = true;
-		}
+		$scope = $this->ensurePHPSessionHandlerEnabled();
 
 		$backend = $this->getBackend( User::newFromName( 'TestResetIdOfGlobalSession' ) );
 		TestingAccessWrapper::newFromObject( $backend )->usePhpSessionHandling = true;
 
-		$resetSingleton = TestUtils::setSessionManagerSingleton( $this->manager );
+		$this->setService( 'SessionManager', $this->manager );
+		PHPSessionHandler::install( $this->manager );
 
 		$manager = TestingAccessWrapper::newFromObject( $this->manager );
 		$request = RequestContext::getMain()->getRequest();
-		$manager->globalSession = $backend->getSession( $request );
-		$manager->globalSessionRequest = $request;
 
 		session_id( self::SESSIONID );
 		@session_start();
@@ -941,30 +1043,18 @@ class SessionBackendTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testUnpersistOfGlobalSession() {
-		if ( !PHPSessionHandler::isInstalled() ) {
-			PHPSessionHandler::install( SessionManager::singleton() );
-		}
-		if ( !PHPSessionHandler::isEnabled() ) {
-			$staticAccess = TestingAccessWrapper::newFromClass( PHPSessionHandler::class );
-			$handler = TestingAccessWrapper::newFromObject( $staticAccess->instance );
-			$resetHandler = new ScopedCallback( static function () use ( $handler ) {
-				session_write_close();
-				$handler->enable = false;
-			} );
-			$handler->enable = true;
-		}
+		$scope = $this->ensurePHPSessionHandlerEnabled();
 
 		$backend = $this->getBackend( User::newFromName( 'TestUnpersistOfGlobalSession' ) );
 		$wrap = TestingAccessWrapper::newFromObject( $backend );
 		$wrap->usePhpSessionHandling = true;
 		$wrap->persist = true;
 
-		$resetSingleton = TestUtils::setSessionManagerSingleton( $this->manager );
+		$this->setService( 'SessionManager', $this->manager );
+		PHPSessionHandler::install( $this->manager );
 
 		$manager = TestingAccessWrapper::newFromObject( $this->manager );
 		$request = RequestContext::getMain()->getRequest();
-		$manager->globalSession = $backend->getSession( $request );
-		$manager->globalSessionRequest = $request;
 
 		session_id( self::SESSIONID . 'x' );
 		@session_start();

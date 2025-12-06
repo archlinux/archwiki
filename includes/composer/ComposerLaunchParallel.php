@@ -60,7 +60,7 @@ class ComposerLaunchParallel extends ForkController {
 		$this->excludeGroups = $excludeGroups;
 		$this->composerSystemInterface = $composerSystemInterface ?? new ComposerSystemInterface();
 		$this->splitGroupExecutor = $splitGroupExecutor ?? new SplitGroupExecutor(
-			$phpUnitConfigFile, Shellbox::createUnboxedExecutor(), $event, $this->composerSystemInterface
+			$phpUnitConfigFile, Shellbox::createUnboxedExecutor(), $event->getIO(), $this->composerSystemInterface
 		);
 
 		/**
@@ -143,7 +143,7 @@ class ComposerLaunchParallel extends ForkController {
 			if ( $groupIndex > 0 ) {
 				if ( count( $_SERVER['argv'] ) > $groupIndex + 1 ) {
 					$nextArg = $_SERVER['argv'][$groupIndex + 1];
-					if ( strpos( $nextArg, "--" ) === 0 ) {
+					if ( str_starts_with( $nextArg, "--" ) ) {
 						throw new \InvalidArgumentException(
 							"parameter " . $argument . " takes a variable - none supplied"
 						);
@@ -248,7 +248,7 @@ class ComposerLaunchParallel extends ForkController {
 		}
 
 		if ( $splitGroupCount < 2 ) {
-			throw new InvalidSplitGroupCountException( $splitGroupCount );
+			throw new InvalidSplitGroupCountException( (string)$splitGroupCount );
 		}
 
 		return $splitGroupCount;

@@ -32,6 +32,17 @@ class ParserHooksHandler implements
 	/** @var array[] renders delayed to be done as a batch [ MathRenderer, Parser ] */
 	private $mathLazyRenderBatch = [];
 
+	/**
+	 * @var string[] result of batch rendering.
+	 *
+	 * We store rendered math to prevent parsing again if we happen to need it later.
+	 * Sometimes, parserAfterTidy is called several times.
+	 * First time it is called, we batch render all math, but maybe we don't need some math at that point,
+	 * so we store the rendered math for later use.
+	 * T371972
+	 */
+	private $mathLazyRenderBatchCompleted = [];
+
 	/** @var RendererFactory */
 	private $rendererFactory;
 
@@ -140,9 +151,13 @@ class ParserHooksHandler implements
 			$renderer->addTrackingCategories( $parser );
 			return $renderer->getLastError();
 		}
-		$this->hookRunner->onMathFormulaPostRender(
-			$parser, $renderer, $renderedMath
-		); // Enables indexing of math formula
+
+		// Enables indexing of math formula
+		$this->hookRunner->onMathFormulaPostRenderRevision(
+			$parser->getRevisionRecordObject(),
+			$renderer,
+			$renderedMath
+		);
 
 		// Writes cache if rendering was successful
 		$renderer->writeCache();
@@ -155,21 +170,31 @@ class ParserHooksHandler implements
 	 * @param string &$text
 	 */
 	public function onParserAfterTidy( $parser, &$text ) {
-		global $wgMathoidCli;
+		$this->renderBatch();
+
+		foreach ( $this->mathLazyRenderBatchCompleted as $key => $value ) {
+			$count = 0;
+			$text = str_replace( $key, $value, $text, $count );
+			if ( $count ) {
+				// This hook might be called multiple times. However once the tag is replaced the job is done.
+				unset( $this->mathLazyRenderBatchCompleted[ $key ] );
+			}
+		}
+	}
+
+	private function renderBatch() {
 		$renderers = array_column( $this->mathLazyRenderBatch, 0 );
-		if ( $wgMathoidCli ) {
+		if ( MathMathMLCli::isMathoidCliConfigured() ) {
 			MathMathMLCli::batchEvaluate( $renderers );
 		} else {
 			MathMathML::batchEvaluate( $renderers );
 		}
 		foreach ( $this->mathLazyRenderBatch as $key => [ $renderer, $renderParser ] ) {
-			$value = $this->mathPostTagHook( $renderer, $renderParser );
-			$count = 0;
-			$text = str_replace( $key, $value, $text, $count );
-			if ( $count ) {
-				// This hook might be called multiple times. However once the tag is rendered the job is done.
-				unset( $this->mathLazyRenderBatch[ $key ] );
-			}
+			$this->mathLazyRenderBatchCompleted[ $key ] = $this->mathPostTagHook( $renderer, $renderParser );
+			// Unset directly after (expensive) parse to prevent accidentaly
+			// parsing again on subsequent parserAfterTidy calls.
+			// Result is stored on mathLazyRenderBatchCompleted array, in case we need it later. (T371972)
+			unset( $this->mathLazyRenderBatch[ $key ] );
 		}
 	}
 

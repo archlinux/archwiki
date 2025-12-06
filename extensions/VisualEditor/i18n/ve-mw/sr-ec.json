@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -14,8 +15,7 @@
 			"Zenfiric",
 			"Zoranzoki21",
 			"Милан Јелисавчић",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -335,13 +335,13 @@
 	"visualeditor-special-characters-group-other": "Често коришћени",
 	"visualeditor-templatesused-tool": "Коришћени шаблони",
 	"visualeditor-title-error": "Неважећи наслов.",
-	"visualeditor-toload": "Уређивач ће се сада учитати. Ако и даље видите ову поруку након неколико секунди, [$1 поново учитајте страницу].",
+	"visualeditor-toload": "Уређивач ће се сада учитати. Ако и даље видите ову поруку након неколико секунди, [$1 освежите страницу].",
 	"visualeditor-tooltip-non-breaking-space": "Непреломни размак",
 	"visualeditor-version-label": "Верзија",
 	"visualeditor-wikitext-progress": "Претварање викитекста",
 	"visualeditor-wikitext-warning": "Користите визуелни уређивач — [[{{MediaWiki:visualeditor-wikitext-warning-link}}|викитекст]] овде не ради. У сваком тренутку можете да се пребаците на уређивање извора без губитка измена кликом на одговарајуће дугме.",
 	"visualeditor-wikitext-warning-title": "Откривено је означавање викитекста",
-	"visualeditor-wikitextconvert-title": "Претворити форматирање у викитекст?",
+	"visualeditor-wikitextconvert-title": "Форматирај у викитекст?",
 	"visualeditor-wikitextconvert-message": "Налепили сте садржај који садржи форматирање. Да ли желите да претворите ово форматирање у викитекст?",
 	"visualeditor-wikitextconvert-convert": "Претвори у викитекст"
 }

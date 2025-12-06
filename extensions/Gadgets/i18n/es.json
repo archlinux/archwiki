@@ -31,7 +31,6 @@
 	"gadgetusage-usercount": "Número de usuarios",
 	"gadgetusage-noresults": "No se encontraron accesorios.",
 	"gadgetusage-intro": "Esta tabla indica el número de usuarios que han activado cada accesorio en esta wiki. Un usuario activo es aquel que ha realizado una edición en {{PLURAL:$1|el último día|los últimos $1 días}}. La lista no incluye estadísticas de accesorios activados para todos por defecto y podría incluir accesorios que ya no están disponibles.",
-	"gadgetusage-intro-noactive": "Esta tabla indica el número de usuarios que han activado cada accesorio en esta wiki. La lista no incluye estadísticas de accesorios activados para todos por defecto y podría incluir accesorios que ya no están disponibles.",
 	"gadgetusage-activeusers": "Usuarios activos",
 	"gadgetusage-default": "Predeterminado",
 	"gadgets-title": "Accesorios",

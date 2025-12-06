@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
@@ -20,10 +21,10 @@ class MMLmstyleTest extends MediaWikiUnitTestCase {
 		$mi = new MMLmi( '', [], 'x' );
 		$mo = new MMLmo( '', [], '+' );
 		$mn = new MMLmn( '', [], '5' );
-		$mstyle = new MMLmstyle( '', [ 'mathvariant' => 'bold' ], $mi, $mo, $mn );
+		$mstyle = new MMLmstyle( '', [ 'mathvariant' => Variants::BOLD ], $mi, $mo, $mn );
 
 		$this->assertEquals( 'mstyle', $mstyle->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $mstyle->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mstyle->getAttributes() );
 		$this->assertEquals( $mstyle->getChildren(), [ $mi, $mo, $mn ] );
 	}
 }

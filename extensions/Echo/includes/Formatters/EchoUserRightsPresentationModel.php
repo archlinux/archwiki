@@ -101,7 +101,7 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		}
 		return [
 			'url' => SpecialPage::getTitleFor( 'Listgrouprights', false, $fragment )->getFullURL(),
-			'label' => $this->msg( 'echo-learn-more' )->text()
+			'label' => $this->msg( 'echo-learn-more' )->text(),
 		];
 	}
 

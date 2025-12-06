@@ -13,7 +13,7 @@
 	"manifest_version": 2,
 	"load_composer_autoloader": true,
 	"requires": {
-		"MediaWiki": ">= 1.44"
+		"MediaWiki": ">= 1.45"
 	},
 	"MessagesDirs": {
 		"TemplateStyles": [
@@ -24,11 +24,20 @@
 		"MediaWiki\\Extension\\TemplateStyles\\": "includes/"
 	},
 	"ContentHandlers": {
-		"sanitized-css": "MediaWiki\\Extension\\TemplateStyles\\TemplateStylesContentHandler"
+		"sanitized-css": {
+			"class": "MediaWiki\\Extension\\TemplateStyles\\TemplateStylesContentHandler",
+			"services": [
+				"TrackingCategories",
+				"ConfigFactory"
+			]
+		}
 	},
 	"TrackingCategories": [
 		"templatestyles-stylesheet-error-category",
 		"templatestyles-page-error-category"
+	],
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
 	],
 	"attributes": {
 		"SyntaxHighlight": {
@@ -48,9 +57,9 @@
 	"callback": "MediaWiki\\Extension\\TemplateStyles\\Hooks::onRegistration",
 	"Hooks": {
 		"ParserFirstCallInit": "main",
-		"ParserClearState": "main",
 		"ContentHandlerDefaultModelFor": "main",
-		"CodeEditorGetPageLanguage": "codeeditor"
+		"CodeEditorGetPageLanguage": "codeeditor",
+		"CodeMirrorGetMode": "codemirror"
 	},
 	"HookHandlers": {
 		"main": {
@@ -58,6 +67,9 @@
 		},
 		"codeeditor": {
 			"class": "MediaWiki\\Extension\\TemplateStyles\\CodeEditorHooks"
+		},
+		"codemirror": {
+			"class": "MediaWiki\\Extension\\TemplateStyles\\CodeMirrorHooks"
 		}
 	},
 	"config": {
@@ -103,6 +115,10 @@
 			"description": "Use CodeEditor when editing TemplateStyles CSS pages.",
 			"value": true
 		},
+		"TemplateStylesUseCodeMirror": {
+			"description": "Use CodeMirror when editing TemplateStyles CSS pages.",
+			"value": false
+		},
 		"TemplateStylesAutoParseContent": {
 			"description": "Set this false if you want to manage an entry for 'sanitized-css' in $wgTextModelsToParse manually. If true, an entry will be added to $wgTextModelsToParse automatically if CONTENT_MODEL_CSS is in the array.",
 			"value": true
@@ -117,6 +133,6 @@
 		}
 	},
 	"ConfigRegistry": {
-		"templatestyles": "GlobalVarConfig::newInstance"
+		"templatestyles": "MediaWiki\\Config\\GlobalVarConfig::newInstance"
 	}
 }

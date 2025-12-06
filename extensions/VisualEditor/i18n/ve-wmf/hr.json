@@ -16,6 +16,8 @@
 	"tag-editcheck-references-activated-description": "EditCheck je pretpostavio da je bila potrebna referencija pa je prikazana poruka u sučelju.",
 	"tag-editcheck-references-shown": "EditCheck: referencije",
 	"tag-editcheck-references-shown-description": "EditCheck je pretpostavio da je bila potrebna referencija pa je prikazano korisničko sučelje",
+	"tag-editcheck-tone-shown": "EditCheck: neenciklopedijski stil",
+	"tag-editcheck-tone-shown-description": "EditCheck je pretpostavio da je bila potrebna prilagodba stila i tona pa je prikazana poruka u sučelju.",
 	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "Uređivanje napravljeno [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditorom]]",
 	"tag-visualeditor-needcheck": "vizualno uređivanje: provjera",

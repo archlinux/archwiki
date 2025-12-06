@@ -12,10 +12,10 @@
 			"Nghiemtrongdai VN",
 			"NguoiDungKhongDinhDanh",
 			"Nguyên Lê",
+			"Nvdtn19",
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran",
-			"Nvdtn19"
+			"Vinhtantran"
 		]
 	},
 	"minerva-last-modified-date": "Sửa đổi lần cuối lúc $2 vào $1",
@@ -41,7 +41,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Thông tin về thể loại này",
 	"mobile-frontend-meta-data-issues-header": "Vấn đề về trang",
 	"minerva-meta-data-issues-section-header": "Vấn đề về đề mục",
-	"mobile-frontend-pageaction-edit-tooltip": "Sửa phần mở đầu của trang này",
 	"mobile-frontend-placeholder": "Tìm kiếm trên {{SITENAME}}",
 	"mobile-frontend-random-button": "Ngẫu nhiên",
 	"mobile-frontend-redirected-from": "Đổi hướng từ “[[$1]]”",
@@ -63,12 +62,6 @@
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Thảo luận]",
 	"minerva-skin-desc": "Giao diện ưu tiên di động mang tính phản hồi",
 	"skin-minerva-issue-learn-more": "Tìm hiểu thêm",
-	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 giây}} trước",
-	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 phút}} trước",
-	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 giờ}} trước",
-	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 ngày}} trước",
-	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 tháng}} trước",
-	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 năm}} trước",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Thể loại",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Xem thể loại của trang",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Thật không may, kết quả gom nhóm theo trang không hiển thị được trên di động. Nếu bạn muốn sử dụng tính năng gom nhóm theo trang vui lòng dùng phiên bản máy tính để bàn.",

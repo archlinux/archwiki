@@ -28,5 +28,7 @@
 	"oathauth-ui-no-module": "Niciuna activată",
 	"oathauth-ui-manage": "Administrare",
 	"oathmanage": "Administrare autentificare cu doi factori",
-	"oathauth-notifications-enable-help": "Ajutor"
+	"oathauth-notifications-enable-help": "Ajutor",
+	"group-oathauth-twofactorauth": "Utilizatori care pot folosi autentificarea cu doi factori",
+	"group-oathauth-twofactorauth-member": "{{GENDER:$1|utilizator care poate folosi autentificarea cu doi factori|utilizatoare care poate folosi autentificarea cu doi factori}}"
 }

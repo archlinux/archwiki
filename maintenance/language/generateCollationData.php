@@ -2,21 +2,7 @@
 /**
  * Maintenance script to generate first letter data files for Collation.php.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup MaintenanceLanguage
  */
@@ -116,7 +102,7 @@ class GenerateCollationData extends Maintenance {
 
 	private function loadUcd() {
 		$uxr = new UcdXmlReader( "{$this->dataDir}/ucd.all.grouped.xml" );
-		$uxr->readChars( [ $this, 'charCallback' ] );
+		$uxr->readChars( $this->charCallback( ... ) );
 	}
 
 	private function charCallback( array $data ) {
@@ -124,7 +110,7 @@ class GenerateCollationData extends Maintenance {
 		// but do not skip a normal space (U+0020) since
 		// people like to use that as a fake no header symbol.
 		$category = substr( $data['gc'], 0, 1 );
-		if ( strpos( 'LNPS', $category ) === false
+		if ( !str_contains( 'LNPS', $category )
 			&& $data['cp'] !== '0020'
 		) {
 			return;
@@ -143,19 +129,16 @@ class GenerateCollationData extends Maintenance {
 			return;
 		}
 
-		// Calculate implicit weight per UTS #10 v6.0.0, sec 7.1.3
-		if ( $data['UIdeo'] === 'Y' ) {
-			if ( $data['block'] == 'CJK Unified Ideographs'
-				|| $data['block'] == 'CJK Compatibility Ideographs'
-			) {
-				$base = 0xFB40;
-			} else {
-				$base = 0xFB80;
-			}
-		} else {
-			$base = 0xFBC0;
+		// Skip characters that mapped to a single character we skipped above.
+		// e.g. U+2329 -> U+3008 (from CJK Symbols and Punctuation)
+		if ( $data['dm'] !== '#' && !str_contains( $data['dm'], ' ' ) &&
+			!isset( $this->weights[ hexdec( $data['dm'] ) ] )
+		) {
+			return;
 		}
-		$a = $base + ( $cp >> 15 );
+
+		// Calculate implicit weight per UTS #10 v6.0.0, sec 7.1.3
+		$a = 0xFBC0 + ( $cp >> 15 );
 		$b = ( $cp & 0x7fff ) | 0x8000;
 
 		$this->weights[$cp] = sprintf( ".%04X.%04X", $a, $b );

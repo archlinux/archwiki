@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"CERminator",
 			"Edinwiki",
@@ -12,8 +13,7 @@
 			"Sociologist",
 			"Srdjan m",
 			"Srđan",
-			"Vlad5250",
-			"Aca"
+			"Vlad5250"
 		]
 	},
 	"abusefilter-desc": "Dodaje automatske heuristike izmjenama.",
@@ -269,7 +269,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "Nova stranica wikiteksta, nakon uređivanja",
 	"abusefilter-edit-builder-vars-added-links": "Linkovi dodani na stranicu",
 	"abusefilter-edit-builder-vars-removed-links": "Linkovi uklonjeni sa stranice",
-	"abusefilter-edit-builder-vars-all-links": "Svi linkovi kao tekst nove stranice",
+	"abusefilter-edit-builder-vars-old-links": "Linkovi na stranici, prije uređivanja",
 	"abusefilter-edit-builder-vars-new-pst": "Novi wikitekst stranice, prilagođeno za sačuvanje",
 	"abusefilter-edit-builder-vars-new-text": "Tekst nove stranice, bez ikakvih obilježavanja",
 	"abusefilter-edit-builder-vars-new-html": "Parsirani HTML izvor nove izmjene",
@@ -278,7 +278,6 @@
 	"abusefilter-edit-builder-vars-restrictions-create": "Zaštita za pravljenje stranice",
 	"abusefilter-edit-builder-vars-restrictions-upload": "Zaštita za postavljanje datoteke",
 	"abusefilter-edit-builder-vars-recent-contributors": "Posljednjih pet urednika stranice",
-	"abusefilter-edit-builder-vars-old-links": "Linkovi na stranici, prije uređivanja",
 	"abusefilter-edit-builder-vars-file-sha1": "SHA1 haš sadržaja datoteke",
 	"abusefilter-edit-builder-vars-old-text": "Tekst sa stare stranice, uklonjene sve oznake",
 	"abusefilter-edit-builder-vars-old-html": "Wikitekst stare stranice, parsiran u HTML",

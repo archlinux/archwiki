@@ -73,6 +73,7 @@ class HTMLButtonField extends HTMLFormField {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getInputHTML( $value ) {
 		$flags = '';
 		$prefix = 'mw-htmlform-';
@@ -119,9 +120,10 @@ class HTMLButtonField extends HTMLFormField {
 		) );
 	}
 
+	/** @inheritDoc */
 	public function getInputCodex( $value, $hasErrors ) {
 		$flags = $this->mFlags;
-		$buttonLabel = $this->buttonLabel ?: $this->getDefault();
+		$buttonLabel = $this->buttonLabel ?: htmlspecialchars( $this->getDefault() );
 		$buttonClasses = [ 'mw-htmlform-submit', 'cdx-button', $this->mClass ];
 		$buttonAttribs = [
 			'class' => $buttonClasses,
@@ -171,7 +173,7 @@ class HTMLButtonField extends HTMLFormField {
 		$attribs['class'] = $buttonClassesAndFlags;
 
 		$buttonHtml = Html::rawElement(
-			'button', $attribs, htmlspecialchars( $buttonLabel )
+			'button', $attribs, $buttonLabel
 		);
 
 		return $buttonHtml;

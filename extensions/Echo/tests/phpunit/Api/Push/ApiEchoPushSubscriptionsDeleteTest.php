@@ -96,7 +96,7 @@ class ApiEchoPushSubscriptionsDeleteTest extends ApiTestCase {
 		$params = [
 			'action' => 'echopushsubscriptions',
 			'command' => 'delete',
-			'providertoken' => ''
+			'providertoken' => '',
 		];
 		$this->expectException( ApiUsageException::class );
 		$result = $this->doApiRequestWithToken( $params, null, $this->user );

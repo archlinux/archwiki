@@ -17,18 +17,13 @@ use MediaWiki\User\User;
  */
 abstract class ApiThank extends ApiBase {
 
-	protected PermissionManager $permissionManager;
-	protected LogStore $storage;
-
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		PermissionManager $permissionManager,
-		LogStore $storage
+		protected readonly PermissionManager $permissionManager,
+		protected readonly LogStore $storage,
 	) {
 		parent::__construct( $main, $action );
-		$this->permissionManager = $permissionManager;
-		$this->storage = $storage;
 	}
 
 	protected function dieOnBadUser( User $user ) {

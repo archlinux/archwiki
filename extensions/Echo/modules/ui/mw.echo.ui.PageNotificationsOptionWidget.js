@@ -31,7 +31,7 @@ mw.echo.ui.PageNotificationsOptionWidget = function MwEchoUiPageNotificationsOpt
 
 	this.unreadCountLabel = new OO.ui.LabelWidget( {
 		classes: [ 'mw-echo-ui-pageNotificationsOptionWidget-label-count' ],
-		label: countLabel
+		label: countLabel,
 	} );
 
 	const $row = $( '<div>' )
@@ -44,7 +44,7 @@ mw.echo.ui.PageNotificationsOptionWidget = function MwEchoUiPageNotificationsOpt
 			$( '<div>' )
 				.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-cell' )
 				.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-count' )
-				.append( this.unreadCountLabel.$element )
+				.append( this.unreadCountLabel.$element ),
 		);
 
 	// Initialization
@@ -57,7 +57,7 @@ mw.echo.ui.PageNotificationsOptionWidget = function MwEchoUiPageNotificationsOpt
 			$( '<div>' )
 				.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-cell' )
 				.addClass( 'mw-echo-ui-pageNotificationsOptionWidget-icon' )
-				.append( this.$icon )
+				.append( this.$icon ),
 		);
 	}
 };

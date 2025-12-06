@@ -58,7 +58,7 @@ QUnit.test( 'insert new ref', ( assert ) => {
 	assert.strictEqual( doc.getLength(), oldDocLength + 6, 'mwReference added to document' );
 
 	refModel.updateInternalItem( surface );
-	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).keyedNodes[ 'auto/0' ].length, 1, 'keyedNodes track the ref' );
+	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).getAllReuses( 'auto/0' ).length, 1, 'keyedNodes track the ref' );
 } );
 
 QUnit.test( 'insert ref reuse', ( assert ) => {
@@ -73,7 +73,7 @@ QUnit.test( 'insert ref reuse', ( assert ) => {
 	const oldNodeCount = internalList.getItemNodeCount();
 	const oldDocLength = doc.getLength();
 
-	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).keyedNodes[ 'auto/0' ].length, 1, 'Initial document does not reuse ref' );
+	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).getAllReuses( 'auto/0' ).length, 1, 'Initial document does not reuse ref' );
 	refModel.insertInternalItem( surface );
 	assert.strictEqual( internalList.getItemNodeCount(), oldNodeCount + 1, 'internalItem added' );
 
@@ -82,5 +82,5 @@ QUnit.test( 'insert ref reuse', ( assert ) => {
 	assert.strictEqual( doc.getLength(), oldDocLength + 10, 'mwReference added to document' );
 
 	refModel.updateInternalItem( surface );
-	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).keyedNodes[ 'auto/0' ].length, 2, 'keyedNodes track the ref reuse' );
+	assert.strictEqual( internalList.getNodeGroup( 'mwReference/' ).getAllReuses( 'auto/0' ).length, 2, 'keyedNodes track the ref reuse' );
 } );

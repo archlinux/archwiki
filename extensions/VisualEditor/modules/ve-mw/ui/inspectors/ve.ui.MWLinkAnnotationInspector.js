@@ -212,7 +212,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.onLinkInputEnter = function () {
 		this.executeAction( 'done' );
 	}
 	this.annotationInput.getTextInputWidget().getValidity()
-		.done( () => {
+		.then( () => {
 			this.executeAction( 'done' );
 		} );
 };

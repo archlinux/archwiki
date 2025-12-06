@@ -16,14 +16,12 @@ use Wikimedia\CSS\Objects\Token;
  */
 class TemplateStylesMatcherFactory extends \Wikimedia\CSS\Grammar\MatcherFactory {
 
-	/** @var array URL validation regexes */
-	protected $allowedDomains;
-
 	/**
 	 * @param array $allowedDomains See $wgTemplateStylesAllowedUrls
 	 */
-	public function __construct( array $allowedDomains ) {
-		$this->allowedDomains = $allowedDomains;
+	public function __construct(
+		private readonly array $allowedDomains,
+	) {
 	}
 
 	/**

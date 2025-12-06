@@ -1,20 +1,9 @@
 <?php
+declare( strict_types = 1 );
 /**
  * Copyright (C) 2011-2022 Wikimedia Foundation and others.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * @license GPL-2.0-or-later
  */
 
 // NO_PRELOAD -- anonymous class in parent
@@ -26,6 +15,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Config\MutableConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Language\Language;
@@ -56,6 +46,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Stats\PrefixingStatsdDataFactoryProxy;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Stats\StatsUtils;
 
 /**
  * Site-level configuration for Parsoid
@@ -66,12 +57,6 @@ use Wikimedia\Stats\StatsFactory;
  * @internal
  */
 class SiteConfig extends ISiteConfig {
-
-	/**
-	 * Regular expression fragment for matching wikitext comments.
-	 * Meant for inclusion in other regular expressions.
-	 */
-	protected const COMMENT_REGEXP_FRAGMENT = '<!--(?>[\s\S]*?-->)';
 
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::GalleryOptions,
@@ -100,99 +85,38 @@ class SiteConfig extends ISiteConfig {
 		MainConfigNames::ParsoidExperimentalParserFunctionOutput,
 	];
 
-	private ServiceOptions $config;
-	private Config $mwConfig;
-	/** Parsoid-specific options array from $config */
-	private array $parsoidSettings;
-	private Language $contLang;
-	private StatsdDataFactoryInterface $stats;
-	private StatsFactory $statsFactory;
-	private MagicWordFactory $magicWordFactory;
-	private NamespaceInfo $namespaceInfo;
-	private SpecialPageFactory $specialPageFactory;
-	private InterwikiLookup $interwikiLookup;
-	private ParserFactory $parserFactory;
-	private UserOptionsLookup $userOptionsLookup;
-	private ObjectFactory $objectFactory;
-	private LanguageFactory $languageFactory;
-	private LanguageConverterFactory $languageConverterFactory;
-	private LanguageNameUtils $languageNameUtils;
-	private UrlUtils $urlUtils;
-	private IContentHandlerFactory $contentHandlerFactory;
 	private ?string $baseUri = null;
 	private ?string $relativeLinkPrefix = null;
 	private ?array $interwikiMap = null;
 	private ?array $variants = null;
 	private ?array $extensionTags = null;
-	private bool $isTimedMediaHandlerLoaded;
 
-	/**
-	 * @param ServiceOptions $config MediaWiki main configuration object
-	 * @param array $parsoidSettings Parsoid-specific options array from main configuration.
-	 * @param ObjectFactory $objectFactory
-	 * @param Language $contentLanguage Content language.
-	 * @param StatsdDataFactoryInterface $stats
-	 * @param StatsFactory $statsFactory
-	 * @param MagicWordFactory $magicWordFactory
-	 * @param NamespaceInfo $namespaceInfo
-	 * @param SpecialPageFactory $specialPageFactory
-	 * @param InterwikiLookup $interwikiLookup
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param UrlUtils $urlUtils
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param array $extensionParsoidModules
-	 * @param ParserFactory $parserFactory
-	 * @param Config $mwConfig
-	 * @param bool $isTimedMediaHandlerLoaded
-	 */
 	public function __construct(
-		ServiceOptions $config,
-		array $parsoidSettings,
-		ObjectFactory $objectFactory,
-		Language $contentLanguage,
-		StatsdDataFactoryInterface $stats,
-		StatsFactory $statsFactory,
-		MagicWordFactory $magicWordFactory,
-		NamespaceInfo $namespaceInfo,
-		SpecialPageFactory $specialPageFactory,
-		InterwikiLookup $interwikiLookup,
-		UserOptionsLookup $userOptionsLookup,
-		LanguageFactory $languageFactory,
-		LanguageConverterFactory $languageConverterFactory,
-		LanguageNameUtils $languageNameUtils,
-		UrlUtils $urlUtils,
-		IContentHandlerFactory $contentHandlerFactory,
-		array $extensionParsoidModules,
+		private readonly ServiceOptions $config,
+		private readonly array $parsoidSettings,
+		private readonly ObjectFactory $objectFactory,
+		private readonly Language $contLang,
+		private readonly StatsdDataFactoryInterface $stats,
+		private readonly StatsFactory $statsFactory,
+		private readonly MagicWordFactory $magicWordFactory,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly InterwikiLookup $interwikiLookup,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly LanguageFactory $languageFactory,
+		private readonly LanguageConverterFactory $languageConverterFactory,
+		private readonly LanguageNameUtils $languageNameUtils,
+		private readonly UrlUtils $urlUtils,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
+		private readonly array $extensionParsoidModules,
 		// $parserFactory is temporary and may be removed once a better solution is found.
-		ParserFactory $parserFactory, // T268776
-		Config $mwConfig,
-		bool $isTimedMediaHandlerLoaded
+		private readonly ParserFactory $parserFactory, // T268776
+		private readonly Config $mwConfig,
+		private readonly bool $isTimedMediaHandlerLoaded,
 	) {
 		parent::__construct();
 
 		$config->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->config = $config;
-		$this->mwConfig = $mwConfig;
-		$this->parsoidSettings = $parsoidSettings;
-
-		$this->objectFactory = $objectFactory;
-		$this->contLang = $contentLanguage;
-		$this->stats = $stats;
-		$this->statsFactory = $statsFactory;
-		$this->magicWordFactory = $magicWordFactory;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->interwikiLookup = $interwikiLookup;
-		$this->parserFactory = $parserFactory;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->languageFactory = $languageFactory;
-		$this->languageConverterFactory = $languageConverterFactory;
-		$this->languageNameUtils = $languageNameUtils;
-		$this->urlUtils = $urlUtils;
-		$this->contentHandlerFactory = $contentHandlerFactory;
 
 		// Override parent default
 		if ( isset( $this->parsoidSettings['linting'] ) ) {
@@ -211,8 +135,6 @@ class SiteConfig extends ISiteConfig {
 		foreach ( $extensionParsoidModules as $configOrSpec ) {
 			$this->registerExtensionModule( $configOrSpec );
 		}
-
-		$this->isTimedMediaHandlerLoaded = $isTimedMediaHandlerLoaded;
 	}
 
 	/** @inheritDoc */
@@ -272,6 +194,32 @@ class SiteConfig extends ISiteConfig {
 		$this->prefixedStatsFactory()->getTiming( $name )
 			->setLabels( $labels )
 			->observe( $value );
+	}
+
+	/**
+	 * Record a histogram metric
+	 * @param string $name
+	 * @param float $value A time value in milliseconds
+	 * @param array $buckets The buckets used in this histogram
+	 * @param array $labels The metric labels
+	 * @return void
+	 */
+	public function observeHistogram( string $name, float $value, array $buckets, array $labels ) {
+		$metric = $this->prefixedStatsFactory()->getHistogram( $name, $buckets );
+		foreach ( $labels as $labelKey => $labelValue ) {
+			$metric->setLabel( $labelKey, $labelValue );
+		}
+		$metric->observe( $value );
+	}
+
+	/**
+	 * Generate buckets based on skip and mean
+	 * @param float $mean
+	 * @param int $skip
+	 * @return float[]
+	 */
+	public function getHistogramBuckets( float $mean, int $skip ) {
+		return StatsUtils::makeBucketsFromMean( $mean, $skip );
 	}
 
 	/**
@@ -598,7 +546,12 @@ class SiteConfig extends ISiteConfig {
 	): void {
 		'@phan-var ParserOutput $metadata'; // @var ParserOutput $metadata
 		// Look for a displaytitle.
-		$displayTitle = $metadata->getPageProperty( 'displaytitle' ) ?:
+		//
+		// Temporarily (while we wait for ParserCache content to expire),
+		// explicitly cast to handle titles that are numbers. A separate patch
+		// ensures that ParserOutput only contains strings for displaytitle
+		// (and other number-like string properties).
+		$displayTitle = (string)$metadata->getPageProperty( 'displaytitle' ) ?:
 			// Use the default title, properly escaped
 			Utils::escapeHtml( $defaultTitle );
 		$this->exportMetadataHelper(
@@ -752,7 +705,7 @@ class SiteConfig extends ISiteConfig {
 	protected function shouldValidateExtConfig(): bool {
 		// Only perform json schema validation for extension module
 		// configurations when running tests.
-		return defined( 'MW_PHPUNIT_TEST' ) || defined( 'MW_PARSER_TEST' );
+		return defined( 'MW_PHPUNIT_TEST' );
 	}
 
 	/** @inheritDoc */
@@ -850,7 +803,7 @@ class SiteConfig extends ISiteConfig {
 			if ( $handler->getDefaultFormat() === CONTENT_FORMAT_WIKITEXT ) {
 				return true;
 			}
-		} catch ( MWUnknownContentModelException $ex ) {
+		} catch ( MWUnknownContentModelException ) {
 			// If the content model is not known, it can't be supported.
 			return false;
 		}
@@ -858,4 +811,18 @@ class SiteConfig extends ISiteConfig {
 		return $this->getContentModelHandler( $model ) !== null;
 	}
 
+	/** @inheritDoc */
+	public function deprecated( string $function, string $version, int $callerOffset = 2 ): void {
+		MWDebug::deprecated( $function, $version, "Parsoid", $callerOffset + 1 );
+	}
+
+	/** @inheritDoc */
+	public function filterDeprecationForTest( string $regex ): void {
+		MWDebug::filterDeprecationForTest( $regex );
+	}
+
+	/** @inheritDoc */
+	public function clearDeprecationFilters(): void {
+		MWDebug::clearDeprecationFilters();
+	}
 }

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -30,6 +16,8 @@ use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
@@ -39,6 +27,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Event\PageProtectionChangedEvent;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
@@ -75,7 +64,6 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
-use Wikimedia\Rdbms\RawSQLValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -127,7 +115,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	protected $mLatest = false;
 
 	/**
-	 * @var PreparedEdit|false Map of cache fields (text, parser output, ect) for a proposed/new edit
+	 * @var PreparedEdit|false Map of cache fields (text, parser output, etc.) for a proposed/new edit
 	 * @note for access by subclasses only
 	 */
 	protected $mPreparedEdit = false;
@@ -243,7 +231,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	/**
 	 * Returns the ContentHandler instance to be used to deal with the content of this WikiPage.
 	 *
-	 * Shorthand for ContentHandler::getForModelID( $this->getContentModel() );
+	 * Shorthand for ContentHandlerFactory::getContentHandler( $this->getContentModel() );
 	 *
 	 * @return ContentHandler
 	 *
@@ -943,7 +931,9 @@ class WikiPage implements Stringable, Page, PageRecord {
 			} else {
 				// NOTE: keep in sync with RevisionRenderer::getLinkCount
 				// NOTE: keep in sync with DerivedPageDataUpdater::isCountable
-				$dbr = $mwServices->getConnectionProvider()->getReplicaDatabase();
+				$dbr = $mwServices
+					->getConnectionProvider()
+					->getReplicaDatabase( PageLinksTable::VIRTUAL_DOMAIN );
 				$hasLinks = (bool)$dbr->newSelectQueryBuilder()
 					->select( '1' )
 					->from( 'pagelinks' )
@@ -1214,6 +1204,8 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * or else the record will be left in a funky state.
 	 * Best if all done inside a transaction.
 	 *
+	 * @internal Low level interface, not safe for use in extensions!
+	 *
 	 * @todo Factor out into a PageStore service, to be used by PageUpdater.
 	 *
 	 * @param IDatabase $dbw
@@ -1253,6 +1245,8 @@ class WikiPage implements Stringable, Page, PageRecord {
 
 	/**
 	 * Update the page record to point to a newly saved revision.
+	 *
+	 * @internal Low level interface, not safe for use in extensions!
 	 *
 	 * @todo Factor out into a PageStore service, or move into PageUpdater.
 	 *
@@ -1574,7 +1568,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * (with ChangeTags::canAddTagsAccompanyingChange)
 	 * @param int $undidRevId Id of revision that was undone or 0
 	 *
-	 * @return PageUpdateStatus Possible errors:
+	 * @return PageUpdateStatus<array> Possible errors:
 	 *     edit-hook-aborted: The ArticleSave hook aborted the edit but didn't
 	 *       set the fatal flag of $status.
 	 *     edit-gone-missing: In update mode, but the article didn't exist.
@@ -1907,7 +1901,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * @param UserIdentity $user The user updating the restrictions
 	 * @param string[] $tags Change tags to add to the pages and protection log entries
 	 *   ($user should be able to add the specified tags before this is called)
-	 * @return Status Status object; if action is taken, $status->value is the log_id of the
+	 * @return Status<?int> Status object; if action is taken, $status->value is the log_id of the
 	 *   protection log entry.
 	 */
 	public function doUpdateRestrictions( array $limit, array $expiry,
@@ -1939,19 +1933,26 @@ class WikiPage implements Stringable, Page, PageRecord {
 		$changed = false;
 
 		$dbw = $services->getConnectionProvider()->getPrimaryDatabase();
+		$restrictionMapBefore = [];
+		$restrictionMapAfter = [];
 
 		foreach ( $restrictionTypes as $action ) {
 			if ( !isset( $expiry[$action] ) || $expiry[$action] === $dbw->getInfinity() ) {
 				$expiry[$action] = 'infinity';
 			}
-			if ( !isset( $limit[$action] ) ) {
-				$limit[$action] = '';
-			} elseif ( $limit[$action] != '' ) {
-				$protect = true;
-			}
 
 			// Get current restrictions on $action
-			$current = implode( '', $restrictionStore->getRestrictions( $this->mTitle, $action ) );
+			$restrictionMapBefore[$action] = $restrictionStore->getRestrictions( $this->mTitle, $action );
+			$limit[$action] ??= '';
+
+			if ( $limit[$action] === '' ) {
+				$restrictionMapAfter[$action] = [];
+			} else {
+				$protect = true;
+				$restrictionMapAfter[$action] = explode( ',', $limit[$action] );
+			}
+
+			$current = implode( ',', $restrictionMapBefore[$action] );
 			if ( $current != '' ) {
 				$isProtected = true;
 			}
@@ -2150,6 +2151,20 @@ class WikiPage implements Stringable, Page, PageRecord {
 		}
 		$logId = $logEntry->insert();
 		$logEntry->publish( $logId );
+
+		$event = new PageProtectionChangedEvent(
+			$this,
+			$restrictionMapBefore,
+			$restrictionMapAfter,
+			$expiry,
+			$cascade,
+			$user,
+			$reason,
+			$tags
+		);
+
+		$dispatcher = MediaWikiServices::getInstance()->getDomainEventDispatcher();
+		$dispatcher->dispatch( $event, $services->getConnectionProvider() );
 
 		return Status::newGood( $logId );
 	}
@@ -2363,7 +2378,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 	 * @param string[]|null $tags Tags to apply to the deletion action
 	 * @param string $logsubtype
 	 * @param bool $immediate false allows deleting over time via the job queue
-	 * @return Status Status object; if successful, $status->value is the log_id of the
+	 * @return Status<int> Status object; if successful, $status->value is the log_id of the
 	 *   deletion log entry. If the page couldn't be deleted because it wasn't
 	 *   found, $status is a non-fatal 'cannotdelete' error
 	 */
@@ -2390,6 +2405,7 @@ class WikiPage implements Stringable, Page, PageRecord {
 			if ( $deletePage->deletionsWereScheduled()[DeletePage::PAGE_BASE] ) {
 				$status->warning( 'delete-scheduled', wfEscapeWikiText( $this->getTitle()->getPrefixedText() ) );
 			} else {
+				// @phan-suppress-next-line PhanTypeMismatchProperty Changing the type of the status parameter
 				$status->value = $deletePage->getSuccessfulDeletionsIDs()[DeletePage::PAGE_BASE];
 			}
 		}
@@ -2639,12 +2655,14 @@ class WikiPage implements Stringable, Page, PageRecord {
 			return $services->getTitleFactory()->newTitleArrayFromResult( new FakeResultWrapper( [] ) );
 		}
 
-		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
 		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'page_title' => 'cl_to', 'page_namespace' => (string)NS_CATEGORY ] )
+			->select( [ 'page_title' => 'lt_title', 'page_namespace' => (string)NS_CATEGORY ] )
 			->from( 'categorylinks' )
+			->join( 'linktarget', null, [ 'cl_target_id = lt_id', 'lt_namespace = ' . NS_CATEGORY ] )
 			->where( [ 'cl_from' => $id ] )
-			->caller( __METHOD__ )->fetchResultSet();
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		return $services->getTitleFactory()->newTitleArrayFromResult( $res );
 	}
@@ -2663,17 +2681,19 @@ class WikiPage implements Stringable, Page, PageRecord {
 			return [];
 		}
 
-		$dbr = $this->getConnectionProvider()->getReplicaDatabase();
+		$dbr = $this->getConnectionProvider()->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
 		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'cl_to' ] )
+			->select( 'lt_title' )
 			->from( 'categorylinks' )
-			->join( 'page', null, 'page_title=cl_to' )
+			->join( 'linktarget', null, 'cl_target_id = lt_id' )
+			->join( 'page', null, [ 'page_title = lt_title', 'page_namespace = lt_namespace' ] )
 			->join( 'page_props', null, 'pp_page=page_id' )
 			->where( [ 'cl_from' => $id, 'pp_propname' => 'hiddencat', 'page_namespace' => NS_CATEGORY ] )
-			->caller( __METHOD__ )->fetchResultSet();
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		foreach ( $res as $row ) {
-			$result[] = Title::makeTitle( NS_CATEGORY, $row->cl_to );
+			$result[] = Title::makeTitle( NS_CATEGORY, $row->lt_title );
 		}
 
 		return $result;
@@ -2692,97 +2712,6 @@ class WikiPage implements Stringable, Page, PageRecord {
 			return $this->getContentHandler()->getAutoDeleteReason( $this->getTitle(), $hasHistory );
 		}
 		return $this->getContentHandler()->getAutoDeleteReason( $this->getTitle() );
-	}
-
-	/**
-	 * Update all the appropriate counts in the category table, given that
-	 * we've added the categories $added and deleted the categories $deleted.
-	 *
-	 * This should only be called from deferred updates or jobs to avoid contention.
-	 *
-	 * @param string[] $added The names of categories that were added
-	 * @param string[] $deleted The names of categories that were deleted
-	 * @param int $id Page ID (this should be the original deleted page ID)
-	 */
-	public function updateCategoryCounts( array $added, array $deleted, $id = 0 ) {
-		$id = $id ?: $this->getId();
-		// Guard against data corruption T301433
-		$added = array_map( 'strval', $added );
-		$deleted = array_map( 'strval', $deleted );
-		$type = MediaWikiServices::getInstance()->getNamespaceInfo()->
-			getCategoryLinkType( $this->getTitle()->getNamespace() );
-
-		$addFields = [ 'cat_pages' => new RawSQLValue( 'cat_pages + 1' ) ];
-		$removeFields = [ 'cat_pages' => new RawSQLValue( 'cat_pages - 1' ) ];
-		if ( $type !== 'page' ) {
-			$addFields["cat_{$type}s"] = new RawSQLValue( "cat_{$type}s + 1" );
-			$removeFields["cat_{$type}s"] = new RawSQLValue( "cat_{$type}s - 1" );
-		}
-
-		$dbw = $this->getConnectionProvider()->getPrimaryDatabase();
-		$res = $dbw->newSelectQueryBuilder()
-			->select( [ 'cat_id', 'cat_title' ] )
-			->from( 'category' )
-			->where( [ 'cat_title' => array_merge( $added, $deleted ) ] )
-			->caller( __METHOD__ )
-			->fetchResultSet();
-		$existingCategories = [];
-		foreach ( $res as $row ) {
-			$existingCategories[$row->cat_id] = $row->cat_title;
-		}
-		$existingAdded = array_intersect( $existingCategories, $added );
-		$existingDeleted = array_intersect( $existingCategories, $deleted );
-		$missingAdded = array_diff( $added, $existingAdded );
-
-		// For category rows that already exist, do a plain
-		// UPDATE instead of INSERT...ON DUPLICATE KEY UPDATE
-		// to avoid creating gaps in the cat_id sequence.
-		if ( $existingAdded ) {
-			$dbw->newUpdateQueryBuilder()
-				->update( 'category' )
-				->set( $addFields )
-				->where( [ 'cat_id' => array_keys( $existingAdded ) ] )
-				->caller( __METHOD__ )->execute();
-		}
-
-		if ( $missingAdded ) {
-			$queryBuilder = $dbw->newInsertQueryBuilder()
-				->insertInto( 'category' )
-				->onDuplicateKeyUpdate()
-				->uniqueIndexFields( [ 'cat_title' ] )
-				->set( $addFields );
-			foreach ( $missingAdded as $cat ) {
-				$queryBuilder->row( [
-					'cat_title'   => $cat,
-					'cat_pages'   => 1,
-					'cat_subcats' => ( $type === 'subcat' ) ? 1 : 0,
-					'cat_files'   => ( $type === 'file' ) ? 1 : 0,
-				] );
-			}
-			$queryBuilder->caller( __METHOD__ )->execute();
-		}
-
-		if ( $existingDeleted ) {
-			$dbw->newUpdateQueryBuilder()
-				->update( 'category' )
-				->set( $removeFields )
-				->where( [ 'cat_id' => array_keys( $existingDeleted ) ] )
-				->caller( __METHOD__ )->execute();
-		}
-
-		foreach ( $added as $catName ) {
-			$cat = Category::newFromName( $catName );
-			$this->getHookRunner()->onCategoryAfterPageAdded( $cat, $this );
-		}
-
-		foreach ( $deleted as $catName ) {
-			$cat = Category::newFromName( $catName );
-			$this->getHookRunner()->onCategoryAfterPageRemoved( $cat, $this, $id );
-			// Refresh counts on categories that should be empty now (after commit, T166757)
-			DeferredUpdates::addCallableUpdate( static function () use ( $cat ) {
-				$cat->refreshCountsIfEmpty();
-			} );
-		}
 	}
 
 	/**

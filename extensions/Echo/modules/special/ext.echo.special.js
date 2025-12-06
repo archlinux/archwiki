@@ -19,9 +19,9 @@ $( () => {
 				limitNotifications,
 				{
 					localOnly: true,
-					source: 'local'
-				}
-			)
+					source: 'local',
+				},
+			),
 		} ),
 		controller = new mw.echo.Controller( echoApi, modelManager );
 
@@ -35,8 +35,8 @@ $( () => {
 		{
 			limit: limitNotifications,
 			$overlay: mw.echo.ui.$overlay,
-			prefLink: links.preferences
-		}
+			prefLink: links.preferences,
+		},
 	);
 
 	// Overlay

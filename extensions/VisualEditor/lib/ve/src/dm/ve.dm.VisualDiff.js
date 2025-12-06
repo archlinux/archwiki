@@ -17,7 +17,7 @@
  * @param {ve.dm.Document|ve.dm.BranchNode} newDocOrNode
  * @param {number} [timeout=1000] Timeout after which to stop performing linear diffs (in ms)
  */
-ve.dm.VisualDiff = function VeDmVisualDiff( oldDocOrNode, newDocOrNode, timeout ) {
+ve.dm.VisualDiff = function VeDmVisualDiff( oldDocOrNode, newDocOrNode, timeout = 1000 ) {
 	const oldDoc = oldDocOrNode instanceof ve.dm.Document ? oldDocOrNode : oldDocOrNode.getDocument(),
 		newDoc = newDocOrNode instanceof ve.dm.Document ? newDocOrNode : newDocOrNode.getDocument();
 
@@ -51,7 +51,7 @@ ve.dm.VisualDiff = function VeDmVisualDiff( oldDocOrNode, newDocOrNode, timeout 
 	// Minimum ratio of content (same : different) allowed between two corresponding nodes
 	this.diffThreshold = 0.5;
 
-	this.endTime = Date.now() + ( timeout || 1000 );
+	this.endTime = Date.now() + timeout;
 	this.timedOut = false;
 
 	// Calling getDocumentNode triggers the DM node tree to be built
@@ -84,8 +84,8 @@ OO.initClass( ve.dm.VisualDiff );
  * Get the original linear data from a node
  *
  * @param {ve.dm.Node} node Node
- * @param {boolean} innerRange Get the node's inner range
- * @return {Array} Linear data
+ * @param {boolean} [innerRange=false] Get the node's inner range
+ * @return {ve.dm.LinearData.Item[]} Linear data
  */
 ve.dm.VisualDiff.static.getDataFromNode = function ( node, innerRange ) {
 	const doc = node.getRoot().getDocument();
@@ -118,7 +118,7 @@ ve.dm.VisualDiff.static.compareNodes = function ( oldNode, newNode ) {
 
 	for ( let i = 0, ilen = oldData.length; i < ilen; i++ ) {
 		if ( oldData[ i ] !== newData[ i ] &&
-			!ve.dm.ElementLinearData.static.compareElements( oldData[ i ], newData[ i ], oldStore, newStore ) ) {
+			!ve.dm.LinearData.static.compareElements( oldData[ i ], newData[ i ], oldStore, newStore ) ) {
 			return false;
 		}
 	}
@@ -130,24 +130,21 @@ ve.dm.VisualDiff.static.compareNodes = function ( oldNode, newNode ) {
  * Attach the internal list indexOrder to each node referenced by the internal
  * list, ahead of document merge.
  *
+ * @private
  * @param {ve.dm.Document} doc
  */
 ve.dm.VisualDiff.prototype.freezeInternalListIndices = function ( doc ) {
-	const nodes = doc.getInternalList().nodes,
-		internalListGroups = doc.getInternalList().getNodeGroups();
+	const internalListGroups = doc.getInternalList().getNodeGroups();
 
 	for ( const groupName in internalListGroups ) {
 		const group = internalListGroups[ groupName ];
-		const groupIndexOrder = group.indexOrder;
-		for ( let i = 0, ilen = groupIndexOrder.length; i < ilen; i++ ) {
-			const nodeIndex = groupIndexOrder[ i ];
-			const refNodes = nodes[ groupName ].keyedNodes[ nodes[ groupName ].firstNodes[ nodeIndex ].registeredListKey ];
-			for ( let j = 0, jlen = refNodes.length; j < jlen; j++ ) {
-				doc.data.modifyData( refNodes[ j ].getOffset(), ( item ) => {
+		group.getKeysInIndexOrder().forEach( ( key, i ) => {
+			group.getAllReuses( key ).forEach( ( node ) => {
+				doc.data.modifyData( node.getOffset(), ( item ) => {
 					ve.setProp( item, 'internal', 'overrideIndex', i + 1 );
 				} );
-			}
-		}
+			} );
+		} );
 	}
 };
 
@@ -295,6 +292,10 @@ ve.dm.VisualDiff.prototype.calculateDiffMoves = function ( oldToNew, newToOld ) 
 		up = 'up',
 		down = 'down';
 
+	/**
+	 * @param {number|Object} obj An index for unchanged nodes, object for changed nodes
+	 * @return {number}
+	 */
 	const getIndex = ( obj ) => typeof obj === 'number' ? obj : obj.node;
 
 	// See https://en.wikipedia.org/wiki/Longest_increasing_subsequence
@@ -455,7 +456,7 @@ ve.dm.VisualDiff.prototype.findModifiedNodes = function ( oldIndices, newIndices
  */
 ve.dm.VisualDiff.prototype.diffNodes = function ( oldNode, newNode, noTreeDiff ) {
 	// If not diff comparable, return no diff
-	if ( !( oldNode.isDiffComparable( newNode ) ) ) {
+	if ( !oldNode.isDiffComparable( newNode ) ) {
 		return false;
 	}
 
@@ -498,7 +499,7 @@ ve.dm.VisualDiff.prototype.diffLeafNodes = function ( oldNode, newNode ) {
 			diffLength: 0
 		};
 		linearDiff = this.diffContent( oldNode, newNode );
-		if ( !( linearDiff ) ) {
+		if ( !linearDiff ) {
 			return false;
 		}
 		this.updateChangeRecordLinearDiff( linearDiff, changeRecord );
@@ -507,12 +508,10 @@ ve.dm.VisualDiff.prototype.diffLeafNodes = function ( oldNode, newNode ) {
 		}
 	}
 
-	const diff = {
+	return {
 		attributeChange: this.diffAttributes( oldNode, newNode ),
-		linearDiff: linearDiff
+		linearDiff
 	};
-
-	return diff;
 };
 
 /**
@@ -951,7 +950,7 @@ ve.dm.VisualDiff.prototype.getMetaListDiff = function ( oldMetaList, newMetaList
  * @property {ve.dm.InternalListNode} newDocInternalListNode
  */
 
-/*
+/**
  * Get the diff between the old document's internal list and the new document's
  * internal list. The diff is grouped by list group, and each node in each list
  * group is marked as removed, inserted, the same, or changed (in which case the
@@ -968,20 +967,22 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
 		newDocInternalListNode = newInternalList.getListNode(),
 		groups = [],
 		groupDiffs = {};
-	let oldDocInternalListItems,
-		newDocInternalListItems;
 
+	/**
+	 * @param {number[]} indexOrder Possibly a sparse array
+	 * @param {ve.dm.Node[]} nodes
+	 * @param {number} [action] One of the {@link ve.DiffMatchPatch}.static.DIFF_… constants
+	 * @return {{toDiff: ve.dm.Node[], indices: Object[]}}
+	 */
 	function getInternalListItemsToDiff( indexOrder, nodes, action ) {
-		const internalListItems = {
-			toDiff: [],
-			indices: []
-		};
+		const toDiff = [];
+		const indices = [];
 
 		for ( let j = 0, jlen = indexOrder.length; j < jlen; j++ ) {
 			const nodeIndex = indexOrder[ j ];
 			if ( nodeIndex !== null ) {
-				internalListItems.toDiff.push( nodes[ nodeIndex ] );
-				internalListItems.indices.push( {
+				toDiff.push( nodes[ nodeIndex ] );
+				indices.push( {
 					diff: action,
 					indexOrder: j,
 					nodeIndex: nodeIndex
@@ -989,23 +990,16 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
 			}
 		}
 
-		return internalListItems;
+		return { toDiff, indices };
 	}
 
 	// Find all groups common to old and new docs
 	// Also find inserted groups
 	for ( const group in newDocNodeGroups ) {
-		if ( group in oldDocNodeGroups ) {
-			groups.push( {
-				group: group,
-				action: 'diff'
-			} );
-		} else {
-			groups.push( {
-				group: group,
-				action: 'insert'
-			} );
-		}
+		groups.push( {
+			group: group,
+			action: group in oldDocNodeGroups ? 'diff' : 'insert'
+		} );
 	}
 
 	// Find removed groups
@@ -1025,20 +1019,16 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
 		let diff = null;
 		switch ( group.action ) {
 			case 'diff':
-				// Get old and new doc internal list items for this group
-				oldDocInternalListItems = getInternalListItemsToDiff(
-					oldDocNodeGroups[ group.group ].indexOrder,
-					oldDocInternalListNode.children
-				);
-				newDocInternalListItems = getInternalListItemsToDiff(
-					newDocNodeGroups[ group.group ].indexOrder,
-					newDocInternalListNode.children
-				);
-
 				// Diff internal list items
 				diff = this.diffList(
-					oldDocInternalListItems.toDiff,
-					newDocInternalListItems.toDiff
+					getInternalListItemsToDiff(
+						oldDocNodeGroups[ group.group ].indexOrder,
+						oldDocInternalListNode.children
+					).toDiff,
+					getInternalListItemsToDiff(
+						newDocNodeGroups[ group.group ].indexOrder,
+						newDocInternalListNode.children
+					).toDiff
 				);
 
 				if ( !this.hasChanges( diff, true ) ) {
@@ -1051,7 +1041,7 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
 				const listItems = getInternalListItemsToDiff(
 					newDocNodeGroups[ group.group ].indexOrder,
 					newDocInternalListNode.children,
-					1
+					ve.DiffMatchPatch.static.DIFF_INSERT
 				);
 				diff = listItems.indices;
 				diff.newNodes = listItems.toDiff;
@@ -1063,7 +1053,7 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
 				const listItems = getInternalListItemsToDiff(
 					oldDocNodeGroups[ group.group ].indexOrder,
 					oldDocInternalListNode.children,
-					-1
+					ve.DiffMatchPatch.static.DIFF_DELETE
 				);
 				diff = listItems.indices;
 				diff.oldNodes = listItems.toDiff;
@@ -1090,10 +1080,14 @@ ve.dm.VisualDiff.prototype.getInternalListDiff = function ( oldInternalList, new
  * Check if a list diff object has any changes
  *
  * @param {Object} diff Diff object
- * @param {boolean} isInternalListDiff Is an internal list diff
+ * @param {boolean} [isInternalListDiff=false] Is an internal list diff
  * @return {boolean} The diff object has changes
  */
 ve.dm.VisualDiff.prototype.hasChanges = function ( diff, isInternalListDiff ) {
+	/**
+	 * @param {Object} diffObject
+	 * @return {boolean}
+	 */
 	function containsDiff( diffObject ) {
 		for ( const n in diffObject ) {
 			if ( typeof diffObject[ n ] !== 'number' ) {

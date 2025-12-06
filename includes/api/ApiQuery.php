@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -326,6 +312,7 @@ class ApiQuery extends ApiBase {
 				'GroupPermissionsLookup',
 				'ContentLanguage',
 				'TempUserConfig',
+				'RecentChangeLookup',
 			]
 		],
 		'backlinks' => [
@@ -444,13 +431,11 @@ class ApiQuery extends ApiBase {
 			'services' => [
 				'CommentStore',
 				'RowCommentFormatter',
-				'ChangeTagDefStore',
-				'ChangeTagsStore',
-				'SlotRoleStore',
 				'SlotRoleRegistry',
 				'UserNameUtils',
-				'TempUserConfig',
 				'LogFormatterFactory',
+				'ChangesListQueryFactory',
+				'RecentChangeLookup',
 			],
 		],
 		'search' => [
@@ -465,6 +450,12 @@ class ApiQuery extends ApiBase {
 			'class' => ApiQueryTags::class,
 			'services' => [
 				'ChangeTagsStore',
+			]
+		],
+		'trackingcategories' => [
+			'class' => ApiQueryTrackingCategories::class,
+			'services' => [
+				'TrackingCategories',
 			]
 		],
 		'usercontribs' => [
@@ -494,13 +485,12 @@ class ApiQuery extends ApiBase {
 			'class' => ApiQueryWatchlist::class,
 			'services' => [
 				'CommentStore',
-				'WatchedItemQueryService',
-				'ContentLanguage',
-				'NamespaceInfo',
-				'GenderCache',
-				'CommentFormatter',
+				'ChangesListQueryFactory',
+				'RowCommentFormatter',
 				'TempUserConfig',
 				'LogFormatterFactory',
+				'RecentChangeLookup',
+				'TitleFormatter',
 			],
 		],
 		'watchlistraw' => [
@@ -963,6 +953,7 @@ class ApiQuery extends ApiBase {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams( $flags = 0 ) {
 		$result = [
 			'prop' => [
@@ -997,6 +988,7 @@ class ApiQuery extends ApiBase {
 		return $result;
 	}
 
+	/** @inheritDoc */
 	public function isReadMode() {
 		// We need to make an exception for certain meta modules that should be
 		// accessible even without the 'read' right. Restrict the exception as
@@ -1027,6 +1019,7 @@ class ApiQuery extends ApiBase {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function isWriteMode() {
 		// Ask each module if it requires write mode. If any require write mode this returns true.
 		$modules = [];
@@ -1043,6 +1036,7 @@ class ApiQuery extends ApiBase {
 		return false;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage()->getPrefixedText();
 		$mp = rawurlencode( $title );
@@ -1056,6 +1050,7 @@ class ApiQuery extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return [
 			'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Query',

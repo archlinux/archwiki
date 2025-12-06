@@ -35,12 +35,10 @@ class PygmentizeTest extends MediaWikiIntegrationTestCase {
 	private function stubShellbox( ?BoxedResult $result, ?Exception $e ) {
 		$factory = $this->createStub( CommandFactory::class );
 		$command = new class ( $result, $e ) extends BoxedCommand {
-			private $result;
-			private $e;
-
-			public function __construct( $result, $e ) {
-				$this->result = $result;
-				$this->e = $e;
+			public function __construct(
+				private readonly ?BoxedResult $result,
+				private readonly ?Exception $e,
+			) {
 			}
 
 			public function execute(): BoxedResult {
@@ -86,10 +84,6 @@ class PygmentizeTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testHighlightBasic( ?BoxedResult $result, ?Exception $e, string $expect ) {
 		$this->stubShellbox( $result, $e );
-
-		$this->hideDeprecated( SyntaxHighlight::class . '::highlight' );
-		$status = SyntaxHighlight::highlight( '"example"', 'json' );
-		$this->assertSame( $expect, $status->getValue() );
 
 		$status = $this->newInstance()->syntaxHighlight( '"example"', 'json' );
 		$this->assertSame( $expect, $status->getValue() );

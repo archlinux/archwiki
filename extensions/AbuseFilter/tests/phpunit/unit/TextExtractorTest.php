@@ -87,9 +87,6 @@ class TextExtractorTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $converter->contentToString( $content ) );
 	}
 
-	/**
-	 * @return Generator
-	 */
 	public static function provideContentToString(): Generator {
 		$text = 'Some dummy text';
 		yield 'text' => [ new TextContent( $text ), $text ];

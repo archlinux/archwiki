@@ -32,8 +32,8 @@ function onCountChange( count ) {
 		'all',
 		count,
 		mw.msg( 'echo-badge-count',
-			mw.language.convertNumber( count )
-		)
+			mw.language.convertNumber( count ),
+		),
 	);
 }
 
@@ -47,11 +47,11 @@ function notificationsOverlay( onBeforeExit ) {
 	let markAllReadButton;
 	const oouiPromise = mw.loader.using( 'oojs-ui' ).then( () => {
 		markAllReadButton = new OO.ui.ButtonWidget( {
-			icon: 'checkAll'
+			icon: 'checkAll',
 		} );
 		return View.make(
 			{ class: 'notifications-overlay-header-markAllRead' },
-			[ markAllReadButton.$element ]
+			[ markAllReadButton.$element ],
 		);
 	} );
 	const markAllReadButtonView = promisedView( oouiPromise );
@@ -65,7 +65,7 @@ function notificationsOverlay( onBeforeExit ) {
 				href: mw.util.getUrl( 'Special:Notifications' ),
 				progressive: true,
 				additionalClassNames: 'footer-link notifications-archive-link',
-				label: mw.msg( 'echo-overlay-link' )
+				label: mw.msg( 'echo-overlay-link' ),
 			},
 			headerActions: [ markAllReadButtonView ],
 			isBorderBox: false,
@@ -74,11 +74,11 @@ function notificationsOverlay( onBeforeExit ) {
 				onBeforeExit( () => {
 					onBeforeExitAnimation( overlay, exit );
 				} );
-			}
+			},
 		},
 		promisedView(
-			oouiPromise.then( () => list( mw.echo, markAllReadButton, onCountChange ) )
-		)
+			oouiPromise.then( () => list( mw.echo, markAllReadButton, onCountChange ) ),
+		),
 	);
 	return overlay;
 }

@@ -174,7 +174,7 @@ class RunVariableGenerator extends VariableGenerator {
 		try {
 			$update = $page->getCurrentUpdate();
 			$update->getParserOutputForMetaData();
-		} catch ( PreconditionException | LogicException $exception ) {
+		} catch ( PreconditionException | LogicException ) {
 			// Temporary workaround until this becomes
 			// a hook parameter
 			$update = null;
@@ -283,8 +283,6 @@ class RunVariableGenerator extends VariableGenerator {
 
 		$this->vars->setVar( 'summary', $reason );
 		$this->vars->setVar( 'action', 'delete' );
-		// FIXME: this is an unnecessary round-trip, we could obtain WikiPage from
-		// the hook and call WikiPage::getRevisionRecord, but then ProofreadPage tests fail
 		$this->setLastEditAge( $this->title, 'page' );
 		// TODO: add old_wikitext etc. (T173663)
 		$this->addGenericVars();
@@ -360,7 +358,7 @@ class RunVariableGenerator extends VariableGenerator {
 			$this->vars->setVar( 'old_wikitext', $oldtext );
 			$this->vars->setVar( 'new_wikitext', $text );
 			// TODO: set old_content_model and new_content_model vars, use them
-			$this->addEditVars( $page, $this->user, true );
+			$this->addEditVars( $page, $this->user );
 		}
 		$this->addGenericVars();
 		return $this->vars;
@@ -388,11 +386,25 @@ class RunVariableGenerator extends VariableGenerator {
 				'user-type',
 				[ 'user-identity' => $this->user ]
 			);
+
+			// Extra security layer to make user_unnamed_ip accessible only for temp account creation
+			// See also LazyVariableComputer::compute(), which conditionally exposes the source IP
+			if ( $autocreate && $createdUser->isTemp() ) {
+				$this->vars->setLazyLoadVar(
+					'user_unnamed_ip',
+					'user-unnamed-ip',
+					[ 'user' => $this->user, 'rc' => null ]
+				);
+			}
 		}
 
 		$this->vars->setVar( 'action', $autocreate ? 'autocreateaccount' : 'createaccount' );
 		$this->vars->setVar( 'accountname', $createdUser->getName() );
 		$this->addGenericVars();
+
+		$this->hookRunner->onAbuseFilterGenerateAccountCreationVars(
+			$this->vars, $this->user, $createdUser, $autocreate, null
+		);
 		return $this->vars;
 	}
 }

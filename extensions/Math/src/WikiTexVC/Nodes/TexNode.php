@@ -6,19 +6,21 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMethods;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 
 class TexNode {
 
-	/** @var list<TexNode|string> */
+	/** @var list<self|string> */
 	protected $args;
 
 	/**
 	 * Creates a TexNode
-	 * @param TexNode|string ...$args arguments for this node
+	 * @param self|string ...$args arguments for this node
 	 */
 	public function __construct( ...$args ) {
 		foreach ( $args as $arg ) {
-			if ( !( $arg instanceof TexNode || is_string( $arg ) ) ) {
+			if ( !( $arg instanceof self || is_string( $arg ) ) ) {
 				throw new InvalidArgumentException( 'Wrong input type specified in args.' );
 			}
 		}
@@ -29,9 +31,9 @@ class TexNode {
 	 * @param string $input
 	 * @param array $passedArgs
 	 * @param mixed|null $operatorContent
-	 * @return string
+	 * @return MMLbase|string|null
 	 */
-	protected function parseToMML( $input, $passedArgs, $operatorContent ): string {
+	protected function parseToMML( $input, $passedArgs, $operatorContent ) {
 		$parsed = BaseMethods::checkAndParse( $input, $passedArgs, $operatorContent, $this );
 		if ( $parsed ) {
 			return $parsed;
@@ -42,7 +44,7 @@ class TexNode {
 	}
 
 	/**
-	 * @return TexNode[]|string[]
+	 * @return self[]|string[]
 	 */
 	public function getArgs(): array {
 		return $this->args;
@@ -62,25 +64,26 @@ class TexNode {
 	/**
 	 * @param array $arguments
 	 * @param array &$state
-	 * @return string
+	 * @return MMLbase|string|null
 	 */
-	public function renderMML( $arguments = [], &$state = [] ) {
-		return array_reduce( $this->args, function ( $out, $child ) use ( $arguments, $state ) {
-			return $out . $this->renderChildMML( $child, $arguments, $state );
-		}, '' );
+	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+		return new MMLarray( ...array_map(
+			fn ( $child ) => $this->processChildMML( $child, $arguments, $state ),
+			$this->args
+		) );
 	}
 
 	/**
-	 * @param self|string $child
+	 * @param mixed $child
 	 * @param array $arguments
 	 * @param array &$state
-	 * @return string
+	 * @return MMLbase|null
 	 */
-	public function renderChildMML( $child, $arguments, &$state ) {
-		if ( $child instanceof TexNode ) {
-			return $child->renderMML( $arguments, $state );
+	private function processChildMML( $child, array $arguments, array &$state ): ?MMLbase {
+		if ( $child instanceof self ) {
+			return $child->toMMLTree( $arguments, $state );
 		}
-		return $child;
+		return null;
 	}
 
 	/**
@@ -88,7 +91,7 @@ class TexNode {
 	 */
 	public function isEmpty() {
 		foreach ( $this->args ?? [] as $arg ) {
-			if ( $arg instanceof TexNode && !$arg->isEmpty() ) {
+			if ( $arg instanceof self && !$arg->isEmpty() ) {
 				return false;
 			}
 			if ( is_string( $arg ) && $arg !== '' ) {

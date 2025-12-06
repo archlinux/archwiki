@@ -37,7 +37,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 		parent::__construct( [], $matcherFactory->cssWideKeywords() );
 
 		$this->addKnownProperties( [
-			// https://www.w3.org/TR/2018/CR-css-cascade-4-20180828/#all-shorthand
+			// https://www.w3.org/TR/2022/CR-css-cascade-4-20220113/#all-shorthand
 			'all' => $matcherFactory->cssWideKeywords(),
 
 			// https://www.w3.org/TR/2019/REC-pointerevents2-20190404/#the-touch-action-css-property
@@ -49,25 +49,25 @@ class StylePropertySanitizer extends PropertySanitizer {
 				] ),
 			] ),
 
-			// https://www.w3.org/TR/2018/WD-css-page-3-20181018/#using-named-pages
+			// https://www.w3.org/TR/2023/WD-css-page-3-20230914/#using-named-pages
 			'page' => $matcherFactory->ident(),
 		] );
 		$this->addKnownProperties( $this->css2( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssDisplay3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssPosition3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssColor3( $matcherFactory ) );
-		$this->addKnownProperties( $this->cssBorderBackground3( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssBackgrounds3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssImages3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssFonts3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssMulticol( $matcherFactory ) );
-		$this->addKnownProperties( $this->cssOverflow3( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssOverflow4( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssUI4( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssCompositing1( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssWritingModes4( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssTransitions( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssAnimations( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssFlexbox3( $matcherFactory ) );
-		$this->addKnownProperties( $this->cssTransforms1( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssTransforms2( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssText3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssTextDecor3( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssAlign3( $matcherFactory ) );
@@ -76,8 +76,11 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$this->addKnownProperties( $this->cssFilter1( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssShapes1( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssMasking1( $matcherFactory ) );
-		$this->addKnownProperties( $this->cssSizing3( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssSizing4( $matcherFactory ) );
 		$this->addKnownProperties( $this->cssLogical1( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssRuby1( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssLists3( $matcherFactory ) );
+		$this->addKnownProperties( $this->cssScrollSnap1( $matcherFactory ) );
 	}
 
 	/**
@@ -115,6 +118,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 		// https://www.w3.org/TR/2011/REC-CSS2-20110607/visuren.html
 		// https://www.w3.org/TR/2018/WD-css-logical-1-20180827/#directional-keywords
+		$props['z-index'] = new Alternative( [ $auto, $matcherFactory->integer() ] );
 		$props['float'] = new KeywordMatcher( [ 'left', 'right', 'inline-start', 'inline-end', 'none' ] );
 		$props['clear'] = new KeywordMatcher( [ 'none', 'left', 'right', 'both', 'inline-start', 'inline-end' ] );
 
@@ -135,28 +139,23 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['clip'] = new Alternative( [
 			$auto, new FunctionMatcher( 'rect', Quantifier::hash( $autoLength, 4, 4 ) ),
 		] );
-		$props['visibility'] = new KeywordMatcher( [ 'visible', 'hidden', 'collapse' ] );
 
 		// https://www.w3.org/TR/2011/REC-CSS2-20110607/generate.html
-		$props['list-style-type'] = new KeywordMatcher( [
-			'disc', 'circle', 'square', 'decimal', 'decimal-leading-zero', 'lower-roman', 'upper-roman',
-			'lower-greek', 'lower-latin', 'upper-latin', 'armenian', 'georgian', 'lower-alpha',
-			'upper-alpha', 'none'
-		] );
 		$props['content'] = new Alternative( [
 			new KeywordMatcher( [ 'normal', 'none' ] ),
 			Quantifier::plus( new Alternative( [
 				$matcherFactory->string(),
 				// Replaces <url> per https://www.w3.org/TR/css-images-3/#placement
 				$matcherFactory->image(),
+				// Updated by https://www.w3.org/TR/2020/WD-css-lists-3-20201117/#counter-functions
 				new FunctionMatcher( 'counter', new Juxtaposition( [
 					$matcherFactory->ident(),
-					Quantifier::optional( $props['list-style-type'] ),
+					Quantifier::optional( $matcherFactory->counterStyle() ),
 				], true ) ),
 				new FunctionMatcher( 'counters', new Juxtaposition( [
 					$matcherFactory->ident(),
 					$matcherFactory->string(),
-					Quantifier::optional( $props['list-style-type'] ),
+					Quantifier::optional( $matcherFactory->counterStyle() ),
 				], true ) ),
 				new FunctionMatcher( 'attr', $matcherFactory->ident() ),
 				new KeywordMatcher( [ 'open-quote', 'close-quote', 'no-open-quote', 'no-close-quote' ] ),
@@ -166,22 +165,6 @@ class StylePropertySanitizer extends PropertySanitizer {
 			$none, Quantifier::plus( new Juxtaposition( [
 				$matcherFactory->string(), $matcherFactory->string()
 			] ) ),
-		] );
-		$props['counter-reset'] = new Alternative( [
-			$none,
-			Quantifier::plus( new Juxtaposition( [
-				$matcherFactory->ident(), Quantifier::optional( $matcherFactory->integer() )
-			] ) ),
-		] );
-		$props['counter-increment'] = $props['counter-reset'];
-		$props['list-style-image'] = new Alternative( [
-			$none,
-			// Replaces <url> per https://www.w3.org/TR/css-images-3/#placement
-			$matcherFactory->image()
-		] );
-		$props['list-style-position'] = new KeywordMatcher( [ 'inside', 'outside' ] );
-		$props['list-style'] = UnorderedGroup::someOf( [
-			$props['list-style-type'], $props['list-style-position'], $props['list-style-image']
 		] );
 
 		// https://www.w3.org/TR/2011/REC-CSS2-20110607/tables.html
@@ -197,7 +180,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Display Module Level 3
-	 * @see https://www.w3.org/TR/2019/CR-css-display-3-20190711/
+	 * @see https://www.w3.org/TR/2023/CR-css-display-3-20230330/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -236,13 +219,17 @@ class StylePropertySanitizer extends PropertySanitizer {
 			] ),
 		] );
 
+		$props['visibility'] = new KeywordMatcher( [ 'visible', 'hidden', 'collapse' ] );
+
+		$props['order'] = $matcherFactory->integer();
+
 		$this->cache[__METHOD__] = $props;
 		return $props;
 	}
 
 	/**
 	 * Properties for CSS Positioned Layout Module Level 3
-	 * @see https://www.w3.org/TR/2016/WD-css-position-3-20160517/
+	 * @see https://www.w3.org/TR/2025/WD-css-position-3-20250311/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -265,11 +252,13 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['right'] = $autoLengthPct;
 		$props['bottom'] = $autoLengthPct;
 		$props['left'] = $autoLengthPct;
-		$props['offset-before'] = $autoLengthPct;
-		$props['offset-after'] = $autoLengthPct;
-		$props['offset-start'] = $autoLengthPct;
-		$props['offset-end'] = $autoLengthPct;
-		$props['z-index'] = new Alternative( [ $auto, $matcherFactory->integer() ] );
+		$props['inset-block-start'] = $autoLengthPct;
+		$props['inset-inline-start'] = $autoLengthPct;
+		$props['inset-block-end'] = $autoLengthPct;
+		$props['inset-inline-end'] = $autoLengthPct;
+		$props['inset-block'] = Quantifier::count( $autoLengthPct, 1, 2 );
+		$props['inset-inline'] = $props['inset-block'];
+		$props['inset'] = Quantifier::count( $autoLengthPct, 1, 4 );
 
 		$this->cache[__METHOD__] = $props;
 		return $props;
@@ -328,12 +317,33 @@ class StylePropertySanitizer extends PropertySanitizer {
 	}
 
 	/**
+	 * Keywords for the <box> production and its subsets
+	 * @see https://www.w3.org/TR/2024/WD-css-box-4-20240804/#keywords
+	 * @return array<string,string[]>
+	 */
+	protected function boxEdgeKeywords() {
+		// @codeCoverageIgnoreStart
+		if ( isset( $this->cache[__METHOD__] ) ) {
+			return $this->cache[__METHOD__];
+		}
+		// @codeCoverageIgnoreEnd
+		$kws = [];
+		$kws['visual-box'] = [ 'content-box', 'padding-box', 'border-box' ];
+		$kws['layout-box'] = [ ...$kws['visual-box'], 'margin-box' ];
+		$kws['paint-box'] = [ ...$kws['visual-box'], 'fill-box', 'stroke-box' ];
+		$kws['coord-box'] = [ ...$kws['paint-box'], 'view-box' ];
+		$kws['box'] = [ 'content-box', 'padding-box', 'border-box', 'margin-box', 'fill-box',
+			'stroke-box', 'view-box' ];
+		return $kws;
+	}
+
+	/**
 	 * Properties for CSS Backgrounds and Borders Module Level 3
-	 * @see https://www.w3.org/TR/2017/CR-css-backgrounds-3-20171017/
+	 * @see https://www.w3.org/TR/2024/CRD-css-backgrounds-3-20240311/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
-	protected function cssBorderBackground3( MatcherFactory $matcherFactory ) {
+	protected function cssBackgrounds3( MatcherFactory $matcherFactory ) {
 		// @codeCoverageIgnoreStart
 		if ( isset( $this->cache[__METHOD__] ) ) {
 			return $this->cache[__METHOD__];
@@ -348,7 +358,8 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$bgrepeat = $types['bgrepeat'];
 		$bgattach = new KeywordMatcher( [ 'scroll', 'fixed', 'local' ] );
 		$position = $matcherFactory->bgPosition();
-		$box = new KeywordMatcher( $types['boxKeywords'] );
+		$boxKeywords = $this->boxEdgeKeywords();
+		$visualBox = new KeywordMatcher( $boxKeywords['visual-box'] );
 		$bgsize = $types['bgsize'];
 		$bglayer = UnorderedGroup::someOf( [
 			$bgimage,
@@ -357,19 +368,19 @@ class StylePropertySanitizer extends PropertySanitizer {
 			] ),
 			$bgrepeat,
 			$bgattach,
-			$box,
-			$box,
+			$visualBox,
+			$visualBox,
 		] );
 		$finalBglayer = UnorderedGroup::someOf( [
-			$matcherFactory->color(),
 			$bgimage,
 			new Juxtaposition( [
 				$position, Quantifier::optional( new Juxtaposition( [ $slash, $bgsize ] ) )
 			] ),
 			$bgrepeat,
 			$bgattach,
-			$box,
-			$box,
+			$visualBox,
+			$visualBox,
+			$matcherFactory->color(),
 		] );
 
 		$props['background-color'] = $matcherFactory->color();
@@ -377,7 +388,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['background-repeat'] = Quantifier::hash( $bgrepeat );
 		$props['background-attachment'] = Quantifier::hash( $bgattach );
 		$props['background-position'] = Quantifier::hash( $position );
-		$props['background-clip'] = Quantifier::hash( $box );
+		$props['background-clip'] = Quantifier::hash( $visualBox );
 		$props['background-origin'] = $props['background-clip'];
 		$props['background-size'] = Quantifier::hash( $bgsize );
 		$props['background'] = new Juxtaposition(
@@ -464,9 +475,9 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['box-shadow'] = new Alternative( [
 			new KeywordMatcher( 'none' ),
 			Quantifier::hash( UnorderedGroup::allOf( [
-				Quantifier::optional( new KeywordMatcher( 'inset' ) ),
-				Quantifier::count( $matcherFactory->length(), 2, 4 ),
 				Quantifier::optional( $matcherFactory->color() ),
+				Quantifier::count( $matcherFactory->length(), 2, 4 ),
+				Quantifier::optional( new KeywordMatcher( 'inset' ) ),
 			] ) )
 		] );
 
@@ -476,7 +487,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Images Module Level 3
-	 * @see https://www.w3.org/TR/2019/CR-css-images-3-20191010/
+	 * @see https://www.w3.org/TR/2023/CRD-css-images-3-20231218/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -492,16 +503,14 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['object-fit'] = new KeywordMatcher( [ 'fill', 'contain', 'cover', 'none', 'scale-down' ] );
 		$props['object-position'] = $matcherFactory->position();
 
-		// Not documented as allowing bare 0, but predates the redefinition of <angle> so let's
-		// be conservative
+		// Allow bare zero per legacy note at https://www.w3.org/TR/2024/WD-css-values-4-20240312/#angles
 		$a = new Alternative( [
 			$matcherFactory->zero(),
 			$matcherFactory->angle(),
 		] );
 		$props['image-orientation'] = new Alternative( [
-			new KeywordMatcher( [ 'from-image', 'none', 'flip' ] ),
-			$a,
-			new Juxtaposition( [
+			new KeywordMatcher( [ 'from-image', 'none' ] ),
+			UnorderedGroup::someOf( [
 				$a,
 				new KeywordMatcher( [ 'flip' ] ),
 			] ),
@@ -603,7 +612,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Multi-column Layout Module
-	 * @see https://www.w3.org/TR/2019/WD-css-multicol-1-20191015/
+	 * @see https://www.w3.org/TR/2024/CR-css-multicol-1-20240516/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -614,15 +623,17 @@ class StylePropertySanitizer extends PropertySanitizer {
 		}
 		// @codeCoverageIgnoreEnd
 
-		$borders = $this->cssBorderBackground3( $matcherFactory );
+		$borders = $this->cssBackgrounds3( $matcherFactory );
 		$props = [];
 
 		$auto = new KeywordMatcher( 'auto' );
 
 		$props['column-width'] = new Alternative( array_merge(
 			[ $matcherFactory->length(), $auto ],
-			// Additional values from https://www.w3.org/TR/2019/WD-css-sizing-3-20190522/
-			$this->getSizingAdditions( $matcherFactory )
+			// Additional values from https://www.w3.org/TR/2021/WD-css-sizing-3-20211217/
+			// Note! This adds support for a now invalid `column-width: min-width`.
+			// Should probably be removed once new CSS specifications are released.
+			$this->getSizingAdditions3( $matcherFactory )
 		) );
 		$props['column-count'] = new Alternative( [ $matcherFactory->integer(), $auto ] );
 		$props['columns'] = UnorderedGroup::someOf( [ $props['column-width'], $props['column-count'] ] );
@@ -650,7 +661,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Overflow Module Level 3
-	 * @see https://www.w3.org/TR/2018/WD-css-overflow-3-20180731/
+	 * @see https://www.w3.org/TR/2023/WD-css-overflow-3-20230329/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -669,24 +680,82 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['overflow-y'] = $overflow;
 		$props['overflow-inline'] = $overflow;
 		$props['overflow-block'] = $overflow;
-
-		$props['text-overflow'] = new KeywordMatcher( [ 'clip', 'ellipsis' ] );
-		$props['block-overflow'] = new Alternative( [
-			new KeywordMatcher( [ 'clip', 'ellipsis' ] ),
-			$matcherFactory->string(),
+		$props['overflow-clip-margin'] = UnorderedGroup::someOf( [
+			new KeywordMatcher( [ 'content-box', 'padding-box', 'border-box' ] ),
+			$matcherFactory->length()
 		] );
 
+		$props['text-overflow'] = new KeywordMatcher( [ 'clip', 'ellipsis' ] );
+
+		$props['scroll-behavior'] = new KeywordMatcher( [ 'auto', 'smooth' ] );
+		$props['scrollbar-gutter'] = new Alternative( [
+			new KeywordMatcher( 'auto' ),
+			UnorderedGroup::allOf( [
+				new KeywordMatcher( 'stable' ),
+				Quantifier::optional( new KeywordMatcher( 'both-edges' ) )
+			] )
+		] );
+
+		$this->cache[__METHOD__] = $props;
+		return $props;
+	}
+
+	/**
+	 * Properties for CSS Overflow Module Level 4
+	 * @see https://www.w3.org/TR/2023/WD-css-overflow-4-20230321/
+	 * @param MatcherFactory $matcherFactory Factory for Matchers
+	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
+	 */
+	protected function cssOverflow4( MatcherFactory $matcherFactory ) {
+		// @codeCoverageIgnoreStart
+		if ( isset( $this->cache[__METHOD__] ) ) {
+			return $this->cache[__METHOD__];
+		}
+		// @codeCoverageIgnoreEnd
+		$props = $this->cssOverflow3( $matcherFactory );
+		$props['-webkit-line-clamp'] = new Alternative( [
+			new KeywordMatcher( 'none' ),
+			$matcherFactory->integer()
+		] );
+		$props['block-ellipsis'] = new Alternative( [
+			new KeywordMatcher( [ 'none', 'auto' ] ),
+			$matcherFactory->string()
+		] );
+		$props['continue'] = new KeywordMatcher( [ 'auto', 'discard' ] );
 		$props['line-clamp'] = new Alternative( [
 			new KeywordMatcher( 'none' ),
 			new Juxtaposition( [
 				$matcherFactory->integer(),
-				Quantifier::optional( $props['block-overflow'] ),
+				Quantifier::optional( $props['block-ellipsis'] ),
 			] ),
 		] );
 		$props['max-lines'] = new Alternative( [
 			new KeywordMatcher( 'none' ), $matcherFactory->integer()
 		] );
-		$props['continue'] = new KeywordMatcher( [ 'auto', 'discard' ] );
+		$clipMargin = $props['overflow-clip-margin'];
+		$props['overflow-clip-margin-block'] = $clipMargin;
+		$props['overflow-clip-margin-block-end'] = $clipMargin;
+		$props['overflow-clip-margin-block-start'] = $clipMargin;
+		$props['overflow-clip-margin-bottom'] = $clipMargin;
+		$props['overflow-clip-margin-inline'] = $clipMargin;
+		$props['overflow-clip-margin-inline-end'] = $clipMargin;
+		$props['overflow-clip-margin-inline-start'] = $clipMargin;
+		$props['overflow-clip-margin-inline-left'] = $clipMargin;
+		$props['overflow-clip-margin-left'] = $clipMargin;
+		$props['overflow-clip-margin-right'] = $clipMargin;
+		$props['overflow-clip-margin-top'] = $clipMargin;
+		$props['text-overflow'] = Quantifier::count(
+			new Alternative( [
+				new KeywordMatcher( [ 'clip', 'ellipsis' ] ),
+				$matcherFactory->string(),
+				new KeywordMatcher( 'fade' ),
+				new FunctionMatcher(
+					'fade',
+					new Alternative( [ $matcherFactory->length(), $matcherFactory->percentage() ] )
+				)
+			] ),
+			1, 2
+		);
 
 		$this->cache[__METHOD__] = $props;
 		return $props;
@@ -695,7 +764,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 	/**
 	 * Properties for CSS Basic User Interface Module Level 4
 	 * @see https://www.w3.org/TR/2018/REC-css-ui-3-20180621/
-	 * @see https://www.w3.org/TR/2020/WD-css-ui-4-20200102/
+	 * @see https://www.w3.org/TR/2021/WD-css-ui-4-20210316/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -706,7 +775,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 		}
 		// @codeCoverageIgnoreEnd
 
-		$border = $this->cssBorderBackground3( $matcherFactory );
+		$border = $this->cssBackgrounds3( $matcherFactory );
 		$props = [];
 
 		// Copy these from similar border properties
@@ -721,7 +790,9 @@ class StylePropertySanitizer extends PropertySanitizer {
 			$props['outline-width'], $props['outline-style'], $props['outline-color']
 		] );
 		$props['outline-offset'] = $matcherFactory->length();
-		$props['resize'] = new KeywordMatcher( [ 'none', 'both', 'horizontal', 'vertical' ] );
+		$props['resize'] = new KeywordMatcher( [
+			'none', 'both', 'horizontal', 'vertical', 'block', 'inline',
+		] );
 		$props['cursor'] = new Juxtaposition( [
 			Quantifier::star( new Juxtaposition( [
 				$matcherFactory->image(),
@@ -763,6 +834,11 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['-ms-user-select'] = $props['user-select'];
 		$props['-webkit-user-select'] = $props['user-select'];
 
+		$props['accent-color'] = new Alternative( [
+			new KeywordMatcher( 'auto' ),
+			$matcherFactory->color(),
+		] );
+
 		$props['appearance'] = new KeywordMatcher( [
 			'none', 'auto', 'button', 'textfield', 'menulist-button',
 		] );
@@ -773,7 +849,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Compositing and Blending Level 1
-	 * @see https://www.w3.org/TR/2015/CR-compositing-1-20150113/
+	 * @see https://www.w3.org/TR/2024/CRD-compositing-1-20240321/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -787,8 +863,8 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props = [];
 
 		$props['mix-blend-mode'] = new KeywordMatcher( [
-			'normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn',
-			'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'
+			'normal', 'darken', 'multiply', 'color-burn', 'lighten', 'screen', 'color-dodge', 'overlay',
+			'soft-light', 'hard-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'
 		] );
 		$props['isolation'] = new KeywordMatcher( [ 'auto', 'isolate' ] );
 
@@ -875,7 +951,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Animations
-	 * @see https://www.w3.org/TR/2018/WD-css-animations-1-20181011/
+	 * @see https://www.w3.org/TR/2023/WD-css-animations-1-20230302/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -943,12 +1019,11 @@ class StylePropertySanitizer extends PropertySanitizer {
 		] );
 		$props['flex-wrap'] = new KeywordMatcher( [ 'nowrap', 'wrap', 'wrap-reverse' ] );
 		$props['flex-flow'] = UnorderedGroup::someOf( [ $props['flex-direction'], $props['flex-wrap'] ] );
-		$props['order'] = $matcherFactory->integer();
 		$props['flex-grow'] = $matcherFactory->number();
 		$props['flex-shrink'] = $matcherFactory->number();
 		$props['flex-basis'] = new Alternative( [
 			new KeywordMatcher( [ 'content' ] ),
-			$this->cssSizing3( $matcherFactory )['width']
+			$this->cssSizing4( $matcherFactory )['width']
 		] );
 		$props['flex'] = new Alternative( [
 			new KeywordMatcher( 'none' ),
@@ -966,8 +1041,77 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['align-self'] = $align['align-self'];
 		$props['align-content'] = $align['align-content'];
 
+		// 'order' was copied into display-3 in CR 2023-03-30
+		// Removed from flexbox in the ED as of 2025-03-10, it can be removed
+		// here once we update our flexbox version.
+		$props['order'] = $this->cssDisplay3( $matcherFactory )['order'];
+
 		$this->cache[__METHOD__] = $props;
 		return $props;
+	}
+
+	/**
+	 * Get a matcher for any transform function for a given level of the
+	 * Transforms module.
+	 *
+	 * @see https://www.w3.org/TR/2019/CR-css-transforms-1-20190214/
+	 * @see https://www.w3.org/TR/2021/WD-css-transforms-2-20211109/
+	 *
+	 * @param MatcherFactory $matcherFactory
+	 * @param int $level
+	 * @return Alternative
+	 */
+	protected function transformFunc( MatcherFactory $matcherFactory, int $level ) {
+		$a = $matcherFactory->angle();
+		$az = new Alternative( [
+			$matcherFactory->zero(),
+			$a,
+		] );
+		$n = $matcherFactory->number();
+		$l = $matcherFactory->length();
+		$lp = $matcherFactory->lengthPercentage();
+		$np = new Alternative( [ $n, $matcherFactory->percentage() ] );
+
+		$level1 = [
+			'matrix' => Quantifier::hash( $n, 6, 6 ),
+			'translate' => Quantifier::hash( $lp, 1, 2 ),
+			'translateX' => $lp,
+			'translateY' => $lp,
+			'scale' => Quantifier::hash( $n, 1, 2 ),
+			'scaleX' => $n,
+			'scaleY' => $n,
+			'rotate' => $az,
+			'skew' => Quantifier::hash( $az, 1, 2 ),
+			'skewX' => $az,
+			'skewY' => $az,
+		];
+
+		$level2 = [
+			'scale' => Quantifier::hash( $np, 1, 2 ),
+			'scaleX' => $np,
+			'scaleY' => $np,
+			'matrix3d' => Quantifier::hash( $n, 16, 16 ),
+			'translate3d' => new Juxtaposition( [ $lp, $lp, $l ], true ),
+			'translateZ' => $l,
+			'scale3d' => Quantifier::hash( $np, 3, 3 ),
+			'scaleZ' => $np,
+			'rotate3d' => new Juxtaposition( [ $n, $n, $n, $az ], true ),
+			'rotateX' => $az,
+			'rotateY' => $az,
+			'rotateZ' => $az,
+			'perspective' => new Alternative( [ $l, new KeywordMatcher( 'none' ) ] ),
+		];
+
+		if ( $level === 1 ) {
+			$funcs = $level1;
+		} else {
+			$funcs = $level2 + $level1;
+		}
+		$funcMatchers = [];
+		foreach ( $funcs as $name => $contents ) {
+			$funcMatchers[] = new FunctionMatcher( $name, $contents );
+		}
+		return new Alternative( $funcMatchers );
 	}
 
 	/**
@@ -985,12 +1129,6 @@ class StylePropertySanitizer extends PropertySanitizer {
 		// @codeCoverageIgnoreEnd
 
 		$props = [];
-		$a = $matcherFactory->angle();
-		$az = new Alternative( [
-			$matcherFactory->zero(),
-			$a,
-		] );
-		$n = $matcherFactory->number();
 		$l = $matcherFactory->length();
 		$ol = Quantifier::optional( $l );
 		$lp = $matcherFactory->lengthPercentage();
@@ -1000,19 +1138,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 		$props['transform'] = new Alternative( [
 			new KeywordMatcher( 'none' ),
-			Quantifier::plus( new Alternative( [
-				new FunctionMatcher( 'matrix', Quantifier::hash( $n, 6, 6 ) ),
-				new FunctionMatcher( 'translate', Quantifier::hash( $lp, 1, 2 ) ),
-				new FunctionMatcher( 'translateX', $lp ),
-				new FunctionMatcher( 'translateY', $lp ),
-				new FunctionMatcher( 'scale', Quantifier::hash( $n, 1, 2 ) ),
-				new FunctionMatcher( 'scaleX', $n ),
-				new FunctionMatcher( 'scaleY', $n ),
-				new FunctionMatcher( 'rotate', $az ),
-				new FunctionMatcher( 'skew', Quantifier::hash( $az, 1, 2 ) ),
-				new FunctionMatcher( 'skewX', $az ),
-				new FunctionMatcher( 'skewY', $az ),
-			] ) )
+			Quantifier::plus( $this->transformFunc( $matcherFactory, 1 ) )
 		] );
 
 		$props['transform-origin'] = new Alternative( [
@@ -1039,8 +1165,70 @@ class StylePropertySanitizer extends PropertySanitizer {
 	}
 
 	/**
+	 * Properties for CSS Transforms Module Levels 1 and 2
+	 *
+	 * @see https://www.w3.org/TR/2019/CR-css-transforms-1-20190214/
+	 * @see https://www.w3.org/TR/2021/WD-css-transforms-2-20211109/
+	 * @param MatcherFactory $matcherFactory Factory for Matchers
+	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
+	 */
+	protected function cssTransforms2( MatcherFactory $matcherFactory ) {
+		if ( !isset( $this->cache[__METHOD__] ) ) {
+			$none = new KeywordMatcher( 'none' );
+
+			$this->cache[__METHOD__] = [
+				'transform' => new Alternative( [
+					new KeywordMatcher( 'none' ),
+					Quantifier::plus( $this->transformFunc( $matcherFactory, 2 ) )
+				] ),
+				'backface-visibility' => new KeywordMatcher( [ 'visible', 'hidden' ] ),
+				'perspective' => new Alternative( [
+					$none,
+					$matcherFactory->length()
+				] ),
+				'perspective-origin' => $matcherFactory->position(),
+				'rotate' => new Alternative( [
+					$none,
+					$matcherFactory->angle(),
+					UnorderedGroup::allOf( [
+						new Alternative( [
+							new KeywordMatcher( [ 'x', 'y', 'z' ] ),
+							Quantifier::count( $matcherFactory->number(), 3, 3 )
+						] ),
+						$matcherFactory->angle()
+					] )
+				] ),
+				'scale' => new Alternative( [
+					$none,
+					Quantifier::count(
+						new Alternative( [
+							$matcherFactory->number(),
+							$matcherFactory->percentage()
+						] ),
+						1, 3
+					)
+				] ),
+				'transform-style' => new KeywordMatcher( [ 'flat', 'preserve-3d' ] ),
+				'translate' => new Alternative( [
+					$none,
+					new Juxtaposition( [
+						$matcherFactory->lengthPercentage(),
+						Quantifier::optional(
+							new Juxtaposition( [
+								$matcherFactory->lengthPercentage(),
+								Quantifier::optional( $matcherFactory->length() )
+							] )
+						)
+					] )
+				] )
+			] + $this->cssTransforms1( $matcherFactory );
+		}
+		return $this->cache[__METHOD__];
+	}
+
+	/**
 	 * Properties for CSS Text Module Level 3
-	 * @see https://www.w3.org/TR/2019/WD-css-text-3-20191113/
+	 * @see https://www.w3.org/TR/2024/CRD-css-text-3-20240930/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1110,7 +1298,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Text Decoration Module Level 3
-	 * @see https://www.w3.org/TR/2019/CR-css-text-decor-3-20190813/
+	 * @see https://www.w3.org/TR/2022/CRD-css-text-decor-3-20220505/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1179,7 +1367,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Box Alignment Module Level 3
-	 * @see https://www.w3.org/TR/2018/WD-css-align-3-20181206/
+	 * @see https://www.w3.org/TR/2025/WD-css-align-3-20250311/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1195,7 +1383,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$normalStretch = new KeywordMatcher( [ 'normal', 'stretch' ] );
 		$autoNormalStretch = new KeywordMatcher( [ 'auto', 'normal', 'stretch' ] );
 		$overflowPosition = Quantifier::optional( new KeywordMatcher( [ 'safe', 'unsafe' ] ) );
-		$baselinePosition = new Juxtaposition( [
+		$baselinePosition = UnorderedGroup::allOf( [
 			Quantifier::optional( new KeywordMatcher( [ 'first', 'last' ] ) ),
 			new KeywordMatcher( 'baseline' )
 		] );
@@ -1315,7 +1503,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Grid Layout Module Level 1
-	 * @see https://www.w3.org/TR/2017/CR-css-grid-1-20171214/
+	 * @see https://www.w3.org/TR/2025/CRD-css-grid-1-20250326/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1488,10 +1676,6 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['justify-content'] = $align['justify-content'];
 		$props['align-content'] = $align['align-content'];
 
-		// Grid uses Flexbox's order property too. Copying is ok as long as
-		// it's the identical object.
-		$props['order'] = $this->cssFlexbox3( $matcherFactory )['order'];
-
 		$this->cache[__METHOD__] = $props;
 		return $props;
 	}
@@ -1546,7 +1730,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Shapes and masking share these basic shapes
-	 * @see https://www.w3.org/TR/2014/CR-css-shapes-1-20140320/#basic-shape-functions
+	 * @see https://www.w3.org/TR/2022/CRD-css-shapes-1-20221115/#basic-shape-functions
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher
 	 */
@@ -1557,19 +1741,33 @@ class StylePropertySanitizer extends PropertySanitizer {
 		}
 		// @codeCoverageIgnoreEnd
 
-		$border = $this->cssBorderBackground3( $matcherFactory );
-		$sa = $matcherFactory->lengthPercentage();
+		$border = $this->cssBackgrounds3( $matcherFactory );
+		$lp = $matcherFactory->lengthPercentage();
 		$sr = new Alternative( [
-			$sa,
+			$lp,
 			new KeywordMatcher( [ 'closest-side', 'farthest-side' ] ),
 		] );
+		$optRound = Quantifier::optional( new Juxtaposition( [
+			new KeywordMatcher( 'round' ), $border['border-radius']
+		] ) );
+		$fillRule = new KeywordMatcher( [ 'nonzero', 'evenodd' ] );
 
 		$basicShape = new Alternative( [
 			new FunctionMatcher( 'inset', new Juxtaposition( [
-				Quantifier::count( $sa, 1, 4 ),
-				Quantifier::optional( new Juxtaposition( [
-					new KeywordMatcher( 'round' ), $border['border-radius']
-				] ) )
+				Quantifier::count( $lp, 1, 4 ),
+				$optRound,
+			] ) ),
+			new FunctionMatcher( 'xywh', new Juxtaposition( [
+				Quantifier::count( $lp, 2, 2 ),
+				Quantifier::count( $lp, 2, 2 ),
+				$optRound,
+			] ) ),
+			new FunctionMatcher( 'rect', new Juxtaposition( [
+				Quantifier::count(
+					new Alternative( [ $lp, new KeywordMatcher( 'auto' ) ] ),
+					4, 4
+				),
+				$optRound,
 			] ) ),
 			new FunctionMatcher( 'circle', new Juxtaposition( [
 				Quantifier::optional( $sr ),
@@ -1584,8 +1782,12 @@ class StylePropertySanitizer extends PropertySanitizer {
 				] ) )
 			] ) ),
 			new FunctionMatcher( 'polygon', new Juxtaposition( [
-				Quantifier::optional( new KeywordMatcher( [ 'nonzero', 'evenodd' ] ) ),
-				Quantifier::hash( Quantifier::count( $sa, 2, 2 ) ),
+				Quantifier::optional( $fillRule ),
+				Quantifier::hash( Quantifier::count( $lp, 2, 2 ) ),
+			], true ) ),
+			new FunctionMatcher( 'path', new Juxtaposition( [
+				Quantifier::optional( $fillRule ),
+				$matcherFactory->string(),
 			], true ) ),
 		] );
 
@@ -1595,7 +1797,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Shapes Module Level 1
-	 * @see https://www.w3.org/TR/2014/CR-css-shapes-1-20140320/
+	 * @see https://www.w3.org/TR/2022/CRD-css-shapes-1-20221115/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1619,7 +1821,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 			] ),
 			$matcherFactory->url( 'image' ),
 		] );
-		$props['shape-image-threshold'] = $matcherFactory->number();
+		$props['shape-image-threshold'] = $matcherFactory->numberPercentage();
 		$props['shape-margin'] = $matcherFactory->lengthPercentage();
 
 		$this->cache[__METHOD__] = $props;
@@ -1628,7 +1830,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 	/**
 	 * Properties for CSS Masking Module Level 1
-	 * @see https://www.w3.org/TR/2014/CR-css-masking-1-20140826/
+	 * @see https://www.w3.org/TR/2021/CRD-css-masking-1-20210805/
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
@@ -1641,17 +1843,24 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 		$slash = new DelimMatcher( '/' );
 		$bgtypes = $this->backgroundTypes( $matcherFactory );
-		$bg = $this->cssBorderBackground3( $matcherFactory );
-		$geometryBoxKeywords = array_merge( $bgtypes['boxKeywords'], [
-			'margin-box', 'fill-box', 'stroke-box', 'view-box'
-		] );
+		$bg = $this->cssBackgrounds3( $matcherFactory );
+
+		// <geometry-box> = <shape-box> | fill-box | stroke-box | view-box
+		// <shape-box> = <box> | margin-box
+		// The changelog says margin-box was removed from the mask-origin and
+		// mask-clip properties, but the grammar still allows it, so we will
+		// allow it. <shape-box> in Shapes 1 refers to <box> in Backgrounds 3,
+		// but it's not there anymore, <box> has moved to Box 4 which is where
+		// we're getting it from. <box> now allows all four of these extra
+		// keywords so this complexity is redundant. It's just a <box>.
+		$geometryBoxKeywords = $this->boxEdgeKeywords()['box'];
 		$geometryBox = new KeywordMatcher( $geometryBoxKeywords );
 		$maskRef = new Alternative( [
 			new KeywordMatcher( 'none' ),
 			$matcherFactory->image(),
 			$matcherFactory->url( 'svg' ),
 		] );
-		$maskMode = new KeywordMatcher( [ 'alpha', 'luminance', 'auto' ] );
+		$maskMode = new KeywordMatcher( [ 'alpha', 'luminance', 'match-source' ] );
 		$maskClip = new KeywordMatcher( array_merge( $geometryBoxKeywords, [ 'no-clip' ] ) );
 		$maskComposite = new KeywordMatcher( [ 'add', 'subtract', 'intersect', 'exclude' ] );
 
@@ -1675,7 +1884,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['mask-size'] = $bg['background-size'];
 		$props['mask-composite'] = Quantifier::hash( $maskComposite );
 		$props['mask'] = Quantifier::hash( UnorderedGroup::someOf( [
-			new Juxtaposition( [ $maskRef, Quantifier::optional( $maskMode ) ] ),
+			$maskRef,
 			new Juxtaposition( [
 				$matcherFactory->position(),
 				Quantifier::optional( new Juxtaposition( [ $slash, $bgtypes['bgsize'] ] ) ),
@@ -1684,6 +1893,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 			$geometryBox,
 			$maskClip,
 			$maskComposite,
+			$maskMode
 		] ) );
 		$props['mask-border-source'] = new Alternative( [
 			new KeywordMatcher( 'none' ),
@@ -1721,12 +1931,12 @@ class StylePropertySanitizer extends PropertySanitizer {
 	}
 
 	/**
-	 * Additional keywords and functions from CSS Intrinsic and Extrinsic Sizing Level 3
-	 * @see https://www.w3.org/TR/2019/WD-css-sizing-3-20190522/
+	 * Additional keywords and functions from CSS Box Sizing Level 3
+	 * @see https://www.w3.org/TR/2021/WD-css-sizing-3-20211217/#column-sizing
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array of matchers
 	 */
-	protected function getSizingAdditions( MatcherFactory $matcherFactory ) {
+	protected function getSizingAdditions3( MatcherFactory $matcherFactory ) {
 		if ( !isset( $this->cache[__METHOD__] ) ) {
 			$lengthPct = $matcherFactory->lengthPercentage();
 			$this->cache[__METHOD__] = [
@@ -1742,12 +1952,36 @@ class StylePropertySanitizer extends PropertySanitizer {
 	}
 
 	/**
-	 * Properties for CSS Intrinsic and Extrinsic Sizing Level 3
-	 * @see https://www.w3.org/TR/2019/WD-css-sizing-3-20190522/
+	 * Additional keywords and functions from CSS Box Sizing Level 3 and 4
+	 * @see https://www.w3.org/TR/css-sizing-3/#sizing-values
+	 * @see https://www.w3.org/TR/css-sizing-4/#sizing-values
+	 * @param MatcherFactory $matcherFactory Factory for Matchers
+	 * @return Matcher[] Array of matchers
+	 */
+	protected function getSizingAdditions( MatcherFactory $matcherFactory ) {
+		if ( !isset( $this->cache[__METHOD__] ) ) {
+			$lengthPct = $matcherFactory->lengthPercentage();
+			$this->cache[__METHOD__] = [
+				new KeywordMatcher( [
+					'max-content', 'min-content', 'stretch', 'fit-content', 'contain'
+				] ),
+				// fit-content() as a function https://developer.mozilla.org/en-US/docs/Web/CSS/fit-content_function
+				new FunctionMatcher( 'fit-content', $lengthPct ),
+				// Prefixed for FF v3-v93 (until 2021) https://caniuse.com/?search=fit-content
+				new FunctionMatcher( '-moz-fit-content', $lengthPct ),
+			];
+		}
+		return $this->cache[__METHOD__];
+	}
+
+	/**
+	 * Properties for CSS Box Sizing Level 3 and 4
+	 * @see https://www.w3.org/TR/css-sizing-3/#sizing-values
+	 * @see https://www.w3.org/TR/css-sizing-4/#sizing-values
 	 * @param MatcherFactory $matcherFactory Factory for Matchers
 	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
 	 */
-	protected function cssSizing3( MatcherFactory $matcherFactory ) {
+	protected function cssSizing4( MatcherFactory $matcherFactory ) {
 		// @codeCoverageIgnoreStart
 		if ( isset( $this->cache[__METHOD__] ) ) {
 			return $this->cache[__METHOD__];
@@ -1768,6 +2002,32 @@ class StylePropertySanitizer extends PropertySanitizer {
 		$props['max-height'] = $props['max-width'];
 
 		$props['box-sizing'] = new KeywordMatcher( [ 'content-box', 'border-box' ] );
+		// https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio
+		// auto || <ratio>
+		$props['aspect-ratio'] = UnorderedGroup::someOf( [ $auto, $matcherFactory->ratio() ] );
+		// https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-size
+		// auto? [ none | <length> ]
+		$containIntrinsic = new Juxtaposition( [
+			Quantifier::optional( $auto ),
+			new Alternative( [
+				$none,
+				$lengthPct,
+			] ),
+		] );
+		$props['contain-intrinsic-width'] = $containIntrinsic;
+		$props['contain-intrinsic-height'] = $containIntrinsic;
+		$props['contain-intrinsic-block-size'] = $containIntrinsic;
+		$props['contain-intrinsic-inline-size'] = $containIntrinsic;
+		$props['contain-intrinsic-size'] = Quantifier::count( $containIntrinsic, 1, 2 );
+		// https://drafts.csswg.org/css-sizing-4/#intrinsic-contribution-override
+		// legacy | zero-if-scroll || zero-if-extrinsic
+		$props['min-intrinsic-sizing'] = new Alternative( [
+			new KeywordMatcher( 'legacy' ),
+			UnorderedGroup::someOf( [
+				new KeywordMatcher( 'zero-if-scroll' ),
+				new KeywordMatcher( 'zero-if-extrinsic' ),
+			] ),
+		] );
 
 		$this->cache[__METHOD__] = $props;
 		return $props;
@@ -1786,10 +2046,9 @@ class StylePropertySanitizer extends PropertySanitizer {
 		}
 		// @codeCoverageIgnoreEnd
 
-		$cssSizing3 = $this->cssSizing3( $matcherFactory );
+		$cssSizing4 = $this->cssSizing4( $matcherFactory );
 		$css2 = $this->css2( $matcherFactory );
-		$cssPosition3 = $this->cssPosition3( $matcherFactory );
-		$cssBorderBackground3 = $this->cssBorderBackground3( $matcherFactory );
+		$cssBorderBackground3 = $this->cssBackgrounds3( $matcherFactory );
 		$borderCombo = UnorderedGroup::someOf( [
 			$cssBorderBackground3['border-top-width'],
 			$cssBorderBackground3['border-top-style'],
@@ -1798,12 +2057,12 @@ class StylePropertySanitizer extends PropertySanitizer {
 
 		$props = [
 			// https://www.w3.org/TR/2018/WD-css-logical-1-20180827/#dimension-properties
-			'block-size' => $cssSizing3['width'],
-			'inline-size' => $cssSizing3['width'],
-			'min-block-size' => $cssSizing3['min-width'],
-			'min-inline-size' => $cssSizing3['min-width'],
-			'max-block-size' => $cssSizing3['max-width'],
-			'max-inline-size' => $cssSizing3['max-width'],
+			'block-size' => $cssSizing4['width'],
+			'inline-size' => $cssSizing4['width'],
+			'min-block-size' => $cssSizing4['min-width'],
+			'min-inline-size' => $cssSizing4['min-width'],
+			'max-block-size' => $cssSizing4['max-width'],
+			'max-inline-size' => $cssSizing4['max-width'],
 
 			// https://www.w3.org/TR/2018/WD-css-logical-1-20180827/#margin-properties
 			'margin-block-start' => $css2['margin-top'],
@@ -1814,13 +2073,7 @@ class StylePropertySanitizer extends PropertySanitizer {
 			'margin-inline' => Quantifier::count( $css2['margin-top'], 1, 2 ),
 
 			// https://www.w3.org/TR/2018/WD-css-logical-1-20180827/#inset-properties
-			'inset-block-start' => $cssPosition3['top'],
-			'inset-block-end' => $cssPosition3['top'],
-			'inset-inline-start' => $cssPosition3['top'],
-			'inset-inline-end' => $cssPosition3['top'],
-			'inset-block' => Quantifier::count( $cssPosition3['top'], 1, 2 ),
-			'inset-inline' => Quantifier::count( $cssPosition3['top'], 1, 2 ),
-			'inset' => Quantifier::count( $cssPosition3['top'], 1, 4 ),
+			// Superseded by Position 3
 
 			// https://www.w3.org/TR/2018/WD-css-logical-1-20180827/#padding-properties
 			'padding-block-start' => $css2['padding-top'],
@@ -1869,6 +2122,146 @@ class StylePropertySanitizer extends PropertySanitizer {
 			'border-end-start-radius' => $cssBorderBackground3['border-top-left-radius'],
 			'border-end-end-radius' => $cssBorderBackground3['border-top-left-radius'],
 		];
+
+		$this->cache[__METHOD__] = $props;
+		return $props;
+	}
+
+	/**
+	 * Properties for CSS Ruby Annotation Layout Module Level 1
+	 * @see https://www.w3.org/TR/2022/WD-css-ruby-1-20221231/
+	 * @param MatcherFactory $matcherFactory
+	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
+	 */
+	protected function cssRuby1( $matcherFactory ) {
+		return $this->cache[__METHOD__] ??= [
+			'ruby-position' => new Alternative( [
+				UnorderedGroup::someOf( [
+					new KeywordMatcher( 'alternate' ),
+					new KeywordMatcher( [ 'over', 'under' ] ),
+				] ),
+				new KeywordMatcher( [ 'inter-character' ] )
+			] ),
+			'ruby-merge' => new KeywordMatcher( [ 'separate', 'merge', 'auto' ] ),
+			'ruby-align' => new KeywordMatcher( [
+				'start', 'center', 'space-between', 'space-around'
+			] ),
+			'ruby-overhang' => new KeywordMatcher( [ 'auto', 'none' ] ),
+		];
+	}
+
+	/**
+	 * CSS Lists and Counters Module Level 3
+	 * @see https://www.w3.org/TR/2020/WD-css-lists-3-20201117/
+	 *
+	 * @param MatcherFactory $matcherFactory
+	 * @return Matcher[]
+	 */
+	protected function cssLists3( MatcherFactory $matcherFactory ) {
+		// @codeCoverageIgnoreStart
+		if ( isset( $this->cache[__METHOD__] ) ) {
+			return $this->cache[__METHOD__];
+		}
+		// @codeCoverageIgnoreEnd
+		$none = new KeywordMatcher( 'none' );
+		$props = [];
+
+		$props['counter-increment'] = $props['counter-reset'] = $props['counter-set'] =
+			new Alternative( [
+				Quantifier::plus( new Juxtaposition( [
+					$matcherFactory->customIdent( [ 'none' ] ),
+					Quantifier::optional( $matcherFactory->integer() )
+				] ) ),
+				$none
+			] );
+
+		$props['list-style-image'] = new Alternative( [
+			$matcherFactory->image(),
+			$none
+		] );
+
+		$props['list-style-position'] = new KeywordMatcher( [ 'inside', 'outside' ] );
+
+		$props['list-style-type'] = new Alternative( [
+			$matcherFactory->counterStyle(),
+			$matcherFactory->string(),
+			$none
+		] );
+
+		$props['list-style'] = UnorderedGroup::someOf( [
+			$props['list-style-position'], $props['list-style-image'], $props['list-style-type']
+		] );
+
+		$props['marker-side'] = new KeywordMatcher( [ 'match-self', 'match-parent' ] );
+
+		$this->cache[__METHOD__] = $props;
+		return $props;
+	}
+
+	/**
+	 * Properties for CSS Scroll Snap Module Level 1
+	 * @see https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/
+	 * @param MatcherFactory $matcherFactory
+	 * @return Matcher[] Array mapping declaration names (lowercase) to Matchers for the values
+	 */
+	protected function cssScrollSnap1( MatcherFactory $matcherFactory ) {
+		// @codeCoverageIgnoreStart
+		if ( isset( $this->cache[__METHOD__] ) ) {
+			return $this->cache[__METHOD__];
+		}
+		// @codeCoverageIgnoreEnd
+
+		$props = [];
+		$none = new KeywordMatcher( 'none' );
+		$auto = new KeywordMatcher( 'auto' );
+		$length = $matcherFactory->length();
+		$lp = $matcherFactory->lengthPercentage();
+
+		// https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/#scroll-snap-type
+		$props['scroll-snap-type'] = new Alternative( [
+			$none,
+			new Juxtaposition( [
+				new KeywordMatcher( [ 'x', 'y', 'block', 'inline', 'both' ] ),
+				Quantifier::optional( new KeywordMatcher( [ 'mandatory', 'proximity' ] ) ),
+			] ),
+		] );
+
+		// https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/#scroll-padding
+		$props['scroll-padding'] = Quantifier::count( new Alternative( [ $auto, $lp ] ), 1, 4 );
+
+		$props['scroll-padding-top'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-right'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-bottom'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-left'] = new Alternative( [ $auto, $lp ] );
+
+		$props['scroll-padding-inline'] = Quantifier::count( new Alternative( [ $auto, $lp ] ), 1, 2 );
+		$props['scroll-padding-inline-start'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-inline-end'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-block'] = Quantifier::count( new Alternative( [ $auto, $lp ] ), 1, 2 );
+		$props['scroll-padding-block-start'] = new Alternative( [ $auto, $lp ] );
+		$props['scroll-padding-block-end'] = new Alternative( [ $auto, $lp ] );
+
+		// https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/#scroll-margin
+		$props['scroll-margin'] = Quantifier::count( $length, 1, 4 );
+
+		$props['scroll-margin-top'] = $length;
+		$props['scroll-margin-right'] = $length;
+		$props['scroll-margin-bottom'] = $length;
+		$props['scroll-margin-left'] = $length;
+
+		$props['scroll-margin-inline'] = Quantifier::count( $length, 1, 2 );
+		$props['scroll-margin-inline-start'] = $length;
+		$props['scroll-margin-inline-end'] = $length;
+		$props['scroll-margin-block'] = Quantifier::count( $length, 1, 2 );
+		$props['scroll-margin-block-start'] = $length;
+		$props['scroll-margin-block-end'] = $length;
+
+		// https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/#scroll-snap-align
+		$props['scroll-snap-align'] = Quantifier::count( new KeywordMatcher( [ 'none', 'start', 'end', 'center' ] ),
+			1, 2 );
+
+		// https://www.w3.org/TR/2021/CR-css-scroll-snap-1-20210311/#scroll-snap-stop
+		$props['scroll-snap-stop'] = new KeywordMatcher( [ 'normal', 'always' ] );
 
 		$this->cache[__METHOD__] = $props;
 		return $props;

@@ -9,8 +9,6 @@
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Хуучны Vector ашиглах",
-	"vector-opt-out": "Хуучин хувилбарт шилжих",
-	"vector-opt-out-tooltip": "Сайтын скинийг хуучин хувилбарт шилжүүлэх (legacy Vector)",
 	"vector-action-toggle-sidebar": "Хажуугийн цэсийг нээж хаах",
 	"vector-languages": "Хэлнүүд",
 	"vector-language-button-label": "{{PLURAL:$1|$1 хэлээр}}",
@@ -40,7 +38,6 @@
 	"skin-theme-night-label": "Харанхуй",
 	"skin-theme-os-label": "Автомат",
 	"skin-theme-exclusion-notice": "Энэ хуудас үргэлж гэрэлтэй горимд байдаг.",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> бичвэрийг агуулсан хуудсыг хайх",
 	"vector-toc-label": "Гарчиг",
 	"vector-toc-beginning": "Эхлэл",
 	"vector-toc-toggle-button-label": "$1 хэсгийг нээж хаах",

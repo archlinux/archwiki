@@ -2,8 +2,9 @@
 @import '../../../minerva.less/minerva.variables.less';
 @import '../../../minerva.less/minerva.mixins.less';
 
-/* This not does apply to links with role button per discussion on T373989 */
-a:where( :not( [ role='button' ] ) ) {
+// This not does apply to links with role button per discussion on T373989
+// or to links with class .cdx-menu-item__content (used inside TAHS)
+a:where( :not( [ role='button' ] ):not( .cdx-menu-item__content ) ) {
 	.cdx-mixin-link-base();
 }
 

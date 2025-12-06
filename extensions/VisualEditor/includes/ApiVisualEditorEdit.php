@@ -42,33 +42,23 @@ class ApiVisualEditorEdit extends ApiBase {
 	private const MAX_CACHE_RECENT = 2;
 	private const MAX_CACHE_TTL = 900;
 
-	private VisualEditorHookRunner $hookRunner;
-	private PageEditStash $pageEditStash;
-	private SkinFactory $skinFactory;
-	private WikiPageFactory $wikiPageFactory;
-	private SpecialPageFactory $specialPageFactory;
-	private VisualEditorParsoidClientFactory $parsoidClientFactory;
+	private readonly VisualEditorHookRunner $hookRunner;
 
 	public function __construct(
 		ApiMain $main,
 		string $name,
 		HookContainer $hookContainer,
 		StatsFactory $statsFactory,
-		PageEditStash $pageEditStash,
-		SkinFactory $skinFactory,
-		WikiPageFactory $wikiPageFactory,
-		SpecialPageFactory $specialPageFactory,
-		VisualEditorParsoidClientFactory $parsoidClientFactory
+		private readonly PageEditStash $pageEditStash,
+		private readonly SkinFactory $skinFactory,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly VisualEditorParsoidClientFactory $parsoidClientFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
 		$this->setStatsFactory( $statsFactory );
 		$this->hookRunner = new VisualEditorHookRunner( $hookContainer );
-		$this->pageEditStash = $pageEditStash;
-		$this->skinFactory = $skinFactory;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->parsoidClientFactory = $parsoidClientFactory;
 	}
 
 	/**

@@ -22,10 +22,6 @@ class CheckUserHandler implements
 	/** @var UserIdentityUtils */
 	private $userIdentityUtils;
 
-	/**
-	 * @param FilterUser $filterUser
-	 * @param UserIdentityUtils $userIdentityUtils
-	 */
 	public function __construct(
 		FilterUser $filterUser,
 		UserIdentityUtils $userIdentityUtils

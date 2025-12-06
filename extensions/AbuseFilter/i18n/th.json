@@ -6,6 +6,7 @@
 			"Ans",
 			"B20180",
 			"Ekminarin",
+			"Electorus",
 			"Geonuch",
 			"Harley Hartwell",
 			"Horus",
@@ -20,8 +21,7 @@
 			"Prame Tan",
 			"RidJasper",
 			"Trisorn Triboon",
-			"Woraponboonkerd",
-			"Electorus"
+			"Woraponboonkerd"
 		]
 	},
 	"abusefilter-desc": "วิเคราะห์พฤติกรรมการแก้ไขอัตโนมัติ",
@@ -410,7 +410,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "ข้อความวิกิใหม่หลังการแก้ไข ($1)",
 	"abusefilter-edit-builder-vars-added-links": "ลิงก์ภายนอกทั้งหมดที่เพิ่มมาในการแก้ไข ($1)",
 	"abusefilter-edit-builder-vars-removed-links": "ลิงก์ภายนอกทั้งหมดที่นำออกในการแก้ไข ($1)",
-	"abusefilter-edit-builder-vars-all-links": "ลิงก์ภายนอกทั้งหมดในข้อความใหม่ ($1)",
+	"abusefilter-edit-builder-vars-old-links": "ลิงค์ภายนอกที่อยู่ในหน้าก่อนการแก้ไข ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "ข้อความวิกิหน้าใหม่ แปลงก่อนบันทึก ($1)",
 	"abusefilter-edit-builder-vars-diff-pst": "ผลต่างรวมของการแก้ไขที่ทำโดยการแก้ไข แปลงก่อนบันทึก ($1)",
 	"abusefilter-edit-builder-vars-addedlines-pst": "บรรทัดที่เพิ่มในการแก้ไข แปลงก่อนบันทึก ($1)",
@@ -434,7 +434,6 @@
 	"abusefilter-edit-builder-vars-movedto-restrictions-upload": "การป้องกันการอัปโหลดของหน้าปลายทางการย้าย ($1)",
 	"abusefilter-edit-builder-vars-movedto-recent-contributors": "ผู้ใช้สิบคนสุดท้ายที่ร่วมแก้ไขหน้าปลายทางการย้าย ($1)",
 	"abusefilter-edit-builder-vars-movedto-first-contributor": "ผู้ใช้คนแรกสุดท้ายที่ร่วมแก้ไขหน้าปลายทางการย้าย ($1)",
-	"abusefilter-edit-builder-vars-old-links": "ลิงก์ในหน้าก่อนการแก้ไข ($1)",
 	"abusefilter-edit-builder-vars-file-sha1": "แฮช SHA1 ของเนื้อหาไฟล์ ($1)",
 	"abusefilter-edit-builder-vars-file-size": "ขนาดของไฟล์หน่วยเป็นไบต์ ($1)",
 	"abusefilter-edit-builder-vars-file-mime": "ประเภท MIME ของไฟล์ ($1)",

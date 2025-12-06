@@ -90,7 +90,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 		try {
 			$popt = ParserOptions::newCanonical( 'bogus' );
 			$this->fail( 'Excpected exception not thrown' );
-		} catch ( InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException ) {
 		}
 	}
 
@@ -267,7 +267,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 				'canonical!wgRenderHashAppend!onPageRenderingHash',
 				[],
 				[ MainConfigNames::RenderHashAppend => '!wgRenderHashAppend' ],
-				__CLASS__ . '::onPageRenderingHash',
+				[ self::class, 'onPageRenderingHash' ],
 			],
 		];
 	}

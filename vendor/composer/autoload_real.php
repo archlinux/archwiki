@@ -35,7 +35,6 @@ class ComposerAutoloaderInit_mediawiki_vendor
         require __DIR__ . '/autoload_static.php';
         call_user_func(\Composer\Autoload\ComposerStaticInit_mediawiki_vendor::getInitializer($loader));
 
-        $loader->setClassMapAuthoritative(true);
         $loader->register(false);
 
         $filesToLoad = \Composer\Autoload\ComposerStaticInit_mediawiki_vendor::$files;

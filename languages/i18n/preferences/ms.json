@@ -208,6 +208,8 @@
 	"rcfilters-watchlist-preference-label": "Gunakan antara muka bukan JavaScript",
 	"rcfilters-watchlist-preference-help": "Memuatkan [[{{#special:Watchlist}}|senarai pantauan]] tanpa menapis pencarian atau penyerlahan fungsi.",
 	"prefs-changeswatchlist": "Perubahan yang dipaparkan",
+	"tog-watchstar-expiry": "Tempoh masa lalai dalam senarai pantau untuk laman yang ditambahkan secara manual:",
+	"tog-watch-expiry": "Tempoh masa lalai:",
 	"tog-watchlisthideminor": "Sembunyikan suntingan kecil daripada senarai pantau",
 	"tog-watchlisthidebots": "Sembunyikan suntingan bot daripada senarai pantau",
 	"tog-watchlisthideown": "Sembunyikan suntingan saya daripada senarai pantau",

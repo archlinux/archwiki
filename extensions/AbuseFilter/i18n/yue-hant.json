@@ -3,10 +3,10 @@
 		"authors": [
 			"H78c67c",
 			"Hello903hello",
-			"Winston Sung",
-			"Yueman",
+			"JeffreyKim",
 			"Ktchankt",
-			"JeffreyKim"
+			"Winston Sung",
+			"Yueman"
 		]
 	},
 	"abusefilter-desc": "應用自動行為到編輯",
@@ -186,7 +186,7 @@
 	"abusefilter-edit-done": "[[Special:AbuseFilter/$1|過濾器$3]]經已[[Special:AbuseFilter/history/$1/diff/prev/$2|改咗]]。",
 	"abusefilter-edit-badsyntax": "你所指定嘅過濾器有語法錯誤。\n個處理器嘅輸出係: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "你唔可以改呢個過濾器，由於佢有一個或者更多限制咗嘅動作。\n問一位有權限嘅用戶去幫你改，去加限制咗嘅動作。",
-	"abusefilter-edit-protected-variable-not-protected": "你嘅過濾器冇儲存到，因為佢用咗以下嘅[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables {{PLURAL:$1|受保護變數}}]：$1。請啟用受保護變數。呢個動作會將呢個過濾器嘅細節永久收埋，唔畀睇唔到受保護變數嘅用戶睇。",
+	"abusefilter-edit-protected-variable-not-protected": "你嘅過濾器冇儲存到，因為佢用咗以下嘅[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables {{PLURAL:$2|受保護變數}}]：$1。請啟用受保護變數。呢個動作會將呢個過濾器嘅細節永久收埋，唔畀睇唔到受保護變數嘅用戶睇。",
 	"abusefilter-edit-viewhistory": "睇呢個過濾器嘅歷史",
 	"abusefilter-edit-history": "歷史:",
 	"abusefilter-edit-check": "檢查語法",
@@ -279,13 +279,12 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "響編輯之後嘅新頁wiki字",
 	"abusefilter-edit-builder-vars-added-links": "編輯加咗嘅全部外連",
 	"abusefilter-edit-builder-vars-removed-links": "編輯拎走咗嘅全部外連",
-	"abusefilter-edit-builder-vars-all-links": "新字加外連",
+	"abusefilter-edit-builder-vars-old-links": "響編輯之前嘅連結",
 	"abusefilter-edit-builder-vars-new-text": "切咗標記嘅新頁字",
 	"abusefilter-edit-builder-vars-new-html": "新修訂處理過嘅HTML源碼",
 	"abusefilter-edit-builder-vars-restrictions-edit": "響嗰版嘅保謢等級",
 	"abusefilter-edit-builder-vars-restrictions-move": "搬嗰版嘅保謢等級",
 	"abusefilter-edit-builder-vars-recent-contributors": "對呢版嘅上十位編者",
-	"abusefilter-edit-builder-vars-old-links": "響編輯之前嘅連結",
 	"abusefilter-edit-builder-vars-file-sha1": "檔案內容嘅SHA1切細值",
 	"abusefilter-edit-builder-vars-old-text": "切咗標記嘅舊頁字",
 	"abusefilter-edit-builder-vars-old-html": "舊wiki字處理過嘅HTML",
@@ -383,7 +382,6 @@
 	"abusefilter-examine-notfound": "你所要求嘅更改搵唔到。",
 	"abusefilter-examine-incompatible": "你所請求嘅修改並未由濫用過濾器支援",
 	"abusefilter-examine-noresults": "你所提供嘅搵嘢參數搵到無結果。",
-	"abusefilter-examine-protected-vars-permission": "想睇有受保護變數嘅記錄嘅話，請去[[Special:Preferences|你嘅喜好設定]]度接受協議內容。",
 	"abusefilter-topnav": "'''濫用過濾器導航'''",
 	"abusefilter-topnav-home": "頭版",
 	"abusefilter-topnav-recentchanges": "最近過濾器改動",
@@ -410,5 +408,9 @@
 	"abusefilter-blocked-domains-title": "封鎖咗嘅出面域名",
 	"abusefilter-blocked-domains-attempted": "你想發佈嘅文字俾我哋嘅過濾器截住咗。呢個域名封咗唔加得：$1",
 	"abusefilter-log-ip-not-available": "唔適用",
-	"right-abusefilter-bypass-blocked-external-domains": "兜過封鎖咗嘅出面域名"
+	"right-abusefilter-bypass-blocked-external-domains": "兜過封鎖咗嘅出面域名",
+	"right-abusefilter-blocked-external-domains-log": "睇返被封鎖嘅外部網域嘅命中記錄",
+	"action-abusefilter-blocked-external-domains-log": "睇返被封鎖嘅外部網域嘅命中記錄",
+	"communityconfiguration-blockeddomain-title": "封鎖咗嘅外部域名",
+	"communityconfiguration-blockeddomain-description": "唔連得嘅外部域名清單。"
 }

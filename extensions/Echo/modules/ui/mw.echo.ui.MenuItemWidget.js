@@ -39,7 +39,7 @@ mw.echo.ui.MenuItemWidget = function MwEchoUiMenuItemWidget( config ) {
 	// Optional description
 	this.descriptionLabel = new OO.ui.LabelWidget( {
 		classes: [ 'mw-echo-ui-menuItemWidget-description' ],
-		label: config.description || ''
+		label: config.description || '',
 	} );
 	this.descriptionLabel.toggle( !this.prioritized && config.description );
 
@@ -54,7 +54,7 @@ mw.echo.ui.MenuItemWidget = function MwEchoUiMenuItemWidget( config ) {
 	if ( this.isLink ) {
 		this.$element.attr( {
 			href: config.url,
-			title: config.tooltip
+			title: config.tooltip,
 		} );
 	}
 };

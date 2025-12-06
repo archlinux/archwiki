@@ -6,7 +6,7 @@ use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\OATHAuth\Auth\SecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\Auth\TwoFactorModuleSelectAuthenticationRequest;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
@@ -72,7 +72,7 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 			new NullLogger(),
 			$this->createNoOpMock( AuthManager::class ),
 			$this->createNoOpMock( HookContainer::class ),
-			$this->createNoOpAbstractMock( Config::class ),
+			new HashConfig( [ 'OATHPrioritizedModules' => [] ] ),
 			$this->createNoOpMock( UserNameUtils::class )
 		);
 		$response = $provider->beginSecondaryAuthentication( $user, [] );
@@ -106,6 +106,19 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 						$test->assertEquals( AuthenticationResponse::newPass(), $response );
 					},
 				],
+			],
+			'one module, recovery codes, success' => [
+				'enabledModules' => [ 'recoverycodes' ],
+				'steps' => [
+					static function ( self $test, AuthenticationResponse $response ) {
+						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'recoverycodes',
+							$hasSwitchRequest = false );
+						return [ new FakeModuleAuthenticationRequest( 'recoverycodes', true ) ];
+					},
+					static function ( self $test, AuthenticationResponse $response ) {
+						$test->assertEquals( AuthenticationResponse::newPass(), $response );
+					},
+				]
 			],
 			'one module, failure then success' => [
 				'enabledModules' => [ 'totp' ],
@@ -245,7 +258,25 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 					},
 				],
 			],
-		];
+			'three modules, no switch' => [
+				'enabledModules' => [ 'recoverycodes', 'totp', 'webauthn' ],
+					'steps' => [
+						static function ( self $test, AuthenticationResponse $response ) {
+							$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'recoverycodes',
+								$hasSwitchRequest = true );
+							$switchReq = $response->neededRequests[1];
+							$test->assertSame( 'recoverycodes', $switchReq->currentModule );
+							$test->assertSame(
+								[ 'recoverycodes', 'totp', 'webauthn' ], array_keys( $switchReq->allowedModules )
+							);
+							return [ new FakeModuleAuthenticationRequest( 'recoverycodes', true ) ];
+						},
+						static function ( self $test, AuthenticationResponse $response ) {
+							$test->assertEquals( AuthenticationResponse::newPass(), $response );
+						},
+					],
+				],
+			];
 	}
 
 	private function getFakeModule( string $name ): IModule&MockObject {

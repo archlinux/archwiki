@@ -69,7 +69,7 @@ class ContentModelHandler extends IContentModelHandler {
 	 */
 	private function setupSelser(
 		ParsoidExtensionAPI $extApi, SelectiveUpdateData $selserData
-	) {
+	): void {
 		$env = $this->env;
 
 		// Why is it safe to use a reparsed dom for dom diff'ing?
@@ -149,8 +149,10 @@ class ContentModelHandler extends IContentModelHandler {
 		}
 
 		// set indicator metadata for unique keys
+		// (Note that this could easily be updated in the future to pass
+		// a DocumentFragment directly, instead of converting to a string.)
 		foreach ( $iData as $name => $html ) {
-			$extApi->getMetadata()->setIndicator( (string)$name, $html );
+			$extApi->getMetadata()->setIndicator( (string)$name, $extApi->domToHtml( $html, true ) );
 		}
 	}
 
@@ -218,7 +220,7 @@ class ContentModelHandler extends IContentModelHandler {
 
 		// Run any registered DOM preprocessors
 		foreach ( $siteConfig->getExtDOMProcessors() as $extName => $domProcs ) {
-			foreach ( $domProcs as $i => $classNameOrSpec ) {
+			foreach ( $domProcs as $classNameOrSpec ) {
 				$c = $siteConfig->getObjectFactory()->createObject( $classNameOrSpec, [
 					'allowClassName' => true,
 					'assertClass' => ExtDOMProcessor::class,
@@ -234,7 +236,7 @@ class ContentModelHandler extends IContentModelHandler {
 	 * @inheritDoc
 	 */
 	public function fromDOM(
-		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selserData = null
+		ParsoidExtensionAPI $extApi, ?SelectiveUpdateData $selectiveUpdateData = null
 	): string {
 		$env = $this->env;
 		$siteConfig = $env->getSiteConfig();
@@ -242,10 +244,10 @@ class ContentModelHandler extends IContentModelHandler {
 
 		$this->canonicalizeDOM( $env, $env->getTopLevelDoc() );
 
-		$serializerOpts = [ 'selserData' => $selserData ];
-		if ( $selserData ) {
+		$serializerOpts = [ 'selserData' => $selectiveUpdateData ];
+		if ( $selectiveUpdateData ) {
 			$serializer = new SelectiveSerializer( $env, $serializerOpts );
-			$this->setupSelser( $extApi, $selserData );
+			$this->setupSelser( $extApi, $selectiveUpdateData );
 			$wtsType = 'selser';
 		} else {
 			// Fallback

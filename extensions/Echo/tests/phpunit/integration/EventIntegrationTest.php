@@ -20,7 +20,7 @@ class EventIntegrationTest extends MediaWikiIntegrationTestCase {
 		$event = Event::create( [
 			'type' => 'welcome',
 			'agent' => $user,
-			'extra' => [ 'key' => 'value' ]
+			'extra' => [ 'key' => 'value' ],
 		] );
 		$eventId = $event->getId();
 		$this->assertNotFalse( $eventId );
@@ -41,7 +41,7 @@ class EventIntegrationTest extends MediaWikiIntegrationTestCase {
 			'type' => 'welcome',
 			// anons cannot be notified
 			'agent' => UserIdentityValue::newAnonymous( '1.2.3.4' ),
-			'extra' => [ 'key' => 'value' ]
+			'extra' => [ 'key' => 'value' ],
 		] );
 		$this->assertFalse( $event->getId() );
 		$this->assertSelect(
@@ -54,12 +54,12 @@ class EventIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testEventNotCreatedForUnknownUser() {
 		$this->clearHook( 'BeforeEchoEventInsert' );
+		$this->expectException( \Wikimedia\NormalizedException\NormalizedException::class );
 
 		$event = Event::create( [
 			'type' => 'welcome',
 			'agent' => UserIdentityValue::newAnonymous( 'Anonymous user' ),
 		] );
-		$this->assertFalse( $event );
 	}
 
 	public function testEventInsertionDeferred() {
@@ -76,7 +76,7 @@ class EventIntegrationTest extends MediaWikiIntegrationTestCase {
 			'type' => 'welcome',
 			'agent' => $user,
 			'title' => $title,
-			'extra' => [ 'key' => 'value' ]
+			'extra' => [ 'key' => 'value' ],
 		] );
 		$this->assertFalse( $event->getId() );
 		unset( $event );

@@ -128,7 +128,6 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Standard config for Language Alert in Sidebar
-	 * @return array
 	 */
 	private static function enableLanguageInHeaderFeatureConfig(): array {
 		return [

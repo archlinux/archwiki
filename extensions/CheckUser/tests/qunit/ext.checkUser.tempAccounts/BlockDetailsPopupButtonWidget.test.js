@@ -1,7 +1,7 @@
 'use strict';
 
 const BlockDetailsPopupButtonWidget = require(
-	'../../../modules/ext.checkUser.tempAccounts/BlockDetailsPopupButtonWidget.js'
+	'ext.checkUser.tempAccounts/BlockDetailsPopupButtonWidget.js'
 );
 
 QUnit.module( 'ext.checkUser.tempAccounts.BlockDetailsPopupButtonWidget', QUnit.newMwEnvironment( {

@@ -7,11 +7,14 @@ use DummySessionProvider;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Session\SingleBackendSessionStore;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LogLevel;
+use stdClass;
 use TestLogger;
 use UnexpectedValueException;
 use Wikimedia\ScopedCallback;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -27,11 +30,9 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		if ( $staticAccess->instance ) {
 			$old = TestingAccessWrapper::newFromObject( $staticAccess->instance );
 			$oldManager = $old->manager;
-			$oldStore = $old->store;
 			$oldLogger = $old->logger;
 			$reset[] = new ScopedCallback(
-				[ PHPSessionHandler::class, 'install' ],
-				[ $oldManager, $oldStore, $oldLogger ]
+				static fn () => PHPSessionHandler::install( $oldManager, $oldLogger )
 			);
 		}
 
@@ -80,10 +81,19 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		$logger = new TestLogger( false, static function ( $m ) {
 			return preg_match( '/^SessionManager using store/', $m ) ? null : $m;
 		} );
-		$manager = new SessionManager( [
-			'store' => $store,
-			'logger' => $logger,
-		] );
+
+		$services = $this->getServiceContainer();
+		$manager = new SessionManager(
+			$services->getMainConfig(),
+			$logger,
+			$services->getCentralIdLookup(),
+			$services->getHookContainer(),
+			$services->getObjectFactory(),
+			$services->getProxyLookup(),
+			$services->getUrlUtils(),
+			$services->getUserNameUtils(),
+			$services->getSessionStore()
+		);
 
 		$this->assertFalse( PHPSessionHandler::isInstalled() );
 		PHPSessionHandler::install( $manager );
@@ -94,7 +104,6 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $staticAccess->instance );
 		$priv = TestingAccessWrapper::newFromObject( $staticAccess->instance );
 		$this->assertSame( $manager, $priv->manager );
-		$this->assertSame( $store, $priv->store );
 		$this->assertSame( $logger, $priv->logger );
 	}
 
@@ -111,7 +120,6 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::ObjectCacheSessionExpiry => 2,
 		] );
 
-		$store = new TestBagOStuff();
 		$logger = new TestLogger( true, static function ( $m ) {
 			return (
 				// Discard all log events starting with expected prefix
@@ -120,15 +128,24 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 				|| preg_match( '/^(Persisting|Unpersisting) session (for|due to)/', $m )
 			) ? null : $m;
 		} );
-		$manager = new SessionManager( [
-			'store' => $store,
-			'logger' => $logger,
-		] );
+
+		$services = $this->getServiceContainer();
+		$manager = new SessionManager(
+			$services->getMainConfig(),
+			$logger,
+			$services->getCentralIdLookup(),
+			$services->getHookContainer(),
+			$services->getObjectFactory(),
+			$services->getProxyLookup(),
+			$services->getUrlUtils(),
+			$services->getUserNameUtils(),
+			new SingleBackendSessionStore( new TestBagOStuff(), $logger, StatsFactory::newNull() )
+		);
 		PHPSessionHandler::install( $manager );
 		$wrap = TestingAccessWrapper::newFromObject( $staticAccess->instance );
+		$oldFlags = $wrap->enable ? ( $wrap->warn ? 'warn' : 'enable' ) : 'disable';
 		$reset[] = new ScopedCallback(
-			[ $wrap, 'setEnableFlags' ],
-			[ $wrap->enable ? ( $wrap->warn ? 'warn' : 'enable' ) : 'disable' ]
+			static fn () => $wrap->setEnableFlags( $oldFlags )
 		);
 		$wrap->setEnableFlags( 'warn' );
 
@@ -157,8 +174,7 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		session_write_close();
 		$this->assertSame( [
 			[ LogLevel::DEBUG, 'SessionManager using store MediaWiki\Tests\Session\TestBagOStuff' ],
-			[ LogLevel::WARNING, 'Something wrote to $_SESSION!' ],
-			[ LogLevel::INFO, 'Session store: {action} for {reason}' ],
+			[ LogLevel::WARNING, "Something wrote to \$_SESSION['AuthenticationSessionTest']!" ],
 		], $logger->getBuffer() );
 
 		// Screw up $_SESSION so we can tell the difference between "this
@@ -296,8 +312,19 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 				return false;
 			}
 		);
-		$this->assertNull( $manager->getSessionById( $id, true ) );
 		session_write_close();
+
+		// Object identities change during a serialization roundtrip. This shouldn't trigger a save.
+		$logger->clearBuffer();
+		$session = $manager->getEmptySession();
+		$session->set( 'object in session', new stdClass() );
+		$session->persist();
+		$session->save();
+		session_id( $session->getId() );
+		session_start();
+		session_write_close();
+		// should not log "Something wrote to $_SESSION['object in session']!"
+		$this->assertSame( [], $logger->getBuffer() );
 
 		$this->clearHook( 'SessionCheckInfo' );
 		$this->assertNotNull( $manager->getSessionById( $id, true ) );

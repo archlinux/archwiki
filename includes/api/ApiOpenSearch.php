@@ -4,21 +4,7 @@
  * Copyright © 2008 Brooke Vibber <bvibber@wikimedia.org>
  * Copyright © 2014 Wikimedia Foundation and contributors
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -41,11 +27,6 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiOpenSearch extends ApiBase {
 	use \MediaWiki\Api\SearchApi;
 
-	/** @var string|null */
-	private $format = null;
-	/** @var string|null */
-	private $fm = null;
-
 	private LinkBatchFactory $linkBatchFactory;
 	private UrlUtils $urlUtils;
 
@@ -65,42 +46,32 @@ class ApiOpenSearch extends ApiBase {
 		$this->urlUtils = $urlUtils;
 	}
 
-	/**
-	 * Get the output format
-	 *
-	 * @return string
-	 */
-	protected function getFormat() {
-		if ( $this->format === null ) {
-			$format = $this->getParameter( 'format' );
-
-			if ( str_ends_with( $format, 'fm' ) ) {
-				$this->format = substr( $format, 0, -2 );
-				$this->fm = 'fm';
-			} else {
-				$this->format = $format;
-				$this->fm = '';
-			}
-		}
-		return $this->format;
+	private function getFormat(): string {
+		return $this->getParameter( 'format' );
 	}
 
+	private function getBaseFormat(): string {
+		$format = $this->getFormat();
+		return str_ends_with( $format, 'fm' ) ? substr( $format, 0, -2 ) : $format;
+	}
+
+	/** @inheritDoc */
 	public function getCustomPrinter() {
-		switch ( $this->getFormat() ) {
+		switch ( $this->getBaseFormat() ) {
 			case 'json':
 				return new ApiOpenSearchFormatJson(
-					$this->getMain(), $this->fm, $this->getParameter( 'warningsaserror' )
+					$this->getMain(), $this->getFormat(), $this->getParameter( 'warningsaserror' )
 				);
 
 			case 'xml':
-				$printer = $this->getMain()->createPrinterByName( 'xml' . $this->fm );
+				$printer = $this->getMain()->createPrinterByName( $this->getFormat() );
 				'@phan-var ApiFormatXml $printer';
 				/** @var ApiFormatXml $printer */
 				$printer->setRootElement( 'SearchSuggestion' );
 				return $printer;
 
 			default:
-				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getFormat()}'" );
+				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getBaseFormat()}'" );
 		}
 	}
 
@@ -153,7 +124,7 @@ class ApiOpenSearch extends ApiBase {
 
 		if ( $params['redirects'] === null ) {
 			// Backwards compatibility, don't resolve for JSON.
-			$resolveRedir = $this->getFormat() !== 'json';
+			$resolveRedir = $this->getBaseFormat() !== 'json';
 		} else {
 			$resolveRedir = $params['redirects'] === 'resolve';
 		}
@@ -233,10 +204,10 @@ class ApiOpenSearch extends ApiBase {
 	 * @param string $search
 	 * @param array[] &$results
 	 */
-	protected function populateResult( $search, &$results ) {
+	private function populateResult( $search, &$results ) {
 		$result = $this->getResult();
 
-		switch ( $this->getFormat() ) {
+		switch ( $this->getBaseFormat() ) {
 			case 'json':
 				// http://www.opensearch.org/Specifications/OpenSearch/Extensions/Suggestions/1.1
 				$result->addArrayType( null, 'array' );
@@ -287,10 +258,11 @@ class ApiOpenSearch extends ApiBase {
 				break;
 
 			default:
-				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getFormat()}'" );
+				ApiBase::dieDebug( __METHOD__, "Unsupported format '{$this->getBaseFormat()}'" );
 		}
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$allowedParams = $this->buildCommonApiParams( false ) + [
 			'suggest' => [
@@ -318,6 +290,7 @@ class ApiOpenSearch extends ApiBase {
 		return $allowedParams;
 	}
 
+	/** @inheritDoc */
 	public function getSearchProfileParams() {
 		return [
 			'profile' => [
@@ -327,6 +300,7 @@ class ApiOpenSearch extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=opensearch&search=Te'
@@ -334,6 +308,7 @@ class ApiOpenSearch extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Opensearch';
 	}

@@ -41,14 +41,11 @@ class CiteParsoidTest extends \MediaWikiIntegrationTestCase {
 	private function getSiteConfig( $options ) {
 		$objectFactory = $this->getServiceContainer()->getObjectFactory();
 		$siteConfig = new class( $options, $objectFactory ) extends MockSiteConfig {
-			private ObjectFactory $objectFactory;
-
 			public function __construct(
 				array $opts,
-				ObjectFactory $objectFactory
+				private readonly ObjectFactory $objectFactory,
 			) {
 				parent::__construct( $opts );
-				$this->objectFactory = $objectFactory;
 			}
 
 			public function getObjectFactory(): ObjectFactory {
@@ -70,7 +67,7 @@ class CiteParsoidTest extends \MediaWikiIntegrationTestCase {
 	 * @return Element
 	 */
 	private function parseWT( string $wt, array $pageOpts = [] ): Element {
-		$siteConfig = $this->getSiteConfig( [] );
+		$siteConfig = $this->getSiteConfig( [ 'linting' => true ] );
 		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
@@ -231,6 +228,16 @@ EOT;
 		$this->assertTrue( isset( $result[1]['templateInfo'] ), $desc );
 		$this->assertEquals( 'Template:1x', $result[1]['templateInfo']['name'], $desc );
 
+		$desc = "should lint content even when ref is the first node of a template";
+		$wt = "{{1x|<ref><s>x</ref> }}";
+		$result = $this->wtToLint( $wt );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'missing-end-tag', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 23, null, null ], $result[0]['dsr'], $desc );
+		$this->assertTrue( isset( $result[0]['params'] ), $desc );
+		$this->assertEquals( 's', $result[0]['params']['name'], $desc );
+		$this->assertEquals( 'Template:1x', $result[0]['templateInfo']['name'], $desc );
+
 		$desc = "should lint inside ref with redefinition";
 		$wt = "<ref name=\"test\">123</ref>\n" .
 			"<ref name=\"test\"><s>345</ref>\n" .
@@ -242,11 +249,34 @@ EOT;
 		$this->assertTrue( isset( $result[0]['params'] ), $desc );
 		$this->assertEquals( 's', $result[0]['params']['name'], $desc );
 
+		$desc = "should lint follow content once";
+		$wt = "<ref name='test'>hi ho</ref><ref follow='test'>[[File:Foobar.jpg|hi|ho]]</ref>";
+		$result = $this->wtToLint( $wt );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'bogus-image-options', $result[0]['type'], $desc );
+
+		$desc = "should lint content once in face of follow";
+		$wt = "<ref name='test'>[[File:Foobar.jpg|hi|ho]]</ref><ref follow='test'>hi ho</ref>";
+		$result = $this->wtToLint( $wt );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'bogus-image-options', $result[0]['type'], $desc );
+
+		$desc = "should preserve follow content when linting";
+		$wt = "<ref name='test'>1</ref><ref follow='test'>2</ref><ref follow='test'>3</ref>";
+		$body = $this->parseWT( $wt );
+		$li = DOMCompat::querySelector( $body, 'li' );
+		$this->assertEquals( '↑  1 2 3', $li->textContent, $desc );
+
 		// Should not get into a cycle trying to lint ref in ref
 		$this->wtToLint(
 			"{{#tag:ref|<ref name='y' />|name='x'}}{{#tag:ref|<ref name='x' />|name='y'}}<ref name='x' />"
 		);
 		$this->wtToLint( "<ref name='x' />{{#tag:ref|<ref name='x' />|name=x}}" );
+
+		// FIXME: MockDataAccess::preprocessWikitext is naive and doesn't do the nested expansion
+		// so we help it out to get the returned string we expect from the template
+		// $this->wtToLint( "{{1x|<ref name='test' />{{#tag:ref|<ref follow='test'>123</ref>|follow='test'}}}}" );
+		$this->wtToLint( "{{1x|<ref name='test' /><ref follow='test'><ref follow='test'>123</ref></ref>}}" );
 	}
 
 	/**

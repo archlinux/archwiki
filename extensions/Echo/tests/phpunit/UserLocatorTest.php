@@ -23,7 +23,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 			$rows[] = [
 				'wl_user' => $i,
 				'wl_namespace' => NS_USER_TALK,
-				'wl_title' => $key
+				'wl_title' => $key,
 			];
 		}
 
@@ -49,7 +49,7 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 				// expected user id's
 				'empty',
 				// event title
-				null
+				null,
 			],
 
 			[

@@ -1,33 +1,22 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace MediaWiki\Page;
 
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -214,10 +203,11 @@ class ImagePage extends Article {
 					$context->msg( 'metadata' )->text()
 				) . "\n"
 			);
-			$out->wrapWikiTextAsInterface(
-				'mw-imagepage-section-metadata',
+			$out->addHTML( Html::openElement( 'div', [ 'class' => 'mw-imagepage-section-metadata' ] ) );
+			$out->addWikiTextAsInterface(
 				$this->makeMetadataTable( $formattedMetadata )
 			);
+			$out->addHTML( Html::closeElement( 'div' ) );
 			$out->addModules( [ 'mediawiki.action.view.metadata' ] );
 		}
 
@@ -366,7 +356,6 @@ class ImagePage extends Article {
 		$enableUploads = $mainConfig->get( MainConfigNames::EnableUploads );
 		$send404Code = $mainConfig->get( MainConfigNames::Send404Code );
 		$svgMaxSize = $mainConfig->get( MainConfigNames::SVGMaxSize );
-		$enableLegacyMediaDOM = $mainConfig->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 		$this->loadFile();
 		$out = $context->getOutput();
 		$user = $context->getUser();
@@ -509,9 +498,7 @@ class ImagePage extends Article {
 				if ( $isMulti ) {
 					$linkPrev = $linkNext = '';
 					$count = $this->displayImg->pageCount();
-					if ( !$enableLegacyMediaDOM ) {
-						$out->addModules( 'mediawiki.page.media' );
-					}
+					$out->addModules( 'mediawiki.page.media' );
 
 					if ( $page > 1 ) {
 						$label = $context->msg( 'imgmultipageprev' )->text();
@@ -599,8 +586,6 @@ class ImagePage extends Article {
 				);
 			}
 
-			$longDesc = $context->msg( 'parentheses', $this->displayImg->getLongDesc() )->text();
-
 			$handler = $this->displayImg->getHandler();
 
 			// If this is a filetype with potential issues, warn the user.
@@ -617,24 +602,32 @@ class ImagePage extends Article {
 				}
 			}
 
-			$medialink = "[[Media:$filename|$linktext]]";
+			$medialink = $context->msg( new RawMessage( "[[Media:$filename|$linktext]]" ) )->parse();
+			if ( !$this->displayImg->isSafeFile() ) {
+				$medialink = Html::rawElement( 'span', [ 'class' => 'dangerousLink' ], $medialink );
+			}
+
+			// File::getLongDesc() is documented to return HTML, but many handlers used to incorrectly
+			// return plain text (T395834), so sanitize it in case the same bug is present in extensions.
+			$unsafeLongDesc = $this->displayImg->getLongDesc();
+			$longDesc = Sanitizer::removeSomeTags( $unsafeLongDesc );
+			$longDesc = $context->msg( 'parentheses' )->rawParams( $longDesc )->escaped();
+
+			$out->addHTML(
+				Html::rawElement( 'div', [ 'class' => 'fullMedia' ],
+					// <bdi> is needed here to separate the file name, which
+					// most likely ends in Latin characters, from the description,
+					// which may begin with the file type. In RTL environment
+					// this will get messy.
+					Html::rawElement( 'bdi', [ 'dir' => $sitedir ], $medialink ) .
+					' ' .
+					Html::rawElement( 'span', [ 'class' => 'fileInfo' ], $longDesc )
+				)
+			);
 
 			if ( !$this->displayImg->isSafeFile() ) {
-				$warning = $context->msg( 'mediawarning' )->plain();
-				// <bdi> is needed here to separate the file name, which
-				// most likely ends in Latin characters, from the description,
-				// which may begin with the file type. In RTL environment
-				// this will get messy.
-				$out->wrapWikiTextAsInterface( 'fullMedia', <<<EOT
-<bdi dir="$sitedir"><span class="dangerousLink">$medialink</span></bdi> <span class="fileInfo">$longDesc</span>
-EOT
-				);
-				// phpcs:enable
-				$out->wrapWikiTextAsInterface( 'mediaWarning', $warning );
-			} else {
-				$out->wrapWikiTextAsInterface( 'fullMedia', <<<EOT
-<bdi dir="$sitedir">$medialink</bdi> <span class="fileInfo">$longDesc</span>
-EOT
+				$out->addHTML(
+					Html::rawElement( 'div', [ 'class' => 'mediaWarning' ], $context->msg( 'mediawarning' )->parse() )
 				);
 			}
 
@@ -651,12 +644,13 @@ EOT
 				// additionally have a specific message for
 				// file-no-thumb-animation-gif
 				$ext = $this->displayImg->getExtension();
-				$noAnimMesg = wfMessageFallback(
-					'file-no-thumb-animation-' . $ext,
-					'file-no-thumb-animation'
-				)->setContext( $context )->plain();
-
-				$out->wrapWikiTextAsInterface( 'mw-noanimatethumb', $noAnimMesg );
+				$out->wrapWikiMsg(
+					Html::element( 'div', [ 'class' => 'mw-noanimatethumb' ], '$1' ),
+					wfMessageFallback(
+						'file-no-thumb-animation-' . $ext,
+						'file-no-thumb-animation'
+					)
+				);
 			}
 
 			if ( !$this->displayImg->isLocal() ) {
@@ -807,7 +801,7 @@ EOT
 		}
 	}
 
-	public function getUploadUrl() {
+	public function getUploadUrl(): string {
 		$this->loadFile();
 		$uploadTitle = SpecialPage::getTitleFor( 'Upload' );
 		return $uploadTitle->getFullURL( [
@@ -889,7 +883,7 @@ EOT
 	 * @return IResultWrapper
 	 */
 	protected function queryImageLinks( $target, $limit ) {
-		return $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
+		return $this->dbProvider->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title', 'il_to' ] )
 			->from( 'imagelinks' )
 			->join( 'page', null, 'il_from = page_id' )
@@ -956,7 +950,7 @@ EOT
 				[ 'class' => 'mw-imagepage-linkstoimage' ] ) . "\n"
 		);
 		// Sort the list by namespace:title
-		usort( $rows, [ $this, 'compare' ] );
+		usort( $rows, $this->compare( ... ) );
 
 		// Create links for every element
 		$currentCount = 0;

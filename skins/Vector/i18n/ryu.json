@@ -3,8 +3,8 @@
 		"authors": [
 			"ChoiChong",
 			"Kyoww",
-			"春春眠眠",
-			"さきじょーぐー"
+			"さきじょーぐー",
+			"春春眠眠"
 		]
 	},
 	"vector-languages": "言葉",
@@ -32,7 +32,6 @@
 	"skin-theme-night-label": "ダーク",
 	"skin-theme-os-label": "自動",
 	"skin-theme-exclusion-notice": "くぬページェーちゃーライトモードやいびーん。",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>含むページ検索すん",
 	"vector-toc-label": "目次",
 	"vector-toc-beginning": "ページ先頭",
 	"vector-anon-user-menu-pages": "ログアウトさたる編集者ぬページ",

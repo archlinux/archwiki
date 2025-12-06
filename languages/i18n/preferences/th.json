@@ -209,6 +209,8 @@
 	"rcfilters-watchlist-preference-label": "ใช้อินเทอร์เฟซที่ไม่ใช้ JavaScript",
 	"rcfilters-watchlist-preference-help": "โหลด[[{{#special:Watchlist}}|รายการเฝ้าดู]]โดยไม่มีการค้นหาตัวกรองหรือฟังก์ชันการเน้น",
 	"prefs-changeswatchlist": "การเปลี่ยนแปลงที่แสดง",
+	"tog-watchstar-expiry": "กำหนดระยะเวลาเริ่มต้นในรายการเฝ้าดูสำหรับหน้าที่เพิ่มด้วยตนเอง:",
+	"tog-watch-expiry": "ระยะเวลาเริ่มต้น:",
 	"tog-watchlisthideminor": "ซ่อนการแก้ไขเล็กน้อยจากรายการเฝ้าดู",
 	"tog-watchlisthidebots": "ซ่อนการแก้ไขของบอตจากรายการเฝ้าดู",
 	"tog-watchlisthideown": "ซ่อนการแก้ไขของฉันจากรายการเฝ้าดู",

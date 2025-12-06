@@ -16,6 +16,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use Profiler;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\ScopedCallback;
@@ -163,8 +164,6 @@ class AbuseLogger {
 
 	/**
 	 * Creates a template to use for logging taken actions
-	 *
-	 * @return array
 	 */
 	private function buildLogTemplate(): array {
 		// If $this->user isn't safe to load (e.g. a failure during
@@ -178,7 +177,7 @@ class AbuseLogger {
 			'afl_namespace' => $this->title->getNamespace(),
 			'afl_title' => $this->title->getDBkey(),
 			'afl_action' => $this->action,
-			'afl_ip' => $this->options->get( 'AbuseFilterLogIP' ) ? $this->requestIP : ''
+			'afl_ip_hex' => $this->options->get( 'AbuseFilterLogIP' ) ? IPUtils::toHex( $this->requestIP ) : '',
 		];
 		// Hack to avoid revealing IPs of people creating accounts
 		if ( ( $this->action === 'createaccount' || $this->action === 'autocreateaccount' ) && !$user->getId() ) {
@@ -187,10 +186,6 @@ class AbuseLogger {
 		return $logTemplate;
 	}
 
-	/**
-	 * @param array $data
-	 * @return ManualLogEntry
-	 */
 	private function newLocalLogEntryFromData( array $data ): ManualLogEntry {
 		// Give grep a chance to find the usages:
 		// logentry-abusefilter-hit
@@ -302,7 +297,8 @@ class AbuseLogger {
 	}
 
 	/**
-	 * Returns the BlobStore address for use as the value of the afl_var_dump column for an AbuseFilter log entry.
+	 * Returns a string to be used as the value of afl_var_dump in an abuse_filter_log row. This may either
+	 * be a BlobStore address or a JSON string (see {@link VariablesBlobStore::storeVarDump} for more detail).
 	 *
 	 * This method removes protected variables from the var dump that are not used in the filter
 	 * associated with the AbuseFilter log to be created. It also de-duplicates var dumps where

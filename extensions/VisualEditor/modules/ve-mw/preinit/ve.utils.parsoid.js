@@ -90,7 +90,7 @@ mw.libs.ve.stripRestbaseIds = function ( doc ) {
 mw.libs.ve.reduplicateStyles = function ( element ) {
 	Array.prototype.forEach.call( element.querySelectorAll( 'link[rel~="mw-deduplicated-inline-style"]' ), ( link ) => {
 		const href = link.getAttribute( 'href' );
-		if ( !href || href.slice( 0, 'mw-data:'.length ) !== 'mw-data:' ) {
+		if ( !href || !href.startsWith( 'mw-data:' ) ) {
 			return;
 		}
 		const key = href.slice( 'mw-data:'.length );
@@ -165,6 +165,7 @@ mw.libs.ve.deduplicateStyles = function ( element ) {
 			// Dupe - replace with a placeholder <link> reference
 			const link = style.ownerDocument.createElement( 'link' );
 			link.setAttribute( 'rel', 'mw-deduplicated-inline-style' );
+			// eslint-disable-next-line local/no-unsanitized-href
 			link.setAttribute( 'href', 'mw-data:' + key );
 
 			// Copy attributes from the old `link` node (for selser)
@@ -203,7 +204,7 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
 	prefix = prefix || '';
 	Array.prototype.forEach.call( container.querySelectorAll( 'a[href*="#"]' ), ( el ) => {
 		let fragment = null;
-		if ( el.getAttribute( 'href' )[ 0 ] === '#' ) {
+		if ( el.getAttribute( 'href' ).startsWith( '#' ) ) {
 			// Legacy parser
 			fragment = el.getAttribute( 'href' ).slice( 1 );
 		} else {
@@ -232,6 +233,9 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
 						target.setAttribute( 'data-mw-id-fixed', '' );
 					}
 				}
+				// This utility doesn't need to enforce href safety, that
+				// is up to the user when building the DOM nodes originally
+				// eslint-disable-next-line local/no-unsanitized-href
 				el.setAttribute( 'href', '#' + prefix + fragment );
 			}
 			el.removeAttribute( 'target' );
@@ -307,7 +311,7 @@ mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
 	const relativeHref = url.toString().replace( /^https?:/i, '' );
 	// Check if this matches the server's script path (as used by red links)
 	const scriptBase = new URL( mw.config.get( 'wgScript' ), doc.baseURI ).toString().replace( /^https?:/i, '' );
-	if ( relativeHref.indexOf( scriptBase ) === 0 ) {
+	if ( relativeHref.startsWith( scriptBase ) ) {
 		if ( queryLength === 1 && url.searchParams.get( 'title' ) ) {
 			return returnInternalData( url.searchParams.get( 'title' ) + url.hash );
 		}

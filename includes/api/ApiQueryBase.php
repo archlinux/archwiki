@@ -2,21 +2,7 @@
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -47,6 +33,9 @@ abstract class ApiQueryBase extends ApiBase {
 
 	private ApiQuery $mQueryModule;
 	private ?IReadableDatabase $mDb;
+	/** @var array<string,IReadableDatabase> */
+	private array $virtualDBs;
+	private string|false $currentDomain;
 
 	/**
 	 * @var SelectQueryBuilder|null
@@ -63,6 +52,8 @@ abstract class ApiQueryBase extends ApiBase {
 		parent::__construct( $queryModule->getMain(), $moduleName, $paramPrefix );
 		$this->mQueryModule = $queryModule;
 		$this->mDb = null;
+		$this->virtualDBs = [];
+		$this->currentDomain = false;
 		$this->resetQueryParams();
 	}
 
@@ -119,14 +110,53 @@ abstract class ApiQueryBase extends ApiBase {
 	}
 
 	/**
-	 * Get the Query database connection (read-only)
+	 * Get the Query database connection (read-only). This will return the
+	 * virtual database if a virtual domain is set, otherwise the main database.
+	 *
 	 * @stable to override
 	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
+		if ( $this->currentDomain ) {
+			if ( !isset( $this->virtualDBs[$this->currentDomain] ) ) {
+				$db = MediaWikiServices::getInstance()
+					->getConnectionProvider()
+					->getReplicaDatabase( $this->currentDomain );
+				$this->virtualDBs[$this->currentDomain] = $db;
+			}
+			return $this->virtualDBs[$this->currentDomain];
+		}
+
 		$this->mDb ??= $this->getQuery()->getDB();
 
 		return $this->mDb;
+	}
+
+	/**
+	 * Set the Query database connection (read-only)
+	 *
+	 * @stable to override
+	 * @param string|false $virtualDomain
+	 */
+	protected function setVirtualDomain( string|false $virtualDomain ) {
+		$this->currentDomain = $virtualDomain;
+		$this->updateQueryBuilderConnection();
+	}
+
+	/**
+	 * Reset the virtual domain to the main database
+	 *
+	 * @stable to override
+	 */
+	protected function resetVirtualDomain() {
+		$this->currentDomain = false;
+		$this->updateQueryBuilderConnection();
+	}
+
+	private function updateQueryBuilderConnection() {
+		if ( $this->queryBuilder ) {
+			$this->queryBuilder->connection( $this->getDB() );
+		}
 	}
 
 	/**
@@ -547,7 +577,7 @@ abstract class ApiQueryBase extends ApiBase {
 		try {
 			$titleParser = MediaWikiServices::getInstance()->getTitleParser();
 			$t = $titleParser->parseTitle( $titlePart . 'X', $defaultNamespace );
-		} catch ( MalformedTitleException $e ) {
+		} catch ( MalformedTitleException ) {
 			$t = null;
 		}
 

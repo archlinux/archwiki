@@ -3,15 +3,18 @@
 namespace MediaWiki\HTMLForm\Field;
 
 use MediaWiki\HTMLForm\HTMLFormField;
+use MediaWiki\Message\Message;
 
-/*
+/**
  * @stable to extend
  */
 class HTMLEditTools extends HTMLFormField {
+	/** @inheritDoc */
 	public function getInputHTML( $value ) {
 		return '';
 	}
 
+	/** @inheritDoc */
 	public function getTableRow( $value ) {
 		$msg = $this->formatMsg();
 
@@ -41,6 +44,9 @@ class HTMLEditTools extends HTMLFormField {
 		return $this->getDiv( $value );
 	}
 
+	/**
+	 * @return Message
+	 */
 	protected function formatMsg() {
 		if ( empty( $this->mParams['message'] ) ) {
 			$msg = $this->msg( 'edittools' );

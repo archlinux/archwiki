@@ -303,7 +303,7 @@ return testframework.getTestProvider( {
 		args = { 'formatDate', 'Y-F-d H:i:s', '20140305123456' },
 		expect = {
 			{ '2014-March-05 12:34:56' },
-			{ '2014-Mart-05 12:34:56' },
+			{ '2014-mart-05 12:34:56' },
 			{ '۲۰۱۴-مارس-۰۵ ۱۲:۳۴:۵۶' },
 			"language code '[[bogus]]' is invalid",
 		}

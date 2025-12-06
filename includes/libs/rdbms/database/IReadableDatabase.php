@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 namespace Wikimedia\Rdbms;
@@ -237,7 +223,7 @@ interface IReadableDatabase extends Stringable, ISQLPlatform, DbQuoter, IDatabas
 	 *
 	 * Each table reference assigns a table name to a specified collection of rows
 	 * for the context of the query (e.g. field expressions, WHERE clause, GROUP BY
-	 * clause, HAVING clause, ect...). Use of multiple table references implies a JOIN.
+	 * clause, HAVING clause, etc...). Use of multiple table references implies a JOIN.
 	 *
 	 * If a string is given, it must hold the name of the table having the specified
 	 * collection of rows. If an array is given, each entry must be one of the following:

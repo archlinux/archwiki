@@ -49,7 +49,7 @@ class EchoMentionInSummaryPresentationModel extends EchoEventPresentationModel {
 	private function getDiffURL(): string {
 		return $this->event->getTitle()->getLocalURL( [
 			'oldid' => 'prev',
-			'diff' => $this->event->getExtraParam( 'revid' )
+			'diff' => $this->event->getExtraParam( 'revid' ),
 		] );
 	}
 }

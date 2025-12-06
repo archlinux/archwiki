@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-scribunto-console-summary": "د سکريبونتو کنسول څخه د XHR غوښتنو د چوپړکولو لپاره دننه‌نی چلنوال.",
+	"apihelp-scribunto-console-param-title": "ازمېښت لپاره د چلنوال سرليک",
+	"apihelp-scribunto-console-param-content": "د چلنوال نوې منځپانگه.",
+	"apihelp-scribunto-console-param-session": "ناستې نښه.",
+	"apihelp-scribunto-console-param-question": "راتلونکې کرښه چې د سکريپټ په توگه ارزول کېږي.",
+	"apihelp-scribunto-console-param-clear": "د اوسنۍ ناستې دريځ سپاکولو لپاره اوڼل."
+}

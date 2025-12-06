@@ -42,7 +42,7 @@ mw.echo.ui.NotificationsListWidget = function MwEchoUiNotificationsListWidget( c
 			// Fallback on IDs
 			return b.getId() - a.getId();
 		},
-		config
+		config,
 	);
 
 	// Initialize models
@@ -61,7 +61,7 @@ mw.echo.ui.NotificationsListWidget = function MwEchoUiNotificationsListWidget( c
 
 	this.manager.connect( this, {
 		update: 'resetDataFromModel',
-		discard: 'onModelManagerDiscard'
+		discard: 'onModelManagerDiscard',
 	} );
 
 	this.$element
@@ -137,8 +137,8 @@ mw.echo.ui.NotificationsListWidget.prototype.resetDataFromModel = function ( mod
 					model,
 					{
 						$overlay: this.$overlay,
-						animateSorting: this.animated
-					}
+						animateSorting: this.animated,
+					},
 				);
 			} else {
 				// local bundle
@@ -148,8 +148,8 @@ mw.echo.ui.NotificationsListWidget.prototype.resetDataFromModel = function ( mod
 					{
 						$overlay: this.$overlay,
 						bundle: false,
-						animateSorting: this.animated
-					}
+						animateSorting: this.animated,
+					},
 				);
 			}
 			itemWidgets.push( widget );
@@ -164,8 +164,8 @@ mw.echo.ui.NotificationsListWidget.prototype.resetDataFromModel = function ( mod
 					subItem,
 					{
 						$overlay: this.$overlay,
-						bundle: false
-					}
+						bundle: false,
+					},
 				);
 				itemWidgets.push( widget );
 				$elements = $elements.add( widget.$element );

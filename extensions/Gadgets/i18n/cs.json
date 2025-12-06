@@ -17,7 +17,6 @@
 	"gadgetusage-usercount": "Počet uživatelů",
 	"gadgetusage-noresults": "Nenalezena žádná udělátka.",
 	"gadgetusage-intro": "Tato tabulka zobrazuje počet uživatelů, kteří si zapnuli jednotlivá udělátka na této wiki. Jako aktivní se počítají uživatelé, kteří za {{PLURAL:$1|poslední den|poslední $1 dny|posledních $1 dní}} provedli editaci. Seznam nezahrnuje statistiky udělátek, která jsou pro všechny implicitně zapnutá, a může zahrnovat i udělátka, která již nejsou dostupná.",
-	"gadgetusage-intro-noactive": "Tato tabulka zobrazuje počet uživatelů, kteří si zapnuli jednotlivá udělátka na této wiki. Seznam nezahrnuje statistiky udělátek, která jsou pro všechny implicitně zapnutá, a může zahrnovat i udělátka, která již nejsou dostupná.",
 	"gadgetusage-activeusers": "Aktivní uživatelé",
 	"gadgetusage-default": "Výchozí",
 	"gadgets-title": "Udělátka",

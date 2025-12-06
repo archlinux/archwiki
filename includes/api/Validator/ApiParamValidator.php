@@ -173,7 +173,7 @@ class ApiParamValidator {
 			$ret['messages'][] = MessageValue::newFromSpecifier( $msg );
 		} catch ( TimeoutException $e ) {
 			throw $e;
-		} catch ( Exception $e ) {
+		} catch ( Exception ) {
 			$ret['issues'][] = "Message specification for $key is not valid";
 		}
 	}
@@ -349,7 +349,7 @@ class ApiParamValidator {
 	 * @throws ApiUsageException always
 	 * @return never
 	 */
-	private function convertValidationException( ApiBase $module, ValidationException $ex ) {
+	private function convertValidationException( ApiBase $module, ValidationException $ex ): never {
 		$mv = $ex->getFailureMessage();
 		throw ApiUsageException::newWithMessage(
 			$module,

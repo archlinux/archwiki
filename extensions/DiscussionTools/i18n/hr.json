@@ -8,7 +8,8 @@
 			"Matma Rex",
 			"Neptune, the Mystic",
 			"Ponor",
-			"Woytecr"
+			"Woytecr",
+			"Aca"
 		]
 	},
 	"discussiontools": "Alati za raspravu",
@@ -26,6 +27,7 @@
 	"discussiontools-emptystate-desc-self-temp": "Suradnici mogu koristiti ovu [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|stranicu za razgovor]] kako bi {{GENDER:|Vam}} poslali javnu poruku.\n\nNakon nekog vremena [[{{MediaWiki:tempuser-helppage}}|ova će stranica nestati]]. Da biste nastavili primati obavijesti i pristupali drugim značajkama, [$2 prijavite se] ili [$1 stvorite račun].",
 	"discussiontools-emptystate-desc-user": "Na [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|stranicama za razgovor]] raspravljamo kako se  može unaprijediti {{SITENAME}}. Započnite novu raspravu i surađujte sa {{GENDER:{{PAGENAME}}|suradnikom|suradnicom|suradnikom/suradnicom}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]].{{GENDER:|}}",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Stranice za razgovor]] su mjesta na kojima suradnici raspravljaju kako sadržaj projekta {{SITENAME}} učiniti najboljim mogućim. Da biste započeli raspravu o izmjenama napravljenim s ove IP adrese, rabite ovu stranicu. Ono što ovdje napišete bit će javno i vidljivo svima. Mnoge IP adrese povremeno se mijenjaju i često ih dijeli nekoliko ljudi.",
+	"discussiontools-emptystate-desc-user-temp": "Ovu [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|razgovornu stranicu]] rabite kako biste započeli razgovor {{GENDER:{{PAGENAME}}|s}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] o poboljšanjima projekta {{SITENAME}}. Sve što {{GENDER:|}} napišete, biti će javno dostupno svima. Obzirom da je [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] [[{{MediaWiki:tempuser-helppage}}|privremeni račun]], ova će razgovorna stranica s vremenom isteći. [[{{MediaWiki:tempuser-helppage}}|Više informacija]].",
 	"discussiontools-emptystate-title": "Započnite raspravu o stranici {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Dobro došli}} na svoju stranicu za razgovor",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Dobro došli}} na ovu stranicu za razgovor",
@@ -66,7 +68,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Otkazali ste pretplatu.",
 	"discussiontools-notification-added-topic-header": "{{GENDER:$2|Suradnik|Suradnica}} $1 {{GENDER:$2|započeo|započela}} je novu temu <strong>$4</strong> na stranici <strong>$3</strong>.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Jedna nova tema|$1 nove teme|$1 novih tema|100=Preko 99 novih tema}} na \"<strong>$2</strong>\".",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Vidi temu",
 	"discussiontools-notification-comment-thank-header": "$1 se {{GENDER:$2|zahvalio|zahvalila}} za {{GENDER:$4|Vaš}} komentar u temi \"<strong>$3</strong>\".",
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Jedna osoba zahvalila se|$1 osobe zahvalile su se|$1 osoba zahvalilo se|100=99+ osoba zahvalilo se}} za {{GENDER:$3|Vaš}} komentar u temi \"<strong>$2</strong>\".",
@@ -106,7 +107,7 @@
 	"discussiontools-preference-summary": "Više informacija o ovoj mogućnosti možete saznati na [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary stranici za razgovor projekta].",
 	"discussiontools-preference-topicsubscription": "Omogući praćenje tema razgovora",
 	"discussiontools-preference-topicsubscription-help": "Ovo će Vam omogućiti praćenje tema i primanje obavijesti o novim komentarima na stranicama za razgovor",
-	"discussiontools-preference-visualenhancements": "Prikaži aktivnost rasprave",
+	"discussiontools-preference-visualenhancements": "Prikazuj aktivnost rasprave",
 	"discussiontools-preference-visualenhancements-help": "Ovo će omogućiti novi izgled stranice za razgovor koji uključuje informacije o aktivnostima unutar svake rasprave.",
 	"discussiontools-replybutton": "{{GENDER:|Odgovor}}",
 	"discussiontools-replylink": "{{GENDER:|odgovori}}",

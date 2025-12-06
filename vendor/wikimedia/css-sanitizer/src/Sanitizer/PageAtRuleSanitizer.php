@@ -25,7 +25,7 @@ use Wikimedia\CSS\Util;
 
 /**
  * Sanitizes a CSS \@page rule
- * @see https://www.w3.org/TR/2018/WD-css-page-3-20181018/
+ * @see https://www.w3.org/TR/2023/WD-css-page-3-20230914/
  */
 class PageAtRuleSanitizer extends RuleSanitizer {
 
@@ -76,6 +76,7 @@ class PageAtRuleSanitizer extends RuleSanitizer {
 					new KeywordMatcher( [ 'portrait', 'landscape' ] ),
 				] ),
 			] ),
+			'page-orientation' => new KeywordMatcher( [ 'upright', 'rotate-left', 'rotate-right' ] ),
 			'marks' => new Alternative( [
 				new KeywordMatcher( 'none' ),
 				UnorderedGroup::someOf( [

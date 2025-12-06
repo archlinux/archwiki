@@ -18,16 +18,17 @@ class InTable extends InsertionMode {
 		'html' => true
 	];
 
+	private const CHARACTERS_ALLOWED = [
+		'table' => true,
+		'tbody' => true,
+		'tfoot' => true,
+		'thead' => true,
+		'tr' => true,
+	];
+
 	/** @inheritDoc */
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
-		$allowed = [
-			'table' => true,
-			'tbody' => true,
-			'tfoot' => true,
-			'thead' => true,
-			'tr' => true
-		];
-		if ( isset( $allowed[$this->builder->stack->current->htmlName] ) ) {
+		if ( isset( self::CHARACTERS_ALLOWED[$this->builder->stack->current->htmlName] ) ) {
 			$this->builder->pendingTableCharacters = [];
 			$this->dispatcher->switchAndSave( Dispatcher::IN_TABLE_TEXT )
 				->characters( $text, $start, $length, $sourceStart, $sourceLength );

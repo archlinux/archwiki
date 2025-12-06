@@ -111,7 +111,7 @@ class MobileFrontendHooks implements
 					$config->get( 'MinervaNightMode' )
 				)
 			);
-		} catch ( RuntimeException $e ) {
+		} catch ( RuntimeException ) {
 			// features already registered...
 			// due to a bug it's possible for this to run twice
 			// https://phabricator.wikimedia.org/T165068

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
@@ -10,8 +11,7 @@
 			"Srđan",
 			"Жељко Тодоровић",
 			"Михајло Анђелковић",
-			"Сербијана",
-			"Aca"
+			"Сербијана"
 		]
 	},
 	"skinname-vector": "Векторско (2010)",
@@ -20,8 +20,6 @@
 	"vector-skin-desc": "Пружа две Векторске теме:\n* 2011 - Савремена верзија Монобука са свежим изгледом и много корисних побољшања.\n* 2022 - Нови Вектор направљен у оквиру пројекта [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
 	"prefs-vector-enable-vector-1-label": "Користи старију векторску тему",
 	"prefs-vector-enable-vector-1-help": "У наредном периоду постепено ћемо ажурирати векторску тему. Изаберите опцију изнад како бисте се вратили на старији изглед теме (децембар 2019). [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements Детаљније о ажурирањима]",
-	"vector-opt-out": "Врати се на стари изглед",
-	"vector-opt-out-tooltip": "Промените подешавања да бисте се вратили старом изгледу теме (старија векторска)",
 	"vector.css": "/* CSS постављен овде учитаће се свим корисницима векторске теме */",
 	"vector.js": "/* JavaScript постављен овде учитаће се свим корисницима векторске теме */",
 	"vector-action-toggle-sidebar": "Прикажи/сакриј бочну траку",
@@ -62,8 +60,6 @@
 	"skin-theme-night-label": "Тамна",
 	"skin-theme-os-label": "Аутоматски",
 	"skin-theme-exclusion-notice": "Ова страница је увек у светлом режиму.",
-	"vector-search-loader": "Учитавам предлоге претраге",
-	"vector-searchsuggest-containing": "Претражи странице које садрже <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
 	"vector-toc-label": "Садржај",
 	"vector-toc-beginning": "(Врх)",

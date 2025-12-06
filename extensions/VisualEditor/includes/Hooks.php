@@ -22,6 +22,7 @@ use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\VisualEditor\EditCheck\ApiEditCheckReferenceUrl;
+use MediaWiki\Extension\VisualEditor\Services\VisualEditorAvailabilityLookup;
 use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\Hook\CustomEditorHook;
 use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
@@ -57,9 +58,6 @@ use OOUI\ButtonGroupWidget;
 use OOUI\ButtonWidget;
 use TextSlotDiffRenderer;
 
-/**
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
- */
 class Hooks implements
 	TextSlotDiffRendererTablePrefixHook,
 	BeforeInitializeHook,
@@ -103,6 +101,9 @@ class Hooks implements
 		'editcheck-references-shown',
 		'editcheck-newcontent',
 		'editcheck-newreference',
+		'editcheck-tone',
+		'editcheck-tone-shown',
+		'editcheck-paste-shown',
 		// No longer in active use:
 		'editcheck-references-activated',
 		'editcheck-reference-decline-common-knowledge',
@@ -113,10 +114,10 @@ class Hooks implements
 		'visualeditor-switched'
 	];
 
-	private ExtensionRegistry $extensionRegistry;
-
-	public function __construct( ExtensionRegistry $extensionRegistry ) {
-		$this->extensionRegistry = $extensionRegistry;
+	public function __construct(
+		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly VisualEditorAvailabilityLookup $visualEditorAvailabilityLookup,
+	) {
 	}
 
 	/**
@@ -237,13 +238,10 @@ class Hooks implements
 		IContextSource $context,
 		array &$parts
 	) {
-		$services = MediaWikiServices::getInstance();
-		$veConfig = $services->getConfigFactory()
-			->makeConfig( 'visualeditor' );
 		$output = $context->getOutput();
 
 		// Return early if not viewing a diff of an allowed type.
-		if ( !ApiVisualEditor::isAllowedContentType( $veConfig, $textSlotDiffRenderer->getContentModel() )
+		if ( !$this->visualEditorAvailabilityLookup->isAllowedContentType( $textSlotDiffRenderer->getContentModel() )
 			|| $output->getActionName() !== 'view'
 		) {
 			return;
@@ -279,7 +277,7 @@ class Hooks implements
 	 * @param WebRequest $req
 	 * @return bool
 	 */
-	private static function isSupportedEditPage( Title $title, User $user, WebRequest $req ): bool {
+	private function isSupportedEditPage( Title $title, User $user, WebRequest $req ): bool {
 		if (
 			$req->getVal( 'action' ) !== 'edit' ||
 			!MediaWikiServices::getInstance()->getPermissionManager()->quickUserCan( 'edit', $user, $title )
@@ -295,52 +293,12 @@ class Hooks implements
 
 		switch ( self::getEditPageEditor( $user, $req ) ) {
 			case 'visualeditor':
-				return self::isVisualAvailable( $title, $req, $user ) ||
+				return $this->visualEditorAvailabilityLookup->isAvailable( $title, $req, $user ) ||
 					self::isWikitextAvailable( $title, $user );
 			case 'wikitext':
 			default:
 				return self::isWikitextAvailable( $title, $user );
 		}
-	}
-
-	/**
-	 * @param UserIdentity $user
-	 * @return bool
-	 */
-	private static function enabledForUser( UserIdentity $user ): bool {
-		$services = MediaWikiServices::getInstance();
-		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
-		$userOptionsLookup = $services->getUserOptionsLookup();
-		$isBeta = $veConfig->get( 'VisualEditorEnableBetaFeature' );
-
-		return ( $isBeta ?
-			$userOptionsLookup->getOption( $user, 'visualeditor-enable' ) :
-			!$userOptionsLookup->getOption( $user, 'visualeditor-betatempdisable' ) ) &&
-			!$userOptionsLookup->getOption( $user, 'visualeditor-autodisable' );
-	}
-
-	/**
-	 * @param Title $title
-	 * @param WebRequest $req
-	 * @param UserIdentity $user
-	 * @return bool
-	 */
-	private static function isVisualAvailable( Title $title, WebRequest $req, UserIdentity $user ): bool {
-		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
-			->makeConfig( 'visualeditor' );
-
-		return (
-			// If forced by the URL parameter, skip the namespace check (T221892) and preference check
-			( $req->getVal( 'veaction' ) === 'edit' || (
-				// Only in enabled namespaces
-				ApiVisualEditor::isAllowedNamespace( $veConfig, $title->getNamespace() ) &&
-
-				// Enabled per user preferences
-				self::enabledForUser( $user )
-			) ) &&
-			// Only for pages with a supported content model
-			ApiVisualEditor::isAllowedContentType( $veConfig, $title->getContentModel() )
-		);
 	}
 
 	/**
@@ -394,7 +352,7 @@ class Hooks implements
 			}
 		}
 
-		if ( !self::enabledForUser( $user ) ) {
+		if ( !$this->visualEditorAvailabilityLookup->isEnabledForUser( $user ) ) {
 			return true;
 		}
 
@@ -408,7 +366,7 @@ class Hooks implements
 			return true;
 		}
 
-		if ( self::isSupportedEditPage( $title, $user, $req ) ) {
+		if ( $this->isSupportedEditPage( $title, $user, $req ) ) {
 			$params = $req->getValues();
 			$params['venoscript'] = '1';
 			$url = wfScript() . '?' . wfArrayToCgi( $params );
@@ -465,11 +423,13 @@ class Hooks implements
 		// VisualEditor shouldn't even call this method when it's disabled, but it is a public API for
 		// other extensions (e.g. DiscussionTools), and the editor preferences might have surprising
 		// values if the user has tried VisualEditor in the past and then disabled it. (T257234)
-		if ( !self::enabledForUser( $user ) ) {
+		$services = MediaWikiServices::getInstance();
+		/** @var VisualEditorAvailabilityLookup $visualEditorAvailabilityLookup */
+		$visualEditorAvailabilityLookup = $services->get( VisualEditorAvailabilityLookup::SERVICE_NAME );
+		if ( !$visualEditorAvailabilityLookup->isEnabledForUser( $user ) ) {
 			return 'wikitext';
 		}
 
-		$services = MediaWikiServices::getInstance();
 		$userOptionsLookup = $services->getUserOptionsLookup();
 
 		switch ( $userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) ) {
@@ -560,7 +520,7 @@ class Hooks implements
 			$config->get( 'VisualEditorUseSingleEditTab' ) &&
 			wfTimestampNow() < $config->get( 'VisualEditorSingleEditTabSwitchTimeEnd' ) &&
 			$user->isNamed() &&
-			self::enabledForUser( $user ) &&
+			$this->visualEditorAvailabilityLookup->isEnabledForUser( $user ) &&
 			!$userOptionsLookup->getOption( $user, 'visualeditor-hidetabdialog' ) &&
 			$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'remember-last'
 		) {
@@ -584,7 +544,7 @@ class Hooks implements
 
 		// Exit if the user doesn't have VE enabled
 		if (
-			!self::enabledForUser( $user ) ||
+			!$this->visualEditorAvailabilityLookup->isEnabledForUser( $user ) ||
 			// T253941: This option does not actually disable the editor, only leaves the tabs/links unchanged
 			( $config->get( 'VisualEditorDisableForAnons' ) && !$user->isRegistered() )
 		) {
@@ -594,7 +554,7 @@ class Hooks implements
 		$title = $skin->getRelevantTitle();
 		// Don't exit if this page isn't VE-enabled, since we should still
 		// change "Edit" to "Edit source".
-		$isAvailable = self::isVisualAvailable( $title, $skin->getRequest(), $user );
+		$isAvailable = $this->visualEditorAvailabilityLookup->isAvailable( $title, $skin->getRequest(), $user );
 
 		$tabMessages = $config->get( 'VisualEditorTabMessages' );
 		// Rebuild the $links['views'] array and inject the VisualEditor tab before or after
@@ -795,7 +755,7 @@ class Hooks implements
 	 *
 	 * @param RecentChange $rc The new RC entry.
 	 */
-	public function onRecentChange_Save( $rc ) {
+	public function onRecentChange_save( $rc ) {
 		$request = RequestContext::getMain()->getRequest();
 		if ( $request->getBool( 'veswitched' ) && $rc->getAttribute( 'rc_this_oldid' ) ) {
 			$rc->addTags( 'visualeditor-switched' );
@@ -844,7 +804,7 @@ class Hooks implements
 		$user = $skin->getUser();
 		// Exit if the user doesn't have VE enabled
 		if (
-			!self::enabledForUser( $user ) ||
+			!$this->visualEditorAvailabilityLookup->isEnabledForUser( $user ) ||
 			// T253941: This option does not actually disable the editor, only leaves the tabs/links unchanged
 			( $config->get( 'VisualEditorDisableForAnons' ) && !$user->isRegistered() )
 		) {
@@ -896,7 +856,7 @@ class Hooks implements
 		);
 
 		// add VE edit section in VE available namespaces
-		if ( self::isVisualAvailable( $title, $skin->getRequest(), $user ) ) {
+		if ( $this->visualEditorAvailabilityLookup->isAvailable( $title, $skin->getRequest(), $user ) ) {
 			// The following messages can be used here:
 			// * editsection
 			$veEditSection = $tabMessages['editsection'];
@@ -1003,7 +963,7 @@ class Hooks implements
 		// Config option for Single Edit Tab
 		if (
 			$veConfig->get( 'VisualEditorUseSingleEditTab' ) &&
-			self::enabledForUser( $user )
+			$this->visualEditorAvailabilityLookup->isEnabledForUser( $user )
 		) {
 			$preferences['visualeditor-tabs'] = [
 				'type' => 'select',
@@ -1124,7 +1084,10 @@ class Hooks implements
 		$coreConfig = RequestContext::getMain()->getConfig();
 		$services = MediaWikiServices::getInstance();
 		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
-		$availableNamespaces = ApiVisualEditor::getAvailableNamespaceIds( $veConfig );
+
+		$availableNamespaces = $this->visualEditorAvailabilityLookup->getAvailableNamespaceIds();
+		sort( $availableNamespaces );
+
 		$availableContentModels = array_filter(
 			array_merge(
 				$this->extensionRegistry->getAttribute( 'VisualEditorAvailableContentModels' ),
@@ -1153,6 +1116,9 @@ class Hooks implements
 		// presence or absence of a trailing colon in the message makes no difference.
 		$defaultSortPrefix = preg_replace( '/:$/', '', $defaultSortPrefix );
 
+		$displayTitlePrefix = $services->getMagicWordFactory()->get( 'displaytitle' )->getSynonym( 0 );
+		$displayTitlePrefix = preg_replace( '/:$/', '', $displayTitlePrefix );
+
 		$vars['wgVisualEditorConfig'] = [
 			'usePageImages' => $this->extensionRegistry->isLoaded( 'PageImages' ),
 			'usePageDescriptions' => $this->extensionRegistry->isLoaded( 'WikibaseClient' ),
@@ -1180,13 +1146,12 @@ class Hooks implements
 			'useChangeTagging' => $veConfig->get( 'VisualEditorUseChangeTagging' ),
 			'editCheckTagging' => $veConfig->get( 'VisualEditorEditCheckTagging' ),
 			'editCheck' => $veConfig->get( 'VisualEditorEditCheck' ),
-			'editCheckSingle' => $veConfig->get( 'VisualEditorEditCheckSingleCheckMode' ),
 			'editCheckExperimental' => (bool)$veConfig->get( 'VisualEditorEditCheckLoadExperimental' ),
 			'editCheckABTest' => $veConfig->get( 'VisualEditorEditCheckABTest' ),
 			'editCheckReliabilityAvailable' => ApiEditCheckReferenceUrl::isAvailable(),
 			'namespacesWithSubpages' => $namespacesWithSubpagesEnabled,
 			'specialBooksources' => urldecode( SpecialPage::getTitleFor( 'Booksources' )->getPrefixedURL() ),
-			'rebaserUrl' => $coreConfig->get( 'VisualEditorRebaserURL' ),
+			'rebaserUrl' => $veConfig->get( 'VisualEditorRebaserURL' ),
 			'feedbackApiUrl' => $veConfig->get( 'VisualEditorFeedbackAPIURL' ),
 			'feedbackTitle' => $veConfig->get( 'VisualEditorFeedbackTitle' ),
 			'sourceFeedbackTitle' => $veConfig->get( 'VisualEditorSourceFeedbackTitle' ),
@@ -1195,6 +1160,7 @@ class Hooks implements
 			'transclusionDialogNewSidebar' => true,
 			'cirrusSearchLookup' => $this->extensionRegistry->isLoaded( 'CirrusSearch' ),
 			'defaultSortPrefix' => $defaultSortPrefix,
+			'displayTitlePrefix' => $displayTitlePrefix,
 		];
 
 		// This can be removed and the module added in TemplateData's extension.json

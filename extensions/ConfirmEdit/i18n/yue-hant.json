@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
 			"JeffreyKim",
-			"Ktchankt"
+			"Ktchankt",
+			"Winston Sung"
 		]
 	},
 	"captcha-edit": "要改呢版，請完成下低個任務，跟住響個盒度輸入答案（[[Special:Captcha/help|更多資料]]）：",

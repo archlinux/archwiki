@@ -1,21 +1,26 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Tests\OutputTransform;
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
+use Mediawiki\MediaWikiServices;
 use MediaWiki\OutputTransform\OutputTransformStage;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\TestingAccessWrapper;
 
 abstract class OutputTransformStageTestBase extends MediaWikiIntegrationTestCase {
 	abstract public function createStage(): OutputTransformStage;
 
-	abstract public function provideShouldRun(): iterable;
+	abstract public static function provideShouldRun(): iterable;
 
-	abstract public function provideShouldNotRun(): iterable;
+	abstract public static function provideShouldNotRun(): iterable;
 
-	abstract public function provideTransform(): iterable;
+	abstract public static function provideTransform(): iterable;
 
 	/**
 	 * @dataProvider provideShouldRun
@@ -49,19 +54,27 @@ abstract class OutputTransformStageTestBase extends MediaWikiIntegrationTestCase
 	/**
 	 * @dataProvider provideTransform
 	 */
-	public function testTransform( $parserOutput, $parserOptions, $options, $expected, $message = '' ) {
+	public function testTransform( ParserOutput $parserOutput, ?ParserOptions $parserOptions, array $options,
+								   ParserOutput $expected, string $message = '' ): void {
 		$stage = $this->createStage();
 		$result = $stage->transform( $parserOutput, $parserOptions, $options );
 		// If this has Parsoid internal metadata, clear it in both the expected
 		// value and the result; these are internal implementation details
 		// that shouldn't be hardwired into tests.
 		if ( PageBundleParserOutputConverter::hasPageBundle( $result ) ) {
-			$key = PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY;
-			$expected->setExtensionData( $key, $result->getExtensionData( $key ) );
+			$ch = TestingAccessWrapper::newFromObject(
+				$expected->getContentHolder()
+			);
+			$ch->pageBundle = clone $result->getContentHolder()->getBasePageBundle();
 		}
 		// Similarly, clear the parse start time to avoid a spurious diff.
 		$result->clearParseStartTime();
 		$expected->clearParseStartTime();
-		$this->assertEquals( $expected, $result, $message );
+		$jsonCodec = MediaWikiServices::getInstance()->getJsonCodec();
+		$this->assertEquals(
+			$jsonCodec->toJsonArray( $expected, ParserOutput::class ),
+			$jsonCodec->toJsonArray( $result, ParserOutput::class ),
+			$message
+		);
 	}
 }

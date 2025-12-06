@@ -16,15 +16,15 @@ class MMLmfrac extends MMLbase {
 
 	/**
 	 * Creates a new subtree element with base and scripts
-	 * @param MMLbase $numerator Top portion of the fraction
-	 * @param MMLbase $denominator Bottom portion of the fraction
+	 * @param MMLbase|string $numerator Top portion of the fraction
+	 * @param MMLbase|string $denominator Bottom portion of the fraction
 	 * @param string $texclass Optional TeX class for styling
 	 * @param array $attributes Additional HTML attributes for the element
 	 * @return static New instance with children ordered as:
 	 *    [base, postsubscript, postsuperscript, presubscript, presuperscript]
 	 */
-	public static function newSubtree( MMLbase $numerator,
-									   MMLbase $denominator,
+	public static function newSubtree( $numerator,
+									   $denominator,
 									   string $texclass = "",
 									   array $attributes = [] ) {
 		$instance = new self( $texclass, $attributes );

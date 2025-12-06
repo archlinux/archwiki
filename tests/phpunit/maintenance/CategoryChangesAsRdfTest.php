@@ -201,7 +201,7 @@ class CategoryChangesAsRdfTest extends MediaWikiLangTestCase {
 	public function getCategoryLinksIterator( $dbr, array $ids ) {
 		$res = [];
 		foreach ( $ids as $pageid ) {
-			$res[] = (object)[ 'cl_from' => $pageid, 'cl_to' => "Parent of $pageid" ];
+			$res[] = (object)[ 'cl_from' => $pageid, 'lt_title' => "Parent of $pageid" ];
 		}
 		return $res;
 	}
@@ -222,7 +222,7 @@ class CategoryChangesAsRdfTest extends MediaWikiLangTestCase {
 				->getMock();
 
 		$dumpScript->method( 'getCategoryLinksIterator' )
-			->willReturnCallback( [ $this, 'getCategoryLinksIterator' ] );
+			->willReturnCallback( $this->getCategoryLinksIterator( ... ) );
 
 		$dumpScript->expects( $this->once() )
 			->method( $iterator )
@@ -230,7 +230,6 @@ class CategoryChangesAsRdfTest extends MediaWikiLangTestCase {
 
 		$ref = new ReflectionObject( $dumpScript );
 		$processedProperty = $ref->getProperty( 'processed' );
-		$processedProperty->setAccessible( true );
 		$processedProperty->setValue( $dumpScript, $preProcessed );
 
 		$output = fopen( "php://memory", "w+b" );
@@ -282,19 +281,15 @@ class CategoryChangesAsRdfTest extends MediaWikiLangTestCase {
 
 		$output = fopen( "php://memory", "w+b" );
 
-		$this->runJobs( [], [
-			'type' => 'categoryMembershipChange'
-		] );
+		$this->runJobs();
 
 		$dbr = $this->getDb();
 		$categoryChangesAsRdf = new CategoryChangesAsRdf();
 
 		$ref = new ReflectionObject( $categoryChangesAsRdf );
 		$startTSProp = $ref->getProperty( 'startTS' );
-		$startTSProp->setAccessible( true );
 		$startTSProp->setValue( $categoryChangesAsRdf, $start->getTimestamp() );
 		$endTSProp = $ref->getProperty( 'endTS' );
-		$endTSProp->setAccessible( true );
 		$endTSProp->setValue( $categoryChangesAsRdf, $end->getTimestamp() );
 
 		$categoryChangesAsRdf->initialize();

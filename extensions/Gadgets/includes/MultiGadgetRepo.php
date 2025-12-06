@@ -33,15 +33,9 @@ use MediaWiki\Title\Title;
 class MultiGadgetRepo extends GadgetRepo {
 
 	/**
-	 * @var GadgetRepo[]
-	 */
-	private array $repos;
-
-	/**
 	 * @param GadgetRepo[] $repos
 	 */
-	public function __construct( array $repos ) {
-		$this->repos = $repos;
+	public function __construct( private readonly array $repos ) {
 	}
 
 	/**
@@ -51,7 +45,7 @@ class MultiGadgetRepo extends GadgetRepo {
 		foreach ( $this->repos as $repo ) {
 			try {
 				return $repo->getGadget( $id );
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 				// Try next repo
 			}
 		}
@@ -85,7 +79,7 @@ class MultiGadgetRepo extends GadgetRepo {
 				$repo->getGadget( $id );
 				// return repo if it didn't throw
 				return $repo;
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 			}
 		}
 		throw new InvalidArgumentException( "No repo found for gadget $id" );
@@ -122,7 +116,7 @@ class MultiGadgetRepo extends GadgetRepo {
 				} else {
 					$found = true;
 				}
-			} catch ( InvalidArgumentException $e ) {
+			} catch ( InvalidArgumentException ) {
 			}
 		}
 		return false;

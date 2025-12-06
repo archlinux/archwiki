@@ -1,13 +1,10 @@
 /**
- * Vector modern layout styles for screen
+ * Vector 2022 (formerly "Vector modern") layout styles for screen
  *
- * Layout rules divide the page into sections and how VectorComponents should be arranged in the skin.
+ * Layout rules divide the page into sections and how VectorComponents should be arranged
+ * in the skin.
  * The rules here should only define the layout, not color or typography.
  */
-
-html {
-	scroll-padding-top: @scroll-padding-top;
-}
 
 body {
 	background-color: @background-color-secondary--modern;
@@ -37,6 +34,18 @@ body {
 /* Content */
 .mw-indicators {
 	z-index: @z-index-indicators;
+}
+
+.mw-heading {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		// T314419 - See the comment on the LESS variable
+		scroll-margin-top: @scroll-margin-heading;
+	}
 }
 
 .vector-page-titlebar {

@@ -27,8 +27,6 @@
 	"tooltip-pt-notifications-alert": "{{GENDER:|ایسا}} آلشدکاریٱل",
 	"tooltip-pt-notifications-notice": "{{GENDER:|ڤارسیاریٱل}} ایسا",
 	"echo-displaynotificationsconfiguration-sorting-by-section-header": "میزوݩ کردن ری جۊر",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "کاریارٱلی کاْ هڌسوݩ",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "کاریارٱل تازاْ",
 	"echo-specialpage": "ڤارسیاریٱل",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|ڤارسیاری|ڤارسیاریٱل}}",
 	"echo-specialpage-pagefilters-title": "کونشتکاریٱل ایسنی",

@@ -1,18 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr"
+			"Lloffiwr",
+			"Ceirios"
 		]
 	},
-	"replacetext": "Disodli testun",
+	"replacetext": "Amnewid testun",
 	"replacetext_originaltext": "Y testun gwreiddiol:",
 	"replacetext_replacementtext": "Y testun newydd:",
 	"replacetext_optionalfilters": "Hidlau dewisol:",
-	"replacetext_watchmovedpages": "Dilyn hynt y tudalennau hyn",
-	"replacetext_invertselections": "Gwrthdroi'r dewis",
-	"replacetext_replace": "Disodler",
-	"replacetext_success": "Caiff \"$1\" ei ddisodli gan \"$2\" mewn $3 {{PLURAL:$3||dudalen|dudalen|tudalen|thudalen|tudalen}}.",
-	"replacetext_noreplacement": "Ni chafwyd hyd i unrhyw dudalennau yn cynnwys y llinyn \"$1\".",
+	"replacetext_editpages": "Amnewid testun yng nghynnwys tudalennau",
+	"replacetext_movepages": "Amnewid testun yn nheitlau tudalennau, lle y bo'n bosibl",
+	"replacetext_givetarget": "Rhaid i chi nodi'r testun i'w amnewid.",
+	"replacetext_watchmovedpages": "Gwylio'r tudalennau hyn",
+	"replacetext_invertselections": "Gwrthdroi'r dewisiadau",
+	"replacetext_replace": "Amnewid",
+	"replacetext_success": "Caiff \"$1\" ei amnewid gan \"$2\" mewn $3 {{PLURAL:$3|un tudalen|$3 dudalen|$3 thudalen|$3 tudalen}}.",
+	"replacetext_noreplacement": "Ni chafwyd unrhyw dudalennau yn cynnwys y testun \"$1\".",
 	"replacetext_continue": "Parhau",
-	"replacetext_editsummary": "Disodli'r testun - \"$1\" i \"$2\""
+	"replacetext_botedit": "Marcio newidiadau fel golygiadau bot",
+	"replacetext_editsummary": "Amnewid testun - \"$1\" i \"$2\"",
+	"tag-replacetext": "[[Special:ReplaceText|AmnewidTestun]]"
 }

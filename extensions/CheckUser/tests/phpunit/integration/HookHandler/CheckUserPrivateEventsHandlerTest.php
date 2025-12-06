@@ -170,10 +170,14 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValues( [
 			'CheckUserLogLogins' => true,
 			'CheckUserLogSuccessfulBotLogins' => true,
+			'CheckUserWriteToCentralIndex' => false,
 		] );
 		$userObj = $this->getTestUser( $userGroups )->getUser();
 		$userName = $userObj->getName();
 		$authResp = $this->getMockAuthenticationResponseForStatus( $authStatus, $userName );
+
+		// Validate that we don't create the T390051 warnings when the username being logged into isn't an IP address.
+		$this->setLogger( 'CheckUser', $this->createNoOpMock( LoggerInterface::class ) );
 
 		$this->doTestOnAuthManagerLoginAuthenticateAudit(
 			$authResp, $userObj, $userName, $isAnonPerformer, $expectedLogAction
@@ -186,6 +190,30 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 			'failed login' => [ AuthenticationResponse::FAIL, 'login-failure', true, [] ],
 			'successful bot login' => [ AuthenticationResponse::PASS, 'login-success', false, [ 'bot' ] ],
 		];
+	}
+
+	public function testOnAuthManagerLoginAuthenticateAuditForLoginToIPAddress() {
+		$this->overrideConfigValue( 'CheckUserLogLogins', true );
+		$userObj = $this->getServiceContainer()->getUserFactory()->newAnonymous();
+		$userName = $userObj->getName();
+		$authResp = $this->getMockAuthenticationResponseForStatus( AuthenticationResponse::FAIL, $userName );
+
+		// Expect that a warning is created that indicates that a login event is being stored for an IP address
+		// as the user being logged in to.
+		$mockLogger = $this->createMock( LoggerInterface::class );
+		$mockLogger->expects( $this->once() )
+			->method( 'warning' )
+			->with( 'T390051: Storing login event where the user being logged into is an IP address' )
+			->willReturnCallback( function ( $message, $context ) use ( $userObj, $userName ) {
+				$this->assertArrayContains( [
+					'username_from_object' => $userObj->getName(),
+					'username_from_arguments' => $userName,
+					'status' => AuthenticationResponse::FAIL,
+				], $context );
+			} );
+		$this->setLogger( 'CheckUser', $mockLogger );
+
+		$this->doTestOnAuthManagerLoginAuthenticateAudit( $authResp, $userObj, $userName, true, 'login-failure' );
 	}
 
 	/** @dataProvider provideOnAuthManagerLoginAuthenticateAuditWithCentralAuthInstalled */
@@ -278,7 +306,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 					[
 						$actualEventId,
 						[ 'Sec-CH-UA-Full-Version-List' => '?0', 'Sec-CH-UA-Bitness' => '"32"' ],
-						'privatelog'
+						'privatelog',
 					],
 					$context
 				);
@@ -409,6 +437,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** @covers \MediaWiki\CheckUser\EncryptedData */
 	public function testOnEmailWithCUPublicKeyDefined() {
+		// Test is broken on postgres DBs, so skip it for now.
+		$this->markTestSkippedIfDbType( 'postgres' );
+
 		if ( !in_array( 'rc4', openssl_get_cipher_methods() ) ) {
 			$this->markTestSkipped( 'Storing encrypted email data requires the RC4 cipher' );
 		}
@@ -459,7 +490,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 					$this->getDb()->anyString(),
 					'4::hash',
 					$this->getDb()->anyString()
-				) )
+				) ),
 			],
 			false
 		);
@@ -482,7 +513,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 					$this->getDb()->anyString(),
 					$account->getName(),
 					$this->getDb()->anyString()
-				) )
+				) ),
 			]
 		);
 		// Add wgCheckUserClientHintsPrivateEventId so that Client Hints data is sent
@@ -532,7 +563,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	public static function provideOnLocalUserCreated() {
 		return [
 			'New user was autocreated' => [ true ],
-			'New user was not autocreated' => [ false ]
+			'New user was not autocreated' => [ false ],
 		];
 	}
 
@@ -549,7 +580,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 				'cupe_actor'  => $user->getActorId(),
 				'cupe_namespace' => NS_USER,
 				'cupe_title' => $user->getName(),
-				'cupe_log_action' => 'create-account'
+				'cupe_log_action' => 'create-account',
 			]
 		);
 	}
@@ -642,7 +673,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 			->where( [
 				'actor_user' => $user->getId(),
 				'cupe_log_action' => 'autocreate-account',
-				'cupe_log_type' => 'checkuser-private-event'
+				'cupe_log_type' => 'checkuser-private-event',
 			] )
 			->caller( __METHOD__ )
 			->assertFieldValue( '1' );

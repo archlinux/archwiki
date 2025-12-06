@@ -31,7 +31,6 @@
 	"discussiontools-newtopic-placeholder-title": "Gaia",
 	"discussiontools-notification-subscribed-new-comment-header": "$1(e)k {{GENDER:$2|erantzun du}} \"<strong>$4</strong>\" eztabaidan.",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Erantzun berri bat|$1 erantzun berri|100=99+ erantzun berri}} \"<strong>$3</strong>\" gaian.",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Erakutsi iruzkina",
 	"discussiontools-postedit-confirmation-published": "Zure iruzkina argitaratua izan da.",
 	"discussiontools-postedit-confirmation-topicadded": "Zure gaia gehitu da.",

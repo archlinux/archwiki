@@ -289,6 +289,13 @@ $namespaceNames['hi'] = [
 	829 => 'मॉड्यूल_वार्ता',
 ];
 
+$namespaceAliases['hi'] = [
+	# Former namespace names; incorrect (T366235), but kept as aliases
+	# for backwards compatibility
+	828 => 'अनुखंड',
+	829 => 'अनुखंड_वार्ता',
+];
+
 $namespaceNames['hr'] = [
 	828 => 'Modul',
 	829 => 'Razgovor_o_modulu',

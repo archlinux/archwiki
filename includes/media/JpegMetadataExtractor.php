@@ -2,33 +2,19 @@
 /**
  * Extraction of JPEG image metadata.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
 
-use MediaWiki\Libs\UnpackFailedException;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\StringUtils\StringUtils;
+use Wikimedia\UnpackFailedException;
 use Wikimedia\XMPReader\Reader as XMPReader;
 
 /**
  * Class for reading jpegs and extracting metadata.
- * see also BitmapMetadataHandler.
+ * See also BitmapMetadataHandler.
  *
  * Based somewhat on GIFMetadataExtractor.
  *
@@ -41,28 +27,19 @@ class JpegMetadataExtractor {
 	 */
 	private const MAX_JPEG_SEGMENTS = 200;
 
-	/** Function to extract metadata segments of interest from jpeg files
+	/**
+	 * Function to extract metadata segments of interest from jpeg files
 	 * based on GIFMetadataExtractor.
 	 *
-	 * we can almost use getimagesize to do this
-	 * but gis doesn't support having multiple app1 segments
+	 * We can almost use getimagesize to do this,
+	 * but gis doesn't support having multiple app1 segments,
 	 * and those can't extract xmp on files containing both exif and xmp data
 	 *
-	 * @param string $filename Name of jpeg file
+	 * @param string $filename Name of the jpeg file
 	 * @return array Array of interesting segments.
 	 * @throws InvalidJpegException
 	 */
 	public static function segmentSplitter( $filename ) {
-		$showXMP = XMPReader::isSupported();
-
-		$segmentCount = 0;
-
-		$segments = [
-			'XMP_ext' => [],
-			'COM' => [],
-			'PSIR' => [],
-		];
-
 		if ( !$filename ) {
 			throw new InvalidJpegException( "No filename specified for " . __METHOD__ );
 		}
@@ -80,6 +57,17 @@ class JpegMetadataExtractor {
 		if ( $buffer !== "\xFF\xD8" ) {
 			throw new InvalidJpegException( "Not a jpeg, no SOI" );
 		}
+
+		$showXMP = XMPReader::isSupported();
+
+		$segmentCount = 0;
+
+		$segments = [
+			'XMP_ext' => [],
+			'COM' => [],
+			'PSIR' => [],
+		];
+
 		while ( !feof( $fh ) ) {
 			$buffer = fread( $fh, 1 );
 			$segmentCount++;
@@ -137,7 +125,7 @@ class JpegMetadataExtractor {
 					$segments["XMP"] = trim( substr( $temp, 29 ) );
 					wfDebug( __METHOD__ . ' Found XMP section with wrong app identifier '
 						. "Using anyways." );
-				} elseif ( substr( $temp, 0, 6 ) === "Exif\0\0" ) {
+				} elseif ( str_starts_with( $temp, "Exif\0\0" ) ) {
 					// Just need to find out what the byte order is.
 					// because php's exif plugin sucks...
 					// This is a II for little Endian, MM for big. Not a unicode BOM.
@@ -151,9 +139,9 @@ class JpegMetadataExtractor {
 					}
 				}
 			} elseif ( $buffer === "\xED" ) {
-				// APP13 - PSIR. IPTC and some photoshop stuff
+				// APP13 - PSIR. IPTC and some Photoshop stuff
 				$temp = self::jpegExtractMarker( $fh );
-				if ( substr( $temp, 0, 14 ) === "Photoshop 3.0\x00" ) {
+				if ( str_starts_with( $temp, "Photoshop 3.0\x00" ) ) {
 					$segments["PSIR"][] = $temp;
 				}
 			} elseif ( $buffer === "\xD9" || $buffer === "\xDA" ) {
@@ -180,7 +168,7 @@ class JpegMetadataExtractor {
 				if ( $size['int'] < 2 ) {
 					throw new InvalidJpegException( "invalid marker size in jpeg" );
 				}
-				// Note it's possible to seek beyond end of file if truncated.
+				// Note it's possible to seek beyond the end of the file if truncated.
 				// fseek doesn't report a failure in this case.
 				fseek( $fh, $size['int'] - 2, SEEK_CUR );
 			}
@@ -217,10 +205,10 @@ class JpegMetadataExtractor {
 	}
 
 	/**
-	 * This reads the photoshop image resource.
-	 * Currently it only compares the iptc/iim hash
+	 * This reads the Photoshop image resource.
+	 * Currently, it only compares the iptc/iim hash
 	 * with the stored hash, which is used to determine the precedence
-	 * of the iptc data. In future it may extract some other info, like
+	 * of the iptc data. In the future it may extract some other info, like
 	 * url of copyright license.
 	 *
 	 * This should generally be called by BitmapMetadataHandler::doApp13()
@@ -234,13 +222,14 @@ class JpegMetadataExtractor {
 		if ( !$app13 ) {
 			throw new InvalidPSIRException( "No App13 segment given" );
 		}
-		// First compare hash with real thing
+		// First, compare hash with the real thing.
 		// 0x404 contains IPTC, 0x425 has hash
 		// This is used to determine if the iptc is newer than
 		// the xmp data, as xmp programs update the hash,
 		// where non-xmp programs don't.
 
-		$offset = 14; // skip past PHOTOSHOP 3.0 identifier. should already be checked.
+		// skip past PHOTOSHOP 3.0 identifier. should already be checked.
+		$offset = 14;
 		$appLen = strlen( $app13 );
 		$realHash = "";
 		$recordedHash = "";
@@ -249,14 +238,12 @@ class JpegMetadataExtractor {
 		while ( $offset + 12 <= $appLen ) {
 			$valid = true;
 			if ( substr( $app13, $offset, 4 ) !== '8BIM' ) {
-				// it's supposed to be 8BIM
-				// but apparently sometimes isn't esp. in
-				// really old jpg's
+				// it's supposed to be 8BIM, but apparently sometimes isn't, especially in really old jpg's
 				$valid = false;
 			}
 			$offset += 4;
 			$id = substr( $app13, $offset, 2 );
-			// id is a 2 byte id number which identifies
+			// id is a 2-byte id number which identifies
 			// the piece of info this record contains.
 
 			$offset += 2;
@@ -267,10 +254,11 @@ class JpegMetadataExtractor {
 			// we care) this is empty, making it two null bytes.
 
 			$lenName = ord( substr( $app13, $offset, 1 ) ) + 1;
-			// we never use the name so skip it. +1 for length byte
+			// we never use the name, so skip it. +1 for length byte
 			if ( $lenName % 2 === 1 ) {
+				// pad to even.
 				$lenName++;
-			} // pad to even.
+			}
 			$offset += $lenName;
 
 			// now length of data (unsigned long big endian)
@@ -281,12 +269,13 @@ class JpegMetadataExtractor {
 			}
 			// PHP can take issue with very large unsigned ints and make them negative.
 			// Which should never ever happen, as this has to be inside a segment
-			// which is limited to a 16 bit number.
+			// which is limited to a 16-bit number.
 			if ( $lenData['len'] < 0 ) {
 				throw new InvalidPSIRException( "Too big PSIR (" . $lenData['len'] . ')' );
 			}
 
-			$offset += 4; // 4bytes length field;
+			// 4-byte length field;
+			$offset += 4;
 
 			// this should not happen, but check.
 			if ( $lenData['len'] + $offset > $appLen ) {

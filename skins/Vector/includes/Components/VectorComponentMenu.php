@@ -10,17 +10,12 @@ class VectorComponentMenu implements VectorComponent, Countable {
 	/** @var array */
 	private $data;
 
-	/**
-	 * @param array $data
-	 */
 	public function __construct( array $data ) {
 		$this->data = $data;
 	}
 
 	/**
 	 * Counts how many items the menu has.
-	 *
-	 * @return int
 	 */
 	public function count(): int {
 		$items = $this->data['array-list-items'] ?? null;

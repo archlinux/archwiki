@@ -54,7 +54,7 @@ class SpecialCheckUserLogTest extends MediaWikiUnitTestCase {
 	public static function provideInitiatorNames() {
 		return [
 			'IP' => [ '127.0.0.1' ],
-			'User' => [ 'TestAccount' ]
+			'User' => [ 'TestAccount' ],
 		];
 	}
 }

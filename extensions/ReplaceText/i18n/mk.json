@@ -45,5 +45,7 @@
 	"replacetext_no_external_stores": "Вашето вики нема да работи со „Замени текст“: Замените на текст не можат да работат ако $wgExternalStores не е празно.",
 	"right-replacetext": "Вршење замена на низи во целото вики",
 	"action-replacetext": "вршење замена на низи во целото вики",
-	"replacetext-summary-label": "Опис на заменувачките уредувања (оставете празно за стандарден опис)"
+	"replacetext-summary-label": "Опис на заменувачките уредувања (оставете празно за стандарден опис)",
+	"tag-replacetext": "[[Special:ReplaceText|Замени текст]]",
+	"tag-replacetext-description": "Автоматски уредувања направени со [[Special:ReplaceText|Специјална:Замени текст]]."
 }

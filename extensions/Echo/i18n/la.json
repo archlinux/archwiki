@@ -28,7 +28,6 @@
 	"echo-category-title-article-linked": "{{PLURAL:$1|Nexus}} ad paginam",
 	"echo-category-title-mention": "{{PLURAL:$1|Mentio|Mentiones}}",
 	"echo-category-title-other": "{{PLURAL:$1|Alia}}",
-	"echo-pref-tooltip-edit-user-talk": "Me certiorem facere si quis nuntium mittat vel in pagina disputationis mea respondat.",
 	"echo-pref-tooltip-article-linked": "Me certiorem facere si quis paginam quam creavi nectit e quadam pagina commentationis.",
 	"echo-pref-tooltip-mention": "Me certiorem facere si quis e quacumque pagina disputationis ad paginam usoris meam nectit.",
 	"notifications": "Nuntia",

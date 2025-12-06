@@ -5,9 +5,9 @@
 			"Har-wradim",
 			"Joystick",
 			"Pacha Tchernof",
+			"Shvermer",
 			"וויקיפּעדלער",
-			"פוילישער",
-			"Shvermer"
+			"פוילישער"
 		]
 	},
 	"skinname-vector": "וועקטאר אלט (2010)",
@@ -42,7 +42,6 @@
 	"skin-theme-night-label": "טונקל",
 	"skin-theme-os-label": "אויטאָמאַטיש",
 	"skin-theme-exclusion-notice": "דער בלאַט איז אַלעמאָל אין העל-מאָדע.",
-	"vector-searchsuggest-containing": "זוכן בלעטער מיט<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "אינהאַלט",
 	"vector-toc-beginning": "אָנפֿאַנג",
 	"vector-anon-user-menu-pages": "בלעטער פאַר ארויסגעלאָגטע רעדאַקטאָרן",

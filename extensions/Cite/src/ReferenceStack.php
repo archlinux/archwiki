@@ -25,6 +25,11 @@ class ReferenceStack {
 	private array $refs = [];
 
 	/**
+	 * @var array<string,array<string,array<string,ReferenceStackItem>>> Secondary lookup table
+	 */
+	private array $subRefLookup = [];
+
+	/**
 	 * Global, auto-incrementing sequence number for all <ref>, no matter which group, starting
 	 * from 1. Reflects the total number of <ref>.
 	 */
@@ -87,25 +92,20 @@ class ReferenceStack {
 		$ref->count = 1;
 		$ref->dir = $dir;
 		$ref->group = $group;
+		// Intentionally drop invalid names like "0" and the empty string
 		$ref->name = $name ?: null;
 		$ref->text = $text;
 
 		if ( $follow ) {
-			if ( !isset( $this->refs[$group][$follow] ) ) {
-				// Mark an incomplete follow="…" as such. This is valid e.g. in the Page:… namespace
-				// on Wikisource.
-				$ref->follow = $follow;
-				$ref->globalId = $this->nextRefSequence();
-				$this->refs[$group][$ref->globalId] = $ref;
-				$this->refCallStack[] = [ self::ACTION_NEW, $ref, $text, $argv ];
-			} elseif ( $text !== null ) {
-				// We know the parent already, so just perform the follow="…" and bail out
-				$this->resolveFollow( $group, $follow, $text );
+			$incompleteFollow = $this->resolveFollow( $ref, $follow );
+			if ( $incompleteFollow ) {
+				$this->refCallStack[] = [ self::ACTION_NEW, $incompleteFollow, $text, $argv ];
 			}
 			// A follow="…" never gets its own footnote marker
 			return null;
 		}
 
+		// The unique identifier for duplicate (reused) main refs is group + name
 		if ( $name && isset( $this->refs[$group][$name] ) ) {
 			// A named <ref> is reused, possibly with more information than before
 			$ref = &$this->refs[$group][$name];
@@ -140,7 +140,8 @@ class ReferenceStack {
 
 		$ref->numberInGroup ??= ++$this->groupRefSequence[$group];
 
-		if ( ( $subrefDetails ?? '' ) !== '' ) {
+		// Earlier the validator intentionally didn't ignore empty details="", but here we do
+		if ( $subrefDetails !== null && $subrefDetails !== '' ) {
 			$parentRef = $ref;
 			// Turns out this is not a reused parent; undo parts of what happened above
 			$parentRef->count--;
@@ -151,9 +152,15 @@ class ReferenceStack {
 
 			$parentRef->subrefCount ??= 0;
 
-			// FIXME: At the moment it's impossible to reuse sub-references in any way
+			$duplicate = $this->findDuplicateSubRef( $ref, $subrefDetails );
+			if ( $duplicate ) {
+				$this->refCallStack[] = [ $action, $duplicate, $text, $argv ];
+				return $duplicate;
+			}
+
 			$ref->count = 1;
 			$ref->globalId = $this->nextRefSequence();
+			// We cannot use the name to track sub-refs, only identical main refs can
 			$ref->name = null;
 			$ref->hasMainRef = $parentRef;
 			$ref->subrefIndex = ++$parentRef->subrefCount;
@@ -165,6 +172,20 @@ class ReferenceStack {
 
 		$this->refCallStack[] = [ $action, $ref, $text, $argv ];
 		return $ref;
+	}
+
+	private function findDuplicateSubRef( ReferenceStackItem $ref, string $details ): ?ReferenceStackItem {
+		// Unique identifier for duplicate (reused) sub-refs is group + name + details
+		$duplicate = $this->subRefLookup[$ref->group][$ref->name][$details] ?? null;
+		if ( $duplicate ) {
+			// Same behavior as above when named main refs are reused
+			$duplicate->count++;
+			return $duplicate;
+		}
+
+		// Remember all unique sub-refs for later possible reuse
+		$this->subRefLookup[$ref->group][$ref->name][$details] = $ref;
+		return null;
 	}
 
 	/**
@@ -297,10 +318,21 @@ class ReferenceStack {
 		return $this->refs[$group] ?? [];
 	}
 
-	private function resolveFollow( string $group, string $follow, string $text ): void {
-		$previousRef =& $this->refs[$group][$follow];
-		$previousRef->text ??= '';
-		$previousRef->text .= " $text";
+	private function resolveFollow( ReferenceStackItem $ref, string $follow ): ?ReferenceStackItem {
+		if ( !isset( $this->refs[$ref->group][$follow] ) ) {
+			// Mark an incomplete follow="…" as such. This is valid e.g. in the Page:… namespace
+			// on Wikisource.
+			$ref->follow = $follow;
+			$ref->globalId = $this->nextRefSequence();
+			$this->refs[$ref->group][$ref->globalId] = $ref;
+			return $ref;
+		} elseif ( $ref->text !== null ) {
+			// We know the parent already, so just perform the follow="…" and bail out
+			$previousRef =& $this->refs[$ref->group][$follow];
+			$previousRef->text ??= '';
+			$previousRef->text .= " $ref->text";
+		}
+		return null;
 	}
 
 	public function listDefinedRef( string $group, string $name, ?string $text ): ReferenceStackItem {

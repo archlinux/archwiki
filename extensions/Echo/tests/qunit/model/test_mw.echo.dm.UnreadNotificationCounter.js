@@ -3,17 +3,17 @@ QUnit.module( 'ext.echo.dm - UnreadNotificationCounter' );
 QUnit.test.each( '.getCappedNotificationCount()', [
 	{ input: 5, output: 5 },
 	{ input: 20, output: 11 },
-	{ input: 10, output: 10 }
+	{ input: 10, output: 10 },
 ], ( assert, data ) => {
 	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
-		10 // max
+		10, // max
 	);
 	assert.strictEqual(
 		model.getCappedNotificationCount( data.input ),
 		data.output,
-		'count for ' + data.input
+		'count for ' + data.input,
 	);
 } );
 
@@ -21,7 +21,7 @@ QUnit.test( '.estimateChange()', ( assert ) => {
 	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
-		99 // max
+		99, // max
 	);
 	// Set initial
 	model.setCount( 50 );
@@ -30,21 +30,21 @@ QUnit.test( '.estimateChange()', ( assert ) => {
 	assert.strictEqual(
 		model.getCount(),
 		40, // 50-10
-		'Estimation within range'
+		'Estimation within range',
 	);
 
 	model.estimateChange( 70 );
 	assert.strictEqual(
 		model.getCount(),
 		100, // Estimation reached above cap - cap is set
-		'Estimation brings count to cap'
+		'Estimation brings count to cap',
 	);
 
 	model.estimateChange( -10 );
 	assert.strictEqual(
 		model.getCount(),
 		100, // We are already above cap, count will not change
-		'Estimation while counter is outside of cap - no change'
+		'Estimation while counter is outside of cap - no change',
 	);
 } );
 
@@ -53,7 +53,7 @@ QUnit.test( '.setCount()', ( assert ) => {
 	const model = new mw.echo.dm.UnreadNotificationCounter(
 		null,
 		'all', // type
-		99 // max
+		99, // max
 	);
 
 	// Listen to event
@@ -71,6 +71,6 @@ QUnit.test( '.setCount()', ( assert ) => {
 	assert.deepEqual(
 		results,
 		[ 50, 100, 10 ],
-		'countChange events emitted.'
+		'countChange events emitted.',
 	);
 } );

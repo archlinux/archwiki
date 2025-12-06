@@ -4,6 +4,8 @@
  * @copyright See AUTHORS.txt
  */
 
+@import '../../../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+
 .ve-ui-linkContextItem {
 	.ve-ui-linkContextItem-link {
 		overflow: hidden;
@@ -31,7 +33,8 @@
 			font-size: 0.8125em;
 		}
 
-		.ve-ui-linkContextItem-label-preview {
+		.ve-ui-linkContextItem-label-preview .oo-ui-labelElement-label {
+			display: block;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -59,7 +62,7 @@
 		.ve-ui-linkContextItem-label {
 			margin: 0.7em -1em 0;
 			padding: 0.7em 1em 0;
-			border-top: 1px solid #eaecf0;
+			border-top: @border-subtle;
 			display: flex;
 			align-items: center;
 			width: 100%;

@@ -3,11 +3,15 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX afh_user;
+
 DROP INDEX afh_user_text;
+
 ALTER TABLE abuse_filter_history
   DROP afh_user;
+
 ALTER TABLE abuse_filter_history
   DROP afh_user_text;
+
 ALTER TABLE abuse_filter_history
   ALTER afh_actor
   DROP DEFAULT;

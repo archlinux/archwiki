@@ -1,0 +1,17 @@
+<details class="cdx-accordion{{!
+  }}{{#renderClasses}}{{{attributes}}}{{/renderClasses}}"{{!
+  }}{{#id}} id="{{ id }}"{{/id}}{{!
+  }}{{#renderAttributes}}{{{attributes}}}{{/renderAttributes}}{{!
+  }}{{#isOpen}} open{{/isOpen}}>
+  <summary>
+    <h3 class="cdx-accordion__header">
+      <span class="cdx-accordion__header__title">{{ title }}</span>
+      {{#description}}{{!
+      }}<span class="cdx-accordion__header__description">{{ description }}</span>
+      {{/description}}
+    </h3>
+  </summary>
+  <div class="cdx-accordion__content">
+    {{{ content-html }}}
+  </div>
+</details>

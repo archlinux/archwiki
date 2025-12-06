@@ -38,11 +38,10 @@ use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\DOM\Document;
-use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 
@@ -91,7 +90,7 @@ class LanguageConverter {
 		$this->loadDefaultTables();
 	}
 
-	public function loadDefaultTables() {
+	public function loadDefaultTables(): void {
 	}
 
 	/**
@@ -137,7 +136,7 @@ class LanguageConverter {
 				$languageClass = self::classFromCode( $lang, $fallback );
 				return new $languageClass();
 			}
-		} catch ( \Error $e ) {
+		} catch ( \Error ) {
 			/* fall through */
 		}
 		$fallback = (string)$fallback;
@@ -145,8 +144,13 @@ class LanguageConverter {
 		return new Language();
 	}
 
-	// phpcs:ignore MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
-	public function findVariantLink( $link, $nt, $ignoreOtherCond ) {
+	/**
+	 * @param mixed $link
+	 * @param mixed $nt
+	 * @param bool $ignoreOtherCond
+	 * @return array{nt: mixed, link: mixed}
+	 */
+	public function findVariantLink( $link, $nt, $ignoreOtherCond ): array {
 		// XXX unimplemented
 		return [ 'nt' => $nt, 'link' => $link ];
 	}
@@ -155,6 +159,7 @@ class LanguageConverter {
 	 * @param string $fromVariant
 	 * @param string $text
 	 * @param string $toVariant
+	 *
 	 * @suppress PhanEmptyPublicMethod
 	 */
 	public function translate( $fromVariant, $text, $toVariant ) {
@@ -231,32 +236,16 @@ class LanguageConverter {
 	 * construct round-trip metadata, instead of using a heuristic to guess the best variant
 	 * for each DOM subtree of wikitext.
 	 * @param Env $env
-	 * @param Node $rootNode The root node of a fragment to convert.
-	 * @param string|Bcp47Code $htmlVariantLanguage The variant to be used for the output DOM.
-	 *  This is a mediawiki-internal language code string (T320662, deprecated),
-	 *  or a BCP 47 language object (preferred).
-	 * @param string|Bcp47Code|null $wtVariantLanguage An optional variant assumed for the
+	 * @param Element $rootNode The root node of a fragment to convert.
+	 * @param Bcp47Code $htmlVariantLanguage The variant to be used for the output DOM.
+	 * @param Bcp47Code|null $wtVariantLanguage An optional variant assumed for the
 	 *  input DOM in order to create roundtrip metadata.
-	 *  This is a mediawiki-internal language code (T320662, deprecated),
-	 *  or a BCP 47 language object (preferred), or null.
 	 */
 	public static function baseToVariant(
-		Env $env, Node $rootNode, $htmlVariantLanguage, $wtVariantLanguage
+		Env $env, Element $rootNode, Bcp47Code $htmlVariantLanguage, ?Bcp47Code $wtVariantLanguage
 	): void {
-		// Back-compat w/ old string-passing parameter convention
-		if ( is_string( $htmlVariantLanguage ) ) {
-			$htmlVariantLanguage = Utils::mwCodeToBcp47(
-				$htmlVariantLanguage, true, $env->getSiteConfig()->getLogger()
-			);
-		}
-		if ( is_string( $wtVariantLanguage ) ) {
-			$wtVariantLanguage = Utils::mwCodeToBcp47(
-				$wtVariantLanguage, true, $env->getSiteConfig()->getLogger()
-			);
-		}
 		// PageConfig guarantees getPageLanguage() never returns null.
 		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
-		$guesser = null;
 
 		$loadTiming = Timing::start( $env->getSiteConfig() );
 		$languageClass = self::loadLanguage( $env, $pageLangCode );
@@ -313,7 +302,6 @@ class LanguageConverter {
 
 		// HACK: to avoid data-parsoid="{}" in the output, set the isNew flag
 		// on synthetic spans
-		DOMUtils::assertElt( $rootNode );
 		foreach ( DOMCompat::querySelectorAll(
 			$rootNode, 'span[typeof="mw:LanguageVariant"][data-mw-variant]'
 		) as $span ) {
@@ -350,36 +338,38 @@ class LanguageConverter {
 		return $validTarget;
 	}
 
-	/**
-	 * Convert a string in an unknown variant of the page language to all its possible variants.
-	 *
-	 * @param Env $env
-	 * @param Document $doc
-	 * @param string $text
-	 * @return string[] map of converted variants keyed by variant language
-	 */
-	public static function autoConvertToAllVariants(
-		Env $env,
-		Document $doc,
-		string $text
-	): array {
+	public static function loadLanguageConverter( Env $env ): ?LanguageConverter {
 		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
 
 		// Parsoid's Chinese language converter implementation is not performant enough,
 		// so disable it explicitly (T346657).
 		if ( $pageLangCode->toBcp47Code() === 'zh' ) {
-			return [];
+			return null;
 		}
 
 		if ( $env->getSiteConfig()->variantsFor( $pageLangCode ) === null ) {
 			// Optimize for the common case where the page language has no variants.
-			return [];
+			return null;
 		}
 
 		$languageClass = self::loadLanguage( $env, $pageLangCode );
 		$lang = new $languageClass();
-		$langconv = $lang->getConverter();
+		return $lang->getConverter();
+	}
 
+	/**
+	 * Convert a string in an unknown variant of the page language to all its possible variants.
+	 *
+	 * @param Document $doc
+	 * @param string $text
+	 * @param ?LanguageConverter $langconv
+	 * @return array<string,string> map of converted variants keyed by variant language
+	 */
+	public static function autoConvertToAllVariants(
+		Document $doc,
+		string $text,
+		?LanguageConverter $langconv
+	): array {
 		if ( $langconv === null || $langconv->getMachine() === null ) {
 			return [];
 		}

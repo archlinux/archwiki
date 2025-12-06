@@ -26,7 +26,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 use Wikimedia\Timestamp\TimestampException;
 
@@ -98,6 +98,33 @@ class CommentFormatter {
 	}
 
 	/**
+	 * Check if the heading has attributes that can only be added using HTML syntax.
+	 *
+	 * In the Parsoid default future, we might prefer checking for stx=html.
+	 */
+	private static function isHtmlHeading( Element $h ): bool {
+		foreach ( $h->attributes as $attr ) {
+			// Condition matches core HandleSectionLinks / HandleParsoidSectionLinks::isHtmlHeading
+			if (
+				!in_array( $attr->name, [ 'id', 'data-object-id', 'about', 'typeof' ], true ) &&
+				!Sanitizer::isReservedDataAttribute( $attr->name )
+			) {
+				return true;
+			}
+		}
+		// FIXME(T100856): stx info probably shouldn't be in data-parsoid
+		// FIXME(T394005): onParserOutputPostCacheTransform is called from a
+		// ContentTextTransformStage, so data-parsoid isn't available
+		//
+		// Id is ignored above since it's a special case, make use of metadata
+		// to determine if it came from wikitext
+		// if ( DOMDataUtils::getDataParsoid( $h )->reusedId ?? false ) {
+		// 	return true;
+		// }
+		return false;
+	}
+
+	/**
 	 * Add a wrapper, topic container, and subscribe link around a heading element
 	 *
 	 * @param Element $headingElement Heading element
@@ -117,16 +144,8 @@ class CommentFormatter {
 			DOMUtils::hasClass( $wrapperNode, 'mw-heading' )
 		) ) {
 			// Do not add the wrapper if the heading has attributes generated from wikitext (T353489).
-			// Only allow reserved attributes (e.g. 'data-mw', which can't be used in wikitext, but which
-			// are used internally by our own code and by Parsoid) and the 'id', 'about', and 'typeof'
-			// attributes used by Parsoid.
-			foreach ( $headingElement->attributes as $attr ) {
-				if (
-					!in_array( $attr->name, [ 'id', 'about', 'typeof' ], true ) &&
-					!Sanitizer::isReservedDataAttribute( $attr->name )
-				) {
-					return $headingElement;
-				}
+			if ( self::isHtmlHeading( $headingElement ) ) {
+				return $headingElement;
 			}
 
 			$wrapperNode = $doc->createElement( 'div' );
@@ -367,9 +386,10 @@ class CommentFormatter {
 						CommentUtils::closestElement( $lastTimestamp->endContainer, [ 'a' ] );
 
 					if ( !$existingLink ) {
-						$link = $doc->createElement( 'a' );
+						$link = $doc->createElement( 'mw:dt-timestamplink' );
 						$link->setAttribute( 'href', $url . '#' . Sanitizer::escapeIdForLink( $threadItem->getId() ) );
 						$link->setAttribute( 'class', 'ext-discussiontools-init-timestamplink' );
+						$link->setAttribute( 'title', $threadItem->getTimestampString() );
 						$lastTimestamp->surroundContents( $link );
 					}
 				}
@@ -447,7 +467,7 @@ class CommentFormatter {
 
 		// Like DOMCompat::getInnerHTML(), but disable 'smartQuote' for compatibility with
 		// ParserOutput::EDITSECTION_REGEX matching 'mw:editsection' tags (T274709)
-		$html = XMLSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'];
+		$html = XHtmlSerializer::serialize( $container, [ 'innerXML' => true, 'smartQuote' => false ] )['html'];
 
 		return $html;
 	}
@@ -458,7 +478,6 @@ class CommentFormatter {
 	 * @param ThreadItem $threadItem The heading or comment item
 	 * @param Document $document Retrieved by parsing page HTML
 	 * @param Element $element The element to add the overflow menu button to
-	 * @return void
 	 */
 	protected static function addOverflowMenuButton(
 		ThreadItem $threadItem, Document $document, Element $element
@@ -474,21 +493,15 @@ class CommentFormatter {
 	 * Replace placeholders for all interactive tools with nothing. This is intended for cases where
 	 * interaction is unexpected, e.g. reply links while previewing an edit.
 	 */
-	public static function removeInteractiveTools( string $text ): string {
-		$text = HtmlHelper::modifyElements(
-			$text,
+	public static function removeInteractiveTools( BatchModifyElements &$batchModifyElements ): void {
+		$batchModifyElements->add(
 			static fn ( SerializerNode $node ): bool => in_array( $node->name, [
 				'mw:dt-replybuttonscontent',
 				'mw:dt-ellipsisbutton',
 				'mw:dt-subscribebutton',
-				// HACK: MobileFrontend's HtmlFormatter strips the mw: namespace
-				'dt-replybuttonscontent',
-				'dt-ellipsisbutton',
-				'dt-subscribebutton'
 			] ),
 			static fn () => ''
 		);
-		return $text;
 	}
 
 	/**
@@ -498,21 +511,26 @@ class CommentFormatter {
 		string $text, BatchModifyElements &$batchModifyElements, IContextSource $contextSource,
 		SubscriptionStore $subscriptionStore, bool $isMobile, bool $useButtons
 	): void {
+		// Optimization: Only parse and process the HTML if it seems to contain our tags (T400115)
+		if ( !str_contains( $text, '<mw:dt-subscribebutton' ) ) {
+			return;
+		}
+
 		$doc = DOMCompat::newDocument( true );
 
 		$itemDataByName = [];
 		HtmlHelper::modifyElements(
 			$text,
-			static function ( SerializerNode $node ) use ( &$itemDataByName ): bool {
-				if ( $node->name === 'mw:dt-subscribebutton' || $node->name === 'dt-subscribebutton' ) {
+			static fn ( $n ) => true,
+			static function ( SerializerNode $node ) use ( &$itemDataByName ): string {
+				if ( $node->name === 'mw:dt-subscribebutton' ) {
 					$data = $node->attrs['data'];
 					$itemDataByName[ $data ] = json_decode( $data, true );
 				}
-				// This is non-replacing - we are just using this as
-				// a convenient way to traverse the DOM tree.
-				return false;
-			},
-			static fn ( $n ) => $n
+				// We ignore the result - we are just using this as a convenient way to traverse the DOM tree.
+				// Match all nodes and return a string to skip the HTML serialization and reduce overhead.
+				return '';
+			}
 		);
 
 		$itemNames = array_column( $itemDataByName, 'name' );
@@ -529,11 +547,24 @@ class CommentFormatter {
 
 		$lang = $contextSource->getLanguage();
 		$title = $contextSource->getTitle();
+
+		// Only parse each message once per pageview (T405135)
+		$messages = [];
+		foreach ( [
+			'discussiontools-topicsubscription-button-unsubscribe-tooltip',
+			'discussiontools-topicsubscription-button-subscribe-tooltip',
+			'discussiontools-topicsubscription-button-unsubscribe',
+			'discussiontools-topicsubscription-button-subscribe',
+			'discussiontools-topicsubscription-button-unsubscribe-label',
+			'discussiontools-topicsubscription-button-subscribe-label',
+		] as $msg ) {
+			$messages[$msg] = wfMessage( $msg )->inLanguage( $lang )->text();
+		}
+
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-subscribebutton' ||
-				$node->name === 'dt-subscribebutton',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-subscribebutton',
 			static function ( SerializerNode $node ) use (
-				$doc, $itemsByName, $itemDataByName, $lang, $title, $isMobile, $useButtons
+				$doc, $itemsByName, $itemDataByName, $messages, $title, $isMobile, $useButtons
 			) {
 				$buttonIsMobile = $node->attrs->offsetExists( 'mobile' );
 				$itemData = $itemDataByName[ $node->attrs['data'] ];
@@ -565,16 +596,16 @@ class CommentFormatter {
 					$subscribeLink->setAttribute( 'class', 'ext-discussiontools-init-section-subscribe-link' );
 					$subscribeLink->setAttribute( 'role', 'button' );
 					$subscribeLink->setAttribute( 'tabindex', '0' );
-					$subscribeLink->setAttribute( 'title', wfMessage(
+					$subscribeLink->setAttribute( 'title', $messages[
 						$isSubscribed ?
 							'discussiontools-topicsubscription-button-unsubscribe-tooltip' :
 							'discussiontools-topicsubscription-button-subscribe-tooltip'
-					)->inLanguage( $lang )->text() );
-					$subscribeLink->nodeValue = wfMessage(
+					] );
+					$subscribeLink->nodeValue = $messages[
 						$isSubscribed ?
 							'discussiontools-topicsubscription-button-unsubscribe' :
 							'discussiontools-topicsubscription-button-subscribe'
-					)->inLanguage( $lang )->text();
+					];
 
 					if ( $subscribedState !== null ) {
 						$subscribeLink->setAttribute( 'data-mw-subscribed', (string)$subscribedState );
@@ -599,14 +630,14 @@ class CommentFormatter {
 						'icon' => $isSubscribed ? 'bell' : 'bellOutline',
 						'flags' => [ 'progressive' ],
 						'href' => $href,
-						'label' => wfMessage( $isSubscribed ?
+						'label' => $messages[ $isSubscribed ?
 							'discussiontools-topicsubscription-button-unsubscribe-label' :
 							'discussiontools-topicsubscription-button-subscribe-label'
-						)->inLanguage( $lang )->text(),
-						'title' => wfMessage( $isSubscribed ?
+						],
+						'title' => $messages[ $isSubscribed ?
 							'discussiontools-topicsubscription-button-unsubscribe-tooltip' :
 							'discussiontools-topicsubscription-button-subscribe-tooltip'
-						)->inLanguage( $lang )->text(),
+						],
 						'infusable' => true,
 					] );
 
@@ -625,8 +656,7 @@ class CommentFormatter {
 	 */
 	public static function removeTopicSubscription( BatchModifyElements &$batchModifyElements ): void {
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-subscribebutton' ||
-				$node->name === 'dt-subscribebutton',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-subscribebutton',
 			static fn () => ''
 		);
 	}
@@ -641,12 +671,12 @@ class CommentFormatter {
 		$doc = DOMCompat::newDocument( true );
 
 		$lang = $contextSource->getLanguage();
-		$replyLinkText = wfMessage( 'discussiontools-replylink' )->inLanguage( $lang )->escaped();
-		$replyButtonText = wfMessage( 'discussiontools-replybutton' )->inLanguage( $lang )->escaped();
+		// Only parse each message once per pageview (T405135)
+		$replyLinkText = wfMessage( 'discussiontools-replylink' )->inLanguage( $lang )->text();
+		$replyButtonText = wfMessage( 'discussiontools-replybutton' )->inLanguage( $lang )->text();
 
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-replybuttonscontent' ||
-				$node->name === 'dt-replybuttonscontent',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-replybuttonscontent',
 			static function ( SerializerNode $node ) use(
 				$doc, $replyLinkText, $replyButtonText, $isMobile, $useButtons, $lang
 			) {
@@ -697,8 +727,7 @@ class CommentFormatter {
 	 */
 	public static function removeReplyTool( BatchModifyElements &$batchModifyElements ): void {
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-replybuttonscontent' ||
-				$node->name === 'dt-replybuttonscontent',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-replybuttonscontent',
 			static fn () => ''
 		);
 	}
@@ -713,8 +742,7 @@ class CommentFormatter {
 		$user = $contextSource->getUser();
 
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-timestamplink' ||
-				$node->name === 'dt-timestamplink',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-timestamplink',
 			static function ( SerializerNode $node ) use ( $lang, $user ): SerializerNode {
 				$node->name = 'a';
 				$relativeTime = static::getSignatureRelativeTime(
@@ -733,7 +761,6 @@ class CommentFormatter {
 	 *
 	 * @param string $className
 	 * @param string|\OOUI\HtmlSnippet $label Label
-	 * @return \OOUI\Tag
 	 */
 	private static function metaLabel( string $className, $label ): \OOUI\Tag {
 		return ( new \OOUI\Tag( 'span' ) )
@@ -746,7 +773,6 @@ class CommentFormatter {
 	 *
 	 * @param ContentCommentItem $commentItem Comment item
 	 * @param bool $includeTopicAndAuthor Include metadata about topic and author
-	 * @return array
 	 */
 	private static function getJsonArrayForCommentMarker(
 		ContentCommentItem $commentItem,
@@ -785,7 +811,7 @@ class CommentFormatter {
 	): string {
 		try {
 			$diff = time() - intval( $timestamp->getTimestamp() );
-		} catch ( TimestampException $ex ) {
+		} catch ( TimestampException ) {
 			// Can't happen
 			$diff = 0;
 		}
@@ -805,8 +831,7 @@ class CommentFormatter {
 		$lang = $contextSource->getLanguage();
 		$user = $contextSource->getUser();
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-latestcommentthread' ||
-				$node->name === 'dt-latestcommentthread',
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-latestcommentthread',
 			static function ( SerializerNode $node ) use ( $lang, $user ) {
 				$itemData = json_decode( $node->attrs['data'], true );
 				if ( $itemData && $itemData['timestamp'] && $itemData['id'] ) {
@@ -831,9 +856,8 @@ class CommentFormatter {
 			}
 		);
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-commentcount' ||
-				$node->name === 'dt-commentcount',
-			static function ( SerializerNode $node ) use ( $lang, $user ) {
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-commentcount',
+			static function ( SerializerNode $node ) use ( $lang ) {
 				$count = $lang->formatNum( $node->attrs['data'] );
 				$label = wfMessage(
 					'discussiontools-topicheader-commentcount',
@@ -846,9 +870,8 @@ class CommentFormatter {
 			}
 		);
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-authorcount' ||
-				$node->name === 'dt-authorcount',
-			static function ( SerializerNode $node ) use ( $lang, $user ) {
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-authorcount',
+			static function ( SerializerNode $node ) use ( $lang ) {
 				$count = $lang->formatNum( $node->attrs['data'] );
 				$label = wfMessage(
 					'discussiontools-topicheader-authorcount',
@@ -860,10 +883,10 @@ class CommentFormatter {
 				)->toString();
 			}
 		);
+		$msgCache = [];
 		$batchModifyElements->add(
-			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-ellipsisbutton' ||
-				$node->name === 'dt-ellipsisbutton',
-			static function ( SerializerNode $node ) use ( $contextSource, $isMobile ) {
+			static fn ( SerializerNode $node ): bool => $node->name === 'mw:dt-ellipsisbutton',
+			static function ( SerializerNode $node ) use ( $contextSource, $isMobile, &$msgCache ) {
 				$overflowMenuData = json_decode( $node->attrs['data'], true );
 
 				'@phan-var array $overflowMenuData';
@@ -891,6 +914,12 @@ class CommentFormatter {
 							return $itemB->getWeight() - $itemA->getWeight();
 						}
 					);
+					// Parse label messages.
+					// Only parse each message once per pageview, if possible (T405135)
+					foreach ( $overflowMenuItems as $item ) {
+						/** @var OverflowMenuItem $item */
+						$item->parseLabel( $contextSource, $msgCache );
+					}
 
 					$overflowButton = new ButtonMenuSelectWidget( [
 						'classes' => [
@@ -922,11 +951,6 @@ class CommentFormatter {
 				'mw:dt-commentcount',
 				'mw:dt-authorcount',
 				'mw:dt-ellipsisbutton',
-				// HACK: MobileFrontend's HtmlFormatter strips the mw: namespace
-				'dt-latestcommentthread',
-				'dt-commentcount',
-				'dt-authorcount',
-				'dt-ellipsisbutton',
 			] ),
 			static fn () => ''
 		);
@@ -1037,7 +1061,6 @@ class CommentFormatter {
 	 * Check if the language requires an icon for the reply button
 	 *
 	 * @param Language $userLang Language
-	 * @return bool
 	 */
 	public static function isLanguageRequiringReplyIcon( Language $userLang ): bool {
 		$services = MediaWikiServices::getInstance();

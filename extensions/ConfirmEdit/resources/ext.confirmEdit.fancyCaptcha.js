@@ -7,7 +7,7 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 	$this.addClass( 'fancycaptcha-reload-loading' );
 
 	// AJAX request to get captcha index key
-	new mw.Api().post( { action: 'fancycaptchareload' } ).done( ( data ) => {
+	new mw.Api().post( { action: 'fancycaptchareload' } ).then( ( data ) => {
 		const captchaIndex = data.fancycaptchareload.index;
 		let imgSrc;
 		if ( typeof captchaIndex === 'string' ) {
@@ -18,10 +18,6 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 			// replace index key with a new one for hidden tag
 			$( '#mw-input-captchaId' ).val( captchaIndex );
 			$( '#mw-input-captchaWord' ).val( '' ).trigger( 'focus' );
-
-			// now do the same with a selector that works for pre-1.27 login forms
-			$root.find( '[name="wpCaptchaId"]' ).val( captchaIndex );
-			$root.find( '[name="wpCaptchaWord"]' ).val( '' ).trigger( 'focus' );
 
 			// and make it accessible for other tools, e.g. VisualEditor
 			$captchaImage.data( 'captchaId', captchaIndex );

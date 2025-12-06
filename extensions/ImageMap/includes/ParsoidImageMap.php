@@ -31,7 +31,6 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
  *
  * Coordinates are relative to the source image, not the thumbnail.
  */
-
 class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 
 	private const TOP_RIGHT = 0;
@@ -60,7 +59,10 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 		];
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @throws ExtensionError
+	 */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $src, array $extArgs
 	): DocumentFragment {
@@ -129,10 +131,12 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				$imageNode = $anchor->firstChild;
 
 				// Could be a span
-				if ( DOMCompat::nodeName( $imageNode ) !== 'img' ) {
+				if ( !(
+					$imageNode instanceof Element &&
+					DOMUtils::nodeName( $imageNode ) === 'img'
+				) ) {
 					throw new ExtensionError( 'imagemap_invalid_image' );
 				}
-				DOMUtils::assertElt( $imageNode );
 
 				// Add the linear dimensions to avoid inaccuracy in the scale
 				// factor when one is much larger than the other
@@ -198,12 +202,18 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				// sol
 				true
 			);
-			$a = DOMCompat::querySelector( $linkFragment, 'a' );
-			if ( $a === null ) {
+			// Interlanguage and category links parse to link tags,
+			// so expect them here too
+			$a = DOMCompat::querySelector( $linkFragment, 'a, link' );
+			if (
+				!( $a instanceof Element ) ||
+				( DOMUtils::nodeName( $a ) === 'link' &&
+					// We could expose WTUtils::isSolTransparentLink for this
+					!DOMUtils::matchRel( $a, '#^mw:PageProp/(Category|Language)#D' ) )
+			) {
 				// Meh, might be for other reasons
 				throw new ExtensionError( 'imagemap_invalid_title', $lineNum );
 			}
-			DOMUtils::assertElt( $a );
 
 			$href = $a->getAttribute( 'href' );
 			$externLink = DOMUtils::matchRel( $a, '#^mw:ExtLink#D' ) !== null;

@@ -52,13 +52,10 @@ trait MediaWikiTestCaseTrait {
 	/**
 	 * Return a PHPUnit mock that is expected to never have any methods called on it.
 	 *
-	 * @psalm-template RealInstanceType of object
+	 * @template RealInstanceType of object
 	 *
-	 * @psalm-param class-string<RealInstanceType> $type
-	 * @psalm-param list<string> $allow Methods to allow
-	 *
-	 * @param string $type
-	 * @param string[] $allow Methods to allow
+	 * @param class-string<RealInstanceType> $type
+	 * @param list<string> $allow Methods to allow
 	 *
 	 * @return MockObject&RealInstanceType
 	 */
@@ -71,13 +68,10 @@ trait MediaWikiTestCaseTrait {
 	/**
 	 * Return a PHPUnit mock that is expected to never have any methods called on it.
 	 *
-	 * @psalm-template RealInstanceType of object
+	 * @template RealInstanceType of object
 	 *
-	 * @psalm-param class-string<RealInstanceType> $type
-	 * @psalm-param list<string> $allow Methods to allow
-	 *
-	 * @param string $type
-	 * @param string[] $allow methods to allow
+	 * @param class-string<RealInstanceType> $type
+	 * @param list<string> $allow Methods to allow
 	 *
 	 * @return MockObject&RealInstanceType
 	 */
@@ -127,7 +121,7 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * Create an initially empty DoainEventDispatcher with an empty service
+	 * Create an initially empty DomainEventDispatcher with an empty service
 	 * container attached. Register only the listeners specified in the parameter.
 	 *
 	 * @param array<string, callable> $listeners
@@ -151,9 +145,9 @@ trait MediaWikiTestCaseTrait {
 	 * @param string $op
 	 * @param string $version
 	 */
-	protected function markTestSkippedIfPhp( $op, $version ) {
+	protected static function markTestSkippedIfPhp( $op, $version ) {
 		if ( version_compare( PHP_VERSION, $version, $op ) ) {
-			$this->markTestSkipped( "PHP $version isn't supported for this test" );
+			self::markTestSkipped( "PHP $version isn't supported for this test" );
 		}
 	}
 
@@ -444,7 +438,7 @@ trait MediaWikiTestCaseTrait {
 		$this->fail( "$reason\n$status" );
 	}
 
-	protected function assertStatusOK( StatusValue $status, $message = '' ) {
+	protected function assertStatusOK( StatusValue $status, string $message = '' ) {
 		if ( !$status->isOK() ) {
 			$errors = $status->splitByErrorType()[0];
 			$this->failStatus( $errors, 'Status should be OK', $message );
@@ -453,7 +447,7 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
-	protected function assertStatusGood( StatusValue $status, $message = '' ) {
+	protected function assertStatusGood( StatusValue $status, string $message = '' ) {
 		if ( !$status->isGood() ) {
 			$this->failStatus( $status, 'Status should be Good', $message );
 		} else {
@@ -461,7 +455,7 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
-	protected function assertStatusNotOK( StatusValue $status, $message = '' ) {
+	protected function assertStatusNotOK( StatusValue $status, string $message = '' ) {
 		if ( $status->isOK() ) {
 			$this->failStatus( $status, 'Status should not be OK', $message );
 		} else {
@@ -469,7 +463,7 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
-	protected function assertStatusNotGood( StatusValue $status, $message = '' ) {
+	protected function assertStatusNotGood( StatusValue $status, string $message = '' ) {
 		if ( $status->isGood() ) {
 			$this->failStatus( $status, 'Status should not be Good', $message );
 		} else {
@@ -477,7 +471,7 @@ trait MediaWikiTestCaseTrait {
 		}
 	}
 
-	protected function assertStatusMessage( string $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusMessage( string $messageKey, StatusValue $status, string $message = '' ) {
 		if ( !$status->hasMessage( $messageKey ) ) {
 			$this->failStatus( $status, "Status should have message $messageKey", $message );
 		} else {
@@ -513,7 +507,10 @@ trait MediaWikiTestCaseTrait {
 					$expectedMsg === null || $actualMsg === null ||
 					$localizer->msg( $expectedMsg )->text() !== $localizer->msg( $actualMsg )->text()
 				) {
-					$this->failStatus( $actual, "Status messages should be exactly like: $expected\nActual:", $message );
+					$this->failStatus(
+						$actual,
+						"Status messages should be exactly like: $expected\nActual:", $message
+					);
 				}
 			}
 		}
@@ -521,16 +518,16 @@ trait MediaWikiTestCaseTrait {
 		$this->addToAssertionCount( 1 );
 	}
 
-	protected function assertStatusValue( $expected, StatusValue $status, $message = 'Status value' ) {
+	protected function assertStatusValue( mixed $expected, StatusValue $status, string $message = 'Status value' ) {
 		$this->assertEquals( $expected, $status->getValue(), $message );
 	}
 
-	protected function assertStatusError( string $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusError( string $messageKey, StatusValue $status, string $message = '' ) {
 		$this->assertStatusNotOK( $status, $message );
 		$this->assertStatusMessage( $messageKey, $status, $message );
 	}
 
-	protected function assertStatusWarning( string $messageKey, StatusValue $status, $message = '' ) {
+	protected function assertStatusWarning( string $messageKey, StatusValue $status, string $message = '' ) {
 		$this->assertStatusNotGood( $status, $message );
 		$this->assertStatusOK( $status, $message );
 		$this->assertStatusMessage( $messageKey, $status, $message );

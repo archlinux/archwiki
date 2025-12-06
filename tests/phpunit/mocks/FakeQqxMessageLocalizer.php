@@ -21,11 +21,12 @@ use Wikimedia\Message\MessageSpecifier;
  *     ->willReturnCallback( [ new FakeQqxMessageLocalizer(), 'msg' ] );
  * ```
  *
- * @since 1.40 (backported in 1.39.4)
+ * @since 1.39.4
  * @license GPL-2.0-or-later
  */
 class FakeQqxMessageLocalizer implements MessageLocalizer {
 
+	/** @inheritDoc */
 	public function msg( $key, ...$params ): Message {
 		$message = new class( $key ) extends Message {
 
@@ -33,6 +34,7 @@ class FakeQqxMessageLocalizer implements MessageLocalizer {
 				return "($this->key$*)";
 			}
 
+			/** @inheritDoc */
 			public static function newFromSpecifier( $value ) {
 				if ( $value instanceof MessageSpecifier ) {
 					return new self( $value );
@@ -46,11 +48,15 @@ class FakeQqxMessageLocalizer implements MessageLocalizer {
 					public function __construct() {
 					}
 
+					/** @inheritDoc */
 					public function getCode(): string {
 						return 'qqx';
 					}
 
-					// Support using Message::numParam()
+					/**
+					 * Support using Message::numParam()
+					 * @inheritDoc
+					 */
 					public function formatNum( $number ): string {
 						return (string)$number;
 					}
@@ -65,6 +71,7 @@ class FakeQqxMessageLocalizer implements MessageLocalizer {
 				return $this;
 			}
 
+			/** @inheritDoc */
 			protected function transformText( $string ): string {
 				return $string;
 			}

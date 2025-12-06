@@ -6,14 +6,17 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Tokens\EmptyLineTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
+use Wikimedia\Parsoid\Tokens\IndentPreTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Tokens\XMLTagTk;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
@@ -92,7 +95,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
  *   the rest of the string.
  * ```
  */
-class PreHandler extends TokenHandler {
+class PreHandler extends LineBasedHandler {
 	// FSM states
 	private const STATE_SOL = 1;
 	private const STATE_PRE = 2;
@@ -103,8 +106,7 @@ class PreHandler extends TokenHandler {
 
 	/** @var int */
 	private $state;
-	/** @var int */
-	private $preTSR;
+	private ?SourceRange $preTSR;
 	/** @var array<Token|string> */
 	private $tokens;
 	/** @var array<Token|string> */
@@ -150,8 +152,6 @@ class PreHandler extends TokenHandler {
 	 * as a meta-tag, we <pre> tag will not get a 1-char width during DSR computation since
 	 * this meta-tag will consume that width. Accordingly, once we strip this meta-tag in the
 	 * cleanup pass, we will reassign its width to the opening tag width of the <pre> tag.
-	 *
-	 * @return Token
 	 */
 	public static function newIndentPreWS(): Token {
 		return new SelfclosingTagTk( 'meta', [ new KV( 'typeof', 'mw:IndentPreWS' ) ] );
@@ -186,7 +186,7 @@ class PreHandler extends TokenHandler {
 		}
 	}
 
-	public function resetState( array $opts ): void {
+	public function resetState( array $options ): void {
 		$this->reset();
 	}
 
@@ -198,7 +198,8 @@ class PreHandler extends TokenHandler {
 		// Initialize to zero to deal with indent-pre
 		// on the very first line where there is no
 		// preceding newline to initialize this.
-		$this->preTSR = 0;
+		// XXX: T405759 should initialize source better
+		$this->preTSR = new SourceRange( 0, 0, null );
 		$this->tokens = [];
 		$this->currLinePreToks = [];
 		$this->wsTkIndex = -1;
@@ -216,7 +217,7 @@ class PreHandler extends TokenHandler {
 	/**
 	 * Wrap buffered tokens with <pre>..</pre>
 	 *
-	 * @return array<string|Token>
+	 * @return list<string|Token>
 	 */
 	private function genPre(): array {
 		$ret = [];
@@ -241,16 +242,20 @@ class PreHandler extends TokenHandler {
 			}
 
 			// Add pre wrapper around the selected tokens
+			// and embed them in a compound IndentPre token
 			$da = null;
-			if ( $this->preTSR !== -1 ) {
+			if ( $this->preTSR !== null ) {
 				$da = new DataParsoid;
-				$da->tsr = new SourceRange( $this->preTSR, $this->preTSR );
+				$da->tsr = clone $this->preTSR;
 			}
-			$ret = [ new TagTk( 'pre', [], $da ) ];
+			$indentPreTk = new IndentPreTk;
+			$indentPreTk->addToken( new TagTk( 'pre', [], $da ) );
 			for ( $j = 0; $j < $i + 1; $j++ ) {
-				$ret[] = $this->tokens[$j];
+				$indentPreTk->addToken( $this->tokens[$j] );
 			}
-			$ret[] = new EndTagTk( 'pre' );
+			$indentPreTk->addToken( new EndTagTk( 'pre' ) );
+
+			$ret = [ $indentPreTk ];
 			for ( $j = $i + 1; $j < $n; $j++ ) {
 				$t = $this->tokens[$j];
 				if ( self::isIndentPreWS( $t ) ) {
@@ -312,14 +317,13 @@ class PreHandler extends TokenHandler {
 
 	/**
 	 * Initialize a pre TSR
-	 *
-	 * @param NlTk $nltk
-	 * @return int
 	 */
-	private function initPreTSR( NlTk $nltk ): int {
+	private function initPreTSR( NlTk $nltk ): ?SourceRange {
 		$da = $nltk->dataParsoid;
 		// tsr->end can never be zero, so safe to use tsr->end to check for null/undefined
-		return $da->tsr->end ?? -1;
+		return ( $da->tsr->end ?? null ) !== null ?
+			new SourceRange( $da->tsr->end, $da->tsr->end, $da->tsr->source ) :
+			null;
 	}
 
 	/**
@@ -329,7 +333,7 @@ class PreHandler extends TokenHandler {
 		$env = $this->env;
 
 		$env->trace( 'pre', $this->pipelineId, 'NL    |',
-			self::STATE_STR[$this->state], '| ', $token
+			self::STATE_STR[$this->state], '|', $token
 		);
 
 		// Whenever we move into SOL-state, init preTSR to
@@ -346,8 +350,8 @@ class PreHandler extends TokenHandler {
 
 			case self::STATE_MULTILINE_PRE:
 			case self::STATE_PRE_COLLECT:
-				$this->processCurrLine( $token );
 				$ret = [];
+				$this->processCurrLine( $token );
 				$this->state = self::STATE_SOL_AFTER_PRE;
 				break;
 
@@ -358,7 +362,7 @@ class PreHandler extends TokenHandler {
 				break;
 
 			case self::STATE_IGNORE:
-				// Returning null will invoke the onAny handler
+				// Returning null will invoke the onAny handler.
 				// Since we want to skip it, return [ $token ].
 				$ret = [ $token ];
 				$this->reset();
@@ -381,7 +385,7 @@ class PreHandler extends TokenHandler {
 	 */
 	public function onEnd( EOFTk $token ): ?array {
 		$this->env->trace( 'pre', $this->pipelineId, 'eof   |',
-			self::STATE_STR[$this->state], '| ', $token
+			self::STATE_STR[$this->state], '|', $token
 		);
 
 		switch ( $this->state ) {
@@ -421,20 +425,27 @@ class PreHandler extends TokenHandler {
 	/**
 	 * Get updated pre TSR value
 	 *
-	 * @param int $tsr
+	 * @param ?SourceRange $tsr
 	 * @param Token|string $token
-	 * @return int
+	 * @return ?SourceRange
 	 */
-	private function getUpdatedPreTSR( int $tsr, $token ): int {
+	private function getUpdatedPreTSR( ?SourceRange $tsr, $token ): ?SourceRange {
 		if ( $token instanceof CommentTk ) {
-			$tsr = isset( $token->dataParsoid->tsr ) ? $token->dataParsoid->tsr->end :
-				( ( $tsr === -1 ) ? -1 : WTUtils::decodedCommentLength( $token ) + $tsr );
-		} elseif ( $token instanceof SelfclosingTagTk ) {
+			if ( isset( $token->dataParsoid->tsr ) ) {
+				$tsr = new SourceRange(
+					$token->dataParsoid->tsr->end,
+					$token->dataParsoid->tsr->end,
+					$token->dataParsoid->tsr->source
+				);
+			} elseif ( $tsr !== null ) {
+				$tsr = $tsr->offset( WTUtils::decodedCommentLength( $token ) );
+			}
+		} elseif ( $token instanceof SelfclosingTagTk || $token instanceof EmptyLineTk ) {
 			// meta-tag (cannot compute)
-			$tsr = -1;
-		} elseif ( $tsr !== -1 ) {
+			$tsr = null;
+		} elseif ( $tsr !== null ) {
 			// string
-			$tsr += strlen( $token );
+			$tsr = $tsr->offset( strlen( $token ) );
 		}
 		return $tsr;
 	}
@@ -490,7 +501,10 @@ class PreHandler extends TokenHandler {
 			case self::STATE_PRE:
 			case self::STATE_PRE_COLLECT:
 			case self::STATE_MULTILINE_PRE:
-				if ( !is_string( $token ) && TokenUtils::isWikitextBlockTag( $token->getName() ) ) {
+				if (
+					$token instanceof XMLTagTk &&
+					TokenUtils::isWikitextBlockTag( $token->getName() )
+				) {
 					$ret = $this->state === self::STATE_PRE ?
 						$this->purgeBuffers( $token ) : $this->discardCurrLinePre( $token );
 					$this->moveToIgnoreState();

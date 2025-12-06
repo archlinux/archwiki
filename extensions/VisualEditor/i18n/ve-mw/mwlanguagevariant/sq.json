@@ -33,7 +33,7 @@
 	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Kod gjuhe",
 	"visualeditor-mwlanguagevariantinspector-filter-text-label": "Lëndë",
 	"visualeditor-mwlanguagevariantinspector-filter-text-placeholder": "Tekst i filtruar",
-	"visualeditor-mwlanguagevariantinspector-oneway-add-button": "Shto rast të ri",
+	"visualeditor-mwlanguagevariantinspector-oneway-add-button": "Shtoni rast të ri",
 	"visualeditor-mwlanguagevariantinspector-oneway-clear-button": "Hiqeni rastin",
 	"visualeditor-mwlanguagevariantinspector-oneway-from-text-placeholder": "Tekst burimi",
 	"visualeditor-mwlanguagevariantinspector-oneway-to-text-placeholder": "Tekst varianti",
@@ -42,7 +42,7 @@
 	"visualeditor-mwlanguagevariantinspector-title-name": "Emër gjuhe",
 	"visualeditor-mwlanguagevariantinspector-title-oneway": "Rregull shndërrimesh njëkahëshe",
 	"visualeditor-mwlanguagevariantinspector-title-twoway": "Rregull shndërrimesh gjuhe",
-	"visualeditor-mwlanguagevariantinspector-twoway-add-button": "Shto rast të ri",
+	"visualeditor-mwlanguagevariantinspector-twoway-add-button": "Shtoni rast të ri",
 	"visualeditor-mwlanguagevariantinspector-twoway-clear-button": "Hiqeni rastin",
 	"visualeditor-mwlanguagevariantinspector-twoway-text-placeholder": "Tekst varianti"
 }

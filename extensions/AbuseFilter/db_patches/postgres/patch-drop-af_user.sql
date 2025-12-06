@@ -3,10 +3,13 @@
 -- Do not modify this file directly.
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 DROP INDEX af_user;
+
 ALTER TABLE abuse_filter
   DROP af_user;
+
 ALTER TABLE abuse_filter
   DROP af_user_text;
+
 ALTER TABLE abuse_filter
   ALTER af_actor
   DROP DEFAULT;

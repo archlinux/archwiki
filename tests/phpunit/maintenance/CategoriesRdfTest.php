@@ -50,7 +50,7 @@ class CategoriesRdfTest extends MediaWikiLangTestCase {
 	public function getCategoryLinksIterator( $dbr, array $ids ) {
 		$res = [];
 		foreach ( $ids as $pageid ) {
-			$res[] = (object)[ 'cl_from' => $pageid, 'cl_to' => "Parent of $pageid" ];
+			$res[] = (object)[ 'cl_from' => $pageid, 'lt_title' => "Parent of $pageid" ];
 		}
 		return $res;
 	}
@@ -74,7 +74,7 @@ class CategoriesRdfTest extends MediaWikiLangTestCase {
 			->willReturn( $this->getCategoryIterator() );
 
 		$dumpScript->method( 'getCategoryLinksIterator' )
-			->willReturnCallback( [ $this, 'getCategoryLinksIterator' ] );
+			->willReturnCallback( $this->getCategoryLinksIterator( ... ) );
 
 		/** @var DumpCategoriesAsRdf $dumpScript */
 		$logFileName = $this->getNewTempFile();

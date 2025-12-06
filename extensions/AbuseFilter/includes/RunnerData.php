@@ -103,16 +103,10 @@ class RunnerData {
 		return $this->profilingData;
 	}
 
-	/**
-	 * @return float
-	 */
 	public function getTotalRuntime(): float {
 		return $this->totalRuntime;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getTotalConditions(): int {
 		return $this->totalConditions;
 	}

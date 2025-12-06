@@ -26,20 +26,13 @@ use MediaWiki\User\UserIdentity;
  * @ingroup Extensions
  */
 class OATHUser {
-	private UserIdentity $user;
-	private int $centralId;
-
 	/** @var IAuthKey[] */
 	private array $keys = [];
 
 	/**
 	 * Constructor. Can't be called directly. Use OATHUserRepository::findByUser instead.
-	 * @param UserIdentity $user
-	 * @param int $centralId
 	 */
-	public function __construct( UserIdentity $user, int $centralId ) {
-		$this->user = $user;
-		$this->centralId = $centralId;
+	public function __construct( private UserIdentity $user, private int $centralId ) {
 	}
 
 	public function getUser(): UserIdentity {
@@ -53,10 +46,7 @@ class OATHUser {
 		return $this->centralId;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getIssuer() {
+	public function getIssuer(): string {
 		global $wgSitename, $wgOATHAuthAccountPrefix;
 
 		if ( $wgOATHAuthAccountPrefix !== false ) {
@@ -65,11 +55,15 @@ class OATHUser {
 		return $wgSitename;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getAccount() {
+	public function getAccount(): string {
 		return $this->user->getName();
+	}
+
+	/**
+	 * @return IAuthKey[]
+	 */
+	public function getRecoveryCodes() {
+		return $this->getKeysForModule( 'recoverycodes' );
 	}
 
 	/**
@@ -92,6 +86,16 @@ class OATHUser {
 				static fn ( IAuthKey $key ) => $key->getModule() === $moduleName
 			)
 		);
+	}
+
+	public function getKeyById( int $id ): ?IAuthKey {
+		$matchingKeys = array_values(
+			array_filter(
+				$this->keys,
+				static fn ( IAuthKey $key ) => $key->getId() === $id
+			)
+		);
+		return $matchingKeys[0] ?? null;
 	}
 
 	public function removeKey( IAuthKey $key ) {
@@ -117,9 +121,7 @@ class OATHUser {
 	}
 
 	/**
-	 * Adds single key to the key array
-	 *
-	 * @param IAuthKey $key
+	 * Adds a single key to the key array
 	 */
 	public function addKey( IAuthKey $key ) {
 		$this->keys[] = $key;
@@ -152,5 +154,27 @@ class OATHUser {
 	 */
 	public function disable() {
 		$this->keys = [];
+	}
+
+	/**
+	 * Get all of the user's keys, but exclude special keys
+	 * @return IAuthKey[]
+	 */
+	public function getNonSpecialKeys(): array {
+		$moduleRegistry = OATHAuthServices::getInstance()->getModuleRegistry();
+		return array_values(
+			array_filter(
+				$this->keys,
+				static fn ( IAuthKey $key ) => !$moduleRegistry->getModuleByKey( $key->getModule() )->isSpecial()
+			)
+		);
+	}
+
+	/**
+	 * Returns a bool indicating whether a user has _any_ 2fa modules enabled
+	 * which are not considered "special" modules, as defined via IModule::isSpecial()
+	 */
+	public function userHasNonSpecialEnabledKeys(): bool {
+		return count( $this->getNonSpecialKeys() ) > 0;
 	}
 }

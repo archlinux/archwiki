@@ -28,7 +28,9 @@
 	"templatedata-modal-button-cancel": "Жокко чыгаруу",
 	"templatedata-modal-button-changelang": "Тилди өзгөртүү",
 	"templatedata-modal-button-done": "Даяр",
+	"templatedata-modal-button-importParams": "Параметрлерди импорттоо",
 	"templatedata-modal-button-saveparam": "Сактоо",
+	"templatedata-modal-button-discard": "Жокко чыгаруу",
 	"templatedata-modal-format-custom": "Ыңгайлаштырылуучу",
 	"templatedata-modal-json-error-replace": "Алмаштыруу",
 	"templatedata-modal-placeholder-paramkey": "Параметрдин аталышы",
@@ -36,7 +38,11 @@
 	"templatedata-modal-table-param-description": "Сыпаттама ($1)",
 	"templatedata-modal-table-param-example": "Мисал ($1)",
 	"templatedata-modal-table-param-label": "Аталыш ($1)",
+	"templatedata-modal-title-addparam": "Жаңы параметрди кошуу",
 	"templatedata-modal-title-language": "Тил",
 	"templatedata-modal-title-templatedesc": "Калыптын сыпаттамасы ($1)",
-	"templatedata-modal-title-templateparams": "Калыптын параметрлери"
+	"templatedata-modal-title-templateparams": "Калыптын параметрлери",
+	"templatedata-category-browser-header": "Категориялар",
+	"templatedata-category-switch-label": "Жогорку деңгээлдеги категория:",
+	"templatedata-category-rootcat": "Калыптар"
 }

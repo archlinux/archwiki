@@ -3,6 +3,8 @@ declare( strict_types = 1 );
 
 namespace Cite\Parsoid;
 
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -18,10 +20,16 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
  */
 class ErrorUtils {
 
-	private ParsoidExtensionAPI $extApi;
+	public function __construct(
+		private readonly ParsoidExtensionAPI $extApi,
+	) {
+	}
 
-	public function __construct( ParsoidExtensionAPI $extApi ) {
-		$this->extApi = $extApi;
+	public static function fromMessageSpecifier( MessageSpecifier $msg ): DataMwError {
+		return new DataMwError( $msg->getKey(), array_map(
+			static fn ( $p ) => $p instanceof MessageParam ? $p->getValue() : $p,
+			$msg->getParams()
+		) );
 	}
 
 	/**
@@ -96,7 +104,8 @@ class ErrorUtils {
 
 		$this->extApi->addTrackingCategory( 'cite-tracking-category-cite-error' );
 
-		$fragment = $this->extApi->createInterfaceI18nFragment( 'cite_error', [ $error ] );
+		$msg = new MessageValue( 'cite_error', [ $error ] );
+		$fragment = $this->extApi->createInterfaceI18nFragment( $msg->getKey(), $msg->getParams() );
 		$fragSpan = DOMCompat::getFirstElementChild( $fragment );
 		DOMUtils::addAttributes( $fragSpan, [ 'class' => 'error mw-ext-cite-error' ] );
 		return $fragment;

@@ -14,12 +14,10 @@ use stdClass;
  */
 class TemplateDataHtmlFormatter {
 
-	private MessageLocalizer $localizer;
-	private string $languageCode;
-
-	public function __construct( MessageLocalizer $localizer, string $languageCode = 'en' ) {
-		$this->localizer = $localizer;
-		$this->languageCode = $languageCode;
+	public function __construct(
+		private readonly MessageLocalizer $localizer,
+		private readonly string $languageCode = 'en',
+	) {
 	}
 
 	/**

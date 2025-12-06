@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,6 +14,8 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Title\ForeignTitle;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier;
 
 /**
  * Reporting callback
@@ -67,10 +55,10 @@ class ImportReporter extends ContextSource {
 			wfDeprecated( __METHOD__ . ' without $context', '1.42' );
 		}
 		$this->mOriginalPageOutCallback =
-			$importer->setPageOutCallback( [ $this, 'reportPage' ] );
+			$importer->setPageOutCallback( $this->reportPage( ... ) );
 		$this->mOriginalLogCallback =
-			$importer->setLogItemCallback( [ $this, 'reportLogItem' ] );
-		$importer->setNoticeCallback( [ $this, 'reportNotice' ] );
+			$importer->setLogItemCallback( $this->reportLogItem( ... ) );
+		$importer->setNoticeCallback( $this->reportNotice( ... ) );
 		$this->mIsUpload = $upload;
 		$this->mInterwiki = $interwiki;
 		$this->reason = is_string( $reason ) ? $reason : "";
@@ -90,12 +78,20 @@ class ImportReporter extends ContextSource {
 		$this->getOutput()->addHTML( "<ul>\n" );
 	}
 
+	/**
+	 * @param string|string[]|MessageSpecifier $msg
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @param (MessageParam|MessageSpecifier|string|int|float|list<MessageParam|MessageSpecifier|string|int|float>)[] $params
+	 */
 	public function reportNotice( $msg, array $params ) {
 		$this->getOutput()->addHTML(
 			Html::element( 'li', [], $this->msg( $msg, $params )->text() )
 		);
 	}
 
+	/**
+	 * @param mixed ...$args
+	 */
 	public function reportLogItem( ...$args ) {
 		$this->mLogItemCount++;
 		if ( is_callable( $this->mOriginalLogCallback ) ) {
@@ -181,7 +177,7 @@ class ImportReporter extends ContextSource {
 		}
 	}
 
-	public function close() {
+	public function close(): Status {
 		$out = $this->getOutput();
 		if ( $this->mLogItemCount > 0 ) {
 			$msg = $this->msg( 'imported-log-entries' )->numParams( $this->mLogItemCount )->parse();

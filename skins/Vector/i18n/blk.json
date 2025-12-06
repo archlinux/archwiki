@@ -7,7 +7,6 @@
 			"咽頭べさ"
 		]
 	},
-	"vector-opt-out": "ခြုဲင်းချာပုင်ႏစံႏအလီꩻ",
 	"vector-languages": "ဘာႏသာႏငဝ်းငွါဖုံႏ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ဘာႏသာႏငဝ်းငွါ|$1 ဘာႏသာႏငဝ်းငွါဖိုင်ႏ}}",
 	"vector-no-language-button-label": "ထဲမ်သော့ꩻဘာႏသာႏငဝ်းငွါဖိုင်ႏ",
@@ -33,7 +32,6 @@
 	"skin-theme-day-label": "အလေ",
 	"skin-theme-night-label": "အခေ့ꩻ",
 	"skin-theme-os-label": "အဝ်ႏလွိုႏကာႏကာႏ",
-	"vector-searchsuggest-containing": "ထိုမ်ႏသွော့ ကပါသော့ꩻ လိတ်မဲ့ငါဖုံႏယို။ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:ငဝ်းတယ်ႏအွဉ်",
 	"vector-toc-label": "ဟော်ꩻထွားရီးတာႏ",
 	"vector-toc-beginning": "အစ",

@@ -12,7 +12,8 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
  */
 class MMLmrow extends MMLbase {
 
-	public function __construct( string $texclass = TexClass::ORD, array $attributes = [], MMLbase ...$children ) {
+	/** @inheritDoc */
+	public function __construct( string $texclass = TexClass::ORD, array $attributes = [], ...$children ) {
 		parent::__construct( "mrow", $texclass, $attributes, ...$children );
 	}
 }

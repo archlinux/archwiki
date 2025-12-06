@@ -55,5 +55,7 @@
 	"replacetext_no_external_stores": "Notice shown to administrator of wiki configured with $wgExternalStores",
 	"right-replacetext": "{{doc-right|replacetext}}",
 	"action-replacetext": "{{doc-action|replacetext}}",
-	"replacetext-summary-label": "Used as label meesage for custom summary in replacement edits"
+	"replacetext-summary-label": "Used as label meesage for custom summary in replacement edits",
+	"tag-replacetext": "Name of the tag for edits made via Special:ReplaceText.",
+	"tag-replacetext-description": "Short description of the tags for edits made via Special:ReplaceText."
 }

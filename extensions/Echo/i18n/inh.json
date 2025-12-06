@@ -22,7 +22,6 @@
 	"echo-pref-notifications-blacklist": "Ма гойта хоамаш укх доакъашхошкара ([[mw:Special:MyLanguage/Help:Notifications#mute|дукхагIа хá]])",
 	"notifications": "Хоамбар",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Хьога}} дéна дӀахайтар",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Керда доакъашхой",
 	"echo-specialmute-label-mute-notifications": "Ма гойта хоамаш {{GENDER:$1|укх доакъашхочунгара}}",
 	"echo-notification-alert-text-only": "Хабар дáр"
 }

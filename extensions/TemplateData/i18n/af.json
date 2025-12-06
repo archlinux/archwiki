@@ -94,6 +94,8 @@
 	"templatedata-modal-title-templateformat": "Voorgestelde sjabloonformaat",
 	"templatedata-modal-title-templateparam-details": "Parameterbesonderhede: $1",
 	"templatedata-modal-title-templateparams": "Sjabloonparameters",
+	"templatedata-search-description": "Soek vir 'n sjabloon:",
+	"templatedata-search-placeholder-cirrussearch": "Voer die sjabloon naam of sleutelwoorde in",
 	"templatedata-search-list-header": "Gunstelinge",
 	"templatedata-search-list-empty": "Sjablone wat jy as gunstelinge merk, sal hier verskyn",
 	"templatedata-favorite-add": "Voeg sjabloon by gunstelinge",

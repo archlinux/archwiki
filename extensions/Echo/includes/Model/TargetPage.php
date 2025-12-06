@@ -75,7 +75,7 @@ class TargetPage extends AbstractEntity {
 	public static function newFromRow( $row ) {
 		$requiredFields = [
 			'etp_page',
-			'etp_event'
+			'etp_event',
 		];
 		foreach ( $requiredFields as $field ) {
 			if ( !isset( $row->$field ) || !$row->$field ) {
@@ -146,7 +146,7 @@ class TargetPage extends AbstractEntity {
 	public function toDbArray() {
 		return [
 			'etp_page' => $this->pageId,
-			'etp_event' => $this->eventId
+			'etp_event' => $this->eventId,
 		];
 	}
 }

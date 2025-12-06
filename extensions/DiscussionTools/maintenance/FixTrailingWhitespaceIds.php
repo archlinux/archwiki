@@ -90,7 +90,7 @@ class FixTrailingWhitespaceIds extends LoggedUpdateMaintenance {
 						->set( [ 'itid_itemid' => $fixedItemId ] )
 						->where( [ 'itid_itemid' => $itemId ] )
 						->caller( __METHOD__ )->execute();
-				} catch ( DBQueryError $err ) {
+				} catch ( DBQueryError ) {
 					// Give up on updating in case of complex conflicts (T356196#9913698)
 					$this->output( "Failed to update $itemId\n" );
 					$skippedIds[] = $itemId;

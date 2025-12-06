@@ -33,7 +33,6 @@ use MediaWiki\Hook\SkinBuildSidebarHook;
 use MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook;
 use MediaWiki\Hook\SpecialTrackingCategories__preprocessHook;
 use MediaWiki\Html\Html;
-use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook;
 use MediaWiki\Output\OutputPage;
@@ -45,14 +44,11 @@ use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
-use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Hooks for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
- *
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
  */
 class Hooks implements
 	SpecialTrackingCategories__preprocessHook,
@@ -63,24 +59,12 @@ class Hooks implements
 	CategoryViewer__doCategoryQueryHook,
 	CategoryViewer__generateLinkHook
 {
-	private CategoryCache $categoryCache;
-	private Config $config;
-	private IConnectionProvider $dbProvider;
-	private LinkRenderer $linkRenderer;
-	private TitleFormatter $titleFormatter;
-
 	public function __construct(
-		CategoryCache $categoryCache,
-		Config $config,
-		IConnectionProvider $dbProvider,
-		LinkRenderer $linkRenderer,
-		TitleFormatter $titleFormatter
+		private readonly CategoryCache $categoryCache,
+		private readonly CategoryTreeFactory $categoryTreeFactory,
+		private readonly Config $config,
+		private readonly TitleFormatter $titleFormatter,
 	) {
-		$this->categoryCache = $categoryCache;
-		$this->config = $config;
-		$this->dbProvider = $dbProvider;
-		$this->linkRenderer = $linkRenderer;
-		$this->titleFormatter = $titleFormatter;
 	}
 
 	/**
@@ -98,16 +82,13 @@ class Hooks implements
 	 * Entry point for the {{#categorytree}} tag parser function.
 	 * This is a wrapper around Hooks::parserHook
 	 * @param Parser $parser
+	 * @param string $cat
 	 * @param string ...$params
 	 * @return array|string
 	 */
-	public function parserFunction( Parser $parser, ...$params ) {
-		// first user-supplied parameter must be category name
-		if ( !$params ) {
-			// no category specified, return nothing
-			return '';
-		}
-		$cat = array_shift( $params );
+	public function parserFunction( Parser $parser, string $cat, string ...$params ) {
+		// The first user-supplied parameter is the category name.
+		// On `{{#categorytree:}}` $cat is ''.
 
 		// build associative arguments from flat parameter list
 		$argv = [];
@@ -135,11 +116,11 @@ class Hooks implements
 
 	/**
 	 * Obtain a category sidebar link based on config
-	 * @return bool|string of link
+	 * @return string|null of link
 	 */
-	private function getCategorySidebarBox() {
+	private function getCategorySidebarBox(): ?string {
 		if ( !$this->config->get( 'CategoryTreeSidebarRoot' ) ) {
-			return false;
+			return null;
 		}
 		return $this->parserHook(
 			$this->config->get( 'CategoryTreeSidebarRoot' ),
@@ -183,13 +164,13 @@ class Hooks implements
 	 * @param string|null $cat
 	 * @param array $argv
 	 * @param Parser|null $parser
-	 * @return bool|string
+	 * @return string
 	 */
 	public function parserHook(
 		?string $cat,
 		array $argv,
 		?Parser $parser = null
-	) {
+	): string {
 		if ( $parser ) {
 			$parserOutput = $parser->getOutput();
 			$parserOutput->addModuleStyles( [ 'ext.categoryTree.styles' ] );
@@ -203,15 +184,13 @@ class Hooks implements
 			}
 		}
 
-		$ct = new CategoryTree( $argv, $this->config, $this->dbProvider, $this->linkRenderer );
+		$ct = $this->categoryTreeFactory->newCategoryTree( $argv );
 
 		$attr = Sanitizer::validateTagAttributes( $argv, 'div' );
 
-		$hideroot = isset( $argv['hideroot'] )
-			? OptionManager::decodeBoolean( $argv['hideroot'] ) : false;
-		$onlyroot = isset( $argv['onlyroot'] )
-			? OptionManager::decodeBoolean( $argv['onlyroot'] ) : false;
-		$depthArg = isset( $argv['depth'] ) ? (int)$argv['depth'] : 1;
+		$hideroot = OptionManager::decodeBoolean( $argv['hideroot'] ?? false );
+		$onlyroot = OptionManager::decodeBoolean( $argv['onlyroot'] ?? false );
+		$depthArg = (int)( $argv['depth'] ?? 1 );
 
 		$depth = $ct->optionManager->capDepth( $depthArg );
 		if ( $onlyroot ) {
@@ -233,14 +212,13 @@ class Hooks implements
 
 	/**
 	 * OutputPageRenderCategoryLink hook
-	 * @param OutputPage $out
+	 * @param OutputPage $outputPage
 	 * @param ProperPageIdentity $categoryTitle
 	 * @param string $text
 	 * @param ?string &$link
-	 * @return void
 	 */
 	public function onOutputPageRenderCategoryLink(
-		OutputPage $out,
+		OutputPage $outputPage,
 		ProperPageIdentity $categoryTitle,
 		string $text,
 		?string &$link
@@ -254,7 +232,7 @@ class Hooks implements
 			return;
 		}
 
-		CategoryTree::setHeaders( $out );
+		CategoryTree::setHeaders( $outputPage );
 
 		$options = $this->config->get( 'CategoryTreePageCategoryOptions' );
 		$link = $this->parserHook(
@@ -271,7 +249,7 @@ class Hooks implements
 	 * @param Config $config
 	 * @return array Data to be serialised as data.json
 	 */
-	public static function getDataForJs( RL\Context $context, Config $config ) {
+	public static function getDataForJs( RL\Context $context, Config $config ): array {
 		// Look, this is pretty bad but CategoryTree is just whacky, it needs to be rewritten
 		$optionManager = new OptionManager( $config->get( 'CategoryTreeCategoryPageOptions' ), $config );
 
@@ -318,7 +296,7 @@ class Hooks implements
 	 * @param IResultWrapper $res
 	 */
 	public function onCategoryViewer__doCategoryQuery( $type, $res ) {
-		if ( $type === 'subcat' && $res ) {
+		if ( $type === 'subcat' ) {
 			$this->categoryCache->fillFromQuery( $res );
 		}
 	}
@@ -345,7 +323,7 @@ class Hooks implements
 		if ( $mode !== null ) {
 			$options['mode'] = $mode;
 		}
-		$tree = new CategoryTree( $options, $this->config, $this->dbProvider, $this->linkRenderer );
+		$tree = $this->categoryTreeFactory->newCategoryTree( $options );
 
 		$cat = $this->categoryCache->getCategory( $title );
 

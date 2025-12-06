@@ -2,21 +2,7 @@
 /**
  * Creates an account and grants it rights.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
@@ -49,6 +35,12 @@ class CreateAndPromote extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Create a new user account and/or grant it additional rights' );
+		$this->addOption(
+			'email',
+			'Sets the users email address',
+			false,
+			true
+		);
 		$this->addOption(
 			'force',
 			'If account exists already, just grant it rights or change password.'
@@ -105,7 +97,7 @@ class CreateAndPromote extends Maintenance {
 			$inGroups = $services->getUserGroupManager()->getUserGroups( $user );
 		}
 
-		$groups = array_filter( self::PERMIT_ROLES, [ $this, 'hasOption' ] );
+		$groups = array_filter( self::PERMIT_ROLES, $this->hasOption( ... ) );
 		if ( $this->hasOption( 'custom-groups' ) ) {
 			$allGroups = array_fill_keys( $services->getUserGroupManager()->listAllGroups(), true );
 			$customGroupsText = $this->getOption( 'custom-groups' );
@@ -191,6 +183,14 @@ class CreateAndPromote extends Maintenance {
 			} catch ( PasswordError $pwe ) {
 				$this->fatalError( 'Setting the password failed: ' . $pwe->getMessage() );
 			}
+		}
+
+		if ( $this->hasOption( 'email' ) ) {
+			$resetEmail = $this->createChild( ResetUserEmail::class );
+			$resetEmail->setArg( 0, $user->getName() );
+			$resetEmail->setArg( 1, $this->getOption( 'email' ) );
+			$resetEmail->setOption( 'no-reset-password', true );
+			$resetEmail->execute();
 		}
 
 		if ( !$exists ) {

@@ -1,13 +1,10 @@
 <?php
 
-// phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
-// phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
+// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic -- Test traits are not excluded
+
+use MediaWiki\Languages\LanguageFallback;
 
 /**
- * Code to test the getFallbackFor, getFallbacksFor, and getFallbacksIncludingSiteLanguage methods
- * that have historically been static methods of the Language class. It can be used to test any
- * class or object that implements those three methods.
- *
  * @internal For LanguageFallbackTest and LanguageFallbackIntegrationTest
  */
 trait LanguageFallbackTestTrait {
@@ -17,21 +14,9 @@ trait LanguageFallbackTestTrait {
 	 *   ignored in integration tests -- it's enough to test in unit tests.)
 	 *   * fallbackMap: A map of language codes to fallback sequences to use.
 	 *   * siteLangCode
-	 * @return string|object Name of class or object with the three methods getFirst, getAll, and
-	 *   getAllIncludingSiteLanguage (or getFallbackFor, getFallbacksFor, and
-	 *   getFallbacksIncludingSiteLanguage if callMethod() is suitably overridden).
+	 * @return LanguageFallback
 	 */
-	abstract protected function getCallee( array $options = [] );
-
-	/**
-	 * @return int Value from LanguageFallback:MESSAGES
-	 */
-	abstract protected function getMessagesKey();
-
-	/**
-	 * @return int Value from LanguageFallback::STRICT
-	 */
-	abstract protected function getStrictKey();
+	abstract protected function getCallee( array $options = [] ): LanguageFallback;
 
 	/**
 	 * @param int $expectedGets How many times it's expected that 'getItem' will be called
@@ -57,18 +42,6 @@ trait LanguageFallbackTestTrait {
 	}
 
 	/**
-	 * Convenience/readability wrapper to call a method on a class or object.
-	 *
-	 * @param string|object $callee As in return value of getCallee()
-	 * @param string $method Name of method to call
-	 * @param mixed ...$params To pass to method
-	 * @return mixed Return value of method
-	 */
-	public function callMethod( $callee, $method, ...$params ) {
-		return [ $callee, $method ]( ...$params );
-	}
-
-	/**
 	 * @param string $code
 	 * @param array $expected
 	 * @param array $options
@@ -77,7 +50,8 @@ trait LanguageFallbackTestTrait {
 	public function testGetFirst( $code, array $expected, array $options = [] ) {
 		$callee = $this->getCallee( $options );
 		$this->assertSame( $expected[0] ?? null,
-			$this->callMethod( $callee, 'getFirst', $code ) );
+			$callee->getFirst( $code )
+		);
 	}
 
 	/**
@@ -88,7 +62,8 @@ trait LanguageFallbackTestTrait {
 	 */
 	public function testGetAll( $code, array $expected, array $options = [] ) {
 		$this->assertSame( $expected,
-			$this->callMethod( $this->getCallee( $options ), 'getAll', $code ) );
+			$this->getCallee( $options )->getAll( $code )
+		);
 	}
 
 	/**
@@ -99,8 +74,8 @@ trait LanguageFallbackTestTrait {
 	 */
 	public function testGetAll_messages( $code, array $expected, array $options = [] ) {
 		$this->assertSame( $expected,
-			$this->callMethod( $this->getCallee( $options ), 'getAll',
-				$code, $this->getMessagesKey() ) );
+			$this->getCallee( $options )->getAll( $code, LanguageFallback::MESSAGES )
+		);
 	}
 
 	public static function provideGetAll() {
@@ -110,7 +85,7 @@ trait LanguageFallbackTestTrait {
 			'sco' => [ 'sco', [ 'en' ] ],
 			'yi' => [ 'yi', [ 'he', 'en' ] ],
 			'ruq' => [ 'ruq', [ 'ruq-latn', 'ro', 'en' ] ],
-			'sh' => [ 'sh', [ 'sh-latn', 'sh-cyrl', 'bs', 'sr-el', 'sr-latn', 'hr', 'en' ] ],
+			'sh' => [ 'sh', [ 'sh-latn', 'bs', 'hr', 'sr-latn', 'sr-el', 'sh-cyrl', 'sr-cyrl', 'sr-ec', 'en' ] ],
 		];
 	}
 
@@ -122,8 +97,8 @@ trait LanguageFallbackTestTrait {
 	 */
 	public function testGetAll_strict( $code, array $expected, array $options = [] ) {
 		$this->assertSame( $expected,
-			$this->callMethod( $this->getCallee( $options ), 'getAll',
-				$code, $this->getStrictKey() ) );
+			$this->getCallee( $options )->getAll( $code, LanguageFallback::STRICT )
+		);
 	}
 
 	public static function provideGetAll_strict() {
@@ -133,7 +108,7 @@ trait LanguageFallbackTestTrait {
 			'sco' => [ 'sco', [ 'en' ] ],
 			'yi' => [ 'yi', [ 'he' ] ],
 			'ruq' => [ 'ruq', [ 'ruq-latn', 'ro' ] ],
-			'sh' => [ 'sh', [ 'sh-latn', 'sh-cyrl', 'bs', 'sr-el', 'sr-latn', 'hr' ] ],
+			'sh' => [ 'sh', [ 'sh-latn', 'bs', 'hr', 'sr-latn', 'sr-el', 'sh-cyrl', 'sr-cyrl', 'sr-ec' ] ],
 		];
 	}
 
@@ -145,11 +120,11 @@ trait LanguageFallbackTestTrait {
 
 		// These should not throw, because of short-circuiting. If they do, it will fail the test,
 		// because we pass 5 and 6 instead of 7.
-		$this->callMethod( $callee, 'getAll', 'en', 5 );
-		$this->callMethod( $callee, 'getAll', '!!!', 6 );
+		$callee->getAll( 'en', 5 );
+		$callee->getAll( '!!!', 6 );
 
 		// This is the one that should throw.
-		$this->callMethod( $callee, 'getAll', 'fr', 7 );
+		$callee->getAll( 'fr', 7 );
 	}
 
 	/**
@@ -165,10 +140,11 @@ trait LanguageFallbackTestTrait {
 		$callee = $this->getCallee(
 			[ 'siteLangCode' => $siteLangCode, 'expectedGets' => $expectedGets ] );
 		$this->assertSame( $expected,
-			$this->callMethod( $callee, 'getAllIncludingSiteLanguage', $code ) );
+			$callee->getAllIncludingSiteLanguage( $code )
+		);
 
 		// Call again to make sure we don't call LocalisationCache again
-		$this->callMethod( $callee, 'getAllIncludingSiteLanguage', $code );
+		$callee->getAllIncludingSiteLanguage( $code );
 	}
 
 	public static function provideGetAllIncludingSiteLanguage() {
@@ -190,9 +166,9 @@ trait LanguageFallbackTestTrait {
 			'yi on yi' => [ 'yi', 'yi', [ [ 'he', 'en' ], [ 'yi' ] ] ],
 
 			'sh on ruq' => [ 'sh', 'ruq',
-				[ [ 'sh-latn', 'sh-cyrl', 'bs', 'sr-el', 'sr-latn', 'hr', 'en' ], [ 'ruq', 'ruq-latn', 'ro' ] ], 2 ],
+				[ [ 'sh-latn', 'bs', 'hr', 'sr-latn', 'sr-el', 'sh-cyrl', 'sr-cyrl', 'sr-ec', 'en' ], [ 'ruq', 'ruq-latn', 'ro' ] ], 2 ],
 			'ruq on sh' => [ 'ruq', 'sh',
-				[ [ 'ruq-latn', 'ro', 'en' ], [ 'sh', 'sh-latn', 'sh-cyrl', 'bs', 'sr-el', 'sr-latn', 'hr' ] ], 2 ],
+				[ [ 'ruq-latn', 'ro', 'en' ], [ 'sh', 'sh-latn', 'bs', 'hr', 'sr-latn', 'sr-el', 'sh-cyrl', 'sr-cyrl', 'sr-ec' ] ], 2 ],
 		];
 	}
 }

@@ -4,21 +4,7 @@
  * This is the part of the wikitext parser which handles automatic paragraphs
  * and conversion of start-of-line prefixes to HTML lists.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Parser
  * @internal
@@ -27,6 +13,7 @@
 namespace MediaWiki\Parser;
 
 use LogicException;
+use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\StringUtils\StringUtils;
 
 class BlockLevelPass {
@@ -472,6 +459,8 @@ class BlockLevelPass {
 		$state = self::COLON_STATE_TEXT;
 		$ltLevel = 0;
 		$lcLevel = 0;
+		$captureName = false;
+		$tagName = '';
 		$len = strlen( $str );
 		for ( $i = $m[0][1]; $i < $len; $i++ ) {
 			$c = $str[$i];
@@ -482,6 +471,8 @@ class BlockLevelPass {
 						case "<":
 							# Could be either a <start> tag or an </end> tag
 							$state = self::COLON_STATE_TAGSTART;
+							$captureName = true;
+							$tagName = '';
 							break;
 						case ":":
 							if ( $ltLevel === 0 ) {
@@ -531,8 +522,13 @@ class BlockLevelPass {
 				case self::COLON_STATE_TAG:
 					# In a <tag>
 					switch ( $c ) {
+						case " ":
+							$captureName = false;
+							break;
 						case ">":
-							$ltLevel++;
+							if ( !isset( HTMLData::TAGS['void'][strtolower( $tagName )] ) ) {
+								$ltLevel++;
+							}
 							$state = self::COLON_STATE_TEXT;
 							break;
 						case "/":
@@ -540,6 +536,9 @@ class BlockLevelPass {
 							$state = self::COLON_STATE_TAGSLASH;
 							break;
 						default:
+							if ( $captureName ) {
+								$tagName .= $c;
+							}
 							# ignore
 					}
 					break;
@@ -556,6 +555,9 @@ class BlockLevelPass {
 							$state = self::COLON_STATE_TEXT;
 							break;
 						default:
+							if ( $captureName ) {
+								$tagName .= $c;
+							}
 							$state = self::COLON_STATE_TAG;
 					}
 					break;

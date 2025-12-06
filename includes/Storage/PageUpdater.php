@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -34,7 +20,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
-use MediaWiki\Page\Event\PageRevisionUpdatedEvent;
+use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
@@ -284,10 +270,10 @@ class PageUpdater implements PageUpdateCauses {
 	}
 
 	/**
-	 * Set the cause of the update. Will be used for the PageRevisionUpdatedEvent
+	 * Set the cause of the update. Will be used for the PageLatestRevisionChangedEvent
 	 * and for tracing/logging in jobs, etc.
 	 *
-	 * @param string $cause See PageRevisionUpdatedEvent::CAUSE_XXX
+	 * @param string $cause See PageLatestRevisionChangedEvent::CAUSE_XXX
 	 * @return $this
 	 */
 	public function setCause( string $cause ): self {
@@ -295,6 +281,14 @@ class PageUpdater implements PageUpdateCauses {
 		return $this;
 	}
 
+	/**
+	 * @param array $hints Hints used by DerivedPageDataUpdater::prepareUpdate.
+	 * Additional hints supported:
+	 * - suppressDerivedDataUpdates: do not perform any updates of derived data,
+	 *   do not emit events.
+	 *
+	 * @return $this
+	 */
 	public function setHints( array $hints ): self {
 		$this->hints = $hints + $this->hints;
 		return $this;
@@ -1325,7 +1319,7 @@ class PageUpdater implements PageUpdateCauses {
 
 			$this->buildEditResult( $newRevisionRecord, false );
 
-			// NOTE: don't trigger a PageRevisionUpdated event!
+			// NOTE: don't trigger a PageLatestRevisionChanged event!
 			$wikiPage = $this->getWikiPage(); // TODO: use for legacy hooks only!
 			$this->prepareDerivedDataUpdater(
 				$wikiPage,
@@ -1333,21 +1327,18 @@ class PageUpdater implements PageUpdateCauses {
 				$revision->getComment(),
 				[],
 				[
-					PageRevisionUpdatedEvent::FLAG_SILENT => true,
-					PageRevisionUpdatedEvent::FLAG_IMPLICIT => true,
+					PageLatestRevisionChangedEvent::FLAG_SILENT => true,
+					PageLatestRevisionChangedEvent::FLAG_IMPLICIT => true,
 					'emitEvents' => false,
 				]
 			);
 
-			DeferredUpdates::addUpdate(
-				$this->getAtomicSectionUpdate(
-					$dbw,
-					$wikiPage,
-					$newRevisionRecord,
-					$revision->getComment(),
-					[ 'changed' => false ]
-				),
-				DeferredUpdates::PRESEND
+			$this->scheduleAtomicSectionUpdate(
+				$dbw,
+				$wikiPage,
+				$newRevisionRecord,
+				$revision->getComment(),
+				[ 'changed' => false ]
 			);
 		}
 
@@ -1449,13 +1440,16 @@ class PageUpdater implements PageUpdateCauses {
 
 			$editResult = $this->getEditResult();
 			$tags = $this->computeEffectiveTags();
-			$this->hookRunner->onRevisionFromEditComplete(
-				$wikiPage,
-				$newRevisionRecord,
-				$editResult->getOriginalRevisionId(),
-				$this->author,
-				$tags
-			);
+
+			if ( !$this->updatesSuppressed() ) {
+				$this->hookRunner->onRevisionFromEditComplete(
+					$wikiPage,
+					$newRevisionRecord,
+					$editResult->getOriginalRevisionId(),
+					$this->author,
+					$tags
+				);
+			}
 
 			$this->prepareDerivedDataUpdater(
 				$wikiPage,
@@ -1467,7 +1461,7 @@ class PageUpdater implements PageUpdateCauses {
 			// Return the new revision to the caller
 			$status->setNewRevision( $newRevisionRecord );
 
-			// Notify the dispatcher of the PageRevisionUpdatedEvent during the transaction round
+			// Notify the dispatcher of the PageLatestRevisionChangedEvent during the transaction round
 			$this->emitEvents();
 		} else {
 			// T34948: revision ID must be set to page {{REVISIONID}} and
@@ -1490,7 +1484,7 @@ class PageUpdater implements PageUpdateCauses {
 			// via WikiPage::doEditUpdates().
 			$this->getTitle()->invalidateCache( $now );
 
-			// Notify the dispatcher of the PageRevisionUpdatedEvent during the transaction round
+			// Notify the dispatcher of the PageLatestRevisionChangedEvent during the transaction round
 			$this->emitEvents();
 		}
 
@@ -1500,15 +1494,12 @@ class PageUpdater implements PageUpdateCauses {
 		// HTTP redirect to the standard view before derived data has been created - most
 		// importantly, before the parser cache has been updated. This would cause the
 		// content to be parsed a second time, or may cause stale content to be shown.
-		DeferredUpdates::addUpdate(
-			$this->getAtomicSectionUpdate(
-				$dbw,
-				$wikiPage,
-				$newRevisionRecord,
-				$summary,
-				[ 'changed' => $changed, ]
-			),
-			DeferredUpdates::PRESEND
+		$this->scheduleAtomicSectionUpdate(
+			$dbw,
+			$wikiPage,
+			$newRevisionRecord,
+			$summary,
+			[ 'changed' => $changed, ]
 		);
 
 		// Mark the earliest point where the transaction round can be committed in CLI mode.
@@ -1577,9 +1568,11 @@ class PageUpdater implements PageUpdateCauses {
 		}
 
 		$tags = $this->computeEffectiveTags();
-		$this->hookRunner->onRevisionFromEditComplete(
-			$wikiPage, $newRevisionRecord, false, $this->author, $tags
-		);
+		if ( !$this->updatesSuppressed() ) {
+			$this->hookRunner->onRevisionFromEditComplete(
+				$wikiPage, $newRevisionRecord, false, $this->author, $tags
+			);
+		}
 
 		if ( $this->usePageCreationLog ) {
 			// Log the page creation
@@ -1606,18 +1599,16 @@ class PageUpdater implements PageUpdateCauses {
 		// Return the new revision to the caller
 		$status->setNewRevision( $newRevisionRecord );
 
-		// Notify the dispatcher of the PageRevisionUpdatedEvent during the transaction round
+		// Notify the dispatcher of the PageLatestRevisionChangedEvent during the transaction round
 		$this->emitEvents();
+
 		// Schedule the secondary updates to run after the transaction round commits
-		DeferredUpdates::addUpdate(
-			$this->getAtomicSectionUpdate(
-				$dbw,
-				$wikiPage,
-				$newRevisionRecord,
-				$summary,
-				[ 'created' => true ]
-			),
-			DeferredUpdates::PRESEND
+		$this->scheduleAtomicSectionUpdate(
+			$dbw,
+			$wikiPage,
+			$newRevisionRecord,
+			$summary,
+			[ 'created' => true ]
 		);
 
 		// Mark the earliest point where the transaction round can be committed in CLI mode.
@@ -1637,9 +1628,9 @@ class PageUpdater implements PageUpdateCauses {
 		array $hintOverrides = []
 	) {
 		static $flagMap = [
-			EDIT_SILENT => PageRevisionUpdatedEvent::FLAG_SILENT,
-			EDIT_FORCE_BOT => PageRevisionUpdatedEvent::FLAG_BOT,
-			EDIT_IMPLICIT => PageRevisionUpdatedEvent::FLAG_IMPLICIT,
+			EDIT_SILENT => PageLatestRevisionChangedEvent::FLAG_SILENT,
+			EDIT_FORCE_BOT => PageLatestRevisionChangedEvent::FLAG_BOT,
+			EDIT_IMPLICIT => PageLatestRevisionChangedEvent::FLAG_IMPLICIT,
 		];
 
 		$hints = $this->hints;
@@ -1647,7 +1638,7 @@ class PageUpdater implements PageUpdateCauses {
 			$hints[$name] = ( $this->flags & $bit ) === $bit;
 		}
 
-		$hints += PageRevisionUpdatedEvent::DEFAULT_FLAGS;
+		$hints += PageLatestRevisionChangedEvent::DEFAULT_FLAGS;
 		$hints = $hintOverrides + $hints;
 
 		// set debug data
@@ -1665,8 +1656,39 @@ class PageUpdater implements PageUpdateCauses {
 		$this->derivedDataUpdater->prepareUpdate( $newRevisionRecord, $hints );
 	}
 
+	private function updatesSuppressed(): bool {
+		return $this->hints['suppressDerivedDataUpdates'] ?? false;
+	}
+
 	private function emitEvents(): void {
+		if ( $this->updatesSuppressed() ) {
+			return;
+		}
+
 		$this->derivedDataUpdater->emitEvents();
+	}
+
+	private function scheduleAtomicSectionUpdate(
+		IDatabase $dbw,
+		WikiPage $wikiPage,
+		RevisionRecord $newRevisionRecord,
+		CommentStoreComment $summary,
+		array $hints = []
+	): void {
+		if ( $this->updatesSuppressed() ) {
+			return;
+		}
+
+		DeferredUpdates::addUpdate(
+			$this->getAtomicSectionUpdate(
+				$dbw,
+				$wikiPage,
+				$newRevisionRecord,
+				$summary,
+				$hints
+			),
+			DeferredUpdates::PRESEND
+		);
 	}
 
 	private function getAtomicSectionUpdate(

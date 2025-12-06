@@ -4,5 +4,5 @@
 			"122112ê"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1| {{GENDER:$2| tɛnki}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|tɛnki}}}}"
 }

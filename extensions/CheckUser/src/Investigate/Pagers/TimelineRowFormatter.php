@@ -294,7 +294,7 @@ class TimelineRowFormatter {
 					[
 						'curid' => $row->page_id,
 						'diff' => $row->this_oldid,
-						'oldid' => $row->last_oldid
+						'oldid' => $row->last_oldid,
 					]
 				)
 			)->escaped();
@@ -328,7 +328,7 @@ class TimelineRowFormatter {
 					[],
 					[
 						'curid' => $row->page_id,
-						'action' => 'history'
+						'action' => 'history',
 					]
 				)
 			)->escaped();

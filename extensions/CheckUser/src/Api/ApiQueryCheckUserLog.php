@@ -46,7 +46,7 @@ class ApiQueryCheckUserLog extends ApiQueryBase {
 		$this->addOption( 'LIMIT', $limit + 1 );
 		$this->addTimestampWhereRange( 'cul_timestamp', $dir, $params['from'], $params['to'] );
 		$fields = [
-			'cul_id', 'cul_timestamp', 'cul_type', 'cul_target_text', 'actor_name'
+			'cul_id', 'cul_timestamp', 'cul_type', 'cul_target_text', 'actor_name',
 		];
 		$this->addJoinConds( [ 'actor' => [ 'JOIN', 'actor_id=cul_actor' ] ] );
 
@@ -166,7 +166,7 @@ class ApiQueryCheckUserLog extends ApiQueryBase {
 				ParamValidator::PARAM_DEFAULT => 'older',
 				ParamValidator::PARAM_TYPE => [
 					'newer',
-					'older'
+					'older',
 				],
 				ApiBase::PARAM_HELP_MSG => 'checkuser-api-help-param-direction',
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [

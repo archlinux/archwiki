@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
+use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -50,7 +51,6 @@ class DOMTraverser {
 	 * @param callable $action A callback, called on each node we traverse that matches nodeName.
 	 *   Will be called with the following parameters:
 	 *   - Node $node: the node being processed
-	 *   - Env $env: the parser environment
 	 *   - DTState $state: State.
 	 *   Return value: Node|null|true.
 	 *   - true: proceed normally
@@ -68,22 +68,21 @@ class DOMTraverser {
 
 	/**
 	 * @param Node $node
-	 * @param ?ParsoidExtensionAPI $extAPI
+	 * @param ?SiteConfig $siteConfig
 	 * @param DTState|null $state
 	 * @return bool|mixed
 	 */
-	private function callHandlers( Node $node, ?ParsoidExtensionAPI $extAPI, ?DTState $state ) {
-		$name = DOMCompat::nodeName( $node );
+	private function callHandlers( Node $node, ?SiteConfig $siteConfig, ?DTState $state ) {
+		$name = DOMUtils::nodeName( $node );
 
 		// Process embedded HTML first since the handlers below might
 		// return a different node which aborts processing. By processing
 		// attributes first, we ensure attribute are always processed.
 		if ( $node instanceof Element && $this->applyToAttributeEmbeddedHTML ) {
-			$self = $this;
 			ContentUtils::processAttributeEmbeddedDom(
-				$extAPI,
+				$siteConfig,
 				$node,
-				static function ( DocumentFragment $dom ) use ( $self, $extAPI, $state ) {
+				function ( DocumentFragment $dom ) use ( $siteConfig, $state ) {
 					// We are processing a nested document (which by definition
 					// is not a top-level document).
 					// FIXME:
@@ -99,7 +98,7 @@ class DOMTraverser {
 					//    traversal object here and that feels a little bit "more correct"
 					//    than reusing partial state.
 					$newState = $state ? new DTState( $state->env, $state->options, false ) : null;
-					$self->traverse( $extAPI, $dom, $newState );
+					$this->traverse( $siteConfig, $dom, $newState );
 					return true; // $dom might have been changed
 				}
 			);
@@ -131,7 +130,8 @@ class DOMTraverser {
 	 *   `$workNode->nextSibling` works even when workNode is a last child of its parent.
 	 * - `true`: continues regular processing on current node.
 	 *
-	 * @param ?ParsoidExtensionAPI $extAPI
+	 * @param SiteConfig|ParsoidExtensionAPI|null $siteConfig
+	 *   Passing ParsoidExtensionAPI here is deprecated.
 	 * @param Node $workNode The starting node for the traversal.
 	 *   The traversal could go beyond the subtree rooted at $workNode if
 	 *   the handlers called during traversal return an arbitrary node elsewhere
@@ -140,18 +140,22 @@ class DOMTraverser {
 	 *   there is nothing in the traversal code to prevent that.
 	 * @param DTState|null $state
 	 */
-	public function traverse( ?ParsoidExtensionAPI $extAPI, Node $workNode, ?DTState $state = null ): void {
-		$this->traverseInternal( true, $extAPI, $workNode, $state );
+	public function traverse( $siteConfig, Node $workNode, ?DTState $state = null ): void {
+		if ( $siteConfig instanceof ParsoidExtensionAPI ) {
+			$siteConfig = $siteConfig->getSiteConfig();
+			$siteConfig->deprecated( __METHOD__ . ' with ParsoidExtensionAPI', '0.22' );
+		}
+		$this->traverseInternal( true, $siteConfig, $workNode, $state );
 	}
 
 	/**
 	 * @param bool $isRootNode
-	 * @param ?ParsoidExtensionAPI $extAPI
+	 * @param ?SiteConfig $siteConfig
 	 * @param Node $workNode
 	 * @param DTState|null $state
 	 */
 	private function traverseInternal(
-		bool $isRootNode, ?ParsoidExtensionAPI $extAPI, Node $workNode, ?DTState $state
+		bool $isRootNode, ?SiteConfig $siteConfig, Node $workNode, ?DTState $state
 	): void {
 		while ( $workNode !== null ) {
 			if ( $this->traverseWithTplInfo && $workNode instanceof Element ) {
@@ -185,7 +189,7 @@ class DOMTraverser {
 			if ( $workNode instanceof DocumentFragment ) {
 				$possibleNext = true;
 			} else {
-				$possibleNext = $this->callHandlers( $workNode, $extAPI, $state );
+				$possibleNext = $this->callHandlers( $workNode, $siteConfig, $state );
 			}
 
 			// We may have walked passed the last about sibling or want to
@@ -200,7 +204,7 @@ class DOMTraverser {
 				// The 'continue processing' case
 				if ( $workNode->hasChildNodes() ) {
 					$this->traverseInternal(
-						false, $extAPI, $workNode->firstChild, $state
+						false, $siteConfig, $workNode->firstChild, $state
 					);
 				}
 				if ( $isRootNode ) {

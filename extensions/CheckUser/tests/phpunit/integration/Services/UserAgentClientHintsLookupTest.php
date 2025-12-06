@@ -36,7 +36,7 @@ class UserAgentClientHintsLookupTest extends MediaWikiIntegrationTestCase {
 			);
 		}
 		$referenceIds = new ClientHintsReferenceIds( [
-			UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => $referenceIdsToLookup
+			UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => $referenceIdsToLookup,
 		] );
 		/** @var UserAgentClientHintsLookup $userAgentClientHintsLookup */
 		$userAgentClientHintsLookup = $this->getServiceContainer()->get( 'UserAgentClientHintsLookup' );
@@ -71,30 +71,30 @@ class UserAgentClientHintsLookupTest extends MediaWikiIntegrationTestCase {
 					[
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8"
+							"version" => "8",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114"
+							"version" => "114",
 						],
 						[
 							"brand" => "Edge",
-							"version" => "114"
-						]
+							"version" => "114",
+						],
 					],
 					[
 						[
 							"brand" => "Not.A/Brand",
-							"version" => "8.0.0.0"
+							"version" => "8.0.0.0",
 						],
 						[
 							"brand" => "Chromium",
-							"version" => "114.0.5735.199"
+							"version" => "114.0.5735.199",
 						],
 						[
 							"brand" => "Edge",
-							"version" => "114.0.5735.198"
-						]
+							"version" => "114.0.5735.198",
+						],
 					],
 					true,
 					"",

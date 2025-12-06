@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic -- Test traits are not excluded
+
 use MediaWiki\FileBackend\FileBackendGroup;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\FileRepo\LocalRepo;
@@ -12,7 +14,6 @@ use Wikimedia\FileBackend\FSFileBackend;
 use Wikimedia\Mime\MimeAnalyzer;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
-use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -51,9 +52,6 @@ trait FileBackendGroupTestTrait {
 	 */
 	private $srvCache;
 
-	/** @var WANObjectCache */
-	private $wanCache;
-
 	/** @var LockManagerGroupFactory */
 	private $lmgFactory;
 
@@ -89,9 +87,6 @@ trait FileBackendGroupTestTrait {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstructor_overrideImplicitBackend() {
 		$obj = $this->newObj( [ MainConfigNames::FileBackends =>
 			[ [ 'name' => 'local-backend', 'class' => '', 'lockManager' => 'fsLockManager' ] ]
@@ -99,9 +94,6 @@ trait FileBackendGroupTestTrait {
 		$this->assertSame( '', $obj->config( 'local-backend' )['class'] );
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstructor_backendObject() {
 		// 'backend' being an object makes that repo from configuration ignored
 		// XXX This is not documented in MainConfigSchema, does it do anything useful?
@@ -115,7 +107,6 @@ trait FileBackendGroupTestTrait {
 	 * @param string|callable $expected Expected value of config()[$key], or callable returning it
 	 * @param array $extraBackendsOptions To add to the FileBackends entry passed to newObj()
 	 * @param array $otherExtraOptions To add to the array passed to newObj() (e.g., services)
-	 * @covers ::register
 	 */
 	public function testRegister(
 		$key, $expected, array $extraBackendsOptions = [], array $otherExtraOptions = []
@@ -173,8 +164,6 @@ trait FileBackendGroupTestTrait {
 	 * @param array $fileBackends Value of FileBackends to pass to constructor
 	 * @param string $class Expected exception class
 	 * @param string $msg Expected exception message
-	 * @covers ::__construct
-	 * @covers ::register
 	 */
 	public function testRegister_exception( $fileBackends, $class, $msg ) {
 		$this->expectException( $class );
@@ -200,29 +189,17 @@ trait FileBackendGroupTestTrait {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::config
-	 * @covers ::get
-	 */
 	public function testGet() {
 		$backend = $this->newObj()->get( 'local-backend' );
 		$this->assertTrue( $backend instanceof FSFileBackend );
 	}
 
-	/**
-	 * @covers ::get
-	 */
 	public function testGetUnrecognized() {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( "No backend defined with the name 'unrecognized'." );
 		$this->newObj()->get( 'unrecognized' );
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::config
-	 */
 	public function testConfig() {
 		$obj = $this->newObj();
 		$config = $obj->config( 'local-backend' );
@@ -233,12 +210,14 @@ trait FileBackendGroupTestTrait {
 		$config['profiler'] = null;
 
 		$this->assertEquals( [
-			'mimeCallback' => [ $obj, 'guessMimeInternal' ],
+			'mimeCallback' => $obj->guessMimeInternal( ... ),
 			'obResetFunc' => 'wfResetOutputBuffers',
-			'streamMimeFunc' => [ StreamFile::class, 'contentTypeFromPath' ],
+			'streamMimeFunc' => StreamFile::contentTypeFromPath( ... ),
 			'tmpFileFactory' => $this->tmpFileFactory,
-			'statusWrapper' => [ Status::class, 'wrap' ],
-			'wanCache' => $this->wanCache,
+			'statusWrapper' => Status::wrap( ... ),
+			// Ignore actual value, normal service is fine, because it wraps
+			// $wgMainCacheType (HashBagOStuff) which we already clear between tests.
+			'wanCache' => $config['wanCache'],
 			// If $this->srvCache is null, we don't know what it should be, so just fill in the
 			// actual value. Equality to a new HashBagOStuff doesn't work because of the token.
 			'srvCache' => $this->srvCache ?? $config['srvCache'],
@@ -260,16 +239,15 @@ trait FileBackendGroupTestTrait {
 			'class' => FSFileBackend::class,
 			'lockManager' =>
 				$this->lmgFactory->getLockManagerGroup( self::getWikiID() )->get( 'fsLockManager' ),
-			'asyncHandler' => [
-				MediaWiki\Deferred\DeferredUpdates::class,
-				'addCallableUpdate'
-			]
+			'asyncHandler' => DeferredUpdates::addCallableUpdate( ... )
 		], $config );
 
+		// Compare closures with ==
+		// https://github.com/sebastianbergmann/comparator/issues/127
+		$this->assertTrue( $obj->guessMimeInternal( ... ) == $config['mimeCallback'] );
+
 		// For config values that are objects, check object identity.
-		$this->assertSame( [ $obj, 'guessMimeInternal' ], $config['mimeCallback'] );
 		$this->assertSame( $this->tmpFileFactory, $config['tmpFileFactory'] );
-		$this->assertSame( $this->wanCache, $config['wanCache'] );
 		if ( $this->srvCache === null ) {
 			$this->assertInstanceOf( HashBagOStuff::class, $config['srvCache'] );
 			$this->assertSame(
@@ -285,8 +263,6 @@ trait FileBackendGroupTestTrait {
 	 * @param string $inputName Name to set to null in LocalFileRepo setting
 	 * @param string|array $key Key to check in array returned by config(), or array [ 'key1',
 	 *   'key2' ] for nested key
-	 * @covers ::__construct
-	 * @covers ::config
 	 */
 	public function testConfig_defaultNull( $expected, $inputName, $key ) {
 		$config = self::getDefaultLocalFileRepo();
@@ -305,8 +281,6 @@ trait FileBackendGroupTestTrait {
 	 * @param string $inputName Name to unset in LocalFileRepo setting
 	 * @param string|array $key Key to check in array returned by config(), or array [ 'key1',
 	 *   'key2' ] for nested key
-	 * @covers ::__construct
-	 * @covers ::config
 	 */
 	public function testConfig_defaultUnset( $expected, $inputName, $key ) {
 		$config = self::getDefaultLocalFileRepo();
@@ -330,9 +304,6 @@ trait FileBackendGroupTestTrait {
 		];
 	}
 
-	/**
-	 * @covers ::config
-	 */
 	public function testConfigUnrecognized() {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( "No backend defined with the name 'unrecognized'." );
@@ -341,7 +312,6 @@ trait FileBackendGroupTestTrait {
 
 	/**
 	 * @dataProvider provideBackendFromPath
-	 * @covers ::backendFromPath
 	 * @param string|null $expected Name of backend that will be returned from 'get', or null
 	 * @param string $storagePath
 	 */
@@ -377,7 +347,6 @@ trait FileBackendGroupTestTrait {
 
 	/**
 	 * @dataProvider provideGuessMimeInternal
-	 * @covers ::guessMimeInternal
 	 * @param string $storagePath
 	 * @param string|null $content
 	 * @param string|null $fsPath

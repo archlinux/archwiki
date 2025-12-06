@@ -70,14 +70,87 @@ local function test_inexpensive()
 	return 'did not error'
 end
 
+local function test_inexpensive_newbatch()
+	local batch = mw.title.newBatch{
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'
+	}
+	local titles = batch:lookupExistence():getTitles()
+	for i = 1, 11 do
+		local _ = titles[i].exists
+	end
+	return 'did not error'
+end
+
+local function test_inexpensive_newbatch_ns()
+	local batch = mw.title.newBatch( {
+		'1', '2', '3', 'Talk:4'
+	}, "User" )
+	local titles = batch:lookupExistence():getTitles()
+	for i = 1, 3 do
+		if titles[i].namespace ~= 2 then
+			return "wrong namespace"
+		end
+	end
+	if titles[4].namespace ~= 1 then
+		return "wrong namespace"
+	end
+	return 'did not error'
+end
+
+local function test_expensive_newbatch_media()
+	local batch = mw.title.newBatch{
+		'Media:1', 'Media:2', 'Media:3', 'Media:4', 'Media:5', 'Media:6',
+		'Media:7', 'Media:8', 'Media:9', 'Media:10', 'Media:11'
+	}
+	local titles = batch:lookupExistence():getTitles()
+	for i = 1, 11 do
+		local _ = titles[i].exists
+	end
+	return 'did not error'
+end
+
+local function test_expensive_newbatch_nolookup()
+	local batch = mw.title.newBatch{
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'
+	}
+	local titles = batch:getTitles()
+	for i = 1, 11 do
+		local _ = titles[i].exists
+	end
+	return 'did not error'
+end
+
+local function test_inexpensive_newbatch_cache()
+	local batch = mw.title.newBatch{
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'
+	}
+	local titles = batch:lookupExistence():getTitles()
+	for i = 1, 11 do
+		local _ = mw.title.new( tostring(i) ).exists
+	end
+	return 'did not error'
+end
+
+local function test_expensive_newbatch()
+	local toCheck = {}
+	for i = 1, 300 do
+		toCheck[i] = tostring(i)
+	end
+	local batch = mw.title.newBatch(toCheck)
+	local titles = batch:lookupExistence():getTitles()
+	return 'did not error'
+end
+
 local function test_getContent()
 	return mw.title.new( 'ScribuntoTestPage' ):getContent(),
-		mw.title.new( 'ScribuntoTestNonExistingPage' ):getContent()
+		mw.title.new( 'ScribuntoTestNonExistingPage' ):getContent(),
+		mw.title.new( 'Test:Restricted' ):getContent()
 end
 
 local function test_content()
 	return mw.title.new( 'ScribuntoTestPage' ).content,
-		mw.title.new( 'ScribuntoTestNonExistingPage' ).content
+		mw.title.new( 'ScribuntoTestNonExistingPage' ).content,
+		mw.title.new( 'Test:Restricted' ).content
 end
 
 local function test_redirectTarget()
@@ -414,12 +487,14 @@ local tests = {
 		expect = {
 			'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>',
 			nil,
+			nil,
 		}
 	},
 
 	{ name = '.content', func = test_content,
 		expect = {
 			'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>',
+			false,
 			false,
 		}
 	},
@@ -438,6 +513,24 @@ local tests = {
 		expect = { 'did not error' }
 	},
 	{ name = "inexpensive actions shouldn't count as expensive", func = test_inexpensive,
+		expect = { 'did not error' }
+	},
+	{ name = "newBatch should make exists not expensive", func = test_inexpensive_newbatch,
+		expect = { 'did not error' }
+	},
+	{ name = "newBatch should make exists not expensive", func = test_expensive_newbatch_media,
+		expect = 'too many expensive function calls'
+	},
+	{ name = "newBatch should make exists not expensive", func = test_expensive_newbatch_nolookup,
+		expect = 'too many expensive function calls'
+	},
+	{ name = "newBatch should still eventually be expensive", func = test_expensive_newbatch,
+		expect = 'too many expensive function calls'
+	},
+	{ name = "newBatch should make exists not expensive and remember it for new titles", func = test_inexpensive_newbatch_cache,
+		expect = { 'did not error' }
+	},
+	{ name = "newBatch supports namespace", func = test_inexpensive_newbatch_ns,
 		expect = { 'did not error' }
 	},
 	{ name = "fragments don't leak via getCurrentTitle()", func = test_getCurrentTitle_fragment,

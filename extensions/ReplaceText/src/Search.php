@@ -23,21 +23,15 @@ use MediaWiki\Config\Config;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
-use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class Search {
-	private Config $config;
-	private IConnectionProvider $loadBalancer;
-
 	public function __construct(
-		Config $config,
-		IConnectionProvider $loadBalancer
+		private readonly Config $config,
+		private readonly IConnectionProvider $loadBalancer,
 	) {
-		$this->config = $config;
-		$this->loadBalancer = $loadBalancer;
 	}
 
 	/**
@@ -66,14 +60,14 @@ class Search {
 			->join( 'content', null, 'slot_content_id = content_id' )
 			->join( 'text', null, $dbr->buildIntegerCast( 'SUBSTR(content_address, 4)' ) . ' = old_id' );
 		if ( $use_regex ) {
-			$queryBuilder->where( self::regexCond( $dbr, 'old_text', $search ) );
+			$queryBuilder->where( $this->regexCond( 'old_text', $search ) );
 		} else {
 			$any = $dbr->anyString();
 			$queryBuilder->where( $dbr->expr( 'old_text', IExpression::LIKE, new LikeValue( $any, $search, $any ) ) );
 		}
 		$queryBuilder->andWhere( [ 'page_namespace' => $namespaces ] );
 		self::categoryCondition( $category, $queryBuilder );
-		$this->prefixCondition( $prefix, $dbr, $queryBuilder );
+		$this->prefixCondition( $prefix, $queryBuilder );
 		return $queryBuilder->orderBy( [ 'page_namespace', 'page_title' ] )
 			->limit( $pageLimit )
 			->caller( __METHOD__ )
@@ -84,13 +78,13 @@ class Search {
 		if ( $category !== null && $category !== '' ) {
 			$category = Title::newFromText( $category )->getDbKey();
 			$queryBuilder->join( 'categorylinks', null, 'page_id = cl_from' )
-				->where( [ 'cl_to' => $category ] );
+				->join( 'linktarget', null, 'cl_target_id = lt_id' )
+				->where( [ 'lt_title' => $category ] );
 		}
 	}
 
 	private function prefixCondition(
 		?string $prefix,
-		IReadableDatabase $dbr,
 		SelectQueryBuilder $queryBuilder
 	): void {
 		if ( $prefix === null || $prefix === '' ) {
@@ -101,17 +95,18 @@ class Search {
 		if ( $title !== null ) {
 			$prefix = $title->getDbKey();
 		}
+		$dbr = $this->loadBalancer->getReplicaDatabase();
 		$any = $dbr->anyString();
 		$queryBuilder->where( $dbr->expr( 'page_title', IExpression::LIKE, new LikeValue( $prefix, $any ) ) );
 	}
 
 	/**
-	 * @param IReadableDatabase $dbr
 	 * @param string $column
 	 * @param string $regex
 	 * @return string query condition for regex
 	 */
-	private static function regexCond( IReadableDatabase $dbr, string $column, string $regex ): string {
+	private function regexCond( string $column, string $regex ): string {
+		$dbr = $this->loadBalancer->getReplicaDatabase();
 		if ( $dbr->getType() == 'postgres' ) {
 			$cond = "$column ~ ";
 		} else {
@@ -144,14 +139,14 @@ class Search {
 			->from( 'page' );
 		$str = str_replace( ' ', '_', $str );
 		if ( $use_regex ) {
-			$queryBuilder->where( self::regexCond( $dbr, 'page_title', $str ) );
+			$queryBuilder->where( $this->regexCond( 'page_title', $str ) );
 		} else {
 			$any = $dbr->anyString();
 			$queryBuilder->where( $dbr->expr( 'page_title', IExpression::LIKE, new LikeValue( $any, $str, $any ) ) );
 		}
 		$queryBuilder->andWhere( [ 'page_namespace' => $namespaces ] );
 		self::categoryCondition( $category, $queryBuilder );
-		$this->prefixCondition( $prefix, $dbr, $queryBuilder );
+		$this->prefixCondition( $prefix, $queryBuilder );
 		return $queryBuilder->orderBy( [ 'page_namespace', 'page_title' ] )
 			->limit( $pageLimit )
 			->caller( __METHOD__ )

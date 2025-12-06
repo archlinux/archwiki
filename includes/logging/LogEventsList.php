@@ -5,21 +5,7 @@
  * Copyright © 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -52,10 +38,16 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
 use stdClass;
+use UnexpectedValueException;
+use Wikimedia\IPUtils;
 use Wikimedia\MapCacheLRU\MapCacheLRU;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeMatch;
+use Wikimedia\Rdbms\LikeValue;
 
 class LogEventsList extends ContextSource {
 	public const NO_ACTION_LINK = 1;
@@ -83,6 +75,8 @@ class LogEventsList extends ContextSource {
 	/** @var MapCacheLRU */
 	private $tagsCache;
 
+	private TempUserConfig $tempUserConfig;
+
 	/**
 	 * @param IContextSource $context
 	 * @param LinkRenderer|null $linkRenderer
@@ -100,6 +94,7 @@ class LogEventsList extends ContextSource {
 		$this->hookRunner = new HookRunner( $services->getHookContainer() );
 		$this->logFormatterFactory = $services->getLogFormatterFactory();
 		$this->tagsCache = new MapCacheLRU( 50 );
+		$this->tempUserConfig = $services->getTempUserConfig();
 	}
 
 	/**
@@ -156,8 +151,18 @@ class LogEventsList extends ContextSource {
 
 		// Add extra inputs if any
 		$extraInputsDescriptor = $this->getExtraInputsDesc( $type );
+
+		// Single inputs (array of attributes) and multiple inputs (array of arrays)
+		// are supported. Distinguish between the two by checking if the first element
+		// is an array or not.
 		if ( $extraInputsDescriptor ) {
-			$formDescriptor[ 'extra' ] = $extraInputsDescriptor;
+			if ( isset( $extraInputsDescriptor[0] ) && is_array( $extraInputsDescriptor[0] ) ) {
+				foreach ( $extraInputsDescriptor as $i => $input ) {
+					$formDescriptor[ 'extra_' . $i ] = $input;
+				}
+			} else {
+				$formDescriptor[ 'extra' ] = $extraInputsDescriptor;
+			}
 		}
 
 		// Date menu
@@ -275,20 +280,35 @@ class LogEventsList extends ContextSource {
 	 * @return array Form descriptor
 	 */
 	private function getExtraInputsDesc( $type ) {
+		$formDescriptor = [];
+
 		if ( $type === 'suppress' ) {
-			return [
+			$formDescriptor[] = [
 				'type' => 'text',
 				'label-message' => 'revdelete-offender',
 				'name' => 'offender',
 			];
-		} else {
-			// Allow extensions to add an extra input into the descriptor array.
-			$unused = ''; // Deprecated since 1.32, removed in 1.41
-			$formDescriptor = [];
-			$this->hookRunner->onLogEventsListGetExtraInputs( $type, $this, $unused, $formDescriptor );
-
 			return $formDescriptor;
 		}
+
+		if ( $type === 'newusers' || $type === '' ) {
+			// Add option to exclude/include temporary account creations in results,
+			// excluding them by default.
+			if ( $this->tempUserConfig->isKnown() ) {
+				$formDescriptor[] = [
+						'type' => 'check',
+						'label-message' => 'newusers-excludetempacct',
+						'name' => 'excludetempacct',
+						'default' => true,
+					];
+			}
+		}
+
+		// Allow extensions to add an extra input into the descriptor array.
+		$unused = ''; // Deprecated since 1.32, removed in 1.41
+		$this->hookRunner->onLogEventsListGetExtraInputs( $type, $this, $unused, $formDescriptor );
+
+		return $formDescriptor;
 	}
 
 	/**
@@ -378,10 +398,7 @@ class LogEventsList extends ContextSource {
 				$this->getContext()
 			)
 		);
-		$classes = array_merge(
-			[ 'mw-logline-' . $entry->getType() ],
-			$newClasses
-		);
+		$classes = [ 'mw-logline-' . $entry->getType(), ...$newClasses ];
 		$attribs = [
 			'data-mw-logid' => $entry->getId(),
 			'data-mw-logaction' => $entry->getFullType(),
@@ -546,7 +563,8 @@ class LogEventsList extends ContextSource {
 	 *
 	 * @param OutputPage|string &$out
 	 * @param string|array $types Log types to show
-	 * @param string|PageReference $page The page title to show log entries for
+	 * @param string|PageReference|(string|PageReference)[] $pages The page title(s) to show log
+	 *   entries for
 	 * @param string $user The user who made the log entries
 	 * @param array $param Associative Array with the following additional options:
 	 * - lim Integer Limit of items to show, default is 50
@@ -569,7 +587,7 @@ class LogEventsList extends ContextSource {
 	 * @return int Number of total log items (not limited by $lim)
 	 */
 	public static function showLogExtract(
-		&$out, $types = [], $page = '', $user = '', $param = []
+		&$out, $types = [], $pages = '', $user = '', $param = []
 	) {
 		$defaultParameters = [
 			'lim' => 25,
@@ -596,7 +614,6 @@ class LogEventsList extends ContextSource {
 		$extraUrlParams = $param['extraUrlParams'];
 
 		$useRequestParams = $param['useRequestParams'];
-		// @phan-suppress-next-line PhanRedundantCondition
 		if ( !is_array( $msgKey ) ) {
 			$msgKey = [ $msgKey ];
 		}
@@ -613,13 +630,17 @@ class LogEventsList extends ContextSource {
 		// FIXME: Figure out how to inject this
 		$linkRenderer = $services->getLinkRenderer();
 
+		if ( !is_array( $pages ) ) {
+			$pages = [ $pages ];
+		}
+
 		# Insert list of top 50 (or top $lim) items
 		$loglist = new LogEventsList( $context, $linkRenderer, $flags );
 		$pager = new LogPager(
 			$loglist,
 			$types,
 			$user,
-			$page,
+			$pages,
 			false,
 			$conds,
 			false,
@@ -643,12 +664,11 @@ class LogEventsList extends ContextSource {
 		if ( $param['useMaster'] ) {
 			$pager->mDb = $services->getConnectionProvider()->getPrimaryDatabase();
 		}
-		// @phan-suppress-next-line PhanImpossibleCondition
+
 		if ( isset( $param['offset'] ) ) { # Tell pager to ignore WebRequest offset
 			$pager->setOffset( $param['offset'] );
 		}
 
-		// @phan-suppress-next-line PhanSuspiciousValueComparison
 		if ( $lim > 0 ) {
 			$pager->mLimit = $lim;
 		}
@@ -663,8 +683,8 @@ class LogEventsList extends ContextSource {
 			if ( $msgKey[0] ) {
 				// @phan-suppress-next-line PhanParamTooFewUnpack Non-emptiness checked above
 				$msg = $context->msg( ...$msgKey );
-				if ( $page instanceof PageReference ) {
-					$msg->page( $page );
+				if ( ( $pages[0] ?? null ) instanceof PageReference ) {
+					$msg->page( $pages[0] );
 				}
 				$s .= $msg->parseAsBlock();
 			}
@@ -678,19 +698,20 @@ class LogEventsList extends ContextSource {
 				$context->msg( 'logempty' )->parse() );
 		}
 
-		if ( $page instanceof PageReference ) {
-			$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
-			$pageName = $titleFormatter->getPrefixedDBkey( $page );
-		} elseif ( $page != '' ) {
-			$pageName = $page;
-		} else {
-			$pageName = null;
+		$pageNames = [];
+		foreach ( $pages as $page ) {
+			if ( $page instanceof PageReference ) {
+				$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
+				$pageNames[] = $titleFormatter->getPrefixedDBkey( $page );
+			} elseif ( $page != '' ) {
+				$pageNames[] = $page;
+			}
 		}
 
 		if ( $numRows > $pager->mLimit ) { # Show "Full log" link
 			$urlParam = [];
-			if ( $pageName ) {
-				$urlParam['page'] = $pageName;
+			if ( $pageNames ) {
+				$urlParam['page'] = count( $pageNames ) > 1 ? $pageNames : $pageNames[0];
 			}
 
 			if ( $user != '' ) {
@@ -706,7 +727,6 @@ class LogEventsList extends ContextSource {
 				$urlParam['type'] = $types[0];
 			}
 
-			// @phan-suppress-next-line PhanSuspiciousValueComparison
 			if ( $extraUrlParams !== false ) {
 				$urlParam = array_merge( $urlParam, $extraUrlParams );
 			}
@@ -751,14 +771,15 @@ class LogEventsList extends ContextSource {
 			$context->getOutput()->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
 		}
 
-		// @phan-suppress-next-line PhanSuspiciousValueComparison
 		if ( $wrap != '' ) { // Wrap message in html
 			$s = str_replace( '$1', $s, $wrap );
 		}
 
 		/* hook can return false, if we don't want the message to be emitted (Wikia BugId:7093) */
 		$hookRunner = new HookRunner( $services->getHookContainer() );
-		if ( $hookRunner->onLogEventsListShowLogExtract( $s, $types, $pageName, $user, $param ) ) {
+		if ( $hookRunner->onLogEventsListShowLogExtract(
+			$s, $types, $pageNames, $user, $param
+		) ) {
 			// $out can be either an OutputPage object or a String-by-reference
 			if ( $out instanceof OutputPage ) {
 				$out->addHTML( $s );
@@ -807,7 +828,8 @@ class LogEventsList extends ContextSource {
 	}
 
 	/**
-	 * @internal -- shared code for IntroMessageBuilder and Article::showMissingArticle
+	 * @internal -- shared code for IntroMessageBuilder, Article::showMissingArticle,
+	 * and ContributionsSpecialPage::contributionsSub
 	 *
 	 * If the user associated with the current page is blocked, get a warning
 	 * box with a block log extract in it. Otherwise, return null.
@@ -816,8 +838,17 @@ class LogEventsList extends ContextSource {
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param MessageLocalizer $localizer
 	 * @param LinkRenderer $linkRenderer
-	 * @param UserIdentity|false|null $user The user which may be blocked
-	 * @param Title $title The title being viewed
+	 * @param UserIdentity|false|null $user The user identity that may be blocked
+	 * @param Title|null $title The title being viewed. Pass null if the box
+	 *  should be shown regardless of the title.
+	 * @param array|callable $additionalParams Either:
+	 * - An array of extra parameters for LogEventsList::showLogExtract, or
+	 * - A callback returning such an array.
+	 *
+	 * When a callback is used, it receives a `$data` array with the following keys:
+	 * - `blocks: DatabaseBlock[]` - Active blocks matching the target
+	 * - `sitewide: bool` - Whether any of the blocks is sitewide
+	 * - `logTargetPages: string[]` - Pages used as log targets
 	 * @return string|null
 	 */
 	public static function getBlockLogWarningBox(
@@ -826,54 +857,160 @@ class LogEventsList extends ContextSource {
 		MessageLocalizer $localizer,
 		LinkRenderer $linkRenderer,
 		$user,
-		Title $title
+		?Title $title,
+		array|callable $additionalParams = []
 	) {
 		if ( !$user ) {
 			return null;
 		}
+
+		// For IP ranges we must give DatabaseBlock::newFromTarget the CIDR string
+		// and not a user object
+		$userOrRange = IPUtils::isValidRange( $user->getName() ) ? $user->getName() : $user;
+		$blocks = $blockStore->newListFromTarget(
+			// Do not expose the autoblocks, since that may lead to a leak of accounts' IPs,
+			// and also that will display a totally irrelevant log entry as a current block.
+			$userOrRange, $userOrRange, false, DatabaseBlockStore::AUTO_NONE
+		);
+		if ( !count( $blocks ) ) {
+			return null;
+		}
+
+		$isAnon = !$user->isRegistered();
 		$appliesToTitle = false;
-		$logTargetPage = '';
-		$blockTargetName = '';
-		$blocks = $blockStore->newListFromTarget( $user, $user, false,
-			DatabaseBlockStore::AUTO_NONE );
+		$logTargetPages = [];
+		$sitewide = false;
+		$matchingIpFound = false;
+		$newestBlockTimestamp = null;
+		$blockId = null;
 		foreach ( $blocks as $block ) {
-			if ( $block->appliesToTitle( $title ) ) {
+			if ( $title === null || $block->appliesToTitle( $title ) ) {
 				$appliesToTitle = true;
 			}
 			$blockTargetName = $block->getTargetName();
-			$logTargetPage = $namespaceInfo->getCanonicalName( NS_USER ) .
-				':' . $blockTargetName;
+			$logTargetPages[] =
+				$namespaceInfo->getCanonicalName( NS_USER ) . ':' . $blockTargetName;
+			if ( $block->isSitewide() ) {
+				$sitewide = true;
+			}
+
+			// Track the most recent active block. Prefer newer timestamps; if two blocks
+			// share the same timestamp, fall back to the larger block ID to break ties.
+			// This avoids issues where overridden blocks may reuse smaller IDs.
+			//
+			// IP blocks are a bit tricky here:
+			// - Prioritize direct blocks where $user and $block share the same IP.
+			// - The same IP can be directly blocked multiple times, in which case
+			//   the timestamp priority logic should work the same way.
+			// Once an exact IP match is found, it takes precedence over range blocks
+			// even if the range is newer or has a bigger ID, since it represents a more
+			// specific and directly applicable restriction.
+			$isExactIpMatch = $isAnon && $user->getName() === $blockTargetName;
+			if ( ( $isExactIpMatch || !$matchingIpFound ) && (
+				$newestBlockTimestamp === null ||
+				$block->getTimestamp() > $newestBlockTimestamp ||
+				( $block->getTimestamp() === $newestBlockTimestamp && $block->getId() > $blockId )
+			) ) {
+				$newestBlockTimestamp = $block->getTimestamp();
+				$blockId = $block->getId();
+
+				// If this block is an exact IP match, mark it so future range blocks don't
+				// override it, regardless of newer timestamps or bigger IDs
+				if ( $isExactIpMatch ) {
+					$matchingIpFound = true;
+				}
+			}
 		}
 
-		// Show log extract if the user is sitewide blocked or is partially
-		// blocked and not allowed to edit their user page or user talk page
-		if ( !count( $blocks ) || !$appliesToTitle ) {
+		// Show nothing if no active block applies to the given title
+		// (practically, whether the target user is allowed to edit their user/user_talk page)
+		if ( !$appliesToTitle ) {
 			return null;
 		}
-		$msgKey = count( $blocks ) === 1
-			? 'blocked-notice-logextract' : 'blocked-notice-logextract-multi';
+
+		if ( count( $blocks ) === 1 ) {
+			if ( $isAnon ) {
+				$msgKey = $sitewide ?
+					'blocked-notice-logextract-anon' :
+					'blocked-notice-logextract-anon-partial';
+			} else {
+				$msgKey = $sitewide ?
+					'blocked-notice-logextract' :
+					'blocked-notice-logextract-partial';
+			}
+		} else {
+			if ( $isAnon ) {
+				$msgKey = 'blocked-notice-logextract-anon-multi';
+			} else {
+				$msgKey = 'blocked-notice-logextract-multi';
+			}
+		}
+
+		// While $blocks already contains only active blocks, LogEventsList::showLogExtract
+		// by default fetches the most recent log entries regardless of block status.
+		// To ensure the newest ACTIVE block log is shown, add explicit LIKE conditions
+		// here to filter block log entries.
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+		$orCondsForBlockId = [];
+		$orCondsForBlockId[] = $dbr->expr(
+			// Before MW 1.44, log_params did not contain blockId. Always include such older
+			// log entries for backwards compatibility
+			'log_params',
+			IExpression::NOT_LIKE,
+			new LikeValue( new LikeMatch( '%"blockId"%' ) )
+		);
+		if ( $blockId !== null ) {
+			$orCondsForBlockId[] = $dbr->expr(
+				'log_params',
+				IExpression::LIKE,
+				new LikeValue( new LikeMatch( "%\"blockId\";i:$blockId;%" ) )
+			);
+		}
+		$conds = [ $dbr->makeList( $orCondsForBlockId, LIST_OR ) ];
+
 		$params = [
 			'lim' => 1,
+			'conds' => $conds,
 			'showIfEmpty' => false,
 			'msgKey' => [
 				$msgKey,
-				$user->getName(), # Support GENDER in notice
+				$user->getName(), // Support GENDER in $msgKey
 				count( $blocks )
 			],
+			'offset' => '' // Don't use WebRequest parameter offset
 		];
+
 		if ( count( $blocks ) > 1 ) {
 			$params['footerHtmlItems'] = [
 				$linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( 'BlockList' ),
 					$localizer->msg( 'blocked-notice-list-link' )->text(),
 					[],
-					[ 'wpTarget' => $blockTargetName ]
+					[ 'wpTarget' => $user->getName() ]
 				),
 			];
 		}
 
+		if ( is_callable( $additionalParams ) ) {
+			$extraParams = $additionalParams( [
+				// Add values to this callback array depending on the needs
+				// Don't forget to also update the method documentation
+				'blocks' => $blocks,
+				'sitewide' => $sitewide,
+				'logTargetPages' => $logTargetPages
+			] );
+			if ( !is_array( $extraParams ) ) {
+				throw new UnexpectedValueException(
+					'The callable $additionalParams must return an array, ' . gettype( $extraParams ) . ' given'
+				);
+			}
+			$params += $extraParams;
+		} else {
+			$params += $additionalParams;
+		}
+
 		$outString = '';
-		self::showLogExtract( $outString, 'block', $logTargetPage, '', $params );
+		self::showLogExtract( $outString, 'block', $logTargetPages, '', $params );
 		return $outString ?: null;
 	}
 }

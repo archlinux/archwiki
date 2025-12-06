@@ -1,41 +1,36 @@
 <?php
 /**
- * MediaWiki cookie-based session provider interface
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
 
 use InvalidArgumentException;
+use MediaWiki\Json\JwtCodec;
+use MediaWiki\Json\JwtException;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
+use MediaWiki\Utils\UrlUtils;
+use Wikimedia\IPUtils;
+use Wikimedia\LightweightObjectStore\ExpirationAwareness;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * A CookieSessionProvider persists sessions using cookies
+ * The default session provider for MediaWiki which persists sessions using cookies.
  *
- * @ingroup Session
  * @since 1.27
+ * @ingroup Session
  */
 class CookieSessionProvider extends SessionProvider {
+
+	/**
+	 * Name of the JWT cookie, when enabled. Ignores $wgCookiePrefix.
+	 */
+	protected const JWT_COOKIE_NAME = 'sessionJwt';
 
 	/** @var mixed[] */
 	protected $params = [];
@@ -44,6 +39,16 @@ class CookieSessionProvider extends SessionProvider {
 	protected $cookieOptions = [];
 
 	/**
+	 * JWT 'jti' field.
+	 * FIXME This is an ugly hack to make the cookie set in setJwtCookie() deterministic within
+	 *   a given request. We don't have a mechanism to avoid writing cookies several times per
+	 *   request, and rely on WebResponse deduplicating cookies as long as the values are the same.
+	 */
+	protected ?string $jti = null;
+
+	/**
+	 * @param JwtCodec $jwtCodec
+	 * @param UrlUtils $urlUtils
 	 * @param array $params Keys include:
 	 *  - priority: (required) Priority of the returned sessions
 	 *  - sessionName: Session cookie name. Doesn't honor 'prefix'. Defaults to
@@ -56,7 +61,11 @@ class CookieSessionProvider extends SessionProvider {
 	 *    - httpOnly: Cookie httpOnly flag, defaults to $wgCookieHttpOnly
 	 *    - sameSite: Cookie SameSite attribute, defaults to $wgCookieSameSite
 	 */
-	public function __construct( $params = [] ) {
+	public function __construct(
+		private JwtCodec $jwtCodec,
+		private UrlUtils $urlUtils,
+		$params = []
+	) {
 		parent::__construct();
 
 		$params += [
@@ -107,6 +116,7 @@ class CookieSessionProvider extends SessionProvider {
 		];
 	}
 
+	/** @inheritDoc */
 	public function provideSessionInfo( WebRequest $request ) {
 		$sessionId = $this->getCookie( $request, $this->params['sessionName'], '' );
 		$info = [
@@ -122,7 +132,7 @@ class CookieSessionProvider extends SessionProvider {
 		if ( $userId !== null ) {
 			try {
 				$userInfo = UserInfo::newFromId( $userId );
-			} catch ( InvalidArgumentException $ex ) {
+			} catch ( InvalidArgumentException ) {
 				return null;
 			}
 
@@ -178,13 +188,26 @@ class CookieSessionProvider extends SessionProvider {
 			return null;
 		}
 
-		return new SessionInfo( $this->priority, $info );
+		$sessionInfo = new SessionInfo( $this->priority, $info );
+
+		if ( $this->useJwtCookie() ) {
+			try {
+				$this->verifyJwtCookie( $request, $sessionInfo );
+			} catch ( JwtException $e ) {
+				$this->logger->info( 'JWT validation failed: ' . $e->getNormalizedMessage(), $e->getMessageContext() );
+				return null;
+			}
+		}
+
+		return $sessionInfo;
 	}
 
+	/** @inheritDoc */
 	public function persistsSessionId() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function canChangeUser() {
 		return true;
 	}
@@ -219,13 +242,16 @@ class CookieSessionProvider extends SessionProvider {
 				$response->clearCookie( $key, $options );
 			} else {
 				$expirationDuration = $this->getLoginCookieExpiration( $key, $session->shouldRememberUser() );
-				$expiration = $expirationDuration ? $expirationDuration + time() : null;
+				$expiration = $expirationDuration ? $expirationDuration + ConvertibleTimestamp::time() : null;
 				$response->setCookie( $key, (string)$value, $expiration, $options );
 			}
 		}
 
 		$this->setForceHTTPSCookie( $forceHTTPS, $session, $request );
 		$this->setLoggedOutCookie( $session->getLoggedOutTimestamp(), $request );
+		if ( $this->useJwtCookie() ) {
+			$this->setJwtCookie( $session->getUser(), $request, $session->shouldRememberUser() );
+		}
 
 		if ( $sessionData ) {
 			$session->addData( $sessionData );
@@ -240,6 +266,9 @@ class CookieSessionProvider extends SessionProvider {
 			return;
 		}
 
+		// This intentionally does not clear the "UserName" cookie,
+		// because it powers SessionProvider::suggestLoginUsername.
+		// See also self::getExtendedLoginCookies, and self::cookieDataToExport.
 		$cookies = [
 			'UserID' => false,
 			'Token' => false,
@@ -251,6 +280,10 @@ class CookieSessionProvider extends SessionProvider {
 
 		foreach ( $cookies as $key => $value ) {
 			$response->clearCookie( $key, $this->cookieOptions );
+		}
+
+		if ( $this->useJwtCookie() ) {
+			$response->clearCookie( self::JWT_COOKIE_NAME, $this->getJwtCookieOptions() );
 		}
 
 		$this->setForceHTTPSCookie( false, null, $request );
@@ -275,7 +308,7 @@ class CookieSessionProvider extends SessionProvider {
 					'forceHTTPS',
 					true
 				);
-				$expiration = $expirationDuration ? $expirationDuration + time() : null;
+				$expiration = $expirationDuration ? $expirationDuration + ConvertibleTimestamp::time() : null;
 			} else {
 				$expiration = null;
 			}
@@ -292,7 +325,7 @@ class CookieSessionProvider extends SessionProvider {
 	 * @param WebRequest $request
 	 */
 	protected function setLoggedOutCookie( $loggedOut, WebRequest $request ) {
-		if ( $loggedOut + 86400 > time() &&
+		if ( $loggedOut + 86400 > ConvertibleTimestamp::time() &&
 			$loggedOut !== (int)$this->getCookie( $request, 'LoggedOut', $this->cookieOptions['prefix'] )
 		) {
 			$request->response()->setCookie( 'LoggedOut', (string)$loggedOut, $loggedOut + 86400,
@@ -300,8 +333,9 @@ class CookieSessionProvider extends SessionProvider {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getVaryCookies() {
-		return [
+		$cookies = [
 			// Vary on token and session because those are the real authn
 			// determiners. UserID and UserName don't matter without those.
 			$this->cookieOptions['prefix'] . 'Token',
@@ -309,8 +343,13 @@ class CookieSessionProvider extends SessionProvider {
 			$this->params['sessionName'],
 			'forceHTTPS',
 		];
+		if ( $this->useJwtCookie() ) {
+			$cookies[] = $this->getJwtCookieOptions()['prefix'] . self::JWT_COOKIE_NAME;
+		}
+		return $cookies;
 	}
 
+	/** @inheritDoc */
 	public function suggestLoginUsername( WebRequest $request ) {
 		$name = $this->getCookie( $request, 'UserName', $this->cookieOptions['prefix'] );
 		if ( $name !== null ) {
@@ -388,10 +427,12 @@ class CookieSessionProvider extends SessionProvider {
 		return [];
 	}
 
+	/** @inheritDoc */
 	public function whyNoSession() {
 		return wfMessage( 'sessionprovider-nocookies' );
 	}
 
+	/** @inheritDoc */
 	public function getRememberUserDuration() {
 		return min( $this->getLoginCookieExpiration( 'UserID', true ),
 			$this->getLoginCookieExpiration( 'Token', true ) ) ?: null;
@@ -421,7 +462,9 @@ class CookieSessionProvider extends SessionProvider {
 		$extendedCookies = $this->getExtendedLoginCookies();
 		$normalExpiration = $this->getConfig()->get( MainConfigNames::CookieExpiration );
 
-		if ( $shouldRememberUser && in_array( $cookieName, $extendedCookies, true ) ) {
+		if ( $cookieName === self::JWT_COOKIE_NAME ) {
+			return $this->getConfig()->get( MainConfigNames::SessionCookieJwtExpiration );
+		} elseif ( $shouldRememberUser && in_array( $cookieName, $extendedCookies, true ) ) {
 			$extendedExpiration = $this->getConfig()->get( MainConfigNames::ExtendedLoginCookieExpiration );
 
 			return ( $extendedExpiration !== null ) ? (int)$extendedExpiration : (int)$normalExpiration;
@@ -429,4 +472,138 @@ class CookieSessionProvider extends SessionProvider {
 			return (int)$normalExpiration;
 		}
 	}
+
+	/**
+	 * Tells whether the provider should emit session data as a JWT cookie, alongside of (in the
+	 * future, possibly instead of) the normal session cookies.
+	 */
+	protected function useJwtCookie(): bool {
+		return $this->config->get( MainConfigNames::UseSessionCookieJwt );
+	}
+
+	/**
+	 * Emit a JWT cookie containing the user ID, token and other information.
+	 */
+	protected function setJwtCookie(
+		User $user,
+		WebRequest $request,
+		bool $shouldRememberUser
+	): void {
+		$response = $request->response();
+		$expirationDuration = $this->getLoginCookieExpiration( self::JWT_COOKIE_NAME, $shouldRememberUser );
+		$expiration = $expirationDuration ? $expirationDuration + ConvertibleTimestamp::time() : null;
+
+		// Do not set JWT cookies for anonymous sessions. Not particularly useful, and makes
+		// cookie conflicts on a shared domain more likely.
+		if ( IPUtils::isValid( $user->getName() ) ) {
+			$response->clearCookie( self::JWT_COOKIE_NAME, $this->getJwtCookieOptions() );
+			return;
+		}
+
+		$jwtData = $this->getManager()->getJwtData( $user );
+		$jwtData = $this->getJwtClaimOverrides( $expirationDuration ) + $jwtData;
+		$jwt = $this->jwtCodec->create( $jwtData );
+		$response->setCookie( self::JWT_COOKIE_NAME, $jwt, $expiration,
+			$this->getJwtCookieOptions() );
+	}
+
+	/**
+	 * Ensure that the JWT cookie (if it exists) matches the SessionInfo. The SessionInfo must
+	 * contain a non-null UserInfo (anonymous UserInfo is fine).
+	 * A missing JWT cookie is always treated as success.
+	 *
+	 * If necessary, marks the session to be refreshed.
+	 *
+	 * @throws JwtException on error
+	 */
+	protected function verifyJwtCookie( WebRequest $request, SessionInfo &$sessionInfo ): void {
+		$jwt = $this->getCookie( $request, self::JWT_COOKIE_NAME, $this->getJwtCookieOptions()['prefix'] );
+		if ( $jwt === null ) {
+			// This is normal: the JWT cookie has a shorter lifetime and will expire before the other cookies.
+			if ( $sessionInfo->wasPersisted() ) {
+				// Make sure it's re-persisted so the JWT cookie is updated.
+				$sessionInfo = new SessionInfo( $sessionInfo->getPriority(), [
+					'needsRefresh' => true,
+					'copyFrom' => $sessionInfo,
+				] );
+			}
+			return;
+		}
+
+		$data = $this->jwtCodec->parse( $jwt );
+		$expectedUser = ( $sessionInfo->getUserInfo() ?? UserInfo::newAnonymous() )->getUser();
+		$this->manager->validateJwtSubject( $data, $expectedUser );
+
+		[ 'iss' => $issuer, 'sxp' => $softExpiry, 'exp' => $hardExpiry ] = $data + [ 'exp' => PHP_INT_MAX ];
+		[ 'iss' => $expectedIssuer ] = $this->getJwtClaimOverrides( 0 );
+		if ( $issuer !== $expectedIssuer ) {
+			throw new JwtException( 'JWT error: wrong issuer', [
+				'expected_issuer' => $expectedIssuer,
+				'issuer' => $issuer,
+			] );
+		}
+
+		if ( $hardExpiry < ConvertibleTimestamp::time() ) {
+			throw new JwtException( 'JWT error: hard-expired', [
+				'jti' => $data['jti'],
+				'expiry' => $hardExpiry,
+				'expired_by' => ConvertibleTimestamp::time() - $hardExpiry,
+			] + $request->getSecurityLogContext( $expectedUser ) );
+		}
+
+		// Valid JWT. We could use this to make the UserInfo in the SessionInfo verified if it
+		// isn't already, or to make a SessionInfo in the first place if the other cookies weren't
+		// sufficient for a valid session, but for now we avoid using the JWT to make a session
+		// valid if it wouldn't be without it.
+
+		// Refresh the JWT cookie if it's about to expire. We can't rely on the normal session refresh
+		// mechanism because the expiry time is different.
+		$expirationDuration = $this->getLoginCookieExpiration( self::JWT_COOKIE_NAME, $sessionInfo->wasRemembered() );
+		if ( $sessionInfo->wasPersisted()
+			&& $softExpiry < ConvertibleTimestamp::time() + 0.75 * $expirationDuration
+		) {
+			$sessionInfo = new SessionInfo( $sessionInfo->getPriority(), [
+				'needsRefresh' => true,
+				'copyFrom' => $sessionInfo,
+			] );
+			if ( $softExpiry < ConvertibleTimestamp::time() - ExpirationAwareness::TTL_MINUTE ) {
+				// Already expired (we add a one-minute fudge factor for slow network etc).
+				// This shouldn't happen since the cookie expiry and the JWT expiry are synced,
+				// but some clients might not honor cookie expiry; we want to know about those.
+				LoggerFactory::getInstance( 'session-sampled' )->warning( 'Soft-expired JWT cookie', [
+					'jti' => $data['jti'],
+					'expiry' => $softExpiry,
+					'expired_by' => ConvertibleTimestamp::time() - $softExpiry,
+					'subject' => $data['sub'],
+				] + $request->getSecurityLogContext( $expectedUser ) );
+			}
+		}
+	}
+
+	/**
+	 * Helper method to make it easy for subclasses to alter claims.
+	 * @param int $expirationDuration Session lifetime in seconds.
+	 */
+	protected function getJwtClaimOverrides( int $expirationDuration ): array {
+		$this->jti ??= base64_encode( random_bytes( 16 ) );
+		return [
+			'iss' => $this->urlUtils->getCanonicalServer(),
+			// FIXME Omit 'exp' for now. In theory we could just set it to something larger than
+			//   the cookie expiration, but want to be careful about clients which don't honor
+			//   cookie expiries and the possibility that JWTs with an invalid 'exp' field will be
+			//   hard-rejected at the edge.
+			// 'exp' => ConvertibleTimestamp::time() + $expirationDuration + ExpirationAwareness::TTL_MINUTE,
+			'sxp' => ConvertibleTimestamp::time() + $expirationDuration,
+			'jti' => $this->jti,
+		];
+	}
+
+	/**
+	 * Helper method to make it easy for subclasses to alter JWT cookie options (as multiple wikis
+	 * are expected to share the same cookie for some providers).
+	 */
+	protected function getJwtCookieOptions(): array {
+		return [ 'prefix' => '' ] + $this->cookieOptions;
+	}
+
 }

@@ -17,9 +17,34 @@ QUnit.module( 've.ui.MWWikitextStringTransferHandler', ve.test.utils.newMwEnviro
 	}
 } ) );
 
-ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType, expectedResponse, expectedData, annotations, assertDom, base, msg ) => {
+/**
+ * @param {QUnit.Assert} assert
+ * @param {Object} caseItem
+ * @param {Object} caseItem.server
+ * @param {string} caseItem.pasteString
+ * @param {string} caseItem.pasteType
+ * @param {string} caseItem.parsoidResponse
+ * @param {Array} caseItem.expectedData
+ * @param {boolean} caseItem.assertDom
+ * @param {string} caseItem.base
+ * @param {string} caseItem.msg
+ */
+ve.test.utils.runWikitextStringHandlerTest = function ( assert, caseItem ) {
+	if ( arguments.length > 2 ) {
+		caseItem = {
+			server: arguments[ 1 ],
+			pasteString: arguments[ 2 ],
+			pasteType: arguments[ 3 ],
+			parsoidResponse: arguments[ 4 ],
+			expectedData: arguments[ 5 ],
+			// annotations
+			assertDom: arguments[ 7 ],
+			base: arguments[ 8 ],
+			msg: arguments[ 9 ]
+		};
+	}
 	const done = assert.async(),
-		item = ve.ui.DataTransferItem.static.newFromString( string, mimeType ),
+		item = ve.ui.DataTransferItem.static.newFromString( caseItem.pasteString, caseItem.pasteType ),
 		doc = ve.dm.Document.static.newBlankDocument(),
 		mockSurface = {
 			getModel: () => ( {
@@ -28,27 +53,16 @@ ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType,
 			createProgress: () => ve.createDeferred().promise()
 		};
 
-	ve.fixBase( doc.getHtmlDocument(), doc.getHtmlDocument(), base );
-
-	// Preprocess the expectedData array
-	for ( let i = 0; i < expectedData.length; i++ ) {
-		if ( Array.isArray( expectedData[ i ] ) ) {
-			for ( let j = 0; j < expectedData[ i ][ 1 ].length; j++ ) {
-				if ( typeof expectedData[ i ][ 1 ][ j ] === 'number' ) {
-					expectedData[ i ][ 1 ][ j ] = annotations[ expectedData[ i ][ 1 ][ j ] ];
-				}
-			}
-		}
-	}
+	ve.fixBase( doc.getHtmlDocument(), doc.getHtmlDocument(), caseItem.base );
 
 	// Check we match the wikitext string handler
 	const name = ve.ui.dataTransferHandlerFactory.getHandlerNameForItem( item );
-	assert.strictEqual( name, 'wikitextString', msg + ': triggers match function' );
+	assert.strictEqual( name, 'wikitextString', caseItem.msg + ': triggers match function' );
 
 	// Invoke the handler
 	const handler = ve.ui.dataTransferHandlerFactory.create( 'wikitextString', mockSurface, item );
 
-	handler.getInsertableData().done( ( docOrData ) => {
+	handler.getInsertableData().then( ( docOrData ) => {
 		let actualData, store;
 		if ( docOrData instanceof ve.dm.Document ) {
 			actualData = docOrData.getData();
@@ -58,19 +72,19 @@ ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType,
 			store = new ve.dm.HashValueStore();
 		}
 		ve.dm.example.postprocessAnnotations( actualData, store );
-		if ( assertDom ) {
-			assert.equalLinearDataWithDom( store, actualData, expectedData, msg + ': data match (with DOM)' );
+		if ( caseItem.assertDom ) {
+			assert.equalLinearDataWithDom( store, actualData, caseItem.expectedData, caseItem.msg + ': data match (with DOM)' );
 		} else {
-			assert.equalLinearData( actualData, expectedData, msg + ': data match' );
+			assert.equalLinearData( actualData, caseItem.expectedData, caseItem.msg + ': data match' );
 		}
 		done();
 	} );
 
-	if ( server && expectedResponse ) {
-		server.respond( [ 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
+	if ( caseItem.server && caseItem.parsoidResponse ) {
+		caseItem.server.respond( [ 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 			visualeditor: {
 				result: 'success',
-				content: expectedResponse
+				content: caseItem.parsoidResponse
 			}
 		} ) ] );
 	}
@@ -85,20 +99,17 @@ QUnit.test.each( 'convert', [
 		pasteString: 'some [[Foo]] text',
 		pasteType: 'text/plain',
 		parsoidResponse: '<p>some <a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a> text</p>',
-		annotations: [ {
-			type: 'link/mwInternal',
-			attributes: {
-				lookupTitle: 'Foo',
-				normalizedTitle: 'Foo',
-				title: 'Foo'
-			}
-		} ],
 		expectedData: [
 			{ type: 'paragraph' },
 			...'some ',
-			[ 'F', [ 0 ] ],
-			[ 'o', [ 0 ] ],
-			[ 'o', [ 0 ] ],
+			...ve.dm.example.annotateText( 'Foo', {
+				type: 'link/mwInternal',
+				attributes: {
+					lookupTitle: 'Foo',
+					normalizedTitle: 'Foo',
+					title: 'Foo'
+				}
+			} ),
 			...' text',
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
@@ -110,14 +121,6 @@ QUnit.test.each( 'convert', [
 		pasteString: '*[[Foo]]',
 		pasteType: 'text/plain',
 		parsoidResponse: '<ul><li><a rel="mw:WikiLink" href="./Foo" title="Foo">Foo</a></li></ul>',
-		annotations: [ {
-			type: 'link/mwInternal',
-			attributes: {
-				lookupTitle: 'Foo',
-				normalizedTitle: 'Foo',
-				title: 'Foo'
-			}
-		} ],
 		expectedData: [
 			{
 				type: 'list',
@@ -128,9 +131,14 @@ QUnit.test.each( 'convert', [
 				type: 'paragraph',
 				internal: { generated: 'wrapper' }
 			},
-			[ 'F', [ 0 ] ],
-			[ 'o', [ 0 ] ],
-			[ 'o', [ 0 ] ],
+			...ve.dm.example.annotateText( 'Foo', {
+				type: 'link/mwInternal',
+				attributes: {
+					lookupTitle: 'Foo',
+					normalizedTitle: 'Foo',
+					title: 'Foo'
+				}
+			} ),
 			{ type: '/paragraph' },
 			{ type: '/listItem' },
 			{ type: '/list' },
@@ -162,7 +170,6 @@ QUnit.test.each( 'convert', [
 		pasteString: '==heading==',
 		pasteType: 'text/plain',
 		parsoidResponse: '<h2 id="mwAB">foo</h2><h2 id="mw-meaningful-id">bar</h2>',
-		annotations: [],
 		assertDom: true,
 		expectedData: [
 			{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2>foo</h2>' ) },
@@ -180,7 +187,6 @@ QUnit.test.each( 'convert', [
 		pasteString: '== Tudnivalók ==',
 		pasteType: 'text/plain',
 		parsoidResponse: '<h2 id="Tudnivalók"><span id="Tudnival.C3.B3k" typeof="mw:FallbackId"></span> Tudnivalók </h2>',
-		annotations: [],
 		assertDom: true,
 		expectedData: [
 			{ type: 'mwHeading', attributes: { level: 2 }, originalDomElements: $.parseHTML( '<h2 id="Tudnivalók"> Tudnivalók </h2>' ) },
@@ -195,7 +201,6 @@ QUnit.test.each( 'convert', [
 		pasteString: 'RFC 1234',
 		pasteType: 'text/plain',
 		parsoidResponse: false,
-		annotations: [],
 		expectedData: [
 			{
 				type: 'link/mwMagic',
@@ -213,7 +218,6 @@ QUnit.test.each( 'convert', [
 		pasteString: 'PMID 1234',
 		pasteType: 'text/plain',
 		parsoidResponse: false,
-		annotations: [],
 		expectedData: [
 			{
 				type: 'link/mwMagic',
@@ -231,7 +235,6 @@ QUnit.test.each( 'convert', [
 		pasteString: 'ISBN 123456789X',
 		pasteType: 'text/plain',
 		parsoidResponse: false,
-		annotations: [],
 		expectedData: [
 			{
 				type: 'link/mwMagic',
@@ -250,8 +253,11 @@ QUnit.test.each( 'convert', [
 	} );
 
 	ve.test.utils.runWikitextStringHandlerTest(
-		assert, this.server, caseItem.pasteString, caseItem.pasteType, caseItem.parsoidResponse,
-		caseItem.expectedData, caseItem.annotations, caseItem.assertDom, ve.dm.mwExample.baseUri,
-		caseItem.msg
+		assert,
+		{
+			server: this.server,
+			base: ve.dm.mwExample.baseUri,
+			...caseItem
+		}
 	);
 } );

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"MaxBioHazard",
-			"Okras",
-			"MidnightLG"
+			"MidnightLG",
+			"Okras"
 		]
 	},
 	"apihelp-scribunto-console-summary": "Внутренний модуль для обработки XHR-запросов из консоли Scribunto.",

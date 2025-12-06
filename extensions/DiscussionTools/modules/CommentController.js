@@ -666,13 +666,13 @@ CommentController.prototype.save = function ( replyWidget, pageName, extraParams
  */
 CommentController.prototype.updateNewCommentsWarning = function ( addedComments, removedComments ) {
 	// Add new comments
-	this.newComments.push.apply( this.newComments, addedComments );
+	this.newComments.push( ...addedComments );
 
 	// Delete any comments which have since been deleted (e.g. posted then reverted)
-	const removedCommentIds = removedComments.filter( ( cmt ) => cmt.id );
+	const removedCommentIds = new Set( removedComments.map( ( cmt ) => cmt.id ) );
 	this.newComments = this.newComments.filter(
 		// If comment ID is not in removedCommentIds, keep it
-		( cmt ) => !removedCommentIds.includes( cmt.id )
+		( cmt ) => !removedCommentIds.has( cmt.id )
 	);
 
 	this.replyWidgetPromise.then( ( replyWidget ) => {

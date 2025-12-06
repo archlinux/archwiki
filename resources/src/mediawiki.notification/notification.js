@@ -10,7 +10,15 @@
 	const preReadyNotifQueue = [];
 
 	/**
+	 * @typedef {Object} mw.notification~Notification
+	 * @property {mw.Message|jQuery|HTMLElement|string} message
+	 * @property {mw.notification.NotificationOptions} options
+	 */
+
+	/**
 	 * @classdesc Describes a notification. See [mw.notification module]{@link mw.notification}. A Notification object for 1 message.
+	 * @param message
+	 * @param options
 	 *
 	 * The constructor is not publicly accessible; use [mw.notification.notify]{@link mw.notification} instead.
 	 * This does not insert anything into the document. To add to document use
@@ -19,8 +27,7 @@
 	 * @class Notification
 	 * @global
 	 * @hideconstructor
-	 * @param {mw.Message|jQuery|HTMLElement|string} message
-	 * @param {mw.notification.NotificationOptions} options
+	 * @param {mw.notification~Notification} Notification object
 	 */
 	function Notification( message, options ) {
 
@@ -49,6 +56,8 @@
 			// The following classes are used here:
 			// * mw-notification-type-error
 			// * mw-notification-type-warn
+			// * mw-notification-type-success
+			// * mw-notification-type-notice
 			$notification.addClass( 'mw-notification-type-' + options.type );
 		}
 
@@ -378,7 +387,6 @@
 		 * Pause auto-hide timers for all notifications.
 		 * Notifications will not auto-hide until resume is called.
 		 *
-		 * @see Notification#pause
 		 * @memberof mw.notification
 		 */
 		pause: function () {
@@ -413,7 +421,7 @@
 		 * @param {mw.notification.NotificationOptions} [options] The options to use
 		 *  for the notification. Options not specified default to the values in
 		 *  [#defaults]{@link mw.notification.defaults}.
-		 * @return {Notification} Notification object
+		 * @return {mw.notification~Notification} Notification object
 		 */
 		notify: function ( message, options ) {
 			options = Object.assign( {}, notification.defaults, options );
@@ -445,7 +453,7 @@
 		 * @property {string|null} title Title for the notification. Will be displayed
 		 *   above the content. Usually in bold.
 		 * @property {string|null} type The type of the message used for styling.
-		 *   Examples: `info`, `warn`, `error`, `success`.
+		 *   Examples: `info`, `warn`, `error`, `success`, `notice`.
 		 * @property {boolean} visibleTimeout Whether the autoHide timeout should be
 		 *   based on time the page was visible to user. Or if it should use wall
 		 *   clock time.

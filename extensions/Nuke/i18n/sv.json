@@ -4,12 +4,12 @@
 			"Ainali",
 			"Ayaibrahim",
 			"Cybjit",
+			"Gkyziridis",
 			"Hangsna",
 			"Lejonel",
 			"Martinwiss",
 			"Tobulos1",
-			"WikiPhoenix",
-			"Gkyziridis"
+			"WikiPhoenix"
 		]
 	},
 	"nuke": "Massradering",
@@ -18,6 +18,7 @@
 	"nuke-defaultreason": "Massradering av sidor skapade av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Massradering av nyligen tillagda sidor",
 	"nuke-tools": "Det här verktyget gör det möjligt att massradera sidor som nyligen skapats av en viss användare eller IP-adress.\nAnge användarnamnet eller IP-adressen för att se en lista över sidor som kan tas bort, eller lämna tomt för alla användare.",
+	"nuke-tools-notice-error": "Ett fel uppstod när du skulle fastställa din behörighet att massradera sidor, så du har inte behörighet att göra det.",
 	"nuke-submit-list": "Lista sidor",
 	"nuke-submit-delete": "Ta bort valda",
 	"right-nuke": "Massradera sidor",

@@ -13,8 +13,7 @@ class LengthSpec extends TexNode {
 		$this->sign = $sign ?? '';
 		$this->unit = $unit;
 		if ( count( $number ) === 3 ) {
-
-				$this->number = implode( $number[0] ) . ( $number[1] ?? '' ) . implode( $number[2] );
+			$this->number = implode( $number[0] ) . ( $number[1] ?? '' ) . implode( $number[2] );
 		} elseif ( count( $number ) === 2 ) {
 			$this->number = ( $number[0] ?? '' ) . implode( $number[1] );
 		} else {

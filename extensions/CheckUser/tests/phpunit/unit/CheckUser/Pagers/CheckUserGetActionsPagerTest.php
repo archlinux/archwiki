@@ -49,17 +49,16 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 	public static function provideIsNavigationBarShown() {
 		return [
 			[ 0, false ],
-			[ 2, true ]
+			[ 2, true ],
 		];
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuChanges */
-	public function testGetQueryInfoForCuChanges( $displayClientHints, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuChanges( $expectedQueryInfo ) {
 		$this->commonGetQueryInfoForTableSpecificMethod(
 			'getQueryInfoForCuChanges',
 			[
 				'commentStore' => new CommentStore( $this->createMock( Language::class ) ),
-				'displayClientHints' => $displayClientHints
 			],
 			$expectedQueryInfo
 		);
@@ -67,39 +66,24 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 
 	public static function provideGetQueryInfoForCuChanges() {
 		return [
-			'Returns expected keys to arrays and includes cu_changes in tables' => [
-				false,
-				[
-					// Fields should be an array
-					'fields' => [],
-					// Assert at least cu_changes in the table list
-					'tables' => [ 'cu_changes' ],
-					// Should be all of these as arrays
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
-			'When displaying client hints' => [
-				true,
-				[
-					// Fields should be an array with Client Hints fields set.
-					'fields' => [
-						'client_hints_reference_id' => 'cuc_this_oldid',
-						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
-					],
-					// Tables array should have at least cu_log_event
-					'tables' => [ 'cu_changes' ],
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
+			'Returns expected keys to arrays and includes cu_changes in tables' => [ [
+				// Fields should be an array
+				'fields' => [
+					'client_hints_reference_id' => 'cuc_this_oldid',
+					'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+				],
+				// Assert at least cu_changes in the table list
+				'tables' => [ 'cu_changes' ],
+				// Should be all of these as arrays
+				'conds' => [],
+				'options' => [],
+				'join_conds' => [],
+			] ],
 		];
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuLogEvent */
-	public function testGetQueryInfoForCuLogEvent( $displayClientHints, $databaseType, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuLogEvent( $databaseType, $expectedQueryInfo ) {
 		$mockDbr = $this->createMock( IReadableDatabase::class );
 		$mockDbr->expects( $this->once() )
 			->method( 'getType' )
@@ -108,7 +92,6 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 			'getQueryInfoForCuLogEvent',
 			[
 				'commentStore' => new CommentStore( $this->createMock( Language::class ) ),
-				'displayClientHints' => $displayClientHints,
 				'mDb' => $mockDbr,
 			],
 			$expectedQueryInfo
@@ -118,24 +101,9 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 	public static function provideGetQueryInfoForCuLogEvent() {
 		return [
 			'Returns expected keys to arrays and includes cu_log_event in tables' => [
-				false,
 				'mysql',
 				[
 					# Fields should be an array
-					'fields' => [],
-					# Tables array should have at least cu_log_event
-					'tables' => [ 'cu_log_event' ],
-					# All other values should be arrays
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
-			'When displaying client hints' => [
-				true,
-				'mysql',
-				[
-					# Fields should be an array with Client Hints fields set.
 					'fields' => [
 						'client_hints_reference_id' => 'cule_log_id',
 						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT,
@@ -146,27 +114,30 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 			'When using postgres DB' => [
-				false,
 				'postgres',
 				[
 					# Fields should be an array with type casted to a smallint when using postgres DB.
-					'fields' => [ 'type' => 'CAST(3 AS smallint)' ],
+					'fields' => [
+						'type' => 'CAST(3 AS smallint)',
+						'client_hints_reference_id' => 'cule_log_id',
+						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT,
+					],
 					# Tables array should have at least cu_log_event
 					'tables' => [ 'cu_log_event' ],
 					# All other values should be arrays
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 		];
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuPrivateEvent */
-	public function testGetQueryInfoForCuPrivateEvent( $displayClientHints, $databaseType, $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuPrivateEvent( $databaseType, $expectedQueryInfo ) {
 		$mockDbr = $this->createMock( IReadableDatabase::class );
 		$mockDbr->expects( $this->once() )
 			->method( 'getType' )
@@ -175,7 +146,6 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 			'getQueryInfoForCuPrivateEvent',
 			[
 				'commentStore' => new CommentStore( $this->createMock( Language::class ) ),
-				'displayClientHints' => $displayClientHints,
 				'mDb' => $mockDbr,
 			],
 			$expectedQueryInfo
@@ -184,22 +154,7 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 
 	public static function provideGetQueryInfoForCuPrivateEvent() {
 		return [
-			'Returns expected keys to arrays and includes cu_log_event in tables' => [
-				false,
-				'mysql',
-				[
-					# Fields should be an array
-					'fields' => [ 'type' => RC_LOG ],
-					# Tables array should have at least cu_private_event
-					'tables' => [ 'cu_private_event' ],
-					# All other values should be arrays
-					'conds' => [],
-					'options' => [],
-					'join_conds' => [],
-				]
-			],
 			'When displaying client hints' => [
-				true,
 				'mysql',
 				[
 					# Fields should be an array with Client Hints fields set.
@@ -213,21 +168,24 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 			'When using postgres DB' => [
-				false,
 				'postgres',
 				[
 					# Fields should be an array with type casted to a smallint when using postgres DB.
-					'fields' => [ 'type' => 'CAST(3 AS smallint)' ],
+					'fields' => [
+						'type' => 'CAST(3 AS smallint)',
+						'client_hints_reference_id' => 'cupe_id',
+						'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT,
+					],
 					# Tables array should have at least cu_private_event
 					'tables' => [ 'cu_private_event' ],
 					# All other values should be arrays
 					'conds' => [],
 					'options' => [],
 					'join_conds' => [],
-				]
+				],
 			],
 		];
 	}

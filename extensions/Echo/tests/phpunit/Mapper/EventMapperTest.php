@@ -23,13 +23,13 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 			[
 				'successful insert with next sequence = 1',
 				[ 'insert' => true, 'insertId' => 1 ],
-				1
+				1,
 			],
 			[
 				'successful insert with insert id = 2',
 				[ 'insert' => true, 'insertId' => 2 ],
-				2
-			]
+				2,
+			],
 		];
 	}
 
@@ -57,7 +57,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 						'event_agent_id' => '',
 						'event_agent_ip' => '',
 						'event_deleted' => 0,
-					]
+					],
 				]
 			)
 		);
@@ -69,7 +69,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 		$eventMapper = new EventMapper(
 			$this->mockDbFactory(
 				[
-					'selectRow' => false
+					'selectRow' => false,
 				]
 			)
 		);
@@ -109,7 +109,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 			'insert' => '',
 			'insertId' => '',
 			'select' => [],
-			'selectRow' => ''
+			'selectRow' => '',
 		];
 		$db = $this->createMock( IDatabase::class );
 		$db->method( 'insert' )
@@ -148,22 +148,23 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 		$eventWithTitle = Event::create( [
 			'type' => 'welcome',
 			'agent' => $user,
-			'title' => $page->getTitle()
+			'title' => $page->getTitle(),
 		] );
 
 		// Create a notification with a target-page
 		$eventWithTargetPage = Event::create( [
 			'type' => 'welcome',
 			'agent' => $user,
-			'extra' => [ 'target-page' => $page->getId() ]
+			'extra' => [ 'target-page' => $page->getId() ],
 		] );
 
 		$eventMapper = new EventMapper();
-
-		$this->assertArrayEquals(
-			[ $eventWithTitle->getId(), $eventWithTargetPage->getId() ],
-			$eventMapper->fetchIdsByPage( $page->getId() )
-		);
+		$this->runDeferredUpdates();
+		$pageIds = $eventMapper->fetchIdsByPage( $page->getId() );
+		$expectedPageIds = [ $eventWithTitle->getId(), $eventWithTargetPage->getId() ];
+		foreach ( $expectedPageIds as $expectedPageId ) {
+			$this->assertContains( $expectedPageId, $pageIds );
+		}
 	}
 
 }

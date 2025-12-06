@@ -1,14 +1,16 @@
 <?php
 
-// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
-
 namespace MediaWiki\Extension\ConfirmEdit;
 
+use BadMethodCallException;
 use MediaWiki\Api\Hook\APIGetAllowedParamsHook;
+use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\FancyCaptcha\FancyCaptcha;
 use MediaWiki\Extension\ConfirmEdit\hCaptcha\HCaptcha;
+use MediaWiki\Extension\ConfirmEdit\Hooks\HookRunner;
 use MediaWiki\Extension\ConfirmEdit\QuestyCaptcha\QuestyCaptcha;
 use MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha\ReCaptchaNoCaptcha;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
@@ -20,6 +22,7 @@ use MediaWiki\Hook\EditPageBeforeEditButtonsHook;
 use MediaWiki\Hook\EmailUserFormHook;
 use MediaWiki\Hook\EmailUserHook;
 use MediaWiki\Html\Html;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Hook\TitleReadWhitelistHook;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
@@ -30,6 +33,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use ReflectionClass;
 use Wikimedia\IPUtils;
 use Wikimedia\ObjectCache\WANObjectCache;
 
@@ -47,7 +51,11 @@ class Hooks implements
 	AuthChangeFormFieldsHook
 {
 
-	protected static ?SimpleCaptcha $instance = null;
+	/**
+	 * @var SimpleCaptcha[][] Captcha instances, where the keys are action => captcha type and the
+	 *   values are an instance of that captcha type.
+	 */
+	protected static array $instance = [];
 
 	private WANObjectCache $cache;
 
@@ -58,12 +66,14 @@ class Hooks implements
 	}
 
 	/**
-	 * Get the global Captcha instance
+	 * Get the global Captcha instance for a specific action.
 	 *
-	 * @return SimpleCaptcha
+	 * If a specific Captcha is not defined in $wgCaptchaTriggers[$action]['class'],
+	 * $wgCaptchaClass will be returned instead.
+	 *
+	 * @stable to call - May be used by code not visible in codesearch
 	 */
-	public static function getInstance() {
-		global $wgCaptchaClass;
+	public static function getInstance( string $action = '' ): SimpleCaptcha {
 		static $map = [
 			'SimpleCaptcha' => SimpleCaptcha::class,
 			'FancyCaptcha' => FancyCaptcha::class,
@@ -72,24 +82,83 @@ class Hooks implements
 			'HCaptcha' => HCaptcha::class,
 			'Turnstile' => Turnstile::class,
 		];
-		// Support PHP 7.4: Avoid `new ( $map[$wgCaptchaClass] ?? $wgCaptchaClass )`
-		$className = $map[$wgCaptchaClass] ?? $wgCaptchaClass;
 
-		static::$instance ??= new $className;
-		return static::$instance;
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$captchaTriggers = $config->get( 'CaptchaTriggers' );
+		$defaultCaptchaClass = $config->get( 'CaptchaClass' );
+
+		// Check for the newer style captcha trigger array
+		$class = $captchaTriggers[$action]['class'] ?? $defaultCaptchaClass;
+
+		$hookRunner = new HookRunner(
+			MediaWikiServices::getInstance()->getHookContainer()
+		);
+		// Allow hook implementers to override the class that's about to be cached.
+		$hookRunner->onConfirmEditCaptchaClass( $action, $class );
+
+		if ( !isset( static::$instance[$action][$class] ) ) {
+			// There is not a cached instance, construct a new one based on the mapping
+			/** @var SimpleCaptcha $classInstance */
+			$classInstance = new ( $map[$class] ?? $map[$defaultCaptchaClass] ?? $defaultCaptchaClass );
+			$classInstance->setConfig( $captchaTriggers[$action]['config'] ?? [] );
+			static::$instance[$action][$class] = $classInstance;
+		}
+
+		return static::$instance[$action][$class];
+	}
+
+	/**
+	 * Gets a list of all currently active Captcha classes, in the Wikis configuration.
+	 *
+	 * This includes the default/fallback Captcha of $wgCaptchaClass and any set under
+	 * $wgCaptchaTriggers[$action]['class'].
+	 */
+	public static function getActiveCaptchas(): array {
+		$instances = [];
+
+		// We can't rely on static::$instance being loaded with all Captcha Types, so make our own list.
+		$defaultCaptcha = self::getInstance();
+		$instances[ ( new ReflectionClass( $defaultCaptcha ) )->getShortName() ] = $defaultCaptcha;
+
+		$captchaTriggers = MediaWikiServices::getInstance()->getMainConfig()->get( 'CaptchaTriggers' );
+		foreach ( $captchaTriggers as $action => $trigger ) {
+			if ( isset( $trigger['class'] ) ) {
+				$class = self::getInstance( $action );
+				$instances[ $trigger['class'] ] = $class;
+			}
+		}
+
+		return $instances;
+	}
+
+	/**
+	 * Clears the global Captcha cache for testing
+	 *
+	 * @codeCoverageIgnore
+	 * @internal Only for use in PHPUnit tests.
+	 */
+	public static function unsetInstanceForTests(): void {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new BadMethodCallException( 'Cannot unset ' . __CLASS__ . ' instance in operation.' );
+		}
+		static::$instance = [];
 	}
 
 	/** @inheritDoc */
 	public function onEditFilterMergedContent( IContextSource $context, Content $content, Status $status,
-		$summary, User $user, $minorEdit
+		$summary, User $user, $minoredit
 	) {
-		$simpleCaptcha = self::getInstance( CaptchaTriggers::EDIT );
+		$action = CaptchaTriggers::EDIT;
+		if ( !$context->getWikiPage()->exists() ) {
+			$action = CaptchaTriggers::CREATE;
+		}
+		$simpleCaptcha = self::getInstance( $action );
 		// Set a flag indicating that ConfirmEdit's implementation of
 		// EditFilterMergedContent ran.
 		// This can be checked by other MediaWiki extensions, e.g. AbuseFilter.
 		$simpleCaptcha->setEditFilterMergedContentHandlerInvoked();
 		return $simpleCaptcha->confirmEditMerged( $context, $content, $status, $summary,
-			$user, $minorEdit );
+			$user, $minoredit );
 	}
 
 	/** @inheritDoc */
@@ -111,37 +180,58 @@ class Hooks implements
 
 	/** @inheritDoc */
 	public function onEditPageBeforeEditButtons( $editpage, &$buttons, &$tabindex ) {
-		self::getInstance()->editShowCaptcha( $editpage );
+		self::getInstance( CaptchaTriggers::EDIT )->editShowCaptcha( $editpage );
 	}
 
 	/** @inheritDoc */
-	public function onEditPage__showEditForm_fields( $editPage, $out ) {
-		self::getInstance()->showEditFormFields( $editPage, $out );
+	public function onEditPage__showEditForm_fields( $editor, $out ) {
+		self::getInstance( CaptchaTriggers::EDIT )->showEditFormFields( $editor, $out );
 	}
 
 	/** @inheritDoc */
 	public function onEmailUserForm( &$form ) {
-		return self::getInstance()->injectEmailUser( $form );
+		return self::getInstance( CaptchaTriggers::SENDEMAIL )->injectEmailUser( $form );
 	}
 
 	/** @inheritDoc */
 	public function onEmailUser( &$to, &$from, &$subject, &$text, &$error ) {
-		return self::getInstance()->confirmEmailUser( $from, $to, $subject, $text, $error );
+		return self::getInstance( CaptchaTriggers::SENDEMAIL )->confirmEmailUser( $from, $to, $subject, $text, $error );
 	}
 
 	/** @inheritDoc */
 	public function onAPIGetAllowedParams( $module, &$params, $flags ) {
-		return self::getInstance()->apiGetAllowedParams( $module, $params, $flags );
+		// To quote Happy-melon from 32102375f80e72c8c4359abbeff66a75da463efa...
+		// > Asking for captchas in the API is really silly
+
+		// Create a merged array of API parameters based on active captcha types.
+		// This may result in clashes/overwriting if multiple Captcha use the same parameter names,
+		// but there's not a lot we can do about that...
+		foreach ( self::getActiveCaptchas() as $instance ) {
+			/** @var SimpleCaptcha $instance */
+			$instance->apiGetAllowedParams( $module, $params, $flags );
+		}
 	}
 
 	/** @inheritDoc */
 	public function onAuthChangeFormFields(
 		$requests, $fieldInfo, &$formDescriptor, $action
 	) {
-		self::getInstance()->onAuthChangeFormFields( $requests, $fieldInfo, $formDescriptor, $action );
+		/** @var CaptchaAuthenticationRequest $req */
+		$req = AuthenticationRequest::getRequestByClass(
+			$requests,
+			CaptchaAuthenticationRequest::class,
+			true
+		);
+		if ( !$req ) {
+			return;
+		}
+
+		self::getInstance( $req->getAction() )
+			->onAuthChangeFormFields( $requests, $fieldInfo, $formDescriptor, $action );
 	}
 
-	public static function confirmEditSetup() {
+	/** @codeCoverageIgnore */
+	public static function confirmEditSetup(): void {
 		global $wgCaptchaTriggers;
 
 		// There is no need to run (core) tests with enabled ConfirmEdit - bug T44145
@@ -162,8 +252,10 @@ class Hooks implements
 	/**
 	 * Callback for extension.json of FancyCaptcha to set a default captcha directory,
 	 * which depends on wgUploadDirectory
+	 *
+	 * @codeCoverageIgnore
 	 */
-	public static function onFancyCaptchaSetup() {
+	public static function onFancyCaptchaSetup(): void {
 		global $wgCaptchaDirectory, $wgUploadDirectory;
 		if ( !$wgCaptchaDirectory ) {
 			$wgCaptchaDirectory = "$wgUploadDirectory/captcha";
@@ -241,7 +333,7 @@ class Hooks implements
 	}
 
 	/** @inheritDoc */
-	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
+	public function onResourceLoaderRegisterModules( ResourceLoader $rl ): void {
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		$messages = [
 			'colon-separator',
@@ -259,7 +351,7 @@ class Hooks implements
 			$messages[] = 'fancycaptcha-imgcaptcha-ph';
 		}
 
-		$resourceLoader->register( [
+		$rl->register( [
 			'ext.confirmEdit.CaptchaInputWidget' => [
 				'localBasePath' => dirname( __DIR__ ),
 				'remoteExtPath' => 'ConfirmEdit',

@@ -7,12 +7,12 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\JsonCodec\Hint;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
+use Wikimedia\Parsoid\Core\Source;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\CompatJsonCodec;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Utils;
-use Wikimedia\Parsoid\Wt2Html\Frame;
 
 /**
  * Catch-all class for all token types.
@@ -64,6 +64,8 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 				return DOMDataUtils::getCodecHints()['data-mw'];
 			case 'attribs':
 				return Hint::build( KV::class, Hint::LIST );
+			case 'nestedTokens':
+				return new Hint( self::hint(), Hint::LIST );
 			default:
 				return null;
 		}
@@ -82,15 +84,6 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 
 	public static function hint(): Hint {
 		return Hint::build( self::class, Hint::INHERITED );
-	}
-
-	/**
-	 * Get a name for the token.
-	 * Derived classes can override this.
-	 * @return string
-	 */
-	public function getName(): string {
-		return $this->getType();
 	}
 
 	/**
@@ -205,8 +198,9 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 	 * context to be set to a token.
 	 *
 	 * @param string $name
-	 * @return array Information about the shadow info attached to this attribute:
-	 *   - value: (string|Token|array<Token|string>)
+	 * @return array{value: string|Token|array<Token|KV|string>, modified: bool, fromsrc: bool}
+	 *  Information about the shadow info attached to this attribute:
+	 *   - value: (string|Token|array<Token|KV|string>)
 	 *     When modified is false and fromsrc is true, this is always a string.
 	 *   - modified: (bool)
 	 *   - fromsrc: (bool)
@@ -254,7 +248,7 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 	 */
 	public function removeAttribute( string $name ): void {
 		foreach ( $this->attribs as $i => $kv ) {
-			if ( mb_strtolower( $kv->k ) === $name ) {
+			if ( is_string( $kv->k ) && mb_strtolower( $kv->k ) === $name ) {
 				unset( $this->attribs[$i] );
 			}
 		}
@@ -289,17 +283,16 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 	/**
 	 * Get the wikitext source of a token.
 	 *
-	 * @param Frame $frame
+	 * @param Source ...$source Optional Source, for context.
 	 * @return string
 	 */
-	public function getWTSource( Frame $frame ): string {
+	public function getWTSource( Source ...$source ): string {
 		$tsr = $this->dataParsoid->tsr ?? null;
 		if ( !( $tsr instanceof SourceRange ) ) {
 			throw new InvalidTokenException( 'Expected token to have tsr info.' );
 		}
-		$srcText = $frame->getSrcText();
 		Assert::invariant( $tsr->end >= $tsr->start, 'Bad TSR' );
-		return $tsr->substr( $srcText );
+		return $tsr->substr( ...$source );
 	}
 
 	/**

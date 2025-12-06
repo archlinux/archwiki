@@ -8,7 +8,7 @@ namespace MediaWiki\Extension\Notifications\Test\Structure;
 class EchoBundleSizeTest extends \MediaWiki\Tests\Structure\BundleSizeTestBase {
 
 	/** @inheritDoc */
-	public function getBundleSizeConfig(): string {
+	public static function getBundleSizeConfigData(): string {
 		return dirname( __DIR__, 3 ) . '/bundlesize.config.json';
 	}
 }

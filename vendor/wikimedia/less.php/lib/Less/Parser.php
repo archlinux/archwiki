@@ -166,7 +166,6 @@ class Less_Parser {
 			case 'cache_dir':
 				if ( is_string( $value ) ) {
 					Less_Cache::SetCacheDir( $value );
-					Less_Cache::CheckCacheDir();
 				}
 				return;
 			case 'functions':
@@ -555,26 +554,11 @@ class Less_Parser {
 	}
 
 	/**
-	 * @deprecated 1.5.1.2
+	 * @deprecated 1.5.1.2 Use Less_Cache::SetCacheDir instead.
 	 */
 	public function SetCacheDir( $dir ) {
-		if ( !file_exists( $dir ) ) {
-			if ( mkdir( $dir ) ) {
-				return true;
-			}
-			throw new Less_Exception_Parser( 'Less.php cache directory couldn\'t be created: ' . $dir );
-
-		} elseif ( !is_dir( $dir ) ) {
-			throw new Less_Exception_Parser( 'Less.php cache directory doesn\'t exist: ' . $dir );
-
-		} elseif ( !is_writable( $dir ) ) {
-			throw new Less_Exception_Parser( 'Less.php cache directory isn\'t writable: ' . $dir );
-
-		} else {
-			$dir = self::WinPath( $dir );
-			Less_Cache::$cache_dir = rtrim( $dir, '/' ) . '/';
-			return true;
-		}
+		trigger_error( 'Less_Parser::SetCacheDir is deprecated, use Less_Cache::SetCacheDir instead', E_USER_DEPRECATED );
+		Less_Cache::SetCacheDir( $dir );
 	}
 
 	/**
@@ -2452,7 +2436,7 @@ class Less_Parser {
 				if ( is_array( $name ) && array_key_exists( 0, $name ) // to satisfy phan
 					&& $name[0] instanceof Less_Tree_Keyword
 					&& $name[0]->value && strpos( $name[0]->value, '--' ) === 0 ) {
-					$value = $this->parsePermissiveValue();
+					$value = $this->parsePermissiveValue( [ ';', '}' ] );
 				} else {
 					// Try to store values as anonymous
 					// If we need the value later we'll re-parse it in ruleset.parseValue
@@ -2537,6 +2521,11 @@ class Less_Parser {
 			$e = $this->parseEntity();
 			if ( $e ) {
 				$value[] = $e;
+			}
+			// NOTE: Comma handling backported from Less.js 4.2.1 (T386077)
+			if ( $this->peekChar( ',' ) ) {
+				$value[] = new Less_Tree_Anonymous( ',' );
+				$this->matchChar( ',' );
 			}
 		} while ( $e );
 		$done = $testCurrentChar( $this->input[$this->pos] );

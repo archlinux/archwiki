@@ -34,6 +34,8 @@
 	"tag-editcheck-references-activated-description": "編輯檢查認為可能需要參考資料，並顯示了UI",
 	"tag-editcheck-references-shown": "編輯檢查（參考資料）已顯示",
 	"tag-editcheck-references-shown-description": "編輯檢查認為可能需要參考資料，並顯示了UI",
+	"tag-editcheck-tone-shown": "編輯檢查（語調）已顯示",
+	"tag-editcheck-tone-shown-description": "編輯檢查認為編輯內容的語調可能需要調整，並顯示了UI",
 	"tag-visualeditor": "視覺化編輯",
 	"tag-visualeditor-description": "使用[[{{MediaWiki:visualeditor-descriptionpagelink}}|視覺化編輯器]]完成的編輯",
 	"tag-visualeditor-needcheck": "視覺化編輯器：需要檢查",

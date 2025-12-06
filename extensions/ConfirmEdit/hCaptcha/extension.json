@@ -8,77 +8,10 @@
 	"descriptionmsg": "hcaptcha-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
-	"MessagesDirs": {
-		"hCaptcha": [
-			"i18n"
-		]
-	},
-	"config": {
-		"HCaptchaProxy": {
-			"description": "Proxy to use for outbound PHP web requests to hCaptcha servers (HCaptchaVerifyUrl)",
-			"value": false
-		},
-		"HCaptchaSiteKey": {
-			"description": "Sitekey from hCaptcha (requires creating an account)",
-			"value": ""
-		},
-		"HCaptchaSecretKey": {
-			"description": "Secret key from hCaptcha (requires creating an account)",
-			"value": ""
-		},
-		"HCaptchaSendRemoteIP": {
-			"description": "Whether to send the client's IP address to hCaptcha",
-			"value": false
-		},
-		"HCaptchaApiUrl": {
-			"description": "Url that the hCaptcha JS is loaded from; may want to use https://cn1.hcaptcha.com/1/api.js?endpoint=https://cn1.hcaptcha.com&assethost=https://assets-cn1.hcaptcha.com&imghost=https://imgs-cn1.hcaptcha.com&reportapi=https://reportapi-cn1.hcaptcha.com for Chinese visitors",
-			"value": "https://js.hcaptcha.com/1/api.js"
-		},
-		"HCaptchaVerifyUrl": {
-			"description": "Url that the hCaptcha requested is verified against; may want to use https://cn1.hcaptcha.com/siteverify if server is in China",
-			"value": "https://api.hcaptcha.com/siteverify"
-		},
-		"HCaptchaEnterprise": {
-			"description": "Whether the provided sitekey is for hCaptcha Enterprise features. See https://www.hcaptcha.com/#enterprise-features",
-			"value": false
-		},
-		"HCaptchaPassiveMode": {
-			"description": "If you are using using (primarily) passive modes, force the inclusion of a message with the hCaptcha Privacy Policy and Terms of Service",
-			"value": false
-		},
-		"HCaptchaCSPRules": {
-			"description": "Urls to add to the Content Security Policies (CSP) for hcaptcha.com and *.hcaptcha.com to a page when loading a hCaptcha",
-			"value": [
-				"https://hcaptcha.com",
-				"https://*.hcaptcha.com"
-			]
-		}
-	},
-	"ConfigRegistry": {
-		"hcaptcha": "GlobalVarConfig::newInstance"
-	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "../resources",
-		"remoteExtPath": "ConfirmEdit/resources"
-	},
-	"ResourceModules": {
-		"ext.confirmEdit.hCaptcha.visualEditor": {
-			"dependencies": [
-				"web2017-polyfills"
-			],
-			"packageFiles": [
-				"ve-confirmedit-hCaptcha/ve.init.mw.HCaptchaSaveErrorHandler.js",
-				{
-					"name": "ve-confirmedit-hCaptcha/config.json",
-					"callback": "MediaWiki\\Extension\\ConfirmEdit\\hCaptcha\\Hooks\\ResourceLoaderHooks::getHCaptchaResourceLoaderConfig"
-				}
-			]
-		}
-	},
 	"attributes": {
 		"VisualEditor": {
 			"PluginModules": [
-				"ext.confirmEdit.hCaptcha.visualEditor"
+				"ext.confirmEdit.hCaptcha"
 			]
 		}
 	},

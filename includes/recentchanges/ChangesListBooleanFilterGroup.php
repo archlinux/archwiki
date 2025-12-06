@@ -2,6 +2,7 @@
 
 namespace MediaWiki\RecentChanges;
 
+use InvalidArgumentException;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -14,6 +15,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
  * @since 1.29
  * @ingroup RecentChanges
  * @method ChangesListBooleanFilter[] getFilters()
+ * @method ChangesListBooleanFilter|null getFilter( string $name )
  */
 class ChangesListBooleanFilterGroup extends ChangesListFilterGroup {
 	/**
@@ -58,6 +60,26 @@ class ChangesListBooleanFilterGroup extends ChangesListFilterGroup {
 	}
 
 	/**
+	 * @since 1.45
+	 * @param array $defaultValue
+	 */
+	public function setDefault( $defaultValue ) {
+		if ( !is_array( $defaultValue ) ) {
+			throw new InvalidArgumentException(
+				"Can't set the default of filter options group \"{$this->getName()}\"" .
+				' to a value of type "' . gettype( $defaultValue ) . ': expected bool[]' );
+		}
+		foreach ( $defaultValue as $name => $value ) {
+			if ( !is_bool( $value ) ) {
+				throw new InvalidArgumentException(
+					"Can't set the default of filter option \"{$this->getName()}/$name\"" .
+					' to a value of type "' . gettype( $value ) . ': expected bool' );
+			}
+			$this->getFilter( $name )?->setDefault( $value );
+		}
+	}
+
+	/**
 	 * Registers a filter in this group
 	 *
 	 * @param ChangesListBooleanFilter $filter
@@ -74,7 +96,6 @@ class ChangesListBooleanFilterGroup extends ChangesListFilterGroup {
 		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
 		FormOptions $opts, $isStructuredFiltersEnabled
 	) {
-		/** @var ChangesListBooleanFilter $filter */
 		foreach ( $this->getFilters() as $filter ) {
 			if ( $filter->isActive( $opts, $isStructuredFiltersEnabled ) ) {
 				$filter->modifyQuery( $dbr, $specialPage, $tables, $fields, $conds,
@@ -87,7 +108,6 @@ class ChangesListBooleanFilterGroup extends ChangesListFilterGroup {
 	 * @inheritDoc
 	 */
 	public function addOptions( FormOptions $opts, $allowDefaults, $isStructuredFiltersEnabled ) {
-		/** @var ChangesListBooleanFilter $filter */
 		foreach ( $this->getFilters() as $filter ) {
 			$defaultValue = $allowDefaults ? $filter->getDefault( $isStructuredFiltersEnabled ) : false;
 			$opts->add( $filter->getName(), $defaultValue );

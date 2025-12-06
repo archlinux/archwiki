@@ -6,16 +6,29 @@ mw.hook( 'wikiEditor.toolbarReady' ).add( function ( $textarea ) {
 		return;
 	}
 
+	// Ensure WikiEditor has loaded.
+	const context = $textarea.data( 'wikiEditor-context' );
+	if ( context === undefined ) {
+		return;
+	}
+
 	const RealtimePreview = require( './RealtimePreview.js' );
-	const realtimePreview = new RealtimePreview();
+	const realtimePreview = new RealtimePreview( context );
+
 	$textarea.wikiEditor( 'addToToolbar', {
 		section: 'secondary',
 		group: 'default',
 		tools: {
+			realtimepreviewReload: {
+				type: 'element',
+				element: function () {
+					return realtimePreview.getToolbarReloadButton();
+				}
+			},
 			realtimepreview: {
 				type: 'element',
-				element: function ( context ) {
-					return realtimePreview.getToolbarButton( context );
+				element: function () {
+					return realtimePreview.getToolbarButton();
 				}
 			}
 		}

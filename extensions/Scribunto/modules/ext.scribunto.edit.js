@@ -268,8 +268,8 @@
 		const api = new mw.Api();
 		setPending();
 
-		api.postWithToken( 'csrf', params )
-			.done( ( result ) => {
+		api.postWithToken( 'csrf', params ).then(
+			( result ) => {
 				if ( result.sessionIsNew === '' && !sentContent ) {
 					// Session was lost. Resend query, with content
 					printClearBar( 'scribunto-console-cleared-session-lost' );
@@ -293,8 +293,8 @@
 				}
 				clearPending();
 				setTimeout( refocus, 0 );
-			} )
-			.fail( ( code, result ) => {
+			},
+			( code, result ) => {
 				if ( result.error && result.error.info ) {
 					printError( result.error.info );
 				} else if ( result.exception ) {
@@ -305,7 +305,8 @@
 				}
 				clearPending();
 				setTimeout( refocus, 0 );
-			} );
+			}
+		);
 	}
 
 	function getContent() {
@@ -343,7 +344,7 @@
 		$( '<fieldset>' )
 			.attr( 'class', 'mw-scribunto-console-fieldset' )
 			.append( $( '<legend>' ).text( mw.msg( 'scribunto-console-title' ) ) )
-			.append( $( '<div id="mw-scribunto-output"></div>' ) )
+			.append( $( '<div>' ).attr( 'id', 'mw-scribunto-output' ) )
 			.append(
 				$( '<div>' ).append(
 					$( '<textarea>' )

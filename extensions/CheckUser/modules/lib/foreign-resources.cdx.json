@@ -1,0 +1,27 @@
+{
+	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.6",
+	"serialNumber": "urn:uuid:8827d5df-7ee5-4980-8d2a-f74f416e15c5",
+	"version": 1,
+	"components": [
+		{
+			"type": "library",
+			"name": "d3",
+			"version": "7.6.1",
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://d3js.org/",
+					"type": "website"
+				}
+			]
+		}
+	]
+}

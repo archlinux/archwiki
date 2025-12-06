@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Bugoslav",
 			"Ex13",
@@ -8,8 +9,7 @@
 			"Neptune, the Mystic",
 			"Ponor",
 			"Roberta F.",
-			"Wumbolo",
-			"Aca"
+			"Wumbolo"
 		]
 	},
 	"echo-desc": "Sustav obavješćivanja suradnika o događajima i porukama",
@@ -60,15 +60,11 @@
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|Miljokaz|Miljokazi}} uređivanja",
 	"echo-category-title-watchlist": "Uređivanje praćene stranice",
 	"echo-category-title-minor-watchlist": "Manje uređivanje praćene stranice",
-	"echo-pref-tooltip-edit-user-talk": "Obavijesti me kad netko napravi uređivanje na mojoj stranici za razgovor.",
-	"echo-pref-tooltip-edit-user-page": "Obavijesti me o uređivanjima moje suradničke stranice.",
 	"echo-pref-tooltip-article-linked": "Obavijesti me kad netko doda poveznicu na stranicu koju sam započeo s druge stranice.",
 	"echo-pref-tooltip-reverted": "Obavijesti me kad netko ukloni moje uređivanje.",
 	"echo-pref-tooltip-mention": "Obavijesti me kad netko doda poveznicu prema mojoj suradničkoj stranici.",
 	"echo-pref-tooltip-mention-failure": "Obavijesti me kad netko nije dobio obavijest nakon što sam ga spomenuo.",
 	"echo-pref-tooltip-mention-success": "Obavijesti me kad ikom pošaljem spominjanje.",
-	"echo-pref-tooltip-user-rights": "Obavijesti me kad netko promijeni moja suradnička prava.",
-	"echo-pref-tooltip-emailuser": "Obavijesti me kada mi netko pošalje e-poštu.",
 	"echo-pref-tooltip-article-reminder": "Obavijesti me o ovoj stranici kad to zatražim.",
 	"echo-pref-tooltip-thank-you-edit": "Obavijesti me kad ostvarim moje 1., 10., 100... uređivanje.",
 	"echo-pref-tooltip-watchlist": "Obavijesti me kad netko napravi uređivanje stranice s mog popisa praćenja.",
@@ -85,8 +81,6 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-header": "Dopušteni načini obavješćivanja",
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Koji su načini dopušteni za svaku kategoriju",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Zadano omogućeno",
-	"echo-displaynotificationsconfiguration-enabled-default-existing-users-legend": "Postojeći suradnici",
-	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "Novi suradnici",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Zahtijevani načini obavješćivanja",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Koji su načini obvezni za svaku kategoriju",
 	"echo-specialpage": "Obavijesti i vijestice",

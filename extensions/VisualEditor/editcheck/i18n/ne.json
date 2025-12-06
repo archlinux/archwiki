@@ -1,8 +1,39 @@
 {
 	"@metadata": {
 		"authors": [
-			"पर्वत सुबेदी"
+			"पर्वत सुबेदी",
+			"बडा काजी"
 		]
 	},
+	"editcheck-dialog-action-no": "होइन",
+	"editcheck-dialog-action-yes": "हो",
+	"editcheck-dialog-action-decline": "असहमत",
+	"editcheck-dialog-action-revise": "संशोधन गर्नुहोस्",
+	"editcheck-dialog-action-recheck": "पुन: जाँच गर्नुहोस्",
+	"editcheck-dialog-action-back": "पछाडि",
+	"editcheck-dialog-action-submit": "पेस गर्नुहोस्",
+	"editcheck-dialog-addref-description": "उद्धरण थपेर पाठकहरूलाई यो जानकारी कहाँबाट आउँदैछ भनेर बुझ्न मद्दत गर्नुहोस्।",
+	"editcheck-dialog-addref-reject-question": "तपाईँ किन उद्धरण थप्दै हुनुहुन्न?",
+	"editcheck-dialog-addref-reject-irrelevant": "मलाई लाग्दैन कि उद्धरणहरू मैले गरिरहेको परिवर्तनसँग सान्दर्भिक छन्।",
+	"editcheck-dialog-addref-reject-common-knowledge": "मैले थपिरहेको जानकारी व्यापक रूपमा परिचित छ।",
+	"editcheck-dialog-addref-reject-uncertain": "मलाई कुन उद्धरण थप्ने भन्ने कुरा निश्चित छैन।",
+	"editcheck-dialog-addref-reject-other": "अन्य",
+	"editcheck-dialog-addref-success-notify": "उद्धरण थप्नुभएकोमा धन्यवाद!",
+	"editcheck-dialog-addref-title": "सन्दर्भ थप्नुहोस्",
+	"editcheck-dialog-title": "प्रकाशन गर्नु अघि",
+	"editcheck-copyvio-prompt": "के तपाईंले यो पाठ लेख्नुभएको हो?",
+	"editcheck-copyvio-action-keep": "हो, राख्नुहोस्।",
+	"editcheck-copyvio-action-remove": "होइन, यसलाई हटाउनुहोस्",
+	"editcheck-copyvio-keep-description": "कृपया यस लेखका अन्य सम्पादकहरूलाई टाँसिएको पाठ राख्ने तपाईंको कारण बुझ्न मद्दत गर्नुहोस्।",
+	"editcheck-copyvio-keep-wrote": "यो सामग्री मैले लेखेको हुँ र यो अन्यत्र प्रकाशित भएको छैन।",
+	"editcheck-copyvio-keep-permission": "यो सामग्री नि:शुल्क इजाजतपत्र प्राप्त छ।",
+	"editcheck-copyvio-keep-other": "माथिका कुनै पनि लागू हुँदैनन्।",
+	"editcheck-copyvio-keep-notify": "टाँसिएको पाठ राख्नुको कारण साझा गर्नुभएकोमा धन्यवाद!",
+	"editcheck-copyvio-remove-notify": "ज्ञान निःशुल्क उपलब्ध गराउन मद्दत गर्नुभएकोमा धन्यवाद!",
+	"editcheck-tone-title": "स्वर संशोधन गर्ने?",
+	"editcheck-tone-title-acted": "स्वर परिमार्जन गर्दै",
+	"editcheck-tone-reject-appropriate": "स्वर उपयुक्त छ।",
+	"editcheck-tone-reject-other": "अन्य",
+	"editcheck-tone-thank": "स्वरलाई विचार गर्नुभएकोमा धन्यवाद!",
 	"tag-editcheck-reference-decline-other": "सम्पादन जाँच गर्नुहोस् (सन्दर्भ) अस्वीकृत भयो (अन्य)"
 }

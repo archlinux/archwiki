@@ -15,6 +15,7 @@
 	"discussiontools-desc": "സംവാദത്താളുകൾ മെച്ചപ്പെടുത്തുവാനുള്ള ഉപകരണങ്ങൾ.",
 	"discussiontools-emptystate-button": "സം‌വാദം ആരംഭിക്കുക",
 	"discussiontools-emptystate-desc": "{{SITENAME}} പദ്ധതിയിൽ എപ്രകാരം ഉള്ളടക്കം നിർമ്മിക്കാമെന്നും മെച്ചപ്പെടുത്താമെന്നും മറ്റുള്ളവരുമായി ചർച്ച ചെയ്യാനുള്ള വേദിയാണ് [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|സംവാദത്താളുകൾ]]. [[:{{SUBJECTPAGENAME}}]] ലേഖനം മെച്ചപ്പെടുത്താനുള്ള ചർച്ച ഈ താളിൽ {{GENDER:|താങ്കൾക്ക്}} ആരംഭിക്കാവുന്നതാണ്.",
+	"discussiontools-emptystate-desc-self": "{{SITENAME}} പദ്ധതിയിലുള്ളവർക്ക് താങ്കൾക്കൊരു സന്ദേശം പരസ്യമായി ചേർക്കാൻ ഈ [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|സംവാദത്താൾ]] ഉപയോഗിക്കാനാവും, അപ്രകാരം ചെയ്യുമ്പോൾ താങ്കൾക്ക് ഒരറിയിപ്പ് ലഭിക്കുന്നതായിരിക്കും.",
 	"discussiontools-emptystate-title": "{{SUBJECTPAGENAME}} എന്ന വിഷയത്തിൽ ചർച്ച ആരംഭിക്കുക",
 	"discussiontools-emptystate-title-self": "താങ്കളുടെ സംവാദത്താളിലേക്ക് {{GENDER:|സ്വാഗതം}}",
 	"discussiontools-emptystate-title-self-anon": "ഈ സംവാദത്താളിലേക്ക് {{GENDER:|സ്വാഗതം}}",

@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln"
+		]
+	},
+	"hcaptcha-desc": "Ergänzt die Erweiterung „ConfirmEdit“ um ein [https://www.hcaptcha.com/ hCaptcha]-Modul",
+	"hcaptcha-edit": "Um das Wiki vor automatisiertem Bearbeitungsspam zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
+	"hcaptcha-addurl": "Deine Bearbeitung enthält neue Weblinks. Um das Wiki vor automatisiertem Spam zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
+	"hcaptcha-badlogin": "Um das Wiki vor automatisiertem Knacken des Passwortes zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
+	"hcaptcha-createaccount": "Um das Wiki vor automatisiertem Spam zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
+	"hcaptcha-createaccount-fail": "Es scheint, als ob du das hCaptcha nicht gelöst hast.",
+	"hcaptcha-create": "Um das Wiki vor automatisierter Seitenerstellung zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
+	"hcaptcha-help": "Bitte löse eine hCaptcha-Herausforderung und gib den Antwortwert als captchaWord zurück.",
+	"hcaptcha-privacy-policy": "Diese Site ist durch hCaptcha geschützt und es gelten die [https://www.hcaptcha.com/privacy Datenschutzrichtlinie] und [https://www.hcaptcha.com/terms Nutzungsbedingungen].",
+	"hcaptcha-challenge-closed": "Um fortzufahren, musst du das Captcha ausfüllen.",
+	"hcaptcha-challenge-expired": "Das Zeitlimit zur Vervollständigung des Captcha ist abgelaufen. Bitte versuche es erneut.",
+	"hcaptcha-generic-error": "Beim Laden des Formulars ist ein Fehler aufgetreten. Um fortzufahren, musst du die Seite neu laden.",
+	"hcaptcha-loading-indicator-label": "Bitte warte, während das Formular fertig lädt ...",
+	"hcaptcha-missing-token": "Das Formular ist noch nicht vollständig geladen. Bitte warte einige Sekunden und versuche es dann erneut.",
+	"hcaptcha-noscript": "Zum Fortfahren ist JavaScript erforderlich. Aktiviere JavaScript in deinen Browsereinstellungen und aktualisiere die Seite."
+}

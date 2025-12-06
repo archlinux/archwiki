@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -27,6 +13,8 @@ use Wikimedia\Rdbms\DatabaseDomain;
 
 /**
  * Tools for dealing with other locally-hosted wikis.
+ *
+ * @ingroup Site
  */
 class WikiMap {
 
@@ -75,7 +63,7 @@ class WikiMap {
 		// If we don't have a canonical server or a path containing $1, the
 		// WikiReference isn't going to function properly. Just return null in
 		// that case.
-		if ( !is_string( $canonicalServer ) || !is_string( $path ) || strpos( $path, '$1' ) === false ) {
+		if ( !is_string( $canonicalServer ) || !is_string( $path ) || !str_contains( $path, '$1' ) ) {
 			return null;
 		}
 
@@ -233,14 +221,16 @@ class WikiMap {
 	public static function getWikiFromUrl( $url ) {
 		global $wgCanonicalServer;
 
-		if ( strpos( $url, "$wgCanonicalServer/" ) === 0 ) {
+		if ( str_starts_with( $url, "$wgCanonicalServer/" ) ) {
 			// Optimisation: Handle the common case.
 			// (Duplicates self::getCanonicalServerInfoForAllWikis)
 			return self::getCurrentWikiId();
 		}
 
 		$urlPartsCheck = wfGetUrlUtils()->parse( $url );
-		if ( $urlPartsCheck === null ) {
+		if ( $urlPartsCheck === null
+			|| !in_array( $urlPartsCheck['scheme'], [ '', 'http', 'https' ], true )
+		) {
 			return false;
 		}
 

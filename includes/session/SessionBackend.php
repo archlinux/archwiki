@@ -1,32 +1,17 @@
 <?php
 /**
- * MediaWiki session backend
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
- * @ingroup Session
  */
 
 namespace MediaWiki\Session;
 
 use InvalidArgumentException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
@@ -35,6 +20,7 @@ use MediaWiki\User\User;
 use MWRestrictions;
 use Psr\Log\LoggerInterface;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\IPUtils;
 use Wikimedia\ObjectCache\CachedBagOStuff;
 
 /**
@@ -52,8 +38,8 @@ use Wikimedia\ObjectCache\CachedBagOStuff;
  *    SessionManager to hold a reference to every active session so it can be
  *    saved when the request ends.
  *
- * @ingroup Session
  * @since 1.27
+ * @ingroup Session
  */
 final class SessionBackend {
 	private SessionId $id;
@@ -74,20 +60,17 @@ final class SessionBackend {
 	private $forcePersist = false;
 
 	/**
-	 * The reason for the next persistSession/unpersistSession call. Only used for logging. Can be:
-	 * - 'renew': triggered by a renew() call)
+	 * The reason for the next session write to the backend. Only used for logging. Can be:
+	 * - 'renew', 'resetId', 'setRememberUser', 'setUser', 'setForceHTTPS', 'setLoggedOutTimestamp',
+	 *   'setProviderMetadata': triggered by a call to that method
+	 * - 'manual': triggered by persist() / unpersist() call
+	 * - 'manual-forced': triggered by persist() call with the $force flag set
 	 * - 'no-store': the session was not found in the session store
-	 * - 'no-expiry': there was no expiry * in the session store data; this probably shouldn't happen
+	 * - 'no-expiry': there was no expiry in the session store data; this probably shouldn't happen
+	 * - 'token': the user did not have a token
 	 * - null otherwise.
-	 * @var string|null
 	 */
-	private $persistenceChangeType;
-
-	/**
-	 * The data from the previous logPersistenceChange() log event. Used for deduplication.
-	 * @var array
-	 */
-	private $persistenceChangeData = [];
+	private ?string $sessionWriteReason = null;
 
 	/** @var bool */
 	private $metaDirty = false;
@@ -98,7 +81,7 @@ final class SessionBackend {
 	/** @var string Used to detect subarray modifications */
 	private $dataHash = null;
 
-	private CachedBagOStuff $store;
+	private SessionStore $sessionStore;
 	private LoggerInterface $logger;
 	private HookRunner $hookRunner;
 
@@ -127,26 +110,30 @@ final class SessionBackend {
 
 	/** @var int */
 	private $delaySave = 0;
+	private bool $hasDelayedSave = false;
 
 	/** @var bool */
 	private $usePhpSessionHandling;
 	/** @var bool */
 	private $checkPHPSessionRecursionGuard = false;
 
-	/** @var bool */
-	private $shutdown = false;
+	private int $priority;
 
 	/**
 	 * @param SessionId $id
 	 * @param SessionInfo $info Session info to populate from
-	 * @param CachedBagOStuff $store Backend data store
+	 * @param SessionStore $sessionStore
 	 * @param LoggerInterface $logger
 	 * @param HookContainer $hookContainer
 	 * @param int $lifetime Session data lifetime in seconds
 	 */
 	public function __construct(
-		SessionId $id, SessionInfo $info, CachedBagOStuff $store, LoggerInterface $logger,
-		HookContainer $hookContainer, $lifetime
+		SessionId $id,
+		SessionInfo $info,
+		SessionStore $sessionStore,
+		LoggerInterface $logger,
+		HookContainer $hookContainer,
+		$lifetime
 	) {
 		$phpSessionHandling = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::PHPSessionHandling );
@@ -165,10 +152,11 @@ final class SessionBackend {
 		}
 
 		$this->id = $id;
+		$this->priority = $info->getPriority();
 		$this->user = $info->getUserInfo()
 			? $info->getUserInfo()->getUser()
 			: MediaWikiServices::getInstance()->getUserFactory()->newAnonymous();
-		$this->store = $store;
+		$this->sessionStore = $sessionStore;
 		$this->logger = $logger;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->lifetime = $lifetime;
@@ -178,7 +166,7 @@ final class SessionBackend {
 		$this->forceHTTPS = $info->forceHTTPS();
 		$this->providerMetadata = $info->getProviderMetadata();
 
-		$blob = $store->get( $store->makeKey( 'MWSession', (string)$this->id ) );
+		$blob = $sessionStore->get( $info );
 		if ( !is_array( $blob ) ||
 			!isset( $blob['metadata'] ) || !is_array( $blob['metadata'] ) ||
 			!isset( $blob['data'] ) || !is_array( $blob['data'] )
@@ -186,7 +174,7 @@ final class SessionBackend {
 			$this->data = [];
 			$this->dataDirty = true;
 			$this->metaDirty = true;
-			$this->persistenceChangeType = 'no-store';
+			$this->sessionWriteReason = 'no-store';
 			$this->logger->debug(
 				'SessionBackend "{session}" is unsaved, marking dirty in constructor',
 				[
@@ -201,7 +189,7 @@ final class SessionBackend {
 				$this->expires = (int)$blob['metadata']['expires'];
 			} else {
 				$this->metaDirty = true;
-				$this->persistenceChangeType = 'no-expiry';
+				$this->sessionWriteReason = 'no-expiry';
 				$this->logger->debug(
 					'SessionBackend "{session}" metadata dirty due to missing expiration timestamp',
 					[
@@ -213,7 +201,33 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Return a new Session for this backend
+	 * Provide a utility to construct session info on demand
+	 * as the session backend changes the SessionInfo state.
+	 *
+	 * @return SessionInfo
+	 */
+	private function getSessionInfo(): SessionInfo {
+		$userInfo = IPUtils::isValid( $this->user->getName() )
+			? UserInfo::newAnonymous()
+			: UserInfo::newFromUser( $this->user );
+
+		return new SessionInfo(
+			$this->priority,
+			[
+				'id' => (string)$this->id,
+				'provider' => $this->provider,
+				'persisted' => $this->persist,
+				'userInfo' => $userInfo,
+				'remembered' => $this->remember,
+				'forceHTTPS' => $this->forceHTTPS,
+				'metadata' => $this->providerMetadata,
+			]
+		);
+	}
+
+	/**
+	 * Create a new Session for this backend
+	 *
 	 * @param WebRequest $request
 	 * @return Session
 	 */
@@ -226,28 +240,27 @@ final class SessionBackend {
 
 	/**
 	 * Deregister a Session
+	 *
 	 * @internal For use by \MediaWiki\Session\Session::__destruct() only
 	 * @param int $index
 	 */
 	public function deregisterSession( $index ) {
-		if ( !$this->shutdown && count( $this->requests ) <= 1 ) {
-			$this->save( true );
-			$this->provider->getManager()->deregisterSessionBackend( $this );
-		}
 		unset( $this->requests[$index] );
 	}
 
 	/**
 	 * Shut down a session
+	 *
 	 * @internal For use by \MediaWiki\Session\SessionManager::shutdown() only
 	 */
 	public function shutdown() {
+		$this->sessionWriteReason = 'shutdown';
 		$this->save( true );
-		$this->shutdown = true;
 	}
 
 	/**
-	 * Returns the session ID.
+	 * Return the session ID.
+	 *
 	 * @return string
 	 */
 	public function getId() {
@@ -256,6 +269,7 @@ final class SessionBackend {
 
 	/**
 	 * Fetch the SessionId object
+	 *
 	 * @internal For internal use by WebRequest
 	 * @return SessionId
 	 */
@@ -264,11 +278,13 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Changes the session ID
+	 * Change the session ID
+	 *
 	 * @return string New ID (might be the same as the old)
 	 */
 	public function resetId() {
 		if ( $this->provider->persistsSessionId() ) {
+			$oldSessionInfo = $this->getSessionInfo();
 			$oldId = (string)$this->id;
 			$restart = $this->usePhpSessionHandling && $oldId === session_id() &&
 				PHPSessionHandler::isEnabled();
@@ -282,6 +298,7 @@ final class SessionBackend {
 			$this->provider->getManager()->changeBackendId( $this );
 			$this->provider->sessionIdWasReset( $this, $oldId );
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'resetId';
 			$this->logger->debug(
 				'SessionBackend "{session}" metadata dirty due to ID reset (formerly "{oldId}")',
 				[
@@ -301,8 +318,9 @@ final class SessionBackend {
 				'action' => 'delete',
 				'reason' => 'ID reset',
 			] );
+
 			// Delete the data for the old session ID now
-			$this->store->delete( $this->store->makeKey( 'MWSession', $oldId ) );
+			$this->sessionStore->delete( $oldSessionInfo );
 		}
 
 		return (string)$this->id;
@@ -310,6 +328,7 @@ final class SessionBackend {
 
 	/**
 	 * Fetch the SessionProvider for this session
+	 *
 	 * @return SessionProviderInterface
 	 */
 	public function getProvider() {
@@ -317,9 +336,7 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Indicate whether this session is persisted across requests
-	 *
-	 * For example, if cookies are set.
+	 * Whether this session is persisted across requests. For example, if cookies are set.
 	 *
 	 * @return bool
 	 */
@@ -328,16 +345,25 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Make this session persisted across requests
+	 * Make this session persisted across requests by calling SessionProvider::persist()
+	 * and saving the session data and metadata to the session store.
 	 *
-	 * If the session is already persistent, equivalent to calling
-	 * $this->renew().
+	 * Mutable sessions are started by application code calling persist(), and then the session
+	 * will exist until unpersist() is called, the session expires, or the client stops sending
+	 * the session tokens needed by the SessionProvider to return a non-null value from
+	 * provideSessionInfo(). Immutable sessions are started by the client sending the needed
+	 * session tokens; persist() / unpersist() will only determine whether the session data
+	 * is saved to the session store.
+	 *
+	 * If the session is already persistent, persist() equivalent to calling `$this->renew()`,
+	 * except when the $force flag is set.
 	 */
-	public function persist() {
-		if ( !$this->persist ) {
+	public function persist( bool $force = false ) {
+		if ( !$this->persist || $force ) {
 			$this->persist = true;
 			$this->forcePersist = true;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= ( $force ? 'manual-forced' : 'manual' );
 			$this->logger->debug(
 				'SessionBackend "{session}" force-persist due to persist()',
 				[
@@ -369,6 +395,7 @@ final class SessionBackend {
 			$this->persist = false;
 			$this->forcePersist = true;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'manual';
 
 			$this->logSessionWrite( [
 				'action' => 'delete',
@@ -376,15 +403,15 @@ final class SessionBackend {
 			] );
 			// Delete the session data, so the local cache-only write in
 			// self::save() doesn't get things out of sync with the backend.
-			$this->store->delete( $this->store->makeKey( 'MWSession', (string)$this->id ) );
+			$this->sessionStore->delete( $this->getSessionInfo() );
 
 			$this->autosave();
 		}
 	}
 
 	/**
-	 * Indicate whether the user should be remembered independently of the
-	 * session ID.
+	 * Whether the user should be remembered, independently of the session ID.
+	 *
 	 * @return bool
 	 */
 	public function shouldRememberUser() {
@@ -392,14 +419,15 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Set whether the user should be remembered independently of the session
-	 * ID.
+	 * Set whether the user should be remembered, independently of the session ID.
+	 *
 	 * @param bool $remember
 	 */
 	public function setRememberUser( $remember ) {
 		if ( $this->remember !== (bool)$remember ) {
 			$this->remember = (bool)$remember;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'setRememberUser';
 			$this->logger->debug(
 				'SessionBackend "{session}" metadata dirty due to remember-user change',
 				[
@@ -410,7 +438,8 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Returns the request associated with a Session
+	 * Return the request associated with a Session
+	 *
 	 * @param int $index Session index
 	 * @return WebRequest
 	 */
@@ -422,14 +451,15 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Returns the authenticated user for this session
+	 * Return the authenticated user for this session
 	 */
 	public function getUser(): User {
 		return $this->user;
 	}
 
 	/**
-	 * Fetch the rights allowed the user when this session is active.
+	 * @internal For PermissionManager
+	 * @see SessionProvider::getAllowedUserRights
 	 * @return null|string[] Allowed user rights, or null to allow all.
 	 */
 	public function getAllowedUserRights() {
@@ -437,8 +467,8 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Fetch any restrictions imposed on logins or actions when this
-	 * session is active.
+	 * @internal For PermissionManager
+	 * @see SessionProvider::getRestrictions
 	 * @return MWRestrictions|null
 	 */
 	public function getRestrictions(): ?MWRestrictions {
@@ -446,7 +476,8 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Indicate whether the session user info can be changed
+	 * Whether the session user info can be changed
+	 *
 	 * @return bool
 	 */
 	public function canSetUser() {
@@ -454,11 +485,13 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Set a new user for this session
+	 * Set a new User object for this session
+	 *
 	 * @note This should only be called when the user has been authenticated via a login process
+	 *
+	 * TODO: Consider changing to a "UserIdentity" instead.
+	 *
 	 * @param User $user User to set on the session.
-	 *   This may become a "UserValue" in the future, or User may be refactored
-	 *   into such.
 	 */
 	public function setUser( $user ) {
 		if ( !$this->canSetUser() ) {
@@ -469,6 +502,7 @@ final class SessionBackend {
 
 		$this->user = $user;
 		$this->metaDirty = true;
+		$this->sessionWriteReason ??= 'setUser';
 		$this->logger->debug(
 			'SessionBackend "{session}" metadata dirty due to user change',
 			[
@@ -478,7 +512,7 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Get a suggested username for the login form
+	 * @see SessionProvider::suggestLoginUsername
 	 * @param int $index Session index
 	 * @return string|null
 	 */
@@ -505,6 +539,7 @@ final class SessionBackend {
 		if ( $this->forceHTTPS !== (bool)$force ) {
 			$this->forceHTTPS = (bool)$force;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'setForceHTTPS';
 			$this->logger->debug(
 				'SessionBackend "{session}" metadata dirty due to force-HTTPS change',
 				[
@@ -530,6 +565,7 @@ final class SessionBackend {
 		if ( $this->loggedOut !== $ts ) {
 			$this->loggedOut = $ts;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'setLoggedOutTimestamp';
 			$this->logger->debug(
 				'SessionBackend "{session}" metadata dirty due to logged-out-timestamp change',
 				[
@@ -559,6 +595,7 @@ final class SessionBackend {
 		if ( $this->providerMetadata !== $metadata ) {
 			$this->providerMetadata = $metadata;
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'setProviderMetadata';
 			$this->logger->debug(
 				'SessionBackend "{session}" metadata dirty due to provider metadata change',
 				[
@@ -619,14 +656,16 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Renew the session by resaving everything
+	 * Renew the session by re-saving all data with a new TTL
 	 *
 	 * Resets the TTL in the backend store if the session is near expiring, and
-	 * re-persists the session to any active WebRequests if persistent.
+	 * re-persists the session to any active WebRequests if persistent. No-op
+	 * otherwise to reduce cookie churn in browsers.
 	 */
 	public function renew() {
 		if ( time() + $this->lifetime / 2 > $this->expires ) {
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'renew';
 			$this->logger->debug(
 				'SessionBackend "{callers}" metadata dirty for renew(): {callers}',
 				[
@@ -634,7 +673,6 @@ final class SessionBackend {
 					'callers' => wfGetAllCallers( 5 ),
 				] );
 			if ( $this->persist ) {
-				$this->persistenceChangeType = 'renew';
 				$this->forcePersist = true;
 				$this->logger->debug(
 					'SessionBackend "{session}" force-persist for renew(): {callers}',
@@ -643,8 +681,8 @@ final class SessionBackend {
 						'callers' => wfGetAllCallers( 5 ),
 					] );
 			}
+			$this->autosave();
 		}
-		$this->autosave();
 	}
 
 	/**
@@ -659,18 +697,24 @@ final class SessionBackend {
 		return new \Wikimedia\ScopedCallback( function () {
 			if ( --$this->delaySave <= 0 ) {
 				$this->delaySave = 0;
-				$this->save();
+				if ( $this->hasDelayedSave ) {
+					$this->hasDelayedSave = false;
+					$this->save();
+				}
 			}
 		} );
 	}
 
 	/**
 	 * Save the session, unless delayed
-	 * @see SessionBackend::save()
+	 *
+	 * @see SessionBackend::save
 	 */
 	private function autosave() {
 		if ( $this->delaySave <= 0 ) {
 			$this->save();
+		} else {
+			$this->hasDelayedSave = true;
 		}
 	}
 
@@ -720,6 +764,7 @@ final class SessionBackend {
 				} );
 			}
 			$this->metaDirty = true;
+			$this->sessionWriteReason ??= 'token';
 		}
 		// @codeCoverageIgnoreEnd
 
@@ -755,7 +800,6 @@ final class SessionBackend {
 			if ( $this->persist ) {
 				foreach ( $this->requests as $request ) {
 					$request->setSessionId( $this->getSessionId() );
-					$this->logPersistenceChange( $request, true );
 					$this->provider->persistSession( $this, $request );
 				}
 				if ( !$closing ) {
@@ -764,28 +808,28 @@ final class SessionBackend {
 			} else {
 				foreach ( $this->requests as $request ) {
 					if ( $request->getSessionId() === $this->id ) {
-						$this->logPersistenceChange( $request, false );
 						$this->provider->unpersistSession( $request );
 					}
 				}
 			}
 		}
 
-		$persistenceChangeType = $this->persistenceChangeType;
+		$forcePersist = $this->forcePersist;
+		$persistenceChangeReason = $this->sessionWriteReason;
 		$this->forcePersist = false;
-		$this->persistenceChangeType = null;
+		$this->sessionWriteReason = null;
 
 		if ( !$this->metaDirty && !$this->dataDirty ) {
 			return;
 		}
 
 		// Save session data to store, if necessary
+		$userName = $this->user->getName();
 		$metadata = $origMetadata = [
 			'provider' => (string)$this->provider,
 			'providerMetadata' => $this->providerMetadata,
 			'userId' => $anon ? 0 : $this->user->getId(),
-			'userName' => MediaWikiServices::getInstance()->getUserNameUtils()
-				->isValid( $this->user->getName() ) ? $this->user->getName() : null,
+			'userName' => IPUtils::isIPAddress( $userName ) ? null : $userName,
 			'userToken' => $anon ? null : $this->user->getToken(),
 			'remember' => !$anon && $this->remember,
 			'forceHTTPS' => $this->forceHTTPS,
@@ -807,16 +851,17 @@ final class SessionBackend {
 				'remember' => $metadata['remember'],
 				'metaDirty' => $this->metaDirty,
 				'dataDirty' => $this->dataDirty,
-				'persistenceChangeType' => $persistenceChangeType ?? '',
+				'forcePersist' => $forcePersist,
 				'action' => 'write',
-				'reason' => 'save',
+				// 'other' probably means the session had dirty data.
+				'reason' => $persistenceChangeReason ?? 'other',
 			] );
 
 		}
 
 		$flags = $this->persist ? 0 : CachedBagOStuff::WRITE_CACHE_ONLY;
-		$this->store->set(
-			$this->store->makeKey( 'MWSession', (string)$this->id ),
+		$this->sessionStore->set(
+			$this->getSessionInfo(),
 			[
 				'data' => $this->data,
 				'metadata' => $metadata,
@@ -843,7 +888,7 @@ final class SessionBackend {
 			} );
 
 			if ( $this->usePhpSessionHandling && session_id() === '' && PHPSessionHandler::isEnabled() &&
-				SessionManager::getGlobalSession()->getId() === (string)$this->id
+				RequestContext::getMain()->getRequest()->getSession()->getId() === (string)$this->id
 			) {
 				$this->logger->debug(
 					'SessionBackend "{session}" Taking over PHP session',
@@ -857,59 +902,10 @@ final class SessionBackend {
 	}
 
 	/**
-	 * Helper method for logging persistSession/unpersistSession calls.
-	 * @param WebRequest $request
-	 * @param bool $persist True when persisting, false when unpersisting
-	 */
-	private function logPersistenceChange( WebRequest $request, bool $persist ) {
-		if ( !$this->isPersistent() && !$persist ) {
-			// FIXME SessionManager calls unpersistSession() on anonymous requests (and the cookie
-			//   filtering in WebResponse makes it a noop). Skip those.
-			return;
-		}
-
-		$verb = $persist ? 'Persisting' : 'Unpersisting';
-		if ( $this->persistenceChangeType === 'renew' ) {
-			$message = "$verb session for renewal";
-		} elseif ( $this->persistenceChangeType === 'no-store' ) {
-			$message = "$verb session due to no pre-existing stored session";
-		} elseif ( $this->persistenceChangeType === 'no-expiry' ) {
-			$message = "$verb session due to lack of stored expiry";
-		} elseif ( $this->persistenceChangeType === null ) {
-			$message = "$verb session for unknown reason";
-		}
-
-		// Because SessionManager repeats session loading several times in the same request,
-		// it will try to persist or unpersist several times. WebResponse deduplicates, but
-		// we want to deduplicate logging as well since the volume is already fairly large.
-		$id = $this->getId();
-		$user = $this->getUser()->isAnon() ? '<anon>' : $this->getUser()->getName();
-		if ( $this->persistenceChangeData
-			&& $this->persistenceChangeData['id'] === $id
-			&& $this->persistenceChangeData['user'] === $user
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable message always set
-			&& $this->persistenceChangeData['message'] === $message
-		) {
-			return;
-		}
-		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable message always set
-		$this->persistenceChangeData = [ 'id' => $id, 'user' => $user, 'message' => $message ];
-
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable,PhanPossiblyUndeclaredVariable message always set
-		$this->logger->info( $message, [
-			'id' => $id,
-			'provider' => get_class( $this->getProvider() ),
-			'user' => $user,
-			'clientip' => $request->getIP(),
-			'userAgent' => $request->getHeader( 'user-agent' ),
-		] );
-	}
-
-	/**
+	 * @see SessionManager::logSessionWrite
 	 * @param array $data Additional log context. Should have at least the following keys:
 	 *   - action: 'write' or 'delete'.
 	 *   - reason: why the write happened
-	 * @see SessionManager::logSessionWrite()
 	 */
 	private function logSessionWrite( array $data = [] ): void {
 		$id = $this->getId();
@@ -922,7 +918,7 @@ final class SessionBackend {
 		if ( $request === false && defined( 'MW_PHPUNIT_TEST' ) ) {
 			$request = new FauxRequest();
 		}
-		$this->logger->info( 'Session store: {action} for {reason}', $data + [
+		LoggerFactory::getInstance( 'session-sampled' )->info( 'Session store: {action} for {reason}', $data + [
 				'id' => $id,
 				'provider' => get_class( $this->getProvider() ),
 				'user' => $user,

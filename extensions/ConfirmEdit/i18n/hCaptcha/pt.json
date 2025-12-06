@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Albertoleoncio",
+			"Dreamy Jazz",
+			"Hamilton Abreu",
+			"Mansil alfalb"
+		]
+	},
+	"hcaptcha-desc": "Módulo [https://www.hcaptcha.com/ hCaptcha] para Confirmação de Edição",
+	"hcaptcha-edit": "Para proteger a wiki contra a edição automatizada de spam, pedimos gentilmente que resolva o seguinte hCaptcha:",
+	"hcaptcha-addurl": "A sua edição inclui novas hiperligações externas. Para proteger a wiki contra spam automatizado, pedimos gentilmente que resolva o seguinte hCaptcha:",
+	"hcaptcha-badlogin": "Para proteger a wiki contra as tentativas automatizadas de quebra de palavra-passe, nós pedimos-lhe que resolva o seguinte hCaptcha:",
+	"hcaptcha-createaccount": "Para proteger a wiki contra a criação automatizada de contas, pedimos gentilmente que resolva o seguinte hCaptcha:",
+	"hcaptcha-createaccount-fail": "Parece que você não resolveu o desafio hCaptcha.",
+	"hcaptcha-create": "Para proteger a wiki contra a criação automatizada de páginas, pedimos gentilmente que resolva o seguinte hCaptcha:",
+	"hcaptcha-help": "Resolva um desafio hCaptcha e devolva o valor da resposta como captchaWord, por favor.",
+	"hcaptcha-privacy-policy": "Este site é protegido pelo hCaptcha e aplicam-se seus [https://www.hcaptcha.com/terms Termos de Serviço] e sua [https://www.hcaptcha.com/privacy Política de Privacidade].",
+	"hcaptcha-challenge-closed": "Por favor, resolva o desafio antes de enviar o formulário.",
+	"hcaptcha-challenge-expired": "O prazo para resolver o desafio expirou. Por favor, tente novamente.",
+	"hcaptcha-loading-indicator-label": "Aguarde enquanto a proteção contra spam do hCaptcha é inicializada",
+	"hcaptcha-missing-token": "Este formulário está protegido por um desafio hCaptcha. Aguarde o desafio aparecer antes de enviar o formulário. Certifique-se de que o JavaScript esteja habilitado."
+}

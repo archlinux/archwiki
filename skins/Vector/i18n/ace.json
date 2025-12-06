@@ -5,7 +5,6 @@
 			"Si Gam Acèh"
 		]
 	},
-	"vector-opt-out": "Gantoe u rupa awai",
 	"vector-languages": "Bahsa",
 	"vector-language-button-label": "{{PLURAL:$1|$1 bahsa}}",
 	"vector-no-language-button-label": "Tamah bahsa",
@@ -22,7 +21,6 @@
 	"vector-view-viewsource": "Eu nè",
 	"vector-more-actions": "Lom",
 	"vector-appearance-tooltip": "Gantoe seunipat harah, rayek ngön wareuna ôn",
-	"vector-searchsuggest-containing": "Mita ôn nyang na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Asoe",
 	"vector-toc-beginning": "Awai",
 	"vector-page-tools-label": "Alat",

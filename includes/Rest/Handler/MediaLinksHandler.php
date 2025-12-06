@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Rest\Handler;
 
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
@@ -90,7 +91,7 @@ class MediaLinksHandler extends SimpleHandler {
 	 * @return array the results
 	 */
 	private function getDbResults( int $pageId ) {
-		return $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
+		return $this->dbProvider->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
 			->select( 'il_to' )
 			->from( 'imagelinks' )
 			->where( [ 'il_from' => $pageId ] )
@@ -137,10 +138,12 @@ class MediaLinksHandler extends SimpleHandler {
 		return $response;
 	}
 
+	/** @inheritDoc */
 	public function needsWriteAccess() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getParamSettings() {
 		return [
 			'title' => [
@@ -189,12 +192,6 @@ class MediaLinksHandler extends SimpleHandler {
 	 */
 	protected function getMaxNumLinks(): int {
 		return self::MAX_NUM_LINKS;
-	}
-
-	protected function generateResponseSpec( string $method ): array {
-		$spec = parent::generateResponseSpec( $method );
-		$spec['404'] = [ '$ref' => '#/components/responses/GenericErrorResponse' ];
-		return $spec;
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {

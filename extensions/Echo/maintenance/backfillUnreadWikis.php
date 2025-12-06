@@ -9,11 +9,13 @@ use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
+// @codeCoverageIgnoreStart
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
 
 class BackfillUnreadWikis extends Maintenance {
 	public function __construct() {
@@ -94,5 +96,7 @@ class BackfillUnreadWikis extends Maintenance {
 	}
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = BackfillUnreadWikis::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

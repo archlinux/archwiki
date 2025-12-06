@@ -12,6 +12,7 @@
 namespace MediaWiki\Extension\Scribunto;
 
 use MediaWiki\Content\TextContent;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 
 /**
@@ -30,13 +31,17 @@ class ScribuntoContent extends TextContent {
 	 * @inheritDoc
 	 */
 	public function updateRedirect( Title $target ) {
-		return Scribunto::newDefaultEngine()->updateRedirect( $this, $target );
+		return $this->getEngineFactory()->getDefaultEngine()->updateRedirect( $this, $target );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getRedirectTarget() {
-		return Scribunto::newDefaultEngine()->getRedirectTarget( $this );
+		return $this->getEngineFactory()->getDefaultEngine()->getRedirectTarget( $this );
+	}
+
+	private function getEngineFactory(): EngineFactory {
+		return MediaWikiServices::getInstance()->getService( 'Scribunto.EngineFactory' );
 	}
 }

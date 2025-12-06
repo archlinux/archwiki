@@ -3,10 +3,10 @@
 		"authors": [
 			"Beta16",
 			"C.R.",
+			"Chelin",
 			"Cryptex nap",
 			"Finizio",
-			"Ruthven",
-			"Chelin"
+			"Ruthven"
 		]
 	},
 	"minerva-last-modified-date": "Urtemo cagnamiento 'o $1, a 'e $2",
@@ -32,7 +32,6 @@
 	"mobile-frontend-meta-data-issues-categories": "Ncopp'a sta categurìa",
 	"mobile-frontend-meta-data-issues-header": "Nguacchie c' 'a paggena",
 	"minerva-meta-data-issues-section-header": "Nguacchie ch' 'e seziune",
-	"mobile-frontend-pageaction-edit-tooltip": "Cagna 'a sezione 'e cummencio 'e sta paggena",
 	"mobile-frontend-placeholder": "Ascia dint' 'a {{SITENAME}}",
 	"mobile-frontend-random-button": "A caso",
 	"mobile-frontend-redirected-from": "Redirect 'a \"[[$1]]\"",

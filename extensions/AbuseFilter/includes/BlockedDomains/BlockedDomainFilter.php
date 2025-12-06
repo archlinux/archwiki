@@ -38,15 +38,11 @@ use MediaWiki\User\User;
  */
 class BlockedDomainFilter implements IBlockedDomainFilter {
 	private VariablesManager $variablesManager;
-	private BlockedDomainStorage $blockedDomainStorage;
+	private IBlockedDomainStorage $blockedDomainStorage;
 
-	/**
-	 * @param VariablesManager $variablesManager
-	 * @param BlockedDomainStorage $blockedDomainStorage
-	 */
 	public function __construct(
 		VariablesManager $variablesManager,
-		BlockedDomainStorage $blockedDomainStorage
+		IBlockedDomainStorage $blockedDomainStorage
 	) {
 		$this->variablesManager = $variablesManager;
 		$this->blockedDomainStorage = $blockedDomainStorage;
@@ -69,22 +65,21 @@ class BlockedDomainFilter implements IBlockedDomainFilter {
 			if ( !is_string( $parsedHost ) ) {
 				continue;
 			}
+			$parsedHost = strtolower( $parsedHost );
+			$addedDomains[$parsedHost] = true;
 			// Given that we block subdomains of blocked domains too
 			// pretend that all the higher-level domains are added as well
 			// so for foo.bar.com, you will have three domains to check:
 			// foo.bar.com, bar.com, and com
 			// This saves string search in the large list of blocked domains
 			// making it much faster.
-			$domainString = '';
-			$domainPieces = array_reverse( explode( '.', strtolower( $parsedHost ) ) );
-			foreach ( $domainPieces as $domainPiece ) {
-				if ( !$domainString ) {
-					$domainString = $domainPiece;
-				} else {
-					$domainString = $domainPiece . '.' . $domainString;
-				}
+			$pos = 0;
+			// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition
+			while ( ( $pos = strpos( $parsedHost, '.', $pos ) ) !== false ) {
+				// Skip the dot we just found
+				$pos++;
 				// It should be a map, benchmark at https://phabricator.wikimedia.org/P48956
-				$addedDomains[$domainString] = true;
+				$addedDomains[ substr( $parsedHost, $pos ) ] = true;
 			}
 		}
 		if ( !$addedDomains ) {

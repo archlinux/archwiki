@@ -78,34 +78,50 @@ SQL;
 		return null;
 	}
 
+	/** @inheritDoc */
 	public function name() {
 		return $this->name;
 	}
 
+	/** @inheritDoc */
 	public function tableName() {
 		return $this->tablename;
 	}
 
+	/** @inheritDoc */
 	public function type() {
 		return $this->type;
 	}
 
+	/** @inheritDoc */
 	public function isNullable() {
 		return $this->nullable;
 	}
 
+	/**
+	 * @return int
+	 */
 	public function maxLength() {
 		return $this->max_length;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_deferrable() {
 		return $this->deferrable;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_deferred() {
 		return $this->deferred;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function conname() {
 		return $this->conname;
 	}

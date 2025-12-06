@@ -5,21 +5,7 @@
  * Copyright © 2003 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -55,51 +41,63 @@ class DerivativeRequest extends FauxRequest {
 		parent::__construct( $data, $wasPosted );
 	}
 
+	/** @inheritDoc */
 	public function getCookie( $key, $prefix = null, $default = null ) {
 		return $this->base->getCookie( $key, $prefix, $default );
 	}
 
+	/** @inheritDoc */
 	public function getHeader( $name, $flags = 0 ) {
 		return $this->base->getHeader( $name, $flags );
 	}
 
+	/** @inheritDoc */
 	public function getAllHeaders() {
 		return $this->base->getAllHeaders();
 	}
 
+	/** @inheritDoc */
 	public function getSession(): Session {
 		return $this->base->getSession();
 	}
 
+	/** @inheritDoc */
 	public function getSessionData( $key ) {
 		return $this->base->getSessionData( $key );
 	}
 
+	/** @inheritDoc */
 	public function setSessionData( $key, $data ) {
 		$this->base->setSessionData( $key, $data );
 	}
 
+	/** @inheritDoc */
 	public function getAcceptLang() {
 		return $this->base->getAcceptLang();
 	}
 
+	/** @inheritDoc */
 	public function getIP(): string {
 		return $this->ip ?: $this->base->getIP();
 	}
 
+	/** @inheritDoc */
 	public function setIP( $ip ) {
 		$this->ip = $ip;
 	}
 
+	/** @inheritDoc */
 	public function getProtocol() {
 		return $this->base->getProtocol();
 	}
 
+	/** @inheritDoc */
 	public function getUpload( $key ) {
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $this->base->getUpload( $key );
 	}
 
+	/** @inheritDoc */
 	public function getElapsedTime() {
 		return $this->base->getElapsedTime();
 	}

@@ -358,7 +358,7 @@ class CommentParser {
 				$comment = $match[0];
 
 				// Fix up urlencoded title texts (copied from Parser::replaceInternalLinks)
-				if ( strpos( $match[1], '%' ) !== false ) {
+				if ( str_contains( $match[1], '%' ) ) {
 					$match[1] = strtr(
 						rawurldecode( $match[1] ),
 						[ '<' => '&lt;', '>' => '&gt;' ]
@@ -386,7 +386,6 @@ class CommentParser {
 					if ( isset( $match[1][0] ) && $match[1][0] == ':' ) {
 						$match[1] = substr( $match[1], 1 );
 					}
-					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 					if ( $match[1] !== false && $match[1] !== null && $match[1] !== '' ) {
 						if ( preg_match(
 							$this->contLang->linkTrail(),
@@ -424,7 +423,7 @@ class CommentParser {
 								$selfLinkTarget ?? $wgTitle ?? SpecialPage::getTitleFor( 'Badtitle' )
 							);
 							$linkMarker .= $trail;
-						} catch ( MalformedTitleException $e ) {
+						} catch ( MalformedTitleException ) {
 							// Fall through
 						}
 					}

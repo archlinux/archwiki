@@ -17,11 +17,6 @@ class UnreadWikis {
 	private const DEFAULT_TS_DB = '00010101010101';
 
 	/**
-	 * @var int
-	 */
-	private $id;
-
-	/**
 	 * @var DbFactory
 	 */
 	private $dbFactory;
@@ -29,8 +24,7 @@ class UnreadWikis {
 	/**
 	 * @param int $id Central user id
 	 */
-	public function __construct( $id ) {
-		$this->id = $id;
+	public function __construct( private readonly int $id ) {
 		$this->dbFactory = DbFactory::newFromDefault();
 	}
 

@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -52,6 +38,7 @@ class Names {
 		'aa' => 'Qafár af', # Afar
 		'aae' => 'Arbërisht', # Arbëresh
 		'ab' => 'аԥсшәа', # Abkhaz
+		'abr' => 'Abron', # Bono
 		'abs' => 'bahasa ambon', # Ambonese Malay, T193566
 		'ace' => 'Acèh', # Aceh
 		'acf' => 'Kwéyòl Sent Lisi', # Saint Lucian Creole
@@ -62,6 +49,7 @@ class Names {
 		'aeb-arab' => 'تونسي', # Tunisian Arabic (Arabic Script)
 		'aeb-latn' => 'Tûnsî', # Tunisian Arabic (Latin Script)
 		'af' => 'Afrikaans', # Afrikaans
+		'aig' => 'Aanteegan an\' Baabyuudan', # Antiguan and Barbudan Creole English
 		'aln' => 'Gegë', # Gheg Albanian
 		'als' => 'Alemannisch', # Alemannic -- not a valid code, for compatibility. See gsw.
 		'alt' => 'алтай тил', # Altai, T254854
@@ -164,6 +152,7 @@ class Names {
 		'dga' => 'Dagaare', # Southern Dagaare
 		'din' => 'Thuɔŋjäŋ', # Dinka
 		'diq' => 'Zazaki', # Zazaki
+		'dlg' => 'долган тыла', # Dolgan
 		'dsb' => 'dolnoserbski', # Lower Sorbian
 		'dtp' => 'Kadazandusun', # Central Dusun
 		'dty' => 'डोटेली', # Doteli
@@ -281,6 +270,7 @@ class Names {
 		'kaa' => 'Qaraqalpaqsha', # Karakalpak
 		'kab' => 'Taqbaylit', # Kabyle
 		'kai' => 'Karai-karai', # Karekare
+		'kaj' => 'Jju', # Jju
 		'kbd' => 'адыгэбзэ', # Kabardian
 		'kbd-cyrl' => 'адыгэбзэ', # Kabardian (Cyrillic)
 		'kbp' => 'Kabɩyɛ', # Kabiyè
@@ -313,8 +303,10 @@ class Names {
 		'kri' => 'Krio', # Krio
 		'krj' => 'Kinaray-a', # Kinaray-a
 		'krl' => 'karjal', # Karelian
-		'ks' => 'कॉशुर / کٲشُر', # Kashmiri (multiple scripts - defaults to Perso-Arabic)
+		'ks' => 'کٲشُر', # Kashmiri (defaults to Perso-Arabic script)
+		# Backwards compatibility
 		'ks-arab' => 'کٲشُر', # Kashmiri (Perso-Arabic script)
+		# Backwards compatibility, deprecated, to be removed
 		'ks-deva' => 'कॉशुर', # Kashmiri (Devanagari script)
 		'ksh' => 'Ripoarisch', # Ripuarian
 		'ksw' => 'စှီၤ', # S'gaw Karen
@@ -386,10 +378,10 @@ class Names {
 		'mzn' => 'مازِرونی', # Mazanderani
 		'na' => 'Dorerin Naoero', # Nauruan
 		'nah' => 'Nāhuatl', # Nahuatl (added to ISO 639-3 on 2006-10-31)
-		'nan' => '閩南語 / Bân-lâm-gú', # Minnan (multiple scripts), T10217, T354937
+		'nan' => '閩南語 / Bân-lâm-gí', # Minnan (multiple scripts), T10217, T354937
 		'nan-hant' => '閩南語（傳統漢字）', # Minnan (Traditional Han script), T354937
-		'nan-latn-pehoeji' => 'Bân-lâm-gú (Pe̍h-ōe-jī)', # Minnan (Pe̍h-ōe-jī), T354937
-		'nan-latn-tailo' => 'Bân-lâm-gú (Tâi-lô)', # Minnan (Tâi-lô), T354937
+		'nan-latn-pehoeji' => 'Bân-lâm-gí (Pe̍h-ōe-jī)', # Minnan (Pe̍h-ōe-jī), T354937
+		'nan-latn-tailo' => 'Bân-lâm-gí (Tâi-lô)', # Minnan (Tâi-lô), T354937
 		'nap' => 'Napulitano', # Neapolitan, T45793
 		'nb' => 'norsk bokmål', # Norwegian (Bokmal)
 		'nds' => 'Plattdüütsch', # Low German ''or'' Low Saxon
@@ -469,6 +461,7 @@ class Names {
 		'ryu' => 'うちなーぐち', # Okinawan
 		'sa' => 'संस्कृतम्', # Sanskrit
 		'sah' => 'саха тыла', # Sakha
+		'sas' => 'Sasak', # Sasak
 		'sat' => 'ᱥᱟᱱᱛᱟᱲᱤ', # Santali
 		'sc' => 'sardu', # Sardinian
 		'scn' => 'sicilianu', # Sicilian
@@ -592,6 +585,7 @@ class Names {
 		'yi' => 'ייִדיש', # Yiddish
 		'yo' => 'Yorùbá', # Yoruba
 		'yrl' => 'Nhẽẽgatú', # Nheengatu
+		'yua' => 'maaya t’aan', # Yucatec Maya
 		'yue' => '粵語', # Cantonese (multiple scripts - defaults to Traditional Han)
 		'yue-hans' => '粵语（简体）', # Cantonese (Simplified Han)
 		'yue-hant' => '粵語（繁體）', # Cantonese (Traditional Han)

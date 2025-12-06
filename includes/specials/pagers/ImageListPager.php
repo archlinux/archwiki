@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Pager
  */
@@ -206,6 +192,7 @@ class ImageListPager extends TablePager {
 		return $conds;
 	}
 
+	/** @inheritDoc */
 	protected function getFieldNames() {
 		if ( !$this->mFieldNames ) {
 			$this->mFieldNames = [
@@ -231,6 +218,7 @@ class ImageListPager extends TablePager {
 		return $this->mFieldNames;
 	}
 
+	/** @inheritDoc */
 	protected function isFieldSortable( $field ) {
 		if ( $this->mIncluding ) {
 			return false;
@@ -255,6 +243,7 @@ class ImageListPager extends TablePager {
 		return isset( self::INDEX_FIELDS[$field] );
 	}
 
+	/** @inheritDoc */
 	public function getQueryInfo() {
 		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
 			// Hacky Hacky Hacky - I want to get query info
@@ -374,6 +363,7 @@ class ImageListPager extends TablePager {
 		];
 	}
 
+	/** @inheritDoc */
 	public function reallyDoQuery( $offset, $limit, $order ) {
 		if ( $this->migrationStage & SCHEMA_COMPAT_READ_OLD ) {
 			return $this->reallyDoQueryOld( $offset, $limit, $order );
@@ -487,10 +477,12 @@ class ImageListPager extends TablePager {
 		return new FakeResultWrapper( $resultArray );
 	}
 
+	/** @inheritDoc */
 	public function getIndexField() {
 		return [ self::INDEX_FIELDS[$this->mSort] ];
 	}
 
+	/** @inheritDoc */
 	public function getDefaultSort() {
 		if ( $this->mShowAll &&
 			$this->getConfig()->get( MainConfigNames::MiserMode ) &&
@@ -678,18 +670,22 @@ class ImageListPager extends TablePager {
 			->displayForm( '' );
 	}
 
+	/** @inheritDoc */
 	protected function getTableClass() {
 		return parent::getTableClass() . ' listfiles';
 	}
 
+	/** @inheritDoc */
 	protected function getNavClass() {
 		return parent::getNavClass() . ' listfiles_nav';
 	}
 
+	/** @inheritDoc */
 	protected function getSortHeaderClass() {
 		return parent::getSortHeaderClass() . ' listfiles_sort';
 	}
 
+	/** @inheritDoc */
 	public function getPagingQueries() {
 		$queries = parent::getPagingQueries();
 		if ( $this->mUserName !== null ) {
@@ -704,6 +700,7 @@ class ImageListPager extends TablePager {
 		return $queries;
 	}
 
+	/** @inheritDoc */
 	public function getDefaultQuery() {
 		$queries = parent::getDefaultQuery();
 		if ( !isset( $queries['user'] ) && $this->mUserName !== null ) {
@@ -713,7 +710,7 @@ class ImageListPager extends TablePager {
 		return $queries;
 	}
 
-	public function getTitle() {
+	public function getTitle(): Title {
 		return SpecialPage::getTitleFor( 'Listfiles' );
 	}
 }

@@ -17,9 +17,6 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadClasses": {
-		"FancyCaptcha": "../includes/FancyCaptcha/FancyCaptcha.php"
-	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
 			"styles": "ext.confirmEdit.fancyCaptcha.less"

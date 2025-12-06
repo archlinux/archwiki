@@ -79,6 +79,7 @@
 	"math_invalidresponse": "$1: Resposta inválida (\"$3\") do servidor \"$2\":",
 	"math_invalidxml": "O MathML ou o SVG não são XML válido.",
 	"math_mathoid_error": "Erro de conversão. O servidor (\"$1\") devolveu: \"$2\"",
+	"math_other_error": "Outro erro: $1",
 	"math-status-introduction": "Esta página fornece informação sobre {{PLURAL:$1|o modo que foi ativado|os modos que foram ativados}} para a apresentação gráfica de fórmulas matemáticas.\n\n{{PLURAL:$1|Está ativado o seguinte modo de composição gráfica|Estão ativados os seguintes modos de composição gráfica}}:",
 	"math_syntax_error": "erro de sintaxe",
 	"math_timeout": "Limite de tempo excedido por $1 no servidor \"$2\".",

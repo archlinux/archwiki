@@ -34,6 +34,7 @@ import os
 import random
 import re
 import sys
+import subprocess
 
 try:
     from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
@@ -311,8 +312,17 @@ if __name__ == "__main__":
     )
     parser.add_option(
         "--key",
-        help="The passphrase set as $wgCaptchaSecret (required)",
-        metavar="KEY"
+        help="The passphrase set as $wgCaptchaSecret. "
+        "Either --key or --php-key-file must be specified.",
+        metavar="KEY",
+        default="",
+    )
+    parser.add_option(
+        "--php-key-file",
+        help="A PHP file that contains the $wgCaptchaSecret variable. "
+        "Either --key or --php-key-file must be specified.",
+        metavar="FILE",
+        default=None,
     )
     parser.add_option(
         "--output",
@@ -400,10 +410,15 @@ if __name__ == "__main__":
         wordlist = None
     else:
         sys.exit("Need to specify a wordlist")
-    if opts.key:
-        key = opts.key
-    else:
-        sys.exit("Need to specify a key")
+    if not opts.key:
+        # If the key is not specified, try to read it from a PHP file by including it
+        # and echoing the value of $wgCaptchaSecret. This is useful in environments where
+        # you might want to run this script outside of MediaWiki but still use the same key.
+        if not opts.php_key_file or not os.path.isfile(opts.php_key_file):
+            sys.exit("Need to specify a key or a php file with the key")
+        inline_php = f"include '{opts.php_key_file}'; echo $wgCaptchaSecret;"
+        opts.key = subprocess.run(["php", "-r", inline_php], capture_output=True, text=True, check=True).stdout.strip()
+
     if opts.output:
         if not os.path.exists(opts.output):
             try:
@@ -470,3 +485,5 @@ if __name__ == "__main__":
     if opts.jsonmap:
         with open("map.json", "w") as outfile:
             json.dump(jsonmap.copy(), outfile, indent=4)
+
+    print("Done!")

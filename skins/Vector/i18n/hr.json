@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"BadDog",
 			"Bugoslav",
 			"Ex13",
@@ -8,16 +9,13 @@
 			"MaGa",
 			"Neptune, the Mystic",
 			"Ponor",
-			"Tivek",
-			"Aca"
+			"Tivek"
 		]
 	},
 	"skinname-vector": "Vector (stara inačica iz 2010.)",
 	"vector-skin-desc": "Postoje dvije inačice Vectora:\n* 2011. – Moderna inačica MonoBooka s osvježenim izgledom i mnogim poboljšanjima.\n* 2022. – Vector izrađen kao dio WMF-ova projekta [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements].",
 	"prefs-vector-enable-vector-1-label": "Rabi staru inačicu izgleda Vector",
 	"prefs-vector-enable-vector-1-help": "Izgled sučelja Vector osvježavat će se tijekom nekoliko godina. Ova postavka omogućit će Vam upotrebu inačice Vectora iz prosinca 2019. Više o tehnološkome osuvremenjavanju saznajte na [[mw:Reading/Web/Desktop_Improvements|stranici  projekta na MediaWikiju]].",
-	"vector-opt-out": "Prebaci na stari izgled",
-	"vector-opt-out-tooltip": "Promijenite postavke i vratite se na stari izgled sučelja Vector",
 	"vector.css": "/* Sav kôd CSS-a na ovoj stranici bit će učitan upotrebljavačima izgleda Vector */",
 	"vector.js": "/* Sav kôd JavaScripta na ovoj stranici bit će učitan upotrebljavačima izgleda Vector */",
 	"vector-action-toggle-sidebar": "Uključi / isključi bočnu traku",
@@ -58,8 +56,6 @@
 	"skin-theme-night-label": "Tamne",
 	"skin-theme-os-label": "Automatski izbor",
 	"skin-theme-exclusion-notice": "Ova se stranica uvijek prikazuje u svijetloj temi.",
-	"vector-search-loader": "Učitavanje prijedloga pretrage",
-	"vector-searchsuggest-containing": "Traži stranice koje sadrže <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Pomoć:Uvod",
 	"vector-toc-label": "Sadržaj",
 	"vector-toc-beginning": "Početak",

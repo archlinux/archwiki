@@ -40,19 +40,12 @@ use MediaWiki\Title\Title;
  * @copyright 2007 Daniel Kinzler
  */
 class SpecialGadgets extends SpecialPage {
-	private Language $contentLanguage;
-	private GadgetRepo $gadgetRepo;
-	private SkinFactory $skinFactory;
-
 	public function __construct(
-		Language $contentLanguage,
-		GadgetRepo $gadgetRepo,
-		SkinFactory $skinFactory
+		private readonly Language $contentLanguage,
+		private readonly GadgetRepo $gadgetRepo,
+		private readonly SkinFactory $skinFactory,
 	) {
 		parent::__construct( 'Gadgets' );
-		$this->contentLanguage = $contentLanguage;
-		$this->gadgetRepo = $gadgetRepo;
-		$this->skinFactory = $skinFactory;
 	}
 
 	/**
@@ -115,6 +108,9 @@ class SpecialGadgets extends SpecialPage {
 		$editInterfaceMessage = $this->getUser()->isAllowed( 'editinterface' )
 			? 'gadgets-editdescription'
 			: 'gadgets-viewdescription';
+		$editInterfaceMessageSection = $this->getUser()->isAllowed( 'editinterface' )
+			? 'gadgets-editsectiontitle'
+			: 'gadgets-viewsectiontitle';
 
 		$linkRenderer = $this->getLinkRenderer();
 		foreach ( $gadgets as $section => $entries ) {
@@ -125,32 +121,17 @@ class SpecialGadgets extends SpecialPage {
 				}
 
 				// H2 section heading
-				$headingText = Html::rawElement(
-					'span',
-					[ 'class' => 'mw-headline' ],
-					$this->msg( "gadget-section-$section" )->parse()
-				);
+				$headingText = $this->msg( "gadget-section-$section" )->parse();
+				$output->addHTML( Html::rawElement( 'h2', [], $headingText ) . "\n" );
+
+				// Edit link for the section heading
 				$title = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-section-$section$langSuffix" );
-				$leftBracket = Html::rawElement(
-					'span',
-					[ 'class' => 'mw-editsection-bracket' ],
-					'['
-				);
 				$linkTarget = $title
-					? $linkRenderer->makeLink( $title, $this->msg( $editInterfaceMessage )->text(),
+					? $linkRenderer->makeLink( $title, $this->msg( $editInterfaceMessageSection )->text(),
 						[], [ 'action' => 'edit' ] )
 					: htmlspecialchars( $section );
-				$rightBracket = Html::rawElement(
-					'span',
-					[ 'class' => 'mw-editsection-bracket' ],
-					']'
-				);
-				$editDescriptionLink = Html::rawElement(
-					'span',
-					[ 'class' => 'mw-editsection' ],
-					$leftBracket . $linkTarget . $rightBracket
-				);
-				$output->addHTML( Html::rawElement( 'h2', [], $headingText . $editDescriptionLink ) . "\n" );
+				$output->addHTML( Html::rawElement( 'p', [],
+					$this->msg( 'parentheses' )->rawParams( $linkTarget )->escaped() ) . "\n" );
 			}
 
 			/**
@@ -433,7 +414,7 @@ class SpecialGadgets extends SpecialPage {
 		$output = $this->getOutput();
 		try {
 			$g = $this->gadgetRepo->getGadget( $gadget );
-		} catch ( InvalidArgumentException $e ) {
+		} catch ( InvalidArgumentException ) {
 			$output->showErrorPage( 'error', 'gadgets-not-found', [ $gadget ] );
 			return;
 		}

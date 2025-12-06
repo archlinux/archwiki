@@ -31,7 +31,7 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 
 	// A notice or error message widget
 	this.noticeMessageWidget = new OO.ui.LabelWidget( {
-		classes: [ 'mw-echo-ui-notificationsInboxWidget-notice' ]
+		classes: [ 'mw-echo-ui-notificationsInboxWidget-notice' ],
 	} );
 
 	// Notifications list
@@ -40,8 +40,8 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 		this.manager,
 		{
 			$overlay: this.$overlay,
-			animateSorting: false
-		}
+			animateSorting: false,
+		},
 	);
 	this.setPendingElement( this.datedListWidget.$element );
 
@@ -49,14 +49,14 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 	this.topPaginationWidget = new mw.echo.ui.PaginationWidget(
 		this.manager.getPaginationModel(),
 		{
-			itemsPerPage: this.limit
-		}
+			itemsPerPage: this.limit,
+		},
 	);
 	this.bottomPaginationWidget = new mw.echo.ui.PaginationWidget(
 		this.manager.getPaginationModel(),
 		{
-			itemsPerPage: this.limit
-		}
+			itemsPerPage: this.limit,
+		},
 	);
 
 	// Settings menu
@@ -65,8 +65,8 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 		{
 			framed: true,
 			prefLink: config.prefLink,
-			$overlay: this.$overlay
-		}
+			$overlay: this.$overlay,
+		},
 	);
 
 	// Filter by read state
@@ -75,7 +75,7 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 	// Sidebar filters
 	this.xwikiUnreadWidget = new mw.echo.ui.CrossWikiUnreadFilterWidget(
 		this.controller,
-		this.manager.getFiltersModel()
+		this.manager.getFiltersModel(),
 	);
 
 	// Events
@@ -83,7 +83,7 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 	this.xwikiUnreadWidget.connect( this, { filter: 'onSourcePageFilter' } );
 	this.manager.connect( this, {
 		modelItemUpdate: 'updatePaginationLabels',
-		localCountChange: 'updatePaginationLabels'
+		localCountChange: 'updatePaginationLabels',
 	} );
 	this.manager.getFiltersModel().connect( this, { update: 'updateReadStateSelectWidget' } );
 	this.manager.getPaginationModel().connect( this, { update: 'updatePaginationLabels' } );
@@ -107,7 +107,7 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 								$( '<div>' )
 									.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-readState' )
 									.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
-									.append( this.readStateSelectWidget.$element )
+									.append( this.readStateSelectWidget.$element ),
 							),
 						$( '<div>' )
 							.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-pagination' )
@@ -116,8 +116,8 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 						mw.user.isTemp() ? '' : $( '<div>' )
 							.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-settings' )
 							.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
-							.append( this.settingsMenu.$element )
-					)
+							.append( this.settingsMenu.$element ),
+					),
 			);
 
 	this.$toolbarWrapper =
@@ -134,7 +134,7 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 		.append(
 			this.$toolbarWrapper,
 			this.noticeMessageWidget.$element,
-			this.datedListWidget.$element
+			this.datedListWidget.$element,
 		);
 
 	this.$element
@@ -146,8 +146,8 @@ mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget(
 					$sidebar
 						.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' ),
 					$main
-						.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
-				)
+						.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' ),
+				),
 		);
 
 	this.updateReadStateSelectWidget();
@@ -256,7 +256,7 @@ mw.echo.ui.NotificationsInboxWidget.prototype.populateNotifications = function (
 				this.error = true;
 				this.noticeMessageWidget.setLabel( msg );
 				this.displayMessage( true );
-			}
+			},
 		)
 		.always( this.popPending.bind( this ) );
 };

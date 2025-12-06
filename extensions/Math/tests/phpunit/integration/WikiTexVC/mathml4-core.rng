@@ -1,0 +1,970 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  MathML 4 (Core Level 1)
+  #######################
+-->
+<!--
+      Copyright 1998-2024 W3C (MIT, ERCIM, Keio, Beihang)
+  
+      Use and distribution of this code are permitted under the terms
+      W3C Software Notice and License
+      http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+-->
+<grammar ns="http://www.w3.org/1998/Math/MathML" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start combine="choice">
+    <ref name="math"/>
+  </start>
+  <define name="math">
+    <element name="math">
+      <ref name="math.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="MathMLoneventAttributes">
+    <optional>
+      <attribute name="onabort"/>
+    </optional>
+    <optional>
+      <attribute name="onauxclick"/>
+    </optional>
+    <optional>
+      <attribute name="onblur"/>
+    </optional>
+    <optional>
+      <attribute name="oncancel"/>
+    </optional>
+    <optional>
+      <attribute name="oncanplay"/>
+    </optional>
+    <optional>
+      <attribute name="oncanplaythrough"/>
+    </optional>
+    <optional>
+      <attribute name="onchange"/>
+    </optional>
+    <optional>
+      <attribute name="onclick"/>
+    </optional>
+    <optional>
+      <attribute name="onclose"/>
+    </optional>
+    <optional>
+      <attribute name="oncontextlost"/>
+    </optional>
+    <optional>
+      <attribute name="oncontextmenu"/>
+    </optional>
+    <optional>
+      <attribute name="oncontextrestored"/>
+    </optional>
+    <optional>
+      <attribute name="oncuechange"/>
+    </optional>
+    <optional>
+      <attribute name="ondblclick"/>
+    </optional>
+    <optional>
+      <attribute name="ondrag"/>
+    </optional>
+    <optional>
+      <attribute name="ondragend"/>
+    </optional>
+    <optional>
+      <attribute name="ondragenter"/>
+    </optional>
+    <optional>
+      <attribute name="ondragleave"/>
+    </optional>
+    <optional>
+      <attribute name="ondragover"/>
+    </optional>
+    <optional>
+      <attribute name="ondragstart"/>
+    </optional>
+    <optional>
+      <attribute name="ondrop"/>
+    </optional>
+    <optional>
+      <attribute name="ondurationchange"/>
+    </optional>
+    <optional>
+      <attribute name="onemptied"/>
+    </optional>
+    <optional>
+      <attribute name="onended"/>
+    </optional>
+    <optional>
+      <attribute name="onerror"/>
+    </optional>
+    <optional>
+      <attribute name="onfocus"/>
+    </optional>
+    <optional>
+      <attribute name="onformdata"/>
+    </optional>
+    <optional>
+      <attribute name="oninput"/>
+    </optional>
+    <optional>
+      <attribute name="oninvalid"/>
+    </optional>
+    <optional>
+      <attribute name="onkeydown"/>
+    </optional>
+    <optional>
+      <attribute name="onkeypress"/>
+    </optional>
+    <optional>
+      <attribute name="onkeyup"/>
+    </optional>
+    <optional>
+      <attribute name="onload"/>
+    </optional>
+    <optional>
+      <attribute name="onloadeddata"/>
+    </optional>
+    <optional>
+      <attribute name="onloadedmetadata"/>
+    </optional>
+    <optional>
+      <attribute name="onloadstart"/>
+    </optional>
+    <optional>
+      <attribute name="onmousedown"/>
+    </optional>
+    <optional>
+      <attribute name="onmouseenter"/>
+    </optional>
+    <optional>
+      <attribute name="onmouseleave"/>
+    </optional>
+    <optional>
+      <attribute name="onmousemove"/>
+    </optional>
+    <optional>
+      <attribute name="onmouseout"/>
+    </optional>
+    <optional>
+      <attribute name="onmouseover"/>
+    </optional>
+    <optional>
+      <attribute name="onmouseup"/>
+    </optional>
+    <optional>
+      <attribute name="onpause"/>
+    </optional>
+    <optional>
+      <attribute name="onplay"/>
+    </optional>
+    <optional>
+      <attribute name="onplaying"/>
+    </optional>
+    <optional>
+      <attribute name="onprogress"/>
+    </optional>
+    <optional>
+      <attribute name="onratechange"/>
+    </optional>
+    <optional>
+      <attribute name="onreset"/>
+    </optional>
+    <optional>
+      <attribute name="onresize"/>
+    </optional>
+    <optional>
+      <attribute name="onscroll"/>
+    </optional>
+    <optional>
+      <attribute name="onsecuritypolicyviolation"/>
+    </optional>
+    <optional>
+      <attribute name="onseeked"/>
+    </optional>
+    <optional>
+      <attribute name="onseeking"/>
+    </optional>
+    <optional>
+      <attribute name="onselect"/>
+    </optional>
+    <optional>
+      <attribute name="onslotchange"/>
+    </optional>
+    <optional>
+      <attribute name="onstalled"/>
+    </optional>
+    <optional>
+      <attribute name="onsubmit"/>
+    </optional>
+    <optional>
+      <attribute name="onsuspend"/>
+    </optional>
+    <optional>
+      <attribute name="ontimeupdate"/>
+    </optional>
+    <optional>
+      <attribute name="ontoggle"/>
+    </optional>
+    <optional>
+      <attribute name="onvolumechange"/>
+    </optional>
+    <optional>
+      <attribute name="onwaiting"/>
+    </optional>
+    <optional>
+      <attribute name="onwebkitanimationend"/>
+    </optional>
+    <optional>
+      <attribute name="onwebkitanimationiteration"/>
+    </optional>
+    <optional>
+      <attribute name="onwebkitanimationstart"/>
+    </optional>
+    <optional>
+      <attribute name="onwebkittransitionend"/>
+    </optional>
+    <optional>
+      <attribute name="onwheel"/>
+    </optional>
+    <optional>
+      <attribute name="onafterprint"/>
+    </optional>
+    <optional>
+      <attribute name="onbeforeprint"/>
+    </optional>
+    <optional>
+      <attribute name="onbeforeunload"/>
+    </optional>
+    <optional>
+      <attribute name="onhashchange"/>
+    </optional>
+    <optional>
+      <attribute name="onlanguagechange"/>
+    </optional>
+    <optional>
+      <attribute name="onmessage"/>
+    </optional>
+    <optional>
+      <attribute name="onmessageerror"/>
+    </optional>
+    <optional>
+      <attribute name="onoffline"/>
+    </optional>
+    <optional>
+      <attribute name="ononline"/>
+    </optional>
+    <optional>
+      <attribute name="onpagehide"/>
+    </optional>
+    <optional>
+      <attribute name="onpageshow"/>
+    </optional>
+    <optional>
+      <attribute name="onpopstate"/>
+    </optional>
+    <optional>
+      <attribute name="onrejectionhandled"/>
+    </optional>
+    <optional>
+      <attribute name="onstorage"/>
+    </optional>
+    <optional>
+      <attribute name="onunhandledrejection"/>
+    </optional>
+    <optional>
+      <attribute name="onunload"/>
+    </optional>
+    <optional>
+      <attribute name="oncopy"/>
+    </optional>
+    <optional>
+      <attribute name="oncut"/>
+    </optional>
+    <optional>
+      <attribute name="onpaste"/>
+    </optional>
+  </define>
+  <!--
+    Sample set. May need preprocessing 
+    or schema extension to allow more see MathML Core (and HTML) spec
+  -->
+  <define name="MathMLDataAttributes">
+    <optional>
+      <attribute name="data-other"/>
+    </optional>
+  </define>
+  <!-- sample set, like data- may need preprocessing to allow more -->
+  <define name="MathMLARIAattributes">
+    <optional>
+      <attribute name="aria-label"/>
+    </optional>
+    <optional>
+      <attribute name="aria-describedby"/>
+    </optional>
+    <optional>
+      <attribute name="aria-description"/>
+    </optional>
+    <optional>
+      <attribute name="aria-details"/>
+    </optional>
+  </define>
+  <define name="MathMLintentAttributes">
+    <optional>
+      <attribute name="intent"/>
+    </optional>
+    <optional>
+      <attribute name="arg">
+        <data type="NCName"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="MathMLPGlobalAttributes">
+    <optional>
+      <attribute name="id">
+        <data type="ID"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="class">
+        <data type="NCName"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="style">
+        <data type="string"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="dir">
+        <choice>
+          <value>ltr</value>
+          <value>rtl</value>
+        </choice>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="mathbackground">
+        <ref name="color"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="mathcolor">
+        <ref name="color"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="mathsize">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="mathvariant">
+        <data type="string">
+          <param name="pattern">\s*([Nn][Oo][Rr][Mm][Aa][Ll]|[Bb][Oo][Ll][Dd]|[Ii][Tt][Aa][Ll][Ii][Cc]|[Bb][Oo][Ll][Dd]-[Ii][Tt][Aa][Ll][Ii][Cc]|[Dd][Oo][Uu][Bb][Ll][Ee]-[Ss][Tt][Rr][Uu][Cc][Kk]|[Bb][Oo][Ll][Dd]-[Ff][Rr][Aa][Kk][Tt][Uu][Rr]|[Ss][Cc][Rr][Ii][Pp][Tt]|[Bb][Oo][Ll][Dd]-[Ss][Cc][Rr][Ii][Pp][Tt]|[Ff][Rr][Aa][Kk][Tt][Uu][Rr]|[Ss][Aa][Nn][Ss]-[Ss][Ee][Rr][Ii][Ff]|[Bb][Oo][Ll][Dd]-[Ss][Aa][Nn][Ss]-[Ss][Ee][Rr][Ii][Ff]|[Ss][Aa][Nn][Ss]-[Ss][Ee][Rr][Ii][Ff]-[Ii][Tt][Aa][Ll][Ii][Cc]|[Ss][Aa][Nn][Ss]-[Ss][Ee][Rr][Ii][Ff]-[Bb][Oo][Ll][Dd]-[Ii][Tt][Aa][Ll][Ii][Cc]|[Mm][Oo][Nn][Oo][Ss][Pp][Aa][Cc][Ee]|[Ii][Nn][Ii][Tt][Ii][Aa][Ll]|[Tt][Aa][Ii][Ll][Ee][Dd]|[Ll][Oo][Oo][Pp][Ee][Dd]|[Ss][Tt][Rr][Ee][Tt][Cc][Hh][Ee][Dd])\s*</param>
+        </data>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="displaystyle">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="scriptlevel">
+        <data type="integer"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="autofocus">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="tabindex">
+        <data type="integer"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="nonce"/>
+    </optional>
+    <ref name="MathMLoneventAttributes"/>
+    <!-- Extension attributes, no defined behavior -->
+    <ref name="MathMLDataAttributes"/>
+    <!-- No specified behavior in Core, see MathML4 -->
+    <ref name="MathMLintentAttributes"/>
+    <!-- No specified behavior in Core, see WAI-ARIA -->
+    <ref name="MathMLARIAattributes"/>
+  </define>
+  <define name="math.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="display">
+        <choice>
+          <value>block</value>
+          <value>inline</value>
+        </choice>
+      </attribute>
+    </optional>
+    <optional>
+      <!-- No specified behavior in Core, see MathML4 -->
+      <attribute name="alttext"/>
+    </optional>
+  </define>
+  <define name="annotation">
+    <element name="annotation">
+      <ref name="MathMLPGlobalAttributes"/>
+      <optional>
+        <ref name="encoding"/>
+      </optional>
+      <text/>
+    </element>
+  </define>
+  <define name="anyElement">
+    <element>
+      <anyName/>
+      <zeroOrMore>
+        <choice>
+          <attribute>
+            <anyName/>
+          </attribute>
+          <text/>
+          <ref name="anyElement"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="annotation-xml">
+    <element name="annotation-xml">
+      <ref name="annotation-xml.attributes"/>
+      <choice>
+        <zeroOrMore>
+          <ref name="MathExpression"/>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="anyElement"/>
+        </zeroOrMore>
+      </choice>
+    </element>
+  </define>
+  <define name="annotation-xml.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <ref name="encoding"/>
+    </optional>
+  </define>
+  <define name="encoding">
+    <optional>
+      <attribute name="encoding">
+        <data type="string"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="semantics">
+    <element name="semantics">
+      <ref name="semantics.attributes"/>
+      <ref name="MathExpression"/>
+      <zeroOrMore>
+        <choice>
+          <ref name="annotation"/>
+          <ref name="annotation-xml"/>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="semantics.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mathml-boolean">
+    <data type="string">
+      <param name="pattern">\s*([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])\s*</param>
+    </data>
+  </define>
+  <define name="length-percentage">
+    <data type="string">
+      <param name="pattern">\s*((-?[0-9]*([0-9]\.?|\.[0-9])[0-9]*(r?em|ex|in|cm|mm|p[xtc]|Q|v[hw]|vmin|vmax|%))|0)\s*</param>
+    </data>
+  </define>
+  <define name="MathExpression">
+    <choice>
+      <ref name="TokenExpression"/>
+      <ref name="mrow"/>
+      <ref name="mfrac"/>
+      <ref name="msqrt"/>
+      <ref name="mroot"/>
+      <ref name="mstyle"/>
+      <ref name="merror"/>
+      <ref name="mpadded"/>
+      <ref name="mphantom"/>
+      <ref name="msub"/>
+      <ref name="msup"/>
+      <ref name="msubsup"/>
+      <ref name="munder"/>
+      <ref name="mover"/>
+      <ref name="munderover"/>
+      <ref name="mmultiscripts"/>
+      <ref name="mtable"/>
+      <ref name="maction"/>
+      <ref name="semantics"/>
+    </choice>
+  </define>
+  <define name="MathMalignExpression">
+    <ref name="MathExpression"/>
+  </define>
+  <define name="ImpliedMrow">
+    <zeroOrMore>
+      <ref name="MathMalignExpression"/>
+    </zeroOrMore>
+  </define>
+  <define name="TableRowExpression">
+    <ref name="mtr"/>
+  </define>
+  <define name="MultiScriptExpression">
+    <choice>
+      <ref name="MathExpression"/>
+      <ref name="none"/>
+    </choice>
+    <choice>
+      <ref name="MathExpression"/>
+      <ref name="none"/>
+    </choice>
+  </define>
+  <define name="color">
+    <data type="string">
+      <param name="pattern">\s*((#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?)|[a-zA-Z]+|[a-zA-Z]+\s*\([0-9, %.]+\))\s*</param>
+    </data>
+  </define>
+  <define name="TokenExpression">
+    <choice>
+      <ref name="mi"/>
+      <ref name="mn"/>
+      <ref name="mo"/>
+      <ref name="mtext"/>
+      <ref name="mspace"/>
+      <ref name="ms"/>
+    </choice>
+  </define>
+  <define name="textorHTML">
+    <choice>
+      <text/>
+      <element>
+        <nsName ns="http://www.w3.org/1999/xhtml"/>
+        <zeroOrMore>
+          <attribute>
+            <anyName/>
+          </attribute>
+        </zeroOrMore>
+        <zeroOrMore>
+          <ref name="textorHTML"/>
+        </zeroOrMore>
+      </element>
+    </choice>
+  </define>
+  <define name="token.content">
+    <ref name="textorHTML"/>
+  </define>
+  <define name="mi">
+    <element name="mi">
+      <ref name="mi.attributes"/>
+      <ref name="token.content"/>
+    </element>
+  </define>
+  <define name="mi.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mn">
+    <element name="mn">
+      <ref name="mn.attributes"/>
+      <ref name="token.content"/>
+    </element>
+  </define>
+  <define name="mn.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mo">
+    <element name="mo">
+      <ref name="mo.attributes"/>
+      <ref name="token.content"/>
+    </element>
+  </define>
+  <define name="mo.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="form">
+        <choice>
+          <value>prefix</value>
+          <value>infix</value>
+          <value>postfix</value>
+        </choice>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="lspace">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="rspace">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="stretchy">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="symmetric">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="maxsize">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="minsize">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="largeop">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="movablelimits">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mtext">
+    <element name="mtext">
+      <ref name="mtext.attributes"/>
+      <ref name="token.content"/>
+    </element>
+  </define>
+  <define name="mtext.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mspace">
+    <element name="mspace">
+      <ref name="mspace.attributes"/>
+      <empty/>
+    </element>
+  </define>
+  <define name="mspace.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="width">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="height">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="depth">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="ms">
+    <element name="ms">
+      <ref name="ms.attributes"/>
+      <ref name="token.content"/>
+    </element>
+  </define>
+  <define name="ms.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="none">
+    <element name="none">
+      <ref name="none.attributes"/>
+      <empty/>
+    </element>
+  </define>
+  <define name="none.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mprescripts">
+    <element name="mprescripts">
+      <ref name="mprescripts.attributes"/>
+      <empty/>
+    </element>
+  </define>
+  <define name="mprescripts.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mrow">
+    <element name="mrow">
+      <ref name="mrow.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="mrow.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mfrac">
+    <element name="mfrac">
+      <ref name="mfrac.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="mfrac.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="linethickness">
+        <ref name="length-percentage"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="msqrt">
+    <element name="msqrt">
+      <ref name="msqrt.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="msqrt.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mroot">
+    <element name="mroot">
+      <ref name="mroot.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="mroot.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mstyle">
+    <element name="mstyle">
+      <ref name="mstyle.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="mstyle.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="merror">
+    <element name="merror">
+      <ref name="merror.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="merror.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mpadded">
+    <element name="mpadded">
+      <ref name="mpadded.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="mpadded.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="height">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="depth">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="width">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="lspace">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="rspace">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="voffset">
+        <ref name="mpadded-length-percentage"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mpadded-length-percentage">
+    <ref name="length-percentage"/>
+  </define>
+  <define name="mphantom">
+    <element name="mphantom">
+      <ref name="mphantom.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="mphantom.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="msub">
+    <element name="msub">
+      <ref name="msub.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="msub.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="msup">
+    <element name="msup">
+      <ref name="msup.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="msup.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="msubsup">
+    <element name="msubsup">
+      <ref name="msubsup.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="msubsup.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="munder">
+    <element name="munder">
+      <ref name="munder.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="munder.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="accentunder">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mover">
+    <element name="mover">
+      <ref name="mover.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="mover.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="accent">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="munderover">
+    <element name="munderover">
+      <ref name="munderover.attributes"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+      <ref name="MathExpression"/>
+    </element>
+  </define>
+  <define name="munderover.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="accent">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="accentunder">
+        <ref name="mathml-boolean"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mmultiscripts">
+    <element name="mmultiscripts">
+      <ref name="mmultiscripts.attributes"/>
+      <ref name="MathExpression"/>
+      <zeroOrMore>
+        <ref name="MultiScriptExpression"/>
+      </zeroOrMore>
+      <optional>
+        <ref name="mprescripts"/>
+        <zeroOrMore>
+          <ref name="MultiScriptExpression"/>
+        </zeroOrMore>
+      </optional>
+    </element>
+  </define>
+  <define name="mmultiscripts.attributes">
+    <ref name="msubsup.attributes"/>
+  </define>
+  <define name="mtable">
+    <element name="mtable">
+      <ref name="mtable.attributes"/>
+      <zeroOrMore>
+        <ref name="TableRowExpression"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="mtable.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mtr">
+    <element name="mtr">
+      <ref name="mtr.attributes"/>
+      <zeroOrMore>
+        <ref name="mtd"/>
+      </zeroOrMore>
+    </element>
+  </define>
+  <define name="mtr.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+  </define>
+  <define name="mtd">
+    <element name="mtd">
+      <ref name="mtd.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="mtd.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="rowspan">
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="columnspan">
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="maction">
+    <element name="maction">
+      <ref name="maction.attributes"/>
+      <ref name="ImpliedMrow"/>
+    </element>
+  </define>
+  <define name="maction.attributes">
+    <ref name="MathMLPGlobalAttributes"/>
+    <optional>
+      <attribute name="actiontype"/>
+    </optional>
+    <optional>
+      <attribute name="selection">
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+  </define>
+</grammar>

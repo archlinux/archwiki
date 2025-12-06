@@ -10,26 +10,35 @@
  */
 module.exports = function ( documentRoot ) {
 	const $userCheckboxes = $( '#checkuserresults li [type=checkbox]' ),
-		$checkUserBlockFieldset = $( '.mw-checkuser-massblock fieldset' ),
+		$checkUserBlockFieldset = $( '.mw-checkuser-massblock > fieldset' ),
 		$blockAccountsButton = $( '.mw-checkuser-massblock-accounts-button', $checkUserBlockFieldset ),
 		$blockIPsButton = $( '.mw-checkuser-massblock-ips-button', $checkUserBlockFieldset ),
-		centralURL = mw.config.get( 'wgCUCAMultiLockCentral' );
+		$globallyBlockAccountsButton = $( '.mw-checkuser-massglobalblock-accounts-button', $checkUserBlockFieldset ),
+		$globallyBlockIPsButton = $( '.mw-checkuser-massglobalblock-ips-button', $checkUserBlockFieldset ),
+		multiLockUrl = mw.config.get( 'wgCUCAMultiLockCentral' ),
+		massGlobalBlockUrl = mw.config.get( 'wgCUMassGlobalBlockUrl' );
 	let selectedAccounts = [],
 		selectedIPs = [];
 
-	if ( !centralURL && ( !$blockAccountsButton.length || !$blockIPsButton.length ) ) {
-		// If no central URL is set and the block buttons are missing, then return early
-		// as we are likely not on the Special:CheckUser 'Get users' page or the user
-		// does not have the rights to lock or block.
+	if (
+		!multiLockUrl &&
+		!massGlobalBlockUrl &&
+		( !$globallyBlockAccountsButton.length || !$globallyBlockIPsButton.length ) &&
+		( !$blockAccountsButton.length || !$blockIPsButton.length )
+	) {
+		// If no URL is set for global locking, and all the local/global block buttons
+		// are missing, then return early as we are likely not on the Special:CheckUser
+		// 'Get users' page or the user does not have the rights to
+		// lock, global block, or local block.
 		return false;
 	}
 
-	if ( centralURL ) {
+	if ( multiLockUrl ) {
 		// Initialize the link to Special:MultiLock.
 		$checkUserBlockFieldset.append(
 			$( '<a>' ).attr( {
 				class: 'mw-checkuser-multilock-link',
-				href: centralURL
+				href: multiLockUrl
 			} ).text( mw.msg( 'checkuser-centralauth-multilock' ) )
 		);
 	}
@@ -54,18 +63,18 @@ module.exports = function ( documentRoot ) {
 			}
 		} );
 
-		if ( !centralURL ) {
+		if ( !multiLockUrl ) {
 			return;
 		}
 
 		const urls = [];
 		$( '.mw-checkuser-multilock-link, .mw-checkuser-multilock-link-header, .mw-checkuser-multilock-link-list' ).remove();
 		// Split the names up into batches of username length of a
-		// maximum of 2,000 including the centralURL + other parts
+		// maximum of 2,000 including the multiLockUrl + other parts
 		// of the GET parameters
 		let i = 0;
 		while ( i < selectedAccounts.length ) {
-			let url = centralURL + '?wpTarget=';
+			let url = multiLockUrl + '?wpTarget=';
 			let firstUsername = true;
 			while ( i < selectedAccounts.length ) {
 				let urlComponent = selectedAccounts[ i ];
@@ -145,21 +154,55 @@ module.exports = function ( documentRoot ) {
 		$form.appendTo( documentRoot ).trigger( 'submit' );
 	}
 
-	if ( !$blockAccountsButton.length || !$blockIPsButton.length ) {
-		// If the block buttons are not present, then the user does not have
-		// the rights to block but does have the rights to lock. As such, don't
-		// try to interact with the non-existing block buttons and return early.
-		return false;
+	/**
+	 * Open the Special:MassGlobalBlock page in a new tab with the given targets.
+	 *
+	 * @param {string[]} targets
+	 */
+	function openSpecialMassGlobalBlockPage( targets ) {
+		const $form = $( '<form>' ).attr( {
+			action: massGlobalBlockUrl,
+			method: 'post',
+			target: '_blank'
+		} ).addClass( [ 'oo-ui-element-hidden', 'ext-checkuser-hidden-block-form' ] );
+
+		$form.append( $( '<input>' ).attr( {
+			type: 'hidden',
+			name: 'wpTargets',
+			value: targets.join( '\n' )
+		} ) );
+
+		if ( !documentRoot ) {
+			documentRoot = 'body';
+		}
+		$form.appendTo( documentRoot ).trigger( 'submit' );
 	}
 
 	// If the 'Block accounts' or 'Block IPs' button is pressed, then open the block form in
 	// a new tab for the user.
-	$blockAccountsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
-		openSpecialInvestigateBlockPage( selectedAccounts );
-	} );
-	$blockIPsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
-		openSpecialInvestigateBlockPage( selectedIPs );
-	} );
+	if ( $blockAccountsButton.length ) {
+		$blockAccountsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
+			openSpecialInvestigateBlockPage( selectedAccounts );
+		} );
+	}
+	if ( $blockIPsButton.length ) {
+		$blockIPsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
+			openSpecialInvestigateBlockPage( selectedIPs );
+		} );
+	}
+
+	// If the 'Globally block accounts' or 'Globally block IPs' button is pressed, then open the
+	// Special:MassGlobalBlock form in a new tab for the user.
+	if ( $globallyBlockAccountsButton.length ) {
+		$globallyBlockAccountsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
+			openSpecialMassGlobalBlockPage( selectedAccounts );
+		} );
+	}
+	if ( $globallyBlockIPsButton.length ) {
+		$globallyBlockIPsButton.find( 'button' )[ 0 ].addEventListener( 'click', () => {
+			openSpecialMassGlobalBlockPage( selectedIPs );
+		} );
+	}
 
 	return true;
 };

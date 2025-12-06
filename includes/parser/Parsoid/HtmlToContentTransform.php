@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace MediaWiki\Parser\Parsoid;
 
@@ -8,6 +9,7 @@ use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -20,7 +22,7 @@ use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\DomPageBundle;
-use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Document;
@@ -45,44 +47,26 @@ class HtmlToContentTransform {
 	private ?RevisionRecord $originalRevision = null;
 	/**
 	 * Whether $this->doc has had any necessary processing applied,
-	 * such as injecting data-parsoid attributes from a PageBundle.
+	 * such as injecting data-parsoid attributes from a HtmlPageBundle.
 	 */
 	private bool $docHasBeenProcessed = false;
 	private ?Document $doc = null;
 	private ?Element $originalBody = null;
 	protected ?StatsFactory $metrics = null;
-	private PageBundle $modifiedPageBundle;
-	private PageBundle $originalPageBundle;
+	private HtmlPageBundle $modifiedPageBundle;
+	private HtmlPageBundle $originalPageBundle;
 	private ?PageConfig $pageConfig = null;
-	private Parsoid $parsoid;
-	private array $parsoidSettings;
-	private PageIdentity $page;
-	private PageConfigFactory $pageConfigFactory;
-	private IContentHandlerFactory $contentHandlerFactory;
 
-	/**
-	 * @param string $modifiedHTML
-	 * @param PageIdentity $page
-	 * @param Parsoid $parsoid
-	 * @param array $parsoidSettings
-	 * @param PageConfigFactory $pageConfigFactory
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 */
 	public function __construct(
 		string $modifiedHTML,
-		PageIdentity $page,
-		Parsoid $parsoid,
-		array $parsoidSettings,
-		PageConfigFactory $pageConfigFactory,
-		IContentHandlerFactory $contentHandlerFactory
+		private readonly PageIdentity $page,
+		private readonly Parsoid $parsoid,
+		private readonly array $parsoidSettings,
+		private readonly PageConfigFactory $pageConfigFactory,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
 	) {
-		$this->parsoid = $parsoid;
-		$this->parsoidSettings = $parsoidSettings;
-		$this->modifiedPageBundle = new PageBundle( $modifiedHTML );
-		$this->originalPageBundle = new PageBundle( '' );
-		$this->page = $page;
-		$this->pageConfigFactory = $pageConfigFactory;
-		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->modifiedPageBundle = new HtmlPageBundle( $modifiedHTML );
+		$this->originalPageBundle = new HtmlPageBundle( '' );
 	}
 
 	/**
@@ -160,7 +144,8 @@ class HtmlToContentTransform {
 		$this->originalContent = $content;
 	}
 
-	private function validatePageBundle( PageBundle $pb ) {
+	/** @throws ClientError */
+	private function validatePageBundle( HtmlPageBundle $pb ) {
 		if ( !$pb->version ) {
 			return;
 		}
@@ -175,6 +160,7 @@ class HtmlToContentTransform {
 	 * @note Call this after all original data has been set!
 	 *
 	 * @param array $modifiedDataMW
+	 * @throws ClientError
 	 */
 	public function setModifiedDataMW( array $modifiedDataMW ): void {
 		// Relies on setOriginalSchemaVersion having been called already.
@@ -247,14 +233,13 @@ class HtmlToContentTransform {
 			}
 
 			try {
-				$this->pageConfig = $this->pageConfigFactory->create(
+				$this->pageConfig = $this->pageConfigFactory->createFromParserOptions(
+					ParserOptions::newFromAnon(),
 					$this->page,
-					null,
 					$revision,
-					null,
 					$this->contentLanguage
 				);
-			} catch ( RevisionAccessException $exception ) {
+			} catch ( RevisionAccessException ) {
 				// TODO: Throw a different exception, this class should not know
 				//       about HTTP status codes.
 				throw new LocalizedHttpException( new MessageValue( "rest-specified-revision-unavailable" ), 404 );
@@ -314,6 +299,7 @@ class HtmlToContentTransform {
 	 * @todo Make this method redundant, nothing should operate on HTML strings.
 	 *
 	 * @return string
+	 * @throws ClientError
 	 */
 	public function getOriginalHtml(): string {
 		// NOTE: Schema version should have been set explicitly,
@@ -435,7 +421,7 @@ class HtmlToContentTransform {
 		return $this->options['offsetType'] ?? 'byte';
 	}
 
-	private function needsDowngrade( PageBundle $pb ): bool {
+	private function needsDowngrade( HtmlPageBundle $pb ): bool {
 		$vOriginal = $pb->version;
 		$vEdited = $this->getSchemaVersion();
 
@@ -452,7 +438,8 @@ class HtmlToContentTransform {
 		return $vOriginal !== null && !Semver::satisfies( $vOriginal, "^{$vEdited}" );
 	}
 
-	private function downgradeOriginalData( PageBundle $pb, string $targetSchemaVersion ) {
+	/** @throws ClientError */
+	private function downgradeOriginalData( HtmlPageBundle $pb, string $targetSchemaVersion ) {
 		if ( $pb->version === null ) {
 			throw new ClientError( 'Missing schema version' );
 		}
@@ -500,11 +487,11 @@ class HtmlToContentTransform {
 
 	/**
 	 * @param Document $doc
-	 * @param PageBundle $pb
+	 * @param HtmlPageBundle $pb
 	 *
 	 * @throws ClientError
 	 */
-	private function applyPageBundle( Document $doc, PageBundle $pb ): void {
+	private function applyPageBundle( Document $doc, HtmlPageBundle $pb ): void {
 		if ( $pb->parsoid === null && $pb->mw === null ) {
 			return;
 		}

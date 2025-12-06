@@ -40,7 +40,7 @@ class MockEnvironment extends EntryPointEnvironment {
 		$this->request = $request;
 	}
 
-	public function setRequestInfo( string $requestUrl, $params = '', $method = 'GET' ) {
+	public function setRequestInfo( string $requestUrl, string|array $params = '', string $method = 'GET' ) {
 		$this->request = null;
 
 		$this->setServerInfo(
@@ -103,15 +103,15 @@ class MockEnvironment extends EntryPointEnvironment {
 		return true;
 	}
 
-	public function setServerInfo( string $key, $value ) {
+	public function setServerInfo( string $key, mixed $value ) {
 		$this->serverInfo[$key] = $value;
 	}
 
-	public function getServerInfo( string $key, $default = null ) {
+	public function getServerInfo( string $key, mixed $default = null ): mixed {
 		return $this->serverInfo[$key] ?? $default;
 	}
 
-	public function exit( int $code = 0 ) {
+	public function exit( int $code = 0 ): never {
 		throw new Exception( $code );
 	}
 
@@ -119,33 +119,36 @@ class MockEnvironment extends EntryPointEnvironment {
 		// no-op
 	}
 
+	/** @inheritDoc */
 	public function getEnv( string $name ) {
 		// Implement when needed.
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function getIni( string $name ) {
 		// Implement when needed.
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function setIniOption( string $name, $value ) {
 		// Implement when needed.
 		return false;
 	}
 
-	public function assertStatusCode( int $expected, $message = null ) {
+	public function assertStatusCode( int $expected, ?string $message = null ) {
 		$message ??= "HTTP status";
 		$code = $this->getFauxResponse()->getStatusCode() ?? 200;
 		Assert::assertSame( $expected, $code, $message );
 	}
 
-	public function assertHeaderValue( ?string $expected, string $name, $message = null ) {
+	public function assertHeaderValue( ?string $expected, string $name, ?string $message = null ) {
 		$message ??= "$name header";
 		Assert::assertSame( $expected, $this->getFauxResponse()->getHeader( $name ), $message );
 	}
 
-	public function assertCookieValue( ?string $expected, string $name, $message = null ) {
+	public function assertCookieValue( ?string $expected, string $name, ?string $message = null ) {
 		$message ??= "$name header";
 		Assert::assertSame( $expected, $this->getFauxResponse()->getCookie( $name ), $message );
 	}

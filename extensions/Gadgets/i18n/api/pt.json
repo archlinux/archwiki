@@ -1,16 +1,23 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hamilton Abreu"
+			"Hamilton Abreu",
+			"Mansil alfalb"
 		]
 	},
-	"apihelp-query+gadgetcategories-summary": "Devolve uma lista de categorias de ''gadgets''.",
-	"apihelp-query+gadgetcategories-param-prop": "A informação de categorias de ''gadget'' a obter:\n;name:Nome interno da categoria.\n;title:Título da categoria.\n;members:Número de ''gadgets'' na categoria.",
-	"apihelp-query+gadgetcategories-param-names": "Nomes das categorias a obter.",
-	"apihelp-query+gadgetcategories-example-1": "Obter uma lista das categorias de ''gadgets'' existentes",
-	"apihelp-query+gadgetcategories-example-2": "Obter todas as informações sobre as categorias de nome \"foo\" e \"bar\"",
+	"apihelp-query+gadgetcategories-summary": "Devolve uma lista das secções do ''gadget''.",
+	"apihelp-query+gadgetcategories-param-prop": "A informação da secção do ''gadget'' a obter:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Nome interno da secção.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Título da secção.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Número de ''gadgets'' na secção.",
+	"apihelp-query+gadgetcategories-param-names": "Nomes das secções a obter.",
+	"apihelp-query+gadgetcategories-example-1": "Obter uma lista das secções do ''gadget'' existentes",
+	"apihelp-query+gadgetcategories-example-2": "Obter toda a informação sobre as secções de nome \"foo\" e \"bar\"",
 	"apihelp-query+gadgets-summary": "Devolve uma lista dos ''gadgets'' usados nesta wiki.",
-	"apihelp-query+gadgets-param-prop": "As informações do ''gadget'' a obter:\n;id:Identificador interno do ''gadget''.\n;metadata:Os metadados do ''gadget''.\n;desc:Descrição do ''gadget'' transformada em HTML (pode ser lento, usar só se absolutamente necessário).",
+	"apihelp-query+gadgets-param-prop": "A informação do ''gadget'' a obter:",
+	"apihelp-query+gadgets-paramvalue-prop-id": "Identificador interno do ''gadget''.",
+	"apihelp-query+gadgets-paramvalue-prop-metadata": "Os metadados do ''gadget''.",
+	"apihelp-query+gadgets-paramvalue-prop-desc": "Descrição do ''gadget'' transformada em HTML (pode ser lento, só utilize se absolutamente necessário).",
 	"apihelp-query+gadgets-param-categories": "Categorias dos ''gadgets'' a obter.",
 	"apihelp-query+gadgets-param-ids": "Identificadores dos ''gadgets'' a obter.",
 	"apihelp-query+gadgets-param-allowedonly": "Listar só os ''gadgets'' permitidos para o utilizador atual.",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Arash71",
 			"Hosseinblue",
-			"Lakzon"
+			"Lakzon",
+			"LordProfo"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتاب",
@@ -15,7 +16,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "منابع عمومی",
 	"cite-ve-dialog-reference-options-section": "گزینۀل",
 	"cite-ve-dialog-reference-title": "بنچەک(منبع)",
-	"cite-ve-dialog-reference-useexisting-tool": "استفادهٔ مجدد",
+	"cite-ve-dialog-reference-useexisting-tool": "استفادهٔ دوباره",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "فهرست منابع عمومی",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "فهرست منابع برای گروه $1",
 	"cite-ve-dialog-referenceslist-title": "فهرست منابع",

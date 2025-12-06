@@ -8,7 +8,7 @@ class CustomDifferenceEngine extends DifferenceEngine {
 		parent::__construct();
 	}
 
-	public function generateContentDiffBody( Content $old, Content $new ) {
+	public function generateContentDiffBody( Content $old, Content $new ): string {
 		return $old->getText() . '|' . $new->getText();
 	}
 
@@ -16,6 +16,7 @@ class CustomDifferenceEngine extends DifferenceEngine {
 		$this->getOutput()->addModules( 'foo' );
 	}
 
+	/** @inheritDoc */
 	public function getDiffBodyCacheKeyParams() {
 		$params = parent::getDiffBodyCacheKeyParams();
 		$params[] = 'foo';

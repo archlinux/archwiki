@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\Content\WikitextContent;
-use MediaWiki\Debug\MWDebug;
 use MediaWiki\Deferred\LinksUpdate\LinksTable;
 use MediaWiki\Deferred\LinksUpdate\LinksTableGroup;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
@@ -11,6 +10,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,6 +19,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @covers \MediaWiki\Deferred\LinksUpdate\LinksUpdate
  * @covers \MediaWiki\Deferred\LinksUpdate\CategoryLinksTable
+ * @covers \MediaWiki\Deferred\LinksUpdate\ExistenceLinksTable
  * @covers \MediaWiki\Deferred\LinksUpdate\ExternalLinksTable
  * @covers \MediaWiki\Deferred\LinksUpdate\GenericPageLinksTable
  * @covers \MediaWiki\Deferred\LinksUpdate\ImageLinksTable
@@ -179,7 +180,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		$po->addLink( Title::newFromText( "Foo" ) );
 		$this->assertMoveLinksUpdate(
 			$t,
-			new PageIdentityValue( 2, 0, "Foo", false ),
+			PageIdentityValue::localIdentity( 2, 0, "Foo" ),
 			$po,
 			'pagelinks',
 			[ 'lt_namespace', 'lt_title', 'pl_from_namespace' ],
@@ -309,13 +310,17 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'categorylinks',
-			[ 'cl_to', 'cl_sortkey' ],
+			[ 'lt_title', 'cl_sortkey' ],
 			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nTESTING" ],
 				[ 'Foo', "FOO\nTESTING" ]
 			]
 		);
+
+		// Run category membership change job to update cat_pages
+		// TODO: This should move out of this test.
+		$this->runAllRelatedJobs();
 
 		// Check category count
 		$this->newSelectQueryBuilder()
@@ -335,7 +340,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'categorylinks',
-			[ 'cl_to', 'cl_sortkey' ],
+			[ 'lt_title', 'cl_sortkey' ],
 			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nTESTING" ],
@@ -344,6 +349,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		);
 
 		// Check category count decrement
+		$this->runAllRelatedJobs();
 		$this->newSelectQueryBuilder()
 			->select( [ 'cat_title', 'cat_pages' ] )
 			->from( 'category' )
@@ -451,7 +457,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'categorylinks',
-			[ 'cl_to', 'cl_sortkey' ],
+			[ 'lt_title', 'cl_sortkey' ],
 			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nOLD" ],
@@ -459,6 +465,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			]
 		);
 
+		$this->runAllRelatedJobs();
 		// Check category count
 		$this->newSelectQueryBuilder()
 			->select( [ 'cat_title', 'cat_pages' ] )
@@ -480,7 +487,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			$t,
 			$po,
 			'categorylinks',
-			[ 'cl_to', 'cl_sortkey' ],
+			[ 'lt_title', 'cl_sortkey' ],
 			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Bar', "BAR\nOLD" ],
@@ -489,6 +496,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		);
 
 		// Check category count
+		$this->runAllRelatedJobs();
 		$this->newSelectQueryBuilder()
 			->select( [ 'cat_title', 'cat_pages' ] )
 			->from( 'category' )
@@ -507,10 +515,10 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		// With move notification, update to cl_sortkey is expected
 		$this->assertMoveLinksUpdate(
 			$t,
-			new PageIdentityValue( 2, 0, "new", false ),
+			PageIdentityValue::localIdentity( 2, 0, "new" ),
 			$po,
 			'categorylinks',
-			[ 'cl_to', 'cl_sortkey' ],
+			[ 'lt_title', 'cl_sortkey' ],
 			[ 'cl_from' => self::$testingPageId ],
 			[
 				[ 'Baz', "BAZ\nNEW" ],
@@ -519,6 +527,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		);
 
 		// Check category count
+		$this->runAllRelatedJobs();
 		$this->newSelectQueryBuilder()
 			->select( [ 'cat_title', 'cat_pages' ] )
 			->from( 'category' )
@@ -731,13 +740,11 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @param bool $useDeprecatedApi
 	 * @covers \MediaWiki\Parser\ParserOutput::setPageProperty
 	 * @covers \MediaWiki\Parser\ParserOutput::setNumericPageProperty
 	 * @covers \MediaWiki\Parser\ParserOutput::setUnsortedPageProperty
-	 * @dataProvider provideUseDeprecatedApi
 	 */
-	public function testUpdate_page_props( $useDeprecatedApi ) {
+	public function testUpdate_page_props() {
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
 
@@ -746,14 +753,6 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 
 		$setNumericPageProperty = 'setNumericPageProperty';
 		$setUnsortedPageProperty = 'setUnsortedPageProperty';
-		if ( $useDeprecatedApi ) {
-			// ::setPageProperty is deprecated when used for non-string values;
-			// and when used for string values it is identical to
-			// ::setUnsortedPageProperty
-			$indexedPageProperty = 'setPageProperty';
-			$setUnsortedPageProperty = 'setPageProperty';
-			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
-		}
 
 		$po->$setNumericPageProperty( 'deleted', 1 );
 		$po->$setNumericPageProperty( 'changed', 1 );
@@ -774,12 +773,6 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		// Third element is the sort key (as a float, or null)
 		$expected = [];
 
-		if ( $useDeprecatedApi ) {
-			// Using legacy API this is only coerced during LinksUpdate
-			$po->setPageProperty( 'bool', true );
-			$expected[] = [ "bool", true, 1.0 ];
-		}
-
 		$po->$setNumericPageProperty( 'changed', 2 );
 		$expected[] = [ 'changed', 2, 2.0 ];
 
@@ -793,16 +786,14 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		$po->$setUnsortedPageProperty( "string", "33 bar" );
 		$expected[] = [ "string", "33 bar", null ];
 
-		if ( !$useDeprecatedApi ) {
-			// A numeric string *does* get indexed if you use
-			// ::setNumericPageProperty
-			$po->setNumericPageProperty( "numeric-string", "33" );
-			$expected[] = [ "numeric-string", 33, 33.0 ];
-			// And similarly a numeric argument won't get indexed if you
-			// use ::setUnsortedPageProperty
-			$po->setUnsortedPageProperty( "unsorted", 33 );
-			$expected[] = [ "unsorted", "33", null ];
-		}
+		// A numeric string *does* get indexed if you use
+		// ::setNumericPageProperty
+		$po->setNumericPageProperty( "numeric-string", "33" );
+		$expected[] = [ "numeric-string", 33, 33.0 ];
+		// And similarly a numeric argument won't get indexed if you
+		// use ::setUnsortedPageProperty
+		$po->setUnsortedPageProperty( "unsorted", 33 );
+		$expected[] = [ "unsorted", "33", null ];
 
 		// Note that the ::assertSelect machinery will sort by the columns
 		// provided in $fields; in our case we should sort by property name
@@ -825,9 +816,55 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		);
 	}
 
-	public static function provideUseDeprecatedApi() {
-		yield "Non-deprecated API" => [ false ];
-		yield "Deprecated API" => [ true ];
+	public function testUpdate_existencelinks() {
+		/** @var ParserOutput $po */
+		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
+
+		$po->addExistenceDependency( Title::newFromText( "Foo" ) );
+		$po->addExistenceDependency( Title::newFromText( "Bar" ) );
+		$po->addExistenceDependency( Title::newFromText( "Special:Foo" ) ); // special namespace should be ignored
+		$po->addExistenceDependency( Title::newFromText( "linksupdatetest:Foo" ) ); // interwiki link should be ignored
+		$po->addExistenceDependency( Title::newFromText( "#Foo" ) ); // hash link should be ignored
+
+		$update = $this->assertLinksUpdate(
+			$t,
+			$po,
+			'existencelinks',
+			[ 'lt_namespace', 'lt_title' ],
+			[ 'exl_from' => self::$testingPageId ],
+			[
+				[ NS_MAIN, 'Bar' ],
+				[ NS_MAIN, 'Foo' ],
+			]
+		);
+		$this->assertArrayEquals( [
+			[ NS_MAIN, 'Foo' ],
+			[ NS_MAIN, 'Bar' ],
+		], array_map(
+			static function ( PageReference $pageReference ) {
+				return [ $pageReference->getNamespace(), $pageReference->getDbKey() ];
+			},
+			$update->getPageReferenceArray( 'existencelinks', LinksTable::INSERTED )
+		) );
+
+		$po = new ParserOutput();
+		$po->setTitleText( $t->getPrefixedText() );
+		$po->addExistenceDependency( Title::newFromText( "Bar" ) );
+		$po->addExistenceDependency( Title::newFromText( "Baz" ) );
+		$po->addExistenceDependency( Title::newFromText( "Talk:Baz" ) );
+
+		$this->assertLinksUpdate(
+			$t,
+			$po,
+			'existencelinks',
+			[ 'lt_namespace', 'lt_title' ],
+			[ 'exl_from' => self::$testingPageId ],
+			[
+				[ NS_MAIN, 'Bar' ],
+				[ NS_MAIN, 'Baz' ],
+				[ NS_TALK, 'Baz' ],
+			]
+		);
 	}
 
 	// @todo test recursive, too!
@@ -858,6 +895,10 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			->where( $condition );
 		if ( $table === 'pagelinks' ) {
 			$qb->join( 'linktarget', null, 'pl_target_id=lt_id' );
+		} elseif ( $table === 'existencelinks' ) {
+			$qb->join( 'linktarget', null, 'exl_target_id=lt_id' );
+		} elseif ( $table === 'categorylinks' ) {
+			$qb->join( 'linktarget', null, 'cl_target_id=lt_id' );
 		}
 		$qb->assertResultSet( $expectedRows );
 		return $update;
@@ -871,7 +912,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 			->from( 'recentchanges' )
 			->join( 'comment', null, 'comment_id = rc_comment_id' )
 			->where( [
-				'rc_type' => RC_CATEGORIZE,
+				'rc_source' => RecentChange::SRC_CATEGORIZE,
 				'rc_namespace' => NS_CATEGORY,
 				'rc_title' => $categoryTitle->getDBkey(),
 			] )
@@ -887,6 +928,11 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		}
 		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $job = $queueGroup->pop( 'categoryMembershipChange' ) ) {
+			$job->run();
+			$queueGroup->ack( $job );
+		}
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
+		while ( $job = $queueGroup->pop( 'CategoryCountUpdateJob' ) ) {
 			$job->run();
 			$queueGroup->ack( $job );
 		}
@@ -909,16 +955,10 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 	/**
 	 * Confirm that repeatedly saving the same ParserOutput does not lead to
 	 * DELETE/INSERT queries (T299662)
-	 * @dataProvider provideUseDeprecatedApi
 	 */
-	public function testNullEdit( bool $useDeprecatedApi ) {
+	public function testNullEdit() {
 		$setNumericPageProperty = 'setNumericPageProperty';
 		$setUnsortedPageProperty = 'setUnsortedPageProperty';
-		if ( $useDeprecatedApi ) {
-			$setNumericPageProperty = 'setPageProperty';
-			$setUnsortedPageProperty = 'setPageProperty';
-			MWDebug::filterDeprecationForTest( '/::setPageProperty with non-string value/' );
-		}
 
 		/** @var ParserOutput $po */
 		[ $t, $po ] = $this->makeTitleAndParserOutput( "Testing", self::$testingPageId );
@@ -932,14 +972,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		$po->$setUnsortedPageProperty( 'numeric-string', '1' );
 		$po->$setNumericPageProperty( 'int', 10 );
 		$po->$setNumericPageProperty( 'float', 2 / 3 );
-		if ( $useDeprecatedApi ) {
-			$po->setPageProperty( 'true', true );
-			$po->setPageProperty( 'false', false );
-			$this->expectDeprecationAndContinue( '/::setPageProperty with null value/' );
-			$po->setPageProperty( 'null', null );
-		} else {
-			$po->$setUnsortedPageProperty( 'null', '' );
-		}
+		$po->$setUnsortedPageProperty( 'null', '' );
 
 		$update = new LinksUpdate( $t, $po );
 		$update->setStrictTestMode();
@@ -986,6 +1019,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		$po->addLink( new TitleValue( 0, $s ) );
 		$po->setUnsortedPageProperty( $s, $s );
 		$po->addTemplate( new TitleValue( 0, $s ), 1, 1 );
+		$po->addExistenceDependency( new TitleValue( 0, $s ) );
 
 		$update = new LinksUpdate( $t, $po );
 		/** @var LinksTableGroup $tg */
@@ -1019,6 +1053,7 @@ class LinksUpdateTest extends MediaWikiLangTestCase {
 		$this->setTransactionTicket( $update );
 		$update->setStrictTestMode();
 		$update->doUpdate();
+		$this->runAllRelatedJobs();
 
 		$this->newSelectQueryBuilder()
 			->select( 'cat_pages' )

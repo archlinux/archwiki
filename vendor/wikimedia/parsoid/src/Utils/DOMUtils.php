@@ -8,12 +8,13 @@ use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\DOMParser;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Wikitext\Consts;
-use Wikimedia\Parsoid\Wt2Html\TreeBuilder\DOMBuilder;
-use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
+use Wikimedia\Parsoid\Wt2Html\TreeBuilder\ParsoidDOMBuilder;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
 use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
@@ -41,8 +42,12 @@ class DOMUtils {
 			// elements.
 			$html = '<body>' . $html;
 		}
+		if ( DOMCompat::isUsingDodo() ) {
+			return ( new DOMParser() )->parseFromString( $html, 'text/html' );
+		}
+		// If DOMCompat::isUsing84Dom use Remex to parse.
 
-		$domBuilder = new DOMBuilder; // our DOMBuilder, not remex's
+		$domBuilder = new ParsoidDOMBuilder; // our DOMBuilder, not remex's
 		$treeBuilder = new TreeBuilder( $domBuilder, [ 'ignoreErrors' => true ] );
 		$dispatcher = new Dispatcher( $treeBuilder );
 		$tokenizer = new Tokenizer( $dispatcher, $html, [ 'ignoreErrors' => true ] );
@@ -90,6 +95,26 @@ class DOMUtils {
 	}
 
 	/**
+	 * Many DOM implementations will de-optimize the representation of a
+	 * Node if `$node->childNodes` is accessed, converting the linked list
+	 * of node children to an array which is then expensive to mutate.
+	 *
+	 * This method returns an array of child nodes, but uses the
+	 * `->firstChild`/`->nextSibling` accessors to obtain it, avoiding
+	 * deoptimization.  This is also robust against concurrent mutation.
+	 *
+	 * @param Node $n
+	 * @return list<Node> the child nodes
+	 */
+	public static function childNodes( Node $n ): array {
+		$result = [];
+		for ( $child = $n->firstChild; $child !== null; $child = $child->nextSibling ) {
+			$result[] = $child;
+		}
+		return $result;
+	}
+
+	/**
 	 * Copy 'from'.childNodes to 'to' adding them before 'beforeNode'
 	 * 'from' and 'to' belong to different documents.
 	 *
@@ -113,16 +138,14 @@ class DOMUtils {
 		}
 	}
 
-	// phpcs doesn't like @phan-assert...
-	// phpcs:disable MediaWiki.Commenting.FunctionAnnotations.UnrecognizedAnnotation
-
 	/**
 	 * Assert that this is a DOM element node.
 	 * This is primarily to help phan analyze variable types.
+	 *
 	 * @phan-assert Element $node
+	 *
 	 * @param ?Node $node
-	 * @return bool Always returns true
-	 * @phan-assert Element $node
+	 * @return true Always returns true
 	 */
 	public static function assertElt( ?Node $node ): bool {
 		Assert::invariant( $node instanceof Element, "Expected an element" );
@@ -131,34 +154,34 @@ class DOMUtils {
 
 	public static function isRemexBlockNode( ?Node $node ): bool {
 		return $node instanceof Element &&
-			!isset( Consts::$HTML['OnlyInlineElements'][DOMCompat::nodeName( $node )] ) &&
+			!isset( Consts::$HTML['OnlyInlineElements'][self::nodeName( $node )] ) &&
 			// This is a superset of \\MediaWiki\Tidy\RemexCompatMunger::$metadataElements
 			!self::isMetaDataTag( $node );
 	}
 
 	public static function isWikitextBlockNode( ?Node $node ): bool {
-		return $node && TokenUtils::isWikitextBlockTag( DOMCompat::nodeName( $node ) );
+		return $node && TokenUtils::isWikitextBlockTag( self::nodeName( $node ) );
 	}
 
 	/**
 	 * Determine whether this is a formatting DOM element.
 	 */
 	public static function isFormattingElt( ?Node $node ): bool {
-		return $node && isset( Consts::$HTML['FormattingTags'][DOMCompat::nodeName( $node )] );
+		return $node && isset( Consts::$HTML['FormattingTags'][self::nodeName( $node )] );
 	}
 
 	/**
 	 * Determine whether this is a quote DOM element.
 	 */
 	public static function isQuoteElt( ?Node $node ): bool {
-		return $node && isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $node )] );
+		return $node && isset( Consts::$WTQuoteTags[self::nodeName( $node )] );
 	}
 
 	/**
 	 * Determine whether this is the <body> DOM element.
 	 */
 	public static function isBody( ?Node $node ): bool {
-		return $node && DOMCompat::nodeName( $node ) === 'body';
+		return $node && self::nodeName( $node ) === 'body';
 	}
 
 	/**
@@ -249,7 +272,7 @@ class DOMUtils {
 	 */
 	public static function findAncestorOfName( Node $node, string $name ): ?Element {
 		$node = $node->parentNode;
-		while ( $node && DOMCompat::nodeName( $node ) !== $name ) {
+		while ( $node && self::nodeName( $node ) !== $name ) {
 			$node = $node->parentNode;
 		}
 		'@phan-var Element $node'; // @var Element $node
@@ -260,7 +283,7 @@ class DOMUtils {
 	 * Check whether $node has $name or has an ancestor named $name.
 	 */
 	public static function hasNameOrHasAncestorOfName( Node $node, string $name ): bool {
-		return DOMCompat::nodeName( $node ) === $name || self::findAncestorOfName( $node, $name ) !== null;
+		return self::nodeName( $node ) === $name || self::findAncestorOfName( $node, $name ) !== null;
 	}
 
 	/**
@@ -275,7 +298,7 @@ class DOMUtils {
 	 *   no match.
 	 */
 	public static function matchNameAndTypeOf( Node $n, string $name, string $typeRe ): ?string {
-		return DOMCompat::nodeName( $n ) === $name ? self::matchTypeOf( $n, $typeRe ) : null;
+		return self::nodeName( $n ) === $name ? self::matchTypeOf( $n, $typeRe ) : null;
 	}
 
 	/**
@@ -497,28 +520,28 @@ class DOMUtils {
 	 * Check whether `node` is in a fosterable position.
 	 */
 	public static function isFosterablePosition( ?Node $n ): bool {
-		return $n && isset( Consts::$HTML['FosterablePosition'][DOMCompat::nodeName( $n->parentNode )] );
+		return $n && isset( Consts::$HTML['FosterablePosition'][self::nodeName( $n->parentNode )] );
 	}
 
 	/**
 	 * Check whether `node` is a heading.
 	 */
 	public static function isHeading( ?Node $n ): bool {
-		return $n && preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $n ) );
+		return $n && preg_match( '/^h[1-6]$/D', self::nodeName( $n ) );
 	}
 
 	/**
 	 * Check whether `node` is a list.
 	 */
 	public static function isList( ?Node $n ): bool {
-		return $n && isset( Consts::$HTML['ListTags'][DOMCompat::nodeName( $n )] );
+		return $n && isset( Consts::$HTML['ListTags'][self::nodeName( $n )] );
 	}
 
 	/**
 	 * Check whether `node` is a list item.
 	 */
 	public static function isListItem( ?Node $n ): bool {
-		return $n && isset( Consts::$HTML['ListItemTags'][DOMCompat::nodeName( $n )] );
+		return $n && isset( Consts::$HTML['ListItemTags'][self::nodeName( $n )] );
 	}
 
 	/**
@@ -629,7 +652,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function treeHasElement( Node $node, string $tagName, bool $checkRoot = false ): bool {
-		if ( $checkRoot && DOMCompat::nodeName( $node ) === $tagName ) {
+		if ( $checkRoot && self::nodeName( $node ) === $tagName ) {
 			return true;
 		}
 
@@ -649,7 +672,7 @@ class DOMUtils {
 	 * Is node a table tag (table, tbody, td, tr, etc.)?
 	 */
 	public static function isTableTag( Node $node ): bool {
-		return isset( Consts::$HTML['TableTags'][DOMCompat::nodeName( $node )] );
+		return isset( Consts::$HTML['TableTags'][self::nodeName( $node )] );
 	}
 
 	/**
@@ -741,6 +764,9 @@ class DOMUtils {
 		self::addAttributes( $elt, $attrs );
 		$head = DOMCompat::getHead( $document );
 		if ( !$head ) {
+			if ( !$document->documentElement ) {
+				$document->appendChild( $document->createElement( 'html' ) );
+			}
 			$head = $document->createElement( 'head' );
 			$document->documentElement->insertBefore(
 				$head, DOMCompat::getBody( $document )
@@ -756,7 +782,7 @@ class DOMUtils {
 	 * Defined similarly to DOMCompat::getInnerHTML()
 	 */
 	public static function getFragmentInnerHTML( DocumentFragment $frag ): string {
-		return XMLSerializer::serialize(
+		return XHtmlSerializer::serialize(
 			$frag, [ 'innerXML' => true ]
 		)['html'];
 	}
@@ -779,7 +805,7 @@ class DOMUtils {
 	}
 
 	public static function isRawTextElement( Node $node ): bool {
-		return isset( Consts::$HTML['RawTextElements'][DOMCompat::nodeName( $node )] );
+		return isset( Consts::$HTML['RawTextElements'][self::nodeName( $node )] );
 	}
 
 	/**
@@ -800,32 +826,16 @@ class DOMUtils {
 	}
 
 	/**
-	 * Get an associative array of attributes, suitable for serialization.
-	 *
-	 * Add the xmlns attribute if available, to workaround PHP's surprising
-	 * behavior with the xmlns attribute: HTML is *not* an XML document,
-	 * but various parts of PHP (including our misnamed XMLSerializer) pretend
-	 * that it is, sort of.
-	 *
-	 * @param Element $element
-	 * @return array<string,string>
-	 * @see https://phabricator.wikimedia.org/T235295
+	 * @see DOMCompat::attributes()
+	 * @deprecated since 0.22; use DOMCompat::attributes()
 	 */
 	public static function attributes( Element $element ): array {
-		$result = [];
-		// The 'xmlns' attribute is "invisible" T235295
-		$xmlns = DOMCompat::getAttribute( $element, 'xmlns' );
-		if ( $xmlns !== null ) {
-			$result['xmlns'] = $xmlns;
-		}
-		foreach ( $element->attributes as $attr ) {
-			$result[$attr->name] = $attr->value;
-		}
-		return $result;
+		PHPUtils::deprecated( __METHOD__, "0.22" );
+		return DOMCompat::attributes( $element );
 	}
 
 	public static function isMetaDataTag( Element $node ): bool {
-		return isset( Consts::$HTML['MetaDataTags'][DOMCompat::nodeName( $node )] );
+		return isset( Consts::$HTML['MetaDataTags'][self::nodeName( $node )] );
 	}
 
 	/**
@@ -833,5 +843,17 @@ class DOMUtils {
 	 */
 	public static function stripPWrapper( string $ret ): string {
 		return preg_replace( '#(^<p>)|(\n</p>(' . Utils::COMMENT_REGEXP_FRAGMENT . '|\s)*$)#D', '', $ret );
+	}
+
+	/**
+	 * Return the lower-case version of the node name.
+	 * FIXME: HTML says this should be capitalized, but we are tailoring
+	 * this to the PHP7.x DOM libraries that return lower-case names.
+	 * @see DOMCompat::nodeName()
+	 */
+	public static function nodeName( Node $node ): string {
+		// We will transition to DOMCompat::nodeName() once we move to
+		// PHP 8.4 in production, which uses uppercase node names.
+		return $node instanceof \DOMNode ? $node->nodeName : strtolower( $node->nodeName );
 	}
 }

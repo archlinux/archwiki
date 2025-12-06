@@ -5,7 +5,7 @@ use MediaWiki\Tests\Unit\DummyServicesTrait;
 
 /**
  * @group Language
- * @covers \MediaWiki\Languages\LanguageFallback
+ * @covers \MediaWiki\Language\LanguageFallback
  */
 class LanguageFallbackTest extends MediaWikiUnitTestCase {
 	use DummyServicesTrait;
@@ -17,7 +17,7 @@ class LanguageFallbackTest extends MediaWikiUnitTestCase {
 		'sco' => [ 'en' ],
 		'yi' => [ 'he' ],
 		'ruq' => [ 'ruq-latn', 'ro' ],
-		'sh' => [ 'sh-latn', 'sh-cyrl', 'bs', 'sr-el', 'sr-latn', 'hr' ],
+		'sh' => [ 'sh-latn', 'bs', 'hr', 'sr-latn', 'sr-el', 'sh-cyrl', 'sr-cyrl', 'sr-ec' ],
 	];
 
 	private function getCallee( array $options = [] ): LanguageFallback {
@@ -31,11 +31,4 @@ class LanguageFallbackTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	private function getMessagesKey() {
-		return LanguageFallback::MESSAGES;
-	}
-
-	private function getStrictKey() {
-		return LanguageFallback::STRICT;
-	}
 }

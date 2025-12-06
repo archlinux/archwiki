@@ -4,27 +4,16 @@
  *
  * Copyright © 2014 Wikimedia Foundation and contributors
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @since 1.24
  */
 
 namespace MediaWiki\Api;
 
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
@@ -62,6 +51,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 			'indexes' => [ 'pl_namespace', 'pl_backlinks_namespace' ],
 			'from_namespace' => true,
 			'showredirects' => true,
+			'virtualdomain' => PageLinksTable::VIRTUAL_DOMAIN,
 		],
 		'transcludedin' => [
 			'code' => 'ti',
@@ -69,6 +59,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 			'linktable' => 'templatelinks',
 			'from_namespace' => true,
 			'showredirects' => true,
+			'virtualdomain' => TemplateLinksTable::VIRTUAL_DOMAIN,
 		],
 		'fileusage' => [
 			'code' => 'fu',
@@ -79,6 +70,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 			'to_namespace' => NS_FILE,
 			'exampletitle' => 'File:Example.jpg',
 			'showredirects' => true,
+			'virtualdomain' => ImageLinksTable::VIRTUAL_DOMAIN,
 		],
 	];
 
@@ -97,6 +89,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$this->run();
 	}
 
+	/** @inheritDoc */
 	public function executeGenerator( $resultPageSet ) {
 		$this->run( $resultPageSet );
 	}
@@ -107,7 +100,10 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 	private function run( ?ApiPageSet $resultPageSet = null ) {
 		$settings = self::$settings[$this->getModuleName()];
 
+		$domain = $settings['virtualdomain'] ?? false;
+		$this->setVirtualDomain( $domain );
 		$db = $this->getDB();
+
 		$params = $this->extractRequestParams();
 		$prop = array_fill_keys( $params['prop'], true );
 
@@ -201,7 +197,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		if ( isset( $this->linksMigration::$mapping[$settings['linktable']] ) ) {
 			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 			$queryInfo = $this->linksMigration->getQueryInfo( $settings['linktable'] );
-			$this->addTables( array_merge( [ 'page' ], $queryInfo['tables'] ) );
+			$this->addTables( [ 'page', ...$queryInfo['tables'] ] );
 			$this->addJoinConds( $queryInfo['joins'] );
 			// TODO: Move to links migration
 			if ( in_array( 'linktarget', $queryInfo['tables'] ) ) {
@@ -367,10 +363,12 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$this->setContinueEnumParameter( 'continue', implode( '|', $cont ) );
 	}
 
+	/** @inheritDoc */
 	public function getCacheMode( $params ) {
 		return 'public';
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		$settings = self::$settings[$this->getModuleName()];
 
@@ -439,6 +437,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		return $ret;
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		$settings = self::$settings[$this->getModuleName()];
 		$name = $this->getModuleName();
@@ -454,6 +453,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		$name = ucfirst( $this->getModuleName() );
 		return "https://www.mediawiki.org/wiki/Special:MyLanguage/API:{$name}";

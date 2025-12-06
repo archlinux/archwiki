@@ -17,15 +17,7 @@ use MediaWiki\WikiMap\WikiMap;
  * enabled the preference, set $forceEnable=true in the constructor.
  */
 class ForeignNotifications {
-	/**
-	 * @var UserIdentity
-	 */
-	protected $user;
-
-	/**
-	 * @var bool
-	 */
-	protected $enabled = false;
+	protected bool $enabled;
 
 	/**
 	 * @var array<string,int> [ section => count ]
@@ -56,8 +48,10 @@ class ForeignNotifications {
 	 * @param UserIdentity $user
 	 * @param bool $forceEnable Ignore the user's preferences and act as if they've enabled cross-wiki notifications
 	 */
-	public function __construct( UserIdentity $user, $forceEnable = false ) {
-		$this->user = $user;
+	public function __construct(
+		protected UserIdentity $user,
+		bool $forceEnable = false,
+	) {
 		$this->enabled = $forceEnable || $this->isEnabledByUser();
 	}
 

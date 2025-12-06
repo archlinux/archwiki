@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Belkacem77",
+			"ButterflyOfFire",
 			"Mmistmurt",
-			"YouvaDjouadi",
-			"ButterflyOfFire"
+			"YouvaDjouadi"
 		]
 	},
 	"vector-skin-desc": "Lqem atrar n MonoBook s wudem ilemẓi akked ddeqs n usnerni ucbiḥ",
@@ -24,8 +24,10 @@
 	"vector-view-viewsource": "Ẓer aɣbalu",
 	"vector-more-actions": "Ugar",
 	"vector-feature-limited-width-name": "Tehri",
+	"vector-feature-limited-width-1-label": "Aslugan",
 	"vector-feature-custom-font-size-name": "Aḍris",
 	"vector-feature-custom-font-size-0-label": "Ameẓyan",
+	"vector-feature-custom-font-size-1-label": "Aslugan",
 	"vector-feature-custom-font-size-2-label": "Ahrawan",
 	"skin-theme-name": "Ini",
 	"skin-theme-day-label": "Aceɛlal",

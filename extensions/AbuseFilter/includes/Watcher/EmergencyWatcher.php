@@ -164,21 +164,14 @@ class EmergencyWatcher implements Watcher {
 	 * @return mixed
 	 */
 	private function getEmergencyValue( string $type, string $group ) {
-		switch ( $type ) {
-			case 'threshold':
-				$opt = 'AbuseFilterEmergencyDisableThreshold';
-				break;
-			case 'count':
-				$opt = 'AbuseFilterEmergencyDisableCount';
-				break;
-			case 'age':
-				$opt = 'AbuseFilterEmergencyDisableAge';
-				break;
-			default:
-				// @codeCoverageIgnoreStart
-				throw new InvalidArgumentException( '$type must be either "threshold", "count" or "age"' );
-				// @codeCoverageIgnoreEnd
-		}
+		$opt = match ( $type ) {
+			'threshold' => 'AbuseFilterEmergencyDisableThreshold',
+			'count' => 'AbuseFilterEmergencyDisableCount',
+			'age' => 'AbuseFilterEmergencyDisableAge',
+			// @codeCoverageIgnoreStart
+			default => throw new InvalidArgumentException( '$type must be either "threshold", "count" or "age"' ),
+			// @codeCoverageIgnoreEnd
+		};
 
 		$value = $this->options->get( $opt );
 		return $value[$group] ?? $value['default'];

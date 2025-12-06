@@ -62,7 +62,6 @@
 	"linter-numerrors": "($1 {{PLURAL:$1|خطا|خطا}})",
 	"linter-page-edit": "ویرایش",
 	"linter-page-history": "تاریخچه",
-	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "نمایش مبدأ",
 	"linter-pager-bogus-image-options-details": "خصوصیت قلابی پرونده",
 	"linter-pager-category-header": "رده",

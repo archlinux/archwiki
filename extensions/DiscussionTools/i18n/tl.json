@@ -30,7 +30,7 @@
 	"discussiontools-replywidget-preview": "Pasilip",
 	"discussiontools-replywidget-reply": "Tumugon",
 	"discussiontools-replywidget-summary": "Buod",
-	"discussiontools-replywidget-watchthis": "Idagdga ang pahinang ito sa [[Special:Watchlist|binabantayan]] mo",
+	"discussiontools-replywidget-watchthis": "Idagdag ang pahinang ito sa [[Special:Watchlist|binabantayan]] mo",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tao|(na) tao}} ang nasa usapan",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komento|(na) komento}}",
 	"discussiontools-topicheader-latestcomment": "Pinakabagong komento: $1",

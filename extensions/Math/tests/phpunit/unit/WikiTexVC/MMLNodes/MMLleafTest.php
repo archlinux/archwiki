@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLnodes;
 
-use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLLeaf;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLleaf;
 use MediaWikiUnitTestCase;
 
 /**

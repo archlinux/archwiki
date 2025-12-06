@@ -115,5 +115,9 @@
 	"templatedata-modal-title-templateformatstring": "अनुकूलित प्रारूपण का स्ट्रिंग",
 	"templatedata-modal-title-templateparam-details": "पैरामीटर का विस्तार: $1",
 	"templatedata-modal-title-templateparams": "साँचे के पैरामीटर्स",
-	"templatedata-search-list-header": "पसंदीदा"
+	"templatedata-search-list-header": "पसंदीदा",
+	"templatedata-category-browser-header": "श्रेणियाँ",
+	"templatedata-category-switch-button": "ब्राउज़",
+	"templatedata-category-no-cats": "कोई नहीं।",
+	"templatedata-featured-list-header": "निर्वाचित"
 }

@@ -4,6 +4,7 @@
 			"Filipinayzd"
 		]
 	},
+	"vector-languages": "Mga sarita",
 	"vector-action-addsection": "Magrugang sa paksa",
 	"vector-action-delete": "Puraon",
 	"vector-action-move": "Ilipat",
@@ -15,5 +16,15 @@
 	"vector-view-history": "Baydon a kasaysayan",
 	"vector-view-view": "Basahon",
 	"vector-view-viewsource": "Baydon a ginikanan",
-	"vector-more-actions": "Dakul pa"
+	"vector-more-actions": "Dakul pa",
+	"vector-appearance-label": "Itsura",
+	"vector-feature-limited-width-1-label": "Katamtaman",
+	"vector-feature-custom-font-size-name": "Teksto",
+	"vector-feature-custom-font-size-0-label": "Saday",
+	"vector-feature-custom-font-size-1-label": "Katamtaman",
+	"vector-feature-custom-font-size-2-label": "Dakulo",
+	"vector-page-tools-label": "Mga gamit",
+	"vector-page-tools-general-label": "Ngamin",
+	"vector-page-tools-actions-label": "Mga aksyon",
+	"vector-unpin-element-label": "itago"
 }

@@ -8,9 +8,9 @@
 			"Jdforrester",
 			"Minh Nguyen",
 			"Nghiemtrongdai VN",
-			"아라",
+			"NgocAnMaster",
 			"Nvdtn19",
-			"NgocAnMaster"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Kiểm tra Sửa đổi cho rằng nội dung mới đã được thêm vào trang",
@@ -20,6 +20,11 @@
 	"tag-editcheck-references-activated-description": "Kiểm tra Sửa đổi cho rằng có thể cần phải có một nguồn tham khảo, và giao diện người dùng được hiển thị",
 	"tag-editcheck-references-shown": "Đã hiển thị Kiểm tra Sửa đổi (nguồn tham khảo)",
 	"tag-editcheck-references-shown-description": "Kiểm tra Sửa đổi cho rằng có thể cần phải có một nguồn tham khảo, và giao diện người dùng được hiển thị",
+	"tag-editcheck-tone-description": "Kiểm tra Sửa đổi đã phát hiện vấn đề với giọng điệu của một số nội dung được thêm vào",
+	"tag-editcheck-tone-shown": "Đã hiển thị Kiểm tra Sửa đổi (giọng điệu)",
+	"tag-editcheck-tone-shown-description": "Kiểm tra Sửa đổi cho rằng có thể cần phải điều chỉnh giọng điệu ở một số đoạn nội dung, và giao diện người dùng được hiển thị",
+	"tag-editcheck-paste-shown": "Đã hiển thị Kiểm tra Sửa đổi (dán)",
+	"tag-editcheck-paste-shown-description": "Kiểm tra sửa đổi đã yêu cầu biên tập viên cung cấp thông tin về nội dung mà họ đã dán, sau đó nội dung này đã bị xóa hoặc được xác nhận là được phép dùng",
 	"tag-visualeditor": "Soạn thảo trực quan",
 	"tag-visualeditor-description": "Đã sửa đổi dùng [[{{MediaWiki:visualeditor-descriptionpagelink}}|Trình soạn thảo trực quan]]",
 	"tag-visualeditor-needcheck": "Qua trình soạn thảo trực quan: Cần kiểm tra",
@@ -32,8 +37,8 @@
 	"visualeditor-feedback-tool": "Để lại phản hồi về phần mềm này",
 	"visualeditor-help-label": "Đọc hướng dẫn sử dụng",
 	"visualeditor-welcomedialog-action": "Bắt đầu sửa đổi",
-	"visualeditor-welcomedialog-content": "Bất cứ người nào có thể góp tay xây dựng và cải thiện nội dung.",
-	"visualeditor-welcomedialog-content-thanks": "Xin cảm ơn bạn muốn giúp người ta khám phá và tìm hiểu!",
+	"visualeditor-welcomedialog-content": "Bất cứ ai cũng có thể cùng chung tay xây dựng và cải thiện nội dung.",
+	"visualeditor-welcomedialog-content-thanks": "Xin cảm ơn bạn đã giúp những người khác cùng khám phá và tìm hiểu!",
 	"visualeditor-welcomedialog-switch": "Chuyển sang trình soạn thảo mã nguồn",
 	"visualeditor-welcomedialog-switch-ve": "Chuyển sang trình soạn thảo trực quan",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Chào mừng bạn}} đến với $2"

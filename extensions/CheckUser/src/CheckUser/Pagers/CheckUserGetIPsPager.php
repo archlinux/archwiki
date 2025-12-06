@@ -19,6 +19,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
@@ -43,13 +44,14 @@ class CheckUserGetIPsPager extends AbstractCheckUserPager {
 		CheckUserLookupUtils $checkUserLookupUtils,
 		UserOptionsLookup $userOptionsLookup,
 		DatabaseBlockStore $blockStore,
+		TempUserConfig $tempUserConfig,
 		?IContextSource $context = null,
 		?LinkRenderer $linkRenderer = null,
 		?int $limit = null
 	) {
 		parent::__construct( $opts, $target, $logType, $tokenQueryManager, $userGroupManager, $centralIdLookup,
 			$dbProvider, $specialPageFactory, $userIdentityLookup, $checkUserLogService, $userFactory,
-			$checkUserLookupUtils, $userOptionsLookup, $blockStore, $context, $linkRenderer, $limit );
+			$checkUserLookupUtils, $userOptionsLookup, $blockStore, $tempUserConfig, $context, $linkRenderer, $limit );
 		$this->checkType = SpecialCheckUser::SUBTYPE_GET_IPS;
 	}
 
@@ -269,7 +271,7 @@ class CheckUserGetIPsPager extends AbstractCheckUserPager {
 
 		// Apply index, group by IP / IP hex, and filter results to just the target user.
 		$queryInfo['options']['USE INDEX'] = [
-			$table => $this->checkUserLookupUtils->getIndexName( $this->xfor, $table )
+			$table => $this->checkUserLookupUtils->getIndexName( $this->xfor, $table ),
 		];
 		$queryInfo['options']['GROUP BY'] = [ 'ip', 'ip_hex' ];
 		$queryInfo['conds']['actor_user'] = $this->target->getId();

@@ -11,7 +11,6 @@ class Consts {
 	public static array $WikitextTagsWithTrimmableWS;
 	public static array $HTMLTagsRequiringSOLContext;
 	public static array $WTQuoteTags;
-	public static array $SolSpaceSensitiveTags;
 	public static array $HTML;
 	public static array $WTTagsWithNoClosingTags;
 	public static array $Output;
@@ -26,7 +25,7 @@ class Consts {
 	public static array $wikitextBlockElems;
 	public static string $strippedUrlCharacters;
 
-	public static function init() {
+	public static function init(): void {
 		/*
 		 * Valid media options:
 		 * - Prefix options are of the form "alt=foo"
@@ -265,7 +264,7 @@ class Consts {
 
 		self::$Output = [
 			'FlaggedEmptyElts' => PHPUtils::makeSet( [
-				'li', 'tr', 'p',
+				'li', 'tbody', 'tr', 'p',
 			] ),
 		];
 
@@ -299,6 +298,7 @@ class Consts {
 			"tr" => [ null, 0 ],
 			"td" => [ null, 0 ],
 			"th" => [ null, 0 ],
+			"caption" => [ null, 0 ],
 			"b" => [ 3, 3 ],
 			"i" => [ 2, 2 ],
 			"br" => [ 0, 0 ],

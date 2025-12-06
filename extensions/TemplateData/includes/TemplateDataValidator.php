@@ -56,7 +56,7 @@ class TemplateDataValidator {
 	];
 
 	/** @var string[] */
-	private array $validParameterTypes;
+	private readonly array $validParameterTypes;
 
 	/**
 	 * @param string[] $additionalParameterTypes

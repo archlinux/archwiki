@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.44",
+		"MediaWiki": ">= 1.45",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -40,7 +40,8 @@
 		"main": {
 			"class": "LoginNotify\\Hooks",
 			"services": [
-				"UserFactory"
+				"UserFactory",
+				"LoginNotify.LoginNotify"
 			]
 		},
 		"echo": {
@@ -54,7 +55,8 @@
 		"LoginNotifyChecks": {
 			"class": "LoginNotify\\DeferredChecksJob",
 			"services": [
-				"UserFactory"
+				"UserFactory",
+				"LoginNotify.LoginNotify"
 			]
 		},
 		"LoginNotifyPurgeSeen": {

@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Gadir",
 			"Matma Rex",
 			"NMW03",
 			"Nemoralis",
 			"Serkanland",
 			"Toghrul Rahimli",
-			"Əkrəm",
-			"Gadir"
+			"Əkrəm"
 		]
 	},
 	"discussiontools": "Müzakirə alətləri",
@@ -35,9 +35,9 @@
 	"discussiontools-emptystate-title-user": "{{PAGENAME}} {{GENDER:{{PAGENAME}}|ilə}} müzakirə başlat",
 	"discussiontools-emptystate-title-user-anon": "Bu müzakirə səhifəsinə xoş gəlmisiniz",
 	"discussiontools-emptystate-title-user-temp": "{{PAGENAME}} {{GENDER:{{PAGENAME}}|ilə}} müzakirə başladın",
-	"discussiontools-error-comment-conflict": "Şərhiniz saxlanıla bilmədi, çünki sizinlə eyni vaxtda başqa istifadəçi şərh yazdı. Yenidən cəhd edin və ya son şərhləri görmək üçün səhifəni yenidən yükləyin.",
-	"discussiontools-error-comment-disappeared": "Səhifədə cavablandırdığınız şərh tapılmadı. Silinmiş və ya başqa bir səhifəyə köçürülmüş ola bilər. Zəhmət olmasa, səhifəni yenidən yükləyin və yenidən cəhd edin.",
-	"discussiontools-error-comment-disappeared-reload": "Səhifəni {{GENDER:|yenidən yükləyin}} və yenidən cəhd edin.",
+	"discussiontools-error-comment-conflict": "{{GENDER:|Şərhiniz}} saxlanıla bilmədi, çünki sizinlə eyni vaxtda başqa istifadəçi şərh yazdı. Yenidən cəhd edin və ya son şərhləri görmək üçün səhifəni yenidən yükləyin.",
+	"discussiontools-error-comment-disappeared": "Səhifədə {{GENDER:|cavablandırdığınız}} şərh tapılmadı. O, silinmiş və ya başqa bir səhifəyə köçürülmüş ola bilər.",
+	"discussiontools-error-comment-disappeared-reload": "Səhifəni {{GENDER:|yenidən yükləyin}} və təkrar cəhd edin.",
 	"discussiontools-error-comment-is-transcluded": "\"{{int:discussiontools-replylink}}\" keçidi bu şərhə cavab vermək üçün istifadə edilə bilməz. Zəhmət olmasa, cavab vermək üçün \"$1\" düyməsinə klikləyib redaktora keçin.",
 	"discussiontools-error-comment-is-transcluded-title": "\"{{int:discussiontools-replylink}}\" keçidi buna cavab vermək üçün istifadə edilə bilməz çünki o başqa səhifədən yüklənib. Cavab vermək üçün zəhmət olmasa, [[$1]] səhifəsinə gedin.",
 	"discussiontools-error-comment-not-saved": "Şərhiniz səhifənin ən son versiyasında yayımlana bilmədi. Ən son dəyişiklikləri görmək üçün şərhinizi kopyalayın və sonra səhifəni yenidən yükləmək üçün brauzerinizdən istifadə edin.",
@@ -74,7 +74,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Abunəlikdən çıxdınız.",
 	"discussiontools-notification-added-topic-header": "<strong>$3</strong> səhifəsində $1 tərəfindən yeni \"<strong>$4</strong>\" mövzusu {{GENDER:$2|yaradıldı}}",
 	"discussiontools-notification-added-topic-header-bundled": "\"<strong>$2</strong>\" səhifəsində {{PLURAL:$1|bir yeni mövzu|$1 yeni mövzu|100=99+ yeni mövzu}}",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Mövzuya bax",
 	"discussiontools-notification-comment-thank-header": "$1 \"<strong>$3</strong>\" mövzusundakı şərhinizə görə {{GENDER:$4|sizə}} {{GENDER:$2|təşəkkür edib.}}",
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Bir nəfər|$1 istifadəçi|100=99+ istifadəçi}} <strong>$2</strong> mövzusundakı şərhinizə görə {{GENDER:$3|sizə}} təşəkkür edib.",
@@ -88,11 +87,10 @@
 	"discussiontools-notification-removed-topic-disabled-title": "{{GENDER:|Siz}} mövzu arxivləndikdə və ya silindikdə artıq bildirişlər almayacaqsınız.",
 	"discussiontools-notification-removed-topic-disabled-body": "Bunu [[Special:Preferences#mw-prefsection-echo-echosubscriptions|nizamlamalarınızda]] dəyişə bilərsiniz.",
 	"discussiontools-notification-topic-hidden": "(mövzu silinib)",
-	"discussiontools-notification-subscribed-new-comment-header": "$1 \"<strong>$4</strong>\" bölməsində {{GENDER:$2|cavab verdi}}",
+	"discussiontools-notification-subscribed-new-comment-header": "$1 \"<strong>$4</strong>\" bölməsində {{GENDER:$2|şərh əlavə etdi}}",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "\"<strong>$3</strong>\" bölməsində {{PLURAL:$1|bir yeni cavab|$1 yeni cavab|100=99+ yeni cavab}}",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "Şərhə bax",
-	"discussiontools-pageframe-latestcomment": "Ən son rəy:$1, $2 tərəfindən \"$3\" mövzusunda",
+	"discussiontools-pageframe-latestcomment": "Ən son rəy: $1, $2 tərəfindən \"$3\" adlı mövzuda",
 	"discussiontools-pageframe-latestcomment-notopic": "Ən son rəy: $1, $2 tərəfindən",
 	"discussiontools-pagetitle-newtopic": "Yeni mövzu əlavə edilir: $1 səhifəsi",
 	"discussiontools-pagetitle-reply": "Cavab verilir: $1 səhifəsində",

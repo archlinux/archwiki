@@ -63,6 +63,8 @@
 	"logentry-checkuser-private-event-autocreate-account": "bol automaticky vytvorený",
 	"logentry-checkuser-private-event-create-account": "bol vytvorený",
 	"checkuser-investigateblock-warning-confirmaction": "Ak ste si {{GENDER:|istý|istá|istí}}, že to chcete urobiť, zaškrtnite prepínač „{{int:checkuser-investigateblock-confirm-blocks-label}}“ nižšie.",
+	"checkuser-ip-contributions-results-title": "Príspevky dočasných účtov z IP adresy $1",
+	"checkuser-ip-contributions-archive-results-title": "Zmazané príspevky dočasných účtov z IP adresy $1",
 	"checkuser-global-contributions-link": "globálne príspevky",
 	"checkuser-global-contributions-link-sidebar": "Globálne príspevky"
 }

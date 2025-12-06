@@ -19,11 +19,9 @@
 namespace MediaWiki\Extension\OATHAuth;
 
 use InvalidArgumentException;
-use MediaWiki\Config\ConfigException;
-use MediaWiki\Exception\ErrorPageError;
-use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\OATHAuth\Notifications\Manager;
 use MediaWiki\Json\FormatJson;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\CentralId\CentralIdLookupFactory;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerAwareInterface;
@@ -32,48 +30,27 @@ use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class OATHUserRepository implements LoggerAwareInterface {
-	private IConnectionProvider $dbProvider;
-
-	private BagOStuff $cache;
-
-	private OATHAuthModuleRegistry $moduleRegistry;
-
-	private CentralIdLookupFactory $centralIdLookupFactory;
-
 	private LoggerInterface $logger;
 
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		BagOStuff $cache,
-		OATHAuthModuleRegistry $moduleRegistry,
-		CentralIdLookupFactory $centralIdLookupFactory,
-		LoggerInterface $logger
+		private readonly IConnectionProvider $dbProvider,
+		private readonly BagOStuff $cache,
+		private readonly OATHAuthModuleRegistry $moduleRegistry,
+		private readonly CentralIdLookupFactory $centralIdLookupFactory,
+		LoggerInterface $logger,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->cache = $cache;
-		$this->moduleRegistry = $moduleRegistry;
-		$this->centralIdLookupFactory = $centralIdLookupFactory;
 		$this->setLogger( $logger );
 	}
 
-	/**
-	 * @param LoggerInterface $logger
-	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @return OATHUser
-	 * @throws ConfigException
-	 * @throws MWException
-	 */
-	public function findByUser( UserIdentity $user ) {
+	public function findByUser( UserIdentity $user ): OATHUser {
 		$oathUser = $this->cache->get( $user->getName() );
 		if ( !$oathUser ) {
 			$uid = $this->centralIdLookupFactory->getLookup()
-				->centralIdFromLocalUser( $user );
+				->centralIdFromLocalUser( $user, CentralIdLookup::AUDIENCE_RAW );
 			$oathUser = new OATHUser( $user, $uid );
 			$this->loadKeysFromDatabase( $oathUser );
 
@@ -85,40 +62,24 @@ class OATHUserRepository implements LoggerAwareInterface {
 	/**
 	 * Persists the given OAuth key in the database.
 	 *
-	 * @param OATHUser $user
-	 * @param IModule $module
-	 * @param array $keyData
-	 * @param string $clientInfo
-	 * @return IAuthKey
+	 * @throws InvalidArgumentException
 	 */
 	public function createKey( OATHUser $user, IModule $module, array $keyData, string $clientInfo ): IAuthKey {
-		$otherEnabledModule = null;
-		foreach ( $user->getKeys() as $key ) {
-			if ( $key->getModule() !== $module->getName() ) {
-				$otherEnabledModule = $this->moduleRegistry->getModuleByKey( $key->getModule() );
-				break;
-			}
-		}
-		if ( $otherEnabledModule ) {
-			throw new ErrorPageError( 'errorpagetitle', 'oathauth-error-multiple-modules',
-				[ $module->getDisplayName(), $otherEnabledModule->getDisplayName() ] );
-		}
-
 		$uid = $user->getCentralId();
 		if ( !$uid ) {
 			throw new InvalidArgumentException( "Can't persist a key for user with no central ID available" );
 		}
 
 		$moduleId = $this->moduleRegistry->getModuleId( $module->getName() );
-
 		$dbw = $this->dbProvider->getPrimaryDatabase( 'virtual-oathauth' );
+		$createdTimestamp = $dbw->timestamp();
 		$dbw->newInsertQueryBuilder()
 			->insertInto( 'oathauth_devices' )
 			->row( [
 				'oad_user' => $uid,
 				'oad_type' => $moduleId,
 				'oad_data' => FormatJson::encode( $keyData ),
-				'oad_created' => $dbw->timestamp(),
+				'oad_created' => $createdTimestamp,
 			] )
 			->caller( __METHOD__ )
 			->execute();
@@ -126,7 +87,7 @@ class OATHUserRepository implements LoggerAwareInterface {
 
 		$hasExistingKey = $user->isTwoFactorAuthEnabled();
 
-		$key = $module->newKey( $keyData + [ 'id' => $id ] );
+		$key = $module->newKey( $keyData + [ 'id' => $id, 'created_timestamp' => $createdTimestamp ] );
 		$user->addKey( $key );
 
 		$this->logger->info( 'OATHAuth {oathtype} key {key} added for {user} from {clientip}', [
@@ -145,10 +106,6 @@ class OATHUserRepository implements LoggerAwareInterface {
 
 	/**
 	 * Saves an existing key in the database.
-	 *
-	 * @param OATHUser $user
-	 * @param IAuthKey $key
-	 * @return void
 	 */
 	public function updateKey( OATHUser $user, IAuthKey $key ): void {
 		$keyId = $key->getId();
@@ -170,11 +127,6 @@ class OATHUserRepository implements LoggerAwareInterface {
 		] );
 	}
 
-	/**
-	 * @param OATHUser $user
-	 * @param array $where Conditions to pass to DeleteQueryBuilder::where().
-	 * @return void
-	 */
 	private function removeSomeKeys( OATHUser $user, array $where ): void {
 		$this->dbProvider->getPrimaryDatabase( 'virtual-oathauth' )
 			->newDeleteQueryBuilder()
@@ -187,12 +139,6 @@ class OATHUserRepository implements LoggerAwareInterface {
 		$this->cache->delete( $user->getUser()->getName() );
 	}
 
-	/**
-	 * @param OATHUser $user
-	 * @param IAuthKey $key
-	 * @param string $clientInfo
-	 * @param bool $self Whether they disabled it themselves
-	 */
 	public function removeKey( OATHUser $user, IAuthKey $key, string $clientInfo, bool $self ) {
 		$keyId = $key->getId();
 		if ( !$keyId ) {
@@ -209,7 +155,9 @@ class OATHUserRepository implements LoggerAwareInterface {
 			'oathtype' => $key->getModule(),
 		] );
 
-		Manager::notifyDisabled( $user, $self );
+		if ( !$this->moduleRegistry->getModuleByKey( $key->getModule() )->isSpecial() ) {
+			Manager::notifyDisabled( $user, $self );
+		}
 	}
 
 	/**
@@ -233,7 +181,9 @@ class OATHUserRepository implements LoggerAwareInterface {
 			'oathtype' => $keyType,
 		] );
 
-		Manager::notifyDisabled( $user, $self );
+		if ( !$this->moduleRegistry->getModuleByKey( $keyType )->isSpecial() ) {
+			Manager::notifyDisabled( $user, $self );
+		}
 	}
 
 	/**
@@ -284,6 +234,7 @@ class OATHUserRepository implements LoggerAwareInterface {
 				'oad_id',
 				'oad_data',
 				'oat_name',
+				'oad_created',
 			] )
 			->from( 'oathauth_devices' )
 			->join( 'oathauth_types', null, [ 'oat_id = oad_type' ] )
@@ -291,13 +242,19 @@ class OATHUserRepository implements LoggerAwareInterface {
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
-		// Clear stored key list before loading keys
+		// Clear the stored key list before loading keys
 		$user->disable();
 
 		foreach ( $res as $row ) {
 			$module = $this->moduleRegistry->getModuleByKey( $row->oat_name );
 			$keyData = FormatJson::decode( $row->oad_data, true );
-			$user->addKey( $module->newKey( $keyData + [ 'id' => (int)$row->oad_id ] ) );
+
+			$user->addKey(
+				$module->newKey( $keyData + [
+					'id' => (int)$row->oad_id,
+					'created_timestamp' => $row->oad_created
+				] )
+			);
 		}
 	}
 }

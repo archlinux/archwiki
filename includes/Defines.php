@@ -2,21 +2,7 @@
 /**
  * A few constants that might be needed during LocalSettings.php.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -34,7 +20,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.44.2' );
+define( 'MW_VERSION', '1.45.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -251,6 +237,8 @@ define( 'CONTENT_MODEL_JAVASCRIPT', 'javascript' );
 define( 'CONTENT_MODEL_CSS', 'css' );
 define( 'CONTENT_MODEL_TEXT', 'text' );
 define( 'CONTENT_MODEL_JSON', 'json' );
+/** @since 1.45 */
+define( 'CONTENT_MODEL_VUE', 'vue' );
 define( 'CONTENT_MODEL_UNKNOWN', 'unknown' );
 /** @} */
 
@@ -267,6 +255,8 @@ define( 'CONTENT_FORMAT_WIKITEXT', 'text/x-wiki' );
 define( 'CONTENT_FORMAT_JAVASCRIPT', 'text/javascript' );
 /** For CSS pages */
 define( 'CONTENT_FORMAT_CSS', 'text/css' );
+/** For Vue pages */
+define( 'CONTENT_FORMAT_VUE', 'application/vue+xml' );
 /** For future use, e.g. with some plain HTML messages. */
 define( 'CONTENT_FORMAT_TEXT', 'text/plain' );
 /** For future use, e.g. with some plain HTML messages. */

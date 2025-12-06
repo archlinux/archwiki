@@ -1,7 +1,8 @@
 <?php
 
-namespace phpunit\unit\WikiTexVC\MMLNodes;
+namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLNodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtd;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtr;
 use MediaWikiUnitTestCase;
@@ -16,10 +17,10 @@ use MediaWikiUnitTestCase;
 class MMLmtrTest extends MediaWikiUnitTestCase {
 	public function testConstructor() {
 		$mtd = new MMLmtd( '', [] );
-		$mtr = new MMLmtr( '', [ 'mathvariant' => 'bold' ], $mtd, $mtd );
+		$mtr = new MMLmtr( '', [ 'mathvariant' => Variants::BOLD ], $mtd, $mtd );
 
 		$this->assertEquals( 'mtr', $mtr->getName() );
-		$this->assertEquals( [ 'mathvariant' => 'bold' ], $mtr->getAttributes() );
+		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mtr->getAttributes() );
 		$this->assertEquals( $mtr->getChildren(), [ $mtd, $mtd ] );
 	}
 }

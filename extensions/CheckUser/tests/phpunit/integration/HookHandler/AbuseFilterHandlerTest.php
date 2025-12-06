@@ -10,6 +10,7 @@ use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
+use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\Options\StaticUserOptionsLookup;
@@ -83,6 +84,43 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
 			] )
 			->assertFieldValue( 1 );
+	}
+
+	public function testProtectedVarsLogSplitIfVariablesContainUserUnnamedIp() {
+		$performer = $this->getTestSysop();
+		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
+		$protectedVarsAccessLogger->logViewProtectedVariableValue(
+			$performer->getUserIdentity(), '~2024-01', [ 'user_unnamed_ip', 'other_protected_var' ], (int)wfTimestamp()
+		);
+		DeferredUpdates::doUpdates();
+
+		// Assert that the log was created by AbuseFilter and did not go in full to CheckUser, as CheckUser
+		// is only interested in user_unnamed_ip variable.
+		$cuLogs = DatabaseLogEntry::newSelectQueryBuilder( $this->getDb() )
+			->where( [
+				'log_action' => 'af-view-protected-var-value',
+				'log_type' => TemporaryAccountLogger::LOG_TYPE,
+			] )
+			->fetchResultSet();
+		$this->assertSame( 1, $cuLogs->numRows() );
+		$cuLogEntry = DatabaseLogEntry::newFromRow( $cuLogs->current() );
+		$this->assertSame(
+			[ 'user_unnamed_ip' ],
+			$cuLogEntry->getParameters()['variables']
+		);
+
+		$afLogs = DatabaseLogEntry::newSelectQueryBuilder( $this->getDb() )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->fetchResultSet();
+		$this->assertSame( 1, $afLogs->numRows() );
+		$afLogEntry = DatabaseLogEntry::newFromRow( $afLogs->current() );
+		$this->assertSame(
+			[ 'other_protected_var' ],
+			$afLogEntry->getParameters()['variables']
+		);
 	}
 
 	public function testProtectedVarsAccessDebouncedLogging() {

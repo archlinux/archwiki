@@ -30,6 +30,8 @@ class ApiValidatePassword extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
+		$this->logFeatureUsage( 'action=validatepassword' );
+
 		$this->requirePostedParameters( [ 'password' ] );
 
 		if ( $params['user'] !== null ) {
@@ -71,10 +73,12 @@ class ApiValidatePassword extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $r );
 	}
 
+	/** @inheritDoc */
 	public function mustBePosted() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'password' => [
@@ -90,6 +94,7 @@ class ApiValidatePassword extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	protected function getExamplesMessages() {
 		return [
 			'action=validatepassword&password=foobar'
@@ -99,6 +104,7 @@ class ApiValidatePassword extends ApiBase {
 		];
 	}
 
+	/** @inheritDoc */
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Validatepassword';
 	}

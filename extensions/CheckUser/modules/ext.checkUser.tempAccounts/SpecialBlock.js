@@ -21,7 +21,7 @@ function onLoad() {
 		if ( mw.config.get( 'wgUseCodexSpecialBlock' ) ) {
 			mw.hook( 'codex.userlookup' ).add( ( components ) => {
 				// Codex and Vue are fully loaded at this point.
-				const ShowIPButton = require( './ShowIPButton.vue' );
+				const ShowIPButton = require( './components/ShowIPButton.vue' );
 				components.value.push( ShowIPButton );
 			} );
 			return;
@@ -80,7 +80,7 @@ function onTargetChange( blockTarget ) {
 			$( '#mw-htmlform-target' ).after( $container );
 
 			revealButton.once( 'click', () => {
-				performFullRevealRequest( blockTarget, [], [] ).then( ( response ) => {
+				performFullRevealRequest( blockTarget ).then( ( response ) => {
 					let message;
 					if ( response.ips.length ) {
 						// Wrap each IP in a link to Special:IPContributions
@@ -97,10 +97,10 @@ function onTargetChange( blockTarget ) {
 						).parse();
 						message = new OO.ui.HtmlSnippet( message );
 					} else {
-						message = mw.message(
+						message = mw.msg(
 							'checkuser-tempaccount-no-ip-results',
 							Math.round( mw.config.get( 'wgCUDMaxAge' ) / 86400 )
-						).text();
+						);
 					}
 					$container.empty().append( new OO.ui.LabelWidget( {
 						label: message
@@ -109,7 +109,7 @@ function onTargetChange( blockTarget ) {
 					$container.empty()
 						.addClass( 'ext-checkuser-tempaccount-reveal-ip' )
 						.append( new OO.ui.LabelWidget( {
-							label: mw.message( 'checkuser-tempaccount-reveal-ip-error' ).text()
+							label: mw.msg( 'checkuser-tempaccount-reveal-ip-error' )
 						} ).$element );
 				} );
 			} );

@@ -14,9 +14,6 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 
-/**
- * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
- */
 class Hooks implements
 	ResourceLoaderRegisterModulesHook
 {
@@ -25,10 +22,6 @@ class Hooks implements
 		$services = MediaWikiServices::getInstance();
 		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
 		$experimentalConfig = $veConfig->get( 'VisualEditorEditCheckLoadExperimental' );
-
-		if ( !$experimentalConfig ) {
-			return;
-		}
 
 		$experimentalDir = dirname( __DIR__ ) . '/modules/editchecks/experimental';
 		$files = array_diff( scandir( $experimentalDir ), [ '..', '.' ] );

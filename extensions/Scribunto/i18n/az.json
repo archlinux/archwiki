@@ -19,7 +19,7 @@
 	"scribunto-error-long": "Skript xətaları:\n\n$1",
 	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''Bu modulun sənədləşdirmə səhifəsi [[$1]] səhifəsində yaradıla bilər''",
-	"scribunto-doc-page-header": "''Bu [[$1]] modulunun sənədləşmə səhifəsidir.''",
+	"scribunto-doc-page-header": "'''Bu, [[$1]] modulunun sənədləşmə səhifəsidir.'''",
 	"scribunto-console-intro": "* Modul \"p\" adıyla aktivdir, yayımlanmamış dəyişikliklərlə birlikdə.\n* Bir ifadə olaraq qiymətləndirmək üçün \"=\" işarəsi ilə bir sətrin önünə keçin və ya print() istifadə edin. Cədvəllər üçün mw.logObject() istifadə edin.\n* Modul kodundan bu konsola mesaj göndərmək üçün mw.log() və mw.logObject() istifadə edin.",
 	"scribunto-console-title": "Test konsolu",
 	"scribunto-console-too-large": "Bu konsol sessiyası çox böyükdür. Zəhmət olmasa tarixçəni təmizləyin ya da modulun ölçüsünü azaldın.",

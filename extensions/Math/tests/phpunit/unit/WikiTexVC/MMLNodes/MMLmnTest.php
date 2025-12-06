@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLnodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
 use MediaWikiUnitTestCase;
 
@@ -14,7 +15,7 @@ use MediaWikiUnitTestCase;
  */
 class MMLmnTest extends MediaWikiUnitTestCase {
 	public function testConstructor() {
-		$mn = new MMLmn( '', [ 'mathvariant' => 'bold' ], '3' );
+		$mn = new MMLmn( '', [ 'mathvariant' => Variants::BOLD ], '3' );
 		$this->assertEquals( "mn", $mn->getName() );
 		$this->assertSame( "3", $mn->getText() );
 	}

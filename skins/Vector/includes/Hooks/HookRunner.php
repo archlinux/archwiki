@@ -8,10 +8,7 @@ use MediaWiki\HookContainer\HookContainer;
  * @internal
  */
 class HookRunner implements VectorSearchResourceLoaderConfigHook {
-	private HookContainer $hookContainer;
-
-	public function __construct( HookContainer $hookContainer ) {
-		$this->hookContainer = $hookContainer;
+	public function __construct( private readonly HookContainer $hookContainer ) {
 	}
 
 	/**

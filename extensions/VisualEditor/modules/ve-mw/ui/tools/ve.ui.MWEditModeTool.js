@@ -1,6 +1,11 @@
 /*!
  * VisualEditor MediaWiki UserInterface edit mode tool classes.
  *
+ * Used for making edit mode switcher tools within VE.
+ *
+ * When building a toolbar for use outside of VE you can use
+ * the mw.libs.ve.MWEditModeTool classes.
+ *
  * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
@@ -35,13 +40,19 @@ ve.ui.MWEditModeTool.prototype.getMode = function () {
  */
 ve.ui.MWEditModeTool.prototype.isModeAvailable = function ( mode ) {
 	const target = this.toolbar.getTarget();
-	const surface = target.getSurface();
-	const canSwitch = surface && !surface.getModel().isMultiUser();
-
-	// Source mode is always available
-	return canSwitch && (
-		mode === 'source' || target.isModeAvailable( mode )
-	);
+	if ( !target.getSurface() ) {
+		// Disable switching before surface is loaded
+		return false;
+	}
+	if ( target.getSurface().getModel().isMultiUser() ) {
+		// Disable switching in multi-user mode
+		return false;
+	}
+	if ( mode === 'source' ) {
+		// A fallback source mode should always available (e.g. EditPage.php)
+		return true;
+	}
+	return target.isModeAvailable( mode );
 };
 
 /**
@@ -69,17 +80,6 @@ OO.mixinClass( ve.ui.MWEditModeVisualTool, ve.ui.MWEditModeTool );
 ve.ui.MWEditModeVisualTool.prototype.switch = function () {
 	this.toolbar.getTarget().switchToVisualEditor();
 };
-
-/**
- * @inheritdoc
- */
-ve.ui.MWEditModeVisualTool.prototype.isModeAvailable = function ( mode ) {
-	// Adding a new section is not supported in visual mode
-	if ( mode === 'visual' && this.toolbar.getTarget().section === 'new' ) {
-		return false;
-	}
-	return ve.ui.MWEditModeVisualTool.super.prototype.isModeAvailable( mode );
-};
 ve.ui.toolFactory.register( ve.ui.MWEditModeVisualTool );
 
 /**
@@ -104,6 +104,6 @@ OO.mixinClass( ve.ui.MWEditModeSourceTool, ve.ui.MWEditModeTool );
  * @inheritdoc
  */
 ve.ui.MWEditModeSourceTool.prototype.switch = function () {
-	this.toolbar.getTarget().editSource();
+	this.toolbar.getTarget().switchToWikitextEditor();
 };
 ve.ui.toolFactory.register( ve.ui.MWEditModeSourceTool );

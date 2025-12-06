@@ -39,5 +39,6 @@
 	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>Nula rezulto korespondis al inquesto.</strong> Uzero \"$1\" havas nula videbla kontributado.",
 	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>Nula rezulto korespondas al inquesto.</strong> Vu povos trovar kontributadi se vu modifikos vua sercho-parametri.",
 	"prefs-checkuser-tempaccount": "Montrar IP-adresi de tempala konti",
-	"checkuser-tempaccount-enable-preference": "Kapabligar la montro di adresi IP por tempala konti"
+	"checkuser-tempaccount-enable-preference": "Kapabligar la montro di adresi IP por tempala konti",
+	"checkuser-userinfocard-active-blocks-from-all-wikis": "Aktiva blokusi de omna wiki: $1"
 }

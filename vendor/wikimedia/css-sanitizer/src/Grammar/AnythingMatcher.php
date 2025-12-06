@@ -17,7 +17,7 @@ use Wikimedia\CSS\Objects\Token;
  * Matcher that matches anything except bad strings, bad urls, and unmatched
  * left-paren, left-brace, or left-bracket.
  * @warning Be very careful using this!
- * @see https://www.w3.org/TR/2019/CR-css-syntax-3-20190716/#any-value
+ * @see https://www.w3.org/TR/2021/CRD-css-syntax-3-20211224/#any-value
  */
 class AnythingMatcher extends Matcher {
 
