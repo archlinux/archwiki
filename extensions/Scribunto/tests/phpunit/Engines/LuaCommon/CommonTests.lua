@@ -153,6 +153,10 @@ setmetatable( pairs_test_table, {
 	__ipairs = function () return 4, 5, 6, 'ignore' end,
 } )
 
+function test.unpackCount( t, i, j )
+	return select( '#', unpack( t, i, j ) )
+end
+
 function test.noLeaksViaPackageLoaded()
 	assert( package.loaded.debug == debug, "package.loaded.debug ~= debug" )
 	assert( package.loaded.string == string, "package.loaded.string ~= string" )
@@ -360,6 +364,51 @@ return testframework.getTestProvider( {
 	{ name = 'ipairs with __ipairs',
 		func = ipairs, args = { pairs_test_table },
 		expect = { 4, 5, 6 },
+	},
+
+	{ name = 'unpack empty table',
+		func = unpack, args = { {} },
+		expect = {}
+	},
+
+	{ name = 'unpack one value',
+		func = unpack, args = { { 1 } },
+		expect = { 1 }
+	},
+
+	{ name = 'unpack extra right',
+		func = test.unpackCount, args = { {}, 1, 3 },
+		expect = { 3 }
+	},
+
+	{ name = 'unpack extra left',
+		func = test.unpackCount, args = { {}, -2, 0 },
+		expect = { 3 }
+	},
+
+	{ name = 'unpack too many positive',
+		func = test.unpackCount, args = { {}, 1, 8000 },
+		expect = "too many results to unpack"
+	},
+
+	{ name = 'unpack too many negative',
+		func = test.unpackCount, args = { {}, -8000, 0 },
+		expect = "too many results to unpack"
+	},
+
+	{ name = 'unpack INT_MAX',
+		func = test.unpackCount, args = { {}, 0, 2^31 - 1 },
+		expect = "too many results to unpack"
+	},
+
+	{ name = 'unpack large float',
+		func = test.unpackCount, args = { {}, 0, 2^43 },
+		expect = "too many results to unpack"
+	},
+
+	{ name = 'unpack non-table',
+		func = test.unpackCount, args = { 0 },
+		expect = "bad argument #1 to 'old_unpack' (table expected, got number)"
 	},
 
 	{ name = 'package.loaded does not leak references to out-of-environment objects',

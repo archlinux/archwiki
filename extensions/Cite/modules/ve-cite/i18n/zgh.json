@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lhoussine AIT TAYFST"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "ⴰⴷⵍⵉⵙ",
+	"visualeditor-cite-tool-name-journal": "ⴰⵖⵎⵉⵙ",
+	"visualeditor-cite-tool-name-news": "ⵉⵏⵖⵎⵉⵙⵏ",
+	"visualeditor-cite-tool-name-web": "ⴰⵙⵉⵜ",
+	"cite-ve-citationneeded-button": "ⵔⵏⵓ ⴰⴱⴷⴰⵔ",
+	"cite-ve-dialog-reference-useexisting-tool": "ⵙⵙⵎⵔⵙ ⵜⵉⴽⴽⵍⵜ ⵢⴰⴹⵏⵉⵏ",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "ⵜⴰⵍⴳⴰⵎⵜ ⵏ ⵉⵙⴰⵖⵓⵍⵏ ⵉⵎⴰⵜⴰⵢⵏ",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "ⵉⴱⴷⴰⵔⵏ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "ⵜⴰⵍⴳⴰⵎⵜ ⵏ ⵉⵙⴰⵖⵓⵍⵏ",
+	"cite-ve-toolbar-group-label": "ⴱⴷⵔ",
+	"cite-ve-othergroup-item": "$1 ⴰⵙⴰⵖⵓⵍ"
+}

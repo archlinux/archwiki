@@ -19,7 +19,8 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Umherirrender",
-			"Xiplus"
+			"Xiplus",
+			"TMg"
 		]
 	},
 	"cite-desc": "{{desc|name=Cite|url=https://www.mediawiki.org/wiki/Extension:Cite}}",
@@ -35,7 +36,7 @@
 	"cite_error_ref_parameter_suggestion": "Generic error message shown when unknown, unsupported parameters are used in a <code>&lt;ref></code> tag. This can happen when there is a mistake in a parameter name.\n\nParameters:\n* $1 - First invalid parameter name\n* $2 - Suggested parameter name",
 	"cite_error_ref_follow_conflicts": "Error message shown when a ref tag with the <code>follow=\"...\"</code> feature, which is intended for sites like Wikisource, is used in a combination with another parameter that is not or cannot be supported.",
 	"cite_error_ref_no_input": "Error message shown when ref tags without names have no content. An example that cause this error is <code>&lt;ref></ref&gt;</code>",
-	"cite_error_references_duplicate_key": "Error message shown when multiple refs with same name exist but with different content",
+	"cite_error_references_duplicate_key": "Error message shown when multiple ref tags with the same name exist, but with different content.\n\nParameters:\n* $1 - Name of the reference",
 	"cite_error_references_invalid_parameters": "Generic error message shown when unknown, unsupported parameters are used in a <code>&lt;references></code> tag. This can happen when there is a mistake in a parameter name, or a parameter exclusive to the <code>&lt;ref></code> tag is used in a <code>&lt;references></code> tag. This and [[MediaWiki:Cite error ref too many keys]] form a pair and should be worded similarly.\n\nParameters:\n* $1 - First invalid parameter name\n* $2 - List of allowed parameter names",
 	"cite_error_references_no_text": "This error occurs when the tag <code>&lt;ref name=\"something\"/&gt;</code> is used with the name-option specified and no other tag specifies a cite-text for this name.\n\nParameters:\n* $1 - Name of the reference",
 	"cite_error_included_ref": "Error message shown if the <code>&lt;ref&gt;</code> tag is unbalanced, that means a <code>&lt;ref&gt;</code> is not followed by a <code>&lt;/ref&gt;</code>",
@@ -44,7 +45,7 @@
 	"cite_error_references_group_mismatch": "Error message shown when a <code>&lt;ref></code> has a different group than its enclosing <code>&lt;references></code>.\n\nParameters:\n* $1 - the value of the <code>group</code> attribute on the inner <code>&lt;ref&gt;</code>",
 	"cite_error_references_missing_key": "Error message shown when using something like\n<pre>\n<references>\n<ref name=\"refname\">...</ref>\n</references>\n</pre>\nand the reference <code>&lt;ref name=\"refname\"/&gt;</code> is not used anywhere in the page text.\n\nParameters:\n* $1 - the name of the unused reference (in the example above, “refname”)",
 	"cite_error_references_no_key": "Error message shown when a <code>&lt;ref&gt;</code> inside <code>&lt;references&gt;</code> does not have a <code>name</code> attribute.",
-	"cite_error_empty_references_define": "Error message shown when there is a <code>&lt;ref&gt;</code> inside <code>&lt;references&gt;</code>, but it does not have any content, e.g.\n<pre>\n<references>\n<ref name=\"foo\" />\n</references>\n</pre>\nParameters:\n* $1 - the <code><nowiki>name</nowiki></code> of the erroneous <code>&lt;ref&gt;</code> (in the above example, “foo”)",
+	"cite_error_empty_references_define": "Error message shown when there is a ref tag inside <code>&lt;references></code>, but it does not have any content, e.g.\n<pre>\n<references>\n<ref name=\"foo\" />\n</references>\n</pre>\nParameters:\n* $1 - The name of the erroneous ref tag (in the above example, “foo”)\n* $2 - Group name the ref tag belongs to",
 	"cite-tracking-category-cite-error": "{{tracking category name}}\nTracking category name.",
 	"cite-tracking-category-cite-error-desc": "Tracking category description.",
 	"cite-tracking-category-cite-diffing-error": "{{tracking category name}}\nTracking category name for pages with reference errors that trigger visual diffs.",
@@ -83,8 +84,8 @@
 	"cite-wikieditor-help-content-sub-reference-description": "Row header in WikiEditor's reference help section.\n\n{{doc-jqueryMsg}}",
 	"cite-wikieditor-help-content-showreferences-description": "Row header in WikiEditor's reference help section.\n\n{{doc-jqueryMsg}}",
 	"cite-wikieditor-help-content-reference-example-text1": "Short sample text with a reference.\n\nParameters:\n* $1 - a &lt;ref&gt; tag\n\n{{doc-jqueryMsg}}",
-	"cite-wikieditor-help-content-reference-example-text2": "Short sample of something that can be put between &lt;ref&gt; tags.\n\nParameters:\n* $1 - a URL\n\n{{doc-jqueryMsg}}",
-	"cite-wikieditor-help-content-reference-example-text3": "Short sample of external link syntax.\n\nParameters:\n* $1 - a URL\n\n{{doc-jqueryMsg}}",
+	"cite-wikieditor-help-content-reference-example-text2": "Short sample of some wikitext that can be put inside a ref tag.\n\nParameters:\n* $1 - A short example URL\n\n{{doc-jqueryMsg}}",
+	"cite-wikieditor-help-content-reference-example-text3": "Short sample of some wikitext that can be put inside a ref tag.\n\nParameters:\n* $1 - A short example URL\n\n{{doc-jqueryMsg}}",
 	"cite-wikieditor-help-content-reference-example-ref-id": "{{optional}}\nUsed as an example of a name for a reference.",
 	"cite-wikieditor-help-content-reference-example-extra-details": "Used as an example for additional footnote content within a <ref> tag",
 	"cite-wikieditor-help-content-reference-example-ref-normal": "{{ignored}}",

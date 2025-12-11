@@ -1,8 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amara-Amaziɣ"
+			"Amara-Amaziɣ",
+			"Lhoussine AIT TAYFST"
 		]
 	},
-	"cite_error": "ⵜⴰⵣⴳⵍⵜ ⵏ ⵓⴱⴷⴰⵔ: $1"
+	"cite_error": "ⵜⴰⵣⴳⵍⵜ ⵏ ⵓⴱⴷⴰⵔ: $1",
+	"cite-reference-previews-reference": "ⴰⵙⴰⵖⵓⵍ",
+	"cite-reference-previews-book": "ⴰⵙⴰⵖⵓⵍ ⵏ ⵓⴷⵍⵉⵙ",
+	"cite-reference-previews-journal": "ⴰⵙⴰⵖⵓⵍ ⵏ ⵓⵖⵎⵉⵙ",
+	"cite-reference-previews-news": "ⴰⵙⴰⵖⵓⵍ ⵏ ⵉⵏⵖⵎⵉⵙⵏ",
+	"cite-wikieditor-help-page-references": "ⵉⵙⴰⵖⵓⵍⵏ",
+	"cite-wikieditor-help-content-reference-description": "ⴰⵙⴰⵖⵓⵍ",
+	"cite-wikieditor-help-content-showreferences-description": "ⵙⴽⵏ ⵉⵙⴰⵖⵓⵍⵏ",
+	"communityconfiguration-cite-title": "ⴱⴷⵔ",
+	"cite-configuration-submit": "ⵃⴹⵓ ⵉⵙⵏⴼⴰⵍ"
 }

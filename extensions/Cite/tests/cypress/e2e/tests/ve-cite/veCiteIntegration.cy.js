@@ -1,3 +1,4 @@
+require( '@cypress/skip-test/support' );
 import * as helper from './../../utils/functions.helper.js';
 import * as veHelper from './../../utils/ve.helper.js';
 
@@ -15,6 +16,13 @@ let usesCitoid;
 
 describe( 'Visual Editor Cite Integration', () => {
 	before( () => {
+		// Skip tests when VisualEditor is not loaded
+		cy.visit( '/index.php' );
+		helper.waitForMWLoader();
+		cy.window().then( async ( win ) => {
+			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		} );
+
 		helper.editPage( title, wikiText );
 	} );
 

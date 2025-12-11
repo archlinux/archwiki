@@ -35,6 +35,29 @@ do
 	end
 end
 
+-- Avoid segfault in unpack (T408135)
+-- Necessary before Lua 5.2.3
+do
+	local old_unpack = unpack
+	unpack = function ( t, i, j )
+		if type( t ) == "table" then
+			local ival, jval = i, j
+			local max_stack = 8000
+			local max_int = 2^31 - 1
+			if ival == nil then
+				ival = 1
+			end
+			if jval == nil then
+				jval = #t
+			end
+			if  math.abs( ival ) > max_int or math.abs( jval ) > max_int or jval - ival > max_stack then
+				error( "too many results to unpack", 2 )
+			end
+		end
+		return old_unpack( t, i, j )
+	end
+end
+
 --- Do a "deep copy" of a table or other value.
 do
 	-- Declare global variables as locals to reduce access times

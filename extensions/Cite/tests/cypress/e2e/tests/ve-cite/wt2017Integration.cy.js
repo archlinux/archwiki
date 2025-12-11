@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 
+require( '@cypress/skip-test/support' );
 import * as helper from './../../utils/functions.helper.js';
 import * as veHelper from './../../utils/ve.helper.js';
 
@@ -12,6 +13,12 @@ let usesCitoid;
 describe( 'Visual Editor Wt 2017 Cite Integration', () => {
 	before( () => {
 		helper.loginAsAdmin();
+
+		// Skip tests when VisualEditor is not loaded
+		helper.waitForMWLoader();
+		cy.window().then( async ( win ) => {
+			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		} );
 
 		helper.editPage( 'MediaWiki:Cite-tool-definition.json', JSON.stringify( [
 			{

@@ -1,3 +1,4 @@
+require( '@cypress/skip-test/support' );
 import * as helper from './../../utils/functions.helper.js';
 import * as veHelper from './../../utils/ve.helper.js';
 
@@ -16,6 +17,12 @@ describe( 'Re-using refs in Visual Editor', () => {
 	before( () => {
 		cy.clearCookies();
 		helper.loginAsAdmin();
+
+		// Skip tests when VisualEditor is not loaded
+		helper.waitForMWLoader();
+		cy.window().then( async ( win ) => {
+			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		} );
 
 		helper.editPage( 'MediaWiki:Cite-tool-definition.json', JSON.stringify( [
 			{

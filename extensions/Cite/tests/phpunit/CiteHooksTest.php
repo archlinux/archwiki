@@ -69,8 +69,10 @@ class CiteHooksTest extends \MediaWikiIntegrationTestCase {
 
 		if ( $enabled ) {
 			$this->assertArrayHasKey( 'ext.cite.wikiEditor', $rlModules );
+			$this->assertArrayHasKey( 'ext.cite.visualEditor', $rlModules );
 		} else {
 			$this->assertArrayNotHasKey( 'ext.cite.wikiEditor', $rlModules );
+			$this->assertArrayNotHasKey( 'ext.cite.visualEditor', $rlModules );
 		}
 	}
 
