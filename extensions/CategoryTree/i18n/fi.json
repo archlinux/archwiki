@@ -32,7 +32,7 @@
 	"categorytree-num-files": "$1 T",
 	"categorytree-num-empty": "tyhjä",
 	"categorytree-load": "näytä",
-	"categorytree-loading": "etsitään",
+	"categorytree-loading": "ladataan…",
 	"categorytree-nothing-found": "ei alaluokkia",
 	"categorytree-no-subcategories": "ei alaluokkia",
 	"categorytree-no-parent-categories": "ei yläluokkia",

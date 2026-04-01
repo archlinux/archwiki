@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samoasambia"
+		]
+	},
+	"apihelp-query+gadgetcategories-summary": "Antaa listan pienoisohjelmien osioista.",
+	"apihelp-query+gadgetcategories-param-names": "Haettavien osioiden nimet.",
+	"apihelp-query+gadgetcategories-example-1": "Hakee listan olemassa olevista pienoisohjelmaosioista"
+}

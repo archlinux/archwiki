@@ -6,11 +6,13 @@
 			"Lejonel",
 			"Mjälten",
 			"Sabelöga",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Hämta en lista med lint-fel",
 	"apihelp-query+linterrors-param-categories": "Kategorier över lint-fel",
+	"apihelp-query+linterrors-param-invisible-categories": "Osynliga kategorier av lint-fel",
 	"apihelp-query+linterrors-param-limit": "Antal resultat att fråga",
 	"apihelp-query+linterrors-param-from": "Link-ID att börja fråga från",
 	"apihelp-query+linterrors-param-namespace": "Inkludera endast lint-fel från specificerade namnrymder",

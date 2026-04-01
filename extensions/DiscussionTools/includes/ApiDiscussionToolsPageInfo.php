@@ -253,7 +253,10 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 						// This probably means that there's a wrapping node
 						// e.g. <div>foo\n==heading==\nbar</div>
 						$endOffset += $endContainer->length;
-					} elseif ( $endContainer instanceof Element && $endContainer->tagName === 'section' ) {
+					} elseif (
+						$endContainer instanceof Element &&
+						strtolower( $endContainer->tagName ) === 'section'
+					) {
 						// if we're in sections, make sure we're selecting the
 						// end of the previous section
 						$endOffset = $endContainer->childNodes->length;

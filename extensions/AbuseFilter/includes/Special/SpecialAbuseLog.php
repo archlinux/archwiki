@@ -32,7 +32,6 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Registration\ExtensionRegistry;
-use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -1219,13 +1218,15 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 		if ( !$row->afl_rev_id ) {
 			return self::VISIBILITY_VISIBLE;
 		}
-		$revRec = MediaWikiServices::getInstance()
+		$vis = (int)MediaWikiServices::getInstance()
 			->getRevisionLookup()
-			->getRevisionById( (int)$row->afl_rev_id );
-		if ( !$revRec || $revRec->getVisibility() === 0 ) {
+			->getRevisionById( (int)$row->afl_rev_id )
+			?->getVisibility();
+		if ( $vis === 0 ) {
 			return self::VISIBILITY_VISIBLE;
 		}
-		return $revRec->audienceCan( RevisionRecord::SUPPRESSED_ALL, RevisionRecord::FOR_THIS_USER, $authority )
+
+		return AbuseFilterPermissionManager::hasRevisionAccess( $vis, $authority )
 			? self::VISIBILITY_VISIBLE
 			: self::VISIBILITY_HIDDEN_IMPLICIT;
 	}

@@ -14,5 +14,10 @@
 	"categorytree-load": "undan",
 	"categorytree-loading": "ngundan...",
 	"categorytree-nothing-found": "nadai utai ditemu",
-	"categorytree-no-subcategories": "nadai subkategori"
+	"categorytree-no-subcategories": "nadai subkategori",
+	"categorytree-no-parent-categories": "nadai kategori indu",
+	"categorytree-no-pages": "nadai lambar tauka subkategori",
+	"categorytree-not-found": "Kategori <i>$1</i> enda ditemu",
+	"categorytree-error": "Penanggul ngundan data.",
+	"categorytree-retry": "Minta anti sekejap lalu uji baru."
 }

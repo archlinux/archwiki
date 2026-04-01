@@ -39,5 +39,9 @@
 	"categorytree-no-pages": "कोई पृष्ठ या उपश्रेणीयाँ नहीं हैं",
 	"categorytree-not-found": "श्रेणी <i>$1</i> नहीं मिली",
 	"categorytree-error": "डाटा लोड करने में समस्या।",
-	"categorytree-retry": "कृपया थोड़े समय पश्चात पुनः यत्न करें।"
+	"categorytree-retry": "कृपया थोड़े समय पश्चात पुनः यत्न करें।",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: <code>onlyroot</code> पैरामीटर पदावनत है। इसकी जगह <code>depth=\"0\"</code> का प्रयोग करें।",
+	"categorytree-deprecation-warning": "'''चेतावनी:''' यह पृष्ठ पदावनत पैरामीटर के साथ <code>&lt;categorytree&gt;</code> का उपयोग करता है।",
+	"categorytree-deprecation-category": "पदावनत categorytree पैरामीटर्स का उपयोग करने वाले पृष्ठ",
+	"categorytree-deprecation-category-desc": "पृष्ठ <code>onlyroot</code> जैसे पदावनत पैरामीटर्स का उपयोग करता है।"
 }

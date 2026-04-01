@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Stefan2255"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-modul för att bekräfta redigering",
+	"hcaptcha-addurl": "Din redigering innehåller nya externa länkar. För att skydda wikin mot automatisk spam ber vi dig vänligen att lösa följande hCaptcha:",
+	"hcaptcha-badlogin": "För att skydda wikin mot automatisk lösenordsknäckning ber vi dig vänligen att lösa följande hCaptcha:",
+	"hcaptcha-createaccount-fail": "Det verkar som att du inte har löst hCaptcha-problemet.",
+	"hcaptcha-create": "För att skydda wikin mot automatiserad sidgenerering ber vi dig vänligen att lösa följande hCaptcha:",
+	"hcaptcha-help": "Lös en hCaptcha-utmaning och returnera svarsvärdet som captchaWord.",
+	"hcaptcha-privacy-policy": "Denna webbplats är skyddad av hCaptcha och dess [https://www.hcaptcha.com/privacy Sekretesspolicy] och [https://www.hcaptcha.com/terms Användarvillkor] gäller.",
+	"hcaptcha-challenge-closed": "För att fortsätta måste du fylla i captcha.",
+	"hcaptcha-challenge-expired": "Tidsgränsen för att slutföra captcha-frågan har löpt ut. Försök igen.",
+	"hcaptcha-generic-error": "Det uppstod ett fel när formuläret lästes in. Du måste ladda sidan om för att fortsätta.",
+	"hcaptcha-loading-indicator-label": "Vänta medan vi laddar formuläret...",
+	"hcaptcha-missing-token": "Vi är inte helt klara med att ladda formuläret. Vänta några sekunder och försök sedan igen.",
+	"hcaptcha-noscript": "JavaScript krävs för att fortsätta. Aktivera JavaScript i webbläsarinställningarna och uppdatera sidan."
+}

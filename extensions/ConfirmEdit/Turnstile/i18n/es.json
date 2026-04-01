@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Danielyepezgarces"
+		]
+	},
+	"turnstile-edit": "Para proteger la wiki contra el spam de edición automática, te pedimos que resuelvas el siguiente CAPTCHA:",
+	"turnstile-badlogin": "Para proteger la wiki contra el descifrado automatizado de contraseñas, te pedimos que resuelvas el siguiente CAPTCHA:",
+	"turnstile-createaccount": "Para proteger la wiki contra la creación automática de cuentas, le rogamos que resuelva el siguiente hCaptcha:",
+	"turnstile-createaccount-fail": "Parece que no has resuelto el CAPTCHA."
+}

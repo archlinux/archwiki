@@ -17,15 +17,18 @@
 	"cite-ve-dialog-reference-options-group-label": "ဤအုပ်စုကိုအသုံးပြုရန်",
 	"cite-ve-dialog-reference-options-group-placeholder": "ယေဘုယျကိုးကားချက်များ",
 	"cite-ve-dialog-reference-options-section": "ရွေးပိုင်ခွင့်",
+	"cite-ve-dialog-reference-placeholder": "သင်၏ ကိုးကားကို ဤနေရာတွင် ရေးသားပါ သို့မဟုတ် ကူးထည့်ပါ၊ သို့မဟုတ် အကိုးအကား တမ်းပလိတ်တစ်ခုကို ထည့်သွင်းပါ။",
 	"cite-ve-dialog-reference-title": "ကိုးကား",
 	"cite-ve-dialog-reference-useexisting-tool": "ပြန်လည်သုံး",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "ယေဘုယျကိုးကားချက်များ၏ စာရင်း",
 	"cite-ve-dialog-referenceslist-title": "အကိုးအကား စာရင်း",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "သတင်းအချက်အလက် ရင်းမြစ်များကို ထည့်သွင်းခြင်းဖြင့် သင်၏ အကြောင်းအရာများအား ပိုမိုကောင်းမွန်စေရန် ပြုလုပ်ပါ။ စာအုပ်များ၊ သတင်းစာများနှင့် ဝဘ်ဆိုက်များမှ ကိုးကားနိုင်သည်။",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "ကိုးကားချက်များ",
 	"cite-ve-dialogbutton-reference-full-label": "အခြေခံ",
 	"cite-ve-dialogbutton-reference-title": "ရည်ညွှန်း",
 	"cite-ve-dialogbutton-reference-tooltip": "အခြေခံ",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "အကိုးအကား စာရင်း",
+	"cite-ve-reference-input-placeholder": "လက်ရှိ ကိုးကားချက်များအတွင်း ရှာဖွေရန်",
 	"cite-ve-toolbar-group-label": "ကိုးကားရန်",
 	"cite-ve-othergroup-item": "$1 ကိုးကား"
 }

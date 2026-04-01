@@ -2,14 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Quintino Lopes Castro Tavares",
-			"Waldyrious"
+			"Waldyrious",
+			"Letra.berdi",
+			"GrogeXaKaba"
 		]
 	},
 	"citethispage": "Sita es pájina",
-	"citethispage-desc": "Ta jera un pájina spesial di [[Special:CiteThisPage|sitason]] i un ligason pa el na lista di feramentas",
+	"citethispage-desc": "Ta kirsenta un pájina spisial di [[Special:CiteThisPage|sitason]] i un ligason na lista di faraméntas",
 	"citethispage-link": "Sita es pájina",
-	"tooltip-citethispage": "Informason sobri modu ki bu debi sita es pájina",
+	"tooltip-citethispage": "Nfurmason sobri kumó bu debi sita es pájina",
 	"citethispage-change-submit": "Sita",
 	"citethispage-change-target": "Pájina:",
-	"citethispage-badrevision": "Eru: ka atxadu ninhun verson di pájina \"$1\" ku ID $2."
+	"citethispage-badrevision": "Éru: ka foi pusívi utxa nun ravizon pa pájina \"$1\" ku idintifikador $2."
 }

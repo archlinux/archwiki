@@ -5,7 +5,8 @@
 			"Gazeb",
 			"Gramo Džukić",
 			"KHMELNYTSKYIA",
-			"Tkalyn"
+			"Tkalyn",
+			"Cevioch"
 		]
 	},
 	"skinname-vector": "Старый Вектор (2010)",
@@ -42,5 +43,6 @@
 	"vector-toc-menu-tooltip": "Содержай",
 	"vector-toc-collapsible-button-label": "Указати/спрятати содержай",
 	"vector-site-nav-label": "Сайт",
-	"vector-main-menu-label": "Головне меню"
+	"vector-main-menu-label": "Головне меню",
+	"vector-page-tools-actions-label": "Дїї"
 }

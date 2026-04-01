@@ -32,7 +32,9 @@
 			"Vitorvicentevalente",
 			"Waldir",
 			"Waldyrious",
-			"BraunOBruno"
+			"BraunOBruno",
+			"Maria Manuela Silva",
+			"MrNinja"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas às edições",
@@ -435,6 +437,7 @@
 	"abusefilter-edit-builder-vars-new-wikitext": "Texto wiki novo da página, após a edição ($1)",
 	"abusefilter-edit-builder-vars-added-links": "Hiperligações externas adicionadas na edição de ($1)",
 	"abusefilter-edit-builder-vars-removed-links": "Hiperligações externas removidas na edição de ($1)",
+	"abusefilter-edit-builder-vars-new-links": "Ligações externas adicionadas na edição ($1)",
 	"abusefilter-edit-builder-vars-old-links": "Hiperligações externas na página, antes da edição de ($1)",
 	"abusefilter-edit-builder-vars-new-pst": "Texto wiki novo, transformado antes da gravação ($1)",
 	"abusefilter-edit-builder-vars-diff-pst": "Diferenças unificadas das alterações nesta edição, transformadas antes da gravação ($1)",

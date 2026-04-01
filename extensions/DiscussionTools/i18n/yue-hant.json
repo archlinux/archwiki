@@ -7,7 +7,8 @@
 			"SCP-2000",
 			"Winston Sung",
 			"Woytecr",
-			"Yueman"
+			"Yueman",
+			"Al12si"
 		]
 	},
 	"discussiontools": "傾嘢工具",
@@ -87,11 +88,11 @@
 	"discussiontools-notification-removed-topic-disabled-title": "當主題被歸檔或者剷走之後，{{GENDER:|你}}就唔會再收到通知。",
 	"discussiontools-notification-removed-topic-disabled-body": "你可以喺[[Special:Preferences#mw-prefsection-echo-echosubscriptions|你嘅喜好設定]]入面改呢個。",
 	"discussiontools-notification-topic-hidden": "（主題已經剷走咗）",
-	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|回覆}}喺\"<strong>$4</strong>\"入面。",
+	"discussiontools-notification-subscribed-new-comment-header": "$1 喺 ｢<strong>$4</strong>｣ 回覆咗。",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "「<strong>$3</strong>」有{{PLURAL:$1|$1個新回覆|100=99+個新回覆}}。",
 	"discussiontools-notification-subscribed-new-comment-view": "睇留言",
 	"discussiontools-pageframe-latestcomment": "最新留言：$1由$2喺主題$3度留言",
-	"discussiontools-pageframe-latestcomment-notopic": "最新嘅評論：$1乘$2",
+	"discussiontools-pageframe-latestcomment-notopic": "最新留言：$1由$2留言",
 	"discussiontools-pagetitle-newtopic": "用$1開始新主題",
 	"discussiontools-pagetitle-reply": "回覆緊$1",
 	"discussiontools-permalink-comment-copied": "連結去留言複製咗去剪貼簿。",

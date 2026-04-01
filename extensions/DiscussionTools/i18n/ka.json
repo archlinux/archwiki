@@ -96,7 +96,6 @@
 	"discussiontools-replywidget-terms-click": "„$1“-ზე დაჭერით, თქვენ ეთანხმებით გამოყენების პირობებს ამ ვიკისათვის.",
 	"discussiontools-replywidget-transcluded": "თქვენი კომენტარი შენახულია [[$1]]-ში.",
 	"discussiontools-replywidget-watchthis": "დაამატეთ ეს გვერდი თქვენი [[Special:Watchlist|კონტროლის სიაში]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-heading-missing": "ეს თემა ვერ მოიძებნა. ის შეიძლება წაიშალა ან გადავიდა სხვა გვერდზე.",
 	"discussiontools-topicheader-authorcount": "დისკუსიაში მონაწილეობს $1 {{PLURAL:$1|ადამიანი}}",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|კომენტარი}}",

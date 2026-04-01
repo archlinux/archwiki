@@ -117,6 +117,7 @@ class StyleRuleSanitizer extends RuleSanitizer {
 	/** @inheritDoc */
 	protected function doSanitize( CSSObject $object ) {
 		if ( !$object instanceof QualifiedRule ) {
+			'@phan-var CSSObject $object';
 			$this->sanitizationError( 'expected-qualified-rule', $object );
 			return null;
 		}
@@ -173,6 +174,7 @@ class StyleRuleSanitizer extends RuleSanitizer {
 
 		$this->sanitizeDeclarationBlock( $ret->getBlock(), $this->propertySanitizer );
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 

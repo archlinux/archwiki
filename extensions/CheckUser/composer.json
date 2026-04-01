@@ -20,7 +20,7 @@
 		"phpcs": "phpcs -sp --cache"
 	},
 	"require": {
-		"firebase/php-jwt": "^6.10.0"
+		"firebase/php-jwt": "^7.0.2"
 	},
 	"config": {
 		"allow-plugins": {

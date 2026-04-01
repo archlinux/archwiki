@@ -28,7 +28,8 @@
 			"Wladek92",
 			"Wyz",
 			"Zetud",
-			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
+			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ",
+			"Escargot bleu"
 		]
 	},
 	"cite-desc": "Ajoute les balises <code>&lt;ref[ name=id]&gt;</code> et <code>&lt;references/&gt;</code> pour les citations",
@@ -58,7 +59,7 @@
 	"cite-tracking-category-cite-error-desc": "Les pages dans cette catégorie ont des erreurs dans l’utilisation des balises de référence.",
 	"cite-tracking-category-cite-diffing-error": "Pages avec des erreurs de référence qui déclenchent des différences visuelles",
 	"cite-tracking-category-cite-diffing-error-desc": "Les pages de cette catégorie contiennent des erreurs dans l'utilisation des balises de référence et ces erreurs ne sont pas rendues de la même manière dans l'analyseur hérité et dans Parsoid.",
-	"cite-tracking-category-ref-details": "Pages qui utilisent des sous-références",
+	"cite-tracking-category-ref-details": "Page utilisant des références ayant des précisions",
 	"cite-tracking-category-ref-details-desc": "Les pages de cette catégorie utilisent l'attribut « détails » de la balise &lt;ref&gt;.",
 	"cite-reference-previews-reference": "Référence",
 	"cite-reference-previews-book": "Référence de livre",

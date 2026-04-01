@@ -6,16 +6,17 @@
 			"Renessaince",
 			"Wizardist",
 			"Чаховіч Уладзіслаў",
-			"아라"
+			"아라",
+			"Ucukor"
 		]
 	},
-	"tag-visualeditor": "Візуальная праўка",
-	"tag-visualeditor-description": "Праўка зробленая празь [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальны рэдактар]]",
-	"tag-visualeditor-needcheck": "Візуальная праўка: праверыць",
-	"tag-visualeditor-needcheck-description": "Праўка была зроблена [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальным рэдактарам]], і сыстэма заўважыла патэнцыйна непажаданыя зьмены ў вікітэксьце.",
+	"tag-visualeditor": "Візуальны рэдактар",
+	"tag-visualeditor-description": "Рэдагаваньне зробленае празь [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальны рэдактар]]",
+	"tag-visualeditor-needcheck": "Візуальны рэдактар: Праверыць",
+	"tag-visualeditor-needcheck-description": "Рэдагаваньне было зробленае [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальным рэдактарам]], і сыстэма заўважыла патэнцыйна непажаданыя зьмены ў вікітэксьце.",
 	"tag-visualeditor-wikitext": "рэдактар вікітэксту-2017",
 	"tag-visualeditor-wikitext-description": "Рэдагаваньне зробленае з дапамогай рэдактара вікітэксту-2017",
-	"tag-visualeditor-switched": "Візуальная праўка: пераключана",
+	"tag-visualeditor-switched": "Візуальны рэдактар: Пералучана",
 	"tag-visualeditor-switched-description": "Удзельнік пачаў рэдагаваць з дапамогай візуальнага рэдактару, а потым пераключыўся на рэдактар вікітэксту.",
 	"visualeditor-feedback-link": "Project:Візуальны рэдактар/Водгукі",
 	"visualeditor-feedback-tool": "Пакінуць водгук пра гэтае праграмнае забесьпячэньне",

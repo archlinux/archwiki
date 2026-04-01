@@ -2,13 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Peter57770",
-			"R12ntech"
+			"R12ntech",
+			"AmazingJus",
+			"Tuwewanzi"
 		]
 	},
+	"categorytree-portlet": "Očháže tóna",
 	"categorytree-category": "Očháže:",
-	"categorytree-expand": "Yutȟáŋka yo/ye",
+	"categorytree-mode-all": "oyúblaye iyúha",
+	"categorytree-collapse": "yučísčila {{GENDER:|yo|ye|yo/ye}}",
+	"categorytree-expand": "yutȟáŋka {{GENDER:|yo|ye|yo/ye}}",
 	"categorytree-member-counts": "{{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, na {{PLURAL:$3|1 file|$3 files}} yukȟé",
 	"categorytree-num-categories": "$1 O",
 	"categorytree-num-pages": "$1 Oy",
-	"categorytree-num-files": "$1 O"
+	"categorytree-num-files": "$1 W",
+	"categorytree-num-empty": "háeče",
+	"categorytree-load": "yutȟáŋka"
 }

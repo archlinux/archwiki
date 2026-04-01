@@ -4,7 +4,8 @@
 			"Cgboeree",
 			"Chabi",
 			"Elefentiste",
-			"Katxis"
+			"Katxis",
+			"Earldridge Jazzed Pineda"
 		]
 	},
 	"vector-languages": "Linguas",
@@ -31,10 +32,14 @@
 	"skin-theme-day-label": "Pal",
 	"skin-theme-night-label": "Oscur",
 	"skin-theme-os-label": "Automata",
+	"skin-theme-exclusion-notice": "Esta paje es sempre en moda pal.",
+	"vector-toc-label": "Contenidas",
 	"vector-toc-beginning": "Comensa",
+	"vector-anon-user-menu-pages": "Pajes per editores desautenticida",
 	"vector-main-menu-label": "Menu xef",
 	"vector-feature-custom-font-size-exclusion-notice": "Esta paje usa sempre tipo peti",
 	"vector-page-tools-label": "Utiles",
 	"vector-page-tools-general-label": "Jeneral",
+	"vector-page-tools-actions-label": "Atas",
 	"vector-unpin-element-label": "asconde"
 }

@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kirsan"
+			"Kirsan",
+			"Orbitminis"
 		]
 	},
 	"mobile-frontend-editor-edit": "Editëjë",
 	"mobile-frontend-editor-redlink-create": "Ùsadzë starnã",
 	"mobile-frontend-history": "Òbaczë historijã edicëji ti starnë.",
 	"mobile-frontend-home-button": "Przédnô",
-	"mobile-frontend-language-article-heading": "Przeczëtôj w jinszim jãzëkù",
+	"mobile-frontend-language-article-heading": "Jãzëk",
 	"mobile-frontend-languages-not-available": "Na starna nie je dostãpnô w jinëch jãzëkach.",
 	"mobile-frontend-main-menu-button-tooltip": "Òtemkni przédné menu",
 	"mobile-frontend-main-menu-contributions": "Mój wkłôd",
@@ -26,5 +27,6 @@
 	"mobile-frontend-talk-back-to-projectpage": "Nazôd do starnë ùdbë \"$1\".",
 	"mobile-frontend-talk-back-to-userpage": "Nazôd do starnë brëkòwnika òd \"{{GENDER:$1|$1}}\".",
 	"mobile-frontend-user-page-contributions": "Mój wkłôd",
-	"mobile-frontend-user-page-talk": "Diskùsëjô"
+	"mobile-frontend-user-page-talk": "Diskùsëjô",
+	"minerva-page-actions-overflow": "Wiãcy"
 }

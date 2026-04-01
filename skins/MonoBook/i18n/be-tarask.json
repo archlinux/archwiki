@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Red Winged Duck",
-			"Renessaince"
+			"Renessaince",
+			"Ucukor"
 		]
 	},
 	"skinname-monobook": "Монакніга",
@@ -14,8 +15,8 @@
 	"monobook-more-actions": "Болей",
 	"cactions-mobile": "Дзеяньні на старонцы",
 	"monobook-cactions-label": "Дзеяньні на старонцы",
-	"monobook-notifications-link": "Паведамленьні ($1)",
-	"monobook-notifications-link-none": "Паведамленьні",
+	"monobook-notifications-link": "Абвесткі ($1)",
+	"monobook-notifications-link-none": "Абвесткі",
 	"monobook-view-history": "Гісторыя",
 	"monobook-action-undelete": "Аднавіць $1 {{PLURAL:$1|рэдагаваньне|рэдагаваньні|рэдагаваньняў}}"
 }

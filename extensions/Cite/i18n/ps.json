@@ -10,7 +10,9 @@
 	},
 	"cite-desc": "د اخځ کولو لپاره <code>&lt;ref&gt;</code> او <code>&lt;references&gt;</code> نښلنونه ورگډوي.",
 	"cite_error": "د سرچينې ستونزه: $1",
+	"cite_error_included_references": "<code>&lt;سرچينې&gt;</code> پای نښلن نشته",
 	"cite-tracking-category-cite-error": "مخونه د غبرګونيزي تيروتنې سره",
+	"cite-tracking-category-cite-diffing-error": "هغه مخونه چې د ليدنيزو توپيرونو لامل کېدونکې سرچينې تېروتنې لري",
 	"cite-tracking-category-ref-details": "مخونه چې څېرمه سرچينې کاروي",
 	"cite-tracking-category-ref-details-desc": "په دې وېشنيزه کې مخونه د  &lt;ref> نښلن اړوند  \"سپيناوي\" ځانگړنيا کاروئ.",
 	"cite-reference-previews-reference": "سرچينه",
@@ -41,8 +43,10 @@
 	"communityconfiguration-cite-title": "اخځ",
 	"communityconfiguration-cite-description": "د سرچينو بڼه او ونگبڼه دوديزول.",
 	"cite-configuration-title": "اخځ مهارول",
+	"cite-configuration-info": "دا اوڼنې په ټولو هغه مخونو اغېزه کوي چې اخځ کاروي. يوازې پازوالان دا اوڼنې بدلولی شي.",
 	"cite-configuration-backlink-title": "د شاتړي اوڼنې",
 	"cite-configuration-backlink-marker-label": "شاتړ نښو ټولگه",
 	"cite-configuration-backlink-marker-description": "لاندې لوښې به ستاسو ويکي کې د شاتړو لپاره وکارول شي.",
+	"cite-configuration-backlink-marker-help": "د خپلو دوديزو لوښو ټولگه دننه کړئ، د هرې لوښې ترمنځ ځای پرېږدئ. ځان ډاډه کړئ چې لوښی په خپل ځان کې XX لوښې رانغاړي.",
 	"cite-configuration-submit": "بدلونونه خوندي‌کول"
 }

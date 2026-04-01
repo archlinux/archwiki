@@ -87,7 +87,6 @@
 	"discussiontools-replywidget-terms-click": "\"$1\" ကို နှိပ်ခြင်းဖြင့် {{GENDER:|သင်}}သည် ဤဝီကီ အသုံးပြုခြင်းဆိုင်ရာ သတ်မှတ်ချက်များကို သဘောတူပါသည်။",
 	"discussiontools-replywidget-transcluded": "သင့်သုံးသပ်ချက်ကို [[$1]]တွင် သိမ်းဆည်းပါလိမ့်မည်။",
 	"discussiontools-replywidget-watchthis": "ဤစာမျက်နှာအား သင်၏[[Special:Watchlist|စောင့်ကြည့်စာရင်း]]တွင် ပေါင်းထည့်ရန်",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-topicheader-authorcount": "ဆွေးနွေးချက်တွင် {{PLURAL:$1|လူ}} $1 ဦး ရှိသည်",
 	"discussiontools-topicheader-commentcount": "{{PLURAL:$1| မှတ်ချက်|မှတ်ချက်များ}} $1 ခု",
 	"discussiontools-topicheader-latestcomment": "နောက်ဆုံးမှတ်ချက်- $1",

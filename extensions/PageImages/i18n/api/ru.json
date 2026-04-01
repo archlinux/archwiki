@@ -3,14 +3,20 @@
 		"authors": [
 			"Fenixs-ru",
 			"Movses",
-			"Okras"
+			"Okras",
+			"Daisy40"
 		]
 	},
+	"apihelp-query+pageimages-summary": "Возвращает информацию об изображениях на странице, такую ​​как миниатюра и наличие фотографий.",
 	"apihelp-query+pageimages-example-1": "Получить название и <kbd>100</kbd>-пиксельный эскиз изображения страницы об <kbd>Альберте Эйнштейне</kbd>.",
 	"apihelp-query+pageimages-param-prop": "Какую информацию возвращать:",
 	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "URL-адрес и размеры миниатюры, связанной со страницей.",
 	"apihelp-query+pageimages-paramvalue-prop-original": "URL-адрес и размеры исходного изображения, связанного со страницей.",
 	"apihelp-query+pageimages-paramvalue-prop-name": "Заголовок изображения.",
 	"apihelp-query+pageimages-param-thumbsize": "Максимальная ширина эскизов в пикселях.",
-	"apihelp-query+pageimages-param-limit": "Свойства, указывающие на то, сколько страниц возвращать."
+	"apihelp-query+pageimages-param-langcode": "Код для языка, на котором будет отображаться изображение, если поддерживается несколько языков.",
+	"apihelp-query+pageimages-param-limit": "Свойства, указывающие на то, сколько страниц возвращать.",
+	"apihelp-query+pageimages-param-license": "Ограничение изображений страниц определённым типом лицензии:",
+	"apihelp-query+pageimages-paramvalue-license-free": "Только свободные изображения.",
+	"apihelp-query+pageimages-paramvalue-license-any": "Лучшее изображение, независимо от того, свободное оно или несвободное."
 }

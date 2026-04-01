@@ -28,7 +28,7 @@
 	"thanks-error-invalidrecipient-bot": "বটকে ধন্যবাদ দেয়া যাবে না",
 	"thanks-error-invalidrecipient-self": "আপনি নিজেকে নিজে ধন্যবাদ দিতে পারবেন না",
 	"thanks-error-notloggedin": "বেনামী ব্যবহারকারীগণ ধন্যবাদ পাঠাতে পারবে না",
-	"thanks-error-ratelimited": "{{GENDER:$1|আপনি}} আপনার সর্বোচ্চ সীমা অতিক্রম করেছেন। অনুগ্রহ করে অপেক্ষা করুন এবং পুনরায় চেষ্টা করুন।",
+	"thanks-error-ratelimited": "{{GENDER:$1|আপনি}} নির্ধারিত অনুরোধের সীমা অতিক্রম করেছেন। অনুগ্রহ করে অপেক্ষা করুন এবং পুনরায় চেষ্টা করুন।",
 	"thanks-thank-tooltip": "এই {{GENDER:$2|ব্যবহারকারীকে}} ধন্যবাদ বিজ্ঞপ্তি {{GENDER:$1|পাঠান}}",
 	"thanks-thank-tooltip-no": "ধন্যবাদ বিজ্ঞপ্তি {{GENDER:$1|বাতিল করুন}}",
 	"thanks-thank-tooltip-yes": "ধন্যবাদের বিজ্ঞপ্তি {{GENDER:$1|পাঠান}}",

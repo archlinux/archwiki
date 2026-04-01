@@ -160,7 +160,7 @@ class Utils {
 	 */
 	static getPossibleImageSizesForHtml( width, height ) {
 		const buckets = {
-			small: { width: 640, height: 480 },
+			small: { width: 500, height: 480 },
 			medium: { width: 1280, height: 720 }, // HD ready = 720p
 			large: { width: 1920, height: 1080 }, // Full HD = 1080p
 			xl: { width: 3840, height: 2160 } // 4K = 2160p

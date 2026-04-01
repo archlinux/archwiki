@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Brettchenweber"
+			"Brettchenweber",
+			"Volvox",
+			"Johannnes89"
 		]
 	},
 	"editcheck-dialog-action-no": "Nein",
@@ -24,8 +26,8 @@
 	"editcheck-copyvio-title": "Eingefügter Inhalt",
 	"editcheck-copyvio-description": "Bitte vermeide das Kopieren von Texten aus anderen Quellen, auch wenn diese umformuliert oder zitiert werden. Dies könnte als [$1 Urheberrechtsverletzung oder Plagiat] angesehen werden und zur Entfernung deiner Inhalte oder zur Sperrung deines Kontos führen.",
 	"editcheck-copyvio-prompt": "Hast du diesen Text geschrieben?",
-	"editcheck-copyvio-action-keep": "Ja, behalten.",
-	"editcheck-copyvio-action-remove": "Nein, entfernen.",
+	"editcheck-copyvio-action-keep": "Ja, behalten",
+	"editcheck-copyvio-action-remove": "Nein, entfernen",
 	"editcheck-copyvio-keep-description": "Bitte hilf anderen Benutzern dieses Artikels, deinen Grund zu verstehen, den eingefügten Text beizubehalten.",
 	"editcheck-copyvio-keep-wrote": "Ich habe diesen Inhalt geschrieben und er ist nirgendwo anders veröffentlicht",
 	"editcheck-copyvio-keep-permission": "Dieser Inhalt ist frei lizenziert",

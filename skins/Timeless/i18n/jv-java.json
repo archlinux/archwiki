@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin"
+		]
+	},
+	"timeless-anonymous": "ꦲꦤꦺꦴꦤꦶꦩꦸꦱ꧀",
+	"timeless-loggedinas": "​ꦩ꧀ꦊꦧꦸ​ꦭꦺꦴꦒ꧀ꦢꦢꦶ​'''$1'''",
+	"timeless-notloggedin": "ꦢꦸꦫꦸꦁ​ꦩ꧀ꦊꦧꦸ​ꦭꦺꦴꦒ꧀",
+	"timeless-userpage": "ꦏꦕ​{{GENDER:$1|ꦤꦫꦒꦸꦤ}}",
+	"timeless-talkpage": "ꦉꦩ꧀ꦧꦸꦒ꧀ꦒꦤ꧀{{GENDER:$1|ꦤꦫꦒꦸꦤ}}",
+	"timeless-pagelog": "ꦭꦺꦴꦒ꧀ꦏꦕ",
+	"timeless-more": "ꦭꦶꦪꦤꦺ",
+	"timeless-sitetools": "ꦥꦶꦫꦤ꧀ꦠꦶ​ꦮꦶꦏꦶ",
+	"timeless-pageactions": "ꦥꦶꦫꦤ꧀ꦠꦶ​ꦏꦕ",
+	"timeless-userpagetools": "ꦥꦶꦫꦤ꧀ꦠꦶ​ꦏꦕ​ꦤꦫꦒꦸꦤ",
+	"timeless-action-addsection": "ꦠꦺꦴꦥꦶꦏ꧀ꦲꦚꦂ",
+	"timeless-view-view": "ꦮꦕ",
+	"timeless-pagemisc": "ꦭꦶꦪꦤꦺ",
+	"timeless-namespaces": "ꦩꦤ꧀ꦝꦭ​ꦲꦫꦤ꧀",
+	"timeless-pagetools": "ꦲꦏ꧀ꦱꦶ​ꦏꦕ",
+	"timeless-languages": "ꦧꦱ",
+	"timeless-projects": "ꦥꦿꦺꦴꦪꦺꦏ꧀ꦭꦶꦪ",
+	"timeless-view-history": "ꦱꦗꦫꦃ",
+	"timeless-action-undelete": "ꦮꦸꦫꦸꦁ​ꦲꦥꦸꦱ꧀{{PLURAL:$1|$1 ꦧꦼꦱꦸꦠ꧀ꦠꦤ꧀}}"
+}

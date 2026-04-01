@@ -3,7 +3,8 @@
 		"authors": [
 			"BAPerdana-WMF",
 			"Daud I.F. Argana",
-			"Rachmat04"
+			"Rachmat04",
+			"Penyuwangi"
 		]
 	},
 	"hcaptcha-desc": "Modul [https://www.hcaptcha.com/ hCaptcha] untuk Confirm Edit",
@@ -13,7 +14,7 @@
 	"hcaptcha-createaccount": "Untuk melindungi wiki ini dari pembuatan akun otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
 	"hcaptcha-createaccount-fail": "Tampaknya Anda belum menyelesaikan hCaptchanya.",
 	"hcaptcha-create": "Untuk melindungi wiki ini dari pembuatan halaman otomatis, kami memohon Anda menyelesaikan hCaptcha berikut:",
-	"hcaptcha-help": "Tolong selesaikan sebuah tantangan hCaptcha dan kembalikan nilai respons sebagai captchaWord.",
+	"hcaptcha-help": "Tolong selesaikan sebuah tantangan hCaptcha dan kembalikan nilai tanggapan sebagai captchaWord.",
 	"hcaptcha-privacy-policy": "Situs ini dilindungi oleh hCaptcha dan tunduk pada [https://www.hcaptcha.com/privacy Kebijakan Privasi] serta [https://www.hcaptcha.com/terms Ketentuan Layanan] dari hCaptcha.",
 	"hcaptcha-challenge-closed": "Harap selesaikan tantangan ini sebelum mengirimkan isiannya.",
 	"hcaptcha-challenge-expired": "Batas waktu untuk menyelesaikan tantangan tersebut telah habis. Silakan ulangi.",

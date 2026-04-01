@@ -3,7 +3,8 @@
 		"authors": [
 			"EritajGwadloup",
 			"Histnou",
-			"Laetitia Kb"
+			"Laetitia Kb",
+			"Istwalezanti"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Fo ou sévi èvê Legacy Vector",
@@ -28,9 +29,12 @@
 	"vector-appearance-label": "Aparans",
 	"vector-feature-limited-width-name": "Lajè",
 	"vector-feature-limited-width-0-label": "Lajè",
+	"vector-feature-limited-width-1-label": "Èstanda",
 	"vector-feature-custom-font-size-name": "Tèks",
 	"vector-feature-custom-font-size-0-label": "Pitit",
 	"vector-feature-custom-font-size-2-label": "Gran",
+	"skin-theme-day-label": "Klè",
+	"skin-theme-night-label": "Toupré nwè",
 	"vector-intro-page": "Anmwé:Entrodiksyon",
 	"vector-toc-label": "Kontni",
 	"vector-toc-beginning": "Konmansman",

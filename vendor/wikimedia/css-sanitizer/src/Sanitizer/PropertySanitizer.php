@@ -124,6 +124,7 @@ class PropertySanitizer extends Sanitizer {
 			return null;
 		}
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $object;
 	}
 }

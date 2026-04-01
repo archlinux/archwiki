@@ -645,5 +645,6 @@
 	"action-abusefilter-modify-blocked-external-domains": "hangi dış etki alanlarının bağlanmasının engelleneceğini oluşturmaya ya da değiştirmeye",
 	"right-abusefilter-bypass-blocked-external-domains": "Engellenen dış alan adlarını atla",
 	"action-abusefilter-bypass-blocked-external-domains": "engellenen dış alan adlarını atla",
-	"abusefilter-blocked-domains-cannot-edit-directly": "Hangi dış etki alanlarının bağlanmasının engelleneceğini oluşturmak ya da değiştirmek [[Special:BlockedExternalDomains|özel sayfa]] aracılığıyla yapılmalıdır."
+	"abusefilter-blocked-domains-cannot-edit-directly": "Hangi dış etki alanlarının bağlanmasının engelleneceğini oluşturmak ya da değiştirmek [[Special:BlockedExternalDomains|özel sayfa]] aracılığıyla yapılmalıdır.",
+	"communityconfiguration-blockeddomain-title": "Engellenen dış alan adları"
 }

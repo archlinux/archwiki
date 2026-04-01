@@ -16,7 +16,8 @@
 			"Veracious",
 			"William Surya Permana",
 			"WongKentir",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Penyuwangi"
 		]
 	},
 	"echo-desc": "Sistem pemberitahuan ke pengguna tentang pesan dan peristiwa",
@@ -90,7 +91,7 @@
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Metode pemberitahuan yang dibutuhkan",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Metode pemberitahuan yang wajib untuk tiap kategori",
 	"echo-specialpage": "Pemberitahuan",
-	"echo-specialpage-section-markread": "Tandai grup telah dibaca",
+	"echo-specialpage-section-markread": "Tandai kelompok telah dibaca",
 	"echo-specialpage-markasread": "Pemberitahuan: Tandai sudah dibaca",
 	"echo-specialpage-markasread-invalid-id": "ID event tidak sah",
 	"echo-specialpage-pagefilterwidget-aria-label": "Saring menurut wiki dan judul halaman",

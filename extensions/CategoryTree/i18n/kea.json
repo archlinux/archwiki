@@ -2,11 +2,41 @@
 	"@metadata": {
 		"authors": [
 			"Quintino Lopes Castro Tavares",
-			"Waldyrious"
+			"Waldyrious",
+			"GrogeXaKaba",
+			"Letra.berdi"
 		]
 	},
-	"categorytree-expand": "amplia",
+	"categorytree": "Arbi di katigurias",
+	"categorytree-portlet": "Katigurias",
+	"categorytree-legend": "Mustra arbi di katigurias",
+	"categorytree-desc": "Nabega dinamikamenti trabés di [[Special:CategoryTree|strutura di katigurias]]",
+	"categorytree-header": "Dijita nómi di un katiguria pa udja sis kuntiúdu na un strutura di arbi. (Ta izijidu JavaScript.)",
+	"categorytree-category": "Katiguria:",
+	"categorytree-go": "Mustra arbi",
+	"categorytree-parents": "Katigurias supirior",
+	"categorytree-mode-label": "Módi:",
+	"categorytree-mode-categories": "Mustra katigurias txaskan",
+	"categorytree-mode-pages": "pájinas, isétu imájis",
+	"categorytree-mode-all": "tudu pájina",
+	"categorytree-collapse": "sukundi",
+	"categorytree-expand": "spandi",
+	"categorytree-member-counts": "Ta konte {{PLURAL:$1|1 subikatiguria|$1 subikatigurias}}, {{PLURAL:$2|1 pájina|$2 pájinas}}, {{PLURAL:$3|1 fixeru|$3 fixerus}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
-	"categorytree-num-files": "$1 F"
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "baziu",
+	"categorytree-load": "karaga",
+	"categorytree-loading": "sa-ta karagadu...",
+	"categorytree-nothing-found": "ka foi atxadu nada",
+	"categorytree-no-subcategories": "niun subikatiguria",
+	"categorytree-no-parent-categories": "niun katiguria supirior",
+	"categorytree-no-pages": "niun pájina nin subikatigurias",
+	"categorytree-not-found": "Katiguria <i>$1</i> ka foi atxadu",
+	"categorytree-error": "Prabuléma na karagamentu di dadus.",
+	"categorytree-retry": "Di sumóla, spera un mumentu i tenta otu bes.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parámitru <code>onlyroot</code> sta obusuletu. Nbes di kel-li, uza <code>depth=\"0\"</code>.",
+	"categorytree-deprecation-warning": "'''Abizu:''' Es pájina ta uza <code>&lt;categorytree&gt;</code> ku un parámitru obusuletu.",
+	"categorytree-deprecation-category": "Pájinas ki ta uza parámitrus di arbi di katigurias obusuletu",
+	"categorytree-deprecation-category-desc": "Pájina ta uza parámitrus di arbi di katigurias obusuletu, suma <code>onlyroot</code>."
 }

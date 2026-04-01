@@ -85,8 +85,9 @@ class Juxtaposition extends Matcher {
 			if ( $this->commas ) {
 				if ( $match->getLength() === 0 ) {
 					$thisEnd = $lastEnd;
+					// @phan-suppress-next-line PhanRedundantConditionInLoop https://github.com/phan/phan/issues/5441
 				} elseif ( isset( $values[$nextFrom] ) && $values[$nextFrom] instanceof Token &&
-					// @phan-suppress-next-line PhanNonClassMethodCall False positive
+					// @phan-suppress-next-line PhanUndeclaredMethod False positive
 					$values[$nextFrom]->type() === Token::T_COMMA
 				) {
 					$nextFrom = $this->next( $values, $nextFrom, $options );

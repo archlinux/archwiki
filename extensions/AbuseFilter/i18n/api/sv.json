@@ -3,7 +3,8 @@
 		"authors": [
 			"Jopparn",
 			"Lokal Profil",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Kontrollera om ett missbruksfilter matchar en grupp variabler, en redigering eller en händelse som är loggad i missbruksfiltret.",
@@ -54,5 +55,6 @@
 	"apierror-abusefilter-cantcheck": "Du har inte behörighet att kolla syntaxen för missbruksfilter.",
 	"apierror-abusefilter-canteval": "Du har inte behörighet att utvärdera missbruksfilteruttryck.",
 	"apierror-abusefilter-nosuchlogid": "Det finns ingen post i missbruksloggen med ID $1.",
+	"apierror-abusefilter-incompatible": "Den begärda ändringen stöds inte av missbruksfiltret.",
 	"apierror-abusefilter-badsyntax": "Filtret har ogiltig syntax."
 }

@@ -5,7 +5,8 @@
 			"Jim-by",
 			"Red Winged Duck",
 			"Wizardist",
-			"Zedlik"
+			"Zedlik",
+			"Ucukor"
 		]
 	},
 	"replacetext": "Замяніць тэкст",
@@ -13,15 +14,15 @@
 	"replacetext_docu": "Каб замяніць адзін радок на іншы ва ўсіх звычайных старонках гэтай вікі, увядзіце два радкі тут, а потым націсьніце «{{int:replacetext_continue}}».\nБудзе паказаны сьпіс старонак, якія ўтрымліваюць тэкст, які Вы шукалі, і Вы зможаце выбраць старонкі, дзе Вы жадаеце зрабіць замену.\nВаша імя будзе запісанае ў гісторыю старонкі, таму што ўдзельнікі адказныя за ўсе зробленыя зьмены.",
 	"replacetext_originaltext": "Арыгінальны тэкст:",
 	"replacetext_replacementtext": "Тэкст на замену:",
-	"replacetext_useregex": "Выкарыстоўваць рэгулярныя выразы",
+	"replacetext_useregex": "Ужываць рэгулярныя выразы",
 	"replacetext_regexdocu": "(Напрыклад, выразы «a(.*)c» ў полі «{{int:replacetext_originaltext}}» і «ac$1» у полі «{{int:replacetext_replacementtext}}» прывядуць да замены «abc» на «acb».)",
 	"replacetext_optionalfilters": "Неабавязковыя фільтры:",
 	"replacetext_categorysearch": "Замяніць толькі ў катэгорыі:",
 	"replacetext_prefixsearch": "Замяніць толькі ў старонках, назвы якіх пачынаюцца з:",
 	"replacetext_editpages": "Замяніць тэкст ў зьмесьце старонак",
 	"replacetext_movepages": "Замяніць тэкст у назвах старонак, калі гэта магчыма",
-	"replacetext_givetarget": "Вам неабходна пазначыць радок для замены.",
-	"replacetext_nonamespace": "Вам неабходна выбраць хаця б адну прастору назваў.",
+	"replacetext_givetarget": "Патрэбна пазначыць радок для замены.",
+	"replacetext_nonamespace": "Патрэбна выбраць хаця б адну прастору назваў.",
 	"replacetext_editormove": "Вам неабходна выбраць хаця б адну з наладаў пераносу.",
 	"replacetext_choosepagesforedit": "Калі ласка, абярыце {{PLURAL:$3|1=старонку, на якой|старонкі, на якіх}} Вы жадаеце замяніць «$1» на «$2»:",
 	"replacetext_choosepagesformove": "Замяніць «$1» на «$2» у {{PLURAL:$3|1=назьве наступнай старонкі|назвах наступных старонак}}:",

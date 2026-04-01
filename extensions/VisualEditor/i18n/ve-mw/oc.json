@@ -123,6 +123,7 @@
 	"visualeditor-dialog-table-wikitable": "Amb estil (Wikitable)",
 	"visualeditor-dialog-template-title": "Modèl",
 	"visualeditor-dialog-transclusion-add-wikitext": "Ajustar lo còdi wiki",
+	"visualeditor-dialog-transclusion-add-param-help": "Se son coneguts, entrar los noms dels [//www.mediawiki.org/wiki/special:MyLanguage/Help:VisualEditor/Usar_guida#Adding_undocumented_parameters paramètres non documentats]. Notatz que sols los paramètres coneguts pel modèl auràn un efièit. Podètz trobar d'informacions suls paramètres existents sus la [[$1|pagina del modèl]].",
 	"visualeditor-dialog-transclusion-add-template": "Apondre lo modèl",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Ajustar un paramètre non documentat.",
 	"visualeditor-dialog-transclusion-collapse-options": "Amagar las opcions",

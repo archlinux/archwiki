@@ -21,8 +21,8 @@
 	"log-name-spamblacklist": "Kniha zakázaných domén",
 	"log-description-spamblacklist": "Tyto události sledují zásahy seznamu zakázaných domén.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|Uživateli|Uživatelce}} $1 zabránil seznam zakázaných domén přidat $4 na stránku $3.",
-	"right-spamblacklistlog": "Prohlížet záznamy v knize zakázaných domén",
+	"right-spamblacklistlog": "Prohlížení záznamů v knize zakázaných domén",
 	"action-spamblacklistlog": "prohlížet záznamy v knize zakázaných domén",
-	"right-sboverride": "Obejít seznam zakázaných domén",
-	"action-sboverride": "obejít seznam zakázaných domén"
+	"right-sboverride": "Obcházení listiny blokování spamu",
+	"action-sboverride": "obejít listinu blokování spamu"
 }

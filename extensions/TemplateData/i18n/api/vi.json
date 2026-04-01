@@ -5,6 +5,12 @@
 			"Nvdtn19"
 		]
 	},
+	"apihelp-templatedata-summary": "Trích xuất dữ liệu được lưu bởi phần mở rộng TemplateData.",
 	"apihelp-templatedata-example-1": "Truy xuất dữ liệu bản mẫu cho [[Template:Foobar]], kết quả sẽ được trả về ngay cả khi bản mẫu không tồn tại hoặc tồn tại nhưng không có dữ liệu bản mẫu.",
-	"apihelp-templatedata-param-lang": "Cho ra các giá trị địa phương hóa cho ngôn ngỮ này. Theo mặc định, tất cả các bản dịch có sẵn được cho ra."
+	"apihelp-templatedata-example-2": "Trả về dữ liệu bản mẫu cho [[Template:Phabricator]], sẽ không có kết quả nếu bản mẫu không tồn tại hoặc tồn tại nhưng không có dữ liệu bản mẫu",
+	"apihelp-templatedata-param-includeMissingTitles": "Trả về dữ liệu tiêu đề ngay cả khi chúng bị thiếu hoặc không có dữ liệu bản mẫu. Theo mặc định, các tiêu đề chỉ được trả về nếu chúng tồn tại và có dữ liệu bản mẫu.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Trả về dữ liệu tiêu đề ngay cả khi chúng bị thiếu hoặc không có dữ liệu bản mẫu. Theo mặc định (để tương thích ngược), các tiêu đề chỉ được trả về nếu chúng tồn tại và có dữ liệu bản mẫu.",
+	"apihelp-templatedata-param-lang": "Trả về các giá trị địa phương hóa cho ngôn ngữ này. Theo mặc định, tất cả các bản dịch có sẵn sẽ được trả về.",
+	"apierror-templatedata-corrupt": "Dữ liệu bản mẫu của trang #$1 chứa dữ liệu không hợp lệ: $2",
+	"apiwarn-templatedata-deprecation-format": "Định dạng đầu ra mặc định sẽ chuyển thành <kbd>jsonfm</kbd> trong tương lai. Vui lòng chỉ định rõ <kbd>format=json</kbd>."
 }

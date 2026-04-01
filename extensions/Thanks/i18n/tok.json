@@ -3,7 +3,8 @@
 		"authors": [
 			"20kdc",
 			"Juwan",
-			"Ne"
+			"Ne",
+			"Tamzin"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|o toki e pona pali}}}}",
@@ -17,5 +18,6 @@
 	"thanks-thank-tooltip-no": "o {{GENDER:$1|pana ala}} e toki pi pali pona",
 	"thanks-thank-tooltip-yes": "o {{GENDER:$1|pana}} e toki pi pali pona",
 	"thanks-confirmation2": "jan ale li ken lukin e ni. sina wile ala wile {{GENDER:$1|toki}} e pona pali?",
-	"thanks-thanked-notice": "{{GENDER:$3|sina}} pana e pona tawa jan {{GENDER:$2|$1}}."
+	"thanks-thanked-notice": "{{GENDER:$3|sina}} pana e pona tawa jan {{GENDER:$2|$1}}.",
+	"log-name-thanks": "pilin pona la pini"
 }

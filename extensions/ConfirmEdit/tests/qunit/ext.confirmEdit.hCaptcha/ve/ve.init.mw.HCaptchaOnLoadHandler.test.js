@@ -203,10 +203,16 @@ QUnit.module.if( 'VisualEditor', mw.loader.getModuleNames().includes( 'ext.visua
 
 	QUnit.test.each( 'renderHCaptcha is called for successful render', {
 		'hCaptcha is in invisible mode': {
-			invisibleMode: true
+			invisibleMode: true,
+			removeMwConfigSiteKey: false
 		},
 		'hCaptcha is not in invisible mode': {
-			invisibleMode: false
+			invisibleMode: false,
+			removeMwConfigSiteKey: false
+		},
+		'hCaptcha falls back to config.json if mw.config does not have site key': {
+			invisibleMode: false,
+			removeMwConfigSiteKey: true
 		}
 	}, function ( assert, options ) {
 		mw.config.set( 'wgConfirmEditCaptchaNeededForGenericEdit', 'hcaptcha' );
@@ -215,6 +221,10 @@ QUnit.module.if( 'VisualEditor', mw.loader.getModuleNames().includes( 'ext.visua
 		this.window.hcaptcha.render.returns( 'widget-id' );
 
 		hCaptchaConfig.HCaptchaInvisibleMode = options.invisibleMode;
+
+		if ( options.removeMwConfigSiteKey ) {
+			mw.config.set( 'wgConfirmEditHCaptchaSiteKey', null );
+		}
 
 		setupSaveDialog( this );
 
@@ -245,7 +255,7 @@ QUnit.module.if( 'VisualEditor', mw.loader.getModuleNames().includes( 'ext.visua
 				);
 				assert.deepEqual(
 					actualRenderCallArgs[ 1 ],
-					{ sitekey: 'test-site-key' },
+					{ sitekey: !options.removeMwConfigSiteKey ? 'test-site-key' : 'test-default-site-key' },
 					'window.hcaptcha.render was provided with the expected configuration values'
 				);
 				assert.deepEqual(

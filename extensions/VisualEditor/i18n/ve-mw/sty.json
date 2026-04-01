@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Khanmarat",
-			"Sorbat"
+			"Sorbat",
+			"Арбыуын"
 		]
 	},
 	"tooltip-ca-ve-edit": "Пы питне төсәткәле",
 	"visualeditor-ca-createlocaldescriptionsource": "Локал сүрәтләмә аҡманы өстәгәле",
-	"visualeditor-ca-createsource": "Үики-текст итеп пултырғалы",
-	"visualeditor-ca-editsource": "Үики-текстны төсәткәле",
-	"visualeditor-ca-editsource-section": "үики-текстны төсәткәле",
+	"visualeditor-ca-createsource": "Вики-текстны цығарғалы",
+	"visualeditor-ca-editsource": "Вики-текстны төсәткәле",
+	"visualeditor-ca-editsource-section": "вики-текстны төсәткәле",
 	"visualeditor-descriptionpagelink": "Project:Визуаль мөғәрир"
 }

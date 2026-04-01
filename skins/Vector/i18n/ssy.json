@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jmgurey"
+		]
+	},
+	"vector-languages": "Afof",
+	"vector-language-button-label": "{{PLURAL:$1|$1 af|$1 afah}}",
+	"vector-no-language-button-label": "Afah os",
+	"vector-action-addsection": "Magaro os",
+	"vector-action-move": "Esgeecez",
+	"vector-view-create": "Gin",
+	"vector-view-history": "Tillabtem ubul",
+	"vector-more-actions": "Ziyaada",
+	"vector-appearance-label": "Xibare",
+	"vector-feature-limited-width-name": "Masangale",
+	"vector-feature-limited-width-0-label": "fidaane",
+	"vector-feature-limited-width-1-label": "Qiyaas",
+	"vector-feature-custom-font-size-name": "Kataaba",
+	"vector-feature-custom-font-size-0-label": "Cindha",
+	"vector-feature-custom-font-size-1-label": "Qiyaas",
+	"vector-feature-custom-font-size-2-label": "Naba",
+	"skin-theme-name": "Beeno",
+	"skin-theme-day-label": "Iffoye",
+	"skin-theme-night-label": "Data",
+	"skin-theme-os-label": "Akkanih",
+	"skin-theme-exclusion-notice": "Ta garbi umman  gedda iffoye xibar leya",
+	"vector-toc-label": "Dhibrho",
+	"vector-toc-beginning": "Erhedhdho",
+	"vector-anon-user-menu-pages": "Yewce maymamacit hi garba",
+	"vector-main-menu-label": "Afti zirzir",
+	"vector-feature-custom-font-size-exclusion-notice": "Ta garbi umman gedda cindha kataaba yatneefece",
+	"vector-page-tools-label": "Nuwaa",
+	"vector-page-tools-general-label": "Bukaako",
+	"vector-page-tools-actions-label": "Abittot",
+	"vector-unpin-element-label": "sucus"
+}

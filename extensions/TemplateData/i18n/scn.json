@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ajeje Brazorf"
+			"Ajeje Brazorf",
+			"Gmelfi"
 		]
 	},
 	"templatedata-doc-desc-empty": "Nuḍḍa discrizzioni.",
@@ -20,11 +21,14 @@
 	"templatedata-doc-param-type-wiki-page-name": "Nomu dâ pàggina",
 	"templatedata-doc-param-type-wiki-template-name": "Template",
 	"templatedata-doc-param-type-wiki-user-name": "Utenti",
+	"templatedata-editbutton": "Cancia li dati dû mudellu",
+	"templatedata-helplink": "Nfurmazzioni supra li dati dû mudellu",
 	"templatedata-modal-button-add-language": "Agghiunci lingua",
 	"templatedata-modal-button-apply": "Applica",
 	"templatedata-modal-button-cancel": "Annulla",
 	"templatedata-modal-button-changelang": "Cancia lingua",
 	"templatedata-modal-button-done": "Fattu",
+	"templatedata-modal-button-map": "Cancia li mappi",
 	"templatedata-modal-button-saveparam": "Sarva",
 	"templatedata-modal-current-language": "Lingua attuali: $1",
 	"templatedata-modal-format-custom": "Pirsunalizzatu",

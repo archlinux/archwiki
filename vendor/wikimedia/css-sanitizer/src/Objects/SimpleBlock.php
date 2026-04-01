@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Wikimedia\CSS\Util;
 
 /**
- * Represent a CSS simple block
+ * Represent a CSS simple block, eg. `{ color: red }`
  */
 class SimpleBlock extends ComponentValue {
 

@@ -4,6 +4,10 @@
 			"Merrahtar"
 		]
 	},
+	"action-abusefilter-log": "кӣһче эйй вӯййк оаннҍмужэ журналл",
+	"abusefilter-log-linkoncontribs": "эйй вӯййк оаннҍмуж журналл",
+	"abusefilter-log-linkonhistory": "кӣһче эйй вӯййк оаннҍмужэ журнал",
 	"abusefilter-list-options": "О̄дзэм оа̄ссмуж",
-	"abusefilter-test-search-type-createaccount": "Аккаунтэтҍ лыһкмуж"
+	"abusefilter-test-search-type-createaccount": "Аккаунтэтҍ лыһкмуж",
+	"abusefilter-diff-item": "Элеменнт"
 }

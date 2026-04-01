@@ -7,7 +7,8 @@
 			"Robin van der Vliet",
 			"Tymewalk",
 			"Wierzbowski",
-			"Ziko"
+			"Ziko",
+			"Gamliel Fishkin"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Vi}} ricevos sciigon kiam iu afiŝas novan komenton en ĉi tiu diskuto. Vi povas ĝustigi viajn agordojn en preferojn pri sciigoj.",
@@ -39,6 +40,7 @@
 	"discussiontools-error-comment-is-transcluded-title": "La ligilo \"{{int:discussiontools-replylink}}\" ne povas esti uzata por respondi al ĉi tiu komento ĉar ĝi estas ŝargita de alia paĝo. Por respondi, bonvolu {{GENDER:|iri}} ĉi tien: [[$1]].",
 	"discussiontools-error-lint": "Komentoj sur ĉi tiu paĝo ne povas esti responditaj pro eraro en la vikiteksto. {{GENDER:|Vi}} povas lerni pri ĉi tiu eraro [$1 legante la dokumentaron], peti helpon per [$2 afiŝado ĉi tie] aŭ ripari la eraron [$3 malfermante la plenan paĝan redaktilon].",
 	"discussiontools-newtopic-placeholder-title": "Temo",
+	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|respondis}} en \"<strong>$4</strong>\".",
 	"discussiontools-postedit-confirmation-published": "Via komento estis publikigita.",
 	"discussiontools-replylink": "{{GENDER:|respondi}}",
 	"discussiontools-replywidget-advanced": "Altnivela",

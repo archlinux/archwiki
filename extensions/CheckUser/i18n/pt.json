@@ -19,7 +19,8 @@
 			"Tks4Fish",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"MrNinja"
 		]
 	},
 	"checkuser-summary": "Esta ferramenta varre as mudanças recentes para obter os endereços IP de um utilizador ou para apresentar os dados de edições/utilizadores para um determinado IP.\nOs utilizadores e edições de um determinado IP, podem ser obtidos através de cabeçalhos XFF, acrescentando \"/xff\" no final do endereço. São suportados endereços IPv4 (CIDR $1-32) e IPv6 (CIDR $2-128).\nPor motivos de desempenho não serão fornecidas mais do que $3 edições.\nO uso desta ferramenta deverá respeitar as normas e recomendações.",
@@ -31,6 +32,7 @@
 	"checkuser-contribs-log-initiator": "verificações feitas por este utilizador",
 	"group-checkuser": "Verificadores de utilizadores",
 	"group-checkuser-member": "{{GENDER:$1|verificador|verificadora}} de utilizadores",
+	"group-temporary-account-viewer-member": "{{GENDER:$1|visualizador de IP de conta temporária|visualizadora de IP de conta temporária|visualizador(a) de IP de conta temporária}}",
 	"right-checkuser": "Verificar os endereços IP e outras informações de um utilizador",
 	"right-checkuser-log": "Ver o registo das verificações de utilizadores",
 	"right-checkuser-temporary-account": "Ver endereços IP usados por contas temporárias",
@@ -264,8 +266,10 @@
 	"checkuser-userinfocard-loading-label": "A carregar a informação do utilizador(a)",
 	"checkuser-userinfocard-error-no-data": "Não foi possível obter a informação para este utilizador. Por favor, tente mais tarde.",
 	"checkuser-userinfocard-activity-chart-label": "Atividade de edição nos últimos 60 dias ({{PLURAL:$1|$1 edição|$1 edições|0=sem edições}})",
+	"checkuser-userinfocard-last-edit-timestamp-label": "Última edição: $1",
 	"checkuser-userinfocard-groups": "<strong>Grupos</strong>: $1",
 	"checkuser-userinfocard-global-groups": "<strong>Grupos globais</strong>: $1",
 	"checkuser-userinfocard-chart-tooltip-label": "$1 ( {{PLURAL:$2| $2 edição| $2 edições|0=Sem edições}})",
-	"checkuser-userinfocard-temporary-account-viewer-opted-in": "Optou por ver os IPs de contas temporárias"
+	"checkuser-userinfocard-temporary-account-viewer-opted-in": "Optou por ver os IPs de contas temporárias",
+	"checkuser-userinfocard-temporary-account-bucketcount": "Contas temporárias de todos os IPs associados: $1"
 }

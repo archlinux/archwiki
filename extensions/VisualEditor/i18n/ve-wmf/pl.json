@@ -18,7 +18,8 @@
 			"WTM",
 			"Woytecr",
 			"Wpedzich",
-			"아라"
+			"아라",
+			"MarMi wiki"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Automatyczny pomocnik uważa, że do strony została dodana nowa treść",
@@ -26,6 +27,13 @@
 	"tag-editcheck-references-description": "Automatyczny pomocnik stwierdził, że przydałby się przypis",
 	"tag-editcheck-references-activated": "Aktywowano automatycznego pomocnika (przypisy)",
 	"tag-editcheck-references-activated-description": "Automatyczny pomocnik stwierdził, że przypis może być potrzebny i odpowiedni komunikat został wyświetlony",
+	"tag-editcheck-references-shown": "Kontrola edycji (przypisy) – wyświetlono",
+	"tag-editcheck-references-shown-description": "Automatyczny pomocnik stwierdził, że może być potrzebny przypis i odpowiedni komunikat został wyświetlony",
+	"tag-editcheck-tone-description": "Automatyczny pomocnik wykrył potencjalny problem z tonem niektórych dodanych treści",
+	"tag-editcheck-tone-shown": "Kontrola edycji (styl) – wyświetlono",
+	"tag-editcheck-tone-shown-description": "Automatyczny pomocnik uważa, że konieczna może być zmiana brzmienia niektórych treści i odpowiedni komunikat został wyświetlony",
+	"tag-editcheck-paste-shown": "Kontrola edycji (wklejanie) – wyświetlono",
+	"tag-editcheck-paste-shown-description": "Automatyczny pomocnik zapytał o określenie się co do wklejonej przez edytującego treści, po czym treść ta została przez niego usunięta lub potwierdzona jako dozwolona",
 	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "Edycja z wykorzystaniem [[{{MediaWiki:visualeditor-descriptionpagelink}}|edytora wizualnego]]",
 	"tag-visualeditor-needcheck": "VisualEditor: do sprawdzenia",

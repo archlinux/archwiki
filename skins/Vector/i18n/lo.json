@@ -20,6 +20,7 @@
 	"vector-more-actions": "ເພີ່ມເຕີມ",
 	"vector-appearance-label": "ຮູບຮ່າງການສະແດງຜົນ",
 	"vector-feature-limited-width-name": "ກ້ວາງ",
+	"vector-feature-limited-width-0-label": "ກວ້າງ",
 	"vector-feature-limited-width-1-label": "ມາດຕະຖານ",
 	"vector-feature-custom-font-size-name": "ຂໍ້ຄວາມ",
 	"vector-feature-custom-font-size-0-label": "ນ້ອຍ",
@@ -32,9 +33,11 @@
 	"skin-theme-exclusion-notice": "ໜ້ານີ້ມັກຈະຢູ່ໃນໂໝດແຈ້ງ",
 	"vector-toc-label": "ເນື້ອໃນ",
 	"vector-toc-beginning": "ທຳອິດ",
+	"vector-anon-user-menu-pages": "ໜ້າເວັບສຳລັບບັນນາທິການທີ່ອອກຈາກລະບົບ",
 	"vector-main-menu-label": "ເມນູຫຼັກ",
 	"vector-feature-custom-font-size-exclusion-notice": "ໜ້ານີ້ມັກຈະໃຊ້ຟອນຂະໜາດນ້ອຍ",
 	"vector-page-tools-label": "ເຄື່ອງມື",
 	"vector-page-tools-general-label": "ທົ່ວໄປ",
+	"vector-page-tools-actions-label": "ການກະທຳ",
 	"vector-unpin-element-label": "ເຊື່ອງ"
 }

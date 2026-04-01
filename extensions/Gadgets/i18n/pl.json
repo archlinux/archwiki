@@ -33,6 +33,7 @@
 	"gadgets-editdescription": "Edytuj opis",
 	"gadgets-viewdescription": "Pokaż opis",
 	"gadgets-editsectiontitle": "Edytuj tytuł sekcji",
+	"gadgets-viewsectiontitle": "Zobacz tytuł sekcji",
 	"gadgets-uses": "Używa",
 	"gadgets-required-rights": "Wymaga {{PLURAL:$2|uprawnienia|następujących uprawnień:}} $1",
 	"gadgets-required-skins": "Działa wyłącznie na {{PLURAL:$2|skórce $1|skórkach: $1}}.",

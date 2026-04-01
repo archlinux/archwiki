@@ -8,7 +8,8 @@
 			"Rockyfelle",
 			"Sabelöga",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"templatedata-desc": "Lagrar data för mallparametrar (med JSON)",
@@ -45,7 +46,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Användare",
 	"templatedata-doc-params": "Mallparametrar",
 	"templatedata-editbutton": "Redigera TemplateData",
-	"templatedata-errormsg-jsonbadformat": "Ogiltigt JSON-format. Du kan avbryta denna åtgärd för att korrigera den, radera de aktuella <templatedata>-taggarna och försöka igen, eller fortsätta ersätta aktuell malldata med den nya.",
+	"templatedata-errormsg-jsonbadformat": "Ogiltigt JSON-format. Du kan avbryta denna åtgärd för att korrigera eller radera den, eller fortsätta ersätta aktuell malldata med den nya.",
 	"templatedata-errormsg-insertblank": "Är du säker på att du vill infoga malldata utan information?",
 	"templatedata-exists-on-related-page": "OBS: Det finns redan ett block med malldata på den relaterade sidan ''[[$1]]''.",
 	"templatedata-helplink": "Information om malldata",
@@ -117,7 +118,7 @@
 	"templatedata-modal-title-templateformatstring": "Anpassad formatsträng",
 	"templatedata-modal-title-templateparam-details": "Parameterdetaljer: $1",
 	"templatedata-modal-title-templateparams": "Mallparametrar",
-	"templatedata-search-description": "Sök efter en mall:",
+	"templatedata-search-description": "Sök efter en mall",
 	"templatedata-search-placeholder": "Ange mallnamn",
 	"templatedata-search-placeholder-cirrussearch": "Ange mallnamn eller nyckelord",
 	"templatedata-search-list-header": "Favoriter",

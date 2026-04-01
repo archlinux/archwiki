@@ -8,21 +8,24 @@
 			"Lokal Profil",
 			"NH",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
-	"spam-blacklist": " #<!-- ändra inte den här raden --> <pre>\n# Den här listan stoppar matchande externa URL:er från att läggas till på sidor.\n# Listan påverkar bara den här wikin; se även den globala svartlistan.\n# För dokumentation se https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader används som reguljära uttryck för att matcha domännamn i URL:er\n\n #</pre> <!-- ändra inte den här raden -->",
-	"spam-whitelist": "\n #<!-- ändra inte den här raden --> <pre>\n# Externa URL:er som matchar den här listan blockeras *inte*,\n# inte ens om de är blockerade genom den svarta listan för spam.\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader används som reguljära uttryck för att matcha domännamn i URL:er\n\n #</pre> <!-- ändra inte den här raden -->",
-	"email-blacklist": " #<!-- ändra inte den här raden --> <pre>\n# E-postadresser som matchar den här listan kommer att hindras att registrera och skicka e-post\n# Denna lista gäller endast denna wiki; se även den globala svartlistan.\n# För dokumentation se https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaxen är följande:\n#   * Allt från ett \"#\"-tecken till slutet av raden är en kommentar\n#   * Varje icke-tom rad är ett regex-fragment som endast kommer att matcha värdnamn i e-postadresser\n #</pre> <!-- ändra inte den här raden -->",
-	"email-whitelist": " #<!-- ändra inte den här raden --> <pre>\n# E-postadresser som matchar den här listan kommer *inte* att blockeras, även om de skulle ha blivit blockerade av svartlistan.\n#\n# Syntaxen är följande:\n#   * Allt från ett \"#\"-tecken till slutet av raden är en kommentar\n#   * Varje icke-tom rad är ett regex-fragment som endast kommer att matcha värdnamn i e-postadresser\n\n #</pre> <!-- ändra inte den här raden -->",
+	"spam-blacklist": " #<!-- ändra inte den här raden --> <pre>\n# Externa URL:er som matchar den här listan kommer att blockeras när de läggs till på en sida.\n# Den här listan påverkar endast denna wiki; se även den globala blockeringslistan.\n# För dokumentation, se https://www.mediawiki.org/wiki/Extension:SpamBlacklist/sv\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader är ett regex-fragment som bara matchar värdar inuti URL:er\n\n\n #</pre> <!-- ändra inte den här raden -->",
+	"spam-whitelist": "\n #<!-- ändra inte den här raden --> <pre>\n# Externa URL:er som matchar den här listan kommer *inte* att blockeras även om de skulle\n# ha blockerats av poster i blockeringslistan.\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader är ett regex-fragment som bara matchar värdar inuti URL:er\n\n #</pre> <!-- ändra inte den här raden -->",
+	"email-blacklist": " #<!-- ändra inte den här raden --> <pre>\n# E-postadresser som matchar den här listan kommer att blockeras från att registrera sig eller skicka e-post\n# Den här listan påverkar endast den här wikin; se även den globala blockeringslistan.\n# För dokumentation se https://www.mediawiki.org/wiki/Extension:SpamBlacklist/sv\n#\n# Syntaxen är följande:\n#   * Allt från ett \"#\"-tecken till slutet av raden är en kommentar\n#   * Varje icke-tom rad är ett regex-fragment som endast kommer att matcha värdnamn i e-postadresser\n #</pre> <!-- ändra inte den här raden -->",
+	"email-whitelist": "\n #<!-- ändra inte den här raden --> <pre>\n# Externa URL:er som matchar den här listan blockeras *inte*,\n# inte ens om de är blockerade genom den svarta listan för spam.\n#\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader används som reguljära uttryck för att matcha domännamn i URL:er\n\n #</pre> <!-- ändra inte den här raden -->",
 	"spam-blacklisted-email": "Svartlistad e-postadress",
 	"spam-blacklisted-email-text": "Din e-postadress är för närvarande svartlistad från att skicka e-post till andra användare.",
 	"spam-blacklisted-email-signup": "Den angivna e-postadressen är förnärvarande svartlistad från användning.",
-	"spam-invalid-lines": "Följande {{PLURAL:$1|rad|rader}} i svarta listan för spam innehåller inte något giltigt reguljärt uttryck  och måste rättas innan sidan sparas:",
-	"spam-blacklist-desc": "Antispamverktyg baserat på reguljära uttryck som gör det möjligt att svartlista webbadresser på sidor och e-postadresser för registrerade användare",
-	"log-name-spamblacklist": "Spamfilterlogg",
+	"spam-invalid-lines": "Följande spamblockeringslista {{PLURAL:$1|rad är ett|rader är}} ogiltiga reguljära {{PLURAL:$1|uttryck}} och {{PLURAL:$1|behöver}} korrigeras innan sidan sparas:",
+	"spam-blacklist-desc": "Regex-baserat antispamverktyg som gör det möjligt att blockera webbadresser (URL:er) på sidor och e-postadresser för registrerade användare",
+	"log-name-spamblacklist": "Logg för spamfiltret",
 	"log-description-spamblacklist": "Här visas händelser som utlöst spamfiltret",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} utlöste spamfiltret vid redigering av $3 genom att försöka lägga till $4.",
-	"right-spamblacklistlog": "Visa svartlistningslogg för spam",
-	"action-spamblacklistlog": "visa svartlistningsloggen för spam"
+	"right-spamblacklistlog": "Visa loggen för spamblockeringslistan",
+	"action-spamblacklistlog": "visa spamfiltrloggen",
+	"right-sboverride": "Kringgå listan över spamblockeringar",
+	"action-sboverride": "kringgå listan över spamblockeringar"
 }

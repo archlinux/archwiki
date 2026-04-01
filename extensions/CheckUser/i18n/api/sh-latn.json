@@ -25,6 +25,6 @@
 	"apihelp-query+checkuserlog-example-2": "Prikaži provjere 192.0.2.0/24 nakon 2011-10-15T23:00:00Z",
 	"apierror-checkuser-missingsummary": "Morate navesti razlog za provjeru.",
 	"apierror-checkuser-timelimit": "Morat ćete koristiti ispravno vremensko ograničenje (npr, \"-2 weeks\" ili \"2 weeks ago\").",
-	"apierror-checkuser-invalidmode": "Nevažeći način upita",
+	"apierror-checkuser-invalidmode": "Neispravan režim zahtjeva",
 	"checkuser-api-help-param-direction": "U kojem smjeru nabrajati:\n;never:Prvo najstarije. Napomena: $1from mora biti prije $1to.\n;older:Prvo najnovije (podrazumijevano). Napomena: $1from mora biti kasnije od $1to."
 }

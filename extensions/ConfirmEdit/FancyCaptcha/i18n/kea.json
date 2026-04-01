@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Waldyrious"
+			"Waldyrious",
+			"GrogeXaKaba"
 		]
 	},
+	"fancycaptcha-captcha": "Birifikason di suguransa",
+	"fancycaptcha-accountcreate": "Pa purteji es uiki kóntra kiriason otumatizadu di kónta, di sumóla, dijita kes palabra ki ta parsi na kaxa pa baxu ([[Special:Captcha/help|más nfurmason]]):",
+	"fancycaptcha-imgcaptcha-ph": "Dijita testu ki bu ta udja na imáji",
 	"fancycaptcha-reload-text": "Atualiza"
 }

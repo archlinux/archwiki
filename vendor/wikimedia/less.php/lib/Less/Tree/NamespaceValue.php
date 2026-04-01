@@ -7,8 +7,11 @@ class Less_Tree_NamespaceValue extends Less_Tree {
 
 	/** @var Less_Tree_Mixin_Call|Less_Tree_VariableCall */
 	public $value;
+	/** @var int|null */
 	public $index;
+	/** @var string[] */
 	public $lookups;
+	/** @var array|null */
 	public $currentFileInfo;
 
 	public function __construct( $ruleCall, $lookups, $index = null, $currentFileInfo = null ) {

@@ -3,7 +3,8 @@
 		"authors": [
 			"Dovud",
 			"Farorud",
-			"ToJack"
+			"ToJack",
+			"ZulfiqorF"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Посух додан",
@@ -30,6 +31,6 @@
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Лағви обуна",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Шумо}} огаҳӣ хоҳед гирифт аз паёмҳои нав дар ин баҳс.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Шумо}} пайгирӣ кардед!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Шумо}} дигар огаҳӣ дар бораи паёмҳои нав дар ин баҳс нахоҳед гирифт.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Шумо}} дар оянда дигар огаҳӣ дар бораи паёмҳои нав дар ин баҳс дарёфт нахоҳед кард.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "Обунаи {{GENDER:|Шумо}} қатъ шуд."
 }

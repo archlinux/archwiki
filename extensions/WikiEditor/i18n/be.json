@@ -10,7 +10,8 @@
 			"Plaga med",
 			"Tomato Cream",
 			"Yury Tarasievich",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Ucukor"
 		]
 	},
 	"wikieditor": "Палепшаны інтэрфейс праўкі вікітэкста",
@@ -56,7 +57,7 @@
 	"wikieditor-toolbar-file-format": "Фармат:",
 	"wikieditor-toolbar-file-format-none": "няма",
 	"wikieditor-toolbar-tool-file-insert": "Уставіць",
-	"wikieditor-toolbar-tool-file-cancel": "Адмена",
+	"wikieditor-toolbar-tool-file-cancel": "Скасаваць",
 	"wikieditor-toolbar-tool-file-upload": "Запампаваць",
 	"wikieditor-toolbar-tool-signature": "Ваш подпіс і адзначаны час",
 	"wikieditor-toolbar-section-advanced": "Дадаткова",

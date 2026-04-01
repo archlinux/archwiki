@@ -2,6 +2,7 @@
 /**
  * @file
  * @license https://opensource.org/licenses/Apache-2.0 Apache-2.0
+ * @phan-file-suppress PhanTemplateTypeNotUsedInFunctionReturn
  */
 
 namespace Wikimedia\CSS\Sanitizer;
@@ -63,9 +64,10 @@ abstract class Sanitizer {
 
 	/**
 	 * Run another sanitizer over a CSSObject
+	 * @template T of CSSObject
 	 * @param Sanitizer $sanitizer
-	 * @param CSSObject $object
-	 * @return CSSObject|null
+	 * @param T $object
+	 * @return T|null
 	 */
 	protected function sanitizeObj( Sanitizer $sanitizer, CSSObject $object ) {
 		$newObj = $sanitizer->doSanitize( $object );
@@ -79,13 +81,15 @@ abstract class Sanitizer {
 
 	/**
 	 * Run a sanitizer over all CSSObjects in a CSSObjectList
+	 * @template T of CSSObjectList
 	 * @param Sanitizer $sanitizer
-	 * @param CSSObjectList $list
-	 * @return CSSObjectList
+	 * @param T $list
+	 * @return T
 	 */
 	protected function sanitizeList( Sanitizer $sanitizer, CSSObjectList $list ) {
 		$class = get_class( $list );
 		$ret = new $class;
+		'@phan-var T $ret';
 		foreach ( $list as $obj ) {
 			$newObj = $sanitizer->doSanitize( $obj );
 			if ( $newObj ) {
@@ -139,16 +143,18 @@ abstract class Sanitizer {
 
 	/**
 	 * Sanitize a CSS object
-	 * @param CSSObject $object
-	 * @return CSSObject|null Sanitized version of the object, or null if
+	 * @template T of CSSObject
+	 * @param T $object
+	 * @return ?T Sanitized version of the object, or null if
 	 *  sanitization failed
 	 */
 	abstract protected function doSanitize( CSSObject $object );
 
 	/**
 	 * Sanitize a CSS object
-	 * @param CSSObject $object
-	 * @return CSSObject|null Sanitized version of the object, or null if
+	 * @template T of CSSObject
+	 * @param T $object
+	 * @return ?T Sanitized version of the object, or null if
 	 *  sanitization failed
 	 */
 	public function sanitize( CSSObject $object ) {

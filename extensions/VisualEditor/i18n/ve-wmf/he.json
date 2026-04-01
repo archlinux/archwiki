@@ -14,7 +14,8 @@
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"아라"
+			"아라",
+			"חזרתי"
 		]
 	},
 	"tag-editcheck-newcontent-description": "מערכת בדיקת עריכה חושבת שנוסף תוכן חדש לדף.",
@@ -27,7 +28,7 @@
 	"tag-editcheck-tone-description": "מערכת בדיקת עריכה זיהתה בעיה אפשרית בנימה של תוכן שנוסף",
 	"tag-editcheck-tone-shown": "הוצגה הודעה של בדיקת עריכה (נימה)",
 	"tag-editcheck-tone-shown-description": "מערכת בדיקת עריכה חושבת שאולי היה נחוץ תיקון בנימה של חלק מהתוכן והוצג ממשק המשתמש של זה",
-	"tag-editcheck-paste-shown": "הוצגהה הודעה של מערכת בדיקת עריכה (הדבקה)",
+	"tag-editcheck-paste-shown": "הוצגה הודעה של מערכת בדיקת עריכה (הדבקה)",
 	"tag-editcheck-paste-shown-description": "מערכת בדיקת עריכה בקישה הבהרה על תוכן שהעורך הדביק, שלאחר מכן הוסר או אושר בתור קביל",
 	"tag-visualeditor": "עריכה חזותית",
 	"tag-visualeditor-description": "עריכה שנעשתה באמצעות [[{{MediaWiki:visualeditor-descriptionpagelink}}|העורך החזותי]]",

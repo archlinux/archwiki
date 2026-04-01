@@ -7,7 +7,8 @@
 			"SaiPhani02",
 			"V Bhavya",
 			"Veeven",
-			"Woytecr"
+			"Woytecr",
+			"WikiPBR"
 		]
 	},
 	"discussiontools": "చర్చ ఉపకరణాలు",
@@ -39,7 +40,7 @@
 	"discussiontools-error-noswitchtove-title": "విజువల్ విధం అచేతనం",
 	"discussiontools-findcomment-label-search": "వెతుకు",
 	"discussiontools-ledesection-button": "ఈ పేజీ గురించి మరింత తెలుసుకోండి",
-	"discussiontools-newtopic-missing-title": "మీ చర్చాంశానికి ఒక పేరు ఇవ్వండి. \"{{int:discussiontools-replywidget-newtopic}}\" నొక్కితే, ఈ అంశం శీర్షిక పేరేమీ లేకుండానే ప్రచురితమౌతుంది.",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|మీ}} చర్చాంశానికి ఒక పేరు ఇవ్వండి.",
 	"discussiontools-newtopic-placeholder-title": "శీర్షిక",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "సభ్యత్వం",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "సభ్యత్వం తీసివేయు",
@@ -92,7 +93,7 @@
 	"discussiontools-replywidget-mode-source": "మూలం",
 	"discussiontools-replywidget-mode-visual": "విజువల్",
 	"discussiontools-replywidget-newcomments-button": "$1 కొత్త {{PLURAL:$1|వ్యాఖ్యను|వ్యాఖ్యలను}} చూపించు",
-	"discussiontools-replywidget-newtopic": "అంశాన్ని చేర్చండి",
+	"discussiontools-replywidget-newtopic": "అంశాన్ని {{GENDER:|చేర్చండి}}",
 	"discussiontools-replywidget-placeholder-newtopic": "వివరణ",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} కు {{GENDER:|ప్రత్యుత్తరం}}",
 	"discussiontools-replywidget-preferences": "అభిరుచులు",
@@ -104,7 +105,6 @@
 	"discussiontools-replywidget-terms-click": "\"$1\" నొక్కటం ద్వారా, ఈ వికీ వాడుక షరతులను అంగీకరిస్తున్నారు.",
 	"discussiontools-replywidget-transcluded": "[[$1]] దగ్గర మీ వ్యాఖ్య భద్రపరచబడుతుంది.",
 	"discussiontools-replywidget-watchthis": "ఈ పేజీని మీ [[Special:Watchlist|వీక్షణ జాబితాలో]] చేర్చండి",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "ఈ వ్యాఖ్య కనబడలేదు. దాన్ని తొలగించడమో, తరలించడమో చేసి ఉండవచ్చు.",
 	"discussiontools-target-comments-missing": "కొత్త వ్యాఖ్యలు కనబడలేదు. వాటిని తొలగించడమో, తరలించడమో చేసి ఉండవచ్చు.",
 	"discussiontools-topicheader-authorcount": "చర్చలో $1 {{PLURAL:$1|వ్యక్తి|మంది వ్యక్తులు}} ఉన్నారు",

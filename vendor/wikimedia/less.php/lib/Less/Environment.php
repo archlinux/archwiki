@@ -22,9 +22,12 @@ class Less_Environment {
 	public $frames = [];
 	/** @var array */
 	public $importantScope = [];
+	/** @var bool */
 	public $inCalc = false;
+	/** @var bool */
 	public $mathOn = true;
 
+	/** @var true[] */
 	private $calcStack = [];
 
 	/** @var Less_Tree_Media[] */
@@ -44,18 +47,22 @@ class Less_Environment {
 	 */
 	public $importVisitorOnceMap = [];
 
+	/** @var int */
 	public static $tabLevel = 0;
 
+	/** @var bool */
 	public static $lastRule = false;
 
+	/** @var array<string,true> */
 	public static $_noSpaceCombinators;
 
+	/** @var int */
 	public static $mixin_stack = 0;
 
+	/** @var int */
 	public $math = self::MATH_PARENS_DIVISION;
 
-	public $importCallback = null;
-
+	/** @var true[] */
 	public $parensStack = [];
 
 	public const MATH_ALWAYS = 0;

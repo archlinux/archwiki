@@ -10,6 +10,7 @@
 	"linter-form-namespace": "Nommâkomovuotâ:",
 	"linter-numerrors": "($1 {{PLURAL:$1|feilâ|feeilâ|feilâd}})",
 	"linter-page-history": "historjá",
+	"linter-pager-category-header": "Luokka",
 	"linter-pager-inline-media-caption-details": "Uáinimettum kovetekstâ",
 	"linter-pager-missing-image-alt-text-details": "Kove alt-tekstâ váilu",
 	"linter-pager-title-header": "Sijđonommâ",

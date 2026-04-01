@@ -13,22 +13,26 @@ use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerStatus;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
+use MediaWiki\Extension\AbuseFilter\Tests\Integration\AbuseFilterPermissionManagerTestTrait;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 
 /**
+ * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
  * @covers \MediaWiki\Extension\AbuseFilter\Api\CheckMatch
  * @group Database
  * @group medium
  */
 class CheckMatchTest extends ApiTestCase {
 	use AbuseFilterApiTestTrait;
+	use AbuseFilterPermissionManagerTestTrait;
 	use MockAuthorityTrait;
 
 	private static int $recentChangeId;
@@ -42,7 +46,7 @@ class CheckMatchTest extends ApiTestCase {
 			'action' => 'abusefiltercheckmatch',
 			'filter' => 'sampleFilter',
 			'vars' => FormatJson::encode( [] ),
-		], null, null, $this->mockRegisteredNullAuthority() );
+		], null, false, $this->mockRegisteredNullAuthority() );
 	}
 
 	public static function provideExecuteOk() {
@@ -101,6 +105,72 @@ class CheckMatchTest extends ApiTestCase {
 			'filter' => $filter,
 			'vars' => FormatJson::encode( [] ),
 		] );
+	}
+
+	public function testExecuteForRCEntryAccessLogSource() {
+		$rc = $this->createRCEntryDeleteLog();
+		$rcid = $rc->getAttribute( 'rc_id' );
+		$this->assertNotNull( $rcid );
+
+		$this->assertRCEntryAccessControlBruteForce(
+			self::PERMSET_LOG,
+			[
+				'action' => 'abusefiltercheckmatch',
+				'filter' => 'action === "delete"',
+				'rcid' => $rcid,
+			],
+			true
+		);
+	}
+
+	public function testExecuteForRCEntryAccessNonlogSource() {
+		$this->overrideConfigValue( MainConfigNames::PageCreationLog, false );
+		$rc = $this->createRCEntryEdit();
+		$rcid = $rc->getAttribute( 'rc_id' );
+		$this->assertNotNull( $rcid );
+
+		$this->assertRCEntryAccessControlBruteForce(
+			self::PERMSET_REVISION,
+			[
+				'action' => 'abusefiltercheckmatch',
+				'filter' => 'action === "edit"',
+				'rcid' => $rcid,
+			],
+			false
+		);
+	}
+
+	private function assertRCEntryAccessControlBruteForce(
+		array $permSet,
+		array $apiParams,
+		bool $isLog
+	) {
+		// Test all possible bitmask patterns of the LogPage:: or RevisionRecord::DELETED_* constants
+		$ceil = $isLog ? self::LOG_DELETED_ALL : self::REV_DELETED_ALL;
+		for ( $vis = 0; $vis <= $ceil; $vis++ ) {
+			if ( $vis !== 0 ) {
+				$this->updateRCEntryVisibility( $vis, (int)$apiParams['rcid'] );
+			}
+
+			foreach ( $permSet as $perms ) {
+				$authority = $this->mockFilterEditorAuthorityWithPermissions( $perms );
+				$this->apiContext->setAuthority( $authority );
+
+				$shouldSucceed = $isLog
+					? $this->shouldHaveRCEntryAccess( $vis, $perms )
+					: $this->shouldHaveRevisionAccess( $vis, $perms );
+				if ( !$shouldSucceed ) {
+					// ::doApiRequest intentionally duped because the error expectation
+					// should not carry over to the next iteration on an unexpected success
+					$this->expectApiErrorCode( 'deletedrc' );
+					$this->doApiRequest( $apiParams );
+					continue;
+				}
+
+				[ $res ] = $this->doApiRequest( $apiParams );
+				$this->assertArrayEquals( [ 'abusefiltercheckmatch' => [ 'result' => true ] ], $res );
+			}
+		}
 	}
 
 	public function testExecuteWhenPerformerCannotSeeLogId() {

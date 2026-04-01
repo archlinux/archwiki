@@ -4,7 +4,9 @@
 			"Minh Nguyen",
 			"Prenn",
 			"Quenhitran",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Duongvu",
+			"Nvdtn19"
 		]
 	},
 	"exif-imagewidth": "Chiều ngang",
@@ -379,5 +381,6 @@
 	"exif-exposurelockused-false": "Không",
 	"exif-poseheadingdegrees": "Hướng tư thế (độ)",
 	"exif-posepitchdegrees": "Độ dốc (độ)",
-	"exif-poserolldegrees": "Độ xoay (độ)"
+	"exif-poserolldegrees": "Độ xoay (độ)",
+	"exif-digitalsourcetype-trainedalgorithmicmedia": "Được tạo bằng AI"
 }

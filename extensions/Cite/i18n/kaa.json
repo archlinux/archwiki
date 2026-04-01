@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ajiniyaz Nurniyazov",
-			"Inabat Allanova"
+			"Inabat Allanova",
+			"Janabaevazizbek"
 		]
 	},
 	"cite_error": "Silteme kórsetiwdegi qátelik: $1",
@@ -10,6 +11,7 @@
 	"cite_error_group_refs_without_references": "«$1» dep atalǵan derekler toparında <code>&lt;ref&gt;</code> tegleri bar, biraq tiyisli <code>&lt;references group=«$1»/&gt;</code> tegi tabılmadı yamasa <code>&lt;/ref&gt;</code> jabıw tegi talap etiledi",
 	"cite-tracking-category-cite-error": "Qáte siltemeleri bar betler",
 	"cite_references_link_accessibility_label": "Joqarıǵa kóterilińiz",
+	"cite_section_preview_references": "Dereklerdi aldınnan kóriw",
 	"cite-wikieditor-tool-reference": "Derek qosıw",
 	"cite-wikieditor-help-page-references": "Derekler",
 	"cite-wikieditor-help-content-reference-description": "Derek",

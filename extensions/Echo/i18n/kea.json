@@ -1,8 +1,48 @@
 {
 	"@metadata": {
 		"authors": [
-			"Waldyrious"
+			"Waldyrious",
+			"GrogeXaKaba",
+			"Letra.berdi"
 		]
 	},
-	"tooltip-pt-notifications-alert": "{{GENDER:|Bus}} alertas"
+	"echo-desc": "Sistéma di nutifikason di uzuáris sobri ivéntus i mensájis",
+	"prefs-echo": "Nutifikasons",
+	"prefs-emailsettings": "Opusons di kureiu iletróniku",
+	"echo-pref-email-format": "Furmatu di kureiu iletróniku:",
+	"echo-pref-email": "Kureiu iletróniku",
+	"echo-pref-push": "Aplikativu",
+	"echo-pref-email-frequency-never": "Ka nvia-m nutifikasons pa kureiu iletróniku",
+	"echo-pref-email-format-plain-text": "Testu sinplis",
+	"echo-learn-more": "Sabe más",
+	"echo-log": "Rajistu públiku",
+	"echo-category-title-other": "{{PLURAL:$1|Otu}}",
+	"echo-category-title-system": "{{PLURAL:$1|Sistéma}}",
+	"echo-category-title-system-noemail": "{{PLURAL:$1|Sistéma}}",
+	"echo-category-title-system-emailonly": "{{PLURAL:$1|Sistéma}}",
+	"echo-category-title-user-rights": "{{PLURAL:$1|Alterason na diretus di uzuári}}",
+	"echo-category-title-article-reminder": "{{PLURAL:$1|Nutifikason}} di pájina",
+	"echo-category-title-verify-email-reminder": "Abizu pa kunfirmason di kureiu iletróniku",
+	"tooltip-pt-notifications-alert": "{{GENDER:|Bus}} alérta",
+	"notification-link-text-collapse-all": "Rakodji",
+	"notification-link-text-view-message": "Udja mensáji",
+	"notification-link-text-view-mention": "Udja menson",
+	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Udja menson|Udja mensons}}",
+	"notification-link-text-view-changes": "{{GENDER:$1|Udja}} alterasons",
+	"notification-link-text-view-page": "Udja pájina",
+	"notification-header-thank-you-1-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} purmeru idison; obrigadu, i ben-bindu!",
+	"notification-header-thank-you-10-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} désimu idison; obrigadu i, di smóla, kuntinua!",
+	"notification-header-thank-you-100-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} sentésimu idison; mutu obrigadu!",
+	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} milésimu idison; obrigadu pa es inórmi kulaburason!",
+	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} désimu milésimu idison; nu ta gardise-bu na divéra!",
+	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} désimu milionésimu idison; nu ka tene palabras pa gardise-bu pa es didikason brilianti!",
+	"notification-link-thank-you-edit": "{{GENDER:$1|Bu}} idison",
+	"notification-link-text-view-edit": "Udja idison",
+	"notification-link-article-reminder": "Udja pájina",
+	"notification-link-api-triggered": "Udja pájina",
+	"notification-timestamp-today": "Oxi",
+	"notification-timestamp-yesterday": "Ónti",
+	"notification-inbox-filter-read": "Kes ledu",
+	"notification-inbox-filter-unread": "Kes non ledu",
+	"notification-inbox-filter-all": "Tudu"
 }

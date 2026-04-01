@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Wikimedia\CSS\Util;
 
 /**
- * Represent a CSS qualified rule
+ * Represent a CSS qualified rule, eg. `div { color: red }`
  */
 class QualifiedRule extends Rule {
 

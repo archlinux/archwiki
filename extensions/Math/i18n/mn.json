@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chinneeb"
+			"Chinneeb",
+			"Zorigt"
 		]
 	},
 	"math_failure": "Задлан ялгал хийж чадсангүй",
-	"math_syntax_error": "синтаксийн алдаа",
+	"math_syntax_error": "синтаксын алдаа",
 	"math_unknown_error": "үл мэдэгдэх алдаа",
 	"math_unknown_function": "үл мэдэгдэх функц",
 	"mw-math-mathml": "Бололцоотой бол MathML （туршилт）",

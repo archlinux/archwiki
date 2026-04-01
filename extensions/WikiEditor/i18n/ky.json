@@ -97,7 +97,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Баарын алмаштыр",
 	"wikieditor-toolbar-tool-replace-close": "Жабуу",
 	"wikieditor-toolbar-tool-replace-nomatch": "Сиздин талап боюнча эчтеке табылган жок",
-	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|өзгөртүү|өзгөртүүлөр}} аткарылды.",
+	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|алмаштыруу}} аткарылды.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Сиз издегенге эч нерсе көргөзгөн жоксуз.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Сиз киргизген регулярдуу айтылыш туура эмес: $1",
 	"wikieditor-toolbar-section-characters": "Атайын белгилер",

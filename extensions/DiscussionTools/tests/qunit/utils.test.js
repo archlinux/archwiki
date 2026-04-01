@@ -12,12 +12,12 @@ QUnit.test( '#linearWalk', ( assert ) => {
 
 		const actual = [];
 		utils.linearWalk( doc, ( event, node ) => {
-			actual.push( event + ' ' + node.nodeName.toLowerCase() + '(' + node.nodeType + ')' );
+			actual.push( event + ' ' + node.nodeName.toLowerCase() );
 		} );
 
 		const actualBackwards = [];
 		utils.linearWalkBackwards( doc, ( event, node ) => {
-			actualBackwards.push( event + ' ' + node.nodeName.toLowerCase() + '(' + node.nodeType + ')' );
+			actualBackwards.push( event + ' ' + node.nodeName.toLowerCase() );
 		} );
 
 		assert.deepEqual( actual, expected, caseItem.name );

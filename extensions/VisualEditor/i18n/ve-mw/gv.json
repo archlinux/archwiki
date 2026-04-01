@@ -1,8 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xð"
+			"Xð",
+			"MacTire02"
 		]
 	},
-	"tooltip-ca-ve-edit": "Reagh y ghuillag shoh"
+	"tooltip-ca-ve-edit": "Reagh y duillag shoh",
+	"tooltip-ca-ve-create": "Croo yn duillag shoh",
+	"tooltip-ca-editsource": "Reagh bun-choad y duillag shoh",
+	"tooltip-ca-createsource": "Croo bun-choad y duillag shoh",
+	"visualeditor-ca-createlocaldescriptionsource": "Cur stiagh moir ynnydagh da cur-sheese",
+	"visualeditor-ca-createsource": "Croo bun",
+	"visualeditor-ca-editsource": "Reagh y bun",
+	"visualeditor-ca-editsource-section": "reagh y bun"
 }

@@ -270,6 +270,8 @@
 	"echo-blacklist": "",
 	"right-echo-create": "Send notifications to others",
 	"action-echo-create": "send notifications to others",
+	"right-echo-read-notifications": "Read my notifications",
+	"action-echo-read-notifications": "read my notifications",
 	"right-manage-all-push-subscriptions": "Manage all push subscriptions",
 	"action-manage-all-push-subscriptions": "manage all push subscriptions",
 	"group-push-subscription-manager": "Push subscription managers",

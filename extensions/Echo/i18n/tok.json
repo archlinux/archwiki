@@ -3,7 +3,8 @@
 		"authors": [
 			"Juwan",
 			"Ne",
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"Tamzin"
 		]
 	},
 	"prefs-echo": "toki suli",
@@ -88,5 +89,6 @@
 	"echo-email-batch-link-text-view-all-notifications": "o lukin e toki suli ale",
 	"notification-header-foreign-alert": "mu suli li kama tan {{PLURAL:$5|lipu ante}}",
 	"notification-header-foreign-notice": "mu li kama tan {{PLURAL:$5|lipu ante}}",
-	"notification-header-foreign-all": "toki suli li kama tan {{PLURAL:$5|lipu ante}}"
+	"notification-header-foreign-all": "toki suli li kama tan {{PLURAL:$5|lipu ante}}",
+	"right-echo-create": "ona li ken mu e jan ante"
 }

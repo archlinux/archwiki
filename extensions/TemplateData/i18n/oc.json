@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cedric31"
+			"Cedric31",
+			"Lhanars"
 		]
 	},
 	"templatedata-desc": "Met en place un emmagazinatge de donadas pels paramètres dels modèls (en utilizant JSON)",
@@ -11,6 +12,7 @@
 	"templatedata-doc-param-status": "Estatut",
 	"templatedata-doc-param-type": "Tipe",
 	"templatedata-doc-params": "Paramètres del modèl",
+	"templatedata-editbutton": "Editar las donadas del modèl",
 	"templatedata-helplink": "Informacions sus TemplateData",
 	"templatedata-invalid-length": "Donadas tròp gròssas per èsser enregistradas ({{formatnum:$1}} {{PLURAL:$1|octet|octets}}, {{PLURAL:$2|lo limit es}} {{formatnum:$2}})",
 	"templatedata-invalid-missing": "Proprietat « $1 » obligatòria pas trobada.",

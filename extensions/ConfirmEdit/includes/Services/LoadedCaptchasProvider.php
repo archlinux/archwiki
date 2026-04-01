@@ -47,6 +47,9 @@ class LoadedCaptchasProvider {
 			}
 		}
 
+		// Remove namespaces from the classes
+		$loadedCaptchas = preg_replace( '@^.+\\\\@', '', $loadedCaptchas );
+
 		return array_unique( $loadedCaptchas );
 	}
 

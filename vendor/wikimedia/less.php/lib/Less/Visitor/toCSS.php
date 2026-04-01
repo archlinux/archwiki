@@ -4,6 +4,7 @@
  */
 class Less_Visitor_toCSS extends Less_VisitorReplacing {
 
+	/** @var bool|null */
 	private $charset;
 
 	public function __construct() {

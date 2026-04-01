@@ -17,7 +17,8 @@
 			"Rex",
 			"Robifr",
 			"Veracious",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Penyuwangi"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -82,8 +83,8 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskusi]]",
 	"tooltip-vector-anon-user-menu-title": "Opsi lainnya",
 	"vector-page-tools-nav-label": "Peralatan halaman",
-	"vector-prefs-limited-width": "Aktifkan mode lebar terbatas",
-	"vector-prefs-limited-width-help": "Aktifkan mode lebar terbatas untuk meningkatkan pengalaman membaca.",
+	"vector-prefs-limited-width": "Nyalakan mode lebar terbatas",
+	"vector-prefs-limited-width-help": "Nyalakan mode lebar terbatas untuk meningkatkan pengalaman membaca.",
 	"empty-language-selector-body": "Konten halaman tidak didukung dalam bahasa lain.",
 	"vector-toc-unpinned-popup": "Daftar isi telah dipindahkan ke sini.",
 	"vector-page-tools-unpinned-popup": "Menu perkakas telah dipindahkan ke sini.",

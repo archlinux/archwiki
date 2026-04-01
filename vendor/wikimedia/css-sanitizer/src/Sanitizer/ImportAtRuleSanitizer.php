@@ -80,6 +80,7 @@ class ImportAtRuleSanitizer extends RuleSanitizer {
 			}
 			return null;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $this->fixPreludeWhitespace( $object, true );
 	}
 }

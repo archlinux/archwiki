@@ -9,7 +9,9 @@ namespace Wikimedia\CSS\Objects;
 use InvalidArgumentException;
 
 /**
- * Represent a list of CSS declarations
+ * Represent a list of CSS component values, eg. `10px 20px` is the
+ * component value list in the declaration `margin: 10px 20px;`.
+ * @extends CSSObjectList<ComponentValue>
  */
 class ComponentValueList extends CSSObjectList {
 	/**

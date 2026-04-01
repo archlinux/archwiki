@@ -22,7 +22,7 @@
 	"nuke-not-deleted": "Sida [[:$1]] ''kunne ikkje''' verta sletta.",
 	"nuke-delete-more": "[[Special:Nuke|Slett fleire sider]]",
 	"nuke-pattern": "Mønster for sidenamnet:",
-	"nuke-nopages-global": "Det er ingen nye sider i [[Special:RecentChanges|siste endringane]].",
+	"nuke-nopages-global": "Ingen sider samsvarer med søket.",
 	"nuke-viewchanges": "vis endringar",
 	"nuke-namespace": "Avgrens til namnerom:",
 	"nuke-linkoncontribs": "masseslett",

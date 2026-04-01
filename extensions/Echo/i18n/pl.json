@@ -103,6 +103,7 @@
 	"echo-displaynotificationsconfiguration-available-notification-methods-by-category-legend": "Jakie metody powiadamiania są obsługiwane dla każdej z kategorii",
 	"echo-displaynotificationsconfiguration-enabled-default-header": "Domyślnie włączone",
 	"echo-displaynotificationsconfiguration-enabled-default-legend": "Domyślne ustawienia",
+	"echo-displaynotificationsconfiguration-enabled-default-conditional-legend": "Opcje dla użytkowników spełniających warunki: $1",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-header": "Wymagane sposoby powiadamiania",
 	"echo-displaynotificationsconfiguration-mandatory-notification-methods-by-category-legend": "Które metody powiadamiania są obowiązkowe dla każdej z kategorii",
 	"echo-specialpage": "Powiadomienia",
@@ -261,5 +262,9 @@
 	"action-manage-all-push-subscriptions": "zarządzania subskrypcjami push",
 	"group-push-subscription-manager": "Menedżerowie subskrypcji push",
 	"group-push-subscription-manager-member": "{{GENDER:$1|menedżer|menedżerka}} subskrypcji push",
-	"grouppage-push-subscription-manager": "{{ns:project}}:Menedżerowie subskrypcji push"
+	"grouppage-push-subscription-manager": "{{ns:project}}:Menedżerowie subskrypcji push",
+	"notification-subject-email-verify-email-reminder": "Potwierdź {{GENDER:$1|swój}} e-mail",
+	"notification-header-verify-email-reminder": "<strong>{{GENDER:$1|Zweryfikuj}} swój adres e-mail</strong>, abyśmy wiedzieli, że adres e-mail na Twoim koncie należy do Ciebie.",
+	"notification-link-text-verify-email-reminder": "Zarządzaj preferencjami e-mail",
+	"notification-verify-email-reminder-link-label": "Potwierdź adres e-mail"
 }

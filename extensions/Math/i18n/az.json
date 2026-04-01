@@ -63,6 +63,7 @@
 	"math-visualeditor-symbol-group-math-typefaces": "Yazı tipləri",
 	"math-visualeditor-symbol-group-math-unsorted": "Çeşidlənməmiş",
 	"math-form-tex-label": "Xüsusi TeX girişi",
+	"math-form-tex-help": "Öz TeX kodunuzla test edin. Daha detallı [[{{int:math-helppage}}|riyazi düsturlar üçün kömək səhifəsinə]] baxın.",
 	"math_failure": "Analiz etmək alınmadı",
 	"math_invalidjson": "$1 server cavabı etibarsız JSON-dur.",
 	"math_syntax_error": "sintaksis xətası",

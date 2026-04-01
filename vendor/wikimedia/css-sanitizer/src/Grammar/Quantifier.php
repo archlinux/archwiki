@@ -150,14 +150,17 @@ class Quantifier extends Matcher {
 			// And in either case optional whitespace is always allowed.
 			if ( $this->commas ) {
 				$n = $nextFrom;
+				// https://github.com/phan/phan/issues/5441
+				// @phan-suppress-next-line PhanRedundantConditionInLoop
 				if ( isset( $values[$n] ) && $values[$n] instanceof Token &&
-					// @phan-suppress-next-line PhanNonClassMethodCall False positive
+					// @phan-suppress-next-line PhanUndeclaredMethod False positive
 					$values[$n]->type() === Token::T_WHITESPACE
 				) {
 					$n = $this->next( $values, $n, [ 'skip-whitespace' => true ] + $options );
 				}
+				// @phan-suppress-next-line PhanRedundantConditionInLoop
 				if ( isset( $values[$n] ) && $values[$n] instanceof Token &&
-					// @phan-suppress-next-line PhanNonClassMethodCall False positive
+					// @phan-suppress-next-line PhanUndeclaredMethod False positive
 					$values[$n]->type() === Token::T_COMMA
 				) {
 					$nextFrom = $this->next( $values, $n, [ 'skip-whitespace' => true ] + $options );

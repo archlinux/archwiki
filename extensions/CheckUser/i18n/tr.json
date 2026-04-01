@@ -23,7 +23,8 @@
 			"Suelnur",
 			"ToprakM",
 			"Vito Genovese",
-			"Ömer Berkay"
+			"Ömer Berkay",
+			"Gadir"
 		]
 	},
 	"checkuser-summary": "Bu araç bir kullanıcı tarafından kullanılan IP'leri almak için son değişiklikleri tarar ya da bir IP için değişiklik/kullanıcı verisini gösterir.\nAlıcı IP'deki kullanıcı ve değişiklikler, IP'ye \"/xff\" eklenmesiyle XFF başlıklarıyla alınabilir. IPv4 (CIDR $1-32) ve IPv6 (CIDR $2-128) desteklenmektedir.\nPerformans nedenleriyle $3 düzenlemeden fazla geri almayacaktır.",
@@ -36,7 +37,7 @@
 	"group-checkuser": "Denetçiler",
 	"group-checkuser-member": "{{GENDER:$1|denetçi}}",
 	"group-temporary-account-viewer": "Geçici hesap IP görüntüleyicileri",
-	"group-temporary-account-viewer-member": "{{GENDER:$1|geçici hesap IP görüntüleyicisi}}",
+	"group-temporary-account-viewer-member": "{{GENDER:$1|geçici hesap IP görüntüleyici}}",
 	"right-checkuser": "Kullanıcıların IP adreslerini ve diğer bilgilerini denetle",
 	"right-checkuser-log": "Denetleme günlüğünü gör",
 	"right-checkuser-temporary-account": "Geçici hesaplar tarafından kullanılan IP adreslerini görüntüle",

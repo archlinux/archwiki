@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Woytecr"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "Sprawdź dwa URL pod kątem obecności na liście zablokowanych",
+	"apihelp-spamblacklist-param-url": "URLe do sprawdzenia pod kątem obecności na liście zablokowanych.",
+	"apihelp-spamblacklist-summary": "Sprawdź jeden lub więcej adresów URL pod kątem obecności na liście blokowania spamu."
+}

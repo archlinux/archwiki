@@ -7,7 +7,8 @@
 			"He7d3r",
 			"Helder.wiki",
 			"Hmohr",
-			"McDutchie"
+			"McDutchie",
+			"Fúlvio"
 		]
 	},
 	"syntaxhighlight-desc": "Providencia realce de sintaxe <code>&lt;syntaxhighlight&gt;</code> usando [http://pygments.org/ Pygments - Marcador de sintaxe Python]",
@@ -25,5 +26,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloco de código",
 	"syntaxhighlight-error-pygments-invocation-failure": "Falha ao invocar Pygments",
 	"syntaxhighlight-error-unknown-language": "Linguagem \"$1\" desconhecida",
-	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código, $1 {{PLURAL:$1|bytes}}, excede o máximo permitido de $2 {{PLURAL:$2|bytes}}"
+	"syntaxhighlight-error-exceeds-size-limit": "O tamanho do código, $1 {{PLURAL:$1|bytes}}, excede o máximo permitido de $2 {{PLURAL:$2|bytes}}",
+	"syntaxhighlight-button-copy": "Copiar",
+	"syntaxhighlight-button-copied": "Copiado!"
 }

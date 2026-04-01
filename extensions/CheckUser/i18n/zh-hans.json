@@ -54,7 +54,10 @@
 			"白布飘扬",
 			"范",
 			"铁桶",
-			"ExoHyper2026"
+			"ExoHyper2026",
+			"Plana",
+			"Gsdn",
+			"0x48fe75df30"
 		]
 	},
 	"checkuser-summary": "本工具会从最近更改中获取某个用户使用过的IP地址，或者显示某个IP地址下的编辑/用户。\n可在IP地址后方附加“/xff”以使用XFF头信息来获取同一客户端IP地址下的用户和编辑。支持IPv4（CIDR $1-32）和IPv6（CIDR $2-128）。\n由于性能问题，本工具最多返回$3笔最近编辑信息。\n请确保您的操作符合方针。",
@@ -209,7 +212,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-content": "[https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/IP_Info IP信息]工具可让管理员、反破坏人员以及经验丰富的用户在无需查看IP地址的情况下，更轻松地访问有关IP地址的信息。\n\n满足访问要求的用户可以在其偏好设置中启用IP信息功能。启用后，IP信息弹出窗口将显示在临时账号和传统IP地址旁。IP信息也将显示在用户贡献页面。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-image-aria-label": "显示IPInfo工具的用途（在页面上查找临时账号信息，其中信息图标被激活以显示弹框）的图像。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "启用IP信息工具",
-	"checkuser-temporary-accounts-onboarding-dialog-preference-error": "发生错误。请重试。收到的错误消息是： $1",
+	"checkuser-temporary-accounts-onboarding-dialog-preference-error": "发生错误。请重试。收到的错误消息是：$1",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-success": "设置已更新",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "请点击“$1”再继续",
 	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "保存设置",
@@ -217,8 +220,8 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "显示临时账号的IP地址",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base": "管理员、反破坏工作者以及有经验的用户现在可以选择显示与某一临时账号关联的IP地址。开启后，“{{int:checkuser-tempaccount-reveal-ip-button-label}}”按钮将显示在临时账号旁。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-with-global-preferences": "{{int:checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base}}\n\n满足访问条件的用户需要在其[[Special:Preferences#mw-prefsection-personal-checkuser-tempaccount|参数设置]]或[[Special:GlobalPreferences#mw-prefsection-personal-checkuser-tempaccount|全域参数设置]]中开启IP显示功能。",
-	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text": "您可以在[[Special:Preferences#mw-prefsection-personal-checkuser-tempaccount|参数设置]]中管理查看临时帐号IP地址的功能。",
-	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences": "您可以在[[Special:GlobalPreferences#mw-prefsection-personal-checkuser-tempaccount|全域参数设置]]中管理查看临时帐号IP地址的功能。",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text": "您可以在[[Special:Preferences#mw-prefsection-personal-checkuser-tempaccount|参数设置]]中管理查看临时账号IP地址的功能。",
+	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences": "您可以在[[Special:GlobalPreferences#mw-prefsection-personal-checkuser-tempaccount|全域参数设置]]中管理查看临时账号IP地址的功能。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences-with-autoreveal": "{{int:checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences}}自动显示IP地址模式可在工具菜单中通过“{{int:checkuser-ip-auto-reveal-link-sidebar}}”链接管理，并提供不同期限选项。默认期限为$1。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-image-aria-label": "该图像显示了IP显示工具使用后的效果，与临时账号关联的IP地址皆已显示。功能按钮的文本为“{{int:checkuser-tempaccount-reveal-ip-button-label}}”，显示在临时账号用户名旁。",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-title-with-global-preferences": "在全域开启IP显示",

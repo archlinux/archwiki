@@ -4,7 +4,8 @@
 			"Alicia Agyeiwaa",
 			"Obed554",
 			"SaldırganSincap",
-			"Yaw tuba"
+			"Yaw tuba",
+			"TMg"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Nkyekyɛmu|Nkyekyɛmu ahorow}}",
@@ -153,9 +154,7 @@
 	"viewdeleted": "Hwɛ $1?",
 	"restorelink": "{{PLURAL:$1|nsakraeɛ biako a bɛapopa|$1 nsakraeɛ ahodoɔ a bɛapopa}}",
 	"site-rss-feed": "$1 RSS feed",
-	"site-atom-feed": "$1 Atom feed",
 	"page-rss-feed": "\"$1\" RSS feed",
-	"page-atom-feed": "\"$1\" Atom feed",
 	"red-link-title": "$1 (simpie he nni hɔ bio)",
 	"sort-descending": "Hyehyɛ kɔ fam",
 	"sort-ascending": "Hyehyɛ kɔ soro",
@@ -278,7 +277,7 @@
 	"resetpass_submit": "Yɛ kukuwa mu ahyɛnsodeɛ ne kɔ mu",
 	"changepassword-success": "Wo kukuwa mu ahyɛnsodeɛ he asesa!",
 	"resetpass_forbidden": "Bɛ ntumi nsesa wo kukuwa mu ahyɛnsodeɛ",
-	"resetpass_forbidden-reason": "Bɛ ntumi nsesa wo kukuwa mu ahyɛnsodeɛ",
+	"resetpass_forbidden-reason": "Bɛ ntumi nsesa wo kukuwa mu ahyɛnsodeɛ: $1",
 	"resetpass-submit-loggedin": "Sesa kukuwa mu ahyɛnsodeɛ he",
 	"resetpass-submit-cancel": "Twa mu",
 	"resetpass-temp-password": "Kukuwa mu ahyɛnsodeɛ a ɛnkyɛ:",
@@ -478,7 +477,7 @@
 	"restriction-edit": "Siesie",
 	"restriction-move": "Kɔ",
 	"namespace": "Beaeɛ a din ahodoɔ wɔ",
-	"blanknamespace": "Ne titire",
+	"blanknamespace": "(Ne titire)",
 	"contributions": "Wo mmoa",
 	"contributions-title": "{{GENDER:$2|Dwumadini}} ntoboa ma $1",
 	"mycontris": "Mmoa ahodoɔ",

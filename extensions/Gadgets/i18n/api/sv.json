@@ -3,17 +3,18 @@
 		"authors": [
 			"Lokal Profil",
 			"Sabelöga",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
-	"apihelp-query+gadgetcategories-summary": "Returnerar en lista för finesskategorier.",
-	"apihelp-query+gadgetcategories-param-prop": "Vilken information om finesskategorier som ska hämtas:",
-	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Internt kategorinamn.",
-	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Kategorititel.",
-	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Antal finesser i kategorin.",
-	"apihelp-query+gadgetcategories-param-names": "Namn på kategorier som ska hämtas.",
-	"apihelp-query+gadgetcategories-example-1": "Få en lista över befintliga finesskategorier",
-	"apihelp-query+gadgetcategories-example-2": "Få all information om kategorier med namnen \"foo\" och \"bar\"",
+	"apihelp-query+gadgetcategories-summary": "Returnerar en lista för finesssektioner.",
+	"apihelp-query+gadgetcategories-param-prop": "Vilken information om finessektioner som ska hämtas:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Internt sektionsnamn.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Sektionstitel.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Antal finesser i sektionen.",
+	"apihelp-query+gadgetcategories-param-names": "Namn på sektioner som ska hämtas.",
+	"apihelp-query+gadgetcategories-example-1": "Få en lista över befintliga finessektioner",
+	"apihelp-query+gadgetcategories-example-2": "Få all information om sektioner med namnen \"foo\" och \"bar\"",
 	"apihelp-query+gadgets-summary": "Returnerar en lista över finesser som används på denna wiki.",
 	"apihelp-query+gadgets-param-prop": "Vilken finessinformation som ska hämtas:",
 	"apihelp-query+gadgets-paramvalue-prop-id": "Internt finess-ID.",

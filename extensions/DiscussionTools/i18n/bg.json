@@ -119,7 +119,6 @@
 	"discussiontools-replywidget-terms-click": "Щраквайки върху „$1“, {{GENDER:|Вие}} се съгласявате с условията за използване на това уики.",
 	"discussiontools-replywidget-transcluded": "Вашият коментар ще бъде записан на [[$1]].",
 	"discussiontools-replywidget-watchthis": "Добавяне на страницата към [[Special:Watchlist|списъка за наблюдение]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Коментарът не може да бъде открит. Може да е изтрит или преместен.",
 	"discussiontools-target-comments-missing": "Нови коментари не могат да бъдат намерени. Може да са изтрити или преместени.",
 	"discussiontools-target-heading-missing": "Темата не може да бъде намерена. Може да е изтрита, преместена или преименувана.",

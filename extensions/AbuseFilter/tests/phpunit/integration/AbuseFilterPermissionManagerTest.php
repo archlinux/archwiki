@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -14,6 +15,7 @@ use StatusValue;
  * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
  */
 class AbuseFilterPermissionManagerTest extends MediaWikiIntegrationTestCase {
+	use AbuseFilterPermissionManagerTestTrait;
 	use MockAuthorityTrait;
 	use TempUserTestTrait;
 
@@ -119,4 +121,45 @@ class AbuseFilterPermissionManagerTest extends MediaWikiIntegrationTestCase {
 			],
 		];
 	}
+
+	/**
+	 * @todo This should be put in the corresponding unit test,
+	 * but the test trait requires DB
+	 */
+	public function testHasRevisionAccessBruteForce() {
+		for ( $visibility = 0; $visibility <= self::REV_DELETED_ALL; $visibility++ ) {
+			foreach ( self::PERMSET_REVISION as $label => $perms ) {
+				$authority = $this->mockFilterEditorAuthorityWithPermissions( $perms );
+				$this->assertSame(
+					$this->shouldHaveRevisionAccess( $visibility, $perms ),
+					AbuseFilterPermissionManager::hasRevisionAccess( $visibility, $authority ),
+					$this->formatVisibilityError( $visibility, $label )
+				);
+			}
+		}
+	}
+
+	/**
+	 * @todo This should be put in the corresponding unit test,
+	 * but the test trait requires DB
+	 */
+	public function testHasRCEntryAccessBruteForce() {
+		for ( $visibility = 0; $visibility <= self::LOG_DELETED_ALL; $visibility++ ) {
+			foreach ( self::PERMSET_LOG as $label => $perms ) {
+				$rc = $this->createMock( RecentChange::class );
+				$rc->method( 'getAttribute' )->willReturnMap( [
+					[ 'rc_source', RecentChange::SRC_LOG ],
+					[ 'rc_deleted', $visibility ],
+				] );
+
+				$authority = $this->mockFilterEditorAuthorityWithPermissions( $perms );
+				$this->assertSame(
+					$this->shouldHaveRCEntryAccess( $visibility, $perms ),
+					AbuseFilterPermissionManager::hasRCEntryAccess( $rc, $authority ),
+					$this->formatVisibilityError( $visibility, $label )
+				);
+			}
+		}
+	}
+
 }

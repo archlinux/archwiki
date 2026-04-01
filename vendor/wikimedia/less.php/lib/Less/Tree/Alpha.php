@@ -4,6 +4,7 @@
  * @see less-2.5.3.js#Alpha.prototype
  */
 class Less_Tree_Alpha extends Less_Tree implements Less_Tree_HasValueProperty {
+	/** @var string|Less_Tree */
 	public $value;
 
 	/**

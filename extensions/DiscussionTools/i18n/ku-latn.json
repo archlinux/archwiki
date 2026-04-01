@@ -97,7 +97,6 @@
 	"discussiontools-replywidget-terms-click": "Piştî pê li \"$1\" kir, ew tê maneya ku tu mercên bikaranînê yên vê wîkiyê qebûl dikî.",
 	"discussiontools-replywidget-transcluded": "Şiroveya te dê li [[$1]] were qeydkirin.",
 	"discussiontools-replywidget-watchthis": "Vê rûpelê tevlî [[Special:Watchlist|lîsteya xwe ya şopandinê]] bike",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|kes di gotûbêjê de ye|kes di gotûbêjê de ne}}",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|şirove}}",
 	"discussiontools-topicheader-latestcomment": "Şiroveya dawî: $1",

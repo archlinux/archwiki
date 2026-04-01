@@ -47,7 +47,7 @@
 	"templatedata-modal-button-apply": "Primijeni",
 	"templatedata-modal-button-back": "Nazad",
 	"templatedata-modal-button-cancel": "Otkaži",
-	"templatedata-modal-button-changelang": "Smijeni jezik",
+	"templatedata-modal-button-changelang": "Promijeni jezik",
 	"templatedata-modal-button-delparam": "Ukloni podatke o parametru",
 	"templatedata-modal-button-done": "Gotovo",
 	"templatedata-modal-button-map": "Uredi mapiranje",
@@ -96,5 +96,8 @@
 	"templatedata-modal-title-templateformatstring": "Niska prilagođenog formata",
 	"templatedata-modal-title-templateparam-details": "Detalji o parametru: $1",
 	"templatedata-modal-title-templateparams": "Parametri šablona",
-	"templatedata-favorite-add": "Dodajte šablon u omiljene"
+	"templatedata-search-placeholder-cirrussearch": "Unesite naziv šablona ili ključne riječi",
+	"templatedata-favorite-add": "Dodajte šablon u omiljene",
+	"templatedata-category-switch-label": "Krovna kategorija",
+	"templatedata-featured-list-config-link": "Uredi listu istaknutih"
 }

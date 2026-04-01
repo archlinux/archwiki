@@ -121,6 +121,7 @@
 	"templatedata-modal-title-templateparams": "Параметри шаблона",
 	"templatedata-search-description": "Претрага шаблона",
 	"templatedata-search-placeholder": "Унесите назив странице",
+	"templatedata-search-placeholder-cirrussearch": "Унесите назив шаблона или кључне речи",
 	"templatedata-search-list-header": "Омиљено",
 	"templatedata-search-list-empty": "Шаблони које означите омиљеним ће се појавити овде",
 	"templatedata-search-list-empty-anon": "Молимо пријавите се да означите шаблон омиљеним",
@@ -134,6 +135,8 @@
 	"templatedata-category-column-error": "Дошло је до грешке",
 	"templatedata-category-categories": "Остале категорије",
 	"templatedata-category-no-cats": "Нема.",
-	"templatedata-featured-list-header": "Изабрани",
-	"communityconfiguration-templatedata-featuredtemplates-title": "Истакнути шаблони"
+	"templatedata-featured-list-header": "Истакнути",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Истакнути шаблони",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Наслови",
+	"templatedata-featured-list-config-link": "Уреди списак истакнутих"
 }

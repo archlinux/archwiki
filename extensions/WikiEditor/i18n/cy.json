@@ -68,6 +68,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Eitem ar restr gyda bwledi",
 	"wikieditor-toolbar-tool-olist": "Rhestr wedi'i rhifo",
 	"wikieditor-toolbar-tool-olist-example": "Eitem ar restr wedi'i rhifo",
+	"wikieditor-toolbar-tool-code": "Cod cyfrifiadurol",
+	"wikieditor-toolbar-tool-code-example": "Cod cyfrifiadurol",
 	"wikieditor-toolbar-tool-nowiki": "Dim fformatio wici",
 	"wikieditor-toolbar-tool-nowiki-example": "Rhowch destun heb ei fformatio yma",
 	"wikieditor-toolbar-tool-redirect": "Ailgyfeiriad",

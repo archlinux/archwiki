@@ -34,8 +34,8 @@
 	"apihelp-query+notifications-paramvalue-format-html": "<span class=\"apihelp-deprecated\">Zdeprecjonowane</span>. Użyj <kbd>$1format=model</kbd> dla surowych danych",
 	"apihelp-query+notifications-param-limit": "Maksymalna liczba zwracanych powiadomień.",
 	"apihelp-query+notifications-param-wikis": "Lista wiki, z których pobrać powiadomienia (domyślnie tylko bieżąca wiki).",
-	"apihelp-query+notifications-example-1": "Spis powiadomień",
-	"apihelp-query+notifications-example-2": "Wypisz powiadomienia pogrupowane według sekcji z ich liczbą",
+	"apihelp-query+notifications-example-1": "Pobierz listę powiadomień strony internetowej",
+	"apihelp-query+notifications-example-2": "Wypisz powiadomienia strony internetowej pogrupowane według sekcji z ich liczbą",
 	"apihelp-query+unreadnotificationpages-param-limit": "Maksymalna liczba zwracanych stron.",
 	"apierror-echo-event-creation-failed": "Nie można utworzyć wydarzenia Echo"
 }

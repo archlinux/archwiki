@@ -3,12 +3,14 @@
 		"authors": [
 			"Ainali",
 			"Sabelöga",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Kommentar med ID \"$1\" hittades inte.",
 	"apierror-discussiontools-commentname-ambiguous": "Flera kommentarer med namnet \"$1\" hittades, <var>commentid</var> krävs.",
 	"apierror-discussiontools-commentname-notfound": "Kommentar med namnet \"$1\" hittades inte.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Sidan har aldrig innehållit några diskussioner.",
 	"apierror-discussiontools-formtoken-used": "Kommentaren har redan publicerats. Uppdatera sidan för att se den.",
 	"apierror-discussiontools-subscription-failed-add": "Kunde inte prenumerera på ämnet.",
 	"apierror-discussiontools-subscription-failed-remove": "Kunde inte avsluta prenumeration på ämnet.",
@@ -26,6 +28,8 @@
 	"apihelp-discussiontoolsedit-summary": "Posta ett inlägg på en diskussionssida.",
 	"apihelp-discussiontoolsfindcomment-summary": "Hitta en kommentar via dess ID eller namn.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Kommentars-ID eller namn",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Rubrik-hashfragment",
+	"apihelp-discussiontoolsfindcomment-param-page": "Sidan där rubrikens hashfragment en gång fanns",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Namn på ämnen att kontrollera",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Hämta prenumerationsstatus för angivna ämnen.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Sidversionsnummer att använd (standard är senaste versionen).",
@@ -40,5 +44,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Namn på ämnet att prenumerera på (eller sluta prenumerera på)",
 	"apihelp-discussiontoolssubscribe-param-page": "En sida som ämnet visas på",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True för att prenumerera, false för att sluta prenumerera",
-	"apihelp-discussiontoolssubscribe-summary": "Prenumerera (eller sluta prenumerera) för att ta emot aviseringar om ett ämne."
+	"apihelp-discussiontoolssubscribe-summary": "Prenumerera (eller sluta prenumerera) för att ta emot aviseringar om ett ämne.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID för kommentaren att tacka.",
+	"apihelp-discussiontoolsthank-summary": "Skicka ett offentligt tackmeddelande för en kommentar."
 }

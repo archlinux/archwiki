@@ -207,7 +207,7 @@
 	"abusefilter-deleted": "削除",
 	"abusefilter-disabled": "無効",
 	"abusefilter-throttled": "高い一致率",
-	"abusefilter-hitcount": "$1 {{PLURAL:$1|件}}の一致",
+	"abusefilter-hitcount": "$1 {{PLURAL:$1|回}}",
 	"abusefilter-new": "フィルターの新規作成",
 	"abusefilter-import-button": "フィルターのインポート",
 	"abusefilter-return": "フィルター管理に戻る",
@@ -276,9 +276,9 @@
 	"abusefilter-edit-rules": "条件:",
 	"abusefilter-edit-field-conditions": "条件",
 	"abusefilter-edit-notes": "メモ:",
-	"abusefilter-edit-lastmod": "フィルターの最終変更:",
+	"abusefilter-edit-lastmod": "最終更新:",
 	"abusefilter-edit-lastmod-text": "$1に、$2による",
-	"abusefilter-edit-hitcount": "フィルターが発動した回数:",
+	"abusefilter-edit-hitcount": "発動回数:",
 	"abusefilter-edit-consequences": "発動したときに取る対処操作",
 	"abusefilter-edit-action-warn": "利用者に警告を与えてからこれらの対処操作を発動する",
 	"abusefilter-edit-action-disallow": "問題となっている操作を利用者がするのを防ぐ",
@@ -681,8 +681,8 @@
 	"notification-header-throttle-filter-no-actions": "{{GENDER:$1|あなた}}が最近編集した不正利用フィルター$2が高頻度で一致しています。対処操作は無効化されていませんが、意図した挙動か否かの確認が望まれます。",
 	"notification-subject-throttle-filter": "{{GENDER:$1|あなた}}が最近編集した不正利用フィルターが{{SITENAME}}で一致頻度上限に達しました",
 	"notification-link-text-show-filter": "フィルターを表示:",
-	"right-abusefilter-modify-blocked-external-domains": "リンクをブロックする外部ドメインの作成または変更",
-	"action-abusefilter-modify-blocked-external-domains": "リンクをブロックする外部ドメインの作成または変更",
+	"right-abusefilter-modify-blocked-external-domains": "リンクをブロックする外部ドメインを作成/変更",
+	"action-abusefilter-modify-blocked-external-domains": "リンクをブロックする外部ドメインの作成/変更",
 	"right-abusefilter-bypass-blocked-external-domains": "ブロックされた外部ドメインを回避",
 	"action-abusefilter-bypass-blocked-external-domains": "ブロックされた外部ドメインの回避",
 	"abusefilter-blocked-domains-cannot-edit-directly": "リンクをブロックする外部ドメインの作成または変更は、[[Special:BlockedExternalDomains|対応する特別ページ]]を通じて行う必要があります。",
@@ -700,5 +700,5 @@
 	"log-action-filter-abusefilter-protected-vars-change-access": "アクセスを変更",
 	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "保護された変数の表示",
 	"communityconfiguration-blockeddomain-title": "ブロックされた外部ドメイン",
-	"communityconfiguration-blockeddomain-description": "リンクすることができない外部ドメインのリスト。"
+	"communityconfiguration-blockeddomain-description": "リンクできない外部ドメインの一覧。"
 }

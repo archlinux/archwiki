@@ -47,6 +47,7 @@
 	"linter-category-obsolete-tag": "Köhnəlmiş HTML teqləri",
 	"linter-category-obsolete-tag-desc": "Bu səhifələr köhnəlmiş HTML teqlərindən istifadə edir.",
 	"linter-category-pwrap-bug-workaround": "Paraqraf sürüşdürmə xətası müvəqqəti həlli",
+	"linter-category-pwrap-bug-workaround-desc": "Bu səhifələrdə həll edilə bilən abzas bağlama xətası var.",
 	"linter-category-self-closed-tag": "Self-qapalı tags",
 	"linter-category-self-closed-tag-desc": "Bu pages özünü qapalı tags var.",
 	"linter-category-stripped-tag": "Açılma teqi olmayan teqlər",

@@ -10,7 +10,9 @@
 			"M.M.S.",
 			"Sannab",
 			"Sturban",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255",
+			"Nirmos (Wikimedia)"
 		]
 	},
 	"categorytree": "Kategoriträd",
@@ -40,5 +42,9 @@
 	"categorytree-no-pages": "inga artiklar eller underkategorier",
 	"categorytree-not-found": "Kategori ''$1'' hittades ej",
 	"categorytree-error": "Problem med att ladda data.",
-	"categorytree-retry": "Vänta en stund och försök igen."
+	"categorytree-retry": "Vänta en stund och försök igen.",
+	"categorytree-onlyroot-message": "[https://phabricator.wikimedia.org/T290062 T290062]: Parametern <code>onlyroot</code> är föråldrad. Använd <code>depth=\"0\"</code> istället.",
+	"categorytree-deprecation-warning": "'''Varning:''' Den här sidan använder <code><code>&lt;categorytree&gt;</code> med en föråldrad parameter.",
+	"categorytree-deprecation-category": "Sidor som använder föråldrade kategoriträd-parametrar",
+	"categorytree-deprecation-category-desc": "Sidan använder föråldrade kategoriträd-parametrar som <code>onlyroot</code>."
 }

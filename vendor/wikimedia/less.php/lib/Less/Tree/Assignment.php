@@ -4,7 +4,9 @@
  * @see less-2.5.3.js#Assignment.prototype
  */
 class Less_Tree_Assignment extends Less_Tree implements Less_Tree_HasValueProperty {
+	/** @var string */
 	public $key;
+	/** @var Less_Tree */
 	public $value;
 
 	public function __construct( string $key, Less_Tree $val ) {

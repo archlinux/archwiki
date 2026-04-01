@@ -4,20 +4,31 @@
  */
 class Less_Tree_Ruleset extends Less_Tree {
 
+	/** @var array[][] */
 	protected $lookups;
+	/** @var array<string,Less_Tree_Declaration>|null */
 	public $_variables;
+	/** @var array<string,Less_Tree_Declaration[]>|null */
 	public $_properties;
-	public $_rulesets;
 
+	/** @var null|bool */
 	public $strictImports;
 
+	/** @var Less_Tree_Selector[]|null */
 	public $selectors;
+	/** @var Less_Tree[] */
 	public $rules;
+	/** @var true|null */
 	public $root;
+	/** @var true|null */
 	public $allowImports;
+	/** @var Less_Tree_Selector[][]|null */
 	public $paths;
+	/** @var true|null */
 	public $firstRoot;
+	/** @var true|null */
 	public $multiMedia;
+	/** @var Less_Tree_Extend[] */
 	public $allExtends;
 
 	/** @var int */
@@ -25,6 +36,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 	/** @var int */
 	public $originalRuleset;
 
+	/** @var array<string,true> */
 	public $first_oelements;
 
 	public function SetRulesetIndex() {
@@ -296,7 +308,6 @@ class Less_Tree_Ruleset extends Less_Tree {
 	}
 
 	public function resetCache() {
-		$this->_rulesets = null;
 		$this->_variables = null;
 		$this->lookups = [];
 	}
@@ -388,8 +399,12 @@ class Less_Tree_Ruleset extends Less_Tree {
 	 */
 	private function transformDeclaration( $decl ) {
 		if ( $decl->value instanceof Less_Tree_Anonymous && !$decl->parsed ) {
-			[ $err, $result ] = self::$parse->parseNode( (string)$decl->value->value, [ 'value', 'important' ],
-				$decl->value->index, $decl->value->currentFileInfo ?? [] );
+			[ $err, $result ] = self::$parse->parseNode(
+				(string)$decl->value->value,
+				[ 'value', 'important' ],
+				$decl->value->index,
+				$decl->value->currentFileInfo ?? []
+			);
 			if ( $err ) {
 				$decl->parsed = true;
 			}
@@ -567,7 +582,7 @@ class Less_Tree_Ruleset extends Less_Tree {
 
 			Less_Environment::$lastRule = $currentLastRule;
 
-			if ( !Less_Environment::$lastRule ) {
+			if ( !Less_Environment::$lastRule && $rule->isVisible() ) {
 				$output->add( $tabRuleStr );
 			} else {
 				Less_Environment::$lastRule = false;

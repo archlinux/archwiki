@@ -8,7 +8,8 @@
 			"Praveen Illa",
 			"Ravichandra",
 			"V Bhavya",
-			"Veeven"
+			"Veeven",
+			"WikiPBR"
 		]
 	},
 	"skinname-vector": "వెక్టర్",
@@ -46,6 +47,7 @@
 	"vector-toc-label": "విషయ సూచిక",
 	"vector-toc-beginning": "ప్రవేశిక",
 	"vector-toc-toggle-button-label": "$1 ఉపవర్గాన్ని టాగుల్ చెయ్యి",
+	"vector-anon-user-menu-pages": "లాగౌటైన ఎడిటర్ల కోసం పేజీలు",
 	"vector-main-menu-tooltip": "ప్రధాన మెనూ",
 	"vector-main-menu-label": "ప్రధాన మెనూ",
 	"vector-feature-custom-font-size-exclusion-notice": "ఈ పేజీలో ఎప్పుడూ చిన్న ఫాంటే ఉంటుంది",

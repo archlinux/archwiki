@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\ConfirmEdit\Tests\Unit\Services;
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\ConfirmEdit\hCaptcha\HCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Services\LoadedCaptchasProvider;
 use MediaWikiUnitTestCase;
 
@@ -24,6 +25,10 @@ class LoadedCaptchasProviderTest extends MediaWikiUnitTestCase {
 			'Captchas are only defined using $wgCaptchaClass' => [
 				[ 'ConfirmEditLoadedCaptchas' => [], 'CaptchaClass' => 'SimpleCaptcha', 'CaptchaTriggers' => [] ],
 				[ 'SimpleCaptcha' ],
+			],
+			'Captchas have their namespaces removed' => [
+				[ 'ConfirmEditLoadedCaptchas' => [], 'CaptchaClass' => HCaptcha::class, 'CaptchaTriggers' => [] ],
+				[ 'HCaptcha' ],
 			],
 			'Captchas are defined using $wgCaptchaClass and $wgConfirmEditLoadedCaptchas' => [
 				[

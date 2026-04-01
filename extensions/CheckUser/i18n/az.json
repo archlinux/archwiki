@@ -12,7 +12,8 @@
 			"Vago",
 			"Vesely35",
 			"Vugar 1981",
-			"Əkrəm"
+			"Əkrəm",
+			"Gadir"
 		]
 	},
 	"checkuser-summary": "Bu alət bir istifadəçi tərəfindən istifadə olunan IP ünvanlarını almaq və ya bir IP ünvan üçün redaktə/istifadəçi məlumatlarını göstərmək üçün son dəyişiklikləri yoxlayır. Bir müştəri IP ünvanı ilə istifadəçilər və redaktələr IP ünvana \"/xff\"  əlavə edərək XFF başlıqları əldə edə bilər. IPv4 (CIDR $1-32) və IPv6 (CIDR $2-128) ilə dəstəklənir. Performans səbəblərinə görə $3+ redaktə qaytarılmayacaq. Bunu siyasətə uyğun olaraq istifadə edin.",
@@ -370,7 +371,7 @@
 	"checkuser-userinfocard-past-blocks": "Keçmiş bloklar: $1",
 	"checkuser-userinfocard-global-edits": "Qlobal redaktə sayı: $1",
 	"checkuser-userinfocard-local-edits": "Lokal redaktə sayı: $1 ($2 geri qaytarılan)",
-	"checkuser-userinfocard-local-edits-reverts-unknown": "Lokal redaktə: $1",
+	"checkuser-userinfocard-local-edits-reverts-unknown": "Lokal redaktə sayı: $1",
 	"checkuser-userinfocard-new-articles": "Yeni məqalə sayı: $1",
 	"checkuser-userinfocard-thanks": "Qəbul edilmiş təşəkkür: $1 ($2 verilib)",
 	"checkuser-userinfocard-checks": "Təftişlər: $1 (son yoxlanış: $2)",

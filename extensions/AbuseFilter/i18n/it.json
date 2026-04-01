@@ -29,7 +29,8 @@
 			"Titore",
 			"Valepert",
 			"Wim b",
-			"Ximo17"
+			"Ximo17",
+			"Dream Indigo"
 		]
 	},
 	"abusefilter-desc": "Applica un'euristica automatica alle modifiche.",
@@ -319,8 +320,8 @@
 	"abusefilter-edit-syntaxerr": "Errore di sintassi rilevato: $1",
 	"abusefilter-edit-warn-leave": "Lasciando la pagina perderai tutte le modifiche apportate a questo filtro.",
 	"abusefilter-edit-bad-tags": "Una o più etichette specificate non sono valide.\nLe etichette devono essere corte, non contenere caratteri speciali e non devono essere riservate da altri programmi. Prova a scegliere un altro nome.",
-	"abusefilter-edit-notallowed": "Non sei autorizzato a creare o modificare i filtri del filtro anti abusi",
-	"abusefilter-edit-notallowed-global": "Non sei autorizzato a creare o modificare i filtri globali del filtro anti abusi",
+	"abusefilter-edit-notallowed": "Non hai l'autorizzazione per creare o modificare i filtri del filtro anti abusi",
+	"abusefilter-edit-notallowed-global": "Non hai l'autorizzazione per creare o modificare i filtri globali del filtro anti abusi",
 	"abusefilter-edit-notallowed-global-custom-msg": "I messaggi di avviso personalizzati non sono supportati per i filtri globali",
 	"abusefilter-edit-invalid-warn-message": "Il messaggio di avviso non può essere lasciato vuoto.",
 	"abusefilter-edit-invalid-disallow-message": "Il messaggio usato per impedire l'azione non può essere lasciato vuoto.",

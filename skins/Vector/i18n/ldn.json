@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Earldridge Jazzed Pineda"
+		]
+	},
+	"vector-language-button-label": "{{PLURAL:$1|Dan $1}}",
+	"skin-theme-name": "Liri",
+	"skin-theme-day-label": "Líithu",
+	"skin-theme-night-label": "Loyu",
+	"skin-theme-exclusion-notice": "Bíi duth miháabe hi wolíithu wonubeth hadihad wa."
+}

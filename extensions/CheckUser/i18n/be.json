@@ -10,7 +10,8 @@
 			"Tomato Cream",
 			"Vlad5250",
 			"ZlyiLev",
-			"Тест"
+			"Тест",
+			"Ucukor"
 		]
 	},
 	"checkuser-desc": "Дае магчымасць удзельнікам з адпаведнымі правамі правяраць ІР-адрасы і іншую інфармацыю ўдзельнікаў",
@@ -74,7 +75,7 @@
 	"checkuser-investigateblock-warning-confirmaction": "Калі вы ўпэўнены, што сапраўды хочаце гэта зрабіць, калі ласка, адзначце поле \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" ніжэй.",
 	"checkuser-investigate": "Даследаваць",
 	"checkuser-investigate-page-subtitle": "Бягучае даследаванне за $1",
-	"checkuser-investigate-subtitle-cancel-button-label": "Адмена",
+	"checkuser-investigate-subtitle-cancel-button-label": "Скасаваць",
 	"checkuser-investigate-subtitle-continue-button-label": "Працягнуць",
 	"checkuser-investigate-indicator-new-investigation": "Новае даследаванне",
 	"checkuser-investigate-indicator-logs": "Журналы",

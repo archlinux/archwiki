@@ -154,7 +154,6 @@
 	"discussiontools-replywidget-terms-click": "Ved å trykke på «$1» samtykker {{GENDER:|du}} i bruksvilkårene til denne wikien.",
 	"discussiontools-replywidget-transcluded": "Kommentaren din blir lagret på [[$1]].",
 	"discussiontools-replywidget-watchthis": "Legg denne siden til din [[Special:Watchlist|overvåkningsliste]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Denne kommentaren ble ikke funnet. Den kan ha blitt slettet eller flyttet.",
 	"discussiontools-target-comments-missing": "Nye kommentarer ble ikke funnet. De kan ha blitt slettet eller flyttet.",
 	"discussiontools-target-heading-missing": "Dette emnet ble ikke funnet. Det kan ha blitt slettet, flyttet eller døpt om.",

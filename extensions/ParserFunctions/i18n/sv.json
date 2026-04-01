@@ -7,7 +7,8 @@
 			"M.M.S.",
 			"Najami",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"pfunc_desc": "Lägger till logiska funktioner i parsern",
@@ -15,6 +16,7 @@
 	"pfunc_time_too_long": "Fel: för många anrop av #time",
 	"pfunc_time_too_big": "Fel: # tid stöder endast år fram till 9999",
 	"pfunc_time_too_small": "Fel: #tid stödjer enbart år från 0.",
+	"pfunc_timef_bad_format": "Fel: ogiltigt format för #timef",
 	"pfunc_rel2abs_invalid_depth": "Fel: felaktig djup i sökväg: \"$1\" (försöker nå en nod ovanför rotnoden)",
 	"pfunc_expr_stack_exhausted": "Fel i uttryck: Stackutrymmet tog slut",
 	"pfunc_expr_unexpected_number": "Fel i uttryck: Oväntat tal",
@@ -26,8 +28,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Fel i uttryck: Okänt skiljetecken \"$1\"",
 	"pfunc_expr_unclosed_bracket": "Fel i uttryck: Oavslutad parentes",
 	"pfunc_expr_division_by_zero": "Division med noll",
-	"pfunc_expr_invalid_argument": "Ogiltigt argument för $1: < -1 eller > 1",
-	"pfunc_expr_invalid_argument_ln": "Ogiltigt argument för ln: <= 0",
+	"pfunc_expr_invalid_argument": "Ogiltigt argument för $1 : mindre än -1 eller större än 1.",
+	"pfunc_expr_invalid_argument_ln": "Ogiltigt argument för ln: mindre än eller lika med 0.",
 	"pfunc_expr_unknown_error": "Fel i uttryck: Okänt fel ($1)",
 	"pfunc_expr_not_a_number": "I $1: resultatet är inte ett tal",
 	"pfunc_string_too_long": "Fel: Strängen överskrider gränsen på $1 tecken"

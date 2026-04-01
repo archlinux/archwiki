@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"GrogeXaKaba"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ruspósta",
+	"discussiontools-newtopic-missing-title": "Di sumóla, furnisi un titlu pa {{GENDER:|bu}} tópiku di kunbérsu.",
+	"discussiontools-newtopic-placeholder-title": "Asuntu",
+	"discussiontools-replylink": "{{GENDER:|ruspondi}}",
+	"discussiontools-replywidget-advanced": "Vansadu",
+	"discussiontools-replywidget-cancel": "Kansela",
+	"discussiontools-replywidget-mode-source": "Fonti",
+	"discussiontools-replywidget-mode-visual": "Vizual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Kirsenta}} tópiku",
+	"discussiontools-replywidget-placeholder-newtopic": "Diskrison",
+	"discussiontools-replywidget-placeholder-reply": "Ruspondi pa {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Privizualizason",
+	"discussiontools-replywidget-reply": "{{GENDER:|Ruspondi}}",
+	"discussiontools-replywidget-summary": "Razumu",
+	"discussiontools-replywidget-watchthis": "Pui es pájina na bu [[Special:Watchlist|lista di pájinas biziadu]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|argen}} na diskuson",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kumentári}}",
+	"discussiontools-topicheader-latestcomment": "Últimu kumentári: $1",
+	"discussiontools-topicsubscription-button-subscribe": "subuskrebi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Subuskrebi",
+	"discussiontools-topicsubscription-button-unsubscribe": "kansela subuskrison",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Kansela subuskrison",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Bu}} ta rasibi nutifikasons sobri kumentáris nobu na es tópiku.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Bu}} subuskrebi!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Bu}} ta txa di rasibi nutifikason sobri kumentáris nobu na es tópiku.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Bu}} kansela subuskrison."
+}

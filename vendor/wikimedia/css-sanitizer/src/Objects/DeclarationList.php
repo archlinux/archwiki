@@ -7,7 +7,8 @@
 namespace Wikimedia\CSS\Objects;
 
 /**
- * Represent a list of declarations
+ * Represent a list of declarations, eg. `margin: 10px 20px; color: red; display: block;`
+ * @extends CSSObjectList<Declaration>
  */
 class DeclarationList extends CSSObjectList {
 	/**

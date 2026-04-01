@@ -1,15 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"ClarFonThey"
+			"ClarFonThey",
+			"Tbodt"
 		]
 	},
-	"content-model-scribunto": "nanpa Scribunto",
-	"scribunto-line": "lon linja $1",
-	"scribunto-parser-dialog-title": "pakala nanpa",
-	"scribunto-error-short": "pakala nanpa: $1",
-	"scribunto-error-long": "pakala nanpa:\n\n$1",
-	"scribunto-limitreport-profile-ms": "$1 ms",
-	"nstab-module": "nanpa",
-	"tooltip-ca-nstab-module": "o lukin e lipu nanpa"
+	"content-model-scribunto": "ilo pi nasin Scribunto",
+	"scribunto-line": "lon linja nanpa $1",
+	"scribunto-parser-dialog-title": "pakala ilo",
+	"scribunto-error-short": "pakala ilo: $1",
+	"scribunto-error-long": "pakala ilo:\n\n$1",
+	"scribunto-doc-page-name": "Module:$1/sona",
+	"scribunto-limitreport-profile-ms": "tenpo ms $1",
+	"nstab-module": "ilo",
+	"tooltip-ca-nstab-module": "o lukin e lipu ilo"
 }

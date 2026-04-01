@@ -6,6 +6,8 @@
 			"Kuldeepburjbhalaike"
 		]
 	},
+	"wikieditor": "ਵਧੇਰੇ ਵਿਕੀਲਿਖਤ ਸੋਧਕ ਮੁਹਾਂਦਰਾ",
+	"wikieditor-desc": "ਇੱਕ ਵਧੀਆ ਅਤੇ ਵਧਣਯੋਗ ਵਿਕੀਲਿਖਤ ਸੋਧਕ ਮੁਹਾਂਦਰਾ ਦਿੰਦਾ ਏ",
 	"wikieditor-toolbar": "ਸੰਪਾਦਨ ਟੂਲਬਾਰ",
 	"wikieditor-toolbar-desc": "ਬਿਹਤਰ ਵਰਤੋਂਯੋਗਤਾ ਨਾਲ ਸਫ਼ਾ ਟੂਲਬਾਰ ਸੋਧੋ",
 	"wikieditor-toolbar-preference": "ਸੰਪਾਦਨ ਟੂਲਬਾਰ ਚਾਲੂ ਕਰੋ",
@@ -50,7 +52,7 @@
 	"wikieditor-toolbar-tool-file-cancel": "ਰੱਦ ਕਰੋ",
 	"wikieditor-toolbar-tool-file-upload": "ਅੱਪਲੋਡ",
 	"wikieditor-toolbar-tool-signature": "ਦਸਤਖ਼ਤ ਅਤੇ ਸਮੇਂ ਦੀ ਮੋਹਰ",
-	"wikieditor-toolbar-section-advanced": "ਉੱਨਤ",
+	"wikieditor-toolbar-section-advanced": "ਵਾਧੂ",
 	"wikieditor-toolbar-tool-heading": "ਸਿਰਨਾਵਾਂ",
 	"wikieditor-toolbar-tool-heading-1": "ਪੱਧਰ 1",
 	"wikieditor-toolbar-tool-heading-2": "ਪੱਧਰ 2",
@@ -73,7 +75,7 @@
 	"wikieditor-toolbar-tool-small-example": "ਛੋਟੀ ਲਿਖਤ",
 	"wikieditor-toolbar-tool-superscript": "ਉਤਲੀ ਲਿਖਤ",
 	"wikieditor-toolbar-tool-superscript-example": "ਉਤਲੀ ਲਿਖਤ",
-	"wikieditor-toolbar-tool-subscript": "ਹੇਠਲੀ ਲਿਖਤ",
+	"wikieditor-toolbar-tool-subscript": "ਪੈਰੀ-ਲਿਖਤ",
 	"wikieditor-toolbar-tool-subscript-example": "ਹੇਠਲੀ ਲਿਖਤ",
 	"wikieditor-toolbar-group-insert": "ਜੋੜੋ",
 	"wikieditor-toolbar-tool-gallery": "ਤਸਵੀਰਾਂ ਦਾ ਬਰਾਮਦਾ (ਚਿੱਤਰਸ਼ਾਲਾ)",

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"VicenteCancheM"
+			"VicenteCancheM",
+			"26agcp"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|u níib óolalil}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ts'áaj u níib óolalil}}}}"
 }

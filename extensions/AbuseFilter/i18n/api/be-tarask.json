@@ -3,7 +3,8 @@
 		"authors": [
 			"Nerogaf",
 			"Red Winged Duck",
-			"Renessaince"
+			"Renessaince",
+			"Ucukor"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Праверце, ці адпавядае Фільтру злоўжываньняў набор зьменных, рэдагаваньне ці запратакаляваная падзея Фільтру.",
@@ -22,7 +23,7 @@
 	"apihelp-abusefilterevalexpression-param-prettyprint": "Ці павінен вынік быць прыгожа надрукаваны.",
 	"apihelp-abusefilterevalexpression-example-1": "Ацаніць просты выраз.",
 	"apihelp-abusefilterevalexpression-example-2": "Вылічыце просты выраз, фарматуючы вынік",
-	"apihelp-abusefilterunblockautopromote-summary": "Разблякаваць карыстальніка ад атрыманьня аўтаматычных рэклямных акцыяў з-за наступстваў abusefilter.",
+	"apihelp-abusefilterunblockautopromote-summary": "Разблякаваць карыстальніка ад атрыманьня аўтаматычных рэклямных акцыяў праз наступствы abusefilter.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Імя карыстальніка, якога вы жадаеце разблякаваць.",
 	"apihelp-abusefilterunblockautopromote-example-1": "Зьняць блякаваньне з аўтаматычнага прасоўваньня карыстача [[User:Example]]",
 	"apihelp-query+abusefilters-summary": "Паказаць падрабязнасьці фільтраў злоўжываньняў.",

@@ -4,11 +4,16 @@
  */
 class Less_Tree_Mixin_Call extends Less_Tree {
 
+	/** @var Less_Tree_Selector */
 	public $selector;
+	/** @var array[] */
 	public $arguments;
+	/** @var int */
 	public $index;
+	/** @var array */
 	public $currentFileInfo;
 
+	/** @var bool */
 	public $important;
 
 	public function __construct( $elements, $args, $index, $currentFileInfo, $important = false ) {
@@ -153,10 +158,19 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 		if ( $isOneFound ) {
 			$selectorName = $this->selector->toCSS();
-			throw new Less_Exception_Compiler( 'No matching definition was found for ' . $selectorName . ' with args `' . $this->Format( $args ) . '`', null, $this->index, $this->currentFileInfo );
+			throw new Less_Exception_Compiler(
+				'No matching definition was found for ' . $selectorName . ' with args `' . $this->Format( $args ) . '`',
+				null,
+				$this->index,
+				$this->currentFileInfo
+			);
 
 		} else {
-			throw new Less_Exception_Compiler( trim( $this->selector->toCSS() ) . " is undefined in " . $this->currentFileInfo['filename'], null, $this->index );
+			throw new Less_Exception_Compiler(
+				trim( $this->selector->toCSS() ) . " is undefined in " . $this->currentFileInfo['filename'],
+				null,
+				$this->index
+			);
 		}
 	}
 
@@ -171,7 +185,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 				if ( $a['name'] ) {
 					$argValue .= $a['name'] . ':';
 				}
-				if ( is_object( $a['value'] ) ) {
+				if ( $a['value'] instanceof Less_Tree ) {
 					$argValue .= $a['value']->toCSS();
 				} else {
 					$argValue .= '???';

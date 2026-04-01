@@ -4,13 +4,19 @@
  * @see less-2.5.3.js#Anonymous.prototype
  */
 class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValueProperty {
+	/** @var string */
 	public $value;
+	/** @var string|null */
 	public $quote;
+	/** @var int|null */
 	public $index;
+	/** @var bool|null */
 	public $mapLines;
+	/** @var array|null */
 	public $currentFileInfo;
 	/** @var bool */
 	public $rulesetLike;
+	/** @var bool */
 	public $isReferenced;
 
 	/**
@@ -53,9 +59,8 @@ class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValuePropert
 	 * @see less-3.13.1.js#Anonymous.prototype.genCSS
 	 */
 	public function genCSS( $output ) {
-		// TODO: When we implement $visibilityInfo, store this result in-class
-		$nodeVisible = $this->value !== "" && $this->value !== 0;
-		if ( $nodeVisible ) {
+		$this->nodeVisible = $this->value !== "" && $this->value !== 0;
+		if ( $this->nodeVisible ) {
 			$output->add( $this->value, $this->currentFileInfo, $this->index, $this->mapLines );
 		}
 	}

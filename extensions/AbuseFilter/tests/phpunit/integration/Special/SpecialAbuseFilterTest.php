@@ -14,6 +14,7 @@ use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Extension\AbuseFilter\Tests\Integration\AbuseFilterPermissionManagerTestTrait;
 use MediaWiki\Extension\AbuseFilter\Tests\Integration\FilterFromSpecsTestTrait;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewDiff;
@@ -28,7 +29,9 @@ use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTools;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logging\LogEntryBase;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\UltimateAuthority;
@@ -41,6 +44,8 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
+ * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList
+ * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
  * @covers \MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter
  * @covers \MediaWiki\Extension\AbuseFilter\Special\AbuseFilterSpecialPage
  * @covers \MediaWiki\Extension\AbuseFilter\View\AbuseFilterView
@@ -58,6 +63,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  * @group Database
  */
 class SpecialAbuseFilterTest extends SpecialPageTestBase {
+	use AbuseFilterPermissionManagerTestTrait;
 	use MockAuthorityTrait;
 	use FilterFromSpecsTestTrait;
 
@@ -507,6 +513,99 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			$this->authorityCanUseProtectedVar
 		);
 		$this->assertStringContainsString( '1.2.3.4', $html );
+	}
+
+	/**
+	 * @dataProvider provideIsLogSourceForRCAccessControl
+	 */
+	public function testViewTestBatchWhenSubmittedAccessControl( bool $isLogSource ) {
+		$this->overrideConfigValue( MainConfigNames::PageCreationLog, false );
+
+		$sysop = $this->getTestSysop()->getUser();
+		if ( $isLogSource ) {
+			$rc = $this->createRCEntryDeleteLog( $sysop );
+			$ceil = self::LOG_DELETED_ALL;
+			$permSet = self::PERMSET_LOG;
+			$action = 'delete';
+			$checkAccess = $this->shouldHaveRCEntryAccess( ... );
+		} else {
+			$rc = $this->createRCEntryEdit( $sysop );
+			$ceil = self::REV_DELETED_ALL;
+			$permSet = self::PERMSET_REVISION;
+			$action = 'edit';
+			$checkAccess = $this->shouldHaveRevisionAccess( ... );
+		}
+		$rcid = (int)$rc->getAttribute( 'rc_id' );
+
+		static $extractChangelist;
+		$extractChangelist ??= static function ( string $html ): string {
+			$pos = strpos( $html, '<div class="mw-changeslist">' );
+			return $pos !== false ? substr( $html, $pos ) : $html;
+		};
+
+		for ( $vis = 0; $vis <= $ceil; $vis++ ) {
+			if ( $vis === LogPage::DELETED_RESTRICTED ) {
+				// This bitfield is always composite in DB
+				continue;
+			}
+			if ( $vis !== 0 ) {
+				$this->updateRCEntryVisibility( $vis, $rcid );
+			}
+
+			foreach ( $permSet as $label => $perms ) {
+				[ $html ] = $this->executeSpecialPage(
+					'test',
+					new FauxRequest( [
+						'wpFilterRules' => "action === '$action'",
+						'wpTestAction' => 0,
+						'wpTestUser' => $sysop->getName(),
+						'wpTestPeriodStart'	=> '',
+						'wpTestPeriodEnd' => '',
+						'wpTestPage' => $rc->getPage()->getDBkey(),
+						'wpShowNegative' => 1,
+					], true ),
+					'qqx',
+					$this->mockFilterEditorAuthorityWithPermissions( $perms )
+				);
+
+				$expectedRowVisibility = $this->expectRCRowVisibility( $vis, $perms );
+				$rowCount = (int)preg_match_all( '/\bmw-changeslist-line(?!-)/', $html );
+				$this->assertSame(
+					(int)$expectedRowVisibility, $rowCount,
+					$this->formatVisibilityError( $vis, $label ) .
+						", expectedRowVisibility: $expectedRowVisibility\n" . $extractChangelist( $html )
+				);
+
+				if ( !$rowCount ) {
+					continue;
+				}
+
+				$expectedExamineLinks = (int)$checkAccess( $vis, $perms );
+				$actualExamineLinks = substr_count( $html, '(abusefilter-changeslist-examine)' );
+				$this->assertSame(
+					$expectedExamineLinks, $actualExamineLinks,
+					$this->formatVisibilityError( $vis, $label ) .
+						"\nExpected $expectedExamineLinks \"examine\" link(s), but got $actualExamineLinks\n" .
+						$extractChangelist( $html )
+				);
+
+				$expectedHiddenWarning = (int)( $vis !== 0 );
+				$actualHiddenWarning = substr_count( $html, '(abusefilter-log-hidden-implicit)' );
+				$this->assertSame(
+					$expectedHiddenWarning, $actualHiddenWarning,
+					$this->formatVisibilityError( $vis, $label ) .
+						"\nExpected $expectedHiddenWarning \"hidden-implicit\" message(s)\n" .
+						$extractChangelist( $html )
+				);
+			}
+		}
+	}
+
+	public static function provideIsLogSourceForRCAccessControl() {
+		return [
+			'Access control for a RecentChange::SRC_LOG entry' => [ true ],
+			'Access control for a non-RecentChange::SRC_LOG entry' => [ false ],
+		];
 	}
 
 	public function testViewTestBatchWhenSubmittedForProtectedFilter() {
@@ -1094,6 +1193,53 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			$vars->setVar( 'custom_variable', 'custom_variable_value' );
 		} );
 		$this->resetServices();
+	}
+
+	/**
+	 * @dataProvider provideIsLogSourceForRCAccessControl
+	 */
+	public function testViewExamineForShowExaminerForRCAccessControl( bool $isLogSource ) {
+		$this->overrideConfigValue( MainConfigNames::PageCreationLog, false );
+
+		$sysop = $this->getTestSysop()->getUser();
+		if ( $isLogSource ) {
+			$rc = $this->createRCEntryDeleteLog( $sysop );
+			$ceil = self::LOG_DELETED_ALL;
+			$permSet = self::PERMSET_LOG;
+		} else {
+			$rc = $this->createRCEntryEdit( $sysop );
+			$ceil = self::REV_DELETED_ALL;
+			$permSet = self::PERMSET_REVISION;
+		}
+		$rcid = (int)$rc->getAttribute( 'rc_id' );
+
+		for ( $vis = 0; $vis <= $ceil; $vis++ ) {
+			if ( $vis === LogPage::DELETED_RESTRICTED ) {
+				// This bitfield is always composite in DB
+				continue;
+			}
+			if ( $vis !== 0 ) {
+				$this->updateRCEntryVisibility( $vis, $rcid );
+			}
+
+			foreach ( $permSet as $perms ) {
+				$authority = $this->mockFilterEditorAuthorityWithPermissions( $perms );
+
+				[ $html ] = $this->executeSpecialPage(
+					"examine/$rcid", null, 'qqx', $authority
+				);
+
+				$shouldHaveAccess = $isLogSource
+					? $this->shouldHaveRCEntryAccess( $vis, $perms )
+					: $this->shouldHaveRevisionAccess( $vis, $perms );
+				if ( $shouldHaveAccess ) {
+					$this->assertStringContainsString( '(abusefilter-examine-test)', $html );
+					$this->assertStringContainsString( '(abusefilter-examine-vars)', $html );
+				} else {
+					$this->assertStringContainsString( '(abusefilter-log-details-hidden-implicit)', $html );
+				}
+			}
+		}
 	}
 
 	public function testViewExamineForRecentChangeWhereUserCannotSeeSpecificProtectedVariableDueToPermission() {

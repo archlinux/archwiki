@@ -497,7 +497,7 @@ class Parser {
 		}
 
 		// 5. and part of 6.
-		// @phan-suppress-next-line PhanSuspiciousValueComparison False positive about $l1 is -1
+		// @phan-suppress-next-line PhanImpossibleValueComparison False positive about $l1 is -1
 		$v1 = $l1 >= 0 ? $value[$l1] : null;
 		$v2 = $l2 >= 0 ? $value[$l2] : null;
 		if ( $v1 instanceof Token &&
@@ -508,7 +508,8 @@ class Parser {
 			!strcasecmp( $v2->value(), 'important' )
 		) {
 			// This removes the "!" and "important" (5), and also any whitespace between/after (6)
-			// @phan-suppress-next-line PhanPossiblyInfiniteLoop
+			// Phan bug: https://github.com/phan/phan/issues/5441
+			// @phan-suppress-next-line PhanPossiblyInfiniteLoop, PhanRedundantConditionInLoop
 			while ( isset( $value[$l1] ) ) {
 				$value->remove( $l1 );
 			}
@@ -517,7 +518,7 @@ class Parser {
 
 		// Rest of 6.
 		$i = $value->count();
-		// @phan-suppress-next-line PhanNonClassMethodCall False positive
+		// @phan-suppress-next-line PhanUndeclaredMethod False positive
 		while ( --$i >= 0 && $value[$i] instanceof Token && $value[$i]->type() === Token::T_WHITESPACE ) {
 			$value->remove( $i );
 		}

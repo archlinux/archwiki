@@ -1,15 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Qiorly"
+			"Qiorly",
+			"IJzeren Jan"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Одговор",
+	"discussiontools-newtopic-missing-title": "Просимо, введите заглавје за {{GENDER:|вашу}} дискусијну тему.",
+	"discussiontools-newtopic-placeholder-title": "Прєдмет",
 	"discussiontools-replylink": "{{GENDER:|одговорити}}",
 	"discussiontools-replywidget-advanced": "Разширјене",
 	"discussiontools-replywidget-cancel": "Ануловати",
 	"discussiontools-replywidget-mode-source": "Извор",
 	"discussiontools-replywidget-mode-visual": "Визуално",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Додати}} tему",
+	"discussiontools-replywidget-placeholder-newtopic": "Опис",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Одговорити на текст}} {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Прєдглед",
 	"discussiontools-replywidget-reply": "{{GENDER:|Одговорити}}",

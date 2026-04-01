@@ -12,6 +12,7 @@
 	"cite_error_ref_no_key": "La balisa dobrenta <code>&lt;ref&gt;</code> es malformada o a un marrit nom.",
 	"cite_error_ref_too_many_keys": "Ampèl invalid ; claus invalidas, per exemple, tròp de claus especificadas o clau erronèa",
 	"cite_error_ref_no_input": "Ampèl invalid ; cap de dintrada pas especificada",
+	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> non valida; lo nom «$1» es definit divèrses còps amb un contengut diferent.",
 	"cite_error_references_invalid_parameters": "Arguments invalids ; argument esperat",
 	"cite_error_references_no_text": "Balisa  <code>&lt;ref&gt;</code> incorrècta ;\n\npas de tèxte per las referéncias nomenadas <code>$1</code>.",
 	"cite_error_included_ref": "Clausura <code>&lt;/ref&gt;</code> omesa per la balisa <code>&lt;ref&gt;</code>",

@@ -37,6 +37,8 @@
 	"gadgets-pagetext": "Debajo hay una lista de accesorios especiales que los usuarios pueden activar en sus [[Special:Preferences#mw-prefsection-gadgets|páginas de preferencias]], según las [[MediaWiki:Gadgets-definition|definiciones]].\nEsta vista provee un acceso fácil a las páginas de mensajes del sistema que definen la descripción y el código de cada accesorio.",
 	"gadgets-editdescription": "Editar descripción",
 	"gadgets-viewdescription": "Ver descripción",
+	"gadgets-editsectiontitle": "Editar el título de la sección",
+	"gadgets-viewsectiontitle": "Ver el título de la sección",
 	"gadgets-uses": "Usos",
 	"gadgets-required-rights": "Requiere {{PLURAL:$2|el siguiente permiso|los siguientes permisos}}:\n$1",
 	"gadgets-required-skins": "Disponible en {{PLURAL:$2|la apariencia $1|las siguientes apariencias: $1}}.",

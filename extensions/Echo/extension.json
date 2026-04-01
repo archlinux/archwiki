@@ -130,9 +130,13 @@
 	],
 	"AvailableRights": [
 		"manage-all-push-subscriptions",
-		"echo-create"
+		"echo-create",
+		"echo-read-notifications"
 	],
 	"GroupPermissions": {
+		"user": {
+			"echo-read-notifications": true
+		},
 		"push-subscription-manager": {
 			"manage-all-push-subscriptions": true
 		}

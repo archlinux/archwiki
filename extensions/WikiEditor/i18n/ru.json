@@ -28,7 +28,8 @@
 			"Temuri rajavi",
 			"Vlad5250",
 			"WindEwriX",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Lvova"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования вики-текста",
@@ -54,7 +55,7 @@
 	"wikieditor-toolbar-tool-link-insert": "Вставить ссылку",
 	"wikieditor-toolbar-tool-link-cancel": "Отмена",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "Страница существует в {{GRAMMAR:prepositional|{{SITENAME}}}}",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Эта страница не существует на {{GRAMMAR:prepositional|{{SITENAME}}}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Страница не существует",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Указанное вами название недействительно",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Внешняя ссылка",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Эта страница является не статьёй, а списком тем с похожими названиями.",

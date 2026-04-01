@@ -272,6 +272,7 @@
 	"visualeditor-includes-includeonly-description": "Jeśli treść tej strony zostanie użyta na innej stronie, załączona będzie poniższa dodatkowa treść:",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Więcej informacji na temat załączania fragmentów stron]",
 	"visualeditor-languages-tool": "Języki",
+	"visualeditor-linkcontext-uneditable": "Niestety, na razie ten link może być zmodyfikowany tylko w trybie edycji kodu źródłowego.",
 	"visualeditor-linkinspector-button-link-external": "Strona zewnętrzna",
 	"visualeditor-linkinspector-button-link-internal": "Wyszukaj wewnętrzne strony",
 	"visualeditor-linkinspector-convert-link-isbn": "Przekształć na odnośnik ISBN",

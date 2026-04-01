@@ -255,7 +255,8 @@ class DataSourceTokenizer implements Tokenizer {
 					$this->consumeCharacter();
 					$this->consumeCharacter();
 					while ( $this->currentCharacter !== DataSource::EOF &&
-						// @phan-suppress-next-line PhanSuspiciousValueComparisonInLoop
+						// phan doesn't see the side effects of ::consumeCharacter
+						// @phan-suppress-next-line PhanImpossibleValueComparisonInLoop
 						!( $this->currentCharacter === '*' && $this->nextCharacter === '/' )
 					) {
 						$this->consumeCharacter();
@@ -571,7 +572,7 @@ class DataSourceTokenizer implements Tokenizer {
 	protected static function isNameStartCharacter( $char ) {
 		// Every non-ASCII character is a name start character, so we can just
 		// check the first byte.
-		$char = ord( $char );
+		$char = ord( $char[0] );
 		return ( $char >= 0x41 && $char <= 0x5a ) ||
 			( $char >= 0x61 && $char <= 0x7a ) ||
 			$char >= 0x80 || $char === 0x5f;
@@ -586,7 +587,7 @@ class DataSourceTokenizer implements Tokenizer {
 	protected static function isNameCharacter( $char ) {
 		// Every non-ASCII character is a name character, so we can just check
 		// the first byte.
-		$char = ord( $char );
+		$char = ord( $char[0] );
 		return ( $char >= 0x41 && $char <= 0x5a ) ||
 			( $char >= 0x61 && $char <= 0x7a ) ||
 			( $char >= 0x30 && $char <= 0x39 ) ||
@@ -602,7 +603,7 @@ class DataSourceTokenizer implements Tokenizer {
 	protected static function isNonPrintable( $char ) {
 		// No non-ASCII character is non-printable, so we can just check the
 		// first byte.
-		$char = ord( $char );
+		$char = ord( $char[0] );
 		return ( $char >= 0x00 && $char <= 0x08 ) ||
 			$char === 0x0b ||
 			( $char >= 0x0e && $char <= 0x1f ) ||
@@ -618,7 +619,7 @@ class DataSourceTokenizer implements Tokenizer {
 	protected static function isDigit( $char ) {
 		// No non-ASCII character is a digit, so we can just check the first
 		// byte.
-		$char = ord( $char );
+		$char = ord( $char[0] );
 		return $char >= 0x30 && $char <= 0x39;
 	}
 
@@ -631,7 +632,7 @@ class DataSourceTokenizer implements Tokenizer {
 	protected static function isHexDigit( $char ) {
 		// No non-ASCII character is a hex digit, so we can just check the
 		// first byte.
-		$char = ord( $char );
+		$char = ord( $char[0] );
 		return ( $char >= 0x30 && $char <= 0x39 ) ||
 			( $char >= 0x41 && $char <= 0x46 ) ||
 			( $char >= 0x61 && $char <= 0x66 );
@@ -657,7 +658,9 @@ class DataSourceTokenizer implements Tokenizer {
 	 * @return bool
 	 */
 	protected static function wouldStartIdentifier( $char1, $char2, $char3 ) {
-		if ( $char1 === '-' ) {
+		if ( $char1 === DataSource::EOF ) {
+			return false;
+		} elseif ( $char1 === '-' && $char2 !== DataSource::EOF ) {
 			return self::isNameStartCharacter( $char2 ) || $char2 === '-' ||
 				self::isValidEscape( $char2, $char3 );
 		} elseif ( self::isNameStartCharacter( $char1 ) ) {
@@ -678,10 +681,10 @@ class DataSourceTokenizer implements Tokenizer {
 	 * @return bool
 	 */
 	protected static function wouldStartNumber( $char1, $char2, $char3 ) {
-		if ( $char1 === '+' || $char1 === '-' ) {
+		if ( ( $char1 === '+' || $char1 === '-' ) && $char2 !== DataSource::EOF ) {
 			return self::isDigit( $char2 ) ||
 				( $char2 === '.' && self::isDigit( $char3 ) );
-		} elseif ( $char1 === '.' ) {
+		} elseif ( $char1 === '.' && $char2 !== DataSource::EOF ) {
 			return self::isDigit( $char2 );
 		// @codeCoverageIgnoreStart
 		// Nothing reaches this code
@@ -705,9 +708,12 @@ class DataSourceTokenizer implements Tokenizer {
 		$this->consumeCharacter();
 
 		// 1-6 hexits, plus one optional whitespace character
-		if ( self::isHexDigit( $this->currentCharacter ) ) {
+		if ( $this->currentCharacter !== DataSource::EOF && self::isHexDigit( $this->currentCharacter ) ) {
 			$num = $this->currentCharacter;
-			while ( strlen( $num ) < 6 && self::isHexDigit( $this->nextCharacter ) ) {
+			while ( strlen( $num ) < 6 &&
+				$this->nextCharacter !== DataSource::EOF &&
+				self::isHexDigit( $this->nextCharacter )
+			) {
 				$this->consumeCharacter();
 				$num .= $this->currentCharacter;
 			}
@@ -746,7 +752,9 @@ class DataSourceTokenizer implements Tokenizer {
 		while ( true ) {
 			$this->consumeCharacter();
 
-			if ( self::isNameCharacter( $this->currentCharacter ) ) {
+			if ( $this->currentCharacter === DataSource::EOF ) {
+				break;
+			} elseif ( self::isNameCharacter( $this->currentCharacter ) ) {
 				$name .= $this->currentCharacter;
 			} elseif ( self::isValidEscape( $this->currentCharacter, $this->nextCharacter ) ) {
 				$name .= $this->consumeEscape();
@@ -781,7 +789,7 @@ class DataSourceTokenizer implements Tokenizer {
 		}
 
 		// 3.
-		while ( self::isDigit( $this->nextCharacter ) ) {
+		while ( $this->nextCharacter !== DataSource::EOF && self::isDigit( $this->nextCharacter ) ) {
 			$this->consumeCharacter();
 			$repr .= $this->currentCharacter;
 		}
@@ -798,7 +806,7 @@ class DataSourceTokenizer implements Tokenizer {
 				// 4.3.
 				$type = 'number';
 				// 4.4.
-				while ( self::isDigit( $this->nextCharacter ) ) {
+				while ( $this->nextCharacter !== DataSource::EOF && self::isDigit( $this->nextCharacter ) ) {
 					$this->consumeCharacter();
 					$repr .= $this->currentCharacter;
 				}
@@ -829,7 +837,7 @@ class DataSourceTokenizer implements Tokenizer {
 				// 5.3.
 				$type = 'number';
 				// 5.4.
-				while ( self::isDigit( $this->nextCharacter ) ) {
+				while ( $this->nextCharacter !== DataSource::EOF && self::isDigit( $this->nextCharacter ) ) {
 					$this->consumeCharacter();
 					$repr .= $this->currentCharacter;
 				}

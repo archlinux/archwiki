@@ -147,7 +147,23 @@ $css = file_get_contents( '/var/www/writable_folder/' . $cssOutputFile );
 
 #### Incremental caching
 
-In addition to the whole-output caching described above, Less.php also has the ability to keep an internal cache which allows re-parses to be faster by effectively only re-compiling portions that have changed.
+**Warning:** The incremental cache in Less_Parser is significantly slower and more memory-intense than `Less_Cache`! If you call Less.php during web requests, or otherwise call it repeatedly with files that might be unchanged, use `Less_Cache` instead.
+
+You can turn off the incremental cache to save memory and disk space ([ref](https://github.com/wikimedia/less.php/issues/104)). Without incremental cache, cache misses may be slower.
+
+```php
+// Disable incremental cache
+$lessFiles = [ __DIR__ . '/assets/bootstrap.less' => '/mysite/assets/' ];
+$options = [
+  'cache_dir' => '/var/www/writable_folder',
+  'cache_incremental' => false,
+];
+$css = Less_Cache::Get( $lessFiles, $options );
+```
+
+When you instantiate Less_Parser, and call `parseFile()` or `getCss()`, it is assumed that at least one input file has changed (i.e. the whole-output cache from Less_Cache was a cache miss). The incremental cache exists to speed up cache misses on very large code bases, and is enabled by default when you call Less_Cache.
+
+It is inherent to the Less language that later imports may change variables or extend mixins used in earlier files, and that imports may reference variables defined by earlier imports. Thus one can't actually cache the CSS output of an import. All inputs needs to be re-compiled together to produce the correct CSS output. The incremental cache merely allows the `parseFile()` method to skip parsing for unchanged files (i.e. interpreting Less syntax into an object structure). The `getCss()` method will still traverse and compile the representation of all input files.
 
 ## Source maps
 

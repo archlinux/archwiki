@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Chinneeb",
-			"Enkhsaihan2005"
+			"Enkhsaihan2005",
+			"Zorigt"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Хариулах",
@@ -11,6 +12,7 @@
 	"discussiontools-replywidget-cancel": "Цуцлах",
 	"discussiontools-replywidget-mode-source": "Эх кодоор",
 	"discussiontools-replywidget-mode-visual": "Харагдах байдал",
+	"discussiontools-replywidget-placeholder-newtopic": "Тодорхойлолт",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}-д {{GENDER:|хариу бичих}}",
 	"discussiontools-replywidget-preview": "Урьдчилж харах",
 	"discussiontools-replywidget-reply": "{{GENDER:|Хариулах}}",

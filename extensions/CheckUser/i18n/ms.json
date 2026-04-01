@@ -364,7 +364,7 @@
 	"checkuser-userinfocard-past-blocks": "Sekatan lalu: $1",
 	"checkuser-userinfocard-global-edits": "Suntingan sejagat: $1",
 	"checkuser-userinfocard-local-edits": "Suntingan tempatan: $1 (dibalikkan: $2)",
-	"checkuser-userinfocard-local-edits-reverts-unknown": "Suntingan sejagat: $1",
+	"checkuser-userinfocard-local-edits-reverts-unknown": "Suntingan tempatan: $1",
 	"checkuser-userinfocard-new-articles": "Rencana baharu: $1",
 	"checkuser-userinfocard-thanks": "Penghargaan diterima: $1 (diberi: $2)",
 	"checkuser-userinfocard-checks": "Pemeriksaan: $1 (pemeriksaan lalu: $2)",

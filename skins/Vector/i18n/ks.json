@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Ayaat123"
+		]
 	},
 	"skinname-vector": "ویکٹر پرٛون (2010)",
 	"skinname-vector-2022": "ویکٹر (2022)",
@@ -26,7 +28,7 @@
 	"vector-more-actions": "بێیہِ",
 	"vector-appearance-label": "ظٲہِریَتھ",
 	"vector-feature-limited-width-name": "کَھجَر",
-	"vector-feature-limited-width-0-label": "کھُلہ",
+	"vector-feature-limited-width-0-label": "کھُلہٕ",
 	"vector-feature-limited-width-1-label": "معیٲری",
 	"vector-feature-custom-font-size-name": "مَتَن",
 	"vector-feature-custom-font-size-0-label": "لۄکُٹ",
@@ -34,7 +36,7 @@
 	"vector-feature-custom-font-size-2-label": "بۆڈ",
 	"skin-theme-name": "رَنٛگ",
 	"skin-theme-day-label": "گٲشراوُن",
-	"skin-theme-night-label": "پوٗشیٖدٕ",
+	"skin-theme-night-label": "کرٛؠہنراوُن",
 	"skin-theme-os-label": "خودکار",
 	"skin-theme-exclusion-notice": "یہِ صَفہٕ چھُ ہَمیشہ گاشدار طرز اِستِمال کَران",
 	"vector-intro-page": "Help:تَعارُف",
@@ -52,7 +54,7 @@
 	"vector-page-tools-general-label": "عام",
 	"vector-page-tools-actions-label": "عَملہٕ",
 	"vector-pin-element-label": "اَنٛد کُن تھٲوِو",
-	"vector-unpin-element-label": "کٔھٹِتھ",
+	"vector-unpin-element-label": "کھٔٹِتھ",
 	"tooltip-vector-anon-user-menu-title": "مٔزیٖد یَختِیار",
 	"vector-main-menu-unpinned-popup": "اَہَم مؠنِو چھُ یور اَنہٕ آمُت۔"
 }

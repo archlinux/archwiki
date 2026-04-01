@@ -85,5 +85,6 @@
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto del enlace], texto adicional.",
 	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto del enlace]",
 	"cite-wikieditor-help-content-reference-example-ref-id": "prueba",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Detalles adicionales"
+	"cite-wikieditor-help-content-reference-example-extra-details": "Detalles adicionales",
+	"cite-configuration-submit": "Guardar cambios"
 }

@@ -25,8 +25,11 @@ use MediaWiki\CheckUser\SuggestedInvestigations\Model\CaseStatus;
 use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
 use MediaWiki\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
 use MediaWiki\CheckUser\SuggestedInvestigations\SuggestedInvestigationsTablePager;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\IndexPager;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
@@ -39,6 +42,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  */
 class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase {
 	use SuggestedInvestigationsTestTrait;
+	use MockAuthorityTrait;
 
 	private static User $testUser1;
 	private static User $testUser2;
@@ -51,10 +55,7 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 
 	public function testQuery() {
 		$caseId = $this->addCaseWithTwoUsers();
-		$pager = new SuggestedInvestigationsTablePager(
-			$this->getServiceContainer()->getConnectionProvider(),
-			$this->getServiceContainer()->getUserLinkRenderer(),
-		);
+		$pager = $this->getPager( RequestContext::getMain() );
 
 		$results = $pager->reallyDoQuery( '', 10, IndexPager::QUERY_ASCENDING );
 
@@ -80,12 +81,7 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 		$context->setTitle( Title::newFromText( 'Special:SuggestedInvestigations' ) );
 		$context->setLanguage( 'qqx' );
 
-		$pager = new SuggestedInvestigationsTablePager(
-			$this->getServiceContainer()->getConnectionProvider(),
-			$this->getServiceContainer()->getUserLinkRenderer(),
-			$context,
-		);
-
+		$pager = $this->getPager( $context );
 		$html = $pager->getBody();
 
 		// 1 data row + 1 header row
@@ -124,6 +120,62 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 		$this->assertStringContainsString( 'data-case-id="' . $caseId . '"', $statusCell );
 	}
 
+	public function testOutputWhenUsersHidden() {
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
+
+		// Get a case with one of the users blocked with a 'hideuser' block
+		$this->addCaseWithTwoUsers();
+		$this->getServiceContainer()->getBlockUserFactory()
+			->newBlockUser(
+				self::$testUser1,
+				$this->mockRegisteredUltimateAuthority(),
+				'indefinite',
+				'Test reason',
+				[ 'isHideUser' => true ]
+			)
+			->placeBlock();
+
+		// Load the special page with a user who cannot see hidden users
+		$context = RequestContext::getMain();
+		$context->setTitle( Title::newFromText( 'Special:SuggestedInvestigations' ) );
+		$context->setLanguage( 'qqx' );
+		$context->setAuthority( $this->mockRegisteredAuthorityWithoutPermissions( [ 'hideuser' ] ) );
+
+		$pager = $this->getPager( $context );
+		$html = $pager->getFullOutput()->getContentHolder()->getAsHtmlString();
+
+		$this->assertStringContainsString(
+			'(rev-deleted-user)',
+			$html,
+			'First test username should be replaced with the rev-deleted-user message'
+		);
+
+		$this->assertStringNotContainsString(
+			'Special:CheckUser/' . self::$testUser1->getName(),
+			$html,
+			'Should not contain link to Special:CheckUser for the first user'
+		);
+		$this->assertStringContainsString(
+			'Special:CheckUser/' . self::$testUser2->getName(),
+			$html,
+			'Should contain link to Special:CheckUser for the second user'
+		);
+
+		$name2 = urlencode( self::$testUser2->getName() );
+		$this->assertStringContainsString(
+			'?title=Special:Investigate&amp;targets=' . $name2,
+			$html,
+			'Should contain link to Special:Investigate in the case row with only the second user'
+		);
+
+		$this->assertStringNotContainsString(
+			self::$testUser1->getName(),
+			$html,
+			'As the first test user is not visible by the viewing authority, ' .
+			'their name should be not visible anywhere on the page'
+		);
+	}
+
 	public function testInvestigateDisabledWhenTooManyUsers() {
 		$caseId = $this->addCaseWithManyUsers();
 
@@ -131,12 +183,7 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 		$context->setTitle( Title::newFromText( 'Special:SuggestedInvestigations' ) );
 		$context->setLanguage( 'qqx' );
 
-		$pager = new SuggestedInvestigationsTablePager(
-			$this->getServiceContainer()->getConnectionProvider(),
-			$this->getServiceContainer()->getUserLinkRenderer(),
-			$context,
-		);
-
+		$pager = $this->getPager( $context );
 		$html = $pager->getBody();
 
 		// 1 data row + 1 header row
@@ -167,12 +214,7 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 		$context->setTitle( Title::newFromText( 'Special:SuggestedInvestigations' ) );
 		$context->setLanguage( 'qqx' );
 
-		$pager = new SuggestedInvestigationsTablePager(
-			$this->getServiceContainer()->getConnectionProvider(),
-			$this->getServiceContainer()->getUserLinkRenderer(),
-			$context,
-		);
-
+		$pager = $this->getPager( $context );
 		$html = $pager->getBody();
 
 		// Validate that the status reason contains the default for the invalid status
@@ -228,5 +270,14 @@ class SuggestedInvestigationsTablePagerTest extends MediaWikiIntegrationTestCase
 		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult( self::SIGNAL, 'Test value', false );
 
 		return $caseManager->createCase( $users, [ $signal ] );
+	}
+
+	private function getPager( IContextSource $context ): SuggestedInvestigationsTablePager {
+		return new SuggestedInvestigationsTablePager(
+			$this->getServiceContainer()->getConnectionProvider(),
+			$this->getServiceContainer()->getUserLinkRenderer(),
+			$this->getServiceContainer()->getUserFactory(),
+			$context
+		);
 	}
 }

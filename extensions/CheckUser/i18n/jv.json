@@ -6,7 +6,8 @@
 			"Meursault2004",
 			"NoiX180",
 			"Pras",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Bennylin"
 		]
 	},
 	"checkuser-summary": "Piranti iki nlusuri owah-owahan pungkasan kanggo golèk IP sing dienggo déning sawijining naraguna utawa nuduhaké data suntingan/naraguna kanggo sawijining IP.\nNaraguna lan suntingan bisa dirunut saka sawijining IP XFF mawa nambahaké \"/xff\" ing sawijining IP. IPv4 (CIDR $1-32) IPv6 (CIDR $2-128) bisa dienggo.\nAmerga déning alesan kinerja, ora luwih saka 5.000 besutan sing bisa dijupuk. Mangga gunakna piranti iki miturut kawicaksanan sing wis ditetepaké.",
@@ -45,7 +46,7 @@
 	"checkuser-locked": "Dikunci",
 	"checkuser-wasblocked": "Wis diblokir sadurungé",
 	"checkuser-localonly": "Ora digabungaké",
-	"checkuser-massblock": "Blokir naraguna kapilih",
+	"checkuser-massblock": "Penggak naraguna kapilih",
 	"checkuser-massblock-text": "Akun-akun kapilih bakal diblokir salawasé, alamat-alamat IP pungkasan sing dipigunakaké otomatis diblokir lan ora bisa gawé akun.\nAlamat-alamat IP bakal diblokir jroning 1 minggu tumrap naraguna anonim lan ora bisa gawé akun.",
 	"checkuser-noreason": "Panjenengan kudu ngawèhi alesan kanggo kuèri iki.",
 	"checkuser-search": "Golèk",

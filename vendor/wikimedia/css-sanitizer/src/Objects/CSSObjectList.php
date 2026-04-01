@@ -15,13 +15,16 @@ use Wikimedia\CSS\Util;
 
 /**
  * Represent a list of CSS objects
+ * @template T of CSSObject
+ * @implements SeekableIterator<T>
+ * @implements ArrayAccess<T>
  */
 class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObject {
 
-	/** @var string The specific class of object contained */
+	/** @var class-string The specific class of object contained */
 	protected static $objectType;
 
-	/** @var CSSObject[] The objects contained */
+	/** @var T[] The objects contained */
 	protected $objects;
 
 	/** @var int */
@@ -35,17 +38,18 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 	}
 
 	/**
-	 * @param CSSObject[] $objects
+	 * @param T[] $objects
 	 */
 	public function __construct( array $objects = [] ) {
 		Util::assertAllInstanceOf( $objects, static::$objectType, static::class );
+		// @phan-suppress-next-line PhanTypeMismatchArgument
 		static::testObjects( $objects );
 		$this->objects = array_values( $objects );
 	}
 
 	/**
 	 * Insert one or more objects into the list
-	 * @param CSSObject|CSSObject[]|CSSObjectList $objects An object to add, or an array of objects.
+	 * @param T|T[]|CSSObjectList<T> $objects An object to add, or an array of objects.
 	 * @param int|null $index Insert the objects at this index. If omitted, the
 	 *  objects are added at the end.
 	 */
@@ -55,6 +59,7 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 		} elseif ( is_array( $objects ) ) {
 			Util::assertAllInstanceOf( $objects, static::$objectType, static::class );
 			$objects = array_values( $objects );
+			// @phan-suppress-next-line PhanTypeMismatchArgument
 			static::testObjects( $objects );
 		} else {
 			if ( !$objects instanceof static::$objectType ) {
@@ -81,7 +86,7 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 	/**
 	 * Remove an object from the list
 	 * @param int $index
-	 * @return CSSObject The removed object
+	 * @return T The removed object
 	 */
 	public function remove( $index ) {
 		if ( $index < 0 || $index >= count( $this->objects ) ) {
@@ -102,7 +107,7 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 	 * Extract a slice of the list
 	 * @param int $offset
 	 * @param int|null $length
-	 * @return CSSObject[] The objects in the slice
+	 * @return T[] The objects in the slice
 	 */
 	public function slice( $offset, $length = null ) {
 		return array_slice( $this->objects, $offset, $length );
@@ -134,8 +139,7 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 	}
 
 	/** @inheritDoc */
-	#[\ReturnTypeWillChange]
-	public function current() {
+	public function current(): mixed {
 		return $this->objects[$this->offset] ?? null;
 	}
 
@@ -166,7 +170,10 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 		return isset( $this->objects[$offset] );
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @param mixed $offset
+	 * @return T
+	 */
 	public function offsetGet( $offset ): CSSObject {
 		if ( !is_numeric( $offset ) || (float)(int)$offset !== (float)$offset ) {
 			throw new InvalidArgumentException( 'Offset must be an integer.' );
@@ -220,8 +227,8 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 
 	/**
 	 * Return the tokens to use to separate list items
-	 * @param CSSObject $left
-	 * @param CSSObject|null $right
+	 * @param T $left
+	 * @param ?T $right
 	 * @return Token[]
 	 */
 	protected function getSeparator( CSSObject $left, ?CSSObject $right = null ) {
@@ -240,6 +247,7 @@ class CSSObjectList implements Countable, SeekableIterator, ArrayAccess, CSSObje
 			foreach ( $iValue->$function() as $v ) {
 				$ret[] = $v;
 			}
+			// @phan-suppress-next-line PhanTemplateTypeConstraintViolation
 			$sep = $this->getSeparator( $iValue, $i + 1 < $l ? $this->objects[$i + 1] : null );
 			foreach ( $sep as $v ) {
 				$ret[] = $v;

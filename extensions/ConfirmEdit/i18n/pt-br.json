@@ -10,7 +10,8 @@
 			"Giro720",
 			"He7d3r",
 			"Helder.wiki",
-			"Jesielt"
+			"Jesielt",
+			"Fúlvio"
 		]
 	},
 	"captcha-edit": "Para editar esta página, por favor, resolva a seguinte tarefa abaixo e insira a resposta na caixa ([[Special:Captcha/help|mais informações]]):",
@@ -31,7 +32,7 @@
 	"captcha-error": "A verificação CAPTCHA falhou devido a erro interno: $1",
 	"captchahelp-title": "Ajuda com o Captcha",
 	"captchahelp-cookies-needed": "Você precisa ter cookies habilitados em seu navegador para que isso possa funcionar.",
-	"captchahelp-text": "Sites abertos a inserções públicas, como é o caso desta wiki, são vulneráveis a spammers que utilizam ferramentas automatizadas para inserir seus links em diversos locais.\nRemover tais ligações posteriormente pode ser um incômodo significativo.\n\nAlgumas vezes, especialmente ao adicionar novas ligações externas a uma página, o wiki exibirá uma imagem com um texto colorido ou distorcido e pedirá que você introduza as palavras exibidas.\nUma vez que essa é uma tarefa um tanto difícil de ser automatizada, ela possibilita que a maioria dos humanos faça as suas inserções ao mesmo tempo que inibe as que forem feitas por spammers e mecanismos automatizados.\n\nInfelizmente, isso pode ser um inconveniente para usuários com limitações visuais ou que naveguem através de mecanismos baseados em texto ou baseados em voz.\nNo momento, não está disponível uma alternativa em áudio.\nPor favor, contate os [[{{int:grouppage-sysop}}|administradores do sítio]] em casos que seja necessária a assistência de alguém para que você possa fazer as suas inserções legítimas.\n\nPressione o botão 'voltar' de seu navegador para retornar à página de edição.",
+	"captchahelp-text": "Sites abertos a inserções públicas, como é o caso desta wiki, são vulneráveis a spammers que utilizam ferramentas automatizadas para inserir seus links em diversos locais.\nRemover tais ligações posteriormente pode ser um incômodo significativo.\n\nAlgumas vezes, especialmente ao adicionar novas ligações externas a uma página, o wiki exibirá uma imagem com um texto colorido ou distorcido e pedirá que você introduza as palavras exibidas.\nUma vez que essa é uma tarefa um tanto difícil de ser automatizada, ela possibilita que a maioria dos humanos faça as suas inserções ao mesmo tempo que inibe as que forem feitas por spammers e mecanismos automatizados.\n\nInfelizmente, isso pode ser um inconveniente para usuários com limitações visuais ou que utilizam navegadores baseados em texto ou em voz.\nNo momento, não está disponível uma alternativa em áudio.\nPor favor, contate os [[{{int:grouppage-sysop}}|administradores do sítio]] em casos que seja necessária a assistência de alguém para que você possa fazer as suas inserções legítimas.\n\nPressione o botão 'voltar' de seu navegador para retornar à página de edição.",
 	"captcha-addurl-whitelist": "#<!-- deixe este linha exatamente como está --> <pre>\n# A sintaxe é a que se segue:\n# * Tudo desde o caractere \"#\" até ao fim da linha é um comentário\n# * Qualquer linha não vazia é um fragmento de regex que irá apenas verificar o servidor dentro das URLs\n #</pre> <!-- deixe este linha exatamente como está -->",
 	"right-skipcaptcha": "Executar ações de acionamento do CAPTCHA sem precisar passar pelo CAPTCHA",
 	"action-skipcaptcha": "executar ações desencadeadoras de CAPTCHA sem ter que passar pelo CAPTCHA",
@@ -40,5 +41,6 @@
 	"confirmedit-preview-validity": "Validade",
 	"confirmedit-preview-valid": "válido",
 	"confirmedit-preview-invalid": "inválido",
-	"confirmedit-preview-description": "A tabela a seguir mostra a lista de linhas nesta página e se é um endereço IP válido ou um intervalo de endereço IP. Se a linha for um endereço IP válido ou um intervalo de endereço IP, ele será listado na lista branca de CAPTCHA, mas as linhas inválidas serão ignoradas. Um exemplo de um intervalo de endereço IP válido seria: 69.208.0.0/16 que vai de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mais informações] sobre o cálculo de um intervalo de endereços IP."
+	"confirmedit-preview-description": "A tabela a seguir mostra a lista de linhas nesta página e se é um endereço IP válido ou um intervalo de endereço IP. Se a linha for um endereço IP válido ou um intervalo de endereço IP, ele será listado na lista branca de CAPTCHA, mas as linhas inválidas serão ignoradas. Um exemplo de um intervalo de endereço IP válido seria: 69.208.0.0/16 que vai de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mais informações] sobre o cálculo de um intervalo de endereços IP.",
+	"abusefilter-edit-action-showcaptcha": "Exigir que o usuário complete um CAPTCHA para prosseguir com a ação. Usuários com permissão para ignorar o CAPTCHA estão isentos."
 }

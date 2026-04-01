@@ -153,7 +153,12 @@
 	"templatedata-category-use-template": "Usar esta plantilla",
 	"templatedata-category-categories": "Otras categorías",
 	"templatedata-category-no-cats": "Ninguno.",
+	"templatedata-featured-list-empty": "Las plantillas destacadas son plantillas que la comunidad ha marcado como útiles. Aún no se han configurado plantillas destacadas.",
 	"communityconfiguration-templatedata-featuredtemplates-title": "Plantillas mostradas",
+	"communityconfiguration-templatedata-featuredtemplates-description": "Las plantillas destacadas son plantillas que la comunidad ha marcado como útiles. Están disponibles para su uso en la herramienta de descubrimiento de plantillas.",
+	"communityconfiguration-templatedata-featuredtemplates-info-text": "Las plantillas que se enumeran aquí están disponibles para su uso en la herramienta de descubrimiento de plantillas.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-label": "Plantillas destacadas",
 	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Títulos",
+	"templatedata-featured-list-help": "Las plantillas destacadas son plantillas que la comunidad ha marcado como útiles.",
 	"templatedata-favorite-count": "Tienes $1/$2 plantillas favoritas"
 }

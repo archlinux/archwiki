@@ -4,16 +4,16 @@
 			"MacTire02"
 		]
 	},
-	"categorytree": "BilleyRonnaghyn",
+	"categorytree": "Billey ronnaghyn",
 	"categorytree-portlet": "Ronnaghyn",
-	"categorytree-legend": "Taishbyney billey ronnaghyn",
+	"categorytree-legend": "Taishbyn y billey ronnaghyn",
 	"categorytree-category": "Ronney:",
-	"categorytree-go": "Taishbyney billey",
+	"categorytree-go": "Taishbyn y billey",
 	"categorytree-mode-categories": "ronnaghyn ynrican",
 	"categorytree-mode-all": "dagh ooilley ghuillag",
-	"categorytree-collapse": "filley",
-	"categorytree-expand": "mooadaghey",
-	"categorytree-load": "dy lughtaghey",
+	"categorytree-collapse": "follee",
+	"categorytree-expand": "mooadee",
+	"categorytree-load": "lughtee",
 	"categorytree-loading": "lughtaghey...",
-	"categorytree-no-subcategories": "gyn fo-ronnaghyn"
+	"categorytree-no-subcategories": "fo-ronney erbee"
 }

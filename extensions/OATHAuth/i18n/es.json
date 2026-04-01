@@ -19,7 +19,9 @@
 			"No se",
 			"PoLuX124",
 			"Rousmery96",
-			"Ezarate"
+			"Ezarate",
+			"Avengium",
+			"Codename Noreste"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -59,7 +61,7 @@
 	"oathauth-enterdisablereason": "Motivo para deshabilitar:",
 	"oathauth-enterverifyreason": "Motivo de la verificación:",
 	"oathauth-user-not-does-not-have-oath-enabled": "El usuario no tiene habilitada la autenticación en dos pasos, no hay nada que deshabilitar.",
-	"right-oathauth-enable": "Activar la autenticación en dos pasos",
+	"right-oathauth-enable": "Activar la autenticación de dos factores",
 	"action-oathauth-enable": "activar la autenticación en dos pasos",
 	"oathauth-auth-token-label": "Clave",
 	"oathauth-auth-token-help": "La contraseña de un solo uso utilizada como segundo paso de la autenticación en dos pasos.",

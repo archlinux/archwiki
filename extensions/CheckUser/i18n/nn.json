@@ -58,5 +58,6 @@
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "Kva er ein mellombels konto?",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "Vising av IP-informasjon",
 	"checkuser-investigate-preliminary-table-header-editcount": "Endringar",
-	"prefs-checkuser-tempaccount": "Vising av IP-adressa til mellombels kontoar"
+	"prefs-checkuser-tempaccount": "Vising av IP-adressa til mellombels kontoar",
+	"checkuser-userinfocard-temporary-account-bucketcount": "Mellombels kontoar frå alle tilknytte IP-adresser: $1"
 }

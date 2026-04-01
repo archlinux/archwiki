@@ -7,7 +7,8 @@
 			"Munkhzaya.E",
 			"Sembuk",
 			"Wisdom",
-			"Буцах"
+			"Буцах",
+			"Zorigt"
 		]
 	},
 	"tooltip-ca-ve-edit": "Энэ хуудсыг VisualEditor-р засварлах",
@@ -18,7 +19,7 @@
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-change-image": "Ялгаатай зураг сонгоно уу",
 	"visualeditor-dialog-media-type-none": "Үндсэн",
-	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Нуугдсан категориуд",
+	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Нуугдсан ангиллууд",
 	"visualeditor-dialog-transclusion-collapse-options": "Сонголтуудыг нуух",
 	"visualeditor-dialog-transclusion-expand-options": "Сонголтуудыг харуулах",
 	"visualeditor-savedialog-label-publish-short": "Нийтлэх"

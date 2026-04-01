@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Red Winged Duck",
-			"Renessaince"
+			"Renessaince",
+			"Ucukor"
 		]
 	},
 	"multimediaviewer-desc": "Разгарнуць мініятуры большага памеру ў поўнаэкранным інтэрфэйсе",
@@ -20,6 +21,7 @@
 	"multimediaviewer-permission-link": "паказаць умовы",
 	"multimediaviewer-geolocation": "Месцазнаходжаньне: $1",
 	"multimediaviewer-reuse-link": "Падзяліцца або выкарыстаць гэты файл",
+	"multimediaviewer-reuse-loading-placeholder": "Ладаваньне...",
 	"multimediaviewer-share-tab": "Падзяліцца",
 	"multimediaviewer-embed-tab": "Выкарыстаць",
 	"multimediaviewer-download-link": "Спампаваць гэты файл",
@@ -27,17 +29,18 @@
 	"multimediaviewer-embed-wt": "Вікітэкст",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "Выкарыстоўвайце гэты код для ўстаўкі файла",
-	"multimediaviewer-default-embed-dimensions": "Памер мініятуры па змоўчаньні",
-	"multimediaviewer-original-embed-dimensions": "Першапачатковы файл $1",
+	"multimediaviewer-default-embed-dimensions": "Перадвызначаны памер мініятуры",
+	"multimediaviewer-original-embed-dimensions": "Арыґінальны файл $1",
 	"multimediaviewer-large-embed-dimensions": "Вялікі памер $1",
 	"multimediaviewer-medium-embed-dimensions": "Сярэдні памер $1",
 	"multimediaviewer-small-embed-dimensions": "Малы памер $1",
 	"multimediaviewer-view-expanded": "Адкрыць у мэдыяпраглядальніку",
 	"multimediaviewer-close-popup-text": "Закрыць гэты інструмэнт (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Паказаць на ўвесь экран",
+	"multimediaviewer-copy-button": "Капіяваць",
 	"multimediaviewer-disable-confirmation-header": "Вы адключылі мэдыяпраглядальнік",
 	"multimediaviewer-disable-confirmation-text": "Наступны раз, калі вы націсьніце на мініятуру на сайце $1, вы наўпрост пабачыце ўсе зьвесткі пра файл.",
-	"multimediaviewer-enable-text-header": "Уключыць гэтую функцыю мэдыяпрагляду па змоўчаньні для ўсіх файлаў.",
+	"multimediaviewer-enable-text-header": "Перадвызначана ўключыць гэтую функцыю мэдыяпрагляду для ўсіх файлаў.",
 	"multimediaviewer-enable-submit-button": "Уключыць мэдыяпраглядальнік",
 	"multimediaviewer-enable-confirmation-header": "Вы ўключылі мэдыяпраглядальнік для ўсіх файлаў",
 	"multimediaviewer-enable-confirmation-text": "Наступны раз, калі вы націсьніце на мініятуру на сайце $1, будзе выкарыстаны мэдыяпраглядальнік.",

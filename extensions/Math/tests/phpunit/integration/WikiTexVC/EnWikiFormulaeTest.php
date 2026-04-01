@@ -13,7 +13,7 @@ use MediaWikiIntegrationTestCase;
  * $ cd maintenance && ./downloadMoreTexVCtests.sh
  * @covers \MediaWiki\Extension\Math\WikiTexVC\Parser
  *
- * @group Stub
+ * @group Standalone
  */
 class EnWikiFormulaeTest extends MediaWikiIntegrationTestCase {
 

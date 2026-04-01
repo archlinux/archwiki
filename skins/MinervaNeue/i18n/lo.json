@@ -15,5 +15,6 @@
 	"mobile-frontend-main-menu-settings": "ການຕັ້ງຄ່າ",
 	"mobile-frontend-main-menu-watchlist": "ລາຍການຕິດຕາມ",
 	"mobile-frontend-placeholder": "ຊອກຫາ {{SITENAME}}",
-	"mobile-frontend-random-button": "ສຸ່ມ"
+	"mobile-frontend-random-button": "ສຸ່ມ",
+	"minerva-page-actions-overflow": "ເພີ່ມເຕີມ"
 }

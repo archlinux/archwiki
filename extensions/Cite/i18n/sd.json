@@ -6,7 +6,11 @@
 			"Tweety"
 		]
 	},
+	"cite-desc": "حوالن لاءِ <code>&lt;ref&gt;</code> ۽ <code>&lt;references&gt;</code> ٽيگَ شامل ڪري ٿو",
 	"cite_error": "حوالي جي چڪ: $1",
+	"cite_error_details_missing_parent": "تفصيل سان گڏ هڪ <code>&lt;ref></code> ٽيگ ۾ مواد هجڻ گهرجي يا نالو کڻي اصل حوالي ڏانھن اشارو ڪندو ھجي.",
+	"cite_error_details_unsupported_context": "<code>&lt;ref&gt;</code> ٽيگ \"$1\" تفصيل استعمال نہ ٿو ڪري سگهي جڏھن ھن ڪوڊ جي اندر جي <code>&lt;references&gt;</code>.",
+	"cite_error_ref_invalid_dir": "ناقابلڪار <code>dir=\"$1\"</code>، لازمي <code>ltr</code> يا <code>rtl</code> ھجڻ گهرجي",
 	"cite_error_group_refs_without_references": "\"$1\" نالي جي حوالن جي لاءِ ٽيگ <code>&lt;ref&gt;</code> آهن، پر لاڳاپيل ٽيگ <code>&lt;references group=\"$1\"/&gt;</code> نہ مليو",
 	"cite-tracking-category-cite-error": "حوالن ۾ چُڪَ وارا صفحا",
 	"cite-reference-previews-reference": "حوالو",
@@ -17,6 +21,20 @@
 	"cite-reference-previews-web": "ويب حوالو",
 	"cite-reference-previews-collapsible-placeholder": "ھن حوالي ۾ ڪا شڪل شامل آھي جيڪا پيش-نگاھ ۾ نٿي ماپي.",
 	"cite-reference-previews-preference-label": "حوالن جون پيش-نگاھون فعال ڪريو (حوالن جون ڪو صفحو پڙھڻ دوران تڪڙيون پيش-نگاھون وٺو)",
+	"cite_references_link_accessibility_label": "ٽپو ڏيو",
+	"cite_references_link_many_accessibility_label": "ڏانھن ٽپو ڏيو:",
+	"cite_references_link_accessibility_back_label": "واپس مٿي ٽپو ڏيو",
 	"cite_section_preview_references": "حوالن جي پيش-نگاھ",
-	"cite-wikieditor-tool-reference": "حوالو"
+	"cite-wikieditor-tool-reference": "حوالو",
+	"cite-wikieditor-help-page-references": "حوالا",
+	"cite-wikieditor-help-content-reference-description": "حوالو",
+	"cite-wikieditor-help-content-named-reference-description": "عنوان ڏنل حوالو",
+	"cite-wikieditor-help-content-rereference-description": "ساڳئي حوالي جو اضافي استعمال",
+	"cite-wikieditor-help-content-sub-reference-description": "ساڳئي حوالي جو اضافي استعمال، واڌو تفصيلن سان",
+	"cite-wikieditor-help-content-showreferences-description": "حوالا ڏيکاريو",
+	"cite-wikieditor-help-content-reference-example-text1": "صفحي جو متن.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 ڳنڍڻي جو متن]، اضافي متن.",
+	"communityconfiguration-cite-title": "حوالو",
+	"communityconfiguration-cite-description": "حوالن جي فارميٽ ۽ ظاهري ڏيک کي مرتب ڪريو.",
+	"cite-configuration-submit": "تبديليون سانڍيو"
 }

@@ -12,7 +12,8 @@
 			"Sabelöga",
 			"Stens51",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"multimediaviewer-desc": "Expandera miniatyrer i en större storlek i fulkskärmsgränssnitt.",
@@ -25,6 +26,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|ytterligare en skapare|ytterligare $1 skapare}}",
 	"multimediaviewer-multiple-authors-combine": "$1 och $2",
 	"multimediaviewer-metadata-error": "Kunde inte läsa in bilddetaljer. (Fel: $1)",
+	"multimediaviewer-file-not-found-error": "Tyvärr kan filen $1 inte visas eftersom den inte finns på den aktuella sidan.",
 	"multimediaviewer-thumbnail-error": "Tyvärr, filen kan inte visas",
 	"multimediaviewer-thumbnail-error-description": "Ett tekniskt fel har uppstått. Du kan $1 om det kvarstår. Felmeddelande: $2",
 	"multimediaviewer-thumbnail-error-retry": "försöka igen",
@@ -60,6 +62,7 @@
 	"multimediaviewer-reuse-copy-embed": "Välj och kopiera (om det stöds) koden för att bädda in den här filen",
 	"multimediaviewer-share-tab": "Dela",
 	"multimediaviewer-embed-tab": "Bädda in",
+	"multimediaviewer-download": "Ladda ned",
 	"multimediaviewer-download-link": "Ladda ner denna fil",
 	"multimediaviewer-download-preview-link-title": "Visa i webbläsare",
 	"multimediaviewer-download-original-button-name": "Ladda ned originalfil",
@@ -101,9 +104,11 @@
 	"multimediaviewer-credit-popup-text": "Information om skapare och källa",
 	"multimediaviewer-title-popup-text-more": "Visa full beskrivning",
 	"multimediaviewer-credit-popup-text-more": "Visa all information om skapare och källa",
+	"multimediaviewer-download-attribution": "Erkännande",
 	"multimediaviewer-download-attribution-cta-header": "Du måste ge skaparen erkännande",
 	"multimediaviewer-download-optional-attribution-cta-header": "Du kan ge skaparen erkännande",
 	"multimediaviewer-download-attribution-cta": "Visa mig hur",
+	"multimediaviewer-copy-button": "Kopiera",
 	"multimediaviewer-download-attribution-copy": "Välj och kopiera (om det stöds) attributionstexten för den här filen",
 	"multimediaviewer-reuse-warning-deletion": "Filen är föreslagen för radering.",
 	"multimediaviewer-reuse-warning-nonfree": "Filen har inte en fri licens.",
@@ -120,5 +125,6 @@
 	"multimediaviewer-enable-alert": "Media Viewer är nu inaktiverad",
 	"multimediaviewer-disable-info-title": "Du har inaktiverat Media Viewer",
 	"multimediaviewer-disable-info": "Du kan fortfarande visa enskilda filer med Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "Detaljer om felet bifogas rapporten, som kommer att vara tillgänglig för allmänheten. Om du inte trivs med det kan du redigera rapporten nedan och ta bort all data du inte vill dela."
+	"multimediaviewer-errorreport-privacywarning": "Detaljer om felet bifogas rapporten, som kommer att vara tillgänglig för allmänheten. Om du inte trivs med det kan du redigera rapporten nedan och ta bort all data du inte vill dela.",
+	"multimediaviewer-loading": "Aktivera Mediavisaren"
 }

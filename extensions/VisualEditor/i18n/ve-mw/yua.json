@@ -48,5 +48,9 @@
 	"visualeditor-categories-tool": "u tsolil múuch'ilo'ob",
 	"visualeditor-changedesc-mwcategory-sortkey-changed": "le u k'alil tsolilo' k'expaj ti $1 tak $2",
 	"visualeditor-changedesc-mwcategory-sortkey-set": "u k'aalil le tsolilo' ts'o'ok u ya'alal. $1",
-	"visualeditor-changedesc-mwcategory-sortkey-unset": "le' u k'alil u ordenacioono' $1 ts'o'ok u cha'abal"
+	"visualeditor-changedesc-mwcategory-sortkey-unset": "le' u k'alil u ordenacioono' $1 ts'o'ok u cha'abal",
+	"visualeditor-changedesc-mwlanguagevariant": "k'expajal u marcado le t'aanl'obo'",
+	"visualeditor-changedesc-mwredirect": "Le destino ti' le redirección k'e'expajil ti' $1 tak $2",
+	"visualeditor-changedesc-mwtransclusion": "Parámetros ti' plantilla k'exa'abo'ob",
+	"visualeditor-desc": "Editor visual uti'al MediaWiki"
 }

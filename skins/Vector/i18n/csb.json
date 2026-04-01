@@ -3,9 +3,13 @@
 		"authors": [
 			"Kaszeba",
 			"Kirsan",
-			"Kuvaly"
+			"Kuvaly",
+			"Orbitminis"
 		]
 	},
+	"vector-languages": "Jãzëczi",
+	"vector-language-button-label": "$1 {{PLURAL:$1|jãzëk|jãzëczi|jãzëków}}",
+	"vector-no-language-button-label": "Dodôj jãzëczi",
 	"vector-action-addsection": "Dodôj témã",
 	"vector-action-delete": "Rëmôj",
 	"vector-action-move": "Przeniesë",
@@ -17,5 +21,27 @@
 	"vector-view-history": "Historëjô lopka",
 	"vector-view-view": "Czëtôj",
 	"vector-view-viewsource": "Zdrojowi tekst",
-	"vector-more-actions": "Wiãcy"
+	"vector-more-actions": "Wiãcy",
+	"vector-appearance-label": "Wëzdrzatk",
+	"vector-feature-limited-width-name": "Szérzawa",
+	"vector-feature-limited-width-0-label": "Wiôlgô",
+	"vector-feature-limited-width-1-label": "Zwëkòwô",
+	"vector-feature-custom-font-size-name": "Tekst",
+	"vector-feature-custom-font-size-0-label": "Môłi",
+	"vector-feature-custom-font-size-1-label": "Zwëkòwô",
+	"vector-feature-custom-font-size-2-label": "Wiôldżi",
+	"skin-theme-name": "Farwa",
+	"skin-theme-day-label": "Widny",
+	"skin-theme-night-label": "Cemny",
+	"skin-theme-os-label": "Aùtomaticzny",
+	"skin-theme-exclusion-notice": "Na starnié dërch je wëskrzëniany widny mòtiw.",
+	"vector-toc-label": "Spisënk zamkłoscë",
+	"vector-toc-beginning": "Zôczątk",
+	"vector-anon-user-menu-pages": "Starnë dlô anonimòwëch editorów",
+	"vector-main-menu-label": "Przédné menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Na ti starnié dërch brëkòwóny je môłô wiôlgòsc czcónczi.",
+	"vector-page-tools-label": "Nôrzãdza",
+	"vector-page-tools-general-label": "Òglowé",
+	"vector-page-tools-actions-label": "Dzéjania",
+	"vector-unpin-element-label": "zatacë"
 }

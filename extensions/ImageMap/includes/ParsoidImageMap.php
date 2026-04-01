@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\ImageMap;
 
-use DOMNode;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
@@ -142,10 +141,10 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				// factor when one is much larger than the other
 				// (sx+sy)/(x+y) = s
 
-				$thumbWidth = (int)( $imageNode->getAttribute( 'width' ) );
-				$thumbHeight = (int)( $imageNode->getAttribute( 'height' ) );
-				$imageWidth = (int)( $imageNode->getAttribute( 'data-file-width' ) );
-				$imageHeight = (int)( $imageNode->getAttribute( 'data-file-height' ) );
+				$thumbWidth = (int)( DOMCompat::getAttribute( $imageNode, 'width' ) ?? '0' );
+				$thumbHeight = (int)( DOMCompat::getAttribute( $imageNode, 'height' ) ?? '0' );
+				$imageWidth = (int)( DOMCompat::getAttribute( $imageNode, 'data-file-width' ) ?? '0' );
+				$imageHeight = (int)( DOMCompat::getAttribute( $imageNode, 'data-file-height' ) ?? '0' );
 
 				$denominator = $imageWidth + $imageHeight;
 				$numerator = $thumbWidth + $thumbHeight;
@@ -215,7 +214,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				throw new ExtensionError( 'imagemap_invalid_title', $lineNum );
 			}
 
-			$href = $a->getAttribute( 'href' );
+			$href = DOMCompat::getAttribute( $a, 'href' ) ?? '';
 			$externLink = DOMUtils::matchRel( $a, '#^mw:ExtLink#D' ) !== null;
 			$alt = '';
 
@@ -227,7 +226,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 				// Here we produce a known difference by just taking the text
 				// content of the resulting dom.
 				// See the test, "Link with wikitext syntax in content"
-				$alt = trim( $a->textContent );
+				$alt = trim( $a->textContent ?? '' );
 			}
 
 			$shapeSpec = substr( $line, 0, -strlen( $link ) );
@@ -299,21 +298,13 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 			}
 		}
 
-		// Ugh! This is messy.
-		// The proxy classes aren't visible to phan here.
-		// Maybe we should get rid of those since we are unlikely
-		// to go the Dodo route since there is a proposal to introduce
-		// a HTML5 parsing and updated DOM library in newer PHP versions.
-		//
-		// Help out phan since it doesn't seem to be able to look
-		// at the definitions in vendor?
-		'@phan-var Element $thumb';
-		'@phan-var DOMNode $anchor';
-		'@phan-var Element $imageNode';
-
 		if ( $first ) {
 			throw new ExtensionError( 'imagemap_no_image' );
 		}
+		// $thumb, $imageNode, and $anchor are non-null at this point.
+		'@phan-var Element $thumb';
+		'@phan-var Element $imageNode';
+		'@phan-var Element $anchor';
 
 		if ( $mapHTML !== null ) {
 			// Construct the map
@@ -335,8 +326,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 		DOMCompat::getClassList( $thumb )->add( 'noresize' );
 
 		// Determine whether a "magnify" link is present
-		$typeOf = $thumb->getAttribute( 'typeof' );
-		if ( !preg_match( '#\bmw:File/Thumb\b#', $typeOf ) && $descType !== self::NONE ) {
+		if ( !DOMUtils::hasTypeOf( $thumb, 'mw:File/Thumb' ) && $descType !== self::NONE ) {
 			// The following classes are used here:
 			// * mw-ext-imagemap-desc-top-right
 			// * mw-ext-imagemap-desc-bottom-right
@@ -360,7 +350,7 @@ class ParsoidImageMap extends ExtensionTagHandler implements ExtensionModule {
 
 		if ( !WTUtils::hasVisibleCaption( $thumb ) ) {
 			$caption = DOMCompat::querySelector( $thumb, 'figcaption' );
-			$captionText = trim( $caption->textContent );
+			$captionText = trim( $caption?->textContent ?? '' );
 			if ( $captionText ) {
 				$defaultAnchor->setAttribute( 'title', $captionText );
 			}

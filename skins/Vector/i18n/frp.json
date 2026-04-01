@@ -4,9 +4,9 @@
 			"ChrisPtDe"
 		]
 	},
-	"skinname-vector": "Vèctor",
-	"vector.css": "/* Lo code CSS betâ ique afècterat los usanciérs de l’habelyâjo « Vèctor ». */",
-	"vector.js": "/* Tot code JavaScript betâ ique serat chargiê per los usanciérs de l’habelyâjo « Vèctor ». */",
+	"skinname-vector": "Vèctor (vielye vèrsion 2010)",
+	"vector.css": "/* Tot CSS betâ ique serat chargiê por los utilisators de l’habelyâjo Vèctor */",
+	"vector.js": "/* Tot code JavaScript betâ ique serat chargiê por los utilisators de l’habelyâjo Vèctor */",
 	"vector-languages": "Lengoues",
 	"vector-language-button-label": "$1 lengou{{PLURAL:$1|a|es}}",
 	"vector-no-language-button-label": "Apondre de lengoues",

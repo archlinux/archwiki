@@ -443,8 +443,8 @@ class ExprParser {
 				if ( count( $stack ) < 2 ) {
 					throw new ExprError( 'missing_operand', self::NAMES[$op] );
 				}
-				$right = (double)array_pop( $stack );
-				$left = (double)array_pop( $stack );
+				$right = (float)array_pop( $stack );
+				$left = (float)array_pop( $stack );
 				if ( !$right ) {
 					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
 				}

@@ -148,7 +148,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "Zapnout nástroj pro informace o IP",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-error": "Něco se nepodařilo. Prosím, zkuste to znovu. Chybová zpráva: $1.",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-success": "Nastavení aktualizováno",
-	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "Klikněte prosím na tlačítko \"Uložit nastavení\" před tím, než budete pokračovat.",
+	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "Klikněte prosím na tlačítko „$1“ předtím, než budete pokračovat",
 	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "Uložit nastavení",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "Zobrazení IP adresy",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base": "Funkce pro zobrazení IP adres umožňuje správcům, patrolářům a dalším zkušeným uživatelům zobrazit si IP adresu přiřazenou k dočasnému účtu.",
@@ -251,5 +251,6 @@
 	"logentry-checkuser-temporary-account-change-access": "$1 $4 {{GENDER:$2|svůj}} vlastní přístup k prohlížení IP adres dočasných účtů",
 	"checkuser-temporary-account-change-access-level-disable": "{{GENDER:$1|zakázal|zakázala|zakázali}}",
 	"checkuser-temporary-account-change-access-level-enable": "{{GENDER:$1|povolil|povolila|povolili}}",
-	"logentry-checkuser-temporary-account-view-ips": "$1 {{GENDER:$2|zobrazil|zobrazila}} IP adresy pro $3"
+	"logentry-checkuser-temporary-account-view-ips": "$1 {{GENDER:$2|zobrazil|zobrazila}} IP adresy pro $3",
+	"checkuser-userinfocard-temporary-account-bucketcount": "Dočasných účtů ze všech přidružených IP adres: $1"
 }

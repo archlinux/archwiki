@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Caro de Segeda"
+		]
+	},
+	"mobile-frontend-history": "Vel o historial de edicións de ésta página.",
+	"mobile-frontend-home-button": "Iniciu",
+	"mobile-frontend-language-article-heading": "Léngua",
+	"mobile-frontend-main-menu-login": "Accedel",
+	"mobile-frontend-main-menu-nearby": "Cercanus",
+	"mobile-frontend-main-menu-settings": "Configuración",
+	"mobile-frontend-placeholder": "Buscal en {{SITENAME}}",
+	"mobile-frontend-random-button": "Ao azal",
+	"minerva-page-actions-overflow": "Máis"
+}

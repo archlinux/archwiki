@@ -115,7 +115,7 @@ class NumericLiteral extends Literal
             //Numeric separator cannot appear at the beginning or at the end of the number
             if (preg_match("/^_|_$/", $value)) {
                 throw new \Exception("Invalid numeric value");
-            } elseif (isset($this->forms[$form])) {
+            } elseif (isset($this->forms[$form !== null ? $form : ''])) {
                 $formDef = $this->forms[$form];
                 if (!preg_match($formDef["check"], $value)) {
                     throw new \Exception("Invalid " . $formDef["format"]);
@@ -142,9 +142,16 @@ class NumericLiteral extends Literal
             throw new \Exception("Invalid numeric value");
         }
         $value = (float) $value;
-        $intValue = (int) $value;
-        if ($value == $intValue) {
-            $value = $intValue;
+        //Do not attempt to cast to int if it's not possible
+        $checkInt = true;
+        if (defined("PHP_INT_MAX") && defined("PHP_INT_MIN")) {
+            $checkInt = $value <= PHP_INT_MAX && $value >= PHP_INT_MIN;
+        }
+        if ($checkInt) {
+            $intValue = (int) $value;
+            if ($value == $intValue) {
+                $value = $intValue;
+            }
         }
         $this->format = $format;
         $this->value = $value;

@@ -4,11 +4,16 @@
  */
 class Less_ImportVisitor extends Less_Visitor {
 
+	/** @var Less_Environment */
 	public $env;
+	/** @var array<array{function:string,args:array}> */
 	public $variableImports = [];
+	/** @var array<string,true> */
 	public $recursionDetector = [];
 
+	/** @var int */
 	public $_currentDepth = 0;
+	/** @var mixed */
 	public $importItem;
 
 	public function __construct( $env ) {
@@ -159,7 +164,7 @@ class Less_ImportVisitor extends Less_Visitor {
 				throw $e;
 			}
 
-			$duplicateImport = isset( $this->recursionDetector[$fullPath] );
+			$duplicateImport = $fullPath && isset( $this->recursionDetector[$fullPath] );
 
 			if ( !$env->importMultiple ) {
 				if ( $duplicateImport ) {

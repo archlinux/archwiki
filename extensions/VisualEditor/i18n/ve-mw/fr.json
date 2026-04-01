@@ -333,7 +333,7 @@
 	"visualeditor-mweditmodeve-progress": "Basculer vers l’éditeur visuel...",
 	"visualeditor-mweditmodeve-showagain": "Ne plus afficher ce message",
 	"visualeditor-mweditmodeve-tool-current": "Éditeur visuel",
-	"visualeditor-mweditmodeve-tool-unavailable": "La modification visuelle n’est pas disponible ici",
+	"visualeditor-mweditmodeve-tool-unavailable": "La modification visuelle n’est pas disponible pour cette page",
 	"visualeditor-mweditmodewt-popup-body": "Vous pouvez revenir à la modification du code source à tout moment en cliquant sur cette icône.",
 	"visualeditor-mweditmodewt-popup-title": "Vous êtes passé à la modification visuelle",
 	"visualeditor-mwgallerycontext-description": "$1 image{{PLURAL:$1||s}}",

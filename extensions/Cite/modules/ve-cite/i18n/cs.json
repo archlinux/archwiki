@@ -41,6 +41,7 @@
 	"cite-ve-citationneeded-description": "Podle některého editora vyžaduje toto tvrzení citaci důvěryhodného zdroje.",
 	"cite-ve-citationneeded-reason": "Zdůvodnění:",
 	"cite-ve-citationneeded-title": "Chybí citace",
+	"cite-ve-dialog-reference-editing-reused-short": "Použito {{PLURAL:$1|jednou|$1krát}}",
 	"cite-ve-dialog-reference-editing-reused": "Tato reference se na této stránce používá $1{{PLURAL:$1|krát}}.",
 	"cite-ve-dialog-reference-editing-reused-long": "Tato reference se na této stránce používá $1{{PLURAL:$1|krát}}. Zde provedené změny se projeví všude, kde se tato reference používá.",
 	"cite-ve-dialog-reference-options-group-label": "Použít tuto skupinu",

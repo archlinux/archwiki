@@ -40,7 +40,6 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|جواب دِیِو}}",
 	"discussiontools-replywidget-summary": "خُلاصہٕ",
 	"discussiontools-replywidget-watchthis": "یہِ صَفہٕ تھٲوِو [[Special:Watchlist|نَظرِ تَل]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|صٲرِف}} بَحَث مَنٛز",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|کَتھ| کَتھہٕ}}",
 	"discussiontools-topicheader-latestcomment": "ٲخری تَبصُر: $1",

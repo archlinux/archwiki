@@ -4,16 +4,33 @@
  * @see less-3.13.1.js#AtRule.prototype
  */
 class Less_Tree_AtRule extends Less_Tree implements Less_Tree_HasValueProperty {
+	/** @var string */
 	public $name;
+	/** @var Less_Tree|null */
 	public $value;
+	/** @var Less_Tree_Ruleset[]|null */
 	public $rules;
+	/** @var int|null */
 	public $index;
+	/** @var bool */
 	public $isReferenced;
+	/** @var bool */
 	public $isRooted;
+	/** @var array|null */
 	public $currentFileInfo;
+	/** @var mixed|null */
 	public $debugInfo;
 
-	public function __construct( $name, $value = null, $rules = null, $index = null, $isRooted = false, $currentFileInfo = null, $debugInfo = null, $isReferenced = false ) {
+	public function __construct(
+		$name,
+		$value = null,
+		$rules = null,
+		$index = null,
+		$isRooted = false,
+		$currentFileInfo = null,
+		$debugInfo = null,
+		$isReferenced = false
+	) {
 		$this->name = $name;
 		// TODO: Less.js 3.13 handles `$value instanceof Less_Tree` and creates Anonymous here.
 		$this->value = $value;

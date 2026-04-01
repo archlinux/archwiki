@@ -209,7 +209,7 @@
 	"notification-header-thank-you-10000-edit": "On bininci {{GENDER:$2|değişikliğinizi}} {{GENDER:$2|yaptınız}}; inanılmaz katkılarınız için çok teşekkürler!",
 	"notification-header-thank-you-100000-edit": "Yüz bininci {{GENDER:$2|değişikliğinizi}} {{GENDER:$2|yaptınız}}; Vikipedi, olağanüstü çalışmalarınızdan dolayı size müteşekkirdir.",
 	"notification-header-thank-you-1000000-edit": "Bir milyonuncu {{GENDER:$2|değişikliğinizi}} {{GENDER:$2|yaptınız}}; Vikipedi'yi benimsediğiniz ve burayı daha iyi bir hâle getirdiğiniz için sonsuz teşekkürler!",
-	"notification-header-thank-you-10000000-edit": "On milyonuncu {{GENDER:$2|değişikliğinizi}} {{GENDER:$2|yaptınız}}; parlak özveri bırakan katkınız için teşekkürler!",
+	"notification-header-thank-you-10000000-edit": "On milyonuncu {{GENDER:$2|değişikliğinizi}} {{GENDER:$2|yaptınız}}; muhteşem özveriniz için teşekkürler!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Sizin}} düzenleme",
 	"notification-link-text-view-edit": "Değişikliği görüntüle",
 	"notification-link-article-reminder": "Sayfayı görüntüle",

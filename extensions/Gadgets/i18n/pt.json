@@ -11,7 +11,8 @@
 			"Malafaya",
 			"Mansil",
 			"Vitorvicentevalente",
-			"Mansil alfalb"
+			"Mansil alfalb",
+			"BraunOBruno"
 		]
 	},
 	"gadgets-desc": "Permite que os utilizadores selecionem [[Special:Gadgets|''gadgets'' em JavaScript e CSS]] personalizados nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]]",
@@ -34,7 +35,7 @@
 	"gadgets-editsectiontitle": "Editar título da secção",
 	"gadgets-viewsectiontitle": "Ver título da secção",
 	"gadgets-uses": "Utiliza",
-	"gadgets-required-rights": "Requer o seguinte {{PLURAL:$2| certo|direitos}}: $1 .",
+	"gadgets-required-rights": "Requer o seguinte {{PLURAL:$2|direito|direitos}}: $1.",
 	"gadgets-required-skins": "Disponível para {{PLURAL:$2|o tema $1|os seguintes temas: $1}}",
 	"gadgets-required-actions": "Limitado {{PLURAL:$2|à operação de página \"$1\"|às seguintes operações de página: $1}}.",
 	"gadgets-required-namespaces": "Limitado {{PLURAL:$2|ao espaço nominal \"$1\"|aos seguintes espaços nominais: $1}}.",

@@ -13,7 +13,8 @@
 			"Reedy",
 			"Sp5uhe",
 			"ToSter",
-			"WTM"
+			"WTM",
+			"Woytecr"
 		]
 	},
 	"replacetext": "Zastąp tekst",
@@ -26,6 +27,7 @@
 	"replacetext_optionalfilters": "Dodatkowe filtry:",
 	"replacetext_categorysearch": "Zamień tylko w kategorii",
 	"replacetext_prefixsearch": "Zamień tylko na stronach z prefiksem",
+	"replacetext_pagelimit": "Maksymalna liczba stron zwracanych w wyszukiwaniu:",
 	"replacetext_editpages": "Zastąp tekst w treści stron",
 	"replacetext_movepages": "Jeśli to możliwe wykonaj zastępowanie również w tytułach stron",
 	"replacetext_givetarget": "Musisz podać łańcuch znaków, który ma zostać zastąpiony.",
@@ -48,11 +50,14 @@
 	"replacetext_warning": "'''Uwaga:''' {{PLURAL:$1|Jest $1 strona zawierająca|Są $1 strony zawierające|Jest $1 stron zawierających}} tekst „$2”, którym chcesz zastępować. Jeśli wykonasz zastępowanie nie będzie możliwe odseparowanie Twoich zastąpień od tych tekstów.",
 	"replacetext_blankwarning": "'''Uwaga:''' Ponieważ ciąg znaków, którym ma być wykonane zastępowanie jest pusty, operacja będzie nieodwracalna. Czy kontynuować?",
 	"replacetext_continue": "Kontynuuj",
+	"replacetext_botedit": "Oznacz zmiany jako edycje bota",
 	"replacetext_editsummary": "Zastępowanie tekstu – „$1” na „$2”",
 	"replacetext_reminder": "Aby zaktualizować również linki do tej strony w innych miejscach, przejdź do $1.",
 	"replacetext_cfg_error": "Błąd konfiguracji ReplaceText",
 	"replacetext_no_compress": "Twoja wiki nie będzie działać z ReplaceText: zamiany tekstu nie mogą być uruchamiane, jeśli $wgCompressRevisions jest ustawione na true.",
 	"replacetext_no_external_stores": "Twoja wiki nie będzie działać z ReplaceText: zamiany tekstu nie mogą być uruchomione, jeśli $wgExternalStores nie jest puste.",
 	"right-replacetext": "Wykonywanie zastępowania tekstu w całej wiki",
-	"action-replacetext": "wykonywania zastępowania tekstu w całej wiki"
+	"action-replacetext": "wykonywania zastępowania tekstu w całej wiki",
+	"replacetext-summary-label": "Opis zmian w edycji (pozostaw puste, aby użyć domyślnego opisu zmian)",
+	"tag-replacetext-description": "Zautomatyzowane edycje wykonywane za pomocą [[{{#Special:ReplaceText}}]]."
 }

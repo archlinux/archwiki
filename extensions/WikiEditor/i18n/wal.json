@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ella Lachow"
+			"Ella Lachow",
+			"Malaalaa"
 		]
 	},
 	"wikieditor": "Lo'ida wikkiixuufiya goyiduwa gattiyasa",
@@ -35,7 +36,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Wikkiyaappe kare gattiyaagaa",
 	"wikieditor-toolbar-tool-file": "Misiletanne miidiyaa",
 	"wikieditor-toolbar-tool-file-title": "Fayiliyaa gelissa",
-	"wikieditor-toolbar-file-target": "Fayiliyaa sunttaa:",
+	"wikieditor-toolbar-file-target": "Fayliya sunttaa:",
 	"wikieditor-toolbar-file-caption": "Kiike xuufiya:",
 	"wikieditor-toolbar-file-alt": "Dooriyo xuufiya:",
 	"wikieditor-toolbar-file-alt-help": "Ha fayiliyaa be'anawu danddayenna asatussi qonccissuwaa xaafanawu hagaa go'ettanawu danddayaasa. Qonccissoy eti miidiyaa naqaashatanne halchota akeekanawu danddayissiyaagaa gidana koshshees. Hageee qooqe (be'anawu danddayenna) asatussi, hegaadankka iskiriiniya de'iyabaa nabbabiyaa softweeriya go'ettiyageetussi keehippe go'iyaba.",
@@ -68,7 +69,7 @@
 	"wikieditor-toolbar-tool-redirect-example": "Baanawu halchido sinttaa sunttaa",
 	"wikieditor-toolbar-tool-big": "Gita",
 	"wikieditor-toolbar-tool-big-example": "Gita xuufiya",
-	"wikieditor-toolbar-tool-small": "Qeera",
+	"wikieditor-toolbar-tool-small": "Guutta",
 	"wikieditor-toolbar-tool-small-example": "Qeera xuufiya",
 	"wikieditor-toolbar-tool-superscript": "Liiphiya xaafettida xuufiya",
 	"wikieditor-toolbar-tool-superscript-example": "Liiphiyan xaafettida xuufiya",
@@ -91,7 +92,7 @@
 	"wikieditor-toolbar-tool-table-example": "Leemisuwaa",
 	"wikieditor-toolbar-tool-table-preview": "Kaseti be'uwaa",
 	"wikieditor-toolbar-tool-table-insert": "Gelissa",
-	"wikieditor-toolbar-tool-table-cancel": "Qucca",
+	"wikieditor-toolbar-tool-table-cancel": "Agga",
 	"wikieditor-toolbar-tool-table-toomany": "Ha diyaalooggiyan $1 {{PLURAL:$1|shaahuwa|shaahota}} gelissiyoogee danddayettenna.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Neeni likke gidiya meegatu payduwa woykko tuussata gelissabaakka.",
 	"wikieditor-toolbar-tool-table-zero": "Zaraa zeero meegan woykko tuussan gelissanawu danddayakka.",
@@ -110,7 +111,7 @@
 	"wikieditor-toolbar-tool-replace-invalidregex": "Ne gelissido gophphe qonccissoy likkenna: $1",
 	"wikieditor-toolbar-tool-replace-word": "Ubba qaalatakka issi mala ootta",
 	"wikieditor-toolbar-section-characters": "Dumma machchallata",
-	"wikieditor-toolbar-section-help": "Maaduwaa",
+	"wikieditor-toolbar-section-help": "Maaduwa",
 	"tag-wikieditor-description": "Goyidettay [[mw:Special:MyLanguage/Extension:WikiEditor|Wikiigoyidiyagaa]] (2010 wikiixuufiya goyidiyagan) polettiis",
 	"wikieditor-realtimepreview-preview": "Kaseti be'uwaa",
 	"wikieditor-realtimepreview-error": "Kaseti be'oy yibeenna",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Martin Urbanec"
+			"Martin Urbanec",
+			"Mormegil"
 		]
 	},
 	"apihelp-query+checkuser-param-request": "Typ požadavku CheckUser:",
@@ -9,5 +10,6 @@
 	"apihelp-query+checkuser-param-limit": "Omezení počtu výsledků.",
 	"apihelp-query+checkuserlog-param-limit": "Omezení počtu výsledků.",
 	"apierror-checkuser-missingsummary": "Musíte uvést důvod kontroly.",
-	"apierror-checkuser-invalidmode": "Neznámý režim požadavku"
+	"apierror-checkuser-invalidmode": "Neznámý režim požadavku",
+	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} sbírá data o uživatelských agentech za účelem pomoci s bráněním vandalismu a zneužívání. Více informací najdete na https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:CheckUser/Client_Hints"
 }

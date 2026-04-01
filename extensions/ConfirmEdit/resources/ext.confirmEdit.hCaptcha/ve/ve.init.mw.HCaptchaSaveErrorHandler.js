@@ -8,6 +8,8 @@
  */
 module.exports = () => {
 	// Load these here so that in QUnit tests we have a chance to mock utils.js
+	const config = require( './../config.json' );
+
 	ve.init.mw.HCaptchaSaveErrorHandler = function () {};
 
 	OO.inheritClass( ve.init.mw.HCaptchaSaveErrorHandler, ve.init.mw.SaveErrorHandler );
@@ -24,7 +26,7 @@ module.exports = () => {
 
 	ve.init.mw.HCaptchaSaveErrorHandler.static.process = function ( data, target ) {
 		const self = this,
-			siteKey = mw.config.get( 'wgConfirmEditHCaptchaSiteKey' ),
+			siteKey = mw.config.get( 'wgConfirmEditHCaptchaSiteKey' ) || config.HCaptchaSiteKey,
 			$container = $( '<div>' );
 
 		// Register extra fields

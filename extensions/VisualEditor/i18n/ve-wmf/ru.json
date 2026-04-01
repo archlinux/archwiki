@@ -23,9 +23,11 @@
 			"Yury Katkov",
 			"Александр Сигачёв",
 			"Умар",
-			"아라"
+			"아라",
+			"Yurina Tatiana"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck считает, что на страницу было добавлено новое содержимое",
 	"tag-editcheck-newreference-description": "На страницу добавлена ссылка",
 	"tag-visualeditor": "через&nbsp;визуальный редактор",
 	"tag-visualeditor-description": "Правка, сделанная через [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]]",

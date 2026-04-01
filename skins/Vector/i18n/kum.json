@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Arsenekoumyk",
-			"ArslanX"
+			"ArslanX",
+			"Кумнац"
 		]
 	},
+	"vector-languages": "Тиллер",
+	"vector-language-button-label": "{{PLURAL:$1|$1 Тил|$1тиллер}}",
+	"vector-no-language-button-label": "Тиллени къошув",
 	"vector-action-addsection": "Мавзу къошмакъ",
 	"vector-action-delete": "Тайдырмакъ",
 	"vector-action-move": "Атын алышдырмакъ",
@@ -13,5 +17,27 @@
 	"vector-view-edit": "Тюзлемек",
 	"vector-view-history": "Тарихине къарамакъ",
 	"vector-view-view": "Охумакъ",
-	"vector-more-actions": "Дагъы"
+	"vector-more-actions": "Дагъы",
+	"vector-appearance-label": "Герюнюв",
+	"vector-feature-limited-width-name": "Генглик",
+	"vector-feature-limited-width-0-label": "Генг",
+	"vector-feature-limited-width-1-label": "Стандарт",
+	"vector-feature-custom-font-size-name": "Языв",
+	"vector-feature-custom-font-size-0-label": "Гиччи",
+	"vector-feature-custom-font-size-1-label": "Стандарт",
+	"vector-feature-custom-font-size-2-label": "Уллу",
+	"skin-theme-name": "Тюс",
+	"skin-theme-day-label": "Дунья",
+	"skin-theme-night-label": "Къара",
+	"skin-theme-os-label": "Автоматлы",
+	"skin-theme-exclusion-notice": "Бу сагьифа гьар заман акъ кюйде",
+	"vector-toc-label": "Ичиндеги язывлар",
+	"vector-toc-beginning": "Баш",
+	"vector-anon-user-menu-pages": "Сагьифа къошулмагъан язывчулагъа",
+	"vector-main-menu-label": "Аслу меню",
+	"vector-feature-custom-font-size-exclusion-notice": "Бу сагьифада гьар заман къоллара гиччи языв.",
+	"vector-page-tools-label": "Алатлар",
+	"vector-page-tools-general-label": "Умуми",
+	"vector-page-tools-actions-label": "Иш юрютюв",
+	"vector-unpin-element-label": "Яшырмакъ"
 }

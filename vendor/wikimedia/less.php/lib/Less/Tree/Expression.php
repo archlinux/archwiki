@@ -7,8 +7,9 @@ class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProper
 
 	/** @var Less_Tree[] */
 	public $value = [];
-
+	/** @var bool */
 	public $noSpacing;
+	/** @var true|null */
 	public $parens = null;
 
 	public function __construct( $value, $noSpacing = false ) {

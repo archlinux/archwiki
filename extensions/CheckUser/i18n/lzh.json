@@ -3,12 +3,16 @@
 		"authors": [
 			"LNDDYL",
 			"WAN233",
-			"逆襲的天邪鬼"
+			"逆襲的天邪鬼",
+			"Dream Star.cn",
+			"Davidzdh"
 		]
 	},
 	"group-checkuser": "知簿",
 	"group-checkuser-member": "{{GENDER:$1|知簿}}",
+	"checkuser-target": "網際位址，或載簿之名稱：",
 	"checkuser-search": "尋",
 	"checkuser-search-submit": "尋",
-	"checkuser-helper-user": "用戶"
+	"checkuser-helper-user": "用戶",
+	"checkuser-investigate-subtitle-cancel-button-label": "罷"
 }

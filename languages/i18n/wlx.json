@@ -3,7 +3,8 @@
 		"authors": [
 			"Fadia",
 			"Umar Asiya",
-			"Zakaria Tunsung"
+			"Zakaria Tunsung",
+			"Yaw tuba"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Lombori kaŋa|Lomboe mine}}",
@@ -163,8 +164,8 @@
 	"editing": "Maana enna $1",
 	"creating": "Maale $1",
 	"editingsection": "Maale embu $1 (jie)",
-	"templatesused": "{{PLURAL:$1|Bondemaahewuloo|Bondemaahewulo}} a tonneŋ a peeji ŋa:",
-	"templatesusedpreview": "{{PLURAL:$1|Tɛmpileti| Tɛmpiletihi}} aŋ tuŋ ne tuma a daŋkaabu ŋaŋ:",
+	"templatesused": "{{PLURAL:$1|Page|Pages}} included on this page:\n\n{{PLURAL:$1|Lɩɛrɩnimbiri|Lɩɛrɩnimbie}} ba paahʋʋŋ a lɩɛrɩnimbiri ŋa puoŋ:",
+	"templatesusedpreview": "{{PLURAL:$1|Lɩɛrɩnimbiri|Lɩɛrɩnimbie}} ba paahʋʋŋ a daŋkaabʋ ŋa puoŋ:",
 	"template-protected": "(guyeŋ)",
 	"template-semiprotected": "Gu-kyɛlii",
 	"hiddencategories": "A peeji ŋa meŋ poɔ yɛ a {{PLURAL:$1|lambo sɔgenuu|$1 lamboe sɔgene}}:",

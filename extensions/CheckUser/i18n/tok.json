@@ -4,6 +4,13 @@
 			"Tamzin"
 		]
 	},
+	"right-checkuser": "sijelo ale la ona li ken lukin e nanpa IP, e sona ante",
+	"right-checkuser-log": "lukin pi nanpa IP la ona li ken lukin e pini",
+	"right-checkuser-temporary-account": "sijelo pi nimi ala la ona li ken lukin e nanpa IP",
+	"right-checkuser-temporary-account-no-preference": "sijelo pi nimi ala la ona li ken lukin e nanpa IP, li wile ala toki e wile ni tawa ilo",
+	"right-checkuser-temporary-account-log": "sijelo pi nimi ala la ona li ken lukin e pini lukin pi nanpa IP",
+	"right-checkuser-temporary-account-auto-reveal": "sijelo pi nimi ala la ona li ken lukin e nanpa IP ale",
+	"checkuser-ip-contributions-deleted-contributions-link": "pali weka",
 	"checkuser-global-contributions-link": "pali pi ma ale",
 	"checkuser-global-contributions-link-sidebar": "pali pi ma ale",
 	"checkuser-ip-auto-reveal-link-sidebar-on": "sina lukin e nanpa IP lon tenpo ale",

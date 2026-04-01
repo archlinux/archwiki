@@ -22,8 +22,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Грешка в израза: Неразпознат пунктуационен знак „$1“.",
 	"pfunc_expr_unclosed_bracket": "Грешка в записа: Незатворена скоба",
 	"pfunc_expr_division_by_zero": "Деление на нула",
-	"pfunc_expr_invalid_argument": "Невалиден аргумент за $1: < -1 или > 1",
-	"pfunc_expr_invalid_argument_ln": "Невалиден аргумент за ln: <= 0",
+	"pfunc_expr_invalid_argument": "Невалиден аргумент за $1: по-малко от -1 или по-голямо от 1.",
+	"pfunc_expr_invalid_argument_ln": "Невалиден аргумент за ln: по-малко или равно на 0.",
 	"pfunc_expr_unknown_error": "Грешка в израза: Неразпозната грешка ($1).",
 	"pfunc_expr_not_a_number": "В $1: резултатът не е число",
 	"pfunc_string_too_long": "Грешка: Низът превишава ограничението от $1 знака"

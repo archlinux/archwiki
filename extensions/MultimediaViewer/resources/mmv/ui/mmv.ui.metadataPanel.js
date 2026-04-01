@@ -15,7 +15,6 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HtmlUtils = require( '../mmv.HtmlUtils.js' );
 const Description = require( './mmv.ui.description.js' );
 const UiElement = require( './mmv.ui.js' );
 const MetadataPanelScroller = require( './mmv.ui.metadataPanelScroller.js' );
@@ -458,13 +457,15 @@ class MetadataPanel extends UiElement {
 			.addClass( 'mw-mmv-author' );
 
 		if ( authorCount > 1 ) {
-			const moreText = HtmlUtils.jqueryToHtml(
-				$( '<a>' )
-					.addClass( 'mw-mmv-more-authors' )
-					.text( mw.msg( 'multimediaviewer-multiple-authors', authorCount - 1 ) )
-					.attr( 'href', filepageUrl )
-			);
-			$wrapper.append( mw.message( 'multimediaviewer-multiple-authors-combine', author, moreText ).escaped() );
+			const $moreLink = $( '<a>' )
+				.addClass( 'mw-mmv-more-authors' )
+				.text( mw.msg( 'multimediaviewer-multiple-authors', authorCount - 1 ) )
+				.attr( 'href', filepageUrl );
+			$wrapper.append( mw.message(
+				'multimediaviewer-multiple-authors-combine',
+				$( $.parseHTML( author ) ),
+				$moreLink
+			).parseDom() );
 		} else {
 			$wrapper.append( author );
 		}

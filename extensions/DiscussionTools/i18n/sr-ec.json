@@ -111,6 +111,7 @@
 	"discussiontools-preference-topicsubscription": "Праћење тема",
 	"discussiontools-preference-topicsubscription-help": "Додаје опцију прати поред сваке теме.",
 	"discussiontools-preference-visualenhancements": "Прикажи дискусиону активност",
+	"discussiontools-preference-visualenhancements-help": "Означава све нове коментаре у темама које пратите светло плавом бојом.",
 	"discussiontools-replybutton": "{{GENDER:|Одговори}}",
 	"discussiontools-replylink": "{{GENDER:|одговори}}",
 	"discussiontools-replywidget-abandon": "Желите ли заиста да одбаците коментар који сте започели писати?",

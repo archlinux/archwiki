@@ -4,7 +4,8 @@
 			"Amire80",
 			"Guycn2",
 			"Rotemliss",
-			"YaronSh"
+			"YaronSh",
+			"Neriah"
 		]
 	},
 	"replacetext": "החלפת טקסט",
@@ -48,5 +49,7 @@
 	"replacetext_no_external_stores": "הוויקי שלך לא יעבוד עם ReplaceText: החלפות טקסט לא יכולות להיות מורצות אם <span dir=\"ltr\">$wgExternalStores</span> אינו ריק.",
 	"right-replacetext": "ביצוע החלפת מחרוזות באתר הוויקי כולו",
 	"action-replacetext": "לבצע החלפת מחרוזות באתר הוויקי כולו",
-	"replacetext-summary-label": "תקציר לעריכות החלפה (יש להשאיר את זה ריק כדי להשתמש בתקציר ברירת המחדל)"
+	"replacetext-summary-label": "תקציר לעריכות החלפה (יש להשאיר את זה ריק כדי להשתמש בתקציר ברירת המחדל)",
+	"tag-replacetext": "[[Special:ReplaceText|החלפת טקסט]]",
+	"tag-replacetext-description": "עריכות אוטומטיות שבוצעו באמצעות [[{{#Special:ReplaceText}}]]."
 }

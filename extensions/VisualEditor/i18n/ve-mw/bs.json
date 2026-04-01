@@ -31,6 +31,7 @@
 	"visualeditor-changedesc-mwtransclusion": "Promijenjeni parametri šablona",
 	"visualeditor-desc": "Vizualni uređivač za MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:Vizualni uređivač",
+	"visualeditor-dialog-extension-abandonedit": "Jeste li sigurni da želite zatvoriti ovaj dijaloški okvir bez čuvanja izmjena?",
 	"visualeditor-dialog-media-alttext-section": "Alternativni tekst",
 	"visualeditor-dialog-media-alttext-section-help": "Ovo možete koristiti kako biste napisali opis za osobe koje ne mogu vidjeti ovu stavku. Opis bi trebao biti toliko sadržajan da osobe mogu razumjeti svrhu i informaciju koje im pruža ova stavka. Ovo je od velikog značaja slijepim korisnicima i drugim osobama koje koriste softver za čitanje stavki s ekrana ili preglednike koji samo prikazuju tekst.",
 	"visualeditor-dialog-media-change-image": "Promijeni sliku",

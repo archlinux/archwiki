@@ -6,7 +6,8 @@
 			"Fulup",
 			"Huñvreüs",
 			"SaldırganSincap",
-			"VIGNERON"
+			"VIGNERON",
+			"TMg"
 		]
 	},
 	"cite-desc": "Ouzhpennañ a ra ar tikedennoù <code>&lt;ref&gt;</code> ha <code>&lt;references/&gt;</code> evit an daveoù",
@@ -15,11 +16,11 @@
 	"cite_error_ref_conflicting_dir": "Ne glot ket arventenn dir unan eus ar balizennoù <code>&lt;ref&gt;</code> gant an anv \"$1\".",
 	"cite_error_ref_numeric_key": "Balizenn <code>&lt;ref&gt;</code> faziek; ne c’hell ket name bezañ niver anterin. Grit gant un titl deskrivus",
 	"cite_error_ref_no_key": "Stummet mat eo ar valizenn digeriñ <code>&lt;ref&gt;</code> pe fall eo e anv",
-	"cite_error_ref_too_many_keys": "Arventenn faziek e balizenn <code>&lt;references&gt;</code>",
-	"cite_error_ref_follow_conflicts": "Ur valizenn <code><ref follow=\"…\"></code> a zo kendalc'h unan kent ne c'hall ket kaout un arventenn name he-unan",
+	"cite_error_ref_too_many_keys": "Arventenn \"$1\" direizh e balizenn <code><ref></code>. Arventennoù skoret: $2.",
+	"cite_error_ref_follow_conflicts": "Ur valizenn <code>&lt;ref follow=\"…\"&gt;</code> a zo kendalc'h unan kent ne c'hall ket kaout he arventenn name-hi pe kaout munudoù.",
 	"cite_error_ref_no_input": "Balizenn <code>&lt;ref&gt;</code> faziek; ret eo d'an daveennoù hep anv bezañ danvez enno",
 	"cite_error_references_duplicate_key": "Balizenn <code>&lt;ref&gt;</code> faziek; anv \"$1$ spisaet meur a wech gant danvez disheñvel",
-	"cite_error_references_invalid_parameters": "Arventenn faziek e balizenn <code>&lt;references&gt;</code>",
+	"cite_error_references_invalid_parameters": "Arventenn \"$1\" direizh e-barzh balizenn <code><references></code>. Arventennoù skoret: $2.",
 	"cite_error_references_no_text": "Balizenn <code>&lt;ref&gt;</code> faziek ; ne oa bet lakaet tamm testenn ebet evit an daveennoù anvet <code>$1</code>",
 	"cite_error_included_ref": "Kod digeriñ <code>&lt;/ref&gt;</code> hep kod serriñ <code>&lt;ref&gt;</code>",
 	"cite_error_included_references": "Balizenn serriñ a vank evit <code>&lt;references&gt;</code>",
@@ -41,7 +42,7 @@
 	"cite-reference-previews-gadget-conflict-info-reftooltips": "Gweredekaet eo ar bitrak [[$1|Reference Tooltips]], neuze ne weloc’h ket rakweloù daveoù met gwelout a reoc’h rakweloù pajennoù. Gallout a rafe ar bitrak-mañ kaout un anv all en ho wiki. Ma kendalc’hit da gaout kudennoù, arsellit mar plij ho pitrakoù hag ho skriptoù implijer, re hollek hag all.",
 	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "Gweredekaet eo ar bitrakoù [[$1|Navigation popups]] ha [[$1|Reference Tooltips]], neuze ne weloc’h ket rakweloù pourchaset gant an arc’hwel-mañ. Gallout a rafe ar bitrakoù-mañ kaout un anv all en ho wiki. Ma kendalc’hit da gaout kudennoù, arsellit mar plij ho pitrakoù hag ho skriptoù implijer, re hollek hag all.",
 	"cite-reference-previews-preference-label": "Gweredekaat rakwel daveoù (kaout rakweloù prim eus un dave en ul lenn ur bajenn)",
-	"cite_references_link_many_and": " ha",
+	"cite_references_link_many_and": "&#32;ha&#32;",
 	"cite_references_link_accessibility_label": "Lammat",
 	"cite_references_link_many_accessibility_label": "Lammat da :",
 	"cite-wikieditor-tool-reference": "Daveenn",

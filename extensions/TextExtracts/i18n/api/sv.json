@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Dhallin",
-			"Lokal Profil"
+			"Lokal Profil",
+			"Stefan2255"
 		]
 	},
 	"apihelp-query+extracts-summary": "Returnerar ren text eller begränsade HTML-utdrag av de angivna sidorna.",
@@ -11,7 +12,10 @@
 	"apihelp-query+extracts-param-limit": "Hur många utdrag som ska returneras. (Flera extrakt kan endast returneras om exintro är satt till true.)",
 	"apihelp-query+extracts-param-intro": "Returnera bara innehåll före första avsnittet.",
 	"apihelp-query+extracts-param-plaintext": "Returnera extrakt som ren text eller begränsad HTML.",
-	"apihelp-query+extracts-param-sectionformat": "Hur stycken formateras i ren-text-läge:\n;plain:Ingen formatering.\n;wiki:Wikitext-stil formatering (== som detta ==).\n;raw:Denna moduls interna representation (avsnittstitlar med prefixet &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;section level&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",
+	"apihelp-query+extracts-param-sectionformat": "Hur stycken formateras i ren-text-läge:",
+	"apihelp-query+extracts-paramvalue-sectionformat-plain": "Ingen formatering.",
+	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "Wikitext-stilformatering (== så här ==).",
+	"apihelp-query+extracts-paramvalue-sectionformat-raw": "Den här modulens interna representation (avsnittstitlar med prefixet &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;sektionsnivå&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",
 	"apihelp-query+extracts-example-1": "FÅ ett extrakt på 175 tecken",
 	"apiwarn-textextracts-limit": "<var>exlimit</var> var för stor för en begäran om hela artikelutdrag, sänkt till $1.",
 	"apiwarn-textextracts-unsupportedmodel": "$1 har innehållsmodell $2, som inte stöds; returnerar ett tomt utdrag.",

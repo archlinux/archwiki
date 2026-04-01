@@ -126,6 +126,11 @@ class EngineFactory {
 	}
 
 	public function destroyEngineForParser( Parser $parser ): void {
+		if ( isset( $this->engineForParser[$parser] ) ) {
+			// T419168: Call destroy() manually to prevent memory leaks
+			$this->engineForParser[$parser]->destroy();
+		}
+
 		unset( $this->engineForParser[$parser] );
 	}
 }

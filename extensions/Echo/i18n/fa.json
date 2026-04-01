@@ -72,7 +72,7 @@
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|ویرایش|ویرایش‌ها}} در صفحهٔ بحث من",
 	"echo-category-title-edit-user-page": "{{PLURAL:$1|ویرایش|ویرایش‌ها}} در صفحهٔ کاربری من",
 	"echo-category-title-article-linked": "{{PLURAL:$1|پیوند|پیوندهای}} صفحه",
-	"echo-category-title-reverted": "{{PLURAL:$1|واگردانی|واگردانی‌های}} ویرایش",
+	"echo-category-title-reverted": "{{PLURAL:$1|برگردانی|برگردانی‌های}} ویرایش",
 	"echo-category-title-mention": "{{PLURAL:$1|اشاره|اشاره‌ها}}",
 	"echo-category-title-mention-failure": "{{PLURAL:$1|اشاره|اشاره‌های}} ناموفق",
 	"echo-category-title-mention-success": "{{PLURAL:$1|اشاره|اشاره‌های}} موفق",

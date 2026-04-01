@@ -7,7 +7,8 @@
 			"Nguyên Lê",
 			"Nvdtn19",
 			"Prenn",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"gadgets-desc": "Cho phép người dùng lựa chọn [[Special:Gadgets|tiện ích CSS và JavaScript]] tùy chỉnh trong [[Special:Preferences#mw-prefsection-gadgets|tùy chọn]] của họ",
@@ -48,7 +49,7 @@
 	"gadgets-validate-notset": "Thuộc tính <code>$1</code> không được đặt.",
 	"gadgets-validate-wrongtype": "Thuộc tính <code>$1</code> phải là kiểu <code>$2</code>.",
 	"gadgets-validate-json": "Tệp JSON được chỉ định nhưng không được sử dụng. Chúng chỉ hợp lệ trong các tiện ích được đóng gói.",
-	"gadgets-validate-icons": "Biểu tượng Codex chỉ có thể được đưa vào các tiện ích đóng gói.",
+	"gadgets-validate-icons": "Chỉ tiện ích đóng gói mới có thể dùng các icon của Codex.",
 	"gadgets-validate-es6default": "Tiện ích yêu cầu ES6 không thể được bật theo mặc định",
 	"gadgets-validate-noscripts": "Các tập lệnh bị bỏ qua vì tiện ích này thiết lập <code>type=styles</code>.",
 	"gadgets-validate-scriptsnotallowed": "Các tập lệnh và tệp dữ liệu không được sử dụng vì tiện ích này thiết lập <code>type=styles</code>.",

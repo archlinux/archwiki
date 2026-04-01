@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"templatestyles": "کينډۍ‌ښودبڼې",
+	"templatestyles-desc": "هرې کينډۍ لپاره بېلې ښودبڼې لارښو شوني کوي",
+	"templatestyles-missing-src": "کينډۍ‌ښودبڼې <code>src</code> بايد تش نه وي.",
+	"templatestyles-invalid-src": "کينډۍ‌ښودبڼې لپاره ناسم سرليک<code>src</code> ځانگړی‌کونگ."
+}

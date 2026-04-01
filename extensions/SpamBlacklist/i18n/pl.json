@@ -27,6 +27,6 @@
 	"logentry-spamblacklist-hit": "$1 {{GENDER:$2|uruchomił|uruchomiła|uruchomił(a)}} filtr antyspamowy na stronie $3, próbując dodać $4.",
 	"right-spamblacklistlog": "Podgląd rejestru filtru antyspamowego",
 	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego",
-	"right-sboverride": "Pomijanie filtru antyspamowego",
+	"right-sboverride": "Omijanie filtru antyspamowego",
 	"action-sboverride": "omijania filtru antyspamowego"
 }

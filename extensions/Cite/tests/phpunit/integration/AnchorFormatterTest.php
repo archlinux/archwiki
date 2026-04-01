@@ -22,13 +22,13 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$formatter = new AnchorFormatter();
 
 		$this->assertSame(
-			'cite_ref-1',
+			'cite&#95;ref-1',
 			$formatter->wikitextSafeBacklink( null, 1, 0 ) );
 		$this->assertSame(
-			'cite_ref-name_2-0',
+			'cite&#95;ref-name&#95;2-0',
 			$formatter->wikitextSafeBacklink( 'name_', 2, 1 ) );
 		$this->assertSame(
-			'cite_note-name-1',
+			'cite&#95;note-name-1',
 			$formatter->wikitextSafeNoteLink( 'name', 1 ) );
 	}
 
@@ -45,10 +45,10 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 
 	public static function provideFragmentIdentifierNormalizations() {
 		return [
-			[ 'a b', 'a_b' ],
-			[ 'a  __  b', 'a_b' ],
+			[ 'a b', 'a&#95;b' ],
+			[ 'a  __  b', 'a&#95;b' ],
 			[ ':', ':' ],
-			[ "\t\n", '_' ],
+			[ "\t\n", '&#95;' ],
 			[ "'", '&#039;' ],
 			[ "''", '&#039;&#039;' ],
 			[ '"%&/<>?[]{|}', '&quot;%&amp;/&lt;&gt;?&#91;&#93;&#123;&#124;&#125;' ],
@@ -56,12 +56,12 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 
 			[ 'nature%20phylo', 'nature%2520phylo' ],
 			[ 'Mininova%2E26%2E11%2E2009', 'Mininova%252E26%252E11%252E2009' ],
-			[ '%c8%98tiri_2019', '%25c8%2598tiri_2019' ],
+			[ '%c8%98tiri_2019', '%25c8%2598tiri&#95;2019' ],
 			[ 'play%21', 'play%2521' ],
 			[ 'Terry+O%26rsquo%3BN…</ref', 'Terry+O%2526rsquo%253BN…&lt;/ref' ],
 			[ '9&nbsp;pm', '9&amp;nbsp;pm' ],
 			[ 'n%25%32%30n', 'n%2525%2532%2530n' ],
-			[ 'a_ %20a', 'a_%2520a' ],
+			[ 'a_ %20a', 'a&#95;%2520a' ],
 		];
 	}
 

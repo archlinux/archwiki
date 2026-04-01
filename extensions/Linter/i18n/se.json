@@ -10,6 +10,7 @@
 	"linter-category-wikilink-in-extlink": "Liŋkkat liŋkkain",
 	"linter-form-namespace": "Nammagomuvuohta:",
 	"linter-numerrors": "($1 {{PLURAL:$1|meattáhus|meattáhusa}})",
+	"linter-pager-category-header": "Kategoriija",
 	"linter-pager-inline-media-caption-details": "Oaidnemeahttun govvateaksta",
 	"linter-pager-missing-image-alt-text-details": "Gova alt-teaksta váilu",
 	"linter-pager-title-header": "Siidonamma",

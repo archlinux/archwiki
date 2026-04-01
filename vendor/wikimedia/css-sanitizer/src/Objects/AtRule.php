@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Wikimedia\CSS\Util;
 
 /**
- * Represent a CSS at-rule
+ * Represent a CSS at-rule, eg. `@import url("styles.css")` or `@media (min-width: 768px) { div { color: red } }`
  */
 class AtRule extends Rule implements DeclarationOrAtRule {
 
