@@ -5,8 +5,13 @@
 			"Yupik"
 		]
 	},
+	"verifyoathforuser": "Visásmit kyevtmuddosii tubdâttâttâm tile",
+	"oathauth-secret": "Kyevtmuddosii tubdâttâttâm čiähukoodam čoovdâ:",
 	"oathauth-recoverycodes-download": "Luođii",
+	"oathauth-step1": "Lävkki 1: Luođii kyevtmuddosii tubdâttâttâm heiviittâs",
 	"oathauth-enteruser": "Kevtteenommâ:",
+	"oathauth-auth-use-recovery-code": "Keevti macâttemkoodijd",
+	"oath-log-name": "Kyevtmuddosii tubdâttâttâm loki",
 	"oathauth-notifications-disable-help": "Iše",
 	"oathauth-password-header": "Syelisääni",
 	"oathauth-password-action": "Molso syelisääni"

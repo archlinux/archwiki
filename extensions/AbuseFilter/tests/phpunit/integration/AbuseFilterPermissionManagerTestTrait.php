@@ -174,7 +174,8 @@ trait AbuseFilterPermissionManagerTestTrait {
 		if ( $field === self::DELETED_ANY ) {
 			$field = LogPage::DELETED_ACTION | LogPage::DELETED_COMMENT | LogPage::DELETED_USER;
 		} else {
-			self::assertFieldInputValid( $field, 0b111 /* 7 */ );
+			// 0b111 = 7
+			self::assertFieldInputValid( $field, 0b111 );
 		}
 		return (bool)(
 			( $visibility & $field ) &&
@@ -201,7 +202,8 @@ trait AbuseFilterPermissionManagerTestTrait {
 		if ( $field === self::DELETED_ANY ) {
 			return (bool)( $visibility & LogPage::DELETED_RESTRICTED );
 		}
-		self::assertFieldInputValid( $field, 0b111 /* 7 */ );
+		// 0b111 = 7
+		self::assertFieldInputValid( $field, 0b111 );
 		return ( $visibility & LogPage::DELETED_RESTRICTED ) && (bool)( $visibility & $field );
 	}
 

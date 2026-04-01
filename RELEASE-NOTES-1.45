@@ -6,6 +6,13 @@ PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
 PHP 8.4 workboard: https://phabricator.wikimedia.org/tag/php_8.4_support/
 PHP 8.5 workboard: https://phabricator.wikimedia.org/tag/php_8.5_support/
 
+== MediaWiki 1.45.3 ==
+
+This is a maintenance release of the MediaWiki 1.45 branch.
+
+=== Changes since 1.45.2 ===
+* Fixed backport issues.
+
 == MediaWiki 1.45.2 ==
 
 This is a security and maintenance release of the MediaWiki 1.45 branch.
@@ -106,16 +113,16 @@ This is a security and maintenance release of the MediaWiki 1.45 branch.
   content via generated log page html.
 * (T411305, CVE-2026-34091) SECURITY: User localization leaked by AbuseFilter
   + EventStream.
-* (T411366, CVE-2026-34090) SECURITY: Suggested investigations: Handle suppressed
-  usernames.
+* (T411366, CVE-2026-34090) SECURITY: Suggested investigations: Handle
+  suppressed usernames.
 * (T414547, CVE-2026-34093) SECURITY: Special:UserRights allows viewing user
   rights from private wiki.
 * (T416090, CVE-2026-34094) SECURITY: Customized help link for page protection
   indicator is relative to subpage name, because the link target is missing the
   "/wiki/" prefix.
-* (T419192, CVE-2026-34095) SECURITY: action=raw with Special:Mypage subpage title
-  responds with "Content-Type) SECURITY: text/html" on ctype=text/javascript
-  request.
+* (T419192, CVE-2026-34095) SECURITY: action=raw with Special:Mypage subpage
+  title responds with "Content-Type) SECURITY: text/html" on
+  ctype=text/javascript request.
 
 == MediaWiki 1.45.1 ==
 

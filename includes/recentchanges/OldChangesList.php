@@ -147,6 +147,7 @@ class OldChangesList extends ChangesList {
 			$titleText = $this->msg( 'rev-deleted-event' )->escaped();
 		}
 
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html = Html::rawElement( 'span', [
 			'class' => 'mw-changeslist-line-inner',
 			'data-target-page' => $titleText, // Used for reliable determination of the affiliated page

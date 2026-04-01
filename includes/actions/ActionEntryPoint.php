@@ -512,8 +512,9 @@ class ActionEntryPoint extends MediaWikiEntryPoint {
 				}
 			}
 
-			if ( $context->getRequest() instanceof FauxRequest ) {
-				$fauxResponse = $context->getRequest()->response();
+			$request = $context->getRequest();
+			if ( $request instanceof FauxRequest ) {
+				$fauxResponse = $request->response();
 				if ( $fauxResponse->getStatusCode() ) {
 					$request->response()->statusHeader( $fauxResponse->getStatusCode() );
 				}
