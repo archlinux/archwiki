@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xð"
+			"Xð",
+			"MacTire02"
 		]
 	},
-	"fancycaptcha-reload-text": "Seyr-obbragh"
+	"fancycaptcha-captcha": "Scrutaghey shickyrys",
+	"fancycaptcha-accountcreate": "As shin coadey yn wiki noi crooaght coontyssyn dy deyr-obbragh, ta shin shirrey ny focklyn ta taishbynit shoh heese dy chur stiagh ‘sy chishtey ([[Special:Captcha/help|tooilley fysseree]]):",
+	"fancycaptcha-imgcaptcha-ph": "Cur stiagh y teks t’ou fakin ‘sy jalloo",
+	"fancycaptcha-reload-text": "Ooree"
 }

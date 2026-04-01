@@ -88,7 +88,7 @@ class UrangeMatcher extends Matcher {
 				// Mark the 'U' T_IDENT beginning a <urange>, to later avoid
 				// serializing it with extraneous comments.
 				// @see Wikimedia\CSS\Util::stringify()
-				// @phan-suppress-next-line PhanNonClassMethodCall False positive
+				// @phan-suppress-next-line PhanUndeclaredMethod could be a bug?
 				$values[$start]->urangeHack( $len );
 
 				yield new GrammarMatch( $values, $start, $len, $this->captureName, $matches );

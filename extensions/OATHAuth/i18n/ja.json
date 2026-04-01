@@ -16,7 +16,10 @@
 			"Whym",
 			"Yusuke1109",
 			"ネイ",
-			"春春眠眠"
+			"春春眠眠",
+			"Dragoniez",
+			"X200b",
+			"RhAnish"
 		]
 	},
 	"oathauth-desc": "HMAC に基づいたワンタイムパスワードを使用する認証機能を提供する",
@@ -86,7 +89,7 @@
 	"oathauth-describe-provider": "二要素認証 (OATH)。",
 	"grant-group-authentication": "自分および他人の認証操作を実行",
 	"grant-oath": "自分および他の利用者の二要素認証 (OATH) 情報にアクセス",
-	"right-oathauth-api-all": "自分や他人の OATH 情報を照会して検証する",
+	"right-oathauth-api-all": "自分や他人の OATH 情報を照会して検証",
 	"action-oathauth-api-all": "OATH 状態の確認",
 	"oathauth-user-not-found": "その名前の利用者アカウントは見つかりませんでした",
 	"oath-log-name": "二要素認証の記録",
@@ -109,8 +112,8 @@
 	"oathauth-disable-generic": "無効にする",
 	"oathauth-invalid-data-format": "選択した認証方法のキーを作成するにはデータプロバイダが無効です",
 	"oathauth-invalid-recovery-code-data-format": "回復コードを作成できませんでした。",
-	"oathauth-disable-page-title": "$1を無効化しました",
-	"oathauth-enable-page-title": "$1を有効化しました",
+	"oathauth-disable-page-title": "$1を無効化",
+	"oathauth-enable-page-title": "$1を有効化",
 	"oathauth-action-exclusive-to-2fa": "この操作は、二要素認証が有効になっている利用者のみが実行できます。",
 	"oathauth-ui-available-modules": "利用可能な認証方式",
 	"oathauth-ui-general-help": "'''多要素認証''' ('''MFA''') とは、アクセス権を求める利用者に対し、2つ以上の異なる証拠（要素）を提示させる認証方法です: 知識（本人が知っていること）、所有（本人が持っているもの）、生体（本人の身体的特徴） [https://ja.wikipedia.org/wiki/%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC 詳細情報]",

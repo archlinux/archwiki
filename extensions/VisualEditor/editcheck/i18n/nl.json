@@ -4,7 +4,10 @@
 			"ABPMAB",
 			"Jeroen N",
 			"Mainframe98",
-			"McDutchie"
+			"McDutchie",
+			"Siebrand",
+			"HanV",
+			"ItsNyoty"
 		]
 	},
 	"editcheck-dialog-action-no": "Nee",
@@ -26,7 +29,7 @@
 	"editcheck-dialog-title": "Voordat u dit publiceert",
 	"editcheck-copyvio-title": "Geplakte inhoud",
 	"editcheck-copyvio-description": "Kopieer geen tekst van andere bronnen, ook niet door de tekst te herformuleren of te citeren. Dit kan worden beschouwd als [$1 schending van het auteursrecht of plagiaat] en kan ertoe leiden dat uw tekst wordt verwijderd of uw account wordt geblokkeerd.",
-	"editcheck-copyvio-prompt": "Hebt u deze tekst geschreven?",
+	"editcheck-copyvio-prompt": "Hebt u deze tekst zelf geschreven?",
 	"editcheck-copyvio-action-keep": "Ja, behouden",
 	"editcheck-copyvio-action-remove": "Nee, verwijderen",
 	"editcheck-copyvio-keep-description": "Help andere redacteuren van dit artikel te begrijpen waarom u de geplakte tekst behoudt.",

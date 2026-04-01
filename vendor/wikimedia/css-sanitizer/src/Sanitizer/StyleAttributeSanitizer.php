@@ -49,9 +49,11 @@ class StyleAttributeSanitizer extends Sanitizer {
 	/** @inheritDoc */
 	protected function doSanitize( CSSObject $object ) {
 		if ( !$object instanceof DeclarationList ) {
+			'@phan-var CSSObject $object';
 			$this->sanitizationError( 'expected-declaration-list', $object );
 			return null;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $this->sanitizeList( $this->propertySanitizer, $object );
 	}
 
@@ -64,7 +66,6 @@ class StyleAttributeSanitizer extends Sanitizer {
 		$parser = Parser::newFromString( $string );
 		$declarations = $parser->parseDeclarationList();
 		$this->sanitizationErrors = array_merge( $this->sanitizationErrors, $parser->getParseErrors() );
-		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $this->sanitizeList( $this->propertySanitizer, $declarations );
 	}
 }

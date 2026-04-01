@@ -82,6 +82,7 @@
 	"math_invalidresponse": "$1: Nieprawidłowa odpowiedź („$3”) z serwera „$2”:",
 	"math_invalidxml": "MathML lub SVG zawiera nieprawidłowy kod XML.",
 	"math_mathoid_error": "Błąd konwersji. Serwer („$1”) zgłosił: „$2”",
+	"math_other_error": "Inny błąd: $1",
 	"math-status-introduction": "Ta strona pokazuje informacje o dostępności {{PLURAL:$1|rodzaju|rodzajów}} renderowania wzorów matematycznych.\n\n{{PLURAL:$1|Dostępny jest następujący rodzaj|Dostępne są następujące}} renderowania:",
 	"math_syntax_error": "błąd składni",
 	"math_timeout": "$1 przekroczył czas oczekiwania od „$2”.",

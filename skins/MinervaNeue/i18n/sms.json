@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Tynnoel"
 		]
 	},
 	"minerva-last-modified-date": "Seeid muʹtteš mââimõssân $1 čiâss $2",
@@ -16,6 +17,7 @@
 	"mobile-frontend-main-menu-contributions": "Muttâz",
 	"mobile-frontend-main-menu-login": "Ǩeeʹrjtõõđ sizz",
 	"mobile-frontend-main-menu-logout": "Ǩeeʹrjtõõđ åålǥas",
+	"mobile-frontend-main-menu-nearby": "Ââlda",
 	"mobile-frontend-main-menu-settings": "Asetõõzz",
 	"mobile-frontend-main-menu-watchlist": "Valvvâmlistt",
 	"mobile-frontend-meta-data-issues-categories": "Lââʹssteâđ tän kategoria pirr",

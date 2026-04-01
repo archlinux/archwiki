@@ -122,6 +122,7 @@
 	"discussiontools-replywidget-reply": "{{GENDER:|Svar}}",
 	"discussiontools-replywidget-return-to-newtopic": "Tilbake til nytt emne",
 	"discussiontools-replywidget-summary": "Samandrag",
+	"discussiontools-replywidget-terms-click": "Ved å trykkja på «$1» samtykkjer {{GENDER:|du}} i bruksvilkåra til denne wikien.",
 	"discussiontools-replywidget-watchthis": "Legg til sida i [[Special:Watchlist|overvakingslista]] di",
 	"discussiontools-target-heading-missing": "Emnet vart ikkje funne. Det kan ha vorte sletta, flytta eller fått nytt namn.",
 	"discussiontools-target-comment-found-moved": "Kommentaren vart ikkje funne på denne sida, men han finst på {{PLURAL:$1|denne sida|desse sidene}}:",

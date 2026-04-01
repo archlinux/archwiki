@@ -8,6 +8,7 @@ namespace Wikimedia\CSS\Objects;
 
 /**
  * Represent a list of CSS declarations and at-rules
+ * @extends CSSObjectList<DeclarationOrAtRule>
  */
 class DeclarationOrAtRuleList extends CSSObjectList {
 	/**

@@ -46,7 +46,7 @@
 	"checkuser-api-help-param-direction": "In welke richting opsommen:",
 	"checkuser-api-help-paramvalue-direction-newer": "Oudste eerst vermelden. Let op: $1from moet vóór $1to liggen.",
 	"checkuser-api-help-paramvalue-direction-older": "Nieuwste eerst vermelden (standaard). Let op: $1from moet na $1to liggen.",
-	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Gebruiker $1 is niet de auteur van revisie $2",
+	"checkuser-api-useragent-clienthints-revision-user-mismatch": "Gebruiker $1 is niet de auteur van versie $2",
 	"checkuser-api-useragent-clienthints-mappings-exist": "Er bestaan al client-hint-toewijzingen voor $1 $2",
 	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 is te oud om gegevens over client-hints op te nemen",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "De $1-ID $2 bestaat niet",

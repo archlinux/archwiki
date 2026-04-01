@@ -5,7 +5,8 @@
 			"Enkhsaihan2005",
 			"MongolWiki",
 			"Sembuk",
-			"Wisdom"
+			"Wisdom",
+			"Zorigt"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Хуучны Vector ашиглах",
@@ -18,7 +19,7 @@
 	"vector-action-move": "Зөөх",
 	"vector-action-protect": "Хамгаалах",
 	"vector-action-undelete": "Үл устгах",
-	"vector-action-unprotect": "Хамгаалалтын түвшинг солих",
+	"vector-action-unprotect": "Хамгаалалтын түвшнийг солих",
 	"vector-view-create": "Үүсгэх",
 	"vector-view-edit": "Засварлах",
 	"vector-view-history": "Түүх",
@@ -41,9 +42,10 @@
 	"vector-toc-label": "Гарчиг",
 	"vector-toc-beginning": "Эхлэл",
 	"vector-toc-toggle-button-label": "$1 хэсгийг нээж хаах",
+	"vector-anon-user-menu-pages": "Холболт салгасан засварлагчдын хуудас",
 	"vector-main-menu-tooltip": "Үндсэн цэс",
 	"vector-toc-menu-tooltip": "Гарчиг",
-	"vector-toc-collapsible-button-label": "Гарчигийг нээж хаах",
+	"vector-toc-collapsible-button-label": "Гарчгийг нээж хаах",
 	"vector-site-nav-label": "Сайт",
 	"vector-main-menu-label": "Үндсэн цэс",
 	"vector-feature-custom-font-size-exclusion-notice": "Энэ хуудас нь үргэлж жижиг үсгийн хэмжээг ашигладаг",

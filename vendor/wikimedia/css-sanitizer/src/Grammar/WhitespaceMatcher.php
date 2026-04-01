@@ -29,8 +29,9 @@ class WhitespaceMatcher extends Matcher {
 	/** @inheritDoc */
 	protected function generateMatches( ComponentValueList $values, $start, array $options ) {
 		$end = $start;
+		// @phan-suppress-next-line PhanRedundantConditionInLoop https://github.com/phan/phan/issues/5441
 		while ( isset( $values[$end] ) &&
-			// @phan-suppress-next-line PhanNonClassMethodCall False positive
+			// @phan-suppress-next-line PhanUndeclaredMethod False positive
 			$values[$end] instanceof Token && $values[$end]->type() === Token::T_WHITESPACE
 		) {
 			$end++;
@@ -47,8 +48,9 @@ class WhitespaceMatcher extends Matcher {
 		// Otherwise, return no match.
 		if ( $end === $start ) {
 			$start--;
+			// @phan-suppress-next-line PhanRedundantCondition https://github.com/phan/phan/issues/5441
 			if ( !$options['skip-whitespace'] || !isset( $values[$start] ) ||
-				// @phan-suppress-next-line PhanNonClassMethodCall False positive
+				// @phan-suppress-next-line PhanUndeclaredMethod False positive
 				!$values[$start] instanceof Token || $values[$start]->type() !== Token::T_WHITESPACE
 			) {
 				return;

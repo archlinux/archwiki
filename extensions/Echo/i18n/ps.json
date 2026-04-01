@@ -138,7 +138,7 @@
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$3|تاسو}} ته په \"<strong>$4</strong>\" کې يو پيغام {{GENDER:$2|پرېښود}}.",
 	"notification-header-page-linked": "وېبتړ د <strong>$4</strong> څخه <strong>$3</strong> ته ورکول شو.",
 	"notification-compact-header-page-linked": "د <strong> $1</strong> څخه تړونی‌ ورکړل‌شوی.",
-	"notification-bundle-header-page-linked": "د {{PLURAL:$5||$5 مخونو|100=+۹۹ مخونو}} څخه تر <strong>$3</strong> پورې وېبتړنې جوړې شوې وې.",
+	"notification-bundle-header-page-linked": "{{PLURAL:$5||$5 مخونو|100=+۹۹ مخونو}} څخه <strong>$3</strong> ته وېبتړنې ورکړل شوې دي.",
 	"notification-header-article-reminder": "هغه مخ چې {{GENDER:$2|تاسو}} يې د په يادولو اړوند غوښتنه کړې وه په <strong> $3 کې دی</strong>",
 	"notification-link-text-what-links-here": "همدې مخ سره ټولې تړنې",
 	"notification-header-mention-other": "$1 {{GENDER:$3|تاسو}} د <strong>$4</strong> په \"<strong>$5</strong>\" کې {{GENDER:$2|ياد کړي ياست}}.",

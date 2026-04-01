@@ -168,7 +168,7 @@ abstract class Matcher {
 		do {
 			$i++;
 		} while ( $skipWS && $i < $l &&
-			// @phan-suppress-next-line PhanNonClassMethodCall False positive
+			// @phan-suppress-next-line PhanUndeclaredMethod False positive
 			$values[$i] instanceof Token && $values[$i]->type() === Token::T_WHITESPACE
 		);
 		return $i;

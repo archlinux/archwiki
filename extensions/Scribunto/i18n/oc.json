@@ -14,5 +14,7 @@
 	"scribunto-lua-error": "Error de Lua : $2.",
 	"scribunto-luastandalone-gone": "Error LUA : Error intèrna : L'interpretador s'es ja arrestat.",
 	"scribunto-luastandalone-signal": "Error LUA : Error intèrna: L'interpretador s'es arrestat amb lo senhal « $2 ».",
+	"scribunto-limitreport-estmemusage": "Utilizacion estimada de la memòria de Lua",
+	"scribunto-limitreport-memusage": "Utilizacion memòria de Lua",
 	"nstab-module": "Modul"
 }

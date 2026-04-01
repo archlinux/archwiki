@@ -13,7 +13,8 @@
 			"Vlad5250",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
-			"Тест"
+			"Тест",
+			"Ucukor"
 		]
 	},
 	"abusefilter-desc": "Прымяняе аўтаматычную эўрыстыку да правак.",
@@ -406,6 +407,7 @@
 	"abusefilter-diff-backhistory": "Гісторыя фільтру",
 	"abusefilter-diff-prev": "Старэйшая змена",
 	"abusefilter-diff-next": "Навейшая змена",
+	"abusefilter-import-submit": "Імпарт звестак",
 	"abusefilter-group-default": "Прадвызначана",
 	"abusefilter-invalid-request": "Няправільны запыт! Вы павінны атрымаць доступ да асабістых даных журнала праз форму ў [[Special:AbuseLog/$1]] і пазначыць прычыну.",
 	"abusefilter-invalid-request-noid": "Няправільны запыт! Вы павінны атрымаць доступ да асабістых даных журнала праз форму на старонцы звестак пра журнал злоўжыванняў і пазначыць прычыну.",

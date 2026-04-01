@@ -7,7 +7,8 @@
 namespace Wikimedia\CSS\Objects;
 
 /**
- * Represent a CSS component value
+ * Represent a CSS component value, eg. `html`, `div`, `10px`, `20px` are all
+ * component values in the rule `html div { margin: 10px 20px; }`.
  */
 abstract class ComponentValue implements CSSObject {
 

@@ -21,7 +21,7 @@
 	"skinname-vector": "Vanha Vektori (2010)",
 	"skinname-vector-2022": "Vektori (2022)",
 	"vector-specialversion-name": "Vektori",
-	"vector-skin-desc": "Tarjoaa 2 Vektori-ulkoasua:\n* 2011 - Monobookin moderni versio, jossa on tuore ulkoasu ja monia käytettävyysparannuksia.\n* 2022 - Vektori, joka rakennettiin osana WMF:n [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements] -projektia.",
+	"vector-skin-desc": "Tarjoaa kaksi Vektori-ulkoasua:\n* 2011 – Monobookin moderni versio, jossa on tuore ulkoasu ja monia käytettävyysparannuksia.\n* 2022 – Vektori, joka rakennettiin osana WMF:n [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements] -projektia.",
 	"prefs-vector-enable-vector-1-label": "Käytä vanhaa Vektoria",
 	"prefs-vector-enable-vector-1-help": "Seuraavien muutaman vuoden aikana päivitämme Vektori-ulkoasua vaiheittain. Vanha Vektori mahdollistaa Vektorin vanhan (joulukuu 2019) version käyttämisen. Saadaksesi lisätietoa päivityksistä katso [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements projektisivumme].",
 	"vector.css": "/* Tämä sivu sisältää Vektori-ulkoasua muuttavia tyylejä. */",

@@ -22,7 +22,8 @@
 			"Winston Sung",
 			"Xiplus",
 			"捍粵者",
-			"魔琴"
+			"魔琴",
+			"Peterxy12"
 		]
 	},
 	"skinname-vector": "舊版Vector（2010）",
@@ -35,7 +36,7 @@
 	"vector-action-toggle-sidebar": "切換側欄",
 	"vector-languages": "語言",
 	"vector-language-button-aria-label": "前往別種語言的條目。有 {{PLURAL:$1|$1}} 種語言可用",
-	"vector-language-button-label": "{{PLURAL:$1|$1}} 種語言",
+	"vector-language-button-label": "{{PLURAL:$1|$1種語言}}",
 	"vector-no-language-button-label": "新增語言",
 	"vector-no-language-button-aria-label": "這篇條目只在此語言可用。請添加該條目的其他語言版本",
 	"vector-language-variant-switcher-label": "變更語言變體",
@@ -64,7 +65,7 @@
 	"vector-feature-custom-font-size-0-label": "小",
 	"vector-feature-custom-font-size-1-label": "標準",
 	"vector-feature-custom-font-size-2-label": "大",
-	"skin-theme-name": "色彩",
+	"skin-theme-name": "顏色",
 	"skin-theme-description": "[實驗版本，遇到問題的可能性高] 減少裝置螢幕散發出的光線。",
 	"skin-theme-day-label": "淺色",
 	"skin-theme-night-label": "深色",

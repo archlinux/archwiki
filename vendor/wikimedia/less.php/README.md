@@ -48,6 +48,7 @@ _See also [SECURITY](./SECURITY.md)._
 * **[Icinga](https://en.wikipedia.org/wiki/Icinga)** in Icinga Web ([docs](https://github.com/Icinga/icingaweb2)).
 * **[Shopware](https://de.wikipedia.org/wiki/Shopware)** ([docs](https://developers.shopware.com/designers-guide/less/)).
 * **[Winter CMS](https://wintercms.com/)** ([docs](https://wintercms.com/docs/v1.2/docs/themes/development))
+* **[Flarum](https://en.wikipedia.org/wiki/Flarum)** ([docs](https://docs.flarum.org/themes/))
 
 ## Integrations
 

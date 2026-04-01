@@ -498,7 +498,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 
 	public static function provideFiltersWhichProduceNoResults() {
 		return [
-			'Start timestamp is set after the last contribution' => [ [ 'start' => '2026-02-01' ] ],
+			'Start timestamp is set after the last contribution' => [ [ 'start' => '2900-02-01' ] ],
 			'End timestamp is set before the first contribution' => [ [ 'end' => '1999-01-01' ] ],
 			'Start and end timestamp are set to not show any contributions' => [
 				[ 'end' => '2025-03-05', 'start' => '2025-03-05' ],

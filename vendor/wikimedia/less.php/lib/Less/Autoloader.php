@@ -5,16 +5,14 @@
  */
 class Less_Autoloader {
 
-	/** @var bool */
-	protected static $registered = false;
+	protected static bool $registered = false;
 
 	/**
 	 * Register the autoloader in the SPL autoloader
 	 *
-	 * @return void
 	 * @throws Exception If there was an error in registration
 	 */
-	public static function register() {
+	public static function register(): void {
 		if ( self::$registered ) {
 			return;
 		}
@@ -28,10 +26,8 @@ class Less_Autoloader {
 
 	/**
 	 * Unregister the autoloader
-	 *
-	 * @return void
 	 */
-	public static function unregister() {
+	public static function unregister(): void {
 		spl_autoload_unregister( [ __CLASS__, 'loadClass' ] );
 		self::$registered = false;
 	}
@@ -41,9 +37,9 @@ class Less_Autoloader {
 	 *
 	 * @param string $className The class to load
 	 */
-	public static function loadClass( $className ) {
+	public static function loadClass( string $className ): void {
 		// handle only package classes
-		if ( strpos( $className, 'Less_' ) !== 0 ) {
+		if ( !str_starts_with( $className, 'Less_' ) ) {
 			return;
 		}
 
@@ -51,7 +47,6 @@ class Less_Autoloader {
 		$fileName = __DIR__ . DIRECTORY_SEPARATOR . str_replace( '_', DIRECTORY_SEPARATOR, $className ) . '.php';
 
 		require $fileName;
-		return true;
 	}
 
 }

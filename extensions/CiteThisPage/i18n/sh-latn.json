@@ -12,5 +12,5 @@
 	"tooltip-citethispage": "Saznajte kako da citirate ovu stranicu",
 	"citethispage-change-submit": "Citiraj",
 	"citethispage-change-target": "Stranica:",
-	"citethispage-badrevision": "Greška: nisam pronašao reviziju s naznakom $2 za stranicu \"$1\"."
+	"citethispage-badrevision": "Greška: Nije moguće pronaći izmjenu stranice \"$1\" s ID-jem $2."
 }

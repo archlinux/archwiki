@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pitchrigi"
+		]
+	},
+	"vector-languages": "Baso",
+	"vector-language-button-label": "$1 baso",
+	"vector-no-language-button-label": "Tamboi baso",
+	"vector-action-addsection": "Bagian baru",
+	"vector-view-create": "Buat",
+	"vector-view-history": "Tengok riwayat",
+	"vector-more-actions": "Lengkapnyo",
+	"vector-appearance-label": "Tengokan",
+	"vector-feature-limited-width-name": "Lebar",
+	"vector-feature-limited-width-0-label": "Luas",
+	"vector-feature-limited-width-1-label": "Patokan",
+	"vector-feature-custom-font-size-name": "Tulisan",
+	"vector-feature-custom-font-size-0-label": "Kecik",
+	"vector-feature-custom-font-size-1-label": "Patokan",
+	"vector-feature-custom-font-size-2-label": "Besak",
+	"skin-theme-name": "Warno",
+	"skin-theme-day-label": "Terang",
+	"skin-theme-night-label": "Gelap",
+	"skin-theme-os-label": "Otomatis",
+	"skin-theme-exclusion-notice": "Laman ko selalu make mode terang.",
+	"vector-toc-label": "Daftar isi",
+	"vector-toc-beginning": "Awal",
+	"vector-anon-user-menu-pages": "Laman penyunting yang lah keluar",
+	"vector-main-menu-label": "Menu utamo",
+	"vector-feature-custom-font-size-exclusion-notice": "Laman ko selalu make ukuran huruf kecik",
+	"vector-page-tools-label": "Pekakas",
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Tindakan",
+	"vector-unpin-element-label": "Nyingiti"
+}

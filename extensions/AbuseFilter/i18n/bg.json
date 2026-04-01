@@ -539,6 +539,7 @@
 	"abusefilter-blocked-domains-domain-header": "Домейн",
 	"abusefilter-blocked-domains-notes-header": "Забележки",
 	"abusefilter-blocked-domains-actions-header": "Действия",
+	"abusefilter-blocked-domains-remove-reason": "Причина",
 	"abusefilter-blocked-domains-remove-submit": "Премахване",
 	"abusefilter-blocked-domains-json-error": "JSON трябва да е масив",
 	"log-description-abusefilterblockeddomainhit": "Тези събития проследяват посещения на блокирани домейни.",

@@ -56,6 +56,7 @@
 	"discussiontools-notification-removed-topic-disable": "Pārtraukt saņemt šādus paziņojumus",
 	"discussiontools-notification-removed-topic-disabled-title": "Tu vairs nesaņemsi paziņojumus, kad tēma tiks arhivēta vai noņemta.",
 	"discussiontools-notification-removed-topic-disabled-body": "Tu vari to mainīt [[Special:Preferences#mw-prefsection-echo-echosubscriptions|savos iestatījumos]].",
+	"discussiontools-notification-topic-hidden": "(tēma noņemta)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|atbildēja}} tēmā \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Skatīt komentāru",
 	"discussiontools-pageframe-latestcomment": "Jaunākais komentārs: $1 no $2 tēmā $3",

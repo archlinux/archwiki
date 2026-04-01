@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Jaeminlovetaejoon",
-			"SawJaemin"
+			"SawJaemin",
+			"SawEKP"
 		]
 	},
+	"vector-languages": "ကျိာ်",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ကျိၥ်}}",
+	"vector-no-language-button-label": "ပၥ်ဖှိၣ်ဒီးကျိာ်တဖၣ်",
 	"vector-action-addsection": "မၤအါထီၣ်တၢ်ဂ့ၢ်ခိၣ်တီ",
 	"vector-action-delete": "ထူးသံကွံာ်",
 	"vector-action-move": "သုး",
@@ -14,5 +18,21 @@
 	"vector-view-history": "ကွၢ်တၢ်စံၣ်စိၤတဲစိၤ",
 	"vector-view-view": "ဖး",
 	"vector-more-actions": "အါထီၣ်",
+	"vector-appearance-label": "တၢ်အိၣ်ဖျါ",
+	"vector-feature-limited-width-name": "တၢ်အလဲၢ်",
+	"vector-feature-limited-width-0-label": "လဲၢ်",
+	"vector-feature-limited-width-1-label": "ပတီၢ်မုၣ်",
+	"vector-feature-custom-font-size-name": "လံၥ်မဲၥ်ဖျၢၣ်",
+	"vector-feature-custom-font-size-0-label": "ဆံး",
+	"vector-feature-custom-font-size-1-label": "တဒိၣ်တဆံး",
+	"vector-feature-custom-font-size-2-label": "ဒိၣ်",
+	"skin-theme-name": "အလွဲၢ်",
+	"skin-theme-night-label": "ခံး",
+	"skin-theme-os-label": "ဒၣ်တၢ်",
+	"vector-toc-label": "တၢ်ဂ့ၢ်ခိၣ်တီ",
+	"vector-toc-beginning": "တၢ်စးထီၣ်တၢ်",
+	"vector-page-tools-label": "တၢ်ပီတၢ်လီ",
+	"vector-page-tools-general-label": "ထီရီၤ",
+	"vector-unpin-element-label": "ပာ်ခူသူၣ်",
 	"tooltip-vector-anon-user-menu-title": "တၢ်ဃုထၢအါထီၣ်"
 }

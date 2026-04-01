@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"DaSupremo",
-			"Pintupi Luritja Guy"
+			"Pintupi Luritja Guy",
+			"Yaw tuba"
 		]
 	},
 	"vector-languages": "Languages",
@@ -17,9 +18,26 @@
 	"vector-view-history": "View history",
 	"vector-view-view": "Read",
 	"vector-more-actions": "More",
+	"vector-appearance-label": "Appearance",
+	"vector-feature-limited-width-name": "Width",
+	"vector-feature-limited-width-0-label": "Wide",
+	"vector-feature-limited-width-1-label": "Standard",
+	"vector-feature-custom-font-size-name": "Text",
+	"vector-feature-custom-font-size-0-label": "Small",
+	"vector-feature-custom-font-size-1-label": "Standard",
+	"vector-feature-custom-font-size-2-label": "Bola",
+	"skin-theme-name": "Color",
+	"skin-theme-day-label": "Light",
+	"skin-theme-night-label": "Dark",
+	"skin-theme-os-label": "Automatic",
+	"skin-theme-exclusion-notice": "Dis page always dey light mode insyd.",
 	"vector-toc-label": "Contents",
 	"vector-toc-beginning": "Dey begin",
+	"vector-anon-user-menu-pages": "Pages give editors wey log out",
+	"vector-main-menu-label": "Main menu",
+	"vector-feature-custom-font-size-exclusion-notice": "Dis page always dey use font size wey be small",
 	"vector-page-tools-label": "Tools",
 	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Actions",
 	"vector-unpin-element-label": "hide am"
 }

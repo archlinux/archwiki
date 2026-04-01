@@ -1,10 +1,25 @@
 {
 	"@metadata": {
 		"authors": [
-			"R12ntech"
+			"R12ntech",
+			"AmazingJus",
+			"Tuwewanzi"
 		]
 	},
 	"mobile-frontend-editor-edit": "Yutȟókeča",
-	"mobile-frontend-main-menu-login": "Čhaž’óigwa",
-	"mobile-frontend-placeholder": "{{SITENAME}} él wóle yo/ye"
+	"minerva-download": "PDF khulwókšu {{GENDER:|wo|we|wo/we}}",
+	"mobile-frontend-editor-redlink-create": "Oyúblaye káǧa {{GENDER:|wo|we|wo/we}}",
+	"mobile-frontend-editor-redlink-leave": "Hiyá.",
+	"mobile-frontend-history": "Oyúblaye kiƞ le eháŋni wóyakapi waŋyáŋka {{GENDER:|yo|ye|yo/ye}}.",
+	"mobile-frontend-home-button": "Thiyáta",
+	"mobile-frontend-language-article-heading": "Iyápi",
+	"mobile-frontend-main-menu-login": "Čhaž'óigwa",
+	"mobile-frontend-main-menu-nearby": "Khiyéla",
+	"mobile-frontend-main-menu-settings": "Wóigluštaŋ",
+	"mobile-frontend-placeholder": "{{SITENAME}} él wóle {{GENDER:|yo|ye|yo/ye}}",
+	"mobile-frontend-random-button": "Tukté oyúblaye k'éyaš",
+	"minerva-page-actions-overflow": "Sáƞpȟa",
+	"minerva-page-actions-language-switcher": "Iyápi",
+	"minerva-page-actions-history": "Eháƞni-wóyakapi",
+	"skin-minerva-mobile-option-MinervaShowCategories": "Očháže tóna"
 }

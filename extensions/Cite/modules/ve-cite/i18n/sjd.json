@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Merrahtar"
+		]
+	},
+	"visualeditor-cite-tool-name-web": "Вэб-са̄ййт",
+	"cite-ve-dialog-reference-options-group-label": "Оаннӭ тэнн группа",
+	"cite-ve-dialog-reference-options-responsive-label": "Оаннӭ адаптивнэ стуалпае макет",
+	"cite-ve-dialog-reference-title": "Тӣһтса̄ннҍ",
+	"cite-ve-dialog-reference-useexisting-tool": "Аввта оаннӭ",
+	"cite-ve-dialog-referenceslist-title": "Тӣһтсоа̄нӭ нэ̄ммлысст",
+	"cite-ve-dialogbutton-reference-tooltip": "Пыйе ба̄зовэ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Тӣһтсоа̄нӭ нэ̄ммлысст",
+	"cite-ve-referenceslist-isempty": "Тэнн лыстэсьт евла тӣһтса̄нҍ «$1» группанҍ тэнн лысста ва̄лльтэм гуэйкэ.",
+	"cite-ve-referenceslist-isempty-default": "Тэнн лыстэсьт евла тӣһтса̄нҍ тэнн лысста ва̄лльтэм гуэйкэ.",
+	"cite-ve-othergroup-item": "$1 тӣһтса̄нҍ"
+}

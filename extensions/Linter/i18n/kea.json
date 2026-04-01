@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"GrogeXaKaba"
+		]
+	},
+	"linter-category-missing-end-tag": "Ozénsa di itikéta di fitxamentu",
+	"linter-pager-misc-tidy-replacement-issues-details": "Txeu éru di markason",
+	"linter-pager-missing-end-tag-details": "Itikéta final ozenti",
+	"linter-pager-missing-end-tag-in-heading-details": "Ozénsa di itikéta di fitxamentu na titlu"
+}

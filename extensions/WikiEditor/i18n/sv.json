@@ -22,7 +22,8 @@
 			"Sertion",
 			"Technic2",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
@@ -84,6 +85,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Punktlistelement",
 	"wikieditor-toolbar-tool-olist": "Numrerad lista",
 	"wikieditor-toolbar-tool-olist-example": "Numrerat listelement",
+	"wikieditor-toolbar-tool-code": "Datorkod",
+	"wikieditor-toolbar-tool-code-example": "Datorkod",
 	"wikieditor-toolbar-tool-nowiki": "Ingen wikiformatering",
 	"wikieditor-toolbar-tool-nowiki-example": "Lägg till icke-formaterad text här",
 	"wikieditor-toolbar-tool-redirect": "Omdirigera",

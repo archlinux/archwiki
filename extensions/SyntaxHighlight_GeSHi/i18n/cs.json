@@ -22,5 +22,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kódu",
 	"syntaxhighlight-error-pygments-invocation-failure": "Nepodařilo se zavolat Pygments",
 	"syntaxhighlight-error-unknown-language": "Neznámý jazyk „$1“",
-	"syntaxhighlight-error-exceeds-size-limit": "Kód o velikosti $1 {{PLURAL:$1|bajt|bajty|bajtů}} přesahuje dovolené maximum $2 {{PLURAL:$2|bajt|bajty|bajtů}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Kód o velikosti $1 {{PLURAL:$1|bajt|bajty|bajtů}} přesahuje dovolené maximum $2 {{PLURAL:$2|bajt|bajty|bajtů}}",
+	"syntaxhighlight-button-copy": "Zkopírovat",
+	"syntaxhighlight-button-copied": "Zkopírováno!"
 }

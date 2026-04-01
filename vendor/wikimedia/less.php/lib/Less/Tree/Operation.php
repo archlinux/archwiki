@@ -5,8 +5,11 @@
  */
 class Less_Tree_Operation extends Less_Tree {
 
+	/** @var string */
 	public $op;
+	/** @var Less_Tree[] */
 	public $operands;
+	/** @var bool */
 	public $isSpaced;
 
 	/**

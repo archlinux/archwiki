@@ -23,7 +23,8 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"أبو هشام"
 		]
 	},
 	"wikieditor": "الواجهة المتقدمة لتعديل نص ويكي",
@@ -180,7 +181,7 @@
 	"wikieditor-toolbar-help-content-indent1": "نص عادي",
 	"wikieditor-toolbar-help-content-indent2": "نص مسنن",
 	"wikieditor-toolbar-help-content-indent3": "نص مسنن",
-	"tag-wikieditor-description": "تم التعديل باستخدام [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (محرر نصوص wikitext لعام 2010)",
+	"tag-wikieditor-description": "تعديل باستخدام [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (محرر نصوص wikitext لعام 2010)",
 	"wikieditor-realtimepreview-preview": "معاينة",
 	"wikieditor-realtimepreview-error": "لم تُحمَّل المعاينة",
 	"wikieditor-realtimepreview-reload": "إعادة تحميل",

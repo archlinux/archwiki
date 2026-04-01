@@ -17,6 +17,7 @@ use Wikimedia\CSS\Grammar\UnorderedGroup;
 use Wikimedia\CSS\Objects\AtRule;
 use Wikimedia\CSS\Objects\CSSObject;
 use Wikimedia\CSS\Objects\Declaration;
+use Wikimedia\CSS\Objects\DeclarationOrAtRule;
 use Wikimedia\CSS\Objects\DeclarationOrAtRuleList;
 use Wikimedia\CSS\Objects\Rule;
 use Wikimedia\CSS\Objects\Token;
@@ -139,6 +140,7 @@ class PageAtRuleSanitizer extends RuleSanitizer {
 				$this->sanitizationError( 'invalid-page-rule-content', $thing );
 				$thing = null;
 			}
+			'@phan-var DeclarationOrAtRule $thing';
 			if ( $thing ) {
 				$newList->add( $thing );
 			}
@@ -146,6 +148,7 @@ class PageAtRuleSanitizer extends RuleSanitizer {
 		$blockContents->clear();
 		$blockContents->add( $newList->toComponentValueArray() );
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 }

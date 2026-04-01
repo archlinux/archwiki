@@ -10,7 +10,8 @@
 			"Olion",
 			"Piramidion",
 			"Sergento",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
 	"multimediaviewer-desc": "Розгорнути мініатюри в більшому розмірі у лайтбоксі.",
@@ -78,6 +79,7 @@
 	"multimediaviewer-reuse-copy-embed": "Виділіть і скопіюйте (якщо підтримується) цей код для вбудовування цього файлу",
 	"multimediaviewer-share-tab": "Поділитися",
 	"multimediaviewer-embed-tab": "Вбудований",
+	"multimediaviewer-download": "Завантажити",
 	"multimediaviewer-download-link": "Завантажити цей файл",
 	"multimediaviewer-download-preview-link-title": "Переглянути в браузері",
 	"multimediaviewer-download-original-button-name": "Завантажити початковий файл",
@@ -124,9 +126,11 @@
 	"multimediaviewer-credit-popup-text": "Інформація про автора і джерело",
 	"multimediaviewer-title-popup-text-more": "Переглянути опис файлу повністю",
 	"multimediaviewer-credit-popup-text-more": "Переглянути інформацію про автора та джерело повністю",
+	"multimediaviewer-download-attribution": "Авторство",
 	"multimediaviewer-download-attribution-cta-header": "Вам потрібно вказати автора",
 	"multimediaviewer-download-optional-attribution-cta-header": "Ви можете вказати ім'я автора",
 	"multimediaviewer-download-attribution-cta": "Показати мені, як",
+	"multimediaviewer-copy-button": "Скопіювати",
 	"multimediaviewer-download-attribution-copy": "Виділіть та скопіюйте (якщо підтримується) текст атрибуції цього файлу",
 	"multimediaviewer-reuse-warning-deletion": "Цей файл номіновано на вилучення.",
 	"multimediaviewer-reuse-warning-nonfree": "Цей файл не має вільної ліцензії.",
@@ -144,5 +148,6 @@
 	"multimediaviewer-enable-alert": "Медіапереглядач тепер вимкнено",
 	"multimediaviewer-disable-info-title": "Ви вимкнули Медіапереглядач",
 	"multimediaviewer-disable-info": "Ви все ще можете переглядати окремі файли за допомогою Медіапереглядача.",
-	"multimediaviewer-errorreport-privacywarning": "Відомості про помилку прикріплені до звіту, який буде доступний для публічного перегляду. Якщо для Вас це незручно, Ви можете відредагувати звіт нижче та усунути всі дані, якими Ви не бажаєте ділитися."
+	"multimediaviewer-errorreport-privacywarning": "Відомості про помилку прикріплені до звіту, який буде доступний для публічного перегляду. Якщо для Вас це незручно, Ви можете відредагувати звіт нижче та усунути всі дані, якими Ви не бажаєте ділитися.",
+	"multimediaviewer-loading": "Завантаження Медіапереглядача."
 }

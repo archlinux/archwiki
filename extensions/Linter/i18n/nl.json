@@ -14,7 +14,8 @@
 			"Patio",
 			"Robin van der Vliet",
 			"Romaine",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Siebrand"
 		]
 	},
 	"linterrors": "Lintfouten",
@@ -60,13 +61,13 @@
 	"linter-category-self-closed-tag-desc": "Deze pagina's hebben zelfsluitende elementen.",
 	"linter-category-stripped-tag": "Genegeerde elementen",
 	"linter-category-stripped-tag-desc": "Deze pagina's hebben elementen die genegeerd worden.",
-	"linter-category-tidy-font-bug": "Oud gedrag van font-tags die een link omgeven",
+	"linter-category-tidy-font-bug": "Oud gedrag van font-tags die om een koppeling staan",
 	"linter-category-tidy-font-bug-desc": "Deze font-elementen werden eerder binnen de koppeling geplaatst om de kleur van de koppeling te veranderen",
 	"linter-category-tidy-whitespace-bug": "Witruimte-intepretatiebug",
 	"linter-category-tidy-whitespace-bug-desc": "Deze pagina's veroorzaken een Witruimte intepretatiebug die verholpen kan worden.",
 	"linter-category-unclosed-quotes-in-heading": "Niet-afgesloten apostrof in kopje",
 	"linter-category-unclosed-quotes-in-heading-desc": "Deze pagina's hebben niet niet-afgesloten apostrof in een kop, die uit de inhoudsopgave lekt.",
-	"linter-category-wikilink-in-extlink": "Wikilink in externe link",
+	"linter-category-wikilink-in-extlink": "Koppelingen in koppelingen",
 	"linter-category-wikilink-in-extlink-desc": "Deze pagina's hebben wikilinks in externe links die kunnen worden opgelost",
 	"linter-desc": "Spoor lint-fouten op met een externe service en toon deze aan de gebruikers",
 	"linter-lints-prefix-search-page-desc": "Zoeken naar pagina's met lintfouten op voorvoegsel van de paginatitel of volledige titel",

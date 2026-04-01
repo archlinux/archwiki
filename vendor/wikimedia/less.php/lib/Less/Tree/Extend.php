@@ -4,16 +4,25 @@
  */
 class Less_Tree_Extend extends Less_Tree {
 
+	/** @var Less_Tree_Selector */
 	public $selector;
+	/** @var string */
 	public $option;
+	/** @var int */
 	public $index;
+	/** @var Less_Tree_Selector[] */
 	public $selfSelectors = [];
+	/** @var bool */
 	public $allowBefore;
+	/** @var bool */
 	public $allowAfter;
+	/** @var bool */
 	public $firstExtendOnThisSelectorPath;
+	/** @var Less_Tree_Ruleset|null */
 	public $ruleset;
-
+	/** @var string */
 	public $object_id;
+	/** @var array<string,true> */
 	public $parent_ids = [];
 
 	/**

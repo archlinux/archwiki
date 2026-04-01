@@ -22,7 +22,8 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"Tensama0415"
 		]
 	},
 	"echo-desc": "이벤트와 메시지를 사용자에게 알리는 시스템",
@@ -172,6 +173,7 @@
 	"notification-header-user-rights-expiry-change": "$2 {{PLURAL:$3|그룹|그룹들}}에서의 {{GENDER:$4|귀하}}의 멤버십 유효기간이 {{GENDER:$1|변경되었습니다}}.",
 	"notification-header-welcome": "{{SITENAME}}에 오신 것을 {{GENDER:$2|환영}}합니다, $1님! 당신을 만나게 되어 기쁩니다.",
 	"notification-header-mention-summary": "$1님이 <strong>$4</strong>의 편집 요약에서 {{GENDER:$3|나를}} {{GENDER:$2|언급했습니다}}.",
+	"notification-header-watchlist-changed": "$1님이 {{GENDER:$4|당신의}} 감시문서 목록에 있는 <strong>$3</strong> 문서를 {{PLURAL:$5|{{GENDER:$2|편집했습니다}}|$5번 {{GENDER:$2|편집했습니다}}}}.",
 	"notification-welcome-linktext": "환영합니다",
 	"notification-header-thank-you-1-edit": "{{GENDER:$2|}}방금 첫 번째 편집을 달성했습니다. 기여에 감사드리며, 환영합니다!",
 	"notification-header-thank-you-10-edit": "{{GENDER:$2|}}방금 10번째 편집을 달성했습니다. 편집에 감사드리며, 앞으로도 좋은 기여 부탁드립니다!",

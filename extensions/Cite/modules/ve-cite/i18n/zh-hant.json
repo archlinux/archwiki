@@ -45,6 +45,7 @@
 	"cite-ve-citationneeded-title": "引用所需",
 	"cite-ve-dialog-reference-contextitem-extends": "重複利用的參考資料，另外附有資訊：",
 	"cite-ve-dialog-reference-editing-add-details": "您正在對此參考資料添加更多細節：",
+	"cite-ve-dialog-reference-editing-edit-details": "您正在對此參考資料編輯細節：",
 	"cite-ve-dialog-reference-editing-add-details-placeholder": "請在此處撰寫或貼上您的補充資訊，例如某個頁碼或引文。",
 	"cite-ve-dialog-reference-editing-reused-short": "已使用{{PLURAL:$1|一次|2=兩次|$1次}}",
 	"cite-ve-dialog-reference-editing-reused": "此頁面已使用此參考文獻 {{PLURAL:$1|1|2=2|$1}} 次。",

@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Demmy"
+			"Demmy",
+			"ToluAyo"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Ìdáhùn",
 	"discussiontools-replylink": "{{GENDER:|ìdáhùn}}",
 	"discussiontools-replywidget-cancel": "Fagilé",
 	"discussiontools-replywidget-mode-source": "Orísun",

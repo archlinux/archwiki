@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shimmin Beg"
+			"Shimmin Beg",
+			"MacTire02"
 		]
 	},
-	"tag-visualeditor-needcheck": "Reagheyder Reayrtagh: Son shickyraghey",
-	"tag-visualeditor-needcheck-description": "Ceaghley jeant liorish y [[{{MediaWiki:visualeditor-descriptionpagelink}}|Reagheyder Reayrtagh]], as caghlaaghyn neuyioinagh jeant 'sy choad wiki, foddee."
+	"tag-visualeditor-needcheck": "Reaghey shilleydagh: Shickyree",
+	"tag-visualeditor-needcheck-description": "Va’n reaghey jeant lesh y [[{{MediaWiki:visualeditor-descriptionpagelink}}|reagheyder shilleydagh]] raad chronnee yn corys caghlaaghyn neuchiarit ec y wikiteks, foddee."
 }

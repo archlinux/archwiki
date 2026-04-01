@@ -44,8 +44,8 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Prostý text",
 	"echo-pref-cross-wiki-notifications": "Zobrazovat upozornění z jiných wiki",
-	"echo-pref-notifications-blacklist": "Nezobrazovat notifikace od těchto uživatelů. ([[mw:Special:MyLanguage/Help:Notifications#mute|dozvědět se více]])",
-	"echo-pref-notifications-page-linked-title-muted-list": "Nezobrazovat notifikace ohledně odkazů na tyto stránky. ([[mw:Special:MyLanguage/Help:Notifications#mute|dozvědět se více]])",
+	"echo-pref-notifications-blacklist": "Nezobrazovat notifikace od těchto uživatelů. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute dozvědět se více])",
+	"echo-pref-notifications-page-linked-title-muted-list": "Nezobrazovat notifikace ohledně odkazů na tyto stránky. ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute dozvědět se více])",
 	"echo-pref-dont-email-read-notifications": "V souhrnech neposílat přečtená upozornění",
 	"echo-learn-more": "Další informace",
 	"echo-log": "Veřejný záznam",
@@ -81,7 +81,7 @@
 	"notifications": "Upozornění",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Vaše}} upozornění",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Vaše}} oznámení",
-	"tooltip-pt-notifications": "Vaše upozornění",
+	"tooltip-pt-notifications": "{{GENDER:|Vaše}} upozornění",
 	"echo-displaynotificationsconfiguration": "Zobrazení konfigurace Notifikací",
 	"echo-displaynotificationsconfiguration-summary": "Toto je přehled konfigurace Notifikací na této wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Notifikace podle kategorií",
@@ -236,5 +236,9 @@
 	"echo-email-batch-link-text-view-all-notifications": "Zobrazit všechna upozornění",
 	"notification-header-foreign-alert": "Více upozornění z {{PLURAL:$5|další wiki|$5 dalších wiki}}",
 	"notification-header-foreign-notice": "Více oznámení z {{PLURAL:$5|další wiki|$5 dalších wiki}}",
-	"notification-header-foreign-all": "Další notifikace z {{PLURAL:$5|jiné wiki|$5 jiných wiki}}"
+	"notification-header-foreign-all": "Další notifikace z {{PLURAL:$5|jiné wiki|$5 jiných wiki}}",
+	"notification-subject-email-verify-email-reminder": "Ověřte si {{GENDER:$1|svou}} e-mailovou adresu",
+	"notification-header-verify-email-reminder": "<strong>Potvrďte prosím {{GENDER:$1|svoji}} e-mailovou adresu</strong>, abychom věděli, že e-mailová adresa {{GENDER:$1|vašeho}} účtu opravdu patří {{GENDER:$1|vám}}.",
+	"notification-link-text-verify-email-reminder": "Spravovat předvolby e-mailu",
+	"notification-verify-email-reminder-link-label": "Potvrdit e-mail"
 }

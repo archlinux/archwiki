@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Ayaat123"
+		]
 	},
 	"visualeditor-cite-tool-name-book": "کِتاب",
 	"visualeditor-cite-tool-name-journal": "رِسالہٕ",
@@ -14,7 +16,7 @@
 	"cite-ve-dialog-reference-options-group-placeholder": "عام حَوالہٕ",
 	"cite-ve-dialog-reference-options-section": "اِختِیار",
 	"cite-ve-dialog-reference-title": "حَوالہٕ",
-	"cite-ve-dialog-reference-useexisting-tool": "بیٚیِہ اِستِمال",
+	"cite-ve-dialog-reference-useexisting-tool": "بیٚیہِ اِستِمال",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "عام حَوالَن ہٕنٛز فِہرِست",
 	"cite-ve-dialog-referenceslist-title": "حَوالہٕ فِہرِست",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "حَوالہٕ",

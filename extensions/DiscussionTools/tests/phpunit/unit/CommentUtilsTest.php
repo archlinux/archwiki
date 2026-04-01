@@ -24,12 +24,13 @@ class CommentUtilsTest extends MediaWikiUnitTestCase {
 
 		$actual = [];
 		CommentUtils::linearWalk( $doc, static function ( $event, $node ) use ( &$actual ) {
-			$actual[] = "$event {$node->nodeName}({$node->nodeType})";
+			// Different versions of PHP can give different cases for nodeName (T415942)
+			$actual[] = $event . ' ' . strtolower( $node->nodeName );
 		} );
 
 		$actualBackwards = [];
 		CommentUtils::linearWalkBackwards( $doc, static function ( $event, $node ) use ( &$actualBackwards ) {
-			$actualBackwards[] = "$event {$node->nodeName}({$node->nodeType})";
+			$actualBackwards[] = $event . ' ' . strtolower( $node->nodeName );
 		} );
 
 		// Optionally write updated content to the JSON files

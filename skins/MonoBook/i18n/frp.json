@@ -5,8 +5,8 @@
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook.css": "/* Lo code CSS betâ ique afècterat los usanciérs de l’habelyâjo « MonoBook ». */",
-	"monobook.js": "/* Tot code JavaScript betâ ique serat chargiê per los usanciérs de l’habelyâjo « MonoBook ». */",
+	"monobook.css": "/* Tot CSS betâ ique serat chargiê por los utilisators de l’habelyâjo MonoBook */",
+	"monobook.js": "/* Tot code JavaScript betâ ique serat chargiê por los utilisators de l’habelyâjo MonoBook */",
 	"monobook-view-history": "Historico",
 	"monobook-action-undelete": "Refâre {{PLURAL:$1|un changement|$1 changements}}"
 }

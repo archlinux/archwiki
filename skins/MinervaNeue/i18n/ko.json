@@ -16,7 +16,8 @@
 			"Whatback11",
 			"Ykhwong",
 			"관인생략",
-			"아라"
+			"아라",
+			"YeBoy371"
 		]
 	},
 	"minerva-last-modified-date": "$1 $2에 마지막으로 편집됨",
@@ -43,7 +44,7 @@
 	"mobile-frontend-meta-data-issues-header": "문서 이슈",
 	"minerva-meta-data-issues-section-header": "문단 문제",
 	"mobile-frontend-placeholder": "{{SITENAME}} 검색",
-	"mobile-frontend-random-button": "임의의 문서로",
+	"mobile-frontend-random-button": "임의 문서로",
 	"mobile-frontend-redirected-from": "\"[[$1]]\"에서 넘어옴",
 	"mobile-frontend-talk-back-to-filepage": "\"$1\" 파일로 돌아갑니다.",
 	"mobile-frontend-talk-back-to-page": "\"$1\" 문서로 돌아갑니다.",

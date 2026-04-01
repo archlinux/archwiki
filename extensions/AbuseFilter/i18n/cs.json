@@ -57,6 +57,7 @@
 	"right-abusefilter-hide-log": "Skrývání záznamů v protokolu zneužití",
 	"right-abusefilter-hidden-log": "Prohlížení skrytých záznamů v protokolu zneužití",
 	"right-abusefilter-modify-global": "Vytváření a editace globálních filtrů zneužití",
+	"right-abusefilter-protected-vars-log": "Prohlížení protokolovacích záznamů souvisejících s prohlížením chráněných proměnných",
 	"action-abusefilter-modify": "upravovat filtry zneužití",
 	"action-abusefilter-view": "prohlížet si filtry zneužití",
 	"action-abusefilter-log": "prohlížet si protokol zneužití",
@@ -630,11 +631,17 @@
 	"notification-header-throttle-filter": "Filtr zneužití $2, který jste nedávno {{GENDER:$1|upravil|upravila|upravil(a)}}, byl omezen.",
 	"notification-subject-throttle-filter": "Na {{GRAMMAR:6sg|{{SITENAME}}}} byl omezen filtr zneužití, který jste {{GENDER:$1|upravil|upravila|upravil(a)}}",
 	"notification-link-text-show-filter": "Zobrazit filtr",
-	"right-abusefilter-modify-blocked-external-domains": "Vytvořit nebo upravit seznam externích domén, jejichž odkazování je blokováno",
+	"right-abusefilter-modify-blocked-external-domains": "Vytváření nebo upravování seznamu externích domén, jejichž odkazování je blokováno",
 	"action-abusefilter-modify-blocked-external-domains": "vytvořit nebo upravit seznam externích domén, jejichž odkazování je blokováno",
-	"right-abusefilter-bypass-blocked-external-domains": "Obejít seznam blokovaných externích domén",
+	"right-abusefilter-bypass-blocked-external-domains": "Obcházení seznamu blokovaných externích domén",
 	"action-abusefilter-bypass-blocked-external-domains": "obejít seznam blokovaných externích domén",
+	"right-abusefilter-access-protected-vars": "Prohlížení a vytváření filtrů, které používají chráněné proměnné",
+	"action-abusefilter-access-protected-vars": "prohlížet a vytvářet filtry, které používají chráněné proměnné",
+	"right-abusefilter-blocked-external-domains-log": "Prohlížení protokolovacích záznamů zablokovaných externích domén",
+	"action-abusefilter-blocked-external-domains-log": "prohlížet si protokolovací záznamy zablokovaných externích domén",
 	"abusefilter-protected-vars-log-name": "Protokol proměnných chráněných filtrem proti zneužití",
 	"abusefilter-protected-vars-log-header": "Toto je protokol:\n# Zobrazení chráněných proměnných v podrobnostech protokolu\n# Změn úrovní přístupu uživatelů pro prohlížení chráněných proměnných",
-	"log-action-filter-abusefilter-protected-vars": "Typ akce:"
+	"log-action-filter-abusefilter-protected-vars": "Typ akce:",
+	"communityconfiguration-blockeddomain-title": "Blokované externí domény",
+	"communityconfiguration-blockeddomain-description": "Seznam externích domén, na které nelze odkazovat."
 }

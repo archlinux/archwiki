@@ -379,7 +379,7 @@
 	"visualeditor-special-characters-group-other": "Usado frequentemente",
 	"visualeditor-templatesused-tool": "Predefinições usadas",
 	"visualeditor-title-error": "Título inválido.",
-	"visualeditor-toload": "O editor agora será carregado. Se você ainda vê esta mensagem após alguns segundos, por favor [$1 recarregue a página].",
+	"visualeditor-toload": "O editor agora será carregado. Se você ainda vê esta mensagem após alguns segundos, por favor [$1 atualize a página].",
 	"visualeditor-tooltip-non-breaking-space": "Espaço não-separável",
 	"visualeditor-version-label": "Versão",
 	"visualeditor-wikitext-progress": "Convertendo código-fonte",

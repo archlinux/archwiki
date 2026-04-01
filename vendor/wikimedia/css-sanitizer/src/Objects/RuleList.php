@@ -8,6 +8,7 @@ namespace Wikimedia\CSS\Objects;
 
 /**
  * Represent a list of CSS rules
+ * @extends CSSObjectList<Rule>
  */
 class RuleList extends CSSObjectList {
 	/**

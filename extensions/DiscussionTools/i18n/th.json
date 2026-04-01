@@ -137,7 +137,6 @@
 	"discussiontools-replywidget-terms-click": "เมื่อกดปุ่ม \"$1\" ถือว่า{{GENDER:|คุณ}}ยอมรับข้อกำหนดการใช้งานสำหรับวิกินี้",
 	"discussiontools-replywidget-transcluded": "ความเห็นของคุณจะถูกบันทึกไว้ที่ [[$1]]",
 	"discussiontools-replywidget-watchthis": "เพิ่มหน้านี้ไปยัง[[Special:Watchlist|รายการเฝ้าดู]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "ไม่พบความเห็นนี้ อาจถูกลบหรือย้ายแล้ว",
 	"discussiontools-target-comments-missing": "ไม่พบความเห็นใหม่ อาจถูกลบหรือย้ายแล้ว",
 	"discussiontools-target-heading-missing": "ไม่พบหัวข้อนี้ อาจถูกลบ ย้าย หรือเปลี่ยนชื่อแล้ว",

@@ -72,5 +72,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Logs Lua",
 	"nstab-module": "Módulo",
-	"tooltip-ca-nstab-module": "Ver a página do módulo"
+	"tooltip-ca-nstab-module": "Ver a página do módulo",
+	"namespaceinfo-description-ns828": "Espaço nominal para módulos de código Lua, que podem ser chamados a partir de páginas da wiki, e suas páginas de documentação",
+	"namespaceinfo-description-ns829": "Páginas de discussão dos módulos e da documentação"
 }

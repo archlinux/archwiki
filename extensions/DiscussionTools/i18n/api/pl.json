@@ -10,15 +10,18 @@
 	"apierror-discussiontools-commentid-notfound": "Nie odnaleziono komentarza z ID „$1”.",
 	"apierror-discussiontools-commentname-ambiguous": "Odnaleziono więcej niż jeden komentarz z nazwą „$1”, wymagany jest parametr <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Nie odnaleziono komentarza z nazwą „$1”.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Strona nigdy nie zawierała żadnych dyskusji.",
 	"apierror-discussiontools-formtoken-used": "Komentarz został już umieszczony. Przeładuj stronę aby go zobaczyć.",
 	"apierror-discussiontools-subscription-failed-add": "Nie udało się zasubskrybować tego tematu.",
 	"apierror-discussiontools-subscription-failed-remove": "Nie udało się anulować subskrypcji tego tematu.",
 	"apihelp-discussiontoolscompare-summary": "Uzyskaj informacje o zmianach komentarzy pomiędzy dwiema wersjami strony.",
 	"apihelp-discussiontoolsedit-param-commentid": "ID komentarza, na który odpowiedzieć. Parametr używany tylko wtedy, gdy wartość <var>paction</var> to <var>addcomment</var>. Ma pierwszeństwo nad parametrem <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "Nazwa komentarza, na który odpowiedzieć. Parametr używany tylko wtedy, gdy wartość <var>paction</var> to <var>addcomment</var>.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "Czy automatycznie zasubskrybować użytkownika do wątku na stronie dyskusji?",
 	"apihelp-discussiontoolsedit-param-formtoken": "Opcjonalny unikalny identyfikator wygenerowany przez oprogramowanie klienckie służący do zapobiegania wysyłania zdublowanych komentarzy.",
 	"apihelp-discussiontoolsedit-param-html": "Treść do dodania, jako HTML. Nie może być użyte wraz z <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Parametr używany tylko wtedy, gdy wartość <var>paction</var> to <var>addtopic</var>.",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Zezwól na umieszczenie nowej sekcji bez tytułu.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Treść do dodania, jako wikitekst. Nie może być użyte wraz z <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Dodaj nowy komentarz jako odpowiedź do istniejącego komentarza.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Dodaj nową sekcję dyskusji i pierwszy komentarz w niej.",
@@ -38,5 +41,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nazwa tematu do zasubskrybowania (lub anulowania subskrypcji)",
 	"apihelp-discussiontoolssubscribe-param-page": "Tytuł strony, gdzie widoczny jest temat",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Włącz, aby subskrybować; wyłącz, aby zrezygnować z subskrypcji",
-	"apihelp-discussiontoolssubscribe-summary": "Subskrybuj (lub anuluj subskrypcję), aby otrzymywać powiadomienia o komentarzach w danym temacie."
+	"apihelp-discussiontoolssubscribe-summary": "Subskrybuj (lub anuluj subskrypcję), aby otrzymywać powiadomienia o komentarzach w danym temacie.",
+	"apihelp-discussiontoolsthank-param-commentid": "Identyfikator komentarza, za który podziękować.",
+	"apihelp-discussiontoolsthank-summary": "Wysyła publiczne powiadomienie z podziękowaniem za komentarz."
 }

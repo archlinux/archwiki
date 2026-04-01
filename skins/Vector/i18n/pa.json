@@ -44,6 +44,7 @@
 	"vector-more-actions": "ਹੋਰ",
 	"vector-appearance-label": "ਦਿੱਖ",
 	"vector-appearance-tooltip": "ਸਫ਼ੇ ਦੇ ਅੱਖਰ ਦਾ ਆਕਾਰ, ਚੌੜਾਈ ਅਤੇ ਰੰਗ ਦੀ ਦਿੱਖ ਬਦਲੋ",
+	"vector-personal-tools-tooltip": "ਨਿੱਜੀ ਤਰਜੀਹਾਂ",
 	"vector-feature-limited-width-name": "ਚੌੜਾਈ",
 	"vector-feature-limited-width-0-label": "ਚੌੜਾ",
 	"vector-feature-limited-width-1-label": "ਮਿਆਰੀ",
@@ -55,7 +56,7 @@
 	"skin-theme-description": "[ਜਾਂਚ-ਪੜਤਾਲ ਸੰਸਕਰਣ, ਸਮੱਸਿਆਵਾਂ ਦਾ ਸਾਹਮਣਾ ਕਰਨ ਦੀ ਵੱਡੀ ਸੰਭਾਵਨਾ] ਜੰਤਰ ਸਕ੍ਰੀਨਾਂ ਤੋਂ ਨਿਕਲ ਵਾਲੀ ਰੋਸ਼ਨੀ ਨੂੰ ਘਟਾਉਂਦਾ ਏ।",
 	"skin-theme-day-label": "ਚਾਨਣ",
 	"skin-theme-night-label": "ਗੂੜ੍ਹਾ",
-	"skin-theme-os-label": "ਸਵੈਚਲਿਤ",
+	"skin-theme-os-label": "ਆਪਣੇ-ਆਪ",
 	"skin-theme-exclusion-notice": "ਇਹ ਵਰਕਾ ਹਮੇਸ਼ਾ ਚਾਨਣ ਮੋਡ ਵਿੱਚ ਹੁੰਦਾ ਹੈ।",
 	"vector-intro-page": "Help:ਜਾਣ-ਪਛਾਣ",
 	"vector-toc-label": "ਸਮੱਗਰੀ",
@@ -88,8 +89,11 @@
 	"vector-appearance-unpinned-popup": "ਦਿੱਖ ਮੇਨੂ ਇੱਥੇ ਚਲਾ ਗਿਆ ਹੈ।",
 	"vector-2022-beta-preview-label": "ਪੜ੍ਹਨ ਲਈ ਪਹੁੰਚਯੋਗਤਾ (ਵੈਕਟਰ 2022)",
 	"vector-2022-beta-preview-description": "ਟਾਈਪੋਗ੍ਰਾਫੀ ਸੁਧਾਰ ਅਤੇ ਗੂੜ੍ਹਾ ਮੋਡ ਵਰਗੀਆਂ ਨਵੀਆਂ ਪੜ੍ਹਨ ਪਹੁੰਚਯੋਗਤਾ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਤੱਕ ਜਲਦੀ ਪਹੁੰਚ ਪ੍ਰਾਪਤ ਕਰੋ।",
+	"vector-night-mode-gadget-warning": "ਤੁਸੀਂ ਗੂੜੇ ਰੂਪ ਵਾਲਾ ਅਜਿਹਾ ਜੰਤਰ ਵਰਤ ਰਹੇ ਹੋ ਜੋ ਇਸ ਕੰਮ ਵਿੱਚ ਅੜਿੱਕਾ ਪਾ ਰਿਹਾ ਏ। ਇਸ ਦੀ ਵਰਤੋਂ ਲਈ [[Special:Preferences#mw-prefsection-gadgets|ਇਹ ਜੰਤਰ ਬੰਦ ਕਰੋ]]।",
+	"vector-night-mode-issue-reporting-notice-tooltip": "ਜੇ ਗੂੜੇ ਰੂਪ ਵਿੱਚ ਅੱਖਰ ਪੜ੍ਹਨੇ ਔਖੇ ਲੱਗਣ, ਤਾਂ ਉਸ ਦੀ ਖ਼ਬਰ ਦਿਓ।",
 	"vector-night-mode-issue-reporting-link-label": "ਗੂੜ੍ਹੇ ਮੋਡ ਨਾਲ ਕੋਈ ਮੁੱਦਾ ਰਿਪੋਰਟ ਕਰੋ",
 	"vector-night-mode-issue-reporting-link-notification": "ਰਿਪੋਰਟ ਪ੍ਰਾਪਤ ਕੀਤੀ!",
 	"vector-night-mode-issue-reporting-preload-title": "$1 ਗੂੜ੍ਹਾ ਮੋਡ ਗਲਤੀ",
+	"vector-night-mode-issue-reporting-preload-content": "<!--\nਹਦਾਇਤਾਂ:\nਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਕਿ 'ਗੂੜੇ ਰੂਪ' ਦੇ ਰੰਗ ਵਿਕੀਪੀਡੀਆ ਪੜ੍ਹਨ ਵਿੱਚ ਕਿਵੇਂ ਅੜਿੱਕਾ ਪਾ ਰਹੇ ਹਨ।\nਕਿਰਪਾ ਕਰਕੇ ਲੇਖ ਦਾ ਉਹ ਹਿੱਸਾ ਵੀ ਦੱਸੋ ਜਿੱਥੇ ਤੁਹਾਨੂੰ ਇਹ ਮੁਸ਼ਕਲ ਆਈ ਏ।\n->\n''ਮੁੱਦਾ ਵੇਰਵਾ''",
 	"vector-night-mode-beta-tag": "(ਬੀਟਾ)"
 }

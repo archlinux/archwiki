@@ -1,5 +1,41 @@
 # Changelog
 
+## v5.5.0
+
+Added:
+* Add support for CSS4 `#RRGGBBAA` colors. (Hannah Okwelum) [T403056](https://phabricator.wikimedia.org/T403056)
+* Add support for native CSS color functions including with CSS variables. (Hannah Okwelum) [T405815](https://phabricator.wikimedia.org/T405815)
+
+Fixed:
+* Fix "Using null as the key parameter for array_key_exists" PHP 8.5 warning. (del72683) [T410596](https://phabricator.wikimedia.org/T410596)
+* Fix interpolation of string with number followed by underscore. (Timo Tijhof) [Less.js #2462](https://github.com/less/less.js/issues/2462)
+* Less_Functions: Fix "Using null as an array offset is deprecated" PHP 8.5 warnings. (Hannah Okwelum) [T411398](https://phabricator.wikimedia.org/T411398)
+* Less_ImportVisitor: Fix "Using null as an array offset" PHP 8.5 warning. (Hannah Okwelum) [T411400](https://phabricator.wikimedia.org/T411400)
+* Less_Parser: Fix "ord(): Providing an empty string is deprecated" PHP 8.5 warning. (Hannah Okwelum) [T411397](https://phabricator.wikimedia.org/T411397)
+
+## v5.4.0
+
+Added:
+* Add support for Logical Functions `if()` and `boolean()`. (Hannah Okwelum) [T393383](https://phabricator.wikimedia.org/T393383)
+
+Changed:
+* Remove support for PHP 7.4 and 8.0. Raise requirement to PHP 8.1+. (James D. Forrester)
+
+## v5.3.1
+
+Fixed:
+* Fix `PHP Warning: Undefined property $value` in `extract()`. (Timo Tijhof) [T391735](https://phabricator.wikimedia.org/T391735)
+
+## v5.3.0
+
+Added:
+* Less_Parser: Add `cache_incremental` option. Set this to false via `Less_Cache` to use the fast whole-output cache without the memory-intensive incremental cache. (Timo Tijhof)
+
+Deprecated:
+* Deprecate `Less_Cache::CheckCacheDir()` as public method. This is called automatically.
+* Deprecate `Less_Cache::CleanCache()` as public method. This is called automatically.
+* Deprecate `Less_Parser::SetCacheDir()`. Set the `cache_dir` option, or use `Less_Cache::SetCacheDir()` instead.
+
 ## v5.2.2
 
 Fixed:

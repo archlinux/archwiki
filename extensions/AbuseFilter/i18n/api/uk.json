@@ -60,5 +60,6 @@
 	"apierror-abusefilter-cantcheck": "Ви не маєте дозволу перевіряти синтаксис фільтрів зловживань.",
 	"apierror-abusefilter-canteval": "У вас немає прав на оцінювання виразів фільтрів зловживань.",
 	"apierror-abusefilter-nosuchlogid": "Немає запису зловживання з id $1.",
+	"apierror-abusefilter-incompatible": "Фільтр зловживань не підтримує вказану вами зміну.",
 	"apierror-abusefilter-badsyntax": "Фільтр має неправильний синтаксис."
 }

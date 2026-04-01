@@ -1,18 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
-			"EbelleMarcel"
+			"EbelleMarcel",
+			"Olivier Moukodi",
+			"Serieminou"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Jalabɛ",
+	"discussiontools-newtopicssubscription-button-subscribe-label": "Biya",
+	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Jébɛ ó biya",
 	"discussiontools-replylink": "{{GENDER:|alabɛ}}",
 	"discussiontools-replywidget-advanced": "Pótísɛ muwasó",
 	"discussiontools-replywidget-cancel": "Ɓáŋga",
 	"discussiontools-replywidget-mode-source": "Tongo",
 	"discussiontools-replywidget-mode-visual": "Jɛnɛ",
-	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Alabɛ}} {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|álabɛ}} {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Sɛlɛ jɛnɛ",
-	"discussiontools-replywidget-reply": "{{GENDER:|Alabɛ}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|álabɛ}}",
 	"discussiontools-replywidget-summary": "O patápɛm",
 	"discussiontools-replywidget-watchthis": "Ɓatá di dipapá o [[Special:Watchlist|liste de suivi]]",
 	"discussiontools-topicheader-authorcount": "$1 bató be ó ikwali",
@@ -22,8 +26,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Tidisɛ dina",
 	"discussiontools-topicsubscription-button-unsubscribe": "sumwá la diná",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Sumwa lá diná",
-	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Wa}} kusá mibia o bekwali ba peńá tegɛnɛ mu mwendi.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Wa tidisɛ dina !",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|O}} makusá pɛ mibia o bekwali ba peńá tegɛnɛ mu mwendi.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Wa}} sumwa diná !"
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Wa}} kusá mibia o bekwali ba penyá tɛ́gɛnɛ mu mwɛndi.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Lo e ndé {{GENDER:|nu tidisɛ́ dína mɔmɛ|nu tidisɛ dína muto}} !",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|O}} makusá pɛ mibia o bekwali ɓa penyá tegɛnɛ mu mwendi.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Lo e ndé {{GENDER:|nu nú sumó dína mɔmɛ|nu nú sumó dína mɔmɛ muto}}."
 }

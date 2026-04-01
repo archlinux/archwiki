@@ -77,6 +77,7 @@
 	"math_unknown_error": "nepoznata pogreška",
 	"math_unknown_function": "nepoznata funkcija \"$1\"",
 	"mw-math-mathml": "SVG (MathML može biti omogućen dodatkom preglednika)",
+	"mw-math-native": "MathML (probno; bez slika)",
 	"mw-math-source": "Izvor LaTeX (za tekstualne preglednike)",
 	"prefs-math": "Prikaz matematičkih formula",
 	"mathstatus": "Stanje izvedbe ispisa matematičkih formula",

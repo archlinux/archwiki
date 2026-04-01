@@ -30,7 +30,8 @@
 			"Stefania.scaramuzzi",
 			"Supernino",
 			"Una giornata uggiosa '94",
-			"Vivbod"
+			"Vivbod",
+			"Valepert"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
@@ -50,6 +51,7 @@
 	"cite-ve-dialog-reference-editing-add-details": "Stai aggiungendo dettagli a questo riferimento:",
 	"cite-ve-dialog-reference-editing-edit-details": "Stai modificando i dettagli di questo riferimento:",
 	"cite-ve-dialog-reference-editing-add-details-placeholder": "Scrivi o incolla qui i tuoi dettagli aggiuntivi, ad esempio un numero di pagina specifico o una citazione.",
+	"cite-ve-dialog-reference-editing-reused-short": "Usato {{PLURAL:$1|1 volta|$1 volte}}",
 	"cite-ve-dialog-reference-editing-reused": "Questo riferimento è usato {{PLURAL:$1|una volta|2=due volte|$1 volte}} su questa pagina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Questo riferimento è usato {{PLURAL:$1|1 volta|$1 volte}} su questa pagina. Le modifiche fatte qui saranno applicate ovunque questo riferimento sia riusato.",
 	"cite-ve-dialog-reference-missing-parent-ref": "Questi dettagli sono collegati a un riferimento mancante. Rimuovili dalla pagina o correggi il problema in modalità sorgente.",

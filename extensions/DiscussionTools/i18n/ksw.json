@@ -2,12 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Jaeminlovetaejoon",
-			"SawJaemin"
+			"SawJaemin",
+			"SawEKP"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "အိခ့, န့ၢ်လံ",
 	"discussiontools-defaultsummary-reply": "စံးဆၢက့ၤ",
 	"discussiontools-replylink": "{{GENDER:|စံးဆၢက့ၤ}}",
+	"discussiontools-replywidget-advanced": "လၢအပတီၢ်ထီ",
+	"discussiontools-replywidget-cancel": "ထူးသံကွံာ်",
+	"discussiontools-replywidget-mode-source": "တၢ်အခီၣ်ထံး",
+	"discussiontools-replywidget-placeholder-newtopic": "တၢ်ပာ်ဖျါထီၣ်",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|စံးဆၢက့ၤ}}{{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "တၢ်မိၣ်န့ၢ်သး",
-	"discussiontools-replywidget-reply": "စံးဆၢက့ၤ"
+	"discussiontools-replywidget-preview": "ကွၢ်ကဒါ",
+	"discussiontools-replywidget-reply": "{{GENDER:|စံးဆၢက့ၤ}}",
+	"discussiontools-replywidget-summary": "တၢ်ဂ့ၢ်ကျၢၢ်တံၢ်"
 }

@@ -90,7 +90,6 @@
 	"discussiontools-replywidget-terms-click": "Kanthi ngeklik \"$1\", kowé sarujuk karo paugeran panganggo wiki iki.",
 	"discussiontools-replywidget-transcluded": "Tanggepanmu bakal kasimpen ing [[$1]].",
 	"discussiontools-replywidget-watchthis": "Tambah kaca iki menyang [[Special:Watchlist|pratélan pawawanganmu]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|wong}} ana ing parembugan",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|tanggepan}}",
 	"discussiontools-topicheader-latestcomment": "Tanggepan paling anyar: $1",

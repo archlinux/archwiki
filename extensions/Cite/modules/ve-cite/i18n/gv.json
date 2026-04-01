@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"MacTire02"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Lioar",
+	"visualeditor-cite-tool-name-journal": "Jurnyl",
+	"visualeditor-cite-tool-name-news": "Naight",
+	"visualeditor-cite-tool-name-web": "Ynnyd-eggey",
+	"cite-ve-changedesc-ref-group-both": "Possan imraa er ny chaghlaa veih \"$1\" dys \"$2\"",
+	"cite-ve-changedesc-ref-group-from": "Possan imraa er ny chaghlaa veih \"$1\" dys y phossan cadjin",
+	"cite-ve-changedesc-ref-group-to": "Possan imraa er ny chaghlaa veih'n phossan cadjin dys \"$1\"",
+	"cite-ve-citationneeded-button": "Cur symney rish"
+}

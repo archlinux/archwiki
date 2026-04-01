@@ -8,9 +8,13 @@ use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\AbuseFilterProtectedVariablesLookup;
+use MediaWiki\Logging\LogPage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\RCCacheEntry;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\TempUser\TempUserConfig;
 
 /**
@@ -322,6 +326,75 @@ class AbuseFilterPermissionManager {
 	public function canUseTestTools( Authority $performer ): bool {
 		// TODO: make independent
 		return $this->canViewPrivateFilters( $performer );
+	}
+
+	/**
+	 * Determine whether the current user is allowed to view a revision
+	 * at all, given its current visibility restrictions.
+	 *
+	 * Unlike `RevisionRecord::userCanBitfield`, which checks whether the user
+	 * may view a specific deleted aspect of a revision (e.g. text or comment),
+	 * this method evaluates whether the revision itself is viewable, considering
+	 * all applicable visibility flags together.
+	 *
+	 * @param int $visibility Current visibility bit field (the `rev_deleted` value)
+	 * @param Authority $authority User on whose behalf to check access
+	 * @return bool
+	 * @todo Consider moving this to core if similar logic is needed elsewhere
+	 * @see RevisionRecord::userCanBitfield
+	 */
+	public static function hasRevisionAccess( int $visibility, Authority $authority ): bool {
+		if ( !$visibility ) {
+			return true;
+		}
+		if ( $visibility & RevisionRecord::DELETED_RESTRICTED ) {
+			// Suppressed revisions require suppressor rights regardless of other flags
+			return $authority->isAllowedAny( 'suppressrevision', 'viewsuppressed' );
+		}
+		if ( ( $visibility & RevisionRecord::DELETED_TEXT ) && !$authority->isAllowed( 'deletedtext' ) ) {
+			return false;
+		}
+		if ( ( $visibility & ( RevisionRecord::DELETED_COMMENT | RevisionRecord::DELETED_USER ) ) &&
+			!$authority->isAllowed( 'deletedhistory' )
+		) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Determine whether the current user is allowed to view a recent change row
+	 * at all, given its source and current visibility restrictions.
+	 *
+	 * Unlike `ChangesList::userCan`, which checks whether the user may view a
+	 * specific deleted aspect of a recent change and delegates to
+	 * `LogEventsList::userCanBitfield` for log entries or
+	 * `RevisionRecord::userCanBitfield` otherwise, this method evaluates whether
+	 * the recent change row itself is viewable, considering all applicable
+	 * visibility flags together, and delegates to `::hasRevisionAccess` for
+	 * non-log entries.
+	 *
+	 * @param RCCacheEntry|RecentChange $rc
+	 * @param Authority $authority User on whose behalf to check
+	 * @return bool
+	 * @see ChangesList::userCan
+	 * @see LogEventsList::userCanBitfield
+	 * @see RevisionRecord::userCanBitfield
+	 * @see AbuseFilterPermissionManager::hasRevisionAccess
+	 */
+	public static function hasRCEntryAccess( $rc, Authority $authority ): bool {
+		$visibility = (int)$rc->getAttribute( 'rc_deleted' );
+		if ( $visibility === 0 ) {
+			return true;
+		}
+		if ( $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG ) {
+			if ( $visibility & LogPage::DELETED_RESTRICTED ) {
+				return $authority->isAllowedAny( 'suppressrevision', 'viewsuppressed' );
+			} else {
+				return $authority->isAllowed( 'deletedhistory' );
+			}
+		}
+		return self::hasRevisionAccess( $visibility, $authority );
 	}
 
 }

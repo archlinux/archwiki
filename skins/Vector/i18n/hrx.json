@@ -36,9 +36,11 @@
 	"skin-theme-exclusion-notice": "Do die Seit is immer im helle Modo.",
 	"vector-toc-label": "Inhaltsferzeichnis",
 	"vector-toc-beginning": "Aanfang",
+	"vector-anon-user-menu-pages": "Seite fer abgemellde Benutzer",
 	"vector-main-menu-label": "Hauptmenu",
 	"vector-feature-custom-font-size-exclusion-notice": "Do die Seit ferwenne immer en kleen Schriftgres",
 	"vector-page-tools-label": "Fërramente",
 	"vector-page-tools-general-label": "Allgemeen",
+	"vector-page-tools-actions-label": "Akzione",
 	"vector-unpin-element-label": "Fersteckle"
 }

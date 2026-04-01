@@ -12,5 +12,10 @@
 	"editcheck-dialog-addref-reject-other": "Кхийерг",
 	"editcheck-dialog-addref-title": "Хьост тӀетоха",
 	"editcheck-dialog-title": "Публикаци йале",
+	"editcheck-copyvio-prompt": "ХӀара текст йазйина ахь?",
+	"editcheck-copyvio-action-keep": "ХӀаъ, Ӏалашйе",
+	"editcheck-copyvio-action-remove": "ХӀан-хӀа, дӀадаккха",
+	"editcheck-tone-title": "Тон карлайаккхар?",
+	"editcheck-tone-title-acted": "Тон хийцар",
 	"editcheck-tone-reject-other": "Кхийерг"
 }

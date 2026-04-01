@@ -124,6 +124,7 @@ class CounterStyleAtRuleSanitizer extends RuleSanitizer {
 		$ret = clone $object;
 		$this->fixPreludeWhitespace( $ret, false );
 		$this->sanitizeDeclarationBlock( $ret->getBlock(), $this->propertySanitizer );
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 }

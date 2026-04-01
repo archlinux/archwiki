@@ -207,6 +207,11 @@ class MatcherFactory {
 			$this->cache[__METHOD__] = $calcSum;
 
 			$calcKeyword = new KeywordMatcher( [ 'e', 'pi', 'infinity', '-infinity', 'NaN' ] );
+			// calc() forces values to be numeric so it is safe to allow custom props here
+			$customProp = new FunctionMatcher( 'var', new Juxtaposition( [
+				new CustomPropertyMatcher(),
+				Quantifier::optional( $calcSum ),
+			], true ) );
 
 			// Complete the recursive rule <calc-value>
 			$calcValue = new Alternative( [
@@ -214,6 +219,7 @@ class MatcherFactory {
 				$this->dimension(),
 				$this->percentage(),
 				$calcKeyword,
+				$customProp,
 				new BlockMatcher( Token::T_LEFT_PAREN, $calcSum )
 			] );
 		}
@@ -655,17 +661,33 @@ class MatcherFactory {
 	}
 
 	/**
+	 * Matcher for either a given value type or a var() with the value type
+	 * as fallback.
+	 *
+	 * @param Matcher $fallback
+	 * @return Matcher
+	 */
+	private function rawOrCustomProp( Matcher $fallback ): Matcher {
+		$withCustomProp = new FunctionMatcher( 'var', new Juxtaposition( [
+			new CustomPropertyMatcher(),
+			Quantifier::optional( $fallback ),
+		], true ) );
+		return new Alternative( [ $fallback, $withCustomProp ] );
+	}
+
+	/**
 	 * Matchers for color functions
 	 * @return Matcher[]
 	 */
 	protected function colorFuncs() {
 		if ( !isset( $this->cache[__METHOD__] ) ) {
-			$n = $this->number();
-			$p = $this->percentage();
+			// Color functions require arguments to be numeric so allowing var() is safe
+			$n = $this->rawOrCustomProp( $this->number() );
+			$p = $this->rawOrCustomProp( $this->percentage() );
 			$hue = new Alternative( [ $this->angle(), $n ] );
 
 			$none = new KeywordMatcher( 'none' );
-			$nPNone = new Alternative( [ $this->numberPercentage(), $none ] );
+			$nPNone = new Alternative( [ $this->rawOrCustomProp( $this->numberPercentage() ), $none ] );
 			$hueNone = new Alternative( [ $hue, $none ] );
 
 			$colorSpaceParams = new Alternative( [
@@ -753,21 +775,12 @@ class MatcherFactory {
 			??= new Alternative( [
 				$this->safeColor(),
 				new FunctionMatcher( 'var', new Juxtaposition( [
-						new CustomPropertyMatcher(),
-						Quantifier::optional( new Alternative( [
-							$this->colorWords(),
-							$this->colorHex(),
-						] ) ),
+					new CustomPropertyMatcher(),
+					Quantifier::optional( $this->safeColor() ),
 				], true ) ),
 				new FunctionMatcher( 'light-dark', new Juxtaposition( [
-						new Alternative( [
-							$this->colorWords(),
-							$this->colorHex(),
-						] ),
-						new Alternative( [
-							$this->colorWords(),
-							$this->colorHex(),
-						] ),
+					$this->safeColor(),
+					$this->safeColor(),
 				], true ) ),
 			] );
 	}

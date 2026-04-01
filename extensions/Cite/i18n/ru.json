@@ -26,16 +26,20 @@
 			"Vlad5250",
 			"Wikisaurus",
 			"Wileyfoxyx",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Vonavy",
+			"Merrahtar",
+			"Yurina Tatiana"
 		]
 	},
 	"cite-desc": "Добавляет для сносок теги <code>&lt;ref&gt;</code> и <code>&lt;references/&gt;</code>",
-	"cite_error": "Ошибка цитирования $1",
+	"cite_error": "Ошибка цитирования: $1",
 	"cite_error_details_missing_parent": "Тег <code>&lt;ref></code> должен иметь содержимое, либо указывать на родительский референс по его имени.",
 	"cite_error_ref_invalid_dir": "Неверное значение <code>dir=\"$1\"</code>, должно быть <code>ltr</code> или <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Неправильный тег <code>&lt;ref&gt;</code>;\nимя не может быть целым числом. Используйте описательное название",
 	"cite_error_ref_no_key": "Открывающий тег <code>&lt;ref&gt;</code> — неправильный или содержит некорректное имя.",
 	"cite_error_ref_too_many_keys": "Недействительный параметр \"$1\" в теге <code>&lt;ref></code>. Поддерживаемые параметры: $2.",
+	"cite_error_ref_parameter_suggestion": "Недействительный параметр «$1» в теге <code>&lt;ref></code>. Возможно, вы имели в виду «$2»?",
 	"cite_error_ref_no_input": "Неправильный тег <code>&lt;ref&gt;</code>;\nэлемент без имени должен иметь содержание",
 	"cite_error_references_duplicate_key": "Неверный тег <code>&lt;ref&gt;</code>: название «$1» определено несколько раз для различного содержимого",
 	"cite_error_references_invalid_parameters": "Недействительный параметр \"$1\" в теге <code>&lt;references></code>. Поддерживаемые параметры: $2.",

@@ -7,10 +7,12 @@
 			"MinecraftAustralia",
 			"Moilleadóir",
 			"Nmacu",
-			"Tem"
+			"Tem",
+			"Aindriu80"
 		]
 	},
 	"tooltip-ca-ve-edit": "Cuir an leathanach seo in eagar",
+	"visualeditor-ca-createlocaldescriptionsource": "Cuir foinse cur síos áitiúil leis",
 	"visualeditor-ca-createsource": "Cruthaigh foinse",
 	"visualeditor-ca-editsource": "Cuir foinse in eagar",
 	"visualeditor-ca-editsource-section": "athraigh foinse",

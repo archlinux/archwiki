@@ -181,6 +181,7 @@
 	"echo-email-html-footer-with-link": "Et määrata, milliseid kirju {{GENDER:$2|sulle}} saadetakse, $1.",
 	"echo-notification-alert": "{{PLURAL:$1|Märguanne ($1)|Märguanded ($1)|100=Märguanded (99+)}}",
 	"echo-notification-notice": "{{PLURAL:$1|Märkus ($1)|Märkused ($1)|100=Märkused (99+)}}",
+	"echo-notification-all": "{{PLURAL:$1|Teavitus ($1)|Teavitused ($1)|100=Teavitused (99+)}}",
 	"echo-notification-alert-text-only": "Märguanded",
 	"echo-notification-notice-text-only": "Märkused",
 	"echo-overlay-link": "Kõik teavitused",

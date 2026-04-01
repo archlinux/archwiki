@@ -4,6 +4,7 @@
  */
 class Less_Visitor_processExtends extends Less_Visitor {
 
+	/** @var Less_Tree_Extend[][] */
 	public $allExtendsStack;
 
 	/**
@@ -106,7 +107,9 @@ class Less_Visitor_processExtends extends Less_Visitor {
 					$selectorTwo = "{unable to calculate}";
 				}
 
-				throw new Less_Exception_Parser( "extend circular reference detected. One of the circular extends is currently:" . $selectorOne . ":extend(" . $selectorTwo . ")" );
+				throw new Less_Exception_Parser(
+					"extend circular reference detected. One of the circular extends is currently:" . $selectorOne . ":extend(" . $selectorTwo . ")"
+				);
 			}
 
 			// now process the new extends on the existing rules so that we can handle a extending b extending c ectending d extending e...
@@ -133,7 +136,7 @@ class Less_Visitor_processExtends extends Less_Visitor {
 			return;
 		}
 
-		$allExtends	= end( $this->allExtendsStack );
+		$allExtends = end( $this->allExtendsStack );
 		$paths_len = count( $rulesetNode->paths );
 
 		// look at each selector path in the ruleset, find any extend matches and then copy, find and replace
@@ -199,7 +202,12 @@ class Less_Visitor_processExtends extends Less_Visitor {
 
 				// if we allow elements before our match we can add a potential match every time. otherwise only at the first element.
 				if ( $extend->allowBefore || ( $haystackSelectorIndex === 0 && $hackstackElementIndex === 0 ) ) {
-					$potentialMatches[] = [ 'pathIndex' => $haystackSelectorIndex, 'index' => $hackstackElementIndex, 'matched' => 0, 'initialCombinator' => $haystackElement->combinator ];
+					$potentialMatches[] = [
+						'pathIndex' => $haystackSelectorIndex,
+						'index' => $hackstackElementIndex,
+						'matched' => 0,
+						'initialCombinator' => $haystackElement->combinator
+					];
 					$potentialMatches_len++;
 				}
 
@@ -212,7 +220,9 @@ class Less_Visitor_processExtends extends Less_Visitor {
 					if ( $potentialMatch && $potentialMatch['matched'] === $extend->selector->elements_len ) {
 						$potentialMatch['finished'] = true;
 
-						if ( !$extend->allowAfter && ( $hackstackElementIndex + 1 < $haystack_elements_len || $haystackSelectorIndex + 1 < $haystack_path_len ) ) {
+						if ( !$extend->allowAfter &&
+							( $hackstackElementIndex + 1 < $haystack_elements_len || $haystackSelectorIndex + 1 < $haystack_path_len )
+						) {
 							$potentialMatch = null;
 						}
 					}
@@ -399,7 +409,10 @@ class Less_Visitor_processExtends extends Less_Visitor {
 
 			if ( $match['pathIndex'] > $currentSelectorPathIndex && $currentSelectorPathElementIndex > 0 ) {
 				$last_path = end( $path );
-				$last_path->elements = array_merge( $last_path->elements, array_slice( $selectorPath[$currentSelectorPathIndex]->elements, $currentSelectorPathElementIndex ) );
+				$last_path->elements = array_merge(
+					$last_path->elements,
+					array_slice( $selectorPath[$currentSelectorPathIndex]->elements, $currentSelectorPathElementIndex )
+				);
 				$currentSelectorPathElementIndex = 0;
 				$currentSelectorPathIndex++;
 			}
@@ -411,9 +424,9 @@ class Less_Visitor_processExtends extends Less_Visitor {
 					// last parameter of array_slice is different than the last parameter of javascript's slice
 					$match['index'] - $currentSelectorPathElementIndex
 				),
-				 [ $firstElement ],
-				 array_slice( $replacementSelector->elements, 1 )
-				);
+				[ $firstElement ],
+				array_slice( $replacementSelector->elements, 1 )
+			);
 
 			if ( $currentSelectorPathIndex === $match['pathIndex'] && $matchIndex > 0 ) {
 				$last_key = count( $path ) - 1;
@@ -433,7 +446,10 @@ class Less_Visitor_processExtends extends Less_Visitor {
 
 		if ( $currentSelectorPathIndex < $selectorPath_len && $currentSelectorPathElementIndex > 0 ) {
 			$last_path = end( $path );
-			$last_path->elements = array_merge( $last_path->elements, array_slice( $selectorPath[$currentSelectorPathIndex]->elements, $currentSelectorPathElementIndex ) );
+			$last_path->elements = array_merge(
+				$last_path->elements,
+				array_slice( $selectorPath[$currentSelectorPathIndex]->elements, $currentSelectorPathElementIndex )
+			);
 			$currentSelectorPathIndex++;
 		}
 

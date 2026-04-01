@@ -26,5 +26,6 @@
 	"apihelp-query+checkuserlog-example-2": "Показать проверки 192.0.2.0/24 начиная с 2011-10-15T23:00:00Z",
 	"apierror-checkuser-missingsummary": "Вы должны указать причину для проверки.",
 	"apierror-checkuser-timelimit": "Вам необходимо использовать правильное ограничение по времени (например, «-2 weeks» или «2 weeks ago»).",
-	"apierror-checkuser-invalidmode": "Недопустимый режим запроса"
+	"apierror-checkuser-invalidmode": "Недопустимый режим запроса",
+	"checkuser-ip-auto-reveal-missing-permission": "У вас недостаточно прав для использования автораскрытия IP-адресов."
 }

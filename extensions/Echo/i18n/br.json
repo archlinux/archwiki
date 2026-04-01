@@ -234,7 +234,7 @@
 	"echo-email-batch-body-intro-daily": "Demat deoc'h $1,\nSetu amañ un diverradur eus obererezh an deiz war {{SITENAME}} evidoc'h.",
 	"echo-email-batch-body-intro-weekly": "Demat deoc'h $1,\nSetu amañ un diverradur eus obererezh ar sizhun-mañ war {{SITENAME}} evidoc'h.",
 	"echo-email-batch-link-text-view-all-notifications": "Gwelet an holl gemennadennoù",
-	"notification-header-foreign-alert": "Muioc'h a c'halvoù-diwall eus {{PLURAL:$5|ur wiki-all|$5 wiki-all}}",
+	"notification-header-foreign-alert": "Muioc'h a c'halvoù-diwall eus {{PLURAL:$5|ur wiki all|$5 wiki all}}",
 	"notification-header-foreign-notice": "Kemennoù all eus {{PLURAL:$5|ur|$5}} wiki all",
 	"notification-header-foreign-all": "Kemennoù ouzhpenn war {{PLURAL:$5|ur wiki all|$5 wiki all}}",
 	"right-echo-create": "Kas kemennadennoù da dud all",

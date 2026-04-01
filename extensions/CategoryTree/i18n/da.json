@@ -8,14 +8,15 @@
 			"Fredelige",
 			"Jon Harald Søby",
 			"Peter Alberti",
-			"Steenth"
+			"Steenth",
+			"Peterleth"
 		]
 	},
 	"categorytree": "Kategoritræ",
 	"categorytree-portlet": "Kategorier",
 	"categorytree-legend": "Vis kategoritræ",
 	"categorytree-desc": "Dynamisk navigation i [[Special:CategoryTree|kategoristrukturen]]",
-	"categorytree-header": "Indtast navnet på en kategori for at se indholdet som et træ. Bemærk at dette kræver avanceret JavaScript-funktionalitet kendt som AJAX, det virker ikke hvis du har en meget gammel browser eller hvis du har slået JavaScript fra.",
+	"categorytree-header": "Indtast et kategorinavn for at se indholdet som en træstruktur. (Kræver JavaScript.)",
 	"categorytree-category": "Kategori:",
 	"categorytree-go": "Vis træ",
 	"categorytree-parents": "Overkategorier",

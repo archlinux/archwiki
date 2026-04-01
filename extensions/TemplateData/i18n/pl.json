@@ -126,11 +126,12 @@
 	"templatedata-modal-title-templateformatstring": "Własny format ciągu znaków",
 	"templatedata-modal-title-templateparam-details": "Szczegóły parametrów: $1",
 	"templatedata-modal-title-templateparams": "Parametry szablonu",
-	"templatedata-search-description": "Wyszukaj szablon:",
+	"templatedata-search-description": "Wyszukaj szablon",
 	"templatedata-search-placeholder": "Wprowadź nazwę szablonu",
 	"templatedata-search-placeholder-cirrussearch": "Wprowadź nazwę szablonu lub słowa kluczowe",
 	"templatedata-search-list-header": "Ulubione",
 	"templatedata-search-list-empty": "Tutaj pojawią się szablony, które oznaczysz jako ulubione",
+	"templatedata-search-list-empty-anon": "Zaloguj się, aby oznaczać szablony jako ulubione",
 	"templatedata-template-discovery-disabled": "Odkrywanie szablonów jest niedostępne na tej wiki.",
 	"templatediscovery": "Odkrywanie szablonów",
 	"templatedata-favorite-disabled": "Musisz się zalogować, aby dodawać szablony do ulubionych",
@@ -154,6 +155,11 @@
 	"templatedata-featured-list-empty": "Wyróżnione szablony to szablony, które zostały oznaczone jako przydatne przez społeczność. Nie ustalono jeszcze żadnych wyróżnionych szablonów.",
 	"communityconfiguration-templatedata-featuredtemplates-title": "Polecane szablony",
 	"communityconfiguration-templatedata-featuredtemplates-description": "Polecane szablony to szablony, które zostały oznaczone jako przydatne przez społeczność. Są dostępne do użycia w narzędziu do wyszukiwania szablonów.",
+	"communityconfiguration-templatedata-featuredtemplates-info-text": "Szablony wymienione tutaj są dostępne do użycia w narzędziu do wyszukiwania szablonów.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-label": "Polecane szablony",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Tytuły",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-description": "Wypisz tytuły szablonów (wraz z prefiksem przestrzeni nazw „Szablon:”).",
 	"templatedata-featured-list-config-link": "Edytuj listę wyróżnionych",
-	"templatedata-featured-list-help": "Wyróżnione szablony to szablony oznaczone przez społeczność jako przydatne."
+	"templatedata-featured-list-help": "Wyróżnione szablony to szablony oznaczone przez społeczność jako przydatne.",
+	"templatedata-favorite-count": "Masz $1/$2 ulubionych szablonów"
 }

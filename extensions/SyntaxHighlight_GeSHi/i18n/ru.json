@@ -12,7 +12,8 @@
 			"OlegVeliky",
 			"Pacha Tchernof",
 			"Stjn",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Merrahtar"
 		]
 	},
 	"syntaxhighlight-desc": "Обеспечивает подсветки синтаксиса <code>&lt;syntaxhighlight&gt;</code> с помощью [http://pygments.org/ Pygments — средства подсветки синтаксиса для Python]",
@@ -26,7 +27,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Язык",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(ничего)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Показать номера строк",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "начинающий номер линии",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Число в начале строки",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Фрагмент кода",
 	"syntaxhighlight-error-pygments-invocation-failure": "Сбой при вызове Pygments",
 	"syntaxhighlight-error-unknown-language": "Неизвестный язык «$1»",

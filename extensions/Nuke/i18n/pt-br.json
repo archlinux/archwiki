@@ -11,7 +11,8 @@
 			"Felipe L. Ewald",
 			"Giro720",
 			"MetalBrasil",
-			"Tuliouel"
+			"Tuliouel",
+			"Fúlvio"
 		]
 	},
 	"nuke": "Eliminar de forma massiva",
@@ -35,5 +36,6 @@
 	"nuke-viewchanges": "ver alterações",
 	"nuke-namespace": "Limitar ao espaço nominal:",
 	"nuke-linkoncontribs": "excluir em massa",
-	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este usuário é o único autor|esta usuária é a única autora}}"
+	"nuke-linkoncontribs-text": "Eliminar em massa páginas em que {{GENDER:$1|este usuário é o único autor|esta usuária é a única autora}}",
+	"tag-nuke-description": "Eliminações realizadas com a extensão Nuke"
 }

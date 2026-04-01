@@ -11,7 +11,8 @@
 			"Nike",
 			"Purodha",
 			"Shirayuki",
-			"Umherirrender"
+			"Umherirrender",
+			"Neriah"
 		]
 	},
 	"replacetext": "{{doc-special|ReplaceText}}",
@@ -56,6 +57,6 @@
 	"right-replacetext": "{{doc-right|replacetext}}",
 	"action-replacetext": "{{doc-action|replacetext}}",
 	"replacetext-summary-label": "Used as label meesage for custom summary in replacement edits",
-	"tag-replacetext": "Name of the tag for edits made via Special:ReplaceText.",
+	"tag-replacetext": "Name of the tag for edits made via Special:ReplaceText. The English link text should be in English.",
 	"tag-replacetext-description": "Short description of the tags for edits made via Special:ReplaceText."
 }

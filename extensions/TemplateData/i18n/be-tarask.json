@@ -4,7 +4,8 @@
 			"Jim-by",
 			"Red Winged Duck",
 			"Renessaince",
-			"Wizardist"
+			"Wizardist",
+			"Ucukor"
 		]
 	},
 	"templatedata-desc": "Рэалізацыя сховішча зьвестак для парамэтраў шаблёнаў (праз JSON)",
@@ -80,7 +81,7 @@
 	"templatedata-modal-search-input-placeholder": "Шукаць паводле назвы або коду мовы",
 	"templatedata-modal-table-param-aliases": "Псэўданімы",
 	"templatedata-modal-table-param-autovalue": "Аўтаматычнае значэньне",
-	"templatedata-modal-table-param-default": "Дапомна ($1)",
+	"templatedata-modal-table-param-default": "Перадвызначана ($1)",
 	"templatedata-modal-table-param-deprecated": "Састарэлы",
 	"templatedata-modal-table-param-deprecatedValue": "Састарэлае кіраўніцтва",
 	"templatedata-modal-table-param-description": "Апісаньне ($1)",
@@ -101,5 +102,6 @@
 	"templatedata-modal-title-templateformat": "Прапанаванае фарматаваньне вікітэксту",
 	"templatedata-modal-title-templateformatstring": "Нестандартны фармат радку",
 	"templatedata-modal-title-templateparam-details": "Апісаньне парамэтру: $1",
-	"templatedata-modal-title-templateparams": "Парамэтры шаблёну"
+	"templatedata-modal-title-templateparams": "Парамэтры шаблёну",
+	"templatedata-category-browser-loadmore": "...ладаваць болей"
 }

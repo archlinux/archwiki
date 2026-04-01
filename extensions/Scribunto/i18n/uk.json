@@ -10,9 +10,11 @@
 			"Piramidion",
 			"Steve.rusyn",
 			"SteveR",
-			"Ата"
+			"Ата",
+			"Repakr"
 		]
 	},
+	"content-model-scribunto": "Модуль Scribunto",
 	"scribunto-desc": "Фреймворк для включення скриптових мов на сторінки MediaWiki",
 	"scribunto-line": "у рядку $1",
 	"scribunto-module-line": "у $1 у рядку $2",
@@ -71,5 +73,7 @@
 	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Журнали Lua",
 	"nstab-module": "Модуль",
-	"tooltip-ca-nstab-module": "Переглянути сторінку модуля"
+	"tooltip-ca-nstab-module": "Переглянути сторінку модуля",
+	"namespaceinfo-description-ns828": "Простір назва для модулів коду Lua, які можна викликати з вікісторінок, та їхні сторінки документації.",
+	"namespaceinfo-description-ns829": "Сторінки обговорення для модулів та документацій"
 }

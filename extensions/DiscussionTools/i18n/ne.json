@@ -132,7 +132,6 @@
 	"discussiontools-replywidget-terms-click": "\"$1\" प्रयोग गरेर, तपाइँ यो विकिको प्रयोगका सर्तहरूमा सहमत हुनुहुन्छ।",
 	"discussiontools-replywidget-transcluded": "तपाईंको टिप्पणी [[$1]]मा प्रकाशित गरिनेछ।",
 	"discussiontools-replywidget-watchthis": "यो पृष्ठ आफ्नो [[Special:Watchlist|अवलोकनसूची]]मा थप्नुहोस्",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "यो टिप्पणी फेला पार्न सकिएन। यो मेटिएको वा सारिएको हुन सक्छ।",
 	"discussiontools-target-comments-missing": "नयाँ टिप्पणीहरू फेला पार्न सकिएन। तिनीहरू मेटाइएको वा सारिएको हुन सक्छ।",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|जना}}ले बहस गरिरहेका छन्",

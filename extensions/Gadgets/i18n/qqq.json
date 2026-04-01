@@ -17,13 +17,14 @@
 			"Shirayuki",
 			"Siebrand",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Bennylin"
 		]
 	},
 	"gadgets-desc": "{{desc|name=Gadgets|url=https://www.mediawiki.org/wiki/Extension:Gadgets}}",
 	"prefs-gadgets": "In Gadgets extension. The name of a tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]] where user set their preferences for the extension.\n\n{{Identical|Gadgets}}",
 	"prefs-description-gadgets": "Used in [[Special:Preferences]] for mobile to describe the Gadgets features section.",
-	"gadgets-prefstext": "In Gadgets extension. This is the explanation text displayed under the Gadgets tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]].",
+	"gadgets-prefstext": "In Gadgets extension. This is the explanation text displayed under the Gadgets tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]]. See also [[MediaWiki:Gadgets-pagetext]].",
 	"gadgets-prefstext-safemode": "In Gadgets extension. Shown under the Gadgets tab in [[Special:Preferences#mw-prefsection-gadgets|Special:Preferences]] when safe mode is enabled (thus gadgets are disabled).",
 	"special-gadgets": "{{doc-special|Gadgets}}\n{{Identical|Gadgets}}",
 	"gadgetusage": "{{doc-special|Gadget usage statistics}}",
@@ -35,7 +36,7 @@
 	"gadgetusage-default": "Message to indicate the gadget is default and actual stats are not available\n{{Identical|Default}}",
 	"gadgets-definition": "{{notranslate}}",
 	"gadgets-title": "{{Identical|Gadgets}}",
-	"gadgets-pagetext": "Used as intro text in [[Special:Gadgets]].",
+	"gadgets-pagetext": "Used as intro text in [[Special:Gadgets]]. See also [[MediaWiki:Gadgets-prefstext]].",
 	"gadgets-editdescription": "Link for editing the gadget description shown in Special:Preferences. Used on [[Special:Gadgets]].",
 	"gadgets-viewdescription": "Link for viewing the gadget description shown in Special:Preferences. Used on [[Special:Gadgets]] instead of {{msg-mw|Gadgets-editdescription}} when the user does not have permissions to edit.",
 	"gadgets-editsectiontitle": "Link for editing a section title (heading) in the list of gadgets shown in Special:Preferences. Used on [[Special:Gadgets]].",

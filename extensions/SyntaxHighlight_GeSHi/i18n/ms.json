@@ -1,10 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
-	"syntaxhighlight-desc": "Menyediakan tag <code>&lt;syntaxhighlight&gt;</code> untuk penonjolan sintaks menggunakan [http://pygments.org/ GeSHi]",
+	"syntaxhighlight-desc": "Menyediakan penyerlahan sintaks <code><syntaxhighlight></code> menggunakan [http://pygments.org/ Pygments - penyerlah sintaks Python]",
+	"syntaxhighlight-error-category": "Laman dengan ralat penyerlahan sintaks",
+	"syntaxhighlight-error-category-desc": "Terdapat ralat semasa cuba menyerlahkan kod yang disertakan pada laman tersebut.",
+	"syntaxhighlight-enclose-category": "Laman yang menggunakan atribut enclose yang henti penggunaannya",
+	"syntaxhighlight-enclose-category-desc": "Penyerlahan sintaks pada laman menggunakan sintaks lampiran yang henti penggunaannya.",
+	"syntaxhighlight-source-category": "Laman yang menggunakan tag sumber yang henti penggunaannya",
+	"syntaxhighlight-source-category-desc": "Penyerlahan sintaks pada laman menggunakan teg sumber yang henti penggunaannya.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Bahasa",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Tiada)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Tunjukkan nombor baris",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Nombor baris permulaan",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kod",
+	"syntaxhighlight-error-pygments-invocation-failure": "Gagal memanggil Pygments",
+	"syntaxhighlight-error-unknown-language": "Bahasa tidak diketahui \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Saiz kod $1 {{PLURAL:$1|bait}} melebihi maksimum yang dibenarkan iaitu $2 {{PLURAL:$2|bait}}",
 	"syntaxhighlight-button-copy": "Salin",
 	"syntaxhighlight-button-copied": "Disalin!"
 }

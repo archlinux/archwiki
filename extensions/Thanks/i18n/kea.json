@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Waldyrious"
+			"Waldyrious",
+			"Letra.berdi"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|agradesi}}}}",
-	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|agradesidu}}}}",
-	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Agradesi}}}}",
-	"thanks-confirmation2": "{{GENDER:$1|Manda}} un agradesimentu públiku?",
-	"thanks": "Manda agradesimentu",
-	"thanks-submit": "Manda agradesimentu"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|gardisi}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|gardisidu}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Gardisi}}}}",
+	"thanks-confirmation2": "{{GENDER:$1|Nvia}} un gardisimentu públiku?",
+	"thanks": "Nvia gardisimentu",
+	"thanks-submit": "Nvia gardisimentu"
 }

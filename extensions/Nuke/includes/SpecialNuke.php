@@ -700,6 +700,12 @@ class SpecialNuke extends SpecialPage {
 		foreach ( $context->getAllPages() as $page ) {
 			$title = Title::newFromText( $page );
 
+			// Check the delete rate limit for each page
+			if ( $user->pingLimiter( 'delete' ) ) {
+				$statuses[$title->getPrefixedDBkey()] = Status::newFatal( 'actionthrottledtext' );
+				break;
+			}
+
 			if ( in_array( $page, $associatedPages ) ) {
 				$reason = $this->msg( 'delete-talk-summary-prefix', $baseReason )
 					->inContentLanguage()

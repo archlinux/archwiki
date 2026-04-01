@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Singkiring57"
+		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|kuljoarvaić}}}}"
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|kuljohrvaiy}}}}"
 }

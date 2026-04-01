@@ -18,7 +18,8 @@
 			"Vito Genovese",
 			"Wooze",
 			"Sakblue",
-			"SaldırganSincap"
+			"SaldırganSincap",
+			"LisafBia"
 		]
 	},
 	"oathauth-desc": "HMAC tabanlı tek kullanımlık parolalar kullanarak kimlik doğrulama desteği sağlar",
@@ -90,6 +91,7 @@
 	"oathauth-module-totp-label": "Kimlik doğrulayıcı uygulaması",
 	"oathauth-ui-manage": "Yönet",
 	"oathmanage": "İki faktörlü kimlik doğrulamayı yönet",
+	"accountsecurity": "Hesap güvenliği",
 	"oathauth-ui-not-enabled-modules": "Alternatif bir yönteme geç",
 	"oathauth-ui-enabled-module": "Etkin kimlik doğrulama yöntemi",
 	"oathauth-enable-generic": "Etkinleştir",
@@ -108,5 +110,11 @@
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} iki faktörlü kimlik doğrulamayı etkinleştirmedi.",
 	"group-oathauth-twofactorauth": "İki faktörlü kimlik doğrulamayı kullanabilecek kullanıcılar",
 	"group-oathauth-twofactorauth-member": "iki faktörlü kimlik doğrulamayı kullanabilen {{GENDER:$1|kullanıcı}}",
+	"oathauth-password-header": "Parola",
+	"oathauth-password-label": "Hesabınızı korumak için güçlü bir parola seçin.",
+	"oathauth-password-action": "Parolayı değiştir",
+	"oathauth-authenticator-header": "İki faktörlü kimlik doğrulaması",
+	"oathauth-authenticator-placeholder": "Hesabınızın güvenliğini sağlamak için giriş yaparken ek bir adım ekleyin.",
+	"oathauth-totp-add-key": "Kimlik doğrulama uygulaması ekleyin",
 	"oathauth-delete-warning": "Bu kimlik doğrulama yöntemi ile artık giriş yapamazsınız ve kurtarma kodlarınız artık çalışmayacak."
 }

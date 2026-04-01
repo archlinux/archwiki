@@ -13,13 +13,14 @@
 			"Stryn"
 		]
 	},
-	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille. \nKirjoita kuvan sisältämät sanat alla olevaan tekstikenttään \n([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-desc": "Fancy CAPTCHA -kehitin Confirm Edit-laajennukselle",
+	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä ulkoisille sivustoilla. \nAutomatisoidun roskapostin estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-captcha": "Turvallisuustarkistus",
-	"fancycaptcha-accountcreate": "Automaattisten käyttäjätunnusten luonnin estämiseksi kirjoita kuvassa näkyvät kirjaimet alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoa]]):",
-	"fancycaptcha-create": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-edit": "Muokkauksesi sisältää uusia linkkejä muille sivuille. Kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-accountcreate": "Automaattisten käyttäjätunnusten luonnin estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoa]]):",
+	"fancycaptcha-create": "Luodaksesi sivun kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-edit": "Muokataksesi sivua kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-imgcaptcha-ph": "Kirjoita kuvassa näkyvä teksti",
-	"fancycaptcha-sendemail": "Automatisoidun roskapostin lähettämisen vaikeuttamiseksi kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään \n([[Special:Captcha/help|lisätietoja]]):",
+	"fancycaptcha-sendemail": "Automatisoidun roskapostin estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-reload-text": "Vaihda"
 }

@@ -154,7 +154,6 @@
 	"discussiontools-replywidget-terms-click": "\"$1\" ক্লিক করার দ্বারা, আপনি এই উইকির ব্যবহারের শর্তাবলী সাথে সম্মত হচ্ছেন।",
 	"discussiontools-replywidget-transcluded": "আপনার মন্তব্য [[$1]]-এ সংরক্ষণ করা হবে।",
 	"discussiontools-replywidget-watchthis": "আপনার [[Special:Watchlist|নজর তালিকায়]] এই পাতাটি যোগ করুন",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "এই মন্তব্যটি খুঁজে পাওয়া যায়নি। এটি সম্ভবত মুছে ফেলা হয়েছে বা স্থানান্তর করা হয়েছে।",
 	"discussiontools-target-comments-missing": "নতুন মন্তব্যগুলি খুঁজে পাওয়া যায়নি। এগুলি সম্ভবত মুছে ফেলা হয়েছে বা স্থানান্তর করা হয়েছে।",
 	"discussiontools-target-heading-missing": "এই আলোচনাটি খুঁজে পাওয়া যায়নি। এটি সম্ভবত মুছে ফেলা হয়েছে, স্থানান্তর করা হয়েছে বা নামান্তর করা হয়েছে।",

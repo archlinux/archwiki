@@ -149,7 +149,6 @@
 	"discussiontools-replywidget-terms-click": "Quan feu clic a «$1», {{GENDER:|esteu}} acceptant les condicions d'ús d'aquest wiki.",
 	"discussiontools-replywidget-transcluded": "El vostre comentari serà desat a [[$1]].",
 	"discussiontools-replywidget-watchthis": "Afegiu aquesta pàgina a la vostra [[Special:Watchlist|Llista de seguiment]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Aquest comentari no s'ha trobat. És possible que s'hagi suprimit o mogut.",
 	"discussiontools-target-comments-missing": "No s'han trobat comentaris nous. És possible que s'hagin suprimit o mogut.",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persona|persones}} a la discussió",

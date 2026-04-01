@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Extension\ImageMap;
 
-use DOMElement;
 use MediaWiki\Config\Config;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\Hook\ParserFirstCallInitHook;
@@ -31,6 +30,7 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -144,8 +144,8 @@ class ImageMap implements ParserFirstCallInitHook {
 				if ( !$imageNode ) {
 					return $this->error( 'imagemap_invalid_image' );
 				}
-				$thumbWidth = (int)$imageNode->getAttribute( 'width' );
-				$thumbHeight = (int)$imageNode->getAttribute( 'height' );
+				$thumbWidth = (int)( DOMCompat::getAttribute( $imageNode, 'width' ) ?? '0' );
+				$thumbHeight = (int)( DOMCompat::getAttribute( $imageNode, 'height' ) ?? '0' );
 
 				$imageObj = $this->repoGroup->findFile( $imageTitle );
 				if ( !$imageObj || !$imageObj->exists() ) {
@@ -327,10 +327,10 @@ class ImageMap implements ParserFirstCallInitHook {
 
 		$anchor = $imageNode->parentNode;
 		$wrapper = $anchor->parentNode;
-		Assert::precondition( $wrapper instanceof DOMElement, 'Anchor node has a parent' );
-		'@phan-var DOMElement $anchor';
+		Assert::precondition( $wrapper instanceof Element, 'Anchor node has a parent' );
+		'@phan-var Element $anchor';
 
-		$classes = $wrapper->getAttribute( 'class' );
+		$classes = DOMCompat::getAttribute( $wrapper, 'class' ) ?? '';
 
 		// For T22030
 		$classes .= ( $classes ? ' ' : '' ) . 'noresize';
@@ -369,13 +369,10 @@ class ImageMap implements ParserFirstCallInitHook {
 
 		$parserOutput = $parser->getOutput();
 
-		'@phan-var DOMElement $wrapper';
-		$typeOf = $wrapper->getAttribute( 'typeof' );
-		if ( preg_match( '#\bmw:File/Thumb\b#', $typeOf ) ) {
+		if ( DOMUtils::hasTypeOf( $wrapper, 'mw:File/Thumb' ) ) {
 			// $imageNode was cloned above
-			$img = $imageParent->firstChild;
-			'@phan-var DOMElement $img';
-			if ( !$img->hasAttribute( 'resource' ) ) {
+			$img = DOMCompat::getFirstElementChild( $imageParent );
+			if ( $img !== null && !$img->hasAttribute( 'resource' ) ) {
 				$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
 			}
 		} elseif ( $descType !== self::NONE ) {
@@ -388,9 +385,8 @@ class ImageMap implements ParserFirstCallInitHook {
 				'mw-ext-imagemap-desc-' . self::DESC_TYPE_MAP[$descType]
 			);
 			// $imageNode was cloned above
-			$img = $imageParent->firstChild;
-			'@phan-var DOMElement $img';
-			if ( !$img->hasAttribute( 'resource' ) ) {
+			$img = DOMCompat::getFirstElementChild( $imageParent );
+			if ( $img !== null && !$img->hasAttribute( 'resource' ) ) {
 				$img->setAttribute( 'resource', $imageTitle->getLocalURL() );
 			}
 			$parserOutput->addModules( [ 'ext.imagemap' ] );

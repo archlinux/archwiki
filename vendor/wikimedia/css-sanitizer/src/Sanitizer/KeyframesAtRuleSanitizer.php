@@ -79,6 +79,7 @@ class KeyframesAtRuleSanitizer extends RuleSanitizer {
 		$this->fixPreludeWhitespace( $ret, false );
 		$this->sanitizeRuleBlock( $ret->getBlock(), [ $this->ruleSanitizer ] );
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 }

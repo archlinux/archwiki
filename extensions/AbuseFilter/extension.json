@@ -286,6 +286,7 @@
 	"TestAutoloadClasses": {
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Unit\\Parser\\ParserTestCase": "tests/phpunit/unit/Parser/ParserTestCase.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Unit\\GetFilterEvaluatorTestTrait": "tests/phpunit/unit/GetFilterEvaluatorTestTrait.php",
+		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\AbuseFilterPermissionManagerTestTrait": "tests/phpunit/integration/AbuseFilterPermissionManagerTestTrait.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\FilterFromSpecsTestTrait": "tests/phpunit/integration/FilterFromSpecsTestTrait.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\Api\\AbuseFilterApiTestTrait": "tests/phpunit/integration/Api/AbuseFilterApiTestTrait.php",
 		"AbuseFilterUploadTestTrait": "tests/phpunit/AbuseFilterUploadTestTrait.php",

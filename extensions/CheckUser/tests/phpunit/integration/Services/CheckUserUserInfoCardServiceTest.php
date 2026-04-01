@@ -1001,9 +1001,7 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		?string $expectedResult,
 		?string $expectedTimestamp
 	) {
-		if ( $globallyBlockUser ) {
-			$this->markTestSkippedIfExtensionNotLoaded( 'GlobalBlocking' );
-		}
+		$this->markTestSkippedIfExtensionNotLoaded( 'GlobalBlocking' );
 
 		$user = self::$testGlobalUser;
 		$this->overrideConfigValue( MainConfigNames::CentralIdLookupProvider, 'local' );

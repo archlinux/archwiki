@@ -387,7 +387,7 @@
 	"visualeditor-savedialog-title-save": "Wijzigingen opslaan",
 	"visualeditor-section-body-placeholder": "Nieuwe sectie",
 	"visualeditor-section-title-placeholder": "Onderwerp",
-	"visualeditor-loaderror-revidconflict": "Door de server geretourneerde revisie-ID's komen niet overeen (document: $1, metadata: $2).",
+	"visualeditor-loaderror-revidconflict": "Door de server teruggegeven versie-ID's komen niet overeen (document: $1, metadata: $2).",
 	"visualeditor-loaderror-wrongmode": "Probeerde de tekstverwerker in de verkeerde modus te laden (gegevenstype: \"$1\", tekstverwerkermodus: \"$2\").",
 	"visualeditor-settings-tool": "Pagina-instellingen",
 	"visualeditor-special-characters-group-other": "Vaak gebruikt",

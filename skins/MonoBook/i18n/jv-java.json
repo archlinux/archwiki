@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin"
+		]
+	},
+	"monobook-desc": "Kulit MediaWiki klasik sejak tahun 2004, dinamai berdasarkan foto hitam-putih dari buku di latar belakang halaman",
+	"monobook-jumptotop": "ꦧꦭꦶ​ꦚꦁ​ꦤ꧀ꦝꦸꦮꦸꦂ",
+	"monobook-jumptopersonal": "ꦥꦶꦫꦤ꧀ꦠꦶ​ꦤꦫꦒꦸꦤ",
+	"monobook-jumptonavigation": "ꦩꦼꦚ꧀ꦕꦺꦴꦭꦺꦴꦠ꧀ꦩꦼꦚꦁ​ꦤꦥ꦳ꦶꦒꦱꦶ",
+	"monobook-jumptosearch": "ꦩꦼꦚ꧀ꦕꦺꦴꦭꦺꦴꦠ꧀ꦩꦼꦚꦁ​ꦥꦤꦼꦭꦸꦱꦸꦂꦫꦤ꧀",
+	"monobook-more-actions": "ꦭꦶꦪꦤꦺ",
+	"cactions-mobile": "ꦲꦏ꧀ꦱꦶ​ꦏꦕ",
+	"monobook-cactions-label": "ꦲꦏ꧀ꦱꦶ​ꦏꦕ",
+	"monobook-notifications-link": "ꦥꦩ꧀ꦧꦶꦮꦫ​($1)",
+	"monobook-notifications-link-none": "ꦥꦩ꧀ꦧꦶꦮꦫ",
+	"monobook-view-history": "ꦱꦗꦫꦃ",
+	"monobook-action-undelete": "ꦮꦸꦫꦸꦁ​ꦲꦥꦸꦱ꧀{{PLURAL:$1|$1 ꦧꦼꦱꦸꦠ꧀ꦠꦤ꧀}}"
+}

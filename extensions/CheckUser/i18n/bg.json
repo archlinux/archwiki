@@ -143,7 +143,7 @@
 	"checkuser-global-contributions-summary": "Показва редакции, направени от потребител във всеки уики проект $1 през {{PLURAL:$1| последния ден|последните $1 дни}}.",
 	"checkuser-global-contributions": "Търсене на глобални приноси",
 	"checkuser-global-contributions-subtitle": "Показване на резултати от {{PLURAL:$1|последния ден|последните $1 дни}} от всички уикита, в които имате права за преглед на приноси. Ограничено до $2 {{PLURAL:$2|резултат|резултата}} на уики.",
-	"checkuser-global-contributions-subtitle-account": "Показване на резултати от {{PLURAL:$1|последния ден|последните $1 dni}} за всички уикита. Ограничено до $2 {{PLURAL:$2|резултат|резултата}} на уики.",
+	"checkuser-global-contributions-subtitle-account": "Показване на резултати от {{PLURAL:$1|последния ден|последните $1 дни}} за всички уикита. Ограничено до $2 {{PLURAL:$2|резултат|резултата}} на уики.",
 	"checkuser-global-contributions-target-label": "Потребителско име, IP адрес или IP диапазон:",
 	"checkuser-global-contributions-target-placeholder": "Потребителско име, IP адрес или IP диапазон",
 	"checkuser-global-contributions-search-form-wrapper": "Търсене на глобални приноси",
@@ -209,5 +209,6 @@
 	"checkuser-suggestedinvestigations-header-created": "Създадено",
 	"checkuser-suggestedinvestigations-header-status": "Статус",
 	"checkuser-suggestedinvestigations-header-notes": "Бележки",
-	"checkuser-suggestedinvestigations-header-actions": "Действия"
+	"checkuser-suggestedinvestigations-header-actions": "Действия",
+	"checkuser-userinfocard-temporary-account-bucketcount": "Временни сметки от всички свързани IP адреси: $1"
 }

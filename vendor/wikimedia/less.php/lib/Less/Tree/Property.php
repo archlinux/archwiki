@@ -5,9 +5,13 @@
  */
 class Less_Tree_Property extends Less_Tree {
 
+	/** @var string */
 	public $name;
+	/** @var int|null */
 	public $index;
+	/** @var array|null */
 	public $currentFileInfo;
+	/** @var bool */
 	public $evaluating = false;
 
 	/**
@@ -23,8 +27,11 @@ class Less_Tree_Property extends Less_Tree {
 		$name = $this->name;
 
 		if ( $this->evaluating ) {
-			throw new Less_Exception_Compiler( "Recursive property reference for " . $name, null,
-				$this->index, $this->currentFileInfo );
+			throw new Less_Exception_Compiler(
+				"Recursive property reference for " . $name,
+				null,
+				$this->index, $this->currentFileInfo
+			);
 		}
 
 		$property = null;

@@ -5,13 +5,30 @@
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
 			"Baloch Khan",
-			"عثمان خان شاہ"
+			"عثمان خان شاہ",
+			"شاه زمان پټان"
 		]
 	},
-	"pfunc_time_error": "ستونزه: ناسم وخت",
-	"pfunc_expr_unrecognised_word": "اصطلاحي تېروتنه: ناپېژندل شوې ټکي \"$1\".",
-	"pfunc_expr_unexpected_operator": "اصطلاحي تېروتنه: نااټکله $1 چارنگر.",
-	"pfunc_expr_missing_operand": "اصطلاحي تېروتنه: د $1 ورک شوی چارنگر.",
-	"pfunc_expr_unrecognised_punctuation": "اصطلاحي تېروتنه: د ناپېژندلې ليکنښې لوښه \"$1\".",
-	"pfunc_expr_division_by_zero": "وېش په صفر"
+	"pfunc_desc": "د منطقي کړنچارو سره تجزيه‌کوونکی لوړول",
+	"pfunc_time_error": "تېروتنه: ناسم وخت.",
+	"pfunc_time_too_long": "تېروتنه: گڼ شمېر #وخت غږونه",
+	"pfunc_time_too_big": "تېروتنه:يوازې تر ۹۹۹۹ کلونو پورې #وخت ملاتړ کوي.",
+	"pfunc_time_too_small": "تېروتنه:يوازې له ۰ کلونو څخه #وخت ملاتړ کوي.",
+	"pfunc_timef_bad_format": "تېروتنه: #timef لپاره ناسمه بڼه",
+	"pfunc_rel2abs_invalid_depth": "تېروتنه: په \"$1\" لوري کې ناسم ژوروالی (د ريښې له نښې پورته نښې د لاسرسي هڅه)",
+	"pfunc_expr_stack_exhausted": "د څرگندونې تېروتنه: باره تشه شوې.",
+	"pfunc_expr_unexpected_number": "د څرگندونې تېروتنه: نااټکله شمېره.",
+	"pfunc_expr_preg_match_failure": "د څرگندونې تېروتنه: د preg_match ناڅاپي پاتې راتلنه.",
+	"pfunc_expr_unrecognised_word": "د څرگندونې تېروتنه: ناپېژندل شوی ويی \"$1\".",
+	"pfunc_expr_unexpected_operator": "د څرگندونې تېروتنه: نااټکله $1 چلوونکی.",
+	"pfunc_expr_missing_operand": "د څرگندونې تېروتنه: د $1 ورک شوی چلوونکی.",
+	"pfunc_expr_unexpected_closing_bracket": "د څرگندونې تېروتنه:ناڅاپي تړل شوې لينده‌کۍ.",
+	"pfunc_expr_unrecognised_punctuation": "د څرگندونې تېروتنهه: د ناپېژندلې ليکنښې لوښه \"$1\".",
+	"pfunc_expr_unclosed_bracket": "د څرگندونې تېروتنه:ناتړلې لينده‌کۍ.",
+	"pfunc_expr_division_by_zero": "په صفر وېشل.",
+	"pfunc_expr_invalid_argument": "$1 لپاره ناسمه ويې‌ينه: له -۱ څخه کوچنی يا له ۱ څخه لوی.",
+	"pfunc_expr_invalid_argument_ln": "ln لپارنه ناسمه ويې‌ينه: له ۰ څخه کوچنی يا مساوي.",
+	"pfunc_expr_unknown_error": "د څرگندونې تېروتنه: نامالومه تېروتنه ($1).",
+	"pfunc_expr_not_a_number": "په $1 کې: پايله شمېره نه ده.",
+	"pfunc_string_too_long": "تېروتنه: لړۍ له $1 لوښو بريد څخه تېری کوي."
 }

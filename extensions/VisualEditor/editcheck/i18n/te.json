@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chaduvari"
+		]
+	},
+	"editcheck-dialog-action-no": "లేదు",
+	"editcheck-dialog-action-yes": "సరే",
+	"editcheck-dialog-action-decline": "తిరస్కరించండి",
+	"editcheck-dialog-action-revise": "పునఃపరిశీలించండి",
+	"editcheck-dialog-action-recheck": "తిరిగి తనిఖీ చేయండి",
+	"editcheck-dialog-action-back": "వెనక్కి",
+	"editcheck-dialog-action-submit": "పంపించు",
+	"editcheck-dialog-addref-description": "ఒక మూలాన్ని చేర్చి, ఈ సమాచారం ఎక్కడి నుండి వచ్చిందో పాఠకులకు తెలియజేయండి.",
+	"editcheck-dialog-addref-reject-question": "మీరు మూలాన్ని ఎందుకు చేర్చడం లేదు?",
+	"editcheck-dialog-addref-reject-irrelevant": "నేను చేస్తున్న మార్పుకు మూలాలు అవసరమని నేను అనుకోవడం లేదు",
+	"editcheck-dialog-addref-reject-common-knowledge": "నేను చేరుస్తున్న సమాచారం విస్తృతంగా తెలిసినదే",
+	"editcheck-dialog-addref-reject-uncertain": "ఏ మూలాన్ని చేర్చాలో నాకు ఖచ్చితంగా తెలియదు",
+	"editcheck-dialog-addref-reject-other": "ఇతర",
+	"editcheck-dialog-addref-success-notify": "మూలాన్ని చేర్చినందుకు ధన్యవాదాలు!",
+	"editcheck-dialog-addref-title": "మూలాన్ని చేర్చండి",
+	"editcheck-dialog-title": "ప్రచురించే ముందు",
+	"editcheck-copyvio-title": "పేస్టు చేసిన కంటెంటు",
+	"editcheck-copyvio-prompt": "ఈ పాఠ్యాన్ని మీరే రాశారా?",
+	"editcheck-copyvio-action-keep": "అవును, దాన్ని ఉంచు",
+	"editcheck-copyvio-action-remove": "లేదు, దాన్ని తీసివేయి",
+	"editcheck-copyvio-keep-description": "మీరు అతికించిన ఈ పాఠ్యాన్ని ఎందుకు ఉంచాలో తోటి ఎడిటర్లు అర్థం చేసుకోవడంలో తోడ్పడండి.",
+	"editcheck-copyvio-keep-wrote": "ఈ పాఠ్యాన్ని నేనే రాశాను, ఇది మరెక్కడా ప్రచురితమైనది కాదు",
+	"editcheck-copyvio-keep-permission": "ఈ కంటెంటుకు స్వేచ్ఛా లైసెన్సు ఉంది",
+	"editcheck-copyvio-keep-other": "పైన పేర్కొన్న వాటిలో ఏదీ వర్తించదు",
+	"editcheck-copyvio-keep-notify": "అతికించిన పాఠ్యాన్ని ఎందుకు ఉంచాలో కారణాన్ని చెప్పినందుకు ధన్యవాదాలు!",
+	"editcheck-tone-reject-other": "ఇతర",
+	"editcheck-reject-description": "మీరు దీన్ని ఎందుకు ఎంచుకున్నారో ఇతర ఎడిటర్లు తెలుసుకోవడం విలువైనది.",
+	"editcheck-review-title": "మార్పులను సమీక్షించండి",
+	"tag-editcheck-reference-decline-common-knowledge": "ఎడిట్ చెక్ (మూలాలు) తిరస్కరించబడింది (అందరికీ తెలిసిన సంగతే)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "అందరికీ తెలిసిన సంగతే అని తిరస్కరించిన మూలం ఎడిట్‌చెక్",
+	"tag-editcheck-reference-decline-irrelevant": "ఎడిట్ చెక్ (మూలాలు) తిరస్కరించబడింది (సంబంధం లేదు)",
+	"tag-editcheck-reference-decline-irrelevant-description": "సంబంధం లేదనే కారణంతో తిరస్కరించిన మూలం ఎడిట్‌చెక్",
+	"tag-editcheck-reference-decline-other": "ఎడిట్ చెక్ (మూలాలు) తిరస్కరించబడింది (ఇతర)",
+	"tag-editcheck-reference-decline-other-description": "జాబితాలో లేని కారణంతో తిరస్కరించిన మూలం ఎడిట్‌చెక్",
+	"tag-editcheck-reference-decline-uncertain": "ఎడిట్ చెక్ (మూలాలు) తిరస్కరించబడింది (అనిశ్చితం)",
+	"tag-editcheck-reference-decline-uncertain-description": "అనిశ్చితంగా ఉందనే కారణంతో తిరస్కరించిన మూలం ఎడిట్‌చెక్"
+}

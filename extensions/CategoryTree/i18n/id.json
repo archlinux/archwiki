@@ -8,13 +8,14 @@
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"Rex"
+			"Rex",
+			"Penyuwangi"
 		]
 	},
 	"categorytree": "Pohon kategori",
 	"categorytree-portlet": "Kategori",
 	"categorytree-legend": "Tampilkan pohon kategori",
-	"categorytree-desc": "Gadget berbasis AJAX untuk menampilkan [[Special:CategoryTree|struktur kategori]] suatu wiki",
+	"categorytree-desc": "Gawai berbasis AJAX untuk menampilkan [[Special:CategoryTree|struktur kategori]] suatu wiki",
 	"categorytree-header": "Masukkan nama kategori untuk melihat kontennya dalam bentuk struktur pohon.\n(Membutuhkan JavaScript.)",
 	"categorytree-category": "Kategori:",
 	"categorytree-go": "Tampilkan",

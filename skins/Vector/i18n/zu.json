@@ -5,17 +5,18 @@
 			"Fwolff",
 			"INgobemnyama",
 			"Irus",
-			"Nkankane"
+			"Nkankane",
+			"Fongcwele"
 		]
 	},
-	"vector-languages": "iziLimi",
+	"vector-languages": "IziLimi",
 	"vector-no-language-button-label": "engeza iziLimi",
 	"vector-action-addsection": "Faka isihloko",
 	"vector-view-create": "Qamba",
 	"vector-view-edit": "Ukuhlela",
 	"vector-view-history": "Bona umlando",
 	"vector-view-view": "Funda",
-	"vector-more-actions": "Okunye",
+	"vector-more-actions": "Okwengeziwe",
 	"vector-toc-beginning": "ekuqaleni",
 	"vector-unpin-element-label": "fihla"
 }

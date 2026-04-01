@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Caro de Segeda"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|agradecel}}}}"
+}

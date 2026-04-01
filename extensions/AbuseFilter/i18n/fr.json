@@ -63,7 +63,8 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"Zetud"
+			"Zetud",
+			"Escargot bleu"
 		]
 	},
 	"abusefilter-desc": "Applique des heuristiques automatiques aux modifications",
@@ -675,7 +676,7 @@
 	"abusefilter-blocked-domains-attempted": "Le texte que vous voulez publier a été bloqué par notre filtre. Le domaine suivant est bloqué contre tout ajout : $1",
 	"abusefilter-blocked-domains-json-error": "Le JSON doit être un tableau",
 	"abusefilter-blocked-domains-invalid-entry": "L’entrée $1 en JSON n’est pas valide : il devrait s’agir d’un objet avec les champs « domain » (domaine) et « notes » uniquement, les deux étant des chaînes",
-	"abusefilter-blocked-domains-domain-added-comment": "Ajoute le domaine externe bloqué $1 avec comme notes : $2",
+	"abusefilter-blocked-domains-domain-added-comment": "Ajout de $1 aux domaines externes bloqués, avec comme note : $2",
 	"abusefilter-blocked-domains-domain-removed-comment": "Retire le domaine externe bloqué $1 avec comme notes : $2",
 	"log-description-abusefilterprivatedetails": "Ce journal affiche une liste des dates et heures où un utilisateur a accédé aux détails confidentiels d’un journal d’abus.",
 	"log-description-abusefilterblockeddomainhit": "Ces événements suivent les accès aux [[Special:BlockedExternalDomains|domaines bloqués]].",

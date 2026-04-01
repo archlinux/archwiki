@@ -8,9 +8,18 @@
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "2004 से मीडियाविकि की क्लासिक त्वचा, जिसका नाम पृष्ठभूमि में पुस्तक के इकरंगा चित्र से पड़ा।",
-	"monobook.css": "/* यहां रखी गई css मोनोबुक त्वचा का इस्तेमाल करने वाले सभी सदस्योंपर असर करेगी */",
-	"monobook.js": "/* यहाँ पर दी गई जावास्क्रिप्ट मोनोबुक त्वचा का प्रयोग कर रहे सदस्यों के लिए लोड होगी */",
+	"monobook-desc": "2004 से मीडियाविकि का क्लासिक स्किन, जिसका नाम पृष्ठभूमि में पुस्तक के इकरंगा चित्र से पड़ा",
+	"monobook.css": "/* यहाँ के CSS को MonoBook स्किन के उपयोगकर्ताओं के लिए लोड किया जाएगा */",
+	"monobook.js": "/* यहाँ की जावास्क्रिप्ट को MonoBook स्किन के उपयोगकर्ताओं के लिए लोड किया जाएगा */",
+	"monobook-jumptotop": "वापस शीर्ष पर जाएँ",
+	"monobook-jumptopersonal": "सदस्य उपकरण",
+	"monobook-jumptonavigation": "नैविगेशन पर जाएं",
+	"monobook-jumptosearch": "खोज पर जाएँ",
+	"monobook-more-actions": "अधिक",
+	"cactions-mobile": "पृष्ठ क्रियाएँ",
+	"monobook-cactions-label": "पृष्ठ क्रियाएँ",
+	"monobook-notifications-link": "अधिसूचनाएँ ($1)",
+	"monobook-notifications-link-none": "अधिसूचनाएँ",
 	"monobook-view-history": "इतिहास",
-	"monobook-action-undelete": "{{PLURAL:$1|एक हटाया गया|$1 हटाए गए}} बदलाव वापस लायें"
+	"monobook-action-undelete": "{{PLURAL:$1|एक सम्पादन|$1 सम्पादन}} पुनर्स्थापित करें"
 }

@@ -26,6 +26,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\Linker\UserLinkRenderer;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\UserFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class SpecialSuggestedInvestigations extends SpecialPage {
@@ -33,6 +34,7 @@ class SpecialSuggestedInvestigations extends SpecialPage {
 	public function __construct(
 		private readonly IConnectionProvider $connectionProvider,
 		private readonly UserLinkRenderer $userLinkRenderer,
+		private readonly UserFactory $userFactory,
 		private readonly HookRunner $hookRunner,
 		private readonly SuggestedInvestigationsInstrumentationClient $instrumentationClient,
 	) {
@@ -55,6 +57,7 @@ class SpecialSuggestedInvestigations extends SpecialPage {
 		$pager = new SuggestedInvestigationsTablePager(
 			$this->connectionProvider,
 			$this->userLinkRenderer,
+			$this->userFactory,
 			$this->getContext()
 		);
 

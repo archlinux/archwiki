@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Caro de Segeda"
+		]
+	},
+	"vector-languages": "Lénguas",
+	"vector-language-button-label": "{{PLURAL:$1|$1 léngua|$1 lénguas}}",
+	"vector-no-language-button-label": "Añadil lénguas",
+	"vector-action-addsection": "Añadil téma",
+	"vector-action-delete": "Borral",
+	"vector-action-move": "Trasladal",
+	"vector-action-protect": "Protegel",
+	"vector-view-create": "Creal",
+	"vector-view-history": "Vel historial",
+	"vector-more-actions": "Máis",
+	"vector-appearance-label": "Apariéncia",
+	"vector-feature-limited-width-name": "Anchura",
+	"vector-feature-limited-width-0-label": "Anchu",
+	"vector-feature-limited-width-1-label": "Estándar",
+	"vector-feature-custom-font-size-name": "Téxtu",
+	"vector-feature-custom-font-size-0-label": "Pequenu",
+	"vector-feature-custom-font-size-1-label": "Estándar",
+	"vector-feature-custom-font-size-2-label": "Grandi",
+	"skin-theme-name": "Colól",
+	"skin-theme-day-label": "Claru",
+	"skin-theme-night-label": "Oscuru",
+	"skin-theme-os-label": "Automáticu",
+	"skin-theme-exclusion-notice": "Ésta página sémpris está en mó claru.",
+	"vector-toc-label": "Contius",
+	"vector-toc-beginning": "Iniciu",
+	"vector-anon-user-menu-pages": "Páginas pa editóris desconectaus",
+	"vector-main-menu-label": "Menú principal",
+	"vector-feature-custom-font-size-exclusion-notice": "Ésta página sémpris utiliza un tamañu de fónti pequénu",
+	"vector-page-tools-label": "Ferraméntas",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Accións",
+	"vector-unpin-element-label": "ocultal"
+}

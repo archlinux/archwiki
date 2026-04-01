@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Demmy",
-			"TheSymbyat"
+			"TheSymbyat",
+			"ToluAyo"
 		]
 	},
 	"vector-languages": "Àwọn èdè",
@@ -25,6 +26,7 @@
 	"vector-feature-custom-font-size-0-label": "Kékeré",
 	"vector-feature-custom-font-size-1-label": "Àjùmọ̀lò",
 	"vector-feature-custom-font-size-2-label": "Tóbi",
+	"skin-theme-day-label": "Ìmọ́lẹ̀",
 	"vector-toc-label": "Àwọn àkóónú",
 	"vector-toc-beginning": "Ìbẹ̀rẹ̀",
 	"vector-main-menu-label": "Ẹ̀ka àkọ́kọ́",

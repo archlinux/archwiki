@@ -14,21 +14,26 @@ class Less_Tree_Color extends Less_Tree {
 	public function __construct( $rgb, $a = null, ?string $originalForm = null ) {
 		if ( is_array( $rgb ) ) {
 			$this->rgb = $rgb;
-		} elseif ( strlen( $rgb ) == 6 ) {
-			// TODO: Less.js 3.13 supports 8-digit rgba as #RRGGBBAA
+		} elseif ( strlen( $rgb ) >= 6 ) {
 			$this->rgb = [];
-			foreach ( str_split( $rgb, 2 ) as $c ) {
-				$this->rgb[] = hexdec( $c );
+			foreach ( str_split( $rgb, 2 ) as $i => $c ) {
+				if ( $i < 3 ) {
+					$this->rgb[] = hexdec( $c );
+				} else {
+					$this->alpha = hexdec( $c ) / 255;
+				}
 			}
 		} else {
 			$this->rgb = [];
-			// TODO: Less.js 3.13 supports 4-digit short rgba as #RGBA
-			foreach ( str_split( $rgb, 1 ) as $c ) {
-				$this->rgb[] = hexdec( $c . $c );
+			foreach ( str_split( $rgb, 1 ) as $i => $c ) {
+				if ( $i < 3 ) {
+					$this->rgb[] = hexdec( $c . $c );
+				} else {
+					$this->alpha = hexdec( $c . $c ) / 255;
+				}
 			}
 		}
-
-		$this->alpha = is_numeric( $a ) ? $a : 1;
+		$this->alpha ??= ( is_numeric( $a ) ? $a : 1 );
 
 		if ( $originalForm !== null ) {
 			$this->value = $originalForm;
@@ -58,28 +63,56 @@ class Less_Tree_Color extends Less_Tree {
 		$compress = Less_Parser::$options['compress'] && !$doNotCompress;
 		$alpha = $this->fround( $this->alpha );
 
-		// `value` is set if this color was originally
-		// converted from a named color string so we need
-		// to respect this and try to output named color too.
-		if ( $this->value ) {
-			return $this->value;
-		}
-
 		// If we have alpha transparency other than 1.0, the only way to represent it
 		// is via rgba(). Otherwise, we use the hex representation,
 		// which has better compatibility with older browsers.
 		// Values are capped between `0` and `255`, rounded and zero-padded.
-		//
-		// TODO: Less.js 3.13 supports hsla() and hsl() as well
-		if ( $alpha < 1 ) {
-			$values = [];
-			foreach ( $this->rgb as $c ) {
-				$values[] = $this->clamp( round( $c ), 255 );
-			}
-			$values[] = $alpha;
+		$colorFunction = null;
+		$args = [];
+		if ( $this->value ) {
+			if ( strpos( $this->value, 'rgb' ) === 0 ) {
+				if ( $alpha < 1 ) {
+					$colorFunction = 'rgba';
 
+				}
+			} elseif ( strpos( $this->value, 'hsl' ) === 0 ) {
+				if ( $alpha < 1 ) {
+					$colorFunction = 'hsla';
+				} else {
+					$colorFunction = 'hsl';
+				}
+			} else {
+				return $this->value;
+			}
+
+		} else {
+			if ( $alpha < 1 ) {
+				$colorFunction = 'rgba';
+			}
+		}
+
+		switch ( $colorFunction ) {
+			case 'rgba':
+				foreach ( $this->rgb as $c ) {
+					$args[] = $this->clamp( round( $c ), 255 );
+				}
+				$args[] = $this->clamp( $alpha, 1 );
+				break;
+			case 'hsla':
+				$args[] = $this->clamp( $alpha, 1 );
+				// fall through
+			case 'hsl':
+				$color = $this->toHSL();
+				$args = [ $this->fround( $color["h"] ),
+					$this->fround( $color["s"] * 100 ) . "%",
+					$this->fround( $color["l"] * 100 ) . "%",
+					...$args
+				];
+
+		}
+		if ( $colorFunction ) {
 			$glue = ( $compress ? ',' : ', ' );
-			return "rgba(" . implode( $glue, $values ) . ")";
+			return $colorFunction . "(" . implode( $glue, $args ) . ")";
 		}
 
 		$color = $this->toRGB();

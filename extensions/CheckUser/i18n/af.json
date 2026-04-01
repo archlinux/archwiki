@@ -61,5 +61,6 @@
 	"checkuser-ip-auto-reveal-notification-on": "<strong>IP Outo-onthul is aan</strong>",
 	"checkuser-ip-auto-reveal-notification-off": "<strong>IP Outo-onthul is af</strong>",
 	"checkuser-ip-auto-reveal-on-dialog-title": "Skakel IP Outo-onthul aan",
-	"checkuser-ip-auto-reveal-off-dialog-title": "IP Outo-onthul is aan"
+	"checkuser-ip-auto-reveal-off-dialog-title": "IP Outo-onthul is aan",
+	"checkuser-userinfocard-thanks": "Dankbetuigings ontvang: $1 (gegee: $2)"
 }

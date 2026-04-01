@@ -35,10 +35,10 @@
 		"ext-xml": "*",
 		"ext-xmlreader": "*",
 		"guzzlehttp/guzzle": "7.10.0",
-		"justinrainbow/json-schema": "5.3.0",
+		"justinrainbow/json-schema": "5.3.1",
 		"lcobucci/jwt": "4.1.5",
 		"liuggio/statsd-php-client": "1.0.18",
-		"mck89/peast": "1.17.2",
+		"mck89/peast": "1.17.4",
 		"monolog/monolog": "2.9.3",
 		"oojs/oojs-ui": "0.53.0",
 		"pear/mail": "2.0.0",
@@ -64,15 +64,15 @@
 		"wikimedia/common-passwords": "0.5.1",
 		"wikimedia/composer-merge-plugin": "2.1.0",
 		"wikimedia/cssjanus": "2.3.0",
-		"wikimedia/css-sanitizer": "6.1.0",
+		"wikimedia/css-sanitizer": "6.2.1",
 		"wikimedia/html-formatter": "4.1.0",
 		"wikimedia/ip-utils": "5.0.0",
 		"wikimedia/json-codec": "4.0.0",
-		"wikimedia/less.php": "5.2.2",
+		"wikimedia/less.php": "5.5.0",
 		"wikimedia/minify": "2.9.0",
 		"wikimedia/normalized-exception": "2.1.1",
 		"wikimedia/object-factory": "5.0.1",
-		"wikimedia/parsoid": "0.22.0",
+		"wikimedia/parsoid": "0.22.2",
 		"wikimedia/php-session-serializer": "3.0.2",
 		"wikimedia/purtle": "2.0.0",
 		"wikimedia/relpath": "4.0.2",
@@ -103,12 +103,12 @@
 		"nikic/php-parser": "^5.5.0",
 		"php-parallel-lint/php-console-highlighter": "1.0.0",
 		"php-parallel-lint/php-parallel-lint": "1.4.0",
-		"phpunit/phpunit": "9.6.21",
-		"psy/psysh": "^0.12.3",
+		"phpunit/phpunit": "9.6.34",
+		"psy/psysh": "^0.12.19",
 		"seld/jsonlint": "1.11.0",
 		"wikimedia/alea": "1.0.0",
 		"wikimedia/langconv": "^0.5.0",
-		"wikimedia/testing-access-wrapper": "^3.0.0",
+		"wikimedia/testing-access-wrapper": "^3.0.0 || ^4.0.0",
 		"wmde/hamcrest-html-matchers": "^1.0.0"
 	},
 	"replace": {
@@ -182,7 +182,10 @@
 			"@lint",
 			"@phpcs"
 		],
-		"phpunit": "phpunit",
+		"phpunit": [
+			"Composer\\Config::disableProcessTimeout",
+			"phpunit"
+		],
 		"phpunit:unit": "@phpunit --colors=always --testsuite=core:unit,extensions:unit",
 		"phpunit:coverage": "@phpunit --testsuite=core:unit --exclude-group Dump,Broken",
 		"phpunit:coverage-edit": "MediaWiki\\Composer\\ComposerPhpunitXmlCoverageEdit::onEvent",
@@ -215,6 +218,9 @@
 			"wikimedia/composer-merge-plugin": true,
 			"composer/installers": true,
 			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"audit": {
+			"block-insecure": false
 		}
 	},
 	"extra": {

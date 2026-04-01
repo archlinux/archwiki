@@ -9,7 +9,8 @@
 			"Lejonel",
 			"Martinwiss",
 			"Tobulos1",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"nuke": "Massradering",
@@ -20,18 +21,18 @@
 	"nuke-tools": "Det här verktyget gör det möjligt att massradera sidor som nyligen skapats av en viss användare eller IP-adress.\nAnge användarnamnet eller IP-adressen för att se en lista över sidor som kan tas bort, eller lämna tomt för alla användare.",
 	"nuke-tools-notice-error": "Ett fel uppstod när du skulle fastställa din behörighet att massradera sidor, så du har inte behörighet att göra det.",
 	"nuke-submit-list": "Lista sidor",
-	"nuke-submit-delete": "Ta bort valda",
+	"nuke-submit-delete": "Radera",
 	"right-nuke": "Massradera sidor",
 	"nuke-userorip": "Användarnamn, IP-adress eller tomt:",
-	"nuke-maxpages": "Maximalt antal sidor:",
+	"nuke-maxpages": "Antal sidor att hämta (max 500):",
 	"nuke-editby": "Skapades av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Sidan '''$1''' har raderats.",
 	"nuke-not-deleted": "Sidan [[:$1]] '''kunde inte''' raderas.",
 	"nuke-delete-more": "[[Special:Nuke|Radera fler sidor]]",
 	"nuke-pattern": "SQL LIKE-mönster (t.ex %) för sidnamnet:",
-	"nuke-nopages-global": "Det finns inga sidtitlar som matchar din sökning.",
-	"nuke-viewchanges": "visa ändringar",
-	"nuke-namespace": "Begränsa till namnrymd:",
+	"nuke-nopages-global": "Inga sidor matchar sökningen.",
+	"nuke-viewchanges": "historik",
+	"nuke-namespace": "Begränsa till namnrymder:",
 	"nuke-linkoncontribs": "massradering",
 	"nuke-linkoncontribs-text": "Radera alla sidor där {{GENDER:$1|användaren}} är den enda bidragsgivaren"
 }

@@ -49,8 +49,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 		// To avoid API warning, register the parameter used to bust browser cache
 		$this->getMain()->getVal( '_' );
 
-		if ( !$this->getUser()->isRegistered() ) {
-			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
+		if ( !$this->getAuthority()->isAllowed( 'echo-read-notifications' ) ) {
+			if ( !$this->getAuthority()->isRegistered() ) {
+				$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
+			} else {
+				$this->dieWithError( 'apierror-permissiondenied', 'echo-read-notifications' );
+			}
 		}
 
 		$params = $this->extractRequestParams();

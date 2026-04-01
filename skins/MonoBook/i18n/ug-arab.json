@@ -1,12 +1,23 @@
 {
 	"@metadata": {
 		"authors": [
-			"Arlin"
+			"Arlin",
+			"Sahran"
 		]
 	},
 	"skinname-monobook": "MonoBook",
+	"monobook-desc": "2004-يىلىدىن باشلانغان ئەنئەنىۋى MediaWiki تېرىسى، ئىسمى بىر كىتابنىڭ مۇقاۋىسىنىڭ ئارقىسىدىكى رەڭسىز رەسىمدىن كەلگەن",
 	"monobook.css": "/* CSS placed here will affect users of the Monobook skin */",
 	"monobook.js": "/* Any JavaScript here will be loaded for users using the MonoBook skin */",
+	"monobook-jumptotop": "چوققىغا قايت",
+	"monobook-jumptopersonal": "ئىشلەتكۈچى قورالى",
+	"monobook-jumptonavigation": "يولباشچىغا ئاتلا",
+	"monobook-jumptosearch": "ئىزدەشكە ئاتلا",
+	"monobook-more-actions": "تېخىمۇ كۆپ",
+	"cactions-mobile": "بەت مەشغۇلاتى",
+	"monobook-cactions-label": "بەت مەشغۇلاتى",
+	"monobook-notifications-link": "ئۇقتۇرۇش ($1)",
+	"monobook-notifications-link-none": "ئۇقتۇرۇش",
 	"monobook-view-history": "تارىخ",
-	"monobook-action-undelete": "ئۆچۈرۈلگەن {{PLURAL:$1|بىر تەھرىر|$1 تەھرىر}} ئەسلىگە كەلتۈرۈلدى"
+	"monobook-action-undelete": "ئۆچۈرۈلگەن {{PLURAL:$1|تەھرىر|$1 تەھرىر}} ئەسلىگە كەلتۈرىدۇ"
 }

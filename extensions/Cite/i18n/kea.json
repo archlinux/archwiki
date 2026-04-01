@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"GrogeXaKaba",
+			"Letra.berdi"
+		]
+	},
+	"cite_error": "Éru di sitason: $1",
+	"cite-tracking-category-cite-error": "Pájinas ku érus di rafirénsa",
+	"cite-tracking-category-cite-error-desc": "Pájinas na es katiguria ta konte érus na utilizason di itikétas di rafirénsa.",
+	"cite-tracking-category-cite-diffing-error": "Pájinas ku érus di rafirénsa ki ta disona kunparasons vizual",
+	"cite-tracking-category-cite-diffing-error-desc": "Pájinas na es katiguria ta konte érus na utilizason di itikétas di rafirénsa, i es érus ka é mustradu di un mésmu fórma na analizador sintátiku bédju i na Parsoid.",
+	"cite-tracking-category-ref-details": "Pájinas ki ta uza subirafirénsas",
+	"cite-tracking-category-ref-details-desc": "Pájinas di es katiguria ta uza atributu \"ditalis\" di itikéta &lt;ref>.",
+	"cite-reference-previews-reference": "Rafirénsa",
+	"cite-reference-previews-book": "Rafirénsa di libru",
+	"cite-reference-previews-journal": "Rafirénsa di piriódiku",
+	"cite-reference-previews-news": "Rafirénsa di nóbas",
+	"cite-reference-previews-note": "Ozerbason",
+	"cite-reference-previews-web": "Rafirénsa di internéti",
+	"cite-reference-previews-collapsible-placeholder": "Es rafirénsa ta nklui un figura ki ka ta kebe na privizualizason",
+	"cite-reference-previews-gadget-conflict-info-navpopups": "Bu tene faraménta [[$1|Nabegason flutuanti]] ativadu, puris, bu ka ta udja privizualizasons furnisidu pa es funsonalidadi. Dipendendu di uiki uzadu, kel faraménta podi tene un nómi ku lébi diferénsa. Si bu kuntinua ta spurmenta prabulémas, di sumóla, fasi un ravizon na bu faraméntas i kódis di uzuári, nkluzivi na kes glubal.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Bu tene faraménta [[$1|Dikas di Rafirénsa]] ativadu, puris, bu ka ta udja privizualizasons di rafirénsas, ma bu inda ta udja privizualizasons di pájinas. Dipendendu di uiki uzadu, kel faraménta podi tene un nómi ku lébi diferénsa. Si bu kuntinua ta spurmenta prabulémas, di sumóla, fasi un ravizon na bu faraméntas i kódis di uzuári, nkluzivi na kes glubal.",
+	"cite-reference-previews-gadget-conflict-info-navpopups-reftooltips": "Bu tene faraméntas [[$1|Nabegason flutuanti]] ku [[$1|Dikas di Rafirénsa]] ativadu, puris, bu ka ta udja privizualizasons furnisidu pa es funsonalidadi. Dipendendu di uiki uzadu, kes faraménta podi tene un nómi ku lébi diferénsa. Si bu kuntinua ta spurmenta prabulémas, di sumóla, fasi un ravizon na bu faraméntas i kódis di uzuári, nkluzivi na kes glubal.",
+	"cite-reference-previews-preference-label": "Ativa privizualizasons di rafirénsa (obute déntu faxi privizualizasons di un rafirénsa duranti letura di un pájina)",
+	"cite_references_link_accessibility_label": "Bai pa riba",
+	"cite_references_link_many_accessibility_label": "Bai ba:",
+	"cite_references_link_accessibility_back_label": "Bolta pa riba",
+	"cite_section_preview_references": "Privizualizason di rafirénsas",
+	"cite_warning_sectionpreview_no_text": "Itikéta <code>&lt;ref&gt</code> ku nómi <code>$1</code> ka podi fasi párti di privizualizason, pabia el sta difinidu fóra di es sekson atual o el nin ka foi difinidu.",
+	"cite-wikieditor-tool-reference": "Rafirénsa",
+	"cite-wikieditor-help-page-references": "Rafirénsas",
+	"cite-wikieditor-help-content-reference-description": "Rafirénsa",
+	"cite-wikieditor-help-content-named-reference-description": "Rafirénsa numiadu",
+	"cite-wikieditor-help-content-rereference-description": "Uzu kunplimentar di un mésmu rafirénsa",
+	"cite-wikieditor-help-content-sub-reference-description": "Uzu kunplimentar di un mésmu rafirénsa, ku más ditali",
+	"cite-wikieditor-help-content-showreferences-description": "Mustra rafirénsas",
+	"cite-wikieditor-help-content-reference-example-text1": "Testu di pájina.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Testu di linki], testu kunplimentar.",
+	"communityconfiguration-cite-title": "Sita",
+	"communityconfiguration-cite-description": "Kustumiza furmatu i parsénsa di rafirénsas.",
+	"cite-configuration-submit": "Garda alterasons"
+}

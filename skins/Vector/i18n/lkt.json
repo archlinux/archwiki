@@ -1,11 +1,47 @@
 {
 	"@metadata": {
 		"authors": [
-			"Peter57770"
+			"Peter57770",
+			"AmazingJus",
+			"Tuwewanzi"
 		]
 	},
+	"vector-languages": "Iyápi",
+	"vector-language-button-label": "{{PLURAL:$1|$1 iyápi}}",
+	"vector-no-language-button-label": "Iyápi sáƞpȟa",
+	"vector-action-addsection": "Wóiwoglake yeyá {{GENDER:|yo|ye|yo/ye}}",
+	"vector-action-delete": "Iháƞgya {{GENDER:|yo|ye|yo/ye}}",
+	"vector-action-move": "Tȟokšu̇ {{GENDER:|wo|we|wo/we}}",
+	"vector-action-protect": "Nakíčižiƞ {{GENDER:|yo|ye|yo/ye}}",
+	"vector-action-undelete": "Yukíni {{GENDER:|yo|ye|yo/ye}}",
+	"vector-view-create": "Káǧa",
 	"vector-view-edit": "Wayútȟokeča",
-	"vector-view-history": "Takú eháŋni blawá",
-	"vector-view-view": "Yawá yo/ye",
-	"vector-more-actions": "Táku kȟó"
+	"vector-view-history": "Eháŋni wóyakapi waŋyáŋka",
+	"vector-view-view": "Yawá",
+	"vector-view-viewsource": "Óhiyu kiŋ waŋyáŋka {{GENDER:|yo|ye|yo/ye}}",
+	"vector-more-actions": "Táku kȟó",
+	"vector-appearance-label": "Owáƞyaƞke",
+	"vector-feature-limited-width-name": "Tíŋsko?",
+	"vector-feature-limited-width-0-label": "Otȟáƞka",
+	"vector-feature-limited-width-1-label": "Ikčé",
+	"vector-feature-custom-font-size-name": "Wičhóiye",
+	"vector-feature-custom-font-size-0-label": "Čístila",
+	"vector-feature-custom-font-size-1-label": "Ikčé",
+	"vector-feature-custom-font-size-2-label": "Tȟáƞka",
+	"skin-theme-name": "Wíyuƞpi",
+	"skin-theme-day-label": "Ožáƞžaƞ",
+	"skin-theme-night-label": "Okpáza",
+	"skin-theme-os-label": "Naidepi",
+	"skin-theme-exclusion-notice": "Óhiƞniyaƞ oyubláye kiƞ le ožáƞžaƞ owáƞyaƞke uƞ.",
+	"vector-toc-label": "Táku lel owápi",
+	"vector-toc-beginning": "Otȟókahe",
+	"vector-anon-user-menu-pages": "Tuwá yutȟókeča čhaž'óigwapi šni kiŋ tȟaóyublaye",
+	"vector-toc-menu-tooltip": "Táku lel Owápi",
+	"vector-site-nav-label": "Otȟáwokaške",
+	"vector-feature-custom-font-size-exclusion-notice": "Óhiƞniyaƞ oyubláye kiƞ le wičhóiye čístila uƞ",
+	"vector-page-tools-label": "Wíkhičhaŋye",
+	"vector-page-tools-general-label": "Ikče-wíkhičhaŋye",
+	"vector-page-tools-actions-label": "Oȟ'áƞ kiƞ",
+	"vector-unpin-element-label": "naȟmá {{GENDER:|yo|ye|yo/ye}}",
+	"vector-page-tools-nav-label": "Oyúblaye wíkhičhaŋye"
 }

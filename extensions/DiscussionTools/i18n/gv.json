@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"MacTire02"
+		]
+	},
+	"discussiontools": "Greienyn resoonaght",
+	"discussiontools-autotopicsubpopup-body": "Bee fogrey currit dhyt tra vees çhaghteraght noa er ny phostal ‘sy resoonaght shoh. Foddee oo soiaghyn dt’ograghyn y chochiartaghey ayns tosheeaghtyn.",
+	"discussiontools-autotopicsubpopup-dismiss": "OK, ta mee toiggal",
+	"discussiontools-defaultsummary-reply": "Freggyrt",
+	"discussiontools-newtopic-missing-title": "Kiarail enmys da {{GENDER:|dty}} vun-chooish resoonaght, my sailt.",
+	"discussiontools-newtopic-placeholder-title": "Bun-chooish",
+	"discussiontools-replylink": "{{GENDER:|freggyr}}",
+	"discussiontools-replywidget-advanced": "Cast",
+	"discussiontools-replywidget-cancel": "Cur ass",
+	"discussiontools-replywidget-mode-source": "Bun",
+	"discussiontools-replywidget-mode-visual": "Reayrtagh",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Cur}} bun-chooish rish",
+	"discussiontools-replywidget-placeholder-newtopic": "Cur-sheese",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Freggyr}} da {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Roie-haishbynys",
+	"discussiontools-replywidget-reply": "{{GENDER:|Freggyr}}",
+	"discussiontools-replywidget-summary": "Giare-choontys",
+	"discussiontools-replywidget-watchthis": "Cur y duillag shoh rish dty [[Special:Watchlist|rolley arrey]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ymmydeyr|ymmydeyryn}} ‘sy resoonaght",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|çhaghteraght|çhaghteraghtyn}}",
+	"discussiontools-topicheader-latestcomment": "Çhaghteraght s’jerree: $1",
+	"discussiontools-topicsubscription-button-subscribe": "fo-screeu",
+	"discussiontools-topicsubscription-button-subscribe-label": "Fo-screeu",
+	"discussiontools-topicsubscription-button-unsubscribe": "cur stap er fo-screeu",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Cur stap er fo-screeu",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Nee {{GENDER:|oo}} feddyn fograghyn bentyn rish çhaghteraghtyn noa ‘sy vun-chooish shoh.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|T’ou}} fo-screeuit nish!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Cha jean {{GENDER:|oo}} feddyn fograghyn bentyn rish çhaghteraghtyn noa ‘sy vun-chooish shoh.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Cha nel {{GENDER:|oo}} fo-screeuit nish."
+}

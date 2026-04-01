@@ -1,15 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"DaSupremo"
+			"DaSupremo",
+			"Yaw tuba"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Reply",
+	"discussiontools-newtopic-missing-title": "Abeg amke you provide title give {{GENDER:|your}} discussion topic.",
+	"discussiontools-newtopic-placeholder-title": "Subject",
 	"discussiontools-replylink": "{{GENDER:|reply}}",
 	"discussiontools-replywidget-advanced": "Advanced",
 	"discussiontools-replywidget-cancel": "Cancel am",
 	"discussiontools-replywidget-mode-source": "Source",
 	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Made you Add}} topic",
+	"discussiontools-replywidget-placeholder-newtopic": "Description",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Reply}} go {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Preview",
 	"discussiontools-replywidget-reply": "{{GENDER:|Reply}}",

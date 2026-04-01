@@ -4,7 +4,7 @@
  */
 class Less_Visitor {
 
-	protected $methods = [];
+	/** @var array */
 	protected $_visitFnCache = [];
 
 	public function __construct() {
@@ -15,7 +15,7 @@ class Less_Visitor {
 	public function visitObj( $node ) {
 		static $funcNames = [];
 
-		if ( !$node || !is_object( $node ) ) {
+		if ( !$node instanceof Less_Tree ) {
 			return $node;
 		}
 
@@ -41,7 +41,7 @@ class Less_Visitor {
 				$node = $newNode;
 			}
 
-			if ( $visitDeeper && is_object( $node ) ) {
+			if ( $visitDeeper && $node instanceof Less_Tree ) {
 				$node->accept( $this );
 			}
 

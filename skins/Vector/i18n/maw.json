@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Christian Yakubu"
+			"Christian Yakubu",
+			"Yambutigra"
 		]
 	},
 	"vector-languages": "Bula",
@@ -12,8 +13,10 @@
 	"vector-action-move": "Vuuma",
 	"vector-action-protect": "Gur",
 	"vector-view-create": "Namma",
+	"vector-view-history": "Nya gban  maligu",
 	"vector-more-actions": "Din pasi",
 	"vector-appearance-label": "Yin paalo",
+	"vector-feature-limited-width-name": "Yalisim",
 	"vector-feature-limited-width-0-label": "Yɛlima",
 	"vector-feature-limited-width-1-label": "Din sumsi sheem",
 	"vector-feature-custom-font-size-name": "Sɔbbu",
@@ -24,9 +27,11 @@
 	"skin-theme-day-label": "Neesim",
 	"skin-theme-night-label": "Zibsim",
 	"skin-theme-os-label": "Toritori",
+	"skin-theme-exclusion-notice": "Gbaŋ ŋɔ neeri mi",
 	"vector-toc-label": "Din be di puuni",
 	"vector-toc-beginning": "Di Piligu",
 	"vector-main-menu-label": "Yiŋni dundɔŋi",
+	"vector-feature-custom-font-size-exclusion-notice": "Gbaŋ ŋɔ sobi nyɛla pɔra",
 	"vector-page-tools-label": "Kpatuɣa dima",
 	"vector-page-tools-general-label": "Di kolin vaai",
 	"vector-page-tools-actions-label": "Tuuma",

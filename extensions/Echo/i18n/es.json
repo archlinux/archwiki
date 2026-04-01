@@ -274,5 +274,8 @@
 	"action-manage-all-push-subscriptions": "gestionar todas las suscripciones push",
 	"group-push-subscription-manager": "Gestores de notificaciones push",
 	"group-push-subscription-manager-member": "{{GENDER:$1|gestor|gestora}} de notificaciones push",
-	"grouppage-push-subscription-manager": "{{ns:project}}:Gestores de notificaciones push"
+	"grouppage-push-subscription-manager": "{{ns:project}}:Gestores de notificaciones push",
+	"notification-subject-email-verify-email-reminder": "Confirma {{GENDER:$1|tu}} correo electrónico",
+	"notification-link-text-verify-email-reminder": "Gestionar las preferencias de correo electrónico",
+	"notification-verify-email-reminder-link-label": "Confirmar la dirección de correo electrónico"
 }

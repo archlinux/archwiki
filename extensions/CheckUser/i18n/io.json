@@ -26,6 +26,8 @@
 	"checkuser-search-submit": "Serchar",
 	"checkuser-log-search-target": "Emo:",
 	"checkuser-ipeditcount": "~$1 di omna uzanti",
+	"checkuser-temporary-accounts-onboarding-dialog-previous-label": "Antea",
+	"checkuser-temporary-accounts-onboarding-dialog-next-label": "Sequanta",
 	"checkuser-investigate-subtitle-cancel-button-label": "Nuligez",
 	"checkuser-investigate-subtitle-continue-button-label": "Durar",
 	"checkuser-investigate-tab-preliminary-check": "Informo pri la konto",

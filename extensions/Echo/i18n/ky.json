@@ -64,7 +64,7 @@
 	"notification-link-text-expand-notice-count": "{{PLURAL:$1|$1 кабарламаны}} көрүү",
 	"notification-link-text-expand-all-count": "{{PLURAL:$1|$1 кабарламаны}} көрүү",
 	"notification-link-text-collapse-all": "түрүү",
-	"notification-link-text-view-message": "Билдирүүнү окуу",
+	"notification-link-text-view-message": "Билдирмени окуу",
 	"notification-link-text-view-page": "Баракты көрүү",
 	"notification-compact-header-page-linked": "\"<strong>$1</strong>\" барагы менен байланыштырылды.",
 	"notification-link-text-what-links-here": "Бул баракка бардык шилтемелер",

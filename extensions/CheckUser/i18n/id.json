@@ -22,7 +22,8 @@
 			"Rebeccayoga",
 			"Rex",
 			"Sumbukompor",
-			"Veracious"
+			"Veracious",
+			"Penyuwangi"
 		]
 	},
 	"checkuser-summary": "Peralatan ini memindai perubahan terbaru untuk mengetahui IP seorang pengguna atau menampilkan data suntingan/pengguna untuk suatu IP.\nPengguna dan suntingan suatu IP dapat diketahui melalui kepala XFF dengan menambahkan \"/xff\" pada IP tersebut. Alat ini mendukung baik IPv4 (CIDR $1-32) maupun IPv6 (CIDR $2-128).\nKarena alasan kinerja, maksimum hanya 5000 suntingan yang dapat diambil.\nHarap gunakan peralatan ini sesuai dengan kebijakan yang ada.",
@@ -123,7 +124,7 @@
 	"checkuser-investigate-duration-option-2w": "2 Pekan lalu",
 	"checkuser-investigate-duration-option-30d": "30 hari terakhir",
 	"checkuser-investigate-reason-label": "Alasan",
-	"checkuser-investigate-preliminary-notice-ip-targets": "Tab Informasi akun tidak menyertakan informasi apa pun tentang IP. Lihat <span class=\"plainlinks\">[tab IP & Agen pengguna $1]</span> untuk detail tersebut.",
+	"checkuser-investigate-preliminary-notice-ip-targets": "Tab Informasi akun tidak menyertakan informasi apa pun tentang IP. Lihat <span class=\"plainlinks\">[tab IP & Agen pengguna $1]</span> untuk rincian tersebut.",
 	"checkuser-investigate-preliminary-table-cell-blocked": "Diblokir",
 	"checkuser-investigate-preliminary-table-cell-edits": "$1 {{PLURAL:$1|suntingan}}",
 	"checkuser-investigate-preliminary-table-cell-unblocked": "Tidak diblokir",

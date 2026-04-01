@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Milicevic01"
+			"Milicevic01",
+			"Kizule"
 		]
 	},
 	"editcheck-dialog-action-no": "Не",
 	"editcheck-dialog-action-yes": "Да",
 	"editcheck-dialog-action-decline": "Одбаци",
+	"editcheck-dialog-action-revise": "Ревидирај",
 	"editcheck-dialog-action-recheck": "Провери",
 	"editcheck-dialog-action-back": "Назад",
 	"editcheck-dialog-action-submit": "Проследи",
@@ -22,9 +24,13 @@
 	"editcheck-dialog-title": "Пре објављивања",
 	"editcheck-copyvio-title": "Налепљен садржај",
 	"editcheck-copyvio-description": "Опште правило је да се не копира текст из других извора. Копирање туђих текстова је [$1 кршење ауторских права и плагијат]. И такође може довести до уклањања садржаја и блокаде.",
+	"editcheck-copyvio-prompt": "Јесте ли ви написали текст?",
 	"editcheck-copyvio-action-keep": "Да, задржи",
 	"editcheck-copyvio-action-remove": "Не, уклони",
+	"editcheck-copyvio-keep-wrote": "Ја сам ово написао и није другде објављено",
+	"editcheck-copyvio-keep-permission": "Овај садржај је под слободном лиценцом",
 	"editcheck-copyvio-keep-other": "Друго",
+	"editcheck-tone-title": "Ревидирај тон?",
 	"editcheck-tone-reject-appropriate": "Тон је примеран",
 	"editcheck-tone-reject-uncertain": "Не знам како да ревидирам тон",
 	"editcheck-tone-reject-other": "Друго",

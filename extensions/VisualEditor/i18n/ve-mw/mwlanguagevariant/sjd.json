@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Merrahtar"
+		]
+	},
+	"visualeditor-mwlanguagevariant-name": "Кӣл нэ̄мм: $1",
+	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Кӣл ко̄дт",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Кӣлл",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Ка̄ййв",
+	"visualeditor-mwlanguagevariantcontextitem-title-name": "Кӣл нэ̄мм",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Кӣл",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Кӣл ко̄дт",
+	"visualeditor-mwlanguagevariantinspector-filter-text-placeholder": "Фильтруввма текст",
+	"visualeditor-mwlanguagevariantinspector-title-name": "Кӣл нэ̄мм"
+}

@@ -16,7 +16,9 @@
 			"Xiplus",
 			"列维劳德",
 			"捍粵者",
-			"沈澄心"
+			"沈澄心",
+			"Peterxy12",
+			"LowensteinYang"
 		]
 	},
 	"discussiontools": "討論工具（Discussion tools）",
@@ -98,7 +100,7 @@
 	"discussiontools-notification-topic-hidden": "(話題已移除)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1{{GENDER:$2|回覆了}}「<strong>$4</strong>」。",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "「<strong>$3</strong>」有{{PLURAL:$1|一則新回覆|$1則新回覆|100=99+則新回覆}}。",
-	"discussiontools-notification-subscribed-new-comment-header-compact": "$1：<em>$3</em>。",
+	"discussiontools-notification-subscribed-new-comment-header-compact": "$1：<em>$3</em>",
 	"discussiontools-notification-subscribed-new-comment-view": "查看留言",
 	"discussiontools-pageframe-latestcomment": "由$2在話題$3上作出的最新留言：$1",
 	"discussiontools-pageframe-latestcomment-notopic": "$2的最新留言：$1",
@@ -166,7 +168,7 @@
 	"discussiontools-target-heading-missing": "無法找到此話題，可能已被刪除、移動、或重新命名。",
 	"discussiontools-target-comment-found-moved": "該留言雖無法在此頁面上找到，但存在於以下{{PLURAL:$1|頁面}}：",
 	"discussiontools-target-heading-found-moved": "該話題雖無法在此頁面上找到，但存在於以下{{PLURAL:$1|頁面}}：",
-	"discussiontools-topicheader-authorcount": "$1{{PLURAL:$1|個人}}參與討論",
+	"discussiontools-topicheader-authorcount": "$1{{PLURAL:$1|人}}參與討論",
 	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|則留言}}",
 	"discussiontools-topicheader-latestcomment": "最新留言：$1",
 	"discussiontools-topicsubscription-action-subscribe-button": "訂閱",

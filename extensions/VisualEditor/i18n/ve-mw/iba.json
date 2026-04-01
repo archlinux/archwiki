@@ -341,7 +341,7 @@
 	"visualeditor-savedialog-title-save": "Simpan ubah nuan",
 	"visualeditor-section-body-placeholder": "Bagi baru",
 	"visualeditor-section-title-placeholder": "Subjek",
-	"visualeditor-loaderror-revidconflict": "ID revisyen ti dipulaika server enda setipak (dokumen: $1 , metadata: $2).",
+	"visualeditor-loaderror-revidconflict": "ID revisyen ti dipulaika penginta enda setipak (dokumen: $1 , metadata: $2).",
 	"visualeditor-loaderror-wrongmode": "Uji muat editor dalam mod ti salah (bansa data: \"$1\", mod editor: \"$2\").",
 	"visualeditor-settings-tool": "Atur lambar",
 	"visualeditor-special-characters-group-other": "Suah dikena",

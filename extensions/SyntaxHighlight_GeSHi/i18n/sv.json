@@ -5,11 +5,14 @@
 			"Lejonel",
 			"Lokal Profil",
 			"Nirmos (Wikimedia)",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
-	"syntaxhighlight-desc": "Ger syntaxmarkering med [http://pygments.org/ Pygments] inuti <code>&lt;syntaxhighlight&gt;</code>-taggar",
+	"syntaxhighlight-desc": "Ger syntaxmarkering <code>&lt;syntaxhighlight&gt;</code> med [http://pygments.org/ Pygments - Python syntaxmarkerare]",
+	"syntaxhighlight-error-category": "Sidor med syntaxframhävningsfel",
 	"syntaxhighlight-enclose-category": "Sidor som använder föråldrade enclose-attribut",
+	"syntaxhighlight-source-category": "Sidor med föråldrade source-taggar",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Språk",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ingen)",

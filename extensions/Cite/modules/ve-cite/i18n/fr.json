@@ -87,7 +87,7 @@
 	"cite-ve-dialog-reference-options-section": "Options",
 	"cite-ve-dialog-reference-placeholder": "Écrivez ou collez ici votre référence, ou bien insérez un modèle de référence.",
 	"cite-ve-dialog-reference-title": "Référence",
-	"cite-ve-dialog-reference-add-details-button": "Ajouter des détails",
+	"cite-ve-dialog-reference-add-details-button": "Ajouter une précision (page, volume,…)",
 	"cite-ve-dialog-subreference-help-dialog-title": "Précisions",
 	"cite-ve-dialog-subreference-help-dialog-head": "Nouveau : Ajouter une précision à une référence réutilisée",
 	"cite-ve-dialog-subreference-help-dialog-content": "Lorsque vous réutilisez une référence, vous pouvez désormais ajouter différentes précisions tels qu'un numéro de page ou une citation sans répéter la référence complète.<br><br> <strong>Utilisez cela pour :</strong><ul><li>citer différentes pages ou volumes d'un livre</li><li>spécifier un horodatage dans un podcast ;</li><li>ajouter une citation pertinente d'une source.</li></ul>",

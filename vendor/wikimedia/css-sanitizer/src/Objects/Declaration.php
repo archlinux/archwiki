@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Wikimedia\CSS\Util;
 
 /**
- * Represent a CSS declaration
+ * Represent a CSS declaration, eg. `margin: 10px 20px;`
  */
 class Declaration implements DeclarationOrAtRule {
 

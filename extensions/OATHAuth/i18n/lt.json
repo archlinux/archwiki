@@ -3,7 +3,8 @@
 		"authors": [
 			"Eitvys200",
 			"Hugo.arg",
-			"Nokeoo"
+			"Nokeoo",
+			"Tomasdd"
 		]
 	},
 	"oathauth-desc": "Teikia autentifikavimo palaikymą naudojant HMAC pagrįstus vienkartinius slaptažodžius",
@@ -20,7 +21,7 @@
 	"oathauth-step1-test": "Atsisiųskite dviejų veiksnių autentifikavimo programą. Tai gali būti programėlė mobiliesiems (pvz., „Google Authenticator“) arba darbalaukio programa.",
 	"oathauth-step2": "2 žingsnis: nuskaitykite QR kodą",
 	"oathauth-step2alt": "Arba įveskite paslaptį rankiniu būdu:",
-	"oathauth-step4": "4 žingsnis: patvirtinimas",
+	"oathauth-step4": "5 žingsnis: patvirtinimas",
 	"oathauth-entertoken": "Įveskite kodą iš autentifikavimo įrenginio, kad patvirtintumėte:",
 	"oathauth-disable-for-user": "Išjungti dviejų veiksnių autentifikavimą naudotojui",
 	"oathauth-verify-for-user": "Patvirtinti ar naudotojas turi įjungtą dviejų veiksnių autentifikavimą",

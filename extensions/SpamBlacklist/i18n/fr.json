@@ -7,7 +7,8 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Escargot bleu"
 		]
 	},
 	"spam-blacklist": " #<!-- Laissez cette ligne telle quelle --><pre>\n# Les liens externes faisant partie de cette liste seront bloqués lors de leur insertion dans une page.\n# Cette liste n’affecte que ce wiki ; référez-vous également à la liste globale de blocage.\n# Pour la documentation, voir : https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist/fr\n#\n# La syntaxe est la suivante :\n#  * tout texte qui suit un « # » est considéré comme un commentaire ;\n#  * toute ligne non vide est un fragment d’expression rationnelle qui n’analysera que les hôtes dans les liens hypertextes.\n\n #</pre><!-- Laissez cette ligne telle quelle -->",

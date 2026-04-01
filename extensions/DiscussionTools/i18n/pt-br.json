@@ -167,7 +167,6 @@
 	"discussiontools-replywidget-terms-click": "Ao clicar em “$1”, {{GENDER:|você}} concorda com os termos de uso dessa wiki.",
 	"discussiontools-replywidget-transcluded": "Seu comentário será salvo em [[$1]].",
 	"discussiontools-replywidget-watchthis": "Adicionar essa página à sua [[Special:Watchlist|lista de páginas vigiadas]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Não foi possível encontrar este comentário. Ele pode ter sido eliminado ou movido.",
 	"discussiontools-target-comments-missing": "Não foi possível encontrar os comentários novos. Eles podem ter sido eliminados ou movidos.",
 	"discussiontools-target-heading-missing": "Não foi possível encontrar este tópico. Ele pode ter sido eliminado, movido ou renomeado.",

@@ -4,12 +4,15 @@
 			"Bluehill",
 			"MemphisA5",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Jango",
+			"Minejango2"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "ID가 ' $1 '인 댓글을 찾을 수 없습니다.",
 	"apierror-discussiontools-commentname-ambiguous": "이름이 '$1'인 댓글이 여러 개 있습니다. <var>commentid</var>는 필수입니다.",
 	"apierror-discussiontools-commentname-notfound": "이름이 '$1'인 댓글을 찾을 수 없습니다.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "문서에 토론이 전혀 포함되지 않았습니다.",
 	"apierror-discussiontools-formtoken-used": "답변이 이미 게시되었습니다. 답변을 보려면 페이지를 다시 로드하십시오.",
 	"apierror-discussiontools-subscription-failed-add": "이 주제를 구독하지 못했습니다.",
 	"apierror-discussiontools-subscription-failed-remove": "이 주제의 구독을 취소하지 못했습니다.",

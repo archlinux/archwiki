@@ -4,5 +4,11 @@
 			"Yupik"
 		]
 	},
-	"oathauth-enteruser": "Õõʹnninõmm:"
+	"oathauth-recoverycodes-copy": "Kopiââʹst",
+	"oathauth-enteruser": "Õõʹnninõmm:",
+	"oathauth-notifications-disable-help": "Vuäʹppõõzz",
+	"oathauth-password-header": "Peittsääʹnn",
+	"oathauth-password-action": "Vaajât peittsääʹn",
+	"oathauth-authenticator-delete": "Jaukkâd",
+	"oathauth-authenticator-delete-text": "jaukkâd"
 }

@@ -16,11 +16,22 @@
 			"Tommy Kronkvist",
 			"Warrakkk",
 			"WikiPhoenix",
-			"아라"
+			"아라",
+			"Stefan2255"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck tror att nytt innehåll har lagts till på sidan",
 	"tag-editcheck-newreference-description": "En referens lades till i sidan",
 	"tag-editcheck-references-description": "EditCheck tror att en referens kan ha behövts",
+	"tag-editcheck-references-activated": "Edit Check (referenser) aktiverad",
+	"tag-editcheck-references-activated-description": "EditCheck tror att en referens kan ha behövts, och användargränssnittet visades",
+	"tag-editcheck-references-shown": "Edit Check (referenser) visas",
+	"tag-editcheck-references-shown-description": "EditCheck tror att en referens kan ha behövts, och användargränssnittet visades",
+	"tag-editcheck-tone-description": "EditCheck upptäckte ett potentiellt problem med tonen i visst tillagt innehåll.",
+	"tag-editcheck-tone-shown": "Edit Check (ton) visas",
+	"tag-editcheck-tone-shown-description": "EditCheck tror att en justering av tonen i en del innehåll kan ha behövts, och användargränssnittet visades.",
+	"tag-editcheck-paste-shown": "Edit Check (klistra in) visas",
+	"tag-editcheck-paste-shown-description": "EditCheck bad om förtydligande om innehåll som redaktören klistrade in, vilket sedan antingen togs bort eller bekräftades vara tillåtet.",
 	"tag-visualeditor": "Visuell redigering",
 	"tag-visualeditor-description": "Redigering gjord med hjälp av [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuell redigering]]",
 	"tag-visualeditor-needcheck": "Visuell redigering: Kontrollera",

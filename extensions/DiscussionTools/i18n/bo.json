@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dhondup"
+		]
+	},
+	"discussiontools-newtopic-placeholder-title": "བརྗོད་གཞི།",
+	"discussiontools-replywidget-cancel": "ཕྱིར་འཐེན།",
+	"discussiontools-replywidget-mode-source": "མ་ཡིག",
+	"discussiontools-replywidget-mode-visual": "ཐད་མཐོང་།",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|སྣོན།}} བརྗོད་གཞི།",
+	"discussiontools-replywidget-reply": "{{GENDER:|ལན།}}"
+}

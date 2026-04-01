@@ -9,7 +9,7 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  * @covers \MediaWiki\Extension\Math\WikiTexVC\Parser
  *
- * @group Stub
+ * @group Standalone
  */
 class ChemRegressionTest extends MediaWikiUnitTestCase {
 	/** @var TexVC */

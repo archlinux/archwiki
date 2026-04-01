@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Seipinne"
+			"Seipinne",
+			"Yupik"
 		]
 	},
+	"oathauth-recoverycodes-download": "Luođii",
 	"oathauth-enteruser": "Kevtteenommâ:",
-	"oathauth-notifications-disable-help": "Iše"
+	"oathauth-notifications-disable-help": "Iše",
+	"oathauth-password-header": "Syelisääni",
+	"oathauth-password-action": "Molso syelisääni"
 }

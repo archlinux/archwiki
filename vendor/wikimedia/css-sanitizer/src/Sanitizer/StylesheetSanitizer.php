@@ -101,6 +101,7 @@ class StylesheetSanitizer extends Sanitizer {
 			$object = $object->getRuleList();
 		}
 		if ( !$object instanceof RuleList ) {
+			'@phan-var CSSObject $object';
 			$this->sanitizationError( 'expected-stylesheet', $object );
 			return null;
 		}
@@ -110,6 +111,7 @@ class StylesheetSanitizer extends Sanitizer {
 			$ret = new Stylesheet( $ret );
 		}
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 }

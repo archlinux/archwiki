@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
+use BadMethodCallException;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
@@ -226,6 +227,18 @@ class HookHandler implements
 	 * @inheritDoc
 	 */
 	public function onUserEffectiveGroups( $user, &$groups ) {
+		// If the user has 2FA disabled, don't leak that information to other users (T412061)
+		try {
+			if ( !$user->equals( RequestContext::getMain()->getUser() ) ) {
+				return;
+			}
+		} catch ( BadMethodCallException ) {
+			// If we got this exception, it means we are in a session-less entry point.
+			// Treat this as if the current user is not the same as $user, and don't expose
+			// $user's potential lack of 2FA
+			return;
+		}
+
 		$disabledGroups = $this->getDisabledGroups( $user, $groups );
 		if ( $disabledGroups ) {
 			$groups = array_diff( $groups, $disabledGroups );

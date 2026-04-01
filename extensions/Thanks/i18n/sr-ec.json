@@ -61,5 +61,5 @@
 	"notification-header-flow-thank": "$1 {{GENDER:$5|Вам}} се {{GENDER:$2|захваљује}} на коментару у одељку „<strong>$3</strong>”.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|Вам}} се {{GENDER:$2|захваљује}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Једна особа вам се захвалила|$1 особе су вам се захвалиле|$1 особа вам се захвалило|100=>&thinsp;99 особа вам се захвалило}} на {{GENDER:$3|вашем}} коментару у „<strong>$2</strong>”.",
-	"ipb-action-thanks": "Захваљивање"
+	"ipb-action-thanks": "захваљивање"
 }

@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"NikolasKHF"
+		]
+	},
+	"editcheck-dialog-action-no": "Ndéq",
+	"editcheck-dialog-action-yes": "Aoq",
+	"editcheck-dialog-action-decline": "Tolak",
+	"editcheck-dialog-action-revise": "Kerisaq",
+	"editcheck-dialog-action-recheck": "Peréksa ulang",
+	"editcheck-dialog-action-back": "Balik",
+	"editcheck-dialog-action-submit": "Kirim"
+}

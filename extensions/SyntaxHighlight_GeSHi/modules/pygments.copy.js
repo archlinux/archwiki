@@ -20,10 +20,9 @@ if ( hasFeature ) {
 			} catch ( e ) {
 				return;
 			}
-			const prevLabel = btn.textContent;
 			btn.textContent = mw.msg( 'syntaxhighlight-button-copied' );
 			setTimeout( () => {
-				btn.textContent = prevLabel;
+				btn.textContent = mw.msg( 'syntaxhighlight-button-copy' );
 			}, 5000 );
 		} );
 

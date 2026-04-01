@@ -128,8 +128,11 @@
 	"templatedata-modal-title-templateformatstring": "사용자 지정 포맷 문자열",
 	"templatedata-modal-title-templateparam-details": "변수 상세 정보: $1",
 	"templatedata-modal-title-templateparams": "틀 변수",
+	"templatedata-search-description": "틀 검색",
 	"templatedata-search-placeholder": "틀 이름 입력",
+	"templatedata-search-placeholder-cirrussearch": "틀 이름 또는 키워드 입력",
 	"templatedata-search-list-header": "즐겨찾기",
+	"templatedata-search-list-empty": "즐겨찾기로 표시한 틀은 여기에서 확인할 수 있습니다",
 	"templatedata-favorite-disabled": "틀을 즐겨찾기하려면 로그인해야 합니다",
 	"templatedata-favorite-added": "즐겨찾기에 틀이 추가되었습니다",
 	"templatedata-favorite-removed": "즐겨찾기에서 틀을 제거했습니다",
@@ -141,5 +144,9 @@
 	"templatedata-category-column-empty": "[[$1]]에 틀 또는 하위 분류가 없습니다.",
 	"templatedata-category-browser-loadmore": "…더 불러오기",
 	"templatedata-category-column-error": "오류가 발생했습니다",
-	"templatedata-category-categories": "다른 분류"
+	"templatedata-category-categories": "다른 분류",
+	"templatedata-category-no-cats": "없음.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "제목",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-description": "틀 제목 목록 ('틀:' 이름공간 접두사 포함)",
+	"templatedata-favorite-count": "$1/$2개의 즐겨찾기를 한 틀이 포함되어 있습니다"
 }

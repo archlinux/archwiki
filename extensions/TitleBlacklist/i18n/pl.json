@@ -30,7 +30,7 @@
 	"titleblacklist-forbidden-upload": "Utworzenie pliku o nazwie „$2” nie jest możliwe. \nNazwa ta pasuje do wpisu z listy niedozwolonych tytułów: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Utworzenie konta o nazwie „$2” nie jest możliwe.\nNazwa ta pasuje do wpisu z listy niedozwolonych tytułów: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Następująca linia|Następujące linie}} na liście niedozwolonych tytułów stron {{PLURAL:$1|jest nieprawidłowa|są nieprawidłowe}}. Popraw {{PLURAL:$1|ją|je}} przed zapisaniem:",
-	"titleblacklist-override": "Nadpisz dopasowania listy niedozwolonych tytułów",
+	"titleblacklist-override": "Zignoruj dopasowania listy niedozwolonych tytułów",
 	"titleblacklist-override-help": "Użytkownicy z odpowiednimi uprawnieniami mogą to ustawić, aby ignorować sprawdzanie z użyciem listy niedozwolonych tytułów.",
 	"titleblacklist-warning": "<strong>Uwaga: tę stronę mogą edytować tylko administratorzy i użytkownicy z uprawnieniem <code>tboverride</code>, ponieważ znajduje się ona na liście niedozwolonych tytułów, w punkcie:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignorowanie listy niedozwolonych tytułów lub nazw użytkowników",

@@ -16,11 +16,17 @@
  */
 class Less_Tree_Import extends Less_Tree {
 
+	/** @var array<string,bool> */
 	public $options;
+	/** @var int */
 	public $index;
+	/** @var Less_Tree_Quoted|Less_Tree_Url */
 	public $path;
+	/** @var Less_Tree_Value */
 	public $features;
+	/** @var array|null */
 	public $currentFileInfo;
+	/** @var bool|null */
 	public $css;
 	/** @var bool|null This is populated by Less_ImportVisitor */
 	public $doSkip = false;
@@ -124,7 +130,7 @@ class Less_Tree_Import extends Less_Tree {
 	public function compileForImport( $env ) {
 		$path = $this->path;
 		if ( $path instanceof Less_Tree_Url ) {
-			 $path = $path->value;
+			$path = $path->value;
 		}
 		return new self( $path->compile( $env ), $this->features, $this->options, $this->index, $this->currentFileInfo );
 	}
@@ -160,7 +166,9 @@ class Less_Tree_Import extends Less_Tree {
 		}
 
 		if ( $this->options['inline'] ) {
-			$contents = new Less_Tree_Anonymous( $this->root, 0,
+			$contents = new Less_Tree_Anonymous(
+				$this->root,
+				0,
 				[
 					'filename' => $this->importedFilename,
 					'reference' => $this->currentFileInfo['reference'] ?? null,

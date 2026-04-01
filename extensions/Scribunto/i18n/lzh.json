@@ -2,8 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"SolidBlock",
-			"列维劳德"
+			"列维劳德",
+			"Davidzdh"
 		]
 	},
+	"scribunto-common-error-category": "手稿有誤之頁",
 	"scribunto-lua-error": "邏輯單元應用之誤：$2"
 }

@@ -33,7 +33,7 @@
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-tags for en gruppe med navnet \"$1\", men der blev ikke fundet noget tilsvarende <code>&lt;references group=\" $1 \"/&gt;</code> tag.",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code>-tag inden i <code>&lt;references&gt;</code> har modstridende gruppe-attribut \"$1\".",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code>-tag med navn \"$1\" defineret inden i <code>&lt;references&gt;</code> anvendes ikke i den ovenstående tekst.",
-	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-tag defineret inden i <code>&lt;references&gt;</code> har ikke en navne-attribut.",
+	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-tag defineret inden i <code>&lt;references&gt;</code> har ikke en name-attribut.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code>-tag med navnet \"$1\" defineret i <code>&lt;references&gt;</code> -gruppen \"$2\" har intet indhold.",
 	"cite-tracking-category-cite-error": "Sider med fejl i referencer",
 	"cite-tracking-category-cite-error-desc": "Sider i denne kategori har fejl i brugen af reference-tags.",

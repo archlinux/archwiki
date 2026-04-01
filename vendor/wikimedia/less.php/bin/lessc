@@ -5,10 +5,10 @@ require_once __DIR__ . '/../lib/Less/Autoloader.php';
 Less_Autoloader::register();
 
 // Create our environment
-$env		= array('compress' => false, 'relativeUrls' => false);
-$silent		= false;
-$watch		= false;
-$rootpath	= '';
+$env = array('compress' => false, 'relativeUrls' => false);
+$silent = false;
+$watch = false;
+$rootpath = '';
 
 // Check for arguments
 array_shift($argv);

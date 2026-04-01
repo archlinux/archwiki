@@ -4,9 +4,13 @@
  * @see less-2.5.3.js#Comment.prototype
  */
 class Less_Tree_Comment extends Less_Tree implements Less_Tree_HasValueProperty {
+	/** @var string */
 	public $value;
+	/** @var bool */
 	public $isLineComment;
+	/** @var bool|null */
 	public $isReferenced;
+	/** @var array|null */
 	public $currentFileInfo;
 
 	public function __construct( $value, $isLineComment, $index = null, $currentFileInfo = null ) {

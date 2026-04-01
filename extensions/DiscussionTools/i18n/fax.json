@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Caro de Segeda"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Respósta",
+	"discussiontools-newtopic-missing-title": "Por favól indica un títulu pá conversación.",
+	"discussiontools-newtopic-placeholder-title": "Assuntu",
+	"discussiontools-replylink": "{{GENDER:|respondél}}",
+	"discussiontools-replywidget-advanced": "Avanzau",
+	"discussiontools-replywidget-cancel": "Cancelal",
+	"discussiontools-replywidget-mode-source": "Fónti",
+	"discussiontools-replywidget-mode-visual": "Vissual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Añadil}} téma",
+	"discussiontools-replywidget-placeholder-newtopic": "Descripción",
+	"discussiontools-replywidget-placeholder-reply": "Respondél a {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Previsualización",
+	"discussiontools-replywidget-reply": "{{GENDER:|Responder}}",
+	"discussiontools-replywidget-summary": "Ressumin",
+	"discussiontools-replywidget-watchthis": "Añadi ésta página á tu [[Special:Watchlist|lista de seguiménto]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|usuariu|usuarius}} na discussión",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|mensaji|mensajis}}",
+	"discussiontools-topicheader-latestcomment": "Últimu comentariu: $1",
+	"discussiontools-topicsubscription-button-subscribe": "suscribilsi",
+	"discussiontools-topicsubscription-button-subscribe-label": "Suscribilsi",
+	"discussiontools-topicsubscription-button-unsubscribe": "cancelal a suscripción",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Cancelal a suscripción",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Recibirás notificacións sóbre comentarius nóvus en ésti téma.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "¡Te has suscritu!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Ya non recibirás notificacións sóbre comentárius nóvus en ésti téma.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Has cancelau a tu suscripción."
+}

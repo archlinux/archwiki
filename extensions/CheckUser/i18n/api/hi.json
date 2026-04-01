@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sfic"
+			"Sfic",
+			"Saurmandal"
 		]
 	},
-	"apihelp-query+checkuser-param-limit": "पंक्तियों की सीमा",
-	"apihelp-query+checkuserlog-param-limit": "पंक्तियों की सीमा"
+	"apihelp-query+checkuser-param-limit": "पंक्तियों की सीमा।",
+	"apihelp-query+checkuserlog-param-limit": "पंक्तियों की सीमा।"
 }

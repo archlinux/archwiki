@@ -31,6 +31,7 @@ use MediaWiki\Linker\UserLinkRenderer;
 use MediaWiki\Pager\CodexTablePager;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Codex\Utility\Codex;
@@ -54,6 +55,7 @@ class SuggestedInvestigationsTablePager extends CodexTablePager {
 	public function __construct(
 		private readonly IConnectionProvider $connectionProvider,
 		private readonly UserLinkRenderer $userLinkRenderer,
+		private readonly UserFactory $userFactory,
 		?IContextSource $context = null,
 		?LinkRenderer $linkRenderer = null
 	) {
@@ -120,7 +122,25 @@ class SuggestedInvestigationsTablePager extends CodexTablePager {
 		}
 
 		foreach ( $users as $i => $user ) {
-			$userLink = $this->userLinkRenderer->userLink( $user, $this->getContext() );
+			$userVisible = $this->getAuthority()->isAllowed( 'hideuser' ) ||
+				!$this->userFactory->newFromUserIdentity( $user )->isHidden();
+			if ( $userVisible ) {
+				$userLink = $this->userLinkRenderer->userLink( $user, $this->getContext() );
+
+				$userElementHtml = $this->msg( 'checkuser-suggestedinvestigations-user-check' )
+					->rawParams( $userLink )
+					->params(
+						SpecialPage::getTitleFor( 'CheckUser', $user->getName() )->getFullText(),
+						$user->getName()
+					)
+					->parse();
+			} else {
+				$userElementHtml = Html::element(
+					'span',
+					[ 'class' => 'history-deleted' ],
+					$this->msg( 'rev-deleted-user' )->text()
+				);
+			}
 
 			$formattedUsers .= Html::rawElement(
 				'li', [
@@ -128,13 +148,7 @@ class SuggestedInvestigationsTablePager extends CodexTablePager {
 						'mw-checkuser-suggestedinvestigations-user-defaulthide'
 						: '',
 				],
-				$this->msg( 'checkuser-suggestedinvestigations-user-check' )
-					->rawParams( $userLink )
-					->params(
-						SpecialPage::getTitleFor( 'CheckUser', $user->getName() )->getFullText(),
-						$user->getName()
-					)
-					->parse()
+				$userElementHtml
 			);
 		}
 		$formattedUsers .= Html::closeElement( 'ul' );
@@ -206,7 +220,11 @@ class SuggestedInvestigationsTablePager extends CodexTablePager {
 		] );
 
 		/** @var UserIdentity[] $users */
-		$users = $this->mCurrentRow->users;
+		$users = array_filter(
+			$this->mCurrentRow->users,
+			fn ( UserIdentity $user ) => $this->getAuthority()->isAllowed( 'hideuser' ) ||
+				!$this->userFactory->newFromUserIdentity( $user )->isHidden()
+		);
 
 		$investigateEnabled = false;
 		$investigateUrl = null;

@@ -22,9 +22,9 @@
 	"vector-action-toggle-sidebar": "Vis/skjul venstremenuen",
 	"vector-languages": "Sprog",
 	"vector-language-button-aria-label": "Gå til en artikel på et andet sprog. Tilgængelig på {{PLURAL:$1|$1 sprog}}",
-	"vector-language-button-label": "{{PLURAL:$1|$1 sprog}}",
+	"vector-language-button-label": "{{PLURAL:$1|Ét|$1}} sprog",
 	"vector-no-language-button-label": "Tilføj sprog",
-	"vector-no-language-button-aria-label": "Denne artikel findes kun på dette sprog. Tilføj artiklen til andre sprog",
+	"vector-no-language-button-aria-label": "Denne artikel er kun tilgængelig på dette sprog. Tilføj artiklen for andre sprog",
 	"vector-language-variant-switcher-label": "Ændr sprogvariant",
 	"vector-action-addsection": "Tilføj emne",
 	"vector-action-delete": "Slet",
@@ -43,6 +43,7 @@
 	"vector-more-actions": "Mere",
 	"vector-appearance-label": "Udseende",
 	"vector-appearance-tooltip": "Skift udseendet af sidens skriftstørrelse, -bredde og -farve",
+	"vector-personal-tools-tooltip": "Personlige indstillinger",
 	"vector-feature-limited-width-name": "Bredde",
 	"vector-feature-limited-width-0-label": "Bred",
 	"vector-feature-limited-width-1-label": "Standard",
@@ -91,5 +92,6 @@
 	"vector-night-mode-issue-reporting-notice-tooltip": "Rapportér, når mørke tilstandsfarver gør tingene svære at læse.",
 	"vector-night-mode-issue-reporting-link-label": "Rapporter et problem med mørk tilstand",
 	"vector-night-mode-issue-reporting-link-notification": "Rapport modtaget!",
-	"vector-night-mode-issue-reporting-preload-title": "$1 mørk tilstandsfejl"
+	"vector-night-mode-issue-reporting-preload-title": "$1 mørk tilstandsfejl",
+	"vector-night-mode-beta-tag": "(beta)"
 }

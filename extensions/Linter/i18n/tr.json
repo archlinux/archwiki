@@ -12,7 +12,8 @@
 			"Rapsar",
 			"SaldırganSincap",
 			"Sezgin İbiş",
-			"Vito Genovese"
+			"Vito Genovese",
+			"ToprakM"
 		]
 	},
 	"linterrors": "Lint hataları",
@@ -23,6 +24,9 @@
 	"linter-category-deletable-table-tag": "Silinmesi gereken tablo etiketi",
 	"linter-category-deletable-table-tag-desc": "Bu sayfalarda silinmesi gereken tablo etiketleri var.",
 	"linter-category-duplicate-ids": "Yinelenen kimlikler",
+	"linter-category-duplicate-ids-desc": "Bu sayfalar yinelenen id özniteliğine sahip öğeler barındırmaktadır.",
+	"linter-category-empty-heading": "Boş başlıklar",
+	"linter-category-empty-heading-desc": "Bu sayfalar boş başlıklar içermektedir.",
 	"linter-category-fostered": "Desteklenen içerik",
 	"linter-category-fostered-desc": "Bu sayfaların içeriği teşvik edilmiştir.",
 	"linter-category-html5-misnesting": "HTML5 ve HTML4'te farklı oluşturmaya sahip yanlış iç içe geçmiş etiket",

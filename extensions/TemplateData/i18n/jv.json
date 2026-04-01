@@ -3,7 +3,8 @@
 		"authors": [
 			"Diki Ananta",
 			"NoiX180",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Bennylin"
 		]
 	},
 	"templatedata-desc": "Cakaké panyimpenan data kanggo paramèter cithakan (nganggo JSON)",
@@ -67,7 +68,7 @@
 	"templatedata-modal-current-language": "Basa saiki: $1",
 	"templatedata-modal-errormsg": "Ana masalah. Pesthèkaké ora ana jeneng paramèter sing kosong utawa dhobel, lan ora ngemu \"$1\", \"$2\" utawa \"$3\".",
 	"templatedata-modal-errormsg-import-noparams": "Ora ana paramèter anyar sing ditemu nalika ngimpor.",
-	"templatedata-modal-format-block": "Blok",
+	"templatedata-modal-format-block": "Penggak",
 	"templatedata-modal-format-custom": "Bisa diowah",
 	"templatedata-modal-format-inline": "Salarik",
 	"templatedata-modal-format-null": "Ora ditemtokaké",

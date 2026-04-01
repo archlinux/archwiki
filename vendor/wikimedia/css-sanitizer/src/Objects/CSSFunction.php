@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Wikimedia\CSS\Util;
 
 /**
- * Represent a CSS function
+ * Represent a CSS function, eg. `rgb(255, 0, 0)`
  */
 class CSSFunction extends ComponentValue {
 

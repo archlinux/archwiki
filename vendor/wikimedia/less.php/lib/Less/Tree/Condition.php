@@ -4,10 +4,15 @@
  */
 class Less_Tree_Condition extends Less_Tree {
 
+	/** @var string */
 	public $op;
+	/** @var Less_Tree */
 	public $lvalue;
+	/** @var Less_Tree */
 	public $rvalue;
+	/** @var int */
 	public $index;
+	/** @var bool */
 	public $negate;
 
 	public function __construct( $op, $l, $r, $i = 0, $negate = false ) {

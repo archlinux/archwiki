@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Кумнац"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Жавап бармек",
+	"discussiontools-newtopic-missing-title": "Тилейбиз, {{GENDER:|оьзюгюзню}} лакъыр темагъызны баш атын языгъыз.",
+	"discussiontools-newtopic-placeholder-title": "Чешме",
+	"discussiontools-replylink": "{{GENDER:|Жавап бермек}}",
+	"discussiontools-replywidget-advanced": "Генглешдирилген",
+	"discussiontools-replywidget-cancel": "Токътав",
+	"discussiontools-replywidget-mode-source": "Манба",
+	"discussiontools-replywidget-mode-visual": "Визуал",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Тема къошмакъ}}",
+	"discussiontools-replywidget-placeholder-newtopic": "Англатыв",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} {{GENDER:|жавап бермек}}",
+	"discussiontools-replywidget-preview": "Ахыр керен къарамакъ",
+	"discussiontools-replywidget-reply": "{{GENDER:|Жавап бермек}}",
+	"discussiontools-replywidget-summary": "Къысгъартылым",
+	"discussiontools-replywidget-watchthis": "Бу бетни оьзюгюзню [[Special:Watchlist|гьайлав списогугъузгъа]] къошугъуз.",
+	"discussiontools-topicheader-authorcount": "Лакъырда $1 {{PLURAL:$1|адам|инсан}} сейлешивде.",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|языв|язывлар}}",
+	"discussiontools-topicheader-latestcomment": "Ахыр языв: $1",
+	"discussiontools-topicsubscription-button-subscribe": "къошулмакъ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Къошулмакъ",
+	"discussiontools-topicsubscription-button-unsubscribe": "чыкъмакъ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Чыкъмакъ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Сизге}} бу темадагъы янгы язмалар гьакъында билдиривлер гележек».",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Сиз}} къошулдугъуз!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Сизге}} бу темадагъы янгы язмалар гьакъында билдиривлер дагъы гелмежек.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|СИЗ}} язылывну токътатдыгъыз."
+}

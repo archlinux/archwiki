@@ -4,7 +4,8 @@
 			"Khanmarat",
 			"Sorbat",
 			"TayfunEt.",
-			"Zolgoyo"
+			"Zolgoyo",
+			"Арбыуын"
 		]
 	},
 	"mobile-frontend-editor-edit": "Төсәткәле",
@@ -18,5 +19,6 @@
 	"mobile-frontend-main-menu-watchlist": "Күргәсеү күцермәлек",
 	"mobile-frontend-placeholder": "{{SITENAME}}та эстәгәле‎",
 	"mobile-frontend-random-button": "Уйланмаған",
+	"minerva-page-actions-overflow": "Йәнә",
 	"minerva-page-actions-language-switcher": "Телләр"
 }

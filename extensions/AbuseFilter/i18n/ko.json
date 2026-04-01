@@ -36,7 +36,9 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"Bisang",
+			"Minejango2"
 		]
 	},
 	"abusefilter-desc": "사용자 편집을 규칙에 따라 자동으로 검사합니다",
@@ -221,7 +223,7 @@
 	"abusefilter-tools-reautoconfirm": "자동 인증 상태를 복구",
 	"abusefilter-tools-reautoconfirm-user": "사용자:",
 	"abusefilter-tools-reautoconfirm-submit": "자동 인증 상태 복구",
-	"abusefilter-tools-restoreautopromote": "자동 승진은 편집필터 도구를 통해 복구됨.",
+	"abusefilter-tools-restoreautopromote": "편집필터 도구를 통해 자동 승격 복구됨.",
 	"abusefilter-reautoconfirm-none": "이 사용자는 {{GENDER:$1}}자동 인증 상태가 중단된 적이 없습니다.",
 	"abusefilter-reautoconfirm-notallowed": "자동 인증 상태를 복구할 권한이 없습니다.",
 	"abusefilter-reautoconfirm-done": "계정의 자동 인증 상태가 복구되었습니다",
@@ -665,8 +667,8 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "연결이 차단된 외부 도메인을 생성하거나 수정하려면 [[Special:BlockedExternalDomains|특수문서]]를 통해 수행해야 합니다.",
 	"right-abusefilter-access-protected-vars": "보호된 변수를 사용하는 필터 보기 및 생성",
 	"action-abusefilter-access-protected-vars": "보호된 변수를 사용하는 필터를 보고 생성할",
-	"right-abusefilter-blocked-external-domains-log": "차단된 외부 도메인 히트 기록 보기",
-	"action-abusefilter-blocked-external-domains-log": "차단된 외부 도메인 히트 기록을 볼",
+	"right-abusefilter-blocked-external-domains-log": "차단된 외부 도메인을 입력하려고 시도한 기록 보기",
+	"action-abusefilter-blocked-external-domains-log": "차단된 외부 도메인을 입력하려고 시도한 기록을 볼",
 	"abusefilter-protected-vars-log-name": "편집 필터 보호 변수 기록",
 	"abusefilter-protected-vars-log-header": "이것은 다음의 기록입니다:\n# 기록 세부 정보에서 보호된 변수를 조회\n# 보호된 변수를 보기 위한 사용자 접근 권한 수준을 변경",
 	"logentry-abusefilter-protected-vars-change-access-enable": "$1님이 {{GENDER:$2|자신}}에게 보호된 변수를 볼 권한을 활성화함",

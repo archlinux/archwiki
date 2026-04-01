@@ -601,7 +601,7 @@ class CommentFormatter {
 							'discussiontools-topicsubscription-button-unsubscribe-tooltip' :
 							'discussiontools-topicsubscription-button-subscribe-tooltip'
 					] );
-					$subscribeLink->nodeValue = $messages[
+					$subscribeLink->textContent = $messages[
 						$isSubscribed ?
 							'discussiontools-topicsubscription-button-unsubscribe' :
 							'discussiontools-topicsubscription-button-subscribe'
@@ -614,9 +614,9 @@ class CommentFormatter {
 					$bracket = $doc->createElement( 'span' );
 					$bracket->setAttribute( 'class', 'ext-discussiontools-init-section-subscribe-bracket' );
 					$bracketOpen = $bracket->cloneNode( false );
-					$bracketOpen->nodeValue = '[';
+					$bracketOpen->textContent = '[';
 					$bracketClose = $bracket->cloneNode( false );
-					$bracketClose->nodeValue = ']';
+					$bracketClose->textContent = ']';
 
 					$subscribe->appendChild( $bracketOpen );
 					$subscribe->appendChild( $subscribeLink );

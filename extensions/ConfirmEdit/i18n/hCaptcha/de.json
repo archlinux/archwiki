@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kghbln"
+			"Kghbln",
+			"Brettchenweber"
 		]
 	},
 	"hcaptcha-desc": "Ergänzt die Erweiterung „ConfirmEdit“ um ein [https://www.hcaptcha.com/ hCaptcha]-Modul",

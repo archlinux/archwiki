@@ -25,6 +25,7 @@
 	"cite-ve-citationneeded-description": "Мөхәррир бу фикер өчен абруйлы чыганакка сылтама кирәклеген билгеләде.",
 	"cite-ve-citationneeded-reason": "Китерелгән сәбәп:",
 	"cite-ve-citationneeded-title": "Чыганакка сылтама кирәк",
+	"cite-ve-dialog-reference-contextitem-extends": "Бу чыганак кабат кулланыла. Куллану буенча өстәмә мәгълүмат:",
 	"cite-ve-dialog-reference-editing-add-details": "Сез бу искәрмәгә мәгълүматлар өстисез:",
 	"cite-ve-dialog-reference-editing-edit-details": "Сез бу искәрмәнең өстәмә мәгълүматларын үзгәртәсез:",
 	"cite-ve-dialog-reference-editing-add-details-placeholder": "Өстәмә мәгълүматларны, мәсәлән, махсус бит номерын яки өзекне монда кертегез.",
@@ -41,6 +42,8 @@
 	"cite-ve-dialog-reference-title": "Искәрмә",
 	"cite-ve-dialog-reference-add-details-button": "Мәгълүмат өстә",
 	"cite-ve-dialog-subreference-help-dialog-title": "Тулырак",
+	"cite-ve-dialog-subreference-help-dialog-head": "Яңа: Кабат кулланылган чыганакка өстәмә мәгълүмат өстәгез",
+	"cite-ve-dialog-subreference-help-dialog-content": "Чыганакны кабат кулланганда сез, чыганакны тулысынча кабатламыйча, аның аерым өлешләре — мәсәлән, бит номеры — турында өстәмә мәгълүмат калдыра аласыз. <p><b>Шундый мәгълүмат куллану мисаллары:</b></p><ul><li>Китапның төрле битләрен яки бүлекләрен цитаталау</li><li>подкастның цитаталау өчен махсус вакыт тамгасын билгеләү</li><li>Чыганактан тиешле өзекне китерү</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "Чыганакка сылтамага өстәмә мәгълүмат өстәү турында күбрәк белегез",
 	"cite-ve-dialog-reference-title-details": "Тулырак",
 	"cite-ve-dialog-reference-useexisting-tool": "Яңадан куллану",
@@ -56,9 +59,10 @@
 	"cite-ve-reference-input-placeholder": "Мәкаләдәге искәрмәләр арасында эзләү",
 	"cite-ve-referenceslist-isempty": "Әлеге биттә « $1 » төркеме белән сылтамалар юк.",
 	"cite-ve-referenceslist-isempty-default": "Әлеге биттә исемлеккә кертер өчен сылтамалар юк.",
+	"cite-ve-referenceslist-missing-parent": "Түбәндәге мәгълүматлар югалган чыганакка сылтый. Аларны биттән алып куегыз яки вики-текстны редакторлау режимында төзәтегез.",
 	"cite-ve-referenceslist-missingref": "Әлеге сылтама калыпта гына яки аерым блокта гына билгеләнә, һәм хәзерге вакытта аны чыганак код режимында гына үзгәртеп була.",
 	"cite-ve-referenceslist-missingref-in-list": "Әлеге искәрмә калыпта гына яки аерым блокта гына билгеләнә, һәм хәзерге вакытта аны чыганак код режимында гына карап була.",
 	"cite-ve-referenceslist-missingreflist": "Бу искәрмәләр исемлеге калып тарафыннан генерацияләнә",
-	"cite-ve-toolbar-group-label": "Чыганакка җибәрү",
+	"cite-ve-toolbar-group-label": "Чыганаклар",
 	"cite-ve-othergroup-item": "$1 искәрмә"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Daud I.F. Argana"
+			"Daud I.F. Argana",
+			"Penyuwangi"
 		]
 	},
 	"renocaptcha-desc": "Modul reCAPTCHA NoCAPTCHA untuk Confirm Edit",
@@ -12,5 +13,5 @@
 	"renocaptcha-createaccount-fail": "Tampaknya Anda belum menyelesaikan CAPTCHA-nya.",
 	"renocaptcha-create": "Untuk melindungi wiki ini dari pembuatan halaman otomatis, kami memohon Anda menyelesaikan CAPTCHA berikut:",
 	"renocaptcha-noscript": "Sayangnya Anda telah mematikan JavaScript, jadi kami tidak bisa mengenali secara otomatis apakah Anda manusia atau bukan. Tolong selesaikan CAPTCHA di atas dan salin hasil teksnya ke dalam kotak teks berikut:",
-	"renocaptcha-help": "Tolong selesaikan sebuah tantangan ReCaptcha NoCaptcha dan kembalikan nilai respons sebagai captchaWord."
+	"renocaptcha-help": "Tolong selesaikan sebuah tantangan ReCaptcha NoCaptcha dan kembalikan nilai tanggapan sebagai captchaWord."
 }

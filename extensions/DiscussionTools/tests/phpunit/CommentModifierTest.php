@@ -87,7 +87,7 @@ class CommentModifierTest extends IntegrationTestCase {
 
 		foreach ( $comments as $comment ) {
 			$linkNode = $doc->createElement( 'a' );
-			$linkNode->nodeValue = 'Reply';
+			$linkNode->textContent = 'Reply';
 			$linkNode->setAttribute( 'href', '#' );
 			CommentModifier::addReplyLink( $comment, $linkNode );
 		}

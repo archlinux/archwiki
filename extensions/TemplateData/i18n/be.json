@@ -5,7 +5,8 @@
 			"Chadyka",
 			"Maksim L.",
 			"No Sleep till Krupki",
-			"Plaga med"
+			"Plaga med",
+			"Ucukor"
 		]
 	},
 	"templatedata-desc": "Рэалізацыя сховішча звестак для параметраў шаблонаў (з дапамогай JSON)",
@@ -61,7 +62,7 @@
 	"templatedata-modal-button-addmap": "Дадаць новую карту",
 	"templatedata-modal-button-apply": "Прымяніць",
 	"templatedata-modal-button-back": "Назад",
-	"templatedata-modal-button-cancel": "Адмена",
+	"templatedata-modal-button-cancel": "Скасаваць",
 	"templatedata-modal-button-changelang": "Змяніць мову",
 	"templatedata-modal-button-delparam": "Выдаліць інфармацыю пра параметр",
 	"templatedata-modal-button-done": "Гатова",

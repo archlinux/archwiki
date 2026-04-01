@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"JeffreyKim"
 		]
 	},
 	"syntaxhighlight-desc": "用[http://pygments.org/ Pygments]以<code>&lt;syntaxhighlight&gt;</code>提供醒目提示",
@@ -9,5 +10,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "話",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "（無）",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "顯示行數",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "起始行數",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "程式碼區塊",
 	"syntaxhighlight-error-unknown-language": "不明語言「$1」"
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Khanmarat",
-			"Sorbat"
+			"Sorbat",
+			"Арбыуын"
 		]
 	},
 	"vector-languages": "Телләр",
@@ -17,7 +18,12 @@
 	"vector-view-history": "Тариҡны ҡарағалы",
 	"vector-view-view": "Уғығалы",
 	"vector-more-actions": "Тағын",
+	"vector-feature-custom-font-size-2-label": "Йыуан",
+	"skin-theme-name": "Төс",
+	"skin-theme-os-label": "Автоматиклы",
+	"vector-main-menu-label": "Паш меню",
 	"vector-page-tools-label": "Ҡораллар",
 	"vector-page-tools-general-label": "Умумий",
+	"vector-page-tools-actions-label": "Ҡыймылтаулар",
 	"vector-unpin-element-label": "йәшергәле"
 }

@@ -87,6 +87,7 @@ class SupportsAtRuleSanitizer extends RuleSanitizer {
 		$this->fixPreludeWhitespace( $ret, false );
 		$this->sanitizeRuleBlock( $ret->getBlock(), $this->ruleSanitizers );
 
+		// @phan-suppress-next-line PhanTypeMismatchReturn generics weakness
 		return $ret;
 	}
 }

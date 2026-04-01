@@ -11,7 +11,8 @@
 			"Tomato Cream",
 			"Tīgelika",
 			"Woytecr",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Ucukor"
 		]
 	},
 	"discussiontools": "Інструменты абмеркаванняў",
@@ -122,7 +123,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "Працягнуць пісаць",
 	"discussiontools-replywidget-advanced": "Дадаткова",
 	"discussiontools-replywidget-anon-warning": "<strong>Вы не ўвайшлі ў сістэму.</strong> Каб атрымліваць апавяшчэнні пра адказы і паведамленне было пад вашым імем, а не IP-адрасам, вы можаце [$1 ўвайсці] або [$2 стварыць уліковы запіс].",
-	"discussiontools-replywidget-cancel": "Адмена",
+	"discussiontools-replywidget-cancel": "Скасаваць",
 	"discussiontools-replywidget-feedback": "{{GENDER:|Адправіць водгук}} на гэту функцыю",
 	"discussiontools-replywidget-loading": "Загрузка…",
 	"discussiontools-replywidget-mention-tool-header": "Знайсці ўдзельніка: $1",
@@ -144,7 +145,6 @@
 	"discussiontools-replywidget-terms-click": "Націскаючы \"$1\", {{GENDER:|вы}} згаджаецеся з умовамі выкарыстання гэтай вікі.",
 	"discussiontools-replywidget-transcluded": "Ваш каментарый будзе захаваны на [[$1]].",
 	"discussiontools-replywidget-watchthis": "Дадаць гэтую старонку да [[Special:Watchlist|свайго спісу назіраных старонак]]",
-	"discussiontools-signature-prefix": "&#32;",
 	"discussiontools-target-comment-missing": "Не ўдалося знайсці гэты каментар. Магчыма, ён быў выдалены або перамешчаны.",
 	"discussiontools-target-comments-missing": "Не ўдалося знайсці новыя каментары. Магчыма, яны былі выдаленыя або перамешчаныя.",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|чалавек у|чалавекі ў|чалавек у}} дыскусіі",

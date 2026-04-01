@@ -29,13 +29,14 @@
 			"Translatobecomer",
 			"Vlad5250",
 			"Wikisaurus",
-			"Ядерный Трамвай"
+			"Ядерный Трамвай",
+			"Shabe"
 		]
 	},
 	"math-desc": "Отображает математические формулы в тегах <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"popups-settings-option-math": "Математика",
 	"popups-settings-option-math-description": "Объяснение математических формул.",
-	"popups-settings-option-math-tooltip": "Объяснение математических формул при наведении курсора.",
+	"popups-settings-option-math-tooltip": "Объяснение математических формул при наведении курсора",
 	"math-visualeditor-mwchemdialog-title": "Химическая формула",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Быстрая правка",
 	"math-visualeditor-mwlatexdialog-card-formula": "Формула",

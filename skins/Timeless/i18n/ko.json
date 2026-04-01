@@ -9,7 +9,8 @@
 			"Revi",
 			"Ykhwong",
 			"고솜",
-			"아라"
+			"아라",
+			"Tensama0415"
 		]
 	},
 	"skinname-timeless": "타임리스",
@@ -18,7 +19,7 @@
 	"timeless-loggedinas": "'''$1'''님으로 로그인됨",
 	"timeless-notloggedin": "로그인하지 않음",
 	"timeless-userpage": "{{GENDER:$1|사용자}} 문서",
-	"timeless-talkpage": "{{GENDER:$1|사용자}}토론",
+	"timeless-talkpage": "{{GENDER:$1|사용자}} 토론",
 	"timeless-pagelog": "문서 기록",
 	"timeless-more": "더 보기",
 	"timeless-sitetools": "위키 도구",

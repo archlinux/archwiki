@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tuwewanzi"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Wóayúpte",
+	"discussiontools-findcomment-label-search": "Wóle",
+	"discussiontools-replybutton": "{{GENDER:|Ayúpta yo|Ayúpta ye|Ayúpta yo/ye}}",
+	"discussiontools-replylink": "{{GENDER:|ayúpta yo|ayúpta ye|ayúpta yo/ye}}",
+	"discussiontools-replywidget-advanced": "Ektáwapȟaya",
+	"discussiontools-replywidget-cancel": "Yužúžu {{GENDER:|wo|we|wo/we}}",
+	"discussiontools-replywidget-mode-source": "Óhiyu kiŋ",
+	"discussiontools-replywidget-placeholder-newtopic": "Wóakhiye-oyákapi",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} ektá {{GENDER:|Ayúpta yo|Ayúpta ye|Ayúpta yo/ye}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Wóayúpte}}",
+	"discussiontools-replywidget-summary": "Oȟ'áƞ-oyákapi",
+	"discussiontools-replywidget-watchthis": "Oyúblaye kiƞ le [[Special:Watchlist|watchlist]] nitȟáwa ognáka {{GENDER:|yo|ye|yo/ye}}",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tuwá uƞ kiƞ}} wóakhiye mahél {{PLURAL:$1|yaƞké|yaƞkápi}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|wóeye}}",
+	"discussiontools-topicheader-latestcomment": "Wóeye iyótaƞ théča: $1",
+	"discussiontools-topicsubscription-button-subscribe": "oíyutȟe otȟápȟa {{GENDER:|yo|ye|yo/ye}}",
+	"discussiontools-topicsubscription-button-subscribe-label": "Oíyutȟe otȟápȟa {{GENDER:|yo|ye|yo/ye}}",
+	"discussiontools-topicsubscription-button-unsubscribe": "oíyutȟe otȟápȟa-ayúštaƞ {{GENDER:|yo|ye|yo/ye}}",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Oíyutȟe otȟápȟa-ayúštaƞ {{GENDER:|yo|ye|yo/ye}}",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Tuwá wóiwoglake kiŋ lel owápi eháŋtaŋš, nayaȟ'uŋ kte.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Wótȟaƞiƞ {{GENDER:|otȟáyapȟe}}!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Tuwá wóiwoglake kiŋ lel owápi eháŋtaŋš, heh́aŋyela nayaȟ'uŋ kte šni.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Wótȟaƞiƞ {{GENDER:|otȟápȟa-ayúštaƞ}}!",
+	"discussiontools-topicsubscription-pager-page": "Oyúblaye"
+}

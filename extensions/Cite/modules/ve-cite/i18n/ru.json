@@ -38,7 +38,9 @@
 			"Дмитрий",
 			"Краснорядцева Елена",
 			"Умар",
-			"EneshTranslates"
+			"EneshTranslates",
+			"Merrahtar",
+			"Yurina Tatiana"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Книга",
@@ -65,7 +67,10 @@
 	"cite-ve-dialog-reference-options-section": "Параметры",
 	"cite-ve-dialog-reference-placeholder": "Напишите или скопируйте вашу сноску сюда, или вставьте шаблон источника.",
 	"cite-ve-dialog-reference-title": "Примечание",
-	"cite-ve-dialog-reference-useexisting-tool": "Повторное использование",
+	"cite-ve-dialog-reference-add-details-button": "Добавить подробности",
+	"cite-ve-dialog-subreference-help-dialog-title": "Подробности",
+	"cite-ve-dialog-reference-title-details": "Подробности",
+	"cite-ve-dialog-reference-useexisting-tool": "Повторно использовать",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Список общих ссылок",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Список примечаний для группы «$1»",
 	"cite-ve-dialog-referenceslist-title": "Список примечаний",
@@ -73,7 +78,7 @@
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Источники",
 	"cite-ve-dialogbutton-reference-full-label": "Простая",
 	"cite-ve-dialogbutton-reference-title": "Примечание",
-	"cite-ve-dialogbutton-reference-tooltip": "Базовая",
+	"cite-ve-dialogbutton-reference-tooltip": "Базовое",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Список примечаний",
 	"cite-ve-reference-input-placeholder": "Поиск в пределах текущих ссылок на источники",
 	"cite-ve-referenceslist-isempty": "На этой странице нет ссылок с группой «$1» для включения в этот список.",

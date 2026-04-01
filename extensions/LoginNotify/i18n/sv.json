@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Stefan2255"
 		]
 	},
 	"loginnotify-desc": "Meddelar användare om misstänkta inloggningar från okända enheter och /eller IP-adresser",
@@ -11,6 +12,7 @@
 	"echo-category-title-login-success": "Inloggning från en främmande enhet",
 	"echo-pref-tooltip-login-success": "Meddela mig när någon loggar in på mitt konto från en okänd enhet och IP-adress.",
 	"loginnotify-primary-link": "Hjälp",
+	"loginnotify-unknown-ip": "Du har försökt logga in från en okänd IP-adress, och {{SITENAME}} är för närvarande konfigurerad för att förhindra inloggningar från okända IP-adresser.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Misslyckat försök|Flera misslyckade försök}} att logga in på {{SITENAME}} som $1",
 	"notification-loginnotify-login-success-email-subject": "Inloggning på {{SITENAME}} som $1 från en enhet {{GENDER:$1|du}} inte har använt nyligen",
 	"notification-header-login-success": "Någon (förmodligen {{GENDER:$1|du}}) loggade nyligen in på ditt konto från en ny enhet. Om det var du kan du ignorera detta meddelande. Om det inte var du, är det rekommenderat att du ändrar ditt lösenord och kontrollerar din kontoaktivitet.",

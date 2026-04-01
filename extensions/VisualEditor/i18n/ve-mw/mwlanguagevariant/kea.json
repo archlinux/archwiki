@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"GrogeXaKaba"
+		]
+	},
+	"visualeditor-mwlanguagevariant-name": "Nómi di linga: $1",
+	"visualeditor-mwlanguagevariant-unknown": "Barianti di linga",
+	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kódi di linga",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Nbálidu</em>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Linga",
+	"visualeditor-mwlanguagevariantcontextitem-title-name": "Nómi di linga",
+	"visualeditor-mwlanguagevariantcontextitem-title-unknown": "Barianti di linga",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Lingas",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Kódi di linga",
+	"visualeditor-mwlanguagevariantinspector-filter-text-label": "Kuntiúdu",
+	"visualeditor-mwlanguagevariantinspector-title-name": "Nómi di linga"
+}

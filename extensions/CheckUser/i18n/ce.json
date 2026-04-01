@@ -58,6 +58,7 @@
 	"checkuser-month": "тӀаьххьара 30 де",
 	"checkuser-month-2": "тӀаьххьара 60 де",
 	"checkuser-all": "массо",
+	"checkuser-filter-title": "Фильтраш",
 	"checkuser-cidr-label": "IP-могӀаман йерриг диапазон а, Ӏаткъам бина адресаш а лаха",
 	"checkuser-cidr-res": "Йукъара CIDR:",
 	"checkuser-cidr-affected-ips": "Ӏаткъам бина IP-адресаш:",

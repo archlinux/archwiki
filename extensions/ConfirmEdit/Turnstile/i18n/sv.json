@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Stefan2255"
+		]
+	},
+	"turnstile-desc": "Lägger till stöd för Cloudflare Turnstile för att bekräfta.",
+	"turnstile-edit": "För att skydda wikin mot automatiserad redigeringsspam ber vi dig att lösa följande CAPTCHA:",
+	"turnstile-addurl": "Din redigering innehåller nya externa länkar. För att skydda wikin mot automatisk spam ber vi dig vänligen att lösa följande hCaptcha:",
+	"turnstile-badlogin": "För att skydda wikin mot automatisk lösenordsknäckning, vänligen lös följande captcha:",
+	"turnstile-createaccount": "För att skydda wikin mot automatiskt skapande av konton, vänligen lös följande captcha:",
+	"turnstile-createaccount-fail": "Det verkar som att du inte har löst CAPTCHA:n.",
+	"turnstile-create": "För att skydda wikin mot automatiserad sidgenerering, vänligen lös följande captcha:",
+	"turnstile-help": "Lös en vändkorsutmaning och returnera svarsvärdet som captchaWord."
+}

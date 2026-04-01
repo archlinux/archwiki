@@ -17,7 +17,9 @@
 			"علاء",
 			"محمد أحمد عبد الفتاح",
 			"مشعل الحربي",
-			"아라"
+			"아라",
+			"أبو هشام",
+			"Mohammed Qays"
 		]
 	},
 	"tag-editcheck-newcontent-description": "يعتقد EditCheck أنه تمت إضافة محتوى جديد إلى الصفحة",
@@ -33,11 +35,11 @@
 	"tag-editcheck-paste-shown": "تم عرض تعديل الاختيار (اللصق)",
 	"tag-editcheck-paste-shown-description": "طلب EditCheck توضيحًا بشأن المحتوى الذي قام المحرر بلصقه، والذي تمت إزالته بعد ذلك أو تأكيد أنه مسموح به",
 	"tag-visualeditor": "تحرير مرئي",
-	"tag-visualeditor-description": "تم التعديل باستخدام [[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي]]",
+	"tag-visualeditor-description": "التعديل باستخدام [[{{MediaWiki:visualeditor-descriptionpagelink}}|المحرر المرئي]]",
 	"tag-visualeditor-needcheck": "المحرر المرئي: تحقق",
 	"tag-visualeditor-needcheck-description": "تم التعديل [[{{MediaWiki:visualeditor-descriptionpagelink}}|بالمحرر المرئي]] حيث اكتشف النظام تغييرات ربما تكون غير مقصودة على نص الويكي.",
 	"tag-visualeditor-wikitext": "تعديل مصدر 2017",
-	"tag-visualeditor-wikitext-description": "التعديل تم باستخدام محرر نص الويكي 2017",
+	"tag-visualeditor-wikitext-description": "تعديل باستخدام محرر نص الويكي 2017",
 	"tag-visualeditor-switched": "المحرر المرئي: تبديل",
 	"tag-visualeditor-switched-description": "بدأ المستخدم بالتحرير باستخدام المحرر المرئي ثم انتقل إلى محرر نص الويكي.",
 	"visualeditor-feedback-link": "Project:المحرر المرئي/تعليقات",

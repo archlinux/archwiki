@@ -59,7 +59,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "Šta je privremeni račun?",
 	"checkuser-investigateblock-warning-confirmaction": "Ako ste sigurni da želite nastaviti, kliknite na \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" polje na dnu stranice.",
 	"checkuser-investigate-compare-table-header-activity": "Vremenski opseg",
-	"checkuser-ip-contributions-subtitle": "Prikazujem rezultate za {{PLURAL:$1|posljednji $1 dan|posljednja $2 dana|posljednjih $2 dana}}.",
+	"checkuser-ip-contributions-subtitle": "Prikazujem rezultate za {{PLURAL:$1|posljednji $1 dan|posljednja $1 dana|posljednjih $1 dana}}.",
 	"checkuser-ip-contributions-target-label": "IP-adresa ili opseg:",
 	"checkuser-ip-contributions-search-form-wrapper": "Pretraži doprinose s IP-a",
 	"checkuser-ip-contributions-results-title": "Doprinosi privremenog korisnika s IP-a $1",

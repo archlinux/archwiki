@@ -27,7 +27,7 @@
 	"linter-heading-high-priority": "Iznimna važnost",
 	"linter-heading-low-priority": "Mala važnost",
 	"linter-heading-medium-priority": "Srednja važnost",
-	"linter-numerrors": "($1 {{PLURAL:$1|pogrješka|pogrješke|pogrješaka}})",
+	"linter-numerrors": "($1 {{PLURAL:$1|greška|greškе|grešaka}})",
 	"linter-page-edit": "uredi",
 	"linter-page-history": "historija",
 	"linter-page-viewsource": "pogl. izvor",

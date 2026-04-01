@@ -2,11 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Peter57770",
-			"R12ntech"
+			"R12ntech",
+			"AmazingJus",
+			"Tuwewanzi"
 		]
 	},
-	"tooltip-ca-ve-edit": "Oyúblaye kiŋ lé yutȟókeča yo/ye",
-	"visualeditor-ca-editsource": "Óhiyu kiŋ yutȟókeča yo/ye",
-	"visualeditor-ca-editsource-section": "ohútkȟaŋ yutȟókeča",
+	"tooltip-ca-ve-edit": "Oyúblaye kiŋ lé yutȟókeča {{GENDER:|yo|ye|yo/ye}}",
+	"visualeditor-ca-createsource": "Óhiyu kiŋ káǧa {{GENDER:|yo|ye|yo/ye}}",
+	"visualeditor-ca-editsource": "Óhiyu yutȟókeča",
+	"visualeditor-ca-editsource-section": "óhiyu yutȟókeča {{GENDER:|yo|ye|yo/ye}}",
 	"visualeditor-dialog-media-search-tab-search": "Wóle"
 }

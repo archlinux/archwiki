@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Кумнац"
+		]
+	},
+	"mobile-frontend-history": "Бу сагьифаны алышдырылыгъан тарихине къарамакъ",
+	"mobile-frontend-home-button": "Уьй",
+	"mobile-frontend-language-article-heading": "Тил",
+	"mobile-frontend-main-menu-login": "Янгы аккаунт ачмакъ",
+	"mobile-frontend-main-menu-nearby": "Ягъынгда",
+	"mobile-frontend-main-menu-settings": "Къурулув",
+	"mobile-frontend-placeholder": "Излев {{Сайтны аты}}",
+	"mobile-frontend-random-button": "Билмейлик",
+	"minerva-page-actions-overflow": "Дагъыда"
+}

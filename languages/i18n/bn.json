@@ -66,7 +66,8 @@
 			"আফতাবুজ্জামান",
 			"এম আবু সাঈদ",
 			"খাত্তাব হাসান",
-			"মোঃ মারুফ হাসান24"
+			"মোঃ মারুফ হাসান24",
+			"Saurmandal"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|বিষয়শ্রেণী|বিষয়শ্রেণীসমূহ}}",
@@ -710,6 +711,7 @@
 	"invalid-content-data": "বিষয়বস্তুর উপাত্ত বৈধ নয়",
 	"invalid-json-data": "অবৈধ জেসন (JSON): $1",
 	"vue-invalid-content": "অবৈধ Vue বিষয়বস্তু: <code>$1</code>",
+	"vue-less-notsupported": "অবৈধ Vue বিষয়বস্তু: &lt;style&gt; ট্যাগে LESS-এর ব্যবহার সমর্থিত নয়।",
 	"content-not-allowed-here": "\"$1\" সামগ্রী [[:$2]] পাতায় \"$3\" স্লটে অনুমোদিত নয়",
 	"confirmleave-warning": "এই পাতাটি ত্যাগ করলে আপনার করা পরিবর্তনগুলো হারিয়ে যেতে পারে।",
 	"editpage-invalidcontentmodel-title": "বিষয়বস্তু মডেল সমর্থিত নয়",
@@ -1016,7 +1018,7 @@
 	"linterror-pwrap-bug-workaround": "অনুচ্ছেদ মোড়ানো বা লাইন ভাঙা জনীত ত্রুটি সমাধান",
 	"linterror-self-closed-tag": "স্ব-বন্ধকৃত ট্যাগ",
 	"linterror-stripped-tag": "অবৈধ বা অপ্রচলিত HTML ট্যাগ",
-	"linterror-tidy-font-bug": "ফন্ট ট্যাগ লিঙ্কের রঙ পরিবর্তন করার চেষ্টা করে",
+	"linterror-tidy-font-bug": "Font ট্যাগ লিঙ্কের রঙ পরিবর্তন করার চেষ্টা করছে",
 	"linterror-tidy-whitespace-bug": "হোয়াইটস্পেস পার্সিং বাগ",
 	"linterror-unclosed-quotes-in-heading": "অবন্ধকৃত উদ্ধৃতি যা বিষয়বস্তুর টেবিল থেকে বেরিয়ে আসছে",
 	"linterror-wikilink-in-extlink": "লিঙ্কের মধ্যে লিঙ্ক",
@@ -1027,7 +1029,7 @@
 	"editusergroup": "ব্যবহারকারী দল লোড করুন",
 	"editinguser": "<strong>[[User:$1|$1]]</strong> $2 {{GENDER:$1|ব্যবহারকারীর}} ব্যবহারকারী দল পরিবর্তন করছেন",
 	"viewinguserrights": "<strong>[[User:$1|$1]]</strong> $2 {{GENDER:$1|ব্যবহারকারীর}} ব্যবহারকারী দল দেখছেন",
-	"userrights-editusergroup": "{{GENDER:$1|ব্যবহারকারী}} দল সম্পাদনা করে",
+	"userrights-editusergroup": "{{GENDER:$1|ব্যবহারকারী}} দল সম্পাদনাকরণ",
 	"userrights-viewusergroup": "{{GENDER:$1|ব্যবহারকারী}} দল দেখা",
 	"saveusergroups": "{{GENDER:$1|ব্যবহারকারীর}} দল সংরক্ষণ করো",
 	"userrights-groupsmember": "সদস্য:",
@@ -2023,6 +2025,7 @@
 	"logeventslist-patrol-log": "পরীক্ষণ লগ",
 	"logeventslist-tag-log": "ট্যাগ লগ",
 	"logeventslist-newusers-log": "ব্যবহারকারী সৃষ্টির লগ",
+	"newusers-excludetempacct": "অস্থায়ী অ্যাকাউন্ট সৃষ্টিকরণ বাদ দিন",
 	"all-logs-page": "মূল প্রকাশ্য লগ",
 	"alllogstext": "{{SITENAME}}-এর সবগুলো লগের সম্মিলিত প্রদর্শন।\nআপনি লগের ধরন, ব্যবহারকারীর নাম, বা পাতার নাম নির্বাচন করে প্রদর্শনটির আকার কমিয়ে আনতে পারেন।",
 	"logempty": "মিলে যায় এমন কিছু লগে পাওয়া যায়নি।",
