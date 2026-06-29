@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-query+linterrors-summary": "Hel liiska khaladaadka lint",
+	"apihelp-query+linterrors-param-categories": "Qaybaha khaladaadka lint",
+	"apihelp-query+linterrors-param-invisible-categories": "Qaybaha aan muuqan ee khaladaadka lint",
+	"apihelp-query+linterrors-param-limit": "Tirada natiijooyinka la weydiinayo",
+	"apihelp-query+linterrors-param-from": "Aqoonsiga lint ee laga bilaabayo weydiinta",
+	"apihelp-query+linterrors-param-namespace": "Kaliya ku dar khaladaadka lint ee ka yimaadda meel-bogagga la cayimay",
+	"apihelp-query+linterrors-param-pageid": "Kaliya ku dar khaladaadka lint ee ka yimaadda aqoonsiyada bogagga la cayimay",
+	"apihelp-query+linterrors-param-title": "Kaliya ku dar khaladaadka lint ee ka yimaadda cinwaanka bogga la cayimay",
+	"apihelp-query+linterrors-example-1": "Hel dhammaan khaladaadka lint ee qaybta calaamadaha duugoobay",
+	"apihelp-query+linterstats-summary": "Hel tirada khaladaadka lint ee qayb kasta",
+	"apihelp-query+linterstats-example-1": "Hel tirada khaladaadka lint ee qayb kasta"
+}

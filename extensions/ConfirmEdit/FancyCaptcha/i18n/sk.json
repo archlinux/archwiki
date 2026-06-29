@@ -4,9 +4,11 @@
 			"Helix84",
 			"Luky001",
 			"Teslaton",
-			"TomášPolonec"
+			"TomášPolonec",
+			"Wizzard"
 		]
 	},
+	"fancycaptcha-desc": "Generátor Fancy CAPTCHA pre rozšírenie Confirm Edit",
 	"fancycaptcha-addurl": "Vaša úprava obsahuje nové externé odkazy.\nV záujme ochrany tejto wiki proti automatizovanému spamu, prosím, napíšte nižšie uvedené slová do poľa ([[Special:Captcha/help|viac informácií]]):",
 	"fancycaptcha-badlogin": "V záujme ochrany tejto wiki pred automatizovanými lámaniami hesiel, prosím, napíšte nižšie uvedené slová do poľa ([[Special:Captcha/help|viac informácií]]):",
 	"fancycaptcha-captcha": "Bezpečnostná kontrola",

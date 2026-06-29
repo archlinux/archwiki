@@ -84,6 +84,7 @@
 	"abusefilter-log-hide-reason-other": "Drugi / dodatni razlog:",
 	"abusefilter-log-hide-forbidden": "Nemate dopuštenje da sakrivate stavke zapisnika zloupotrebe.",
 	"logentry-abusefilter-hit": "$1 je {{GENDER:$2|aktivirao|aktivirala}} filter $4, izvodeći radnju \"$5\" na stranici $3. Poduzete radnje: $6 ($7)",
+	"log-name-abusefilterblockeddomainhit": "Zapisnik pogodaka blokiranih domena",
 	"abusefilter-list": "Svi filteri",
 	"abusefilter-list-id": "ID filtera",
 	"abusefilter-list-status": "Stanje",
@@ -388,5 +389,6 @@
 	"abusefilter-import-intro": "Možete koristiti ovaj interfejs za uvoz filtera sa drugih wikija.\nU izvornoj wiki, kliknite na \"{{int:abusefilter-edit-export}}\" u meniju \"{{int:abusefilter-edit-tools}}\" u interfejsu uređivanja.\nKopirajte iz tekstualne kutije koja se pojavi i zalijepite u ovu kutiju, zatim kliknite na \"{{int:abusefilter-import-submit}}\",",
 	"abusefilter-import-submit": "Uvezi podatke",
 	"abusefilter-group-default": "Standardno",
-	"abusefilter-http-error": "Pojavila se HTTP greška: $1."
+	"abusefilter-http-error": "Pojavila se HTTP greška: $1.",
+	"log-description-abusefilterblockeddomainhit": "Zapisnik prati pogotke sa spiska [[Special:BlockedExternalDomains|blokiranih domena]]."
 }

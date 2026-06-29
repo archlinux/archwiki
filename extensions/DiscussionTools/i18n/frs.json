@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kluntjekniiper"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Antern",
+	"discussiontools-newtopic-missing-title": "Bitte dau 'n tittel föör diin diskusjoonsteemó ingeeven.",
+	"discussiontools-newtopic-placeholder-title": "Unnerwaarp",
+	"discussiontools-replylink": "{{GENDER:|antern}}",
+	"discussiontools-replywidget-advanced": "Ferwiidert",
+	"discussiontools-replywidget-cancel": "Ofbreeken",
+	"discussiontools-replywidget-mode-source": "Weltekst",
+	"discussiontools-replywidget-mode-visual": "Wisuel",
+	"discussiontools-replywidget-newtopic": "Ofsnid taufaugen",
+	"discussiontools-replywidget-placeholder-newtopic": "Beskriiven",
+	"discussiontools-replywidget-placeholder-reply": "Antern an {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Föörskaau",
+	"discussiontools-replywidget-reply": "{{GENDER:|Antern}}",
+	"discussiontools-replywidget-summary": "T'sóómenfóóten",
+	"discussiontools-replywidget-watchthis": "Taufaugen fan disser siid tau diin [[Special:Watchlist|abserwäärensliest]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persoon is|persoonen bünt}} an disser diskusjoon bedäiliğt",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kummentaar|kummentaaren}}",
+	"discussiontools-topicheader-latestcomment": "Läest kummentaar: $1",
+	"discussiontools-topicsubscription-button-subscribe": "abonnäären",
+	"discussiontools-topicsubscription-button-subscribe-label": "Abonnäären",
+	"discussiontools-topicsubscription-button-unsubscribe": "ofbestellen",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ofbestellen",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Duu worst oover näej kummentaaren tau dit teemó benóórichtiğt.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Duu hest abonnäärt!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Duu kriğst kiin benóórichtigens meer oover näej kummentaaren tau dit teemó.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Duu hest disser benóórichtigens ofbestelt."
+}

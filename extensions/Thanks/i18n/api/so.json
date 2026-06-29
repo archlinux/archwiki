@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-flowthank-summary": "Dir ogeysiis mahadcelin dadweyne oo loogu talagalay faallo Flow ah.",
+	"apihelp-flowthank-param-postid": "Aqoonsiga UUID ee boostada la doonayo in lagu mahadceliyo.",
+	"apihelp-flowthank-example-1": "Dir mahadcelin faallada leh <kbd>UUID xyz789</kbd>",
+	"apihelp-thank-summary": "U dir ogeysiis mahadcelin tafatiraha.",
+	"apihelp-thank-param-rev": "Aqoonsiga dib u eegista lagu mahadcelinayo. Tan ama 'log' waa in la bixiyo.",
+	"apihelp-thank-param-log": "Aqoonsiga diiwaanka lagu mahadcelinayo. Tan ama 'rev' waa in la bixiyo.",
+	"apihelp-thank-param-source": "Xadhig gaaban oo sharxaya halka codsigu ka yimid, tusaale ahaan <kbd>diff</kbd> ama <kbd>taariikh</kbd>.",
+	"apihelp-thank-example-1": "Dir mahadcelin dib u eegista <kbd>ID 456</kbd>, iyadoo isha ay tahay bogga diff."
+}

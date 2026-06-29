@@ -19,7 +19,6 @@
 	"multimediaviewer-thumbnail-error": "ക്ഷമിക്കണം, പ്രമാണം പ്രദർശിപ്പിക്കാനാവില്ല",
 	"multimediaviewer-thumbnail-error-description": "എന്തോ ഒരു സാങ്കേതിക പ്രശ്നമുണ്ടെന്ന് തോന്നുന്നു. ഇത് സ്ഥിരമായിട്ട് ഉണ്ടെങ്കിൽ താങ്കൾ $1. പിഴവ്: $2",
 	"multimediaviewer-thumbnail-error-retry": "വീണ്ടും ശ്രമിക്കുക",
-	"multimediaviewer-thumbnail-error-report": "പ്രശ്നമാണെന്ന് അറിയിക്കുക",
 	"multimediaviewer-license-cc-by-1.0": "സി.സി. ബൈ 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "സി.സി. എസ്.എ. 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "സി.സി. ബൈ-എസ്.എ. 1.0",
@@ -128,6 +127,5 @@
 	"multimediaviewer-enable-confirmation-text": "അടുത്ത പ്രാവശ്യം $1 സംരംഭത്തിൽ ലഘുചിത്രത്തിൽ താങ്കൾ ഞെക്കുമ്പോൾ, മീഡിയ ദർശനോപാധി ഉപയോഗിക്കപ്പെടുന്നതാണ്.",
 	"multimediaviewer-enable-alert": "മീഡിയ ദർശനോപാധി ഇപ്പോൾ പ്രവർത്തനരഹിതമാണ്",
 	"multimediaviewer-disable-info-title": "താങ്കൾ മീഡിയ ദർശനോപാധി പ്രവർത്തനരഹിതമാക്കി",
-	"multimediaviewer-disable-info": "താങ്കൾക്ക് ഇപ്പോഴും ഒറ്റയൊറ്റ പ്രമാണങ്ങൾ മീഡിയ ദർശനോപാധി ഉപയോഗിച്ച് കാണാവുന്നതാണ്.",
-	"multimediaviewer-errorreport-privacywarning": "പിഴവിന്റെ വിശദാംശങ്ങൾ റിപ്പോർട്ടിലേക്ക് ചേർത്തു, ഇത് പരസ്യമായി കാണാവുന്നതായിരിക്കും. അത് അനുയോജ്യമായി താങ്കൾക്ക് അനുഭവപ്പെടുന്നില്ലെങ്കിൽ, റിപ്പോർട്ട് താഴെ തിരുത്താവുന്നതും, താങ്കൾ പങ്ക് വെയ്ക്കാൻ ആഗ്രഹിക്കാത്ത വിവരങ്ങൾ നീക്കം ചെയ്യാവുന്നതും ആണ്."
+	"multimediaviewer-disable-info": "താങ്കൾക്ക് ഇപ്പോഴും ഒറ്റയൊറ്റ പ്രമാണങ്ങൾ മീഡിയ ദർശനോപാധി ഉപയോഗിച്ച് കാണാവുന്നതാണ്."
 }

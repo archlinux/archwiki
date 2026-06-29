@@ -275,6 +275,7 @@
 	"echo-blacklist": "{{ignored}} Site-wide list of accounts that cannot trigger notifications. Can be overridden by users at [[Special:MyPage/Echo-whitelist]].",
 	"right-echo-create": "{{doc-right|echo-create}}",
 	"action-echo-create": "{{doc-action|echo-create}}",
+	"grant-echo-read-notifications": "{{doc-grant|grant-echo-read-notifications}}",
 	"right-echo-read-notifications": "{{doc-right|echo-read-notifications}}",
 	"action-echo-read-notifications": "{{doc-action|echo-read-notifications}}",
 	"right-manage-all-push-subscriptions": "{{doc-right|manage-all-push-subscriptions}}",

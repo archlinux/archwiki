@@ -1,8 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Abdullahi"
+			"Abdullahi",
+			"AhmedG612"
 		]
 	},
-	"inputbox-tryexact": "Baroobeey isku mid sax ah"
+	"inputbox-desc": "Oggolow ku darista foomamka HTML ee horay loo qeexay",
+	"inputbox-error-no-type": "Ma aadan cayimin nooca sanduuqa gelinta ee la abuuri doono.",
+	"inputbox-error-bad-type": "Nooca sanduuqa gelinta \"$1\" lama aqoonsan.\nFadlan caddee \"abuur\", \"faallo\", \"raadin\", \"raadin2\" ama \"qoraal buuxa\".",
+	"inputbox-tryexact": "Baroobeey isku mid sax ah",
+	"inputbox-searchfulltext": "Raadi qoraal buuxa",
+	"inputbox-createarticle": "Abuur bog",
+	"inputbox-movearticle": "Wareeji bogga",
+	"inputbox-postcomment": "Qayb cusub",
+	"inputbox-postcommenttitle": "Qayb cusub",
+	"inputbox-ns-main": "Bogga ugu weyn"
 }

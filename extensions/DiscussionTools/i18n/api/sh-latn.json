@@ -5,7 +5,7 @@
 			"Aca"
 		]
 	},
-	"apierror-discussiontools-formtoken-used": "Komentar je već objavljen. Ponovno učitajte stranicu da biste ga vidjeli.",
+	"apierror-discussiontools-formtoken-used": "Komentar je već objavljen. Ponovo učitajte stranicu da biste ga vidjeli.",
 	"apierror-discussiontools-subscription-failed-add": "Nije moguće pratiti ovu temu.",
 	"apierror-discussiontools-subscription-failed-remove": "Nije moguće otkazati pretplatu na ovu temu.",
 	"apihelp-discussiontoolscompare-summary": "Nabavi informacije o promjenama komentara između dvije izmjene stranice.",

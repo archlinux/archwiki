@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Отримати список Lint-помилок",
 	"apihelp-query+linterrors-param-categories": "Категорії Lint-помилок",
+	"apihelp-query+linterrors-param-invisible-categories": "Невидимі категорії lint-помилок",
 	"apihelp-query+linterrors-param-limit": "Кількість результатів, на яку надіслати запит",
 	"apihelp-query+linterrors-param-from": "Ідентифікатор Lint, куди треба надсилати запити",
 	"apihelp-query+linterrors-param-namespace": "Включати лише Lint-помилки із вказаних просторів назв",

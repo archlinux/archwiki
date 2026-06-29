@@ -14,7 +14,8 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"乌拉跨氪",
-			"列维劳德"
+			"列维劳德",
+			"Wilf233"
 		]
 	},
 	"action-tboverride": "忽略禁用标题与用户名名单",
@@ -34,7 +35,7 @@
 	"titleblacklist-override": "若匹配禁用标题名单则忽略它",
 	"titleblacklist-override-help": "有足够特权的用户才可以将其设置为略过禁用标题名单检查。",
 	"titleblacklist-warning": "<strong>警告：此页面只能由管理员和其他拥有<code>tboverride</code>权限的用户编辑，因为它匹配以下禁用标题名单：</strong><br /><code>$1</code>",
-	"right-tboverride": "覆盖禁用标题或用户名名单",
-	"right-tboverride-account": "覆盖禁用用户名名单",
+	"right-tboverride": "忽略禁用标题或用户名名单",
+	"right-tboverride-account": "忽略禁用用户名名单",
 	"right-titleblacklistlog": "查看禁用标题名单日志"
 }

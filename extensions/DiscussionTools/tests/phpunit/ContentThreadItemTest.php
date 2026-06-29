@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
@@ -31,7 +32,7 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		$makeThreadItem = static function ( array $arr ) use ( &$makeThreadItem, $range ): ContentThreadItem {
 			if ( $arr['type'] === 'comment' ) {
 				$item = new ContentCommentItem(
-					1, $range, false, [], [], new DateTimeImmutable(),
+					1, $range, false, [], [], new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) ),
 					$arr['author'],
 					$arr['displayName'] ?? null
 				);

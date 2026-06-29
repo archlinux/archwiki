@@ -7,7 +7,7 @@
 	},
 	"replacetext": "Zamijeni tekst",
 	"replacetext-desc": "Dodaje [[Special:ReplaceText|posebnu stranicu]] koja omogućava administratorima da vrše pronalaženje i zamijenu globalnog teksta u stranicama na wikiju.",
-	"replacetext_docu": "Da biste zamijenili jedan niz s drugim, po svim regularnim stranicama na ovom wikiju, unesite ovdje dva dijela teksta i zatim kliknite \"{{int:replacetext_continue}}\".\nZatim će Vam se prikazati spisak stranica koje sadrže traženi tekst, i će možete izabrati u kojima od njih želite ispuniti zamjenu.\nVaše ime će se prikazati u historiji stranica kao korisnika koji je odgovoran za promjene.",
+	"replacetext_docu": "Da biste zamijenili jedan niz s drugim, po svim regularnim stranicama na ovom wikiju, unesite ovdje dva dijela teksta i zatim kliknite \"{{int:replacetext_continue}}\".\nZatim će Vam se prikazati lista stranica koje sadrže traženi tekst, i će možete izabrati u kojima od njih želite ispuniti zamjenu.\nVaše ime će se prikazati u historiji stranica kao korisnika koji je odgovoran za promjene.",
 	"replacetext_originaltext": "Prvobitni tekst:",
 	"replacetext_replacementtext": "Novi tekst:",
 	"replacetext_useregex": "Koristi regularne izraze",

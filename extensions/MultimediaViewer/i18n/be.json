@@ -21,7 +21,6 @@
 	"multimediaviewer-thumbnail-error": "Прабачце, файл не можа быць паказаны",
 	"multimediaviewer-thumbnail-error-description": "Здаецца, узнікла нейкая тэхнічная праблема. Вы можаце $1, калі яна будзе паўтарацца. Памылка: $2",
 	"multimediaviewer-thumbnail-error-retry": "паўтарыць",
-	"multimediaviewer-thumbnail-error-report": "паведаміць пра праблему",
 	"multimediaviewer-license-cc-pd": "Грамадскі набытак",
 	"multimediaviewer-license-pd": "Грамадскі набытак",
 	"multimediaviewer-license-default": "Прагляд ліцэнзіі",
@@ -110,6 +109,5 @@
 	"multimediaviewer-enable-confirmation-text": "Наступны раз, калі Вы націсніце на эскіз на $1, будзе выкарыстаны Праглядальнік медыяфайлаў.",
 	"multimediaviewer-enable-alert": "Праглядальнік медыяфайлаў цяпер адключаны",
 	"multimediaviewer-disable-info-title": "Вы адключылі Праглядальнік медыяфайлаў",
-	"multimediaviewer-disable-info": "Вы ўсё яшчэ можаце праглядаць асобныя файлы з дапамогай Праглядальніка медыяфайлаў",
-	"multimediaviewer-errorreport-privacywarning": "Падрабязнасці пра памылку далучаны да звароту, які будзе даступны для публічнага прагляду. Калі Вас гэта не задавальняе, можаце адрэдагаваць зварот і прыбраць усе звесткі, якімі не хочаце дзяліцца."
+	"multimediaviewer-disable-info": "Вы ўсё яшчэ можаце праглядаць асобныя файлы з дапамогай Праглядальніка медыяфайлаў"
 }

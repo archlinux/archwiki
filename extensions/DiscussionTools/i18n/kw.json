@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Flynn"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Gorthyp",
+	"discussiontools-newtopic-missing-title": "Proviewgh titel mar pleg rag {{GENDER:|dha}} testen keskows.",
+	"discussiontools-replywidget-advanced": "Avonsys",
+	"discussiontools-replywidget-cancel": "Hedhi",
+	"discussiontools-replywidget-mode-source": "Pennfenten",
+	"discussiontools-replywidget-mode-visual": "Gwelesek",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Keworra}} testen",
+	"discussiontools-replywidget-placeholder-newtopic": "Deskrifans",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Gorthebi}} dhe {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Ragwolok",
+	"discussiontools-replywidget-summary": "Berrskrif",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|den|tus}} yn keskows",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kampol|kampollys\n}}",
+	"discussiontools-topicheader-latestcomment": "Kampol diwettha: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ragbrena",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ragbrena",
+	"discussiontools-topicsubscription-button-unsubscribe": "diragbrena",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Diragbrena",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Hwi}} a wra degemeres gwarnyansow a-dro dhe gampollys nowydh y'n desten ma."
+}

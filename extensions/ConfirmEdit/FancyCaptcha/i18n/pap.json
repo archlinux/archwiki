@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"ObaTango"
+			"ObaTango",
+			"Kallmemel"
 		]
 	},
-	"fancycaptcha-captcha": "Verifikashon pa siguridat",
+	"fancycaptcha-captcha": "Kontrol di seguridat",
 	"fancycaptcha-accountcreate": "Pa protehá e wiki kontra kreashon outomátiko di kuenta nos ta pidibo enkaresidamente pa skirbi e palabranan ku ta den e kuadro abou ([[Special:Captcha/help|more info]]):",
 	"fancycaptcha-imgcaptcha-ph": "Yena e teksto ku bo ta mira riba e imágen",
-	"fancycaptcha-reload-text": "Aktualisá"
+	"fancycaptcha-reload-text": "Refreská"
 }

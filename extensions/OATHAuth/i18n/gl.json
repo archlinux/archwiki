@@ -70,7 +70,7 @@
 	"oathauth-auth-switch-module-label": "Usar a aplicación de autenticación",
 	"oathauth-auth-switch-module-help": "Configura <code>newModule</code> como o nome do módulo novo para obter un novo desafío dun módulo de autenticación de dous factores diferente. Déixao baleiro se estás a responder ao desafío actual.",
 	"oathauth-auth-switch-module-keep": "(non cambiar)",
-	"oathauth-throttled": "Demasiados intentos de verificación! Agarda $1.",
+	"oathauth-throttled": "Houbo demasiados intentos! Agarda uns intres.",
 	"oathauth-login-failed": "Fallou a autenticación de dous factores.",
 	"oathauth-recovery-code-login-failed": "Fallou a verificación do código de recuperación.",
 	"oathauth-describe-provider": "Autenticación de dous factores (OATH).",
@@ -149,7 +149,7 @@
 	"oathauth-delete-confirm-box": "Escribe «{{int:oathauth-authenticator-delete-text}}» para continuar",
 	"oathauth-delete-warning-final": "Ao eliminar este método, desactivarase por completo a autenticación de dous factores.",
 	"oathauth-delete-wrong-confirm-message": "Entrada incorrecta para a eliminación final da chave. Escribe «{{int:oathauth-authenticator-delete-text}}» para continuar.",
-	"oathauth-delete-success": "Eliminouse «<strong>$1</strong>».",
+	"oathauth-delete-success": "Eliminado!",
 	"oathauth-created-at": "Engadido o $1",
-	"oathauth-enable-success": "Engadiuse «<strong>$1</strong>»."
+	"oathauth-enable-success": "Engadido!"
 }

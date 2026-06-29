@@ -51,6 +51,7 @@
 	"discussiontools-findcomment-results-id": "Коментар са наведеним ID-ем се појављује на {{PLURAL:$1|следећој страници|следећим страницама}}:",
 	"discussiontools-findcomment-results-name": "Коментар са наведеним именом се појављује на {{PLURAL:$1|следећој страници|следећим страницама}}:",
 	"discussiontools-findcomment-label-idorname": "ID коментара или име",
+	"discussiontools-findcomment-gotocomment": "Приказује се само у тренутној ревизији једне странице, {{GENDER:|можете}} отићи [[Special:GoToComment/$1|директно на коментар помоћу овог линка]]. Или ће вас преусмерити на следеће резултате претраге.",
 	"discussiontools-findcomment-label-search": "Претрага",
 	"discussiontools-findcomment-noresults": "Нема резултата.",
 	"discussiontools-findcomment-results-notcurrent": "(није у тренутној измени)",

@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pitchrigi"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Jawab",
+	"discussiontools-newtopic-missing-title": "Berikan judul pada topik ngota {{{{GENDER:|Anda}}}}",
+	"discussiontools-newtopic-placeholder-title": "Subjék",
+	"discussiontools-replylink": "{{GENDER:|jawab}}",
+	"discussiontools-replywidget-advanced": "Lanjutan",
+	"discussiontools-replywidget-cancel": "Dak jadi",
+	"discussiontools-replywidget-mode-source": "Sumber",
+	"discussiontools-replywidget-mode-visual": "Tampakan",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Tambah}} topik",
+	"discussiontools-replywidget-placeholder-newtopic": "Gambaran",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Jawad}} ke {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Téngok dulu",
+	"discussiontools-replywidget-reply": "{{GENDER:|Jawab}}",
+	"discussiontools-replywidget-summary": "Ringkasan",
+	"discussiontools-replywidget-watchthis": "Tamboi laman ko ke [[Special:Watchlist|daptar téngokan]] Anda",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|orang}} dalam pengotaan",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|tanggapan}}",
+	"discussiontools-topicheader-latestcomment": "Tanggapan tebaru: $1",
+	"discussiontools-topicsubscription-button-subscribe": "langganan",
+	"discussiontools-topicsubscription-button-subscribe-label": "Langganan",
+	"discussiontools-topicsubscription-button-unsubscribe": "dak langganan lagi",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Dak langganan lagi",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Anda}} akan nerimo pemberitauan tentang tanggapan baru di topik ko.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Anda}} lah langganan!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Anda}} dak akan nerimo lagi pemberitauan tentang tanggap baru di topik ko.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Anda}} lah dak langganan lagi!"
+}

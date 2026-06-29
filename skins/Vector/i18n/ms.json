@@ -22,7 +22,7 @@
 	"vector-languages": "Bahasa",
 	"vector-language-button-aria-label": "Pergi ke rencana dalam bahasa lain. Tersedia dalam {{PLURAL:$1|$1 bahasa}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 bahasa}}",
-	"vector-no-language-button-label": "Tambahkan bahasa",
+	"vector-no-language-button-label": "Tambah bahasa",
 	"vector-no-language-button-aria-label": "Rencana ini hanya wujud dalam bahasa ini. Tambahlah rencana untuk bahasa lain",
 	"vector-language-variant-switcher-label": "Tukar kelainan bahasa",
 	"vector-action-addsection": "Tambah topik",

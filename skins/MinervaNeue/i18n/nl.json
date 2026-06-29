@@ -24,7 +24,7 @@
 	"mobile-frontend-editor-redlink-create": "Pagina aanmaken",
 	"mobile-frontend-editor-redlink-explain": "Deze pagina is nog niet aangemaakt.",
 	"mobile-frontend-editor-redlink-leave": "Nee, bedankt.",
-	"mobile-frontend-history": "Bekijk de bewerkingsgeschiedenis van deze pagina.",
+	"mobile-frontend-history": "Bewerkingsgeschiedenis van deze pagina bekijken.",
 	"mobile-frontend-home-button": "Startpagina",
 	"mobile-frontend-language-article-heading": "Taal",
 	"mobile-frontend-languages-not-available": "Deze pagina is niet beschikbaar in andere talen.",
@@ -61,7 +61,7 @@
 	"minerva-skin-desc": "Een responsieve vormgeving die mobiele apparaten voorop stelt",
 	"skin-minerva-issue-learn-more": "Meer leren",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorieën",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Toon paginacategorieën",
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Paginacategorieën weergeven",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Helaas is het groeperen van resultaten per pagina niet beschikbaar in de mobiele weergave. Als u deze functionaliteit wilt gebruiken, bezoek dan de desktop weergave.",
 	"skin-minerva-night-mode-unavailable": "Pagina alleen beschikbaar in het kleurenthema \"Licht\"."
 }

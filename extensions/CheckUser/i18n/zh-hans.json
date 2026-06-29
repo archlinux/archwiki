@@ -57,7 +57,12 @@
 			"ExoHyper2026",
 			"Plana",
 			"Gsdn",
-			"0x48fe75df30"
+			"0x48fe75df30",
+			"SaoMikoto",
+			"ShuQizhe",
+			"Saoutax",
+			"Hamish",
+			"Peterxy"
 		]
 	},
 	"checkuser-summary": "本工具会从最近更改中获取某个用户使用过的IP地址，或者显示某个IP地址下的编辑/用户。\n可在IP地址后方附加“/xff”以使用XFF头信息来获取同一客户端IP地址下的用户和编辑。支持IPv4（CIDR $1-32）和IPv6（CIDR $2-128）。\n由于性能问题，本工具最多返回$3笔最近编辑信息。\n请确保您的操作符合方针。",
@@ -410,8 +415,8 @@
 	"checkuser-userinfocard-open-menu-aria-label": "打开{{GENDER:$1|用户}}信息卡菜单",
 	"checkuser-userinfocard-joined": "{{GENDER:$3|加入时间}}: $1（$2）",
 	"checkuser-userinfocard-joined-unknowndate": "{{GENDER:$1|加入时间}}：2005年或以前",
-	"checkuser-userinfocard-active-wikis-label": "活跃wiki",
-	"checkuser-userinfocard-active-blocks-from-all-wikis": "所有wiki上的现有封禁：$1",
+	"checkuser-userinfocard-active-wikis-label": "活跃的项目",
+	"checkuser-userinfocard-active-blocks-from-all-wikis": "所有wiki上的生效封禁数：$1个",
 	"checkuser-userinfocard-past-blocks": "过去的封禁：$1",
 	"checkuser-userinfocard-global-edits": "全域编辑数：$1",
 	"checkuser-userinfocard-local-edits": "本地编辑数：$1（已被回退：$2）",

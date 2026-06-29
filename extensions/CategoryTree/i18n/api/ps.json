@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-categorytree-summary": "د وېشنيزې ونې شاتاړي دننه‌نی چلنوال.",
+	"apihelp-categorytree-param-category": "د وېشنيزې نوم‌تشيال کې که سرليک يا مختاړی ورکړل شي، له پامه به وغورځول شي.",
+	"apihelp-categorytree-param-options": "د جی‌او‌اېس‌اېن څيز په توگه د وېشنيزې‌ونې جوړوونکي لپاره خوښنې. د <var>depth</var> خوښنه په تلواله ډول <kbd>1</kbd> ده.",
+	"apierror-categorytree-invalidjson": "خوښنې بايد يو باوري جی‌اواېس‌اېن څيز وي.",
+	"apierror-categorytree-invalidjson-option": "\"$1\" خوښنه ناچله ارزښت لري."
+}

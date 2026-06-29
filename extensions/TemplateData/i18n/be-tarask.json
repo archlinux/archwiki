@@ -20,7 +20,7 @@
 	"templatedata-doc-param-desc": "Апісаньне",
 	"templatedata-doc-param-desc-empty": "няма апісаньня",
 	"templatedata-doc-param-name": "Парамэтар",
-	"templatedata-doc-param-status": "Стан",
+	"templatedata-doc-param-status": "Статус",
 	"templatedata-doc-param-status-deprecated": "састарэлы",
 	"templatedata-doc-param-status-optional": "неабавязковы",
 	"templatedata-doc-param-status-required": "абавязковы",
@@ -67,7 +67,7 @@
 	"templatedata-modal-button-saveparam": "Захаваць",
 	"templatedata-modal-confirmcancel": "Вы насамрэч жадаеце скасаваць вашыя зьмены?",
 	"templatedata-modal-current-language": "Цяперашняя мова: $1",
-	"templatedata-modal-errormsg": "Знойдзеныя памылкі. Пераканайцеся, калі ласка, што адсутнічаюць пустыя ці дубляваныя назвы парамэтраў, і што назвы не зьмяшчаюць «$1», «$2» або «$3».",
+	"templatedata-modal-errormsg": "Знойдзеныя памылкі. Пераканайцеся, калі ласка, што няма пустых ці дубляваных назваў парамэтраў, і што назвы не зьмяшчаюць «$1», «$2» або «$3».",
 	"templatedata-modal-errormsg-duplicate-name": "Знойдзеная памылка. Абране імя ўжо выкарыстанае іншым парамэтрам.",
 	"templatedata-modal-errormsg-import-noparams": "Падчас імпартаваньня новыя парамэтры ня знойдзеныя.",
 	"templatedata-modal-format-block": "Блёкавы",
@@ -82,6 +82,7 @@
 	"templatedata-modal-table-param-aliases": "Псэўданімы",
 	"templatedata-modal-table-param-autovalue": "Аўтаматычнае значэньне",
 	"templatedata-modal-table-param-default": "Перадвызначана ($1)",
+	"templatedata-modal-table-param-status": "Статус",
 	"templatedata-modal-table-param-deprecated": "Састарэлы",
 	"templatedata-modal-table-param-deprecatedValue": "Састарэлае кіраўніцтва",
 	"templatedata-modal-table-param-description": "Апісаньне ($1)",
@@ -103,5 +104,6 @@
 	"templatedata-modal-title-templateformatstring": "Нестандартны фармат радку",
 	"templatedata-modal-title-templateparam-details": "Апісаньне парамэтру: $1",
 	"templatedata-modal-title-templateparams": "Парамэтры шаблёну",
+	"templatedata-search-list-header": "Улюбёнае",
 	"templatedata-category-browser-loadmore": "...ладаваць болей"
 }

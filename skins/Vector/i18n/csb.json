@@ -4,7 +4,8 @@
 			"Kaszeba",
 			"Kirsan",
 			"Kuvaly",
-			"Orbitminis"
+			"Orbitminis",
+			"Iketsi"
 		]
 	},
 	"vector-languages": "Jãzëczi",
@@ -18,7 +19,7 @@
 	"vector-action-unprotect": "Zmieni zazychrowanié",
 	"vector-view-create": "Ùsadzë",
 	"vector-view-edit": "Edicëjô",
-	"vector-view-history": "Historëjô lopka",
+	"vector-view-history": "Historëjô",
 	"vector-view-view": "Czëtôj",
 	"vector-view-viewsource": "Zdrojowi tekst",
 	"vector-more-actions": "Wiãcy",

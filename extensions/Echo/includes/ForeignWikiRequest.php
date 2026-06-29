@@ -92,7 +92,8 @@ class ForeignWikiRequest {
 	 */
 	protected function getCentralAuthToken( User $user ) {
 		$context = new RequestContext;
-		$context->setRequest( new FauxRequest( [ 'action' => 'centralauthtoken' ] ) );
+		$context->setRequest( new FauxRequest( [ 'action' => 'centralauthtoken' ],
+			session: SessionManager::getGlobalSession() ) );
 		$context->setUser( $user );
 
 		$api = new ApiMain( $context );

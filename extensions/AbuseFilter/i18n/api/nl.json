@@ -17,7 +17,7 @@
 	"apihelp-abusefilterchecksyntax-summary": "Controleer de syntaxis van een filter.",
 	"apihelp-abusefilterchecksyntax-param-filter": "De volledige filtertekst om de syntaxis van te controleren.",
 	"apihelp-abusefilterchecksyntax-example-1": "Controleer de syntaxis van een geldig filter",
-	"apihelp-abusefilterchecksyntax-example-2": "Controleer de syntaxis van een ongeldig filter",
+	"apihelp-abusefilterchecksyntax-example-2": "Controleer de syntaxis van een foutief filter",
 	"apihelp-abusefilterevalexpression-summary": "Evalueert een misbruikfilterexpressie.",
 	"apihelp-abusefilterevalexpression-param-expression": "De te evalueren expressie.",
 	"apihelp-abusefilterevalexpression-param-prettyprint": "Of het resultaat opgemaakt moet worden.",

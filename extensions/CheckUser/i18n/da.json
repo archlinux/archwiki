@@ -100,7 +100,7 @@
 	"checkuser-torexitnode": "Tor exit node",
 	"checkuser-wasblocked": "Tidligere blokeret",
 	"checkuser-localonly": "Ikke slået sammen",
-	"checkuser-massblock": "Bloker valgte brugere",
+	"checkuser-massblock": "Blokér valgte brugere",
 	"checkuser-massblock-text-without-local-block-buttons": "Du har ikke de nødvendige rettigheder til at blokere brugere på denne wiki. Du kan dog stadig bruge afkrydsningsfelterne i resultaterne ovenfor til at vælge konti og IP-adresser, du enten vil låse eller blokere globalt (afhængigt af din adgang).",
 	"checkuser-massblock-text": "Brug afkrydsningsfelterne i resultaterne ovenfor til at vælge konti og IP'er, du ønsker at blokere. Så kan du bruge knapperne nedenfor, som åbner {{#special:InvestigateBlock}}-formularen med målinputtet udfyldt.",
 	"checkuser-massblock-commit-accounts": "Bloker de valgte konti",

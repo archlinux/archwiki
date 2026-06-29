@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Muhamad Izzul Fiqih"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|terimo kasih}}}}"
+}

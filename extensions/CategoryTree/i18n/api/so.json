@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-categorytree-summary": "Qaybta gudaha ee kordhinta CategoryTree.",
+	"apihelp-categorytree-param-category": "Cinwaanka qaybta magaca, horgalaha waa la iska indho tiri doonaa haddii la bixiyo.",
+	"apihelp-categorytree-param-options": "Ikhtiyaarada dhisaha CategoryTree oo ah shay JSON ah. Ikhtiyaarka <var>qoto dheer</var> wuxuu caadi ahaan u beddelaa <kbd>1</kbd> .",
+	"apierror-categorytree-invalidjson": "Xulashooyinku waa inay ahaadaan shay JSON ah oo sax ah.",
+	"apierror-categorytree-invalidjson-option": "Ikhtiyaarka \" $1 \" waxa ku jira qiimo aan sax ahayn."
+}

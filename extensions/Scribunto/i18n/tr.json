@@ -9,9 +9,11 @@
 			"SaldırganSincap",
 			"Sezgin İbiş",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Anthelior"
 		]
 	},
+	"content-model-scribunto": "Scribunto modülü",
 	"scribunto-desc": "Betik dillerini MediaWiki sayfalarına gömmek için çerçeve",
 	"scribunto-line": "$1 satırında",
 	"scribunto-module-line": "$2 satırında $1",
@@ -20,7 +22,7 @@
 	"scribunto-error-long": "Betik hataları:\n\n$1",
 	"scribunto-doc-page-name": "Module:$1/belge",
 	"scribunto-doc-page-does-not-exist": "''Bu modül için bir [[$1]] belgelendirmesi oluşturabilirsiniz''",
-	"scribunto-doc-page-header": "'''Bu [[$1]] belgelendirme sayfası içindir'''",
+	"scribunto-doc-page-header": "'''Bu, [[$1]] için belgelendirme sayfasıdır'''",
 	"scribunto-console-intro": "* Modül dışa aktarımları, kaydedilmemiş değişiklikler de dahil olmak üzere \"p\" değişkeni olarak mevcuttur.\n* Bir ifadeyi ifade olarak değerlendirmek veya print() kullanmak için bir satırdan önce \"=\" işaretini kullanın. Tablolar için mw.logObject() öğesini kullanın.\n* Bu konsola mesaj göndermek için modül kodunda mw.log() ve mw.logObject() kullanın.",
 	"scribunto-console-title": "Hata ayıklama konsolu",
 	"scribunto-console-too-large": "Bu konsol oturumu çok büyük. Lütfen konsol geçmişini temizleyin veya modülün boyutunu küçültün.",
@@ -68,5 +70,7 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua günlükleri",
 	"nstab-module": "Modül",
-	"tooltip-ca-nstab-module": "Modül sayfasını görüntüle"
+	"tooltip-ca-nstab-module": "Modül sayfasını görüntüle",
+	"namespaceinfo-description-ns828": "Viki sayfalarından ve onların belgelendirme sayfalarından çağrılabilecek Lua kod modülleri için ad alanı",
+	"namespaceinfo-description-ns829": "Modüller ve belgelendirme için tartışma sayfaları"
 }

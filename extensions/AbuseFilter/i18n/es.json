@@ -87,7 +87,7 @@
 	"abusefilter-blocker": "Filtro antiabusos",
 	"abusefilter-blockreason": "Bloqueado automáticamente por el filtro antiabusos.\nDescripción del filtro que se ha disparado: $1",
 	"abusefilter-degroupreason": "Derechos revocados automáticamente por el filtro antiabusos.\nDescripción de la regla: $1",
-	"abusefilter-blockautopromotereason": "Autopromoción retrasado automáticamente por el filtro antiabusos.\nDescripción de la regla: $1",
+	"abusefilter-blockautopromotereason": "Recepción automática de permisos retrasada automáticamente por el filtro antiabusos.\nDescripción de la regla: $1",
 	"abusefilter-accountreserved": "Este nombre de cuenta está reservado para su uso por el filtro antiabusos.",
 	"right-abusefilter-modify": "Crear o modificar filtros antiabusos",
 	"right-abusefilter-view": "Ver filtros antiabusos",

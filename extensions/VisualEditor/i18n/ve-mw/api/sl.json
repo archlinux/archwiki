@@ -3,14 +3,15 @@
 		"authors": [
 			"Eleassar",
 			"Janezdrilc",
-			"Pinky sl"
+			"Pinky sl",
+			"Ed g2s"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Za ta ključ ni bilo mogoče najti predpomnjene serializacije",
 	"apierror-visualeditor-difffailed": "Prikaz primerjalne strani je spodletel",
 	"apihelp-visualeditor-param-basetimestamp": "Pri shranjevanju, nastavite to časovnemu žigu urejene revizije. Uporablja se za odkrivanje konfliktov pri urejanju.",
 	"apihelp-visualeditor-param-badetag": "Če je poizvedba RESTBase vrnila na videz neveljavno značko ETag, jo posredujte sem za namene beleženja.",
-	"apihelp-visualeditor-param-cachekey": "Za serializacijo ali razliko uporabite rezultat predhodnega zahtevka serializeforchache s tem ključem. Povozi $1html.",
+	"apihelp-visualeditor-param-cachekey": "Za serializacijo ali razliko uporabite rezultat predhodnega zahtevka serializeforcache s tem ključem. Povozi $1html.",
 	"apihelp-visualeditor-param-editintro": "Urejanje intra za dodajanje obvestil.",
 	"apihelp-visualeditor-param-etag": "ETag za pošiljanje.",
 	"apihelp-visualeditor-param-format": "Oblika izhoda.",

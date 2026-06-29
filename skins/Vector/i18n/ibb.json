@@ -7,7 +7,9 @@
 			"Ekemini5",
 			"Okon Ibiono",
 			"Uduakj",
-			"Uduakumana"
+			"Uduakumana",
+			"Andikan Efiok Eduok",
+			"Orokbest1"
 		]
 	},
 	"vector-languages": "Ikọ",
@@ -20,10 +22,25 @@
 	"vector-view-create": "Nam",
 	"vector-view-history": "Se mkpo ini edem",
 	"vector-more-actions": "afen",
+	"vector-appearance-label": "Adiuwọ nda",
+	"vector-feature-limited-width-name": "Ubom",
+	"vector-feature-limited-width-0-label": "Ukpa",
+	"vector-feature-limited-width-1-label": "Nañgha aba",
+	"vector-feature-custom-font-size-name": "Iko",
+	"vector-feature-custom-font-size-0-label": "Etuk -etuk",
+	"vector-feature-custom-font-size-1-label": "Nañgha enam",
+	"vector-feature-custom-font-size-2-label": "Ekamba",
+	"skin-theme-name": "Nañgha aba",
+	"skin-theme-day-label": "Ikañ",
+	"skin-theme-night-label": "Akim",
+	"skin-theme-os-label": "Akañ keed",
+	"skin-theme-exclusion-notice": "Ikpeghe nwed ayem ase asine ke uwana",
 	"vector-toc-label": "Si sine",
 	"vector-toc-beginning": "Ntak",
 	"vector-main-menu-label": "Ata usung",
+	"vector-feature-custom-font-size-exclusion-notice": "Ikpeghe nwed ayem ase akama ntuk ubọk newd",
 	"vector-page-tools-label": "Mkpo utom",
 	"vector-page-tools-general-label": "Uked",
+	"vector-page-tools-actions-label": "Adinam",
 	"vector-unpin-element-label": "dịbe"
 }

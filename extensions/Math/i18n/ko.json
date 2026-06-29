@@ -23,6 +23,7 @@
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> 태그 사이에 수학 수식을 렌더합니다",
+	"popups-settings-option-math": "수학",
 	"popups-settings-option-math-description": "수학 공식을 설명합니다.",
 	"popups-settings-option-math-tooltip": "마우스 커서를 올리면 수학 공식을 설명합니다.",
 	"math-visualeditor-mwchemdialog-title": "화학식",
@@ -34,6 +35,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "기본값",
 	"math-visualeditor-mwlatexinspector-display-inline": "인라인",
 	"math-visualeditor-mwlatexinspector-id": "연결 ID (선택 사항)",
+	"math-visualeditor-mwlatexinspector-qid": "위키베이스 ID (접두사 Q)",
 	"math-visualeditor-mwmathdialog-title": "수학 공식",
 	"math-visualeditor-symbol-group-chem-addition": "첨가 화합물",
 	"math-visualeditor-symbol-group-chem-aggregation": "물질의 상태",

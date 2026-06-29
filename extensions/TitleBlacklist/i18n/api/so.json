@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-titleblacklist-summary": "Hubi sax ahaanshaha cinwaan bog, magaca faylka, ama magaca isticmaale adigoo isticmaalaya liiska cinwaannada la reebay.",
+	"apihelp-titleblacklist-param-title": "Xadhigga lagu hubinayo liiska madow.",
+	"apihelp-titleblacklist-param-action": "Ficilka la hubinayo.",
+	"apihelp-titleblacklist-param-nooverride": "Ha isku dayin inaad ka gudubto liiska cinwaannada la reebay.",
+	"apihelp-titleblacklist-example-1": "Hubi in [[Foo]] uu ku jiro liiska cinwaannada la reebay",
+	"apihelp-titleblacklist-example-2": "Hubi in [[Bar]] uu ku jiro liiska cinwaannada la reebay ee wax ka beddelka",
+	"apihelp-createaccount-param-ignoretitleblacklist": "Iska indha tir hubinta been-abuurka (waxay u baahan tahay mid ka mid ah xuquuqaha soo socda: <code>tboverride</code>, <code>tboverride-account</code>)."
+}

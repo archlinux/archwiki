@@ -1,24 +1,33 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hindustanilanguage"
+			"Hindustanilanguage",
+			"Saurmandal"
 		]
 	},
-	"apihelp-abusefiltercheckmatch-param-filter": "मेल खाने को जाँचने के लिए पूर्ण फ़िलटर पाठ ।",
-	"apihelp-abusefilterevalexpression-param-expression": "जाँचने की अभिव्यक्ति",
-	"apihelp-abusefilterevalexpression-example-1": "सीधी अभिव्यक्ति जाँचना",
+	"apihelp-abusefiltercheckmatch-summary": "जाँचें कि क्या कोई दुरुपयोग फ़िल्टर, वेरिएबलों के किसी समुच्चय, किसी सम्पादन, या फिर दुरुपयोग फ़िल्टर की किसी लॉग की गई घटना से मेल खाता है।",
+	"apihelp-abusefiltercheckmatch-extended-description": "vars, rcid या logid में से एक आवश्यक है, हालाँकि इनमें से किसी एक का ही प्रयोग किया जा सकता है।",
+	"apihelp-abusefiltercheckmatch-param-filter": "मिलान को जाँचने के लिए फ़िल्टर का पूरा टेक्स्ट।",
+	"apihelp-abusefilterchecksyntax-summary": "दुरुपयोग फ़िल्टर का सिनटैक्स जाँचें।",
+	"apihelp-abusefilterevalexpression-summary": "दुरुपयोग फ़िल्टर व्यंजक का मूल्यांकन करता है।",
+	"apihelp-abusefilterevalexpression-param-expression": "मूल्यांकन हेतु व्यंजक।",
+	"apihelp-abusefilterevalexpression-example-1": "सरल व्यंजक का मूल्यांकन करें",
+	"apihelp-abusefilterunblockautopromote-summary": "दुरुपयोग फ़िल्टर के परिणामस्वरूप स्वतः पदोन्नति से अवरोधित किसी सदस्य पर से अवरोध हटाता है।",
 	"apihelp-abusefilterunblockautopromote-param-user": "उस सदस्य का सदस्यनाम जिस पर से आप अवरोध हटाना चाहते हैं।",
-	"apihelp-abusefilterunblockautopromote-example-1": "[[User:Example]] के स्वतःपदोन्नति पर से अवरोध हटाना",
-	"apihelp-query+abusefilters-param-prop": "कौन से गुण पाना चाहिए।",
-	"apihelp-query+abusefilters-example-1": "सक्षम सार्वजनिक फ़िलटरों सूची दें",
-	"apihelp-query+abusefilters-example-2": "फ़िलटरों के बारे में कुछ जानकारी दिखाइये",
-	"apihelp-query+abuselog-param-start": "समयछाप की गिनती प्रारंभ हो रही (स्थान) से।",
-	"apihelp-query+abuselog-param-end": "समयछाप की गिनती समाप्त हो रही (स्थान) से।",
-	"apihelp-query+abuselog-param-user": "केवल उन प्रविष्टियों को दिखाएँ जो दिए गए सदस्य या आई०पी० पते द्वारा किए गए हैं।",
-	"apihelp-query+abuselog-param-title": "केवल उन प्रविष्टियों को दिखाएँ जो दिए गए पृष्ठ पर आ रहे हैं।",
-	"apihelp-query+abuselog-param-filter": "केवल उन प्रविष्टियों को दिखाएँ जो दी गई फ़िलटर आई०डी० द्वारा दिखाई गई है।",
-	"apihelp-query+abuselog-param-limit": "सूची के अनुसार सर्वाधिक प्रविष्टियाँ।",
-	"apihelp-query+abuselog-param-prop": "कौन से गुण पाना चाहिए।",
-	"apihelp-query+abuselog-example-1": "हाल के लॉग प्रविष्टियाँ दिखाएँ",
-	"apihelp-query+abuselog-example-2": "हाल के लॉग प्रविष्टियाँ [[API]] के लिए दिखाएँ"
+	"apihelp-abusefilterunblockautopromote-example-1": "[[User:Example]] की स्वतः पदोन्नति पर से अवरोध हटाएँ",
+	"apihelp-query+abusefilters-summary": "दुरुपयोग फ़िल्टरों का विवरण दिखाएँ।",
+	"apihelp-query+abusefilters-param-prop": "कौन-से गुणधर्म प्राप्त करने हैं।",
+	"apihelp-query+abusefilters-example-1": "सक्षम सार्वजनिक फ़िल्टरों को सूचीबद्ध करें",
+	"apihelp-query+abusefilters-example-2": "फ़िल्टरों के बारे में कुछ जानकारी दिखाएँ",
+	"apihelp-query+abuselog-summary": "किसी दुरुपयोग फ़िल्टर द्वारा पकड़ी गई घटनाएँ दिखाएँ।",
+	"apihelp-query+abuselog-param-start": "टाइमस्टैम्प जहाँ से गणना शुरू करनी है।",
+	"apihelp-query+abuselog-param-end": "टाइमस्टैम्प जहाँ तक गणना जारी रखनी है।",
+	"apihelp-query+abuselog-param-user": "केवल वे प्रविष्टियाँ दिखाएँ जो दिए गए सदस्य या IP पते द्वारा की गई हैं।",
+	"apihelp-query+abuselog-param-title": "केवल वे प्रविष्टियाँ दिखाएँ जो दिए गए पृष्ठ से आ रही हैं।",
+	"apihelp-query+abuselog-param-filter": "केवल वे प्रविष्टियाँ दिखाएँ जो दिए गए फ़िल्टर ID-ओं द्वारा पकड़े गए थे। पाइप (|) से अलग करें, और वैश्विक फ़िल्टरों के लिए \"$1\" उपसर्ग का प्रयोग करें।",
+	"apihelp-query+abuselog-param-limit": "सूचीबद्ध करने के लिए सर्वाधिक प्रविष्टियाँ।",
+	"apihelp-query+abuselog-param-prop": "कौन-से गुणधर्म प्राप्त करने हैं।",
+	"apihelp-query+abuselog-example-1": "हाल की लॉग प्रविष्टियाँ दिखाएँ",
+	"apihelp-query+abuselog-example-2": "[[API]] के लिए हाल की लॉग प्रविष्टियाँ दिखाएँ",
+	"apihelp-abuselogprivatedetails-summary": "किसी दुरुपयोग लॉग प्रविष्टि का गोपनीय विवरण देखें।"
 }

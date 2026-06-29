@@ -3,8 +3,6 @@
 namespace MediaWiki\Extension\OATHAuth\Special;
 
 use MediaWiki\CheckUser\Hooks as CheckUserHooks;
-use MediaWiki\Config\ConfigException;
-use MediaWiki\Exception\MWException;
 use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Exception\UserNotLoggedIn;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
@@ -13,6 +11,8 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 
@@ -23,6 +23,7 @@ class VerifyOATHForUser extends FormSpecialPage {
 	public function __construct(
 		private readonly OATHUserRepository $userRepo,
 		private readonly UserFactory $userFactory,
+		private readonly CentralIdLookup $centralIdLookup,
 	) {
 		// messages used: verifyoathforuser (display "name" on Special:SpecialPages),
 		// right-oathauth-verify-user, action-oathauth-verify-user
@@ -97,18 +98,20 @@ class VerifyOATHForUser extends FormSpecialPage {
 		];
 	}
 
-	/**
-	 * @param array $formData
-	 * @return array|true
-	 * @throws ConfigException
-	 * @throws MWException
-	 */
+	/** @inheritDoc */
 	public function onSubmit( array $formData ) {
 		$this->targetUser = $formData['user'];
 		$user = $this->userFactory->newFromName( $this->targetUser );
-		if ( !$user || $user->getId() === 0 ) {
+		// T424117, same as T393253 - Check the username is valid, but don't check if
+		// it exists on the local wiki. Instead, check there is a valid central ID.
+		if ( !$user || $this->centralIdLookup->centralIdFromName( $formData['user'] ) === 0 ) {
 			return [ 'oathauth-user-not-found' ];
 		}
+
+		if ( $this->getUser()->pingLimiter( 'verify-2fa' ) ) {
+			return Status::newFatal( 'oathauth-throttled' );
+		}
+
 		$oathUser = $this->userRepo->findByUser( $user );
 
 		$this->enabledStatus = $oathUser->isTwoFactorAuthEnabled();

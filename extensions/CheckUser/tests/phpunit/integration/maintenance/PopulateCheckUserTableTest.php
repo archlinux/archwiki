@@ -30,7 +30,7 @@ class PopulateCheckUserTableTest extends MaintenanceBaseTestCase {
 			$this->maintenance->execute(),
 			'Maintenance script should have returned true.'
 		);
-		$this->expectOutputString( 'recentchanges is empty; nothing to add.' );
+		$this->expectOutputString( "recentchanges is empty; nothing to add.\n" );
 		$this->assertRowCount(
 			0, 'cu_private_event', 'cupe_id',
 			'No entries in recentchanges table, so no population should have occurred.'

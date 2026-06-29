@@ -25,6 +25,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class ApiEchoNotifications extends ApiQueryBase {
 	use ApiCrossWiki;
+	use ApiEchoPermissionsTrait;
 
 	/**
 	 * @var bool
@@ -46,16 +47,10 @@ class ApiEchoNotifications extends ApiQueryBase {
 	}
 
 	public function execute() {
+		$this->checkReadNotificationsPermissions();
+
 		// To avoid API warning, register the parameter used to bust browser cache
 		$this->getMain()->getVal( '_' );
-
-		if ( !$this->getAuthority()->isAllowed( 'echo-read-notifications' ) ) {
-			if ( !$this->getAuthority()->isRegistered() ) {
-				$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
-			} else {
-				$this->dieWithError( 'apierror-permissiondenied', 'echo-read-notifications' );
-			}
-		}
 
 		$params = $this->extractRequestParams();
 

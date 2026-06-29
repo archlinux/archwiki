@@ -5,18 +5,19 @@
 			"Daramlagon",
 			"Geopoet",
 			"MinecraftAustralia",
-			"ShimunUfesoj"
+			"ShimunUfesoj",
+			"ShiminUfesoj"
 		]
 	},
 	"mobile-frontend-editor-edit": "Liwaton",
 	"mobile-frontend-history": "Hilingon an kasaysayan nin pagbabago kan pahinang ini.",
 	"mobile-frontend-home-button": "Irukan",
-	"mobile-frontend-language-article-heading": "Lenggwahe",
+	"mobile-frontend-language-article-heading": "Tataramon",
 	"mobile-frontend-main-menu-button-tooltip": "Bukasan an pangenot na hùyagan",
 	"mobile-frontend-main-menu-login": "Mag-login",
 	"mobile-frontend-main-menu-logout": "Magluwas",
-	"mobile-frontend-main-menu-nearby": "Haranihon",
-	"mobile-frontend-main-menu-settings": "Kagustuhan",
+	"mobile-frontend-main-menu-nearby": "Harani",
+	"mobile-frontend-main-menu-settings": "Mga Panuytoy",
 	"mobile-frontend-main-menu-watchlist": "Bantay-listahan",
 	"mobile-frontend-meta-data-issues": "Mga isyu sa pahina",
 	"mobile-frontend-meta-data-issues-header": "Mga isyu sa Pahina",
@@ -24,5 +25,6 @@
 	"mobile-frontend-random-button": "Dawa ano",
 	"mobile-frontend-user-button-tooltip": "Ipahiling an sakuyang mga notipikasyon",
 	"mobile-frontend-user-newmessages": "Ika igwa nin baguhong mga mensahe sa saimong pahina nin orolayan.",
-	"minerva-user-menu-button": "Menu kan paragamit"
+	"minerva-user-menu-button": "Menu kan paragamit",
+	"minerva-page-actions-overflow": "Labi pa"
 }

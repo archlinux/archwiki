@@ -35,6 +35,7 @@
 	"cite-ve-dialog-reference-editing-reused-short": "{{PLURAL:$1|Eemol|2=Zweemol|$1 Mol}} benotzt",
 	"cite-ve-dialog-reference-editing-reused": "Dës Referenz gëtt {{PLURAL:$1|eemol|2=zweemol|$1 Mol}} op dëser Säit benotzt.",
 	"cite-ve-dialog-reference-editing-reused-long": "Dës Referenz gëtt {{PLURAL:$1|eemol|2=zweemol|$1 Mol}} op dëser Säit benotzt. Ännerungen, déi hei gemaach ginn, ginn op alle Plazen applizéiert, wou dës Referenz erëmbenotzt gëtt.",
+	"cite-ve-dialog-reference-editing-details-placeholder": "Inhalt, deen an d'Feld derbäigesat gëtt, wäert hei optauchen.",
 	"cite-ve-dialog-reference-missing-parent-ref": "Dës Detailer sinn un eng Referenz gebonnen, déi guer net do ass. Huelt se wgl. aus der Säit eraus oder léist de Problem am Quelltextmodus.",
 	"cite-ve-dialog-reference-options-group-label": "Dës Grupp benotzen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allgemeng Referenzen",

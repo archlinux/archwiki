@@ -34,8 +34,6 @@
 	"multimediaviewer-thumbnail-error": "Text shown when the image could not be loaded. Followed by {{msg-mw|multimediaviewer-thumbnail-error-description}}.\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error-description}}\n* {{msg-mw|multimediaviewer-metadata-error}}",
 	"multimediaviewer-thumbnail-error-description": "Text shown when the image could not be loaded. Follows {{msg-mw|multimediaviewer-thumbnail-error}}. Parameters:\n* $1 - \"retry\" link (see {{msg-mw|multimediaviewer-thumbnail-error-retry}})\n* $2 - the error message (not localized)\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
 	"multimediaviewer-thumbnail-error-retry": "Used as a part of {{msg-mw|multimediaviewer-thumbnail-error-description}} (as a link text).\n{{Identical|Retry}}",
-	"multimediaviewer-thumbnail-error-report": "Used as a part of {{msg-mw|multimediaviewer-thumbnail-error-description}} (as a link text).",
-	"multimediaviewer-report-issue-url": "{{ignored}}URL to the report issue website",
 	"multimediaviewer-license-cc-by-1.0": "{{optional}}\nVery short label for the Creative Commons Attribution license, version 1.0, used in a link to the file information page that has more licensing information.\n{{Identical|CC BY}}",
 	"multimediaviewer-license-cc-sa-1.0": "{{optional}}\nVery short label for the Creative Commons ShareAlike license, version 1.0, used in a link to the file information page that has more licensing information.",
 	"multimediaviewer-license-cc-by-sa-1.0": "{{optional}}\nVery short label for the Creative Commons Attribution ShareAlike license, version 1.0, used in a link to the file information page that has more licensing information.\n{{Identical|CC BY-SA}}",
@@ -155,6 +153,5 @@
 	"multimediaviewer-enable-alert": "Text shown in the enable panel to alert the user that the media viewer is currently disabled.",
 	"multimediaviewer-disable-info-title": "Used as title for {{msg-mw|Multimediaviewer-disable-info}}.",
 	"multimediaviewer-disable-info": "The title for this message is {{msg-mw|Multimediaviewer-disable-info-title}}.",
-	"multimediaviewer-errorreport-privacywarning": "A warning that is included in the Phabricator error report that's generated when the user clicks on the report link on an error page.",
 	"multimediaviewer-loading": "Label for indeterminate progress bar shown while the dialog is loading."
 }

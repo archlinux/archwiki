@@ -17,7 +17,6 @@
 	"multimediaviewer-thumbnail-error": "ߤߊߞߍ߬ߕߏ߫߸ ߞߐߕߐ߮ ߕߍ߫ ߛߐ߲߬ ߠߊߢߎ߲߫ ߠߊ߫",
 	"multimediaviewer-thumbnail-error-description": "ߊ߬ ߞߍߣߍ߲߫ ߦߋ߫ ߦߏ߫ ߛߋߒߞߏߟߦߊ߫ ߝߙߋߞߋ ߘߏ߫ ߟߋ߬ ߓߌ߬ߟߊ߬ߣߍ߲߬ ߦߴߊ߬ ߘߐ߫. ߌ ߘߌ߫ ߛߋ߫ $1 ߟߊ߫ ߣߴߊ߬ ߟߊߝߛߊ߬ ߘߊ߫. ߝߎ߬ߕߎ߲߬ߕߌ: $2",
 	"multimediaviewer-thumbnail-error-retry": "ߊ߬ ߡߊߝߍߣߍ߲߫",
-	"multimediaviewer-thumbnail-error-report": "ߓߐߒߘߊ ߞߏߝߐ߫",
 	"multimediaviewer-license-cc-pd": "ߝߘߏ߬ߓߊ߬ ߡߊߘߎ߮",
 	"multimediaviewer-license-pd": "ߝߘߏ߬ߓߊ߬ ߡߊߘߎ߮",
 	"multimediaviewer-permission-title": "ߘߌ߬ߢߍ߬ߒ߬ߡߊ߬ߟߌ ߝߊߙߊ߲ߝߊ߯ߛߌ ߟߎ߬",
@@ -88,6 +87,5 @@
 	"multimediaviewer-enable-confirmation-text": "ߛߋ߲߬ߧߊ߫ ߣߊ߬ߕߐ ߸ ߌ ߦߋ߫ $1 ߞߝߊ߬ߟߋ߲ߛߋ߲ ߛߐ߲߬ߞߌ߲߬߸ ߏ߬ ߓߊ߯ ߞߍ߫ ߞߟߋߞߟߋ ߦߋߟߊ߲ ߘߌ߫ ߓߊ߯ߙߊ߫",
 	"multimediaviewer-enable-alert": "ߞߟߋߞߟߋ ߦߋߟߊ߲ ߓߘߊ߫ ߓߴߊ߬ ߟߊ߫ ߡߎ߬ߕߎ߲߬",
 	"multimediaviewer-disable-info-title": "ߌ ߓߘߊ߫ ߞߟߋߞߟߋ ߦߋߟߊ߲ ߓߴߊ߬ ߟߊ߫",
-	"multimediaviewer-disable-info": "ߌ ߘߌ߫ ߕߏ߫ ߞߐߕߐ߮ ߝߊߙߊ߲ߝߊߙߊ߲ߠߊ ߠߎ߬ ߦߋ߫ ߟߊ߫ ߞߟߋߞߟߋ ߦߋߟߊ߲ ߠߊ߫ ߡߎߣߎ߲߬.",
-	"multimediaviewer-errorreport-privacywarning": "ߝߌ߬ߟߌ ߝߊߙߊ߲ߝߊ߯ߛߌ ߛߘߌ߬ߣߍ߲߫ ߦߋ߫ ߘߊ߲߬ߕߍ߰ߟߌ ߟߋ߬ ߟߊ߫ ߡߍ߲ ߘߌ߫ ߣߊ߬ ߞߍ߫ ߜߍߘߐ߫ ߦߋߕߊ ߘߌ߫. ߣߴߏ߬ ߘߏ߲߬ ߡߊ߫ ߞߴߌ ߟߊߝߙߍߞߏ߫ ߘߴߌ ߢߣߊ߫߸ ߌ ߘߌ߫ ߛߋ߫ ߘߊ߲߬ߕߍ߰ߟߌ ߘߎ߰ߟߊ ߘߐ߫ ߘߊ߬ ߓߟߏߡߟߊ ߟߎ߬ ߓߍ߯ ߖߏ߰ߛߌ߫ ߌ ߕߴߊ߬ ߝߍ߬ ߞߊ߬ ߡߍ߲ ߠߎ߬ ߟߊߖߍ߲ߛߍ߲߫."
+	"multimediaviewer-disable-info": "ߌ ߘߌ߫ ߕߏ߫ ߞߐߕߐ߮ ߝߊߙߊ߲ߝߊߙߊ߲ߠߊ ߠߎ߬ ߦߋ߫ ߟߊ߫ ߞߟߋߞߟߋ ߦߋߟߊ߲ ߠߊ߫ ߡߎߣߎ߲߬."
 }

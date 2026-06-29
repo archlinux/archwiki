@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"hcaptcha-desc": "Qaybta [https://www.hcaptcha.com/ hCaptcha] ee ConfirmEdit",
+	"hcaptcha-edit": "Si wiki-ga looga ilaaliyo tafatirro spam ah oo otomaatig ah, waxaan si naxariis leh kuugu codsaneynaa inaad xalliso hCaptcha-kan soo socda:",
+	"hcaptcha-addurl": "Tafatirkaaga waxa ku jira xiriiriyeyaal dibadeed oo cusub. Si wiki-ga looga ilaaliyo spam otomaatig ah, waxaan si naxariis leh kuugu codsaneynaa inaad xalliso hCaptcha-kan soo socda:",
+	"hcaptcha-badlogin": "Si wiki-ga looga ilaaliyo jebinta furaha sirta ah ee otomaatigga ah, waxaan si naxariis leh kuugu codsaneynaa inaad xalliso hCaptcha-kan soo socda:",
+	"hcaptcha-createaccount": "Si wiki-ga looga ilaaliyo abuurista akoonnada ee otomaatigga ah, waxaan si naxariis leh kuugu codsaneynaa inaad xalliso hCaptcha-kan soo socda:",
+	"hcaptcha-createaccount-fail": "Waxay u muuqataa inaadan xallin hCaptcha-ga.",
+	"hcaptcha-create": "Si wiki-ga looga ilaaliyo abuurista bogag otomaatig ah, waxaan si naxariis leh kuugu codsaneynaa inaad xalliso hCaptcha-kan soo socda:",
+	"hcaptcha-help": "Fadlan xalli caqabadda hCaptcha oo soo celi qiimaha jawaabta sida captchaWord.",
+	"hcaptcha-privacy-policy": "Boggan waxaa ilaaliya hCaptcha, waxaana khuseeya [https://www.hcaptcha.com/privacy Siyaasadda Asturnaanta] iyo [https://www.hcaptcha.com/terms Shuruudaha Adeegga] ee hCaptcha.",
+	"hcaptcha-challenge-closed": "Si aad u sii waddo, waa inaad dhammaystirtaa captcha-ga.",
+	"hcaptcha-challenge-expired": "Waqtiga lagu dhammeeyo CAPTCHA wuu dhacay. Fadlan mar kale isku day.",
+	"hcaptcha-generic-error": "Waxaa khalad dhacay markii la soo shubayay foomka. Si aad u sii waddo, waa inaad dib u soo rartaa bogga.",
+	"hcaptcha-loading-indicator-label": "Fadlan sug inta aan dhammaynayno soo gelinta foomka...",
+	"hcaptcha-missing-token": "Weli si buuxda looma soo gelin foomka. Fadlan sug dhowr ilbiriqsi, ka dibna isku day mar kale.",
+	"hcaptcha-noscript": "JavaScript ayaa loo baahan yahay si loo sii wado. Fadlan shid JavaScript-ka ku jira dejimaha biraawsarkaaga ka dibna dib u cusboonaysii bogga."
+}

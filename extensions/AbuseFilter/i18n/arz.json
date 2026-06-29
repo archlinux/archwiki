@@ -5,7 +5,8 @@
 			"Matma Rex",
 			"Meno25",
 			"OsamaK",
-			"Ramsis II"
+			"Ramsis II",
+			"HitomiAkane"
 		]
 	},
 	"abusefilter-desc": "يطبق قواعد آليه على التعديلات.",
@@ -89,7 +90,7 @@
 	"abusefilter-tools-text": "هنا بعض الأدوات التى ربما تكون مفيده فى صياغه وتصليح مرشحات الإساءه.",
 	"abusefilter-tools-expr": "مختبر التعبير",
 	"abusefilter-tools-submitexpr": "تقييم",
-	"abusefilter-tools-reautoconfirm": "استرجاع حاله التأكيد التلقائي",
+	"abusefilter-tools-reautoconfirm": "استرجاع حالة التأكيد التلقائى",
 	"abusefilter-tools-reautoconfirm-user": "المستخدم:",
 	"abusefilter-tools-reautoconfirm-submit": "إعاده التأكيد التلقائي",
 	"abusefilter-reautoconfirm-none": "{{GENDER:$1|هذا المستخدم|هذه المستخدمة}} لم يتم تعليق حاله {{GENDER:$1|تأكيده|تأكيدها}} التلقائى.",

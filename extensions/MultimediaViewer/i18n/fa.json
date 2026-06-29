@@ -29,7 +29,6 @@
 	"multimediaviewer-thumbnail-error": "با عرض پوزش، پرونده نمی‌تواند نمایش یابد",
 	"multimediaviewer-thumbnail-error-description": "به نظر می‌رسد مشکل فنی وجود داشته باشد. شما می‌توانید $1 اگر همچنان ادامه دارد. خطا: $2",
 	"multimediaviewer-thumbnail-error-retry": "تلاش دوباره",
-	"multimediaviewer-thumbnail-error-report": "مشکل را گزارش دهید",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",

@@ -3,13 +3,14 @@
 		"authors": [
 			"Helix84",
 			"Lexected",
-			"Teslaton"
+			"Teslaton",
+			"Wizzard"
 		]
 	},
 	"codeeditor-desc": "Editor stránok JavaScriptu a CSS so zvýrazňovaním syntaxe pomocou [https://ace.c9.io/ editora Ace]",
 	"codeeditor-next-annotation": "Prejsť na ďalšiu anotáciu",
 	"codeeditor-toolbar-toggle": "Prepnúť editor kódu",
-	"codeeditor-save-with-errors": "Tento dokument obsahuje chyby. Skutočne ho chcete uložiť?",
+	"codeeditor-save-with-errors": "Dokument obsahuje chyby. Naozaj ho chcete zverejniť?",
 	"codeeditor-invisibleChars-toggle": "Prepnúť zobrazenie neviditeľných znakov",
 	"codeeditor-lineWrapping-toggle": "Prepnúť zalamovanie riadkov",
 	"codeeditor-searchReplace-toggle": "Prepnúť zobrazenie okna pre vyhľadávanie a náhrady",

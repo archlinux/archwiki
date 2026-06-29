@@ -60,7 +60,7 @@
 	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|bait}}",
 	"scribunto-limitreport-estmemusage": "Penggunaan ingatan Lua yang dianggarkan",
 	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|bait}}",
-	"scribunto-limitreport-memusage": "penggunaan ingatan Lua",
+	"scribunto-limitreport-memusage": "Penggunaan memori Lua",
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bait}}",
 	"scribunto-limitreport-profile": "Profil Lua",
 	"scribunto-limitreport-profile-ms": "$1 ms",

@@ -78,7 +78,7 @@
 	"echo-specialpage": "Obavijesti",
 	"echo-specialpage-section-markread": "Označi grupu kao pročitanu",
 	"echo-specialpage-markasread": "Obavijest: Označavanje kao pročitano",
-	"echo-specialpage-markasread-invalid-id": "Neispravna naznaka događaja",
+	"echo-specialpage-markasread-invalid-id": "Neispravan ID događaja",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|obavijest|obavijesti}}",
 	"echo-specialpage-pagination-range": "$1–$2.",
 	"echo-specialpage-pagefilters-title": "Nedavna aktivnost",

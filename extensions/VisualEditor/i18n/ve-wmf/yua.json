@@ -24,6 +24,8 @@
 	"tag-editcheck-tone-description": "EditCheck tu yilaj jump'éel talamil yéetel u tono yaan contenido añadido",
 	"tag-editcheck-tone-shown": "Editar Check (tono) mostrado",
 	"tag-editcheck-tone-shown-description": "EditCheck ku tukultik jump'éel ajuste ti' le tono ti' yaan contenido je'el u páajtal u sido k'a'abéet, ka le UI bin u ye'esa'al",
+	"tag-editcheck-paste-shown": "Editar Check (ja'ats'al) ku ye'esik",
+	"tag-editcheck-paste-shown-description": "EditCheck tu k'áataj u tsoolil yo'osal le ba'ax tu ts'áaj le editoro', le je'ela' ts'o'okole' bin luk'sa'an wa afirmado u permitido",
 	"tag-visualeditor": "Edición visual",
 	"tag-visualeditor-description": "Edición beeta'an yéetel le [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]].",
 	"tag-visualeditor-needcheck": "Edición visual: Compruebe",
@@ -40,5 +42,5 @@
 	"visualeditor-welcomedialog-content-thanks": "¡Gracias por ayudar al mundo a descubrir más!",
 	"visualeditor-welcomedialog-switch": "K'ex le \"editor de codigo\"'",
 	"visualeditor-welcomedialog-switch-ve": "K'ex ti' le editor visual",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|}} ti' $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|k'amikech}} ti' $2"
 }

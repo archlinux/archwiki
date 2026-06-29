@@ -48,7 +48,8 @@
 			"Yusuke1109",
 			"しぃ",
 			"ネイ",
-			"春春眠眠"
+			"春春眠眠",
+			"Tensama0415"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -387,7 +388,7 @@
 	"visualeditor-special-characters-group-other": "よく使われるもの",
 	"visualeditor-templatesused-tool": "テンプレート一覧",
 	"visualeditor-title-error": "無効なページ名です。",
-	"visualeditor-toload": "エディターを読み込んでいます。このメッセージが引き続き表示される場合、[$1 ページを再読み込み]してください。",
+	"visualeditor-toload": "エディターを読み込んでいます。このメッセージが引き続き表示される場合、[$1 ページを更新]してください。",
 	"visualeditor-tooltip-non-breaking-space": "改行しない半角スペース",
 	"visualeditor-version-label": "バージョン",
 	"visualeditor-wikitext-progress": "ウィキテキストを変換中",

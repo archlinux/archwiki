@@ -64,7 +64,8 @@
 			"神樂坂秀吉",
 			"科劳",
 			"范",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Saoutax"
 		]
 	},
 	"echo-desc": "用于通知用户事件和留言的系统",
@@ -298,8 +299,11 @@
 	"notification-header-foreign-all": "来自{{PLURAL:$5|另外$5个wiki}}的更多通知",
 	"echo-foreign-wiki-lang": "$1 - $2",
 	"echo-badge-count": "{{PLURAL:$1|$1|100={{formatnum:99}}+}}",
+	"grant-echo-read-notifications": "阅读我的通知",
 	"right-echo-create": "发送通知给其他人",
 	"action-echo-create": "发送通知给其他人",
+	"right-echo-read-notifications": "阅读自己的通知",
+	"action-echo-read-notifications": "阅读您的通知",
 	"right-manage-all-push-subscriptions": "管理所有推送订阅",
 	"action-manage-all-push-subscriptions": "管理所有推送订阅",
 	"group-push-subscription-manager": "推送订阅管理员",

@@ -2,15 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Kandar",
-			"Pijri Paijar"
+			"Pijri Paijar",
+			"Deepturquoise"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Bales",
+	"discussiontools-newtopic-missing-title": "Mangga pasihan judul kanggo topik diskusi {{GENDER:|anjeun}}.",
+	"discussiontools-newtopic-placeholder-title": "Ngeunaan",
 	"discussiontools-replylink": "{{GENDER:|balesan}}",
 	"discussiontools-replywidget-advanced": "Lengkep",
 	"discussiontools-replywidget-cancel": "Bolay",
 	"discussiontools-replywidget-mode-source": "Sumber",
 	"discussiontools-replywidget-mode-visual": "Pisual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Tambah}} topik",
+	"discussiontools-replywidget-placeholder-newtopic": "Pedaran",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Bales}} ka {{BIDI: $1 }}",
 	"discussiontools-replywidget-preview": "Pramidang",
 	"discussiontools-replywidget-reply": "{{GENDER:|Balesan}}",

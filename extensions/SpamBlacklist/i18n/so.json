@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"spam-blacklist": " #<!-- leave this line exactly as it is --> <pre>\n# URL-yada dibadda ee ku jira liiskan waa la xannibi doonaa marka lagu daro bog.\n# Liiskan wuxuu saameeyaa wiki-kan kaliya; sidoo kale eeg liiska xannibaadda caalamiga ah.\n# Dukumeenti faahfaahsan ka eeg https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Habka qoraalka waa sida soo socota:\n#   * Wax kasta oo ka bilaabma astaanta \"#\" ilaa dhammaadka khadka waa faallo\n#   * Khad kasta oo aan madhnayn waa qayb regex ah oo kaliya u eegi doonta martigeliyeyaasha ku jira URL-yada\n\n #</pre> <!-- leave this line exactly as it is -->",
+	"spam-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# URL-yada dibadda ee ku jira liiskan *lama* xannibi doono xitaa haddii\n# lagu xannibi lahaa gelitaannada liiska xannibaadda.\n#\n# Habka qoraalka waa sida soo socota:\n#   * Wax kasta oo ka bilaabma astaanta \"#\" ilaa dhammaadka khadka waa faallo\n#   * Khad kasta oo aan madhnayn waa qayb regex ah oo kaliya u eegi doonta martigeliyeyaasha ku jira URL-yada\n\n#</pre> <!-- leave this line exactly as it is -->",
+	"email-blacklist": " #<!-- leave this line exactly as it is --> <pre>\n# Cinwaannada iimaylka ee ku jira liiskan waa laga xannibi doonaa diiwaangelinta ama dirista iimayllada\n# Liiskan wuxuu saameeyaa wiki-kan kaliya; sidoo kale eeg liiska xannibaadda caalamiga ah.\n# Dukumeenti faahfaahsan ka eeg https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Habka qoraalka waa sida soo socota:\n#   * Wax kasta oo ka bilaabma astaanta \"#\" ilaa dhammaadka khadka waa faallo\n#   * Khad kasta oo aan madhnayn waa qayb regex ah oo kaliya u eegi doonta martigeliyeyaasha ku jira cinwaannada iimaylka\n\n#</pre> <!-- leave this line exactly as it is -->",
+	"email-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# Cinwaannada iimaylka ee ku jira liiskan *lama* xannibi doono xitaa haddii\n# lagu xannibi lahaa gelitaannada liiska xannibaadda.\n#\n# Habka qoraalka waa sida soo socota:\n#   * Wax kasta oo ka bilaabma astaanta \"#\" ilaa dhammaadka khadka waa faallo\n#   * Khad kasta oo aan madhnayn waa qayb regex ah oo kaliya u eegi doonta martigeliyeyaasha ku jira cinwaannada iimaylka\n\n#</pre> <!-- leave this line exactly as it is -->",
+	"spam-blacklisted-email": "Cinwaan iimayl oo mamnuuc ah",
+	"spam-blacklisted-email-text": "Cinwaankaaga iimaylka hadda waa ka mamnuuc dirista iimayllo loo diro isticmaaleyaasha kale.",
+	"spam-blacklisted-email-signup": "Cinwaanka iimaylka ee la bixiyay hadda waa ka mamnuuc in la isticmaalo.",
+	"spam-blacklist-desc": "Qalab ka hortag spam oo ku salaysan regex, kaas oo oggolaanaya in lagu xannibo liiska URL-yada bogagga iyo cinwaannada iimaylka ee isticmaaleyaasha diiwaangashan",
+	"log-name-spamblacklist": "Diiwaanka liiska xannibaadda spam",
+	"log-description-spamblacklist": "Dhacdooyinkan waxay la socdaan isku dhacyada liiska xannibaadda spam.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} ayaa sababay isku dhac liiska xannibaadda spam-ka $3 isagoo isku dayay inuu ku daro $4.",
+	"right-spamblacklistlog": "Eeg diiwaanka liiska xannibaadda spam",
+	"action-spamblacklistlog": "Eeg diiwaanka liiska xannibaadda spam",
+	"right-sboverride": "Ka gudub liiska xannibaadda spam",
+	"action-sboverride": "Ka gudub liiska xannibaadda spam"
+}

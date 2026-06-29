@@ -78,7 +78,8 @@
 			"Туллук",
 			"Умар",
 			"1233qwer1234qwer4",
-			"Lvova"
+			"Lvova",
+			"Shabe"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять к правкам автоматические эвристические фильтры",
@@ -151,6 +152,7 @@
 	"abusefilter-log-entry": "$1: $2 {{GENDER:$8|вызвал|вызвала}} срабатывание фильтра злоупотреблений, выполнив действие «$3» на странице $4.\nПредпринятые меры: $5;\nОписание фильтра: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 {{GENDER:$8|вызвал|вызвала}} срабатывание фильтра злоупотреблений, выполнив действие «$3» на странице $4.\nПредпринятые меры: $5;\nОписание фильтра: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|вызвал|вызвала}} срабатывание $3, выполнив действие «$4» на странице $5.\nПредпринятые меры: $6.\nОписание фильтра: $7 ($8)",
+	"abusefilter-log-detailedentry-meta-without-action-links": "$1: $2 {{GENDER:$9|вызвал|вызвала}} срабатывание $3, {{GENDER:$9|выполнив}} действие «$4» на странице $5.\nПредпринятые меры: $6;\nОписание фильтра: $7",
 	"abusefilter-log-detailedentry-global": "глобальный фильтр $1",
 	"abusefilter-log-detailedentry-local": "фильтра $1",
 	"abusefilter-log-detailslink": "подробности",
@@ -686,9 +688,9 @@
 	"tag-abusefilter-condition-limit": "предел условия достигнут",
 	"tag-abusefilter-condition-limit-description": "Правки или другие действия, которые не могут быть проверены всеми активными [[Special:AbuseFilter|фильтрами злоупотреблений]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions справка]).",
 	"notification-header-throttle-filter": "Фильтр злоупотреблений $2, который {{GENDER:$1|вы}} недавно редактировали, был ограничен.",
-	"notification-header-throttle-filter-actions": "Фильтр злоупотреблений $2 недавно отредактированный {{GENDER:$1|вами}} имел высокий процент совпадений, а следующие {{PLURAL:$4|действие было|действия были}} автоматически отключены: $3.",
+	"notification-header-throttle-filter-actions": "Фильтр злоупотреблений $2 недавно отредактированный {{GENDER:$1|вами}} имел высокий процент совпадений, а {{PLURAL:$4|следующее действие было|следующие действия были}} автоматически отключены: $3.",
 	"notification-header-throttle-filter-no-actions": "Фильтр злоупотреблений $2, который {{GENDER:$1|вы}} недавно редактировали, имел высокий уровень совпадений, но никакие действия не были автоматически отключены.",
-	"notification-subject-throttle-filter": "Отредактированный {{GENDER:$1|вами}} фильтр злоупотреблений был заблокирован на сайте {{SITENAME}}",
+	"notification-subject-throttle-filter": "Отредактированный {{GENDER:$1|вами}} фильтр злоупотреблений избыточно переработал на сайте {{SITENAME}}",
 	"notification-link-text-show-filter": "Показать фильтр",
 	"right-abusefilter-modify-blocked-external-domains": "Создание или изменение установки блокировки ссылок на внешние домены",
 	"action-abusefilter-modify-blocked-external-domains": "создание или изменение установки блокировки ссылок на внешние домены",
@@ -697,6 +699,8 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "Создать или изменить, ссылки на какие внешние домены блокируются, необходимо через [[Special:BlockedExternalDomains|специальную страницу]].",
 	"right-abusefilter-access-protected-vars": "Просмотр и создание фильтров с использованием защищённых переменных",
 	"action-abusefilter-access-protected-vars": "просмотр и создание фильтров, использующих защищённые переменные",
+	"right-abusefilter-blocked-external-domains-log": "Просмотреть журнал срабатываний блокировки для внешних доменов",
+	"action-abusefilter-blocked-external-domains-log": "просмотр журнала срабатываний заблокированных внешних доменов",
 	"abusefilter-protected-vars-log-name": "Журнал защищённых переменных фильтра злоупотреблений",
 	"log-action-filter-abusefilter-protected-vars": "Тип действия:",
 	"log-action-filter-abusefilter-protected-vars-change-access": "Изменить доступ",

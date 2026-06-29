@@ -20,6 +20,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 	use ApiCrossWiki;
+	use ApiEchoPermissionsTrait;
 
 	/**
 	 * @var bool
@@ -40,12 +41,10 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 	 * @throws ApiUsageException
 	 */
 	public function execute() {
+		$this->checkReadNotificationsPermissions();
+
 		// To avoid API warning, register the parameter used to bust browser cache
 		$this->getMain()->getVal( '_' );
-
-		if ( !$this->getUser()->isRegistered() ) {
-			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
-		}
 
 		$params = $this->extractRequestParams();
 

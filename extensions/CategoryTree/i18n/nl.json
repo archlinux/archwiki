@@ -7,7 +7,8 @@
 			"McDutchie",
 			"Nickthijssen1994",
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Erik Baas"
 		]
 	},
 	"categorytree": "Categorieboom",
@@ -33,7 +34,7 @@
 	"categorytree-loading": "aan het laden…",
 	"categorytree-nothing-found": "niets gevonden",
 	"categorytree-no-subcategories": "Geen ondercategorieën.",
-	"categorytree-no-parent-categories": "geen bovencategorieën",
+	"categorytree-no-parent-categories": "geen",
 	"categorytree-no-pages": "Geen pagina's of ondercategorieën.",
 	"categorytree-not-found": "Categorie <i>$1</i> is niet gevonden",
 	"categorytree-error": "Probleem bij het laden van de gegevens.",

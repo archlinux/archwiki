@@ -17,7 +17,6 @@
 	"multimediaviewer-thumbnail-error": "Ne rincress, el fail el po vesser minga mostrad",
 	"multimediaviewer-thumbnail-error-description": "El par che ghe sia un problema tecnich. Semai che 'l persista te podet $1. Eror: $2",
 	"multimediaviewer-thumbnail-error-retry": "prova an'mò",
-	"multimediaviewer-thumbnail-error-report": "segnala el problema",
 	"multimediaviewer-license-cc-pd": "Domini Publich",
 	"multimediaviewer-license-pd": "Domini Publich",
 	"multimediaviewer-license-default": "Varda la licenza",
@@ -106,6 +105,5 @@
 	"multimediaviewer-enable-confirmation-text": "La volta che la ven che te clichet in su una miniadura $1, el sarà drovad el Visualizador Audiovisiv.",
 	"multimediaviewer-enable-alert": "Adess el Visualizador Audiovisiv l'è disativad",
 	"multimediaviewer-disable-info-title": "T'hee disativad el Visualizador Audiovisiv",
-	"multimediaviewer-disable-info": "Te podet ancamò vedè i fail deperlor cont el Visualizador Audiovisiv.",
-	"multimediaviewer-errorreport-privacywarning": "I detali de l'eror a inn tacad al report, che 'l sarà visibile publicament. Se 'te voeuret , te podet modifegà el raport chì de sota e toeu via tut i dati che te voeuret no spartì in gir."
+	"multimediaviewer-disable-info": "Te podet ancamò vedè i fail deperlor cont el Visualizador Audiovisiv."
 }

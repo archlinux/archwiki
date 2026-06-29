@@ -254,7 +254,7 @@
 	"visualeditor-special-characters-group-other": "Често използвани",
 	"visualeditor-templatesused-tool": "Използвани шаблони",
 	"visualeditor-title-error": "Невалидно заглавие.",
-	"visualeditor-toload": "Режимът на редактиране ще зареди всеки момент. Ако все още виждате това съобщение след няколко секунди, моля [$1 презаредете страницата].",
+	"visualeditor-toload": "Редакторът ще се зареди сега. Ако все още виждате това съобщение след няколко секунди, моля, [$1 опреснете страницата].",
 	"visualeditor-tooltip-non-breaking-space": "Несекаем интервал",
 	"visualeditor-version-label": "Версия",
 	"visualeditor-wikitext-progress": "Преобразуване на уикитекст",

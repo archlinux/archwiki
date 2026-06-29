@@ -5,10 +5,10 @@
 			"Aca"
 		]
 	},
-	"apihelp-query+linterrors-summary": "Dobijanje spisak grešaka pročišćivanja",
+	"apihelp-query+linterrors-summary": "Dobijanje liste grešaka pročišćivanja",
 	"apihelp-query+linterrors-param-categories": "Kategorije grešaka pročišćivanja",
 	"apihelp-query+linterrors-param-limit": "Broj stavki u ishodu upita",
-	"apihelp-query+linterrors-param-from": "Pročišćivačka naznaka od koje će se početi upit",
+	"apihelp-query+linterrors-param-from": "Pročišćivački ID od kojeg će početi upit",
 	"apihelp-query+linterrors-param-namespace": "Davaj samo greške pročišćivanja iz pojedinih imenskih prostora",
-	"apihelp-query+linterrors-param-pageid": "Davaj samo greške Linta iz pojedinih naznaka imenskih prostora"
+	"apihelp-query+linterrors-param-pageid": "Davaj samo greške Linta iz pojedinih ID-jeva imenskih prostora"
 }

@@ -36,6 +36,7 @@
 	"checkuser-wasblocked": "Lehenago ere blokeatua",
 	"checkuser-localonly": "Batu gabe",
 	"checkuser-massblock": "Blokeatu hautatutako erabiltzaileak",
+	"checkuser-block-reason-dropdown": "* Blokeatzeko arrazoi ohikoenak\n** Kontu anitz gaizki erabiltzea\n** Kanpoko guneetarako estekak sartuz spam egitea\n** Bandalismoa egitea",
 	"checkuser-search": "Erregistroko sarrerak bilatu",
 	"checkuser-search-submit": "Bilatu",
 	"checkuser-helper-label": "Ikusi emaitzak taula batean",

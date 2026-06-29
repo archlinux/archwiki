@@ -80,11 +80,9 @@ class RecoveryCodesSecondaryAuthenticationProvider extends AbstractSecondaryAuth
 		if ( $user->pingLimiter( 'badoath', 0 ) ) {
 			return AuthenticationResponse::newUI(
 				[ new RecoveryCodesAuthenticationRequest() ],
-				new Message(
-					'oathauth-throttled',
-					// Arbitrary duration given here
-					[ Message::durationParam( 60 ) ]
-				), 'error' );
+				new Message( 'oathauth-throttled' ),
+				'error'
+			);
 		}
 
 		$authUser = $this->userRepository->findByUser( $user );

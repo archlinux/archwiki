@@ -29,7 +29,6 @@
 	"multimediaviewer-thumbnail-error": "Вибачте, файл не можна відобразити",
 	"multimediaviewer-thumbnail-error-description": "Схоже, сталася технічна проблема. Ви можете $1, якщо вона збережеться. Помилка: $2",
 	"multimediaviewer-thumbnail-error-retry": "повторити",
-	"multimediaviewer-thumbnail-error-report": "повідомити про проблему",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
@@ -148,6 +147,5 @@
 	"multimediaviewer-enable-alert": "Медіапереглядач тепер вимкнено",
 	"multimediaviewer-disable-info-title": "Ви вимкнули Медіапереглядач",
 	"multimediaviewer-disable-info": "Ви все ще можете переглядати окремі файли за допомогою Медіапереглядача.",
-	"multimediaviewer-errorreport-privacywarning": "Відомості про помилку прикріплені до звіту, який буде доступний для публічного перегляду. Якщо для Вас це незручно, Ви можете відредагувати звіт нижче та усунути всі дані, якими Ви не бажаєте ділитися.",
 	"multimediaviewer-loading": "Завантаження Медіапереглядача."
 }

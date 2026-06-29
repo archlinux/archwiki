@@ -15,7 +15,8 @@
 			"Sunpriat",
 			"Vlad5250",
 			"EneshTranslates",
-			"Engineer56"
+			"Engineer56",
+			"Shabe"
 		]
 	},
 	"linterrors": "Ошибки статического анализатора",
@@ -31,6 +32,8 @@
 	"linter-category-fostered-desc": "На этих страницах находится присвоенное содержимое.",
 	"linter-category-html5-misnesting": "Некорректно вложенный тег, который по-разному отображается в HTML5 и HTML4",
 	"linter-category-html5-misnesting-desc": "Эти некорректно вложенные теги имеют различное поведение в HTML5 и HTML4.",
+	"linter-category-night-mode-unaware-background-color": "Указанный вручную в стилях цвет фона присутствует без соответствующего цвета текста",
+	"linter-category-night-mode-unaware-background-color-desc": "На этих страницах есть указанный вручную в стилях цвет фона без указанного цвета текста, что неверно отображается в тёмном режиме",
 	"linter-category-misc-tidy-replacement-issues": "Различные проблемы",
 	"linter-category-misc-tidy-replacement-issues-desc": "На этих страницах есть другие проблемы, из-за которых они отображаются не так, как раньше",
 	"linter-category-misnested-tag": "Неверно вложенный тег",

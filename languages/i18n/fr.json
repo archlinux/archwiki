@@ -232,7 +232,10 @@
 			"Muisha wiki hke",
 			"Raveloaritiana Mamisoa",
 			"Antimuonium",
-			"Serieminou"
+			"Serieminou",
+			"Alkmen-Alesia",
+			"AhmedG612",
+			"Maxime2024"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Catégorie|Catégories}}",
@@ -418,7 +421,7 @@
 	"nstab-image": "Fichier",
 	"nstab-mediawiki": "Message",
 	"nstab-template": "Modèle",
-	"nstab-help": "Aide",
+	"nstab-help": "Page d'aide",
 	"nstab-category": "Catégorie",
 	"mainpage-nstab": "Accueil",
 	"nosuchaction": "Action inconnue",
@@ -3175,7 +3178,7 @@
 	"pageinfo-subpages-value-unknown": "Inconnu ($1)",
 	"pageinfo-firstuser": "Créat{{GENDER:$1|eur|rice}} de la page",
 	"pageinfo-firsttime": "Date de création de la page",
-	"pageinfo-lastuser": "Derni{{GENDER:$1|er|ère}} rédact{{GENDER:$1|eur|rice}}",
+	"pageinfo-lastuser": "Derni{{GENDER:$1|er|ère}} contribut{{GENDER:$1|eur|rice}}",
 	"pageinfo-lasttime": "Date de la dernière modification",
 	"pageinfo-edits": "Nombre total de modifications",
 	"pageinfo-authors": "Nombre total d’auteurs distincts",

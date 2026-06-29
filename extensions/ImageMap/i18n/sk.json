@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Helix84"
+			"Helix84",
+			"Wizzard"
 		]
 	},
 	"imagemap_desc": "Poskytuje klikateľné obrázkové mapy spracúvané na strane klienta pomocou značky <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Chyba: musí mať na prvom riadku uvedený obrázok",
 	"imagemap_invalid_image": "Chyba: obrázok je neplatný alebo neexistuje",
-	"imagemap_bad_image": "Chyba: obrázok na tejto stránke sa nachádza na čiernej listine",
+	"imagemap_bad_image": "Chyba: Obrázok nie je na tejto stránke povolený.",
 	"imagemap_no_link": "Chyba: na konci riadka $1 nebol nájdený platný odkaz",
 	"imagemap_invalid_title": "Chyba: neplatný nadpis v odkaze na riadku $1",
 	"imagemap_missing_coord": "Chyba: nedostatok súradníc na vytvorenie tvaru na riadku $1",

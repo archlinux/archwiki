@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"TomášPolonec"
+			"TomášPolonec",
+			"Wizzard"
 		]
 	},
+	"timeless-prefs-talkpage": "[[mw:Skin talk:Timeless|{{int:talk}}]]",
+	"skinname-timeless": "Timeless",
 	"timeless-desc": "Nadčasový vzhľad navrhnutý podľa prototypu Winter od Brandona Harrisa a ďalších štýlov vytvorených nadáciou Wikimedia.",
 	"timeless-anonymous": "Anonym",
 	"timeless-loggedinas": "Ste {{GENDER:$1|prihlásený|prihlásená}} ako '''$1'''",
@@ -15,11 +18,15 @@
 	"timeless-sitetools": "Wiki nástroje",
 	"timeless-pageactions": "Nástroje",
 	"timeless-userpagetools": "Používateľské nástroje",
+	"timeless-action-addsection": "Nová téma",
+	"timeless-view-view": "Čítať",
 	"timeless-pagemisc": "Viac",
 	"timeless-namespaces": "Menné priestory",
 	"timeless-pagetools": "Možnosti stránky",
 	"timeless-languages": "Jazyky",
-	"timeless.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Timeless */",
+	"timeless-projects": "Ostatné projekty",
+	"timeless.css": "/* CSS umiestnené tu sa načíta používateľom témy vzhľadu Timeless */",
+	"timeless.js": "/* JavaScript umiestnený tu sa načíta používateľom témy vzhľadu Timeless */",
 	"timeless-view-history": "História",
 	"timeless-action-undelete": "Obnoviť {{PLURAL:$1|jednu úpravu|$1 úpravy|$1 úprav}}"
 }

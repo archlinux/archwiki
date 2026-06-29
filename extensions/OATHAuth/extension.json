@@ -231,7 +231,8 @@
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\VerifyOATHForUser",
 			"services": [
 				"OATHUserRepository",
-				"UserFactory"
+				"UserFactory",
+				"CentralIdLookup"
 			]
 		}
 	},
@@ -297,6 +298,28 @@
 			],
 			"user-global": [
 				10,
+				60
+			]
+		},
+		"disableoath": {
+			"&can-bypass": false,
+			"user": [
+				5,
+				60
+			],
+			"user-global": [
+				5,
+				60
+			]
+		},
+		"verify-2fa": {
+			"&can-bypass": false,
+			"user": [
+				5,
+				60
+			],
+			"user-global": [
+				5,
 				60
 			]
 		}

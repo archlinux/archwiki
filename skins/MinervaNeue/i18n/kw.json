@@ -3,11 +3,13 @@
 		"authors": [
 			"Kw-Moon",
 			"MinecraftAustralia",
-			"Nrowe"
+			"Nrowe",
+			"Flynn"
 		]
 	},
 	"mobile-frontend-editor-edit": "Chanjya",
-	"mobile-frontend-home-button": "Folen dre",
+	"mobile-frontend-history": "Gweles istori golegyans a'n folen ma.",
+	"mobile-frontend-home-button": "Tre",
 	"mobile-frontend-language-article-heading": "Yeth",
 	"mobile-frontend-main-menu-button-tooltip": "Ygeri an bennrol",
 	"mobile-frontend-main-menu-login": "Omgelmi",
@@ -18,6 +20,7 @@
 	"mobile-frontend-meta-data-issues": "An folen-ma a's teves kudynnow",
 	"mobile-frontend-meta-data-issues-header": "Kudynnow",
 	"mobile-frontend-placeholder": "Hwilas yn {{SITENAME}}",
-	"mobile-frontend-random-button": "Dre happ",
-	"mobile-frontend-user-button-tooltip": "Diskwedhes ow gwarnyansow"
+	"mobile-frontend-random-button": "Chonsus",
+	"mobile-frontend-user-button-tooltip": "Diskwedhes ow gwarnyansow",
+	"minerva-page-actions-overflow": "Moy"
 }

@@ -10,6 +10,7 @@
 	"discussiontools-replywidget-cancel": "Semmet",
 	"discussiontools-replywidget-mode-source": "Aɣbalu",
 	"discussiontools-replywidget-placeholder-newtopic": "Aglam",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Err-as}} i {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Taskant",
 	"discussiontools-replywidget-reply": "{{GENDER:|Err}}",
 	"discussiontools-replywidget-summary": "Agzul",

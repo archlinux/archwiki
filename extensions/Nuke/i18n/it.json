@@ -9,13 +9,15 @@
 			"F. Cosoleto",
 			"Nemo bis",
 			"Sakretsu",
-			"FL2226"
+			"FL2226",
+			"Titore"
 		]
 	},
 	"nuke": "Cancellazione di massa",
 	"action-nuke": "cancellare in massa le pagine",
 	"nuke-desc": "Consente agli amministratori la [[Special:Nuke|cancellazione in massa]] delle pagine",
 	"nuke-defaultreason": "Cancellazione di massa delle pagine create da [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
+	"nuke-defaultreason-tempaccount": "Cancellazione di massa delle pagine create da utenze temporanee",
 	"nuke-multiplepeople": "Cancellazione di massa delle pagine create recentemente",
 	"nuke-tools": "Questo strumento permette la cancellazione in massa delle pagina create di recente da un determinato utente registrato o anonimo (IP).\nInserisci il nome utente o l'indirizzo IP per la lista delle pagine da cancellare, oppure lascia vuoto per tutti gli utenti.",
 	"nuke-submit-list": "Elenca pagine",

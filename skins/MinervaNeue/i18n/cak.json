@@ -5,5 +5,12 @@
 		]
 	},
 	"mobile-frontend-history": "tatz'eta' ri jaloj chupam re ruxaq k'am re'",
-	"mobile-frontend-placeholder": "tikanöx"
+	"mobile-frontend-home-button": "Okib'äl",
+	"mobile-frontend-language-article-heading": "ch'ab'äl",
+	"mobile-frontend-main-menu-login": "katok",
+	"mobile-frontend-main-menu-nearby": "naqaj",
+	"mobile-frontend-main-menu-settings": "jaloj",
+	"mobile-frontend-placeholder": "tikanöx",
+	"mobile-frontend-random-button": "Xa achike na rutzijol",
+	"minerva-page-actions-overflow": "juläy chik"
 }

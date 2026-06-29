@@ -5,26 +5,21 @@ namespace MediaWiki\Extension\Notifications\Api;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
-use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoMarkRead extends ApiBase {
 	use ApiCrossWiki;
+	use ApiEchoPermissionsTrait;
 
 	public function execute() {
+		$this->checkReadNotificationsPermissions();
+
 		// To avoid API warning, register the parameter used to bust browser cache
 		$this->getMain()->getVal( '_' );
 
-		$user = $this->getUser();
-		if ( !$user->isRegistered() ) {
-			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
-		} elseif ( DbFactory::newFromDefault()->isReadOnly() ) {
-			$this->dieReadOnly();
-		}
-
-		$notifUser = NotifUser::newFromUser( $user );
+		$notifUser = NotifUser::newFromUser( $this->getUser() );
 
 		$params = $this->extractRequestParams();
 

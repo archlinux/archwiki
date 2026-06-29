@@ -20,7 +20,9 @@
 			"ToprakM",
 			"Uğurkent",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Gadir",
+			"HakanIST"
 		]
 	},
 	"minerva-last-modified-date": "Son düzenleme $1, $2 tarihinde yapıldı",
@@ -56,7 +58,7 @@
 	"mobile-frontend-user-button-tooltip": "Bildirimlerimi göster",
 	"mobile-frontend-user-newmessages": "Mesaj sayfanızda yeni mesajlarınız var",
 	"mobile-frontend-user-page-contributions": "Katkılar",
-	"mobile-frontend-user-page-member-since": "$1 {{GENDER:$2|katıldı}}",
+	"mobile-frontend-user-page-member-since": "$1 tarihinde {{GENDER:$2|katıldı}}",
 	"mobile-frontend-user-page-talk": "Mesaj",
 	"minerva-user-menu-button": "Kullanıcı menüsü",
 	"minerva-user-navigation": "Kullanıcı gezintisi",
@@ -65,10 +67,13 @@
 	"minerva-page-actions-language-switcher": "Diller",
 	"minerva-page-actions-history": "Geçmiş",
 	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Tartışma]",
+	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Duyarlı bir mobil ilk görünümü",
 	"skin-minerva-issue-learn-more": "Daha fazla bilgi",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriler",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Sayfanın kategorilerini görüntüle",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Maalesef, sonuçları sayfaya göre gruplandırma mobil cihazda mevcut değil. Grup olarak sayfa özelliğini kullanmak istiyorsanız, lütfen masaüstü sitesini ziyaret edin.",
-	"skin-minerva-night-mode-unavailable": "Sayfa yalnızca \"Açık\" renk temasında vardır."
+	"skin-minerva-night-mode-unavailable": "Sayfa yalnızca \"Açık\" renk temasında vardır.",
+	"minerva.css": "/* All CSS here will be loaded for users of the MinervaNeue skin */",
+	"minerva.js": "/* All JavaScript here will be loaded for users of the MinervaNeue skin */"
 }

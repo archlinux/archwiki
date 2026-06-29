@@ -62,11 +62,14 @@
 	"cite-wikieditor-help-content-reference-description": "Nota",
 	"cite-wikieditor-help-content-named-reference-description": "Riferimento denominato",
 	"cite-wikieditor-help-content-rereference-description": "Ulteriore uso della stessa nota",
+	"cite-wikieditor-help-content-sub-reference-description": "Utilizzo ulteriore della stessa nota con dettagli aggiuntivi",
 	"cite-wikieditor-help-content-showreferences-description": "Mostra note",
 	"cite-wikieditor-help-content-reference-example-text1": "Testo della pagina.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Testo del collegamento], testo aggiuntivo.",
 	"cite-wikieditor-help-content-reference-example-text3": "[$1 Testo del collegamento]",
 	"cite-wikieditor-help-content-reference-example-extra-details": "Dettagli aggiuntivi",
 	"communityconfiguration-cite-title": "Cita",
+	"communityconfiguration-cite-description": "Personalizza il formato e l'aspetto della nota.",
+	"cite-configuration-info": "Queste impostazioni riguardano tutte le pagine che utilizzano Cite. Solo gli amministratori possono modificarle.",
 	"cite-configuration-submit": "Salva modifiche"
 }

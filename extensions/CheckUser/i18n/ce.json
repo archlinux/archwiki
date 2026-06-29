@@ -282,7 +282,7 @@
 	"checkuser-global-contributions-target-label": "Декъашхочун цӀе, IP-адрес йа IP-адресийн диапазон:",
 	"checkuser-global-contributions-target-placeholder": "Декъашхочун цӀе, IP-адрес йа диапазон",
 	"checkuser-global-contributions-search-form-wrapper": "Глобалан къинхьегам лахар",
-	"checkuser-global-contributions-results-title": "Глобалан ахчанаш $1",
+	"checkuser-global-contributions-results-title": "Глобалан къинхьегам $1",
 	"checkuser-global-contributions-no-results-no-permissions": "<strong>Дехарца догӀуш долу жамӀаш дац.</strong> Хьан бакъо ца хила тарло ханна лелош долу IP-адресаш хьажа.",
 	"checkuser-global-contributions-no-results-no-global-preference": "<strong>Дехарца догӀуш долу жамӀаш дац.</strong> ХӀара жамӀаш дуьззина ца хила тарло, хӀунда аьлча ахь тӀеэца беза барт [$1 хьан глобалан нисдаран гӀирсан] чохь.",
 	"checkuser-global-contributions-no-global-preference": "ХӀара жамӀаш дуьззина ца хила тарло, хӀунда аьлча ахь барт тӀеэца беза [$1 хьан глобалан нисдаран гӀирсан] чохь.",

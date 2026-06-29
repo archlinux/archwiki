@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-query+mathwbextracts-example-1": "Waxay codsataa soo koobidda walxaha xisaabta ee Wikibase.",
+	"apihelp-query+mathwbextracts-summary": "Waxay soo celisaa soo koobidda shayga xisaabta ee Wikibase oo ku jira HTML.",
+	"apihelp-query+mathwbextracts-param-qid": "Aqoonsiga QID ee shayga Wikibase ee la codsan doono.",
+	"apihelp-query+mathwbextracts-param-uselang": "Luqadda la codsanayo ee shayga Wikibase. Ingiriisigu waa luqadda caadiga ah."
+}

@@ -348,7 +348,7 @@
 	"logentry-checkuser-temporary-account-disable-auto-reveal": "$1 {{GENDER:$2|כיבה|כיבתה}} את החשיפה האוטומטית של חשבונות חולפים",
 	"logentry-checkuser-temporary-account-enable-auto-reveal": "$1 {{GENDER:$2|הפעיל|הפעילה}} את החשיפה האוטומטית של חשבונות חולפים על $5",
 	"logentry-checkuser-temporary-account-view-ips": "$1 {{GENDER:$2|צפה|צפתה}} בכתובות IP עבור $3",
-	"logentry-checkuser-temporary-account-view-temporary-accounts-on-ip": "$1 {{GENDER:$2|צפה|צפתה}} החשבונות זמניים בדף $3",
+	"logentry-checkuser-temporary-account-view-temporary-accounts-on-ip": "$1 {{GENDER:$2|צפה|צפתה}} בחשבונות זמניים מהכתובת $3",
 	"logentry-checkuser-temporary-account-view-temp-accounts-on-ip-global": "$1 {{GENDER:$2|צפה|צפתה}} באופן גלובלי בחשבונות זמניים בדף $3",
 	"log-action-filter-checkuser-temporary-account": "סוג הפעולה:",
 	"log-action-filter-checkuser-temporary-account-change-access": "שינוי גישה",

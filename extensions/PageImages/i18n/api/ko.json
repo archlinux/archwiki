@@ -2,9 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Kwj2772",
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
 	},
 	"apihelp-query+pageimages-summary": "섬네일이나 사진의 존재 여부 등 문서의 이미지에 관한 정보를 반환합니다.",
-	"apihelp-query+pageimages-param-thumbsize": "섬네일 그림의 최대 너비. (단위: 화소)"
+	"apihelp-query+pageimages-example-1": "<kbd>Albert Einstein</kbd> 문서에 있는 이미지의 이름과 <kbd>100</kbd> 픽셀 크기의 섬네일 이미지를 가져옵니다.",
+	"apihelp-query+pageimages-param-prop": "반환할 정보:",
+	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "문서와 관련된 섬네일 이미지의 URL과 크기 (있는 경우) 입니다.",
+	"apihelp-query+pageimages-paramvalue-prop-original": "문서와 관련된 섬네일 이미지의 URL과 원본 크기 (있는 경우) 입니다.",
+	"apihelp-query+pageimages-paramvalue-prop-name": "사진 제목.",
+	"apihelp-query+pageimages-param-thumbsize": "섬네일 그림의 최대 너비. (단위: 화소)",
+	"apihelp-query+pageimages-param-langcode": "여러 언어를 지원하는 경우 이미지가 렌더링될 언어에 대한 코드",
+	"apihelp-query+pageimages-param-limit": "반환할 페이지 수에 대한 속성입니다.",
+	"apihelp-query+pageimages-param-license": "문서 이미지 사용 권한을 특정 라이선스 유형으로 제한합니다:",
+	"apihelp-query+pageimages-paramvalue-license-free": "무료 이미지만입니다.",
+	"apihelp-query+pageimages-paramvalue-license-any": "무료이든 아니든 최고의 이미지만입니다."
 }

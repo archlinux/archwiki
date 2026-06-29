@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaSandbox;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
 use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaInterpreterTestBase;
+use MediaWiki\Title\Title;
 
 if ( !wfIsCLI() ) {
 	exit;
@@ -24,7 +25,9 @@ class SandboxInterpreterTest extends LuaInterpreterTestBase {
 
 	protected function newInterpreter( $opts = [] ) {
 		$opts += $this->stdOpts;
-		$engine = new LuaSandboxEngine( $this->stdOpts );
+		$engine = new LuaSandboxEngine( $this->stdOpts + [
+			'title' => Title::makeTitle( NS_MAIN, 'Dummy' ),
+		] );
 		return new LuaSandboxInterpreter( $engine, $opts );
 	}
 

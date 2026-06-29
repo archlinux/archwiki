@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"monobook-desc": "Muuqaalka caadiga ah ee MediaWiki tan iyo 2004, oo loogu magac daray sawirka madow iyo caddaanka ah ee buugga ee ku yaal gadaasha bogga",
+	"monobook-jumptotop": "Ku laabo sare",
+	"monobook-jumptopersonal": "Qalabka isticmaalaha",
+	"monobook-jumptonavigation": "U bood hagidda",
+	"monobook-jumptosearch": "U bood raadinta",
+	"monobook-more-actions": "Dheeraad",
+	"cactions-mobile": "Ficillada bogga",
+	"monobook-cactions-label": "Ficillada bogga",
+	"monobook-notifications-link": "Ogeysiisyada ($1)",
+	"monobook-notifications-link-none": "Ogeysiisyada",
+	"monobook-view-history": "Taariikh",
+	"monobook-action-undelete": "Soo celi {{PLURAL:$1|hal wax ka beddel|$1 wax ka beddello}}"
+}

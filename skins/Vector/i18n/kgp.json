@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Arcstur"
+		]
+	},
+	"vector-languages": "Vẽnh vĩ ũ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 vĩ|$1 vĩ ag}}",
+	"vector-no-language-button-label": "Vĩ ũ ag vin",
+	"vector-action-addsection": "Venhrá ta jagma hã vin",
+	"vector-action-move": "Ra tῖn",
+	"vector-action-protect": "Ki rĩr",
+	"vector-view-create": "Jẽ'ỹn",
+	"vector-view-history": "Vãme ve",
+	"vector-more-actions": "Ũ ke gé",
+	"vector-appearance-label": "Ve ũ",
+	"vector-feature-limited-width-name": "Téj nỹ",
+	"vector-feature-limited-width-0-label": "Mag kar",
+	"vector-feature-limited-width-1-label": "Rike kỹr",
+	"vector-feature-custom-font-size-name": "Ti rá",
+	"skin-theme-name": "Kor",
+	"skin-theme-day-label": "Kurã ve",
+	"skin-theme-night-label": "Kuty ve",
+	"skin-theme-os-label": "Vỹsóki rán",
+	"skin-theme-exclusion-notice": "Ti ve tag vỹ kurã ve kãnĩg tĩ",
+	"vector-toc-label": "Ti ki nénũ",
+	"vector-toc-beginning": "Pẽnjẽg",
+	"vector-main-menu-label": "Mẽnũ pẽ",
+	"vector-feature-custom-font-size-exclusion-notice": "Ti ve tag vỹ vẽnh rá kẽsir ta han tĩ",
+	"vector-page-tools-label": "Kyfé ag",
+	"vector-page-tools-general-label": "Ti kar",
+	"vector-page-tools-actions-label": "Han ke",
+	"vector-unpin-element-label": "Péju"
+}

@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"syntaxhighlight-desc": "Waxay bixisaa muujinta naxwe  <code>&lt;syntaxhighlight&gt;</code> iyadoo la adeegsanayo [http://pygments.org/ Pygments - muujiyaha syntax ee Python]",
+	"syntaxhighlight-error-category": "Bogag leh khaladaad muujinta naxwaha koodhka",
+	"syntaxhighlight-error-category-desc": "Khalad ayaa dhacay markii la isku dayay in la muujiyo koodhka ku jira bogga.",
+	"syntaxhighlight-enclose-category": "Bogag isticmaalaya sifooyin enclose oo la joojiyay",
+	"syntaxhighlight-enclose-category-desc": "Muujinta naxwaha koodhka ee bogga waxay adeegsanaysaa qaab enclose oo la joojiyay.",
+	"syntaxhighlight-source-category": "Bogag isticmaalaya calaamado source oo la joojiyay",
+	"syntaxhighlight-source-category-desc": "Muujinta naxwaha koodhka ee bogga waxay adeegsanaysaa calaamado source oo la joojiyay.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koodhka",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Luqad",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(waxna)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Muuji lambarrada khadadka",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Lambarka bilowga khadka",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Xanibaada koodh",
+	"syntaxhighlight-error-pygments-invocation-failure": "Ku guuldarreystay in la kiciyo Pygments",
+	"syntaxhighlight-error-unknown-language": "Luqad aan la aqoon \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Cabbirka koodhka $1 {{PLURAL:$1|baytyada}} wuxuu ka badan yahay xadka la oggol yahay ee $2 {{PLURAL:$2|baytyada}}",
+	"syntaxhighlight-button-copy": "Nuqul",
+	"syntaxhighlight-button-copied": "La koobiyey!"
+}

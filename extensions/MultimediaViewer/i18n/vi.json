@@ -26,7 +26,6 @@
 	"multimediaviewer-thumbnail-error": "Rất tiếc, không thể hiển thị tập tin",
 	"multimediaviewer-thumbnail-error-description": "Hình như đã gặp vấn đề về kỹ thuật. Bạn có thể $1 nếu tiếp tục xảy ra. Lỗi: $2",
 	"multimediaviewer-thumbnail-error-retry": "thử lại",
-	"multimediaviewer-thumbnail-error-report": "báo cáo về vấn đề",
 	"multimediaviewer-license-cc-by-4.0": "CC-BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Phạm vi công cộng",
@@ -125,6 +124,5 @@
 	"multimediaviewer-enable-confirmation-text": "Lần sau khi bạn nhấn chuột vào một hình thu nhỏ trên $1, nó sẽ xuất hiện trong cửa sổ phương tiện.",
 	"multimediaviewer-enable-alert": "Cửa sổ phương tiện đã tắt",
 	"multimediaviewer-disable-info-title": "Đã tắt cửa sổ phương tiện",
-	"multimediaviewer-disable-info": "Bạn vẫn có thể xem tập tin riêng trong cửa sổ phương tiện.",
-	"multimediaviewer-errorreport-privacywarning": "Các chi tiết lỗi được đính kèm vào bản báo cáo công khai. Nếu bạn không đồng ý với điều này, bạn có thể sửa đổi bản báo cáo bên dưới và xóa tất cả dữ liệu mà bạn không muốn chia sẻ."
+	"multimediaviewer-disable-info": "Bạn vẫn có thể xem tập tin riêng trong cửa sổ phương tiện."
 }

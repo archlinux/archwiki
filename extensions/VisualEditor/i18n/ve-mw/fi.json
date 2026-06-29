@@ -228,7 +228,7 @@
 	"visualeditor-dialog-transclusion-required-parameter": "Pakollinen kenttä",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Kenttä vaaditaan.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Takaisin",
-	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Jatka",
+	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Jatka silti",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Vaadittava kenttä puuttuu|Vaadittavat kentät puuttuvat}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Haluatko varmasti jatkaa, vaikka et ole täyttänyt $1 {{PLURAL:$2|kenttää}}?",
 	"visualeditor-dialog-transclusion-see-template": "Mallineet ovat käyttäjien tekemiä, ja niiden kuvaukset voivat olla puutteellisia. [[$2|Mallineen sivulla]] saattaa olla lisätietoja.",

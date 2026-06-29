@@ -1,12 +1,34 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zakaria Tunsung"
+			"Zakaria Tunsung",
+			"Uthman salma"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Ihi noɔre",
+	"discussiontools-emptystate-title": "piili a yɛlyaga gaa {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title-self": "{{GENDER:|ɩ yaanhɩ}} ɩ yɛla lɩɛrɩ",
+	"discussiontools-emptystate-title-self-anon": "{{GENDER:|ɩ yaanhɩ}}nɩŋ a yɛla lɩɛrɩ ŋa",
+	"discussiontools-emptystate-title-self-temp": "{{GENDER:|ɩ yaanhɩ}} nɩŋ ɩ ba kauhɩbʋ yɛla lɩɛrɩ",
+	"discussiontools-emptystate-title-user": "Piili a yɛlyaga {{GENDER:{{PAGENAME}}|nɩŋ}} {{PAGENAME}}",
+	"discussiontools-emptystate-title-user-anon": "{{GENDER:|ɩ yaanhɩ}}nɩŋ a yɛla lɩɛrɩ ŋa",
+	"discussiontools-emptystate-title-user-temp": "piili a sohɩbʋ  {{GENDER:{{PAGENAME}}|nɩŋ}} {{PAGENAME}}",
+	"discussiontools-findcomment-label-search": "bɔ yɛla",
+	"discussiontools-findcomment-results-notcurrent": "(a ba kyɩ pampana ɛʋ kaabʋ)",
+	"discussiontools-findcomment-title": "Bɔ nuorɩ cherɩbʋ",
+	"discussiontools-ledesection-button": "Daanhɩ jemaa a yɩ a lɩɛrɩ ŋa",
+	"discussiontools-ledesection-title": "Agaa a yɛla lɩɛrɩ ŋa",
+	"discussiontools-limitreport-errorreqid": "sohɩbʋbunhʋʋ borɩbʋ buɔrɛɛ ID",
+	"discussiontools-limitreport-timeusage": "sohɩbʋbunhʋʋ wɔgrɩ tʋmbʋ",
+	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|mintipunnii|mintipunnihɩ}}",
 	"discussiontools-newtopic-missing-title": "Nang bɔ yuori ku {{GENDER:|i}} sohibu yeliju.",
 	"discussiontools-newtopic-placeholder-title": "Yeli ju",
+	"discussiontools-newtopicssubscription-button-subscribe-label": "Sage kee maŋ nyɛ duoho",
+	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Ta sagɩ kee maŋ nyɛ duoho",
+	"discussiontools-newtopicssubscription-notify-subscribed-body": "{{GENDER:|ɩna }} na nyɛɛ duoho ɩŋbu ka yɛlɩjuri paanɩ wa piili a lɩɛrɩ ŋa.",
+	"discussiontools-newtopicssubscription-notify-subscribed-title": "{{GENDER:|E}} sagɩyɛ ka ɩ maŋ nyɛ duoho!",
+	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|E}} bala sage ka ɩ maŋ nyɛ duoho.",
+	"discussiontools-notification-added-topic-view": "kaa yʋlɩjuri",
 	"discussiontools-replylink": "{{GENDER:|ihi noɔri}}",
 	"discussiontools-replywidget-advanced": "nimbi-toori gaabu",
 	"discussiontools-replywidget-cancel": "Toɔsaaŋ bahi",

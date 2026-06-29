@@ -38,7 +38,7 @@
 	"tag-visualeditor": "Visuele tekstverwerker",
 	"tag-visualeditor-description": "Bewerking gedaan met de [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuele tekstverwerker]]",
 	"tag-visualeditor-needcheck": "Visuele tekstverwerker: nakijken",
-	"tag-visualeditor-needcheck-description": "Bewerking gedaan met de [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuele tekstverwerker]], waarbij het systeem mogelijk onbedoelde veranderingen in de wikitekst heeft ontdekt.",
+	"tag-visualeditor-needcheck-description": "Bewerking gedaan met de [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuele tekstverwerker]], waarbij het systeem mogelijk onbedoelde wijzigingen in de wikitekst heeft ontdekt.",
 	"tag-visualeditor-wikitext": "bewerking met nieuwe wikitekstmodus",
 	"tag-visualeditor-wikitext-description": "Bewerking gemaakt met de 2017 wikitekstbewerker",
 	"tag-visualeditor-switched": "Visuele tekstverwerker: omgeschakeld",

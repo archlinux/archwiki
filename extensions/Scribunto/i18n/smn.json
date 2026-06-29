@@ -12,7 +12,7 @@
 	"scribunto-doc-page-does-not-exist": "''Taan mooduul ravvuu puáhtá rähtiđ siijđon [[$1]]''",
 	"scribunto-doc-page-header": "'''Taat lii raavâsijđo modulân [[$1]]'''",
 	"scribunto-common-error-category-desc": "Siijđost leijee modulij kieđâvuššâm ääigi tábáhtui feilâ.",
-	"scribunto-common-no-details": "Lasetiäđuh iä lah finnimnáál.",
+	"scribunto-common-no-details": "Tiäđuh koodi saajeest iä lah finniimist.",
 	"scribunto-lua-in-function": "funktiost ”$1”",
 	"scribunto-lua-in-function-at": "funktiost saajeest $1:$2",
 	"scribunto-lua-error-location": "Lua-feilâ $1: $2.",

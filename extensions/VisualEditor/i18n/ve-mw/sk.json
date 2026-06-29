@@ -15,7 +15,8 @@
 			"Teslaton",
 			"TomášPolonec",
 			"Vegetator",
-			"Yardom78"
+			"Yardom78",
+			"Wizzard"
 		]
 	},
 	"tooltip-ca-ve-edit": "Upraviť túto stránku",
@@ -54,7 +55,7 @@
 	"visualeditor-dialog-media-info-artist": "Nahral $1",
 	"visualeditor-dialog-media-info-audiofile": "Zvukový súbor",
 	"visualeditor-dialog-media-info-created": "Vytvorené: $1",
-	"visualeditor-dialog-media-info-meta-artist": "Umelec: $1",
+	"visualeditor-dialog-media-info-meta-artist": "Autor: $1",
 	"visualeditor-dialog-media-info-moreinfo": "Viac informácií",
 	"visualeditor-dialog-media-info-readmore": "Čítať ďalej",
 	"visualeditor-dialog-media-info-uploaded": "Nahrané: $1",
@@ -187,7 +188,7 @@
 	"visualeditor-generating-wikitext-progress": "Generovanie wikitextu",
 	"visualeditor-languages-tool": "Jazyky",
 	"visualeditor-linkinspector-button-link-external": "Externý web",
-	"visualeditor-linkinspector-button-link-internal": "Hľadanie stránok",
+	"visualeditor-linkinspector-button-link-internal": "Hľadať interné stránky",
 	"visualeditor-linkinspector-convert-link-isbn": "Previesť na ISBN odkaz",
 	"visualeditor-linkinspector-convert-link-pmid": "Previesť na PMID odkaz",
 	"visualeditor-linkinspector-convert-link-rfc": "Previesť na RFC odkaz",
@@ -254,8 +255,8 @@
 	"visualeditor-rebase-client-import-name": "Názov stránky",
 	"visualeditor-recreate": "Počas vašich úprav bola stránka zmazaná. Tlačidlom $1 ju obnovíte.",
 	"visualeditor-redirect-description": "Presmerovanie na $1",
-	"visualeditor-savedialog-identify-anon": "Chcete stránku uložiť ako anonymný redaktor? Vaša IP adresa bude zverejnená v histórii úprav stránky.",
-	"visualeditor-savedialog-identify-user": "Momentálne ste {{GENDER:|prihlásený|prihlásená}} ako [[User:$1|$1]]. Ak túto úpravu uložíte, bude priradená k uvedenému používateľskému kontu.",
+	"visualeditor-savedialog-identify-anon": "Už nie ste prihlásený/á. Ak budete pokračovať, <strong>vaša IP adresa bude zaznamenaná</strong> v histórii úprav tejto stránky.",
+	"visualeditor-savedialog-identify-user": "Teraz ste {{GENDER:|prihlásený|prihlásená}} ako <strong>[[User:$1|$1]]</strong>. Ak budete pokračovať, vaša úprava bude priradená k tomuto účtu.",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "Svoju úpravu môžete uložiť stlačením $1.",
 	"visualeditor-savedialog-label-publish-short": "Zverejniť",
 	"visualeditor-savedialog-label-publish-short-start": "Zverejniť...",
@@ -278,12 +279,12 @@
 	"visualeditor-special-characters-group-other": "Často používané",
 	"visualeditor-templatesused-tool": "Použité šablóny",
 	"visualeditor-title-error": "Neplatný názov",
-	"visualeditor-toload": "Editor sa teraz načíta. Pokiaľ stále vidíte túto správu po niekoľkých sekundách, prosím, [$1 obnovte stránku].",
+	"visualeditor-toload": "Editor sa teraz načíta. Ak túto správu vidíte aj po niekoľkých sekundách, [$1 obnovte prosím stránku].",
 	"visualeditor-version-label": "Verzia",
 	"visualeditor-wikitext-progress": "Prebieha konverzia wikitextu",
 	"visualeditor-wikitext-warning": "Používate Vizuálny editor – [[{{MediaWiki:visualeditor-wikitext-warning-link}}|wikitext]] sa tu nepoužíva. Kedykoľvek sa však môžete bez straty vykonaných úprav prepnúť do režimu editácie zdrojového kódu, kliknutím na tlačidlo „Prepnúť“.",
 	"visualeditor-wikitext-warning-title": "Zistená syntax wikitextu",
 	"visualeditor-wikitextconvert-title": "Previesť formátovanie na wikitext?",
-	"visualeditor-wikitextconvert-message": "Vložili ste obsah obsahujúci formátovanie. Mal by byť prevedený na wikitext alebo vložený ako obyčajný text?",
+	"visualeditor-wikitextconvert-message": "Vložili ste obsah s formátovaním. Chcete toto formátovanie previesť na wikitext?",
 	"visualeditor-wikitextconvert-convert": "Previesť na wikitext"
 }

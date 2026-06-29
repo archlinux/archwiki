@@ -147,5 +147,6 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Подпіс і час",
 	"wikieditor-toolbar-help-content-signature-description": "Подпіс",
 	"wikieditor-toolbar-help-content-indent-description": "Водступ",
-	"wikieditor-realtimepreview-error": "Папярэдні прагляд не ладуецца"
+	"wikieditor-realtimepreview-error": "Папярэдні прагляд не ладуецца",
+	"wikieditor-realtimepreview-reload": "Пераладаваць"
 }

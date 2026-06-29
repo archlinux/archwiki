@@ -1,15 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Moshtank"
+			"Moshtank",
+			"Yasirkhan"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "جواب",
+	"discussiontools-newtopic-missing-title": "پہ مھروانی {{GENDER:|وتی}} گپ ءُ تران ءِ موضوع ءِ سرگال ءَ بہ دے اِت۔",
+	"discussiontools-newtopic-placeholder-title": "سرگال",
 	"discussiontools-replylink": "{{GENDER:|جواب دئ}}",
 	"discussiontools-replywidget-advanced": "دݔمارپتگݔن/اڈوانسݔن",
 	"discussiontools-replywidget-cancel": "بججگ",
 	"discussiontools-replywidget-mode-source": "سرچممگ",
 	"discussiontools-replywidget-mode-visual": "گندگی",
+	"discussiontools-replywidget-newtopic": "سرگال ءِ {{GENDER:|ھوار کنگ}}",
+	"discussiontools-replywidget-placeholder-newtopic": "سرۏشتادی",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|جواب دیگہ}} پہ {{BIDI:$1}}‌ئا",
 	"discussiontools-replywidget-preview": "پݔشسۏج",
 	"discussiontools-replywidget-reply": "{{GENDER:|جواب دیگ}}",

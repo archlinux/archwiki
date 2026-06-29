@@ -14,6 +14,5 @@
 	"multimediaviewer-file-not-found-error": "Ағымдағы биттә булмағанлыҡтан $1 файлын күрһәтеп булмай.",
 	"multimediaviewer-thumbnail-error": "Ғәфү итегеҙ, файлды күрһәтеп булмай",
 	"multimediaviewer-thumbnail-error-description": "Техник проблема булған кеүек. Дауам иткән осраҡта $1 алаһығыҙ. Хата: $2",
-	"multimediaviewer-thumbnail-error-retry": "ҡабатлай",
-	"multimediaviewer-thumbnail-error-report": "хата белдерә"
+	"multimediaviewer-thumbnail-error-retry": "ҡабатлай"
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Htawmonzel",
-			"咽頭べさ"
+			"咽頭べさ",
+			"Aue Nai"
 		]
 	},
 	"vector-languages": "အရေဝ်ဘာသာဂမၠိုင်",
@@ -17,6 +18,7 @@
 	"vector-view-edit": "ပလေဝ်ဒါန်",
 	"vector-view-history": "ထ္ၜး လၟေင်အပြံင်အလှာဲ",
 	"vector-view-view": "ဗှ်",
+	"vector-jumptocontent": "ထလာ်တိတ်အာနကဵုမာတိကာညိ",
 	"vector-more-actions": "ဆက်ဗှ်",
 	"vector-appearance-label": "မံက်ပြာကတ်",
 	"vector-feature-limited-width-name": "အနာံ",

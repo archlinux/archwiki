@@ -4,7 +4,8 @@
 			"Htawmonzel",
 			"Ninjastrikers",
 			"Ranger-Mon",
-			"咽頭べさ"
+			"咽頭べさ",
+			"Aue Nai"
 		]
 	},
 	"mobile-frontend-history": "ဗဵု လၟေင်ပြံင်လှာဲ မုက်လိက်ဏအ်။",
@@ -14,5 +15,6 @@
 	"mobile-frontend-main-menu-nearby": "ဗဒဲါဒၞာဲဏအ်",
 	"mobile-frontend-main-menu-settings": "ဖျေဟ်ဒၞာဲ",
 	"mobile-frontend-placeholder": "ဂၠာဲ {{SITENAME}}",
-	"mobile-frontend-random-button": "ပရိုင်မွဲမွဲ"
+	"mobile-frontend-random-button": "ပရိုင်မွဲမွဲ",
+	"minerva-page-actions-overflow": "ဆက်ဗှ်"
 }

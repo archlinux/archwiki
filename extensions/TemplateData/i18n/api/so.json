@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-templatedata-summary": "Soo qaado xogta lagu kaydiyay kordhinta TemplateData.",
+	"apihelp-templatedata-example-1": "Soo celi TemplateData ee [[Template:Foobar]], oo ay ku jiraan natiijooyin haddii tusmadu uusan jirin ama uu jiro balse uusan lahayn TemplateData",
+	"apihelp-templatedata-example-2": "Soo celi TemplateData ee [[Template:Phabricator]], oo aan natiijo soo celin haddii tusmadu aysan jirin ama ay jirto balse aysan lahayn TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Soo celi xogta cinwaannada xitaa haddii aysan jirin ama aysan lahayn TemplateData. Sida caadiga ah cinwaannada waxaa la soo celiyaa kaliya haddii ay jiraan oo ay leeyihiin TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Soo celi xogta cinwaannada xitaa haddii aysan jirin ama aysan lahayn TemplateData. Sida caadiga ah (si loo ilaaliyo la jaanqaadka hore) cinwaannada waxaa la soo celiyaa kaliya haddii ay jiraan oo ay leeyihiin TemplateData.",
+	"apihelp-templatedata-param-lang": "Soo celi qiimayaasha la turjumay ee luqaddan. Sida caadiga ah dhammaan turjumaadaha la heli karo ayaa la soo celiyaa.",
+	"apierror-templatedata-corrupt": "Bogga #$1 templateData wuxuu ka kooban yahay xog aan sax ahayn: $2",
+	"apiwarn-templatedata-deprecation-format": "Qaabka soo-saarka caadiga ah wuxuu mustaqbalka isu beddeli doonaa <kbd>jsonfm</kbd>. Fadlan si cad u sheeg <kbd>format=json</kbd>."
+}

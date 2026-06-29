@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"timeless-desc": "Muuqaal aan waqti ku xirnayn oo lagu naqshadeeyay iyadoo laga duulayo tusaalaha Winter ee Brandon Harris, iyo qaabab kala duwan oo ay samaysay Hay’adda Wikimedia",
+	"timeless-anonymous": "Aan la aqoon",
+	"timeless-loggedinas": "Soo galay sida '''$1'''",
+	"timeless-notloggedin": "Lama soo gelin",
+	"timeless-userpage": "Bogga {{GENDER:$1|isticmaalaha}}",
+	"timeless-talkpage": "Wadahadalka {{GENDER:$1|isticmaalaha}}",
+	"timeless-pagelog": "Diiwaanka bogga",
+	"timeless-more": "Dheeraad",
+	"timeless-sitetools": "Qalabka wiki",
+	"timeless-pageactions": "Qalabka bogga",
+	"timeless-userpagetools": "Qalabka bogga isticmaalaha",
+	"timeless-action-addsection": "Mowduuc cusub",
+	"timeless-view-view": "Akhri",
+	"timeless-pagemisc": "Dheeraad",
+	"timeless-namespaces": "Meel magacyo",
+	"timeless-pagetools": "Ficillada bogga",
+	"timeless-languages": "Luuqadaha",
+	"timeless-projects": "Mashruucyo kale",
+	"timeless-view-history": "Taariikh",
+	"timeless-action-undelete": "Soo celi {{PLURAL:$1|hal wax ka beddel|$1 wax ka beddello}}"
+}

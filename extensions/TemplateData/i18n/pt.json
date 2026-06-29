@@ -50,7 +50,7 @@
 	"templatedata-doc-param-type-wiki-template-name": "Modelo",
 	"templatedata-doc-param-type-wiki-user-name": "Utilizador",
 	"templatedata-doc-params": "Parâmetros do modelo",
-	"templatedata-editbutton": "Editar dados do modelo",
+	"templatedata-editbutton": "Editar dados da predefinição",
 	"templatedata-errormsg-jsonbadformat": "Mau formato JSON. Pode cancelar esta operação, e assim, pode corrigi-la ou removê-la, ou continuar a substituir os dados atuais do modelo por um novo.",
 	"templatedata-errormsg-insertblank": "Tem a certeza de que pretende inserir os dados do modelo sem nenhuma informação?",
 	"templatedata-exists-on-related-page": "Atenção: já existe um bloco de dados do modelo na página relacionada \"[[$1]]\".",

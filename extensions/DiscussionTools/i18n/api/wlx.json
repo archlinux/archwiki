@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Uthman salma"
+		]
+	},
+	"apierror-discussiontools-commentid-notfound": "cheri nuori nɩŋ a ID\n'$1' aŋ ba nyɛ.",
+	"apierror-discussiontools-commentname-ambiguous": "Nuorɩ cherɩbʋ jemaa nɩŋ a yuori '$1' nyiibʋ, <var>commentid</var> ɩyɛ kparaama.",
+	"apierror-discussiontools-commentname-notfound": "cheri nuori nɩŋ a ID\n'$1' aŋ ba nyɛ.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "lɩɛrɩ daaŋ ba tarɩ yɛliyaga jaa",
+	"apierror-discussiontools-formtoken-used": "Nuorɩ cherɩbʋ ta tuolɩyɛ. lɛʋ gaa a lɩɛrɩ tɩ nyɛ.",
+	"apierror-discussiontools-subscription-failed-add": "kuŋ baŋ  chiehi ku a yɛl'ju",
+	"apierror-discussiontools-subscription-failed-remove": "kuŋ baŋ tuoŋ chɩɛhɩbʋ yɩ a yɛl'ju",
+	"apihelp-discussiontoolscompare-summary": "nyɛ duoho a gaa nuorɩ cherɩbʋ lɛʋhɩbʋ a yi lɩɛra ayi lɛʋ kaabʋ kpachaga.",
+	"apihelp-discussiontoolsedit-param-formtoken": "A ID aŋ ba i kparaama bɩ ʋ nyoŋ da yiyɛ a bundaara seŋ ka ʋ bigi buyi tuolɩbʋ.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "paahɩ nuori cherɩbʋ paanɩ ka a ɩ nuori lɛʋhɩbʋ ku yɛlyaga aŋ daŋ bɩ-bɛ",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "paahɩ yɛliyaga paanɩ vuo anɩŋ a fɔrɔ nuorɩ cherɩbʋ ʋ puoŋ",
+	"apihelp-discussiontoolsedit-summary": "tuolɩ duoho a yɛlɩyaga lɩɛrɩ.",
+	"apihelp-discussiontoolsfindcomment-summary": "nyɛ a nuorɩ cherɩbʋ nɩŋ ʋ ID bii yuori.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "nuorɩ cherɩbʋ ID bii yuori",
+	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "yuoe ku a yɛl'jurɩ piehɩbʋ",
+	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Weli minga ‘yo-seu’binnuu yɩ a nuori cherɩbʋ (ka ɩ naŋ wa tuna nɩŋ <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspreview-param-type": "Duoho buurii daaŋ nyɩɩbʋ",
+	"apihelp-discussiontoolspreview-summary": "daaŋ nyɛ a duoho a yɛliyaga lɩɛrɩ .",
+	"apihelp-discussiontoolssubscribe-param-commentname": "yuoe ku a yɛl'juri aŋ na chiehi (bii a kuŋ chiehi ku)",
+	"apihelp-discussiontoolssubscribe-param-page": "A lɩɛrɩ ni a yɛlɩju a yɩ",
+	"apihelp-discussiontoolssubscribe-param-subscribe": "sagɩ ku chɩɛhɩbʋ girɩɩ ku ba chɩɛhɩbʋ",
+	"apihelp-discussiontoolssubscribe-summary": "chɩɛhɩbʋ (bii ba chɩɛhɩbʋ) kyɛ nyɛ duoho nyɩɩbʋ nɩŋ a yɛl'jurɩ",
+	"apihelp-discussiontoolsthank-param-commentid": "ID ku a yɛlyaga barɩka.",
+	"apihelp-discussiontoolsthank-summary": "ku jemaa barɩka puohɩbʋ duoho ɩŋ a yɛlyaga"
+}

@@ -11,7 +11,8 @@
 			"Miguelos1976",
 			"Tunichmay",
 			"ValentinaTec",
-			"VicenteCancheM"
+			"VicenteCancheM",
+			"26agcp"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -42,15 +43,22 @@
 	"visualeditor-ca-createlocaldescriptionsource": "A'al tu'ux u taal",
 	"visualeditor-ca-createsource": "A'al tu'ux u taal",
 	"visualeditor-ca-editlocaldescriptionsource": "je'el beet le coodigoi' u tsolil le kuuchilo'",
-	"visualeditor-ca-editsource": "k'ex le coodigóo",
+	"visualeditor-ca-editsource": "K'ex le coodigóo",
 	"visualeditor-ca-editsource-section": "k'ex le koodigo'",
 	"visualeditor-ca-editsource-section-hint": "jeel beet u coodigoi' u poolil buuj:$1",
 	"visualeditor-categories-tool": "u tsolil múuch'ilo'ob",
 	"visualeditor-changedesc-mwcategory-sortkey-changed": "le u k'alil tsolilo' k'expaj ti $1 tak $2",
 	"visualeditor-changedesc-mwcategory-sortkey-set": "u k'aalil le tsolilo' ts'o'ok u ya'alal. $1",
 	"visualeditor-changedesc-mwcategory-sortkey-unset": "le' u k'alil u ordenacioono' $1 ts'o'ok u cha'abal",
-	"visualeditor-changedesc-mwlanguagevariant": "k'expajal u marcado le t'aanl'obo'",
+	"visualeditor-changedesc-mwlanguagevariant": "k'expajal u marcado le t'aanlo'obo'",
 	"visualeditor-changedesc-mwredirect": "Le destino ti' le redirección k'e'expajil ti' $1 tak $2",
 	"visualeditor-changedesc-mwtransclusion": "Parámetros ti' plantilla k'exa'abo'ob",
-	"visualeditor-desc": "Editor visual uti'al MediaWiki"
+	"visualeditor-desc": "Editor visual uti'al MediaWiki",
+	"visualeditor-descriptionpagelink": "proyecto: ku ilajeditor",
+	"visualeditor-dialog-extension-abandonedit": "¿Yaan wáaj a k'áat a k'alik le diálogo xma' aplicar a k'eexo'ob?",
+	"visualeditor-dialog-media-alttext-checkbox": "Meyaj le titulo je'ex texto alternativo",
+	"visualeditor-dialog-media-alttext-section": "Uláak' bixil",
+	"visualeditor-dialog-media-alttext-section-help": "Je'el u páajtal a meyajtik le je'ela' uti'al a ts'íibtik jump'éel tsoolil analte'o' uti'al máako'ob ma' tu páajtal u yiliko'ob le ba'alo'. Le tsoolil k'a'ana'an u suficiente utia'al u leti'ob u na'atiko'ob le propósito yéetel le a'alajil t'aan ku ts'aik le artículo medios comunicación. Lela' jach k'a'anan uti'al le máaxo'ob ch'óopo'obo' yéetel uláak' máako'ob ku meyajtiko'ob software lector pantalla wa navegadores chéen textos.",
+	"visualeditor-dialog-media-change-image": "k'ex oochel",
+	"visualeditor-dialog-media-choose-image": "ch'a' le oochela'"
 }

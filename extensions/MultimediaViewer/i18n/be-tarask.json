@@ -24,13 +24,14 @@
 	"multimediaviewer-reuse-loading-placeholder": "Ладаваньне...",
 	"multimediaviewer-share-tab": "Падзяліцца",
 	"multimediaviewer-embed-tab": "Выкарыстаць",
-	"multimediaviewer-download-link": "Спампаваць гэты файл",
+	"multimediaviewer-download": "Сьцягнуць",
+	"multimediaviewer-download-link": "Сьцягнуць гэты файл",
 	"multimediaviewer-share-explanation": "Скапіюйце і свабодна дзяліцеся спасылкай",
 	"multimediaviewer-embed-wt": "Вікітэкст",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "Выкарыстоўвайце гэты код для ўстаўкі файла",
 	"multimediaviewer-default-embed-dimensions": "Перадвызначаны памер мініятуры",
-	"multimediaviewer-original-embed-dimensions": "Арыґінальны файл $1",
+	"multimediaviewer-original-embed-dimensions": "Арыгінальны файл $1",
 	"multimediaviewer-large-embed-dimensions": "Вялікі памер $1",
 	"multimediaviewer-medium-embed-dimensions": "Сярэдні памер $1",
 	"multimediaviewer-small-embed-dimensions": "Малы памер $1",
@@ -44,6 +45,5 @@
 	"multimediaviewer-enable-submit-button": "Уключыць мэдыяпраглядальнік",
 	"multimediaviewer-enable-confirmation-header": "Вы ўключылі мэдыяпраглядальнік для ўсіх файлаў",
 	"multimediaviewer-enable-confirmation-text": "Наступны раз, калі вы націсьніце на мініятуру на сайце $1, будзе выкарыстаны мэдыяпраглядальнік.",
-	"multimediaviewer-enable-alert": "Мэдыяпраглядальнік цяпер адключаны",
-	"multimediaviewer-errorreport-privacywarning": "Падрабязнасьці памылкі далучаныя да справаздачы, якая будзе публічна даступнай. Калі вас гэта не задавальняе, можаце выправіць справаздачу ўнізе, выдаліўшы тыя зьвесткі, якімі вы ня хочаце дзяліцца."
+	"multimediaviewer-enable-alert": "Мэдыяпраглядальнік цяпер адключаны"
 }

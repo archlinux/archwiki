@@ -36,7 +36,6 @@
 	"multimediaviewer-thumbnail-error": "No se puede mostrar el archivo",
 	"multimediaviewer-thumbnail-error-description": "Parece que hay un problema técnico. Puedes $1 si persiste. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "reintentar",
-	"multimediaviewer-thumbnail-error-report": "reportar el problema",
 	"multimediaviewer-license-cc-pd": "Dominio público",
 	"multimediaviewer-license-pd": "Dominio público",
 	"multimediaviewer-license-default": "Ver licencia",
@@ -130,6 +129,5 @@
 	"multimediaviewer-enable-alert": "Se ha desactivado el visor multimedia",
 	"multimediaviewer-disable-info-title": "Has desactivado el visor multimedia",
 	"multimediaviewer-disable-info": "Aún puede ver archivos individuales con el Visor Multimedia.",
-	"multimediaviewer-errorreport-privacywarning": "El informe contiene detalles del error que serán visibles públicamente. Si ello no te inspira confianza, puedes modificar el informe para quitarle cualquier dato que no quieras compartir.",
 	"multimediaviewer-loading": "Cargando el visor multimedia."
 }

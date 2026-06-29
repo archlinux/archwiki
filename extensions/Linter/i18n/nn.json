@@ -13,6 +13,7 @@
 	"linter-category-large-tables-desc": "Desse sidene har tabellar som er vanskelege å visa på mobil",
 	"linter-category-deletable-table-tag": "Tabellmerke som bør slettast",
 	"linter-category-deletable-table-tag-desc": "Desse sidene har tabellmerke som bør slettast.",
+	"linter-category-duplicate-ids-desc": "Desse sidene har element med dupliserte id-attributtar.",
 	"linter-category-fostered": "Fostra innhald",
 	"linter-category-fostered-desc": "Desse sidene har fostra innhald.",
 	"linter-category-html5-misnesting": "Feilnøsta taggar med ulik attgjeving i HTML5 og HTML4",

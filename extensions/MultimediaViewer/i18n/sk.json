@@ -17,7 +17,6 @@
 	"multimediaviewer-metadata-error": "Nedajú sa načítať podrobnosti obrázka (chyba: $1)",
 	"multimediaviewer-thumbnail-error": "Prepáčte, súbor nie je možné zobraziť",
 	"multimediaviewer-thumbnail-error-retry": "znova",
-	"multimediaviewer-thumbnail-error-report": "nahlásiť problém",
 	"multimediaviewer-license-cc-pd": "Voľné dielo",
 	"multimediaviewer-license-pd": "Voľné dielo",
 	"multimediaviewer-license-default": "Zobraziť licenciu",

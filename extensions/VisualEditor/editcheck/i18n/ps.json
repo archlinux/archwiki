@@ -22,7 +22,7 @@
 	"editcheck-dialog-title": "له خپرولو دمخه",
 	"editcheck-copyvio-title": "لېښل‌شوې منځپانگه",
 	"editcheck-copyvio-description": "مهرباني وکړئ، له نورو سرچينو ليکنه مه رالمېسئ، ولو که بياتکرار شوې وي يا اخځ شوې هم وي. دا ښايي  [$1 د لمېسې رښتې څخه سرغړونه يا ادبي غلا] وگڼل شي او ښايي ستاسو منځپانگه لرې شي يا ستاسو گڼون باندې بنديز ولگېږي.",
-	"editcheck-copyvio-prompt": "دا متن تا ليکلی دی؟",
+	"editcheck-copyvio-prompt": "دا ليک تا ليکلی؟",
 	"editcheck-copyvio-action-keep": "هو، ويې ساته",
 	"editcheck-copyvio-action-remove": "نه، لرې يې کړه",
 	"editcheck-copyvio-keep-description": "مهرباني وکړئ د دې ليکنې نورو سموونکو سره مرسته وکړئ چې ستاسو د لېښل شوي ليک د ساتلو په دليل پوه شي.",

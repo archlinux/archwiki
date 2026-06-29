@@ -39,7 +39,11 @@
 			"Umherirrender",
 			"Verdy p",
 			"Waki285",
-			"Xiplus"
+			"Xiplus",
+			"Mitte27",
+			"Pikne",
+			"Pskyechology",
+			"Stjn"
 		]
 	},
 	"checkuser-summary": "{{CheckUserForm}}\nExplanation of CheckUser tool shown on [[Special:CheckUser]].\n\nParameters:\n* $1 - an integer that can change based on wiki configuration. default value: 16\n* $2 - an integer that can change based on wiki configuration. default value: 32\n* $3 - the maximum number of results returned as set in the wiki global CheckUserMaximumRowCount. default value: 5000",
@@ -117,8 +121,8 @@
 	"checkuser-show-suggestedinvestigations": "{{CheckUserLogForm}}\nLabel for a link shown as a subtitle link, leading to [[Special:SuggestedInvestigations]].",
 	"checkuser-log-checks-by": "{{CheckUserLogForm}}\nTool link shown next to the performer of a check on [[Special:CheckUserLog]]. Links to the log for all checks made by that checkuser.",
 	"checkuser-log-checks-on": "{{CheckUserLogForm}}\nTool link shown next to the target of a check on [[Special:CheckUserLog]]. Links to the log of all checks performed on that target.",
-	"checkuser-log-link-text": "{{CheckUser}}\nUsed as link text in [[Special:CheckUser]] to link to the log ID for the given action. Shown at the start of lines that refer to a log action where a specific log ID has been stored.\nSee also:\n* {{msg-mw|logs}} - The same word in English with the only difference being the first letter capitalised and the word being not plural.",
-	"checkuser-logs-link-text": "{{CheckUser}}\nUsed as link text in [[Special:CheckUser]] to link to the logs for a given title. Shown at the start of lines that are log actions.\nSee also:\n* {{msg-mw|logs}} - The same word in English with the only difference being the first letter capitalised.",
+	"checkuser-log-link-text": "{{CheckUser}}\nUsed as link text in [[Special:CheckUser]] to link to the log ID for the given action. Shown at the start of lines that refer to a log action where a specific log ID has been stored.\n\n{{Identical|Log}}",
+	"checkuser-logs-link-text": "{{CheckUser}}\nUsed as link text in [[Special:CheckUser]] to link to the logs for a given title. Shown at the start of lines that are log actions.\n\n{{Identical|Log}}",
 	"checkuser-blocked": "Used as link text in [[Special:CheckUser]] and indicates that a user or IP address is currently blocked.\n\nThe link points to [[Special:Log]] or [[Special:BlockList]] for the relevant block entry.\n\nSee also:\n* {{msg-mw|Checkuser-gblocked}}\n* {{msg-mw|Checkuser-wasblocked}}\n{{Identical|Blocked}}",
 	"checkuser-gblocked": "Used to indicate that an IP address in the results is globally blocked in [[Special:CheckUser]].\n\nSee also:\n* {{msg-mw|Checkuser-blocked}}\n* {{msg-mw|Checkuser-wasblocked}}",
 	"checkuser-locked": "Used to indicate that a user shown in the results is locked in [[Special:CheckUser]].\n{{Identical|Locked}}",
@@ -390,7 +394,7 @@
 	"logentry-checkuser-temporary-account-disable-auto-reveal": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}\nLog entry created if a user disabled IP auto-reveal mode.",
 	"logentry-checkuser-temporary-account-enable-auto-reveal": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}\nLog entry created if a user enabled IP auto-reveal mode.\n\nAdditional parameters:\n* $5 - Date and time when the enabled mode expires",
 	"logentry-checkuser-temporary-account-view-ips": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}",
-	"logentry-checkuser-temporary-account-view-temporary-accounts-on-ip": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}",
+	"logentry-checkuser-temporary-account-view-temporary-accounts-on-ip": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}\n\n$3 is an IP address.",
 	"logentry-checkuser-temporary-account-view-temp-accounts-on-ip-global": "{{Logentry|[[Special:Log/checkuser-temporary-account]]}}",
 	"log-action-filter-checkuser-temporary-account": "{{doc-log-action-filter-type|checkuser-temporary-account}}\n{{related|Log-action-filter}}",
 	"log-action-filter-checkuser-temporary-account-change-access": "{{doc-log-action-filter-action|checkuser-temporary-account|change-access}}",

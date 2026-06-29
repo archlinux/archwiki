@@ -4,7 +4,8 @@
 			"Base",
 			"DDPAT",
 			"Ice bulldog",
-			"Piramidion"
+			"Piramidion",
+			"Repakr"
 		]
 	},
 	"templatestyles": "TemplateStyles",
@@ -16,6 +17,7 @@
 	"templatestyles-bad-src": "Сторінка [[:$1|$2]] повинна мати контентну модель «{{int:content-model-sanitized-css}}» для TemplateStyles (поточною моделлю є «$3»).",
 	"templatestyles-errorcomment": "Помилка при опрацюванні таблиці стилів [[:$1]] (версія $2):\n$3",
 	"templatestyles-size-exceeded": "Таблиця стилів є більшою за максимальний розмір $2.",
+	"templatestyles-tag-injection": "Надана таблиця стилів містить щось схоже на тег html, що заборонено.",
 	"content-model-sanitized-css": "Очищений CSS",
 	"templatestyles-stylesheet-error-category": "Таблиці стилів TemplateStyles з помилками",
 	"templatestyles-stylesheet-error-category-desc": "Таблиця стилів TemplateStyles має помилку.",

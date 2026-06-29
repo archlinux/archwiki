@@ -132,6 +132,7 @@
 	"log-action-filter-rights-restoreautopromote": "Automatska dodjela statusa omogućena",
 	"logentry-rights-blockautopromote": "$1 {{GENDER:$2|onemogućio|onemogućila}} je automatsku dodjelu statusa {{GENDER:$4|$3}} na rok od $5",
 	"logentry-rights-restoreautopromote": "$1 {{GENDER:$2|omogućio|omogućila}} je automatsku dodjelu statusa {{GENDER:$4|$3}}",
+	"log-name-abusefilterblockeddomainhit": "Evidencija blokiranih domena",
 	"abusefilter-list": "Svi filtri",
 	"abusefilter-list-id": "ID filtra",
 	"abusefilter-list-pattern": "Uzorak",
@@ -524,7 +525,9 @@
 	"abusefilter-view-privatedetails-legend": "Vidi privatne detalje",
 	"abusefilter-view-privatedetails-reason": "Razlog pristupu privatnim detaljima:",
 	"abusefilter-log-details-id": "Evidencijski ID",
+	"abusefilter-blocked-domains-add-explanation": "Ovdje možete dodati internetsku domenu na popis blokiranih domena.",
 	"abusefilter-blocked-domains-attempted": "Tekst koji ste htjeli objaviti blokirao je naš filter. Blokirano je dodavanje sljedeće domene: $1",
+	"log-description-abusefilterblockeddomainhit": "Evidencija pokušaja dodavanja [[Special:BlockedExternalDomains|blokiranih internetskih domena]].",
 	"abusefilter-log-ip-not-available": "Nije dostupno",
 	"tag-abusefilter-condition-limit": "dostignuta granica uvjeta",
 	"tag-abusefilter-condition-limit-description": "Uređivanja ili druge radnje koje nije bilo moguće provjeriti pomoću svih aktivnih [[Special:AbuseFilter|filtara zloporaba]] ([[mw:Extension:AbuseFilter/Conditions|pomoć]])."

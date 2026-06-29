@@ -11,6 +11,7 @@ namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
 use DateInterval;
 use DateTimeImmutable;
+use DateTimeZone;
 use Iterator;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
@@ -245,7 +246,7 @@ class EventDispatcher {
 			}
 			// Ignore comments which are more than 10 minutes old, as this may be a user archiving
 			// their own comment. (T290803)
-			$revTimestamp = new DateTimeImmutable( $newRevRecord->getTimestamp() );
+			$revTimestamp = new DateTimeImmutable( $newRevRecord->getTimestamp(), new DateTimeZone( 'UTC' ) );
 			$threshold = $revTimestamp->sub( new DateInterval( 'PT10M' ) );
 			if ( $newComment->getTimestamp() <= $threshold ) {
 				continue;

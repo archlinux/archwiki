@@ -30,7 +30,6 @@
 	"multimediaviewer-thumbnail-error": "Tyvärr, filen kan inte visas",
 	"multimediaviewer-thumbnail-error-description": "Ett tekniskt fel har uppstått. Du kan $1 om det kvarstår. Felmeddelande: $2",
 	"multimediaviewer-thumbnail-error-retry": "försöka igen",
-	"multimediaviewer-thumbnail-error-report": "rapportera problemet",
 	"multimediaviewer-license-cc-by-4.0": "CC BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Public Domain",
@@ -125,6 +124,5 @@
 	"multimediaviewer-enable-alert": "Media Viewer är nu inaktiverad",
 	"multimediaviewer-disable-info-title": "Du har inaktiverat Media Viewer",
 	"multimediaviewer-disable-info": "Du kan fortfarande visa enskilda filer med Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "Detaljer om felet bifogas rapporten, som kommer att vara tillgänglig för allmänheten. Om du inte trivs med det kan du redigera rapporten nedan och ta bort all data du inte vill dela.",
 	"multimediaviewer-loading": "Aktivera Mediavisaren"
 }

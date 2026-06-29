@@ -17,7 +17,8 @@
 			"Tel'et",
 			"Tifinaghes",
 			"Ата",
-			"아라"
+			"아라",
+			"Repakr"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Звіряння редагування показало, що на сторінку додано новий вміст",
@@ -30,6 +31,8 @@
 	"tag-editcheck-tone-description": "Звіряння редагувань виявило потенційну проблему з тоном деякого доданого контенту",
 	"tag-editcheck-tone-shown": "Звіряння редагувань (тон) показано",
 	"tag-editcheck-tone-shown-description": "Звіряння редагувань вважає, що, можливо, потрібно було скоригувати тон певного контенту, і показано інтерфейс користувача для цього",
+	"tag-editcheck-paste-shown": "Звіряння редагувань (вставлення) показано",
+	"tag-editcheck-paste-shown-description": "Звіряння редагувань запросило уточнення щодо вмісту, який вставив користувач, що потім був або вилучений або підтверджений як допустимий",
 	"tag-visualeditor": "Візуальний редактор",
 	"tag-visualeditor-description": "Редагування виконано з використанням [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуального редактора]]",
 	"tag-visualeditor-needcheck": "Візуальний редактор: Перевірити",

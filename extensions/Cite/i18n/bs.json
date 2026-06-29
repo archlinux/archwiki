@@ -33,6 +33,7 @@
 	"cite-reference-previews-note": "Napomena",
 	"cite-reference-previews-web": "Naveden sajt",
 	"cite-reference-previews-collapsible-placeholder": "Reference sadrži grafiku koja ne može stati u ovaj pregled.",
+	"cite-reference-previews-gadget-conflict-info-reftooltips": "Uključen je dodatak [[$1|Oblačići za reference]], pa nećete moći vidjeti pretpreglede referenci, već samo pretpreglede stranica. U zavisnosti od projekta, moguće je da se dodatak drukčije zove. Budete li i dalje nailazili na probleme, pregledajte dodatke i korisničke skripte, kako lokalne, tako i globalne.",
 	"cite-reference-previews-preference-label": "Pregled reference (brzi pregled futnota)",
 	"cite_references_link_accessibility_label": "Vrati se na vrh",
 	"cite_references_link_many_accessibility_label": "Vrati se na:",

@@ -22,7 +22,6 @@
 	"multimediaviewer-thumbnail-error": "Din păcate fișierul nu poate fi afișat",
 	"multimediaviewer-thumbnail-error-description": "Se pare că a apărut o eroare tehnică. Puteți să $1 dacă aceasta persistă. Eroare: $2",
 	"multimediaviewer-thumbnail-error-retry": "reîncercați",
-	"multimediaviewer-thumbnail-error-report": "raportați problema",
 	"multimediaviewer-license-cc-pd": "Domeniu public",
 	"multimediaviewer-license-pd": "Domeniu public",
 	"multimediaviewer-license-default": "Vezi licența",
@@ -111,6 +110,5 @@
 	"multimediaviewer-enable-confirmation-text": "Data viitoare când veți face clic pe o miniatură la $1, se va lansa Vizualizatorul multimedia.",
 	"multimediaviewer-enable-alert": "Vizualizatorul multimedia este acum dezactivat",
 	"multimediaviewer-disable-info-title": "Ați dezactivat Vizualizatorul multimedia",
-	"multimediaviewer-disable-info": "Puteți vizualiza în continuare fișiere individuale cu Vizualizatorul multimedia.",
-	"multimediaviewer-errorreport-privacywarning": "Detaliile referitoare la eroare sunt atașate raportului care va fi făcut public. Dacă nu vă simțiți confortabil în această postură, puteți modifica raportul și să eliminați informațiile pe care nu le doriți publice."
+	"multimediaviewer-disable-info": "Puteți vizualiza în continuare fișiere individuale cu Vizualizatorul multimedia."
 }

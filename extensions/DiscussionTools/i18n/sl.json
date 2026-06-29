@@ -72,7 +72,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Odnaročili}} ste se.",
 	"discussiontools-notification-added-topic-header": "Na strani <strong>$3</strong> je $1 {{GENDER:$2|ustvaril|ustvarila|ustvaril_a}} novo temo »<strong>$4</strong>«.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Ena nova tema|$1 novi temi|$1 nove teme|$1 novih tem|100=99+ novih tem}} na strani »<strong>$2</strong>«.",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Ogled teme",
 	"discussiontools-notification-comment-thank-header": "$1 se {{GENDER:$4|vam}} je {{GENDER:$2|zahvalil|zahvalila|zahvalil_a}} za vaš komentar na strani »<strong>$3</strong>«.",
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Ena oseba|$1 človeka|$1 ljudje|$1 ljudi|100=99+ ljudi}} se {{GENDER:$3|vam}} je {{PLURAL:$1|zahvalil|zahvalila|zahvalili|zahvalilo}} za vaš komentar pri temi »<strong>$2</strong>«.",

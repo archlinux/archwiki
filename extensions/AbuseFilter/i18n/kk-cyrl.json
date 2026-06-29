@@ -8,7 +8,8 @@
 			"Hedeyohu22",
 			"U.ayaao.p",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Moonborn"
 		]
 	},
 	"abusefilter": "Бұзақылықты сүзгілеуді басқару",
@@ -59,7 +60,7 @@
 	"abusefilter-log-details-privatedetails": "Жеке деректері",
 	"abusefilter-log-details-ip": "Қайнар IP мекен жайы",
 	"abusefilter-log-noactions": "еш",
-	"abusefilter-log-noactions-filter": "Еш",
+	"abusefilter-log-noactions-filter": "Ешқайсысы",
 	"abusefilter-log-details-diff": "Өңдеп жасаған өзгерістері",
 	"abusefilter-log-linkoncontribs": "бұзақылық жасау журналы",
 	"abusefilter-log-linkoncontribs-text": "Бұл қатысушының бұзақылық жасау журналы",

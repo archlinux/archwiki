@@ -1,8 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"ObaTango"
+			"ObaTango",
+			"Kallmemel"
 		]
 	},
-	"tag-visualeditor": "Editamentu visual"
+	"tag-visualeditor": "Editá visual",
+	"tag-visualeditor-description": "Modifikashon ehekutá ku uso di [[{{MediaWiki:visualeditor-descriptionpagelink}}|prosesadó visual]]",
+	"tag-visualeditor-needcheck": "Prosesadó visual di teksto: Chèk",
+	"tag-visualeditor-switched": "A suich pa editor visual",
+	"visualeditor-help-label": "Lesa e guia di usadó",
+	"visualeditor-welcomedialog-action": "Kuminsá editá",
+	"visualeditor-welcomedialog-content": "Tur hende por editá i kada mehorashon ta yuda.",
+	"visualeditor-welcomedialog-content-thanks": "Danki na bo, e mundu por deskubrí mas!",
+	"visualeditor-welcomedialog-switch": "Suich pa editor di kódigo",
+	"visualeditor-welcomedialog-switch-ve": "Suich pa editor visual",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bonbiní}} na $2"
 }

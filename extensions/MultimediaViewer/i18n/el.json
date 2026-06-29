@@ -28,7 +28,6 @@
 	"multimediaviewer-thumbnail-error": "Συγνώμη, το αρχείο δεν μπορεί να προβληθεί",
 	"multimediaviewer-thumbnail-error-description": "Φαίνεται να υπάρχει τεχνικό θέμα. Μπορείτε να $1 αν συνεχίζει. Σφάλμα: $2",
 	"multimediaviewer-thumbnail-error-retry": "ξανά προσπάθεια",
-	"multimediaviewer-thumbnail-error-report": "αναφέρετε το πρόβλημα",
 	"multimediaviewer-license-cc-by-4.0": "CC BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Κοινό κτήμα",
@@ -119,6 +118,5 @@
 	"multimediaviewer-enable-confirmation-text": "Την επόμενη φορά που θα κάνετε κλικ σε μια μικρογραφία στο $1, το Media Viewer θα χρησιμοποιηθεί.",
 	"multimediaviewer-enable-alert": "Ο Media Viewer είναι απενεργοποιημένος τώρα",
 	"multimediaviewer-disable-info-title": "Έχετε απενεργοποιήσει το Media Viewer",
-	"multimediaviewer-disable-info": "Μπορείτε ακόμα να προβάλετε μεμονωμένα αρχεία με το Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "Λεπτομέρειες σχετικά με το σφάλμα επισυνάπτονται στην αναφορά, η οποία θα είναι δημόσια ορατή. Αν δεν είστε άνετοι με αυτό, μπορείτε να επεξεργαστείτε την παρακάτω αναφορά και να αφαιρέσετε όλα τα δεδομένα που δεν θέλετε να μοιραστείτε."
+	"multimediaviewer-disable-info": "Μπορείτε ακόμα να προβάλετε μεμονωμένα αρχεία με το Media Viewer."
 }

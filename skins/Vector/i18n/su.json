@@ -4,7 +4,8 @@
 			"Akbar Soepadhi",
 			"Daud I.F. Argana",
 			"Kandar",
-			"Pijri Paijar"
+			"Pijri Paijar",
+			"Deepturquoise"
 		]
 	},
 	"vector-skin-desc": "MonoBook vérsi modéren dina pidangan anu leuwih anyar jeung leuwih hadé",
@@ -24,18 +25,24 @@
 	"vector-view-viewsource": "Témbongkeun sumber",
 	"vector-more-actions": "Lianna",
 	"vector-appearance-label": "Pidangan",
+	"vector-feature-limited-width-name": "Lega",
 	"vector-feature-limited-width-0-label": "Lebar",
+	"vector-feature-limited-width-1-label": "Baku",
 	"vector-feature-custom-font-size-name": "Téks",
 	"vector-feature-custom-font-size-0-label": "Leutik",
 	"vector-feature-custom-font-size-1-label": "Standar",
 	"vector-feature-custom-font-size-2-label": "Gedé",
+	"skin-theme-name": "Warna",
 	"skin-theme-day-label": "Caang",
 	"skin-theme-night-label": "Poék",
 	"skin-theme-os-label": "Otomatis",
+	"skin-theme-exclusion-notice": "Kaca ieu sok dina mode caang.",
 	"vector-toc-label": "Eusi",
 	"vector-toc-beginning": "Mimiti",
 	"vector-main-menu-label": "Menu utama",
+	"vector-feature-custom-font-size-exclusion-notice": "Kaca ieu sok ngagunakeun ukuran font leutik",
 	"vector-page-tools-label": "Parabot",
 	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Tarékah",
 	"vector-unpin-element-label": "sumputkeun"
 }

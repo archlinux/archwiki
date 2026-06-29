@@ -30,11 +30,13 @@
 			"ひまり",
 			"春春眠眠",
 			"翻訳者a",
-			"青子守歌"
+			"青子守歌",
+			"Tensama0415"
 		]
 	},
 	"skinname-vector": "レガシー ベクター (2010年版)",
 	"skinname-vector-2022": "ベクター (2022年版)",
+	"vector-specialversion-name": "ベクター",
 	"vector-skin-desc": "2 種類のベクター外装を提供します:\n* 2011年版 - モノブックのモダンバージョンで、新しい外観と多くのユーザビリティ向上を備えています。\n* 2022年版 - ウィキメディア財団の[https://www.mediawiki.org/wiki/Desktop_Improvements デスクトップ版改善]プロジェクトの一環として構築されました。",
 	"prefs-vector-enable-vector-1-label": "レガシーベクター外装を使用する",
 	"prefs-vector-enable-vector-1-help": "今後数年にわたり、ベクター外装を徐々に更新していく予定です。レガシーベクターでは、(2019年12月時点の) 古いベクター外装を表示できます。アップデートについての詳細は、[https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements プロジェクトページ]をご覧ください。",
@@ -45,7 +47,7 @@
 	"vector-language-button-aria-label": "特定の記事の別の言語版に移動します。 {{PLURAL:$1|利用可能な言語$1件}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 個の言語版}}",
 	"vector-no-language-button-label": "言語を追加",
-	"vector-no-language-button-aria-label": "この記事はこの言語にのみ存在します。他の言語のための記事を追加",
+	"vector-no-language-button-aria-label": "この記事はこの言語でのみ利用できます。他の言語のための記事を追加",
 	"vector-language-variant-switcher-label": "別の言語に切り替える",
 	"vector-action-addsection": "話題を追加",
 	"vector-action-delete": "削除",

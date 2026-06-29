@@ -638,6 +638,8 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::getTemplateData
 	 */
 	public function testGetTemplateData() {
+		$this->clearHook( 'SiteNoticeAfter' );
+
 		$context = new RequestContext();
 		$title = $this->getExistingTestPage()->getTitle();
 		$context->setTitle( $title );

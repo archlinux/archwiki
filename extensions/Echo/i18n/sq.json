@@ -6,7 +6,8 @@
 			"Kosovastar",
 			"Liridon",
 			"Olsi",
-			"Xhulianoo"
+			"Xhulianoo",
+			"INNERLMNT"
 		]
 	},
 	"echo-desc": "Sistem për njoftimin e përdoruesve rreth ngjarjeve dhe mesazheve",
@@ -97,5 +98,7 @@
 	"echo-email-batch-body-intro-daily": "Përshëndetje, $1!\n\nMë poshtë gjendet përmbledhja e aktivitetit të sotëm në {{SITENAME}}.",
 	"echo-email-batch-body-intro-weekly": "Përshëndetje, $1!\n\nMë poshtë gjendet përmbledhja e aktivitetit javor në {{SITENAME}}.",
 	"echo-email-batch-link-text-view-all-notifications": "Shfaq të gjitha njoftimet",
-	"notification-header-foreign-notice": "Më shumë njoftime nga {{PLURAL:$5|një wiki tjetër|$5 wiki të tjera}}"
+	"notification-header-foreign-notice": "Më shumë njoftime nga {{PLURAL:$5|një wiki tjetër|$5 wiki të tjera}}",
+	"grant-echo-read-notifications": "Lexo njoftimet e mia",
+	"action-echo-read-notifications": "lexosh njoftimet e tua"
 }

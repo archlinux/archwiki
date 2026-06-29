@@ -19,7 +19,6 @@
 	"multimediaviewer-thumbnail-error": "Žao nam je, datoteku nije moguće prikazati",
 	"multimediaviewer-thumbnail-error-description": "Čini se da je došlo do tehničke poteškoće. Možete $1 ako se opet pojavi. Pogreška: $2",
 	"multimediaviewer-thumbnail-error-retry": "ponoviti",
-	"multimediaviewer-thumbnail-error-report": "prijaviti poteškoću",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
@@ -124,6 +123,5 @@
 	"multimediaviewer-enable-alert": "Preglednik multimedijskih datoteka trenutačno je onemogućen.",
 	"multimediaviewer-disable-info-title": "Onemogućili ste preglednik",
 	"multimediaviewer-disable-info": "Još uvijek možete pregledavati pojedinačne datoteke u pregledniku.",
-	"multimediaviewer-errorreport-privacywarning": "Pojedinosti pogreške su priložene izvješću koje će biti javno vidljivo. Ako niste suglasni s tim, možete urediti izvješće i ukloniti podatke koje ne želite objaviti javno.",
 	"multimediaviewer-loading": "Učitavanje preglednika multimedijskih datoteka."
 }

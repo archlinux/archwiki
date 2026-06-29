@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"timeless-desc": "Un diseño eterno, basá riba prototipo di Winter door di Brandon Harris i otro estilonan di Fundashon Wikimedia.",
+	"timeless-anonymous": "Anónimo",
+	"timeless-loggedinas": "Outentiká komo '''$1'''",
+	"timeless-notloggedin": "No ta outentiká",
+	"timeless-userpage": "Página di {{GENDER:$1|usadó}}",
+	"timeless-talkpage": "Diskushon {{GENDER:$1|usadó}}",
+	"timeless-pagelog": "Registro di página",
+	"timeless-more": "Mas",
+	"timeless-sitetools": "Hèrmènt di wiki",
+	"timeless-pageactions": "Hèrmènt di página",
+	"timeless-userpagetools": "Hèrmènt di página di usadó",
+	"timeless-action-addsection": "Tópiko nobo",
+	"timeless-view-view": "Lesa",
+	"timeless-pagemisc": "Mas",
+	"timeless-namespaces": "Espasio di nòmber",
+	"timeless-pagetools": "Akshon di página",
+	"timeless-languages": "Idioma",
+	"timeless-projects": "Otro proyektonan",
+	"timeless-view-history": "Historia",
+	"timeless-action-undelete": "Restourá {{PLURAL:$1|un adaptashon|$1 adaptashon}}"
+}

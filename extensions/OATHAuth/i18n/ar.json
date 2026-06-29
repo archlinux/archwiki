@@ -76,7 +76,7 @@
 	"oathauth-auth-switch-module-label": "استخدم تطبيق المصادقة",
 	"oathauth-auth-switch-module-help": "اضبط <code>newModule</code> على اسم الوحدة الجديدة للحصول على تحدٍّ جديد من وحدة مصادقة ثنائية مختلفة. اتركه فارغًا إذا كنت تُجيب على التحدي الحالي.",
 	"oathauth-auth-switch-module-keep": "(لا تقم بالتبديل)",
-	"oathauth-throttled": "هناك الكثير من محاولات التحقق! الرجاء انتظار $1.",
+	"oathauth-throttled": "الكثير من المحاولات! من فضلك انتظر بضعة دقائق",
 	"oathauth-login-failed": "التوثيق بثنائي العامل فشل",
 	"oathauth-recovery-code-login-failed": "فشل التحقق من رمز الاسترداد.",
 	"oathauth-describe-provider": "توثيق ذو عاملين (OATH)",
@@ -155,7 +155,7 @@
 	"oathauth-delete-confirm-box": "أدخل \"{{int:oathauth-authenticator-delete-text}}\" للمتابعة",
 	"oathauth-delete-warning-final": "ستؤدي إزالة هذه الطريقة إلى تعطيل المصادقة الثنائية بالكامل.",
 	"oathauth-delete-wrong-confirm-message": "إدخال خاطئ لإزالة المفتاح النهائي. يُرجى كتابة \"{{int:oathauth-authenticator-delete-text}}\" للمتابعة.",
-	"oathauth-delete-success": "<strong>$1</strong> حذف.",
+	"oathauth-delete-success": "تمت إزالته!",
 	"oathauth-created-at": "تمت الإضافة على $1",
-	"oathauth-enable-success": "تمت إضافة <strong>$1</strong> ."
+	"oathauth-enable-success": "تمت الإضافة!"
 }

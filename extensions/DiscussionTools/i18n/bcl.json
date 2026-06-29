@@ -1,13 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kunokuno"
+			"Kunokuno",
+			"ShiminUfesoj"
 		]
 	},
-	"discussiontools-replylink": "{{GENDER:|magsimbag}}",
+	"discussiontools-defaultsummary-reply": "Simbag",
+	"discussiontools-newtopic-missing-title": "Tabi magtao nin sarong titulo para sa {{GENDER:|saindong}} topic na pinag-uulayan.",
+	"discussiontools-newtopic-placeholder-title": "Subheto",
+	"discussiontools-replylink": "{{GENDER:|simbag}}",
 	"discussiontools-replywidget-cancel": "dai idagos",
 	"discussiontools-replywidget-mode-source": "Ginunuan",
 	"discussiontools-replywidget-mode-visual": "Biswal",
-	"discussiontools-replywidget-placeholder-reply": "Magsimbag sa  {{BIDI:$1}}",
-	"discussiontools-replywidget-reply": "magsimbag"
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Magdugang}} nin pag-uulayan",
+	"discussiontools-replywidget-placeholder-newtopic": "Paglaladawan",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Magsimbag}} sa {{BIDI:$1}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Simbag}}",
+	"discussiontools-replywidget-summary": "Sumaryo",
+	"discussiontools-replywidget-watchthis": "Idugang an pahinang ini sa saimong [[Special:Watchlist|lista nin mga pagbantay]]",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ika}} makakaresibe nin mga notipikasyon dapit sa mga bagong komento sa temang ini."
 }

@@ -26,5 +26,7 @@
 	"log-description-spamblacklist": "Esses eventos rastreiam hits na lista de bloqueio de spam.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} causou uma correspondência na lista de bloqueio de spam em $3, tentando adicionar $4.",
 	"right-spamblacklistlog": "Ver os registros da lista de bloqueio de spam",
-	"action-spamblacklistlog": "ver os registros da lista de bloqueio de spam"
+	"action-spamblacklistlog": "ver os registros da lista de bloqueio de spam",
+	"right-sboverride": "Contornar a lista de barramento de spam",
+	"action-sboverride": "contornar a lista de barramento de spam"
 }

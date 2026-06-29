@@ -4,9 +4,13 @@
 			"GwikorFrank",
 			"Kernoweger",
 			"Kw-Moon",
-			"Nrowe"
+			"Nrowe",
+			"Flynn"
 		]
 	},
+	"vector-languages": "Yethow",
+	"vector-language-button-label": "{{PLURAL:$1|$1 yeth|$1 yethow}}",
+	"vector-no-language-button-label": "Keworra yethow",
 	"vector-action-addsection": "Keworra testen",
 	"vector-action-delete": "Dilea",
 	"vector-action-move": "Gwaya",
@@ -18,5 +22,26 @@
 	"vector-view-history": "Gweles an istori",
 	"vector-view-view": "Redya",
 	"vector-view-viewsource": "Gweles an bennfenten",
-	"vector-more-actions": "Moy"
+	"vector-more-actions": "Moy",
+	"vector-appearance-label": "Gis",
+	"vector-feature-limited-width-name": "Lester",
+	"vector-feature-limited-width-0-label": "Efan",
+	"vector-feature-limited-width-1-label": "Savonek",
+	"vector-feature-custom-font-size-name": "Tekst",
+	"vector-feature-custom-font-size-0-label": "Byghan",
+	"vector-feature-custom-font-size-1-label": "Savonek",
+	"vector-feature-custom-font-size-2-label": "Bras",
+	"skin-theme-name": "Liw",
+	"skin-theme-day-label": "Gwynn",
+	"skin-theme-night-label": "Du",
+	"skin-theme-os-label": "Awtomatek",
+	"skin-theme-exclusion-notice": "An folen ma yw y'n fordh gwynn pub prys.",
+	"vector-toc-label": "Rol an folen",
+	"vector-toc-beginning": "Dalleth",
+	"vector-main-menu-label": "Pennrol",
+	"vector-feature-custom-font-size-exclusion-notice": "An folen ma a dhevnydhya braster font byghan pub prys",
+	"vector-page-tools-label": "Toulys",
+	"vector-page-tools-general-label": "Ollgemmyn",
+	"vector-page-tools-actions-label": "Gwriansow",
+	"vector-unpin-element-label": "kudha"
 }

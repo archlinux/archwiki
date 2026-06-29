@@ -22,7 +22,6 @@
 	"multimediaviewer-thumbnail-error": "দুঃখিত, ফাইলটি প্রদর্শন করা সম্ভব নয়",
 	"multimediaviewer-thumbnail-error-description": "এখানে একটি প্রযুক্তিগত সমস্যা আছে বলে মনে হচ্ছে। যদি এটি চলতেই থাকে তাহলে আপনি $1 করতে পারেন। ত্রুটি: $2",
 	"multimediaviewer-thumbnail-error-retry": "পুনঃচেষ্টা",
-	"multimediaviewer-thumbnail-error-report": "সমস্যা প্রতিবেদন করতে",
 	"multimediaviewer-license-cc-by-1.0": "সিসি বাই ১.০",
 	"multimediaviewer-license-cc-sa-1.0": "সিসি এসএ ১.০",
 	"multimediaviewer-license-cc-by-sa-1.0": "সিসি বাই-এসএ ১.০",

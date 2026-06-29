@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-query+pageimages-summary": "Waxay soo celisaa macluumaad ku saabsan sawirrada ku jira bogga, sida sawirka yar iyo jiritaanka sawirro.",
+	"apihelp-query+pageimages-example-1": "Ka hel magaca iyo sawir yar oo cabbirkiisu yahay <kbd>100</kbd> pixel ee sawir ku yaal bogga <kbd>Albert Einstein</kbd>.",
+	"apihelp-query+pageimages-param-prop": "Macluumaadka la soo celinayo:",
+	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "URL-ka iyo cabbirrada sawirka thumbnail-ka ee ku xiran bogga, haddii uu jiro.",
+	"apihelp-query+pageimages-paramvalue-prop-original": "URL-ka iyo cabbirrada asalka ah ee sawirka ku xiran bogga, haddii uu jiro.",
+	"apihelp-query+pageimages-paramvalue-prop-name": "Cinwaanka sawirka.",
+	"apihelp-query+pageimages-param-thumbsize": "Ballaca ugu badan ee pixel ahaan ee sawirrada thumbnail-ka.",
+	"apihelp-query+pageimages-param-langcode": "Koodhka luqadda ee sawirka lagu soo bandhigi doono haddii luqado badan la taageero",
+	"apihelp-query+pageimages-param-limit": "Guryaha tirada bogagga la soo celinayo.",
+	"apihelp-query+pageimages-param-license": "Ku xaddid sawirrada bogagga nooc gaar ah oo shati ah:",
+	"apihelp-query+pageimages-paramvalue-license-free": "Kaliya sawirrada bilaashka ah.",
+	"apihelp-query+pageimages-paramvalue-license-any": "Sawirka ugu fiican, ha ahaado bilaash ama aan bilaash ahayn."
+}

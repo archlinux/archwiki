@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-echocreateevent-summary": "کارن ته په لاسي ډول خبرتيا لېږل",
+	"apihelp-echocreateevent-example": "خبرتيا لېږل",
+	"apihelp-echocreateevent-param-user": "هغه کارن چې خبرتيا ورته ورلېږل کېږي",
+	"apihelp-echocreateevent-param-header": "د خبرتيا د سرليک منځپانگه",
+	"apihelp-echocreateevent-param-content": "د خبرتيا د بدن منځپانگه",
+	"apihelp-echocreateevent-param-page": "هغه مخ چې په خبرتيا کې ورسره تړونی ورکړل شي",
+	"apihelp-echocreateevent-param-section": "هغه برخه چې خبرتيا به پکې ورکړل شي",
+	"apihelp-echocreateevent-param-email": "ايا برېښليک هم ولېږي؟",
+	"apihelp-echomarkread-summary": "د اوسني کارن لپاره خبرتياوې د لوستل شوي په توگه په نښه کړئ.",
+	"apihelp-echomarkread-param-list": "د خبرتياوو پېژند لړليک چې د لوستي په توگه په نښه شي.",
+	"apihelp-echomarkread-param-unreadlist": "د خبرتياوو پېژند لړليک چې د نالوستي په توگه په نښه شي.",
+	"apihelp-echomarkread-param-all": "که واوڼل شي؛ نو د کارن ټولې خبرتياوې د لوستي په توگه نښه کوي.",
+	"apihelp-echomarkread-param-sections": "د برخو لړليک چې د لوستي په توگه په نښه شي.",
+	"apihelp-echomarkread-param-wikis": "د ويکي‌گانو لړليک چې د لوستي په توگه په نښه شي (يوازې اوسنۍ ويکي ته تلواله وي).",
+	"apihelp-echomarkread-example-1": "8 خبرتيا لکه لوستل شوې په نښه کول",
+	"apihelp-echomarkread-example-2": "ټولې خبرتياوې لکه لوستل شوې په نښه کول",
+	"apihelp-echomarkread-example-3": "1 خبرتيا لکه لوستل شوې په نښه کول",
+	"apihelp-echomarkseen-summary": "د اوسني کارن لپاره خبرتياوې د ليدل شويو په توگه په نښه کړئ.",
+	"apihelp-echomarkseen-example-1": "د ټولو ډولونو خبرتياوې د ليدل شويو په توگه په نښه کړئ",
+	"apihelp-echomarkseen-param-type": "د خبرتياوو ډولونه چې د ليدل شويو په توگه په نښه کېږي: 'تيارسئ'، 'پيغام' يا 'ټول'.",
+	"apihelp-query+notifications-param-prop": "سپيناوی چې غوښتل کېږي.",
+	"apihelp-query+notifications-param-filter": "چاڼ خبرتياوې بېرته راوگرځول شوې."
+}

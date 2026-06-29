@@ -25,7 +25,8 @@
 			"Sunpriat",
 			"UniCollab",
 			"Vonavy",
-			"Merrahtar"
+			"Merrahtar",
+			"Daisy40"
 		]
 	},
 	"templatedata-desc": "Реализация хранилища данных для параметров шаблона (с помощью JSON)",
@@ -102,7 +103,7 @@
 	"templatedata-modal-format-null": "Не определён",
 	"templatedata-modal-format-placeholder": "Формат параметра шаблона",
 	"templatedata-modal-json-error-replace": "Заменить",
-	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|новый параметр импортирован|новых параметра импортированы|новых параметров импортированы}}: $2",
+	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|новый параметр импортирован|новых параметра импортированы|новых параметров импортировано}}: $2",
 	"templatedata-modal-placeholder-add-new-map-input": "Добавить новый маппинг…",
 	"templatedata-modal-placeholder-paramkey": "Имя параметра",
 	"templatedata-modal-placeholder-mapinfo": "У этого шаблона нет объекта маппингов",
@@ -140,6 +141,7 @@
 	"templatedata-search-placeholder-cirrussearch": "Введите название шаблона или ключевые слова",
 	"templatedata-search-list-header": "Избранное",
 	"templatedata-search-list-empty": "Здесь появятся шаблоны, которые вы пометили как избранные",
+	"templatedata-search-list-empty-anon": "Пожалуйста, войдите в систему, чтобы добавлять шаблоны в избранное",
 	"templatedata-template-discovery-disabled": "Обнаружение шаблонов на этом вики-сайте отключено.",
 	"templatediscovery": "Обнаружение шаблонов",
 	"templatedata-favorite-disabled": "Чтобы добавить шаблон в число избранных, сначала нужно войти под своей учётной записью",
@@ -151,6 +153,7 @@
 	"templatedata-favorite-maximum-reached": "Вы достигли максимального количества ($1) избранных шаблонов. Прежде чем добавлять новые, придётся удалить какие-то из своего списка.",
 	"templatedata-category-browser-header": "Категории",
 	"templatedata-category-switch-label": "Категория верхнего уровня:",
+	"templatedata-category-rootcat": "Шаблоны",
 	"templatedata-category-switch-button": "Обзор",
 	"templatedata-category-column-empty": "В [[$1]] не найдены шаблоны или подкатегории",
 	"templatedata-category-browser-loadmore": "…загрузить ещё",
@@ -162,7 +165,8 @@
 	"templatedata-featured-list-empty": "Избранные шаблоны — это шаблоны, которые сообщество отметило как полезные. Пока не создано ни одного избранного шаблона.",
 	"communityconfiguration-templatedata-featuredtemplates-title": "Избранные шаблоны",
 	"communityconfiguration-templatedata-featuredtemplates-description": "Избранные шаблоны — это шаблоны, которые сообщество отметило как полезные. Они доступны для использования в инструменте обнаружения шаблонов.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-label": "Избранные шаблоны",
 	"templatedata-featured-list-config-link": "Изменить список избранных",
 	"templatedata-featured-list-help": "Избранные шаблоны — это шаблоны, которые были отмечены сообществом как полезные.",
-	"templatedata-favorite-count": "У вас в избранных $1 {{PLURAL:$1|шаблон|̄шаблона|шаблонов}} из $2 возможных"
+	"templatedata-favorite-count": "У вас в избранных $1 {{PLURAL:$1|шаблон|шаблона|шаблонов}} из $2 возможных"
 }

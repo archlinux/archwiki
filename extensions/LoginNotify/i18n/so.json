@@ -1,8 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Abshirdheere"
+			"Abshirdheere",
+			"AhmedG612"
 		]
 	},
+	"loginnotify-desc": "I soo ogeysii isticmaalayaasha gelitaanno laga shakiyo oo ka yimid qalabyo ama IP-yo aan la aqoon",
+	"echo-category-title-login-fail": "Isku dayo gelitaan oo fashilmay",
+	"echo-pref-tooltip-login-fail": "I soo ogeysii marka ay jiraan isku dayo gelitaan oo fashilmay oo lagu sameeyay akoonkayga.",
+	"echo-category-title-login-success": "Gelitaan ka yimid qalab aan la aqoon",
+	"echo-pref-tooltip-login-success": "I soo ogeysii mar kasta oo qof akoonkayga ka soo galo qalab iyo IP aan la aqoon.",
+	"loginnotify-primary-link": "Caawin",
+	"loginnotify-unknown-ip": "Waxaad isku dayday inaad ka soo gasho IP aan la aqoon, waxaana {{SITENAME}} hadda loo habeeyay inuu ka hortago gelitaanka ka yimaada IP-yo aan la aqoon.",
+	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Isku day fashilmay|Isku dayo badan oo fashilmay}} oo gelitaan ah oo lagu sameeyay {{SITENAME}} oo loo galay $1",
+	"notification-loginnotify-login-success-email-subject": "Gelitaan {{SITENAME}} oo loo galay $1 oo ka yimid qalab {{GENDER:$1|aad}} aan dhawaan isticmaalin",
+	"notification-header-login-success": "Qof (malaha {{GENDER:$1|adiga}}) ayaa dhawaan akoonkaaga ka soo galay qalab cusub. Haddii ay adiga ahayd, fariintan iska ilow. Haddii aysan adiga ahayn, waxaa lagula talinayaa inaad beddesho eraygaaga sirta ah, isla markaana aad hubiso hawlaha akoonkaaga.",
+	"notification-new-bundled-header-login-fail": "Waxaa {{PLURAL:$1|jirtay '''isku day fashilmay'''|jireen '''$1 isku dayo fashilmay'''}} oo lagu galay akoonkaaga laga soo galay qalab cusub tan iyo markii ugu dambeysay ee aad gashay. Haddii aysan adiga ahayn, fadlan hubi in akoonkaaga uu leeyahay eray sir ah oo adag.",
+	"notification-known-header-login-fail": "Waxaa {{PLURAL:$1|jirtay '''isku day fashilmay'''|jireen '''$1 isku dayo fashilmay'''}} oo lagu galay akoonkaaga tan iyo markii ugu dambeysay ee aad gashay. Haddii aysan adiga ahayn, fadlan hubi in akoonkaaga uu leeyahay eray sir ah oo adag.",
 	"notification-new-unbundled-header-login-fail": "Waxaa jirtay {{PLURAL:$1|iskuday '''fashilantay'''|waxaa jirtay '''iskudayo farabadan'''}} in laga soo galo akoonkaada qalab cusub. Fadlan hubi akoonkaada in uu yeesho ereysir adag."
 }

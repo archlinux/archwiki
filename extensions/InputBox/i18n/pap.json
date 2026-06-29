@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"ObaTango"
+			"ObaTango",
+			"Kallmemel"
 		]
 	},
-	"inputbox-tryexact": "Buska ekspreshon eksakto"
+	"inputbox-tryexact": "Listra pa título eksakto"
 }

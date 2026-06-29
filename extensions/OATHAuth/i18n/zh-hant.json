@@ -86,7 +86,7 @@
 	"oathauth-auth-switch-module-label": "使用認證器的應用程式",
 	"oathauth-auth-switch-module-help": "請將<code>newModule</code>設定為新模組的名稱，即可從其他雙重認證模組獲取新的驗證題。若您正在回應當前的驗證題，請保持此欄位空白。",
 	"oathauth-auth-switch-module-keep": "（請勿切換）",
-	"oathauth-throttled": "驗證次數過多，請等待$1。",
+	"oathauth-throttled": "嘗試的次數過多，請等待片刻。",
 	"oathauth-login-failed": "雙重認證失敗。",
 	"oathauth-recovery-code-login-failed": "恢復代碼驗證失敗。",
 	"oathauth-describe-provider": "雙重認證（OATH）。",
@@ -164,7 +164,7 @@
 	"oathauth-delete-warning": "您再也無法使用此驗證方式登入。",
 	"oathauth-delete-confirm-box": "請輸入「{{int:oathauth-authenticator-delete-text}}」繼續",
 	"oathauth-delete-wrong-confirm-message": "輸入移除最終密鑰時有誤。請輸入「{{int:oathauth-authenticator-delete-text}}」繼續",
-	"oathauth-delete-success": "已移除<strong>$1</strong>。",
+	"oathauth-delete-success": "已移除！",
 	"oathauth-created-at": "新增在$1",
-	"oathauth-enable-success": "已新增<strong>$1</strong>。"
+	"oathauth-enable-success": "已新增！"
 }

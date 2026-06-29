@@ -17,7 +17,8 @@
 			"Sarrus",
 			"Sir48",
 			"Steenth",
-			"Weblars"
+			"Weblars",
+			"MGA73"
 		]
 	},
 	"wikieditor": "Avanceret interface til redigering af wikitekst",
@@ -47,7 +48,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titlen, du angav, er ugyldig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ekstern henvisning",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Denne side er ikke en indholdsside, men en liste over emner med lignende navne",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL'en, du har angivet, ser ud til at være tiltænkt som en henvisning til en anden wikiside.\nØnsker du at gøre den til en intern henvisning.",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "Den URL, du angav, ser ud til at være tænkt som et link til en anden wikiside.\nVil du gøre den til et internt link.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Intern henvisning",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ekstern henvisning",
 	"wikieditor-toolbar-tool-file": "Billeder og medier",
@@ -79,6 +80,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Element i punktliste",
 	"wikieditor-toolbar-tool-olist": "Nummereret liste",
 	"wikieditor-toolbar-tool-olist-example": "Element i nummereret liste",
+	"wikieditor-toolbar-tool-code": "Computerkode",
+	"wikieditor-toolbar-tool-code-example": "Computerkode",
 	"wikieditor-toolbar-tool-nowiki": "Ingen wikiformatering",
 	"wikieditor-toolbar-tool-nowiki-example": "Indsæt uformateret tekst her",
 	"wikieditor-toolbar-tool-redirect": "Omdirigering",
@@ -145,6 +148,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-description": "Fed & kursiv",
 	"wikieditor-toolbar-help-content-bolditalic-example": "Fed & kursiv tekst",
 	"wikieditor-toolbar-help-content-ilink-description": "Intern henvisning",
+	"wikieditor-toolbar-help-content-ilink-example": "[[Sidetitel]]\n[[Sidetitel|Linketiket]]",
 	"wikieditor-toolbar-help-content-xlink-description": "Ekstern henvisning",
 	"wikieditor-toolbar-help-content-xlink-example-label": "Linktekst",
 	"wikieditor-toolbar-help-content-heading2-description": "Overskrift på niveau 2",

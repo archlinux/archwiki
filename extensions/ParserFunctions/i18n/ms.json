@@ -4,7 +4,8 @@
 			"Anakmalaysia",
 			"Aurora",
 			"Aviator",
-			"Kurniasan"
+			"Kurniasan",
+			"Hakimi97"
 		]
 	},
 	"pfunc_desc": "Meningkatkan penghurai dengan fungsi-fungsi logik",
@@ -23,8 +24,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Ralat ungkapan: Aksara tanda baca \"$1\" tidak dikenali",
 	"pfunc_expr_unclosed_bracket": "Ralat ungkapan: Tanda kurung tidak ditutup",
 	"pfunc_expr_division_by_zero": "Pembahagian dengan sifar",
-	"pfunc_expr_invalid_argument": "Argumen bagi $1 tidak sah: < -1 atau > 1",
-	"pfunc_expr_invalid_argument_ln": "Argumen bagi ln tidak sah: <= 0",
+	"pfunc_expr_invalid_argument": "Argumen tidak sah untuk $1: kurang daripada -1 atau lebih besar daripada 1.",
+	"pfunc_expr_invalid_argument_ln": "Argumen tidak sah untuk ln: kurang daripada atau sama dengan 0.",
 	"pfunc_expr_unknown_error": "Ralat ungkapan: Ralat tidak diketahui ($1)",
 	"pfunc_expr_not_a_number": "Dalam $1: hasil bukan nombor",
 	"pfunc_string_too_long": "Ralat: Rentetan melampaui batas aksara $1"

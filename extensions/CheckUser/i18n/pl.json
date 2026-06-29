@@ -389,7 +389,7 @@
 	"checkuser-userinfocard-thanks": "Otrzymane podziękowania: $1 (wysłane: $2)",
 	"checkuser-userinfocard-checks": "Sprawdzenia: $1 (ostatnio: $2)",
 	"checkuser-userinfocard-checks-empty": "Sprawdzenia: $1",
-	"checkuser-userinfocard-global-restrictions-locked": "[[$2|Globalnie częściowo {{GENDER:$1|zablokowany|zablokowana|zablokowany(a)}}]] od $3",
+	"checkuser-userinfocard-global-restrictions-locked": "[[$2|Globalnie {{GENDER:$1|wyłączone}} konto]] od $3",
 	"checkuser-userinfocard-global-restrictions-locked-no-date": "[[$2|Globalnie częściowo {{GENDER:$1|zablokowany|zablokowana|zablokowany(a)}}]]",
 	"checkuser-userinfocard-global-restrictions-blocked": "[[$2|Globalnie {{GENDER:$1|zablokowany|zablokowana|zablokowany(a)}}]] od $3",
 	"checkuser-userinfocard-global-restrictions-blocked-disabled": "[[$2|Globalnie {{GENDER:$1|zablokowany|zablokowana|zablokowany(a)}}]] od $3 (wyłączono lokalnie)",

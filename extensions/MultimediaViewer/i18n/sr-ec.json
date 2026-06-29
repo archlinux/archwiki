@@ -24,7 +24,6 @@
 	"multimediaviewer-thumbnail-error": "Није могуће приказати датотеку",
 	"multimediaviewer-thumbnail-error-description": "Изгледа да је дошло до техничког проблема. $1 ако се настави. Грешка: $2",
 	"multimediaviewer-thumbnail-error-retry": "Покушајте поново",
-	"multimediaviewer-thumbnail-error-report": "пријавите проблем",
 	"multimediaviewer-license-cc-pd": "Јавно власништво",
 	"multimediaviewer-license-pd": "Јавно власништво",
 	"multimediaviewer-license-default": "Лиценца",

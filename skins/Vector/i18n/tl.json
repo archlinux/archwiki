@@ -7,7 +7,8 @@
 			"Ianlopez1115",
 			"Jojit fb",
 			"Qwrop",
-			"Sky Harbor"
+			"Sky Harbor",
+			"Chlod"
 		]
 	},
 	"skinname-vector": "Legacy na Vector (2010)",
@@ -20,8 +21,8 @@
 	"vector.js": "/* Ang lahat ng JavaScript dito ay ikakarga para sa mga tagagamit ng pabalat na Vector */",
 	"vector-action-toggle-sidebar": "Ipakita/itago ang sidebar",
 	"vector-languages": "Mga wika",
-	"vector-language-button-aria-label": "Pumunta sa isang artikulo na nakasulat sa ibang wika. Mayroon ito sa $1 (na) wika",
-	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 (na) wika}}",
+	"vector-language-button-aria-label": "Pumunta sa isang artikulo na nakasulat sa ibang wika. Mayroon ito sa {{PLURAL:$1|$1 wika}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 wika}}",
 	"vector-no-language-button-label": "Magdagdag ng wika",
 	"vector-no-language-button-aria-label": "Mayroon lamang ang artikulong ito sa wikang ito. Idagdag ang artikulo sa ibang mga wika",
 	"vector-language-variant-switcher-label": "Ibahin ang baryante o variant ng wika",

@@ -65,5 +65,6 @@
 	"templatedata-modal-title-paramorder": "Parameetterij oornig",
 	"templatedata-modal-title-templatedesc": "Myenster kuvvim ($1)",
 	"templatedata-modal-title-templateparam-details": "Parameetter kuvvim: $1",
-	"templatedata-modal-title-templateparams": "Myenster parameettereh"
+	"templatedata-modal-title-templateparams": "Myenster parameettereh",
+	"templatedata-category-browser-loadmore": "...luođii lase"
 }

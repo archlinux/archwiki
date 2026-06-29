@@ -21,7 +21,6 @@
 	"multimediaviewer-thumbnail-error": "Maaf, berkas ini tidak dapat ditampilkan",
 	"multimediaviewer-thumbnail-error-description": "Tampaknya ada masalah teknis. Anda dapat $1 jika masalah berlanjut. Galat: $2",
 	"multimediaviewer-thumbnail-error-retry": "mencoba lagi",
-	"multimediaviewer-thumbnail-error-report": "laporkan masalah",
 	"multimediaviewer-license-cc-pd": "Domain Publik",
 	"multimediaviewer-license-pd": "Domain Publik",
 	"multimediaviewer-license-default": "Lihat lisensi",
@@ -118,6 +117,5 @@
 	"multimediaviewer-enable-confirmation-text": "Saat Anda mengeklik gambar mini di $1 selanjutnya, Penampil Media akan digunakan.",
 	"multimediaviewer-enable-alert": "Penampil Media kini dinonaktifkan",
 	"multimediaviewer-disable-info-title": "Anda telah menonaktifkan Penampil Media",
-	"multimediaviewer-disable-info": "Anda masih dapat melihat berkas individu dengan Penampil Media.",
-	"multimediaviewer-errorreport-privacywarning": "Rincian dari galat dilampirkan pada laporan, yang akan dapat dilihat secara umum. Jika Anda tidak merasa nyaman dengan hal ini, Anda dapat menyunting laporan di bawah ini dan menghapus semua data yang tidak ingin Anda bagikan."
+	"multimediaviewer-disable-info": "Anda masih dapat melihat berkas individu dengan Penampil Media."
 }

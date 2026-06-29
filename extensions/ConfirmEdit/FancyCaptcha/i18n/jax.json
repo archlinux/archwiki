@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Muhamad Izzul Fiqih"
+		]
+	},
+	"fancycaptcha-captcha": "Perikso keamanan",
+	"fancycaptcha-accountcreate": "Biak ngelindungi wiki dari akun otomatis, kami mohon kau masukin kato di bawah ko ke dalam kotak yang disediokan ([[Special:Captcha/help|info lengkap]]):",
+	"fancycaptcha-imgcaptcha-ph": "Masukkin teks yang kau tengok dalam gambar",
+	"fancycaptcha-reload-text": "Segarin"
+}

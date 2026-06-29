@@ -127,6 +127,8 @@
 	"echo-email-batch-link-text-view-all-notifications": "Montrez omna avizi",
 	"notification-header-foreign-alert": "Plusa avizi de {{PLURAL:$5|altra Wiki|$5 altra Wiki}}",
 	"notification-header-foreign-notice": "Altra avizi de {{PLURAL:$5|altra Wiki|$5 altra Wiki}}",
+	"grant-echo-read-notifications": "Lektez mea avizi",
+	"action-echo-read-notifications": "lektez vua avizi",
 	"right-manage-all-push-subscriptions": "Administrar omna nemediata (''push'') suskriptaji",
 	"action-manage-all-push-subscriptions": "administrar omna nemediata (''push'') suskriptaji",
 	"group-push-subscription-manager": "Jeranti di suskripti ''push''",

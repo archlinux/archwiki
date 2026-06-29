@@ -6,9 +6,12 @@
 			"Joseph",
 			"Rapsar",
 			"SaldırganSincap",
-			"ToprakM"
+			"ToprakM",
+			"HakanIST"
 		]
 	},
+	"monobook-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:MonoBook {{int:talk}}]",
+	"skinname-monobook": "MonoBook",
 	"monobook-desc": "2004'ten beri klasik MediaWiki teması, adını sayfa arka planındaki bir kitabın siyah beyaz fotoğrafından alıyor",
 	"monobook.css": "/* Buradaki tüm CSS kodu Monobook teması kullanan kullanıcılar için yüklenir */",
 	"monobook.js": "/* Buradaki tüm JavaScript, MonoBook görünümü kullanıcıları için yüklenecek */",
@@ -22,5 +25,6 @@
 	"monobook-notifications-link": "Bildirimler ($1)",
 	"monobook-notifications-link-none": "Bildirimler",
 	"monobook-view-history": "Geçmiş",
-	"monobook-action-undelete": "{{PLURAL:$1|Bir düzenlemeyi|$1 düzenlemeyi}} geri getir"
+	"monobook-action-undelete": "{{PLURAL:$1|Bir düzenlemeyi|$1 düzenlemeyi}} geri getir",
+	"monobook-action-addsection": "+"
 }

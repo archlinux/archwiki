@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"pdf-desc": "Maareeye lagu daawado faylasha PDF ee habka sawirka",
+	"pdf-file-page-warning": "PDF waa qaab fayl oo adag oo mararka qaar soo bandhigi kara qaar ka mid ah xogtaada gaarka ah. Hubi inaad si ammaan ah u dejiso daawadaha PDF-kaaga.",
+	"pdf-file-page-warning-header": "Tixgelinta asturnaanta",
+	"pdf-file-page-warning-footer": "Arrintani ma aha mid gaar u ah faylkan, balse waa dhibaato guud oo ku saabsan qaabka PDF.",
+	"pdf-file-page-warning-info": "Wax badan ka baro arrintan.",
+	"pdf_no_metadata": "Lama heli karo xogta metadata ee PDF-ka.",
+	"pdf_page_error": "Lambarka bogga kuma jiro xadka la oggol yahay.",
+	"exif-pdf-producer": "Barnaamijka beddelidda",
+	"exif-pdf-version": "Nooca qaabka PDF",
+	"exif-pdf-encrypted": "Lagu sireeyay",
+	"exif-pdf-pagesize": "Cabbirka bogga"
+}

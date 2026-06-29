@@ -30,7 +30,6 @@
 	"multimediaviewer-thumbnail-error": "Spiacenti, il file non può essere visualizzato",
 	"multimediaviewer-thumbnail-error-description": "Sembra esserci un problema tecnico. Puoi $1 se persiste. Errore: $2",
 	"multimediaviewer-thumbnail-error-retry": "riprova",
-	"multimediaviewer-thumbnail-error-report": "segnalare il problema",
 	"multimediaviewer-license-cc-pd": "Pubblico dominio",
 	"multimediaviewer-license-pd": "Pubblico dominio",
 	"multimediaviewer-license-default": "Vedi la licenza",
@@ -119,6 +118,5 @@
 	"multimediaviewer-enable-confirmation-text": "La prossima volta che clicchi su un'anteprima in $1, verrà usato Media Viewer.",
 	"multimediaviewer-enable-alert": "Media Viewer è ora disabilitato",
 	"multimediaviewer-disable-info-title": "Hai disabilitato Media Viewer",
-	"multimediaviewer-disable-info": "Puoi ancora vedere file individuali con Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "I dettagli dell'errore sono allegati al report, che sarà visibile pubblicamente. Se non sei a tuo agio con ciò, puoi modificare il report qui sotto e rimuovere tutti i dati che non vuoi condividere."
+	"multimediaviewer-disable-info": "Puoi ancora vedere file individuali con Media Viewer."
 }

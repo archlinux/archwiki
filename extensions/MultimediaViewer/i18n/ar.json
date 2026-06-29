@@ -29,7 +29,6 @@
 	"multimediaviewer-thumbnail-error": "خطأ: تعذر تحميل الملف معطل",
 	"multimediaviewer-thumbnail-error-description": "يبدو أن هناك مشكلة فنية، يمكنك $1 إذا استمرت، الخطأ: $2",
 	"multimediaviewer-thumbnail-error-retry": "إعادة المحاولة",
-	"multimediaviewer-thumbnail-error-report": "أبلغ عن المشكلة",
 	"multimediaviewer-license-cc-pd": "ملكية عامة",
 	"multimediaviewer-license-pd": "ملكية عامة",
 	"multimediaviewer-license-default": "عرض الترخيص",
@@ -128,6 +127,5 @@
 	"multimediaviewer-enable-alert": "عارض الوسائط غير مفعل الآن",
 	"multimediaviewer-disable-info-title": "لقد عطلت عارض الوسائط",
 	"multimediaviewer-disable-info": "ما زال بإمكانك عرض الملفات المنفردة بعارض الوسائط.",
-	"multimediaviewer-errorreport-privacywarning": "يتم إرفاق تفاصيل الخطأ بالتقرير، والذي سيكون قابلا للعرض للجمهور، إذا لم تكن مرتاحا لذلك، فيمكنك تحرير التقرير أدناه وإزالة جميع البيانات التي لا تريد مشاركتها.",
 	"multimediaviewer-loading": "جاري تحميل عارض الوسائط."
 }

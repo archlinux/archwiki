@@ -46,7 +46,7 @@ class EventDispatcherTest extends IntegrationTestCase {
 		$fakeTitle = PageIdentityValue::localIdentity( 0, NS_TALK, __CLASS__ );
 		$fakeRevRecord = new MutableRevisionRecord( $fakeTitle );
 		// All mock comments are posted between 00:00 and 00:10 on 2020-01-01
-		$fakeRevRecord->setTimestamp( ( new DateTimeImmutable( '2020-01-01T00:10' ) )->format( 'c' ) );
+		$fakeRevRecord->setTimestamp( ( new DateTimeImmutable( '2020-01-01T00:10Z' ) )->format( 'c' ) );
 		MockEventDispatcher::generateEventsFromItemSets(
 			$events, $itemSet1, $itemSet2, $fakeRevRecord, $fakeTitle, $fakeUser
 		);
@@ -64,7 +64,7 @@ class EventDispatcherTest extends IntegrationTestCase {
 
 		// Assert that no "new comment" events are generated for comments saved >10 minutes after their timestamps
 		$events = $other ? static::getJson( $other, true ) : [];
-		$fakeRevRecord->setTimestamp( ( new DateTimeImmutable( '2020-01-01T00:20' ) )->format( 'c' ) );
+		$fakeRevRecord->setTimestamp( ( new DateTimeImmutable( '2020-01-01T00:20Z' ) )->format( 'c' ) );
 		MockEventDispatcher::generateEventsFromItemSets(
 			$events, $itemSet1, $itemSet2, $fakeRevRecord, $fakeTitle, $fakeUser
 		);

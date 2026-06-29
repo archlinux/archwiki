@@ -98,17 +98,33 @@ class QueryAbuseFiltersTest extends ApiTestCase {
 			MutableFilter::newDefault()
 		) );
 
+		// Create a third filter which is private (hidden)
+		ConvertibleTimestamp::setFakeTime( '20100601000000' );
+		$this->assertStatusGood( $filterStore->saveFilter(
+			$authority, null,
+			$this->getFilterFromSpecs( [
+				'id' => '3',
+				'rules' => 'action = "edit"',
+				'name' => 'Hidden filter',
+				'privacy' => Flags::FILTER_HIDDEN,
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20100601000000',
+				'hitCount' => 42,
+			] ),
+			MutableFilter::newDefault()
+		) );
+
 		// Verify that the expected number of DB rows were created
 		$this->newSelectQueryBuilder()
 			->select( 'COUNT(*)' )
 			->table( 'abuse_filter' )
 			->caller( __METHOD__ )
-			->assertFieldValue( 2 );
+			->assertFieldValue( 3 );
 		$this->newSelectQueryBuilder()
 			->select( 'COUNT(*)' )
 			->table( 'abuse_filter_history' )
 			->caller( __METHOD__ )
-			->assertFieldValue( 2 );
+			->assertFieldValue( 3 );
 	}
 
 	public function testExecuteWhenUserMissingPermissionToSeeFilters() {
@@ -126,34 +142,14 @@ class QueryAbuseFiltersTest extends ApiTestCase {
 			'abfprop' => 'id|description|pattern|actions|hits|comments|' .
 				'lasteditor|lastedittime|status|private|protected',
 		], null, false, $this->authorityCanUseProtectedVar );
-		$this->assertSame(
-			[
-				[
-					'id' => 1,
-					'description' => 'Filter with protected variables',
-					'pattern' => 'user_unnamed_ip = "1.2.3.4"',
-					'actions' => 'tags',
-					'hits' => 1,
-					'comments' => '',
-					'lasteditor' => 'UTSysop',
-					'lastedittime' => '2019-08-27T00:00:00Z',
-					'protected' => '',
-					'enabled' => '',
-				],
-				[
-					'id' => 2,
-					'description' => 'Filter without protected variables',
-					'pattern' => 'user_name = "1.2.3.4"',
-					'actions' => '',
-					'hits' => 0,
-					'comments' => '',
-					'lasteditor' => 'UTSysop',
-					'lastedittime' => '2000-01-01T00:00:00Z',
-					'enabled' => '',
-				]
-			],
-			$result['query']['abusefilters']
-		);
+		$filters = $result['query']['abusefilters'];
+		// User with protected var access should see hits for all filters
+		$this->assertSame( 1, $filters[0]['id'] );
+		$this->assertSame( 1, $filters[0]['hits'] );
+		$this->assertSame( 2, $filters[1]['id'] );
+		$this->assertSame( 0, $filters[1]['hits'] );
+		$this->assertSame( 3, $filters[2]['id'] );
+		$this->assertSame( 42, $filters[2]['hits'] );
 	}
 
 	public function testExecuteForUserWhoCannotSeeProtectedVariables() {
@@ -163,31 +159,41 @@ class QueryAbuseFiltersTest extends ApiTestCase {
 			'abfprop' => 'id|description|pattern|actions|hits|comments|' .
 				'lasteditor|lastedittime|status|private|protected',
 		], null, false, $this->authorityCannotUseProtectedVar );
-		$this->assertSame(
+		$filters = $result['query']['abusefilters'];
+		// User without protected var access should NOT see hits for the protected filter
+		$this->assertSame( 1, $filters[0]['id'] );
+		$this->assertArrayNotHasKey( 'hits', $filters[0],
+			'Hit count for protected filter should be hidden from users without protected var access' );
+		// But should still see hits for the public filter
+		$this->assertSame( 2, $filters[1]['id'] );
+		$this->assertSame( 0, $filters[1]['hits'] );
+		// And should see hits for hidden filter (this user has abusefilter-log-private)
+		$this->assertSame( 3, $filters[2]['id'] );
+		$this->assertSame( 42, $filters[2]['hits'] );
+	}
+
+	/**
+	 * Test that hit count is hidden for hidden (private) filters
+	 * from users who lack the abusefilter-log-detail permission.
+	 * This is the scenario described in T406954.
+	 */
+	public function testHitCountHiddenForPrivateFiltersFromUnprivilegedUser() {
+		$authorityBasic = $this->mockUserAuthorityWithPermissions(
+			$this->getTestUser()->getUserIdentity(),
 			[
-				[
-					'id' => 1,
-					'description' => 'Filter with protected variables',
-					'actions' => 'tags',
-					'hits' => 1,
-					'lasteditor' => 'UTSysop',
-					'lastedittime' => '2019-08-27T00:00:00Z',
-					'protected' => '',
-					'enabled' => '',
-				],
-				[
-					'id' => 2,
-					'description' => 'Filter without protected variables',
-					'pattern' => 'user_name = "1.2.3.4"',
-					'actions' => '',
-					'hits' => 0,
-					'comments' => '',
-					'lasteditor' => 'UTSysop',
-					'lastedittime' => '2000-01-01T00:00:00Z',
-					'enabled' => '',
-				]
-			],
-			$result['query']['abusefilters']
+				'abusefilter-view',
+			]
 		);
+		[ $result ] = $this->doApiRequest( [
+			'action' => 'query',
+			'list' => 'abusefilters',
+			'abfprop' => 'id|hits',
+		], null, false, $authorityBasic );
+		$filters = $result['query']['abusefilters'];
+		// User without abusefilter-log-detail should not see hits for any filter
+		foreach ( $filters as $filter ) {
+			$this->assertArrayNotHasKey( 'hits', $filter,
+				"Hit count for filter {$filter['id']} should be hidden from users without log-detail" );
+		}
 	}
 }

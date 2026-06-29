@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-scribunto-console-summary": "Module gudaha ah oo loogu adeegayo codsiyada XHR ee ka imanaya konsolka Scribunto.",
+	"apihelp-scribunto-console-param-title": "Cinwaanka module-ka la tijaabinayo.",
+	"apihelp-scribunto-console-param-content": "Nuxurka cusub ee module-ka.",
+	"apihelp-scribunto-console-param-session": "Calaamadda kalfadhiga.",
+	"apihelp-scribunto-console-param-question": "Sadarka xiga ee loo fulinayo sida script.",
+	"apihelp-scribunto-console-param-clear": "U deji si loo nadiifiyo xaaladda kalfadhiga hadda."
+}

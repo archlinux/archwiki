@@ -20,7 +20,8 @@
 			"Vlad5250",
 			"Ата",
 			"Пан Хаунд",
-			"Тест"
+			"Тест",
+			"Repakr"
 		]
 	},
 	"wikieditor": "Розширений інтерфейс редагування вікітексту",
@@ -82,6 +83,8 @@
 	"wikieditor-toolbar-tool-ulist-example": "Елемент маркованого списку",
 	"wikieditor-toolbar-tool-olist": "Нумерований список",
 	"wikieditor-toolbar-tool-olist-example": "Елемент нумерованого списку",
+	"wikieditor-toolbar-tool-code": "Комп'ютерний код",
+	"wikieditor-toolbar-tool-code-example": "Комп'ютерний код",
 	"wikieditor-toolbar-tool-nowiki": "Ігнорувати вікі-форматування",
 	"wikieditor-toolbar-tool-nowiki-example": "Вставте тут невідформатований текст",
 	"wikieditor-toolbar-tool-redirect": "Перенаправлення",

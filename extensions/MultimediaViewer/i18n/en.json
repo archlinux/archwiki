@@ -20,8 +20,6 @@
 	"multimediaviewer-thumbnail-error": "Sorry, the file cannot be displayed",
 	"multimediaviewer-thumbnail-error-description": "There seems to be a technical issue. You can $1 if it persists. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "retry",
-	"multimediaviewer-thumbnail-error-report": "report the issue",
-	"multimediaviewer-report-issue-url": "https://phabricator.wikimedia.org/maniphest/task/create/?projects=PHID-PROJ-cabyqp5sf4hyvauln3sq&description=$1",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
@@ -141,6 +139,5 @@
 	"multimediaviewer-enable-alert": "Media Viewer is now disabled",
 	"multimediaviewer-disable-info-title": "You have disabled Media Viewer",
 	"multimediaviewer-disable-info": "You can still view individual files with Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "Details of the error are attached to the report, which will be publicly viewable. If you are not comfortable with that, you can edit the report below and remove all the data you don't want to share.",
 	"multimediaviewer-loading": "Loading Media Viewer."
 }

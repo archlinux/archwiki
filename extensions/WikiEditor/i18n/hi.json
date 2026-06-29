@@ -12,8 +12,8 @@
 			"Siddhartha Ghai"
 		]
 	},
-	"wikieditor": "उन्नत विकिटेक्स्ट संपादन इंटरफ़ेस",
-	"wikieditor-desc": "एक उन्नत, विस्तार-योग्य विकिटेक्स्ट संपादन इंटरफ़ेस प्रदान करता है",
+	"wikieditor": "उन्नत विकिटेक्स्ट सम्पादन अंतरफलक",
+	"wikieditor-desc": "एक उन्नत, विस्तार-योग्य विकिटेक्स्ट सम्पादन अंतरफलक प्रदान करता है",
 	"wikieditor-toolbar": "संपादन टूलबार",
 	"wikieditor-toolbar-desc": "बेहतर उपयोगिता के साथ संपादन पृष्ठ टूलबार",
 	"wikieditor-toolbar-preference": "संपादन टूलबार को सक्षम करें",
@@ -73,7 +73,7 @@
 	"wikieditor-toolbar-tool-olist-example": "संख्यात्मक सूची प्रविष्टि",
 	"wikieditor-toolbar-tool-code": "कम्प्यूटर कोड",
 	"wikieditor-toolbar-tool-code-example": "कम्प्यूटर कोड",
-	"wikieditor-toolbar-tool-nowiki": "कोई विकि प्रारूपण नहीं है",
+	"wikieditor-toolbar-tool-nowiki": "कोई विकि प्रारूपण नहीं",
 	"wikieditor-toolbar-tool-nowiki-example": "गैर-प्रारूपित टेक्स्ट यहाँ दर्ज करें",
 	"wikieditor-toolbar-tool-redirect": "अनुप्रेषण",
 	"wikieditor-toolbar-tool-redirect-example": "लक्ष्य पृष्ठ का नाम",

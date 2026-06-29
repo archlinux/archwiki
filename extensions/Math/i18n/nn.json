@@ -18,5 +18,6 @@
 	"prefs-math": "Matematiske formlar",
 	"datatypes-type-math": "Matematisk uttrykk",
 	"wikibase-listdatatypes-math-head": "Matematisk uttrykk",
-	"wikibase-listdatatypes-math-body": "Literalt datafelt for matematiske uttrykk, formlar, likningar og tilsvarande, uttrykt i ein variant av LaTeX."
+	"wikibase-listdatatypes-math-body": "Literalt datafelt for matematiske uttrykk, formlar, likningar og tilsvarande, uttrykt i ein variant av LaTeX.",
+	"math-wikibase-formula-elements-header": "Elementa til formelen"
 }

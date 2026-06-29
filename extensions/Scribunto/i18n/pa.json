@@ -5,7 +5,11 @@
 			"Cabal"
 		]
 	},
+	"scribunto-console-clear": "ਸਾਫ਼ ਕਰੋ",
 	"scribunto-lua-in-main": "ਮੁੱਢ ਹਿੱਸੇ ਵਿੱਚ",
 	"scribunto-lua-error": "ਲੂਆ ਗ਼ਲਤੀ: $2।",
-	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|ਬਾਈਟ|ਬਾਈਟਾਂ}}"
+	"scribunto-limitreport-timeusage-value": "$1/$2 ਸਕਿੰਟ",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|ਬਾਈਟ|ਬਾਈਟਾਂ}}",
+	"nstab-module": "ਇਕਾਈ",
+	"tooltip-ca-nstab-module": "ਇਕਾਈ ਵਰਕਾ ਵੇਖੋ"
 }

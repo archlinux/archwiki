@@ -8,7 +8,8 @@
 			"Ice bulldog",
 			"Piramidion",
 			"Serhio Magpie",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",
@@ -27,5 +28,6 @@
 	"syntaxhighlight-error-pygments-invocation-failure": "Не вдалося викликати Pygments",
 	"syntaxhighlight-error-unknown-language": "Невідома мова «$1»",
 	"syntaxhighlight-error-exceeds-size-limit": "Код розміром $1 {{PLURAL:$1|байт|байти|байтів}} перевищує дозволений максимум $2 {{PLURAL:$2|байт|байти|байтів}}",
-	"syntaxhighlight-button-copy": "Копіювати"
+	"syntaxhighlight-button-copy": "Копіювати",
+	"syntaxhighlight-button-copied": "Скопійовано!"
 }

@@ -21,7 +21,8 @@
 			"SteveR",
 			"Vlad5250",
 			"Ата",
-			"Максим Підліснюк"
+			"Максим Підліснюк",
+			"Repakr"
 		]
 	},
 	"echo-desc": "Система сповіщення користувачів про події і повідомлення",
@@ -255,8 +256,11 @@
 	"notification-header-foreign-all": "Більше сповіщень з {{PLURAL:$5|іншої вікі|$5 інших вікі}}",
 	"echo-foreign-wiki-lang": "$1 - $2",
 	"echo-badge-count": "{{PLURAL:$1|$1|100={{formatnum:99}}+}}",
+	"grant-echo-read-notifications": "Читання моїх сповіщень",
 	"right-echo-create": "Надсилання сповіщень іншим",
 	"action-echo-create": "надсилання сповіщень іншим",
+	"right-echo-read-notifications": "Читання моїх сповіщень",
+	"action-echo-read-notifications": "читання Ваших сповіщень",
 	"right-manage-all-push-subscriptions": "Керування всіма push-підписками",
 	"action-manage-all-push-subscriptions": "керування всіма push-підписками",
 	"group-push-subscription-manager": "Керівники push-підписками",

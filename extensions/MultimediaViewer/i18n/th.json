@@ -24,7 +24,6 @@
 	"multimediaviewer-thumbnail-error": "ขออภัย ไม่สามารถแสดงไฟล์นี้ได้",
 	"multimediaviewer-thumbnail-error-description": "ดูเหมือนว่าอาจมีปัญหาทางเทคนิค คุณสามารถ$1ได้หากยังมีปัญหาอยู่ ข้อผิดพลาด: $2",
 	"multimediaviewer-thumbnail-error-retry": "ลองใหม่",
-	"multimediaviewer-thumbnail-error-report": "รายงานปัญหานี้",
 	"multimediaviewer-license-cc-pd": "สาธารณสมบัติ",
 	"multimediaviewer-license-pd": "สาธารณสมบัติ",
 	"multimediaviewer-license-default": "ดูสัญญาอนุญาต",

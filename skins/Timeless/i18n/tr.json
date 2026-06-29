@@ -9,6 +9,8 @@
 			"Sayginer"
 		]
 	},
+	"timeless-prefs-talkpage": "[[mw:Skin talk:Timeless|{{int:talk}}]]",
+	"skinname-timeless": "Timeless",
 	"timeless-desc": "Brandon Harris'in Winter prototipinden sonra tasarlanan zamansız bir görünüm ve Wikimedia Vakfı'nın çeşitli stilleri",
 	"timeless-anonymous": "Anonim",
 	"timeless-loggedinas": "'''$1''' olarak oturum açıldı",
@@ -27,6 +29,7 @@
 	"timeless-pagetools": "Sayfa eylemleri",
 	"timeless-languages": "Diller",
 	"timeless-projects": "Diğer projeler",
+	"timeless.css": "/* All CSS here will be loaded for users of the Timeless skin */",
 	"timeless.js": "/* Buradaki tüm JavaScript, Timeless arayüz kullanıcıları için yüklenecek */",
 	"timeless-view-history": "Geçmiş",
 	"timeless-action-undelete": "{{PLURAL:$1|Bir düzenlemeyi|$1 düzenlemeyi}} geri getir"

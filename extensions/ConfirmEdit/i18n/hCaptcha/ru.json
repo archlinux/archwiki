@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Diman Russkov",
-			"Engineer56"
+			"Engineer56",
+			"Mitte27"
 		]
 	},
 	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] модуль для подтверждения редактирования",
@@ -12,5 +13,7 @@
 	"hcaptcha-createaccount-fail": "Похоже, вы не решили hCaptcha.",
 	"hcaptcha-create": "Чтобы защитить вики от автоматического создания страниц, мы просим вас решить следующую hCaptcha:",
 	"hcaptcha-help": "Пожалуйста, решите задачу hCaptcha и верните значение ответа как captchaWord.",
-	"hcaptcha-privacy-policy": "Данный сайт защищен hCaptcha, и на него распространяются его [https://www.hcaptcha.com/privacy Политика конфиденциальности] и [https://www.hcaptcha.com/terms Условия обслуживания]."
+	"hcaptcha-privacy-policy": "Данный сайт защищен hCaptcha, и на него распространяются его [https://www.hcaptcha.com/privacy Политика конфиденциальности] и [https://www.hcaptcha.com/terms Условия обслуживания].",
+	"hcaptcha-challenge-closed": "Чтобы продолжить, введите правильно капчу.",
+	"hcaptcha-challenge-expired": "Срок действия капчи истёк. Пожалуйста, попробуйте ещё раз."
 }

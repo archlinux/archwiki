@@ -56,7 +56,8 @@
 			"Y-M D",
 			"Yasten",
 			"Zebulon84",
-			"Codeurluce"
+			"Codeurluce",
+			"Escargot bleu"
 		]
 	},
 	"echo-desc": "Système pour avertir les utilisateurs des événements et messages",
@@ -290,8 +291,11 @@
 	"notification-header-foreign-all": "Davantage de notifications {{PLURAL:$5|d’un autre wiki|de $5 autres wikis}}",
 	"echo-foreign-wiki-lang": "$1 – $2",
 	"echo-badge-count": "{{PLURAL:$1|$1|100={{formatnum:99}}+}}",
+	"grant-echo-read-notifications": "Afficher mes notifications",
 	"right-echo-create": "Envoyer des notifications aux autres utilisateurs",
 	"action-echo-create": "envoyer des notification aux autres utilisateurs",
+	"right-echo-read-notifications": "Afficher mes notifications",
+	"action-echo-read-notifications": "afficher vos notifications",
 	"right-manage-all-push-subscriptions": "Gérer toutes les demandes de poussée",
 	"action-manage-all-push-subscriptions": "gérer toutes les demandes de poussée",
 	"group-push-subscription-manager": "Gestionnaires de demande de poussée",

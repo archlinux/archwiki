@@ -14,7 +14,8 @@
 			"Renamerr",
 			"Woytecr",
 			"Ата",
-			"Пан Хаунд"
+			"Пан Хаунд",
+			"Repakr"
 		]
 	},
 	"discussiontools": "Інструменти обговорення",
@@ -69,6 +70,7 @@
 	"discussiontools-limitreport-timeusage": "Використання інструментів DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунда|секунди|секунд}}",
 	"discussiontools-newtopic-missing-title": "Будь ласка, вкажіть назву для {{GENDER:|своєї}} теми в обговоренні.",
+	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|Ви}} не зазначили назву для {{GENDER:|Вашої}} теми обговорення. Чи {{GENDER:|Ви}} впевнені, що бажаєте додати цю тему без назви?",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Підписатись",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Підписатися, щоб отримувати сповіщення, коли на цій сторінці розпочинаються нові теми.",
@@ -83,6 +85,7 @@
 	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>.",
 	"discussiontools-notification-added-topic-view": "Переглянути тему",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|подякував|подякувала}} {{GENDER:$4|вам}} за ваш коментар у темі \"<strong>$3</strong>\".",
+	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|Одна людина подякувала|$1 людини подякувало|$1 людей подякувало|100=99+ людей подякували}} {{GENDER:$3|Вам}} за коментар на «<strong>$2</strong>».",
 	"discussiontools-notification-comment-thank-header-compact": "$1 {{GENDER:$2|подякував|подякувала}} {{GENDER:$3|вам}}.",
 	"discussiontools-notification-removed-topic-body": "Можливо, {{GENDER:|ви}} більше не отримуватимете сповіщень про {{PLURAL:$1|цю тему|ці теми}}.",
 	"discussiontools-notification-removed-topic-header": "Тему «<strong>$4</strong>» було архівовано або вилучено зі сторінки $3.",

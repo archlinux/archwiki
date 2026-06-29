@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Servien"
+		]
+	},
+	"discussiontools-replywidget-cancel": "Afbreaken",
+	"discussiontools-replywidget-mode-source": "Bronkode",
+	"discussiontools-replywidget-mode-visual": "Visueel",
+	"discussiontools-replywidget-reply": "{{GENDER:|Reageren}}"
+}

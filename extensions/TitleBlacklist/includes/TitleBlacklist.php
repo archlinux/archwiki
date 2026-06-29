@@ -15,6 +15,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\ObjectCache\WANObjectCache;
 
 /**
  * @ingroup Extensions
@@ -68,30 +69,33 @@ class TitleBlacklist {
 		global $wgTitleBlacklistSources, $wgTitleBlacklistCaching;
 
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		// Try to find something in the cache
-		/** @var TitleBlacklistEntry[]|false $cachedBlacklist */
-		$cachedBlacklist = $cache->get( $cache->makeKey( 'title_blacklist_entries' ) );
-		if ( $cachedBlacklist &&
-			is_array( $cachedBlacklist ) &&
-			$cachedBlacklist[0]->getFormatVersion() == self::VERSION
-		) {
-			$this->mBlacklist = $cachedBlacklist;
-			return;
-		}
+		$this->mBlacklist = $cache->getWithSetCallback(
+			$cache->makeKey( 'title_blacklist_entries' ),
+			$wgTitleBlacklistCaching['expiry'],
+			static function () use ( $wgTitleBlacklistSources ) {
+				$sources = $wgTitleBlacklistSources;
+				$sources['local'] = [ 'type' => 'message' ];
+				$blacklist = [];
+				foreach ( $sources as $sourceName => $source ) {
+					$blacklist = array_merge(
+						$blacklist,
+						self::parseBlacklist(
+							self::getBlacklistText( $source ),
+							$sourceName
+						)
+					);
+				}
 
-		$sources = $wgTitleBlacklistSources;
-		$sources['local'] = [ 'type' => 'message' ];
-		$this->mBlacklist = [];
-		foreach ( $sources as $sourceName => $source ) {
-			$this->mBlacklist = array_merge(
-				$this->mBlacklist,
-				self::parseBlacklist( self::getBlacklistText( $source ), $sourceName )
-			);
-		}
-		$cache->set( $cache->makeKey( 'title_blacklist_entries' ),
-			$this->mBlacklist, $wgTitleBlacklistCaching['expiry'] );
-		wfDebugLog( 'TitleBlacklist-cache', 'Updated ' . $cache->makeKey( 'title_blacklist_entries' )
-			. ' with ' . count( $this->mBlacklist ) . ' entries.' );
+				wfDebugLog( 'TitleBlacklist-cache',
+					'Regenerated blacklist with ' . count( $blacklist ) . ' entries.' );
+				return $blacklist;
+			},
+			[
+				'version' => self::VERSION,
+				'lockTSE' => 30,
+				'staleTTL' => WANObjectCache::TTL_DAY,
+			]
+		);
 	}
 
 	/**
@@ -101,19 +105,21 @@ class TitleBlacklist {
 		global $wgTitleBlacklistCaching;
 
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		/** @var TitleBlacklistEntry[]|false $cachedWhitelist */
-		$cachedWhitelist = $cache->get( $cache->makeKey( 'title_whitelist_entries' ) );
-		if ( $cachedWhitelist &&
-			is_array( $cachedWhitelist ) &&
-			$cachedWhitelist[0]->getFormatVersion() == self::VERSION
-		) {
-			$this->mWhitelist = $cachedWhitelist;
-			return;
-		}
-		$this->mWhitelist = self::parseBlacklist( wfMessage( 'titlewhitelist' )
-				->inContentLanguage()->text(), 'whitelist' );
-		$cache->set( $cache->makeKey( 'title_whitelist_entries' ),
-			$this->mWhitelist, $wgTitleBlacklistCaching['expiry'] );
+		$this->mWhitelist = $cache->getWithSetCallback(
+			$cache->makeKey( 'title_whitelist_entries' ),
+			$wgTitleBlacklistCaching['expiry'],
+			static function () {
+				return self::parseBlacklist(
+					wfMessage( 'titlewhitelist' )->inContentLanguage()->text(),
+					'whitelist'
+				);
+			},
+			[
+				'version' => self::VERSION,
+				'lockTSE' => 30,
+				'staleTTL' => WANObjectCache::TTL_DAY,
+			]
+		);
 	}
 
 	/**
@@ -297,35 +303,52 @@ class TitleBlacklist {
 	 * @return string The content of the blacklist source as a string
 	 */
 	private static function getHttp( $url ) {
-		global $wgTitleBlacklistCaching, $wgMessageCacheType;
-		// FIXME: This is a hack to use Memcached where possible (incl. WMF),
-		// but have CACHE_DB as fallback (instead of no cache).
-		// This might be a good candidate for T248005.
-		$services = MediaWikiServices::getInstance();
-		$cache = $services->getObjectCacheFactory()->getInstance( $wgMessageCacheType );
+		global $wgTitleBlacklistCaching;
 
-		// Globally shared
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$key = $cache->makeGlobalKey( 'title_blacklist_source', md5( $url ) );
-		// Per-wiki
-		$warnkey = $cache->makeKey( 'titleblacklistwarning', md5( $url ) );
+		$caller = __METHOD__;
 
-		$result = $cache->get( $key );
-		$warn = $cache->get( $warnkey );
+		return $cache->getWithSetCallback(
+			$key,
+			$wgTitleBlacklistCaching['expiry'],
+			static function ( $oldValue, &$ttl ) use ( $url, $caller ) {
+				$httpRequestFactory = MediaWikiServices::getInstance()
+					->getHttpRequestFactory();
 
-		if ( !is_string( $result )
-			|| ( !$warn && !mt_rand( 0, $wgTitleBlacklistCaching['warningchance'] ) )
-		) {
-			$result = MediaWikiServices::getInstance()->getHttpRequestFactory()
-				->get( $url, [], __METHOD__ );
-			$cache->set( $warnkey, 1, $wgTitleBlacklistCaching['warningexpiry'] );
-			$cache->set( $key, $result, $wgTitleBlacklistCaching['expiry'] );
-			if ( !$result ) {
-				wfDebugLog( 'TitleBlacklist-cache', "Error loading title blacklist from $url\n" );
-				$result = '';
-			}
-		}
+				$result = $httpRequestFactory->get( $url, [], $caller );
 
-		return $result;
+				// Retry once on transient failure (T423162)
+				if ( $result === null ) {
+					usleep( 50_000 );
+					$result = $httpRequestFactory->get( $url, [], $caller );
+				}
+
+				if ( is_string( $result ) ) {
+					return $result;
+				}
+
+				// All attempts failed
+				wfDebugLog( 'TitleBlacklist-cache',
+					"Error loading title blacklist from $url" );
+
+				// If we have a previous cached value, keep using it
+				if ( is_string( $oldValue ) ) {
+					$ttl = WANObjectCache::TTL_MINUTE;
+					wfDebugLog( 'TitleBlacklist-cache',
+						"Using previously cached value for $url" );
+					return $oldValue;
+				}
+
+				// No previous value at all
+				return '';
+			},
+			[
+				'lockTSE' => 30,
+				'staleTTL' => WANObjectCache::TTL_DAY,
+				'busyValue' => '',
+			]
+		);
 	}
 
 	/**

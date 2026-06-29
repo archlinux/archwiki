@@ -5,8 +5,8 @@
 			"Noooote"
 		]
 	},
-	"abusefilter-log-linkonhistory": "mira con el log de abuso",
-	"abusefilter-log-linkonhistory-text": "Mira con el log de abuso de este pagina",
-	"abusefilter-log-linkonundelete": "Mira con el log de abuso",
-	"abusefilter-log-linkonundelete-text": "Mira con el log de abuso de este pagina"
+	"abusefilter-log-linkonhistory": "mira el registro de abuso",
+	"abusefilter-log-linkonhistory-text": "Mira maga regisro de abuso de este pagina",
+	"abusefilter-log-linkonundelete": "Mira el registro de abuso",
+	"abusefilter-log-linkonundelete-text": "Mira maga registro de abuso de este pagina"
 }

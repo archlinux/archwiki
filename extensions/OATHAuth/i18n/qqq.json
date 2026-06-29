@@ -85,7 +85,7 @@
 	"oathauth-auth-switch-module-label": "Label for the 2FA method switcher button on login",
 	"oathauth-auth-switch-module-help": "API help for the 2FA method switcher on login",
 	"oathauth-auth-switch-module-keep": "Default option for the 2FA method switcher on login",
-	"oathauth-throttled": "Error message when throttling limit is hit.\n\nParameters:\n* $1 - throttle block duration",
+	"oathauth-throttled": "Error message when throttling limit is hit.",
 	"oathauth-login-failed": "Error message when verifying the second factor failed.",
 	"oathauth-recovery-code-login-failed": "Error message when verifying the recovery code failed.",
 	"oathauth-describe-provider": "Description of the extension as an authentication provider.",
@@ -167,7 +167,7 @@
 	"oathauth-delete-confirm-box": "Message for input confirmation box shown when removing last 2FA method.\n\nSee also:\n{{msg-mw|oathauth-authenticator-delete-text}}",
 	"oathauth-delete-warning-final": "Warning message shown when deleting the last 2FA method",
 	"oathauth-delete-wrong-confirm-message": "Warning message shown when deleting the last 2FA method and the confirmation message is incorrect",
-	"oathauth-delete-success": "Success message shown when a 2FA method has been deleted.\n\nParameters:\n* $1 - Name of the 2FA method that was deleted",
+	"oathauth-delete-success": "Success message shown when a 2FA method has been deleted.",
 	"oathauth-created-at": "Timestamp label for key\n\nParameters:\n* $1 - Date from createdTimestamp for key",
-	"oathauth-enable-success": "Success message shown when a 2FA method has been added.\n\nParameters:\n* $1 - Name of the 2FA method that was enabled"
+	"oathauth-enable-success": "Success message shown when a 2FA method has been added."
 }

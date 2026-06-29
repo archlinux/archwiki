@@ -53,7 +53,8 @@
 			"Verdy p",
 			"Yekrats",
 			"Ильгиз",
-			"Warudo"
+			"Warudo",
+			"Nike"
 		]
 	},
 	"abusefilter-desc": "{{desc|name=Abuse Filter|url=https://www.mediawiki.org/wiki/Extension:AbuseFilter}}",
@@ -557,7 +558,7 @@
 	"abusefilter-action-block": "{{doc-abusefilter-action}}\n\nUsers matching the filter will be blocked indefinitely, with a descriptive block summary indicating the rule that was triggered.\n\n{{Identical|Block}}",
 	"abusefilter-action-degroup": "{{doc-abusefilter-action}}\n\n'''Removing from privileged groups'''\n\nUsers matching the filter will be '''removed from all privileged groups''' (sysop, bureaucrat, and so on). A descriptive summary will be used, detailing the rule that was triggered.\n\nAdditional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
 	"abusefilter-action-rangeblock": "{{doc-abusefilter-action}}\n\n'''Range-block'''\n\nSomewhat of a 'nuclear option', the entire /16 range from which the rule was triggered will be blocked for 24 hours.",
-	"abusefilter-action-disallow": "{{doc-abusefilter-action}}\n\nTo '''disallow''' actions means that actions matching the filter will be '''prevented''', and a descriptive error message will be shown. Additional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions\n{{Identical|Disallow}}",
+	"abusefilter-action-disallow": "{{doc-abusefilter-action}}\n\nTo '''disallow''' actions means that actions matching the filter will be '''prevented''', and a descriptive error message will be shown. Additional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
 	"abusefilter-revert-title": "Used as page title of [[Special:AbuseFilter/revert/1]] (go to [[Special:AbuseFilter]], open a filter, click \"Revert actions taken by this filter\").\n\nParameters:\n* $1 - filter ID",
 	"abusefilter-revert-intro": "Parameters:\n* $1 - filter",
 	"abusefilter-revert-preview-item": "Parameters:\n* $1 is a localised time and date\n* $2 is the linked user that made a change\n* $3 is the action (one of block, blockautopromote or degroup)\n* $4 is the page title of the page that was changed\n* $5 is a (localised) comma-separated list of actions\n* $6 is link to the log details with {{msg-mw|abusefilter-log-detailslink}} as link description.\n* $7 is a raw username, which can be used for GENDER.",

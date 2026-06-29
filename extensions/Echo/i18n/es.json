@@ -43,7 +43,8 @@
 			"The Anonymouse",
 			"TheBITLINK",
 			"Themasterriot",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"Luigi Nakano"
 		]
 	},
 	"echo-desc": "Sistema para notificar a los usuarios sobre eventos y mensajes",
@@ -270,6 +271,7 @@
 	"notification-header-foreign-all": "Más notificaciones de {{PLURAL:$5|otra wiki|otras $5 wikis}}",
 	"right-echo-create": "Enviar notificaciones a otros",
 	"action-echo-create": "enviar notificaciones a otros",
+	"right-echo-read-notifications": "Leer mis notificaciones",
 	"right-manage-all-push-subscriptions": "Gestionar todas las suscripciones push",
 	"action-manage-all-push-subscriptions": "gestionar todas las suscripciones push",
 	"group-push-subscription-manager": "Gestores de notificaciones push",

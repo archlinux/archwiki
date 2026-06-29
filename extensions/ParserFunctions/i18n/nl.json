@@ -8,7 +8,7 @@
 		]
 	},
 	"pfunc_desc": "Verrijkt de parser met logische functies",
-	"pfunc_time_error": "Fout: ongeldige tijd.",
+	"pfunc_time_error": "Fout: incorrecte tijd.",
 	"pfunc_time_too_long": "Fout: #time te vaak aangeroepen.",
 	"pfunc_time_too_big": "Fout: #time ondersteunt jaren tot maximaal 9999",
 	"pfunc_time_too_small": "Fout: #time ondersteunt alleen jaren vanaf 0.",

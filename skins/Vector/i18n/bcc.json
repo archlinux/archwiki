@@ -4,7 +4,8 @@
 			"Moshtank",
 			"Mostafadaneshvar",
 			"RigiMahnoor",
-			"Sultanselim baloch"
+			"Sultanselim baloch",
+			"Yasirkhan"
 		]
 	},
 	"vector-languages": "زبانان",
@@ -22,11 +23,26 @@
 	"vector-view-view": "وانگ",
 	"vector-view-viewsource": "سرچممگءِ سۏج",
 	"vector-more-actions": "گݔشتِر",
+	"vector-appearance-label": "درۆشم",
+	"vector-feature-limited-width-name": "پَراھی",
+	"vector-feature-limited-width-0-label": "پَراھ",
+	"vector-feature-limited-width-1-label": "میاری",
+	"vector-feature-custom-font-size-name": "نبشتانک",
+	"vector-feature-custom-font-size-0-label": "کسان",
+	"vector-feature-custom-font-size-1-label": "میاری",
+	"vector-feature-custom-font-size-2-label": "مزن",
+	"skin-theme-name": "رنگ",
+	"skin-theme-day-label": "روژنا",
+	"skin-theme-night-label": "تَهار",
+	"skin-theme-os-label": "وتاوت",
+	"skin-theme-exclusion-notice": "اے تاکدیم مدام رُژناھیں ڈول ءَ اِنت.",
 	"vector-toc-label": "تلمبار",
 	"vector-toc-beginning": "بُنرِد",
 	"vector-main-menu-tooltip": "رݔدگݔن منو",
 	"vector-main-menu-label": "رݔدگݔن منو",
+	"vector-feature-custom-font-size-exclusion-notice": "اے تاکدیم مدام کسانیں لکّہ ءِ کچ ءَ کارمرز کنت۔",
 	"vector-page-tools-label": "ابزاران",
 	"vector-page-tools-general-label": "لَس",
+	"vector-page-tools-actions-label": "کردکاراں",
 	"vector-unpin-element-label": "اندݔم کنگ"
 }

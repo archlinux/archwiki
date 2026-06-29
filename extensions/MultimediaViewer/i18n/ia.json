@@ -18,7 +18,6 @@
 	"multimediaviewer-thumbnail-error": "Non es possibile monstrar le file",
 	"multimediaviewer-thumbnail-error-description": "Il sembla haber un problema technic. Tu pote $1 si illo persiste. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "reprobar",
-	"multimediaviewer-thumbnail-error-report": "reportar le problema",
 	"multimediaviewer-license-cc-pd": "Dominio public",
 	"multimediaviewer-license-pd": "Dominio public",
 	"multimediaviewer-license-default": "Vider licentia",
@@ -111,6 +110,5 @@
 	"multimediaviewer-enable-alert": "MediaViewer es ora disactivate",
 	"multimediaviewer-disable-info-title": "Tu ha disactivate Media Viiewer",
 	"multimediaviewer-disable-info": "Tu pote totevia vider files individual con Media Viewer.",
-	"multimediaviewer-errorreport-privacywarning": "Le detalios del error es attachate al reporto, le qual essera publicamente visibile. Si tu non te senti confortabile con isto, tu pote modificar le reporto hic infra e remover tote le datos que tu non vole condivider.",
 	"multimediaviewer-loading": "Cargamento de Media Viewer in curso."
 }

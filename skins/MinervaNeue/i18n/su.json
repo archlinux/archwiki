@@ -3,7 +3,8 @@
 		"authors": [
 			"Kandar",
 			"Uchup19",
-			"WikiKaruhun"
+			"WikiKaruhun",
+			"Deepturquoise"
 		]
 	},
 	"mobile-frontend-cookies-required": "Kuki dibutuhkeun ajang ngaganti pidangan. Pék aktifkeun kuki sarta cobaan deui.",
@@ -36,5 +37,6 @@
 	"mobile-frontend-user-newmessages": "Anjeun meunang talatah anyar dina kaca obrolan anjeun",
 	"mobile-frontend-user-page-contributions": "Kontribusi",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Geus aub}} $1",
-	"mobile-frontend-user-page-talk": "Obrolan"
+	"mobile-frontend-user-page-talk": "Obrolan",
+	"minerva-page-actions-overflow": "Lianna"
 }
