@@ -18,7 +18,6 @@
 	"multimediaviewer-thumbnail-error": "Nije moguće prikazati datoteku",
 	"multimediaviewer-thumbnail-error-description": "Izgleda da je došlo do tehničkog problema. $1 ako se nastavi. Greška: $2",
 	"multimediaviewer-thumbnail-error-retry": "Pokušajte ponovo",
-	"multimediaviewer-thumbnail-error-report": "prijavite problem",
 	"multimediaviewer-license-cc-pd": "Javno vlasništvo",
 	"multimediaviewer-license-pd": "Javno vlasništvo",
 	"multimediaviewer-license-default": "Licenca",

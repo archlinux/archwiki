@@ -5,7 +5,9 @@
 			"Glanthor Reviol",
 			"KossuthRad",
 			"Nyuszika7H",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"TMg",
+			"Bean49"
 		]
 	},
 	"cite-desc": "Lehetővé teszi idézések létrehozását <code>&lt;ref&gt;</code> és <code>&lt;references/&gt;</code> XML-elemek segítségével",
@@ -26,6 +28,7 @@
 	"cite_error_empty_references_define": "a <code>&lt;references&gt;</code> címkében definiált „$1” <code>&lt;ref&gt;</code> címkének nincs tartalma.",
 	"cite-tracking-category-cite-error": "Lapok forráshivatkozás-hibákkal",
 	"cite-tracking-category-cite-error-desc": "Az ebben a kategóriában található lapokon hibásan használt forráshivatkozás-elemek találhatók.",
+	"cite-tracking-category-ref-details": "Alhivatkozásokat használó oldalak",
 	"cite-reference-previews-reference": "Forráshivatkozás",
 	"cite-reference-previews-book": "Könyvforrás",
 	"cite-reference-previews-journal": "Folyóirat-hivatkozás",

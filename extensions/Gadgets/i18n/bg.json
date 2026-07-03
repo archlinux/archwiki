@@ -36,5 +36,5 @@
 	"gadgets-export-text": "За да експортирате джаджата $1, щракнете на бутона \"{{int:gadgets-export-download/bg}}\", запазете файла на диска си, отидете на страницата Special:Import в целевото уики и го качете там. След това добавете към страницата MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nВ целевото уики трябва да се ползвате от съответните права (в това число правото да редактирате системни съобщения) и трябва да са разрешени локалните файлови качвания.",
 	"gadgets-export-download": "Изтегляне",
 	"gadgets-validate-notset": "Свойството <code>$1</code> не е установено.",
-	"gadgets-validate-wrongtype": "Свойството <code>$1</code> трябва да бъде <code>$2</code> вместо от тип <code>$3</code>."
+	"gadgets-validate-wrongtype": "Свойството <code>$1</code> трябва да бъде от тип <code>$2</code>."
 }

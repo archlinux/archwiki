@@ -14,7 +14,6 @@
 	"multimediaviewer-thumbnail-error": "Pardonez, l'arkivo ne povas montresar",
 	"multimediaviewer-thumbnail-error-description": "Semblas esar teknikala problemo. Vu povas $1 se ol duros eventar. Eroro: $2",
 	"multimediaviewer-thumbnail-error-retry": "riprobez",
-	"multimediaviewer-thumbnail-error-report": "informar la problemo",
 	"multimediaviewer-license-cc-pd": "Publika domeno",
 	"multimediaviewer-license-pd": "Publika domeno",
 	"multimediaviewer-license-default": "Montrez licenco",
@@ -91,6 +90,5 @@
 	"multimediaviewer-enable-confirmation-header": "Vu permisis ''Media Viewer'' por tot artikli",
 	"multimediaviewer-enable-alert": "''Media Viewer'' nun deskapabligesis",
 	"multimediaviewer-disable-info-title": "Vu klozis ''Media Viewer''",
-	"multimediaviewer-disable-info": "Vu ankore povas vidar individual arkivi kun ''Media Viewer''.",
-	"multimediaviewer-errorreport-privacywarning": "Detali pri l'eroro adjuntesis a la reporto, qua povos videsar publike. Se vu ne prizas to, vu povos modifikar la reporto adinfre, e removar omna detali quin vu ne deziras partigar kun altri."
+	"multimediaviewer-disable-info": "Vu ankore povas vidar individual arkivi kun ''Media Viewer''."
 }

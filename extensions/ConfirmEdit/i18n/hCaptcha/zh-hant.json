@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
-			"Lakejason0"
+			"Lakejason0",
+			"LowensteinYang"
 		]
 	},
 	"hcaptcha-desc": "用於確認編輯的 [https://www.hcaptcha.com/ hCaptcha] 模組",

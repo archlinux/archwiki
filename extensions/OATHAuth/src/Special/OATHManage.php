@@ -232,7 +232,7 @@ class OATHManage extends SpecialPage {
 		$deletedKeyName = $this->getRequest()->getVal( 'deletesuccess' );
 		if ( $deletedKeyName !== null ) {
 			$this->getOutput()->addHTML( Html::successBox(
-				$this->msg( 'oathauth-delete-success', $deletedKeyName )->parse()
+				$this->msg( 'oathauth-delete-success' )->parse()
 			) );
 		}
 
@@ -241,7 +241,7 @@ class OATHManage extends SpecialPage {
 		if ( $addedKeyName !== null ) {
 			$this->getOutput()->addHTML(
 				Html::successBox(
-					$this->msg( 'oathauth-enable-success', $addedKeyName )->parse()
+					$this->msg( 'oathauth-enable-success' )->parse()
 				)
 			);
 		}

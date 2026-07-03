@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"action-tboverride": "ka gudub liiska ciwaannada ama magacyada isticmaale ee la reebay",
+	"action-tboverride-account": "ka gudub liiska magacyada isticmaalaha ee la reebay",
+	"action-titleblacklistlog": "eeg diiwaanka liiska ciwaannada la reebay",
+	"log-name-titleblacklist": "Diiwaanka liiska ciwaannada la reebay",
+	"log-description-titleblacklist": "Dhacdooyinkani waxay la socdaan garaacis liiska ciwaannada la reebay.",
+	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|wuxuu sababay}} in liiska ciwaannada la reebay uu kiciyo markii la isku dayayay in la abuuro akoon $3 oo la mid ah $4.",
+	"titleblacklist-desc": "Waxay u oggolaanaysaa maamulayaasha inay ka mamnuucaan abuurista bogagga iyo akoonnada isticmaalaha iyadoo lagu salaynayo [[MediaWiki:Titleblacklist|liis cinwaanno la reebay]] iyo [[MediaWiki:Titlewhitelist|cinwaanno la oggol yahay]]",
+	"titleblacklist": "# Tani waa liiska cinwaannada la reebay. Cinwaannada iyo magacyada isticmaalaha ee u dhigma muujinta joogtada ah ee halkan ku qoran lama abuuri karo.\n# Isticmaal \"#\" si aad u qorto faallooyin.\n# Sida caadiga ah waa aan xasaasi u ahayn far waaweyn iyo far yar",
+	"titlewhitelist": "# Tani waa liiska cinwaannada la oggol yahay. Isticmaal \"#\" si aad u qorto faallooyin.\n# Sida caadiga ah waa aan xasaasi u ahayn far waaweyn iyo far yar",
+	"titleblacklist-forbidden-edit": "Cinwaanka \"$2\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
+	"titleblacklist-forbidden-move": "\"$2\" looma wareejin karo \"$3\", sababtoo ah cinwaanka \"$3\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "Magaca faylka \"$2\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Magaca isticmaalaha \"$2\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
+	"titleblacklist-override": "Ka gudub liiska cinwaannada la reebay haddii uu is waafaqo",
+	"titleblacklist-override-help": "Isticmaalayaasha leh awood ku filan waxay u dejin karaan si ay u iska indha tiraan hubinta liiska cinwaannada la reebay.",
+	"titleblacklist-warning": "<strong>Digniin: Boggan waxaa kaliya wax ka beddeli kara maamulayaasha iyo isticmaalayaasha kale ee leh xuquuqda <code>tboverride</code> sababtoo ah wuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socota:</strong><br /><code>$1</code>",
+	"right-tboverride": "Ka gudub liiska cinwaannada ama magacyada isticmaalaha ee la reebay",
+	"right-tboverride-account": "Ka gudub liiska magacyada isticmaalaha ee la reebay",
+	"right-titleblacklistlog": "Eeg diiwaanka liiska cinwaannada la reebay"
+}

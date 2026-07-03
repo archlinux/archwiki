@@ -47,6 +47,7 @@
 	"abusefilter-log-hide-entries": "Čájet/čiega válljejuvvon loggamearkkastagaid",
 	"abusefilter-log-details-legend": "Lassedieđut loggamearkkastagas $1",
 	"abusefilter-log-details-val": "Árvu",
+	"abusefilter-log-details-checkuser": "Čujuhusaid dárkkisteapmi",
 	"abusefilter-log-linkoncontribs": "boasttugeavahanlogga",
 	"abusefilter-log-linkoncontribs-text": "Boasttugeavahanlogga {{GENDER:$1|dán geavaheaddjái}}",
 	"abusefilter-log-linkonhistory": "čájet boasttugeavahanlogga",

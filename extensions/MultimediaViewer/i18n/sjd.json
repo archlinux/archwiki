@@ -4,5 +4,9 @@
 			"Merrahtar"
 		]
 	},
-	"multimediaviewer-optin-pref": "Ключчье <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Ме̄дья кӣһчей]</span>»"
+	"multimediaviewer-optin-pref": "Ключчье <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Ме̄дья кӣһчей]</span>»",
+	"multimediaviewer-geoloc-north": "т. кт.",
+	"multimediaviewer-geoloc-east": "н. кк.",
+	"multimediaviewer-geoloc-south": "с. кт.",
+	"multimediaviewer-geoloc-west": "в. кк."
 }

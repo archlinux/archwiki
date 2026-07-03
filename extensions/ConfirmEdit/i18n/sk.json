@@ -3,7 +3,8 @@
 		"authors": [
 			"Helix84",
 			"Luky001",
-			"Vlad5250"
+			"Vlad5250",
+			"Wizzard"
 		]
 	},
 	"captcha-edit": "Aby ste mohli upravovať túto stránku, vyriešte prosím nižšie uvedenú úlohu a napíšte odpoveď do poľa ([[Special:Captcha/help|viac informácií]]):",
@@ -18,7 +19,7 @@
 	"captcha-disabledinapi": "Táto operácia vyžaduje captcha, preto nemôže byť vykonaná prostredníctvom rozhrania API.",
 	"captchahelp-title": "Pomocník ku captcha",
 	"captchahelp-cookies-needed": "Aby toto fungovalo, budete si musieť v prehliadači zapnúť koláčiky (cookies).",
-	"captchahelp-text": "Webstránky prijímajúce príspevky od verejnosti ako táto wiki sú často cieľom zneužitia spammermi, ktorí používajú automatizované nástroje na to, aby svoje odkazy umiestnili na množstvo stránok. Hoci je možné tieto odkazy odstrániť, zbytočne to zaťažuje používateľov.\n\nNiekedy, obzvlášť keď pridávate webové odkazy k článkom, wiki vám môže zobraziť obrázok so zafarbeným alebo pokriveným textom a požiadať vás o prepísanie zobrazených slov. Keďže takúto úlohu je ťažké zautomatizovať a umožní skutočným ľuďom poslať svoje príspevky, zastaví to väčšinu spammerov a iných robotických útočníkov.\n\nNanešťastie, môže to byť prekážkou pre používateľov so zrakovým postihnutím alebo tých, ktorí používajú textové alebo hovoriace prehliadače. Momentálne nemáme dostupnú audio zvukovú alternatívu. Kontaktujte prosím [[{{int:grouppage-sysop}}|správcov stránok]] ak vám to neočakávane komplikuje umiestňovanie oprávnených príspevkov.\n\nStlačením tlačidla „späť“ vo vašom prehliadači sa vrátite do editora stránky.",
+	"captchahelp-text": "Webové stránky prijímajúce príspevky od verejnosti, ako táto wiki, sú často zneužívané spamermi, ktorí používajú automatizované nástroje na umiestňovanie svojich odkazov na množstvo stránok.\nHoci je možné tieto spamové odkazy odstrániť, sú výrazne obťažujúce.\n\nNiekedy, obzvlášť pri pridávaní nových webových odkazov na stránku, vám wiki môže zobraziť obrázok s farebným alebo skresleným textom a požiadať vás o opísanie zobrazených slov.\nKeďže takúto úlohu je ťažké zautomatizovať, umožní to väčšine skutočných ľudí odoslať svoje príspevky, ale zastaví väčšinu spamerov a iných robotických útočníkov.\n\nNanešťastie to môže byť prekážkou pre používateľov s obmedzeným zrakom alebo pre tých, ktorí používajú textové či hlasové prehliadače.\nMomentálne nemáme dostupnú zvukovú alternatívu.\nAk vám to neočakávane bráni vo vykonávaní oprávnených akcií, kontaktujte prosím [[{{int:grouppage-sysop}}|správcov stránky]].\n\nStlačením tlačidla „späť“ vo svojom prehliadači sa vrátite do editora stránky.",
 	"captcha-addurl-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# Syntax je nasledovná:\n#   * Všetko od znaku „#“ do konca riadka je komentár\n#   * Každý neprázdny riadok je fragment regulárneho výrazu, ktorého zhody budú iba stroje v rámci URL\n  #</pre> <!-- leave this line exactly as it is -->",
 	"right-skipcaptcha": "Vykonávať činnosti spúšťajúce CAPTCHA bez toho, aby bolo potrebné vyriešiť CAPTCHA",
 	"action-skipcaptcha": "vykonávať činnosti spúšťajúce CAPTCHA bez toho, aby bolo potrebné vyriešiť CAPTCHA",

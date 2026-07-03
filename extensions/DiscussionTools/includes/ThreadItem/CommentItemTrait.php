@@ -3,6 +3,8 @@
 namespace MediaWiki\Extension\DiscussionTools\ThreadItem;
 
 use DateTimeImmutable;
+use DateTimeZone;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use RuntimeException;
 
@@ -57,7 +59,9 @@ trait CommentItemTrait {
 	public function getTimestampString(): string {
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
 		$switchTime = new DateTimeImmutable(
-			$dtConfig->get( 'DiscussionToolsTimestampFormatSwitchTime' )
+			$dtConfig->get( 'DiscussionToolsTimestampFormatSwitchTime' ),
+			// Oops, this probably should have been in UTC, but it's too late to change it now...
+			new DateTimeZone( MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::Localtimezone ) )
 		);
 		$timestamp = $this->getTimestamp();
 		if ( $timestamp < $switchTime ) {

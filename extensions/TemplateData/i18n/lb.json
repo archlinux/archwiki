@@ -6,6 +6,7 @@
 			"Volvox"
 		]
 	},
+	"templatedata-desc": "Implementéiert d'Späichere vun Donnéeë fir Schablouneparameteren (mat Hëllef vun JSON)",
 	"templatedata-doc-desc-empty": "Keng Beschreiwung.",
 	"templatedata-doc-format-block": "An dëser Schabloun gëtt d'Block-Formatéierung vun de Parametere recommandéiert.",
 	"templatedata-doc-format-custom": "D'Formatéierung vun dëser Schabloun ass benotzerdefinéiert.",
@@ -40,6 +41,7 @@
 	"templatedata-doc-params": "Parametere vun der Schabloun",
 	"templatedata-editbutton": "Schablounendonnéeën änneren",
 	"templatedata-errormsg-insertblank": "Sidd Dir sécher, datt Dir Schablounendonnéeën ouni Informatiounen drasetze wëllt?",
+	"templatedata-exists-on-related-page": "Opgepasst: Et gëtt schonn e Block mat Schablounendonnéeën op der verwannter Säit „[[$1]]“.",
 	"templatedata-helplink": "Informatiounen iwwer Schablounendonnéeën",
 	"templatedata-invalid-unnamed-parameter": "Parameternimm däerfen net eidel sinn. Fir onbenannt Parameteren ze dokumentéieren, benotzt hir intern Nummeréierung „1“, „2“ a sou weider.",
 	"templatedata-invalid-duplicate-value": "D'Eegenschaft „$1“ („$3“) ass en Doublon vu(n) „$2“.",

@@ -30,7 +30,8 @@
 			"WhatamIdoing",
 			"WindEwriX",
 			"Woytecr",
-			"Умар"
+			"Умар",
+			"Merrahtar"
 		]
 	},
 	"discussiontools": "Инструменты обсуждений",
@@ -47,8 +48,10 @@
 	"discussiontools-emptystate-desc": "На [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|страницах обсуждения]] люди обсуждают, как улучшить содержимое {{GRAMMAR:genitive|{{SITENAME}}}}. Вы можете использовать эту страницу, чтобы обсудить с другими участниками, какие улучшения внести на страницу «[[:{{SUBJECTPAGENAME}}]]».",
 	"discussiontools-emptystate-desc-self": "Участники {{GRAMMAR:genitive|{{SITENAME}}}} могут использовать эту [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|страницу обсуждения]], чтобы написать вам публичное сообщение, и {{GENDER:|вы}} будете уведомлены, если это произойдёт.",
 	"discussiontools-emptystate-desc-self-anon": "Участники {{GRAMMAR:genitive|{{SITENAME}}}} могут использовать эту [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|страницу обсуждения]], чтобы написать публичное сообщение о правках с используемого {{GENDER:|вами}} IP-адреса.\n\nМногие IP-адреса периодически меняются и часто используются несколькими людьми одновременно. Вы можете [$1 создать учётную запись] или [$2 войти в неё], чтобы вас не принимали за других пользователей. Создание учётной записи также скрывает ваш IP-адрес.",
+	"discussiontools-emptystate-desc-self-temp": "Участники {{GRAMMAR:genitive|{{SITENAME}}}} могут использовать эту [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|страницу обсуждения]], чтобы написать {{GENDER:|вам}} публичное сообщение.\n\nВ определённый момент [[{{MediaWiki:tempuser-helppage}}|эта страница перестанет существовать]]. Чтобы продолжить получать уведомления и получить доступ к другим функциям, [$1 создайте учётную запись] или [$2 войдите в неё].",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Страницы обсуждения]] — место, где люди обсуждают, как улучшить содержимое {{GRAMMAR:genitive|{{SITENAME}}}}. Начните новое обсуждение, чтобы связаться и обсудить что-нибудь {{GENDER:{{PAGENAME}}|с}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Написанное здесь {{GENDER:|вами}} смогут прочесть и другие.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Страницы обсуждения]] — место, где люди обсуждают, как улучшить содержимое {{GRAMMAR:genitive|{{SITENAME}}}}. Используйте эту страницу, чтобы начать обсуждение о правках, сделанных с этого IP-адреса. Написанное здесь {{GENDER:|вами}} смогут прочесть и другие. Многие IP-адреса периодически меняются и часто используются несколькими людьми одновременно.",
+	"discussiontools-emptystate-desc-user-temp": "Используйте эту [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|страницу обсуждения]], чтобы начать обсуждение {{GENDER:{{PAGENAME}}|с}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] о том, как улучшить содержимое {{GRAMMAR:genitive|{{SITENAME}}}}. Написанное здесь {{GENDER:|вами}} смогут прочесть и другие. Так как [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] — это [[{{MediaWiki:tempuser-helppage}}|временная учётная запись]], эта страница обсуждения со временем перестанет существовать. [[{{MediaWiki:tempuser-helppage}}|Узнать больше]].",
 	"discussiontools-emptystate-title": "Начать обсуждение страницы «{{SUBJECTPAGENAME}}»",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Добро пожаловать}} на вашу страницу обсуждения",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Добро пожаловать}} на эту страницу обсуждения",
@@ -83,6 +86,7 @@
 	"discussiontools-limitreport-timeusage": "Время использования DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунда|секунды|секунд}}",
 	"discussiontools-newtopic-missing-title": "Пожалуйста, введите заголовок для {{GENDER:|своей}} темы обсуждения.",
+	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|Вы}} не указали заголовок для {{GENDER:|этой}} темы обсуждения. {{GENDER:|Вы}} уверены, что хотите добавить её без заголовка?",
 	"discussiontools-newtopic-placeholder-title": "Тема",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Подписаться",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Подпишитесь, чтобы получать уведомления о появлении новых тем на этой странице.",
@@ -106,6 +110,7 @@
 	"discussiontools-notification-removed-topic-disable": "Не получать подобные уведомления",
 	"discussiontools-notification-removed-topic-disabled-title": "{{GENDER:|Вы}} больше не будете получать уведомления, когда тема архивируется или удаляется.",
 	"discussiontools-notification-removed-topic-disabled-body": "Вы можете изменить это в [[Special:Preferences#mw-prefsection-echo-echosubscriptions|своих настройках]].",
+	"discussiontools-notification-topic-hidden": "(тема удалена)",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 ответил{{GENDER:$2||а}} в «<strong>$4</strong>».",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|1=Один новый ответ|$1 новый ответ|$1 новых ответа|$1 новых ответов|100=99+ новых ответов}} в «<strong>$3</strong>».",
 	"discussiontools-notification-subscribed-new-comment-view": "Посмотреть сообщение",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Aafi",
 			"Muhammad Shuaib",
-			"TheAafi"
+			"TheAafi",
+			"شاه زمان پټان"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "آئی ڈی '$1' کے ساتھ تبصرہ نہیں ملا۔",
@@ -16,7 +17,7 @@
 	"apihelp-discussiontoolsedit-param-commentid": "جواب دیے جانے والے تبصرے کی آئی ڈی۔ یہ صرف اس صورت استعمال ہوتا ہے جب <var>paction</var> <var>addcomment</var> ہو۔ اس سے <var>commentname</var> اور۔رائڈ ہوتا ہے۔",
 	"apihelp-discussiontoolsedit-param-commentname": "جواب دیے جانے والے تبصرے کا نام۔ یہ صرف اس صورت استعمال ہوتا ہے جب <var>paction</var> <var>addcomment</var> ہو۔",
 	"apihelp-discussiontoolsedit-param-formtoken": "دوہری پوسٹنگ کو روکنے کے لیے کلائنٹ میں ایک آپشنل منفرد آئی ڈی تیار کی جاتی ہے۔",
-	"apihelp-discussiontoolsedit-param-html": "بطور ایچ۔ٹی۔ایم۔ال، ہوسٹ کرنے کے لیے مواد <var>ikitext\n</var> کے ساتھ ساتھ استعمال نہیں کیا جاسکتا۔",
+	"apihelp-discussiontoolsedit-param-html": "بطور ایچ۔ٹی۔ایم۔ال، ہوسٹ کرنے کے لیے مواد <var>wikitext</var> کے ساتھ ساتھ استعمال نہیں کیا جاسکتا۔",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} صرف اسی صورت استعمال ہوتا ہے جب <var>paction</var> <var>addtopic</var> ہو۔",
 	"apihelp-discussiontoolsedit-param-allownosectiontitle": "عنوان کے بغیر نیا موضوع شروع کرنے کی اجازت۔",
 	"apihelp-discussiontoolsedit-param-wikitext": "بطور ویکی ٹیکسٹ، ہوسٹ کرنے کے لیے مواد <var>html</var> کے ساتھ ساتھ استعمال نہیں کیا جاسکتا۔",

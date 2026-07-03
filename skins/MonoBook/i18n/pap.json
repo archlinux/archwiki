@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"monobook-jumptotop": "Bèk na laira",
+	"monobook-jumptopersonal": "Hèrmènt di usadó",
+	"monobook-jumptonavigation": "Salta pa nabegashon",
+	"monobook-jumptosearch": "Salta pa bùskeda",
+	"monobook-more-actions": "Mas",
+	"cactions-mobile": "Akshon di página",
+	"monobook-cactions-label": "Akshon di página",
+	"monobook-notifications-link": "Notifikashon ($1)",
+	"monobook-notifications-link-none": "Notifikashon",
+	"monobook-view-history": "Historia",
+	"monobook-action-undelete": "Restourá {{PLURAL:$1|un adaptashon|$1 adaptashon}}"
+}

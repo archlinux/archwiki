@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Buki",
+	"visualeditor-cite-tool-name-journal": "Revista",
+	"visualeditor-cite-tool-name-news": "Notisia",
+	"visualeditor-cite-tool-name-web": "Wèpsait",
+	"cite-ve-changedesc-ref-group-both": "Grupo di referensia a kambia di \"$1\" pa \"$2\"",
+	"cite-ve-citationneeded-button": "Agregá un sitashon",
+	"cite-ve-citationneeded-reason": "Motibu duná:",
+	"cite-ve-citationneeded-title": "Sitashon nesesario",
+	"cite-ve-dialog-reference-options-group-label": "Usa e grupo aki",
+	"cite-ve-dialog-reference-options-group-placeholder": "Referensia general",
+	"cite-ve-dialog-reference-options-section": "Opshon",
+	"cite-ve-dialog-reference-title": "Referensia",
+	"cite-ve-dialog-reference-add-details-button": "Agregá detaye",
+	"cite-ve-dialog-subreference-help-dialog-title": "Detaye",
+	"cite-ve-dialog-reference-title-details": "Detaye",
+	"cite-ve-dialog-reference-useexisting-tool": "Reutilisá",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista di referensia general",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Lista di referensia pa grupo \"$1\"",
+	"cite-ve-dialog-referenceslist-title": "Lista di referensia",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Mehorá bo kontenido dor di agregá fuente di informashon. Bo por sita for di buki, korant i wèpsait.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Sitashon",
+	"cite-ve-dialogbutton-reference-full-label": "Básiko",
+	"cite-ve-dialogbutton-reference-title": "Referensia",
+	"cite-ve-dialogbutton-reference-tooltip": "Simpel",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Lista di referensia",
+	"cite-ve-reference-input-placeholder": "Listra denter sitashonnan aktual",
+	"cite-ve-referenceslist-isempty": "No tin referensia ku e grupo \"$1\" riba e página aki pa inkluí den e lista aki.",
+	"cite-ve-referenceslist-isempty-default": "No tin referensia riba e página aki pa inkluí den e lista aki.",
+	"cite-ve-referenceslist-missing-parent": "E detayenan akibou ta vinkulá na un referensia ku falta. Por fabor kita nan for di e página òf drecha e problema aki den modo di fuente.",
+	"cite-ve-referenceslist-missingref": "E referensia aki ta definí den un malchi òf otro blòki generá, i pa awor por wòrdu editá solamente den modo di fuente.",
+	"cite-ve-referenceslist-missingref-in-list": "E referensia aki ta definí den un malchi òf otro blòki generá, i pa awor por wòrdu previsualisá solamente den modo di fuente.",
+	"cite-ve-referenceslist-missingreflist": "E lista di referensia aki ta wòrdu generá dor di un malchi.",
+	"cite-ve-toolbar-group-label": "Sita",
+	"cite-ve-othergroup-item": "$1 referensia"
+}

@@ -65,6 +65,7 @@ class WrapSectionsState {
 	) {
 		$this->env = $env;
 		$this->frame = $frame;
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$this->rootNode = $rootNode;
 		$this->doc = $rootNode->ownerDocument;
 	}
@@ -307,11 +308,20 @@ class WrapSectionsState {
 				$this->tplInfo = $tplInfo = new WrapSectionsTplInfo;
 				$tplInfo->first = $node;
 				$about = DOMCompat::getAttribute( $node, 'about' );
-				// NOTE: could be null because of language variant markup!
 				$tplInfo->about = $about;
-				$aboutSiblings = WTUtils::getAboutSiblings( $node, $about );
-				$tplInfo->last = end( $aboutSiblings );
-				$this->aboutIdMap[$about] = $node;
+				if ( $about === null ) {
+					Assert::invariant(
+						DOMUtils::hasTypeOf( $node, 'mw:LanguageVariant' ),
+						"Expected only language variants to be missing about ids."
+					);
+					$tplInfo->last = $node;
+					// No need to map about id since language variants
+					// aren't forests
+				} else {
+					$aboutSiblings = WTUtils::getAboutSiblings( $node, $about );
+					$tplInfo->last = end( $aboutSiblings );
+					$this->aboutIdMap[$about] = $node;
+				}
 
 				// Collect a sequence of rendering transparent nodes starting at $node.
 				// This could be while ( true ), but being defensive.

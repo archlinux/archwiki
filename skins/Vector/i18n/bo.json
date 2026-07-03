@@ -6,7 +6,8 @@
 			"Tenzin Thoesam",
 			"ཁ་བཏགས་ནག་པོ",
 			"Pecha-Tsewang",
-			"Dhondup"
+			"Dhondup",
+			"Pecha-G.Dhargyal"
 		]
 	},
 	"vector-languages": "སྐད་སྣ་",
@@ -36,7 +37,7 @@
 	"skin-theme-day-label": "ཚོན་སླ་བོ།",
 	"skin-theme-night-label": "ནག་པོ།",
 	"skin-theme-os-label": "རང་འགུལ།",
-	"skin-theme-exclusion-notice": "ཤོག་ངོས་འདིར་རྒྱུན་དུ་ཚོན་མདོག་སྐྱ་བོ་ལས་སྤྱོད་མི་ཐུབ།",
+	"skin-theme-exclusion-notice": "ཤོག་ངོས་འདི་རྒྱུན་དུ་ཚོན་མདངས་དཀར་པོའི་རང་བཞིན་ཡིན།",
 	"vector-toc-label": "དཀར་ཆག",
 	"vector-toc-beginning": "མགོ་འཛུགས།",
 	"vector-anon-user-menu-pages": "ཐོ་འགོད་མེད་པའི་ཞུ་དག་པའི་ཤོག་ངོས།",

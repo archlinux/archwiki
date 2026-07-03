@@ -1,9 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
-			"Siddhartha Ghai"
+			"Siddhartha Ghai",
+			"Saurmandal"
 		]
 	},
-	"codeeditor-desc": "जावास्क्रिप्ट और सीएसएस पृष्ठों के सम्पादन के लिये सिंटेक्स-हाइलाइट करने हेतु [https://ace.c9.io/ ऐस सम्पादक]",
-	"codeeditor-toolbar-toggle": "कोड सम्पादक ऑन/ऑफ़ करें"
+	"codeeditor-desc": "[https://ace.c9.io/ Ace एडिटर] की मदद से जावास्क्रिप्ट और CSS पृष्ठों के लिए सिनटैक्स हाइलाइटिंग सहित सम्पादन",
+	"codeeditor-next-annotation": "अगले एनोटेशन पर जाएँ",
+	"codeeditor-toolbar-toggle": "कोड एडिटर टॉगल करें",
+	"codeeditor-save-with-errors": "इस दस्तावेज़ में त्रुटियाँ हैं। क्या आप वाकई में इसे प्रकाशित करना चाहते हैं?",
+	"codeeditor-invisibleChars-toggle": "अदृश्य कैरेक्टर्स टॉगल करें",
+	"codeeditor-lineWrapping-toggle": "पंक्ति रैपिंग टॉगल करें",
+	"codeeditor-searchReplace-toggle": "खोजें-और-बदलें का डायलॉग टॉगल करें",
+	"codeeditor-gotoline": "इस पंक्ति संख्या पर जाएँ...",
+	"codeeditor-gotoline-placeholder": "पंक्ति[:कॉलम]",
+	"codeeditor-gotoline-prompt": "पंक्ति नंबर दर्ज करें",
+	"codeeditor-indent": "इनडेंट",
+	"codeeditor-outdent": "इनडेंट पूर्ववत",
+	"codeeditor-error-title": "निर्भरता विफल",
+	"codeeditor-error-message": "CodeEditor को लोड होने के लिए WikiEditor की आवश्यकता है।"
 }

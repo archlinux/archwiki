@@ -68,7 +68,7 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools felbegäran-ID",
 	"discussiontools-limitreport-timeusage": "Tidsanvändning av DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekund|sekunder}}",
-	"discussiontools-newtopic-missing-title": "Ange gärna en rubrik till {{GENDER:|ditt}} diskussionsämne.",
+	"discussiontools-newtopic-missing-title": "Ange en rubrik till {{GENDER:|ditt}} diskussionsämne.",
 	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|Du}} har inte angett en titel för {{GENDER:|ditt}} diskussionsämne. Är {{GENDER:|du}} säker på att du vill lägga till det här ämnet utan en titel?",
 	"discussiontools-newtopic-placeholder-title": "Ämne",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Följ",

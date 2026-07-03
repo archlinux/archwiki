@@ -8,7 +8,8 @@
 			"Mguix",
 			"Pere prlpz",
 			"SMP",
-			"Vriullop"
+			"Vriullop",
+			"Paucabot"
 		]
 	},
 	"cite-desc": "Afegiu les etiquetes <code>&lt;ref&gt;</code> i <code>&lt;references&gt;</code> per a cites",
@@ -20,7 +21,7 @@
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; \nles referències sense nom han de tenir contingut",
 	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; el nom «$1» està definit diverses vegades amb contingut diferent.",
 	"cite_error_references_invalid_parameters": "Paràmetre «$1» no vàlid a l'etiqueta <code>&lt;references></code>. Els paràmetres admesos són: $2.",
-	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nno s'ha proporcionat text per les refs nomenades <code>$1</code>",
+	"cite_error_references_no_text": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nno s'ha proporcionat text per les refs anomenades <code>$1</code>",
 	"cite_error_included_ref": "Es tanca el <code>&lt;/ref&gt;</code> que manca per una etiqueta <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Existeixen etiquetes <code>&lt;ref&gt;</code> pel grup «$1» però no s'ha trobat l'etiqueta <code>&lt;references group=\"$1\"/&gt;</code> corresponent.",
 	"cite_error_references_group_mismatch": "L'etiqueta <code>&lt;ref&gt;</code> a <code>&lt;references&gt;</code> té un conflicte amb l'atribut de grup \"$1\".",

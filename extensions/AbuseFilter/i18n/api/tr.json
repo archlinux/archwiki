@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BaRaN6161 TURK",
-			"MuratTheTurkish"
+			"MuratTheTurkish",
+			"HakanIST"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Bir AbuseFilter'ın bir değişkenler kümesiyle mi, bir düzenleme ile mi yoksa günlüğe kaydedilen bir AbuseFilter olayıyla eşleştiğini kontrol edin.",
@@ -53,5 +54,6 @@
 	"apierror-abusefilter-cantcheck": "Kötüye kullanım filtrelerinin sözdizimini kontrol etme izniniz yok.",
 	"apierror-abusefilter-canteval": "AbuseFilter ifadelerini değerlendirme izniniz yok.",
 	"apierror-abusefilter-nosuchlogid": "$1 kimliğiyle hiçbir kötü kullanım günlük girişi yok.",
+	"apierror-abusefilter-incompatible": "Talep edilen değişiklik, Kötüye Kullanım Filtresi tarafından desteklenmiyor.",
 	"apierror-abusefilter-badsyntax": "Filtre geçersiz sözdizimine sahip."
 }

@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Steenth"
+		]
+	},
+	"spam-blacklist": "#<!-- lad denne linje være nøjagtig som den er --> <pre>\n # Denne liste blokerer matchende eksterne URL'er matching fra at blive tilføjet siden.\n # denne liste berører kun denne wiki; henviser også til den globale sortliste.\n # For dokumentation se https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# syntaksen er som følger:\n #  * alt fra et \"#\" tegn til slutningen af linjen er en kommentar\n #  * hver ikke-tomme linjer anvendes som regulære udtryk for at matcha domænenavne i webadresser\n #</pre> <!-- lad denne linje være nøjagtig som den er -->",
+	"spam-whitelist": "#<!-- lad denne linje være nøjagtig som den er --> <pre>\n# Eksterne URL'er på denne liste bliver ikke blokeret, selvom de ville være blevet det gennem den globale sortliste.\n# For dokumentation se https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaksen er som følger:\n#  * alt fra et \"#\" tegn til slutningen af linjen er en kommentar\n#  * hver ikke-tomme linjer anvendes som regulære udtryk for at matche domænenavne i webadresser\n#</pre> <!-- lad denne linje være nøjagtig som den er -->",
+	"email-blacklist": "#<!-- lad denne linje være nøjagtig som den er --> <pre>\n# E-mailadresser der er på denne liste vil blive blokeret fra at registreres eller fra at sende e-mails\n# Denne liste vedrører kun denne wiki; se også den globale sortliste\n# For dokumentation se https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntaksen er som følger:\n#  * alt fra et \"#\" tegn til slutningen af linjen er en kommentar\n#  * hver ikke-tomme linjer anvendes som regulære udtryk for at matche domænenavne i webadresser\n#</pre> <!-- lad denne linje være nøjagtig som den er -->",
+	"email-whitelist": " #<!-- lad denne linje være nøjagtig som den er --> <pre>\n# E-mailadresser på denne liste bliver ikke blokeret, selvom de ville være blevet det gennem den globale sortliste.\n#\n# Syntaksen er som følger:\n#  * alt fra et \"#\" tegn til slutningen af linjen er en kommentar\n#  * hver ikke-tomme linjer anvendes som regulære udtryk for at matche domænenavne i webadresser\n\n#</pre> <!-- lad denne linje være nøjagtig som den er -->",
+	"spam-blacklisted-email": "Forbudt e-mailadresse",
+	"spam-blacklisted-email-text": "Din e-mailadresse er i øjeblikket blokeret fra at sende e-mails til andre brugere.",
+	"spam-blacklisted-email-signup": "Den angivne e-mailadresse er i øjeblikket forbudt at bruge.",
+	"spam-blacklist-desc": "Antispamværktøjet er baseret på regulære udtryk, der giver mulighed for at blokere URL'er i sider og e-mailadresser for registrerede brugere",
+	"log-name-spamblacklist": "Log over spamblokeringsliste",
+	"log-description-spamblacklist": "Disse hændelser sporer hits på spamblokeringslisten.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} forårsagede et hit på spam-blokeringslisten på $3 ved at forsøge at tilføje $4.",
+	"right-spamblacklistlog": "Vise loggen for spamblokeringslisten",
+	"action-spamblacklistlog": "vise loggen for spamblokeringslisten",
+	"right-sboverride": "Omgå spamblokeringslisten",
+	"action-sboverride": "omgå spam-blokeringslisten"
+}

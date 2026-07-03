@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"codeeditor-desc": "Wax ka beddel leh muujin naxwe oo loogu talagalay bogagga JavaScript iyo CSS iyadoo la adeegsanayo [https://ace.c9.io/ Tifaftiraha Ace]",
+	"codeeditor-next-annotation": "U gudub faallada xigta",
+	"codeeditor-toolbar-toggle": "Daar ama dami tifaftiraha koodka",
+	"codeeditor-save-with-errors": "Dukumeentigu wuxuu ka kooban yahay khaladaad. Ma hubtaa inaad rabto inaad daabacdo?",
+	"codeeditor-invisibleChars-toggle": "Daar ama dami xarfaha aan muuqan",
+	"codeeditor-lineWrapping-toggle": "Daar ama dami duubista khadadka",
+	"codeeditor-searchReplace-toggle": "Daar ama dami daaqadda raadinta iyo beddelka",
+	"codeeditor-gotoline": "U gudub lambarka khadka...",
+	"codeeditor-gotoline-placeholder": "khad[:tiir]",
+	"codeeditor-gotoline-prompt": "Geli lambarka khadka",
+	"codeeditor-indent": "Gelin",
+	"codeeditor-outdent": "Ka saar gelinta",
+	"codeeditor-error-title": "Ku xirnaanshuhu wuu fashilmay",
+	"codeeditor-error-message": "CodeEditor wuxuu u baahan yahay in WikiEditor la soo raro."
+}

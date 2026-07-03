@@ -13,7 +13,7 @@
 	"hcaptcha-createaccount-fail": "Es scheint, als ob du das hCaptcha nicht gelöst hast.",
 	"hcaptcha-create": "Um das Wiki vor automatisierter Seitenerstellung zu schützen, bitten wir dich, das folgende hCaptcha zu lösen:",
 	"hcaptcha-help": "Bitte löse eine hCaptcha-Herausforderung und gib den Antwortwert als captchaWord zurück.",
-	"hcaptcha-privacy-policy": "Diese Site ist durch hCaptcha geschützt und es gelten die [https://www.hcaptcha.com/privacy Datenschutzrichtlinie] und [https://www.hcaptcha.com/terms Nutzungsbedingungen].",
+	"hcaptcha-privacy-policy": "Diese Webseite ist durch hCaptcha geschützt, deren [https://www.hcaptcha.com/privacy Datenschutzrichtlinie] und [https://www.hcaptcha.com/terms Nutzungsbedingungen] gelten.",
 	"hcaptcha-challenge-closed": "Um fortzufahren, musst du das Captcha ausfüllen.",
 	"hcaptcha-challenge-expired": "Das Zeitlimit zur Vervollständigung des Captcha ist abgelaufen. Bitte versuche es erneut.",
 	"hcaptcha-generic-error": "Beim Laden des Formulars ist ein Fehler aufgetreten. Um fortzufahren, musst du die Seite neu laden.",

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tensama0415"
+		]
+	},
+	"apihelp-query+mathwbextracts-example-1": "수학 관련 위키베이스 항목의 요약을 요청합니다.",
+	"apihelp-query+mathwbextracts-summary": "수학 관련 위키베이스 항목의 요약을 HTML 형식으로 반환합니다.",
+	"apihelp-query+mathwbextracts-param-qid": "요청될 위키베이스 항목의 QID입니다.",
+	"apihelp-query+mathwbextracts-param-uselang": "위키베이스 항목에 요청할 언어입니다. 기본값은 영어입니다."
+}

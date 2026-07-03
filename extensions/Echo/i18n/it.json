@@ -221,5 +221,8 @@
 	"notification-header-foreign-alert": "Altri avvisi da {{PLURAL:$5|un altro wiki|altri $5 wiki}}",
 	"notification-header-foreign-notice": "Altre notizie da {{PLURAL:$5|un altro wiki|altri $5 wiki}}",
 	"notification-header-foreign-all": "Altre notifiche da {{PLURAL:$5|un altro wiki|altri $5 wiki}}",
-	"action-echo-create": "inviare notifiche ad altri"
+	"grant-echo-read-notifications": "Legge le mie notifiche",
+	"action-echo-create": "inviare notifiche ad altri",
+	"right-echo-read-notifications": "Legge le mie notifiche",
+	"action-echo-read-notifications": "leggere le tue notifiche"
 }

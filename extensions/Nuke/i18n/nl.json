@@ -19,7 +19,7 @@
 	"nuke-tools": "Dit hulpmiddel maakt het mogelijk pagina's die recentelijk zijn aangemaakt door een gebruiker of IP-adres massaal te verwijderen.\nVoer de gebruikersnaam of het IP-adres in voor een lijst van te verwijderen pagina's of laat leeg voor alle gebruikers.",
 	"nuke-tools-tempaccount": "Hiermee kunt u pagina’s die onlangs zijn toegevoegd door een bepaalde gebruiker of tijdelijk account massaal verwijderen. Voer een gebruikersnaam of IP-adres in om een lijst met te verwijderen pagina’s op te vragen, of laat het leeg voor alle gebruikers. Als u een IP-adres invoert, worden alle pagina’s weergegeven die zijn gemaakt door dat IP-adres of door tijdelijke accounts die vanaf dat IP-adres zijn gebruikt.",
 	"nuke-tools-prompt": "Ga naar de lijst met pagina’s, selecteer de te verwijderen pagina’s en klik op ‘{{int:nuke-submit-continue}}’. Doorverwijzingen worden cursief weergegeven.",
-	"nuke-tools-prompt-restricted": "U kunt met deze tool wel de lijst met pagina’s bekijken, maar u kunt geen pagina’s verwijderen.",
+	"nuke-tools-prompt-restricted": "U kunt met dit hulpmiddel wel de lijst met pagina’s bekijken, maar u kunt geen pagina’s verwijderen.",
 	"nuke-tools-notice-error": "Er is een fout opgetreden bij het bepalen van uw recht om massaal pagina’s te verwijderen. Daarom wordt het u nu niet toegestaan.",
 	"nuke-tools-notice-noperm": "U hebt geen toestemming om massaal pagina’s te verwijderen.",
 	"nuke-tools-notice-blocked": "Een actieve blokkade belet u om massaal pagina’s te verwijderen.",

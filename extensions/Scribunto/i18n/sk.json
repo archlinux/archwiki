@@ -35,7 +35,7 @@
 	"scribunto-common-timeout": "Čas vyhradený na spustenie skriptov vypršal.",
 	"scribunto-common-oom": "Množstvo pamäte povolené pre spustenie skriptov bolo prekročené.",
 	"scribunto-common-backtrace": "Zásobník volania:",
-	"scribunto-common-no-details": "Nie sú k dispozícii žiadne ďalšie podrobnosti.",
+	"scribunto-common-no-details": "Nie sú k dispozícii žiadne podrobnosti o umiestnení kódu.",
 	"scribunto-lua-in-function": "vo funkcii „$1“",
 	"scribunto-lua-in-main": "v hlavnom bloku",
 	"scribunto-lua-in-function-at": "vo funkcii na $1:$2",

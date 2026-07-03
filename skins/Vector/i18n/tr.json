@@ -18,7 +18,8 @@
 			"Stultiwikia",
 			"ToprakM",
 			"Vito Genovese",
-			"Eleman"
+			"Eleman",
+			"HakanIST"
 		]
 	},
 	"skinname-vector": "Eski Vektör (2010)",
@@ -27,6 +28,8 @@
 	"vector-skin-desc": "2 Vector görünümleri sağlar:\n* 2011 - MonoBook'un yeni görünümü ve birçok kullanılabilirlik geliştirmesiyle Modern versiyonu.\n* 2022 - Vector, WMF [https://www.mediawiki.org/wiki/Desktop_Improvements Masaüstü İyileştirmeleri] projesinin bir parçası olarak oluşturuldu.",
 	"prefs-vector-enable-vector-1-label": "Eski Vector'u Kullan",
 	"prefs-vector-enable-vector-1-help": "Önümüzdeki birkaç yıl içinde Vector görünümünü kademeli olarak güncelleyeceğiz. Eski Vector'un eski sürümünü görüntülemenize izin verir (Aralık 2019 itibariyle). Güncellemeler hakkında daha fazla bilgi için [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements proje sayfamıza] gidin.",
+	"vector.css": "/* All CSS here will be loaded for users of the Vector skin */",
+	"vector.js": "/* All JavaScript here will be loaded for users of the Vector skin */",
 	"vector-action-toggle-sidebar": "Kenar çubuğunu aç/kapat",
 	"vector-languages": "Diller",
 	"vector-language-button-aria-label": "Başka bir dildeki sayfaya gidin. {{PLURAL:$1|$1 dilde}} mevcut",

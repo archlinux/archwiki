@@ -6,14 +6,16 @@
 		]
 	},
 	"mobile-frontend-editor-edit": "𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽",
+	"mobile-frontend-editor-redlink-create": "𐌻𐌰𐌿𐍆 𐌲𐌰𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽",
+	"mobile-frontend-editor-redlink-explain": "𐍃𐌰 𐌻𐌰𐌿𐍆𐍃 𐌽𐌹 𐌽𐌰𐌿𐌷 𐌲𐌰𐍃𐌺𐌰𐍀𐌰𐌽𐍃 𐌹𐍃𐍄.",
 	"mobile-frontend-history": "𐍃𐍀𐌹𐌻𐌻 𐌹𐌽𐌼𐌰𐌹𐌳𐌴𐌹𐌽𐍉 𐌸𐌹𐍃 𐌻𐌰𐌿𐌱𐌹𐍃 𐍃𐌰𐌹𐍈𐌰𐌽.",
 	"mobile-frontend-home-button": "𐌲𐌰𐍂𐌳𐍃",
 	"mobile-frontend-language-article-heading": "𐍂𐌰𐌶𐌳𐌰",
 	"mobile-frontend-main-menu-button-tooltip": "𐌿𐍃𐌻𐌿𐌺 𐌷𐌰𐌿𐌱𐌹𐌳𐌰𐍅𐌰𐌻𐌴𐌹𐌽𐌹𐍅𐌹𐌺𐍉𐌽",
 	"mobile-frontend-main-menu-login": "𐌰𐍄𐌲𐌰𐌲𐌲𐌰𐌽",
 	"mobile-frontend-main-menu-nearby": "𐌽𐌴𐍈𐌰",
-	"mobile-frontend-main-menu-settings": "𐌻𐌰𐌲𐌴𐌹𐌽𐍉𐍃",
-	"mobile-frontend-main-menu-watchlist": "𐍅𐌹𐍄𐌰𐍅𐌹𐌺𐍉",
+	"mobile-frontend-main-menu-settings": "𐍃𐌰𐍄𐌴𐌹𐌽𐍉𐍃",
+	"mobile-frontend-main-menu-watchlist": "𐍅𐌹𐍄𐌰𐌻𐌴𐌹𐍃𐍄𐌰",
 	"mobile-frontend-placeholder": "{{SITENAME}} 𐍃𐍉𐌺𐌾𐌰𐌽",
 	"mobile-frontend-random-button": "𐌸𐌿𐍃 𐌿𐌽𐌺𐌿𐌽𐌸",
 	"minerva-page-actions-overflow": "𐌼𐌰𐌹𐍃"

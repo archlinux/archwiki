@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"LittleGun"
+		]
+	},
+	"editcheck-dialog-action-no": "Nej",
+	"editcheck-dialog-action-yes": "Ja",
+	"editcheck-dialog-action-decline": "Avböj",
+	"editcheck-dialog-action-revise": "Ändra",
+	"editcheck-dialog-action-recheck": "Kontrollera",
+	"editcheck-dialog-action-back": "Tillbaka",
+	"editcheck-dialog-action-submit": "Skicka in",
+	"editcheck-dialog-addref-description": "Hjälp läsarna förstå var informationen kommer ifrån genom att lägga till källa.",
+	"editcheck-dialog-addref-reject-question": "Varför lägger du inte till en källa?",
+	"editcheck-dialog-addref-reject-irrelevant": "Jag anser att källor inte tillför något till den ändring jag gör,",
+	"editcheck-dialog-addref-reject-common-knowledge": "Den information jag lägger till är allmänt känd.",
+	"editcheck-dialog-addref-reject-uncertain": "Jag är osäker på vilken källa jag ska lägga till",
+	"editcheck-dialog-addref-reject-other": "Annat",
+	"editcheck-dialog-addref-success-notify": "Tack för att du lade till en källa!",
+	"editcheck-dialog-addref-title": "Lägg till en källa",
+	"editcheck-dialog-title": "Innan publicering",
+	"editcheck-copyvio-title": "Inkopierat",
+	"editcheck-copyvio-prompt": "Har du skrivit denna text?",
+	"editcheck-copyvio-action-keep": "Ja, behåll den",
+	"editcheck-copyvio-action-remove": "Nej, ta bort den"
+}

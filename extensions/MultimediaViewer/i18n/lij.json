@@ -17,7 +17,6 @@
 	"multimediaviewer-thumbnail-error": "Spiaxenti, o file o no poeu vese vixoalizou",
 	"multimediaviewer-thumbnail-error-description": "Pâ che ghe segge 'n problema tecnico. S'o persciste ti poeu $1. Errô: $2",
 	"multimediaviewer-thumbnail-error-retry": "proeuva torna",
-	"multimediaviewer-thumbnail-error-report": "segnalla o problema",
 	"multimediaviewer-license-cc-pd": "Pubbrico Dominnio",
 	"multimediaviewer-license-pd": "Pubbrico Dominnio",
 	"multimediaviewer-license-default": "Amia a lisensia",
@@ -106,6 +105,5 @@
 	"multimediaviewer-enable-confirmation-text": "A proscima votta che ti clicchi 'na miniatua in $1, saiâ doeuviou o Vizô Murtimediâ.",
 	"multimediaviewer-enable-alert": "Oua o Vizô Murtimediâ o l'è dizabilitou",
 	"multimediaviewer-disable-info-title": "T'hæ dizabilitou o Vizô Murtimediâ",
-	"multimediaviewer-disable-info": "Ti poeu ancon amiâ i scingoli file co-o Vizô Murtimediâ.",
-	"multimediaviewer-errorreport-privacywarning": "I detalli de l'aro son aligæ a-o raporto, ch'o saiâ vixibbile pubricamente. Se questo no te conven, ti poeu modificâ o raporto chì de sotta e levâghe tutti i dæti che no ti voeu condividde."
+	"multimediaviewer-disable-info": "Ti poeu ancon amiâ i scingoli file co-o Vizô Murtimediâ."
 }

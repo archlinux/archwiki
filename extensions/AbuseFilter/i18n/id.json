@@ -34,7 +34,8 @@
 			"Syman51",
 			"Veracious",
 			"Zulf",
-			"Penyuwangi"
+			"Penyuwangi",
+			"Bayahiu"
 		]
 	},
 	"abusefilter-desc": "Menerapkan heuristik otomatis ke suntingan",
@@ -575,7 +576,7 @@
 	"abusefilter-examine-incompatible": "Perubahan yang Anda minta tidak ditunjang oleh Filter Penyalahgunaan",
 	"abusefilter-examine-noresults": "Tidak ada hasil yang ditemukan untuk pencarian dengan parameter yang anda sediakan.",
 	"abusefilter-topnav": "'''Navigasi Filter Penyalahgunaan '''",
-	"abusefilter-topnav-home": "Utama",
+	"abusefilter-topnav-home": "Beranda",
 	"abusefilter-topnav-recentchanges": "Perubahan filter terbaru",
 	"abusefilter-topnav-test": "Tumpak uji coba",
 	"abusefilter-topnav-examine": "Memeriksa suntingan terdahulu",

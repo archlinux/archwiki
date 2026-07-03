@@ -57,6 +57,7 @@
 	"discussiontools-ledesection-title": "O ovoj stranici za razgovor",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekunda|sekunde|sekundi}}",
 	"discussiontools-newtopic-missing-title": "Molimo Vas dodajte naslov teme. Kliknete li na »{{int:discussiontools-replywidget-newtopic}}«, tema će biti dodana bez naslova.{{GENDER:|}}",
+	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|Niste}} naveli naslov {{GENDER:|Vašoj}} temi za raspravu. Jeste li sigurni da želite dodati ovu temu bez naslova?",
 	"discussiontools-newtopic-placeholder-title": "Tema",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Pretplati se",
 	"discussiontools-newtopicssubscription-button-subscribe-tooltip": "Pretplatite se kako biste dobivali obavijesti o novim temama započetim na ovoj stranici.",

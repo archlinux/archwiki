@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"Neronno",
+			"VanModers",
+			"WikiFayo95"
+		]
+	},
+	"vector-languages": "Tóólen",
+	"vector-language-button-label": "{{PLURAL:$1|$1 tóól|$1 tóólen}}",
+	"vector-no-language-button-label": "Tóólen taufaugen",
+	"vector-action-addsection": "Ofsnid taufaugen",
+	"vector-action-delete": "Leskern",
+	"vector-action-move": "Ferskuuven",
+	"vector-action-protect": "Skütsen",
+	"vector-view-create": "Erstellen",
+	"vector-view-edit": "Beaarbaiden",
+	"vector-view-history": "Wersjoonshistoorje",
+	"vector-view-view": "Leesen",
+	"vector-more-actions": "Meer",
+	"vector-appearance-label": "Uutkiik",
+	"vector-feature-limited-width-name": "Bräed't",
+	"vector-feature-limited-width-0-label": "Bräid",
+	"vector-feature-limited-width-1-label": "Standard",
+	"vector-feature-custom-font-size-name": "Tekst",
+	"vector-feature-custom-font-size-0-label": "Lütjet",
+	"vector-feature-custom-font-size-1-label": "Standard",
+	"vector-feature-custom-font-size-2-label": "Groot",
+	"skin-theme-name": "Klööer",
+	"skin-theme-day-label": "Lecht",
+	"skin-theme-night-label": "Dunker",
+	"skin-theme-os-label": "Aautomóótsk",
+	"skin-theme-exclusion-notice": "Disser siid is altiid in d' läecht modus.",
+	"vector-toc-label": "Inholdsfertäikennis",
+	"vector-toc-beginning": "Anfang",
+	"vector-anon-user-menu-pages": "Siiden föör ofmullen benütsers",
+	"vector-main-menu-label": "Hoovdmenü",
+	"vector-feature-custom-font-size-exclusion-notice": "Disser siid bruukt altiid 'n lütje skriftgröet't",
+	"vector-page-tools-label": "Rêev",
+	"vector-page-tools-general-label": "Almäin",
+	"vector-page-tools-actions-label": "Aksjoonen",
+	"vector-unpin-element-label": "ferbaargen"
+}

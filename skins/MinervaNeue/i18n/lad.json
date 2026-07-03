@@ -3,16 +3,18 @@
 		"authors": [
 			"Menachem.Moreira",
 			"Universal Life",
-			"WikiiiTranslator"
+			"WikiiiTranslator",
+			"Maor X"
 		]
 	},
 	"mobile-frontend-editor-edit": "Trocar",
-	"mobile-frontend-history": "Ver todos los trocamientos de esta oja.",
-	"mobile-frontend-home-button": "Precipio",
+	"mobile-frontend-history": "Ver todos los trokamientos de esta oja.",
+	"mobile-frontend-home-button": "Prensipio",
 	"mobile-frontend-language-article-heading": "Lingua",
 	"mobile-frontend-main-menu-login": "Entrar",
-	"mobile-frontend-main-menu-nearby": "Aquí cerca",
+	"mobile-frontend-main-menu-nearby": "Aki serka",
 	"mobile-frontend-main-menu-settings": "Ayares",
 	"mobile-frontend-placeholder": "Bushka en {{SITENAME}}",
-	"mobile-frontend-random-button": "Por azardo"
+	"mobile-frontend-random-button": "Por azardo",
+	"minerva-page-actions-overflow": "Mas"
 }

@@ -6,7 +6,8 @@
 			"Juanchuy0",
 			"Patoasado97",
 			"Shadow.666",
-			"VicenteCancheM"
+			"VicenteCancheM",
+			"26agcp"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} yaan u k'amik jump'éel notificación ken yaan máax ku ts'íibtik jump'éel túumben ts'íibiltuukul te'el tsikbala'. Je'el u páajtal a wutskíinsik u configuración notificaciones ti' preferencias.",
@@ -27,7 +28,7 @@
 	"discussiontools-replywidget-placeholder-newtopic": "Bixil",
 	"discussiontools-replywidget-placeholder-reply": "Núuk ti' {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Yáax e'esajil",
-	"discussiontools-replywidget-reply": "{{GENER:|Núukik}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Núukik}}",
 	"discussiontools-replywidget-summary": "Kóomts'íib",
 	"discussiontools-replywidget-watchthis": "Ts'áa le linki abas kaambal ti' a [[Special:Watchlist|watchlist]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|máak|wíiniko'ob}} ti' tsikbal",
@@ -38,7 +39,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "Lu'us a ts'íibtmilabáaj",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Lu'us a ts'íibtmilabáaj",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tech}} yaan u k'amik notificaciones yóok'ol túumben comentarios ti' le chun tuukulo'.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|You}} ts'o'ok u suscribirkuba.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "¡Ts'o'ok a suscribirkabáaj!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Tech}} ma' ken a k'amik túumben t'aano'ob yóok'ol le chun tuukulo'.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|You}} ts'o'ok u p'atik u ts'íibta'al."
 }

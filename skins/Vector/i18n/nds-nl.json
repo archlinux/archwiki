@@ -6,6 +6,7 @@
 	},
 	"vector-skin-desc": "Moderne versy van MonoBook mid een fris uterlik en verbeateringen up et gebeed van gebruuksvrendelikheid",
 	"vector-languages": "Språken",
+	"vector-language-button-label": "{{PLURAL:$1|$1 språke|$1 språken}}",
 	"vector-no-language-button-label": "Språken tovogen",
 	"vector-action-addsection": "Ny underwarp",
 	"vector-action-delete": "Vordsmyten",

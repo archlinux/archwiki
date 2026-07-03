@@ -21,7 +21,8 @@
 			"Prame Tan",
 			"RidJasper",
 			"Trisorn Triboon",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Ouclie"
 		]
 	},
 	"abusefilter-desc": "วิเคราะห์พฤติกรรมการแก้ไขอัตโนมัติ",
@@ -249,7 +250,7 @@
 	"abusefilter-edit-throttle-count": "จำนวนการกระทำที่อนุญาต:",
 	"abusefilter-edit-throttle-period": "ช่วงเวลา (ในหน่วยวินาที):",
 	"abusefilter-edit-throttle-groups": "จัดกลุ่มการจำกัดผลลัพธ์ตาม:",
-	"abusefilter-edit-throttle-groups-help": "ดู $1",
+	"abusefilter-edit-throttle-groups-help": "ดู$1",
 	"abusefilter-edit-throttle-groups-help-text": "เอกสารทาง mediawiki.org",
 	"abusefilter-edit-throttle-hidden-placeholder": "คั่นด้วยจุลภาคเพื่อเชื่อมด้วย AND หรือด้วยการแบ่งบรรทัดเพื่อเชื่อมด้วย OR",
 	"abusefilter-edit-throttle-placeholder": "คั่นด้วยจุลภาคเพื่อเชื่อมด้วย AND และแทรกเดี่ยว ๆ เพื่อเชื่อมด้วย OR",

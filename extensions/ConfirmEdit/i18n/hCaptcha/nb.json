@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"EdoAug",
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"Dreamy Jazz"
 		]
 	},
 	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha]-modul for Confirm Edit",
@@ -13,7 +14,7 @@
 	"hcaptcha-createaccount-fail": "Det ser ut som du ikke har løst hCaptcha-en.",
 	"hcaptcha-create": "Vi ber deg løse følgende hCaptcha for å beskytte wikien mot automatisk sideopprettelse:",
 	"hcaptcha-help": "Løs en hCaptcha-utfordring og returner responsverdien som et captchaWord.",
-	"hcaptcha-privacy-policy": "Dette nettstedet beskyttes av hCaptcha, og deres [https://www.hcaptcha.com/privacy personvernspolitikk] og [htps://www.hcaptcha.com/terms tjenestevilkår] gjelder.",
+	"hcaptcha-privacy-policy": "Dette nettstedet beskyttes av hCaptcha, og deres [https://www.hcaptcha.com/privacy personvernspolitikk] og [https://www.hcaptcha.com/terms tjenestevilkår] gjelder.",
 	"hcaptcha-challenge-closed": "Du må fullføre CAPTCHA-en for å fortsette.",
 	"hcaptcha-challenge-expired": "Tidsfristen for å fullføre CAPTCHA-en har utløpt. Prøv igjen.",
 	"hcaptcha-generic-error": "En feil oppsto under lasting av skjemaet. Du må laste siden på nytt for å fortsette.",

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"apihelp-echomarkread-example-2": "Marka tur notifikashon komo lesá",
+	"apihelp-echomute-summary": "Dèmpel òf no dèmpel notifikashon di sierto usadó òf páginanan.",
+	"apihelp-query+notifications-example-3": "Listá notifikashon di email"
+}

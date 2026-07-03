@@ -22,7 +22,7 @@
 	"discussiontools-error-comment-is-transcluded": "Link \"{{int:discussiontools-replylink}}\" ne može se {{GENDER:|koristiti}} za odgovor na ovaj komentar. Da biste odgovorili, koristite uređivač cijele stranice klikom na \"$1\".",
 	"discussiontools-error-comment-is-transcluded-title": "Link \"{{int:discussiontools-replylink}}\" ne može biti uporabljen za odgovor na ovaj komentar jer je učitan s druge stranice. Da biste odgovorili, {{GENDER:|idite}} na: [[$1]].",
 	"discussiontools-error-comment-not-saved": "{{GENDER:|Vaš}} komentar nije mogao biti objavljen na najnovijoj verziji stranice. Da biste vidjeli najnovije izmjene, prekopirajte nacrt komentara, a zatim ponovno učitajte stranicu.",
-	"discussiontools-error-lint": "Na komentare na ovoj stranici ne može se odgovoriti zbog greške u vikitekstu. Više o grešci možete {{GENDER:|saznati}} [$1 u dokumentaciji], traženjem pomoći [$2 ovdje] ili je možete popraviti [$3 otvaranjem uređivača cijele stranice].",
+	"discussiontools-error-lint": "Na komentare na ovoj stranici ne može se odgovoriti zbog greške u wikitekstu. Više o grešci možete {{GENDER:|saznati}} [$1 u dokumentaciji], traženjem pomoći [$2 ovdje] ili je možete popraviti [$3 otvaranjem uređivača cijele stranice].",
 	"discussiontools-error-noswitchtove": "Prebacivanje u vizualni način je onemogućeno jer je u {{GENDER:|napisanom}} komentaru pronađeno <b>$1</b>.\n[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations Saznajte više].",
 	"discussiontools-error-noswitchtove-extension": "proširenje ili referenca sintakse",
 	"discussiontools-error-noswitchtove-table": "sintaksa tablice",

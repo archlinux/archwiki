@@ -3,11 +3,14 @@
 		"authors": [
 			"Helix84",
 			"Luky001",
-			"TomášPolonec"
+			"TomášPolonec",
+			"Teslaton"
 		]
 	},
 	"syntaxhighlight-desc": "Poskytuje zvýrazňovanie syntaxe <code>&lt;syntaxhighlight&gt;</code> pomocou [http://pygments.org/ Pygments – zvýrazňovača syntaxe v Pythone]",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(žiadny)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Zobraziť čísla riadkov",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Počítať od čísla"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Počítať od čísla",
+	"syntaxhighlight-button-copy": "Skopírovať",
+	"syntaxhighlight-button-copied": "Skopírované!"
 }

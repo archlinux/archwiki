@@ -20,7 +20,6 @@
 	"multimediaviewer-thumbnail-error": "Sajnáljuk, a fájl nem jeleníthető meg",
 	"multimediaviewer-thumbnail-error-description": "Úgy tűnik, technikai hiba lépett fel. $1, ha nem szűnik meg. Hibaüzenet: $2",
 	"multimediaviewer-thumbnail-error-retry": "Újrapróbálkozhatsz",
-	"multimediaviewer-thumbnail-error-report": "jelentheted a hibát",
 	"multimediaviewer-license-cc-pd": "Közkincs",
 	"multimediaviewer-license-pd": "Közkincs",
 	"multimediaviewer-license-default": "Licenc megtekintése",

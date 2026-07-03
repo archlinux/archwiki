@@ -106,6 +106,26 @@ class BasePageBundle implements JsonCodecable {
 		);
 	}
 
+	/**
+	 * @deprecated
+	 * // todo remove this method when the dependent code has been adjusted to use hasContent
+	 */
+	public function isEmpty(): bool {
+		return !$this->hasContent();
+	}
+
+	/**
+	 * Returns true if the BasePageBundle has any content that's worth serializing.
+	 * A BasePageBundle created without any constructor parameters does not have content.
+	 */
+	public function hasContent(): bool {
+		return $this->parsoid !== null ||
+			$this->mw !== null ||
+			$this->version !== null ||
+			$this->headers !== null ||
+			$this->contentmodel !== null;
+	}
+
 	// JsonCodecable -------------
 
 	/** @inheritDoc */
@@ -126,6 +146,7 @@ class BasePageBundle implements JsonCodecable {
 			$json['parsoid']['counter'] = $json['counters']['nodedata'];
 		}
 		return new BasePageBundle(
+			// @phan-suppress-next-line PhanTypeMismatchArgument
 			parsoid: $json['parsoid'] ?? null,
 			mw: $json['mw'] ?? null,
 			version: $json['version'] ?? null,

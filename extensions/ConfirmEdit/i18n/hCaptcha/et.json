@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pikne"
+		]
+	},
+	"hcaptcha-desc": "ConfirmEditi [https://www.hcaptcha.com/ hCaptcha] moodul",
+	"hcaptcha-privacy-policy": "Seda saiti kaitseb hCaptcha ning kohalduvad selle [https://www.hcaptcha.com/privacy andmekaitsepõhimõtted] ja [https://www.hcaptcha.com/terms teenustingimused].",
+	"hcaptcha-noscript": "JavaScript on jätkamiseks nõutav. Lülita brauseri sätetes JavaScript sisse ja laadi lehekülg uuesti."
+}

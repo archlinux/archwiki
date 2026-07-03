@@ -9,7 +9,8 @@
 			"Koroğlu",
 			"Macofe",
 			"Matma Rex",
-			"Mousa"
+			"Mousa",
+			"شاه زمان پټان"
 		]
 	},
 	"abusefilter-desc": "دوزلیش‌لره ائوریستیک فیلترلرین تطبیق اولونماسینا ایمکان وئریر.",
@@ -299,7 +300,7 @@
 	"abusefilter-exception-noparams": "\"$ 2\" فونکسیاسینا $ 1 کاراکتئرینده هئچ پارامئتر وئریلمه‌دی.",
 	"abusefilter-exception-dividebyzero": "$ 1 کاراکتئرینده $ 2 ایله کورالدیشی صیفیرا بؤلمه جهدی.",
 	"abusefilter-exception-unrecognisedvar": "$ 1 کاراکتئرینده تانینمایان دییشن $ 2",
-	"abusefilter-exception-notenoughargs": "$ 1 کاراکتئرینده چاغیریلان $ 2 فونکسیاسی اوچون کافی دییشن یوخ.\n$ 3 {{پلورال: $ 3 | دییشن | دییشن}} گؤزلنیلیردی، $ 4 آلیندی",
+	"abusefilter-exception-notenoughargs": "$ 1 کاراکتئرینده چاغیریلان $ 2 فونکسیاسی اوچون کافی دییشن یوخ.\n$ 3 {{PLURAL: $ 3 | دییشن | دییشن}} گؤزلنیلیردی، $ 4 آلیندی",
 	"abusefilter-exception-regexfailure": "\"$ 3\" نیزام‌لی ایفاده‌سی‌نین $ 1 کاراکتئرینده سهو: \"$ 2\"",
 	"abusefilter-exception-overridebuiltin": "$ 1 کاراکتئرینده \"$ 2\" مسکون دئغیشکئنی‌نین کورالدیشی اعتبارسیز قیلینماسی.",
 	"abusefilter-exception-outofbounds": "$1 کاراکتئرین‌دکی مؤوجود اولمایان سیاهی ائلئمئنتی $2 (سیاهی اؤلچوسو = $3) ایستنیر.",

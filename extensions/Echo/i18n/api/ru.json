@@ -10,13 +10,17 @@
 			"Okras",
 			"Putnik",
 			"Sunpriat",
-			"Daisy40"
+			"Daisy40",
+			"Vlad5250"
 		]
 	},
 	"apihelp-echocreateevent-summary": "Вручную отправить уведомление участнику",
+	"apihelp-echocreateevent-example": "Отправить уведомление",
+	"apihelp-echocreateevent-param-user": "Участник, которому следует отправить уведомление",
 	"apihelp-echocreateevent-param-header": "Содержимое заголовка уведомления",
 	"apihelp-echocreateevent-param-content": "Содержание основного текста уведомления",
 	"apihelp-echocreateevent-param-page": "Страница, на которую ведёт ссылка в уведомлении",
+	"apihelp-echocreateevent-param-section": "Раздел, в который будет отправлено уведомление",
 	"apihelp-echomarkread-summary": "Отметить уведомления как прочитанные для текущего пользователя.",
 	"apihelp-echomarkread-param-list": "Список ID уведомлений для отметки прочитанными.",
 	"apihelp-echomarkread-param-unreadlist": "Список ID уведомлений для отметки непрочитанными.",

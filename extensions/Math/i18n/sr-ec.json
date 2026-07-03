@@ -66,6 +66,7 @@
 	"math-visualeditor-symbol-group-math-typefaces": "Облици фонта",
 	"math-visualeditor-symbol-group-math-unsorted": "Несврстано",
 	"math_failure": "Рашчлањивање није успело",
+	"math_other_error": "Друга грешка: $1",
 	"math_syntax_error": "грешка у синтакси",
 	"math-test-fail": "Тест ''$1'' није успео.",
 	"math-test-success": "Тест ''$1'' успешан.",
@@ -93,5 +94,6 @@
 	"math-wikibase-special-form-header": "Име формуле:",
 	"math-wikibase-special-form-placeholder": "Назив формуле",
 	"math-wikibase-special-form-button": "Затражи информацију",
-	"math-wikibase-special-error-header": "Грешка"
+	"math-wikibase-special-error-header": "Грешка",
+	"math-wikibase-special-error-invalid-argument": "Навели сте ID ставке на Викибази који не постоји."
 }

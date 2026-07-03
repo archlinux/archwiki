@@ -43,7 +43,6 @@
 	"multimediaviewer-thumbnail-error": "对不起，该文件无法显示",
 	"multimediaviewer-thumbnail-error-description": "似乎出现了技术问题。如果问题仍然存在，您可以$1。错误：$2",
 	"multimediaviewer-thumbnail-error-retry": "重试",
-	"multimediaviewer-thumbnail-error-report": "报告问题",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
 	"multimediaviewer-license-cc-by-2.0": "CC BY 2.0",
@@ -159,6 +158,5 @@
 	"multimediaviewer-enable-alert": "媒体查看器已停用",
 	"multimediaviewer-disable-info-title": "您已停用媒体查看器",
 	"multimediaviewer-disable-info": "您仍然可以使用媒体查看器查看单个文件。",
-	"multimediaviewer-errorreport-privacywarning": "错误详情附在报告中，会公开展示。如果您对此不满意，可以编辑下面的报告，删除所有您不想分享的数据。",
 	"multimediaviewer-loading": "正在加载媒体查看器。"
 }

@@ -13,7 +13,8 @@
 			"Rzuwig",
 			"WTM",
 			"WaldiSt",
-			"Woytecr"
+			"Woytecr",
+			"G3raltJJ"
 		]
 	},
 	"oathauth-desc": "Dodaje wsparcie uwierzytelniania za pomocą haseł jednorazowych opartych o HMAC",
@@ -157,7 +158,7 @@
 	"oathauth-delete-confirm-box": "Wpisz „{{int:oathauth-authenticator-delete-text}}”, aby kontynuować",
 	"oathauth-delete-warning-final": "Usunięcie tej metody spowoduje całkowite wyłączenie uwierzytelniania dwuskładnikowego.",
 	"oathauth-delete-wrong-confirm-message": "Wprowadzony tekst nie odpowiada oczekiwanemu. Wpisz „{{int:oathauth-authenticator-delete-text}}”, aby kontynuować.",
-	"oathauth-delete-success": "Usunięto <strong>$1</strong>.",
+	"oathauth-delete-success": "Usunięto!",
 	"oathauth-created-at": "Dodano $1",
-	"oathauth-enable-success": "Dodano <strong>$1</strong>."
+	"oathauth-enable-success": "Dodano!"
 }

@@ -26,7 +26,6 @@
 	"multimediaviewer-thumbnail-error": "Atsiprašome, negalima parodyti failo",
 	"multimediaviewer-thumbnail-error-description": "Atrodo, kad iškilo techninė problema. Galite $1, jei tai tęsiasi. Klaida: $2",
 	"multimediaviewer-thumbnail-error-retry": "bandyti dar kartą",
-	"multimediaviewer-thumbnail-error-report": "pranešti apie problemą",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
@@ -128,6 +127,5 @@
 	"multimediaviewer-enable-confirmation-text": "Kitąsyk, kai paspausite ant miniatiūros $1 svetainėje, bus naudojamas nuotraukų peržvalgos įrankis.",
 	"multimediaviewer-enable-alert": "Nuotraukų peržvalgos įrankis dabar išjungtas",
 	"multimediaviewer-disable-info-title": "Jūs išjungėte nuotraukų peržiūros įrankį",
-	"multimediaviewer-disable-info": "Jūs vis dar galite peržiūrėti atskirus vaizdus su nuotraukų peržvalgos įrankiu",
-	"multimediaviewer-errorreport-privacywarning": "Išsami informacija apie klaidą pridedama prie ataskaitos, kurią bus galima peržiūrėti viešai. Jei jums tai nepatinka, galite redaguoti toliau pateiktą ataskaitą ir pašalinti visus duomenis, kurių nenorite bendrinti."
+	"multimediaviewer-disable-info": "Jūs vis dar galite peržiūrėti atskirus vaizdus su nuotraukų peržvalgos įrankiu"
 }

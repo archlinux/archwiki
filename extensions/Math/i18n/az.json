@@ -6,7 +6,8 @@
 			"Nemoralis",
 			"PrinceValiant",
 			"Serkanland",
-			"Wertuose"
+			"Wertuose",
+			"Əkrəm"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> teqləri arasındakı riyazi formulları renderləyir",
@@ -20,7 +21,7 @@
 	"math-visualeditor-mwlatexinspector-display": "Görünüş",
 	"math-visualeditor-mwlatexinspector-display-block": "Blok",
 	"math-visualeditor-mwlatexinspector-display-default": "Defolt",
-	"math-visualeditor-mwlatexinspector-display-inline": "Xətdə",
+	"math-visualeditor-mwlatexinspector-display-inline": "Sətirdaxili",
 	"math-visualeditor-mwlatexinspector-id": "Keçid nömrəsi (məcburi deyil)",
 	"math-visualeditor-mwlatexinspector-qid": "Wikibase ID (Q prefiksi ilə)",
 	"math-visualeditor-mwmathdialog-title": "Riyazi formul",

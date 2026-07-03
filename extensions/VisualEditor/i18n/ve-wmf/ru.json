@@ -24,11 +24,14 @@
 			"Александр Сигачёв",
 			"Умар",
 			"아라",
-			"Yurina Tatiana"
+			"Yurina Tatiana",
+			"Mitte27",
+			"Shabe"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck считает, что на страницу было добавлено новое содержимое",
 	"tag-editcheck-newreference-description": "На страницу добавлена ссылка",
+	"tag-editcheck-tone-shown-description": "EditCheck считает, что, возможно, следовало скорректировать тон некоторых фрагментов текста, и был показан интерфейс пользователя",
 	"tag-visualeditor": "через&nbsp;визуальный редактор",
 	"tag-visualeditor-description": "Правка, сделанная через [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]]",
 	"tag-visualeditor-needcheck": "через&nbsp;визуальный редактор: проверить",

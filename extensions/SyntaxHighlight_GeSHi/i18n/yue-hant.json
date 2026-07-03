@@ -6,11 +6,21 @@
 		]
 	},
 	"syntaxhighlight-desc": "用[http://pygments.org/ Pygments]以<code>&lt;syntaxhighlight&gt;</code>提供醒目提示",
+	"syntaxhighlight-error-category": "語法標色出咗錯嘅版",
+	"syntaxhighlight-error-category-desc": "幫呢個版入面嘅程式碼標色嗰陣出咗錯。",
+	"syntaxhighlight-enclose-category": "語法標色出錯嘅版",
+	"syntaxhighlight-enclose-category-desc": "呢版嘅語法標色用咗過時嘅enclose語法。",
+	"syntaxhighlight-source-category": "用咗過時source標籤嘅版",
+	"syntaxhighlight-source-category-desc": "呢版嘅語法標色用咗過時嘅source標籤。",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "程式碼",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "話",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "（無）",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "顯示行數",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "起始行數",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "程式碼區塊",
-	"syntaxhighlight-error-unknown-language": "不明語言「$1」"
+	"syntaxhighlight-error-pygments-invocation-failure": "啟動唔到Pygments",
+	"syntaxhighlight-error-unknown-language": "不明語言「$1」",
+	"syntaxhighlight-error-exceeds-size-limit": "程式碼嘅大細（$1 {{PLURAL:$1|位元組}}）多過上限規定嘅 $2 {{PLURAL:$2|位元組}}",
+	"syntaxhighlight-button-copy": "複製",
+	"syntaxhighlight-button-copied": "複製咗！"
 }

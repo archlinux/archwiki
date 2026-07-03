@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Anakmalaysia",
-			"Aviator"
+			"Aviator",
+			"Tofeiku"
 		]
 	},
 	"nuke": "Hapus pukal",
@@ -11,7 +12,7 @@
 	"nuke-defaultreason": "Menghapuskan laman-laman yang ditambah oleh [[Special:Contributions/$1|{{GENDER:$1|$1}}]] secara pukal",
 	"nuke-multiplepeople": "Penghapusan laman yang baru ditambahkan secara pukal",
 	"nuke-tools": "Alat ini membolehkan penghapusan secara besar-besaran laman-laman yang dibuka oleh pengguna atau alamat IP tertentu.\nIsikan nama pengguna atau alamat IP untuk mendapat senarai laman yang hendak dikosongkan, atau biarkan kosong untuk semua pengguna.",
-	"nuke-submit-list": "Pergi",
+	"nuke-submit-list": "Senaraikan laman",
 	"nuke-submit-delete": "Hapus",
 	"right-nuke": "Menghapuskan laman secara pukal",
 	"nuke-userorip": "Nama pengguna, alamat IP atau kosong:",

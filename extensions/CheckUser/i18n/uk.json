@@ -78,7 +78,7 @@
 	"checkuser-all": "усі",
 	"checkuser-filter-title": "Фільтри",
 	"checkuser-filter-hide-temporary-accounts": "Приховати тимчасові облікові записи",
-	"checkuser-cidr-label": "Знайти загальний діапазон і задіяні адреси для списку IP-адрес",
+	"checkuser-cidr-label": "Знайдіть спільний діапазон та вплинуті IP-адреси для списку IP-адрес",
 	"checkuser-cidr-res": "Спільний CIDR:",
 	"checkuser-cidr-affected-ips": "Охоплені IP-адреси:",
 	"checkuser-cidr-too-small": "Завеликий діапазон",

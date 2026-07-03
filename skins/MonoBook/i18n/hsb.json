@@ -5,8 +5,18 @@
 		]
 	},
 	"skinname-monobook": "MonoBook",
+	"monobook-desc": "Klasiska drasta MediaWiki wot lěta 2004, pomjenowana po čornoběłym foće knihi w pozadku strony",
 	"monobook.css": "/* CSS wobdźěłać, zo by so skin „monobook” za wšěčh wužiwarjow tutoho skina priměrił */",
 	"monobook.js": "/* Slědowacy JavaScript začita so za wužiwarjow, kotřiž šat MonoBook wužiwaja */",
-	"monobook-view-history": "wersije",
-	"monobook-action-undelete": "{{PLURAL:$1|jednu wersiju|$1 wersiji|$1 wersije|$1 wersijow}} wobnowić"
+	"monobook-jumptotop": "wróćo horje",
+	"monobook-jumptopersonal": "Wužiwarske nastroje",
+	"monobook-jumptonavigation": "K nawigaciji skočić",
+	"monobook-jumptosearch": "K pytanju skočić",
+	"monobook-more-actions": "Wjace",
+	"cactions-mobile": "Akcije strony",
+	"monobook-cactions-label": "Akcije strony",
+	"monobook-notifications-link": "Zdźělenki ($1)",
+	"monobook-notifications-link-none": "Zdźělenki",
+	"monobook-view-history": "Historija",
+	"monobook-action-undelete": "{{PLURAL:$1|$1 změnu|$1 změnje|$1 změny|$1 změnow}} wobnowić"
 }

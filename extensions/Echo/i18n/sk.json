@@ -8,7 +8,9 @@
 			"Teslaton",
 			"TomášPolonec",
 			"Urbanecm",
-			"Vlad5250"
+			"Vlad5250",
+			"KormiSK",
+			"Wizzard"
 		]
 	},
 	"echo-desc": "Systém na upozorňovanie používateľov na udalosti a správy",
@@ -36,12 +38,12 @@
 	"echo-pref-email-format-html": "HTML",
 	"echo-pref-email-format-plain-text": "Obyčajný text",
 	"echo-pref-cross-wiki-notifications": "Zobrazovať upozornenia z iných wiki",
-	"echo-pref-notifications-blacklist": "Nezobrazovať notifikácie od týchto používateľov. ([[mw:Special:MyLanguage/Help:Notifications#mute|podrobnosti]])",
-	"echo-pref-notifications-page-linked-title-muted-list": "Nezobrazovať notifikácie ohľadom odkazov na tieto stránky. ([[mw:Special:MyLanguage/Help:Notifications#mute|podrobnosti]])",
+	"echo-pref-notifications-blacklist": "Nezobrazovať upozornenia od týchto používateľov ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute viac informácií])",
+	"echo-pref-notifications-page-linked-title-muted-list": "Nezobrazovať upozornenia „Odkaz na stránku“ pre tieto stránky ([https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Notifications#mute viac informácií])",
 	"echo-learn-more": "Ďalšie informácie",
 	"echo-log": "Verejný záznam",
-	"echo-new-messages": "Máte nové správy",
-	"echo-category-title-edit-user-talk": "{{PLURAL:$1|správu|správy}} v diskusii",
+	"echo-new-messages": "Máte novú správu na diskusnej stránke",
+	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Úprava|Úpravy|Úprav}} mojej diskusnej stránky",
 	"echo-category-title-edit-user-page": "{{PLURAL:$1|úpravu|úpravy}} mojej používateľskej stránky",
 	"echo-category-title-article-linked": "{{PLURAL:$1|odkaz|odkazy}} na stránku",
 	"echo-category-title-reverted": "{{PLURAL:$1|vrátenú úpravu|vrátené úpravy}}",
@@ -72,7 +74,7 @@
 	"notifications": "Upozornenia",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Vaše}} upozornenia",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Vaše}} oznámenia",
-	"tooltip-pt-notifications": "Vaše upozornenia",
+	"tooltip-pt-notifications": "{{GENDER:|Vaše}} upozornenia",
 	"echo-displaynotificationsconfiguration": "Zobrazenie konfigurácie Oznámení",
 	"echo-displaynotificationsconfiguration-summary": "Toto je prehľad konfigurácie Oznámení na tejto wiki.",
 	"echo-displaynotificationsconfiguration-notifications-by-category-header": "Oznámenia podľa kategórie",
@@ -133,8 +135,8 @@
 	"notification-header-mention-agent-talkpage-nosection": "$1 {{GENDER:$3|vás}} {{GENDER:$2|spomenul|spomenula}} na <strong>svojej diskusnej stránke</strong>.",
 	"notification-header-mention-article-talkpage": "$1 {{GENDER:$3|vás}} {{GENDER:$2|spomenul|spomenula}} v diskusii k článku <strong>$4</strong> v sekcii „<strong>$5</strong>“.",
 	"notification-header-mention-article-talkpage-nosection": "$1 {{GENDER:$3|vás}} {{GENDER:$2|spomenul|spomenula}} v diskusii k článku <strong>$4</strong>.",
-	"notification-header-mention-failure-user-unknown": "{{GENDER:$2|Vaša}} zmienka používateľa <strong>$3</strong> nebola odoslaná, pretože daný používateľ nebol nájdený.",
-	"notification-header-mention-failure-user-anonymous": "{{GENDER:$2|Vaša}} zmienka používateľa <strong>$3</strong> nebola odoslaná, pretože daný používateľ je anonymný.",
+	"notification-header-mention-failure-user-unknown": "{{GENDER:$2|Vašu}} zmienku o používateľovi <strong>$3</strong> nemožno odoslať, pretože účet s týmto menom neexistuje.",
+	"notification-header-mention-failure-user-anonymous": "{{GENDER:$2|Vašu}} zmienku o používateľovi <strong>$3</strong> nemožno odoslať, pretože ide o anonymného používateľa.",
 	"notification-header-mention-failure-too-many": "{{GENDER:$2|Pokúsili}} ste sa spomenúť viac ako {{PLURAL:$3|jedného používateľa|$3 používateľov}}. Všetky zmienky nad tento limit neboli odoslané.",
 	"notification-header-mention-failure-bundle": "{{PLURAL:$3|Vašu zmienku|$3 vaše zmienky|$3 vašich zmienok}} na diskusnej stránke <strong>$4</strong> {{GENDER:$2|nebolo}} možné odoslať.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Používateľské meno neexistuje:</strong> $1",
@@ -204,5 +206,7 @@
 	"echo-email-batch-link-text-view-all-notifications": "Zobraziť všetky upozornenia",
 	"notification-header-foreign-alert": "Viac upozornení z {{PLURAL:$5|ďalšej wiki|$5 ďalších wiki}}",
 	"notification-header-foreign-notice": "Viac oznámení z {{PLURAL:$5|ďalšej wiki|$5 ďalších wiki}}",
-	"notification-header-foreign-all": "Ďalšie notifikácie z {{PLURAL:$5|inej wiki|$5 iných wiki}}"
+	"notification-header-foreign-all": "Ďalšie notifikácie z {{PLURAL:$5|inej wiki|$5 iných wiki}}",
+	"right-echo-read-notifications": "Prečítať si svoje oznámenia",
+	"action-echo-read-notifications": "prečítať si svoje oznámenia"
 }

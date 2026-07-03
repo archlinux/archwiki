@@ -4,7 +4,8 @@
 			"2nd-player",
 			"Ochaochaocha3",
 			"Otokoume",
-			"RYOUMA1117"
+			"RYOUMA1117",
+			"Shirayuki"
 		]
 	},
 	"apihelp-echomarkread-summary": "現在の利用者への通知を既読にする。",
@@ -17,6 +18,6 @@
 	"apihelp-echomarkseen-param-type": "既読としてマークする通知の種類：'alert'、'message'、あるいは 'all'。",
 	"apihelp-query+notifications-param-limit": "返す通知の最大数。",
 	"apihelp-query+notifications-example-1": "Web通知を一覧表示する",
-	"apihelp-query+notifications-example-2": "セクションごとにグループ化されたWeb通知をカウントとともに一覧表示します",
+	"apihelp-query+notifications-example-2": "節ごとにグループ化された Web 通知を件数とともに一覧表示します",
 	"apihelp-query+unreadnotificationpages-param-limit": "返すページの最大数。"
 }

@@ -5,11 +5,13 @@
 			"WAN233",
 			"逆襲的天邪鬼",
 			"Dream Star.cn",
-			"Davidzdh"
+			"Davidzdh",
+			"Wilf233"
 		]
 	},
 	"group-checkuser": "知簿",
 	"group-checkuser-member": "{{GENDER:$1|知簿}}",
+	"grouppage-checkuser": "{{ns:project}}:知簿",
 	"checkuser-target": "網際位址，或載簿之名稱：",
 	"checkuser-search": "尋",
 	"checkuser-search-submit": "尋",

@@ -1,12 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"ObaTango"
+			"ObaTango",
+			"Kallmemel"
 		]
 	},
+	"categorytree-portlet": "Kategoria",
+	"categorytree-category": "Kategoria:",
+	"categorytree-mode-label": "Modo:",
+	"categorytree-mode-all": "tur página",
+	"categorytree-collapse": "kolèps",
 	"categorytree-expand": "Ekspandé",
 	"categorytree-member-counts": "Ta kontené {{PLURAL:$1|1 supkategoria\n|$1 supkategoria}}, {{PLURAL:$2|1 página|$2 página}}, i {{PLURAL:$3|1 fail|$3 fail}}",
-	"categorytree-num-categories": "$1 C",
+	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 P",
-	"categorytree-num-files": "$1 F"
+	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "bashí",
+	"categorytree-load": "karga",
+	"categorytree-loading": "Ta karga…"
 }

@@ -28,7 +28,6 @@
 	"multimediaviewer-thumbnail-error": "Leider kann die Datei nicht angezeigt werden",
 	"multimediaviewer-thumbnail-error-description": "Es scheint ein technisches Problem zu geben. Du kannst es $1, falls es weiterhin besteht. Fehler: $2",
 	"multimediaviewer-thumbnail-error-retry": "erneut versuchen",
-	"multimediaviewer-thumbnail-error-report": "das Problem melden",
 	"multimediaviewer-license-cc-by-4.0": "CC BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Gemeinfrei",
@@ -123,6 +122,5 @@
 	"multimediaviewer-enable-alert": "Der Medienbetrachter ist jetzt deaktiviert",
 	"multimediaviewer-disable-info-title": "Du hast den Medienbetrachter deaktiviert",
 	"multimediaviewer-disable-info": "Du kannst dennoch einzelne Dateien mit dem Medienbetrachter ansehen.",
-	"multimediaviewer-errorreport-privacywarning": "Einzelheiten zum Fehler werden dem Bericht beigefügt, die öffentlich sichtbar sind. Falls du mit diesem Vorgehen nicht einverstanden bist, kannst du den Bericht unten bearbeiten und alle Daten entfernen, die du nicht teilen möchtest.",
 	"multimediaviewer-loading": "Medienbetrachter wird geladen."
 }

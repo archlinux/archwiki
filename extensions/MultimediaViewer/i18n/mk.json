@@ -5,6 +5,7 @@
 			"Vlad5250"
 		]
 	},
+	"multimediaviewer-current-image-number": "$1 ⁄ $2",
 	"multimediaviewer-desc": "Зголемување на минијатурите на цел екран",
 	"multimediaviewer-optin-pref": "Вклучи го <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Прегледувачот]</span>",
 	"multimediaviewer-file-page": "Оди на соодветната податотечна страница",
@@ -20,7 +21,6 @@
 	"multimediaviewer-thumbnail-error": "За жал, не можев да ја прикажам податотеката",
 	"multimediaviewer-thumbnail-error-description": "Имаме технички проблем. Можете да $1 ако упорно се јавува. Грешка: $2",
 	"multimediaviewer-thumbnail-error-retry": "пробај пак",
-	"multimediaviewer-thumbnail-error-report": "го пријавите проблемот",
 	"multimediaviewer-license-cc-by-4.0": "CC BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Јавна сопственост",
@@ -112,6 +112,7 @@
 	"multimediaviewer-reuse-warning-noattribution": "Оваа податотека нема приписни податоци.",
 	"multimediaviewer-reuse-warning-generic": "Погледајте ги [$1 поединостите] пред да ја употребите.",
 	"multimediaviewer-attr-plain": "Прост",
+	"multimediaviewer-attr-html": "HTML",
 	"multimediaviewer-disable-confirmation-header": "Прегледувачот ви е исклучен.",
 	"multimediaviewer-disable-confirmation-text": "Следен пат кога ќе стиснете на минијатура на $1, право ќе ви се прикажат  сите поединости за податотеката",
 	"multimediaviewer-enable-dialog-header": "Да го вклучам Прегледувачот?",
@@ -122,6 +123,5 @@
 	"multimediaviewer-enable-alert": "Прегледувачот сега ви е исклучен",
 	"multimediaviewer-disable-info-title": "Прегледувачот ви е исклучен",
 	"multimediaviewer-disable-info": "Сè уште можете да прегледувате поединечни податотеки со Прегледувачот.",
-	"multimediaviewer-errorreport-privacywarning": "Во извештајот се приложени подровности за грешката, кои ќе бидат јавно видливи. Доколку тоа ви пречи, можете да го измените извештајот подолу, отстранувајќи ги податоците што не сакате да се знаат.",
 	"multimediaviewer-loading": "Го вчитувам Прегледувачот."
 }

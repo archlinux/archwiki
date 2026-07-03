@@ -11,10 +11,11 @@
 			"Niels",
 			"PiefPafPier",
 			"Romaine",
-			"Siebrand"
+			"Siebrand",
+			"Jeroen N"
 		]
 	},
-	"cite-desc": "Voegt <code>&lt;ref&gt;</code>- en <code>&lt;references&gt;</code>-labels toe voor citaten",
+	"cite-desc": "Voegt <code>&lt;ref&gt;</code>- en <code>&lt;references&gt;</code>-tags toe voor referenties",
 	"cite_error": "Citefout: $1",
 	"cite_error_details_missing_parent": "De <code>&lt;ref></code>-tag met details moet inhoud bevatten of via de naam naar een bovenliggende referentie verwijzen.",
 	"cite_error_details_unsupported_context": "De <code>&lt;ref&gt;</code>-tag met de naam “$1” kan geen details gebruiken wanneer deze zich binnen <code>&lt;references&gt;</code> bevindt.",
@@ -27,7 +28,7 @@
 	"cite_error_ref_parameter_suggestion": "Onjuiste parameter “$1” in de <code>&lt;ref></code>-tag. Bedoelde u “$2”?",
 	"cite_error_ref_follow_conflicts": "Een <code>&lt;ref follow=\"…\"&gt;</code>-tag die de voortzetting is van een vorige, kan niet afzonderlijk worden genoemd en geen details bevatten.",
 	"cite_error_ref_no_input": "Onjuist label <code>&lt;ref&gt;</code>; refs zonder naam moeten inhoud hebben",
-	"cite_error_references_duplicate_key": "Ongeldig label <code>&lt;ref&gt;</code>; de naam \"$1\" wordt meerdere keren met andere inhoud gedefinieerd.",
+	"cite_error_references_duplicate_key": "Incorrect label <code>&lt;ref&gt;</code>; de naam \"$1\" wordt meerdere keren met andere inhoud gedefinieerd.",
 	"cite_error_references_invalid_parameters": "Onjuiste parameter “$1” in de <code>&lt;references&gt;</code>-tag. De mogelijke parameters zijn: $2.",
 	"cite_error_references_no_text": "Onjuist label <code>&lt;ref&gt;</code>; er is geen tekst opgegeven voor referenties met de naam <code>$1</code>",
 	"cite_error_included_ref": "Na het label <code>&lt;ref&gt;</code> ontbreekt het afsluitende label <code>&lt;/ref&gt;</code>",

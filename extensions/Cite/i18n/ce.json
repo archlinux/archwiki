@@ -19,7 +19,7 @@
 	"cite_error_ref_no_input": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nцӀе йоцу элементан чулацам хила беза.",
 	"cite_error_references_duplicate_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>: «$1» цӀе, башха чулацамна маситтазза хӀотийна",
 	"cite_error_references_invalid_parameters": "Нийса йоцу «$1» параметр йу <code>&lt;references></code> тегехь. Лелаш йолу параметраш йу: $2.",
-	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> тег нийса йац; кху <code>$1</code> тIетовжаран текст йазйина йац",
+	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> тег нийса йац; кху <code>$1</code> тӀетовжаран текст йазйина йац",
 	"cite_error_included_ref": "ДӀакъовлуш йолу тег йац <code>&lt;/ref&gt;</code>",
 	"cite_error_included_references": "ДӀачӀогӀу тег йац <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Йолуш йолучу \"$1\" тобанан <code>&lt;ref&gt;</code> тегашна ца карийра йогӀуш йолу <code>&lt;references group=\"$1\"/&gt;</code> тег.",

@@ -6,12 +6,14 @@
 			"Mykola7",
 			"Piramidion",
 			"Vlad5250",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
 	"apihelp-query+checkuser-summary": "Перевірка того, які IP-адреси використовуються даним іменем користувача, або які імена користувачів використовуються даною IP-адресою.",
 	"apihelp-query+checkuser-param-request": "Тип запиту перевірки користувача:",
 	"apihelp-query+checkuser-paramvalue-request-userips": "Отримати IP-адреси цільового користувача.",
+	"apihelp-query+checkuser-paramvalue-request-actions": "Отримати дії, виконані з цільової IP-адреси або діапазону.",
 	"apihelp-query+checkuser-paramvalue-request-ipusers": "Отримати користувачів з цільової IP-адреси або діапазону.",
 	"apihelp-query+checkuser-param-target": "Ім'я користувача, IP-адреса, або CIDR-діапазон для перевірки.",
 	"apihelp-query+checkuser-param-reason": "Причина перевірки.",

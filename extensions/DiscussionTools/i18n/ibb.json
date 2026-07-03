@@ -8,15 +8,20 @@
 			"Ekemini5",
 			"Esther605",
 			"Okon Ibiono",
-			"Uduakj"
+			"Uduakj",
+			"Andikan Efiok Eduok",
+			"Orokbest1"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Yie",
+	"discussiontools-newtopic-placeholder-title": "Iwud nwed",
 	"discussiontools-replylink": "{{GENDER:|yie}}‎",
 	"discussiontools-replywidget-advanced": "Ikpo mkpo",
 	"discussiontools-replywidget-cancel": "Kpọñ",
 	"discussiontools-replywidget-mode-source": "Ntak",
 	"discussiontools-replywidget-mode-visual": "Use mkpo",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Add}} ikpeghe iko",
+	"discussiontools-replywidget-placeholder-newtopic": "Tañ nañgha aba",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Yie}} adi {{BIDI:$1}}‎",
 	"discussiontools-replywidget-preview": "Wọọt",
 	"discussiontools-replywidget-reply": "{{GENDER:|Yie}}‎",

@@ -17,7 +17,8 @@
 			"Ykhwong",
 			"관인생략",
 			"아라",
-			"YeBoy371"
+			"YeBoy371",
+			"Tensama0415"
 		]
 	},
 	"minerva-last-modified-date": "$1 $2에 마지막으로 편집됨",
@@ -68,5 +69,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories": "분류",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "문서 분류 보기",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "유감스럽지만, 문서별 그룹화는 모바일에서는 가능하지 않습니다. 페이지별 그룹화를 원하신다면 데스크탑 사이트를 방문해 주세요.",
-	"skin-minerva-night-mode-unavailable": "\"라이트\" 색상 테마로만 제공되는 페이지입니다."
+	"skin-minerva-night-mode-unavailable": "\"라이트\" 색상 테마로만 제공되는 페이지입니다.",
+	"minerva.css": "/* 이 CSS 설정은 미네르바 노이에 스킨을 사용하는 사용자에게 적용됩니다 */",
+	"minerva.js": "/* 이 자바스크립트 설정은 미네르바 노이에 스킨을 사용하는 사용자에게 적용됩니다 */"
 }

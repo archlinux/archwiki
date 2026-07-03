@@ -3,7 +3,8 @@
 		"authors": [
 			"Mainframe98",
 			"McDutchie",
-			"Romaine"
+			"Romaine",
+			"Siebrand"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "Variantconversie uitgeschakeld",
@@ -16,7 +17,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Dit is een verborgen regel.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Deze regel heeft invloed op de paginatitel.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Taalcode",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ongeldig</em>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Onjuist</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Taal",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Bron",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Bestemming",

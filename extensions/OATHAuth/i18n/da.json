@@ -71,7 +71,7 @@
 	"oathauth-auth-switch-module-label": "Brug godkendelsesappen",
 	"oathauth-auth-switch-module-help": "Sæt <code>newModule</code> til navnet på det nye modul for at få en ny udfordring fra et andet 2FA-modul. Lad feltet stå tomt, hvis du besvarer den aktuelle udfordring.",
 	"oathauth-auth-switch-module-keep": "(byt ikke)",
-	"oathauth-throttled": "For mange verificeringsforsøg! Vent i $1.",
+	"oathauth-throttled": "For mange forsøg! Vent venligst et par minutter.",
 	"oathauth-login-failed": "Tofaktorgodkendelse mislykkedes.",
 	"oathauth-recovery-code-login-failed": "Bekræftelse af gendannelseskoden mislykkedes.",
 	"oathauth-describe-provider": "Tofaktorgodkendelse (OATH).",
@@ -150,7 +150,7 @@
 	"oathauth-delete-confirm-box": "Indtast \"{{int:oathauth-authenticator-delete-text}}\" for at fortsætte",
 	"oathauth-delete-warning-final": "Hvis du fjerner denne metode, deaktiveres tofaktorgodkendelse helt.",
 	"oathauth-delete-wrong-confirm-message": "Forkert input til endelig fjernelse af nøgle. Skriv venligst \"{{int:oathauth-authenticator-delete-text}}\" for at fortsætte.",
-	"oathauth-delete-success": "<strong>$1</strong> fjernet.",
+	"oathauth-delete-success": "Fjernet!",
 	"oathauth-created-at": "Tilføjet på $1",
-	"oathauth-enable-success": "<strong>$1</strong> tilføjet."
+	"oathauth-enable-success": "Tilføjet!"
 }

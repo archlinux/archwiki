@@ -14,6 +14,7 @@
 	},
 	"minerva-last-modified-date": "Naposledy upravené $1 o $2",
 	"minerva-watchlist-cta": "Sledujte túto stránku a všetky jej zmeny.",
+	"mobile-frontend-cookies-required": "Na prepínanie režimov zobrazenia sú potrebné cookies. Povoľte ich prosím a skúste to znova.",
 	"mobile-frontend-editor-edit": "Upraviť",
 	"minerva-download": "Stiahnuť ako PDF",
 	"mobile-frontend-editor-redlink-create": "Vytvoriť stránku",
@@ -47,12 +48,18 @@
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pripojil|Pripojila}} sa dňa $1",
 	"mobile-frontend-user-page-talk": "Diskusia",
 	"minerva-user-menu-button": "Používateľské menu",
+	"minerva-user-navigation": "Navigácia používateľa",
 	"minerva-page-actions-editfull": "Upraviť celú stránku",
 	"minerva-page-actions-overflow": "Viac",
 	"minerva-page-actions-language-switcher": "Jazyky",
 	"minerva-page-actions-history": "História",
+	"minerva-prefs-talkpage": "[https://www.mediawiki.org/wiki/Skin_talk:Minerva_Neue Diskusia]",
+	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Responzívny vzhľad navrhnutý pre mobily",
 	"skin-minerva-issue-learn-more": "Viac informácií",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategórie",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobraziť kategórie stránok"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobraziť kategórie stránok",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Zoskupovanie výsledkov podľa stránok bohužiaľ nie je na mobile dostupné. Ak chcete použiť funkciu zoskupovania podľa stránok, navštívte desktopovú verziu.",
+	"minerva.css": "/* CSS umiestnené tu sa načíta používateľom témy vzhľadu MinervaNeue */",
+	"minerva.js": "/* JavaScript umiestnený tu sa načíta používateľom témy vzhľadu MinervaNeue */"
 }

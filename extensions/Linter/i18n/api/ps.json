@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-query+linterrors-summary": "د پټو ساتل شويو تېروتنو لړليک ترلاسه کول",
+	"apihelp-query+linterrors-param-categories": "د پټو ساتل شويو تېروتنو وېشنيزې",
+	"apihelp-query+linterrors-param-invisible-categories": "د پټو ساتل شويو تېروتنو نه‌ليدل‌کېدونکې وېشنيزې",
+	"apihelp-query+linterrors-param-limit": "د تپوس د پايلو شمېر",
+	"apihelp-query+linterrors-param-from": "د پټې‌ساتل‌شوې‌تېروتنې پېژند چې تپوس ترې پيلېږي",
+	"apihelp-query+linterrors-param-namespace": "يوازې د مشخص شويو نوم‌تشيالونو پټې‌ساتل‌شوې تېروتنې رانغاړي",
+	"apihelp-query+linterrors-param-pageid": "يوازې د مشخص شويو مخ پېژندونو پټې‌ساتل‌شوې تېروتنې رانغاړي",
+	"apihelp-query+linterrors-param-title": "يوازې د مشخص شوي مخ سرليک پټې‌ساتل‌شوې تېروتنې رانغاړي",
+	"apihelp-query+linterrors-example-1": "د زوړ نښلن وېشنيزې ټولې پټې‌ساتل‌شوې تېروتنې ترلاسه‌کول",
+	"apihelp-query+linterstats-summary": "په هره وېشنيزه کې د پټوساتل‌شويو تېروتنو شمېره ترلاسه‌کول",
+	"apihelp-query+linterstats-example-1": "په هره وېشنيزه کې د پټوساتل‌شويو تېروتنو شمېره ترلاسه‌کول"
+}

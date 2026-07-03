@@ -246,6 +246,8 @@
 	"visualeditor-mwpredialog-title": "Unaprijed formatirani obični tekst",
 	"visualeditor-mwsignature-tool": "Vaš potpis",
 	"visualeditor-preference-visualeditor": "Uključi vizualni uređivač",
+	"visualeditor-preference-newwikitexteditor-enable": "Koristi režim uređivanja wikiteksta unutar vizualnog uređivača umjesto prebacivanja na drugi uređivač",
+	"visualeditor-preference-newwikitexteditor-help": "Ponekad se naziva \"uređivač wikiteksta iz 2017.\"",
 	"visualeditor-preference-tabs": "Režim uređivanja:",
 	"visualeditor-preference-tabs-multi-tab": "Prikaži kartice oba uređivača",
 	"visualeditor-preference-tabs-prefer-ve": "Otvori vizualni uređivač kad god je moguće",

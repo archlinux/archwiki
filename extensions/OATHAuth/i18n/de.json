@@ -158,7 +158,7 @@
 	"oathauth-delete-confirm-box": "Gib „{{int:oathauth-authenticator-delete-text}}“ ein, um fortzufahren",
 	"oathauth-delete-warning-final": "Durch das Entfernen dieser Methode wird die Zwei-Faktor-Authentifizierung vollständig deaktiviert.",
 	"oathauth-delete-wrong-confirm-message": "Falsche Eingabe für die endgültige Schlüsselentfernung. Bitte gib „{{int:oathauth-authenticator-delete-text}}“ ein, um fortzufahren",
-	"oathauth-delete-success": "<strong>$1</strong> entfernt.",
+	"oathauth-delete-success": "Entfernt!",
 	"oathauth-created-at": "Hinzugefügt am $1",
-	"oathauth-enable-success": "<strong>$1</strong> hinzugefügt."
+	"oathauth-enable-success": "Hinzugefügt!"
 }

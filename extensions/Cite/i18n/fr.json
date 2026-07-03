@@ -29,15 +29,16 @@
 			"Wyz",
 			"Zetud",
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ",
-			"Escargot bleu"
+			"Escargot bleu",
+			"DavidL"
 		]
 	},
-	"cite-desc": "Ajoute les balises <code>&lt;ref[ name=id]&gt;</code> et <code>&lt;references/&gt;</code> pour les citations",
+	"cite-desc": "Ajoute les balises <code>&lt;ref&gt;</code> et <code>&lt;references&gt;</code> pour les références",
 	"cite_error": "Erreur de référence : $1",
-	"cite_error_details_missing_parent": "Une balise <code><ref></code> avec des détails doit contenir du contenu ou pointer vers une référence parent par nom.",
-	"cite_error_details_unsupported_context": "La balise <code><ref></code> avec le nom \"$1\" ne peut pas utiliser les détails lorsqu'elle est à l'intérieur <code>&lt;references&gt;</code> .",
-	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> non valide, doit être <code>ltr</code> ou <code>rtl</code>",
-	"cite_error_ref_conflicting_dir": "Une des balises <code>&lt;ref&gt;</code> avec le nom \"$1\" a un attribut dir en conflit.",
+	"cite_error_details_missing_parent": "Une balise <code>&lt;ref></code> avec des détails doit contenir du contenu ou pointer vers une autre référence par son nom.",
+	"cite_error_details_unsupported_context": "La balise <code>&lt;ref&gt;</code> avec le nom « $1 » ne peut pas utiliser de détails parce qu’elle est déclarée dans la balise <code>&lt;references&gt;</code>.",
+	"cite_error_ref_invalid_dir": "La valeur de l’attribut <code>dir=\"$1\"</code> n’est pas valide, elle doit être <code>ltr</code> ou <code>rtl</code>.",
+	"cite_error_ref_conflicting_dir": "Une des balises <code>&lt;ref&gt;</code> avec le nom « $1 » a un attribut dir en conflit.",
 	"cite_error_ref_numeric_key": "Balise <code>&lt;ref&gt;</code> incorrecte : la valeur de l’attribut <code>name</code> ne peut être un simple entier. Utilisez un titre descriptif.",
 	"cite_error_ref_no_key": "La balise ouvrante <code>&lt;ref&gt;</code> est mal formée ou a un mauvais nom.",
 	"cite_error_ref_with_details_no_name": "Balise <code>&lt;ref></code> non valide ; attribut name manquant. Un attribut name doit être fourni avec un attribut details.",

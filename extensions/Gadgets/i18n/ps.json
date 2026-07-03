@@ -43,6 +43,7 @@
 	"gadgets-validate-notset": "<code>$1</code> ځانتيا اوڼل شوې نه ده.",
 	"gadgets-validate-wrongtype": "د <code>$1</code> ځانتيا ډول بايد <code>$2</code> وي.",
 	"gadgets-validate-json": "جی‌اېس‌او‌اېن دوتنې ځانگړې شوې دي، خو کارول شوې نه دي. دا يوازې په بسته‌شوو ويښيارتوکيو کې د چلېدو وړ دي.",
+	"gadgets-validate-icons": "Codex انځورن يوازې د ويښيارتوکو کڅوړه کې رانغاړل کېدی شي.",
 	"gadgets-validate-es6default": "هغه ويښيارتوکي چې اي‌اېس۶ ته اړتيا لري په تلواله بڼه نشي چارنېدای.",
 	"gadgets-validate-noentrypoint": "داچې هېڅ سکريپټي دوتنې ځانگړې شوې نه دي؛ نو د کڅوړې بيرغ له پامه غورځول‌شوی.",
 	"gadgets-validate-noscripts": "سکريپټونه له پامه غورځول‌شوي ځکه چې دا ويښيارتوکی له <code>type=styles</code> اوڼنې کار اخلي.",

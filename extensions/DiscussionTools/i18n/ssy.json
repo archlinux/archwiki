@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jmgurey"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Gaxso",
+	"discussiontools-newtopic-missing-title": "ku beezza ishi zatehi magaroh migac akah {{GENDER:|eyyec}}.",
+	"discussiontools-newtopic-placeholder-title": "Naba magaro",
+	"discussiontools-replylink": "{{GENDER:|gaxish}}",
+	"discussiontools-replywidget-advanced": "Yefeedede",
+	"discussiontools-replywidget-cancel": "Xishii",
+	"discussiontools-replywidget-mode-source": "Raxeena",
+	"discussiontools-replywidget-mode-visual": "Intih yabliinim",
+	"discussiontools-replywidget-newtopic": "Magaro {{GENDER:|os}}",
+	"discussiontools-replywidget-placeholder-newtopic": "Caddos",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}-ille alle {{GENDER:|edebbaa}}",
+	"discussiontools-replywidget-preview": "Mamballaytina",
+	"discussiontools-replywidget-reply": "{{GENDER:|Gaxish}}",
+	"discussiontools-replywidget-summary": "Arure",
+	"discussiontools-replywidget-watchthis": "Ta garba tamaa atu tablemhi [[Special:Watchlist|hoorudde]]osit",
+	"discussiontools-topicheader-authorcount": "Wagrodde $1 {{PLURAL:$1|xiyawti}} yane",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|mablo|mablol}}",
+	"discussiontools-topicheader-latestcomment": "cusub mablo: $1",
+	"discussiontools-topicsubscription-button-subscribe": "engel",
+	"discussiontools-topicsubscription-button-subscribe-label": "Engel",
+	"discussiontools-topicsubscription-button-unsubscribe": "mangalin",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Mangalin",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Ta}} magarolle yamxaye cusub mablolhi siniyo geyto kito.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Tengeleh}} tanito!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Kamboh {{GENDER:|ta}} magarolle yamxaye cusub mablolhi siniyo geyto makito.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Yangaliinim {{GENDER:|xabteh}} tanito"
+}

@@ -36,6 +36,7 @@
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|То̄нн}} ля̄к еськ {{GENDER:$2|ӣжянт}} тоа̄фант воа̄йхэз лыһкма; па̄ссьпэ {{GENDER:$2|тоннӭ}} шӯрр лыгк эвтэсьт!",
 	"notification-link-article-reminder": "Кӣһче лыст",
 	"notification-header-reverted": "{{PLURAL:$4|То̄н воа̄йхэсс|То̄н воа̄йхэз}} лыстэсьт <strong>$3</strong> {{GENDER:$2|{{PLURAL:$4|ля̄йй ка̄вьса|лӣйенҍ ка̄вьса}}}}.",
+	"notification-header-emailuser": "$1 {{GENDER:$2|вӯлкхэһтҍ}} тоннӭ кырьй.",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 с}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 мин}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 ч}}",

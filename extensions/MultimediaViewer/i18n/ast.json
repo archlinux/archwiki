@@ -18,7 +18,6 @@
 	"multimediaviewer-thumbnail-error": "Nun ye posible amosar el ficheru",
 	"multimediaviewer-thumbnail-error-description": "Paez qu'hai un problema téunicu. Puedes $1 si siguiera produciéndose. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "reintentar",
-	"multimediaviewer-thumbnail-error-report": "informar del problema",
 	"multimediaviewer-license-cc-pd": "Dominiu públicu",
 	"multimediaviewer-license-pd": "Dominiu públicu",
 	"multimediaviewer-license-default": "Ver la llicencia",
@@ -107,6 +106,5 @@
 	"multimediaviewer-enable-confirmation-text": "La siguiente vez que faigas clic n'una miniatura en $1, usaráse'l Visor de multimedia.",
 	"multimediaviewer-enable-alert": "El Visor de multimedia agora ta desactiváu",
 	"multimediaviewer-disable-info-title": "Desactivasti el visor de multimedia",
-	"multimediaviewer-disable-info": "Inda pues ver los ficheros individualmente col Visor de multimedia.",
-	"multimediaviewer-errorreport-privacywarning": "Los detalles del error axúntense al informe, que va ser visible públicamente. Si nun tas cómodu con eso, pues editar l'informe más abaxo y desaniciar tolos datos que nun quixeras compartir."
+	"multimediaviewer-disable-info": "Inda pues ver los ficheros individualmente col Visor de multimedia."
 }

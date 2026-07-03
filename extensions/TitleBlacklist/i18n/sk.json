@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"log-name-titleblacklist": "Protokol zoznamu zakázaných názvov",
+	"log-description-titleblacklist": "Tieto udalosti zaznamenávajú zásahy zoznamu zakázaných názvov.",
+	"titleblacklist-desc": "Umožňuje správcom zakázať vytváranie stránok a používateľských účtov na základe [[MediaWiki:Titleblacklist|zoznamu zakázaných]] a [[MediaWiki:Titlewhitelist|povolených]] názvov",
+	"titleblacklist": "# Toto je zoznam zakázaných názvov. Názvy a používateľské mená, ktoré zodpovedajú tu uvedenému regulárnemu výrazu, nebude možné vytvoriť.\n# Komentáre začínajú znakom „#“.\n# Štandardne nezáleží na veľkosti písmen",
+	"titlewhitelist": "# Toto je zoznam povolených názvov. Komentáre začínajú znakom „#“.\n# Štandardne nezáleží na veľkosti písmen",
+	"titleblacklist-forbidden-edit": "Vytvorenie stránky s názvom „$2“ bolo zakázané.\nZodpovedá tejto položke zoznamu zakázaných názvov: <code>$1</code>",
+	"titleblacklist-forbidden-move": "„$2“ nie je možné presunúť na „$3“, pretože vytvorenie stránky s názvom „$3“ bolo zakázané.\nZodpovedá tejto položke zoznamu zakázaných názvov: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "Vytvorenie súboru s názvom „$2“ bolo zakázané.\nZodpovedá tejto položke zoznamu zakázaných názvov: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Vytvorenie používateľského mena „$2“ bolo zakázané.\nZodpovedá tejto položke zoznamu zakázaných názvov: <code>$1</code>",
+	"titleblacklist-override": "Ignorovať zoznam zakázaných názvov v prípade zhody",
+	"right-tboverride": "Ignorovanie zoznamu zakázaných názvov alebo používateľských mien",
+	"right-tboverride-account": "Ignorovanie zoznamu zakázaných používateľských mien"
+}

@@ -1,10 +1,30 @@
 {
 	"@metadata": {
 		"authors": [
-			"Abdullahi"
+			"Abdullahi",
+			"AhmedG612"
 		]
 	},
+	"pfunc_desc": "Kordhi falanqeeyaha adigoo ku daraya shaqooyin macquul ah",
+	"pfunc_time_error": "Qalad: Waqti aan sax ahayn.",
+	"pfunc_time_too_long": "Qalad: #time aad u badan ayaa la isticmaalay.",
+	"pfunc_time_too_big": "Qalad: #time waxa uu taageeraa sanado kaliya ilaa 9999.",
+	"pfunc_time_too_small": "Qalad: #time waxa uu taageeraa sanado kaliya laga bilaabo 0.",
+	"pfunc_timef_bad_format": "Qalad: qaabka #timef ma saxna",
+	"pfunc_rel2abs_invalid_depth": "Qalad: qoto dheerta waddada \"$1\" waa aan saxnayn (waxay isku dayday inay gasho meel ka baxsan xididka).",
+	"pfunc_expr_stack_exhausted": "Qalad: muujinta ayaa fashilantay sababtoo ah xusuusta ayaa buuxsamay.",
+	"pfunc_expr_unexpected_number": "Qalad: tiro aan la fileyn ayaa la helay.",
+	"pfunc_expr_preg_match_failure": "Qalad: fashilka preg_match lama fileyn.",
 	"pfunc_expr_unrecognised_word": "Muujinta khaladaadka: Erayga aan la aqoonsan \"$1\".",
+	"pfunc_expr_unexpected_operator": "Qalad: $1 waa hawlgal aan la fileyn.",
 	"pfunc_expr_missing_operand": "Khalad muujinta: Operand loo waayay $1.",
-	"pfunc_expr_unrecognised_punctuation": "Muujinta khaladaadka: Astaamaha shaqaaleenta ee aan la aqoonin \"$1\"."
+	"pfunc_expr_unexpected_closing_bracket": "Qalad: xidhitaanka qawska lama fileyn.",
+	"pfunc_expr_unrecognised_punctuation": "Muujinta khaladaadka: Astaamaha shaqaaleenta ee aan la aqoonin \"$1\".",
+	"pfunc_expr_unclosed_bracket": "Qalad: qawska aan la xirin.",
+	"pfunc_expr_division_by_zero": "Qaybin eber",
+	"pfunc_expr_invalid_argument": "Dood aan saxnayn $1: ka yar -1 ama ka weyn 1.",
+	"pfunc_expr_invalid_argument_ln": "Dood aan saxnayn ln: ka yar ama la mid 0.",
+	"pfunc_expr_unknown_error": "Qalad muujin: khalad aan la aqoon ($1).",
+	"pfunc_expr_not_a_number": "Gudaha $1: Natiijadu ma aha tiro.",
+	"pfunc_string_too_long": "Qalad: xarafku wuu dhaafay xadka $1."
 }

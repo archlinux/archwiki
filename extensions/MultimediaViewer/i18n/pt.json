@@ -24,7 +24,6 @@
 	"multimediaviewer-thumbnail-error": "Desculpe, o ficheiro não pode ser apresentado",
 	"multimediaviewer-thumbnail-error-description": "Parece haver um problema técnico. Pode $1, caso o problema continue. Erro: $2",
 	"multimediaviewer-thumbnail-error-retry": "tentar novamente",
-	"multimediaviewer-thumbnail-error-report": "comunicar o erro",
 	"multimediaviewer-license-cc-pd": "Domínio Público",
 	"multimediaviewer-license-pd": "Domínio público",
 	"multimediaviewer-license-default": "Ver licença",
@@ -113,6 +112,5 @@
 	"multimediaviewer-enable-confirmation-text": "Da próxima vez que clicar uma miniatura em $1, o Visualizador Multimédia será usado.",
 	"multimediaviewer-enable-alert": "O Visualizador Multimédia está agora desativado",
 	"multimediaviewer-disable-info-title": "Desativou o Visualizador Multimédia",
-	"multimediaviewer-disable-info": "Pode ainda ver ficheiros individuais com o Visualizador Multimédia.",
-	"multimediaviewer-errorreport-privacywarning": "Os detalhes do erro foram anexados ao relatório, que será publicamente visível. Se não concordar, pode editar o relatório abaixo e remover todos os dados que não deseja partilhar."
+	"multimediaviewer-disable-info": "Pode ainda ver ficheiros individuais com o Visualizador Multimédia."
 }

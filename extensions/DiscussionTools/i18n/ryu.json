@@ -2,13 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"ChoiChong",
-			"さきじょーぐー"
+			"さきじょーぐー",
+			"Smaugryu"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "返信",
 	"discussiontools-newtopic-missing-title": "御主ぬトピックんかいタイトルを付きてぃくぃみしぇーびれー。",
 	"discussiontools-newtopic-placeholder-title": "件名",
 	"discussiontools-replylink": "{{GENDER:|いれーいん}}",
+	"discussiontools-replywidget-advanced": "いしぇー",
 	"discussiontools-replywidget-cancel": "とぅりちゃーすん",
 	"discussiontools-replywidget-mode-source": "原典",
 	"discussiontools-replywidget-mode-visual": "ビジュアル",

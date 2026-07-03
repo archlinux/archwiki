@@ -70,7 +70,7 @@
 	"oathauth-auth-switch-module-label": "تاييدونکی کاريال کارول",
 	"oathauth-auth-switch-module-help": "د نوي چلنوال نوم ته <code>newModule</code> وټاکئ؛ ترڅو د چلنوال څخه يوه نوې دوه پړاويزه ننگونه ترلاسه کړئ. که تاسو اوسنۍ ننگونې ته ځواب ورکوئ؛ نو خالي يې پرېږدئ.",
 	"oathauth-auth-switch-module-keep": "(مه بدلوئ)",
-	"oathauth-throttled": "ډېرې زياتې تاييد هېڅ! مهرباني وکړئ $1 په تمه شئ.",
+	"oathauth-throttled": "ډېرې زياتې تاييد هېڅ! مهرباني وکړئ څو دقيقې په تمه شئ.",
 	"oathauth-login-failed": "دوه‌پړاويز تاييد تاييد نابرياله شو.",
 	"oathauth-recovery-code-login-failed": "بياترلاسنې کوډ تاييدي نابرياله شوه.",
 	"oathauth-describe-provider": "دوه‌پړاويز تاييد (OATH)",
@@ -148,7 +148,7 @@
 	"oathauth-delete-warning": "تاسو به نور د دې تاييدي چلندلارې څخه د ننوتلو لپاره کار نشئ اخيستلای او ستاسو د بياترلاسن کوډونه به نور کار ونکړي.",
 	"oathauth-delete-confirm-box": "دوام لپاره \"{{int:oathauth-authenticator-delete-text}}\" وليکئ",
 	"oathauth-delete-wrong-confirm-message": "د وروستۍ کونجۍ لرې کولو لپاره ناسمه ننوتنه. مهرباني وکړئ د دوام ورکولو لپاره \"{{int:oathauth-authenticator-delete-text}}\" وليکئ",
-	"oathauth-delete-success": "<strong>$1</strong> لرې‌شو",
+	"oathauth-delete-success": "لرې‌شو!",
 	"oathauth-created-at": "$1 کې ورگډ شو",
-	"oathauth-enable-success": "<strong>$1</strong> ورگډ شو."
+	"oathauth-enable-success": "ورگډ شو."
 }

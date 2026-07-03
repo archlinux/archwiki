@@ -161,7 +161,9 @@ class QueryAbuseFilters extends ApiQueryBase {
 				$entry['actions'] = implode( ',', $filter->getActionsNames() );
 			}
 			if ( $fld_hits ) {
-				$entry['hits'] = $filter->getHitCount();
+				if ( $this->afPermManager->canSeeLogDetailsForFilter( $this->getAuthority(), $filter ) ) {
+					$entry['hits'] = $filter->getHitCount();
+				}
 			}
 			if ( $fld_comments && $canViewExtendedDetailsAboutFilter ) {
 				$entry['comments'] = $filter->getComments();

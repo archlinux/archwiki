@@ -42,5 +42,7 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Abone olunacak (veya abonelikten çıkılacak) konunun adı",
 	"apihelp-discussiontoolssubscribe-param-page": "Konunun göründüğü bir sayfa",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Abone olmak için true, ayrılmak için false",
-	"apihelp-discussiontoolssubscribe-summary": "Bir konu hakkında bildirim almak için abone ol (ya da abonelikten çık)."
+	"apihelp-discussiontoolssubscribe-summary": "Bir konu hakkında bildirim almak için abone ol (ya da abonelikten çık).",
+	"apihelp-discussiontoolsthank-param-commentid": "Teşekkür edilecek yorumun kimliği.",
+	"apihelp-discussiontoolsthank-summary": "Yorum için herkese açık bir teşekkür bildirimi gönderin."
 }

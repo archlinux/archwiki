@@ -31,7 +31,8 @@
 			"Vlad5250",
 			"Yurina Tatiana",
 			"Александр Сигачёв",
-			"З. ӘЙЛЕ"
+			"З. ӘЙЛЕ",
+			"Mitte27"
 		]
 	},
 	"skinname-vector": "Вектор, устаревшая (2010)",
@@ -74,11 +75,11 @@
 	"vector-feature-custom-font-size-0-label": "Мелкий",
 	"vector-feature-custom-font-size-1-label": "Стандартный",
 	"vector-feature-custom-font-size-2-label": "Крупный",
-	"skin-theme-name": "Цвет",
+	"skin-theme-name": "Цвета",
 	"skin-theme-description": "[Экспериментальная версия, высокая вероятность возникновения проблем] Уменьшает свет, излучаемый экранами устройств.",
-	"skin-theme-day-label": "Светлая",
-	"skin-theme-night-label": "Тёмная",
-	"skin-theme-os-label": "Автоматически",
+	"skin-theme-day-label": "Светлые",
+	"skin-theme-night-label": "Тёмные",
+	"skin-theme-os-label": "Автоматические",
 	"skin-theme-exclusion-notice": "Эта страница всегда находится в светлом режиме.",
 	"vector-intro-page": "Help:Введение",
 	"vector-toc-label": "Содержание",
@@ -114,7 +115,7 @@
 	"vector-night-mode-gadget-warning": "Вы используете гаджет тёмной темы, который мешает работе этой функции. [[Special:Preferences#mw-prefsection-gadgets|Отключить гаджет]] для использования тёмной темы.",
 	"vector-night-mode-issue-reporting-notice-tooltip": "Сообщите, когда цвета тёмной темы затрудняют чтение.",
 	"vector-night-mode-issue-reporting-link-label": "Сообщить о проблеме с темным режимом",
-	"vector-night-mode-issue-reporting-link-notification": "Отчет получен!",
+	"vector-night-mode-issue-reporting-link-notification": "Сообщение отправлено!",
 	"vector-night-mode-issue-reporting-preload-title": "Ошибка темного режима $1",
 	"vector-night-mode-issue-reporting-preload-content": "<!--\nИнструкции\nПожалуйста, опишите нам, как цвета в темном режиме затрудняют чтение Википедии.\nПожалуйста, укажите раздел статьи, в котором вы обнаружили эту проблему.\n-->\n'''Описание проблемы'''",
 	"vector-night-mode-beta-tag": "(бета)"

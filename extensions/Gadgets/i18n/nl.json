@@ -70,7 +70,7 @@
 	"gadgets-validate-invalidnamespaces": "{{PLURAL:$2|Het volgende naamruimtenummer bestaat|De volgende naamruimtenummers bestaan}} niet: $1",
 	"gadgets-validate-invalidskins": "De volgende {{PLURAL:$2|vormgeving bestaat|vormgevingen bestaan}} niet: $1",
 	"gadgets-validate-invalidrights": "{{PLURAL:$2|Het volgende recht bestaat|De volgende rechten bestaan}} niet: $1",
-	"gadgets-validate-invalidtitle": "Paginatitel “$1” is ongeldig",
+	"gadgets-validate-invalidtitle": "Paginatitel “$1” is onjuist",
 	"gadgets-validate-unknownpages": "Bevat een of meer pagina’s zonder het achtervoegsel .js, .css of .json. Ze zouden niet worden gebruikt.",
 	"gadgets-validate-duplicate": "Er is een tweede definitie van gadget $1 gedetecteerd, die zal worden genegeerd",
 	"gadgets-validate-nopage": "Pagina “$1” bestaat niet.",

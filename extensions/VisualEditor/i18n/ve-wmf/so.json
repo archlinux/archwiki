@@ -2,13 +2,37 @@
 	"@metadata": {
 		"authors": [
 			"Abdullahi",
-			"Abshirdheere"
+			"Abshirdheere",
+			"AhmedG612"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck wuxuu u arkaa in wax cusub lagu daray bogga",
+	"tag-editcheck-newreference-description": "Tixraac ayaa lagu daray bogga",
+	"tag-editcheck-references-description": "EditCheck waxa uu u malaynayaa in tixraac loo baahnaa",
+	"tag-editcheck-references-activated": "EditCheck (tixraacyo) waa la hawlgeliyay",
+	"tag-editcheck-references-activated-description": "EditCheck wuxuu u arkaa in tixraac loo baahnaa, waxaana la muujiyay is-dhexgalka",
+	"tag-editcheck-references-shown": "EditCheck (tixraacyo) waa la muujiyay",
+	"tag-editcheck-references-shown-description": "EditCheck waxa uu u malaynayaa in tixraac loo baahnaa, waxaana la muujiyay UI-ga",
+	"tag-editcheck-tone-description": "EditCheck wuxuu ogaaday dhibaato suurtagal ah oo ku saabsan qaabka hadalka ee qaar ka mid ah waxyaabaha lagu daray",
+	"tag-editcheck-tone-shown": "EditCheck (qaabka hadalka) ayaa la muujiyay",
+	"tag-editcheck-tone-shown-description": "EditCheck wuxuu u arkaa in loo baahnaa in la hagaajiyo qaabka hadalka ee qaar ka mid ah waxyaabaha, waxaana la muujiyay is-dhexgalka",
+	"tag-editcheck-paste-shown": "EditCheck (ku dhajin) ayaa la muujiyay",
+	"tag-editcheck-paste-shown-description": "EditCheck wuxuu weydiiyay caddeyn ku saabsan waxyaabaha uu tafatiruhu ku dhajiyay, ka dibna waa la saaray ama waa la xaqiijiyay in la oggol yahay",
 	"tag-visualeditor": "wax ka badalka muuqaalka ah",
+	"tag-visualeditor-description": "Wax ka-beddel lagu sameeyay iyadoo la adeegsanayo [[{{MediaWiki:visualeditor-descriptionpagelink}}|tifaftiraha muuqaalka]]",
+	"tag-visualeditor-needcheck": "Tafatirka muuqaalka: Hubi",
+	"tag-visualeditor-needcheck-description": "Tafatir lagu sameeyay iyadoo la adeegsanayo [[{{MediaWiki:visualeditor-descriptionpagelink}}|tifaftiraha muuqaalka]] halkaas oo nidaamku ogaaday in wikitext-ku uu yeelan karo isbeddello aan la doonayn.",
+	"tag-visualeditor-wikitext": "2017 tafatirka koodhka",
+	"tag-visualeditor-wikitext-description": "Tafatir lagu sameeyay iyadoo la adeegsanayo tifaftiraha wikitext ee 2017",
+	"tag-visualeditor-switched": "Tafatirka muuqaalka: Waa la beddelay",
+	"tag-visualeditor-switched-description": "Isticmaaluhu wuxuu ku bilaabay tafatirka tifaftiraha muuqaalka, ka dibna wuxuu u beddelay tifaftiraha wikitext.",
+	"visualeditor-feedback-link": "Project: Tifaftiraha Muuqaalka/Faallo",
+	"visualeditor-feedback-tool": "Ka bixi faallo ku saabsan software-kan",
+	"visualeditor-help-label": "Akhri hagaha isticmaalaha",
 	"visualeditor-welcomedialog-action": "Biloow bedelidda",
 	"visualeditor-welcomedialog-content": "Qof kasta wuu ka qayb qaadan karaa, habayn kasta waa kaalmo.",
 	"visualeditor-welcomedialog-content-thanks": "Waad ku mahadsantahay kaalmada aad adduunyada ku caawisay helitaan dheeraad ah!",
+	"visualeditor-welcomedialog-switch": "U beddel tafatiraha koodhka",
 	"visualeditor-welcomedialog-switch-ve": "Ku bedel wax bedelaha la arki karo",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Ku}} soo dhawoow $2"
 }

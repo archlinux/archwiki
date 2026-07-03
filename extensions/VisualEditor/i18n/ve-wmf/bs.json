@@ -7,8 +7,9 @@
 			"Srđan"
 		]
 	},
+	"tag-editcheck-newreference-description": "Referenca dodana na stranicu",
 	"tag-visualeditor": "vizualno uređivanje",
-	"tag-visualeditor-description": "Izmjena načinjena korištenjem [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualnog uređivača]]",
+	"tag-visualeditor-description": "Izmjena napravljena [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualnim uređivačem]]",
 	"tag-visualeditor-needcheck": "vizualno uređivanje: potrebna provjera",
 	"tag-visualeditor-needcheck-description": "Izmjena načinjena korištenjem [[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualnog uređivača]] gdje je sistem detektirao wikitekst s mogućim neželjenim izmjenama.",
 	"tag-visualeditor-wikitext": "uređivanje izvornog kôda (2017)",

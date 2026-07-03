@@ -31,7 +31,6 @@
 	"multimediaviewer-thumbnail-error": "Maalesef dosya görüntülenemiyor",
 	"multimediaviewer-thumbnail-error-description": "Teknik bir sorun var gibi görünüyor. Devam ederse $1. Hata: $2",
 	"multimediaviewer-thumbnail-error-retry": "tekrar deneyin",
-	"multimediaviewer-thumbnail-error-report": "sorun bildir",
 	"multimediaviewer-license-cc-pd": "Kamu Malı",
 	"multimediaviewer-license-pd": "Kamu Malı",
 	"multimediaviewer-license-default": "Lisansı görüntüle",
@@ -128,6 +127,5 @@
 	"multimediaviewer-enable-alert": "Medya Görüntüleyici artık devre dışı",
 	"multimediaviewer-disable-info-title": "Medya Görüntüleyiciyi devre dışı bıraktınız",
 	"multimediaviewer-disable-info": "Medya Görüntüleyici ile dosyaları tek tek görüntüleyebilirsiniz.",
-	"multimediaviewer-errorreport-privacywarning": "Hatanın ayrıntıları rapora eklenir ve bu rapor herkes tarafından görülebilir. Bundan memnun değilseniz, aşağıdaki raporu düzenleyebilir ve paylaşmak istemediğiniz tüm verileri kaldırabilirsiniz.",
 	"multimediaviewer-loading": "Ortam Görüntüleyici yükleniyor."
 }

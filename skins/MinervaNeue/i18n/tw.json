@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"AC Krah",
-			"Robertjamal12"
+			"Robertjamal12",
+			"Sandiooses"
 		]
 	},
 	"minerva-last-modified-date": "Nsesae a ɛtwa mu da $1, bere $2",
@@ -33,6 +34,7 @@
 	"mobile-frontend-user-page-contributions": "Mmoa",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|abɛkaho}} $1",
 	"mobile-frontend-user-page-talk": "Kasa",
+	"minerva-page-actions-editfull": "Sesa krataafa no nyinaa",
 	"minerva-page-actions-overflow": "Pii",
 	"minerva-page-actions-language-switcher": "Kasa ahorow",
 	"minerva-page-actions-history": "Abakɔsɛm",

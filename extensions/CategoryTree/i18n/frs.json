@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"WikiFayo95"
+		]
+	},
+	"categorytree-expand": "uutklappen",
+	"categorytree-member-counts": "undholt {{PLURAL:$1|1 unnerkategoorii|$1 unnerkategooriien}}, {{PLURAL:$2|1 siid|$2 siiden}} un {{PLURAL:$3|1 dóótäj|$3 dóótäjen}}",
+	"categorytree-num-categories": "$1 K",
+	"categorytree-num-pages": "$1 S",
+	"categorytree-num-files": "$1 D"
+}

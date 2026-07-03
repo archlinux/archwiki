@@ -12,7 +12,7 @@
 			"Wikiuser13"
 		]
 	},
-	"multimediaviewer-desc": "एक फ़ुलस्क्रीन इंटरफ़ेस पर एक बड़े आकार में अंगूठाकार चित्रों को दिखाता है",
+	"multimediaviewer-desc": "एक फ़ुलस्क्रीन अंतरफलक पर एक बड़े आकार में अंगूठाकार चित्रों को दिखाता है",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About मीडिया वीक्षक]</span> को सक्षम करें",
 	"multimediaviewer-file-page": "संबंधित चित्र पृष्ठ पर जाएँ",
 	"multimediaviewer-repository-local": "अधिक जानकारी",
@@ -25,7 +25,6 @@
 	"multimediaviewer-thumbnail-error": "क्षमा करें, चित्र को दिखाया नहीं जा सकता",
 	"multimediaviewer-thumbnail-error-description": "ऐसा लगता है कोई तकनीकी त्रुटि आई है। अगर यह बरकरार रहती है, आप $1 सकते हैं। त्रुटि: $2",
 	"multimediaviewer-thumbnail-error-retry": "पुनः प्रयास कर",
-	"multimediaviewer-thumbnail-error-report": "समस्या को रिपोर्ट कर",
 	"multimediaviewer-license-cc-pd": "सार्वजनिक डोमेन",
 	"multimediaviewer-license-pd": "सार्वजनिक डोमेन",
 	"multimediaviewer-license-default": "लाइसेंस देखें",
@@ -115,6 +114,5 @@
 	"multimediaviewer-enable-confirmation-text": "$1 पर अगली बार किसी अंगूठाकार पर क्लिक करने पर मीडिया वीक्षक का इस्तेमाल किया जाएगा।",
 	"multimediaviewer-enable-alert": "मीडिया वीक्षक अब अक्षम है",
 	"multimediaviewer-disable-info-title": "आपने मीडिया वीक्षक को अक्षम किया है",
-	"multimediaviewer-disable-info": "आप चित्रों को अब भी मीडिया वीक्षक को देख सकते हैं।",
-	"multimediaviewer-errorreport-privacywarning": "रिपोर्ट के साथ त्रुटि की जानकारी दी गई है, जो सार्वजनिक रूप से दृश्य होगा। अगर आप नहीं चाहते कि यह सार्वजनिक हो, आप नीचे के रिपोर्ट को संपादित करके उस सारी जानकारी को हटा सकते हैं जो आप बाँटना नहीं चाहते।"
+	"multimediaviewer-disable-info": "आप चित्रों को अब भी मीडिया वीक्षक को देख सकते हैं।"
 }

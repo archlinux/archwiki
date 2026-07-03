@@ -7,7 +7,7 @@
 			"Jeluang Terluang"
 		]
 	},
-	"visualeditor-mwlanguagevariant-disabled": "Penukaran kelainan dimatikan",
+	"visualeditor-mwlanguagevariant-disabled": "Penukaran kelainan bahasa dimatikan",
 	"visualeditor-mwlanguagevariant-filter": "Kelainan-kelainan ditapis kepada $1",
 	"visualeditor-mwlanguagevariant-name": "Nama bahasa: $1",
 	"visualeditor-mwlanguagevariant-oneway": "Penukaran sehala: $1",
@@ -22,7 +22,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Sumber",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinasi",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "Teks",
-	"visualeditor-mwlanguagevariantcontextitem-title-disabled": "Penukaran kelainan dihentikan",
+	"visualeditor-mwlanguagevariantcontextitem-title-disabled": "Penukaran kelainan bahasa dimatikan",
 	"visualeditor-mwlanguagevariantcontextitem-title-filter": "Tapisan kelainan",
 	"visualeditor-mwlanguagevariantcontextitem-title-name": "Nama bahasa",
 	"visualeditor-mwlanguagevariantcontextitem-title-oneway": "Peraturan penukaran sehala",
@@ -36,7 +36,7 @@
 	"visualeditor-mwlanguagevariantinspector-oneway-add-button": "Tambah kes baharu",
 	"visualeditor-mwlanguagevariantinspector-oneway-clear-button": "Gugurkan kes",
 	"visualeditor-mwlanguagevariantinspector-oneway-from-text-placeholder": "Teks sumber",
-	"visualeditor-mwlanguagevariantinspector-oneway-to-text-placeholder": "Teks kelainan",
+	"visualeditor-mwlanguagevariantinspector-oneway-to-text-placeholder": "Teks kelainan bahasa",
 	"visualeditor-mwlanguagevariantinspector-title-disabled": "Penukaran kelainan bahasa dimatikan",
 	"visualeditor-mwlanguagevariantinspector-title-filter": "Penapis kelainan",
 	"visualeditor-mwlanguagevariantinspector-title-name": "Nama bahasa",
@@ -44,5 +44,5 @@
 	"visualeditor-mwlanguagevariantinspector-title-twoway": "Peraturan penukaran bahasa",
 	"visualeditor-mwlanguagevariantinspector-twoway-add-button": "Tambah kes baru",
 	"visualeditor-mwlanguagevariantinspector-twoway-clear-button": "Gugurkan kes",
-	"visualeditor-mwlanguagevariantinspector-twoway-text-placeholder": "Teks varian"
+	"visualeditor-mwlanguagevariantinspector-twoway-text-placeholder": "Teks kelainan bahasa"
 }

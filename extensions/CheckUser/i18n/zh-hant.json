@@ -35,7 +35,9 @@
 			"Peterxy12",
 			"臺灣象象",
 			"Erik Baas",
-			"ShuQizhe"
+			"ShuQizhe",
+			"Hamish",
+			"Peterxy"
 		]
 	},
 	"checkuser-summary": "本工具會掃描近期變更的內容以獲得某位使用者用過的IP位址、或顯示某個IP位址的編輯資料或使用者資料。\n可透過在IP位址後附加「/xff」的XFF標頭，來檢索客戶端IP位址的使用者與編輯紀錄。本工具有支援IPv4（CIDR $1-32）與IPv6（CIDR $2-128）。\n因效能上的考量，本工具只會回傳最近$3筆的編輯。\n請依照政策使用此工具。",
@@ -386,7 +388,7 @@
 	"checkuser-userinfocard-open-menu-aria-label": "開啟{{GENDER:$1|使用者}}資訊卡選單",
 	"checkuser-userinfocard-joined": "{{GENDER:$3|加入時間}}：$1（$2）",
 	"checkuser-userinfocard-joined-unknowndate": "{{GENDER:$1|加入時間}}：2005 年或之前",
-	"checkuser-userinfocard-active-wikis-label": "生效 wiki",
+	"checkuser-userinfocard-active-wikis-label": "活躍的項目",
 	"checkuser-userinfocard-active-blocks-from-all-wikis": "所有 wiki 的生效封鎖：$1",
 	"checkuser-userinfocard-past-blocks": "過去封鎖次數：$1",
 	"checkuser-userinfocard-global-edits": "全域編輯次數：$1",

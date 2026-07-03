@@ -32,7 +32,6 @@
 	"multimediaviewer-thumbnail-error": "抱歉，檔案無法正常顯示",
 	"multimediaviewer-thumbnail-error-description": "似乎發生技術性問題，若問題仍然存在您可以先$1。錯誤：$2",
 	"multimediaviewer-thumbnail-error-retry": "重試",
-	"multimediaviewer-thumbnail-error-report": "回報問題",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
 	"multimediaviewer-license-cc-by-sa-2.0": "CC BY-SA 2.0",
 	"multimediaviewer-license-cc-by-sa-2.1": "CC BY-SA 2.1",
@@ -131,6 +130,5 @@
 	"multimediaviewer-enable-alert": "媒體檢視器現在已關閉",
 	"multimediaviewer-disable-info-title": "您已關閉媒體檢視器",
 	"multimediaviewer-disable-info": "您仍可以使用媒體檢視器來檢視個別檔案。",
-	"multimediaviewer-errorreport-privacywarning": "錯誤的詳情內容會附加到報告裡，並可公開檢視。若您對此不認同，您可以編輯以下報告並移除您不希望分享的資料。",
 	"multimediaviewer-loading": "正在載入媒體檢視器。"
 }

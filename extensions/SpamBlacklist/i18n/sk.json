@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"spam-blacklist": " #<!-- leave this line exactly as it is --> <pre>\n# Externé URL zodpovedajúce tomuto zoznamu budú zablokované pri pridaní na stránku.\n# Tento zoznam ovplyvňuje len túto wiki; pozrite si aj globálny zoznam blokovaní.\n# Dokumentáciu nájdete na https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Syntax je nasledovná:\n#   * Všetko od znaku „#“ do konca riadka je komentár\n#   * Každý neprázdny riadok je časť regulárneho výrazu, ktorá zodpovedá len doménam v URL\n\n #</pre> <!-- leave this line exactly as it is -->",
+	"spam-whitelist": " #<!-- leave this line exactly as it is --> <pre>\n# Externé URL zodpovedajúce tomuto zoznamu *nebudú* zablokované, ani keby\n# boli zablokované položkami zoznamu blokovaní.\n#\n# Syntax je nasledovná:\n#   * Všetko od znaku „#“ do konca riadka je komentár\n#   * Každý neprázdny riadok je časť regulárneho výrazu, ktorá zodpovedá len doménam v URL\n\n #</pre> <!-- leave this line exactly as it is -->",
+	"spam-blacklist-desc": "Antispamový nástroj založený na regulárnych výrazoch umožňujúci blokovať URL na stránkach a e-mailové adresy registrovaných používateľov",
+	"log-name-spamblacklist": "Protokol antispamového zoznamu blokovaní",
+	"log-description-spamblacklist": "Tieto udalosti zaznamenávajú zásahy antispamového zoznamu blokovaní."
+}

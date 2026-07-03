@@ -23,7 +23,8 @@
 			"Valtlai",
 			"Valtlait",
 			"Varusmies",
-			"ZeiP"
+			"ZeiP",
+			"Wikipeedikko"
 		]
 	},
 	"checkuser-summary": "Tämän työkalun avulla voidaan tutkia tuoreet muutokset ja paljastaa käyttäjien IP-osoitteet tai noutaa IP-osoitteiden muokkaukset ja käyttäjätiedot.\nKäyttäjät ja muokkaukset voidaan hakea myös uudelleenohjausosoitteen (X-Forwarded-For) takaa käyttämällä IP-osoitteen perässä <tt>/xff</tt> -merkintää. Työkalu tukee sekä IPv4 (CIDR $1–32) ja IPv6 (CIDR $2–128) -standardeja.\nEnintään $3 muokkausta palautetaan suorituskykyyn liittyvien syiden vuoksi.\nKäytä tätä käytäntöjen mukaisesti.",
@@ -171,7 +172,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-preference-title": "Ota IP-tiedot käyttöön",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-error": "Jotain meni pieleen. Yritä uudelleen. Virheilmoitus oli: $1",
 	"checkuser-temporary-accounts-onboarding-dialog-preference-success": "Asetukset päivitetty",
-	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "Klikkaa ”$1” ennen kuin jatkat",
+	"checkuser-temporary-accounts-onboarding-dialog-preference-warning": "Napsauta ”$1” ennen kuin jatkat",
 	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "Tallenna asetukset",
 	"checkuser-temporary-accounts-onboarding-dialog-save-global-preference": "Tallenna järjestelmänlaajuiset asetukset",
 	"checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-title": "Tilapäisten tunnusten IP-osoitteiden paljastaminen",

@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"captcha-edit": "Si aad u saxdo boggan, fadlan xalliso hawsha hoose oo geli jawaabta sanduuqa ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-edit-fail": "CAPTCHA khaldan ama maqan.",
+	"captcha-desc": "Waxay bixisaa farsamooyinka CAPTCHA si looga ilaaliyo spam iyo isku dayga qiyaasidda erayga sirta ah.",
+	"captcha-help": "Xalka CAPTCHA",
+	"captcha-info-help": "Sharaxaadda CAPTCHA.",
+	"captcha-id-label": "Aqoonsiga CAPTCHA",
+	"captcha-id-help": "Qiimahan waa in dib loo soo diraa isbeddel la’aan.",
+	"captcha-addurl": "Wax ka beddelkaaga wuxuu ka kooban yahay xiriirro dibadda ah oo cusub.\nSi loo ilaaliyo wiki-ga spam otomaatig ah, fadlan xalliso hawsha hoose oo geli jawaabta sanduuqa si aad u kaydiso wax ka beddelkaaga ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-badlogin": "Si loo ilaaliyo wiki-ga ka hortagga jabinta sirta tooska ah, waxaan si naxariis leh kaaga codsanaynaa inaad xalliso hawsha hoose oo aad geli jawaabta sanduuqa ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-createaccount": "Si loo ilaaliyo wiki-ga ka hortagga abuurista akoonnada tooska ah, waxaan si naxariis leh kaaga codsanaynaa inaad xalliso hawsha hoose oo aad geli jawaabta sanduuqa ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-createaccount-fail": "CAPTCHA khaldan ama maqan.",
+	"captcha-create": "Si aad u abuurto bogga, fadlan xalliso hawsha hoose oo geli jawaabta sanduuqa ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-sendemail": "Si loo ilaaliyo wiki-ga ka hortagga spam-ka tooska ah, waxaan si naxariis leh kaaga codsanaynaa inaad xalliso hawsha hoose oo aad geli jawaabta sanduuqa ([[Special:Captcha/help|faahfaahin dheeraad ah]]):",
+	"captcha-sendemail-fail": "CAPTCHA khaldan ama maqan.",
+	"captcha-disabledinapi": "Tallaabadani waxay u baahan tahay CAPTCHA, sidaas darteed laguma fulin karo API-ga.",
+	"captcha-error": "Xaqiijinta CAPTCHA ayaa fashilantay sabab la xiriirta khalad gudaha ah: $1",
+	"captchahelp-title": "Caawimaadda CAPTCHA",
+	"captchahelp-cookies-needed": "Si arrintan loo sameeyo waa inaad ku rakibtaa cookies-ka biraawsarkaaga.",
+	"captchahelp-text": "Mareegaha u oggolaanaya dadweynaha inay wax ku qoraan, sida wiki-kan, badanaa waxaa si xun u adeegsada spammer-yaal isticmaala qalab otomaatig ah si ay u faafiyaan xiriirradooda bogag badan.\n\nInkasta oo xiriirrada spam-ka la tirtiri karo, haddana waxay yihiin dhib weyn.\n\nMararka qaar, gaar ahaan marka lagu darayo xiriirro cusub oo web ah bogga, wiki-ga ayaa laga yaabaa inuu ku tuso sawir qoraal midabaysan ama qalloocan oo ku weydiinaya inaad qorto erayada ku jira sawirka.\n\nMaadaama tani ay tahay hawl adag in si otomaatig ah loo sameeyo, waxay u oggolaanaysaa dadka dhabta ah inay wax qoraan halka ay joojinayso spammer-yaasha iyo weerarrada robot-ka ah intooda badan.\n\nNasiib darro, tani waxay dhib ku noqon kartaa dadka aragga xaddidan leh ama kuwa isticmaalaya browserro qoraal ama cod ku saleysan.\n\nWaqtigan xaadirka ah, ma jiro beddel cod ah oo la heli karo.\n\nFadlan la xiriir [[{{int:grouppage-sysop}}|maamulka bogga]] haddii tani si lama filaan ah kuu hor istaagto inaad sameyso ficillo sharci ah.\n\nRiix badhanka \"dib u noqo\" ee browser-kaaga si aad ugu noqoto tifaftiraha bogga.",
+	"captcha-addurl-whitelist": "#<!-- ka tag khadkan sida uu yahay --> <pre>\n# Qaabka syntax-ku waa sidan:\n#   * Wax kasta oo ka bilaabma \"#\" ilaa dhamaadka khadka waa faallo\n#   * Khad kasta oo aan madhnayn waa qayb regex ah oo kaliya la jaanqaadaysa host-yada ku jira URL-yada\n #</pre> <!-- ka tag khadkan sida uu yahay -->",
+	"right-skipcaptcha": "Samee falal kicinaya CAPTCHA adigoon marin CAPTCHA-ga",
+	"action-skipcaptcha": "samee ficillo kicinaya CAPTCHA adigoon marin CAPTCHA",
+	"confirmedit-preview-line": "Tirada Sadarka",
+	"confirmedit-preview-content": "Nuxur",
+	"confirmedit-preview-validity": "Ansaxnimo",
+	"confirmedit-preview-valid": "Ansax",
+	"confirmedit-preview-invalid": "aan ansax ahayn",
+	"confirmedit-preview-description": "Jadwalku soo socda wuxuu muujinayaa liiska khadadka ku jira boggan iyo in mid kasta uu yahay cinwaan IP sax ah ama xadka cinwaannada IP. Haddii khadku yahay cinwaan IP sax ah ama xad IP sax ah, waxaa laga saari doonaa hubinta CAPTCHA, halka khadadka aan sax ahayn la iska indho tiri doono. Tusaale xad IP sax ah waa: 69.208.0.0/16 oo ka bilaabma 69.208.0.0 ilaa 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Macluumaad dheeraad ah] oo ku saabsan xisaabinta xadka cinwaanka IP."
+}

@@ -5,7 +5,8 @@
 			"Martin Urbanec",
 			"Matěj Suchánek",
 			"WikipedistaOndra",
-			"Mormegil"
+			"Mormegil",
+			"Jkjk"
 		]
 	},
 	"editcheck-dialog-action-no": "Ne",
@@ -15,7 +16,7 @@
 	"editcheck-dialog-action-recheck": "Znovu zkontrolovat",
 	"editcheck-dialog-action-back": "Zpět",
 	"editcheck-dialog-action-submit": "Odeslat",
-	"editcheck-dialog-addref-description": "Pomozte čtenářům pochopit, odkud vámi přidaná informace pochází tím, že přidáte referenci.",
+	"editcheck-dialog-addref-description": "Pomozte čtenářům pochopit, odkud vámi přidaná informace pochází, tím, že přidáte referenci.",
 	"editcheck-dialog-addref-reject-question": "Z jakého důvodu nepřidáváte žádnou referenci?",
 	"editcheck-dialog-addref-reject-description": "Ostatní wikipedisté by rádi věděli více o tom, proč jste se {{GENDER:|rozhodl|rozhodla|rozhodl(a)}} nepřidat žádnou referenci.",
 	"editcheck-dialog-addref-reject-irrelevant": "Nemyslím si, že reference je pro mou změnu relevantní",
@@ -30,7 +31,7 @@
 	"editcheck-copyvio-action-keep": "Ano, ponechat",
 	"editcheck-copyvio-action-remove": "Ne, odstranit",
 	"editcheck-copyvio-keep-description": "Pomozte prosím ostatním editorům tohoto článku pochopit váš důvod pro ponechání vloženého textu.",
-	"editcheck-copyvio-keep-wrote": "Tento obsah jsem napsal(a) já a není publikován nikde jinde",
+	"editcheck-copyvio-keep-wrote": "Tento obsah jsem {{GENDER:|napsal|napsala|napsal(a)}} já a není publikován nikde jinde",
 	"editcheck-copyvio-keep-permission": "Tento obsah je volně licencován",
 	"editcheck-copyvio-keep-other": "Nic z výše uvedeného neplatí",
 	"editcheck-copyvio-keep-notify": "Děkujeme za sdílení důvodu, proč ponechat tento vložený text!",
@@ -43,6 +44,7 @@
 	"editcheck-tone-reject-other": "Další",
 	"editcheck-tone-thank": "Děkujeme za zvážení tónu!",
 	"editcheck-reject-description": "Ostatní editoři by se rádi dozvěděli, proč jste {{GENDER:|zvolil|zvolila|zvolili}} tuto možnost.",
+	"editcheck-review-title": "Zkontrolovat změny",
 	"tag-editcheck-reference-decline-common-knowledge": "Kontrola editace (reference) odmítnuta (všeobecné znalosti)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Kontrola editace (reference) odmítnuta jako všeobecná znalost",
 	"tag-editcheck-reference-decline-irrelevant": "Kontrola editace (reference) odmítnuta (irelevantní)",

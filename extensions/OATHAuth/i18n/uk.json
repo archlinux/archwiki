@@ -75,7 +75,7 @@
 	"oathauth-auth-ui": "Будь ласка, введіть код з Вашої програми двофакторної автентифікації (наприклад, [https://www.authy.com Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] або [https://1password.com/ 1Password]).",
 	"oathauth-auth-switch-module-label": "Використати програму-автентифікатор",
 	"oathauth-auth-switch-module-keep": "(не перемикати)",
-	"oathauth-throttled": "Забагато спроб верифікації! Будь ласка, зачекайте $1.",
+	"oathauth-throttled": "Забагато спроб! Будь ласка, зачекайте кілька хвилин.",
 	"oathauth-login-failed": "Двофакторна автентифікація не вдалась.",
 	"oathauth-recovery-code-login-failed": "Не вдалося перевірити код відновлення.",
 	"oathauth-describe-provider": "Двофакторна автентифікація (OATH).",
@@ -152,7 +152,7 @@
 	"oathauth-delete-warning-header": "Вилучити «$1»",
 	"oathauth-delete-confirm-box": "Введіть «{{int:oathauth-authenticator-delete-text}}», щоб продовжити",
 	"oathauth-delete-wrong-confirm-message": "Неправильне введення для остаточного вилучення ключа. Будь ласка, введіть «{{int:oathauth-authenticator-delete-text}}», щоб продовжити",
-	"oathauth-delete-success": "<strong>$1</strong> вилучено.",
+	"oathauth-delete-success": "Видалено!",
 	"oathauth-created-at": "Додано $1",
-	"oathauth-enable-success": "Додано <strong>$1</strong>."
+	"oathauth-enable-success": "Додано!"
 }

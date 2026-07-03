@@ -21,7 +21,6 @@
 	"multimediaviewer-thumbnail-error": "Beklager, filen kunne ikke vises",
 	"multimediaviewer-thumbnail-error-description": "Det ser ut til å være et teknisk problem. Du kan $1 om det fortsetter. Feil: $2",
 	"multimediaviewer-thumbnail-error-retry": "prøve igjen",
-	"multimediaviewer-thumbnail-error-report": "rapportere problemet",
 	"multimediaviewer-license-cc-pd": "Offentlig eiendom",
 	"multimediaviewer-license-pd": "Offentlig eiendom",
 	"multimediaviewer-license-default": "Vis lisens",
@@ -116,6 +115,5 @@
 	"multimediaviewer-enable-alert": "Mediefremviseren er deaktivert som standard",
 	"multimediaviewer-disable-info-title": "Du har deaktivert mediefremviseren",
 	"multimediaviewer-disable-info": "Du kan fremdeles vise enkeltfiler i mediefremviseren.",
-	"multimediaviewer-errorreport-privacywarning": "Detaljer om feilen legges ved rapporten, og vil være synlige offentlig. Om du ikke er komfortabel med det kan du redigere rapporten nedenfor og fjerne data du ikke ønsker å dele.",
 	"multimediaviewer-loading": "Laster mediefremviseren."
 }

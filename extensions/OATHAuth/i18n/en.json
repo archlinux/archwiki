@@ -68,7 +68,7 @@
 	"oathauth-auth-switch-module-label": "Use authenticator app",
 	"oathauth-auth-switch-module-help": "Set <code>newModule</code> to the name of the new module to get a new challenge from a different 2FA module. Leave empty if you are answering the current challenge.",
 	"oathauth-auth-switch-module-keep": "(do not switch)",
-	"oathauth-throttled": "Too many verification attempts! Please wait $1.",
+	"oathauth-throttled": "Too many attempts! Please wait a few minutes.",
 	"oathauth-login-failed": "Two-factor authentication failed.",
 	"oathauth-recovery-code-login-failed": "Recovery code verification failed.",
 	"oathauth-describe-provider": "Two-factor authentication (OATH).",
@@ -150,7 +150,7 @@
 	"oathauth-delete-confirm-box": "Enter \"{{int:oathauth-authenticator-delete-text}}\" to continue",
 	"oathauth-delete-warning-final": "Removing this method will disable two-factor authentication entirely.",
 	"oathauth-delete-wrong-confirm-message": "Wrong input for final key removal. Please type \"{{int:oathauth-authenticator-delete-text}}\" to continue",
-	"oathauth-delete-success": "<strong>$1</strong> removed.",
+	"oathauth-delete-success": "Removed!",
 	"oathauth-created-at": "Added on $1",
-	"oathauth-enable-success": "<strong>$1</strong> added."
+	"oathauth-enable-success": "Added!"
 }

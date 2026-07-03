@@ -28,7 +28,7 @@
 	"editcheck-dialog-title": "Przed publikacją",
 	"editcheck-copyvio-title": "Wklejona zawartość",
 	"editcheck-copyvio-description": "Prosimy unikać kopiowania tekstu z innych źródeł, nawet jeśli jest przeformułowany lub cytowany. Może to zostać uznane za [$1 naruszenie praw autorskich lub plagiat] i może skutkować usunięciem treści lub zablokowaniem konta.",
-	"editcheck-copyvio-prompt": "Czy to Ty napisałe(a)ś ten tekst?",
+	"editcheck-copyvio-prompt": "Czy to Ty {{GENDER:|napisałeś|napisałaś|napisałeś(-aś)}} ten tekst?",
 	"editcheck-copyvio-action-keep": "Tak, zachowaj to",
 	"editcheck-copyvio-action-remove": "Nie, usuń to",
 	"editcheck-copyvio-keep-description": "Pomóż innym redaktorom tego artykułu zrozumieć, dlaczego chcesz zachować wklejony tekst.",

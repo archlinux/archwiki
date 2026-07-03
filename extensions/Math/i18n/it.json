@@ -9,7 +9,8 @@
 			"Ricordisamoa",
 			"Sakretsu",
 			"Statix64",
-			"Valepert"
+			"Valepert",
+			"Neonsn0w"
 		]
 	},
 	"math-desc": "Esegue il rendering di formule matematiche tra i tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

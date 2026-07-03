@@ -106,9 +106,7 @@
 		},
 		"TitleBlacklistCaching": {
 			"value": {
-				"warningchance": 100,
-				"expiry": 900,
-				"warningexpiry": 600
+				"expiry": 900
 			}
 		},
 		"TitleBlacklistBlockAutoAccountCreation": {

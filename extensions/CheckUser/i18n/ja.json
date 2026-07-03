@@ -45,7 +45,8 @@
 			"バレロン",
 			"春春眠眠",
 			"背番号4のエース",
-			"青子守歌"
+			"青子守歌",
+			"Tensama0415"
 		]
 	},
 	"checkuser-summary": "このツールは最近の更新をもとに、ある利用者が使用したIPアドレスの検索、または、あるIPアドレスからなされた編集および利用者名の表示を行います。\nIPアドレスと共に「/xff」オプションを指定すると、XFF (X-Forwarded-For) ヘッダーを通じてクライアントIPアドレスを取得し、そこからなされた編集および利用者名を検索できます。\nIPv4 ($1から32ビットのCIDR表記) と IPv6 ($2から128ビットのCIDR表記) に対応しています。\nパフォーマンス上の理由により、最大$3件の編集しか表示できません。\n方針に従って使用してください。",
@@ -61,7 +62,7 @@
 	"group-temporary-account-viewer-member": "{{GENDER:$1|仮アカウントIP閲覧者}}",
 	"right-checkuser": "利用者のIPアドレスやその他の情報をチェック",
 	"right-checkuser-log": "チェックユーザー記録を閲覧",
-	"right-checkuser-temporary-account": "仮アカウントのIPアドレスを閲覧",
+	"right-checkuser-temporary-account": "仮アカウントの IP アドレスを閲覧",
 	"right-checkuser-temporary-account-no-preference": "個人設定を有効化せずに仮アカウントのIPアドレスを閲覧",
 	"right-checkuser-temporary-account-log": "仮アカウントIPアドレスのアクセス記録を閲覧",
 	"right-checkuser-temporary-account-auto-reveal": "仮アカウントの IP アドレスを自動的に開示",
@@ -429,7 +430,7 @@
 	"checkuser-userinfocard-last-edit-timestamp-label": "最終編集: $1",
 	"checkuser-ipinfo-global-contributions-label": "グローバル投稿記録",
 	"checkuser-ipinfo-global-contributions-tooltip": "このIPアドレスから行われたクロスウィキの編集数。",
-	"checkuser-ipinfo-global-contributions-value": "{{PLURAL:$1|$1グローバル編集|0=グローバル編集なし}}",
+	"checkuser-ipinfo-global-contributions-value": "{{PLURAL:$1|グローバル編集 $1 件|0=グローバル編集なし}}",
 	"tooltip-t-global-contributions": "{{GENDER:$1|この利用者}}の全ウィキでの投稿記録",
 	"checkuser-userinfocard-groups": "<strong>グループ</strong>: $1",
 	"checkuser-userinfocard-global-groups": "<strong>グローバルグループ</strong>: $1",

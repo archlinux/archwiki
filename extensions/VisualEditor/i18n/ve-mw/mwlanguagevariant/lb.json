@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Les Meloures",
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"visualeditor-mwlanguagevariant-filter": "Variante gefiltert no $1",
@@ -14,11 +15,12 @@
 	"visualeditor-mwlanguagevariantcontextitem-flag-hidden": "Dëst ass eng verstoppt Reegel.",
 	"visualeditor-mwlanguagevariantcontextitem-flag-title": "Dës Reegel beaflosst dëse Säitentitel.",
 	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Sprooch&nbsp;Code",
-	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Net valabel</em>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<em>Ongülteg</em>",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Sprooch",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Quell",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Destinatioun",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "Text",
+	"visualeditor-mwlanguagevariantcontextitem-title-filter": "Variantefilter",
 	"visualeditor-mwlanguagevariantcontextitem-title-name": "Numm vun der Sprooch",
 	"visualeditor-mwlanguagevariantcontextitem-title-unknown": "Sproochvariant",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Sproochen",

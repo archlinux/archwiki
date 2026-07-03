@@ -9,19 +9,17 @@ use MediaWiki\Extension\Notifications\SeenTime;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoMarkSeen extends ApiBase {
+	use ApiEchoPermissionsTrait;
 
 	public function execute() {
+		$this->checkReadNotificationsPermissions();
+
 		// To avoid API warning, register the parameter used to bust browser cache
 		$this->getMain()->getVal( '_' );
 
-		$user = $this->getUser();
-		if ( !$user->isRegistered() ) {
-			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'login-required' );
-		}
-
 		$params = $this->extractRequestParams();
 		$timestamp = wfTimestamp( TS_MW );
-		$seenTime = SeenTime::newFromUser( $user );
+		$seenTime = SeenTime::newFromUser( $this->getUser() );
 		$seenTime->setTime( $timestamp, $params['type'] );
 
 		if ( $params['timestampFormat'] === 'ISO_8601' ) {

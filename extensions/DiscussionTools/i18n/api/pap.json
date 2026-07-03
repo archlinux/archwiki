@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"apierror-discussiontools-commentid-notfound": "No a haña reakshon ku ID '$1'.",
+	"apierror-discussiontools-commentname-ambiguous": "Multiple reakshon ku e nòmber '$1' a wòrdu hañá, <var>commentid</var> ta rekerí.",
+	"apierror-discussiontools-commentname-notfound": "No a haña reakshon ku nòmber '$1'.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "E página nunka a kontené un diskushon.",
+	"apierror-discussiontools-formtoken-used": "Reakshon ya kaba a wòrdu butá. Karga e página di nobo pa wak e.",
+	"apierror-discussiontools-subscription-failed-add": "No por a suskribí na e tópiko aki.",
+	"apierror-discussiontools-subscription-failed-remove": "No por a anulá for di e tópiko aki.",
+	"apihelp-discussiontoolscompare-summary": "Haña informashon tokante kambionan di reakshon entre dos revishon di página.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "Kódigo di identifikashon òf nòmber di reakshon"
+}

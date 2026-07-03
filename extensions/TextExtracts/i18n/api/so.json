@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-query+extracts-summary": "Waxay soo celisaa qoraal cad ama HTML xaddidan oo laga soo xigtay bogagga la bixiyay.",
+	"apihelp-query+extracts-param-chars": "Immisa xaraf ayaa la soo celinayaa. Qoraalka dhabta ah ee la soo celiyo waxa laga yaabaa inuu wax yar ka dheeraado.",
+	"apihelp-query+extracts-param-sentences": "Immisa jumladood ayaa la soo celinayaa.",
+	"apihelp-query+extracts-param-limit": "Immisa soo koobid ayaa la soo celinayaa. (Soo koobidyo badan waxa kaliya oo la soo celin karaa haddii exintro la dejiyo true.)",
+	"apihelp-query+extracts-param-intro": "Soo celi kaliya nuxurka ka hor qaybta ugu horreysa.",
+	"apihelp-query+extracts-param-plaintext": "Soo celi soo koobidda qoraal cad halkii aad ka soo celin lahayd HTML xaddidan.",
+	"apihelp-query+extracts-param-sectionformat": "Sida loo qaabeeyo qaybaha marka lagu jiro qaabka qoraal cad:",
+	"apihelp-query+extracts-paramvalue-sectionformat-plain": "Qaabayn ma jirto.",
+	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "Qaabaynta qaabka Wikitext \n(== sida tan ==).",
+	"apihelp-query+extracts-paramvalue-sectionformat-raw": "Matalaadda gudaha ee module-kan (cinwaannada qaybaha oo lagu hormariyey &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;section level&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",
+	"apihelp-query+extracts-example-1": "Soo hel soo koobid 175 xaraf ah",
+	"apiwarn-textextracts-limit": "<var>exlimit</var> aad buu ugu weynaa codsiga soo koobidda maqaal buuxa, waxaa hoos loogu dhigay $1.",
+	"apiwarn-textextracts-unsupportedmodel": "$1 wuxuu leeyahay qaab nuxur $2, kaas oo aan la taageerin; sidaas darteed waxaa la soo celinayaa soo koobid madhan.",
+	"apiwarn-textextracts-title-in-file-namespace": "Soo koobid loogu talagalay cinwaan ku jira meesha-magac ee Faylka ayaa la codsaday, waxba lama soo celin.",
+	"apiwarn-textextracts-sentences-and-html": "Halbeegga <var>$1sentences</var> waxa laga yaabaa inuu keeno natiijooyin aan la filayn marka lagu isticmaalo qaabka HTML.",
+	"apiwarn-textextracts-malformed-html": "HTML waxa laga yaabaa inuu noqdo mid khaldan iyo/ama aan isu dheellitirin, waxaana laga yaabaa in laga reebo sawirrada ku jira qoraalka. Isticmaal adiga oo mas’uul ka ah. Dhibaatooyinka la yaqaan waxa lagu taxay https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats."
+}

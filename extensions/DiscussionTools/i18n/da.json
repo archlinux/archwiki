@@ -77,7 +77,6 @@
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "{{GENDER:|Du}} har afmeldt abonnementet.",
 	"discussiontools-notification-added-topic-header": "Ny diskussion \"<strong>$4</strong>\" er {{GENDER:$2|oprettet}} på <strong>$3</strong> af $1.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|En ny diskussion|$1 nye diskussioner|100=99+ nye diskussioner}} på \"<strong>$2</strong>\".",
-	"discussiontools-notification-added-topic-header-compact": "$3: <em>$4</em>",
 	"discussiontools-notification-added-topic-view": "Vis diskussion",
 	"discussiontools-notification-comment-thank-header": "$1 {{GENDER:$2|takkede}} {{GENDER:$4|dig}} for din kommentar i \"<strong>$3</strong>\".",
 	"discussiontools-notification-comment-thank-header-bundled": "{{PLURAL:$1|En person|$1 personer|100=mere end 99 personer}} takkede {{GENDER:$3|dig}} for din kommentar i \"<strong>$2</strong>\".",

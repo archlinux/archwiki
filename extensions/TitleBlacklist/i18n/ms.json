@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hakimi97"
+		]
+	},
+	"action-tboverride": "melangkau tajuk atau senarai nama pengguna yang tidak dibenarkan",
+	"action-tboverride-account": "melangkau senarai nama pengguna yang tidak dibenarkan",
+	"action-titleblacklistlog": "melihat log senarai tajuk yang tidak dibenarkan",
+	"log-name-titleblacklist": "Log senarai tajuk yang tidak dibenarkan",
+	"log-description-titleblacklist": "Acara ini mengesan kenaan senarai tajuk yang tidak dibenarkan.",
+	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|mencetuskan}} kenaan senarai tajuk yang tidak dibenarkan apabila cuba untuk mencipta akaun $3 yang berpadanan dengan $4.",
+	"titleblacklist-desc": "Membolehkan penyelia untuk menghalangkan penciptaan laman dan akaun pengguna melalui [[MediaWiki:Titleblacklist|senarai tajuk yang tidak dibenarkan]] dan [[MediaWiki:Titlewhitelist|senarai tajuk yang dibenarkan]]",
+	"titleblacklist": "# Laman ini merupakan senarai tajuk yang tidak dibenarkan. Tajuk dan nama pengguna yang berpadanan dengan ungkapan nalar tersenarai di sini tidak boleh dicipta.\n# Gunakan \"#\" untuk komen.\n# Secara asali, ungkapan nalar pada senarai ini tidak peka besar kecil huruf",
+	"titlewhitelist": "# Laman ini merupakan senarai tajuk yang dibenarkan. Gunakan \"#\" untuk komen.\n# Secara asali, ungkapan nalar pada senarai ini tidak peka besar kecil huruf",
+	"titleblacklist-forbidden-edit": "Tajuk \"$2\" telah diharamkan.\nTajuk tersebut berpadanan dengan entri senarai tajuk yang tidak dibenarkan seperti berikut: <code>$1</code>",
+	"titleblacklist-forbidden-move": "\"$2\" tak dapat dipindahkan ke \"$3\" kerana tajuk \"$3\" telah diharamkan daripada penciptaan.\nTajuk tersebut berpadanan dengan entri senarai tajuk yang tidak dibenarkan seperti yang berikut: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "Nama fail \"$2\" telah diharamkan.\nNama tersebut berpadanan dengan entri senarai tajuk yang tidak dibenarkan seperti yang berikut: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Nama pengguna \"$2\" telah diharamkan.\nIa berpadanan dengan entri senarai tajuk yang tidak dibenarkan berikut: <code>$1</code>",
+	"titleblacklist-override": "Langkau senarai tajuk yang tidak dibenarkan jika berpadanan",
+	"titleblacklist-override-help": "Pengguna dengan hak istimewa yang mencukupi boleh menetapkan senarai ini untuk mengabaikan pemeriksaan senarai tajuk yang tidak dibenarkan.",
+	"titleblacklist-warning": "<strong>Amaran: Laman ini hanya boleh disunting oleh penyelia dan pengguna lain yang mempunyai hak <code>tboverride</code> kerana ia berpadanan dengan senarai tajuk yang tidak dibenarkan seperti berikut:</strong><br /><code>$1</code>",
+	"right-tboverride": "Melangkau senarai nama pengguna atau tajuk yang tidak dibenarkan",
+	"right-tboverride-account": "Melangkau senarai nama pengguna yang tidak dibenarkan",
+	"right-titleblacklistlog": "Lihat log senarai tajuk yang tidak dibenarkan"
+}

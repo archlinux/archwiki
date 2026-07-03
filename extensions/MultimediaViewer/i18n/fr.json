@@ -38,7 +38,6 @@
 	"multimediaviewer-thumbnail-error": "Désolé, le fichier ne peut pas être chargé.",
 	"multimediaviewer-thumbnail-error-description": "Il semble y avoir un problème technique. Vous pouvez $1 pour voir s’il persiste. Erreur : $2",
 	"multimediaviewer-thumbnail-error-retry": "essayer à nouveau",
-	"multimediaviewer-thumbnail-error-report": "signaler le problème",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",
 	"multimediaviewer-license-cc-sa-1.0": "CC SA 1.0",
 	"multimediaviewer-license-cc-by-sa-1.0": "CC BY-SA 1.0",
@@ -157,6 +156,5 @@
 	"multimediaviewer-enable-alert": "La visionneuse de médias est maintenant désactivée",
 	"multimediaviewer-disable-info-title": "Vous avez désactivé la visionneuse de médias",
 	"multimediaviewer-disable-info": "Vous pouvez toujours consulter des fichiers individuels avec la visionneuse de médias.",
-	"multimediaviewer-errorreport-privacywarning": "Les détails sur l’erreur sont joints au rapport, qui sera visible publiquement. Si cela ne vous convient pas, vous pouvez modifier le rapport ci-dessous et supprimer toutes les données que vous ne voulez pas partager.",
 	"multimediaviewer-loading": "Chargement de la visionneuse multimédia."
 }

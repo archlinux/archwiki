@@ -35,7 +35,8 @@
 			"Umherirrender",
 			"Verdy p",
 			"Wowes",
-			"Yekrats"
+			"Yekrats",
+			"Nike"
 		]
 	},
 	"wikieditor": "An extension to provide an advanced, extensible wikitext editing interface.\nhttps://www.mediawiki.org/wiki/Extension:WikiEditor",
@@ -76,7 +77,7 @@
 	"wikieditor-toolbar-file-alt-help": "Help text explaining the use of alternative text",
 	"wikieditor-toolbar-file-alt-help-label": "Label for toggling help text of alternative text",
 	"wikieditor-toolbar-file-size": "Label for input of size on insert file dialog\n{{Identical|Size}}",
-	"wikieditor-toolbar-file-float": "Label for image align selector on insert file dialog\n{{Identical|Align}}",
+	"wikieditor-toolbar-file-float": "Label for image align selector on insert file dialog",
 	"wikieditor-toolbar-file-default": "Label for default option in insert file dialog selectors\n{{Identical|Default}}",
 	"wikieditor-toolbar-file-format": "Label for image format (thumbnail, framed, frameless, none) selector on insert file dialog\n{{Identical|Format}}",
 	"wikieditor-toolbar-file-format-none": "Option in file dialog for no format for the added image.\n{{Identical|None}}",

@@ -6,7 +6,8 @@
 			"Matroxko",
 			"Teslaton",
 			"Woytecr",
-			"Yardom78"
+			"Yardom78",
+			"Wizzard"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Keď niekto pridá nový príspevok do tejto diskusie, dostanete upozornenie. Nastavenia upozornení môžete zmeniť v nastaveniach.",
@@ -26,9 +27,9 @@
 	"discussiontools-emptystate-title-user": "Začnite diskusiu s {{GENDER:{{PAGENAME}}|redaktorom|redaktorkou}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "Vitajte na tejto diskusnej stránke",
 	"discussiontools-emptystate-title-user-temp": "Začnite diskusiu s {{GENDER:{{PAGENAME}}|redaktorom|redaktorkou}} {{PAGENAME}}",
-	"discussiontools-error-comment-conflict": "Váš príspevok nebolo možné uložiť, pretože niekto iný pridával príspevok v ten istý čas ako vy. Prosím, skúste to znovu alebo stránku obnovte, aby ste videli najnovšie príspevky.",
+	"discussiontools-error-comment-conflict": "{{GENDER:|Váš}} príspevok nebolo možné uložiť, pretože niekto iný pridával príspevok v rovnakom čase ako vy. Skúste to prosím znova alebo obnovte stránku, aby ste videli najnovšie príspevky.",
 	"discussiontools-error-comment-disappeared": "Nemôžeme nájsť príspevok, na ktorý odpovedáte. Možno bol vymazaný alebo presunutý na inú stránku.",
-	"discussiontools-error-comment-disappeared-reload": "Prosíme, aktualizujte stránku a skúste to znova.",
+	"discussiontools-error-comment-disappeared-reload": "{{GENDER:|Obnovte}} prosím stránku a skúste to znova.",
 	"discussiontools-error-noswitchtove-extension": "syntax rozšírenia alebo referencie",
 	"discussiontools-error-noswitchtove-table": "syntax tabuľky",
 	"discussiontools-error-noswitchtove-template": "syntax šablóny",

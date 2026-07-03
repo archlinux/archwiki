@@ -14,7 +14,8 @@
 			"Tarikozket",
 			"TmY e12",
 			"ToprakM",
-			"Vito Genovese"
+			"Vito Genovese",
+			"HakanIST"
 		]
 	},
 	"nuke": "Toplu sil",
@@ -23,9 +24,11 @@
 	"nuke-defaultreason": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] tarafından eklenen sayfaların toplu olarak silinmesi",
 	"nuke-multiplepeople": "Son eklenen sayfaların toplu olarak silinmesi",
 	"nuke-tools": "Bu araç, belirli bir kullanıcı veya bir IP adresi tarafından yakın zamanda eklenen sayfaların toplu olarak silinmesine izin verir.\nSilinecek sayfaların bir listesini almak veya tüm kullanıcılar için boş bırakmak için kullanıcı adını veya IP adresini girin.",
+	"nuke-tools-tempaccount": "Bu araç, belirli bir kullanıcı veya geçici hesap tarafından yakın zamanda eklenen sayfaların toplu olarak silinmesini sağlar. Silinecek sayfaların listesini almak için bir kullanıcı adı veya IP adresi girin veya tüm kullanıcılar için boş bırakın. Bir IP adresi girilmesi, o IP adresi tarafından oluşturulan veya o IP adresinden kullanılan tüm geçici hesaplar tarafından oluşturulan tüm sayfaların listesini verecektir.",
 	"nuke-tools-prompt-restricted": "Bu aracı sayfaları listelemek için kullanabilirsiniz, ancak onları silemezsiniz.",
 	"nuke-tools-notice-noperm": "Sayfaları toplu silmek için yetkiniz bulunmuyor.",
 	"nuke-submit-list": "Sayfaları listele",
+	"nuke-submit-continue": "Devam et",
 	"nuke-submit-delete": "Sil",
 	"right-nuke": "Sayfaları toplu sil",
 	"nuke-userorip": "Kullanıcı adı, IP adresi veya boş:",

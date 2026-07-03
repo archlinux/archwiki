@@ -4,7 +4,9 @@
 			"Bdijkstra",
 			"Mainframe98",
 			"MarcoSwart",
-			"McDutchie"
+			"McDutchie",
+			"Erik Baas",
+			"Siebrand"
 		]
 	},
 	"templatestyles": "TemplateStyles",
@@ -13,7 +15,7 @@
 	"templatestyles-invalid-src": "Ongeldige titel in het <code>src</code>-attribuut van TemplateStyles.",
 	"templatestyles-invalid-wrapper": "Ongeldige waarde voor het <code>wrapper</code> attribuut van TemplateStyles.",
 	"templatestyles-bad-src-missing": "Pagina [[:$1|$2]] heeft geen inhoud.",
-	"templatestyles-bad-src": "Pagina [[:$1|$2]] moet het inhoudsmodel \"{{int:content-model-sanitized-css}}\" hebben voor TemplateStyles (inhoudmodel is \"$3\").",
+	"templatestyles-bad-src": "Pagina [[:$1|$2]] moet het inhoudsmodel \"{{int:content-model-sanitized-css}}\" hebben voor TemplateStyles (inhoudsmodel is \"$3\").",
 	"templatestyles-errorcomment": "Fouten tijdens het verwerken van stijlblad [[:$1]] (versie $2): $3",
 	"templatestyles-size-exceeded": "Het stijlblad is groter dan de maximum grootte $2",
 	"templatestyles-tag-injection": "Het meegeleverde stijlblad bevat iets dat lijkt op een HTML-tag, wat niet is toegestaan.",
@@ -25,7 +27,7 @@
 	"templatestyles-error-at-rule-block-not-allowed": "Regel $1, teken $2: blok niet toegestaan voor <code>@$3</code>.",
 	"templatestyles-error-at-rule-block-required": "Regel $1, teken $2: blok vereist voor <code>@$3</code>.",
 	"templatestyles-error-bad-character-in-url": "Ongeldig teken in de URL op regel $1, positie $2.",
-	"templatestyles-error-bad-escape": "Regel $1, teken $2: ongeldig teken in escape.",
+	"templatestyles-error-bad-escape": "Regel $1, teken $2: onjuist teken in escape.",
 	"templatestyles-error-bad-value-for-property": "Ongeldige of niet ondersteunde waarde voor eigenschap <code>$3</code> op regel $1, teken $2.",
 	"templatestyles-error-expected-at-rule": "<code>@$3</code> ontbreekt op regel $1, positie $2.",
 	"templatestyles-error-expected-colon": "Dubbele punt ontbreekt op regel $1, positie $2.",

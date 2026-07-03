@@ -5,8 +5,8 @@
 			"Aca"
 		]
 	},
-	"wikieditor": "Napredni interfejs za uređivanje vikiteksta",
-	"wikieditor-desc": "Pruža napredni, proširivi interfejs za uređivanje vikiteksta",
+	"wikieditor": "Napredni interfejs za uređivanje wikiteksta",
+	"wikieditor-desc": "Pruža napredni, proširivi interfejs za uređivanje wikiteksta",
 	"wikieditor-toolbar-preference": "Traka s alatima za uređivanje",
 	"wikieditor-toolbar-preference-help": "Ponekad se naziva \"uređivačem wikiteksta iz 2010. godine\".",
 	"wikieditor-toolbar-tool-bold": "Podebljano",
@@ -41,7 +41,7 @@
 	"wikieditor-toolbar-tool-ulist-example": "Stavka nenumerirane liste",
 	"wikieditor-toolbar-tool-olist": "Numerirana lista",
 	"wikieditor-toolbar-tool-olist-example": "Stavka numerirane liste",
-	"wikieditor-toolbar-tool-nowiki": "Bez viki formatiranja",
+	"wikieditor-toolbar-tool-nowiki": "Bez wiki formatiranja",
 	"wikieditor-toolbar-tool-redirect": "Preusmjerenje",
 	"wikieditor-toolbar-tool-big": "Velika slova",
 	"wikieditor-toolbar-tool-small": "Mala slova",

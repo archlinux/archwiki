@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"imagemap_desc": "Waxay u oggolaanaysaa isticmaalka khariidado sawir oo la gujin karo dhinaca macmiilka iyadoo la adeegsanayo calaamadda <code>&lt;imagemap&gt;</code>",
+	"imagemap_no_image": "Khalad: Waa in sawir lagu caddeeyaa safka koowaad.",
+	"imagemap_invalid_image": "Khalad: Sawirku ma aha mid sax ah ama ma jiro.",
+	"imagemap_bad_image": "Khalad: Sawirkan looma oggola boggan.",
+	"imagemap_no_link": "Khalad: Lama helin xiriir sax ah dhammaadka safka $1.",
+	"imagemap_invalid_title": "Khalad: Cinwaan aan sax ahayn ayaa ku jira xiriirka safka $1.",
+	"imagemap_missing_coord": "Khalad: Ma jiraan ku filan isku duwaha qaabka safka $1.",
+	"imagemap_unrecognised_shape": "Khalad: Qaab aan la aqoonsan ayaa ku jira safka $1, saf kasta waa inuu ku bilaabmaa mid ka mid ah: <code>default</code>, <code>rect</code>, <code>circle</code> ama <code>poly</code>.",
+	"imagemap_invalid_coord": "Khalad: Iskudubbar aan sax ahayn ayaa ku jira safka $1, waa inuu noqdaa tiro.",
+	"imagemap_invalid_desc": "Khalad: Qeexidda desc ma aha mid sax ah, waa inay noqotaa mid ka mid ah: <code>$1</code>.",
+	"imagemap_description": "Ku saabsan sawirkan",
+	"imagemap_poly_odd": "Khalad: Waxaa laga helay poly leh tiro aan labboobnayn oo iskudubbarro ah safka $1"
+}

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-query+gadgetcategories-summary": "Waxay soo celisaa liiska qaybaha aaladaha.",
+	"apihelp-query+gadgetcategories-param-prop": "Macluumaadka qaybta aaladda ee la doonayo in la helo:",
+	"apihelp-query+gadgetcategories-paramvalue-prop-name": "Magaca gudaha ee qaybta.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-title": "Cinwaanka qaybta.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Tirada aaladaha ku jira qaybta.",
+	"apihelp-query+gadgetcategories-param-names": "Magacyada qaybaha la doonayo in la soo saaro.",
+	"apihelp-query+gadgetcategories-example-1": "Hel liiska qaybaha aaladaha ee jira",
+	"apihelp-query+gadgetcategories-example-2": "Hel dhammaan macluumaadka qaybaha la yiraahdo \"foo\" iyo \"bar\"",
+	"apihelp-query+gadgets-summary": "Waxay soo celisaa liiska aaladaha lagu isticmaalo wiki-kan.",
+	"apihelp-query+gadgets-param-prop": "Macluumaadka aaladda ee la doonayo in la helo:",
+	"apihelp-query+gadgets-paramvalue-prop-id": "Aqoonsiga gudaha ee aaladda.",
+	"apihelp-query+gadgets-paramvalue-prop-metadata": "Macluumaadka aaladda.",
+	"apihelp-query+gadgets-paramvalue-prop-desc": "Sharaxaadda aaladda oo loo beddelay HTML (waxay noqon kartaa gaabis, isticmaal kaliya haddii loo baahdo).",
+	"apihelp-query+gadgets-param-categories": "Aaladaha laga soo saarayo qaybaha.",
+	"apihelp-query+gadgets-param-ids": "Aqoonsiyada aaladaha la doonayo in la soo saaro.",
+	"apihelp-query+gadgets-param-allowedonly": "Kaliya soo bandhig aaladaha loo oggol yahay isticmaalaha hadda.",
+	"apihelp-query+gadgets-param-enabledonly": "Kaliya soo bandhig aaladaha uu isticmaaluhu hadda daaray.",
+	"apihelp-query+gadgets-example-1": "Hel liiska aaladaha iyo sharaxaadkooda",
+	"apihelp-query+gadgets-example-2": "Hel liiska aaladaha oo leh dhammaan sifooyinka suurtagalka ah",
+	"apihelp-query+gadgets-example-3": "Hel liiska aaladaha ku jira qaybta \"foo\"",
+	"apihelp-query+gadgets-example-4": "Hel macluumaadka aaladaha \"foo\" iyo \"bar\".",
+	"apihelp-query+gadgets-example-5": "Hel liiska aaladaha uu isticmaalaha hadda daaray"
+}

@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Bdijkstra",
-			"ObaTango"
+			"ObaTango",
+			"Kallmemel"
 		]
 	},
-	"citethispage-link": "Cita e página akí",
-	"tooltip-citethispage": "Informashon tokante kon sita e página akí"
+	"citethispage": "Sita e página aki",
+	"citethispage-link": "Sita e página aki",
+	"tooltip-citethispage": "Informashon tokante kon pa sitá e página aki",
+	"citethispage-change-submit": "Sita",
+	"citethispage-change-target": "Página:"
 }

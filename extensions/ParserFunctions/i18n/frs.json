@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"WikiFayo95",
+			"VanModers"
+		]
+	},
+	"pfunc_expr_unrecognised_word": "Feeler in d' uutdrük: Unerkent woord \"$1\"",
+	"pfunc_expr_missing_operand": "Feeler in d' uutdrük: Feelend operand $1",
+	"pfunc_expr_unrecognised_punctuation": "Feeler in d' uutdrük: Näit erkent satstäiken \"$1\""
+}

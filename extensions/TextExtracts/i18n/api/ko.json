@@ -1,10 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
 	},
 	"apihelp-query+extracts-summary": "주어진 문서의 플레인 텍스트 또는 제한된 HTML 추출 정보를 반환합니다.",
-	"apiwarn-textextracts-sentences-and-html": "<var>$1sentences</var> 변수는 HTML 모드에서 사용할 때 예측하지 못한 결과가 있을 수 있습니다.",
+	"apihelp-query+extracts-param-chars": "반환할 문자 수. 실제 반환되는 텍스트는 약간 더 길 수 있습니다.",
+	"apihelp-query+extracts-param-sentences": "반환할 문장 수.",
+	"apihelp-query+extracts-param-limit": "반환할 추출 결과 수 (exintro가 참으로 설정된 경우에만 복수의 추출 결과가 반환될 수 있음.)",
+	"apihelp-query+extracts-param-intro": "첫 번째 문단 이전의 내용만 반환합니다.",
+	"apihelp-query+extracts-param-plaintext": "추출된 내용을 제한된 HTML 형식이 아닌 일반 텍스트 형식으로 반환합니다.",
+	"apihelp-query+extracts-param-sectionformat": "plaintext 모드에서 문단에 사용할 서식:",
+	"apihelp-query+extracts-paramvalue-sectionformat-plain": "서식 없음.",
+	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "위키텍스트 스타일 서식 (== 이런 식입니다 ==).",
+	"apihelp-query+extracts-paramvalue-sectionformat-raw": "이 모듈의 내부 표현 방식 (문단 제목 앞에 &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;문단 레벨&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt; 접두사가 붙음).",
+	"apihelp-query+extracts-example-1": "175개 문자의 추출 결과를 가져오기",
+	"apiwarn-textextracts-limit": "전체 문서 추출 요청에 대한 <var>exlimit</var>가 너무 커서 $1 으(로) 낮췄습니다.",
+	"apiwarn-textextracts-unsupportedmodel": "$1 문서는 지원되지 않는 $2 콘텐츠 모델을 가지고 있습니다. 빈 추출 결과가 반환됩니다.",
+	"apiwarn-textextracts-title-in-file-namespace": "파일 이름공간에서 제목에 대한 추출 결과를 요청했지만, 반환된 내용이 없습니다.",
+	"apiwarn-textextracts-sentences-and-html": "<var>$1sentences</var> 매개변수는 HTML 모드에서 사용할 때 예측하지 못한 결과가 있을 수 있습니다.",
 	"apiwarn-textextracts-malformed-html": "HTML이 잘못 구성되었거나 균형을 잃었거나 인라인 이미지가 누락된 상태일 수 있습니다. 자신의 책임 하에 사용하십시오. 알려진 문제는 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TextExtracts#Caveats 여기]에 나열되어 있습니다."
 }

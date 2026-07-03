@@ -4,8 +4,11 @@
 			"BHARATHESHA ALASANDEMAJALU",
 			"VASANTH S.N.",
 			"Vishwanatha Badikana",
-			"రహ్మానుద్దీన్"
+			"రహ్మానుద్దీన్",
+			"ChiK"
 		]
 	},
-	"scribunto-lua-error": "Lua ದೋಸೊ:$2."
+	"scribunto-lua-error": "Lua ದೋಸೊ:$2.",
+	"nstab-module": "ಮೋಡ್ಯೂಲ್",
+	"tooltip-ca-nstab-module": "View the module page\nಮೋಡ್ಯೂಲ್‌ದ ಪುಟೊ ತೂಲೆ"
 }

@@ -18,14 +18,23 @@ class SpecialNotifications extends SpecialPage {
 	private const DISPLAY_NUM = 20;
 
 	public function __construct() {
-		parent::__construct( 'Notifications' );
+		parent::__construct( 'Notifications', 'echo-read-notifications' );
 	}
 
 	/**
 	 * @param string|null $par
 	 */
 	public function execute( $par ) {
-		$this->setHeaders();
+		if ( !$this->getUser()->isRegistered() ) {
+			// Anonymous users cannot have their notification, even if they technically have
+			// the right permission. Redirect them to login instead of erroring on permissions.
+			// NOTE: This has to be before parent::execute(), as the parent is responsible for
+			// permission checks.
+			$this->requireLogin( 'echo-notification-loginrequired' );
+			return;
+		}
+
+		parent::execute( $par );
 
 		$out = $this->getOutput();
 		$out->setPageTitleMsg( $this->msg( 'echo-specialpage' ) );
@@ -35,13 +44,6 @@ class SpecialNotifications extends SpecialPage {
 		$out->addJsConfigVars( 'wgNotificationsSpecialPageLinks', [
 			'preferences' => SpecialPage::getTitleFor( 'Preferences', false, 'mw-prefsection-echo' )->getLinkURL(),
 		] );
-
-		$user = $this->getUser();
-		if ( !$user->isRegistered() ) {
-			// Redirect to login page and inform user of the need to login
-			$this->requireLogin( 'echo-notification-loginrequired' );
-			return;
-		}
 
 		$out->addSubtitle( $this->buildSubtitle() );
 
@@ -68,7 +70,9 @@ class SpecialNotifications extends SpecialPage {
 
 		$notif = [];
 		foreach ( $notifications as $notification ) {
-			$output = DataOutputFormatter::formatOutput( $notification, 'special', $user, $this->getLanguage() );
+			$output = DataOutputFormatter::formatOutput(
+				$notification, 'special', $this->getUser(), $this->getLanguage()
+			);
 			if ( $output ) {
 				$notif[] = $output;
 			}
@@ -77,7 +81,7 @@ class SpecialNotifications extends SpecialPage {
 		// Add the notifications to the page (interspersed with date headers)
 		$dateHeader = '';
 		$anyUnread = false;
-		$seenTime = SeenTime::newFromUser( $user )->getTime();
+		$seenTime = SeenTime::newFromUser( $this->getUser() )->getTime();
 		$notifArray = [];
 		foreach ( $notif as $row ) {
 			if ( !$row['*'] ) {
@@ -120,7 +124,7 @@ class SpecialNotifications extends SpecialPage {
 		if ( $anyUnread ) {
 			$markReadSpecialPage = new SpecialNotificationsMarkRead();
 			$markReadSpecialPage->setContext( $this->getContext() );
-			$notifUser = NotifUser::newFromUser( $user );
+			$notifUser = NotifUser::newFromUser( $this->getUser() );
 			$unreadCount = $notifUser->getAlertCount() + $notifUser->getMessageCount();
 
 			$markAllAsReadText = $this

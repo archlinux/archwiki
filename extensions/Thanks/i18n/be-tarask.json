@@ -13,9 +13,9 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|падзякаваў}}|{{GENDER:$2|падзякавала}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Дзякуй}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Падзякаваў}}|{{GENDER:$2|Падзякавала}}}}",
-	"thanks-error-undefined": "Не атрымалася падзякаваць (код памылкі: $1). Калі ласка, паспрабуйце яшчэ раз.",
+	"thanks-error-undefined": "Не ўдалося падзякаваць (код памылкі: $1). Калі ласка, паспрабуйце яшчэ раз.",
 	"thanks-error-invalid-log-id": "Запіс журналу ня знойдзены",
-	"thanks-error-invalid-log-type": "Тып журналу «$1» адсутнічае ў сьпісе дазволеных.",
+	"thanks-error-invalid-log-type": "Тып журналу «$1» не ў сьпісе дазволеных тыпаў.",
 	"thanks-error-log-deleted": "Запытаны запіс журналу быў выдалены, і за яго немагчыма падзякаваць.",
 	"thanks-error-invalidrevision": "Няслушны ідэнтыфікатар вэрсіі",
 	"thanks-error-revdeleted": "Немагчыма адаслаць падзяку, бо вэрсія была выдаленая.",
@@ -56,5 +56,6 @@
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Вы}} падзякавалі $1 за {{GENDER:$2|ягоны|ейны|іхні}} камэнтар.",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$5|вам}} за камэнтар у «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$3|вам}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Адна асоба падзякавала|$1 асобаў падзякавалі|100=>99 асобаў падзякавалі}} {{GENDER:$3|вам}} за камэнтар на «<strong>$2</strong>»."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Адна асоба падзякавала|$1 асобаў падзякавалі|100=>99 асобаў падзякавалі}} {{GENDER:$3|вам}} за камэнтар на «<strong>$2</strong>».",
+	"ipb-action-thanks": "Дасыланьне падзякі"
 }

@@ -50,7 +50,9 @@
 			"ЛосЯш",
 			"Умар",
 			"Чаховіч Уладзіслаў",
-			"Merrahtar"
+			"Merrahtar",
+			"Shabe",
+			"Vlad5250"
 		]
 	},
 	"echo-desc": "Система уведомления участников о событиях и сообщениях",
@@ -227,6 +229,7 @@
 	"notification-link-thank-you-edit": "{{GENDER:$1|Ваша}} правка",
 	"notification-link-text-view-edit": "Просмотр правки",
 	"notification-link-article-reminder": "Просмотр страницы",
+	"notification-link-api-triggered": "Просмотр страницы",
 	"notification-header-reverted": "{{PLURAL:$4|Ваша правка|Ваши правки}} на странице <strong>$3</strong> {{GENDER:$2|{{PLURAL:$4|была отменена|были отменены}}}}.",
 	"notification-header-emailuser": "$1 отправил{{GENDER:$2||а}} вам письмо.",
 	"notification-edit-user-page-email-subject": "$1 {{GENDER:$2|отредактировал|отредактировала}} {{GENDER:$3|вашу страницу участника|вашу страницу участницы}} на {{GRAMMAR:locative|{{SITENAME}}}}",
@@ -252,8 +255,10 @@
 	"echo-email-html-footer-with-link": "Чтобы контролировать, какие письма мы посылаем {{GENDER:$2|вам}}, $1.",
 	"echo-notification-alert": "{{PLURAL:$1|Оповещение ($1)|Оповещения ($1)|100=Оповещения (99+)}}",
 	"echo-notification-notice": "{{PLURAL:$1|Уведомление ($1)|Уведомления ($1)|100=Уведомления (99+)}}",
+	"echo-notification-all": "{{PLURAL:$1|1=Уведомление ($1)|Уведомления ($1)|100=Уведомления (99+)}}",
 	"echo-notification-alert-text-only": "Оповещения",
 	"echo-notification-notice-text-only": "Уведомления",
+	"echo-notification-all-text-only": "Уведомления",
 	"echo-overlay-link": "Все уведомления",
 	"echo-overlay-title": "<b>Уведомления</b>",
 	"echo-mark-all-as-read": "Отметить {{PLURAL:$1|все}} как прочитанные",
@@ -273,10 +278,15 @@
 	"notification-header-foreign-alert": "Больше уведомлений из {{PLURAL:$5|другой вики|$5 других вики}}",
 	"notification-header-foreign-notice": "Больше уведомлений из {{PLURAL:$5|другой вики|$5 других вики}}",
 	"notification-header-foreign-all": "Больше уведомлений из {{PLURAL:$5|другой вики|$5 других вики}}",
+	"grant-echo-read-notifications": "Чтение уведомлений",
+	"right-echo-create": "Отправка уведомлений другим участникам",
+	"action-echo-create": "отправка уведомлений другим участникам",
+	"right-echo-read-notifications": "Чтение уведомлений",
 	"right-manage-all-push-subscriptions": "Управление всеми подписками push-уведомлений",
 	"action-manage-all-push-subscriptions": "управление всеми подписками push-уведомлений",
 	"group-push-subscription-manager": "Управляющие подписками push-уведомлений",
 	"group-push-subscription-manager-member": "{{GENDER:$1|управляющий подписками push-уведомлений|управляющая подписками push-уведомлений}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Управляющие подписками push-уведомлений",
+	"notification-subject-email-verify-email-reminder": "Подтвердите {{GENDER:$1|ваш}} адрес электронной почты",
 	"notification-verify-email-reminder-link-label": "Подтвердите эл. почту"
 }

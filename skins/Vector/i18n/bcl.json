@@ -5,10 +5,13 @@
 			"Filipinayzd",
 			"Geopoet",
 			"Kunokuno",
-			"ShimunUfesoj"
+			"ShimunUfesoj",
+			"ShiminUfesoj"
 		]
 	},
+	"vector-languages": "Mga tataramon",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lenggwahe|$1 mga lenggwahe}}",
+	"vector-no-language-button-label": "Magdugang nin mga tataramon",
 	"vector-action-addsection": "Magdagdag nin pag-uulayan",
 	"vector-action-delete": "puraon",
 	"vector-action-move": "Ibalyo",
@@ -20,5 +23,26 @@
 	"vector-view-history": "Hilingon an kasaysayan",
 	"vector-view-view": "Basahon",
 	"vector-view-viewsource": "Hilingón an ginikánan",
-	"vector-more-actions": "Labi pa"
+	"vector-more-actions": "Labi pa",
+	"vector-appearance-label": "Itsura",
+	"vector-feature-limited-width-name": "Lakbang",
+	"vector-feature-limited-width-0-label": "Lapad",
+	"vector-feature-limited-width-1-label": "Panusugan",
+	"vector-feature-custom-font-size-name": "Teksto",
+	"vector-feature-custom-font-size-0-label": "Sadit",
+	"vector-feature-custom-font-size-1-label": "Panusugan",
+	"vector-feature-custom-font-size-2-label": "Dakula",
+	"skin-theme-name": "Kolor",
+	"skin-theme-day-label": "Maliwanag",
+	"skin-theme-night-label": "Madiklom",
+	"skin-theme-os-label": "Awtomatiko",
+	"skin-theme-exclusion-notice": "An pahinang ini pirming nasa modo nin maliwanag.",
+	"vector-toc-label": "Mga kalaugan",
+	"vector-toc-beginning": "Kapinonan",
+	"vector-main-menu-label": "Panginot na menu",
+	"vector-feature-custom-font-size-exclusion-notice": "An pahinang ini pirming naggagamit nin sadit na letra",
+	"vector-page-tools-label": "Mga kagamitan",
+	"vector-page-tools-general-label": "Pankagabsan",
+	"vector-page-tools-actions-label": "Mga aksyon",
+	"vector-unpin-element-label": "itago"
 }

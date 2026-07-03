@@ -61,5 +61,5 @@
 	"action-replacetext": "在整个wiki进行字符串替换",
 	"replacetext-summary-label": "替换编辑的摘要（留空则使用默认摘要）",
 	"tag-replacetext": "[[Special:ReplaceText|ReplaceText]]",
-	"tag-replacetext-description": "通过 [[{{#Special:ReplaceText}}]]作出的自动编辑。"
+	"tag-replacetext-description": "通过[[{{#Special:ReplaceText}}]]作出的自动编辑。"
 }

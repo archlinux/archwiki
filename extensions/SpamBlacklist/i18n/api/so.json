@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "Hubi laba URL oo ka dhan ah liiska xannibaadda",
+	"apihelp-spamblacklist-param-url": "URL-yada lagu xaqiijinayo liiska xannibaadda.",
+	"apihelp-spamblacklist-summary": "Xaqiiji hal ama ka badan URL oo ka dhan ah liiska xannibaadda spam."
+}

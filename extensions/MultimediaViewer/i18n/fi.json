@@ -10,10 +10,11 @@
 			"Pxos",
 			"Pyscowicz",
 			"Samoasambia",
-			"Stryn"
+			"Stryn",
+			"Wikipeedikko"
 		]
 	},
-	"multimediaviewer-desc": "Näytä pienoiskuvat suuremmassa koossa kokoruututilassa",
+	"multimediaviewer-desc": "Näytää pienoiskuvat suuremmassa koossa kokoruututilassa",
 	"multimediaviewer-optin-pref": "Ota käyttöön <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Mediakatselin]</span>",
 	"multimediaviewer-file-page": "Siirry tiedoston omalle sivulle",
 	"multimediaviewer-repository-local": "Lisätiedot",
@@ -27,7 +28,6 @@
 	"multimediaviewer-thumbnail-error": "Pahoittelut, tiedostoa ei voida näyttää",
 	"multimediaviewer-thumbnail-error-description": "Tekninen ongelma. $1, jos se jatkuu. Virhe: $2",
 	"multimediaviewer-thumbnail-error-retry": "yritä uudelleen",
-	"multimediaviewer-thumbnail-error-report": "ilmoita ongelmasta",
 	"multimediaviewer-license-cc-pd": "Public Domain",
 	"multimediaviewer-license-pd": "Public Domain",
 	"multimediaviewer-license-default": "Näytä lisenssi",

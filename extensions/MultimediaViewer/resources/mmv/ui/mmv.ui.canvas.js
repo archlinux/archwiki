@@ -266,28 +266,8 @@ class Canvas extends UiElement {
 	 * @param {string} error error message
 	 */
 	showError( error ) {
-		const canvasDimensions = this.getDimensions();
-		const thumbnailDimensions = this.getCurrentImageWidths();
-
-		// ** is bolding in Phabricator
-		const description = `**${ mw.msg( 'multimediaviewer-errorreport-privacywarning' ) }**
-
-
-Error details:
-
-error: ${ error }
-URL: ${ location.href }
-user agent: ${ navigator.userAgent }
-screen size: ${ screen.width }x${ screen.height }
-canvas size: ${ canvasDimensions.width }x${ canvasDimensions.height }
-image size: ${ this.imageRawMetadata.originalWidth }x${ this.imageRawMetadata.originalHeight }
-thumbnail size: CSS: ${ thumbnailDimensions.cssWidth }x${ thumbnailDimensions.cssHeight }, screen width: ${ thumbnailDimensions.screen }, real width: ${ thumbnailDimensions.real }`;
-		const errorUri = mw.msg( 'multimediaviewer-report-issue-url', encodeURIComponent( description ) );
-
 		const $retryLink = $( '<a>' ).addClass( 'mw-mmv-retry-link' ).text(
 			mw.msg( 'multimediaviewer-thumbnail-error-retry' ) );
-		const $reportLink = $( '<a>' ).attr( 'href', errorUri ).text(
-			mw.msg( 'multimediaviewer-thumbnail-error-report' ) );
 
 		this.$imageDiv.empty()
 			.addClass( 'error' )
@@ -300,8 +280,7 @@ thumbnail size: CSS: ${ thumbnailDimensions.cssWidth }x${ thumbnailDimensions.cs
 					$( '<div>' ).addClass( 'mw-mmv-error-description' ).append(
 						mw.msg( 'multimediaviewer-thumbnail-error-description',
 							HtmlUtils.jqueryToHtml( $retryLink ),
-							error,
-							HtmlUtils.jqueryToHtml( $reportLink )
+							error
 						)
 					)
 				)

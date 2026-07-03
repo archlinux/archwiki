@@ -663,6 +663,8 @@
 	"abusefilter-blocked-domains-cannot-edit-directly": "A criação ou modificação de quais domínios externos são bloqueados de se tornarem ligações (''links'') deve ser realizada através da [[Special:BlockedExternalDomains|página especial]].",
 	"right-abusefilter-access-protected-vars": "Ver e criar filtros que usam variáveis protegidas",
 	"action-abusefilter-access-protected-vars": "ver e criar filtros que usam variáveis protegidas",
+	"right-abusefilter-blocked-external-domains-log": "Ver o registro de acessos a domínios externos bloqueados",
+	"abusefilter-protected-vars-log-name": "Registro de variáveis protegidas pelo filtro de abuso",
 	"log-action-filter-abusefilter-protected-vars": "Tipo de ação:",
 	"log-action-filter-abusefilter-protected-vars-change-access": "Mudança de acesso",
 	"log-action-filter-abusefilter-protected-vars-view-protected-variable-value": "Ver valores de variáveis protegidas",

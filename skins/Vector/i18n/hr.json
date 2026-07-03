@@ -22,7 +22,7 @@
 	"vector-languages": "Drugi jezici",
 	"vector-language-button-aria-label": "Idi na druge jezične varijante članka. Dostupan je na {{PLURAL:$1|$1 jeziku|$1 jezika}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
-	"vector-no-language-button-label": "Dodajte druge jezike",
+	"vector-no-language-button-label": "Drugi jezici",
 	"vector-no-language-button-aria-label": "Članak je napisan samo na ovom jeziku. Dodajte druge jezike.",
 	"vector-language-variant-switcher-label": "Promijeni jezičnu varijantu",
 	"vector-action-addsection": "Dodaj temu",

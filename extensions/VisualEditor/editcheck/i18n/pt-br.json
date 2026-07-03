@@ -4,7 +4,8 @@
 			"BraunOBruno",
 			"Eduardoaddad",
 			"Fúlvio",
-			"Erol"
+			"Erol",
+			"Albertoleoncio"
 		]
 	},
 	"editcheck-dialog-action-no": "Não",
@@ -24,7 +25,7 @@
 	"editcheck-dialog-addref-success-notify": "Agradecemos por adicionar uma citação!",
 	"editcheck-dialog-addref-title": "Adicionar uma citação",
 	"editcheck-dialog-title": "Antes de publicar",
-	"editcheck-copyvio-title": "Conteúdo promovido",
+	"editcheck-copyvio-title": "Conteúdo copiado",
 	"editcheck-copyvio-description": "Como regra geral, não copie textos de outras fontes. Isso geralmente constitui uma violação de direitos autorais e plágio.",
 	"editcheck-copyvio-prompt": "Você escreveu este texto?",
 	"editcheck-copyvio-action-keep": "Sim, manter",

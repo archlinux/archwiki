@@ -6,7 +6,8 @@
 			"Mikulas1",
 			"Robert Važan",
 			"Sudo77(new)",
-			"Teslaton"
+			"Teslaton",
+			"Wizzard"
 		]
 	},
 	"thanks-desc": "Pridáva odkazy na poďakovanie používateľom za úpravy, komentáre, atď.",
@@ -16,7 +17,7 @@
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Poďakované}}}}",
 	"thanks-error-undefined": "Poďakovanie sa nepodarilo (kód chyby: $1). Skúste to, prosím, znova.",
 	"thanks-error-invalid-log-id": "Protokolovací záznam nebol nájdený",
-	"thanks-error-invalid-log-type": "Typ protokolovacích záznamov „$1“ nie je v zozname povolených typov.",
+	"thanks-error-invalid-log-type": "Typ protokolu „$1“ nie je v zozname povolených typov protokolov.",
 	"thanks-error-log-deleted": "Požadovaný protokolovací záznam bol odstránený a nedá sa zaňho poďakovať.",
 	"thanks-error-invalidrevision": "ID revízie je neplatné.",
 	"thanks-error-revdeleted": "Nepodarilo sa odoslať poďakovanie, pretože revízia bola odstránená.",
@@ -57,5 +58,6 @@
 	"flow-thanks-thanked-notice": "{{GENDER:$2|Používateľ|Používateľka|Používateľ(ka)}} $1 {{GENDER:$2|obdržal|obdržala|obdržal(a)}} {{GENDER:$3|vaše}} poďakovanie za svoj komentár.",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|vám}} {{GENDER:$2|poďakoval|poďakovala}} za komentár k téme „<strong>$3</strong>“.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|vám}} {{GENDER:$2|poďakoval|poďakovala|poďakoval(a)}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Jeden človek|$1 ľudia|$1 ľudí|100=Viac ako 99 ľudí}} {{GENDER:$3|vám}} {{PLURAL:$1|poďakoval|poďakovali|poďakovalo}} za váš komentár k téme „<strong>$2</strong>“."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Jeden človek|$1 ľudia|$1 ľudí|100=Viac ako 99 ľudí}} {{GENDER:$3|vám}} {{PLURAL:$1|poďakoval|poďakovali|poďakovalo}} za váš komentár k téme „<strong>$2</strong>“.",
+	"ipb-action-thanks": "Odoslanie poďakovania"
 }

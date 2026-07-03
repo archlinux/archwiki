@@ -106,6 +106,9 @@
 	"oathauth-disable-method-warning": "$1 iki faktörlü kimlik doğrulama yöntemini devre dışı bırakırsanız, oturum açarken bu yöntemi artık kullanamazsınız ve bu kimlik doğrulama yöntemiyle ilişkili tüm veriler silinir. Başka, etkin bir kimlik doğrulama yönteminiz varsa, kurtarma kodlarınız silinmez.",
 	"oathauth-totp-disable-warning": "Bu hesaba kayıtlı kimlik doğrulama cihazını artık kullanamayacaksınız. Başka bir kimlik doğrulama faktörünü etkinleştirmediğiniz sürece, bu hesapla ilişkili tüm kurtarma kodları devre dışı bırakılacaktır.",
 	"oathauth-invalidrequest": "Geçersiz istek",
+	"oathauth-notifications-disable-help": "Yardım",
+	"oathauth-notifications-enable-help": "Yardım",
+	"oathauth-notifications-recoverycodesleft-help": "Yardım",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} iki faktörlü kimlik doğrulamayı etkinleştirdi.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} iki faktörlü kimlik doğrulamayı etkinleştirmedi.",
 	"group-oathauth-twofactorauth": "İki faktörlü kimlik doğrulamayı kullanabilecek kullanıcılar",
@@ -115,6 +118,7 @@
 	"oathauth-password-action": "Parolayı değiştir",
 	"oathauth-authenticator-header": "İki faktörlü kimlik doğrulaması",
 	"oathauth-authenticator-placeholder": "Hesabınızın güvenliğini sağlamak için giriş yaparken ek bir adım ekleyin.",
+	"oathauth-authenticator-delete": "Kaldır",
 	"oathauth-totp-add-key": "Kimlik doğrulama uygulaması ekleyin",
 	"oathauth-delete-warning": "Bu kimlik doğrulama yöntemi ile artık giriş yapamazsınız ve kurtarma kodlarınız artık çalışmayacak."
 }

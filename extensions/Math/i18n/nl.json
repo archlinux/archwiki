@@ -79,7 +79,7 @@
 	"math-helppage": "Help:Displaying a formula",
 	"math_failure": "Fout bij het verwerken",
 	"math_invalidjson": "$1: het antwoord van de server is ongeldige JSON.",
-	"math_invalidresponse": "$1: Ongeldig antwoord (\"$3\") van server \"$2\":",
+	"math_invalidresponse": "$1: Onjuist antwoord (\"$3\") van server \"$2\":",
 	"math_invalidxml": "MathML of SVG is ongeldige XML.",
 	"math_mathoid_error": "Conversiefout. De server (\"$1\") heeft gemeld: \"$2\"",
 	"math_other_error": "Andere fout: $1",
