@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "وحدة API للتواصل بين الخادم والعميل أثناء عملية التسجيل/المصادقة.",
+	"apihelp-oathauth-webauthn-param-func": "اسم الوظيفة المطلوب تنفيذها.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "معلومات المصادقة.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "معلومات التسجيل.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "ما إذا كان المفتاح الذي يتم تسجيله في وضع كلمة المرور. (فقط لـ getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "وحدة WebAuthn غير متوفرة.",
+	"apierror-oathauth-webauthn-missing-credential": "لم يتم تقديم أي بيانات اعتماد.",
+	"apierror-oathauth-webauthn-invalid-credential": "بيانات الاعتماد غير صالحة أو مشوهة.",
+	"apierror-oathauth-webauthn-reauthenticate": "يجب عليك أولاً إعادة المصادقة من خلال Special:OATHManage قبل أن تتمكن من اتخاذ هذا الإجراء.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "قم بتسجيل بيانات اعتماد WebAuthn جديدة للمستخدم الحالي.",
+	"apihelp-oathauth-webauthn-param-credential": "استجابة بيانات اعتماد WebAuthn المشفرة بصيغة JSON من المتصفح.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "اسم مناسب للوثيقة الجديدة."
+}

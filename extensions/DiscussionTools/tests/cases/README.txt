@@ -37,11 +37,11 @@ it-unsigned:
 https://it.wikipedia.org/w/index.php?title=Aiuto:Sportello_informazioni&oldid=116856029&action=render
 https://it.wikipedia.org/api/rest_v1/page/html/Aiuto%3ASportello_informazioni/116856029
 
-sr-ec:
-https://sr.wikipedia.org/w/index.php?title=Википедија:Трг/Архива/Техника/35&variant=sr-ec&action=render
+sr-cyrl:
+https://sr.wikipedia.org/w/index.php?title=Википедија:Трг/Архива/Техника/35&variant=sr-cyrl&action=render
 
-sr-el:
-https://sr.wikipedia.org/w/index.php?title=Википедија:Трг/Архива/Техника/35&variant=sr-el&action=render
+sr-latn:
+https://sr.wikipedia.org/w/index.php?title=Википедија:Трг/Архива/Техника/35&variant=sr-latn&action=render
 
 unclosed-font:
 https://nl.wikipedia.org/w/index.php?title=Overleg_gebruiker:RYasmeen_(WMF)&oldid=57970619&action=render

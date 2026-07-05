@@ -4,8 +4,8 @@
 			"GuoPC",
 			"Key0121",
 			"Lakejason0",
-			"XtexChooser",
 			"Peterxy12",
+			"XtexChooser",
 			"Peterxy"
 		]
 	},
@@ -21,7 +21,11 @@
 	"hcaptcha-challenge-closed": "要继续，您必须完成验证。",
 	"hcaptcha-challenge-expired": "完成验证的时间限制已过。请重试。",
 	"hcaptcha-generic-error": "加载表单时出错。要继续，您需要重新加载页面。",
+	"hcaptcha-internal-error": "表单发送过程中出现内部错误，请重试。",
+	"hcaptcha-network-error": "表单发送过程中出现网络错误。请确认您的网络连接然后重试。",
+	"hcaptcha-rate-limited": "验证码尝试次数过多，请稍等片刻再试。",
 	"hcaptcha-loading-indicator-label": "正在加载表单，请稍候…",
 	"hcaptcha-missing-token": "表单尚未加载完毕。请等待几秒，然后重试。",
-	"hcaptcha-noscript": "需要JavaScript才能继续。请在您的浏览器设置中激活JavaScript，然后刷新页面。"
+	"hcaptcha-noscript": "需要JavaScript才能继续。请在您的浏览器设置中激活JavaScript，然后刷新页面。",
+	"hcaptcha-force-show-captcha-edit": "请重新提交表格，并完成问题以保存您的编辑内容。"
 }

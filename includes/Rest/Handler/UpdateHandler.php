@@ -14,6 +14,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Core REST API endpoint that handles page updates (main slot only)
@@ -147,7 +148,7 @@ class UpdateHandler extends EditHandler {
 
 			$data['edit']['newrevid'] = $currentRev->getId();
 			$data['edit']['newtimestamp']
-				= MWTimestamp::convert( TS_ISO_8601, $currentRev->getTimestamp() );
+				= MWTimestamp::convert( TS::ISO_8601, $currentRev->getTimestamp() );
 		}
 
 		return parent::mapActionModuleResult( $data );
@@ -181,7 +182,7 @@ class UpdateHandler extends EditHandler {
 	 *
 	 * The resulting array contains the following keys:
 	 * - base: revision ID of the base revision
-	 * - current: revision ID of the current revision (new base after resolving the conflict)
+	 * - current: revision ID of the latest revision (new base after resolving the conflict)
 	 * - local: the difference between the content submitted and the base revision
 	 * - remote: the difference between the latest revision of the page and the base revision
 	 *
@@ -262,6 +263,6 @@ class UpdateHandler extends EditHandler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/ExistingPageSource.json';
+		return __DIR__ . '/Schema/ExistingPageSource.json';
 	}
 }

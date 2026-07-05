@@ -26,7 +26,7 @@ class NullMetric {
 	 *
 	 * @param $method_name string
 	 * @param $args array
-	 * @return NullMetric
+	 * @return $this
 	 */
 	public function __call( string $method_name, array $args ): NullMetric {
 		return $this;

@@ -6,6 +6,7 @@
 			"DerHexer",
 			"Filzstift",
 			"FriedhelmW",
+			"IWL04",
 			"Inkowik",
 			"Kghbln",
 			"Lucas Werkmeister",
@@ -23,8 +24,7 @@
 			"Tobi 406",
 			"Umherirrender",
 			"Vogone",
-			"Wnme",
-			"IWL04"
+			"Wnme"
 		]
 	},
 	"echo-desc": "Erweitert das Wiki um ein System zur Benachrichtigung von Benutzern zu Ereignissen und Nachrichten",
@@ -179,6 +179,7 @@
 	"notification-header-user-rights-add-only": "Deine {{GENDER:$4|Benutzerrechte|Benutzerinnenrechte}} wurden {{GENDER:$1|geändert}}. Du wurdest hinzugefügt zu: $2.",
 	"notification-header-user-rights-remove-only": "Deine {{GENDER:$4|Benutzerrechte|Benutzerinnenrechte}} wurden {{GENDER:$1|geändert}}. Du bist kein Mitglied mehr von: $2.",
 	"notification-header-user-rights-add-and-remove": "Deine {{GENDER:$6|Benutzerrechte|Benutzerinnenrechte}} wurden {{GENDER:$1|geändert}}. Du wurdest hinzugefügt zu: $2. Du bist kein Mitglied mehr von: $4.",
+	"notification-header-user-rights-expiry": "{{#FORMAL:Deine|Ihre}} {{GENDER:$3|Mitgliedschaft}} in {{PLURAL:$2|der folgenden Gruppe|den folgenden Gruppen}} ist automatisch abgelaufen: $1.",
 	"notification-header-user-rights-expiry-change": "Der Ablauf {{GENDER:$4|deiner}} Mitgliedschaft in {{PLURAL:$3|der folgenden Gruppe|den folgenden Gruppen}} wurde {{GENDER:$1|geändert}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Willkommen}} bei {{SITENAME}}, $1! Wir freuen uns, dass {{GENDER:$2|{{#FORMAL:du|Sie}}}} da {{#FORMAL:bist|sind}}.",
 	"notification-header-mention-summary": "$1 {{GENDER:$2|erwähnte}} {{GENDER:$3|dich}} in einer Bearbeitungszusammenfassung auf <strong>$4</strong>.",
@@ -200,8 +201,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} hundertste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} tausendste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank! Du bist großartig!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} zehntausendste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} herzlichen Dank!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} hunderttausendste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank für einen hervorragenden Beitrag!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} millionste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank für einen erstaunlichen Beitrag!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} hunderttausendste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank für deine hervorragenden Beiträge!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} millionste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank für deine erstaunlichen Beiträge!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Du}} hast gerade {{GENDER:$2|deine}} zehnmillionste Bearbeitung durchgeführt. {{GENDER:$2|Vielen}} Dank für einen brillanten Beitrag!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Deine}} Bearbeitung",
 	"notification-link-text-view-edit": "Bearbeitung ansehen",
@@ -215,6 +216,7 @@
 	"notification-reverted-email-subject2": "{{GENDER:$3|Deine}} {{PLURAL:$4|Bearbeitung auf {{SITENAME}} wurde|Bearbeitungen auf {{SITENAME}} wurden}} {{GENDER:$2|rückgängig}} gemacht",
 	"notification-mention-email-subject": "$1 {{GENDER:$2|erwähnte}} {{GENDER:$3|dich}} auf {{SITENAME}}",
 	"notification-user-rights-email-subject": "{{#FORMAL:Deine|Ihre}} {{GENDER:$3|Benutzerrechte|Benutzerinnenrechte}} auf „{{SITENAME}}“ wurden geändert.",
+	"notification-user-rights-expiry-email-subject": "{{FORMAL:Deine|Ihre}} {{GENDER:$3|Benutzerrechte}} auf {{SITENAME}} sind abgelaufen.",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|Eine Sekunde|$1 Sekunden}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|Eine Minute|$1 Minuten}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|Eine Stunde|$1 Stunden}}",
@@ -266,7 +268,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|Push-Abonnementverwalter|Push-Abonnementverwalterin}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push-Abonnementverwalter",
 	"notification-subject-email-verify-email-reminder": "Überprüfe {{GENDER:$1|deine}} E-Mail-Adresse",
-	"notification-header-verify-email-reminder": "Bitte <strong>überprüfe {{GENDER:$1|deine}} E-Mail-Adresse</strong>, damit wir wissen, dass die E-Mail-Adresse in {{GENDER:$1|deinem}} Konto zu {{GENDER:$1|dir}} gehört.",
+	"notification-header-verify-email-reminder": "Hallo $2,\n\nbitte <strong>überprüfe {{GENDER:$1|deine}} E-Mail-Adresse</strong>, damit wir wissen, dass die E-Mail-Adresse in {{GENDER:$1|deinem}} Konto zu {{GENDER:$1|dir}} gehört.",
 	"notification-link-text-verify-email-reminder": "E-Mail-Einstellungen verwalten",
 	"notification-verify-email-reminder-link-label": "E-Mail-Adresse bestätigen"
 }

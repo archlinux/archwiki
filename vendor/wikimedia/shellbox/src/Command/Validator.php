@@ -292,7 +292,7 @@ class Validator {
 	private function isRelative( $path ) {
 		try {
 			Shellbox::normalizePath( $path );
-		} catch ( ShellboxError $e ) {
+		} catch ( ShellboxError ) {
 			return false;
 		}
 		return true;

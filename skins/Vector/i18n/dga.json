@@ -45,9 +45,6 @@
 	"vector-toc-label": "Yelbulo",
 	"vector-toc-beginning": "Piiluu",
 	"vector-toc-toggle-button-label": "ŋmɛɛle $1 gbuli bile",
-	"vector-anon-user-menu-pages": "Peegyiri ko kpɛ yi maale enneba",
-	"vector-anon-user-menu-pages-learn": "Zanne yɛlɛ yaga",
-	"vector-anon-user-menu-pages-label": "Zanne yɛlɛ yaga kyaare maale eŋ",
 	"vector-main-menu-tooltip": "Menu zumeŋɛ",
 	"vector-toc-menu-tooltip": "Yelbulo tabul",
 	"vector-toc-collapsible-button-label": "ŋmɛɛle a tabul yelbulo",
@@ -67,7 +64,5 @@
 	"vector-toc-unpinned-popup": "A yelbulo tabol tage wa la kyɛ.",
 	"vector-page-tools-unpinned-popup": "A tontoŋ boma mɛnu tage wa la kyɛ.",
 	"vector-main-menu-unpinned-popup": "A yelzu niŋe tage wa la kyɛ.",
-	"vector-appearance-unpinned-popup": "A mɛnu saanaa tage wa la kyɛ.",
-	"vector-2022-beta-preview-label": "Vuo nyaabo ko kannoo (Vector 2022)",
-	"vector-2022-beta-preview-description": "Nyɛ vuo wieoŋ ko a kannoo vuo nyɛraa paalaa nandaare, a seŋ topogyerefi baabo ane yinsoga moodi."
+	"vector-appearance-unpinned-popup": "A mɛnu saanaa tage wa la kyɛ."
 }

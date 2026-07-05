@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -12,33 +12,33 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges
  */
 class DeleteReadOldRowsInCuChangesTest extends MaintenanceBaseTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {
 		return DeleteReadOldRowsInCuChanges::class;
 	}
 
-	private function addRows( $numberOfReadOldRows, $numberOfNormalRows ) {
+	private function addRows( int $numberOfReadOldRows, int $numberOfNormalRows ): void {
 		$rows = [];
 		$testUser = $this->getTestUser()->getUser();
 		for ( $i = 0; $i < $numberOfReadOldRows; $i++ ) {
 			$rows[] = [
 				'cuc_actor' => $testUser->getActorId(), 'cuc_only_for_read_old' => 1, 'cuc_type' => RC_LOG,
-				'cuc_ip'  => '1.2.3.4', 'cuc_ip_hex' => IPUtils::toHex( '1.2.3.4' ),
-				'cuc_timestamp'  => $this->getDb()->timestamp(), 'cuc_comment_id' => 0,
+				'cuc_ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'cuc_timestamp' => $this->getDb()->timestamp(),
+				'cuc_comment_id' => 0,
 			];
 		}
 
 		for ( $i = 0; $i < $numberOfNormalRows; $i++ ) {
 			$rows[] = [
 				'cuc_actor' => $testUser->getActorId(), 'cuc_only_for_read_old' => 0, 'cuc_type' => RC_EDIT,
-				'cuc_ip'  => '1.2.3.4', 'cuc_ip_hex' => IPUtils::toHex( '1.2.3.4' ),
-				'cuc_timestamp'  => $this->getDb()->timestamp(), 'cuc_comment_id' => 0,
+				'cuc_ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'cuc_timestamp' => $this->getDb()->timestamp(),
+				'cuc_comment_id' => 0,
 			];
 		}
 
@@ -55,14 +55,16 @@ class DeleteReadOldRowsInCuChangesTest extends MaintenanceBaseTestCase {
 			'::execute should have returned true as the script should have run successfully.'
 		);
 		$this->assertRowCount(
-			0, 'cu_changes', 'cuc_id',
+			0,
+			'cu_changes',
+			'cuc_id',
 			'The row count in an empty cu_changes should not have changed after calling ::execute.'
 		);
 		$this->expectOutputString( "cu_changes is empty; nothing to delete.\n" );
 	}
 
 	/** @dataProvider provideRowCountsAndBatchSize */
-	public function testExecute( $numberOfReadOldRows, $numberOfNormalRows, $batchSize ) {
+	public function testExecute( int $numberOfReadOldRows, int $numberOfNormalRows, int $batchSize ) {
 		// Set up cu_changes
 		$this->addRows( $numberOfReadOldRows, $numberOfNormalRows );
 		// Run the script
@@ -77,7 +79,9 @@ class DeleteReadOldRowsInCuChangesTest extends MaintenanceBaseTestCase {
 		);
 		// Test entries were moved
 		$this->assertRowCount(
-			$numberOfNormalRows, 'cu_changes', 'cuc_id',
+			$numberOfNormalRows,
+			'cu_changes',
+			'cuc_id',
 			'The row count in an empty cu_changes was not as expected after calling ::execute.'
 		);
 	}

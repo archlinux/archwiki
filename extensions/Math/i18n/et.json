@@ -111,5 +111,7 @@
 	"math-wikibase-special-form-placeholder": "Valemi pealkiri",
 	"math-wikibase-special-form-button": "Päri teave",
 	"math-wikibase-special-error-header": "Tõrge",
-	"math-wikibase-special-error-invalid-argument": "Määrasid Vikibaasi identifikaatori, mida pole olemas."
+	"math-wikibase-special-error-invalid-argument": "Määrasid Vikibaasi identifikaatori, mida pole olemas.",
+	"math-editpage-insert-inline": "Matemaatiline valem (reasisene)",
+	"math-editpage-insert-block": "Matemaatiline valem (plokk)"
 }

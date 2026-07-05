@@ -45,8 +45,6 @@
 	"oathauth-describe-provider": "Identificación de dos factores (OATH).",
 	"grant-group-authentication": "Facer les aiciones d'autenticación propies y pa otros",
 	"grant-oath": "Acceder a la información d'autenticación en dos factores (OATH) propies y pa otros",
-	"right-oathauth-api-all": "Consultar y validar la información OATH propia y d'otros",
-	"action-oathauth-api-all": "comprobar l'estatus OATH",
 	"oathauth-user-not-found": "Nun s'alcontró nenguna cuenta d'usuariu con esi nome",
 	"oath-log-name": "Rexistru d'identificación de dos factores",
 	"oath-log-header": "Estos eventos rexistren los cambeos nel estáu de la identificación en dos pasos de les cuentes de los usuarios.",
@@ -55,13 +53,10 @@
 	"oathauth-module-totp-label": "TOTP (pase d’un solu usu)",
 	"oathauth-ui-manage": "Alministrar",
 	"oathmanage": "Alministrar la identificación de dos factores",
-	"oathauth-ui-not-enabled-modules": "Cambiar a un métodu alternativu",
-	"oathauth-ui-enabled-module": "Métodu d'identificación activáu",
 	"oathauth-enable-generic": "Activar",
 	"oathauth-disable-generic": "Desactivar",
 	"oathauth-invalid-data-format": "El fornidor de datos ye inválidu pa crear una clave pal métodu d'identificación escoyíu",
 	"oathauth-disable-page-title": "Desactivar $1",
 	"oathauth-enable-page-title": "Activar $1",
-	"oathauth-action-exclusive-to-2fa": "Esta aición solo puen facela usuarios que tengan activada la identificación en dos pasos.",
-	"oathauth-ui-available-modules": "Métodos disponibles"
+	"oathauth-action-exclusive-to-2fa": "Esta aición solo puen facela usuarios que tengan activada la identificación en dos pasos."
 }

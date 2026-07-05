@@ -21,6 +21,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use UtfNormal;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Helper functions for feeds
@@ -33,7 +34,7 @@ class FeedUtils {
 	 * Check whether feeds can be used and that $type is a valid feed type
 	 *
 	 * @param string $type Feed type, as requested by the user
-	 * @param OutputPage|null $output Null falls back to $wgOut
+	 * @param OutputPage|null $output Null (deprecated since 1.46) falls back to $wgOut
 	 * @return bool
 	 * @since 1.36 $output parameter added
 	 */
@@ -41,7 +42,7 @@ class FeedUtils {
 		$feed = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::Feed );
 		$feedClasses = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::FeedClasses );
 		if ( $output === null ) {
-			// Todo update GoogleNewsSitemap and deprecate
+			wfDeprecated( __METHOD__ . ' with null $output', '1.46' );
 			global $wgOut;
 			$output = $wgOut;
 		}
@@ -70,7 +71,7 @@ class FeedUtils {
 	 */
 	public static function formatDiff( $row, $formattedComment = null ) {
 		$titleObj = Title::makeTitle( $row->rc_namespace, $row->rc_title );
-		$timestamp = wfTimestamp( TS_MW, $row->rc_timestamp );
+		$timestamp = wfTimestamp( TS::MW, $row->rc_timestamp );
 		$actiontext = '';
 		if ( $row->rc_source === RecentChange::SRC_LOG ) {
 			$rcRow = (array)$row; // newFromRow() only accepts arrays for RC rows
@@ -118,7 +119,7 @@ class FeedUtils {
 	 * except with preformatted comments.
 	 *
 	 * @param Title $title
-	 * @param int $oldid Old revision's id
+	 * @param int|null $oldid Old revision's id
 	 * @param int $newid New revision's id
 	 * @param string $timestamp New revision's timestamp
 	 * @param string $formattedComment New revision's comment in HTML format

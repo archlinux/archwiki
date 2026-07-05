@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use GlobalPreferences\GlobalPreferencesFactory;
 use GlobalPreferences\Storage;
-use MediaWiki\CheckUser\HookHandler\Preferences;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Preferences\PreferencesFactory;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -17,19 +17,12 @@ class CheckUserTemporaryAccountAutoRevealLookup {
 	 */
 	public const CONSTRUCTOR_OPTIONS = [ 'CheckUserAutoRevealMaximumExpiry' ];
 
-	private ServiceOptions $options;
-	private PreferencesFactory $preferencesFactory;
-	private CheckUserPermissionManager $checkUserPermissionManager;
-
 	public function __construct(
-		ServiceOptions $options,
-		PreferencesFactory $preferencesFactory,
-		CheckUserPermissionManager $checkUserPermissionManager
+		private readonly ServiceOptions $options,
+		private readonly PreferencesFactory $preferencesFactory,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->preferencesFactory = $preferencesFactory;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/**

@@ -16,7 +16,7 @@ describe( 'Cite popups integration', () => {
 		// Create a new page containing a reference
 		const wikiText = 'Lorem ipsum dolor.<ref>small reference</ref>' +
 			'Reference with lots of text.<ref>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</ref>' +
-			'Lorem ipsum dolor.<ref>reference inception{{#tag:ref|body}}</ref>';
+			'Lorem ipsum dolor.{{#tag:ref|reference inception<ref>body</ref>}}';
 
 		helper.editPage( title, wikiText );
 	} );
@@ -49,11 +49,11 @@ describe( 'Cite popups integration', () => {
 	} );
 
 	it( 'hovering nested reference', () => {
-		helper.abandonReference( 'cite_ref-3' );
-		helper.dwellReference( 'cite_ref-3' );
+		helper.abandonReference( 'cite_ref-4' );
+		helper.dwellReference( 'cite_ref-4' );
 		cy.get( '.mwe-popups-type-reference', { timeout: 1000 } )
 			.should( 'be.visible' );
-		helper.dwellReference( 'cite_ref-4' );
+		helper.dwellReference( 'cite_ref-3' );
 		// eslint-disable-next-line cypress/no-unnecessary-waiting
 		cy.wait( 1000 );
 		cy.get( '.mwe-popups-type-reference' )

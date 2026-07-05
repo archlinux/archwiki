@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"আফতাবুজ্জামান"
+		]
+	},
+	"oathauth-webauthn-module-label": "নিরাপত্তা চাবি",
+	"oathauth-webauthn-registered-keys-section-name": "নিবন্ধিত চাবি"
+}

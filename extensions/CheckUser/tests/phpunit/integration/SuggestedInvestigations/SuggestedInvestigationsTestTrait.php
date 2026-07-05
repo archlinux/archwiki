@@ -18,7 +18,7 @@
  * @file
  */
 
-namespace MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations;
 
 /**
  * A helper trait for tests that interact with Suggested Investigations functionality.

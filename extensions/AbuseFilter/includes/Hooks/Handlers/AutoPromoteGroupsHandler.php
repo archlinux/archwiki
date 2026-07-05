@@ -14,25 +14,12 @@ class AutoPromoteGroupsHandler implements GetAutoPromoteGroupsHook {
 	/** @var BagOStuff */
 	private $cache;
 
-	/** @var ConsequencesRegistry */
-	private $consequencesRegistry;
-
-	/** @var BlockAutopromoteStore */
-	private $blockAutopromoteStore;
-
-	/**
-	 * @param ConsequencesRegistry $consequencesRegistry
-	 * @param BlockAutopromoteStore $blockAutopromoteStore
-	 * @param BagOStuff|null $cache
-	 */
 	public function __construct(
-		ConsequencesRegistry $consequencesRegistry,
-		BlockAutopromoteStore $blockAutopromoteStore,
+		private readonly ConsequencesRegistry $consequencesRegistry,
+		private readonly BlockAutopromoteStore $blockAutopromoteStore,
 		?BagOStuff $cache = null
 	) {
 		$this->cache = $cache ?? new HashBagOStuff();
-		$this->consequencesRegistry = $consequencesRegistry;
-		$this->blockAutopromoteStore = $blockAutopromoteStore;
 	}
 
 	/**

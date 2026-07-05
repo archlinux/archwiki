@@ -57,7 +57,7 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 			$result += $this->getUnreadNotificationPagesFromForeign();
 		}
 
-		$apis = $this->getForeignNotifications()->getApiEndpoints( $this->getRequestedWikis() );
+		$apis = $this->getForeignNotifications()->getApiEndpoints( $this->getRequestedWikis(), $this->getLanguage() );
 		foreach ( $result as $wiki => $data ) {
 			$result[$wiki]['source'] = $apis[$wiki];
 			$result[$wiki]['pages'] = $data['pages'] ?: [];

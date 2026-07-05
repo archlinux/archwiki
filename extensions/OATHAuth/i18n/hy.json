@@ -15,5 +15,6 @@
 	"oathauth-disable-page-title": "Անջատել $1",
 	"oathauth-enable-page-title": "Միացնել $1",
 	"oathauth-notifications-disable-help": "Օգնություն",
-	"oathauth-notifications-enable-help": "Օգնություն"
+	"oathauth-notifications-enable-help": "Օգնություն",
+	"oathauth-2fa-required-groups-on-project": "$2-ը $3-ում"
 }

@@ -5,9 +5,9 @@
 			"Macofe",
 			"Red Winged Duck",
 			"Renessaince",
+			"Ucukor",
 			"Vlad5250",
-			"Wizardist",
-			"Ucukor"
+			"Wizardist"
 		]
 	},
 	"echo-desc": "Сыстэма абвестак ўдзельнікаў пра падзеі і паведамленьні",
@@ -178,8 +178,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашае}} сотае рэдагаваньне; шчыра {{GENDER:$2|вам}} дзякуем!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашае}} тысячнае рэдагаваньне; дзякуй {{GENDER:$2|вам}} за вялікі ўнёсак!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашае}} дзесяцітысячнае рэдагаваньне; сардэчна {{GENDER:$2|вам}} дзякуем!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашую}} статысячную праўку; дзякуй {{GENDER:$2|вам}} за дзівосны ўнёсак!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашую}} мільённую праўку; дзякуй {{GENDER:$2|вам}} за ашаламляльны ўнёсак!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашае}} статысячнае рэдагаваньне; дзякуй {{GENDER:$2|вам}} за дзівосны ўнёсак!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|вашую}} мільённае рэдагаваньне; дзякуй {{GENDER:$2|вам}} за ашаламляльны ўнёсак!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваё}} дзесяцімільённае рэдагаваньне; дзякуем {{GENDER:$2|вам}} за такое ашаламляльнае пасьвячэньне!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Вашае}} рэдагаваньне",
 	"notification-link-text-view-edit": "Праглядзець рэдагаваньне",

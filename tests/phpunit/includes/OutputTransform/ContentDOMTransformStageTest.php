@@ -5,9 +5,11 @@ namespace MediaWiki\OutputTransform;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Tests\OutputTransform\DummyDOMTransformStage;
+use MediaWiki\Title\TitleValue;
 use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -31,12 +33,14 @@ class ContentDOMTransformStageTest extends TestCase {
 	public function testTransform() {
 		$html = "<div>some output</div>";
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
-			new HtmlPageBundle( html: $html )
+			new HtmlPageBundle( html: $html ),
+			title: new TitleValue( NS_MAIN, 'Test_Page' ),
 		);
 		$transform = $this->createStage();
+		$popts = ParserOptions::newFromAnon();
 		$options = [];
 		$this->assertTrue( $po->getContentHolder()->isParsoidContent() );
-		$po = $transform->transform( $po, null, $options );
+		$po = $transform->transform( $po, $popts, $options );
 		$json = MediaWikiServices::getInstance()->getJsonCodec()->serialize( $po );
 		self::assertStringContainsString( "parsoid-page-bundle", $json );
 	}
@@ -50,18 +54,20 @@ class ContentDOMTransformStageTest extends TestCase {
 		$transform = $this->createStage();
 
 		// Legacy, should roundtrip the input
+		$popts = ParserOptions::newFromAnon();
 		$options = [];
 		$this->assertFalse( $po->getContentHolder()->isParsoidContent() );
-		$po = $transform->transform( $po, null, $options );
+		$po = $transform->transform( $po, $popts, $options );
 		$text = $po->getContentHolderText();
 		$this->assertEquals( $html, $text );
 
 		// Parsoid, also roundtrips the input since document creation marks it as new
 		$po = PageBundleParserOutputConverter::parserOutputFromPageBundle(
-			new HtmlPageBundle( html: $html )
+			new HtmlPageBundle( html: $html ),
+			title: new TitleValue( NS_MAIN, 'Test_Page' ),
 		);
 		$this->assertTrue( $po->getContentHolder()->isParsoidContent() );
-		$po = $transform->transform( $po, null, $options );
+		$po = $transform->transform( $po, $popts, $options );
 		$text = $po->getContentHolderText();
 		$this->assertEquals( $html, $text );
 	}

@@ -1,45 +1,37 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser;
+namespace MediaWiki\Extension\CheckUser\CheckUser;
 
-use MediaWiki\CheckUser\CheckUser\Pagers\AbstractCheckUserPager;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\AbstractCheckUserPager;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\User\UserIdentity;
-use MessageLocalizer;
 
 class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
-	private TokenQueryManager $tokenQueryManager;
-	private UserIdentity $target;
-	private WebRequest $request;
-	private CsrfTokenSet $csrfTokenSet;
-
-	/** @var FormOptions The submitted form data in a helper class. */
-	private FormOptions $opts;
 
 	public function __construct(
 		MessageLocalizer $messageLocalizer,
-		TokenQueryManager $tokenQueryManager,
-		CsrfTokenSet $csrfTokenSet,
-		WebRequest $request,
-		FormOptions $opts,
-		UserIdentity $target
+		private readonly TokenQueryManager $tokenQueryManager,
+		private readonly CsrfTokenSet $csrfTokenSet,
+		private readonly WebRequest $request,
+		private readonly FormOptions $opts,
+		private readonly UserIdentity $target,
 	) {
 		parent::__construct( $messageLocalizer );
-		$this->opts = $opts;
-		$this->tokenQueryManager = $tokenQueryManager;
-		$this->target = $target;
-		$this->request = $request;
-		$this->csrfTokenSet = $csrfTokenSet;
 	}
 
 	/** @inheritDoc */
 	protected function makeLink(
-		?array $query, ?string $class, string $text, ?string $tooltip, ?string $rel = null
+		?array $query,
+		?string $class,
+		string $text,
+		?string $tooltip,
+		?string $rel = null
 	): string {
 		if ( $query === null ) {
 			return Html::element(
@@ -51,10 +43,10 @@ class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
 			);
 		}
 		$query = array_merge( $this->linkQuery, $query );
-		$opts = $this->opts;
-		$fields = array_filter( AbstractCheckUserPager::TOKEN_MANAGED_FIELDS, static function ( $field ) use ( $opts ) {
-			return $opts->validateName( $field );
-		} );
+		$fields = array_filter(
+			AbstractCheckUserPager::TOKEN_MANAGED_FIELDS,
+			$this->opts->validateName( ... )
+		);
 		$fieldData = [];
 		foreach ( $fields as $field ) {
 			if ( !in_array( $field, [ 'dir', 'offset', 'limit' ] ) ) {
@@ -88,12 +80,10 @@ class CheckUserPagerNavigationBuilder extends PagerNavigationBuilder {
 		// be set on each POST request (otherwise they will revert back to their default value).
 		$filterFields = array_filter(
 			array_keys( AbstractCheckUserPager::FILTER_FIELDS ),
-			static function ( $field ) use ( $opts ) {
-				return $opts->validateName( $field );
-			}
+			$this->opts->validateName( ... )
 		);
 		foreach ( $filterFields as $field ) {
-			$formFields[] = Html::hidden( $field, $opts->getValue( $field ) );
+			$formFields[] = Html::hidden( $field, $this->opts->getValue( $field ) );
 		}
 
 		$formFields[] = Html::submitButton(

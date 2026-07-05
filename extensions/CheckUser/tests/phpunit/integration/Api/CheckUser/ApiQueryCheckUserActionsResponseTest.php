@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\CheckUser;
 
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Services\ApiQueryCheckUserResponseFactory;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogPage;
@@ -15,7 +15,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse
  * @group Database
  */
 class ApiQueryCheckUserActionsResponseTest extends MediaWikiIntegrationTestCase {

@@ -1,11 +1,11 @@
 <?php
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\SpecialPageBeforeExecuteHandler;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MutableConfig;
 use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\HookHandler\SpecialPageBeforeExecuteHandler;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -13,7 +13,7 @@ use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\SpecialPageBeforeExecuteHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\SpecialPageBeforeExecuteHandler
  */
 class SpecialPageBeforeExecuteHandlerTest extends MediaWikiIntegrationTestCase {
 	private SpecialPageBeforeExecuteHandler $handler;

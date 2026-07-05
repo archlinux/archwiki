@@ -1,0 +1,29 @@
+{
+	"before": {},
+	"after": {
+		"name": "oathauth_user_handles",
+		"comment": "Mapping from WebAuthn User Handle values to users",
+		"columns": [
+			{
+				"name": "oah_user",
+				"comment": "User ID",
+				"type": "integer",
+				"options": { "notnull": true, "unsigned": true }
+			},
+			{
+				"name": "oah_handle",
+				"comment": "WebAuthn User Handle value, see https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Handle.html",
+				"type": "binary",
+				"options": { "notnull": false, "length": 88 }
+			}
+		],
+		"indexes": [
+			{
+				"name": "oah_handle",
+				"columns": [ "oah_handle" ],
+				"unique": true
+			}
+		],
+		"pk": [ "oah_user" ]
+	}
+}

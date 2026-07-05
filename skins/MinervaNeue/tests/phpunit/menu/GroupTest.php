@@ -75,8 +75,8 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 								'value' => 'menu.home'
 							],
 							[
-								'key' => 'data-mw',
-								'value' => 'interface'
+								'key' => 'data-mw-interface',
+								'value' => '1'
 							],
 						],
 						'classes' => 'menu__item--home',
@@ -138,8 +138,8 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 								'value' => $this->nearbyComponent['href'],
 							],
 							[
-								'key' => 'data-mw',
-								'value' => 'interface'
+								'key' => 'data-mw-interface',
+								'value' => '1'
 							],
 						],
 						'classes' => 'menu__item--nearby',

@@ -17,9 +17,10 @@ class Scribunto {
 	 *
 	 * @param Parser $parser
 	 * @return ScribuntoEngineBase
-	 * @deprecated Use EngineFactory::getEngineForParser
+	 * @deprecated since 1.45, use EngineFactory::getEngineForParser
 	 */
 	public static function getParserEngine( Parser $parser ) {
+		wfDeprecated( __METHOD__, '1.45' );
 		/** @var EngineFactory $engineFactory */
 		$engineFactory = MediaWikiServices::getInstance()->getService( 'Scribunto.EngineFactory' );
 		'@phan-var EngineFactory $engineFactory';

@@ -18,7 +18,7 @@
 const Canvas = require( './ui/mmv.ui.canvas.js' );
 const CanvasButtons = require( './ui/mmv.ui.canvasButtons.js' );
 const MetadataPanel = require( './ui/mmv.ui.metadataPanel.js' );
-const ThumbnailWidthCalculator = require( './mmv.ThumbnailWidthCalculator.js' );
+const { ThumbnailWidthCalculator } = require( 'mmv.common' );
 const UiElement = require( './ui/mmv.ui.js' );
 
 /** Proxy for a Dialog. Initialises and attaches the dialog upon first use. */

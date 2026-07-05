@@ -43,21 +43,12 @@ use Wikimedia\Rdbms\IDBAccessObject;
 class CustomBlockedDomainStorage implements IBlockedDomainStorage, IDBAccessObject {
 	public const TARGET_PAGE = 'BlockedExternalDomains.json';
 
-	private RevisionLookup $revisionLookup;
-	private BagOStuff $cache;
-	private WikiPageFactory $wikiPageFactory;
-	private BlockedDomainValidator $domainValidator;
-
 	public function __construct(
-		BagOStuff $cache,
-		RevisionLookup $revisionLookup,
-		WikiPageFactory $wikiPageFactory,
-		BlockedDomainValidator $domainValidator
+		private readonly BagOStuff $cache,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly BlockedDomainValidator $domainValidator
 	) {
-		$this->cache = $cache;
-		$this->revisionLookup = $revisionLookup;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->domainValidator = $domainValidator;
 	}
 
 	/** @inheritDoc */

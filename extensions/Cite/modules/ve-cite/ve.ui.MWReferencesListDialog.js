@@ -172,7 +172,7 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 
 			this.groupInput.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
 			const docRefs = MWDocumentReferences.static.refsForDoc( this.getFragment().getDocument() );
-			this.groupInput.populateMenu( docRefs.getAllGroupNames() );
+			this.groupInput.populateMenu( docRefs.getListGroupNames() );
 
 			this.responsiveCheckbox.setSelected( this.selectedNode.getAttribute( 'isResponsive' ) );
 

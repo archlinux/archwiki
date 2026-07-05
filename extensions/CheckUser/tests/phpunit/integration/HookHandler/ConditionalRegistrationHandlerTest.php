@@ -1,20 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
 use MediaWiki\Api\ApiModuleManager;
-use MediaWiki\CheckUser\HookHandler\ConditionalRegistrationHandler;
-use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\HookHandler\ConditionalRegistrationHandler;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\ConditionalRegistrationHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\ConditionalRegistrationHandler
  */
 class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
-	private Config $config;
+	private HashConfig $config;
 	private TempUserConfig $tempUserConfig;
 	private ExtensionRegistry $extensionRegistry;
 	private ConditionalRegistrationHandler $handler;
@@ -22,7 +22,7 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock( Config::class );
+		$this->config = new HashConfig();
 		$this->tempUserConfig = $this->createMock( TempUserConfig::class );
 		$this->extensionRegistry = $this->createMock( ExtensionRegistry::class );
 
@@ -36,6 +36,8 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testShouldDoNothingWhenTempUsersAreNotKnown(): void {
 		$this->tempUserConfig->method( 'isKnown' )
 			->willReturn( false );
+		$this->config->set( 'CheckUserGlobalContributionsCentralWikiId', false );
+		$this->config->set( 'CheckUserSuggestedInvestigationsEnabled', false );
 
 		$list = [];
 
@@ -47,6 +49,8 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testShouldRegisterSpecialIPContributionsIfTempUsersAreKnown(): void {
 		$this->tempUserConfig->method( 'isKnown' )
 			->willReturn( true );
+		$this->config->set( 'CheckUserGlobalContributionsCentralWikiId', false );
+		$this->config->set( 'CheckUserSuggestedInvestigationsEnabled', false );
 
 		$list = [];
 
@@ -69,8 +73,8 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->extensionRegistry->method( 'isLoaded' )
 			->willReturn( $extensionsAreLoaded );
 
-		$this->config->method( 'get' )
-			->willReturn( $centralWiki );
+		$this->config->set( 'CheckUserGlobalContributionsCentralWikiId', $centralWiki );
+		$this->config->set( 'CheckUserSuggestedInvestigationsEnabled', false );
 
 		$list = [];
 
@@ -110,9 +114,10 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 	): void {
 		$this->extensionRegistry->method( 'isLoaded' )
 			->willReturn( $extensionsAreLoaded );
-		$this->config->method( 'get' )
-			->with( 'CheckUserGlobalContributionsCentralWikiId' )
-			->willReturn( $isOnCentralWiki ? WikiMap::getCurrentWikiId() : false );
+		$this->config->set(
+			'CheckUserGlobalContributionsCentralWikiId',
+			$isOnCentralWiki ? WikiMap::getCurrentWikiId() : false
+		);
 
 		if ( $expectLoaded ) {
 			$moduleManager = $this->createMock( ApiModuleManager::class );
@@ -140,16 +145,15 @@ class ConditionalRegistrationHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideSuggestedInvestigationsRegistered */
 	public function testSuggestedInvestigationsRegistered(
-		bool $enabled, bool $hidden, bool $siExpected
+		bool $enabled,
+		bool $hidden,
+		bool $siExpected
 	) {
 		// Normally we could switch these using methods from SuggestedInvestigationsTestTrait, but
-		// these tests create mock of the config object, so we need to set the values this way.
-		$this->config->method( 'get' )
-			->willReturnCallback( static fn ( $key ) => match ( $key ) {
-				'CheckUserSuggestedInvestigationsEnabled' => $enabled,
-				'CheckUserSuggestedInvestigationsHidden' => $hidden,
-				default => null,
-			} );
+		// these tests create own config object, so we need to set the values this way.
+		$this->config->set( 'CheckUserSuggestedInvestigationsEnabled', $enabled );
+		$this->config->set( 'CheckUserSuggestedInvestigationsHidden', $hidden );
+		$this->config->set( 'CheckUserGlobalContributionsCentralWikiId', false );
 
 		$list = [];
 		$this->handler->onSpecialPage_initList( $list );

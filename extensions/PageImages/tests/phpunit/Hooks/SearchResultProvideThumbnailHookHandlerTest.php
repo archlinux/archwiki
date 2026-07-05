@@ -5,13 +5,13 @@ namespace PageImages\Tests\Hooks;
 use LogicException;
 use MediaWiki\FileRepo\File\LocalFile;
 use MediaWiki\FileRepo\RepoGroup;
+use MediaWiki\Media\ThumbnailImage;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageProps;
 use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\SearchResultProvideThumbnailHookHandler;
 use PageImages\PageImages;
-use ThumbnailImage;
 
 /**
  * @covers \PageImages\Hooks\SearchResultProvideThumbnailHookHandler
@@ -19,6 +19,7 @@ use ThumbnailImage;
  * @group PageImages
  */
 class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiIntegrationTestCase {
+
 	/**
 	 * Creates mock object for LocalFile
 	 */

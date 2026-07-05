@@ -27,3 +27,11 @@
 		}
 	}
 }
+
+// Apply spacing between buttons in icon-only button appearance.
+// Refer to T401361.
+@media all and ( min-width: @min-width-breakpoint-tablet ) {
+	.page-actions-menu__list {
+		gap: @spacing-125;
+	}
+}

@@ -20,9 +20,6 @@ use Wikimedia\CSS\Sanitizer\FontFaceAtRuleSanitizer;
  */
 class TemplateStylesFontFaceAtRuleSanitizer extends FontFaceAtRuleSanitizer {
 
-	/**
-	 * @param MatcherFactory $matcherFactory
-	 */
 	public function __construct( MatcherFactory $matcherFactory ) {
 		parent::__construct( $matcherFactory );
 

@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Lint errors хаталары",
+	"linttemplateerrors": "Lint errors хаталары булган трансклюзияләр",
 	"linter-category-bogus-image-options": "Файлларның фиктив параметрлары",
 	"linter-category-missing-end-tag": "Ябучы тэг юк"
 }

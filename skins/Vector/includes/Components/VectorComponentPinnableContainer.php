@@ -6,18 +6,10 @@ namespace MediaWiki\Skins\Vector\Components;
  * To be used with PinnableContainer/Pinned or PinnableContainer/Unpinned templates.
  */
 class VectorComponentPinnableContainer implements VectorComponent {
-	/** @var string */
-	private $id;
-	/** @var bool */
-	private $isPinned;
-
-	/**
-	 * @param string $id
-	 * @param bool $isPinned
-	 */
-	public function __construct( string $id, bool $isPinned = true ) {
-		$this->id = $id;
-		$this->isPinned = $isPinned;
+	public function __construct(
+		private readonly string $id,
+		private readonly bool $isPinned = true,
+	) {
 	}
 
 	/**

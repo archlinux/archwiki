@@ -6,9 +6,9 @@ use JsonSerializable;
 use MediaWiki\Extension\DiscussionTools\CommentModifier;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\Parser\Sanitizer;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
  * A thread item, either a heading or a comment
@@ -16,10 +16,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	use ThreadItemTrait;
 
-	protected string $type;
-	protected ImmutableRange $range;
 	protected Element $rootNode;
-	protected int $level;
 	protected ?ContentThreadItem $parent = null;
 	/** @var string[] */
 	protected array $warnings = [];
@@ -29,8 +26,6 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	protected ?string $legacyId = null;
 	/** @var ContentThreadItem[] */
 	protected array $replies = [];
-	/** @var string|bool */
-	private $transcludedFrom;
 
 	/** @var ?array[] */
 	protected ?array $authors = null;
@@ -46,12 +41,11 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	 * @param bool|string $transcludedFrom
 	 */
 	public function __construct(
-		string $type, int $level, ImmutableRange $range, $transcludedFrom
+		protected readonly string $type,
+		protected int $level,
+		protected ImmutableRange $range,
+		protected readonly bool|string $transcludedFrom
 	) {
-		$this->type = $type;
-		$this->level = $level;
-		$this->range = $range;
-		$this->transcludedFrom = $transcludedFrom;
 	}
 
 	/**

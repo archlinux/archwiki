@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\Math\WikiTexVC\MMLmappings;
 use ArgumentCountError;
 use Exception;
 use LogicException;
-use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Variants;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLutil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
@@ -12,9 +11,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmerror;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
-use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmspace;
-use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
@@ -29,10 +26,10 @@ use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
  */
 class BaseMethods {
 
-	public static function checkAndParse( $input, $passedArgs, $operatorContent, TexNode $node ) {
+	public static function checkAndParse( $input, $passedArgs, $operatorContent, TexNode $node ): MMLbase {
 		if ( !is_string( $input ) ) {
 			// just discard these elements, sometimes empty TexArray
-			return null;
+			return new MMLarray();
 		}
 
 		// Checking for a named parsing function
@@ -43,7 +40,7 @@ class BaseMethods {
 			$resFct = TexUtil::getInstance()->callback( trim( $input ) );
 		}
 		if ( $resFct == null ) {
-			return null;
+			return new MMLarray();
 		}
 		// If the function has been found, dynamically call the associated parsing function.
 		if ( is_string( $resFct ) ) {
@@ -60,14 +57,14 @@ class BaseMethods {
 			}
 			return BaseParsing::{$resFct[0]}( $node, $passedArgs, $operatorContent, $input );
 		} catch ( Exception ) {
-			return null;
+			return new MMLarray();
 		}
 	}
 
 	public function checkAndParseOperator( $input, $node, $passedArgs, $operatorContent,
 		$state, $prepareInput = true
-	): ?MMLbase {
-			$resOperator = TexUtil::getInstance()->operator_rendering( trim( $input ) );
+	): MMLbase {
+		$resOperator = TexUtil::getInstance()->operator_rendering( trim( $input ) );
 		if ( $resOperator == null ) {
 			$resOperator = TexUtil::getInstance()->operator_infix( trim( $input ) );
 			if ( $resOperator ) {
@@ -86,7 +83,7 @@ class BaseMethods {
 		}
 
 		if ( $resOperator == null ) {
-			return null;
+			return new MMLarray();
 		}
 		return $this->parseOperator( $node, $passedArgs, $operatorContent, $input, $state, ...$resOperator );
 	}
@@ -96,14 +93,13 @@ class BaseMethods {
 	): MMLbase {
 		// Some custom parsing from operatorDict
 		switch ( $input ) {
+			// effectively, those operations are not tagged with stretchy=false
 			case ";":
 			case ",":
+			case "<":
+			case ">":
 				// this maybe just a default case, this is not rendered when it is the last in row
 				return new MMLmo( "", [], $input );
-			case "<":
-				return new MMLmo( "", [], "<" );
-			case ">":
-				return new MMLmo( "", [], ">" );
 			case "\\":
 				 // instead of carriage return, force whitespace here:
 				 // see: https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Math/+/961213
@@ -125,16 +121,12 @@ class BaseMethods {
 		if ( array_key_exists( "movesupsub", $attrs ) && $attrs['movesupsub'] == "1" ) {
 			unset( $attrs['movesupsub'] );
 		}
-
-		if ( $state != null && array_key_exists( "not", $state ) && $state["not"] ) {
-			return new MMLmo( "", $attrs, $uc . "&#x338;" );
-		}
-		return new MMLmo( "", $attrs, $uc );
+		return new MMLmo( trim( $name ) === '\\colon' ? 'PUNCT' : '', $attrs, $uc );
 	}
 
 	public function checkAndParseIdentifier( $input, $node, $passedArgs, $operatorContent,
 		 $prepareInput = true
-	): ?MMLbase {
+	): MMLbase {
 		// @phan-suppress-next-line PhanCoalescingNeverUndefined
 		$resIdentifier = TexUtil::getInstance()->identifier( trim( $input ) ) ?? null;
 		// If the macro has been found, dynamically call the associated parsing function.
@@ -143,13 +135,13 @@ class BaseMethods {
 		}
 
 		if ( $resIdentifier == null ) {
-			return null;
+			return new MMLarray();
 		}
 		try {
 			$resIdentifier[0] = MMLutil::uc2xNotation( $resIdentifier[0] );
 			return $this->parseIdentifier( $node, $passedArgs, $operatorContent, $input, ...$resIdentifier );
 		} catch ( ArgumentCountError ) {
-			return null;
+			return new MMLarray();
 		}
 	}
 
@@ -176,16 +168,15 @@ class BaseMethods {
 	}
 
 	public function checkAndParseDelimiter( $input, $node, $passedArgs,
-		$operatorContent, $noargs = false, $texClass = ""
-	): ?MMLbase {
+		$operatorContent, $noargs = false, $texClass = "" ): MMLbase {
 		if ( $input === null ) {
-			return null;
+			return new MMLarray();
 		}
 		$input = trim( $input );
 
 		$resDelimiter = TexUtil::getInstance()->delimiter( $input ) ?? false;
 		if ( $resDelimiter === false || !is_string( $resDelimiter[0] ) ) {
-			return null;
+			return new MMLarray();
 		}
 
 		if ( isset( $resDelimiter[1] ) && is_array( $resDelimiter[1] ) && !$noargs ) {
@@ -197,43 +188,12 @@ class BaseMethods {
 
 	public function checkAndParseMathCharacter( $input, $node, $passedArgs, $operatorContent,
 		$prepareInput = true
-	): ?MMLbase {
+	): MMLbase {
 		$resChar = TexUtil::getInstance()->mathchar( trim( $input ) );
 		if ( $resChar == null ) {
-			return null;
+			return new MMLarray();
 		}
 		return new MMLmi( '', [ 'mathvariant' => Variants::NORMAL ], $resChar );
-	}
-
-	public function checkAndParseColor( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ): ?MMLbase {
-		// tbd usually this encapsulates the succeeding box element
-		if ( $operatorContent == null ) {
-			return null;
-		}
-
-		if ( !( $input === 'color' || $input === 'pagecolor' ) ) {
-			return null;
-		}
-		$resColor = TexUtil::getInstance()->color( ucfirst( $operatorContent ) );
-		if ( $resColor == null ) {
-			return null;
-		}
-		if ( $input === 'color' ) {
-			return new MMLmstyle( "", [ "mathcolor" => $resColor ] );
-		}
-
-		// Input is 'pagecolor'
-		// Mj3 does this, probably not necessary
-		$innerRow = [];
-		foreach ( str_split( $operatorContent ) as $char ) {
-			$innerRow[] = new MMLmi( "", [], $char );
-		}
-		if ( $innerRow !== [] ) {
-			return new MMLarray( ( new MMLmtext( "", [ "mathcolor" => $resColor ], "\\pagecolor" ) ),
-				new MMLmrow( TexClass::ORD, [], ...$innerRow ) );
-		}
-
-		return new MMLmtext( "", [ "mathcolor" => $resColor ], "\\pagecolor" );
 	}
 
 	public static function generateMMLError( string $msg ): MMLmerror {

@@ -54,7 +54,7 @@ class DiscoveryHandler extends Handler {
 			$module = $this->getRouter()->getModule( $moduleName );
 
 			if ( $module ) {
-				$modules[$moduleName] = $this->getModuleSpec( $moduleName, $module );
+				$modules[$moduleName] = $this->getModuleSpec( $module );
 			}
 		}
 
@@ -99,11 +99,11 @@ class DiscoveryHandler extends Handler {
 		];
 	}
 
-	private function getModuleSpec( string $moduleId, Module $module ): array {
+	private function getModuleSpec( Module $module ): array {
 		return $module->getModuleDescription();
 	}
 
 	protected function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'docs/rest/discovery-1.0.json';
+		return MW_INSTALL_PATH . '/docs/rest/discovery-1.0.json';
 	}
 }

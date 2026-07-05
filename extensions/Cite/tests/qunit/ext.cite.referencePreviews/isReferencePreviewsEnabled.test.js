@@ -64,7 +64,7 @@
 			}
 
 			assert.strictEqual(
-				require( 'ext.cite.referencePreviews' ).private.isReferencePreviewsEnabled( user, isPreviewTypeEnabled, config ),
+				require( 'ext.cite.referencePreviews' ).test.isReferencePreviewsEnabled( user, isPreviewTypeEnabled, config ),
 				data.expected,
 				data.testCase
 			);
@@ -79,7 +79,7 @@
 		config.set( 'wgCiteReferencePreviewsActive', true );
 
 		assert.true(
-			require( 'ext.cite.referencePreviews' ).private.isReferencePreviewsEnabled( user, userSettings, config ),
+			require( 'ext.cite.referencePreviews' ).test.isReferencePreviewsEnabled( user, userSettings, config ),
 			'If the user is logged in and the user is in the on group, then it\'s enabled.'
 		);
 	} );
@@ -92,7 +92,7 @@
 		config.set( 'wgCiteReferencePreviewsActive', false );
 
 		assert.strictEqual(
-			require( 'ext.cite.referencePreviews' ).private.isReferencePreviewsEnabled( user, userSettings, config ),
+			require( 'ext.cite.referencePreviews' ).test.isReferencePreviewsEnabled( user, userSettings, config ),
 			null,
 			'Reference Previews is disabled.'
 		);

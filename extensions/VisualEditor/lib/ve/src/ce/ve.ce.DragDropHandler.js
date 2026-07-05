@@ -73,25 +73,18 @@ ve.ce.DragDropHandler.prototype.onDocumentDragOver = function ( e ) {
 			// If we can get file metadata, check if there is a DataTransferHandler registered
 			// to handle it.
 			if ( dataTransfer.items ) {
-				for ( let i = 0, l = dataTransfer.items.length; i < l; i++ ) {
-					const item = dataTransfer.items[ i ];
-					if ( item.kind !== 'string' ) {
-						const fakeItem = new ve.ui.DataTransferItem( item.kind, item.type );
-						if ( dataTransferHandlerFactory.getHandlerNameForItem( fakeItem ) ) {
-							this.allowedFile = true;
-							break;
-						}
+				this.allowedFile = Array.prototype.some.call( dataTransfer.items, ( item ) => {
+					if ( item.kind === 'string' ) {
+						return false;
 					}
-				}
-			} else if ( dataTransfer.files && dataTransfer.files.length ) {
-				for ( let i = 0, l = dataTransfer.files.length; i < l; i++ ) {
-					const item = dataTransfer.items[ i ];
 					const fakeItem = new ve.ui.DataTransferItem( item.kind, item.type );
-					if ( dataTransferHandlerFactory.getHandlerNameForItem( fakeItem ) ) {
-						this.allowedFile = true;
-						break;
-					}
-				}
+					return !!dataTransferHandlerFactory.getHandlerNameForItem( fakeItem );
+				} );
+			} else if ( dataTransfer.files && dataTransfer.files.length ) {
+				this.allowedFile = Array.prototype.some.call( dataTransfer.files, ( item ) => {
+					const fakeItem = new ve.ui.DataTransferItem( item.kind, item.type );
+					return !!dataTransferHandlerFactory.getHandlerNameForItem( fakeItem );
+				} );
 			} else if ( Array.prototype.indexOf.call( dataTransfer.types || [], 'Files' ) !== -1 ) {
 				// Support: Firefox
 				// If we have no metadata (e.g. in Firefox) assume it is droppable
@@ -163,10 +156,7 @@ ve.ce.DragDropHandler.prototype.onDocumentDragOver = function ( e ) {
 				top += $dropTarget.outerHeight();
 			}
 			this.$dropMarker
-				.css( {
-					top: top,
-					left: left
-				} )
+				.css( { top, left } )
 				.width( $dropTarget.outerWidth() )
 				.removeClass( 'oo-ui-element-hidden' );
 		}

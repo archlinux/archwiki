@@ -3,13 +3,16 @@
 		"authors": [
 			"Ammartivari",
 			"Dori",
+			"INNERLMNT",
 			"Toplove12",
 			"Vanished 456321456",
-			"Xhulianoo",
-			"INNERLMNT"
+			"Xhulianoo"
 		]
 	},
 	"checkuser": "Kontrollo përdoruesin",
+	"checkuser-clienthints-value-is-browser-likely-bot": "Me shumë gjasa robot",
+	"checkuser-clienthints-value-is-browser-indeterminate": "Pacaktuar",
+	"checkuser-clienthints-value-is-browser-likely-browser": "Me shumë gjasa prej shfletuesit",
 	"checkuser-reason": "Arsyeja:",
 	"checkuser-blocked": "Bllokuar",
 	"checkuser-wasblocked": "Bllokuar më parë",

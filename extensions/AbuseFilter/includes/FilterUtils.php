@@ -27,4 +27,14 @@ class FilterUtils {
 	public static function isProtected( int $privacyLevel ) {
 		return (bool)( Flags::FILTER_USES_PROTECTED_VARS & $privacyLevel );
 	}
+
+	/**
+	 * Given a bitmask of privacy levels, return if the filter is suppressed
+	 *
+	 * @param int $privacyLevel
+	 * @return bool
+	 */
+	public static function isSuppressed( int $privacyLevel ): bool {
+		return (bool)( Flags::FILTER_SUPPRESSED & $privacyLevel );
+	}
 }

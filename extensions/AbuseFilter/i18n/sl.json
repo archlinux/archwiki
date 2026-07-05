@@ -374,7 +374,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizacija entitet HTML v znake Unicode ($1)",
 	"abusefilter-edit-builder-group-vars": "Spremenljivke",
 	"abusefilter-edit-builder-vars-timestamp": "Unixov časovni žig spremembe ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Ime računa ob ustvaritvi računa ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Ime računa ob ustvaritvi računa ($1)",
 	"abusefilter-edit-builder-vars-action": "Dejanje ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Vrstice, dodane v urejanju ($1)",
 	"abusefilter-edit-builder-vars-delta": "Sprememba velikosti pri urejanju ($1)",

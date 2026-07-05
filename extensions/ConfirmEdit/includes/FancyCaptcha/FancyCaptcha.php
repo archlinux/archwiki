@@ -12,13 +12,14 @@ use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Output\StreamFile;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use NullLockManager;
 use UnderflowException;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\FileBackend\FSFileBackend;
+use Wikimedia\LockManager\NullLockManager;
 
 /**
  * FancyCaptcha for displaying captcha images precomputed by captcha.py
@@ -50,8 +51,8 @@ class FancyCaptcha extends SimpleCaptcha {
 				'lockManager'    => new NullLockManager( [] ),
 				'containerPaths' => [ $this->getStorageDir() => $wgCaptchaDirectory ],
 				'fileMode'       => 777,
-				'obResetFunc'    => 'wfResetOutputBuffers',
-				'streamMimeFunc' => [ 'StreamFile', 'contentTypeFromPath' ]
+				'obResetFunc'    => wfResetOutputBuffers( ... ),
+				'streamMimeFunc' => StreamFile::contentTypeFromPath( ... ),
 			] );
 		}
 

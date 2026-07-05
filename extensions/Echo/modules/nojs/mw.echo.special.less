@@ -8,14 +8,17 @@
 	max-width: 600px;
 }
 
-.client-js .mw-echo-special-nojs {
+.client-js .mw-echo-special-js {
 	min-height: 5em;
-	/* @embed */
-	background-image: url( ../../images/pending.gif );
+	max-width: @specialpage-width;
+}
 
-	.mw-echo-special-container {
-		display: none;
-	}
+.client-nojs .mw-echo-special-js {
+	display: none;
+}
+
+.client-js .mw-echo-special-nojs {
+	display: none;
 }
 
 // Hide the preferences link

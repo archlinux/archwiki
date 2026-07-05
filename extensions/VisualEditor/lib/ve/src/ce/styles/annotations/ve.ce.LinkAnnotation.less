@@ -4,17 +4,17 @@
  * @copyright See AUTHORS.txt
  */
 
+@import '../../../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+
 .ve-ce-linkAnnotation {
 	&.ve-ce-annotation-active {
-		box-shadow: 0 0 0 1px #c6e0ff;
 		border-radius: 2px;
-		padding: 2px;
-		margin: -2px;
-		background-color: #e6f1ff;
+		box-shadow: 0 0 0 2px @background-color-progressive-subtle, 0 0 0 3px @border-color-subtle;
+		background-color: @background-color-progressive-subtle;
 
 		.ve-init-mobileTarget .ve-ce-surface:not( .ve-ce-surface-deactivated ) & {
-			box-shadow: 0 0 0 1px #36c;
-			background-color: transparent;
+			box-shadow: 0 0 0 2px @background-color-base, 0 0 0 3px @border-color-progressive--focus;
+			background-color: @background-color-base;
 		}
 	}
 }

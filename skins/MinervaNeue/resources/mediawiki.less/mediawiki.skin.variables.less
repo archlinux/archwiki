@@ -21,10 +21,20 @@
 // Overrides for Codex tokens:
 
 // == Typography ==
-// Body content uses the user setting in browser / the system default sans-serif font:
-// Arial on Windows, Roboto on Android.
-// FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
-@font-family-sans: @font-family-sans--fallback;
+
+/**
+ * System font stack for sans-serif fonts
+ *
+ * `-apple-system` ('San Francisco') – Support: Safari 9+ macOS and iOS, Firefox macOS
+ * `BlinkMacSystemFont` ('San Francisco') – Chrome 48+ macOS and iOS
+ * `Segoe UI` – Windows Vista & newer
+ * `Roboto` – Android 4.0
+ * `Lato` – Wikimedia Design choice, OFL licensed
+ * `Helvetica, Arial, sans-serif` – (Generic) Web fallback
+ * Note that CSS Fonts Module Level 4's `system-ui` value has resulted in unresolved
+ * side-effects in certain OS/language combinations and is therefore not included as of now.
+ */
+@font-family-base: @font-family-system-sans;
 
 // Line height specific former values in preparation of new font modes, see T389900.
 // TODO: These variables can be removed once the new font modes typographic styles are

@@ -3,6 +3,7 @@
 namespace MediaWiki\Rest\Validator;
 
 use MediaWiki\ParamValidator\TypeDef\ArrayDef;
+use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\TitleDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Permissions\Authority;
@@ -45,7 +46,7 @@ class Validator {
 	 *
 	 * @since 1.42
 	 */
-	public const KNOWN_PARAM_SOURCES = [ 'path', 'query', 'body', 'post' ];
+	public const KNOWN_PARAM_SOURCES = [ 'path', 'query', 'body', 'post', 'header' ];
 
 	/**
 	 * (string) ParamValidator constant for use as a key in a param settings array
@@ -77,6 +78,10 @@ class Validator {
 		'timestamp' => [ 'class' => TimestampDef::class ],
 		'upload' => [ 'class' => UploadDef::class ],
 		'expiry' => [ 'class' => ExpiryDef::class ],
+		'namespace' => [
+			'class' => NamespaceDef::class,
+			'services' => [ 'NamespaceInfo' ],
+		],
 		'title' => [
 			'class' => TitleDef::class,
 			'services' => [ 'TitleFactory' ],
@@ -147,8 +152,10 @@ class Validator {
 					continue;
 				}
 
+				$type = $settings[ParamValidator::PARAM_TYPE] ?? 'unspecified';
 				$validatedParams[$name] = $this->paramValidator->getValue( $name, $settings, [
 					'source' => $source,
+					'type' => $type
 				] );
 			} catch ( ValidationException $e ) {
 				// NOTE: error data structure must match the one used by validateBodyParams
@@ -332,6 +339,7 @@ class Validator {
 		'timestamp-param' => [ 'type' => 'string', 'format' => 'mw-timestamp' ],
 		'upload-param' => [ 'type' => 'string', 'format' => 'mw-upload' ],
 		'expiry-param' => [ 'type' => 'string', 'format' => 'mw-expiry' ],
+		'namespace-param' => [ 'type' => 'integer' ],
 		'title-param' => [ 'type' => 'string', 'format' => 'mw-title' ],
 		'user-param' => [ 'type' => 'string', 'format' => 'mw-user' ],
 		'array-param' => [ 'type' => 'object' ],
@@ -407,6 +415,10 @@ class Validator {
 		} else {
 			// TODO: multi-value params?!
 			$schema = self::PARAM_TYPE_SCHEMAS["{$type}-param"] ?? [];
+		}
+
+		if ( isset( $paramSetting[ ParamValidator::PARAM_DEFAULT ] ) ) {
+			$schema['default'] = $paramSetting[ ParamValidator::PARAM_DEFAULT ];
 		}
 
 		return $schema;

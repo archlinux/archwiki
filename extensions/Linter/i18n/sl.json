@@ -7,6 +7,7 @@
 		]
 	},
 	"linterrors": "Skladenjske napake",
+	"linttemplateerrors": "Prevključitve z napakami lint",
 	"linter-category-bogus-image-options": "Napaka v zapisu datoteke",
 	"linter-category-bogus-image-options-desc": "Te strani imajo napako v zapisu datoteke.",
 	"linter-category-large-tables": "Velike tabele, ki si jih je na mobilni napravi težko ogledati",
@@ -17,6 +18,8 @@
 	"linter-category-duplicate-ids-desc": "Te strani vsebujejo elemente s podvojenimi atributi ID.",
 	"linter-category-empty-heading": "Prazni podnaslovi",
 	"linter-category-empty-heading-desc": "Te stran vsebujejo prazne podnaslove.",
+	"linter-category-template-arg-in-extension-tag": "Oznaka razširitve s parametrom predloge",
+	"linter-category-template-arg-in-extension-tag-desc": "Te strani imajo oznako razširitve s parametrom predloge, ki se ne bi pravilno prevključil.",
 	"linter-category-fostered": "Nepravilno vključena vsebina",
 	"linter-category-fostered-desc": "Te strani vsebujejo posvojeno vsebino.",
 	"linter-category-fostered-transparent": "Nevidna vsebina tabele na napačnem mestu",
@@ -59,6 +62,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Te strani imajo v zunanjih povezavah vikipovezave, ki bi jih bilo mogoče popraviti.",
 	"linter-desc": "Iskanje skladenjskih napak z zunanjim orodjem in njihov prikaz uporabnikom",
 	"linter-lints-prefix-search-page-desc": "Poiščite strani s skladenjskimi napakami po predponi naslova ali popolnem naslovu",
+	"linter-invalid-category": "Kategorija ni bila najdena ali je napačno oblikovana",
 	"linter-invalid-title": "Imenski prostor in/ali ime strani nista najdena ali sta neveljavna",
 	"linter-form-exact-match": "Iskanje posameznega naslova strani",
 	"linter-form-prefix-match": "Iskanje vseh strani, ki se ujemajo s predpono naslova",
@@ -110,10 +114,16 @@
 	"linter-pager-title-header": "Naslov strani",
 	"linter-pager-unclosed-quotes-in-heading-details": "Neparni narekovaj, ki izstopa iz vsebinskega kazala",
 	"linter-pager-wikilink-in-extlink-details": "Povezave v povezavah",
+	"linter-pager-template-arg-in-extension-tag-details": "Oznaka razširitve, ki jo je treba posodobiti (in parametre predloge, uporabljene v njej)",
 	"linter-prefix-search-subpage": "STrani z napakami razčlembe Linta, ki se ujemajo v predponi naslova ali celotnem naslovu: $1",
 	"linterrors-subpage": "Skladenjske napake: $1",
 	"linterrors-summary": "<strong>Opomba:</strong> Za posamezne kategorije so navedena ocenjena števila.",
 	"multi-part-template-block": "Izhod ni iz ene same predloge",
+	"parser-function": "Izhod funkcije razčlenjevalnika",
 	"pageinfo-linter": "Skladenjske napake",
-	"pageinfo-linter-moreinfo": "Oglejte si podrobne informacije o skladenjskih napakah."
+	"pageinfo-linter-moreinfo": "Oglejte si podrobne informacije o skladenjskih napakah.",
+	"category-by-template": "Prevključitve z napakami lint: $1",
+	"category-by-template-view": "Ogled prevključitev s temi napakami lint.",
+	"category-by-template-desc": "Prevključitve teh strani vsebujejo napake lint '''[[Special:LintErrors/$1|$1]]'''. ''Upoštevajte, da se lahko nekatere prevključitve prikažejo na tem seznamu zaradi argumentov, posredovanih v prevključitvi, in ne zaradi vira prevključitve''.",
+	"linter-template-errors-index-desc": "To so seznami prevključitev strani, ki vsebujejo napake lint. ''Upoštevajte, da se lahko nekatere prevključitve prikažejo na tem seznamu zaradi argumentov, posredovanih v prevključitvi, in ne zaradi vira prevključitve.''"
 }

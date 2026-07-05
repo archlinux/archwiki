@@ -24,12 +24,12 @@ ve.dm.MWDocumentReferences = function VeDmMWDocumentReferences( doc ) {
 	/**
 	 * Holds the information calculated for each group.
 	 *
-	 * @member {Object.<string, MWGroupReferences>}
+	 * @member {Object.<string, ve.dm.MWGroupReferences>}
 	 */
 	this.cachedByGroup = {};
 
 	doc.getInternalList().connect( this, { update: 'updateGroups' } );
-	this.updateGroups( this.getAllGroupNames() );
+	this.updateGroups( this.getListGroupNames() );
 };
 
 /* Inheritance */
@@ -76,7 +76,7 @@ ve.dm.MWDocumentReferences.prototype.updateGroups = function ( groupsChanged ) {
 
 /**
  * @param {string} groupName with or without prefix
- * @return {MWGroupReferences}
+ * @return {ve.dm.MWGroupReferences}
  */
 ve.dm.MWDocumentReferences.prototype.getGroupRefs = function ( groupName ) {
 	return this.cachedByGroup[ groupName.startsWith( 'mwReference/' ) ? groupName : 'mwReference/' + groupName ] ||
@@ -84,9 +84,9 @@ ve.dm.MWDocumentReferences.prototype.getGroupRefs = function ( groupName ) {
 };
 
 /**
- * @return {string[]}
+ * @return {string[]} List group names with the "mwReference/" prefix
  */
-ve.dm.MWDocumentReferences.prototype.getAllGroupNames = function () {
+ve.dm.MWDocumentReferences.prototype.getListGroupNames = function () {
 	return Object.keys( this.doc.getInternalList().getNodeGroups() );
 };
 
@@ -115,18 +115,6 @@ ve.dm.MWDocumentReferences.static.contentLangDigits = function ( num ) {
 		return numString;
 	}
 	return numString.split( '' ).map( ( numChar ) => digitLookup[ numChar ] ).join( '' );
-};
-
-/**
- * @deprecated Should be refactored to store formatted index numbers as a simple
- *  property on each CE ref node after document transaction.
- * @param {string} groupName Ref group without prefix
- * @param {string} listKey Ref key with prefix
- * @return {string} Rendered index number string which can be used as a footnote
- *  marker or reflist item number.
- */
-ve.dm.MWDocumentReferences.prototype.getIndexLabel = function ( groupName, listKey ) {
-	return this.getGroupRefs( groupName ).getIndexLabel( listKey );
 };
 
 module.exports = ve.dm.MWDocumentReferences;

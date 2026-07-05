@@ -8,21 +8,14 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Search\SearchEngineFactory;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Title\Title;
-use SearchEngineFactory;
 
 class SpecialCiteThisPage extends FormSpecialPage {
 
-	/**
-	 * @var Parser
-	 */
-	private $citationParser;
-
-	/**
-	 * @var Title|bool
-	 */
-	protected $title = false;
+	private Parser $citationParser;
+	private ?Title $title = null;
 
 	public function __construct(
 		private readonly SearchEngineFactory $searchEngineFactory,
@@ -32,14 +25,12 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		parent::__construct( 'CiteThisPage' );
 	}
 
-	/**
-	 * @param string $par
-	 */
+	/** @inheritDoc */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->addHelpLink( 'Extension:CiteThisPage' );
 		parent::execute( $par );
-		if ( $par ) {
+		if ( $par !== null && $par !== '' ) {
 			$this->title = Title::newFromText( $par );
 		}
 		if ( $this->title instanceof Title ) {
@@ -48,17 +39,13 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		}
 	}
 
-	/**
-	 * @param HTMLForm $form
-	 */
+	/** @inheritDoc */
 	protected function alterForm( HTMLForm $form ) {
 		$form->setMethod( 'get' );
 		$form->setFormIdentifier( 'titleform' );
 	}
 
-	/**
-	 * @return array
-	 */
+	/** @inheritDoc */
 	protected function getFormFields() {
 		return [
 			'page' => [

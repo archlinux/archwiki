@@ -25,6 +25,7 @@
 			"תומר ט"
 		]
 	},
+	"collabpad-disabled": "CollabPad אינו מופעל בוויקי הזה.",
 	"collabpad-doctitle": "פנקס שיתופי: $1",
 	"collabpad-import-subtitle": "יובא מתוך $1",
 	"collabpad": "פנקס שיתופי",
@@ -246,6 +247,7 @@
 	"visualeditor-educationpopup-dismiss": "בסדר, הבנתי",
 	"visualeditor-expandable-less": "פחות",
 	"visualeditor-expandable-more": "יותר",
+	"visualeditor-expandableerror-toggle": "הצגה או הסתרה",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "כותרת הדף",
 	"visualeditor-formatdropdown-format-mw-heading2": "כותרת",
@@ -253,6 +255,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "כותרת־משנה 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "כותרת־משנה 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "כותרת־משנה 4",
+	"visualeditor-fullpage-switch-label": "עריכת דף שלם",
 	"visualeditor-generating-wikitext-progress": "יוצר קוד ויקי",
 	"visualeditor-includes-noinclude-start": "תחילת התוכן שאינו נכלל במובאות",
 	"visualeditor-includes-noinclude-end": "סוף התוכן שאינו נכלל במובאות",

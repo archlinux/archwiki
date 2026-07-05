@@ -152,6 +152,11 @@ module.exports = exports = defineStore( 'block', () => {
 	 */
 	const formErrors = ref( mw.config.get( 'blockPreErrors' ) || [] );
 	/**
+	 * Error messages processed from the additional blocks hook mechanism.
+	 * They're generated in the success block of the doBlock call.
+	 */
+	const blocksAdditionalErrors = ref( [] );
+	/**
 	 * Whether the form has been submitted. This is watched by UserLookup
 	 * and ExpiryField to trigger validation on form submission.
 	 *
@@ -178,6 +183,13 @@ module.exports = exports = defineStore( 'block', () => {
 	 * @type {Ref<boolean>}
 	 */
 	const blockAdded = ref( false );
+	/**
+	 * The message detailing any additional blocks that were added successfully.
+	 * It's generated in the success block of the doBlock call.
+	 *
+	 * @type {Ref<Array>}
+	 */
+	const additionalBlocksMessage = ref( '' );
 	/**
 	 * Whether the block was removed successfully.
 	 *
@@ -246,6 +258,11 @@ module.exports = exports = defineStore( 'block', () => {
 	 * @type {ComputedRef<boolean>}
 	 */
 	const confirmationNeeded = computed( () => !!confirmationMessage.value );
+	/**
+	 * Whether the target is an IP address.
+	 */
+	const showIPTempBlockMessage = computed( () => mw.config.get( 'wgAutoCreateTempUserEnabled' ) &&
+		mw.util.isIPAddress( targetUser.value, true ) );
 
 	// ** Watchers **
 
@@ -267,13 +284,14 @@ module.exports = exports = defineStore( 'block', () => {
 	);
 
 	/**
-	 * Update the URL path with the target user, and set the query string parameters:
+	 * Update wgRelevantUserName and the URL path with the target user, and set the query string parameters:
 	 * - id: The block ID of the block to modify
 	 * - remove: Whether to remove the block (opens the dialog)
 	 */
 	watch(
 		computed( () => [ targetUser.value, blockId.value, removalConfirmationOpen.value ] ),
 		() => {
+			mw.config.set( 'wgRelevantUserName', targetUser.value );
 			const params = new URLSearchParams( window.location.search );
 			if ( blockId.value ) {
 				params.set( 'id', blockId.value );
@@ -373,6 +391,8 @@ module.exports = exports = defineStore( 'block', () => {
 		if ( internal ) {
 			resetFormInternal();
 		}
+
+		mw.hook( 'mw.special.block.formReset' ).fire();
 	}
 
 	/**
@@ -388,6 +408,8 @@ module.exports = exports = defineStore( 'block', () => {
 		formDirty.value = false;
 		blockAdded.value = false;
 		blockRemoved.value = false;
+		additionalBlocksMessage.value = '';
+		blocksAdditionalErrors.value = '';
 		promises.value.clear();
 	}
 
@@ -464,6 +486,10 @@ module.exports = exports = defineStore( 'block', () => {
 		if ( !hardBlock.value && mw.util.isIPAddress( targetUser.value, true ) ) {
 			params.anononly = 1;
 		}
+
+		// Allow other components to update the final block parameters without the store
+		// needing to know about third-party props and without needing to expose the store
+		mw.hook( 'mw.special.block.doBlockParamsReady' ).fire( params );
 
 		// Clear any previous errors.
 		formErrors.value = [];
@@ -614,6 +640,8 @@ module.exports = exports = defineStore( 'block', () => {
 		formDirty,
 		targetUser,
 		blockAdded,
+		additionalBlocksMessage,
+		blocksAdditionalErrors,
 		blockRemoved,
 		blockId,
 		alreadyBlocked,
@@ -634,6 +662,7 @@ module.exports = exports = defineStore( 'block', () => {
 		hardBlock,
 		confirmationMessage,
 		confirmationNeeded,
+		showIPTempBlockMessage,
 		removalReason,
 		removalConfirmationOpen,
 		loadFromData,

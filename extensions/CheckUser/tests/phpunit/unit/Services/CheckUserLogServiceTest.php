@@ -1,16 +1,16 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
 use LogicException;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserLogService
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserLogService
  * @group CheckUser
  */
 class CheckUserLogServiceTest extends MediaWikiUnitTestCase {

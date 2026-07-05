@@ -6,30 +6,20 @@ use LogicException;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
-use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\User\User;
 
 class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationProvider {
 
-	/**
-	 * @param string $action
-	 * @param array $options
-	 *
-	 * @return array
-	 */
+	public const MODULE_PRIORITY = [ 'webauthn', 'totp', 'recoverycodes' ];
+
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		return [];
 	}
 
-	/**
-	 * @param User $user
-	 * @param User $creator
-	 * @param array|AuthenticationRequest[] $reqs
-	 * @return AuthenticationResponse
-	 */
+	/** @inheritDoc */
 	public function beginSecondaryAccountCreation( $user, $creator, array $reqs ) {
 		return AuthenticationResponse::newAbstain();
 	}
@@ -37,12 +27,14 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	/**
 	 * If the user has enabled two-factor authentication, request a second factor.
 	 *
-	 * @param User $user
-	 * @param array $reqs
-	 *
-	 * @return AuthenticationResponse
+	 * @inheritDoc
 	 */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
+		if ( $this->manager->getAuthenticationSessionData( PasskeyPrimaryAuthenticationProvider::SUCCESS_KEY ) ) {
+			// The user logged in with a passwordless passkey; skip 2FA
+			return AuthenticationResponse::newAbstain();
+		}
+
 		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
 		if ( !$authUser->isTwoFactorAuthEnabled() ) {
@@ -62,9 +54,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 		return $response;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
 		$authUser = OATHAuthServices::getInstance()->getUserRepository()->findByUser( $user );
 
@@ -84,7 +74,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 		}
 
 		if ( $response->status === AuthenticationResponse::PASS ) {
-			$user->getRequest()->getSession()->set( OATHAuth::AUTHENTICATED_OVER_2FA, true );
+			OATHAuthServices::getInstance()->getLogger()->logSuccessfulVerification( $user );
 		}
 
 		$this->maybeAddSelectAuthenticationRequest( $authUser, $response, $module );
@@ -99,6 +89,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 	/**
 	 * Return the ID of the module corresponding to the 2FA type option the user selected in the
 	 * login form (or null if not selected / invalid).
+	 *
 	 * @param OATHUser $authUser
 	 * @param AuthenticationRequest[] $reqs
 	 * @return string|null
@@ -132,7 +123,7 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 		}
 
 		// Use the highest-priority module the user has
-		foreach ( $this->config->get( 'OATHPrioritizedModules' ) as $module ) {
+		foreach ( self::MODULE_PRIORITY as $module ) {
 			if ( $authUser->getKeysForModule( $module ) ) {
 				return $module;
 			}

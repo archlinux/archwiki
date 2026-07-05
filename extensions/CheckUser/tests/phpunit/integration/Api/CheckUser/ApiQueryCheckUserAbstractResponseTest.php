@@ -1,18 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\CheckUser;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
 use MediaWikiIntegrationTestCase;
 use RuntimeException;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse
  * @group Database
  */
 class ApiQueryCheckUserAbstractResponseTest extends MediaWikiIntegrationTestCase {

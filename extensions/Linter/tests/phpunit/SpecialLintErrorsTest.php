@@ -26,8 +26,8 @@ use MediaWiki\Linter\RecordLintJob;
 use MediaWiki\Linter\SpecialLintErrors;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Title\Title;
-use SpecialPageTestBase;
 
 /**
  * @covers \MediaWiki\Linter\SpecialLintErrors

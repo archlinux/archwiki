@@ -129,7 +129,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 
 				$expectedValues = [
 					'action' => $action,
-					'accountname' => $accountName,
+					'account_name' => $accountName,
 					'timestamp' => $timestamp
 				];
 				if ( $user->isRegistered() ) {
@@ -198,7 +198,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 		$actual = $varGenerator->getVars()->getVars();
 
 		// Convert PHP variables to AFPData
-		$expected = array_map( [ AFPData::class, 'newFromPHPVar' ], $expectedValues );
+		$expected = array_map( AFPData::newFromPHPVar( ... ), $expectedValues );
 
 		// Remove lazy variables (covered in other tests) and variables coming
 		// from other extensions (may not be generated, depending on the test environment)

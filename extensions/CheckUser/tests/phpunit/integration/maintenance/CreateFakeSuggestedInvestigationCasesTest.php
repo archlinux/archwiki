@@ -1,18 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\CreateFakeSuggestedInvestigationCases;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\CreateFakeSuggestedInvestigationCases;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Maintenance\CreateFakeSuggestedInvestigationCases
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\CreateFakeSuggestedInvestigationCases
  */
 class CreateFakeSuggestedInvestigationCasesTest extends MaintenanceBaseTestCase {
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {

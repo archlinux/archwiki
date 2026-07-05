@@ -10,8 +10,8 @@
 			"Martin Urbanec (WMF)",
 			"Matěj Suchánek",
 			"Mormegil",
-			"Nesuprachy",
-			"MrJaroslavik"
+			"MrJaroslavik",
+			"Nesuprachy"
 		]
 	},
 	"checkuser-summary": "Tento nástroj zkoumá poslední změny a umožňuje získat IP adresy uživatelů nebo zobrazit editace a uživatele z dané IP adresy.\nUživatele a editace z klientské IP adresy lze získat z hlaviček XFF přidáním „/xff“ k IP. Je podporováno IPv4 (CIDR $1–32) a IPv6 (CIDR $2-128).\nZ výkonnostních důvodů lze zobrazit maximálně $3 editací. Používejte tento nástroj v souladu s pravidly.",
@@ -31,6 +31,7 @@
 	"right-checkuser-temporary-account-no-preference": "Zobrazování IP adres používaných dočasnými účty bez nutnosti povolit přístup v nastavení",
 	"right-checkuser-temporary-account-log": "Prohlížení protokolu přístupů k IP adresám dočasných účtů",
 	"right-checkuser-temporary-account-auto-reveal": "Automaticky zobrazit IP adresy používané dočasnými účty",
+	"right-checkuser-suggested-investigations": "Zpracovávání [[Special:SuggestedInvestigations|návrhů prošetřování revizorům]]",
 	"grant-checkuser": "Přístup k údajům kontroly uživatele",
 	"grant-checkuser-temporary-account": "Zobrazit revizorské údaje k dočasným účtům",
 	"action-checkuser": "kontrolovat uživatelovy IP adresy a další údaje",
@@ -39,6 +40,7 @@
 	"action-checkuser-temporary-account-no-preference": "zobrazit IP adresy používané dočasnými účty",
 	"action-checkuser-temporary-account-log": "prohlížet protokol přístupů k IP adresám dočasných účtů",
 	"action-checkuser-temporary-account-auto-reveal": "automaticky zobrazit IP adresy používané dočasnými účty",
+	"action-checkuser-suggested-investigations": "zpracovávat návrhy prošetřování revizorům",
 	"grouppage-checkuser": "{{ns:project}}:Revize uživatele",
 	"grouppage-temporary-account-viewer": "{{ns:project}}:Zobrazovači IP adres dočasných účtů",
 	"checkuser-clienthints-name-architecture": "Architektura",
@@ -296,5 +298,10 @@
 	"checkuser-userinfocard-groups": "<strong>Skupiny</strong>: $1",
 	"checkuser-userinfocard-global-groups": "<strong>Globální skupiny</strong>: $1",
 	"checkuser-userinfocard-chart-tooltip-label": "$1 ({{PLURAL:$2|$2 editace|$2 editace|$2 editací|0=žádné editace}})",
-	"checkuser-userinfocard-temporary-account-bucketcount": "Dočasných účtů ze všech přidružených IP adres: $1"
+	"checkuser-userinfocard-temporary-account-bucketcount": "Dočasných účtů ze všech přidružených IP adres: $1",
+	"checkuser-contributions-temporary-accounts-show-related": "Zobrazit všechny příspěvky z těchto účtů",
+	"checkuser-contributions-temporary-accounts-hide-related": "Skrýt příspěvky ze souvisejících dočasných účtů",
+	"checkuser-contributions-temporary-account-bucketcount": "Dočasných účtů ze všech přidružených IP adres: $1.",
+	"checkuser-contributions-temporary-accounts-on-ip": "Dočasných účtů na této IP: $1.",
+	"checkuser-contributions-temporary-accounts-on-ip-with-blocked": "Dočasných účtů na této IP: $1 (zablokovaných: $2)."
 }

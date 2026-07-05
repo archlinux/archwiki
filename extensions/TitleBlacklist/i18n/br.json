@@ -14,7 +14,6 @@
 	"titleblacklist-forbidden-move": "Ne c'hell ket \"$2\" bezañ dilec’hiet da \"$3\", peogwir eo bet nac'het krouiñ an titl-mañ.\nKlotañ a ra gant an enmont-mañ e roll an titloù difennet: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Difennet eo bet krouiñ ur restr gant an anv \"$2\".\nKlotañ a ra gant an enmont-mañ e roll an titloù difennet: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Difennet eo bet krouiñ anv implijer \"$2\".\nKlotañ a ra gant an enmont-mañ e roll an titloù difennet: <code>$1</code>",
-	"titleblacklist-invalid": "Direizh eo al {{PLURAL:$1|linenn|linennoù}} da-heul a gaver e roll an titloù difennet; \nreizhit {{PLURAL:$1|anezhi|anezho}} a-raok enrollañ :",
 	"titleblacklist-override": "Ober van eus roll an titloù difennet ma klot",
 	"right-tboverride": "Na ober van ouzh roll an titloù pe anvioù implijer difennet",
 	"right-tboverride-account": "Na ober van ouzh roll an anvioù implijer difennet",

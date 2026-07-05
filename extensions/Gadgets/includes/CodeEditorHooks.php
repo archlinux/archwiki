@@ -34,14 +34,7 @@ class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 	 * @return bool
 	 */
 	public function onCodeEditorGetPageLanguage( Title $title, ?string &$lang, string $model, string $format ) {
-		if ( $title->hasContentModel( 'GadgetDefinition' ) && (
-				$this->useCodeEditor ||
-				// Temporary code while CodeMirror is still in beta (T373711#11018957).
-				// If the beta feature is disabled, we want to fallback to using CodeEditor.
-				// Temporary while CodeMirror is still in beta (T373711#11018957).
-				!( \MediaWiki\Extension\CodeEditor\Hooks::tempIsCodeMirrorEnabled() )
-			)
-		) {
+		if ( $title->hasContentModel( 'GadgetDefinition' ) && $this->useCodeEditor ) {
 			$lang = 'json';
 			return false;
 		}

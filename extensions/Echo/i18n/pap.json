@@ -87,6 +87,7 @@
 	"echo-api-failure": "No ta posibel pa optené notifikashonnan.",
 	"echo-notification-placeholder": "No tin notifikashon.",
 	"echo-notification-placeholder-filters": "No tin notifikashon ku ta kumpli ku e kriterionan aki.",
+	"echo-notification-loginrequired": "Bo mester inisiá seshon pa por mira notifikashonnan.",
 	"echo-notification-popup-loginrequired": "Inisiá seshon pa mira bo notifikashonnan.",
 	"echo-notification-markasread": "Marka komo lesá",
 	"echo-notification-markasunread": "Marka komo sin a lesa",
@@ -148,6 +149,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} sentésimo adaptashon; masha danki!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} milésimo adaptashon; danki pa bo tremendo kontribushon!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} désimo milésimo adaptashon; masha danki!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} sentésimo milésimo adaptashon; danki pa bo kontribushon fantástiko!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} mionésimo adaptashon; danki pa bo kontribushon sublime!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Bo}} a kab'i hasi {{GENDER:$2|bo}} désimo mionésimo adaptashon; danki pa bo dedikashon ekselente!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Bo}} adaptashon",
 	"notification-link-text-view-edit": "Wak adaptashon",
@@ -161,6 +164,7 @@
 	"notification-reverted-email-subject2": "Un {{GENDER:$2|revershon}} a wòrdu ehekutá riba {{GENDER:$3|bo}} {{PLURAL:$4|adaptashon|adaptashonnan}}  riba {{SITENAME}}",
 	"notification-mention-email-subject": "$1 a {{GENDER:$2|menshoná}}{{GENDER:$3|bo}} riba {{SITENAME}}",
 	"notification-user-rights-email-subject": "{{GENDER:$3|Bo}} derechi di usadó a wòrdu kambiá riba {{SITENAME}}",
+	"notification-user-rights-expiry-email-subject": "{{GENDER:$3|Bo}} derechi di usadó riba {{SITENAME}} a kaduká",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1s}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1m}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1h}}",
@@ -208,6 +212,7 @@
 	"right-echo-read-notifications": "Lesa mi notifikashonnan",
 	"action-echo-read-notifications": "Lesa mi notifikashonnan",
 	"notification-subject-email-verify-email-reminder": "Verifiká {{GENDER:$1|bo}} email",
+	"notification-header-verify-email-reminder": "Haló $2,\nPor fabor <strong>verifiká {{GENDER:$1|bo}} email adrès</strong> pa no sa ku e email adrès riba {{GENDER:$1|bo}} kuenta ta pertenesé na {{GENDER:$1|bo}}.",
 	"notification-link-text-verify-email-reminder": "Manehá preferensia di email",
 	"notification-verify-email-reminder-link-label": "Konfirmá email"
 }

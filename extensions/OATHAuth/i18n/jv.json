@@ -26,6 +26,5 @@
 	"oathauth-login-failed": "Wurung vèrifikasi.",
 	"oathauth-describe-provider": "Otèntifikasi rong faktor (OATH).",
 	"grant-group-authentication": "Ayahi tumindak otèntifikasi kanggo panjenengan dhéwé lan liyan",
-	"grant-oath": "Aksès informasi otèntifikasi rong faktor (OATH) kanggo panjenengan dhéwé lan liyan",
-	"action-oathauth-api-all": "priksa status OATH"
+	"grant-oath": "Aksès informasi otèntifikasi rong faktor (OATH) kanggo panjenengan dhéwé lan liyan"
 }

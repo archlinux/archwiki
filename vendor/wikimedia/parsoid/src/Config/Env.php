@@ -8,6 +8,7 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\Sanitizer;
@@ -17,13 +18,11 @@ use Wikimedia\Parsoid\Fragments\PFragment;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\TitleException;
 use Wikimedia\Parsoid\Utils\TokenUtils;
-use Wikimedia\Parsoid\Utils\UrlUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wikitext\ContentModelHandler as WikitextContentModelHandler;
 use Wikimedia\Parsoid\Wt2Html\Frame;
@@ -152,6 +151,7 @@ class Env {
 
 	/**
 	 * Cache of wikitext source for a title; only used for ParserTests.
+	 * @var array<string,string>
 	 */
 	public array $pageCache = [];
 
@@ -690,8 +690,7 @@ class Env {
 	 * When an environment is constructed, we initialize a document (and
 	 * RemexPipeline) to be used throughout the parse.
 	 *
-	 * @param ?Document $topLevelDoc if non-null,
-	 *  the document should be prepared and loaded.
+	 * @param ?Document $topLevelDoc if non-null, the document should be prepared and loaded.
 	 */
 	public function setupTopLevelDoc( ?Document $topLevelDoc = null ): void {
 		if ( $topLevelDoc ) {
@@ -702,6 +701,8 @@ class Env {
 				"toplevelDoc should be prepared and loaded already"
 			);
 			$this->topLevelDoc = $topLevelDoc;
+			// if it is already prepared and loaded, then serializeNewEmptyDp
+			// is already set as well; leave it alone.
 		} else {
 			$this->topLevelDoc = DOMCompat::newDocument( isHtml: true );
 			$documentElement = $this->topLevelDoc->documentElement;
@@ -716,19 +717,7 @@ class Env {
 			}
 			$this->remexPipeline = new RemexPipeline( $this );
 			// Prepare and load.
-			// (Loading should be easy since the doc is expected to be empty.)
-			$options = [
-				'validateXMLNames' => true,
-				 // Don't mark the <body> tag as new!
-				'markNew' => false,
-			];
-			DOMDataUtils::prepareDoc( $this->topLevelDoc );
-			DOMDataUtils::visitAndLoadDataAttribs(
-				$body, $options
-			);
-			// Mark the document as loaded so we can try to catch errors which
-			// might try to reload this again later.
-			DOMDataUtils::getBag( $this->topLevelDoc )->loaded = true;
+			DOMDataUtils::prepareAndLoadDoc( $this->topLevelDoc, [ 'serializeNewEmptyDp' => true ] );
 		}
 	}
 
@@ -1023,23 +1012,33 @@ class Env {
 	/**
 	 * Get an array of attributes to apply to an anchor linking to $url
 	 *
-	 * @return array{rel?: list<'nofollow'|'noopener'|'noreferrer'>, target?: string}
+	 * @return array{class:list<string>,rel:list<string>,title?:string,href?:string}
 	 */
 	public function getExternalLinkAttribs( string $url ): array {
 		$siteConfig = $this->getSiteConfig();
-		$noFollowConfig = $siteConfig->getNoFollowConfig();
-		$attribs = [];
-		$ns = $this->getContextTitle()->getNamespace();
-		if (
-			$noFollowConfig['nofollow'] &&
-			!in_array( $ns, $noFollowConfig['nsexceptions'], true ) &&
-			!UrlUtils::matchesDomainList(
-				$url,
-				// Cast to an array because parserTests sets it as a string
-				(array)$noFollowConfig['domainexceptions']
-			)
-		) {
-			$attribs['rel'] = [ 'nofollow' ];
+		$dataAccess = $this->getDataAccess();
+		// Even though this API allows for batch updates, we're just passsing 1
+		if ( $url ) {
+			$info = $dataAccess->getExternalUrlInfo(
+				$siteConfig, [ $url ], $this->getContextTitle()
+			)[0];
+		} else {
+			$info = [ 'href' => $url ];
+		}
+		$split = static fn ( $s ) => preg_split( '/\s+/', $s, -1, PREG_SPLIT_NO_EMPTY );
+		$attribs = [
+			'href' => $info['href'] ?? null,
+			'class' => $split( $info['class'] ?? '' ),
+			'rel' => $split( $info['rel'] ?? '' ),
+		];
+		if ( ( $info['title'] ?? null ) !== null ) {
+			$attribs['title'] = $info['title'];
+		}
+		if ( $attribs['href'] !== $url ) {
+			$attribs['data-mw-original-href'] = $url;
+		}
+		if ( $attribs['href'] === null ) {
+			unset( $attribs['href'] );
 		}
 		$target = $siteConfig->getExternalLinkTarget();
 		if ( $target ) {
@@ -1048,9 +1047,6 @@ class Env {
 				// T133507. New windows can navigate parent cross-origin.
 				// Including noreferrer due to lacking browser
 				// support of noopener. Eventually noreferrer should be removed.
-				if ( !isset( $attribs['rel'] ) ) {
-					$attribs['rel'] = [];
-				}
 				array_push( $attribs['rel'], 'noreferrer', 'noopener' );
 			}
 		}

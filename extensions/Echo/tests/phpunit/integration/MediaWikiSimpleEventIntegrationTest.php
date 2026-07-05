@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use Wikimedia\Message\MessageValue;
 

@@ -25,7 +25,7 @@ class EchoVerifyEmailReminderPresentationModel extends EchoEventPresentationMode
 	/** @inheritDoc */
 	public function getHeaderMessage() {
 		return $this->msg( 'notification-header-verify-email-reminder' )
-				->params( $this->getViewingUserForGender() );
+				->params( $this->getViewingUserForGender(), $this->getUser()->getName() );
 	}
 
 	/** @inheritDoc */

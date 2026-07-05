@@ -1,18 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser;
 
-use MediaWiki\CheckUser\CheckUser\SpecialCheckUserLog;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUserLog;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
-use SpecialPageTestBase;
 use TestUser;
 use Wikimedia\IPUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -23,8 +23,8 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\CheckUser\SpecialCheckUserLog
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserLogPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUserLog
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserLogPager
  */
 class SpecialCheckUserLogTest extends SpecialPageTestBase {
 
@@ -218,7 +218,9 @@ class SpecialCheckUserLogTest extends SpecialPageTestBase {
 
 	/** @dataProvider provideLinkToSuggestedInvestigationsPresent */
 	public function testLinkToSuggestedInvestigationsPresent(
-		bool $enabled, bool $hidden, bool $linkExpected
+		bool $enabled,
+		bool $hidden,
+		bool $linkExpected
 	) {
 		if ( $enabled ) {
 			$this->enableSuggestedInvestigations();
@@ -339,7 +341,12 @@ class SpecialCheckUserLogTest extends SpecialPageTestBase {
 			$target = $data['target'];
 			$targetType = IPUtils::isIPAddress( $target->getName() ) ? 'ip' : 'user';
 			$checkUserLogService->addLogEntry(
-				$data['initiator'], $data['logType'], $targetType, $target->getName(), "Check $i", $target->getId()
+				$data['initiator'],
+				$data['logType'],
+				$targetType,
+				$target->getName(),
+				"Check $i",
+				$target->getId()
 			);
 		}
 		ConvertibleTimestamp::setFakeTime( false );

@@ -12,6 +12,7 @@ namespace MediaWiki\Maintenance;
  * @ingroup Maintenance
  */
 abstract class LoggedUpdateMaintenance extends Maintenance {
+
 	public function __construct() {
 		parent::__construct();
 		$this->addOption( 'force', 'Run the update even if it was completed already' );
@@ -20,32 +21,44 @@ abstract class LoggedUpdateMaintenance extends Maintenance {
 
 	/** @inheritDoc */
 	public function execute() {
-		$db = $this->getPrimaryDB();
-		$key = $this->getUpdateKey();
-		$queryBuilder = $db->newSelectQueryBuilder()
-			->select( '1' )
-			->from( 'updatelog' )
-			->where( [ 'ul_key' => $key ] );
-
-		if ( !$this->hasOption( 'force' )
-			&& $queryBuilder->caller( __METHOD__ )->fetchRow()
-		) {
-			$this->output( "..." . $this->updateSkippedMessage() . "\n" );
-
+		if ( !$this->hasOption( 'force' ) && $this->isAlreadyCompleted() ) {
+			$this->output( "..." . $this->updateSkippedMessage() . " Use --force to run it again.\n" );
 			return true;
 		}
 
-		if ( !$this->doDBUpdates() ) {
+		$result = $this->doDBUpdates();
+
+		if ( is_bool( $result ) ) {
+			// NOTE: returning a boolean value from doDBUpdates() is deprecated
+			// since 1.46, but a lot of subclasses still do.
+			// TODO: make this emit a deprecation warning.
+			$result = $result ? LoggedUpdateOutcome::COMPLETE : LoggedUpdateOutcome::FAILED;
+		}
+
+		if ( $result === LoggedUpdateOutcome::FAILED ) {
 			return false;
 		}
 
-		$db->newInsertQueryBuilder()
-			->insertInto( 'updatelog' )
-			->ignore()
-			->row( [ 'ul_key' => $key ] )
-			->caller( __METHOD__ )->execute();
+		if ( $result !== LoggedUpdateOutcome::SIMULATED ) {
+			$db = $this->getPrimaryDB();
+			$db->newInsertQueryBuilder()
+				->insertInto( 'updatelog' )
+				->ignore()
+				->row( [ 'ul_key' => $this->getUpdateKey() ] )
+				->caller( __METHOD__ )->execute();
+		}
 
 		return true;
+	}
+
+	public function isAlreadyCompleted(): bool {
+		$db = $this->getPrimaryDB();
+		return (bool)$db->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'updatelog' )
+			->where( [ 'ul_key' => $this->getUpdateKey() ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 	}
 
 	/**
@@ -60,16 +73,20 @@ abstract class LoggedUpdateMaintenance extends Maintenance {
 	 * Message to show that the update was done already and was just skipped
 	 * @return string
 	 */
-	protected function updateSkippedMessage() {
+	public function updateSkippedMessage() {
 		$key = $this->getUpdateKey();
 
-		return "Update '{$key}' already logged as completed. Use --force to run it again.";
+		return "Update '{$key}' already logged as completed.";
 	}
 
 	/**
 	 * Do the actual work. All child classes will need to implement this.
-	 * Return true to log the update as done or false (usually on failure).
-	 * @return bool
+	 *
+	 * @return LoggedUpdateOutcome|bool The outcome of the update.
+	 * Returning boolean true for success and false for
+	 * failure is also supported but deprecated since 1.46 (T411104).
+	 * Implementations that return a LoggedUpdateOutcome should indicate
+	 * this fact by declaring a return type.
 	 */
 	abstract protected function doDBUpdates();
 

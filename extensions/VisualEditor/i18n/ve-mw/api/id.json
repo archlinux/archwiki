@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bennylin",
 			"Daud I.F. Argana",
 			"Gombang",
-			"Rachmat04",
-			"William Surya Permana",
 			"Penyuwangi",
-			"Bennylin"
+			"Rachmat04",
+			"William Surya Permana"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Tidak ditemukan serialisasi tembolok dengan kunci tersebut",

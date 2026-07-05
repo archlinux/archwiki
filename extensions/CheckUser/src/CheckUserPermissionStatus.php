@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\CheckUser;
+namespace MediaWiki\Extension\CheckUser;
 
 use MediaWiki\Block\Block;
 use StatusValue;
@@ -72,3 +72,10 @@ class CheckUserPermissionStatus extends StatusValue {
 		return $this->permission;
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserPermissionStatus::class, 'MediaWiki\\CheckUser\\CheckUserPermissionStatus' );
+// @codeCoverageIgnoreEnd

@@ -13,15 +13,16 @@
 			"Kwj2772",
 			"Priviet",
 			"Revi",
+			"Tensama0415",
 			"YeBoy371",
 			"Ykhwong",
 			"YuzaTea",
-			"아라",
-			"Tensama0415"
+			"아라"
 		]
 	},
 	"multimediaviewer-desc": "섬네일을 전체 화면 인터페이스에서 더 큰 크기로 확장합니다.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About 미디어 뷰어]</span> 사용",
+	"multimediaviewer-disable-image-carousel-pref": "모바일 사이트에서의 이미지 로테이션을 비활성화합니다.",
 	"multimediaviewer-file-page": "해당 파일 문서로 가기",
 	"multimediaviewer-repository-local": "자세한 내용",
 	"multimediaviewer-datetime-created": "만듦: $1",

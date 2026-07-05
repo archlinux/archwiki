@@ -15,24 +15,22 @@ let usesCitoid;
 describe( 'Re-using refs in Visual Editor', () => {
 
 	before( () => {
-		cy.clearCookies();
-		helper.loginAsAdmin();
-
-		// Skip tests when VisualEditor is not loaded
-		helper.waitForMWLoader();
-		cy.window().then( async ( win ) => {
-			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		veHelper.checkModuleDependencies().then( ( deps ) => {
+			cy.skipOn( !deps.visualEditor );
+			usesCitoid = deps.citoid;
 		} );
 
+		cy.clearCookies();
+		helper.loginAsAdmin();
 		helper.editPage( 'MediaWiki:Cite-tool-definition.json', JSON.stringify( [
 			{
-				name: 'Webseite',
-				icon: 'ref-cite-web',
+				name: 'web',
+				title: 'Webseite',
 				template: 'Internetquelle'
 			},
 			{
-				name: 'Literatur',
-				icon: 'ref-cite-book',
+				name: 'book',
+				title: 'Literatur',
 				template: 'Literatur'
 			}
 		] ) );
@@ -44,10 +42,6 @@ describe( 'Re-using refs in Visual Editor', () => {
 		cy.clearCookies();
 		helper.editPage( title, wikiText );
 
-		cy.window().then( async ( win ) => {
-			usesCitoid = win.mw.loader.getModuleNames().includes( 'ext.citoid.visualEditor' );
-		} );
-
 		veHelper.setVECookiesToDisableDialogs();
 		veHelper.openVEForEditingReferences( title, usesCitoid );
 	} );
@@ -57,7 +51,7 @@ describe( 'Re-using refs in Visual Editor', () => {
 		helper.getRefsFromArticleSection().should( 'have.length', 3 );
 
 		// Place cursor next to ref #2 in order to add re-use ref next to it
-		cy.contains( '.mw-reflink-text', '[2]' ).type( '{rightarrow}' );
+		cy.contains( '.ve-ui-surface .mw-reflink-text', '[2]' ).type( '{rightarrow}' );
 
 		if ( usesCitoid ) {
 			veHelper.openVECitoidReuseDialog();
@@ -69,7 +63,7 @@ describe( 'Re-using refs in Visual Editor', () => {
 		veHelper.getCiteReuseDialogRefResult( 2 ).click();
 
 		// The context dialog on one of the references shows it's being used twice
-		cy.get( '.mw-reflink-text' ).contains( '[2]' ).click();
+		cy.contains( '.ve-ui-surface .mw-reflink-text', '[2]' ).click();
 		cy.get( '.oo-ui-popupWidget-popup .ve-ui-mwReferenceContextItem-reuse' )
 			.should( 'have.text', 'Used twice' );
 
@@ -97,7 +91,7 @@ describe( 'Re-using refs in Visual Editor', () => {
 
 	it( 'should display correct ref content and name attribute for re-used ref with existing name attribute', () => {
 		// Place cursor next to ref #1 in order to add re-used ref next to it
-		cy.contains( '.mw-reflink-text', '[1]' ).first().type( '{rightarrow}' );
+		cy.contains( '.ve-ui-surface .mw-reflink-text', '[1]' ).first().type( '{rightarrow}' );
 
 		if ( usesCitoid ) {
 			veHelper.openVECitoidReuseDialog();

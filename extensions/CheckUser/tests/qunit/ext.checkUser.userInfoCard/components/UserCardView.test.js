@@ -2,7 +2,7 @@
 
 const { nextTick } = require( 'vue' );
 const { mount } = require( 'vue-test-utils' );
-const UserCardView = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserCardView.vue' );
+const UserCardView = require( 'ext.checkUser.userInfoCard/components/UserCardView.vue' );
 
 // Using mocks since we don't need to fully load child components
 const mockComponents = {
@@ -30,7 +30,7 @@ const mockComponents = {
 			'thanksReceived', 'thanksSent', 'activeBlocks', 'pastBlocks',
 			'localEdits', 'localEditsReverted', 'newArticles', 'checks',
 			'lastChecked', 'activeWikis', 'recentLocalEdits', 'totalLocalEdits',
-			'ipRevealCount', 'hasIpRevealInfo'
+			'ipRevealCount', 'hasIpRevealInfo', 'suggestedInvestigationsCaseCount'
 		]
 	}
 };
@@ -60,17 +60,19 @@ const sampleUserData = {
 	activeWikis: {
 		enwiki: 'https://en.wikipedia.org',
 		dewiki: 'https://de.wikipedia.org'
-	}
+	},
+	suggestedInvestigationsCaseCount: 3
 };
+
+let server;
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserCardView', QUnit.newMwEnvironment( {
 	beforeEach: function () {
 		this.server = this.sandbox.useFakeServer();
+		this.server.respondImmediately = true;
+		server = this.server;
 
 		this.sandbox.stub( mw, 'msg' ).callsFake( ( key ) => key );
-		this.sandbox.stub( mw.user, 'tokens' ).value( {
-			get: this.sandbox.stub().returns( 'test-csrf-token' )
-		} );
 		this.sandbox.stub( mw.Title, 'makeTitle' ).callsFake( ( namespace, title ) => ( {
 			getUrl: () => `/wiki/User:${ title }`,
 			getPrefixedText: () => `User:${ title }`
@@ -134,63 +136,143 @@ QUnit.test( 'renders loading state initially', ( assert ) => {
 	} );
 } );
 
-// forcing explicit `function` to add `this` context
-QUnit.test( 'renders error state when API call fails', function ( assert ) {
-	const done = assert.async();
+/**
+ * Waits for the return value of a given function to be true.
+ * Will wait for a maximum of 1 second for the condition to be true.
+ *
+ * @param {Function} conditionCheck
+ */
+async function waitFor( conditionCheck ) {
+	let tries = 0;
+	while ( !conditionCheck() && tries < 20 ) {
+		tries++;
+		await new Promise( ( resolve ) => {
+			setTimeout( () => resolve(), 50 );
+		} );
+	}
+}
 
-	const restPostStub = this.sandbox.stub().rejects( {
-		messageTranslations: {
-			en: 'Mocked error message'
+// forcing explicit `function` to add `this` context
+QUnit.test( 'renders error state when API call fails', ( assert ) => {
+	let userInfoCardApiCalled = false;
+	server.respond( ( request ) => {
+		if ( request.url.endsWith( '/checkuser/v0/userinfo?uselang=en' ) ) {
+			request.respond(
+				400, { 'Content-Type': 'application/json' },
+				JSON.stringify( {
+					messageTranslations: {
+						en: 'Mocked error message'
+					}
+				} )
+			);
+			userInfoCardApiCalled = true;
 		}
 	} );
-	this.sandbox.stub( mw, 'Rest' ).returns( { post: restPostStub } );
 
 	const wrapper = mountComponent();
 
-	nextTick( () => {
-		nextTick( () => {
-			// Third tick: DOM updates to reflect error state
-			nextTick( () => {
-				const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
-				assert.false( loadingView.exists(), 'Loading view is not displayed after error' );
+	return waitFor( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		return userInfoCardApiCalled && !loadingView.exists();
+	} ).then( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		assert.false( loadingView.exists(), 'Loading view is not displayed after error' );
 
-				const errorView = wrapper.findComponent( mockComponents.UserInfoCardError );
-				assert.true( errorView.exists(), 'Error view is displayed' );
-				assert.strictEqual(
-					errorView.props( 'message' ),
-					'checkuser-userinfocard-error-generic',
-					'Error message is passed correctly'
-				);
+		const errorView = wrapper.findComponent( mockComponents.UserInfoCardError );
+		assert.true( errorView.exists(), 'Error view is displayed' );
+		assert.strictEqual(
+			errorView.props( 'message' ),
+			'Mocked error message',
+			'Error message is passed correctly'
+		);
 
-				const cardView = wrapper.find( '.ext-checkuser-userinfocard-view' );
-				assert.false( cardView.exists(), 'Card view is not displayed' );
-
-				done();
-			} );
-		} );
+		const cardView = wrapper.find( '.ext-checkuser-userinfocard-view' );
+		assert.false( cardView.exists(), 'Card view is not displayed' );
 	} );
 } );
 
-QUnit.test( 'renders card view when API call succeeds', function ( assert ) {
-	const done = assert.async();
-
-	const restPostStub = this.sandbox.stub().resolves( sampleUserData );
-	this.sandbox.stub( mw, 'Rest' ).returns( { post: restPostStub } );
+QUnit.test( 'renders card view when API call succeeds', ( assert ) => {
+	let userInfoCardApiCalled = false;
+	server.respond( ( request ) => {
+		if ( request.url.endsWith( '/checkuser/v0/userinfo?uselang=en' ) ) {
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				JSON.stringify( sampleUserData )
+			);
+			userInfoCardApiCalled = true;
+		}
+	} );
 
 	const wrapper = mountComponent();
 
-	nextTick( () => {
-		nextTick( () => {
-			const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
-			assert.false( loadingView.exists(), 'Loading view is not displayed after data is loaded' );
+	return waitFor( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		return userInfoCardApiCalled && !loadingView.exists();
+	} ).then( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		assert.false( loadingView.exists(), 'Loading view is not displayed after data is loaded' );
 
-			const errorView = wrapper.findComponent( mockComponents.UserInfoCardError );
-			assert.false( errorView.exists(), 'Error view is not displayed' );
+		const errorView = wrapper.findComponent( mockComponents.UserInfoCardError );
+		assert.false( errorView.exists(), 'Error view is not displayed' );
 
-			const headerView = wrapper.findComponent( mockComponents.UserCardHeader );
-			assert.true( headerView.exists(), 'Header view is displayed' );
+		const headerView = wrapper.findComponent( mockComponents.UserCardHeader );
+		assert.true( headerView.exists(), 'Header view is displayed' );
+	} );
+} );
 
-			done();
-		} );
+QUnit.test( 'sets suggestedInvestigationsCaseCount from API response', ( assert ) => {
+	let userInfoCardApiCalled = false;
+	server.respond( ( request ) => {
+		if ( request.url.endsWith( '/checkuser/v0/userinfo?uselang=en' ) ) {
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				JSON.stringify( sampleUserData )
+			);
+			userInfoCardApiCalled = true;
+		}
+	} );
+
+	const wrapper = mountComponent();
+
+	return waitFor( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		return userInfoCardApiCalled && !loadingView.exists();
+	} ).then( () => {
+		assert.strictEqual(
+			wrapper.vm.userCard.suggestedInvestigationsCaseCount,
+			3,
+			'suggestedInvestigationsCaseCount is set from API response'
+		);
+	} );
+} );
+
+QUnit.test( 'defaults suggestedInvestigationsCaseCount to 0 when not in API response', ( assert ) => {
+	let userInfoCardApiCalled = false;
+	const dataWithoutSI = Object.assign( {}, sampleUserData );
+	delete dataWithoutSI.suggestedInvestigationsCaseCount;
+	server.respond( ( request ) => {
+		if ( request.url.endsWith( '/checkuser/v0/userinfo?uselang=en' ) ) {
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				JSON.stringify( dataWithoutSI )
+			);
+			userInfoCardApiCalled = true;
+		}
+	} );
+
+	const wrapper = mountComponent();
+
+	return waitFor( () => {
+		const loadingView = wrapper.findComponent( mockComponents.UserCardLoadingView );
+		return userInfoCardApiCalled && !loadingView.exists();
+	} ).then( () => {
+		assert.strictEqual(
+			wrapper.vm.userCard.suggestedInvestigationsCaseCount,
+			0,
+			'suggestedInvestigationsCaseCount defaults to 0 when not in response'
+		);
 	} );
 } );

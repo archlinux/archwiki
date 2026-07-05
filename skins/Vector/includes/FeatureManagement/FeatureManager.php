@@ -223,12 +223,12 @@ class FeatureManager {
 				// These features only persist for logged in users so do not contain the clientpref suffix.
 				// These features have two valid states: enabled and disabled. In future it would be nice if these
 				// were 0 and 1 so that the features.js module cannot be applied to server side only flags.
+				case CONSTANTS::FEATURE_LANGUAGE_IN_MAIN_MENU:
 				case CONSTANTS::FEATURE_MAIN_MENU_PINNED:
 				case CONSTANTS::FEATURE_PAGE_TOOLS_PINNED:
 				// Server side only feature flags.
 				// Note these classes are fixed and cannot be changed at runtime by JavaScript,
 				// only via modification to LocalSettings.php.
-				case Constants::FEATURE_NIGHT_MODE:
 				case Constants::FEATURE_LIMITED_WIDTH_CONTENT:
 				case Constants::FEATURE_LANGUAGE_IN_HEADER:
 				case Constants::FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER:

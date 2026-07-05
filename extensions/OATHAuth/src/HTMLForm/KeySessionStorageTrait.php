@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
-use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Request\WebRequest;
@@ -16,7 +16,7 @@ trait KeySessionStorageTrait {
 	abstract public function getRequest();
 
 	/**
-	 * Helper function to generically track IAuthKeys in the user session
+	 * Helper function to generically track AuthKeys in the user session
 	 *
 	 * @param string $keyType accepts current key names (TOTPKey, RecoveryCodeKeys)
 	 * @return RecoveryCodeKeys|TOTPKey|null
@@ -42,7 +42,7 @@ trait KeySessionStorageTrait {
 			}
 		}
 
-		if ( $key instanceof IAuthKey ) {
+		if ( $key instanceof AuthKey ) {
 			$this->getRequest()->getSession()->setSecret(
 				$sessionKey,
 				$key->jsonSerialize()

@@ -19,93 +19,26 @@ use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\NullStatsdDataFactory;
 
 class FilterRunnerFactory {
-	public const SERVICE_NAME = 'AbuseFilterFilterRunnerFactory';
+	public const SERVICE_NAME = ServiceNames::FilterRunnerFactory;
 
-	/** @var AbuseFilterHookRunner */
-	private $hookRunner;
-	/** @var FilterProfiler */
-	private $filterProfiler;
-	/** @var ChangeTagger */
-	private $changeTagger;
-	/** @var FilterLookup */
-	private $filterLookup;
-	/** @var RuleCheckerFactory */
-	private $ruleCheckerFactory;
-	/** @var ConsequencesExecutorFactory */
-	private $consExecutorFactory;
-	/** @var AbuseLoggerFactory */
-	private $abuseLoggerFactory;
-	/** @var VariablesManager */
-	private $varManager;
-	/** @var EmergencyCache */
-	private $emergencyCache;
-	/** @var UpdateHitCountWatcher */
-	private $updateHitCountWatcher;
-	/** @var EmergencyWatcher */
-	private $emergencyWatcher;
-	/** @var BagOStuff */
-	private $localCache;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var LoggerInterface */
-	private $editStashLogger;
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
-	/** @var ServiceOptions */
-	private $options;
-
-	/**
-	 * @param AbuseFilterHookRunner $hookRunner
-	 * @param FilterProfiler $filterProfiler
-	 * @param ChangeTagger $changeTagger
-	 * @param FilterLookup $filterLookup
-	 * @param RuleCheckerFactory $ruleCheckerFactory
-	 * @param ConsequencesExecutorFactory $consExecutorFactory
-	 * @param AbuseLoggerFactory $abuseLoggerFactory
-	 * @param VariablesManager $varManager
-	 * @param EmergencyCache $emergencyCache
-	 * @param UpdateHitCountWatcher $updateHitCountWatcher
-	 * @param EmergencyWatcher $emergencyWatcher
-	 * @param BagOStuff $localCache
-	 * @param LoggerInterface $logger
-	 * @param LoggerInterface $editStashLogger
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
-	 * @param ServiceOptions $options
-	 */
 	public function __construct(
-		AbuseFilterHookRunner $hookRunner,
-		FilterProfiler $filterProfiler,
-		ChangeTagger $changeTagger,
-		FilterLookup $filterLookup,
-		RuleCheckerFactory $ruleCheckerFactory,
-		ConsequencesExecutorFactory $consExecutorFactory,
-		AbuseLoggerFactory $abuseLoggerFactory,
-		VariablesManager $varManager,
-		EmergencyCache $emergencyCache,
-		UpdateHitCountWatcher $updateHitCountWatcher,
-		EmergencyWatcher $emergencyWatcher,
-		BagOStuff $localCache,
-		LoggerInterface $logger,
-		LoggerInterface $editStashLogger,
-		IBufferingStatsdDataFactory $statsdDataFactory,
-		ServiceOptions $options
+		private readonly AbuseFilterHookRunner $hookRunner,
+		private readonly FilterProfiler $filterProfiler,
+		private readonly ChangeTagger $changeTagger,
+		private readonly FilterLookup $filterLookup,
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly ConsequencesExecutorFactory $consExecutorFactory,
+		private readonly AbuseLoggerFactory $abuseLoggerFactory,
+		private readonly VariablesManager $varManager,
+		private readonly EmergencyCache $emergencyCache,
+		private readonly UpdateHitCountWatcher $updateHitCountWatcher,
+		private readonly EmergencyWatcher $emergencyWatcher,
+		private readonly BagOStuff $localCache,
+		private readonly LoggerInterface $logger,
+		private readonly LoggerInterface $editStashLogger,
+		private readonly IBufferingStatsdDataFactory $statsdDataFactory,
+		private readonly ServiceOptions $options
 	) {
-		$this->hookRunner = $hookRunner;
-		$this->filterProfiler = $filterProfiler;
-		$this->changeTagger = $changeTagger;
-		$this->filterLookup = $filterLookup;
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->consExecutorFactory = $consExecutorFactory;
-		$this->abuseLoggerFactory = $abuseLoggerFactory;
-		$this->varManager = $varManager;
-		$this->emergencyCache = $emergencyCache;
-		$this->updateHitCountWatcher = $updateHitCountWatcher;
-		$this->emergencyWatcher = $emergencyWatcher;
-		$this->localCache = $localCache;
-		$this->logger = $logger;
-		$this->editStashLogger = $editStashLogger;
-		$this->statsdDataFactory = $statsdDataFactory;
-		$this->options = $options;
 	}
 
 	/**

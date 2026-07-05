@@ -64,7 +64,7 @@ ve.ui.MWLinkNodeInspector.prototype.initialize = function () {
 ve.ui.MWLinkNodeInspector.prototype.getActionProcess = function ( action ) {
 	if ( action === 'convert' ) {
 		return new OO.ui.Process( () => {
-			this.close( { action: action } );
+			this.close( { action } );
 		} );
 	}
 	return ve.ui.MWLinkNodeInspector.super.prototype.getActionProcess.call( this, action );

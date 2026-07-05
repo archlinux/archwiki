@@ -329,7 +329,7 @@ ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config = {} ) {
 		// Preserve empty linebreaks on paste in source editor
 		importRules.all.keepEmptyContentBranches = true;
 		config = this.getSurfaceConfig( ve.extendObject( {}, config, {
-			importRules: importRules
+			importRules
 		} ) );
 		return new ve.ui.MWWikitextSurface( this, dmDoc, config );
 	}
@@ -491,7 +491,7 @@ ve.init.mw.Target.prototype.initAutosave = function ( config = {} ) {
  */
 ve.init.mw.Target.prototype.storeDocState = function ( html ) {
 	const mode = this.getSurface().getMode();
-	this.getSurface().getModel().storeDocState( { mode: mode }, html );
+	this.getSurface().getModel().storeDocState( { mode }, html );
 };
 
 /**
@@ -623,8 +623,8 @@ ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, do
 			action: 'visualeditor',
 			paction: 'parsefragment',
 			page: this.getPageName( doc ),
-			wikitext: wikitext,
-			pst: pst
+			wikitext,
+			pst
 		}, ajaxOptions ) )
 		.promise( abortable );
 };
@@ -668,4 +668,43 @@ ve.init.mw.Target.prototype.getContentApi = function ( doc, options = {} ) {
 ve.init.mw.Target.prototype.getLocalApi = function ( options = {} ) {
 	options.parameters = ve.extendObject( { formatversion: 2 }, options.parameters );
 	return new mw.Api( options );
+};
+
+const interwikiMapPromiseCache = {};
+
+// TODO: Deduplicate this with mw.widgets.TitleWidget.prototype.getInterwikiMapPromise
+function getInterwikiMapPromise( api ) {
+	const key = api.defaults.ajax.url;
+	if ( !interwikiMapPromiseCache[ key ] ) {
+		// Cache client-side for a day since this info is mostly static
+		const oneDay = 60 * 60 * 24;
+		interwikiMapPromiseCache[ key ] = api.get( {
+			action: 'query',
+			meta: 'siteinfo',
+			siprop: 'interwikimap',
+			maxage: oneDay,
+			smaxage: oneDay,
+			// Workaround T97096 by setting uselang=content
+			uselang: 'content'
+		} ).then( ( data ) => data.query.interwikimap );
+		// Do not cache errors
+		interwikiMapPromiseCache[ key ].catch( () => {
+			delete interwikiMapPromiseCache[ key ];
+		} );
+	}
+	return interwikiMapPromiseCache[ key ];
+}
+
+/**
+ * Check if a URL is an interwiki link.
+ *
+ * @param {string} url URL to check
+ * @return {jQuery.Promise<boolean>} Promise resolving to true if the URL is an interwiki link, false otherwise
+ */
+ve.init.mw.Target.prototype.isInterwikiUrl = function ( url ) {
+	return getInterwikiMapPromise( this.getContentApi() ).then(
+		( interwikiMap ) => interwikiMap.some(
+			( iw ) => mw.libs.ve.getRegexFromUrlPattern( iw.url ).test( url )
+		)
+	);
 };

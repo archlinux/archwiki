@@ -8,10 +8,11 @@ use Wikimedia\JsonCodec\Hint;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Core\SourceRange;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\CompatJsonCodec;
-use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
 /**
@@ -57,18 +58,13 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 
 	/** @inheritDoc */
 	public static function jsonClassHintFor( string $keyName ) {
-		switch ( $keyName ) {
-			case 'dataParsoid':
-				return DOMDataUtils::getCodecHints()['data-parsoid'];
-			case 'dataMw':
-				return DOMDataUtils::getCodecHints()['data-mw'];
-			case 'attribs':
-				return Hint::build( KV::class, Hint::LIST );
-			case 'nestedTokens':
-				return new Hint( self::hint(), Hint::LIST );
-			default:
-				return null;
-		}
+		return match ( $keyName ) {
+			'dataParsoid' => DataParsoid::hint(),
+			'dataMw' => DataMw::hint(),
+			'attribs' => Hint::build( KV::class, Hint::LIST ),
+			'nestedTokens' => new Hint( self::hint(), Hint::LIST ),
+			default => null
+		};
 	}
 
 	/** @inheritDoc */
@@ -121,7 +117,7 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 	 */
 	public function addNormalizedAttribute( string $name, $value, $origValue ): void {
 		$this->addAttribute( $name, $value );
-		$this->setShadowInfo( $name, $value, $origValue );
+		$this->setShadowInfoIfModified( $name, $value, $origValue );
 	}
 
 	/**
@@ -183,12 +179,23 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 	 * @param mixed $origValue
 	 */
 	public function setShadowInfo( string $name, $value, $origValue ): void {
+		$this->dataParsoid->a ??= [];
+		$this->dataParsoid->a[$name] = $value;
+		$this->dataParsoid->sa ??= [];
+		$this->dataParsoid->sa[$name] = $origValue;
+	}
+
+	/**
+	 * Store the original value of an attribute in a token's dataParsoid.
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 * @param mixed $origValue
+	 */
+	public function setShadowInfoIfModified( string $name, $value, $origValue ): void {
 		// Don't shadow if value is the same or the orig is null
 		if ( $value !== $origValue && $origValue !== null ) {
-			$this->dataParsoid->a ??= [];
-			$this->dataParsoid->a[$name] = $value;
-			$this->dataParsoid->sa ??= [];
-			$this->dataParsoid->sa[$name] = $origValue;
+			$this->setShadowInfo( $name, $value, $origValue );
 		}
 	}
 
@@ -215,7 +222,7 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 			return [
 				"value" => $curVal,
 				// Mark as modified if a new element
-				"modified" => $this->dataParsoid->isModified(),
+				"modified" => $this->dataParsoid->isEmpty(),
 				"fromsrc" => false
 			];
 		} elseif ( $this->dataParsoid->a[$name] !== $curVal ) {
@@ -309,7 +316,7 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 		return $codec->newFromJsonArray( $input, self::hint() );
 	}
 
-	public function fetchExpandedAttrValue( string $key ): ?string {
+	public function fetchExpandedAttrValue( string $key ): ?DocumentFragment {
 		if ( preg_match(
 			'/mw:ExpandedAttrs/', $this->getAttributeV( 'typeof' ) ?? ''
 		) ) {
@@ -318,7 +325,7 @@ abstract class Token implements JsonCodecable, \JsonSerializable {
 				return null;
 			}
 			foreach ( $dmw->attribs as $attr ) {
-				if ( ( $attr->key['txt'] ?? null ) === $key ) {
+				if ( $attr->getKeyString() === $key ) {
 					return $attr->value['html'] ?? null;
 				}
 			}

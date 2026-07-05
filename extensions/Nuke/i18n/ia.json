@@ -43,6 +43,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Deler plus paginas]]",
 	"nuke-deletemore": "Deler plus paginas",
 	"nuke-pattern": "Patrono SQL LIKE (p.ex. %) pro le nomine de pagina:",
+	"nuke-pattern-leading-wildcard": "Le patrono non pote comenciar con <code>%</code>. Per favor insere un prefixo ante le metacharacter (p.ex. <code>Exemplo%</code> in loco de <code>%Exemplo</code>).",
 	"nuke-nolist": "Pro continuar, primo ‘{{int:nuke-submit-list}}’ e alora selige le paginas a mitter in cauda pro deletion.",
 	"nuke-nopages-global": "Necun pagina corresponde al recerca.",
 	"nuke-searchnotice-minmorethanmax": "Le grandor minime in bytes es superior al grandor maxime in bytes, dunque non es possibile que alcun pagina satisface iste criterios.",

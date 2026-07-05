@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Logging;
+namespace MediaWiki\Extension\CheckUser\Logging;
 
 use InvalidArgumentException;
 use MediaWiki\Html\Html;
@@ -18,14 +18,11 @@ use MediaWiki\User\UserRigorOptions;
  */
 class CheckUserPrivateEventLogFormatter extends LogFormatter {
 
-	private UserFactory $userFactory;
-
 	public function __construct(
 		LogEntry $entry,
-		UserFactory $userFactory
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct( $entry );
-		$this->userFactory = $userFactory;
 	}
 
 	/**

@@ -1,5 +1,11 @@
 # Release History
 
+## v6.0.0
+* BREAKING CHANGE: Drop support for PHP < 8.1 (James D. Forrester)
+* Use unprefixed `@template` annotations so IDEs can read them (Daimona)
+* Restrict templated types to `object` and make them part of the return value for
+  better type inference in IDEs and static analysis (Daimona and Umherirrender)
+
 ## v5.0.1
 * .gitattributes: Updates (Reedy)
 

@@ -1,4 +1,5 @@
 module.exports = function addBlockForm( documentRoot ) {
+	let expiry = mw.msg( 'checkuser-investigateblock-expiry-default' );
 	// Attributes used for pinnable highlighting
 	const accountsBlockButton = OO.ui.infuse( $( '.ext-checkuser-investigate-subtitle-block-accounts-button' ) ),
 		ipsBlockButton = OO.ui.infuse( $( '.ext-checkuser-investigate-subtitle-block-ips-button' ) ),
@@ -63,6 +64,7 @@ module.exports = function addBlockForm( documentRoot ) {
 			unselectedOptions = excludeTargets.filter(
 				( target ) => mw.util.isIPAddress( target, true )
 			);
+			expiry = mw.msg( 'checkuser-investigateblock-expiry-ip' );
 		}
 		// Initially add all options (selected and unselected) to the widget as unselected
 		// options. This needs to happen first, as ::setValue will only allow selecting options
@@ -98,6 +100,12 @@ module.exports = function addBlockForm( documentRoot ) {
 			type: 'hidden',
 			name: 'wpTargets',
 			value: targetsWidget.getValue().join( '\n' )
+		} ) );
+
+		$form.append( $( '<input>' ).attr( {
+			type: 'hidden',
+			name: 'wpExpiry',
+			value: expiry
 		} ) );
 
 		if ( !documentRoot ) {

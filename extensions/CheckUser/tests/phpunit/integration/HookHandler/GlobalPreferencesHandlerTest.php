@@ -1,18 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\GlobalPreferencesHandler;
-use MediaWiki\CheckUser\HookHandler\Preferences;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\HookHandler\GlobalPreferencesHandler;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group CheckUser
- * @covers \MediaWiki\CheckUser\HookHandler\GlobalPreferencesHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\GlobalPreferencesHandler
  */
 class GlobalPreferencesHandlerTest extends MediaWikiIntegrationTestCase {
 
@@ -29,20 +29,11 @@ class GlobalPreferencesHandlerTest extends MediaWikiIntegrationTestCase {
 	) {
 		$user = $this->createMock( User::class );
 
-		$logger = $this->createMock( TemporaryAccountLogger::class );
-		foreach ( [
-			'logGlobalAccessEnabled',
-			'logGlobalAccessDisabled',
-			'logAutoRevealAccessEnabled',
-			'logAutoRevealAccessDisabled',
-		] as $logMethod ) {
-			if ( $expectedLogMethod === $logMethod ) {
-				$logger->expects( $this->once() )
-					->method( $logMethod );
-			} else {
-				$logger->expects( $this->never() )
-					->method( $logMethod );
-			}
+		if ( !$expectedLogMethod ) {
+			$logger = $this->createNoOpMock( TemporaryAccountLogger::class );
+		} else {
+			$logger = $this->createNoOpMock( TemporaryAccountLogger::class, [ $expectedLogMethod ] );
+			$logger->expects( $this->once() )->method( $expectedLogMethod );
 		}
 
 		$loggerFactory = $this->createMock( TemporaryAccountLoggerFactory::class );

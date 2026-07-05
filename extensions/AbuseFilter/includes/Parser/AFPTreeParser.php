@@ -20,8 +20,7 @@ use Wikimedia\Stats\IBufferingStatsdDataFactory;
  */
 class AFPTreeParser {
 	/**
-	 * @var array[] Contains the AFPTokens for the code being parsed
-	 * @phan-var array<int,array{0:AFPToken,1:int}>
+	 * @var array<int,array{0:AFPToken,1:int}> Contains the AFPTokens for the code being parsed
 	 */
 	private $mTokens;
 	/**
@@ -38,32 +37,11 @@ class AFPTreeParser {
 
 	public const CACHE_VERSION = 2;
 
-	/**
-	 * @var LoggerInterface Used for debugging
-	 */
-	private $logger;
-
-	/**
-	 * @var IBufferingStatsdDataFactory
-	 */
-	private $statsd;
-
-	/** @var KeywordsManager */
-	private $keywordsManager;
-
-	/**
-	 * @param LoggerInterface $logger Used for debugging
-	 * @param IBufferingStatsdDataFactory $statsd
-	 * @param KeywordsManager $keywordsManager
-	 */
 	public function __construct(
-		LoggerInterface $logger,
-		IBufferingStatsdDataFactory $statsd,
-		KeywordsManager $keywordsManager
+		private readonly LoggerInterface $logger,
+		private readonly IBufferingStatsdDataFactory $statsd,
+		private readonly KeywordsManager $keywordsManager
 	) {
-		$this->logger = $logger;
-		$this->statsd = $statsd;
-		$this->keywordsManager = $keywordsManager;
 		$this->resetState();
 	}
 
@@ -122,8 +100,7 @@ class AFPTreeParser {
 	/**
 	 * Parse the supplied filter source code into a tree.
 	 *
-	 * @param array[] $tokens
-	 * @phan-param array<int,array{0:AFPToken,1:int}> $tokens
+	 * @param array<int,array{0:AFPToken,1:int}> $tokens
 	 * @return AFPSyntaxTree
 	 * @throws UserVisibleException
 	 */
@@ -708,8 +685,7 @@ class AFPTreeParser {
 		}
 
 		$this->move();
-		// @phan-suppress-next-next-line PhanPossiblyUndeclaredVariable
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable Until phan can understand the switch
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 		return $result;
 	}
 

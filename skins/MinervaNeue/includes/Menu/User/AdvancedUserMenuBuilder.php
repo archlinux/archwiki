@@ -19,32 +19,23 @@
  */
 namespace MediaWiki\Minerva\Menu\User;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\ProfileMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
+use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use MessageLocalizer;
 
 /**
  * Logged-in, advanced Mobile Contributions user menu config generator.
  */
 final class AdvancedUserMenuBuilder implements IUserMenuBuilder {
-	private MessageLocalizer $messageLocalizer;
-	private User $user;
-	private Definitions $definitions;
-
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param User $user
-	 * @param Definitions $definitions A menu items definitions set
-	 */
 	public function __construct(
-		MessageLocalizer $messageLocalizer, User $user, Definitions $definitions
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly User $user,
+		private readonly Definitions $definitions,
 	) {
-		$this->messageLocalizer = $messageLocalizer;
-		$this->user = $user;
-		$this->definitions = $definitions;
 	}
 
 	/**
@@ -62,6 +53,19 @@ final class AdvancedUserMenuBuilder implements IUserMenuBuilder {
 		];
 
 		foreach ( $personalTools as $key => $item ) {
+			// TODO Remove after T418053 is concluded
+			if ( $key === "login" ) {
+				$item['class'] = 'user-account-menu-login';
+			}
+			if ( $key === "createaccount" ) {
+				$item['class'] = 'user-account-menu-createaccount';
+			}
+			// Default to EditWatchlist if $user has no edits
+			// Many users use the watchlist like a favorites list without ever editing.
+			// [T88270].
+			if ( $key === 'watchlist' && $this->user->getEditCount() === 0 ) {
+				$item['href'] = Title::newFromText( 'Special:EditWatchlist' )->getLocalUrl();
+			}
 			if ( in_array( $key, [ 'preferences', 'betafeatures', 'uploads' ] ) ) {
 				continue;
 			}

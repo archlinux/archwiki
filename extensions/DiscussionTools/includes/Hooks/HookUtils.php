@@ -28,8 +28,8 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Assert\Assert;
 use Wikimedia\NormalizedException\NormalizedException;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 class HookUtils {
@@ -40,8 +40,6 @@ class HookUtils {
 	public const TOPICSUBSCRIPTION = 'topicsubscription';
 	public const AUTOTOPICSUB = 'autotopicsub';
 	public const VISUALENHANCEMENTS = 'visualenhancements';
-	public const VISUALENHANCEMENTS_REPLY = 'visualenhancements_reply';
-	public const VISUALENHANCEMENTS_PAGEFRAME = 'visualenhancements_pageframe';
 
 	/**
 	 * @var string[] List of all sub-features. Will be used to generate:
@@ -55,9 +53,7 @@ class HookUtils {
 		self::SOURCEMODETOOLBAR,
 		self::TOPICSUBSCRIPTION,
 		self::AUTOTOPICSUB,
-		self::VISUALENHANCEMENTS,
-		self::VISUALENHANCEMENTS_REPLY,
-		self::VISUALENHANCEMENTS_PAGEFRAME,
+		self::VISUALENHANCEMENTS
 	];
 
 	/**
@@ -65,9 +61,7 @@ class HookUtils {
 	 *  - Feature override global: $wgDiscussionTools_FEATURE
 	 */
 	public const CONFIGS = [
-		self::VISUALENHANCEMENTS,
-		self::VISUALENHANCEMENTS_REPLY,
-		self::VISUALENHANCEMENTS_PAGEFRAME,
+		self::VISUALENHANCEMENTS
 	];
 
 	public const FEATURES_CONFLICT_WITH_GADGET = [
@@ -164,7 +158,7 @@ class HookUtils {
 			$parserOptions,
 			$revRecord,
 			// Don't flood the parser cache
-			$updateParserCacheFor ? 0 : ParserOutputAccess::OPT_NO_UPDATE_CACHE
+			[ ParserOutputAccess::OPT_NO_UPDATE_CACHE => !$updateParserCacheFor ],
 		);
 
 		if ( !$status->isOK() ) {
@@ -410,14 +404,6 @@ class HookUtils {
 			return false;
 		}
 
-		// Subfeatures are disabled if the main feature is disabled
-		if ( (
-			$feature === static::VISUALENHANCEMENTS_REPLY ||
-			$feature === static::VISUALENHANCEMENTS_PAGEFRAME
-		) && !self::isFeatureEnabledForOutput( $output, static::VISUALENHANCEMENTS ) ) {
-			return false;
-		}
-
 		// ?dtenable=1 overrides all user and title checks
 		$queryEnable = $output->getRequest()->getRawVal( 'dtenable' ) ?:
 			// Extra hack for parses from API, where this parameter isn't passed to derivative requests
@@ -456,9 +442,7 @@ class HookUtils {
 					$output->getUser()->isNamed() &&
 					ExtensionRegistry::getInstance()->isLoaded( 'Echo' )
 				) ||
-				$feature === static::VISUALENHANCEMENTS ||
-				$feature === static::VISUALENHANCEMENTS_REPLY ||
-				$feature === static::VISUALENHANCEMENTS_PAGEFRAME;
+				$feature === static::VISUALENHANCEMENTS;
 		}
 
 		return static::isFeatureEnabledForUser( $output->getUser(), $feature );

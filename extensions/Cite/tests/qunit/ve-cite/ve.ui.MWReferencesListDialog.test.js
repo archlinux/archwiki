@@ -1,8 +1,12 @@
 'use strict';
 
-QUnit.module( 've.ui.MWReferencesListDialog (Cite)', ve.test.utils.newMwEnvironment() );
+{
+	const { MWReferencesListDialog } = require( 'ext.cite.visualEditor' ).test;
 
-QUnit.test( 'isModified', ( assert ) => {
-	const dialog = new ve.ui.MWReferencesListDialog();
-	assert.true( dialog.isModified() );
-} );
+	QUnit.module( 've.ui.MWReferencesListDialog (Cite)', ve.test.utils.newMwEnvironment() );
+
+	QUnit.test( 'isModified', ( assert ) => {
+		const dialog = new MWReferencesListDialog();
+		assert.true( dialog.isModified() );
+	} );
+}

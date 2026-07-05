@@ -16,7 +16,12 @@
 	"hcaptcha-challenge-closed": "Si aad u sii waddo, waa inaad dhammaystirtaa captcha-ga.",
 	"hcaptcha-challenge-expired": "Waqtiga lagu dhammeeyo CAPTCHA wuu dhacay. Fadlan mar kale isku day.",
 	"hcaptcha-generic-error": "Waxaa khalad dhacay markii la soo shubayay foomka. Si aad u sii waddo, waa inaad dib u soo rartaa bogga.",
+	"hcaptcha-internal-error": "Waxaa dhacay khalad gudaha ah markii la dirayay foomka. Fadlan isku day mar kale.",
+	"hcaptcha-network-error": "Waxaa dhacay khalad shabakad ah markii la dirayay foomka. Fadlan hubi in xiriirkaaga internet-ku shaqaynayo oo isku day mar kale.",
+	"hcaptcha-rate-limited": "Waxaa jiray isku dayo aad u badan oo lagu xallinayo captcha-ga. Fadlan sug daqiiqad ka hor intaadan mar kale isku dayin.",
 	"hcaptcha-loading-indicator-label": "Fadlan sug inta aan dhammaynayno soo gelinta foomka...",
 	"hcaptcha-missing-token": "Weli si buuxda looma soo gelin foomka. Fadlan sug dhowr ilbiriqsi, ka dibna isku day mar kale.",
-	"hcaptcha-noscript": "JavaScript ayaa loo baahan yahay si loo sii wado. Fadlan shid JavaScript-ka ku jira dejimaha biraawsarkaaga ka dibna dib u cusboonaysii bogga."
+	"hcaptcha-noscript": "JavaScript ayaa loo baahan yahay si loo sii wado. Fadlan shid JavaScript-ka ku jira dejimaha biraawsarkaaga ka dibna dib u cusboonaysii bogga.",
+	"hcaptcha-force-show-captcha-edit": "Fadlan dib u soo gudbi foomka oo dhammaystir caqabadda si aad u kaydiso tafatirkaaga.",
+	"hcaptcha-visual-editor-error-handler-warning": "Fadlan dib u soo gudbi foomka si aad u kaydiso tafatirkaaga."
 }

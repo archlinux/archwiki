@@ -59,5 +59,7 @@
 	"gadgets-validate-nopage": "D'Säit „$1“ gëtt et net.",
 	"gadgets-validate-invaliddependencies": "Déi follgend {{PLURAL:$2|Ofhängegkeet feelt|Ofhängegkeete feelen}}: $1.",
 	"gadgets-validate-deprecateddependencies": "Déi follgend {{PLURAL:$2|Ofhängegkeet ass|Ofhängegkeete si}} vereelzt: $1.",
-	"gadgets-hidden": "Dëse Gadget ass [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden verstoppt], wat heescht, datt en net op der Säit vun den Astellungen ugewise gëtt."
+	"gadgets-hidden": "Dëse Gadget ass [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden verstoppt], wat heescht, datt en net op der Säit vun den Astellungen ugewise gëtt.",
+	"gadgets-subpage-invalid": "Ongülteg Ënnersäit „<nowiki>$1</nowiki>“",
+	"gadgets-subpage-toofewparams": "Net genuch Ënnersäiteparameter (ongültege Link)."
 }

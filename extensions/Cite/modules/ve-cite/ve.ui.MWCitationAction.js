@@ -8,7 +8,7 @@
  */
 
 /**
- * Opens the {@see ve.ui.MWCitationDialog} (via it's name "cite") in VisualEditor.
+ * Opens the {@link ve.ui.MWCitationDialog} in VisualEditor.
  *
  * @constructor
  * @extends ve.ui.Action
@@ -32,18 +32,26 @@ ve.ui.MWCitationAction.static.methods = [ 'open' ];
 /* Methods */
 
 /**
- * When opening a citation, send the dialog a property of the surface
- * dialog name.
+ * Opens the {@link ve.ui.MWCitationDialog} and forwards the toolDefinition
+ * as part of the windowData.
  *
- * @param {Object} windowData Data to send to the dialog
+ * @param {Object} toolDefinition
+ * @param {string} toolDefinition.name
+ * @param {string|string[]} toolDefinition.template
+ * @param {string} toolDefinition.title
  * @return {boolean} Action was executed
  */
-ve.ui.MWCitationAction.prototype.open = function ( windowData ) {
-	windowData = Object.assign( {
+ve.ui.MWCitationAction.prototype.open = function ( toolDefinition ) {
+	const windowData = Object.assign( {
 		inDialog: this.surface.getInDialog()
-	}, windowData );
+	}, toolDefinition );
 
-	this.surface.execute( 'window', 'open', 'cite', windowData );
+	this.surface.execute(
+		'window',
+		'open',
+		ve.ui.MWCitationDialog.static.name,
+		windowData
+	);
 	return true;
 };
 

@@ -14,7 +14,6 @@
 	"spam-blacklisted-email": "Địa chỉ thư điện tử bị cấm",
 	"spam-blacklisted-email-text": "Địa chỉ thư điện tử của bạn đã bị cấm không được gửi thư điện tử cho người dùng khác.",
 	"spam-blacklisted-email-signup": "Địa chỉ thư điện tử đã cung cấp hiện bị cấm sử dụng.",
-	"spam-invalid-lines": "{{PLURAL:$1|Dòng|Những dòng}} sau đây trong danh sách chặn spam không hợp lệ; xin hãy sửa lại {{PLURAL:$1|nó|chúng}} để tuân theo cú pháp biểu thức chính quy trước khi lưu trang:",
 	"spam-blacklist-desc": "Công cụ cho phép chống spam bằng cách cấm những URL trong trang và địa chỉ thư điện tử của thành viên đăng ký khớp với các biểu thức chính quy trong danh sách cấm",
 	"log-name-spamblacklist": "Nhật trình danh sách chống spam",
 	"log-description-spamblacklist": "Nhật trình này ghi lại các lượt chặn của danh sách chặn spam.",

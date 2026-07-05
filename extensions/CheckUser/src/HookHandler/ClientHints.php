@@ -1,27 +1,40 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\Api\ApiLogout;
 use MediaWiki\Api\Hook\APIGetAllowedParamsHook;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\ClientHints\UserAgentClientHintsManagerHelperTrait;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use Psr\Log\LoggerInterface;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * HookHandler for entry points related to requesting User-Agent Client Hints data.
  */
-class ClientHints implements SpecialPageBeforeExecuteHook, BeforePageDisplayHook, APIGetAllowedParamsHook {
+class ClientHints implements
+	SpecialPageBeforeExecuteHook,
+	BeforePageDisplayHook,
+	APIGetAllowedParamsHook,
+	PageSaveCompleteHook
+{
+	use UserAgentClientHintsManagerHelperTrait;
 
-	private Config $config;
-	private SpecialPageFactory $specialPageFactory;
-
-	public function __construct( Config $config, SpecialPageFactory $specialPageFactory ) {
-		$this->config = $config;
-		$this->specialPageFactory = $specialPageFactory;
+	public function __construct(
+		private readonly Config $config,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly LoggerInterface $logger,
+	) {
 	}
 
 	/** @inheritDoc */
@@ -111,9 +124,9 @@ class ClientHints implements SpecialPageBeforeExecuteHook, BeforePageDisplayHook
 			// Roundabout way to ensure we have a list of values like "architecture", "bitness"
 			// etc for use with the client-side JS API. Make sure we get 1) just the values
 			// from the configuration, 2) filter out any empty entries, 3) convert to a list
-			'wgCheckUserClientHintsHeadersJsApi' => array_values( array_filter( array_values(
+			'wgCheckUserClientHintsHeadersJsApi' => array_values( array_filter(
 				$this->config->get( 'CheckUserClientHintsHeaders' )
-			) ) ),
+			) ),
 		] );
 		$out->addModules( 'ext.checkUser.clientHints' );
 	}
@@ -128,10 +141,23 @@ class ClientHints implements SpecialPageBeforeExecuteHook, BeforePageDisplayHook
 		}
 	}
 
+	/** @inheritDoc */
+	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ): void {
+		// Don't process null edits, as the revision ID will not be performed by the user
+		// who just attempted to edit
+		if ( $editResult->isNullEdit() ) {
+			return;
+		}
+
+		$this->storeHeaderOnlyClientHintsData(
+			$revisionRecord->getId(),
+			'revision',
+			RequestContext::getMain()->getRequest()
+		);
+	}
+
 	/**
 	 * Get the list of headers to use with Accept-CH.
-	 *
-	 * @return string
 	 */
 	private function getClientHintsHeaderString(): string {
 		$headers = implode(
@@ -143,8 +169,6 @@ class ClientHints implements SpecialPageBeforeExecuteHook, BeforePageDisplayHook
 
 	/**
 	 * Get an Accept-CH header string to tell the client to stop sending client-hint data.
-	 *
-	 * @return string
 	 */
 	private function getEmptyClientHintsHeaderString(): string {
 		return "Accept-CH: ";

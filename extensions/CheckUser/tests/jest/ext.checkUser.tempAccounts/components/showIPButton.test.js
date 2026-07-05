@@ -138,17 +138,21 @@ describe( 'ShowIPButton', () => {
 				.toStrictEqual( false );
 
 			if ( expectedHtml ) {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( wrapper.find( '.ext-checkuser-tempaccount-specialblock-block-details-content > p' ).html() )
 					.toStrictEqual( expectedHtml );
 			} else {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( wrapper.find( '.ext-checkuser-tempaccount-specialblock-block-details-content' ).exists() )
 					.toStrictEqual( false );
 			}
 
 			if ( messageType ) {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( wrapper.find( `.ext-checkuser-tempaccount-specialblock-block-details .cdx-message--${ messageType }` ).text() )
 					.toStrictEqual( messageText );
 			} else {
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( wrapper.find( '.ext-checkuser-tempaccount-specialblock-block-details .cdx-message' ).exists() )
 					.toStrictEqual( false );
 			}

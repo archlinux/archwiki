@@ -1,9 +1,10 @@
 <?php
 
-namespace MediaWiki\Extension\OATHAuth\Tests\Key;
+namespace MediaWiki\Extension\OATHAuth\Tests\Unit\Key;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\OATHAuth\Key\EncryptionHelper;
+use MediaWiki\Extension\OATHAuth\Tests\Integration\EncryptionTestTrait;
 use MediaWikiUnitTestCase;
 use UnexpectedValueException;
 
@@ -12,12 +13,12 @@ use UnexpectedValueException;
  */
 class EncryptionHelperTest extends MediaWikiUnitTestCase {
 
+	use EncryptionTestTrait;
+
 	protected function setUp(): void {
 		parent::setUp();
 
-		if ( !extension_loaded( 'sodium' ) ) {
-			$this->markTestSkipped( 'sodium extension not installed, skipping' );
-		}
+		$this->encryptionUnitTestSetup();
 	}
 
 	private function getHelper() {
@@ -25,7 +26,7 @@ class EncryptionHelperTest extends MediaWikiUnitTestCase {
 			new ServiceOptions(
 				EncryptionHelper::CONSTRUCTOR_OPTIONS,
 				// Generated once using `MWCryptRand::generateHex( 64 );`
-				[ 'OATHSecretKey' => 'f901c7d7ecc25c90229c01cec0efec1b521a5e2eb6761d29007dde9566c4536a' ],
+				[ 'OATHSecretKey' => self::SECRET_KEY ],
 			),
 		);
 	}
@@ -46,7 +47,7 @@ class EncryptionHelperTest extends MediaWikiUnitTestCase {
 		$invalidMagicPhrase = 'a different phrase that isn\'t encrypted';
 		$encrypted = $helper->encrypt( $magicPhrase );
 		$this->expectException( UnexpectedValueException::class );
-		$decrypted = $helper->decrypt( $invalidMagicPhrase, $encrypted['nonce'] );
+		$helper->decrypt( $invalidMagicPhrase, $encrypted['nonce'] );
 	}
 
 	/**

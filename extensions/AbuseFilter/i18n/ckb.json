@@ -206,7 +206,7 @@
 	"abusefilter-edit-builder-op-bool-or": "یان (|)",
 	"abusefilter-edit-builder-group-misc": "جۆربەجۆر",
 	"abusefilter-edit-builder-group-vars": "بگۆڕەکان",
-	"abusefilter-edit-builder-vars-accountname": "ناوی ھەژمار (لە کاتی دروستکردنی ھەژمار)",
+	"abusefilter-edit-builder-vars-account-name": "ناوی ھەژمار (لە کاتی دروستکردنی ھەژمار)",
 	"abusefilter-edit-builder-vars-action": "کردەوە",
 	"abusefilter-edit-builder-vars-addedlines": "دێڕە زیادکراوەکان لە دەستکاریدا",
 	"abusefilter-edit-builder-vars-delta": "گۆڕانکاریی قەبارە لە دەستکاریدا",

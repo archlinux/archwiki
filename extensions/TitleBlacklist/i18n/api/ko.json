@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Hwangjy9",
-			"Ykhwong",
-			"Tensama0415"
+			"Tensama0415",
+			"Ykhwong"
 		]
 	},
 	"apihelp-titleblacklist-summary": "TitleBlacklist에 대해 문서 제목, 파일 이름, 사용자 이름을 검사합니다.",

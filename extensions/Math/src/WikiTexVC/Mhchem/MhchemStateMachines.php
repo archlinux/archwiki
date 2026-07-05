@@ -37,8 +37,6 @@ class MhchemStateMachines {
 	 */
 	private array $genericActions;
 
-	private MhchemParser $mhchemParser;
-
 	private static function mhchemCreateTransitions( array $o ): array {
 		$transitions = [];
 		// 1. Collect all states
@@ -98,8 +96,9 @@ class MhchemStateMachines {
 	 * Initialize arrays for genericActions and StateMachines with mhchemCreateTransitions.
 	 * @param-taint $mhchemParser none
 	 */
-	public function __construct( MhchemParser $mhchemParser ) {
-		$this->mhchemParser = $mhchemParser;
+	public function __construct(
+		private readonly MhchemParser $mhchemParser,
+	) {
 		$this->genericActions = [
 			'a=' => static function ( &$buffer, $m ) {
 				$buffer["a"] = ( $buffer["a"] ?? "" ) . $m;
@@ -466,7 +465,6 @@ class MhchemStateMachines {
 							$ret = $this->stateMachines["ce"]["actions"]["output"]( $buffer, null, null );
 						}
 
-						/** @phan-suppress-next-line PhanParamTooFew */
 						$this->genericActions['o=']( $buffer, $m );
 						return $ret;
 					},
@@ -481,7 +479,6 @@ class MhchemStateMachines {
 							$im = $this->stateMachines["ce"]["actions"]["output"]( $buffer, null, null );
 							MhchemUtil::concatArray( $ret, $im );
 
-							/** @phan-suppress-next-line PhanParamTooMany */
 							MhchemUtil::concatArray( $ret, $this->genericActions['bond']( $buffer, $m, "-" ) );
 							return $ret;
 						} else {
@@ -512,14 +509,12 @@ class MhchemStateMachines {
 						} else {
 							$c1 = $this->mhchemParser->getPatterns()->match( 'digits', $buffer["d"] ?? "" );
 							if ( $isAfterD && isset( $c1["remainder"] ) && $c1["remainder"] === '' ) {
-								/** @phan-suppress-next-line PhanParamTooFew */
 								MhchemUtil::concatArray( $ret, $this->genericActions['d=']( $buffer, $m ) );
 								$im = $this->stateMachines["ce"]["actions"]["output"]( $buffer, null, null );
 								MhchemUtil::concatArray( $ret, $im );
 							} else {
 								$im = $this->stateMachines["ce"]["actions"]["output"]( $buffer, null, null );
 								MhchemUtil::concatArray( $ret, $im );
-								/** @phan-suppress-next-line PhanParamTooMany */
 								MhchemUtil::concatArray( $ret, $this->genericActions['bond']( $buffer, $m, "-" ) );
 							}
 						}

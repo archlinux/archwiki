@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -96,7 +96,8 @@
 				"AbuseFilterAbuseLoggerFactory",
 				"AbuseFilterFilterLookup",
 				"TempUserConfig",
-				"ExtensionRegistry"
+				"ExtensionRegistry",
+				"AbuseLogConditionFactory"
 			]
 		},
 		"AbuseFilter": {
@@ -140,7 +141,7 @@
 		"abusefilter/modify": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterModifyLogFormatter",
 		"abusefilter/create": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterModifyLogFormatter",
 		"abusefilterblockeddomainhit/*": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterBlockedDomainHitLogFormatter",
-		"abusefilterprivatedetails/access": "LogFormatter",
+		"abusefilterprivatedetails/access": "MediaWiki\\Logging\\LogFormatter",
 		"suppress/hide-afl": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterSuppressLogFormatter",
 		"suppress/unhide-afl": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterSuppressLogFormatter",
 		"rights/blockautopromote": "MediaWiki\\Extension\\AbuseFilter\\LogFormatter\\AbuseFilterRightsLogFormatter",
@@ -236,7 +237,8 @@
 				"AbuseFilterVariableGeneratorFactory",
 				"AbuseFilterFilterLookup",
 				"AbuseFilterAbuseLoggerFactory",
-				"RecentChangeLookup"
+				"RecentChangeLookup",
+				"ReadOnlyMode"
 			]
 		},
 		"abuselogprivatedetails": {
@@ -259,7 +261,10 @@
 				"AbuseFilterVariablesManager",
 				"UserFactory",
 				"AbuseFilterAbuseLoggerFactory",
-				"AbuseFilterRuleCheckerFactory"
+				"AbuseFilterRuleCheckerFactory",
+				"AbuseLogConditionFactory",
+				"TemporaryAccountIPsViewerSpecification",
+				"ReadOnlyMode"
 			]
 		},
 		"abusefilters": {
@@ -492,6 +497,7 @@
 		"ContributionsToolLinks": "ToolLinks",
 		"HistoryPageToolLinks": "ToolLinks",
 		"UndeletePageToolLinks": "ToolLinks",
+		"HtmlPageLinkRendererEnd": "ToolLinks",
 		"UploadVerifyUpload": "FilteredActions",
 		"UploadStashFile": "FilteredActions",
 		"getUserPermissionsErrors": "EditPermission",
@@ -506,7 +512,7 @@
 	"DomainEventIngresses": [
 		{
 			"events": [
-				"PageRevisionUpdated"
+				"PageLatestRevisionChanged"
 			],
 			"class": "MediaWiki\\Extension\\AbuseFilter\\MediaWikiEventIngress\\PageEventIngress",
 			"services": [
@@ -666,6 +672,14 @@
 				"user_unnamed_ip"
 			],
 			"description": "Array of variables that are be considered protected (limited access) and require the abusefilter-access-protected-vars right to use/view. To access this list, use the AbuseFilterProtectedVariablesLookup service which will also include protected variables provided by other extensions."
+		},
+		"AbuseFilterUseCodeEditor": {
+			"value": true,
+			"description": "Set to true to enable the CodeEditor extension integration"
+		},
+		"AbuseFilterUseCodeMirror": {
+			"value": false,
+			"description": "Set to true to enable the CodeMirror extension integration"
 		}
 	},
 	"load_composer_autoloader": true,

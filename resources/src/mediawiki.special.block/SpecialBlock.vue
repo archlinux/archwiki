@@ -23,8 +23,8 @@
 				class="mw-block-success"
 			>
 				<p><strong>{{ blockSavedMessage }}</strong></p>
-				<!-- eslint-disable-next-line vue/no-v-html -->
-				<p v-html="$i18n( 'block-success', store.targetUser ).parse()"></p>
+				<p v-i18n-html:block-success="[ store.targetUser ]"></p>
+				<p v-if="additionalBlocksMessage" v-i18n-html="additionalBlocksMessage"></p>
 			</cdx-message>
 			<cdx-message
 				v-if="blockRemoved"
@@ -42,10 +42,33 @@
 				<!-- eslint-disable-next-line vue/no-v-html -->
 				<div v-html="formError"></div>
 			</cdx-message>
+			<cdx-message
+				v-if="blocksAdditionalErrors.length"
+				type="error"
+				:allow-user-dismiss="true"
+				class="mw-block-additional-error"
+			>
+				<p>
+					<strong>
+						{{ $i18n( 'block-additional-error-header-text', blocksAdditionalErrors.length ) }}
+					</strong>
+				</p>
+				<ul>
+					<li
+						v-for="( blocksAdditionalError, index ) in blocksAdditionalErrors"
+						:key="index"
+					>
+						{{ blocksAdditionalError }}
+					</li>
+				</ul>
+			</cdx-message>
 		</div>
 		<user-lookup
 			v-model="store.targetUser"
 		></user-lookup>
+		<div v-if="store.showIPTempBlockMessage" class="mw-block-target-ip-tempuser-info">
+			{{ $i18n( 'block-target-ip-tempuser-info' ) }}
+		</div>
 
 		<div v-if="showBlockLogs">
 			<block-log
@@ -82,7 +105,7 @@
 				<h2>{{ formHeaderText }}</h2>
 				<block-type-field></block-type-field>
 				<expiry-field></expiry-field>
-				<reason-field v-model="store.reason"></reason-field>
+				<reason-field v-model="store.reason" :expiry="store.expiry"></reason-field>
 				<block-details-field></block-details-field>
 				<additional-details-field></additional-details-field>
 				<confirmation-dialog
@@ -206,6 +229,8 @@ module.exports = exports = defineComponent( {
 			formVisible,
 			formDirty,
 			blockAdded,
+			additionalBlocksMessage,
+			blocksAdditionalErrors,
 			blockRemoved,
 			enableMultiblocks,
 			removalConfirmationOpen
@@ -424,6 +449,27 @@ module.exports = exports = defineComponent( {
 						blockSavedMessage.value = mw.message( 'block-added-message' ).text();
 					}
 					blockAdded.value = true;
+
+					if ( result.block.additionalBlocksStatuses ) {
+						// Capture all successful blocks, which return no messages, as target names
+						const additionalBlocks = Object.entries( result.block.additionalBlocksStatuses )
+							.filter( ( obj ) => !obj[ 1 ].length );
+						if ( additionalBlocks.length ) {
+							// From the target names of sucessful blocks, generate the copy describing the blocks made
+							const userLinks = additionalBlocks.map(
+								( target ) => mw.message( 'block-target-link', target ).parse()
+							);
+							const $listOfUserLinks = $( $.parseHTML( mw.language.listToText( userLinks ) ) );
+							additionalBlocksMessage.value =
+								mw.message( 'block-additional-success-text', $listOfUserLinks, userLinks.length );
+						}
+
+						// Capture existing messages, which are all errors pre-parsed by the hook responder
+						blocksAdditionalErrors.value = [].concat(
+							...Object.values( result.block.additionalBlocksStatuses )
+						);
+					}
+
 					formErrors.value = [];
 					// Bump the submitCount (to re-render the logs) after scrolling
 					// because the log tables may change the length of the page.
@@ -491,6 +537,8 @@ module.exports = exports = defineComponent( {
 			shouldShowAddBlockButton,
 			submitCount,
 			blockSavedMessage,
+			additionalBlocksMessage,
+			blocksAdditionalErrors,
 			formHeaderText,
 			enableMultiblocks,
 			blockShowSuppressLog,

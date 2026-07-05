@@ -37,8 +37,6 @@
 	"cite_error_empty_references_define": "برچسپ <code>&lt;ref&gt;</code> با نام «$1» تعریف شده درون <code>&lt;references&gt;</code> گروه «$2» محتوایی ندارد.",
 	"cite-tracking-category-cite-error": "صفحه‌های دارای خطا در ارجاع",
 	"cite-tracking-category-cite-error-desc": "صفحه‌های در این رده خطای استفاده از برچسب ارجاع دارند.",
-	"cite-tracking-category-cite-diffing-error": "صفحه‌های دارای خطا در ارجاع که تفاوت دیداری را فعال می‌کنند",
-	"cite-tracking-category-cite-diffing-error-desc": "صفحه‌های موجود در این رده دارای خطاهایی در استفاده از برچسب‌های ارجاع هستند، و این خطاها به‌شکل یکسان با تجزیه‌گر قدیمی یا پارسوئید رندر نمی‌شوند.",
 	"cite-reference-previews-reference": "منبع",
 	"cite-reference-previews-book": "منبع کتاب",
 	"cite-reference-previews-journal": "منبع ژورنال",

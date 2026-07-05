@@ -6,9 +6,9 @@
  */
 
 use MediaWiki\Maintenance\Benchmarker;
-use Wikimedia\MapCacheLRU\MapCacheLRU;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\ObjectCache\MapCacheLRU;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/../includes/Benchmarker.php';

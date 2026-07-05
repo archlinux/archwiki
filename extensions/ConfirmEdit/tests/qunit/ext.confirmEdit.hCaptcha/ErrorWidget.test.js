@@ -54,16 +54,28 @@ QUnit.test( 'should be hidable via hide()', function ( assert ) {
 	const message = 'some error';
 
 	this.widget.show( message );
-	this.widget.hide();
 
 	assert.strictEqual(
 		this.widget.$element.css( 'display' ),
-		'none',
-		'should be hidden'
+		'flex',
+		'widget should be visible'
 	);
 	assert.strictEqual(
 		this.widget.$element.text(),
 		message,
 		'message should match'
+	);
+
+	this.widget.hide();
+
+	assert.strictEqual(
+		this.widget.$element.text(),
+		'',
+		'message should be unset'
+	);
+	assert.strictEqual(
+		this.widget.$element.css( 'display' ),
+		'none',
+		'widget should be hidden'
 	);
 } );

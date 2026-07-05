@@ -172,11 +172,11 @@ QUnit.test( 'Test onLoad for a user which matches temporary account format but d
  * Call the onLoad method, click the button that is created and then verify the text that replaces
  * the button is as expected.
  *
- * @param {string} expectedText The expected text of the element that replaces the button
+ * @param {string} expectedHtml The expected HTML of the element that replaces the button
  * @param {Object} assert The QUnit assert object
  * @param {*} done Method to call to indicate this method has completed assertions
  */
-async function performOnLoadTestWhenButtonClicked( expectedText, assert, done ) {
+async function performOnLoadTestWhenButtonClicked( expectedHtml, assert, done ) {
 	// Call the method under test
 	specialBlock.onLoad();
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -200,8 +200,8 @@ async function performOnLoadTestWhenButtonClicked( expectedText, assert, done ) 
 						'Container still present after button click'
 					);
 					assert.strictEqual(
-						$( '.ext-checkuser-tempaccount-specialblock-ips', $qunitFixture ).text(),
-						expectedText,
+						$( '.ext-checkuser-tempaccount-specialblock-ips', $qunitFixture ).html(),
+						expectedHtml,
 						'Text of element that replaced button'
 					);
 					done();
@@ -240,7 +240,7 @@ QUnit.test( 'Test onLoad for an existing temporary account with IP data', async 
 		}
 	} );
 	await performOnLoadTestWhenButtonClicked(
-		'(checkuser-tempaccount-specialblock-ips: 2, <a href="https://www.example.com/wiki/Special:IPContributions/172.20.0.1">172.20.0.1</a>(and)(word-separator)<a href="https://www.example.com/wiki/Special:IPContributions/1.2.3.4">1.2.3.4</a>)',
+		'<label class="oo-ui-widget oo-ui-widget-enabled oo-ui-labelElement oo-ui-labelElement-label oo-ui-labelWidget">(checkuser-tempaccount-specialblock-ips: 2, <a href="https://www.example.com/wiki/Special:IPContributions/172.20.0.1">172.20.0.1</a>(and)(word-separator)<a href="https://www.example.com/wiki/Special:IPContributions/1.2.3.4">1.2.3.4</a>)</label>',
 		assert, done
 	);
 	// Check that the IPs in the element that replaced the button are
@@ -289,7 +289,7 @@ QUnit.test( 'Test onLoad for an existing temporary account without IP data', ( a
 		}
 	} );
 	performOnLoadTestWhenButtonClicked(
-		'(checkuser-tempaccount-no-ip-results: 90)', assert, done
+		'<label class="oo-ui-widget oo-ui-widget-enabled oo-ui-labelElement oo-ui-labelElement-label oo-ui-labelWidget">(checkuser-tempaccount-no-ip-results: 90)</label>', assert, done
 	);
 } );
 
@@ -322,12 +322,13 @@ QUnit.test( 'Test onLoad for an existing temporary account but IP data call fail
 		}
 	} );
 	performOnLoadTestWhenButtonClicked(
-		'(checkuser-tempaccount-reveal-ip-error)', assert, done
+		'<label class="oo-ui-widget oo-ui-widget-enabled oo-ui-labelElement oo-ui-labelElement-label oo-ui-labelWidget">(checkuser-tempaccount-reveal-ip-error)</label>', assert, done
 	);
 } );
 
 QUnit.test( 'Test onLoad when Codex Special:Block is enabled', ( assert ) => {
 	mw.config.set( 'wgUseCodexSpecialBlock', true );
+	mw.config.set( 'wgAutoCreateTempUserEnabled', true );
 	// Add a mock block target input to simulate that the page is the block page.
 	const $blockTargetInput = $( '<div>' ).attr( 'id', 'mw-bi-target' );
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -336,13 +337,19 @@ QUnit.test( 'Test onLoad when Codex Special:Block is enabled', ( assert ) => {
 	// Call the method under test
 	specialBlock.onLoad();
 	// Fire the 'codex.userlookup' hook with a mock Vue ref and then expect
-	// that the Show IP button is added to this mock Vue ref.
+	// that the Show IP button and Show IP message components as well as the related
+	// temporary accounts block feature are added to this mock Vue ref.
 	const customComponents = { value: [] };
 	mw.hook( 'codex.userlookup' ).fire( customComponents );
-	assert.strictEqual( customComponents.value.length, 1, 'Component was added' );
+	assert.strictEqual( customComponents.value.length, 3, 'Components were added' );
 	assert.strictEqual(
 		customComponents.value[ 0 ].name,
 		'ShowIPButton',
 		'Show IP button component was added'
+	);
+	assert.strictEqual(
+		customComponents.value[ 1 ].name,
+		'TempUsersMessage',
+		'Show IP message component was added'
 	);
 } );

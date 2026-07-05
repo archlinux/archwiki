@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -35,6 +35,8 @@
 		"WikiEditorHooks": {
 			"class": "MediaWiki\\Extension\\WikiEditor\\Hooks",
 			"services": [
+				"ExtensionRegistry",
+				"FormatterFactory",
 				"MainConfig",
 				"UserEditTracker",
 				"UserOptionsLookup"
@@ -59,6 +61,8 @@
 				"jquery.wikiEditor.toolbar.config.js",
 				"jquery.wikiEditor.dialogs.js",
 				"jquery.wikiEditor.dialogs.config.js",
+				"jquery.wikiEditor.resizingdragbar.js",
+				"resizingdragbar/ResizingDragBar.js",
 				{
 					"name": "data.json",
 					"callback": "MediaWiki\\Extension\\WikiEditor\\Hooks::getModuleData",
@@ -68,6 +72,7 @@
 			"styles": [
 				"insertlink/TitleInputField.less",
 				"insertlink/LinkTypeField.less",
+				"resizingdragbar/ResizingDragBar.less",
 				"jquery.wikiEditor.less",
 				"jquery.wikiEditor.toolbar.less",
 				"jquery.wikiEditor.dialogs.less",
@@ -256,6 +261,7 @@
 				"mediawiki.jqueryMsg",
 				"mediawiki.language.specialCharacters",
 				"mediawiki.language",
+				"mediawiki.storage",
 				"mediawiki.Title",
 				"mediawiki.user",
 				"mediawiki.util",
@@ -288,7 +294,6 @@
 				"ext.wikiEditor",
 				"mediawiki.page.preview",
 				"mediawiki.pulsatingdot",
-				"mediawiki.storage",
 				"ext.wikiEditor.images",
 				"oojs-ui.styles.icons-interactions"
 			],
@@ -303,14 +308,12 @@
 			"packageFiles": [
 				"realtimepreview/init.js",
 				"realtimepreview/RealtimePreview.js",
-				"realtimepreview/ResizingDragBar.js",
 				"realtimepreview/TwoPaneLayout.js",
 				"realtimepreview/ErrorLayout.js",
 				"realtimepreview/ManualWidget.js"
 			],
 			"styles": [
 				"realtimepreview/RealtimePreview.less",
-				"realtimepreview/ResizingDragBar.less",
 				"realtimepreview/TwoPaneLayout.less",
 				"realtimepreview/ErrorLayout.less",
 				"realtimepreview/ManualWidget.less"

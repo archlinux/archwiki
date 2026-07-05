@@ -20,7 +20,7 @@
 	"spam-blacklisted-email": "Niedozwolone adresy e-mail",
 	"spam-blacklisted-email-text": "Z Twojego adresu e-mail obecnie nie można wysyłać wiadomości e-mail do innych użytkowników.",
 	"spam-blacklisted-email-signup": "Użycie podanego adresu e-mail jest obecnie niedozwolone.",
-	"spam-invalid-lines": "{{PLURAL:$1|Następująca linia jest niepoprawnym wyrażeniem regularnym i musi być poprawiona przed zapisaniem strony:|Następujące linie są niepoprawnymi wyrażeniami regularnymi i muszą być poprawione przed zapisaniem strony:}}",
+	"spam-blacklisted-email-change": "Użycie podanego adresu e-mail jest obecnie niedozwolone.",
 	"spam-blacklist-desc": "Narzędzie antyspamowe oparte o wyrażenia regularne pozwalające odrzucać adresy URL na stronach wiki i adresy e-mail użytkowników",
 	"log-name-spamblacklist": "Rejestr filtru antyspamowego",
 	"log-description-spamblacklist": "Te zdarzenia służą do śledzenia blokad filtru antyspamowego.",

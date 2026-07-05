@@ -30,6 +30,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-previous-label": "پچھلا",
 	"checkuser-temporary-accounts-onboarding-dialog-next-label": "اڳلا",
 	"checkuser-temporary-accounts-onboarding-dialog-close-label": "بند کرو",
+	"checkuser-investigateblock-expiry": "مُکسی",
 	"checkuser-investigateblock-reason": "سبب",
 	"checkuser-investigateblock-options": "اضافی اختیارات",
 	"checkuser-investigate-subtitle-cancel-button-label": "منسوخ",
@@ -68,6 +69,11 @@
 	"checkuser-tempaccount-reveal-ip-error": "خرابی",
 	"log-action-filter-checkuser-temporary-account": "عمل دی قسم:",
 	"checkuser-userinfocard-close-button-aria-label": "بند کرو",
+	"checkuser-suggestedinvestigations-filter-dialog-close-button": "بند کرو",
+	"checkuser-suggestedinvestigations-filter-dialog-status-filter-header": "حیثیت",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-today": "اڄ",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-all-time": "سارے ویلے",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "کھاتہ",
 	"checkuser-suggestedinvestigations-header-status": "حیثیت",
 	"checkuser-suggestedinvestigations-header-notes": "نوٹس"
 }

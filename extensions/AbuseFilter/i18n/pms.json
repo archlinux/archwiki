@@ -221,7 +221,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Definì la variàbil (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variàbij",
 	"abusefilter-edit-builder-vars-timestamp": "Timestamp Unix dël cambiament",
-	"abusefilter-edit-builder-vars-accountname": "Nòm dël cont (a la creassion dël cont)",
+	"abusefilter-edit-builder-vars-account-name": "Nòm dël cont (a la creassion dël cont)",
 	"abusefilter-edit-builder-vars-action": "Assion",
 	"abusefilter-edit-builder-vars-addedlines": "Linie giontà ant la modìfica",
 	"abusefilter-edit-builder-vars-delta": "Cambiament ëd dimension ant la modìfica",

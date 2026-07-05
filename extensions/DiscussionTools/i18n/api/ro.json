@@ -44,5 +44,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Adevărat pentru abonare, fals pentru dezabonare.",
 	"apihelp-discussiontoolssubscribe-summary": "Abonați-vă (sau dezabonați-vă) pentru a primi notificări despre un subiect.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID-ul comentariului căruia să i se mulțumească.",
-	"apihelp-discussiontoolsthank-summary": "Trimiteți o notificare publică de mulțumire pentru un comentariu."
+	"apihelp-discussiontoolsthank-summary": "Trimiteți o notificare publică de mulțumire pentru un comentariu.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Abonează automat utilizatorul la oricare fire noi de pe pagina de discuție create de modificare. Folosește „yes” sau „no” pentru a suprascrie preferința unui utilizator (setarea prestabilită)."
 }

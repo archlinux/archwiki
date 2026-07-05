@@ -21,7 +21,6 @@
 	"spam-blacklisted-email": "Dirección de correo electrónico prohibida",
 	"spam-blacklisted-email-text": "Su dirección de correo electrónico está actualmente bloqueada y no puede enviar correos electrónicos a otros usuarios.",
 	"spam-blacklisted-email-signup": "La dirección de correo electrónico proporcionada está actualmente prohibida y no puede usarse.",
-	"spam-invalid-lines": "{{PLURAL:$1|La siguiente línea|Las siguientes líneas}} de la lista negra de spam {{PLURAL:$1|es una expresión regular inválida|son expresiones regulares inválidas}} y es necesario {{PLURAL:$1|corregirla|corregirlas}} antes de guardar la página:",
 	"spam-blacklist-desc": "Herramienta antispam que usa expresiones regulares para bloquear la inserción de direcciones URL en las páginas de la wiki así como registrar cuentas de usuario usando determinados correos electrónicos",
 	"log-name-spamblacklist": "Registro de la lista negra de spam",
 	"log-description-spamblacklist": "Este registro muestra acciones bloqueadas por la lista negra de spam.",

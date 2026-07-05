@@ -48,10 +48,6 @@ $wgOut
 	OutputPage object for HTTP response.
 	Use IContextSource::getOutput() instead.
 
-$wgUser
-	User object for the user associated with the current request.
-	Use IContextSource::getAuthority() instead.
-
 $wgLang
 	Language object selected by user preferences.
 	Use IContextSource::getLanguage() instead.

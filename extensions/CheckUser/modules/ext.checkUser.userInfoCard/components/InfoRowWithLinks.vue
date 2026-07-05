@@ -22,7 +22,7 @@
 const { computed, onMounted, watch, nextTick } = require( 'vue' );
 const InfoRow = require( './InfoRow.vue' );
 const useInstrument = require( '../composables/useInstrument.js' );
-const { CdxTooltip } = require( '@wikimedia/codex' );
+const { CdxTooltip } = require( '../codex.js' );
 
 // @vue/component
 module.exports = exports = {

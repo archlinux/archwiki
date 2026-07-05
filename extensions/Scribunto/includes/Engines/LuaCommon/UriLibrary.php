@@ -9,10 +9,10 @@ class UriLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'anchorEncode' => [ $this, 'anchorEncode' ],
-			'localUrl' => [ $this, 'localUrl' ],
-			'fullUrl' => [ $this, 'fullUrl' ],
-			'canonicalUrl' => [ $this, 'canonicalUrl' ],
+			'anchorEncode' => $this->anchorEncode( ... ),
+			'localUrl' => $this->localUrl( ... ),
+			'fullUrl' => $this->fullUrl( ... ),
+			'canonicalUrl' => $this->canonicalUrl( ... ),
 		];
 
 		$title = $this->getTitle();
@@ -23,11 +23,10 @@ class UriLibrary extends LibraryBase {
 
 	/**
 	 * Handler for anchorEncode
-	 * @internal
 	 * @param string $s
 	 * @return string[]
 	 */
-	public function anchorEncode( $s ) {
+	private function anchorEncode( $s ) {
 		return [ CoreParserFunctions::anchorencode(
 			$this->getParser(), $s
 		) ];
@@ -63,34 +62,31 @@ class UriLibrary extends LibraryBase {
 
 	/**
 	 * Handler for localUrl
-	 * @internal
 	 * @param string $page
 	 * @param array $query
 	 * @return string[]|null[]
 	 */
-	public function localUrl( $page, $query ) {
+	private function localUrl( $page, $query ) {
 		return $this->getUrl( 'getLocalURL', $page, $query );
 	}
 
 	/**
 	 * Handler for fullUrl
-	 * @internal
 	 * @param string $page
 	 * @param array $query
 	 * @return string[]|null[]
 	 */
-	public function fullUrl( $page, $query ) {
+	private function fullUrl( $page, $query ) {
 		return $this->getUrl( 'getFullURL', $page, $query );
 	}
 
 	/**
 	 * Handler for canonicalUrl
-	 * @internal
 	 * @param string $page
 	 * @param array $query
 	 * @return string[]|null[]
 	 */
-	public function canonicalUrl( $page, $query ) {
+	private function canonicalUrl( $page, $query ) {
 		return $this->getUrl( 'getCanonicalURL', $page, $query );
 	}
 }

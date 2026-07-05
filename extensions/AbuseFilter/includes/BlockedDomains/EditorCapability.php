@@ -12,22 +12,14 @@ use Wikimedia\ObjectCache\WANObjectCache;
 
 class EditorCapability extends AbstractEditorCapability {
 
-	private WANObjectCache $wanCache;
-	private LinkRenderer $linkRenderer;
-	private BlockedDomainValidator $blockedDomainValidator;
-
 	public function __construct(
 		IContextSource $ctx,
 		Title $parentTitle,
-		WANObjectCache $wanCache,
-		LinkRenderer $linkRenderer,
-		BlockedDomainValidator $blockedDomainValidator
+		private readonly WANObjectCache $wanCache,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly BlockedDomainValidator $blockedDomainValidator
 	) {
 		parent::__construct( $ctx, $parentTitle );
-
-		$this->wanCache = $wanCache;
-		$this->linkRenderer = $linkRenderer;
-		$this->blockedDomainValidator = $blockedDomainValidator;
 	}
 
 	/**

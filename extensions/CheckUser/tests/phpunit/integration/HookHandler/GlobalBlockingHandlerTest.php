@@ -1,21 +1,21 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\GlobalBlockingHandler;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\HookHandler\GlobalBlockingHandler;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\Extension\GlobalBlocking\GlobalBlock;
 use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\GlobalBlockingHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\GlobalBlockingHandler
  * @group Database
  * @group CheckUser
  */
 class GlobalBlockingHandlerTest extends MediaWikiIntegrationTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -41,10 +41,12 @@ class GlobalBlockingHandlerTest extends MediaWikiIntegrationTestCase {
 		return $globalBlock;
 	}
 
-	private function commonTestRetroactiveAutoblockWhenNoIpsFound( GlobalBlock $globalBlock ) {
+	private function commonTestRetroactiveAutoblockWhenNoIpsFound( GlobalBlock $globalBlock ): void {
 		$ips = [];
 		$returnValue = $this->getObjectUnderTest()->onGlobalBlockingGetRetroactiveAutoblockIPs(
-			$globalBlock, 100, $ips
+			$globalBlock,
+			100,
+			$ips
 		);
 		$this->assertCount( 0, $ips );
 		$this->assertTrue( $returnValue );

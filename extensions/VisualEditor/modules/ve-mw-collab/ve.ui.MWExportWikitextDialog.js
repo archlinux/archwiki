@@ -30,7 +30,7 @@ OO.inheritClass( ve.ui.MWExportWikitextDialog, OO.ui.ProcessDialog );
 
 ve.ui.MWExportWikitextDialog.static.name = 'mwExportWikitext';
 
-ve.ui.MWExportWikitextDialog.static.title = ve.msg( 'visualeditor-rebase-client-export' );
+ve.ui.MWExportWikitextDialog.static.title = OO.ui.deferMsg( 'visualeditor-rebase-client-export' );
 
 ve.ui.MWExportWikitextDialog.static.actions = [
 	{
@@ -97,7 +97,7 @@ ve.ui.MWExportWikitextDialog.prototype.initialize = function () {
 	const panel = new OO.ui.PanelLayout( {
 		padded: true,
 		expanded: false,
-		$content: $content
+		$content
 	} );
 	this.$body.append( panel.$element );
 };

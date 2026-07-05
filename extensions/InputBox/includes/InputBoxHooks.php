@@ -11,10 +11,11 @@ namespace MediaWiki\Extension\InputBox;
 use MediaWiki\Actions\ActionEntryPoint;
 use MediaWiki\Config\Config;
 use MediaWiki\Hook\MediaWikiPerformActionHook;
-use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\PPFrame;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
@@ -30,20 +31,10 @@ class InputBoxHooks implements
 	SpecialPageBeforeExecuteHook,
 	MediaWikiPerformActionHook
 {
-	/** @var Config */
-	private $config;
-
-	private ExtensionRegistry $extensionRegistry;
-
-	/**
-	 * @param Config $config
-	 */
 	public function __construct(
-		Config $config,
-		ExtensionRegistry $extensionRegistry
+		private readonly Config $config,
+		private readonly ExtensionRegistry $extensionRegistry,
 	) {
-		$this->config = $config;
-		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/**
@@ -87,9 +78,10 @@ class InputBoxHooks implements
 	 * @param string|null $input
 	 * @param array $args
 	 * @param Parser $parser
+	 * @param PPFrame $frame
 	 * @return string
 	 */
-	public function render( $input, $args, Parser $parser ) {
+	public function render( $input, $args, Parser $parser, PPFrame $frame ) {
 		if ( $input === null ) {
 			return '';
 		}
@@ -98,7 +90,7 @@ class InputBoxHooks implements
 		$inputBox = new InputBox( $this->config, $this->extensionRegistry, $parser );
 
 		// Configure InputBox
-		$inputBox->extractOptions( $parser->replaceVariables( $input ) );
+		$inputBox->extractOptions( $parser->replaceVariables( $input, $frame ) );
 
 		// Return output
 		return $inputBox->render();

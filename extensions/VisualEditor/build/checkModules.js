@@ -113,11 +113,17 @@ const extensionFiles = new Set();
 addModulesToSet( extensionJson.ResourceModules, extensionFiles );
 addModulesToSet( { QUnitTestModule: extensionJson.QUnitTestModule }, extensionFiles );
 
-// Modules listed in veModules of ResourceModules are loaded automatically.
-Object.values( extensionJson.ResourceModules ).forEach( ( module ) => {
-	if ( module.veModules ) {
-		module.veModules.forEach( ( veModule ) => {
+const veModuleToResourceModules = {};
+Object.entries( extensionJson.ResourceModules ).forEach( ( [ rlName, rlModule ] ) => {
+	if ( rlModule.veModules ) {
+		rlModule.veModules.forEach( ( veModule ) => {
+			// Modules listed in veModules of ResourceModules are loaded automatically.
 			addModulesToSet( { [ veModule ]: modulesJson[ veModule ] || {} }, extensionFiles, 'lib/ve' );
+			// Track which veModules are included by which ResourceModules
+			if ( !veModuleToResourceModules[ veModule ] ) {
+				veModuleToResourceModules[ veModule ] = [];
+			}
+			veModuleToResourceModules[ veModule ].push( rlName );
 		} );
 	}
 } );
@@ -128,8 +134,9 @@ const missingFiles = Array.from( modulesFiles ).filter( ( file ) => !extensionFi
 
 if ( unusedIgnores.size ) {
 	console.warn(
-		'Unused ignore path(s) in checkModules.js:\n\n' +
-		Array.from( unusedIgnores ).map( ( ignore ) => `* ${ ignore }\n` ).join( '' )
+		'Unused ignore path(s) in checkModules.js:\n' +
+		Array.from( unusedIgnores ).map( ( ignore ) => `* ${ ignore }\n` ).join( '' ) +
+		'\n'
 	);
 }
 
@@ -142,5 +149,15 @@ if ( missingFiles.length ) {
 	// eslint-disable-next-line n/no-process-exit
 	process.exit( 1 );
 } else {
-	console.log( 'No missing files.' );
+	console.log( 'No missing files.\n' );
+}
+
+// Warn about any veModules included by multiple ResourceModules
+const duplicateVeModules = Object.entries( veModuleToResourceModules )
+	.filter( ( [ , resourceModules ] ) => resourceModules.length > 1 );
+if ( duplicateVeModules.length ) {
+	console.warn( 'The following veModules are included by multiple ResourceModules,\nwhich could result in them being loaded multiple times:' );
+	duplicateVeModules.forEach( ( [ veModule, resourceModules ] ) => {
+		console.warn( `* '${ veModule }' by '${ resourceModules.join( '\', \'' ) }'\n` );
+	} );
 }

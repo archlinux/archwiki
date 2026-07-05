@@ -29,31 +29,36 @@ On input, the following formats are recognized:
   * As an extension, anything after the first semicolon in the string is ignored.
 * [RFC 850] format.
 * [asctime] format.
-* The `TS_MW`, `TS_DB`, `TS_POSTGRES`, `TS_ORACLE`, and `TS_EXIF` formats described below.
+* The `MW`, `DB`, `POSTGRES`, `ORACLE`, and `EXIF` formats described below.
 
-For output, the following conversions are predefined:
+For output, the following conversions are predefined in TimestampFormat:
 
-* `TS_DB`: MySQL datetime format: "2012-07-31 19:01:08"
-* `TS_EXIF`: Exif 2.2 format: "2012:07:31 19:01:08"
-* `TS_ISO_8601`: [ISO 8601] expanded format: "2012-07-31T19:01:08Z"
-* `TS_ISO_8601_BASIC`: [ISO 8601] basic format: "20120731T190108Z"
-* `TS_MW`: A 14-digit string: "20120731190108"
-* `TS_ORACLE`: A default Oracle timestamp format: "31-07-2012 19:01:08.000000"
-* `TS_POSTGRES`: PostgreSQL default timestamptz format: "2012-07-31 19:01:08+00"
-* `TS_RFC2822`: [RFC 2822] format using an obsolete timezone: "Tue, 31 Jul 2012 19:01:08 GMT"
-* `TS_UNIX`: Seconds since the Unix epoch (1970-01-01T00:00:00Z): "1343761268".
-* `TS_UNIX_MICRO`: Seconds since the Unix epoch with microseconds: "1343761268.000000".
+* `DB`: MySQL datetime format: "2012-07-31 19:01:08"
+* `EXIF`: Exif 2.2 format: "2012:07:31 19:01:08"
+* `ISO_8601`: [ISO 8601] expanded format: "2012-07-31T19:01:08Z"
+* `ISO_8601_BASIC`: [ISO 8601] basic format: "20120731T190108Z"
+* `MW`: A 14-digit string: "20120731190108"
+* `ORACLE`: A default Oracle timestamp format: "31-07-2012 19:01:08.000000"
+* `POSTGRES`: PostgreSQL default timestamptz format: "2012-07-31 19:01:08+00"
+* `RFC2822`: [RFC 2822] format using an obsolete timezone: "Tue, 31 Jul 2012 19:01:08 GMT"
+* `UNIX`: Seconds since the Unix epoch (1970-01-01T00:00:00Z): "1343761268".
+* `UNIX_MICRO`: Seconds since the Unix epoch with microseconds: "1343761268.000000".
+
+For backward compatibility with wikimedia/timestamp v5.0 and earlier,
+there are also global constants defined for these formats.  The
+constants have names beginning with `TS_`, for example `TS_UNIX`.
+Use of these constants is discouraged in new code.
 
 Usage
 -----
 
 ```php
 $ts = new ConvertibleTimestamp( '2012-07-31T19:01:08Z' );
-$formatted = $ts->getTimestamp( TS_UNIX );
+$formatted = $ts->getTimestamp( TimestampFormat::UNIX );
 
 // Shorthand
 $formatted = ConvertibleTimestamp::convert(
-    TS_UNIX, '2012-07-31T19:01:08Z'
+    TimestampFormat::UNIX, '2012-07-31T19:01:08Z'
 );
 
 // Format using PHP date formatting codes
@@ -67,6 +72,12 @@ Running tests
     composer install --prefer-dist
     composer test
 
+Releasing a new version
+-----------------------
+
+This package uses `wikimedia/update-history` and its conventions.
+
+See https://www.mediawiki.org/wiki/UpdateHistory for details.
 
 ---
 [Latest Stable Version]: https://poser.pugx.org/wikimedia/timestamp/v/stable.svg

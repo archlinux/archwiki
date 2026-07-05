@@ -4,8 +4,15 @@ declare( strict_types = 1 );
 
 namespace Test\Parsoid\Wt2Html;
 
+use Wikimedia\JsonCodec\Hint;
+use Wikimedia\Parsoid\Core\SourceRange;
+use Wikimedia\Parsoid\Core\SourceString;
+use Wikimedia\Parsoid\Fragments\HtmlPFragment;
 use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\Tokens\PreprocTk;
+use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\CompatJsonCodec;
+use Wikimedia\Parsoid\Utils\DOMDataCodec;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Wt2Html\PegTokenizer;
 use Wikimedia\WikiPEG\DefaultTracer;
@@ -15,6 +22,54 @@ use Wikimedia\WikiPEG\DefaultTracer;
  * @coversDefaultClass \Wikimedia\Parsoid\Wt2Html\PegTokenizer
  */
 class PegTokenizerTest extends \PHPUnit\Framework\TestCase {
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Wt2Html\Grammar
+	 * @covers ::tokenizeAs
+	 * @dataProvider provideTokenizeAs
+	 */
+	public function testTokenizeAs( $input, $expected, $options = [] ) {
+		$env = new MockEnv( [] );
+		$codec = new DOMDataCodec( $env->getTopLevelDoc(), [] );
+		if ( $options['pFragmentMap'] ?? false ) {
+			$env->addToPFragmentMap( $options['pFragmentMap'] );
+		}
+		$pt = new PegTokenizer( $env );
+		$r = $pt->tokenizeAs( $input, $options['rule'] ?? 'start', $options['sol'] ?? true );
+		$hint = Token::hint();
+		if ( is_array( $r ) ) {
+			$hint = new Hint( $hint, Hint::LIST );
+		}
+		$actual = $codec->toJsonString( $r, $hint );
+		$this->assertSame( $expected, $actual );
+	}
+
+	public static function provideTokenizeAs() {
+		$marker = PipelineUtils::PARSOID_FRAGMENT_PREFIX . '9}}';
+		$pFragmentMap = [
+			$marker => HtmlPFragment::newFromHtmlString(
+				'<!--test-->', null
+			),
+		];
+
+		yield "Parsoid fragment by itself" => [
+			"$marker",
+			'[{"type":"TagTk","name":"span","attribs":[{"k":"typeof","v":"mw:DOMFragment"}],"dataParsoid":{"html":{"_h":"\u003C!--test--\u003E"},"tsr":[0,23]}},{"type":"EndTagTk","name":"span","attribs":[],"dataParsoid":{"tsr":[23,23]}}]',
+			[ 'pFragmentMap' => $pFragmentMap, ],
+		];
+
+		yield "Parsoid fragment after dash" => [
+			"-$marker",
+			'["-",{"type":"TagTk","name":"span","attribs":[{"k":"typeof","v":"mw:DOMFragment"}],"dataParsoid":{"html":{"_h":"\u003C!--test--\u003E"},"tsr":[1,24]}},{"type":"EndTagTk","name":"span","attribs":[],"dataParsoid":{"tsr":[24,24]}}]',
+			[ 'pFragmentMap' => $pFragmentMap, ],
+		];
+
+		yield "Parsoid fragment pretending to be a template argument" => [
+			'{' . $marker . '}',
+			'["{",{"type":"TagTk","name":"span","attribs":[{"k":"typeof","v":"mw:DOMFragment"}],"dataParsoid":{"html":{"_h":"\u003C!--test--\u003E"},"tsr":[1,24]}},{"type":"EndTagTk","name":"span","attribs":[],"dataParsoid":{"tsr":[24,24]}},"}"]',
+			[ 'pFragmentMap' => $pFragmentMap, ],
+		];
+	}
 
 	/**
 	 * @covers \Wikimedia\Parsoid\Wt2Html\Grammar
@@ -115,6 +170,130 @@ class PegTokenizerTest extends \PHPUnit\Framework\TestCase {
 			  }}}
 			}}}
 			"}"
+			END,
+		];
+
+		$marker = PipelineUtils::PARSOID_FRAGMENT_PREFIX . '12}}';
+		yield "1 matching braces w/ marker" => [
+			"{" . $marker . "}", <<<END
+			"{"
+			<Parsoid Fragment 12>
+			"}"
+			END,
+		];
+		yield "2 matching braces w/ marker" => [
+			"{{" . $marker . "}}", <<<END
+			{{
+			  <Parsoid Fragment 12>
+			}}
+			END,
+		];
+		yield "3 matching braces w/ marker" => [
+			"{{{" . $marker . "}}}", <<<END
+			{{{
+			  <Parsoid Fragment 12>
+			}}}
+			END,
+		];
+		yield "4 matching braces w/ marker" => [
+			"{{{{" . $marker . "}}}}", <<<END
+			"{"
+			{{{
+			  <Parsoid Fragment 12>
+			}}}
+			"}"
+			END,
+		];
+		yield "5 matching braces w/ marker" => [
+			"{{{{{" . $marker . "}}}}}", <<<END
+			{{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}}
+			END,
+		];
+		yield "6 matching braces w/ marker" => [
+			"{{{{{{" . $marker . "}}}}}}", <<<END
+			{{{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}}}
+			END,
+		];
+		yield "7 matching braces w/ marker" => [
+			"{{{{{{{" . $marker . "}}}}}}}", <<<END
+			"{"
+			{{{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}}}
+			"}"
+			END,
+		];
+		yield "Dash then 0 matching braces w/ marker" => [
+			"-" . $marker . "-", <<<END
+			"-"
+			<Parsoid Fragment 12>
+			"-"
+			END,
+		];
+		yield "Dash then 1 matching braces w/ marker" => [
+			"-{" . $marker . "}-", <<<END
+			-{
+			  <Parsoid Fragment 12>
+			}-
+			END,
+		];
+		yield "Dash then 2 matching braces w/ marker" => [
+			"-{{" . $marker . "}}-", <<<END
+			"-"
+			{{
+			  <Parsoid Fragment 12>
+			}}
+			"-"
+			END,
+		];
+		yield "Dash then 3 matching braces w/ marker" => [
+			"-{{{" . $marker . "}}}-", <<<END
+			"-"
+			{{{
+			  <Parsoid Fragment 12>
+			}}}
+			"-"
+			END,
+		];
+		yield "Dash then 4 matching braces w/ marker" => [
+			"-{{{{" . $marker . "}}}}-", <<<END
+			-{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}-
+			END,
+		];
+		yield "Dash then 5 matching braces w/ marker" => [
+			"-{{{{{" . $marker . "}}}}}-", <<<END
+			"-"
+			{{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}}
+			"-"
+			END,
+		];
+		yield "Dash then 6 matching braces w/ marker" => [
+			"-{{{{{{" . $marker . "}}}}}}-", <<<END
+			"-"
+			{{{
+			  {{{
+			    <Parsoid Fragment 12>
+			  }}}
+			}}}
+			"-"
 			END,
 		];
 		# note that tplarg (three braces) has precedence, and rightmost
@@ -456,6 +635,32 @@ class PegTokenizerTest extends \PHPUnit\Framework\TestCase {
 		];
 		yield "<pre><pre><pre><pre>" => [
 			'', "<pre>", '', 40
+		];
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Wt2Html\Grammar
+	 * @covers ::tokenizeTemplate3
+	 * @dataProvider provideTokenizerTemplate3
+	 */
+	public function testTokenizerTemplate3( $input, $expected ) {
+		$env = new MockEnv( [] );
+		$pt = new PegTokenizer( $env );
+		$source = new SourceString( $input );
+		$r = $pt->tokenizeTemplate3( $input, SourceRange::fromSource( $source ) );
+		$codec = new CompatJsonCodec;
+		$hint = Token::hint();
+		if ( is_array( $r ) ) {
+			$hint = new Hint( $hint, Hint::LIST );
+		}
+		$actual = $codec->toJsonString( $r, $hint );
+		$this->assertSame( $expected, $actual );
+	}
+
+	public static function provideTokenizerTemplate3() {
+		yield "Parser function" => [
+			"{{#foo:bar|bat|baz=barmy|=rah|ext=<pre>foo</pre>|pf={{pf}}}}",
+			'{"type":"SelfclosingTagTk","name":"template3","attribs":[{"k":["#foo:bar"],"v":"","srcOffsets":[2,10,10,10]},{"k":[""],"v":["bat"],"srcOffsets":[11,11,11,14]},{"k":["baz"],"v":["barmy"],"srcOffsets":[15,18,19,24]},{"k":[""],"v":["rah"],"srcOffsets":[25,25,26,29]},{"k":["ext"],"v":[{"type":"PreprocAngleTk","open":"pre","extAttrs":"","close":"\u003C/pre\u003E","attribs":[{"k":"mw:contents","v":["foo"],"srcOffsets":[39,39,39,42]}],"dataParsoid":{"tsr":[34,48],"extTagOffsets":[34,48,5,6]}}],"srcOffsets":[30,33,34,48]},{"k":["pf"],"v":[{"type":"PreprocTk","open":"{","count":2,"attribs":[{"k":"mw:contents","v":["pf"],"srcOffsets":[54,54,54,56]}],"dataParsoid":{"tsr":[52,58]}}],"srcOffsets":[49,51,52,58]}],"dataParsoid":{"tsr":[0,60],"src":"{{#foo:bar|bat|baz=barmy|=rah|ext=\u003Cpre\u003Efoo\u003C/pre\u003E|pf={{pf}}}}"}}'
 		];
 	}
 }

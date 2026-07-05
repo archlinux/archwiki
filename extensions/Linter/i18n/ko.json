@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"IRTC1015",
+			"Tensama0415",
 			"YeBoy371",
 			"Ykhwong",
 			"메이",
-			"밝은소년",
-			"Tensama0415"
+			"밝은소년"
 		]
 	},
 	"linterrors": "린트 오류",
+	"linttemplateerrors": "린트 오류가 포함된 끼워넣기",
 	"linter-category-bogus-image-options": "무효한 파일 옵션",
 	"linter-category-bogus-image-options-desc": "이 문서들은 무효한 옵션을 가진 파일을 포함합니다.",
 	"linter-category-large-tables": "모바일에서 보기 힘든 큰 테이블",
@@ -20,6 +21,8 @@
 	"linter-category-duplicate-ids-desc": "이 문서에는 중복 id 속성을 가진 요소가 있습니다.",
 	"linter-category-empty-heading": "빈 제목",
 	"linter-category-empty-heading-desc": "이 문서의 제목이 비어있습니다.",
+	"linter-category-template-arg-in-extension-tag": "틀 매개변수가 있는 확장 태그",
+	"linter-category-template-arg-in-extension-tag-desc": "이 문서들은 틀 매개변수를 포함하는 확장 태그를 가지고 있으며, 이로 인해 올바르게 끼워넣어지지 않게 됩니다.",
 	"linter-category-fostered": "포스터 상위 요소에 상속되는 내용",
 	"linter-category-fostered-desc": "이 문서에는 포스터 상위 요소에 상속되는 내용이 있습니다.",
 	"linter-category-fostered-transparent": "포스터 상위 요소에 상속되는 렌더링-투명한 내용",
@@ -62,6 +65,7 @@
 	"linter-category-wikilink-in-extlink-desc": "이 문서들은 수정 가능한 외부 링크 내 위키링크가 있습니다",
 	"linter-desc": "외부 서비스로부터 린트 오류를 추적하고 사용자에게 보여줍니다",
 	"linter-lints-prefix-search-page-desc": "문서 제목의 두문자 또는 전체 제목으로 린트 오류가 있는 문서 검색",
+	"linter-invalid-category": "분류를 찾을 수 없거나 형식이 잘못되었습니다",
 	"linter-invalid-title": "이름공간 및/또는 문서 이름을 찾을 수 없거나 형식이 잘못됨",
 	"linter-form-exact-match": "특정 문서 제목 검색",
 	"linter-form-prefix-match": "제목 두문자와 일치하는 모든 문서 검색",
@@ -112,10 +116,16 @@
 	"linter-pager-title-header": "문서 제목",
 	"linter-pager-unclosed-quotes-in-heading-details": "목차 밖으로 빠져나오는 닫히지 않은 인용 부호",
 	"linter-pager-wikilink-in-extlink-details": "링크 안 링크",
+	"linter-pager-template-arg-in-extension-tag-details": "업데이트가 필요한 확장 태그 이름 (및 그 안에 사용된 틀 매개변수)",
 	"linter-prefix-search-subpage": "제목 접두사 또는 전체 제목과 일치하는 린트 오류가 있는 문서: $1",
 	"linterrors-subpage": "린트 오류: $1",
 	"linterrors-summary": "<strong>알림</strong>: 분류 수는 정확한 개수가 아니며 추정치에 기반합니다.",
 	"multi-part-template-block": "하나의 틀에서 비롯되지 않는 출력",
+	"parser-function": "파서 함수의 출력",
 	"pageinfo-linter": "린트 오류",
-	"pageinfo-linter-moreinfo": "린트 오류에 관한 자세한 정보를 봅니다."
+	"pageinfo-linter-moreinfo": "린트 오류에 관한 자세한 정보를 봅니다.",
+	"category-by-template": "린트 오류를 포함한 끼워넣은 문서: $1",
+	"category-by-template-view": "이 린트 오류가 있는 끼워넣은 문서를 봅니다.",
+	"category-by-template-desc": "이 문서들의 끼워넣은 문서에는 '''[[Special:LintErrors/$1|$1]]''' 린트 오류가 포함되어 있습니다. 일부 끼워넣은 문서는 끼워넣은 문서의 출처 자체가 아니라 끼워넣은 문서에 전달된 매개변수 때문에 이 목록에 표시될 수 있습니다.",
+	"linter-template-errors-index-desc": "린트 오류가 포함된 문서의 끼워넣기의 목록입니다. ''일부 끼워넣기는 끼워넣기 출처 자체가 아닌 끼워넣기에 전달된 인수 때문에 이 목록에 나타날 수 있습니다.''"
 }

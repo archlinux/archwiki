@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.MWTransclusionNode' );
+QUnit.module( 've.dm.MWTransclusionNode', ve.test.utils.newMwEnvironment() );
 
 QUnit.test.each( 'getWikitext', {
 		'mix of numbered and named parameters': {

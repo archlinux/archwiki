@@ -20,14 +20,13 @@
  */
 class PHPVersionCheck {
 	/** @var string The number of the MediaWiki version used. If you're updating MW_VERSION in Defines.php, you must also update this value. */
-	var $mwVersion = '1.45';
+	var $mwVersion = '1.46';
 
 	/** @var string[] A mapping of PHP functions to PHP extensions. */
 	var $functionsExtensionsMapping = array(
 		'mb_substr'   => 'mbstring',
 		'xml_parser_create' => 'xml',
 		'ctype_digit' => 'ctype',
-		'json_decode' => 'json',
 		'iconv'       => 'iconv',
 		'mime_content_type' => 'fileinfo',
 		'intl_is_failure' => 'intl',
@@ -65,9 +64,8 @@ class PHPVersionCheck {
 	 * Displays an error, if the installed PHP version does not meet the minimum requirement.
 	 */
 	function checkRequiredPHPVersion() {
-		// This value should match the PHP version specified in composer.json,
-		// .phan/config.php, and ScopeStructureTest.php
-		$minimumVersion = '8.2.0';
+		// NOTE: Keep this in sync with composer.json and ScopeStructureTest.php
+		$minimumVersion = '8.3.0';
 
 		/**
 		 * This is a list of known-bad ranges of PHP versions. Syntax is like SemVer – either:

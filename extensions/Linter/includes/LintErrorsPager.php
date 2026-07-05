@@ -21,11 +21,11 @@
 namespace MediaWiki\Linter;
 
 use InvalidArgumentException;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Pager\TablePager;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Title\Title;
@@ -36,43 +36,28 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class LintErrorsPager extends TablePager {
 
-	private CategoryManager $categoryManager;
-	private LinkCache $linkCache;
-	private LinkRenderer $linkRenderer;
-	private PermissionManager $permissionManager;
-
-	private ?string $category;
 	/** @var mixed */
 	private $categoryId;
-	private array $namespaces;
-	private bool $exactMatch;
-	private string $title;
 	private string $tag;
 
 	/**
-	 * Allowed values are keys 'all', 'with' or 'without'
+	 * Special values are keys 'all', 'with' or 'without'
 	 */
-	private string $throughTemplate;
+	private string $template;
 
 	public function __construct(
 		IContextSource $context,
-		CategoryManager $categoryManager,
-		LinkCache $linkCache,
-		LinkRenderer $linkRenderer,
-		PermissionManager $permissionManager,
-		?string $category,
-		array $namespaces,
-		bool $exactMatch,
-		string $title,
-		string $throughTemplate,
+		private readonly CategoryManager $categoryManager,
+		private readonly LinkCache $linkCache,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly PermissionManager $permissionManager,
+		private readonly ?string $category,
+		private readonly array $namespaces,
+		private readonly bool $exactMatch,
+		private readonly string $title,
+		string $template,
 		string $tag
 	) {
-		$this->categoryManager = $categoryManager;
-		$this->linkCache = $linkCache;
-		$this->linkRenderer = $linkRenderer;
-		$this->permissionManager = $permissionManager;
-
-		$this->category = $category;
 		if ( $category !== null ) {
 			$this->categoryId = $categoryManager->getCategoryId( $category );
 		} else {
@@ -80,11 +65,7 @@ class LintErrorsPager extends TablePager {
 				$this->categoryManager->getVisibleCategories()
 			) );
 		}
-
-		$this->namespaces = $namespaces;
-		$this->exactMatch = $exactMatch;
-		$this->title = $title;
-		$this->throughTemplate = $throughTemplate ?: 'all';
+		$this->template = $template ?: 'all';
 		$this->tag = $tag ?: 'all';
 		parent::__construct( $context );
 	}
@@ -127,11 +108,13 @@ class LintErrorsPager extends TablePager {
 			$useIndex = true;
 		}
 
-		if ( $this->throughTemplate !== 'all' ) {
+		if ( $this->template !== 'all' ) {
 			$useIndex = false;
-			$op = ( $this->throughTemplate === 'with' ) ? '!=' : '=';
-			$queryBuilder->where( $this->mDb->expr( 'linter_template', $op, '' ) );
+			$op = ( $this->template === 'with' ) ? '!=' : '=';
+			$val = ( in_array( $this->template, [ 'with', 'without' ], true ) ) ? '' : $this->template;
+			$queryBuilder->where( $this->mDb->expr( 'linter_template', $op, $val ) );
 		}
+
 		if ( $this->tag !== 'all' && ( new HtmlTags( $this ) )->checkAllowedHTMLTags( $this->tag ) ) {
 			$useIndex = false;
 			$queryBuilder->where( [ 'linter_tag'  => $this->tag ] );
@@ -246,9 +229,17 @@ class LintErrorsPager extends TablePager {
 					$title = Title::newFromText( $lintError->params['file'], NS_FILE );
 					return Html::element( 'a', [
 						'href' => $title->getLocalUrl(),
-					], $title );
+					], $title->getPrefixedText() );
 				} elseif ( $category === 'duplicate-ids' ) {
 					return Html::element( 'code', [], $lintError->params['id'] );
+				} elseif ( $category === 'template-arg-in-extension-tag' ) {
+					$nameHtml = Html::element( 'code', [], $lintError->params['ext-name'] );
+					$parametersHtmlArray = [];
+					foreach ( $lintError->params['details'] as $parameter ) {
+						$parametersHtmlArray[] = Html::element( 'code', [], $parameter );
+					}
+					$parametersHtml = implode( ', ', $parametersHtmlArray );
+					return "$nameHtml: [ $parametersHtml ]";
 				}
 				return '';
 			case 'template':
@@ -258,6 +249,8 @@ class LintErrorsPager extends TablePager {
 
 				if ( isset( $lintError->templateInfo['multiPartTemplateBlock'] ) ) {
 					return $this->msg( 'multi-part-template-block' )->escaped();
+				} elseif ( isset( $lintError->templateInfo['parserFunction'] ) ) {
+					return $this->msg( 'parser-function' )->escaped();
 				} else {
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable Null checked above
 					$templateName = $lintError->templateInfo['name'];

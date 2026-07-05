@@ -50,9 +50,6 @@
 	"vector-toc-label": "Йөкмәткеһе",
 	"vector-toc-beginning": "Башы",
 	"vector-toc-toggle-button-label": "$1 бүлеген күрһәтергә/йәшерергә",
-	"vector-anon-user-menu-pages": "Танылмаған мөхәррирҙәр өсөн бит",
-	"vector-anon-user-menu-pages-learn": "Күберәк белергә",
-	"vector-anon-user-menu-pages-label": "Мөхәррирләү тураһында ентеклерәк",
 	"vector-main-menu-tooltip": "Төп меню",
 	"vector-toc-menu-tooltip": "Йөкмәткеһе",
 	"vector-toc-collapsible-button-label": "Йөкмәткене күрһәтергә/йәшерергә",
@@ -71,7 +68,5 @@
 	"empty-language-selector-body": "Башҡа телдәрҙә был бит юҡ",
 	"vector-toc-unpinned-popup": "Йөкмәтке бында күсерелгән.",
 	"vector-page-tools-unpinned-popup": "Ҡоралдар менюһы бында күсерелгән.",
-	"vector-main-menu-unpinned-popup": "Төп меню бында күсерелгән.",
-	"vector-2022-beta-preview-label": "Vector 2022 бета",
-	"vector-2022-beta-preview-description": "Vector 2022 яңы мөмкинлектәрен алдан ҡарап сығыу"
+	"vector-main-menu-unpinned-popup": "Төп меню бында күсерелгән."
 }

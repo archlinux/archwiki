@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Utilities;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Utilities;
 
-use MediaWiki\CheckUser\Investigate\Utilities\DurationManager;
+use MediaWiki\Extension\CheckUser\Investigate\Utilities\DurationManager;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 
 /**
  * @group CheckUser
- * @covers \MediaWiki\CheckUser\Investigate\Utilities\DurationManager
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Utilities\DurationManager
  */
 class DurationManagerTest extends MediaWikiIntegrationTestCase {
 

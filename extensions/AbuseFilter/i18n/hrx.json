@@ -194,7 +194,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Variable setze (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variable",
 	"abusefilter-edit-builder-vars-timestamp": "Zeitstempel von der Ännerung im Unix-Format",
-	"abusefilter-edit-builder-vars-accountname": "Benutzernoome (bei Erstellung von ein Benutzerkonto)",
+	"abusefilter-edit-builder-vars-account-name": "Benutzernoome (bei Erstellung von ein Benutzerkonto)",
 	"abusefilter-edit-builder-vars-action": "Aktion",
 	"abusefilter-edit-builder-vars-addedlines": "Doorrich die Beoorbeitung hinzugefüchte Zeile",
 	"abusefilter-edit-builder-vars-delta": "Grössenännrung von der Beoorbeitung",

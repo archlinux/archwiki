@@ -1,11 +1,13 @@
 <?php
 
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\Extension\TemplateStyles\Hooks;
 use MediaWiki\Extension\TemplateStyles\TemplateStylesContent;
 use MediaWiki\Extension\TemplateStyles\TemplateStylesContentHandler;
 use MediaWiki\Message\Message;
-use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 
@@ -40,7 +42,7 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 	public function testValidateSave() {
 		$content = new TemplateStylesContent( '.foo { bogus: bogus; }' );
 		$handler = $this->newHandler();
-		$page = new PageIdentityValue( 0, 1, 'Foo', PageIdentity::LOCAL );
+		$page = PageIdentityValue::localIdentity( 0, 1, 'Foo' );
 		$validationParams = new ValidationParams( $page, 0, 123 );
 
 		$this->assertEquals(
@@ -119,14 +121,45 @@ class TemplateStylesContentHandlerTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideSanitize
-	 * @param string $text Input text
-	 * @param array $options
-	 * @param Status $expect
 	 */
-	public function testSanitize( $text, $options, $expect ) {
+	public function testSanitize( string $text, array $options, Status $expect ) {
 		$content = new TemplateStylesContent( $text );
 		$contentHandler = $this->newHandler( $content->getModel() );
 		$this->assertEquals( $expect, $contentHandler->sanitize( $content, $options ) );
+	}
+
+	public function testSanitizeParserOutput() {
+		// Change the allowed urls for testing and reset cached MatcherFactory
+		$mf = new ReflectionProperty( Hooks::class, 'matcherFactory' );
+		$mf->setValue( null, null );
+		$sanitizers = new ReflectionProperty( Hooks::class, 'sanitizers' );
+		$sanitizers->setValue( null, [] );
+		MediaWiki\MediaWikiServices::getInstance()->resetServiceForTesting( 'ConfigFactory' );
+		$this->setMwGlobals( 'wgTemplateStylesAllowedUrls', [
+			'image' => [ '<https://example.com/(?:foo/(?\'filename\'[^/?#]*))?>' ]
+		] );
+		$text = '#a { background-image: url( https://example.com/foo/Test1.svg ) } '
+			. '#b { background-image: url( https://example.com/bar/Test2.svg ) } '
+			. '#c { background-image: url( "https://example.com/foo/Test3.png?abc" ) } ';
+		$expected = '.mw-parser-output #a{background-image:url("https://example.com/foo/Test1.svg")}'
+			. '.mw-parser-output #b{background-image:url("https://example.com/bar/Test2.svg")}'
+			. '.mw-parser-output #c{background-image:url("https://example.com/foo/Test3.png?abc")}';
+		$content = new TemplateStylesContent( $text );
+		$contentHandler = $this->newHandler( $content->getModel() );
+		$pout = new ParserOutput();
+		$options = [ 'parserOutput' => $pout ];
+
+		$this->assertEquals( Status::newGood( $expected ), $contentHandler->sanitize( $content, $options ) );
+
+		$mf->setValue( null, null );
+		$sanitizers->setValue( null, [] );
+		MediaWiki\MediaWikiServices::getInstance()->resetServiceForTesting( 'ConfigFactory' );
+
+		$images = $pout->getLinkList( ParserOutputLinkTypes::MEDIA );
+		$imageList = array_map( static function ( $x ) {
+			return $x['link']->getDBKey();
+		}, $images );
+		$this->assertEqualsCanonicalizing( [ 'Test1.svg', 'Test3.png' ], $imageList );
 	}
 
 	public function testInvalidWrapper() {

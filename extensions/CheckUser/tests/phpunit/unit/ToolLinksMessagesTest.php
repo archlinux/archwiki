@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit;
 
-use MediaWiki\CheckUser\ToolLinksMessages;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\ToolLinksMessages;
 use MediaWiki\Message\Message;
 use MediaWiki\ResourceLoader\Context;
 use MediaWikiUnitTestCase;
@@ -11,7 +11,7 @@ use MediaWikiUnitTestCase;
 /**
  * @author DannyS712
  * @group CheckUser
- * @covers \MediaWiki\CheckUser\ToolLinksMessages
+ * @covers \MediaWiki\Extension\CheckUser\ToolLinksMessages
  */
 class ToolLinksMessagesTest extends MediaWikiUnitTestCase {
 

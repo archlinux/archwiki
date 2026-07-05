@@ -346,7 +346,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Postavi promenljivu ($1)",
 	"abusefilter-edit-builder-group-vars": "Promenljive",
 	"abusefilter-edit-builder-vars-timestamp": "Juniksov vremenski potpis izmene ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Ime naloga u trenutku otvaranja ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Ime naloga u trenutku otvaranja ($1)",
 	"abusefilter-edit-builder-vars-action": "Radnja ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Dodati redovi u izmeni ($1)",
 	"abusefilter-edit-builder-vars-delta": "Promena veličine u izmeni ($1)",

@@ -3,15 +3,15 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
-use Psr\Container\ContainerInterface;
 use Wikimedia\JsonCodec\Hint;
-use Wikimedia\JsonCodec\JsonClassCodec;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecInterface;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\JsonCodecableWithCodecTrait;
+use Wikimedia\Parsoid\Utils\RichCodecable;
 use Wikimedia\Parsoid\Utils\Utils;
 
 /**
@@ -44,7 +44,15 @@ use Wikimedia\Parsoid\Utils\Utils;
  * @property DataMwExtAttribs $extAttribs Attributes for an extension tag or annotation
  */
 #[\AllowDynamicProperties]
-class DataMw implements JsonCodecable {
+class DataMw implements JsonCodecable, RichCodecable {
+	/*
+	 * Because the 'caption' and 'html' fields have embedded DocumentFragments
+	 * that /don't/ use the standard encoding, we need to use a custom
+	 * "WithCodec" trait which allows us to manually encode
+	 * the DocumentFragment (by passing the codec itself to the
+	 * serialization/deserialization methods).
+	 */
+	use JsonCodecableWithCodecTrait;
 
 	public function __construct( array $initialVals = [] ) {
 		foreach ( $initialVals as $k => $v ) {
@@ -64,6 +72,10 @@ class DataMw implements JsonCodecable {
 					break;
 			}
 		}
+	}
+
+	public function fromWellBalancedTemplate(): bool {
+		return isset( $this->parts ) && count( $this->parts ) === 1;
 	}
 
 	/** Returns true iff there are no dynamic properties of this object. */
@@ -113,6 +125,26 @@ class DataMw implements JsonCodecable {
 		$this->extAttribs->set( $name, $value );
 	}
 
+	public function equalsWithComparator( DataMw $other, callable $docFragEquals ): bool {
+		$propsA = (array)$this;
+		$propsB = (array)$other;
+		foreach ( [ 'caption', 'html' ] as $field ) {
+			$fA = $propsA[$field] ?? null;
+			$fB = $propsB[$field] ?? null;
+			if ( ( $fA === null ) !== ( $fB === null ) ) {
+				return false;
+			}
+			if ( $fA !== null ) {
+				if ( !$docFragEquals( $fA, $fB ) ) {
+					return false;
+				}
+				unset( $propsA[$field] );
+				unset( $propsB[$field] );
+			}
+		}
+		return $propsA == $propsB;
+	}
+
 	public function __clone() {
 		// Deep clone non-primitive properties
 
@@ -134,6 +166,42 @@ class DataMw implements JsonCodecable {
 				$this->$field = DOMDataUtils::cloneDocumentFragment( $this->$field );
 			}
 		}
+	}
+
+	/** @return Hint<DataMw> */
+	public static function hint(): Hint {
+		static $hint = null;
+		if ( $hint === null ) {
+			$hint = Hint::build( self::class, Hint::ALLOW_OBJECT );
+		}
+		return $hint;
+	}
+
+	/** @inheritDoc */
+	public static function defaultValue(): ?self {
+		return new DataMw;
+	}
+
+	/** @inheritDoc */
+	public function flatten(): ?string {
+		return null;
+	}
+
+	/** @inheritDoc */
+	public function embeddedDocumentFragments(): \Iterator {
+		foreach ( ( $this->attribs ?? [] ) as $a ) {
+			yield from $a->embeddedDocumentFragments();
+		}
+		if ( isset( $this->caption ) ) {
+			yield $this->caption;
+		}
+		// 'html' is also a DocumentFragment, but it is never set by core;
+		// instead the Indicator extension enumerates it for us.
+		// T416397: this should be unified with body->html, used by Cite.
+
+		// 'body.html' is a DocumentFragment; again it is used by the
+		// Cite extension and the Cite extension enumerates is.
+		// T416397: this should be unified with ->html, used by Indicator
 	}
 
 	/** @inheritDoc */
@@ -252,41 +320,5 @@ class DataMw implements JsonCodecable {
 		}
 		uksort( $json, static fn ( $a, $b )=>( $order[$a] ?? -1 ) - ( $order[$b] ?? -1 ) );
 		return new DataMw( $json );
-	}
-
-	/**
-	 * Custom JsonClassCodec for DataMw.
-	 *
-	 * Because the 'caption' and 'html' fields have embedded DocumentFragments
-	 * that /don't/ use the standard encoding, we need to use a custom
-	 * class codec which allows us to manually encode
-	 * the DocumentFragment (by passing the codec itself to the
-	 * serialization/deserialization methods).
-	 */
-	public static function jsonClassCodec(
-		JsonCodecInterface $codec, ContainerInterface $serviceContainer
-	): JsonClassCodec {
-		return new class( $codec ) implements JsonClassCodec {
-			private JsonCodecInterface $codec;
-
-			public function __construct( JsonCodecInterface $codec ) {
-				$this->codec = $codec;
-			}
-
-			/** @inheritDoc */
-			public function toJsonArray( $obj ): array {
-				return $obj->toJsonArray( $this->codec );
-			}
-
-			/** @inheritDoc */
-			public function newFromJsonArray( string $className, array $json ) {
-				return $className::newFromJsonArray( $this->codec, $json );
-			}
-
-			/** @inheritDoc */
-			public function jsonClassHintFor( string $className, string $keyName ) {
-				return $className::jsonClassHintFor( $keyName );
-			}
-		};
 	}
 }

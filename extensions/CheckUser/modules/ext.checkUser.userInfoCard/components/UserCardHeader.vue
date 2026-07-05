@@ -1,7 +1,7 @@
 <template>
 	<div class="ext-checkuser-userinfocard-header">
 		<div class="ext-checkuser-userinfocard-header-main">
-			<cdx-icon :icon="cdxIconUserAvatar"></cdx-icon>
+			<cdx-icon :icon="userIcon"></cdx-icon>
 			<div class="ext-checkuser-userinfocard-header-userinfo">
 				<span
 					ref="focusTrapRef"
@@ -34,10 +34,12 @@
 </template>
 
 <script>
-const { ref, onActivated, onMounted, nextTick } = require( 'vue' );
-const { CdxIcon, CdxButton } = require( '@wikimedia/codex' );
+const { ref, onActivated, onMounted, nextTick, computed } = require( 'vue' );
+const { CdxIcon, CdxButton } = require( '../codex.js' );
 const UserCardMenu = require( './UserCardMenu.vue' );
-const { cdxIconUserAvatar, cdxIconClose } = require( './icons.json' );
+const {
+	cdxIconUserAvatar, cdxIconUserTemporary, cdxIconClose, cdxIconUserBlocked
+} = require( './icons.json' );
 const useInstrument = require( '../composables/useInstrument.js' );
 
 // @vue/component
@@ -72,13 +74,24 @@ module.exports = exports = {
 		specialCentralAuthUrl: {
 			type: String,
 			default: ''
+		},
+		hasLocalBlockGlobalBlockOrLock: {
+			type: Boolean,
+			default: false
 		}
 	},
 	emits: [ 'close' ],
-	setup() {
+	setup( props ) {
 		const focusTrapRef = ref();
 		const logEvent = useInstrument();
 		const closeAriaLabel = mw.msg( 'checkuser-userinfocard-close-button-aria-label' );
+		const userIcon = computed( () => {
+			if ( props.hasLocalBlockGlobalBlockOrLock ) {
+				return cdxIconUserBlocked;
+			}
+			return mw.util.isTemporaryUser( props.username ) ?
+				cdxIconUserTemporary : cdxIconUserAvatar;
+		} );
 
 		function onUsernameClick() {
 			logEvent( 'link_click', {
@@ -105,7 +118,7 @@ module.exports = exports = {
 		} );
 
 		return {
-			cdxIconUserAvatar,
+			userIcon,
 			cdxIconClose,
 			closeAriaLabel,
 			onUsernameClick,

@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later AND BSD-3-Clause",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.45",
+		"MediaWiki": ">= 1.46",
 		"extensions": {
 			"WikiEditor": ">= 0.5.2"
 		}
@@ -20,7 +20,8 @@
 				"javascript": true,
 				"json": true,
 				"css": true,
-				"lua": true
+				"lua": true,
+				"vue": true
 			},
 			"description": "Temporary configuration flag to control conflicts with Extension:CodeMirror. Only modes that exist in CodeMirror need to be specified."
 		}
@@ -64,7 +65,6 @@
 			"dependencies": [
 				"ext.wikiEditor",
 				"ext.codeEditor.ace",
-				"jquery.ui",
 				"mediawiki.api",
 				"mediawiki.user",
 				"user.options",

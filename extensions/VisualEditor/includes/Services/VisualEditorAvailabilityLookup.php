@@ -82,9 +82,13 @@ class VisualEditorAvailabilityLookup {
 
 		// Get a list of namespace IDs where VisualEditor is enabled
 		$normalized = [];
-		foreach ( $configuredNamespaces as $namespaceName => $enabled ) {
-			$id = $this->namespaceInfo->getCanonicalIndex( strtolower( $namespaceName ) ) ?? $namespaceName;
-			$normalized[$id] = $enabled && $this->namespaceInfo->exists( $id );
+		foreach ( $configuredNamespaces as $id => $enabled ) {
+			if ( is_string( $id ) ) {
+				$id = $this->namespaceInfo->getCanonicalIndex( strtolower( $id ) );
+			}
+			if ( is_int( $id ) && $this->namespaceInfo->exists( $id ) ) {
+				$normalized[$id] = $enabled;
+			}
 		}
 
 		return array_keys( array_filter( $normalized ) );

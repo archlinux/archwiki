@@ -52,6 +52,22 @@ QUnit.module( 'mediawiki.api', ( hooks ) => {
 		assert.deepEqual( data, [], 'Simple POST request' );
 	} );
 
+	QUnit.test( 'post() with action sets a GET param (T421288)', async function ( assert ) {
+		const api = new mw.Api();
+
+		this.server.respond( [ 200, { 'Content-Type': 'application/json' }, '[]' ] );
+
+		await api.post( { action: 'foo', another: 'bar' } );
+		assert.true(
+			/action=foo/.test( this.server.requests[ 0 ].url ),
+			'POSTed request URL contains "action" as a GET parameter'
+		);
+		assert.false(
+			/another/.test( this.server.requests[ 0 ].url ),
+			'POSTed request URL does not contain other parameters'
+		);
+	} );
+
 	QUnit.test( 'API error errorformat=bc', async function ( assert ) {
 		const api = new mw.Api();
 
@@ -91,7 +107,6 @@ QUnit.module( 'mediawiki.api', ( hooks ) => {
 
 		await api.post( { action: 'test' }, { contentType: 'multipart/form-data' } );
 
-		assert.strictEqual( request.url, '/FormData/api.php', 'no query string' );
 		assert.true( request.requestBody instanceof FormData, 'Request uses FormData body' );
 	} );
 
@@ -109,7 +124,6 @@ QUnit.module( 'mediawiki.api', ( hooks ) => {
 
 		await api.post( { action: 'test' }, { contentType: 'multipart/form-data' } );
 
-		assert.strictEqual( request.url, '/FormData/api.php', 'no query string' );
 		assert.strictEqual( request.requestBody, 'action=test&format=json', 'Request uses query string body' );
 	} );
 
@@ -527,5 +541,35 @@ QUnit.module( 'mediawiki.api', ( hooks ) => {
 
 		assert.strictEqual( this.server.requests[ 0 ].requestHeaders[ 'Api-User-Agent' ], 'MediaWiki-JS/VERSION', 'Default user agent' );
 		assert.strictEqual( this.server.requests[ 1 ].requestHeaders[ 'Api-User-Agent' ], 'foo', 'Custom user agent' );
+	} );
+
+	QUnit.test( 'getErrorMessage()', async function ( assert ) {
+		// This method should have more tests :)
+
+		const api = new mw.Api();
+
+		this.server.respondWith( /action=query/, [
+			429,
+			{
+				'Retry-After': 1234,
+				'Content-Type': 'application/json'
+			},
+			// Request body is not used by #getErrorMessage. This is a possible error response from
+			// <https://wikitech.wikimedia.org/wiki/REST_Gateway/Rate_limiting>.
+			'{"httpCode":429,"httpReason":"Too Many Requests"}'
+		] );
+
+		const promise = api.get( {} );
+		await assert.rejects( promise, /^http$/, 'HTTP error should reject the deferred' );
+		await promise.catch( ( code, data ) => {
+			const $message = api.getErrorMessage( data );
+			assert.strictEqual(
+				$message.text(),
+				'(api-clientside-error-http-429-retry: (duration-minutes: 20)(and)(word-separator)(duration-seconds: 34))',
+				'Expected error message'
+			);
+		} );
+
+		assert.strictEqual( this.server.requests.length, 1, 'Requests made' );
 	} );
 } );

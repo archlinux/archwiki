@@ -11,7 +11,7 @@
 
 <script>
 const { ref, computed } = require( 'vue' );
-const { CdxMenuButton, CdxIcon } = require( '@wikimedia/codex' );
+const { CdxMenuButton, CdxIcon } = require( '../codex.js' );
 const { cdxIconEllipsis } = require( './icons.json' );
 const useWatchList = require( '../composables/useWatchList.js' );
 const useInstrument = require( '../composables/useInstrument.js' );

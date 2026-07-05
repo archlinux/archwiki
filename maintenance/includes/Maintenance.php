@@ -7,7 +7,6 @@
 namespace MediaWiki\Maintenance;
 
 use Closure;
-use ExecutableFinder;
 use Generator;
 use MediaWiki;
 use MediaWiki\Config\Config;
@@ -23,6 +22,7 @@ use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
 use MediaWiki\User\User;
+use MediaWiki\Utils\ExecutableFinder;
 use StatusValue;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILBFactory;
@@ -183,6 +183,12 @@ abstract class Maintenance {
 	 * @var ILBFactory|null Injected DB connection manager (e.g. LBFactorySingle); null if none
 	 */
 	private ?ILBFactory $lbFactory = null;
+
+	/**
+	 * Convert fatalError() to a throw in order to allow this class to be
+	 * tested.
+	 */
+	private bool $isTesting = false;
 
 	/**
 	 * Default constructor. Children should call this *first* if implementing
@@ -379,7 +385,7 @@ abstract class Maintenance {
 
 	/**
 	 * Programmatically set the value of the given option.
-	 * Useful for setting up child scripts, see runChild().
+	 * Useful for setting up child scripts, see createChild().
 	 *
 	 * @since 1.39
 	 *
@@ -392,7 +398,7 @@ abstract class Maintenance {
 
 	/**
 	 * Programmatically set the value of the given argument.
-	 * Useful for setting up child scripts, see runChild().
+	 * Useful for setting up child scripts, see createChild().
 	 *
 	 * @since 1.39
 	 *
@@ -547,7 +553,7 @@ abstract class Maintenance {
 		// If running PHPUnit tests we don't want to call exit, as it will end the test suite early.
 		// Instead, throw an exception that will still cause the relevant test to fail if the ::fatalError
 		// call was not expected.
-		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+		if ( defined( 'MW_PHPUNIT_TEST' ) && $this->isTesting ) {
 			throw new MaintenanceFatalError( $exitCode );
 		} else {
 			exit( $exitCode );
@@ -735,6 +741,7 @@ abstract class Maintenance {
 	 *   {@link Maintenance::execute} on the returned object.
 	 */
 	public function runChild( $maintClass, $classFile = null ) {
+		wfDeprecated( __METHOD__, '1.43' );
 		MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'runChild', '1.43' );
 		return self::createChild( $maintClass, $classFile );
 	}
@@ -1028,7 +1035,7 @@ abstract class Maintenance {
 		}
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getPrimaryDB();
-		$this->beginTransaction( $dbw, __METHOD__ );
+		$this->beginTransactionRound( __METHOD__ );
 
 		# Get "active" text records via the content table
 		$cur = [];
@@ -1081,7 +1088,7 @@ abstract class Maintenance {
 			$this->output( "done.\n" );
 		}
 
-		$this->commitTransaction( $dbw, __METHOD__ );
+		$this->commitTransactionRound( __METHOD__ );
 	}
 
 	/**
@@ -1129,19 +1136,21 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * @param string|false $virtualDomain
 	 * @return IReadableDatabase
 	 * @since 1.42
 	 */
-	protected function getReplicaDB(): IReadableDatabase {
-		return $this->getLBFactory()->getReplicaDatabase();
+	protected function getReplicaDB( string|false $virtualDomain = false ): IReadableDatabase {
+		return $this->getLBFactory()->getReplicaDatabase( $virtualDomain );
 	}
 
 	/**
+	 * @param string|false $virtualDomain
 	 * @return IDatabase
 	 * @since 1.42
 	 */
-	protected function getPrimaryDB(): IDatabase {
-		return $this->getLBFactory()->getPrimaryDatabase();
+	protected function getPrimaryDB( string|false $virtualDomain = false ): IDatabase {
+		return $this->getLBFactory()->getPrimaryDatabase( $virtualDomain );
 	}
 
 	/**

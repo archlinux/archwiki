@@ -99,7 +99,7 @@
 	"abusefilter-edit-builder-op-arithmetic-divide": "Mgawanyo (/)",
 	"abusefilter-edit-builder-group-misc": "Mseto",
 	"abusefilter-edit-builder-group-vars": "Vibadili",
-	"abusefilter-edit-builder-vars-accountname": "Jina la akaunti (wakati wa kufungua akaunti)",
+	"abusefilter-edit-builder-vars-account-name": "Jina la akaunti (wakati wa kufungua akaunti)",
 	"abusefilter-edit-builder-vars-action": "Tendo",
 	"abusefilter-edit-builder-vars-addedlines": "Laini zilizo ongezwa katika hariri",
 	"abusefilter-edit-builder-vars-delta": "Badiliko katika ukubwa wa hariri",

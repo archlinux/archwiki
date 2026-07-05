@@ -13,14 +13,14 @@ class TemplateStylesFontFaceAtRuleSanitizerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideRules
-	 * @param string $input
-	 * @param bool $handled
-	 * @param string|null $output
-	 * @param string|null $minified
-	 * @param array $errors
-	 * @param array $options
 	 */
-	public function testRules( $input, $handled, $output, $minified, $errors = [], $options = [] ) {
+	public function testRules(
+		string $input,
+		bool $handled,
+		string $output,
+		string $minified,
+		array $errors = []
+	) {
 		$san = new TemplateStylesFontFaceAtRuleSanitizer( new MatcherFactory() );
 		$rule = Parser::newFromString( $input )->parseRule();
 		$oldRule = clone $rule;
@@ -28,14 +28,8 @@ class TemplateStylesFontFaceAtRuleSanitizerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $handled, $san->handlesRule( $rule ) );
 		$ret = $san->sanitize( $rule );
 		$this->assertSame( $errors, $san->getSanitizationErrors() );
-		if ( $output === null ) {
-			$this->assertNull( $ret );
-		} else {
-			$this->assertNotNull( $ret );
-			$this->assertSame( $output, (string)$ret );
-			$this->assertSame( $minified, Util::stringify( $ret, [ 'minify' => true ] ) );
-		}
-
+		$this->assertSame( $output, (string)$ret );
+		$this->assertSame( $minified, Util::stringify( $ret, [ 'minify' => true ] ) );
 		$this->assertEquals( (string)$oldRule, (string)$rule, 'Rule wasn\'t overwritten' );
 	}
 

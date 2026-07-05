@@ -133,7 +133,7 @@ class Fun1Test extends MediaWikiIntegrationTestCase {
 		) );
 		$rendering = $f->toMMLTree();
 		preg_match_all( '/mathvariant="normal"/', $rendering, $matches );
-		$this->assertCount( 2, $matches[0] );
+		$this->assertCount( 3, $matches[0] );
 	}
 
 	public function testLlap() {

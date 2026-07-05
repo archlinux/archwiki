@@ -17,7 +17,7 @@ use Wikimedia\WRStats\WRStatsFactory;
  * @internal
  */
 class FilterProfiler {
-	public const SERVICE_NAME = 'AbuseFilterFilterProfiler';
+	public const SERVICE_NAME = ServiceNames::FilterProfiler;
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterConditionLimit',
@@ -42,44 +42,16 @@ class FilterProfiler {
 
 	private const KEY_PREFIX = 'abusefilter-profile';
 
-	/** @var WRStatsFactory */
-	private $statsFactory;
-
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var string */
-	private $localWikiID;
-
-	/** @var IBufferingStatsdDataFactory */
-	private $statsd;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var array */
+	/** @var array<string,array> */
 	private $statsSpecs;
 
-	/**
-	 * @param WRStatsFactory $statsFactory
-	 * @param ServiceOptions $options
-	 * @param string $localWikiID
-	 * @param IBufferingStatsdDataFactory $statsd
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
-		WRStatsFactory $statsFactory,
-		ServiceOptions $options,
-		string $localWikiID,
-		IBufferingStatsdDataFactory $statsd,
-		LoggerInterface $logger
+		private readonly WRStatsFactory $statsFactory,
+		private readonly ServiceOptions $options,
+		private readonly string $localWikiID,
+		private readonly IBufferingStatsdDataFactory $statsd,
+		private readonly LoggerInterface $logger
 	) {
-		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->statsFactory = $statsFactory;
-		$this->options = $options;
-		$this->localWikiID = $localWikiID;
-		$this->statsd = $statsd;
-		$this->logger = $logger;
 		$this->statsSpecs = [
 			'count' => self::STATS_TEMPLATE,
 			'total' => self::STATS_TEMPLATE,
@@ -102,8 +74,8 @@ class FilterProfiler {
 	 * Retrieve per-filter statistics.
 	 *
 	 * @param int $filter
-	 * @return array See self::NULL_FILTER_PROFILE for the returned array structure
-	 * @phan-return array{count:int,matches:int,total-time:float,total-cond:int}
+	 * @return array{count:int,matches:int,total-time:float,total-cond:int}
+	 * See self::NULL_FILTER_PROFILE for the returned array structure
 	 */
 	public function getFilterProfile( int $filter ): array {
 		$reader = $this->statsFactory->createReader(
@@ -121,8 +93,8 @@ class FilterProfiler {
 	 * Retrieve per-group statistics.
 	 *
 	 * @param string $group
-	 * @return array See self::NULL_GROUP_PROFILE for the returned array structure
-	 * @phan-return array{total:int,overflow:int,total-time:float,total-cond:int,matches:int}
+	 * @return array{total:int,overflow:int,total-time:float,total-cond:int,matches:int}
+	 * See self::NULL_GROUP_PROFILE for the returned array structure
 	 */
 	public function getGroupProfile( string $group ): array {
 		$reader = $this->statsFactory->createReader(
@@ -210,8 +182,7 @@ class FilterProfiler {
 	 * Record per-filter profiling, for all filters
 	 *
 	 * @param Title $title
-	 * @param array $data Profiling data
-	 * @phan-param array<string,array{time:float,conds:int,result:bool}> $data
+	 * @param array<string,array{time:float,conds:int,result:bool}> $data Profiling data
 	 */
 	public function recordPerFilterProfiling( Title $title, array $data ): void {
 		$slowFilterThreshold = $this->options->get( 'AbuseFilterSlowFilterRuntimeLimit' );

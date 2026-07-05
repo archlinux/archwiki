@@ -80,7 +80,7 @@ parsoid=wt2html
 |}
 ]]
 !! html/parsoid
-<figure typeof="mw:File/Thumb" data-parsoid='{"optList":[{"ck":"thumbnail","ak":"thumb"},{"ck":"width","ak":"50px"},{"ck":"caption","ak":"\n{|\n{{1x|&lt;span>foo&lt;/span>}}\n|}\n"}]}'><a href="./File:Foobar.jpg" class="mw-file-description"><img resource="./File:Foobar.jpg" src="http://example.com/images/thumb/3/3a/Foobar.jpg/50px-Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="6" width="50" srcset="http://example.com/images/thumb/3/3a/Foobar.jpg/75px-Foobar.jpg 1.5x, http://example.com/images/thumb/3/3a/Foobar.jpg/100px-Foobar.jpg 2x" class="mw-file-element" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"6","width":"50"},"sa":{"resource":"File:Foobar.jpg"}}'/></a><figcaption>
+<figure typeof="mw:File/Thumb" data-parsoid='{"optList":[{"ck":"thumbnail","ak":"thumb"},{"ck":"width","ak":"50px"},{"ck":"caption","ak":"\n{|\n{{1x|&lt;span>foo&lt;/span>}}\n|}\n"}]}'><a href="./File:Foobar.jpg" class="mw-file-description"><img resource="./File:Foobar.jpg" src="http://example.com/images/thumb/3/3a/Foobar.jpg/50px-Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="6" width="50" srcset="http://example.com/images/thumb/3/3a/Foobar.jpg/100px-Foobar.jpg 2x" class="mw-file-element" data-parsoid='{"a":{"resource":"./File:Foobar.jpg","height":"6","width":"50"},"sa":{"resource":"File:Foobar.jpg"}}'/></a><figcaption>
 <p about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"fostered":true,"autoInsertedStart":true,"firstWikitextNode":"TABLE","pi":[[{"k":"1"}]]}' data-mw='{"parts":["{|\n",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;span>foo&lt;/span>"}},"i":0}},"\n|}"]}'><span>foo</span></p><table about="#mwt2">
 
 </table>
@@ -274,4 +274,14 @@ Migrate leading empty extension into following div
 }}{{1x|<section begin="2011-05-16" /><div>bar</div>}}
 !! html/parsoid
 <div about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"stx":"html"}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;div>foo&lt;/div>\n"}},"i":0}}]}'>foo</div><div about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"stx":"html"}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;section begin=\"2011-05-16\" />&lt;div>bar&lt;/div>"}},"i":0}}]}'><link typeof="mw:Extension/section" about="#mwt3" data-mw='{"name":"section","attrs":{"begin":"2011-05-16"}}'/>bar</div>
+!! end
+
+!! test
+T410826: named arguments to parser functions in "old-style" DOM
+!! options
+parsoid=html2wt
+!! html/parsoid
+<p data-parsoid='{"dsr":[0,52,0,0]}'><span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"},{"k":"2"}]],"dsr":[0,52,null,null]}' data-mw='{"parts":[{"template":{"target":{"wt":"fullurl:User talk:cscott","function":"fullurl"},"params":{"action":{"wt":"edit&amp;section=new"}},"i":0}}]}'>//en.wikipedia.org/w/index.php?title=User_talk:Cscott&amp;action=edit&amp;section=new</span></p>
+!! wikitext
+{{fullurl:User talk:cscott|action=edit&section=new}}
 !! end

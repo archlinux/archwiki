@@ -47,6 +47,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Daha çox səhifə sil]]",
 	"nuke-deletemore": "Daha çox səhifə sil",
 	"nuke-pattern": "Səhifə adı üçün SQL LIKE kodu (məs: %)",
+	"nuke-pattern-leading-wildcard": "Kod <code>%</code> ilə başlaya bilməz. Zəhmət olmasa, işarədən əvvəl prefiks daxil edin (məsələn, <code>%Example</code> əvəzinə <code>Example%</code>).",
 	"nuke-nolist": "Davam etmək üçün əvvəlcə \"{{int:nuke-submit-list}}\" düyməsinə klikləyin, sonra silinmək üçün növbəyə qoyulacaq səhifələri seçin.",
 	"nuke-nopages-global": "Axtarışa uyğun səhifə yoxdur.",
 	"nuke-searchnotice-minmorethanmax": "Baytdakı minimum ölçü maksimum ölçüdən çoxdur, ona görə də heç bir səhifənin bu meyarlara cavab verməsi mümkün deyil.",

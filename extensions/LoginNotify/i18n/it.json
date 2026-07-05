@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Beta16",
+			"Dream Indigo",
 			"Elitre (WMF)",
-			"Greis",
-			"Dream Indigo"
+			"Greis"
 		]
 	},
 	"loginnotify-desc": "Avvisa gli utenti di accessi sospetti da un dispositivo e/o un indirizzo IP sconosciuto.",

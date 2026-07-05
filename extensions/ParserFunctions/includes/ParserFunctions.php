@@ -5,13 +5,14 @@ namespace MediaWiki\Extension\ParserFunctions;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
-use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageConverterFactory;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
+use MediaWiki\Page\LinkCache;
+use MediaWiki\Parser\CoreMagicVariables;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\PPNode;
@@ -19,8 +20,9 @@ use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Utils\MWTimestamp;
-use StringUtils;
+use WeakMap;
 use Wikimedia\RequestTimeout\TimeoutException;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Parser function handlers
@@ -31,7 +33,7 @@ class ParserFunctions {
 	private static ?ExprParser $mExprParser = null;
 	/** @var array[][][][] */
 	private static array $mTimeCache = [];
-	private static int $mTimeChars = 0;
+	private static ?WeakMap $timeCharsLimits = null;
 
 	/** ~10 seconds */
 	private const MAX_TIME_CHARS = 6000;
@@ -53,6 +55,29 @@ class ParserFunctions {
 			self::$mExprParser = new ExprParser;
 		}
 		return self::$mExprParser;
+	}
+
+	// Limit the length of the format string (per parser)
+	public static function getLimit( Parser $parser ): int {
+		return (
+			self::$timeCharsLimits !== null &&
+			self::$timeCharsLimits->offsetExists( $parser )
+		) ? self::$timeCharsLimits->offsetGet( $parser ) : 0;
+	}
+
+	public static function incrLimit( Parser $parser, int $amt ): bool {
+		$newValue = self::getLimit( $parser ) + $amt;
+		if ( self::$timeCharsLimits === null ) {
+			self::$timeCharsLimits = new WeakMap;
+		}
+		self::$timeCharsLimits->offsetSet( $parser, $newValue );
+		return $newValue > self::MAX_TIME_CHARS;
+	}
+
+	public static function resetLimit( Parser $parser ): void {
+		if ( self::$timeCharsLimits !== null ) {
+			self::$timeCharsLimits->offsetSet( $parser, 0 );
+		}
 	}
 
 	/**
@@ -408,22 +433,25 @@ class ParserFunctions {
 	}
 
 	/**
+	 * Build a human-readable label identifying what caused a cache TTL reduction.
+	 */
+	private static function makeCacheExpirySource( PPFrame $frame, string $funcName ): string {
+		return $frame->getTitle()->getPrefixedDBkey() . " ($funcName)";
+	}
+
+	/**
 	 * Used by time() and localTime()
 	 */
 	private function timeCommon(
-		Parser $parser, PPFrame $frame, string $format, string $date, string $language, bool $local
+		Parser $parser, string $format, string $date, string $language,
+		bool $local, string $source
 	): string {
-		$this->hookContainer->register(
-			'ParserClearState',
-			static function () {
-				self::$mTimeChars = 0;
-			}
-		);
-
+		$unixTimestamp = '0';
 		if ( $date === '' ) {
-			$cacheKey = $parser->getOptions()->getTimestamp();
-			$timestamp = new MWTimestamp( $cacheKey );
+			$timestamp = new MWTimestamp( $parser->getParseTime() );
+			$cacheKey = $timestamp->getTimestamp( TS_MW );
 			$date = $timestamp->getTimestamp( TS_ISO_8601 );
+			$unixTimestamp = $timestamp->getTimestamp( TS_UNIX );
 			$useTTL = true;
 		} else {
 			$cacheKey = $date;
@@ -432,7 +460,7 @@ class ParserFunctions {
 		if ( isset( self::$mTimeCache[$format][$cacheKey][$language][(int)$local] ) ) {
 			$cachedVal = self::$mTimeCache[$format][$cacheKey][$language][(int)$local];
 			if ( $useTTL && $cachedVal[1] !== null ) {
-				$frame->setTTL( $cachedVal[1] );
+				CoreMagicVariables::applyCacheExpiry( $parser, $cachedVal[1], (int)$unixTimestamp, $source );
 			}
 			return $cachedVal[0];
 		}
@@ -487,14 +515,14 @@ class ParserFunctions {
 				$parser->msg( 'pfunc_time_error' )->escaped() .
 				'</strong>';
 		} else {
-			self::$mTimeChars += strlen( $format );
-			if ( self::$mTimeChars > self::MAX_TIME_CHARS ) {
+			if ( self::incrLimit( $parser, strlen( $format ) ) ) {
 				return '<strong class="error">' .
 					$parser->msg( 'pfunc_time_too_long' )->escaped() .
 					'</strong>';
 			}
 
 			// Language can't deal with BC years
+			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			if ( $ts < 0 ) {
 				return '<strong class="error">' .
 					$parser->msg( 'pfunc_time_too_small' )->escaped() .
@@ -509,11 +537,12 @@ class ParserFunctions {
 
 			$langObject = $this->languageFactory->getLanguage(
 				$this->normalizeLangCode( $parser, $language ) );
+			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			$result = $langObject->sprintfDate( $format, $ts, $tz, $ttl );
 		}
 		self::$mTimeCache[$format][$cacheKey][$language][(int)$local] = [ $result, $ttl ];
 		if ( $useTTL && $ttl !== null ) {
-			$frame->setTTL( $ttl );
+			CoreMagicVariables::applyCacheExpiry( $parser, $ttl, (int)$unixTimestamp, $source );
 		}
 		return $result;
 	}
@@ -546,7 +575,8 @@ class ParserFunctions {
 		$date = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
 		$language = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
 		$local = isset( $args[3] ) && trim( $frame->expand( $args[3] ) );
-		return $this->timeCommon( $parser, $frame, $format, $date, $language, $local );
+		return $this->timeCommon( $parser, $format, $date, $language, $local,
+			self::makeCacheExpirySource( $frame, '#time' ) );
 	}
 
 	/**
@@ -566,7 +596,8 @@ class ParserFunctions {
 		$format = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
 		$date = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
 		$language = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
-		return $this->timeCommon( $parser, $frame, $format, $date, $language, true );
+		return $this->timeCommon( $parser, $format, $date, $language, true,
+			self::makeCacheExpirySource( $frame, '#timel' ) );
 	}
 
 	/**
@@ -623,7 +654,8 @@ class ParserFunctions {
 		$langCode = $this->normalizeLangCode( $parser, $langCode );
 		$lang = $this->languageFactory->getLanguage( $langCode );
 		$format = $lang->getDateFormatString( $type, 'default' );
-		return $this->timeCommon( $parser, $frame, $format, $date, $langCode, $local );
+		return $this->timeCommon( $parser, $format, $date, $langCode, $local,
+			self::makeCacheExpirySource( $frame, $local ? '#timefl' : '#timef' ) );
 	}
 
 	/**

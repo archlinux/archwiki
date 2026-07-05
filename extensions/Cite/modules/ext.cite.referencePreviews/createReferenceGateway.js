@@ -64,7 +64,7 @@ module.exports = function createReferenceGateway() {
 	 * @return {string|null}
 	 */
 	function scrapeReferenceType( referenceElement ) {
-		const KNOWN_TYPES = [ 'book', 'journal', 'news', 'note', 'web' ];
+		const KNOWN_TYPES = [ 'book', 'journal', 'news', 'note', 'map', 'web' ];
 		let type = null;
 		const citeTags = referenceElement.querySelectorAll( 'cite[class]' );
 		Array.prototype.forEach.call( citeTags, ( element ) => {
@@ -109,7 +109,9 @@ module.exports = function createReferenceGateway() {
 			url: `#${ id }`,
 			extract: scrapeReferenceText( referenceTextElement, referenceParentTextElement ),
 			type: TYPE_REFERENCE,
-			referenceType: scrapeReferenceType( referenceParentTextElement || referenceTextElement ),
+			referenceType: scrapeReferenceType(
+				referenceParentTextElement || referenceTextElement
+			),
 			// Note: Even the top-most HTMLHtmlElement is guaranteed to have a parent.
 			sourceElementId: el.parentNode.id
 		};

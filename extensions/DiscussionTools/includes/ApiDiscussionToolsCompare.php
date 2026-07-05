@@ -14,21 +14,14 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsCompare extends ApiBase {
 
-	private CommentParser $commentParser;
-	private VisualEditorParsoidClientFactory $parsoidClientFactory;
-	private RevisionLookup $revisionLookup;
-
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		VisualEditorParsoidClientFactory $parsoidClientFactory,
-		CommentParser $commentParser,
-		RevisionLookup $revisionLookup
+		private readonly VisualEditorParsoidClientFactory $parsoidClientFactory,
+		private readonly CommentParser $commentParser,
+		private readonly RevisionLookup $revisionLookup,
 	) {
 		parent::__construct( $main, $name );
-		$this->parsoidClientFactory = $parsoidClientFactory;
-		$this->commentParser = $commentParser;
-		$this->revisionLookup = $revisionLookup;
 	}
 
 	/**

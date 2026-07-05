@@ -1,8 +1,10 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\Gadgets\Gadget;
 use MediaWiki\Extension\Gadgets\GadgetResourceLoaderModule;
 use MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionLookup;
 use Wikimedia\ObjectCache\HashBagOStuff;
 use Wikimedia\ObjectCache\WANObjectCache;
@@ -38,6 +40,10 @@ trait GadgetTestTrait {
 			new GadgetResourceLoaderModule( [ 'id' => null ] )
 		);
 		$module->gadget = $g;
+		$module->setConfig( new HashConfig( [
+			MainConfigNames::UseSiteJs => true,
+			MainConfigNames::UseSiteCss => true
+		] ) );
 		return $module;
 	}
 

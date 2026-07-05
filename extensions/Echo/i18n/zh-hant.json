@@ -16,6 +16,7 @@
 			"Liflon",
 			"Littletung",
 			"Liuxinyu970226",
+			"LowensteinYang",
 			"LuciferianThomas",
 			"Macofe",
 			"Shirayuki",
@@ -32,8 +33,7 @@
 			"一個正常人",
 			"列维劳德",
 			"沈澄心",
-			"逆襲的天邪鬼",
-			"LowensteinYang"
+			"逆襲的天邪鬼"
 		]
 	},
 	"echo-desc": "用來通知使用者事件及訊息的系統",
@@ -128,7 +128,7 @@
 	"echo-api-failure-cross-wiki": "對遠端網域的存取被拒絕。",
 	"echo-notification-placeholder": "無任何通知。",
 	"echo-notification-placeholder-filters": "沒有任何符合這些條件的通知。",
-	"echo-notification-loginrequired": "您必須登入方可查閱通知。",
+	"echo-notification-loginrequired": "您必須登入方可查閱你的通知。",
 	"echo-notification-popup-loginrequired": "請登入以檢視您的通知。",
 	"echo-notification-markasread": "標記為已讀",
 	"echo-notification-markasunread": "標記為未讀取",
@@ -271,7 +271,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|推送訂閱管理員}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:推送訂閱管理員",
 	"notification-subject-email-verify-email-reminder": "驗證{{GENDER:$1|您的}}電子郵件",
-	"notification-header-verify-email-reminder": "請<strong>驗證{{GENDER:$1|您的}}電子郵件地址</strong>，以讓我們知道{{GENDER:$1|您的}}帳號上的電子郵件地址確實屬於{{GENDER:$1|您}}。",
+	"notification-header-verify-email-reminder": "$2{{GENDER:$2|先生，你好|女士，妳好|先生/女士，您好}}：\n請<strong>驗證{{GENDER:$1|您的}}電子郵件地址</strong>，以讓我們知道{{GENDER:$1|您的}}帳號上的電子郵件地址確實屬於{{GENDER:$1|您}}。",
 	"notification-link-text-verify-email-reminder": "管理電子郵件偏好設定",
 	"notification-verify-email-reminder-link-label": "確認電子郵件"
 }

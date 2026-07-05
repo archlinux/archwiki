@@ -2,36 +2,39 @@
 
 namespace MediaWiki\Extension\OATHAuth\Tests\Integration\Key;
 
+use MediaWiki\Extension\OATHAuth\Key\RecoveryCode;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
+use MediaWiki\Extension\OATHAuth\Tests\Integration\EncryptionTestTrait;
 use MediaWiki\Request\WebRequest;
-use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
+use OutOfRangeException;
 use SodiumException;
 use UnexpectedValueException;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys
+ * @covers \MediaWiki\Extension\OATHAuth\Key\AuthKey
  * @covers \MediaWiki\Extension\OATHAuth\Key\EncryptionHelper
+ * @covers \MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys
+ * @covers \MediaWiki\Extension\OATHAuth\Key\RecoveryCode
  * @covers \MediaWiki\Extension\OATHAuth\Module\TOTP
  * @covers \MediaWiki\Extension\OATHAuth\OATHAuthServices
- * @covers \MediaWiki\Extension\OATHAuth\OATHUser
  * @group Database
  */
 class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
-	public function encryptionTestSetup() {
-		if ( !extension_loaded( 'sodium' ) ) {
-			$this->markTestSkipped( 'sodium extension not installed, skipping' );
-		}
-		$this->setMwGlobals( 'wgOATHSecretKey', 'f901c7d7ecc25c90229c01cec0efec1b521a5e2eb6761d29007dde9566c4536a' );
-		$this->getServiceContainer()->resetServiceForTesting( 'OATHAuth.EncryptionHelper' );
-		$this->assertTrue(
-			OATHAuthServices::getInstance( $this->getServiceContainer() )
-				->getEncryptionHelper()
-				->isEnabled(),
-		);
+	use EncryptionTestTrait;
+
+	private const NONCE = 'ZQLYMZGFRFXA62IPRSX6ZQGZERFIM6M6ZQ4PI2I=';
+	// The two below correspond to each other with the above nonce
+	private const VALID_ENCRYPTED_RECOVERY_KEY = 'YD576FTL362W5AJL6GYNI55SRZFBWV72NWAF3IZV2NSMXX2X5T2A====';
+	private const VALID_RECOVERY_KEY = 'IETUSRVABHG54F33';
+	private const INVALID_ENCRYPTED_RECOVERY_KEY = '88asdyf09sadf';
+
+	public function setUp(): void {
+		$this->setMwGlobals( 'wgOATHSecretKey', false );
 	}
 
 	public function testDeserializationUnencrypted() {
@@ -54,29 +57,39 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $key->getRecoveryCodeKeys(), $deserialized->getRecoveryCodeKeys() );
 	}
 
-	public function testNewFromArrayWithNonce() {
+	public function testNewFromArrayWithNonce_encryptionDisabled() {
 		$this->setMwGlobals( 'wgOATHSecretKey', false );
 		$this->expectException( UnexpectedValueException::class );
-		$keyArray = [
-			'recoverycodekeys' => [ '88asdyf09sadf' ],
+		RecoveryCodeKeys::newFromArray( [
+			'recoverycodekeys' => [ self::INVALID_ENCRYPTED_RECOVERY_KEY ],
 			'nonce' => 'bad_value',
-		];
-		$key = RecoveryCodeKeys::newFromArray( $keyArray );
+		] );
+	}
 
-		$this->encryptionTestSetup();
-
+	public function testNewFromArrayWithNonce_invalidKey() {
+		$this->encryptionIntegrationTestSetup();
 		$this->expectException( SodiumException::class );
-		$key = RecoveryCodeKeys::newFromArray( $keyArray );
+		RecoveryCodeKeys::newFromArray( [
+			'recoverycodekeys' => [ self::INVALID_ENCRYPTED_RECOVERY_KEY ],
+			'nonce' => 'bad_value',
+		] );
+	}
 
+	public function testNewFromArrayWithNonce_validKey() {
+		$this->encryptionIntegrationTestSetup();
 		$key = RecoveryCodeKeys::newFromArray( [
-			'recoverycodekeys' => [ '88as3hh433jj2o22' ],
-			'nonce' => '7LRMXBX2AKPYWDBUBDHCN2WCFJXFX4XR2GZRV7Q=',
+			'recoverycodekeys' => [ self::VALID_ENCRYPTED_RECOVERY_KEY ],
+			'nonce' => self::NONCE,
 		] );
 		$this->assertInstanceOf( RecoveryCodeKeys::class, $key );
+
+		$recoveryCodes = $key->getRecoveryCodeKeys();
+		$this->assertCount( 1, $recoveryCodes );
+		$this->assertSame( self::VALID_RECOVERY_KEY, $recoveryCodes[0] );
 	}
 
 	public function testNewFromArrayWithEncryption() {
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 
 		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 10 );
 		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [] ] );
@@ -88,39 +101,49 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 			'nonce' => $data['nonce'],
 		] );
 
-		$this->assertEquals(
-			OATHAuthServices::getInstance( $this->getServiceContainer() )
-				->getEncryptionHelper()
-				->decryptStringArrayValues( $data['recoverycodekeys'], $data['nonce'] ),
-			$keysPostSerialization->getRecoveryCodeKeys(),
-		);
+		$encryptionHelper = OATHAuthServices::getInstance( $this->getServiceContainer() )->getEncryptionHelper();
+		$decryptedKeys = [];
+		foreach ( $data['recoverycodekeys'] as $recoveryCodeKeys ) {
+			$decryptedKeys[] = $encryptionHelper->decrypt( $recoveryCodeKeys, $data['nonce'] );
+		}
+
+		$this->assertEquals( $decryptedKeys, $keysPostSerialization->getRecoveryCodeKeys() );
 	}
 
 	public function testJsonSerializerWithEncryption() {
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 10 );
 		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [] ] );
 		$keys->regenerateRecoveryCodeKeys();
 		$data = $keys->jsonSerialize();
 		$this->assertArrayHasKey( 'nonce', $data );
 		$this->assertArrayHasKey( 'recoverycodekeys', $data );
-		$config = OATHAuthServices::getInstance( $this->getServiceContainer() )->getConfig();
+		$config = $this->getServiceContainer()->getMainConfig();
 		$this->assertCount( $config->get( 'OATHRecoveryCodesCount' ), $data['recoverycodekeys'] );
 		$this->assertNotEquals( $data['recoverycodekeys'], $keys->getRecoveryCodeKeys() );
 	}
 
-	public function testDoNotReencryptEncryptedKeyData() {
-		$this->encryptionTestSetup();
-
-		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [] ] );
+	public function testEncryptsKeyWithData() {
+		$this->encryptionIntegrationTestSetup();
+		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [
+			[ 'TESTCODE', [ 'foo' => 'bar' ] ],
+		] ] );
 		$data = $keys->jsonSerialize();
-		$encryptedData = $keys->getRecoveryCodeKeysEncryptedAndNonce();
-		$oldEncryptedRecoveryCodes = $encryptedData[0];
-		$oldNonce = $encryptedData[1];
+		$this->assertArrayHasKey( 'nonce', $data );
+		$this->assertArrayHasKey( 'recoverycodekeys', $data );
+		$this->assertSame( [ 'TESTCODE' ], $keys->getRecoveryCodeKeys() );
+	}
 
-		$newData = $keys->jsonSerialize();
-		$this->assertEquals( $oldEncryptedRecoveryCodes, $newData['recoverycodekeys'] );
-		$this->assertEquals( $oldNonce, $newData['nonce'] );
+	public function testDoNotReencryptEncryptedKeyData() {
+		$this->encryptionIntegrationTestSetup();
+
+		$keys = RecoveryCodeKeys::newFromArray( [
+			'recoverycodekeys' => [ self::VALID_ENCRYPTED_RECOVERY_KEY ],
+			'nonce' => self::NONCE,
+		] );
+		$serializedData = $keys->jsonSerialize();
+		$this->assertEquals( [ self::VALID_ENCRYPTED_RECOVERY_KEY ], $serializedData['recoverycodekeys'] );
+		$this->assertEquals( self::NONCE, $serializedData['nonce'] );
 	}
 
 	public function testGetSetFunctions(): void {
@@ -136,8 +159,7 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testVerify(): void {
-		$mockUserIdentity = $this->createMock( UserIdentity::class );
-		$mockWebRequest = $this->createMock( WebRequest::class, [ 'getSecurityLogContext' ] );
+		$mockWebRequest = $this->createMock( WebRequest::class );
 		$mockOATHUser = $this->createMock( OATHUser::class );
 		$mockOATHUser->method( 'getCentralId' )
 			->willReturn( 12345 );
@@ -145,7 +167,7 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $this->getTestUser()->getUser() );
 		$this->setTemporaryHook(
 			'GetSecurityLogContext',
-			static function ( array $info, array &$context ) use ( $mockWebRequest, $mockUserIdentity ) {
+			static function ( array $info, array &$context ) {
 				$context['foo'] = 'bar';
 			}
 		);
@@ -154,24 +176,46 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 
 		$testData = [];
 		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [] ] );
-		$this->assertSame( false, $keys->verify( $testData, $mockOATHUser ) );
+		$this->assertFalse( $keys->verify( $mockOATHUser, $testData ) );
 
 		$keys->regenerateRecoveryCodeKeys();
 
 		$testData = [ 'recoverycode' => 'bad_token' ];
-		$this->assertSame( false, $keys->verify( $testData, $mockOATHUser ) );
+		$this->assertFalse( $keys->verify( $mockOATHUser, $testData ) );
 
-		$config = OATHAuthServices::getInstance( $this->getServiceContainer() )->getConfig();
+		$config = $this->getServiceContainer()->getMainConfig();
 		$this->assertCount( $config->get( 'OATHRecoveryCodesCount' ), $keys->getRecoveryCodeKeys() );
 
 		// Test that verify works with a generated key
 		$testData = [ 'recoverycode' => $keys->getRecoveryCodeKeys()[0] ];
-		$this->assertSame( true, $keys->verify( $testData, $mockOATHUser ) );
+		$this->assertTrue( $keys->verify( $mockOATHUser, $testData ) );
+	}
 
-		$this->assertCount( $config->get( 'OATHRecoveryCodesCount' ) - 1, $keys->getRecoveryCodeKeys() );
+	/** @dataProvider provideRemoveCode */
+	public function testRemoveCode( int $originalCodeCount, int $expectedCodeCount ): void {
+		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 10 );
+		$mockOATHUser = $this->createMock( OATHUser::class );
+		$mockOATHUser->method( 'getUser' )
+			->willReturn( $this->getTestUser()->getUser() );
 
-		// Test that you can't verify twice (in a row) with the same recovery code
-		$this->assertSame( false, $keys->verify( $testData, $mockOATHUser ) );
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' )
+		];
+		while ( count( $codes ) < $originalCodeCount ) {
+			$codes[] = RecoveryCode::newRandom();
+		}
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$this->assertArrayContains( [ 'TESTCODE' ], $keys->getRecoveryCodeKeys() );
+
+		$keys->removeRecoveryCode( $mockOATHUser, 'TESTCODE' );
+		$this->assertNotContains( 'TESTCODE', $keys->getRecoveryCodeKeys() );
+		$this->assertCount( $expectedCodeCount, $keys->getRecoveryCodeKeys() );
+	}
+
+	public static function provideRemoveCode(): iterable {
+		yield 'There are also other keys' => [ 5, 4 ];
+		yield 'The removed key is the last one' => [ 1, 10 ];
 	}
 
 	public function testIsValidRecoveryCode(): void {
@@ -181,5 +225,181 @@ class RecoveryCodeKeysTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $key->isValidRecoveryCode( ' 64SZLJTTPRI5XBUE ' ) );
 		// Wrong token
 		$this->assertFalse( $key->isValidRecoveryCode( 'WIQGC24UJUFXQDW4' ) );
+	}
+
+	public function testGenerateAdditionalCodes(): void {
+		$keys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [ 'BL5KE9W38GYGEB9T' ] ] );
+		$this->assertSame( [ 'BL5KE9W38GYGEB9T' ], $keys->getRecoveryCodeKeys() );
+
+		$newCodes = $keys->generateAdditionalRecoveryCodeKeys( 1 );
+		$this->assertCount( 1, $newCodes );
+		$this->assertCount( 2, $keys->getRecoveryCodeKeys() );
+
+		$existingKeys = $keys->getRecoveryCodeKeys();
+		$this->assertSame( 'BL5KE9W38GYGEB9T', $existingKeys[0] );
+	}
+
+	public function testGenerateAdditionalCodesWithEncryption(): void {
+		$this->encryptionIntegrationTestSetup();
+
+		$keysObject = RecoveryCodeKeys::newFromArray( [
+			'recoverycodekeys' => [ self::VALID_ENCRYPTED_RECOVERY_KEY ],
+			'nonce' => self::NONCE,
+		] );
+		$existingKeysInitial = $keysObject->getRecoveryCodeKeys();
+		$this->assertCount( 1, $existingKeysInitial );
+
+		$keysObject->generateAdditionalRecoveryCodeKeys( 1 );
+		$existingKeysPreSerialization = $keysObject->getRecoveryCodeKeys();
+		$this->assertCount( 2, $existingKeysPreSerialization );
+		$this->assertSame( $existingKeysInitial[0], $existingKeysPreSerialization[0] );
+
+		$data = $keysObject->jsonSerialize();
+		$keysObjectPostSerialization = RecoveryCodeKeys::newFromArray( $data );
+		$existingKeysPostSerialization = $keysObjectPostSerialization->getRecoveryCodeKeys();
+		$this->assertCount( 2, $existingKeysPostSerialization );
+		$this->assertSame( $existingKeysInitial[0], $existingKeysPostSerialization[0] );
+	}
+
+	/** @dataProvider provideWithEncryption */
+	public function testDataIsPreservedWhenSerializing( bool $useEncryption ): void {
+		if ( $useEncryption ) {
+			$this->encryptionIntegrationTestSetup();
+			$originalData = [
+				'recoverycodekeys' => [ [ self::VALID_ENCRYPTED_RECOVERY_KEY, [ 'foo' => 'bar' ] ] ],
+				'nonce' => self::NONCE,
+			];
+		} else {
+			$originalData = [
+				'recoverycodekeys' => [ [ 'KEY', [ 'foo' => 'bar' ] ] ]
+			];
+		}
+
+		$keysObject = RecoveryCodeKeys::newFromArray( $originalData );
+		$serializedData = $keysObject->jsonSerialize();
+
+		$this->assertSame( $originalData, $serializedData );
+	}
+
+	public static function provideWithEncryption(): iterable {
+		yield 'No encryption' => [ false ];
+		yield 'With encryption' => [ true ];
+	}
+
+	public function testSkipsExpiredKeysWhenInitializing() {
+		ConvertibleTimestamp::setFakeTime( '20260101000000' );
+
+		$keyData = [
+			'recoverycodekeys' => [
+				[ 'VALID_KEY', [ 'expiry' => '20270101000000' ] ],
+				[ 'EXPIRED_KEY', [ 'expiry' => '20250101000000' ] ],
+			]
+		];
+		$keys = RecoveryCodeKeys::newFromArray( $keyData );
+		$this->assertSame( [ 'VALID_KEY' ], $keys->getRecoveryCodeKeys() );
+		$this->assertSame( '20270101000000', $keys->getRecoveryCodes()[0]->getExpiryTimestamp() );
+	}
+
+	public function testRegeneratesCodesWhenLastOneIsUsed() {
+		ConvertibleTimestamp::setFakeTime( '20260101000000' );
+		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 10 );
+
+		$mockOATHUser = $this->createMock( OATHUser::class );
+		$mockOATHUser->method( 'getUser' )
+			->willReturn( $this->getTestUser()->getUser() );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+			RecoveryCode::newFromPlaintext( 'EXPIRINGCODE', [ 'expiry' => '20270101000000' ] ),
+		];
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$this->assertArrayContains( [ 'TESTCODE', 'EXPIRINGCODE' ], $keys->getRecoveryCodeKeys() );
+
+		$keys->removeRecoveryCode( $mockOATHUser, 'TESTCODE' );
+		$this->assertNotContains( 'TESTCODE', $keys->getRecoveryCodeKeys() );
+		$this->assertCount( 11, $keys->getRecoveryCodeKeys() );
+	}
+
+	public function testDropsTemporaryWhenRegenerating_notEnoughSlots() {
+		ConvertibleTimestamp::setFakeTime( '20260101000000' );
+		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 2 );
+		$this->setMwGlobals( 'wgOATHMaxRecoveryCodesCount', 3 );
+
+		$mockOATHUser = $this->createMock( OATHUser::class );
+		$mockOATHUser->method( 'getUser' )
+			->willReturn( $this->getTestUser()->getUser() );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+			RecoveryCode::newFromPlaintext( 'EXPIRING1', [ 'expiry' => '20270101000000' ] ),
+			RecoveryCode::newFromPlaintext( 'EXPIRING2', [ 'expiry' => '20270101000000' ] ),
+		];
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$this->assertArrayContains( [ 'TESTCODE', 'EXPIRING1', 'EXPIRING2' ], $keys->getRecoveryCodeKeys() );
+
+		$keys->removeRecoveryCode( $mockOATHUser, 'TESTCODE' );
+		$this->assertNotContains( 'TESTCODE', $keys->getRecoveryCodeKeys() );
+		$this->assertNotContains( 'EXPIRING1', $keys->getRecoveryCodeKeys() );
+		$this->assertCount( 3, $keys->getRecoveryCodeKeys() );
+	}
+
+	public function testCapsNumberOfCodesAtMaximum() {
+		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 100 );
+		$this->setMwGlobals( 'wgOATHMaxRecoveryCodesCount', 2 );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+		];
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$keys->regenerateRecoveryCodeKeys();
+
+		$this->assertNotContains( 'TESTCODE', $keys->getRecoveryCodeKeys() );
+		$this->assertCount( 2, $keys->getRecoveryCodeKeys() );
+	}
+
+	public function testGenerateAdditionalBeyondMaximum() {
+		$this->setMwGlobals( 'wgOATHMaxRecoveryCodesCount', 2 );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+		];
+
+		$this->expectException( OutOfRangeException::class );
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$keys->generateAdditionalRecoveryCodeKeys( 2 );
+	}
+
+	public function testGenerateAdditionalBeyondMaximum_noThrow() {
+		$this->setMwGlobals( 'wgOATHMaxRecoveryCodesCount', 2 );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+		];
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$newCodes = $keys->generateAdditionalRecoveryCodeKeys( 2, [], true );
+
+		$this->assertCount( 1, $newCodes );
+		$this->assertCount( 2, $keys->getRecoveryCodeKeys() );
+		$this->assertContains( 'TESTCODE', $keys->getRecoveryCodeKeys() );
+	}
+
+	public function testRemoveTemporaryCodes() {
+		ConvertibleTimestamp::setFakeTime( '20260101000000' );
+
+		$codes = [
+			RecoveryCode::newFromPlaintext( 'TESTCODE' ),
+			RecoveryCode::newFromPlaintext( 'EXPIRINGCODE', [ 'expiry' => '20270101000000' ] ),
+		];
+
+		$keys = new RecoveryCodeKeys( null, null, null, $codes );
+		$this->assertArrayContains( [ 'TESTCODE', 'EXPIRINGCODE' ], $keys->getRecoveryCodeKeys() );
+
+		$keys->removeTemporaryCodes();
+		$this->assertNotContains( 'EXPIRINGCODE', $keys->getRecoveryCodeKeys() );
+		$this->assertCount( 1, $keys->getRecoveryCodeKeys() );
 	}
 }

@@ -36,6 +36,7 @@
 			"VezonThunder"
 		]
 	},
+	"collabpad-disabled": "CollabPad ei ole käytössä tässä wikissä.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Tuotu kohteesta $1",
 	"collabpad": "CollabPad",
@@ -255,6 +256,7 @@
 	"visualeditor-educationpopup-dismiss": "Selvä",
 	"visualeditor-expandable-less": "Piilota",
 	"visualeditor-expandable-more": "Laajenna",
+	"visualeditor-expandableerror-toggle": "Vaihda näkyvyyttä",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Sivun otsikko",
 	"visualeditor-formatdropdown-format-mw-heading2": "Väliotsikko",
@@ -262,6 +264,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Alaotsikko 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Alaotsikko 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Alaotsikko 4",
+	"visualeditor-fullpage-switch-label": "Muokkaa koko sivua",
 	"visualeditor-generating-wikitext-progress": "Luodaan wikitekstiä",
 	"visualeditor-includes-noinclude-start": "Poiminnosta poissuljetun sisällön alkukohta",
 	"visualeditor-includes-noinclude-end": "Poiminnosta poissuljetun sisällön loppukohta",

@@ -14,6 +14,8 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Import\ImportStreamSource;
+use MediaWiki\Import\WikiRevision;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\UltimateAuthority;

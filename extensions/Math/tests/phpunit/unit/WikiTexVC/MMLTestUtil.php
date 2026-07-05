@@ -23,21 +23,6 @@ class MMLTestUtil {
 		return json_decode( file_get_contents( $filePath ) );
 	}
 
-	public static function createJSONstartEnd( bool $start, string $file ) {
-		file_put_contents( $file, $start ? "[\n" : "\n]", FILE_APPEND );
-	}
-
-	public static function appendToJSONFile( array $dataArray, string $file ) {
-		$jsonData = json_encode( $dataArray, JSON_PRETTY_PRINT ) . ",";
-		file_put_contents( $file, $jsonData, FILE_APPEND );
-	}
-
-	public static function deleteFile( string $file ): void {
-		if ( file_exists( $file ) ) {
-			unlink( $file );
-		}
-	}
-
 	public static function prettifyXML( string $xml, bool $replaceHeader = true ): string {
 		$dom = new DOMDocument();
 		// Initial block (must before load xml string)

@@ -269,7 +269,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Üýtgeýäni sazla (set_var)",
 	"abusefilter-edit-builder-group-vars": "Üýtgeýänler",
 	"abusefilter-edit-builder-vars-timestamp": "Üýtgeşmäniň Unix wagt belgisi",
-	"abusefilter-edit-builder-vars-accountname": "Hasap ady (hasap döredilende)",
+	"abusefilter-edit-builder-vars-account-name": "Hasap ady (hasap döredilende)",
 	"abusefilter-edit-builder-vars-action": "Hereket",
 	"abusefilter-edit-builder-vars-addedlines": "Özgerdişe goşulan setirler",
 	"abusefilter-edit-builder-vars-delta": "Özgerdişde ölçeg üýtgeşmesi",

@@ -1,7 +1,7 @@
 'use strict';
 
 const { shallowMount } = require( 'vue-test-utils' );
-const UserCardMenu = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserCardMenu.vue' );
+const UserCardMenu = require( 'ext.checkUser.userInfoCard/components/UserCardMenu.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserCardMenu', QUnit.newMwEnvironment( {
 	beforeEach: function () {

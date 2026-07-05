@@ -1,3 +1,5 @@
+const ResizingDragBar = require( './resizingdragbar/ResizingDragBar.js' );
+
 /**
  * This plugin provides a way to build a wiki-text editing user interface around a textarea.
  *
@@ -35,40 +37,6 @@ const hasOwn = Object.prototype.hasOwnProperty,
 	}() );
 
 /**
- * Helper function to mark the automatic message functionality in
- * the autoMsg and autoSafeMsg functions as deprecated.
- *
- * @private
- * @param {string} property
- * @param {string} key
- */
-function deprecateAutoMsg( property, key ) {
-	const searchParam = mw.config.get( 'wgSearchType' ) === 'CirrusSearch' ?
-		'insource:/' + property + 'Msg: \'' + key + '\'/' :
-		property + 'Msg: ' + key;
-	let searchUri = mw.config.get( 'wgServer' ) +
-		mw.util.getUrl(
-			'Special:Search',
-			{ search: searchParam, ns2: 1, ns8: 1 }
-		);
-	if ( searchUri.slice( 0, 2 ) === '//' ) {
-		searchUri = location.protocol + searchUri;
-	}
-
-	let messageMethod;
-	if ( property === 'html' || property === 'text' || property === 'title' ) {
-		messageMethod = 'mw.message( ' + JSON.stringify( key ) + ' ).parse()';
-	} else {
-		messageMethod = 'mw.msg( ' + JSON.stringify( key ) + ' )';
-	}
-	const deprecationMsg = mw.log.makeDeprecated(
-		'wikiEditor_autoMsg',
-		'WikiEditor: Use `' + property + ': ' + messageMethod + '` instead of `' + property + 'Msg: ' + JSON.stringify( key ) + '`.\nSearch: ' + searchUri
-	);
-	deprecationMsg();
-}
-
-/**
  * Global static object for wikiEditor that provides generally useful functionality to all modules and contexts.
  */
 $.wikiEditor = {
@@ -79,7 +47,8 @@ $.wikiEditor = {
 	 */
 	modules: {
 		toolbar: require( './jquery.wikiEditor.toolbar.js' ),
-		dialogs: require( './jquery.wikiEditor.dialogs.js' )
+		dialogs: require( './jquery.wikiEditor.dialogs.js' ),
+		resizingdragbar: require( './jquery.wikiEditor.resizingdragbar.js' )
 	},
 
 	/**
@@ -120,92 +89,6 @@ $.wikiEditor = {
 	},
 
 	/**
-	 * Provides a way to extract messages from objects. Wraps a mw.message( ... ).text() call.
-	 *
-	 * FIXME: This is a security nightmare. Only use is for the help toolbar panel. Inline the
-	 *        special need instead?
-	 * FIXME: Also, this is ludicrously complex. Just use mw.message().text() directly.
-	 *
-	 * @deprecated Since v0.5.4. Use mw.message() directly instead of <key>Msg
-	 *
-	 * @param {Object} object Object to extract messages from
-	 * @param {string} property String of name of property which contains the message. This should be the base name of the
-	 * property, which means that in the case of the object { this: 'that', fooMsg: 'bar' }, passing property as 'this'
-	 * would return the raw text 'that', while passing property as 'foo' would return the internationalized message
-	 * with the key 'bar'.
-	 * @return {string}
-	 */
-	autoMsg: function ( object, property ) {
-		mw.log.warn( 'autoMsg is deprecated. Use mw.message() instead.' );
-		// Accept array of possible properties, of which the first one found will be used
-		if ( typeof property === 'object' ) {
-			for ( const i in property ) {
-				if ( property[ i ] in object || property[ i ] + 'Msg' in object ) {
-					property = property[ i ];
-					break;
-				}
-			}
-		}
-		if ( property in object ) {
-			return object[ property ];
-		} else if ( property + 'Msg' in object ) {
-			const p = object[ property + 'Msg' ];
-			if ( Array.isArray( p ) && p.length >= 2 ) {
-				deprecateAutoMsg( property, p[ 0 ] );
-				return mw.message.apply( mw.message, p ).text();
-			} else {
-				deprecateAutoMsg( property, p );
-				// eslint-disable-next-line mediawiki/msg-doc
-				return mw.message( p ).text();
-			}
-		} else {
-			return '';
-		}
-	},
-
-	/**
-	 * Provides a way to extract messages from objects. Wraps a mw.message( ... ).escaped() call.
-	 *
-	 * FIXME: This is ludicrously complex. Just use mw.message().escaped() directly.
-	 *
-	 * @deprecated Since v0.5.4. Use mw.message() directly instead of <key>Msg
-	 *
-	 * @param {Object} object Object to extract messages from
-	 * @param {string} property String of name of property which contains the message. This should be the base name of the
-	 * property, which means that in the case of the object { this: 'that', fooMsg: 'bar' }, passing property as 'this'
-	 * would return the raw text 'that', while passing property as 'foo' would return the internationalized message
-	 * with the key 'bar'. This is then escaped.
-	 * @return {string}
-	 */
-	autoSafeMsg: function ( object, property ) {
-		mw.log.warn( 'autoSafeMsg is deprecated. Use mw.message() instead.' );
-		// Accept array of possible properties, of which the first one found will be used
-		if ( typeof property === 'object' ) {
-			for ( const i in property ) {
-				if ( property[ i ] in object || property[ i ] + 'Msg' in object ) {
-					property = property[ i ];
-					break;
-				}
-			}
-		}
-		if ( property in object ) {
-			return object[ property ];
-		} else if ( property + 'Msg' in object ) {
-			const p = object[ property + 'Msg' ];
-			if ( Array.isArray( p ) && p.length >= 2 ) {
-				deprecateAutoMsg( property, p[ 0 ] );
-				return mw.message.apply( mw.message, p ).escaped();
-			} else {
-				deprecateAutoMsg( property, p );
-				// eslint-disable-next-line mediawiki/msg-doc
-				return mw.message( p ).escaped();
-			}
-		} else {
-			return '';
-		}
-	},
-
-	/**
 	 * Provides a way to extract a property of an object in a certain language, falling back on the property keyed as
 	 * 'default' or 'default-rtl'. If such key doesn't exist, the object itself is considered the actual value, which
 	 * should ideally be the case so that you may use a string or object of any number of strings keyed by language
@@ -241,18 +124,30 @@ $.wikiEditor = {
 				let src = icon[ key ];
 
 				// Return a data URL immediately
-				if ( src.slice( 0, 5 ) === 'data:' ) {
+				if ( src.startsWith( 'data:' ) ) {
 					return src;
 				}
 
 				// Prepend path if src is not absolute
-				if ( src.slice( 0, 7 ) !== 'http://' && src.slice( 0, 8 ) !== 'https://' && src[ 0 ] !== '/' ) {
+				if ( !src.startsWith( 'http://' ) && !src.startsWith( 'https://' ) && !src.startsWith( '/' ) ) {
 					src = path + src;
 				}
 				return src;
 			}
 		}
 		return icon;
+	},
+
+	/**
+	 * Creates a ResizingDragBar instance.
+	 *
+	 * @param {Object} [config] Configuration options
+	 * @param {boolean} [config.isEW] Orientation of the drag bar, East-West (true) or North-South (false).
+	 * @param {boolean} [config.id] The element ID. If supplied, the size of the resized pane will be persisted to localStorage.
+	 * @return {ResizingDragBar}
+	 */
+	createResizingDragBar: function ( config ) {
+		return new ResizingDragBar( config );
 	}
 };
 
@@ -438,6 +333,7 @@ $.fn.wikiEditor = function () {
 		if ( hasFocus ) {
 			context.$textarea.trigger( 'focus' );
 			context.$textarea.textSelection( 'setSelection', { start: cursorPos[ 0 ], end: cursorPos[ 1 ] } );
+			context.$textarea.textSelection( 'scrollToCaretPosition' );
 		}
 
 		// Get references to some of the newly created containers

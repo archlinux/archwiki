@@ -25,6 +25,7 @@
 			"Kenrick95",
 			"Matma Rex",
 			"Pebaryan",
+			"Penyuwangi",
 			"Rachmat.Wahidi",
 			"Rachmat04",
 			"Rex",
@@ -34,7 +35,6 @@
 			"Syman51",
 			"Veracious",
 			"Zulf",
-			"Penyuwangi",
 			"Bayahiu"
 		]
 	},
@@ -390,7 +390,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalisasi entitas HTML menjadi karakter unicode ($1)",
 	"abusefilter-edit-builder-group-vars": "Variabel",
 	"abusefilter-edit-builder-vars-timestamp": "Perubahan waktu Unix ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Nama pengguna pada pembuatan akun ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Nama pengguna pada pembuatan akun ($1)",
 	"abusefilter-edit-builder-vars-action": "Tindakan ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Garis ditambahkan dalam suntingan ($1)",
 	"abusefilter-edit-builder-vars-delta": "Ukuran berubah dalam suntingan ($1)",

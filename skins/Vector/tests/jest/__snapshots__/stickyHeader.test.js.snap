@@ -3,7 +3,7 @@
 exports[`Sticky header renders 1`] = `
 "<div id=\\"vector-sticky-header\\" class=\\"vector-sticky-header\\">
 	<div class=\\"vector-sticky-header-start\\">
-		<div class=\\"vector-sticky-header-icon-start vector-button-flush-left vector-button-flush-right\\" aria-hidden=\\"true\\">
+		<div class=\\"vector-sticky-header-icon-start vector-button-flush-left\\" aria-hidden=\\"true\\">
 <button class=\\"cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-sticky-header-search-toggle\\" data-event-name=\\"ui.vector-sticky-search-form.icon\\" tabindex=\\"-1\\"><span class=\\"vector-icon mw-ui-icon-search mw-ui-icon-wikimedia-search\\"></span>
 
 <span>search</span>

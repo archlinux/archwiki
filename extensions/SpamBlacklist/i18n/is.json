@@ -14,6 +14,5 @@
 	"spam-blacklisted-email": "Bannað tölvupóstfang",
 	"spam-blacklisted-email-text": "Tölvupóstfangið þitt er eins og er bannað að senda tölvupósta til annarra notenda.",
 	"spam-blacklisted-email-signup": "Hið uppgefna tölvupóstfang er eins og er bannað.",
-	"spam-invalid-lines": "Eftirfarandi bannlista {{PLURAL:$1|færsla er ógild regluleg segð|færslur eru ógildar reglulegar segðir}} og leiðrétta þarf {{PLURAL:$1|hana|þær}} áður en síðan er vistuð:",
 	"spam-blacklist-desc": "Kæfuvörn byggð á reglulegum segðum sem gerir kleift að banna vefslóðir á síðum og netföng skráðra notenda"
 }

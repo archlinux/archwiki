@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Math\Tests\WikiTexVC\MMLmappings;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\LengthSpec;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Matrix;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
@@ -138,6 +139,21 @@ class BaseParsingTest extends MediaWikiIntegrationTestCase {
 		);
 		$result = BaseParsing::alignAt( $matrix, [], null, 'alignat' );
 		$this->assertStringContainsString( 'mtable', $result );
+		$this->assertStringNotContainsString( 'padding-bottom', $result );
+	}
+
+	public function testAlignAtLength() {
+		$row1 = new TexArray( new Literal( '\\sin' ) );
+		$row1->setRowSpecs( new LengthSpec( '-', [ null, [ '2', '3' ] ], 'em' ) );
+		$matrix = new Matrix( 'alignat',
+			new TexArray(
+			$row1
+			)
+		);
+		$result = BaseParsing::alignAt( $matrix, [], null, 'alignat' );
+		$this->assertStringContainsString( 'mtable', $result );
+		$this->assertStringContainsString( 'padding-bottom', $result );
+		$this->assertStringContainsString( '23em;', $result );
 	}
 
 	public function testHLineTop() {
@@ -282,12 +298,6 @@ f(x,y,z) & = & x + y + z
 		$this->assertStringContainsString( '<mtd class="mwe-math-columnalign-r"', $result );
 	}
 
-	public function testNamedOperator() {
-		$node = new Literal( '\\gcd' );
-		$result = BaseParsing::namedOp( $node, [], [], '\\gcd' );
-		$this->assertStringContainsString( '>gcd</mi>', (string)$result );
-	}
-
 	public function testSpace() {
 		$node = new Literal( '\\ ' );
 		$result = BaseParsing::macro( $node, [], [], '\\ ', '\\text{ }' );
@@ -296,7 +306,7 @@ f(x,y,z) & = & x + y + z
 
 	public function testIgnoreMisplacedLimit() {
 		$node = new Literal( '\\limits ' );
-		$result = BaseParsing::limits( $node, [], [], '\\limits' );
+		$result = $node->toMMLTree();
 		$this->assertSame( '', (string)$result, 'Misplaced limits should be ignored' );
 	}
 }

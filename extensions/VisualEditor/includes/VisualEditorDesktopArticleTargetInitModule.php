@@ -36,6 +36,10 @@ class VisualEditorDesktopArticleTargetInitModule extends FileModule {
 		// does not fragment by skin.
 		foreach ( [ 'edit', 'create', 'edit-local', 'create-local' ] as $msgKey ) {
 			// MediaWiki defaults
+			// * skin-view-edit
+			// * skin-view-create
+			// * skin-view-edit-local
+			// * skin-view-create-local
 			$messages[] = "skin-view-$msgKey";
 			foreach ( $services->getSkinFactory()->getInstalledSkins() as $skname => $unused ) {
 				// Per-skin overrides

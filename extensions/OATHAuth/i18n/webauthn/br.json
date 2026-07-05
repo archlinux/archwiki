@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Huñvreüs"
+		]
+	},
+	"oathauth-webauthn-module-label": "Alc'hwez surentez",
+	"oathauth-webauthn-javascript-required": "Ret eo gweredekaat JavaScript en ho merdeer evit implijout un alc'hwez surentez.",
+	"oathauth-webauthn-ui-login-prompt": "Implijit hoc'h alc'hwez surentez pe grit diouzh kemennoù ho merdeer.",
+	"oathauth-webauthn-ui-add-key": "Ouzhpennañ alc'hwez",
+	"oathauth-webauthn-error-browser-unsupported": "Ne skor ket ar merdeer-mañ an alc'hwezioù surentez, pe n'eo ket hegerz evit al lec'hienn-mañ. Klaskit gant ur merdeer all mar plij. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Lenn muioc'h]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Ne skor ket ar merdeer-mañ an alc'hwezioù surentez, pe n'eo ket hegerz evit al lec'hienn-mañ.",
+	"oathauth-webauthn-error-auth-generic": "Harzet eo bet an argerzh dilesañ. Krogit gant an argerzh gwiriekaat en-dro mar plij.",
+	"oathauth-webauthn-error-reg-generic": "N'haller ket gwiriañ hoc'h alc'hwez. Mar plij, krogit gant an argerzh enskrivañ en-dro.",
+	"oathauth-webauthn-registered-keys-section-name": "Alc'hwezioù enrollet",
+	"oathauth-webauthn-ui-remove-key": "Dilemel",
+	"oathauth-webauthn-error-module-not-enabled": "N'eo ket gweredekaet ar vodulenn \"$1\" evit {{GENDER:$2|implijer|implijerez}} \"$2\".",
+	"oathauth-webauthn-error-verification-failed": "Gwiriekadur WebAuthn c’hwitet.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Gwiriekadur alc'hwez-tremen c’hwitet.",
+	"oathauth-webauthn-error-credentials-missing": "N'eo ket bet kaset an titouroù WebAuthn.",
+	"oathauth-webauthn-error-cannot-register": "N’hall ket {{GENDER:$1|implijer|implijerez}} \"$1\" enrollañ titouroù kevreañ nevez.",
+	"oathauth-webauthn-error-invalid-new-key": "N'eo ket eus ar seurt rekis an alc'hwez nevez degaset gant ar vodulenn.",
+	"oathauth-webauthn-error-registration-failed": "Enskrivadur alc'hwez nevez c’hwitet.",
+	"oathauth-webauthn-ui-key-register-help": "Dibabit lesanv hoc’h alc'hwez :",
+	"oathauth-webauthn-error-cannot-remove-key": "N'haller ket dilemel an alc'hwez.",
+	"oathauth-webauthn-error-get-authinfo-fail": "C’hwitet eo bet adtapout titouroù dilesañ.",
+	"oathauth-webauthn-add-key-section-name": "Enrollañ alc'hwez surentez nevez",
+	"oathauth-webauthn-error-get-reginfo-fail": "C’hwitet eo bet adtapout titouroù an enskrivadur.",
+	"oathauth-webauthn-module-description": "En ur stad arnodiñ emañ WebAuthn. Ne c’haller ket adtapout an ardivinkoù dilesañ kollet pe gwallet evit ar mare.\n\n[https://br.wikipedia.org/wiki/WebAuthn Gouzout hiroc'h diwar-benn WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Adkargañ ar bajenn",
+	"oathauth-webauthn-authentication-info-label": "Roadennoù dilesañ",
+	"oathauth-webauthn-authentication-info-help": "Roadennoù dilesañ treuzkaset d'an arval evit adtapout an titouroù",
+	"oathauth-webauthn-credential-label": "Titouroù dilesañ an implijer",
+	"oathauth-webauthn-credential-help": "Titouroù an implijer diazezet war roadennoù dilesañ",
+	"oathauth-webauthn-add-security-key": "Ouzhpennañ un alc'hwez surentez",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Implijout an alc'hwez surentez pe an alc'hwez tremen"
+}

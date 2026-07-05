@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup;
+use MediaWiki\Extension\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\User\UserIdentity;
@@ -10,7 +10,7 @@ use MediaWiki\User\UserIdentity;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup
  */
 class MigrateTemporaryAccountIPViewerGroupTest extends MaintenanceBaseTestCase {
 
@@ -46,10 +46,12 @@ class MigrateTemporaryAccountIPViewerGroupTest extends MaintenanceBaseTestCase {
 		$userWithBothGroups = $this->createTestUsersWithGroup( 'temporary-account-viewer', 1 )[0];
 		$userGroupManager = $this->getServiceContainer()->getUserGroupManager();
 		$userGroupManager->addUserToGroup(
-			$userWithBothGroups, 'checkuser-temporary-account-viewer'
+			$userWithBothGroups,
+			'checkuser-temporary-account-viewer'
 		);
 		$this->getServiceContainer()->getUserGroupManager()->addUserToGroup(
-			$userWithBothGroups, 'sysop'
+			$userWithBothGroups,
+			'sysop'
 		);
 
 		// Drop the checkuser-temporary-account-viewer group definition before running the maintenance script
@@ -74,7 +76,8 @@ class MigrateTemporaryAccountIPViewerGroupTest extends MaintenanceBaseTestCase {
 		}
 		$userGroupManager->clearCache( $userWithBothGroups );
 		$this->assertArrayEquals(
-			[ 'temporary-account-viewer', 'sysop' ], $userGroupManager->getUserGroups( $userWithBothGroups )
+			[ 'temporary-account-viewer', 'sysop' ],
+			$userGroupManager->getUserGroups( $userWithBothGroups )
 		);
 	}
 

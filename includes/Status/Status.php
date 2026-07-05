@@ -11,10 +11,10 @@ namespace MediaWiki\Status;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\StubObject\StubUserLang;
-use MessageLocalizer;
 use RuntimeException;
 use StatusValue;
 
@@ -63,6 +63,10 @@ class Status extends StatusValue {
 	 * @code
 	 *     $this->getOutput()->addHtml( Status::wrap( $sv )->getHTML() );
 	 * @endcode
+	 *
+	 * Note that the contents of the status are copied by reference,
+	 * so that any changes to the inner status will also affect the wrapped status and vice versa.
+	 * If this is not needed, {@link StatusValue::cast()} is usually preferable.
 	 *
 	 * @param StatusValue|Status $sv
 	 * @return static

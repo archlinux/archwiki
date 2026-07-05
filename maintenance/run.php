@@ -44,7 +44,7 @@ if ( !defined( 'MW_FINAL_SETUP_CALLBACK' ) ) {
 		$runner->setup( $settingsBuilder );
 	}
 
-	define( 'MW_FINAL_SETUP_CALLBACK', 'wfMaintenanceRunSetup' );
+	define( 'MW_FINAL_SETUP_CALLBACK', wfMaintenanceRunSetup( ... ) );
 }
 
 // Initialize MediaWiki (load settings, extensions, etc).

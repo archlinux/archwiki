@@ -4,8 +4,8 @@
 			"Caiofernandes",
 			"Hamilton Abreu",
 			"Mansil alfalb",
-			"Mbs262",
-			"Maria Manuela Silva"
+			"Maria Manuela Silva",
+			"Mbs262"
 		]
 	},
 	"rest-prefix-mismatch": "O caminho pedido ($1) não estava no interior do caminho base da API REST ($2)",

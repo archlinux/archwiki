@@ -167,12 +167,7 @@ class MigrateESRefToAflTable extends Maintenance {
 					continue;
 				}
 
-				$newFlags = implode( ',', array_filter(
-					$flags,
-					static function ( $v ) {
-						return $v !== 'external';
-					}
-				) );
+				$newFlags = implode( ',', array_diff( $flags, [ 'external' ] ) );
 				$newBlobAddress = 'es:' . $textRow->old_text . '?flags=' . $newFlags;
 
 				if ( !$dryRun ) {
@@ -183,9 +178,7 @@ class MigrateESRefToAflTable extends Maintenance {
 						->caller( __METHOD__ )
 						->execute();
 
-					if ( $deletedumpfile ) {
-						fwrite( $deletedumpfile, $row->afl_var_dump . "\n" );
-					}
+					fwrite( $deletedumpfile, $row->afl_var_dump . "\n" );
 
 					if ( $dumpfile ) {
 						fwrite( $dumpfile, $row->afl_var_dump . " => " . $newBlobAddress . ";\n" );
@@ -217,9 +210,7 @@ class MigrateESRefToAflTable extends Maintenance {
 			fclose( $dumpfile );
 		}
 
-		if ( $deletedumpfile ) {
-			fclose( $deletedumpfile );
-		}
+		fclose( $deletedumpfile );
 	}
 }
 

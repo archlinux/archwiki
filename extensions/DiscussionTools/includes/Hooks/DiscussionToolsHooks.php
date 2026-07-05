@@ -20,18 +20,14 @@ use MediaWiki\User\UserNameUtils;
 class DiscussionToolsHooks implements
 	DiscussionToolsAddOverflowMenuItemsHook
 {
-	private Config $config;
-	private UserNameUtils $userNameUtils;
-	private UserOptionsLookup $userOptionsLookup;
+	private readonly Config $config;
 
 	public function __construct(
 		ConfigFactory $configFactory,
-		UserNameUtils $userNameUtils,
-		UserOptionsLookup $userOptionsLookup
+		private readonly UserNameUtils $userNameUtils,
+		private readonly UserOptionsLookup $userOptionsLookup,
 	) {
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
-		$this->userNameUtils = $userNameUtils;
-		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -61,27 +57,19 @@ class DiscussionToolsHooks implements
 		}
 
 		$user = $contextSource->getUser();
-		if (
-			$this->config->get( 'DiscussionToolsEnableThanks' ) ||
-			(
-				$this->config->get( 'DiscussionToolsBeta' ) &&
-				$this->userOptionsLookup->getOption( $user, 'discussiontools-betaenable', 0 )
-			)
-		) {
-			$showThanks = ExtensionRegistry::getInstance()->isLoaded( 'Thanks' );
-			if ( $showThanks && ( $threadItemData['type'] ?? null ) === 'comment' && $user->isNamed() ) {
-				$recipient = $this->userNameUtils->getCanonical( $threadItemData['author'], UserNameUtils::RIGOR_NONE );
+		$showThanks = ExtensionRegistry::getInstance()->isLoaded( 'Thanks' );
+		if ( $showThanks && ( $threadItemData['type'] ?? null ) === 'comment' && $user->isNamed() ) {
+			$recipient = $this->userNameUtils->getCanonical( $threadItemData['author'], UserNameUtils::RIGOR_NONE );
 
-				if (
-					$recipient !== $user->getName() &&
-					!$this->userNameUtils->isIP( $recipient )
-				) {
-					$overflowMenuItems[] = new OverflowMenuItem(
-						'thank',
-						'heart',
-						'thanks-button-thank'
-					);
-				}
+			if (
+				$recipient !== $user->getName() &&
+				!$this->userNameUtils->isIP( $recipient )
+			) {
+				$overflowMenuItems[] = new OverflowMenuItem(
+					'thank',
+					'heart',
+					'thanks-button-thank'
+				);
 			}
 		}
 	}

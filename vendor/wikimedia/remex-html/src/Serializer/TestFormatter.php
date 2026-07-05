@@ -168,7 +168,7 @@ class TestFormatter implements Formatter, DOMFormatter {
 					$qName = 'xlink:' . $attr->localName;
 					break;
 				default:
-					if ( strlen( $attr->prefix ) ) {
+					if ( strlen( $attr->prefix ?? '' ) ) {
 						$qName = $attr->prefix . ':' . $attr->localName;
 					} else {
 						$prefix = $attr->prefix;

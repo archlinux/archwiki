@@ -23,6 +23,7 @@
 	"right-checkuser-temporary-account-no-preference": "ترجيح کي آن ڪرڻ جي ضرورت کان سواءِ عارضي کاتن پاران استعمال ٿيندڙ IP پتا ڏسو",
 	"right-checkuser-temporary-account-log": "عارضي کاتن جي IP پتن تائين رسائي جو لاگ ڏسو.",
 	"right-checkuser-temporary-account-auto-reveal": "عارضي کاتن پاران استعمال ٿيندڙ IP پتا خودڪار طريقي سان ظاهر ڪريو",
+	"right-checkuser-suggested-investigations": "وارپرائيندڙ چڪاسڪار لاءِ [[Special:SuggestedInvestigations|ڏسيل تحقيقن]] تي عمل ڪريو",
 	"grant-checkuser": "واپرائيندڙ چڪاسڪار ڊيٽا تائين رسائي وٺو",
 	"grant-checkuser-temporary-account": "عارضي کاتن لاءِ واپرائيندڙ چڪاسڪار ڊيٽا تائين رسائي وٺو",
 	"action-checkuser": "واپرائيندڙ جا IP پتا ۽ ٻي معلومات چڪاسيو",
@@ -31,6 +32,7 @@
 	"action-checkuser-temporary-account-no-preference": "عارضي کاتن پاران استعمال ٿيندڙ IP پتا ڏسو",
 	"action-checkuser-temporary-account-log": "عارضي کاتن جي IP پتن تائين رسائي جو لاگ ڏسو",
 	"action-checkuser-temporary-account-auto-reveal": "عارضي کاتن پاران استعمال ٿيندڙ IP پتا خودڪار طريقي سان ظاهر ڪريو",
+	"action-checkuser-suggested-investigations": "واپرائيندڙ چڪاس لاءِ ڏسل تحقيقن تي عمل ڪريو",
 	"grouppage-checkuser": "{{ns:project}}:واپرائيندڙ چڪاسڪار",
 	"grouppage-temporary-account-viewer": "{{ns:project}}:عارضي کاتن جي IP ڏسندڙ",
 	"checkuser-clienthints-name-architecture": "فن تعمير",
@@ -62,5 +64,9 @@
 	"checkuser-global-contributions-link-sidebar": "عالمي ڀاڱيداريون",
 	"prefs-checkuser-tempaccount": "عارضي کاتن جون آئپي ظاھر ڪريو",
 	"checkuser-tempaccount-enable-preference": "عارضي کاتن جي آئپي پتن کي ظاھر ڪرڻ کي فعال ڪريو",
-	"checkuser-ipinfo-global-contributions-label": "عالمي ڀاڱيداريون"
+	"checkuser-ipinfo-global-contributions-label": "عالمي ڀاڱيداريون",
+	"checkuser-suggestedinvestigations-filter-button": "ڇاڻي",
+	"checkuser-suggestedinvestigations-filter-dialog-title": "ڇاڻيون",
+	"checkuser-suggestedinvestigations-filter-dialog-close-button": "بند ڪريو",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "کاتو"
 }

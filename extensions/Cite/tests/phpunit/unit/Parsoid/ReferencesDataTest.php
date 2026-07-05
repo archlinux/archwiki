@@ -68,6 +68,7 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 
 		$this->assertSame( 1, $group->count() );
 		$this->assertNull( $group->lookupRefByName( '' ) );
+		$this->assertNull( $group->lookupSubRefByDetails( '', '' ) );
 	}
 
 	public function testAddNamedRef() {
@@ -88,6 +89,7 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 
 		$this->assertSame( 1, $group->count() );
 		$this->assertEquals( $expected, $group->lookupRefByName( 'wales' ) );
+		$this->assertNull( $group->lookupSubRefByDetails( 'wales', '' ) );
 	}
 
 	public function testSubref() {
@@ -111,10 +113,12 @@ class ReferencesDataTest extends MediaWikiUnitTestCase {
 		$expected->group = 'note';
 		$expected->globalId = 2;
 		$expected->subrefIndex = 1;
+		$expected->mainRef = 'wales';
 		$this->assertEquals( $expected, $ref );
 
 		$this->assertSame( 2, $group->count() );
 		$this->assertEquals( $expectedParent, $group->lookupRefByName( 'wales' ) );
+		$this->assertEquals( $expected, $group->lookupSubRefByDetails( 'wales', 'detail' ) );
 	}
 
 	public function testIndicatorContext() {

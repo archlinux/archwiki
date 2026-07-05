@@ -10,6 +10,15 @@
 	.column-width( 30em );
 	margin-top: 0.3em;
 
+	// T160497, T349793: Minerva is limited to 993.3px (approx. 62em), which makes 30em a fragile
+	// breakpoint. Give more wiggle room to make sure we usually get two columns.
+	// T334941: Vector 2022 at standard width caps at 59.25rem.
+	// stylelint-disable-next-line selector-class-pattern
+	.vector-feature-limited-width-clientpref-1 &,
+	.skin-minerva & {
+		.column-width( 27em );
+	}
+
 	/* Lines first column up nicely. */
 	.mw-parser-output & .references {
 		margin-top: 0;
@@ -29,32 +38,52 @@ ol.references {
 	 * We have 2 counters for Parsoid HTML for different functionality.
 	 * Make sure both are reset!
 	 **/
-	counter-reset: mw-ref-extends-parent mw-references list-item;
+	counter-reset: mw-ref-details-parent mw-references list-item;
 
 	> li {
 		/**
 		 * We have 2 counters for Parsoid HTML for different functionality.
 		 * Make sure both are incremented!
 		 **/
-		counter-increment: mw-ref-extends-parent mw-references;
-		counter-reset: mw-ref-extends-child;
+		counter-increment: mw-ref-details-parent mw-references;
+		counter-reset: mw-ref-details-child;
 	}
 
 	.mw-subreference-list {
-		margin-left: 1em;
-		padding: 0;
+		margin-top: 0;
 
-		// As in resources/src/mediawiki.skinning/i18n-ordered-lists.less we must reset this on the
-		// <li> level, not <ol>
-		li {
-			list-style: none;
+		> li {
+			counter-increment: mw-ref-details-child;
+
+			&::marker {
+				content: counter( mw-ref-details-parent, decimal ) '.' counter( mw-ref-details-child, decimal ) '. ';
+			}
 		}
 	}
 }
 
-.mw-subreference-list > li::before {
-	counter-increment: mw-ref-extends-child;
-	content: counter( mw-ref-extends-parent, decimal ) '.' counter( mw-ref-extends-child, decimal ) '. ';
+// T411472: Temporary workaround for Safari because of https://caniuse.com/css-marker-pseudo
+// stylelint-disable-next-line selector-type-no-unknown
+_::-webkit-full-page-media,
+ol.references .mw-subreference-list > li::before {
+	content: counter( mw-ref-details-parent, decimal ) '.' counter( mw-ref-details-child, decimal ) '.\00a0';
+	display: inline-block;
+	margin-left: -3.2em;
+	min-width: 3.2em;
+	text-align: right;
+}
+
+// stylelint-disable-next-line selector-type-no-unknown
+_::-webkit-full-page-media,
+ol.references .mw-subreference-list > li::marker {
+	// Just in case some later Safari version suddenly renders both
+	content: none;
+}
+
+// stylelint-disable-next-line selector-type-no-unknown
+_::-webkit-full-page-media,
+ol.references .mw-subreference-list {
+	list-style-type: none;
 }
 
 sup.reference {

@@ -26,5 +26,3 @@ class CallbackIterator extends IteratorDecorator {
 		return ( $this->callable )( $this->iterator->current() );
 	}
 }
-
-class_alias( CallbackIterator::class, 'EchoCallbackIterator' );

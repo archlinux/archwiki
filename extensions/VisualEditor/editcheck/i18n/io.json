@@ -4,7 +4,12 @@
 			"Joao Xavier"
 		]
 	},
+	"editcheck-dialog-action-replace": "Remplasigar",
+	"editcheck-dialog-scroll-into-view": "Vidar sugesti",
 	"editcheck-dialog-addref-reject-common-knowledge": "L'informo quan me adjuntes esas ample konocata",
+	"editcheck-textmatch-replace": "Ka remplasar \"$1\" per \"$2\"?",
+	"editcheck-suggestionfeedback-label-about": "Pri sugestaji",
+	"editcheck-suggestionfeedback-label-report": "Raportez problemo",
 	"tag-editcheck-reference-decline-common-knowledge": "Kontrolo di redakturi (referi) refuzita (ordinara konoco)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "Referi de EditCheck refuzesis pro esar ordinara konoco",
 	"tag-editcheck-reference-decline-irrelevant": "Kontrolo di redakturi (referi) refuzita (senimporta)",

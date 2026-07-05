@@ -10,13 +10,9 @@ class ResourceLoaderConfigHandler implements
 	ResourceLoaderGetConfigVarsHook
 {
 
-	/** @var MathConfig */
-	private $mathConfig;
-
 	public function __construct(
-		MathConfig $mathConfig
+		private readonly MathConfig $mathConfig,
 	) {
-		$this->mathConfig = $mathConfig;
 	}
 
 	/** @inheritDoc */

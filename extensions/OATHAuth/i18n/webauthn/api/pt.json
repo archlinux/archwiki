@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Módulo da API para comunicação entre servidor e cliente durante o processo de registo e autenticação.",
+	"apihelp-oathauth-webauthn-param-func": "Nome da função pedida a ser executada.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Informações de autenticação.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Informações de registo."
+}

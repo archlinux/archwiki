@@ -4,12 +4,12 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Handlers;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
@@ -130,7 +130,7 @@ class Headings {
 
 		// Additional processing for $anchor
 		$anchorText = $clone->textContent; // strip all tags
-		$anchorText = Sanitizer::normalizeSectionNameWhiteSpace( $anchorText );
+		$anchorText = Sanitizer::normalizeSectionNameWhitespace( $anchorText );
 		$anchorText = self::normalizeSectionName( $anchorText, $state->env );
 
 		# NOTE: Parsoid defaults to html5 mode. So, if we want to replicate
@@ -153,7 +153,7 @@ class Headings {
 			$span = $node->ownerDocument->createElement( 'span' );
 			$span->setAttribute( 'id', $fallbackId );
 			DOMUtils::addTypeOf( $span, 'mw:FallbackId' );
-			$nodeDsr = DOMDataUtils::getDataParsoid( $node )->dsr ?? null;
+			$nodeDsr = $dp->dsr ?? null;
 			// Set a zero-width dsr range for the fallback id
 			if ( Utils::isValidDSR( $nodeDsr ) ) {
 				$offset = $nodeDsr->innerStart();

@@ -54,7 +54,7 @@
 			textNode = textNode.firstChild;
 		}
 
-		if ( textNode.nodeType !== Node.TEXT_NODE || textNode.data.trim() === '' ) {
+		if ( textNode.nodeType !== Node.TEXT_NODE || !textNode.data.trim() ) {
 			return $upArrowLink;
 		}
 

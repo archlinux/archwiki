@@ -10,7 +10,7 @@
 			"Vlad5250"
 		]
 	},
-	"oathauth-desc": "Осигурява поддръжка на удостоверяването посредством HMAC на базата на еднократни пароли",
+	"oathauth-desc": "Осигурява поддръжка на удостоверяването посредством HMAC на базата на еднократни пароли и на WebAuthn протокола",
 	"disableoathforuser": "Изключване на двуфакторното удостоверяване за потребителя",
 	"verifyoathforuser": "Проверка състоянието на двуфакторното удостоверяване",
 	"oathauth-account": "Име на сметка:",
@@ -36,14 +36,12 @@
 	"oathauth-enterdisablereason": "Причина за изключване:",
 	"right-oathauth-enable": "Включване на двуфакторно удостоверяване",
 	"action-oathauth-enable": "включване на двуфакторно удостоверяване",
-	"oathauth-auth-token-label": "Маркер",
+	"oathauth-auth-token-label": "Код за удостоверяване",
 	"oathauth-auth-ui": "Моля, въведете кода от вашето приложение за двуфакторно удостоверяване (като [https://www.authy.com/ Authy], [https://freeotp.github.io/ FreeOTP], [https://support.google.com/accounts/answer/1066447 Google Authenticator], [https://www.microsoft.com/en-us/security/mobile-authenticator-app Microsoft Authenticator] или [https://1password.com/ 1Password]).",
 	"oathauth-login-failed": "Двуфакторното удостоверяване не беше успешно.",
 	"oathauth-describe-provider": "Двуфакторно удостоверяване (OATH).",
 	"grant-group-authentication": "Извършване на действия за удостоверяване за себе си и други",
 	"grant-oath": "Достъп до данните за двуфакторно удостоверяване (OATH) за себе си и други",
-	"right-oathauth-api-all": "Искане и проверка на данни за OATH за себе си и други",
-	"action-oathauth-api-all": "проверяване на OATH-статус",
 	"oathauth-user-not-found": "Не е открита потребителска сметка с това име",
 	"oath-log-name": "Дневник на двуфакторното удостоверяване",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|изключи}} двуфакторното удостоверяване на $3",
@@ -51,12 +49,10 @@
 	"oathauth-module-totp-label": "Приложение за удостоверяване",
 	"oathauth-ui-manage": "Управление",
 	"oathmanage": "Управление на двуфакторното удостоверяване",
-	"oathauth-ui-enabled-module": "{{PLURAL:$1|Включен метод|Включени методи}} за удостоверяване",
 	"oathauth-enable-generic": "Включване",
 	"oathauth-disable-generic": "Изключване",
 	"oathauth-disable-page-title": "Изключване на $1",
 	"oathauth-enable-page-title": "Включване на $1",
-	"oathauth-ui-available-modules": "Налични методи",
 	"oathauth-notifications-disable-help": "Помощ",
 	"oathauth-notifications-enable-help": "Помощ"
 }

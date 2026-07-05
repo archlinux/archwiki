@@ -12,22 +12,6 @@ use Wikimedia\Assert\UnreachableException;
  */
 class PHPUtils {
 	/**
-	 * Convert a counter to a Base64 encoded string.
-	 * Padding is stripped. /,+ are replaced with _,- respectively.
-	 * Warning: Max integer is 2^31 - 1 for bitwise operations.
-	 * @param int $n
-	 * @return string
-	 */
-	public static function counterToBase64( int $n ): string {
-		$str = '';
-		do {
-			$str = chr( $n & 0xff ) . $str;
-			$n >>= 8;
-		} while ( $n > 0 );
-		return rtrim( strtr( base64_encode( $str ), '+/', '-_' ), '=' );
-	}
-
-	/**
 	 * FIXME: Copied from FormatJson.php in core
 	 *
 	 * Characters problematic in JavaScript.
@@ -329,6 +313,47 @@ class PHPUtils {
 	}
 
 	/**
+	 * Compare the contents of two arrays for equality, given a
+	 * equality comparison function for elements of the array.
+	 * Arrays are equal if they have the same size and element values
+	 * for equal keys are equal.
+	 *
+	 * For convenience, `null` can be passed in as well, and the function
+	 * only returns true if the other argument is also `null`.  This avoids
+	 * `null` checks in the caller in many cases.
+	 *
+	 * @param ?array $arrA
+	 * @param ?array $arrB
+	 * @param callable(mixed,mixed):bool $elementEquals A function to compare
+	 *  non-null elements of $arrA and $arrB for equality.
+	 * @return bool True if $arrA and $arrB are equal.
+	 */
+	public static function arrayEquals( ?array $arrA, ?array $arrB, callable $elementEquals ): bool {
+		if ( $arrA === null ) {
+			return $arrB === null;
+		}
+		if ( $arrB === null ) {
+			return false;
+		}
+		if ( count( $arrA ) !== count( $arrB ) ) {
+			return false;
+		}
+		foreach ( $arrA as $i => $elemA ) {
+			$elemB = $arrB[$i] ?? null;
+			if ( $elemA === null ) {
+				if ( $elemB !== null ) {
+					return false;
+				}
+			} elseif ( $elemB === null ) {
+				return false;
+			} elseif ( !( $elementEquals( $elemA, $elemB ) ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Convert an iterable to an array.
 	 *
 	 * This function is similar to *but not the same as* the built-in
@@ -351,22 +376,6 @@ class PHPUtils {
 		}
 		'@phan-var \Traversable $iterable'; // @var \Traversable $iterable
 		return iterator_to_array( $iterable );
-	}
-
-	/**
-	 * Indicate that the code which calls this function is intended to be
-	 * unreachable.
-	 *
-	 * This is a workaround for T247093; this has been moved upstream
-	 * into wikimedia/assert.
-	 *
-	 * @param string $reason
-	 * @return never
-	 * @deprecated since 0.16; just throw an UnreachableException instead.
-	 */
-	public static function unreachable( string $reason = "should never happen" ) {
-		self::deprecated( __METHOD__, "0.16" );
-		throw new UnreachableException( $reason );
 	}
 
 	/**

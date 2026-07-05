@@ -44,6 +44,11 @@ class RefGroupItem {
 	public ?string $name = null;
 
 	/**
+	 * Main reference name for sub-references.
+	 */
+	public ?string $mainRef = null;
+
+	/**
 	 * Sequence number per {@link $group}, starting from 1. To be used in the footnote marker,
 	 * e.g. "[1]".
 	 */
@@ -57,7 +62,7 @@ class RefGroupItem {
 
 	/**
 	 * Global, unique sequence number for each <ref>, no matter which group, starting from 1.
-	 * 0 is invalid. Currently unused.
+	 * 0 is invalid.
 	 */
 	public int $globalId;
 

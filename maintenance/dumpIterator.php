@@ -13,6 +13,9 @@
  */
 
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Import\ImportStreamSource;
+use MediaWiki\Import\WikiRevision;
+use MediaWiki\Language\LCStoreNull;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\UltimateAuthority;

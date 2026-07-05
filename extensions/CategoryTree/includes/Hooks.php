@@ -28,20 +28,19 @@ use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Hook\CategoryViewer__doCategoryQueryHook;
 use MediaWiki\Hook\CategoryViewer__generateLinkHook;
-use MediaWiki\Hook\ParserFirstCallInitHook;
-use MediaWiki\Hook\SkinBuildSidebarHook;
-use MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook;
-use MediaWiki\Hook\SpecialTrackingCategories__preprocessHook;
-use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skin\Hook\SkinBuildSidebarHook;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\SpecialTrackingCategories__generateCatLinkHook;
+use MediaWiki\Specials\Hook\SpecialTrackingCategories__preprocessHook;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -74,8 +73,8 @@ class Hooks implements
 		if ( !$this->config->get( 'CategoryTreeAllowTag' ) ) {
 			return;
 		}
-		$parser->setHook( 'categorytree', [ $this, 'parserHook' ] );
-		$parser->setFunctionHook( 'categorytree', [ $this, 'parserFunction' ] );
+		$parser->setHook( 'categorytree', $this->parserHook( ... ) );
+		$parser->setFunctionHook( 'categorytree', $this->parserFunction( ... ) );
 	}
 
 	/**
@@ -105,13 +104,9 @@ class Hooks implements
 			$argv[$k] = $v;
 		}
 
-		if ( $parser->getOutputType() === Parser::OT_PREPROCESS ) {
-			return Html::rawElement( 'categorytree', $argv, $cat );
-		} else {
-			// now handle just like a <categorytree> tag
-			$html = $this->parserHook( $cat, $argv, $parser );
-			return [ $html, 'noparse' => true, 'isHTML' => true ];
-		}
+		// now handle just like a <categorytree> tag
+		$html = $this->parserHook( $cat, $argv, $parser );
+		return [ $html, 'noparse' => true, 'isHTML' => true ];
 	}
 
 	/**

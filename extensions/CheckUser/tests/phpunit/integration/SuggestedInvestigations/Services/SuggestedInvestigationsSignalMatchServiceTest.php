@@ -1,28 +1,37 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\Services;
+declare( strict_types=1 );
 
-use MediaWiki\CheckUser\SuggestedInvestigations\Model\CaseStatus;
-use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
-use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
-use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService;
-use MediaWiki\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
-use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\Services;
+
+use MediaWiki\Extension\CheckUser\Jobs\SuggestedInvestigationsAutoCloseForCaseJob;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\CaseStatus;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService
+ * @covers \MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService
  * @group Database
  */
 class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegrationTestCase {
 	use SuggestedInvestigationsTestTrait;
 
+	private SuggestedInvestigationsCaseManagerService $caseManager;
+
 	public function setUp(): void {
 		parent::setUp();
+
 		$this->enableSuggestedInvestigations();
+		$this->caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
 	}
 
 	public function testMatchSignalsAgainstUserWhenFeatureDisabled() {
@@ -37,7 +46,9 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		);
 
 		$this->getObjectUnderTest()->matchSignalsAgainstUser(
-			$this->createMock( UserIdentity::class ), 'test-event'
+			$this->createMock( UserIdentity::class ),
+			'test-event',
+			[]
 		);
 	}
 
@@ -46,56 +57,91 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		// Users with two different groups to get different ids
 		$user1 = $this->getTestUser()->getUser();
 		$user2 = $this->getTestSysop()->getUser();
-		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
-			'test-signal', 'test-value', $mergeable );
+		$initialSignal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+			'test-signal',
+			'test-value',
+			$mergeable
+		);
+		$signalThatMatchesViaHook = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+			name: 'test-signal',
+			value: 'test-value',
+			allowsMerging: $mergeable,
+			triggerId: 123,
+			triggerIdTable: 'revision',
+			userInfoBitFlags: 2
+		);
 
-		/** @var SuggestedInvestigationsCaseManagerService $caseManager */
-		$caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
-		$openCase = $caseManager->createCase( [ $user1 ], [ $signal ] );
-		$closedCase = $caseManager->createCase( [ $user1 ], [ $signal ] );
-		$caseManager->setCaseStatus( $closedCase, CaseStatus::Resolved );
+		$openCase = $this->caseManager->createCase( [ $user1 ], [ $initialSignal ] );
+		$closedCase = $this->caseManager->createCase( [ $user1 ], [ $initialSignal ] );
+		$this->caseManager->setCaseStatus( $closedCase, CaseStatus::Resolved );
+
+		/** @var SuggestedInvestigationsCaseLookupService $caseLookup */
+		$caseLookup = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseLookup' );
+
+		// Check that only one case is open, as we will assert against this after the object under test is called
+		$openCases = $caseLookup->getCasesForSignal( $initialSignal, [ CaseStatus::Open ] );
+		$this->assertCount( 1, $openCases );
 
 		$eventType = 'test-event';
 
 		$hookCalled = false;
 		$this->setTemporaryHook(
 			'CheckUserSuggestedInvestigationsSignalMatch',
-			static function (
-				UserIdentity $userIdentity, string $eventType, array &$hookProvidedSignalMatchResults
-			) use ( &$hookCalled, $signal ) {
-				$hookProvidedSignalMatchResults[] = $signal;
+			function (
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults,
+				array $extraData
+			) use ( &$hookCalled, $signalThatMatchesViaHook ) {
+				$this->assertArrayEquals( [ 'extra-data' => 'test' ], $extraData, false, true );
+				$hookProvidedSignalMatchResults[] = $signalThatMatchesViaHook;
 				$hookCalled = true;
 			}
 		);
 
-		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, $eventType );
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, $eventType, [ 'extra-data' => 'test' ] );
 		$this->assertTrue( $hookCalled );
 
-		/** @var SuggestedInvestigationsCaseLookupService $caseLookup */
-		$caseLookup = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseLookup' );
-
-		$openCases = $caseLookup->getCasesForSignal( $signal, [ CaseStatus::Open ] );
+		$openCases = $caseLookup->getCasesForSignal( $initialSignal, [ CaseStatus::Open ] );
 		$this->assertCount( $mergeable ? 1 : 2, $openCases );
 
 		// The user should be added to a single case: either $openCase (if mergeable) or a new case (if not).
 		// They should not be added to the closed case.
-		$caseIds = $this->getDb()->newSelectQueryBuilder()
-			->select( 'siu_sic_id' )
+		$caseUserRows = $this->getDb()->newSelectQueryBuilder()
+			->select( [ 'siu_sic_id', 'siu_info' ] )
 			->from( 'cusi_user' )
 			->where( [ 'siu_user_id' => $user2->getId() ] )
 			->caller( __METHOD__ )
-			->fetchFieldValues();
-		$this->assertCount( 1, $caseIds );
+			->fetchResultSet();
+		$this->assertSame( 1, $caseUserRows->numRows() );
+		$caseUserRow = $caseUserRows->fetchRow();
+		$caseIdSecondUserIsIn = (int)$caseUserRow['siu_sic_id'];
 
 		if ( $mergeable ) {
-			$this->assertSame( $openCase, (int)$caseIds[0] );
+			$this->assertSame( $openCase, $caseIdSecondUserIsIn );
 		} else {
-			$this->assertNotContains( $closedCase, $caseIds );
-			$this->assertNotContains( $openCase, $caseIds );
+			$this->assertNotSame( $closedCase, $caseIdSecondUserIsIn );
+			$this->assertNotSame( $openCase, $caseIdSecondUserIsIn );
 		}
+
+		$this->assertSame( 2, (int)$caseUserRow['siu_info'] );
+
+		// Check that the signals are correctly added to the case, using the same logic as above for
+		// what case the matched signal should be on
+		$newSignalExpectedCaseId = $mergeable ? $openCase : $closedCase + 1;
+
+		$this->newSelectQueryBuilder()
+			->select( [ 'sis_trigger_id', 'sis_trigger_type', 'sis_sic_id' ] )
+			->from( 'cusi_signal' )
+			->caller( __METHOD__ )
+			->assertResultSet( [
+				[ 0, 0, $openCase ],
+				[ 0, 0, $closedCase ],
+				[ 123, SuggestedInvestigationsCaseManagerService::TRIGGER_TYPE_REVISION, $newSignalExpectedCaseId ],
+			] );
 	}
 
-	public function provideMatchSignalsAgainstUserWhenFeatureEnabled() {
+	public static function provideMatchSignalsAgainstUserWhenFeatureEnabled() {
 		return [
 			'Signal allows merging' => [ 'mergeable' => true ],
 			'Signal does not allow merging' => [ 'mergeable' => false ],
@@ -108,15 +154,15 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		$user2 = $this->getTestSysop()->getUser();
 		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult( 'test-signal', 'test-value', true );
 
-		/** @var SuggestedInvestigationsCaseManagerService $caseManager */
-		$caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
-		$caseManager->createCase( [ $user1 ], [ $signal ] );
+		$this->caseManager->createCase( [ $user1 ], [ $signal ] );
 
 		$hookCalled = false;
 		$this->setTemporaryHook(
 			'CheckUserSuggestedInvestigationsSignalMatch',
 			static function (
-				UserIdentity $userIdentity, string $eventType, array &$hookProvidedSignalMatchResults
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults
 			) use ( &$hookCalled ) {
 				$negativeResult = SuggestedInvestigationsSignalMatchResult::newNegativeResult( 'test-signal' );
 				$hookProvidedSignalMatchResults[] = $negativeResult;
@@ -124,7 +170,7 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 			}
 		);
 
-		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, 'test-event' );
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, 'test-event', [] );
 		$this->assertTrue( $hookCalled );
 
 		// The user should not be added to any case
@@ -147,15 +193,15 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult( 'test-signal', 'test-value', true );
 
 		if ( $isUpdating ) {
-			/** @var SuggestedInvestigationsCaseManagerService $caseManager */
-			$caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
-			$caseManager->createCase( [ $user2 ], [ $signal ] );
+			$this->caseManager->createCase( [ $user2 ], [ $signal ] );
 		}
 
 		$this->setTemporaryHook(
 			'CheckUserSuggestedInvestigationsSignalMatch',
 			static function (
-				UserIdentity $userIdentity, string $eventType, array &$hookProvidedSignalMatchResults
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults
 			) use ( $signal ) {
 				$hookProvidedSignalMatchResults[] = $signal;
 			}
@@ -173,7 +219,7 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 			}
 		);
 
-		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user1, 'test-event' );
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user1, 'test-event', [] );
 
 		// Both users should be attached to the case
 		$this->newSelectQueryBuilder()
@@ -184,7 +230,7 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 			->assertFieldValues( [ strval( $user1->getId() ), strval( $user2->getId() ) ] );
 	}
 
-	public function provideMatchSignalsWithBeforeCreateHook() {
+	public static function provideMatchSignalsWithBeforeCreateHook() {
 		return [
 			'Hook should run on create' => [ 'isUpdating' => false ],
 			'Hook should not run on update' => [ 'isUpdating' => true ],
@@ -203,7 +249,7 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 			}
 		);
 
-		$service->matchSignalsAgainstUser( $user, 'test-event' );
+		$service->matchSignalsAgainstUser( $user, 'test-event', [] );
 	}
 
 	/** @dataProvider provideIgnoreIfTheresInvalidCase */
@@ -212,18 +258,21 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		$user1 = $this->getTestUser()->getUser();
 		$user2 = $this->getTestSysop()->getUser();
 		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
-			'test-signal', 'test-value', $mergeable );
+			'test-signal',
+			'test-value',
+			$mergeable
+		);
 
 		// Create an invalid case with user1
-		/** @var SuggestedInvestigationsCaseManagerService $caseManager */
-		$caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
-		$invalidCaseId = $caseManager->createCase( [ $user1 ], [ $signal ] );
-		$caseManager->setCaseStatus( $invalidCaseId, CaseStatus::Invalid );
+		$invalidCaseId = $this->caseManager->createCase( [ $user1 ], [ $signal ] );
+		$this->caseManager->setCaseStatus( $invalidCaseId, CaseStatus::Invalid );
 
 		$this->setTemporaryHook(
 			'CheckUserSuggestedInvestigationsSignalMatch',
 			static function (
-				UserIdentity $userIdentity, string $eventType, array &$hookProvidedSignalMatchResults
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults
 			) use ( $signal ) {
 				$hookProvidedSignalMatchResults[] = $signal;
 			}
@@ -241,10 +290,10 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 					'value' => 'test-value',
 				]
 			);
-		$this->setLogger( 'CheckUser', $logger );
+		$this->setService( 'CheckUserLogger', $logger );
 
 		// Trigger the invalid signal again, this time with $user2
-		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, 'test-event' );
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user2, 'test-event', [] );
 
 		// If the signal is mergeable, there should be only one case, with only one user
 		// Otherwise, two cases, each with one user
@@ -262,7 +311,7 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 			->assertFieldValue( $expectedCaseCount );
 	}
 
-	public function provideIgnoreIfTheresInvalidCase(): array {
+	public static function provideIgnoreIfTheresInvalidCase(): array {
 		return [
 			'Signal allows merging' => [
 				'mergeable' => true,
@@ -277,7 +326,189 @@ class SuggestedInvestigationsSignalMatchServiceTest extends MediaWikiIntegration
 		];
 	}
 
+	public static function provideTouchCasesCalledOnFirstEdit(): array {
+		return [
+			'signal matches' => [
+				'hookResult' => SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+					'test-signal',
+					'test-value',
+					false
+				),
+			],
+			'no signal match' => [
+				'hookResult' => SuggestedInvestigationsSignalMatchResult::newNegativeResult(
+					'test-signal'
+				),
+			],
+		];
+	}
+
+	/** @dataProvider provideTouchCasesCalledOnFirstEdit */
+	public function testTimestampChangedAfterFirstEdit( SuggestedInvestigationsSignalMatchResult $hookResult ): void {
+		ConvertibleTimestamp::setFakeTime( '20000000000000' );
+
+		$user = $this->getTestUser()->getUser();
+
+		$initialSignal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+			'test-signal',
+			'test-value',
+			false
+		);
+		$caseId1 = $this->caseManager->createCase( [ $user ], [ $initialSignal ] );
+		$caseId2 = $this->caseManager->createCase( [ $user ], [ $initialSignal ] );
+
+		$this->setTemporaryHook(
+			'CheckUserSuggestedInvestigationsSignalMatch',
+			static function (
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults
+			) use ( $hookResult ) {
+				$hookProvidedSignalMatchResults[] = $hookResult;
+			}
+		);
+
+		ConvertibleTimestamp::setFakeTime( '20211111111111' );
+
+		$status = $this->editPage( 'TestPageFirstEdit', 'content', '', NS_MAIN, $user );
+		$revId = $status->getNewRevision()->getId();
+
+		$this->getObjectUnderTest()->matchSignalsAgainstUser(
+			$user,
+			SuggestedInvestigationsSignalMatchService::EVENT_SUCCESSFUL_EDIT,
+			[ 'revId' => $revId ]
+		);
+
+		$this->newSelectQueryBuilder()
+			->select( [ 'sic_id', 'sic_updated_timestamp' ] )
+			->from( 'cusi_case' )
+			->where( [ 'sic_id' => [ $caseId1, $caseId2 ] ] )
+			->orderBy( 'sic_id', SelectQueryBuilder::SORT_ASC )
+			->caller( __METHOD__ )
+			->assertResultSet( [
+				[ $caseId1, $this->getDb()->timestamp( '20211111111111' ) ],
+				[ $caseId2, $this->getDb()->timestamp( '20211111111111' ) ],
+			] );
+	}
+
+	public static function provideCasesWhenNotToUpdateTheTimestamp(): array {
+		return [
+			'no revId in extraData' => [
+				'revisionCountToCreate' => 0,
+				'useRevId' => false,
+				'eventType' => SuggestedInvestigationsSignalMatchService::EVENT_SUCCESSFUL_EDIT,
+			],
+			'2 revisions before revId' => [
+				'revisionCountToCreate' => 2,
+				'useRevId' => true,
+				'eventType' => SuggestedInvestigationsSignalMatchService::EVENT_SUCCESSFUL_EDIT,
+			],
+			'wrong event type' => [
+				'revisionCountToCreate' => 0,
+				'useRevId' => false,
+				'eventType' => SuggestedInvestigationsSignalMatchService::EVENT_CREATE_ACCOUNT,
+			],
+		];
+	}
+
+	/** @dataProvider provideCasesWhenNotToUpdateTheTimestamp */
+	public function testTimestampIsNotChangedEditCountIsNotOne(
+		int $revisionCountToCreate,
+		bool $useRevId,
+		string $eventType
+	): void {
+		ConvertibleTimestamp::setFakeTime( '20111111111111' );
+
+		$user = $this->getTestUser()->getUser();
+
+		$initialSignal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+			'test-signal',
+			'test-value',
+			false
+		);
+		$caseId = $this->caseManager->createCase( [ $user ], [ $initialSignal ] );
+
+		$revId = null;
+		for ( $i = 0; $i < $revisionCountToCreate; $i++ ) {
+			$status = $this->editPage( 'TestPage' . $i, 'content ' . $i, '', NS_MAIN, $user );
+			$revId = $status->getNewRevision()->getId();
+		}
+
+		$extraData = ( $useRevId && $revId !== null ) ? [ 'revId' => $revId ] : [];
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user, $eventType, $extraData );
+
+		$this->newSelectQueryBuilder()
+			->select( 'sic_updated_timestamp' )
+			->from( 'cusi_case' )
+			->where( [ 'sic_id' => $caseId ] )
+			->caller( __METHOD__ )
+			->assertFieldValue( $this->getDb()->timestamp( '20111111111111' ) );
+	}
+
+	public static function provideAutoCloseJobIsQueuedOnlyOnCaseCreation(): array {
+		return [
+			'new case created (non-mergeable signal)' => [
+				'mergeable' => false,
+				'preCreateExistingCase' => false,
+				'expectedJobCount' => 1,
+			],
+			'new case created (mergeable signal, no existing case)' => [
+				'mergeable' => true,
+				'preCreateExistingCase' => false,
+				'expectedJobCount' => 1,
+			],
+			'merged into existing case' => [
+				'mergeable' => true,
+				'preCreateExistingCase' => true,
+				'expectedJobCount' => 0,
+			],
+		];
+	}
+
+	/** @dataProvider provideAutoCloseJobIsQueuedOnlyOnCaseCreation */
+	public function testAutoCloseJobIsQueuedOnlyOnCaseCreation(
+		bool $mergeable,
+		bool $preCreateExistingCase,
+		int $expectedJobCount
+	): void {
+		$user = $this->getTestUser()->getUser();
+		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+			'test-signal',
+			'test-value',
+			$mergeable
+		);
+
+		if ( $preCreateExistingCase ) {
+			// Pre-create a case so the signal merges into it instead of creating a new one
+			$this->caseManager->createCase( [ $user ], [ $signal ] );
+		}
+
+		$this->setTemporaryHook(
+			'CheckUserSuggestedInvestigationsSignalMatch',
+			static function (
+				UserIdentity $userIdentity,
+				string $eventType,
+				array &$hookProvidedSignalMatchResults
+			) use ( $signal ) {
+				$hookProvidedSignalMatchResults[] = $signal;
+			}
+		);
+
+		$this->getObjectUnderTest()->matchSignalsAgainstUser( $user, 'test-event', [] );
+
+		$jobQueue = $this->getServiceContainer()->getJobQueueGroup()
+			->get( SuggestedInvestigationsAutoCloseForCaseJob::TYPE );
+		$jobs = iterator_to_array( $jobQueue->getAllQueuedJobs() );
+
+		$this->assertCount( $expectedJobCount, $jobs );
+		if ( $expectedJobCount > 0 ) {
+			$this->assertArrayHasKey( 'caseId', $jobs[0]->getParams() );
+			$this->assertArrayNotHasKey( 'jobReleaseTimestamp', $jobs[0]->getParams() );
+		}
+	}
+
 	private function getObjectUnderTest(): SuggestedInvestigationsSignalMatchService {
 		return $this->getServiceContainer()->get( 'SuggestedInvestigationsSignalMatchService' );
 	}
+
 }

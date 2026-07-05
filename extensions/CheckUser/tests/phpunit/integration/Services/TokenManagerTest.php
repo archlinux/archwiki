@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
 use Firebase\JWT\JWT;
-use MediaWiki\CheckUser\Services\TokenManager;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Extension\CheckUser\Services\TokenManager;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\SessionManager;
 use MediaWikiIntegrationTestCase;
@@ -16,7 +16,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\Services\TokenManager
+ * @covers \MediaWiki\Extension\CheckUser\Services\TokenManager
  */
 class TokenManagerTest extends MediaWikiIntegrationTestCase {
 

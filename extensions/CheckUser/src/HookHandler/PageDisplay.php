@@ -1,50 +1,34 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use GlobalPreferences\GlobalPreferencesFactory;
-use MediaWiki\CheckUser\Services\CheckUserIPRevealManager;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Services\CheckUserIPRevealManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\IPInfo\HookHandler\AbstractPreferencesHandler;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\Skin;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
 
 class PageDisplay implements BeforePageDisplayHook {
-	private Config $config;
-	private CheckUserPermissionManager $checkUserPermissionManager;
-	private CheckUserIPRevealManager $checkUserIPRevealManager;
-	private UserOptionsLookup $userOptionsLookup;
-	private TempUserConfig $tempUserConfig;
-	private ExtensionRegistry $extensionRegistry;
-	private UserIdentityUtils $userIdentityUtils;
-	private PreferencesFactory $preferencesFactory;
-
 	public function __construct(
-		Config $config,
-		CheckUserPermissionManager $checkUserPermissionManager,
-		CheckUserIPRevealManager $checkUserIPRevealManager,
-		TempUserConfig $tempUserConfig,
-		UserOptionsLookup $userOptionsLookup,
-		ExtensionRegistry $extensionRegistry,
-		UserIdentityUtils $userIdentityUtils,
-		PreferencesFactory $preferencesFactory
+		private readonly Config $config,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
+		private readonly CheckUserIPRevealManager $checkUserIPRevealManager,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly PreferencesFactory $preferencesFactory,
 	) {
-		$this->config = $config;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
-		$this->checkUserIPRevealManager = $checkUserIPRevealManager;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->extensionRegistry = $extensionRegistry;
-		$this->userIdentityUtils = $userIdentityUtils;
-		$this->preferencesFactory = $preferencesFactory;
 	}
 
 	/**
@@ -68,20 +52,22 @@ class PageDisplay implements BeforePageDisplayHook {
 			return;
 		}
 
-		// Config needed for a js-added message on Special:Block
+		$permStatus = $this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses(
+			$out->getAuthority()
+		);
+
+		// Config needed for a js features on Special:Block
 		$title = $out->getTitle();
 		if ( $title->isSpecial( 'Block' ) ) {
 			$out->addJsConfigVars( [
 				'wgCUDMaxAge' => $this->config->get( 'CUDMaxAge' ),
+				'wgTemporaryAccountIPRevealAllowed' => $permStatus->isGood(),
 			] );
 		}
 
 		$out->addModules( 'ext.checkUser.tempAccounts' );
 		$out->addModuleStyles( 'ext.checkUser.styles' );
 
-		$permStatus = $this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses(
-			$out->getAuthority()
-		);
 		$out->addJSConfigVars( [
 			'wgCheckUserAbuseFilterExtensionLoaded' =>
 				$this->extensionRegistry->isLoaded( 'Abuse Filter' ),
@@ -93,6 +79,7 @@ class PageDisplay implements BeforePageDisplayHook {
 			'wgCheckUserTemporaryAccountIPRevealAllowed' => true,
 			'wgCheckUserSpecialPagesWithoutIPRevealButtons' =>
 				$this->config->get( 'CheckUserSpecialPagesWithoutIPRevealButtons' ),
+			'wgCheckUserContribsPageLocalName' => SpecialPage::getTitleValueFor( 'Contributions' )->getText(),
 		] );
 	}
 
@@ -125,6 +112,9 @@ class PageDisplay implements BeforePageDisplayHook {
 					$authority->isAllowed( 'checkuser' ),
 				'wgCheckUserCanAccessTemporaryAccountLog' =>
 					$authority->isAllowed( 'checkuser-temporary-account-log' ),
+				'wgCheckUserCanViewSuggestedInvestigations' =>
+					$authority->isAllowed( 'checkuser-suggested-investigations' ) &&
+					$this->config->get( 'CheckUserSuggestedInvestigationsEnabled' ),
 			] );
 		}
 	}
@@ -179,13 +169,15 @@ class PageDisplay implements BeforePageDisplayHook {
 		}
 
 		if ( !$out->getAuthority()->isAllowedAny(
-			'checkuser-temporary-account-no-preference', 'checkuser-temporary-account'
+			'checkuser-temporary-account-no-preference',
+			'checkuser-temporary-account'
 		) ) {
 			return;
 		}
 
 		$userHasSeenDialog = $this->userOptionsLookup->getBoolOption(
-			$out->getUser(), Preferences::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN
+			$out->getUser(),
+			Preferences::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN
 		);
 		if ( !$userHasSeenDialog ) {
 			$out->addHtml( '<div id="ext-checkuser-tempaccountsonboarding-app"></div>' );
@@ -202,10 +194,12 @@ class PageDisplay implements BeforePageDisplayHook {
 					$out->getAuthority()->isAllowed( 'ipinfo' ),
 				'wgCheckUserIPInfoPreferenceChecked' => $ipInfoLoaded &&
 					$this->getGlobalPreferenceValue(
-						$out->getUser(), AbstractPreferencesHandler::IPINFO_USE_AGREEMENT
+						$out->getUser(),
+						AbstractPreferencesHandler::IPINFO_USE_AGREEMENT
 					),
 				'wgCheckUserIPRevealPreferenceGloballyChecked' => $this->getGlobalPreferenceValue(
-					$out->getUser(), Preferences::ENABLE_IP_REVEAL
+					$out->getUser(),
+					Preferences::ENABLE_IP_REVEAL
 				),
 				'wgCheckUserIPRevealPreferenceLocallyChecked' =>
 					$this->userOptionsLookup->getBoolOption( $out->getUser(), Preferences::ENABLE_IP_REVEAL ),
@@ -217,9 +211,8 @@ class PageDisplay implements BeforePageDisplayHook {
 					// a prereq for auto-reveal
 					$this->extensionRegistry->isLoaded( 'GlobalPreferences' ) &&
 					$out->getAuthority()->isAllowed( 'checkuser-temporary-account-auto-reveal' ),
-					'wgCheckUserAutoRevealMaximumExpiry' => $this->config->get(
-						'CheckUserAutoRevealMaximumExpiry'
-					),
+				'wgCheckUserAutoRevealMaximumExpiry' =>
+					$this->config->get( 'CheckUserAutoRevealMaximumExpiry' ),
 			] );
 		}
 	}

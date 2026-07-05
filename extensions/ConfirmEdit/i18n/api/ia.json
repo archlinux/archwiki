@@ -5,5 +5,6 @@
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Responsa al CAPTCHA",
-	"captcha-apihelp-param-captchaid": "Le ID de CAPTCHA del requesta precedente"
+	"captcha-apihelp-param-captchaid": "Le ID de CAPTCHA del requesta precedente",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Indica si le CAPTCHA hCaptcha ha essite monstrate per fortia, per exemplo, per un consequentia del extension AbuseFilter (e assi ha usate un clave de sito plus restrictive). Defini isto si le variabile de configuration JS con le mesme nomine es ver o si le prime tentativa de usar iste API restitueva un error ‘forcecaptcha’ con un clave de sito specificate."
 }

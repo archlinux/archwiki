@@ -1,9 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+declare( strict_types=1 );
 
-use MediaWiki\CheckUser\Hook\HookRunner;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
+
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Hook\HookRunner;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
@@ -47,7 +49,8 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 				],
 				[
 					'name' => 'defaultAutoRevealDuration.json',
-					'callback' => 'MediaWiki\\CheckUser\\HookHandler\\DurationMessages::getAutoRevealMaximumExpiry',
+					'callback' => 'MediaWiki\\Extension\\CheckUser\\'
+						. 'HookHandler\\DurationMessages::getAutoRevealMaximumExpiry',
 				],
 			],
 			'messages' => [
@@ -79,7 +82,7 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-title-with-global-preferences',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-autoreveal-preference-checkbox-text',
-				// phpcs:ignore Generic.Files.LineLength.TooLong
+				// phpcs:ignore Generic.Files.LineLength
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text-with-global-preferences',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-locally-enabled',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-globally-enabled',
@@ -87,7 +90,7 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 				'checkuser-tempaccount-enable-preference-description',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text',
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences',
-				// phpcs:ignore Generic.Files.LineLength.TooLong
+				// phpcs:ignore Generic.Files.LineLength
 				'checkuser-temporary-accounts-onboarding-dialog-ip-reveal-postscript-text-with-global-preferences-with-autoreveal',
 				'checkuser-ip-auto-reveal-link-sidebar',
 			],
@@ -130,6 +133,23 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 			'checkuser-suggestedinvestigations-change-status-dialog-reason-description-invalid',
 			'checkuser-suggestedinvestigations-change-status-dialog-reason-placeholder-resolved',
 			'checkuser-suggestedinvestigations-change-status-dialog-reason-placeholder-invalid',
+			'checkuser-suggestedinvestigations-filter-dialog-title',
+			'checkuser-suggestedinvestigations-filter-dialog-close-button',
+			'checkuser-suggestedinvestigations-filter-dialog-show-results-button',
+			'checkuser-suggestedinvestigations-filter-dialog-signal-filter-header',
+			'checkuser-suggestedinvestigations-filter-dialog-status-filter-header',
+			'checkuser-suggestedinvestigations-filter-dialog-account-activity-header',
+			'checkuser-suggestedinvestigations-filter-dialog-show-cases-with-no-user-edits',
+			'checkuser-suggestedinvestigations-filter-dialog-show-cases-with-no-user-edits-globally',
+			'checkuser-suggestedinvestigations-filter-dialog-hide-cases-with-no-blocked-users',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-header',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-today',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-last3days',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-last7days',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-last90days',
+			'checkuser-suggestedinvestigations-filter-dialog-last-updated-all-time',
+			'checkuser-suggestedinvestigations-filter-dialog-username-filter-header',
+			'checkuser-suggestedinvestigations-filter-dialog-username-filter-placeholder',
 			'checkuser-suggestedinvestigations-status-open',
 			'checkuser-suggestedinvestigations-status-resolved',
 			'checkuser-suggestedinvestigations-status-invalid',
@@ -147,6 +167,16 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 			$signals = [];
 			$this->hookRunner->onCheckUserSuggestedInvestigationsGetSignals( $signals );
 			foreach ( $signals as $signal ) {
+				// Signals with a hardcoded description don't need the i18n message
+				// provided in the ResourceLoader module
+				if ( is_array( $signal ) ) {
+					if ( array_key_exists( 'description', $signal ) ) {
+						continue;
+					}
+
+					$signal = $signal['name'];
+				}
+
 				$messages[] = 'checkuser-suggestedinvestigations-risk-signals-popover-body-' . $signal;
 				$messages[] = 'checkuser-suggestedinvestigations-signal-' . $signal;
 			}
@@ -158,13 +188,18 @@ class RLRegisterModulesHandler implements ResourceLoaderRegisterModulesHook {
 			'localBasePath' => $dir . 'ext.checkUser.suggestedInvestigations',
 			'remoteExtPath' => 'CheckUser/modules/ext.checkUser.suggestedInvestigations',
 			'packageFiles' => [
-				'index.js',
+				'dispatcher.js',
 				'Constants.js',
 				'rest.js',
 				'utils.js',
+				'instrumentation.js',
+				'SpecialSuggestedInvestigations.js',
 				'components/ChangeInvestigationStatusDialog.vue',
 				'components/CharacterLimitedTextInput.vue',
+				'components/FilterDialog.vue',
+				'components/FilterDialogUsernameFilter.vue',
 				'components/SignalsPopover.vue',
+				'composables/useInstrument.js',
 			],
 			'messages' => $messages,
 			'dependencies' => [

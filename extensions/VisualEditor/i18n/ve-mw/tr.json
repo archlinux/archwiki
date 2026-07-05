@@ -43,6 +43,7 @@
 			"Vito Genovese"
 		]
 	},
+	"collabpad-disabled": "CollabPad bu wiki'de etkinleştirilmemiştir.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "$1 üzerinden içe aktarıldı",
 	"collabpad": "CollabPad",
@@ -264,6 +265,7 @@
 	"visualeditor-educationpopup-dismiss": "Tamam, anladım",
 	"visualeditor-expandable-less": "Daha az",
 	"visualeditor-expandable-more": "Daha fazla",
+	"visualeditor-expandableerror-toggle": "Görünürlüğü değiştir",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Sayfa başlığı",
 	"visualeditor-formatdropdown-format-mw-heading2": "Başlık",
@@ -271,6 +273,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Alt başlık 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Alt başlık 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Alt başlık 4",
+	"visualeditor-fullpage-switch-label": "Tam sayfayı düzenle",
 	"visualeditor-generating-wikitext-progress": "Vikimetin oluşturuluyor",
 	"visualeditor-includes-noinclude-start": "Alıntılardan hariç tutulan içeriğin başlangıcı",
 	"visualeditor-includes-noinclude-end": "Alıntılardan hariç tutulan içeriğin sonu",

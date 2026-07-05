@@ -18,7 +18,6 @@
 	"spam-blacklisted-email": "Tomet lista epostay",
 	"spam-blacklisted-email-text": "Nıka adresa e-postayê to qande karberê bini ra mesac rıştenê listeyê biya tomet .",
 	"spam-blacklisted-email-signup": "E-posta adresiyo ke deyayo karkerdışe cı newke groto tometa miyan.",
-	"spam-invalid-lines": "na qerelisteya spami {{PLURAL:$1|satır|satıran}}  {{PLURAL:$1|nemeqbulo|nemeqbuli}};",
 	"spam-blacklist-desc": "Regex-tabanın haleta anti-spami URL'ya perer u adresa e-posta qande  karberande qeydınan geriyayo",
 	"log-name-spamblacklist": "Qeydê siyaliste ya spami",
 	"log-description-spamblacklist": "Nê weqeyi isabetanê lista spamiya siyaye teqib kenê.",

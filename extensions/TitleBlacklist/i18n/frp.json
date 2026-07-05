@@ -11,7 +11,6 @@
 	"titleblacklist-forbidden-move": "La pâge « $2 » pôt pas étre renomâ en « $3 », perce que lo titro « $3 » at étâ dèfendu a la crèacion.\nDens la lista nêre, corrèspond a ceta entrâ : <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Lo nom de fichiér « $2 » at étâ dèfendu a la crèacion.\nDens la lista nêre, corrèspond a ceta entrâ : <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Lo nom d’usanciér « $2 » at étâ dèfendu a la crèacion.\nDens la lista nêre, corrèspond a ceta entrâ : <code>$1</code>",
-	"titleblacklist-invalid": "{{PLURAL:$1|Ceta legne|Cetes legnes}} dens la lista nêre des titros {{PLURAL:$1|est envalida|sont envalides}} ;\n{{PLURAL:$1|la|les}} volyéd corregiér devant qu’encartar :",
 	"titleblacklist-override": "Ignorar la lista nêre",
 	"right-tboverride": "Passar outre la lista des titros ou ben des noms d’utilisator dèfendus",
 	"right-tboverride-account": "Ignorar la lista nêre des noms d’usanciér"

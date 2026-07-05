@@ -73,19 +73,26 @@ class RemoveProtectedFlagFromFilterTest extends MaintenanceBaseTestCase {
 	/**
 	 * @dataProvider provideUnprotectedFilter
 	 */
-	public function testExecuteUnprotectedFilter( $filter ) {
+	public function testExecuteUnprotectedFilter( $filter, $expectedNewPrivacyLevel ) {
 		$this->expectOutputString( "Filter $filter is not protected. Nothing to update.\n" );
 		$this->maintenance->loadParamsAndArgs( null, null, [ $filter ] );
 		$this->assertFalse( $this->maintenance->execute() );
+		$this->newSelectQueryBuilder()
+			->select( 'af_hidden' )
+			->from( 'abuse_filter' )
+			->where( [ 'af_id' => $filter ] )
+			->assertFieldValue( $expectedNewPrivacyLevel );
 	}
 
 	public static function provideUnprotectedFilter() {
 		return [
 			'Fail on public filter' => [
-				'filterId' => 1,
+				'filter' => 1,
+				'expectedNewPrivacyLevel' => Flags::FILTER_PUBLIC,
 			],
 			'Fail on unprotected, private filter' => [
-				'filterId' => 2,
+				'filter' => 2,
+				'expectedNewPrivacyLevel' => Flags::FILTER_HIDDEN,
 			],
 		];
 	}
@@ -93,19 +100,24 @@ class RemoveProtectedFlagFromFilterTest extends MaintenanceBaseTestCase {
 	/**
 	 * @dataProvider provideProtectedFilter
 	 */
-	public function testExecuteProtectedFilter( $filter ) {
+	public function testExecuteProtectedFilter( $filter, $expectedNewPrivacyLevel ) {
 		$this->maintenance->loadParamsAndArgs( null, null, [ $filter ] );
 		$this->assertTrue( $this->maintenance->execute() );
+		$this->newSelectQueryBuilder()
+			->select( 'af_hidden' )
+			->from( 'abuse_filter' )
+			->where( [ 'af_id' => $filter ] )
+			->assertFieldValue( $expectedNewPrivacyLevel );
 	}
 
 	public static function provideProtectedFilter() {
 		return [
 			'Remove protected flag from protected filter' => [
-				'filterId' => 3,
+				'filter' => 3,
 				'expectedNewPrivacyLevel' => Flags::FILTER_PUBLIC,
 			],
 			'Remove protected flag from private, protected filter' => [
-				'filterId' => 4,
+				'filter' => 4,
 				'expectedNewPrivacyLevel' => Flags::FILTER_HIDDEN,
 			],
 		];

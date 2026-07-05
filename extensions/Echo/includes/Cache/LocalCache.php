@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Notifications\Cache;
 
 use Iterator;
-use MapCacheLRU;
+use Wikimedia\ObjectCache\MapCacheLRU;
 
 /**
  * Base Local cache object, which borrows the concept from Flow user listener

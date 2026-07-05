@@ -3,8 +3,8 @@
 		"authors": [
 			"EritajGwadloup",
 			"Histnou",
-			"Laetitia Kb",
-			"Istwalezanti"
+			"Istwalezanti",
+			"Laetitia Kb"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Fo ou sévi èvê Legacy Vector",
@@ -38,9 +38,6 @@
 	"vector-intro-page": "Anmwé:Entrodiksyon",
 	"vector-toc-label": "Kontni",
 	"vector-toc-beginning": "Konmansman",
-	"vector-anon-user-menu-pages": "Paj pou kontribitè ki dékonnèkté",
-	"vector-anon-user-menu-pages-learn": "Aprann plis",
-	"vector-anon-user-menu-pages-label": "Aprann plis asi modifikasyon",
 	"vector-main-menu-tooltip": "Méni prensipal",
 	"vector-toc-menu-tooltip": "Andidanbway",
 	"vector-site-nav-label": "Sit",

@@ -7,11 +7,9 @@ use Countable;
  * VectorComponentMenu component
  */
 class VectorComponentMenu implements VectorComponent, Countable {
-	/** @var array */
-	private $data;
-
-	public function __construct( array $data ) {
-		$this->data = $data;
+	public function __construct(
+		private readonly array $data,
+	) {
 	}
 
 	/**

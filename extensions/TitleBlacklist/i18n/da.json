@@ -17,6 +17,7 @@
 	"titleblacklist-forbidden-move": "\"$2\" kan ikke flyttes til \"$3\", fordi artikelnavnet \"$3\" er blevet beskyttet mod oprettelse.\nDen matcher følgende element på listen over ikke-tilladte titler: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Filnavnet \"$2\" er blevet udelukket fra oprettelse.\nDet matcher følgende element på listen over ikke-tilladte titler: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Brugernavnet \"$2\" er blevet udelukket fra oprettelse.\nDet matcher følgende element på listen over ikke-tilladte titler: <code>$1</code>",
+	"titleblacklist-invalid-error": "Følgende {{PLURAL:$1|linje|linjer}} på listen over ikke-tilladte titler {{PLURAL:$1|er}} ugyldige;\nret venligst {{PLURAL:$1|den|dem}} før du gemmer:\n$2",
 	"titleblacklist-override": "Tilsidesæt listen over ikke-tilladte titler, hvis den matcher",
 	"titleblacklist-override-help": "Brugere med tilstrækkelige rettigheder kan indstille dette til at ignorere tjek af listen over ikke-tilladte titler.",
 	"titleblacklist-warning": "<strong>Advarsel: Denne side kan kun redigeres af administratorer og andre brugere med rettigheden <code>tboverride</code>, fordi den matcher følgende post på listen over ikke-tilladte titler:</strong><br /><code>$1</code>",

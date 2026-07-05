@@ -7,8 +7,7 @@
 /* eslint-disable no-console */
 
 /**
- * @property {boolean} debug
- * @memberof ve
+ * @property {boolean} ve.debug
  */
 ve.debug = true;
 
@@ -55,8 +54,7 @@ ve.serializeNodeDebug = function ( domNode ) {
 		// else node.nodeType === Node.ELEMENT_NODE
 
 		html.push( '<', ve.escapeHtml( node.nodeName.toLowerCase() ) );
-		for ( let i = 0, len = node.attributes.length; i < len; i++ ) {
-			const attr = node.attributes[ i ];
+		Array.prototype.forEach.call( node.attributes, ( attr ) => {
 			html.push(
 				' ',
 				ve.escapeHtml( attr.name ),
@@ -65,11 +63,9 @@ ve.serializeNodeDebug = function ( domNode ) {
 				ve.escapeHtml( attr.value ),
 				'\''
 			);
-		}
+		} );
 		html.push( '>' );
-		for ( let i = 0, len = node.childNodes.length; i < len; i++ ) {
-			add( node.childNodes[ i ] );
-		}
+		Array.prototype.forEach.call( node.childNodes, ( childNode ) => add( childNode ) );
 		html.push( '</', ve.escapeHtml( node.nodeName.toLowerCase() ), '>' );
 	}
 	add( domNode );

@@ -1,10 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Maintenance;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Services\CheckUserCentralIndexManager;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Services\CheckUserCentralIndexManager;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 // @codeCoverageIgnoreStart
@@ -85,9 +86,9 @@ class PopulateCentralCheckUserIndexTables extends LoggedUpdateMaintenance {
 				->caller( __METHOD__ )
 				->fetchFieldValues();
 
-			$lastActorId = end( $batchOfActorIds );
-			$firstActorId = reset( $batchOfActorIds );
-			if ( $firstActorId !== false ) {
+			$lastActorId = array_last( $batchOfActorIds );
+			$firstActorId = array_first( $batchOfActorIds );
+			if ( $firstActorId !== null ) {
 				$this->output( "...Processing users with actor IDs $firstActorId to $lastActorId\n" );
 			}
 
@@ -112,36 +113,44 @@ class PopulateCentralCheckUserIndexTables extends LoggedUpdateMaintenance {
 				$lastIp = null;
 				do {
 					// Get a batch of IPs used by this user for processing
-					$ipQueryBuilder = $dbr->newSelectQueryBuilder()
-						->select( "{$columnAlias}ip" )
+					$ipHexQueryBuilder = $dbr->newSelectQueryBuilder()
+						->select( "{$columnAlias}ip_hex" )
 						->distinct()
 						->from( $table )
-						->where( [ "{$columnAlias}actor" => $actorId ] )
+						->where( [
+							"{$columnAlias}actor" => $actorId,
+							$dbr->expr( "{$columnAlias}ip_hex", '!=', null ),
+						] )
 						->limit( $this->mBatchSize )
-						->orderBy( "{$columnAlias}ip", SelectQueryBuilder::SORT_ASC );
+						->orderBy( "{$columnAlias}ip_hex", SelectQueryBuilder::SORT_ASC );
 
 					if ( $lastIp !== null ) {
-						$ipQueryBuilder->where( $dbr->expr( "{$columnAlias}ip", '>', $lastIp ) );
+						$ipHexQueryBuilder->where( $dbr->expr( "{$columnAlias}ip_hex", '>', $lastIp ) );
 					}
 
-					$batchOfIPs = $ipQueryBuilder->caller( __METHOD__ )->fetchFieldValues();
+					$batchOfIPHexes = $ipHexQueryBuilder->caller( __METHOD__ )->fetchFieldValues();
 
-					foreach ( $batchOfIPs as $ip ) {
-						// Using this combination of $ip and $performer, make calls to CheckUserCentralIndexManager
-						// ::recordActionInCentralIndexes to update the central index.
+					foreach ( $batchOfIPHexes as $ipHex ) {
+						// Using this combination of $ipHex and $performer, make calls to
+						// CheckUserCentralIndexManager::recordActionInCentralIndexes to update
+						// the central index.
 
-						// Get the last timestamp used to make an action by this $performer and $ip combination.
+						// Get the last timestamp used to make an action by this $performer and $ipHex combination.
 						$lastTimestamp = $dbr->newSelectQueryBuilder()
 							->select( "MAX({$columnAlias}timestamp)" )
 							->from( $table )
-							->where( [ "{$columnAlias}actor" => $actorId, "{$columnAlias}ip" => $ip ] )
+							->where( [ "{$columnAlias}actor" => $actorId, "{$columnAlias}ip_hex" => $ipHex ] )
 							->limit( $this->mBatchSize )
 							->caller( __METHOD__ )
 							->fetchField();
 
 						// Record an entry in the central index tables with the last found timestamp
 						$checkUserCentralIndexManager->recordActionInCentralIndexes(
-							$performer, $ip, $dbr->getDomainID(), $lastTimestamp, false
+							$performer,
+							IPUtils::formatHex( $ipHex ),
+							$dbr->getDomainID(),
+							$lastTimestamp,
+							false
 						);
 
 						// If the $table is cu_changes, then we should also call the method again while filtering
@@ -153,7 +162,7 @@ class PopulateCentralCheckUserIndexTables extends LoggedUpdateMaintenance {
 								->from( $table )
 								->where( [
 									'cuc_actor' => $actorId,
-									'cuc_ip' => $ip,
+									'cuc_ip_hex' => $ipHex,
 									$dbr->expr( 'cuc_this_oldid', '!=', 0 ),
 								] )
 								->limit( $this->mBatchSize )
@@ -162,7 +171,11 @@ class PopulateCentralCheckUserIndexTables extends LoggedUpdateMaintenance {
 
 							if ( $lastEditTimestamp ) {
 								$checkUserCentralIndexManager->recordActionInCentralIndexes(
-									$performer, $ip, $dbr->getDomainID(), $lastEditTimestamp, true
+									$performer,
+									IPUtils::formatHex( $ipHex ),
+									$dbr->getDomainID(),
+									$lastEditTimestamp,
+									true
 								);
 							}
 						}
@@ -170,8 +183,8 @@ class PopulateCentralCheckUserIndexTables extends LoggedUpdateMaintenance {
 
 					// After processing a batch of IPs for a user, wait for replica DBs to catch up.
 					$this->waitForReplication();
-					$lastIp = end( $batchOfIPs );
-				} while ( count( $batchOfIPs ) );
+					$lastIp = array_last( $batchOfIPHexes );
+				} while ( count( $batchOfIPHexes ) );
 			}
 		} while ( count( $batchOfActorIds ) );
 

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nije pronađena serijalizacija u predmemoriji s tim ključem",

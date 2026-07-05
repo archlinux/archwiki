@@ -10,11 +10,11 @@
 			"Movses",
 			"No Sleep till Krupki",
 			"Plaga med",
+			"Ucukor",
 			"Vlad5250",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
-			"Тест",
-			"Ucukor"
+			"Тест"
 		]
 	},
 	"abusefilter-desc": "Прымяняе аўтаматычную эўрыстыку да правак.",
@@ -282,7 +282,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Задаць зменную ($1)",
 	"abusefilter-edit-builder-group-vars": "Зменныя",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-час змены ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Імя ўліковага запісу пры стварэнні ўліковага запісу ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Імя ўліковага запісу пры стварэнні ўліковага запісу ($1)",
 	"abusefilter-edit-builder-vars-action": "Дзеянне ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Колькасць радкоў, дададзеных у праўцы ($1)",
 	"abusefilter-edit-builder-vars-delta": "Змена памеру ў праўцы ($1)",

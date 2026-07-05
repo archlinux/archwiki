@@ -43,6 +43,7 @@
 	"cite-reference-previews-journal": "Časopisová reference",
 	"cite-reference-previews-news": "Zpravodajská reference",
 	"cite-reference-previews-note": "Poznámka",
+	"cite-reference-previews-map": "Mapová reference",
 	"cite-reference-previews-web": "Webová reference",
 	"cite-reference-previews-collapsible-placeholder": "Tato reference obsahuje prvek, který se do náhledu nevejde.",
 	"cite-reference-previews-gadget-conflict-info-reftooltips": "Máte zapnuté udělátko [[$1|Vyskakovací reference]], takže neuvidíte náhledy referencí, ale i tak uvidíte náhledy stránek. V závislosti na vaší wiki se může udělátko jmenovat i mírně jinak. Pokud budete mít i nadále problémy, zkontrolujte prosím svá udělátka a uživatelské skripty včetně těch globálních.",
@@ -61,6 +62,7 @@
 	"cite-wikieditor-help-content-showreferences-description": "Zobrazení referencí",
 	"cite-wikieditor-help-content-reference-example-text1": "Text článku.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Text odkazu], další text.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Text odkazu]",
+	"cite-wikieditor-help-content-reference-example-text3": "Kniha",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Strana 76",
 	"communityconfiguration-cite-title": "Citace"
 }

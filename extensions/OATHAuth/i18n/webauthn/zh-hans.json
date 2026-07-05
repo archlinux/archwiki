@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"GuoPC",
+			"Peterxy12",
+			"Shizhao",
+			"Stang",
+			"WhitePhosphorus",
+			"人间百态"
+		]
+	},
+	"oathauth-webauthn-module-label": "安全密钥",
+	"oathauth-webauthn-javascript-required": "您的浏览器必须启用JavaScript才能使用安全密钥。",
+	"oathauth-webauthn-ui-login-prompt": "请使用您的安全密钥或按照浏览器中的说明进行操作。",
+	"oathauth-webauthn-ui-add-key": "添加密钥",
+	"oathauth-webauthn-error-browser-unsupported": "此浏览器不支持安全密钥认证，或不适用于本网站。请尝试使用其他浏览器。 [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support 阅读更多]",
+	"oathauth-webauthn-error-browser-unsupported-console": "此浏览器不支持安全密钥认证，或不适用于此网站。",
+	"oathauth-webauthn-error-auth-generic": "身份验证过程被中断。请重新开始身份验证过程。",
+	"oathauth-webauthn-error-reg-generic": "无法验证您的密钥。请重新开始注册过程。",
+	"oathauth-webauthn-registered-keys-section-name": "已注册密钥",
+	"oathauth-webauthn-ui-remove-key": "移除",
+	"oathauth-webauthn-error-module-not-enabled": "未为{{GENDER:$2|用户“$2”}}启用模块“$1”。",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn验证失败。",
+	"oathauth-webauthn-error-passkey-verification-failed": "通行密钥认证失败。",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn凭证未发送。",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|用户“$1”}}无法注册新凭证。",
+	"oathauth-webauthn-error-invalid-new-key": "模块返回的新密钥不是必需的类型。",
+	"oathauth-webauthn-error-registration-failed": "新密钥注册失败。",
+	"oathauth-webauthn-ui-key-register-help": "为您的密钥选择昵称:",
+	"oathauth-webauthn-error-cannot-remove-key": "密钥无法移除。",
+	"oathauth-webauthn-error-get-authinfo-fail": "无法检索身份验证信息。",
+	"oathauth-webauthn-add-key-section-name": "注册新的安全密钥",
+	"oathauth-webauthn-error-get-reginfo-fail": "无法检索注册信息。",
+	"oathauth-webauthn-module-description": "WebAuthn处于实验阶段。其目前尚不提供丢失或损坏的身份验证设备的恢复选项。\n\n[https://zh.wikipedia.org/wiki/WebAuthn 了解关于WebAuthn的更多信息]",
+	"oathauth-webauthn-ui-reload-page-label": "重新加载页面",
+	"oathauth-webauthn-authentication-info-label": "认证数据",
+	"oathauth-webauthn-authentication-info-help": "身份验证数据传递给客户端以用于凭证检索",
+	"oathauth-webauthn-credential-label": "用户凭证",
+	"oathauth-webauthn-credential-help": "基于身份验证数据的用户凭证",
+	"oathauth-webauthn-add-security-key": "添加安全密钥",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "使用安全密钥或通行密钥"
+}

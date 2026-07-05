@@ -18,7 +18,7 @@ abstract class ExceptionBase extends Exception {
 
 	/**
 	 * Deserialize data from edit stash
-	 * @param array $value
+	 * @param array{class: class-string<static>, message: string} $value
 	 * @return static
 	 */
 	public static function fromArray( array $value ) {

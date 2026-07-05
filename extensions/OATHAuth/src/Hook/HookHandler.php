@@ -3,25 +3,31 @@
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
 use BadMethodCallException;
+use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
-use MediaWiki\Extension\OATHAuth\OATHAuth;
+use MediaWiki\Extension\OATHAuth\Auth\SecondaryAuthenticationProvider;
+use MediaWiki\Extension\OATHAuth\Auth\WebAuthnAuthenticationRequest;
+use MediaWiki\Extension\OATHAuth\HTMLField\NoJsInfoField;
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
+use MediaWiki\Extension\OATHAuth\OATHAuthLogger;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Message\Message;
-use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Permissions\Hook\UserGetRightsHook;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\ResourceLoader\Context;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\User\CentralId\CentralIdLookup;
-use MediaWiki\User\CentralId\CentralIdLookupFactory;
+use MediaWiki\User\Hook\ReadPrivateUserRequirementsConditionHook;
 use MediaWiki\User\Hook\UserEffectiveGroupsHook;
+use MediaWiki\User\Hook\UserRequirementsConditionHook;
 use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
+use MediaWiki\User\UserIdentity;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
@@ -30,18 +36,20 @@ use Wikimedia\Message\ListType;
 
 class HookHandler implements
 	AuthChangeFormFieldsHook,
+	BeforePageDisplayHook,
 	GetPreferencesHook,
-	getUserPermissionsErrorsHook,
+	ReadPrivateUserRequirementsConditionHook,
 	UserEffectiveGroupsHook,
-	UserGetRightsHook
+	UserGetRightsHook,
+	UserRequirementsConditionHook
 {
 	public function __construct(
 		private readonly OATHUserRepository $userRepo,
 		private readonly OATHAuthModuleRegistry $moduleRegistry,
+		private readonly OATHAuthLogger $oathLogger,
 		private readonly PermissionManager $permissionManager,
 		private readonly Config $config,
 		private readonly UserGroupManager $userGroupManager,
-		private readonly CentralIdLookupFactory $centralIdLookupFactory,
 	) {
 	}
 
@@ -58,6 +66,17 @@ class HookHandler implements
 				'autocomplete' => 'one-time-code',
 				'spellcheck' => false,
 				'help-message' => 'oathauth-auth-token-help-ui',
+			];
+		}
+
+		if ( isset( $fieldInfo['RecoveryCode'] ) ) {
+			$formDescriptor['RecoveryCode'] += [
+				'dir' => 'ltr',
+				'autofocus' => true,
+				'persistent' => false,
+				'autocomplete' => 'off',
+				'spellcheck' => false,
+				'help-message' => 'oathauth-auth-recovery-code-help',
 			];
 		}
 
@@ -80,9 +99,9 @@ class HookHandler implements
 			// Remove the empty option for not switching first
 			unset( $availableModules[''] );
 
-			// Reorder 2FA types according to OATHPrioritizedModules
+			// Reorder 2FA types according to SecondaryAuthenticationProvider Module Priority
 			$orderedModules = [];
-			foreach ( $this->config->get( 'OATHPrioritizedModules' ) as $moduleName ) {
+			foreach ( SecondaryAuthenticationProvider::MODULE_PRIORITY as $moduleName ) {
 				if ( isset( $availableModules[$moduleName] ) ) {
 					$orderedModules[$moduleName] = $availableModules[$moduleName];
 					unset( $availableModules[$moduleName] );
@@ -109,6 +128,26 @@ class HookHandler implements
 			}
 		}
 
+		$webauthnReq = AuthenticationRequest::getRequestByClass( $requests, WebAuthnAuthenticationRequest::class );
+		// Display a message about needing JavaScript for WebAuthn, but don't display it if we're on
+		// the initial login page (the WebAuthnAuthenticationRequest there is for passwordless login)
+		if ( $webauthnReq && !isset( $fieldInfo['username'] ) ) {
+			$formDescriptor['webauthn-nojs'] = [
+				'class' => NoJsInfoField::class,
+				'weight' => -50,
+			];
+		}
+
+		if ( $this->config->get( 'OATHPasswordlessLogin' ) && isset( $fieldInfo['username'] ) ) {
+			$formDescriptor['username']['autocomplete'] = 'username webauthn';
+
+			// HACK autofocus the username even when it's prepopulated
+			$formDescriptor['username']['autofocus'] = true;
+			if ( isset( $formDescriptor['password']['autofocus'] ) ) {
+				unset( $formDescriptor['password']['autofocus'] );
+			}
+		}
+
 		return true;
 	}
 
@@ -126,7 +165,7 @@ class HookHandler implements
 		}
 
 		$modules = array_unique( array_map(
-			static fn ( IAuthKey $key ) => $key->getModule(),
+			static fn ( AuthKey $key ) => $key->getModule(),
 			$oathUser->getKeys(),
 		) );
 		$moduleNames = array_map(
@@ -243,36 +282,6 @@ class HookHandler implements
 		if ( $disabledGroups ) {
 			$groups = array_diff( $groups, $disabledGroups );
 		}
-
-		// Enable 2FA for users in gradual rollout if MFARollout is enabled.
-		// Exclude temp users and users without email addresses; check this first
-		// so that we don't try to look up central user IDs for non-named users.
-		if ( $user->isNamed() && $user->getEmail() ) {
-			$centralID = $this->centralIdLookupFactory->getLookup()
-				->centralIdFromLocalUser( $user, CentralIdLookup::AUDIENCE_RAW );
-			$MFARollout = $this->config->get( 'OATHRolloutPercent' );
-			if ( $centralID % 100 < $MFARollout ) {
-				$groups[] = "oathauth-twofactorauth";
-			}
-		}
-	}
-
-	/** @inheritDoc */
-	public function onGetUserPermissionsErrors( $title, $user, $action, &$result ) {
-		if ( !$this->config->has( 'OATHExclusiveRights' ) ) {
-			return true;
-		}
-
-		// TODO: Get the session from somewhere more... sane?
-		$session = $user->getRequest()->getSession();
-		if (
-			!$session->get( OATHAuth::AUTHENTICATED_OVER_2FA, false ) &&
-			in_array( $action, $this->config->get( 'OATHExclusiveRights' ) )
-		) {
-			$result = 'oathauth-action-exclusive-to-2fa';
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -290,6 +299,51 @@ class HookHandler implements
 		if ( $this->getDisabledGroups( $user, $dbGroups ) ) {
 			// User has some disabled groups, add oathauth-enable
 			$rights[] = 'oathauth-enable';
+		}
+	}
+
+	/**
+	 * Callback that generates the contents of the virtual data.json file in the ext.oath.manage
+	 * ResourceLoader module.
+	 */
+	public static function getOathManageModuleData( Context $context ): array {
+		return [
+			'passkeyDialogTextHtml' => $context->msg( 'oathauth-passkey-dialog-text' )->parseAsBlock()
+		];
+	}
+
+	/** @inheritDoc */
+	public function onUserRequirementsCondition(
+		string|int $type,
+		array $args,
+		UserIdentity $user,
+		bool $isPerformingRequest,
+		?bool &$result
+	): void {
+		if ( $type !== APCOND_OATH_HAS2FA ) {
+			return;
+		}
+		$result = $this->userRepo->userHas2FAEnabled( $user );
+	}
+
+	/** @inheritDoc */
+	public function onReadPrivateUserRequirementsCondition(
+		UserIdentity $performer,
+		UserIdentity $target,
+		array $conditions
+	): void {
+		if ( in_array( APCOND_OATH_HAS2FA, $conditions ) ) {
+			$this->oathLogger->logImplicitVerification( $performer, $target );
+		}
+	}
+
+	/** @inheritDoc */
+	public function onBeforePageDisplay( $out, $skin ): void {
+		if (
+			$this->config->get( 'OATHPasswordlessLogin' ) &&
+			$out->getTitle()->isSpecial( 'Userlogin' )
+		) {
+			$out->addModules( 'ext.webauthn.passwordlessLogin' );
 		}
 	}
 }

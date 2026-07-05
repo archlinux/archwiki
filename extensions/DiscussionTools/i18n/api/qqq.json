@@ -32,8 +32,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "{{doc-apihelp-param|discussiontoolspageinfo|oldid}}",
 	"apihelp-discussiontoolspageinfo-param-prop": "{{doc-apihelp-param|discussiontoolspageinfo|prop}}",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "{{doc-apihelp-param|discussiontoolspageinfo|excludesignatures}}",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "{{doc-apihelp-param|discussiontoolspageinfo|threaditemsflags}}",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "{{doc-apihelp-paramvalue|discussiontoolspageinfo|prop|threaditemshtml}}",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "{{doc-apihelp-paramvalue|discussiontoolspageinfo|prop|transcludedfrom}}",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "{{doc-apihelp-paramvalue|discussiontoolspageinfo|threaditemsflags|activity}}",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "{{doc-apihelp-paramvalue|discussiontoolspageinfo|threaditemsflags|excludesignatures}}",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "{{doc-apihelp-paramvalue|discussiontoolspageinfo|threaditemsflags|noreplies}}",
 	"apihelp-discussiontoolspageinfo-summary": "{{doc-apihelp-summary|discussiontoolspageinfo}}",
 	"apihelp-discussiontoolspreview-param-type": "{{doc-apihelp-param|discussiontoolspreview|type}}",
 	"apihelp-discussiontoolspreview-param-wikitext": "{{doc-apihelp-param|discussiontoolspreview|wikitext}}",
@@ -43,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "{{doc-apihelp-param|discussiontoolssubscribe|subscribe}}",
 	"apihelp-discussiontoolssubscribe-summary": "{{doc-apihelp-summary|discussiontoolssubscribe}}",
 	"apihelp-discussiontoolsthank-param-commentid": "{{doc-apihelp-summary|discussiontoolsthank|commentid}}",
-	"apihelp-discussiontoolsthank-summary": "{{doc-apihelp-summary|discussiontoolsthank}}"
+	"apihelp-discussiontoolsthank-summary": "{{doc-apihelp-summary|discussiontoolsthank}}",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "{{doc-apihelp-param|edit|discussiontoolsautosubscribe}}"
 }

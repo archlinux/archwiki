@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "CAPTCHA에 응답",
-	"captcha-apihelp-param-captchaid": "이전 요청의 CAPTCHA ID"
+	"captcha-apihelp-param-captchaid": "이전 요청의 CAPTCHA ID",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "표시된 hCaptcha CAPTCHA가 AbuseFilter 확장 프로그램의 결과로 강제로 표시되었는지 여부(따라서 더 제한적인 사이트 키가 사용되었는지 여부)를 나타냅니다. 동일한 이름의 JS 구성 변수가 참이거나 이 API를 처음 사용했을 때 지정된 사이트 키와 함께 'forcecaptcha' 오류가 반환된 경우 이 값을 설정합니다."
 }

@@ -4,21 +4,7 @@
  *
  * Copyright (C) 2012 Tyler Romeo <tylerromeo@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Tyler Romeo <tylerromeo@gmail.com>
  */
@@ -27,6 +13,7 @@ namespace Wikimedia\Timestamp;
 
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
@@ -40,21 +27,23 @@ class ConvertibleTimestamp {
 	/**
 	 * Standard gmdate() formats for the different timestamp types.
 	 */
-	private const FORMATS = [
-		TS_UNIX => 'U',
-		TS_MW => 'YmdHis',
-		TS_DB => 'Y-m-d H:i:s',
-		TS_ISO_8601 => 'Y-m-d\TH:i:s\Z',
-		TS_ISO_8601_BASIC => 'Ymd\THis\Z',
-		// This shouldn't ever be used, but is included for completeness
-		TS_EXIF => 'Y:m:d H:i:s',
-		TS_RFC2822 => 'D, d M Y H:i:s',
-		// Was 'd-M-y h.i.s A' . ' +00:00' before r51500
-		TS_ORACLE => 'd-m-Y H:i:s.u',
-		// Formerly 'Y-m-d H:i:s' . ' GMT'
-		TS_POSTGRES => 'Y-m-d H:i:s+00',
-		TS_UNIX_MICRO => 'U.u',
-	];
+	private function formatFor( TimestampFormat $f ): string {
+		return match ( $f ) {
+			TimestampFormat::UNIX => 'U',
+			TimestampFormat::MW => 'YmdHis',
+			TimestampFormat::DB => 'Y-m-d H:i:s',
+			TimestampFormat::ISO_8601 => 'Y-m-d\TH:i:s\Z',
+			TimestampFormat::ISO_8601_BASIC => 'Ymd\THis\Z',
+			// This shouldn't ever be used, but is included for completeness
+			TimestampFormat::EXIF => 'Y:m:d H:i:s',
+			TimestampFormat::RFC2822 => 'D, d M Y H:i:s',
+			// Was 'd-M-y h.i.s A' . ' +00:00' before r51500
+			TimestampFormat::ORACLE => 'd-m-Y H:i:s.u',
+			// Formerly 'Y-m-d H:i:s' . ' GMT'
+			TimestampFormat::POSTGRES => 'Y-m-d H:i:s+00',
+			TimestampFormat::UNIX_MICRO => 'U.u',
+		};
+	}
 
 	/**
 	 * Regexes for setTimestamp(). Named capture groups correspond to format codes for
@@ -182,7 +171,7 @@ class ConvertibleTimestamp {
 		}
 
 		if ( is_string( $fakeTime ) ) {
-			$fakeTime = (int)static::convert( TS_UNIX, $fakeTime );
+			$fakeTime = (int)static::convert( TimestampFormat::UNIX, $fakeTime );
 		}
 
 		if ( is_int( $fakeTime ) ) {
@@ -220,13 +209,15 @@ class ConvertibleTimestamp {
 	 * Make a new timestamp and set it to the specified time,
 	 * or the current time if unspecified.
 	 *
-	 * @param string|int|float|null|false|DateTime $timestamp Timestamp to set.
+	 * @param string|int|float|null|false|DateTimeInterface $timestamp Timestamp to set.
 	 *   If any falsy value is provided, the timestamp uses the current time instead.
 	 * @throws TimestampException
 	 */
 	public function __construct( $timestamp = false ) {
-		if ( $timestamp instanceof DateTime ) {
-			$this->timestamp = $timestamp;
+		if ( $timestamp instanceof DateTimeInterface ) {
+			$this->timestamp = $timestamp instanceof DateTime
+				? $timestamp
+				: DateTime::createFromInterface( $timestamp );
 		} else {
 			$this->setTimestamp( $timestamp );
 		}
@@ -339,7 +330,7 @@ class ConvertibleTimestamp {
 	 * This is identical to `( new ConvertibleTimestamp() )->getTimestamp()`,
 	 * except it returns false instead of throwing an exception.
 	 *
-	 * @param int $style Constant Output format for timestamp
+	 * @param TimestampFormat|int $style Constant Output format for timestamp
 	 * @param string|int|float|null|false|DateTime $ts Timestamp
 	 * @return string|false Formatted timestamp or false on failure
 	 */
@@ -355,10 +346,10 @@ class ConvertibleTimestamp {
 	/**
 	 * Get the current time in the given format
 	 *
-	 * @param int $style Constant Output format for timestamp
+	 * @param TimestampFormat|int $style Constant Output format for timestamp
 	 * @return string
 	 */
-	public static function now( $style = TS_MW ) {
+	public static function now( $style = TimestampFormat::MW ) {
 		return static::convert( $style, false );
 	}
 
@@ -368,12 +359,15 @@ class ConvertibleTimestamp {
 	 * Convert the internal timestamp to the specified format and then
 	 * return it.
 	 *
-	 * @param int $style Constant Output format for timestamp
+	 * @param TimestampFormat|int $style Constant Output format for timestamp
 	 * @throws TimestampException
 	 * @return string The formatted timestamp
 	 */
-	public function getTimestamp( $style = TS_UNIX ) {
-		if ( !isset( self::FORMATS[$style] ) ) {
+	public function getTimestamp( $style = TimestampFormat::UNIX ) {
+		if ( is_int( $style ) ) {
+			$style = TimestampFormat::tryFrom( $style );
+		}
+		if ( !( $style instanceof TimestampFormat ) ) {
 			throw new InvalidArgumentException( __METHOD__ . ': Illegal timestamp output type.' );
 		}
 
@@ -381,7 +375,7 @@ class ConvertibleTimestamp {
 		$timestamp = clone $this->timestamp;
 		$timestamp->setTimezone( new DateTimeZone( 'UTC' ) );
 
-		if ( $style === TS_UNIX_MICRO ) {
+		if ( $style === TimestampFormat::UNIX_MICRO ) {
 			$seconds = (int)$timestamp->format( 'U' );
 			$microseconds = (int)$timestamp->format( 'u' );
 			if ( $seconds < 0 && $microseconds > 0 ) {
@@ -393,13 +387,13 @@ class ConvertibleTimestamp {
 			return sprintf( "%d.%06d", $seconds, $microseconds );
 		}
 
-		$output = $timestamp->format( self::FORMATS[$style] );
+		$output = $timestamp->format( self::formatFor( $style ) );
 
-		if ( $style == TS_RFC2822 ) {
+		if ( $style == TimestampFormat::RFC2822 ) {
 			$output .= ' GMT';
 		}
 
-		if ( $style == TS_MW && strlen( $output ) !== 14 ) {
+		if ( $style == TimestampFormat::MW && strlen( $output ) !== 14 ) {
 			throw new TimestampException( __METHOD__ . ': The timestamp cannot be represented in ' .
 				'the specified format' );
 		}

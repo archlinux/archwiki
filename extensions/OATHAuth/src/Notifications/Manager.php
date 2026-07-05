@@ -2,28 +2,17 @@
 /**
  * Copyright (C) 2022 Kunal Mehta <legoktm@debian.org>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\OATHAuth\OATHUser;
+use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\UserIdentity;
 
 /**
  * Manages logic for configuring and sending out notifications with Echo
@@ -43,7 +32,7 @@ class Manager {
 	 * @param OATHUser $oUser
 	 * @param bool $self Whether they disabled it themselves
 	 */
-	public static function notifyDisabled( OATHUser $oUser, bool $self ) {
+	public static function notifyDisabled( OATHUser $oUser, bool $self ): void {
 		if ( !self::isEnabled() ) {
 			return;
 		}
@@ -62,7 +51,7 @@ class Manager {
 	/**
 	 * Send a notification that 2FA has been enabled
 	 */
-	public static function notifyEnabled( OATHUser $oUser ) {
+	public static function notifyEnabled( OATHUser $oUser ): void {
 		if ( !self::isEnabled() ) {
 			return;
 		}
@@ -80,7 +69,9 @@ class Manager {
 	/**
 	 * Send a notification that the user has $tokenCount recovery tokens left
 	 */
-	public static function notifyRecoveryTokensRemaining( OATHUser $oUser, int $tokenCount, int $generatedCount ) {
+	public static function notifyRecoveryTokensRemaining(
+		OATHUser $oUser, int $tokenCount, int $generatedCount
+	): void {
 		if ( !self::isEnabled() ) {
 			return;
 		}
@@ -93,5 +84,24 @@ class Manager {
 				'generatedCount' => $generatedCount,
 			],
 		] );
+	}
+
+	/**
+	 * Sends a notification that the user had additional recovery tokens generated for them
+	 */
+	public static function notifyRecoveryTokensGeneratedForUser(
+		UserIdentity $targetUser,
+		int $tokenCount
+	): void {
+		if ( !self::isEnabled() ) {
+			return;
+		}
+		Event::create( [
+			// message used: notification-header-oathauth-recoverycodes-generated-for-user
+			'type' => 'oathauth-recoverycodes-generated-for-user',
+			'extra' => [
+				'codeCount' => $tokenCount
+			],
+		], new RecipientSet( $targetUser ) );
 	}
 }

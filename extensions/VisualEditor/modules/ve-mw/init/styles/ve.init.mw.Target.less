@@ -5,6 +5,8 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
+@import 'mediawiki.mixins.less';
+
 /* Dialogs */
 
 /* Override overflow: hidden; from MW styles */
@@ -113,30 +115,15 @@ a[ rel~='mw:PageProp/Category' ] {
 	font-weight: bold;
 }
 
-/* Night mode */
+/* Dark/night mode */
 
-// FIXME: Can be removed when T369092 is resolved
-&.skin-theme-clientpref-night {
+.darkmode-override( {
 	.ve-ce-branchNode-blockSlug,
 	body p.ve-ce-branchNode-newSlug {
 		background-color: rgba( 241, 247, 251, 0.1 );
 	}
 
-	.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection > div {
+	.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection-rect {
 		background: #fff;
 	}
-}
-
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@media ( prefers-color-scheme: dark ) {
-	&.skin-theme-clientpref-os {
-		.ve-ce-branchNode-blockSlug,
-		body p.ve-ce-branchNode-newSlug {
-			background-color: rgba( 241, 247, 251, 0.1 );
-		}
-
-		.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection > div {
-			background: #fff;
-		}
-	}
-}
+} );

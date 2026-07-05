@@ -101,23 +101,30 @@
 // Night mode
 @media screen {
 	html.skin-theme-clientpref-night {
-		.minerva-footer-logo > img {
-			.night-mode-invert-image();
+		.minerva-footer-logo {
+			// T370943: Set negative z-index to appear behind diff overlay
+			position: relative;
+			z-index: @z-index-bottom;
+
+			& > img {
+				.night-mode-invert-image();
+			}
 		}
 	}
 }
 
 @media screen and ( prefers-color-scheme: dark ) {
 	html.skin-theme-clientpref-os {
-		.minerva-footer-logo > img {
-			.night-mode-invert-image();
+		.minerva-footer-logo {
+			// T370943: Set negative z-index to appear behind diff overlay
+			position: relative;
+			z-index: @z-index-bottom;
+
+			& > img {
+				.night-mode-invert-image();
+			}
 		}
 	}
-}
-
-// T376228: Hide the footer when a modal is active to prevent overlap.
-body.oo-ui-windowManager-modal-active .mw-footer {
-	display: none;
 }
 
 @import 'LastModifiedBar.less';

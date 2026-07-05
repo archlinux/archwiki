@@ -12,10 +12,10 @@
 			"Plaga med",
 			"Tomato Cream",
 			"Tīgelika",
+			"Ucukor",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
-			"Чаховіч Уладзіслаў",
-			"Ucukor"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -237,6 +237,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Падраздзел 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Падраздзел 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Падраздзел 4",
+	"visualeditor-fullpage-switch-label": "Рэдагаваць усю старонку",
 	"visualeditor-generating-wikitext-progress": "Стварэнне вікіразметкі",
 	"visualeditor-includes-noinclude-start": "Пачатак зместу, выключанага з урыўкаў",
 	"visualeditor-includes-noinclude-end": "Канец зместу, выключанага з урыўкаў",

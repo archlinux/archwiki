@@ -1,0 +1,29 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+// Visual enhancements disabled
+.ext-discussiontools-init-pageframe-latestcomment,
+.ext-discussiontools-init-sidebar-meta {
+	display: none;
+}
+
+// Visual enhancements enabled
+.ext-discussiontools-visualenhancements-enabled {
+	// Page frame
+	.mw-page-title-separator::after {
+		content: ' ';
+	}
+
+	.ext-discussiontools-init-pageframe-latestcomment {
+		color: @color-subtle;
+		display: block;
+		word-wrap: break-word;
+	}
+
+	.ext-discussiontools-init-sidebar-meta {
+		display: block;
+		padding-bottom: 6px;
+		color: @color-subtle;
+		white-space: nowrap;
+	}
+}

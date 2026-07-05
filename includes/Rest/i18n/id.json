@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Budhiastawa",
 			"Rachmat04",
-			"Veracious",
-			"Budhiastawa"
+			"Veracious"
 		]
 	},
 	"rest-prefix-mismatch": "Lintasan yang diminta ($1) tidak berada di dalam lintasan utama REST API ($2)",
@@ -23,5 +23,6 @@
 	"rest-pagehistory-timestamp-error": "Tidak dapat mengambil stempel waktu untuk revisi yang dimaksud ($1)",
 	"rest-unsupported-profile-conversion": "Kami tidak tahu cara melakukan konversi ini.",
 	"rest-edit-conflict": "Konflik penyuntingan ($1)",
-	"rest-unknown-content-model": "Model konten tidak dikenal: $1"
+	"rest-unknown-content-model": "Model konten tidak dikenal: $1",
+	"rest-param-desc-page-content-title": "Judul halaman. Untuk memformat judul, ganti spasi dengan garis bawah, lalu lakukan pengkodean URL pada hasilnya (contoh: Steller%27s_jay). Di REST Sandbox, ganti spasi dengan garis bawah, tetapi jangan lakukan pengkodean URL (contoh: Steller's_jay)."
 }

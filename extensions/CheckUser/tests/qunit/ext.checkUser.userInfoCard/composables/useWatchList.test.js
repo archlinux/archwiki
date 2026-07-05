@@ -1,7 +1,7 @@
 'use strict';
 
 const { nextTick } = require( 'vue' );
-const useWatchList = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/composables/useWatchList.js' );
+const useWatchList = require( 'ext.checkUser.userInfoCard/composables/useWatchList.js' );
 
 // Store stubs for use in arrow functions
 let watchStub, unwatchStub, notifyStub;

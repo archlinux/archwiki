@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\ActorStore;
@@ -23,9 +23,6 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 
 	use TemporaryAccountNameTrait;
 
-	protected CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
-	protected TemporaryAccountLoggerFactory $loggerFactory;
-
 	public function __construct(
 		Config $config,
 		JobQueueGroup $jobQueueGroup,
@@ -35,9 +32,9 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 		ActorStore $actorStore,
 		BlockManager $blockManager,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
-		TemporaryAccountLoggerFactory $loggerFactory,
-		ReadOnlyMode $readOnlyMode
+		protected readonly CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		protected readonly TemporaryAccountLoggerFactory $loggerFactory,
+		ReadOnlyMode $readOnlyMode,
 	) {
 		parent::__construct(
 			$config,
@@ -50,8 +47,6 @@ abstract class AbstractTemporaryAccountNameHandler extends AbstractTemporaryAcco
 			$checkUserPermissionsManager,
 			$readOnlyMode
 		);
-		$this->autoRevealLookup = $autoRevealLookup;
-		$this->loggerFactory = $loggerFactory;
 	}
 
 	/**

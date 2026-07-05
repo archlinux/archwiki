@@ -156,23 +156,13 @@ QUnit.test( 'ThumbnailInfo get test', function ( assert ) {
 	} );
 } );
 
-QUnit.test( 'ThumbnailInfo fail test', ( assert ) => {
-	const api = { get: function () {
-		return $.Deferred().resolve( {} );
-	} };
-	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
-	const thumbnailInfoProvider = new ThumbnailInfo( api );
-
-	thumbnailInfoProvider.get( file, '', 100 ).fail( () => {
-		assert.true( true, 'promise rejected when no data is returned' );
-		done();
-	} );
-} );
-
-QUnit.test( 'ThumbnailInfo fail test 2', ( assert ) => {
-	const api = { get: function () {
-		return $.Deferred().resolve( {
+QUnit.test.each( 'ThumbnailInfo fail test', {
+	'no data is returned': {
+		response: {},
+		error: /unknown error/
+	},
+	'imageinfo is missing': {
+		response: {
 			query: {
 				pages: [
 					{
@@ -180,21 +170,11 @@ QUnit.test( 'ThumbnailInfo fail test 2', ( assert ) => {
 					}
 				]
 			}
-		} );
-	} };
-	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
-	const thumbnailInfoProvider = new ThumbnailInfo( api );
-
-	thumbnailInfoProvider.get( file, '', 100 ).fail( () => {
-		assert.true( true, 'promise rejected when imageinfo is missing' );
-		done();
-	} );
-} );
-
-QUnit.test( 'ThumbnailInfo missing page test', ( assert ) => {
-	const api = { get: function () {
-		return $.Deferred().resolve( {
+		},
+		error: /unknown error/
+	},
+	'missing file': {
+		response: {
 			query: {
 				pages: [
 					{
@@ -204,22 +184,11 @@ QUnit.test( 'ThumbnailInfo missing page test', ( assert ) => {
 					}
 				]
 			}
-		} );
-	} };
-	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
-	const thumbnailInfoProvider = new ThumbnailInfo( api );
-
-	thumbnailInfoProvider.get( file, '' ).fail( ( errorMessage ) => {
-		assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',
-			'error message is set correctly for missing file' );
-		done();
-	} );
-} );
-
-QUnit.test( 'ThumbnailInfo fail test 3', ( assert ) => {
-	const api = { get: function () {
-		return $.Deferred().resolve( {
+		},
+		error: /file does not exist: File:Stuff.jpg/
+	},
+	'thumbnail info is missing': {
+		response: {
 			query: {
 				pages: [
 					{
@@ -230,14 +199,19 @@ QUnit.test( 'ThumbnailInfo fail test 3', ( assert ) => {
 					}
 				]
 			}
-		} );
+		},
+		error: /thumb info not found/
+	}
+}, async ( assert, fixture ) => {
+	const api = { get: function () {
+		return $.Deferred().resolve( fixture.response );
 	} };
 	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
 	const thumbnailInfoProvider = new ThumbnailInfo( api );
 
-	thumbnailInfoProvider.get( file, '', 100 ).fail( () => {
-		assert.true( true, 'promise rejected when thumbnail info is missing' );
-		done();
-	} );
+	await assert.rejects(
+		thumbnailInfoProvider.get( file, '', 100 ),
+		fixture.error,
+		'rejection'
+	);
 } );

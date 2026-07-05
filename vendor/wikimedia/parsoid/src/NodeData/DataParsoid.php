@@ -3,14 +3,16 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
+use stdclass;
 use Wikimedia\JsonCodec\Hint;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\RichCodecable;
 use Wikimedia\Parsoid\Utils\Utils;
 
 /**
@@ -83,6 +85,11 @@ use Wikimedia\Parsoid\Utils\Utils;
  * The complete text of a double-underscore behavior switch
  * @property string|null $magicSrc
  *
+ * Whether the first argument of a parser function was split on a colon;
+ * contains the colon character used if so (Japanese may use a double-wide
+ * colon character).
+ * @property string|null $colon
+ *
  * True if the input heading element had an id attribute, preventing automatic
  * assignment of a new id attribute.
  * @property bool|null $reusedId
@@ -116,10 +123,6 @@ use Wikimedia\Parsoid\Utils\Utils;
  * [ opening tag start , closing tag end, opening tag width, closing tag width ]
  * Temporarily present in data-parsoid, but not in final DOM output.
  * @property DomSourceRange|null $extTagOffsets
- *
- * This is true on the extension output wrapper if the extension input wikitext
- * was an empty string. Consumed by <references/>.
- * @property bool $empty
  *
  * The reference group. This is attached to the <ol> or its wrapper <div>,
  * redundantly with the data-mw-group attribute on the <ol>. It is produced by
@@ -201,34 +204,15 @@ use Wikimedia\Parsoid\Utils\Utils;
  * 'row' for td/th cells that show up on the same line, null otherwise
  * @property string|null $stx_v
  *
- * == Language variant token properties ==
- *
- * @property array|null $flags Flags with their human-readable names
- * @property array|null $variants The variant names
- * @property array|null $original Original flags
- * @property array|null $flagSp Spaces around flags, uncompressed
- *
- * An array of associative arrays describing the parts of the variant rule.
- *   - text: (string) The text
- *   - semi: (bool) A semicolon marker
- *   - sp: (array|string) An array of strings containing spaces
- *   - oneway: (bool) A one-way rule definition
- *   - twoway: (bool) A two-way rule definition
- *   - from: (array) An associative array:
- *     - tokens: (array) A token array
- *     - srcOffsets: SourceRange
- *   - to: (array) An associative array same as "from"
- *   - lang: (string)
- * @property array|null $texts
- *
  * == Language variant data-parsoid properties ==
  *
  * @property array|null $flSp Spaces around flags, compressed with compressSpArray().
  * @property array|null $tSp Spaces around texts, compressed with compressSpArray().
- * @property array|null $fl Original flags, copied from $this->original on the token.
+ * @property array|null $fl Original flags, copied from VariantInfo::$original
+ *  on the token.
  */
 #[\AllowDynamicProperties]
-class DataParsoid implements JsonCodecable {
+class DataParsoid implements JsonCodecable, RichCodecable {
 	use JsonCodecableTrait;
 
 	/**
@@ -251,7 +235,7 @@ class DataParsoid implements JsonCodecable {
 		}
 
 		// 2. Properties which are cloneable objects
-		foreach ( [ 'tmp', 'linkTk', 'tsr', 'dsr', 'extTagOffsets' ] as $prop ) {
+		foreach ( [ 'tmp', 'linkTk', 'tsr', 'dsr', 'extTagOffsets', 'dmv' ] as $prop ) {
 			if ( isset( $this->$prop ) ) {
 				$this->$prop = clone $this->$prop;
 			}
@@ -264,8 +248,9 @@ class DataParsoid implements JsonCodecable {
 		}
 	}
 
-	public function isModified(): bool {
-		return $this->toJsonArray() !== [];
+	public function isEmpty(): bool {
+		// First two checks short-circuit for the common case (dsr for nodes & tsr for tokens)
+		return !isset( $this->dsr ) && !isset( $this->tsr ) && $this->toJsonArray() === [];
 	}
 
 	/**
@@ -324,6 +309,38 @@ class DataParsoid implements JsonCodecable {
 		return $result;
 	}
 
+	/** @return Hint<DataParsoid> */
+	public static function hint(): Hint {
+		static $hint = null;
+		if ( $hint === null ) {
+			$hint = Hint::build( self::class, Hint::ALLOW_OBJECT );
+		}
+		return $hint;
+	}
+
+	/** @inheritDoc */
+	public static function defaultValue(): ?self {
+		$dp = new DataParsoid;
+		// Mark data parsoid created as a default value.
+		$dp->setTempFlag( TempData::IS_NEW, true );
+		return $dp;
+	}
+
+	/** @inheritDoc */
+	public function flatten(): ?string {
+		return null;
+	}
+
+	/**
+	 * @inheritDoc
+	 * @suppress PhanEmptyYieldFrom this is deliberate
+	 */
+	public function embeddedDocumentFragments(): \Iterator {
+		// There are internal DocumentFragments here, but they are transient
+		// internal data and should not be exposed.
+		yield from [];
+	}
+
 	/** @inheritDoc */
 	public static function jsonClassHintFor( string $keyname ) {
 		static $hints = null;
@@ -337,6 +354,8 @@ class DataParsoid implements JsonCodecable {
 				'pi' => Hint::build( ParamInfo::class, Hint::LIST, Hint::LIST ),
 				'linkTk' => Token::class,
 				'html' => DocumentFragment::class,
+				'dmv' => DataMwVariant::hint(),
+				'optList' => Hint::build( stdclass::class, Hint::LIST, Hint::LIST )
 			];
 		}
 		return $hints[$keyname] ?? null;

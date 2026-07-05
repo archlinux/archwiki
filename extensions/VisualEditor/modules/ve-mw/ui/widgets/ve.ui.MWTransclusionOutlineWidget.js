@@ -27,7 +27,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineWidget, OO.ui.Widget );
 
 /**
  * @event ve.ui.MWTransclusionOutlineWidget#filterPagesByName
- * @param {Object.<string,boolean>} visibility Keyed by unique id of the {@see OO.ui.BookletLayout}
+ * @param {Object.<string,boolean>} visibility Keyed by unique id of the {@link OO.ui.BookletLayout}
  *  page, e.g. something like "part_1/param1".
  */
 
@@ -35,7 +35,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineWidget, OO.ui.Widget );
  * Respond to the intent to select a sidebar item
  *
  * @event ve.ui.MWTransclusionOutlineWidget#sidebarItemSelected
- * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
+ * @param {string} pageName Unique id of the {@link OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
  * @param {boolean} [soft] If true, don't focus the content pane.  Defaults to false.
  */
@@ -147,7 +147,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.initializeAllStickyHeaderHeights = f
 };
 
 /**
- * This is inspired by {@see OO.ui.SelectWidget.selectItem}, but isn't one.
+ * This is inspired by {@link OO.ui.SelectWidget.selectItem}, but isn't one.
  *
  * @param {string} [pageName] Symbolic name of page. Omit to remove current selection.
  */
@@ -185,7 +185,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.toggleHasValueByPageName = function 
 
 /**
  * Checks if the provided DOM element belongs to the DOM structure of one of the top-level
- * {@see ve.ui.MWTransclusionOutlinePartWidget}s, and returns its id. Useful for e.g. mouse click or
+ * {@link ve.ui.MWTransclusionOutlinePartWidget}s, and returns its id. Useful for e.g. mouse click or
  * keyboard handlers.
  *
  * @param {HTMLElement} element
@@ -203,7 +203,7 @@ ve.ui.MWTransclusionOutlineWidget.prototype.findPartIdContainingElement = functi
 };
 
 /**
- * Removes all {@see ve.ui.MWTransclusionOutlinePartWidget}, i.e. empties the list.
+ * Removes all {@link ve.ui.MWTransclusionOutlinePartWidget}, i.e. empties the list.
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.clear = function () {
 	for ( const id in this.partWidgets ) {

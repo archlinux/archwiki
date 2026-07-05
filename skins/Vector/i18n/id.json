@@ -13,12 +13,12 @@
 			"Iwan Novirion",
 			"Naufal06",
 			"NikolasKHF",
+			"Penyuwangi",
 			"Rachmat04",
 			"Rex",
 			"Robifr",
 			"Veracious",
-			"William Surya Permana",
-			"Penyuwangi"
+			"William Surya Permana"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -66,9 +66,6 @@
 	"vector-toc-label": "Daftar isi",
 	"vector-toc-beginning": "Awal",
 	"vector-toc-toggle-button-label": "Gulingkan subbagian $1",
-	"vector-anon-user-menu-pages": "Halaman penyunting yang telah keluar log",
-	"vector-anon-user-menu-pages-learn": "pelajari lebih lanjut",
-	"vector-anon-user-menu-pages-label": "Pelajari lebih lanjut tentang menyunting",
 	"vector-main-menu-tooltip": "Menu utama",
 	"vector-toc-menu-tooltip": "Daftar Isi",
 	"vector-toc-collapsible-button-label": "Gulingkan daftar isi",
@@ -90,7 +87,5 @@
 	"vector-page-tools-unpinned-popup": "Menu perkakas telah dipindahkan ke sini.",
 	"vector-main-menu-unpinned-popup": "Menu utama telah dipindahkan ke sini.",
 	"vector-appearance-unpinned-popup": "Menu tampilan telah dipindahkan ke sini.",
-	"vector-2022-beta-preview-label": "Keteraksesan Fitur Baca (Vektor 2022)",
-	"vector-2022-beta-preview-description": "Dapatkan akses awal ke fitur aksesibilitas membaca yang baru, seperti penyempurnaan tipografi dan mode malam.",
 	"vector-night-mode-issue-reporting-link-label": "Laporkan masalah untuk mode gelap"
 }

@@ -70,7 +70,7 @@ class ModuleSpecHandler extends SimpleHandler {
 			'info' => $this->getInfoSpec( $module ),
 			'servers' => $this->getServerSpec( $module ),
 			'paths' => $this->getPathsSpec( $module ),
-			'components' => $this->getComponentsSpec( $module ),
+			'components' => $this->getComponentsSpec(),
 		];
 
 		unset( $spec['info']['deprecationSettings'] );
@@ -155,13 +155,18 @@ class ModuleSpecHandler extends SimpleHandler {
 		return $operationSpec;
 	}
 
-	private function getComponentsSpec( Module $module ): array {
+	private function getComponentsSpec(): array {
 		$components = [];
+
+		// Resolve x-i18n-message references
+		$resolvedComponents = $this->getJsonLocalizer()->localizeJson(
+			ResponseFactory::getResponseComponents()
+		);
 
 		// XXX: also collect reusable components from handler specs (but how to avoid name collisions?).
 		$componentsSources = [
 			[ 'schemas' => Validator::getParameterTypeSchemas() ],
-			ResponseFactory::getResponseComponents()
+			$resolvedComponents
 		];
 
 		// 2D merge
@@ -175,7 +180,7 @@ class ModuleSpecHandler extends SimpleHandler {
 	}
 
 	protected function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/ModuleSpec.json';
+		return __DIR__ . '/Schema/ModuleSpec.json';
 	}
 
 	/** @inheritDoc */

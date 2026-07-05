@@ -141,7 +141,7 @@ describe( 'sticky header', () => {
 	test( 'prepareUserLinksDropdown removes gadgets from dropdown', async () => {
 		const menu = document.createElement( 'div' );
 		menu.innerHTML = userLinksHTML;
-		const userLinksDropdown = /** @type {Element} */ ( menu.querySelector( '#' + sticky.USER_LINKS_DROPDOWN_ID ) );
+		const userLinksDropdown = /** @type {HTMLElement} */ ( menu.querySelector( '#' + sticky.USER_LINKS_DROPDOWN_ID ) );
 		const newMenu = sticky.prepareUserLinksDropdown( userLinksDropdown );
 		// check classes have been updated and removed.
 		expect( userLinksDropdown.querySelectorAll( '.user-links-collapsible-item' ).length > 0 ).toBeTruthy();

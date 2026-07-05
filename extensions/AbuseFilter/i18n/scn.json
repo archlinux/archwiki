@@ -285,7 +285,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Mposta na variàbbili (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variàbbili",
 	"abusefilter-edit-builder-vars-timestamp": "Data e ura Unix dû canciamentu",
-	"abusefilter-edit-builder-vars-accountname": "Nomu dû cuntu (â sò criazzioni)",
+	"abusefilter-edit-builder-vars-account-name": "Nomu dû cuntu (â sò criazzioni)",
 	"abusefilter-edit-builder-vars-action": "Azzioni",
 	"abusefilter-edit-builder-vars-addedlines": "Nùmmiru di righi agghiunciuti ntô canciamentu",
 	"abusefilter-edit-builder-vars-delta": "Canciamentu dâ grannizza ntô canciamentu",

@@ -2,7 +2,7 @@
 module.exports = function () {
 	mw.loader.using( [ 'ext.uls.interface' ] ).then( () => {
 		const mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
-			$ULSTrigger = $( '#pt-uls' );
+			$ULSTrigger = $( '#pt-uls, #ca-uls' );
 		let ULSMoved = false;
 
 		function moveULS() {

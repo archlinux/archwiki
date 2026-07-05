@@ -3,8 +3,8 @@ import Page from './Page.js';
 
 const MAINPAGE_REQUESTS_MAX_RUNS = 10; // (arbitrary) safe-guard against endless execution
 
-function getJobCount() {
-	const api = createApiClient();
+async function getJobCount() {
+	const api = await createApiClient();
 	return api.request( {
 		action: 'query',
 		meta: 'siteinfo',
@@ -58,7 +58,7 @@ function runThroughMainPageRequests( runCount = 1 ) {
 class RunJobs {
 
 	static run() {
-		browser.call( () => runThroughMainPageRequests() );
+		return browser.call( () => runThroughMainPageRequests() );
 	}
 }
 

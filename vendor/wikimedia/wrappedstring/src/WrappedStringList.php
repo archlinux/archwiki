@@ -1,4 +1,6 @@
 <?php
+declare( strict_types = 1 );
+
 /**
  * Copyright 2016 Timo Tijhof
  *
@@ -27,29 +29,18 @@
 namespace Wikimedia;
 
 class WrappedStringList {
-	/** @var string */
-	protected $sep;
+	protected readonly string $sep;
 
 	/** @var (string|WrappedString|WrappedStringList)[] */
-	protected $wraps;
+	protected array $wraps;
 
 	/**
 	 * @param string $sep
 	 * @param (string|WrappedString|WrappedStringList)[] $wraps
 	 */
-	public function __construct( $sep, array $wraps ) {
+	public function __construct( string $sep, array $wraps ) {
 		$this->sep = $sep;
 		$this->wraps = $wraps;
-	}
-
-	/**
-	 * @param (string|WrappedString|WrappedStringList)[] $wraps
-	 * @return WrappedStringList Combined list
-	 */
-	protected function extend( array $wraps ) {
-		$list = clone $this;
-		$list->wraps = array_merge( $list->wraps, $wraps );
-		return $list;
 	}
 
 	/**
@@ -62,7 +53,7 @@ class WrappedStringList {
 	 * @return string[] Compacted list to be treated as strings
 	 * (may contain WrappedString and WrappedStringList objects)
 	 */
-	protected static function compact( array $lists, $outerSep ) {
+	protected static function compact( array $lists, string $outerSep ): array {
 		$consolidated = [];
 		foreach ( $lists as $list ) {
 			if ( !$list instanceof WrappedStringList ) {
@@ -90,14 +81,12 @@ class WrappedStringList {
 	 *
 	 * @param string $sep
 	 * @param (string|WrappedString|WrappedStringList)[] $lists
-	 * @return string
 	 */
-	public static function join( $sep, array $lists ) {
+	public static function join( string $sep, array $lists ): string {
 		return implode( $sep, self::compact( $lists, $sep ) );
 	}
 
-	/** @return string */
-	public function __toString() {
+	public function __toString(): string {
 		return self::join( $this->sep, [ $this ] );
 	}
 }

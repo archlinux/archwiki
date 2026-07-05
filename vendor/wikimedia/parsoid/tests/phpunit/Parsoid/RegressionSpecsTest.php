@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Test\Parsoid;
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
@@ -13,7 +14,6 @@ use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
@@ -373,5 +373,32 @@ EOT;
 
 		$this->assertStringNotContainsString( '<default:math', $html );
 		$this->assertStringContainsString( '<math ', $html );
+	}
+
+	/**
+	 * Ensure that DOMRangeBuilder doesn't span-wrap style tags in
+	 * fosterable positions because <style> tags aren't fosterable
+	 * but span tags are!
+	 *
+	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\DOMRangeBuilder
+	 */
+	public function testSkipWrappingStyleTagsInFosterablePosition(): void {
+		$description = "Regression Specs: should not split p-wrappers around templatestyles";
+		$wt = "{{1x|\n" .
+			"{{{!}}\n\n" .
+			"<templatestyles src='Template:Quote/styles.css' />\n\n" .
+			"{{!}}}" .
+			"foo" .
+			"}}";
+		$docBody = $this->parseWT( $wt );
+
+		// If table content is fostered out of the table, about continuity
+		// will be broken and the assertion will fail.
+		$node = $docBody->firstChild;
+		$about = DOMCompat::getAttribute( $node, 'about' );
+		while ( $node !== null ) {
+			$this->assertSame( $about, DOMCompat::getAttribute( $node, 'about' ) );
+			$node = $node->nextSibling;
+		}
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks;
 
 use MediaWiki\Html\TemplateParser;
 

@@ -24,7 +24,6 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
-use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -32,24 +31,13 @@ use MediaWiki\Watchlist\WatchlistManager;
 
 class PageActions {
 
-	private LanguagesHelper $languagesHelper;
-	private IMinervaPagePermissions $permissions;
-	private SkinOptions $skinOptions;
-	private SkinUserPageHelper $skinUserPageHelper;
-	private WatchlistManager $watchlistManager;
-
 	public function __construct(
-		LanguagesHelper $languagesHelper,
-		MinervaPagePermissions $permissions,
-		SkinOptions $skinOptions,
-		SkinUserPageHelper $skinUserPageHelper,
-		WatchlistManager $watchlistManager
+		private readonly LanguagesHelper $languagesHelper,
+		private readonly IMinervaPagePermissions $permissions,
+		private readonly SkinOptions $skinOptions,
+		private readonly SkinUserPageHelper $skinUserPageHelper,
+		private readonly WatchlistManager $watchlistManager,
 	) {
-		$this->languagesHelper = $languagesHelper;
-		$this->permissions = $permissions;
-		$this->skinOptions = $skinOptions;
-		$this->skinUserPageHelper = $skinUserPageHelper;
-		$this->watchlistManager = $watchlistManager;
 	}
 
 	public function getPageActionsDirector( IContextSource $context ): PageActionsDirector {

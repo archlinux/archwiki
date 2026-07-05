@@ -32,7 +32,7 @@ class HTMLTitleTextFieldTest extends MediaWikiIntegrationTestCase {
 		} );
 		$this->setService( 'TitleFactory', $titleFactory );
 		$htmlForm = $this->createMock( HTMLForm::class );
-		$htmlForm->method( 'msg' )->willReturnCallback( 'wfMessage' );
+		$htmlForm->method( 'msg' )->willReturnCallback( wfMessage( ... ) );
 
 		$field = new HTMLTitleTextField( $config + [ 'fieldname' => 'foo', 'parent' => $htmlForm ] );
 		$result = $field->validate( $value, [ 'foo' => $value ] );

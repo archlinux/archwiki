@@ -6,5 +6,6 @@
 		]
 	},
 	"captcha-apihelp-param-captchaword": "{{doc-apihelp-param|description=the \"captchaword\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaid}}",
-	"captcha-apihelp-param-captchaid": "{{doc-apihelp-param|description=the \"captchaid\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaword}}"
+	"captcha-apihelp-param-captchaid": "{{doc-apihelp-param|description=the \"captchaid\" parameter added by [[mw:Extension:ConfirmEdit]]|noseealso=1}}\nSee also {{msg-mw|captcha-apihelp-param-captchaword}}",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "{{doc-apihelp-param|description=the \"wgConfirmEditForceShowCaptcha\" parameter added by [[mw:Extension:ConfirmEdit]] when hCaptcha is in force-show mode|noseealso=1}}"
 }

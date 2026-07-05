@@ -22,7 +22,7 @@
 	"cdx-table-pager-button-last-page": "Tudalen olaf",
 	"cdx-table-pager-button-next-page": "Tudalen nesaf",
 	"cdx-table-pager-button-prev-page": "Tudalen flaenorol",
-	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 rhes|$1 rhes|$1 res|$1 rhes}}",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 eitem}}",
 	"cdx-table-pager-items-per-page-default": "Canlyniadau fesul tudalen",
 	"cdx-table-pagination-status-message-determinate-long": "Yn dangos canlyniadau $1–$2 o $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 o $3",

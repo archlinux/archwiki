@@ -24,7 +24,7 @@ class ImportExtensionMessages extends Maintenance {
 		parent::__construct();
 		$this->addArg( 'extension', 'The extension name' );
 		$this->addOption( 'outdir',
-			'The output directory, default $IP/languages/i18n', false, true );
+			'The output directory, default MW_INSTALL_PATH/languages/i18n', false, true );
 	}
 
 	public function execute() {

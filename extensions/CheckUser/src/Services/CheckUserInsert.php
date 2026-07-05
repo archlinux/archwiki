@@ -1,20 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\ClientHints\UserAgentClientHintsManagerHelperTrait;
-use MediaWiki\CheckUser\Hook\HookRunner;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\ClientHints\UserAgentClientHintsManagerHelperTrait;
+use MediaWiki\Extension\CheckUser\Hook\HookRunner;
+use MediaWiki\Extension\CheckUser\Jobs\SuggestedInvestigationsMatchSignalsAgainstUserJob;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsSignalMatchService;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEntryBase;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\RecentChanges\RecentChangeLookup;
 use MediaWiki\Request\WebRequest;
@@ -25,6 +28,8 @@ use MediaWiki\User\UserIdentityValue;
 use Psr\Log\LoggerInterface;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\TransactionProfiler;
+use Wikimedia\ScopedCallback;
 
 /**
  * This service provides methods that can be used
@@ -51,19 +56,7 @@ class CheckUserInsert {
 		'flow' => 142,
 	];
 
-	private ActorStore $actorStore;
-	private CheckUserUtilityService $checkUserUtilityService;
-	private CommentStore $commentStore;
-	private HookRunner $hookRunner;
-	private IConnectionProvider $connectionProvider;
-	private Language $contentLanguage;
-	private TempUserConfig $tempUserConfig;
-	private CheckUserCentralIndexManager $checkUserCentralIndexManager;
-	private UserAgentClientHintsManager $userAgentClientHintsManager;
-	private JobQueueGroup $jobQueueGroup;
-	private RecentChangeLookup $recentChangeLookup;
-	private ServiceOptions $options;
-	private LoggerInterface $logger;
+	private readonly HookRunner $hookRunner;
 
 	/**
 	 * The maximum number of bytes that fit in CheckUser's text fields,
@@ -72,34 +65,23 @@ class CheckUserInsert {
 	public const TEXT_FIELD_LENGTH = 255;
 
 	public function __construct(
-		ServiceOptions $options,
-		ActorStore $actorStore,
-		CheckUserUtilityService $checkUserUtilityService,
-		CommentStore $commentStore,
+		private readonly ServiceOptions $options,
+		private readonly ActorStore $actorStore,
+		private readonly CheckUserUtilityService $checkUserUtilityService,
+		private readonly CommentStore $commentStore,
 		HookContainer $hookContainer,
-		IConnectionProvider $connectionProvider,
-		Language $contentLanguage,
-		TempUserConfig $tempUserConfig,
-		CheckUserCentralIndexManager $checkUserCentralIndexManager,
-		UserAgentClientHintsManager $userAgentClientHintsManager,
-		JobQueueGroup $jobQueueGroup,
-		RecentChangeLookup $recentChangeLookup,
-		LoggerInterface $logger
+		private readonly IConnectionProvider $connectionProvider,
+		private readonly Language $contentLanguage,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly CheckUserCentralIndexManager $checkUserCentralIndexManager,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly RecentChangeLookup $recentChangeLookup,
+		private readonly SuggestedInvestigationsSignalMatchService $suggestedInvestigationsSignalMatchService,
+		private readonly LoggerInterface $logger,
 	) {
-		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->actorStore = $actorStore;
-		$this->checkUserUtilityService = $checkUserUtilityService;
-		$this->commentStore = $commentStore;
+		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->connectionProvider = $connectionProvider;
-		$this->contentLanguage = $contentLanguage;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->checkUserCentralIndexManager = $checkUserCentralIndexManager;
-		$this->userAgentClientHintsManager = $userAgentClientHintsManager;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->recentChangeLookup = $recentChangeLookup;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -110,9 +92,12 @@ class CheckUserInsert {
 	 * Note that other extensions (like AbuseFilter) may call this function directly
 	 * if they want to send data to CU without creating a recentchanges entry.
 	 *
+	 * @stable to call since 1.46
 	 * @param RecentChange $rc
+	 * @param bool $silenceReplicaWarnings Whether to silence {@link TransactionProfiler} warnings about making
+	 *   writes or accessing primary DB connections. Default this is not silenced.
 	 */
-	public function updateCheckUserData( RecentChange $rc ) {
+	public function updateCheckUserData( RecentChange $rc, bool $silenceReplicaWarnings = false ) {
 		// Exclude recent changes with secondary sources like Wikidata edits,
 		// which are triggered by actions outside the local wiki (T125664),
 		// and categorization, for which we already store the original edit data
@@ -175,14 +160,16 @@ class CheckUserInsert {
 					$rcRow,
 					__METHOD__,
 					$rc->getPerformerIdentity(),
-					$rc
+					$rc,
+					$silenceReplicaWarnings
 				);
 			} else {
 				$this->insertIntoCuLogEventTable(
 					$logEntry,
 					__METHOD__,
 					$rc->getPerformerIdentity(),
-					$rc
+					$rc,
+					$silenceReplicaWarnings
 				);
 				if ( $this->options->get( 'CheckUserClientHintsEnabled' ) &&
 					$rc->getAttribute( 'rc_log_type' ) === 'newusers' ) {
@@ -215,7 +202,8 @@ class CheckUserInsert {
 				$rcRow,
 				__METHOD__,
 				new UserIdentityValue( $attribs['rc_user'], $attribs['rc_user_text'] ),
-				$rc
+				$rc,
+				$silenceReplicaWarnings
 			);
 		}
 	}
@@ -224,22 +212,40 @@ class CheckUserInsert {
 	 * Performs a call to CheckUserCentralIndexManager::recordActionInCentralIndexes inside a DeferredUpdate that
 	 * is run on POST_SEND.
 	 *
-	 * @param UserIdentity $performer
-	 * @param string $ip
-	 * @param string $timestamp
-	 * @param bool $hasRevisionId
 	 * @see CheckUserCentralIndexManager::recordActionInCentralIndexes for documentation on the parameters
 	 */
 	private function recordActionInCentralTablesOnDeferredUpdate(
-		UserIdentity $performer, string $ip, string $timestamp, bool $hasRevisionId
-	) {
+		UserIdentity $performer,
+		string $ip,
+		string $timestamp,
+		bool $hasRevisionId,
+		bool $silenceReplicaWarnings
+	): void {
 		$dbw = $this->connectionProvider->getPrimaryDatabase();
 		$domainID = $dbw->getDomainID();
 
 		DeferredUpdates::addCallableUpdate(
-			fn () => $this->checkUserCentralIndexManager->recordActionInCentralIndexes(
-				$performer, $ip, $domainID, $timestamp, $hasRevisionId
-			),
+			function () use (
+				$performer,
+				$ip,
+				$domainID,
+				$timestamp,
+				$hasRevisionId,
+				$silenceReplicaWarnings
+			) {
+				if ( $silenceReplicaWarnings ) {
+					$transactionProfilerScope = Profiler::instance()->getTransactionProfiler()
+						->silenceForScope( TransactionProfiler::EXPECTATION_REPLICAS_ONLY );
+				}
+				$this->checkUserCentralIndexManager->recordActionInCentralIndexes(
+					$performer,
+					$ip,
+					$domainID,
+					$timestamp,
+					$hasRevisionId
+				);
+				ScopedCallback::consume( $transactionProfilerScope );
+			},
 			DeferredUpdates::POSTSEND,
 			// Cancel this update if the main transaction round is rolled back (T385734).
 			$dbw
@@ -265,8 +271,15 @@ class CheckUserInsert {
 		DatabaseLogEntry $logEntry,
 		string $method,
 		UserIdentity $user,
-		?RecentChange $rc = null
+		?RecentChange $rc = null,
+		bool $silenceReplicaWarnings = false
 	): void {
+		$transactionProfilerScope = null;
+		if ( $silenceReplicaWarnings ) {
+			$transactionProfilerScope = Profiler::instance()->getTransactionProfiler()
+				->silenceForScope( TransactionProfiler::EXPECTATION_REPLICAS_ONLY );
+		}
+
 		$request = RequestContext::getMain()->getRequest();
 
 		$ip = $request->getIP();
@@ -286,12 +299,15 @@ class CheckUserInsert {
 		$row = array_merge( [
 			'cule_actor'     => $this->acquireActorId( $user, CheckUserQueryInterface::LOG_EVENT_TABLE ),
 			'cule_timestamp' => $dbw->timestamp( $logEntry->getTimestamp() ),
-			'cule_ip'        => IPUtils::sanitizeIP( $ip ),
 			'cule_ip_hex'    => $ip ? IPUtils::toHex( $ip ) : null,
 			'cule_xff'       => !$isSquidOnly ? $xff : '',
 			'cule_xff_hex'   => ( $xff_ip && !$isSquidOnly ) ? IPUtils::toHex( $xff_ip ) : null,
-			'cule_agent'     => $this->getAgent( $request ),
 		], $row );
+
+		// Set the User-Agent in the row via a reference to the cu_useragent table
+		$agent = $this->getAgent( $row['cule_agent'] ?? null, $request );
+		unset( $row['cule_agent'] );
+		$row['cule_agent_id'] = $this->acquireUserAgentTableId( $agent );
 
 		// (T199323) Truncate text fields prior to database insertion
 		// Attempting to insert too long text will cause an error in MariaDB/MySQL strict mode
@@ -305,8 +321,14 @@ class CheckUserInsert {
 
 		// Update the central index for this newly inserted row.
 		$this->recordActionInCentralTablesOnDeferredUpdate(
-			$user, $ip, $row['cule_timestamp'], false
+			$user,
+			$ip,
+			$row['cule_timestamp'],
+			false,
+			$silenceReplicaWarnings
 		);
+
+		ScopedCallback::consume( $transactionProfilerScope );
 	}
 
 	/**
@@ -331,8 +353,15 @@ class CheckUserInsert {
 		array $row,
 		string $method,
 		UserIdentity $user,
-		?RecentChange $rc = null
+		?RecentChange $rc = null,
+		bool $silenceReplicaWarnings = false
 	): int {
+		$transactionProfilerScope = null;
+		if ( $silenceReplicaWarnings ) {
+			$transactionProfilerScope = Profiler::instance()->getTransactionProfiler()
+				->silenceForScope( TransactionProfiler::EXPECTATION_REPLICAS_ONLY );
+		}
+
 		$request = RequestContext::getMain()->getRequest();
 
 		$ip = $request->getIP();
@@ -355,14 +384,17 @@ class CheckUserInsert {
 				'cupe_page'       => 0,
 				'cupe_actor'      => $this->acquireActorId( $user, CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE ),
 				'cupe_timestamp'  => $dbw->timestamp( wfTimestampNow() ),
-				'cupe_ip'         => IPUtils::sanitizeIP( $ip ),
 				'cupe_ip_hex'     => $ip ? IPUtils::toHex( $ip ) : null,
 				'cupe_xff'        => !$isSquidOnly ? $xff : '',
 				'cupe_xff_hex'    => ( $xff_ip && !$isSquidOnly ) ? IPUtils::toHex( $xff_ip ) : null,
-				'cupe_agent'      => $this->getAgent( $request ),
 			],
 			$row
 		);
+
+		// Set the User-Agent in the row via a reference to the cu_useragent table
+		$agent = $this->getAgent( $row['cupe_agent'] ?? null, $request );
+		unset( $row['cupe_agent'] );
+		$row['cupe_agent_id'] = $this->acquireUserAgentTableId( $agent );
 
 		// (T199323) Truncate text fields prior to database insertion
 		// Attempting to insert too long text will cause an error in MariaDB/MySQL strict mode
@@ -386,10 +418,31 @@ class CheckUserInsert {
 			->execute();
 		$insertedId = $dbw->insertId();
 
+		// Allow SI to match signals when private CheckUser events are inserted
+		DeferredUpdates::addCallableUpdate(
+			function () use ( $user, $row, $insertedId ) {
+				$this->jobQueueGroup->push( SuggestedInvestigationsMatchSignalsAgainstUserJob::newSpec(
+					$user,
+					SuggestedInvestigationsSignalMatchService::EVENT_CHECKUSER_PRIVATE_EVENT,
+					[ 'row' => $row, 'id' => $insertedId ]
+				) );
+			},
+			DeferredUpdates::POSTSEND,
+			// Cancel the signal matching if the main transaction round is rolled back
+			// (as no matching cu_private_event row would exist)
+			$dbw
+		);
+
 		// Update the central index for this newly inserted row.
 		$this->recordActionInCentralTablesOnDeferredUpdate(
-			$user, $ip, $row['cupe_timestamp'], false
+			$user,
+			$ip,
+			$row['cupe_timestamp'],
+			false,
+			$silenceReplicaWarnings
 		);
+
+		ScopedCallback::consume( $transactionProfilerScope );
 
 		return $insertedId;
 	}
@@ -405,14 +458,22 @@ class CheckUserInsert {
 	 * @param UserIdentity $user the user who made the change
 	 * @param ?RecentChange $rc If triggered by a RecentChange, then this is the associated
 	 *  RecentChange object. Null if not triggered by a RecentChange.
+	 * @param bool $silenceReplicaWarnings Whether to silence
 	 * @internal Only for use by the CheckUser extension
 	 */
 	public function insertIntoCuChangesTable(
 		array $row,
 		string $method,
 		UserIdentity $user,
-		?RecentChange $rc = null
+		?RecentChange $rc = null,
+		bool $silenceReplicaWarnings = false
 	): void {
+		$transactionProfilerScope = null;
+		if ( $silenceReplicaWarnings ) {
+			$transactionProfilerScope = Profiler::instance()->getTransactionProfiler()
+				->silenceForScope( TransactionProfiler::EXPECTATION_REPLICAS_ONLY );
+		}
+
 		$request = RequestContext::getMain()->getRequest();
 
 		$ip = $request->getIP();
@@ -436,14 +497,17 @@ class CheckUserInsert {
 				'cuc_last_oldid' => 0,
 				'cuc_type'       => RC_LOG,
 				'cuc_timestamp'  => $dbw->timestamp( wfTimestampNow() ),
-				'cuc_ip'         => IPUtils::sanitizeIP( $ip ),
 				'cuc_ip_hex'     => $ip ? IPUtils::toHex( $ip ) : null,
 				'cuc_xff'        => !$isSquidOnly ? $xff : '',
 				'cuc_xff_hex'    => ( $xff_ip && !$isSquidOnly ) ? IPUtils::toHex( $xff_ip ) : null,
-				'cuc_agent'      => $this->getAgent( $request ),
 			],
 			$row
 		);
+
+		// Set the User-Agent in the row via a reference to the cu_useragent table
+		$agent = $this->getAgent( $row['cuc_agent'] ?? null, $request );
+		unset( $row['cuc_agent'] );
+		$row['cuc_agent_id'] = $this->acquireUserAgentTableId( $agent );
 
 		// (T199323) Truncate text fields prior to database insertion
 		// Attempting to insert too long text will cause an error in MariaDB/MySQL strict mode
@@ -466,24 +530,60 @@ class CheckUserInsert {
 
 		// Update the central index for this newly inserted row.
 		$this->recordActionInCentralTablesOnDeferredUpdate(
-			$user, $ip, $row['cuc_timestamp'], $row['cuc_this_oldid'] !== 0
+			$user,
+			$ip,
+			$row['cuc_timestamp'],
+			$row['cuc_this_oldid'] !== 0,
+			$silenceReplicaWarnings
 		);
+
+		ScopedCallback::consume( $transactionProfilerScope );
 	}
 
 	/**
 	 * Get user agent for the given request.
 	 *
+	 * @param ?string $agent The value of the User-Agent string from the
+	 *   row being inserted. `null` if no value was set in the row (which is the default)
 	 * @param WebRequest $request
 	 * @return string
 	 */
-	private function getAgent( WebRequest $request ): string {
-		$agent = $request->getHeader( 'User-Agent' );
+	private function getAgent( ?string $agent, WebRequest $request ): string {
+		$agent ??= $request->getHeader( 'User-Agent' );
 		if ( $agent === false ) {
 			// no agent was present, store as an empty string (otherwise, it would
 			// end up stored as a zero due to boolean casting done by the DB layer).
 			return '';
 		}
 		return $this->contentLanguage->truncateForDatabase( $agent, self::TEXT_FIELD_LENGTH );
+	}
+
+	/**
+	 * Gets the ID of a row in the `cu_useragent` table that has the provided
+	 * User-Agent string, creating one if it does not exist.
+	 *
+	 * @internal Only for use by {@link PopulateCheckUserTable}
+	 *   and {@link PopulateUserAgentTable}
+	 */
+	public function acquireUserAgentTableId( string $agent ): int {
+		$dbr = $this->connectionProvider->getReplicaDatabase();
+		$id = $dbr->newSelectQueryBuilder()
+			->select( 'cuua_id' )
+			->from( 'cu_useragent' )
+			->where( [ 'cuua_text' => $agent ] )
+			->caller( __METHOD__ )
+			->fetchField();
+		if ( $id === false ) {
+			$dbw = $this->connectionProvider->getPrimaryDatabase();
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'cu_useragent' )
+				->row( [ 'cuua_text' => $agent ] )
+				->caller( __METHOD__ )
+				->execute();
+			$id = $dbw->insertId();
+		}
+
+		return $id;
 	}
 
 	/**
@@ -534,3 +634,10 @@ class CheckUserInsert {
 		return self::CHANGE_TYPES[$source];
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserInsert::class, 'MediaWiki\\CheckUser\\Services\\CheckUserInsert' );
+// @codeCoverageIgnoreEnd

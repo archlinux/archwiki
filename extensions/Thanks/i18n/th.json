@@ -22,7 +22,6 @@
 	"thanks-error-invalid-log-id": "ไม่พบรายการบันทึก",
 	"thanks-error-invalidrevision": "หมายเลขประจำรุ่นไม่ถูกต้อง",
 	"thanks-error-revdeleted": "ไม่สามารถส่งคำขอบคุณได้เนื่องจากรุ่นแก้ไขดังกล่าวถูกลบแล้ว",
-	"thanks-error-notitle": "ไม่สามารถดึงข้อมูลชื่อหน้าได้",
 	"thanks-error-invalidrecipient": "ไม่พบผู้รับที่ถูกต้อง",
 	"thanks-error-invalidrecipient-bot": "ไม่สามารถขอบคุณบอตได้",
 	"thanks-error-invalidrecipient-self": "คุณไม่สามารถขอบคุณตัวคุณเองได้",

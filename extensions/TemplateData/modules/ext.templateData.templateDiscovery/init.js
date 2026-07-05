@@ -15,3 +15,5 @@ if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'TemplateDiscovery' ) {
 	specialPage.init();
 	return;
 }
+
+module.exports = mw.templateData;

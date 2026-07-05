@@ -10,9 +10,9 @@ namespace MediaWiki\Extension\TemplateStyles;
 use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\TemplateStyles\Hooks\HookRunner;
-use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -43,34 +43,29 @@ class Hooks implements
 	ContentHandlerDefaultModelForHook
 {
 
-	/** @var MatcherFactory|null */
-	private static $matcherFactory = null;
+	private static ?MatcherFactory $matcherFactory = null;
 
-	/** @var Sanitizer[] */
-	private static $sanitizers = [];
+	/** @var array<string,Sanitizer> */
+	private static array $sanitizers = [];
 
-	/** @var (false|Token[])[] */
-	private static $wrappers = [];
+	/** @var array<string,false|Token[]> */
+	private static array $wrappers = [];
 
 	/**
-	 * @return Config
 	 * @codeCoverageIgnore
 	 */
-	public static function getConfig() {
+	public static function getConfig(): Config {
 		return MediaWikiServices::getInstance()->getConfigFactory()
 			->makeConfig( 'templatestyles' );
 	}
 
 	/**
-	 * @return MatcherFactory
 	 * @codeCoverageIgnore
 	 */
-	private static function getMatcherFactory() {
-		if ( !self::$matcherFactory ) {
-			self::$matcherFactory = new TemplateStylesMatcherFactory(
-				self::getConfig()->get( 'TemplateStylesAllowedUrls' )
-			);
-		}
+	public static function getMatcherFactory(): TemplateStylesMatcherFactory {
+		self::$matcherFactory ??= new TemplateStylesMatcherFactory(
+			self::getConfig()->get( 'TemplateStylesAllowedUrls' )
+		);
 		return self::$matcherFactory;
 	}
 
@@ -226,7 +221,7 @@ class Hooks implements
 			);
 
 		if ( !empty( $enabledNamespaces[$title->getNamespace()] ) &&
-			$title->isSubpage() && substr( $title->getText(), -4 ) === '.css'
+			$title->isSubpage() && str_ends_with( $title->getText(), '.css' )
 		) {
 			$model = 'sanitized-css';
 			return false;
@@ -277,7 +272,7 @@ class Hooks implements
 		$parser->getOutput()->addTemplate(
 			$title,
 			$title->getArticleId(),
-			$revRecord ? $revRecord->getId() : null
+			$revRecord ? $revRecord->getId() : 0
 		);
 
 		if ( !$revRecord ) {

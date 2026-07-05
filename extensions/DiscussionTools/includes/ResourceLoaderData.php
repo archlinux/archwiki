@@ -11,11 +11,11 @@ namespace MediaWiki\Extension\DiscussionTools;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Title\Title;
-use MessageLocalizer;
 
 class ResourceLoaderData {
 	/**

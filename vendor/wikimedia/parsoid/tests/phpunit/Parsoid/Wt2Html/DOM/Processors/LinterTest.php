@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter;
 
 /**
@@ -20,7 +21,7 @@ use Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter;
 class LinterTest extends TestCase {
 
 	private function wtToLint(
-		string $wt, array $linterOverrides = [], ?string $title = null
+		string $wt, array $linterOverrides = [], ?string $title = null, ?int $namespace = null
 	): array {
 		$siteOptions = [
 			'linting' => true,
@@ -32,9 +33,10 @@ class LinterTest extends TestCase {
 		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$content = new MockPageContent( [ 'main' => $wt ] );
+		$title = Title::newFromText( $title ?? 'TestPage', $siteConfig, $namespace );
+		$content = new MockPageContent( [ 'main' => $wt ], $title );
 		$pageConfig = new MockPageConfig(
-			$siteConfig, [ 'title' => $title ], $content
+			$siteConfig, [], $content
 		);
 
 		return $parsoid->wikitext2lint( $pageConfig, [] );
@@ -257,6 +259,13 @@ class LinterTest extends TestCase {
 		$this->assertEquals( 'obsolete-tag', $result[0]['type'], $desc );
 		$this->assertFalse( isset( $result[0]['templateInfo'] ), $desc );
 		$this->assertEquals( [ 24, 36, 4, 5 ], $result[0]['dsr'], $desc );
+
+		$desc = 'should lint obsolete tag from parser function argument';
+		$result = $this->wtToLint( "{{#tag:div|<tt>foo</tt>bar}}" );
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'obsolete-tag', $result[0]['type'], $desc );
+		$this->assertEquals( [ 0, 28, null, null ], $result[0]['dsr'], $desc );
+		$this->assertTrue( $result[0]['templateInfo']['parserFunction'] ?? false, $desc );
 	}
 
 	/**
@@ -1873,6 +1882,95 @@ class LinterTest extends TestCase {
 		$this->assertEquals( [ 5, 50, 0, 0 ], $result[0]['dsr'], $desc );
 		$this->assertEquals( 'extlink-contains-template', $result[1]['type'], $desc );
 		$this->assertEquals( [ 51, 105, 0, 0 ], $result[1]['dsr'], $desc );
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Wt2Html\DOM\Processors\Linter::lintTemplateArgInExtensionTag
+	 * @see https://phabricator.wikimedia.org/T348722
+	 */
+	public function testLintTemplateArgInExtensionTag(): void {
+		$desc = "should not lint template argument in extension tag (no parameter inside)";
+		$result = $this->wtToLint(
+			"text {{{1|sort of}}} front <gallery>File:Foobar.jpg</gallery> text {{{2|sort of}}} behind"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint template argument in extension tag (new syntax)";
+		$result = $this->wtToLint(
+			"text behind {{#tag:gallery|File:{{{1|some}}}.jpg}} text behind"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint template argument in extension tag (non extension tag)";
+		$result = $this->wtToLint(
+			"text front <small>with {{{1|some}}} text</small> text behind"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint template argument in extension tag (nowiki)";
+		$result = $this->wtToLint(
+			"text front <gallery>File:<nowiki>{{{1}}}.jpg</nowiki>\n" .
+			"File:<nowiki>Foobar.jpg</nowiki></gallery> text behind"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint template argument in extension tag (extension without wikitext)";
+		$result = $this->wtToLint(
+			"text front <math>with {{{1|some}}} text</math> text behind"
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should not lint template argument in extension tag (template namespace)";
+		$siteOptions = [
+			'linting' => true,
+		];
+		$siteConfig = new MockSiteConfig( $siteOptions );
+		$result = $this->wtToLint(
+			"text front <gallery>File:{{{1|some}}}-{{{2|name}}}.jpg</gallery> text behind",
+			[],
+			null,
+			$siteConfig->canonicalNamespaceId( 'template' ) // Template namespace
+		);
+		$this->assertCount( 0, $result, $desc );
+
+		$desc = "should lint template argument in extension tag (basic)";
+		$result = $this->wtToLint(
+			"text front <gallery>File:{{{1|some}}}-{{{2|name}}}.jpg</gallery> text behind"
+		);
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'template-arg-in-extension-tag', $result[0]['type'], $desc );
+		$this->assertEquals( [ 11, 64, 9, 10 ], $result[0]['dsr'], $desc );
+		$this->assertTrue( isset( $result[0]['params']['ext-name'] ), $desc );
+		$this->assertEquals( 'gallery', $result[0]['params']['ext-name'], $desc );
+		$this->assertCount( 2, $result[0]['params']['details'] );
+		$this->assertEquals( '{{{1|some}}}', $result[0]['params']['details'][0], $desc );
+		$this->assertEquals( '{{{2|name}}}', $result[0]['params']['details'][1], $desc );
+
+		$desc = "should lint template argument in extension tag (tag inside template)";
+		$result = $this->wtToLint(
+			"text front {{template with ext tag}} text behind"
+		);
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'template-arg-in-extension-tag', $result[0]['type'], $desc );
+		$this->assertEquals( [ 11, 36, null, null ], $result[0]['dsr'], $desc );
+		$this->assertTrue( isset( $result[0]['params']['ext-name'] ), $desc );
+		$this->assertEquals( 'gallery', $result[0]['params']['ext-name'], $desc );
+		$this->assertCount( 2, $result[0]['params']['details'] );
+		$this->assertEquals( '{{{1|some}}}', $result[0]['params']['details'][0], $desc );
+		$this->assertEquals( '{{{2|name}}}', $result[0]['params']['details'][1], $desc );
+
+		$desc = "should lint template argument in extension tag (nowiki front))";
+		$result = $this->wtToLint(
+			"text front <gallery><nowiki>File:{{{name|should not show}}}.jpg</nowiki>\n"
+			. "File:{{{name}}}.jpg</gallery> text behind"
+		);
+		$this->assertCount( 1, $result, $desc );
+		$this->assertEquals( 'template-arg-in-extension-tag', $result[0]['type'], $desc );
+		$this->assertEquals( [ 11, 102, 9, 10 ], $result[0]['dsr'], $desc );
+		$this->assertTrue( isset( $result[0]['params']['ext-name'] ), $desc );
+		$this->assertEquals( 'gallery', $result[0]['params']['ext-name'], $desc );
+		$this->assertCount( 1, $result[0]['params']['details'] );
+		$this->assertEquals( '{{{name}}}', $result[0]['params']['details'][0], $desc );
 	}
 
 }

@@ -15,7 +15,7 @@ class CommentUtilsTest extends IntegrationTestCase {
 	 * @dataProvider provideIsSingleCommentSignedBy
 	 */
 	public function testIsSingleCommentSignedBy(
-		string $msg, string $title, string $username, string $html, bool $expected
+		string $msg, string $title, string $user, string $html, bool $expected
 	) {
 		$doc = static::createDocument( $html );
 		$container = static::getThreadContainer( $doc );
@@ -26,7 +26,7 @@ class CommentUtilsTest extends IntegrationTestCase {
 		$parser = $this->createParser( $config, $data );
 
 		$threadItemSet = $parser->parse( $container, $title );
-		$isSigned = CommentUtils::isSingleCommentSignedBy( $threadItemSet, $username, $container );
+		$isSigned = CommentUtils::isSingleCommentSignedBy( $threadItemSet, $user, $container );
 		static::assertEquals( $expected, $isSigned, $msg );
 	}
 
@@ -120,10 +120,10 @@ class CommentUtilsTest extends IntegrationTestCase {
 		yield 'ConfusingShortUrl-parsoid-editing-path' => [ 'Foo', './Foo?action=edit', $config ];
 
 		// External link (matches regardless of domain - this may be unexpected)
-		yield 'ShortUrl-external-path1' => [ 'Foo', 'http://example.com/Foo', $config ];
-		yield 'ShortUrl-external-path2' => [ 'Foo', 'http://example.org/Foo', $config ];
-		yield 'ShortUrl-external-cgi1' => [ 'Foo', 'http://example.com/index.php?title=Foo', $config ];
-		yield 'ShortUrl-external-cgi2' => [ 'Foo', 'http://example.org/index.php?title=Foo', $config ];
+		yield 'ConfusingShortUrl-external-path1' => [ 'Foo', 'http://example.com/Foo', $config ];
+		yield 'ConfusingShortUrl-external-path2' => [ 'Foo', 'http://example.org/Foo', $config ];
+		yield 'ConfusingShortUrl-external-cgi1' => [ 'Foo', 'http://example.com/index.php?title=Foo', $config ];
+		yield 'ConfusingShortUrl-external-cgi2' => [ 'Foo', 'http://example.org/index.php?title=Foo', $config ];
 	}
 
 	public static function provideGetTitleFromUrl_NoShortUrl() {
@@ -146,8 +146,8 @@ class CommentUtilsTest extends IntegrationTestCase {
 		yield 'NoShortUrl-parsoid-editing-path' => [ 'Foo', './index.php?title=Foo&action=edit', $config ];
 
 		// External link (matches regardless of domain - this may be unexpected)
-		yield 'ShortUrl-external-cgi1' => [ 'Foo', 'http://example.com/wiki/index.php?title=Foo', $config ];
-		yield 'ShortUrl-external-cgi2' => [ 'Foo', 'http://example.org/wiki/index.php?title=Foo', $config ];
-		yield 'ShortUrl-external-null' => [ null, 'http://example.net/Foo', $config ];
+		yield 'NoShortUrl-external-cgi1' => [ 'Foo', 'http://example.com/wiki/index.php?title=Foo', $config ];
+		yield 'NoShortUrl-external-cgi2' => [ 'Foo', 'http://example.org/wiki/index.php?title=Foo', $config ];
+		yield 'NoShortUrl-external-null' => [ null, 'http://example.net/Foo', $config ];
 	}
 }

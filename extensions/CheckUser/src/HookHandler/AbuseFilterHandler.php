@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterCanViewProtectedVariablesHook;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterCustomProtectedVariablesHook;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterProtectedVarsAccessLoggerHook;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
@@ -18,18 +18,11 @@ class AbuseFilterHandler implements
 	AbuseFilterCanViewProtectedVariablesHook
 	{
 
-	private TemporaryAccountLoggerFactory $loggerFactory;
-	private CheckUserPermissionManager $checkUserPermissionManager;
-	private TempUserConfig $tempUserConfig;
-
 	public function __construct(
-		TemporaryAccountLoggerFactory $loggerFactory,
-		CheckUserPermissionManager $checkUserPermissionManager,
-		TempUserConfig $tempUserConfig
+		private readonly TemporaryAccountLoggerFactory $loggerFactory,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
+		private readonly TempUserConfig $tempUserConfig,
 	) {
-		$this->loggerFactory = $loggerFactory;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
-		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -106,7 +99,9 @@ class AbuseFilterHandler implements
 	 * @inheritDoc
 	 */
 	public function onAbuseFilterCanViewProtectedVariables(
-		Authority $performer, array $variables, AbuseFilterPermissionStatus $status
+		Authority $performer,
+		array $variables,
+		AbuseFilterPermissionStatus $status
 	): void {
 		if ( !in_array( 'user_unnamed_ip', $variables ) || !$this->tempUserConfig->isKnown() ) {
 			return;

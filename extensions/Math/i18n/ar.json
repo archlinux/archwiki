@@ -10,6 +10,7 @@
 			"Maroen1990",
 			"Meno25",
 			"Mido",
+			"Mohammed Qays",
 			"Moud hosny",
 			"Omda4wady",
 			"SaldırganSincap",
@@ -18,8 +19,7 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"Mohammed Qays"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -131,5 +131,7 @@
 	"math-wikibase-special-form-button": "طلب معلومات",
 	"math-wikibase-special-error-header": "خطأ",
 	"math-wikibase-special-error-invalid-argument": "معرف عنصر قاعدة الويكي المحدد غير موجود.",
-	"math-wikibase-special-error-unknown": "حدث خطأ غير معروف أثناء جلب البيانات من ويكي."
+	"math-wikibase-special-error-unknown": "حدث خطأ غير معروف أثناء جلب البيانات من ويكي.",
+	"math-editpage-insert-inline": "صيغة رياضية (مضمنة)",
+	"math-editpage-insert-block": "صيغة رياضية (مربع)"
 }

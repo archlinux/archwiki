@@ -24,16 +24,17 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Category\Category;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
 use MediaWiki\Extension\Translate\PageTranslation\TranslatablePage;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
@@ -118,12 +119,13 @@ class CategoryTree {
 		}
 
 		$dbr = $this->dbProvider->getReplicaDatabase();
+		$categoryLinksDbr = $this->dbProvider->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
 
 		$inverse = $this->optionManager->isInverse();
 		$mode = $this->optionManager->getOption( 'mode' );
 		$namespaces = $this->optionManager->getOption( 'namespaces' );
 
-		$queryBuilder = $dbr->newSelectQueryBuilder()
+		$queryBuilder = $categoryLinksDbr->newSelectQueryBuilder()
 			->select( [
 				'page_id', 'page_namespace', 'page_title', 'page_is_redirect',
 				'page_len', 'page_latest', 'cl_from', 'lt_title'
@@ -166,18 +168,35 @@ class CategoryTree {
 			}
 		}
 
-		# fetch member count if possible
-		$doCount = !$inverse && $this->config->get( 'CategoryTreeUseCategoryTable' );
-
-		if ( $doCount ) {
-			$queryBuilder
-				->leftJoin( 'category', null, [ 'cat_title = page_title', 'page_namespace' => NS_CATEGORY ] )
-				->fields( [ 'cat_id', 'cat_title', 'cat_subcats', 'cat_pages', 'cat_files' ] );
-		}
-
 		$res = $queryBuilder->fetchResultSet();
 
-		# collect categories separately from other pages
+		// fetch member count if possible
+		$doCount = !$inverse && $this->config->get( 'CategoryTreeUseCategoryTable' );
+
+		$categoryData = [];
+		if ( $doCount ) {
+			$categoryTitles = [];
+			foreach ( $res as $row ) {
+				if ( (int)$row->page_namespace === NS_CATEGORY ) {
+					$categoryTitles[] = $row->page_title;
+				}
+			}
+
+			if ( $categoryTitles !== [] ) {
+				$categoryRes = $dbr->newSelectQueryBuilder()
+					->select( [ 'cat_id', 'cat_title', 'cat_subcats', 'cat_pages', 'cat_files' ] )
+					->from( 'category' )
+					->where( [ 'cat_title' => $categoryTitles ] )
+					->caller( __METHOD__ )
+					->fetchResultSet();
+
+				foreach ( $categoryRes as $catRow ) {
+					$categoryData[$catRow->cat_title] = $catRow;
+				}
+			}
+		}
+
+		// collect categories separately from other pages
 		$categories = '';
 		$other = '';
 		$suppressTranslations = OptionManager::decodeBoolean(
@@ -210,19 +229,22 @@ class CategoryTree {
 				}
 			}
 
-			# NOTE: in inverse mode, the page record may be null, because we use a right join.
-			#      happens for categories with no category page (red cat links)
+			// NOTE: in inverse mode, the page record may be null, because we use a right join.
+			//      happens for categories with no category page (red cat links)
 			if ( $inverse && $row->page_title === null ) {
 				$t = Title::makeTitle( NS_CATEGORY, $row->lt_title );
 			} else {
-				# TODO: translation support; ideally added to Title object
+				// TODO: translation support; ideally added to Title object
 				$t = Title::newFromRow( $row );
 			}
 
 			$cat = null;
 
 			if ( $doCount && (int)$row->page_namespace === NS_CATEGORY ) {
-				$cat = Category::newFromRow( $row, $t );
+				$catRow = $categoryData[$row->page_title] ?? null;
+				if ( $catRow ) {
+					$cat = Category::newFromRow( $catRow, $t );
+				}
 			}
 
 			$s = $this->renderNodeInfo( $t, $cat, $depth - 1 );
@@ -241,9 +263,9 @@ class CategoryTree {
 	 * Returns a string with an HTML representation of the parents of the given category.
 	 */
 	public function renderParents( Title $title ): string {
-		$dbr = $this->dbProvider->getReplicaDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase( CategoryLinksTable::VIRTUAL_DOMAIN );
 
-		$qb = $dbr->newSelectQueryBuilder()
+		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'lt_title' ] )
 			->from( 'categorylinks' )
 			->join( 'linktarget', null, [ 'lt_id=cl_target_id' ] )
@@ -251,9 +273,8 @@ class CategoryTree {
 			->andWhere( [ 'lt_namespace' => NS_CATEGORY ] )
 			->limit( $this->config->get( 'CategoryTreeMaxChildren' ) )
 			->orderBy( 'lt_title' )
-			->caller( __METHOD__ );
-
-		$res = $qb->fetchResultSet();
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$special = SpecialPage::getTitleFor( 'CategoryTree' );
 

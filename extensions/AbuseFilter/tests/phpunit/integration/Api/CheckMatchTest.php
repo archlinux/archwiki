@@ -203,16 +203,22 @@ class CheckMatchTest extends ApiTestCase {
 		);
 	}
 
-	private function addCustomProtectedVariable(): void {
+	private function addCustomProtectedVariable(
+		?string $variableValue = 'custom_variable_value'
+	): void {
 		$this->setTemporaryHook( 'AbuseFilterCustomProtectedVariables', static function ( &$variables ) {
 			$variables[] = 'custom_variable';
 		} );
 		$this->setTemporaryHook( 'AbuseFilter-builder', static function ( array &$realValues ) {
 			$realValues['vars']['custom_variable'] = 'custom-variable-test';
 		} );
-		$this->setTemporaryHook( 'AbuseFilter-generateGenericVars', static function ( VariableHolder $vars ) {
-			$vars->setVar( 'custom_variable', 'custom_variable_value' );
-		} );
+		$this->setTemporaryHook(
+			'AbuseFilter-generateGenericVars',
+			static function ( VariableHolder $vars ) use ( $variableValue ) {
+				$vars->setVar( 'custom_variable', $variableValue );
+			}
+		);
+		$this->resetServices();
 	}
 
 	public function testExecuteWhenLogIdContainsProtectedVariablesUserCannotSee() {
@@ -283,6 +289,22 @@ class CheckMatchTest extends ApiTestCase {
 		);
 	}
 
+	public function testExecuteWhenProvidedTestPatternUsesProtectedVariablesButInReadOnlyMode(): void {
+		$this->addCustomProtectedVariable();
+
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+
+		$this->expectApiErrorCode( 'readonly' );
+		$this->doApiRequest(
+			[
+				'action' => 'abusefiltercheckmatch',
+				'rcid' => self::$recentChangeId,
+				'filter' => 'custom_variable = 1',
+			],
+			null, false, $this->mockRegisteredUltimateAuthority()
+		);
+	}
+
 	public function testExecuteWhenProvidedTestPatternUsesProtectedVariables() {
 		$this->addCustomProtectedVariable();
 		$this->setTemporaryHook(
@@ -339,6 +361,34 @@ class CheckMatchTest extends ApiTestCase {
 			false,
 			true
 		);
+
+		$this->dropProtectedVarAccessLogs();
+	}
+
+	public function testViewExamineForProtectedVariableWhenValueIsNull() {
+		$this->addCustomProtectedVariable( null );
+
+		[ $result ] = $this->doApiRequest(
+			[
+				'action' => 'abusefiltercheckmatch',
+				'rcid' => self::$recentChangeId,
+				'filter' => "custom_variable = 'custom_variable_value'",
+			],
+			null, false, $this->mockRegisteredUltimateAuthority()
+		);
+
+		$this->assertSame( [ 'abusefiltercheckmatch' => [ 'result' => false ] ], $result );
+
+		// Verify that a protected variable access log was created as protected variable values were viewed.
+		$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
 
 		$this->dropProtectedVarAccessLogs();
 	}

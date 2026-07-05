@@ -10,7 +10,7 @@
 	"descriptionmsg": "linter-desc",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\Linter\\Maintenance\\MigrateNamespace": "maintenance/migrateNamespace.php",
@@ -52,14 +52,15 @@
 		"BeforePageDisplay": "main",
 		"APIQuerySiteInfoGeneralInfo": "main",
 		"InfoAction": "main",
-		"WikiPageDeletionUpdates": "main",
+		"PageDeletionDataUpdates": "main",
 		"ParserLogLinterData": "main",
-		"RevisionDataUpdates": "main"
+		"RevisionDataUpdates": "main",
+		"wgQueryPages": "main"
 	},
 	"DomainEventIngresses": [
 		{
 			"events": [
-				"PageRevisionUpdated"
+				"PageLatestRevisionChanged"
 			],
 			"class": "MediaWiki\\Linter\\LintEventIngress",
 			"services": [
@@ -95,6 +96,16 @@
 				"Linter.CategoryManager",
 				"Linter.TotalsLookup"
 			]
+		},
+		"LintTemplateErrors": {
+			"class": "MediaWiki\\Linter\\SpecialLintTemplateErrors",
+			"services": [
+				"ConnectionProvider",
+				"TitleParser",
+				"LinkCache",
+				"PermissionManager",
+				"Linter.CategoryManager"
+			]
 		}
 	},
 	"JobClasses": {
@@ -111,7 +122,8 @@
 		"ext.linter.edit": {
 			"scripts": "ext.linter.edit.js",
 			"dependencies": [
-				"jquery.textSelection"
+				"jquery.textSelection",
+				"user.options"
 			]
 		},
 		"ext.linter.styles": {
@@ -273,6 +285,11 @@
 					"enabled": true,
 					"priority": "low",
 					"no-params": true
+				},
+				"template-arg-in-extension-tag": {
+					"dbid": 27,
+					"enabled": true,
+					"priority": "high"
 				}
 			}
 		},

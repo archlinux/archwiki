@@ -5,11 +5,11 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences\Consequence;
 use ConsequenceGetMessageTestTrait;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\Consequences\Consequence\BlockAutopromote

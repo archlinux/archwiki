@@ -8,6 +8,7 @@
  */
 
 const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
+const MWReferenceKeyGenerator = require( './ve.dm.MWReferenceKeyGenerator.js' );
 
 /**
  * DataModel MediaWiki reference node.
@@ -54,26 +55,58 @@ ve.dm.MWReferenceNode.static.isContent = true;
 ve.dm.MWReferenceNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 /**
- * Regular expression for parsing the listKey attribute
- *
- * Use [\s\S]* instead of .* to catch esoteric whitespace (T263698)
- *
- * @static
- * @property {RegExp}
- * @inheritable
+ * @private
+ * @param {ve.dm.ModelFromDomConverter} converter
+ * @param {string|null} [refListItemId]
+ * @return {string}
  */
-ve.dm.MWReferenceNode.static.listKeyRegex = /^(auto|literal)\/([\s\S]*)$/;
+ve.dm.MWReferenceNode.static.getBodyFromReflist = function ( converter, refListItemId ) {
+	if ( !refListItemId ) {
+		return '';
+	}
+	const elem = converter.getHtmlDocument().getElementById( refListItemId );
+	return elem && elem.innerHTML || '';
+};
 
 /**
  * @private
- * @param {ve.dm.InternalList} internalList
- * @param {string|null} [name]
+ * @param {ve.dm.ModelFromDomConverter} converter
+ * @param {string|null} [refListItemId]
  * @return {string}
  */
-ve.dm.MWReferenceNode.static.makeListKey = function ( internalList, name ) {
-	return name ?
-		'literal/' + name :
-		'auto/' + internalList.getNextUniqueNumber();
+ve.dm.MWReferenceNode.static.getGroupFromReflist = function ( converter, refListItemId ) {
+	if ( !refListItemId ) {
+		return '';
+	}
+	const elem = converter.getHtmlDocument().getElementById( refListItemId );
+	return elem && elem.getAttribute( 'data-mw-group' ) || '';
+};
+
+/**
+ * @private
+ * @param {ve.dm.ModelFromDomConverter} converter
+ * @param {string|null} [refListItemId]
+ * @return {Array(string,number)|null} [listKey, index] or null when the sub-ref is unknown
+ */
+ve.dm.MWReferenceNode.static.lookupSubRefIndex = function ( converter, refListItemId ) {
+	return converter.subrefLookup && refListItemId && converter.subrefLookup[ refListItemId ];
+};
+
+/**
+ * @private
+ * @param {ve.dm.ModelFromDomConverter} converter
+ * @param {string|null} [refListItemId]
+ * @param {string} listKey
+ * @param {number} index
+ */
+ve.dm.MWReferenceNode.static.insertSubRefIndex = function ( converter, refListItemId, listKey, index ) {
+	if ( !refListItemId ) {
+		return;
+	}
+	if ( !converter.subrefLookup ) {
+		converter.subrefLookup = {};
+	}
+	converter.subrefLookup[ refListItemId ] = [ listKey, index ];
 };
 
 /**
@@ -84,63 +117,90 @@ ve.dm.MWReferenceNode.static.makeListKey = function ( internalList, name ) {
  * @return {Object|Array|null} Data element or array of linear model data, or null to alienate
  */
 ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter ) {
-	function getReflistItemHtml( id ) {
-		const elem = converter.getHtmlDocument().getElementById( id );
-		return elem && elem.innerHTML;
-	}
-
-	function getReflistItemGroup( id ) {
-		const elem = converter.getHtmlDocument().getElementById( id );
-		return elem && elem.getAttribute( 'data-mw-group' );
-	}
-
 	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' );
 	const mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 	const mwAttrs = mwData.attrs || {};
-	const reflistItemId = ve.getProp( mwData, 'body', 'id' );
-	const body = ve.getProp( mwData, 'body', 'html' ) ||
-		( reflistItemId && getReflistItemHtml( reflistItemId ) ) ||
-		'';
-	const refGroup = mwAttrs.group ||
-		( reflistItemId && getReflistItemGroup( reflistItemId ) ) ||
-		'';
-	const listGroup = this.name + '/' + refGroup;
-	const refName = ( mwData.mainRef ? null : mwAttrs.name );
-	const listKey = this.makeListKey( converter.internalList, refName );
-	const { index, isNew } = converter.internalList.queueItemHtml( listGroup, listKey, body );
 
+	// Load the item's embedded HTML or find it in the reflist.
+	const refListItemId = ve.getProp( mwData, 'body', 'id' );
+	const body = ve.getProp( mwData, 'body', 'html' ) || this.getBodyFromReflist( converter, refListItemId );
+	const refName = ( mwData.mainRef ? null : mwAttrs.name );
 	if ( converter.isFromClipboard() && !( refName || body ) ) {
 		// Pasted reference has neither a name nor body HTML, must have
 		// come from Parsoid read mode directly. (T389518)
 		return [];
 	}
 
+	const refGroup = mwAttrs.group || this.getGroupFromReflist( converter, refListItemId );
+	const listGroup = this.name + '/' + refGroup;
+
+	// FIXME When ve.dm.InternalList takes more responsibilty for sub-refs the code might move there
+	const internalList = converter.getInternalList();
+	if ( !internalList.itemHtmlQueue.length ) {
+		// The property needs to be reset when we start parsing a new doc
+		ve.dm.converter.modelFromDomConverter.subrefLookup = null;
+	}
+
+	let listKey, index, isNew;
+	const lookupResult = mwData.mainRef && this.lookupSubRefIndex( converter, refListItemId );
+	if ( lookupResult ) {
+		[ listKey, index ] = lookupResult;
+		isNew = false;
+	} else {
+		listKey = MWReferenceKeyGenerator.makeListKey( internalList, refName );
+		const { index: qIndex, isNew: qNew } = internalList.queueItemHtml( listGroup, listKey, body );
+		index = qIndex;
+		isNew = qNew;
+		if ( mwData.mainRef ) {
+			this.insertSubRefIndex( converter, refListItemId, listKey, index );
+		}
+	}
+
 	// Sub-refs will always get body content for the details attribute so we use contentsUsed to
 	// store if they had main content in the main+details case
-	const contentsUsed = !!( mwData.mainRef ? mwData.isSubRefWithMainBody : isNew && body );
+	const contentsUsed = !!( mwData.mainRef ? mwData.mainBody : isNew && body );
 
 	const dataElement = {
 		type: this.name,
 		attributes: {
 			mw: mwData,
 			originalMw: mwDataJSON,
-			listIndex: index,
 			listGroup,
 			listKey,
+			listIndex: index,
 			refGroup,
 			contentsUsed
 		}
 	};
 
 	if ( mwData.mainRef && mw.config.get( 'wgCiteSubReferencing' ) ) {
-		dataElement.attributes.mainRefKey = this.makeListKey(
-			converter.internalList,
+		// Create a main ref internalListItem
+		const mainListKey = MWReferenceKeyGenerator.makeListKey(
+			internalList,
 			mwData.mainRef
 		);
+		dataElement.attributes.mainListKey = mainListKey;
+		let mainHtml;
+		if ( mw.config.get( 'wgCiteRemoveSyntheticRefsUnsafe' ) ) {
+			// If this is a non-synthetic main+details then read its contents from the
+			// list item fragment.  We skip synthetic refs because they may have been
+			// produced by a transclusion.
+			mainHtml = !mwData.isSyntheticMainRef &&
+				mwData.mainBody &&
+				this.getBodyFromReflist( converter, mwData.mainBody );
+		}
+		const { index: mainListIndex } = internalList.queueItemHtml( listGroup, mainListKey, mainHtml || '' );
+		dataElement.attributes.mainListIndex = mainListIndex;
 	}
-	if ( reflistItemId ) {
-		dataElement.attributes.refListItemId = reflistItemId;
+
+	if ( refListItemId ) {
+		dataElement.attributes.refListItemId = refListItemId;
 	}
+
+	if ( mw.config.get( 'wgCiteRemoveSyntheticRefsUnsafe' ) && ve.getProp( mwData, 'isSyntheticMainRef' ) ) {
+		return [];
+	}
+
 	return dataElement;
 };
 
@@ -154,58 +214,50 @@ ve.dm.MWReferenceNode.static.toDataElement = function ( domElements, converter )
  * @return {HTMLElement[]}
  */
 ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	const isForClipboard = converter.isForClipboard();
-	const internalList = converter.internalList;
 	const attributes = dataElement.attributes;
+	if ( attributes.placeholder ) {
+		return [];
+	}
+	// Create output DOM element
 	const domElement = doc.createElement( 'sup' );
-
 	domElement.setAttribute( 'typeof', 'mw:Extension/ref' );
 
+	const isSubRef = this.isSubRef( attributes );
+
+	const internalList = converter.getInternalList();
 	const mwData = attributes.mw ? ve.copy( attributes.mw ) : {};
 	const originalMw = attributes.originalMw;
 	const originalMwData = originalMw ? JSON.parse( originalMw ) : {};
 	mwData.name = 'ref';
 
-	if ( isForClipboard || converter.isForParser() ) {
+	if ( converter.isForClipboard() || converter.isForParser() ) {
 		// This call rebuilds the document tree if it isn't built already (e.g. on a
 		// document slice), so only use when necessary (i.e. not in preview mode)
 		const itemNode = internalList.getItemNode( attributes.listIndex );
 		const itemNodeRange = itemNode.getRange();
+		const hasEmptyItem = itemNodeRange.isCollapsed();
 
 		const nodeGroup = internalList.getNodeGroup( attributes.listGroup );
-		const nodesWithSameKey = nodeGroup.getAllReuses( attributes.listKey ) || [];
+		const nodeReuses = nodeGroup.getAllReusesByListIndex( attributes.listIndex ) || [];
 
-		const name = this.generateName( attributes, internalList, nodesWithSameKey );
+		// Generate and add name to data-mw
+		const isReused = nodeReuses.length > 1 || this.hasSubRefs( attributes, internalList );
+		const name = MWReferenceKeyGenerator.generateName( attributes, internalList, isReused );
 		if ( name !== undefined ) {
 			ve.setProp( mwData, 'attrs', 'name', name );
 		}
 
-		// Node is a sub-ref
-		if ( attributes.mainRefKey ) {
+		if ( isSubRef ) {
 			// this is always either the literal name that was already there or the
 			// auto generated literal from above
 			ve.setProp( mwData, 'mainRef', name );
-
-			if ( !ve.getProp( mwData, 'attrs', 'details' ) ) {
-				// Make sure Parsoid recognizes the ref as a sub-ref, the details content will be
-				// set by Parsoid from the bodyContent in body.html
-				ve.setProp( mwData, 'attrs', 'details', '1' );
-			}
-
-			// Check if this sub-ref should get a synthetic main body
-			const syntheticMainRefId = this.shouldLinkSyntheticMainRef( dataElement, nodeGroup );
-			if ( syntheticMainRefId ) {
-				ve.setProp( mwData, 'isSubRefWithMainBody', '1' );
-				ve.setProp( mwData, 'mainBody', syntheticMainRefId );
-			}
 		}
 
-		// FIXME: Merge if sub-refs should get main content vs main refs getting body content
 		const shouldGetMainContent = this.shouldGetMainContent( dataElement, nodeGroup );
 
-		// Add reference content to data-mw.
-		if ( attributes.mainRefKey ||
-			( !this.isBodyContentSet( dataElement, nodesWithSameKey ) && shouldGetMainContent )
+		// Set reference content on data-mw
+		if ( isSubRef ||
+			( !this.shouldAvoidContentOverride( dataElement, nodeReuses ) && shouldGetMainContent )
 		) {
 			// get the current content html of the node
 			const currentHtmlWrapper = doc.createElement( 'div' );
@@ -222,20 +274,23 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 			originalHtmlWrapper.innerHTML = originalHtml;
 
 			// Only set body.html if current and original are actually different,
-			// or we are writing the clipboard for use in another VE instance
-			if ( isForClipboard || !originalHtmlWrapper.isEqualNode( currentHtmlWrapper ) ) {
+			// unless we are writing the clipboard for use in another VE instance
+			if ( converter.isForClipboard() || !originalHtmlWrapper.isEqualNode( currentHtmlWrapper ) ) {
 				ve.setProp( mwData, 'body', 'html', currentHtmlWrapper.innerHTML );
 			}
 		}
 
-		// If we have no internal item data for this reference, don't let it get pasted into
-		// another VE document. T110479
-		if ( isForClipboard && itemNodeRange.isCollapsed() ) {
-			domElement.setAttribute( 'data-ve-ignore', '' );
+		// Set flags for sub-refs with body content on data-mw
+		if ( isSubRef && shouldGetMainContent ) {
+			const mainKeyReuses = nodeGroup.getAllReuses( attributes.mainListKey ) || [];
+			const refListNode = mainKeyReuses.find( ( node ) => node.getAttribute( 'refListItemId' ) );
+			const refListItemId = ( refListNode && refListNode.getAttribute( 'refListItemId' ) ) ||
+				MWReferenceKeyGenerator.makeRefListItemId( attributes.mainListIndex );
+			ve.setProp( mwData, 'mainBody', refListItemId );
 		}
 
-		// Set or clear group
-		if ( attributes.refGroup !== '' &&
+		// Set or clear group on data-mw
+		if ( attributes.refGroup &&
 			// List defined references that had no group before should not save their group T400596
 			!( attributes.refListItemId && !ve.getProp( originalMwData, 'attrs', 'group' ) )
 		) {
@@ -243,22 +298,27 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 		} else if ( mwData.attrs ) {
 			delete mwData.attrs.group;
 		}
+
+		// If we have no internal item data for this reference, don't let it get pasted into
+		// another VE document. T110479
+		if ( converter.isForClipboard() && hasEmptyItem ) {
+			domElement.setAttribute( 'data-ve-ignore', '' );
+		}
 	}
 
-	// If mwAttr and originalMw are the same, use originalMw to prevent reserialization,
+	// If mwData and originalMwData are the same, use originalMwData to prevent reserialization,
 	// unless we are writing the clipboard for use in another VE instance
-	// Reserialization has the potential to reorder keys and so change the DOM unnecessarily
 	if ( converter.isForParser() && originalMw && ve.compare( mwData, originalMwData ) ) {
-		domElement.setAttribute( 'data-mw', originalMw );
-
 		// Return the original DOM elements if possible
 		if ( dataElement.originalDomElementsHash !== undefined ) {
 			return ve.copyDomElements(
 				converter.getStore().value( dataElement.originalDomElementsHash ), doc );
 		}
+
+		domElement.setAttribute( 'data-mw', originalMw );
 	} else {
 		let stringifiedMwData = JSON.stringify( mwData );
-		if ( isForClipboard ) {
+		if ( converter.isForClipboard() ) {
 			// T382858: Ensure data-mw attribute wouldn't be removed by DOMPurify on paste.
 			// DOMPurify forbids '</style' in the body of attributes to avoid mXSS
 			// attacks. Since we know it's JSON, we can encode it with JS unicode escape
@@ -286,79 +346,34 @@ ve.dm.MWReferenceNode.static.toDomElements = function ( dataElement, doc, conver
 /***
  * Check if a previous node with the same key has already set the content.
  * If so, we don't overwrite the content of this node.
+ * FIXME: I guess this method needs to take sub-refs with the main key into
+ * consideration, not only reuses?
  *
  * @private
  * @static
  * @param {Object} dataElement
- * @param {ve.dm.Node[]} nodesWithSameKey
+ * @param {ve.dm.Node[]} nodeReuses
  * @return {boolean}
  * */
-ve.dm.MWReferenceNode.static.isBodyContentSet = function ( dataElement, nodesWithSameKey ) {
-	// Sub-refs can't set body content for other sub-refs so we can bail out early here
-	if ( !dataElement.attributes.contentsUsed || dataElement.attributes.mainRefKey ) {
+ve.dm.MWReferenceNode.static.shouldAvoidContentOverride = function ( dataElement, nodeReuses ) {
+	// Avoiding an override is irrelevant when our node had content before or is a sub-ref
+	if ( !dataElement.attributes.contentsUsed ||
+		this.isSubRef( dataElement.attributes )
+	) {
 		return false;
 	}
 
 	const current = this.getInstanceHashObject( dataElement );
-	for ( let i = 0; i < nodesWithSameKey.length; i++ ) {
+	for ( let i = 0; i < nodeReuses.length; i++ ) {
 		// Stop at the current node, we are only interested in earlier nodes
-		if ( ve.compare( current, this.getInstanceHashObject( nodesWithSameKey[ i ].element ) ) ) {
+		if ( ve.compare( current, this.getInstanceHashObject( nodeReuses[ i ].element ) ) ) {
 			break;
 		}
 
 		// Yes, an earlier node is already marked as holding the content
-		if ( nodesWithSameKey[ i ].getAttribute( 'contentsUsed' ) ) {
+		if ( nodeReuses[ i ].getAttribute( 'contentsUsed' ) ) {
 			return true;
 		}
-	}
-
-	return false;
-};
-
-/***
- * Check if a sub reference node should be linked with the body content of a synthetic main node.
- * This only needs to happen in cases where the body can't move to another main ref.
- *
- * @private
- * @static
- * @param {Object} dataElement
- * @param {ve.dm.InternalListNodeGroup} nodeGroup
- * @return {string|false} the reflistItemId of the main to link to or false if not applicable
- * */
-ve.dm.MWReferenceNode.static.shouldLinkSyntheticMainRef = function ( dataElement, nodeGroup ) {
-	const attributes = dataElement.attributes;
-	const mainRefKey = ve.getProp( attributes, 'mainRefKey' );
-	const siblingSubRefs = this.getSubRefs( mainRefKey, nodeGroup );
-	const isFirstNode = ve.compare(
-		this.getInstanceHashObject( dataElement ),
-		this.getInstanceHashObject( siblingSubRefs[ 0 ].element )
-	);
-
-	// Bail out when the current sub-ref is not the first, only the first should get linked
-	if ( !isFirstNode ||
-		// Bail out when the current sub-ref already has the main body
-		ve.getProp( attributes, 'mw', 'isSubRefWithMainBody' )
-	) {
-		return false;
-	}
-
-	const mainNodes = nodeGroup.getAllReuses( mainRefKey );
-	if (
-		// bail out if there are other main refs that could get the content
-		!mainNodes ||
-		mainNodes.length > 1 ||
-		// bail out if there's no synthetic main ref to link
-		!ve.getProp( mainNodes[ 0 ].getAttribute( 'mw' ), 'isSyntheticMainRef' )
-	) {
-		return false;
-	}
-
-	// mainNodes[ 0 ] is a synthetic main ref, check if there's no other sub-ref after the first
-	// that's linked
-	if ( !siblingSubRefs.slice( 1 ).some(
-		( node ) => ve.getProp( node.getAttribute( 'mw' ), 'isSubRefWithMainBody' )
-	) ) {
-		return mainNodes[ 0 ].getAttribute( 'refListItemId' );
 	}
 
 	return false;
@@ -380,13 +395,11 @@ ve.dm.MWReferenceNode.static.doesHoldBodyContent = function ( attributes, nodeGr
 		return ve.getProp( attributes, 'contentsUsed' );
 	}
 
-	const mainRefKey = ve.getProp( attributes, 'listKey' );
-	// Sub-refs cannot have reuses, that's why using only the firstNodes is safe
-	return nodeGroup.firstNodes.some(
-		// Is there a sub-ref (mainRefKey exists) for the same main ref (mainRefKey is the same)
-		// that already holds the main body?
-		( node ) => ve.getProp( node.getAttribute( 'mw' ), 'isSubRefWithMainBody' ) &&
-			node.getAttribute( 'mainRefKey' ) === mainRefKey
+	const mainListIndex = ve.getProp( attributes, 'listIndex' );
+	const subRefs = this.getSubRefs( mainListIndex, nodeGroup );
+	return subRefs.some(
+		// Is there a sub-ref that already holds the main body?
+		( node ) => ve.getProp( node.getAttribute( 'mw' ), 'mainBody' )
 	);
 };
 
@@ -402,8 +415,8 @@ ve.dm.MWReferenceNode.static.doesHoldBodyContent = function ( attributes, nodeGr
  * */
 ve.dm.MWReferenceNode.static.shouldGetMainContent = function ( dataElement, nodeGroup ) {
 	const attributes = dataElement.attributes;
-	const mainContentKey = attributes.listKey;
-	const mainReuses = nodeGroup.getAllReuses( mainContentKey ) || [];
+	const mainListIndex = this.isSubRef( attributes ) ? attributes.mainListIndex : attributes.listIndex;
+	const mainReuses = this.getRefsWithSameMain( mainListIndex, nodeGroup );
 
 	// If the reference already stored the main content before, it should be stored there again
 	if ( attributes.contentsUsed ||
@@ -423,53 +436,59 @@ ve.dm.MWReferenceNode.static.shouldGetMainContent = function ( dataElement, node
 		// We only want to give this node the main content if there's no other main node after the
 		// first that holds it already.
 		!mainReuses.slice( 1 ).some(
-			( node ) => this.doesHoldBodyContent( node.getAttributes(), nodeGroup )
+			( node ) => {
+				if ( node.isSubRef() ) {
+					return node.getAttribute( 'contentsUsed' );
+				}
+				return this.doesHoldBodyContent( node.element.attributes, nodeGroup );
+			}
 		);
 };
 
 /**
- * Generate the name for a given reference
+ * Return a list of nodes sharing the same main content.  This can be sub-refs or main refs.
+ * This list includes all nodes in index.  Reuses are expaned in the list according to the
+ * first occurence of the first node.  So the list is not in document order.
  *
  * @private
  * @static
- * @param {Object} attributes
- * @param {ve.dm.InternalList} internalList
- * @param {ve.dm.Node[]} nodesWithSameKey
- * @return {string|undefined} literal or auto generated name
+ * @param {number} mainListIndex
+ * @param {ve.dm.InternalListNodeGroup} nodeGroup
+ * @return {ve.dm.MWReferenceNode[]}
  */
-ve.dm.MWReferenceNode.static.generateName = function ( attributes, internalList, nodesWithSameKey ) {
-	const listKey = attributes.mainRefKey || attributes.listKey;
-	const keyParts = this.listKeyRegex.exec( listKey );
-
-	// use literal name
-	if ( keyParts && keyParts[ 1 ] === 'literal' ) {
-		return keyParts[ 2 ];
-	}
-
-	// use auto generated name
-	if ( attributes.mainRefKey ||
-		nodesWithSameKey.length > 1 ||
-		this.hasSubRefs( attributes, internalList )
-	) {
-		return internalList.getNodeGroup( attributes.listGroup ).getUniqueListKey(
-			listKey,
-			'literal/:'
-		).slice( 'literal/'.length );
-	}
+ve.dm.MWReferenceNode.static.getRefsWithSameMain = function ( mainListIndex, nodeGroup ) {
+	const keys = nodeGroup.getKeysInIndexOrder();
+	const results = [];
+	keys.forEach( ( key ) => {
+		const reuses = nodeGroup.getAllReuses( key ) || [];
+		// Sub-ref reuses share the mainListIndex, that's why stopping after the first match is fine
+		if ( reuses.some( ( node ) => ( node.getAttribute( 'mainListIndex' ) === mainListIndex ) ||
+			node.getAttribute( 'listIndex' ) === mainListIndex )
+		) {
+			results.push( ...reuses );
+		}
+	} );
+	return results;
 };
 
 /**
  * @private
  * @static
- * @param {string} mainRefKey
+ * @param {number} mainListIndex
  * @param {ve.dm.InternalListNodeGroup} nodeGroup
  * @return {ve.dm.Node[]}
  */
-ve.dm.MWReferenceNode.static.getSubRefs = function ( mainRefKey, nodeGroup ) {
-	// Sub-refs cannot have reuses, that's why using only the firstNodes is safe
-	return nodeGroup.getFirstNodesInIndexOrder().filter(
-		( node ) => node.element.attributes.mainRefKey === mainRefKey
-	);
+ve.dm.MWReferenceNode.static.getSubRefs = function ( mainListIndex, nodeGroup ) {
+	const keys = nodeGroup.getKeysInIndexOrder();
+	const results = [];
+	keys.forEach( ( key ) => {
+		const reuses = nodeGroup.getAllReuses( key ) || [];
+		// Sub-ref reuses share the mainListIndex, that's why stopping after the first match is fine
+		if ( reuses.some( ( node ) => node.getAttribute( 'mainListIndex' ) === mainListIndex ) ) {
+			results.push( ...reuses );
+		}
+	} );
+	return results;
 };
 
 /**
@@ -481,11 +500,23 @@ ve.dm.MWReferenceNode.static.getSubRefs = function ( mainRefKey, nodeGroup ) {
  */
 ve.dm.MWReferenceNode.static.hasSubRefs = function ( attributes, internalList ) {
 	// A sub-ref cannot have sub-refs, bail out fast for performance reasons
-	return !attributes.mainRefKey &&
-		// Sub-refs cannot have reuses, that's why using only the firstNodes is safe
+	return !this.isSubRef( attributes ) &&
+		// Sub-ref reuses share the mainListIndex, that's why using only the firstNodes is safe
 		internalList.getNodeGroup( attributes.listGroup ).firstNodes.some(
-			( node ) => node.getAttribute( 'mainRefKey' ) === attributes.listKey
+			( node ) => node.getAttribute( 'mainListIndex' ) === attributes.listIndex
 		);
+};
+
+/**
+ * @private
+ * @static
+ * @param {Object} attributes
+ * @return {boolean}
+ */
+ve.dm.MWReferenceNode.static.isSubRef = function ( attributes ) {
+	return attributes.mainListIndex !== undefined ||
+		// TODO: Temporary redundancy, please remove as soon as possible
+		!!attributes.mainListKey;
 };
 
 /**
@@ -503,9 +534,10 @@ ve.dm.MWReferenceNode.static.remapInternalListIndexes = function (
 	dataElement.attributes.listIndex = mapping[ dataElement.attributes.listIndex ];
 
 	// Remap listKey if it was automatically generated
-	const listKeyParts = this.listKeyRegex.exec( dataElement.attributes.listKey );
-	if ( listKeyParts && listKeyParts[ 1 ] === 'auto' ) {
-		dataElement.attributes.listKey = this.makeListKey( newInternalList );
+	if ( !MWReferenceKeyGenerator.isLiteralListKey( dataElement.attributes.listKey ) ) {
+		dataElement.attributes.listKey = MWReferenceKeyGenerator.makeListKey( newInternalList );
+	} else {
+		ve.error( 'T420107 ve.dm.MWReferenceNode.remapInternalListIndexes() called with named ref' );
 	}
 };
 
@@ -520,9 +552,14 @@ ve.dm.MWReferenceNode.static.remapInternalListIndexes = function (
  * @param {ve.dm.InternalList} newInternalList Target document's existing internalList
  */
 ve.dm.MWReferenceNode.static.remapInternalListKeys = function ( dataElement, newInternalList ) {
+	const group = newInternalList.getNodeGroup( dataElement.attributes.listGroup );
+	if ( !group ) {
+		return;
+	}
+
 	let suffix = '';
 	// Try name, name2, name3, ... until unique
-	while ( newInternalList.keys.includes( dataElement.attributes.listKey + suffix ) ) {
+	while ( group.getAllReuses( dataElement.attributes.listKey + suffix ) ) {
 		suffix = suffix ? suffix + 1 : 2;
 	}
 	if ( suffix ) {
@@ -551,9 +588,9 @@ ve.dm.MWReferenceNode.static.getGroup = function ( dataElement ) {
  */
 ve.dm.MWReferenceNode.static.getFormattedRefLinkLabel = function ( dataElement, internalList ) {
 	const refGroup = dataElement.attributes.refGroup;
-	const indexNumber = dataElement.attributes.placeholder ? '…' :
+	const indexNumber = !dataElement.attributes.placeholder &&
 		ve.dm.MWReferenceNode.static.findIndexNumber( dataElement, internalList );
-	const label = ( refGroup ? refGroup + ' ' : '' ) + indexNumber;
+	const label = ( refGroup ? refGroup + ' ' : '' ) + ( indexNumber || '…' );
 
 	return $( '<span>' ).addClass( 'cite-bracket' ).text( '[' )
 		.add( document.createTextNode( label ) )
@@ -566,12 +603,13 @@ ve.dm.MWReferenceNode.static.getFormattedRefLinkLabel = function ( dataElement, 
  * @private
  * @param {Object} dataElement data for the node to be looked up
  * @param {ve.dm.InternalList} internalList document internalList
- * @return {string} footnote number ready for rendering
+ * @return {string|undefined} footnote number ready for rendering
  */
 ve.dm.MWReferenceNode.static.findIndexNumber = function ( dataElement, internalList ) {
 	return ve.getProp( dataElement, 'internal', 'overrideIndex' ) ||
 		MWDocumentReferences.static.refsForDoc( internalList.getDocument() )
-			.getIndexLabel( dataElement.attributes.refGroup, dataElement.attributes.listKey );
+			.getGroupRefs( dataElement.attributes.refGroup )
+			.getIndexLabel( dataElement.attributes.listIndex );
 };
 
 /**
@@ -688,6 +726,14 @@ ve.dm.MWReferenceNode.prototype.getGroup = function () {
 };
 
 /**
+ * @private
+ * @return {boolean}
+ */
+ve.dm.MWReferenceNode.prototype.isSubRef = function () {
+	return this.constructor.static.isSubRef( this.element.attributes );
+};
+
+/**
  * Gets the index label for the reference
  *
  * @return {jQuery} Formatted label including the square brackets
@@ -700,7 +746,7 @@ ve.dm.MWReferenceNode.prototype.getFormattedRefLinkLabel = function () {
 /**
  * FIXME: This will be replaced by a simple property.
  *
- * @return {string} Footnote number ready for rendering
+ * @return {string|undefined} Footnote number ready for rendering
  */
 ve.dm.MWReferenceNode.prototype.getIndexNumber = function () {
 	return this.constructor.static.findIndexNumber(
@@ -719,6 +765,10 @@ ve.dm.MWReferenceNode.prototype.getIndexNumber = function () {
  * @param {ve.dm.Surface} surface
  */
 ve.dm.MWReferenceNode.prototype.copySyntheticRefIntoReferencesList = function ( surface ) {
+	if ( mw.config.get( 'wgCiteRemoveSyntheticRefsUnsafe' ) ) {
+		return;
+	}
+
 	// Get the ReferencesList we want to move the node into
 	const docChildren = this.getDocument().getDocumentNode().getChildren();
 	const refListNode = docChildren.find(
@@ -732,16 +782,13 @@ ve.dm.MWReferenceNode.prototype.copySyntheticRefIntoReferencesList = function ( 
 	}
 	const refListNodeRange = refListNode.getRange();
 
-	const attributes = ve.copy( this.getAttributes() );
+	const attributes = ve.copy( this.element.attributes );
 	ve.setProp( attributes, 'mw', 'isSyntheticMainRef', true );
 	ve.setProp( attributes, 'contentsUsed', true );
 	if ( !ve.getProp( attributes, 'refListItemId' ) ) {
-		// This will be the value of the `id` attribute of reference list item
-		const refListItemId = 'cite_note-' +
-			attributes.listGroup + '-' +
-			attributes.listKey + '-' +
-			attributes.listIndex;
-		ve.setProp( attributes, 'refListItemId', refListItemId.replace( /[_\s]+/u, '_' ) );
+		// This will be the value of the `id` attribute of the reference list item
+		const refListItemId = MWReferenceKeyGenerator.makeRefListItemId( attributes.listIndex );
+		ve.setProp( attributes, 'refListItemId', refListItemId );
 	}
 	const txInsert = ve.dm.TransactionBuilder.static.newFromInsertion(
 		this.getDocument(), refListNodeRange.to, [
@@ -771,7 +818,7 @@ ve.dm.MWReferenceNode.prototype.onRoot = function () {
 ve.dm.MWReferenceNode.prototype.onUnroot = function ( oldRoot ) {
 	if ( this.getDocument().getDocumentNode() === oldRoot ) {
 		// Phabricator T401495
-		if ( this.getAttribute( 'mainRefKey' ) ) {
+		if ( this.isSubRef() ) {
 			ve.track( 'activity.subReference', { action: 'delete-subref' } );
 		}
 		this.removeFromInternalList();
@@ -816,29 +863,15 @@ ve.dm.MWReferenceNode.prototype.removeFromInternalList = function () {
 ve.dm.MWReferenceNode.prototype.onAttributeChange = function ( key, _from, to ) {
 	if ( key === 'placeholder' ) {
 		this.getDocument().getInternalList().markGroupAsChanged( this.registeredListGroup );
-	}
-	if (
-		( key !== 'listGroup' && key !== 'listKey' ) ||
-		( key === 'listGroup' && this.registeredListGroup === to ) ||
-		( key === 'listKey' && this.registeredListKey === to )
+	} else if (
+		( key === 'listGroup' && this.registeredListGroup !== to ) ||
+		( key === 'listKey' && this.registeredListKey !== to )
 	) {
-		return;
+		// Need the old list keys and indexes, so we register them in addToInternalList
+		// They've already been updated in this.element.attributes before this code runs
+		this.removeFromInternalList();
+		this.addToInternalList();
 	}
-
-	// Need the old list keys and indexes, so we register them in addToInternalList
-	// They've already been updated in this.element.attributes before this code runs
-	this.removeFromInternalList();
-	this.addToInternalList();
-};
-
-/**
- * Set the footnote number
- *
- * @param {number[]} groupItemIndex Pair of numbers giving the top-level and sub-reference indexes.
- */
-ve.dm.MWReferenceNode.prototype.setGroupIndex = function ( groupItemIndex ) {
-	// TODO: refine where this is stored
-	this.groupItemIndex = groupItemIndex;
 };
 
 module.exports = ve.dm.MWReferenceNode;

@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"BaRaN6161 TURK",
+			"Hedda",
+			"LisafBia",
+			"SaldırganSincap",
+			"Vito Genovese"
+		]
+	},
+	"oathauth-webauthn-module-label": "Güvenlik anahtarı",
+	"oathauth-webauthn-javascript-required": "Güvenlik anahtarı kullanabilmek için tarayıcınızda JavaScript’in etkinleştirilmiş olması gerekir.",
+	"oathauth-webauthn-ui-login-prompt": "Lütfen güvenlik anahtarınıza dokunun ya da tarayıcının verdiği talimatları izleyin.",
+	"oathauth-webauthn-ui-add-key": "Anahtar ekle",
+	"oathauth-webauthn-error-browser-unsupported": "Bu tarayıcı güvenlik anahtarıyla kimlik doğrulamayı desteklemiyor ya da bu web sitesi için kullanılabilir değil. Lütfen farklı bir tarayıcıyla deneyin. Daha fazla bilgi için [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support adresini okuyun].",
+	"oathauth-webauthn-error-browser-unsupported-console": "Bu tarayıcı güvenlik anahtarıyla kimlik doğrulamayı desteklemiyor ya da bu web sitesi için kullanılamıyor.",
+	"oathauth-webauthn-error-auth-generic": "Kimlik doğrulama işlemi yarıda kesildi. Lütfen kimlik doğrulama işlemini tekrar başlatın.",
+	"oathauth-webauthn-error-reg-generic": "Anahtarınız doğrulanamadı. Lütfen kayıt işlemini tekrar başlatın.",
+	"oathauth-webauthn-registered-keys-section-name": "Kayıtlı anahtarlar",
+	"oathauth-webauthn-ui-remove-key": "Kaldır",
+	"oathauth-webauthn-error-module-not-enabled": "\"$1\" modülü \"$2\" kullanıcısı için etkinleştirilmedi.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn doğrulaması başarısız oldu.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|\"$1\" kullanıcısı}} yeni bir kimlik bilgisi kaydedemiyor.",
+	"oathauth-webauthn-error-invalid-new-key": "Modül tarafından döndürülen yeni anahtar gerekli türde değil.",
+	"oathauth-webauthn-error-registration-failed": "Yeni anahtar kaydı başarısız oldu.",
+	"oathauth-webauthn-ui-key-register-help": "Anahtarınızın takma adını seçin:",
+	"oathauth-webauthn-error-cannot-remove-key": "Anahtar kaldırılamıyor.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Kimlik doğrulama bilgileri alınamadı.",
+	"oathauth-webauthn-add-key-section-name": "Yeni güvenlik anahtarı kaydet",
+	"oathauth-webauthn-error-get-reginfo-fail": "Kayıt bilgileri alınamadı.",
+	"oathauth-webauthn-module-description": "WebAuthn deneysel bir durumdadır. Şu anda kaybolan veya zarar gören kimlik doğrulama cihazları için herhangi bir kurtarma seçeneği sunmamaktadır. WebAuthn hakkında daha fazla bilgi için [https://en.wikipedia.org/wiki/WebAuthn adresine bakın].",
+	"oathauth-webauthn-ui-reload-page-label": "Sayfayı yeniden yükle",
+	"oathauth-webauthn-authentication-info-label": "Kimlik doğrulama verileri",
+	"oathauth-webauthn-authentication-info-help": "Kimlik bilgilerinin alınması için istemciye geçirilen kimlik doğrulama verileri",
+	"oathauth-webauthn-credential-label": "Kullanıcı kimlik bilgisi",
+	"oathauth-webauthn-credential-help": "Kimlik doğrulama verilerine dayalı kullanıcı kimlik bilgileri",
+	"oathauth-webauthn-add-security-key": "Güvenlik anahtarı ekleyin"
+}

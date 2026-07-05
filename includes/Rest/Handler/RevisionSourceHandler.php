@@ -83,10 +83,10 @@ class RevisionSourceHandler extends SimpleHandler {
 	protected function getResponseBodySchemaFileName( string $method ): ?string {
 		switch ( $this->getTargetFormat() ) {
 			case 'bare':
-				return 'includes/Rest/Handler/Schema/RevisionMetaDataBare.json';
+				return __DIR__ . '/Schema/RevisionMetaDataBare.json';
 
 			case 'source':
-				return 'includes/Rest/Handler/Schema/RevisionMetaDataWithSource.json';
+				return __DIR__ . '/Schema/RevisionMetaDataWithSource.json';
 
 			default:
 				throw new LocalizedHttpException(

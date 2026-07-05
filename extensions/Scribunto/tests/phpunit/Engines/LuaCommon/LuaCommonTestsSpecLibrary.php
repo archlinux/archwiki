@@ -3,17 +3,14 @@
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LibraryBase;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 
 class LuaCommonTestsSpecLibrary extends LibraryBase {
-	protected string $message;
-
-	/**
-	 * @param MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine $engine
-	 * @param string $message A string received from ObjectFactory
-	 */
-	public function __construct( $engine, $message ) {
+	public function __construct(
+		LuaEngine $engine,
+		private readonly string $message,
+	) {
 		parent::__construct( $engine );
-		$this->message = $message;
 	}
 
 	/** @inheritDoc */

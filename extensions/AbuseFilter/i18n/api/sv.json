@@ -3,8 +3,8 @@
 		"authors": [
 			"Jopparn",
 			"Lokal Profil",
-			"WikiPhoenix",
-			"Stefan2255"
+			"Stefan2255",
+			"WikiPhoenix"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Kontrollera om ett missbruksfilter matchar en grupp variabler, en redigering eller en händelse som är loggad i missbruksfiltret.",

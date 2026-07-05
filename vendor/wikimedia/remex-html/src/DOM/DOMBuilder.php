@@ -122,16 +122,21 @@ class DOMBuilder implements TreeHandler {
 		$options += [
 			'errorCallback' => null,
 			'domImplementation' => null,
+			'domExceptionClass' => null,
+		] + ( class_exists( '\Dom\Document' ) ? [
+			'domImplementationClass' => '\Dom\Implementation',
+		] : [
 			'domImplementationClass' => \DOMImplementation::class,
-			'domExceptionClass' => \DOMException::class,
-		];
+		] );
 		$this->errorCallback = $options['errorCallback'];
 		$this->domImplementation = $options['domImplementation'] ??
 			new $options['domImplementationClass'];
-		$this->domExceptionClass = $options['domExceptionClass'];
 
 		$isOldNative = $this->domImplementation instanceof \DOMImplementation;
 		$isNewNative = is_a( $this->domImplementation, '\Dom\Implementation' );
+
+		$this->domExceptionClass = $options['domExceptionClass'] ??
+			( $isNewNative ? '\Dom\Exception' : \DOMException::class );
 
 		$this->suppressHtmlNamespace = $options['suppressHtmlNamespace'] ??
 			$isOldNative;
@@ -151,6 +156,11 @@ class DOMBuilder implements TreeHandler {
 
 	private function rethrowIfNotDomException( \Throwable $t ) {
 		if ( is_a( $t, $this->domExceptionClass, false ) ) {
+			return;
+		}
+		// PHP 8.4 claims to alias \Dom\Exception to \DOMException but
+		// is_a doesn't recognize the alias, so check both.
+		if ( is_a( $t, \DOMException::class, false ) ) {
 			return;
 		}
 		// @phan-suppress-next-line PhanThrowTypeAbsent
@@ -229,7 +239,11 @@ class DOMBuilder implements TreeHandler {
 			);
 			$doc = $impl->createDocument( null, '', $doctype );
 		}
-		$doc->encoding = 'UTF-8';
+		if ( $doc instanceof \DOMDocument ) {
+			$doc->encoding = 'UTF-8';
+		} else {
+			$doc->characterSet = 'UTF-8';
+		}
 		return $doc;
 	}
 
@@ -259,7 +273,8 @@ class DOMBuilder implements TreeHandler {
 	/**
 	 * Helper function to try to execute a function, coercing the given
 	 * name and trying again if it throws a DOMException.
-	 * @phan-template T
+	 *
+	 * @template T
 	 * @param string $name The name to possibly coerce
 	 * @param callable(string):T $func The operation we wish to perform
 	 * @param ?callable():T $parserWorkaround An alternative method to
@@ -332,7 +347,7 @@ class DOMBuilder implements TreeHandler {
 		if ( $useCreateElement ) {
 			$node = $this->maybeCoerce(
 				$element->name,
-				fn ( $name ) => $this->doc->createElement( $name ),
+				$this->doc->createElement( ... ),
 				fn () => $this->parserElementWorkaround( $element->name )
 			);
 		} elseif ( $this->createElementSetsNullNS || !str_contains( $element->name, ':' ) ) {

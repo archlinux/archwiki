@@ -36,11 +36,6 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 
 	private const PAGE_NAME = 'AbuseFilter';
 
-	/**
-	 * @var ObjectFactory
-	 */
-	private $objectFactory;
-
 	private const SERVICES_PER_VIEW = [
 		AbuseFilterViewDiff::class => [
 			AbuseFilterPermissionManager::SERVICE_NAME,
@@ -69,6 +64,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			VariableGeneratorFactory::SERVICE_NAME,
 			AbuseLoggerFactory::SERVICE_NAME,
 			'RecentChangeStore',
+			'ReadOnlyMode',
 		],
 		AbuseFilterViewHistory::class => [
 			'UserNameUtils',
@@ -106,6 +102,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			VariableGeneratorFactory::SERVICE_NAME,
 			AbuseLoggerFactory::SERVICE_NAME,
 			'RecentChangeFactory',
+			'ReadOnlyMode',
 		],
 		AbuseFilterViewTools::class => [
 			AbuseFilterPermissionManager::SERVICE_NAME,
@@ -115,10 +112,14 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 
 	public function __construct(
 		AbuseFilterPermissionManager $afPermissionManager,
-		ObjectFactory $objectFactory
+		private readonly ObjectFactory $objectFactory
 	) {
-		parent::__construct( self::PAGE_NAME, 'abusefilter-view', $afPermissionManager );
-		$this->objectFactory = $objectFactory;
+		parent::__construct( self::PAGE_NAME, $afPermissionManager );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'abusefilter-view';
 	}
 
 	/**
@@ -178,8 +179,6 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 	/**
 	 * Instantiate the view class
 	 *
-	 * @suppress PhanTypeInvalidCallableArraySize
-	 *
 	 * @param class-string<AbuseFilterView> $viewClass
 	 * @param array $params
 	 * @return AbuseFilterView
@@ -196,20 +195,14 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 	 * Determine the view class to instantiate
 	 *
 	 * @param string|null $subpage
-	 * @return array A tuple of three elements:
+	 * @return array{0:class-string,1:string,2:array} A tuple of three elements:
 	 *      - a subclass of AbuseFilterView
 	 *      - type of page for addNavigationLinks
 	 *      - array of parameters for the class
-	 * @phan-return array{0:class-string,1:string,2:array}
 	 */
-	public function getViewClassAndPageType( $subpage ): array {
+	public function getViewClassAndPageType( ?string $subpage ): array {
 		// Filter by removing blanks.
-		$params = array_values( array_filter(
-			explode( '/', $subpage ?: '' ),
-			static function ( $value ) {
-				return $value !== '';
-			}
-		) );
+		$params = preg_split( '{/+}', $subpage ?: '' );
 
 		if ( $subpage === 'tools' ) {
 			return [ AbuseFilterViewTools::class, 'tools', [] ];

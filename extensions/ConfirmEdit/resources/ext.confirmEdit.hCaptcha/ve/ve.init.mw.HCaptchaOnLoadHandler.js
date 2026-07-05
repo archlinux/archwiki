@@ -9,7 +9,6 @@
  */
 module.exports = () => {
 	// Load these here so that in QUnit tests we have a chance to mock utils.js
-	const config = require( './../config.json' );
 	const ErrorWidget = require( '../ErrorWidget.js' );
 	const { mapErrorCodeToMessageKey } = require( './../utils.js' );
 
@@ -32,27 +31,18 @@ module.exports = () => {
 	ve.init.mw.HCaptchaOnLoadHandler.static.isHCaptchaRendered = false;
 
 	/**
-	 * The return value of `hcaptcha.render`, which is the widget ID of the
-	 * rendered hCaptcha widget. This can be used by `executeHCaptcha`
-	 * to programmatically execute hCaptcha in invisible mode.
-	 *
-	 * @type {string|null} `null` if no hCaptcha widget is rendered yet
-	 */
-	ve.init.mw.HCaptchaOnLoadHandler.static.widgetId = null;
-
-	/**
 	 * Load the hCaptcha SDK when a user changes content in the VisualEditor editor if
 	 * hCaptcha is required for a "generic" edit.
 	 *
+	 * @param {ve.init.Target} target
 	 * @return {void}
 	 */
-	ve.init.mw.HCaptchaOnLoadHandler.static.onActivationComplete = function () {
+	ve.init.mw.HCaptchaOnLoadHandler.static.onActivationComplete = function ( target ) {
 		if ( !this.shouldRun() ) {
 			return;
 		}
 
-		const surface = ve.init.target.surface;
-		surface.getModel().getDocument().once( 'transact', () => {
+		target.surface.getModel().getDocument().once( 'transact', () => {
 			this.getReadyPromise();
 		} );
 	};
@@ -62,9 +52,10 @@ module.exports = () => {
 	 * as long as hCaptcha is required for a "generic" edit.
 	 *
 	 * @param {window} win
+	 * @param {ve.init.Target} target
 	 * @return {Promise}
 	 */
-	ve.init.mw.HCaptchaOnLoadHandler.static.renderHCaptcha = function ( win ) {
+	ve.init.mw.HCaptchaOnLoadHandler.static.renderHCaptcha = function ( win, target ) {
 		// Return early if not enabled, if the hCaptcha widget is currently being rendered,
 		// or if hCaptcha has already been rendered.
 		// This is needed because this method is called when the state of the dialog changes
@@ -76,19 +67,11 @@ module.exports = () => {
 		this.isHCaptchaRendering = true;
 
 		// Drop any other hCaptcha widget as we are going to add one ourselves in a specific place
-		const saveDialog = ve.init.target.saveDialog;
+		const saveDialog = target.saveDialog;
 		saveDialog.$element.find( '.ext-confirmEdit-visualEditor-hCaptchaContainer' ).remove();
 
 		const $hCaptchaContainer = $( '<div>' );
-
-		// If in secure enclave mode, we should add the hCaptcha privacy policy text
-		// now to make the text appear as soon as possible.
-		if ( config.HCaptchaInvisibleMode ) {
-			const $privacyPolicyNotice = $( '<div>' );
-			$privacyPolicyNotice.html( mw.message( 'hcaptcha-privacy-policy' ).parse() );
-			$privacyPolicyNotice.addClass( 'ext-confirmEdit-hcaptcha-privacy-policy ve-ui-mwSaveDialog-license' );
-			$hCaptchaContainer.append( $privacyPolicyNotice );
-		}
+		this.renderHCaptchaPrivacyPolicyNotice( $hCaptchaContainer );
 
 		const errorWidget = new ErrorWidget();
 		$hCaptchaContainer.append( errorWidget.$element );
@@ -96,6 +79,7 @@ module.exports = () => {
 		// Add a container to hold the hCaptcha widget to the DOM, as hcaptcha.render requires
 		// the container element exist in the DOM for it to work.
 		$hCaptchaContainer.addClass( 'ext-confirmEdit-visualEditor-hCaptchaContainer' );
+		$hCaptchaContainer.addClass( 'ext-confirmEdit-visualEditor-hCaptchaOnLoadContainer' );
 
 		const $hCaptchaWidgetContainer = $( '<div>' );
 		$hCaptchaWidgetContainer.addClass( 'ext-confirmEdit-visualEditor-hCaptchaWidgetContainer' );
@@ -107,10 +91,11 @@ module.exports = () => {
 		const loadPromise = this.getReadyPromise();
 		loadPromise.then(
 			() => {
-				this.widgetId = win.hcaptcha.render( $hCaptchaWidgetContainer[ 0 ], {
-					sitekey: mw.config.get( 'wgConfirmEditHCaptchaSiteKey' ) || config.HCaptchaSiteKey
-				} );
-				saveDialog.updateSize();
+				if ( mw.config.get( 'wgConfirmEditForceShowCaptcha' ) ) {
+					target.saveFields.wgConfirmEditForceShowCaptcha = () => true;
+				}
+
+				this.renderHCaptchaWidget( win, target, $hCaptchaWidgetContainer );
 
 				this.isHCaptchaRendering = false;
 				this.isHCaptchaRendered = true;
@@ -134,11 +119,30 @@ module.exports = () => {
 	 * When the save dialog is closed, we no longer have a rendered hCaptcha widget and so should
 	 * keep track of that so that if it is opened again the hCaptcha widget is re-rendered.
 	 *
+	 * @param {ve.init.Target} target
 	 * @return {void}
 	 */
-	ve.init.mw.HCaptchaOnLoadHandler.static.onSaveWorkflowEnd = function () {
+	ve.init.mw.HCaptchaOnLoadHandler.static.onSaveWorkflowEnd = function ( target ) {
+		ve.init.mw.HCaptcha.static.onSaveWorkflowEnd.call( this, target );
+
 		this.isHCaptchaRendering = false;
 		this.isHCaptchaRendered = false;
+	};
+
+	/**
+	 * Destroys the hCaptcha onload widget and makes this handler stop doing anything in the
+	 * save process unless re-rendered.
+	 *
+	 * @param {ve.init.Target} target
+	 * @return {void}
+	 */
+	ve.init.mw.HCaptchaOnLoadHandler.static.destroyWidget = function ( target ) {
+		if ( target.saveDialog ) {
+			target.saveDialog.$element.find( '.ext-confirmEdit-visualEditor-hCaptchaOnLoadContainer' ).remove();
+		}
+
+		this.widgetId = null;
+		this.hCaptchaResponseToken = null;
 	};
 
 	/**
@@ -151,19 +155,26 @@ module.exports = () => {
 	 * @return {boolean}
 	 */
 	ve.init.mw.HCaptchaOnLoadHandler.static.shouldRun = function () {
-		return mw.config.get( 'wgConfirmEditCaptchaNeededForGenericEdit' ) === 'hcaptcha';
+		return mw.config.get( 'wgConfirmEditCaptchaNeededForGenericEdit' ) === 'hcaptcha' &&
+			mw.config.get( 'wgConfirmEditHCaptchaVisualEditorOnLoadIntegrationEnabled' );
 	};
 
 	/**
 	 * Initialises the hCaptcha VisualEditor on load handler for the current page.
 	 */
 	ve.init.mw.HCaptchaOnLoadHandler.static.init = function () {
-		mw.hook( 've.activationComplete' ).add( () => {
-			ve.init.mw.HCaptchaOnLoadHandler.static.onActivationComplete();
-			ve.init.target.connect( this, { saveWorkflowEnd: 'onSaveWorkflowEnd' } );
-		} );
-		mw.hook( 've.saveDialog.stateChanged' ).add( () => {
-			ve.init.mw.HCaptchaOnLoadHandler.static.renderHCaptcha( window );
+		ve.init.mw.HCaptcha.static.init.call( this );
+
+		mw.hook( 've.newTarget' ).add( ( target ) => {
+			if ( target.constructor.static.name !== 'article' ) {
+				return;
+			}
+			target.on( 'surfaceReady', () => {
+				this.onActivationComplete( target );
+			} );
+			target.on( 'saveWorkflowChangePanel', () => {
+				this.renderHCaptcha( window, target );
+			} );
 		} );
 	};
 };

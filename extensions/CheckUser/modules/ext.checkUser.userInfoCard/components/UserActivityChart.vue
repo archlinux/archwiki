@@ -1,5 +1,7 @@
 <template>
-	<div class="ext-checkuser-userinfocard-activity-chart">
+	<div
+		v-if="totalLocalEdits < 1000"
+		class="ext-checkuser-userinfocard-activity-chart">
 		<c-sparkline
 			:id="componentId"
 			:title="activityChartLabel"
@@ -8,18 +10,16 @@
 			x-accessor="date"
 			y-accessor="count"
 		></c-sparkline>
-	</div>
-	<p>
 		<span
 			class="ext-checkuser-userinfocard-activity-chart-label">
 			{{ activityChartLabel }}
 		</span>
-		<span
-			v-if="latestEditMessage"
-			class="ext-checkuser-userinfocard-latest-edit-label">
-			{{ latestEditMessage }}
-		</span>
-	</p>
+	</div>
+	<span
+		v-if="latestEditMessage"
+		class="ext-checkuser-userinfocard-latest-edit-label">
+		{{ latestEditMessage }}
+	</span>
 </template>
 
 <script>
@@ -52,7 +52,7 @@ module.exports = exports = {
 	setup( props ) {
 		const componentId = `user-activity-${ hashUsername( props.username ) }`;
 		const activityChartLabel = mw.msg(
-			'checkuser-userinfocard-activity-chart-label', props.totalLocalEdits
+			'checkuser-userinfocard-activity-chart-label', mw.language.convertNumber( props.totalLocalEdits )
 		);
 		const latestEditMessage = props.lastEditTimestamp ?
 			mw.msg(

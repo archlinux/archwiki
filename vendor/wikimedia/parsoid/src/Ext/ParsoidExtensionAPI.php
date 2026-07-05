@@ -9,10 +9,11 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
-use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\Core\SourceString;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -25,9 +26,7 @@ use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\NodeData\DataMwError;
 use Wikimedia\Parsoid\Tokens\KV;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
@@ -124,7 +123,11 @@ class ParsoidExtensionAPI {
 	public function pushError( DataMwError|string $key, ...$params ): DocumentFragment {
 		$err = $key instanceof DataMwError ? $key : new DataMwError( $key, $params );
 		$this->errors[] = $err;
-		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $err->key, $params );
+		$domFragment = WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $err->key, $params );
+		$i18nFrag = $domFragment->firstChild;
+		'@phan-var Element $i18nFrag'; // @var Element $firstNode
+		$i18nFrag->setAttribute( 'class', 'error' );
+		return $domFragment;
 	}
 
 	/**
@@ -500,11 +503,6 @@ class ParsoidExtensionAPI {
 			// Sanitize args and set on the wrapper
 			Sanitizer::applySanitizedArgs( $this->env->getSiteConfig(), $wrapper, $extArgs );
 
-			// Mark empty content DOMs
-			if ( $wikitext === '' ) {
-				DOMDataUtils::getDataParsoid( $wrapper )->empty = true;
-			}
-
 			if ( $this->extTag->isSelfClosed() ) {
 				DOMDataUtils::getDataParsoid( $wrapper )->selfClose = true;
 			}
@@ -681,28 +679,6 @@ class ParsoidExtensionAPI {
 	 *
 	 * Ex: inline media captions that aren't rendered, language variant markup,
 	 *     attributes that are transcluded. More scenarios might be added later.
-	 * @deprecated since 0.21; use ::processAttributeEmbeddedDom().
-	 * This method may omit content which is embedded natively as
-	 * DocumentFragments instead of as HTML strings.
-	 *
-	 * @param Element $elt The node whose data attributes need to be examined
-	 * @param Closure $proc The processor that will process the embedded HTML
-	 *        Signature: (string) -> string
-	 *        This processor will be provided the HTML string as input
-	 *        and is expected to return a possibly modified string.
-	 */
-	public function processAttributeEmbeddedHTML( Element $elt, Closure $proc ): void {
-		$this->getSiteConfig()->deprecated( __METHOD__, "0.21" );
-		// @phan-suppress-next-line PhanDeprecatedFunction
-		ContentUtils::processAttributeEmbeddedHTML( $this, $elt, $proc );
-	}
-
-	/**
-	 * Extensions might be interested in examining (their) content embedded
-	 * in attributes that don't otherwise show up in the DOM.
-	 *
-	 * Ex: inline media captions that aren't rendered, language variant markup,
-	 *     attributes that are transcluded. More scenarios might be added later.
 	 *
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param callable(DocumentFragment):bool $proc
@@ -740,37 +716,6 @@ class ParsoidExtensionAPI {
 	 * This does not run any hooks however since that would be unexpected.
 	 * This also doesn't support replacing template args from a frame.
 	 *
-	 * @param string $wikitext
-	 * @return array{error:bool,src?:string,fragment?:PFragment}
-	 *  - 'error' did we hit resource limits?
-	 *  - 'src' expanded wikitext OR error message to print
-	 *     FIXME: Maybe error message should be localizable
-	 *  - 'fragment' Optional fragment (wikitext plus strip state)
-	 * @deprecated since 0.21; use ::preprocessFragment instead
-	 */
-	public function preprocessWikitext( string $wikitext ) {
-		$this->getSiteConfig()->deprecated( __METHOD__, "0.21" );
-		$error = false;
-		$result = $this->preprocessFragment(
-			WikitextPFragment::newFromWt( $wikitext, null ),
-			$error
-		);
-		if ( $error ) {
-			return [
-				'error' => true,
-				'src' => $result->killMarkers(),
-			];
-		}
-		return [ 'error' => false, 'fragment' => $result, ];
-	}
-
-	/**
-	 * Equivalent of 'preprocess' from Parser.php in core.
-	 * - expands templates
-	 * - replaces magic variables
-	 * This does not run any hooks however since that would be unexpected.
-	 * This also doesn't support replacing template args from a frame.
-	 *
 	 * This version takes fragments as input and output.
 	 *
 	 * @param PFragment $fragment The input fragment
@@ -794,10 +739,16 @@ class ParsoidExtensionAPI {
 	 * @return DocumentFragment
 	 */
 	public function htmlToDom(
-		string $html, ?Document $doc = null, ?array $options = []
+		string $html, ?Document $doc = null, ?array $options = null
 	): DocumentFragment {
+		if ( $doc !== null ) {
+			$this->env->getSiteConfig()->deprecated( __METHOD__ . ' with $doc', '0.23' );
+		}
+		if ( $options !== null ) {
+			$this->env->getSiteConfig()->deprecated( __METHOD__ . ' with $options', '0.23' );
+		}
 		return ContentUtils::createAndLoadDocumentFragment(
-			$doc ?? $this->getTopLevelDoc(), $html, $options
+			$doc ?? $this->getTopLevelDoc(), $html
 		);
 	}
 
@@ -864,17 +815,24 @@ class ParsoidExtensionAPI {
 	 * @param array $opts
 	 *  - extName: (string) Name of the extension whose body we are serializing
 	 *  - inPHPBlock: (bool) FIXME: This needs to be removed
-	 * @param Element $node DOM to serialize
+	 * @param DocumentFragment|Element $df DOM to serialize
 	 * @param bool $releaseDom If $releaseDom is set to true, the DOM will be left in
 	 *  non-canonical form and is not safe to use after this call. This is primarily a
 	 *  performance optimization.  This flag defaults to false.
 	 * @return mixed
+	 * @note Passing an Element as $df is deprecated as of Parsoid 0.23.
 	 */
-	public function domToWikitext( array $opts, Element $node, bool $releaseDom = false ) {
-		// FIXME: WTS expects the input DOM to be a <body> element!
-		// Till that is fixed, we have to go through this round-trip!
-		// TODO: Move $node children to a fragment and call `$serializer->domToWikitext`
-		return $this->htmlToWikitext( $opts, $this->domToHtml( $node, $releaseDom ) );
+	public function domToWikitext( array $opts, Element|DocumentFragment $df, bool $releaseDom = false ) {
+		if ( $df instanceof Element ) {
+			$node = $df;
+			// Passing an element is deprecated and will emit warnings in the future.
+			// FIXME: This call has been busted since a4385806 where we were mistakenly
+			// using $releaseDom as the second arg to actually request $node's innerHTML.
+			return $this->htmlToWikitext( $opts, $this->domToHtml( $node, $releaseDom, false ) );
+		}
+		$state = $this->serializerState;
+		$opts['env'] = $this->env;
+		return $state->serializer->domToWikitext( $opts, $df );
 	}
 
 	/**
@@ -1162,26 +1120,6 @@ class ParsoidExtensionAPI {
 			// Note that $ct could be an AutoURLLinkText, not just null
 			return [ '', '' ];
 		}
-	}
-
-	/**
-	 * @param array $modules
-	 *
-	 * @deprecated since 0.20; use ::getMetadata()->appendOutputStrings( MODULE, ...) instead.
-	 */
-	public function addModules( array $modules ): void {
-		$this->getSiteConfig()->deprecated( __METHOD__, "0.20" );
-		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE, $modules );
-	}
-
-	/**
-	 * @param array $modulestyles
-	 *
-	 * @deprecated since 0.20; use ::getMetadata()->appendOutputStrings(MODULE_STYLE, ...) instead.
-	 */
-	public function addModuleStyles( array $modulestyles ): void {
-		$this->getSiteConfig()->deprecated( __METHOD__, "0.20" );
-		$this->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, $modulestyles );
 	}
 
 	/**

@@ -1,30 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\Config;
-use MediaWiki\Hook\ChangesListInsertLogEntryHook;
-use MediaWiki\Hook\LogEventsListLineEndingHook;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Logging\Hook\LogEventsListLineEndingHook;
 use MediaWiki\Logging\LogEntry;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RecentChanges\Hook\ChangesListInsertLogEntryHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserNameUtils;
 
 class LogDisplayHandler implements LogEventsListLineEndingHook, ChangesListInsertLogEntryHook {
 
-	private UserNameUtils $userNameUtils;
-	private Config $config;
-	private CheckUserPermissionManager $checkUserPermissionManager;
-
 	public function __construct(
-		UserNameUtils $userNameUtils,
-		Config $config,
-		CheckUserPermissionManager $checkUserPermissionManager
+		private readonly UserNameUtils $userNameUtils,
+		private readonly Config $config,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
 	) {
-		$this->userNameUtils = $userNameUtils;
-		$this->config = $config;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/** @inheritDoc */

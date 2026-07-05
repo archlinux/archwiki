@@ -61,6 +61,7 @@ function performRevealRequestTest(
 		revIds,
 		logIds,
 		aflIds,
+		undefined,
 		false
 	);
 
@@ -207,4 +208,22 @@ QUnit.test( 'Test performFullRevealRequest on bad CSRF token for first attempt',
 	return rest.performFullRevealRequest( '~1' ).then( ( data ) => {
 		assert.deepEqual( data, { ips: [ '127.0.0.1', '1.2.3.4' ] }, 'Response data' );
 	} );
+} );
+
+QUnit.test( 'Test de-duplication with same request params on different wikis', ( assert ) => {
+	const target = '~1';
+	const request = {
+		[ target ]: {
+			revIds: {},
+			logIds: {},
+			lastUsedIp: true
+		}
+	};
+
+	const p1 = rest.performBatchRevealRequest( request, undefined, false );
+	const p2 = rest.performBatchRevealRequest( request, undefined, false );
+	const p3 = rest.performBatchRevealRequest( request, 'otherwiki', false );
+
+	assert.strictEqual( p1, p2, 'Both calls should return the same promise instance' );
+	assert.notStrictEqual( p1, p3, 'Call to other wiki should return a different promise' );
 } );

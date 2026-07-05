@@ -1,14 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserNameUtils;
+use Wikimedia\IPUtils;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -82,10 +83,10 @@ trait TemporaryAccountNameTrait {
 		foreach ( CheckUserQueryInterface::RESULT_TABLES as $table ) {
 			$prefix = CheckUserQueryInterface::RESULT_TABLE_TO_PREFIX[$table];
 			$queryBuilder = $dbr->newSelectQueryBuilder()
-				->select( [ 'ip' => "{$prefix}ip", 'timestamp' => 'MAX(' . $prefix . 'timestamp)' ] )
+				->select( [ 'ip_hex' => "{$prefix}ip_hex", 'timestamp' => 'MAX(' . $prefix . 'timestamp)' ] )
 				->from( $table )
-				->where( [ "{$prefix}actor" => $actorId ] )
-				->groupBy( "{$prefix}ip" )
+				->where( [ "{$prefix}actor" => $actorId, $dbr->expr( "{$prefix}ip_hex", '!=', null ) ] )
+				->groupBy( "{$prefix}ip_hex" )
 				->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
 				->limit( $limit )
 				->caller( __METHOD__ );
@@ -98,7 +99,9 @@ trait TemporaryAccountNameTrait {
 		} );
 
 		// Get the IP addresses from $resultRows in the order applied by usort.
-		$result = array_column( $resultRows, 'ip' );
+		$result = array_map( static function ( $ipHex ) {
+			return IPUtils::formatHex( $ipHex );
+		}, array_column( $resultRows, 'ip_hex' ) );
 
 		// Remove duplicated IPs (if any)
 		$result = array_unique( $result );

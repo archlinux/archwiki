@@ -10,9 +10,9 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
+use MediaWiki\Html\Html;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use MediaWiki\Widget\TitleInputWidget;
 use OOUI\ActionFieldLayout;
 use OOUI\ButtonWidget;
@@ -37,14 +37,6 @@ class SpecialCollabPad extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	public function userCanExecute( User $user ) {
-		return $this->getConfig()->get( 'VisualEditorRebaserURL' ) &&
-			parent::userCanExecute( $user );
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function isListed() {
 		return (bool)$this->getConfig()->get( 'VisualEditorRebaserURL' );
 	}
@@ -52,11 +44,40 @@ class SpecialCollabPad extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
+	public function getShortDescription( string $path = '' ): string {
+		switch ( $path ) {
+			case 'CollabPad':
+				return $this->msg( 'collabpad' )->text();
+			default:
+				return implode( '/', array_slice( explode( '/', $path ), 1 ) );
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getAssociatedNavigationLinks() {
+		$thisTitle = $this->getSkin()->getTitle()->getFullText();
+		$title = SpecialPage::getTitleFor( 'CollabPad' )->getFullText();
+		$links = [ $title ];
+		if ( $title !== $thisTitle ) {
+			$links[] = $thisTitle;
+		}
+		return $links;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function execute( $subPage ) {
 		$this->setHeaders();
-		$this->checkPermissions();
 
 		$output = $this->getOutput();
+
+		if ( !$this->getConfig()->get( 'VisualEditorRebaserURL' ) ) {
+			$output->addHTML( Html::element( 'p', [], $this->msg( 'collabpad-disabled' )->text() ) );
+			return;
+		}
 
 		$output->addJsConfigVars( 'collabPadPageName', $subPage );
 		$output->addModuleStyles( 'ext.visualEditor.collabTarget.init.styles' );

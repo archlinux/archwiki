@@ -4,11 +4,21 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config;
 
 use InvalidArgumentException;
+use Wikimedia\Parsoid\Core\LinkTarget;
 
 /**
  * Page content data object
  */
 abstract class PageContent {
+	/**
+	 * Return the title of this page.
+	 */
+	abstract public function getLinkTarget(): LinkTarget;
+
+	/**
+	 * Return the revision ID of this page, or null if it is unknown.
+	 */
+	abstract public function getRevisionId(): ?int;
 
 	/**
 	 * Return the roles available in this page

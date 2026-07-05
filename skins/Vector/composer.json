@@ -33,9 +33,9 @@
 		"installer-name": "Vector"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "48.0.0",
-		"mediawiki/mediawiki-phan-config": "0.17.0",
-		"mediawiki/minus-x": "1.1.3",
+		"mediawiki/mediawiki-codesniffer": "50.0.0",
+		"mediawiki/mediawiki-phan-config": "0.20.0",
+		"mediawiki/minus-x": "2.0.1",
 		"php-parallel-lint/php-console-highlighter": "1.0.0",
 		"php-parallel-lint/php-parallel-lint": "1.4.0"
 	},
@@ -49,7 +49,7 @@
 			"@phpcs",
 			"minus-x check ."
 		],
-		"test:size": "php ../../vendor/phpunit/phpunit/phpunit -c ../../phpunit.xml.dist tests/phpunit/structure/BundleSizeTest.php",
+		"test:size": "@composer -d ../../ phpunit skins/Vector/tests/phpunit/structure/BundleSizeTest.php",
 		"phan": "phan -d . --long-progress-bar",
 		"phpcs": "phpcs -sp --cache"
 	},

@@ -7,16 +7,24 @@
 
 // Temporarily disable TOC in edit mode until TOC
 // works with both visual and source editors (T294950)
-.ve-activated .vector-toc {
-	display: none;
+.ve-activated {
+	.vector-toc,
+	.vector-page-titlebar-toc {
+		display: none;
+	}
 }
 
 .ve-init-mw-desktopArticleTarget-toolbar,
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder,
 .ve-ui-overlay-local,
 .ve-ui-overlay-global,
-.ve-ui-sidebarDialogWindowManager {
+.ve-ui-sidebarDialogWindowManager,
+.ve-ce-surface-interface {
 	font-size: 0.875rem;
+}
+
+.ve-ce-surface-interface {
+	font-family: sans-serif;
 }
 
 // Change the default shadow to not leak out from the sides

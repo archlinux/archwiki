@@ -8,13 +8,10 @@ use MediaWiki\Title\Title;
 
 class SpecialGoToComment extends RedirectSpecialPage {
 
-	private ThreadItemStore $threadItemStore;
-
 	public function __construct(
-		ThreadItemStore $threadItemStore
+		private readonly ThreadItemStore $threadItemStore,
 	) {
 		parent::__construct( 'GoToComment' );
-		$this->threadItemStore = $threadItemStore;
 	}
 
 	/**

@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\Extension\OATHAuth\Tests\Integration;
+namespace MediaWiki\Extension\OATHAuth\Tests\Integration\HTMLForm;
 
 use MediaWiki\Extension\OATHAuth\HTMLForm\KeySessionStorageTrait;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Request\WebRequest;
@@ -22,12 +22,11 @@ class KeySessionStorageTraitTest extends MediaWikiIntegrationTestCase {
 	public function setUp(): void {
 		// do not test with encryption
 		$this->setMwGlobals( 'wgOATHSecretKey', false );
-		$this->session = $this->createMock( Session::class, [ 'set' ] );
-		$this->request = $this->createMock( WebRequest::class, [ 'getSession' ] );
+		$this->session = $this->createMock( Session::class );
+		$this->request = $this->createMock( WebRequest::class );
 		$this->request->method( 'getSession' )->willReturn( $this->session );
 	}
 
-	// mock function for trait
 	public function getRequest(): WebRequest {
 		return $this->request;
 	}
@@ -36,23 +35,39 @@ class KeySessionStorageTraitTest extends MediaWikiIntegrationTestCase {
 		return $this->session;
 	}
 
-	public function provideSessionKeyNameAndDataData(): array {
+	public static function provideSessionKeyNameAndData(): array {
+		$emptyVal = [ '' ];
+		$filledVal = [ 'secret' => 'ABCDEFGH==' ];
 		return [
-			[ 'TOTPKey', [ '' ], false, IAuthKey::class ],
-			[ 'RecoveryCodeKeys', [ '' ], true, null ],
-			[ 'TOTPKey', [ 'secret' => 'ABCDEFGH==' ], true, IAuthKey::class ],
+			[
+				'TOTPKey',
+				TOTPKey::newFromArray( $emptyVal ),
+				$emptyVal,
+				false,
+				AuthKey::class,
+			],
+			[
+				'RecoveryCodeKeys',
+				RecoveryCodeKeys::newFromArray( $emptyVal ),
+				$emptyVal,
+				true,
+				null,
+			],
+			[
+				'TOTPKey',
+				TOTPKey::newFromArray( $filledVal ),
+				$filledVal,
+				true,
+				AuthKey::class,
+			],
 		];
 	}
 
 	/**
-	 * @dataProvider provideSessionKeyNameAndDataData
+	 * @dataProvider provideSessionKeyNameAndData
 	 */
-	public function testSetGetKeyDataInSession( $keyType, $keyData, $assertEquals, $interfaceType ): void {
-		// test creation and setting of new IAuthKeys in session
-		// TODO: $authKey1 assignment should be done dynamically, if PHP will allow...
-		$authKey1 = ( $keyType === 'TOTPKey' ) ?
-			TOTPKey::newFromArray( $keyData )
-			: RecoveryCodeKeys::newFromArray( $keyData );
+	public function testSetGetKeyDataInSession( $keyType, $authKey1, $keyData, $assertEquals, $interfaceType ): void {
+		// test creation and setting of new AuthKeys in session
 		$authKey2 = $this->setKeyDataInSession( $keyType, $keyData );
 		if ( count( $keyData ) > 0 && $interfaceType ) {
 			$this->assertInstanceOf( $interfaceType, $authKey2 );
@@ -75,7 +90,7 @@ class KeySessionStorageTraitTest extends MediaWikiIntegrationTestCase {
 		$this->setKeyDataInSessionToNull( $keyType );
 	}
 
-	public function provideSessionKeyNameData(): array {
+	public static function provideSessionKeyNameData(): array {
 		return [
 			[ 'TOTPKey_oathauth_key', 'TOTPKey' ],
 			[ 'RecoveryCodeKeys_oathauth_key', 'RecoveryCodeKeys' ]

@@ -59,6 +59,22 @@ QUnit.test( 'init', ( assert ) => {
 						'label-id': 'mw-editpage-watch',
 						'legacy-name': 'watch',
 						default: true
+					},
+					wpWatchlistLabels: {
+						id: 'wpWatchlistLabelsWidget',
+						'label-message': 'watchlistlabels-editpage-label',
+						'help-message': 'watchlistlabels-editpage-help',
+						'placeholder-message': 'watchlistlabels-editpage-placeholder',
+						class: 'MediaWiki\\Widget\\MenuTagMultiselectWidget',
+						options: {
+							'': [
+								{ data: '1', label: 'Test label 1' },
+								{ data: '2', label: 'Test label 2' }
+							]
+						},
+						default: [ '1' ],
+						allowReordering: false,
+						align: 'top'
 					}
 				},
 				checkboxesMessages: {
@@ -67,7 +83,10 @@ QUnit.test( 'init', ( assert ) => {
 					minoredit: 'This is a minor edit',
 					'accesskey-watch': 'w',
 					'tooltip-watch': 'Add this page to your watchlist',
-					watchthis: 'Watch this page'
+					watchthis: 'Watch this page',
+					'watchlistlabels-editpage-label': 'Watchlist labels',
+					'watchlistlabels-editpage-help': 'Help text',
+					'watchlistlabels-editpage-placeholder': 'Search labels'
 				},
 				protectedClasses: '',
 				basetimestamp: '20161119005107',
@@ -126,10 +145,17 @@ QUnit.test( 'init', ( assert ) => {
 
 			// Open the save dialog and examine it (this bypasses a bunch of stuff, and may fail in funny
 			// ways, but #showSaveDialog has many dependencies that I don't want to simulate here).
+			await target.loadDeferredCheckboxes();
 			const dialogs = target.getSurface().getDialogs();
 			const instance = dialogs.openWindow( 'mwSave', target.getSaveDialogOpeningData() );
 			await instance.opened;
 			const dialog = dialogs.getCurrentWindow();
+			assert.true( !!dialog.checkboxesByName.wpWatchlistLabels, 'Watchlist labels widget is created in save dialog' );
+			assert.false( dialog.checkboxesByName.wpWatchlistLabels.isDisabled(), 'Watchlist labels is enabled when watch checkbox is selected' );
+			dialog.checkboxesByName.wpWatchlistLabels.setValue( [ '1', '2' ] );
+			assert.strictEqual( target.getSaveFields().wpWatchlistLabels, '1|2', 'Save fields serialize all selected watchlist label IDs' );
+			dialog.checkboxesByName.wpWatchthis.setSelected( false );
+			assert.true( dialog.checkboxesByName.wpWatchlistLabels.isDisabled(), 'Watchlist labels is disabled when watch checkbox is unselected' );
 			assert.equalDomElement(
 				dialog.$element.find( '#editpage-copywarn' )[ 0 ],
 				$( '<div id="editpage-copywarn">Blah blah</div>' )[ 0 ],
@@ -140,6 +166,7 @@ QUnit.test( 'init', ( assert ) => {
 
 			// Store doc state and examine it
 			target.storeDocState();
+			// eslint-disable-next-line mediawiki/no-storage
 			const storedData = JSON.parse( sessionStorage.getItem( 've-docstate' ) );
 			const ignoredKeys = {
 				// Not stored because it's always 'success'

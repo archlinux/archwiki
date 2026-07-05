@@ -31,7 +31,9 @@ ve.ui.MWCategoryPopupWidget = function VeUiMWCategoryPopupWidget( config ) {
 	this.removeButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'trash',
-		title: ve.msg( 'visualeditor-inspector-remove-tooltip' )
+		title: ve.msg( 'visualeditor-inspector-remove-tooltip' ),
+		label: ve.msg( 'visualeditor-inspector-remove-tooltip' ),
+		invisibleLabel: true
 	} );
 	this.sortKeyInput = new OO.ui.TextInputWidget();
 	this.sortKeyField = new OO.ui.FieldLayout( this.sortKeyInput, {

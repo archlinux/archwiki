@@ -225,7 +225,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "دییشنی نیزاملا (set_var)",
 	"abusefilter-edit-builder-group-vars": "دییشن‌لر",
 	"abusefilter-edit-builder-vars-timestamp": "دییشیکلیگین اونیخ زامان دامغاسی",
-	"abusefilter-edit-builder-vars-accountname": "حساب آدی (حساب یارادیلدیغیندا)",
+	"abusefilter-edit-builder-vars-account-name": "حساب آدی (حساب یارادیلدیغیندا)",
 	"abusefilter-edit-builder-vars-action": "فعالیت",
 	"abusefilter-edit-builder-vars-addedlines": "رئداکته زامانی علاوه اولونان خت‌لر",
 	"abusefilter-edit-builder-vars-delta": "رئداکته زامانی اؤلچونون دییشمه‌سی",

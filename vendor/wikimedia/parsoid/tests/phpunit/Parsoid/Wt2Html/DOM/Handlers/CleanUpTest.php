@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Test\Parsoid\Wt2Html\DOM\Handlers;
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
@@ -13,9 +14,9 @@ use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMTraverser;
+use Wikimedia\Parsoid\Utils\Title;
 
 /**
  * Test CleanUp, the tests used for validating CleanUp class port from JS to PHP
@@ -32,7 +33,8 @@ class CleanUpTest extends TestCase {
 		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$content = new MockPageContent( [ 'main' => $wt ] );
+		$title = Title::newFromText( 'TestPage', $siteConfig );
+		$content = new MockPageContent( [ 'main' => $wt ], $title );
 		$pageConfig = new MockPageConfig( $siteConfig, [], $content );
 		$html = $parsoid->wikitext2html( $pageConfig, [ "wrapSections" => false ] );
 

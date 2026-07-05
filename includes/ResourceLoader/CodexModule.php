@@ -244,7 +244,6 @@ class CodexModule extends FileModule {
 			$skinCodexThemes = ExtensionRegistry::getInstance()->getAttribute( 'SkinCodexThemes' );
 			self::$themeMap = [ 'default' => 'wikimedia-ui' ] + $skinCodexThemes;
 		}
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		return self::$themeMap[ $context->getSkin() ] ?? self::$themeMap[ 'default' ];
 	}
 

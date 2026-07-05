@@ -49,7 +49,7 @@ interface MetricInterface {
 	 * Sets sample rate on a new metric instance.
 	 *
 	 * @param float $sampleRate
-	 * @return self|NullMetric
+	 * @return $this|NullMetric
 	 */
 	public function setSampleRate( float $sampleRate );
 
@@ -76,7 +76,7 @@ interface MetricInterface {
 	 *
 	 * @param string $key
 	 * @param string $value
-	 * @return self|NullMetric
+	 * @return $this|NullMetric
 	 */
 	public function setLabel( string $key, string $value );
 
@@ -84,7 +84,7 @@ interface MetricInterface {
 	 * Convenience function to set a number of labels at once.
 	 * @see ::setLabel
 	 * @param array<string,string> $labels
-	 * @return self|NullMetric
+	 * @return $this|NullMetric
 	 */
 	public function setLabels( array $labels );
 
@@ -97,14 +97,14 @@ interface MetricInterface {
 	 *
 	 * @deprecated since 1.45, see: https://www.mediawiki.org/wiki/Manual:Stats.
 	 * @param string|string[] $statsdNamespaces
-	 * @return self|NullMetric
+	 * @return $this|NullMetric
 	 */
 	public function copyToStatsdAt( $statsdNamespaces );
 
 	/**
 	 * Returns metric with cleared labels.
 	 *
-	 * @return self|NullMetric
+	 * @return $this|NullMetric
 	 */
 	public function fresh();
 

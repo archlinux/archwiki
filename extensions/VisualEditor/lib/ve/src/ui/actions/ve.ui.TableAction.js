@@ -49,7 +49,7 @@ ve.ui.TableAction.static.methods = [
  */
 ve.ui.TableAction.prototype.create = function ( options = {} ) {
 	const type = options.type || 'table';
-	const tableElement = { type: type };
+	const tableElement = { type };
 	const surfaceModel = this.surface.getModel();
 	const fragment = surfaceModel.getFragment();
 	const numberOfCols = options.cols || 4;
@@ -408,7 +408,7 @@ ve.ui.TableAction.prototype.changeCellStyle = function ( style ) {
 	for ( let i = ranges.length - 1; i >= 0; i-- ) {
 		txBuilders.push(
 			ve.dm.TransactionBuilder.static.newFromAttributeChanges.bind( null,
-				documentModel, ranges[ i ].start, { style: style }
+				documentModel, ranges[ i ].start, { style }
 			)
 		);
 	}
@@ -774,7 +774,7 @@ ve.ui.TableAction.prototype.insertRowOrCol = function ( tableNode, mode, index, 
 			}
 			let cellData;
 			if ( !dataMatrixLine ) {
-				cellData = ve.dm.TableCellNode.static.createData( { style: style } );
+				cellData = ve.dm.TableCellNode.static.createData( { style } );
 			} else {
 				cell = dataMatrixLine.cells[ cell.row ];
 				cellData = [];
@@ -880,7 +880,7 @@ ve.ui.TableAction.prototype.deleteRowsOrColumns = function ( matrix, mode, minIn
 		}
 	}
 
-	for ( let i = 0, l = cells.length; i < l; i++ ) {
+	for ( let i = 0; i < cells.length; i++ ) {
 		const cell = cells[ i ];
 		if ( !cell ) {
 			continue;
@@ -925,7 +925,7 @@ ve.ui.TableAction.prototype.deleteRowsOrColumns = function ( matrix, mode, minIn
 
 		// Cell nodes only get deleted when deleting columns (otherwise row nodes)
 		if ( mode === 'col' ) {
-			actions.push( { action: 'delete', cell: cell } );
+			actions.push( { action: 'delete', cell } );
 		}
 	}
 
@@ -1007,7 +1007,7 @@ ve.ui.TableAction.prototype.deleteRowsOrColumns = function ( matrix, mode, minIn
  * @param {ve.dm.TableMatrix} matrix Table matrix
  * @param {ve.dm.TableMatrixCell} placeholder Placeholder cell to replace
  * @param {Object} [options] Options to pass to ve.dm.TableCellNode.static.createData
- * @return {Function} Zero-argument function returning a ve.dm.Transaction
+ * @return {Function} Zero-argument function returning a ve.dm.Transaction or null
  */
 ve.ui.TableAction.prototype.replacePlaceholder = function ( matrix, placeholder, options ) {
 	// For inserting the new cell a reference cell node
@@ -1021,9 +1021,7 @@ ve.ui.TableAction.prototype.replacePlaceholder = function ( matrix, placeholder,
 	} else {
 		const rowNode = matrix.getRowNode( placeholder.row );
 		if ( !rowNode ) {
-			return function () {
-				return null;
-			};
+			return () => null;
 		}
 		// if there are only placeholders in the row, the row node's inner range is used
 		range = rowNode.getRange();

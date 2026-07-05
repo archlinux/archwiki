@@ -15,22 +15,16 @@ class BlockedDomainConfigProvider extends AbstractProvider implements IBlockedDo
 
 	public const PROVIDER_ID = 'BlockedDomain';
 
-	private BagOStuff $cache;
-	private BlockedDomainValidator $domainValidator;
-
 	public function __construct(
 		ProviderServicesContainer $providerServicesContainer,
 		string $providerId,
 		array $options,
 		IConfigurationStore $store,
 		IValidator $validator,
-		BagOStuff $cache,
-		BlockedDomainValidator $domainValidator
+		private readonly BagOStuff $cache,
+		private readonly BlockedDomainValidator $domainValidator
 	) {
 		parent::__construct( $providerServicesContainer, $providerId, $options, $store, $validator );
-
-		$this->cache = $cache;
-		$this->domainValidator = $domainValidator;
 	}
 
 	/** @inheritDoc */

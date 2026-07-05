@@ -1,0 +1,868 @@
+<?php
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+namespace MediaWiki\SpecialPage;
+
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\LogEventsList;
+use MediaWiki\Logging\LogPage;
+use MediaWiki\Message\Message;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserGroupAssignmentService;
+use MediaWiki\User\UserGroupMembership;
+use MediaWiki\Xml\XmlSelect;
+use OOUI\FieldLayout;
+use OOUI\FieldsetLayout;
+use OOUI\HtmlSnippet;
+use OOUI\LabelWidget;
+use OOUI\PanelLayout;
+
+/**
+ * A base class for special pages that allow to view and edit user groups.
+ *
+ * @stable to extend
+ * @ingroup SpecialPage
+ */
+abstract class UserGroupsSpecialPage extends SpecialPage {
+
+	/** @var string The bare name of the target user, e.g. "Foo" in a form suitable for {{GENDER:}} */
+	protected string $targetBareName = '';
+
+	/**
+	 * @var string The display name of the target user, e.g. "Foo", "Foo@wiki". It will also be used as a value
+	 *   for the hidden target field in the edit groups form.
+	 */
+	protected string $targetDisplayName = '';
+
+	/** @var list<string> An array of all explicit groups in the system */
+	protected array $explicitGroups = [];
+
+	/**
+	 * @var array<string,UserGroupMembership> An array of group name => UserGroupMembership objects that the target
+	 *   user belongs to
+	 */
+	protected array $groupMemberships = [];
+
+	/** @var array<string> An array of group names that can be added by the current user to the current target */
+	protected array $addableGroups = [];
+
+	/** @var array<string> An array of group names that can be removed by the current user to the current target */
+	protected array $removableGroups = [];
+
+	/** @var array<string,list<Message|string>> An array of group name => list of annotations to show below the group */
+	protected array $groupAnnotations = [];
+
+	/** @var bool Whether the "Watch the user page" checkbox should be available on the page */
+	protected bool $enableWatchUser = true;
+
+	/** @var string Name of session flag that's saved when the user groups are successfully saved */
+	private const SAVE_SUCCESS_FLAG = 'specialUserrightsSaveSuccess';
+
+	/** @var string Name of the form field, which stores the conflict check key */
+	private const CONFLICT_CHECK_FIELD = 'conflictcheck-originalgroups';
+
+	/**
+	 * Sets the name of the target user. If this page uses a special notation for the username (e.g. "Foo@wiki"),
+	 * which is different from actual bare username, this additional form should be passed as the second parameter.
+	 * The second form will be used in the interface messages and in the hidden target field in the groups form.
+	 * @param string $bareName A form of the name that can be used with {{GENDER:}}
+	 * @param string|null $displayName A form of the name that will be used as a value of the target field
+	 *   in the edit groups form. If null, $targetName is used.
+	 */
+	protected function setTargetName( string $bareName, ?string $displayName = null ): void {
+		$this->targetBareName = $bareName;
+		$this->targetDisplayName = $displayName ?? $bareName;
+	}
+
+	/**
+	 * Sets the groups that can be added and removed by the current user to/from the target user.
+	 * If there are any restricted groups, adds appropriate annotations for them. This method accepts
+	 * the same input structure as returned by {@see UserGroupAssignmentService::getChangeableGroups()}.
+	 * @param array{add:list<string>,remove:list<string>,restricted:array<string,array>} $changeableGroups
+	 */
+	protected function setChangeableGroups( array $changeableGroups ): void {
+		$this->addableGroups = $changeableGroups['add'];
+		$this->removableGroups = $changeableGroups['remove'];
+		foreach ( $changeableGroups['restricted'] as $group => $details ) {
+			$isConditionMet = $details['condition-met'];
+			if ( $isConditionMet === false ) {
+				if ( isset( $details['message'] ) ) {
+					$messageKey = $details['message'];
+				} else {
+					$customMessageKey = 'userrights-restricted-group-' . $group;
+					$messageKey = $this->msg( $customMessageKey )->exists() ?
+						$customMessageKey :
+						'userrights-restricted-group-warning';
+				}
+				$this->addGroupAnnotation( $group, $messageKey );
+			} elseif ( $isConditionMet === null ) {
+				$customMessageKey = 'userrights-restricted-group-' . $group . '-private-conditions';
+				$messageKey = $this->msg( $customMessageKey )->exists() ?
+					$customMessageKey :
+					'userrights-restricted-group-warning-private-conditions';
+				$this->addGroupAnnotation( $group, $messageKey );
+			}
+		}
+	}
+
+	/**
+	 * Adds ResourceLoader modules that are used by this page.
+	 */
+	protected function addModules(): void {
+		$out = $this->getOutput();
+		$out->addModules( [ 'mediawiki.special.userrights' ] );
+		$out->addModuleStyles( [ 'mediawiki.special', 'mediawiki.codex.messagebox.styles' ] );
+	}
+
+	/**
+	 * If the session contains a flag that the user rights were successfully saved,
+	 * shows a success message and removes the flag from the session.
+	 */
+	protected function showMessageOnSuccess(): void {
+		$session = $this->getRequest()->getSession();
+		if ( $session->get( self::SAVE_SUCCESS_FLAG ) ) {
+			// Remove session data for the success message
+			$session->remove( self::SAVE_SUCCESS_FLAG );
+
+			$out = $this->getOutput();
+			$out->addModuleStyles( 'mediawiki.notification.convertmessagebox.styles' );
+			$out->addHTML(
+				Html::successBox(
+					Html::element(
+						'p',
+						[],
+						$this->msg( 'savedrights', $this->targetDisplayName )->text()
+					),
+					'mw-notify-success'
+				)
+			);
+		}
+	}
+
+	/**
+	 * Sets a flag in the session that the user rights were successfully saved.
+	 * Next requests can call {@see showMessageOnSuccess()} to show a success message.
+	 */
+	protected function setSuccessFlag(): void {
+		$session = $this->getRequest()->getSession();
+		$session->set( self::SAVE_SUCCESS_FLAG, 1 );
+	}
+
+	/**
+	 * Builds the user groups form, either in view or edit mode.
+	 * @return string The HTML of the form
+	 */
+	protected function buildGroupsForm(): string {
+		$this->getOutput()->addBodyClasses( 'mw-special-UserGroupsSpecialPage' );
+
+		$groups = $this->prepareAvailableGroups();
+
+		$canChangeAny = array_any(
+			$groups,
+			static fn ( $group ) => $group['canAdd'] || $group['canRemove']
+		);
+
+		$panel = $canChangeAny ?
+			$this->buildEditGroupsFormContent( $groups ) :
+			$this->buildViewGroupsFormContent();
+		return $panel->toString();
+	}
+
+	private function buildFormHeader( string $messageKey ): string {
+		return $this->msg( $messageKey, $this->targetBareName )->text();
+	}
+
+	private function buildFormDescription( string $messageKey ): string {
+		return $this->msg( $messageKey )
+			->params( wfEscapeWikiText( $this->targetDisplayName ) )
+			->rawParams( $this->getTargetUserToolLinks() )->parse();
+	}
+
+	private function buildFormGroupsLists(): array {
+		return array_map( static function ( $field ) {
+			return $field['label'] . ' ' . $field['list'];
+		}, $this->getCurrentUserGroupsFields() );
+	}
+
+	/**
+	 * Allow subclasses to add extra information. This is displayed on the edit and
+	 * view panels, after the lists of the target user's groups.
+	 *
+	 * @return ?string Parsed HTML
+	 */
+	protected function buildFormExtraInfo(): ?string {
+		return null;
+	}
+
+	/**
+	 * Builds the user groups form in view-only mode.
+	 */
+	private function buildViewGroupsFormContent(): PanelLayout {
+		$panelLabel = $this->buildFormHeader( 'userrights-viewusergroup' );
+
+		$panelItems = array_filter( [
+			$this->buildFormDescription( 'viewinguserrights' ),
+			...$this->buildFormGroupsLists(),
+			$this->buildFormExtraInfo(),
+		] );
+		$panelItems = array_map( static function ( $label ) {
+			return new FieldLayout(
+				new LabelWidget( [
+					'label' => new HtmlSnippet( $label )
+				] )
+			);
+		}, $panelItems );
+
+		return new PanelLayout( [
+			'expanded' => false,
+			'padded' => true,
+			'framed' => true,
+			'content' => new FieldsetLayout( [
+				'label' => $panelLabel,
+				'items' => $panelItems,
+			] )
+		] );
+	}
+
+	/**
+	 * Builds the user groups form in edit mode.
+	 * @param array $groups Prepared list of groups to show, {@see prepareAvailableGroups()}
+	 */
+	private function buildEditGroupsFormContent( array $groups ): PanelLayout {
+		$panelLabel = $this->buildFormHeader( 'userrights-editusergroup' );
+
+		$panelItems = array_filter( [
+			$this->buildFormDescription( 'editinguser' ),
+			$this->msg( 'userrights-groups-help', $this->targetBareName )->parse(),
+			...$this->buildFormGroupsLists(),
+			$this->buildFormExtraInfo(),
+		] );
+		$panelItems = array_map( static function ( $label ) {
+			return new FieldLayout(
+				new LabelWidget( [
+					'label' => new HtmlSnippet( $label )
+				] )
+			);
+		}, $panelItems );
+
+		$formDescriptor = [
+			'user' => [
+				'type' => 'hidden',
+				'name' => 'user',
+				'default' => $this->targetDisplayName,
+			],
+			'EditToken' => [
+				'type' => 'hidden',
+				'default' => $this->getUser()->getEditToken( $this->targetDisplayName ),
+			],
+			self::CONFLICT_CHECK_FIELD => [
+				'type' => 'hidden',
+				'name' => self::CONFLICT_CHECK_FIELD,
+				'default' => $this->makeConflictCheckKey(),
+			],
+		];
+
+		$memberships = $this->groupMemberships;
+		$unchangeableGroupFields = [];
+		$changeableGroupFields = [];
+		foreach ( $groups as $group => $groupData ) {
+			$isMember = array_key_exists( $group, $memberships );
+			$expiry = null;
+			if ( $isMember ) {
+				$expiry = $memberships[$group]->getExpiry();
+			}
+
+			[ $groupFields, $isChangeable ] = $this->makeGroupFields(
+				$groupData,
+				$isMember,
+				$expiry,
+				$this->targetBareName
+			);
+
+			if ( $isChangeable ) {
+				$changeableGroupFields += $groupFields;
+			} else {
+				$unchangeableGroupFields += $groupFields;
+			}
+		}
+
+		// Ensure that the unchangeable fields section is before the changeable fields section,
+		// so that it displays on the correct side, if present.
+		$formDescriptor += $unchangeableGroupFields;
+		$formDescriptor += $changeableGroupFields;
+
+		$formDescriptor['user-reason'] = [
+			'type' => 'text',
+			'name' => 'user-reason',
+			'id' => 'wpReason',
+			'label' => $this->msg( 'userrights-reason' )->text(),
+			// HTML maxlength uses "UTF-16 code units", which means that characters outside BMP
+			// (e.g. emojis) count for two each. This limit is overridden in JS to instead count
+			// Unicode codepoints.
+			'maxlength' => CommentStore::COMMENT_CHARACTER_LIMIT,
+			'maxlength-unit' => 'codepoints',
+			'size' => 60,
+			'default' => $this->getRequest()->getVal( 'user-reason' ) ?? false,
+		];
+
+		if ( $this->enableWatchUser ) {
+			$formDescriptor['Watch'] = [
+				'type' => 'check',
+				'default' => false,
+				'id' => 'wpWatch',
+				'label' => $this->msg( 'userrights-watchuser' )->text(),
+			];
+		}
+
+		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext(), 'userrights' );
+		$htmlForm
+			->setMethod( 'POST' )
+			->setName( 'editGroup' )
+			->setTitle( $this->getPageTitle() )
+			->setId( 'mw-userrights-form2' )
+			->setSubmitTextMsg( $this->msg( 'saveusergroups', $this->targetBareName ) )
+			->setSubmitName( 'saveusergroups' )
+			->prepareForm();
+		$form = $htmlForm->getHtml( true );
+
+		return new PanelLayout( [
+			'expanded' => false,
+			'padded' => true,
+			'framed' => true,
+			'content' => [
+				new FieldsetLayout( [
+					'label' => $panelLabel,
+					'items' => $panelItems,
+				] ),
+				new PanelLayout( [
+					'expanded' => false,
+					'content' => new HtmlSnippet( $form ),
+				] )
+			],
+		] );
+	}
+
+	/**
+	 * Returns an array of all user groups that should be presented in the form, along with
+	 * information whether the current user can add/remove them and any annotations.
+	 * @return array<string,array{group:string,canAdd:bool,canRemove:bool,annotations:list<Message|string>}>
+	 */
+	private function prepareAvailableGroups(): array {
+		$allGroups = $this->explicitGroups;
+
+		// We store user groups with information whether the current user can add/remove them
+		// and possibly other data that will be then used for rendering the form
+		$result = [];
+
+		foreach ( $allGroups as $group ) {
+			$result[$group] = [
+				'group' => $group,
+				'canAdd' => $this->canAdd( $group ),
+				'canRemove' => $this->canRemove( $group ),
+				'annotations' => $this->getGroupAnnotations( $group ),
+			];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Creates an HTML code for a single item in the user groups form: a checkbox along with the expiry field
+	 * (if applicable) and any annotations.
+	 * @param array $groupData The group data as returned by {@see prepareAvailableGroups()}
+	 * @param bool $isMember Whether the target user is currently a member of this group
+	 * @param string|null $expiry The expiry time of this group for the target user, or null if it has no expiry.
+	 *   Ignored if the user is not a member of this group.
+	 * @param string $userName The username of the target user, used for {{GENDER:}}
+	 * @return array{0:array<string, array<string, mixed>>, 1:bool} Array of form fields, and whether any are
+	 *   changeable (i.e. any of the checkbox or expiry field are not disabled)
+	 */
+	private function makeGroupFields( array $groupData, bool $isMember, ?string $expiry, string $userName ): array {
+		$group = $groupData['group'];
+		$uiLanguage = $this->getLanguage();
+		$member = $uiLanguage->getGroupMemberName( $group, $userName );
+
+		// Users who can add the group, but not remove it, can only lengthen
+		// expiries, not shorten them. So they should only see the expiry
+		// dropdown if the group currently has a finite expiry
+		$canOnlyLengthenExpiry = (
+			$isMember && $expiry &&
+			$groupData['canAdd'] && !$groupData['canRemove']
+		);
+
+		// Should the checkbox be disabled?
+		$disabledCheckbox = !(
+			( $isMember && $groupData['canRemove'] ) ||
+			( !$isMember && $groupData['canAdd'] )
+		);
+
+		// Should the expiry elements be disabled?
+		$disabledExpiry = $disabledCheckbox && !$canOnlyLengthenExpiry;
+
+		// Do we need to point out that this action is irreversible?
+		$irreversible = !$disabledCheckbox && (
+			( $isMember && !$groupData['canAdd'] ) ||
+			( !$isMember && !$groupData['canRemove'] )
+		);
+
+		if ( $irreversible ) {
+			$text = $this->msg( 'userrights-irreversible-marker', $member )->text();
+		} elseif ( $disabledCheckbox && !$disabledExpiry ) {
+			$text = $this->msg( 'userrights-no-shorten-expiry-marker', $member )->text();
+		} else {
+			$text = $member;
+		}
+
+		$checkboxField = [
+			'type' => 'check',
+			'name' => "wpGroup-$group",
+			'id' => "wpGroup-$group",
+			'default' => $isMember,
+			'cssclass' => 'mw-userrights-groupcheckbox',
+			'disabled' => $disabledCheckbox,
+			'label' => $text,
+			'help-messages' => [],
+		];
+
+		foreach ( $groupData['annotations'] as $annotation ) {
+			if ( !$annotation instanceof Message ) {
+				$message = $this->msg( $annotation );
+			} else {
+				$message = $annotation;
+			}
+
+			$checkboxField['help-messages'][] = $message;
+			$checkboxField['help-messages'][] = $this->msg( 'userrights-checkbox-help-message-separator' );
+		}
+
+		$uiUser = $this->getUser();
+
+		// If the user can't modify the expiry, print the current expiry below
+		// it in plain text. Otherwise, provide UI to set/change the expiry
+		if ( $isMember && ( $irreversible || $disabledExpiry ) ) {
+			if ( $expiry ) {
+				$checkboxField['help-messages'][] = $this->msg( 'userrights-expiry-current' )->params(
+					$uiLanguage->userTimeAndDate( $expiry, $uiUser ),
+					$uiLanguage->userDate( $expiry, $uiUser ),
+					$uiLanguage->userTime( $expiry, $uiUser )
+				);
+			} else {
+				$checkboxField['help-messages'][] = $this->msg( 'userrights-expiry-none' );
+			}
+			// T171345: Add a hidden form element so that other groups can still be manipulated,
+			// otherwise saving errors out with an invalid expiry time for this group.
+			$expiryField = [
+				'type' => 'hidden',
+				'name' => "wpExpiry-$group",
+				'default' => $expiry ? 'existing' : 'infinite',
+			];
+		} else {
+			$expiryField = [
+				'type' => 'selectorother',
+				'label' => $this->msg( 'userrights-expiry-for', $member )->text(),
+				'other-message' => 'userrights-expiry-othertime',
+				'name' => "wpExpiry-$group",
+				'id' => "mw-input-wpExpiry-$group",
+				'hide-if' => [ '!==', "wpGroup-$group", '1' ],
+				'disabled' => $disabledExpiry,
+			];
+
+			// Create expiry field options. If there is an existing expiry, set it to the default.
+			// Otherwise, default to infinite.
+			$expiries = [];
+
+			$expiries[$this->msg( 'userrights-expiry-none' )->text()] = 'infinite';
+			$expiryOptionsMsg = $this->msg( 'userrights-expiry-options' )->inContentLanguage();
+			$expiryOptions = $expiryOptionsMsg->isDisabled()
+				? []
+				: XmlSelect::parseOptionsMessage( $expiryOptionsMsg->text() );
+			$expiries = array_merge( $expiries, $expiryOptions );
+
+			if ( $isMember && $expiry ) {
+				$existingExpiryText = $this->msg(
+					'userrights-expiry-existing',
+					$uiLanguage->userTimeAndDate( $expiry, $uiUser ),
+					$uiLanguage->userDate( $expiry, $uiUser ),
+					$uiLanguage->userTime( $expiry, $uiUser )
+				)->text();
+				$expiries[$existingExpiryText] = 'existing';
+				$expiryField['default'] = 'existing';
+			} else {
+				$expiryField['default'] = 'infinite';
+			}
+
+			$expiryField['options'] = $expiries;
+		}
+
+		$fullyDisabled = $disabledCheckbox && $disabledExpiry;
+		$checkboxField['section'] = $fullyDisabled ? 'unchangeable-col' : 'changeable-col';
+		$expiryField['section'] = $fullyDisabled ? 'unchangeable-col' : 'changeable-col';
+
+		$groupFields = [
+			"wpGroup-$group" => $checkboxField,
+			"wpExpiry-$group" => $expiryField
+		];
+
+		if ( $isMember && $disabledCheckbox && !( $irreversible || $disabledExpiry ) ) {
+			// If the user group is set but the checkbox is disabled, mimic a
+			// checked checkbox in the form submission so that the expiry is read
+			$groupFields["wpHidden-$group"] = [
+				'type' => 'hidden',
+				'name' => "wpGroup-$group",
+				'default' => 1,
+			];
+		}
+
+		return [ $groupFields, !$fullyDisabled ];
+	}
+
+	/**
+	 * Reads the user groups set in the form. Returns them wrapped in a Status object.
+	 * On success, the value is an array of group name => expiry pairs. The expiry
+	 * is either a timestamp, null or 'existing' (meaning no change).
+	 * On failure, the status is fatal and contains an appropriate error message.
+	 *
+	 * NOTE: This method doesn't check whether the current user is actually allowed
+	 * to add/remove the groups. Normally, the result doesn't contain groups that
+	 * the user is not supposed to change.
+	 */
+	protected function readGroupsForm(): Status {
+		$allGroups = $this->explicitGroups;
+		// New state of the user groups, read from the form (group name => expiry)
+		// The expiry is either timestamp, null or 'existing' (meaning no change)
+		$newGroups = [];
+
+		foreach ( $allGroups as $group ) {
+			// We'll tell it to remove all unchecked groups, and add all checked groups.
+			// For disabled checkboxes, the state is propagated from the current memberships.
+			if ( $this->getRequest()->getCheck( "wpGroup-$group" ) ) {
+				// Default expiry is infinity, may be changed below
+				$newGroups[$group] = null;
+
+				// read the expiry information from the request
+				$expiryDropdown = $this->getRequest()->getVal( "wpExpiry-$group" );
+				if ( $expiryDropdown === 'existing' ) {
+					$newGroups[$group] = 'existing';
+					continue;
+				}
+
+				if ( $expiryDropdown === 'other' ) {
+					$expiryValue = $this->getRequest()->getVal( "wpExpiry-$group-other" );
+				} else {
+					$expiryValue = $expiryDropdown;
+				}
+
+				// validate the expiry
+				$expiry = UserGroupAssignmentService::expiryToTimestamp( $expiryValue );
+
+				if ( $expiry === false ) {
+					return Status::newFatal( 'userrights-invalid-expiry', $group );
+				}
+
+				// not allowed to have things expiring in the past
+				if ( $expiry && $expiry < wfTimestampNow() ) {
+					return Status::newFatal( 'userrights-expiry-in-past', $group );
+				}
+
+				$newGroups[$group] = $expiry;
+			} elseif ( !$this->canRemove( $group ) && isset( $this->groupMemberships[$group] ) ) {
+				// If the checkbox is absent from the request, it's either unchecked or disabled.
+				// If it's the latter, pretend that its state hasn't changed from the current group membership.
+				$newGroups[$group] = 'existing';
+			}
+		}
+
+		return Status::newGood( $newGroups );
+	}
+
+	/**
+	 * Compares the current and new groups and splits them into groups to add, to remove, and prepares
+	 * the new expiries of the groups in 'add'. If a group has its expiry changed, but the user is already
+	 * a member of it, this group will be included in 'add' (to update the expiry).
+	 * @param array<string, ?string> $newGroups An array of group name => expiry pairs, as returned
+	 *   by {@see readGroupsForm()}. The expiry is either a timestamp, null (meaning infinity) or
+	 *   'existing' (meaning no change).
+	 * @param array<string, UserGroupMembership> $existingUGMs The current group memberships of
+	 *   the target user, in the same format as in {@see $groupMemberships}.
+	 * @return array{0:list<string>,1:list<string>,2:array<string,?string>} Respectively: the groups
+	 *   to add, to remove, and the expiries to set on the groups to add.
+	 */
+	protected function splitGroupsIntoAddRemove( array $newGroups, array $existingUGMs ): array {
+		$involvedGroups = array_unique( array_merge( array_keys( $existingUGMs ), array_keys( $newGroups ) ) );
+
+		$addGroups = [];
+		$removeGroups = [];
+		$groupExpiries = [];
+		foreach ( $involvedGroups as $group ) {
+			// By definition of $involvedGroups, at least one of $hasGroup and $wantsGroup is true
+			$hasGroup = array_key_exists( $group, $existingUGMs );
+			$wantsGroup = array_key_exists( $group, $newGroups );
+
+			if ( $wantsGroup && $newGroups[$group] === 'existing' ) {
+				// No change requested for this group
+				continue;
+			}
+
+			if ( $hasGroup && !$wantsGroup ) {
+				$removeGroups[] = $group;
+				continue;
+			}
+			if ( !$hasGroup && $wantsGroup ) {
+				$addGroups[] = $group;
+				$groupExpiries[$group] = $newGroups[$group];
+				continue;
+			}
+
+			$currentExpiry = $existingUGMs[$group]->getExpiry();
+			$wantedExpiry = $newGroups[$group];
+			if ( $currentExpiry !== $wantedExpiry ) {
+				$addGroups[] = $group;
+				$groupExpiries[$group] = $wantedExpiry;
+			}
+		}
+
+		return [ $addGroups, $removeGroups, $groupExpiries ];
+	}
+
+	/**
+	 * Get the message translations for displaying the types of groups memberships the user has, and the
+	 * list of groups for each type.
+	 *
+	 * @return array<array{label:string,list:string}>
+	 */
+	private function getCurrentUserGroupsFields(): array {
+		$userGroups = $this->sortGroupMemberships( $this->groupMemberships );
+		$groupParagraphs = $this->categorizeUserGroupsForDisplay( $userGroups );
+
+		$context = $this->getContext();
+		$userName = $this->targetBareName;
+		$language = $this->getLanguage();
+
+		$fields = [];
+		foreach ( $groupParagraphs as $paragraphKey => $groups ) {
+			if ( count( $groups ) === 0 ) {
+				continue;
+			}
+
+			$groupLinks = array_map(
+				static fn ( $group ) => UserGroupMembership::getLinkHTML( $group, $context ),
+				$groups
+			);
+			$memberLinks = array_map(
+				static fn ( $group ) => UserGroupMembership::getLinkHTML( $group, $context, $userName ),
+				$groups
+			);
+
+			// Some languages prefer to have group names listed and some others prefer the member names,
+			// i.e. "Administrators" or "Administrator", respectively. This message acts as a switch between these.
+			$displayedList = $this->msg( 'userrights-groupsmember-type' )
+				->rawParams(
+					$language->commaList( $groupLinks ),
+					$language->commaList( $memberLinks )
+				)->escaped();
+
+			$paragraphHeader = $this->msg( $paragraphKey )
+				->numParams( count( $groups ) )
+				->params( $userName )
+				->parse();
+
+			$fields[] = [
+				'label' => $paragraphHeader,
+				'list' => $displayedList
+			];
+		}
+		return $fields;
+	}
+
+	/**
+	 * Shows a log fragment for the current target user, i.e. page "User:{$this->targetDisplayName}".
+	 *
+	 * @param string $logType The type of the log to show
+	 * @param string $logSubType The subtype of the log to show
+	 */
+	protected function showLogFragment( string $logType, string $logSubType ): void {
+		$logPage = new LogPage( $logType );
+
+		$logTitle = $logPage->getName()
+			// setContext allows us to test it - otherwise, English text would be used in tests
+			->setContext( $this->getContext() )
+			->text();
+
+		$output = $this->getOutput();
+		$output->addHTML( Html::element( 'h2', [], $logTitle ) );
+		LogEventsList::showLogExtract(
+			$output,
+			$logSubType,
+			Title::makeTitle( NS_USER, $this->targetDisplayName )
+		);
+	}
+
+	/**
+	 * This function is invoked when constructing the "current user groups" part of the form. It can be
+	 * overridden by the implementations to split the user groups into several paragraphs or add more
+	 * groups to the list, which are not expected to be editable through the form.
+	 *
+	 * @param array<string,UserGroupMembership> $userGroups The user groups the target belongs to, in
+	 *   the same format as {@see $groupMemberships}. The groups are sorted in such a way that permanent
+	 *   memberships are after temporary ones.
+	 * @return array<string,list<UserGroupMembership|string>> List of groups to show, keyed by the message key to
+	 *   include at the beginning of the respective paragraph. The default implementation returns a single
+	 *   paragraph with all the groups, keyed by 'userrights-groupsmember'.
+	 */
+	protected function categorizeUserGroupsForDisplay( array $userGroups ): array {
+		return [
+			'userrights-groupsmember' => array_values( $userGroups ),
+		];
+	}
+
+	/**
+	 * Returns a string that represents the current state of the target's groups. It is used to
+	 * detect attempts of concurrent modifications to the user groups.
+	 * @param ?array<string,UserGroupMembership> $groupMemberships The group memberships to use
+	 *   in the conflict key generation. If null, defaults to the value of {@see $groupMemberships}.
+	 *   It's advised to use set this parameter to memberships fetched from the primary database when
+	 *   trying to detect conflicts on handling a request to save changes to user groups.
+	 */
+	protected function makeConflictCheckKey( ?array $groupMemberships = null ): string {
+		$groupMemberships ??= $this->groupMemberships;
+		$groups = array_keys( $groupMemberships );
+		// Sort, so that the keys are safe to compare
+		sort( $groups );
+		return implode( ',', $groups );
+	}
+
+	/**
+	 * Tests if a conflict occurred when trying to save changes to user groups, by comparing
+	 * the conflict check key received from the form with the expected one.
+	 * @param ?array<string,UserGroupMembership> $groupMembershipsPrimary The group memberships
+	 *   to use when generating the expected conflict check key. If null, defaults to the value
+	 *   of {@see $groupMemberships}. It's recommended to pass memberships fetched from the primary
+	 *   database, so that concurrent changes made by other requests are detected.
+	 */
+	protected function conflictOccured( ?array $groupMembershipsPrimary = null ): bool {
+		$request = $this->getRequest();
+		$receivedConflictCheck = $request->getVal( self::CONFLICT_CHECK_FIELD );
+		$expectedConflictCheck = $this->makeConflictCheckKey( $groupMembershipsPrimary );
+
+		return $receivedConflictCheck !== $expectedConflictCheck;
+	}
+
+	/**
+	 * Returns an HTML snippet with links to pages like user talk, contributions etc. for the
+	 * target user. It will be used in the "Changing user groups of" header.
+	 */
+	abstract protected function getTargetUserToolLinks(): string;
+
+	/**
+	 * Whether the current user can add the target user to the given group.
+	 */
+	protected function canAdd( string $group ): bool {
+		return in_array( $group, $this->addableGroups );
+	}
+
+	/**
+	 * Whether the current user can remove the target user from the given group.
+	 */
+	protected function canRemove( string $group ): bool {
+		return in_array( $group, $this->removableGroups );
+	}
+
+	/**
+	 * Returns an array of annotations (messages or message keys) that should be displayed
+	 * below the checkbox for the given group. The default implementation returns an empty array.
+	 *
+	 * Annotations can signify special properties of the group, e.g. conditions required to grant this
+	 * group or consequences of adding the user etc.
+	 * @return list<Message|string>
+	 */
+	protected function getGroupAnnotations( string $group ): array {
+		return $this->groupAnnotations[$group] ?? [];
+	}
+
+	/**
+	 * Adds an annotation (message or message key) that should be displayed below the checkbox
+	 * for the given group. The annotation will be appended to any existing annotations
+	 * for this group.
+	 */
+	protected function addGroupAnnotation( string $group, Message|string $annotation ): void {
+		$this->groupAnnotations[$group][] = $annotation;
+	}
+
+	/**
+	 * Sorts the given group memberships so that the temporary memberships come first, followed
+	 * by the permanent ones; within each category, sorts alphabetically by group name.
+	 * @param array<string,UserGroupMembership> $memberships
+	 * @return array<string,UserGroupMembership>
+	 */
+	private function sortGroupMemberships( array $memberships ): array {
+		uasort( $memberships, static function ( $a, $b ) {
+			$aPermanent = $a->getExpiry() === null;
+			$bPermanent = $b->getExpiry() === null;
+
+			if ( $aPermanent === $bPermanent ) {
+				return $a->getGroup() <=> $b->getGroup();
+			} else {
+				return $aPermanent ? 1 : -1;
+			}
+		} );
+		return $memberships;
+	}
+
+	/**
+	 * When there's an attempt to change user's groups in a way that the performer shouldn't do,
+	 * this function formats the Status result telling what and why happened.
+	 * @param array<string,string> $invalidGroups list of groups that shouldn't be changed, as returned by
+	 *     {@see UserGroupAssignmentServiceBase::validateUserGroups()}
+	 * @param string $targetUserName Name of the target user, for use in {{GENDER:}}
+	 */
+	protected function formatInvalidGroupsStatus( array $invalidGroups, string $targetUserName ): Status {
+		$listItems = '';
+		foreach ( $invalidGroups as $group => $reason ) {
+			$groupName = $this->getLanguage()->getGroupName( $group );
+
+			if ( $reason === 'rights' ) {
+				$reasonMessage = $this->msg( 'userrights-insufficient-rights' );
+			} else {
+				// Use the same message as for annotation next to the group checkbox
+				$customMessageKey = 'userrights-restricted-group-' . $group;
+				$messageKey = $this->msg( $customMessageKey )->exists() ?
+					$customMessageKey :
+					'userrights-restricted-group-warning';
+				$reasonMessage = $this->msg( $messageKey );
+			}
+
+			$message = $this->msg( 'userrights-unable-to-change-row', $groupName, $reasonMessage )->parse();
+			$listItems .= Html::rawElement( 'li', [], $message );
+		}
+
+		$formattedList = Html::rawElement( 'ul', [], $listItems );
+		return Status::newFatal(
+			$this->msg( 'userrights-unable-to-change' )
+				->rawParams( $formattedList )
+				->params( $targetUserName )
+				->numParams( count( $invalidGroups ) )
+		);
+	}
+
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
+	public function doesWrites() {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 * @codeCoverageIgnore Merely declarative
+	 */
+	protected function getGroupName() {
+		return 'users';
+	}
+}

@@ -6,8 +6,8 @@
 			"Fulup",
 			"Huñvreüs",
 			"SaldırganSincap",
-			"VIGNERON",
-			"TMg"
+			"TMg",
+			"VIGNERON"
 		]
 	},
 	"cite-desc": "Ouzhpennañ a ra ar tikedennoù <code>&lt;ref&gt;</code> ha <code>&lt;references/&gt;</code> evit an daveoù",
@@ -53,9 +53,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "Diskwel an daveennoù",
 	"cite-wikieditor-help-content-reference-example-text1": "Testenn ar bajenn.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Testenn al liamm], testenn ouzhpenn.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Testenn al liamm]",
+	"cite-wikieditor-help-content-reference-example-text3": "Ul levr",
 	"cite-wikieditor-help-content-reference-example-ref-id": "amprouad",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Munudoù all",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Pajenn 76",
 	"cite-configuration-title": "Kefluniadur Cite",
 	"cite-configuration-info": "Talvezout a ra an arventennoù-mañ evit an holl bajennoù a ra gant Cite. N'eus nemet merourien a c'hall kemmañ an arventennoù-mañ.",
 	"cite-configuration-submit": "Enrollañ ar c'hemmoù"

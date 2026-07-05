@@ -55,6 +55,10 @@ ve.dm.MWEntityNode.static.toDomElements = function ( dataElement, doc ) {
 	return [ domElement ];
 };
 
+ve.dm.MWEntityNode.static.getText = function ( element ) {
+	return element.attributes.character;
+};
+
 /* Registration */
 
 ve.dm.modelRegistry.register( ve.dm.MWEntityNode );

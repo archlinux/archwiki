@@ -225,7 +225,7 @@
 	"abusefilter-edit-builder-funcs-rmspecials": "विशेष कॅरेक्टर्स हटवा(rmspecials)",
 	"abusefilter-edit-builder-funcs-substr": "सबस्ट्रिंग (substr)",
 	"abusefilter-edit-builder-group-vars": "चल घटक (व्हॅरिएबल्स)",
-	"abusefilter-edit-builder-vars-accountname": "खात्याचे नाव (खाते तयार केल्यावर)",
+	"abusefilter-edit-builder-vars-account-name": "खात्याचे नाव (खाते तयार केल्यावर)",
 	"abusefilter-edit-builder-vars-action": "कृती",
 	"abusefilter-edit-builder-vars-addedlines": "संपादनात जोडलेल्या ओळींचे क्षेत्र",
 	"abusefilter-edit-builder-vars-delta": "संपादनातील आकार बदल",

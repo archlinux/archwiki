@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Maintenance;
 
-use MediaWiki\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\RecentChanges\RecentChange;
@@ -91,7 +91,14 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 
 		$services = $this->getServiceContainer();
 		$commentStore = $services->getCommentStore();
+		/** @var CheckUserInsert $checkUserInsert */
+		$checkUserInsert = $services->get( 'CheckUserInsert' );
+
 		$rcQuery = RecentChange::getQueryInfo();
+
+		// Acquire an ID in the cu_useragent table for a User Agent that is an empty string,
+		// as we will have no value for the user agent for rows from recentchanges
+		$emptyUserAgentId = $checkUserInsert->acquireUserAgentTableId( '' );
 
 		while ( $blockStart <= $end ) {
 			$this->output( "...migrating rc_id from $blockStart to $blockEnd\n" );
@@ -142,20 +149,20 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 							'cupe_log_action' => $row->rc_log_action,
 							'cupe_log_type' => $row->rc_log_type,
 							'cupe_params' => $row->rc_params,
-							'cupe_ip' => $row->rc_ip,
-							'cupe_ip_hex' => IPUtils::toHex( $row->rc_ip ),
+							'cupe_ip_hex' => $row->rc_ip ? IPUtils::toHex( $row->rc_ip ) : null,
+							'cupe_agent_id' => $emptyUserAgentId,
 						];
 					} else {
 						$cuLogEventBatch[] = [
 							'cule_timestamp' => $row->rc_timestamp,
 							'cule_actor' => $row->rc_actor,
 							'cule_log_id' => $row->rc_logid,
-							'cule_ip' => $row->rc_ip,
-							'cule_ip_hex' => IPUtils::toHex( $row->rc_ip ),
+							'cule_ip_hex' => $row->rc_ip ? IPUtils::toHex( $row->rc_ip ) : null,
+							'cule_agent_id' => $emptyUserAgentId,
 						];
 					}
 				} else {
-					$cuChangesRow = [
+					$cuChangesBatch[] = [
 						'cuc_timestamp' => $row->rc_timestamp,
 						'cuc_namespace' => $row->rc_namespace,
 						'cuc_title' => $row->rc_title,
@@ -166,10 +173,9 @@ class PopulateCheckUserTable extends LoggedUpdateMaintenance {
 						'cuc_this_oldid' => $row->rc_this_oldid,
 						'cuc_last_oldid' => $row->rc_last_oldid,
 						'cuc_type' => CheckUserInsert::getTypeFromRCSource( $row->rc_source ),
-						'cuc_ip' => $row->rc_ip,
-						'cuc_ip_hex' => IPUtils::toHex( $row->rc_ip ),
+						'cuc_ip_hex' => $row->rc_ip ? IPUtils::toHex( $row->rc_ip ) : null,
+						'cuc_agent_id' => $emptyUserAgentId,
 					];
-					$cuChangesBatch[] = $cuChangesRow;
 				}
 			}
 			if ( count( $cuChangesBatch ) ) {

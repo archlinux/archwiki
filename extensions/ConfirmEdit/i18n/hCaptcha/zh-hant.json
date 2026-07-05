@@ -18,7 +18,12 @@
 	"hcaptcha-challenge-closed": "要繼續，您必須完成驗證。",
 	"hcaptcha-challenge-expired": "完成驗證的時限已過。請重試。",
 	"hcaptcha-generic-error": "載入表單時發生錯誤。要繼續，您需要重新載入頁面。",
+	"hcaptcha-internal-error": "表單發送過程中發生內部錯誤，請重試。",
+	"hcaptcha-network-error": "表單發送過程中發生網路錯誤。\n請確認您的網路連線然後重試。",
+	"hcaptcha-rate-limited": "驗證碼嘗試次數過多，請稍後片刻再試。",
 	"hcaptcha-loading-indicator-label": "正在載入表單，請稍候…",
 	"hcaptcha-missing-token": "表單尚未載入完畢。請等待幾秒鐘，然後再試一次。",
-	"hcaptcha-noscript": "需要 JavaScript 才能繼續。請在您的瀏覽器設定中啟用 JavaScript，然後重新整理頁面。"
+	"hcaptcha-noscript": "需要 JavaScript 才能繼續。請在您的瀏覽器設定中啟用 JavaScript，然後重新整理頁面。",
+	"hcaptcha-force-show-captcha-edit": "請重新提交表格，並完成問題以保存您的編輯內容。",
+	"hcaptcha-visual-editor-error-handler-warning": "請重新提交表單以儲存您的編輯內容。"
 }

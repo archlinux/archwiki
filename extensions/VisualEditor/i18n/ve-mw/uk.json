@@ -29,6 +29,7 @@
 			"Пан Хаунд"
 		]
 	},
+	"collabpad-disabled": "CollabPad не ввімкнено на цій вікі.",
 	"collabpad-doctitle": "CollabPad : $1",
 	"collabpad-import-subtitle": "Імпортовано з $1",
 	"collabpad": "CollabPad",
@@ -250,6 +251,7 @@
 	"visualeditor-educationpopup-dismiss": "Гаразд, зрозуміло",
 	"visualeditor-expandable-less": "Менше",
 	"visualeditor-expandable-more": "Більше",
+	"visualeditor-expandableerror-toggle": "Перемикання видимості",
 	"visualeditor-feedback-defaultmessage": "URL-адреса: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Заголовок сторінки",
 	"visualeditor-formatdropdown-format-mw-heading2": "Заголовок",
@@ -257,6 +259,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Підзаголовок 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Підзаголовок 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Підзаголовок 4",
+	"visualeditor-fullpage-switch-label": "Редагувати всю сторінку",
 	"visualeditor-generating-wikitext-progress": "Генерування вікірозмітки",
 	"visualeditor-includes-noinclude-start": "Початок вмісту, виключеного з уривків",
 	"visualeditor-includes-noinclude-end": "Кінець вмісту, виключеного з уривків",

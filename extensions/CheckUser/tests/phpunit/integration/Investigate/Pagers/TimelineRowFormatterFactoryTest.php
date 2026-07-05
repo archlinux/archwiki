@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Pagers;
 
-use MediaWiki\CheckUser\Investigate\Pagers\TimelineRowFormatter;
-use MediaWiki\CheckUser\Investigate\Pagers\TimelineRowFormatterFactory;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelineRowFormatter;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelineRowFormatterFactory;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\TimelineRowFormatterFactory
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelineRowFormatterFactory
  * @group CheckUser
  */
 class TimelineRowFormatterFactoryTest extends MediaWikiIntegrationTestCase {

@@ -1,4 +1,5 @@
 @import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 
 .mw-checkuser-links-no-parentheses > span:not( :first-child )::before {
 	content: ' @{msg-pipe-separator} ';
@@ -29,31 +30,29 @@
 		font-size: inherit;
 	}
 
-	.mw-checkuser-paging-links {
-		text-decoration: none;
-		color: @color-link;
+	.mw-checkuser-suggestedinvestigations-link-form {
+		display: inline;
+
+		button {
+			.link-button();
+		}
+	}
+
+	.link-button() {
+		.cdx-mixin-link-base();
+		// Button resets not in cdx-mixin-link-base:
 		background: none;
 		border: 0;
-		padding: 0;
-		font-size: unset;
-		font-family: inherit;
-	}
-
-	.mw-checkuser-paging-links:not( [ href ] ) {
 		cursor: pointer;
+		font-family: inherit;
+		font-size: unset;
+		font-weight: normal;
+		padding: 0;
+		white-space: nowrap;
 	}
 
-	.mw-checkuser-paging-links:visited {
-		color: @color-link--visited;
-	}
-
-	.mw-checkuser-paging-links:active {
-		color: @color-link--active;
-	}
-
-	.mw-checkuser-paging-links:hover,
-	.mw-checkuser-paging-links:focus {
-		text-decoration: underline;
+	.mw-checkuser-paging-links {
+		.link-button();
 	}
 
 	.mw-checkuser-indented {

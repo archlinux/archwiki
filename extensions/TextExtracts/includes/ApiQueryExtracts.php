@@ -8,7 +8,7 @@ use MediaWiki\Api\ApiQueryBase;
 use MediaWiki\Api\ApiUsageException;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigFactory;
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ParserOutputAccess;
@@ -280,13 +280,10 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private function truncate( $text ) {
 		$useTidy = !$this->params['plaintext'];
-		$truncator = new TextTruncator( $useTidy );
+		$truncator = new TextTruncator( $useTidy, $this->msg( 'ellipsis' )->text() );
 
 		if ( $this->params['chars'] ) {
-			$truncatedText = $truncator->getFirstChars( $text, $this->params['chars'] );
-			if ( $truncatedText !== $text ) {
-				$text = $truncatedText . $this->msg( 'ellipsis' )->text();
-			}
+			$text = $truncator->getFirstChars( $text, $this->params['chars'] );
 		} elseif ( $this->params['sentences'] ) {
 			$text = $truncator->getFirstSentences( $text, $this->params['sentences'] );
 		}

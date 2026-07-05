@@ -33,8 +33,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "Sideversjonstallet som skal brukes (standardverdien er siste versjon).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Hvilke egenskaper som skal hentes:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Ekskluder brukersignaturer fra kommentarene (når man bruker <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Flagg for å endre utdataene når <var>prop=threaditemshtml</var> brukes.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Representasjon av kommentartrådene tolket fra siden",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Hvilke andre sider kommentarer har blitt transkludert fra",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Inkluder ekstra aktivitetsdata om eldste og nyeste svar (når <var>prop=threaditemshtml</var> brukes).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Utelat brukersignaturer fra kommentarer (når <var>prop=threaditemshtml</var> brukes).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Ikke inkluder hele svartreet, bare oppgi overskriftene på toppnivå (når <var>prop=threaditemshtml</var> brukes).",
 	"apihelp-discussiontoolspageinfo-summary": "Returnerer metadata som kreves for å initialisere diskusjonsverktøyene.",
 	"apihelp-discussiontoolspreview-param-type": "Typen melding som skal forhåndsvises",
 	"apihelp-discussiontoolspreview-param-wikitext": "Innholdet som skal forhåndsvises, som wikitekst.",
@@ -44,5 +48,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True for å abonnere, false for å avslutte abonnement.",
 	"apihelp-discussiontoolssubscribe-summary": "Abonner (eller avslutt abonnement) for å motta varsler om et emne.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID-en til kommentaren det skal takkes for.",
-	"apihelp-discussiontoolsthank-summary": "Send et offentlig takkevarsel for en kommentar."
+	"apihelp-discussiontoolsthank-summary": "Send et offentlig takkevarsel for en kommentar.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Gjør at brukeren automatisk abonnerer på nye diskusjonstråder som opprettes med redigeringen. Bruk «yes» eller «no» for å overstyre brukerens innstilling (som er standardvalget)."
 }

@@ -35,7 +35,7 @@ class KnownIPPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 
 		$request = $this->manager->getRequest();
 
-		$known = $this->loginNotify->isKnownSystemFast( $user, $request );
+		$known = $this->loginNotify->isKnownSystem( $user, $request );
 
 		if ( $known === LoginNotify::USER_KNOWN ) {
 			return StatusValue::newGood();

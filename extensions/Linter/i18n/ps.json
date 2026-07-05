@@ -8,6 +8,7 @@
 		]
 	},
 	"linterrors": "پټې ساتل‌شوې تېروتنې",
+	"linttemplateerrors": "هغه رانغاړنې چې پټې‌ساتل‌شوې تېروتنې لري",
 	"linter-category-bogus-image-options": "شکمنې دوتنې خوښنې",
 	"linter-category-bogus-image-options-desc": "دا مخونه د شکمنو خوښنو لرونکې دوتنې لري",
 	"linter-category-large-tables": "لوی لښتيالونه چې په موبايل نشي کتل کېدای",
@@ -18,6 +19,8 @@
 	"linter-category-duplicate-ids-desc": "دا مخونه د دوه‌گوني پېژند ځانگړي‌کونگ عناصر لري.",
 	"linter-category-empty-heading": "تش سرليکونه",
 	"linter-category-empty-heading-desc": "دا مخونه تش سرليکونه لري.",
+	"linter-category-template-arg-in-extension-tag": "شاتاړي نښلن له کينډۍ پاراميتر سره",
+	"linter-category-template-arg-in-extension-tag-desc": "دا مخونه د شاتاړي نښلن لري چې کينډۍ ارزښت لري، کوم چې په سمه توگه رانغاړل کېدی نه شي.",
 	"linter-category-fostered": "کرل‌شوې منځپانگه",
 	"linter-category-fostered-desc": "دا مخونه د لښتيال نااړوند منځپانگه لري.",
 	"linter-category-fostered-transparent": "د رڼې منځپانگې د ودې وړانديزول",
@@ -60,6 +63,7 @@
 	"linter-category-wikilink-in-extlink-desc": "دا مخونه په باندنيو تړونو کې ويکي‌تړوني لري چې بايد سم شي",
 	"linter-desc": "د باندني چوپړ څخه پټې‌ساتل‌شوې تېروتنې موندل او کارنانو ته د هغې ښودل",
 	"linter-lints-prefix-search-page-desc": "د مخ سرليک د مختاړي يا بشپړ سرليک له مخې د غونډلپوهې تېروتنو لرونکو مخونو پلټل",
+	"linter-invalid-category": "وېشنيزه ونه موندل شوه يا بدبڼې شوه",
 	"linter-invalid-title": "نوم‌تشيال او/يا مخنوم ونه موندل شو يا بدبڼی شو",
 	"linter-form-exact-match": "د يو ځانگړي مخ سرليک پلټل",
 	"linter-form-prefix-match": "د ټولو هغه مخونو پلټل چې د سرليک مختاړي سره سمون خوري",
@@ -111,10 +115,16 @@
 	"linter-pager-title-header": "مخ سرليک",
 	"linter-pager-unclosed-quotes-in-heading-details": "ناتړلی وينالېږد چې د منځپانگې له لښتيال څخه راوتلی دی",
 	"linter-pager-wikilink-in-extlink-details": "تړونو کې تړوني",
+	"linter-pager-template-arg-in-extension-tag-details": "د شاتاړي نښلن نوم چې هممهالولو ته اړتيا لري (او کينډۍ ارزښتونه چې د دې دننه کارېدلی دي)",
 	"linter-prefix-search-subpage": "پټۍ کې تېروتنې لرونکي مخونه چې د سرليک مختاړي يا بشپړ سرليک سره سمون خوري: $1",
 	"linterrors-subpage": "پټې ساتل‌شوې تېروتنې: $1",
 	"linterrors-summary": "<strong>يادونه:</strong> د وېشنيزو شمېرنې کره شمېرنې نه دي؛ بلکې اټکلي شمېرنې دي.",
 	"multi-part-template-block": "له يوې کينډۍ نه دي راوتلي",
+	"parser-function": "د تجزيه‌کوونکي کړنچار څخه راويستنه",
 	"pageinfo-linter": "پټ ساتل شوي تېروتنې",
-	"pageinfo-linter-moreinfo": "د پټ ساتل‌شوې تېروتنو په اړه سپيناوشوي مالومات."
+	"pageinfo-linter-moreinfo": "د پټ ساتل‌شوې تېروتنو په اړه سپيناوشوي مالومات.",
+	"category-by-template": "هغه رانغاړنې چې پټې‌ساتل‌شوې تېروتنې لري: $1",
+	"category-by-template-view": "هغه رانغاړنې کتل چې دا پټې‌ساتل‌شوې تېروتنې لري.",
+	"category-by-template-desc": "د دې مخونو لېږدونه '''[[Special:LintErrors/$1|$1]]''' پټې‌ساتل‌شوې تېروتنې لري. ''په ياد ولرئ ځينې لېږدونې ښايي دې لړليک کې لېږدونې ته د لېږل شوي لاملونو له امله ښکاره شي؛ نه د لېږدونې د سرچينې له امله.''",
+	"linter-template-errors-index-desc": "دا لړليکونه د هغه رانغاړل شويو مخونو دي چې پټې‌ساتل‌شوې تېروتنې لري. ''په ياد ولرئ ځينې رانغاړنې ښايي دې لړليک کې رانغاړنې ته د لېږل شوي لاملونو له امله ښکاره شي؛ نه د رانغاړنې د سرچينې له امله.''"
 }

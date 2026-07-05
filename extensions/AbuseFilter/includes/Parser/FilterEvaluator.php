@@ -147,50 +147,20 @@ class FilterEvaluator {
 	private $allowMissingVariables = false;
 
 	/**
-	 * @var BagOStuff Used to cache the AST and the tokens
-	 */
-	private $cache;
-	/**
 	 * @var bool Whether the AST was retrieved from cache
 	 */
 	private $fromCache = false;
-	/**
-	 * @var LoggerInterface Used for debugging
-	 */
-	private $logger;
-	/**
-	 * @var Language Content language, used for language-dependent functions
-	 */
-	private $contLang;
-	/**
-	 * @var IBufferingStatsdDataFactory
-	 */
-	private $statsd;
-
-	/** @var KeywordsManager */
-	private $keywordsManager;
-
-	/** @var VariablesManager */
-	private $varManager;
-
-	/** @var int */
-	private $conditionsLimit;
 
 	/** @var UserVisibleWarning[] */
 	private $warnings = [];
 
 	/**
-	 * @var array Cached results of functions
+	 * @var array<string,mixed> Cached results of functions
 	 */
 	private $funcCache = [];
 
 	/**
-	 * @var Equivset
-	 */
-	private $equivset;
-
-	/**
-	 * @var array AFPToken::TID values found during node evaluation
+	 * @var string[] AFPToken::TID values found during node evaluation
 	 */
 	private $usedVars = [];
 
@@ -202,30 +172,22 @@ class FilterEvaluator {
 	 * @param LoggerInterface $logger Used for debugging
 	 * @param KeywordsManager $keywordsManager
 	 * @param VariablesManager $varManager
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
+	 * @param IBufferingStatsdDataFactory $statsd
 	 * @param Equivset $equivset
 	 * @param int $conditionsLimit
 	 * @param VariableHolder|null $vars
 	 */
 	public function __construct(
-		Language $contLang,
-		BagOStuff $cache,
-		LoggerInterface $logger,
-		KeywordsManager $keywordsManager,
-		VariablesManager $varManager,
-		IBufferingStatsdDataFactory $statsdDataFactory,
-		Equivset $equivset,
-		int $conditionsLimit,
+		private readonly Language $contLang,
+		private readonly BagOStuff $cache,
+		private readonly LoggerInterface $logger,
+		private readonly KeywordsManager $keywordsManager,
+		private readonly VariablesManager $varManager,
+		private readonly IBufferingStatsdDataFactory $statsd,
+		private readonly Equivset $equivset,
+		private readonly int $conditionsLimit,
 		?VariableHolder $vars = null
 	) {
-		$this->contLang = $contLang;
-		$this->cache = $cache;
-		$this->logger = $logger;
-		$this->statsd = $statsdDataFactory;
-		$this->keywordsManager = $keywordsManager;
-		$this->varManager = $varManager;
-		$this->equivset = $equivset;
-		$this->conditionsLimit = $conditionsLimit;
 		$this->resetState();
 		if ( $vars ) {
 			$this->mVariables = $vars;
@@ -822,7 +784,7 @@ class FilterEvaluator {
 		// allowing it to result in DUNDEFINED.
 		$allowMissingVariables = !$this->varExists( $var ) || $this->allowMissingVariables;
 
-		array_push( $this->usedVars, $var );
+		$this->usedVars[] = $var;
 
 		// It's a built-in, non-disabled variable (either set or unset), or a set custom variable
 		$flags = $allowMissingVariables

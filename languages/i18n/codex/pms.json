@@ -23,6 +23,7 @@
 	"cdx-table-pager-button-last-page": "Ùltima pàgina",
 	"cdx-table-pager-button-next-page": "Pàgina anans",
 	"cdx-table-pager-button-prev-page": "Pàgina andré",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 element}}",
 	"cdx-table-pager-items-per-page-default": "Arzultà për pàgina",
 	"cdx-table-pagination-status-message-determinate-long": "Visualisassion dj'arzultà $1–$2 ëd $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 ëd $3",

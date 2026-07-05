@@ -1,8 +1,8 @@
-const utils = require( './utils.js' );
+const clientUtils = require( './clientUtils.js' );
 
 function init( $pageContainer ) {
 	$pageContainer.find( '.ext-discussiontools-init-timestamplink' ).on( 'click', ( e ) => {
-		if ( !utils.isUnmodifiedLeftClick( e ) ) {
+		if ( !clientUtils.isUnmodifiedLeftClick( e ) ) {
 			// Only handle unmodified left clicks
 			return;
 		}

@@ -3,7 +3,7 @@
 namespace MediaWiki\Skins\Vector;
 
 use MediaWiki\Html\Html;
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\SkinMustache;
@@ -22,6 +22,7 @@ use MediaWiki\Skins\Vector\Components\VectorComponentUserLinks;
 use MediaWiki\Skins\Vector\Components\VectorComponentVariants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManagerFactory;
+use MobileContext;
 use RuntimeException;
 
 /**
@@ -39,6 +40,7 @@ class SkinVector22 extends SkinMustache {
 	public function __construct(
 		private readonly LanguageConverterFactory $languageConverterFactory,
 		private readonly FeatureManagerFactory $featureManagerFactory,
+		private readonly ?MobileContext $mobFrontContext,
 		array $options
 	) {
 		parent::__construct( $options );
@@ -56,6 +58,18 @@ class SkinVector22 extends SkinMustache {
 				$content_navigation['views'][ $key ]['icon'] = null;
 			}
 		}
+		$userPage = $content_navigation['user-page']['userpage'] ?? null;
+		if ( $userPage ) {
+			if ( isset( $userPage['class'] ) ) {
+				$userPage['class'] .= ' user-links-collapsible-item';
+			} else {
+				$userPage['class'] = ' user-links-collapsible-item';
+			}
+
+			$content_navigation['user-menu'] = [
+				'user-page' => $userPage,
+			] + $content_navigation['user-menu'];
+		}
 		Hooks::onSkinTemplateNavigation( $skin, $content_navigation );
 	}
 
@@ -68,11 +82,11 @@ class SkinVector22 extends SkinMustache {
 		// For historic reasons, the viewport is added when Vector is loaded on the mobile
 		// domain. This is only possible for 3rd parties or by useskin parameter as there is
 		// no preference for changing mobile skin. Only need to check if $responsive is falsey.
-		if ( !$responsive && ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
-			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
-			if ( $mobFrontContext->shouldDisplayMobileView() ) {
-				return true;
-			}
+		if ( !$responsive &&
+			$this->mobFrontContext &&
+			$this->mobFrontContext->shouldDisplayMobileView()
+		) {
+			return true;
 		}
 		return $responsive;
 	}
@@ -298,6 +312,19 @@ class SkinVector22 extends SkinMustache {
 		}
 	}
 
+	/**
+	 * @param array $portlets
+	 * @return bool
+	 */
+	private function isReadingListsEnabled( array $portlets ): bool {
+		foreach ( $portlets['data-user-menu']['array-items'] as $item ) {
+			if ( $item['id'] === 'pt-readinglists' ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function getTemplateData(): array {
 		$parentData = parent::getTemplateData();
 		$parentData = $this->mergeViewOverflowIntoActions( $parentData );
@@ -341,7 +368,7 @@ class SkinVector22 extends SkinMustache {
 				'data-page-titlebar-toc-dropdown' => new VectorComponentDropdown(
 					'vector-page-titlebar-toc',
 					// label
-					$this->msg( 'vector-toc-collapsible-button-label' ),
+					$this->msg( 'vector-toc-collapsible-button-label' )->text(),
 					// class
 					'vector-page-titlebar-toc vector-button-flush-left',
 					// icon
@@ -357,7 +384,7 @@ class SkinVector22 extends SkinMustache {
 				'data-sticky-header-toc-dropdown' => new VectorComponentDropdown(
 					'vector-sticky-header-toc',
 					// label
-					$this->msg( 'vector-toc-collapsible-button-label' ),
+					$this->msg( 'vector-toc-collapsible-button-label' )->text(),
 					// class
 					'mw-portlet mw-portlet-sticky-header-toc vector-sticky-header-toc vector-button-flush-left',
 					// icon
@@ -392,13 +419,13 @@ class SkinVector22 extends SkinMustache {
 				$this->languageConverterFactory,
 				$portlets['data-variants'],
 				$title->getPageLanguage(),
-				$this->msg( 'vector-language-variant-switcher-label' )
+				$this->msg( 'vector-language-variant-switcher-label' )->text()
 			),
 			'data-vector-user-links' => new VectorComponentUserLinks(
 				$localizer,
 				$user,
+				MediaWikiServices::getInstance()->getUserNameUtils(),
 				$portlets,
-				$this->getOptions()['link'],
 				$userPage[ 'icon' ] ?? ''
 			),
 			'data-lang-dropdown' => $langData ? new VectorComponentLanguageDropdown(
@@ -485,7 +512,8 @@ class SkinVector22 extends SkinMustache {
 						],
 						'quiet'
 					) : null,
-				$this->isVisualEditorTabPositionFirst( $portlets[ 'data-views' ] )
+				$this->isVisualEditorTabPositionFirst( $portlets[ 'data-views' ] ),
+				$this->isReadingListsEnabled( $portlets )
 			),
 		];
 

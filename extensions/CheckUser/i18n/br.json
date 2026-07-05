@@ -127,7 +127,7 @@
 	"checkuser-investigate-indicator-logs": "Marilhoù",
 	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "N'eo ket bet kavet ar wiki",
 	"checkuser-investigate-filters-exclude-temp-accounts-label": "Silañ ar c'hontoù berrbad",
-	"checkuser-investigate-compare-notice-no-results": "N'eus disoc'h ebet : an implijerien pe IPoù-se n'o deus graet kemm ebet e-kerzh an 90 deiz diwezhañ.",
+	"checkuser-investigate-compare-notice-no-results": "N'eus disoc'h ebet : an implijerien pe IPoù-se n'o deus graet kemm ebet e-kerzh an $1 deiz diwezhañ.",
 	"checkuser-investigate-compare-notice-no-results-filters": "Disoc'h ebet ne glot gant an dezverkoù silañ-mañ. Dilamit siloù zo evit ledanaat ar c'hlask.",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Diskouez holl IPoù an implijer-mañ",
 	"checkuser-ip-contributions": "Klask degasadennoù IP",
@@ -166,7 +166,7 @@
 	"checkuser-global-contributions-api-lookup-error": "Fazi o kargañ roadennoù eus wikioù zo. Diglok eo an disoc'hoù-mañ. <strong>Marteze e vo talvoudus klask en-dro.</strong>",
 	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>Disoc'h ebet na glot gant ar reked.</strong> An implijer \"$1\" n'en deus degasadenn welus ebet.",
 	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>Disoc'h ebet na glot gant ar reked.</strong> Marteze e kavoc’h degasadennoù ma kemmit ho dibarzhioù klask.",
-	"checkuser-global-contributions-page-when-no-namespace-translation-available": "Esaouenn anv<$1>:$2",
+	"checkuser-global-contributions-page-when-no-namespace-translation-available": "Esaouenn anv[$1]:$2",
 	"checkuser-ip-auto-reveal-link-sidebar": "Diskuliañ IP ent emgefre",
 	"checkuser-ip-auto-reveal-link-sidebar-on": "Diskuliañ IP ent emgefre (gweredekaet)",
 	"checkuser-ip-auto-reveal-notification-on": "<strong>Gweredekaet eo diskuliañ IP ent emgefre</strong>",
@@ -233,6 +233,7 @@
 	"checkuser-userinfocard-thanks": "Trugarez resevet : $1 (roet : $2)",
 	"checkuser-userinfocard-checks": "Gwiriadurioù : $1 (gwiriadur diwezhañ : $2)",
 	"checkuser-userinfocard-checks-empty": "Gwiriadurioù : $1",
+	"checkuser-userinfocard-suggested-investigations": "Enklaskoù kinnigetː $1",
 	"checkuser-userinfocard-global-restrictions-locked": "[[$2|{{GENDER:$1|Prennet}} en un doare hollek]] abaoe $3",
 	"checkuser-userinfocard-global-restrictions-locked-no-date": "[[$2|{{GENDER:$1|Prennet}} en un doare hollek]]",
 	"checkuser-userinfocard-global-restrictions-blocked": "[[$2|{{GENDER:$1|Stanket}} en un doare hollek]] abaoe $3",
@@ -266,5 +267,7 @@
 	"checkuser-userinfocard-ip-revealed-never": "IPoù diskuliet ː $1",
 	"checkuser-suggestedinvestigations": "Enklaskoù kinniget",
 	"checkuser-userinfocard-temporary-account-bucketcount": "Kontoù berrbad eus an holl IPoù a glot : $1",
-	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Un niver hollek eus an holl gontoù berrbad eus an holl IPoù stag ouzh ar gont-mañ"
+	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Un niver hollek eus an holl gontoù berrbad eus an holl IPoù stag ouzh ar gont-mañ",
+	"checkuser-contributions-temporary-accounts-on-ip": "Kontoù berrbad gant an IP-mañ: $1.",
+	"checkuser-contributions-temporary-accounts-on-ip-with-blocked": "Kontoù berrbad gant an IP-mañ: $1 (stanketː $2)."
 }

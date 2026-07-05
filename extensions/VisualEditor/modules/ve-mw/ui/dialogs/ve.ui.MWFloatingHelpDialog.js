@@ -6,7 +6,7 @@
  */
 
 /**
- * Popup help dialog launched by a {@see ve.ui.MWFloatingHelpElement}
+ * Popup help dialog launched by a {@link ve.ui.MWFloatingHelpElement}
  *
  * @class
  * @extends OO.ui.ProcessDialog

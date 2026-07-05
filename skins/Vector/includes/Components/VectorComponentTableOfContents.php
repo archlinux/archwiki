@@ -2,56 +2,34 @@
 namespace MediaWiki\Skins\Vector\Components;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
-use MessageLocalizer;
 
 /**
  * VectorComponentTableOfContents component
  */
 class VectorComponentTableOfContents implements VectorComponent {
 
-	/** @var array */
-	private $tocData;
-
-	/** @var MessageLocalizer */
-	private $localizer;
-
-	/** @var bool */
-	private $isPinned;
-
-	/** @var Config */
-	private $config;
-
-	/** @var VectorComponentPinnableHeader */
-	private $pinnableHeader;
+	private readonly bool $isPinned;
+	private readonly VectorComponentPinnableHeader $pinnableHeader;
 
 	/** @var string */
 	public const ID = 'vector-toc';
 
-	/**
-	 * @param array $tocData
-	 * @param MessageLocalizer $localizer
-	 * @param Config $config
-	 * @param FeatureManager $featureManager
-	 */
 	public function __construct(
-		array $tocData,
-		MessageLocalizer $localizer,
-		Config $config,
-		FeatureManager $featureManager
+		private array $tocData,
+		private readonly MessageLocalizer $localizer,
+		private readonly Config $config,
+		FeatureManager $featureManager,
 	) {
-		$this->tocData = $tocData;
-		$this->localizer = $localizer;
 		// FIXME: isPinned is no longer accurate because the appearance menu uses client preferences
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_TOC_PINNED );
-		$this->config = $config;
 		$this->pinnableHeader = new VectorComponentPinnableHeader(
 			$this->localizer,
 			$this->isPinned,
 			self::ID,
 			'toc-pinned',
-			false,
 			'h2'
 		);
 	}

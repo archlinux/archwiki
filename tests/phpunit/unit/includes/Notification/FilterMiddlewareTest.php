@@ -12,7 +12,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers MediaWiki\Notification\Middleware\FilterMiddleware
+ * @covers \MediaWiki\Notification\Middleware\FilterMiddleware
  */
 class FilterMiddlewareTest extends MediaWikiUnitTestCase {
 
@@ -41,7 +41,7 @@ class FilterMiddlewareTest extends MediaWikiUnitTestCase {
 		);
 
 		$calledNext = false;
-		$sut->handle( $batch, static function () use ( &$calledNext )  {
+		$sut->handle( $batch, static function () use ( &$calledNext ) {
 			$calledNext = true;
 		} );
 		$envelopes = iterator_to_array( $batch );

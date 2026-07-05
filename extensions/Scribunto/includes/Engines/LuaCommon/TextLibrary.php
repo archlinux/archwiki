@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\CoreTagHooks;
+use Wikimedia\RemexHtml\HTMLData;
 
 class TextLibrary extends LibraryBase {
 	// Matches Lua mw.text constants
@@ -16,12 +16,12 @@ class TextLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'unstrip' => [ $this, 'textUnstrip' ],
-			'unstripNoWiki' => [ $this, 'textUnstripNoWiki' ],
-			'killMarkers' => [ $this, 'killMarkers' ],
-			'getEntityTable' => [ $this, 'getEntityTable' ],
-			'jsonEncode' => [ $this, 'jsonEncode' ],
-			'jsonDecode' => [ $this, 'jsonDecode' ],
+			'unstrip' => $this->textUnstrip( ... ),
+			'unstripNoWiki' => $this->textUnstripNoWiki( ... ),
+			'killMarkers' => $this->killMarkers( ... ),
+			'getEntityTable' => $this->getEntityTable( ... ),
+			'jsonEncode' => $this->jsonEncode( ... ),
+			'jsonDecode' => $this->jsonDecode( ... ),
 		];
 		$opts = [
 			'comma' => wfMessage( 'comma-separator' )->inContentLanguage()->text(),
@@ -53,32 +53,31 @@ class TextLibrary extends LibraryBase {
 
 	/**
 	 * Handler for textUnstrip
-	 * @internal
 	 * @param string $s
 	 * @return string[]
 	 */
-	public function textUnstrip( $s ) {
+	private function textUnstrip( $s ) {
 		$this->checkType( 'unstrip', 1, $s, 'string' );
 		$stripState = $this->getParser()->getStripState();
 		return [ $stripState->killMarkers( $stripState->unstripNoWiki( $s ) ) ];
 	}
 
-	public function processNoWikis( string $text ): string {
+	private function processNoWikis( string $text ): string {
 		$content = preg_replace( "#</?nowiki[^>]*>#i", '', $text );
-		return $content ? CoreTagHooks::nowiki( $content, [], $this->getParser() )[0] : '';
+		$parserCoreTagHooks = MediaWikiServices::getInstance()->getParserCoreTagHooks();
+		return $content ? $parserCoreTagHooks->nowiki( $content, [], $this->getParser() )[0] : '';
 	}
 
 	/**
 	 * Handler for textUnstripNoWiki
-	 * @internal
 	 * @param string $s
 	 * @param bool $getOrigTextWhenPreprocessing
 	 * @return string[]
 	 */
-	public function textUnstripNoWiki( $s, $getOrigTextWhenPreprocessing ) {
+	private function textUnstripNoWiki( $s, $getOrigTextWhenPreprocessing ) {
 		$this->checkType( 'unstripNoWiki', 1, $s, 'string' );
 		if ( !$getOrigTextWhenPreprocessing ) {
-			return [ $this->getParser()->getStripState()->replaceNoWikis( $s, [ $this, "processNowikis" ] ) ];
+			return [ $this->getParser()->getStripState()->replaceNoWikis( $s, $this->processNowikis( ... ) ) ];
 		} else {
 			return [ $this->getParser()->getStripState()->unstripNoWiki( $s ) ];
 		}
@@ -86,35 +85,30 @@ class TextLibrary extends LibraryBase {
 
 	/**
 	 * Handler for killMarkers
-	 * @internal
 	 * @param string $s
 	 * @return string[]
 	 */
-	public function killMarkers( $s ) {
+	private function killMarkers( $s ) {
 		$this->checkType( 'killMarkers', 1, $s, 'string' );
 		return [ $this->getParser()->getStripState()->killMarkers( $s ) ];
 	}
 
 	/**
 	 * Handler for getEntityTable
-	 * @internal
 	 * @return array[]
 	 */
-	public function getEntityTable() {
-		$table = array_flip(
-			get_html_translation_table( HTML_ENTITIES, ENT_QUOTES | ENT_HTML5, "UTF-8" )
-		);
-		return [ $table ];
+	private function getEntityTable() {
+		return [ HTMLData::NAMED_ENTITY_TRANSLATION ];
 	}
 
 	/**
 	 * Handler for jsonEncode
-	 * @internal
 	 * @param mixed $value
 	 * @param string|int $flags
 	 * @return string[]
+	 * @throws LuaError
 	 */
-	public function jsonEncode( $value, $flags ) {
+	private function jsonEncode( $value, $flags ) {
 		$this->checkTypeOptional( 'mw.text.jsonEncode', 2, $flags, 'number', 0 );
 		$flags = (int)$flags;
 		if ( !( $flags & self::JSON_PRESERVE_KEYS ) && is_array( $value ) ) {
@@ -129,12 +123,12 @@ class TextLibrary extends LibraryBase {
 
 	/**
 	 * Handler for jsonDecode
-	 * @internal
 	 * @param string $s
 	 * @param string|int $flags
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function jsonDecode( $s, $flags ) {
+	private function jsonDecode( $s, $flags ) {
 		$this->checkType( 'mw.text.jsonDecode', 1, $s, 'string' );
 		$this->checkTypeOptional( 'mw.text.jsonDecode', 2, $flags, 'number', 0 );
 		$flags = (int)$flags;

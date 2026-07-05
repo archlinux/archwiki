@@ -112,6 +112,7 @@
 	"checkuser-investigateblock": "Αποκλεισμένοι χρήστες",
 	"checkuser-investigateblock-target": "Ονόματα χρήστη και διευθύνσεις IP",
 	"checkuser-investigateblock-actions": "Ενέργειες για φραγή",
+	"checkuser-investigateblock-expiry": "Λήξη",
 	"checkuser-investigateblock-reason": "Αιτία",
 	"checkuser-investigateblock-email-label": "Αποτροπή αποστολής μηνύματος ηλεκτρονικού ταχυδρομείου",
 	"checkuser-investigateblock-notice-position-label": "Θέση",
@@ -121,5 +122,9 @@
 	"checkuser-global-contributions-link": "καθολικές συνεισφορές χρήστη",
 	"checkuser-global-contributions-link-sidebar": "Καθολικές συνεισφορές",
 	"checkuser-tempaccount-reveal-ip-button-label": "Εμφάνιση IP",
-	"checkuser-tempaccount-reveal-ip-error": "σφάλμα"
+	"checkuser-tempaccount-reveal-ip-error": "σφάλμα",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-today": "Σήμερα",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-last3days": "Τελευταίες 3 ημέρες",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-last7days": "Τελευταίες 7 ημέρες",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-last90days": "Τελευταίες 90 ημέρες"
 }

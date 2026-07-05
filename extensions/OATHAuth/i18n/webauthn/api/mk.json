@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bjankuloski06"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Извршничкиот модул кој посредува меѓу опслужувачот и клиентот при зачленувањето/заверката.",
+	"apihelp-oathauth-webauthn-param-func": "Назив на побараната функција што треба да се изврши.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Информации за заверка.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Информации за зачленување.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Дали клучот што се пријавува е во режим на пропустен клуч. (Само за getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "Модулот WebAuthn не е недостапен.",
+	"apierror-oathauth-webauthn-missing-credential": "Нема внесено најавни податоци.",
+	"apierror-oathauth-webauthn-invalid-credential": "Најавните податоци се неважечки или погрешно срочени.",
+	"apierror-oathauth-webauthn-reauthenticate": "Ќе треба прво да се презаверите преку Special:OATHManage пред да можете да го направите ова дејство.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Заведете нова најава со WebAuthn за тековниот корисник.",
+	"apihelp-oathauth-webauthn-param-credential": "Одговор за WebAuthn-најавни податоци од прелистувач кодиран во JSON.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Описно име за новите најавни податоци."
+}

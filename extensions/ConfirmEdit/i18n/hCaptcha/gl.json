@@ -16,7 +16,12 @@
 	"hcaptcha-challenge-closed": "Para continuar, debes completar o CAPTCHA.",
 	"hcaptcha-challenge-expired": "O límite de tempo para completar o CAPTCHA expirou. Inténtao de novo.",
 	"hcaptcha-generic-error": "Houbo un erro ao cargar o formulario. Para continuar, terás que recargar a páxina.",
+	"hcaptcha-internal-error": "Houbo un erro interno ao enviar o formulario. Inténtao de novo.",
+	"hcaptcha-network-error": "Houbo un erro de rede ao enviar o formulario. Asegúrate de que tes conexión a Internet e inténtao de novo.",
+	"hcaptcha-rate-limited": "Houbo demasiados intentos de resolver o CAPTCHA. Agarda uns intres e inténtao de novo.",
 	"hcaptcha-loading-indicator-label": "Agarda mentres remata a carga do formulario...",
 	"hcaptcha-missing-token": "Non rematou a carga do formulario. Agarda uns segundos e inténtao de novo.",
-	"hcaptcha-noscript": "Cómpre JavaScript para continuar. Activa JavaScript na configuración do teu navegador e actualiza a páxina."
+	"hcaptcha-noscript": "Cómpre JavaScript para continuar. Activa JavaScript na configuración do teu navegador e actualiza a páxina.",
+	"hcaptcha-force-show-captcha-edit": "Volve enviar o formulario e completa o desafío para gardares a túa edición.",
+	"hcaptcha-visual-editor-error-handler-warning": "Volve enviar o formulario para gardares a túa edición."
 }

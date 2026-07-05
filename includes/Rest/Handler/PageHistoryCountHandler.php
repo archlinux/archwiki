@@ -11,6 +11,7 @@ use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -24,6 +25,7 @@ use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\RawSQLExpression;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Handler class for Core REST API endpoints that perform operations on revisions
@@ -181,14 +183,14 @@ class PageHistoryCountHandler extends SimpleHandler {
 				'count' => $count > $countLimit ? $countLimit : $count,
 				'limit' => $count > $countLimit
 		] );
-		$response->setHeader( 'Cache-Control', 'max-age=' . self::MAX_AGE_200 );
+		$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'max-age=' . self::MAX_AGE_200 );
 
 		// Inform clients who use a deprecated "type" value, so they can adjust
 		if ( isset( self::DEPRECATED_COUNT_TYPES[$type] ) ) {
 			$docs = '<https://www.mediawiki.org/wiki/API:REST/History_API' .
 				'#Get_page_history_counts>; rel="deprecation"';
-			$response->setHeader( 'Deprecation', 'version="v1"' );
-			$response->setHeader( 'Link', $docs );
+			$response->setHeader( ResponseHeaders::DEPRECATION, 'version="v1"' );
+			$response->setHeader( ResponseHeaders::LINK, $docs );
 		}
 
 		return $response;
@@ -293,13 +295,13 @@ class PageHistoryCountHandler extends SimpleHandler {
 	}
 
 	/**
-	 * @return RevisionRecord|null current revision or false if unable to retrieve revision
+	 * @return RevisionRecord|null Latest revision or false if unable to retrieve revision
 	 */
-	private function getCurrentRevision(): ?RevisionRecord {
+	private function getLatestRevision(): ?RevisionRecord {
 		if ( $this->revision === false ) {
 			$page = $this->getPage();
 			if ( $page ) {
-				$this->revision = $this->revisionStore->getKnownCurrentRevision( $page ) ?: null;
+				$this->revision = $this->revisionStore->getKnownLatestRevision( $page ) ?: null;
 			} else {
 				$this->revision = null;
 			}
@@ -318,7 +320,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 
 	/**
 	 * Returns latest of 2 timestamps:
-	 * 1. Current revision
+	 * 1. Latest revision
 	 * 2. OR entry from the DB logging table for the given page
 	 * @return int|null
 	 */
@@ -332,17 +334,17 @@ class PageHistoryCountHandler extends SimpleHandler {
 
 	/**
 	 * Returns array with 2 timestamps:
-	 * 1. Current revision
+	 * 1. Latest revision
 	 * 2. OR entry from the DB logging table for the given page
 	 * @return array|null
 	 */
 	protected function getLastModifiedTimes() {
-		$currentRev = $this->getCurrentRevision();
+		$currentRev = $this->getLatestRevision();
 		if ( !$currentRev ) {
 			return null;
 		}
 		if ( $this->lastModifiedTimes === null ) {
-			$currentRevTime = (int)wfTimestampOrNull( TS_UNIX, $currentRev->getTimestamp() );
+			$currentRevTime = (int)wfTimestampOrNull( TS::UNIX, $currentRev->getTimestamp() );
 			$loggingTableTime = $this->loggingTableTime( $currentRev->getPageId() );
 			$this->lastModifiedTimes = [
 				'currentRevTS' => $currentRevTime,
@@ -363,7 +365,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 			->from( 'logging' )
 			->where( [ 'log_page' => $pageId ] )
 			->caller( __METHOD__ )->fetchField();
-		return $res ? (int)wfTimestamp( TS_UNIX, $res ) : null;
+		return $res ? (int)wfTimestamp( TS::UNIX, $res ) : null;
 	}
 
 	/**
@@ -393,7 +395,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 			$this->cache->makeKey( 'rest', 'pagehistorycount', $pageId, $type ),
 			WANObjectCache::TTL_WEEK,
 			function ( $oldValue ) use ( $fetchCount ) {
-				$currentRev = $this->getCurrentRevision();
+				$currentRev = $this->getLatestRevision();
 				if ( $oldValue ) {
 					// Last modified timestamp was NOT a dependency change (e.g. revdel)
 					$doIncrementalUpdate = (
@@ -423,9 +425,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 				];
 			},
 			[
-				'touchedCallback' => function (){
-					return $this->getLastModified();
-				},
+				'touchedCallback' => $this->getLastModified( ... ),
 				'version' => 2,
 				'lockTSE' => WANObjectCache::TTL_MINUTE * 5
 			]
@@ -688,7 +688,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 	}
 
 	protected function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/PageHistoryCount.json';
+		return __DIR__ . '/Schema/PageHistoryCount.json';
 	}
 
 	/** @inheritDoc */
@@ -722,5 +722,17 @@ class PageHistoryCountHandler extends SimpleHandler {
 				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-pagehistory-count-to' ),
 			]
 		];
+	}
+
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::LINK => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::LINK
+				]
+			]
+		);
 	}
 }

@@ -3,6 +3,8 @@
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Settings\SettingsBuilder;
+use MediaWiki\Tests\Common\Parser\MultiTestRecorder;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Parsoid\ParserTests\Test as ParserTest;

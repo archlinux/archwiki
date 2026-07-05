@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"imagemap_desc": "Pruža kartografske slike koje se mogu kliknuti na klijentskom računaru koristeći oznaku <code>&lt;imagemap&gt;</code>",

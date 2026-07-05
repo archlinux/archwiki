@@ -304,7 +304,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Cakto variablën (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variablat",
 	"abusefilter-edit-builder-vars-timestamp": "Unix vula-kohore e ndryshimit",
-	"abusefilter-edit-builder-vars-accountname": "Emri i llogarisë (në krijimin e llogarive)",
+	"abusefilter-edit-builder-vars-account-name": "Emri i llogarisë (në krijimin e llogarive)",
 	"abusefilter-edit-builder-vars-action": "Veprim",
 	"abusefilter-edit-builder-vars-addedlines": "Linjat e shtuara në redaktim",
 	"abusefilter-edit-builder-vars-delta": "Ndryshimi i madhësisë në redaktim",

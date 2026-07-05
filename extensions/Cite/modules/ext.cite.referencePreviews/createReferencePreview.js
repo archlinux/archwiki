@@ -47,6 +47,7 @@ function renderReferencePreview(
 	// * cite-reference-previews-journal
 	// * cite-reference-previews-news
 	// * cite-reference-previews-note
+	// * cite-reference-previews-map
 	// * cite-reference-previews-web
 	let titleMsg = mw.message( `cite-reference-previews-${ type }` );
 	if ( !titleMsg.exists() ) {
@@ -65,6 +66,7 @@ function renderReferencePreview(
 	// * popups-icon--reference-journal
 	// * popups-icon--reference-news
 	// * popups-icon--reference-note
+	// * popups-icon--reference-map
 	// * popups-icon--reference-web
 	el.querySelector( '.mwe-popups-title .popups-icon' )
 		.classList.add( `popups-icon--reference-${ type }` );

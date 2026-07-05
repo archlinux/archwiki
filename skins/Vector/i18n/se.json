@@ -55,9 +55,6 @@
 	"vector-toc-label": "Sisdoallu",
 	"vector-toc-beginning": "Álgu",
 	"vector-toc-toggle-button-label": "Čájet/čiega vuolitsekšuvnna $1",
-	"vector-anon-user-menu-pages": "Siiddut olggoščálihuvvon rievdadeddjiide",
-	"vector-anon-user-menu-pages-learn": "oahpa eambbo",
-	"vector-anon-user-menu-pages-label": "Oahpa eambbo rievdadeami birra",
 	"vector-main-menu-tooltip": "Váldofállu",
 	"vector-toc-menu-tooltip": "Sisdoallologahallan",
 	"vector-toc-collapsible-button-label": "Čájet dahje čiega sisdoallologahallama",
@@ -77,7 +74,5 @@
 	"vector-toc-unpinned-popup": "Sisdoallologahallan lea sirdon deike.",
 	"vector-page-tools-unpinned-popup": "Reaidofállu lea sirdon deike.",
 	"vector-main-menu-unpinned-popup": "Váldofállu lea sirdon deike.",
-	"vector-appearance-unpinned-popup": "Olggosoaidnin fállu lea sirdon deike.",
-	"vector-2022-beta-preview-label": "Vector 2022 -betaveršuvdna",
-	"vector-2022-beta-preview-description": "Oaččo beassanlobi ođđa lohkanvejolašvuođa doaimmaide, dego typográfalaš buoridemiide ja sevdnjes modusii."
+	"vector-appearance-unpinned-popup": "Olggosoaidnin fállu lea sirdon deike."
 }

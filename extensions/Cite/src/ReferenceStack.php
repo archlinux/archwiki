@@ -18,7 +18,7 @@ class ReferenceStack {
 	 * string for the default group) and reference name.
 	 *
 	 * References without a name get a numeric index, starting from 0. Conflicts are avoided by
-	 * disallowing numeric names (e.g. <ref name="1">) in {@see Validator::validateRef}.
+	 * disallowing numeric names (e.g. <ref name="1">) in {@link Validator::validateRef}.
 	 *
 	 * @var array<string,array<string|int,ReferenceStackItem>>
 	 */
@@ -46,7 +46,7 @@ class ReferenceStack {
 	 * See description of function rollbackRef.
 	 *
 	 * @var (array{0: string, 1: ReferenceStackItem, 2: ?string, 3: array}|false)[] Non-false
-	 *  entries are parameters for the {@see rollbackRef} function
+	 *  entries are parameters for the {@link rollbackRef} function
 	 */
 	private array $refCallStack = [];
 
@@ -279,6 +279,7 @@ class ReferenceStack {
 	public function popGroup( string $group ): array {
 		$refs = $this->getGroupRefs( $group );
 		unset( $this->refs[$group] );
+		unset( $this->subRefLookup[$group] );
 		unset( $this->groupRefSequence[$group] );
 		return $refs;
 	}

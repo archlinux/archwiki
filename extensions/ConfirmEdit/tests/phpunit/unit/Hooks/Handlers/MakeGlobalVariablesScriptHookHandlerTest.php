@@ -2,13 +2,14 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Tests\Unit\Hooks\Handlers;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\ConfirmEdit\Hooks\Handlers\MakeGlobalVariablesScriptHookHandler;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\Extension\ConfirmEdit\Hooks\Handlers\RLRegisterModulesHandler
+ * @covers \MediaWiki\Extension\ConfirmEdit\Hooks\Handlers\MakeGlobalVariablesScriptHookHandler
  */
 class MakeGlobalVariablesScriptHookHandlerTest extends MediaWikiUnitTestCase {
 
@@ -20,7 +21,10 @@ class MakeGlobalVariablesScriptHookHandlerTest extends MediaWikiUnitTestCase {
 
 		// Run the hook and expect the hook to not add any items to the $vars array
 		$vars = [];
-		$objectUnderTest = new MakeGlobalVariablesScriptHookHandler( $extensionRegistry );
+		$objectUnderTest = new MakeGlobalVariablesScriptHookHandler(
+			$extensionRegistry,
+			new HashConfig( [ 'HCaptchaVisualEditorOnLoadIntegrationEnabled' => true ] )
+		);
 		$objectUnderTest->onMakeGlobalVariablesScript( $vars, $this->createMock( OutputPage::class ) );
 		$this->assertArrayEquals( [], $vars );
 	}

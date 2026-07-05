@@ -22,34 +22,6 @@ class GlobalTest extends MediaWikiIntegrationTestCase {
 		] );
 	}
 
-	/**
-	 * @dataProvider provideForWfArrayDiff2
-	 * @covers ::wfArrayDiff2
-	 */
-	public function testWfArrayDiff2( $a, $b, $expected ) {
-		$this->expectDeprecationAndContinue( '/wfArrayDiff2/' );
-		$this->assertEquals(
-			$expected, wfArrayDiff2( $a, $b )
-		);
-	}
-
-	// @todo Provide more tests
-	public static function provideForWfArrayDiff2() {
-		// $a $b $expected
-		return [
-			[
-				[ 'a', 'b' ],
-				[ 'a', 'b' ],
-				[],
-			],
-			[
-				[ [ 'a' ], [ 'a', 'b', 'c' ] ],
-				[ [ 'a' ], [ 'a', 'b' ] ],
-				[ 1 => [ 'a', 'b', 'c' ] ],
-			],
-		];
-	}
-
 	/*
 	 * Test cases for random functions could hypothetically fail,
 	 * even though they shouldn't.
@@ -252,6 +224,7 @@ class GlobalTest extends MediaWikiIntegrationTestCase {
 		int $accuracy = 2,
 		bool $round = true
 	) {
+		$this->hideDeprecated( 'wfPercent' );
 		$this->assertSame( $expected, wfPercent( $input, $accuracy, $round ) );
 	}
 
@@ -435,18 +408,6 @@ class GlobalTest extends MediaWikiIntegrationTestCase {
 				".\n",
 			],
 		];
-	}
-
-	/**
-	 * Same tests as the UrlUtils method to ensure they don't fall out of sync
-	 * @dataProvider UrlUtilsProviders::provideMatchesDomainList
-	 * @covers ::wfMatchesDomainList
-	 */
-	public function testWfMatchesDomainList( $url, $domains, $expected ) {
-		$this->hideDeprecated( 'wfMatchesDomainList' );
-
-		$actual = wfMatchesDomainList( $url, $domains );
-		$this->assertEquals( $expected, $actual );
 	}
 
 	/**

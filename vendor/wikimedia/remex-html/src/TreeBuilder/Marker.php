@@ -14,7 +14,7 @@ class Marker implements FormattingElement {
 	public $nextAFE;
 	/** @var self|null */
 	public $prevAFE;
-	/** @var self|null */
+	/** @var self|Element|null */
 	public $nextNoah;
 	/** @var string */
 	public $type;

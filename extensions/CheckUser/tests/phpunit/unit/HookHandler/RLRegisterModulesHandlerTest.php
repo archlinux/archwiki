@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\HookHandler;
 
-use MediaWiki\CheckUser\Hook\HookRunner;
-use MediaWiki\CheckUser\HookHandler\RLRegisterModulesHandler;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\Hook\HookRunner;
+use MediaWiki\Extension\CheckUser\HookHandler\RLRegisterModulesHandler;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWikiUnitTestCase;
@@ -12,7 +12,7 @@ use MediaWikiUnitTestCase;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\HookHandler\RLRegisterModulesHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\RLRegisterModulesHandler
  */
 class RLRegisterModulesHandlerTest extends MediaWikiUnitTestCase {
 

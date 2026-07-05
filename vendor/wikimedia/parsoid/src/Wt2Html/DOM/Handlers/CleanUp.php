@@ -5,14 +5,13 @@ namespace Wikimedia\Parsoid\Wt2Html\DOM\Handlers;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
-use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
@@ -97,7 +96,7 @@ class CleanUp {
 						return false;
 					}
 				}
-				if ( WTUtils::isRenderingTransparentNode( $n ) ) {
+				if ( WTUtils::isRenderingTransparentNode( $n ) || DOMUtils::hasClass( $n, 'mw-empty-elt' ) ) {
 					$hasRTNodes = true;
 					continue;
 				}
@@ -124,6 +123,8 @@ class CleanUp {
 	public const ALLOWED_TPL_WRAPPER_ATTRS = [
 		'about' => 1,
 		'typeof' => 1,
+		'data-parsoid' => 1,
+		'data-mw' => 1
 	];
 
 	/**
@@ -135,6 +136,25 @@ class CleanUp {
 		// Set by isEmptyNode() to indicate whether a node which is "empty" contained
 		// invisible "rendering transparent" nodes.
 		$hasRTNodes = false;
+
+		// Remove mw-empty-elt span nodes introduced by DOMRangeBuilder
+		// that are deletable (IEW children only, if any).
+		if ( $node instanceof Element && DOMUtils::nodeName( $node ) === 'span' &&
+			DOMUtils::hasClass( $node, 'mw-empty-elt' )
+		) {
+			if ( WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
+				return true;
+			}
+
+			if ( !$node->hasChildNodes() ||
+				( $node->childElementCount === 1 && DOMUtils::isIEW( $node->firstChild ) )
+			) {
+				$next = $node->nextSibling;
+				DOMCompat::remove( $node );
+				return $next;
+			}
+			return true;
+		}
 
 		if ( !( $node instanceof Element ) ||
 			!isset( Consts::$Output['FlaggedEmptyElts'][DOMUtils::nodeName( $node )] ) ||
@@ -427,12 +447,8 @@ class CleanUp {
 		if ( $discardDataParsoid ) {
 			// We cannot unset data-parsoid because any code that runs after
 			// this that calls DOMDataUtils::getDataParsoid will reinitialize
-			// it to an empty object. So, we do that re-init here and set the
-			// IS_NEW flag to ensure DOMDataUtils::storeDataAttribs discards this
-			// if unmodified. The empty data-parsoid blob is considered unmodified.
-			$dp = new DataParsoid;
-			$dp->setTempFlag( TempData::IS_NEW );
-			DOMDataUtils::setDataParsoid( $node, $dp );
+			// it to an empty object.
+			$dp->setTempFlag( TempData::DISCARDABLE_DP );
 		}
 
 		return true;

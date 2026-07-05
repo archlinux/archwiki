@@ -1,25 +1,27 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers;
 
-use MediaWiki\CheckUser\CheckUser\SpecialCheckUser;
-use MediaWiki\CheckUser\ClientHints\ClientHintsLookupResults;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsFormatter;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks\MockTemplateParser;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUsernameResultInterface;
+use MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUser;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsLookupResults;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsFormatter;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks\MockTemplateParser;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ArrayUtils\ArrayUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\IPUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -29,10 +31,10 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
  */
 class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -44,7 +46,10 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 
 	/** @dataProvider provideFormatUserRow */
 	public function testFormatUserRow(
-		$userSets, $userText, $clientHintsLookupResults, $expectedTemplateParams
+		$userSets,
+		$userText,
+		$clientHintsLookupResults,
+		$expectedTemplateParams
 	) {
 		$objectUnderTest = $this->setUpObject();
 		$objectUnderTest->templateParser = new MockTemplateParser();
@@ -64,12 +69,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		);
 		$this->assertArrayEquals(
 			$expectedTemplateParams,
-			array_filter(
+			array_intersect_key(
 				$objectUnderTest->templateParser->lastCalledWith[1],
-				static function ( $key ) use ( $expectedTemplateParams ) {
-					return array_key_exists( $key, $expectedTemplateParams );
-				},
-				ARRAY_FILTER_USE_KEY
+				$expectedTemplateParams
 			),
 			false,
 			true,
@@ -159,7 +161,51 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 					'agentsList' => [ 'Testing useragent2', 'Testing user agent' ],
 				],
 			],
+			'Row for IP address with invalid UTF-8 in user agent' => [
+				[
+					'first' => [ '127.0.0.1' => $smallestFakeTimestamp ],
+					'last' => [ '127.0.0.1' => $largestFakeTimestamp ],
+					'edits' => [ '127.0.0.1' => 123 ],
+					'ids' => [ '127.0.0.1' => 0 ],
+					'infosets' => [ '127.0.0.1' => [ [ '127.0.0.1', null ] ] ],
+					'agentsets' => [ '127.0.0.1' => [ "Testing \u{FFFD} user agent" ] ],
+					'clienthints' => [ '127.0.0.1' => new ClientHintsReferenceIds( [
+						UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES => [ 1 ],
+					] ) ],
+				],
+				'127.0.0.1',
+				new ClientHintsLookupResults( [], [] ),
+				[
+					'userText' => '127.0.0.1',
+					'editCount' => 123,
+					'agentsList' => [ "Testing \u{FFFD} user agent" ],
+				],
+			],
 		];
+	}
+
+	public function testPreprocessResultsCleansInvalidUtf8UserAgents(): void {
+		$objectUnderTest = $this->setUpObject();
+		$result = new FakeResultWrapper( [
+			(object)[
+				'actor' => null,
+				'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
+				'user_text' => '127.0.0.1',
+				'user' => 0,
+				'timestamp' => ConvertibleTimestamp::now(),
+				'xff' => null,
+				'agent' => "Testing \xE4 user agent",
+				'client_hints_reference_id' => 1,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			],
+		] );
+
+		$objectUnderTest->preprocessResults( $result );
+
+		$this->assertSame(
+			[ "Testing \u{FFFD} user agent" ],
+			$objectUnderTest->userSets['agentsets']['127.0.0.1']
+		);
 	}
 
 	/** @dataProvider provideFormatUserRowWithUsernameHidden */
@@ -169,8 +215,11 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		$blockingUser = $this->getTestUser( [ 'sysop', 'suppress' ] )->getUser();
 		$blockStatus = $this->getServiceContainer()->getBlockUserFactory()
 			->newBlockUser(
-				$hiddenUser, $blockingUser, 'infinity',
-				'block to hide the test user', [ 'isHideUser' => true ]
+				$hiddenUser,
+				$blockingUser,
+				'infinity',
+				'block to hide the test user',
+				[ 'isHideUser' => true ]
 			)->placeBlock();
 		$this->assertStatusGood( $blockStatus );
 
@@ -223,12 +272,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		];
 		$this->assertArrayEquals(
 			$expectedTemplateParams,
-			array_filter(
+			array_intersect_key(
 				$objectUnderTest->templateParser->lastCalledWith[1],
-				static function ( $key ) use ( $expectedTemplateParams ) {
-					return array_key_exists( $key, $expectedTemplateParams );
-				},
-				ARRAY_FILTER_USE_KEY
+				$expectedTemplateParams
 			),
 			false,
 			true,
@@ -282,12 +328,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		);
 		$this->assertArrayEquals(
 			$expectedTemplateParams,
-			array_filter(
+			array_intersect_key(
 				$objectUnderTest->templateParser->lastCalledWith[1],
-				static function ( $key ) use ( $expectedTemplateParams ) {
-					return array_key_exists( $key, $expectedTemplateParams );
-				},
-				ARRAY_FILTER_USE_KEY
+				$expectedTemplateParams
 			),
 			false,
 			true,
@@ -362,6 +405,77 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		);
 	}
 
+	public function testFormatUserRowWithSiCasesLink() {
+		$testUser = $this->getTestUser()->getUserIdentity();
+		$timestamp = ConvertibleTimestamp::now();
+		$objectUnderTest = $this->setUpObject();
+		$objectUnderTest->templateParser = new MockTemplateParser();
+		$objectUnderTest->userSets = [
+			'first' => [ $testUser->getName() => $timestamp ],
+			'last' => [ $testUser->getName() => $timestamp ],
+			'edits' => [ $testUser->getName() => 5 ],
+			'ids' => [ $testUser->getName() => $testUser->getId() ],
+			'infosets' => [ $testUser->getName() => [ [ '127.0.0.1', null ] ] ],
+			'agentsets' => [ $testUser->getName() => [ 'Testing user agent' ] ],
+			'clienthints' => [ $testUser->getName() => new ClientHintsReferenceIds( [] ) ],
+		];
+		$objectUnderTest->usersInSiCases = [ $testUser->getId() ];
+		$objectUnderTest->clientHintsLookupResults = new ClientHintsLookupResults( [], [] );
+		$objectUnderTest->mQueryDone = true;
+		$objectUnderTest->mResult = new FakeResultWrapper( [] );
+		$this->setUserLang( 'qqx' );
+		$objectUnderTest->formatUserRow( $testUser->getName() );
+		$this->assertNotNull(
+			$objectUnderTest->templateParser->lastCalledWith,
+			'The template parser was not called by ::formatUserRow.'
+		);
+		$this->assertStringContainsString(
+			'Special:SuggestedInvestigations',
+			$objectUnderTest->templateParser->lastCalledWith[1]['userToolLinks'],
+			'The SI cases link does not point to Special:SuggestedInvestigations'
+		);
+		$this->assertStringContainsString(
+			'username=' . urlencode( $testUser->getName() ),
+			$objectUnderTest->templateParser->lastCalledWith[1]['userToolLinks'],
+			'The SI cases link does not contain the username'
+		);
+		$this->assertStringContainsString(
+			'mw-checkuser-si-cases-link',
+			$objectUnderTest->templateParser->lastCalledWith[1]['userToolLinks'],
+			'The SI cases link class is present in the user tool links'
+		);
+	}
+
+	public function testFormatUserRowWithoutSiCasesLinkWhenUserNotInCase() {
+		$testUser = $this->getTestUser()->getUserIdentity();
+		$timestamp = ConvertibleTimestamp::now();
+		$objectUnderTest = $this->setUpObject();
+		$objectUnderTest->templateParser = new MockTemplateParser();
+		$objectUnderTest->userSets = [
+			'first' => [ $testUser->getName() => $timestamp ],
+			'last' => [ $testUser->getName() => $timestamp ],
+			'edits' => [ $testUser->getName() => 5 ],
+			'ids' => [ $testUser->getName() => $testUser->getId() ],
+			'infosets' => [ $testUser->getName() => [ [ '127.0.0.1', null ] ] ],
+			'agentsets' => [ $testUser->getName() => [ 'Testing user agent' ] ],
+			'clienthints' => [ $testUser->getName() => new ClientHintsReferenceIds( [] ) ],
+		];
+		// usersInSiCases is empty — user not in any case
+		$objectUnderTest->clientHintsLookupResults = new ClientHintsLookupResults( [], [] );
+		$objectUnderTest->mQueryDone = true;
+		$objectUnderTest->mResult = new FakeResultWrapper( [] );
+		$objectUnderTest->formatUserRow( $testUser->getName() );
+		$this->assertNotNull(
+			$objectUnderTest->templateParser->lastCalledWith,
+			'The template parser was not called by ::formatUserRow.'
+		);
+		$this->assertStringNotContainsString(
+			'mw-checkuser-si-cases-link',
+			$objectUnderTest->templateParser->lastCalledWith[1]['userToolLinks'],
+			'The SI cases link should not be added when user is not in any case.'
+		);
+	}
+
 	/** @dataProvider provideGetQueryInfo */
 	public function testGetQueryInfo( $xfor, $table, $expectedQueryInfo ) {
 		$this->overrideConfigValue( 'CheckUserCIDRLimit', [ 'IPv4' => 16, 'IPv6' => 19 ] );
@@ -420,6 +534,44 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 		];
 	}
 
+	public function testGetResultUsernameMapAfterPreprocessResults(): void {
+		$object = $this->setUpObject();
+
+		$this->assertInstanceOf( CheckUsernameResultInterface::class, $object->object );
+
+		$object->preprocessResults( new FakeResultWrapper( [
+			// Registered user — should appear in the map
+			array_merge( $this->getDefaultRowFieldValues(), [
+				'user_text' => 'Alice',
+				'user' => 1,
+				'actor' => 1,
+				'ip_hex' => IPUtils::toHex( '1.2.3.4' ),
+				'client_hints_reference_id' => 1,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			] ),
+			// IP row (actor=null) — should be excluded
+			array_merge( $this->getDefaultRowFieldValues(), [
+				'user_text' => null,
+				'user' => null,
+				'actor' => null,
+				'ip_hex' => IPUtils::toHex( '1.2.3.5' ),
+				'client_hints_reference_id' => 2,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			] ),
+			// Registered user with IP name — should be excluded
+			array_merge( $this->getDefaultRowFieldValues(), [
+				'user_text' => '1.2.3.5',
+				'user' => 2,
+				'actor' => 3,
+				'ip_hex' => IPUtils::toHex( '1.2.3.5' ),
+				'client_hints_reference_id' => 3,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			] ),
+		] ) );
+
+		$this->assertSame( [ 1 => 'Alice' ], $object->getResultUsernameMap() );
+	}
+
 	/** @inheritDoc */
 	protected function getDefaultRowFieldValues(): array {
 		return [
@@ -464,18 +616,22 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 
 	/** @dataProvider provideGetEndBodyForBlockFieldset */
 	public function testGetEndBodyForBlockFieldset(
-		bool $hasLocalBlockRights, bool $hasGlobalLockRights, bool $hasGlobalBlockRights
+		bool $hasLocalBlockRights,
+		bool $hasGlobalLockRights,
+		bool $hasGlobalBlockRights
 	) {
 		// Set the centralDB as a non-existent but valid format wiki ID. This will cause the URLs to fallback to
 		// the local URLs which are easier to test.
 		$centralAuthLoaded = $this->getServiceContainer()->getExtensionRegistry()->isLoaded( 'CentralAuth' );
 		if ( $centralAuthLoaded ) {
 			$this->overrideConfigValue(
-				'CheckUserCAMultiLock', [ 'centralDB' => 'otherwiki', 'groups' => [ 'globallock' ] ]
+				'CheckUserCAMultiLock',
+				[ 'centralDB' => 'otherwiki', 'groups' => [ 'globallock' ] ]
 			);
 		}
 		$this->overrideConfigValue(
-			'CheckUserGBtoollink', [ 'centralDB' => 'otherwiki', 'groups' => [ 'globalblock' ] ]
+			'CheckUserGBtoollink',
+			[ 'centralDB' => 'otherwiki', 'groups' => [ 'globalblock' ] ]
 		);
 
 		// Make the test user have the necessary groups based on the configured rights they should have.
@@ -551,7 +707,8 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerTestBase {
 
 			if ( $hasGlobalBlockRights || $hasGlobalLockRights ) {
 				$this->assertStringContainsString(
-					'(checkuser-massblock-text-without-local-block-buttons', $fieldsetHtml
+					'(checkuser-massblock-text-without-local-block-buttons',
+					$fieldsetHtml
 				);
 			}
 		}

@@ -31,7 +31,6 @@
 	"oathauth-login-failed": "പരിശോധന പരാജയപ്പെട്ടു.",
 	"oathauth-describe-provider": "ദ്വി-ഘടക സാധൂകരണം (OATH).",
 	"grant-oath": "തന്റെയും മറ്റുള്ളവരുടെയും ദ്വി-ഘടക സാധൂകരണ (OATH) വിവരങ്ങൾ എടുക്കാൻ സാധിക്കുക",
-	"right-oathauth-api-all": "തന്റെയും മറ്റുള്ളവരുടെയും OATH വിവരങ്ങൾ ആവശ്യപ്പെടാനും പരിശോധിക്കാനും കഴിയുക",
 	"oathauth-ui-no-module": "ഒന്നും സജ്ജമാക്കിയിട്ടില്ല",
 	"oathauth-module-totp-label": "ടി.ഒ.ടി.പി. (ഒറ്റത്തവണ ചീട്ട്)",
 	"oathauth-ui-manage": "കൈകാര്യം ചെയ്യുക",
@@ -39,6 +38,5 @@
 	"oathauth-enable-generic": "സജ്ജമാക്കുക",
 	"oathauth-disable-generic": "നിർജ്ജീവമാക്കുക",
 	"oathauth-disable-page-title": "$1 നിർജ്ജീവമാക്കുക",
-	"oathauth-enable-page-title": "$1 സജ്ജമാക്കുക",
-	"oathauth-ui-available-modules": "ലഭ്യമായ മാർഗ്ഗങ്ങൾ"
+	"oathauth-enable-page-title": "$1 സജ്ജമാക്കുക"
 }

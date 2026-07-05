@@ -1,33 +1,11 @@
-import MWBot from 'mwbot';
-import { mwbot } from 'wdio-mediawiki/Api.js';
+import { createApiClient } from 'wdio-mediawiki/Api.js';
 import ArticlePageWithOverlay from '../support/pages/article_page_with_overlay.js';
 import { waitForModuleState } from 'wdio-mediawiki/Util.js';
 import { ArticlePage, UserLoginPage } from '../support/world.js';
 
-const createPages = async ( pages ) => {
-	const summary = 'edit by selenium test';
-	const bot = new MWBot();
-	await bot.loginGetEditToken( {
-		username: browser.options.username,
-		password: browser.options.password,
-		apiUrl: `${ browser.options.baseUrl }/api.php`
-	} );
-
-	try {
-		await bot.batch(
-			pages.map( ( page ) => [ 'create' ].concat( page ).concat( [ summary ] ) )
-		);
-	} catch ( err ) {
-		if ( err.code === 'articleexists' ) {
-			return;
-		}
-		throw err;
-	}
-};
-
 const createPage = async ( title, wikitext ) => {
-	const bot = await mwbot();
-	await bot.edit( title, wikitext );
+	const api = await createApiClient();
+	await api.edit( title, wikitext );
 };
 
 const iAmUsingTheMobileSite = async () => {
@@ -98,7 +76,7 @@ export {
 	iAmUsingMobileScreenResolution,
 	iClickTheOverlayCloseButton,
 	iClickTheBrowserBackButton,
-	createPage, createPages,
+	createPage,
 	pageExistsWithText,
 	pageExists, iAmOnAPageThatDoesNotExist, iShouldSeeAToastNotification,
 	iShouldSeeAToastNotificationWithMessage,

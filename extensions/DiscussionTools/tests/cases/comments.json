@@ -120,18 +120,18 @@
 		"data": "../data/itwiki-data.json"
 	},
 	{
-		"name": "srwiki sr-ec variant",
+		"name": "srwiki sr-cyrl variant",
 		"title": "Википедија:Трг/Архива/Техника/35",
-		"dom": "cases/sr-ec/sr-ec.html",
-		"expected": "../cases/sr-ec/sr-ec.json",
+		"dom": "cases/sr-cyrl/sr-cyrl.html",
+		"expected": "../cases/sr-cyrl/sr-cyrl.json",
 		"config": "../data/srwiki-config.json",
 		"data": "../data/srwiki-data.json"
 	},
 	{
-		"name": "srwiki sr-el variant",
+		"name": "srwiki sr-latn variant",
 		"title": "Википедија:Trg/Arhiva/Tehnika/35",
-		"dom": "cases/sr-el/sr-el.html",
-		"expected": "../cases/sr-el/sr-el.json",
+		"dom": "cases/sr-latn/sr-latn.html",
+		"expected": "../cases/sr-latn/sr-latn.json",
 		"config": "../data/srwiki-config.json",
 		"data": "../data/srwiki-data.json"
 	},

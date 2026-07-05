@@ -29,10 +29,8 @@ class AttachLatestTest extends MaintenanceBaseTestCase {
 			$returnArray[$existingTestPage->getRevisionRecord()->getId()] = $existingTestPage->getTitle();
 		}
 		// Set the page_latest as 0 for the test on all pages in $returnArray
-		$pageIds = array_map( static function ( $page ) {
-			return $page->getId();
-		}, $returnArray );
-		if ( count( $pageIds ) ) {
+		$pageIds = array_map( static fn ( $page ) => $page->getId(), $returnArray );
+		if ( $pageIds ) {
 			$this->getDb()->newUpdateQueryBuilder()
 				->update( 'page' )
 				->set( [ 'page_latest' => 0 ] )

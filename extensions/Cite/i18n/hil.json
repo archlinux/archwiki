@@ -26,8 +26,6 @@
 	"cite_error_empty_references_define": "<code><ref></code> tag nga may ngalan nga \" $1 \" nga ginhatagan kahulugan sa <code><references></code> nga grupo \" $2 \" wala sing kaundan.",
 	"cite-tracking-category-cite-error": "Mga pahina nga may mga sayop sa reperensya",
 	"cite-tracking-category-cite-error-desc": "Ang mga pahina sa sini nga kategorya may mga sayop sa paggamit sang mga tag sang reperensya.",
-	"cite-tracking-category-cite-diffing-error": "Mga pahina nga may mga sayop sa reperensya nga nagapukaw sang mga kalainan sa biswal",
-	"cite-tracking-category-cite-diffing-error-desc": "Ang mga pahina sa sini nga kategorya may mga sayop sa paggamit sang mga tag sang mga reperensya, kag ining mga sayop wala gina-render sa pareho nga paagi sa legacy parser kag sa Parsoid.",
 	"cite-reference-previews-reference": "Reperensya",
 	"cite-reference-previews-book": "Reperensya sa libro",
 	"cite-reference-previews-journal": "Reperensya sa journal",

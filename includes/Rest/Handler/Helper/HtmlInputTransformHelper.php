@@ -7,10 +7,10 @@ namespace MediaWiki\Rest\Handler\Helper;
 
 use InvalidArgumentException;
 use MediaWiki\Content\Content;
+use MediaWiki\Content\UnknownContentModelException;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
-use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Language\LanguageCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
@@ -368,13 +368,14 @@ class HtmlInputTransformHelper {
 		} elseif ( !empty( $original['html'] ) || !empty( $original['data-parsoid'] ) ) {
 			// NOTE: We might have an incomplete HtmlPageBundle here, with no HTML but with data-parsoid!
 			// XXX: Do we need to support that, or can that just be a 400?
-			$originalRendering = new HtmlPageBundle(
-				$original['html']['body'] ?? '',
-				$original['data-parsoid']['body'] ?? null,
-				$original['data-mw']['body'] ?? null,
-				null, // will be derived from $original['html']['headers']['content-type']
-				$original['html']['headers'] ?? []
-			);
+			$originalRendering = HtmlPageBundle::newFromJsonArray( [
+				'html' => $original['html']['body'] ?? '',
+				'parsoid' => $original['data-parsoid']['body'] ?? null,
+				'mw' => $original['data-mw']['body'] ?? null,
+				'counters' => $original['counters']['body'] ?? null,
+				'version' => null, // will be derived from $original['html']['headers']['content-type']
+				'headers' => $original['html']['headers'] ?? []
+			] );
 		}
 
 		if ( !$originalRevision && !empty( $original['revid'] ) ) {
@@ -390,7 +391,6 @@ class HtmlInputTransformHelper {
 					->setLabel( 'original_html_given', 'false' )
 					->setLabel( 'page_exists', 'true' )
 					->setLabel( 'status', 'unknown' )
-					->copyToStatsdAt( 'html_input_transform.original_html.not_given.page_exists' )
 					->increment();
 			} else {
 				$this->statsFactory
@@ -398,7 +398,6 @@ class HtmlInputTransformHelper {
 					->setLabel( 'original_html_given', 'false' )
 					->setLabel( 'page_exists', 'false' )
 					->setLabel( 'status', 'unknown' )
-					->copyToStatsdAt( 'html_input_transform.original_html.not_given.page_not_exist' )
 					->increment();
 			}
 		}
@@ -460,7 +459,6 @@ class HtmlInputTransformHelper {
 					->setLabel( 'original_html_given', 'as_renderid' )
 					->setLabel( 'page_exists', 'unknown' )
 					->setLabel( 'status', 'bad_renderid' )
-					->copyToStatsdAt( 'html_input_transform.original_html.given.as_renderid.bad' )
 					->increment();
 				throw new LocalizedHttpException( new MessageValue( "rest-bad-stash-key" ),
 					400,
@@ -509,14 +507,12 @@ class HtmlInputTransformHelper {
 					->setLabel( 'original_html_given', 'as_revid' )
 					->setLabel( 'page_exists', 'unknown' )
 					->setLabel( 'status', 'found' )
-					->copyToStatsdAt( 'html_input_transform.original_html.given.as_revid.found' )
 					->increment();
 			} else {
 				$this->statsFactory->getCounter( 'html_input_transform_total' )
 					->setLabel( 'original_html_given', 'as_revid' )
 					->setLabel( 'page_exists', 'unknown' )
 					->setLabel( 'status', 'not_found' )
-					->copyToStatsdAt( 'html_input_transform.original_html.given.as_revid.not_found' )
 					->increment();
 			}
 		} elseif ( $originalRendering ) {
@@ -524,12 +520,11 @@ class HtmlInputTransformHelper {
 				->setLabel( 'original_html_given', 'true' )
 				->setLabel( 'page_exists', 'unknown' )
 				->setLabel( 'status', 'verbatim' )
-				->copyToStatsdAt( 'html_input_transform.original_html.given.verbatim' )
 				->increment();
 		}
 
 		if ( $originalRendering instanceof ParserOutput ) {
-			$originalRendering = PageBundleParserOutputConverter::pageBundleFromParserOutput( $originalRendering );
+			$originalRendering = PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $originalRendering );
 
 			// NOTE: Use the default if we got a ParserOutput object.
 			//       Don't apply the default if we got passed a HtmlPageBundle,
@@ -599,7 +594,7 @@ class HtmlInputTransformHelper {
 				413,
 				[ 'reason' => $e->getMessage() ]
 			);
-		} catch ( MWUnknownContentModelException $e ) {
+		} catch ( UnknownContentModelException $e ) {
 			throw new LocalizedHttpException(
 				new MessageValue( "rest-unknown-content-model", [ $e->getModelId() ] ),
 				400
@@ -715,7 +710,6 @@ class HtmlInputTransformHelper {
 		$counter = $this->statsFactory->getCounter( 'html_input_transform_total' );
 		if ( $selserContext ) {
 			$counter->setLabels( $labels )
-				->copyToStatsdAt( 'html_input_transform.original_html.given.as_renderid.stash_hit.found.hit' )
 				->increment();
 			return $selserContext;
 		} else {
@@ -727,9 +721,7 @@ class HtmlInputTransformHelper {
 
 				if ( !$parserOutput ) {
 					$labels[ 'status' ] = 'miss-fallback_not_found';
-					$counter->setLabels( $labels )->copyToStatsdAt(
-						'html_input_transform.original_html.given.as_renderid.stash_miss_pc_fallback.not_found.miss'
-					)->increment();
+					$counter->setLabels( $labels )->increment();
 					return null;
 				}
 
@@ -737,10 +729,6 @@ class HtmlInputTransformHelper {
 				if ( $cachedRenderID->getKey() !== $renderID->getKey() ) {
 					$labels[ 'status' ] = 'mismatch-fallback_not_found';
 					$counter->setLabels( $labels )
-						->copyToStatsdAt(
-							'html_input_transform.original_html.given.as_renderid.' .
-							'stash_miss_pc_fallback.not_found.mismatch'
-						)
 						->increment();
 
 					// It's not the correct rendering.
@@ -748,21 +736,13 @@ class HtmlInputTransformHelper {
 				}
 				$labels[ 'status' ] = 'hit-fallback_found';
 				$counter->setLabels( $labels )
-					->copyToStatsdAt(
-						'html_input_transform.original_html.given.as_renderid.' .
-						'stash_miss_pc_fallback.found.hit'
-					)
 					->increment();
 
-				$pb = PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput );
+				$pb = PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $parserOutput );
 				return new SelserContext( $pb, $renderID->getRevisionID() );
 			} catch ( HttpException ) {
 				$labels[ 'status' ] = 'failed-fallback_not_found';
 				$counter->setLabels( $labels )
-					->copyToStatsdAt(
-						'html_input_transform.original_html.given.as_renderid.' .
-						'stash_miss_pc_fallback.not_found.failed'
-					)
 					->increment();
 
 				// If the revision isn't found, don't trigger a 404. Return null to trigger a 412.
@@ -782,6 +762,11 @@ class HtmlInputTransformHelper {
 		if ( $status->hasMessage( 'parsoid-resource-limit-exceeded' ) ) {
 			throw new LocalizedHttpException( new MessageValue( "rest-parsoid-resource-exceeded" ),
 				413,
+				[ 'reason' => $status->getHTML() ]
+			);
+		} elseif ( $status->hasMessage( 'missing-revision-permission' ) ) {
+			throw new LocalizedHttpException( new MessageValue( 'rest-permission-denied-revision' ),
+				403,
 				[ 'reason' => $status->getHTML() ]
 			);
 		} else {

@@ -1,13 +1,13 @@
 import EditPage from '../pageobjects/edit.page.js';
-import { mwbot } from 'wdio-mediawiki/Api.js';
+import { createApiClient } from 'wdio-mediawiki/Api.js';
 import LoginPage from 'wdio-mediawiki/LoginPage.js';
 
 describe( 'TemplateData users can favorite templates via VisualEditor', function () {
 
 	before( async function () {
-		const bot = await mwbot();
-		await bot.edit( 'Template:Without_TemplateData_1', 'Template 1.' );
-		await bot.edit( 'Template:Without_TemplateData_2', 'Template 2.' );
+		const api = await createApiClient();
+		await api.edit( 'Template:Without_TemplateData_1', 'Template 1.' );
+		await api.edit( 'Template:Without_TemplateData_2', 'Template 2.' );
 		if ( !await EditPage.openTemplateInsertionDialog() ) {
 			this.skip();
 		}

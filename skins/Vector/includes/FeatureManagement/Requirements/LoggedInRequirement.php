@@ -31,20 +31,14 @@ use MediaWiki\User\UserIdentity;
  */
 class LoggedInRequirement implements Requirement {
 
-	private UserIdentity $user;
-
-	/**
-	 * The name of the requirement
-	 */
-	private string $name;
-
 	/**
 	 * @param UserIdentity $user
 	 * @param string $name The name of the requirement
 	 */
-	public function __construct( UserIdentity $user, string $name ) {
-		$this->user = $user;
-		$this->name = $name;
+	public function __construct(
+		private readonly UserIdentity $user,
+		private readonly string $name,
+	) {
 	}
 
 	/**

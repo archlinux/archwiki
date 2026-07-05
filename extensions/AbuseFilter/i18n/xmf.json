@@ -193,7 +193,7 @@
 	"abusefilter-edit-builder-op-bool-or": "ვარ-და (|)",
 	"abusefilter-edit-builder-group-misc": "შხვადოშხვანერი",
 	"abusefilter-edit-builder-group-funcs": "ფუნქციეფი",
-	"abusefilter-edit-builder-vars-accountname": "ანგარიშიშ ჯოხო (გოჭყაფაშ ბორჯის)",
+	"abusefilter-edit-builder-vars-account-name": "ანგარიშიშ ჯოხო (გოჭყაფაშ ბორჯის)",
 	"abusefilter-edit-builder-vars-action": "ქიმინუა",
 	"abusefilter-edit-builder-vars-addedlines": "ღოზიშ დინოძინა",
 	"abusefilter-edit-builder-vars-delta": "ზჷმაშ თირუა რედაქტირაფას",

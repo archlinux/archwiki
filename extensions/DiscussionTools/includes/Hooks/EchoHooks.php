@@ -48,16 +48,16 @@ class EchoHooks implements
 			'group' => 'interactive',
 			'section' => 'message',
 			'user-locators' => [
-				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
+				[ EventDispatcher::locateSubscribedUsers( ... ) ]
 			],
 			// Exclude mentioned users and talk page owner from our notification, to avoid
 			// duplicate notifications for a single comment
 			'user-filters' => [
 				[
-					[ UserLocator::class, 'locateFromEventExtra' ],
+					UserLocator::locateFromEventExtra( ... ),
 					[ 'mentioned-users' ]
 				],
-				[ [ UserLocator::class, 'locateTalkPageOwner' ] ],
+				[ UserLocator::locateTalkPageOwner( ... ) ],
 			],
 			'presentation-model' => SubscribedNewCommentPresentationModel::class,
 			'bundle' => [
@@ -78,7 +78,7 @@ class EchoHooks implements
 			'group' => 'interactive',
 			'section' => 'message',
 			'user-locators' => [
-				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
+				[ EventDispatcher::locateSubscribedUsers( ... ) ]
 			],
 			'presentation-model' => RemovedTopicPresentationModel::class,
 			'bundle' => [
@@ -92,7 +92,7 @@ class EchoHooks implements
 			'group' => 'interactive',
 			'section' => 'message',
 			'user-locators' => [
-				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
+				[ EventDispatcher::locateSubscribedUsers( ... ) ]
 			],
 			'presentation-model' => AddedTopicPresentationModel::class,
 			'bundle' => [
@@ -109,7 +109,7 @@ class EchoHooks implements
 				'section' => 'message',
 				'user-locators' => [
 					[
-						[ UserLocator::class, 'locateFromEventExtra' ],
+						UserLocator::locateFromEventExtra( ... ),
 						[ 'thanked-user-id' ]
 					]
 				],

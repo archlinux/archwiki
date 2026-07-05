@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Guycn2"
+		]
+	},
+	"oathauth-webauthn-module-label": "מפתח אבטחה",
+	"oathauth-webauthn-javascript-required": "יש להפעיל JavaScript בדפדפן שלך כדי להשתמש במפתח אבטחה.",
+	"oathauth-webauthn-ui-login-prompt": "נא לגעת במפתח האבטחה שלך או לעקוב אחר ההוראות בדפדפן.",
+	"oathauth-webauthn-ui-add-key": "הוספת מפתח",
+	"oathauth-webauthn-error-browser-unsupported": "הדפדפן הזה אינו תומך באימות במפתח אבטחה או שזה לא זמין עבור האתר הזה. נא לנסות עם דפדפן אחר. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support מידע נוסף]",
+	"oathauth-webauthn-error-browser-unsupported-console": "הדפדפן הזה אינו תומך באימות במפתח אבטחה או שזה לא זמין עבור האתר הזה.",
+	"oathauth-webauthn-error-auth-generic": "תהליך האימות נקטע. נא להתחיל את תהליך האימות שוב.",
+	"oathauth-webauthn-error-reg-generic": "לא היה אפשר לאמת את המפתח שלך. נא להתחיל את תהליך הרישום שוב.",
+	"oathauth-webauthn-registered-keys-section-name": "מפתחות רשומים",
+	"oathauth-webauthn-ui-remove-key": "הסרה",
+	"oathauth-webauthn-error-module-not-enabled": "המודול \"$1\" לא מופעל עבור {{GENDER:$2|משתמש \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "האימות ב־WebAuthn נכשל.",
+	"oathauth-webauthn-error-credentials-missing": "נתוני ההזדהות לא נשלחו.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|המשתמש|המשתמשת}} \"$1\" לא יכול לרשום נתון האמנה חדש.",
+	"oathauth-webauthn-error-invalid-new-key": "מפתח חדש שהוחזר על־ידי מודול לא שייך לסוג הדרוש.",
+	"oathauth-webauthn-error-registration-failed": "רישום מפתח חדש נכשל.",
+	"oathauth-webauthn-ui-key-register-help": "נא לבחור כינוי למפתח שלך.",
+	"oathauth-webauthn-error-cannot-remove-key": "לא ניתן להסיר מפתח.",
+	"oathauth-webauthn-error-get-authinfo-fail": "לא ניתן לאחזר מידע על אימות.",
+	"oathauth-webauthn-add-key-section-name": "לרשום מפתח אבטחה חדש",
+	"oathauth-webauthn-error-get-reginfo-fail": "לא ניתן לאחזר מידע על רישום.",
+	"oathauth-webauthn-module-description": "שירות WebAuthn נמצא במצב ניסיוני. כרגע אין אפשרות שחזור עבור מכשירי אימות שאבדו או ניזוקו.\n\n[https://en.wikipedia.org/wiki/WebAuthn מידע נוסף על WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "רענון הדף",
+	"oathauth-webauthn-authentication-info-label": "נתוני האימות",
+	"oathauth-webauthn-authentication-info-help": "נתוני האימות הועברו ללקוח לשם אחזור נתוני הזדהות",
+	"oathauth-webauthn-credential-label": "נתוני הזדהות משתמש",
+	"oathauth-webauthn-credential-help": "נתון הזדהות משתמש מבוסס על נתוני אימות",
+	"oathauth-webauthn-add-security-key": "הוספת מפתח אבטחה",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "להשתמש במפתח אבטחה או במפתח גישה"
+}

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"scribunto-desc": "Interfejs za inkorporiranje skriptnih jezika u stranice MediaWikija",

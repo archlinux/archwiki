@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\CheckUser\Pagers;
 
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserLogPager;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserLogPager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\User\ActorStore;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -13,14 +13,19 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserLogPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserLogPager
  */
 class CheckUserLogPagerTest extends MediaWikiUnitTestCase {
-	private function commonGetPerformerSearchConds( string $initiatorName, $mockReturnValue ) {
+
+	/**
+	 * @return CheckUserLogPager
+	 */
+	private function commonGetPerformerSearchConds( string $initiatorName, ?int $mockReturnValue ) {
 		$objectUnderTest = $this->getMockBuilder( CheckUserLogPager::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [] )
 			->getMock();
+		/** @var CheckUserLogPager $objectUnderTest */
 		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
 		$mockActorStore = $this->createMock( ActorStore::class );
 		$mockDbr = $this->createMock( IReadableDatabase::class );

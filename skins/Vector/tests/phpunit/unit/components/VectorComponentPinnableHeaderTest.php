@@ -21,10 +21,10 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use MediaWiki\Skins\Vector\Components\VectorComponentPinnableHeader;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 
 /**
  * @group Vector
@@ -47,8 +47,6 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 				'id' => 'vector-example',
 				// Feature name for persistent state tracking.
 				'featureName' => 'example-pinned',
-				// Indicates the header is expected to move in the DOM.
-				'moveElement' => true,
 				// The type of label tag to be used.
 				'labelTagName' => 'div'
 			],
@@ -60,8 +58,6 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 				'id' => 'vector-another-example',
 				// Feature name for tracking state.
 				'featureName' => 'another-example-pinned',
-				// Indicates the header will not move in the DOM.
-				'moveElement' => false,
 				// The type of label tag to be used, in this case, an h2.
 				'labelTagName' => 'h2'
 			],
@@ -74,7 +70,7 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 	 * @covers ::getTemplateData
 	 * @dataProvider provideTestCases
 	 */
-	public function testGetTemplateData( $pinned, $id, $featureName, $moveElement, $labelTagName ) {
+	public function testGetTemplateData( $pinned, $id, $featureName, $labelTagName ) {
 		// Mocking the MessageLocalizer to provide predictable responses for given message keys.
 		$localizer = $this->createMock( MessageLocalizer::class );
 		$localizer->method( 'msg' )->willReturnCallback( function ( $key ) {
@@ -90,7 +86,6 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 			$pinned,
 			$id,
 			$featureName,
-			$moveElement,
 			$labelTagName
 		);
 
@@ -105,14 +100,7 @@ class VectorComponentPinnableHeaderTest extends MediaWikiUnitTestCase {
 		$this->assertStringEndsWith( '-mocked-label', $templateData['unpin-label'] );
 		$this->assertEquals( $id, $templateData['data-pinnable-element-id'] );
 		$this->assertEquals( $featureName, $templateData['data-feature-name'] );
-
-		// Additional checks for elements' IDs when the element can move.
-		if ( $moveElement ) {
-			$this->assertEquals( $id . '-unpinned-container', $templateData['data-unpinned-container-id'] );
-			$this->assertEquals( $id . '-pinned-container', $templateData['data-pinned-container-id'] );
-		} else {
-			$this->assertArrayNotHasKey( 'data-unpinned-container-id', $templateData );
-			$this->assertArrayNotHasKey( 'data-pinned-container-id', $templateData );
-		}
+		$this->assertEquals( $id . '-unpinned-container', $templateData['data-unpinned-container-id'] );
+		$this->assertEquals( $id . '-pinned-container', $templateData['data-pinned-container-id'] );
 	}
 }

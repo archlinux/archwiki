@@ -16,6 +16,75 @@ ve.dm.citeExample.createExampleDocument = function ( name, store, base ) {
 		name, store, ve.dm.citeExample, base || ve.dm.citeExample.baseUri );
 };
 
+// A simple document with a reference without internalData
+ve.dm.citeExample.simpleRef = [
+	{ type: 'paragraph' },
+	'B', 'a', 'r',
+	{
+		type: 'mwReference',
+		attributes: {
+			contentsUsed: true,
+			listGroup: 'mwReference/',
+			listIndex: 0,
+			listKey: 'auto/0',
+			mw: {
+				attrs: {},
+				body: { html: 'Foo' },
+				name: 'ref'
+			},
+			originalMw: '{"name":"ref","body":{"html":"Foo"},"attrs":{}}',
+			refGroup: ''
+		}
+	},
+	{ type: '/mwReference' },
+	{ type: '/paragraph' },
+	{ type: 'internalList' },
+	{ type: 'internalItem' },
+	{ type: 'paragraph' },
+	'F', 'o', 'o',
+	{ type: '/paragraph' },
+	{ type: '/internalItem' },
+	{ type: '/internalList' }
+];
+
+ve.dm.citeExample.simpleRefsWithGroup = [
+	{ type: 'paragraph' },
+	'B', 'a', 'r',
+	{
+		type: 'mwReference',
+		attributes: {
+			contentsUsed: true,
+			listGroup: 'mwReference/',
+			listIndex: 0,
+			listKey: 'literal/book',
+			refGroup: ''
+		}
+	},
+	{ type: '/mwReference' },
+	{
+		type: 'mwReference',
+		attributes: {
+			listGroup: 'mwReference/g1',
+			listIndex: 1,
+			listKey: 'literal/book',
+			refGroup: 'g1'
+		}
+	},
+	{ type: '/mwReference' },
+	{ type: '/paragraph' },
+	{ type: 'internalList' },
+	{ type: 'internalItem' },
+	{ type: 'paragraph' },
+	'F', 'o', 'o',
+	{ type: '/paragraph' },
+	{ type: 'paragraph' },
+	'B', 'a', 'r',
+	{ type: '/paragraph' },
+	{ type: '/internalItem' },
+	{ type: '/internalList' }
+];
+
+// A document with a few references without internalData
 ve.dm.citeExample.references = [
 	{ type: 'paragraph' },
 	{
@@ -173,6 +242,7 @@ ve.dm.citeExample.references = [
 	{ type: '/internalList' }
 ];
 
+// A document with a references and a nested reference including internalData
 ve.dm.citeExample.complexInternalData = [
 	// 0
 	{ type: 'paragraph' },
@@ -204,7 +274,7 @@ ve.dm.citeExample.complexInternalData = [
 		about: '#mwt2',
 		listIndex: 1,
 		listGroup: 'mwReference/',
-		listKey: 'foo',
+		listKey: 'literal/foo',
 		refGroup: '',
 		contentsUsed: true
 	} },
@@ -234,17 +304,19 @@ ve.dm.citeExample.complexInternalData = [
 ];
 
 ve.dm.citeExample.complexInternalData.internalItems = [
-	{ group: 'mwReference', key: null, body: 'First reference' },
-	{ group: 'mwReference', key: 'foo', body: 'Table in ref: <table><tr><td>because I can</td></tr></table>' }
+	{ group: 'mwReference/', key: 'auto/0', body: 'First reference' },
+	{ group: 'mwReference/', key: 'literal/foo', body: 'Table in ref: <table><tr><td>because I can</td></tr></table>' }
 ];
 
 ve.dm.citeExample.complexInternalData.internalListNextUniqueNumber = 1;
 
 // TODO: Rewrite for details syntax
+// A document using sub-references without internalData
 ve.dm.citeExample.subReferencing = [
 	{ type: 'paragraph' },
 	{ type: 'mwReference', attributes: {
-		mainRefKey: 'literal/ldr',
+		mainListKey: 'literal/ldr',
+		mainListIndex: 1,
 		listIndex: 0,
 		listGroup: 'mwReference/',
 		listKey: 'auto/0',
@@ -252,15 +324,16 @@ ve.dm.citeExample.subReferencing = [
 	} },
 	{ type: '/mwReference' },
 	{ type: 'mwReference', attributes: {
-		listIndex: 1,
+		listIndex: 2,
 		listGroup: 'mwReference/',
 		listKey: 'auto/1',
 		refGroup: ''
 	} },
 	{ type: '/mwReference' },
 	{ type: 'mwReference', attributes: {
-		mainRefKey: 'literal/nonexistent',
-		listIndex: 2,
+		mainListKey: 'literal/nonexistent',
+		mainListIndex: 4,
+		listIndex: 3,
 		listGroup: 'mwReference/',
 		listKey: 'literal/orphaned',
 		refGroup: ''
@@ -273,7 +346,7 @@ ve.dm.citeExample.subReferencing = [
 	} },
 	{ type: 'paragraph' },
 	{ type: 'mwReference', attributes: {
-		listIndex: 3,
+		listIndex: 1,
 		listGroup: 'mwReference/',
 		listKey: 'literal/ldr',
 		refGroup: ''
@@ -289,12 +362,19 @@ ve.dm.citeExample.subReferencing = [
 	{ type: '/internalItem' },
 	{ type: 'internalItem' },
 	{ type: 'paragraph' },
-	'O', 't', 'h', 'e', 'r',
+	'L', 'i', 's', 't', '-', 'd', 'e', 'f', 'i', 'n', 'e', 'd',
 	{ type: '/paragraph' },
 	{ type: '/internalItem' },
 	{ type: 'internalItem' },
 	{ type: 'paragraph' },
-	'L', 'i', 's', 't', '-', 'd', 'e', 'f', 'i', 'n', 'e', 'd',
+	'O', 't', 'h', 'e', 'r',
+	{ type: '/paragraph' },
+	{ type: '/internalItem' },
+	{ type: 'internalItem' },
+	{ type: '/internalItem' },
+	{ type: 'internalItem' },
+	{ type: 'paragraph' },
+	'M', 'a', 'i', 'n', ' ', 'n', 'o', ' ', 'n', 'o', 'd', 'e',
 	{ type: '/paragraph' },
 	{ type: '/internalItem' },
 	{ type: '/internalList' }

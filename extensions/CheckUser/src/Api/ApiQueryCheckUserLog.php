@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api;
+namespace MediaWiki\Extension\CheckUser\Api;
 
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryBase;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\User\UserFactory;
 use Wikimedia\IPUtils;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -16,21 +16,14 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  * CheckUser API Query Module
  */
 class ApiQueryCheckUserLog extends ApiQueryBase {
-	private CommentStore $commentStore;
-	private CheckUserLogService $checkUserLogService;
-	private UserFactory $userFactory;
-
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
-		CommentStore $commentStore,
-		CheckUserLogService $checkUserLogService,
-		UserFactory $userFactory
+		private readonly CommentStore $commentStore,
+		private readonly CheckUserLogService $checkUserLogService,
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct( $query, $moduleName, 'cul' );
-		$this->commentStore = $commentStore;
-		$this->checkUserLogService = $checkUserLogService;
-		$this->userFactory = $userFactory;
 	}
 
 	public function execute() {

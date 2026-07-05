@@ -20,8 +20,8 @@ function createScreenshotEnvironment( test ) {
 				browserName: process.env.BROWSER,
 				platform: process.env.PLATFORM,
 				screenResolution: '1280x1024',
-				username: username,
-				accessKey: accessKey
+				username,
+				accessKey
 			} ).usingServer( 'http://' + username + ':' + accessKey +
 				'@ondemand.saucelabs.com:80/wd/hub' ).build();
 		} else {
@@ -94,6 +94,7 @@ function createScreenshotEnvironment( test ) {
 					const imageBuffer = Buffer.from( base64Image, 'base64' );
 					return cropScreenshot( filename, imageBuffer, rect, padding );
 				} else {
+					// eslint-disable-next-line security/detect-non-literal-fs-filename
 					fs.writeFile( filename, base64Image, 'base64' );
 				}
 			} ).then( () => {

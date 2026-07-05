@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Request\WebRequest;
 use Wikimedia\Minify\CSSMin;
 
 /**
@@ -17,7 +18,7 @@ use Wikimedia\Minify\CSSMin;
  * @ingroup ResourceLoader
  * @internal
  */
-class SkinModule extends LessVarFileModule {
+class SkinModule extends FileModule {
 
 	/**
 	 * Every skin should define which features it would like to reuse for core inside a
@@ -442,12 +443,13 @@ class SkinModule extends LessVarFileModule {
 	 *
 	 * @param array $featureStyles
 	 * @param array $parentStyles
+	 * @param WebRequest $request
 	 *
 	 * @return array
 	 */
-	private function combineFeatureAndParentStyles( $featureStyles, $parentStyles ) {
-		$combinedFeatureStyles = ResourceLoader::makeCombinedStyles( $featureStyles );
-		$combinedParentStyles = ResourceLoader::makeCombinedStyles( $parentStyles );
+	private function combineFeatureAndParentStyles( $featureStyles, $parentStyles, $request ) {
+		$combinedFeatureStyles = ResourceLoader::makeCombinedStyles( $featureStyles, $request );
+		$combinedParentStyles = ResourceLoader::makeCombinedStyles( $parentStyles, $request );
 		$combinedStyles = array_merge( $combinedFeatureStyles, $combinedParentStyles );
 		return [ '' => $combinedStyles ];
 	}
@@ -477,15 +479,6 @@ class SkinModule extends LessVarFileModule {
 				$featureStyles['all'][] = '.mw-wiki-logo { ' .
 					'background-size: 135px auto; }';
 			} else {
-				if ( isset( $logo['1.5x'] ) ) {
-					$featureStyles[
-						'(-webkit-min-device-pixel-ratio: 1.5), ' .
-						'(min-resolution: 1.5dppx), ' .
-						'(min-resolution: 144dpi)'
-					][] = '.mw-wiki-logo { background-image: ' .
-						CSSMin::buildUrlValue( $logo['1.5x'] ) . ';' .
-						'background-size: 135px auto; }';
-				}
 				if ( isset( $logo['2x'] ) ) {
 					$featureStyles[
 						'(-webkit-min-device-pixel-ratio: 2), ' .
@@ -516,8 +509,55 @@ class SkinModule extends LessVarFileModule {
 		if ( $isLogoFeatureEnabled ) {
 			$featureStyles = $this->generateAndAppendLogoStyles( $featureStyles, $context );
 		}
+		$isAccessibilityEnabled = in_array( 'accessibility', $this->features );
 
-		return $this->combineFeatureAndParentStyles( $featureStyles, $parentStyles );
+		$config = $this->getConfig();
+		$limits = $config->get( 'ThumbLimits' );
+
+		// Note this is currently restricted to Parsoid.
+		// @todo: Pending feedback on T375981 it can be extended to legacy parser as well.
+		// @todo: these may be converted to em units at later point in project (pending feedback)
+		// @todo: This may be moved to a dedicated module later on to group user customizations
+		// (for example the underline user preference currently residing in `content-links` feature.
+		if ( $isAccessibilityEnabled ) {
+			$smallSize = max( 180, min( $limits ) );
+			$defaultSize = $limits[
+				$config->get( 'DefaultUserOptions' )[ 'thumbsize' ]
+			];
+			$largeSize = max( $limits );
+			$imgSelectors = [
+				'.mw-parser-output[data-mw-parsoid-version] .mw-default-size img' .
+				'[ width="' . $defaultSize . '" ]',
+				'.mw-parser-output[data-mw-parsoid-version] .mw-default-size img.mw-file-upright',
+			];
+			// Restrict to width='$defaultSize' to prevent upscaling images which were
+			// originally smaller than the default thumbnail size (T417828)
+			foreach ( $imgSelectors as $imgSelector ) {
+				$featureStyles['all'][] = $imgSelector .
+					' { height: auto; width: ' . self::makeThumbCalc( $defaultSize ) .
+						'; width: ' . self::makeThumbCalc( $defaultSize, true ) . '; }';
+				$featureStyles['all'][] = 'html.skin-theme-clientpref-thumb-small ' .
+					$imgSelector . ' { width: ' . self::makeThumbCalc( $smallSize ) .
+						'; width: ' . self::makeThumbCalc( $smallSize, true ) . '; }';
+				$featureStyles['all'][] = 'html.skin-theme-clientpref-thumb-large ' .
+					$imgSelector . ' { width: ' . self::makeThumbCalc( $largeSize ) .
+						'; width: ' . self::makeThumbCalc( $largeSize, true ) . '; }';
+			}
+		}
+
+		return $this->combineFeatureAndParentStyles( $featureStyles, $parentStyles, $context->getRequest() );
+	}
+
+	/**
+	 * @param int $size
+	 * @param bool $round apply the CSS round function. This is not supported in
+	 *   some recent browsers e.g. Firefox 115esr.
+	 *   See https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/round.
+	 * @return string
+	 */
+	private static function makeThumbCalc( int $size, bool $round = false ) {
+		$val = $size . 'px * var( --mw-file-upright, 1 )';
+		return $round ? 'calc( round( ' . $val . ', 10px ) )' : 'calc(' . $val . ')';
 	}
 
 	public function getPreloadLinks( Context $context ): array {
@@ -538,34 +578,18 @@ class SkinModule extends LessVarFileModule {
 			return [ $logo['svg'] => [ 'as' => 'image' ] ];
 		}
 
-		$logosPerDppx = [];
-		foreach ( $logo as $dppx => $src ) {
-			// Keys are in this format: "1.5x"
-			$dppx = substr( $dppx, 0, -1 );
-			$logosPerDppx[$dppx] = $src;
-		}
-
-		// Because PHP can't have floats as array keys
-		uksort( $logosPerDppx, static function ( $a, $b ) {
-			$a = floatval( $a );
-			$b = floatval( $b );
-			// Sort from smallest to largest (e.g. 1x, 1.5x, 2x)
-			return $a <=> $b;
-		} );
-
 		$logos = [];
-		foreach ( $logosPerDppx as $dppx => $src ) {
-			$logos[] = [
-				'dppx' => $dppx,
-				'src' => $src
-			];
+		foreach ( $logo as $dppx => $src ) {
+			// Keys are in this format: "2x"
+			$logos[] = [ 'dppx' => (float)$dppx, 'src' => $src ];
 		}
+		// Sort from smallest to largest (e.g. 1x, 2x)
+		usort( $logos, static fn ( $a, $b ) => $a['dppx'] <=> $b['dppx'] );
 
 		$logosCount = count( $logos );
 		$preloadLinks = [];
 		// Logic must match SkinModule:
-		// - 1x applies to resolution < 1.5dppx
-		// - 1.5x applies to resolution >= 1.5dppx && < 2dppx
+		// - 1x applies to resolution < 2dppx
 		// - 2x applies to resolution >= 2dppx
 		// Note that min-resolution and max-resolution are both inclusive.
 		for ( $i = 0; $i < $logosCount; $i++ ) {
@@ -700,20 +724,11 @@ class SkinModule extends LessVarFileModule {
 				$conf,
 				$logoHD['svg']
 			);
-		} elseif ( isset( $logoHD['1.5x'] ) || isset( $logoHD['2x'] ) ) {
-			// Only 1.5x and 2x are supported
-			if ( isset( $logoHD['1.5x'] ) ) {
-				$logoUrls['1.5x'] = OutputPage::transformResourcePath(
-					$conf,
-					$logoHD['1.5x']
-				);
-			}
-			if ( isset( $logoHD['2x'] ) ) {
-				$logoUrls['2x'] = OutputPage::transformResourcePath(
-					$conf,
-					$logoHD['2x']
-				);
-			}
+		} elseif ( isset( $logoHD['2x'] ) ) {
+			$logoUrls['2x'] = OutputPage::transformResourcePath(
+				$conf,
+				$logoHD['2x']
+			);
 		} else {
 			// Return a string rather than a one-element array, getLogoPreloadlinks depends on this
 			return $logo1Url;

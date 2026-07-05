@@ -4,12 +4,12 @@ declare( strict_types = 1 );
 namespace Test\Parsoid\Html2Wt;
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Html2Wt\DiffMarkers;
 use Wikimedia\Parsoid\Html2Wt\DiffUtils;
 use Wikimedia\Parsoid\Html2Wt\DOMDiff;
 use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * Test DOM Diff, the tests used for validating DOMNDiff class port from JS
@@ -26,12 +26,8 @@ class DOMDiffTest extends TestCase {
 	public function testDOMDiff( array $test ) {
 		$mockEnv = new MockEnv( [] );
 
-		$oldDOM = ContentUtils::createAndLoadDocument(
-			$test['orig'], [ 'markNew' => true ]
-		);
-		$newDOM = ContentUtils::createAndLoadDocument(
-			$test['edit'], [ 'markNew' => true ]
-		);
+		$oldDOM = ContentUtils::createAndLoadDocument( $test['orig'] );
+		$newDOM = ContentUtils::createAndLoadDocument( $test['edit'] );
 
 		$oldBody = DOMCompat::getBody( $oldDOM );
 		$body = DOMCompat::getBody( $newDOM );

@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\RLRegisterModulesHandler;
-use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
+use MediaWiki\Extension\CheckUser\HookHandler\RLRegisterModulesHandler;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWikiIntegrationTestCase;
@@ -11,7 +11,7 @@ use MediaWikiIntegrationTestCase;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\HookHandler\RLRegisterModulesHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\RLRegisterModulesHandler
  */
 class RLRegisterModulesHandlerTest extends MediaWikiIntegrationTestCase {
 	use SuggestedInvestigationsTestTrait;
@@ -23,7 +23,11 @@ class RLRegisterModulesHandlerTest extends MediaWikiIntegrationTestCase {
 			$this->setTemporaryHook(
 				'CheckUserSuggestedInvestigationsGetSignals',
 				static function ( &$signals ) {
-					$signals = [ 'dev-signal-1', 'dev-signal-2' ];
+					$signals = [
+						'dev-signal-1',
+						[ 'name' => 'dev-signal-2' ],
+						[ 'name' => 'dev-signal-3', 'description' => 'Test' ],
+					];
 				}
 			);
 		} else {

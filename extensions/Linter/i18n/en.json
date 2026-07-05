@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Lint errors",
+	"linttemplateerrors": "Transclusions containing lint errors",
 	"linter-category-bogus-image-options": "Bogus file options",
 	"linter-category-bogus-image-options-desc": "These pages have files with bogus options.",
 	"linter-category-large-tables": "Big Tables that are hard to view on mobile",
@@ -15,6 +16,8 @@
 	"linter-category-duplicate-ids-desc": "These pages have elements with duplicate id attributes.",
 	"linter-category-empty-heading": "Empty headings",
 	"linter-category-empty-heading-desc": "These pages have empty headings.",
+	"linter-category-template-arg-in-extension-tag": "Extension tag with template parameter",
+	"linter-category-template-arg-in-extension-tag-desc": "These pages have extension tag containing template parameter, which would not transclude properly.",
 	"linter-category-fostered": "Fostered content",
 	"linter-category-fostered-desc": "These pages have fostered content.",
 	"linter-category-fostered-transparent": "Fostered rendering-transparent content",
@@ -57,6 +60,7 @@
 	"linter-category-wikilink-in-extlink-desc": "These pages have wikilinks in external links that could be fixed",
 	"linter-desc": "Track lint errors from an external service and show them to users",
 	"linter-lints-prefix-search-page-desc": "Search for pages with lint errors by page title prefix or complete title",
+	"linter-invalid-category": "Category not found or malformed",
 	"linter-invalid-title": "Namespace and/or pagename not found or malformed",
 	"linter-form-exact-match": "Search for a specific page title",
 	"linter-form-prefix-match": "Search for all pages that match the title prefix",
@@ -108,10 +112,16 @@
 	"linter-pager-title-header": "Page title",
 	"linter-pager-unclosed-quotes-in-heading-details": "Unclosed quote which leaks out of the table of contents",
 	"linter-pager-wikilink-in-extlink-details": "Links in links",
+	"linter-pager-template-arg-in-extension-tag-details": "Extension tag name with need for update (and template parameters used inside of it)",
 	"linter-prefix-search-subpage": "Pages with lint errors matching title prefix or complete title: $1",
 	"linterrors-subpage": "Lint errors: $1",
 	"linterrors-summary": "<strong>Note:</strong> The counts for categories are not accurate counts, but are based on estimates.",
 	"multi-part-template-block": "Output not from a single template",
+	"parser-function": "Output from a parser function",
 	"pageinfo-linter": "Lint errors",
-	"pageinfo-linter-moreinfo": "View detailed information on the lint errors."
+	"pageinfo-linter-moreinfo": "View detailed information on the lint errors.",
+	"category-by-template": "Transclusions containing lint errors: $1",
+	"category-by-template-view": "View transclusions that contain these lint errors.",
+	"category-by-template-desc": "Transclusions of these pages contain '''[[Special:LintErrors/$1|$1]]''' lint errors.  ''Note that some transclusions might show up on this list because of the arguments passed into the transclusion and not the transclusion source.''",
+	"linter-template-errors-index-desc": "These are lists of transclusions of pages containing lint errors.  ''Note that some transclusions might show up on these lists because of the arguments passed into the transclusion and not the transclusion source.''"
 }

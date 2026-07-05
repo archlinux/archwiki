@@ -42,64 +42,21 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	 * @var string|null The reason provided for the revert
 	 */
 	private $reason;
-	/**
-	 * @var LBFactory
-	 */
-	private $lbFactory;
-	/**
-	 * @var UserFactory
-	 */
-	private $userFactory;
-	/**
-	 * @var FilterLookup
-	 */
-	private $filterLookup;
-	/**
-	 * @var ConsequencesFactory
-	 */
-	private $consequencesFactory;
-	/**
-	 * @var VariablesBlobStore
-	 */
-	private $varBlobStore;
-	/**
-	 * @var SpecsFormatter
-	 */
-	private $specsFormatter;
 
-	/**
-	 * @param LBFactory $lbFactory
-	 * @param UserFactory $userFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param FilterLookup $filterLookup
-	 * @param ConsequencesFactory $consequencesFactory
-	 * @param VariablesBlobStore $varBlobStore
-	 * @param SpecsFormatter $specsFormatter
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param string $basePageName
-	 * @param array $params
-	 */
 	public function __construct(
-		LBFactory $lbFactory,
-		UserFactory $userFactory,
+		private readonly LBFactory $lbFactory,
+		private readonly UserFactory $userFactory,
 		AbuseFilterPermissionManager $afPermManager,
-		FilterLookup $filterLookup,
-		ConsequencesFactory $consequencesFactory,
-		VariablesBlobStore $varBlobStore,
-		SpecsFormatter $specsFormatter,
+		private readonly FilterLookup $filterLookup,
+		private readonly ConsequencesFactory $consequencesFactory,
+		private readonly VariablesBlobStore $varBlobStore,
+		private readonly SpecsFormatter $specsFormatter,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
-		$this->lbFactory = $lbFactory;
-		$this->userFactory = $userFactory;
-		$this->filterLookup = $filterLookup;
-		$this->consequencesFactory = $consequencesFactory;
-		$this->varBlobStore = $varBlobStore;
-		$this->specsFormatter = $specsFormatter;
 		$this->specsFormatter->setMessageLocalizer( $this->getContext() );
 	}
 
@@ -137,29 +94,29 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$RCMaxAge = $this->getConfig()->get( 'RCMaxAge' );
 		$min = wfTimestamp( TS_ISO_8601, time() - $RCMaxAge );
 		$max = wfTimestampNow();
-		$filterLink =
-			$this->linkRenderer->makeLink(
-				$this->getTitle( $filter ),
-				$lang->formatNum( $filter )
-			);
-		$searchFields = [];
-		$searchFields['filterid'] = [
-			'type' => 'info',
-			'default' => $filterLink,
-			'raw' => true,
-			'label-message' => 'abusefilter-revert-filter'
-		];
-		$searchFields['PeriodStart'] = [
-			'type' => 'datetime',
-			'label-message' => 'abusefilter-revert-periodstart',
-			'min' => $min,
-			'max' => $max
-		];
-		$searchFields['PeriodEnd'] = [
-			'type' => 'datetime',
-			'label-message' => 'abusefilter-revert-periodend',
-			'min' => $min,
-			'max' => $max
+		$filterLink = $this->linkRenderer->makeLink(
+			$this->getTitle( $filter ),
+			$lang->formatNum( $filter )
+		);
+		$searchFields = [
+			'filterid' => [
+				'type' => 'info',
+				'default' => $filterLink,
+				'raw' => true,
+				'label-message' => 'abusefilter-revert-filter',
+			],
+			'PeriodStart' => [
+				'type' => 'datetime',
+				'label-message' => 'abusefilter-revert-periodstart',
+				'min' => $min,
+				'max' => $max,
+			],
+			'PeriodEnd' => [
+				'type' => 'datetime',
+				'label-message' => 'abusefilter-revert-periodend',
+				'min' => $min,
+				'max' => $max,
+			],
 		];
 
 		HTMLForm::factory( 'ooui', $searchFields, $this->getContext() )
@@ -215,10 +172,8 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 					$lang->commaList( $displayActions )
 				)->rawParams(
 					$this->linkRenderer->makeLink(
-						SpecialPage::getTitleFor( 'AbuseLog' ),
-						$this->msg( 'abusefilter-log-detailslink' )->text(),
-						[],
-						[ 'details' => $result['id'] ]
+						SpecialPage::getTitleFor( 'AbuseLog', $result['id'] ),
+						$this->msg( 'abusefilter-log-detailslink' )->text()
 					)
 				)->params(
 					$spec->getUser()->getName()
@@ -229,17 +184,18 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$dateForm->addPostHtml( Html::rawElement( 'ul', [], implode( "\n", $list ) ) );
 
 		// Add a button down the bottom.
-		$confirmForm = [];
-		$confirmForm['PeriodStart'] = [
-			'type' => 'hidden',
-		];
-		$confirmForm['PeriodEnd'] = [
-			'type' => 'hidden',
-		];
-		$confirmForm['Reason'] = [
-			'type' => 'text',
-			'label-message' => 'abusefilter-revert-reasonfield',
-			'id' => 'wpReason',
+		$confirmForm = [
+			'PeriodStart' => [
+				'type' => 'hidden',
+			],
+			'PeriodEnd' => [
+				'type' => 'hidden',
+			],
+			'Reason' => [
+				'type' => 'text',
+				'label-message' => 'abusefilter-revert-reasonfield',
+				'id' => 'wpReason',
+			],
 		];
 
 		$revertForm = HTMLForm::factory( 'ooui', $confirmForm, $this->getContext() )
@@ -308,8 +264,8 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 				$vars = $this->varBlobStore->loadVarDump( $row );
 				try {
 					// The variable is not lazy-loaded
-					$accountName = $vars->getComputedVariable( 'accountname' )->toNative();
-				} catch ( UnsetVariableException $_ ) {
+					$accountName = $vars->getComputedVariable( 'account_name' )->toNative();
+				} catch ( UnsetVariableException ) {
 					$accountName = null;
 				}
 

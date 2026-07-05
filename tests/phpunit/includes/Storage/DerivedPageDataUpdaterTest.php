@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use ArrayUtils;
-use DummyContentHandlerForTesting;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\Content;
@@ -39,6 +37,7 @@ use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\EditResultCache;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Tests\ExpectCallbackTrait;
+use MediaWiki\Tests\Mocks\Content\DummyContentHandlerForTesting;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
@@ -48,10 +47,12 @@ use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\ArrayUtils\ArrayUtils;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * @group Database
@@ -182,26 +183,26 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::grabCurrentRevision()
+	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::grabLatestRevision()
 	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::pageExisted()
 	 */
 	public function testGrabCurrentRevision() {
 		$page = $this->getPage( __METHOD__ );
 
 		$updater0 = $this->getDerivedPageDataUpdater( $page );
-		$this->assertNull( $updater0->grabCurrentRevision() );
+		$this->assertNull( $updater0->grabLatestRevision() );
 		$this->assertFalse( $updater0->pageExisted() );
 
 		$rev1 = $this->createRevision( $page, 'first' );
 		$updater1 = $this->getDerivedPageDataUpdater( $page );
-		$this->assertSame( $rev1->getId(), $updater1->grabCurrentRevision()->getId() );
+		$this->assertSame( $rev1->getId(), $updater1->grabLatestRevision()->getId() );
 		$this->assertFalse( $updater0->pageExisted() );
 		$this->assertTrue( $updater1->pageExisted() );
 
 		$rev2 = $this->createRevision( $page, 'second' );
 		$updater2 = $this->getDerivedPageDataUpdater( $page );
-		$this->assertSame( $rev1->getId(), $updater1->grabCurrentRevision()->getId() );
-		$this->assertSame( $rev2->getId(), $updater2->grabCurrentRevision()->getId() );
+		$this->assertSame( $rev1->getId(), $updater1->grabLatestRevision()->getId() );
+		$this->assertSame( $rev2->getId(), $updater2->grabLatestRevision()->getId() );
 	}
 
 	/**
@@ -251,7 +252,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		// second be ok to call again with the same params
 		$updater->prepareContent( $sysop, $update, false );
 
-		$this->assertNull( $updater->grabCurrentRevision() );
+		$this->assertNull( $updater->grabLatestRevision() );
 		$this->assertTrue( $updater->isContentPrepared() );
 		$this->assertFalse( $updater->isUpdatePrepared() );
 		$this->assertFalse( $updater->pageExisted() );
@@ -322,7 +323,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		$updater1 = $this->getDerivedPageDataUpdater( $page );
 		$updater1->prepareContent( $sysop, $update, false );
 
-		$this->assertNotNull( $updater1->grabCurrentRevision() );
+		$this->assertNotNull( $updater1->grabLatestRevision() );
 		$this->assertTrue( $updater1->isContentPrepared() );
 		$this->assertTrue( $updater1->pageExisted() );
 		$this->assertFalse( $updater1->isCreation() );
@@ -468,7 +469,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 			'editResult' => $editResult,
 			'changed' => false
 		];
-		$updater1->grabCurrentRevision();
+		$updater1->grabLatestRevision();
 		$updater1->prepareContent(
 			$rev1->getUser(),
 			RevisionSlotsUpdate::newFromContent( [
@@ -598,7 +599,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Storage\DerivedPageDataUpdater::getPreparedEdit()
 	 */
 	public function testGetPreparedEditAfterPrepareUpdate() {
-		$clock = MWTimestamp::convert( TS_UNIX, '20100101000000' );
+		$clock = MWTimestamp::convert( TS::UNIX, '20100101000000' );
 		MWTimestamp::setFakeTime( static function () use ( &$clock ) {
 			return $clock++;
 		} );
@@ -746,7 +747,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$this->mergeMwGlobalArrayValue(
 			'wgContentHandlers', [
-				$name => static function () use ( $handler ){
+				$name => static function () use ( $handler ) {
 					return $handler;
 				}
 			]
@@ -903,114 +904,114 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		$rev2y = [ $title, $update2, $user1, 'rev2', 122 ];
 
 		yield 'any' => [
-			'$prepUser' => null,
-			'$prepRevision' => null,
-			'$prepUpdate' => null,
-			'$forUser' => null,
-			'$forRevision' => null,
-			'$forUpdate' => null,
-			'$forParent' => null,
-			'$isReusable' => true,
+			'prepUser' => null,
+			'prepRevision' => null,
+			'prepUpdate' => null,
+			'forUser' => null,
+			'forRevision' => null,
+			'forUpdate' => null,
+			'forParent' => null,
+			'isReusable' => true,
 		];
 		yield 'for any' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => $rev1,
-			'$prepUpdate' => $update1,
-			'$forUser' => null,
-			'$forRevision' => null,
-			'$forUpdate' => null,
-			'$forParent' => null,
-			'$isReusable' => true,
+			'prepUser' => $user1,
+			'prepRevision' => $rev1,
+			'prepUpdate' => $update1,
+			'forUser' => null,
+			'forRevision' => null,
+			'forUpdate' => null,
+			'forParent' => null,
+			'isReusable' => true,
 		];
 		yield 'unprepared' => [
-			'$prepUser' => null,
-			'$prepRevision' => null,
-			'$prepUpdate' => null,
-			'$forUser' => $user1,
-			'$forRevision' => $rev1,
-			'$forUpdate' => $update1,
-			'$forParent' => 0,
-			'$isReusable' => true,
+			'prepUser' => null,
+			'prepRevision' => null,
+			'prepUpdate' => null,
+			'forUser' => $user1,
+			'forRevision' => $rev1,
+			'forUpdate' => $update1,
+			'forParent' => 0,
+			'isReusable' => true,
 		];
 		yield 'match prepareContent' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => null,
-			'$prepUpdate' => $update1,
-			'$forUser' => $user1,
-			'$forRevision' => null,
-			'$forUpdate' => $update1,
-			'$forParent' => 0,
-			'$isReusable' => true,
+			'prepUser' => $user1,
+			'prepRevision' => null,
+			'prepUpdate' => $update1,
+			'forUser' => $user1,
+			'forRevision' => null,
+			'forUpdate' => $update1,
+			'forParent' => 0,
+			'isReusable' => true,
 		];
 		yield 'match prepareUpdate' => [
-			'$prepUser' => null,
-			'$prepRevision' => $rev1,
-			'$prepUpdate' => null,
-			'$forUser' => $user1,
-			'$forRevision' => $rev1,
-			'$forUpdate' => null,
-			'$forParent' => 0,
-			'$isReusable' => true,
+			'prepUser' => null,
+			'prepRevision' => $rev1,
+			'prepUpdate' => null,
+			'forUser' => $user1,
+			'forRevision' => $rev1,
+			'forUpdate' => null,
+			'forParent' => 0,
+			'isReusable' => true,
 		];
 		yield 'match all' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => $rev1,
-			'$prepUpdate' => $update1,
-			'$forUser' => $user1,
-			'$forRevision' => $rev1,
-			'$forUpdate' => $update1,
-			'$forParent' => 0,
-			'$isReusable' => true,
+			'prepUser' => $user1,
+			'prepRevision' => $rev1,
+			'prepUpdate' => $update1,
+			'forUser' => $user1,
+			'forRevision' => $rev1,
+			'forUpdate' => $update1,
+			'forParent' => 0,
+			'isReusable' => true,
 		];
 		yield 'mismatch prepareContent update' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => null,
-			'$prepUpdate' => $update1,
-			'$forUser' => $user1,
-			'$forRevision' => null,
-			'$forUpdate' => $update1b,
-			'$forParent' => 0,
-			'$isReusable' => false,
+			'prepUser' => $user1,
+			'prepRevision' => null,
+			'prepUpdate' => $update1,
+			'forUser' => $user1,
+			'forRevision' => null,
+			'forUpdate' => $update1b,
+			'forParent' => 0,
+			'isReusable' => false,
 		];
 		yield 'mismatch prepareContent user' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => null,
-			'$prepUpdate' => $update1,
-			'$forUser' => $user2,
-			'$forRevision' => null,
-			'$forUpdate' => $update1,
-			'$forParent' => 0,
-			'$isReusable' => false,
+			'prepUser' => $user1,
+			'prepRevision' => null,
+			'prepUpdate' => $update1,
+			'forUser' => $user2,
+			'forRevision' => null,
+			'forUpdate' => $update1,
+			'forParent' => 0,
+			'isReusable' => false,
 		];
 		yield 'mismatch prepareContent parent' => [
-			'$prepUser' => $user1,
-			'$prepRevision' => null,
-			'$prepUpdate' => $update1,
-			'$forUser' => $user1,
-			'$forRevision' => null,
-			'$forUpdate' => $update1,
-			'$forParent' => 7,
-			'$isReusable' => false,
+			'prepUser' => $user1,
+			'prepRevision' => null,
+			'prepUpdate' => $update1,
+			'forUser' => $user1,
+			'forRevision' => null,
+			'forUpdate' => $update1,
+			'forParent' => 7,
+			'isReusable' => false,
 		];
 		yield 'mismatch prepareUpdate revision update' => [
-			'$prepUser' => null,
-			'$prepRevision' => $rev1,
-			'$prepUpdate' => null,
-			'$forUser' => null,
-			'$forRevision' => $rev1b,
-			'$forUpdate' => null,
-			'$forParent' => 0,
-			'$isReusable' => false,
+			'prepUser' => null,
+			'prepRevision' => $rev1,
+			'prepUpdate' => null,
+			'forUser' => null,
+			'forRevision' => $rev1b,
+			'forUpdate' => null,
+			'forParent' => 0,
+			'isReusable' => false,
 		];
 		yield 'mismatch prepareUpdate revision id' => [
-			'$prepUser' => null,
-			'$prepRevision' => $rev2,
-			'$prepUpdate' => null,
-			'$forUser' => null,
-			'$forRevision' => $rev2y,
-			'$forUpdate' => null,
-			'$forParent' => 0,
-			'$isReusable' => false,
+			'prepUser' => null,
+			'prepRevision' => $rev2,
+			'prepUpdate' => null,
+			'forUser' => null,
+			'forRevision' => $rev2y,
+			'forUpdate' => null,
+			'forParent' => 0,
+			'isReusable' => false,
 		];
 	}
 
@@ -1059,34 +1060,34 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 
 	public static function provideIsCountable() {
 		yield 'deleted revision' => [
-			'$articleCountMethod' => 'any',
-			'$wikitextContent' => 'Test',
-			'$revisionVisibility' => RevisionRecord::SUPPRESSED_ALL,
-			'$isCountable' => false
+			'articleCountMethod' => 'any',
+			'wikitextContent' => 'Test',
+			'revisionVisibility' => RevisionRecord::SUPPRESSED_ALL,
+			'isCountable' => false
 		];
 		yield 'redirect' => [
-			'$articleCountMethod' => 'any',
-			'$wikitextContent' => '#REDIRECT [[Main_Page]]',
-			'$revisionVisibility' => 0,
-			'$isCountable' => false
+			'articleCountMethod' => 'any',
+			'wikitextContent' => '#REDIRECT [[Main_Page]]',
+			'revisionVisibility' => 0,
+			'isCountable' => false
 		];
 		yield 'no links count method any' => [
-			'$articleCountMethod' => 'any',
-			'$wikitextContent' => 'Test',
-			'$revisionVisibility' => 0,
-			'$isCountable' => true
+			'articleCountMethod' => 'any',
+			'wikitextContent' => 'Test',
+			'revisionVisibility' => 0,
+			'isCountable' => true
 		];
 		yield 'no links count method link' => [
-			'$articleCountMethod' => 'link',
-			'$wikitextContent' => 'Test',
-			'$revisionVisibility' => 0,
-			'$isCountable' => false
+			'articleCountMethod' => 'link',
+			'wikitextContent' => 'Test',
+			'revisionVisibility' => 0,
+			'isCountable' => false
 		];
 		yield 'with links count method link' => [
-			'$articleCountMethod' => 'link',
-			'$wikitextContent' => '[[Test]]',
-			'$revisionVisibility' => 0,
-			'$isCountable' => true
+			'articleCountMethod' => 'link',
+			'wikitextContent' => '[[Test]]',
+			'revisionVisibility' => 0,
+			'isCountable' => true
 		];
 	}
 
@@ -1120,10 +1121,10 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getPage( __METHOD__ );
 		$content = [ SlotRecord::MAIN => new WikitextContent( '[[Test]]' ) ];
 		$rev = $this->createRevision( $page, 'first', $content );
-		$nullRevision = MutableRevisionRecord::newFromParentRevision( $rev );
-		$nullRevision->setId( 14 );
-		$updater = $this->getDerivedPageDataUpdater( $page, $nullRevision );
-		$updater->prepareUpdate( $nullRevision );
+		$dummyRevision = MutableRevisionRecord::newFromParentRevision( $rev );
+		$dummyRevision->setId( 14 );
+		$updater = $this->getDerivedPageDataUpdater( $page, $dummyRevision );
+		$updater->prepareUpdate( $dummyRevision );
 		$this->assertTrue( $updater->isCountable() );
 	}
 
@@ -1754,7 +1755,7 @@ class DerivedPageDataUpdaterTest extends MediaWikiIntegrationTestCase {
 	 * Regression test for T368006
 	 */
 	public function testTemplateUpdate() {
-		$clock = MWTimestamp::convert( TS_UNIX, '20100101000000' );
+		$clock = MWTimestamp::convert( TS::UNIX, '20100101000000' );
 		MWTimestamp::setFakeTime( static function () use ( &$clock ) {
 			return $clock++;
 		} );

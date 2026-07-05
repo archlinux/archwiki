@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -17,20 +17,14 @@ class TokenManager {
 	/** @var string|null */
 	private $cipherMethod;
 
-	private string $secret;
-
-	/**
-	 * @param string $secret
-	 */
 	public function __construct(
-		string $secret
+		private readonly string $secret,
 	) {
 		if ( $secret === '' ) {
 			throw new ConfigException(
 				'CheckUser Token Manager requires $wgSecretKey to be set.'
 			);
 		}
-		$this->secret = $secret;
 	}
 
 	/**
@@ -122,8 +116,6 @@ class TokenManager {
 	 *
 	 * This must be consistent between encryption and decryption,
 	 * must be no more than 16 bytes in length and never repeat.
-	 *
-	 * @return string
 	 */
 	private function getInitializationVector(): string {
 		return random_bytes( 16 );

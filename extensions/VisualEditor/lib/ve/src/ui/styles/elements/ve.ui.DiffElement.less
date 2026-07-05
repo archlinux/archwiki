@@ -5,10 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-/* stylelint-disable-next-line selector-class-pattern */
-.solidToOpacity( @property, @color, @opacity, @before: '', @after: '' ) {
-	@{property}: ~'@{before}' fade( ( ( @color - ( 1 - @opacity ) * ( #fff ) ) / @opacity ), @opacity * 100 ) ~'@{after}';
-}
+@import '../../../styles/ve.mixins.less';
 
 .ve-ui-diffElement {
 	position: relative;
@@ -92,8 +89,6 @@
 		&.oo-ui-labelElement .oo-ui-labelElement-label {
 			/* Respect line breaks and prevent collapsing added/removed spaces */
 			white-space: pre-wrap;
-			word-break: break-word;
-			word-wrap: break-word;
 			overflow-wrap: break-word;
 			/* As we're rendering whitespace, use a sensible tab width. */
 			/* The surface uses 4, but as we're in a narrow sidebar use 2 */
@@ -141,8 +136,8 @@ del[ data-diff-action='remove' ] {
 	/* elements using display:table-caption need separate backgrounds as they render outside the parent's bounding box */
 	& > caption,
 	& > figcaption {
-		.solidToOpacity( background-color, #7fd7c4, 0.5, '', '!important' );
-		.solidToOpacity( box-shadow, #7fd7c4, 0.5, '0 0 0 1px' );
+		background-color: .solid-to-opacity( #7fd7c4, 0.5 ) [ @result ] !important; /* stylelint-disable-line declaration-no-important */
+		box-shadow: 0 0 0 1px .solid-to-opacity( #7fd7c4, 0.5 ) [ @result ];
 	}
 }
 
@@ -151,15 +146,15 @@ del[ data-diff-action='remove' ] {
 	/* elements using display:table-caption need separate backgrounds as they render outside the parent's bounding box */
 	& > caption,
 	& > figcaption {
-		.solidToOpacity( background-color, #e88e89, 0.5, '', '!important' );
-		.solidToOpacity( box-shadow, #e88e89, 0.5, '0 0 0 1px' );
+		background-color: .solid-to-opacity( #e88e89, 0.5 ) [ @result ] !important; /* stylelint-disable-line declaration-no-important */
+		box-shadow: 0 0 0 1px .solid-to-opacity( #e88e89, 0.5 ) [ @result ];
 	}
 }
 
 [ data-diff-action='change' ],
 [ data-diff-action='change-insert' ] {
-	.solidToOpacity( background-color, #b6d4fb, 0.5, '', '!important' );
-	.solidToOpacity( box-shadow, #b6d4fb, 0.5, '0 0 0 1px' );
+	background-color: .solid-to-opacity( #b6d4fb, 0.5 ) [ @result ] !important; /* stylelint-disable-line declaration-no-important */
+	box-shadow: 0 0 0 1px .solid-to-opacity( #b6d4fb, 0.5 ) [ @result ];
 }
 
 [ data-diff-move ] {
@@ -167,8 +162,8 @@ del[ data-diff-action='remove' ] {
 	/* elements using display:table-caption need separate backgrounds as they render outside the parent's bounding box */
 	& > caption,
 	& > figcaption {
-		.solidToOpacity( background, #eaecf0, 0.5 );
-		.solidToOpacity( outline, #eaecf0, 0.5, '5px solid' );
+		background-color: .solid-to-minimum-opacity( #eaecf0 ) [ @result ];
+		outline: 5px solid .solid-to-minimum-opacity( #eaecf0 ) [ @result ];
 	}
 }
 

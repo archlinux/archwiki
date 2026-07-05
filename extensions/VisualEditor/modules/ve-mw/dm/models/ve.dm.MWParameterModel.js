@@ -8,8 +8,8 @@
 /**
  * Represents a parameter that's part of a template invocation, centered around the parameter's
  * value. Holds a reference to the specification of the template and the parameter as it is
- * documented via TemplateData. Meant to be a sub-element of a {@see ve.dm.MWTemplateModel}, which
- * is a sub-element of a {@see ve.dm.MWTransclusionModel}.
+ * documented via TemplateData. Meant to be a sub-element of a {@link ve.dm.MWTemplateModel}, which
+ * is a sub-element of a {@link ve.dm.MWTransclusionModel}.
  *
  * @class
  * @mixes OO.EventEmitter
@@ -18,7 +18,7 @@
  * @param {ve.dm.MWTemplateModel} template Reference back to the template that contains the
  *  parameter, as well as to the specification
  * @param {string} [name] Can be missing or empty when meant to be used as a placeholder. Parameters
- *  without a name won't be serialized to wikitext, {@see ve.dm.MWTemplateModel.serialize}.
+ *  without a name won't be serialized to wikitext, {@link ve.dm.MWTemplateModel.serialize}.
  * @param {string} [value='']
  */
 ve.dm.MWParameterModel = function VeDmMWParameterModel( template, name, value ) {
@@ -101,7 +101,7 @@ ve.dm.MWParameterModel.prototype.getName = function () {
 };
 
 /**
- * Original parameter name. Will be used in {@see ve.dm.MWTransclusionPartModel.serialize}.
+ * Original parameter name. Will be used in {@link ve.dm.MWTransclusionPartModel.serialize}.
  *
  * @return {string|undefined} Untrimmed parameter name as provided on construction time
  */

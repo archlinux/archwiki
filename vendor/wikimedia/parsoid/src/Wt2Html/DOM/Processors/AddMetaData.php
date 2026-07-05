@@ -6,10 +6,10 @@ namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 use Closure;
 use DateTime;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Parsoid;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -201,9 +201,7 @@ class AddMetaData implements Wt2HtmlDOMProcessor {
 		);
 
 		$expTitle = explode( '/', $title->getPrefixedDBKey() );
-		$expTitle = array_map( static function ( $comp ) {
-			return PHPUtils::encodeURIComponent( $comp );
-		}, $expTitle );
+		$expTitle = array_map( PHPUtils::encodeURIComponent( ... ), $expTitle );
 
 		DOMUtils::appendToHead( $document, 'link', [
 			'rel' => 'dc:isVersionOf',

@@ -29,7 +29,7 @@ class HTMLUserTextFieldTest extends MediaWikiIntegrationTestCase {
 		} );
 		$this->setService( 'UserFactory', $userFactory );
 		$htmlForm = $this->createMock( HTMLForm::class );
-		$htmlForm->method( 'msg' )->willReturnCallback( 'wfMessage' );
+		$htmlForm->method( 'msg' )->willReturnCallback( wfMessage( ... ) );
 
 		$field = new HTMLUserTextField( $config + [ 'fieldname' => 'foo', 'parent' => $htmlForm ] );
 		$result = $field->validate( $value, [ 'foo' => $value ] );

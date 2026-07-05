@@ -71,6 +71,8 @@
 	"checkuser-ipinfo-global-contributions-label": "عالمی شراکتیں",
 	"checkuser-userinfocard-groups": "<strong>گروہ</strong>: $1",
 	"checkuser-userinfocard-global-groups": "<strong>عالمی گروہ</strong>: $1",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "کھاتہ",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-placeholder": "کھاتے کا نام لکھیں۔۔۔",
 	"checkuser-userinfocard-temporary-account-bucketcount": "متعلقہ تمام آئی پی پتوں سے عارضی کھاتے: $1",
 	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "اس کھاتے سے منسلک تمام آئی پی پتوں کے تمام عارضی کھاتوں کی مجموعی تعداد"
 }

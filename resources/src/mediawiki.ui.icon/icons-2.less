@@ -157,34 +157,3 @@
 		vertical-align: middle;
 	}
 }
-
-@media all and ( min-width: @min-width-breakpoint-desktop ) {
-	.mw-ui-icon-with-label-desktop {
-		// stylelint-disable-next-line declaration-no-important
-		color: @icon-color !important;
-		width: auto;
-		line-height: inherit;
-		flex-basis: auto;
-		// Special case outside of standard buttons styling due to surrounding
-		// interface elements, see T237019.
-		// stylelint-disable-next-line declaration-no-important
-		font-weight: 500 !important;
-
-		&:hover,
-		&:focus,
-		&:active,
-		&:visited {
-			color: @icon-color;
-			text-decoration: none;
-		}
-
-		&::before {
-			width: auto;
-			display: inline-block;
-			// Don't use `@icon-padding-md` as we are adjacent to text.
-			margin-right: @margin-icon-md-labelled;
-			// Seems to be more visually centered than `middle`.
-			vertical-align: text-bottom;
-		}
-	}
-}

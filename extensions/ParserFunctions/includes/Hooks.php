@@ -2,19 +2,20 @@
 
 namespace MediaWiki\Extension\ParserFunctions;
 
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
-use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageConverterFactory;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Parser\Parser;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 
 class Hooks implements
-	\MediaWiki\Hook\ParserFirstCallInitHook,
-	\MediaWiki\Hook\ParserTestGlobalsHook
+	\MediaWiki\Parser\Hook\ParserFirstCallInitHook,
+	\MediaWiki\Hook\ParserTestGlobalsHook,
+	\MediaWiki\Parser\Hook\ParserClearStateHook
 {
 	private readonly ParserFunctions $parserFunctions;
 
@@ -49,6 +50,16 @@ class Hooks implements
 	 */
 	public function onParserTestGlobals( &$globals ) {
 		$globals['wgPFEnableStringFunctions'] = true;
+	}
+
+	/**
+	 * Resets the resource limit in ParserFunctions.
+	 * @param Parser $parser
+	 * @return true
+	 */
+	public function onParserClearState( $parser ): bool {
+		ParserFunctions::resetLimit( $parser );
+		return true;
 	}
 
 	/**

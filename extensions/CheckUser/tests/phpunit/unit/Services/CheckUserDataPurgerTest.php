@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
-use MediaWiki\CheckUser\Services\CheckUserDataPurger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserDataPurger;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserDataPurger
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserDataPurger
  */
 class CheckUserDataPurgerTest extends MediaWikiUnitTestCase {
 	public function testGetPurgeLockKey() {

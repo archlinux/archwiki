@@ -7,16 +7,14 @@ use MediaWiki\Extension\Scribunto\ScribuntoModuleBase;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Status\Status;
 
+/**
+ * @property LuaEngine $engine
+ */
 class LuaModule extends ScribuntoModuleBase {
 	/**
 	 * @var mixed
 	 */
 	protected $initChunk;
-
-	/**
-	 * @var LuaEngine
-	 */
-	protected $engine;
 
 	/**
 	 * @param LuaEngine $engine
@@ -60,6 +58,10 @@ class LuaModule extends ScribuntoModuleBase {
 	 * @return string|null
 	 */
 	public function invoke( $name, $frame ) {
+		// $resetModule is a ScopedCallback; it restores the previous module
+		// name when it goes out of scope.
+		$resetModule = $this->engine->setupCurrentModule( $this->chunkName );
+
 		$ret = $this->engine->executeModule( $this->getInitChunk(), $name, $frame );
 
 		if ( $ret === null ) {

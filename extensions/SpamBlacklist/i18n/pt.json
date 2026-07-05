@@ -17,7 +17,6 @@
 	"spam-blacklisted-email": "Endereço de correio eletrónico proibido",
 	"spam-blacklisted-email-text": "Atualmente o seu endereço de correio eletrónico está proibido de enviar correio a outros utilizadores.",
 	"spam-blacklisted-email-signup": "O uso do endereço de correio eletrónico fornecido está atualmente proibido.",
-	"spam-invalid-lines": "{{PLURAL:$1|A seguinte linha da lista de barramento de ''spam'' é uma expressão regular inválida e precisa de ser corrigida|As seguintes linhas da lista de barramento de ''spam'' são expressões regulares inválidas e precisam de ser corrigidas}} antes de gravar a página:",
 	"spam-blacklist-desc": "Ferramenta ''antispam'' baseada em expressões regulares, que permite o barramento de endereços URL, impedindo que estes sejam colocados nas páginas, e de endereços de correio eletrónico, impedindo que utilizadores se registem com eles.",
 	"log-name-spamblacklist": "Registo da lista de barramento de ''spam''",
 	"log-description-spamblacklist": "Estes eventos registam as correspondências com a lista de barramento de ''spam''.",

@@ -114,5 +114,7 @@
 	"math-wikibase-special-form-button": "Requestar information",
 	"math-wikibase-special-error-header": "Error",
 	"math-wikibase-special-error-invalid-argument": "Le ID del elemento Wikibase que tu ha specificate non existe.",
-	"math-wikibase-special-error-unknown": "Un error incognite ha occurrite obtenente datos de Wikibase."
+	"math-wikibase-special-error-unknown": "Un error incognite ha occurrite obtenente datos de Wikibase.",
+	"math-editpage-insert-inline": "Formula mathematic (integrate)",
+	"math-editpage-insert-block": "Formula mathematic (bloco)"
 }

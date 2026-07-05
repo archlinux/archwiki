@@ -10,27 +10,29 @@ namespace MediaWiki\Extension\TitleBlacklist;
 
 use MediaWiki\Api\ApiMessage;
 use MediaWiki\Api\ApiResult;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\EditPage\EditPage;
-use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\MovePageCheckPermissionsHook;
 use MediaWiki\Hook\TitleGetEditNoticesHook;
-use MediaWiki\Html\Html;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsExpensiveHook;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\Hook\MultiContentSaveHook;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use StatusValue;
 use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Message\MessageValue;
 
 /**
  * Hooks for the TitleBlacklist class
@@ -38,7 +40,7 @@ use Wikimedia\Message\MessageSpecifier;
  * @ingroup Extensions
  */
 class Hooks implements
-	EditFilterHook,
+	MultiContentSaveHook,
 	TitleGetEditNoticesHook,
 	MovePageCheckPermissionsHook,
 	GetUserPermissionsErrorsExpensiveHook,
@@ -219,36 +221,39 @@ class Hooks implements
 	}
 
 	/**
-	 * EditFilter hook
-	 *
-	 * @param EditPage $editor
-	 * @param string $text
-	 * @param string $section
-	 * @param string &$error
-	 * @param string $summary
+	 * @inheritDoc
 	 */
-	public function onEditFilter( $editor, $text, $section, &$error, $summary ) {
-		$title = $editor->getTitle();
-
-		if ( $title->getNamespace() === NS_MEDIAWIKI && $title->getDBkey() === 'Titleblacklist' ) {
-			$blackList = TitleBlacklist::singleton();
-			$bl = TitleBlacklist::parseBlacklist( $text, 'page' );
-			$ok = $blackList->validate( $bl );
-			if ( $ok === [] ) {
-				return;
-			}
-
-			$errmsg = wfMessage( 'titleblacklist-invalid' )->numParams( count( $ok ) )->text();
-			$errlines = '* <code>' .
-				implode( "</code>\n* <code>", array_map( 'wfEscapeWikiText', $ok ) ) .
-				'</code>';
-			$error = Html::errorBox(
-					$errmsg . "\n" . $errlines
-				) . "\n" .
-				Html::element( 'br', [ 'clear' => 'all' ] ) . "\n";
-
-			// $error will be displayed by the edit class
+	public function onMultiContentSave( $renderedRevision, $user, $summary, $flags, $status ): bool {
+		$page = $renderedRevision->getRevision()->getPage();
+		if ( $page->getNamespace() !== NS_MEDIAWIKI || $page->getDBkey() !== 'Titleblacklist' ) {
+			return true;
 		}
+
+		$blackList = TitleBlacklist::singleton();
+		$content = $renderedRevision->getRevision()->getContent( SlotRecord::MAIN );
+		if ( !$content instanceof TextContent ) {
+			return true;
+		}
+
+		$text = $content->getText();
+		$bl = TitleBlacklist::parseBlacklist( $text, 'page' );
+		$ok = $blackList->validate( $bl );
+		if ( $ok === [] ) {
+			return true;
+		}
+
+		$invalidLines = '* <code>' .
+			implode( "</code>\n* <code>", array_map( wfEscapeWikiText( ... ), $ok ) ) .
+			'</code>';
+		// We're passing a MessageValue to the StatusValue here so the parameters aren't wikitext-escaped.
+		$status->fatal( MessageValue::new(
+			'titleblacklist-invalid-error',
+			[
+				Message::numParam( count( $ok ) ),
+				$invalidLines,
+			]
+		) );
+		return false;
 	}
 
 	/**

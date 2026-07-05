@@ -17,6 +17,9 @@ use MediaWiki\User\User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @group DiscussionTools
+ * @group Standalone
+ *
  * @covers \MediaWiki\Extension\DiscussionTools\CommentFormatter
  * @covers \MediaWiki\Extension\DiscussionTools\CommentUtils
  */
@@ -54,7 +57,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 	 * @dataProvider provideAddDiscussionToolsInternal
 	 */
 	public function testAddDiscussionToolsInternal(
-		string $name, string $titleText, string $dom, string $expected, string $config, string $data,
+		string $name, string $title, string $dom, string $expected, string $config, string $data,
 		bool $isMobile, bool $useButtons
 	): void {
 		if ( $isMobile ) {
@@ -78,8 +81,8 @@ class CommentFormatterTest extends IntegrationTestCase {
 			MainConfigNames::Script => '/w/index.php',
 		] );
 
-		$title = Title::newFromText( $titleText );
-		$wrappedTitle = TestingAccessWrapper::newFromObject( $title );
+		$titleObj = Title::newFromText( $title );
+		$wrappedTitle = TestingAccessWrapper::newFromObject( $titleObj );
 		// Mock values which would otherwise trigger a DB lookup
 		$wrappedTitle->mContentModel = CONTENT_MODEL_WIKITEXT;
 		$wrappedTitle->mLatestID = 1;
@@ -90,7 +93,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$skin = $this->createMock( Skin::class );
 		$skin->method( 'getSkinName' )->willReturn( 'minerva' );
 		$outputPage = $this->createMock( IContextSource::class );
-		$outputPage->method( 'getTitle' )->willReturn( $title );
+		$outputPage->method( 'getTitle' )->willReturn( $titleObj );
 		$outputPage->method( 'getUser' )->willReturn( $user );
 		$outputPage->method( 'getLanguage' )->willReturn( $qqxLang );
 		$outputPage->method( 'getSkin' )->willReturn( $skin );
@@ -100,7 +103,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$commentFormatter = TestingAccessWrapper::newFromClass( MockCommentFormatter::class );
 
 		$pout = new ParserOutput();
-		$preprocessed = $commentFormatter->addDiscussionToolsInternal( $dom, $pout, $title );
+		$preprocessed = $commentFormatter->addDiscussionToolsInternal( $dom, $pout, $titleObj );
 		$preprocessed .= "\n<pre>\n" .
 			"newestComment: " . FormatJson::encode(
 				$pout->getExtensionData( 'DiscussionTools-newestComment' ), "\t", FormatJson::ALL_OK ) . "\n" .

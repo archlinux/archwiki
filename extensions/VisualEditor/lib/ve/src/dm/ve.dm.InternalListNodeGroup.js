@@ -11,7 +11,7 @@
  */
 ve.dm.InternalListNodeGroup = function VeDmInternalListNodeGroup() {
 	/**
-	 * @private please do not use directly
+	 * @private Please access via {@link getAllReuses} etc. if possible
 	 * @property {Object.<string,ve.dm.Node[]>} keyedNodes Indexed by the internal listKey.
 	 *
 	 * Practically, one of these arrays can contain multiple elements when a reference (with the
@@ -20,11 +20,11 @@ ve.dm.InternalListNodeGroup = function VeDmInternalListNodeGroup() {
 	this.keyedNodes = {};
 
 	/**
-	 * @private please do not use directly
-	 * @property {Array.<ve.dm.Node|undefined>} firstNodes When {@link keyedNodes} contains more
+	 * @private Please access via {@link getFirstNodeByListIndex} etc. if possible
+	 * @property {Array.<ve.dm.Node|undefined>} firstNodes When {@link #keyedNodes} contains more
 	 * than one node per listKey then firstNodes can be used to identify the node that appears first
 	 * in the document. If there is only one node it's just that node. Array keys correspond to the
-	 * values in the {@link indexOrder} array. Order is meaningless but dictated by indexOrder
+	 * values in the {@link #indexOrder} array. Order is meaningless but dictated by indexOrder
 	 * instead.
 	 *
 	 * Practically, this is the first occurence of a reused reference (with the same group and name)
@@ -32,14 +32,14 @@ ve.dm.InternalListNodeGroup = function VeDmInternalListNodeGroup() {
 	 * in which references are rendered in their reference list.
 	 *
 	 * Note this is possibly a sparse array with elements missing in case initialization happened
-	 * out of order. Skip these and use {@link indexOrder} as your primary source of truth.
+	 * out of order. Skip these and use {@link #indexOrder} as your primary source of truth.
 	 */
 	this.firstNodes = [];
 
 	/**
-	 * @private please do not use directly
+	 * @private Please access via {@link getFirstNodesInIndexOrder} etc. if possible
 	 * @property {number[]} indexOrder Sorted to reflect the order of first appearance in the
-	 * document. Values are indexes for the {@link firstNodes} array.
+	 * document. Values are indexes for the {@link #firstNodes} array.
 	 *
 	 * Practically, this usually starts as a simple [ 0, 1, 2, … ] array but changes when references
 	 * are added, reused, moved, and removed.
@@ -63,6 +63,15 @@ ve.dm.InternalListNodeGroup.prototype.isEmpty = function () {
  */
 ve.dm.InternalListNodeGroup.prototype.getAllReuses = function ( key ) {
 	return this.keyedNodes[ key ];
+};
+
+/**
+ * @param {number} listIndex
+ * @return {ve.dm.Node[]|undefined} All reference nodes (1 or more, never 0) that (re)use the same
+ *  listIndex. Undefined when the listIndex is unknown.
+ */
+ve.dm.InternalListNodeGroup.prototype.getAllReusesByListIndex = function ( listIndex ) {
+	return this.getAllReuses( this.getListKeyForListIndex( listIndex ) );
 };
 
 /**
@@ -103,19 +112,44 @@ ve.dm.InternalListNodeGroup.prototype.getFirstNodesInIndexOrder = function () {
  */
 ve.dm.InternalListNodeGroup.prototype.getFirstNode = function ( key ) {
 	const nodes = this.getAllReuses( key );
-	if ( !nodes ) {
-		return undefined;
-	}
-	// FIXME: This should be a fast lookup, but we currently don't have a map for that
-	for ( const node in this.firstNodes ) {
-		// TODO: Can we be sure the first node is at position 0? If this is guaranteed we can
-		// replace this search with a single comparison.
-		if ( nodes.includes( node ) ) {
-			return node;
+	// Note: This works with the guarantee that the "first node" is actually the first
+	return nodes && nodes[ 0 ];
+};
+
+/**
+ * @param {number} listIndex
+ * @return {ve.dm.Node|undefined} Undefined in case there are no known nodes with this listIndex
+ */
+ve.dm.InternalListNodeGroup.prototype.getFirstNodeByListIndex = function ( listIndex ) {
+	return this.firstNodes[ listIndex ];
+};
+
+/**
+ * @private
+ * @param {string} key
+ * @return {number|undefined} Corresponding listIndex for the given listKey
+ */
+ve.dm.InternalListNodeGroup.prototype.getListIndex = function ( key ) {
+	const nodes = this.getAllReuses( key );
+	// Note: This works with the guarantee that the "first node" is actually the first
+	const index = nodes && this.firstNodes.indexOf( nodes[ 0 ] );
+	return index === -1 ? undefined : index;
+};
+
+/**
+ * @private
+ * @param {number} listIndex
+ * @return {string|undefined} Corresponding listKey for the given listIndex
+ */
+ve.dm.InternalListNodeGroup.prototype.getListKeyForListIndex = function ( listIndex ) {
+	const firstNode = this.getFirstNodeByListIndex( listIndex );
+	if ( firstNode ) {
+		for ( const key in this.keyedNodes ) {
+			if ( this.getFirstNode( key ) === firstNode ) {
+				return key;
+			}
 		}
 	}
-	// Fallback in case there is something wrong
-	return nodes[ 0 ];
 };
 
 /**
@@ -156,7 +190,7 @@ ve.dm.InternalListNodeGroup.prototype.appendNode = function ( key, newNode ) {
 /**
  * @param {string} key
  * @param {ve.dm.Node} newNode Reference node to add
- * @param {number} index Existing index; ignored when this is not the first node for this key
+ * @param {number} index Existing listIndex; ignored when this is not the first node for this key
  */
 ve.dm.InternalListNodeGroup.prototype.appendNodeWithKnownIndex = function ( key, newNode, index ) {
 	if ( !( key in this.keyedNodes ) ) {
@@ -171,7 +205,7 @@ ve.dm.InternalListNodeGroup.prototype.appendNodeWithKnownIndex = function ( key,
 /**
  * @param {string} key
  * @param {ve.dm.Node} newNode Reference node to insert at document position
- * @param {number} [index] Existing index; ignored when this is not the first node for this key
+ * @param {number} [index] Existing listIndex; ignored when this is not the first node for this key
  */
 ve.dm.InternalListNodeGroup.prototype.insertNodeInDocumentOrder = function ( key, newNode, index ) {
 	const nodes = this.getAllReuses( key );
@@ -246,7 +280,7 @@ ve.dm.InternalListNodeGroup.prototype.unsetNode = function ( key, node ) {
  * @param {string} oldListKey Current list key (typically something like "auto/0") to associate the
  *  generated list key with
  * @param {string} prefix Prefix for the generated key. Must match the prefix used in
- *  {@link keyedNodes} (typically "literal/") for the duplicate detection to work.
+ *  {@link #keyedNodes} (typically "literal/") for the duplicate detection to work.
  * @return {string} Generated unique list key, or existing unique key associated with oldListKey
  */
 ve.dm.InternalListNodeGroup.prototype.getUniqueListKey = function ( oldListKey, prefix ) {

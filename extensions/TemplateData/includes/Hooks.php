@@ -6,12 +6,12 @@ use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
-use MediaWiki\Hook\ParserFetchTemplateDataHook;
-use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Hook\ParserFetchTemplateDataHook;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
@@ -152,7 +152,7 @@ class Hooks implements
 		$status = $ti->getStatus();
 		if ( !$status->isOK() ) {
 			$parserOutput->setExtensionData( 'TemplateDataStatus', TemplateDataStatus::jsonSerialize( $status ) );
-			return Html::errorBox( $status->getHTML() );
+			return Html::errorBox( Status::wrap( $status )->getHTML() );
 		}
 
 		// Store the blob as page property for retrieval by ApiTemplateData.

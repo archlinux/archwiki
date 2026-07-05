@@ -38,7 +38,7 @@ class MathGenerateSql extends Maintenance {
 				$target = "$sqlPath/$dialect/$table.sql";
 				$this->output( "Writing '$target'.\n" );
 				$this->loadWithArgv( [ "--json=$file", "--type=$dialect", "--sql=$target" ] );
-				$child = $this->runChild( 'GenerateSchemaSql' );
+				$child = $this->createChild( GenerateSchemaSql::class );
 				$child->execute();
 			}
 		}

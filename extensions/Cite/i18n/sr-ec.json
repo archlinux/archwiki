@@ -55,7 +55,7 @@
 	"cite-wikieditor-help-content-showreferences-description": "Приказивање референци",
 	"cite-wikieditor-help-content-reference-example-text1": "Текст странице.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Текст линка], додатни текст.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст линка]",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Додатни детаљи",
+	"cite-wikieditor-help-content-reference-example-text3": "Књига",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Страница 76",
 	"cite-configuration-submit": "Сачувај измене"
 }

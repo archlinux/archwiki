@@ -1,11 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler\SuggestedInvestigations;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler\SuggestedInvestigations;
 
-use InvalidArgumentException;
-use MediaWiki\CheckUser\SuggestedInvestigations\Model\CaseStatus;
-use MediaWiki\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\CaseNotFoundException;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Formatters\StatusReasonFormatter;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\CaseStatus;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
 use MediaWiki\Language\Language;
 use MediaWiki\Rest\Handler\Helper\RestAuthorizeTrait;
 use MediaWiki\Rest\HttpException;
@@ -31,6 +33,7 @@ class UpdateCaseHandler extends SimpleHandler {
 		private readonly Config $config,
 		private readonly Language $contentLanguage,
 		private readonly SuggestedInvestigationsCaseManagerService $caseManager,
+		private readonly StatusReasonFormatter $statusReasonFormatter,
 	) {
 	}
 
@@ -77,19 +80,29 @@ class UpdateCaseHandler extends SimpleHandler {
 			default => throw new RuntimeException( "Unhandled status $status" ),
 		};
 
+		$performer = $this->getAuthority()->getUser();
+
 		try {
-			$this->caseManager->setCaseStatus( $caseId, $newStatus, $reason );
-		} catch ( InvalidArgumentException ) {
+			$this->caseManager->setCaseStatus( $caseId, $newStatus, $reason, $performer->getId() );
+		} catch ( CaseNotFoundException ) {
 			throw new LocalizedHttpException(
 				MessageValue::new( 'checkuser-suggestedinvestigations-case-update-case-not-found' ),
 				400
 			);
 		}
 
+		$formattedReason = $this->statusReasonFormatter->format(
+			$reason,
+			$newStatus,
+			$performer->getName(),
+			RequestContext::getMain()
+		);
+
 		return $this->getResponseFactory()->createJson( [
 			'caseId' => $caseId,
 			'status' => $status,
 			'reason' => $reason,
+			'formattedReason' => $formattedReason,
 		] );
 	}
 

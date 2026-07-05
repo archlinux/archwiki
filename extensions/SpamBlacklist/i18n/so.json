@@ -11,6 +11,8 @@
 	"spam-blacklisted-email": "Cinwaan iimayl oo mamnuuc ah",
 	"spam-blacklisted-email-text": "Cinwaankaaga iimaylka hadda waa ka mamnuuc dirista iimayllo loo diro isticmaaleyaasha kale.",
 	"spam-blacklisted-email-signup": "Cinwaanka iimaylka ee la bixiyay hadda waa ka mamnuuc in la isticmaalo.",
+	"spam-blacklisted-email-change": "Cinwaanka iimaylka ee la bixiyay hadda waa ka mamnuuc in la isticmaalo.",
+	"spam-invalid-lines-error": "Khadka soo socda ee liiska xannibaadda spam-ka {{PLURAL:$1|waa khad aan sax ahayn|waa khadad aan sax ahayn}} ee tibaax joogto ah oo aan sax ahayn {{PLURAL:$1|tibaax|tibaaxo}} waxaana {{PLURAL:$1|loo baahan yahay|loo baahan yihiin}} in la saxo ka hor inta aan bogga la keydin:\n$2",
 	"spam-blacklist-desc": "Qalab ka hortag spam oo ku salaysan regex, kaas oo oggolaanaya in lagu xannibo liiska URL-yada bogagga iyo cinwaannada iimaylka ee isticmaaleyaasha diiwaangashan",
 	"log-name-spamblacklist": "Diiwaanka liiska xannibaadda spam",
 	"log-description-spamblacklist": "Dhacdooyinkan waxay la socdaan isku dhacyada liiska xannibaadda spam.",

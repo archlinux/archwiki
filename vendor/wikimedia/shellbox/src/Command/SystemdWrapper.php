@@ -112,7 +112,7 @@ class SystemdWrapper extends Wrapper {
 	 */
 	private function makeList( $paths ) {
 		foreach ( $paths as $path ) {
-			if ( strpos( $path, ' ' ) !== false ) {
+			if ( str_contains( $path, ' ' ) ) {
 				throw new ShellboxError( 'SystemdWrapper: property list cannot contain a space' );
 			}
 		}

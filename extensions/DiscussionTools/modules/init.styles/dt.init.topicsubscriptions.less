@@ -1,0 +1,218 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+/* stylelint-disable no-descending-specificity */
+
+// Disable all subscription buttons until JS ready
+/* stylelint-disable selector-max-id, selector-class-pattern */
+#ca-dt-page-subscribe,
+.menu__item--page-actions-overflow-t-page-subscribe,
+.ext-discussiontools-init-section-subscribe,
+.ext-discussiontools-init-section-subscribeButton {
+	// If JS is enabled, disable the buttons until it's loaded, so that users don't accidentally
+	// navigate to the no-JS interface.
+	// TODO: These clicks will be ignored, but ideally we would process them once ready (T183720).
+	.client-js:not( .ext-discussiontools-init-ready ) & {
+		pointer-events: none;
+	}
+}
+/* stylelint-enable selector-max-id, selector-class-pattern */
+
+// Topic subscriptions (link)
+.ext-discussiontools-init-section-subscribe {
+	display: none;
+
+	.ext-discussiontools-topicsubscription-enabled:not( .ext-discussiontools-visualenhancements-enabled ) & {
+		display: block;
+	}
+
+	// Directional properties must be based on content direction.
+	.mw-content-ltr &,
+	.mw-content-rtl .mw-content-ltr & {
+		/* @noflip */
+		float: right;
+	}
+
+	.mw-content-rtl &,
+	.mw-content-ltr .mw-content-rtl & {
+		/* @noflip */
+		float: left;
+	}
+
+	&.mw-editsection-like {
+		.user-select( none );
+		margin-top: 0.6em;
+		// Restore line height after Ie2ef68f3d0d
+		line-height: inherit;
+	}
+
+	.mw-mf & {
+		// Subscribe button is used instead on mobile
+		display: none;
+	}
+
+	// Similar to mw-editsection-bracket
+	&-bracket {
+		color: @color-subtle;
+
+		&:first-child {
+			.margin-inline( 0, 0.25em );
+		}
+
+		&:last-child {
+			.margin-inline( 0.25em, 0 );
+		}
+	}
+
+	&-link&-link-pending {
+		color: #72777d;
+		pointer-events: none;
+	}
+
+	@media print {
+		display: none !important;
+	}
+}
+
+// Topic subscriptions (button)
+// Boost specificity by adding .oo-ui-buttonElement
+.ext-discussiontools-init-section-subscribeButton.oo-ui-buttonElement {
+	display: none;
+
+	> .oo-ui-buttonElement-button {
+		font-weight: normal;
+	}
+
+	.ext-discussiontools-topicsubscription-enabled.ext-discussiontools-visualenhancements-enabled & {
+		display: inline-block;
+	}
+
+	// Directional properties must be based on content direction.
+	body:not( .mw-mf ) .mw-content-ltr &,
+	body:not( .mw-mf ) .mw-content-rtl .mw-content-ltr & {
+		/* @noflip */
+		float: right;
+		/* @noflip */
+		margin: -2px 0 0 1em !important;
+	}
+
+	body:not( .mw-mf ) .mw-content-rtl &,
+	body:not( .mw-mf ) .mw-content-ltr .mw-content-rtl & {
+		/* @noflip */
+		float: left;
+		/* @noflip */
+		margin: -2px 1em 0 0 !important;
+	}
+
+	@media print {
+		display: none !important;
+	}
+}
+
+// Auto topic subscription popups
+// Styles inspired by the Popups extension
+// (and occasionally copied from there)
+.ext-discussiontools-autotopicsubpopup {
+	position: absolute;
+	left: 0;
+	right: 0;
+
+	// Increase specificity to override .oo-ui-popupWidget
+	.oo-ui-popupWidget& {
+		// Animations
+		opacity: 0;
+		// Support: Safari
+		// 3D transform is needed to work around a Safari bug, which causes shadows to remain when the
+		// popup is removed (T297266, T226872). Otherwise this should just use 2D translate().
+		transform: translate3d( 0, -20px, 0 );
+		transition-property: opacity, transform;
+		transition-duration: @transition-duration-medium;
+
+		&-fadein {
+			opacity: 1;
+			// Support: Safari
+			// 3D transform is needed to work around a Safari bug, which causes shadows to remain when the
+			// popup is removed (T297266, T226872). Otherwise this should just use 2D translate().
+			transform: translate3d( 0, 0, 0 );
+		}
+	}
+
+	.oo-ui-popupWidget-popup {
+		padding: 1.5em;
+		box-sizing: border-box;
+		// Center horizontally
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		// Position above the highlight
+		bottom: 3em;
+
+		&.ext-discussiontools-autotopicsubpopup-overlap {
+			// If there isn't enough space above, position on top of the highlight
+			top: -1em;
+			bottom: auto;
+		}
+	}
+
+	&-title {
+		font-weight: bold;
+		font-size: 1.2em;
+		display: block;
+	}
+
+	&-image {
+		background: url( images/autotopicsubpopup-image.svg ) center center no-repeat;
+		// Dark mode images (T369834)
+		.darkmode-override( {
+			background-image: url( images/autotopicsubpopup-image-dark.svg );
+		} );
+		width: 200px;
+		height: 200px;
+	}
+
+	// Desktop
+	@media ( min-width: 720px ) {
+		.oo-ui-popupWidget-popup {
+			width: 450px;
+			min-height: 200px;
+			padding-right: 0;
+		}
+
+		&-image {
+			position: absolute;
+			top: 0;
+			right: 0;
+			height: 100%;
+			z-index: 1;
+		}
+
+		&-body {
+			margin-bottom: 1em;
+			margin-top: 1em;
+			margin-right: 200px;
+		}
+
+		&-title,
+		&-actions {
+			margin-right: 150px;
+			position: relative;
+			z-index: 2;
+		}
+	}
+
+	// Mobile
+	@media ( max-width: 719px ) {
+		.oo-ui-popupWidget-popup {
+			width: 320px;
+		}
+
+		&-image {
+			width: 100%;
+		}
+
+		&-body {
+			margin-bottom: 1em;
+		}
+	}
+}

@@ -3,6 +3,8 @@
 		"authors": [
 			"Alexey zakharenkov",
 			"Diman Russkov",
+			"EneshTranslates",
+			"Engineer56",
 			"Facenapalm",
 			"Happy13241",
 			"Incnis Mrsi",
@@ -14,8 +16,6 @@
 			"Stjn",
 			"Sunpriat",
 			"Vlad5250",
-			"EneshTranslates",
-			"Engineer56",
 			"Shabe"
 		]
 	},
@@ -28,6 +28,8 @@
 	"linter-category-deletable-table-tag-desc": "На этих страницах есть теги таблицы, которые следует удалить.",
 	"linter-category-duplicate-ids": "Дублированные ID",
 	"linter-category-duplicate-ids-desc": "Эти страницы содержат элементы с дублированными ID-атрибутами.",
+	"linter-category-template-arg-in-extension-tag": "Тег расширения с параметром шаблона",
+	"linter-category-template-arg-in-extension-tag-desc": "Эти страницы содержат тег расширения с параметром шаблона, который не будет корректно внедрён.",
 	"linter-category-fostered": "Присвоенное содержимое",
 	"linter-category-fostered-desc": "На этих страницах находится присвоенное содержимое.",
 	"linter-category-html5-misnesting": "Некорректно вложенный тег, который по-разному отображается в HTML5 и HTML4",
@@ -68,6 +70,7 @@
 	"linter-category-wikilink-in-extlink-desc": "На этих страницах есть внутренние ссылки внутри внешних ссылок, что может быть исправлено",
 	"linter-desc": "Отслеживание ошибок статического анализатора из внешнего сервиса и показ их пользователям",
 	"linter-lints-prefix-search-page-desc": "Поиск страниц с ошибками по префиксу названия страницы или полному названию",
+	"linter-invalid-category": "Категория не найдена или имеет некорректный формат.",
 	"linter-invalid-title": "Пространство имён и/или имя страницы не найдено или некорректное",
 	"linter-form-exact-match": "Искать на указанной странице",
 	"linter-form-prefix-match": "Искать на всех страницах с таким префиксом в названии",
@@ -114,9 +117,11 @@
 	"linter-pager-title-header": "Заголовок страницы",
 	"linter-pager-unclosed-quotes-in-heading-details": "Незакрытая кавычка, выходящая за содержание",
 	"linter-pager-wikilink-in-extlink-details": "Ссылки в ссылках",
+	"linter-pager-template-arg-in-extension-tag-details": "Имя тега расширения, требующее обновления (и параметры шаблона, используемые внутри него)",
 	"linter-prefix-search-subpage": "Страницы с ошибками статического анализатора с указанным названием или префиксом названия: $1",
 	"linterrors-subpage": "Ошибки статического анализатора: $1",
 	"linterrors-summary": "<strong>Примечание:</strong> Показатели для категорий не являются точными подсчётами, а основаны на оценках.",
 	"multi-part-template-block": "Из нескольких шаблонов",
-	"pageinfo-linter": "Ошибки статического анализатора"
+	"pageinfo-linter": "Ошибки статического анализатора",
+	"category-by-template-view": "Просмотр включений, содержащих эти ошибки."
 }

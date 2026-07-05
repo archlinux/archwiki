@@ -17,7 +17,7 @@ function onLoad( documentRoot = null ) {
 	ipReveal.enableMultiReveal( $( documentRoot ) );
 
 	const $ipRevealButtons = ipReveal.addIpRevealButtons(
-		$( '#bodyContent', documentRoot ).find( 'form ul li[data-afl-log-id]' )
+		$( '#bodyContent', documentRoot ).find( '[data-afl-log-id]' )
 	);
 
 	// Avoid unnecessary requests for auto-reveal if the acting user is blocked (T345639).

@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bennylin",
 			"Diki Ananta",
 			"Dreamy Jazz",
 			"Meursault2004",
 			"NoiX180",
 			"Pras",
-			"Sumbukompor",
-			"Bennylin"
+			"Sumbukompor"
 		]
 	},
 	"checkuser-summary": "Piranti iki nlusuri owah-owahan pungkasan kanggo golèk IP sing dienggo déning sawijining naraguna utawa nuduhaké data suntingan/naraguna kanggo sawijining IP.\nNaraguna lan suntingan bisa dirunut saka sawijining IP XFF mawa nambahaké \"/xff\" ing sawijining IP. IPv4 (CIDR $1-32) IPv6 (CIDR $2-128) bisa dienggo.\nAmerga déning alesan kinerja, ora luwih saka 5.000 besutan sing bisa dijupuk. Mangga gunakna piranti iki miturut kawicaksanan sing wis ditetepaké.",

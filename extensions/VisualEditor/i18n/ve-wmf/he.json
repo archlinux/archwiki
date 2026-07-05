@@ -10,12 +10,12 @@
 			"Orsa",
 			"Shimmin Beg",
 			"אור שפירא",
+			"חזרתי",
 			"חיים",
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"아라",
-			"חזרתי"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "מערכת בדיקת עריכה חושבת שנוסף תוכן חדש לדף.",
@@ -30,6 +30,10 @@
 	"tag-editcheck-tone-shown-description": "מערכת בדיקת עריכה חושבת שאולי היה נחוץ תיקון בנימה של חלק מהתוכן והוצג ממשק המשתמש של זה",
 	"tag-editcheck-paste-shown": "הוצגה הודעה של מערכת בדיקת עריכה (הדבקה)",
 	"tag-editcheck-paste-shown-description": "מערכת בדיקת עריכה בקישה הבהרה על תוכן שהעורך הדביק, שלאחר מכן הוסר או אושר בתור קביל",
+	"tag-editsuggestion-seen": "נראתה הצעת עריכה",
+	"tag-editsuggestion-seen-description": "הצעה עריכה אחת לפחות כנראה נראתה על־ידי המשתמש",
+	"tag-editsuggestion-used": "נעשה שימוש בהצעת עריכה",
+	"tag-editsuggestion-used-description": "הצעה עריכה אחת לפחות כנראה הופעלה על־ידי המשתמש",
 	"tag-visualeditor": "עריכה חזותית",
 	"tag-visualeditor-description": "עריכה שנעשתה באמצעות [[{{MediaWiki:visualeditor-descriptionpagelink}}|העורך החזותי]]",
 	"tag-visualeditor-needcheck": "עריכה חזותית: נא לבדוק",

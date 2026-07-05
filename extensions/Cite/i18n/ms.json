@@ -6,8 +6,8 @@
 			"CyberTroopers",
 			"Hakimi97",
 			"Izzudin",
-			"Tofeiku",
-			"SNN95"
+			"SNN95",
+			"Tofeiku"
 		]
 	},
 	"cite-desc": "Menambah tag <code>&lt;ref&gt;</code> and <code>&lt;references&gt;</code> untuk pemetikan",
@@ -42,6 +42,7 @@
 	"cite-reference-previews-journal": "Rujukan jurnal",
 	"cite-reference-previews-news": "Rujukan berita",
 	"cite-reference-previews-note": "Catatan",
+	"cite-reference-previews-map": "Rujukan peta",
 	"cite-reference-previews-web": "Rujukan web",
 	"cite-reference-previews-collapsible-placeholder": "Rujukan ini termasuk angka yang tidak dapat disesuaikan dalam pralihat.",
 	"cite-reference-previews-gadget-conflict-info-navpopups": "Anda mempunyai gajet [[$1|kotak timbul navigasi]], jadi anda tidak akan nampak pralihat yang disediakan oleh ciri ini. Bergantung pada wiki anda, beberapa alat mungkin mempunyai nama yang sedikit berbeza. Jika anda terus mengalami masalah, sila semak alat dan skrip pengguna anda, termasuk yang global.",
@@ -62,8 +63,8 @@
 	"cite-wikieditor-help-content-showreferences-description": "Paparkan senarai rujukan",
 	"cite-wikieditor-help-content-reference-example-text1": "Teks laman.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teks pautan], teks tambahan.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pautan]",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Butiran tambahan",
+	"cite-wikieditor-help-content-reference-example-text3": "Buku",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Halaman 76",
 	"communityconfiguration-cite-title": "Petik Rujukan",
 	"communityconfiguration-cite-description": "Sesuaikan format dan rupa rujukan.",
 	"cite-configuration-title": "Konfigurasi Petik Rujukan",

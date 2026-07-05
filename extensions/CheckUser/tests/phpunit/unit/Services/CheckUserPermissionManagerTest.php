@@ -1,9 +1,9 @@
 <?php
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
 use MediaWiki\Block\Block;
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\SpecialPage\SpecialPageFactory;
@@ -16,7 +16,7 @@ use MediaWiki\User\UserRigorOptions;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserPermissionManager
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager
  */
 class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 	private UserOptionsLookup $userOptionsLookup;
@@ -98,13 +98,13 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanAutoRevealIPAddresses(
 		array $rights,
-		CheckUserPermissionStatus $expectedStatus
+		CheckUserPermissionStatus $expected
 	): void {
 		$actor = new UserIdentityValue( 1, 'TestUser' );
 		$authority = new SimpleAuthority( $actor, $rights );
 		$autoRevealStatus = $this->checkUserPermissionsManager->canAutoRevealIPAddresses( $authority );
 
-		$this->assertEquals( $expectedStatus, $autoRevealStatus );
+		$this->assertEquals( $expected, $autoRevealStatus );
 	}
 
 	public static function provideCanAutoRevealIPAddresses(): iterable {
@@ -207,14 +207,11 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 
 		if ( $error === '' ) {
-			$this->assertTrue( $status->isGood() );
-			$this->assertNull( $status->getValue() );
+			$this->assertStatusGood( $status );
+			$this->assertStatusValue( null, $status );
 		} else {
-			$this->assertFalse( $status->isGood() );
-			$this->assertEquals(
-				$error,
-				$status->getMessages()[0]->getKey()
-			);
+			$this->assertStatusNotGood( $status );
+			$this->assertStatusMessage( $error, $status );
 		}
 	}
 
@@ -313,14 +310,11 @@ class CheckUserPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 
 		if ( $errorMessage === '' ) {
-			$this->assertTrue( $status->isGood() );
-			$this->assertNull( $status->getValue() );
+			$this->assertStatusGood( $status );
+			$this->assertStatusValue( null, $status );
 		} else {
-			$this->assertFalse( $status->isGood() );
-			$this->assertEquals(
-				$errorMessage,
-				$status->getMessages()[0]->getKey()
-			);
+			$this->assertStatusNotGood( $status );
+			$this->assertStatusMessage( $errorMessage, $status );
 		}
 	}
 

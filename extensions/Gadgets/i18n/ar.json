@@ -75,5 +75,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|التبعية|التبعيات}} التالية مفقودة: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|التبعية|التبعيات}} التالية مستغنى عنها: $1.",
 	"gadgets-supports-urlload": "تدعم هذه الأداة التحميل عبر عنوان URL باستخدام معلمة طلب البحث <code>?withgadget</code>.",
-	"gadgets-hidden": "هذه الإضافة [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden مخفية]، مما يعني أنها لن تظهر في صفحة التفضيلات."
+	"gadgets-hidden": "هذه الإضافة [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden مخفية]، مما يعني أنها لن تظهر في صفحة التفضيلات.",
+	"gadgets-subpage-invalid": "صفحة فرعية غير صالحة \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "معلمات الصفحة الفرعية غير كافية (رابط غير صالح)."
 }

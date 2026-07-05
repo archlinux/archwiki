@@ -2,7 +2,7 @@
 {{>PinnableElement/Open}}
 	{{#data-portlets-first}}{{>Menu}}{{/data-portlets-first}}
 	{{#array-portlets-rest}}{{>Menu}}{{/array-portlets-rest}}
-	{{^is-language-in-content}}
+	{{#is-languages-included}}
 	{{#data-languages}}{{>Menu}}{{/data-languages}}
-	{{/is-language-in-content}}
+	{{/is-languages-included}}
 {{>PinnableElement/Close}}

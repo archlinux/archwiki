@@ -18,7 +18,7 @@
 	"spam-blacklisted-email": "Yasaklı e-posta adresi",
 	"spam-blacklisted-email-text": "E-posta adresinizin şu anda diğer kullanıcılara e-posta göndermesi yasaklanmıştır.",
 	"spam-blacklisted-email-signup": "Belirtilen e-posta adresinin şu anda kullanılması yasaktır.",
-	"spam-invalid-lines": "Aşağıdaki spam engelleme listesi {{PLURAL:$1|satırı|satırları}} geçersiz bir normal {{PLURAL:$1|ifadedir|ifadelerdir}} ve sayfayı kaydetmeden önce düzeltilmesi gerekir:",
+	"spam-blacklisted-email-change": "Belirtilen e-posta adresinin şu anda kullanılması yasaktır.",
 	"spam-blacklist-desc": "Kayıtlı kullanıcılar için sayfalardaki ve e-posta adreslerindeki liste URL'lerini engellemeye izin veren düzenli ifade tabanlı spam önleme aracı",
 	"log-name-spamblacklist": "Spam engelleme listesi günlüğü",
 	"log-description-spamblacklist": "Bu olaylar, spam engelleme listesi değiştirmesini izler.",

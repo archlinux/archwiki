@@ -27,7 +27,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 	public function testRequestForInexistentLogEntry() {
 		$authority = $this->mockRegisteredUltimateAuthority();
 
-		$this->expectExceptionMessage( 'An entry with the provided ID does not exist.' );
+		$this->expectApiErrorCode( 'abusefilter-log-nonexistent' );
 		$this->doApiRequestWithToken( [
 			'action' => 'abuselogprivatedetails',
 			'logid' => 2,
@@ -40,7 +40,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 		$authority = $this->mockRegisteredAuthorityWithPermissions( $permissions );
 
 		if ( $errorMessage !== null ) {
-			$this->expectExceptionMessage( $errorMessage );
+			$this->expectApiErrorCode( $errorMessage );
 		}
 
 		[ $result ] = $this->doApiRequestWithToken( [
@@ -73,7 +73,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 					'abusefilter-log',
 					'abusefilter-log-detail',
 				],
-				'errorMessage' => 'You do not have permission to see private details of this entry.',
+				'errorMessage' => 'abusefilter-log-cannot-see-privatedetails',
 			],
 			'User can see private details but not private filters (querying for private filter)' => [
 				'permissions' => [
@@ -83,7 +83,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 					'abusefilter-privatedetails',
 					'abusefilter-privatedetails-log',
 				],
-				'errorMessage' => 'You do not have permission to see details of this entry.',
+				'errorMessage' => 'abusefilter-log-cannot-see-details',
 			],
 			'User can see private details and private filters' => [
 				'permissions' => [
@@ -106,7 +106,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 		$this->overrideConfigValue( 'AbuseFilterPrivateDetailsForceReason', $requireReason );
 
 		if ( !$shouldSucceed ) {
-			$this->expectExceptionMessage( 'The "reason" parameter must be set.' );
+			$this->expectApiErrorCode( 'missingparam' );
 		}
 
 		[ $result ] = $this->doApiRequestWithToken( [
@@ -170,7 +170,7 @@ class AbuseLogPrivateDetailsTest extends ApiTestCase {
 				'name' => 'Hidden filter',
 				'privacy' => Flags::FILTER_HIDDEN,
 				'lastEditor' => $performer,
-				'lastEditTimestamp' => $this->getDb()->timestamp( '20250701000000' ),
+				'lastEditTimestamp' => '20250701000000',
 			] ),
 			MutableFilter::newDefault()
 		) );

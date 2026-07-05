@@ -14,13 +14,13 @@
 			"Malafaya",
 			"Mansil",
 			"Mansil alfalb",
+			"MrNinja",
 			"RadiX",
 			"Sir Lestaty de Lioncourt",
 			"Tks4Fish",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"MrNinja"
+			"Waldyrious"
 		]
 	},
 	"checkuser-summary": "Esta ferramenta varre as mudanças recentes para obter os endereços IP de um utilizador ou para apresentar os dados de edições/utilizadores para um determinado IP.\nOs utilizadores e edições de um determinado IP, podem ser obtidos através de cabeçalhos XFF, acrescentando \"/xff\" no final do endereço. São suportados endereços IPv4 (CIDR $1-32) e IPv6 (CIDR $2-128).\nPor motivos de desempenho não serão fornecidas mais do que $3 edições.\nO uso desta ferramenta deverá respeitar as normas e recomendações.",
@@ -197,14 +197,14 @@
 	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "A wiki não foi encontrada",
 	"checkuser-investigate-filters-legend": "Filtros",
 	"checkuser-investigate-filters-exclude-targets-label": "Ocultar os seguintes utilizadores ou IPs",
-	"checkuser-investigate-timeline-notice-no-results": "Não foram produzidos resultados: não existe atividade registada destes utilizadores e endereços IP nos últimos 90 dias",
+	"checkuser-investigate-timeline-notice-no-results": "Não foram produzidos resultados: não existe atividade registada destes utilizadores e endereços IP nos últimos $1 dias",
 	"checkuser-investigate-timeline-notice-no-results-filters": "Não foram produzidos resultados que correspondam a estes critérios de filtragem. Tente remover alguns filtros para ampliar o universo da pesquisa.",
 	"checkuser-investigate-compare-copy-button-label": "Mostrar texto wiki",
 	"checkuser-investigate-compare-copy-button-label-hide": "Ocultar texto wiki",
 	"checkuser-investigate-compare-toollinks-ipcheck": "Verificação de proxies",
 	"checkuser-investigate-compare-copy-message-label": "Quer copiar esta informação na forma de tabela em texto wiki?",
 	"checkuser-investigate-compare-notice-exceeded-limit": "Devido a limitações técnicas foi atingido o número de registos que podem ser apresentados. Os dados recebidos para os seguintes alvos estão incompletos: $1. Tente usar menos alvos, uma janela temporal mais pequena ou gamas mais estreitas de endereços IP.",
-	"checkuser-investigate-compare-notice-no-results": "Não foram produzidos resultados: estes utilizadores ou endereços IP não realizaram edições nos últimos 90 dias",
+	"checkuser-investigate-compare-notice-no-results": "Não foram produzidos resultados: estes utilizadores ou endereços IP não realizaram edições nos últimos $1 dias",
 	"checkuser-investigate-compare-notice-no-results-filters": "Não foram produzidos resultados que correspondam a estes critérios de filtragem. Tente remover alguns filtros para ampliar o universo da pesquisa",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Mostrar todos os endereços IP deste utilizador",
 	"checkuser-investigate-compare-table-button-add-user-targets-label": "Mostrar todos os utilizadores deste IP",
@@ -271,5 +271,10 @@
 	"checkuser-userinfocard-global-groups": "<strong>Grupos globais</strong>: $1",
 	"checkuser-userinfocard-chart-tooltip-label": "$1 ( {{PLURAL:$2| $2 edição| $2 edições|0=Sem edições}})",
 	"checkuser-userinfocard-temporary-account-viewer-opted-in": "Optou por ver os IPs de contas temporárias",
-	"checkuser-userinfocard-temporary-account-bucketcount": "Contas temporárias de todos os IPs associados: $1"
+	"checkuser-userinfocard-temporary-account-bucketcount": "Contas temporárias de todos os IPs associados: $1",
+	"checkuser-contributions-temporary-account-bucketcount": "Contas temporárias de todos os IPs associados: $1.",
+	"checkuser-related-tas-specialblock-checkbox-label": "Bloquear todas as contas temporárias associadas",
+	"checkuser-related-tas-specialblock-accounts-list": "$1 {{PLURAL:$1|conta temporária foi identificada|contas temporárias foram identificadas}} utilizando $2 {{PLURAL:$2|endereço|endereços}} IP {{PLURAL:$2|associado|associados}} com $3 nos último $4 dias: $5.",
+	"checkuser-related-tas-specialblock-contribs-link": "[{{fullurl:Special:Contributions/$1|showRelatedTemporaryAccounts=1}} Exibir todas as contribuições destas contas]",
+	"checkuser-related-tas-specialblock-confirm": "Isso será aplicado a $1 {{PLURAL:$1|conta|contas}}. Proceder com o bloqueio {{PLURAL:$1|desta conta|destas contas}} confirma que você {{PLURAL:$1|investigou-a|investigou-as}}."
 }

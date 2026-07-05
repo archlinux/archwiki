@@ -1,0 +1,37 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+.ext-discussiontools-init-highlight {
+	position: absolute;
+	pointer-events: none;
+	opacity: 0;
+	// Use 'darken' instead of 'multiply' so that when highlights overlap
+	// (e.g. when using newcommentssince=) the overlapping parts are not
+	// darker.
+	mix-blend-mode: darken;
+	.darkmode-override( {
+		mix-blend-mode: lighten;
+	} );
+	// Support: Safari
+	// Safari doesn't blend this overlay with the text unless GPU rendering is forced.
+	transform: translateZ( 0 );
+
+	&-fadein {
+		opacity: 1;
+	}
+
+	&-fadeout {
+		opacity: 0;
+		transition: opacity @transition-duration-medium;
+	}
+}
+
+.ext-discussiontools-init-publishedcomment {
+	// T368086
+	background-color: @background-color-success-subtle;
+}
+
+.ext-discussiontools-init-targetcomment {
+	// T368086
+	background-color: @background-color-progressive-subtle;
+}

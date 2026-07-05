@@ -3,9 +3,10 @@ const
 	STATE_UNSUBSCRIBED = 0,
 	STATE_SUBSCRIBED = 1,
 	STATE_AUTOSUBSCRIBED = 2,
-	utils = require( './utils.js' ),
-	CommentItem = require( './CommentItem.js' ),
-	HeadingItem = require( './HeadingItem.js' );
+	clientUtils = require( './clientUtils.js' ),
+	commentUtils = require( './commentparser/commentUtils.js' ),
+	CommentItem = require( './commentparser/CommentItem.js' ),
+	HeadingItem = require( './commentparser/HeadingItem.js' );
 let api,
 	seenAutoTopicSubPopup = !!+mw.user.options.get( 'discussiontools-seenautotopicsubpopup' ),
 	linksByName = {},
@@ -207,7 +208,7 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 				// Only handle keypresses on the "Enter" or "Space" keys
 				return;
 			}
-			if ( e.type === 'click' && !utils.isUnmodifiedLeftClick( e ) ) {
+			if ( e.type === 'click' && !clientUtils.isUnmodifiedLeftClick( e ) ) {
 				// Only handle unmodified left clicks
 				return;
 			}
@@ -262,7 +263,7 @@ function initNewTopicsSubscription() {
 	}
 
 	const titleObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
-	const name = utils.getNewTopicsSubscriptionId( titleObj );
+	const name = commentUtils.getNewTopicsSubscriptionId( titleObj );
 
 	$button.off( '.mw-dt-topicsubscriptions' ).on( 'click.mw-dt-topicsubscriptions', ( e ) => {
 		e.preventDefault();
@@ -500,7 +501,7 @@ function updateAutoSubscriptionStates( $container, threadItemSet, threadItemId )
 	const headingsToUpdate = {};
 	if ( threadItemId ) {
 		// Edited by using the reply tool or new topic tool. Only check the edited topic.
-		if ( threadItemId === utils.NEW_TOPIC_COMMENT_ID ) {
+		if ( threadItemId === commentUtils.NEW_TOPIC_COMMENT_ID ) {
 			recentComments.push( threadItemSet.threadItems[ threadItemSet.threadItems.length - 1 ] );
 		} else {
 			recentComments.push( threadItemSet.threadItemsById[ threadItemId ] );

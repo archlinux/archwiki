@@ -50,6 +50,7 @@
 			"ZandDev"
 		]
 	},
+	"collabpad-disabled": "CollabPad non è abilitato su questo wiki.",
 	"collabpad-import-subtitle": "Importato da $1",
 	"tooltip-ca-ve-edit": "Modifica questa pagina",
 	"tooltip-ca-ve-create": "Crea questa pagina",
@@ -252,6 +253,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Sottotitolo 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Sottotitolo 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Sottotitolo 4",
+	"visualeditor-fullpage-switch-label": "Modifica pagina intera",
 	"visualeditor-generating-wikitext-progress": "Genera wikitesto",
 	"visualeditor-languages-tool": "Lingue",
 	"visualeditor-linkcontext-uneditable": "Spiacenti, attualmente questo collegamento può essere modificato solo in modalità sorgente.",

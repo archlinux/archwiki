@@ -13,6 +13,7 @@ use MediaWiki\Rest\SimpleHandler;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Handler class for Core REST API endpoints that perform operations on revisions
@@ -91,13 +92,17 @@ class MediaLinksHandler extends SimpleHandler {
 	 * @return array the results
 	 */
 	private function getDbResults( int $pageId ) {
-		return $this->dbProvider->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
-			->select( 'il_to' )
+		$dbr = $this->dbProvider->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN );
+
+		return $dbr->newSelectQueryBuilder()
+			->select( 'lt_title' )
 			->from( 'imagelinks' )
-			->where( [ 'il_from' => $pageId ] )
-			->orderBy( 'il_to' )
+			->join( 'linktarget', null, 'il_target_id = lt_id' )
+			->where( [ 'il_from' => $pageId, 'lt_namespace' => NS_FILE ] )
+			->orderBy( 'lt_title' )
 			->limit( $this->getMaxNumLinks() + 1 )
-			->caller( __METHOD__ )->fetchFieldValues();
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 	}
 
 	/**
@@ -166,7 +171,7 @@ class MediaLinksHandler extends SimpleHandler {
 		}
 
 		// XXX: use hash of the rendered HTML?
-		return '"' . $page->getLatest() . '@' . wfTimestamp( TS_MW, $page->getTouched() ) . '"';
+		return '"' . $page->getLatest() . '@' . wfTimestamp( TS::MW, $page->getTouched() ) . '"';
 	}
 
 	/**
@@ -195,6 +200,6 @@ class MediaLinksHandler extends SimpleHandler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/MediaLinks.json';
+		return __DIR__ . '/Schema/MediaLinks.json';
 	}
 }

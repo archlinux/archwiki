@@ -32,17 +32,7 @@ use MediaWiki\User\UserIdentity;
  */
 final class UserPreferenceRequirement implements Requirement {
 
-	private UserIdentity $user;
-
-	private UserOptionsLookup $userOptionsLookup;
-
-	private string $optionName;
-
-	private string $requirementName;
-
-	private ?Title $title;
-
-	private OverrideableRequirementHelper $helper;
+	private readonly OverrideableRequirementHelper $helper;
 
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
@@ -56,18 +46,13 @@ final class UserPreferenceRequirement implements Requirement {
 	 * @param Title|null $title
 	 */
 	public function __construct(
-		UserIdentity $user,
-		UserOptionsLookup $userOptionsLookup,
-		string $optionName,
-		string $requirementName,
+		private readonly UserIdentity $user,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly string $optionName,
+		private readonly string $requirementName,
 		WebRequest $request,
-		?Title $title = null
+		private readonly ?Title $title = null,
 	) {
-		$this->user = $user;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->optionName = $optionName;
-		$this->requirementName = $requirementName;
-		$this->title = $title;
 		$this->helper = new OverrideableRequirementHelper( $request, $requirementName );
 	}
 

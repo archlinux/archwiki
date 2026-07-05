@@ -9,7 +9,6 @@ require_once "$IP/maintenance/Maintenance.php";
 use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\Title\Title;
 use PageImages\Job\InitImageDataJob;
 
 /**
@@ -17,6 +16,7 @@ use PageImages\Job\InitImageDataJob;
  * @author Max Semenik
  */
 class InitImageData extends Maintenance {
+
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Initializes PageImages data' );
@@ -84,7 +84,6 @@ class InitImageData extends Maintenance {
 			}
 			$pageIds = $queryBuilder->fetchFieldValues();
 			$job = new InitImageDataJob(
-				Title::newMainPage(),
 				[ 'page_ids' => $pageIds ],
 				$this->getServiceContainer()->getDBLoadBalancerFactory()
 			);

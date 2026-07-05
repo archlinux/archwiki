@@ -1,13 +1,19 @@
 [
 	{
 		"name": "cusi_case",
-		"comment": "A table used to store suggested investigations to be shown to a checkuser. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"comment": "A table used to store suggested investigations to be shown to a checkuser. Used by the Suggested investigations feature of the CheckUser extension.",
 		"columns": [
 			{
 				"name": "sic_id",
 				"comment": "Primary key",
 				"type": "integer",
 				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "sic_url_identifier",
+				"comment": "A randomised ID which is used in a hexadecimal format to provide a URL to the case. Using a random number avoids exposing how many cases exist or when the case was created when it is included in a URL.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
 			},
 			{
 				"name": "sic_status",
@@ -22,24 +28,48 @@
 				"options": { "notnull": true, "length": 255, "default": "" }
 			},
 			{
+				"name": "sic_status_changed_by",
+				"comment": "The user ID of the user who last changed the status. 0 for system actions (e.g. auto-close). NULL when status change tracking data is not available.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": false, "default": null }
+			},
+			{
 				"name": "sic_created_timestamp",
 				"comment": "The timestamp representing when the case was created by the system.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "sic_updated_timestamp",
+				"comment": "The timestamp representing when the case last had a signal/user added by the system (or the created timestamp if no users/signals have been added since it's creation).",
 				"type": "mwtimestamp",
 				"options": { "notnull": true }
 			}
 		],
 		"indexes": [
 			{
-				"name": "sic_status_created_timestamp_id",
-				"columns": [ "sic_status", "sic_created_timestamp", "sic_id" ],
+				"name": "sic_status_updated_timestamp_id",
+				"columns": [ "sic_status", "sic_updated_timestamp", "sic_id" ],
 				"unique": true,
-				"comment": "Used for several things. Allows sorting and paging the Codex table by the 'Status' column (the created timestamp and ID are used to ensure unique paging). Also allows the system to find the newest open case given a pre-determined list of sic_id values, so the system can add new users to an existing case."
+				"comment": "Used for several things. Allows sorting and paging the Codex table by the 'Status' column (the updated timestamp and ID are used to ensure unique paging). Also allows the system to find the newest open case given a pre-determined list of sic_id values, so the system can add new users to an existing case."
 			},
 			{
-				"name": "sic_created_timestamp_id",
-				"columns": [ "sic_created_timestamp", "sic_id" ],
+				"name": "sic_updated_timestamp_id",
+				"columns": [ "sic_updated_timestamp", "sic_id" ],
 				"unique": true,
-				"comment": "Used to sort and page cases by their creation timestamp (the ID makes paging consistent in case two cases have the same creation timestamp) for the Codex table on the Special page for Suggested investigations."
+				"comment": "Used to sort and page cases by their updated timestamp (the ID makes paging consistent in case two cases have the same updated timestamp) for the Codex table on the Special page for Suggested investigations."
+			},
+			{
+				"name": "sic_url_identifier",
+				"columns": [ "sic_url_identifier" ],
+				"unique": true,
+				"comment": "Allows searching for cases based on their URL identifier (such as when a user loads the special page for a given case using this identifier). Secondly, allows the system to check and enforce that the URL identifier is unique for each case."
+			},
+			{
+				"name": "sic_status_changed_by_updated_timestamp_id",
+				"columns": [ "sic_status_changed_by", "sic_updated_timestamp", "sic_id" ],
+				"unique": false,
+				"comment": "Allows filtering cases by the user who last changed the status and sorting the filtered results by updated timestamp."
 			}
 		],
 		"pk": [ "sic_id" ]
@@ -57,6 +87,12 @@
 			{
 				"name": "siu_sic_id",
 				"comment": "Part of composite primary key. The cusi_case row (suggested investigation) that this user is associated with.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true }
+			},
+			{
+				"name": "siu_info",
+				"comment": "A bitfield column storing information about the user for the case. Set by signal logic which may be in private code.",
 				"type": "integer",
 				"options": { "unsigned": true, "notnull": true }
 			}
@@ -92,6 +128,18 @@
 				"comment": "The value associated with the signal. Used in the composite primary key.",
 				"type": "binary",
 				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "sis_trigger_id",
+				"comment": "The revision or log ID that caused this signal to be evaluated.",
+				"type": "bigint",
+				"options": { "unsigned": true, "notnull": true, "default": 0 }
+			},
+			{
+				"name": "sis_trigger_type",
+				"comment": "Integer mapping identifier specifying which table the data in this row relates to. See SuggestedInvestigationsCaseManagerService for the mapping.",
+				"type": "mwtinyint",
+				"options": { "notnull": true, "length": 1, "default": 0 }
 			}
 		],
 		"indexes": [
@@ -102,6 +150,6 @@
 				"comment": "Used to find cusi_signal rows for a given cusi_case row, when displaying cusi_case rows in the UI."
 			}
 		],
-		"pk": [ "sis_name", "sis_value", "sis_sic_id" ]
+		"pk": [ "sis_name", "sis_value", "sis_sic_id", "sis_trigger_id", "sis_trigger_type" ]
 	}
 ]

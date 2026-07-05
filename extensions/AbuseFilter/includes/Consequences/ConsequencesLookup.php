@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
@@ -13,33 +14,14 @@ use Wikimedia\Rdbms\LBFactory;
  * @todo Can we better integrate this with FilterLookup?
  */
 class ConsequencesLookup {
-	public const SERVICE_NAME = 'AbuseFilterConsequencesLookup';
+	public const SERVICE_NAME = ServiceNames::ConsequencesLookup;
 
-	/** @var LBFactory */
-	private $lbFactory;
-	/** @var CentralDBManager */
-	private $centralDBManager;
-	/** @var ConsequencesRegistry */
-	private $consequencesRegistry;
-	/** @var LoggerInterface */
-	private $logger;
-
-	/**
-	 * @param LBFactory $lbFactory
-	 * @param CentralDBManager $centralDBManager
-	 * @param ConsequencesRegistry $consequencesRegistry
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
-		LBFactory $lbFactory,
-		CentralDBManager $centralDBManager,
-		ConsequencesRegistry $consequencesRegistry,
-		LoggerInterface $logger
+		private readonly LBFactory $lbFactory,
+		private readonly CentralDBManager $centralDBManager,
+		private readonly ConsequencesRegistry $consequencesRegistry,
+		private readonly LoggerInterface $logger
 	) {
-		$this->lbFactory = $lbFactory;
-		$this->centralDBManager = $centralDBManager;
-		$this->consequencesRegistry = $consequencesRegistry;
-		$this->logger = $logger;
 	}
 
 	/**

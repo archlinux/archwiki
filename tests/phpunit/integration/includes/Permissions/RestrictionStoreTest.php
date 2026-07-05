@@ -2,13 +2,15 @@
 
 namespace MediaWiki\Tests\Integration\Permissions;
 
-use MediaWiki\Cache\CacheKeyHelper;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\CacheKeyHelper;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\RestrictionStore;
@@ -84,6 +86,10 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 				MainConfigNames::RestrictionLevels => [ '', 'autoconfirmed', 'sysop' ],
 				MainConfigNames::RestrictionTypes => self::DEFAULT_RESTRICTION_TYPES,
 				MainConfigNames::SemiprotectedRestrictionLevels => [ 'autoconfirmed' ],
+				MainConfigNames::VirtualDomainsMapping => [
+					TemplateLinksTable::VIRTUAL_DOMAIN => [ 'db' => false ],
+					ImageLinksTable::VIRTUAL_DOMAIN => [ 'db' => false ],
+				],
 			] ),
 			$this->wanCache,
 			$this->loadBalancerFactory,

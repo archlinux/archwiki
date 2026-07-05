@@ -9,6 +9,7 @@
 			:user-page-is-known="userCard.userPageIsKnown"
 			:user-page-watched="userCard.userPageWatched"
 			:special-central-auth-url="userCard.specialCentralAuthUrl"
+			:has-local-block-global-block-or-lock="userCard.hasLocalBlockGlobalBlockOrLock"
 			@close="$emit( 'close' )"
 		></user-card-header>
 	</teleport>
@@ -55,6 +56,7 @@
 				:global-restrictions="userCard.globalRestrictions"
 				:global-restrictions-date="userCard.globalRestrictionsDate"
 				:temp-accounts-on-ip-count="userCard.tempAccountsOnIPCount"
+				:suggested-investigations-case-count="userCard.suggestedInvestigationsCaseCount"
 			></user-card-body>
 			<!--eslint-enable-->
 		</div>
@@ -68,6 +70,7 @@ const UserCardLoadingView = require( './UserCardLoadingView.vue' );
 const UserInfoCardError = require( './UserInfoCardError.vue' );
 const DateFormatter = require( 'mediawiki.DateFormatter' );
 const { processEditCountByDay, parseMediaWikiTimestamp } = require( '../util.js' );
+const { getUserInfo } = require( '../rest.js' );
 
 // @vue/component
 module.exports = exports = {
@@ -129,7 +132,9 @@ module.exports = exports = {
 			hasIpRevealInfo: false,
 			globalRestrictions: null,
 			globalRestrictionsTimestamp: null,
-			tempAccountsOnIPCount: []
+			tempAccountsOnIPCount: [],
+			suggestedInvestigationsCaseCount: 0,
+			hasLocalBlockGlobalBlockOrLock: false
 		} );
 
 		// Methods
@@ -141,16 +146,7 @@ module.exports = exports = {
 			loading.value = true;
 			error.value = null;
 
-			const token = mw.user.tokens.get( 'csrfToken' );
-			const rest = new mw.Rest();
-			const payload = {
-				token,
-				username: props.username
-			};
-			// T404682
-			const language = mw.config.get( 'wgUserLanguage' );
-
-			rest.post( '/checkuser/v0/userinfo?uselang=' + language, payload )
+			getUserInfo( props.username )
 				.then( ( userInfo ) => {
 					if ( !userInfo ) {
 						throw new Error( mw.msg( 'checkuser-userinfocard-error-no-data' ) );
@@ -183,7 +179,9 @@ module.exports = exports = {
 						ipRevealLastCheck,
 						globalRestrictions,
 						globalRestrictionsTimestamp,
-						tempAccountsOnIPCount
+						tempAccountsOnIPCount,
+						suggestedInvestigationsCaseCount,
+						hasLocalBlockGlobalBlockOrLock
 					} = userInfo;
 					const userTitleObj = mw.Title.makeTitle( 2, name );
 					const userPageUrl = userTitleObj.getUrl();
@@ -234,6 +232,8 @@ module.exports = exports = {
 					userCard.canAccessTemporaryAccountIpAddresses =
 						canAccessTemporaryAccountIpAddresses;
 					userCard.tempAccountsOnIPCount = tempAccountsOnIPCount;
+					userCard.suggestedInvestigationsCaseCount =
+						suggestedInvestigationsCaseCount || 0;
 
 					// Parse and format checkUserLastCheck date
 					const lastCheckDate = parseMediaWikiTimestamp( checkUserLastCheck );
@@ -266,6 +266,7 @@ module.exports = exports = {
 					userCard.groups = groups;
 					userCard.globalGroups = globalGroups;
 					userCard.globalRestrictions = globalRestrictions;
+					userCard.hasLocalBlockGlobalBlockOrLock = !!hasLocalBlockGlobalBlockOrLock;
 
 					const globalRestrictionsDate =
 						parseMediaWikiTimestamp( globalRestrictionsTimestamp );

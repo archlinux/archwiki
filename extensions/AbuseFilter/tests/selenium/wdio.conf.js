@@ -1,12 +1,15 @@
-'use strict';
+import { config as baseConfig } from 'wdio-mediawiki/wdio-defaults.conf.js';
 
-const { config } = require( 'wdio-mediawiki/wdio-defaults.conf.js' );
-
-exports.config = { ...config,
+export const config = { ...baseConfig
 	// Override, or add to, the setting from wdio-mediawiki.
 	// Learn more at https://webdriver.io/docs/configurationfile/
 	//
 	// Example:
-	// logLevel: 'info',
-	maxInstances: 4
+	// logLevel: 'info'
+	// To enable video recording, enable video and disable browser headless
+	// recordVideo: true,
+	// useBrowserHeadless: false,
+	//
+	// To enable screenshots on all tests, disable screenshotsOnFailureOnly
+	// screenshotsOnFailureOnly: false,
 };

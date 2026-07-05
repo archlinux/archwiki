@@ -1,5 +1,3 @@
-const ResizingDragBar = require( './ResizingDragBar.js' );
-
 /**
  * This is a layout with two resizable panes.
  *
@@ -14,7 +12,7 @@ function TwoPaneLayout( config ) {
 	TwoPaneLayout.super.call( this, config );
 
 	this.$pane1 = $( '<div>' ).addClass( 'ext-WikiEditor-twopanes-pane1' );
-	const middleDragBar = new ResizingDragBar( { isEW: true, id: 'ext-WikiEditor-pane1-dragbar' } );
+	const middleDragBar = $.wikiEditor.createResizingDragBar( { isEW: true, id: 'ext-WikiEditor-pane1-dragbar' } );
 	this.$pane2 = $( '<div>' ).addClass( 'ext-WikiEditor-twopanes-pane2' );
 
 	this.$element.addClass( 'ext-WikiEditor-twopanes-TwoPaneLayout' );

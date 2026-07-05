@@ -22,4 +22,16 @@
 	.cdx-button__icon--download {
 		.cdx-mixin-css-icon( @cdx-icon-download, @param-is-button-icon: true );
 	}
+
+	// Prevent the download button from being squeezed by the flex layout
+	// when font size is large or locale text is long
+	.cdx-button--weight-primary {
+		flex-shrink: 0;
+		white-space: nowrap;
+	}
+
+	// Allow the size selector to shrink properly within the flex container
+	.cdx-select {
+		min-width: 0;
+	}
 }

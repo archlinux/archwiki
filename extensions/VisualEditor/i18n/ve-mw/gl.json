@@ -17,6 +17,7 @@
 			"Vivaelcelta"
 		]
 	},
+	"collabpad-disabled": "CollabPad non está activado neste wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importado de $1",
 	"collabpad": "CollabPad",
@@ -238,6 +239,7 @@
 	"visualeditor-educationpopup-dismiss": "Entendido",
 	"visualeditor-expandable-less": "Menos",
 	"visualeditor-expandable-more": "Máis",
+	"visualeditor-expandableerror-toggle": "Cambiar a visibilidade",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Título da páxina",
 	"visualeditor-formatdropdown-format-mw-heading2": "Cabeceira",
@@ -245,6 +247,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Subcabeceira 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Subcabeceira 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Subcabeceira 4",
+	"visualeditor-fullpage-switch-label": "Editar toda a páxina",
 	"visualeditor-generating-wikitext-progress": "Xerando o texto wiki",
 	"visualeditor-includes-noinclude-start": "Inicio do contido excluído dos fragmentos",
 	"visualeditor-includes-noinclude-end": "Fin do contido excluído dos fragmentos",

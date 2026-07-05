@@ -254,9 +254,26 @@ abstract class Handler {
 	/**
 	 * Returns the path this handler is bound to relative to the module prefix.
 	 * Includes path variables.
+	 *
+	 * This does not prepend a leading slash for module-based handlers.
 	 */
 	public function getPath(): string {
 		return $this->path;
+	}
+
+	/**
+	 * Returns the path this handler is bound to relative to the base router prefix.
+	 * Includes path variables and leading slash for module-based handlers.
+	 *
+	 * @since 1.46
+	 */
+	public function getRoutePath(): string {
+		$prefix = $this->getModulePathPrefix();
+		if ( $prefix !== '' ) {
+			$prefix = "/$prefix";
+		}
+
+		return $prefix . $this->path;
 	}
 
 	/**
@@ -276,6 +293,12 @@ abstract class Handler {
 		return $matches[1] ?? [];
 	}
 
+	/**
+	 * Get the Router of the Module that this handler belongs to.
+	 *
+	 * @note This method forces component coupling and its usage is discouraged (T411521)
+	 * @todo Replace this with a method to expose a narrower interface (T411521)
+	 */
 	protected function getRouter(): Router {
 		return $this->module->getRouter();
 	}
@@ -283,9 +306,25 @@ abstract class Handler {
 	/**
 	 * Get the Module this handler belongs to.
 	 * Will fail hard if called before initContext().
+	 *
+	 * @note This method forces component coupling and its usage is discouraged (T411521)
+	 * @todo Replace this with methods exposing narrower interfaces (T411521)
 	 */
 	protected function getModule(): Module {
 		return $this->module;
+	}
+
+	/**
+	 * Get the path prefix of the Module this handler belongs to.
+	 *
+	 * This does not prepend a leading slash for module-based handlers.
+	 *
+	 * @return string
+	 * @since 1.46
+	 */
+	protected function getModulePathPrefix(): string {
+		// @todo Use an injected module path prefix string (T411521)
+		return $this->module->getPathPrefix();
 	}
 
 	/**
@@ -300,7 +339,8 @@ abstract class Handler {
 	 * @return string
 	 */
 	protected function getRouteUrl( $pathParams = [], $queryParams = [] ): string {
-		$path = $this->getPath();
+		$path = $this->getRoutePath();
+		// @todo: use a narrower route interface to the URL instead of Router (T411521)
 		return $this->getRouter()->getRouteUrl( $path, $pathParams, $queryParams );
 	}
 
@@ -418,9 +458,8 @@ abstract class Handler {
 	 * @throws HttpException On validation failure.
 	 */
 	public function validate( Validator $restValidator ) {
-		$this->validatedParams = $restValidator->validateParams(
-			$this->getParamSettings()
-		);
+		$allParamSettings = array_merge( $this->getParamSettings(), $this->getHeaderParamSettings() );
+		$this->validatedParams = $restValidator->validateParams( $allParamSettings );
 
 		$bodyType = $this->request->getBodyType();
 		$legacyBodyValidator = $bodyType === null ? null
@@ -462,7 +501,7 @@ abstract class Handler {
 	public function applyDeprecationHeader( ResponseInterface $response ) {
 		$dd = $this->getDeprecatedDate();
 		if ( $dd !== null && !$response->getHeaderLine( 'Deprecation' ) ) {
-			$response->setHeader( 'Deprecation', '@' . $dd );
+			$response->setHeader( ResponseHeaders::DEPRECATION, '@' . $dd );
 		}
 	}
 
@@ -548,9 +587,9 @@ abstract class Handler {
 			// We can't make them public without breaking all subclasses that
 			// override them. So we pass closures for now.
 			$this->conditionalHeaderUtil->setValidators(
-				fn () => $this->getETag(),
-				fn () => $this->getLastModified(),
-				fn () => $this->hasRepresentation()
+				$this->getETag( ... ),
+				$this->getLastModified( ... ),
+				$this->hasRepresentation( ... )
 			);
 		}
 		return $this->conditionalHeaderUtil;
@@ -614,14 +653,14 @@ abstract class Handler {
 		// cookies in the response, or the response itself may vary on user-specific variables,
 		// for example on private wikis where the 'read' permission is restricted. (T264631)
 		if ( $response->getHeaderLine( 'Set-Cookie' ) || $this->getSession()->isPersistent() ) {
-			$response->setHeader( 'Cache-Control', 'private,must-revalidate,s-maxage=0' );
+			$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'private,must-revalidate,s-maxage=0' );
 		}
 
-		if ( !$response->getHeaderLine( 'Cache-Control' ) ) {
+		if ( !$response->getHeaderLine( ResponseHeaders::CACHE_CONTROL ) ) {
 			$rqMethod = $this->getRequest()->getMethod();
 			if ( $rqMethod !== 'GET' && $rqMethod !== 'HEAD' ) {
 				// Responses to requests other than GET or HEAD should not be cacheable by default.
-				$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+				$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'private,no-cache,s-maxage=0' );
 			}
 		}
 	}
@@ -650,6 +689,25 @@ abstract class Handler {
 	 *  ParamValidator settings arrays
 	 */
 	public function getParamSettings() {
+		return [];
+	}
+
+	/**
+	 * Fetch ParamValidator settings for request headers
+	 *
+	 * Every setting must include self::PARAM_SOURCE as 'header' to specify
+	 * it's a request header for the endpoint.
+	 *
+	 * Subclasses that must use the headers from a request should consider
+	 * having PARAM_REQUIRED setting of "true", Otherwise if the header's existence
+	 * or non-existence doesn't break the code the PARAM_REQUIRED should be set to "false".
+	 *
+	 * @stable to override
+	 *
+	 * @return array[] Associative array mapping header names to
+	 *  ParamValidator settings arrays
+	 */
+	public function getHeaderParamSettings() {
 		return [];
 	}
 
@@ -701,6 +759,22 @@ abstract class Handler {
 
 			if ( $source === 'path' && !isset( $supportedPathParams[$name] ) ) {
 				// Skip optional path param not used in the current path
+				continue;
+			}
+
+			$setting[ Validator::PARAM_DESCRIPTION ] = $this->getJsonLocalizer()->localizeValue(
+				$setting, Validator::PARAM_DESCRIPTION,
+			);
+
+			$param = Validator::getParameterSpec( $name, $setting );
+
+			$parameters[] = $param;
+		}
+
+		foreach ( $this->getHeaderParamSettings() as $name => $setting ) {
+			$source = $setting[ Validator::PARAM_SOURCE ] ?? '';
+
+			if ( $source !== 'header' ) {
 				continue;
 			}
 
@@ -844,8 +918,8 @@ abstract class Handler {
 	 *
 	 * @see https://swagger.io/specification/#schema-object
 	 *
-	 * Returns null by default. Subclasses that return a JSON response should
-	 * implement this method to return a schema of the response body.
+	 * Loads and decodes the JSON schema file returned by getResponseBodySchemaFileName().
+	 * Returns null if getResponseBodySchemaFileName() returns null.
 	 *
 	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
 	 *
@@ -858,12 +932,70 @@ abstract class Handler {
 	}
 
 	/**
-	 * Returns the path and name of a JSON file containing an OpenAPI Schema Object
-	 * specification structure.
+	 * Fetch Response headers specs for response headers returned by a Handler
+	 *
+	 * Subclasses that return other headers in addition to the default ones should
+	 * extend getResponseHeaderSettings()
+	 *
+	 * @return array[] Associative array mapping response header names to
+	 *  their types and localizable descriptions
+	 */
+	private function getResponseHeaderSchemas(): array {
+		$responseHeaderSettings = [];
+		foreach ( $this->getResponseHeaderSettings() as $headerName => $settings ) {
+			// Set description field for localization
+			$settings[ self::OPENAPI_DESCRIPTION_KEY  ] = new MessageValue( $settings[ 'messageKey' ] );
+			// 'messageKey' field no longer required
+			unset( $settings[ 'messageKey' ] );
+			$settings[ self::OPENAPI_DESCRIPTION_KEY ] = $this->getJsonLocalizer()->localizeValue(
+				$settings, self::OPENAPI_DESCRIPTION_KEY,
+			);
+			$responseHeaderSettings[ $headerName ] = [
+				self::OPENAPI_DESCRIPTION_KEY => $settings[ self::OPENAPI_DESCRIPTION_KEY ],
+				'schema' => $settings[ 'schema' ]
+			];
+		}
+		return $responseHeaderSettings;
+	}
+
+	/**
+	 * Fetch the settings array mapping response headers to their descriptions and schemas
+	 *
+	 * Subclasses that return other headers should extend this function.
+	 * Subclasses that use Response headers not defined in the ResponseHeaders class can
+	 * hardcode the headers names as keys in this function as well.
+	 *
+	 * @stable to override
+	 *
+	 * @return array[] List of Response headers as constants from ResponseHeaders class
+	 */
+	public function getResponseHeaderSettings(): array {
+		$responseHeaderSettings = [
+			ResponseHeaders::CACHE_CONTROL => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+				ResponseHeaders::CACHE_CONTROL
+			]
+		];
+
+		if ( $this->isDeprecated() ) {
+			$responseHeaderSettings[ ResponseHeaders::DEPRECATION ] = ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+				ResponseHeaders::DEPRECATION
+			];
+		}
+		return $responseHeaderSettings;
+	}
+
+	/**
+	 * Returns the absolute path of a JSON file containing an OpenAPI Schema
+	 * Object specification structure describing the response body.
 	 *
 	 * @see https://swagger.io/specification/#schema-object
 	 *
-	 * Returns null by default. Subclasses with a suitable JSON file should implement this method.
+	 * Returns null by default. Subclasses that return a JSON response
+	 * should override this method to return a schema file path.
+	 *
+	 * The returned path must be absolute. Use `__DIR__` to construct the
+	 * path relative to the handler file, e.g.
+	 * `__DIR__ . '/Schema/Foo.json'`.
 	 *
 	 * @param string $method The HTTP method to produce a spec for ("get", "post", etc).
 	 *
@@ -898,6 +1030,13 @@ abstract class Handler {
 		if ( $bodySchema ) {
 			$bodySchema = $this->getJsonLocalizer()->localizeJson( $bodySchema );
 			$ok['content']['application/json']['schema'] = $bodySchema;
+		}
+
+		// TODO: For Sitemap index and base tests the responsefactory is null.
+		// Follow up task to investigate this
+		if ( $this->responseFactory !== null ) {
+			$headersSpec = $this->getResponseHeaderSchemas();
+			$ok['headers'] = $headersSpec;
 		}
 
 		// XXX: we should add info about redirects

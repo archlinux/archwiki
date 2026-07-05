@@ -10,6 +10,7 @@
 		]
 	},
 	"linterrors": "Erros detectados por Lint",
+	"linttemplateerrors": "Transclusións que conteñen erros de Lint",
 	"linter-category-bogus-image-options": "Opcións de ficheiro incorrectas",
 	"linter-category-bogus-image-options-desc": "Estas páxinas teñen ficheiros con opcións inútiles.",
 	"linter-category-large-tables": "Táboas grandes que son difíciles de ver no móbil",
@@ -20,6 +21,8 @@
 	"linter-category-duplicate-ids-desc": "Estas páxinas teñen elementos con atributos \"id\" duplicados.",
 	"linter-category-empty-heading": "Cabeceiras baleiras",
 	"linter-category-empty-heading-desc": "Estas páxinas inclúen cabeceiras baleiras.",
+	"linter-category-template-arg-in-extension-tag": "Etiqueta de extensión con parámetro de modelo",
+	"linter-category-template-arg-in-extension-tag-desc": "Estas páxinas teñen unha etiqueta de extensión cun parámetro de modelo que non se transcluiría correctamente.",
 	"linter-category-fostered": "Contido fóra de lugar",
 	"linter-category-fostered-desc": "Estas páxinas inclúen contido fóra de lugar.",
 	"linter-category-fostered-transparent": "Contido invisible fóra de lugar",
@@ -62,6 +65,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Estas páxinas teñene ligazóns wiki dentro de ligazóns externas e precisan ser correxidas",
 	"linter-desc": "Supervisa erros informados por un servizo comprobador externo e móstraos ós usuarios",
 	"linter-lints-prefix-search-page-desc": "Procurar páxinas con erros de Lint por prefixo do título ou por título completo",
+	"linter-invalid-category": "Categoría non atopada ou con formato incorrecto",
 	"linter-invalid-title": "Espazo de nomes e/ou nome da páxina non atopado ou con formato incorrecto",
 	"linter-form-exact-match": "Procurar un título de páxina específico",
 	"linter-form-prefix-match": "Procurar todas as páxinas que coincidan co prefixo do título",
@@ -112,10 +116,16 @@
 	"linter-pager-title-header": "Título da páxina",
 	"linter-pager-unclosed-quotes-in-heading-details": "Cita non pechada que sae da táboa de contidos",
 	"linter-pager-wikilink-in-extlink-details": "Ligazóns dentro de ligazóns",
+	"linter-pager-template-arg-in-extension-tag-details": "Nome da etiqueta de extensión con necesidade de actualización (e parámetros de modelo usados no seu interior)",
 	"linter-prefix-search-subpage": "Páxinas con erros de Lint que coinciden co prefixo do título ou co título completo: $1",
 	"linterrors-subpage": "Erros de Lint: $1",
 	"linterrors-summary": "<strong>Nota:</strong> As contaxes para as categorías non son exactas pois se basean en estimacións.",
 	"multi-part-template-block": "O resultado non procede dun só modelo",
+	"parser-function": "O resultado dunha función analizadora",
 	"pageinfo-linter": "Erros detectados por Lint",
-	"pageinfo-linter-moreinfo": "Ollar información detallada sobre os erros de Lint."
+	"pageinfo-linter-moreinfo": "Ollar información detallada sobre os erros de Lint.",
+	"category-by-template": "Transclusións que conteñen erros de Lint: $1",
+	"category-by-template-view": "Ver as transclusións que conteñen estes erros de Lint.",
+	"category-by-template-desc": "As transclusións destas páxinas conteñen '''[[Special:LintErrors/$1|$1]]''' erros de Lint. ''Ten en conta que algunhas transclusións poden aparecer nesta lista debido aos argumentos pasados á transclusión e non á fonte da transclusión.''",
+	"linter-template-errors-index-desc": "Estas son listas de transclusións de páxinas que conteñen erros de Lint. ''Ten en conta que algunhas transclusións poden aparecer nestas listas debido aos argumentos pasados á transclusión e non á fonte da transclusión.''"
 }

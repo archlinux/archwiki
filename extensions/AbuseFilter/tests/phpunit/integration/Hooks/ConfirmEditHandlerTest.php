@@ -33,12 +33,11 @@ class ConfirmEditHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testOnEditFilterMergedContent() {
-		$this->markTestSkipped( 'Can be unskipped after I71d9894a908469c5f4e191ce36406b9e1a8113b2' );
 		$this->overrideConfigValue(
 			'CaptchaTriggers',
 			[ 'edit' => [
 				'trigger' => true,
-				'class' => 'QuestyCaptcha',
+				'class' => 'SimpleCaptcha',
 			] ]
 		);
 		$this->editPage( 'Test', 'Foo' );

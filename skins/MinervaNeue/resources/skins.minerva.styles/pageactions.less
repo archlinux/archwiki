@@ -52,6 +52,10 @@
 	.cdx-button {
 		color: @color-subtle !important;
 		font-weight: 500;
+
+		@media all and ( min-width: @min-width-breakpoint-tablet ) {
+			padding: 0 @spacing-75;
+		}
 	}
 }
 
@@ -60,12 +64,28 @@
 .page-actions-menu__list-item:first-child {
 	flex-grow: 1;
 	justify-content: flex-start;
-	.cdx-mixin-button-layout-flush( 'start', true  );
+
+	// Position the first icon with the edge of the content container,
+	// only until desktop when buttons show labels.
+	@media all and ( max-width: @max-width-breakpoint-tablet ) {
+		.cdx-mixin-button-layout-flush(
+			@param-direction: 'start',
+			@param-is-icon-only: true,
+			@param-size-button: 'large'
+		);
+	}
 }
 
-// position the last icon with the edge of the content container
+// Position the last icon with the edge of the content container,
+// only until desktop when buttons show labels.
 .page-actions-menu__list-item:last-child {
-	.cdx-mixin-button-layout-flush( 'end', true  );
+	@media all and ( max-width: @max-width-breakpoint-tablet ) {
+		.cdx-mixin-button-layout-flush(
+			@param-direction: 'end',
+			@param-is-icon-only: true,
+			@param-size-button: 'large'
+		);
+	}
 }
 
 // Watchstar is hidden for anonymous no-js users

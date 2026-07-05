@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.53.0
+ * OOUI v0.53.2
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2025 OOUI Team and other contributors.
+ * Copyright 2011–2026 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2025-09-03T22:03:22Z
+ * Date: 2026-04-21T12:46:08Z
  */
 ( function ( OO ) {
 
@@ -2459,7 +2459,7 @@ OO.ui.PopupToolGroup.prototype.setActive = function ( value ) {
 					this.$clippableScrollableContainer.offset().left;
 
 				this.toggleClipping( false );
-				this.setHorizontalPosition( preferredSide );
+				this.setHorizontalPosition( 'start' );
 
 				this.$clippable.css( {
 					'margin-left': -( this.$element.offset().left - containerLeft ),

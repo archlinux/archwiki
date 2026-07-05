@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Hooks;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -14,21 +14,26 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\HookHandler\PerformRetroactiveAutoblockHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\PerformRetroactiveAutoblockHandler
  */
 class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCase implements CheckUserQueryInterface {
 
 	use CheckUserTempUserTestTrait;
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/**
 	 * @dataProvider provideOnPerformRetroactiveAutoblock
 	 */
 	public function testOnPerformRetroactiveAutoblock(
-		array $tablesWithData, int $maximumIPsToAutoblockConfigValue, array $expectedAutoBlockTargets
+		array $tablesWithData,
+		int $maximumIPsToAutoblockConfigValue,
+		array $expectedAutoBlockTargets
 	) {
 		$this->overrideConfigValue( 'CheckUserMaximumIPsToAutoblock', $maximumIPsToAutoblockConfigValue );
 		$target = $this->getMutableTestUser()->getUserIdentity();
+		/** @var CheckUserInsert $checkUserInsert */
+		$checkUserInsert = $this->getServiceContainer()->get( 'CheckUserInsert' );
+
 		// Insert the specified test data
 		if ( in_array( self::CHANGES_TABLE, $tablesWithData ) ) {
 			ConvertibleTimestamp::setFakeTime( '20210101000000' );
@@ -40,7 +45,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 				self::getDefaultRecentChangeAttribs(),
 				[ 'rc_user' => $target->getId(), 'rc_user_text' => $target->getName() ],
 			) );
-			( new Hooks() )->updateCheckUserData( $rc );
+			$checkUserInsert->updateCheckUserData( $rc );
 		}
 		if ( in_array( self::PRIVATE_LOG_EVENT_TABLE, $tablesWithData ) ) {
 			ConvertibleTimestamp::setFakeTime( '20210101000001' );
@@ -56,7 +61,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 					'rc_user' => $target->getId(), 'rc_user_text' => $target->getName(),
 				]
 			) );
-			( new Hooks() )->updateCheckUserData( $rc );
+			$checkUserInsert->updateCheckUserData( $rc );
 		}
 		if ( in_array( self::LOG_EVENT_TABLE, $tablesWithData ) ) {
 			ConvertibleTimestamp::setFakeTime( '20210101000002' );
@@ -73,7 +78,7 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 					'rc_user' => $target->getId(), 'rc_user_text' => $target->getName(),
 				]
 			) );
-			( new Hooks() )->updateCheckUserData( $rc );
+			$checkUserInsert->updateCheckUserData( $rc );
 		}
 		ConvertibleTimestamp::setFakeTime( '20210102000000' );
 		// Block the target with autoblocking enabled. This should call the method under test.
@@ -93,16 +98,20 @@ class PerformRetroactiveAutoblockHandlerTest extends MediaWikiIntegrationTestCas
 		$blockManager = $this->getServiceContainer()->getBlockManager();
 		if ( count( $expectedAutoBlockTargets ) ) {
 			$this->assertSameSize(
-				$expectedAutoBlockTargets, $blockResult['autoIds'],
+				$expectedAutoBlockTargets,
+				$blockResult['autoIds'],
 				'The number of autoblocks placed was not as expected'
 			);
 			foreach ( $expectedAutoBlockTargets as $expectedAutoBlockTarget ) {
 				$ipBlock = $blockManager->getIpBlock( $expectedAutoBlockTarget, false );
 				$this->assertNotNull(
-					$ipBlock, "An autoblock should have been placed on the IP $expectedAutoBlockTarget."
+					$ipBlock,
+					"An autoblock should have been placed on the IP $expectedAutoBlockTarget."
 				);
 				$this->assertContains(
-					$ipBlock->getId(), $blockResult['autoIds'], 'The autoblock ID was not as expected'
+					$ipBlock->getId(),
+					$blockResult['autoIds'],
+					'The autoblock ID was not as expected'
 				);
 			}
 		} else {

@@ -7,6 +7,7 @@
 		]
 	},
 	"linterrors": "Lint-Feeler",
+	"linttemplateerrors": "Transklusiounen, déi Lint-Feeler enthalen",
 	"linter-category-large-tables": "Grouss Tabellen, déi op engem mobillen Apparat schwéier ze kucke sinn",
 	"linter-category-large-tables-desc": "An dëse Säite kommen Tabelle vir, déi op mobillen Apparater schwéier ze kucke sinn",
 	"linter-category-duplicate-ids": "Duebel IDen",
@@ -61,6 +62,8 @@
 	"linterrors-subpage": "Lint-Feeler: $1",
 	"linterrors-summary": "<strong>REMARK:</strong> D'Compteure fir d'Kategorië sinn net genee, mä baséieren op Schätzungen.",
 	"multi-part-template-block": "Ausgab net vun enger eenzeler Schabloun",
+	"parser-function": "Output vun enger Parserfunktioun",
 	"pageinfo-linter": "Lint-Feeler",
-	"pageinfo-linter-moreinfo": "Detailléiert Informatiounen iwwer d'Lint-Feelere weisen."
+	"pageinfo-linter-moreinfo": "Detailléiert Informatiounen iwwer d'Lint-Feelere weisen.",
+	"category-by-template-view": "Transklusioune weisen, an deenen dës Lint-Feeler virkommen."
 }

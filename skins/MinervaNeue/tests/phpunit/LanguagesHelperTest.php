@@ -4,7 +4,7 @@ namespace MediaWiki\Minerva;
 
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;

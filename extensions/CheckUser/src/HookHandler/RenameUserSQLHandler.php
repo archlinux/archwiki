@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\RenameUser\Hook\RenameUserSQLHook;
 use MediaWiki\RenameUser\RenameuserSQL;

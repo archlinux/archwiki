@@ -1,0 +1,170 @@
+<?php
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+namespace MediaWiki\EditPage;
+
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Message\Message;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageReference;
+use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Title\Title;
+use Wikimedia\Message\ListType;
+
+/**
+ * Handles formatting for the "templates used on this page"
+ * lists. Formerly known as Linker::formatTemplates()
+ *
+ * @since 1.28
+ */
+class TemplatesOnThisPageFormatter {
+
+	public function __construct(
+		private readonly IContextSource $context,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly RestrictionStore $restrictionStore
+	) {
+	}
+
+	/**
+	 * Make an HTML list of templates, and then add a "More..." link at
+	 * the bottom. If $more is null, do not add a "More..." link. If $more
+	 * is a PageReference, make a link to that page and use it. If $more is a string,
+	 * directly paste it in as the link (escaping needs to be done manually).
+	 *
+	 * @param PageIdentity[] $templates
+	 * @param string|false $type 'preview' if a preview, 'section' if a section edit, false if neither
+	 * @param PageReference|string|null $more An escaped link for "More..." of the templates
+	 * @return string HTML output
+	 */
+	public function format( array $templates, $type = false, $more = null ): string {
+		if ( !$templates ) {
+			// No templates
+			return '';
+		}
+
+		# Do a batch existence check
+		$batch = $this->linkBatchFactory->newLinkBatch( $templates );
+		$batch->setCaller( __METHOD__ );
+		$batch->execute();
+
+		# Construct the HTML
+		$outText = Html::openElement( 'div', [ 'class' => 'mw-templatesUsedExplanation' ] );
+		$count = count( $templates );
+		if ( $type === 'preview' ) {
+			$outText .= $this->context->msg( 'templatesusedpreview' )->numParams( $count )
+				->parseAsBlock();
+		} elseif ( $type === 'section' ) {
+			$outText .= $this->context->msg( 'templatesusedsection' )->numParams( $count )
+				->parseAsBlock();
+		} else {
+			$outText .= $this->context->msg( 'templatesused' )->numParams( $count )
+				->parseAsBlock();
+		}
+		$outText .= Html::closeElement( 'div' ) . Html::openElement( 'ul' ) . "\n";
+
+		usort( $templates, Title::compare( ... ) );
+		foreach ( $templates as $template ) {
+			$outText .= $this->formatTemplate( $template );
+		}
+
+		if ( $more instanceof PageReference ) {
+			$outText .= Html::rawElement( 'li', [],
+				$this->linkRenderer->makeLink(
+					$more,
+					$this->context->msg( 'moredotdotdot' )->text()
+				)
+			);
+		} elseif ( $more ) {
+			// Documented as should already be escaped
+			$outText .= Html::rawElement( 'li', [], $more );
+		}
+
+		$outText .= Html::closeElement( 'ul' );
+		return $outText;
+	}
+
+	/**
+	 * Builds a list item for an individual template
+	 *
+	 * The output of this is repeated for live-preview in resources/src/mediawiki.page.preview.js
+	 */
+	private function formatTemplate( PageIdentity $target ): string {
+		if ( !$target->canExist() ) {
+			return Html::rawElement( 'li', [], $this->linkRenderer->makeLink( $target ) );
+		}
+
+		$protected = $this->getRestrictionsText(
+			$this->restrictionStore->getRestrictions( $target, 'edit' )
+		);
+		$editLink = $this->buildEditLink( $target );
+		return Html::rawElement( 'li', [], $this->linkRenderer->makeLink( $target )
+			. $this->context->msg( 'word-separator' )->escaped()
+			. $this->context->msg( 'parentheses' )->rawParams( $editLink )->escaped()
+			. $this->context->msg( 'word-separator' )->escaped()
+			. $protected
+		);
+	}
+
+	/**
+	 * If the page is protected, get the relevant text
+	 * for those restrictions
+	 *
+	 * @return string HTML
+	 */
+	private function getRestrictionsText( array $restrictions ): string {
+		if ( !$restrictions ) {
+			return '';
+		}
+
+		// Construct the message from restriction-level-*
+		// e.g. restriction-level-sysop, restriction-level-autoconfirmed
+		$msgs = array_map(
+			fn ( $r ) => $this->context->msg( "restriction-level-$r" ),
+			$restrictions
+		);
+
+		// Check backwards-compatible messages for the built-in protection levels
+		$msg = null;
+		if ( $restrictions === [ 'sysop' ] ) {
+			$msg = $this->context->msg( 'template-protected' );
+		} elseif ( $restrictions === [ 'autoconfirmed' ] ) {
+			$msg = $this->context->msg( 'template-semiprotected' );
+		}
+		if ( !$msg || $msg->isDisabled() ) {
+			// By default wrap protection levels in parentheses
+			$msg = $this->context->msg( 'parentheses' );
+		}
+
+		return $msg->params( Message::listParam( $msgs, ListType::COMMA ) )->parse();
+	}
+
+	/**
+	 * Return a link to the edit page, with the text
+	 * saying "view source" if the user can't edit the page
+	 *
+	 * @return string HTML
+	 */
+	private function buildEditLink( PageIdentity $page ): string {
+		if ( $this->context->getAuthority()->probablyCan( 'edit', $page ) ) {
+			$linkMsg = 'editlink';
+		} else {
+			$linkMsg = 'viewsourcelink';
+		}
+
+		return $this->linkRenderer->makeLink(
+			$page,
+			$this->context->msg( $linkMsg )->text(),
+			[],
+			[ 'action' => 'edit' ]
+		);
+	}
+
+}

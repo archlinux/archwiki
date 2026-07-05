@@ -247,7 +247,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "設定變數 (set_var)",
 	"abusefilter-edit-builder-group-vars": "變數",
 	"abusefilter-edit-builder-vars-timestamp": "Unix更改時間截記",
-	"abusefilter-edit-builder-vars-accountname": "開戶嗰陣嘅戶口名（$1）",
+	"abusefilter-edit-builder-vars-account-name": "開戶嗰陣嘅戶口名（$1）",
 	"abusefilter-edit-builder-vars-action": "動作",
 	"abusefilter-edit-builder-vars-addedlines": "編輯加咗行數",
 	"abusefilter-edit-builder-vars-delta": "編輯改咗大細",

@@ -148,7 +148,7 @@ ve.ui.MWTemplateTitleInputWidget.prototype.getLookupRequest = function () {
 			if ( titles.length > 0 ) {
 				const xhr = this.getApi().get( {
 					action: 'templatedata',
-					titles: titles,
+					titles,
 					redirects: !!this.showRedirects,
 					includeMissingTitles: '1',
 					lang: mw.config.get( 'wgUserLanguage' )

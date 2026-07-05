@@ -125,9 +125,9 @@ class GenerateDoc extends Maintenance {
 	private function writeFile( string $filename, string $content ): void {
 		$filepath = __DIR__ . '/../doc/' . $filename . '.tex';
 		if ( file_put_contents( $filepath, $content ) === false ) {
-			echo "Error saving document" . PHP_EOL;
+			$this->output( "Error saving document" . PHP_EOL );
 		} else {
-			echo "The file \"{$filename}\" was saved!" . PHP_EOL;
+			$this->output( "The file \"{$filename}\" was saved!" . PHP_EOL );
 		}
 	}
 

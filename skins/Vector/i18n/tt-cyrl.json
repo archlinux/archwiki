@@ -52,8 +52,6 @@
 	"vector-intro-page": "Help:Кереш",
 	"vector-toc-label": "Эчтәлек",
 	"vector-toc-beginning": "Башы",
-	"vector-anon-user-menu-pages": "Авторизация үтмәгән редакторлар өчен битләр",
-	"vector-anon-user-menu-pages-learn": "күбрәк белү",
 	"vector-main-menu-tooltip": "Төп меню",
 	"vector-site-nav-label": "Сайт",
 	"vector-main-menu-label": "Төп меню",
@@ -63,7 +61,5 @@
 	"vector-page-tools-actions-label": "Гамәлләр",
 	"vector-pin-element-label": "кырыйдагы панельга күчерт",
 	"vector-unpin-element-label": "яшер",
-	"empty-language-selector-body": "Битнең эчтәлекләре башка телләрдә бирелми.",
-	"vector-2022-beta-preview-label": "Vector 2022 бета",
-	"vector-2022-beta-preview-description": "Vector 2022 яңа мөмкинлекләрен алдан карап чыгу."
+	"empty-language-selector-body": "Битнең эчтәлекләре башка телләрдә бирелми."
 }

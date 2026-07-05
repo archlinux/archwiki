@@ -141,7 +141,7 @@ QUnit.test( 'Fullscreen mode', ( assert ) => {
 	stubScrollTo();
 
 	// ugly hack to avoid preloading which would require lightbox list being set up
-	viewer.preloadDistance = -1;
+	viewer.pushLightboxImagesIntoQueue = function () {};
 
 	// Since we don't want these tests to really open fullscreen
 	// which is subject to user security confirmation,

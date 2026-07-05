@@ -89,5 +89,7 @@
 	"gadgets-validate-invaliddependencies": "以下{{PLURAL:$2|個依賴項缺失}}：$1",
 	"gadgets-validate-deprecateddependencies": "以下{{PLURAL:$2|依賴項}}已廢棄：$1。",
 	"gadgets-supports-urlload": "此小工具支援透過包含<code>?withgadget</code>查詢參數的URL來載入。",
-	"gadgets-hidden": "此小工具已[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 隱藏]，不會顯示於偏好設定頁面。"
+	"gadgets-hidden": "此小工具已[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 隱藏]，不會顯示於偏好設定頁面。",
+	"gadgets-subpage-invalid": "無效的子頁面：「<nowiki>$1</nowiki>」",
+	"gadgets-subpage-toofewparams": "子頁面參數不足（連結無效）。"
 }

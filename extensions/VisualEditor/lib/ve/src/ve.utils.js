@@ -12,14 +12,7 @@
  * @return {boolean} Object inherits from one or more of the classes
  */
 ve.isInstanceOfAny = function ( subject, classes ) {
-	let i = classes.length;
-
-	while ( classes[ --i ] ) {
-		if ( subject instanceof classes[ i ] ) {
-			return true;
-		}
-	}
-	return false;
+	return subject && classes.some( ( c ) => subject instanceof c );
 };
 
 /**
@@ -266,9 +259,7 @@ ve.isEqualDomElements = function ( domElements1, domElements2 ) {
  * @return {boolean} Class lists are equivalent
  */
 ve.compareClassLists = function ( classList1, classList2 ) {
-	const removeEmpty = function ( c ) {
-		return c !== '';
-	};
+	const removeEmpty = ( c ) => c;
 
 	classList1 = Array.isArray( classList1 ) ? classList1 : classList1.trim().split( /\s+/ );
 	classList2 = Array.isArray( classList2 ) ? classList2 : classList2.trim().split( /\s+/ );
@@ -534,6 +525,32 @@ ve.htmlMsg = function ( key, ...params ) {
 };
 
 /**
+ * Package a message and arguments for deferred resolution.
+ *
+ * Identical to OO.ui.deferMsg, but for ve.htmlMsg.
+ *
+ * @param {string} key Message key
+ * @param {...any} [params] Message parameters
+ * @return {Function} Function that returns the resolved message when executed
+ */
+ve.deferHtmlMsg = function () {
+	return () => ve.htmlMsg( ...arguments );
+};
+
+/**
+ * Package a message and arguments for deferred resolution.
+ *
+ * Identical to ve.deferHtmlMsg, but for jQuery-wrapped messages.
+ *
+ * @param {string} key Message key
+ * @param {...any} [params] Message parameters
+ * @return {Function} Function that returns the resolved message when executed
+ */
+ve.deferJQueryMsg = function () {
+	return () => $( ve.htmlMsg( ...arguments ) );
+};
+
+/**
  * Get platform config value(s)
  *
  * @param {string|string[]} keys Config key, or list of keys
@@ -642,8 +659,8 @@ ve.escapeHtml = ( value ) => value.replace( /['"<>&]/g, ( c ) => ( {
  */
 ve.getDomAttributes = function ( element ) {
 	const result = {};
-	for ( let i = 0; i < element.attributes.length; i++ ) {
-		result[ element.attributes[ i ].name ] = element.attributes[ i ].value;
+	for ( const attr of element.attributes ) {
+		result[ attr.name ] = attr.value;
 	}
 	return result;
 };
@@ -718,22 +735,22 @@ ve.getDomElementSummary = function ( element, includeHtml, getAttributeSummary )
 
 	// Gather attributes
 	if ( element.attributes ) {
-		for ( let i = 0; i < element.attributes.length; i++ ) {
-			const name = element.attributes[ i ].name;
+		for ( const attr of element.attributes ) {
+			const name = attr.name;
 			if ( name === 'about' ) {
 				// The about attribute is non-deterministic as we generate a new random
 				// one whenever a node is cloned (see ve.dm.Node.static.cloneElement).
 				// Exclude it from node comparisons.
 				continue;
 			}
-			const value = element.attributes[ i ].value;
+			const value = attr.value;
 			summary.attributes[ name ] = getAttributeSummary ? getAttributeSummary( name, value ) : value;
 		}
 	}
 	// Summarize children
 	if ( element.childNodes ) {
-		for ( let i = 0; i < element.childNodes.length; i++ ) {
-			summary.children.push( ve.getDomElementSummary( element.childNodes[ i ], includeHtml ) );
+		for ( const child of element.childNodes ) {
+			summary.children.push( ve.getDomElementSummary( child, includeHtml, getAttributeSummary ) );
 		}
 	}
 	return summary;
@@ -811,15 +828,14 @@ ve.resolveAttributes = function ( elementsOrJQuery, doc, attrs ) {
 		elements = [ elements ];
 	}
 
-	let attr;
-
 	/**
-	 * Resolves the value of attr to the computed property value.
+	 * Resolves an attribute to the computed property value.
 	 *
 	 * @private
 	 * @param {HTMLElement} el Element
+	 * @param {string} attr Attribute
 	 */
-	function resolveAttribute( el ) {
+	function resolveAttribute( el, attr ) {
 		const nodeInDoc = doc.createElement( el.nodeName );
 		nodeInDoc.setAttribute( attr, el.getAttribute( attr ) );
 		if ( nodeInDoc[ attr ] ) {
@@ -827,28 +843,15 @@ ve.resolveAttributes = function ( elementsOrJQuery, doc, attrs ) {
 		}
 	}
 
-	for ( let i = 0, iLen = elements.length; i < iLen; i++ ) {
-		const element = elements[ i ];
-		for ( let j = 0, jLen = attrs.length; j < jLen; j++ ) {
-			attr = attrs[ j ];
+	elements.forEach( ( element ) => {
+		attrs.forEach( ( attr ) => {
 			if ( element.hasAttribute( attr ) ) {
-				resolveAttribute( element );
+				resolveAttribute( element, attr );
 			}
-			Array.prototype.forEach.call( element.querySelectorAll( '[' + attr + ']' ), resolveAttribute );
-		}
-	}
-};
-
-/**
- * Make all links within a DOM element open in a new window
- *
- * @param {HTMLElement} container DOM element to search for links
- */
-ve.targetLinksToNewWindow = function ( container ) {
-	// Make all links open in a new window
-	Array.prototype.forEach.call( container.querySelectorAll( 'a[href]' ), ( el ) => {
-		ve.appendToRel( el, 'noopener' );
-		el.setAttribute( 'target', '_blank' );
+			for ( const el of element.querySelectorAll( '[' + attr + ']' ) ) {
+				resolveAttribute( el, attr );
+			}
+		} );
 	} );
 };
 
@@ -927,7 +930,7 @@ ve.getCommonStartSequenceLength = function ( sequences ) {
 			break;
 		}
 		const val = sequences[ 0 ][ commonLength ];
-		for ( let i = 1, len = sequences.length; i < len; i++ ) {
+		for ( let i = 1; i < sequences.length; i++ ) {
 			if (
 				sequences[ i ].length <= commonLength ||
 				sequences[ i ][ commonLength ] !== val
@@ -1078,8 +1081,7 @@ ve.compareDocumentOrder = function ( node1, offset1, node2, offset2 ) {
 };
 
 /**
- * @typedef {Object} DomPosition
- * @memberof ve
+ * @typedef {Object} ve.DomPosition
  * @property {Node|null} node The node, or null if we stepped past the root node
  * @property {number|null} offset The offset, or null if we stepped past the root node
  * @property {ve.PositionStep[]} steps Steps taken
@@ -1136,16 +1138,16 @@ ve.adjacentDomPosition = function ( position, direction, options ) {
 				return {
 					node: null,
 					offset: null,
-					steps: steps
+					steps
 				};
 			}
 			offset = ve.parentIndex( node ) + ( forward ? 1 : 0 );
 			node = node.parentNode;
 			if ( stop( step ) ) {
 				return {
-					node: node,
-					offset: offset,
-					steps: steps
+					node,
+					offset,
+					steps
 				};
 			}
 			// Else take another step
@@ -1164,9 +1166,9 @@ ve.adjacentDomPosition = function ( position, direction, options ) {
 			offset += direction;
 			if ( stop( step ) ) {
 				return {
-					node: node,
-					offset: offset,
-					steps: steps
+					node,
+					offset,
+					steps
 				};
 			}
 			continue;
@@ -1187,9 +1189,9 @@ ve.adjacentDomPosition = function ( position, direction, options ) {
 			offset += forward ? 1 : -1;
 			if ( stop( step ) ) {
 				return {
-					node: node,
-					offset: offset,
-					steps: steps
+					node,
+					offset,
+					steps
 				};
 			}
 			// Else take another step
@@ -1203,9 +1205,9 @@ ve.adjacentDomPosition = function ( position, direction, options ) {
 		steps.push( posStep );
 		if ( stop( posStep ) ) {
 			return {
-				node: node,
-				offset: offset,
-				steps: steps
+				node,
+				offset,
+				steps
 			};
 		}
 	}
@@ -1251,8 +1253,7 @@ ve.rejectsCursor = function ( node ) {
 };
 
 /**
- * @typedef {Object} ChangeOffsets
- * @memberof ve
+ * @typedef {Object} ve.ChangeOffsets
  * @return {number} start Offset from start of first changed element
  * @return {number} end Offset from end of last changed element (nonoverlapping with start)
  */
@@ -1267,9 +1268,7 @@ ve.rejectsCursor = function ( node ) {
  */
 ve.countEdgeMatches = function ( before, after, equals ) {
 	if ( !equals ) {
-		equals = function ( x, y ) {
-			return x === y;
-		};
+		equals = ( x, y ) => x === y;
 	}
 
 	let start, end;
@@ -1292,5 +1291,31 @@ ve.countEdgeMatches = function ( before, after, equals ) {
 			break;
 		}
 	}
-	return { start: start, end: end };
+	return { start, end };
+};
+
+/**
+ * Wait for a transitionend on an element
+ *
+ * @param {jQuery} $element
+ * @param {function} callback
+ * @param {number} [timeout=500] fallback timer to run the callback regardless
+ */
+ve.waitForTransition = function ( $element, callback, timeout = 500 ) {
+	if ( window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+		// The transition won't happen
+		callback();
+		return;
+	}
+	let fallback;
+	$element.one( 'transitionend.waitForTransition', () => {
+		clearTimeout( fallback );
+		callback();
+	} );
+	if ( timeout ) {
+		fallback = setTimeout( () => {
+			$element.off( 'transitionend.waitForTransition' );
+			callback();
+		}, timeout );
+	}
 };

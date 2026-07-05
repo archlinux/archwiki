@@ -23,14 +23,21 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\EditPage\IntroMessageBuilder;
 use MediaWiki\EditPage\PreloadedContentBuilder;
+use MediaWiki\EditPage\TemplatesOnThisPageFormatter;
 use MediaWiki\EditPage\TextboxBuilder;
+use MediaWiki\Html\Html;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Article;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\RevisionLookup;
@@ -41,8 +48,10 @@ use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
+use MediaWiki\Watchlist\WatchlistLabelStore;
 use MediaWiki\Watchlist\WatchlistManager;
-use MessageLocalizer;
 use Wikimedia\Assert\Assert;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Stats\StatsFactory;
@@ -51,48 +60,31 @@ class ApiVisualEditor extends ApiBase {
 	use ApiBlockInfoTrait;
 	use ApiParsoidTrait;
 
-	private RevisionLookup $revisionLookup;
-	private TempUserCreator $tempUserCreator;
-	private UserFactory $userFactory;
-	private UserOptionsLookup $userOptionsLookup;
-	private WatchlistManager $watchlistManager;
-	private ContentTransformer $contentTransformer;
-	private WikiPageFactory $wikiPageFactory;
-	private IntroMessageBuilder $introMessageBuilder;
-	private PreloadedContentBuilder $preloadedContentBuilder;
-	private SpecialPageFactory $specialPageFactory;
-	private VisualEditorParsoidClientFactory $parsoidClientFactory;
-
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		RevisionLookup $revisionLookup,
-		TempUserCreator $tempUserCreator,
-		UserFactory $userFactory,
-		UserOptionsLookup $userOptionsLookup,
-		WatchlistManager $watchlistManager,
-		ContentTransformer $contentTransformer,
-		StatsFactory $statsFactory,
-		WikiPageFactory $wikiPageFactory,
-		IntroMessageBuilder $introMessageBuilder,
-		PreloadedContentBuilder $preloadedContentBuilder,
-		SpecialPageFactory $specialPageFactory,
-		VisualEditorParsoidClientFactory $parsoidClientFactory
+		private readonly RevisionLookup $revisionLookup,
+		private readonly TempUserCreator $tempUserCreator,
+		private readonly UserFactory $userFactory,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly WatchlistManager $watchlistManager,
+		private readonly WatchlistLabelStore $watchlistLabelStore,
+		private readonly WatchedItemStoreInterface $watchedItemStore,
+		private readonly ContentTransformer $contentTransformer,
+		private readonly StatsFactory $statsFactory,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly IntroMessageBuilder $introMessageBuilder,
+		private readonly PreloadedContentBuilder $preloadedContentBuilder,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly RestrictionStore $restrictionStore,
+		private readonly TextboxBuilder $textboxBuilder,
+		private readonly VisualEditorParsoidClientFactory $parsoidClientFactory,
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
 		$this->setStatsFactory( $statsFactory );
-		$this->revisionLookup = $revisionLookup;
-		$this->tempUserCreator = $tempUserCreator;
-		$this->userFactory = $userFactory;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->watchlistManager = $watchlistManager;
-		$this->contentTransformer = $contentTransformer;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->introMessageBuilder = $introMessageBuilder;
-		$this->preloadedContentBuilder = $preloadedContentBuilder;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->parsoidClientFactory = $parsoidClientFactory;
 	}
 
 	/**
@@ -128,6 +120,63 @@ class ApiVisualEditor extends ApiBase {
 			);
 		}
 		return $user;
+	}
+
+	/**
+	 * Add a watchlist labels MenuTagMultiselectWidget definition for VE's publish dialog.
+	 *
+	 * @param array[] &$checkboxesDef
+	 * @param User $user
+	 * @param Title $title
+	 */
+	private function addWatchlistLabelsDefinition( array &$checkboxesDef, User $user, Title $title ): void {
+		if ( !$this->getConfig()->get( MainConfigNames::EnableWatchlistLabels ) || !$user->isNamed() ) {
+			return;
+		}
+
+		$userLabels = $this->watchlistLabelStore->loadAllForUser( $user );
+		if ( !$userLabels ) {
+			return;
+		}
+
+		$options = [];
+		foreach ( $userLabels as $label ) {
+			$labelId = $label->getId();
+			if ( $labelId !== null ) {
+				$options[] = [ 'data' => (string)$labelId, 'label' => $label->getName() ];
+			}
+		}
+		if ( !$options ) {
+			return;
+		}
+
+		$selectedLabelIds = [];
+		$requestLabels = $this->getRequest()->getIntArray( 'wpWatchlistLabels', [] );
+		if ( $requestLabels ) {
+			$selectedLabelIds = $requestLabels;
+		} else {
+			$watchedItem = $this->watchedItemStore->getWatchedItem( $user, $title );
+			if ( $watchedItem instanceof WatchedItem ) {
+				foreach ( $watchedItem->getLabels() as $label ) {
+					$labelId = $label->getId();
+					if ( $labelId !== null ) {
+						$selectedLabelIds[] = $labelId;
+					}
+				}
+			}
+		}
+
+		$checkboxesDef['wpWatchlistLabels'] = [
+			'id' => 'wpWatchlistLabelsWidget',
+			'label-message' => 'watchlistlabels-editpage-label',
+			'help-message' => 'watchlistlabels-editpage-help',
+			'placeholder-message' => 'watchlistlabels-editpage-placeholder',
+			'class' => 'MediaWiki\\Widget\\MenuTagMultiselectWidget',
+			'options' => [ '' => $options ],
+			'default' => array_map( strval( ... ), $selectedLabelIds ),
+			'allowReordering' => false,
+			'align' => 'top',
+		];
 	}
 
 	/**
@@ -238,10 +287,9 @@ class ApiVisualEditor extends ApiBase {
 							'action' => 'query',
 							'revids' => $oldid,
 							'prop' => 'revisions',
-							'rvprop' => 'content|ids'
+							'rvprop' => 'content|ids',
+							'rvsection' => $section,
 						];
-
-						$apiParams['rvsection'] = $section;
 
 						$context = new DerivativeContext( $this->getContext() );
 						$context->setRequest(
@@ -320,8 +368,7 @@ class ApiVisualEditor extends ApiBase {
 				}
 
 				// Look at protection status to set up notices + surface class(es)
-				$builder = new TextboxBuilder();
-				$protectedClasses = $builder->getTextboxProtectionCSSClasses( $title );
+				$protectedClasses = $this->textboxBuilder->getTextboxProtectionCSSClasses( $title );
 
 				// Simplified EditPage::getEditPermissionStatus()
 				// TODO: Use API
@@ -387,6 +434,7 @@ class ApiVisualEditor extends ApiBase {
 						$this->watchlistManager->isWatched( $user, $title ),
 				];
 				$checkboxesDef = $editPage->getCheckboxesDefinition( $states );
+				$this->addWatchlistLabelsDefinition( $checkboxesDef, $user, $title );
 				$checkboxesMessagesList = [];
 				foreach ( $checkboxesDef as &$options ) {
 					if ( isset( $options['tooltip'] ) ) {
@@ -406,6 +454,18 @@ class ApiVisualEditor extends ApiBase {
 						// Extract only the key. Any parameters are included in the fake message definition
 						// passed via $checkboxesMessages. (This changes $checkboxesDef by reference.)
 						$options['label-message'] = $this->msg( $options['label-message'] )->getKey();
+					}
+					if ( isset( $options['help-message'] ) ) {
+						$checkboxesMessagesList[] = $options['help-message'];
+						if ( !is_string( $options['help-message'] ) ) {
+							$options['help-message'] = $this->msg( $options['help-message'] )->getKey();
+						}
+					}
+					if ( isset( $options['placeholder-message'] ) ) {
+						$checkboxesMessagesList[] = $options['placeholder-message'];
+						if ( !is_string( $options['placeholder-message'] ) ) {
+							$options['placeholder-message'] = $this->msg( $options['placeholder-message'] )->getKey();
+						}
 					}
 				}
 				$checkboxesMessages = [];
@@ -481,11 +541,17 @@ class ApiVisualEditor extends ApiBase {
 				break;
 
 			case 'templatesused':
-				// HACK: Build a fake EditPage so we can get checkboxes from it
-				// Deliberately omitting ,0 so oldid comes from request
-				$article = new Article( $title );
-				$editPage = new EditPage( $article );
-				$result = $editPage->makeTemplatesOnThisPageList( $editPage->getTemplates() );
+				$templateListFormatter = new TemplatesOnThisPageFormatter(
+					$this->getContext(),
+					$this->linkRenderer,
+					$this->linkBatchFactory,
+					$this->restrictionStore,
+				);
+				$result = Html::rawElement(
+					'div',
+					[ 'class' => 'templatesUsed' ],
+					$templateListFormatter->format( $title->getTemplateLinksFrom() )
+				);
 				break;
 
 			case 'parsefragment':

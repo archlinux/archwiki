@@ -2,7 +2,6 @@
 
 use MediaWiki\Extension\TemplateData\TemplateDataStatus;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Status\Status;
 
 /**
  * @covers \MediaWiki\Extension\TemplateData\TemplateDataStatus
@@ -13,7 +12,7 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 	public function testParserOutputPersistenceForwardCompatibility() {
 		$output = new ParserOutput();
 
-		$status = Status::newFatal( 'a', 'b', 'c' );
+		$status = StatusValue::newFatal( 'a', 'b', 'c' );
 		$status->fatal( 'f' );
 		$status->warning( 'd', 'e' );
 
@@ -24,14 +23,14 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$result = TemplateDataStatus::newFromJson( $output->getExtensionData( 'TemplateDataStatus' ) );
-		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
+		$this->assertEquals( $status, $result );
 		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	public function testParserOutputPersistenceBackwardCompatibility() {
 		$output = new ParserOutput();
 
-		$status = Status::newFatal( 'a', 'b', 'c' );
+		$status = StatusValue::newFatal( 'a', 'b', 'c' );
 		$status->fatal( 'f' );
 		$status->warning( 'd', 'e' );
 
@@ -39,13 +38,13 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 		$output->setExtensionData( 'TemplateDataStatus', $status );
 
 		$result = TemplateDataStatus::newFromJson( $output->getExtensionData( 'TemplateDataStatus' ) );
-		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
+		$this->assertEquals( $status, $result );
 		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	public static function provideStatus() {
-		yield [ Status::newGood() ];
-		$status = Status::newFatal( 'a', 'b', 'c' );
+		yield [ StatusValue::newGood() ];
+		$status = StatusValue::newFatal( 'a', 'b', 'c' );
 		$status->fatal( 'f' );
 		$status->warning( 'd', 'e' );
 		yield [ $status ];
@@ -54,21 +53,21 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideStatus
 	 */
-	public function testParserOutputPersistenceRoundTrip( Status $status ) {
+	public function testParserOutputPersistenceRoundTrip( StatusValue $status ) {
 		$parserOutput = new ParserOutput();
 		$parserOutput->setExtensionData( 'TemplateDataStatus', TemplateDataStatus::jsonSerialize( $status ) );
 		$result = TemplateDataStatus::newFromJson( $parserOutput->getExtensionData( 'TemplateDataStatus' ) );
-		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
+		$this->assertEquals( $status, $result );
 		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	/**
 	 * @dataProvider provideStatus
 	 */
-	public function testJsonRoundTrip( Status $status ) {
+	public function testJsonRoundTrip( StatusValue $status ) {
 		$json = TemplateDataStatus::jsonSerialize( $status );
 		$result = TemplateDataStatus::newFromJson( $json );
-		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
+		$this->assertEquals( $status, $result );
 		$this->assertSame( (string)$status, (string)$result );
 	}
 

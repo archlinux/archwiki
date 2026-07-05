@@ -20,7 +20,7 @@
 		}
 	};
 
-	QUnit.module( 've.dm.MWTemplateModel' );
+	QUnit.module( 've.dm.MWTemplateModel', ve.test.utils.newMwEnvironment() );
 
 	/**
 	 * Create a new MWTemplateModel initialized with a static transclusion data fixture.

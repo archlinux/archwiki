@@ -49,7 +49,7 @@ class MathVariantTest extends TestCase {
 		$this->assertEquals( $expected, MathVariant::translate( $input, $variant ) );
 	}
 
-	public function provideTranslateValidData(): array {
+	public static function provideTranslateValidData(): array {
 			return [
 				'bold translation' => [ 'A', 'bold', '𝐀' ],
 				'numeric translation' => [ '1', 'double-struck', '𝟙' ],

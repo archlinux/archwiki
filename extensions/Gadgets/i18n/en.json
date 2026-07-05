@@ -66,5 +66,7 @@
 	"gadgets-validate-invaliddependencies": "The following {{PLURAL:$2|dependency is|dependencies are}} missing: $1.",
 	"gadgets-validate-deprecateddependencies": "The following {{PLURAL:$2|dependency is|dependencies are}} deprecated: $1.",
 	"gadgets-supports-urlload": "This gadget supports loading via URL with <code>?withgadget</code> query parameter.",
-	"gadgets-hidden": "This gadget is [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden hidden], meaning it will not show up on the preferences page."
+	"gadgets-hidden": "This gadget is [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden hidden], meaning it will not show up on the preferences page.",
+	"gadgets-subpage-invalid": "Invalid subpage \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Not enough subpage parameters (invalid link)."
 }

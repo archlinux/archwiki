@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Robby",
+			"Volvox"
+		]
+	},
+	"oathauth-webauthn-module-label": "Sécherheetsschlëssel",
+	"oathauth-webauthn-error-auth-generic": "Den Authentifikatiounsprozess gouf ënnerbrach. Fänkt den Authentifikatiounsprozess wgl. nach eng Kéier un.",
+	"oathauth-webauthn-ui-remove-key": "Ewechhuelen",
+	"oathauth-webauthn-error-module-not-enabled": "D'Modul „$1“ ass net aktivéiert fir {{GENDER:$2|de Benotzer|d'Benotzerin}} „$2“.",
+	"oathauth-webauthn-ui-key-register-help": "Sicht ee Spëtznumm fir Äre Schlëssel eraus:",
+	"oathauth-webauthn-ui-reload-page-label": "Säit nei lueden",
+	"oathauth-webauthn-add-security-key": "E Sécherheetsschlëssel derbäisetzen"
+}

@@ -49,19 +49,12 @@ class Database {
 	public const MAX_TAG_LENGTH = 30;
 	public const MAX_TEMPLATE_LENGTH = 250;
 
-	private ServiceOptions $options;
-	private CategoryManager $categoryManager;
-	private LBFactory $dbLoadBalancerFactory;
-
 	public function __construct(
-		ServiceOptions $options,
-		CategoryManager $categoryManager,
-		LBFactory $dbLoadBalancerFactory
+		private readonly ServiceOptions $options,
+		private readonly CategoryManager $categoryManager,
+		private readonly LBFactory $dbLoadBalancerFactory,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->categoryManager = $categoryManager;
-		$this->dbLoadBalancerFactory = $dbLoadBalancerFactory;
 	}
 
 	/**
@@ -173,6 +166,8 @@ class Database {
 		if ( is_array( $templateInfo ) ) {
 			if ( isset( $templateInfo[ 'multiPartTemplateBlock' ] ) ) {
 				$templateInfo = 'multi-part-template-block';
+			} elseif ( isset( $templateInfo[ 'parserFunction' ] ) ) {
+				$templateInfo = 'parser-function';
 			} else {
 				$templateInfo = $templateInfo[ 'name' ] ?? '';
 			}
@@ -512,6 +507,8 @@ class Database {
 				if ( is_object( $templateInfo ) ) {
 					if ( isset( $templateInfo->multiPartTemplateBlock ) ) {
 						$templateInfo = 'multi-part-template-block';
+					} elseif ( isset( $templateInfo->parserFunction ) ) {
+						$templateInfo = 'parser-function';
 					} else {
 						$templateInfo = $templateInfo->name ?? '';
 					}

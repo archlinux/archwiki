@@ -11,13 +11,13 @@
 namespace MediaWiki\Extension\VisualEditor;
 
 use Deflate;
-use DifferenceEngine;
 use FlaggablePageView;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Diff\DifferenceEngine;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
@@ -108,6 +108,22 @@ class ApiVisualEditorEdit extends ApiBase {
 		// Exclude other known params from here and ApiMain.
 		// TODO: This doesn't exclude params from the formatter
 		$allParams = $this->getRequest()->getValues();
+		if ( isset( $allParams['wpWatchlistLabels'] ) ) {
+			if ( is_array( $allParams['wpWatchlistLabels'] ) ) {
+				$allParams['wpWatchlistLabels'] = array_values( array_filter(
+					array_map( static fn ( $id ) => (int)$id, $allParams['wpWatchlistLabels'] ),
+					static fn ( int $id ) => $id > 0
+				) );
+			} elseif ( is_string( $allParams['wpWatchlistLabels'] ) && $allParams['wpWatchlistLabels'] !== '' ) {
+				$allParams['wpWatchlistLabels'] = array_values( array_filter(
+					array_map(
+						static fn ( string $id ) => (int)trim( $id ),
+						preg_split( '/[|,]/', $allParams['wpWatchlistLabels'] ) ?: []
+					),
+					static fn ( int $id ) => $id > 0
+				) );
+			}
+		}
 		$knownParams = array_keys( $this->getAllowedParams() + $this->getMain()->getAllowedParams() );
 		foreach ( $knownParams as $knownParam ) {
 			unset( $allParams[ $knownParam ] );

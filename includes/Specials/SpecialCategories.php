@@ -1,0 +1,65 @@
+<?php
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+namespace MediaWiki\Specials;
+
+use MediaWiki\Html\Html;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Pager\CategoryPager;
+use Wikimedia\Rdbms\IConnectionProvider;
+
+/**
+ * Implements Special:Categories
+ *
+ * @ingroup SpecialPage
+ */
+class SpecialCategories extends SpecialPage {
+
+	public function __construct(
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly IConnectionProvider $dbProvider,
+	) {
+		parent::__construct( 'Categories' );
+	}
+
+	/** @inheritDoc */
+	public function execute( $par ) {
+		$this->setHeaders();
+		$this->outputHeader();
+		$this->addHelpLink( 'Help:Categories' );
+		$this->getOutput()->getMetadata()->setPreventClickjacking( false );
+
+		$from = $this->getRequest()->getText( 'from', $par ?? '' );
+
+		$cap = new CategoryPager(
+			$this->getContext(),
+			$this->linkBatchFactory,
+			$this->getLinkRenderer(),
+			$this->dbProvider,
+			$from
+		);
+		$cap->doQuery();
+
+		$this->getOutput()->addHTML(
+			Html::openElement( 'div', [ 'class' => 'mw-spcontent' ] ) .
+				$this->msg( 'categoriespagetext', $cap->getNumRows() )->parseAsBlock() .
+				$cap->getStartForm( $from ) .
+				$cap->getNavigationBar() .
+				'<ul>' . $cap->getBody() . '</ul>' .
+				$cap->getNavigationBar() .
+				Html::closeElement( 'div' )
+		);
+	}
+
+	/** @inheritDoc */
+	protected function getGroupName() {
+		return 'pages';
+	}
+}
+
+/** @deprecated class alias since 1.41 */
+class_alias( SpecialCategories::class, 'SpecialCategories' );

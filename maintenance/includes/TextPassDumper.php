@@ -15,14 +15,16 @@ namespace MediaWiki\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/BackupDumper.php';
-require_once __DIR__ . '/../../includes/export/WikiExporter.php';
+require_once __DIR__ . '/../../includes/Export/WikiExporter.php';
 // @codeCoverageIgnoreEnd
 
-use BaseDump;
 use Exception;
-use ExportProgressFilter;
+use MediaWiki\Content\UnknownContentModelException;
 use MediaWiki\Exception\MWException;
-use MediaWiki\Exception\MWUnknownContentModelException;
+use MediaWiki\Export\BaseDump;
+use MediaWiki\Export\ExportProgressFilter;
+use MediaWiki\Export\WikiExporter;
+use MediaWiki\Export\XmlDumpWriter;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
@@ -33,9 +35,8 @@ use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWiki\Xml\Xml;
 use RuntimeException;
-use WikiExporter;
-use Wikimedia\AtEase\AtEase;
-use XmlDumpWriter;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 use XMLParser;
 
 /**
@@ -266,34 +267,17 @@ TEXT
 	protected function processFileOpt( string $opt ): string {
 		$split = explode( ':', $opt, 2 );
 		$val = $split[0];
-		$param = '';
-		if ( count( $split ) === 2 ) {
-			$param = $split[1];
-		}
-		$fileURIs = explode( ';', $param );
+		$param = $split[1] ?? '';
 		$newFileURIs = [];
-		foreach ( $fileURIs as $URI ) {
-			switch ( $val ) {
-				case "file":
-					$newURI = $URI;
-					break;
-				case "gzip":
-					$newURI = "compress.zlib://$URI";
-					break;
-				case "bzip2":
-					$newURI = "compress.bzip2://$URI";
-					break;
-				case "7zip":
-					$newURI = "mediawiki.compress.7z://$URI";
-					break;
-				default:
-					$newURI = $URI;
-			}
-			$newFileURIs[] = $newURI;
+		foreach ( explode( ';', $param ) as $uri ) {
+			$newFileURIs[] = match ( $val ) {
+				'gzip' => "compress.zlib://$uri",
+				'bzip2' => "compress.bzip2://$uri",
+				'7zip' => "mediawiki.compress.7z://$uri",
+				default => $uri,
+			};
 		}
-		$val = implode( ';', $newFileURIs );
-
-		return $val;
+		return implode( ';', $newFileURIs );
 	}
 
 	/**
@@ -307,7 +291,7 @@ TEXT
 		}
 
 		if ( $this->reporting ) {
-			$now = wfTimestamp( TS_DB );
+			$now = ConvertibleTimestamp::now( TS::DB );
 			$nowts = microtime( true );
 			$deltaAll = $nowts - $this->startTime;
 			$deltaPart = $nowts - $this->lastTime;
@@ -317,7 +301,7 @@ TEXT
 			if ( $deltaAll ) {
 				$portion = $this->revCount / $this->maxCount;
 				$eta = $this->startTime + $deltaAll / $portion;
-				$etats = wfTimestamp( TS_DB, intval( $eta ) );
+				$etats = wfTimestamp( TS::DB, intval( $eta ) );
 				if ( $this->fetchCount ) {
 					$fetchRate = 100.0 * $this->prefetchCount / $this->fetchCount;
 				} else {
@@ -492,7 +476,7 @@ TEXT
 			$contentHandler = $this->getServiceContainer()
 				->getContentHandlerFactory()
 				->getContentHandler( $model );
-		} catch ( MWUnknownContentModelException $ex ) {
+		} catch ( UnknownContentModelException $ex ) {
 			wfWarn( "Unable to apply export transformation for content model '$model': " .
 				$ex->getMessage() );
 
@@ -545,7 +529,7 @@ TEXT
 		$this->fetchCount++;
 
 		// To allow to simply return on success and do not have to worry about book keeping,
-		// we assume, this fetch works (possible after some retries). Nevertheless, we koop
+		// we assume, this fetch works (possible after some retries). Nevertheless, we keep
 		// the old value, so we can restore it, if problems occur (See after the while loop).
 		$oldConsecutiveFailedTextRetrievals = $consecutiveFailedTextRetrievals;
 		$consecutiveFailedTextRetrievals = 0;
@@ -560,7 +544,7 @@ TEXT
 				//         for plausibility failed)
 
 				// Trying to get prefetch, if it has not been tried before
-				// @phan-suppress-next-line PhanSuspiciousValueComparisonInLoop
+				// @phan-suppress-next-line PhanRedundantValueComparisonInLoop
 				if ( $text === false && $this->prefetch && $prefetchNotTried ) {
 					$prefetchNotTried = false;
 					$tryIsPrefetch = true;
@@ -661,6 +645,7 @@ TEXT
 			}
 
 			// A failure in a prefetch hit does not warrant resetting db connection etc.
+			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable Set in the prefetch block above
 			if ( !$tryIsPrefetch ) {
 				// After backing off for some time, we try to reboot the whole process as
 				// much as possible to not carry over failures from one part to the other
@@ -722,29 +707,28 @@ TEXT
 	 * @return string|false
 	 */
 	private function getTextSpawned( $address ) {
-		AtEase::suppressWarnings();
 		if ( !$this->spawnProc ) {
 			// First time?
-			$this->openSpawn();
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@$this->openSpawn();
 		}
-		$text = $this->getTextSpawnedOnce( $address );
-		AtEase::restoreWarnings();
-
-		return $text;
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		return @$this->getTextSpawnedOnce( $address );
 	}
 
 	protected function openSpawn(): bool {
-		global $IP;
-
 		$wiki = WikiMap::getCurrentWikiId();
 		if ( count( $this->php ) == 2 ) {
 			$mwscriptpath = $this->php[1];
 		} else {
-			$mwscriptpath = "$IP/../multiversion/MWScript.php";
+			// FIXME: Avoid this hardcoded wmf-config reference.
+			// Perhaps refactor the below by using wfShellWikiCmd or use the
+			// 'wrapper' option which is already injected for this purpose.
+			$mwscriptpath = MW_INSTALL_PATH . '/../multiversion/MWScript.php';
 		}
 		if ( file_exists( $mwscriptpath ) ) {
 			$cmd = implode( " ",
-				array_map( [ Shell::class, 'escape' ],
+				array_map( Shell::escape( ... ),
 					[
 						$this->php[0],
 						$mwscriptpath,
@@ -752,10 +736,10 @@ TEXT
 						'--wiki', $wiki ] ) );
 		} else {
 			$cmd = implode( " ",
-				array_map( [ Shell::class, 'escape' ],
+				array_map( Shell::escape( ... ),
 					[
 						$this->php[0],
-						"$IP/maintenance/fetchText.php",
+						MW_INSTALL_PATH . '/maintenance/fetchText.php',
 						'--wiki', $wiki ] ) );
 		}
 		$spec = [
@@ -780,24 +764,26 @@ TEXT
 	}
 
 	private function closeSpawn() {
-		AtEase::suppressWarnings();
 		if ( $this->spawnRead ) {
-			fclose( $this->spawnRead );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@fclose( $this->spawnRead );
 		}
 		$this->spawnRead = null;
 		if ( $this->spawnWrite ) {
-			fclose( $this->spawnWrite );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@fclose( $this->spawnWrite );
 		}
 		$this->spawnWrite = null;
 		if ( $this->spawnErr ) {
-			fclose( $this->spawnErr );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@fclose( $this->spawnErr );
 		}
 		$this->spawnErr = false;
 		if ( $this->spawnProc ) {
-			proc_close( $this->spawnProc );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@proc_close( $this->spawnProc );
 		}
 		$this->spawnProc = false;
-		AtEase::restoreWarnings();
 	}
 
 	/**

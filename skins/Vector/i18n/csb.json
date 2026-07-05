@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Iketsi",
 			"Kaszeba",
 			"Kirsan",
 			"Kuvaly",
-			"Orbitminis",
-			"Iketsi"
+			"Orbitminis"
 		]
 	},
 	"vector-languages": "Jãzëczi",
@@ -38,7 +38,6 @@
 	"skin-theme-exclusion-notice": "Na starnié dërch je wëskrzëniany widny mòtiw.",
 	"vector-toc-label": "Spisënk zamkłoscë",
 	"vector-toc-beginning": "Zôczątk",
-	"vector-anon-user-menu-pages": "Starnë dlô anonimòwëch editorów",
 	"vector-main-menu-label": "Przédné menu",
 	"vector-feature-custom-font-size-exclusion-notice": "Na ti starnié dërch brëkòwóny je môłô wiôlgòsc czcónczi.",
 	"vector-page-tools-label": "Nôrzãdza",

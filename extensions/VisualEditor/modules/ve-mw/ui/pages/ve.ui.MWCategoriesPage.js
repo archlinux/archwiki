@@ -192,10 +192,10 @@ ve.ui.MWCategoriesPage.prototype.getCategoryItemFromMetaListItem = function ( me
 
 	return {
 		name: metaItem.element.attributes.category,
-		value: value,
+		value,
 		// TODO: sortkey is lcase, make consistent throughout CategoryWidget
 		sortKey: metaItem.element.attributes.sortkey,
-		metaItem: metaItem
+		metaItem
 	};
 };
 

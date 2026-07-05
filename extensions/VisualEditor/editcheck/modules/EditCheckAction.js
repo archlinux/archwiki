@@ -8,6 +8,7 @@
  * @param {mw.editcheck.BaseEditCheck} config.check Check which created this action
  * @param {ve.dm.SurfaceFragment[]} config.fragments Affected fragments
  * @param {ve.dm.SurfaceFragment} [config.focusFragment] Fragment to focus
+ * @param {Function} [config.focusAnnotation] Annotation to focus, see ve.ce.Surface#selectAnnotation
  * @param {jQuery|string|Function|OO.ui.HtmlSnippet} [config.title] Title
  * @param {jQuery|string|Function|OO.ui.HtmlSnippet} [config.message] Body message
  * @param {jQuery|string|Function|OO.ui.HtmlSnippet} [config.prompt] Prompt to show before choices
@@ -26,6 +27,7 @@ mw.editcheck.EditCheckAction = function MWEditCheckAction( config ) {
 	this.fragments = config.fragments;
 	this.originalText = this.fragments.map( ( fragment ) => fragment.getText() );
 	this.focusFragment = config.focusFragment;
+	this.focusAnnotation = config.focusAnnotation;
 	this.message = config.message;
 	this.prompt = config.prompt;
 	this.footer = config.footer;
@@ -35,6 +37,8 @@ mw.editcheck.EditCheckAction = function MWEditCheckAction( config ) {
 	this.type = config.type || 'warning';
 	this.choices = config.choices || config.check.constructor.static.choices;
 	this.suggestion = config.suggestion;
+	this.widget = null;
+	this.stale = false;
 };
 
 /* Inheritance */
@@ -50,6 +54,27 @@ OO.mixinClass( mw.editcheck.EditCheckAction, OO.EventEmitter );
  * @param {jQuery.Promise} promise A promise that resolves when the action is complete
  */
 
+/**
+ * Fired when the action's stale state changes
+ *
+ * @event mw.editcheck.EditCheckAction#stale
+ * @param {boolean} stale The check is stale
+ */
+
+/**
+ * Fired when the action is shown to the user
+ *
+ * @event mw.editcheck.EditCheckAction#shown
+ * @param {boolean} shown The check is shown
+ */
+
+/**
+ * Fired when the action is seen by the user
+ *
+ * @event mw.editcheck.EditCheckAction#seen
+ * @param {boolean} seen The check is seen
+ */
+
 /* Methods */
 
 /**
@@ -62,7 +87,19 @@ OO.mixinClass( mw.editcheck.EditCheckAction, OO.EventEmitter );
 mw.editcheck.EditCheckAction.static.compareStarts = function ( a, b ) {
 	const aStart = a.getHighlightSelections()[ 0 ].getCoveringRange().start;
 	const bStart = b.getHighlightSelections()[ 0 ].getCoveringRange().start;
-	return aStart - bStart;
+	const difference = aStart - bStart;
+	if ( difference === 0 ) {
+		if ( a.check.takesFocus() ) {
+			return -1;
+		}
+		if ( b.check.takesFocus() ) {
+			return 1;
+		}
+		const aEnd = a.getHighlightSelections()[ 0 ].getCoveringRange().end;
+		const bEnd = b.getHighlightSelections()[ 0 ].getCoveringRange().end;
+		return bEnd - aEnd;
+	}
+	return difference;
 };
 
 /**
@@ -123,7 +160,7 @@ mw.editcheck.EditCheckAction.prototype.getFocusSelection = function () {
 /**
  * Get a description of the check
  *
- * @return {string}
+ * @return {jQuery|string|Function|OO.ui.HtmlSnippet}
  */
 mw.editcheck.EditCheckAction.prototype.getDescription = function () {
 	return this.message || this.check.getDescription( this );
@@ -136,7 +173,7 @@ mw.editcheck.EditCheckAction.prototype.getDescription = function () {
  */
 mw.editcheck.EditCheckAction.prototype.getType = function () {
 	if ( this.suggestion ) {
-		return 'success';
+		return 'progressive';
 	}
 	return this.type;
 };
@@ -168,7 +205,9 @@ mw.editcheck.EditCheckAction.prototype.isSuggestion = function () {
  * @return {mw.editcheck.EditCheckActionWidget}
  */
 mw.editcheck.EditCheckAction.prototype.render = function ( collapsed, singleAction, surface ) {
-	const widget = new mw.editcheck.EditCheckActionWidget( {
+	const enabledByDefault = ( !this.suggestion && this.check.config.showAsCheck ) ||
+		( this.suggestion && this.check.config.showAsSuggestion );
+	this.widget = new mw.editcheck.EditCheckActionWidget( {
 		type: this.getType(),
 		icon: this.icon,
 		name: this.getName(),
@@ -176,23 +215,36 @@ mw.editcheck.EditCheckAction.prototype.render = function ( collapsed, singleActi
 		message: this.getDescription(),
 		footer: this.getFooter(),
 		prompt: this.getPrompt(),
+		choices: this.getChoices(),
 		mode: this.mode,
-		singleAction: singleAction,
-		suggestion: this.suggestion
+		singleAction,
+		suggestion: this.suggestion,
+		experimental: !enabledByDefault
 	} );
-	widget.actions.connect( this, {
-		click: [ 'onActionClick', surface ]
+	this.widget.connect( this, {
+		actionClick: [ 'onActionClick', surface ]
 	} );
-	widget.actions.add( this.getChoices().map(
-		( choice ) => new OO.ui.ActionWidget( ve.extendObject( { modes: [ '' ], framed: true }, choice ) )
-	) );
-	widget.toggleCollapse( collapsed );
+	// On mobile, 'shown' is already emitted by the GutterSidebarEditCheckDialog, so skip emitting here
+	// (though technically the controller should dedupe anyway)
+	if ( !OO.ui.isMobile() ) {
+		this.emit( 'shown' );
+	}
+	this.widget.once( 'actionSeen', this.onActionSeen.bind( this ) );
+	this.widget.toggleCollapse( collapsed );
 
-	return widget;
+	return this.widget;
 };
 
+/**
+ * Set the mode used by the action widget
+ *
+ * @param {string} mode
+ */
 mw.editcheck.EditCheckAction.prototype.setMode = function ( mode ) {
 	this.mode = mode;
+	if ( this.widget ) {
+		this.widget.setMode( mode );
+	}
 };
 
 /**
@@ -204,10 +256,16 @@ mw.editcheck.EditCheckAction.prototype.setMode = function ( mode ) {
  */
 mw.editcheck.EditCheckAction.prototype.onActionClick = function ( surface, actionWidget ) {
 	const promise = this.check.act( actionWidget.action, this, surface );
-	this.emit( 'act', promise || ve.createDeferred().resolve().promise() );
-	ve.track( 'activity.editCheck-' + this.getName(), {
-		action: 'action-' + ( actionWidget.getAction() || 'unknown' )
-	} );
+	this.emit( 'act', promise || ve.createDeferred().resolve().promise(), actionWidget.action );
+};
+
+/**
+ * Handle seen events from an action widget
+ *
+ * @fires mw.editcheck.EditCheckAction#seen
+ */
+mw.editcheck.EditCheckAction.prototype.onActionSeen = function () {
+	this.emit( 'seen' );
 };
 
 /**
@@ -221,49 +279,67 @@ mw.editcheck.EditCheckAction.prototype.equals = function ( other, allowOverlaps 
 	if ( this.check.constructor !== other.check.constructor ) {
 		return false;
 	}
-	if ( this.id || other.id ) {
-		return this.id === other.id;
+	if ( this.id !== other.id ) {
+		return false;
 	}
 	if ( this.fragments.length !== other.fragments.length ) {
 		return false;
 	}
-	return this.fragments.every( ( fragment ) => {
-		const selection = fragment.getSelection();
-		return other.fragments.some( ( otherFragment ) => {
-			if ( allowOverlaps ) {
-				return otherFragment.getSelection().getCoveringRange().overlapsRange( selection.getCoveringRange() );
-			} else {
-				return otherFragment.getSelection().equals( selection );
-			}
-		} );
+	return this.fragments.every( ( fragment, i ) => {
+		if ( allowOverlaps ) {
+			const selection = fragment.getSelection();
+			return other.fragments.some( ( otherFragment ) => {
+				if ( otherFragment.getSelection().equals( selection ) ) {
+					// A perfect match always counts, and also covers the case of
+					// zero-width ranges on the same point which don't "overlap"
+					return true;
+				}
+				// This case is meant to catch suggestions which were generated on
+				// the same content but which don't perfectly match up because the
+				// modified range is different.
+				const range = selection.getCoveringRange(),
+					otherRange = otherFragment.getSelection().getCoveringRange();
+				// If one is collapsed we accept them touching, otherwise we
+				// only allow overlaps.
+				return ( range.isCollapsed() || otherRange.isCollapsed() ) ?
+					otherRange.touchesRange( range ) :
+					otherRange.overlapsRange( range );
+			} );
+		} else {
+			return fragment.getSelection().equals( other.fragments[ i ].getSelection() );
+		}
 	} );
 };
 
 /**
- * Force the action into a stale or not-stale state
+ * Update the stale state of the action based on the text, or force a specific state
  *
- * @param {boolean} stale
+ * @param {boolean} [forceStale] Force the action into a stale or not-stale state
  */
-mw.editcheck.EditCheckAction.prototype.setStale = function ( stale ) {
-	const previousState = this.isStale();
-	this.originalText = stale ? null : this.fragments.map( ( fragment ) => fragment.getText() );
-	if ( previousState !== this.isStale() ) {
-		this.emit( 'stale', this.isStale() );
+mw.editcheck.EditCheckAction.prototype.updateStale = function ( forceStale ) {
+	const wasStale = this.isStale();
+	if ( forceStale !== undefined ) {
+		this.originalText = forceStale ? null : this.fragments.map( ( fragment ) => fragment.getText() );
+	}
+	this.stale = !this.originalText || !OO.compare(
+		this.originalText,
+		this.fragments.map( ( fragment ) => fragment.getText() )
+	);
+	if ( wasStale !== this.stale ) {
+		this.emit( 'stale', this.stale );
 	}
 };
 
 /**
- * Check whether the text has changed since this action was created
+ * Get the stale state of the action
  *
- * @return {boolean} Whether the text has changed since this action was created
+ * Users must call #updateStale first if they want to get the latest
+ * state based on the current text.
+ *
+ * @return {boolean} The action is stale
  */
 mw.editcheck.EditCheckAction.prototype.isStale = function () {
-	return this.check.canBeStale() && (
-		!this.originalText || !OO.compare(
-			this.originalText,
-			this.fragments.map( ( fragment ) => fragment.getText() )
-		)
-	);
+	return this.check.canBeStale() && this.stale;
 };
 
 /**
@@ -313,4 +389,96 @@ mw.editcheck.EditCheckAction.prototype.isTagged = function ( tag ) {
  */
 mw.editcheck.EditCheckAction.prototype.getTagName = function () {
 	return this.check.constructor.static.name;
+};
+
+/**
+ * Select the action in the surface
+ *
+ * @param {ve.ui.Surface} surface
+ * @param {boolean} selectFocusRange Whether to select the focus range of the check,
+ *  or just move the cursor to the nearest point in the selection if outside the check range
+ * @param {boolean} [focus=true] Activate and focus the surface
+ */
+mw.editcheck.EditCheckAction.prototype.select = function ( surface, selectFocusRange, focus = true ) {
+	const surfaceModel = surface.getModel();
+	const surfaceView = surface.getView();
+	if ( focus ) {
+		surfaceView.activate();
+	}
+	if ( this.focusAnnotation ) {
+		surfaceModel.setSelection( this.getFocusSelection() );
+		if ( focus ) {
+			surfaceView.selectAnnotation( this.focusAnnotation );
+		}
+	} else {
+		const checkRange = this.getFocusSelection().getCoveringRange();
+		if ( selectFocusRange || surfaceView.findFocusedNode( checkRange ) ) {
+			surfaceModel.setLinearSelection( checkRange );
+		} else {
+			const surfaceRange = surfaceModel.getSelection().getCoveringRange();
+			// Collapse and move the selection to the nearest part of the check range
+			// Don't alter it if it touches the check range
+			if ( surfaceRange === null || surfaceRange.end < checkRange.start ) {
+				surfaceModel.setLinearSelection( new ve.Range( checkRange.start ) );
+			} else if ( surfaceRange.start > checkRange.end ) {
+				surfaceModel.setLinearSelection( new ve.Range( checkRange.end ) );
+			}
+		}
+		if ( focus ) {
+			surfaceView.focus();
+		}
+	}
+};
+
+/**
+ *
+ * Check if any of this action's fragments' ranges overlap with the given ranges
+ *
+ * @param {ve.Range[]} ranges The ranges
+ * @return {boolean} True if any overlap exists
+ */
+mw.editcheck.EditCheckAction.prototype.overlapsRanges = function ( ranges ) {
+	return this.fragments.some( ( fragment ) => {
+		const sel = fragment.getSelection();
+		let fragmentRange;
+		if ( sel instanceof ve.dm.LinearSelection ) {
+			fragmentRange = sel.getRange();
+		} else if ( sel instanceof ve.dm.TableSelection ) {
+			fragmentRange = sel.getCoveringRange();
+		} else {
+			return false;
+		}
+		return ranges.some( ( range ) => range.overlapsRange( fragmentRange ) );
+	} );
+};
+
+/**
+ * Check whether every range of this action has been dismissed for this check
+ *
+ * @param {string} tag
+ * @return {boolean}
+ */
+mw.editcheck.EditCheckAction.prototype.isDismissed = function () {
+	return this.isTagged( 'dismissed' );
+};
+
+/**
+ * Check whether every range of this action has been tagged for this check
+ *
+ * @param {string} tag
+ * @return {boolean}
+ */
+mw.editcheck.EditCheckAction.prototype.isTagged = function ( tag ) {
+	return this.fragments.every( ( fragment ) => {
+		const sel = fragment.getSelection();
+		let fragmentRange;
+		if ( sel instanceof ve.dm.LinearSelection ) {
+			fragmentRange = sel.getRange();
+		} else if ( sel instanceof ve.dm.TableSelection ) {
+			fragmentRange = sel.getCoveringRange();
+		} else {
+			return false;
+		}
+		return this.check.isTaggedRange( fragmentRange, tag );
+	} );
 };

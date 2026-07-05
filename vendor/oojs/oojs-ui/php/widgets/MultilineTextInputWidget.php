@@ -30,6 +30,7 @@ class MultilineTextInputWidget extends TextInputWidget {
 		parent::__construct( $config );
 
 		if ( $config['rows'] ?? null ) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset Parent doesn't support this, but we do
 			$this->input->setAttributes( [ 'rows' => $config['rows'] ] );
 		}
 	}

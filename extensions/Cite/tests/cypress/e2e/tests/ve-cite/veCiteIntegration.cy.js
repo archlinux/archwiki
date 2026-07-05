@@ -16,11 +16,9 @@ let usesCitoid;
 
 describe( 'Visual Editor Cite Integration', () => {
 	before( () => {
-		// Skip tests when VisualEditor is not loaded
-		cy.visit( '/index.php' );
-		helper.waitForMWLoader();
-		cy.window().then( async ( win ) => {
-			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		veHelper.checkModuleDependencies().then( ( deps ) => {
+			cy.skipOn( !deps.visualEditor );
+			usesCitoid = deps.citoid;
 		} );
 
 		helper.editPage( title, wikiText );
@@ -29,10 +27,6 @@ describe( 'Visual Editor Cite Integration', () => {
 	beforeEach( () => {
 		helper.visitTitle( title );
 		helper.waitForMWLoader();
-
-		cy.window().then( async ( win ) => {
-			usesCitoid = win.mw.loader.getModuleNames().includes( 'ext.citoid.visualEditor' );
-		} );
 
 		veHelper.setVECookiesToDisableDialogs();
 		veHelper.openVEForEditingReferences( title, usesCitoid );

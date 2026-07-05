@@ -63,7 +63,7 @@ const templateData = {
 		id: 'p-user-menu-logout',
 		class: 'mw-portlet mw-portlet-user-menu-logout',
 		'html-items': `
-			<li id="ca-logout" class="mw-list-item"><a data-mw="interface" href="/w/index.php?title=Special:UserLogout&amp;returnto=Main+Page" title="Log out"><span class="vector-icon mw-ui-icon-logOut mw-ui-icon-wikimedia-logOut"></span> <span>Log out</span></a></li>
+			<li id="ca-logout" class="mw-list-item"><a data-mw-interface="1" href="/w/index.php?title=Special:UserLogout&amp;returnto=Main+Page" title="Log out"><span class="vector-icon mw-ui-icon-logOut mw-ui-icon-wikimedia-logOut"></span> <span>Log out</span></a></li>
 		`
 	} ]
 };

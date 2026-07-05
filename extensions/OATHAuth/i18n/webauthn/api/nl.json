@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie",
+			"Siebrand"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API-module om te communiceren tussen server en cliënt tijdens het registratie-/authenticatieproces.",
+	"apihelp-oathauth-webauthn-param-func": "Naam van de uit te voeren functie.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Authenticatie-informatie.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Registratie-informatie.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Of de te registreren sleutel in de passkey-modus staat. (Alleen voor getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "De WebAuthn-module is niet beschikbaar.",
+	"apierror-oathauth-webauthn-missing-credential": "Er zijn geen aanmeldgegevens verstrekt.",
+	"apierror-oathauth-webauthn-invalid-credential": "De aanmeldgegevens zijn onjuist of verkeerd gevormd.",
+	"apierror-oathauth-webauthn-reauthenticate": "Voordat u dit kunt doen moet u zich eerst opnieuw authenticeren via Special:OATHManage.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Nieuwe WebAuthn-aanmeldinformatie voor de huidige gebruiker registreren.",
+	"apihelp-oathauth-webauthn-param-credential": "In JSON gecodeerd antwoord van de browser met WebAuthn-aanmeldgegevens.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Handige naam voor het nieuwe aanmeldgegeven."
+}

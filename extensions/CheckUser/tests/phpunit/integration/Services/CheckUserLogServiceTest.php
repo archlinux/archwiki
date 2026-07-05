@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -18,7 +18,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\Services\CheckUserLogService
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserLogService
  */
 class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 
@@ -29,11 +29,22 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function commonTestAddLogEntry(
-		$logType, $targetType, $target, $reason, $targetID, $assertSelectFieldNames, $assertSelectFieldValues
-	) {
+		$logType,
+		$targetType,
+		$target,
+		$reason,
+		$targetID,
+		$assertSelectFieldNames,
+		$assertSelectFieldValues
+	): void {
 		$object = $this->setUpObject();
 		$object->addLogEntry(
-			$this->getTestUser( 'checkuser' )->getUser(), $logType, $targetType, $target, $reason, $targetID
+			$this->getTestUser( 'checkuser' )->getUser(),
+			$logType,
+			$targetType,
+			$target,
+			$reason,
+			$targetID
 		);
 		DeferredUpdates::doUpdates();
 		$this->newSelectQueryBuilder()
@@ -65,9 +76,17 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideAddLogEntryIPs */
 	public function testAddLogEntryIPs(
-		$logType, $target, $reason, $assertSelectFieldValues
+		$logType,
+		$target,
+		$reason,
+		$assertSelectFieldValues
 	) {
-		$this->commonTestAddLogEntry( $logType, 'ip', $target, $reason, 0,
+		$this->commonTestAddLogEntry(
+			$logType,
+			'ip',
+			$target,
+			$reason,
+			0,
 			[ 'cul_target_id', 'cul_type', 'cul_target_text', 'cul_target_hex', 'cul_range_start', 'cul_range_end' ],
 			array_merge( [ 0 ], $assertSelectFieldValues )
 		);
@@ -92,9 +111,17 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideAddLogEntryUsers */
 	public function testAddLogEntryUser(
-		$logType, UserIdentity $target, $reason, $assertSelectFieldValues
+		$logType,
+		UserIdentity $target,
+		$reason,
+		$assertSelectFieldValues
 	) {
-		$this->commonTestAddLogEntry( $logType, 'user', $target->getName(), $reason, $target->getId(),
+		$this->commonTestAddLogEntry(
+			$logType,
+			'user',
+			$target->getName(),
+			$reason,
+			$target->getId(),
 			[ 'cul_target_hex', 'cul_range_start', 'cul_range_end', 'cul_type', 'cul_target_text', 'cul_target_id' ],
 			array_merge( [ '', '', '' ], $assertSelectFieldValues )
 		);
@@ -122,8 +149,13 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 		ConvertibleTimestamp::setFakeTime( $timestamp );
 		$testUser = $this->getTestUser()->getUserIdentity();
 		$this->commonTestAddLogEntry(
-			'ipusers', 'user', $testUser->getName(), 'testing', $testUser->getId(),
-			[ 'cul_timestamp' ], [ $this->getDb()->timestamp( $timestamp ) ]
+			'ipusers',
+			'user',
+			$testUser->getName(),
+			'testing',
+			$testUser->getId(),
+			[ 'cul_timestamp' ],
+			[ $this->getDb()->timestamp( $timestamp ) ]
 		);
 	}
 
@@ -224,6 +256,8 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideGetTargetSearchCondsIP */
 	public function testGetTargetSearchCondsIP( $target, $type, $start, $end ) {
+		$this->overrideConfigValue( 'CheckUserLogMaxRangeToShowInLog', false );
+
 		$object = $this->setUpObject();
 		$actualResult = $object->getTargetSearchConds( $target );
 		foreach ( $actualResult as &$result ) {
@@ -257,21 +291,140 @@ class CheckUserLogServiceTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	private function getExpectedGetTargetSearchConds( $type, $id, $start = 0, $end = 0 ) {
+	/** @dataProvider provideGetTargetSearchCondsIPWhenMaxRangeConfigSet */
+	public function testGetTargetSearchCondsIPWhenMaxRangeConfigSet(
+		array $maxRangeToShowInLogConfig,
+		string $target,
+		string $type,
+		string $expectedStart,
+		string $expectedEnd,
+		?string $expectedMinRangeStart,
+		?string $expectedMaxRangeEnd
+	) {
+		$this->overrideConfigValue( 'CheckUserLogMaxRangeToShowInLog', $maxRangeToShowInLogConfig );
+
+		$object = $this->setUpObject();
+		$actualResult = $object->getTargetSearchConds( $target );
+		foreach ( $actualResult as &$result ) {
+			if ( $result instanceof IExpression ) {
+				$result = $result->toSql( new AddQuoterMock() );
+			}
+		}
+		$this->assertArrayEquals(
+			$this->getExpectedGetTargetSearchConds(
+				$type,
+				null,
+				$expectedStart,
+				$expectedEnd,
+				$expectedMinRangeStart,
+				$expectedMaxRangeEnd
+			),
+			$actualResult,
+			false,
+			true,
+			'Valid IP addresses should have associated search conditions.'
+		);
+	}
+
+	public static function provideGetTargetSearchCondsIPWhenMaxRangeConfigSet(): array {
+		return [
+			'Single IPv4 address' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 16, 'IPv6' => 19 ],
+				'target' => '124.1.0.0',
+				'type' => 'ip',
+				'expectedStart' => '7C010000',
+				'expectedEnd' => '7C010000',
+				'expectedMinRangeStart' => '7C010000',
+				'expectedMaxRangeEnd' => '7C01FFFF',
+			],
+			'/24 IP range' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 10, 'IPv6' => 19 ],
+				'target' => '124.0.0.0/24',
+				'type' => 'range',
+				'expectedStart' => '7C000000',
+				'expectedEnd' => '7C0000FF',
+				'expectedMinRangeStart' => '7C000000',
+				'expectedMaxRangeEnd' => '7C3FFFFF',
+			],
+			'/8 IPv4 range' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 16, 'IPv6' => 19 ],
+				'target' => '124.0.0.0/8',
+				'type' => 'range',
+				'expectedStart' => '7C000000',
+				'expectedEnd' => '7CFFFFFF',
+				'expectedMinRangeStart' => null,
+				'expectedMaxRangeEnd' => null,
+			],
+			'Single IPv6 address' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 16, 'IPv6' => 19 ],
+				'target' => '::e:f:2001',
+				'type' => 'ip',
+				'expectedStart' => 'v6-00000000000000000000000E000F2001',
+				'expectedEnd' => 'v6-00000000000000000000000E000F2001',
+				'expectedMinRangeStart' => 'v6-00000000000000000000000000000000',
+				'expectedMaxRangeEnd' => 'v6-00001FFFFFFFFFFFFFFFFFFFFFFFFFFF',
+			],
+			'/96 IPv6 range' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 16, 'IPv6' => 76 ],
+				'target' => '::e:f:2001/96',
+				'type' => 'range',
+				'expectedStart' => 'v6-00000000000000000000000E00000000',
+				'expectedEnd' => 'v6-00000000000000000000000EFFFFFFFF',
+				'expectedMinRangeStart' => 'v6-00000000000000000000000000000000',
+				'expectedMaxRangeEnd' => 'v6-0000000000000000000FFFFFFFFFFFFF',
+			],
+			'/7 IPv6 range' => [
+				'maxRangeToShowInLogConfig' => [ 'IPv4' => 16, 'IPv6' => 19 ],
+				'target' => '::e:f:2001/7',
+				'type' => 'range',
+				'expectedStart' => 'v6-00000000000000000000000000000000',
+				'expectedEnd' => 'v6-01FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',
+				'expectedMinRangeStart' => null,
+				'expectedMaxRangeEnd' => null,
+			],
+		];
+	}
+
+	/**
+	 * Gets the expected SQL where conditions that should be returned by
+	 * {@link CheckUserLogService::getTargetSearchConds}.
+	 */
+	private function getExpectedGetTargetSearchConds(
+		string $type,
+		?int $id,
+		?string $start = null,
+		?string $end = null,
+		?string $minRangeStart = null,
+		?string $maxRangeEnd = null
+	): ?array {
 		switch ( $type ) {
 			case 'ip':
-				return [
-					"(cul_target_hex = '$start' OR " .
+				$expectedSql = "(cul_target_hex = '$start' OR " .
 					"(cul_range_end >= '$start' AND " .
-					"cul_range_start <= '$start'))",
-				];
+					"cul_range_start <= '$start'";
+				if ( $minRangeStart !== null ) {
+					$expectedSql .= " AND cul_range_start >= '$minRangeStart'";
+				}
+				if ( $maxRangeEnd !== null ) {
+					$expectedSql .= " AND cul_range_end <= '$maxRangeEnd'";
+				}
+				$expectedSql .= '))';
+
+				return [ $expectedSql ];
 			case 'range':
-				return [
-					"((cul_target_hex >= '$start' AND " .
+				$expectedSql = "((cul_target_hex >= '$start' AND " .
 					"cul_target_hex <= '$end') OR " .
 					"(cul_range_end >= '$start' AND " .
-					"cul_range_start <= '$end'))",
-				];
+					"cul_range_start <= '$end'";
+				if ( $minRangeStart !== null ) {
+					$expectedSql .= " AND cul_range_start >= '$minRangeStart'";
+				}
+				if ( $maxRangeEnd !== null ) {
+					$expectedSql .= " AND cul_range_end <= '$maxRangeEnd'";
+				}
+				$expectedSql .= '))';
+
+				return [ $expectedSql ];
 			case 'user':
 				if ( $id === null ) {
 					return null;

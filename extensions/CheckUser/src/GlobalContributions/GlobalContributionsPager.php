@@ -1,18 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\GlobalContributions;
 
 use GlobalPreferences\GlobalPreferencesFactory;
-use HtmlArmor;
 use InvalidArgumentException;
 use LogicException;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\ChangeTags\ChangeTagsStoreFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
@@ -20,12 +20,15 @@ use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\UserLinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\ContributionsPager;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\RecentChanges\ChangesList;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\RevisionStoreFactory;
+use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\Site\SiteLookup;
 use MediaWiki\SpecialPage\ContributionsRangeTrait;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
@@ -37,9 +40,11 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
 use OOUI\HtmlSnippet;
 use OOUI\MessageWidget;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -55,17 +60,6 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 
 	use ContributionsRangeTrait;
 
-	private TempUserConfig $tempUserConfig;
-	private CheckUserLookupUtils $checkUserLookupUtils;
-	private CentralIdLookup $centralIdLookup;
-	private CheckUserGlobalContributionsLookup $globalContributionsLookup;
-	private CommentFormatter $commentFormatter;
-	private PermissionManager $permissionManager;
-	private GlobalPreferencesFactory $globalPreferencesFactory;
-	private IConnectionProvider $dbProvider;
-	private JobQueueGroup $jobQueueGroup;
-	private UserLinkRenderer $userLinkRenderer;
-	private RevisionStoreFactory $revisionStoreFactory;
 	private ExternalPermissions $permissions;
 	private int $wikisWithPermissionsCount;
 	private string $needsToEnableGlobalPreferenceAtWiki;
@@ -88,21 +82,24 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 		HookContainer $hookContainer,
 		RevisionStore $revisionStore,
 		NamespaceInfo $namespaceInfo,
-		CommentFormatter $commentFormatter,
+		private readonly CommentFormatter $commentFormatter,
 		UserFactory $userFactory,
-		TempUserConfig $tempUserConfig,
-		CheckUserLookupUtils $checkUserLookupUtils,
-		CentralIdLookup $centralIdLookup,
-		CheckUserGlobalContributionsLookup $globalContributionsLookup,
-		PermissionManager $permissionManager,
-		GlobalPreferencesFactory $globalPreferencesFactory,
-		IConnectionProvider $dbProvider,
-		JobQueueGroup $jobQueueGroup,
-		UserLinkRenderer $userLinkRenderer,
-		RevisionStoreFactory $revisionStoreFactory,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly CheckUserLookupUtils $checkUserLookupUtils,
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly CheckUserGlobalContributionsLookup $globalContributionsLookup,
+		private readonly PermissionManager $permissionManager,
+		private readonly GlobalPreferencesFactory $globalPreferencesFactory,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly UserLinkRenderer $userLinkRenderer,
+		private readonly RevisionStoreFactory $revisionStoreFactory,
+		private readonly ChangeTagsStoreFactory $changeTagsStoreFactory,
+		private readonly SiteLookup $siteLookup,
+		private readonly ReadOnlyMode $readOnlyMode,
 		IContextSource $context,
 		array $options,
-		?UserIdentity $target = null
+		?UserIdentity $target = null,
 	) {
 		$options['runHooks'] = false;
 
@@ -118,18 +115,7 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 			$options,
 			$target
 		);
-		$this->tempUserConfig = $tempUserConfig;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
-		$this->centralIdLookup = $centralIdLookup;
-		$this->commentFormatter = $commentFormatter;
-		$this->globalContributionsLookup = $globalContributionsLookup;
-		$this->permissionManager = $permissionManager;
-		$this->globalPreferencesFactory = $globalPreferencesFactory;
-		$this->dbProvider = $dbProvider;
-		$this->jobQueueGroup = $jobQueueGroup;
 		$this->templateParser = new TemplateParser( __DIR__ . '/../../templates' );
-		$this->userLinkRenderer = $userLinkRenderer;
-		$this->revisionStoreFactory = $revisionStoreFactory;
 		$this->permissions = new ExternalPermissions();
 	}
 
@@ -255,6 +241,10 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 		// Check if the target is an IP or range and only if so, log that the user has globally
 		// viewed the temporary accounts editing on the target IP/range.
 		if ( $this->isValidIPOrQueryableRange( $this->target, $this->getConfig() ) ) {
+			if ( $this->readOnlyMode->isReadOnly() ) {
+				throw new ReadOnlyError;
+			}
+
 			$this->jobQueueGroup->push(
 				LogTemporaryAccountAccessJob::newSpec(
 					$this->getAuthority()->getUser(),
@@ -304,7 +294,9 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 			$startOffset = $checkUserDataCutoff;
 		}
 		$timestampConds[] = $this->mDb->expr(
-			$this->getTimestampField(), '>=', $this->mDb->timestamp( $startOffset )
+			$this->getTimestampField(),
+			'>=',
+			$this->mDb->timestamp( $startOffset )
 		);
 
 		// Compute a synthetic sequence number for each wiki 0 ... -N,
@@ -323,7 +315,8 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 				// these will not be shown to anyone for a registered user target, until T389187.
 				if ( !$this->permissions->hasPermission( 'deletedhistory', $wikiId ) ) {
 					$wikiConds[] = $dbr->bitAnd(
-						$this->revisionDeletedField, RevisionRecord::DELETED_USER
+						$this->revisionDeletedField,
+						RevisionRecord::DELETED_USER
 					) . ' = 0';
 				}
 				if (
@@ -331,20 +324,29 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 					!$this->permissions->hasPermission( 'viewsuppressed', $wikiId )
 				) {
 					$wikiConds[] = $dbr->bitAnd(
-						$this->revisionDeletedField, RevisionRecord::SUPPRESSED_USER
+						$this->revisionDeletedField,
+						RevisionRecord::SUPPRESSED_USER
 					) . ' != ' . RevisionRecord::SUPPRESSED_USER;
 				}
 			}
 
-			$resultSet = $dbr->newSelectQueryBuilder()
+			$queryBuilder = $dbr->newSelectQueryBuilder()
 				->caller( __METHOD__ )
 				->queryInfo( $this->getQueryInfo() )
 				->andWhere( $wikiConds )
 				->andWhere( $timestampConds )
 				->orderBy( [ 'rev_timestamp', 'rev_id' ], SelectQueryBuilder::SORT_DESC )
 				// Use a limit for each wiki (specified in T356292), rather than the page limit.
-				->limit( self::REVISION_COUNT_LIMIT )
-				->fetchResultSet();
+				->limit( self::REVISION_COUNT_LIMIT );
+
+			$changeTagsStore = $this->changeTagsStoreFactory->getChangeTagsStore( $wikiId );
+			$changeTagsStore->modifyDisplayQueryBuilder(
+				$queryBuilder,
+				'revision',
+				$this->getTagFilter(),
+				$this->getTagInvert(),
+			);
+			$resultSet = $queryBuilder->fetchResultSet();
 
 			foreach ( $resultSet as $row ) {
 				$row->sourcewiki = $wikiId;
@@ -391,34 +393,34 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 
 		// Sort the entire results set by timestamp, wiki sequence number
 		// and finally revision ID as a tie-breaker, then apply the limit.
-		usort( $results, static function ( $a, $b ) use ( $order ) {
-			$aTimestamp = $a->rev_timestamp;
-			$bTimestamp = $b->rev_timestamp;
-
-			if ( $aTimestamp !== $bTimestamp ) {
-				if ( $order === self::QUERY_DESCENDING ) {
-					return $bTimestamp <=> $aTimestamp;
-				}
-
-				return $aTimestamp <=> $bTimestamp;
-			}
-
-			if ( $a->wiki_seq_no !== $b->wiki_seq_no ) {
-				if ( $order === self::QUERY_DESCENDING ) {
-					return $b->wiki_seq_no <=> $a->wiki_seq_no;
-				}
-
-				return $a->wiki_seq_no <=> $b->wiki_seq_no;
-			}
-
-			if ( $order === self::QUERY_DESCENDING ) {
-				return $b->rev_id <=> $a->rev_id;
-			}
-
-			return $a->rev_id <=> $b->rev_id;
-		} );
+		usort(
+			$results,
+			$order === self::QUERY_DESCENDING ?
+			static fn ( $a, $b ) =>
+				( $b->rev_timestamp <=> $a->rev_timestamp ?:
+				$b->wiki_seq_no <=> $a->wiki_seq_no ?:
+				$b->rev_id <=> $a->rev_id ) :
+			static fn ( $a, $b ) =>
+				( $a->rev_timestamp <=> $b->rev_timestamp ?:
+				$a->wiki_seq_no <=> $b->wiki_seq_no ?:
+				$a->rev_id <=> $b->rev_id )
+		);
 
 		return new FakeResultWrapper( array_slice( $results, 0, $limit ) );
+	}
+
+	/**
+	 * Overrides a base class method to do nothing. The ContributionsPager operates on a single wiki,
+	 * and always uses the local database to apply tag filters (i.e. maps names to ids using the local DB).
+	 * However, for GlobalContributionsPager we need to apply tag filter on multiple wikis, so we cannot
+	 * rely on this method for that.
+	 *
+	 * Instead, the tag filter is applied in {@see reallyDoQuery}, which knows what wiki is being processed
+	 * at the moment.
+	 *
+	 * @inheritDoc
+	 */
+	protected function modifyQueryInfoWithTagFilter( array &$queryInfo ): void {
 	}
 
 	/**
@@ -443,7 +445,8 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 		foreach ( $parentIdsByWiki as $wikiId => $parentIds ) {
 			$this->parentRevisionSizes[$wikiId] ??= [];
 			$this->parentRevisionSizes[$wikiId] += $this->globalContributionsLookup->getRevisionSizes(
-				$wikiId, array_keys( $parentIds )
+				$wikiId,
+				array_keys( $parentIds )
 			);
 		}
 	}
@@ -520,6 +523,8 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 	protected function populateAttributes( $row, &$attributes ) {
 		if ( !$this->isFromExternalWiki( $row ) ) {
 			parent::populateAttributes( $row, $attributes );
+		} else {
+			$attributes['data-mw-revid'] = $row->rev_id;
 		}
 	}
 
@@ -741,7 +746,8 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 			[ 'class' => 'mw-changeslist-history' ]
 		);
 
-		return Html::rawElement( 'span',
+		return Html::rawElement(
+			'span',
 			[ 'class' => 'mw-changeslist-links' ],
 			// The spans are needed to ensure the dividing '|' elements are not
 			// themselves styled as links.
@@ -900,7 +906,20 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 				);
 		}
 
-		$userPageLink = $this->userLinkRenderer->userLink( $revUser, $this->getContext() );
+		$attributes = [];
+		if ( $this->isFromExternalWiki( $row ) ) {
+			// Add the API URLs to the link, so that data may be looked up
+			$site = $this->siteLookup->getSite( $row->sourcewiki );
+			if ( $site instanceof MediaWikiSite ) {
+				$attributes[ 'data-wiki-url' ] = $site->getPath( MediaWikiSite::PATH_FILE );
+			}
+		}
+		$userPageLink = $this->userLinkRenderer->userLink(
+			$revUser,
+			$this->getContext(),
+			null,
+			$attributes
+		);
 
 		if ( !$this->isFromExternalWiki( $row ) ) {
 			return ' <span class="mw-changeslist-separator"></span> ' .
@@ -959,11 +978,11 @@ class GlobalContributionsPager extends ContributionsPager implements CheckUserQu
 		// row since the RevisionRecord is not available for external rows.
 		$flags = [];
 		if ( $row->{$this->revisionParentIdField} == 0 ) {
-			$flags[] = ChangesList::flag( 'newpage' );
+			$flags[] = ChangesList::flag( 'newpage', $this->getContext() );
 		}
 
 		if ( $row->{$this->revisionMinorField} ) {
-			$flags[] = ChangesList::flag( 'minor' );
+			$flags[] = ChangesList::flag( 'minor', $this->getContext() );
 		}
 		return $flags;
 	}

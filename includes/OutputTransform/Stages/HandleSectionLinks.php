@@ -35,18 +35,20 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		$this->titleFactory = $titleFactory;
 	}
 
-	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
+	public function shouldRun( ParserOutput $po, ParserOptions $popts, array $options = [] ): bool {
 		return !( $po->getContentHolder()->isParsoidContent() );
 	}
 
-	protected function transformText( string $text, ParserOutput $po, ?ParserOptions $popts, array &$options ): string {
-		$text = $this->replaceHeadings( $text, $options );
+	protected function transformText( string $text, ParserOutput $po, ParserOptions $popts, array &$options ): string {
+		$text = $this->replaceHeadings( $text );
 
 		if (
-			( $options['enableSectionEditLinks'] ?? true ) &&
-			!$po->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS )
+			// this should be kept in sync with the legacy implementation in HandleParsoidSectionLinks
+			!$po->getOutputFlag( ParserOutputFlags::NO_SECTION_EDIT_LINKS ) &&
+			!$popts->getSuppressSectionEditLinks() &&
+			( $options['enableSectionEditLinks'] ?? true )
 		) {
-			return $this->addSectionLinks( $text, $po, $options );
+			return $this->addSectionLinks( $text, $popts, $options );
 		} else {
 			return preg_replace( self::EDITSECTION_REGEX, '', $text );
 		}
@@ -64,7 +66,7 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		return false;
 	}
 
-	private function replaceHeadings( string $text, array $options ): string {
+	private function replaceHeadings( string $text ): string {
 		$needToCheckExistingWrappers = preg_match( '/class="[^"]*\bmw-heading\b[^"]*"/', $text );
 
 		return preg_replace_callback( self::HEADING_REGEX, function ( $m ) use (
@@ -177,18 +179,22 @@ class HandleSectionLinks extends ContentTextTransformStage {
 		}
 	}
 
-	private function addSectionLinks( string $text, ParserOutput $po, array $options ): string {
+	private function addSectionLinks( string $text, ParserOptions $popts, array $options ): string {
 		$skin = $this->resolveSkin( $options );
 		if ( !$skin ) {
 			// Should be unreachable
 			return $text;
 		}
-		return preg_replace_callback( self::EDITSECTION_REGEX, function ( $m ) use ( $skin ) {
+		return preg_replace_callback( self::EDITSECTION_REGEX, function ( $m ) use ( $skin, $popts ) {
 			$editsectionPage = $this->titleFactory->newFromTextThrow( htmlspecialchars_decode( $m[1] ) );
 			$editsectionSection = htmlspecialchars_decode( $m[2] );
 			$editsectionContent = Sanitizer::decodeCharReferences( $m[3] );
-			return $skin->doEditSectionLink( $editsectionPage, $editsectionSection, $editsectionContent,
-				$skin->getLanguage() );
+			return $skin->doEditSectionLink(
+				$editsectionPage, $editsectionSection, $editsectionContent,
+				// T413227: skin doesn't mark user interface language as used,
+				// but it is used here.
+				$popts->getUserLangObj()
+			);
 		}, $text );
 	}
 

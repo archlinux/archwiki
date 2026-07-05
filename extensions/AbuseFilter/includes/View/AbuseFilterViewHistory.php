@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
@@ -12,6 +11,7 @@ use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\User\UserNameUtils;
 use OOUI;
@@ -21,45 +21,18 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 	/** @var int|null */
 	private $filter;
 
-	/** @var FilterLookup */
-	private $filterLookup;
-
-	/** @var SpecsFormatter */
-	private $specsFormatter;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/**
-	 * @param UserNameUtils $userNameUtils
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param FilterLookup $filterLookup
-	 * @param SpecsFormatter $specsFormatter
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param string $basePageName
-	 * @param array $params
-	 */
 	public function __construct(
-		UserNameUtils $userNameUtils,
-		LinkBatchFactory $linkBatchFactory,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly LinkBatchFactory $linkBatchFactory,
 		AbuseFilterPermissionManager $afPermManager,
-		FilterLookup $filterLookup,
-		SpecsFormatter $specsFormatter,
+		private readonly FilterLookup $filterLookup,
+		private readonly SpecsFormatter $specsFormatter,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
-		$this->userNameUtils = $userNameUtils;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->filterLookup = $filterLookup;
-		$this->specsFormatter = $specsFormatter;
 		$this->specsFormatter->setMessageLocalizer( $context );
 		$this->filter = $this->mParams['filter'] ?? null;
 	}
@@ -71,14 +44,19 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 		$out = $this->getOutput();
 		$out->enableOOUI();
 		$filter = $this->getRequest()->getIntOrNull( 'filter' ) ?: $this->filter;
+		$canViewSuppressed = $this->afPermManager->canViewSuppressed( $this->getAuthority() );
 		$canViewPrivate = $this->afPermManager->canViewPrivateFilters( $this->getAuthority() );
 
 		if ( $filter ) {
 			$filterObj = null;
 			try {
 				$filterObj = $this->filterLookup->getFilter( $filter, false );
-			} catch ( FilterNotFoundException $_ ) {
+			} catch ( FilterNotFoundException ) {
 				$filter = null;
+			}
+			if ( $filterObj && $filterObj->isSuppressed() && !$canViewSuppressed ) {
+				$out->addWikiMsg( 'abusefilter-history-error-suppressed' );
+				return;
 			}
 			if ( $filterObj && $filterObj->isHidden() && !$canViewPrivate ) {
 				$out->addWikiMsg( 'abusefilter-history-error-hidden' );
@@ -136,7 +114,7 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 			new OOUI\HorizontalLayout( [
 				'items' => array_values( $links )
 			] );
-		$out->addHTML( $backlinks );
+		$out->addHTML( (string)$backlinks );
 
 		// For user
 		$user = $this->userNameUtils->getCanonical(
@@ -190,7 +168,8 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 			$this->afPermManager,
 			$filter,
 			$user,
-			$canViewPrivate
+			$canViewPrivate,
+			$canViewSuppressed
 		);
 
 		$out->addParserOutputContent(

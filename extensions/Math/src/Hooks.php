@@ -21,12 +21,9 @@ class Hooks implements
 	SpecialPage_initListHook,
 	MaintenanceRefreshLinksInitHook
 {
-	private UserOptionsManager $userOptionsManager;
-
 	public function __construct(
-		UserOptionsManager $userOptionsManager
+		private readonly UserOptionsManager $userOptionsManager,
 	) {
-		$this->userOptionsManager = $userOptionsManager;
 	}
 
 	/**

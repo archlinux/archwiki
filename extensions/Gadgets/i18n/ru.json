@@ -90,5 +90,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Отсутствует зависимость|Отсутствуют следующие зависимости}}: $1",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Зависимость устарела|Следующие зависимости устарели}}: $1",
 	"gadgets-supports-urlload": "Гаджет поддерживает загрузку с использованием параметра <code>?withgadget</code> в URL.",
-	"gadgets-hidden": "Этот гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden скрыт]. Это означает, что он не будет отображаться на странице настроек."
+	"gadgets-hidden": "Этот гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden скрыт]. Это означает, что он не будет отображаться на странице настроек.",
+	"gadgets-subpage-invalid": "Недопустимая подстраница «<nowiki>$1</nowiki>»",
+	"gadgets-subpage-toofewparams": "Недостаточно параметров подстраницы (недопустимая ссылка)."
 }

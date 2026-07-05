@@ -56,7 +56,7 @@
 
 <script>
 const { ref, computed, watch } = require( 'vue' );
-const { CdxPopover } = require( '@wikimedia/codex' );
+const { CdxPopover } = require( '../codex.js' );
 const { hashUsername } = require( '../util.js' );
 const UserCardView = require( './UserCardView.vue' );
 const useInstrument = require( '../composables/useInstrument.js' );

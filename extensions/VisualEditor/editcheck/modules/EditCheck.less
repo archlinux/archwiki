@@ -1,4 +1,4 @@
-@import '../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+@import 'mediawiki.skin.variables.less';
 
 .skin-vector-2022 {
 	.ve-editcheck-available & {
@@ -22,26 +22,6 @@
 			opacity: 0;
 			left: 150px;
 			transition: opacity 250ms, left 250ms;
-		}
-
-		.mw-body .vector-column-end,
-		.vector-pinnable-header-pin-button {
-			@media screen and ( max-width: 1492px ) {
-				// Pre-emptively hide right sidebar below width at which it would start
-				// squashing the main content area. Not 100% necessary but reduces amount
-				// of movement when EditCheck opens at these widths.
-				display: none !important;  /* stylelint-disable-line declaration-no-important */
-			}
-		}
-	}
-
-	.ve-editcheck-enabled &,
-	.ve-editcheck-transitioning & {
-		.mw-body .vector-column-end,
-		.vector-main-menu-landmark,
-		.vector-pinnable-header-pin-button {
-			// Hide sidebars during transitions as they reflow their own text when the change width
-			display: none !important;  /* stylelint-disable-line declaration-no-important */
 		}
 	}
 
@@ -75,41 +55,152 @@
 			left: 0;
 		}
 	}
-
-	.ve-editcheck-transitioning.vector-feature-main-menu-pinned-disabled.vector-toc-not-available &,
-	.ve-editcheck-enabled.vector-feature-main-menu-pinned-disabled.vector-toc-not-available &,
-	.ve-editcheck-transitioning.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 &,
-	.ve-editcheck-enabled.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-clientpref-0 & {
-		@media screen and ( min-width: @min-width-breakpoint-desktop ) {
-			.mw-body {
-				padding-right: 0;
-			}
-		}
-
-		.mw-body .vector-column-end {
-			display: block !important;  /* stylelint-disable-line declaration-no-important */
-			visibility: hidden;
-			width: 300px;
-		}
-	}
 }
 
 /* Toolbar */
 
 .ve-ui-editCheck-toolbar-tools {
 	display: flex;
+
+	.ve-ui-toolbar-group-title {
+		font-weight: bold;
+		flex: 5 !important; /* stylelint-disable-line declaration-no-important */
+		line-height: 3em;
+		text-align: center;
+	}
 }
 
-.ve-ui-toolbar-group-title {
-	font-weight: bold;
-	flex: 5 !important; /* stylelint-disable-line declaration-no-important */
-	line-height: 3em;
-	text-align: center;
+/* Switch to full page buttons */
+.ve-ui-editCheck-editFullPage-indicator {
+	margin: 0 -@spacing-25 0 10px;
+	border-left: @spacing-25 solid transparent;
+	box-shadow: -1px 0 0 @border-color-base;
+	position: relative;
+
+	&::after {
+		content: '';
+		display: block;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		position: absolute;
+		right: 0;
+		background: @background-color-progressive;
+		border: 1px solid @border-color-inverted;
+	}
+}
+
+body:not( .skin-monobook ) .oo-ui-tool-name-editCheckSuggestions {
+	& > .oo-ui-tool-link > .oo-ui-iconElement-icon::before {
+		content: '';
+		display: block;
+		height: 100%;
+		/* Difference between icon width (20) and overlay width (26) divided by 2 to center */
+		margin: 0 -3px;
+		background: url( ../images/lightbulb-rays.svg ) 50% 50% no-repeat;
+		/* Animation */
+		background-size: 50%;
+		opacity: 0;
+		transition-property: background-size, opacity;
+		transition-duration: @transition-duration-medium;
+	}
+
+	&.oo-ui-tool-active > .oo-ui-tool-link > .oo-ui-iconElement-icon::before {
+		background-size: 100%;
+		opacity: 1;
+	}
+
+	& > .oo-ui-tool-link > .oo-ui-iconElement-icon::after {
+		content: attr( data-count );
+		display: block;
+		position: absolute;
+		text-align: center;
+		padding: 1px;
+		min-width: 11px;
+		left: 12px;
+		bottom: 1px;
+		border: 1px solid @border-color-inverted;
+		border-radius: @border-radius-base;
+		background-color: @background-color-progressive;
+		color: @color-inverted;
+		font-size: @font-size-x-small;
+		font-weight: bold;
+		transition-property: background-color, border-color, color;
+		transition-duration: @transition-duration-base;
+	}
+
+	&.oo-ui-tool-active > .oo-ui-tool-link > .oo-ui-iconElement-icon::after {
+		background-color: @background-color-progressive-subtle;
+		border-color: @border-color-progressive;
+		color: @color-progressive;
+	}
+
+	/* Hide when no count set yet, or count is 0 and tool isn't active */
+	& > .oo-ui-tool-link > .oo-ui-iconElement-icon:not( [ data-count ] )::after,
+	&:not( .oo-ui-tool-active ) > .oo-ui-tool-link > .oo-ui-iconElement-icon[ data-count='0' ]::after {
+		display: none;
+	}
 }
 
 /* Actions */
 
+.ve-ui-editCheck-scrollIntoView {
+	position: fixed;
+	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.2 );
+	opacity: 0;
+	transition-property: opacity, transform;
+	transition-duration: @transition-duration-base;
+	white-space: nowrap;
+
+	&-top {
+		top: @spacing-200;
+		transform: translateX( -50% ) translateY( calc( -100% - @spacing-200 ) );
+
+		&.ve-ui-editCheck-scrollIntoView-visible {
+			opacity: @opacity-base;
+			transform: translateX( -50% ) translateY( 0 );
+		}
+	}
+
+	&-bottom {
+		bottom: @spacing-200;
+		transform: translateX( -50% ) translateY( calc( 100% + @spacing-200 ) );
+
+		&.ve-ui-editCheck-scrollIntoView-visible {
+			opacity: @opacity-base;
+			transform: translateX( -50% ) translateY( 0 );
+		}
+	}
+
+	.oo-ui-buttonElement-button {
+		/* Fix height rounding error in Minerva, could be upstreamed to OOUI */
+		min-height: 2.25em;
+	}
+
+	/**
+	 * Same border-radius is applied to all these elements to ensure that the trimmed-off corner
+	 * areas don't capture clicks
+	 */
+	&,
+	.oo-ui-buttonElement-framed:first-child,
+	.oo-ui-buttonElement-framed:first-child .oo-ui-buttonElement-button {
+		border-bottom-left-radius: 1.6em;
+		border-top-left-radius: 1.6em;
+	}
+
+	&,
+	.oo-ui-buttonElement-framed:last-child,
+	.oo-ui-buttonElement-framed:last-child .oo-ui-buttonElement-button {
+		border-bottom-right-radius: 1.6em;
+		border-top-right-radius: 1.6em;
+	}
+}
+
 .ve-ui-editCheckDialog {
+	.ve-ui-editCheck-scrollIntoView {
+		margin-left: 150px;
+	}
+
 	&-footer {
 		display: flex;
 		justify-content: flex-end;
@@ -127,13 +218,23 @@
 	}
 
 	.ve-ui-editCheckActionWidget {
-		box-sizing: border-box;
-		white-space: normal; // Minerva needs this
-		margin: @spacing-50 0;
-		padding: @spacing-50 @spacing-75;
-		cursor: pointer;
-		overflow: hidden;
-		border-radius: @border-radius-base;
+		transition-property: background, border-color;
+		transition-duration: @transition-duration-base;
+
+		/**
+		 * Increase specificity over core styles in case they are
+		 * loaded later, such as on Special:EditChecks where order
+		 * can't be guaranteed.
+		 */
+		&.oo-ui-messageWidget {
+			box-sizing: border-box;
+			white-space: normal; // Minerva needs this
+			margin: @spacing-50 0;
+			padding: @spacing-50 @spacing-75;
+			cursor: pointer;
+			overflow: hidden;
+			border-radius: @border-radius-base;
+		}
 
 		> .oo-ui-iconElement-icon {
 			// Fixes icon placement in WMUI theme
@@ -149,6 +250,16 @@
 			background-color: @background-color-base;
 			margin: @spacing-50 -@spacing-75 -@spacing-50 -@spacing-75;
 			padding: @spacing-75;
+
+			/* Progress bar positioning within the margin and without causing layout changes */
+			position: relative;
+
+			> .oo-ui-progressBarWidget {
+				position: absolute;
+				width: 100%;
+				top: 0;
+				left: 0;
+			}
 		}
 
 		&-prompt {
@@ -159,6 +270,13 @@
 
 		&-actions {
 			margin-top: @spacing-100;
+			/* for when buttons wrap to multiple lines */
+			margin-bottom: -@spacing-25;
+
+			.oo-ui-actionWidget {
+				/* for when buttons wrap to multiple lines */
+				margin-bottom: @spacing-25;
+			}
 
 			&-prompted {
 				margin-top: @spacing-75;
@@ -174,8 +292,52 @@
 			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.2 );
 		}
 
+		&.oo-ui-flaggedElement-progressive {
+			border-color: @border-color-progressive;
+			background: @background-color-progressive-subtle;
+
+			> .oo-ui-labelElement-label {
+				font-weight: normal;
+			}
+		}
+
+		&:hover {
+			&.oo-ui-flaggedElement-progressive {
+				border-color: @border-color-progressive--hover;
+			}
+
+			&.oo-ui-flaggedElement-warning {
+				border-color: @border-color-warning--hover;
+			}
+
+			&.oo-ui-flaggedElement-error {
+				border-color: @border-color-error--hover;
+			}
+		}
+
+		&:active {
+			&.oo-ui-flaggedElement-progressive {
+				border-color: @border-color-progressive--active;
+			}
+
+			&.oo-ui-flaggedElement-warning {
+				border-color: @border-color-warning--active;
+			}
+
+			&.oo-ui-flaggedElement-error {
+				border-color: @border-color-error--active;
+			}
+		}
+
 		&.ve-ui-editCheckActionWidget-collapsed {
-			filter: grayscale( 1 );
+			&:not( :hover ) {
+				background: @background-color-base;
+				border-color: @border-color-base;
+
+				&.oo-ui-flaggedElement-progressive {
+					border-color: @border-color-muted;
+				}
+			}
 
 			> .ve-ui-editCheckActionWidget-body {
 				display: none;
@@ -230,10 +392,14 @@
 		}
 
 		&-suggestion {
-			background: @background-color-success-subtle;
+			&-feedbackMenu {
+				position: absolute;
+				right: @spacing-75;
+				bottom: @spacing-75;
+			}
 
-			> .oo-ui-labelElement-label {
-				color: @color-success;
+			.ve-ui-editCheckActionWidget-actions {
+				margin-right: 2.2em;
 			}
 		}
 	}
@@ -255,7 +421,8 @@
 		max-width: calc( 993.3px + (2 * 1em) );
 		margin: 0 auto;
 
-		&-close {
+		&-close,
+		&-collapseExpand {
 			position: absolute;
 			right: 0;
 			top: 2px;
@@ -282,7 +449,7 @@
 			padding: 0.5em 1em;
 			border-width: 0;
 			box-shadow: none;
-			background-color: transparent !important;  /* stylelint-disable-line declaration-no-important */
+			background-color: transparent !important; /* stylelint-disable-line declaration-no-important */
 
 			/* Matches .ve-ui-mobileContext .ve-ui-linearContextItem-body */
 			&-body {
@@ -306,6 +473,11 @@
 .ve-ui-editCheck-gutter-active {
 	div.ve-ui-gutterSidebarEditCheckDialog {
 		background-color: @background-color-interactive-subtle;
+
+		.ve-ui-editCheck-scrollIntoView {
+			left: 50%;
+			margin-top: 48px;
+		}
 
 		.ve-ui-editCheck-gutter-action {
 			position: absolute;
@@ -341,16 +513,8 @@
 				border-left: 2px solid @color-warning;
 			}
 
-			&-notice {
-				border-left: 2px solid @color-notice;
-			}
-
-			&-success {
-				border-left: 2px solid @color-success;
-			}
-
-			&-inactive {
-				border-left: 2px solid @border-color-base;
+			&-progressive {
+				border-left: 2px solid @color-progressive;
 			}
 
 			&-quickaction {
@@ -379,7 +543,8 @@
 			margin: 0 0 1em;
 		}
 
-		.ve-ce-surface {
+		.ve-ce-surface,
+		.ve-ui-surface-placeholder {
 			// Stop reflow during the transition
 			max-width: calc( 100% - (44px + 16px + 16px) );
 			margin: 0 16px 0 32px;
@@ -411,21 +576,20 @@
 /* Selections */
 
 .ve-ce-surface-selections-editCheck {
-	&-active {
+	&-active,
+	&-inactive {
 		.ve-ce-surface-selection {
-			&-rects {
-				opacity: 0.2;
-			}
-
 			&-rect {
-				// Adjust target colours to account for 50% opacity
-				background: ( ( #fef6e7 - 0.8 * ( #fff ) ) / 0.2 );
-				// border: 1px solid ( ( #a66200 - 0.8 * ( #fff ) ) / 0.2 );
 				border-radius: 2px;
 				padding: 2px;
 				margin: -2px 0 0 -2px;
+				transition: background @transition-duration-base;
 			}
+		}
+	}
 
+	&-active {
+		.ve-ce-surface-selection {
 			&-bounding {
 				@padding: 3px;
 				@border: 2px;
@@ -477,27 +641,49 @@
 			background-color: @color-base;
 			z-index: 1;
 		}
+	}
 
-		.ve-ce-surface-selection-editCheck {
-			&-error .ve-ce-surface-selection-gutter {
-				background-color: @color-error;
-			}
+	&-active .ve-ce-surface-selection-editCheck,
+	&-inactive .ve-ce-surface-selection-editCheck-highlighted.ve-ce-surface-selection-editCheck {
+		&-warning .ve-ce-surface-selection-rect {
+			background: @background-color-warning-subtle;
+		}
 
-			&-warning .ve-ce-surface-selection-gutter {
-				background-color: @color-warning;
-			}
+		&-error .ve-ce-surface-selection-rect {
+			background: @background-color-error-subtle;
+		}
 
-			&-notice .ve-ce-surface-selection-gutter {
-				background-color: @color-notice;
-			}
-
-			&-success .ve-ce-surface-selection-gutter {
-				background-color: @color-success;
-			}
+		&-progressive .ve-ce-surface-selection-rect {
+			background: @background-color-progressive-subtle;
 		}
 	}
 
-	&-inactive .ve-ce-surface-selection-gutter {
-		background-color: @border-color-base;
+	&-inactive {
+		.ve-ce-surface-selection {
+			transition: opacity @transition-duration-base;
+			opacity: @opacity-medium;
+		}
+
+		.ve-ce-surface-selection-editCheck-highlighted {
+			opacity: @opacity-base;
+		}
+
+		.ve-ce-surface-selection-rect {
+			background: @background-color-interactive;
+		}
+	}
+}
+
+.ve-ce-surface-selection-editCheck {
+	&-warning .ve-ce-surface-selection-gutter {
+		background-color: @color-warning;
+	}
+
+	&-error .ve-ce-surface-selection-gutter {
+		background-color: @color-error;
+	}
+
+	&-progressive .ve-ce-surface-selection-gutter {
+		background-color: @color-progressive;
 	}
 }

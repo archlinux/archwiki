@@ -118,6 +118,7 @@ class ReferencesData {
 			$ref->numberInGroup = $group->getNextIndex();
 			$ref->name = $name ?: null;
 		} else {
+			$ref->mainRef = $name ?: null;
 			$mainRef = $group->lookupRefByName( $name ) ??
 				// TODO: dir could be different for the main
 				$this->addRef( $group, $name, $dir );
@@ -130,7 +131,7 @@ class ReferencesData {
 		$ref->group = $group->name;
 		$ref->globalId = ++$this->refSequence;
 
-		$group->push( $ref );
+		$group->push( $ref, $details );
 
 		return $ref;
 	}

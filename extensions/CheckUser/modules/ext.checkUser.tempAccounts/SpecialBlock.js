@@ -19,11 +19,17 @@ function onLoad() {
 	// so check for block target widget; if it exists, the form is present
 	if ( $blockTargetWidget.length ) {
 		if ( mw.config.get( 'wgUseCodexSpecialBlock' ) ) {
-			mw.hook( 'codex.userlookup' ).add( ( components ) => {
-				// Codex and Vue are fully loaded at this point.
-				const ShowIPButton = require( './components/ShowIPButton.vue' );
-				components.value.push( ShowIPButton );
-			} );
+			if ( mw.config.get( 'wgAutoCreateTempUserEnabled' ) ) {
+				mw.hook( 'codex.userlookup' ).add( ( components ) => {
+					// Codex and Vue are fully loaded at this point.
+					const ShowIPButton = require( './components/ShowIPButton.vue' );
+					const TempUsersMessage = require( './components/TempUsersMessage.vue' );
+					const blockConnectedTempAccountsField = require( './components/blockConnectedTempAccountsField.vue' );
+					components.value.push( ShowIPButton );
+					components.value.push( TempUsersMessage );
+					components.value.push( blockConnectedTempAccountsField );
+				} );
+			}
 			return;
 		}
 
@@ -56,15 +62,11 @@ function createButton() {
 }
 
 /**
- * Handles the change event of the block target widget.
+ * Handles the change event of the block target widget for a temporary user target.
  *
  * @param {string} blockTarget
  */
-function onTargetChange( blockTarget ) {
-	$( '.ext-checkuser-tempaccount-specialblock-ips' ).remove();
-	if ( !mw.util.isTemporaryUser( blockTarget ) ) {
-		return;
-	}
+function handleTemporaryUserTarget( blockTarget ) {
 	const api = new mw.Api();
 	lastUserRequest = api.get( {
 		action: 'query',
@@ -93,7 +95,7 @@ function onTargetChange( blockTarget ) {
 						message = mw.message(
 							'checkuser-tempaccount-specialblock-ips',
 							ips.length,
-							Object.assign( mw.language.listToText( ips ) )
+							$( $.parseHTML( mw.language.listToText( ips ) ) )
 						).parse();
 						message = new OO.ui.HtmlSnippet( message );
 					} else {
@@ -115,6 +117,48 @@ function onTargetChange( blockTarget ) {
 			} );
 		}
 	} );
+}
+
+/**
+ * Handles the change event of the block target widget for an IP target.
+ *
+ * @param {string} blockTarget
+ * @param {boolean} isCidr
+ */
+function handleIPTarget( blockTarget, isCidr ) {
+	// Wait for the next tick, to ensure the container is added
+	setTimeout( () => {
+		const ipType = isCidr ? 'iprange' : 'ip';
+		// Messages used:
+		// * checkuser-tempaccount-specialblock-ip-target
+		// * checkuser-tempaccount-specialblock-iprange-target
+		const message = mw.message(
+			`checkuser-tempaccount-specialblock-${ ipType }-target`,
+			blockTarget
+		).parseDom();
+		const $message = $( '<p>' )
+			.addClass( 'ext-checkuser-tempaccount-specialblock-ips' )
+			.append( message );
+		$( '.mw-block-target-ip-tempuser-info' ).before( $message );
+	} );
+}
+
+/**
+ * Handles the change event of the block target widget.
+ *
+ * @param {string} blockTarget
+ */
+function onTargetChange( blockTarget ) {
+	$( '.ext-checkuser-tempaccount-specialblock-ips' ).remove();
+	if ( mw.util.isTemporaryUser( blockTarget ) ) {
+		handleTemporaryUserTarget( blockTarget );
+		return;
+	}
+	if ( mw.util.isIPAddress( blockTarget, true ) ) {
+		const isCidr = !mw.util.isIPAddress( blockTarget );
+		handleIPTarget( blockTarget, isCidr );
+		return;
+	}
 }
 
 module.exports = {

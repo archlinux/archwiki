@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bjankuloski06"
+		]
+	},
+	"oathauth-webauthn-module-label": "Безбедносен клуч",
+	"oathauth-webauthn-javascript-required": "Во вашиот прелистувач мора да е овозможен JavaScript за да користите безбедносен клуч.",
+	"oathauth-webauthn-ui-login-prompt": "Употребете го вашиот безбедносен клуч или проследете ги напатствијата од прелистувачот.",
+	"oathauth-webauthn-ui-add-key": "Додај клуч",
+	"oathauth-webauthn-error-browser-unsupported": "Овој прелистувач не поддржува заверка со безбедносен клучч или пак тој не е достапен за ова мрежно место. Пробајте со друг прелистувач. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Прочитајте повеќе]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Овој прелистувач не поддржува заверка со безбедносен клуч или истиот не е достапен за ова мрежно место.",
+	"oathauth-webauthn-error-auth-generic": "Заверката беше прекината. Почнете ја одново.",
+	"oathauth-webauthn-error-reg-generic": "Не можев да ви го заверам клучот. Почнете го пријавувањето одново.",
+	"oathauth-webauthn-registered-keys-section-name": "Пријавени клучеви",
+	"oathauth-webauthn-ui-remove-key": "Отстрани",
+	"oathauth-webauthn-error-module-not-enabled": "Модулот „$1“ не е овозможен за {{GENDER:$2|корисникот „$2“}}.",
+	"oathauth-webauthn-error-verification-failed": "Проверката со WebAuthn не успеа",
+	"oathauth-webauthn-error-passkey-verification-failed": "Заверката на пропусниот клуч не успеа.",
+	"oathauth-webauthn-error-credentials-missing": "Најаните податоци со WebAuthn не беа испратени.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Корисникот „$1“}} не може да пријави нови најавни податоци.",
+	"oathauth-webauthn-error-invalid-new-key": "Новиот клуч даден од модулот не е од бараниот вид.",
+	"oathauth-webauthn-error-registration-failed": "Не успеа пријавувањето на новиот клуч.",
+	"oathauth-webauthn-ui-key-register-help": "Изберете прекар за вашиот клуч:",
+	"oathauth-webauthn-error-cannot-remove-key": "Клучот не може да се отстрани.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Не можев да ги добијам информациите на заверката",
+	"oathauth-webauthn-add-key-section-name": "Пријави нов безбедносен клуч",
+	"oathauth-webauthn-error-get-reginfo-fail": "Не можев да ги добијам информациите на зачленувањето.",
+	"oathauth-webauthn-module-description": "WebAuthn (Семрежна заверка) е во експериментална фаза. Засега нема можност за повраток на изгубени или општетени уреди за заверка. \n\n[https://en.wikipedia.org/wiki/WebAuthn Дознајте повеќе за WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Превчитај ја страницата",
+	"oathauth-webauthn-authentication-info-label": "Податоци за заверка",
+	"oathauth-webauthn-authentication-info-help": "Податоци за заверка дадена на клиентот за добивање на овластување",
+	"oathauth-webauthn-credential-label": "Корисничко овластување",
+	"oathauth-webauthn-credential-help": "Корисничко овластување според податоците за заверка",
+	"oathauth-webauthn-add-security-key": "Додај безбедносен клуч",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Користи безбедносен или пропустен клуч"
+}

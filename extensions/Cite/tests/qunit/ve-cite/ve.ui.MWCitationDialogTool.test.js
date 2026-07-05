@@ -1,8 +1,15 @@
 'use strict';
 
-QUnit.module( 've.ui.MWCitationDialogTool (Cite)', ve.test.utils.newMwEnvironment() );
+{
+	const { MWReferenceNode } = require( 'ext.cite.visualEditor' ).test;
 
-QUnit.test( 'isCompatibleWith', ( assert ) => {
-	const model = new ve.dm.MWReferenceNode();
-	assert.true( ve.ui.MWCitationDialogTool.static.isCompatibleWith( model ) );
-} );
+	QUnit.module( 've.ui.MWCitationDialogTool (Cite)', ve.test.utils.newMwEnvironment() );
+
+	QUnit.test( 'isCompatibleWith', ( assert ) => {
+		const model = new MWReferenceNode();
+		assert.false(
+			ve.ui.MWCitationDialogTool.static.isCompatibleWith( model ),
+			'CitationDialogTools are not compatible with plain ReferenceNodes'
+		);
+	} );
+}

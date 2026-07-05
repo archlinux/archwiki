@@ -2,12 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use FormatJson;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\OOUIHTMLForm;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\User\Options\UserOptionsManager;
 
@@ -125,7 +126,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	 * Displays a checkbox matrix, using an HTMLForm
 	 *
 	 * @param string $id Arbitrary ID
-	 * @param string $legendMsgKey Message key for an explanatory legend.  For example,
+	 * @param string|Message $legendMsg Message for an explanatory legend.  For example,
 	 *   "We wrote this feature because in the days of yore, there was but one notification badge"
 	 * @param array $rowLabelMapping Associative array mapping label to tag
 	 * @param array $columnLabelMapping Associative array mapping label to tag
@@ -133,7 +134,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	 */
 	protected function outputCheckMatrix(
 		$id,
-		$legendMsgKey,
+		$legendMsg,
 		array $rowLabelMapping,
 		array $columnLabelMapping,
 		array $value
@@ -154,7 +155,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 		$form->setTitle( $this->getPageTitle() )
 			->prepareForm()
 			->suppressDefaultSubmit()
-			->setWrapperLegendMsg( $legendMsgKey )
+			->setWrapperLegendMsg( $legendMsg )
 			->displayForm( false );
 	}
 

@@ -1,5 +1,5 @@
 {
-	QUnit.module( 've.dm.MWTransclusionContentModel' );
+	QUnit.module( 've.dm.MWTransclusionContentModel', ve.test.utils.newMwEnvironment() );
 
 	/**
 	 * @return {ve.dm.MWTransclusionModel} but it's a mock

@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.45",
+		"MediaWiki": ">= 1.46",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -32,6 +32,7 @@
 		"Thanks": {
 			"class": "MediaWiki\\Extension\\Thanks\\SpecialThanks",
 			"services": [
+				"LinkRenderer",
 				"UserFactory"
 			]
 		}
@@ -197,8 +198,10 @@
 				"gblrename",
 				"gblrights",
 				"import",
+				"massmessage/send",
 				"merge",
 				"move",
+				"newusers/create2",
 				"pagelang",
 				"pagetranslation",
 				"patrol",

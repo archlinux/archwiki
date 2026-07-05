@@ -22,7 +22,7 @@
 	"cdx-table-pager-button-last-page": "Последна страница",
 	"cdx-table-pager-button-next-page": "Следна страница",
 	"cdx-table-pager-button-prev-page": "Претходна страница",
-	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 ред|$1 реда}}",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 ставка|$1 ставки}}",
 	"cdx-table-pager-items-per-page-default": "Исходни ставки по страница",
 	"cdx-table-pagination-status-message-determinate-long": "Прикажани $1–$2 од вкупно $3 ставки",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 од $3",

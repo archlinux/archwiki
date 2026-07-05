@@ -1,9 +1,7 @@
-const drawers = require( './drawers.js' );
-
 /*
  * Warn people if they're trying to switch to desktop but have cookies disabled.
  */
-module.exports = function ( amcOutreach, currentPage ) {
+module.exports = function () {
 	/**
 	 * Checks whether cookies are enabled
 	 *
@@ -48,42 +46,14 @@ module.exports = function ( amcOutreach, currentPage ) {
 	/**
 	 * @method
 	 * @ignore
-	 * @param {jQuery.Event} ev
 	 * @return {boolean|undefined}
 	 */
-	function amcDesktopClickHandler( ev ) {
-		const self = this;
-		const executeWrappedEvent = function () {
-			if ( desktopViewClick() === false ) {
-				return false;
-			}
-
-			window.location = self.href;
-		};
-		const amcCampaign = amcOutreach.loadCampaign();
-		const onDismiss = function () {
-			executeWrappedEvent();
-		};
-		const drawer = amcCampaign.showIfEligible(
-			amcOutreach.ACTIONS.onDesktopLink,
-			onDismiss,
-			currentPage.title
-		);
-
-		if ( drawer ) {
-			ev.preventDefault();
-			// stopPropagation is needed to prevent drawer from immediately closing
-			// when shown (drawers.js adds a click event to window when drawer is
-			// shown
-			ev.stopPropagation();
-
-			drawers.displayDrawer( drawer, {} );
-			drawers.lockScroll();
-
-			return;
+	function amcDesktopClickHandler() {
+		if ( desktopViewClick() === false ) {
+			return false;
 		}
 
-		return executeWrappedEvent();
+		window.location = this.href;
 	}
 
 	// eslint-disable-next-line no-jquery/no-global-selector

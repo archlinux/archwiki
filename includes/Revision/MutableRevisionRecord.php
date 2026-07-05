@@ -16,6 +16,7 @@ use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Mutable RevisionRecord implementation, for building new revision entries programmatically.
@@ -32,7 +33,7 @@ class MutableRevisionRecord extends RevisionRecord {
 	/**
 	 * Returns an incomplete MutableRevisionRecord which uses $parent as its
 	 * parent revision, and inherits all slots form it. If saved unchanged,
-	 * the new revision will act as a null-revision.
+	 * the new revision will act as a dummy revision.
 	 *
 	 * @param RevisionRecord $parent
 	 *
@@ -219,22 +220,6 @@ class MutableRevisionRecord extends RevisionRecord {
 	}
 
 	/**
-	 * Set revision hash, for optimization. Prevents getSha1() from re-calculating the hash.
-	 *
-	 * @note This should only be used if the calling code is sure that the given hash is correct
-	 * for the revision's content, and there is no chance of the content being manipulated
-	 * later. When in doubt, this method should not be called.
-	 *
-	 * @param string $sha1 SHA1 hash as a base36 string.
-	 * @return self
-	 */
-	public function setSha1( string $sha1 ) {
-		$this->mSha1 = $sha1;
-
-		return $this;
-	}
-
-	/**
 	 * Set nominal revision size, for optimization. Prevents getSize() from re-calculating the size.
 	 *
 	 * @note This should only be used if the calling code is sure that the given size is correct
@@ -265,7 +250,7 @@ class MutableRevisionRecord extends RevisionRecord {
 	 * @return self
 	 */
 	public function setTimestamp( string $timestamp ) {
-		$this->mTimestamp = MWTimestamp::convert( TS_MW, $timestamp );
+		$this->mTimestamp = MWTimestamp::convert( TS::MW, $timestamp );
 
 		return $this;
 	}
@@ -355,10 +340,7 @@ class MutableRevisionRecord extends RevisionRecord {
 	 * @return string The revision hash, may be computed on the fly if not yet known.
 	 */
 	public function getSha1() {
-		// If not known, re-calculate and remember. Will be reset when slots change.
-		$this->mSha1 ??= $this->mSlots->computeSha1();
-
-		return $this->mSha1;
+		return $this->mSlots->computeSha1();
 	}
 
 	/**
@@ -377,7 +359,6 @@ class MutableRevisionRecord extends RevisionRecord {
 	 */
 	private function resetAggregateValues() {
 		$this->mSize = null;
-		$this->mSha1 = null;
 	}
 
 }

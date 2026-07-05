@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Hook;
+namespace MediaWiki\Extension\CheckUser\Hook;
 
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\UserIdentity;
@@ -37,8 +37,15 @@ interface CheckUserInsertLogEventRowHook {
 	);
 }
 
+// @codeCoverageIgnoreStart
 /**
  * Retain the old class name for backwards compatibility.
  * @deprecated since 1.41
  */
-class_alias( CheckUserInsertLogEventRowHook::class, 'MediaWiki\CheckUser\Hook\CheckUserInsertLogEventRow' );
+class_alias( CheckUserInsertLogEventRowHook::class, 'MediaWiki\\CheckUser\\Hook\\CheckUserInsertLogEventRow' );
+
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserInsertLogEventRowHook::class, 'MediaWiki\\CheckUser\\Hook\\CheckUserInsertLogEventRowHook' );
+// @codeCoverageIgnoreEnd

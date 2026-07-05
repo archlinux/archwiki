@@ -47,9 +47,6 @@
 	"vector-toc-label": "Innhald",
 	"vector-toc-beginning": "Byrjinga",
 	"vector-toc-toggle-button-label": "Vis/skjul underseksjonen $1",
-	"vector-anon-user-menu-pages": "Sider for utlogga bidragsytarar",
-	"vector-anon-user-menu-pages-learn": "lær meir",
-	"vector-anon-user-menu-pages-label": "Lær meir om redigering",
 	"vector-main-menu-tooltip": "Hovudmeny",
 	"vector-toc-menu-tooltip": "Innhaldsliste",
 	"vector-toc-collapsible-button-label": "Vis/skjul innhaldslista",
@@ -71,7 +68,5 @@
 	"vector-page-tools-unpinned-popup": "Verktøymenyen har vorte flytt hit.",
 	"vector-main-menu-unpinned-popup": "Hovudmenyen har flytta hit.",
 	"vector-appearance-unpinned-popup": "Utsjånadsmenyen har flytta hit.",
-	"vector-2022-beta-preview-label": "Lesetilgjenge (Vector 2022)",
-	"vector-2022-beta-preview-description": "Få tidleg tilgang til nye funksjonar for lesetilgjenge, som t.d. typografiske betringar og nattmodus.",
 	"vector-night-mode-issue-reporting-link-label": "Rapporter eit problem med mørk modus"
 }

@@ -28,10 +28,9 @@ use RuntimeException;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
-use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 
-class SyntaxHighlight extends ExtensionTagHandler {
+class SyntaxHighlight {
 
 	/** @var string CSS class for syntax-highlighted code. Public as used by the updateCSS maintenance script. */
 	public const HIGHLIGHT_CSS_CLASS = 'mw-highlight';
@@ -160,14 +159,22 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		return $result['html'];
 	}
 
-	/** @inheritDoc */
-	public function sourceToDom(
+	/**
+	 * Handles conversion of tag content to Parsoid DOM.
+	 *
+	 * @param ParsoidExtensionAPI $extApi
+	 * @param string $text
+	 * @param array $extArgs
+	 * @return DocumentFragment|null
+	 */
+	public function handleParsoidTag(
 		ParsoidExtensionAPI $extApi, string $text, array $extArgs
 	): ?DocumentFragment {
 		$result = $this->processContent( $text, $extApi->extArgsToArray( $extArgs ) );
 
-		// FIXME: There is no API method in Parsoid to add tracking categories
-		// So, $result['cats'] is being ignored
+		foreach ( $result['cats'] as $cat ) {
+			$extApi->addTrackingCategory( $cat );
+		}
 
 		// Register modules
 		$extApi->getMetadata()->appendOutputStrings( CMCSS::MODULE_STYLE, self::getModuleStyles() );
@@ -272,7 +279,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 			$options['linenos'] = 'inline';
 		}
 
-		if ( $lexer === 'php' && strpos( $code, '<?php' ) === false ) {
+		if ( $lexer === 'php' && !str_contains( $code, '<?php' ) ) {
 			$options['startinline'] = 1;
 		}
 
@@ -404,7 +411,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		if ( $showLines ) {
 			$classList[] = self::HIGHLIGHT_CSS_CLASS . '-lines';
 		}
-		if ( !$isInline && isset( $args['copy'] ) ) {
+		if ( isset( $args['copy'] ) ) {
 			$classList[] = 'mw-highlight-copy';
 		}
 		$htmlAttribs['class'] = implode( ' ', $classList );
@@ -434,9 +441,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 				$output = $marker;
 			}
 
-			$output = Html::openElement( 'div', $htmlAttribs ) .
-				$output .
-				Html::closeElement( 'div' );
+			$output = Html::rawElement( 'div', $htmlAttribs, $output );
 		}
 
 		$status->value = $output;
@@ -467,12 +472,12 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 */
 	protected function parseHighlightLines( $lineSpec ) {
 		$lines = [];
-		$values = array_map( 'trim', explode( ',', $lineSpec ) );
+		$values = array_map( trim( ... ), explode( ',', $lineSpec ) );
 		foreach ( $values as $value ) {
 			if ( ctype_digit( $value ) ) {
 				$lines[] = (int)$value;
-			} elseif ( strpos( $value, '-' ) !== false ) {
-				[ $start, $end ] = array_map( 'intval', explode( '-', $value ) );
+			} elseif ( str_contains( $value, '-' ) ) {
+				[ $start, $end ] = array_map( intval( ... ), explode( '-', $value ) );
 				if ( $this->validHighlightRange( $start, $end ) ) {
 					for ( $i = $start; $i <= $end; $i++ ) {
 						$lines[] = $i;

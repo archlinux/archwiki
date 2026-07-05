@@ -7,11 +7,11 @@ use Error;
 use Psr\Log\LogLevel;
 use Wikimedia\Alea\Alea;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -469,6 +469,7 @@ class Test extends Item {
 					$wrapperName = 'dd';
 					break;
 				case 'tr':
+					'@phan-var Element $n'; // @var Element $n
 					$prev = DOMCompat::getPreviousElementSibling( $n );
 					if ( $prev ) {
 						// TH or TD

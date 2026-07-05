@@ -3,6 +3,7 @@
 namespace Cite\Tests\Integration\ReferencePreviews;
 
 use Cite\ReferencePreviews\ReferencePreviewsContext;
+use Cite\ReferencePreviews\ReferencePreviewsGadgetsIntegration;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Skin\Skin;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -40,7 +41,7 @@ class ReferencePreviewsContextTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected,
 			( new ReferencePreviewsContext(
 				$config,
-				$this->getServiceContainer()->getService( 'Cite.GadgetsIntegration' ),
+				$this->createMock( ReferencePreviewsGadgetsIntegration::class ),
 				$userOptLookup
 			) )
 				->isReferencePreviewsEnabled( $user, $skin ),
@@ -81,7 +82,7 @@ class ReferencePreviewsContextTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected,
 			( new ReferencePreviewsContext(
 				$config,
-				$this->getServiceContainer()->getService( 'Cite.GadgetsIntegration' ),
+				$this->createMock( ReferencePreviewsGadgetsIntegration::class ),
 				$userOptLookup
 			) )
 				->isReferencePreviewsEnabled( $user, $skin ),

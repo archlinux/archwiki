@@ -18,7 +18,8 @@ class Api {
 			baseUrl,
 			username,
 			password,
-			verbose
+			verbose,
+			cookies
 		} = options;
 
 		this.session = {
@@ -27,7 +28,7 @@ class Api {
 			createAccountToken: null
 		};
 
-		this.cookies = new Cookies();
+		this.cookies = new Cookies( cookies );
 		this.httpClient = new MwApiHttpClient( {
 			cookies: this.cookies,
 			options: {
@@ -62,7 +63,7 @@ class Api {
 	 * Do a request with custom parameters to the API. If you
 	 * use this function maybe something is missing in core?
 	 *
-	 * @param params
+	 * @param {Object} params
 	 * @return {Promise<Object>} The JSON response from the API
 	 * @throws {Error} If the request fails
 	 */
@@ -211,6 +212,7 @@ class Api {
  * - options.baseUrl -  browser.options.baseUrl
  * - options.username - browser.options.capabilities['mw:user']
  * - options.password - browser.options.capabilities['mw:pwd']
+ * - options.cookies - extra cookies to send with every API request (name -> value map)
  * - options.verbose set to true logs every response from MediaWiki
  *
  * @param {Object} [options={}] Optional api configuration.
@@ -223,7 +225,8 @@ class Api {
  *   baseUrl: 'https://mw.example.org',
  *   username: 'Admin',
  *   password: process.env.MW_PWD,
- *   verbose: true
+ *   verbose: true,
+ *   cookies: { cookie1: 'value1', cookie2: 'value2' }
  * });
  */
 export const createApiClient = async function ( options = {} ) {
@@ -234,6 +237,7 @@ export const createApiClient = async function ( options = {} ) {
 		baseUrl,
 		username,
 		password,
+		cookies: options.cookies,
 		verbose: options.verbose ?? false
 	} );
 	await api.loginGetEditToken( username, password );

@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Extension\GlobalBlocking\GlobalBlock;
 use MediaWiki\Extension\GlobalBlocking\Hooks\GlobalBlockingGetRetroactiveAutoblockIPsHook;
 use MediaWiki\User\ActorStoreFactory;
@@ -15,18 +15,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class GlobalBlockingHandler implements GlobalBlockingGetRetroactiveAutoblockIPsHook, CheckUserQueryInterface {
 
-	private IConnectionProvider $dbProvider;
-	private CentralIdLookup $centralIdLookup;
-	private ActorStoreFactory $actorStoreFactory;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		CentralIdLookup $centralIdLookup,
-		ActorStoreFactory $actorStoreFactory
+		private readonly IConnectionProvider $dbProvider,
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly ActorStoreFactory $actorStoreFactory,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->centralIdLookup = $centralIdLookup;
-		$this->actorStoreFactory = $actorStoreFactory;
 	}
 
 	/** @inheritDoc */
@@ -129,7 +122,12 @@ class GlobalBlockingHandler implements GlobalBlockingGetRetroactiveAutoblockIPsH
 	 * @return void
 	 */
 	private function fetchIPAddressesFromLocalWiki(
-		string $wikiID, string $target, int $limit, ?string $upperBound, ?string $lowerBound, array &$foundIps
+		string $wikiID,
+		string $target,
+		int $limit,
+		?string $upperBound,
+		?string $lowerBound,
+		array &$foundIps
 	) {
 		$localDbr = $this->dbProvider->getReplicaDatabase( $wikiID );
 
@@ -151,33 +149,36 @@ class GlobalBlockingHandler implements GlobalBlockingGetRetroactiveAutoblockIPsH
 			// result table.
 			$wikiIDForGetIdCall = $this->dbProvider->getReplicaDatabase()->getDomainID() === $wikiID ?
 				UserIdentityValue::LOCAL : $wikiID;
-			$ipsSubQuery = $localDbr->newSelectQueryBuilder()
-				->select( [ 'ip' => $columnPrefix . 'ip', 'timestamp' => "MAX({$columnPrefix}timestamp)" ] )
+			$ipHexesSubQuery = $localDbr->newSelectQueryBuilder()
+				->select( [ 'ip_hex' => $columnPrefix . 'ip_hex', 'timestamp' => "MAX({$columnPrefix}timestamp)" ] )
 				->from( $table )
 				->join( 'actor', null, "actor_id = {$columnPrefix}actor" )
-				->where( [ 'actor_user' => $localUser->getId( $wikiIDForGetIdCall ) ] )
-				->groupBy( $columnPrefix . 'ip' )
+				->where( [
+					'actor_user' => $localUser->getId( $wikiIDForGetIdCall ),
+					$localDbr->expr( $columnPrefix . 'ip_hex', '!=', null ),
+				] )
+				->groupBy( $columnPrefix . 'ip_hex' )
 				->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC );
 
-			$ipsQuery = $localDbr->newSelectQueryBuilder()
-				->select( [ 'ip', 'timestamp' ] )
-				->from( $ipsSubQuery );
+			$ipHexesQuery = $localDbr->newSelectQueryBuilder()
+				->select( [ 'ip_hex', 'timestamp' ] )
+				->from( $ipHexesSubQuery );
 			if ( $lowerBound ) {
-				$ipsQuery->where( $localDbr->expr( 'timestamp', '>=', $lowerBound ) );
+				$ipHexesQuery->where( $localDbr->expr( 'timestamp', '>=', $lowerBound ) );
 			}
 			if ( $upperBound ) {
-				$ipsQuery->where( $localDbr->expr( 'timestamp', '<', $upperBound ) );
+				$ipHexesQuery->where( $localDbr->expr( 'timestamp', '<', $upperBound ) );
 			}
 			// We can add a LIMIT here, because if we get $limit IPs then we will not need to do another batch
 			// for this table and wiki (because we have all the IPs needed).
-			$ipsFromTableResult = $ipsQuery
+			$ipHexesFromTableResult = $ipHexesQuery
 				->limit( $limit )
 				->caller( __METHOD__ )
 				->fetchResultSet();
 
 			// Store the found IPs with the most recent use of the IP address in an array to process later.
-			foreach ( $ipsFromTableResult as $row ) {
-				$ip = IPUtils::sanitizeIP( $row->ip );
+			foreach ( $ipHexesFromTableResult as $row ) {
+				$ip = IPUtils::formatHex( $row->ip_hex );
 				$timestamp = ConvertibleTimestamp::convert( TS_MW, $row->timestamp );
 
 				$foundIps[$ip] = max( $foundIps[$ip] ?? false, $timestamp );

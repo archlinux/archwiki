@@ -7,8 +7,8 @@ class HashLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'listAlgorithms' => [ $this, 'listAlgorithms' ],
-			'hashValue' => [ $this, 'hashValue' ],
+			'listAlgorithms' => $this->listAlgorithms( ... ),
+			'hashValue' => $this->hashValue( ... ),
 		];
 
 		return $this->getEngine()->registerInterface( 'mw.hash.lua', $lib );
@@ -17,10 +17,9 @@ class HashLibrary extends LibraryBase {
 	/**
 	 * Returns a list of known/ supported hash algorithms
 	 *
-	 * @internal
 	 * @return string[][]
 	 */
-	public function listAlgorithms() {
+	private function listAlgorithms() {
 		$algos = hash_algos();
 		$algos = array_combine( range( 1, count( $algos ) ), $algos );
 
@@ -30,12 +29,12 @@ class HashLibrary extends LibraryBase {
 	/**
 	 * Hash a given value.
 	 *
-	 * @internal
 	 * @param string $algo
 	 * @param string $value
 	 * @return string[]
+	 * @throws LuaError
 	 */
-	public function hashValue( $algo, $value ) {
+	private function hashValue( $algo, $value ) {
 		if ( !in_array( $algo, hash_algos() ) ) {
 			throw new LuaError( "Unknown hashing algorithm: $algo" );
 		}

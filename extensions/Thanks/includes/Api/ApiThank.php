@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\Thanks\Api;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\Thanks\Storage\LogStore;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
 /**
@@ -42,10 +42,10 @@ abstract class ApiThank extends ApiBase {
 	 * This is separate from dieOnBadUser because we need to know the title.
 	 *
 	 * @param User $user
-	 * @param Title $title
+	 * @param PageIdentity $page
 	 */
-	protected function dieOnUserBlockedFromTitle( User $user, Title $title ) {
-		if ( $this->permissionManager->isBlockedFrom( $user, $title ) ) {
+	protected function dieOnUserBlockedFromPage( User $user, PageIdentity $page ) {
+		if ( $this->permissionManager->isBlockedFrom( $user, $page ) ) {
 			// Block should definitely exist
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$this->dieBlocked( $user->getBlock() );
@@ -55,8 +55,8 @@ abstract class ApiThank extends ApiBase {
 	/**
 	 * Check whether the user is sitewide blocked.
 	 *
-	 * This is separate from dieOnUserBlockedFromTitle because we need to know if the thank
-	 * is related to a revision. (If it is, then use dieOnUserBlockedFromTitle instead.)
+	 * This is separate from dieOnUserBlockedFromPage because we need to know if the thank
+	 * is related to a revision. (If it is, then use dieOnUserBlockedFromPage instead.)
 	 *
 	 * @param User $user
 	 */

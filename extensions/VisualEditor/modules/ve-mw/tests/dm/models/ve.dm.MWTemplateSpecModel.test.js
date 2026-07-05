@@ -1,5 +1,5 @@
 {
-	QUnit.module( 've.dm.MWTemplateSpecModel' );
+	QUnit.module( 've.dm.MWTemplateSpecModel', ve.test.utils.newMwEnvironment() );
 
 	/**
 	 * @param {string[]} [parameterNames]

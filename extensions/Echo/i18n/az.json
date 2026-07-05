@@ -169,6 +169,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Sizin}} istifadəçi hüquqlarınız {{GENDER:$1|dəyişdirilib}}. Siz \"$2\" qrupuna əlavə edilmisiniz.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Sizin}} istifadəçi hüquqlarınız {{GENDER:$1|dəyişdirilib}}. Artıq $2 qrupuna üzv deyilsiniz.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$4|Sizin}} istifadəçi hüquqlarınız {{GENDER:$1|dəyişdirilib}}. $2 qrupuna əlavə olunub $4 qrupundan çıxarılmısınız.",
+	"notification-header-user-rights-expiry": "Aşağıdakı {{PLURAL:$2|qrupdakı|qruplardakı}} {{GENDER:$3|üzvlüyünüzün}} müddəti avtomatik olaraq başa çatıb: $1.",
 	"notification-header-user-rights-expiry-change": "Aşağıda qeyd olunan {{PLURAL:$3|istifadəçi qrupuna|istifadəçi qruplarına}} {{GENDER:$4|üzvlüyünüzün}} bitmə müddəti {{GENDER:$1|dəyişdirilib}}: $2",
 	"notification-header-welcome": "{{SITENAME}} saytına {{GENDER:$2|xoş gəlmisiniz}}, $1! {{GENDER:$2|Sizi}} burada görməyimizə çox şadıq!",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|sizi}} <strong>$4</strong> səhifəsinin qısa məzmununda {{GENDER:$2|qeyd etdi}}.",
@@ -205,6 +206,7 @@
 	"notification-reverted-email-subject2": "{{SITENAME}} saytında {{GENDER:$3|etdiyiniz}} {{GENDER:$3|}}{{PLURAL:$4|redaktə|redaktələr}} {{GENDER:$2|geri qaytarılıb}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$3|sizi}} {{SITENAME}} saytında {{GENDER:$2|qeyd etdi}}.",
 	"notification-user-rights-email-subject": "{{SITENAME}} saytındakı istifadəçi hüquqlarınız {{GENDER:$3|dəyişdirilib}}",
+	"notification-user-rights-expiry-email-subject": "{{SITENAME}} saytındakı istifadəçi {{GENDER:$3|hüquqlarınızın}} müddəti bitib",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 sn}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 dq}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 saat}}",
@@ -258,7 +260,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|Push abunə meneceri}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push abunə menecerləri",
 	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|E-poçtunu}} təsdiqlə",
-	"notification-header-verify-email-reminder": "Hesabınızdakı e-poçt ünvanının sizə aid olduğunu təsdiqləyə bilməyimiz üçün zəhmət olmasa <strong>{{GENDER:$1|e-poçt ünvanınızı}} təsdiqləyin.</strong>",
+	"notification-header-verify-email-reminder": "Salam $2,\nHesabınızdakı e-poçt ünvanının sizə aid olduğunu təsdiqləyə bilməyimiz üçün zəhmət olmasa <strong>{{GENDER:$1|e-poçt ünvanınızı}} təsdiqləyin.</strong>",
 	"notification-link-text-verify-email-reminder": "E-poçt parametrlərini idarə et",
 	"notification-verify-email-reminder-link-label": "E-poçtu təsdiqlə"
 }

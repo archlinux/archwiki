@@ -57,9 +57,6 @@
 	"vector-toc-label": "Enhavo",
 	"vector-toc-beginning": "Komenco",
 	"vector-toc-toggle-button-label": "Baskuli $1 subsekcio",
-	"vector-anon-user-menu-pages": "Paĝoj por elsalutitaj redaktistoj",
-	"vector-anon-user-menu-pages-learn": "Lernu pli",
-	"vector-anon-user-menu-pages-label": "Lernu pli pri redaktado",
 	"vector-main-menu-tooltip": "Ĉefa menuo",
 	"vector-toc-menu-tooltip": "Enhavtabelo",
 	"vector-toc-collapsible-button-label": "Ŝaltu la enhavtabelon",
@@ -80,7 +77,5 @@
 	"vector-toc-unpinned-popup": "La enhavotablo estis movita ĉi tien.",
 	"vector-page-tools-unpinned-popup": "La menuo de iloj estis movita ĉi tien.",
 	"vector-main-menu-unpinned-popup": "La ĉefa menuo estis movita ĉi tien.",
-	"vector-appearance-unpinned-popup": "La aspekto-menuo estis movita ĉi tien.",
-	"vector-2022-beta-preview-label": "Alirebleco por Legado (Vektoro 2022)",
-	"vector-2022-beta-preview-description": "Akiru fruan aliron al la novaj lego-alireblecoj, kiel ekzemple tipografiaj plibonigoj kaj nokta modo."
+	"vector-appearance-unpinned-popup": "La aspekto-menuo estis movita ĉi tien."
 }

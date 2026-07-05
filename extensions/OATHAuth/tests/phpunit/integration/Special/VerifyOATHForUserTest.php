@@ -1,31 +1,23 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * @license GPL-2.0-or-later
  *
  * @file
  */
 
 namespace MediaWiki\Extension\OATHAuth\Tests\Integration\Special;
 
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\Special\VerifyOATHForUser;
 use MediaWiki\MainConfigNames;
+use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
-use SpecialPageTestBase;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 
 /**
  * @author Taavi Väänänen
@@ -34,6 +26,8 @@ use SpecialPageTestBase;
  */
 class VerifyOATHForUserTest extends SpecialPageTestBase {
 	use BypassReauthTrait;
+
+	private ?ExtensionRegistry $mockExtensionRegistry;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -47,6 +41,7 @@ class VerifyOATHForUserTest extends SpecialPageTestBase {
 			OATHAuthServices::getInstance( $this->getServiceContainer() )->getUserRepository(),
 			$this->getServiceContainer()->getUserFactory(),
 			$this->getServiceContainer()->getCentralIdLookup(),
+			$this->mockExtensionRegistry ?? $this->getServiceContainer()->getExtensionRegistry()
 		);
 	}
 
@@ -95,7 +90,42 @@ class VerifyOATHForUserTest extends SpecialPageTestBase {
 	}
 
 	/** @dataProvider provideStatusUsers */
-	public function testVerifiesStatus( bool $hasDevice, string $expectedMessage ) {
+	public function testVerifiesStatus( bool $checkUserInstalled, bool $hasDevice, string $expectedMessage ) {
+		// If CheckUser is installed for this test case, then expect that the log entry is sent to be stored
+		// in the CheckUser data tables. Otherwise, mock that it is not installed and expect no calls to do this
+		$logIdFromRecentChange = null;
+		if ( $checkUserInstalled ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
+
+			$mockCheckUserInsert = $this->createMock( CheckUserInsert::class );
+			$mockCheckUserInsert->expects( $this->once() )
+				->method( 'updateCheckUserData' )
+				->with( $this->callback( function ( $actualRecentChange ) use ( &$logIdFromRecentChange ) {
+					$this->assertInstanceOf( RecentChange::class, $actualRecentChange );
+					$logIdFromRecentChange = $actualRecentChange->getAttribute( 'rc_logid' );
+					return true;
+				} ) );
+			$this->setService( 'CheckUserInsert', $mockCheckUserInsert );
+		} else {
+			// Mock that CheckUser is not installed but only modify this for the special page instance
+			// as hooks called by executing the special page use a lot of ExtensionRegistry methods calls
+			$mockExtensionRegistry = $this->createMock( ExtensionRegistry::class );
+			$mockExtensionRegistry->method( 'isLoaded' )
+				->with( 'CheckUser' )
+				->willReturn( false );
+			$this->mockExtensionRegistry = $mockExtensionRegistry;
+
+			$serviceContainer = $this->getServiceContainer();
+			if ( !$serviceContainer->hasService( 'CheckUserInsert' ) ) {
+				// define as no-op and override afterwards to use MediaWikiIntegrationTestCase service reset
+				$serviceContainer->defineService( 'CheckUserInsert', static fn () => null );
+			}
+			$this->setService(
+				'CheckUserInsert',
+				fn () => $this->fail( 'The CheckUserInsert service was expected to not be called' )
+			);
+		}
+
 		$otherUser = $this->getTestUser()->getUser();
 
 		if ( $hasDevice ) {
@@ -124,7 +154,7 @@ class VerifyOATHForUserTest extends SpecialPageTestBase {
 
 		$this->assertStringContainsString( "($expectedMessage:", $html );
 
-		$logEntry = $this->newSelectQueryBuilder()
+		$actualLogId = $this->newSelectQueryBuilder()
 			->caller( __METHOD__ )
 			->select( 'log_id' )
 			->from( 'logging' )
@@ -135,11 +165,37 @@ class VerifyOATHForUserTest extends SpecialPageTestBase {
 				'log_title' => str_replace( ' ', '_', $otherUser->getName() ),
 			] )
 			->fetchField();
-		$this->assertNotNull( $logEntry );
+
+		$this->assertNotNull( $actualLogId );
+		if ( $logIdFromRecentChange !== null ) {
+			$this->assertSame(
+				$logIdFromRecentChange,
+				(int)$actualLogId,
+				'Log ID in RecentChange sent to CheckUser was not as expected'
+			);
+		}
 	}
 
 	public static function provideStatusUsers() {
-		yield 'User with two-factor authentication disabled' => [ false, 'oathauth-verify-disabled' ];
-		yield 'User with two-factor authentication enabled' => [ true, 'oathauth-verify-enabled' ];
+		yield 'User with two-factor authentication disabled' => [
+			'checkUserInstalled' => false,
+			'hasDevice' => false,
+			'expectedMessage' => 'oathauth-verify-disabled',
+		];
+		yield 'User with two-factor authentication enabled' => [
+			'checkUserInstalled' => false,
+			'hasDevice' => true,
+			'expectedMessage' => 'oathauth-verify-enabled',
+		];
+		yield 'User with two-factor authentication enabled when CheckUser installed' => [
+			'checkUserInstalled' => true,
+			'hasDevice' => true,
+			'expectedMessage' => 'oathauth-verify-enabled',
+		];
+		yield 'User with two-factor authentication disabled when CheckUser installed' => [
+			'checkUserInstalled' => true,
+			'hasDevice' => false,
+			'expectedMessage' => 'oathauth-verify-disabled',
+		];
 	}
 }

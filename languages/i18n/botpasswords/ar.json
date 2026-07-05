@@ -34,6 +34,7 @@
 	"botpasswords-bad-appid": "اسم البوت \"$1\" غير صحيح.",
 	"botpasswords-toolong-restrictions": "هناك عدد كبير من الإدخالات لعناوين الأي بي أو النطاقات",
 	"botpasswords-toolong-grants": "لقد جرى تحديد عدد كبير جدًا من تصاريح المنح.",
+	"botpasswords-too-many": "لقد وصلت إلى الحد الأقصى وهو $1 {{PLURAL:$1| كلمة مرور البوت|كلمات مرور البوت}}. يرجى حذف بعض كلمات مرور البوت الموجودة قبل إنشاء كلمات مرور جديدة.",
 	"botpasswords-insert-failed": "فشل في إضافة  اسم البوت \"$1\".هل أضيف بالفعل؟",
 	"botpasswords-update-failed": "فشل في تحديث كلمة سر البوت \"$1\". هل تم حذفه؟",
 	"botpasswords-created-title": "تم إنشاء كلمة سر بوت",

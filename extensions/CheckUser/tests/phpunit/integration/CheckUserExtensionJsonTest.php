@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration;
 
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Tests\ExtensionJsonTestBase;
@@ -21,6 +21,10 @@ class CheckUserExtensionJsonTest extends ExtensionJsonTestBase {
 			'GlobalPreferencesHandler' => 'GlobalPreferences',
 			'GlobalBlockingHandler' => 'GlobalBlocking',
 			'IPInfoHandler' => 'IPInfo',
+			'SuggestedInvestigationsAutoCloseOnGlobalBlockHandler' => 'GlobalBlocking',
+			'SuggestedInvestigationsAutoCloseOnGlobalLockHandler' => 'CentralAuth',
+			'UserInfoCardCacheInvalidationOnGlobalBlockHandler' => 'GlobalBlocking',
+			'UserInfoCardCacheInvalidationOnGlobalLockHandler' => 'CentralAuth',
 			'UserMerge' => 'UserMerge',
 		];
 		foreach ( self::getExtensionJson()['HookHandlers'] ?? [] as $name => $specification ) {

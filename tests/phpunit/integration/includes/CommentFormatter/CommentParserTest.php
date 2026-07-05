@@ -34,7 +34,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 		return $repoGroup;
 	}
 
-	private function getParser() {
+	private function getParser(): CommentParser {
 		$services = $this->getServiceContainer();
 		return new CommentParser(
 			$services->getLinkRenderer(),
@@ -51,9 +51,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 
 	private function getFormatter() {
 		$parserFactory = $this->createNoOpMock( CommentParserFactory::class, [ 'create' ] );
-		$parserFactory->method( 'create' )->willReturnCallback( function () {
-			return $this->getParser();
-		} );
+		$parserFactory->method( 'create' )->willReturnCallback( $this->getParser( ... ) );
 		return new CommentFormatter( $parserFactory );
 	}
 
@@ -123,12 +121,12 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				"/* [[linkie?]] */",
 			],
 			[
-				'<span class="autocomment">: </span> // Edit via via',
+				'<span class="autocomment"><a href="/wiki/Special:BlankPage" title="Special:BlankPage">→<bdi dir="ltr">(top)</bdi></a>: </span> // Edit via via',
 				// Regression test for T222857
 				"/*  */ // Edit via via",
 			],
 			[
-				'<span class="autocomment">: </span> foobar',
+				'<span class="autocomment"><a href="/wiki/Special:BlankPage" title="Special:BlankPage">→<bdi dir="ltr">(top)</bdi></a>: </span> foobar',
 				// Regression test for T222857
 				"/**/ foobar",
 			],
@@ -171,8 +169,13 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				null
 			],
 			[
-				'',
+				'<span class="autocomment"><a href="#">→<bdi dir="ltr">(top)</bdi></a></span>',
 				"/* */",
+				false, true
+			],
+			[
+				'<span class="autocomment"><a href="#top">→<bdi dir="ltr">top</bdi></a></span>',
+				"/* top */",
 				false, true
 			],
 			[

@@ -14,6 +14,7 @@
 	"editcheck-dialog-action-submit": "पेस गर्नुहोस्",
 	"editcheck-dialog-addref-description": "उद्धरण थपेर पाठकहरूलाई यो जानकारी कहाँबाट आउँदैछ भनेर बुझ्न मद्दत गर्नुहोस्।",
 	"editcheck-dialog-addref-reject-question": "तपाईँ किन उद्धरण थप्दै हुनुहुन्न?",
+	"editcheck-dialog-addref-reject-description": "अन्य सम्पादकहरूले उद्धरण थप्न नदिने तपाईंको निर्णयको बारेमा थप जान्न महत्त्वपूर्ण मान्नेछन्।",
 	"editcheck-dialog-addref-reject-irrelevant": "मलाई लाग्दैन कि उद्धरणहरू मैले गरिरहेको परिवर्तनसँग सान्दर्भिक छन्।",
 	"editcheck-dialog-addref-reject-common-knowledge": "मैले थपिरहेको जानकारी व्यापक रूपमा परिचित छ।",
 	"editcheck-dialog-addref-reject-uncertain": "मलाई कुन उद्धरण थप्ने भन्ने कुरा निश्चित छैन।",

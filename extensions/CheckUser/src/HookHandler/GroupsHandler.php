@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\CentralId\CentralIdLookup;
@@ -13,7 +13,7 @@ class GroupsHandler implements
 	public function __construct(
 		private readonly CentralIdLookup $centralIdLookup,
 		private readonly WANObjectCache $wanCache,
-		private readonly SpecialPageFactory $specialPageFactory
+		private readonly SpecialPageFactory $specialPageFactory,
 	) {
 	}
 

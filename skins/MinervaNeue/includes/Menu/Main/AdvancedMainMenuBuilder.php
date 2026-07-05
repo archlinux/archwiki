@@ -31,10 +31,6 @@ use MediaWiki\Minerva\Menu\Group;
  * @package MediaWiki\Minerva\Menu\Main
  */
 final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
-	private bool $showMobileOptions;
-	private bool $showDonateLink;
-	private Definitions $definitions;
-
 	/**
 	 * Initialize the Default Main Menu builder
 	 *
@@ -42,10 +38,11 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 	 * @param bool $showDonateLink whether to show the donate link
 	 * @param Definitions $definitions A menu items definitions set
 	 */
-	public function __construct( $showMobileOptions, $showDonateLink, Definitions $definitions ) {
-		$this->showMobileOptions = $showMobileOptions;
-		$this->showDonateLink = $showDonateLink;
-		$this->definitions = $definitions;
+	public function __construct(
+		private readonly bool $showMobileOptions,
+		private readonly bool $showDonateLink,
+		private readonly Definitions $definitions,
+	) {
 	}
 
 	public function getSettingsGroup(): Group {
@@ -55,7 +52,7 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 	/**
 	 * @inheritDoc
 	 */
-	public function getPersonalToolsGroup( array $personalTools ): Group {
+	public function getPersonalToolsGroup( array $personalTools, bool $shouldShowAccountMenuItems ): Group {
 		return BuilderUtil::getConfigurationTools( $this->definitions, $this->showMobileOptions );
 	}
 

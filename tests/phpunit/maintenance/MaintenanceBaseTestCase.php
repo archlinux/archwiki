@@ -20,6 +20,11 @@ abstract class MaintenanceBaseTestCase extends MediaWikiIntegrationTestCase {
 		parent::setUp();
 
 		$this->maintenance = $this->createMaintenance();
+		// Ensure that fatalError() doesn't die, so we can test this
+		// maintenance class. (This is redundant with ::createMaintenance
+		// but is present to ensure isTesting is set even if subclass
+		// overwrites ::createMaintenance.)
+		$this->maintenance->isTesting = true;
 		// This is smelly, but maintenance scripts usually produce output, so
 		// we anticipate and ignore with a regex that will catch everything.
 		//
@@ -48,7 +53,7 @@ abstract class MaintenanceBaseTestCase extends MediaWikiIntegrationTestCase {
 	 * If you need to change the way your maintenance class is constructed,
 	 * override createMaintenance.
 	 *
-	 * @return string Class name
+	 * @return class-string<Maintenance> Class name
 	 */
 	abstract protected function getMaintenanceClass();
 
@@ -58,12 +63,25 @@ abstract class MaintenanceBaseTestCase extends MediaWikiIntegrationTestCase {
 	 * @return Maintenance The Maintenance instance to test.
 	 */
 	protected function createMaintenance() {
-		$className = $this->getMaintenanceClass();
+		return $this->createMaintenanceInternal( $this->getMaintenanceClass() );
+	}
+
+	/**
+	 * Called by setUp to initialize $this->maintenance.
+	 *
+	 * @param class-string $className
+	 * @return Maintenance The Maintenance instance to test.
+	 */
+	protected function createMaintenanceInternal( string $className ) {
 		$obj = new $className();
 
 		// We use TestingAccessWrapper in order to access protected internals
 		// such as `output()`.
-		return TestingAccessWrapper::newFromObject( $obj );
+		$wrapper = TestingAccessWrapper::newFromObject( $obj );
+		// Ensure that fatalError() doesn't die, so we can test this
+		// maintenance class.
+		$wrapper->isTesting = true;
+		return $wrapper;
 	}
 
 	/**

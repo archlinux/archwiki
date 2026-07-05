@@ -16,6 +16,7 @@ use Error;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Debug\MWDebug;
+use ReflectionFunction;
 use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -175,8 +176,8 @@ class HookContainer implements SalvageableService {
 	 *
 	 * @param string $hook Name of hook
 	 * @param callable|string|array $handler Handler to attach
-	 * @return ScopedCallback
 	 */
+	#[\NoDiscard]
 	public function scopedRegister( string $hook, $handler ): ScopedCallback {
 		$handler = $this->normalizeHandler( $hook, $handler );
 		if ( !$handler ) {
@@ -208,7 +209,7 @@ class HookContainer implements SalvageableService {
 	 *              handler requires service injection, this method will throw an
 	 *              UnexpectedValueException.
 	 *
-	 * @return array
+	 * @return callable-array
 	 */
 	private function makeExtensionHandlerCallback( string $hook, array $handler, array $options = [] ): array {
 		$spec = $handler['handler'];
@@ -227,7 +228,6 @@ class HookContainer implements SalvageableService {
 		}
 
 		if ( !isset( $this->handlerObjects[$name] ) ) {
-			// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
 			$this->handlerObjects[$name] = $this->objectFactory->createObject( $spec );
 		}
 
@@ -248,7 +248,6 @@ class HookContainer implements SalvageableService {
 	 * @return array|false
 	 *  - callback: (callable) Executable handler function
 	 *  - functionName: (string) Handler name for passing to wfDeprecated() or Exceptions thrown
-	 *  - args: (array) Extra handler function arguments (omitted when not needed)
 	 * @phan-return array{callback:callable,functionName:string}|false
 	 */
 	private function normalizeHandler( string $hook, $handler, array $options = [] ) {
@@ -559,8 +558,15 @@ class HookContainer implements SalvageableService {
 		}
 
 		if ( $callable instanceof Closure ) {
-			$hash = spl_object_hash( $callable );
-			return "*closure#$hash*";
+			$func = new ReflectionFunction( $callable );
+			$cls = $func->getClosureCalledClass();
+			if ( $func->getClosureThis() && $cls ) {
+				return "({$cls->getName()})->{$func->getName()}(...)";
+			} elseif ( $cls ) {
+				return "{$cls->getName()}::{$func->getName()}(...)";
+			} else {
+				return "{$func->getName()}(...)";
+			}
 		}
 
 		if ( is_array( $callable ) ) {

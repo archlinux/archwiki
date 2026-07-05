@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Extension\Gadgets;
 
-use InvalidArgumentException;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\ResourceLoader\ResourceLoader;
@@ -41,75 +40,67 @@ class Gadget {
 	public const CACHE_TTL = 86400;
 
 	/** @var string[] */
-	private $dependencies = [];
+	private $dependencies;
 	/** @var string[] */
-	private array $pages = [];
+	private array $pages;
 	/** @var string[] */
-	private $peers = [];
+	private $peers;
 	/** @var string[] */
-	private $messages = [];
+	private $messages;
 	/** @var string|null */
 	private $name;
 	/** @var string|null */
-	private $definition = null;
-	private bool $resourceLoaded = false;
-	private bool $requiresES6 = false;
+	private $definition;
+	private bool $resourceLoaded;
+	private bool $requiresES6;
 	/** @var string[] */
-	private array $requiredRights = [];
+	private array $requiredRights;
 	/** @var string[] */
-	private array $requiredActions = [];
+	private array $requiredActions;
 	/** @var string[] */
-	private array $requiredSkins = [];
+	private array $requiredSkins;
 	/** @var int[]|string[] */
-	private array $requiredNamespaces = [];
+	private array $requiredNamespaces;
 	/** @var string[] */
-	private array $requiredCategories = [];
+	private array $requiredCategories;
 	/** @var string[] */
-	private array $requiredContentModels = [];
+	private array $requiredContentModels;
 	/** @var bool */
-	private $onByDefault = false;
+	private $onByDefault;
 	/** @var bool */
-	private $hidden = false;
+	private $hidden;
 	/** @var bool */
-	private $package = false;
+	private $package;
 	/** @var string */
-	private $type = '';
-	private string $section = '';
+	private $type;
+	private string $section;
 	/** @var bool */
-	private $supportsUrlLoad = false;
+	private $supportsUrlLoad;
 	/** @var string[] */
-	private array $codexIcons = [];
+	private array $codexIcons;
 
 	public function __construct( array $options ) {
-		foreach ( $options as $member => $option ) {
-			switch ( $member ) {
-				case 'section':
-				case 'codexIcons':
-				case 'definition':
-				case 'dependencies':
-				case 'hidden':
-				case 'messages':
-				case 'name':
-				case 'onByDefault':
-				case 'package':
-				case 'pages':
-				case 'peers':
-				case 'requiredActions':
-				case 'requiredCategories':
-				case 'requiredContentModels':
-				case 'requiredNamespaces':
-				case 'requiredRights':
-				case 'requiredSkins':
-				case 'requiresES6':
-				case 'resourceLoaded':
-				case 'supportsUrlLoad':
-				case 'type':
-					$this->{$member} = $option;
-					break;
-				default:
-					throw new InvalidArgumentException( "Unrecognized '$member' parameter" );
-			}
-		}
+		$this->section = $options['section'] ?? '';
+		$this->codexIcons = $options['codexIcons'] ?? [];
+		$this->definition = $options['definition'] ?? null;
+		$this->dependencies = $options['dependencies'] ?? [];
+		$this->hidden = $options['hidden'] ?? false;
+		$this->messages = $options['messages'] ?? [];
+		$this->name = $options['name'] ?? null;
+		$this->onByDefault = $options['onByDefault'] ?? false;
+		$this->package = $options['package'] ?? false;
+		$this->pages = $options['pages'] ?? [];
+		$this->peers = $options['peers'] ?? [];
+		$this->requiredActions = $options['requiredActions'] ?? [];
+		$this->requiredCategories = $options['requiredCategories'] ?? [];
+		$this->requiredContentModels = $options['requiredContentModels'] ?? [];
+		$this->requiredNamespaces = $options['requiredNamespaces'] ?? [];
+		$this->requiredRights = $options['requiredRights'] ?? [];
+		$this->requiredSkins = $options['requiredSkins'] ?? [];
+		$this->requiresES6 = $options['requiresES6'] ?? false;
+		$this->resourceLoaded = $options['resourceLoaded'] ?? false;
+		$this->supportsUrlLoad = $options['supportsUrlLoad'] ?? false;
+		$this->type = $options['type'] ?? '';
 	}
 
 	/**

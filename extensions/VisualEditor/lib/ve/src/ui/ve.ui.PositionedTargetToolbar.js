@@ -34,8 +34,14 @@ ve.ui.PositionedTargetToolbar = function VeUiPositionedTargetToolbar( target, co
 	this.elementOffset = null;
 	this.onWindowScrollThrottled = ve.throttle( this.onWindowScroll.bind( this ), 250 );
 
+	// Events
+	this.$element.on( 'focusin focusout', ve.debounce( this.onFocusChange.bind( this ) ) );
+
 	// Initialization
 	this.$element.addClass( 've-ui-positionedTargetToolbar' );
+	if ( this.floatable ) {
+		this.$element.addClass( 've-ui-positionedTargetToolbar-floatable' );
+	}
 };
 
 /* Inheritance */
@@ -43,6 +49,19 @@ ve.ui.PositionedTargetToolbar = function VeUiPositionedTargetToolbar( target, co
 OO.inheritClass( ve.ui.PositionedTargetToolbar, ve.ui.TargetToolbar );
 
 /* Methods */
+
+/**
+ * Handle focus change events on the toolbar.
+ *
+ * @param {jQuery.Event} event Focus change event
+ */
+ve.ui.PositionedTargetToolbar.prototype.onFocusChange = function () {
+	if ( this.getSurface() ) {
+		this.getSurface().suppressScrollPadding(
+			this.$element[ 0 ].contains( document.activeElement )
+		);
+	}
+};
 
 /**
  * @inheritdoc
@@ -100,23 +119,17 @@ ve.ui.PositionedTargetToolbar.prototype.onWindowResize = function () {
 
 	// Update offsets after resize (see #float)
 	this.calculateOffset();
-
-	if ( this.floating ) {
-		this.$bar.css( {
-			left: this.elementOffset.left,
-			right: this.elementOffset.right
-		} );
-	}
-
 	this.onViewportResize();
+	// Re-calculate height as toolbar might start wrapping at different widths
+	this.calculateHeight();
 };
 
 /**
  * Calculate the left and right offsets of the toolbar
  */
 ve.ui.PositionedTargetToolbar.prototype.calculateOffset = function () {
-	this.elementOffset = this.$element.offset();
-	this.elementOffset.right = document.documentElement.clientWidth - this.$element[ 0 ].offsetWidth - this.elementOffset.left;
+	const $container = this.$element.parent();
+	this.elementOffset = $container.offset();
 };
 
 /**
@@ -145,35 +158,35 @@ ve.ui.PositionedTargetToolbar.prototype.getElementOffset = function () {
  */
 ve.ui.PositionedTargetToolbar.prototype.float = function () {
 	if ( !this.floating ) {
-		this.height = this.$bar[ 0 ].offsetHeight;
-		// When switching into floating mode, set the height of the wrapper and
-		// move the bar to the same offset as the in-flow element
-		this.$element
-			.css( 'height', this.height )
-			.addClass( 've-ui-toolbar-floating' );
-		this.$bar.css( {
-			left: this.elementOffset.left,
-			right: this.elementOffset.right
-		} );
+		this.$element.addClass( 've-ui-toolbar-floating' );
 		this.floating = true;
-		this.emit( 'resize' );
+		this.calculateHeight();
 		this.onViewportResize();
 	}
 };
 
 /**
- * Reset the toolbar to it's default non-floating position.
+ * Reset the toolbar to it's default non-floating state.
  */
 ve.ui.PositionedTargetToolbar.prototype.unfloat = function () {
 	if ( this.floating ) {
-		this.height = 0;
-		this.$element
-			.css( 'height', '' )
-			.removeClass( 've-ui-toolbar-floating' );
-		this.$bar.css( { left: '', right: '' } );
+		this.$element.removeClass( 've-ui-toolbar-floating' );
 		this.floating = false;
-		this.emit( 'resize' );
+		this.calculateHeight();
 		this.onViewportResize();
+	}
+};
+
+/**
+ * Calculate the height of the toolbar and emit a resize event if it has changed.
+ *
+ * @fires ve.ui.Toolbar#resize
+ */
+ve.ui.PositionedTargetToolbar.prototype.calculateHeight = function () {
+	const oldHeight = this.height;
+	this.height = this.floating ? this.$bar[ 0 ].offsetHeight : 0;
+	if ( this.height !== oldHeight ) {
+		this.emit( 'resize' );
 	}
 };
 
@@ -248,11 +261,7 @@ ve.ui.PositionedTargetToolbar.prototype.onToolbarDialogsOpeningOrClosing = funct
 		}
 		// Wait for window transition
 		setTimeout( () => {
-			if ( this.floating ) {
-				// Re-calculate height
-				this.unfloat();
-				this.float();
-			}
+			this.calculateHeight();
 		}, transitionDuration );
 	} );
 };
@@ -284,6 +293,8 @@ ve.ui.PositionedTargetToolbar.prototype.onViewportResize = function () {
 
 /**
  * Handle window scroll events
+ *
+ * Used to ensure a sidebar toolbar dialog will resize to match the viewport height.
  */
 ve.ui.PositionedTargetToolbar.prototype.onWindowScroll = function () {
 	this.onViewportResize();

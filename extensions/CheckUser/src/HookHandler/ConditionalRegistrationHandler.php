@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\Api\Hook\ApiQuery__moduleManagerHook;
-use MediaWiki\CheckUser\Api\GlobalContributions\ApiQueryGlobalContributions;
-use MediaWiki\CheckUser\GlobalContributions\SpecialGlobalContributions;
-use MediaWiki\CheckUser\IPContributions\SpecialIPContributions;
-use MediaWiki\CheckUser\SuggestedInvestigations\SpecialSuggestedInvestigations;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\GlobalContributions\ApiQueryGlobalContributions;
+use MediaWiki\Extension\CheckUser\GlobalContributions\SpecialGlobalContributions;
+use MediaWiki\Extension\CheckUser\IPContributions\SpecialIPContributions;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\SpecialSuggestedInvestigations;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
 use MediaWiki\User\TempUser\TempUserConfig;
@@ -19,18 +19,11 @@ use MediaWiki\WikiMap\WikiMap;
  */
 class ConditionalRegistrationHandler implements SpecialPage_initListHook, ApiQuery__moduleManagerHook {
 
-	private Config $config;
-	private TempUserConfig $tempUserConfig;
-	private ExtensionRegistry $extensionRegistry;
-
 	public function __construct(
-		Config $config,
-		TempUserConfig $tempUserConfig,
-		ExtensionRegistry $extensionRegistry
+		private readonly Config $config,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly ExtensionRegistry $extensionRegistry,
 	) {
-		$this->config = $config;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/** @inheritDoc */
@@ -59,11 +52,12 @@ class ConditionalRegistrationHandler implements SpecialPage_initListHook, ApiQue
 		// - the user enabling IP reveal globally via GlobalPreferences
 		// - CentralAuth being enabled to support cross-wiki lookups
 		// It also requires temp users to be known to this wiki, or for there
-		// to be a central wiki that Special:GlobalContributions redirects to.
+		// to be a (remote) central wiki that Special:GlobalContributions redirects to.
+		$gcCentralWiki = $this->config->get( 'CheckUserGlobalContributionsCentralWikiId' );
 		if (
 			(
 				$this->tempUserConfig->isKnown() ||
-				$this->config->get( 'CheckUserGlobalContributionsCentralWikiId' )
+				( $gcCentralWiki && $gcCentralWiki !== WikiMap::getCurrentWikiId() )
 			) &&
 			$this->areGlobalContributionsDependenciesMet()
 		) {
@@ -94,11 +88,12 @@ class ConditionalRegistrationHandler implements SpecialPage_initListHook, ApiQue
 			$list['SuggestedInvestigations'] = [
 				'class' => SpecialSuggestedInvestigations::class,
 				'services' => [
-					'ConnectionProvider',
-					'UserLinkRenderer',
-					'UserFactory',
 					'CheckUserHookRunner',
+					'CheckUserSuggestedInvestigationsCaseLookup',
 					'CheckUserSuggestedInvestigationsInstrumentationClient',
+					'CheckUserSuggestedInvestigationsPagerFactory',
+					'CheckUserSuggestedInvestigationsMessageRenderer',
+					'UserOptionsLookup',
 				],
 			];
 		}

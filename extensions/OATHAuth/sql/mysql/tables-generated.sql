@@ -20,3 +20,11 @@ CREATE TABLE /*_*/oathauth_devices (
   INDEX oad_user (oad_user),
   PRIMARY KEY(oad_id)
 ) /*$wgDBTableOptions*/;
+
+
+CREATE TABLE /*_*/oathauth_user_handles (
+  oah_user INT UNSIGNED NOT NULL,
+  oah_handle VARBINARY(88) DEFAULT NULL,
+  UNIQUE INDEX oah_handle (oah_handle),
+  PRIMARY KEY(oah_user)
+) /*$wgDBTableOptions*/;

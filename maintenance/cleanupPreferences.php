@@ -17,6 +17,7 @@ require_once __DIR__ . '/Maintenance.php';
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\Utils\BatchRowIterator;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;

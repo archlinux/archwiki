@@ -6,10 +6,10 @@ use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserIdentity;
-use Profiler;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\DBError;
@@ -31,13 +31,6 @@ class ProtectedVarsAccessLogger {
 	 */
 	public const LOG_TYPE = 'abusefilter-protected-vars';
 
-	private LoggerInterface $logger;
-	private IConnectionProvider $lbFactory;
-	private ActorStore $actorStore;
-	private AbuseFilterHookRunner $hookRunner;
-	private TitleFactory $titleFactory;
-	private int $delay;
-
 	/**
 	 * @param LoggerInterface $logger
 	 * @param IConnectionProvider $lbFactory
@@ -49,21 +42,14 @@ class ProtectedVarsAccessLogger {
 	 * @internal Use {@link AbuseLoggerFactory::getProtectedVarsAccessLogger} instead
 	 */
 	public function __construct(
-		LoggerInterface $logger,
-		IConnectionProvider $lbFactory,
-		ActorStore $actorStore,
-		AbuseFilterHookRunner $hookRunner,
-		TitleFactory $titleFactory,
-		int $delay
+		private readonly LoggerInterface $logger,
+		private readonly IConnectionProvider $lbFactory,
+		private readonly ActorStore $actorStore,
+		private readonly AbuseFilterHookRunner $hookRunner,
+		private readonly TitleFactory $titleFactory,
+		private readonly int $delay
 	) {
 		Assert::parameter( $delay > 0, 'delay', 'delay must be positive' );
-
-		$this->logger = $logger;
-		$this->lbFactory = $lbFactory;
-		$this->actorStore = $actorStore;
-		$this->hookRunner = $hookRunner;
-		$this->titleFactory = $titleFactory;
-		$this->delay = $delay;
 	}
 
 	/**

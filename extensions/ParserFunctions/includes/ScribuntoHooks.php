@@ -5,10 +5,10 @@ namespace MediaWiki\Extension\ParserFunctions;
 /**
  * Hooks from Scribunto extension,
  * which is optional to use with this extension.
- * TODO: Implement interface MediaWiki\Extension\Scribunto\Hooks\ScribuntoExternalLibrariesHook
- *  when extension requirement is MediaWiki 1.41+
  */
-class ScribuntoHooks {
+class ScribuntoHooks implements
+	\MediaWiki\Extension\Scribunto\Hooks\ScribuntoExternalLibrariesHook
+{
 
 	/**
 	 * Registers ParserFunctions' lua function with Scribunto

@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Logging;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Logging;
 
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWikiUnitTestCase;
@@ -13,7 +13,7 @@ use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory
+ * @covers \MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory
  */
 class TemporaryAccountLoggerFactoryTest extends MediaWikiUnitTestCase {
 	private function getFactory(): TemporaryAccountLoggerFactory {

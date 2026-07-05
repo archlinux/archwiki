@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "'U module API pe communicà 'mbrà server e client durande 'u processe de reggistrazione/autendicazione.",
+	"apihelp-oathauth-webauthn-param-func": "Nome d'a funzione cercate da eseguì.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "'Mbormaziune de autendicazione.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "'Mbormaziune de reggistrazione."
+}

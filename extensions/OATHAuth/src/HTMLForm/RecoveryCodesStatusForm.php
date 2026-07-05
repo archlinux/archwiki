@@ -2,19 +2,18 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
-use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
+use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
-use UnexpectedValueException;
 
+/**
+ * @property RecoveryCodes $module
+ */
 class RecoveryCodesStatusForm extends OATHAuthOOUIHTMLForm {
 	use KeySessionStorageTrait;
 	use RecoveryCodesTrait;
 
-	/**
-	 * @param array|bool|Status|string $submitResult
-	 * @return string
-	 */
+	/** @inheritDoc */
 	public function getHTML( $submitResult ) {
 		$out = $this->getOutput();
 		$out->addModuleStyles( 'ext.oath.recovery.styles' );
@@ -23,8 +22,7 @@ class RecoveryCodesStatusForm extends OATHAuthOOUIHTMLForm {
 		return parent::getHTML( $submitResult );
 	}
 
-	/** @inheritDoc */
-	protected function getDescriptors() {
+	protected function getDescriptors(): array {
 		if ( $this->oathUser->userHasNonSpecialEnabledKeys() ) {
 			$submitMsg = $this->msg(
 				'oathauth-recoverycodes-create-label',
@@ -47,40 +45,24 @@ class RecoveryCodesStatusForm extends OATHAuthOOUIHTMLForm {
 	}
 
 	/**
-	 * Add content to output when operation was successful
+	 * Add content to output when the operation was successful
 	 */
-	public function onSuccess() {
-		$moduleDbKeys = $this->oathUser->getKeysForModule( $this->module->getName() );
+	public function onSuccess(): void {
+		$key = $this->module->ensureExistence( $this->oathUser );
 
-		if ( count( $moduleDbKeys ) > RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
-			throw new UnexpectedValueException( $this->msg( 'oathauth-recoverycodes-too-many-instances' )->escaped() );
-		}
-
-		if ( array_key_exists( 0, $moduleDbKeys ) ) {
-			$recoveryCodes = $this->getRecoveryCodesForDisplay( array_shift( $moduleDbKeys ) );
-			$output = $this->getOutput();
-			$output->addModuleStyles( 'ext.oath.recovery.styles' );
-			$output->addModules( 'ext.oath.recovery' );
-			$output->addHtml(
-				$this->generateRecoveryCodesContent( $recoveryCodes )
-			);
-		}
+		$recoveryCodes = $this->getRecoveryCodesForDisplay( $key );
+		$output = $this->getOutput();
+		$output->addModuleStyles( 'ext.oath.recovery.styles' );
+		$output->addModules( 'ext.oath.recovery' );
+		$output->addHtml(
+			(string)$this->generateRecoveryCodesContent( $recoveryCodes )
+		);
 	}
 
-	/**
-	 * @param array $formData
-	 * @return array|bool
-	 */
-	public function onSubmit( array $formData ) {
-		$keys = $this->oathUser->getKeysForModule( $this->module->getName() );
-		if ( $keys ) {
-			/** @var RecoveryCodeKeys $objRecoveryCodeKeys */
-			$objRecoveryCodeKeys = array_shift( $keys );
-			'@phan-var RecoveryCodeKeys $objRecoveryCodeKeys';
-			$objRecoveryCodeKeys->regenerateRecoveryCodeKeys();
-		}
-
-		RecoveryCodeKeys::maybeCreateOrUpdateRecoveryCodeKeys( $this->oathUser );
+	public function onSubmit( array $formData ): Status|bool|array|string {
+		$key = $this->module->ensureExistence( $this->oathUser );
+		$key->regenerateRecoveryCodeKeys();
+		$this->oathRepo->updateKey( $this->oathUser, $key );
 
 		LoggerFactory::getInstance( 'authentication' )->info(
 			"OATHAuth {user} generated new recovery codes from {clientip}", [

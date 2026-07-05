@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Notifications\Push;
 
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Http\MWHttpRequest;
 use MediaWiki\Status\StatusFormatter;
-use MWHttpRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 

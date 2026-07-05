@@ -122,6 +122,7 @@ class Less_ImportVisitor extends Less_Visitor {
 			}
 
 			$e = null;
+			$root = null;
 			try {
 				if ( $importNode->options['inline'] ) {
 					if ( !file_exists( $fullPath ) ) {

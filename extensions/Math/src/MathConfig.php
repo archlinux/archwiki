@@ -59,17 +59,11 @@ class MathConfig {
 		self::MODE_NATIVE_JAX => 9
 	];
 
-	private ServiceOptions $options;
-	private ExtensionRegistry $registry;
-
 	public function __construct(
-		ServiceOptions $options,
-		ExtensionRegistry $registry
-
+		private readonly ServiceOptions $options,
+		private readonly ExtensionRegistry $registry,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->registry = $registry;
 	}
 
 	/**

@@ -181,13 +181,6 @@ class JavaScriptMinifier {
 	/** @var int Limit to avoid excessive memory usage */
 	private const STACK_LIMIT = 1000;
 
-	/** Length of the longest token in $tokenTypes made of punctuation characters,
-	 * as defined in $opChars. Update this if you add longer tokens to $tokenTypes.
-	 *
-	 * Currently, the longest punctuation token is `>>>=`, which is 4 characters.
-	 */
-	private const LONGEST_PUNCTUATION_TOKEN = 4;
-
 	/**
 	 * @var int $maxLineLength
 	 *
@@ -249,6 +242,122 @@ class JavaScriptMinifier {
 
 		// ECMAScript 8.0 § 11.8.6 Template Literal Lexical Components
 		'`' => true,
+	];
+
+	/**
+	 * Table-driven lookahead map for parsing multi-character punctuation operators.
+	 *
+	 * This is the subset of $tokenTypes keys, made of two or more $opChars. It must be
+	 * updated whenever punctuation operators are added to $tokenTypes. This is ensured
+	 * by the JavaScriptMinifierTest::testOperatorLookaheadCoversAllTokens test case.
+	 *
+	 * The shape of this map is one character offset per array level (or "column").
+	 * The total depth is based on the longest punctuation token in $tokenTypes.
+	 * Currently, the longest punctuation token is `>>>=`, which is 4 characters.
+	 *
+	 * Example:
+	 * - Token AB is stored at `['A']['B'][''][''] === 2`,
+	 *   Token ABC is stored at `['A']['B']['C'][''] === 3`,
+	 *   Token ABCD is stored at `['A']['B']['C']['D'] === 4`
+	 * - The parser looks at `map[$ch][$next2][$next3][$next4]`.
+	 * - If set, it directly moves past that number of characters to parse the current token.
+	 *
+	 * We have a fairly even distribution (most starting characters lead to only 1 or 2 possible
+	 * tokens), so the most valuable optimization is to look at the first character and narrow
+	 * our options, before performing any other potentially unnecessary assignments and lookups.
+	 *
+	 * The most common token length in this map is 2 (because 3 and 4 are rare, and 1-length tokens
+	 * don't need lookahead) and most of those are unambigious (i.e. not the start of a longer
+	 * token) which allows for a further optimization. Whenever possible, we store length 2 in
+	 * a shortcut directly under `map[$ch][$next2]` instead of `map[$ch][$next2]['']['']`.
+	 * This allows the parser to usually stop after 2 lookups (at the cost of an extra isset),
+	 * instead of always peforming the worst case (4 lookups) for all operators.
+	 */
+	private const MULTICHAR_PUNCTOKENS = [
+		'.' => [
+			'.' => [
+				'.' => [
+					'' => 3,
+				],
+			],
+		],
+		'+' => [
+			'+' => 2,
+			'=' => 2,
+		],
+		'-' => [
+			'-' => 2,
+			'=' => 2,
+		],
+		'*' => [
+			'*' => [
+				'' => 2,
+				'=' => [
+					'' => 3,
+				],
+			],
+			'=' => 2,
+		],
+		'<' => [
+			'<' => [
+				'' => 2,
+				'=' => [
+					'' => 3,
+				],
+			],
+			'=' => 2,
+		],
+		'>' => [
+			'>' => [
+				'' => 2,
+				'>' => [
+					'' => 3,
+					'=' => 4,
+				],
+				'=' => [
+					'' => 3,
+				],
+				'>=' => 4,
+			],
+			'=' => 2,
+		],
+		'=' => [
+			'=' => [
+				'' => 2,
+				'=' => [
+					'' => 3,
+				],
+			],
+			'>' => 2,
+		],
+		'!' => [
+			'=' => [
+				'' => 2,
+				'=' => [
+					'' => 3,
+				],
+			],
+		],
+		'&' => [
+			'&' => 2,
+			'=' => 2,
+		],
+		'|' => [
+			'|' => 2,
+			'=' => 2,
+		],
+		'?' => [
+			'?' => 2,
+		],
+		'/' => [
+			'=' => 2,
+		],
+		'%' => [
+			'=' => 2,
+		],
+		'^' => [
+			'=' => 2,
+		],
 	];
 
 	/**
@@ -446,6 +555,9 @@ class JavaScriptMinifier {
 		'with'       => self::TYPE_IF,
 		'switch'     => self::TYPE_IF,
 		'catch'      => self::TYPE_IF,
+
+		// ECMAScript 8.0 § 13.7.5 The for-of Statement
+		'of'         => self::TYPE_BIN_OP,
 
 		// The keywords followed by a Statement, Expression, or Block.
 		//
@@ -1839,6 +1951,15 @@ class JavaScriptMinifier {
 	public static function minifyInternal( $s, $mapGenerator = null, $onError = null, $onDebug = null ) {
 		self::ensureExpandedStates();
 
+		// Optimization: alias static properties accessed in the hot loop to local variables.
+		$opChars = self::$opChars;
+		$multicharPuncTokens = self::MULTICHAR_PUNCTOKENS;
+		$tokenTypes = self::$tokenTypes;
+		$model = self::$model;
+		$semicolon = self::$semicolon;
+		$divStates = self::$divStates;
+		$maxLineLength = self::$maxLineLength;
+
 		// Here's where the minifying takes place: Loop through the input, looking for tokens
 		// and output them to $out, taking actions to the above defined rules when appropriate.
 		$error = null;
@@ -1975,7 +2096,7 @@ class JavaScriptMinifier {
 
 			// We have to distinguish between regexp literals and division operators
 			// A division operator is only possible in certain states
-			} elseif ( $ch === '/' && !isset( self::$divStates[$state] ) ) {
+			} elseif ( $ch === '/' && !isset( $divStates[$state] ) ) {
 				// Regexp literal
 				for ( ; ; ) {
 					// Search until we find "/" (end of regexp), "\" (backslash escapes),
@@ -2086,18 +2207,35 @@ class JavaScriptMinifier {
 					}
 					$end += $len;
 				}
-			} elseif ( isset( self::$opChars[$ch] ) ) {
-				// Punctuation character. Search for the longest matching operator.
-				for ( $tokenLength = self::LONGEST_PUNCTUATION_TOKEN; $tokenLength > 1; $tokenLength-- ) {
-					if (
-						$pos + $tokenLength <= $length &&
-						isset( self::$tokenTypes[ substr( $s, $pos, $tokenLength ) ] )
-					) {
-						$end = $pos + $tokenLength;
-						break;
+			} elseif ( isset( $multicharPuncTokens[$ch] ) ) {
+				// Optimization: Parse multi-character punctuation operators with direct lookahead
+				// <https://gerrit.wikimedia.org/r/c/mediawiki/libs/Minify/+/1221106>
+				if (
+					$pos + 1 < $length &&
+					// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.Found
+					( $submap2 = $multicharPuncTokens[$ch][$s[$pos + 1]] ?? null )
+					// @phan-suppress-previous-line PhanTypeMismatchDimFetchNullable -- False positive
+				) {
+					if ( $submap2 === 2 ) {
+						// Optimization: Shortcut for the common case of an unambiguous 2-char punctuation token
+						$end = $pos + 2;
+					} else {
+						$next3 = $pos + 2 < $length ? $s[$pos + 2] : '';
+						$next4 = $pos + 3 < $length ? $s[$pos + 3] : '';
+						// 4-char token,
+						// or 3-char token,
+						// or 2-char token that is a subset of a not-seen 3- or 4-char token
+						//
+						// NOTE: The `1` fallback ensures graceful handling of invalid syntax like `..*`,
+						// instead of causing infinite recursion. We don't need to set `$pos + 1`, because
+						// that is the default, but we assign unconditionally here because all valid syntax
+						// needs an assignment. Adding checks to avoid it for invalid syntax doesn't pay off.
+						$end = $pos + ( $submap2[$next3][$next4] ?? $submap2[$next3][''] ?? $submap2[''] ?? 1 );
 					}
 				}
-			} else {
+				// All other opChars ({, }, (, ), [, ], :, ;, ,, ~, etc) are single-char tokens
+				// so $end (which is $pos + 1) is already correct.
+			} elseif ( !isset( $opChars[$ch] ) ) {
 				// Identifier or reserved word. Search for the end by excluding whitespace and
 				// punctuation.
 				$end += strcspn( $s, " \t\n.;,=<>+-{}()[]?:*/%'\"`!&|^~\xb\xc\r", $end );
@@ -2106,9 +2244,9 @@ class JavaScriptMinifier {
 			// Now get the token type from our type array
 			// so $end - $pos == strlen( $token )
 			$token = substr( $s, $pos, $end - $pos );
-			$type = isset( self::$model[$state][self::TYPE_SPECIAL][$token] )
+			$type = isset( $model[$state][self::TYPE_SPECIAL][$token] )
 				? self::TYPE_SPECIAL
-				: self::$tokenTypes[$token] ?? self::TYPE_LITERAL;
+				: $tokenTypes[$token] ?? self::TYPE_LITERAL;
 			if ( $type === self::TYPE_YIELD ) {
 				// yield is treated as TYPE_RETURN inside a generator function (negative state)
 				// but as TYPE_LITERAL when not in a generator function (positive state)
@@ -2117,7 +2255,7 @@ class JavaScriptMinifier {
 
 			$pad = '';
 
-			if ( $newlineFound && isset( self::$semicolon[$state][$type] ) ) {
+			if ( $newlineFound && isset( $semicolon[$state][$type] ) ) {
 				// This token triggers the semicolon insertion mechanism of javascript. While we
 				// could add the ; token here ourselves, keeping the newline has a few advantages.
 				$pad = "\n";
@@ -2127,15 +2265,15 @@ class JavaScriptMinifier {
 			// a newline was found in this this position, if it wasn't, it uses the next available
 			// line break
 			} elseif ( $newlineFound &&
-				$lineLength + $end - $pos > self::$maxLineLength &&
-				!isset( self::$semicolon[$state][$type] ) &&
+				$lineLength + $end - $pos > $maxLineLength &&
+				!isset( $semicolon[$state][$type] ) &&
 				$type !== self::TYPE_INCR_OP &&
 				$type !== self::TYPE_ARROW
 			) {
 				$pad = "\n";
 				$lineLength = 0;
 			// Check, whether we have to separate the token from the last one with whitespace
-			} elseif ( !isset( self::$opChars[$last] ) && !isset( self::$opChars[$ch] ) ) {
+			} elseif ( !isset( $opChars[$last] ) && !isset( $opChars[$ch] ) ) {
 				$pad = ' ';
 				$lineLength++;
 			// Don't accidentally create ++, -- or // tokens
@@ -2178,8 +2316,8 @@ class JavaScriptMinifier {
 
 			// Now that we have output our token, transition into the new state.
 			$actions = $type === self::TYPE_SPECIAL ?
-				self::$model[$state][$type][$token] :
-				self::$model[$state][$type] ?? [];
+				$model[$state][$type][$token] :
+				$model[$state][$type] ?? [];
 			if ( isset( $actions[self::ACTION_PUSH] ) &&
 				count( $stack ) < self::STACK_LIMIT
 			) {
@@ -2218,15 +2356,22 @@ class JavaScriptMinifier {
 	private static function augmentDebugContext( array $context ) {
 		$self = new ReflectionClass( self::class );
 		foreach ( $self->getConstants() as $name => $value ) {
+			if ( !is_int( $value ) ) {
+				continue;
+			}
 			foreach ( $context['stack'] as $i => $state ) {
-				if ( $value === $state ) {
+				if ( $state === $value ) {
 					$context['stack'][$i] = $name;
+				} elseif ( $state === -$value ) {
+					$context['stack'][$i] = '-' . $name;
 				}
 			}
-			if ( $value === $context['state'] ) {
+			if ( $context['state'] === $value ) {
 				$context['state'] = $name;
+			} elseif ( $context['state'] === -$value ) {
+				$context['state'] = '-' . $name;
 			}
-			if ( $value === $context['type'] ) {
+			if ( $context['type'] === $value ) {
 				$context['type'] = $name;
 			}
 		}

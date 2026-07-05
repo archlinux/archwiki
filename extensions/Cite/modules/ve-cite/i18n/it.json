@@ -30,13 +30,14 @@
 			"Stefania.scaramuzzi",
 			"Supernino",
 			"Una giornata uggiosa '94",
-			"Vivbod",
-			"Valepert"
+			"Valepert",
+			"Vivbod"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
 	"visualeditor-cite-tool-name-journal": "Pubblicazione",
 	"visualeditor-cite-tool-name-news": "Notizie",
+	"visualeditor-cite-tool-name-map": "Mappa",
 	"visualeditor-cite-tool-name-web": "Sito web",
 	"cite-ve-changedesc-ref-group-both": "Il gruppo di note è cambiato da \"$1\" a \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "Il gruppo di note è cambiato da \"$1\" al gruppo generale",
@@ -70,6 +71,8 @@
 	"cite-ve-dialog-subreference-help-dialog-head": "Nuovo: aggiungi un dettaglio a un riferimento riutilizzato",
 	"cite-ve-dialog-subreference-help-dialog-content": "Quando si riutilizza un riferimento, ora possibile aggiungere diversi dettagli come il numero di pagina o una citazione senza ripetere il riferimento completo. <p><b>Utilizzalo quando:</b></p><ul><li>citi pagine o volumi diversi di un libro</li><li>indichi un timestamp in un podcast citato</li><li>aggiungi una citazione pertinente da una fonte</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "Scopri di più sull'aggiunta di dettagli a un riferimento",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "Modifica tutti ($1) gli utilizzi di questi dettagli.",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "Aggiungi questi dettagli a tutti gli utilizzi ($1) di questo riferimento che non hanno ancora dettagli.",
 	"cite-ve-dialog-reference-title-details": "Dettagli",
 	"cite-ve-dialog-reference-useexisting-tool": "Riusa",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Elenco di note generali",

@@ -181,10 +181,10 @@ ve.ce.ResizableNode.prototype.updateSizeLabel = function () {
 		.removeClass( 'oo-ui-element-hidden' )
 		.addClass( 've-ce-resizableNode-sizeLabel-resizing' )
 		.css( {
-			top: top,
+			top,
 			left: offset.left,
 			width: dimensions.width,
-			height: height,
+			height,
 			lineHeight: height + 'px'
 		} );
 	this.$sizeText.empty();
@@ -215,16 +215,15 @@ ve.ce.ResizableNode.prototype.showHandles = function ( handles ) {
 	}
 
 	const add = [],
-		remove = [],
-		allDirections = [ 'nw', 'ne', 'sw', 'se' ];
+		remove = [];
 
-	for ( let i = 0, len = allDirections.length; i < len; i++ ) {
-		if ( handles === undefined || handles.includes( allDirections[ i ] ) ) {
-			remove.push( 've-ce-resizableNode-hide-' + allDirections[ i ] );
+	[ 'nw', 'ne', 'sw', 'se' ].forEach( ( direction ) => {
+		if ( handles === undefined || handles.includes( direction ) ) {
+			remove.push( 've-ce-resizableNode-hide-' + direction );
 		} else {
-			add.push( 've-ce-resizableNode-hide-' + allDirections[ i ] );
+			add.push( 've-ce-resizableNode-hide-' + direction );
 		}
-	}
+	} );
 
 	// The following classes are used here:
 	// * ve-ce-resizableNode-hide-nw

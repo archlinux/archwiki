@@ -28,8 +28,6 @@ if ( GENERATE_INTENT_PARSER ) {
 	defaultPathOutput = './src/WikiTexVC/ParserIntent.php';
 }
 
-const PHP_INSERTION_LINE = 9; // indicates where the 'use_xyz' statements are inserted
-
 program
 	.name( 'buildPHPparser' )
 	.option( '-i, --input <string>',
@@ -57,46 +55,10 @@ let parser = peggy.generate( parserPeg, {
 	cache: true,
 	phpeggy: {
 		parserClassName: GENERATE_INTENT_PARSER ? 'ParserIntent' : 'Parser',
-		parserNamespace: 'MediaWiki\\Extension\\Math\\WikiTexVC'
+		parserNamespace: GENERATE_INTENT_PARSER ? 'MediaWiki\\Extension\\Math\\WikiTexVC' :
+			'MediaWiki\\Extension\\Math\\WikiTexVC'
 	}
 } );
-
-const useStatements =
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Box;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Big;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemFun2u;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\ChemWord;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Declh;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Dollar;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\DQ;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\FQ;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun1;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun1nb;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2nb;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun2sq;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Fun4;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Infix;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Literal;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Lr;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\LengthSpec;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Matrix;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\Mhchem;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\UQ;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\Nodes\\TexArray;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\TexUtil;\n' +
-	'use MediaWiki\\Extension\\Math\\WikiTexVC\\ParserUtil;';
-
-function addUseStatements( p, lineStart = PHP_INSERTION_LINE ) {
-	// Adding the specified use statements
-	const splitParser = p.split( '\n' );
-	splitParser.splice( lineStart, 0, useStatements );
-	return splitParser.join( '\n' );
-}
-
-if ( !GENERATE_INTENT_PARSER ) {
-	parser = addUseStatements( parser );
-}
 
 /**
  * Fixing phpeggy to denote regular expressions which

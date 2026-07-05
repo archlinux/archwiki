@@ -7,16 +7,16 @@ export const config = { ...wdioDefaults,
 	// Example:
 	// logLevel: 'info',
 	specs: [
-		'docs/**/specs/*.js',
 		'specs/**/*.js',
+		'docs/**/specs/*.js',
 		'wdio-mediawiki/specs/*.js'
 	],
-	suites: {
-		daily: [
-			'specs/page.js',
-			'wdio-mediawiki/specs/BlankPage.js'
-		]
-	},
+	// To enable video recording, enable video and disable browser headless
+	// recordVideo: true,
+	// useBrowserHeadless: false,
+	//
+	// To enable screenshots on all tests, disable screenshotsOnFailureOnly
+	// screenshotsOnFailureOnly: false,
 	mochaOpts: {
 		...wdioDefaults.mochaOpts,
 		retries: 1

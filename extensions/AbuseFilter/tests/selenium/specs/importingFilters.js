@@ -1,10 +1,7 @@
-'use strict';
-
-const assert = require( 'assert' ),
-	LoginPage = require( 'wdio-mediawiki/LoginPage' ),
-	ViewEditPage = require( '../pageobjects/viewedit.page' ),
-	ViewListPage = require( '../pageobjects/viewlist.page' ),
-	ViewImportPage = require( '../pageobjects/viewimport.page' );
+import LoginPage from 'wdio-mediawiki/LoginPage';
+import { viewEditPage as ViewEditPage } from '../pageobjects/viewedit.page.js';
+import { viewListPage as ViewListPage } from '../pageobjects/viewlist.page.js';
+import { viewImportPage as ViewImportPage } from '../pageobjects/viewimport.page.js';
 
 describe( 'When importing a filter', () => {
 	const filterSpecs = {
@@ -39,7 +36,7 @@ describe( 'When importing a filter', () => {
 		await ViewEditPage.setWarningMessage( filterSpecs.warnMessage );
 		await ViewEditPage.submit();
 
-		assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+		await expect( ViewListPage.filterSavedNotice ).toBeDisplayed();
 		const filterID = await ViewListPage.savedFilterID();
 		await ViewEditPage.open( filterID );
 		importData = await ViewEditPage.exportData;
@@ -47,46 +44,44 @@ describe( 'When importing a filter', () => {
 
 	it( 'the interface should be visible', async () => {
 		await ViewImportPage.open();
-		assert( await ViewImportPage.importData.isDisplayed() );
+		await expect( ViewImportPage.importData ).toBeDisplayed();
 	} );
 
 	it( 'it should redirect to ViewEdit after submission', async () => {
 		await ViewImportPage.importText( 'SOME INVALID GIBBERISH' );
-		assert( /\/new$/.test( await browser.getUrl() ) );
+		expect( await browser.getUrl() ).toMatch( /\/new$/ );
 	} );
 
 	it( 'bad data results in an error', async () => {
-		assert( await ViewEditPage.error.isDisplayed() );
+		await expect( ViewEditPage.error ).toBeDisplayed();
 	} );
 
 	it( 'valid data shows the editing interface', async () => {
 		await ViewImportPage.open();
 		await ViewImportPage.importText( importData );
-		assert( await ViewEditPage.name.isDisplayed() );
+		await expect( ViewEditPage.name ).toBeDisplayed();
 	} );
 
 	describe( 'Data on the editing interface is correct', () => {
 		it( 'filter specs are copied', async () => {
-			assert.strictEqual( await ViewEditPage.name.getValue(), filterSpecs.name );
-			assert.strictEqual( await ViewEditPage.comments.getValue(), filterSpecs.comments + '\n' );
-			assert.strictEqual( await ViewEditPage.rules.getValue(), filterSpecs.rules + '\n' );
+			expect( await ViewEditPage.name.getValue() ).toBe( filterSpecs.name );
+			expect( await ViewEditPage.comments.getValue() ).toBe( filterSpecs.comments + '\n' );
+			expect( await ViewEditPage.rules.getValue() ).toBe( filterSpecs.rules + '\n' );
 		} );
 		it( 'filter flags are copied', async () => {
-			assert.strictEqual( await ViewEditPage.enabled.isSelected(), !!filterSpecs.enabled );
-			assert.strictEqual( await ViewEditPage.hidden.isSelected(), !!filterSpecs.hidden );
-			assert.strictEqual( await ViewEditPage.deleted.isSelected(), !!filterSpecs.deleted );
+			expect( await ViewEditPage.enabled.isSelected() ).toBe( !!filterSpecs.enabled );
+			expect( await ViewEditPage.hidden.isSelected() ).toBe( !!filterSpecs.hidden );
+			expect( await ViewEditPage.deleted.isSelected() ).toBe( !!filterSpecs.deleted );
 		} );
 		it( 'filter actions are copied', async () => {
-			assert.strictEqual( await ViewEditPage.warnCheckbox.isSelected(), true );
-			assert.strictEqual(
-				await ViewEditPage.warnOtherMessage.getValue(),
-				filterSpecs.warnMessage
-			);
+			expect( await ViewEditPage.warnCheckbox.isSelected() ).toBe( true );
+			expect( await ViewEditPage.warnOtherMessage.getValue() )
+				.toBe( filterSpecs.warnMessage );
 		} );
 
 		it( 'the imported data can be saved', async () => {
 			await ViewEditPage.submit();
-			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+			await expect( ViewListPage.filterSavedNotice ).toBeDisplayed();
 		} );
 	} );
 } );

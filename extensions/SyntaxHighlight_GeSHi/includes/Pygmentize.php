@@ -80,7 +80,7 @@ class Pygmentize {
 					$wanCache->makeGlobalKey( 'pygmentize-version' ),
 					// Must be under 55 min to avoid renewing stale data in upper layer
 					30 * $wanCache::TTL_MINUTE,
-					[ __CLASS__, 'fetchVersion' ]
+					self::fetchVersion( ... )
 				);
 			}
 		);
@@ -131,7 +131,7 @@ class Pygmentize {
 		return $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'pygmentize-css', self::getVersion() ),
 			$cache::TTL_WEEK,
-			[ __CLASS__, 'fetchGeneratedCSS' ]
+			self::fetchGeneratedCSS( ... )
 		);
 	}
 
@@ -204,7 +204,7 @@ class Pygmentize {
 		return $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'pygmentize-lexers', self::getVersion() ),
 			$cache::TTL_WEEK,
-			[ __CLASS__, 'fetchLexers' ]
+			self::fetchLexers( ... )
 		);
 	}
 

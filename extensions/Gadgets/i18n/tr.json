@@ -82,5 +82,7 @@
 	"gadgets-validate-invaliddependencies": "Şu {{PLURAL:$2|bağımlılık|bağımlılıklar}} eksik: $1.",
 	"gadgets-validate-deprecateddependencies": "Şu {{PLURAL:$2|bağımlılık|bağımlılıklar}} eski: $1.",
 	"gadgets-supports-urlload": "Bu küçük aracı, <code>?withgadget</code> sorgu parametresiyle URL üzerinden yüklemeyi destekler.",
-	"gadgets-hidden": "Bu küçük araç [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden gizli], bu yüzden tercihler sayfasında görünmeyecektir."
+	"gadgets-hidden": "Bu küçük araç [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden gizli], bu yüzden tercihler sayfasında görünmeyecektir.",
+	"gadgets-subpage-invalid": "Geçersiz alt sayfa \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Yeterli alt sayfa değişkeni yok (geçersiz bağlantı)."
 }

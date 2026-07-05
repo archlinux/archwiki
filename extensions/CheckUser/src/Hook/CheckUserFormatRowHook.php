@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Hook;
+namespace MediaWiki\Extension\CheckUser\Hook;
 
 use MediaWiki\Context\IContextSource;
 use stdClass;
@@ -21,3 +21,13 @@ interface CheckUserFormatRowHook {
 		array &$rowItems
 	);
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	CheckUserFormatRowHook::class,
+	'MediaWiki\\CheckUser\\Hook\\CheckUserFormatRowHook'
+);
+// @codeCoverageIgnoreEnd

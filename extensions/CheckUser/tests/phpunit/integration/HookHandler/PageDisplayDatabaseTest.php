@@ -1,23 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use ArrayUtils;
-use MediaWiki\CheckUser\HookHandler\PageDisplay;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\HookHandler\PageDisplay;
 use MediaWiki\IPInfo\HookHandler\AbstractPreferencesHandler;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
-use MediaWiki\User\UserOptionsManager;
+use MediaWiki\User\Options\UserOptionsManager;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\ArrayUtils\ArrayUtils;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\PageDisplay
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\PageDisplay
  * @group Database
  */
 class PageDisplayDatabaseTest extends MediaWikiIntegrationTestCase {
@@ -35,7 +35,8 @@ class PageDisplayDatabaseTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideOnBeforePageDisplayForOnboardingWhenIPInfoPreferenceIsGlobal */
 	public function testOnBeforePageDisplayForOnboardingWhenIPInfoPreferenceIsGlobal(
-		bool $globalPreferenceValue, bool $localPreferenceValue
+		bool $globalPreferenceValue,
+		bool $localPreferenceValue
 	) {
 		$this->markTestSkippedIfExtensionNotLoaded( 'GlobalPreferences' );
 		$this->markTestSkippedIfExtensionNotLoaded( 'IPInfo' );
@@ -47,7 +48,8 @@ class PageDisplayDatabaseTest extends MediaWikiIntegrationTestCase {
 
 		$user = $this->getTestUser()->getUser();
 		$authority = $this->mockUserAuthorityWithPermissions(
-			$user, [ 'checkuser-temporary-account-no-preference', 'ipinfo' ]
+			$user,
+			[ 'checkuser-temporary-account-no-preference', 'ipinfo' ]
 		);
 
 		$context->setAuthority( $authority );
@@ -57,13 +59,17 @@ class PageDisplayDatabaseTest extends MediaWikiIntegrationTestCase {
 		// Set the global value and local override
 		$userOptionsManager = $this->getServiceContainer()->getUserOptionsManager();
 		$userOptionsManager->setOption(
-			$user, AbstractPreferencesHandler::IPINFO_USE_AGREEMENT,
-			$globalPreferenceValue, UserOptionsManager::GLOBAL_CREATE
+			$user,
+			AbstractPreferencesHandler::IPINFO_USE_AGREEMENT,
+			$globalPreferenceValue,
+			UserOptionsManager::GLOBAL_CREATE
 		);
 		$userOptionsManager->saveOptions( $user );
 		$userOptionsManager->setOption(
-			$user, AbstractPreferencesHandler::IPINFO_USE_AGREEMENT,
-			$localPreferenceValue, UserOptionsManager::GLOBAL_OVERRIDE
+			$user,
+			AbstractPreferencesHandler::IPINFO_USE_AGREEMENT,
+			$localPreferenceValue,
+			UserOptionsManager::GLOBAL_OVERRIDE
 		);
 		$userOptionsManager->saveOptions( $user );
 
@@ -84,7 +90,8 @@ class PageDisplayDatabaseTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$pageDisplayHookHandler->onBeforePageDisplay(
-			$output, $this->createMock( Skin::class )
+			$output,
+			$this->createMock( Skin::class )
 		);
 
 		$expectedConfigVars = [

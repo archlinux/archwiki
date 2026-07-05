@@ -1,7 +1,7 @@
 'use strict';
 
 const { mount } = require( 'vue-test-utils' );
-const UserInfoCardError = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserInfoCardError.vue' );
+const UserInfoCardError = require( 'ext.checkUser.userInfoCard/components/UserInfoCardError.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserInfoCardError', QUnit.newMwEnvironment( {
 	beforeEach: function () {

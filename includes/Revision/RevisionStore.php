@@ -18,15 +18,16 @@ use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\FallbackContent;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\UnknownContentModelException;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Exception\MWException;
-use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\LegacyArticleIdAccess;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\RecentChanges\RecentChange;
@@ -51,6 +52,7 @@ use StatusValue;
 use stdClass;
 use Traversable;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\ParameterAssertionException;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\IPUtils;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -64,6 +66,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Service for looking up page revisions.
@@ -87,6 +90,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	public const INCLUDE_OLD = 'include_old';
 	public const INCLUDE_NEW = 'include_new';
 	public const INCLUDE_BOTH = 'include_both';
+	public const INCLUDE_DELETED_REVISIONS = 'include_deleted_revisions';
 
 	/**
 	 * @var SqlBlobStore
@@ -387,7 +391,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 
 		// Checks
 		$this->failOnNull( $rev->getSize(), 'size field' );
-		$this->failOnEmpty( $rev->getSha1(), 'sha1 field' );
 		$this->failOnEmpty( $rev->getTimestamp(), 'timestamp field' );
 		$comment = $this->failOnNull( $rev->getComment( RevisionRecord::RAW ), 'comment' );
 		$user = $this->failOnNull( $rev->getUser( RevisionRecord::RAW ), 'user' );
@@ -407,10 +410,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			Assert::precondition(
 				$mainSlot->getSize() === $rev->getSize(),
 				'The revisions\'s size must match the main slot\'s size (see T239717)'
-			);
-			Assert::precondition(
-				$mainSlot->getSha1() === $rev->getSha1(),
-				'The revisions\'s SHA1 hash must match the main slot\'s SHA1 hash (see T239717)'
 			);
 		}
 
@@ -598,7 +597,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			$slot = $rev->getSlot( $role, RevisionRecord::RAW );
 
 			// If the SlotRecord already has a revision ID set, this means it already exists
-			// in the database, and should already belong to the current revision.
+			// in the database, and should already belong to the latest revision.
 			// However, a slot may already have a revision, but no content ID, if the slot
 			// is emulated based on the archive table, because we are in SCHEMA_COMPAT_READ_OLD
 			// mode, and the respective archive row was not yet migrated to the new schema.
@@ -707,7 +706,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @return array a revision table row
 	 *
 	 * @throws MWException
-	 * @throws MWUnknownContentModelException
+	 * @throws UnknownContentModelException
 	 */
 	private function insertRevisionRowOn(
 		IDatabase $dbw,
@@ -842,7 +841,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			'rev_timestamp'  => $dbw->timestamp( $rev->getTimestamp() ),
 			'rev_deleted'    => $rev->getVisibility(),
 			'rev_len'        => $rev->getSize(),
-			'rev_sha1'       => $rev->getSha1(),
 		];
 
 		if ( $rev->getId( $this->wikiId ) !== null ) {
@@ -936,7 +934,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @param string $role
 	 *
 	 * @throws MWException
-	 * @throws MWUnknownContentModelException
+	 * @throws UnknownContentModelException
 	 */
 	private function checkContent( Content $content, PageIdentity $page, string $role ) {
 		// Note: may return null for revisions that have not yet been inserted
@@ -959,7 +957,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	}
 
 	/**
-	 * Create a new null-revision for insertion into a page's
+	 * Create a new dummy revision for insertion into a page's
 	 * history. This will not re-save the text, but simply refer
 	 * to the text from the previous version.
 	 *
@@ -967,7 +965,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * operations and other such meta-modifications.
 	 *
 	 * @note This method grabs a FOR UPDATE lock on the relevant row of the page table,
-	 * to prevent a new revision from being inserted before the null revision has been written
+	 * to prevent a new revision from being inserted before the dummy revision has been written
 	 * to the database.
 	 *
 	 * MCR migration note: this replaced Revision::newNullRevision
@@ -1004,7 +1002,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			->caller( __METHOD__ )->fetchField();
 
 		if ( !$pageLatest ) {
-			$msg = 'T235589: Failed to select table row during null revision creation' .
+			$msg = 'T235589: Failed to select table row during dummy revision creation' .
 				" Page id '$pageId' does not exist.";
 			$this->logger->error(
 				$msg,
@@ -1032,7 +1030,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		}
 
 		// Construct the new revision
-		$timestamp = MWTimestamp::now( TS_MW );
+		$timestamp = MWTimestamp::now( TS::MW );
 		$newRevision = MutableRevisionRecord::newFromParentRevision( $oldRevision );
 
 		$newRevision->setComment( $comment );
@@ -1062,7 +1060,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	}
 
 	/**
-	 * Get the RC object belonging to the current revision, if there's one
+	 * Get the RC object belonging to the latest revision, if there's one
 	 *
 	 * MCR migration note: this replaced Revision::getRecentChange
 	 *
@@ -1219,7 +1217,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *      IDBAccessObject::READ_LATEST: Select the data from the primary DB
 	 *      IDBAccessObject::READ_LOCKING : Select & lock the data from the primary DB
 	 *
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param int $revId (optional)
 	 * @param int $flags Bitfield (optional)
 	 * @return RevisionRecord|null
@@ -1230,7 +1228,9 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			return null;
 		}
 		if ( !( $page instanceof PageIdentity ) ) {
-			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			if ( !( $page instanceof PageReference ) ) {
+				wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			}
 			$page = null;
 		}
 
@@ -1301,7 +1301,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *
 	 * MCR migration note: this replaced Revision::loadFromTimestamp
 	 *
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param string $timestamp
 	 * @param int $flags Bitfield (optional) include:
 	 *      IDBAccessObject::READ_LATEST: Select the data from the primary DB
@@ -1319,7 +1319,9 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			return null;
 		}
 		if ( !( $page instanceof PageIdentity ) ) {
-			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			if ( !( $page instanceof PageReference ) ) {
+				wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			}
 			$page = null;
 		}
 
@@ -1599,7 +1601,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		if ( $page === null ) {
 			if ( isset( $row->ar_namespace ) && isset( $row->ar_title ) ) {
 				// Represent a non-existing page.
-				// NOTE: The page title may be invalid by current rules (T384628).
+				// NOTE: The page title may be invalid by latest rules (T384628).
 				$page = PageIdentityValue::localIdentity( 0, $row->ar_namespace, $row->ar_title );
 			} else {
 				throw new InvalidArgumentException(
@@ -2049,7 +2051,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 							$queryFlags,
 							$titlesByPageKey[$row->_page_key]
 						);
-					} catch ( MWException $e ) {
+					} catch ( MWException | ParameterAssertionException $e ) {
 						$result->warning( 'internalerror_info', $e->getMessage() );
 						return null;
 					}
@@ -2198,11 +2200,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * @param int $queryFlags
 	 *
 	 * @return StatusValue<array<int,array<string,stdClass>>>
-	 *         a status containing, if isOK() returns true, a two-level nested
-	 *         associative array, mapping from revision ID to an associative array that maps from
-	 *         role name to an anonymous object containing two fields:
-	 *         - model_name: the name of the content's model
-	 *         - blob_data: serialized content data
+	 *   a status containing, if isOK() returns true, a two-level nested
+	 *   associative array, mapping from revision ID to an associative array that maps from
+	 *   role name to an anonymous object containing two fields:
+	 *   - model_name: the name of the content's model
+	 *   - blob_data: serialized content data
 	 */
 	public function getContentBlobsForBatch(
 		$rowsOrIds,
@@ -2392,7 +2394,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 				'rev_deleted',
 				'rev_len',
 				'rev_parent_id',
-				'rev_sha1',
 			],
 			'joins' => [
 				'actor_rev_user' => [ 'JOIN', "actor_rev_user.actor_id = rev_actor" ],
@@ -2472,22 +2473,19 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 */
 	public function getSlotsQueryInfo( $options = [] ) {
 		$ret = [
-			'tables' => [],
-			'fields' => [],
+			'tables' => [ 'slots' ],
+			'fields' => [
+				'slot_revision_id',
+				'slot_content_id',
+				'slot_origin',
+				'slot_role_id',
+			],
 			'joins'  => [],
-			'keys'  => [],
+			'keys'  => [
+				'rev_id' => 'slot_revision_id',
+				'role_id' => 'slot_role_id',
+			],
 		];
-
-		$ret['keys']['rev_id'] = 'slot_revision_id';
-		$ret['keys']['role_id'] = 'slot_role_id';
-
-		$ret['tables'][] = 'slots';
-		$ret['fields'] = array_merge( $ret['fields'], [
-			'slot_revision_id',
-			'slot_content_id',
-			'slot_origin',
-			'slot_role_id',
-		] );
 
 		if ( in_array( 'role', $options, true ) ) {
 			// Use left join to attach role name, so we still find the revision row even
@@ -2581,7 +2579,6 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 				'ar_deleted',
 				'ar_len',
 				'ar_parent_id',
-				'ar_sha1',
 				'ar_actor',
 				'ar_user' => 'archive_actor.actor_user',
 				'ar_user_text' => 'archive_actor.actor_name',
@@ -2791,7 +2788,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 				->where( [ 'rev_id' => $id ] )
 				->caller( __METHOD__ )->fetchField();
 
-		return ( $timestamp !== false ) ? MWTimestamp::convert( TS_MW, $timestamp ) : false;
+		return ( $timestamp !== false ) ? MWTimestamp::convert( TS::MW, $timestamp ) : false;
 	}
 
 	/**
@@ -2876,7 +2873,7 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	}
 
 	/**
-	 * Load a revision based on a known page ID and current revision ID from the DB
+	 * Load a revision based on a known page ID and latest revision ID from the DB
 	 *
 	 * This method allows for the use of caching, though accessing anything that normally
 	 * requires permission checks (aside from the text) will trigger a small DB lookup.
@@ -2884,11 +2881,12 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 * MCR migration note: this replaced Revision::newKnownCurrent
 	 *
 	 * @param PageIdentity $page the associated page
-	 * @param int $revId current revision of this page. Defaults to $title->getLatestRevID().
+	 * @param int $revId Latest revision of this page. Defaults to $title->getLatestRevID().
 	 *
 	 * @return RevisionRecord|false Returns false if missing
+	 * @since 1.46
 	 */
-	public function getKnownCurrentRevision( PageIdentity $page, $revId = 0 ) {
+	public function getKnownLatestRevision( PageIdentity $page, $revId = 0 ) {
 		$db = $this->getReplicaConnection();
 		$revIdPassed = $revId;
 		$pageId = $this->getArticleId( $page );
@@ -2953,10 +2951,20 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	}
 
 	/**
+	 * @param PageIdentity $page the associated page
+	 * @param int $revId Latest revision of this page
+	 * @return RevisionRecord|false Returns false if missing
+	 * @deprecated Since 1.46; use getKnownLatestRevision()
+	 */
+	public function getKnownCurrentRevision( PageIdentity $page, $revId = 0 ) {
+		return $this->getKnownLatestRevision( $page, $revId );
+	}
+
+	/**
 	 * Get the first revision of a given page.
 	 *
 	 * @since 1.35
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param int $flags
 	 * @return RevisionRecord|null
 	 */
@@ -2969,7 +2977,9 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 			return null;
 		}
 		if ( !( $page instanceof PageIdentity ) ) {
-			wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			if ( !( $page instanceof PageReference ) ) {
+				wfDeprecated( __METHOD__ . ' with a LinkTarget', '1.45' );
+			}
 			$page = null;
 		}
 
@@ -3021,12 +3031,20 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	}
 
 	/**
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @return array|null
 	 */
-	private function getPageConditions( object $page ): ?array {
+	private function getPageConditions( LinkTarget|PageReference $page ): ?array {
 		if ( $page instanceof PageIdentity ) {
 			return $page->exists() ? [ 'page_id' => $page->getId( $this->wikiId ) ] : null;
+		} elseif ( $page instanceof PageReference ) {
+			if ( $page->getWikiId() !== $this->wikiId ) {
+				throw new InvalidArgumentException( 'Non-matching wiki ID for PageReference' );
+			}
+			return [
+				'page_namespace' => $page->getNamespace(),
+				'page_title' => $page->getDBkey(),
+			];
 		} else {
 			// Only resolve LinkTarget when operating in the context of the local wiki (T248756)
 			if ( $this->wikiId !== WikiAwareEntity::LOCAL ) {
@@ -3290,6 +3308,11 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 	 *     RevisionStore::INCLUDE_OLD Include $old in the range; $new is excluded.
 	 *     RevisionStore::INCLUDE_NEW Include $new in the range; $old is excluded.
 	 *     RevisionStore::INCLUDE_BOTH Include both $old and $new in the range.
+	 *     RevisionStore::INCLUDE_DELETED_REVISIONS Include revisions that have been
+	 *     revision deleted.
+	 *
+	 *     If no options are selected, the first revision, last revision, and revision
+	 *     deleted revisions will not be included.
 	 * @throws InvalidArgumentException in case either revision is unsaved or
 	 *  the revisions do not belong to the same page.
 	 * @return int Number of revisions between these revisions.
@@ -3313,11 +3336,16 @@ class RevisionStore implements RevisionFactory, RevisionLookup, LoggerAwareInter
 		}
 
 		$dbr = $this->getReplicaConnection();
-		$conds = [
-			'rev_page' => $pageId,
-			$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_TEXT ) . ' = 0',
-			...$this->getRevisionLimitConditions( $dbr, $old, $new, $options ),
-		];
+		$where = [ 'rev_page' => $pageId ];
+		// If $options is a string, convert it to an array
+		$options = (array)$options;
+		if ( !in_array( self::INCLUDE_DELETED_REVISIONS, $options ) ) {
+			$where[] = $dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_TEXT ) . " = 0";
+		}
+		$conds = array_merge(
+			$where,
+			$this->getRevisionLimitConditions( $dbr, $old, $new, $options )
+		);
 		if ( $max !== null ) {
 			return $dbr->newSelectQueryBuilder()
 				->select( '1' )

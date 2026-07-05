@@ -16,10 +16,9 @@ class ParsoidExt implements ExtensionModule {
 				[
 					'name' => 'source',
 					'handler' => [
-						'class' => SyntaxHighlight::class,
+						'class' => ParsoidSourceTagHandler::class,
 						'services' => [
-							'MainConfig',
-							'MainWANObjectCache',
+							'SyntaxHighlight.SyntaxHighlight',
 						],
 					],
 					'options' => [
@@ -33,10 +32,9 @@ class ParsoidExt implements ExtensionModule {
 				[
 					'name' => 'syntaxhighlight',
 					'handler' => [
-						'class' => SyntaxHighlight::class,
+						'class' => ParsoidTagHandler::class,
 						'services' => [
-							'MainConfig',
-							'MainWANObjectCache',
+							'SyntaxHighlight.SyntaxHighlight',
 						],
 					],
 					'options' => [

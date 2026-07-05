@@ -35,7 +35,6 @@ class Version extends Maintenance {
 			$this->fatalError( "MediaWiki version not defined or unknown" );
 		}
 
-		global $IP;
 		$contentLang = $this->getServiceContainer()->getContentLanguage();
 
 		$version = MW_VERSION;
@@ -44,12 +43,12 @@ class Version extends Maintenance {
 
 		// See: https://www.mediawiki.org/wiki/Topic:U4u94htjqupsosea
 		if ( $strictVersion >= '1.19' ) {
-			$x = (float)explode( '.', $strictVersion )[1];
+			$x = (int)explode( '.', $strictVersion )[1];
 			$isLTS = ( $x - 19 ) % 4 === 0;
 		}
 
 		// Get build date and append if available
-		$gitInfo = new GitInfo( $IP );
+		$gitInfo = new GitInfo( MW_INSTALL_PATH );
 		$gitHeadCommitDate = $gitInfo->getHeadCommitDate();
 		$buildDate = $contentLang->timeanddate( (string)$gitHeadCommitDate, true );
 

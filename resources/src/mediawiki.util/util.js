@@ -1022,20 +1022,20 @@ const util = {
 				// where <name*> could be the filename, 'thumbnail.<ext>' (for long filenames)
 				// or the base-36 SHA1 of the filename.
 
-				/\/[\da-f]\/[\da-f]{2}\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})(\.[^\s/]+)?$/,
+				/\/[\da-f]\/[\da-f]{2}\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})(?:\.[^\s/?]+)?(?:\?[^\s]+)?$/,
 
 				// Full size images
 				// /<hash prefix>/<name>
-				/\/[\da-f]\/[\da-f]{2}\/([^\s/]+)$/,
+				/\/[\da-f]\/[\da-f]{2}\/([^\s/?]+)(?:\?[^\s]+)?$/,
 
 				// Thumbnails in non-hashed upload directories
 				// /<name>/[<options>-]<width>-<name*>[.<ext>]
 
-				/\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})[^\s/]*$/,
+				/\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})[^\s/?]*(?:\?[^\s]+)?$/,
 
 				// Full-size images in non-hashed upload directories
 				// /<name>
-				/\/([^\s/]+)$/
+				/\/([^\s/?]+)(?:\?[^\s]+)?$/
 			];
 			for ( let i = 0; i < regexes.length; i++ ) {
 				const match = url.match( regexes[ i ] );
@@ -1083,12 +1083,15 @@ const util = {
 	 *
 	 * This logic is duplicated server-side in File::adjustThumbWidthForSteps.
 	 *
-	 * @param {number} thumbWidth target width in pixels
-	 * @param {number} originalWidth original file width
+	 * @param {number} thumbWidth Target width in pixels
+	 * @param {number} originalWidth Original file width
+	 * @param {boolean} isVectorized whether the image is svg or similar
+	 * @return {number} Adjusted thumbnail width in pixels
 	 */
 	adjustThumbWidthForSteps(
 		thumbWidth,
-		originalWidth
+		originalWidth,
+		isVectorized = false
 	) {
 		const steps = config.ThumbnailSteps;
 		const ratio = config.ThumbnailStepsRatio;
@@ -1101,7 +1104,7 @@ const util = {
 		// for content generation and should be ok to ignore client-side.
 
 		for ( const widthStep of steps ) {
-			if ( widthStep > originalWidth ) {
+			if ( widthStep > originalWidth && !isVectorized ) {
 				// Round up to original width if there is no step between
 				// desired thumb width & original file width
 				return originalWidth;

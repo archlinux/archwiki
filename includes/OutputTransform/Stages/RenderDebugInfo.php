@@ -28,11 +28,11 @@ class RenderDebugInfo extends ContentTextTransformStage {
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
-	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
+	public function shouldRun( ParserOutput $po, ParserOptions $popts, array $options = [] ): bool {
 		return $options['includeDebugInfo'] ?? false;
 	}
 
-	protected function transformText( string $text, ParserOutput $po, ?ParserOptions $popts, array &$options ): string {
+	protected function transformText( string $text, ParserOutput $po, ParserOptions $popts, array &$options ): string {
 		$debugInfo = $this->debugInfo( $po );
 		return $text . $debugInfo;
 	}
@@ -57,6 +57,10 @@ class RenderDebugInfo extends ContentTextTransformStage {
 				$limitReport .= "Cache expiry: {$limitReportData['cachereport-ttl']}\n";
 			}
 
+			if ( array_key_exists( 'cachereport-expiry-source', $limitReportData ) ) {
+				$limitReport .= "Cache expiry source: {$limitReportData['cachereport-expiry-source']}\n";
+			}
+
 			if ( array_key_exists( 'cachereport-transientcontent', $limitReportData ) ) {
 				$transient = $limitReportData['cachereport-transientcontent'] ? 'true' : 'false';
 				$limitReport .= "Reduced expiry: $transient\n";
@@ -70,6 +74,7 @@ class RenderDebugInfo extends ContentTextTransformStage {
 					'cachereport-origin',
 					'cachereport-timestamp',
 					'cachereport-ttl',
+					'cachereport-expiry-source',
 					'cachereport-transientcontent',
 					'limitreport-timingprofile',
 				] ) ) {
@@ -109,13 +114,20 @@ class RenderDebugInfo extends ContentTextTransformStage {
 			}
 		}
 
+		$renderId = $po->getRenderId();
+		if ( $renderId ) {
+			// Ensure render ID doesn't randomly contain `-->`
+			$renderId = htmlspecialchars( $renderId );
+			$text .= "\n<!-- Render ID " . $renderId . " -->\n";
+		}
+
 		if ( $po->getCacheMessage() ) {
 			$text .= "\n<!-- " . $po->getCacheMessage() . "\n -->\n";
 		}
 
 		$parsoidVersion = $po->getExtensionData( 'core:parsoid-version' );
 		if ( $parsoidVersion ) {
-			$text .= "\n<!--Parsoid $parsoidVersion-->\n";
+			$text .= "\n<!-- Parsoid $parsoidVersion -->\n";
 		}
 
 		return $text;

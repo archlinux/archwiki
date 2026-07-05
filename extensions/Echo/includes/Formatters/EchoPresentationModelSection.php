@@ -124,5 +124,3 @@ class EchoPresentationModelSection {
 		) );
 	}
 }
-
-class_alias( EchoPresentationModelSection::class, 'EchoPresentationModelSection' );

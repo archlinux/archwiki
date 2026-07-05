@@ -22,6 +22,7 @@
 	"cdx-table-pager-button-last-page": "അവസാന താൾ",
 	"cdx-table-pager-button-next-page": "അടുത്ത താൾ",
 	"cdx-table-pager-button-prev-page": "മുൻപത്തെ താൾ",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1| $1 ഇനം| $1 ഇനങ്ങൾ}}",
 	"cdx-table-pager-items-per-page-default": "ഓരോ പേജിലും ഫലങ്ങൾ",
 	"cdx-table-pagination-status-message-determinate-long": "$3-ന്റെ $1-$2 ഫലങ്ങൾ കാണിക്കുന്നു",
 	"cdx-table-pagination-status-message-determinate-short": "$3 ന്റെ $1-$2",

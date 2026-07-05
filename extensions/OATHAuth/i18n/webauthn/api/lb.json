@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Volvox"
+		]
+	},
+	"apihelp-oathauth-webauthn-param-func": "Numm vun der gewënschter Funktioun, déi ausgefouert soll ginn.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Authentifizéierungsinformatiounen."
+}

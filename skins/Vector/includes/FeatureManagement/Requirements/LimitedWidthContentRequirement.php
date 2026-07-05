@@ -33,11 +33,6 @@ use MediaWiki\Title\Title;
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
  */
 final class LimitedWidthContentRequirement implements Requirement {
-	private Config $config;
-	private ConfigHelper $configHelper;
-	private WebRequest $request;
-	private ?Title $title;
-
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
 	 * the overridable config is enabled for the current user and request.
@@ -48,15 +43,11 @@ final class LimitedWidthContentRequirement implements Requirement {
 	 * @param Title|null $title can be null in testing environment
 	 */
 	public function __construct(
-		Config $config,
-		ConfigHelper $configHelper,
-		WebRequest $request,
-		?Title $title = null
+		private readonly Config $config,
+		private readonly ConfigHelper $configHelper,
+		private readonly WebRequest $request,
+		private readonly ?Title $title = null,
 	) {
-		$this->config = $config;
-		$this->configHelper = $configHelper;
-		$this->title = $title;
-		$this->request = $request;
 	}
 
 	/**

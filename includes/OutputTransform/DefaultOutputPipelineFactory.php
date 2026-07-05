@@ -11,6 +11,7 @@ use MediaWiki\OutputTransform\Stages\AddWrapperDivClass;
 use MediaWiki\OutputTransform\Stages\DeduplicateStyles;
 use MediaWiki\OutputTransform\Stages\DeduplicateStylesDOM;
 use MediaWiki\OutputTransform\Stages\ExecutePostCacheTransformHooks;
+use MediaWiki\OutputTransform\Stages\ExpandRelativeAttrs;
 use MediaWiki\OutputTransform\Stages\ExpandToAbsoluteUrls;
 use MediaWiki\OutputTransform\Stages\ExtractBody;
 use MediaWiki\OutputTransform\Stages\HandleParsoidSectionLinks;
@@ -19,6 +20,7 @@ use MediaWiki\OutputTransform\Stages\HandleTOCMarkersDOM;
 use MediaWiki\OutputTransform\Stages\HandleTOCMarkersText;
 use MediaWiki\OutputTransform\Stages\HardenNFC;
 use MediaWiki\OutputTransform\Stages\HydrateHeaderPlaceholders;
+use MediaWiki\OutputTransform\Stages\ParsoidLanguageConverter;
 use MediaWiki\OutputTransform\Stages\ParsoidLocalization;
 use MediaWiki\OutputTransform\Stages\RenderDebugInfo;
 use Psr\Log\LoggerInterface;
@@ -46,9 +48,6 @@ class DefaultOutputPipelineFactory {
 			'services' => [
 				'UrlUtils',
 			],
-			'optional_services' => [
-				'MobileFrontend.Context',
-			],
 		],
 		'AddRedirectHeader' =>
 			AddRedirectHeader::class,
@@ -72,8 +71,41 @@ class DefaultOutputPipelineFactory {
 				'ContentLanguage',
 			],
 		],
-		// HandleParsoidSectionLinks and ParsoidLocalization are currently the only two DOM passes; we keep them
-		// adjacent to each other to be able to skip the DOM->text->DOM transformations
+		// The next five stages are all DOM-based passes. They are adjacent to each
+		// other to be able to skip unnecessary intermediate DOM->text->DOM transformations.
+		'ExpandRelativeAttrs' => [
+			'class' => ExpandRelativeAttrs::class,
+			'services' => [
+				'UrlUtils',
+				'ParsoidSiteConfig',
+				'TitleFormatter',
+			],
+			'optional_services' => [
+				'MobileFrontend.Context',
+			],
+		],
+		// Messages in the user language are already localized to
+		// every variant separately, and don't need to be language
+		// converted.  Therefore, the LanguageConverter pass should be
+		// done before HandleSectionLinks so we don't language-convert
+		// the skin's section edit links (which are in user-interface
+		// language/variant) and before ParsoidLocalization so we
+		// don't try to convert messages which are already in the
+		// user's preferred variant (T416104).  This should also precede
+		// HandleTOCMarkers since we are going to localize the TOC
+		// at the end of this stage, whether or not language conversion
+		// was performed.
+		'ParsoidLanguageConverter' => [
+			'class' => ParsoidLanguageConverter::class,
+			'services' => [
+				'ParsoidSiteConfig',
+				'LanguageFactory',
+				'LanguageConverterFactory',
+				'TitleFactory',
+				'UrlUtils',
+				'LinkBatchFactory',
+			]
+		],
 		'HandleSectionLinks' => [
 			'textStage' => [
 				'class' => HandleSectionLinks::class,
@@ -95,6 +127,7 @@ class DefaultOutputPipelineFactory {
 			'class' => ParsoidLocalization::class,
 			'services' => [
 				'TitleFactory',
+				'LanguageFactory',
 			]
 		],
 		'HandleTOCMarkers' => [
@@ -181,8 +214,6 @@ class DefaultOutputPipelineFactory {
 				];
 			}
 
-			// ObjectFactory::createObject accepts an array, not just a callable (phan bug)
-			// @phan-suppress-next-line PhanTypeInvalidCallableArrayKey
 			$transform = $this->objectFactory->createObject(
 				$spec,
 				[

@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.MWImageModel' );
+QUnit.module( 've.dm.MWImageModel', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

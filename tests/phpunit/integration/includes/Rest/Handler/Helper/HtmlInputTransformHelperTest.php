@@ -742,12 +742,11 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideOriginal() {
-		$unchangedPB = new HtmlPageBundle(
-			self::getTextFromFile( 'MainPage-original.html' ),
-			self::getJsonFromFile( 'MainPage-original.data-parsoid' ),
-			null,
-			Parsoid::defaultHTMLVersion()
-		);
+		$unchangedPB = HtmlPageBundle::newFromJsonArray( [
+			'html' => self::getTextFromFile( 'MainPage-original.html' ),
+			'parsoid' => self::getJsonFromFile( 'MainPage-original.data-parsoid' ),
+			'version' => Parsoid::defaultHTMLVersion(),
+		] );
 
 		$originalContent = new WikitextContent( 'Goats are great!' );
 		$selserContext = new SelserContext( $unchangedPB, 0, $originalContent );
@@ -948,14 +947,14 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		$html = self::getTextFromFile( 'MainPage-original.html' );
 		$dataParsoid = self::getJsonFromFile( 'MainPage-original.data-parsoid' );
 
-		$pb = new HtmlPageBundle(
-			$html,
-			$dataParsoid,
-			[],
-			$profileVersion,
-			$htmlHeaders,
-			CONTENT_MODEL_WIKITEXT
-		);
+		$pb = HtmlPageBundle::newFromJsonArray( [
+			'html' => $html,
+			'parsoid' => $dataParsoid,
+			'mw' => [],
+			'version' => $profileVersion,
+			'headers' => $htmlHeaders,
+			'contentmodel' => CONTENT_MODEL_WIKITEXT,
+		] );
 
 		$eTag = '"' . $page->getLatest() . '/just-a-test/edit"';
 
@@ -995,14 +994,14 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		$oldWikitext = 'Fake old wikitext';
 
 		$content = new WikitextContent( $oldWikitext );
-		$pb = new HtmlPageBundle(
-			$html,
-			$dataParsoid,
-			[],
-			$profileVersion,
-			$htmlHeaders,
-			CONTENT_MODEL_WIKITEXT
-		);
+		$pb = HtmlPageBundle::newFromJsonArray( [
+			'html' => $html,
+			'parsoid' => $dataParsoid,
+			'mw' => [],
+			'version' => $profileVersion,
+			'headers' => $htmlHeaders,
+			'contentmodel' => CONTENT_MODEL_WIKITEXT,
+		] );
 
 		// NOTE: Using 0 as the prefix in the ETag indicates that the content does
 		// not correspond to a saved revision. Since we don't have a revision
@@ -1200,6 +1199,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 					$this->getServiceContainer()->getParsoidDataAccess()
 				),
 				MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidSettings ),
+				$this->getServiceContainer()->getParsoidSiteConfig(),
 				$this->getServiceContainer()->getParsoidPageConfigFactory(),
 				$this->getServiceContainer()->getContentHandlerFactory()
 			] )

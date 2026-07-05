@@ -48,12 +48,12 @@ class Response implements ResponseInterface {
 	}
 
 	/** @inheritDoc */
-	public function getStatusCode() {
+	public function getStatusCode(): int {
 		return $this->statusCode;
 	}
 
 	/** @inheritDoc */
-	public function getReasonPhrase() {
+	public function getReasonPhrase(): string {
 		return $this->reasonPhrase;
 	}
 
@@ -67,32 +67,32 @@ class Response implements ResponseInterface {
 	}
 
 	/** @inheritDoc */
-	public function getProtocolVersion() {
+	public function getProtocolVersion(): string {
 		return $this->protocolVersion;
 	}
 
 	/** @inheritDoc */
-	public function getHeaders() {
+	public function getHeaders(): array {
 		return $this->headerContainer->getHeaders();
 	}
 
 	/** @inheritDoc */
-	public function hasHeader( $name ) {
+	public function hasHeader( string $name ): bool {
 		return $this->headerContainer->hasHeader( $name );
 	}
 
 	/** @inheritDoc */
-	public function getHeader( $name ) {
+	public function getHeader( string $name ): array {
 		return $this->headerContainer->getHeader( $name );
 	}
 
 	/** @inheritDoc */
-	public function getHeaderLine( $name ) {
+	public function getHeaderLine( string $name ): string {
 		return $this->headerContainer->getHeaderLine( $name );
 	}
 
 	/** @inheritDoc */
-	public function getBody() {
+	public function getBody(): StreamInterface {
 		return $this->body;
 	}
 
@@ -117,7 +117,7 @@ class Response implements ResponseInterface {
 	}
 
 	/** @inheritDoc */
-	public function setBody( StreamInterface $body ) {
+	public function setBody( StreamInterface|string $body ) {
 		$this->body = $body;
 	}
 

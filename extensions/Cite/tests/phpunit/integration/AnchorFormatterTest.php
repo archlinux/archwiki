@@ -23,13 +23,16 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			'cite&#95;ref-1',
-			$formatter->wikitextSafeBacklink( null, 1, 0 ) );
+			$formatter->wikitextSafeBacklink( null, 1, 0 )
+		);
 		$this->assertSame(
 			'cite&#95;ref-name&#95;2-0',
-			$formatter->wikitextSafeBacklink( 'name_', 2, 1 ) );
+			$formatter->wikitextSafeBacklink( 'name_', 2, 1 )
+		);
 		$this->assertSame(
 			'cite&#95;note-name-1',
-			$formatter->wikitextSafeNoteLink( 'name', 1 ) );
+			$formatter->wikitextSafeNoteLink( 'name', 1 )
+		);
 	}
 
 	/**

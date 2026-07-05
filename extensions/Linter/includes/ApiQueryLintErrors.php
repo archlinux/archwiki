@@ -29,15 +29,12 @@ use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 class ApiQueryLintErrors extends ApiQueryBase {
-	private CategoryManager $categoryManager;
-
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,
-		CategoryManager $categoryManager
+		private readonly CategoryManager $categoryManager,
 	) {
 		parent::__construct( $queryModule, $moduleName, 'lnt' );
-		$this->categoryManager = $categoryManager;
 	}
 
 	public function execute() {

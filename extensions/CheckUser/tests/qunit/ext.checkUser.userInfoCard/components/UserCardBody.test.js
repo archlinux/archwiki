@@ -1,7 +1,7 @@
 'use strict';
 
 const { shallowMount } = require( 'vue-test-utils' );
-const UserCardBody = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserCardBody.vue' );
+const UserCardBody = require( 'ext.checkUser.userInfoCard/components/UserCardBody.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserCardBody', QUnit.newMwEnvironment( {
 	beforeEach: function () {
@@ -526,9 +526,13 @@ QUnit.test.each( 'should correctly display range, min, and max for temp accounts
 		{ tempAccountsOnIpCount: [ 1, 2 ], username: '~2025-1' },
 		'(checkuser-temporary-account-bucketcount-range: 1, 2)'
 	],
-	max: [
+	exact: [
 		{ tempAccountsOnIpCount: [ 11, 11 ], username: '~2025-1' },
-		'(checkuser-temporary-account-bucketcount-max: 11, 11)'
+		'(checkuser-temporary-account-bucketcount-min: 11, 11)'
+	],
+	max: [
+		{ tempAccountsOnIpCount: [ 101, 101 ], username: '~2025-1' },
+		'(checkuser-temporary-account-bucketcount-max: 101, 101)'
 	]
 }, ( assert, [ props, expectedString ] ) => {
 	const wrapper = mountComponent( props );
@@ -548,6 +552,45 @@ QUnit.test( 'temporary accounts on ip count doesn\'t display for registered user
 		findRowByLabel( wrapper, 'checkuser-userinfocard-temporary-account-bucketcount' ),
 		undefined
 	);
+} );
+
+QUnit.test( 'renders suggested investigations row when permission is granted and count > 0', ( assert ) => {
+	mw.config.set( 'wgCheckUserCanViewSuggestedInvestigations', true );
+	const wrapper = mountComponent( { suggestedInvestigationsCaseCount: 5 } );
+
+	const row = findRowByLabel( wrapper, 'checkuser-userinfocard-suggested-investigations' );
+	assert.true( row !== undefined, 'Suggested investigations row exists' );
+	assert.strictEqual(
+		row.props( 'mainValue' ),
+		'5',
+		'Suggested investigations row has correct main value'
+	);
+	assert.strictEqual(
+		row.props( 'mainLink' ),
+		'/-1/SuggestedInvestigations?username=TestUser&hideCasesWithNoUserEdits=0',
+		'Suggested investigations row has correct link'
+	);
+	assert.strictEqual(
+		row.props( 'mainLinkLogId' ),
+		'suggested_investigations',
+		'Suggested investigations row has correct log ID'
+	);
+} );
+
+QUnit.test( 'does not render suggested investigations row when permission is not granted', ( assert ) => {
+	mw.config.set( 'wgCheckUserCanViewSuggestedInvestigations', false );
+	const wrapper = mountComponent( { suggestedInvestigationsCaseCount: 5 } );
+
+	const row = findRowByLabel( wrapper, 'checkuser-userinfocard-suggested-investigations' );
+	assert.strictEqual( row, undefined, 'Suggested investigations row does not exist without permission' );
+} );
+
+QUnit.test( 'does not render suggested investigations row when count is zero', ( assert ) => {
+	mw.config.set( 'wgCheckUserCanViewSuggestedInvestigations', true );
+	const wrapper = mountComponent( { suggestedInvestigationsCaseCount: 0 } );
+
+	const row = findRowByLabel( wrapper, 'checkuser-userinfocard-suggested-investigations' );
+	assert.strictEqual( row, undefined, 'Suggested investigations row does not exist when count is zero' );
 } );
 
 // TODO: T386440 - Fix the test and remove the skip

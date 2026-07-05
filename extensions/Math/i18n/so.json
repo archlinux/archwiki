@@ -113,5 +113,7 @@
 	"math-wikibase-special-form-button": "Codsi macluumaad",
 	"math-wikibase-special-error-header": "Khalad",
 	"math-wikibase-special-error-invalid-argument": "Aqoonsiga Wikibase ee aad sheegtay ma jiro.",
-	"math-wikibase-special-error-unknown": "Khalad aan la aqoon ayaa dhacay markii xog laga soo qaaday Wikibase."
+	"math-wikibase-special-error-unknown": "Khalad aan la aqoon ayaa dhacay markii xog laga soo qaaday Wikibase.",
+	"math-editpage-insert-inline": "Qaacidada xisaabta (gudaha safka)",
+	"math-editpage-insert-block": "Qaacidada xisaabta (xanibaad)"
 }

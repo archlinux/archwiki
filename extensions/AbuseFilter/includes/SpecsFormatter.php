@@ -4,21 +4,17 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
-use MessageLocalizer;
 
 /**
  * @todo Improve this once DI around Message objects is improved in MW core.
  */
 class SpecsFormatter {
-	public const SERVICE_NAME = 'AbuseFilterSpecsFormatter';
+	public const SERVICE_NAME = ServiceNames::SpecsFormatter;
 
-	/** @var MessageLocalizer */
-	private $messageLocalizer;
-
-	public function __construct( MessageLocalizer $messageLocalizer ) {
-		$this->messageLocalizer = $messageLocalizer;
+	public function __construct( private MessageLocalizer $messageLocalizer ) {
 	}
 
 	public function setMessageLocalizer( MessageLocalizer $messageLocalizer ): void {

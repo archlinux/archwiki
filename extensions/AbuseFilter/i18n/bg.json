@@ -339,7 +339,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Нормализиране на HTML единиците в уникод знаци ($1)",
 	"abusefilter-edit-builder-group-vars": "Променливи",
 	"abusefilter-edit-builder-vars-timestamp": "Дата и час на редакцията ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Име на сметката при създаването ѝ ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Име на сметката при създаването ѝ ($1)",
 	"abusefilter-edit-builder-vars-action": "Действие ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Брой добавени редове в редакцията ($1)",
 	"abusefilter-edit-builder-vars-delta": "Промяна в обема при редакция ($1)",

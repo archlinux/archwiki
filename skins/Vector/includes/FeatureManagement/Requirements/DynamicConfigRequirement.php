@@ -67,12 +67,6 @@ use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
  */
 final class DynamicConfigRequirement implements Requirement {
 
-	private Config $config;
-
-	private string $configName;
-
-	private string $requirementName;
-
 	/**
 	 * @param Config $config
 	 * @param string $configName Any `Config` key. This name is used to query `$config` state. E.g.,
@@ -81,10 +75,11 @@ final class DynamicConfigRequirement implements Requirement {
 	 *   This name _usually_ matches the `$configName` parameter for simplicity but allows for
 	 *   abstraction as needed. See `Requirement->getName()`.
 	 */
-	public function __construct( Config $config, string $configName, string $requirementName ) {
-		$this->config = $config;
-		$this->configName = $configName;
-		$this->requirementName = $requirementName;
+	public function __construct(
+		private readonly Config $config,
+		private readonly string $configName,
+		private readonly string $requirementName,
+	) {
 	}
 
 	/**

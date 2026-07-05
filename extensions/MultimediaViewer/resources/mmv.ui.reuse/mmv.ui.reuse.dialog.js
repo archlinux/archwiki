@@ -73,9 +73,6 @@ class ReuseDialog extends Dialog {
 	 */
 	openDialog() {
 		super.openDialog();
-
-		this.$warning.insertAfter( this.$container );
-
 		$( document ).trigger( 'mmv-reuse-opened' );
 	}
 

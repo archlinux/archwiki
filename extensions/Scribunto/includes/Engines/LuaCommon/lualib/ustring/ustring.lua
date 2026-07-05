@@ -946,7 +946,30 @@ function ustring.gsub( s, pattern, repl, n )
 	checkString( 'gsub', s )
 	checkPattern( 'gsub', pattern )
 	checkType( 'gsub', 4, n, 'number', true )
-	if patternIsSimple( pattern ) then
+	local function replacementHasInvalidPercentSequence( replacement )
+		local i = 1
+		while true do
+			local p = S.find( replacement, '%', i, true )
+			if not p then
+				return false
+			end
+			local c = S.sub( replacement, p + 1, p + 1 )
+			if c == '' then
+				return true
+			end
+			if c ~= '%' and not S.find( c, '[0-9]' ) then
+				return true
+			end
+			i = p + 2
+		end
+	end
+
+	local fastPathAllowed = true
+	if type( repl ) == 'string' or type( repl ) == 'number' then
+		fastPathAllowed = not replacementHasInvalidPercentSequence( tostring( repl ) )
+	end
+
+	if fastPathAllowed and patternIsSimple( pattern ) then
 		local ret = { pcall( S.gsub, s, pattern, repl, n ) }
 		if ret[1] then
 			return unpack( ret, 2 )
@@ -1037,7 +1060,11 @@ function ustring.gsub( s, pattern, repl, n )
 				["%9"] = m[11],
 				["%%"] = "%"
 			}
-			val = S.gsub( repl, '%%[%%0-9]', t )
+			-- Use a function to handle unrecognized % sequences as literals
+			-- and properly handle trailing % without inserting null byte
+			val = S.gsub( repl, '%%[%%0-9]?', function ( cap )
+				return t[cap] or cap
+			end )
 		end
 		valType = type( val )
 		if valType ~= 'nil' and valType ~= 'string' and valType ~= 'number' then

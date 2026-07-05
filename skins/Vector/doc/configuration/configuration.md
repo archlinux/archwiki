@@ -80,12 +80,6 @@ Do not rely on any of the feature flags documented here. They should not be cons
 
   - Removal ticket: [https://phabricator.wikimedia.org/T179159](https://phabricator.wikimedia.org/T179159)
 
-- wgVectorNightMode
-
-  - Enables the night mode feature in client preferences
-
-  - Removal ticket: [https://phabricator.wikimedia.org/T179159](https://phabricator.wikimedia.org/T179159)
-
 - wgVectorResponsive
 
   - Enables an experimental responsive version of the Vector 2022 skin.
@@ -120,6 +114,12 @@ Different projects have different needs, so some configuration on the site level
   - Controls language display in the header for the Vector skin. When disabled languaged appear in the sidebar.
 
   - Configurable for different wikis. This is currently used on projects like Wikimedia Commons, MediaWiki and Wikidata which do not have separate language sites.
+
+- wgVectorLanguageInMainMenu
+
+  - When enabled languaged appear in the sidebar regardless of value of wgVectorLanguageInHeader.
+
+  - This configuration is unstable and strictly for use in Russian Wikipedia only.
 
 - wgVectorTypeahead
 

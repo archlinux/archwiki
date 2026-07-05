@@ -272,6 +272,7 @@ class ContentSecurityPolicy {
 			$directives[] = 'object-src ' . implode( ' ', $objectSrc );
 		}
 		if ( $reportUri ) {
+			$directives[] = 'report-to ' . $reportUri;
 			$directives[] = 'report-uri ' . $reportUri;
 		}
 
@@ -318,17 +319,18 @@ class ContentSecurityPolicy {
 	 * @return string|bool Converted url or false on failure
 	 */
 	private function prepareUrlForCSP( $url ) {
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 		$result = false;
 		if ( preg_match( '/^[a-z][a-z0-9+.-]*:$/i', $url ) ) {
 			// A schema source (e.g. blob: or data:)
 			return $url;
 		}
-		$bits = wfGetUrlUtils()->parse( $url );
+		$bits = $urlUtils->parse( $url );
 		if ( !$bits && !str_contains( $url, '/' ) ) {
 			// probably something like example.com.
 			// try again protocol-relative.
 			$url = '//' . $url;
-			$bits = wfGetUrlUtils()->parse( $url );
+			$bits = $urlUtils->parse( $url );
 		}
 		if ( $bits && isset( $bits['host'] )
 			&& $bits['host'] !== $this->mwConfig->get( MainConfigNames::ServerName )

@@ -153,10 +153,10 @@ ve.dm.example.code = { type: 'textStyle/code', attributes: { nodeName: 'code' } 
 ve.dm.example.tt = { type: 'textStyle/code', attributes: { nodeName: 'tt' } };
 ve.dm.example.strong = { type: 'textStyle/bold', attributes: { nodeName: 'strong' } };
 ve.dm.example.link = function ( href ) {
-	return { type: 'link', attributes: { href: href } };
+	return { type: 'link', attributes: { href } };
 };
 ve.dm.example.language = function ( lang, dir, nodeName ) {
-	return { type: 'meta/language', attributes: { nodeName: nodeName || 'span', lang: lang, dir: dir } };
+	return { type: 'meta/language', attributes: { nodeName: nodeName || 'span', lang, dir } };
 };
 ve.dm.example.boldWithStyle = ve.extendObject( {}, ve.dm.example.bold, { originalDomElements: $.parseHTML( '<b style="color:red;" />' ) } );
 
@@ -176,13 +176,13 @@ ve.dm.example.annHash = function ( tagName ) {
  *
  * Tests using this should mock ve.init.platform.generateUniqueId to return a stable value.
  *
- * @param {string|null} [source=null]
+ * @param {Object|null} [source=null]
  * @return {Object}
  */
 ve.dm.example.getImportedAnnotation = ( source = null ) => ( {
 	type: 'meta/importedData',
 	attributes: {
-		source: source,
+		source,
 		eventId: ve.init.platform.generateUniqueId()
 	}
 } );
@@ -194,7 +194,7 @@ ve.dm.example.underlineHash = 'hf214c680fbc361da';
 ve.dm.example.strongHash = 'ha5aaf526d1c3af54';
 
 ve.dm.example.inlineSlug = '<span class="ve-ce-branchNode-slug ve-ce-branchNode-inlineSlug"></span>';
-ve.dm.example.blockSlug = '<div class="ve-ce-branchNode-slug ve-ce-branchNode-blockSlug"></div>';
+ve.dm.example.blockSlug = '<div class="ve-ce-branchNode-slug ve-ce-branchNode-blockSlug ve-ce-surface-interface"></div>';
 
 ve.dm.example.ceParagraph = '<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">';
 ve.dm.example.ceWrapperParagraph = '<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode ve-ce-generated-wrapper">';
@@ -202,7 +202,10 @@ ve.dm.example.ceWrapperParagraph = '<p class="ve-ce-branchNode ve-ce-contentBran
 ve.dm.example.textStyleClasses = 've-ce-annotation ve-ce-textStyleAnnotation';
 
 ve.dm.example.commentNodePreview = function ( text ) {
-	return '<span class="ve-ce-leafNode ve-ce-focusableNode ve-ce-commentNode ve-ce-focusableNode-invisible" contenteditable="false" title="' + text + '">' +
+	return '<span class="ve-ce-leafNode ve-ce-focusableNode ve-ce-commentNode ve-ce-focusableNode-invisible ve-ce-surface-interface" contenteditable="false" title="' + text + '">' +
+		// We call setLabel after the constructor to match the CSS class
+		// order we get from a real focusable node.
+		// eslint-disable-next-line mediawiki/no-unlabeled-buttonwidget
 		( new OO.ui.ButtonWidget( {
 			// Copied from ve.ce.FocusableNode#createInvisibleIcon
 			classes: [ 've-ce-focusableNode-invisibleIcon' ],
@@ -689,9 +692,9 @@ ve.dm.example.internalData = [
 ve.dm.example.references = [
 	// 0
 	{ type: 'paragraph' },
-	{ type: 'stubReference', attributes: { listKey: 'literal/:3', listGroup: 'g1' } },
+	{ type: 'stubReference', attributes: { listGroup: 'g1', listKey: 'literal/:3', listIndex: 0 } },
 	{ type: '/stubReference' },
-	{ type: 'stubReference', attributes: { listGroup: 'g2' } },
+	{ type: 'stubReference', attributes: { listGroup: 'g2', listKey: 'auto/0', listIndex: 1 } },
 	{ type: '/stubReference' },
 	{ type: '/paragraph' },
 	// 6
@@ -2700,6 +2703,17 @@ ve.dm.example.domToDataCases = {
 			{ type: '/internalList' }
 		],
 		fromDataBody: '<p><b>xx</b></p>'
+	},
+	'link with unmatched rel': {
+		body: '<a href="http://example.org" rel="noopener">Foo</a>',
+		data: [
+			{ type: 'paragraph', internal: { generated: 'wrapper' } },
+			...ve.dm.example.annotateText( 'Foo', ve.dm.example.link( 'http://example.org' ) ),
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		],
+		fromDataBody: '<a href="http://example.org">Foo</a>'
 	},
 	'plain href-less anchors (e.g. on paste) are converted to spans': {
 		body: '<a name="foo">ab</a>',

@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
-use MediaWiki\CheckUser\Services\CheckUserUserInfoCardService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserUserInfoCardService;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
@@ -23,15 +23,10 @@ class UserInfoHandler extends SimpleHandler {
 
 	private const USERNAME_PARAM_NAME = 'username';
 
-	private CheckUserUserInfoCardService $userInfoCardService;
-	private UserFactory $userFactory;
-
 	public function __construct(
-		CheckUserUserInfoCardService $userInfoCardService,
-		UserFactory $userFactory
+		private readonly CheckUserUserInfoCardService $userInfoCardService,
+		private readonly UserFactory $userFactory,
 	) {
-		$this->userInfoCardService = $userInfoCardService;
-		$this->userFactory = $userFactory;
 	}
 
 	/**

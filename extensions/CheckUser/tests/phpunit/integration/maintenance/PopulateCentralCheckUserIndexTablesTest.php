@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
@@ -14,14 +14,14 @@ use MediaWiki\User\UserIdentityValue;
 use Wikimedia\IPUtils;
 
 /**
- * @covers \MediaWiki\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables
  * @group CheckUser
  * @group Database
  */
 class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase implements CheckUserQueryInterface {
 
 	use CheckUserTempUserTestTrait;
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -49,7 +49,11 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 	}
 
 	private function getTestingRowForTable(
-		string $table, UserIdentity $performer, string $ip, string $timestamp, int $oldId = 0
+		string $table,
+		UserIdentity $performer,
+		string $ip,
+		string $timestamp,
+		int $oldId = 0
 	): array {
 		if ( $table !== self::CHANGES_TABLE && $oldId !== 0 ) {
 			$this->fail( 'No table other than cu_changes can contain an revision ID' );
@@ -61,7 +65,6 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 		$row = [
 			$columnAlias . 'actor' => $actorStore->acquireActorId( $performer, $this->getDb() ),
 			$columnAlias . 'timestamp' => $this->getDb()->timestamp( $timestamp ),
-			$columnAlias . 'ip' => IPUtils::sanitizeIP( $ip ),
 			$columnAlias . 'ip_hex' => IPUtils::toHex( $ip ),
 		];
 
@@ -98,35 +101,41 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $testUser2, '1.2.3.3', '20200101000002', 103 ),
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $testUser2, '1.2.3.3', '20200101001000' ),
 			$this->getTestingRowForTable(
-				self::CHANGES_TABLE, $testUser2, '2001:0db8:85a3:0000:0000:8a2e:0370:7334', '20200101001000'
+				self::CHANGES_TABLE,
+				$testUser2,
+				'2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+				'20200101001000'
 			),
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $temporaryUser, '1.2.3.5', '20200101001100' ),
 			// Add rows which should be imported to both central indexes
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $temporaryUser, '1.2.3.4', '20200101001100', 123 ),
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $temporaryUser, '1.2.3.5', '20200101001200', 124 ),
 			$this->getTestingRowForTable(
-				self::CHANGES_TABLE, $temporaryUser, '2001:0db8:85a3:0000:0000:8a2e:0370:7334', '20200101001300', 187
+				self::CHANGES_TABLE,
+				$temporaryUser,
+				'2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+				'20200101001300',
+				187
 			),
 			// Add rows which should not be imported to the central index (because they are anon users or bots)
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $botUser, '2.3.4.5', '20240506070809', 106 ),
 			$this->getTestingRowForTable( self::CHANGES_TABLE, $anonUser, $anonUser->getName(), '20240506070810', 107 ),
 		];
 
-		$rows = array_map( static function ( $row ) {
-			return array_merge( [
-				'cuc_type'       => RC_EDIT,
-				'cuc_agent'      => 'foo user agent',
-				'cuc_namespace'  => NS_MAIN,
-				'cuc_title'      => 'Foo_Page',
-				'cuc_minor'      => 0,
-				'cuc_page_id'    => 1,
-				'cuc_xff'        => 0,
-				'cuc_xff_hex'    => null,
-				'cuc_comment_id' => 0,
-				'cuc_last_oldid' => 0,
-				'cuc_this_oldid' => 0,
-			], $row );
-		}, $testData );
+		$rows = array_map( static fn ( $row ) => [
+			'cuc_type'       => RC_EDIT,
+			'cuc_agent_id'   => 0,
+			'cuc_namespace'  => NS_MAIN,
+			'cuc_title'      => 'Foo_Page',
+			'cuc_minor'      => 0,
+			'cuc_page_id'    => 1,
+			'cuc_xff'        => 0,
+			'cuc_xff_hex'    => null,
+			'cuc_comment_id' => 0,
+			'cuc_last_oldid' => 0,
+			'cuc_this_oldid' => 0,
+			...$row,
+		], $testData );
 
 		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'cu_changes' )
@@ -141,7 +150,10 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			$this->getTestingRowForTable( self::LOG_EVENT_TABLE, $testUser1, '1.2.3.5', '20220101000000' ),
 			$this->getTestingRowForTable( self::LOG_EVENT_TABLE, $testUser2, '1.2.3.6', '20220109000000' ),
 			$this->getTestingRowForTable(
-				self::LOG_EVENT_TABLE, $testUser2, '2001:0db8:85a3:0000:0000:8a2e:0370:7334', '20200101001000'
+				self::LOG_EVENT_TABLE,
+				$testUser2,
+				'2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+				'20200101001000'
 			),
 			$this->getTestingRowForTable( self::LOG_EVENT_TABLE, $temporaryUser, '1.2.3.7', '20240109000000' ),
 			// Add rows which should not be imported to the central index (because they are anon users or bots)
@@ -149,13 +161,12 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			$this->getTestingRowForTable( self::LOG_EVENT_TABLE, $anonUser, $anonUser->getName(), '20240506070810' ),
 		];
 
-		$rows = array_map( static function ( $row ) {
-			return array_merge( [
-				'cule_xff'     => 0,
-				'cule_xff_hex' => null,
-				'cule_agent'   => 'foo user agent',
-			], $row );
-		}, $testData );
+		$rows = array_map( static fn ( $row ) => [
+			'cule_xff' => 0,
+			'cule_xff_hex' => null,
+			'cule_agent_id' => 0,
+			...$row,
+		], $testData );
 
 		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'cu_log_event' )
@@ -169,26 +180,30 @@ class PopulateCentralCheckUserIndexTablesTest extends MaintenanceBaseTestCase im
 			$this->getTestingRowForTable( self::PRIVATE_LOG_EVENT_TABLE, $testUser1, '1.2.3.4', '20200104000000' ),
 			$this->getTestingRowForTable( self::PRIVATE_LOG_EVENT_TABLE, $testUser1, '1.2.3.5', '20220101000000' ),
 			$this->getTestingRowForTable(
-				self::PRIVATE_LOG_EVENT_TABLE, $testUser1, '2001:0db8:85a3:0000:0000:8a2e:0370:7334', '20200101001000'
+				self::PRIVATE_LOG_EVENT_TABLE,
+				$testUser1,
+				'2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+				'20200101001000'
 			),
 			$this->getTestingRowForTable( self::PRIVATE_LOG_EVENT_TABLE, $testUser2, '1.2.3.6', '20220109000000' ),
 			$this->getTestingRowForTable( self::PRIVATE_LOG_EVENT_TABLE, $temporaryUser, '1.2.3.7', '20230109000002' ),
 			// Add rows which should not be imported to the central index (because they are anon users or bots)
 			$this->getTestingRowForTable( self::PRIVATE_LOG_EVENT_TABLE, $botUser, '2.3.4.5', '20230506070809' ),
 			$this->getTestingRowForTable(
-				self::PRIVATE_LOG_EVENT_TABLE, $anonUser, $anonUser->getName(), '20250506070810'
+				self::PRIVATE_LOG_EVENT_TABLE,
+				$anonUser,
+				$anonUser->getName(),
+				'20250506070810'
 			),
 		];
 
-		$rows = array_map( static function ( $row ) {
-			return array_merge( [
-				'cupe_agent'   => 'foo user agent',
-				'cupe_xff'     => 0,
-				'cupe_xff_hex' => null,
-				'cupe_params'  => '',
-				'cupe_private' => '',
-			], $row );
-		}, $testData );
+		$rows = array_map( static fn ( $row ) => [
+			'cupe_agent_id' => 0,
+			'cupe_xff' => 0,
+			'cupe_xff_hex' => null,
+			'cupe_params' => '',
+			...$row,
+		], $testData );
 
 		$this->getDb()->newInsertQueryBuilder()
 			->insertInto( 'cu_private_event' )

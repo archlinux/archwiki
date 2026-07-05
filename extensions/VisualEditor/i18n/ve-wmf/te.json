@@ -12,6 +12,9 @@
 			"రహ్మానుద్దీన్"
 		]
 	},
+	"tag-editsuggestion-seen": "దిద్దుబాటు సూచనను చూసారు",
+	"tag-editsuggestion-seen-description": "వాడుకరి కనీసం ఒక్క దిద్దుబాటు సూచననైనా చూసారు",
+	"tag-editsuggestion-used": "దిద్దుబాటు సూచనను పాటించారు",
 	"tag-visualeditor": "విజువల్ ఎడిటర్ ద్వారా సవరణ",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|విజువల్ ఎడిటర్]] వాడి చేసిన మార్పు",
 	"tag-visualeditor-needcheck": "విజువల్ ఎడిటర్:తనిఖీ",

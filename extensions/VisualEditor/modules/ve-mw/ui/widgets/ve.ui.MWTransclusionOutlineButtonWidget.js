@@ -1,6 +1,6 @@
 /**
  * Generic button-like widget for top-level parts in the template dialog
- * sidebar. See {@see OO.ui.ButtonWidget} for inspiration.
+ * sidebar. See {@link OO.ui.ButtonWidget} for inspiration.
  *
  * @class
  * @extends OO.ui.OptionWidget
@@ -60,7 +60,7 @@ ve.ui.MWTransclusionOutlineButtonWidget.static.pressable = false;
 
 /**
  * @event ve.ui.MWTransclusionOutlineButtonWidget#keyPressed
- * @param {number} key Typically one of the {@see OO.ui.Keys} constants
+ * @param {number} key Typically one of the {@link OO.ui.Keys} constants
  */
 
 /**

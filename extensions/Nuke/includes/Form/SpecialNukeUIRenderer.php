@@ -54,8 +54,8 @@ abstract class SpecialNukeUIRenderer {
 	 * {@link IContextSource::getOutput output} in
 	 * {@link NukeContext::getRequestContext $this->context->getRequestContext}.
 	 *
-	 * @param array{0:Title,1:string|false,2?:string,3?:Title}[][] $pageGroups An array of page title-actor
-	 * *   name pairs.
+	 * @param array<array<int,array{0:Title,1:string|false,2?:string,3?:Title}>> $pageGroups An array of page
+	 *     title-actor name pairs.
 	 * @param bool $hasExcludedResults Whether some results had to be excluded due to the
 	 *   user-defined limit
 	 * @param string[] $searchNotices An array of i18n strings to provide as notices to show the user with the results
@@ -75,10 +75,9 @@ abstract class SpecialNukeUIRenderer {
 	 * user. Directly modifies the {@link IContextSource::getOutput output} in
 	 * {@link NukeContext::getRequestContext $this->context->getRequestContext}.
 	 *
-	 * @param (Status|string|boolean)[] $deletedPageStatuses The status for each page queued for
+	 * @param array<string,Status|string> $deletedPageStatuses The status for each page queued for
 	 *   deletion. Can be either `"job"` to indicate that the page was queued for deletion, a
-	 *   {@link Status} to indicate if the page was successfully deleted, or `false` if the user
-	 *   did not select the page for deletion.
+	 *   {@link Status} to indicate if the page was successfully deleted.
 	 * @return void
 	 */
 	abstract public function showResultPage( array $deletedPageStatuses ): void;

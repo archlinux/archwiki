@@ -61,6 +61,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Supprimer plus de pages]]",
 	"nuke-deletemore": "Supprimer plus de pages",
 	"nuke-pattern": "Patron au format SQL LIKE (par ex. %) pour le nom de page :",
+	"nuke-pattern-leading-wildcard": "Le motif ne peut pas commencer par <code>%</code> . Veuillez fournir un préfixe avant le caractère générique (par exemple <code>Exemple%</code> au lieu de <code>%Exemple</code>).",
 	"nuke-nolist": "Avant de continuer, commencez d'abord par « {{int:nuke-submit-list}} » puis sélectionnez celles qui seront mises en file d’attente pour la suppression.",
 	"nuke-nopages-global": "Aucune page ne correspond à la recherche.",
 	"nuke-searchnotice-minmorethanmax": "La taille minimale en octets dépasse la taille maximale en octets, il est donc impossible qu'une page réponde à ce critère.",

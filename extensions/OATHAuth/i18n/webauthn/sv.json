@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Felba",
+			"Stefan2255",
+			"WikiPhoenix"
+		]
+	},
+	"oathauth-webauthn-module-label": "Säkerhetsnyckel",
+	"oathauth-webauthn-javascript-required": "JavaScript måste vara aktiverat i din webbläsare för att du ska kunna använda en säkerhetsnyckel.",
+	"oathauth-webauthn-ui-login-prompt": "Tryck på din säkerhetsnyckel eller följ instruktionerna från webbläsaren.",
+	"oathauth-webauthn-ui-add-key": "Lägg till nyckel",
+	"oathauth-webauthn-error-browser-unsupported": "Den här webbläsaren stöder inte autentisering med säkerhetsnycklar, eller så är det inte tillgängligt för den här webbplatsen. Försök med en annan webbläsare. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Läs mer]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Den här webbläsaren stöder inte autentisering med säkerhetsnycklar, eller så är den inte tillgänglig för den här webbplatsen.",
+	"oathauth-webauthn-error-auth-generic": "Autentiseringsprocessen avbröts. Vänligen starta autentiseringsprocessen på nytt.",
+	"oathauth-webauthn-error-reg-generic": "Kunde inte verifiera din nyckel. Vänligen starta registreringsprocessen igen.",
+	"oathauth-webauthn-registered-keys-section-name": "Registrerade nycklar",
+	"oathauth-webauthn-ui-remove-key": "Ta bort",
+	"oathauth-webauthn-error-module-not-enabled": "Modul \"$1\" är inte påslagen för {{GENDER:$2|användare \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn-verifieringen misslyckades.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Användare \"$1\"}} kan inte registrera en ny legitimationsuppgift.",
+	"oathauth-webauthn-error-invalid-new-key": "Den nya nyckeln som returneras av modulen är inte av efterfrågad typ.",
+	"oathauth-webauthn-error-registration-failed": "Registrering av ny nyckel misslyckades.",
+	"oathauth-webauthn-ui-key-register-help": "Välj smeknamnet på din nyckel:",
+	"oathauth-webauthn-error-cannot-remove-key": "Nyckeln kan inte tas bort.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Autentiseringsinformation kunde inte hämtas.",
+	"oathauth-webauthn-add-key-section-name": "Registrera ny säkerhetsnyckel",
+	"oathauth-webauthn-error-get-reginfo-fail": "Autentiseringsinformation kunde inte hämtas.",
+	"oathauth-webauthn-module-description": "WebAuthn är i ett experimentellt tillstånd. Det erbjuder för närvarande inget återställningsalternativ för förlorade eller skadade autentiseringsenheter. \n\n[https://en.wikipedia.org/wiki/WebAuthn Läs mer om WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Ladda om sidan",
+	"oathauth-webauthn-authentication-info-label": "Autentiseringsdata",
+	"oathauth-webauthn-authentication-info-help": "Autentiseringsdata som skickas till klienten för hämtning av uppgifter",
+	"oathauth-webauthn-credential-label": "Användaruppgifter",
+	"oathauth-webauthn-credential-help": "Användaruppgifter baserat på autentiseringsdata"
+}

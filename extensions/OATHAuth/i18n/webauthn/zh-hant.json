@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kly",
+			"LowensteinYang",
+			"Peterxy12",
+			"Peterxy"
+		]
+	},
+	"oathauth-webauthn-module-label": "安全金鑰",
+	"oathauth-webauthn-javascript-required": "您的瀏覽器必須啟用JavaScript才能使用安全金鑰。",
+	"oathauth-webauthn-ui-login-prompt": "請輕觸您的安全金鑰或依照瀏覽器的指示說明。",
+	"oathauth-webauthn-ui-add-key": "新增密鑰",
+	"oathauth-webauthn-error-browser-unsupported": "此瀏覽器不支援安全金鑰驗證或是不適用於此網站。請使用別種瀏覽器嘗試。[https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support 了解更多]",
+	"oathauth-webauthn-error-browser-unsupported-console": "此瀏覽器不支援安全金鑰驗證或是不適用於此網站。",
+	"oathauth-webauthn-error-auth-generic": "驗證程序被中斷，請重新開始驗證程序。",
+	"oathauth-webauthn-error-reg-generic": "無法驗證您的金鑰，請重新開始註冊流程。",
+	"oathauth-webauthn-registered-keys-section-name": "已註冊金鑰",
+	"oathauth-webauthn-ui-remove-key": "移除",
+	"oathauth-webauthn-error-module-not-enabled": "模組「$1」未為{{GENDER:$2|使用者「$2」}}啟動。",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn驗證失敗。",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn憑證未傳送。",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|使用者「$1」}}無法註冊新的憑證。",
+	"oathauth-webauthn-error-invalid-new-key": "由模組回傳的新金鑰非請求類型。",
+	"oathauth-webauthn-error-registration-failed": "新金鑰註冊失敗。",
+	"oathauth-webauthn-ui-key-register-help": "選擇您的金鑰暱稱：",
+	"oathauth-webauthn-error-cannot-remove-key": "金鑰無法移除。",
+	"oathauth-webauthn-error-get-authinfo-fail": "驗證資訊無法取得。",
+	"oathauth-webauthn-add-key-section-name": "註冊新的安全金鑰",
+	"oathauth-webauthn-error-get-reginfo-fail": "註冊資訊無法取得。",
+	"oathauth-webauthn-module-description": "WebAuthn 處於實驗階段。目前尚不提供遺失或損壞的身份驗證設備復原。\n\n[https://zh.wikipedia.org/wiki/WebAuthn 了解更多關於 WebAuthn 的資訊]",
+	"oathauth-webauthn-ui-reload-page-label": "重新載入頁面",
+	"oathauth-webauthn-authentication-info-label": "驗證資料",
+	"oathauth-webauthn-authentication-info-help": "驗證資料傳遞給客戶端以用於憑證檢索",
+	"oathauth-webauthn-credential-label": "使用者憑證",
+	"oathauth-webauthn-credential-help": "基於驗證資料的使用者憑證",
+	"oathauth-webauthn-add-security-key": "新增安全密鑰",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "使用安全金鑰或通行金鑰"
+}

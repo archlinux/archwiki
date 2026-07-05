@@ -77,5 +77,7 @@
 	"gadgets-validate-invaliddependencies": "Die {{PLURAL:$2|folgende Abhängigkeit fehlt|folgenden Abhängigkeiten fehlen}}: $1.",
 	"gadgets-validate-deprecateddependencies": "Die {{PLURAL:$2|folgende Abhängigkeit ist|folgenden Abhängigkeiten sind}} veraltet: $1.",
 	"gadgets-supports-urlload": "Dieses Helferlein unterstützt das Laden über eine URL mit dem Query-Parameter <code>?withgadget</code>",
-	"gadgets-hidden": "Dieses Helferlein ist [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden versteckt], was bedeutet, dass es in den Einstellungen nicht angezeigt wird."
+	"gadgets-hidden": "Dieses Helferlein ist [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden versteckt], was bedeutet, dass es in den Einstellungen nicht angezeigt wird.",
+	"gadgets-subpage-invalid": "Ungültige Unterseite „<nowiki>$1</nowiki>“",
+	"gadgets-subpage-toofewparams": "Nicht genügend Unterseitenparameter (ungültiger Link)."
 }

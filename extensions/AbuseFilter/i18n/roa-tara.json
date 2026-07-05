@@ -354,7 +354,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizze le endità HTML in carattere unicode (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Variabbele",
 	"abusefilter-edit-builder-vars-timestamp": "Orarie Unix d'u cangiamende",
-	"abusefilter-edit-builder-vars-accountname": "Nome d'u cunde utende (o nome d'u cunde utende de ccrejazione)",
+	"abusefilter-edit-builder-vars-account-name": "Nome d'u cunde utende (o nome d'u cunde utende de ccrejazione)",
 	"abusefilter-edit-builder-vars-action": "Azione",
 	"abusefilter-edit-builder-vars-addedlines": "Linee aggiunde cu 'nu cangiaminde",
 	"abusefilter-edit-builder-vars-delta": "Dimenzione cangiate jndr'à 'u cangiamende",

@@ -99,32 +99,6 @@
 		}
 	}
 
-	//
-	// See T357352 - New sticky User box at bottom of page
-	//
-	.mw-diff-mobile-footer {
-		display: flex;
-		text-align: left;
-		position: fixed;
-		height: 8em;
-		padding: 1em;
-		background-color: @background-color-interactive-subtle;
-		border-top: 1px solid @border-color-subtle;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: @z-index-above-content;
-
-		.mw-userlink {
-			height: 30px;
-		}
-
-		.mw-rollback-link {
-			position: fixed;
-			right: 1em;
-		}
-	}
-
 	// Former sticky User box
 	#mw-diff-ntitle2 {
 		display: none;
@@ -152,18 +126,6 @@
 					display: block;
 				}
 			}
-		}
-	}
-
-	.mw-userlink {
-		&::before {
-			content: '';
-			margin-right: 8px;
-			.cdx-mixin-css-icon( @cdx-icon-user-avatar, @color-subtle);
-		}
-
-		&.mw-anonuserlink::before {
-			.cdx-mixin-css-icon( @cdx-icon-user-anonymous, @color-subtle);
 		}
 	}
 
@@ -266,3 +228,234 @@
 	display: block;
 }
 /* stylelint-enable selector-max-id */
+
+@media all and ( max-width: @max-width-breakpoint-mobile ) {
+	//
+	// See T357352 - New sticky User box at bottom of page
+	//
+	.mw-diff-new-mobile-footer-accordion {
+		max-height: none !important;
+		overflow: visible !important;
+	}
+
+	.mw-diff-usergroups-popover {
+		position: absolute;
+		top: -9px;
+		left: 50%;
+		transform: translate( -50%, -100% );
+		background: @background-color-base;
+		border: 1px solid @border-color-base;
+		border-radius: @border-radius-base;
+		box-shadow: @box-shadow-color-base;
+		font-size: 0.875em;
+		z-index: @z-index-overlay;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.2s;
+		padding: 0.5em 0.75em;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+
+		.cdx-popover__body {
+			text-transform: none;
+		}
+	}
+
+	.mw-diff-usergroups-popover-wrapper {
+		position: relative;
+		display: inline-block;
+		overflow: visible !important;
+
+		.cdx-popover-trigger {
+			cursor: pointer;
+			background-color: @color-base;
+			padding-left: 1em;
+		}
+
+		.mw-diff-usergroups-popover {
+			display: flex;
+			justify-content: flex-start;
+		}
+
+		.cdx-popover__arrow {
+			position: absolute;
+			border: 1px solid @border-color-base;
+			background-color: @background-color-base;
+			bottom: -8px;
+			left: 50% !important;
+			transform: translateX( -50% ) rotate( 225deg );
+		}
+
+		.cdx-popover-trigger:hover + .cdx-popover,
+		.cdx-popover-trigger:focus + .cdx-popover {
+			opacity: 1;
+			visibility: visible;
+		}
+	}
+
+	.mw-diff-mobile-footer {
+		display: flex;
+		flex-direction: column;
+		text-align: left;
+		justify-content: flex-start;
+		position: fixed;
+		height: auto;
+		padding: 0.75em 1em 1em 1em;
+		background-color: @background-color-base;
+		border-top: 1px solid @border-color-subtle;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: @z-index-over-overlay;
+
+		.cdx-accordion__content {
+			display: flex;
+			flex-direction: column;
+			text-align: left;
+			padding-top: 0.75em;
+		}
+
+		.cdx-accordion > summary::before {
+			transform: rotate( -180deg ) !important;
+			order: 2;
+		}
+
+		.cdx-accordion--separation-minimal > summary {
+			padding: 0 0;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.cdx-accordion[ open ] > summary::before {
+			transform: rotate( -360deg ) !important;
+		}
+
+		.cdx-accordion__header {
+			max-width: 94%;
+			flex-wrap: wrap;
+
+			.cdx-accordion__header__title {
+				max-width: 94%;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5em;
+				align-items: center;
+
+				.ext-checkuser-tempaccount-reveal-ip-button {
+					display: flex;
+
+					.oo-ui-buttonElement-button {
+						padding: 5px 0 0 0;
+					}
+				}
+
+				.ext-checkuser-userinfocard-button.cdx-button {
+					position: static;
+				}
+
+				.mw-userlink {
+					flex-wrap: wrap;
+					max-width: 80%;
+					overflow: hidden;
+					text-overflow: @text-overflow-ellipsis;
+					white-space: nowrap;
+				}
+			}
+		}
+
+		.mw-diff-tool {
+			position: static !important;
+			order: 2;
+
+			> a {
+				min-width: 100%;
+			}
+
+			> .cdx-button,
+			> .jquery-confirmable-wrapper,
+			> .jquery-confirmable-wrapper > .cdx-button {
+				width: 100%;
+			}
+		}
+
+		.mw-diff-usermetadata {
+			display: flex;
+			width: 100%;
+			flex-flow: row wrap;
+			align-items: center;
+			justify-content: flex-start;
+			position: static !important;
+			order: 1;
+			font-size: @font-size-base;
+			padding-bottom: 0.75em;
+
+			.mw-diff-usergroups-popover-text {
+				color: @color-subtle;
+				text-transform: none;
+				max-width: 60%;
+			}
+
+			.cdx-button__icon {
+				background-color: @color-subtle;
+			}
+		}
+
+		.mw-usertoollinks {
+			flex-shrink: 0;
+			white-space: nowrap;
+		}
+
+		.mw-diff-usereditcount {
+			text-transform: none;
+			order: -1;
+			position: static !important;
+			white-space: nowrap;
+			font-size: @font-size-base;
+			color: @color-subtle;
+			margin-bottom: 0.5em;
+
+			span {
+				display: inline-block;
+				font-size: @font-size-base;
+				color: @color-subtle;
+				line-height: 20px;
+			}
+		}
+
+		.mw-rollback-link {
+			min-width: 100%;
+			padding-bottom: 0.75em;
+			flex-grow: 1;
+			order: 2;
+
+			> a {
+				min-width: 100%;
+			}
+		}
+
+		.mw-diff-undo {
+			display: inline-block !important;
+			min-width: 100%;
+			padding-bottom: 0.75em;
+			order: 2;
+
+			> a {
+				min-width: 100%;
+			}
+		}
+
+		.cdx-icon--info {
+			.cdx-mixin-css-icon( @cdx-icon-info-filled, @param-is-button-icon: true );
+		}
+
+		.mw-usergroups-icon {
+			background-color: @color-base;
+		}
+	}
+
+	body:has( .ve-ui-surface ) {
+		.mw-diff-mobile-footer {
+			display: none !important;
+		}
+	}
+}

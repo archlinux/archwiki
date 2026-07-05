@@ -6,6 +6,10 @@
 #mw-content-text {
 	.searchresults {
 		margin-bottom: 1em;
+
+		.searchresult {
+			word-break: break-word;
+		}
 	}
 
 	.mw-search-nonefound,
@@ -206,7 +210,7 @@
 	}
 
 	.checkbox-wrapper {
-		columns: 13em;
+		.column-width( 13em );
 
 		> * {
 			.column-break-inside-avoid;

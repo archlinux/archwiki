@@ -1,5 +1,8 @@
 # Release History
 
+## IDLeDOM 2.1.1 (2026-02-14)
+* Dependency updates for PHP 8.5
+
 ## IDLeDOM 2.1.0 (2025-08-15)
 * Drop support for PHP < 8.1
 * Update dependencies.

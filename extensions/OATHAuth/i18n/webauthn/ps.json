@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"oathauth-webauthn-module-label": "خونديتوب کونجي",
+	"oathauth-webauthn-javascript-required": "د خونديتوب کونجي کارولو لپاره بايد ستاسو ښوونگر کې جاواسکريپټ چارن وي.",
+	"oathauth-webauthn-ui-login-prompt": "خپل د خونديتوب کونجي وکاروئ يا د خپل ښوونگر لارښوونې وڅارئ.",
+	"oathauth-webauthn-ui-add-key": "کونجي ورگډول",
+	"oathauth-webauthn-error-browser-unsupported": "دا ښوونگر د خونديتوب کونجي د تاييد ملاتړ نه کوي يا دا د دې وېبپاڼې لپاره شتون نه لري. مهرباني وکړئ د بل ښوونگر کارولو هڅه وکړئ. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support نور ولولئ]",
+	"oathauth-webauthn-error-browser-unsupported-console": "دا ښوونگر د خونديتوب کونجي د تاييد ملاتړ نه کوي يا دا د دې وېبپاڼې لپاره شتون نه لري.",
+	"oathauth-webauthn-error-auth-generic": "د تاييد بهير ودرول شو. مهرباني وکړئ د تاييد بهير بيا پيل کړئ.",
+	"oathauth-webauthn-error-reg-generic": "ستاسو کونجي تاييد نه‌شوه. مهرباني وکړئ د نوم‌ليکنې بهير بيا پيل کړئ.",
+	"oathauth-webauthn-registered-keys-section-name": "نوم‌‌ليکلې کونجيانې",
+	"oathauth-webauthn-ui-remove-key": "لرې‌کول",
+	"oathauth-webauthn-error-module-not-enabled": "\"$1\" چلنوال د {{GENDER:$2|\"$2\" کارن}} لپاره چارن شوی نه دی.",
+	"oathauth-webauthn-error-verification-failed": "وېب‌تاييد تاييد ناکام شو.",
+	"oathauth-webauthn-error-passkey-verification-failed": "پاس‌کونجي تاييد ناکام شو.",
+	"oathauth-webauthn-error-credentials-missing": "وېب‌تاييد باورونه ونه لېږل شول.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|کارن \"$1\"}} د نوي باور نوم‌ليکنه نشي کولی.",
+	"oathauth-webauthn-error-invalid-new-key": "د چلنوال له خوا راستنه‌شوې نوې کونجي د اړتيا وړ ډول نه دی.",
+	"oathauth-webauthn-error-registration-failed": "د نوې کونجي نوم‌ليکنه ناکامه شوه.",
+	"oathauth-webauthn-ui-key-register-help": "د خپلې کونجۍ لپاره بلن‌نوم خوښ کړئ:",
+	"oathauth-webauthn-error-cannot-remove-key": "کونجي نشي لرې کېدای.",
+	"oathauth-webauthn-error-get-authinfo-fail": "تاييد مالومات بېرته نشي ترلاسه کېدی.",
+	"oathauth-webauthn-add-key-section-name": "د نوې خونديتوب کونجي نوم‌ليکنه",
+	"oathauth-webauthn-error-get-reginfo-fail": "نوم‌ليکنې مالومات بېرته نشي ترلاسه کېدی.",
+	"oathauth-webauthn-module-description": "WebAuthn يو ازمېښتي ونگ‌ډول دی. وسمهال دا د ورک شوو او مات شوو وسيلو د تاييد بياترلاسنې هېڅ چلندلار نه‌لري.\n[https://en.wikipedia.org/wiki/WebAuthn د  WebAuthn په اړه نور ولولئ]",
+	"oathauth-webauthn-ui-reload-page-label": "مخ بارول",
+	"oathauth-webauthn-authentication-info-label": "تاييد اومتوکي",
+	"oathauth-webauthn-authentication-info-help": "د باور ترلاسه کولو لپاره مراجع ته تاييد اومتوکي لېږدول شوي.",
+	"oathauth-webauthn-credential-label": "کارن باور",
+	"oathauth-webauthn-credential-help": "د کارن باور د تاييد اومتوکو پربنسټ",
+	"oathauth-webauthn-add-security-key": "خونديتوب کونجي ورگډول",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "خونديتوب کونجي يا پاس‌کونجي وکاروئ"
+}

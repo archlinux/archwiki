@@ -29,8 +29,6 @@
 	"cite_error_empty_references_define": "\"$1\" цӀе йолу <code>&lt;ref&gt;</code> тег, \"$2\" тобанехь <code>&lt;references&gt;</code> чохь билгалйаьккхина йолу, чулацам боцуш йу.",
 	"cite-tracking-category-cite-error": "Билгалдахаршкахь гӀалаташ долу агӀонаш",
 	"cite-tracking-category-cite-error-desc": "ХӀокху категори чохь йолу агӀонаш чохь ду билгалдахаршкахь гӀалаташ ду.",
-	"cite-tracking-category-cite-diffing-error": "ГӀалаташ долуш агӀонаш, бӀаьра башхаллаш гойтуш йолу",
-	"cite-tracking-category-cite-diffing-error-desc": "ХӀокху категорин агӀонаш тӀехь гӀалаташ ду референсан тегаш лелош. И гӀалаташ тайп-тайпана гойту ширйеллачу синтаксисин анализаторехь а, Parsoid чохь а.",
 	"cite-tracking-category-ref-details": "Бухара хьажоргаш лелош йолу агӀонаш",
 	"cite-tracking-category-ref-details-desc": "ХӀокху категорин агӀонаш лелайо &lt;ref> теган  \"details\" атрибут.",
 	"cite-reference-previews-reference": "ТIетовжам",

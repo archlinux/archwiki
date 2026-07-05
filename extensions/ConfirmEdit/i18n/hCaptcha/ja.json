@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Ant176",
+			"Kokage si",
 			"Omotecho",
 			"Waki285",
-			"Kokage si",
 			"Whym",
 			"Tensama0415"
 		]
@@ -21,7 +21,12 @@
 	"hcaptcha-challenge-closed": "続けるにはキャプチャを完了させてください。",
 	"hcaptcha-challenge-expired": "キャプチャに解答する制限時間が切れました。もう一度お試しください。",
 	"hcaptcha-generic-error": "フォームの読み込み中にエラーが発生しました。続行するには、ページを再読み込みしてください。",
+	"hcaptcha-internal-error": "フォームの送信中に内部エラーが発生しました。もう一度お試しください。",
+	"hcaptcha-network-error": "フォームの送信中にネットワークエラーが発生しました。接続が機能していることを確認して、もう一度お試しください。",
+	"hcaptcha-rate-limited": "captchaの解答試行回数が多すぎます。しばらく待ってから、もう一度お試しください。",
 	"hcaptcha-loading-indicator-label": "フォーム読み込みが終わるまでお待ちください……",
 	"hcaptcha-missing-token": "このフォーム読み込みがまだ終わっていません。あと数秒、お待ちのうえ、もう一度お願いします。",
-	"hcaptcha-noscript": "続けるには JavaScript が必要です。 ブラウザの設定で JavaScript をオンにしてから、ページを更新してください。"
+	"hcaptcha-noscript": "続けるには JavaScript が必要です。 ブラウザの設定で JavaScript をオンにしてから、ページを更新してください。",
+	"hcaptcha-force-show-captcha-edit": "フォームをもう一度送信してチャレンジを完了、編集内容を保存してください。",
+	"hcaptcha-visual-editor-error-handler-warning": "フォームをもう一度送信して編集内容を保存してください。"
 }

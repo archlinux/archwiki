@@ -14,10 +14,10 @@
 				<div id="contentSub" {{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
 				{{#html-undelete-link}}<div id="contentSub2">{{{.}}}</div>{{/html-undelete-link}}{{{html-user-message}}}
 				<div id="jump-to-nav"></div><a href="#column-one" class="mw-jump-link">{{msg-monobook-jumptonavigation}}</a><a href="#searchInput" class="mw-jump-link">{{msg-monobook-jumptosearch}}</a>
-				<!-- start content -->
+				{{! start content }}
 				{{{html-body-content}}}
 				{{{html-categories}}}
-				<!-- end content -->
+				{{! end content }}
 				<div class="visualClear"></div>
 			</div>
 		</div>{{{html-after-content}}}
@@ -31,7 +31,7 @@
 			<div class="pBody">
 				<ul {{{html-user-language-attributes}}}>
 				{{! comments used to avoid additional whitespace}}
-				{{{data-namespaces.html-items}}}{{!
+				{{{data-associated-pages.html-items}}}{{!
 				}}{{{data-views.html-items}}}{{!
 				}}{{{data-actions.html-items}}}
 				{{{data-variants.html-items}}}
@@ -39,16 +39,19 @@
 			</div>
 		</div>
 		{{#data-cactions-mobile}}{{>Portlet}}{{/data-cactions-mobile}}
-		{{#data-personal}}
+		{{#data-user-menu}}
 		<div role="navigation" class="portlet" id="{{id}}" aria-labelledby="{{id}}-label">
 			<h3 id="{{id}}-label" {{{html-user-language-attributes}}}>{{label}}</h3>
 			<div class="pBody">
 				<ul {{{html-user-language-attributes}}}>
+				{{#data-user-interface-preferences}}{{{html-items}}}{{/data-user-interface-preferences}}
+				{{#data-user-page}}{{{html-items}}}{{/data-user-page}}
+				{{#data-notifications}}{{{html-items}}}{{/data-notifications}}
 				{{{html-items}}}
 				</ul>
 			</div>
 		</div>
-		{{/data-personal}}
+		{{/data-user-menu}}
 		<div class="portlet" id="p-logo" role="banner">
 			<a href="{{link-mainpage}}" class="mw-wiki-logo"></a>
 		</div>
@@ -74,7 +77,7 @@
 		<a href="#globalWrapper" title="{{msg-monobook-jumptotop}}"
 			class="menu-toggle" id="globalWrapper-toggle"></a>
 	</div>
-	<!-- end of the left (by default at least) column -->
+	{{! end of the left (by default at least) column }}
 	<div class="visualClear"></div>
 	<div id="footer" class="mw-footer" role="contentinfo"
 		{{{html-user-language-attributes}}}>

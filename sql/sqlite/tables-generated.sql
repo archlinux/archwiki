@@ -23,8 +23,7 @@ CREATE TABLE /*_*/archive (
   ar_deleted SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   ar_len INTEGER UNSIGNED DEFAULT NULL,
   ar_page_id INTEGER UNSIGNED DEFAULT NULL,
-  ar_parent_id INTEGER UNSIGNED DEFAULT NULL,
-  ar_sha1 BLOB DEFAULT '' NOT NULL
+  ar_parent_id INTEGER UNSIGNED DEFAULT NULL
 );
 
 CREATE INDEX ar_name_title_timestamp ON /*_*/archive (
@@ -316,15 +315,16 @@ CREATE INDEX img_media_mime ON /*_*/image (
 
 CREATE TABLE /*_*/imagelinks (
   il_from INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-  il_to BLOB DEFAULT '' NOT NULL,
+  il_target_id BIGINT UNSIGNED NOT NULL,
   il_from_namespace INTEGER DEFAULT 0 NOT NULL,
-  PRIMARY KEY(il_from, il_to)
+  PRIMARY KEY(il_from, il_target_id)
 );
 
-CREATE INDEX il_to ON /*_*/imagelinks (il_to, il_from);
+CREATE INDEX il_target_id ON /*_*/imagelinks (il_target_id, il_from);
 
-CREATE INDEX il_backlinks_namespace ON /*_*/imagelinks (
-  il_from_namespace, il_to, il_from
+CREATE INDEX il_backlinks_namespace_target_id ON /*_*/imagelinks (
+  il_from_namespace, il_target_id,
+  il_from
 );
 
 
@@ -469,8 +469,6 @@ CREATE TABLE /*_*/objectcache (
   keyname BLOB DEFAULT '' NOT NULL,
   value BLOB DEFAULT NULL,
   exptime BLOB NOT NULL,
-  modtoken VARCHAR(17) DEFAULT '00000000000000000' NOT NULL,
-  flags INTEGER UNSIGNED DEFAULT NULL,
   PRIMARY KEY(keyname)
 );
 
@@ -631,7 +629,6 @@ CREATE TABLE /*_*/recentchanges (
   rc_cur_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   rc_this_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   rc_last_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
-  rc_type SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rc_source BLOB NOT NULL, rc_patrolled SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rc_ip BLOB DEFAULT '' NOT NULL, rc_old_len INTEGER DEFAULT NULL,
   rc_new_len INTEGER DEFAULT NULL, rc_deleted SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
@@ -657,11 +654,6 @@ CREATE INDEX rc_ip ON /*_*/recentchanges (rc_ip);
 CREATE INDEX rc_ns_actor ON /*_*/recentchanges (rc_namespace, rc_actor);
 
 CREATE INDEX rc_actor ON /*_*/recentchanges (rc_actor, rc_timestamp);
-
-CREATE INDEX rc_name_type_patrolled_timestamp ON /*_*/recentchanges (
-  rc_namespace, rc_type, rc_patrolled,
-  rc_timestamp
-);
 
 CREATE INDEX rc_name_source_patrolled_timestamp ON /*_*/recentchanges (
   rc_namespace, rc_source, rc_patrolled,
@@ -691,8 +683,7 @@ CREATE TABLE /*_*/revision (
   rev_timestamp BLOB NOT NULL, rev_minor_edit SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_deleted SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_len INTEGER UNSIGNED DEFAULT NULL,
-  rev_parent_id BIGINT UNSIGNED DEFAULT NULL,
-  rev_sha1 BLOB DEFAULT '' NOT NULL
+  rev_parent_id BIGINT UNSIGNED DEFAULT NULL
 );
 
 CREATE INDEX rev_timestamp ON /*_*/revision (rev_timestamp);
@@ -929,3 +920,21 @@ CREATE TABLE /*_*/watchlist_expiry (
 );
 
 CREATE INDEX we_expiry ON /*_*/watchlist_expiry (we_expiry);
+
+
+CREATE TABLE /*_*/watchlist_label (
+  wll_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  wll_user INTEGER UNSIGNED NOT NULL,
+  wll_name BLOB NOT NULL
+);
+
+CREATE UNIQUE INDEX wll_user_name ON /*_*/watchlist_label (wll_user, wll_name);
+
+
+CREATE TABLE /*_*/watchlist_label_member (
+  wlm_label INTEGER UNSIGNED NOT NULL,
+  wlm_item INTEGER UNSIGNED NOT NULL,
+  PRIMARY KEY(wlm_label, wlm_item)
+);
+
+CREATE INDEX wlm_item ON /*_*/watchlist_label_member (wlm_item);

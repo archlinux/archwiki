@@ -21,15 +21,13 @@ class PreferenceHooks implements
 	GetPreferencesHook
 {
 
-	private Config $config;
-	private LinkRenderer $linkRenderer;
+	private readonly Config $config;
 
 	public function __construct(
 		ConfigFactory $configFactory,
-		LinkRenderer $linkRenderer
+		private readonly LinkRenderer $linkRenderer,
 	) {
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
-		$this->linkRenderer = $linkRenderer;
 	}
 
 	/**
@@ -64,13 +62,6 @@ class PreferenceHooks implements
 			];
 		}
 		foreach ( HookUtils::FEATURES as $feature ) {
-			if (
-				$feature === HookUtils::VISUALENHANCEMENTS_REPLY ||
-				$feature === HookUtils::VISUALENHANCEMENTS_PAGEFRAME
-			) {
-				// Feature is never user-configurable
-				continue;
-			}
 			if ( HookUtils::isFeatureAvailableToUser( $user, $feature ) ) {
 				$preferences["discussiontools-$feature"] = [
 					'type' => 'toggle',

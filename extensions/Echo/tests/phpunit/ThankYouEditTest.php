@@ -43,12 +43,6 @@ class ThankYouEditTest extends MediaWikiIntegrationTestCase {
 	 * @param string $mode
 	 */
 	public function testFirstEdit( $mode ) {
-		// TODO: re-renable once I50aa9fe9387c9b7b7ff97dfd39a2830bce647db8 is merged.
-		// That is, after, endAtomic() in PageUpdater::doCreate() is tweaked
-		if ( $mode === 'cli' ) {
-			$this->markTestSkipped();
-		}
-
 		// setup
 		$this->deleteEchoData();
 		$user = $this->getMutableTestUser()->getUser();
@@ -92,11 +86,6 @@ class ThankYouEditTest extends MediaWikiIntegrationTestCase {
 	 * @param string $mode
 	 */
 	public function testTenthEdit( $mode ) {
-		// TODO: re-renable once endAtomic() in PageUpdater::doCreate() is tweaked
-		if ( $mode === 'cli' ) {
-			$this->markTestSkipped();
-		}
-
 		// setup
 		$this->deleteEchoData();
 		$user = $this->getMutableTestUser()->getUser();

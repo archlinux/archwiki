@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Albertoleoncio",
 			"Athena in Wonderland",
 			"Caiofernandes",
 			"Crazymadlover",
@@ -11,14 +12,13 @@
 			"Jdlrobson",
 			"Luan",
 			"Malafaya",
+			"Mansil alfalb",
+			"Maria Manuela Silva",
 			"MokaAkashiyaPT",
 			"Qgustavor",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"Mansil alfalb",
-			"Albertoleoncio",
-			"Maria Manuela Silva"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -71,9 +71,6 @@
 	"vector-toc-label": "Conteúdos",
 	"vector-toc-beginning": "Início",
 	"vector-toc-toggle-button-label": "Alternar a subsecção $1",
-	"vector-anon-user-menu-pages": "Páginas para editores não autenticados",
-	"vector-anon-user-menu-pages-learn": "saber mais",
-	"vector-anon-user-menu-pages-label": "Saiba mais sobre a edição",
 	"vector-main-menu-tooltip": "Menu principal",
 	"vector-toc-menu-tooltip": "Índice",
 	"vector-toc-collapsible-button-label": "Alternar o índice",
@@ -96,8 +93,6 @@
 	"vector-page-tools-unpinned-popup": "O menu de ferramentas mudou para cá.",
 	"vector-main-menu-unpinned-popup": "O menu principal mudou para cá.",
 	"vector-appearance-unpinned-popup": "O menu de aspeto mudou para cá.",
-	"vector-2022-beta-preview-label": "Acessibilidade para Leitura (Vector 2022)",
-	"vector-2022-beta-preview-description": "Obter acesso antecipado às novas funcionalidades de acessibilidade de leitura, como melhoramentos tipográficos e o modo escuro.",
 	"vector-night-mode-gadget-warning": "Está a usar um ''gadget'' de modo escuro que interfere com esta funcinalidade. [[Special:Preferences#mw-prefsection-gadgets|Desative o ''gadget'']] para usar o modo escuro.",
 	"vector-night-mode-issue-reporting-notice-tooltip": "Reporte quando as cores do modo escuro dificultarem a leitura.",
 	"vector-night-mode-issue-reporting-link-label": "Reportar um problema com o modo escuro",

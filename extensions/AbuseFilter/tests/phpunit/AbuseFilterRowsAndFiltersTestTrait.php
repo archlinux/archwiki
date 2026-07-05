@@ -85,8 +85,8 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 			);
 			$ret[$name] = [
 				'row' => $row,
-				'actions' => self::getRowsForActions( $row->af_id, $actionKeys ),
-				'filter' => $filter
+				'actionsRows' => self::getRowsForActions( $row->af_id, $actionKeys ),
+				'expected' => $filter
 			];
 		}
 
@@ -111,8 +111,8 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					'af_global' => 0,
 					'af_group' => 'default'
 				],
-				'actions' => self::getRowsForActions( 333, [ 'warn' ] ),
-				'filter' => new ExistingFilter(
+				'actionsRows' => self::getRowsForActions( 333, [ 'warn' ] ),
+				'expected' => new ExistingFilter(
 					new Specs(
 						'false',
 						'',
@@ -148,8 +148,8 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					'af_global' => 1,
 					'af_group' => 'default'
 				],
-				'actions' => [],
-				'filter' => new ExistingFilter(
+				'actionsRows' => [],
+				'expected' => new ExistingFilter(
 					new Specs(
 						'"foo"',
 						'foo',
@@ -185,8 +185,8 @@ trait AbuseFilterRowsAndFiltersTestTrait {
 					'af_global' => 1,
 					'af_group' => 'default'
 				],
-				'actions' => [],
-				'filter' => new ExistingFilter(
+				'actionsRows' => [],
+				'expected' => new ExistingFilter(
 					new Specs(
 						'0',
 						'foo',

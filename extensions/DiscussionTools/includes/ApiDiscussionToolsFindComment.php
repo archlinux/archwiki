@@ -12,18 +12,13 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsFindComment extends ApiBase {
 
-	private ThreadItemStore $threadItemStore;
-	private TitleFormatter $titleFormatter;
-
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		ThreadItemStore $threadItemStore,
-		TitleFormatter $titleFormatter
+		private readonly ThreadItemStore $threadItemStore,
+		private readonly TitleFormatter $titleFormatter,
 	) {
 		parent::__construct( $main, $name );
-		$this->threadItemStore = $threadItemStore;
-		$this->titleFormatter = $titleFormatter;
 	}
 
 	/**

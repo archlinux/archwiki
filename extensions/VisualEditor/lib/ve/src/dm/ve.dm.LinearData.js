@@ -28,24 +28,23 @@ ve.dm.FlatLinearData = ve.dm.LinearData;
 ve.dm.ElementLinearData = ve.dm.LinearData;
 
 /**
- * @typedef {Object} Element
- * @memberof ve.dm.LinearData
+ * @typedef {Object} ve.dm.LinearData.Element
  * @property {string} type The type of the element
  * @property {Object} [attributes] Optional additional attributes specific to the element type
  * @property {string} [originalDomElementsHash] Hash of the original DOM elements found by the converter
  * @property {Object} [internal] Internal attributes used by the converter
  */
 
+/* eslint-disable jsdoc/valid-types */
 /**
- * @typedef {Array} AnnotatedCharacter
- * @memberof ve.dm.LinearData
+ * @typedef {Array} ve.dm.LinearData.AnnotatedCharacter
  * @property {string} 0 Character data
  * @property {string[]} 1 Annotation hashses
  */
+/* eslint-enable jsdoc/valid-types */
 
 /**
- * @typedef {ve.dm.LinearData.Element|string|ve.dm.LinearData.AnnotatedCharacter} Item
- * @memberof ve.dm.LinearData
+ * @typedef {ve.dm.LinearData.Element|string|ve.dm.LinearData.AnnotatedCharacter} ve.dm.LinearData.Item
  * A single item in the linear model data array, which can be:
  * - An element object
  * - A single character string
@@ -765,8 +764,7 @@ ve.dm.LinearData.prototype.getAnnotationHashesFromOffset = function ( offset, ig
 };
 
 /**
- * @typedef {Object} AnnotationRange
- * @memberof ve.dm.LinearData
+ * @typedef {Object} ve.dm.LinearData.AnnotationRange
  * @property {ve.dm.Annotation} annotation
  * @property {ve.dm.Range} range
  */
@@ -884,7 +882,7 @@ ve.dm.LinearData.prototype.setAttributeAtOffset = function ( offset, key, value 
  * Get character data at a specified offset
  *
  * @param {number} offset Offset to get character data from
- * @return {string} Character data
+ * @return {string} Character data, or '' if no character data
  */
 ve.dm.LinearData.prototype.getCharacterData = function ( offset ) {
 	const item = this.getData( offset );
@@ -1137,6 +1135,11 @@ ve.dm.LinearData.prototype.getText = function ( maintainIndices, range ) {
 			text += this.getCharacterData( i );
 		} else if ( maintainIndices ) {
 			text += '\n';
+		} else if ( this.isOpenElementData( i ) ) {
+			const nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
+			if ( nodeClass ) {
+				text += nodeClass.static.getText( this.getData( i ) );
+			}
 		}
 	} );
 	return text;
@@ -1421,14 +1424,14 @@ ve.dm.LinearData.prototype.getWordRange = function ( offset ) {
  *  Used for refreshing attribute values that were computed with getNextUniqueNumber().
  */
 ve.dm.LinearData.prototype.remapInternalListIndexes = function ( mapping, internalList ) {
-	for ( let i = 0, ilen = this.data.length; i < ilen; i++ ) {
+	this.getRange().forEach( ( i ) => {
 		if ( this.isOpenElementData( i ) ) {
 			const nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
 			this.modifyData( i, ( item ) => {
 				nodeClass.static.remapInternalListIndexes( item, mapping, internalList );
 			} );
 		}
-	}
+	} );
 };
 
 /**
@@ -1439,14 +1442,14 @@ ve.dm.LinearData.prototype.remapInternalListIndexes = function ( mapping, intern
  * @param {ve.dm.InternalList} internalList Internal list the keys are being mapped into.
  */
 ve.dm.LinearData.prototype.remapInternalListKeys = function ( internalList ) {
-	for ( let i = 0, ilen = this.data.length; i < ilen; i++ ) {
+	this.getRange().forEach( ( i ) => {
 		if ( this.isOpenElementData( i ) ) {
 			const nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
 			this.modifyData( i, ( item ) => {
 				nodeClass.static.remapInternalListKeys( item, internalList );
 			} );
 		}
-	}
+	} );
 };
 
 /**
@@ -1466,10 +1469,10 @@ ve.dm.LinearData.prototype.remapAnnotationHash = function ( oldHash, newHash ) {
 			}
 		}
 	}
-	for ( let i = 0, ilen = this.data.length; i < ilen; i++ ) {
-		if ( this.data[ i ] === undefined || typeof this.data[ i ] === 'string' ) {
+	this.data.forEach( ( dataItem, i ) => {
+		if ( dataItem === undefined || typeof dataItem === 'string' ) {
 			// Common case, cheap, avoid the isArray check
-			continue;
+			return;
 		} else {
 			this.modifyData( i, ( item ) => {
 				if ( Array.isArray( item ) ) {
@@ -1479,15 +1482,15 @@ ve.dm.LinearData.prototype.remapAnnotationHash = function ( oldHash, newHash ) {
 				}
 				if ( ve.getProp( item, 'internal', 'metaItems' ) ) {
 					const data = ve.getProp( item, 'internal', 'metaItems' );
-					for ( let j = 0, jlen = data.length; j < jlen; j++ ) {
-						if ( data[ j ].annotations !== undefined ) {
-							remap( data[ j ].annotations );
+					data.forEach( ( metaItem ) => {
+						if ( metaItem.annotations !== undefined ) {
+							remap( metaItem.annotations );
 						}
-					}
+					} );
 				}
 			} );
 		}
-	}
+	} );
 };
 
 /**
@@ -1740,14 +1743,14 @@ ve.dm.LinearData.prototype.sanitize = function ( rules ) {
  */
 ve.dm.LinearData.prototype.cloneElements = function ( preserveGenerated ) {
 	const store = this.getStore();
-	for ( let i = 0, len = this.getLength(); i < len; i++ ) {
+	this.getRange().forEach( ( i ) => {
 		if ( this.isOpenElementData( i ) ) {
 			const nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
 			if ( nodeClass ) {
 				this.setData( i, nodeClass.static.cloneElement( this.getData( i ), store, preserveGenerated ) );
 			}
 		}
-	}
+	} );
 };
 
 /**

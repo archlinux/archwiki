@@ -12,6 +12,7 @@
 	},
 	"multimediaviewer-desc": "Tam ekran interfeysində kiçik şəkilləri daha böyük ölçüdə genişləndirin",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media nümayişetdiricisini]</span> aktivləşdir",
+	"multimediaviewer-disable-image-carousel-pref": "Mobildə şəkil karuselini deaktiv et",
 	"multimediaviewer-file-page": "Müvafiq fayl səhifəsinə get",
 	"multimediaviewer-repository-local": "Daha ətraflı",
 	"multimediaviewer-datetime-created": "Yaradılma tarixi: $1",

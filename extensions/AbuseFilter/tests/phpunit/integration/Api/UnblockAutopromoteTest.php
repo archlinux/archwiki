@@ -20,8 +20,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 	public function testExecute_noPermissions() {
 		$this->expectApiErrorCode( 'permissiondenied' );
 
-		$store = $this->createMock( BlockAutopromoteStore::class );
-		$store->expects( $this->never() )->method( 'unblockAutopromote' );
+		$store = $this->createNoOpMock( BlockAutopromoteStore::class );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
 		$this->doApiRequestWithToken( [
@@ -34,8 +33,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 		$invalid = 'invalid#username';
 		$this->expectApiErrorCode( 'baduser' );
 
-		$store = $this->createMock( BlockAutopromoteStore::class );
-		$store->expects( $this->never() )->method( 'unblockAutopromote' );
+		$store = $this->createNoOpMock( BlockAutopromoteStore::class );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
 		$this->doApiRequestWithToken( [
@@ -57,8 +55,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 			[ 'abusefilter-modify' ]
 		);
 
-		$store = $this->createMock( BlockAutopromoteStore::class );
-		$store->expects( $this->never() )->method( 'unblockAutopromote' );
+		$store = $this->createNoOpMock( BlockAutopromoteStore::class );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
 		$this->doApiRequestWithToken( [

@@ -18,7 +18,12 @@
 	"hcaptcha-challenge-closed": "Error message shown within a form when a user closes the hCaptcha challenge without completing it.",
 	"hcaptcha-challenge-expired": "Error message shown within a form when a user takes too long to complete the hCaptcha challenge.",
 	"hcaptcha-generic-error": "Error message shown within a form when an unknown error occurs while executing the hCaptcha challenge.",
+	"hcaptcha-internal-error": "Error message shown within a form when an internal error occurs while executing the hCaptcha challenge.",
+	"hcaptcha-network-error": "Error message shown within a form when a network error occurs while executing the hCaptcha challenge.",
+	"hcaptcha-rate-limited": "Error message shown within a form when a user has tried to solve an hCaptcha too many time and hits a rate limit.",
 	"hcaptcha-loading-indicator-label": "Hidden label value set for accessibility on the loading indicator shown while the hCaptcha code is initializing.",
 	"hcaptcha-missing-token": "Error message shown within a form when it is submitted without hCaptcha having been executed.",
-	"hcaptcha-noscript": "Message displayed to users with JavaScript disabled, informing them that JavaScript is required to complete the hCaptcha."
+	"hcaptcha-noscript": "Message displayed to users with JavaScript disabled, informing them that JavaScript is required to complete the hCaptcha.",
+	"hcaptcha-force-show-captcha-edit": "Message displayed to users who trip the \"showcaptcha\" AbuseFilter consequence, and are required to complete a visual or text challenge from hCaptcha.",
+	"hcaptcha-visual-editor-error-handler-warning": "Message displayed to users who are asked to resubmit their edit after the VisualEditor edit fails because hCaptcha is required."
 }

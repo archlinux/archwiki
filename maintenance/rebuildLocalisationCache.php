@@ -16,7 +16,9 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageNameUtils;
+use MediaWiki\Language\LocalisationCache;
+use MediaWiki\Language\LocalisationCacheBulkLoad;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;

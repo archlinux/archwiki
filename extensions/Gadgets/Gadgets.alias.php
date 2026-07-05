@@ -301,7 +301,8 @@ $specialPageAliases['nds-nl'] = [
 
 /** Dutch (Nederlands) */
 $specialPageAliases['nl'] = [
-	'Gadgets' => [ 'Extensies' ],
+	'Gadgets' => [ 'Gadgets', 'Extensies' ],
+	'GadgetUsage' => [ 'Gadgetgebruik' ],
 ];
 
 /** Norwegian Nynorsk (norsk nynorsk) */

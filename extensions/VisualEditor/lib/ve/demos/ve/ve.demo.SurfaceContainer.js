@@ -50,6 +50,7 @@ ve.demo.SurfaceContainer = function VeDemoSurfaceContainer( target, page, lang, 
 		label: 'Null selection on blur',
 		value: true
 	} );
+
 	const $exitReadButton = $( '<a>' ).attr( 'href', '#' ).text( 'Back to editor' ).on( 'click', () => {
 		this.modeSelect.selectItemByData( 'visual' );
 		return false;
@@ -208,7 +209,7 @@ ve.demo.SurfaceContainer.prototype.change = function ( mode, page ) {
 	return closePromise.done( () => {
 		const isRead = mode === 'read',
 			otherDir = currentDir === 'ltr' ? 'rtl' : 'ltr',
-			$editStylesheets = $( 'link[rel~=stylesheet]:not(.stylesheet-read):not(.stylesheet-' + otherDir + ')' );
+			$editStylesheets = $( 'link[rel~=stylesheet]:not(.stylesheet-read):not(.stylesheet-dark):not(.stylesheet-' + otherDir + ')' );
 
 		if ( this.surface ) {
 			this.surface.destroy();
@@ -308,7 +309,7 @@ ve.demo.SurfaceContainer.prototype.loadHtml = function ( pageHtml, mode, skipAut
 			mode,
 			{ lang: this.lang, dir: this.dir }
 		),
-		{ placeholder: 'Start your document', mode: mode }
+		{ placeholder: 'Start your document', mode }
 	);
 
 	this.target.setSurface( this.surface );

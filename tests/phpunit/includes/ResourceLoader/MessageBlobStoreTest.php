@@ -39,9 +39,7 @@ class MessageBlobStoreTest extends TestCase {
 	public function testBlobCreation() {
 		$rl = new EmptyResourceLoader();
 		$rl->register( self::NAME, [
-			'factory' => function () {
-				return $this->makeModule( [ 'mainpage' ] );
-			}
+			'factory' => fn () => $this->makeModule( [ 'mainpage' ] )
 		] );
 
 		$blobStore = $this->makeBlobStore( null, $rl );
@@ -76,9 +74,7 @@ class MessageBlobStoreTest extends TestCase {
 		// Register it so that MessageBlobStore::updateMessage can
 		// discover it from the registry as a module that uses this message.
 		$rl->register( self::NAME, [
-			'factory' => function () {
-				return $this->makeModule( [ 'example' ] );
-			}
+			'factory' => fn () => $this->makeModule( [ 'example' ] )
 		] );
 		$module = $rl->getModule( self::NAME );
 		$blobStore = $this->makeBlobStore( [ 'fetchMessage' ], $rl );

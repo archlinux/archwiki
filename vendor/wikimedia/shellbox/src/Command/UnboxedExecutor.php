@@ -83,7 +83,7 @@ class UnboxedExecutor {
 	 *
 	 * @param LoggerInterface $logger
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 		foreach ( $this->wrappers as $wrapper ) {
 			$wrapper->setLogger( $logger );
@@ -352,14 +352,14 @@ class UnboxedExecutor {
 						unset( $pipes[$fd] );
 					}
 				} elseif ( $isWrite ) {
-					$buffers[$fd] = (string)substr( $buffers[$fd], $res );
+					$buffers[$fd] = substr( $buffers[$fd], $res );
 					if ( $buffers[$fd] === '' ) {
 						fclose( $pipes[$fd] );
 						unset( $pipes[$fd] );
 					}
 				} else {
 					$buffers[$fd] .= $res;
-					if ( $fd === 3 && strpos( $res, "\n" ) !== false ) {
+					if ( $fd === 3 && str_contains( $res, "\n" ) ) {
 						// For the log FD, every line is a separate log entry.
 						$lines = explode( "\n", $buffers[3] );
 						$buffers[3] = array_pop( $lines );

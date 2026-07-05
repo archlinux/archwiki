@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Extension\OATHAuth\Auth;
@@ -23,6 +10,7 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
+use MediaWiki\Extension\OATHAuth\OATHAuthLogger;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Message\Message;
 
@@ -37,7 +25,8 @@ class RecoveryCodesSecondaryAuthenticationProvider extends AbstractSecondaryAuth
 
 	public function __construct(
 		private readonly RecoveryCodes $module,
-		private readonly OATHUserRepository $userRepository
+		private readonly OATHUserRepository $userRepository,
+		private readonly OATHAuthLogger $oathLogger,
 	) {
 	}
 
@@ -59,15 +48,10 @@ class RecoveryCodesSecondaryAuthenticationProvider extends AbstractSecondaryAuth
 			return AuthenticationResponse::newAbstain();
 		}
 
-		return AuthenticationResponse::newUI(
-			[ new RecoveryCodesAuthenticationRequest() ],
-			wfMessage( 'oathauth-auth-recovery-code-help' ),
-		);
+		return AuthenticationResponse::newUI( [ new RecoveryCodesAuthenticationRequest() ] );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
 		/** @var RecoveryCodesAuthenticationRequest $request */
 		$request = AuthenticationRequest::getRequestByClass( $reqs, RecoveryCodesAuthenticationRequest::class );
@@ -76,8 +60,8 @@ class RecoveryCodesSecondaryAuthenticationProvider extends AbstractSecondaryAuth
 				wfMessage( 'oathauth-recovery-code-login-failed' ), 'error' );
 		}
 
-		// Don't increase pingLimiter, just check for limit exceeded.
-		if ( $user->pingLimiter( 'badoath', 0 ) ) {
+		// Check for (and increment) rate limiter before doing the auth
+		if ( $user->pingLimiter( 'badoath' ) ) {
 			return AuthenticationResponse::newUI(
 				[ new RecoveryCodesAuthenticationRequest() ],
 				new Message( 'oathauth-throttled' ),
@@ -92,13 +76,12 @@ class RecoveryCodesSecondaryAuthenticationProvider extends AbstractSecondaryAuth
 			return AuthenticationResponse::newPass();
 		}
 
-		// Increase rate limit counter for failed request
-		$user->pingLimiter( 'badoath' );
-
 		$this->logger->info( 'OATHAuth user {user} failed recovery code from {clientip}', [
 			'user'     => $user->getName(),
 			'clientip' => $user->getRequest()->getIP(),
 		] );
+
+		$this->oathLogger->logFailedVerification( $user );
 
 		return AuthenticationResponse::newUI(
 			[ new RecoveryCodesAuthenticationRequest() ],

@@ -26,7 +26,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 		}
 	}
 
-	protected function getBusyLoop( $interpreter ) {
+	protected function getBusyLoop( LuaInterpreter $interpreter ) {
 		return $interpreter->loadString( '
 			local args = {...}
 			local x, i
@@ -56,7 +56,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 
 		$interpreter = $this->newInterpreter();
 		$interpreter->registerLibrary( 'test',
-			[ 'passthru' => [ $this, 'passthru' ] ] );
+			[ 'passthru' => $this->passthru( ... ) ] );
 		$doublePassthru = $interpreter->loadString(
 			'return test.passthru(...)', 'doublePassthru' );
 
@@ -79,7 +79,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 		$this->assertNan( $ret[0], 'NaN was not passed through' );
 
 		$interpreter->registerLibrary( 'test',
-			[ 'passthru' => [ $this, 'passthru' ] ] );
+			[ 'passthru' => $this->passthru( ... ) ] );
 		$doublePassthru = $interpreter->loadString(
 			'return test.passthru(...)', 'doublePassthru' );
 		$ret = $interpreter->callFunction( $doublePassthru, NAN );
@@ -96,7 +96,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 		return $a;
 	}
 
-	public function passthru( ...$args ) {
+	private function passthru( ...$args ) {
 		return $args;
 	}
 
@@ -106,7 +106,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 			[ true ],
 			[ false ],
 			[ 'hello' ],
-			[ implode( '', array_map( 'chr', range( 0, 255 ) ) ) ],
+			[ implode( '', array_map( chr( ... ), range( 0, 255 ) ) ) ],
 			[ 1, 2, 3 ],
 			[ [] ],
 			[ [ 0 => 'foo', 1 => 'bar' ] ],
@@ -162,9 +162,7 @@ abstract class LuaInterpreterTestBase extends TestCase {
 
 	public function testWrapPHPFunction() {
 		$interpreter = $this->newInterpreter();
-		$func = $interpreter->wrapPhpFunction( static function ( $n ) {
-			return [ 42, $n ];
-		} );
+		$func = $interpreter->wrapPhpFunction( static fn ( $n ) => [ 42, $n ] );
 		$res = $interpreter->callFunction( $func, 'From PHP' );
 		$this->assertEquals( [ 42, 'From PHP' ], $res );
 

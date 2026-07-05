@@ -1,10 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\CheckUser\Pagers;
 
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUsernameResultInterface;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Language\Language;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
@@ -14,7 +15,7 @@ use Wikimedia\TestingAccessWrapper;
  *
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager
  */
 class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 
@@ -54,7 +55,7 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 	}
 
 	/** @dataProvider provideGetQueryInfoForCuChanges */
-	public function testGetQueryInfoForCuChanges( $expectedQueryInfo ) {
+	public function testGetQueryInfoForCuChanges( array $expectedQueryInfo ) {
 		$this->commonGetQueryInfoForTableSpecificMethod(
 			'getQueryInfoForCuChanges',
 			[
@@ -188,6 +189,11 @@ class CheckUserGetActionsPagerTest extends CheckUserPagerUnitTestBase {
 				],
 			],
 		];
+	}
+
+	public function testImplementsCheckUsernameResultInterface(): void {
+		$pager = $this->createPartialMock( CheckUserGetActionsPager::class, [] );
+		$this->assertInstanceOf( CheckUsernameResultInterface::class, $pager );
 	}
 
 	public function testGetActionTextForNonLogEvent() {

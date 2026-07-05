@@ -17,7 +17,12 @@
 	"hcaptcha-challenge-closed": "Om verder te gaan moet u de CAPTCHA invullen.",
 	"hcaptcha-challenge-expired": "De tijdslimiet om de CAPTHA in te vullen is verstreken. Probeer het opnieuw.",
 	"hcaptcha-generic-error": "Er is een fout opgetreden bij het laden van het formulier. Om verder te gaan, moet u de pagina opnieuw laden.",
+	"hcaptcha-internal-error": "Er is een interne fout opgetreden bij het versturen van het formulier. Probeer het nog eens.",
+	"hcaptcha-network-error": "Er is een netwerkfout opgetreden bij het versturen van het formulier. Controleer dat uw verbinding werkt en probeer het nog eens.",
+	"hcaptcha-rate-limited": "Er zijn te veel pogingen gedaan om de captcha op te lossen. Wacht even voordat u het opnieuw probeert.",
 	"hcaptcha-loading-indicator-label": "Een momentje geduld, het formulier wordt geladen…",
 	"hcaptcha-missing-token": "Het formulier is nog niet helemaal geladen. Wacht een paar seconden en probeer het dan opnieuw.",
-	"hcaptcha-noscript": "JavaScript is vereist om door te gaan. Schakel JavaScript in uw browserinstellingen in en vernieuw de pagina."
+	"hcaptcha-noscript": "JavaScript is vereist om door te gaan. Schakel JavaScript in uw browserinstellingen in en vernieuw de pagina.",
+	"hcaptcha-force-show-captcha-edit": "Dien het formulier opnieuw in en voltooi de uitdaging om uw bewerking op te slaan.",
+	"hcaptcha-visual-editor-error-handler-warning": "Dien het formulier opnieuw in om uw wijzigingen op te slaan."
 }

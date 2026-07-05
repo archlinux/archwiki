@@ -173,6 +173,18 @@
 				$unwatchLink.trigger( 'blur' );
 			} );
 		}
+
+		// Load the watchlist labels' onboarding process, if it's not been dismissed already.
+		// Exclude the simple watchlist of MobileFrontend (this does introduce an extension's details in core,
+		// but this is temporary and the whole section will be removed in T415965).
+		const watchlistLabelsUrl = mw.config.get( 'SpecialWatchlistLabelsUrl' );
+		if ( watchlistLabelsUrl &&
+			document.querySelector( 'html:not(.mw-mf-amc-clientpref-0) a[href$="' + watchlistLabelsUrl + '"]' ) &&
+			mw.config.get( 'enableWatchlistLabels' ) &&
+			mw.user.options.get( 'watchlistlabelonboarding', '1' )
+		) {
+			mw.loader.load( 'mediawiki.special.watchlistlabels.onboarding' );
+		}
 	} );
 
 }() );

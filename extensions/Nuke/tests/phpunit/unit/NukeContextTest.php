@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Nuke\Test\Unit;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Nuke\NukeConfigNames;
 use MediaWiki\Extension\Nuke\NukeContext;
@@ -17,10 +18,9 @@ class NukeContextTest extends TestCase {
 	private Config $config;
 
 	protected function setUp(): void {
-		$this->config = $this->createMock( Config::class );
-		$this->config->method( 'get' )->willReturnMap( [
-			[ NukeConfigNames::MaxAge, 86400 * 5 ],
-			[ MainConfigNames::RCMaxAge, 86400 * 3 ],
+		$this->config = new HashConfig( [
+			NukeConfigNames::MaxAge => 86400 * 5,
+			MainConfigNames::RCMaxAge => 86400 * 3,
 		] );
 	}
 

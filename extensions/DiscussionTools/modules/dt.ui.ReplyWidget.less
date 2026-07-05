@@ -85,10 +85,11 @@
 	&-scrollback-bottom {
 		position: fixed;
 		opacity: 0;
-		transition: transform 250ms, opacity 250ms;
+		transition-property: transform, opacity;
+		transition-duration: @transition-duration-medium;
 		z-index: 1;
 		margin: 1em 0;
-		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
+		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.2 );
 
 		// OOUI Apex theme
 		.skin-monobook & {
@@ -272,7 +273,7 @@
 	}
 
 	&-preview {
-		background: #f6f6f6;
+		background: @background-color-interactive-subtle;
 		padding: 0.5em 1em;
 		// Establish a block formatting context, so that floated content (e.g. image thumbnails)
 		// doesn't leak out and mess up our layout. (Also hides the 'Preview' label when empty.)
@@ -327,18 +328,6 @@
 			display: block;
 		}
 		// TODO: Consider doing this via's Toggler.js's APIs, rather than CSS overrides.
-
-		@media screen {
-			html.skin-theme-clientpref-night & {
-				background: @background-color-interactive-subtle;
-			}
-		}
-
-		@media screen and ( prefers-color-scheme: dark ) {
-			html.skin-theme-clientpref-os & {
-				background: @background-color-interactive-subtle;
-			}
-		}
 	}
 
 	&-bodyWrapper {
@@ -349,7 +338,8 @@
 		position: absolute;
 		bottom: -1em;
 		left: 50%;
-		transition: transform 250ms ease-in, opacity 250ms ease-in;
+		transition-property: transform, opacity;
+		transition-duration: @transition-duration-medium;
 		transform: translate( -50%, 30px );
 		opacity: 0;
 		white-space: nowrap;

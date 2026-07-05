@@ -1,0 +1,968 @@
+<?php
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Page\ExistingPageRecord;
+use MediaWiki\Page\PageStore;
+use MediaWiki\Page\PageStoreFactory;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\ActorStore;
+use MediaWiki\User\ActorStoreFactory;
+use MediaWiki\User\RestrictedUserGroupChecker;
+use MediaWiki\User\RestrictedUserGroupCheckerFactory;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserGroupAssignmentService;
+use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupManagerFactory;
+use MediaWiki\User\UserGroupMembership;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
+use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
+
+/**
+ * @covers \MediaWiki\User\UserGroupAssignmentService
+ * @covers \MediaWiki\User\UserGroupAssignmentServiceBase
+ * @group Database
+ */
+class UserGroupAssignmentServiceTest extends MediaWikiIntegrationTestCase {
+	use MockAuthorityTrait;
+	use TempUserTestTrait;
+
+	/** @dataProvider provideTargetCanHaveGroups */
+	public function testTargetCanHaveGroups( UserIdentity $target, bool $expected ): void {
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+		$this->assertEquals( $expected, $service->targetCanHaveUserGroups( $target ) );
+	}
+
+	public static function provideTargetCanHaveGroups(): array {
+		return [
+			'Registered user' => [ new UserIdentityValue( 1, 'Test user' ), true ],
+			'Remote registered user' => [ new UserIdentityValue( 1, 'Test user', 'otherwiki' ), true ],
+			'Anonymous user' => [ new UserIdentityValue( 0, '127.0.0.1' ), false ],
+			'Remote anonymous user' => [ new UserIdentityValue( 0, '127.0.0.1', 'otherwiki' ), false ],
+			'Temporary user' => [ new UserIdentityValue( 2, '~2025-1' ), false ],
+			'Remote temporary user' => [ new UserIdentityValue( 2, '~2025-1', 'otherwiki' ), false ],
+		];
+	}
+
+	/** @dataProvider provideTargetCanHaveGroups_tempAccountsNotKnown */
+	public function testTargetCanHaveGroups_tempAccountsNotKnown( UserIdentity $target, bool $expected ): void {
+		$this->disableAutoCreateTempUser();
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+		$this->assertEquals( $expected, $service->targetCanHaveUserGroups( $target ) );
+	}
+
+	public static function provideTargetCanHaveGroups_tempAccountsNotKnown(): array {
+		return [
+			'Anonymous user' => [ new UserIdentityValue( 0, '127.0.0.1' ), false ],
+			'Remote anonymous user' => [ new UserIdentityValue( 0, '127.0.0.1', 'otherwiki' ), false ],
+			'Temporary (unknown) user' => [ new UserIdentityValue( 2, '~2025-1' ), true ],
+			'Remote temporary user' => [ new UserIdentityValue( 2, '~2025-1', 'otherwiki' ), false ],
+		];
+	}
+
+	/** @dataProvider provideUserCanChangeRights */
+	public function testUserCanChangeRights( UserIdentity $target, bool $hasInterwikiRight, bool $expected ): void {
+		$ugmMock = $this->createMock( UserGroupManager::class );
+		$ugmMock->method( 'getGroupsChangeableBy' )
+			->willReturn( [
+				'add' => [ 'add-group' ],
+				'remove' => [],
+				'add-self' => [],
+				'remove-self' => [],
+			] );
+
+		$ugmFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$ugmFactoryMock->method( 'getUserGroupManager' )
+			->willReturn( $ugmMock );
+
+		$this->setService( 'UserGroupManagerFactory', $ugmFactoryMock );
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$performer = $this->mockRegisteredAuthorityWithPermissions(
+			$hasInterwikiRight ? [ 'userrights-interwiki' ] : []
+		);
+		$canChange = $service->userCanChangeRights( $performer, $target );
+		$this->assertSame( $expected, $canChange );
+	}
+
+	public static function provideUserCanChangeRights(): array {
+		return [
+			'Registered target' => [
+				'target' => new UserIdentityValue( 1, 'Test user' ),
+				'hasInterwikiRight' => false,
+				'expected' => true,
+			],
+			'Anonymous target' => [
+				'target' => new UserIdentityValue( 0, '127.0.0.1' ),
+				'hasInterwikiRight' => false,
+				'expected' => false,
+			],
+			'Temporary user target' => [
+				'target' => new UserIdentityValue( 2, '~2025-1' ),
+				'hasInterwikiRight' => false,
+				'expected' => false,
+			],
+			'Registered remote target, no interwiki right' => [
+				'target' => new UserIdentityValue( 1, 'Test user', 'otherwiki' ),
+				'hasInterwikiRight' => false,
+				'expected' => false,
+			],
+			'Registered remote target, with interwiki right' => [
+				'target' => new UserIdentityValue( 1, 'Test user', 'otherwiki' ),
+				'hasInterwikiRight' => true,
+				'expected' => true,
+			],
+		];
+	}
+
+	/** @dataProvider provideIsSelf */
+	public function testUserCanChangeRightsOnlySelf( bool $isSelf ): void {
+		$ugmMock = $this->createMock( UserGroupManager::class );
+		$ugmMock->method( 'getGroupsChangeableBy' )
+			->willReturn( [
+				'add' => [],
+				'remove' => [],
+				'add-self' => [ 'add-group' ],
+				'remove-self' => [],
+			] );
+
+		$ugmFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$ugmFactoryMock->method( 'getUserGroupManager' )
+			->willReturn( $ugmMock );
+
+		$this->setService( 'UserGroupManagerFactory', $ugmFactoryMock );
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$performer = $this->mockRegisteredNullAuthority();
+		$target = $isSelf ? $performer->getUser() : new UserIdentityValue( 1, 'Test user' );
+		$canChange = $service->userCanChangeRights( $performer, $target );
+		$this->assertSame( $isSelf, $canChange );
+	}
+
+	/** @dataProvider provideIsSelf */
+	public function testGetChangeableGroups( bool $isSelf ): void {
+		$ugmMock = $this->createMock( UserGroupManager::class );
+		$ugmMock->method( 'getGroupsChangeableBy' )
+			->willReturn( [
+				'add' => [ 'add-group1' ],
+				'remove' => [ 'remove-group1' ],
+				'add-self' => [ 'add-group2' ],
+				'remove-self' => [ 'remove-group2' ],
+			] );
+
+		$ugmFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$ugmFactoryMock->method( 'getUserGroupManager' )
+			->willReturn( $ugmMock );
+
+		$this->setService( 'UserGroupManagerFactory', $ugmFactoryMock );
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$performer = $this->mockAnonNullAuthority();
+		$target = $isSelf ? $performer->getUser() : new UserIdentityValue( 1, 'Test user' );
+
+		$groups = $service->getChangeableGroups( $performer, $target );
+		if ( $isSelf ) {
+			$this->assertSame( [
+				'add' => [ 'add-group1', 'add-group2' ],
+				'remove' => [ 'remove-group1', 'remove-group2' ],
+				'restricted' => [],
+			], $groups );
+		} else {
+			$this->assertSame( [
+				'add' => [ 'add-group1' ],
+				'remove' => [ 'remove-group1' ],
+				'restricted' => [],
+			], $groups );
+		}
+	}
+
+	public static function provideIsSelf(): array {
+		return [
+			'Not self' => [ false ],
+			'Self' => [ true ],
+		];
+	}
+
+	/** @dataProvider provideGetChangeableGroupsWithRestrictions */
+	public function testGetChangeableGroupsWithRestrictions(
+		array $restrictedGroups,
+		bool $canIgnore,
+		array $expected
+	): void {
+		$ugmMock = $this->createMock( UserGroupManager::class );
+		$ugmMock->method( 'getGroupsChangeableBy' )
+			->willReturn( [
+				'add' => array_keys( $restrictedGroups ),
+				'remove' => array_keys( $restrictedGroups ),
+				'add-self' => [],
+				'remove-self' => [],
+			] );
+
+		$ugmFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$ugmFactoryMock->method( 'getUserGroupManager' )
+			->willReturn( $ugmMock );
+
+		$this->setService( 'UserGroupManagerFactory', $ugmFactoryMock );
+
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, $restrictedGroups );
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$performer = $canIgnore ?
+			$this->mockRegisteredUltimateAuthority() :
+			$this->mockAnonNullAuthority();
+		$target = $performer->getUser();
+
+		$groups = $service->getChangeableGroups( $performer, $target );
+		$this->assertSame( $expected, $groups );
+	}
+
+	public static function provideGetChangeableGroupsWithRestrictions() {
+		$passingConditions = [
+			'|',
+			[ APCOND_EDITCOUNT, 0 ],
+			[ APCOND_AGE, 3 * 86400 * 30 ],
+		];
+		$failingConditions = [
+			'&',
+			[ APCOND_EDITCOUNT, 300 ],
+			[ APCOND_AGE, 3 * 86400 * 30 ],
+		];
+
+		return [
+			'Conditions not met, cannot be ignored' => [
+				'restrictedGroups' => [
+					'group1' => [
+						'memberConditions' => $failingConditions,
+						'canBeIgnored' => false,
+					],
+					'group2' => [
+						'updaterConditions' => $failingConditions,
+						'canBeIgnored' => false,
+					],
+				],
+				'canIgnore' => true,
+				'expected' => [
+					'add' => [],
+					'remove' => [ 'group1', 'group2' ],
+					'restricted' => [
+						'group1' => [
+							'condition-met' => false,
+							'ignore-condition' => false,
+						],
+						'group2' => [
+							'condition-met' => false,
+							'ignore-condition' => false,
+						],
+					],
+				],
+			],
+			'Conditions not met, can be ignored' => [
+				'restrictedGroups' => [
+					'group1' => [
+						'memberConditions' => $failingConditions,
+						'updaterConditions' => $failingConditions,
+						'canBeIgnored' => true,
+					],
+				],
+				'canIgnore' => true,
+				'expected' => [
+					'add' => [ 'group1' ],
+					'remove' => [ 'group1' ],
+					'restricted' => [
+						'group1' => [
+							'condition-met' => false,
+							'ignore-condition' => true,
+						],
+					],
+				],
+			],
+			'Conditions met' => [
+				'restrictedGroups' => [
+					'group1' => [
+						'memberConditions' => $passingConditions,
+						'canBeIgnored' => false,
+					],
+					'group2' => [
+						'updaterConditions' => $passingConditions,
+						'canBeIgnored' => false,
+					],
+				],
+				'canIgnore' => false,
+				'expected' => [
+					'add' => [ 'group1', 'group2' ],
+					'remove' => [ 'group1', 'group2' ],
+					'restricted' => [
+						'group1' => [
+							'condition-met' => true,
+							'ignore-condition' => false,
+						],
+						'group2' => [
+							'condition-met' => true,
+							'ignore-condition' => false,
+						]
+					],
+				],
+			],
+			'No restricted groups' => [
+				'restrictedGroups' => [],
+				'canIgnore' => false,
+				'expected' => [
+					'add' => [],
+					'remove' => [],
+					'restricted' => [],
+				],
+			],
+		];
+	}
+
+	/** @dataProvider provideGetPageTitleForTargetUser */
+	public function testGetPageTitleForTargetUser(
+		UserIdentity $target, string|false $referenceWiki, string $expected
+	): void {
+		$expected = str_replace( '(local)', WikiMap::getCurrentWikiId(), $expected );
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$title = $service->getPageTitleForTargetUser( $target, $referenceWiki );
+		$this->assertSame( $expected, $title );
+	}
+
+	public static function provideGetPageTitleForTargetUser(): array {
+		return [
+			'Local user from local wiki' => [
+				'target' => new UserIdentityValue( 1, 'LocalUser' ),
+				'referenceWiki' => false,
+				'expected' => 'LocalUser'
+			],
+			'Remote user from local wiki' => [
+				'target' => new UserIdentityValue( 2, 'RemoteUser', 'otherwiki' ),
+				'referenceWiki' => false,
+				'expected' => 'RemoteUser@otherwiki'
+			],
+			'Remote user from the same remote wiki' => [
+				'target' => new UserIdentityValue( 3, 'RemoteUser', 'otherwiki' ),
+				'referenceWiki' => 'otherwiki',
+				'expected' => 'RemoteUser'
+			],
+			'Remote user from a different remote wiki' => [
+				'target' => new UserIdentityValue( 4, 'RemoteUser', 'otherwiki' ),
+				'referenceWiki' => 'anotherwiki',
+				'expected' => 'RemoteUser@otherwiki'
+			],
+			'Local user from remote wiki' => [
+				'target' => new UserIdentityValue( 5, 'LocalUser' ),
+				'referenceWiki' => 'otherwiki',
+				'expected' => 'LocalUser@(local)'
+			],
+		];
+	}
+
+	/** @dataProvider provideEnforcePermissions */
+	public function testEnforcePermissions(
+		array &$add,
+		array &$remove,
+		array &$newExpiries,
+		array $existingUGMs,
+		array $permittedChanges,
+		array $expectedAdd,
+		array $expectedRemove,
+		array $expectedNewExpiries
+	): void {
+		foreach ( $existingUGMs as $group => $expiry ) {
+			$existingUGMs[$group] = new UserGroupMembership( 1, $group, $expiry );
+		}
+
+		UserGroupAssignmentService::enforceChangeGroupPermissions(
+			$add,
+			$remove,
+			$newExpiries,
+			$existingUGMs,
+			$permittedChanges
+		);
+
+		$this->assertSame( $expectedAdd, $add );
+		$this->assertSame( $expectedRemove, $remove );
+		$this->assertSame( $expectedNewExpiries, $newExpiries );
+	}
+
+	public static function provideEnforcePermissions(): array {
+		return [
+			'All changes are permitted' => [
+				'add' => [ 'added-group1', 'added-group2', 'prolonged-group', 'shortened-group' ],
+				'remove' => [ 'removed-group1', 'removed-group2' ],
+				'newExpiries' => [
+					'added-group1' => null,
+					'added-group2' => '20290101000000',
+					'prolonged-group' => '20300101000000',
+					'shortened-group' => '20250101000000',
+				],
+				'existingUGMs' => [
+					'prolonged-group' => '20280101000000',
+					'shortened-group' => '20270101000000',
+					'removed-group1' => null,
+					'removed-group2' => '20260101000000',
+				],
+				'permittedChanges' => [
+					'add' => [ 'added-group1', 'added-group2', 'prolonged-group' ],
+					'remove' => [ 'removed-group1', 'removed-group2', 'shortened-group' ],
+				],
+				'expectedAdd' => [ 'added-group1', 'added-group2', 'prolonged-group', 'shortened-group' ],
+				'expectedRemove' => [ 'removed-group1', 'removed-group2' ],
+				'expectedNewExpiries' => [
+					'added-group1' => null,
+					'added-group2' => '20290101000000',
+					'prolonged-group' => '20300101000000',
+					'shortened-group' => '20250101000000',
+				],
+			],
+			'No changes permitted' => [
+				'add' => [ 'added-group1', 'added-group2', 'prolonged-group', 'shortened-group' ],
+				'remove' => [ 'removed-group1', 'removed-group2' ],
+				'newExpiries' => [
+					'added-group1' => null,
+					'added-group2' => '20290101000000',
+					'prolonged-group' => '20300101000000',
+					'shortened-group' => '20250101000000',
+				],
+				'existingUGMs' => [
+					'prolonged-group' => '20280101000000',
+					'shortened-group' => '20270101000000',
+					'removed-group1' => null,
+					'removed-group2' => '20260101000000',
+				],
+				'permittedChanges' => [
+					'add' => [],
+					'remove' => [],
+				],
+				'expectedAdd' => [],
+				'expectedRemove' => [],
+				'expectedNewExpiries' => [],
+			],
+			'Shortening fails without remove right' => [
+				'add' => [ 'shortened-group1', 'shortened-group2' ],
+				'remove' => [],
+				'newExpiries' => [
+					'shortened-group1' => '20250101000000',
+					'shortened-group2' => '20260101000000',
+				],
+				'existingUGMs' => [
+					'shortened-group1' => '20270101000000',
+					'shortened-group2' => null,
+				],
+				'permittedChanges' => [
+					'add' => [ 'shortened-group1', 'shortened-group2' ],
+					'remove' => [],
+				],
+				'expectedAdd' => [],
+				'expectedRemove' => [],
+				'expectedNewExpiries' => [],
+			],
+			'Shortening succeeds with just remove right' => [
+				'add' => [ 'shortened-group1', 'shortened-group2' ],
+				'remove' => [],
+				'newExpiries' => [
+					'shortened-group1' => '20250101000000',
+					'shortened-group2' => '20260101000000',
+				],
+				'existingUGMs' => [
+					'shortened-group1' => '20270101000000',
+					'shortened-group2' => null,
+				],
+				'permittedChanges' => [
+					'add' => [],
+					'remove' => [ 'shortened-group1', 'shortened-group2' ],
+				],
+				'expectedAdd' => [ 'shortened-group1', 'shortened-group2' ],
+				'expectedRemove' => [],
+				'expectedNewExpiries' => [
+					'shortened-group1' => '20250101000000',
+					'shortened-group2' => '20260101000000',
+				],
+			],
+			'User wants to remove non-existing group' => [
+				'add' => [],
+				'remove' => [ 'non-existing-group' ],
+				'newExpiries' => [],
+				'existingUGMs' => [],
+				'permittedChanges' => [
+					'add' => [],
+					'remove' => [ 'non-existing-group' ],
+				],
+				'expectedAdd' => [],
+				'expectedRemove' => [],
+				'expectedNewExpiries' => [],
+			],
+			'User wants to both add and remove the same group' => [
+				'add' => [ 'group1', 'group2' ],
+				'remove' => [ 'group1', 'group2' ],
+				'newExpiries' => [
+					'group1' => null,
+					'group2' => '20290101000000',
+				],
+				'existingUGMs' => [
+					'group2' => null,
+				],
+				'permittedChanges' => [
+					'add' => [ 'group1', 'group2' ],
+					'remove' => [ 'group1', 'group2' ],
+				],
+				'expectedAdd' => [],
+				'expectedRemove' => [],
+				'expectedNewExpiries' => [],
+			],
+		];
+	}
+
+	public function testCannotAddSelfToRestrictedGroup() {
+		$ugmMock = $this->createMock( UserGroupManager::class );
+		$ugmMock->method( 'getGroupsChangeableBy' )
+			->willReturn( [
+				'add' => [],
+				'remove' => [],
+				'add-self' => [ 'interface-admin' ],
+				'remove-self' => [],
+			] );
+
+		$ugmFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$ugmFactoryMock->method( 'getUserGroupManager' )
+			->willReturn( $ugmMock );
+
+		$this->setService( 'UserGroupManagerFactory', $ugmFactoryMock );
+
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, [
+			'interface-admin' => [
+				'memberConditions' => [ APCOND_EDITCOUNT, 100 ],
+			],
+		] );
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$performer = $this->mockAnonNullAuthority();
+		$target = $performer->getUser();
+
+		$groups = $service->getChangeableGroups( $performer, $target );
+		$expected = [
+			'add' => [],
+			'remove' => [],
+			'restricted' => [
+				'interface-admin' => [
+					'condition-met' => false,
+					'ignore-condition' => false
+				]
+			],
+		];
+		$this->assertSame( $expected, $groups );
+	}
+
+	public function testSaveUserGroups(): void {
+		$add = [ 'added-group1', 'added-group2' ];
+		$remove = [ 'removed-group' ];
+		$newExpiries = [
+			'added-group1' => null,
+			'added-group2' => '20290101000000',
+		];
+
+		// Using bureaucrat as a performer won't work because these groups aren't otherwise
+		// known to software and won't be allowed to be assigned.
+		$this->overrideConfigValue( MainConfigNames::AddGroups,
+			[ 'sysop' => [ 'added-group1', 'added-group2', 'hook-added-group' ] ] );
+		$this->overrideConfigValue( MainConfigNames::RemoveGroups,
+			[ 'sysop' => [ 'removed-group', 'hook-removed-group' ] ] );
+
+		$performer = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$target = $this->getTestUser( [ 'static-group', 'removed-group', 'hook-removed-group' ] )->getUser();
+
+		$hookBeforeCalled = false;
+		$hookAfterCalled = false;
+
+		$this->setTemporaryHook(
+			'ChangeUserGroups',
+			function (
+				$performer, $hookUser, array &$addGroups, array &$removeGroups
+			) use ( &$hookBeforeCalled ) {
+				$this->assertSame( [ 'added-group1', 'added-group2' ], $addGroups );
+				$this->assertSame( [ 'removed-group' ], $removeGroups );
+				$hookBeforeCalled = true;
+				$addGroups[] = 'hook-added-group';
+				$removeGroups[] = 'hook-removed-group';
+			}
+		);
+		$this->setTemporaryHook(
+			'UserGroupsChanged',
+			function (
+				$hookUser, array $addGroups, array $removeGroups, $performer, $reason, $oldUGMs, $newUGMs
+			) use ( &$hookAfterCalled ) {
+				$this->assertSame( [ 'added-group1', 'added-group2', 'hook-added-group' ], $addGroups );
+				$this->assertSame( [ 'removed-group', 'hook-removed-group' ], $removeGroups );
+				$this->assertSame(
+					[ 'static-group', 'added-group1', 'added-group2', 'hook-added-group' ],
+					array_keys( $newUGMs )
+				);
+				$hookAfterCalled = true;
+			}
+		);
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+		[ $added, $removed ] = $service->saveChangesToUserGroups( $performer, $target, $add, $remove, $newExpiries );
+
+		$this->assertEquals( [ 'added-group1', 'added-group2', 'hook-added-group' ], $added );
+		$this->assertEquals( [ 'removed-group', 'hook-removed-group' ], $removed );
+		$this->assertTrue( $hookBeforeCalled, 'ChangeUserGroups hook was not called' );
+		$this->assertTrue( $hookAfterCalled, 'UserGroupsChanged hook was not called' );
+	}
+
+	public function testPrivateRestrictedGroupConditions(): void {
+		$this->overrideConfigValue( MainConfigNames::AddGroups, [ 'sysop' => [ 'test-group' ] ] );
+		$this->overrideConfigValue( MainConfigNames::RemoveGroups, [] );
+
+		// Only blocked users can be added to 'test-group'
+		$this->overrideConfigValue( MainConfigNames::UserRequirementsPrivateConditions, [ APCOND_BLOCKED ] );
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, [
+			'test-group' => [
+				'memberConditions' => APCOND_BLOCKED
+			]
+		] );
+
+		$performer = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$target = $this->getTestUser()->getUser();
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		// The two subsequent assertions ensure that the cache is partitioned by evaluatePrivateConditions
+		$changeableGroups = $service->getChangeableGroups( $performer, $target, false );
+		$this->assertSame( [ 'test-group' ], $changeableGroups['add'] );
+
+		$changeableGroups = $service->getChangeableGroups( $performer, $target );
+		$this->assertSame( [], $changeableGroups['add'] );
+
+		// Make sure that attempt to add the user to 'test-group' fails
+		[ $added, $removed ] = $service->saveChangesToUserGroups(
+			$performer, $target, [ 'test-group' ], [], []
+		);
+		$this->assertSame( [], $added );
+		$this->assertSame( [], $removed );
+	}
+
+	public function testValidateUserGroups() {
+		$this->overrideConfigValue( MainConfigNames::AddGroups,
+			[ 'sysop' => [
+				'addable-group', 'restricted-group', 'restricted-group-private1', 'restricted-group-private2'
+			] ] );
+		$this->overrideConfigValue( MainConfigNames::RemoveGroups,
+			[ 'sysop' => [ 'removable-group' ] ] );
+
+		// Groups are considered known only if they are given or revoked some permissions (empty array counts as well)
+		$this->overrideConfigValue(
+			MainConfigNames::RevokePermissions,
+			[
+				'addable-group' => [],
+				'restricted-group' => [],
+				'restricted-group-private1' => [],
+				'restricted-group-private2' => [],
+				'removable-group' => [],
+				'insufficient-rights-group' => [],
+			]
+		);
+
+		$this->overrideConfigValue( MainConfigNames::UserRequirementsPrivateConditions, [ APCOND_BLOCKED ] );
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, [
+			'restricted-group' => [
+				'memberConditions' => [ APCOND_EDITCOUNT, 100 ]
+			],
+			'restricted-group-private1' => [
+				'memberConditions' => APCOND_BLOCKED
+			],
+			// Even though it uses a private condition, the target doesn't meet APCOND_EDITCOUNT, so it fails due to
+			// 'restricted', as it can be publicly determined that the user is not eligible for the group
+			'restricted-group-private2' => [
+				'memberConditions' => [ '&', APCOND_BLOCKED, [ APCOND_EDITCOUNT, 100 ] ]
+			]
+		] );
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+
+		$currentTargetGroups = [ 'unknown-group1', 'removable-group' ];
+		$performer = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$target = $this->getTestUser()->getUser();
+
+		$currentTargetUGMs = [];
+		foreach ( $currentTargetGroups as $group ) {
+			$currentTargetUGMs[$group] = new UserGroupMembership( $target->getId(), $group );
+		}
+
+		$removeGroups = [ 'unknown-group1', 'removable-group' ];
+		$addGroups = [ 'unknown-group2', 'addable-group', 'restricted-group', 'restricted-group-private1',
+			'restricted-group-private2', 'insufficient-rights-group' ];
+		$expected = [
+			'insufficient-rights-group' => 'rights',
+			'restricted-group' => 'restricted',
+			'restricted-group-private1' => 'private-condition',
+			'restricted-group-private2' => 'restricted',
+		];
+
+		$result = $service->validateUserGroups(
+			$performer, $target, $addGroups, $removeGroups, [], $currentTargetUGMs );
+
+		$this->assertArrayEquals( $expected, $result, named: true );
+	}
+
+	/** @dataProvider provideLogAccessToPrivateConditions */
+	public function testLogAccessToPrivateConditions( array $oldGroups, array $newGroups, array $expectedConditions ) {
+		$this->overrideConfigValue( MainConfigNames::AddGroups,
+			[ 'sysop' => [
+				'addable-group', 'restricted-group', 'restricted-group-private1', 'restricted-group-private2',
+				'restricted-group-private3',
+			] ] );
+		$this->overrideConfigValue( MainConfigNames::RemoveGroups,
+			[ 'sysop' => [ 'restricted-group-private2' ] ] );
+
+		$this->overrideConfigValue( MainConfigNames::UserRequirementsPrivateConditions, [ APCOND_BLOCKED ] );
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, [
+			'restricted-group' => [
+				'memberConditions' => [ APCOND_EDITCOUNT, 100 ]
+			],
+			'restricted-group-private1' => [
+				'memberConditions' => APCOND_BLOCKED
+			],
+			// Even though it uses a private condition, the target doesn't meet APCOND_EDITCOUNT, so it's certainly
+			// known without evaluating private conditions
+			'restricted-group-private2' => [
+				'memberConditions' => [ '&', APCOND_BLOCKED, [ APCOND_EDITCOUNT, 100 ] ]
+			],
+			'restricted-group-private3' => [
+				'memberConditions' => [ '|', APCOND_BLOCKED, [ APCOND_EDITCOUNT, 0 ] ]
+			]
+		] );
+
+		$hookCalled = false;
+		$this->setTemporaryHook(
+			'ReadPrivateUserRequirementsCondition',
+			function ( $performer, $target, $conditions ) use ( $expectedConditions, &$hookCalled ) {
+				$this->assertArrayEquals( $expectedConditions, $conditions );
+				$hookCalled = true;
+			}
+		);
+
+		$performer = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$target = $this->getTestUser( array_keys( $oldGroups ) )->getUser();
+
+		$addGroups = array_keys( $newGroups );
+		$currentUGMs = [];
+		foreach ( $oldGroups as $group => $expiry ) {
+			$currentUGMs[$group] = new UserGroupMembership( $target->getId(), $group, $expiry );
+		}
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+		$service->logAccessToPrivateConditions( $performer, $target, $addGroups, $newGroups, $currentUGMs );
+
+		// Hook should be called if and only if there are some private conditions to report
+		$this->assertSame( count( $expectedConditions ) > 0, $hookCalled );
+	}
+
+	public static function provideLogAccessToPrivateConditions(): array {
+		return [
+			'Unrestricted group' => [
+				'oldGroups' => [],
+				'newGroups' => [ 'addable-group' => null ],
+				'expectedConditions' => [],
+			],
+			'Restricted group with public condition' => [
+				'oldGroups' => [],
+				'newGroups' => [ 'restricted-group' => null ],
+				'expectedConditions' => [],
+			],
+			'Restricted group with private condition' => [
+				'oldGroups' => [],
+				'newGroups' => [ 'restricted-group-private1' => null ],
+				'expectedConditions' => [ APCOND_BLOCKED ],
+			],
+			'Restricted group with private condition, which does not impact final decision (unaddable group)' => [
+				'oldGroups' => [],
+				'newGroups' => [ 'restricted-group-private2' => null ],
+				'expectedConditions' => [],
+			],
+			'Restricted group with private condition, which does not impact final decision (addable group)' => [
+				'oldGroups' => [],
+				'newGroups' => [ 'restricted-group-private3' => null ],
+				'expectedConditions' => [],
+			],
+			'Otherwise unassignable group can be revoked without logging condition checks' => [
+				'oldGroups' => [ 'restricted-group-private2' => '21000101000000' ],
+				'newGroups' => [],
+				'expectedConditions' => [],
+			],
+			'Otherwise unassignable group can be shortened without logging condition checks' => [
+				'oldGroups' => [ 'restricted-group-private2' => '21000101000000' ],
+				'newGroups' => [ 'restricted-group-private2' => '20990101000000' ],
+				'expectedConditions' => [],
+			],
+			'Not changing existing restricted group does not trigger a log entry' => [
+				'oldGroups' => [ 'restricted-group-private1' => null ],
+				'newGroups' => [ 'restricted-group-private1' => null, 'addable-group' => null ],
+				'expectedConditions' => [],
+			],
+		];
+	}
+
+	public function testLogAccessToPrivateConditions_ignorableGroup() {
+		$this->overrideConfigValue( MainConfigNames::AddGroups, [ 'sysop' => [ 'restricted-group-private' ] ] );
+		$this->overrideConfigValue( MainConfigNames::UserRequirementsPrivateConditions, [ APCOND_BLOCKED ] );
+		$this->overrideConfigValue( MainConfigNames::RestrictedGroups, [
+			'restricted-group-private' => [
+				'memberConditions' => APCOND_BLOCKED,
+				'canBeIgnored' => true
+			],
+		] );
+
+		$hookCalled = false;
+		$this->setTemporaryHook(
+			'ReadPrivateUserRequirementsCondition',
+			static function () use ( &$hookCalled ) {
+				$hookCalled = true;
+			}
+		);
+
+		$performer = $this->mockAnonUltimateAuthority();
+		$target = $this->getTestUser()->getUser();
+
+		$service = $this->getServiceContainer()->getUserGroupAssignmentService();
+		$service->logAccessToPrivateConditions( $performer, $target, [ 'restricted-group-private' ], [], [] );
+		$this->assertFalse( $hookCalled );
+	}
+
+	public function testLogOnRemoteWiki() {
+		$services = $this->getServiceContainer();
+		$targetId = 1;
+		$dbw = $this->getDb();
+
+		// First, we have to set up some logs, so that we're able to pretend that we have two wikis
+		// even though in practice we're connected to only one database.
+		$userGroupManagerMock = $this->createMock( UserGroupManager::class );
+		$userGroupManagerMock->method( 'getUserGroupMemberships' )
+			->willReturn( [], [ 'sysop' => new UserGroupMembership( $targetId, 'sysop' ) ] );
+		$userGroupManagerMock->method( 'addUserToGroup' )
+			->willReturn( true );
+
+		$userGroupManagerFactoryMock = $this->createMock( UserGroupManagerFactory::class );
+		$userGroupManagerFactoryMock->method( 'getUserGroupManager' )
+			->willReturnCallback( static fn ( $wiki = false ) =>
+				$wiki ? $userGroupManagerMock : $services->getUserGroupManager()
+			);
+
+		$actorStore = $services->getActorStore();
+		$actorStoreMock = $this->createMock( ActorStore::class );
+		$actorStoreMock->method( 'getUserIdentityByName' )
+			->willReturn( null );
+		$actorStoreMock->method( 'acquireActorId' )
+			->willReturnCallback( static function ( $user, $db ) use ( $actorStore ) {
+				// Change to local wiki, so that acquireActorId passes validation
+				$user = new UserIdentityValue( $user->getId( $user->getWikiId() ), $user->getName() );
+				return $actorStore->acquireActorId( $user, $db );
+			} );
+		$actorStoreFactoryMock = $this->createMock( ActorStoreFactory::class );
+		$actorStoreFactoryMock->method( 'getActorStore' )
+			->willReturn( $actorStoreMock );
+		$this->setService( 'ActorStoreFactory', $actorStoreFactoryMock );
+
+		$pageStoreMock = $this->createMock( PageStore::class );
+		$pageStoreMock->method( 'getPageByName' )
+			->willReturnCallback( function ( $ns, $title ) {
+				$pageMock = $this->createMock( ExistingPageRecord::class );
+				$pageMock->method( 'getId' )
+					->willReturn( 0 );
+				$pageMock->method( 'getNamespace' )
+					->willReturn( $ns );
+				$pageMock->method( 'getDBkey' )
+					->willReturn( $title );
+				return $pageMock;
+			} );
+		$pageStoreFactoryMock = $this->createMock( PageStoreFactory::class );
+		$pageStoreFactoryMock->method( 'getPageStore' )
+			->willReturn( $pageStoreMock );
+
+		// Add everything to the same local database, even though on prod it would be two different DBs
+		$connectionProviderMock = $this->createMock( IConnectionProvider::class );
+		$connectionProviderMock->method( 'getPrimaryDatabase' )
+			->willReturn( $dbw );
+
+		$userFactory = $services->getUserFactory();
+		$userFactoryMock = $this->createMock( UserFactory::class );
+		$userFactoryMock->method( 'newFromUserIdentity' )
+			->willReturnCallback( $userFactory->newFromUserIdentity( ... ) );
+
+		$restrictedGroupCheckerMock = $this->createMock( RestrictedUserGroupChecker::class );
+		$restrictedGroupCheckerMock->method( 'isGroupRestricted' )
+			->willReturn( false );
+		$restrictedGroupCheckerFactoryMock = $this->createMock( RestrictedUserGroupCheckerFactory::class );
+		$restrictedGroupCheckerFactoryMock->method( 'getRestrictedUserGroupChecker' )
+			->willReturn( $restrictedGroupCheckerMock );
+
+		$service = new UserGroupAssignmentService(
+			$userGroupManagerFactoryMock,
+			$services->getUserNameUtils(),
+			$userFactoryMock,
+			$restrictedGroupCheckerFactoryMock,
+			new HookRunner( $services->getHookContainer() ),
+			new ServiceOptions(
+				UserGroupAssignmentService::CONSTRUCTOR_OPTIONS, $services->getMainConfig()
+			),
+			$services->getTempUserConfig(),
+			$connectionProviderMock,
+			$pageStoreFactoryMock,
+		);
+
+		$performer = $this->mockRegisteredUltimateAuthority();
+		$target = new UserIdentityValue( $targetId, 'Test user', 'otherwiki' );
+
+		$service->saveChangesToUserGroups( $performer, $target, [ 'sysop' ], [], [] );
+
+		$logs = DatabaseLogEntry::newSelectQueryBuilder( $dbw )
+			->where( [ 'log_type' => 'rights' ] )
+			->fetchResultSet();
+
+		// There should be exactly two entries: one for the local wiki and one for the remote wiki
+		$this->assertSame( 2, $logs->numRows() );
+
+		$localWikiId = WikiMap::getCurrentWikiId();
+		$performerName = $performer->getUser()->getName();
+		$localPresent = false;
+		$remotePresent = false;
+		foreach ( $logs as $log ) {
+			$logTitle = $log->log_title;
+			$logPerformer = $log->log_user_text;
+			if ( $logTitle === 'Test_user' && $logPerformer === $localWikiId . '>' . $performerName ) {
+				$localPresent = true;
+			}
+			if ( $logTitle === 'Test_user@otherwiki' && $logPerformer === $performerName ) {
+				$remotePresent = true;
+			}
+		}
+		$this->assertTrue( $localPresent, 'Local wiki log entry is missing' );
+		$this->assertTrue( $remotePresent, 'Remote wiki log entry is missing' );
+	}
+
+	/** @dataProvider provideExpiryToTimestamp */
+	public function testExpiryToTimestamp( string $providedExpiry, string|null|bool $expectedTimestamp ): void {
+		ConvertibleTimestamp::setFakeTime( '20260504030201' );
+		$this->assertSame( $expectedTimestamp, UserGroupAssignmentService::expiryToTimestamp( $providedExpiry ) );
+	}
+
+	public static function provideExpiryToTimestamp(): array {
+		return [
+			'Expiry is indefinite' => [ 'indefinite', null ],
+			'Expiry is 1 year' => [ '1 year', '20270504030201' ],
+			'Expiry is absolute timestamp' => [ '1 January 2026 23:45', '20260101234500' ],
+			'Expiry is not valid' => [ 'Invalid timestamp', false ],
+		];
+	}
+}

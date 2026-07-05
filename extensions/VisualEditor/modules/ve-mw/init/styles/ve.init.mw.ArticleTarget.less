@@ -1,0 +1,83 @@
+/*!
+ * VisualEditor MediaWiki Initialization ArticleTarget styles.
+ *
+ * @copyright See AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+.ve-init-mw-articleTarget-switchFull {
+	flex-basis: 100%;
+	text-align: center;
+	margin: 2.5em 0;
+	position: relative;
+
+	> .oo-ui-buttonElement {
+		box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
+	}
+
+	&-skeleton {
+		position: absolute;
+		width: 100%;
+		z-index: -1;
+
+		> div {
+			height: 20px;
+			margin-bottom: 4px;
+			border-radius: 2px;
+		}
+
+		> div:first-child {
+			width: 80%;
+		}
+
+		> div + div + div + div {
+			width: 70%;
+		}
+	}
+
+	&-top {
+		.ve-init-mw-articleTarget-switchFull-skeleton {
+			top: -2.5em;
+
+			> div {
+				background: #fcfcfc;
+			}
+
+			> div + div {
+				background: #fafafa;
+			}
+
+			> div + div + div {
+				background: #f7f7f7;
+			}
+
+			> div + div + div + div {
+				background: #f4f4f4;
+			}
+		}
+	}
+
+	&-bottom {
+		margin-bottom: 1.5em;
+
+		.ve-init-mw-articleTarget-switchFull-skeleton {
+			top: -1em;
+
+			> div {
+				background: #f4f4f4;
+			}
+
+			> div + div {
+				background: #f7f7f7;
+			}
+
+			> div + div + div {
+				background: #fafafa;
+			}
+
+			> div + div + div + div {
+				background: #fcfcfc;
+			}
+		}
+	}
+}

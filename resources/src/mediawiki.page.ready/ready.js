@@ -3,6 +3,7 @@ const config = require( './config.json' );
 const teleportTarget = require( './teleportTarget.js' );
 const enableSearchDialog = require( './enableSearchDialog.js' );
 const clearAddressBar = require( './clearAddressBar.js' );
+const { updateThumbnailsToPreferredSize } = require( './updateThumbnailsToPreferredSize.js' );
 
 // Break out of framesets
 if ( mw.config.get( 'wgBreakFrames' ) ) {
@@ -60,32 +61,6 @@ require( './toggleAllCollapsibles.js' );
 
 // Handle elements outside the wikipage content
 $( () => {
-	/**
-	 * There is a bug on iPad and maybe other browsers where if initial-scale is not set
-	 * the page cannot be zoomed. If the initial-scale is set on the server side, this will result
-	 * in an unwanted zoom on mobile devices. To avoid this we check innerWidth and set the
-	 * initial-scale on the client where needed. The width must be synced with the value in
-	 * Skin::initPage.
-	 * More information on this bug in [[phab:T311795]].
-	 *
-	 * @ignore
-	 */
-	function fixViewportForTabletDevices() {
-		const $viewport = $( 'meta[name=viewport]' );
-		const content = $viewport.attr( 'content' );
-		const scale = window.outerWidth / window.innerWidth;
-		// This adjustment is limited to tablet devices. It must be a non-zero value to work.
-		// (these values correspond to @min-width-breakpoint-tablet and @min-width-breakpoint-desktop
-		// See https://doc.wikimedia.org/codex/main/design-tokens/breakpoint.html
-		if ( window.innerWidth >= 640 && window.innerWidth < 1120 &&
-			content && !content.includes( 'initial-scale' )
-		) {
-			// Note:
-			// - The `width` value must be equal to @min-width-breakpoint-desktop above
-			// - If `initial-scale` value is 1 the font-size adjust feature will not work on iPad
-			$viewport.attr( 'content', 'width=1120,initial-scale=' + scale );
-		}
-	}
 
 	// Add accesskey hints to the tooltips
 	$( '[accesskey]' ).updateTooltipAccessKeys();
@@ -124,7 +99,7 @@ $( () => {
 		mw.hook( 'wikipage.content' ).fire( $content );
 	}
 
-	let $nodes = $( '.catlinks[data-mw="interface"]' );
+	let $nodes = $( '.catlinks[data-mw-interface]' );
 	if ( $nodes.length ) {
 		/**
 		 * Fired when categories are being added to the DOM.
@@ -144,7 +119,7 @@ $( () => {
 		mw.hook( 'wikipage.categories' ).fire( $nodes );
 	}
 
-	$nodes = $( 'table.diff[data-mw="interface"]' );
+	$nodes = $( 'table.diff[data-mw-interface]' );
 	if ( $nodes.length ) {
 		/**
 		 * Fired when the diff is added to a page containing a diff.
@@ -193,16 +168,17 @@ $( () => {
 
 		if ( mw.user.isTemp() ) {
 			// Since temporary accounts cannot be logged into again, show a confirmation dialog.
-			confirmedPromise = mw.loader.using( 'oojs-ui-windows' ).then( () => {
+			confirmedPromise = mw.loader.using( [ 'oojs-ui-windows', 'mediawiki.jqueryMsg' ] ).then( () => {
+				// Keep in sync with SpecialUserLogout
 				const $confirmDialogContent = $( '<div>' ).append(
-					$( '<p>' ).text( mw.msg( 'userlogout-temp' ) ),
-					$( '<p>' ).text( mw.msg( 'userlogout-temp-moreinfo' ) ),
+					$( '<p>' ).append( mw.message( 'userlogout-temp' ).parseDom() ),
+					$( '<p>' ).append( mw.message( 'userlogout-temp-moreinfo' ).parseDom() ),
 					new OO.ui.MessageWidget( {
 						type: 'notice',
 						label: $( '<div>' ).append(
 							$( '<strong>' ).text( mw.msg( 'userlogout-temp-messagebox-title' ) ),
 							$( '<br>' ),
-							document.createTextNode( mw.msg( 'userlogout-temp-messagebox-body' ) )
+							mw.message( 'userlogout-temp-messagebox-body' ).parseDom()
 						)
 					} ).$element
 				);
@@ -268,7 +244,6 @@ $( () => {
 		mw.hook( LOGOUT_EVENT ).fire( this.href );
 		e.preventDefault();
 	} );
-	fixViewportForTabletDevices();
 
 	teleportTarget.attach();
 } );
@@ -292,6 +267,7 @@ function isSearchInput( element ) {
 function loadSearchModule( moduleName ) {
 	function requestSearchModule() {
 		mw.loader.using( moduleName ).then( () => {
+			// eslint-disable-next-line security/detect-non-literal-require
 			const { init } = require( moduleName );
 			// If it exports an init function execute that immediately.
 			if ( init ) {
@@ -331,6 +307,9 @@ try {
 		mw.loader.load( 'mediawiki.action.view.postEdit' );
 	}
 } catch ( err ) {}
+
+updateThumbnailsToPreferredSize( $( '#mw-content-text .mw-parser-output' ) );
+mw.hook( 'wikipage.content' ).add( updateThumbnailsToPreferredSize );
 
 /**
  * @exports mediawiki.page.ready

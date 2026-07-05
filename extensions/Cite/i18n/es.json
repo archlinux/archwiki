@@ -56,8 +56,6 @@
 	"cite_error_empty_references_define": "La etiqueta <code>&lt;ref&gt;</code> con nombre «$1» definida en el grupo «$2» para <code>&lt;references&gt;</code> no tiene contenido.",
 	"cite-tracking-category-cite-error": "Páginas con errores en las referencias",
 	"cite-tracking-category-cite-error-desc": "Las páginas en esta categoría tienen errores en el uso de las etiquetas de referencias.",
-	"cite-tracking-category-cite-diffing-error": "Páginas con errores en referencias que provocan diferencias visuales",
-	"cite-tracking-category-cite-diffing-error-desc": "Las páginas de esta categoría tienen errores en el uso de etiquetas de referencias, y estos errores no se muestran de la misma manera en el analizador heredado y en Parsoid.",
 	"cite-reference-previews-reference": "Referencia",
 	"cite-reference-previews-book": "Libro de referencia",
 	"cite-reference-previews-journal": "Referencia de revista",

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Angpradesh",
-			"Proabscorp!",
-			"IND-ANP"
+			"IND-ANP",
+			"Proabscorp!"
 		]
 	},
 	"vector-skin-desc": "दू Vector स्किन्स प्रदान करै छै:\n* 2011 - MonoBook क आधुनिक संस्करण जेकरा मँ एगो टटका दिखावट आरो उपयोग मँ सुधार छै।\n* 2022 - Vector जेकरा विकिमीडिया संस्थान केरौ [[mw:Desktop Improvements|डेस्कटॉप उन्नति]] परियोजना के रूप मँ बनैलौ गेलौ छै।",
@@ -45,9 +45,6 @@
 	"vector-toc-label": "विषय सूची",
 	"vector-toc-beginning": "शुरुआत",
 	"vector-toc-toggle-button-label": "$1 उप-अनुभाग क टॉगल करौ",
-	"vector-anon-user-menu-pages": "लॉग-आउट करलौ गेलौ संपादक सिनी लेली पन्ना",
-	"vector-anon-user-menu-pages-learn": "आरू अधिक जानौ",
-	"vector-anon-user-menu-pages-label": "संपादन केरौ बारै मँ अधिक जानौ",
 	"vector-main-menu-tooltip": "मुख्य सूची",
 	"vector-toc-menu-tooltip": "विषयसूची",
 	"vector-toc-collapsible-button-label": "विषयसूची क टॉगल करौ",

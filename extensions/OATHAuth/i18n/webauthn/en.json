@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dejan Savuljesku <savuljesku@hallowelt.com>"
+		]
+	},
+	"oathauth-webauthn-module-label": "Security key",
+	"oathauth-webauthn-javascript-required": "JavaScript must be enabled in your browser to use a security key.",
+	"oathauth-webauthn-ui-login-prompt": "Use your security key or follow your browser's instructions.",
+	"oathauth-webauthn-ui-add-key": "Add key",
+	"oathauth-webauthn-error-browser-unsupported": "This browser does not support security key authentication, or it is not available for this website. Please try with a different browser. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Read more]",
+	"oathauth-webauthn-error-browser-unsupported-console": "This browser does not support security key authentication, or it is not available for this website.",
+	"oathauth-webauthn-error-auth-generic": "Authentication process was interrupted. Please start the authentication process again.",
+	"oathauth-webauthn-error-reg-generic": "Could not verify your key. Please start the registration process again.",
+	"oathauth-webauthn-registered-keys-section-name": "Registered keys",
+	"oathauth-webauthn-ui-remove-key": "Remove",
+	"oathauth-webauthn-error-module-not-enabled": "Module \"$1\" is not enabled for {{GENDER:$2|user \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn verification failed.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Passkey verification failed.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn credentials were not sent.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|User \"$1\"}} cannot register a new credential.",
+	"oathauth-webauthn-error-invalid-new-key": "New key returned by the module is not of required type.",
+	"oathauth-webauthn-error-registration-failed": "New key registration failed.",
+	"oathauth-webauthn-ui-key-register-help": "Choose the nickname for your key:",
+	"oathauth-webauthn-error-cannot-remove-key": "Key cannot be removed.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Authentication information could not be retrieved.",
+	"oathauth-webauthn-add-key-section-name": "Register new security key",
+	"oathauth-webauthn-error-get-reginfo-fail": "Registration information could not be retrieved.",
+	"oathauth-webauthn-module-description": "WebAuthn is in an experimental state. It currently provides no recovery option for lost or damaged authentication devices. \n\n[https://en.wikipedia.org/wiki/WebAuthn Learn more about WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Reload page",
+	"oathauth-webauthn-authentication-info-label": "Authentication data",
+	"oathauth-webauthn-authentication-info-help": "Authentication data passed to the client for credential retrieval",
+	"oathauth-webauthn-credential-label": "User credential",
+	"oathauth-webauthn-credential-help": "User credential based on authentication data",
+	"oathauth-webauthn-add-security-key": "Add a security key",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Use security key or passkey"
+}

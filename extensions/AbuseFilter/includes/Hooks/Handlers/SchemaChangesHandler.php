@@ -7,33 +7,18 @@ use MediaWiki\Extension\AbuseFilter\Maintenance\MigrateActorsAF;
 use MediaWiki\Extension\AbuseFilter\Maintenance\PopulateAbuseFilterLogIPHex;
 use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
-use MessageLocalizer;
 
 class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
-	/** @var MessageLocalizer */
-	private $messageLocalizer;
-	/** @var UserGroupManager */
-	private $userGroupManager;
-	/** @var UserFactory */
-	private $userFactory;
-
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param UserGroupManager $userGroupManager
-	 * @param UserFactory $userFactory
-	 */
 	public function __construct(
-		MessageLocalizer $messageLocalizer,
-		UserGroupManager $userGroupManager,
-		UserFactory $userFactory
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly UserFactory $userFactory
 	) {
-		$this->messageLocalizer = $messageLocalizer;
-		$this->userGroupManager = $userGroupManager;
-		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -158,10 +143,10 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 				'renameIndex', 'abuse_filter_history', 'abuse_filter_history_timestamp', 'afh_timestamp'
 			] );
 			$updater->addExtensionUpdate( [
-				'changeNullableField', ' abuse_filter_history', 'afh_public_comments', 'NULL', true
+				'changeNullableField', 'abuse_filter_history', 'afh_public_comments', 'NULL', true
 			] );
 			$updater->addExtensionUpdate( [
-				'changeNullableField', ' abuse_filter_history', 'afh_actions', 'NULL', true
+				'changeNullableField', 'abuse_filter_history', 'afh_actions', 'NULL', true
 			] );
 		}
 

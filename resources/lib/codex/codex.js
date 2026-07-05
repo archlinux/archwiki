@@ -30,46 +30,57 @@ var __objRest = (source, exclude) => {
   return target;
 };
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
-import { ref, onMounted, defineComponent, computed, createElementBlock, openBlock, normalizeClass, createCommentVNode, toDisplayString, Comment, warn, watch, withKeys, withModifiers, renderSlot, toRef, resolveComponent, createElementVNode, createBlock, resolveDynamicComponent, withCtx, createVNode, Fragment, renderList, createTextVNode, Transition, normalizeStyle, inject, mergeProps, useId, withDirectives, vModelCheckbox, createSlots, unref, shallowRef, getCurrentScope, onScopeDispose, shallowReadonly, resolveDirective, nextTick, vModelDynamic, onUnmounted, Teleport, toHandlers, vShow, provide, toRefs, reactive, vModelRadio, vModelText, getCurrentInstance } from "vue";
-const g = '<path d="M11.53 2.3A1.85 1.85 0 0010 1.21 1.85 1.85 0 008.48 2.3L.36 16.36C-.48 17.81.21 19 1.88 19h16.24c1.67 0 2.36-1.19 1.52-2.64zM11 16H9v-2h2zm0-4H9V6h2z"/>', w = '<path d="M12.43 14.34A5 5 0 0110 15a5 5 0 113.95-2L17 16.09V3a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 001.45-.63z"/><circle cx="10" cy="10" r="3"/>', v1 = '<path d="M7 14.17 2.83 10l-1.41 1.41L7 17 19 5l-1.41-1.42z"/>', e1 = '<path d="M10 0a10 10 0 1010 10A10 10 0 0010 0m5.66 14.24-1.41 1.41L10 11.41l-4.24 4.25-1.42-1.42L8.59 10 4.34 5.76l1.42-1.42L10 8.59l4.24-4.24 1.41 1.41L11.41 10z"/>', z1 = '<path d="m4.34 2.93 12.73 12.73-1.41 1.41L2.93 4.35z"/><path d="M17.07 4.34 4.34 17.07l-1.41-1.41L15.66 2.93z"/>', L1 = '<path d="M10 15 2 5h16z"/>', S1 = '<path d="M13.728 1H6.272L1 6.272v7.456L6.272 19h7.456L19 13.728V6.272zM11 15H9v-2h2zm0-4H9V5h2z"/>', q1 = '<path d="m17.5 4.75-7.5 7.5-7.5-7.5L1 6.25l9 9 9-9z"/>', $1 = '<path d="M2 2a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V4a2 2 0 00-2-2zm-.17 13 4.09-5.25 2.92 3.51L12.92 8l5.25 7z"/>', l0 = '<path d="M19 3H1v14h18zM3 14l3.5-4.5 2.5 3L12.5 8l4.5 6z"/><path d="M19 5H1V3h18zm0 12H1v-2h18z"/>', i = '<path d="M8 19a1 1 0 001 1h2a1 1 0 001-1v-1H8zm9-12a7 7 0 10-12 4.9S7 14 7 15v1a1 1 0 001 1h4a1 1 0 001-1v-1c0-1 2-3.1 2-3.1A7 7 0 0017 7"/>', p0 = '<path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0M9 5h2v2H9zm0 4h2v6H9z"/>', H2 = '<path d="M3 1h2v18H3zm13.5 1.5L15 1l-9 9 9 9 1.5-1.5L9 10z"/>', x2 = '<path d="M15 1h2v18h-2zM3.5 2.5 11 10l-7.5 7.5L5 19l9-9-9-9z"/>', C2 = '<path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"/>', W2 = '<path d="m4 10 9 9 1.4-1.5L7 10l7.4-7.5L13 1z"/>', t5 = '<path d="M12.2 13.6a7 7 0 111.4-1.4l5.4 5.4-1.4 1.4zM3 8a5 5 0 1010 0A5 5 0 003 8"/>', r5 = '<path d="M10 0 3 8h14zm0 18-7-8h14z"/>', I5 = '<path d="M10 20a10 10 0 010-20 10 10 0 110 20m-2-5 9-8.5L15.5 5 8 12 4.5 8.5 3 10z"/>', c3 = '<path d="m10 5 8 10H2z"/>', C3 = g, P3 = w, l4 = v1, v4 = e1, e4 = z1, V4 = L1, F4 = S1, f4 = q1, j4 = $1, t6 = l0, e6 = {
+import { ref, onMounted, defineComponent, computed, createElementBlock, openBlock, normalizeClass, createCommentVNode, toDisplayString, Comment, warn, watch, withKeys, withModifiers, renderSlot, toRef, resolveComponent, createElementVNode, createBlock, resolveDynamicComponent, withCtx, createVNode, Fragment, renderList, createTextVNode, Transition, normalizeStyle, inject, mergeProps, useId, withDirectives, vModelCheckbox, createSlots, unref, shallowRef, getCurrentScope, onScopeDispose, shallowReadonly, resolveDirective, nextTick, vModelDynamic, onUnmounted, Teleport, toHandlers, vShow, onBeforeUnmount, provide, useCssVars, toRefs, reactive, vModelRadio, vModelText, getCurrentInstance } from "vue";
+function regExpEscape(value) {
+  return value.replace(/([\\{}()|.?*+\-^$[\]])/g, "\\$1");
+}
+const COMBINING_MARK = "[̀-ͯ҃-҉֑-ׇֽֿׁׂׅׄؐ-ًؚ-ٰٟۖ-ۜ۟-۪ۤۧۨ-ܑۭܰ-݊ަ-ް߫-߽߳ࠖ-࠙ࠛ-ࠣࠥ-ࠧࠩ-࡙࠭-࡛࣓-ࣣ࣡-ःऺ-़ा-ॏ॑-ॗॢॣঁ-ঃ়া-ৄেৈো-্ৗৢৣ৾ਁ-ਃ਼ਾ-ੂੇੈੋ-੍ੑੰੱੵઁ-ઃ઼ા-ૅે-ૉો-્ૢૣૺ-૿ଁ-ଃ଼ା-ୄେୈୋ-୍ୖୗୢୣஂா-ூெ-ைொ-்ௗఀ-ఄా-ౄె-ైొ-్ౕౖౢౣಁ-ಃ಼ಾ-ೄೆ-ೈೊ-್ೕೖೢೣഀ-ഃ഻഼ാ-ൄെ-ൈൊ-്ൗൢൣංඃ්ා-ුූෘ-ෟෲෳัิ-ฺ็-๎ັິ-ູົຼ່-ໍ༹༘༙༵༷༾༿ཱ-྄྆྇ྍ-ྗྙ-ྼ࿆ါ-ှၖ-ၙၞ-ၠၢ-ၤၧ-ၭၱ-ၴႂ-ႍႏႚ-ႝ፝-፟ᜒ-᜔ᜲ-᜴ᝒᝓᝲᝳ឴-៓៝᠋-᠍ᢅᢆᢩᤠ-ᤫᤰ-᤻ᨗ-ᨛᩕ-ᩞ᩠-᩿᩼᪰-᪾ᬀ-ᬄ᬴-᭄᭫-᭳ᮀ-ᮂᮡ-ᮭ᯦-᯳ᰤ-᰷᳐-᳔᳒-᳨᳭ᳲ-᳴᳷-᳹᷀-᷹᷻-᷿⃐-⃰⳯-⵿⳱ⷠ-〪ⷿ-゙゚〯꙯-꙲ꙴ-꙽ꚞꚟ꛰꛱ꠂ꠆ꠋꠣ-ꠧꢀꢁꢴ-ꣅ꣠-꣱ꣿꤦ-꤭ꥇ-꥓ꦀ-ꦃ꦳-꧀ꧥꨩ-ꨶꩃꩌꩍꩻ-ꩽꪰꪲ-ꪴꪷꪸꪾ꪿꫁ꫫ-ꫯꫵ꫶ꯣ-ꯪ꯬꯭ﬞ︀-️︠-︯]";
+function splitStringAtMatch(query, title) {
+  if (!query) {
+    return [title, "", ""];
+  }
+  const sanitizedQuery = regExpEscape(query);
+  const match = new RegExp(
+    // Per https://www.regular-expressions.info/unicode.html, "any code point that is not a
+    // combining mark can be followed by any number of combining marks." See also the
+    // discussion in https://phabricator.wikimedia.org/T35242.
+    sanitizedQuery + COMBINING_MARK + "*",
+    "i"
+  ).exec(title);
+  if (!match || match.index === void 0) {
+    return [title, "", ""];
+  }
+  const matchStartIndex = match.index;
+  const matchEndIndex = matchStartIndex + match[0].length;
+  const highlightedTitle = title.slice(matchStartIndex, matchEndIndex);
+  const beforeHighlight = title.slice(0, matchStartIndex);
+  const afterHighlight = title.slice(matchEndIndex, title.length);
+  return [beforeHighlight, highlightedTitle, afterHighlight];
+}
+const stringHelpers = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  regExpEscape,
+  splitStringAtMatch
+}, Symbol.toStringTag, { value: "Module" }));
+const g = '<path d="M11.53 2.3A1.85 1.85 0 0010 1.21 1.85 1.85 0 008.48 2.3L.36 16.36C-.48 17.81.21 19 1.88 19h16.24c1.67 0 2.36-1.19 1.52-2.64zM11 16H9v-2h2zm0-4H9V6h2z"/>', w = '<path d="M12.43 14.34A5 5 0 0110 15a5 5 0 113.95-2L17 16.09V3a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 001.45-.63z"/><circle cx="10" cy="10" r="3"/>', v1 = '<path d="M7 14.17 2.83 10l-1.41 1.41L7 17 19 5l-1.41-1.42z"/>', e1 = '<path d="M10 0a10 10 0 1010 10A10 10 0 0010 0m5.66 14.24-1.41 1.41L10 11.41l-4.24 4.25-1.42-1.42L8.59 10 4.34 5.76l1.42-1.42L10 8.59l4.24-4.24 1.41 1.41L11.41 10z"/>', z1 = '<path d="m4.34 2.93 12.73 12.73-1.41 1.41L2.93 4.35z"/><path d="M17.07 4.34 4.34 17.07l-1.41-1.41L15.66 2.93z"/>', L1 = '<path d="M10 15 2 5h16z"/>', S1 = '<path d="M13.728 1H6.272L1 6.272v7.456L6.272 19h7.456L19 13.728V6.272zM11 15H9v-2h2zm0-4H9V5h2z"/>', q1 = '<path d="m17.5 4.75-7.5 7.5-7.5-7.5L1 6.25l9 9 9-9z"/>', $1 = '<path d="M2 2a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V4a2 2 0 00-2-2zm-.17 13 4.09-5.25 2.92 3.51L12.92 8l5.25 7z"/>', l0 = '<path d="M19 3H1v14h18zM3 14l3.5-4.5 2.5 3L12.5 8l4.5 6z"/><path d="M19 5H1V3h18zm0 12H1v-2h18z"/>', i = '<path d="M8 19a1 1 0 001 1h2a1 1 0 001-1v-1H8zm9-12a7 7 0 10-12 4.9S7 14 7 15v1a1 1 0 001 1h4a1 1 0 001-1v-1c0-1 2-3.1 2-3.1A7 7 0 0017 7"/>', p0 = '<path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0M9 5h2v2H9zm0 4h2v6H9z"/>', H2 = '<path d="M3 1h2v18H3zm13.5 1.5L15 1l-9 9 9 9 1.5-1.5L9 10z"/>', x2 = '<path d="M15 1h2v18h-2zM3.5 2.5 11 10l-7.5 7.5L5 19l9-9-9-9z"/>', C2 = '<path d="M7 1 5.6 2.5 13 10l-7.4 7.5L7 19l9-9z"/>', W2 = '<path d="m4 10 9 9 1.4-1.5L7 10l7.4-7.5L13 1z"/>', t5 = '<path d="M12.2 13.6a7 7 0 111.4-1.4l5.4 5.4-1.4 1.4zM3 8a5 5 0 1010 0A5 5 0 003 8"/>', r5 = '<path d="M10 0 3 8h14zm0 18-7-8h14z"/>', I5 = '<path d="M10 20a10 10 0 010-20 10 10 0 110 20m-2-5 9-8.5L15.5 5 8 12 4.5 8.5 3 10z"/>', c3 = '<path d="m10 5 8 10H2z"/>', F3 = g, N3 = w, n4 = v1, d4 = e1, r4 = z1, u4 = L1, y4 = S1, S4 = q1, X4 = $1, h6 = l0, r6 = {
   langCodeMap: {
     ar: i
   },
   default: p0
-}, s7 = {
+}, l7 = {
   ltr: H2,
   shouldFlip: true
-}, l7 = {
+}, n7 = {
   ltr: x2,
   shouldFlip: true
-}, i7 = {
+}, p7 = {
   ltr: C2,
   shouldFlip: true
-}, k7 = {
+}, C7 = {
   ltr: W2,
   shouldFlip: true
-}, E7 = t5, j7 = r5, n8 = I5, U8 = c3;
-function n9(c, s, o) {
+}, P7 = t5, X7 = r5, v8 = I5, W8 = c3;
+function d9(c, s, o) {
   if (typeof c == "string" || "path" in c)
     return c;
   if ("shouldFlip" in c)
@@ -79,7 +90,7 @@ function n9(c, s, o) {
   const v = s in c.langCodeMap ? c.langCodeMap[s] : c.default;
   return typeof v == "string" || "path" in v ? v : v.ltr;
 }
-function v9(c, s) {
+function e9(c, s) {
   if (typeof c == "string")
     return false;
   if ("langCodeMap" in c) {
@@ -106,10 +117,10 @@ function useComputedLanguage(root) {
   const computedLang = ref("");
   onMounted(() => {
     let ancestor = root.value;
-    while (ancestor && ancestor.lang === "") {
+    while ((ancestor == null ? void 0 : ancestor.lang) === "") {
       ancestor = ancestor.parentElement;
     }
-    computedLang.value = ancestor ? ancestor.lang : null;
+    computedLang.value = ancestor ? ancestor == null ? void 0 : ancestor.lang : null;
   });
   return computedLang;
 }
@@ -138,7 +149,9 @@ const IconSizes = [
   "medium"
 ];
 const StatusTypes = [
+  "subtle",
   "notice",
+  "progressive",
   "warning",
   "error",
   "success"
@@ -234,7 +247,7 @@ const oppositeSides = {
   "right-end": "left"
 };
 const iconSizeValidator = makeStringTypeValidator(IconSizes);
-const _sfc_main$B = defineComponent({
+const _sfc_main$D = defineComponent({
   name: "CdxIcon",
   props: {
     /** The SVG path or an object containing that path plus other data. */
@@ -294,13 +307,13 @@ const _sfc_main$B = defineComponent({
       return (_a = props.lang) != null ? _a : computedLang.value;
     });
     const rootClasses = computed(() => ({
-      "cdx-icon--flipped": overriddenDir.value === "rtl" && overriddenLang.value !== null && v9(props.icon, overriddenLang.value),
+      "cdx-icon--flipped": overriddenDir.value === "rtl" && overriddenLang.value !== null && e9(props.icon, overriddenLang.value),
       ["cdx-icon--".concat(props.size)]: true
     }));
     const resolvedIcon = computed(
       () => {
         var _a, _b;
-        return n9(props.icon, (_a = overriddenLang.value) != null ? _a : "", (_b = overriddenDir.value) != null ? _b : "ltr");
+        return d9(props.icon, (_a = overriddenLang.value) != null ? _a : "", (_b = overriddenDir.value) != null ? _b : "ltr");
       }
     );
     const iconSvg = computed(() => typeof resolvedIcon.value === "string" ? resolvedIcon.value : "");
@@ -320,11 +333,11 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _hoisted_1$y = ["aria-hidden"];
-const _hoisted_2$l = { key: 0 };
-const _hoisted_3$e = ["innerHTML"];
-const _hoisted_4$b = ["d"];
-function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$z = ["aria-hidden"];
+const _hoisted_2$n = { key: 0 };
+const _hoisted_3$f = ["innerHTML"];
+const _hoisted_4$c = ["d"];
+function _sfc_render$E(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "span",
     {
@@ -341,7 +354,7 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
       }, [
         _ctx.iconLabel ? (openBlock(), createElementBlock(
           "title",
-          _hoisted_2$l,
+          _hoisted_2$n,
           toDisplayString(_ctx.iconLabel),
           1
           /* TEXT */
@@ -349,17 +362,17 @@ function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
         _ctx.iconSvg ? (openBlock(), createElementBlock("g", {
           key: 1,
           innerHTML: _ctx.iconSvg
-        }, null, 8, _hoisted_3$e)) : (openBlock(), createElementBlock("path", {
+        }, null, 8, _hoisted_3$f)) : (openBlock(), createElementBlock("path", {
           key: 2,
           d: _ctx.iconPath
-        }, null, 8, _hoisted_4$b))
-      ], 8, _hoisted_1$y))
+        }, null, 8, _hoisted_4$c))
+      ], 8, _hoisted_1$z))
     ],
     2
     /* CLASS */
   );
 }
-const CdxIcon = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$B]]);
+const CdxIcon = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$E]]);
 function flattenSlotContents(slotContents) {
   const flattened = [];
   for (const node of slotContents) {
@@ -432,8 +445,8 @@ function useIconOnlyButton(slot, attrs, componentName) {
 }
 const buttonActionValidator = makeStringTypeValidator(ButtonActions);
 const buttonWeightValidator = makeStringTypeValidator(ButtonWeights);
-const buttonSizeValidator = makeStringTypeValidator(ButtonSizes);
-const _sfc_main$A = defineComponent({
+const buttonSizeValidator$1 = makeStringTypeValidator(ButtonSizes);
+const _sfc_main$C = defineComponent({
   name: "CdxButton",
   props: {
     /**
@@ -469,7 +482,7 @@ const _sfc_main$A = defineComponent({
     size: {
       type: String,
       default: "medium",
-      validator: buttonSizeValidator
+      validator: buttonSizeValidator$1
     }
   },
   emits: ["click"],
@@ -508,7 +521,7 @@ const _sfc_main$A = defineComponent({
     };
   }
 });
-function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$D(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(
     "button",
     {
@@ -525,7 +538,7 @@ function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, NEED_HYDRATION */
   );
 }
-const CdxButton = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$A]]);
+const CdxButton = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$D]]);
 function useOptionalModelWrapper(internalValueRef, modelValueRef, emit, eventName) {
   return computed({
     get: () => {
@@ -542,7 +555,7 @@ function useOptionalModelWrapper(internalValueRef, modelValueRef, emit, eventNam
   });
 }
 const separationValidator = makeStringTypeValidator(AccordionSeparations);
-const _sfc_main$z = defineComponent({
+const _sfc_main$B = defineComponent({
   name: "CdxAccordion",
   components: { CdxButton, CdxIcon },
   props: {
@@ -666,10 +679,10 @@ const _sfc_main$z = defineComponent({
     };
   }
 });
-const _hoisted_1$x = ["open"];
-const _hoisted_2$k = { class: "cdx-accordion__header__title" };
-const _hoisted_3$d = { class: "cdx-accordion__header__description" };
-function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$y = ["open"];
+const _hoisted_2$m = { class: "cdx-accordion__header__title" };
+const _hoisted_3$e = { class: "cdx-accordion__header__description" };
+function _sfc_render$C(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createElementBlock("details", {
@@ -680,10 +693,10 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     createElementVNode("summary", null, [
       (openBlock(), createBlock(resolveDynamicComponent(_ctx.headingLevel), { class: "cdx-accordion__header" }, {
         default: withCtx(() => [
-          createElementVNode("span", _hoisted_2$k, [
+          createElementVNode("span", _hoisted_2$m, [
             renderSlot(_ctx.$slots, "title")
           ]),
-          createElementVNode("span", _hoisted_3$d, [
+          createElementVNode("span", _hoisted_3$e, [
             renderSlot(_ctx.$slots, "description")
           ])
         ]),
@@ -716,9 +729,9 @@ function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
     }, [
       renderSlot(_ctx.$slots, "default")
     ])
-  ], 42, _hoisted_1$x);
+  ], 42, _hoisted_1$y);
 }
-const Accordion = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$z]]);
+const Accordion = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$C]]);
 function getButtonLabel(button) {
   if (button.label === void 0) {
     return button.value;
@@ -808,7 +821,7 @@ function useButtonGroupKeyboardNav(buttonsProp) {
     onKeydown
   };
 }
-const _sfc_main$y = defineComponent({
+const _sfc_main$A = defineComponent({
   name: "CdxButtonGroup",
   components: {
     CdxButton,
@@ -860,16 +873,16 @@ const _sfc_main$y = defineComponent({
     };
   }
 });
-const _hoisted_1$w = {
+const _hoisted_1$x = {
   ref: "rootElement",
   class: "cdx-button-group"
 };
-function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$B(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createElementBlock(
     "div",
-    _hoisted_1$w,
+    _hoisted_1$x,
     [
       (openBlock(true), createElementBlock(
         Fragment,
@@ -911,8 +924,8 @@ function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
     /* NEED_PATCH */
   );
 }
-const ButtonGroup = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$y]]);
-const _sfc_main$x = defineComponent({
+const ButtonGroup = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$B]]);
+const _sfc_main$z = defineComponent({
   name: "CdxThumbnail",
   components: { CdxIcon },
   props: {
@@ -928,7 +941,7 @@ const _sfc_main$x = defineComponent({
      */
     placeholderIcon: {
       type: [String, Object],
-      default: t6
+      default: h6
     }
   },
   setup: (props) => {
@@ -970,15 +983,15 @@ const _sfc_main$x = defineComponent({
     };
   }
 });
-const _hoisted_1$v = { class: "cdx-thumbnail" };
-const _hoisted_2$j = {
+const _hoisted_1$w = { class: "cdx-thumbnail" };
+const _hoisted_2$l = {
   key: 0,
   class: "cdx-thumbnail__placeholder"
 };
-function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$A(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
-  return openBlock(), createElementBlock("span", _hoisted_1$v, [
-    !_ctx.thumbnailLoaded ? (openBlock(), createElementBlock("span", _hoisted_2$j, [
+  return openBlock(), createElementBlock("span", _hoisted_1$w, [
+    !_ctx.thumbnailLoaded ? (openBlock(), createElementBlock("span", _hoisted_2$l, [
       createVNode(_component_cdx_icon, {
         icon: _ctx.placeholderIcon,
         class: "cdx-thumbnail__placeholder__icon--vue"
@@ -1003,8 +1016,8 @@ function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
     })
   ]);
 }
-const CdxThumbnail = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$x]]);
-const _sfc_main$w = defineComponent({
+const CdxThumbnail = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$A]]);
+const _sfc_main$y = defineComponent({
   name: "CdxCard",
   components: { CdxIcon, CdxThumbnail },
   props: {
@@ -1068,17 +1081,17 @@ const _sfc_main$w = defineComponent({
     };
   }
 });
-const _hoisted_1$u = { class: "cdx-card__text" };
-const _hoisted_2$i = { class: "cdx-card__text__title" };
-const _hoisted_3$c = {
+const _hoisted_1$v = { class: "cdx-card__text" };
+const _hoisted_2$k = { class: "cdx-card__text__title" };
+const _hoisted_3$d = {
   key: 0,
   class: "cdx-card__text__description"
 };
-const _hoisted_4$a = {
+const _hoisted_4$b = {
   key: 1,
   class: "cdx-card__text__supporting-text"
 };
-function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$z(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_thumbnail = resolveComponent("cdx-thumbnail");
   const _component_cdx_icon = resolveComponent("cdx-icon");
   return openBlock(), createBlock(resolveDynamicComponent(_ctx.contentTag), {
@@ -1100,14 +1113,14 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
         icon: _ctx.icon,
         class: "cdx-card__icon"
       }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-      createElementVNode("span", _hoisted_1$u, [
-        createElementVNode("span", _hoisted_2$i, [
+      createElementVNode("span", _hoisted_1$v, [
+        createElementVNode("span", _hoisted_2$k, [
           renderSlot(_ctx.$slots, "title")
         ]),
-        _ctx.$slots.description ? (openBlock(), createElementBlock("span", _hoisted_3$c, [
+        _ctx.$slots.description ? (openBlock(), createElementBlock("span", _hoisted_3$d, [
           renderSlot(_ctx.$slots, "description")
         ])) : createCommentVNode("v-if", true),
-        _ctx.$slots["supporting-text"] ? (openBlock(), createElementBlock("span", _hoisted_4$a, [
+        _ctx.$slots["supporting-text"] ? (openBlock(), createElementBlock("span", _hoisted_4$b, [
           renderSlot(_ctx.$slots, "supporting-text")
         ])) : createCommentVNode("v-if", true)
       ])
@@ -1116,7 +1129,7 @@ function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
     /* FORWARDED */
   }, 8, ["href", "class"]);
 }
-const Card = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$w]]);
+const Card = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$z]]);
 function useComputedDisabled(disabledProp) {
   const providedDisabled = inject(DisabledKey, ref(false));
   return computed(() => providedDisabled.value || disabledProp.value);
@@ -1183,7 +1196,7 @@ function useI18nWithOverride(override, messageKey, defaultValue, params = []) {
   const translatedMessage = useI18n(messageKey, defaultValue, params);
   return computed(() => override.value || translatedMessage.value);
 }
-const _sfc_main$v = defineComponent({
+const _sfc_main$x = defineComponent({
   name: "CdxLabel",
   components: { CdxIcon },
   /**
@@ -1295,15 +1308,15 @@ const _sfc_main$v = defineComponent({
     };
   }
 });
-const _hoisted_1$t = ["for"];
-const _hoisted_2$h = { class: "cdx-label__label__text" };
-const _hoisted_3$b = {
+const _hoisted_1$u = ["for"];
+const _hoisted_2$j = { class: "cdx-label__label__text" };
+const _hoisted_3$c = {
   key: 1,
   class: "cdx-label__label__optional-flag"
 };
-const _hoisted_4$9 = ["id"];
+const _hoisted_4$a = ["id"];
 const _hoisted_5$9 = { class: "cdx-label__label" };
-const _hoisted_6$7 = { class: "cdx-label__label__text" };
+const _hoisted_6$8 = { class: "cdx-label__label__text" };
 const _hoisted_7$3 = {
   key: 1,
   class: "cdx-label__label__optional-flag"
@@ -1312,7 +1325,7 @@ const _hoisted_8$3 = {
   key: 0,
   class: "cdx-label__description"
 };
-function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$y(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   return !_ctx.isLegend ? (openBlock(), createElementBlock(
     "div",
@@ -1331,24 +1344,24 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
           icon: _ctx.icon,
           class: "cdx-label__label__icon"
         }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-        createElementVNode("span", _hoisted_2$h, [
+        createElementVNode("span", _hoisted_2$j, [
           renderSlot(_ctx.$slots, "default")
         ]),
         _ctx.optionalFlag || _ctx.optional ? (openBlock(), createElementBlock(
           "span",
-          _hoisted_3$b,
+          _hoisted_3$c,
           toDisplayString(" ") + " " + toDisplayString(_ctx.translatedOptionalFlag),
           1
           /* TEXT */
         )) : createCommentVNode("v-if", true)
-      ], 16, _hoisted_1$t),
+      ], 16, _hoisted_1$u),
       _ctx.$slots.description && _ctx.$slots.description().length > 0 ? (openBlock(), createElementBlock("span", {
         key: 0,
         id: _ctx.descriptionId || void 0,
         class: "cdx-label__description"
       }, [
         renderSlot(_ctx.$slots, "description")
-      ], 8, _hoisted_4$9)) : createCommentVNode("v-if", true)
+      ], 8, _hoisted_4$a)) : createCommentVNode("v-if", true)
     ],
     6
     /* CLASS, STYLE */
@@ -1366,7 +1379,7 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
           icon: _ctx.icon,
           class: "cdx-label__label__icon"
         }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-        createElementVNode("span", _hoisted_6$7, [
+        createElementVNode("span", _hoisted_6$8, [
           renderSlot(_ctx.$slots, "default")
         ]),
         _ctx.optionalFlag || _ctx.optional ? (openBlock(), createElementBlock(
@@ -1385,7 +1398,7 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
     /* FULL_PROPS */
   ));
 }
-const CdxLabel = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$v]]);
+const CdxLabel = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["render", _sfc_render$y]]);
 function useLabelChecker(slot, attrs, componentName) {
   useWarnOnce(
     () => useSlotContents(slot).length === 0 && !(attrs == null ? void 0 : attrs["aria-label"]) && !(attrs == null ? void 0 : attrs["aria-labelledby"]),
@@ -1401,7 +1414,7 @@ function useModelWrapper(modelValueRef, emit, eventName) {
   });
 }
 const statusValidator$a = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$u = defineComponent({
+const _sfc_main$w = defineComponent({
   name: "CdxCheckbox",
   components: { CdxLabel },
   props: {
@@ -1515,9 +1528,9 @@ const _sfc_main$u = defineComponent({
     };
   }
 });
-const _hoisted_1$s = { class: "cdx-checkbox__wrapper" };
-const _hoisted_2$g = ["id", "aria-describedby", "value", "name", "disabled", ".indeterminate"];
-function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$t = { class: "cdx-checkbox__wrapper" };
+const _hoisted_2$i = ["id", "aria-describedby", "value", "name", "disabled", ".indeterminate"];
+function _sfc_render$x(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_label = resolveComponent("cdx-label");
   return openBlock(), createElementBlock(
     "div",
@@ -1525,7 +1538,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
       class: normalizeClass(["cdx-checkbox", _ctx.rootClasses])
     },
     [
-      createElementVNode("div", _hoisted_1$s, [
+      createElementVNode("div", _hoisted_1$t, [
         withDirectives(createElementVNode("input", {
           id: _ctx.checkboxId,
           ref: "input",
@@ -1537,7 +1550,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
           name: _ctx.name,
           disabled: _ctx.computedDisabled,
           ".indeterminate": _ctx.indeterminate
-        }, null, 40, _hoisted_2$g), [
+        }, null, 40, _hoisted_2$i), [
           [vModelCheckbox, _ctx.wrappedModel]
         ]),
         _cache[1] || (_cache[1] = createElementVNode(
@@ -1587,7 +1600,7 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS */
   );
 }
-const CdxCheckbox = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$u]]);
+const CdxCheckbox = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["render", _sfc_render$x]]);
 const sides = ["top", "right", "bottom", "left"];
 const min = Math.min;
 const max = Math.max;
@@ -1771,7 +1784,7 @@ function computeCoordsFromPlacement(_ref, placement, rtl) {
   }
   return coords;
 }
-const computePosition$1 = (reference, floating, config) => __async(null, null, function* () {
+const computePosition$1 = async (reference, floating, config) => {
   const {
     placement = "bottom",
     strategy = "absolute",
@@ -1779,8 +1792,8 @@ const computePosition$1 = (reference, floating, config) => __async(null, null, f
     platform: platform2
   } = config;
   const validMiddleware = middleware.filter(Boolean);
-  const rtl = yield platform2.isRTL == null ? void 0 : platform2.isRTL(floating);
-  let rects = yield platform2.getElementRects({
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+  let rects = await platform2.getElementRects({
     reference,
     floating,
     strategy
@@ -1802,7 +1815,7 @@ const computePosition$1 = (reference, floating, config) => __async(null, null, f
       y: nextY,
       data,
       reset
-    } = yield fn({
+    } = await fn({
       x,
       y,
       initialPlacement: placement,
@@ -1828,7 +1841,7 @@ const computePosition$1 = (reference, floating, config) => __async(null, null, f
           statefulPlacement = reset.placement;
         }
         if (reset.rects) {
-          rects = reset.rects === true ? yield platform2.getElementRects({
+          rects = reset.rects === true ? await platform2.getElementRects({
             reference,
             floating,
             strategy
@@ -1849,126 +1862,122 @@ const computePosition$1 = (reference, floating, config) => __async(null, null, f
     strategy,
     middlewareData
   };
-});
-function detectOverflow(state, options) {
-  return __async(this, null, function* () {
-    var _await$platform$isEle;
-    if (options === void 0) {
-      options = {};
-    }
-    const {
-      x,
-      y,
-      platform: platform2,
-      rects,
-      elements,
-      strategy
-    } = state;
-    const {
-      boundary = "clippingAncestors",
-      rootBoundary = "viewport",
-      elementContext = "floating",
-      altBoundary = false,
-      padding = 0
-    } = evaluate(options, state);
-    const paddingObject = getPaddingObject(padding);
-    const altContext = elementContext === "floating" ? "reference" : "floating";
-    const element = elements[altBoundary ? altContext : elementContext];
-    const clippingClientRect = rectToClientRect(yield platform2.getClippingRect({
-      element: ((_await$platform$isEle = yield platform2.isElement == null ? void 0 : platform2.isElement(element)) != null ? _await$platform$isEle : true) ? element : element.contextElement || (yield platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
-      boundary,
-      rootBoundary,
-      strategy
-    }));
-    const rect = elementContext === "floating" ? {
-      x,
-      y,
-      width: rects.floating.width,
-      height: rects.floating.height
-    } : rects.reference;
-    const offsetParent = yield platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating);
-    const offsetScale = (yield platform2.isElement == null ? void 0 : platform2.isElement(offsetParent)) ? (yield platform2.getScale == null ? void 0 : platform2.getScale(offsetParent)) || {
-      x: 1,
-      y: 1
-    } : {
-      x: 1,
-      y: 1
-    };
-    const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? yield platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
-      elements,
-      rect,
-      offsetParent,
-      strategy
-    }) : rect);
-    return {
-      top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
-      bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
-      left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
-      right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
-    };
-  });
+};
+async function detectOverflow(state, options) {
+  var _await$platform$isEle;
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    x,
+    y,
+    platform: platform2,
+    rects,
+    elements,
+    strategy
+  } = state;
+  const {
+    boundary = "clippingAncestors",
+    rootBoundary = "viewport",
+    elementContext = "floating",
+    altBoundary = false,
+    padding = 0
+  } = evaluate(options, state);
+  const paddingObject = getPaddingObject(padding);
+  const altContext = elementContext === "floating" ? "reference" : "floating";
+  const element = elements[altBoundary ? altContext : elementContext];
+  const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+    element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+    boundary,
+    rootBoundary,
+    strategy
+  }));
+  const rect = elementContext === "floating" ? {
+    x,
+    y,
+    width: rects.floating.width,
+    height: rects.floating.height
+  } : rects.reference;
+  const offsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating));
+  const offsetScale = await (platform2.isElement == null ? void 0 : platform2.isElement(offsetParent)) ? await (platform2.getScale == null ? void 0 : platform2.getScale(offsetParent)) || {
+    x: 1,
+    y: 1
+  } : {
+    x: 1,
+    y: 1
+  };
+  const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+    elements,
+    rect,
+    offsetParent,
+    strategy
+  }) : rect);
+  return {
+    top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
+    bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
+    left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
+    right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
+  };
 }
 const arrow$2 = (options) => ({
   name: "arrow",
   options,
-  fn(state) {
-    return __async(this, null, function* () {
-      const {
-        x,
-        y,
-        placement,
-        rects,
-        platform: platform2,
-        elements,
-        middlewareData
-      } = state;
-      const {
-        element,
-        padding = 0
-      } = evaluate(options, state) || {};
-      if (element == null) {
-        return {};
-      }
-      const paddingObject = getPaddingObject(padding);
-      const coords = {
-        x,
-        y
-      };
-      const axis = getAlignmentAxis(placement);
-      const length = getAxisLength(axis);
-      const arrowDimensions = yield platform2.getDimensions(element);
-      const isYAxis = axis === "y";
-      const minProp = isYAxis ? "top" : "left";
-      const maxProp = isYAxis ? "bottom" : "right";
-      const clientProp = isYAxis ? "clientHeight" : "clientWidth";
-      const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
-      const startDiff = coords[axis] - rects.reference[axis];
-      const arrowOffsetParent = yield platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element);
-      let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
-      if (!clientSize || !(yield platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
-        clientSize = elements.floating[clientProp] || rects.floating[length];
-      }
-      const centerToReference = endDiff / 2 - startDiff / 2;
-      const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
-      const minPadding = min(paddingObject[minProp], largestPossiblePadding);
-      const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
-      const min$1 = minPadding;
-      const max2 = clientSize - arrowDimensions[length] - maxPadding;
-      const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
-      const offset2 = clamp(min$1, center, max2);
-      const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset2 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
-      const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
-      return {
-        [axis]: coords[axis] + alignmentOffset,
-        data: __spreadValues({
-          [axis]: offset2,
-          centerOffset: center - offset2 - alignmentOffset
-        }, shouldAddOffset && {
-          alignmentOffset
-        }),
-        reset: shouldAddOffset
-      };
-    });
+  async fn(state) {
+    const {
+      x,
+      y,
+      placement,
+      rects,
+      platform: platform2,
+      elements,
+      middlewareData
+    } = state;
+    const {
+      element,
+      padding = 0
+    } = evaluate(options, state) || {};
+    if (element == null) {
+      return {};
+    }
+    const paddingObject = getPaddingObject(padding);
+    const coords = {
+      x,
+      y
+    };
+    const axis = getAlignmentAxis(placement);
+    const length = getAxisLength(axis);
+    const arrowDimensions = await platform2.getDimensions(element);
+    const isYAxis = axis === "y";
+    const minProp = isYAxis ? "top" : "left";
+    const maxProp = isYAxis ? "bottom" : "right";
+    const clientProp = isYAxis ? "clientHeight" : "clientWidth";
+    const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+    const startDiff = coords[axis] - rects.reference[axis];
+    const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+    let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+    if (!clientSize || !await (platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
+      clientSize = elements.floating[clientProp] || rects.floating[length];
+    }
+    const centerToReference = endDiff / 2 - startDiff / 2;
+    const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+    const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+    const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+    const min$1 = minPadding;
+    const max2 = clientSize - arrowDimensions[length] - maxPadding;
+    const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+    const offset2 = clamp(min$1, center, max2);
+    const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset2 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+    const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
+    return {
+      [axis]: coords[axis] + alignmentOffset,
+      data: __spreadValues({
+        [axis]: offset2,
+        centerOffset: center - offset2 - alignmentOffset
+      }, shouldAddOffset && {
+        alignmentOffset
+      }),
+      reset: shouldAddOffset
+    };
   }
 });
 const flip$1 = function(options) {
@@ -1978,108 +1987,106 @@ const flip$1 = function(options) {
   return {
     name: "flip",
     options,
-    fn(state) {
-      return __async(this, null, function* () {
-        var _middlewareData$arrow, _middlewareData$flip;
-        const {
-          placement,
-          middlewareData,
-          rects,
-          initialPlacement,
-          platform: platform2,
-          elements
-        } = state;
-        const _a2 = evaluate(options, state), {
-          mainAxis: checkMainAxis = true,
-          crossAxis: checkCrossAxis = true,
-          fallbackPlacements: specifiedFallbackPlacements,
-          fallbackStrategy = "bestFit",
-          fallbackAxisSideDirection = "none",
-          flipAlignment = true
-        } = _a2, detectOverflowOptions = __objRest(_a2, [
-          "mainAxis",
-          "crossAxis",
-          "fallbackPlacements",
-          "fallbackStrategy",
-          "fallbackAxisSideDirection",
-          "flipAlignment"
-        ]);
-        if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
-          return {};
-        }
-        const side = getSide(placement);
-        const initialSideAxis = getSideAxis(initialPlacement);
-        const isBasePlacement = getSide(initialPlacement) === initialPlacement;
-        const rtl = yield platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating);
-        const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
-        const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== "none";
-        if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
-          fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
-        }
-        const placements = [initialPlacement, ...fallbackPlacements];
-        const overflow = yield detectOverflow(state, detectOverflowOptions);
-        const overflows = [];
-        let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
-        if (checkMainAxis) {
-          overflows.push(overflow[side]);
-        }
-        if (checkCrossAxis) {
-          const sides2 = getAlignmentSides(placement, rects, rtl);
-          overflows.push(overflow[sides2[0]], overflow[sides2[1]]);
-        }
-        overflowsData = [...overflowsData, {
-          placement,
-          overflows
-        }];
-        if (!overflows.every((side2) => side2 <= 0)) {
-          var _middlewareData$flip2, _overflowsData$filter;
-          const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
-          const nextPlacement = placements[nextIndex];
-          if (nextPlacement) {
-            return {
-              data: {
-                index: nextIndex,
-                overflows: overflowsData
-              },
-              reset: {
-                placement: nextPlacement
-              }
-            };
-          }
-          let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
-          if (!resetPlacement) {
-            switch (fallbackStrategy) {
-              case "bestFit": {
-                var _overflowsData$filter2;
-                const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
-                  if (hasFallbackAxisSideDirection) {
-                    const currentSideAxis = getSideAxis(d.placement);
-                    return currentSideAxis === initialSideAxis || // Create a bias to the `y` side axis due to horizontal
-                    // reading directions favoring greater width.
-                    currentSideAxis === "y";
-                  }
-                  return true;
-                }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
-                if (placement2) {
-                  resetPlacement = placement2;
-                }
-                break;
-              }
-              case "initialPlacement":
-                resetPlacement = initialPlacement;
-                break;
-            }
-          }
-          if (placement !== resetPlacement) {
-            return {
-              reset: {
-                placement: resetPlacement
-              }
-            };
-          }
-        }
+    async fn(state) {
+      var _middlewareData$arrow, _middlewareData$flip;
+      const {
+        placement,
+        middlewareData,
+        rects,
+        initialPlacement,
+        platform: platform2,
+        elements
+      } = state;
+      const _a = evaluate(options, state), {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true,
+        fallbackPlacements: specifiedFallbackPlacements,
+        fallbackStrategy = "bestFit",
+        fallbackAxisSideDirection = "none",
+        flipAlignment = true
+      } = _a, detectOverflowOptions = __objRest(_a, [
+        "mainAxis",
+        "crossAxis",
+        "fallbackPlacements",
+        "fallbackStrategy",
+        "fallbackAxisSideDirection",
+        "flipAlignment"
+      ]);
+      if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
         return {};
-      });
+      }
+      const side = getSide(placement);
+      const initialSideAxis = getSideAxis(initialPlacement);
+      const isBasePlacement = getSide(initialPlacement) === initialPlacement;
+      const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+      const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+      const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== "none";
+      if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
+        fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
+      }
+      const placements = [initialPlacement, ...fallbackPlacements];
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const overflows = [];
+      let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+      if (checkMainAxis) {
+        overflows.push(overflow[side]);
+      }
+      if (checkCrossAxis) {
+        const sides2 = getAlignmentSides(placement, rects, rtl);
+        overflows.push(overflow[sides2[0]], overflow[sides2[1]]);
+      }
+      overflowsData = [...overflowsData, {
+        placement,
+        overflows
+      }];
+      if (!overflows.every((side2) => side2 <= 0)) {
+        var _middlewareData$flip2, _overflowsData$filter;
+        const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
+        const nextPlacement = placements[nextIndex];
+        if (nextPlacement) {
+          return {
+            data: {
+              index: nextIndex,
+              overflows: overflowsData
+            },
+            reset: {
+              placement: nextPlacement
+            }
+          };
+        }
+        let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+        if (!resetPlacement) {
+          switch (fallbackStrategy) {
+            case "bestFit": {
+              var _overflowsData$filter2;
+              const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
+                if (hasFallbackAxisSideDirection) {
+                  const currentSideAxis = getSideAxis(d.placement);
+                  return currentSideAxis === initialSideAxis || // Create a bias to the `y` side axis due to horizontal
+                  // reading directions favoring greater width.
+                  currentSideAxis === "y";
+                }
+                return true;
+              }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+              if (placement2) {
+                resetPlacement = placement2;
+              }
+              break;
+            }
+            case "initialPlacement":
+              resetPlacement = initialPlacement;
+              break;
+          }
+        }
+        if (placement !== resetPlacement) {
+          return {
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+      }
+      return {};
     }
   };
 };
@@ -2101,87 +2108,83 @@ const hide$1 = function(options) {
   return {
     name: "hide",
     options,
-    fn(state) {
-      return __async(this, null, function* () {
-        const {
-          rects
-        } = state;
-        const _a2 = evaluate(options, state), {
-          strategy = "referenceHidden"
-        } = _a2, detectOverflowOptions = __objRest(_a2, [
-          "strategy"
-        ]);
-        switch (strategy) {
-          case "referenceHidden": {
-            const overflow = yield detectOverflow(state, __spreadProps(__spreadValues({}, detectOverflowOptions), {
-              elementContext: "reference"
-            }));
-            const offsets = getSideOffsets(overflow, rects.reference);
-            return {
-              data: {
-                referenceHiddenOffsets: offsets,
-                referenceHidden: isAnySideFullyClipped(offsets)
-              }
-            };
-          }
-          case "escaped": {
-            const overflow = yield detectOverflow(state, __spreadProps(__spreadValues({}, detectOverflowOptions), {
-              altBoundary: true
-            }));
-            const offsets = getSideOffsets(overflow, rects.floating);
-            return {
-              data: {
-                escapedOffsets: offsets,
-                escaped: isAnySideFullyClipped(offsets)
-              }
-            };
-          }
-          default: {
-            return {};
-          }
+    async fn(state) {
+      const {
+        rects
+      } = state;
+      const _a = evaluate(options, state), {
+        strategy = "referenceHidden"
+      } = _a, detectOverflowOptions = __objRest(_a, [
+        "strategy"
+      ]);
+      switch (strategy) {
+        case "referenceHidden": {
+          const overflow = await detectOverflow(state, __spreadProps(__spreadValues({}, detectOverflowOptions), {
+            elementContext: "reference"
+          }));
+          const offsets = getSideOffsets(overflow, rects.reference);
+          return {
+            data: {
+              referenceHiddenOffsets: offsets,
+              referenceHidden: isAnySideFullyClipped(offsets)
+            }
+          };
         }
-      });
+        case "escaped": {
+          const overflow = await detectOverflow(state, __spreadProps(__spreadValues({}, detectOverflowOptions), {
+            altBoundary: true
+          }));
+          const offsets = getSideOffsets(overflow, rects.floating);
+          return {
+            data: {
+              escapedOffsets: offsets,
+              escaped: isAnySideFullyClipped(offsets)
+            }
+          };
+        }
+        default: {
+          return {};
+        }
+      }
     }
   };
 };
-function convertValueToCoords(state, options) {
-  return __async(this, null, function* () {
-    const {
-      placement,
-      platform: platform2,
-      elements
-    } = state;
-    const rtl = yield platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating);
-    const side = getSide(placement);
-    const alignment = getAlignment(placement);
-    const isVertical = getSideAxis(placement) === "y";
-    const mainAxisMulti = ["left", "top"].includes(side) ? -1 : 1;
-    const crossAxisMulti = rtl && isVertical ? -1 : 1;
-    const rawValue = evaluate(options, state);
-    let {
-      mainAxis,
-      crossAxis,
-      alignmentAxis
-    } = typeof rawValue === "number" ? {
-      mainAxis: rawValue,
-      crossAxis: 0,
-      alignmentAxis: null
-    } : {
-      mainAxis: rawValue.mainAxis || 0,
-      crossAxis: rawValue.crossAxis || 0,
-      alignmentAxis: rawValue.alignmentAxis
-    };
-    if (alignment && typeof alignmentAxis === "number") {
-      crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
-    }
-    return isVertical ? {
-      x: crossAxis * crossAxisMulti,
-      y: mainAxis * mainAxisMulti
-    } : {
-      x: mainAxis * mainAxisMulti,
-      y: crossAxis * crossAxisMulti
-    };
-  });
+async function convertValueToCoords(state, options) {
+  const {
+    placement,
+    platform: platform2,
+    elements
+  } = state;
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+  const side = getSide(placement);
+  const alignment = getAlignment(placement);
+  const isVertical = getSideAxis(placement) === "y";
+  const mainAxisMulti = ["left", "top"].includes(side) ? -1 : 1;
+  const crossAxisMulti = rtl && isVertical ? -1 : 1;
+  const rawValue = evaluate(options, state);
+  let {
+    mainAxis,
+    crossAxis,
+    alignmentAxis
+  } = typeof rawValue === "number" ? {
+    mainAxis: rawValue,
+    crossAxis: 0,
+    alignmentAxis: null
+  } : {
+    mainAxis: rawValue.mainAxis || 0,
+    crossAxis: rawValue.crossAxis || 0,
+    alignmentAxis: rawValue.alignmentAxis
+  };
+  if (alignment && typeof alignmentAxis === "number") {
+    crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+  }
+  return isVertical ? {
+    x: crossAxis * crossAxisMulti,
+    y: mainAxis * mainAxisMulti
+  } : {
+    x: mainAxis * mainAxisMulti,
+    y: crossAxis * crossAxisMulti
+  };
 }
 const offset$1 = function(options) {
   if (options === void 0) {
@@ -2190,27 +2193,25 @@ const offset$1 = function(options) {
   return {
     name: "offset",
     options,
-    fn(state) {
-      return __async(this, null, function* () {
-        var _middlewareData$offse, _middlewareData$arrow;
-        const {
-          x,
-          y,
-          placement,
-          middlewareData
-        } = state;
-        const diffCoords = yield convertValueToCoords(state, options);
-        if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
-          return {};
-        }
-        return {
-          x: x + diffCoords.x,
-          y: y + diffCoords.y,
-          data: __spreadProps(__spreadValues({}, diffCoords), {
-            placement
-          })
-        };
-      });
+    async fn(state) {
+      var _middlewareData$offse, _middlewareData$arrow;
+      const {
+        x,
+        y,
+        placement,
+        middlewareData
+      } = state;
+      const diffCoords = await convertValueToCoords(state, options);
+      if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+        return {};
+      }
+      return {
+        x: x + diffCoords.x,
+        y: y + diffCoords.y,
+        data: __spreadProps(__spreadValues({}, diffCoords), {
+          placement
+        })
+      };
     }
   };
 };
@@ -2221,70 +2222,68 @@ const shift$1 = function(options) {
   return {
     name: "shift",
     options,
-    fn(state) {
-      return __async(this, null, function* () {
-        const {
-          x,
-          y,
-          placement
-        } = state;
-        const _a2 = evaluate(options, state), {
-          mainAxis: checkMainAxis = true,
-          crossAxis: checkCrossAxis = false,
-          limiter = {
-            fn: (_ref) => {
-              let {
-                x: x3,
-                y: y2
-              } = _ref;
-              return {
-                x: x3,
-                y: y2
-              };
-            }
+    async fn(state) {
+      const {
+        x,
+        y,
+        placement
+      } = state;
+      const _a = evaluate(options, state), {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = false,
+        limiter = {
+          fn: (_ref) => {
+            let {
+              x: x3,
+              y: y2
+            } = _ref;
+            return {
+              x: x3,
+              y: y2
+            };
           }
-        } = _a2, detectOverflowOptions = __objRest(_a2, [
-          "mainAxis",
-          "crossAxis",
-          "limiter"
-        ]);
-        const coords = {
-          x,
-          y
-        };
-        const overflow = yield detectOverflow(state, detectOverflowOptions);
-        const crossAxis = getSideAxis(getSide(placement));
-        const mainAxis = getOppositeAxis(crossAxis);
-        let mainAxisCoord = coords[mainAxis];
-        let crossAxisCoord = coords[crossAxis];
-        if (checkMainAxis) {
-          const minSide = mainAxis === "y" ? "top" : "left";
-          const maxSide = mainAxis === "y" ? "bottom" : "right";
-          const min2 = mainAxisCoord + overflow[minSide];
-          const max2 = mainAxisCoord - overflow[maxSide];
-          mainAxisCoord = clamp(min2, mainAxisCoord, max2);
         }
-        if (checkCrossAxis) {
-          const minSide = crossAxis === "y" ? "top" : "left";
-          const maxSide = crossAxis === "y" ? "bottom" : "right";
-          const min2 = crossAxisCoord + overflow[minSide];
-          const max2 = crossAxisCoord - overflow[maxSide];
-          crossAxisCoord = clamp(min2, crossAxisCoord, max2);
-        }
-        const limitedCoords = limiter.fn(__spreadProps(__spreadValues({}, state), {
-          [mainAxis]: mainAxisCoord,
-          [crossAxis]: crossAxisCoord
-        }));
-        return __spreadProps(__spreadValues({}, limitedCoords), {
-          data: {
-            x: limitedCoords.x - x,
-            y: limitedCoords.y - y,
-            enabled: {
-              [mainAxis]: checkMainAxis,
-              [crossAxis]: checkCrossAxis
-            }
+      } = _a, detectOverflowOptions = __objRest(_a, [
+        "mainAxis",
+        "crossAxis",
+        "limiter"
+      ]);
+      const coords = {
+        x,
+        y
+      };
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const crossAxis = getSideAxis(getSide(placement));
+      const mainAxis = getOppositeAxis(crossAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      if (checkMainAxis) {
+        const minSide = mainAxis === "y" ? "top" : "left";
+        const maxSide = mainAxis === "y" ? "bottom" : "right";
+        const min2 = mainAxisCoord + overflow[minSide];
+        const max2 = mainAxisCoord - overflow[maxSide];
+        mainAxisCoord = clamp(min2, mainAxisCoord, max2);
+      }
+      if (checkCrossAxis) {
+        const minSide = crossAxis === "y" ? "top" : "left";
+        const maxSide = crossAxis === "y" ? "bottom" : "right";
+        const min2 = crossAxisCoord + overflow[minSide];
+        const max2 = crossAxisCoord - overflow[maxSide];
+        crossAxisCoord = clamp(min2, crossAxisCoord, max2);
+      }
+      const limitedCoords = limiter.fn(__spreadProps(__spreadValues({}, state), {
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      }));
+      return __spreadProps(__spreadValues({}, limitedCoords), {
+        data: {
+          x: limitedCoords.x - x,
+          y: limitedCoords.y - y,
+          enabled: {
+            [mainAxis]: checkMainAxis,
+            [crossAxis]: checkCrossAxis
           }
-        });
+        }
       });
     }
   };
@@ -2296,76 +2295,74 @@ const size$1 = function(options) {
   return {
     name: "size",
     options,
-    fn(state) {
-      return __async(this, null, function* () {
-        var _state$middlewareData, _state$middlewareData2;
-        const {
-          placement,
-          rects,
-          platform: platform2,
-          elements
-        } = state;
-        const _a2 = evaluate(options, state), {
-          apply = () => {
-          }
-        } = _a2, detectOverflowOptions = __objRest(_a2, [
-          "apply"
-        ]);
-        const overflow = yield detectOverflow(state, detectOverflowOptions);
-        const side = getSide(placement);
-        const alignment = getAlignment(placement);
-        const isYAxis = getSideAxis(placement) === "y";
-        const {
-          width,
-          height
-        } = rects.floating;
-        let heightSide;
-        let widthSide;
-        if (side === "top" || side === "bottom") {
-          heightSide = side;
-          widthSide = alignment === ((yield platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)) ? "start" : "end") ? "left" : "right";
+    async fn(state) {
+      var _state$middlewareData, _state$middlewareData2;
+      const {
+        placement,
+        rects,
+        platform: platform2,
+        elements
+      } = state;
+      const _a = evaluate(options, state), {
+        apply = () => {
+        }
+      } = _a, detectOverflowOptions = __objRest(_a, [
+        "apply"
+      ]);
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const side = getSide(placement);
+      const alignment = getAlignment(placement);
+      const isYAxis = getSideAxis(placement) === "y";
+      const {
+        width,
+        height
+      } = rects.floating;
+      let heightSide;
+      let widthSide;
+      if (side === "top" || side === "bottom") {
+        heightSide = side;
+        widthSide = alignment === (await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)) ? "start" : "end") ? "left" : "right";
+      } else {
+        widthSide = side;
+        heightSide = alignment === "end" ? "top" : "bottom";
+      }
+      const maximumClippingHeight = height - overflow.top - overflow.bottom;
+      const maximumClippingWidth = width - overflow.left - overflow.right;
+      const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
+      const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
+      const noShift = !state.middlewareData.shift;
+      let availableHeight = overflowAvailableHeight;
+      let availableWidth = overflowAvailableWidth;
+      if ((_state$middlewareData = state.middlewareData.shift) != null && _state$middlewareData.enabled.x) {
+        availableWidth = maximumClippingWidth;
+      }
+      if ((_state$middlewareData2 = state.middlewareData.shift) != null && _state$middlewareData2.enabled.y) {
+        availableHeight = maximumClippingHeight;
+      }
+      if (noShift && !alignment) {
+        const xMin = max(overflow.left, 0);
+        const xMax = max(overflow.right, 0);
+        const yMin = max(overflow.top, 0);
+        const yMax = max(overflow.bottom, 0);
+        if (isYAxis) {
+          availableWidth = width - 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max(overflow.left, overflow.right));
         } else {
-          widthSide = side;
-          heightSide = alignment === "end" ? "top" : "bottom";
+          availableHeight = height - 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max(overflow.top, overflow.bottom));
         }
-        const maximumClippingHeight = height - overflow.top - overflow.bottom;
-        const maximumClippingWidth = width - overflow.left - overflow.right;
-        const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
-        const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
-        const noShift = !state.middlewareData.shift;
-        let availableHeight = overflowAvailableHeight;
-        let availableWidth = overflowAvailableWidth;
-        if ((_state$middlewareData = state.middlewareData.shift) != null && _state$middlewareData.enabled.x) {
-          availableWidth = maximumClippingWidth;
-        }
-        if ((_state$middlewareData2 = state.middlewareData.shift) != null && _state$middlewareData2.enabled.y) {
-          availableHeight = maximumClippingHeight;
-        }
-        if (noShift && !alignment) {
-          const xMin = max(overflow.left, 0);
-          const xMax = max(overflow.right, 0);
-          const yMin = max(overflow.top, 0);
-          const yMax = max(overflow.bottom, 0);
-          if (isYAxis) {
-            availableWidth = width - 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max(overflow.left, overflow.right));
-          } else {
-            availableHeight = height - 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max(overflow.top, overflow.bottom));
+      }
+      await apply(__spreadProps(__spreadValues({}, state), {
+        availableWidth,
+        availableHeight
+      }));
+      const nextDimensions = await platform2.getDimensions(elements.floating);
+      if (width !== nextDimensions.width || height !== nextDimensions.height) {
+        return {
+          reset: {
+            rects: true
           }
-        }
-        yield apply(__spreadProps(__spreadValues({}, state), {
-          availableWidth,
-          availableHeight
-        }));
-        const nextDimensions = yield platform2.getDimensions(elements.floating);
-        if (width !== nextDimensions.width || height !== nextDimensions.height) {
-          return {
-            reset: {
-              rects: true
-            }
-          };
-        }
-        return {};
-      });
+        };
+      }
+      return {};
     }
   };
 };
@@ -2911,21 +2908,19 @@ function getOffsetParent(element, polyfill) {
   }
   return offsetParent || getContainingBlock(element) || win;
 }
-const getElementRects = function(data) {
-  return __async(this, null, function* () {
-    const getOffsetParentFn = this.getOffsetParent || getOffsetParent;
-    const getDimensionsFn = this.getDimensions;
-    const floatingDimensions = yield getDimensionsFn(data.floating);
-    return {
-      reference: getRectRelativeToOffsetParent(data.reference, yield getOffsetParentFn(data.floating), data.strategy),
-      floating: {
-        x: 0,
-        y: 0,
-        width: floatingDimensions.width,
-        height: floatingDimensions.height
-      }
-    };
-  });
+const getElementRects = async function(data) {
+  const getOffsetParentFn = this.getOffsetParent || getOffsetParent;
+  const getDimensionsFn = this.getDimensions;
+  const floatingDimensions = await getDimensionsFn(data.floating);
+  return {
+    reference: getRectRelativeToOffsetParent(data.reference, await getOffsetParentFn(data.floating), data.strategy),
+    floating: {
+      x: 0,
+      y: 0,
+      width: floatingDimensions.width,
+      height: floatingDimensions.height
+    }
+  };
 };
 function isRTL(element) {
   return getComputedStyle(element).direction === "rtl";
@@ -3260,7 +3255,9 @@ function generateHashId(content, prefix = LibraryPrefix) {
 }
 const contentCounters = /* @__PURE__ */ new Map();
 class Tooltip {
+  /* eslint-enable es-x/no-class-instance-fields */
   constructor(referenceElement, options) {
+    /* eslint-disable es-x/no-class-instance-fields */
     __publicField(this, "referenceElement");
     __publicField(this, "tooltipElement");
     __publicField(this, "textContent");
@@ -3337,19 +3334,19 @@ class Tooltip {
     }
   }
   addEventListeners() {
-    Object.keys(this.referenceElementHandlers).forEach((k) => {
-      this.referenceElement.addEventListener(k, this.referenceElementHandlers[k]);
+    Object.entries(this.referenceElementHandlers).forEach(([k, handler]) => {
+      this.referenceElement.addEventListener(k, handler);
     });
-    Object.keys(this.tooltipElementHandlers).forEach((k) => {
-      this.tooltipElement.addEventListener(k, this.tooltipElementHandlers[k]);
+    Object.entries(this.tooltipElementHandlers).forEach(([k, handler]) => {
+      this.tooltipElement.addEventListener(k, handler);
     });
   }
   removeEventListeners() {
-    Object.keys(this.referenceElementHandlers).forEach((k) => {
-      this.referenceElement.removeEventListener(k, this.referenceElementHandlers[k]);
+    Object.entries(this.referenceElementHandlers).forEach(([k, handler]) => {
+      this.referenceElement.removeEventListener(k, handler);
     });
-    Object.keys(this.tooltipElementHandlers).forEach((k) => {
-      this.tooltipElement.removeEventListener(k, this.tooltipElementHandlers[k]);
+    Object.entries(this.tooltipElementHandlers).forEach(([k, handler]) => {
+      this.tooltipElement.removeEventListener(k, handler);
     });
   }
   update() {
@@ -3420,7 +3417,7 @@ const CdxTooltip = {
     }
   }
 };
-const _sfc_main$t = defineComponent({
+const _sfc_main$v = defineComponent({
   name: "CdxInputChip",
   components: {
     CdxButton,
@@ -3548,7 +3545,7 @@ const _sfc_main$t = defineComponent({
       rootClasses,
       ariaDescription,
       onKeydown,
-      cdxIconClose: e4,
+      cdxIconClose: r4,
       tabIndex,
       tooltipContent,
       textElement
@@ -3565,12 +3562,12 @@ const _sfc_main$t = defineComponent({
     }
   }
 });
-const _hoisted_1$r = ["tabindex", "aria-description"];
-const _hoisted_2$f = {
+const _hoisted_1$s = ["tabindex", "aria-description"];
+const _hoisted_2$h = {
   ref: "textElement",
   class: "cdx-input-chip__text"
 };
-function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$w(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   const _directive_tooltip = resolveDirective("tooltip");
@@ -3590,7 +3587,7 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
     createElementVNode(
       "span",
-      _hoisted_2$f,
+      _hoisted_2$h,
       [
         renderSlot(_ctx.$slots, "default")
       ],
@@ -3614,13 +3611,13 @@ function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
       _: 1
       /* STABLE */
     }, 8, ["disabled"])
-  ], 42, _hoisted_1$r)), [
+  ], 42, _hoisted_1$s)), [
     [_directive_tooltip, _ctx.tooltipContent]
   ]);
 }
-const CdxInputChip = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$t]]);
+const CdxInputChip = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$w]]);
 const statusValidator$9 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$s = defineComponent({
+const _sfc_main$u = defineComponent({
   name: "CdxChipInput",
   components: {
     CdxInputChip
@@ -3805,19 +3802,17 @@ const _sfc_main$s = defineComponent({
       }
       chipRefs[newIndex].focus();
     }
-    function handleChipClick(clickedChip) {
-      return __async(this, null, function* () {
-        var _a;
-        emit("chip-click", clickedChip);
-        if (props.readonly || computedDisabled.value || !allowArbitrary.value) {
-          return;
-        }
-        addChip();
-        yield nextTick();
-        removeChip(clickedChip);
-        computedInputValue.value = (_a = clickedChip.label) != null ? _a : clickedChip.value;
-        focusInput();
-      });
+    async function handleChipClick(clickedChip) {
+      var _a;
+      emit("chip-click", clickedChip);
+      if (props.readonly || computedDisabled.value || !allowArbitrary.value) {
+        return;
+      }
+      addChip();
+      await nextTick();
+      removeChip(clickedChip);
+      computedInputValue.value = (_a = clickedChip.label) != null ? _a : clickedChip.value;
+      focusInput();
     }
     function handleChipRemove(chipToRemove, index, method) {
       currentChipToRemove.value = chipToRemove;
@@ -3913,25 +3908,25 @@ const _sfc_main$s = defineComponent({
     };
   }
 });
-const _hoisted_1$q = {
+const _hoisted_1$r = {
   ref: "chipsContainer",
   class: "cdx-chip-input__chips",
   role: "listbox",
   "aria-orientation": "horizontal"
 };
-const _hoisted_2$e = ["readonly", "disabled"];
-const _hoisted_3$a = {
+const _hoisted_2$g = ["readonly", "disabled"];
+const _hoisted_3$b = {
   key: 0,
   ref: "separateInputWrapper",
   class: "cdx-chip-input__separate-input"
 };
-const _hoisted_4$8 = ["readonly", "disabled"];
+const _hoisted_4$9 = ["readonly", "disabled"];
 const _hoisted_5$8 = {
   class: "cdx-chip-input__aria-status",
   role: "status",
   "aria-live": "polite"
 };
-function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_input_chip = resolveComponent("cdx-input-chip");
   return openBlock(), createElementBlock(
     "div",
@@ -3945,7 +3940,7 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     [
       createElementVNode(
         "div",
-        _hoisted_1$q,
+        _hoisted_1$r,
         [
           (openBlock(true), createElementBlock(
             Fragment,
@@ -3992,7 +3987,7 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
             onBlur: _cache[1] || (_cache[1] = (...args) => _ctx.onInputBlur && _ctx.onInputBlur(...args)),
             onFocus: _cache[2] || (_cache[2] = (...args) => _ctx.onInputFocus && _ctx.onInputFocus(...args)),
             onKeydown: _cache[3] || (_cache[3] = (...args) => _ctx.onInputKeydown && _ctx.onInputKeydown(...args))
-          }), null, 16, _hoisted_2$e)), [
+          }), null, 16, _hoisted_2$g)), [
             [vModelDynamic, _ctx.computedInputValue]
           ]) : createCommentVNode("v-if", true)
         ],
@@ -4001,7 +3996,7 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       _ctx.separateInput ? (openBlock(), createElementBlock(
         "div",
-        _hoisted_3$a,
+        _hoisted_3$b,
         [
           withDirectives(createElementVNode("input", mergeProps({
             ref: "input",
@@ -4013,7 +4008,7 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
             onBlur: _cache[5] || (_cache[5] = (...args) => _ctx.onInputBlur && _ctx.onInputBlur(...args)),
             onFocus: _cache[6] || (_cache[6] = (...args) => _ctx.onInputFocus && _ctx.onInputFocus(...args)),
             onKeydown: _cache[7] || (_cache[7] = (...args) => _ctx.onInputKeydown && _ctx.onInputKeydown(...args))
-          }), null, 16, _hoisted_4$8), [
+          }), null, 16, _hoisted_4$9), [
             [vModelDynamic, _ctx.computedInputValue]
           ])
         ],
@@ -4032,39 +4027,8 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE, NEED_HYDRATION */
   );
 }
-const CdxChipInput = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$s]]);
-function regExpEscape(value) {
-  return value.replace(/([\\{}()|.?*+\-^$[\]])/g, "\\$1");
-}
-const COMBINING_MARK = "[̀-ͯ҃-҉֑-ׇֽֿׁׂׅׄؐ-ًؚ-ٰٟۖ-ۜ۟-۪ۤۧۨ-ܑۭܰ-݊ަ-ް߫-߽߳ࠖ-࠙ࠛ-ࠣࠥ-ࠧࠩ-࡙࠭-࡛࣓-ࣣ࣡-ःऺ-़ा-ॏ॑-ॗॢॣঁ-ঃ়া-ৄেৈো-্ৗৢৣ৾ਁ-ਃ਼ਾ-ੂੇੈੋ-੍ੑੰੱੵઁ-ઃ઼ા-ૅે-ૉો-્ૢૣૺ-૿ଁ-ଃ଼ା-ୄେୈୋ-୍ୖୗୢୣஂா-ூெ-ைொ-்ௗఀ-ఄా-ౄె-ైొ-్ౕౖౢౣಁ-ಃ಼ಾ-ೄೆ-ೈೊ-್ೕೖೢೣഀ-ഃ഻഼ാ-ൄെ-ൈൊ-്ൗൢൣංඃ්ා-ුූෘ-ෟෲෳัิ-ฺ็-๎ັິ-ູົຼ່-ໍ༹༘༙༵༷༾༿ཱ-྄྆྇ྍ-ྗྙ-ྼ࿆ါ-ှၖ-ၙၞ-ၠၢ-ၤၧ-ၭၱ-ၴႂ-ႍႏႚ-ႝ፝-፟ᜒ-᜔ᜲ-᜴ᝒᝓᝲᝳ឴-៓៝᠋-᠍ᢅᢆᢩᤠ-ᤫᤰ-᤻ᨗ-ᨛᩕ-ᩞ᩠-᩿᩼᪰-᪾ᬀ-ᬄ᬴-᭄᭫-᭳ᮀ-ᮂᮡ-ᮭ᯦-᯳ᰤ-᰷᳐-᳔᳒-᳨᳭ᳲ-᳴᳷-᳹᷀-᷹᷻-᷿⃐-⃰⳯-⵿⳱ⷠ-〪ⷿ-゙゚〯꙯-꙲ꙴ-꙽ꚞꚟ꛰꛱ꠂ꠆ꠋꠣ-ꠧꢀꢁꢴ-ꣅ꣠-꣱ꣿꤦ-꤭ꥇ-꥓ꦀ-ꦃ꦳-꧀ꧥꨩ-ꨶꩃꩌꩍꩻ-ꩽꪰꪲ-ꪴꪷꪸꪾ꪿꫁ꫫ-ꫯꫵ꫶ꯣ-ꯪ꯬꯭ﬞ︀-️︠-︯]";
-function splitStringAtMatch(query, title) {
-  if (!query) {
-    return [title, "", ""];
-  }
-  const sanitizedQuery = regExpEscape(query);
-  const match = new RegExp(
-    // Per https://www.regular-expressions.info/unicode.html, "any code point that is not a
-    // combining mark can be followed by any number of combining marks." See also the
-    // discussion in https://phabricator.wikimedia.org/T35242.
-    sanitizedQuery + COMBINING_MARK + "*",
-    "i"
-  ).exec(title);
-  if (!match || match.index === void 0) {
-    return [title, "", ""];
-  }
-  const matchStartIndex = match.index;
-  const matchEndIndex = matchStartIndex + match[0].length;
-  const highlightedTitle = title.slice(matchStartIndex, matchEndIndex);
-  const beforeHighlight = title.slice(0, matchStartIndex);
-  const afterHighlight = title.slice(matchEndIndex, title.length);
-  return [beforeHighlight, highlightedTitle, afterHighlight];
-}
-const stringHelpers = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  regExpEscape,
-  splitStringAtMatch
-}, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$r = defineComponent({
+const CdxChipInput = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$v]]);
+const _sfc_main$t = defineComponent({
   name: "CdxSearchResultTitle",
   props: {
     /**
@@ -4091,10 +4055,10 @@ const _sfc_main$r = defineComponent({
     };
   }
 });
-const _hoisted_1$p = { class: "cdx-search-result-title" };
-const _hoisted_2$d = { class: "cdx-search-result-title__match" };
-function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("span", _hoisted_1$p, [
+const _hoisted_1$q = { class: "cdx-search-result-title" };
+const _hoisted_2$f = { class: "cdx-search-result-title__match" };
+function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("span", _hoisted_1$q, [
     createElementVNode("bdi", null, [
       createTextVNode(
         toDisplayString(_ctx.titleChunks[0]),
@@ -4103,7 +4067,7 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
       ),
       createElementVNode(
         "span",
-        _hoisted_2$d,
+        _hoisted_2$f,
         toDisplayString(_ctx.titleChunks[1]),
         1
         /* TEXT */
@@ -4116,8 +4080,8 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const CdxSearchResultTitle = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r]]);
-const _sfc_main$q = defineComponent({
+const CdxSearchResultTitle = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$u]]);
+const _sfc_main$s = defineComponent({
   name: "CdxMenuItem",
   components: { CdxIcon, CdxThumbnail, CdxSearchResultTitle },
   props: {
@@ -4339,17 +4303,17 @@ const _sfc_main$q = defineComponent({
       contentTag,
       linkAttrs,
       title,
-      cdxIconCheck: l4
+      cdxIconCheck: n4
     };
   }
 });
-const _hoisted_1$o = ["id", "aria-disabled", "aria-selected", "aria-checked"];
-const _hoisted_2$c = { class: "cdx-menu-item__text" };
-const _hoisted_3$9 = ["lang"];
-const _hoisted_4$7 = ["lang"];
+const _hoisted_1$p = ["id", "aria-disabled", "aria-selected", "aria-checked"];
+const _hoisted_2$e = { class: "cdx-menu-item__text" };
+const _hoisted_3$a = ["lang"];
+const _hoisted_4$8 = ["lang"];
 const _hoisted_5$7 = ["lang"];
-const _hoisted_6$6 = ["lang"];
-function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_6$7 = ["lang"];
+function _sfc_render$t(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_thumbnail = resolveComponent("cdx-thumbnail");
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_search_result_title = resolveComponent("cdx-search-result-title");
@@ -4381,7 +4345,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
               icon: _ctx.icon,
               class: "cdx-menu-item__icon"
             }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-            createElementVNode("span", _hoisted_2$c, [
+            createElementVNode("span", _hoisted_2$e, [
               _ctx.highlightQuery ? (openBlock(), createBlock(_component_cdx_search_result_title, {
                 key: 0,
                 title: _ctx.title,
@@ -4399,7 +4363,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                   1
                   /* TEXT */
                 )
-              ], 8, _hoisted_3$9)),
+              ], 8, _hoisted_3$a)),
               _ctx.match ? (openBlock(), createElementBlock(
                 Fragment,
                 { key: 2 },
@@ -4422,7 +4386,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                       1
                       /* TEXT */
                     )
-                  ], 8, _hoisted_4$7))
+                  ], 8, _hoisted_4$8))
                 ],
                 64
                 /* STABLE_FRAGMENT */
@@ -4460,7 +4424,7 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
                   1
                   /* TEXT */
                 )
-              ], 8, _hoisted_6$6)) : createCommentVNode("v-if", true)
+              ], 8, _hoisted_6$7)) : createCommentVNode("v-if", true)
             ]),
             _ctx.multiselect && _ctx.selected ? (openBlock(), createBlock(_component_cdx_icon, {
               key: 2,
@@ -4474,12 +4438,22 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
       }, 16, ["href"]))
     ])
-  ], 42, _hoisted_1$o);
+  ], 42, _hoisted_1$p);
 }
-const CdxMenuItem = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
-const _sfc_main$p = defineComponent({
+const CdxMenuItem = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$t]]);
+const _sfc_main$r = defineComponent({
   name: "CdxProgressBar",
+  // Disable automatic attribute inheritance so we can control where attrs go
+  inheritAttrs: false,
   props: {
+    value: {
+      type: [Number, null],
+      default: null
+    },
+    max: {
+      type: Number,
+      default: 100
+    },
     /**
      * Whether this is the smaller, inline variant.
      */
@@ -4493,12 +4467,23 @@ const _sfc_main$p = defineComponent({
     disabled: {
       type: Boolean,
       default: false
+    },
+    startLabel: {
+      type: String,
+      default: ""
+    },
+    endLabel: {
+      type: String,
+      default: ""
     }
   },
   setup(props, { attrs }) {
     useWarnOnce(
       () => !props.inline && !attrs["aria-label"] && !attrs["aria-hidden"],
       "CdxProgressBar: Progress bars require one of the following attribute, aria-label or aria-hidden. See documentation on https://doc.wikimedia.org/codex/latest/components/demos/progressbar.html"
+    );
+    const hasValue = computed(
+      () => typeof props.value === "number"
     );
     const rootClasses = computed(() => ({
       "cdx-progress-bar--block": !props.inline,
@@ -4511,30 +4496,90 @@ const _sfc_main$p = defineComponent({
       // Otherwise, don't set the attribute.
       () => props.inline ? "true" : void 0
     );
+    const clampedValue = computed(() => {
+      if (typeof props.value !== "number") {
+        return 0;
+      }
+      return Math.min(
+        Math.max(props.value, 0),
+        props.max
+      );
+    });
+    const progressStyles = computed(() => ({
+      "--cdx-progress-value": clampedValue.value,
+      "--cdx-progress-max": props.max
+    }));
+    const labelsId = useId();
+    const hasLabels = computed(() => Boolean(props.startLabel || props.endLabel));
+    const ariaLabelledBy = computed(() => hasLabels.value ? labelsId : void 0);
     return {
       rootClasses,
-      computedAriaHidden
+      computedAriaHidden,
+      hasValue,
+      progressStyles,
+      clampedValue,
+      labelsId,
+      ariaLabelledBy
     };
   }
 });
-const _hoisted_1$n = ["aria-hidden", "aria-disabled"];
-function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", {
-    class: normalizeClass(["cdx-progress-bar", _ctx.rootClasses]),
-    role: "progressbar",
-    "aria-hidden": _ctx.computedAriaHidden,
-    "aria-disabled": _ctx.disabled
-  }, _cache[0] || (_cache[0] = [
-    createElementVNode(
-      "div",
-      { class: "cdx-progress-bar__bar" },
-      null,
-      -1
-      /* CACHED */
-    )
-  ]), 10, _hoisted_1$n);
+const _hoisted_1$o = ["aria-labelledby", "aria-hidden", "aria-disabled", "aria-valuemin", "aria-valuemax", "aria-valuenow"];
+const _hoisted_2$d = ["id"];
+const _hoisted_3$9 = { class: "cdx-progress-bar__label cdx-progress-bar__label--start" };
+const _hoisted_4$7 = { class: "cdx-progress-bar__label cdx-progress-bar__label--end" };
+function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock(
+    Fragment,
+    null,
+    [
+      createElementVNode("div", mergeProps({
+        class: ["cdx-progress-bar", _ctx.rootClasses]
+      }, _ctx.$attrs, {
+        role: "progressbar",
+        "aria-labelledby": _ctx.ariaLabelledBy,
+        "aria-hidden": _ctx.computedAriaHidden,
+        "aria-disabled": _ctx.disabled,
+        "aria-valuemin": _ctx.hasValue ? 0 : void 0,
+        "aria-valuemax": _ctx.hasValue ? _ctx.max : void 0,
+        "aria-valuenow": _ctx.hasValue ? _ctx.clampedValue : void 0,
+        style: _ctx.hasValue ? _ctx.progressStyles : void 0
+      }), [
+        createElementVNode(
+          "div",
+          {
+            class: normalizeClass(["cdx-progress-bar__bar", { "cdx-progress-bar__bar--determinate": _ctx.hasValue }])
+          },
+          null,
+          2
+          /* CLASS */
+        )
+      ], 16, _hoisted_1$o),
+      _ctx.startLabel || _ctx.endLabel ? (openBlock(), createElementBlock("div", {
+        key: 0,
+        id: _ctx.labelsId,
+        class: "cdx-progress-bar__labels"
+      }, [
+        createElementVNode(
+          "div",
+          _hoisted_3$9,
+          toDisplayString(_ctx.startLabel),
+          1
+          /* TEXT */
+        ),
+        createElementVNode(
+          "div",
+          _hoisted_4$7,
+          toDisplayString(_ctx.endLabel),
+          1
+          /* TEXT */
+        )
+      ], 8, _hoisted_2$d)) : createCommentVNode("v-if", true)
+    ],
+    64
+    /* STABLE_FRAGMENT */
+  );
 }
-const CdxProgressBar = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p]]);
+const CdxProgressBar = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$s]]);
 function useIntersectionObserver(templateRef, observerOptions) {
   const intersectionRef = ref(false);
   let mounted = false;
@@ -4581,7 +4626,7 @@ function selectedIsArray(selected) {
 function isMenuGroupData(menuEntry) {
   return "items" in menuEntry;
 }
-const _sfc_main$o = defineComponent({
+const _sfc_main$q = defineComponent({
   name: "CdxMenu",
   components: {
     CdxMenuItem,
@@ -5158,14 +5203,12 @@ const _sfc_main$o = defineComponent({
     }
     const maxMenuHeight = ref(null);
     const footerHeight = ref(null);
-    function resizeMenu() {
-      return __async(this, null, function* () {
-        yield nextTick();
-        updateFooterHeight();
-        updateMaxMenuHeight();
-        yield nextTick();
-        maybeScrollIntoView();
-      });
+    async function resizeMenu() {
+      await nextTick();
+      updateFooterHeight();
+      updateMaxMenuHeight();
+      await nextTick();
+      maybeScrollIntoView();
     }
     function updateFooterHeight() {
       if (props.footer) {
@@ -5224,25 +5267,25 @@ const _sfc_main$o = defineComponent({
     onUnmounted(() => {
       document.removeEventListener("mouseup", onMouseUp);
     });
-    watch(toRef(props, "expanded"), (newVal) => __async(null, null, function* () {
+    watch(toRef(props, "expanded"), async (newVal) => {
       if (newVal) {
         const selectedMenuItem = findFirstSelectedMenuItem();
         if (selectedMenuItem && !highlightedMenuItem.value) {
           handleMenuItemChange("highlighted", selectedMenuItem);
         }
-        yield resizeMenu();
+        await resizeMenu();
       } else {
         handleMenuItemChange("highlighted", null);
       }
-    }));
-    watch(toRef(props, "menuItems"), (newPropMenuItems) => __async(null, null, function* () {
+    });
+    watch(toRef(props, "menuItems"), async (newPropMenuItems) => {
       if (newPropMenuItems.length < menuItemElements.length) {
         menuItemElements.length = newPropMenuItems.length;
       }
       if (props.expanded) {
-        yield resizeMenu();
+        await resizeMenu();
       }
-    }), { deep: true });
+    }, { deep: true });
     const listBoxStyle = computed(() => ({
       "max-height": maxMenuHeight.value ? "".concat(maxMenuHeight.value, "px") : void 0,
       "margin-bottom": footerHeight.value ? "".concat(footerHeight.value, "px") : void 0
@@ -5367,8 +5410,8 @@ const _sfc_main$o = defineComponent({
     }
   }
 });
-const _hoisted_1$m = ["aria-live", "aria-relevant", "aria-multiselectable"];
-const _hoisted_2$b = {
+const _hoisted_1$n = ["aria-live", "aria-relevant", "aria-multiselectable"];
+const _hoisted_2$c = {
   key: 0,
   class: "cdx-menu__pending cdx-menu-item"
 };
@@ -5379,10 +5422,10 @@ const _hoisted_3$8 = {
 };
 const _hoisted_4$6 = ["aria-labelledby", "aria-describedby"];
 const _hoisted_5$6 = { class: "cdx-menu__group__meta" };
-const _hoisted_6$5 = { class: "cdx-menu__group__meta__text" };
+const _hoisted_6$6 = { class: "cdx-menu__group__meta__text" };
 const _hoisted_7$2 = ["id"];
 const _hoisted_8$2 = ["id"];
-function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_menu_item = resolveComponent("cdx-menu-item");
   const _component_cdx_progress_bar = resolveComponent("cdx-progress-bar");
@@ -5411,7 +5454,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
           onMousedown: _cache[0] || (_cache[0] = withModifiers(() => {
           }, ["prevent"]))
         }), [
-          _ctx.showPending && _ctx.computedMenuItems.length === 0 && _ctx.$slots.pending ? (openBlock(), createElementBlock("li", _hoisted_2$b, [
+          _ctx.showPending && _ctx.computedMenuItems.length === 0 && _ctx.$slots.pending ? (openBlock(), createElementBlock("li", _hoisted_2$c, [
             renderSlot(_ctx.$slots, "pending")
           ])) : createCommentVNode("v-if", true),
           _ctx.computedShowNoResultsSlot ? (openBlock(), createElementBlock("li", _hoisted_3$8, [
@@ -5444,7 +5487,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
                             class: "cdx-menu__group__icon",
                             icon: menuEntry.icon
                           }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-                          createElementVNode("span", _hoisted_6$5, [
+                          createElementVNode("span", _hoisted_6$6, [
                             createElementVNode("span", {
                               id: menuEntry.id + "-label",
                               class: "cdx-menu__group__label"
@@ -5516,7 +5559,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
             class: "cdx-menu__progress-bar",
             inline: true
           })) : createCommentVNode("v-if", true)
-        ], 16, _hoisted_1$m)
+        ], 16, _hoisted_1$n)
       ],
       6
       /* CLASS, STYLE */
@@ -5525,10 +5568,10 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 8, ["to", "disabled"]);
 }
-const CdxMenu = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o]]);
+const CdxMenu = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$r]]);
 const textInputTypeValidator = makeStringTypeValidator(TextInputTypes);
 const statusValidator$8 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$n = defineComponent({
+const _sfc_main$p = defineComponent({
   name: "CdxTextInput",
   components: { CdxIcon },
   /**
@@ -5648,6 +5691,24 @@ const _sfc_main$n = defineComponent({
      */
     "blur",
     /**
+     * When composition begins
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionstart",
+    /**
+     * When composition is updated
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionupdate",
+    /**
+     * When composition ends
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionend",
+    /**
      * When the input value is cleared through the use of the clear button
      *
      * @property {MouseEvent} event
@@ -5718,6 +5779,15 @@ const _sfc_main$n = defineComponent({
     const onBlur = (event) => {
       emit("blur", event);
     };
+    const onCompositionStart = (event) => {
+      emit("compositionstart", event);
+    };
+    const onCompositionUpdate = (event) => {
+      emit("compositionupdate", event);
+    };
+    const onCompositionEnd = (event) => {
+      emit("compositionend", event);
+    };
     const shouldPreventDefault = ref(true);
     const onInvalid = (event, doPreventDefault) => {
       if (doPreventDefault) {
@@ -5742,9 +5812,12 @@ const _sfc_main$n = defineComponent({
       onKeydown,
       onFocus,
       onBlur,
+      onCompositionStart,
+      onCompositionUpdate,
+      onCompositionEnd,
       onInvalid,
       shouldPreventDefault,
-      cdxIconClear: v4
+      cdxIconClear: d4
     };
   },
   // Public methods
@@ -5806,8 +5879,8 @@ const _sfc_main$n = defineComponent({
     }
   }
 });
-const _hoisted_1$l = ["id", "type", "aria-describedby", "disabled"];
-function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$m = ["id", "type", "aria-describedby", "disabled"];
+function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   return openBlock(), createElementBlock(
     "div",
@@ -5827,12 +5900,15 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
         disabled: _ctx.computedDisabled,
         size: "1",
         onInput: _cache[1] || (_cache[1] = (...args) => _ctx.onInput && _ctx.onInput(...args)),
-        onChange: _cache[2] || (_cache[2] = (...args) => _ctx.onChange && _ctx.onChange(...args)),
-        onFocus: _cache[3] || (_cache[3] = (...args) => _ctx.onFocus && _ctx.onFocus(...args)),
-        onBlur: _cache[4] || (_cache[4] = (...args) => _ctx.onBlur && _ctx.onBlur(...args)),
-        onKeydown: _cache[5] || (_cache[5] = (...args) => _ctx.onKeydown && _ctx.onKeydown(...args)),
-        onInvalid: _cache[6] || (_cache[6] = (e) => _ctx.onInvalid(e, _ctx.shouldPreventDefault))
-      }), null, 16, _hoisted_1$l), [
+        onCompositionstart: _cache[2] || (_cache[2] = (...args) => _ctx.onCompositionStart && _ctx.onCompositionStart(...args)),
+        onCompositionupdate: _cache[3] || (_cache[3] = (...args) => _ctx.onCompositionUpdate && _ctx.onCompositionUpdate(...args)),
+        onCompositionend: _cache[4] || (_cache[4] = (...args) => _ctx.onCompositionEnd && _ctx.onCompositionEnd(...args)),
+        onChange: _cache[5] || (_cache[5] = (...args) => _ctx.onChange && _ctx.onChange(...args)),
+        onFocus: _cache[6] || (_cache[6] = (...args) => _ctx.onFocus && _ctx.onFocus(...args)),
+        onBlur: _cache[7] || (_cache[7] = (...args) => _ctx.onBlur && _ctx.onBlur(...args)),
+        onKeydown: _cache[8] || (_cache[8] = (...args) => _ctx.onKeydown && _ctx.onKeydown(...args)),
+        onInvalid: _cache[9] || (_cache[9] = (e) => _ctx.onInvalid(e, _ctx.shouldPreventDefault))
+      }), null, 16, _hoisted_1$m), [
         [vModelDynamic, _ctx.wrappedModel]
       ]),
       _ctx.startIcon ? (openBlock(), createBlock(_component_cdx_icon, {
@@ -5849,7 +5925,7 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
         key: 2,
         icon: _ctx.cdxIconClear,
         class: "cdx-text-input__icon-vue cdx-text-input__clear-icon",
-        onMousedown: _cache[7] || (_cache[7] = withModifiers(() => {
+        onMousedown: _cache[10] || (_cache[10] = withModifiers(() => {
         }, ["prevent"])),
         onClick: _ctx.onClear
       }, null, 8, ["icon", "onClick"])) : createCommentVNode("v-if", true)
@@ -5858,7 +5934,7 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const CdxTextInput = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
+const CdxTextInput = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$q]]);
 function unwrapElement(element) {
   return element && "$el" in element ? element.$el : element;
 }
@@ -5987,7 +6063,7 @@ function useFloatingMenu(referenceElement, menu, opt) {
   });
 }
 const statusValidator$7 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$m = defineComponent({
+const _sfc_main$o = defineComponent({
   name: "CdxCombobox",
   components: {
     CdxButton,
@@ -6164,18 +6240,18 @@ const _sfc_main$m = defineComponent({
       onKeydown,
       onButtonClick,
       onButtonMousedown,
-      cdxIconExpand: f4,
+      cdxIconExpand: S4,
       rootClasses,
       rootStyle,
       otherAttrs
     };
   }
 });
-const _hoisted_1$k = {
+const _hoisted_1$l = {
   ref: "inputWrapper",
   class: "cdx-combobox__input-wrapper"
 };
-function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_text_input = resolveComponent("cdx-text-input");
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
@@ -6189,7 +6265,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     [
       createElementVNode(
         "div",
-        _hoisted_1$k,
+        _hoisted_1$l,
         [
           createVNode(_component_cdx_text_input, mergeProps({
             ref: "input",
@@ -6257,7 +6333,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const Combobox = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
+const Combobox = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$p]]);
 function useResizeObserver(templateRef) {
   const currentDimensions = ref(
     { width: void 0, height: void 0 }
@@ -6267,13 +6343,21 @@ function useResizeObserver(templateRef) {
   }
   const observer = new window.ResizeObserver(
     (entries) => {
-      var _a, _b;
+      var _a;
       const entry = entries == null ? void 0 : entries[0];
       if (entry) {
-        currentDimensions.value = {
-          width: (_a = entry.borderBoxSize) == null ? void 0 : _a[0].inlineSize,
-          height: (_b = entry.borderBoxSize) == null ? void 0 : _b[0].blockSize
-        };
+        const borderBox = (_a = entry.borderBoxSize) == null ? void 0 : _a[0];
+        if (borderBox) {
+          currentDimensions.value = {
+            width: borderBox.inlineSize,
+            height: borderBox.blockSize
+          };
+        } else {
+          currentDimensions.value = {
+            width: entry.contentRect.width,
+            height: entry.contentRect.height
+          };
+        }
       }
     }
   );
@@ -6303,7 +6387,184 @@ function useResizeObserver(templateRef) {
   });
   return currentDimensions;
 }
-const _sfc_main$l = defineComponent({
+function useFocusTrap(options) {
+  const {
+    containerRef,
+    bodyRef,
+    anchorRef,
+    preventScroll = false
+  } = options;
+  const focusTrapStart = ref();
+  const focusTrapEnd = ref();
+  const focusHolder = ref();
+  let previouslyFocused = null;
+  function isPreviouslyFocusedAnchor() {
+    if (!anchorRef || !previouslyFocused) {
+      return false;
+    }
+    const anchorEl = unwrapElement(anchorRef.value);
+    return !!(anchorEl == null ? void 0 : anchorEl.contains(previouslyFocused));
+  }
+  function focusFirst() {
+    if (containerRef.value) {
+      focusFirstFocusableElement(containerRef.value);
+    }
+  }
+  function focusLast() {
+    if (containerRef.value) {
+      focusFirstFocusableElement(containerRef.value, true);
+    }
+  }
+  function scrollFocusedElement(focused) {
+    setTimeout(() => {
+      focused.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }, 500);
+  }
+  function focusFirstFocusableElement(container, backwards = false) {
+    let candidates = Array.from(
+      container.querySelectorAll('\n				input, select, textarea, button, object, a, area,\n				[contenteditable], [tabindex]:not([tabindex^="-"])\n			')
+    );
+    if (backwards) {
+      candidates = candidates.reverse();
+    }
+    for (const candidate of candidates) {
+      candidate.focus({ preventScroll });
+      if (document.activeElement === candidate) {
+        if (preventScroll) {
+          scrollFocusedElement(candidate);
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+  async function activateFocusTrap() {
+    var _a, _b;
+    await nextTick();
+    previouslyFocused = document.activeElement;
+    if (isPreviouslyFocusedAnchor()) {
+      return;
+    }
+    const focusTarget = (_a = bodyRef == null ? void 0 : bodyRef.value) != null ? _a : containerRef.value;
+    if (focusTarget && !focusFirstFocusableElement(focusTarget)) {
+      (_b = focusHolder.value) == null ? void 0 : _b.focus({ preventScroll });
+    }
+  }
+  function deactivateFocusTrap() {
+    if (isPreviouslyFocusedAnchor()) {
+      previouslyFocused = null;
+      return;
+    }
+    if (previouslyFocused instanceof HTMLElement && document.contains(previouslyFocused)) {
+      previouslyFocused.focus({ preventScroll });
+      previouslyFocused = null;
+    }
+  }
+  return {
+    focusTrapStart,
+    focusTrapEnd,
+    focusHolder,
+    focusFirst,
+    focusLast,
+    activateFocusTrap,
+    deactivateFocusTrap
+  };
+}
+function getScrollbarWidth() {
+  const root = document.documentElement;
+  if (root.scrollHeight <= root.clientHeight) {
+    return 0;
+  }
+  const measurement = document.createElement("div");
+  measurement.style.position = "absolute";
+  measurement.style.top = "-9999px";
+  measurement.style.width = "100px";
+  measurement.style.height = "100px";
+  measurement.style.overflow = "scroll";
+  document.body.appendChild(measurement);
+  const scrollbarWidth = measurement.offsetWidth - measurement.clientWidth;
+  document.body.removeChild(measurement);
+  return scrollbarWidth;
+}
+function shouldUseFixedBodyScrollLock() {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+  const ua = navigator.userAgent;
+  return /iP(ad|hone|od)/.test(ua) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+function getScrollRoot() {
+  if ("scrollingElement" in document && document.scrollingElement instanceof HTMLElement) {
+    return document.scrollingElement;
+  }
+  return document.documentElement;
+}
+function useScrollLock(isActive) {
+  let savedScrollX = 0;
+  let savedScrollY = 0;
+  let appliedFixedScrollLock = false;
+  const hasDOM = typeof window !== "undefined" && typeof document !== "undefined";
+  function lockBodyScroll() {
+    if (!hasDOM) {
+      return;
+    }
+    const body = document.body;
+    const scrollRoot = getScrollRoot();
+    if (shouldUseFixedBodyScrollLock()) {
+      savedScrollX = scrollRoot.scrollLeft;
+      savedScrollY = scrollRoot.scrollTop;
+      appliedFixedScrollLock = true;
+      body.style.position = "fixed";
+      body.style.top = "-".concat(savedScrollY, "px");
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+    } else {
+      appliedFixedScrollLock = false;
+    }
+    const scrollbarWidth = getScrollbarWidth();
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = "".concat(scrollbarWidth, "px");
+    }
+    body.style.overflow = "hidden";
+  }
+  function unlockBodyScroll() {
+    if (!hasDOM) {
+      return;
+    }
+    const body = document.body;
+    const scrollRoot = getScrollRoot();
+    body.style.removeProperty("overflow");
+    body.style.removeProperty("padding-right");
+    if (appliedFixedScrollLock) {
+      const restoreX = savedScrollX;
+      const restoreY = savedScrollY;
+      appliedFixedScrollLock = false;
+      body.style.removeProperty("position");
+      body.style.removeProperty("top");
+      body.style.removeProperty("left");
+      body.style.removeProperty("right");
+      body.style.removeProperty("width");
+      window.requestAnimationFrame(() => {
+        scrollRoot.scrollLeft = restoreX;
+        scrollRoot.scrollTop = restoreY;
+      });
+    }
+  }
+  watch(isActive, (active) => {
+    if (active) {
+      lockBodyScroll();
+    } else {
+      unlockBodyScroll();
+    }
+  }, { immediate: true });
+  onBeforeUnmount(() => {
+    if (isActive.value) {
+      unlockBodyScroll();
+    }
+  });
+}
+const __default__ = defineComponent({
   name: "CdxDialog",
   components: {
     CdxButton,
@@ -6344,6 +6605,9 @@ const _sfc_main$l = defineComponent({
     },
     /**
      * Add an icon-only close button to the dialog header.
+     *
+     * On narrow screens, the close button is always displayed. On wide screens, it's only
+     * displayed if this prop is set.
      */
     useCloseButton: {
       type: Boolean,
@@ -6389,6 +6653,15 @@ const _sfc_main$l = defineComponent({
     stackedActions: {
       type: Boolean,
       default: false
+    },
+    /**
+     * Whether the dialog should maintain a fixed maximum height on mobile screens,
+     * rather than expanding to fit the content height.
+     */
+    fixedHeight: {
+      type: [Boolean, Number],
+      default: false,
+      validator: (value) => typeof value === "boolean" || typeof value === "number" && value > 0
     },
     /**
      * Selector or DOM element identifying the container the dialog should
@@ -6437,11 +6710,7 @@ const _sfc_main$l = defineComponent({
     const backdrop = ref();
     const dialogElement = ref();
     const dialogBody = ref();
-    const focusHolder = ref();
-    const focusTrapStart = ref();
-    const focusTrapEnd = ref();
     const innerTeleportTarget = ref();
-    let previouslyFocused = null;
     const useCloseButtonOrLabel = computed(
       () => props.useCloseButton || props.closeButtonLabel.length > 0
     );
@@ -6450,7 +6719,6 @@ const _sfc_main$l = defineComponent({
       "cdx-dialog-close-button-label",
       "Close"
     );
-    const showHeader = computed(() => !props.hideTitle || useCloseButtonOrLabel.value);
     const showFooterActions = computed(() => !!props.primaryAction || !!props.defaultAction);
     const bodyDimensions = useResizeObserver(dialogBody);
     const currentBodyHeight = computed(() => {
@@ -6460,16 +6728,19 @@ const _sfc_main$l = defineComponent({
     const showDividers = ref(false);
     const rootClasses = computed(() => ({
       "cdx-dialog--vertical-actions": props.stackedActions,
-      "cdx-dialog--horizontal-actions": !props.stackedActions,
-      "cdx-dialog--dividers": showDividers.value
+      "cdx-dialog--dividers": showDividers.value,
+      "cdx-dialog--fixed-height": props.fixedHeight !== false,
+      "cdx-dialog--fixed-height-custom": typeof props.fixedHeight === "number"
     }));
+    const fixedHeightRem = computed(() => typeof props.fixedHeight === "number" ? "".concat(props.fixedHeight / 16, "rem") : "");
     const providedTarget = inject("CdxTeleportTarget", void 0);
     const computedTarget = computed(() => {
       var _a, _b;
       return (_b = (_a = props.target) != null ? _a : unref(providedTarget)) != null ? _b : "body";
     });
     provide("CdxTeleportTarget", innerTeleportTarget);
-    const scrollWidth = ref(0);
+    const isDialogOpen = computed(() => props.open);
+    useScrollLock(isDialogOpen);
     function close() {
       emit("update:open", false);
     }
@@ -6482,27 +6753,20 @@ const _sfc_main$l = defineComponent({
         close();
       }
     }
-    function focusFirst() {
-      focusFirstFocusableElement(dialogElement.value);
-    }
-    function focusLast() {
-      focusFirstFocusableElement(dialogElement.value, true);
-    }
-    function focusFirstFocusableElement(container, backwards = false) {
-      let candidates = Array.from(
-        container.querySelectorAll('\n					input, select, textarea, button, object, a, area,\n					[contenteditable], [tabindex]:not([tabindex^="-"])\n				')
-      );
-      if (backwards) {
-        candidates = candidates.reverse();
-      }
-      for (const candidate of candidates) {
-        candidate.focus();
-        if (document.activeElement === candidate) {
-          return true;
-        }
-      }
-      return false;
-    }
+    const {
+      focusTrapStart,
+      focusTrapEnd,
+      focusHolder,
+      focusFirst,
+      focusLast,
+      activateFocusTrap,
+      deactivateFocusTrap
+    } = useFocusTrap({
+      // dialogElement is the container for the focus trap
+      containerRef: dialogElement,
+      bodyRef: dialogBody,
+      preventScroll: true
+    });
     let ariaHiddenElements = [];
     let inertElements = [];
     function setAriaHiddenAndInert() {
@@ -6534,46 +6798,32 @@ const _sfc_main$l = defineComponent({
       ariaHiddenElements = [];
       inertElements = [];
     }
-    function onDialogOpen() {
-      return __async(this, null, function* () {
-        var _a;
-        yield nextTick();
-        scrollWidth.value = window.innerWidth - document.documentElement.clientWidth;
-        document.documentElement.style.setProperty("margin-right", "".concat(scrollWidth.value, "px"));
-        document.body.classList.add("cdx-dialog-open");
-        setAriaHiddenAndInert();
-        previouslyFocused = document.activeElement;
-        if (!focusFirstFocusableElement(dialogBody.value)) {
-          (_a = focusHolder.value) == null ? void 0 : _a.focus();
-        }
-      });
+    async function onDialogOpen() {
+      await nextTick();
+      setAriaHiddenAndInert();
+      await activateFocusTrap();
     }
     function onDialogClose() {
-      document.body.classList.remove("cdx-dialog-open");
-      document.documentElement.style.removeProperty("margin-right");
       unsetAriaHiddenAndInert();
-      if (previouslyFocused instanceof HTMLElement && document.contains(previouslyFocused)) {
-        previouslyFocused.focus();
-        previouslyFocused = null;
-      }
+      deactivateFocusTrap();
     }
-    onMounted(() => __async(null, null, function* () {
+    onMounted(async () => {
       if (props.open) {
-        yield onDialogOpen();
+        await onDialogOpen();
       }
-    }));
+    });
     onUnmounted(() => {
       if (props.open) {
         onDialogClose();
       }
     });
-    watch(toRef(props, "open"), (opened) => __async(null, null, function* () {
+    watch(toRef(props, "open"), async (opened) => {
       if (opened) {
-        yield onDialogOpen();
+        await onDialogOpen();
       } else {
         onDialogClose();
       }
-    }));
+    });
     watch(currentBodyHeight, () => {
       if (dialogBody.value) {
         showDividers.value = dialogBody.value.clientHeight < dialogBody.value.scrollHeight;
@@ -6583,7 +6833,7 @@ const _sfc_main$l = defineComponent({
       close,
       onBackdropClick,
       onBackdropMouseDown,
-      cdxIconClose: e4,
+      cdxIconClose: r4,
       labelId,
       rootClasses,
       backdrop,
@@ -6595,16 +6845,26 @@ const _sfc_main$l = defineComponent({
       focusLast,
       dialogBody,
       focusHolder,
-      showHeader,
       showFooterActions,
       useCloseButtonOrLabel,
       translatedCloseButtonLabel,
-      computedTarget
+      computedTarget,
+      fixedHeightRem
     };
   }
 });
-const _hoisted_1$j = ["aria-label", "aria-labelledby"];
-const _hoisted_2$a = {
+const __injectCSSVars__ = () => {
+  useCssVars((_ctx) => ({
+    "17e0a1f0": _ctx.fixedHeightRem
+  }));
+};
+const __setup__ = __default__.setup;
+__default__.setup = __setup__ ? (props, ctx) => {
+  __injectCSSVars__();
+  return __setup__(props, ctx);
+} : __injectCSSVars__;
+const _hoisted_1$k = ["aria-label", "aria-labelledby"];
+const _hoisted_2$b = {
   key: 0,
   class: "cdx-dialog__header__title-group"
 };
@@ -6618,7 +6878,7 @@ const _hoisted_5$5 = {
   class: "cdx-dialog-focus-trap",
   tabindex: "-1"
 };
-const _hoisted_6$4 = {
+const _hoisted_6$5 = {
   key: 0,
   class: "cdx-dialog__footer__text"
 };
@@ -6627,7 +6887,7 @@ const _hoisted_7$1 = {
   class: "cdx-dialog__footer__actions"
 };
 const _hoisted_8$1 = { ref: "innerTeleportTarget" };
-function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createBlock(Teleport, {
@@ -6672,15 +6932,17 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
               onClick: _cache[3] || (_cache[3] = withModifiers(() => {
               }, ["stop"]))
             }), [
-              _ctx.showHeader || _ctx.$slots.header ? (openBlock(), createElementBlock(
+              createElementVNode(
                 "header",
                 {
-                  key: 0,
-                  class: normalizeClass(["cdx-dialog__header", { "cdx-dialog__header--default": !_ctx.$slots.header }])
+                  class: normalizeClass(["cdx-dialog__header", {
+                    "cdx-dialog__header--default": !_ctx.$slots.header,
+                    "cdx-dialog__header--no-close-button": !_ctx.useCloseButtonOrLabel
+                  }])
                 },
                 [
                   renderSlot(_ctx.$slots, "header", {}, () => [
-                    !_ctx.hideTitle ? (openBlock(), createElementBlock("div", _hoisted_2$a, [
+                    !_ctx.hideTitle ? (openBlock(), createElementBlock("div", _hoisted_2$b, [
                       createElementVNode("h2", {
                         id: _ctx.labelId,
                         class: "cdx-dialog__header__title"
@@ -6693,8 +6955,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                         /* TEXT */
                       )) : createCommentVNode("v-if", true)
                     ])) : createCommentVNode("v-if", true),
-                    _ctx.useCloseButtonOrLabel ? (openBlock(), createBlock(_component_cdx_button, {
-                      key: 1,
+                    createVNode(_component_cdx_button, {
                       class: "cdx-dialog__header__close-button",
                       weight: "quiet",
                       type: "button",
@@ -6706,12 +6967,12 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                       ]),
                       _: 1
                       /* STABLE */
-                    }, 8, ["aria-label", "onClick"])) : createCommentVNode("v-if", true)
+                    }, 8, ["aria-label", "onClick"])
                   ])
                 ],
                 2
                 /* CLASS */
-              )) : createCommentVNode("v-if", true),
+              ),
               createElementVNode(
                 "div",
                 _hoisted_5$5,
@@ -6724,7 +6985,6 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                 {
                   ref: "dialogBody",
                   class: normalizeClass(["cdx-dialog__body cdx-scrollable-container", {
-                    "cdx-dialog__body--no-header": !(_ctx.showHeader || _ctx.$slots.header),
                     "cdx-dialog__body--no-footer": !(_ctx.showFooterActions || _ctx.$slots.footer || _ctx.$slots["footer-text"])
                   }])
                 },
@@ -6737,12 +6997,12 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
               _ctx.showFooterActions || _ctx.$slots.footer || _ctx.$slots["footer-text"] ? (openBlock(), createElementBlock(
                 "footer",
                 {
-                  key: 1,
+                  key: 0,
                   class: normalizeClass(["cdx-dialog__footer", { "cdx-dialog__footer--default": !_ctx.$slots.footer }])
                 },
                 [
                   renderSlot(_ctx.$slots, "footer", {}, () => [
-                    _ctx.$slots["footer-text"] ? (openBlock(), createElementBlock("p", _hoisted_6$4, [
+                    _ctx.$slots["footer-text"] ? (openBlock(), createElementBlock("p", _hoisted_6$5, [
                       renderSlot(_ctx.$slots, "footer-text")
                     ])) : createCommentVNode("v-if", true),
                     _ctx.showFooterActions ? (openBlock(), createElementBlock("div", _hoisted_7$1, [
@@ -6786,7 +7046,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
                 2
                 /* CLASS */
               )) : createCommentVNode("v-if", true)
-            ], 16, _hoisted_1$j),
+            ], 16, _hoisted_1$k),
             createElementVNode(
               "div",
               {
@@ -6815,17 +7075,21 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     })
   ], 8, ["to", "disabled"]);
 }
-const Dialog = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
+const Dialog = /* @__PURE__ */ _export_sfc(__default__, [["render", _sfc_render$o]]);
 const iconMap$2 = {
-  notice: e6,
-  error: F4,
-  warning: C3,
-  success: n8
+  subtle: r6,
+  notice: r6,
+  progressive: r6,
+  error: y4,
+  warning: F3,
+  success: v8
 };
-const _sfc_main$k = defineComponent({
+const _sfc_main$n = defineComponent({
   name: "CdxMessage",
   components: { CdxButton, CdxIcon },
   props: {
+    // Technically, the type can be set to 'subtle' or 'progressive' too, but we do not
+    // recommend this at this time, hence its omission from the Codex docs.
     /**
      * Status type of Message.
      *
@@ -6844,7 +7108,7 @@ const _sfc_main$k = defineComponent({
       default: false
     },
     /**
-     * Custom message icon. Only allowed for notice messages.
+     * Custom message icon. Only allowed for subtle, notice, and progressive messages.
      */
     icon: {
       type: [String, Object],
@@ -6901,6 +7165,13 @@ const _sfc_main$k = defineComponent({
       type: [Boolean, Number],
       default: false,
       validator: (value) => typeof value === "boolean" || typeof value === "number" && value > 0
+    },
+    /**
+     * Label text for the optional action button.
+     */
+    actionButtonLabel: {
+      type: String,
+      default: ""
     }
   },
   emits: [
@@ -6911,7 +7182,11 @@ const _sfc_main$k = defineComponent({
     /**
      * Emitted when the message is automatically dismissed after the display time.
      */
-    "auto-dismissed"
+    "auto-dismissed",
+    /**
+     * Emitted when the action button is clicked.
+     */
+    "action-button-click"
   ],
   setup(props, { emit }) {
     const dismissed = ref(false);
@@ -6950,6 +7225,9 @@ const _sfc_main$k = defineComponent({
       dismissed.value = true;
       emit(eventName);
     }
+    function onActionButtonClick() {
+      emit("action-button-click");
+    }
     onMounted(() => {
       if (props.type === "error" && props.autoDismiss !== false) {
         warn('CdxMessage: Message with type="error" cannot use auto-dismiss');
@@ -6965,13 +7243,14 @@ const _sfc_main$k = defineComponent({
       leaveActiveClass,
       computedIcon,
       onDismiss,
-      cdxIconClose: e4
+      onActionButtonClick,
+      cdxIconClose: r4
     };
   }
 });
-const _hoisted_1$i = ["aria-live", "role"];
-const _hoisted_2$9 = { class: "cdx-message__content" };
-function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$j = ["aria-live", "role"];
+const _hoisted_2$a = { class: "cdx-message__content" };
+function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createBlock(Transition, {
@@ -6990,11 +7269,29 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           class: "cdx-message__icon--vue",
           icon: _ctx.computedIcon
         }, null, 8, ["icon"]),
-        createElementVNode("div", _hoisted_2$9, [
+        createElementVNode("div", _hoisted_2$a, [
           renderSlot(_ctx.$slots, "default")
         ]),
-        _ctx.userDismissable ? (openBlock(), createBlock(_component_cdx_button, {
+        _ctx.actionButtonLabel ? (openBlock(), createBlock(_component_cdx_button, {
           key: 0,
+          class: "cdx-message__action-button",
+          weight: "quiet",
+          type: "button",
+          size: "small",
+          onClick: _ctx.onActionButtonClick
+        }, {
+          default: withCtx(() => [
+            createTextVNode(
+              toDisplayString(_ctx.actionButtonLabel),
+              1
+              /* TEXT */
+            )
+          ]),
+          _: 1
+          /* STABLE */
+        }, 8, ["onClick"])) : createCommentVNode("v-if", true),
+        _ctx.userDismissable ? (openBlock(), createBlock(_component_cdx_button, {
+          key: 1,
           class: "cdx-message__dismiss-button",
           weight: "quiet",
           type: "button",
@@ -7007,15 +7304,15 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
           _: 1
           /* STABLE */
         }, 8, ["aria-label"])) : createCommentVNode("v-if", true)
-      ], 10, _hoisted_1$i)) : createCommentVNode("v-if", true)
+      ], 10, _hoisted_1$j)) : createCommentVNode("v-if", true)
     ]),
     _: 3
     /* FORWARDED */
   }, 8, ["appear", "leave-active-class"]);
 }
-const CdxMessage = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
+const CdxMessage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
 const statusValidator$6 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$j = defineComponent({
+const _sfc_main$m = defineComponent({
   name: "CdxField",
   components: { CdxLabel, CdxMessage },
   props: {
@@ -7133,13 +7430,13 @@ const _sfc_main$j = defineComponent({
     };
   }
 });
-const _hoisted_1$h = { class: "cdx-field__control" };
-const _hoisted_2$8 = { class: "cdx-field__help-text" };
+const _hoisted_1$i = { class: "cdx-field__control" };
+const _hoisted_2$9 = { class: "cdx-field__help-text" };
 const _hoisted_3$6 = {
   key: 0,
   class: "cdx-field__validation-message"
 };
-function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_label = resolveComponent("cdx-label");
   const _component_cdx_message = resolveComponent("cdx-message");
   return openBlock(), createBlock(resolveDynamicComponent(_ctx.isFieldset ? "fieldset" : "div"), {
@@ -7173,10 +7470,10 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
           key: "0"
         } : void 0
       ]), 1032, ["id", "icon", "visually-hidden", "optional", "optional-flag", "input-id", "description-id", "disabled", "is-legend"]),
-      createElementVNode("div", _hoisted_1$h, [
+      createElementVNode("div", _hoisted_1$i, [
         renderSlot(_ctx.$slots, "default")
       ]),
-      createElementVNode("div", _hoisted_2$8, [
+      createElementVNode("div", _hoisted_2$9, [
         renderSlot(_ctx.$slots, "help-text")
       ]),
       !_ctx.computedDisabled && _ctx.validationMessage || _ctx.$slots[_ctx.validationMessageType] ? (openBlock(), createElementBlock("div", _hoisted_3$6, [
@@ -7208,8 +7505,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     /* FORWARDED */
   }, 8, ["class", "aria-disabled", "disabled"]);
 }
-const Field = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
-const _sfc_main$i = defineComponent({
+const Field = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
+const _sfc_main$l = defineComponent({
   name: "CdxImage",
   components: { CdxIcon },
   /**
@@ -7356,14 +7653,14 @@ const _sfc_main$i = defineComponent({
       placeholderStyles,
       handleError,
       handleLoad,
-      cdxIconImage: j4,
+      cdxIconImage: X4,
       iconSizeClass,
       placeholderClasses
     };
   }
 });
-const _hoisted_1$g = ["src", "alt", "width", "height", "loading"];
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$h = ["src", "alt", "width", "height", "loading"];
+function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   return openBlock(), createElementBlock(
     "div",
@@ -7381,7 +7678,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
         class: ["cdx-image__image", _ctx.imageClasses],
         onLoad: _cache[0] || (_cache[0] = (...args) => _ctx.handleLoad && _ctx.handleLoad(...args)),
         onError: _cache[1] || (_cache[1] = (...args) => _ctx.handleError && _ctx.handleError(...args))
-      }), null, 16, _hoisted_1$g)) : createCommentVNode("v-if", true),
+      }), null, 16, _hoisted_1$h)) : createCommentVNode("v-if", true),
       !_ctx.src || !_ctx.isLoaded && !_ctx.isBroken ? (openBlock(), createElementBlock(
         "div",
         {
@@ -7403,14 +7700,16 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const Image$1 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
+const Image$1 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
 const iconMap$1 = {
-  notice: e6,
-  error: F4,
-  warning: C3,
-  success: n8
+  subtle: r6,
+  notice: r6,
+  progressive: r6,
+  error: y4,
+  warning: F3,
+  success: v8
 };
-const _sfc_main$h = defineComponent({
+const _sfc_main$k = defineComponent({
   name: "CdxInfoChip",
   components: { CdxIcon },
   directives: {
@@ -7420,7 +7719,7 @@ const _sfc_main$h = defineComponent({
     /**
      * Status type.
      *
-     * @values 'notice', 'warning', 'error', 'success'
+     * @values 'subtle', 'notice', 'progressive', 'warning', 'error', 'success'
      */
     status: {
       type: String,
@@ -7441,7 +7740,7 @@ const _sfc_main$h = defineComponent({
       ["cdx-info-chip--".concat(props.status)]: true
     }));
     const computedIcon = computed(
-      () => props.status === "notice" ? props.icon : iconMap$1[props.status]
+      () => ["notice", "subtle", "progressive"].includes(props.status) ? props.icon : iconMap$1[props.status]
     );
     const textElement = ref();
     const isMounted = ref(false);
@@ -7465,11 +7764,11 @@ const _sfc_main$h = defineComponent({
     };
   }
 });
-const _hoisted_1$f = {
+const _hoisted_1$g = {
   ref: "textElement",
   class: "cdx-info-chip__text"
 };
-function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _directive_tooltip = resolveDirective("tooltip");
   return withDirectives((openBlock(), createElementBlock(
@@ -7485,7 +7784,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
       }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
       createElementVNode(
         "span",
-        _hoisted_1$f,
+        _hoisted_1$g,
         [
           renderSlot(_ctx.$slots, "default")
         ],
@@ -7499,9 +7798,9 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     [_directive_tooltip, _ctx.tooltipContent]
   ]);
 }
-const InfoChip = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
+const InfoChip = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
 const statusValidator$5 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$g = defineComponent({
+const _sfc_main$j = defineComponent({
   name: "CdxLookup",
   components: {
     CdxMenu,
@@ -7748,7 +8047,7 @@ const _sfc_main$g = defineComponent({
     };
   }
 });
-function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_text_input = resolveComponent("cdx-text-input");
   const _component_cdx_menu = resolveComponent("cdx-menu");
   return openBlock(), createElementBlock(
@@ -7806,96 +8105,11 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const Lookup = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
-const _sfc_main$f = defineComponent({
-  name: "CdxToggleButton",
-  props: {
-    /**
-     * Whether the ToggleButton should be set to "on" (true) or "off" (false).
-     *
-     * Provided by `v-model` binding in the parent component.
-     */
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    /**
-     * Whether the disabled attribute should be added to the ToggleButton, which prevents
-     * it from being clicked.
-     */
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    /**
-     * Whether the ToggleButton should be "quiet", which renders more minimally.
-     */
-    quiet: {
-      type: Boolean,
-      default: false
-    }
-  },
-  emits: [
-    /**
-     * Emitted when modelValue changes (i.e. when the state is toggled)
-     *
-     * @property {boolean} modelValue The new model value
-     */
-    "update:modelValue"
-  ],
-  setup(props, { emit, slots, attrs }) {
-    const isIconOnly = useIconOnlyButton(slots.default, attrs, "CdxToggleButton");
-    const isActive = ref(false);
-    const rootClasses = computed(() => ({
-      // Quiet means frameless among other things
-      "cdx-toggle-button--quiet": props.quiet,
-      "cdx-toggle-button--framed": !props.quiet,
-      // Provide --toggled-off too so that we can simplify selectors
-      "cdx-toggle-button--toggled-on": props.modelValue,
-      "cdx-toggle-button--toggled-off": !props.modelValue,
-      "cdx-toggle-button--icon-only": isIconOnly.value,
-      "cdx-toggle-button--is-active": isActive.value
-    }));
-    const onClick = () => {
-      emit("update:modelValue", !props.modelValue);
-    };
-    const setActive = (active) => {
-      isActive.value = active;
-    };
-    function onKeyDown() {
-      setActive(true);
-    }
-    function onKeyUp() {
-      setActive(false);
-      onClick();
-    }
-    return {
-      rootClasses,
-      onClick,
-      onKeyDown,
-      onKeyUp
-    };
-  }
-});
-const _hoisted_1$e = ["aria-pressed", "disabled"];
-function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("button", {
-    class: normalizeClass(["cdx-toggle-button", _ctx.rootClasses]),
-    "aria-pressed": _ctx.modelValue,
-    disabled: _ctx.disabled,
-    type: "button",
-    onClick: _cache[0] || (_cache[0] = (...args) => _ctx.onClick && _ctx.onClick(...args)),
-    onKeydown: _cache[1] || (_cache[1] = withKeys(withModifiers((...args) => _ctx.onKeyDown && _ctx.onKeyDown(...args), ["prevent"]), ["space", "enter"])),
-    onKeyup: _cache[2] || (_cache[2] = withKeys((...args) => _ctx.onKeyUp && _ctx.onKeyUp(...args), ["space", "enter"]))
-  }, [
-    renderSlot(_ctx.$slots, "default")
-  ], 42, _hoisted_1$e);
-}
-const CdxToggleButton = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
-const _sfc_main$e = defineComponent({
+const Lookup = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
+const _sfc_main$i = defineComponent({
   name: "CdxMenuButton",
   components: {
-    CdxToggleButton,
+    CdxButton,
     CdxMenu
   },
   inheritAttrs: false,
@@ -7934,6 +8148,24 @@ const _sfc_main$e = defineComponent({
       default: () => ({})
     },
     /**
+     * The kind of action that will be taken on click.
+     *
+     * @values 'default', 'progressive', 'destructive'
+     */
+    action: {
+      type: String,
+      default: "default"
+    },
+    /**
+     * Visual prominence of Button.
+     *
+     * @values 'normal', 'primary', 'quiet'
+     */
+    weight: {
+      type: String,
+      default: "quiet"
+    },
+    /**
      * Whether the dropdown is disabled.
      */
     disabled: {
@@ -7965,21 +8197,44 @@ const _sfc_main$e = defineComponent({
   ],
   setup(props, { emit, attrs }) {
     const menu = ref();
-    const toggle = ref();
+    const button = ref();
     const selectedProp = toRef(props, "selected");
     const modelWrapper = useModelWrapper(selectedProp, emit, "update:selected");
     const expanded = ref(false);
-    const toggleId = useId();
+    const buttonId = useId();
     const menuId = useId();
     const { computedDisabled } = useFieldData(toRef(props, "disabled"));
     const { rootClasses, rootStyle, otherAttrs } = useSplitAttributes(attrs);
+    let keyboardActionHandled = false;
     function onKeydown(e) {
-      if (!menu.value || computedDisabled.value || props.menuItems.length === 0 || e.key === " " || e.key === "Enter") {
+      if (!menu.value || computedDisabled.value || props.menuItems.length === 0 || e.key === " ") {
+        return;
+      }
+      if (e.key === "Enter") {
+        const highlightedItem = menu.value.getHighlightedMenuItem();
+        const highlightedViaKeyboard = menu.value.getHighlightedViaKeyboard();
+        if (expanded.value && highlightedItem && highlightedViaKeyboard) {
+          menu.value.delegateKeyNavigation(e);
+        } else {
+          e.preventDefault();
+          expanded.value = !expanded.value;
+        }
+        keyboardActionHandled = true;
         return;
       }
       menu.value.delegateKeyNavigation(e);
     }
-    useFloatingMenu(toggle, menu, {
+    function onClick() {
+      if (keyboardActionHandled) {
+        keyboardActionHandled = false;
+        return;
+      }
+      expanded.value = !expanded.value;
+    }
+    function onBlur() {
+      expanded.value = false;
+    }
+    useFloatingMenu(button, menu, {
       useAvailableWidth: true,
       placement: "bottom-start",
       offset: 4
@@ -7991,17 +8246,19 @@ const _sfc_main$e = defineComponent({
       menuId,
       modelWrapper,
       onKeydown,
-      toggle,
-      toggleId,
+      onClick,
+      onBlur,
+      button,
+      buttonId,
       rootClasses,
       rootStyle,
       otherAttrs
     };
   }
 });
-const _hoisted_1$d = { class: "cdx-menu-button__menu-wrapper" };
-function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_cdx_toggle_button = resolveComponent("cdx-toggle-button");
+const _hoisted_1$f = { class: "cdx-menu-button__menu-wrapper" };
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_cdx_button = resolveComponent("cdx-button");
   const _component_cdx_menu = resolveComponent("cdx-menu");
   return openBlock(), createElementBlock(
     "div",
@@ -8010,18 +8267,18 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
       style: normalizeStyle(_ctx.rootStyle)
     },
     [
-      createVNode(_component_cdx_toggle_button, mergeProps({
-        id: _ctx.toggleId,
-        ref: "toggle"
+      createVNode(_component_cdx_button, mergeProps({
+        id: _ctx.buttonId,
+        ref: "button"
       }, _ctx.otherAttrs, {
-        modelValue: _ctx.expanded,
-        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.expanded = $event),
         disabled: _ctx.computedDisabled,
-        quiet: "",
+        weight: _ctx.weight,
+        action: _ctx.action,
         "aria-haspopup": "menu",
         "aria-controls": _ctx.menuId,
         "aria-expanded": _ctx.expanded,
-        onBlur: _cache[1] || (_cache[1] = ($event) => _ctx.expanded = false),
+        onClick: _ctx.onClick,
+        onBlur: _ctx.onBlur,
         onKeydown: _ctx.onKeydown
       }), {
         default: withCtx(() => [
@@ -8029,19 +8286,20 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
         ]),
         _: 3
         /* FORWARDED */
-      }, 16, ["id", "modelValue", "disabled", "aria-controls", "aria-expanded", "onKeydown"]),
-      createElementVNode("div", _hoisted_1$d, [
+      }, 16, ["id", "disabled", "weight", "action", "aria-controls", "aria-expanded", "onClick", "onBlur", "onKeydown"]),
+      createElementVNode("div", _hoisted_1$f, [
         createVNode(_component_cdx_menu, mergeProps({
           id: _ctx.menuId,
           ref: "menu",
           selected: _ctx.modelWrapper,
-          "onUpdate:selected": _cache[2] || (_cache[2] = ($event) => _ctx.modelWrapper = $event),
+          "onUpdate:selected": _cache[0] || (_cache[0] = ($event) => _ctx.modelWrapper = $event),
           expanded: _ctx.expanded,
-          "onUpdate:expanded": _cache[3] || (_cache[3] = ($event) => _ctx.expanded = $event),
+          "onUpdate:expanded": _cache[1] || (_cache[1] = ($event) => _ctx.expanded = $event),
+          class: "cdx-menu-button__menu",
           "menu-items": _ctx.menuItems
         }, _ctx.menuConfig, {
           role: "menu",
-          "aria-labelledby": _ctx.toggleId,
+          "aria-labelledby": _ctx.buttonId,
           footer: _ctx.footer
         }), {
           default: withCtx(({ menuItem }) => [
@@ -8056,9 +8314,9 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const MenuButton = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
+const MenuButton = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
 const statusValidator$4 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$d = defineComponent({
+const _sfc_main$h = defineComponent({
   name: "CdxMultiselectLookup",
   components: {
     CdxChipInput,
@@ -8154,6 +8412,13 @@ const _sfc_main$d = defineComponent({
     keepInputOnSelection: {
       type: Boolean,
       default: false
+    },
+    /**
+     * Whether the search query should be highlighted within a search result's title.
+     */
+    highlightQuery: {
+      type: Boolean,
+      default: false
     }
   },
   emits: [
@@ -8228,6 +8493,7 @@ const _sfc_main$d = defineComponent({
     const pending = ref(false);
     const expanded = ref(false);
     const isActive = ref(false);
+    const searchQuery = ref("");
     provide(AllowArbitraryKey, ref(false));
     const {
       computedDisabled,
@@ -8256,12 +8522,11 @@ const _sfc_main$d = defineComponent({
       "update:input-value"
     );
     const showNoResults = computed(() => computedInputValue.value.toString().length > 0 && slots["no-results"]);
-    function onUpdateInputValue(newVal) {
-      return __async(this, null, function* () {
-        yield nextTick();
-        pending.value = newVal !== null && newVal !== "";
-        emit("input", newVal);
-      });
+    async function onUpdateInputValue(newVal) {
+      await nextTick();
+      pending.value = newVal !== null && newVal !== "";
+      emit("input", newVal);
+      searchQuery.value = newVal.toString();
     }
     function onInputFocus(event) {
       isActive.value = true;
@@ -8298,6 +8563,7 @@ const _sfc_main$d = defineComponent({
         });
         if (!props.keepInputOnSelection) {
           computedInputValue.value = "";
+          searchQuery.value = "";
           emit("input", "");
         }
       }
@@ -8323,6 +8589,7 @@ const _sfc_main$d = defineComponent({
       menu,
       menuId,
       highlightedId,
+      searchQuery,
       expanded,
       computedDisabled,
       computedStatus,
@@ -8339,7 +8606,7 @@ const _sfc_main$d = defineComponent({
     };
   }
 });
-function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_chip_input = resolveComponent("cdx-chip-input");
   const _component_cdx_menu = resolveComponent("cdx-menu");
   return openBlock(), createElementBlock(
@@ -8380,7 +8647,8 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
         "onUpdate:selected": _cache[3] || (_cache[3] = ($event) => _ctx.selectedWrapper = $event),
         expanded: _ctx.expanded,
         "onUpdate:expanded": _cache[4] || (_cache[4] = ($event) => _ctx.expanded = $event),
-        "menu-items": _ctx.menuItems
+        "menu-items": _ctx.menuItems,
+        "search-query": _ctx.highlightQuery ? _ctx.searchQuery : ""
       }, _ctx.menuConfig, {
         onLoadMore: _cache[5] || (_cache[5] = ($event) => _ctx.$emit("load-more"))
       }), {
@@ -8392,19 +8660,48 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
         ]),
         _: 3
         /* FORWARDED */
-      }, 16, ["id", "selected", "expanded", "menu-items"])
+      }, 16, ["id", "selected", "expanded", "menu-items", "search-query"])
     ],
     6
     /* CLASS, STYLE */
   );
 }
-const MultiselectLookup = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
-const _sfc_main$c = defineComponent({
+const MultiselectLookup = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
+const BREAKPOINTS = {
+  mobileMax: 639,
+  tabletMin: 640,
+  desktopMin: 1120,
+  desktopWideMin: 1680
+};
+function useBreakpoint() {
+  const match = reactive({
+    mobile: false,
+    tablet: false,
+    desktop: false,
+    "desktop-wide": false
+  });
+  function checkBreakpoints() {
+    if (typeof window !== "object") {
+      return;
+    }
+    const width = window.innerWidth;
+    match.mobile = width <= BREAKPOINTS.mobileMax;
+    match.tablet = width >= BREAKPOINTS.tabletMin && width < BREAKPOINTS.desktopMin;
+    match.desktop = width >= BREAKPOINTS.desktopMin && width < BREAKPOINTS.desktopWideMin;
+    match["desktop-wide"] = width >= BREAKPOINTS.desktopWideMin;
+  }
+  onMounted(() => {
+    checkBreakpoints();
+    window.addEventListener("resize", checkBreakpoints);
+  });
+  onUnmounted(() => {
+    window.removeEventListener("resize", checkBreakpoints);
+  });
+  return match;
+}
+const _sfc_main$g = defineComponent({
   name: "CdxPopover",
   components: { CdxButton, CdxIcon },
-  /**
-   * The popover will inherit attributes, not the root element.
-   */
   inheritAttrs: false,
   props: {
     /**
@@ -8412,7 +8709,7 @@ const _sfc_main$c = defineComponent({
      * which can be either an HTML element or a Vue component.
      *
      * This must be provided so the popover can be positioned relative to the triggering
-     * element.
+     * element (floating mode). Optional when only the bottom sheet variant is used on mobile.
      */
     anchor: {
       type: Object,
@@ -8473,6 +8770,7 @@ const _sfc_main$c = defineComponent({
     },
     /**
      * Whether action buttons should be vertically stacked and 100% width.
+     * On mobile, the action buttons are stacked vertically by default.
      */
     stackedActions: {
       type: Boolean,
@@ -8487,11 +8785,27 @@ const _sfc_main$c = defineComponent({
       default: false
     },
     /**
-     * Positioning options for the Popover.
+     * Positioning options for the Popover (floating mode only).
      */
     placement: {
       type: String,
       default: "bottom"
+    },
+    /**
+     * Whether to use the bottom sheet variant on mobile devices.
+     * When true, the popover will render as a bottom sheet on mobile breakpoints.
+     */
+    useBottomSheet: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Whether to hide the backdrop/scrim behind the bottom sheet.
+     * Only applies when useBottomSheet is true and the bottom sheet layout is active.
+     */
+    hideBackdrop: {
+      type: Boolean,
+      default: false
     }
   },
   emits: [
@@ -8511,10 +8825,39 @@ const _sfc_main$c = defineComponent({
     "default"
   ],
   setup(props, { emit }) {
+    const breakpoint = useBreakpoint();
+    const isBottomSheet = computed(() => props.useBottomSheet && breakpoint.mobile);
+    const providedTarget = inject("CdxTeleportTarget", void 0);
+    const computedTarget = computed(() => {
+      var _a;
+      return (_a = unref(providedTarget)) != null ? _a : "body";
+    });
+    const translatedCloseButtonLabel = useI18nWithOverride(
+      toRef(props, "closeButtonLabel"),
+      "cdx-popover-close-button-label",
+      "Close"
+    );
+    const transitionName = computed(() => isBottomSheet.value ? "cdx-popover-bottom-sheet" : "cdx-popover-floating");
+    const showHeader = computed(() => !!props.title || !!props.icon || props.useCloseButton);
+    const showFooter = computed(() => !!props.primaryAction || !!props.defaultAction);
+    const showDividers = ref(false);
+    const footerActionsClasses = computed(() => ({
+      "cdx-popover__footer__actions--vertical": props.stackedActions
+    }));
+    const backdropClassObject = computed(() => ({
+      "cdx-popover__backdrop--bottom-sheet": isBottomSheet.value,
+      "cdx-popover__backdrop--no-backdrop": isBottomSheet.value && props.hideBackdrop
+    }));
+    const panelClassObject = computed(() => ({
+      "cdx-popover--bottom-sheet": isBottomSheet.value,
+      "cdx-popover--dividers": isBottomSheet.value && showDividers.value
+    }));
     const placementRef = toRef(props, "placement");
-    const floating = ref();
-    const reference = toRef(props, "anchor");
+    const panel = ref();
+    const backdrop = ref();
     const arrowRef = ref();
+    const bodyEl = ref();
+    const reference = toRef(props, "anchor");
     const clipPadding2 = 16;
     const minClipWidth = 192;
     const minClipHeight2 = 200;
@@ -8525,32 +8868,38 @@ const _sfc_main$c = defineComponent({
     const triangleHeight = sideC / 2;
     const arrowOffset = 4;
     const offsetDistance = triangleHeight + arrowOffset;
-    const computedMiddleware = computed(() => [
-      offset(offsetDistance),
-      // Default flip behavior will flip floating element across the main axis.
-      flip(),
-      size({
-        // Spacing between the floating element and the viewport.
-        padding: clipPadding2,
-        // Apply styles based on available width/height.
-        apply({ availableWidth, availableHeight, elements }) {
-          const maxWidth = Math.min(maxClipWidth, availableWidth);
-          Object.assign(elements.floating.style, {
-            // Effective max width is the possible max width down to the min clip width.
-            maxWidth: "".concat(Math.max(minClipWidth, maxWidth), "px"),
-            maxHeight: "".concat(Math.max(minClipHeight2, availableHeight), "px")
-          });
-        }
-      }),
-      arrow({ element: arrowRef })
-    ]);
+    const computedMiddleware = computed(() => {
+      if (isBottomSheet.value) {
+        return [];
+      }
+      return [
+        offset(offsetDistance),
+        // Default flip behavior will flip floating element across the main axis
+        flip(),
+        size({
+          // Spacing between the floating element and the viewport.
+          padding: clipPadding2,
+          // Apply styles based on available width/height.
+          apply({ availableWidth, availableHeight, elements }) {
+            const maxWidth = Math.min(maxClipWidth, availableWidth);
+            Object.assign(elements.floating.style, {
+              // Effective max width is the possible max width
+              // down to the min clip width.
+              maxWidth: "".concat(Math.max(minClipWidth, maxWidth), "px"),
+              maxHeight: "".concat(Math.max(minClipHeight2, availableHeight), "px")
+            });
+          }
+        }),
+        arrow({ element: arrowRef })
+      ];
+    });
     const {
       floatingStyles,
       middlewareData,
       placement,
       x,
       y
-    } = useFloating(reference, floating, {
+    } = useFloating(reference, panel, {
       whileElementsMounted: autoUpdate,
       placement: placementRef,
       middleware: computedMiddleware
@@ -8564,40 +8913,124 @@ const _sfc_main$c = defineComponent({
     });
     const oppositeSide = computed(() => oppositeSides[placement.value]);
     watch([x, y], () => {
-      if (middlewareData.value.arrow) {
-        const { x: arrowX, y: arrowY } = middlewareData.value.arrow;
-        arrowStyles.left = arrowX ? "".concat(arrowX, "px") : "";
-        arrowStyles.top = arrowY ? "".concat(arrowY, "px") : "";
-        arrowStyles.right = "";
-        arrowStyles.bottom = "";
-        arrowStyles[oppositeSide.value] = "".concat(-16 / 2 - 1, "px");
-        const arrowTransforms = {
-          top: "rotate( 45deg )",
-          right: "rotate( 135deg )",
-          bottom: "rotate( 225deg )",
-          left: "rotate( 315deg )"
-        };
-        arrowStyles.transform = arrowTransforms[oppositeSide.value];
+      if (isBottomSheet.value || !middlewareData.value.arrow) {
+        return;
+      }
+      const { x: arrowX, y: arrowY } = middlewareData.value.arrow;
+      arrowStyles.left = arrowX ? "".concat(arrowX, "px") : "";
+      arrowStyles.top = arrowY ? "".concat(arrowY, "px") : "";
+      arrowStyles.right = "";
+      arrowStyles.bottom = "";
+      arrowStyles[oppositeSide.value] = "".concat(-16 / 2 - 1, "px");
+      const arrowTransforms = {
+        top: "rotate( 45deg )",
+        right: "rotate( 135deg )",
+        bottom: "rotate( 225deg )",
+        left: "rotate( 315deg )"
+      };
+      arrowStyles.transform = arrowTransforms[oppositeSide.value];
+    });
+    const visualViewportHeight = ref(0);
+    const visualViewportOffsetTop = ref(0);
+    const initialLayoutViewportHeight = ref(0);
+    function resetViewport() {
+      visualViewportHeight.value = window.innerHeight;
+      visualViewportOffsetTop.value = 0;
+      initialLayoutViewportHeight.value = 0;
+    }
+    function setViewport(height, offsetTop) {
+      visualViewportHeight.value = height;
+      visualViewportOffsetTop.value = offsetTop;
+    }
+    let updateViewportRaf = 0;
+    function cancelPendingViewportUpdate() {
+      if (updateViewportRaf !== 0) {
+        cancelAnimationFrame(updateViewportRaf);
+        updateViewportRaf = 0;
+      }
+    }
+    function updateViewport() {
+      if (updateViewportRaf !== 0) {
+        return;
+      }
+      updateViewportRaf = requestAnimationFrame(() => {
+        updateViewportRaf = 0;
+        if (!window.visualViewport) {
+          setViewport(window.innerHeight, 0);
+          return;
+        }
+        setViewport(window.visualViewport.height, window.visualViewport.offsetTop);
+      });
+    }
+    function setViewportListeners() {
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", updateViewport);
+        window.visualViewport.addEventListener("scroll", updateViewport);
+      }
+    }
+    function removeViewportListeners() {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", updateViewport);
+        window.visualViewport.removeEventListener("scroll", updateViewport);
+      }
+    }
+    const sheetStyles = computed(() => {
+      if (!isBottomSheet.value) {
+        return {};
+      }
+      const viewportHeight = visualViewportHeight.value > 0 ? visualViewportHeight.value : initialLayoutViewportHeight.value || window.innerHeight;
+      const offsetTop = visualViewportOffsetTop.value;
+      const layoutViewportHeight = initialLayoutViewportHeight.value || window.innerHeight;
+      const keyboardHeight = layoutViewportHeight - viewportHeight - offsetTop;
+      const paddingBottomValue = keyboardHeight > 100 ? Math.max(0, keyboardHeight) : 0;
+      if (paddingBottomValue <= 0) {
+        return {};
+      }
+      return {
+        paddingBottom: "".concat(paddingBottomValue, "px")
+      };
+    });
+    const scrollableDimensions = useResizeObserver(bodyEl);
+    const currentScrollableHeight = computed(() => {
+      var _a;
+      return (_a = scrollableDimensions.value.height) != null ? _a : 0;
+    });
+    watch(currentScrollableHeight, () => {
+      if (!isBottomSheet.value || !bodyEl.value) {
+        return;
+      }
+      showDividers.value = bodyEl.value.clientHeight < bodyEl.value.scrollHeight;
+    });
+    watch(isBottomSheet, () => {
+      if (!isBottomSheet.value) {
+        showDividers.value = false;
       }
     });
-    const providedTarget = inject("CdxTeleportTarget", void 0);
-    const computedTarget = computed(() => {
-      var _a;
-      return (_a = unref(providedTarget)) != null ? _a : "body";
-    });
-    const translatedCloseButtonLabel = useI18nWithOverride(
-      toRef(props, "closeButtonLabel"),
-      "cdx-popover-close-button-label",
-      "Close"
+    const panelInlineStyles = computed(
+      () => isBottomSheet.value ? sheetStyles.value : floatingStyles.value
     );
-    const showHeader = computed(() => !!props.title || !!props.icon || props.useCloseButton);
-    const showFooter = computed(() => !!props.primaryAction || !!props.defaultAction);
-    const footerActionsClasses = computed(() => ({
-      "cdx-popover__footer__actions--vertical": props.stackedActions,
-      "cdx-popover__footer__actions--horizontal": !props.stackedActions
-    }));
+    const isSheetOpen = computed(() => props.open && isBottomSheet.value);
+    useScrollLock(isSheetOpen);
+    let mousedownOnBackdrop = false;
     function close() {
       emit("update:open", false);
+    }
+    function onPanelClick(e) {
+      if (isBottomSheet.value) {
+        e.stopPropagation();
+      }
+    }
+    function onBackdropMouseDown(e) {
+      if (!isBottomSheet.value) {
+        return;
+      }
+      mousedownOnBackdrop = e.target === backdrop.value;
+    }
+    function onBackdropClick() {
+      if (!isBottomSheet.value || !mousedownOnBackdrop) {
+        return;
+      }
+      close();
     }
     function onKeydown(event) {
       if (event.key === "Escape") {
@@ -8605,43 +9038,124 @@ const _sfc_main$c = defineComponent({
       }
     }
     function onFocusOut(event) {
+      if (isBottomSheet.value) {
+        return;
+      }
       const referenceEl = unwrapElement(reference.value);
       const isOutsidePopoverAndTrigger = (
         // Don't close the popover when the viewport's native scrollbar is clicked (T388302)
         event.target !== document.documentElement && // ...or when the popover or something inside it is clicked
-        (floating.value && !floating.value.contains(event.target)) && // ...or when the trigger or something inside it is clicked
+        (panel.value && !panel.value.contains(event.target)) && // ...or when the trigger or something inside it is clicked
         !(referenceEl == null ? void 0 : referenceEl.contains(event.target))
       );
       if (isOutsidePopoverAndTrigger) {
         close();
       }
     }
-    watch(() => props.open, (isOpen) => {
-      if (isOpen) {
-        document.addEventListener("keydown", onKeydown);
-        document.addEventListener("mousedown", onFocusOut);
-        document.addEventListener("focusin", onFocusOut);
+    const anchorForFocusTrap = ref(null);
+    watch(
+      reference,
+      () => {
+        anchorForFocusTrap.value = reference.value;
+      },
+      { immediate: true }
+    );
+    const {
+      focusTrapStart,
+      focusTrapEnd,
+      focusHolder,
+      focusFirst,
+      focusLast,
+      activateFocusTrap,
+      deactivateFocusTrap
+    } = useFocusTrap({
+      containerRef: panel,
+      bodyRef: bodyEl,
+      anchorRef: anchorForFocusTrap,
+      preventScroll: true
+    });
+    function teardownFloating() {
+      document.removeEventListener("keydown", onKeydown);
+      document.removeEventListener("mousedown", onFocusOut);
+      document.removeEventListener("focusin", onFocusOut);
+      deactivateFocusTrap();
+    }
+    async function setupFloating() {
+      document.addEventListener("keydown", onKeydown);
+      document.addEventListener("mousedown", onFocusOut);
+      document.addEventListener("focusin", onFocusOut);
+      await activateFocusTrap();
+    }
+    function clearFloatingInlineStyles() {
+      var _a, _b, _c, _d, _e;
+      (_a = panel.value) == null ? void 0 : _a.style.removeProperty("max-width");
+      (_b = panel.value) == null ? void 0 : _b.style.removeProperty("max-height");
+      (_c = panel.value) == null ? void 0 : _c.style.removeProperty("left");
+      (_d = panel.value) == null ? void 0 : _d.style.removeProperty("top");
+      (_e = panel.value) == null ? void 0 : _e.style.removeProperty("position");
+    }
+    async function openBottomSheet() {
+      clearFloatingInlineStyles();
+      document.addEventListener("keydown", onKeydown);
+      updateViewport();
+      setViewportListeners();
+      await activateFocusTrap();
+    }
+    function closeBottomSheet() {
+      document.removeEventListener("keydown", onKeydown);
+      removeViewportListeners();
+      cancelPendingViewportUpdate();
+      resetViewport();
+      deactivateFocusTrap();
+    }
+    function closePopover(isBottomSheetValue) {
+      if (isBottomSheetValue) {
+        closeBottomSheet();
       } else {
-        document.removeEventListener("keydown", onKeydown);
-        document.removeEventListener("mousedown", onFocusOut);
-        document.removeEventListener("focusin", onFocusOut);
+        teardownFloating();
+      }
+    }
+    async function openPopover(isBottomSheetValue) {
+      if (isBottomSheetValue) {
+        initialLayoutViewportHeight.value = document.documentElement.clientHeight;
+        await openBottomSheet();
+      } else {
+        await setupFloating();
+      }
+    }
+    watch(() => props.open, async (isOpen) => {
+      if (isOpen) {
+        await openPopover(isBottomSheet.value);
+        return;
+      }
+      closePopover(isBottomSheet.value);
+    });
+    watch(isBottomSheet, async (sheet, prevSheet) => {
+      if (!props.open || sheet === prevSheet) {
+        return;
+      }
+      closePopover(prevSheet);
+      await openPopover(sheet);
+    });
+    onMounted(async () => {
+      if (props.open) {
+        await openPopover(isBottomSheet.value);
+      }
+      if (isBottomSheet.value) {
+        updateViewport();
+      }
+      await nextTick();
+      if (props.anchor === null) {
+        console.warn('[CdxPopover]: The "anchor" prop must be provided to position the popover in floating mode.');
       }
     });
-    onMounted(() => __async(null, null, function* () {
-      if (props.open) {
-        document.addEventListener("keydown", onKeydown);
-        document.addEventListener("mousedown", onFocusOut);
-        document.addEventListener("focusin", onFocusOut);
-      }
-      yield nextTick();
-      if (props.anchor === null) {
-        console.warn('[CdxPopover]: The "anchor" prop must be provided to position the CdxPopover.');
-      }
-    }));
     onUnmounted(() => {
       document.removeEventListener("keydown", onKeydown);
       document.removeEventListener("mousedown", onFocusOut);
       document.removeEventListener("focusin", onFocusOut);
+      removeViewportListeners();
+      cancelPendingViewportUpdate();
+      deactivateFocusTrap();
     });
     return {
       computedTarget,
@@ -8650,29 +9164,48 @@ const _sfc_main$c = defineComponent({
       showFooter,
       footerActionsClasses,
       close,
-      cdxIconClose: e4,
-      floating,
-      floatingStyles,
+      cdxIconClose: r4,
+      transitionName,
+      backdropClassObject,
+      panelClassObject,
+      panelInlineStyles,
+      backdrop,
+      panel,
       arrowRef,
-      arrowStyles
+      arrowStyles,
+      focusTrapStart,
+      focusTrapEnd,
+      focusHolder,
+      bodyEl,
+      focusFirst,
+      focusLast,
+      isBottomSheet,
+      onBackdropMouseDown,
+      onBackdropClick,
+      onPanelClick
     };
   }
 });
-const _hoisted_1$c = {
+const _hoisted_1$e = ["role", "aria-modal"];
+const _hoisted_2$8 = {
+  ref: "focusHolder",
+  class: "cdx-popover-focus-trap",
+  tabindex: "-1"
+};
+const _hoisted_3$5 = {
   key: 0,
   class: "cdx-popover__header"
 };
-const _hoisted_2$7 = {
+const _hoisted_4$4 = {
   key: 1,
   class: "cdx-popover__header__title"
 };
-const _hoisted_3$5 = { class: "cdx-popover__header__button-wrapper" };
-const _hoisted_4$4 = { class: "cdx-popover__body" };
-const _hoisted_5$4 = {
+const _hoisted_5$4 = { class: "cdx-popover__header__button-wrapper" };
+const _hoisted_6$4 = {
   key: 1,
   class: "cdx-popover__footer"
 };
-function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createBlock(Teleport, {
@@ -8681,115 +9214,176 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   }, [
     _ctx.open ? (openBlock(), createElementBlock(
       "div",
-      mergeProps({
+      {
         key: 0,
-        ref: "floating",
-        class: "cdx-popover",
-        style: _ctx.floatingStyles
-      }, _ctx.$attrs),
-      [
-        _ctx.showHeader || _ctx.$slots.header ? (openBlock(), createElementBlock("header", _hoisted_1$c, [
-          renderSlot(_ctx.$slots, "header", {}, () => [
-            _ctx.icon ? (openBlock(), createBlock(_component_cdx_icon, {
-              key: 0,
-              class: "cdx-popover__header__icon",
-              icon: _ctx.icon
-            }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
-            _ctx.title ? (openBlock(), createElementBlock(
-              "div",
-              _hoisted_2$7,
-              toDisplayString(_ctx.title),
-              1
-              /* TEXT */
-            )) : createCommentVNode("v-if", true),
-            createElementVNode("div", _hoisted_3$5, [
-              _ctx.useCloseButton ? (openBlock(), createBlock(_component_cdx_button, {
-                key: 0,
-                class: "cdx-popover__header__close-button",
-                weight: "quiet",
-                type: "button",
-                "aria-label": _ctx.translatedCloseButtonLabel,
-                onClick: _ctx.close
-              }, {
-                default: withCtx(() => [
-                  createVNode(_component_cdx_icon, { icon: _ctx.cdxIconClose }, null, 8, ["icon"])
-                ]),
-                _: 1
-                /* STABLE */
-              }, 8, ["aria-label", "onClick"])) : createCommentVNode("v-if", true)
-            ])
-          ])
-        ])) : createCommentVNode("v-if", true),
-        createElementVNode("div", _hoisted_4$4, [
-          renderSlot(_ctx.$slots, "default")
-        ]),
-        _ctx.showFooter || _ctx.$slots.footer ? (openBlock(), createElementBlock("footer", _hoisted_5$4, [
-          renderSlot(_ctx.$slots, "footer", {}, () => [
-            createElementVNode(
-              "div",
-              {
-                class: normalizeClass(["cdx-popover__footer__actions", _ctx.footerActionsClasses])
-              },
-              [
-                _ctx.primaryAction ? (openBlock(), createBlock(_component_cdx_button, {
-                  key: 0,
-                  class: "cdx-popover__footer__primary-action",
-                  weight: "primary",
-                  action: _ctx.primaryAction.actionType,
-                  disabled: _ctx.primaryAction.disabled,
-                  onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("primary"))
-                }, {
-                  default: withCtx(() => [
-                    createTextVNode(
-                      toDisplayString(_ctx.primaryAction.label),
-                      1
-                      /* TEXT */
-                    )
-                  ]),
-                  _: 1
-                  /* STABLE */
-                }, 8, ["action", "disabled"])) : createCommentVNode("v-if", true),
-                _ctx.defaultAction ? (openBlock(), createBlock(_component_cdx_button, {
-                  key: 1,
-                  class: "cdx-popover__footer__default-action",
-                  disabled: _ctx.defaultAction.disabled,
-                  onClick: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("default"))
-                }, {
-                  default: withCtx(() => [
-                    createTextVNode(
-                      toDisplayString(_ctx.defaultAction.label),
-                      1
-                      /* TEXT */
-                    )
-                  ]),
-                  _: 1
-                  /* STABLE */
-                }, 8, ["disabled"])) : createCommentVNode("v-if", true)
-              ],
-              2
-              /* CLASS */
-            )
-          ])
-        ])) : createCommentVNode("v-if", true),
-        createElementVNode(
+        ref: "focusTrapStart",
+        tabindex: "0",
+        onFocus: _cache[0] || (_cache[0] = (...args) => _ctx.focusLast && _ctx.focusLast(...args))
+      },
+      null,
+      544
+      /* NEED_HYDRATION, NEED_PATCH */
+    )) : createCommentVNode("v-if", true),
+    createVNode(Transition, {
+      name: _ctx.transitionName,
+      appear: ""
+    }, {
+      default: withCtx(() => [
+        _ctx.open ? (openBlock(), createElementBlock(
           "div",
           {
-            ref: "arrowRef",
-            class: "cdx-popover__arrow",
-            style: normalizeStyle(_ctx.arrowStyles)
+            key: 0,
+            ref: "backdrop",
+            class: normalizeClass(["cdx-popover__backdrop", _ctx.backdropClassObject]),
+            onMousedown: _cache[4] || (_cache[4] = (...args) => _ctx.onBackdropMouseDown && _ctx.onBackdropMouseDown(...args)),
+            onClick: _cache[5] || (_cache[5] = (...args) => _ctx.onBackdropClick && _ctx.onBackdropClick(...args))
           },
-          null,
-          4
-          /* STYLE */
-        )
-      ],
-      16
-      /* FULL_PROPS */
+          [
+            createElementVNode("div", mergeProps({
+              ref: "panel",
+              class: ["cdx-popover", _ctx.panelClassObject],
+              style: _ctx.panelInlineStyles,
+              role: _ctx.isBottomSheet ? "dialog" : void 0,
+              "aria-modal": _ctx.isBottomSheet ? "true" : void 0
+            }, _ctx.$attrs, {
+              onClick: _cache[3] || (_cache[3] = (...args) => _ctx.onPanelClick && _ctx.onPanelClick(...args))
+            }), [
+              createElementVNode(
+                "div",
+                _hoisted_2$8,
+                null,
+                512
+                /* NEED_PATCH */
+              ),
+              _ctx.showHeader || _ctx.$slots.header ? (openBlock(), createElementBlock("header", _hoisted_3$5, [
+                renderSlot(_ctx.$slots, "header", {}, () => [
+                  _ctx.icon ? (openBlock(), createBlock(_component_cdx_icon, {
+                    key: 0,
+                    class: "cdx-popover__header__icon",
+                    icon: _ctx.icon
+                  }, null, 8, ["icon"])) : createCommentVNode("v-if", true),
+                  _ctx.title ? (openBlock(), createElementBlock(
+                    "div",
+                    _hoisted_4$4,
+                    toDisplayString(_ctx.title),
+                    1
+                    /* TEXT */
+                  )) : createCommentVNode("v-if", true),
+                  createElementVNode("div", _hoisted_5$4, [
+                    _ctx.useCloseButton ? (openBlock(), createBlock(_component_cdx_button, {
+                      key: 0,
+                      class: "cdx-popover__header__close-button",
+                      weight: "quiet",
+                      type: "button",
+                      "aria-label": _ctx.translatedCloseButtonLabel,
+                      onClick: _ctx.close
+                    }, {
+                      default: withCtx(() => [
+                        createVNode(_component_cdx_icon, { icon: _ctx.cdxIconClose }, null, 8, ["icon"])
+                      ]),
+                      _: 1
+                      /* STABLE */
+                    }, 8, ["aria-label", "onClick"])) : createCommentVNode("v-if", true)
+                  ])
+                ])
+              ])) : createCommentVNode("v-if", true),
+              createElementVNode(
+                "div",
+                {
+                  ref: "bodyEl",
+                  class: normalizeClass(["cdx-popover__body", { "cdx-popover__body--no-footer": !_ctx.showFooter && !_ctx.$slots.footer }])
+                },
+                [
+                  renderSlot(_ctx.$slots, "default")
+                ],
+                2
+                /* CLASS */
+              ),
+              _ctx.showFooter || _ctx.$slots.footer ? (openBlock(), createElementBlock("footer", _hoisted_6$4, [
+                renderSlot(_ctx.$slots, "footer", {}, () => [
+                  createElementVNode(
+                    "div",
+                    {
+                      class: normalizeClass(["cdx-popover__footer__actions", _ctx.footerActionsClasses])
+                    },
+                    [
+                      _ctx.primaryAction ? (openBlock(), createBlock(_component_cdx_button, {
+                        key: 0,
+                        class: "cdx-popover__footer__primary-action",
+                        weight: "primary",
+                        action: _ctx.primaryAction.actionType,
+                        disabled: _ctx.primaryAction.disabled,
+                        onClick: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("primary"))
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(
+                            toDisplayString(_ctx.primaryAction.label),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["action", "disabled"])) : createCommentVNode("v-if", true),
+                      _ctx.defaultAction ? (openBlock(), createBlock(_component_cdx_button, {
+                        key: 1,
+                        class: "cdx-popover__footer__default-action",
+                        disabled: _ctx.defaultAction.disabled,
+                        onClick: _cache[2] || (_cache[2] = ($event) => _ctx.$emit("default"))
+                      }, {
+                        default: withCtx(() => [
+                          createTextVNode(
+                            toDisplayString(_ctx.defaultAction.label),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        _: 1
+                        /* STABLE */
+                      }, 8, ["disabled"])) : createCommentVNode("v-if", true)
+                    ],
+                    2
+                    /* CLASS */
+                  )
+                ])
+              ])) : createCommentVNode("v-if", true),
+              !_ctx.isBottomSheet ? (openBlock(), createElementBlock(
+                "div",
+                {
+                  key: 2,
+                  ref: "arrowRef",
+                  class: "cdx-popover__arrow",
+                  style: normalizeStyle(_ctx.arrowStyles)
+                },
+                null,
+                4
+                /* STYLE */
+              )) : createCommentVNode("v-if", true)
+            ], 16, _hoisted_1$e)
+          ],
+          34
+          /* CLASS, NEED_HYDRATION */
+        )) : createCommentVNode("v-if", true)
+      ]),
+      _: 3
+      /* FORWARDED */
+    }, 8, ["name"]),
+    _ctx.open ? (openBlock(), createElementBlock(
+      "div",
+      {
+        key: 1,
+        ref: "focusTrapEnd",
+        tabindex: "0",
+        onFocus: _cache[6] || (_cache[6] = (...args) => _ctx.focusFirst && _ctx.focusFirst(...args))
+      },
+      null,
+      544
+      /* NEED_HYDRATION, NEED_PATCH */
     )) : createCommentVNode("v-if", true)
   ], 8, ["to", "disabled"]);
 }
-const Popover = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c]]);
-const _sfc_main$b = defineComponent({
+const Popover = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
+const _sfc_main$f = defineComponent({
   name: "CdxProgressIndicator",
   components: { CdxLabel },
   /**
@@ -8827,9 +9421,9 @@ const _sfc_main$b = defineComponent({
     };
   }
 });
-const _hoisted_1$b = { class: "cdx-progress-indicator__indicator" };
-const _hoisted_2$6 = ["id"];
-function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$d = { class: "cdx-progress-indicator__indicator" };
+const _hoisted_2$7 = ["id"];
+function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   var _a, _b;
   const _component_cdx_label = resolveComponent("cdx-label");
   return openBlock(), createElementBlock(
@@ -8839,11 +9433,11 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
       style: normalizeStyle(_ctx.rootStyle)
     },
     [
-      createElementVNode("span", _hoisted_1$b, [
+      createElementVNode("span", _hoisted_1$d, [
         createElementVNode("progress", mergeProps({
           id: _ctx.progressIndicatorId,
           class: "cdx-progress-indicator__indicator__progress"
-        }, _ctx.otherAttrs), null, 16, _hoisted_2$6)
+        }, _ctx.otherAttrs), null, 16, _hoisted_2$7)
       ]),
       Boolean((_b = (_a = _ctx.$slots).default) == null ? void 0 : _b.call(_a, {})) ? (openBlock(), createBlock(_component_cdx_label, {
         key: 0,
@@ -8862,9 +9456,9 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const ProgressIndicator = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b]]);
+const ProgressIndicator = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
 const statusValidator$3 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$a = defineComponent({
+const _sfc_main$e = defineComponent({
   name: "CdxRadio",
   components: { CdxLabel },
   props: {
@@ -8963,9 +9557,9 @@ const _sfc_main$a = defineComponent({
     };
   }
 });
-const _hoisted_1$a = { class: "cdx-radio__wrapper" };
-const _hoisted_2$5 = ["id", "aria-describedby", "name", "value", "disabled"];
-function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$c = { class: "cdx-radio__wrapper" };
+const _hoisted_2$6 = ["id", "aria-describedby", "name", "value", "disabled"];
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_label = resolveComponent("cdx-label");
   return openBlock(), createElementBlock(
     "div",
@@ -8973,7 +9567,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
       class: normalizeClass(["cdx-radio", _ctx.rootClasses])
     },
     [
-      createElementVNode("div", _hoisted_1$a, [
+      createElementVNode("div", _hoisted_1$c, [
         withDirectives(createElementVNode("input", {
           id: _ctx.radioId,
           ref: "input",
@@ -8984,7 +9578,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
           name: _ctx.name,
           value: _ctx.inputValue,
           disabled: _ctx.computedDisabled
-        }, null, 8, _hoisted_2$5), [
+        }, null, 8, _hoisted_2$6), [
           [vModelRadio, _ctx.wrappedModel]
         ]),
         _cache[1] || (_cache[1] = createElementVNode(
@@ -9034,9 +9628,9 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS */
   );
 }
-const Radio = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a]]);
+const Radio = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
 const statusValidator$2 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$9 = defineComponent({
+const _sfc_main$d = defineComponent({
   name: "CdxSearchInput",
   components: {
     CdxButton,
@@ -9146,7 +9740,25 @@ const _sfc_main$9 = defineComponent({
      *
      * @property {FocusEvent} event
      */
-    "blur"
+    "blur",
+    /**
+     * When composition begins
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionstart",
+    /**
+     * When composition is updated
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionupdate",
+    /**
+     * When composition ends
+     *
+     * @property {CompositionEvent} event
+     */
+    "compositionend"
   ],
   setup(props, { emit, attrs }) {
     const wrappedModel = useModelWrapper(toRef(props, "modelValue"), emit);
@@ -9178,7 +9790,7 @@ const _sfc_main$9 = defineComponent({
       rootStyle,
       otherAttrs,
       handleSubmit,
-      searchIcon: E7,
+      searchIcon: P7,
       translatedSearchButtonLabel,
       useButtonOrLabel
     };
@@ -9195,8 +9807,8 @@ const _sfc_main$9 = defineComponent({
     }
   }
 });
-const _hoisted_1$9 = { class: "cdx-search-input__input-wrapper" };
-function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$b = { class: "cdx-search-input__input-wrapper" };
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_text_input = resolveComponent("cdx-text-input");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createElementBlock(
@@ -9206,7 +9818,7 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
       style: normalizeStyle(_ctx.rootStyle)
     },
     [
-      createElementVNode("div", _hoisted_1$9, [
+      createElementVNode("div", _hoisted_1$b, [
         createVNode(_component_cdx_text_input, mergeProps({
           ref: "textInput",
           modelValue: _ctx.wrappedModel,
@@ -9222,7 +9834,10 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
           onInput: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("input", $event)),
           onChange: _cache[2] || (_cache[2] = ($event) => _ctx.$emit("change", $event)),
           onFocus: _cache[3] || (_cache[3] = ($event) => _ctx.$emit("focus", $event)),
-          onBlur: _cache[4] || (_cache[4] = ($event) => _ctx.$emit("blur", $event))
+          onBlur: _cache[4] || (_cache[4] = ($event) => _ctx.$emit("blur", $event)),
+          onCompositionstart: _cache[5] || (_cache[5] = ($event) => _ctx.$emit("compositionstart", $event)),
+          onCompositionupdate: _cache[6] || (_cache[6] = ($event) => _ctx.$emit("compositionupdate", $event)),
+          onCompositionend: _cache[7] || (_cache[7] = ($event) => _ctx.$emit("compositionend", $event))
         }), null, 16, ["modelValue", "start-icon", "clearable", "disabled", "status", "onKeydown"]),
         renderSlot(_ctx.$slots, "default")
       ]),
@@ -9247,9 +9862,9 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const CdxSearchInput = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9]]);
+const CdxSearchInput = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
 const statusValidator$1 = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$8 = defineComponent({
+const _sfc_main$c = defineComponent({
   name: "CdxSelect",
   components: {
     CdxIcon,
@@ -9442,14 +10057,14 @@ const _sfc_main$8 = defineComponent({
       onClick,
       onKeydown,
       startIcon,
-      cdxIconExpand: f4
+      cdxIconExpand: S4
     };
   }
 });
-const _hoisted_1$8 = ["aria-disabled"];
-const _hoisted_2$4 = ["id", "aria-controls", "aria-activedescendant", "aria-expanded", "aria-describedby"];
+const _hoisted_1$a = ["aria-disabled"];
+const _hoisted_2$5 = ["id", "aria-controls", "aria-activedescendant", "aria-expanded", "aria-describedby"];
 const _hoisted_3$4 = ["name", "value"];
-function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_menu = resolveComponent("cdx-menu");
   return openBlock(), createElementBlock("div", {
@@ -9491,7 +10106,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
         icon: _ctx.cdxIconExpand,
         class: "cdx-select-vue__indicator"
       }, null, 8, ["icon"])
-    ], 16, _hoisted_2$4),
+    ], 16, _hoisted_2$5),
     createVNode(_component_cdx_menu, mergeProps({
       id: _ctx.menuId,
       ref: "menu",
@@ -9515,10 +10130,76 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
       name: _ctx.name,
       value: _ctx.selected
     }, null, 8, _hoisted_3$4)) : createCommentVNode("v-if", true)
-  ], 14, _hoisted_1$8);
+  ], 14, _hoisted_1$a);
 }
-const CdxSelect = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8]]);
-const _sfc_main$7 = defineComponent({
+const CdxSelect = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c]]);
+const _sfc_main$b = defineComponent({
+  name: "CdxTab",
+  /**
+   * The "label" and "disabled" props are referenced by the parent Tabs
+   * component during the generation of a list of labels.
+   */
+  props: {
+    /**
+     * String name of the tab, used for programmatic selection. Each Tab
+     * inside a layout must have a unique name. This prop will also be
+     * used as the tab label if no "label" prop is provided.
+     */
+    name: {
+      type: String,
+      required: true
+    },
+    /**
+     * Label that corresponds to this Tab in the Tabs component's header.
+     * Lengthy labels will be truncated.
+     */
+    // eslint-disable-next-line vue/no-unused-properties
+    label: {
+      type: String,
+      default: ""
+    },
+    /**
+     * Whether or not the tab is disabled. Disabled tabs cannot be accessed
+     * via label clicks or keyboard navigation.
+     */
+    // eslint-disable-next-line vue/no-unused-properties
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props) {
+    var _a;
+    const tabsData = inject(TabsKey);
+    const activeTab = inject(ActiveTabKey);
+    if (!tabsData || !activeTab) {
+      throw new Error("Tab component must be used inside a Tabs component");
+    }
+    const tab = (_a = tabsData.value.get(props.name)) != null ? _a : {};
+    const isActive = computed(() => props.name === activeTab.value);
+    return {
+      tab,
+      isActive
+    };
+  }
+});
+const _hoisted_1$9 = ["id", "aria-hidden", "aria-labelledby"];
+function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  return withDirectives((openBlock(), createElementBlock("section", {
+    id: _ctx.tab.id,
+    "aria-hidden": !_ctx.isActive ? true : void 0,
+    "aria-labelledby": "".concat(_ctx.tab.id, "-label"),
+    class: "cdx-tab",
+    role: "tabpanel",
+    tabindex: "-1"
+  }, [
+    renderSlot(_ctx.$slots, "default")
+  ], 8, _hoisted_1$9)), [
+    [vShow, _ctx.isActive]
+  ]);
+}
+const CdxTab = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b]]);
+const _sfc_main$a = defineComponent({
   name: "CdxTablePager",
   components: { CdxButton, CdxIcon, CdxSelect },
   props: {
@@ -9606,25 +10287,25 @@ const _sfc_main$7 = defineComponent({
       btnLabelPrev,
       btnLabelLast,
       wrappedItemsPerPage,
-      cdxIconPrevious: k7,
-      cdxIconNext: i7,
-      cdxIconMoveFirst: s7,
-      cdxIconMoveLast: l7
+      cdxIconPrevious: C7,
+      cdxIconNext: p7,
+      cdxIconMoveFirst: l7,
+      cdxIconMoveLast: n7
     };
   }
 });
-const _hoisted_1$7 = { class: "cdx-table-pager" };
-const _hoisted_2$3 = { class: "cdx-table-pager__start" };
+const _hoisted_1$8 = { class: "cdx-table-pager" };
+const _hoisted_2$4 = { class: "cdx-table-pager__start" };
 const _hoisted_3$3 = { key: 0 };
 const _hoisted_4$3 = { key: 1 };
 const _hoisted_5$3 = { class: "cdx-table-pager__center" };
 const _hoisted_6$3 = { class: "cdx-table-pager__end" };
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_select = resolveComponent("cdx-select");
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
-  return openBlock(), createElementBlock("div", _hoisted_1$7, [
-    createElementVNode("div", _hoisted_2$3, [
+  return openBlock(), createElementBlock("div", _hoisted_1$8, [
+    createElementVNode("div", _hoisted_2$4, [
       createVNode(_component_cdx_select, {
         selected: _ctx.wrappedItemsPerPage,
         "onUpdate:selected": _cache[0] || (_cache[0] = ($event) => _ctx.wrappedItemsPerPage = $event),
@@ -9711,20 +10392,20 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-const CdxTablePager = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7]]);
+const CdxTablePager = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a]]);
 const tableTextAlignmentsValidator = makeStringTypeValidator(TableTextAlignments);
 const paginationPositionValidator = makeStringTypeValidator(TablePaginationPositions);
 const iconMap = {
-  none: j7,
-  asc: U8,
-  desc: V4
+  none: X7,
+  asc: W8,
+  desc: u4
 };
 const sortDirectionMap = {
   none: "none",
   asc: "ascending",
   desc: "descending"
 };
-const _sfc_main$6 = defineComponent({
+const _sfc_main$9 = defineComponent({
   name: "CdxTable",
   components: {
     CdxCheckbox,
@@ -10226,11 +10907,11 @@ const _sfc_main$6 = defineComponent({
     };
   }
 });
-const _hoisted_1$6 = {
+const _hoisted_1$7 = {
   class: "cdx-table",
   tabindex: "0"
 };
-const _hoisted_2$2 = {
+const _hoisted_2$3 = {
   key: 0,
   class: "cdx-table__header"
 };
@@ -10257,13 +10938,13 @@ const _hoisted_19 = {
   key: 3,
   class: "cdx-table__footer"
 };
-function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_table_pager = resolveComponent("cdx-table-pager");
   const _component_cdx_checkbox = resolveComponent("cdx-checkbox");
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_progress_bar = resolveComponent("cdx-progress-bar");
-  return openBlock(), createElementBlock("div", _hoisted_1$6, [
-    !_ctx.hideCaption || _ctx.$slots.header && _ctx.$slots.header().length > 0 ? (openBlock(), createElementBlock("div", _hoisted_2$2, [
+  return openBlock(), createElementBlock("div", _hoisted_1$7, [
+    !_ctx.hideCaption || _ctx.$slots.header && _ctx.$slots.header().length > 0 ? (openBlock(), createElementBlock("div", _hoisted_2$3, [
       createElementVNode("div", {
         class: "cdx-table__header__caption",
         "aria-hidden": _ctx.$slots.header && _ctx.$slots.header().length > 0 ? void 0 : true
@@ -10514,7 +11195,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
               ])) : _ctx.$slots["empty-state"] && _ctx.$slots["empty-state"]().length > 0 ? (openBlock(), createElementBlock("tbody", _hoisted_14, [
                 createElementVNode("tr", _hoisted_15, [
                   createElementVNode("td", {
-                    colspan: _ctx.columns.length,
+                    colspan: _ctx.columns.length + (_ctx.useRowSelection ? 1 : 0),
                     class: "cdx-table__table__empty-state-content"
                   }, [
                     renderSlot(_ctx.$slots, "empty-state")
@@ -10569,74 +11250,8 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("v-if", true)
   ]);
 }
-const Table = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6]]);
-const _sfc_main$5 = defineComponent({
-  name: "CdxTab",
-  /**
-   * The "label" and "disabled" props are referenced by the parent Tabs
-   * component during the generation of a list of labels.
-   */
-  props: {
-    /**
-     * String name of the tab, used for programmatic selection. Each Tab
-     * inside a layout must have a unique name. This prop will also be
-     * used as the tab label if no "label" prop is provided.
-     */
-    name: {
-      type: String,
-      required: true
-    },
-    /**
-     * Label that corresponds to this Tab in the Tabs component's header.
-     * Lengthy labels will be truncated.
-     */
-    // eslint-disable-next-line vue/no-unused-properties
-    label: {
-      type: String,
-      default: ""
-    },
-    /**
-     * Whether or not the tab is disabled. Disabled tabs cannot be accessed
-     * via label clicks or keyboard navigation.
-     */
-    // eslint-disable-next-line vue/no-unused-properties
-    disabled: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup(props) {
-    var _a;
-    const tabsData = inject(TabsKey);
-    const activeTab = inject(ActiveTabKey);
-    if (!tabsData || !activeTab) {
-      throw new Error("Tab component must be used inside a Tabs component");
-    }
-    const tab = (_a = tabsData.value.get(props.name)) != null ? _a : {};
-    const isActive = computed(() => props.name === activeTab.value);
-    return {
-      tab,
-      isActive
-    };
-  }
-});
-const _hoisted_1$5 = ["id", "aria-hidden", "aria-labelledby"];
-function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-  return withDirectives((openBlock(), createElementBlock("section", {
-    id: _ctx.tab.id,
-    "aria-hidden": !_ctx.isActive ? true : void 0,
-    "aria-labelledby": "".concat(_ctx.tab.id, "-label"),
-    class: "cdx-tab",
-    role: "tabpanel",
-    tabindex: "-1"
-  }, [
-    renderSlot(_ctx.$slots, "default")
-  ], 8, _hoisted_1$5)), [
-    [vShow, _ctx.isActive]
-  ]);
-}
-const CdxTab = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5]]);
-const _sfc_main$4 = defineComponent({
+const Table = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9]]);
+const _sfc_main$8 = defineComponent({
   name: "CdxTabs",
   components: {
     CdxButton,
@@ -10710,7 +11325,7 @@ const _sfc_main$4 = defineComponent({
       return slotContents;
     });
     const tabsData = computed(() => childTabNodes.value.reduce((map, item) => {
-      var _a;
+      var _a, _b;
       if (((_a = item.props) == null ? void 0 : _a.name) && typeof item.props.name === "string") {
         if (map.get(item.props.name)) {
           throw new Error("Tab names must be unique");
@@ -10718,7 +11333,7 @@ const _sfc_main$4 = defineComponent({
         map.set(item.props.name, {
           name: item.props.name,
           id: useId(),
-          label: item.props.label || item.props.name,
+          label: (_b = item.props.label) != null ? _b : item.props.name,
           disabled: item.props.disabled
         });
       }
@@ -10830,8 +11445,8 @@ const _sfc_main$4 = defineComponent({
       assignTemplateRefForTabButton,
       scrollTabs,
       focusActiveTab,
-      cdxIconPrevious: k7,
-      cdxIconNext: i7
+      cdxIconPrevious: C7,
+      cdxIconNext: p7
     };
   },
   /**
@@ -10928,8 +11543,8 @@ const _sfc_main$4 = defineComponent({
     }
   }
 });
-const _hoisted_1$4 = { class: "cdx-tabs__header" };
-const _hoisted_2$1 = {
+const _hoisted_1$6 = { class: "cdx-tabs__header" };
+const _hoisted_2$2 = {
   ref: "prevScroller",
   class: "cdx-tabs__prev-scroller"
 };
@@ -10944,7 +11559,7 @@ const _hoisted_5$1 = {
   class: "cdx-tabs__next-scroller"
 };
 const _hoisted_6$1 = { class: "cdx-tabs__content" };
-function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   const _component_cdx_button = resolveComponent("cdx-button");
   return openBlock(), createElementBlock(
@@ -10954,10 +11569,10 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       class: normalizeClass(["cdx-tabs", _ctx.rootClasses])
     },
     [
-      createElementVNode("div", _hoisted_1$4, [
+      createElementVNode("div", _hoisted_1$6, [
         withDirectives(createElementVNode(
           "div",
-          _hoisted_2$1,
+          _hoisted_2$2,
           [
             createVNode(_component_cdx_button, {
               class: "cdx-tabs__scroll-button",
@@ -11059,9 +11674,9 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS */
   );
 }
-const Tabs = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4]]);
+const Tabs = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8]]);
 const statusValidator = makeStringTypeValidator(ValidationStatusTypes);
-const _sfc_main$3 = defineComponent({
+const _sfc_main$7 = defineComponent({
   name: "CdxTextArea",
   components: { CdxIcon },
   inheritAttrs: false,
@@ -11301,8 +11916,8 @@ const _sfc_main$3 = defineComponent({
     }
   }
 });
-const _hoisted_1$3 = ["id", "aria-describedby", "disabled"];
-function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$5 = ["id", "aria-describedby", "disabled"];
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_cdx_icon = resolveComponent("cdx-icon");
   return openBlock(), createElementBlock(
     "div",
@@ -11324,7 +11939,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
         onFocus: _cache[3] || (_cache[3] = (...args) => _ctx.onFocus && _ctx.onFocus(...args)),
         onBlur: _cache[4] || (_cache[4] = (...args) => _ctx.onBlur && _ctx.onBlur(...args)),
         onInvalid: _cache[5] || (_cache[5] = (e) => _ctx.onInvalid(e, _ctx.shouldPreventDefault))
-      }), null, 16, _hoisted_1$3), [
+      }), null, 16, _hoisted_1$5), [
         [vModelText, _ctx.wrappedModel]
       ]),
       _ctx.startIcon ? (openBlock(), createBlock(_component_cdx_icon, {
@@ -11342,7 +11957,820 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     /* CLASS, STYLE */
   );
 }
-const TextArea = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3]]);
+const TextArea = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7]]);
+const toastStore = reactive({
+  toasts: []
+});
+const contentRefsById = /* @__PURE__ */ new Map();
+const isUserTouchingToastRef = ref(false);
+const isToastContainerInitialized = ref(false);
+const _sfc_main$6 = defineComponent({
+  name: "CdxToastDisplay",
+  components: { CdxMessage },
+  inheritAttrs: false,
+  props: {
+    type: {
+      type: String,
+      default: "notice",
+      validator: statusTypeValidator
+    },
+    icon: {
+      type: [String, Object],
+      default: null
+    },
+    actionButtonLabel: {
+      type: String,
+      default: ""
+    },
+    preventUserDismiss: {
+      type: Boolean,
+      default: false
+    },
+    autoDismiss: {
+      type: [Boolean, Number],
+      default: false,
+      validator: (value) => typeof value === "boolean" || typeof value === "number" && value > 0
+    },
+    renderInPlace: {
+      type: Boolean,
+      default: false
+    },
+    // Optional explicit teleport target. Used mainly by standalone toasts;
+    // ignored when rendered inside ToastContainer with renderInPlace.
+    target: {
+      type: [String, Object],
+      default: void 0
+    }
+  },
+  emits: ["user-dismissed", "auto-dismissed", "action-button-click"],
+  setup(props, { emit, attrs }) {
+    const dismissed = ref(false);
+    const toastElement = ref();
+    const leaveActiveClass = ref("");
+    const pendingDismissEvent = ref(null);
+    const isTouchingThisToast = ref(false);
+    let autoDismissTimer = null;
+    let isPaused = false;
+    let swipeCleanup;
+    function getToastContainerTarget() {
+      if (typeof document === "undefined") {
+        return null;
+      }
+      return document.querySelector(".cdx-toast-container__stack");
+    }
+    const containerTarget = ref(getToastContainerTarget());
+    const providedTarget = inject("CdxTeleportTarget", void 0);
+    const computedTarget = computed(() => {
+      var _a, _b, _c;
+      return (_c = (_b = (_a = unref(props.target)) != null ? _a : containerTarget.value) != null ? _b : unref(providedTarget)) != null ? _c : "body";
+    });
+    const displayTime = computed(() => props.autoDismiss === true ? 4e3 : props.autoDismiss);
+    const internalClasses = computed(() => ({
+      ["cdx-toast--".concat(props.type)]: true
+    }));
+    const { rootClasses } = useSplitAttributes(attrs, internalClasses);
+    function onDismiss(eventName) {
+      if (dismissed.value) {
+        return;
+      }
+      clearAutoDismissTimer();
+      leaveActiveClass.value = eventName === "user-dismissed" ? "cdx-toast-leave-active-user" : "cdx-toast-leave-active-system";
+      pendingDismissEvent.value = eventName;
+      dismissed.value = true;
+    }
+    function onAfterLeave() {
+      if (pendingDismissEvent.value) {
+        emit(pendingDismissEvent.value);
+        pendingDismissEvent.value = null;
+      }
+    }
+    function onActionButtonClick() {
+      emit("action-button-click");
+    }
+    function onMouseEnter() {
+      isPaused = true;
+      clearAutoDismissTimer();
+    }
+    function onMouseLeave() {
+      if (isPaused && displayTime.value) {
+        isPaused = false;
+        startAutoDismiss();
+      }
+    }
+    function clearAutoDismissTimer() {
+      if (autoDismissTimer) {
+        clearTimeout(autoDismissTimer);
+        autoDismissTimer = null;
+      }
+    }
+    function startAutoDismiss() {
+      if (!displayTime.value || isPaused) {
+        return;
+      }
+      autoDismissTimer = setTimeout(() => {
+        if (isTouchingThisToast.value || isUserTouchingToastRef.value) {
+          clearAutoDismissTimer();
+          return;
+        }
+        onDismiss("auto-dismissed");
+      }, displayTime.value);
+    }
+    watch(isUserTouchingToastRef, (isTouching, wasTouching) => {
+      if (wasTouching && !isTouching && displayTime.value && !isPaused) {
+        clearAutoDismissTimer();
+        startAutoDismiss();
+      }
+    });
+    watch(displayTime, (newDisplayTime) => {
+      clearAutoDismissTimer();
+      if (newDisplayTime && !isPaused) {
+        startAutoDismiss();
+      }
+    });
+    function setupSwipeToDismiss() {
+      if (!toastElement.value || props.preventUserDismiss) {
+        return;
+      }
+      const el = toastElement.value;
+      const dismissThresholdRatio = 0.35;
+      let touchStartX = null;
+      let currentDeltaX = 0;
+      function getBaseTransform() {
+        return props.renderInPlace ? "" : "translateX(-50%)";
+      }
+      function applyDragTransform(deltaX) {
+        const threshold = el.offsetWidth * dismissThresholdRatio;
+        const opacity = Math.max(0.95, 1 - Math.abs(deltaX) / threshold * 0.05);
+        el.style.opacity = String(opacity);
+        if (props.renderInPlace) {
+          el.style.transform = "translateX(".concat(deltaX, "px)");
+        } else {
+          el.style.transform = "translateX(calc(-50% + ".concat(deltaX, "px))");
+        }
+      }
+      function snapBack() {
+        el.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
+        el.style.transform = getBaseTransform();
+        el.style.opacity = "";
+        const onTransitionEnd = () => {
+          el.removeEventListener("transitionend", onTransitionEnd);
+          el.style.transition = "";
+          el.style.transform = "";
+        };
+        el.addEventListener("transitionend", onTransitionEnd);
+      }
+      function slideOutAndDismiss() {
+        const direction = currentDeltaX >= 0 ? 1 : -1;
+        const slideOutDistance = el.offsetWidth * 1.2;
+        const targetDeltaX = direction * slideOutDistance;
+        el.style.transition = "transform 0.25s ease-out, opacity 0.25s ease-out";
+        el.style.opacity = "0";
+        if (props.renderInPlace) {
+          el.style.transform = "translateX(".concat(targetDeltaX, "px)");
+        } else {
+          el.style.transform = "translateX(calc(-50% + ".concat(targetDeltaX, "px))");
+        }
+        const onTransitionEnd = () => {
+          el.removeEventListener("transitionend", onTransitionEnd);
+          onDismiss("user-dismissed");
+        };
+        el.addEventListener("transitionend", onTransitionEnd);
+      }
+      function setTouching(touching) {
+        isTouchingThisToast.value = touching;
+        isUserTouchingToastRef.value = touching;
+      }
+      const onTouchStart = (e) => {
+        touchStartX = e.touches[0].clientX;
+        currentDeltaX = 0;
+        el.style.transition = "";
+        setTouching(true);
+      };
+      const onTouchMove = (e) => {
+        if (touchStartX === null) {
+          return;
+        }
+        e.preventDefault();
+        currentDeltaX = e.touches[0].clientX - touchStartX;
+        applyDragTransform(currentDeltaX);
+      };
+      const onTouchEnd = () => {
+        setTouching(false);
+        if (touchStartX === null) {
+          return;
+        }
+        const threshold = el.offsetWidth * dismissThresholdRatio;
+        if (Math.abs(currentDeltaX) >= threshold) {
+          slideOutAndDismiss();
+        } else {
+          snapBack();
+        }
+        touchStartX = null;
+      };
+      const onTouchCancel = () => {
+        setTouching(false);
+        if (touchStartX !== null) {
+          snapBack();
+          touchStartX = null;
+        }
+      };
+      el.addEventListener("touchstart", onTouchStart, { passive: true });
+      el.addEventListener("touchmove", onTouchMove, { passive: false });
+      el.addEventListener("touchend", onTouchEnd, { passive: true });
+      el.addEventListener("touchcancel", onTouchCancel, { passive: true });
+      return () => {
+        el.removeEventListener("touchstart", onTouchStart);
+        el.removeEventListener("touchmove", onTouchMove);
+        el.removeEventListener("touchend", onTouchEnd);
+        el.removeEventListener("touchcancel", onTouchCancel);
+      };
+    }
+    async function focusToast() {
+      await nextTick();
+      if (toastElement.value) {
+        toastElement.value.focus();
+      }
+    }
+    onMounted(async () => {
+      containerTarget.value = getToastContainerTarget();
+      if (displayTime.value) {
+        startAutoDismiss();
+      }
+      swipeCleanup = setupSwipeToDismiss();
+      await focusToast();
+    });
+    onUnmounted(() => {
+      clearAutoDismissTimer();
+      swipeCleanup == null ? void 0 : swipeCleanup();
+    });
+    return {
+      dismissed,
+      toastElement,
+      rootClasses,
+      leaveActiveClass,
+      onDismiss,
+      onActionButtonClick,
+      onAfterLeave,
+      onMouseEnter,
+      onMouseLeave,
+      computedTarget
+    };
+  }
+});
+function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_cdx_message = resolveComponent("cdx-message");
+  return openBlock(), createBlock(Teleport, {
+    disabled: _ctx.renderInPlace,
+    to: _ctx.computedTarget
+  }, [
+    createVNode(Transition, {
+      name: "cdx-toast",
+      appear: "",
+      "leave-active-class": _ctx.leaveActiveClass,
+      onAfterLeave: _ctx.onAfterLeave
+    }, {
+      default: withCtx(() => [
+        !_ctx.dismissed ? (openBlock(), createElementBlock(
+          "div",
+          {
+            key: 0,
+            ref: "toastElement",
+            class: normalizeClass(["cdx-toast", _ctx.rootClasses]),
+            tabindex: -1,
+            onMouseenter: _cache[2] || (_cache[2] = (...args) => _ctx.onMouseEnter && _ctx.onMouseEnter(...args)),
+            onMouseleave: _cache[3] || (_cache[3] = (...args) => _ctx.onMouseLeave && _ctx.onMouseLeave(...args)),
+            onKeydown: _cache[4] || (_cache[4] = withKeys(($event) => _ctx.onDismiss("user-dismissed"), ["esc"]))
+          },
+          [
+            createVNode(_component_cdx_message, {
+              type: _ctx.type,
+              icon: _ctx.icon,
+              "action-button-label": _ctx.actionButtonLabel,
+              "allow-user-dismiss": !_ctx.preventUserDismiss,
+              class: "cdx-toast__message",
+              onUserDismissed: _cache[0] || (_cache[0] = ($event) => _ctx.onDismiss("user-dismissed")),
+              onAutoDismissed: _cache[1] || (_cache[1] = ($event) => _ctx.onDismiss("auto-dismissed")),
+              onActionButtonClick: _ctx.onActionButtonClick
+            }, {
+              default: withCtx(() => [
+                renderSlot(_ctx.$slots, "default")
+              ]),
+              _: 3
+              /* FORWARDED */
+            }, 8, ["type", "icon", "action-button-label", "allow-user-dismiss", "onActionButtonClick"])
+          ],
+          34
+          /* CLASS, NEED_HYDRATION */
+        )) : createCommentVNode("v-if", true)
+      ]),
+      _: 3
+      /* FORWARDED */
+    }, 8, ["leave-active-class", "onAfterLeave"])
+  ], 8, ["disabled", "to"]);
+}
+const CdxToastDisplay = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6]]);
+function useToast() {
+  const baseId = useId();
+  const toastCounter = { value: 0 };
+  function show(options) {
+    const {
+      message,
+      contentRef,
+      type,
+      icon,
+      actionButton,
+      preventUserDismiss,
+      autoDismiss,
+      onUserDismissed,
+      onAutoDismissed
+    } = options;
+    if (message === void 0 && !contentRef) {
+      throw new Error("Toast: provide either message or contentRef in options.");
+    }
+    const id = "".concat(baseId, "-").concat(toastCounter.value++);
+    if (contentRef) {
+      contentRefsById.set(id, contentRef);
+    }
+    toastStore.toasts.push({
+      id,
+      message,
+      type: type != null ? type : "notice",
+      icon,
+      actionButton,
+      autoDismiss: autoDismiss != null ? autoDismiss : false,
+      preventUserDismiss: preventUserDismiss != null ? preventUserDismiss : false,
+      onUserDismissed,
+      onAutoDismissed
+    });
+    return id;
+  }
+  function dismiss(id) {
+    const index = toastStore.toasts.findIndex((t) => t.id === id);
+    if (index !== -1) {
+      toastStore.toasts.splice(index, 1);
+      contentRefsById.delete(id);
+    }
+  }
+  function update(id, options) {
+    const toast = toastStore.toasts.find((t) => t.id === id);
+    if (!toast) {
+      return;
+    }
+    Object.assign(toast, options);
+  }
+  function clear() {
+    toastStore.toasts.length = 0;
+    contentRefsById.clear();
+  }
+  function success(message, opts = {}) {
+    return show(__spreadProps(__spreadValues({}, opts), { message, type: "success" }));
+  }
+  function error(message, opts = {}) {
+    return show(__spreadProps(__spreadValues({}, opts), { message, type: "error" }));
+  }
+  function info(message, opts = {}) {
+    return show(__spreadProps(__spreadValues({}, opts), { message, type: "notice" }));
+  }
+  function warning(message, opts = {}) {
+    return show(__spreadProps(__spreadValues({}, opts), { message, type: "warning" }));
+  }
+  return {
+    show,
+    dismiss,
+    update,
+    clear,
+    success,
+    error,
+    info,
+    warning
+  };
+}
+const _sfc_main$5 = defineComponent({
+  name: "CdxToast",
+  components: { CdxToastDisplay },
+  inheritAttrs: false,
+  props: {
+    // Technically, the type can be set to 'subtle' or 'progressive' too, but we do not
+    // recommend this at this time, hence its omission from the Codex docs.
+    /**
+     * Status type of Toast.
+     *
+     * @values 'notice', 'warning', 'error', 'success'
+     */
+    type: {
+      type: String,
+      default: "notice",
+      validator: statusTypeValidator
+    },
+    /**
+     * Custom toast icon. Only allowed for notice toasts.
+     */
+    icon: {
+      type: [String, Object],
+      default: null
+    },
+    /**
+     * Label text for the optional action button.
+     */
+    actionButtonLabel: {
+      type: String,
+      default: ""
+    },
+    /**
+     * Whether to prevent the user from dismissing the toast. When false (default), an
+     * icon-only dismiss button is shown on desktop/tablet and toasts can be dismissed
+     * by swiping on mobile.
+     */
+    preventUserDismiss: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Enable automatic dismissal of toast after a period of time.
+     *
+     * This prop can be set to `true` to use the default display time of 4000 milliseconds. To
+     * customize the display time, set this prop to a number of milliseconds.
+     *
+     * Set to `false` to disable automatic dismissal.
+     */
+    autoDismiss: {
+      type: [Boolean, Number],
+      default: false,
+      validator: (value) => typeof value === "boolean" || typeof value === "number" && value > 0
+    },
+    /**
+     * Whether to disable the use of teleport and render the toast in its
+     * original location in the document.
+     * This is ignored if the toast is rendered inside ToastContainer.
+     */
+    renderInPlace: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Teleport target used when this toast renders itself in standalone mode.
+     * Ignored when the toast is rendered inside ToastContainer, or when
+     * `renderInPlace` is true.
+     */
+    target: {
+      type: [String, Object],
+      default: void 0
+    },
+    /**
+     * When true, this toast does not use the shared store or ToastContainer:
+     * it renders and teleports (or renders in place) itself. Use when you
+     * cannot or do not want to mount a single `<cdx-toast-container />`.
+     * Default is false (toast is added to the store and shown by the container).
+     */
+    standalone: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: [
+    /**
+     * Emitted when the user dismisses the toast (e.g. close button or swipe).
+     * Fires after the leave transition.
+     */
+    "user-dismissed",
+    /**
+     * Emitted when the toast is automatically dismissed after the display time.
+     * Fires after the leave transition.
+     */
+    "auto-dismissed",
+    /**
+     * Emitted when the optional action button is clicked.
+     */
+    "action-button-click"
+  ],
+  setup(props, { emit }) {
+    const stackContentRef = ref(null);
+    const toastId = ref(null);
+    const actionButtonConfig = computed(
+      () => props.actionButtonLabel ? {
+        label: props.actionButtonLabel,
+        onClick: () => emit("action-button-click")
+      } : void 0
+    );
+    if (!props.standalone) {
+      const { show, dismiss, update } = useToast();
+      onMounted(() => {
+        const { preventUserDismiss, autoDismiss, icon, type } = props;
+        toastId.value = show({
+          contentRef: stackContentRef,
+          type,
+          icon: icon != null ? icon : void 0,
+          actionButton: actionButtonConfig.value,
+          preventUserDismiss,
+          autoDismiss,
+          onUserDismissed: () => emit("user-dismissed"),
+          onAutoDismissed: () => emit("auto-dismissed")
+        });
+      });
+      watch(
+        () => [
+          props.type,
+          props.icon,
+          props.actionButtonLabel,
+          props.autoDismiss,
+          props.preventUserDismiss
+        ],
+        () => {
+          var _a;
+          if (!toastId.value) {
+            return;
+          }
+          update(toastId.value, {
+            type: props.type,
+            icon: (_a = props.icon) != null ? _a : void 0,
+            actionButton: actionButtonConfig.value,
+            autoDismiss: props.autoDismiss,
+            preventUserDismiss: props.preventUserDismiss
+          });
+        }
+      );
+      onUnmounted(() => {
+        if (toastId.value) {
+          dismiss(toastId.value);
+        }
+      });
+    }
+    return {
+      stackContentRef
+    };
+  }
+});
+function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_cdx_toast_display = resolveComponent("cdx-toast-display");
+  return _ctx.standalone ? (openBlock(), createBlock(_component_cdx_toast_display, mergeProps({
+    key: 0,
+    type: _ctx.type,
+    icon: _ctx.icon,
+    "action-button-label": _ctx.actionButtonLabel,
+    "prevent-user-dismiss": _ctx.preventUserDismiss,
+    "auto-dismiss": _ctx.autoDismiss,
+    "render-in-place": _ctx.renderInPlace,
+    target: _ctx.target
+  }, _ctx.$attrs, {
+    onUserDismissed: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("user-dismissed")),
+    onAutoDismissed: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("auto-dismissed")),
+    onActionButtonClick: _cache[2] || (_cache[2] = ($event) => _ctx.$emit("action-button-click"))
+  }), {
+    default: withCtx(() => [
+      renderSlot(_ctx.$slots, "default")
+    ]),
+    _: 3
+    /* FORWARDED */
+  }, 16, ["type", "icon", "action-button-label", "prevent-user-dismiss", "auto-dismiss", "render-in-place", "target"])) : _ctx.stackContentRef ? (openBlock(), createBlock(Teleport, {
+    key: 1,
+    to: _ctx.stackContentRef
+  }, [
+    renderSlot(_ctx.$slots, "default")
+  ], 8, ["to"])) : createCommentVNode("v-if", true);
+}
+const Toast = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5]]);
+const _sfc_main$4 = defineComponent({
+  name: "CdxToastContainer",
+  components: { CdxToastDisplay },
+  props: {
+    /**
+     * Teleport target for the ToastContainer.
+     *
+     * If `target` is provided, the container will teleport there. Otherwise, if
+     * an ancestor provides a `CdxTeleportTarget` (e.g. via
+     * `provide( 'CdxTeleportTarget', '#foo-bar' )`), that target is used.
+     * If neither is set, the container is teleported to the end of `<body>`.
+     */
+    target: {
+      type: [String, Object],
+      default: void 0
+    }
+  },
+  setup(props) {
+    const { dismiss } = useToast();
+    const isInitialized = ref(false);
+    const providedTarget = inject("CdxTeleportTarget", void 0);
+    const computedTarget = computed(() => {
+      var _a, _b;
+      return (_b = unref((_a = props.target) != null ? _a : providedTarget)) != null ? _b : "body";
+    });
+    function setToastContentRef(toastId, el) {
+      const contentRef = contentRefsById.get(toastId);
+      if (contentRef) {
+        const target = el && "$el" in el ? el.$el : el;
+        contentRef.value = target;
+      }
+    }
+    function handleUserDismissed(id) {
+      var _a;
+      const toast = toastStore.toasts.find((t) => t.id === id);
+      dismiss(id);
+      (_a = toast == null ? void 0 : toast.onUserDismissed) == null ? void 0 : _a.call(toast);
+    }
+    function handleAutoDismissed(id) {
+      var _a;
+      const toast = toastStore.toasts.find((t) => t.id === id);
+      dismiss(id);
+      (_a = toast == null ? void 0 : toast.onAutoDismissed) == null ? void 0 : _a.call(toast);
+    }
+    function handleActionButtonClick(id) {
+      var _a;
+      const toast = toastStore.toasts.find((t) => t.id === id);
+      (_a = toast == null ? void 0 : toast.actionButton) == null ? void 0 : _a.onClick();
+    }
+    onMounted(() => {
+      if (isToastContainerInitialized.value) {
+        console.warn(
+          "CdxToastContainer: Only one ToastContainer should be mounted in the app. Multiple instances may cause duplicate or missing toasts. This instance will not render."
+        );
+        return;
+      }
+      isToastContainerInitialized.value = true;
+      isInitialized.value = true;
+    });
+    onUnmounted(() => {
+      if (isInitialized.value) {
+        isToastContainerInitialized.value = false;
+      }
+    });
+    return {
+      toastStore,
+      computedTarget,
+      isInitialized,
+      setToastContentRef,
+      handleUserDismissed,
+      handleAutoDismissed,
+      handleActionButtonClick
+    };
+  }
+});
+const _hoisted_1$4 = { class: "cdx-toast-container" };
+const _hoisted_2$1 = { class: "cdx-toast-container__stack" };
+function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_cdx_toast_display = resolveComponent("cdx-toast-display");
+  return _ctx.isInitialized ? (openBlock(), createBlock(Teleport, {
+    key: 0,
+    to: _ctx.computedTarget
+  }, [
+    createElementVNode("div", _hoisted_1$4, [
+      createElementVNode("div", _hoisted_2$1, [
+        (openBlock(true), createElementBlock(
+          Fragment,
+          null,
+          renderList(_ctx.toastStore.toasts, (toast) => {
+            var _a, _b, _c;
+            return openBlock(), createBlock(_component_cdx_toast_display, {
+              key: toast.id,
+              type: toast.type,
+              icon: (_a = toast.icon) != null ? _a : void 0,
+              "action-button-label": (_c = (_b = toast.actionButton) == null ? void 0 : _b.label) != null ? _c : "",
+              "auto-dismiss": toast.autoDismiss,
+              "prevent-user-dismiss": toast.preventUserDismiss,
+              "render-in-place": "",
+              onUserDismissed: ($event) => _ctx.handleUserDismissed(toast.id),
+              onAutoDismissed: ($event) => _ctx.handleAutoDismissed(toast.id),
+              onActionButtonClick: ($event) => _ctx.handleActionButtonClick(toast.id)
+            }, {
+              default: withCtx(() => [
+                toast.message ? (openBlock(), createElementBlock(
+                  Fragment,
+                  { key: 0 },
+                  [
+                    createTextVNode(
+                      toDisplayString(toast.message),
+                      1
+                      /* TEXT */
+                    )
+                  ],
+                  64
+                  /* STABLE_FRAGMENT */
+                )) : (openBlock(), createElementBlock(
+                  "div",
+                  {
+                    key: 1,
+                    ref_for: true,
+                    ref: (el) => _ctx.setToastContentRef(toast.id, el),
+                    class: "cdx-toast__content-target"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ))
+              ]),
+              _: 2
+              /* DYNAMIC */
+            }, 1032, ["type", "icon", "action-button-label", "auto-dismiss", "prevent-user-dismiss", "onUserDismissed", "onAutoDismissed", "onActionButtonClick"]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ])
+    ])
+  ], 8, ["to"])) : createCommentVNode("v-if", true);
+}
+const ToastContainer = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4]]);
+const buttonSizeValidator = makeStringTypeValidator(ButtonSizes);
+const _sfc_main$3 = defineComponent({
+  name: "CdxToggleButton",
+  props: {
+    /**
+     * Whether the ToggleButton should be set to "on" (true) or "off" (false).
+     *
+     * Provided by `v-model` binding in the parent component.
+     */
+    modelValue: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Whether the disabled attribute should be added to the ToggleButton, which prevents
+     * it from being clicked.
+     */
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Whether the ToggleButton should be "quiet", which renders more minimally.
+     */
+    quiet: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Button size.
+     *
+     * Medium: Default for most cases.
+     * Large: Use rarely, mainly for icon-only buttons on touchscreens.
+     * Small: Use in tight spaces or inline with text.
+     * Avoid on touchscreens - prefer medium for better accessibility.
+     *
+     * @values 'small', 'medium', 'large'
+     */
+    size: {
+      type: String,
+      default: "medium",
+      validator: buttonSizeValidator
+    }
+  },
+  emits: [
+    /**
+     * Emitted when modelValue changes (i.e. when the state is toggled)
+     *
+     * @property {boolean} modelValue The new model value
+     */
+    "update:modelValue"
+  ],
+  setup(props, { emit, slots, attrs }) {
+    const isIconOnly = useIconOnlyButton(slots.default, attrs, "CdxToggleButton");
+    const isActive = ref(false);
+    const rootClasses = computed(() => ({
+      ["cdx-toggle-button--size-".concat(props.size)]: true,
+      // Quiet means frameless among other things
+      "cdx-toggle-button--quiet": props.quiet,
+      "cdx-toggle-button--framed": !props.quiet,
+      // Provide --toggled-off too so that we can simplify selectors
+      "cdx-toggle-button--toggled-on": props.modelValue,
+      "cdx-toggle-button--toggled-off": !props.modelValue,
+      "cdx-toggle-button--icon-only": isIconOnly.value,
+      "cdx-toggle-button--is-active": isActive.value
+    }));
+    const onClick = () => {
+      emit("update:modelValue", !props.modelValue);
+    };
+    const setActive = (active) => {
+      isActive.value = active;
+    };
+    function onKeyDown() {
+      setActive(true);
+    }
+    function onKeyUp() {
+      setActive(false);
+      onClick();
+    }
+    return {
+      rootClasses,
+      onClick,
+      onKeyDown,
+      onKeyUp
+    };
+  }
+});
+const _hoisted_1$3 = ["aria-pressed", "disabled"];
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("button", {
+    class: normalizeClass(["cdx-toggle-button", _ctx.rootClasses]),
+    "aria-pressed": _ctx.modelValue,
+    disabled: _ctx.disabled,
+    type: "button",
+    onClick: _cache[0] || (_cache[0] = (...args) => _ctx.onClick && _ctx.onClick(...args)),
+    onKeydown: _cache[1] || (_cache[1] = withKeys(withModifiers((...args) => _ctx.onKeyDown && _ctx.onKeyDown(...args), ["prevent"]), ["space", "enter"])),
+    onKeyup: _cache[2] || (_cache[2] = withKeys((...args) => _ctx.onKeyUp && _ctx.onKeyUp(...args), ["space", "enter"]))
+  }, [
+    renderSlot(_ctx.$slots, "default")
+  ], 42, _hoisted_1$3);
+}
+const CdxToggleButton = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3]]);
 const _sfc_main$2 = defineComponent({
   name: "CdxToggleButtonGroup",
   components: {
@@ -11860,6 +13288,10 @@ const _sfc_main = defineComponent({
     }));
     let debounceId;
     let pendingDelayId;
+    function onComposition(e) {
+      const target = e.target;
+      onUpdateInputValue(target.value);
+    }
     function onUpdateInputValue(newVal, immediate = false) {
       if (selectedResult.value && selectedResult.value.label !== newVal && selectedResult.value.value !== newVal) {
         selection.value = null;
@@ -12030,6 +13462,7 @@ const _sfc_main = defineComponent({
       rootStyle,
       otherAttrs,
       menuConfig,
+      onComposition,
       onUpdateInputValue,
       onUpdateMenuSelection,
       onFocus,
@@ -12040,7 +13473,7 @@ const _sfc_main = defineComponent({
       onSubmit,
       onKeydown,
       MenuFooterValue,
-      articleIcon: P3,
+      articleIcon: N3,
       translatedSearchResultsLabel
     };
   },
@@ -12099,6 +13532,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           "aria-expanded": _ctx.expanded,
           "aria-activedescendant": _ctx.highlightedId,
           "onUpdate:modelValue": _ctx.onUpdateInputValue,
+          onCompositionstart: _ctx.onComposition,
+          onCompositionupdate: _ctx.onComposition,
+          onCompositionend: _ctx.onComposition,
           onFocus: _ctx.onFocus,
           onBlur: _ctx.onBlur,
           onKeydown: _ctx.onKeydown
@@ -12186,7 +13622,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           ]),
           _: 3
           /* FORWARDED */
-        }, 16, ["modelValue", "button-label", "use-button", "hide-icon", "clearable", "aria-owns", "aria-controls", "aria-expanded", "aria-activedescendant", "onUpdate:modelValue", "onFocus", "onBlur", "onKeydown"]),
+        }, 16, ["modelValue", "button-label", "use-button", "hide-icon", "clearable", "aria-owns", "aria-controls", "aria-expanded", "aria-activedescendant", "onUpdate:modelValue", "onCompositionstart", "onCompositionupdate", "onCompositionend", "onFocus", "onBlur", "onKeydown"]),
         renderSlot(_ctx.$slots, "default")
       ], 40, _hoisted_1)
     ],
@@ -12241,6 +13677,8 @@ export {
   TextArea as CdxTextArea,
   CdxTextInput,
   CdxThumbnail,
+  Toast as CdxToast,
+  ToastContainer as CdxToastContainer,
   CdxToggleButton,
   ToggleButtonGroup as CdxToggleButtonGroup,
   ToggleSwitch as CdxToggleSwitch,
@@ -12260,5 +13698,6 @@ export {
   useResizeObserver,
   useSlotContents,
   useSplitAttributes,
+  useToast,
   useWarnOnce
 };

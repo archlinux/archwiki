@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\CheckUser\Pagers;
 
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\RangeChronologicalPager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\ActorStore;
@@ -18,16 +18,6 @@ use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class CheckUserLogPager extends RangeChronologicalPager {
-
-	/** @var array The options provided to the CheckUserLog form. May be empty. */
-	private array $opts;
-
-	private LinkBatchFactory $linkBatchFactory;
-	private CommentFormatter $commentFormatter;
-	private CheckUserLogService $checkUserLogService;
-	private CommentStore $commentStore;
-	private UserFactory $userFactory;
-	private ActorStore $actorStore;
 
 	/**
 	 * @param IContextSource $context
@@ -44,22 +34,15 @@ class CheckUserLogPager extends RangeChronologicalPager {
 	 */
 	public function __construct(
 		IContextSource $context,
-		array $opts,
-		LinkBatchFactory $linkBatchFactory,
-		CommentStore $commentStore,
-		CommentFormatter $commentFormatter,
-		CheckUserLogService $checkUserLogService,
-		UserFactory $userFactory,
-		ActorStore $actorStore
+		private readonly array $opts,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly CommentStore $commentStore,
+		private readonly CommentFormatter $commentFormatter,
+		private readonly CheckUserLogService $checkUserLogService,
+		private readonly UserFactory $userFactory,
+		private readonly ActorStore $actorStore,
 	) {
 		parent::__construct( $context );
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->commentStore = $commentStore;
-		$this->commentFormatter = $commentFormatter;
-		$this->checkUserLogService = $checkUserLogService;
-		$this->userFactory = $userFactory;
-		$this->actorStore = $actorStore;
-		$this->opts = $opts;
 
 		// Date filtering: use timestamp if available - From SpecialContributions.php
 		$startTimestamp = '';
@@ -111,7 +94,8 @@ class CheckUserLogPager extends RangeChronologicalPager {
 					// offset is used by IndexPager, it does not know this is a timestamp,
 					// so provide in database format to make it working as string there.
 					'offset' => $this->getDatabase()->timestamp(
-						(int)wfTimestamp( TS_UNIX, $row->cul_timestamp ) + 3600 ),
+						(int)wfTimestamp( TS_UNIX, $row->cul_timestamp ) + 3600
+					),
 					'highlight' => $row->cul_timestamp,
 				]
 			);
@@ -160,7 +144,9 @@ class CheckUserLogPager extends RangeChronologicalPager {
 				);
 			}
 			$user .= $this->msg( 'word-separator' )->escaped()
-				. Html::rawElement( 'span', [ 'class' => 'mw-usertoollinks' ],
+				. Html::rawElement(
+					'span',
+					[ 'class' => 'mw-usertoollinks' ],
 					$this->msg( 'parentheses' )->rawParams( $this->getLinkRenderer()->makeLink(
 						SpecialPage::getTitleFor( 'CheckUserLog' ),
 						$this->msg( 'checkuser-log-checks-by' )->text(),
@@ -216,18 +202,20 @@ class CheckUserLogPager extends RangeChronologicalPager {
 		// * checkuser-log-entry-ipusers-xff
 		// * checkuser-log-entry-useractions
 		// * checkuser-log-entry-investigate
-		$cul_type = [
+		$cul_type = match ( $row->cul_type ) {
 			'ipedits' => 'ipactions',
 			'ipedits-xff' => 'ipactions-xff',
 			'useredits' => 'useractions',
-		][$row->cul_type] ?? $row->cul_type;
+			default => $row->cul_type,
+		};
 		$rowContent = $this->msg( 'checkuser-log-entry-' . $cul_type )
 			->rawParams(
 				$user,
 				$target,
 				$this->generateTimestampLink(
 					$lang->userTimeAndDate(
-						wfTimestamp( TS_MW, $row->cul_timestamp ), $contextUser
+						wfTimestamp( TS_MW, $row->cul_timestamp ),
+						$contextUser
 					),
 					$row
 				),

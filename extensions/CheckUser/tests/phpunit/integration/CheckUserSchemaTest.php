@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace MediaWiki\CheckUser\Tests\Integration;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration;
 
 use MediaWiki\Tests\Structure\AbstractSchemaTestBase;
 

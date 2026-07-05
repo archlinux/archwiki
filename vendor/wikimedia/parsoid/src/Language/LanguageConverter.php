@@ -37,10 +37,10 @@ use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\NodeData\TempData;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -244,13 +244,8 @@ class LanguageConverter {
 	public static function baseToVariant(
 		Env $env, Element $rootNode, Bcp47Code $htmlVariantLanguage, ?Bcp47Code $wtVariantLanguage
 	): void {
-		// PageConfig guarantees getPageLanguage() never returns null.
-		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
-
 		$loadTiming = Timing::start( $env->getSiteConfig() );
-		$languageClass = self::loadLanguage( $env, $pageLangCode );
-		$lang = new $languageClass();
-		$langconv = $lang->getConverter();
+		$langconv = self::loadLanguageConverter( $env );
 		$htmlVariantLanguageMw = Utils::bcp47ToMwCode( $htmlVariantLanguage );
 		// XXX we might want to lazily-load conversion tables here.
 		$loadTiming->end( "langconv.{$htmlVariantLanguageMw}.init", "langconv_init_seconds", [
@@ -305,7 +300,7 @@ class LanguageConverter {
 		foreach ( DOMCompat::querySelectorAll(
 			$rootNode, 'span[typeof="mw:LanguageVariant"][data-mw-variant]'
 		) as $span ) {
-			$dmwv = DOMDataUtils::getJSONAttribute( $span, 'data-mw-variant', null );
+			$dmwv = DOMDataUtils::getDataMwVariant( $span );
 			if ( $dmwv->rt ?? false ) {
 				$dp = DOMDataUtils::getDataParsoid( $span );
 				$dp->setTempFlag( TempData::IS_NEW );

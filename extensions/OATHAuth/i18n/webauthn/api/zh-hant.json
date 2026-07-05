@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kly",
+			"LowensteinYang"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "在註冊/驗證程序期間，用來溝通伺服器與客戶端兩方的API模組。",
+	"apihelp-oathauth-webauthn-param-func": "要執行的請求功能名稱。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "認證資訊。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "註冊資訊。",
+	"apihelp-oathauth-webauthn-param-passkeymode": "正在註冊的金鑰是否處於密鑰模式。（僅適用於 getRegisterInfo。）",
+	"apierror-oathauth-webauthn-module-missing": "WebAuthn 模組不可用。",
+	"apierror-oathauth-webauthn-missing-credential": "未提供任何憑證資料。",
+	"apierror-oathauth-webauthn-invalid-credential": "憑證資料無效或格式錯誤。",
+	"apierror-oathauth-webauthn-reauthenticate": "您必須先透過 Special:OATHManage 重新進行身份驗證，然後才能執行此操作。",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "為目前使用者註冊新的 WebAuthn 憑證。",
+	"apihelp-oathauth-webauthn-param-credential": "來自瀏覽器的 JSON 編碼的 WebAuthn 憑證回應。",
+	"apihelp-oathauth-webauthn-param-friendlyname": "新憑證的友善名稱。"
+}

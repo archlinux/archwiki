@@ -1,7 +1,7 @@
 'use strict';
 
 const { mount } = require( 'vue-test-utils' );
-const UserCardLoadingView = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserCardLoadingView.vue' );
+const UserCardLoadingView = require( 'ext.checkUser.userInfoCard/components/UserCardLoadingView.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserCardLoadingView', QUnit.newMwEnvironment( {
 	beforeEach: function () {

@@ -185,25 +185,21 @@ ve.init.Platform.prototype.createConflictableStorage = function ( safeStorage ) 
 	return ve.init.createConflictableStorage( safeStorage );
 };
 
-ve.init.Platform.prototype.createLocalStorage = function () {
-	let localStorage;
+/**
+ * Create a local storage-based conflictable storage object
+ *
+ * @abstract
+ * @return {ve.init.ConflictableStorage}
+ */
+ve.init.Platform.prototype.createLocalStorage = null;
 
-	try {
-		localStorage = window.localStorage;
-	} catch ( e ) {}
-
-	return this.createConflictableStorage( this.createSafeStorage( localStorage ) );
-};
-
-ve.init.Platform.prototype.createSessionStorage = function () {
-	let sessionStorage;
-
-	try {
-		sessionStorage = window.sessionStorage;
-	} catch ( e ) {}
-
-	return this.createConflictableStorage( this.createSafeStorage( sessionStorage ) );
-};
+/**
+ * Create a session storage-based conflictable storage object
+ *
+ * @abstract
+ * @return {ve.init.ConflictableStorage}
+ */
+ve.init.Platform.prototype.createSessionStorage = null;
 
 /**
  * Add multiple messages to the localization system.

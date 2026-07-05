@@ -1,0 +1,58 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+span[ data-mw-comment-start ] {
+	// Give comment anchors a negative offset so we don't position
+	// them right at the edge of the page when jumping to them.
+	// Use margin rather than position to avoid Chrome bug (T317135).
+	position: absolute;
+	margin-top: -1em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	span[ data-mw-comment-end ] {
+		// Support: Safari
+		// Markers at the end of a line and before an inline-block (e.g. edit icon)
+		// can cause text to stop wrapping properly. (T298371)
+		display: inline-block;
+	}
+}
+
+// Don't re-color :visited links that act as buttons (T319019)
+.ext-discussiontools-init-replylink-reply,
+.ext-discussiontools-init-section-subscribe-link {
+	&:visited {
+		color: @color-link;
+	}
+}
+
+.ext-discussiontools-init-timestamplink {
+	unicode-bidi: isolate;
+
+	&,
+	&:hover,
+	&:active,
+	&:visited,
+	&:visited:hover {
+		color: @color-placeholder;
+	}
+}
+
+// When using bullet syntax, hide the marker. (T259864#7634107)
+.ext-discussiontools-init-noMarker {
+	list-style: none;
+}
+
+.skin-vector-2022 {
+	.ext-discussiontools-init-section-bar,
+	.ext-discussiontools-init-replybutton.oo-ui-buttonElement,
+	.ext-discussiontools-init-section-subscribe,
+	.ext-discussiontools-init-section-subscribeButton {
+		font-size: 0.875rem;
+	}
+}

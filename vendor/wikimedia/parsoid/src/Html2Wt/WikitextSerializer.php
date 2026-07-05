@@ -7,6 +7,7 @@ use Closure;
 use Exception;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\InternalException;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
@@ -20,8 +21,8 @@ use Wikimedia\Parsoid\Html2Wt\DOMHandlers\DOMHandlerFactory;
 use Wikimedia\Parsoid\NodeData\ParamInfo;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
 use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\Utils\CounterType;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -71,12 +72,6 @@ class WikitextSerializer {
 		DOMDataUtils::DATA_OBJECT_ATTR_NAME => true,
 	];
 
-	/** @var string[] attribute name => value regexp */
-	private const PARSOID_ATTRIBUTES = [
-		'about' => '/^#mwt\d+$/D',
-		'typeof' => '/(^|\s)mw:\S+/',
-	];
-
 	/** @var string Regexp */
 	private const TRAILING_COMMENT_OR_WS_AFTER_NL_REGEXP
 		= '/\n(\s|' . Utils::COMMENT_REGEXP_FRAGMENT . ')*$/D';
@@ -96,6 +91,8 @@ class WikitextSerializer {
 		'sepSuffixWithNlsRE' => '/\n[ \t\r\n]*$/D',
 	];
 
+	/** @var string[] attribute name => value regexp */
+	private array $parsoidAttributes;
 	public Env $env;
 	private SerializerState $state;
 	public WikitextEscapeHandlers $wteHandlers;
@@ -111,11 +108,15 @@ class WikitextSerializer {
 	 *   - extName: (string)
 	 */
 	public function __construct( Env $env, $options ) {
+		// This is non-static because we cannot init it statically
+		$this->parsoidAttributes = [
+			'about' => "/^" . CounterType::TRANSCLUSION_ABOUT->getRE() . "$/D",
+			'typeof' => '/(^|\s)mw:\S+/',
+		];
 		$this->env = $env;
 		$this->logType = $options['logType'] ?? 'wts';
 		$this->state = new SerializerState( $this, $options );
 		$this->wteHandlers = new WikitextEscapeHandlers( $env, $options['extName'] ?? null );
-
 		$annotationTags = $env->getSiteConfig()->getAnnotationTags();
 		$this->commentsOrAnnotationsRE = "#(" .
 			Utils::COMMENT_REGEXP_FRAGMENT .
@@ -165,7 +166,7 @@ class WikitextSerializer {
 
 	public function htmlToWikitext( array $opts, string $html ): string {
 		$domFragment = ContentUtils::createAndLoadDocumentFragment(
-			$this->env->getTopLevelDoc(), $html, [ 'markNew' => true ]
+			$this->env->getTopLevelDoc(), $html
 		);
 		return $this->domToWikitext( $opts, $domFragment );
 	}
@@ -175,8 +176,8 @@ class WikitextSerializer {
 		foreach ( $tplAttrs as $attr ) {
 			// If this attribute's key is generated content,
 			// serialize HTML back to generator wikitext.
-			if ( ( $attr->key['txt'] ?? null ) === $key && isset( $attr->key['html'] ) ) {
-				return $this->htmlToWikitext( [
+			if ( $attr->getKeyString() === $key && isset( $attr->key['html'] ) ) {
+				return $this->domToWikitext( [
 					'env' => $this->env,
 					'onSOL' => false,
 				], $attr->key['html'] );
@@ -195,8 +196,7 @@ class WikitextSerializer {
 		foreach ( $tplAttrs as $attr ) {
 			// If this attribute's value is generated content,
 			// serialize HTML back to generator wikitext.
-			// PORT-FIXME: not type safe. Need documentation on attrib format.
-			if ( ( $attr->key === $key || ( $attr->key['txt'] ?? null ) === $key )
+			if ( $attr->getKeyString() === $key
 				 // Only return here if the value is generated (ie. .html),
 				 // it may just be in .txt form.
 				 // html:"" will serialize to "" and
@@ -206,7 +206,7 @@ class WikitextSerializer {
 				 // Ex: <div {{1x|1=style='color:red'}}>foo</div>
 				 && isset( $attr->value['html'] )
 			) {
-				return $this->htmlToWikitext( [
+				return $this->domToWikitext( [
 					'env' => $this->env,
 					'onSOL' => false,
 					'inAttribute' => true,
@@ -309,7 +309,11 @@ class WikitextSerializer {
 		}
 
 		// srcTagName cannot be '' so, it is okay to use ?? operator
-		$name = $da->srcTagName ?? DOMUtils::nodeName( $node );
+		if ( mb_strtolower( $da->srcTagName ?? '' ) === DOMUtils::nodeName( $node ) ) {
+			$name = $da->srcTagName;
+		} else {
+			$name = DOMUtils::nodeName( $node );
+		}
 		$inner = "{$name}{$sAttribs}{$close}";
 		return $this->wrapAngleBracket( $node, $inner );
 	}
@@ -323,7 +327,11 @@ class WikitextSerializer {
 		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
 
 		// srcTagName cannot be '' so, it is okay to use ?? operator
-		$name = $dataParsoid->srcTagName ?? DOMUtils::nodeName( $node );
+		if ( mb_strtolower( $dataParsoid->srcTagName ?? '' ) === DOMUtils::nodeName( $node ) ) {
+			$name = $dataParsoid->srcTagName;
+		} else {
+			$name = DOMUtils::nodeName( $node );
+		}
 		$ret = '';
 
 		if ( empty( $dataParsoid->autoInsertedEnd )
@@ -362,7 +370,7 @@ class WikitextSerializer {
 			// by clients and shouldn't be serialized. This can also happen
 			// in v2/v3 API when there is no matching data-parsoid entry found
 			// for this id.
-			if ( $k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $v ) ) {
+			if ( $k === 'id' && CounterType::NODE_DATA_ID->matches( $v ) ) {
 				if ( WTUtils::isNewElt( $node ) ) {
 					// Parsoid id found on element without a matching data-parsoid. Drop it!
 				} else {
@@ -406,7 +414,7 @@ class WikitextSerializer {
 			// FIXME: Given that we are currently escaping about/typeof keys
 			// that show up in wikitext, we could unconditionally strip these
 			// away right now.
-			$parsoidValueRegExp = self::PARSOID_ATTRIBUTES[$k] ?? null;
+			$parsoidValueRegExp = $this->parsoidAttributes[$k] ?? null;
 			if ( $parsoidValueRegExp && preg_match( $parsoidValueRegExp, $v ) ) {
 				$rv = preg_replace( $parsoidValueRegExp, '', $v );
 				if ( $rv ) {
@@ -638,6 +646,8 @@ class WikitextSerializer {
 		// Parse custom format specification, if present.
 		$defaultBlockSpc = "{{_\n| _ = _\n}}"; // "block"
 		$defaultInlineSpc = '{{_|_=_}}'; // "inline"
+		$isPF = $part->type === 'parserfunction' ||
+			$part->type === 'old-parserfunction';
 
 		$format = isset( $tplData['format'] ) ? strtolower( $tplData['format'] ) : null;
 		if ( $format === 'block' ) {
@@ -658,6 +668,11 @@ class WikitextSerializer {
 		$formatEnd = $parsedFormat[5] ?? '';
 		$formatEOL = $parsedFormat[6] ?? '';
 		$forceTrim = ( $format !== null ) || WTUtils::isNewElt( $node );
+		if ( $isPF ) {
+			// Parser functions have all positional parameters w/ significant
+			// whitespace.
+			$forceTrim = false;
+		}
 
 		// Shoehorn formatting of top-level templatearg wikitext into this code.
 		if ( $part->type === 'templatearg' ) {
@@ -696,6 +711,7 @@ class WikitextSerializer {
 		// Account for clients not setting the `i`, see T238721
 		$dpArgInfo = $part->i !== null ? ( $dp->pi[$part->i] ?? [] ) : [];
 
+		// Recombine information from data-parsoid and data-mw (T404772)
 		// Build a key -> arg info map (array<string,ParamInfo>)
 		$dpArgInfoMap = [];
 		foreach ( $dpArgInfo as $info ) {
@@ -804,6 +820,7 @@ class WikitextSerializer {
 		// "magic case": If the format string ends with a newline, an extra newline is added
 		// between the template name and the first parameter.
 
+		$first = true;
 		foreach ( $argBuf as $arg ) {
 			$name = $arg['name'];
 			$val = $arg['value'];
@@ -844,9 +861,16 @@ class WikitextSerializer {
 			if ( $trailing && str_starts_with( $formatParamName, "\n" ) ) {
 				$modFormatParamName = substr( $formatParamName, 1 );
 			}
+			// Parser functions are weird! First separator is a colon not a bar
+			if ( $first && $isPF ) {
+				# Use the same colon that original used (T415405)
+				$colon = is_string( $dp->colon ?? null ) ? $dp->colon : ':';
+				$modFormatParamName = preg_replace( '/[|]/', $colon, $modFormatParamName, 1 );
+			}
 
 			$buf .= $this->formatStringSubst( $modFormatParamName, $name, $forceTrim );
 			$buf .= $this->formatStringSubst( $modFormatParamValue, $val, $forceTrim );
+			$first = false;
 		}
 
 		// Don't create duplicate newlines.
@@ -1234,14 +1258,11 @@ class WikitextSerializer {
 	/**
 	 * Internal worker. Recursively serialize a DOM subtree.
 	 * @private
-	 * @param Node $node
-	 * @return ?Node
 	 */
 	public function serializeNode( Node $node ): ?Node {
 		$nodeName = DOMUtils::nodeName( $node );
 		$domHandlerFactory = new DOMHandlerFactory();
 		$state = $this->state;
-		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$state->currNode = $node;
 
 		if ( $state->selserMode ) {
@@ -1318,12 +1339,28 @@ class WikitextSerializer {
 		);
 
 		$this->env->log( 'debug/wts', 'Calling serialization handler for ' . $nodeName );
-		$nextNode = $method( $node, $domHandler );
+		$next = $nextNode = $method( $node, $domHandler );
 
-		$next = DiffDOMUtils::nextNonSepSibling( $node ) ?: $node->parentNode;
+		// If we've skipped over encapsulated content to return a $nextNode,
+		// the newline constraint we want for after $node should be based on
+		// $nextNode and DiffDOMUtils::previousNonSepSibling( $nextNode )
+
+		if ( $next !== null && !DiffDOMUtils::isContentNode( $next ) ) {
+			$next = DiffDOMUtils::nextNonSepSibling( $next );
+		}
+		if ( $next === null ) {
+			$next = $node->parentNode;
+			$prev = DiffDOMUtils::lastNonSepChild( $next, $node ) ?: $node;
+		} else {
+			$prev = DiffDOMUtils::previousNonSepSibling( $next, $node ) ?: $node;
+		}
+
+		$prevDomHandler = ( $prev === $node ) ? $domHandler :
+			$domHandlerFactory->getDOMHandler( $prev );
+
 		$this->env->log( 'debug/wts', 'After constraints for ' . $nodeName );
 		$state->separators->updateSeparatorConstraints(
-			$node, $domHandler,
+			$prev, $prevDomHandler,
 			$next, $domHandlerFactory->getDOMHandler( $next )
 		);
 
@@ -1458,7 +1495,7 @@ class WikitextSerializer {
 		$nonHtmlTag = null;
 		for ( $j = 1;  $j < $n;  $j += 2 ) {
 			// For HTML tags, pull out just the tag name for clearer code below.
-			preg_match( '#^<(/?\w+)#', $p[$j], $matches );
+			preg_match( '#^<(/?[^\t\n\v />\0]+)#', $p[$j], $matches );
 			$tag = mb_strtolower( $matches[1] ?? $p[$j] );
 			$tagLen = strlen( $tag );
 			$selfClose = false;
@@ -1559,12 +1596,8 @@ class WikitextSerializer {
 	 * @return string
 	 */
 	public function serializeDOM(
-		Node $node, bool $selserMode = false
+		Document|DocumentFragment $node, bool $selserMode = false
 	): string {
-		Assert::parameterType(
-			[ Document::class, DocumentFragment::class ],
-			$node, '$node' );
-
 		if ( $node instanceof Document ) {
 			$node = DOMCompat::getBody( $node );
 		}

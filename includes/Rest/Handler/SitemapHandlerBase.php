@@ -4,12 +4,13 @@ namespace MediaWiki\Rest\Handler;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\SitemapGenerator;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HeaderParser\HttpDate;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\StringStream;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -38,11 +39,22 @@ abstract class SitemapHandlerBase extends Handler {
 
 	/**
 	 * @param int $indexId
-	 * @param int $fileId
+	 * @param int $pageId
 	 * @return int
 	 */
-	protected function getOffset( $indexId, $fileId ) {
-		return $this->sitemapSize * ( $indexId * $this->indexSize + $fileId );
+	protected function getOffset( $indexId, $pageId ) {
+		return $this->sitemapSize * ( $indexId * $this->indexSize + $pageId );
+	}
+
+	protected function generateResponseSpec( string $method ): array {
+		$spec = parent::generateResponseSpec( $method );
+
+		$spec['200']['content']['application/xml'] = [
+			'schema' => $this->getResponseSchema(),
+			'example' => $this->getResponseExample(),
+		];
+
+		return $spec;
 	}
 
 	/** @inheritDoc */
@@ -69,5 +81,24 @@ abstract class SitemapHandlerBase extends Handler {
 		return $response;
 	}
 
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::CONTENT_TYPE => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::CONTENT_TYPE
+				],
+				ResponseHeaders::EXPIRES => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::EXPIRES
+				],
+			]
+		);
+	}
+
 	abstract protected function getXml(): string;
+
+	abstract protected function getResponseSchema(): array;
+
+	abstract protected function getResponseExample(): string;
 }

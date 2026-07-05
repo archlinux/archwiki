@@ -21,10 +21,10 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Unit\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use MediaWiki\Skins\Vector\Components\VectorComponentLink;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 
 /**
  * @group Vector

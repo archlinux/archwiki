@@ -1,10 +1,10 @@
 <?php
-namespace MediaWiki\CheckUser\Api\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Api\GlobalContributions;
 
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryBase;
-use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPagerFactory;
+use MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPagerFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -14,18 +14,13 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  * API query module for global contributions.
  */
 class ApiQueryGlobalContributions extends ApiQueryBase {
-	private GlobalContributionsPagerFactory $pagerFactory;
-	private UserNameUtils $userNameUtils;
-
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
-		GlobalContributionsPagerFactory $pagerFactory,
-		UserNameUtils $userNameUtils
+		private readonly GlobalContributionsPagerFactory $pagerFactory,
+		private readonly UserNameUtils $userNameUtils,
 	) {
 		parent::__construct( $query, $moduleName, 'guc' );
-		$this->pagerFactory = $pagerFactory;
-		$this->userNameUtils = $userNameUtils;
 	}
 
 	public function execute() {

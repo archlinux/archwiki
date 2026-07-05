@@ -112,8 +112,8 @@ module.exports = exports = {
 
 					logEvent( 'session_end' );
 				},
-				( error ) => {
-					disableError.value = error;
+				() => {
+					disableError.value = mw.msg( 'checkuser-ip-auto-reveal-off-dialog-error-disable' );
 				}
 			);
 		}

@@ -49,7 +49,7 @@ ve.dm.ModelFromDomConverter.static.getDataContentFromText = function ( text, ann
 		return characters;
 	}
 	// Apply annotations to characters
-	for ( let i = 0, len = characters.length; i < len; i++ ) {
+	for ( let i = 0; i < characters.length; i++ ) {
 		// Just store the annotations' hashes from the hash-value store
 		characters[ i ] = [ characters[ i ], annotations.getHashes().slice() ];
 	}
@@ -111,9 +111,9 @@ ve.dm.ModelFromDomConverter.static.moveInlineMetaItems = function ( data ) {
 				if ( metaParent ) {
 					metaParent.item.internal.metaItems.push( item );
 					pendingMetaItems.push( {
-						item: item,
+						item,
 						closeItem: data[ i + 1 ],
-						metaParent: metaParent,
+						metaParent,
 						offset: i - metaParent.offset - 1
 					} );
 					// Remove this item and the immediately following close item
@@ -128,7 +128,7 @@ ve.dm.ModelFromDomConverter.static.moveInlineMetaItems = function ( data ) {
 				}
 			} else {
 				ancestors.push( {
-					item: item,
+					item,
 					offset: i,
 					isMetaParent: !!ve.getProp( item, 'internal', 'metaItems' )
 				} );
@@ -167,12 +167,10 @@ ve.dm.ModelFromDomConverter.prototype.getStore = function () {
 };
 
 /**
- * Check whether this converter instance is currently inside a getModelFromDom() conversion.
- *
- * @return {boolean} Whether we're converting
+ * @return {ve.dm.InternalList|null}
  */
-ve.dm.ModelFromDomConverter.prototype.isConverting = function () {
-	return this.contextStack !== null;
+ve.dm.ModelFromDomConverter.prototype.getInternalList = function () {
+	return this.internalList;
 };
 
 /**
@@ -421,22 +419,22 @@ ve.dm.ModelFromDomConverter.prototype.getDataFromDomSubtree = function ( domElem
 		const toInsert = [];
 		let prev = wrappingParagraph;
 
-		for ( let j = 0, len = wrappedMetaItems.length; j < len; j++ ) {
-			if ( wrappedMetaItems[ j ].type && wrappedMetaItems[ j ].type.charAt( 0 ) !== '/' ) {
-				if ( wrappedMetaItems[ j ].internal && wrappedMetaItems[ j ].internal.whitespace ) {
+		wrappedMetaItems.forEach( ( wrappedMetaItem ) => {
+			if ( ve.dm.LinearData.static.isOpenElementData( wrappedMetaItem ) ) {
+				if ( wrappedMetaItem.internal && wrappedMetaItem.internal.whitespace ) {
 					if ( whitespaceTreatment === 'restore' ) {
 						ve.batchPush( toInsert, this.constructor.static.getDataContentFromText(
-							wrappedMetaItems[ j ].internal.whitespace[ 0 ], context.annotations
+							wrappedMetaItem.internal.whitespace[ 0 ], context.annotations
 						) );
-						delete wrappedMetaItems[ j ].internal;
+						delete wrappedMetaItem.internal;
 					} else if ( whitespaceTreatment === 'fixup' ) {
-						addWhitespace( prev, 3, wrappedMetaItems[ j ].internal.whitespace[ 0 ] );
+						addWhitespace( prev, 3, wrappedMetaItem.internal.whitespace[ 0 ] );
 					}
 				}
-				prev = wrappedMetaItems[ j ];
+				prev = wrappedMetaItem;
 			}
-			toInsert.push( wrappedMetaItems[ j ] );
-		}
+			toInsert.push( wrappedMetaItem );
+		} );
 		if ( wrappedWhitespace !== '' && whitespaceTreatment === 'restore' ) {
 			// If we have wrapped whitespace, insert the wrapped meta items before it
 			// This is horrible and this whole system desperately needs to be rewritten
@@ -490,20 +488,22 @@ ve.dm.ModelFromDomConverter.prototype.getDataFromDomSubtree = function ( domElem
 		}
 		return group;
 	};
-	const isAllInstanceOf = ( linearData, targetClass ) => {
-		for ( let j = linearData.length - 1; j >= 0; j-- ) {
-			const type = ve.dm.LinearData.static.getType( linearData[ j ] );
-			if ( type ) {
-				const itemClass = modelRegistry.lookup( type ) || ve.dm.AlienNode;
-				if ( !( itemClass === targetClass || itemClass.prototype instanceof targetClass ) ) {
-					return false;
-				}
-			} else {
-				return false;
-			}
+	/**
+	 * Check if all items in linear data are instances of a given class
+	 *
+	 * @private
+	 * @param {ve.dm.LinearData.Item[]} linearData
+	 * @param {Function} targetClass
+	 * @return {boolean}
+	 */
+	const isAllInstanceOf = ( linearData, targetClass ) => linearData.every( ( item ) => {
+		const type = ve.dm.LinearData.static.getType( item );
+		if ( !type ) {
+			return false;
 		}
-		return true;
-	};
+		const itemClass = modelRegistry.lookup( type ) || ve.dm.AlienNode;
+		return itemClass === targetClass || itemClass.prototype instanceof targetClass;
+	} );
 
 	context.annotations = annotationSet || (
 		prevContext ? prevContext.annotations.clone() : new ve.dm.AnnotationSet( this.store )

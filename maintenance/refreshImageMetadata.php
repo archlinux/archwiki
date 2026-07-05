@@ -21,9 +21,11 @@ use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\TitleParser;
 use Wikimedia\Rdbms\IExpression;
-use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -33,11 +35,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * @ingroup Maintenance
  */
 class RefreshImageMetadata extends Maintenance {
-
-	/**
-	 * @var IMaintainableDatabase
-	 */
-	protected $dbw;
+	private ?TitleParser $titleParser = null;
 
 	public function __construct() {
 		parent::__construct();
@@ -102,91 +100,282 @@ class RefreshImageMetadata extends Maintenance {
 			true
 		);
 		$this->addOption( 'oldimage', 'Run and refresh on oldimage table.' );
+		$this->addOption(
+			'listfile',
+			'File with file titles to refresh, one per line (newline delimited). '
+				. 'If provided, other filtering options (--mime, --mediatype, --metadata-contains, '
+				. '--start, --end) will be ignored.',
+			false,
+			true
+		);
 	}
 
 	public function execute() {
 		$force = $this->hasOption( 'force' );
 		$brokenOnly = $this->hasOption( 'broken-only' );
 		$verbose = $this->hasOption( 'verbose' );
-		$start = $this->getOption( 'start', false );
 		$split = $this->hasOption( 'split' );
 		$sleep = (int)$this->getOption( 'sleep', 0 );
 		$reserialize = $this->hasOption( 'convert-to-json' );
 		$oldimage = $this->hasOption( 'oldimage' );
+		$listFile = $this->getOption( 'listfile', false );
 
-		$dbw = $this->getPrimaryDB();
-		if ( $oldimage ) {
-			$fieldPrefix = 'oi_';
-			$queryBuilderTemplate  = FileSelectQueryBuilder::newForOldFile( $dbw );
-		} else {
-			$fieldPrefix = 'img_';
-			$queryBuilderTemplate  = FileSelectQueryBuilder::newForFile( $dbw );
-		}
-
-		$upgraded = 0;
-		$leftAlone = 0;
-		$batchSize = intval( $this->getBatchSize() );
+		$batchSize = (int)$this->getBatchSize();
 		if ( $batchSize <= 0 ) {
 			$this->fatalError( "Batch size is too low...", 12 );
 		}
+
+		$this->titleParser = $this->getServiceContainer()->getTitleParser();
 		$repo = $this->newLocalRepo( $force, $brokenOnly, $reserialize, $split );
+
+		if ( $listFile !== false ) {
+			// Process files by title list
+			$this->processFilesByTitles( $listFile, $repo, $oldimage, $force, $verbose, $sleep );
+		} else {
+			// Process files by database query
+			$this->processFilesByDatabase( $repo, $oldimage, $force, $verbose, $sleep );
+		}
+	}
+
+	/**
+	 * Process files specified in a list file using batch DB queries
+	 *
+	 * @param string $listFile Path to file with titles
+	 * @param LocalRepo $repo
+	 * @param bool $oldimage
+	 * @param bool $force
+	 * @param bool $verbose
+	 * @param int $sleep
+	 */
+	private function processFilesByTitles(
+		string $listFile,
+		LocalRepo $repo,
+		bool $oldimage,
+		bool $force,
+		bool $verbose,
+		int $sleep
+	): void {
+		if ( !file_exists( $listFile ) ) {
+			$this->fatalError( "List file does not exist: $listFile" );
+		}
+
+		$file = fopen( $listFile, 'r' );
+		if ( !$file ) {
+			$this->fatalError( "Unable to read list file: $listFile" );
+		}
+
+		// Read and validate all titles from the file
+		$requestedNames = [];
+		$invalidTitles = [];
+		$lineNum = 0;
+
+		while ( !feof( $file ) ) {
+			$line = trim( fgets( $file ) );
+			$lineNum++;
+
+			if ( $line === '' ) {
+				continue;
+			}
+
+			try {
+				$titleValue = $this->titleParser->parseTitle( $line, NS_FILE );
+				if ( $titleValue->getNamespace() !== NS_FILE ) {
+					$invalidTitles[] = [ 'line' => $lineNum, 'title' => $line ];
+					continue;
+				}
+				$requestedNames[$titleValue->getDBkey()] = $line;
+			} catch ( MalformedTitleException ) {
+				$invalidTitles[] = [ 'line' => $lineNum, 'title' => $line ];
+				continue;
+			}
+		}
+		fclose( $file );
+
+		// Report invalid titles
+		foreach ( $invalidTitles as $invalid ) {
+			$this->output( "Invalid file title on line {$invalid['line']}: '{$invalid['title']}'\n" );
+		}
+
+		if ( count( $requestedNames ) === 0 ) {
+			$this->output( "No valid titles found in list file.\n" );
+			return;
+		}
+
+		$this->output( "Found " . count( $requestedNames ) . " valid title(s) to process.\n" );
+
+		$dbw = $this->getPrimaryDB();
+		$batchSize = (int)$this->getBatchSize();
+		$nameField = $oldimage ? 'oi_name' : 'img_name';
+		$upgraded = 0;
+		$leftAlone = 0;
+		$foundNames = [];
+
+		$nameBatches = array_chunk( array_keys( $requestedNames ), $batchSize );
+
+		foreach ( $nameBatches as $nameBatch ) {
+			if ( $oldimage ) {
+				$queryBuilder = FileSelectQueryBuilder::newForOldFile( $dbw );
+			} else {
+				$queryBuilder = FileSelectQueryBuilder::newForFile( $dbw );
+			}
+			$queryBuilder
+				->where( [ $nameField => $nameBatch ] )
+				->caller( __METHOD__ );
+
+			$res = $queryBuilder->fetchResultSet();
+
+			[ $up, $left, $found ] = $this->processBatch( $res, $repo, $nameField, $force, $verbose );
+			$upgraded += $up;
+			$leftAlone += $left;
+			$foundNames += $found;
+
+			$this->waitForReplication();
+			if ( $sleep ) {
+				sleep( $sleep );
+			}
+		}
+
+		// Report files that were not found in the database
+		$notFound = array_diff_key( $requestedNames, $foundNames );
+		if ( count( $notFound ) > 0 ) {
+			$this->output( "\nThe following " . count( $notFound ) . " file(s) were not found in the database:\n" );
+			foreach ( $notFound as $dbKey => $originalTitle ) {
+				$this->output( "  - $originalTitle\n" );
+			}
+		}
+
+		$this->outputResult( $upgraded, $leftAlone, $force );
+	}
+
+	/**
+	 * Process files using database query with filters
+	 *
+	 * @param LocalRepo $repo
+	 * @param bool $oldimage
+	 * @param bool $force
+	 * @param bool $verbose
+	 * @param int $sleep
+	 */
+	private function processFilesByDatabase(
+		LocalRepo $repo,
+		bool $oldimage,
+		bool $force,
+		bool $verbose,
+		int $sleep
+	): void {
+		$start = $this->getOption( 'start', false );
+		$dbw = $this->getPrimaryDB();
+		if ( $oldimage ) {
+			$fieldPrefix = 'oi_';
+			$queryBuilderTemplate = FileSelectQueryBuilder::newForOldFile( $dbw );
+		} else {
+			$fieldPrefix = 'img_';
+			$queryBuilderTemplate = FileSelectQueryBuilder::newForFile( $dbw );
+		}
+
+		$batchSize = (int)$this->getBatchSize();
+		$nameField = $fieldPrefix . 'name';
+		$upgraded = 0;
+		$leftAlone = 0;
+
 		$this->setConditions( $dbw, $queryBuilderTemplate, $fieldPrefix );
 		$queryBuilderTemplate
-			->orderBy( $fieldPrefix . 'name', SelectQueryBuilder::SORT_ASC )
+			->orderBy( $nameField, SelectQueryBuilder::SORT_ASC )
 			->limit( $batchSize );
 
 		$batchCondition = [];
-		// For the WHERE img_name > 'foo' condition that comes after doing a batch
 		if ( $start !== false ) {
-			$batchCondition[] = $dbw->expr( $fieldPrefix . 'name', '>=', $start );
+			$batchCondition[] = $dbw->expr( $nameField, '>=', $start );
 		}
+
 		do {
 			$queryBuilder = clone $queryBuilderTemplate;
 			$res = $queryBuilder->andWhere( $batchCondition )
 				->caller( __METHOD__ )->fetchResultSet();
-			$nameField = $fieldPrefix . 'name';
+
+			[ $up, $left, $found ] = $this->processBatch( $res, $repo, $nameField, $force, $verbose );
+			$upgraded += $up;
+			$leftAlone += $left;
+
 			if ( $res->numRows() > 0 ) {
-				$row1 = $res->current();
-				$this->output( "Processing next {$res->numRows()} row(s) starting with {$row1->$nameField}.\n" );
-				$res->rewind();
+				$lastName = array_key_last( $found );
+				$batchCondition = [ $dbw->expr( $nameField, '>', $lastName ) ];
 			}
 
-			foreach ( $res as $row ) {
-				try {
-					// LocalFile will upgrade immediately here if obsolete
-					$file = $repo->newFileFromRow( $row );
-					$file->maybeUpgradeRow();
-					if ( $file->getUpgraded() ) {
-						// File was upgraded.
-						$upgraded++;
-						$this->output( "Refreshed File:{$row->$nameField}.\n" );
-					} else {
-						$leftAlone++;
-						if ( $force ) {
-							$file->upgradeRow();
-							if ( $verbose ) {
-								$this->output( "Forcibly refreshed File:{$row->$nameField}.\n" );
-							}
-						} else {
-							if ( $verbose ) {
-								$this->output( "Skipping File:{$row->$nameField}.\n" );
-							}
-						}
-					}
-				} catch ( Exception $e ) {
-					$this->output( "{$row->$nameField} failed. {$e->getMessage()}\n" );
-				}
-			}
-			if ( $res->numRows() > 0 ) {
-				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
-				$batchCondition = [ $dbw->expr( $fieldPrefix . 'name', '>', $row->$nameField ) ];
-			}
 			$this->waitForReplication();
 			if ( $sleep ) {
 				sleep( $sleep );
 			}
 		} while ( $res->numRows() === $batchSize );
 
+		$this->outputResult( $upgraded, $leftAlone, $force );
+	}
+
+	/**
+	 * Process a batch of file rows
+	 *
+	 * @param IResultWrapper $res Database result set
+	 * @param LocalRepo $repo
+	 * @param string $nameField Field name containing the file name
+	 * @param bool $force
+	 * @param bool $verbose
+	 * @return array [ upgraded count, left alone count, found names keyed by name ]
+	 */
+	private function processBatch(
+		IResultWrapper $res,
+		LocalRepo $repo,
+		string $nameField,
+		bool $force,
+		bool $verbose
+	): array {
+		$upgraded = 0;
+		$leftAlone = 0;
+		$foundNames = [];
+
+		if ( $res->numRows() > 0 ) {
+			$firstRow = $res->current();
+			$firstName = $firstRow->$nameField;
+			$res->rewind();
+			$this->output( "Processing next {$res->numRows()} row(s) starting with $firstName.\n" );
+		}
+
+		foreach ( $res as $row ) {
+			$name = $row->$nameField;
+			$foundNames[$name] = true;
+
+			try {
+				$file = $repo->newFileFromRow( $row );
+				$file->maybeUpgradeRow();
+				if ( $file->getUpgraded() ) {
+					$this->output( "Refreshed File:$name.\n" );
+					$upgraded++;
+				} else {
+					if ( $force ) {
+						$file->upgradeRow();
+						if ( $verbose ) {
+							$this->output( "Forcibly refreshed File:$name.\n" );
+						}
+					} elseif ( $verbose ) {
+						$this->output( "Skipping File:$name.\n" );
+					}
+					$leftAlone++;
+				}
+			} catch ( Exception $e ) {
+				$this->output( "$name failed. {$e->getMessage()}\n" );
+			}
+		}
+
+		return [ $upgraded, $leftAlone, $foundNames ];
+	}
+
+	/**
+	 * Output the final result summary
+	 *
+	 * @param int $upgraded
+	 * @param int $leftAlone
+	 * @param bool $force
+	 */
+	private function outputResult( int $upgraded, int $leftAlone, bool $force ): void {
 		$total = $upgraded + $leftAlone;
 		if ( $force ) {
 			$this->output( "\nFinished refreshing file metadata for $total files. "
@@ -202,9 +391,12 @@ class RefreshImageMetadata extends Maintenance {
 	 * @param IReadableDatabase $dbw
 	 * @param SelectQueryBuilder $queryBuilder
 	 * @param string $fieldPrefix like img_ or oi_
-	 * @return void
 	 */
-	private function setConditions( IReadableDatabase $dbw, SelectQueryBuilder $queryBuilder, $fieldPrefix ) {
+	private function setConditions(
+		IReadableDatabase $dbw,
+		SelectQueryBuilder $queryBuilder,
+		string $fieldPrefix
+	): void {
 		$end = $this->getOption( 'end', false );
 		$mime = $this->getOption( 'mime', false );
 		$mediatype = $this->getOption( 'mediatype', false );
@@ -239,7 +431,7 @@ class RefreshImageMetadata extends Maintenance {
 	 *
 	 * @return LocalRepo
 	 */
-	private function newLocalRepo( $force, $brokenOnly, $reserialize, $split ): LocalRepo {
+	private function newLocalRepo( bool $force, bool $brokenOnly, bool $reserialize, bool $split ): LocalRepo {
 		if ( $brokenOnly && $force ) {
 			$this->fatalError( 'Cannot use --broken-only and --force together. ', 2 );
 		}

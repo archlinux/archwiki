@@ -275,7 +275,7 @@ ve.ui.MWGalleryDialog.prototype.initialize = function () {
 		'packed-hover',
 		'slideshow'
 	].map( ( data ) => new OO.ui.MenuOptionWidget( {
-		data: data,
+		data,
 		// Messages used here:
 		// * visualeditor-mwgallerydialog-mode-dropdown-label-traditional
 		// * visualeditor-mwgallerydialog-mode-dropdown-label-nolines
@@ -413,7 +413,7 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 					const imageCaptionNode = image.getCaptionNode();
 					imageTitles.push( resource );
 					this.initialImageData.push( {
-						resource: resource,
+						resource,
 						altText: image.getAttribute( 'altText' ),
 						altTextSame: image.getAttribute( 'altTextSame' ),
 						href: image.getAttribute( 'href' ),

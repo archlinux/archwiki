@@ -223,7 +223,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Don dä Varijable ene Wäät jevve (<code lang=\"en\">set_var</code>)",
 	"abusefilter-edit-builder-group-vars": "Varrijabelle",
 	"abusefilter-edit-builder-vars-timestamp": "Dä Änderong iere <code lang=\"en\">Unix</code>-Zick_Schtämpel",
-	"abusefilter-edit-builder-vars-accountname": "Däm Metmaacher singe Name — wi hä ennjeresht wood",
+	"abusefilter-edit-builder-vars-account-name": "Däm Metmaacher singe Name — wi hä ennjeresht wood",
 	"abusefilter-edit-builder-vars-action": "Akßjuhn",
 	"abusefilter-edit-builder-vars-addedlines": "De Reije, di bemm Ändere dobeij jekumme sen",
 	"abusefilter-edit-builder-vars-delta": "Der Ongerscheed em Ömfang",

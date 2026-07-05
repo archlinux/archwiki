@@ -29,24 +29,12 @@ use MediaWiki\Title\Title;
 
 class UserNamespaceOverflowBuilder extends DefaultOverflowBuilder {
 
-	private IContextSource $context;
-	private LanguagesHelper $languagesHelper;
-
-	/**
-	 * Initialize the overflow menu visible on the User namespace
-	 * @param Title $title
-	 * @param IContextSource $context
-	 * @param IMinervaPagePermissions $permissions
-	 * @param LanguagesHelper $languagesHelper
-	 */
 	public function __construct(
 		Title $title,
-		IContextSource $context,
+		private readonly IContextSource $context,
 		IMinervaPagePermissions $permissions,
-		LanguagesHelper $languagesHelper
+		private readonly LanguagesHelper $languagesHelper,
 	) {
-		$this->context = $context;
-		$this->languagesHelper = $languagesHelper;
 		parent::__construct( $title, $context, $permissions );
 	}
 

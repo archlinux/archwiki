@@ -173,6 +173,30 @@ Message.prototype = /** @lends mw.Message.prototype */ {
 	},
 
 	/**
+	 * Parse message as wikitext and return a jQuery object.
+	 *
+	 * If jqueryMsg is loaded, this transforms text and parses a subset of supported wikitext
+	 * into a jQuery object. Without jqueryMsg, it is equivalent to {@link mw.Message#text},
+	 * wrapped in a text node inside a jQuery object.
+	 *
+	 * @example
+	 * const msg = mw.message( 'key' );
+	 * mw.loader.using(`mediawiki.jqueryMsg`).then(() => {
+	 *   if ( msg.isParseable() ) {
+	 *     const $node = msg.parseDom();
+	 *     $node.appendTo('body');
+	 *   }
+	 * })
+	 *
+	 * @since 1.27 if mediawiki.jqueryMsg is loaded
+	 * @since 1.46 in mediawiki.base
+	 * @return {jQuery} jQuery object of parsed message
+	 */
+	parseDom: function () {
+		return $( document.createTextNode( this.toString( 'text' ) ) );
+	},
+
+	/**
 	 * Return message plainly.
 	 *
 	 * This substitutes parameters, but otherwise does not transform the

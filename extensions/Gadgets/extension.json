@@ -10,7 +10,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"type": "other",
 	"ContentHandlers": {
@@ -25,9 +25,7 @@
 		"Gadgets": {
 			"class": "MediaWiki\\Extension\\Gadgets\\Special\\SpecialGadgets",
 			"services": [
-				"ContentLanguage",
-				"GadgetsRepo",
-				"SkinFactory"
+				"ObjectFactory"
 			]
 		},
 		"GadgetUsage": {
@@ -108,7 +106,7 @@
 	"DomainEventIngresses": [
 		{
 			"events": [
-				"PageRevisionUpdated",
+				"PageLatestRevisionChanged",
 				"PageDeleted"
 			],
 			"class": "MediaWiki\\Extension\\Gadgets\\EventIngress",

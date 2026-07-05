@@ -1,4 +1,5 @@
 @import 'mediawiki.skin.variables.less';
+@import ( reference ) 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
 
 .mw-mmv-overlay {
 	position: fixed;
@@ -18,6 +19,12 @@
 		max-width: 80vw;
 		min-width: 20vw;
 		width: 20rem;
+	}
+
+	// Alternate overlay BG color for beta UI
+	&.mw-mmv-overlay--beta {
+		.cdx-mode-dark();
+		background-color: @background-color-interactive-subtle;
 	}
 }
 

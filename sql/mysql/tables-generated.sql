@@ -25,7 +25,6 @@ CREATE TABLE /*_*/archive (
   ar_len INT UNSIGNED DEFAULT NULL,
   ar_page_id INT UNSIGNED DEFAULT NULL,
   ar_parent_id INT UNSIGNED DEFAULT NULL,
-  ar_sha1 VARBINARY(32) DEFAULT '' NOT NULL,
   INDEX ar_name_title_timestamp (
     ar_namespace, ar_title, ar_timestamp
   ),
@@ -342,13 +341,14 @@ CREATE TABLE /*_*/image (
 
 CREATE TABLE /*_*/imagelinks (
   il_from INT UNSIGNED DEFAULT 0 NOT NULL,
-  il_to VARBINARY(255) DEFAULT '' NOT NULL,
+  il_target_id BIGINT UNSIGNED NOT NULL,
   il_from_namespace INT DEFAULT 0 NOT NULL,
-  INDEX il_to (il_to, il_from),
-  INDEX il_backlinks_namespace (
-    il_from_namespace, il_to, il_from
+  INDEX il_target_id (il_target_id, il_from),
+  INDEX il_backlinks_namespace_target_id (
+    il_from_namespace, il_target_id,
+    il_from
   ),
-  PRIMARY KEY(il_from, il_to)
+  PRIMARY KEY(il_from, il_target_id)
 ) /*$wgDBTableOptions*/;
 
 
@@ -485,8 +485,6 @@ CREATE TABLE /*_*/objectcache (
   keyname VARBINARY(255) DEFAULT '' NOT NULL,
   value MEDIUMBLOB DEFAULT NULL,
   exptime BINARY(14) NOT NULL,
-  modtoken VARCHAR(17) DEFAULT '00000000000000000' NOT NULL,
-  flags INT UNSIGNED DEFAULT NULL,
   INDEX exptime (exptime),
   PRIMARY KEY(keyname)
 ) /*$wgDBTableOptions*/;
@@ -651,7 +649,6 @@ CREATE TABLE /*_*/recentchanges (
   rc_cur_id INT UNSIGNED DEFAULT 0 NOT NULL,
   rc_this_oldid INT UNSIGNED DEFAULT 0 NOT NULL,
   rc_last_oldid INT UNSIGNED DEFAULT 0 NOT NULL,
-  rc_type TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   rc_source VARBINARY(16) NOT NULL,
   rc_patrolled TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   rc_ip VARBINARY(40) DEFAULT '' NOT NULL,
@@ -673,10 +670,6 @@ CREATE TABLE /*_*/recentchanges (
   INDEX rc_ip (rc_ip),
   INDEX rc_ns_actor (rc_namespace, rc_actor),
   INDEX rc_actor (rc_actor, rc_timestamp),
-  INDEX rc_name_type_patrolled_timestamp (
-    rc_namespace, rc_type, rc_patrolled,
-    rc_timestamp
-  ),
   INDEX rc_name_source_patrolled_timestamp (
     rc_namespace, rc_source, rc_patrolled,
     rc_timestamp
@@ -707,7 +700,6 @@ CREATE TABLE /*_*/revision (
   rev_deleted TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   rev_len INT UNSIGNED DEFAULT NULL,
   rev_parent_id BIGINT UNSIGNED DEFAULT NULL,
-  rev_sha1 VARBINARY(32) DEFAULT '' NOT NULL,
   INDEX rev_timestamp (rev_timestamp),
   INDEX rev_page_timestamp (rev_page, rev_timestamp),
   INDEX rev_actor_timestamp (rev_actor, rev_timestamp, rev_id),
@@ -934,4 +926,21 @@ CREATE TABLE /*_*/watchlist_expiry (
   we_expiry BINARY(14) NOT NULL,
   INDEX we_expiry (we_expiry),
   PRIMARY KEY(we_item)
+) /*$wgDBTableOptions*/;
+
+
+CREATE TABLE /*_*/watchlist_label (
+  wll_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+  wll_user INT UNSIGNED NOT NULL,
+  wll_name VARBINARY(255) NOT NULL,
+  UNIQUE INDEX wll_user_name (wll_user, wll_name),
+  PRIMARY KEY(wll_id)
+) /*$wgDBTableOptions*/;
+
+
+CREATE TABLE /*_*/watchlist_label_member (
+  wlm_label INT UNSIGNED NOT NULL,
+  wlm_item INT UNSIGNED NOT NULL,
+  INDEX wlm_item (wlm_item),
+  PRIMARY KEY(wlm_label, wlm_item)
 ) /*$wgDBTableOptions*/;

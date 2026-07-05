@@ -238,7 +238,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Piešķirt mainīgajam vērtību (set_var)",
 	"abusefilter-edit-builder-group-vars": "Mainīgie",
 	"abusefilter-edit-builder-vars-timestamp": "Izmaiņas Unix laika zīmogs",
-	"abusefilter-edit-builder-vars-accountname": "Konta nosaukums (izveidošanas brīdī)",
+	"abusefilter-edit-builder-vars-account-name": "Konta nosaukums (izveidošanas brīdī)",
 	"abusefilter-edit-builder-vars-action": "Darbība",
 	"abusefilter-edit-builder-vars-addedlines": "Labojumā pievienotās rindas",
 	"abusefilter-edit-builder-vars-delta": "Labojuma izmaiņu izmērs",

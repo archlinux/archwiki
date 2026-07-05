@@ -16,17 +16,15 @@ use MediaWiki\User\User;
 
 class SubscribeAction extends FormAction {
 
-	protected SubscriptionStore $subscriptionStore;
 	protected ?Title $subscriptionTitle = null;
 	protected ?string $subscriptionName = null;
 
 	public function __construct(
 		Article $page,
 		IContextSource $context,
-		SubscriptionStore $subscriptionStore
+		protected readonly SubscriptionStore $subscriptionStore,
 	) {
 		parent::__construct( $page, $context );
-		$this->subscriptionStore = $subscriptionStore;
 	}
 
 	/**

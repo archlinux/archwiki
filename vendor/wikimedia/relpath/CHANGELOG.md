@@ -1,12 +1,22 @@
 # Changelog
 
-# 4.0.2
+## 4.1.1
 
-* Fix getRelativePath() with multiple ".." parent fragments (Hannah Okwelum)[T388323](https://phabricator.wikimedia.org/T388323)
+* Optimize `RelPath::getRelativePath` splitting and fix Windows support (Ori Livneh)
 
-# 4.0.1
+## 4.1.0
 
-* Fix "Implicitly nullable parameter" PHP 8.4 warning (libraryupgrader)
+* Require PHP 8.1 or later, drop support for PHP 7.4 and 8.0. (James D. Forrester)
+* Add native return types and enable `strict_types=1` (Umherirrender)
+* Optimize `RelPath::joinPath` by resolving paths in a single pass (Ori Livneh)
+
+## 4.0.2
+
+* Fix `getRelativePath()` with multiple ".." parent fragments. (Hannah Okwelum) [T388323](https://phabricator.wikimedia.org/T388323)
+
+## 4.0.1
+
+* Fix "Implicitly nullable parameter" PHP 8.4 warning. (libraryupgrader)
 
 ## 4.0.0
 
@@ -31,7 +41,7 @@ Changed:
 Removed:
 
 * The `RelPath` namespace, deprecated in 2.1.0, has been removed.
-  Use `Wikimedia\RelPath` instead.
+	Use `Wikimedia\RelPath` instead.
 * PHP 5.5, 5.6, 7.0, and 7.1 are no longer supported.
 
 ## 2.1.1
@@ -39,16 +49,16 @@ Removed:
 Fixed:
 
 * The `RelPath\joinPath` function was calling an undefined
-  function `oinPath`. This has been fixed.
+	function `oinPath`. This has been fixed.
 
 ## 2.1.0
 
 Changed:
 
 * The `RelPath` namespace functions are now static methods on a new
-  `RelPath` class in the `Wikimedia` namespace.
-  For example, change `RelPath\joinPath` to `Wikimedia\RelPath::joinPath`.
-  The old functions are kept for backward compatibility.
+	`RelPath` class in the `Wikimedia` namespace.
+	For example, change `RelPath\joinPath` to `Wikimedia\RelPath::joinPath`.
+	The old functions are kept for backward compatibility.
 
 ## 2.0.0
 
@@ -63,16 +73,16 @@ Removed:
 Fixed:
 
 * Normalize root directory slash on Windows to forward slash.
-  The leading slash could sometimes change from a forward slash
-  to a backslash due to how `dirname()` behaves on Windows.
+	The leading slash could sometimes change from a forward slash
+	to a backslash due to how `dirname()` behaves on Windows.
 
 ## 1.0.3
 
 Changed:
 
 * Collapse redundant path segments in `RelPath\joinPath()`.
-  The method could previously return `/foo/./bar` or `/foo/baz/../bar`,
-  but would now return `/foo/bar` instead.
+	The method could previously return `/foo/./bar` or `/foo/baz/../bar`,
+	but would now return `/foo/bar` instead.
 
 ## 1.0.1
 

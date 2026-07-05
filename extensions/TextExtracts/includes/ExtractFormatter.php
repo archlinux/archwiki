@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\TextExtracts;
 
-use DOMElement;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
  * Provides text-only or limited-HTML extracts of page HTML
@@ -16,7 +16,7 @@ class ExtractFormatter {
 	public const SECTION_MARKER_END = "\2\1";
 
 	/**
-	 * @var DOMElement
+	 * @var Element
 	 */
 	private $body;
 

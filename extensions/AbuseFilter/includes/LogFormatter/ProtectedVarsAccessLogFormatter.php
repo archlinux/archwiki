@@ -11,14 +11,11 @@ use MediaWiki\User\UserFactory;
 
 class ProtectedVarsAccessLogFormatter extends LogFormatter {
 
-	private UserFactory $userFactory;
-
 	public function __construct(
 		LogEntry $entry,
-		UserFactory $userFactory
+		private readonly UserFactory $userFactory
 	) {
 		parent::__construct( $entry );
-		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -45,7 +42,7 @@ class ProtectedVarsAccessLogFormatter extends LogFormatter {
 		if ( $this->entry->getSubtype() === ProtectedVarsAccessLogger::ACTION_VIEW_PROTECTED_VARIABLE_VALUE ) {
 			$tempUserName = $this->entry->getTarget()->getText();
 			$params[2] = Message::rawParam(
-				Linker::userLink( 0, $this->userFactory->newUnsavedTempUser( $tempUserName ) )
+				Linker::userLink( 0, $this->userFactory->newUnsavedTempUser( $tempUserName )->getName() )
 			);
 		}
 

@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Bisang",
+			"Revi",
 			"Tensama0415",
 			"Ykhwong",
-			"Revi",
 			"解浪"
 		]
 	},
@@ -20,7 +20,12 @@
 	"hcaptcha-challenge-closed": "계속하려면 캡차를 완료해야 합니다.",
 	"hcaptcha-challenge-expired": "캡차를 완료할 수 있는 제한 시간이 초과되었습니다. 다시 시도해 주세요.",
 	"hcaptcha-generic-error": "양식을 로드하는 중 오류가 발생했습니다. 계속하셔면 문서를 새로 고쳐야 합니다.",
+	"hcaptcha-internal-error": "양식을 전송하는 동안 내부 오류가 발생했습니다. 다시 시도해 주세요.",
+	"hcaptcha-network-error": "양식을 전송하는 동안 네트워크 오류가 발생했습니다. 인터넷 연결이 정상인지 확인하고 다시 시도해 주세요.",
+	"hcaptcha-rate-limited": "캡차를 풀려는 시도가 너무 많았습니다. 잠시 후 다시 시도해 주세요.",
 	"hcaptcha-loading-indicator-label": "양식을 로드하는 동안 잠시 기다려 주세요...",
 	"hcaptcha-missing-token": "양식을 아직 로딩하지 않았습니다. 잠시 기다린 후 다시 시도해 주세요.",
-	"hcaptcha-noscript": "계속하려면 자바스크립트가 필요합니다. 브라우저 설정에서 자바스크립트를 활성화한 후 문서를 새로고침하세요."
+	"hcaptcha-noscript": "계속하려면 자바스크립트가 필요합니다. 브라우저 설정에서 자바스크립트를 활성화한 후 문서를 새로고침하세요.",
+	"hcaptcha-force-show-captcha-edit": "편집 내용을 저장하려면 양식을 다시 제출하고 과제를 완료해 주세요.",
+	"hcaptcha-visual-editor-error-handler-warning": "편집을 저장하려면 폼을 다시 제출해 주십시오."
 }

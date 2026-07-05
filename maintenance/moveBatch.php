@@ -13,7 +13,6 @@
  */
 
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -65,7 +64,6 @@ class MoveBatch extends Maintenance {
 		if ( !$user || !$user->isRegistered() ) {
 			$this->fatalError( "Invalid username" );
 		}
-		StubGlobalUser::setUser( $user );
 
 		$movePageFactory = $this->getServiceContainer()->getMovePageFactory();
 

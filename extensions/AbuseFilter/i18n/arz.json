@@ -199,7 +199,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "حدد متغير ($1)",
 	"abusefilter-edit-builder-group-vars": "متغيرات",
 	"abusefilter-edit-builder-vars-timestamp": "طابع وقت يونكس للتغيير ($1)",
-	"abusefilter-edit-builder-vars-accountname": "اسم الحساب عند إنشاء الحساب ($1)",
+	"abusefilter-edit-builder-vars-account-name": "اسم الحساب عند إنشاء الحساب ($1)",
 	"abusefilter-edit-builder-vars-action": "عمل ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "خطات مضيفه في تحرير ($1)",
 	"abusefilter-edit-builder-vars-delta": "تغيير الحجم في التحرير ($1)",

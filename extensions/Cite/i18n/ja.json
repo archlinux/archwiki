@@ -12,6 +12,7 @@
 			"Fryed-peach",
 			"JtFuruhata",
 			"Kkairri",
+			"Kokage si",
 			"Marine-Blue",
 			"Omotecho",
 			"Otokoume",
@@ -19,8 +20,7 @@
 			"Shirayuki",
 			"Sujiniku",
 			"Yusuke1109",
-			"春春眠眠",
-			"Kokage si"
+			"春春眠眠"
 		]
 	},
 	"cite-desc": "引用のためのタグ <code>&lt;ref&gt;</code> および <code>&lt;references/&gt;</code> を追加する",
@@ -72,8 +72,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "脚注の表示",
 	"cite-wikieditor-help-content-reference-example-text1": "ページ本文$1。",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 リンクタイトル]、追加テキスト",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 リンクタイトル]",
+	"cite-wikieditor-help-content-reference-example-text3": "書籍",
 	"cite-wikieditor-help-content-reference-example-ref-id": "テスト",
+	"cite-wikieditor-help-content-reference-example-extra-details": "76ページ",
 	"communityconfiguration-cite-title": "引用",
 	"communityconfiguration-cite-description": "脚注の形式と見た目をカスタマイズします。",
 	"cite-configuration-title": "引用の設定",

@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Pagers;
 
-use MediaWiki\CheckUser\Investigate\Pagers\TimelineRowFormatter;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelineRowFormatter;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogFormatter;
 use MediaWiki\Logging\LogPage;
@@ -13,9 +13,10 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\IPUtils;
 
 /**
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\TimelineRowFormatter
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelineRowFormatter
  * @group CheckUser
  * @group Database
  */
@@ -48,7 +49,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 	public static function provideGetFormattedRowItems() {
 		return [
 			'Edit performed by IPv4' => [
-				[ 'ip' => '127.0.0.1', 'agent' => 'Test' ],
+				[ 'ip_hex' => IPUtils::toHex( '127.0.0.1' ), 'agent' => 'Test' ],
 				[
 					'links' => [
 						// No flags should be displayed if the action didn't create a page and wasn't marked as minor.
@@ -66,7 +67,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 			],
 			'Log performed by IPv6' => [
 				[
-					'ip' => '2001:DB8::1', 'log_action' => 'migrated-cu_changes-log-event',
+					'ip_hex' => IPUtils::toHex( '2001:DB8::1' ), 'log_action' => 'migrated-cu_changes-log-event',
 					'log_type' => 'checkuser-private-event',
 					'log_params' => LogEntryBase::makeParamBlob( [ '4::actiontext' => 'test action text' ] ),
 					'log_deleted' => 0,
@@ -177,7 +178,9 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 			->newBlockUser(
 				$hiddenUser,
 				$this->getTestUser( [ 'suppress', 'sysop' ] )->getAuthority(),
-				'infinity', 'block to hide the test user', [ 'isHideUser' => true ]
+				'infinity',
+				'block to hide the test user',
+				[ 'isHideUser' => true ]
 			)->placeBlock();
 		$this->assertStatusGood( $blockStatus );
 		// ::testGetFormattedRowItems uses a test user which cannot see users which are hidden.
@@ -202,7 +205,9 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 			->newBlockUser(
 				$hiddenUser,
 				$this->getTestUser( [ 'suppress', 'sysop' ] )->getAuthority(),
-				'infinity', 'block to hide the test user', [ 'isHideUser' => true ]
+				'infinity',
+				'block to hide the test user',
+				[ 'isHideUser' => true ]
 			)->placeBlock();
 		$this->assertStatusGood( $blockStatus );
 		// Get the object under test and the row.
@@ -310,11 +315,15 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 		$objectUnderTest = $this->getObjectUnderTest();
 		$row = array_merge(
 			$this->getDefaultsForTimelineRow(),
-			[ 'user_text' => null, 'user' => null, 'actor' => null, 'ip' => '1.2.3.4', 'type' => RC_EDIT ]
+			[
+				'user_text' => null, 'user' => null, 'actor' => null,
+				'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'type' => RC_EDIT,
+			]
 		);
 		$actualTimelineFormattedRowItems = $objectUnderTest->getFormattedRowItems( (object)$row );
 		$this->assertStringContainsString(
-			'1.2.3.4', $actualTimelineFormattedRowItems['info']['userLinks'],
+			'1.2.3.4',
+			$actualTimelineFormattedRowItems['info']['userLinks'],
 			'The userLinks should display the IP as the performer in the userLinks if the actor ID was null.'
 		);
 	}
@@ -330,7 +339,9 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 		$actualLogLink = $actualTimelineFormattedRowItems['links']['logLink'];
 		$this->assertStringContainsString( '123', $actualLogLink, 'The log ID link should include the log ID' );
 		$this->assertStringContainsString(
-			'(checkuser-log-link-text', $actualLogLink, 'The link text was not as expected'
+			'(checkuser-log-link-text',
+			$actualLogLink,
+			'The link text was not as expected'
 		);
 	}
 
@@ -393,15 +404,17 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 		$actualLogLink = $actualTimelineFormattedRowItems['links']['logLink'];
 		$this->assertStringContainsString( '123', $actualLogLink );
 		$this->assertStringContainsString(
-			'(checkuser-log-link-text', $actualLogLink, 'The link text was not as expected'
+			'(checkuser-log-link-text',
+			$actualLogLink,
+			'The link text was not as expected'
 		);
 	}
 
-	private function getDefaultsForTimelineRow() {
+	private function getDefaultsForTimelineRow(): array {
 		return [
 			'namespace' => 0, 'title' => 'Test', 'actiontext' => '', 'timestamp' => '20210405060708',
 			'minor' => 0, 'page_id' => 0, 'type' => RC_EDIT, 'this_oldid' => 0, 'last_oldid' => 0,
-			'ip' => '127.0.0.1', 'xff' => '', 'agent' => '', 'id' => 0, 'user' => 0,
+			'ip_hex' => IPUtils::toHex( '127.0.0.1' ), 'xff' => '', 'agent' => '', 'id' => 0, 'user' => 0,
 			'user_text' => '', 'comment_text' => '', 'comment_data' => null, 'actor' => null, 'log_type' => null,
 			'log_action' => null, 'log_params' => null, 'log_deleted' => null, 'log_id' => null,
 		];

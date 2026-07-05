@@ -4,9 +4,11 @@ namespace MediaWiki\Extension\ConfirmEdit\hCaptcha\Services;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
+use MediaWiki\Extension\ConfirmEdit\hCaptcha\HCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Html\Html;
 use MediaWiki\Output\OutputPage;
+use Wikimedia\Assert\Assert;
 
 /**
  * Service used to de-duplicate the code for adding hCaptcha to the output in both
@@ -23,11 +25,10 @@ class HCaptchaOutput {
 		'HCaptchaApiUrl',
 	];
 
-	private ServiceOptions $options;
-
-	public function __construct( ServiceOptions $options ) {
+	public function __construct(
+		private readonly ServiceOptions $options,
+	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
 	}
 
 	/**
@@ -48,8 +49,12 @@ class HCaptchaOutput {
 		} else {
 			$action = CaptchaTriggers::CREATE;
 		}
+		/** @var HCaptcha $simpleCaptcha */
 		$simpleCaptcha = Hooks::getInstance( $action );
-		$siteKey = $simpleCaptcha->getConfig()['HCaptchaSiteKey'] ?? $this->options->get( 'HCaptchaSiteKey' );
+		Assert::postcondition(
+			$simpleCaptcha instanceof HCaptcha, '$simpleCaptcha is not an instance of HCaptcha'
+		);
+		$siteKey = $simpleCaptcha->getSiteKeyForAction();
 		$useInvisibleMode = $this->options->get( 'HCaptchaInvisibleMode' );
 
 		$hCaptchaElementAttribs = [
@@ -98,6 +103,11 @@ class HCaptchaOutput {
 				$outputPage->msg( 'hcaptcha-noscript' )->parse()
 			)
 		);
+		if ( $simpleCaptcha->shouldForceShowCaptcha() ) {
+			// Set a flag that can be used in HCaptcha::shouldCheck() to know if the "showcaptcha"
+			// AbuseFilter consequence was invoked.
+			$output .= Html::hidden( 'wgConfirmEditForceShowCaptcha', true );
+		}
 		return $output;
 	}
 }

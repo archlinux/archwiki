@@ -8,6 +8,7 @@
 			"Tweety"
 		]
 	},
+	"collabpad-disabled": "هن وڪي تي ڪولاب پيڊ فعال نہ آهي.",
 	"collabpad-doctitle": "ڪولاب پيڊ: $1",
 	"collabpad-import-subtitle": "$1 کان درآمديل",
 	"collabpad": "ڪولاب پيڊ",
@@ -170,6 +171,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "ھيٺين-سرخي 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "ھيٺين-سرخي 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "ھيٺين-سرخي 4",
+	"visualeditor-fullpage-switch-label": "مڪمل صفحو سنواريو",
 	"visualeditor-generating-wikitext-progress": "وڪي‌متن جوڙيندي",
 	"visualeditor-languages-tool": "ٻوليون",
 	"visualeditor-linkinspector-button-link-external": "ٻاھرين سائيٽ",

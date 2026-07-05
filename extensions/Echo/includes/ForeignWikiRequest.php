@@ -4,12 +4,10 @@ namespace MediaWiki\Extension\Notifications;
 
 use CentralAuthSessionProvider;
 use Exception;
-use MediaWiki\Api\ApiMain;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Exception\MWExceptionHandler;
+use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\User\CentralId\CentralIdLookup;
@@ -85,40 +83,16 @@ class ForeignWikiRequest {
 	}
 
 	/**
-	 * Returns CentralAuth token, or null on failure.
+	 * Returns CentralAuth token. Should only be called if ::canUseCentralAuth returns true.
 	 *
-	 * @param User $user
-	 * @return string|null
+	 * @return string
 	 */
-	protected function getCentralAuthToken( User $user ) {
-		$context = new RequestContext;
-		$context->setRequest( new FauxRequest( [ 'action' => 'centralauthtoken' ],
-			session: SessionManager::getGlobalSession() ) );
-		$context->setUser( $user );
-
-		$api = new ApiMain( $context );
-
-		try {
-			$api->execute();
-
-			return $api->getResult()->getResultData( [ 'centralauthtoken', 'centralauthtoken' ] );
-		} catch ( Exception $ex ) {
-			LoggerFactory::getInstance( 'Echo' )->debug(
-				'Exception when fetching CentralAuth token: wiki: {wiki}, userName: {userName}, ' .
-					'userId: {userId}, centralId: {centralId}, exception: {exception}',
-				[
-					'wiki' => WikiMap::getCurrentWikiId(),
-					'userName' => $user->getName(),
-					'userId' => $user->getId(),
-					'centralId' => $this->getCentralId( $user ),
-					'exception' => $ex,
-				]
-			);
-
-			MWExceptionHandler::logException( $ex );
-
-			return null;
-		}
+	private function getCentralAuthToken() {
+		return CentralAuthServices::getApiTokenManager()->getToken(
+			$this->user,
+			SessionManager::getGlobalSession()->getId(),
+			WikiMap::getCurrentWikiId()
+		);
 	}
 
 	/**
@@ -141,7 +115,7 @@ class ForeignWikiRequest {
 					'format' => 'json',
 					'formatversion' => '1',
 					'errorformat' => 'bc',
-					'centralauthtoken' => $this->getCentralAuthToken( $this->user ),
+					'centralauthtoken' => $this->getCentralAuthToken(),
 				];
 			}, $originalRequest );
 			$responses = $this->doRequests( $reqs );
@@ -170,7 +144,8 @@ class ForeignWikiRequest {
 	 * @return array[] Array of request parameters to pass to doRequests(), keyed by wiki name
 	 */
 	protected function getRequestParams( $method, $makeParams, ?WebRequest $originalRequest ) {
-		$apis = ForeignNotifications::getApiEndpoints( $this->wikis );
+		$lang = RequestContext::getMain()->getLanguage();
+		$apis = ForeignNotifications::getApiEndpoints( $this->wikis, $lang );
 		if ( !$apis ) {
 			return [];
 		}
@@ -215,7 +190,7 @@ class ForeignWikiRequest {
 		}
 
 		return [
-			'centralauthtoken' => $this->getCentralAuthToken( $this->user ),
+			'centralauthtoken' => $this->getCentralAuthToken(),
 			// once all the results are gathered & merged, they'll be output in the
 			// user requested format
 			// but this is going to be an internal request & we don't want those

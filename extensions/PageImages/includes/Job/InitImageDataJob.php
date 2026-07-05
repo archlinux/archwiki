@@ -4,23 +4,21 @@ namespace PageImages\Job;
 
 use MediaWiki\Exception\MWExceptionHandler;
 use MediaWiki\JobQueue\Job;
-use MediaWiki\Title\Title;
 use RefreshLinks;
 use Wikimedia\Rdbms\ILBFactory;
 
 class InitImageDataJob extends Job {
+
 	/**
-	 * @param Title $title Title object associated with this job
 	 * @param array $params Parameters to the job, containing an array of
 	 * page ids representing which pages to process
 	 * @param ILBFactory $lbFactory
 	 */
 	public function __construct(
-		Title $title,
 		array $params,
 		private readonly ILBFactory $lbFactory,
 	) {
-		parent::__construct( 'InitImageDataJob', $title, $params );
+		parent::__construct( 'InitImageDataJob', $params );
 	}
 
 	/**

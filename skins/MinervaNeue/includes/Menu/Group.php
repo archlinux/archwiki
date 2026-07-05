@@ -29,13 +29,13 @@ use MediaWiki\Minerva\Menu\Entries\IMenuEntry;
 final class Group {
 	/** @var IMenuEntry[] */
 	private array $entries = [];
-	private string $id;
 
 	/**
 	 * @param string $id of the menu defaults to null (optional)
 	 */
-	public function __construct( $id ) {
-		$this->id = $id;
+	public function __construct(
+		private readonly string $id,
+	) {
 	}
 
 	/**

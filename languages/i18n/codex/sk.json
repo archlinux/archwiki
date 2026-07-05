@@ -22,6 +22,7 @@
 	"cdx-table-pager-button-last-page": "Posledná stránka",
 	"cdx-table-pager-button-next-page": "Ďalšia stránka",
 	"cdx-table-pager-button-prev-page": "Predchádzajúca stránka",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 položka|$1 položky|$1 položiek}}",
 	"cdx-table-pager-items-per-page-default": "Výsledkov na stránku",
 	"cdx-table-pagination-status-message-determinate-long": "Zobrazujú sa výsledky $1–$2 z $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 z $3",

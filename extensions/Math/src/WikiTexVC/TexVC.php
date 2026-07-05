@@ -50,7 +50,7 @@ class TexVC {
 	 * @return mixed output of the grammar.
 	 * @throws SyntaxError when SyntaxError in the input
 	 */
-	public function parse( $input, $options = null ) {
+	public function parse( $input, $options = [] ) {
 		return $this->parser->parse( $input, $options );
 	}
 

@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"Derugon",
+			"EmDashUser002",
+			"Escargot bleu",
+			"Gomoko",
+			"JLTRY",
+			"Thibaut120094",
+			"Urhixidur",
+			"Verdy p",
+			"Wladek92"
+		]
+	},
+	"oathauth-webauthn-module-label": "Clé de sécurité",
+	"oathauth-webauthn-javascript-required": "JavaScript doit être activé dans votre navigateur pour utiliser WebAuthn.",
+	"oathauth-webauthn-ui-login-prompt": "Veuillez toucher votre dispositif de vérification ou suivre les instructions du navigateur",
+	"oathauth-webauthn-ui-add-key": "Ajouter une clef",
+	"oathauth-webauthn-error-browser-unsupported": "Ce navigateur ne prend pas en charge le protocole WebAuthentication ou celui-ci n’est pas disponible pour ce site web. Veuillez essayer avec un autre navigateur. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support En savoir plus].",
+	"oathauth-webauthn-error-browser-unsupported-console": "Ce navigateur ne prend pas en charge WebAuthentication ou n’est pas disponible pour ce site web.",
+	"oathauth-webauthn-error-auth-generic": "Le processus d’authentification a été interrompu. Veuillez redémarrer le processus d’authentification.",
+	"oathauth-webauthn-error-reg-generic": "Impossible de vérifier votre clef. Veuillez redémarrer le processus d’inscription.",
+	"oathauth-webauthn-registered-keys-section-name": "Clefs enregistrées",
+	"oathauth-webauthn-ui-remove-key": "Retirer",
+	"oathauth-webauthn-error-module-not-enabled": "Le module « $1 » n’est pas activé pour l’utilisat{{GENDER:$2|eur|rice}} «  $2  »",
+	"oathauth-webauthn-error-verification-failed": "Échec de la vérification WebAuthn",
+	"oathauth-webauthn-error-credentials-missing": "Les clef d'accès WebAuthn n'ont pas étés envoyés",
+	"oathauth-webauthn-error-cannot-register": "L’utilisat{{GENDER:$1|eur|rice}} « $1 » ne peut pas enregistrer une nouvelle clef d’accès.",
+	"oathauth-webauthn-error-invalid-new-key": "Le type de la nouvelle clef retournée par le module ne correspond pas au type requis.",
+	"oathauth-webauthn-error-registration-failed": "Échec lors de l’enregistrement de la nouvelle clef.",
+	"oathauth-webauthn-ui-key-register-help": "Choisissez un surnom pour votre clef :",
+	"oathauth-webauthn-error-cannot-remove-key": "La clef ne peut pas être supprimée.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Les informations d’authentification n’ont pas pu être récupérées.",
+	"oathauth-webauthn-add-key-section-name": "Inscrire une nouvelle clef WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "Les informations sur l’inscription n’ont pas pu être récupérées.",
+	"oathauth-webauthn-module-description": "WebAuthn est en phase expérimentale. Il n'existe actuellement aucune option de récupération pour les dispositifs d'authentification perdus ou endommagés. [https://en.wikipedia.org/wiki/WebAuthn En savoir plus sur WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Recharger la page",
+	"oathauth-webauthn-authentication-info-label": "Données d’authentification",
+	"oathauth-webauthn-authentication-info-help": "Données d’authentification passées au client pour la récupération des références",
+	"oathauth-webauthn-credential-label": "Références de l’utilisateur",
+	"oathauth-webauthn-credential-help": "Références de l’utilisateur basées sur les données d’authentification",
+	"oathauth-webauthn-add-security-key": "Ajouter une clé de sécurité"
+}

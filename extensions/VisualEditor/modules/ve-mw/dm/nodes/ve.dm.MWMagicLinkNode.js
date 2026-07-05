@@ -257,11 +257,6 @@ ve.dm.MWMagicLinkType.prototype.getCode = function () {
 };
 
 /**
- * @method ve.dm.MWMagicLinkNode.getHref
- * @inheritdoc ve.dm.MWMagicLinkNode#getHref
- */
-
-/**
  * Return true if the given href is appropriate for this magic link.
  *
  * @param {string} href

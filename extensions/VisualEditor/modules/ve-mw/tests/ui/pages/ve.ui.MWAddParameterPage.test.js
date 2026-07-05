@@ -34,19 +34,20 @@ QUnit.test( 'Input event handlers', ( assert ) => {
 	assert.strictEqual( page.paramInputField.getValue(), 'documented', 'bad input is not cleared' );
 } );
 
-[
-	[ '', 0 ],
-	[ 'a', 0 ],
-	[ 'a=b', '(visualeditor-dialog-transclusion-add-param-error-forbidden-char: =)' ],
-	[ 'x|a=b', '(visualeditor-dialog-transclusion-add-param-error-forbidden-char: |)' ],
-	[ 'used', '(visualeditor-dialog-transclusion-add-param-error-exists-selected: used, used)' ],
-	[ 'unused', '(visualeditor-dialog-transclusion-add-param-error-exists-unselected: unused, unused)' ],
-	[ 'usedAlias', '(visualeditor-dialog-transclusion-add-param-error-alias: usedAlias, xLabel)' ],
-	[ 'unusedAlias', '(visualeditor-dialog-transclusion-add-param-error-alias: unusedAlias, y)' ],
-	[ 'usedAliasNoLabel', '(visualeditor-dialog-transclusion-add-param-error-alias: usedAliasNoLabel, usedAliasNoLabel)' ],
-	[ 'usedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-exists-selected: usedDeprecated, usedDeprecated)' ],
-	[ 'unusedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-deprecated: unusedDeprecated, unusedDeprecated)' ]
-].forEach( ( [ input, expected ] ) => QUnit.test( 'getValidationErrors: ' + input, ( assert ) => {
+QUnit.test( 'getValidationErrors', ( assert ) => {
+	[
+		[ '' ],
+		[ 'a' ],
+		[ 'a=b', '(visualeditor-dialog-transclusion-add-param-error-forbidden-char: =)' ],
+		[ 'x|a=b', '(visualeditor-dialog-transclusion-add-param-error-forbidden-char: |)' ],
+		[ 'used', '(visualeditor-dialog-transclusion-add-param-error-exists-selected: used, used)' ],
+		[ 'unused', '(visualeditor-dialog-transclusion-add-param-error-exists-unselected: unused, unused)' ],
+		[ 'usedAlias', '(visualeditor-dialog-transclusion-add-param-error-alias: usedAlias, xLabel)' ],
+		[ 'unusedAlias', '(visualeditor-dialog-transclusion-add-param-error-alias: unusedAlias, y)' ],
+		[ 'usedAliasNoLabel', '(visualeditor-dialog-transclusion-add-param-error-alias: usedAliasNoLabel, usedAliasNoLabel)' ],
+		[ 'usedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-exists-selected: usedDeprecated, usedDeprecated)' ],
+		[ 'unusedDeprecated', '(visualeditor-dialog-transclusion-add-param-error-deprecated: unusedDeprecated, unusedDeprecated)' ]
+	].forEach( ( [ input, expectedError ] ) => {
 		const data = {
 			target: {},
 			params: {
@@ -74,9 +75,10 @@ QUnit.test( 'Input event handlers', ( assert ) => {
 		template.addParameter( parameter );
 
 		const errors = page.getValidationErrors( input );
-		assert.strictEqual( errors.length, expected ? 1 : 0 );
-		if ( expected ) {
-			assert.strictEqual( errors[ 0 ].text(), expected );
+		if ( expectedError ) {
+			assert.strictEqual( errors[ 0 ].text(), expectedError, `expected error for '${ input }'` );
+		} else {
+			assert.strictEqual( errors.length, 0, `no errors for '${ input }'` );
 		}
-	} )
-);
+	} );
+} );

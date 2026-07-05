@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\LBFactory;
 
 class AbuseLoggerFactory {
-	public const SERVICE_NAME = 'AbuseFilterAbuseLoggerFactory';
+	public const SERVICE_NAME = ServiceNames::AbuseLoggerFactory;
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterLogIP',
@@ -32,55 +32,24 @@ class AbuseLoggerFactory {
 	 */
 	private const DEFAULT_DEBOUNCE_DELAY = 24 * 60 * 60;
 
-	private CentralDBManager $centralDBManager;
-	private FilterLookup $filterLookup;
-	private VariablesBlobStore $varBlobStore;
-	private VariablesManager $varManager;
-	private EditRevUpdater $editRevUpdater;
-	private AbuseFilterPermissionManager $afPermissionManager;
-	private RuleCheckerFactory $ruleCheckerFactory;
-	private LBFactory $lbFactory;
-	private ActorStore $actorStore;
-	private TitleFactory $titleFactory;
-	private ServiceOptions $options;
-	private string $wikiID;
-	private string $requestIP;
-	private LoggerInterface $logger;
-	private AbuseFilterHookRunner $hookRunner;
-
 	public function __construct(
-		CentralDBManager $centralDBManager,
-		FilterLookup $filterLookup,
-		VariablesBlobStore $varBlobStore,
-		VariablesManager $varManager,
-		EditRevUpdater $editRevUpdater,
-		AbuseFilterPermissionManager $afPermissionManager,
-		RuleCheckerFactory $ruleCheckerFactory,
-		LBFactory $lbFactory,
-		ActorStore $actorStore,
-		TitleFactory $titleFactory,
-		ServiceOptions $options,
-		string $wikiID,
-		string $requestIP,
-		LoggerInterface $logger,
-		AbuseFilterHookRunner $hookRunner
+		private readonly CentralDBManager $centralDBManager,
+		private readonly FilterLookup $filterLookup,
+		private readonly VariablesBlobStore $varBlobStore,
+		private readonly VariablesManager $varManager,
+		private readonly EditRevUpdater $editRevUpdater,
+		private readonly AbuseFilterPermissionManager $afPermissionManager,
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly LBFactory $lbFactory,
+		private readonly ActorStore $actorStore,
+		private readonly TitleFactory $titleFactory,
+		private readonly ServiceOptions $options,
+		private readonly string $wikiID,
+		private readonly string $requestIP,
+		private readonly LoggerInterface $logger,
+		private readonly AbuseFilterHookRunner $hookRunner
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->centralDBManager = $centralDBManager;
-		$this->filterLookup = $filterLookup;
-		$this->varBlobStore = $varBlobStore;
-		$this->varManager = $varManager;
-		$this->editRevUpdater = $editRevUpdater;
-		$this->afPermissionManager = $afPermissionManager;
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->lbFactory = $lbFactory;
-		$this->actorStore = $actorStore;
-		$this->titleFactory = $titleFactory;
-		$this->options = $options;
-		$this->wikiID = $wikiID;
-		$this->requestIP = $requestIP;
-		$this->logger = $logger;
-		$this->hookRunner = $hookRunner;
 	}
 
 	/**

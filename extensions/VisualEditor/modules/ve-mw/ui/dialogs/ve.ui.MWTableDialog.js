@@ -102,10 +102,10 @@ ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
 			this.collapsedToggle.setValue( collapsed ).setDisabled( isReadOnly || hasExpandedAttrs );
 
 			ve.extendObject( this.initialValues, {
-				wikitable: wikitable,
-				sortable: sortable,
-				collapsible: collapsible,
-				collapsed: collapsed
+				wikitable,
+				sortable,
+				collapsible,
+				collapsed
 			} );
 
 			this.onCollapsibleChange( collapsible );

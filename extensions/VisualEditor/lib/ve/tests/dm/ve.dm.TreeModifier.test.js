@@ -162,7 +162,7 @@ QUnit.test( 'treeDiff', ( assert ) => {
 	const doc = surface.documentModel;
 	ve.dm.treeModifier.setup( doc );
 	let j = 0;
-	for ( let i = 0, iLen = tx.operations.length; i < iLen; i++ ) {
+	for ( let i = 0; i < tx.operations.length; i++ ) {
 		ve.dm.treeModifier.processLinearOperation( tx.operations[ i ] );
 		assert.deepEqual(
 			ve.dm.treeModifier.treeOps.slice( j ),
@@ -442,9 +442,9 @@ QUnit.test( 'checkEqualData', ( assert ) => {
 					attrs: {},
 					body: { id: 'mw-reference-text-cite_note-1' }
 				},
-				listIndex: 0,
 				listGroup: 'mwReference/',
 				listKey: 'auto/0',
+				listIndex: 0,
 				refGroup: '',
 				contentsUsed: true,
 				refListItemId: 'mw-reference-text-cite_note-1'

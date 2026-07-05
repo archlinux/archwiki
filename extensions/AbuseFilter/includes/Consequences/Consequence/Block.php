@@ -8,8 +8,8 @@ use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Permissions\Authority;
-use MessageLocalizer;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -17,36 +17,18 @@ use Psr\Log\LoggerInterface;
  */
 class Block extends BlockingConsequence implements ReversibleConsequence {
 
-	private bool $preventsTalkEdit;
-	private DatabaseBlockStore $databaseBlockStore;
-	private UnblockUserFactory $unblockUserFactory;
-
-	/**
-	 * @param Parameters $params
-	 * @param string $expiry
-	 * @param bool $preventTalkEdit
-	 * @param BlockUserFactory $blockUserFactory
-	 * @param UnblockUserFactory $unblockUserFactory
-	 * @param DatabaseBlockStore $databaseBlockStore
-	 * @param FilterUser $filterUser
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
 		Parameters $params,
 		string $expiry,
-		bool $preventTalkEdit,
+		private readonly bool $preventTalkEdit,
 		BlockUserFactory $blockUserFactory,
-		UnblockUserFactory $unblockUserFactory,
-		DatabaseBlockStore $databaseBlockStore,
+		private readonly UnblockUserFactory $unblockUserFactory,
+		private readonly DatabaseBlockStore $databaseBlockStore,
 		FilterUser $filterUser,
 		MessageLocalizer $messageLocalizer,
 		LoggerInterface $logger
 	) {
 		parent::__construct( $params, $expiry, $blockUserFactory, $filterUser, $messageLocalizer, $logger );
-		$this->unblockUserFactory = $unblockUserFactory;
-		$this->databaseBlockStore = $databaseBlockStore;
-		$this->preventsTalkEdit = $preventTalkEdit;
 	}
 
 	/**
@@ -58,8 +40,8 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 			$this->parameters->getFilter()->getID(),
 			$this->parameters->getUser()->getName(),
 			$this->expiry,
-			$autoblock = true,
-			$this->preventsTalkEdit
+			true,
+			$this->preventTalkEdit
 		);
 		// TODO: Should we reblock in case of partial blocks? At that point we could return
 		// the status of doBlockInternal

@@ -9,6 +9,7 @@ use MediaWiki\Deferred\LinksUpdate\CategoryLinksTable;
 use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
 use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
 use MediaWiki\Deferred\LinksUpdate\InterwikiLinksTable;
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
 use MediaWiki\Deferred\LinksUpdate\PageLinksTable;
 use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\Linker\LinkTarget;
@@ -218,12 +219,13 @@ class RefreshLinks extends Maintenance {
 		}
 
 		// Update the page table to be sure it is an a consistent state
-		$dbw->newUpdateQueryBuilder()
+		$update = $dbw->newUpdateQueryBuilder()
 			->update( 'page' )
 			->set( [ 'page_is_redirect' => $fieldValue ] )
 			->where( [ 'page_id' => $id ] )
-			->caller( __METHOD__ )
-			->execute();
+			->caller( __METHOD__ );
+		$update->execute();
+		$maint->getServiceContainer()->getLinkWriteDuplicator()->duplicate( $update );
 	}
 
 	/**
@@ -324,6 +326,7 @@ class RefreshLinks extends Maintenance {
 			'externallinks' => ExternalLinksTable::VIRTUAL_DOMAIN,
 			'imagelinks' => ImageLinksTable::VIRTUAL_DOMAIN,
 			'iwlinks' => InterwikiLinksTable::VIRTUAL_DOMAIN,
+			'langlinks' => LangLinksTable::VIRTUAL_DOMAIN,
 			'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
 			'templatelinks' => TemplateLinksTable::VIRTUAL_DOMAIN,
 		];

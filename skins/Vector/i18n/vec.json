@@ -51,9 +51,6 @@
 	"vector-toc-label": "Somario",
 	"vector-toc-beginning": "Scuminsio",
 	"vector-toc-toggle-button-label": "Mostra o scondi la sesion $1",
-	"vector-anon-user-menu-pages": "Pagine par i utenti anònemi",
-	"vector-anon-user-menu-pages-learn": "par savérghine de pì",
-	"vector-anon-user-menu-pages-label": "Inparà piassè su come modìfegar",
 	"vector-main-menu-tooltip": "Menù prinsipal",
 	"vector-toc-menu-tooltip": "Somario",
 	"vector-toc-collapsible-button-label": "Mostra o scondi el somario",
@@ -72,6 +69,5 @@
 	"empty-language-selector-body": "Contenuti de pajine no soportà in altre łéngue.",
 	"vector-toc-unpinned-popup": "El somario el xe stà spostà chì.",
 	"vector-page-tools-unpinned-popup": "El menù dei instrumenti el xe stà spostà chì.",
-	"vector-main-menu-unpinned-popup": "El menù prinsipal xe stà spostà chì.",
-	"vector-2022-beta-preview-label": "Vector 2022 beta"
+	"vector-main-menu-unpinned-popup": "El menù prinsipal xe stà spostà chì."
 }

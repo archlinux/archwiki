@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Logging;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Logging;
 
 use Generator;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
@@ -17,7 +17,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * @covers \MediaWiki\CheckUser\Logging\TemporaryAccountLogger
+ * @covers \MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger
  */
 class TemporaryAccountLoggerTest extends MediaWikiUnitTestCase {
 	public static function provideLogViewDebounced(): Generator {

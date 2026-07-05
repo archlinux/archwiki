@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\TemplateData;
 
 use MediaWiki\Language\Language;
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * @license GPL-2.0-or-later

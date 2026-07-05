@@ -101,9 +101,9 @@ OO.initClass( ve.dm.TreeModifier );
  * @param {Object[]} treeOps The tree operations
  */
 ve.dm.TreeModifier.static.applyTreeOperations = function ( isReversed, document, treeOps ) {
-	for ( let i = 0, iLen = treeOps.length; i < iLen; i++ ) {
-		this.applyTreeOperation( isReversed, document, treeOps[ i ] );
-	}
+	treeOps.forEach( ( treeOp ) => {
+		this.applyTreeOperation( isReversed, document, treeOp );
+	} );
 };
 
 /**
@@ -212,7 +212,7 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		let i, offset, childLength, child;
 
 		if ( contentOffset === 0 ) {
-			return { node: node, offset: 0 };
+			return { node, offset: 0 };
 		}
 		// Find the child that will take us up to or past the contentOffset
 		offset = 0;
@@ -228,7 +228,7 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 			}
 		}
 		if ( offset === contentOffset ) {
-			return { node: node, offset: i + 1 };
+			return { node, offset: i + 1 };
 		}
 		return { node: child, offset: contentOffset - offset + childLength };
 	}
@@ -239,9 +239,9 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 		let node = document.documentNode;
 
 		// Find node
-		for ( let i = 0, iLen = path.length; i < iLen; i++ ) {
-			node = node.children[ path[ i ] ];
-		}
+		path.forEach( ( pathItem ) => {
+			node = node.children[ pathItem ];
+		} );
 		let position;
 		if ( isContent ) {
 			// Determine position from (linearized) content offset
@@ -251,7 +251,7 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 				position = ensureNotText( findContentPosition( node, offset ) );
 			}
 		} else {
-			position = { node: node, offset: offset };
+			position = { node, offset };
 		}
 		// Get linear offset
 		if ( position.node.type === 'text' || position.offset === 0 ) {
@@ -318,21 +318,24 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 	const isTextOp = treeOp.type.endsWith( 'Text' );
 	const f = treeOp.from && prepareSplice( treeOp.from, treeOp.isContent, isTextOp );
 	const t = treeOp.to && prepareSplice( treeOp.to, treeOp.isContent, isTextOp );
-	// eslint-disable-next-line es-x/no-array-string-prototype-at
+	// eslint-disable-next-line es-x/no-array-prototype-at, es-x/no-string-prototype-at
 	const a = treeOp.at && prepareSplice( treeOp.at, treeOp.isContent, isTextOp );
 
 	// Always adjust linear data before tree, to ensure consistency when node events
 	// are emitted.
 	switch ( treeOp.type ) {
 		case 'removeNode': {
+			document.clearCachedData( a.node );
 			// The node should have no contents, so its outer length should be 2
 			const data = spliceLinear( a.linearOffset, 2 );
 			this.checkEqualData( data, [ treeOp.element, { type: '/' + treeOp.element.type } ] );
-			splice( a.node, a.offset, 1 );
+			const [ nodeRemoved ] = splice( a.node, a.offset, 1 );
+			document.clearCachedData( nodeRemoved );
 			healTextNodes( a.node, a.offset );
 			break;
 		}
 		case 'insertNode': {
+			document.clearCachedData( a.node );
 			spliceLinear( a.linearOffset, 0, [ treeOp.element, { type: '/' + treeOp.element.type } ] );
 			const nodeToInsert = ve.dm.nodeFactory.createFromElement( treeOp.element );
 			if ( nodeToInsert instanceof ve.dm.BranchNode ) {
@@ -342,16 +345,20 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 			break;
 		}
 		case 'moveNode': {
+			document.clearCachedData( f.node );
+			document.clearCachedData( t.node );
 			const data = spliceLinear( f.linearOffset, f.node.children[ f.offset ].getOuterLength() );
 			// No need to use local splice function as we know the node is going
 			// to be re-inserted immediately.
 			const movedNode = f.node.splice( f.offset, 1 )[ 0 ];
+			// No need to call document.clearCachedData( movedNode ), as its contents are unchanged :)
 			const adjustment = t.linearOffset > f.linearOffset ? data.length : 0;
 			spliceLinear( t.linearOffset - adjustment, 0, data );
 			t.node.splice( t.offset, 0, movedNode );
 			break;
 		}
 		case 'removeText': {
+			document.clearCachedData( a.node );
 			const data = spliceLinear( a.linearOffset, treeOp.data.length );
 			this.checkEqualData( data, treeOp.data );
 			a.node.adjustLength( -treeOp.data.length );
@@ -359,11 +366,14 @@ ve.dm.TreeModifier.static.applyTreeOperation = function ( isReversed, document, 
 			break;
 		}
 		case 'insertText': {
+			document.clearCachedData( a.node );
 			spliceLinear( a.linearOffset, 0, treeOp.data );
 			a.node.adjustLength( treeOp.data.length );
 			break;
 		}
 		case 'moveText': {
+			document.clearCachedData( f.node );
+			document.clearCachedData( t.node );
 			const data = spliceLinear( f.linearOffset, treeOp.length );
 			f.node.adjustLength( -treeOp.length );
 			healTextNodes( f.node.parent, f.node.parent.children.indexOf( f.node ) );
@@ -422,9 +432,9 @@ ve.dm.TreeModifier.prototype.setup = function ( document ) {
  */
 ve.dm.TreeModifier.prototype.calculateTreeOperations = function ( transaction ) {
 	const linearOps = transaction.operations;
-	for ( let i = 0, iLen = linearOps.length; i < iLen; i++ ) {
-		this.processLinearOperation( linearOps[ i ] );
-	}
+	linearOps.forEach( ( linearOp ) => {
+		this.processLinearOperation( linearOp );
+	} );
 	this.processImplicitFinalRetain();
 };
 
@@ -763,9 +773,9 @@ ve.dm.TreeModifier.prototype.pushInsertNodeOp = function ( element ) {
 
 	this.treeOps.push( {
 		type: 'insertNode',
-		isContent: isContent,
+		isContent,
 		at: this.adjustInserterPosition( rawInserterPosition ),
-		element: element
+		element
 	} );
 	if ( this.insertedPositions.length === 0 ) {
 		this.modifyAdjustmentTree( rawInserterPosition, isContent ? 2 : 1, false );
@@ -786,7 +796,7 @@ ve.dm.TreeModifier.prototype.pushInsertTextOp = function ( data ) {
 		type: 'insertText',
 		isContent: true,
 		at: this.adjustInserterPosition( rawInserterPosition ),
-		data: data
+		data
 	} );
 	if ( this.insertedPositions.length === 0 ) {
 		this.modifyAdjustmentTree( rawInserterPosition, data.length, false );
@@ -812,7 +822,7 @@ ve.dm.TreeModifier.prototype.pushMoveNodeOp = function ( removerStep ) {
 
 	this.treeOps.push( {
 		type: 'moveNode',
-		isContent: isContent,
+		isContent,
 		from: this.adjustRemoverPosition( rawRemoverPosition ),
 		to: this.adjustInserterPosition( rawInserterPosition )
 	} );
@@ -841,7 +851,7 @@ ve.dm.TreeModifier.prototype.pushMoveTextOp = function ( removerStep ) {
 		isContent: true,
 		from: this.adjustRemoverPosition( rawRemoverPosition ),
 		to: this.adjustInserterPosition( rawInserterPosition ),
-		length: length
+		length
 	} );
 	this.modifyAdjustmentTree( rawRemoverPosition, -length, false );
 	if ( this.insertedPositions.length === 0 ) {
@@ -859,7 +869,7 @@ ve.dm.TreeModifier.prototype.pushRemoveNodeOp = function ( removerStep ) {
 		isContent = this.doesTypeTakeContent( removerStep.node.type );
 	this.treeOps.push( {
 		type: 'removeNode',
-		isContent: isContent,
+		isContent,
 		at: this.adjustRemoverPosition( rawRemoverPosition ),
 		element: removerStep.item.getClonedElement( true )
 	} );
@@ -898,14 +908,13 @@ ve.dm.TreeModifier.prototype.pushRemoveTextOp = function ( removerStep ) {
  */
 ve.dm.TreeModifier.prototype.findOrCreateAdjustmentNode = function ( position ) {
 	let adjustmentNode = this.adjustmentTree;
-	for ( let i = 0, len = position.length; i < len; i++ ) {
-		const offset = position[ i ];
+	position.forEach( ( offset ) => {
 		if ( !adjustmentNode[ offset ] ) {
 			adjustmentNode[ offset ] = { offsetsUsed: [] };
 			adjustmentNode.offsetsUsed.push( offset );
 		}
 		adjustmentNode = adjustmentNode[ offset ];
-	}
+	} );
 	return adjustmentNode;
 };
 
@@ -1045,7 +1054,7 @@ ve.dm.TreeModifier.prototype.getAdjustedPosition = function ( position, isInsert
 
 		const jLen = positionI + 1;
 		const offsetsUsed = node.offsetsUsed;
-		for ( let k = 0, kLen = offsetsUsed.length; k < kLen; k++ ) {
+		for ( let k = 0; k < offsetsUsed.length; k++ ) {
 			const j = offsetsUsed[ k ];
 			if ( j >= jLen ) {
 				continue;

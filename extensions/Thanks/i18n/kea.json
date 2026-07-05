@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Waldyrious",
-			"Letra.berdi"
+			"Letra.berdi",
+			"Waldyrious"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|gardisi}}}}",

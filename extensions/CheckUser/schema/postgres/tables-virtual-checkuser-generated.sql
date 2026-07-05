@@ -4,23 +4,34 @@
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 CREATE TABLE cusi_case (
   sic_id SERIAL NOT NULL,
+  sic_url_identifier INT NOT NULL,
   sic_status SMALLINT DEFAULT 0 NOT NULL,
   sic_status_reason TEXT DEFAULT '' NOT NULL,
+  sic_status_changed_by INT DEFAULT NULL,
   sic_created_timestamp TIMESTAMPTZ NOT NULL,
+  sic_updated_timestamp TIMESTAMPTZ NOT NULL,
   PRIMARY KEY(sic_id)
 );
 
-CREATE UNIQUE INDEX sic_status_created_timestamp_id ON cusi_case (
-  sic_status, sic_created_timestamp,
+CREATE UNIQUE INDEX sic_status_updated_timestamp_id ON cusi_case (
+  sic_status, sic_updated_timestamp,
   sic_id
 );
 
-CREATE UNIQUE INDEX sic_created_timestamp_id ON cusi_case (sic_created_timestamp, sic_id);
+CREATE UNIQUE INDEX sic_updated_timestamp_id ON cusi_case (sic_updated_timestamp, sic_id);
+
+CREATE UNIQUE INDEX sic_url_identifier ON cusi_case (sic_url_identifier);
+
+CREATE INDEX sic_status_changed_by_updated_timestamp_id ON cusi_case (
+  sic_status_changed_by, sic_updated_timestamp,
+  sic_id
+);
 
 
 CREATE TABLE cusi_user (
   siu_user_id INT NOT NULL,
   siu_sic_id INT NOT NULL,
+  siu_info INT NOT NULL,
   PRIMARY KEY(siu_sic_id, siu_user_id)
 );
 
@@ -31,7 +42,12 @@ CREATE TABLE cusi_signal (
   sis_sic_id INT NOT NULL,
   sis_name TEXT NOT NULL,
   sis_value TEXT NOT NULL,
-  PRIMARY KEY(sis_name, sis_value, sis_sic_id)
+  sis_trigger_id BIGINT DEFAULT 0 NOT NULL,
+  sis_trigger_type SMALLINT DEFAULT 0 NOT NULL,
+  PRIMARY KEY(
+    sis_name, sis_value, sis_sic_id, sis_trigger_id,
+  sis_trigger_type
+  )
 );
 
 CREATE INDEX sis_sic_id ON cusi_signal (sis_sic_id);

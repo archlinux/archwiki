@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Pagers;
 
-use MediaWiki\CheckUser\Investigate\Pagers\ComparePager;
-use MediaWiki\CheckUser\Investigate\Pagers\ComparePagerFactory;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePager;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePagerFactory;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\ComparePagerFactory
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePagerFactory
  * @group CheckUser
  * @group Database
  */

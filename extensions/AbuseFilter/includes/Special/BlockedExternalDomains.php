@@ -33,19 +33,18 @@ use Wikimedia\ObjectCache\WANObjectCache;
  * @ingroup SpecialPage
  */
 class BlockedExternalDomains extends SpecialPage {
-	private IBlockedDomainStorage $blockedDomainStorage;
-	private BlockedDomainValidator $blockedDomainValidator;
-	private WANObjectCache $wanCache;
 
 	public function __construct(
-		IBlockedDomainStorage $blockedDomainStorage,
-		BlockedDomainValidator $blockedDomainValidator,
-		WANObjectCache $wanCache
+		private readonly IBlockedDomainStorage $blockedDomainStorage,
+		private readonly BlockedDomainValidator $blockedDomainValidator,
+		private readonly WANObjectCache $wanCache
 	) {
 		parent::__construct( 'BlockedExternalDomains' );
-		$this->blockedDomainStorage = $blockedDomainStorage;
-		$this->blockedDomainValidator = $blockedDomainValidator;
-		$this->wanCache = $wanCache;
+	}
+
+	/** @inheritDoc */
+	public function doesWrites() {
+		return !ExtensionRegistry::getInstance()->isLoaded( 'CommunityConfiguration' );
 	}
 
 	/** @inheritDoc */

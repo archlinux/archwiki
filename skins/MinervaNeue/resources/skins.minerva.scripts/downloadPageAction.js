@@ -19,13 +19,13 @@ function isIos( userAgent ) {
  *
  * @memberof DownloadIcon
  * @instance
- * @param {Window} windowObj
- * @param {Page} page to download
+ * @param {mw.config} mw.config instance
+ * @param config
  * @param {string} userAgent User agent
- * @param {number[]} supportedNamespaces where printing is possible
  * @return {boolean}
  */
-function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
+function isAvailable( config, userAgent ) {
+	const supportedNamespaces = config.get( 'wgMinervaDownloadNamespaces', [] );
 	if ( typeof window.print !== 'function' ) {
 		// T309591: No window.print support
 		return false;
@@ -34,8 +34,8 @@ function isAvailable( windowObj, page, userAgent, supportedNamespaces ) {
 	// Download button is restricted to certain namespaces T181152.
 	// Not shown on missing pages
 	// Defaults to 0, in case cached JS has been served.
-	if ( !supportedNamespaces.includes( page.getNamespaceId() ) ||
-		page.isMainPage() || page.isMissing ) {
+	if ( !supportedNamespaces.includes( config.get( 'wgNamespaceNumber' ) ) ||
+		config.get( 'wgIsMainPage' ) || config.get( 'wgArticleId' ) === 0 ) {
 		// namespace is not supported or it's a main page
 		return false;
 	}
@@ -94,13 +94,12 @@ function onClick( portletItem, spinner, loadAllImagesInPage ) {
  * It calls mw.util.addPortletLink and may inject an element into the page.
  *
  * @ignore
- * @param {Page} page
- * @param {number[]} supportedNamespaces
+ * @param {mw.config} config
  * @param {Window} [windowObj] window object
  * @param {boolean} [overflowList] Append to overflow list
  * @return {jQuery|null}
  */
-function downloadPageAction( page, supportedNamespaces, windowObj, overflowList ) {
+function downloadPageAction( config, windowObj, overflowList ) {
 	const spinner = ( overflowList ) ? mobile.spinner( {
 		label: '',
 		isIconOnly: false
@@ -108,8 +107,7 @@ function downloadPageAction( page, supportedNamespaces, windowObj, overflowList 
 
 	if (
 		isAvailable(
-			windowObj, page, navigator.userAgent,
-			supportedNamespaces
+			config, navigator.userAgent
 		)
 	) {
 		// FIXME: Use p-views when cache has cleared.

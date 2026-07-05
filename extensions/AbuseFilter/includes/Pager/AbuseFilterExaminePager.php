@@ -13,48 +13,21 @@ use Wikimedia\Rdbms\IReadableDatabase;
 
 class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	/**
-	 * @var AbuseFilterChangesList Our changes list
-	 */
-	private $changesList;
-	/**
-	 * @var Title
-	 */
-	private $title;
-	/**
-	 * @var array Query conditions
-	 */
-	private $conds;
-	/**
 	 * @var int Line number of the row, see RecentChange::$counter
 	 */
 	private $rcCounter;
 
-	private RecentChangeFactory $recentChangeFactory;
-
-	/**
-	 * @param AbuseFilterChangesList $changesList
-	 * @param LinkRenderer $linkRenderer
-	 * @param RecentChangeFactory $recentChangeFactory
-	 * @param IReadableDatabase $dbr
-	 * @param Title $title
-	 * @param array $conds
-	 */
 	public function __construct(
-		AbuseFilterChangesList $changesList,
+		private readonly AbuseFilterChangesList $changesList,
 		LinkRenderer $linkRenderer,
-		RecentChangeFactory $recentChangeFactory,
+		private readonly RecentChangeFactory $recentChangeFactory,
 		IReadableDatabase $dbr,
-		Title $title,
-		array $conds
+		private readonly Title $title,
+		private readonly array $conds
 	) {
 		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbr;
 		parent::__construct( $changesList, $linkRenderer );
-
-		$this->recentChangeFactory = $recentChangeFactory;
-		$this->changesList = $changesList;
-		$this->title = $title;
-		$this->conds = $conds;
 		$this->rcCounter = 1;
 	}
 

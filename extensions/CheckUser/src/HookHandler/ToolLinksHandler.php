@@ -1,18 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Hook\ContributionsToolLinksHook;
-use MediaWiki\Hook\SpecialContributionsBeforeMainOutputHook;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
 use MediaWiki\Hook\UserToolLinksEditHook;
 use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Specials\Hook\ContributionsToolLinksHook;
+use MediaWiki\Specials\Hook\SpecialContributionsBeforeMainOutputHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
@@ -30,33 +29,18 @@ class ToolLinksHandler implements
 	UserToolLinksEditHook
 {
 
-	private CheckUserPermissionManager $cuPermissionManager;
-	private PermissionManager $permissionManager;
-	private SpecialPageFactory $specialPageFactory;
-	private LinkRenderer $linkRenderer;
-	private UserIdentityLookup $userIdentityLookup;
-	private UserIdentityUtils $userIdentityUtils;
-	private UserOptionsLookup $userOptionsLookup;
-	private TempUserConfig $tempUserConfig;
-
 	public function __construct(
-		CheckUserPermissionManager $cuPermissionManager,
-		PermissionManager $permissionManager,
-		SpecialPageFactory $specialPageFactory,
-		LinkRenderer $linkRenderer,
-		UserIdentityLookup $userIdentityLookup,
-		UserIdentityUtils $userIdentityUtils,
-		UserOptionsLookup $userOptionsLookup,
-		TempUserConfig $tempUserConfig
+		private readonly CheckUserPermissionManager $cuPermissionManager,
+		private readonly PermissionManager $permissionManager,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly SuggestedInvestigationsCaseLookupService $suggestedInvestigationsCaseLookupService,
+		private readonly ?MobileContext $mobileContext,
 	) {
-		$this->cuPermissionManager = $cuPermissionManager;
-		$this->permissionManager = $permissionManager;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->linkRenderer = $linkRenderer;
-		$this->userIdentityLookup = $userIdentityLookup;
-		$this->userIdentityUtils = $userIdentityUtils;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**
@@ -68,9 +52,9 @@ class ToolLinksHandler implements
 	 */
 	private function userCanRevealIP( UserIdentity $user ) {
 		return $this->permissionManager->userHasRight(
-				$user,
-				'checkuser-temporary-account-no-preference'
-			) ||
+			$user,
+			'checkuser-temporary-account-no-preference'
+		) ||
 			(
 				$this->permissionManager->userHasRight(
 					$user,
@@ -87,13 +71,7 @@ class ToolLinksHandler implements
 	 * @return bool Whether the user is in mobile view. This will always be false if MobileFrontend is not loaded.
 	 */
 	private function isMobile(): bool {
-		$isMobile = false;
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
-			/** @var MobileContext $mobFrontContext */
-			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
-			$isMobile = $mobFrontContext->shouldDisplayMobileView();
-		}
-		return $isMobile;
+		return $this->mobileContext && $this->mobileContext->shouldDisplayMobileView();
 	}
 
 	/**
@@ -160,42 +138,43 @@ class ToolLinksHandler implements
 			],
 		] );
 
+		// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal
 		$sp->getOutput()->addSubtitle( $buttons );
 	}
 
 	/**
-	 * Add a link to Special:CheckUser and Special:CheckUserLog
-	 * on Special:Contributions/<username> for
-	 * privileged users.
+	 * Add links to CheckUser interfaces (CheckUser, Investigate, IPContributions, ...)
+	 * on Special:Contributions/<username> for privileged users.
 	 *
-	 * @param int $id User ID
-	 * @param Title $nt User page title
-	 * @param string[] &$links Tool links
-	 * @param SpecialPage $sp Special page
+	 * @inheritDoc
 	 */
 	public function onContributionsToolLinks(
-		$id, Title $nt, array &$links, SpecialPage $sp
+		$id,
+		Title $title,
+		array &$tools,
+		SpecialPage $specialPage
 	) {
-		$user = $sp->getUser();
-		$linkRenderer = $sp->getLinkRenderer();
+		$targetUserIdentity = $id ? $this->userIdentityLookup->getUserIdentityByUserId( $id ) : null;
+		$user = $specialPage->getUser();
+		$linkRenderer = $specialPage->getLinkRenderer();
 
 		if (
-			( $sp->getName() === 'IPContributions' && $this->userCanRevealIP( $user ) ) ||
-			$sp->getName() === 'Contributions' ||
-			$sp->getName() === 'DeletedContributions'
+			( $specialPage->getName() === 'IPContributions' && $this->userCanRevealIP( $user ) ) ||
+			$specialPage->getName() === 'Contributions' ||
+			$specialPage->getName() === 'DeletedContributions'
 		) {
-			if ( $sp->getName() === 'IPContributions' ) {
-				if ( $sp->getRequest()->getBool( 'isArchive' ) ) {
+			if ( $specialPage->getName() === 'IPContributions' ) {
+				if ( $specialPage->getRequest()->getBool( 'isArchive' ) ) {
 					// Use the same key to ensure the link is added in the same position
-					$links['deletedcontribs'] = $linkRenderer->makeKnownLink(
-						SpecialPage::getTitleFor( 'IPContributions', $nt->getText() ),
-						$sp->msg( 'checkuser-ip-contributions-contributions-link' )->text(),
+					$tools['deletedcontribs'] = $linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( 'IPContributions', $title->getText() ),
+						$specialPage->msg( 'checkuser-ip-contributions-contributions-link' )->text(),
 						[ 'class' => 'mw-contributions-link-check-user-ip-contributions' ],
 					);
 				} elseif ( $this->userCanSeeDeleted( $user ) ) {
-					$links['deletedcontribs'] = $linkRenderer->makeKnownLink(
-						SpecialPage::getTitleFor( 'IPContributions', $nt->getText() ),
-						$sp->msg( 'checkuser-ip-contributions-deleted-contributions-link' )->text(),
+					$tools['deletedcontribs'] = $linkRenderer->makeKnownLink(
+						SpecialPage::getTitleFor( 'IPContributions', $title->getText() ),
+						$specialPage->msg( 'checkuser-ip-contributions-deleted-contributions-link' )->text(),
 						[ 'class' => 'mw-contributions-link-check-user-ip-contributions' ],
 						[ 'isArchive' => true ]
 					);
@@ -204,54 +183,76 @@ class ToolLinksHandler implements
 
 			$gcAccess = $this->cuPermissionManager->canAccessUserGlobalContributions(
 				$user,
-				$nt->getText()
+				$title->getText()
 			);
 
 			if ( $gcAccess->isGood() ) {
 				$globalContributionsLink = $linkRenderer->makeKnownLink(
-					SpecialPage::getTitleFor( 'GlobalContributions', $nt->getText() ),
-					$sp->msg( 'checkuser-global-contributions-link' )->text(),
+					SpecialPage::getTitleFor( 'GlobalContributions', $title->getText() ),
+					$specialPage->msg( 'checkuser-global-contributions-link' )->text(),
 					[ 'class' => 'mw-contributions-link-check-user-global-contributions' ],
 				);
-				$index = array_search( 'deletedcontribs', array_keys( $links ) );
+				$index = array_search( 'deletedcontribs', array_keys( $tools ) );
 				if ( $index !== false ) {
 					// Insert the global contributions link after the 'deletedcontribs' key
 					$index += 1;
-					$links = array_merge(
-						array_slice( $links, 0, $index ),
+					$tools = array_merge(
+						array_slice( $tools, 0, $index ),
 						[ 'global-contributions' => $globalContributionsLink ],
-						array_slice( $links, $index )
+						array_slice( $tools, $index )
 					);
 				} else {
-					$links['global-contributions'] = $globalContributionsLink;
+					$tools['global-contributions'] = $globalContributionsLink;
 				}
 			}
 		}
 
 		if ( $this->permissionManager->userHasRight( $user, 'checkuser' ) ) {
-			$links['checkuser'] = $linkRenderer->makeKnownLink(
+			$tools['checkuser'] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( 'CheckUser' ),
-				$sp->msg( 'checkuser-contribs' )->text(),
+				$specialPage->msg( 'checkuser-contribs' )->text(),
 				[ 'class' => 'mw-contributions-link-check-user' ],
-				[ 'user' => $nt->getText() ]
+				[ 'user' => $title->getText() ]
 			);
 		}
 		if ( $this->permissionManager->userHasRight( $user, 'checkuser-log' ) ) {
-			$links['checkuser-log'] = $linkRenderer->makeKnownLink(
+			$tools['checkuser-log'] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( 'CheckUserLog' ),
-				$sp->msg( 'checkuser-contribs-log' )->text(),
+				$specialPage->msg( 'checkuser-contribs-log' )->text(),
 				[ 'class' => 'mw-contributions-link-check-user-log' ],
-				[ 'cuSearch' => $nt->getText() ]
+				[ 'cuSearch' => $title->getText() ]
 			);
-			$userIdentity = $this->userIdentityLookup->getUserIdentityByUserId( $id );
-			if ( $id && $userIdentity && $this->userIdentityUtils->isNamed( $userIdentity ) ) {
-				$links['checkuser-log-initiator'] = $linkRenderer->makeKnownLink(
+			if ( $targetUserIdentity && $this->userIdentityUtils->isNamed( $targetUserIdentity ) ) {
+				$tools['checkuser-log-initiator'] = $linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( 'CheckUserLog' ),
-					$sp->msg( 'checkuser-contribs-log-initiator' )->text(),
+					$specialPage->msg( 'checkuser-contribs-log-initiator' )->text(),
 					[ 'class' => 'mw-contributions-link-check-user-initiator' ],
-					[ 'cuInitiator' => $nt->getText() ]
+					[ 'cuInitiator' => $title->getText() ]
 				);
 			}
+		}
+
+		if (
+			$targetUserIdentity &&
+			$this->suggestedInvestigationsCaseLookupService->areSuggestedInvestigationsEnabled() &&
+			$this->permissionManager->userHasRight( $user, 'checkuser-suggested-investigations' ) &&
+			$this->suggestedInvestigationsCaseLookupService->isUserInAnyCase( $targetUserIdentity )
+		) {
+			// Needed to instrument the tool link added below
+			$specialPage->getOutput()->addModules( 'ext.checkUser.suggestedInvestigations' );
+
+			$tools['suggested-investigations'] = $linkRenderer->makeKnownLink(
+				SpecialPage::getTitleFor( 'SuggestedInvestigations' ),
+				$specialPage->msg( 'checkuser-suggestedinvestigations-contributions-tool-link' )->text(),
+				[ 'class' => 'mw-contributions-link-suggested-investigations' ],
+				[
+					'username' => $title->getText(),
+					// We want to show all cases the user is in, even if the current user has no edits
+					// The default of this filter is to exclude zero-edit users, so we need to
+					// explicitly disable it here
+					'hideCasesWithNoUserEdits' => 0,
+				]
+			);
 		}
 	}
 

@@ -181,7 +181,7 @@ EOF;
 	protected function applyStyleToCategory( $category ) {
 		return <<< EOF
 <tr>
-	<td colspan="2" style="color: #72777D; font-weight: normal; font-size: 13px; padding-top: 15px;">
+	<td colspan="2" style="color: #72777D; font-weight: normal; font-size: 13px; line-height: 20px; padding-top: 15px;">
 		$category <br />
 		<hr style="background-color:#FFFFFF; color:#FFFFFF; border: 1px solid #EAECF0;" />
 	</td>
@@ -210,7 +210,7 @@ EOF;
 	<td width="30">
 		<img src="$imgSrc" width="30" height="30" style="vertical-align:middle;">
 	</td>
-	<td style="font-family: Arial, Helvetica, sans-serif; font-size:13px; color: #54595D;">
+	<td style="font-family: Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color: #54595D;">
 		$text
 	</td>
 </tr>

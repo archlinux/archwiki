@@ -125,4 +125,43 @@ class MutableFilterTest extends MediaWikiUnitTestCase {
 		// TODO Enable
 		// $this->assertSame( $baseFilter->getActions(), $actual->getActions(), 'actions' );
 	}
+
+	public function testSetSuppressed() {
+		// Create a Flags instance with an initial privacy level that does not include suppressed.
+		$initialPrivacy = Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
+		$flags = new Flags( true, false, $initialPrivacy, false );
+		$filter = new MutableFilter(
+			new Specs( 'rules', 'comments', 'name', [ 'foo' ], 'group' ),
+			$flags,
+			'strlen',
+			new LastEditInfo( UserIdentityValue::newRegistered( 42, "User" ), '12345' )
+		);
+
+		// Initially, suppressed should be false.
+		$this->assertFalse( $filter->getFlags()->getSuppressed(), 'Initially suppressed should be false' );
+		$this->assertSame(
+			$initialPrivacy,
+			$filter->getFlags()->getPrivacyLevel(),
+			'Privacy level initially without suppressed'
+		);
+
+		// Set suppressed to true.
+		$filter->setSuppressed( true );
+		$this->assertTrue( $filter->getFlags()->getSuppressed(), 'Suppressed should be true after setting' );
+		$expectedPrivacy = Flags::FILTER_SUPPRESSED | Flags::FILTER_HIDDEN | Flags::FILTER_USES_PROTECTED_VARS;
+		$this->assertSame(
+			$expectedPrivacy,
+			$filter->getFlags()->getPrivacyLevel(),
+			'Privacy level should include suppressed flag'
+		);
+
+		// Now, set suppressed back to false.
+		$filter->setSuppressed( false );
+		$this->assertFalse( $filter->getFlags()->getSuppressed(), 'Suppressed should be false after resetting' );
+		$this->assertSame(
+			$initialPrivacy,
+			$filter->getFlags()->getPrivacyLevel(),
+			'Privacy level should return to initial value'
+		);
+	}
 }

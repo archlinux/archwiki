@@ -96,6 +96,10 @@ class MMLDomVisitor implements MMLVisitor {
 		);
 	}
 
+	public function getText(): string {
+		return $this->dom->textContent;
+	}
+
 	/**
 	 * Create DOMElement from MMLbase node
 	 * @param MMLbase $node

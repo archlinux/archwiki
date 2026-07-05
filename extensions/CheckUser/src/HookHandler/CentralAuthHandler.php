@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\Extension\CentralAuth\Hooks\CentralAuthGlobalUserGroupMembershipChangedHook;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
@@ -8,15 +8,10 @@ use MediaWiki\SpecialPage\SpecialPageFactory;
 use Wikimedia\ObjectCache\WANObjectCache;
 
 class CentralAuthHandler implements CentralAuthGlobalUserGroupMembershipChangedHook {
-	private WANObjectCache $wanCache;
-	private SpecialPageFactory $specialPageFactory;
-
 	public function __construct(
-		WANObjectCache $wanCache,
-		SpecialPageFactory $specialPageFactory
+		private readonly WANObjectCache $wanCache,
+		private readonly SpecialPageFactory $specialPageFactory,
 	) {
-		$this->wanCache = $wanCache;
-		$this->specialPageFactory = $specialPageFactory;
 	}
 
 	/**

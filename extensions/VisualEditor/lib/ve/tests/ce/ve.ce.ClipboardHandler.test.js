@@ -29,40 +29,44 @@ ve.test.utils.runSurfacePasteTest = function ( assert, item ) {
 		target = view.getSurface().getTarget(),
 		doc = model.getDocument();
 
-	const pasteData = {};
+	const pasteData = ve.copy( item.pasteData ) || {};
 	if ( item.pasteHtml ) {
+		if ( pasteData[ 'text/html' ] ) {
+			throw new Error( 'Only one of `pasteHtml` and `pasteData[ \'text/html\' ]` must be defined' );
+		}
 		pasteData[ 'text/html' ] = item.pasteHtml;
 	}
 	if ( item.pasteText ) {
+		if ( pasteData[ 'text/plain' ] ) {
+			throw new Error( 'Only one of `pasteText` and `pasteData[ \'text/plain\' ]` must be defined' );
+		}
 		pasteData[ 'text/plain' ] = item.pasteText;
 	}
-	const clipboardData = new ve.test.utils.MockDataTransfer( ve.copy( pasteData ) );
+	const clipboardData = new ve.test.utils.MockDataTransfer( pasteData );
 
 	let afterPastePromise = ve.createDeferred().resolve().promise();
 	let testEvent;
 	// Paste sequence
 	if ( item.internalSourceRangeOrSelection ) {
 		model.setSelection( ve.test.utils.selectionFromRangeOrSelection( doc, item.internalSourceRangeOrSelection ) );
-		testEvent = ve.test.utils.createTestEvent( { type: 'copy', clipboardData: clipboardData } );
+		testEvent = ve.test.utils.createTestEvent( { type: 'copy', clipboardData } );
 		let isClipboardDataFormatsSupported;
 		if ( item.noClipboardData ) {
 			isClipboardDataFormatsSupported = ve.isClipboardDataFormatsSupported;
-			ve.isClipboardDataFormatsSupported = function () {
-				return false;
-			};
+			ve.isClipboardDataFormatsSupported = () => false;
 		}
 		view.clipboardHandler.onCopy( testEvent );
 		if ( item.noClipboardData ) {
 			ve.isClipboardDataFormatsSupported = isClipboardDataFormatsSupported;
 		}
-		testEvent = ve.test.utils.createTestEvent( { type: 'paste', clipboardData: clipboardData } );
+		testEvent = ve.test.utils.createTestEvent( { type: 'paste', clipboardData } );
 	} else {
 		if ( item.useClipboardData ) {
 			clipboardData.setData( view.clipboardHandler.constructor.static.clipboardKeyMimeType, 'useClipboardData-0' );
 		} else if ( item.fromVe ) {
 			clipboardData.setData( view.clipboardHandler.constructor.static.clipboardKeyMimeType, '0.123-0' );
 		}
-		testEvent = ve.test.utils.createTestEvent( { type: 'paste', clipboardData: clipboardData } );
+		testEvent = ve.test.utils.createTestEvent( { type: 'paste', clipboardData } );
 	}
 	if ( item.middleClickRangeOrSelection ) {
 		view.lastNonCollapsedDocumentSelection = ve.test.utils.selectionFromRangeOrSelection( doc, item.middleClickRangeOrSelection );
@@ -151,9 +155,7 @@ ve.test.utils.MockDataTransfer = function MockDataTransfer( initialData ) {
 
 	this.items = items;
 	this.types = [];
-	this.getData = function ( prop ) {
-		return data[ prop ] || '';
-	};
+	this.getData = ( prop ) => data[ prop ] || '';
 	this.setData = function ( prop, val ) {
 		if ( data[ prop ] === undefined ) {
 			items.push( {
@@ -249,16 +251,14 @@ QUnit.test( 'onCopy', ( assert ) => {
 
 	cases.forEach( ( caseItem ) => {
 		const clipboardData = new ve.test.utils.MockDataTransfer(),
-			testEvent = ve.test.utils.createTestEvent( { type: 'copy', clipboardData: clipboardData } ),
+			testEvent = ve.test.utils.createTestEvent( { type: 'copy', clipboardData } ),
 			view = ve.test.utils.createSurfaceViewFromDocument( caseItem.doc || ve.dm.example.createExampleDocument() ),
 			model = view.getModel();
 
 		let isClipboardDataFormatsSupported;
 		if ( caseItem.noClipboardData ) {
 			isClipboardDataFormatsSupported = ve.isClipboardDataFormatsSupported;
-			ve.isClipboardDataFormatsSupported = function () {
-				return false;
-			};
+			ve.isClipboardDataFormatsSupported = () => false;
 		}
 
 		// Paste sequence
@@ -2113,7 +2113,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'googleDocs' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'googleDocs', categories: [ 'wordProcessor' ] } ) )
 							],
 							remove: []
 						},
@@ -2134,7 +2134,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'visualEditor' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'visualEditor', categories: [ 'internal' ] } ) )
 							],
 							remove: []
 						},
@@ -2154,7 +2154,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'libreOffice' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'libreOffice', categories: [ 'wordProcessor' ] } ) )
 							],
 							remove: []
 						},
@@ -2174,7 +2174,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'microsoftOffice' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'microsoftOffice', categories: [ 'wordProcessor' ] } ) )
 							],
 							remove: []
 						},
@@ -2182,6 +2182,132 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 					]
 				],
 				msg: 'HTML from MicrosoftOffice'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<a href="//example.org?utm_source=chatgpt.com">Foo</a>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', [
+									ve.dm.example.getImportedAnnotation( { name: 'chatGPT', categories: [ 'ai' ] } ),
+									ve.dm.example.link( '//example.org?utm_source=chatgpt.com' )
+								] )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from ChatGPT (link with utm_source)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<p data-start="123" data-end="456">Foo</p>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'chatGPT', categories: [ 'ai' ] } ) )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from ChatGPT (data-start/data-end)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<p data-path-to-node="0">Foo</p>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'gemini', categories: [ 'ai' ] } ) )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from Gemini (data-path-to-node)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<response-element>Foo</response-element>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'gemini', categories: [ 'ai' ] } ) )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from Gemini (response-element)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<a _ngcontent-ng-c156078443="" target="_blank" rel="noopener" externallink="" _nghost-ng-c2846509428="" jslog="197247;track:generic_click,impression,attention;BardVeMetadataKey:[[&quot;r_dc8fa7bddfb6f620&quot;,&quot;c_234b1406a1993f3c&quot;,null,&quot;rc_24f6b5e950152c91&quot;,null,null,&quot;en&quot;,null,1,null,null,1,0]]" href="//example.org" class="ng-star-inserted" data-hveid="0" decode-data-ved="1" data-ved="0CAAQ_4QMahcKEwjYgonW56aTAxUAAAAAHQAAAAAQcg" style="color: rgb(11, 87, 208);">Foo</a>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', [
+									ve.dm.example.getImportedAnnotation( { name: 'gemini', categories: [ 'ai' ] } ),
+									ve.dm.example.link( '//example.org' )
+								] )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from Gemini (link with BardVeMetadataKey)'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<p class="font-claude-response-body break-words whitespace-normal leading-[1.7]">Foo</span></span>',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				annotateImportedData: true,
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'claude', categories: [ 'ai' ] } ) )
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'HTML from Claude'
 			},
 			{
 				rangeOrSelection: new ve.Range( 1 ),
@@ -2194,7 +2320,7 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 						{
 							type: 'replace',
 							insert: [
-								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( 'plainText' ) )
+								...ve.dm.example.annotateText( 'Foo', ve.dm.example.getImportedAnnotation( { name: 'plainText', categories: [ 'plain' ] } ) )
 							],
 							remove: []
 						},

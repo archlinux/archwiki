@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "מודול API לתקשורת בין השרת ללקוח בעת תהליך רישום/אימות.",
+	"apihelp-oathauth-webauthn-param-func": "שם הפונקציה המבוקשת לביצוע.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "מידע על אימות.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "מידע על רישום."
+}

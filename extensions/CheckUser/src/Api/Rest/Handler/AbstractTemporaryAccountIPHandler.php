@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -24,8 +24,6 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  */
 abstract class AbstractTemporaryAccountIPHandler extends AbstractTemporaryAccountHandler {
 
-	private TempUserConfig $tempUserConfig;
-
 	public function __construct(
 		Config $config,
 		JobQueueGroup $jobQueueGroup,
@@ -34,15 +32,21 @@ abstract class AbstractTemporaryAccountIPHandler extends AbstractTemporaryAccoun
 		IConnectionProvider $dbProvider,
 		ActorStore $actorStore,
 		BlockManager $blockManager,
-		TempUserConfig $tempUserConfig,
+		private readonly TempUserConfig $tempUserConfig,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode
+		ReadOnlyMode $readOnlyMode,
 	) {
 		parent::__construct(
-			$config, $jobQueueGroup, $permissionManager, $userNameUtils, $dbProvider, $actorStore,
-			$blockManager, $checkUserPermissionsManager, $readOnlyMode
+			$config,
+			$jobQueueGroup,
+			$permissionManager,
+			$userNameUtils,
+			$dbProvider,
+			$actorStore,
+			$blockManager,
+			$checkUserPermissionsManager,
+			$readOnlyMode
 		);
-		$this->tempUserConfig = $tempUserConfig;
 	}
 
 	/**

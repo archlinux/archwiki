@@ -22,7 +22,7 @@ use Wikimedia\Timestamp\TimestampException;
 class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 	use DiscussionToolsEventTrait;
 
-	protected PlaintextEchoPresentationModelSection $section;
+	protected readonly PlaintextEchoPresentationModelSection $section;
 
 	/**
 	 * @inheritDoc

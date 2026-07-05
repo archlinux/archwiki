@@ -48,7 +48,7 @@ class ReferenceListFormatterTest extends \MediaWikiUnitTestCase {
 			$mockMessageLocalizer
 		);
 
-		$refs = array_map( [ TestUtils::class, 'refFromArray' ], $refs );
+		$refs = array_map( TestUtils::refFromArray( ... ), $refs );
 		$output = $formatter->formatReferences( $mockParser, $refs, true );
 		$this->assertSame( $expectedOutput, $output );
 	}

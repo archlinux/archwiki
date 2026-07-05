@@ -31,30 +31,11 @@ use MediaWiki\Status\Status;
  * and maintaining the contents of the module.
  */
 abstract class ScribuntoModuleBase {
-	/**
-	 * @var ScribuntoEngineBase
-	 */
-	protected $engine;
-
-	/**
-	 * @var string
-	 */
-	protected $code;
-
-	/**
-	 * @var string|bool
-	 */
-	protected $chunkName;
-
-	/**
-	 * @param ScribuntoEngineBase $engine
-	 * @param string $code
-	 * @param string|bool $chunkName
-	 */
-	public function __construct( ScribuntoEngineBase $engine, $code, $chunkName ) {
-		$this->engine = $engine;
-		$this->code = $code;
-		$this->chunkName = $chunkName;
+	public function __construct(
+		protected readonly ScribuntoEngineBase $engine,
+		protected readonly string $code,
+		protected readonly string|bool $chunkName,
+	) {
 	}
 
 	/**

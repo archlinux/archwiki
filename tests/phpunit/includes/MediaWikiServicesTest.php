@@ -6,8 +6,10 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Hook\MediaWikiServicesHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
+use MediaWiki\Import\OldRevisionImporter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Search\SearchEngine;
 use Wikimedia\Services\DestructibleService;
 use Wikimedia\Services\SalvageableService;
 
@@ -86,9 +88,7 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 		$newServices = $this->newMediaWikiServices();
 		$oldServices = MediaWikiServices::forceGlobalInstance( $newServices );
 
-		$service1 = $this->createMock( SalvageableService::class );
-		$service1->expects( $this->never() )
-			->method( 'salvage' );
+		$service1 = $this->createNoOpMock( SalvageableService::class );
 
 		$newServices->defineService(
 			'Test',
@@ -119,9 +119,7 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 		$newServices = $this->newMediaWikiServices();
 		$oldServices = MediaWikiServices::forceGlobalInstance( $newServices );
 
-		$service1 = $this->createMock( SalvageableService::class );
-		$service1->expects( $this->never() )
-			->method( 'salvage' );
+		$service1 = $this->createNoOpMock( SalvageableService::class );
 
 		$service2 = $this->createMock( SalvageableService::class );
 		$service2->expects( $this->once() )
@@ -240,9 +238,7 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 		$service1->expects( $this->once() )
 			->method( 'destroy' );
 
-		$service2 = $this->createMock( DestructibleService::class );
-		$service2->expects( $this->never() )
-			->method( 'destroy' );
+		$service2 = $this->createNoOpMock( DestructibleService::class );
 
 		// sequence of values the instantiator will return
 		$instantiatorReturnValues = [
@@ -384,6 +380,11 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 		// Test against the default instance, since the dummy will not know the default services.
 		$services = MediaWikiServices::getInstance();
 
+		// TODO Remove this when the HtmlCacheUpdater alias is removed (T419427)
+		if ( $name === 'HtmlCacheUpdater' ) {
+			$this->expectDeprecationAndContinue( '/The "HtmlCacheUpdater" service alias was deprecated/' );
+		}
+
 		$service = $services->getService( $name );
 		$this->assertInstanceOf( $type, $service );
 	}
@@ -397,6 +398,11 @@ class MediaWikiServicesTest extends MediaWikiIntegrationTestCase {
 
 		foreach ( $names as $name ) {
 			$this->assertTrue( $services->hasService( $name ) );
+
+			// TODO Remove this when the HtmlCacheUpdater alias is removed (T419427)
+			if ( $name === 'HtmlCacheUpdater' ) {
+				$this->expectDeprecationAndContinue( '/The "HtmlCacheUpdater" service alias was deprecated/' );
+			}
 
 			// Check that the service can be instantiated without errors.
 			// Make no assumption about the value returned by the instantiator

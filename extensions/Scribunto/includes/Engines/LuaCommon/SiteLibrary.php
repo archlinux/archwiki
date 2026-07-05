@@ -8,6 +8,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\Specials\SpecialVersion;
 use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 
 class SiteLibrary extends LibraryBase {
 	/** @var string|null */
@@ -22,11 +23,12 @@ class SiteLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'getNsIndex' => [ $this, 'getNsIndex' ],
-			'pagesInCategory' => [ $this, 'pagesInCategory' ],
-			'pagesInNamespace' => [ $this, 'pagesInNamespace' ],
-			'usersInGroup' => [ $this, 'usersInGroup' ],
-			'interwikiMap' => [ $this, 'interwikiMap' ],
+			'getNsIndex' => $this->getNsIndex( ... ),
+			'pagesInCategory' => $this->pagesInCategory( ... ),
+			'pagesInNamespace' => $this->pagesInNamespace( ... ),
+			'usersInGroup' => $this->usersInGroup( ... ),
+			'interwikiMap' => $this->interwikiMap( ... ),
+			'loadStats' => $this->loadStats( ... ),
 		];
 		$parser = $this->getParser();
 		$services = MediaWikiServices::getInstance();
@@ -40,6 +42,7 @@ class SiteLibrary extends LibraryBase {
 			'currentVersion' => SpecialVersion::getVersion(
 				'', $parser ? $parser->getTargetLanguage() : $contLang
 			),
+			'wikiId' => WikiMap::getCurrentWikiId(),
 		];
 
 		if ( !self::$namespacesCache || self::$namespacesCacheLang !== $contLang->getCode() ) {
@@ -93,8 +96,16 @@ class SiteLibrary extends LibraryBase {
 		}
 		$info['namespaces'] = self::$namespacesCache;
 
+		return $this->getEngine()->registerInterface( 'mw.site.lua', $lib, $info );
+	}
+
+	/**
+	 * Lazy-loads the site stats table.
+	 * @return int[][]
+	 */
+	private function loadStats() {
 		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
-			$info['stats'] = [
+			return [ [
 				'pages' => 1,
 				'articles' => 1,
 				'files' => 0,
@@ -102,30 +113,27 @@ class SiteLibrary extends LibraryBase {
 				'users' => 1,
 				'activeUsers' => 1,
 				'admins' => 1,
-			];
-		} else {
-			$info['stats'] = [
-				'pages' => (int)SiteStats::pages(),
-				'articles' => (int)SiteStats::articles(),
-				'files' => (int)SiteStats::images(),
-				'edits' => (int)SiteStats::edits(),
-				'users' => (int)SiteStats::users(),
-				'activeUsers' => (int)SiteStats::activeUsers(),
-				'admins' => (int)SiteStats::numberingroup( 'sysop' ),
-			];
+			] ];
 		}
 
-		return $this->getEngine()->registerInterface( 'mw.site.lua', $lib, $info );
+		return [ [
+			'pages' => (int)SiteStats::pages(),
+			'articles' => (int)SiteStats::articles(),
+			'files' => (int)SiteStats::images(),
+			'edits' => (int)SiteStats::edits(),
+			'users' => (int)SiteStats::users(),
+			'activeUsers' => (int)SiteStats::activeUsers(),
+			'admins' => (int)SiteStats::numberingroup( 'sysop' ),
+		] ];
 	}
 
 	/**
 	 * Handler for pagesInCategory
-	 * @internal
 	 * @param string|null $category
 	 * @param string|null $which
 	 * @return int[]|int[][]
 	 */
-	public function pagesInCategory( $category = null, $which = null ) {
+	private function pagesInCategory( $category = null, $which = null ) {
 		$this->checkType( 'pagesInCategory', 1, $category, 'string' );
 		$this->checkTypeOptional( 'pagesInCategory', 2, $which, 'string', 'all' );
 
@@ -159,33 +167,30 @@ class SiteLibrary extends LibraryBase {
 
 	/**
 	 * Handler for pagesInNamespace
-	 * @internal
 	 * @param int|string|null $ns
 	 * @return int[]
 	 */
-	public function pagesInNamespace( $ns = null ) {
+	private function pagesInNamespace( $ns = null ) {
 		$this->checkType( 'pagesInNamespace', 1, $ns, 'number' );
 		return [ (int)SiteStats::pagesInNs( intval( $ns ) ) ];
 	}
 
 	/**
 	 * Handler for usersInGroup
-	 * @internal
 	 * @param string|null $group
 	 * @return int[]
 	 */
-	public function usersInGroup( $group = null ) {
+	private function usersInGroup( $group = null ) {
 		$this->checkType( 'usersInGroup', 1, $group, 'string' );
 		return [ (int)SiteStats::numberingroup( strtolower( $group ) ) ];
 	}
 
 	/**
 	 * Handler for getNsIndex
-	 * @internal
 	 * @param string|null $name
 	 * @return int[]|bool[]
 	 */
-	public function getNsIndex( $name = null ) {
+	private function getNsIndex( $name = null ) {
 		$this->checkType( 'getNsIndex', 1, $name, 'string' );
 		// PHP call is case-insensitive but chokes on non-standard spaces/underscores.
 		$name = trim( preg_replace( '/[\s_]+/', '_', $name ), '_' );
@@ -194,11 +199,11 @@ class SiteLibrary extends LibraryBase {
 
 	/**
 	 * Handler for interwikiMap
-	 * @internal
 	 * @param string|null $filter
 	 * @return array[]
+	 * @throws LuaError
 	 */
-	public function interwikiMap( $filter = null ) {
+	private function interwikiMap( $filter = null ) {
 		$this->checkTypeOptional( 'interwikiMap', 1, $filter, 'string', null );
 		$local = null;
 		if ( $filter === 'local' ) {

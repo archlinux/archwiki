@@ -19,6 +19,19 @@ const iClickTheUnwatchStar = async () => {
 	await ArticlePage.watched_element.click();
 };
 
+const iShouldSeeTheWatchstarPopupWithMessage = async ( msg ) => {
+	const popup = await ArticlePage.watchstar_popup;
+	if ( !await popup.waitForExist( { timeout: 500 } ).catch( () => false ) ) {
+		return false;
+	}
+	const popupMessage = popup.$( '.mw-watchstar-WatchstarPopup-message' );
+	await expect( popupMessage ).toHaveText( expect.stringContaining( msg ) );
+	return true;
+};
+
 export {
 	theWatchstarShouldBeSelected,
-	iClickTheWatchstar, iClickTheUnwatchStar };
+	iClickTheWatchstar,
+	iClickTheUnwatchStar,
+	iShouldSeeTheWatchstarPopupWithMessage
+};

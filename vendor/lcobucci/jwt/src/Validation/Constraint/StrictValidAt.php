@@ -5,20 +5,18 @@ namespace Lcobucci\JWT\Validation\Constraint;
 
 use DateInterval;
 use DateTimeInterface;
-use Lcobucci\Clock\Clock;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
-use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\ConstraintViolation;
+use Lcobucci\JWT\Validation\ValidAt as ValidAtInterface;
+use Psr\Clock\ClockInterface as Clock;
 
-final class StrictValidAt implements Constraint
+final class StrictValidAt implements ValidAtInterface
 {
-    private Clock $clock;
-    private DateInterval $leeway;
+    private readonly DateInterval $leeway;
 
-    public function __construct(Clock $clock, ?DateInterval $leeway = null)
+    public function __construct(private readonly Clock $clock, ?DateInterval $leeway = null)
     {
-        $this->clock  = $clock;
         $this->leeway = $this->guardLeeway($leeway);
     }
 
@@ -38,7 +36,7 @@ final class StrictValidAt implements Constraint
     public function assert(Token $token): void
     {
         if (! $token instanceof UnencryptedToken) {
-            throw new ConstraintViolation('You should pass a plain token');
+            throw ConstraintViolation::error('You should pass a plain token', $this);
         }
 
         $now = $this->clock->now();
@@ -52,11 +50,11 @@ final class StrictValidAt implements Constraint
     private function assertExpiration(UnencryptedToken $token, DateTimeInterface $now): void
     {
         if (! $token->claims()->has(Token\RegisteredClaims::EXPIRATION_TIME)) {
-            throw new ConstraintViolation('"Expiration Time" claim missing');
+            throw ConstraintViolation::error('"Expiration Time" claim missing', $this);
         }
 
         if ($token->isExpired($now)) {
-            throw new ConstraintViolation('The token is expired');
+            throw ConstraintViolation::error('The token is expired', $this);
         }
     }
 
@@ -64,11 +62,11 @@ final class StrictValidAt implements Constraint
     private function assertMinimumTime(UnencryptedToken $token, DateTimeInterface $now): void
     {
         if (! $token->claims()->has(Token\RegisteredClaims::NOT_BEFORE)) {
-            throw new ConstraintViolation('"Not Before" claim missing');
+            throw ConstraintViolation::error('"Not Before" claim missing', $this);
         }
 
         if (! $token->isMinimumTimeBefore($now)) {
-            throw new ConstraintViolation('The token cannot be used yet');
+            throw ConstraintViolation::error('The token cannot be used yet', $this);
         }
     }
 
@@ -76,11 +74,11 @@ final class StrictValidAt implements Constraint
     private function assertIssueTime(UnencryptedToken $token, DateTimeInterface $now): void
     {
         if (! $token->claims()->has(Token\RegisteredClaims::ISSUED_AT)) {
-            throw new ConstraintViolation('"Issued At" claim missing');
+            throw ConstraintViolation::error('"Issued At" claim missing', $this);
         }
 
         if (! $token->hasBeenIssuedBefore($now)) {
-            throw new ConstraintViolation('The token was issued in the future');
+            throw ConstraintViolation::error('The token was issued in the future', $this);
         }
     }
 }

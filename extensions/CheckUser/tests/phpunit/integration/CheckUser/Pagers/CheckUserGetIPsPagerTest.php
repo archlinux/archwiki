@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers;
 
-use MediaWiki\CheckUser\CheckUser\SpecialCheckUser;
-use MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks\MockTemplateParser;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUser;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers\Mocks\MockTemplateParser;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\User\UserIdentityValue;
 use TestUser;
 use Wikimedia\IPUtils;
@@ -17,7 +17,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager
  */
 class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 
@@ -56,12 +56,9 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 		);
 		$this->assertArrayEquals(
 			$expectedTemplateParams,
-			array_filter(
+			array_intersect_key(
 				$object->templateParser->lastCalledWith[1],
-				static function ( $key ) use ( $expectedTemplateParams ) {
-					return array_key_exists( $key, $expectedTemplateParams );
-				},
-				ARRAY_FILTER_USE_KEY
+				$expectedTemplateParams
 			),
 			false,
 			true,
@@ -123,7 +120,10 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 	/** @dataProvider provideGetQueryInfo */
 	public function testGetQueryInfo( $table, $expectedQueryInfo ) {
 		$this->commonTestGetQueryInfo(
-			UserIdentityValue::newRegistered( 1, 'Testing' ), null, $table, $expectedQueryInfo
+			UserIdentityValue::newRegistered( 1, 'Testing' ),
+			null,
+			$table,
+			$expectedQueryInfo
 		);
 	}
 
@@ -132,41 +132,56 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 			'cu_changes table' => [
 				// The $table argument to ::getQueryInfo
 				'cu_changes',
-				// The expected query info returned by ::getQueryInfo (we are only interested in testing the query info
-				// added by ::getQueryInfo and not the info added by the table specific methods).
 				[
+					'fields' => [
+						'ip_hex' => 'cuc_ip_hex',
+						'count' => 'COUNT(*)',
+						'first' => 'MIN(cuc_timestamp)',
+						'last' => 'MAX(cuc_timestamp)',
+					],
 					'tables' => [ 'cu_changes' ],
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
-						'USE INDEX' => [ 'cu_changes' => 'cuc_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ],
+						'USE INDEX' => [ 'cu_changes' => 'cuc_actor_ip_hex_time' ],
+						'GROUP BY' => 'ip_hex',
 					],
-					// Verify that fields and join_conds set as arrays, but we are not testing their values.
-					'fields' => [], 'join_conds' => [],
+					'join_conds' => [],
 				],
 			],
 			'cu_log_event table' => [
 				'cu_log_event',
 				[
+					'fields' => [
+						'ip_hex' => 'cule_ip_hex',
+						'count' => 'COUNT(*)',
+						'first' => 'MIN(cule_timestamp)',
+						'last' => 'MAX(cule_timestamp)',
+					],
 					'tables' => [ 'cu_log_event' ],
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
-						'USE INDEX' => [ 'cu_log_event' => 'cule_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ],
+						'USE INDEX' => [ 'cu_log_event' => 'cule_actor_ip_hex_time' ],
+						'GROUP BY' => 'ip_hex',
 					],
-					'fields' => [], 'join_conds' => [],
+					'join_conds' => [],
 				],
 			],
 			'cu_private_event table' => [
 				'cu_private_event',
 				[
+					'fields' => [
+						'ip_hex' => 'cupe_ip_hex',
+						'count' => 'COUNT(*)',
+						'first' => 'MIN(cupe_timestamp)',
+						'last' => 'MAX(cupe_timestamp)',
+					],
 					'tables' => [ 'cu_private_event' ],
 					'conds' => [ 'actor_user' => 1 ],
 					'options' => [
-						'USE INDEX' => [ 'cu_private_event' => 'cupe_actor_ip_time' ],
-						'GROUP BY' => [ 'ip', 'ip_hex' ],
+						'USE INDEX' => [ 'cu_private_event' => 'cupe_actor_ip_hex_time' ],
+						'GROUP BY' => 'ip_hex',
 					],
-					'fields' => [], 'join_conds' => [],
+					'join_conds' => [],
 				],
 			],
 		];
@@ -217,7 +232,10 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.1' );
 		ConvertibleTimestamp::setFakeTime( '20230405060708' );
 		$this->editPage(
-			$testPage, 'Test content', 'Test summary', NS_MAIN,
+			$testPage,
+			'Test content',
+			'Test summary',
+			NS_MAIN,
 			$this->getServiceContainer()->getUserFactory()
 				->newFromUserIdentity( UserIdentityValue::newAnonymous( '127.0.0.1' ) )
 		);
@@ -228,14 +246,20 @@ class CheckUserGetIPsPagerTest extends CheckUserPagerTestBase {
 		RequestContext::getMain()->getRequest()->setIP( '2001:db8::1' );
 		ConvertibleTimestamp::setFakeTime( '20230405060710' );
 		$this->editPage(
-			$testPage, 'Test content3', 'Test summary', NS_MAIN,
+			$testPage,
+			'Test content3',
+			'Test summary',
+			NS_MAIN,
 			$this->getServiceContainer()->getUserFactory()
 				->newFromUserIdentity( UserIdentityValue::newAnonymous( '2001:db8::1' ) )
 		);
 		RequestContext::getMain()->getRequest()->setIP( '2001:db8::2' );
 		ConvertibleTimestamp::setFakeTime( '20230405060711' );
 		$this->editPage(
-			$testPage, 'Test content4', 'Test summary', NS_MAIN,
+			$testPage,
+			'Test content4',
+			'Test summary',
+			NS_MAIN,
 			$this->getServiceContainer()->getUserFactory()
 				->newFromUserIdentity( UserIdentityValue::newAnonymous( '2001:db8::2' ) )
 		);

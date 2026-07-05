@@ -76,6 +76,7 @@ class WikiMap {
 	 */
 	private static function getWikiWikiReferenceFromSites( $wikiID ) {
 		$siteLookup = MediaWikiServices::getInstance()->getSiteLookup();
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
 		$site = $siteLookup->getSite( $wikiID );
 
 		if ( !$site instanceof MediaWikiSite ) {
@@ -83,7 +84,7 @@ class WikiMap {
 			return null;
 		}
 
-		$urlParts = wfGetUrlUtils()->parse( $site->getPageUrl() );
+		$urlParts = $urlUtils->parse( $site->getPageUrl() );
 		if ( $urlParts === null || !isset( $urlParts['path'] ) || !isset( $urlParts['host'] ) ) {
 			// We can't create a meaningful WikiReference without URLs
 			return null;
@@ -191,20 +192,22 @@ class WikiMap {
 			static function () {
 				global $wgLocalDatabases, $wgCanonicalServer;
 
+				$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+
 				$infoMap = [];
 				// Make sure at least the current wiki is set, for simple configurations.
 				// This also makes it the first in the map, which is useful for common cases.
 				$wikiId = self::getCurrentWikiId();
 				$infoMap[$wikiId] = [
 					'url' => $wgCanonicalServer,
-					'parts' => wfGetUrlUtils()->parse( $wgCanonicalServer )
+					'parts' => $urlUtils->parse( $wgCanonicalServer )
 				];
 
 				foreach ( $wgLocalDatabases as $wikiId ) {
 					$wikiReference = self::getWiki( $wikiId );
 					if ( $wikiReference ) {
 						$url = $wikiReference->getCanonicalServer();
-						$infoMap[$wikiId] = [ 'url' => $url, 'parts' => wfGetUrlUtils()->parse( $url ) ];
+						$infoMap[$wikiId] = [ 'url' => $url, 'parts' => $urlUtils->parse( $url ) ];
 					}
 				}
 
@@ -227,7 +230,8 @@ class WikiMap {
 			return self::getCurrentWikiId();
 		}
 
-		$urlPartsCheck = wfGetUrlUtils()->parse( $url );
+		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
+		$urlPartsCheck = $urlUtils->parse( $url );
 		if ( $urlPartsCheck === null
 			|| !in_array( $urlPartsCheck['scheme'], [ '', 'http', 'https' ], true )
 		) {

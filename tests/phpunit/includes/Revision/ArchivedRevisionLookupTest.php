@@ -10,6 +10,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * @group Database
@@ -103,7 +104,6 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 				'ar_deleted' => '0',
 				'ar_rev_id' => strval( $this->secondRev->getId() ),
 				'ar_timestamp' => $this->getDb()->timestamp( $this->secondRev->getTimestamp() ),
-				'ar_sha1' => '0qdrpxl537ivfnx4gcpnzz0285yxryy',
 				'ar_page_id' => strval( $this->secondRev->getPageId() ),
 				'ar_comment_text' => 'just a test',
 				'ar_comment_data' => null,
@@ -123,7 +123,6 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 				'ar_deleted' => '0',
 				'ar_rev_id' => strval( $this->firstRev->getId() ),
 				'ar_timestamp' => $this->getDb()->timestamp( $this->firstRev->getTimestamp() ),
-				'ar_sha1' => 'pr0s8e18148pxhgjfa0gjrvpy8fiyxc',
 				'ar_page_id' => strval( $this->firstRev->getPageId() ),
 				'ar_comment_text' => 'testing',
 				'ar_comment_data' => null,
@@ -243,31 +242,31 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 	public function testGetPreviousRevisionRecord() {
 		$lookup = $this->getServiceContainer()->getArchivedRevisionLookup();
 
-		$timestamp = wfTimestamp( TS_UNIX, $this->secondRev->getTimestamp() ) + 1;
+		$timestamp = wfTimestamp( TS::UNIX, $this->secondRev->getTimestamp() ) + 1;
 		$prevRec = $lookup->getPreviousRevisionRecord(
 			$this->archivedPage,
-			wfTimestamp( TS_MW, $timestamp )
+			wfTimestamp( TS::MW, $timestamp )
 		);
 		$this->assertNotNull( $prevRec );
 		$this->assertEquals( $this->secondRev->getId(), $prevRec->getId() );
 
 		$prevRec = $lookup->getPreviousRevisionRecord(
 			$this->archivedPage,
-			wfTimestamp( TS_MW, $this->secondRev->getTimestamp() )
+			wfTimestamp( TS::MW, $this->secondRev->getTimestamp() )
 		);
 		$this->assertNotNull( $prevRec );
 		$this->assertEquals( $this->firstRev->getId(), $prevRec->getId() );
 
 		$prevRec = $lookup->getPreviousRevisionRecord(
 			$this->neverExistingPage,
-			wfTimestamp( TS_MW, $this->secondRev->getTimestamp() )
+			wfTimestamp( TS::MW, $this->secondRev->getTimestamp() )
 		);
 		$this->assertNull( $prevRec );
 	}
 
 	public function testGetPreviousRevisionRecord_recreatedPage() {
 		// recreate the archived page
-		$timestamp = wfTimestamp( TS_UNIX, $this->secondRev->getTimestamp() ) + 10;
+		$timestamp = wfTimestamp( TS::UNIX, $this->secondRev->getTimestamp() ) + 10;
 		MWTimestamp::setFakeTime( $timestamp );
 
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $this->archivedPage );
@@ -288,13 +287,13 @@ class ArchivedRevisionLookupTest extends MediaWikiIntegrationTestCase {
 		$lookup = $this->getServiceContainer()->getArchivedRevisionLookup();
 		$prevRec = $lookup->getPreviousRevisionRecord(
 			$this->archivedPage,
-			wfTimestamp( TS_MW, $timestamp + 1 )
+			wfTimestamp( TS::MW, $timestamp + 1 )
 		);
 		$this->assertEquals( $newRev->getId(), $prevRec->getId() );
 
 		$prevRec = $lookup->getPreviousRevisionRecord(
 			$this->archivedPage,
-			wfTimestamp( TS_MW, $timestamp - 1 )
+			wfTimestamp( TS::MW, $timestamp - 1 )
 		);
 		$this->assertEquals( $this->secondRev->getId(), $prevRec->getId() );
 	}

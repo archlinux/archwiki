@@ -13,11 +13,12 @@
 			"Silvonen",
 			"Taavi",
 			"Valtlait",
-			"Yupik",
-			"Wikipeedikko"
+			"Wikipeedikko",
+			"Yupik"
 		]
 	},
 	"linterrors": "Lint-virheet",
+	"linttemplateerrors": "Sisällytykset, joissa on lint-virheitä",
 	"linter-category-deletable-table-tag": "Table tag that should be deleted",
 	"linter-category-deletable-table-tag-desc": "Näillä sivuilla on table-tagi, joka pitäisi poistaa.",
 	"linter-category-misc-tidy-replacement-issues": "Miscellaneous issues",
@@ -57,5 +58,6 @@
 	"linterrors-subpage": "Lint-virheet: $1",
 	"linterrors-summary": "<strong>Huomaa:</strong> Luokkien sisältämät lukumäärät eivät ole tarkkoja vaan perustuvat arvioihin.",
 	"multi-part-template-block": "Tulos ei johdu vain yhdestä mallineesta",
+	"parser-function": "Jäsennintoiminnon tuotos",
 	"pageinfo-linter": "Lint-virheet"
 }

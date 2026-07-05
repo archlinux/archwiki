@@ -11,11 +11,11 @@
 			"Kayser Ahmad",
 			"Macofe",
 			"Nasir8891",
+			"Saurmandal",
 			"Sayak Sarkar",
 			"Yahya",
 			"আফতাবুজ্জামান",
-			"খাত্তাব হাসান",
-			"Saurmandal"
+			"খাত্তাব হাসান"
 		]
 	},
 	"echo-desc": "ঘটনা এবং বার্তা সম্পর্কে ব্যবহারকারীদের বিজ্ঞপ্তি দেয়ার জন্য ব্যবস্থা",
@@ -169,8 +169,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} শততম সম্পাদনা করেছেন; {{GENDER:$2|আপনাকে}} অনেক ধন্যবাদ!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} এক হাজারতম সম্পাদনা করেছেন; একজন দুর্দান্ত অবদানকারী হওয়ার জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} দশ হাজারতম সম্পাদনা করেছেন; {{GENDER:$2|আপনাকে}} অনেক ধন্যবাদ!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} এক লক্ষতম সম্পাদনা করেছেন; একজন অসাধারণ অবদানকারী হওয়ার জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} এক লক্ষতম সম্পাদনা করেছেন; একজন অসাধারণ অবদানকারী হওয়ার জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} এক লক্ষতম সম্পাদনা করেছেন; আপনার অসাধারণ অবদানের জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} দশ লক্ষতম সম্পাদনা করেছেন; আপনার অসাধারণ অবদানের জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|আপনি}} এইমাত্র {{GENDER:$2|আপনার}} এক কোটিতম সম্পাদনা করেছেন; একজন অসাধারণ অবদানকারী হওয়ার জন্য {{GENDER:$2|আপনাকে}} ধন্যবাদ!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|আপনার}} সম্পাদনা",
 	"notification-link-text-view-edit": "সম্পাদনা দেখুন",

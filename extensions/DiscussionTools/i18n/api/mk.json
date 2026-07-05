@@ -32,8 +32,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "Број на преработката што ќе се користи (по основно: најновата преработка).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Кои својства да се дадат:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Изземи кориснички потписи од коментарите (кога се користи <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Ознаки за промена на изводот при употреба на <var>prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Претстава на нишката со коментари расчленета од страницата",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Од кои други страници се предметнати коментари",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Вклучи дополнителни податоци за активност за најстарите и најновите одговори (при употреба на <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Изземи кориснички потписи од коментарите (при употреба на <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Не го вклучувај целото дрво на одговори, туку само најгорни заглавија (при употреба на <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-summary": "Дава метаподатоци потребни за покревање на разговорните алатки.",
 	"apihelp-discussiontoolspreview-param-type": "Вид на порака за преглед",
 	"apihelp-discussiontoolspreview-param-wikitext": "Содржина за преглед, како викитекст.",
@@ -43,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True за претплата, false за отпис",
 	"apihelp-discussiontoolssubscribe-summary": "Претплатете се (или отпишете се) за да добивате известувања на тема.",
 	"apihelp-discussiontoolsthank-param-commentid": "Назнака на коментарот на кој се заблагодарувате.",
-	"apihelp-discussiontoolsthank-summary": "Испратете јавна благодарница за коментар."
+	"apihelp-discussiontoolsthank-summary": "Испратете јавна благодарница за коментар.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Автоматски претплаќај го корисникот на сите нови разговорни нишки создадени од уредувањето. Послужете се со „yes“ или „no“ за да го смените изборот на корисникот (по основно)."
 }

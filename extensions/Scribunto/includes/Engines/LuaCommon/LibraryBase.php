@@ -31,13 +31,9 @@ use MediaWiki\Title\Title;
  * This class provides some basic services that Lua libraries will probably need
  */
 abstract class LibraryBase {
-	/**
-	 * @var LuaEngine
-	 */
-	private $engine;
-
-	public function __construct( LuaEngine $engine ) {
-		$this->engine = $engine;
+	public function __construct(
+		private readonly LuaEngine $engine,
+	) {
 	}
 
 	/**
@@ -130,6 +126,7 @@ abstract class LibraryBase {
 	 * @param mixed $arg Variable to test
 	 * @param string $expectType Lua type expected
 	 * @return void
+	 * @throws LuaError
 	 */
 	protected function checkType( $name, $argIdx, $arg, $expectType ) {
 		$type = $this->getLuaType( $arg );
@@ -153,6 +150,7 @@ abstract class LibraryBase {
 	 * @param string $expectType Lua type expected
 	 * @param mixed $default Default value
 	 * @return void
+	 * @throws LuaError
 	 */
 	protected function checkTypeOptional( $name, $argIdx, &$arg, $expectType, $default ) {
 		if ( $arg === null ) {
@@ -166,10 +164,9 @@ abstract class LibraryBase {
 	 * Increment the expensive function count, and throw if limit exceeded
 	 *
 	 * @return null
+	 * @throws LuaError
 	 */
 	public function incrementExpensiveFunctionCount() {
 		return $this->getEngine()->incrementExpensiveFunctionCount();
 	}
 }
-
-class_alias( LibraryBase::class, 'Scribunto_LuaLibraryBase' );

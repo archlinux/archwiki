@@ -22,3 +22,12 @@ CREATE TABLE oathauth_devices (
 );
 
 CREATE INDEX oad_user ON oathauth_devices (oad_user);
+
+
+CREATE TABLE oathauth_user_handles (
+  oah_user INT NOT NULL,
+  oah_handle TEXT DEFAULT NULL,
+  PRIMARY KEY(oah_user)
+);
+
+CREATE UNIQUE INDEX oah_handle ON oathauth_user_handles (oah_handle);

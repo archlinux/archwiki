@@ -12,8 +12,8 @@ use MediaWikiIntegrationTestCase;
 class BaseMethodsTest extends MediaWikiIntegrationTestCase {
 	public function testCheckAndParseOperatorWithU() {
 		$bm = new BaseMethods();
-		$this->assertNull( $bm->checkAndParseOperator( '\u3009', null, [], [], [] ) );
-		$this->assertNull( $bm->checkAndParseOperator( '&#x3009;', null, [], [], [] ) );
+		$this->assertTrue( $bm->checkAndParseOperator( '\u3009', null, [], [], [] )->isEmpty() );
+		$this->assertTrue( $bm->checkAndParseOperator( '&#x3009;', null, [], [], [] )->isEmpty() );
 	}
 
 	public function testCheckAndParseOperatorNormal() {

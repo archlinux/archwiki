@@ -94,5 +94,7 @@
 	"gadgets-validate-invaliddependencies": "Il manque {{PLURAL:$2|la dépendance suivante|les dépendances suivantes}} : $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|La dépendance suivante est obsolète|Les dépendances suivantes sont obsolètes}} : $1.",
 	"gadgets-supports-urlload": "Ce gadget prend en charge le chargement via URL avec le paramètre de requête <code>?withgadget</code>.",
-	"gadgets-hidden": "Ce gadget est [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden caché] ce qui signifie qu'il n'apparaîtra pas sur la page des préférences."
+	"gadgets-hidden": "Ce gadget est [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden caché] ce qui signifie qu'il n'apparaîtra pas sur la page des préférences.",
+	"gadgets-subpage-invalid": "Sous-page « <nowiki>$1</nowiki> » incorrecte",
+	"gadgets-subpage-toofewparams": "Pas assez de paramètres de sous-page (lien incorrect)."
 }

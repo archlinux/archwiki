@@ -10,6 +10,7 @@
 			"Perohanych",
 			"Piramidion",
 			"RLuts",
+			"Repakr",
 			"Sahran",
 			"Sergento",
 			"Steve.rusyn",
@@ -17,8 +18,7 @@
 			"Tel'et",
 			"Tifinaghes",
 			"Ата",
-			"아라",
-			"Repakr"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Звіряння редагування показало, що на сторінку додано новий вміст",
@@ -33,6 +33,10 @@
 	"tag-editcheck-tone-shown-description": "Звіряння редагувань вважає, що, можливо, потрібно було скоригувати тон певного контенту, і показано інтерфейс користувача для цього",
 	"tag-editcheck-paste-shown": "Звіряння редагувань (вставлення) показано",
 	"tag-editcheck-paste-shown-description": "Звіряння редагувань запросило уточнення щодо вмісту, який вставив користувач, що потім був або вилучений або підтверджений як допустимий",
+	"tag-editsuggestion-seen": "Пропозицію редагування показано",
+	"tag-editsuggestion-seen-description": "Користувач, ймовірно, бачив принаймні одну пропозицію редагування",
+	"tag-editsuggestion-used": "Пропозицію редагування використано",
+	"tag-editsuggestion-used-description": "Користувач врахував щонайменше одну пропозицію редагування",
 	"tag-visualeditor": "Візуальний редактор",
 	"tag-visualeditor-description": "Редагування виконано з використанням [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуального редактора]]",
 	"tag-visualeditor-needcheck": "Візуальний редактор: Перевірити",

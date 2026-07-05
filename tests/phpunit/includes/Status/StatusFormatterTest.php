@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\MessageParser;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Message\Message;
@@ -8,7 +9,6 @@ use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Status\StatusFormatter;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use Psr\Log\Test\TestLogger;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\TestingAccessWrapper;
 
@@ -22,7 +22,7 @@ class StatusFormatterTest extends MediaWikiLangTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->logger = new TestLogger();
+		$this->logger = new TestLogger( true );
 	}
 
 	protected function tearDown(): void {
@@ -73,9 +73,7 @@ class StatusFormatterTest extends MediaWikiLangTestCase {
 	}
 
 	public static function provideCleanParams() {
-		$cleanCallback = static function ( $value ) {
-			return 'xxx';
-		};
+		$cleanCallback = static fn ( $value ) => 'xxx';
 
 		return [
 			[ false, [ 'secret' ], 'secret', 'xxx' ],
@@ -132,9 +130,10 @@ class StatusFormatterTest extends MediaWikiLangTestCase {
 		);
 
 		if ( $expectedWarning !== null ) {
-			$this->assertTrue( $this->logger->hasWarningThatContains( $expectedWarning ) );
+			$this->assertTrue( array_any( $this->logger->getBuffer(),
+				static fn ( $buffer ) => str_contains( $buffer[1], $expectedWarning ) ) );
 		} else {
-			$this->assertFalse( $this->logger->hasWarningRecords() );
+			$this->assertSame( [], $this->logger->getBuffer() );
 		}
 	}
 
@@ -270,9 +269,10 @@ class StatusFormatterTest extends MediaWikiLangTestCase {
 		$this->assertCount( 1, $message->getParams(), 'Message::getParams with wrappers' );
 
 		if ( $expectedWarning !== null ) {
-			$this->assertTrue( $this->logger->hasWarningThatContains( $expectedWarning ) );
+			$this->assertTrue( array_any( $this->logger->getBuffer(),
+				static fn ( $buffer ) => str_contains( $buffer[1], $expectedWarning ) ) );
 		} else {
-			$this->assertFalse( $this->logger->hasWarningRecords() );
+			$this->assertSame( [], $this->logger->getBuffer() );
 		}
 	}
 

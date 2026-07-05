@@ -23,9 +23,7 @@ use MediaWiki\Message\Message;
  * Model for a simple menu entries with label and icon
  */
 class SingleMenuEntry implements IMenuEntry {
-	private string $name;
 	private array $attributes;
-	private array $customAttributes;
 	private bool $isJSOnly = false;
 
 	/**
@@ -35,20 +33,19 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $text Text to show on menu element
 	 * @param string $url URL menu element points to
 	 * @param string|array $className Additional CSS class names.
-	 * @param bool $isInterface If true, the menu element is provided with data-mw='interface'
+	 * @param bool $isInterface If true, the menu element is provided with data-mw-interface
 	 * and is treated as a standard part of the interface (ie. MediaWiki Core might bind to
 	 * the menu element)
 	 * @param array $customAttributes attributes an array of objects with key and value (optional)
 	 */
 	public function __construct(
-		string $name,
+		private readonly string $name,
 		string $text,
 		string $url,
 		$className = '',
 		bool $isInterface = true,
-		array $customAttributes = []
+		private readonly array $customAttributes = [],
 	) {
-		$this->name = $name;
 		$menuClass = 'menu__item--' . $name;
 
 		$this->attributes = [
@@ -65,13 +62,12 @@ class SingleMenuEntry implements IMenuEntry {
 				implode( ' ', $className + [ $menuClass ] ) :
 					ltrim( $className . ' ' . $menuClass ),
 		];
-		$this->customAttributes = $customAttributes;
 		if ( $isInterface ) {
 			// This is needed when Minerva uses a standard MediaWiki button (such as the
 			// watchstar) for a different purpose than MediaWiki usually uses it for. Not setting
-			// data-mw interface will prevent MediaWiki Core from binding to the element and
+			// data-mw-interface interface will prevent MediaWiki Core from binding to the element and
 			// potentially triggering its own actions. See T344925 for an example bug report.
-			$this->attributes['data-mw'] = 'interface';
+			$this->attributes['data-mw-interface'] = true;
 		}
 	}
 
@@ -136,7 +132,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 */
 	public function getComponents(): array {
 		$attrs = [];
-		$primaryAttributes = [ 'id', 'href', 'data-event-name', 'data-mw', 'role' ];
+		$primaryAttributes = [ 'id', 'href', 'data-event-name', 'data-mw-interface', 'role' ];
 		$forbiddenAttributes = array_merge( $primaryAttributes, [ 'class' ] );
 		foreach ( $primaryAttributes as $key ) {
 			$value = $this->attributes[$key] ?? null;

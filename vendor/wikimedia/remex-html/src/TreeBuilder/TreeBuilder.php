@@ -48,7 +48,7 @@ class TreeBuilder {
 
 	public TreeHandler $handler;
 
-	/** @var SimpleStack */
+	/** @var Stack */
 	public $stack;
 
 	public ActiveFormattingElements $afe;

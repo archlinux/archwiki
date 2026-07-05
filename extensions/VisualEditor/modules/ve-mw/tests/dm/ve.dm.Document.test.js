@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.Document (MW)' );
+QUnit.module( 've.dm.Document (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

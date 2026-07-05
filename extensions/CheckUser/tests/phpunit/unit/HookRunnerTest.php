@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit;
 
-use MediaWiki\CheckUser\Hook\HookRunner;
+use MediaWiki\Extension\CheckUser\Hook\HookRunner;
 use MediaWiki\Tests\HookContainer\HookRunnerTestBase;
 
 /**
- * @covers \MediaWiki\CheckUser\Hook\HookRunner
+ * @covers \MediaWiki\Extension\CheckUser\Hook\HookRunner
  */
 class HookRunnerTest extends HookRunnerTestBase {
 

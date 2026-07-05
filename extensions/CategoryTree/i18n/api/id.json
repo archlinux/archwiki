@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bennylin",
 			"Daud I.F. Argana",
 			"Diki Ananta",
 			"Jack Phoenix",
 			"Rachmat04",
-			"Sumbukompor",
-			"Bennylin"
+			"Sumbukompor"
 		]
 	},
 	"apihelp-categorytree-summary": "Modul internal untuk ekstensi CategoryTree.",

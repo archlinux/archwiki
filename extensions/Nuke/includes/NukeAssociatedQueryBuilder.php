@@ -78,6 +78,9 @@ class NukeAssociatedQueryBuilder {
 		return $queryBuilder;
 	}
 
+	/**
+	 * @param Title[] $pages
+	 */
 	public function getRedirectPages( array $pages ): SelectQueryBuilder {
 		$byNamespace = [];
 

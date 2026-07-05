@@ -7,7 +7,7 @@
 
 /**
  * Represents a template invocation that's part of a (possibly unbalanced) sequence of template
- * invocations and raw wikitext snippets. Meant to be an item in a {@see ve.dm.MWTransclusionModel}.
+ * invocations and raw wikitext snippets. Meant to be an item in a {@link ve.dm.MWTransclusionModel}.
  * Holds a back-reference to its parent.
  *
  * Holds a reference to the specification of the template, i.e. how the template is documented via
@@ -110,7 +110,7 @@ ve.dm.MWTemplateModel.newFromName = function ( transclusion, name ) {
 	}
 	if ( title !== null ) {
 		const href = title.getPrefixedText();
-		return new ve.dm.MWTemplateModel( transclusion, { href: href, wt: name } );
+		return new ve.dm.MWTemplateModel( transclusion, { href, wt: name } );
 	}
 
 	return null;
@@ -127,7 +127,7 @@ ve.dm.MWTemplateModel.prototype.getTarget = function () {
 
 /**
  * @return {string|null} Prefixed template title including the "Template:" namespace, if available.
- *  Use {@see ve.dm.MWTemplateSpecModel.getLabel} for a human-readable label without the namespace.
+ *  Use {@link ve.dm.MWTemplateSpecModel#getLabel} for a human-readable label without the namespace.
  */
 ve.dm.MWTemplateModel.prototype.getTitle = function () {
 	return this.title;
@@ -155,7 +155,7 @@ ve.dm.MWTemplateModel.prototype.getSpec = function () {
 
 /**
  * Get all parameters that are currently present in this template invocation in the order as they
- * originally appear in the wikitext. This is critical for {@see serialize}. Might contain
+ * originally appear in the wikitext. This is critical for {@link #serialize}. Might contain
  * placeholders with the parameter name "".
  *
  * @return {Object.<string,ve.dm.MWParameterModel>} Parameters keyed by name or alias
@@ -246,11 +246,11 @@ ve.dm.MWTemplateModel.prototype.getAllParametersOrdered = function () {
 };
 
 /**
- * Returns the same parameters as {@see getParameters}, i.e. parameters that are currently present
+ * Returns the same parameters as {@link #getParameters}, i.e. parameters that are currently present
  * in this template invocation, but sorted in a canonical order for presentational purposes.
  *
  * Don't use this if you need the parameters as they originally appear in the wikitext, or if you
- * don't care about an order. Use {@see getParameters} together with `Object.keys()` instead.
+ * don't care about an order. Use {@link #getParameters} together with `Object.keys()` instead.
  *
  * @return {string[]} Sorted list of parameter names
  */
@@ -391,7 +391,7 @@ ve.dm.MWTemplateModel.prototype.containsValuableData = function () {
 		const param = params[ name ],
 			value = param.getValue();
 		return value &&
-			// This will automatically be restored, see {@see ve.dm.MWParameterModel.getValue}
+			// This will automatically be restored, see {@link ve.dm.MWParameterModel.getValue}
 			value !== param.getAutoValue() &&
 			// While this isn't always meaningless, it typically is, and it's easy to restore
 			value !== param.getDefaultValue();

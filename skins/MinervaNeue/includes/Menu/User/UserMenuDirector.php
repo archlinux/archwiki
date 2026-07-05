@@ -20,18 +20,16 @@
 namespace MediaWiki\Minerva\Menu\User;
 
 use MediaWiki\Html\TemplateParser;
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * Director responsible for building the user menu.
  */
 final class UserMenuDirector {
-	private IUserMenuBuilder $builder;
-	private MessageLocalizer $localizer;
-
-	public function __construct( IUserMenuBuilder $builder, MessageLocalizer $localizer ) {
-		$this->builder = $builder;
-		$this->localizer = $localizer;
+	public function __construct(
+		private readonly IUserMenuBuilder $builder,
+		private readonly MessageLocalizer $localizer,
+	) {
 	}
 
 	/**
@@ -46,6 +44,12 @@ final class UserMenuDirector {
 		$templateParser = new TemplateParser( __DIR__ . '/../../Skins' );
 		$toggleID = 'minerva-user-menu-toggle';
 		$checkboxID = 'minerva-user-menu-checkbox';
+		$userPageIcon = $personalTools['userpage']['icon'] ?? 'userAvatarOutline';
+		// For historic reasons and consistency with notification icon we
+		// show the outline version.
+		if ( $userPageIcon === 'userAvatar' ) {
+			$userPageIcon = 'userAvatarOutline';
+		}
 		return !$entries
 			? null
 			: $templateParser->processTemplate( 'ToggleList', [
@@ -56,7 +60,7 @@ final class UserMenuDirector {
 				'data-btn' => [
 					'tag-name' => 'label',
 					'data-icon' => [
-						'icon' => 'userAvatarOutline',
+						'icon' => $userPageIcon,
 					],
 					'classes' => 'toggle-list__toggle',
 					'array-attributes' => [

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Abiyoyo",
 			"Ahonc",
 			"Aleksandrit",
@@ -39,6 +40,7 @@
 			"Köpleres",
 			"Lockal",
 			"Lopusanski",
+			"Lvova",
 			"Mailman",
 			"Matma Rex",
 			"MaxBioHazard",
@@ -77,8 +79,6 @@
 			"Сrower",
 			"Туллук",
 			"Умар",
-			"1233qwer1234qwer4",
-			"Lvova",
 			"Shabe"
 		]
 	},
@@ -170,6 +170,7 @@
 	"abusefilter-log-noactions": "нет",
 	"abusefilter-log-noactions-filter": "Пусто",
 	"abusefilter-log-details-diff": "Изменения, сделанные в правке",
+	"abusefilter-log-missinguserlink-title": "$1 (учётная запись не существует)",
 	"abusefilter-log-linkoncontribs": "журнал злоупотреблений",
 	"abusefilter-log-linkoncontribs-text": "Записи журнала злоупотреблений для {{GENDER:$1|этого участника|этой участницы}}",
 	"abusefilter-log-linkonhistory": "просмотр журнала злоупотреблений",
@@ -222,6 +223,7 @@
 	"abusefilter-list-limit": "Количество на странице:",
 	"abusefilter-list-lastmodified": "Последнее изменение",
 	"abusefilter-list-group": "Группа фильтра",
+	"abusefilter-suppressed": "Подавлен",
 	"abusefilter-hidden": "Скрытый",
 	"abusefilter-protected": "Защищено",
 	"abusefilter-unhidden": "Общедоступный",
@@ -244,6 +246,7 @@
 	"abusefilter-list-options-scope-global": "Только глобальные правила",
 	"abusefilter-list-options-scope-all": "Локальные и глобальные правила",
 	"abusefilter-list-options-further-options": "Другие настройки:",
+	"abusefilter-list-options-hidesuppressed": "Скрыть подавленные фильтры",
 	"abusefilter-list-options-hidedisabled": "Скрыть отключённые фильтры",
 	"abusefilter-list-options-hideprivate": "Скрыть приватные фильтры",
 	"abusefilter-list-options-searchfield": "Найти среди правил:",
@@ -290,6 +293,7 @@
 	"abusefilter-edit-flags": "Флаги:",
 	"abusefilter-edit-enabled": "Включить этот фильтр",
 	"abusefilter-edit-deleted": "Отметить как удалённый",
+	"abusefilter-edit-suppressed": "Скрыть этот фильтр, чтобы только ревизоры могли просматривать его и его журналы",
 	"abusefilter-edit-hidden": "Скрыть подробности этого фильтра от обычных участников",
 	"abusefilter-edit-protected-variable-already-protected": "Подробности этого фильтра скрыты от участников, которые не могут видеть защищённые переменные",
 	"abusefilter-edit-protected-help-message": "Подробности этого фильтра будут скрыты от участников, которые не могут видеть защищённые переменные. Это действие является постоянным и не может быть отменено.",
@@ -347,6 +351,7 @@
 	"abusefilter-block-user": "блокировать зарегистрированных участников",
 	"abusefilter-block-talk": "страница обсуждения заблокирована",
 	"abusefilter-edit-denied": "Вы не можете просмотреть подробную информацию об этом фильтре, так как она скрыта от обычных участников.",
+	"abusefilter-edit-denied-suppressed": "Вы не можете просмотреть подробности этого фильтра, поскольку они скрыты.",
 	"abusefilter-edit-main": "Параметры фильтра",
 	"abusefilter-edit-done-subtitle": "Фильтр исправлен",
 	"abusefilter-edit-done": "Вы успешно сохранили [[Special:AbuseFilter/history/$1/diff/prev/$2|изменения]] в [[Special:AbuseFilter/$1|фильтре $3]].",
@@ -439,7 +444,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Нормализация символов HTML в юникод ($1)",
 	"abusefilter-edit-builder-group-vars": "Переменные",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-время изменения ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Имя учётной записи (при создании учётной записи) ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Имя учётной записи (при создании учётной записи) ($1)",
 	"abusefilter-edit-builder-vars-action": "Действие ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Добавленные в правке строки ($1)",
 	"abusefilter-edit-builder-vars-delta": "Изменение размера в правке ($1)",

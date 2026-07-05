@@ -13,7 +13,7 @@ interface BeforeCreateEchoEventHook {
 	/**
 	 * Called on setup of Echo extension
 	 *
-	 * @param array &$notifications To expand $wgEchoNnotifications
+	 * @param array &$notifications To expand $wgEchoNotifications
 	 * @param array &$notificationCategories To expand $wgEchoNotificationCategories
 	 * @param array &$notificationIcons To expand $wgEchoNotificationIcons
 	 * @return bool|void True or no return value to continue or false to abort

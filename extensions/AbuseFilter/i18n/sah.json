@@ -216,7 +216,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Переменнайы туруоруу (set_var)",
 	"abusefilter-edit-builder-group-vars": "Уларыйар кэриҥнэр",
 	"abusefilter-edit-builder-vars-timestamp": "Уларытыы Unix-кэмэ",
-	"abusefilter-edit-builder-vars-accountname": "Аат (ханнык эмэ аатынан бэлиэтэнии)",
+	"abusefilter-edit-builder-vars-account-name": "Аат (ханнык эмэ аатынан бэлиэтэнии)",
 	"abusefilter-edit-builder-vars-action": "Дьайыы",
 	"abusefilter-edit-builder-vars-addedlines": "Уларытыыга эбиллибит устуруокалар ахсааннара",
 	"abusefilter-edit-builder-vars-delta": "Уларытыы түмүгэр ыйааһын уларыйыыта",

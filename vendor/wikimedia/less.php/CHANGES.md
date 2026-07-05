@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.5.1
+
+Fixed:
+* Less_Parser: Fix SetImportDirs() type hint to accept callable without string key (Timo Tijhof)
+
 ## v5.5.0
 
 Added:
@@ -7,11 +12,11 @@ Added:
 * Add support for native CSS color functions including with CSS variables. (Hannah Okwelum) [T405815](https://phabricator.wikimedia.org/T405815)
 
 Fixed:
-* Fix "Using null as the key parameter for array_key_exists" PHP 8.5 warning. (del72683) [T410596](https://phabricator.wikimedia.org/T410596)
+* Fix "PHP Warning: Using null as the key parameter for array_key_exists" on PHP 8.5. (del72683) [T410596](https://phabricator.wikimedia.org/T410596)
 * Fix interpolation of string with number followed by underscore. (Timo Tijhof) [Less.js #2462](https://github.com/less/less.js/issues/2462)
-* Less_Functions: Fix "Using null as an array offset is deprecated" PHP 8.5 warnings. (Hannah Okwelum) [T411398](https://phabricator.wikimedia.org/T411398)
-* Less_ImportVisitor: Fix "Using null as an array offset" PHP 8.5 warning. (Hannah Okwelum) [T411400](https://phabricator.wikimedia.org/T411400)
-* Less_Parser: Fix "ord(): Providing an empty string is deprecated" PHP 8.5 warning. (Hannah Okwelum) [T411397](https://phabricator.wikimedia.org/T411397)
+* Fix "PHP Warning: Using null as an array offset" on PHP 8.5 in Less_Functions. (Hannah Okwelum) [T411398](https://phabricator.wikimedia.org/T411398)
+* Fix "PHP Warning: Using null as an array offset" on PHP 8.5 in Less_ImportVisitor. (Hannah Okwelum) [T411400](https://phabricator.wikimedia.org/T411400)
+* Fix "PHP Warning: ord(): Providing an empty string is deprecated" on PHP 8.5. (Hannah Okwelum) [T411397](https://phabricator.wikimedia.org/T411397)
 
 ## v5.4.0
 
@@ -24,7 +29,7 @@ Changed:
 ## v5.3.1
 
 Fixed:
-* Fix `PHP Warning: Undefined property $value` in `extract()`. (Timo Tijhof) [T391735](https://phabricator.wikimedia.org/T391735)
+* Fix "PHP Warning: Undefined property $value" in `extract()`. (Timo Tijhof) [T391735](https://phabricator.wikimedia.org/T391735)
 
 ## v5.3.0
 
@@ -55,13 +60,13 @@ Added:
 
 Fixed:
 * Fix "PHP Warning: Undefined array key currentUri" when using `@import (inline)` (tck) [T380641](https://phabricator.wikimedia.org/T380641)
-* Fix "Implicit conversion from float to int" PHP 8.1 warning when using `hsv()` (Peter Knut)
+* Fix "PHP Warning: Implicit conversion from float to int" on PHP 8.1 when using `hsv()` (Peter Knut)
 * Less_Visitor: Faster class mapping in `visitObj`  by using inline cache (Thiemo Kreuz)
 
 ## v5.1.2
 
 Fixed:
-* Less_Functions: Fix "Implicitly nullable parameter" PHP 8.4 warning (Reedy) [T376276](https://phabricator.wikimedia.org/T376276)
+* Less_Functions: Fix "PHP Warning: Implicitly nullable parameter" on PHP 8.4 (Reedy) [T376276](https://phabricator.wikimedia.org/T376276)
 
 ## v5.1.1
 
@@ -218,9 +223,8 @@ Fixed:
 
 ## v3.2.0
 
-* Fix "Implicit conversion" PHP 8.1 warnings (Ayokunle Odusan)
-* Fix "Creation of dynamic property" PHP 8.2 warnings (Bas Couwenberg)
-* Fix "Creation of dynamic property" PHP 8.2 warnings (Rajesh Kumar)
+* Fix "PHP Warning: Implicit conversion" on PHP 8.1 (Ayokunle Odusan)
+* Fix "PHP Warning: Creation of dynamic property" on PHP 8.2 (Bas Couwenberg, Rajesh Kumar)
 * Tree_Url: Add support for "Url" type to `Parser::getVariables()` (ciroarcadio) [#51](https://github.com/wikimedia/less.php/pull/51)
 * Tree_Import: Add support for importing URLs without file extension (Timo Tijhof) [#27](https://github.com/wikimedia/less.php/issues/27)
 
@@ -264,22 +268,22 @@ Library forked by Wikimedia, from [oyejorge/less.php](https://github.com/oyejorg
 
 ## v1.7.0.12
 
-* set bin/lessc bit executable
-* Add `gettingVariables` method to `Less_Parser`
+* Fix `bin/lessc` to have executable bit (regression from v1.7.0.10)
+* Add `Less_Parser::getVariables` method [oyejorge #258](https://github.com/oyejorge/less.php/issues/258)
 
 ## v1.7.0.11
 
-* Fix realpath issue (windows)
-* Set Less_Tree_Call property back to public ( Fix 258 266 267 issues from oyejorge/less.php)
+* Fix realpath issue on Windows
+* Change Less_Tree_Call property back to public (protected since v1.7.0.2) [oyejorge #324](https://github.com/oyejorge/less.php/pull/324)
 
 ## v1.7.0.10
 
-* Add indentation option
-* Add `optional` modifier for `@import`
+* Less_Parser: Add `indentation` option
+* Add support for `optional` modifier to `@import`
 * Fix $color in Exception messages
-* take relative-url into account when building the cache filename
+* Fix cache filename to take relative-url into account [oyejorge #295](https://github.com/oyejorge/less.php/pull/295)
 * urlArgs should be string no array()
-* fix missing on NameValue type [#269](https://github.com/oyejorge/less.php/issues/269)
+* Fix missing on NameValue type [oyejorge #269](https://github.com/oyejorge/less.php/issues/269)
 
 ## v1.7.0.9
 

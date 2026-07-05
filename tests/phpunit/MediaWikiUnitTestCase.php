@@ -59,7 +59,7 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 		'wgMWLoggerDefaultSpi',
 		'wgLegalTitleChars',
 		'wgDevelopmentWarnings',
-		// Dependency of wfParseUrl()
+		// Needed for wfEscapeWikiText()
 		'wgUrlProtocols',
 		// For LegacyLogger, injected by DevelopmentSettings.php
 		'wgDebugLogFile',
@@ -91,7 +91,7 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 			// Stash current values
 			self::$originalGlobals[$key] =& $GLOBALS[$key];
 
-			// Remove globals not part of the snapshot (see bootstrap.php, phpunit.php).
+			// Remove globals not part of the snapshot (see bootstrap.php).
 			if ( $key !== 'GLOBALS' && !array_key_exists( $key, self::$unitGlobals ) ) {
 				unset( $GLOBALS[$key] );
 			}
@@ -178,9 +178,7 @@ abstract class MediaWikiUnitTestCase extends TestCase {
 
 			$this->serviceContainer
 				->method( 'getService' )
-				->willReturnCallback( function ( $name ) {
-					return $this->getService( $name );
-				} );
+				->willReturnCallback( $this->getService( ... ) );
 		}
 
 		return $this->serviceContainer;

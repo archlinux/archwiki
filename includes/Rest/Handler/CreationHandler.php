@@ -6,6 +6,7 @@ use MediaWiki\Request\WebResponse;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -108,7 +109,7 @@ class CreationHandler extends EditHandler {
 		$title = $this->urlEncodeTitle( $actionModuleResult['edit']['title'] );
 
 		$url = $this->getRouter()->getRouteUrl( '/v1/page/' . $title );
-		$response->setHeader( 'Location', $url );
+		$response->setHeader( ResponseHeaders::LOCATION, $url );
 	}
 
 	/**
@@ -118,6 +119,18 @@ class CreationHandler extends EditHandler {
 	 * @return ?string The file path to the NewPage JSON schema.
 	 */
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/NewPage.json';
+		return __DIR__ . '/Schema/NewPage.json';
+	}
+
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::LOCATION => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::LOCATION
+				]
+			]
+		);
 	}
 }

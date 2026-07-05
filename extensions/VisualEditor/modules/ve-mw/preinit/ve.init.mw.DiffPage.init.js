@@ -29,6 +29,8 @@
 		$visualDiff
 	);
 
+	let diffElement;
+
 	function onReviewModeButtonSelectSelect( item ) {
 		let oldPageName, newPageName;
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) !== 'ComparePages' ) {
@@ -74,19 +76,14 @@
 			mw.libs.ve.diffLoader.getVisualDiffGeneratorPromise( oldId, newId, modulePromise, oldPageName, newPageName ).then( ( visualDiffGenerator ) => {
 				// This class is loaded via modulePromise above
 				// eslint-disable-next-line no-undef
-				const diffElement = new ve.ui.DiffElement( visualDiffGenerator(), { classes: [ 've-init-mw-diffPage-diff' ] } );
+				diffElement = new ve.ui.DiffElement( visualDiffGenerator(), { classes: [ 've-init-mw-diffPage-diff' ] } );
 				diffElement.$document.addClass( 'mw-parser-output content' );
 
 				mw.libs.ve.fixFragmentLinks( diffElement.$document[ 0 ], mw.Title.newFromText( newPageName ), 'mw-diffpage-visualdiff-' );
 
 				progress.$element.addClass( 'oo-ui-element-hidden' );
 				$visualDiff.append( diffElement.$element );
-				lastDiff = {
-					oldId: oldId,
-					newId: newId,
-					oldPageName: oldPageName,
-					newPageName: newPageName
-				};
+				lastDiff = { oldId, newId, oldPageName, newPageName };
 
 				diffElement.positionDescriptions();
 			}, ( code, data ) => {
@@ -109,6 +106,12 @@
 		}
 	}
 
+	$( window ).on( 'resize', OO.ui.debounce( () => {
+		if ( diffElement ) {
+			diffElement.positionDescriptions();
+		}
+	}, 500 ) );
+
 	mw.hook( 'wikipage.diff' ).add( () => {
 		if ( mw.config.get( 'wgDiffOldId' ) === false || mw.config.get( 'wgDiffNewId' ) === false ) {
 			// Don't offer visual diffs for "fake" diffs where the revision to compare to is not given,
@@ -123,7 +126,7 @@
 			return;
 		}
 
-		const $wikitextDiffContainer = $( 'table.diff[data-mw="interface"]' );
+		const $wikitextDiffContainer = $( 'table.diff[data-mw-interface]' );
 		$wikitextDiffHeader = $wikitextDiffContainer.find( 'tr.diff-title' )
 			.add( $wikitextDiffContainer.find( 'td.diff-multi, td.diff-notice' ).parent() );
 		$wikitextDiffBody = $wikitextDiffContainer.find( 'tr' ).not( $wikitextDiffHeader );

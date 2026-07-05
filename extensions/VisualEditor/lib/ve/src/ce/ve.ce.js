@@ -11,6 +11,7 @@
  */
 ve.ce = {
 	// nodeFactory: Initialized in ve.ce.NodeFactory.js
+	// pasteSourceDetectors: Initialized in ve.ce.PasteSourceDetectorRegistry.js
 };
 
 /* Static Properties */
@@ -113,8 +114,7 @@ ve.ce.getDomHash = function ( element ) {
 };
 
 /**
- * @typedef {Object} NodeAndOffset
- * @memberof ve.ce
+ * @typedef {Object} ve.ce.NodeAndOffset
  * @return {Node} node
  * @return {number} offset
  */
@@ -133,7 +133,7 @@ ve.ce.nextCursorOffset = function ( node ) {
 		nextNode = node.parentNode;
 		offset = 1 + ve.parentIndex( node );
 	}
-	return { node: nextNode, offset: offset };
+	return { node: nextNode, offset };
 };
 
 /**
@@ -151,7 +151,7 @@ ve.ce.previousCursorOffset = function ( node ) {
 		previousNode = node.parentNode;
 		offset = ve.parentIndex( node );
 	}
-	return { node: previousNode, offset: offset };
+	return { node: previousNode, offset };
 };
 
 /**

@@ -12,6 +12,7 @@ namespace Wikimedia\Parsoid\Wt2Html\TreeBuilder;
 use Generator;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -27,7 +28,6 @@ use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -178,6 +178,12 @@ class TreeBuilderStage extends PipelineStage {
 		$data->parsoid = $dataParsoid;
 		if ( $dataMw !== null ) {
 			$data->mw = $dataMw;
+		}
+		if ( isset( $dataParsoid->tmp->variantData ) ) {
+			DOMDataUtils::setAttributeObjectNodeData(
+				$data, 'data-mw-variant', $dataParsoid->tmp->variantData
+			);
+			unset( $dataParsoid->tmp->variantData );
 		}
 		// Store in the top level doc since we'll be importing the nodes after treebuilding
 		$nodeId = DOMDataUtils::stashObjectInDoc( $this->env->getTopLevelDoc(), $data );
@@ -400,20 +406,12 @@ class TreeBuilderStage extends PipelineStage {
 			) {
 				$origTxt = $dp->tsr->substr( $this->frame->getSource() );
 			} else {
-				switch ( $name ) {
-					case 'td':
-						$origTxt = '|';
-						break;
-					case 'tr':
-						$origTxt = '|-';
-						break;
-					case 'th':
-						$origTxt = '!';
-						break;
-					default:
-						$origTxt = '';
-						break;
-				}
+				$origTxt = match ( $name ) {
+					'td' => '|',
+					'tr' => '|-',
+					'th' => '!',
+					default => ''
+				};
 			}
 			if ( $origTxt !== '' ) {
 				$this->remexPipeline->dispatcher->characters( $origTxt, 0, strlen( $origTxt ), 0,

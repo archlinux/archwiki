@@ -6,11 +6,11 @@
 			"Dawid Deutschland",
 			"Malafaya",
 			"Matma Rex",
+			"Mehman97",
 			"Otogi",
 			"Temuri rajavi",
 			"გიორგიმელა",
-			"Გიო ოქრო",
-			"Mehman97"
+			"Გიო ოქრო"
 		]
 	},
 	"abusefilter-desc": "საშუალებას იძლევა რედაქტირებისას გამოიყენოს ევრისტიკული ფილტრები",
@@ -240,7 +240,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "ცვლადის ჩასმა (set_var)",
 	"abusefilter-edit-builder-group-vars": "ცვალებადი",
 	"abusefilter-edit-builder-vars-timestamp": "Unix ცვლილების დრო",
-	"abusefilter-edit-builder-vars-accountname": "ანგარიშის სახელი (შექმნისას)",
+	"abusefilter-edit-builder-vars-account-name": "ანგარიშის სახელი (შექმნისას)",
 	"abusefilter-edit-builder-vars-action": "მოქმედება",
 	"abusefilter-edit-builder-vars-addedlines": "ხაზის ჩამატება",
 	"abusefilter-edit-builder-vars-delta": "ზომის ცვლილება რედაქტირებაში",

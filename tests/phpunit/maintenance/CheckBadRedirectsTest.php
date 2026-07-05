@@ -27,10 +27,8 @@ class CheckBadRedirectsTest extends MaintenanceBaseTestCase {
 			$returnArray[] = $existingTestPage->getTitle();
 		}
 		// Set the page_is_redirect as 1 for the test on all pages in $returnArray
-		$pageIds = array_map( static function ( $page ) {
-			return $page->getId();
-		}, $returnArray );
-		if ( count( $pageIds ) ) {
+		$pageIds = array_map( static fn ( $page ) => $page->getId(), $returnArray );
+		if ( $pageIds ) {
 			$this->getDb()->newUpdateQueryBuilder()
 				->update( 'page' )
 				->set( [ 'page_is_redirect' => 1 ] )

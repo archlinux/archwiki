@@ -227,7 +227,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Itakda ang pabagu-bago (set_var)",
 	"abusefilter-edit-builder-group-vars": "Mga pabagu-bago",
 	"abusefilter-edit-builder-vars-timestamp": "Tatak ng oras ng pagbabago ng Unix",
-	"abusefilter-edit-builder-vars-accountname": "Pangalan ng akawnt (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Pangalan ng akawnt (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Kilos",
 	"abusefilter-edit-builder-vars-addedlines": "Mga guhit na idinagdag sa pagbago",
 	"abusefilter-edit-builder-vars-delta": "Pagbabago ng sukat sa pamamatnugot",

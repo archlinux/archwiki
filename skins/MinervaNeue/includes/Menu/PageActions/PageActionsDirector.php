@@ -19,7 +19,7 @@
  */
 namespace MediaWiki\Minerva\Menu\PageActions;
 
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * Director responsible for building Page Actions menu.
@@ -27,25 +27,11 @@ use MessageLocalizer;
  */
 final class PageActionsDirector {
 
-	private ToolbarBuilder $toolbarBuilder;
-	private IOverflowBuilder $overflowBuilder;
-	private MessageLocalizer $messageLocalizer;
-
-	/**
-	 * Director responsible for Page Actions menu building
-	 *
-	 * @param ToolbarBuilder $toolbarBuilder
-	 * @param IOverflowBuilder $overflowBuilder The overflow menu builder
-	 * @param MessageLocalizer $messageLocalizer Message localizer used to translate texts
-	 */
 	public function __construct(
-		ToolbarBuilder $toolbarBuilder,
-		IOverflowBuilder $overflowBuilder,
-		MessageLocalizer $messageLocalizer
+		private readonly ToolbarBuilder $toolbarBuilder,
+		private readonly IOverflowBuilder $overflowBuilder,
+		private readonly MessageLocalizer $messageLocalizer,
 	) {
-		$this->toolbarBuilder = $toolbarBuilder;
-		$this->overflowBuilder = $overflowBuilder;
-		$this->messageLocalizer = $messageLocalizer;
 	}
 
 	/**

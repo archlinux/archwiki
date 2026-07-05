@@ -8,12 +8,12 @@
 			"Kaganer",
 			"Kareyac",
 			"McDutchie",
+			"Merrahtar",
 			"Okras",
 			"OlegVeliky",
 			"Pacha Tchernof",
 			"Stjn",
-			"Александр Сигачёв",
-			"Merrahtar"
+			"Александр Сигачёв"
 		]
 	},
 	"syntaxhighlight-desc": "Обеспечивает подсветки синтаксиса <code>&lt;syntaxhighlight&gt;</code> с помощью [http://pygments.org/ Pygments — средства подсветки синтаксиса для Python]",

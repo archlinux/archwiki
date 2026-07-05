@@ -58,7 +58,7 @@ ve.ui.MWLinkAction.static.getLinkAnnotation = function ( linktext, doc ) {
 	// It's an external link.
 	return new ve.dm.MWExternalLinkAnnotation( {
 		type: 'link/mwExternal',
-		attributes: { href: href }
+		attributes: { href }
 	} );
 };
 

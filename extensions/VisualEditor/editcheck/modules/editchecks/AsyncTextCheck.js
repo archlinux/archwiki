@@ -1,9 +1,3 @@
-/*!
- * EditCheck ContentBranchNode check class
- *
- * @copyright See AUTHORS.txt
- */
-
 /**
  * Abstract class for async checks that run on the plain text of a ContentBranchNode.
  *
@@ -81,12 +75,9 @@ mw.editcheck.AsyncTextCheck.prototype.handleListener = function ( listener, surf
 	this.getModifiedContentBranchNodes( documentModel ).forEach( ( node ) => {
 		const nodeFragment = new ve.dm.SurfaceFragment( surfaceModel, new ve.dm.LinearSelection( node.getRange() ) );
 		const range = node.getRange();
-		if (
-			( listener === 'onBeforeSave' && this.isTaggedRange( 'interacted', range ) ) ||
-			// mw.editcheck.hasAddedContentFailingToneCheck wants to check for any violations, even dismissed ones.
-			// Used for tagging.
-			( listener !== 'onCheckAll' && this.isDismissedRange( range ) )
-		) {
+		// mw.editcheck.hasAddedContentFailingToneCheck wants to check for any violations, even dismissed ones.
+		// Used for tagging.
+		if ( listener !== 'onCheckAll' && this.isDismissedRange( range ) ) {
 			return;
 		}
 

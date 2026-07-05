@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Khaladaadka lint-ka",
+	"linttemplateerrors": "Ku darista bogagga ee leh khaladaadka lint-ka",
 	"linter-category-bogus-image-options": "Xulashooyinka faylka aan sax ahayn",
 	"linter-category-bogus-image-options-desc": "Bogaggan waxay leeyihiin faylal leh xulashooyin aan sax ahayn.",
 	"linter-category-large-tables": "Jadwal waaweyn oo ay adag tahay in lagu arko mobilka",
@@ -15,6 +16,8 @@
 	"linter-category-duplicate-ids-desc": "Bogaggan waxay leeyihiin walxo leh sifooyin id oo isku mid ah.",
 	"linter-category-empty-heading": "Cinwaanno madhan",
 	"linter-category-empty-heading-desc": "Bogaggan waxay leeyihiin cinwaanno madhan.",
+	"linter-category-template-arg-in-extension-tag": "Sumad kordhin oo leh cabbir tusmo",
+	"linter-category-template-arg-in-extension-tag-desc": "Bogaggan waxay ka kooban yihiin sumad kordhin oo leh cabbir tusmo ah, taas oo si sax ah aan loo soo dhajin karin.",
 	"linter-category-fostered": "Nuxur la kobciyay",
 	"linter-category-fostered-desc": "Bogaggan waxay leeyihiin nuxur la kobciyay.",
 	"linter-category-fostered-transparent": "Nuxur la kobciyay oo aan saameyn ku yeelan soo bandhigista",
@@ -57,6 +60,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Bogaggan waxay leeyihiin isku xirro wiki ah oo ku jira isku xirro dibadeed, kuwaas oo la sixi karo.",
 	"linter-desc": "Ka raadraac khaladaadka lint-ka adeeg dibadeed oo u muuji isticmaalayaasha",
 	"linter-lints-prefix-search-page-desc": "Raadi bogag leh khaladaad lint iyadoo lagu raadinayo bilowga cinwaanka bogga ama cinwaanka buuxa",
+	"linter-invalid-category": "Qaybtaan lama helin ama si khaldan loo sameeyay",
 	"linter-invalid-title": "Magaca meel-magac iyo/ama magaca bogga lama helin ama si khaldan ayaa loo qoray",
 	"linter-form-exact-match": "Raadi cinwaan bog oo gaar ah",
 	"linter-form-prefix-match": "Raadi dhammaan bogagga u dhigma bilowga cinwaanka",
@@ -107,10 +111,16 @@
 	"linter-pager-title-header": "Cinwaanka bogga",
 	"linter-pager-unclosed-quotes-in-heading-details": "Calaamad xigasho oo aan la xirin oo ka baxda tusmada waxa ku jira",
 	"linter-pager-wikilink-in-extlink-details": "Xiriirro ku jira xiriirro",
+	"linter-pager-template-arg-in-extension-tag-details": "Magaca calaamadda fidinta oo u baahan cusboonaysiin (iyo cabbirrada tusmada ee lagu isticmaalay dhexdeeda)",
 	"linter-prefix-search-subpage": "Bogag leh khaladaad lint oo u dhigma bilowga cinwaanka ama cinwaan buuxa: $1",
 	"linterrors-subpage": "Khaladaadka lint: $1",
 	"linterrors-summary": "<strong>Fiiro gaar ah:</strong> tirada qaybaha ma aha tiro sax ah, balse waxay ku salaysan yihiin qiyaaso.",
 	"multi-part-template-block": "Wax soo saar aan ka imaan hal tusmo",
+	"parser-function": "Wax soo saar ka yimid hawl falanqeeye",
 	"pageinfo-linter": "Khaladaadka lint",
-	"pageinfo-linter-moreinfo": "Eeg macluumaad faahfaahsan oo ku saabsan khaladaadka lint."
+	"pageinfo-linter-moreinfo": "Eeg macluumaad faahfaahsan oo ku saabsan khaladaadka lint.",
+	"category-by-template": "Gudbinta ka kooban khaladaad lint: $1",
+	"category-by-template-view": "Eeg ku xirnaanta ay ku jiraan khaladaadkan lint",
+	"category-by-template-desc": "Gudbinta bogaggan waxay ka kooban yihiin '''[[Special:LintErrors/$1|$1]]''' khaladaad lint ah.  ''Ogsoonow in qaar ka mid ah gudbinta laga yaabo inay ku soo baxaan liiskan sababo la xiriira xogta loo gudbiyo gudbinta ee aan ahayn isha gudbinta.''",
+	"linter-template-errors-index-desc": "Kuwani waa liisaska gudbinta bogag ka kooban khaladaad lint ah.  ''Ogsoonow in qaar ka mid ah gudbinta laga yaabo inay ka soo muuqdaan liisaskan sababo la xiriira xogta loo gudbiyo gudbinta ee aan ahayn isha gudbinta.''"
 }

@@ -250,6 +250,18 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
 };
 
 /**
+ * Convert a URL pattern with a $1 placeholder into a RegExp
+ *
+ * @param {string} urlPattern
+ * @return {RegExp}
+ */
+mw.libs.ve.getRegexFromUrlPattern = function ( urlPattern ) {
+	const regexEscape = ( str ) => str.replace( /([.?*+^$[\]\\(){}|-])/g, '\\$1' );
+
+	return new RegExp( regexEscape( urlPattern ).replace( regexEscape( '$1' ), '(.*)' ) );
+};
+
+/**
  * @typedef {Object} TargetData
  * @memberof mw.libs.ve
  * @property {string} title The title of the internal link (if the href is internal)
@@ -264,10 +276,6 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
  * @return {mw.libs.ve.TargetData} Information about the given href
  */
 mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
-	function regexEscape( str ) {
-		return str.replace( /([.?*+^$[\]\\(){}|-])/g, '\\$1' );
-	}
-
 	function returnExternalData() {
 		return { isInternal: false };
 	}
@@ -319,7 +327,7 @@ mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
 
 	// Check if this matches the server's article path
 	const articleBase = new URL( mw.config.get( 'wgArticlePath' ), doc.baseURI ).toString().replace( /^https?:/i, '' );
-	const articleBaseRegex = new RegExp( regexEscape( articleBase ).replace( regexEscape( '$1' ), '(.*)' ) );
+	const articleBaseRegex = mw.libs.ve.getRegexFromUrlPattern( articleBase );
 	const matches = relativeHref.match( articleBaseRegex );
 	if ( matches ) {
 		if ( queryLength === 0 && matches && !matches[ 1 ].split( '#' )[ 0 ].includes( '?' ) ) {

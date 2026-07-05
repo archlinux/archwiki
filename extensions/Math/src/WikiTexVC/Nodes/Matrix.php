@@ -6,11 +6,11 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use Generator;
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtable;
 
 class Matrix extends TexArray {
 
-	/** @var string */
-	private $top;
 	private array $lines = [];
 
 	private ?TexArray $columnSpecs = null;
@@ -20,7 +20,11 @@ class Matrix extends TexArray {
 
 	private ?array $alignInfo = null;
 
-	public function __construct( string $top, TexArray $mainarg, ?LengthSpec $rowSpec = null ) {
+	public function __construct(
+		private string $top,
+		TexArray $mainarg,
+		?LengthSpec $rowSpec = null,
+	) {
 		foreach ( $mainarg->args as $row ) {
 			if ( !$row instanceof TexArray ) {
 				throw new InvalidArgumentException( 'Nested arguments have to be type of TexArray' );
@@ -33,7 +37,6 @@ class Matrix extends TexArray {
 		} else {
 			parent::__construct( ...$mainarg->args );
 		}
-		$this->top = $top;
 		if ( $rowSpec && count( $this->args ) ) {
 			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->first()->setRowSpecs( $rowSpec );
@@ -109,8 +112,14 @@ class Matrix extends TexArray {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( $arguments = [], &$state = [] ) {
-		return $this->parseToMML( $this->getTop(), $arguments, null );
+	public function toMMLTree( $arguments = [], &$state = [] ): MMLbase {
+		$mml = $this->parseToMML( $this->getTop(), $arguments, null );
+		// Bug T418073
+		$displayStyle = $state['styleArgs']['displaystyle'] ?? 'true';
+		if ( $mml instanceof MMLmtable && $displayStyle === 'true' ) {
+			$mml->setAttribute( 'displaystyle', $displayStyle );
+		}
+		return $mml;
 	}
 
 	private function renderMatrix( Matrix $matrix ): string {

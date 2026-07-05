@@ -1,30 +1,24 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\DatabaseBlockStoreFactory;
 use MediaWiki\Block\Hook\PerformRetroactiveAutoblockHook;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class PerformRetroactiveAutoblockHandler implements PerformRetroactiveAutoblockHook, CheckUserQueryInterface {
 
-	private IConnectionProvider $dbProvider;
-	private DatabaseBlockStoreFactory $databaseBlockStoreFactory;
-	private Config $config;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		DatabaseBlockStoreFactory $databaseBlockStoreFactory,
-		Config $config
+		private readonly IConnectionProvider $dbProvider,
+		private readonly DatabaseBlockStoreFactory $databaseBlockStoreFactory,
+		private readonly Config $config,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->databaseBlockStoreFactory = $databaseBlockStoreFactory;
-		$this->config = $config;
 	}
 
 	/**
@@ -59,13 +53,19 @@ class PerformRetroactiveAutoblockHandler implements PerformRetroactiveAutoblockH
 		foreach ( self::RESULT_TABLES as $table ) {
 			$tablePrefix = self::RESULT_TABLE_TO_PREFIX[$table];
 			$res = $dbr->newSelectQueryBuilder()
-				->select( [ 'ip' => $tablePrefix . 'ip', 'timestamp' => 'MAX(' . $tablePrefix . 'timestamp)' ] )
+				->select( [
+					'ip_hex' => $tablePrefix . 'ip_hex',
+					'timestamp' => 'MAX(' . $tablePrefix . 'timestamp)',
+				] )
 				->from( $table )
-				->useIndex( $tablePrefix . 'actor_ip_time' )
+				->useIndex( $tablePrefix . 'actor_ip_hex_time' )
 				->join( 'actor', null, 'actor_id=' . $tablePrefix . 'actor' )
-				->where( [ 'actor_user' => $user->getId( $block->getWikiId() ) ] )
+				->where( [
+					'actor_user' => $user->getId( $block->getWikiId() ),
+					$dbr->expr( $tablePrefix . 'ip_hex', '!=', null ),
+				] )
 				->limit( $maximumIPsToAutoblock )
-				->groupBy( 'ip' )
+				->groupBy( 'ip_hex' )
 				->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
 				->caller( __METHOD__ )
 				->fetchResultSet();
@@ -74,11 +74,12 @@ class PerformRetroactiveAutoblockHandler implements PerformRetroactiveAutoblockH
 			// This will be truncated later to meet the specified limit.
 			foreach ( $res as $row ) {
 				$timestamp = ConvertibleTimestamp::convert( TS_MW, $row->timestamp );
-				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
-				if ( !array_key_exists( $row->ip, $lastUsedIPs ) ) {
-					$lastUsedIPs[$row->ip] = $timestamp;
+				$ip = IPUtils::formatHex( $row->ip_hex );
+
+				if ( !array_key_exists( $ip, $lastUsedIPs ) ) {
+					$lastUsedIPs[$ip] = $timestamp;
 				} else {
-					$lastUsedIPs[$row->ip] = max( $lastUsedIPs[$row->ip], $timestamp );
+					$lastUsedIPs[$ip] = max( $lastUsedIPs[$ip], $timestamp );
 				}
 			}
 		}

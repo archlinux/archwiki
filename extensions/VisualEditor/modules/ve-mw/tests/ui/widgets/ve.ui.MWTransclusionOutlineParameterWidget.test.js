@@ -1,4 +1,4 @@
-QUnit.module( 've.ui.MWTransclusionOutlineParameterWidget' );
+QUnit.module( 've.ui.MWTransclusionOutlineParameterWidget', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'interprets param with no attributes', ( assert ) => {
 	const widget = new ve.ui.MWTransclusionOutlineParameterWidget( {} );

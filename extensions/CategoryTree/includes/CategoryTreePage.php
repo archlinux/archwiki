@@ -26,9 +26,9 @@ namespace MediaWiki\Extension\CategoryTree;
 
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Search\SearchEngineFactory;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use SearchEngineFactory;
 
 /**
  * Special page for the CategoryTree extension, an AJAX based gadget

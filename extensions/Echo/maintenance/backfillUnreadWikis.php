@@ -7,6 +7,7 @@ use MediaWiki\Extension\Notifications\UnreadWikis;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 use MediaWiki\WikiMap\WikiMap;
 
 // @codeCoverageIgnoreStart

@@ -15,7 +15,6 @@
 	"thanks-error-undefined": "Ekki tókst að skila þakkarboðinu (villukóði: $1). Reyndu aftur.",
 	"thanks-error-invalidrevision": "Breytingareinkennið er ógilt.",
 	"thanks-error-revdeleted": "Tókst ekki að senda þakkir því útgáfunni hefur verið eytt.",
-	"thanks-error-notitle": "Ekki tókst að sækja titil síðunnar",
 	"thanks-error-invalidrecipient": "Enginn gildur viðtakandi fannst",
 	"thanks-error-invalidrecipient-bot": "Ekki er hægt þakka vélmennum",
 	"thanks-error-invalidrecipient-self": "Ekki er hægt að þakka sjálfum sér",

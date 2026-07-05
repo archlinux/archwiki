@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\GenerateStatsAboutClientHintsData;
+use MediaWiki\Extension\CheckUser\Maintenance\GenerateStatsAboutClientHintsData;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWikiUnitTestCase;
 
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Maintenance\GenerateStatsAboutClientHintsData
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\GenerateStatsAboutClientHintsData
  */
 class GenerateStatsAboutClientHintsDataTest extends MediaWikiUnitTestCase {
 	public function testExecute() {

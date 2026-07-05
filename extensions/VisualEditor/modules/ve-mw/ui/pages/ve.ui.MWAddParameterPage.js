@@ -1,6 +1,6 @@
 /**
  * Placeholder page for a currently unnamed parameter. Represented as an unnamed
- * {@see ve.dm.MWParameterModel} in the corresponding {@see ve.dm.MWTemplateModel}.
+ * {@link ve.dm.MWParameterModel} in the corresponding {@link ve.dm.MWTemplateModel}.
  *
  * @class
  * @extends OO.ui.PageLayout
@@ -99,7 +99,7 @@ ve.ui.MWAddParameterPage.prototype.initialize = function () {
 	).parseDom();
 	ve.init.platform.linkCache.styleElement( link, $helpText.filter( 'a:not(.external)' ) );
 
-	// Copied from {@see OO.ui.FieldsetLayout} because there is no method to do this later
+	// Copied from {@link OO.ui.FieldsetLayout} because there is no method to do this later
 	const helpWidget = new OO.ui.LabelWidget( {
 		label: $helpText,
 		classes: [ 'oo-ui-inline-help' ]
@@ -168,7 +168,7 @@ ve.ui.MWAddParameterPage.prototype.onParameterNameSubmitted = function () {
 /**
  * @private
  * @param {string} name Parameter name or alias
- * @return {jQuery[]} An array as accepted by {@see OO.ui.FieldLayout.setErrors}
+ * @return {jQuery[]} An array as accepted by {@link OO.ui.FieldLayout.setErrors}
  */
 ve.ui.MWAddParameterPage.prototype.getValidationErrors = function ( name ) {
 	if ( !name ) {

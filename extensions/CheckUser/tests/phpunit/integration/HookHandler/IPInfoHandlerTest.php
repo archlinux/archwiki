@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
 use LogicException;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\HookHandler\IPInfoHandler;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\HookHandler\IPInfoHandler;
 use MediaWiki\IPInfo\Rest\Handler\NoRevisionHandler;
 use MediaWiki\IPInfo\Rest\Handler\RevisionHandler;
 use MediaWiki\Permissions\Authority;
@@ -21,7 +21,7 @@ use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\IPInfoHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\IPInfoHandler
  * @group CheckUser
  * @group Database
  */
@@ -109,7 +109,7 @@ class IPInfoHandlerTest extends MediaWikiIntegrationTestCase {
 				$services->get( 'IPInfoTempUserIPLookup' ),
 				$services->get( 'IPInfoPermissionManager' ),
 				$services->getReadOnlyMode(),
-				$services->get( 'IPInfoHookRunner' )
+				$services->getHookContainer(),
 			);
 
 			// Get the request data
@@ -128,7 +128,7 @@ class IPInfoHandlerTest extends MediaWikiIntegrationTestCase {
 				$services->get( 'IPInfoPermissionManager' ),
 				$services->getReadOnlyMode(),
 				$services->get( 'IPInfoAnonymousUserIPLookup' ),
-				$services->get( 'IPInfoHookRunner' )
+				$services->getHookContainer(),
 			);
 
 			// Get the request data
@@ -187,17 +187,15 @@ class IPInfoHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/** @dataProvider provideTestOnIPInfoHandlerRun */
-	public function testOnIPInfoHandlerRun( $targetProvider, $authorityProvider, string $context, array $expected ) {
+	public function testOnIPInfoHandlerRun( $target, $authority, string $context, array $expected ) {
 		// Test that the isolated hook operates as expected when the handler is run
 		$ipInfoData = [];
-		$target = $targetProvider();
-		$authority = $authorityProvider();
 		$handler = new IPInfoHandler(
 			$this->getServiceContainer()->get( 'CheckUserGlobalContributionsLookup' )
 		);
 		$handler->onIPInfoHandlerRun(
-			$target,
-			$authority,
+			$target(),
+			$authority(),
 			$context,
 			$ipInfoData
 		);
@@ -210,7 +208,7 @@ class IPInfoHandlerTest extends MediaWikiIntegrationTestCase {
 				'target' => static fn () => self::$tempUserNoEdits->getName(),
 				'authority' => static fn () => self::$tempUserNoEdits,
 				'context' => 'infobox',
-				'expectedOutput' => [
+				'expected' => [
 					'ipinfo-source-checkuser' => [
 						'globalContributionsCount' => 0,
 					],
@@ -220,7 +218,7 @@ class IPInfoHandlerTest extends MediaWikiIntegrationTestCase {
 				'target' => static fn () => self::$tempUserNoEdits->getName(),
 				'authority' => static fn () => self::$tempUserNoEdits,
 				'context' => 'popup',
-				'expectedOutput' => [],
+				'expected' => [],
 			],
 		];
 	}

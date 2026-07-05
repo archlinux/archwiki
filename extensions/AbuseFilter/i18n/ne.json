@@ -183,7 +183,7 @@
 	"abusefilter-edit-builder-group-funcs": "क्रियाहरु",
 	"abusefilter-edit-builder-funcs-set_var": "चल राशि मिलान गर्ने (मिलान_चल)",
 	"abusefilter-edit-builder-group-vars": "चल राशीहरू",
-	"abusefilter-edit-builder-vars-accountname": "खाता नाम (खाता निर्माणको समयमा)",
+	"abusefilter-edit-builder-vars-account-name": "खाता नाम (खाता निर्माणको समयमा)",
 	"abusefilter-edit-builder-vars-action": "कार्य",
 	"abusefilter-edit-builder-vars-delta": "सम्पादनमा आकार परिवर्तन गर्ने",
 	"abusefilter-edit-builder-vars-newsize": "नयाँ पृष्ठको आकार",

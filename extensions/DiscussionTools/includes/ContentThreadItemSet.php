@@ -2,11 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use MediaWiki\Extension\DiscussionTools\ThreadItem\CommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
-use MediaWiki\Extension\DiscussionTools\ThreadItem\HeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ThreadItem;
 use Wikimedia\Assert\Assert;
 
@@ -33,10 +31,10 @@ class ContentThreadItemSet implements ThreadItemSet {
 		Assert::precondition( $item instanceof ContentThreadItem, 'Must be ContentThreadItem' );
 
 		$this->threadItems[] = $item;
-		if ( $item instanceof CommentItem ) {
+		if ( $item instanceof ContentCommentItem ) {
 			$this->commentItems[] = $item;
 		}
-		if ( $item instanceof HeadingItem ) {
+		if ( $item instanceof ContentHeadingItem ) {
 			$this->threads[] = $item;
 		}
 	}

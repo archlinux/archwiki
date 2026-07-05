@@ -46,9 +46,6 @@
 	"vector-toc-label": "Yelezuo",
 	"vector-toc-beginning": "Pɔsega",
 	"vector-toc-toggle-button-label": "Toggle $1 bɔberɛpika",
-	"vector-anon-user-menu-pages": "Pɛgera n bɔ'ɔra leregere duma la ti ŋmɛ yese ba",
-	"vector-anon-user-menu-pages-learn": "Zamesɛ zo'e",
-	"vector-anon-user-menu-pages-label": "Zamesɛ leregere yɛla zo'e zo'e",
 	"vector-main-menu-tooltip": "Di'a la miŋa n wana",
 	"vector-toc-menu-tooltip": "Yelezuoto",
 	"vector-toc-collapsible-button-label": "Toggle la n de yelezuoto la",
@@ -67,7 +64,5 @@
 	"empty-language-selector-body": "Pɛgerɛ la yelezuto ka sugerɛ bɔna yeletɔgum sɛba puan",
 	"vector-toc-unpinned-popup": "Yelezuto la, ba dikɛ ba kalam mɛ.",
 	"vector-page-tools-unpinned-popup": "Lɔgerɔ zi'an la tee bɔna la kalam",
-	"vector-main-menu-unpinned-popup": "Loosego zi'an la tee bɔna la kalam",
-	"vector-2022-beta-preview-label": "Vector 2022 bita",
-	"vector-2022-beta-preview-description": "Diŋɛ Nyɛ 2022 Vɛketa paala naaŋɔ"
+	"vector-main-menu-unpinned-popup": "Loosego zi'an la tee bɔna la kalam"
 }

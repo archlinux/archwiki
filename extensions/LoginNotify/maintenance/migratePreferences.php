@@ -2,10 +2,10 @@
 
 namespace LoginNotify\Maintenance;
 
-use BatchRowIterator;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 use MediaWiki\WikiMap\WikiMap;
 use RecursiveIteratorIterator;
 

@@ -56,11 +56,11 @@ ve.dm.MWImageNode.static.rdfaToTypes = ( function () {
 	const rdfaToType = {};
 
 	[ 'File', 'Image', 'Video', 'Audio' ].forEach( ( mediaClass ) => {
-		rdfaToType[ 'mw:' + mediaClass ] = { mediaClass: mediaClass, frameType: 'none' };
-		rdfaToType[ 'mw:' + mediaClass + '/Frameless' ] = { mediaClass: mediaClass, frameType: 'frameless' };
+		rdfaToType[ 'mw:' + mediaClass ] = { mediaClass, frameType: 'none' };
+		rdfaToType[ 'mw:' + mediaClass + '/Frameless' ] = { mediaClass, frameType: 'frameless' };
 		// Block image only:
-		rdfaToType[ 'mw:' + mediaClass + '/Thumb' ] = { mediaClass: mediaClass, frameType: 'thumb' };
-		rdfaToType[ 'mw:' + mediaClass + '/Frame' ] = { mediaClass: mediaClass, frameType: 'frame' };
+		rdfaToType[ 'mw:' + mediaClass + '/Thumb' ] = { mediaClass, frameType: 'thumb' };
+		rdfaToType[ 'mw:' + mediaClass + '/Frame' ] = { mediaClass, frameType: 'frame' };
 	} );
 
 	return rdfaToType;

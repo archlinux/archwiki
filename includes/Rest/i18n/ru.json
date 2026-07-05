@@ -7,12 +7,12 @@
 			"Engineer56",
 			"Kareyac",
 			"Katunchik",
+			"LuckyBlock13fa",
 			"Megakott",
 			"Mitte27",
 			"Okras",
 			"Vlad5250",
 			"Yurina Tatiana",
-			"LuckyBlock13fa",
 			"Stjn"
 		]
 	},
@@ -81,7 +81,7 @@
 	"rest-unknown-content-model": "Неизвестная модель содержимого: $1",
 	"rest-module": "Модуль",
 	"rest-module-default": "Модуль по умолчанию",
-	"rest-module-content.v1-title": "Содержимое страницы",
+	"rest-module-content.v1-title": "API контента",
 	"rest-param-desc-revision-id": "Идентификатор правки",
 	"rest-param-desc-comment": "Причина редактирования страницы. Чтобы комментарий был размещён на сервере, используйте \"комментарий: null\".",
 	"rest-param-desc-contentmodel": "Формат содержимого страницы: вики-текст (по умолчанию), css, javascript, json или text.",

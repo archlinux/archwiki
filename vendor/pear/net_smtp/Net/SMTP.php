@@ -1150,7 +1150,7 @@ class Net_SMTP
      */
     protected function authOAuthBearer($uid, $token, $authz, $conn)
     {
-        $auth = base64_encode("n,a=$uid\1auth=$token\1\1");
+        $auth = base64_encode("n,a=$uid,\1auth=$token\1\1");
         return $this->authenticateOAuth('OAUTHBEARER', $auth, $authz, $conn);
     }
 

@@ -127,5 +127,7 @@
 	"math-wikibase-special-form-button": "Request Information",
 	"math-wikibase-special-error-header": "Error",
 	"math-wikibase-special-error-invalid-argument": "Your specified Wikibase item ID does not exist.",
-	"math-wikibase-special-error-unknown": "An unknown error occurred while fetching data from Wikibase."
+	"math-wikibase-special-error-unknown": "An unknown error occurred while fetching data from Wikibase.",
+	"math-editpage-insert-inline": "Math formula (inline)",
+	"math-editpage-insert-block": "Math formula (block)"
 }

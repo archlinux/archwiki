@@ -1,22 +1,10 @@
 <?php
+declare( strict_types = 1 );
+
 /**
  * Methods for validating XMP properties.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @ingroup Media
  */
@@ -26,7 +14,9 @@ namespace Wikimedia\XMPReader;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * This contains some static methods for
@@ -55,11 +45,9 @@ class Validate implements LoggerAwareInterface {
 
 	/**
 	 * Creates a new instance, with a logger
-	 *
-	 * @param LoggerInterface $logger
 	 */
-	public function __construct( LoggerInterface $logger ) {
-		$this->setLogger( $logger );
+	public function __construct( ?LoggerInterface $logger = null ) {
+		$this->setLogger( $logger ?? new NullLogger() );
 	}
 
 	/**
@@ -96,7 +84,7 @@ class Validate implements LoggerAwareInterface {
 			return;
 			// @codeCoverageIgnoreEnd
 		}
-		if ( !preg_match( '/^(?:-?\d+)\/(?:\d+[1-9]|[1-9]\d*)$/D', $val ) ) {
+		if ( !is_string( $val ) || !preg_match( '/^(?:-?\d+)\/(?:\d+[1-9]|[1-9]\d*)$/D', $val ) ) {
 			$this->logger->info( __METHOD__ . " Expected rational but got $val" );
 			$val = null;
 		}
@@ -119,7 +107,7 @@ class Validate implements LoggerAwareInterface {
 			return;
 			// @codeCoverageIgnoreEnd
 		}
-		if ( !preg_match( '/^[-+]?\d*(?:\.?\d*)$/D', $val )
+		if ( ( is_string( $val ) && !preg_match( '/^[-+]?\d*(?:\.?\d*)$/D', $val ) )
 			|| !is_numeric( $val )
 		) {
 			$this->logger->info( __METHOD__ . " Expected rating but got $val" );
@@ -158,7 +146,10 @@ class Validate implements LoggerAwareInterface {
 			return;
 			// @codeCoverageIgnoreEnd
 		}
-		if ( !preg_match( '/^[-+]?\d+$/D', $val ) ) {
+		if ( is_int( $val ) ) {
+			return;
+		}
+		if ( !is_string( $val ) || !preg_match( '/^[-+]?\d+$/D', $val ) ) {
 			$this->logger->info( __METHOD__ . " Expected integer but got $val" );
 			$val = null;
 		}
@@ -283,7 +274,7 @@ class Validate implements LoggerAwareInterface {
 			return;
 			// @codeCoverageIgnoreEnd
 		}
-		if ( !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $val ) ) {
+		if ( !is_string( $val ) || !preg_match( '/^[-A-Za-z0-9]{2,}$/D', $val ) ) {
 			// this is a rather naive check.
 			$this->logger->info( __METHOD__ . " Expected Lang code but got $val" );
 			$val = null;
@@ -302,7 +293,7 @@ class Validate implements LoggerAwareInterface {
 	 * YYYY-MM-DDThh:mm:ss.sTZD
 	 *
 	 * @param array $info Information about current property
-	 * @param mixed &$val Current value to validate. Converts to TS_EXIF as a side effect.
+	 * @param mixed &$val Current value to validate. Converts to TS::EXIF as a side effect.
 	 *    in cases where there's only a partial date, it will give things like
 	 *    2011:04.
 	 * @param bool $standalone If this is a simple property or array
@@ -315,7 +306,7 @@ class Validate implements LoggerAwareInterface {
 			// @codeCoverageIgnoreEnd
 		}
 		$res = [];
-		if ( !preg_match(
+		if ( !is_string( $val ) || !preg_match(
 			/* ahh! scary regex... */
 			// phpcs:ignore Generic.Files.LineLength
 			'/^([0-3]\d{3})(?:-([01]\d)(?:-([0-3]\d)(?:T([0-2]\d):([0-6]\d)(?::([0-6]\d)(?:\.\d+)?)?([-+]\d{2}:\d{2}|Z)?)?)?)?$/D',
@@ -384,7 +375,8 @@ class Validate implements LoggerAwareInterface {
 		// We know that if we got to this step, year, month day hour and min must be set
 		// by virtue of regex not failing.
 
-		$unix = ConvertibleTimestamp::convert( TS_UNIX,
+		$unix = ConvertibleTimestamp::convert(
+			TS::UNIX,
 			$res[1] . $res[2] . $res[3] . $res[4] . $res[5] . $res[6]
 		);
 		$offset = (int)substr( $res[7], 1, 2 ) * 60 * 60;
@@ -392,7 +384,7 @@ class Validate implements LoggerAwareInterface {
 		if ( str_starts_with( $res[7], '-' ) ) {
 			$offset = -$offset;
 		}
-		$val = ConvertibleTimestamp::convert( TS_EXIF, (int)$unix + $offset );
+		$val = ConvertibleTimestamp::convert( TS::EXIF, (int)$unix + $offset );
 
 		if ( $stripSeconds ) {
 			// If seconds weren't specified, remove the trailing ':00'.
@@ -421,7 +413,7 @@ class Validate implements LoggerAwareInterface {
 		}
 
 		$m = [];
-		if ( preg_match(
+		if ( is_string( $val ) && preg_match(
 			'/(\d{1,3}),(\d{1,2}),(\d{1,2})([NWSE])/D',
 			$val, $m )
 		) {
@@ -436,7 +428,7 @@ class Validate implements LoggerAwareInterface {
 			return;
 		}
 
-		if ( preg_match(
+		if ( is_string( $val ) && preg_match(
 			'/(\d{1,3}),(\d{1,2}(?:.\d*)?)([NWSE])/D',
 			$val, $m )
 		) {

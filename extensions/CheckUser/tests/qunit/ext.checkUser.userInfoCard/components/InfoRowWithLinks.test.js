@@ -1,7 +1,7 @@
 'use strict';
 
 const { shallowMount, mount } = require( 'vue-test-utils' );
-const InfoRowWithLinks = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/InfoRowWithLinks.vue' );
+const InfoRowWithLinks = require( 'ext.checkUser.userInfoCard/components/InfoRowWithLinks.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.InfoRowWithLinks', QUnit.newMwEnvironment( {
 	beforeEach: function () {

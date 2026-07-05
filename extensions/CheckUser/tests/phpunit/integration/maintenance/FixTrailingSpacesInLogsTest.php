@@ -1,16 +1,16 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\FixTrailingSpacesInLogs;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Maintenance\FixTrailingSpacesInLogs;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\Maintenance\FixTrailingSpacesInLogs
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\FixTrailingSpacesInLogs
  * @group Database
  */
 class FixTrailingSpacesInLogsTest extends MaintenanceBaseTestCase {
@@ -51,16 +51,24 @@ class FixTrailingSpacesInLogsTest extends MaintenanceBaseTestCase {
 		);
 	}
 
-	public function addDBDataWhenRowsExist() {
+	public function addDBDataWhenRowsExist(): void {
 		// Add a few testing entries to the cu_log table
 		/** @var CheckUserLogService $checkUserLogService */
 		$checkUserLogService = $this->getServiceContainer()->get( 'CheckUserLogService' );
 		for ( $i = 0; $i < 2; $i++ ) {
 			$checkUserLogService->addLogEntry(
-				$this->getTestSysop()->getUser(), 'userips', 'user', 'Testing', '1234 - [[test]]'
+				$this->getTestSysop()->getUser(),
+				'userips',
+				'user',
+				'Testing',
+				'1234 - [[test]]'
 			);
 			$checkUserLogService->addLogEntry(
-				$this->getTestSysop()->getUser(), 'useredits', 'user', 'Testing', '1234 - [[test]]'
+				$this->getTestSysop()->getUser(),
+				'useredits',
+				'user',
+				'Testing',
+				'1234 - [[test]]'
 			);
 		}
 		// Modify the target text to add trailing spaces
@@ -71,10 +79,18 @@ class FixTrailingSpacesInLogsTest extends MaintenanceBaseTestCase {
 			->execute();
 		// Add some testing entries which do not have trailing spaces
 		$checkUserLogService->addLogEntry(
-			$this->getTestSysop()->getUser(), 'userips', 'user', 'Test', '1234 - [[test]]'
+			$this->getTestSysop()->getUser(),
+			'userips',
+			'user',
+			'Test',
+			'1234 - [[test]]'
 		);
 		$checkUserLogService->addLogEntry(
-			$this->getTestSysop()->getUser(), 'useredits', 'user', 'Test', '1234 - [[test]]'
+			$this->getTestSysop()->getUser(),
+			'useredits',
+			'user',
+			'Test',
+			'1234 - [[test]]'
 		);
 	}
 }

@@ -52,8 +52,7 @@ ve.ce.MWLanguageVariantNode.static.iconWhenInvisible = 'language';
  */
 ve.ce.MWLanguageVariantNode.static.getDescription = function ( model ) {
 	// This is shown when you hover over the node.
-	const variantInfo = model.getVariantInfo(),
-		messageKey = 'visualeditor-mwlanguagevariant-' + model.getRuleType();
+	const variantInfo = model.getVariantInfo();
 	let languageCodes = [];
 	if ( variantInfo.name ) {
 		languageCodes = [ variantInfo.name.t ];
@@ -72,7 +71,7 @@ ve.ce.MWLanguageVariantNode.static.getDescription = function ( model ) {
 	// * visualeditor-mwlanguagevariant-oneway
 	// * visualeditor-mwlanguagevariant-twoway
 	// * visualeditor-mwlanguagevariant-unknown
-	return ve.msg( messageKey, languageString );
+	return ve.msg( 'visualeditor-mwlanguagevariant-' + model.getRuleType(), languageString );
 };
 
 /* Methods */

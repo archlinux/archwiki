@@ -9,6 +9,7 @@
 			"Iwai.masaharu",
 			"Jdforrester",
 			"Kkairri",
+			"Kokage si",
 			"Los688",
 			"Miya",
 			"Omotecho",
@@ -26,7 +27,6 @@
 			"Waki285",
 			"Whym",
 			"おはぐろ蜻蛉",
-			"Kokage si",
 			"FlatLanguage"
 		]
 	},
@@ -66,6 +66,7 @@
 	"cite-ve-dialog-subreference-help-dialog-head": "New: 再利用された脚注に補参照を追加",
 	"cite-ve-dialog-subreference-help-dialog-content": "脚注を再利用するときに脚注全体を繰り返すことなくページ番号や引用のような異なる詳細を追加できるようになりました。<p><b>使用する場面:</b></p><ul><li>同じ書籍の異なるページや巻を出典とするとき</li><li>出典とするポッドキャストのタイムスタンプを指定するとき</li><li>出典からの関連する引用を追加するとき</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "脚注への補参照の追加について詳しく学ぶ",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "全ての補参照（$1個）を編集する。",
 	"cite-ve-dialog-reference-title-details": "補参照",
 	"cite-ve-dialog-reference-useexisting-tool": "再利用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "汎用の脚注リスト",

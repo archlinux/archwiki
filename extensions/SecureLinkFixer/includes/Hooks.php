@@ -18,7 +18,7 @@
 
 namespace MediaWiki\SecureLinkFixer;
 
-use MediaWiki\Hook\LinkerMakeExternalLinkHook;
+use MediaWiki\Linker\Hook\LinkerMakeExternalLinkHook;
 use MediaWiki\Utils\UrlUtils;
 
 class Hooks implements LinkerMakeExternalLinkHook {

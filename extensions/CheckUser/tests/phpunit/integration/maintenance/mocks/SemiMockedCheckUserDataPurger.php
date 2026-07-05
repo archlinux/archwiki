@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance\Mocks;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance\Mocks;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\CheckUserDataPurger;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\CheckUserDataPurger;
 use PHPUnit\Framework\Assert;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -24,8 +24,12 @@ class SemiMockedCheckUserDataPurger extends CheckUserDataPurger {
 	private array $seenTables = [];
 
 	public function purgeDataFromLocalTable(
-		IDatabase $dbw, string $table, string $cutoff, ClientHintsReferenceIds $deletedReferenceIds,
-		string $fname, int $totalRowsToPurge = 500
+		IDatabase $dbw,
+		string $table,
+		string $cutoff,
+		ClientHintsReferenceIds $deletedReferenceIds,
+		string $fname,
+		int $totalRowsToPurge = 500
 	): int {
 		// Keep a track of how many times a call to this method has been made, grouped by the $table argument value.
 		// Mock the return value by returning a unique integer on the first call, and then 0 on all subsequent calls
@@ -43,7 +47,7 @@ class SemiMockedCheckUserDataPurger extends CheckUserDataPurger {
 		return $returnValue;
 	}
 
-	public function checkThatExpectedCallsHaveBeenMade() {
+	public function checkThatExpectedCallsHaveBeenMade(): void {
 		// Check that a call has been made twice for each table
 		foreach ( self::RESULT_TABLES as $table ) {
 			Assert::assertSame( 2, $this->seenTables[$table] );

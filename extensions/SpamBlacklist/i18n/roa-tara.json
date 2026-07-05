@@ -11,7 +11,6 @@
 	"spam-blacklisted-email": "Indirizze email vietate",
 	"spam-blacklisted-email-text": "L'indirizze email tune jè mo vietate pe mannà email a otre utinde.",
 	"spam-blacklisted-email-signup": "L'indirizze email ca è date pe mò jè vietate.",
-	"spam-invalid-lines": "{{PLURAL:$1|'A seguende linèe d'a blacklist de spam jè|Le seguende linèe d'a blacklist de spam sonde}} {{PLURAL:$1|espressione|espressiune}} regolare invalide e {{PLURAL:$1|abbesogne|abbesognane}} de avenè corrette apprime de reggistrà 'a pàgene:",
 	"spam-blacklist-desc": "'U strumende andi-spam basate sus a le regex ca dèje le URL de le pàggene da bloccà e le indirizze email de le utinde reggistrate",
 	"log-name-spamblacklist": "Archivije de l'elenghe de blocche de le rummate",
 	"log-description-spamblacklist": "Ste evende tracciane le trasute jndr'à l'elenghe de blocche de le rummate.",

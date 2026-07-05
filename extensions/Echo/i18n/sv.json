@@ -19,10 +19,10 @@
 			"Pipetricker",
 			"Sabelöga",
 			"Skalman",
+			"Stefan2255",
 			"Tobulos1",
 			"Umeaboy",
-			"WikiPhoenix",
-			"Stefan2255"
+			"WikiPhoenix"
 		]
 	},
 	"echo-desc": "System för att meddela användare om händelser och meddelanden",
@@ -198,8 +198,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} hundrade redigering; {{GENDER:$2|tack}} så mycket!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} tusende redigering; {{GENDER:$2|tack}} för att du är en så bra bidragsgivare!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} tiotusende redigering; {{GENDER:$2|tack}} så jättemycket!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} hundratusende redigering; {{GENDER:$2|tack}} för ditt fantastiska bidrag!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} miljonte redigering; {{GENDER:$2|tack}} för ditt häpnadsväckande bidrag!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} hundratusende redigering; {{GENDER:$2|tack}} för dina fantastiska bidrag!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Du}} gjorde precis {{GENDER:$2|din}} miljonte redigering; {{GENDER:$2|tack}} för dina häpnadsväckande bidrag!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Du}} gjorde just {{GENDER:$2|din}} tiomiljonte redigering, tack för {{GENDER:$2|din}} briljanta hängivenhet!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Din}} redigering",
 	"notification-link-text-view-edit": "Visa redigering",

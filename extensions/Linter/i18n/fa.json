@@ -15,6 +15,8 @@
 	"linter-category-bogus-image-options-desc": "این صفحات دارای پرونده‌هایی هستند که خصوصیت قلابی دارند.",
 	"linter-category-deletable-table-tag": "برچسب جدولی که باید حذف شود",
 	"linter-category-deletable-table-tag-desc": "این صفحات شامل برچسب‌های جدولی است که باید حذف شوند.",
+	"linter-category-template-arg-in-extension-tag": "برچسب افزونهٔ دارای پارامتر الگو",
+	"linter-category-template-arg-in-extension-tag-desc": "این صفحه‌ها دارای یک برچسب افزونه حاوی پارامترهای الگو هستند که به‌طور صحیح تراگنجانش نخواهد شد.",
 	"linter-category-fostered": "محتوایی که به جدول تعلق ندارد",
 	"linter-category-fostered-desc": "این صفحات دارای محتوایی است که به جدول تعلق ندارد.",
 	"linter-category-html5-misnesting": "برچسب بدون‌حلقه با نمایش متفاوت در HTML5 و HTML4",

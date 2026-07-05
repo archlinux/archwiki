@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Core;
 
 use Composer\Semver\Semver;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
@@ -27,6 +27,7 @@ class HtmlPageBundle extends BasePageBundle {
 		/** The document, as an HTML string. */
 		public string $html,
 		?array $parsoid = null, ?array $mw = null,
+		?array $counters = null,
 		?string $version = null, ?array $headers = null,
 		?string $contentmodel = null,
 		/** @var array<string,string> Additional named HTML fragments. */
@@ -35,6 +36,7 @@ class HtmlPageBundle extends BasePageBundle {
 		parent::__construct(
 			parsoid: $parsoid,
 			mw: $mw,
+			counters: $counters,
 			version: $version,
 			headers: $headers,
 			contentmodel: $contentmodel,
@@ -45,42 +47,25 @@ class HtmlPageBundle extends BasePageBundle {
 		string $html,
 		?string $version = null,
 		?array $headers = null,
-		?string $contentmodel = null
+		?string $contentmodel = null,
 	): self {
 		return new self(
 			$html,
 			[
-				'counter' => -1,
 				'ids' => [],
 			],
 			[
 				'ids' => [],
+			],
+			[
+				'nodedata' => -1,
+				'annotation' => -1,
+				'transclusion' => -1,
 			],
 			$version,
 			$headers,
 			$contentmodel
 		);
-	}
-
-	/**
-	 * Check if this pagebundle is valid.
-	 * @param string $contentVersion Document content version to validate against.
-	 * @param ?string &$errorMessage Error message will be returned here.
-	 * @return bool
-	 */
-	public function validate(
-		string $contentVersion, ?string &$errorMessage = null
-	) {
-		if ( !$this->parsoid || !isset( $this->parsoid['ids'] ) ) {
-			$errorMessage = 'Invalid data-parsoid was provided.';
-			return false;
-		} elseif ( Semver::satisfies( $contentVersion, '^999.0.0' )
-			&& ( !$this->mw || !isset( $this->mw['ids'] ) )
-		) {
-			$errorMessage = 'Invalid data-mw was provided.';
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -108,6 +93,22 @@ class HtmlPageBundle extends BasePageBundle {
 				'body' => $this->parsoid,
 			],
 		];
+		if ( $this->counters !== null ) {
+			$responseData['counters'] = [
+				'headers' => [
+					'content-type' => 'application/json; charset=utf-8; '
+						. 'profile="https://www.mediawiki.org/wiki/Specs/counters/'
+						. $version . '"',
+				],
+				'body' => $this->counters,
+			];
+		}
+		if ( isset( $this->counters['nodedata'] ) && $this->parsoid !== null ) {
+			// Backward compatibility with Parsoid < 0.23
+			$responseData['data-parsoid']['body'] += [
+				'counter' => $this->counters['nodedata'],
+			];
+		}
 		if ( Semver::satisfies( $version, '^999.0.0' ) ) {
 			$responseData['data-mw'] = [
 				'headers' => [
@@ -148,6 +149,7 @@ class HtmlPageBundle extends BasePageBundle {
 			$out,
 			$dpb->parsoid,
 			$dpb->mw,
+			$dpb->counters,
 			$dpb->version ?? $options['contentversion'] ?? null,
 			$dpb->headers ?? $options['headers'] ?? null,
 			$dpb->contentmodel ?? $options['contentmodel'] ?? null,
@@ -173,12 +175,20 @@ class HtmlPageBundle extends BasePageBundle {
 	/**
 	 * Convert this HtmlPageBundle to "inline attribute" form, where page bundle
 	 * information is represented as inline JSON-valued attributes.
+	 * @param SiteConfig $siteConfig
 	 * @param array $options XHtmlSerializer options
+	 * @param array<string,string>|null &$fragments Additional fragments from the
+	 *  page bundle which will also be serialized to HTML strings.
+	 *  This is an output parameter.
 	 * @return string an HTML string
 	 */
-	public function toInlineAttributeHtml( array $options = [] ): string {
+	public function toInlineAttributeHtml(
+		SiteConfig $siteConfig,
+		array $options = [],
+		?array &$fragments = null,
+	): string {
 		return DomPageBundle::fromHtmlPageBundle( $this )
-			->toInlineAttributeHtml( $options );
+			->toInlineAttributeHtml( siteConfig: $siteConfig, options: $options, fragments: $fragments );
 	}
 
 	// JsonCodecable -------------

@@ -6,5 +6,6 @@
 	},
 	"hcaptcha-addurl": "La tua modifica aggiunge nuovi collegamenti esterni. Per proteggere il wiki contro modifiche automatizzate di spam, ti chiediamo gentilmente di risolvere il seguente hCaptcha:",
 	"hcaptcha-challenge-closed": "Per continuare, devi completare il captcha.",
-	"hcaptcha-missing-token": "Il caricamento del modulo non è ancora terminato. Attendi qualche secondo e riprova."
+	"hcaptcha-missing-token": "Il caricamento del modulo non è ancora terminato. Attendi qualche secondo e riprova.",
+	"hcaptcha-visual-editor-error-handler-warning": "Invia nuovamente il modulo per salvare le modifiche."
 }

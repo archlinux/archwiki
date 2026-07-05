@@ -10,9 +10,9 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\RangeBlock;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Status\Status;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 use Psr\Log\NullLogger;
 
 /**

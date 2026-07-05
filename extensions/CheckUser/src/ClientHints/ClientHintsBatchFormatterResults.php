@@ -1,30 +1,25 @@
 <?php
 
-namespace MediaWiki\CheckUser\ClientHints;
+namespace MediaWiki\Extension\CheckUser\ClientHints;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 
 /**
  * Value object for the result of UserAgentClientHintsFormatter::batchFormatClientHintsData
  * which contains reference IDs to formatted strings of Client Hints data.
  */
 class ClientHintsBatchFormatterResults {
-	/** @var int[][] */
-	private array $referenceIdsToFormattedClientHintsIndex;
-
-	/** @var string[] */
-	private array $formattedClientHints;
-
 	/**
 	 * @param int[][] $referenceIdsToFormattedClientHintsIndex A map of reference type and reference ID values
 	 *   to integer keys in $formattedClientHints array.
 	 * @param string[] $formattedClientHints An array of strings where the keys are integers that are the
 	 *   second-dimension value in the first parameter.
 	 */
-	public function __construct( array $referenceIdsToFormattedClientHintsIndex, array $formattedClientHints ) {
-		$this->referenceIdsToFormattedClientHintsIndex = $referenceIdsToFormattedClientHintsIndex;
-		$this->formattedClientHints = $formattedClientHints;
+	public function __construct(
+		private readonly array $referenceIdsToFormattedClientHintsIndex,
+		private readonly array $formattedClientHints,
+	) {
 	}
 
 	/**

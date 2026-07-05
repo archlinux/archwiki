@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Phurbutsering",
-			"Dhondup"
+			"Dhondup",
+			"Phurbutsering"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|ཐུགས་རྗེ་ཆེ།}}}}",

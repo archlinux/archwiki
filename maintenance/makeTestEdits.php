@@ -27,6 +27,7 @@ class MakeTestEdits extends Maintenance {
 		$this->addOption( 'user', 'User name', true, true );
 		$this->addOption( 'count', 'Number of edits', true, true );
 		$this->addOption( 'namespace', 'Namespace number', false, true );
+		$this->addOption( 'watchlist', 'Add edited pages to user watchlist', false, false );
 		$this->setBatchSize( 100 );
 	}
 
@@ -36,11 +37,12 @@ class MakeTestEdits extends Maintenance {
 			$this->fatalError( "No such user exists." );
 		}
 
-		$count = $this->getOption( 'count' );
+		$count = (int)$this->getOption( 'count' );
 		$namespace = (int)$this->getOption( 'namespace', 0 );
 		$batchSize = $this->getBatchSize();
 		$services = $this->getServiceContainer();
 		$wikiPageFactory = $services->getWikiPageFactory();
+		$watchedItemStore = $services->getWatchedItemStore();
 
 		/** @var iterable<Title[]> $titleBatches */
 		$titleBatches = $this->newBatchIterator(
@@ -51,7 +53,9 @@ class MakeTestEdits extends Maintenance {
 			}
 		);
 
+		$watchlist = $this->getOption( 'watchlist' );
 		foreach ( $titleBatches as $titleBatch ) {
+			$editedTitles = $watchlist ? [] : null;
 			$this->beginTransactionRound( __METHOD__ );
 			foreach ( $titleBatch as $title ) {
 				$page = $wikiPageFactory->newFromTitle( $title );
@@ -60,7 +64,15 @@ class MakeTestEdits extends Maintenance {
 
 				$page->doUserEditContent( $content, $user, $summary );
 
+				// Collect titles for watchlist if requested
+				if ( $watchlist ) {
+					$editedTitles[] = $title;
+				}
+
 				$this->output( "Edited $title\n" );
+			}
+			if ( $editedTitles ) {
+				$watchedItemStore->addWatchBatchForUser( $user, $editedTitles );
 			}
 			$this->commitTransactionRound( __METHOD__ );
 		}

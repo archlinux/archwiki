@@ -51,8 +51,6 @@
 	"oathauth-describe-provider": "Dvofaktorska autentifikacija (OATH)",
 	"grant-group-authentication": "Izvođenje provjere dvofaktorske autentifikacije za sebe i druge",
 	"grant-oath": "Pristup podatcima dvofaktorske autentifikacije (OATH) za sebe i druge",
-	"right-oathauth-api-all": "Upit i provjera podataka OATH-a za sebe i druge",
-	"action-oathauth-api-all": "provjeravanje statusa OATH-a",
 	"oathauth-user-not-found": "Sustav nije pronašao suradnički račun s traženim imenom računa",
 	"oath-log-name": "Evidencija dvofaktorske autentifikacije",
 	"oath-log-header": "Ovi događaji prate promjene statusa dvofaktorske autentifikacije suradnika/suradnice.",
@@ -61,18 +59,13 @@
 	"oathauth-module-totp-label": "TOTP (jednokratni kôd)",
 	"oathauth-ui-manage": "Upravljaj",
 	"oathmanage": "Upravljanje dvofaktorskom autentifikacijom",
-	"oathauth-ui-not-enabled-modules": "Prebacite se na alternativnu metodu",
-	"oathauth-ui-enabled-module": "Omogućena metoda autentifikacije",
 	"oathauth-enable-generic": "Omogući",
 	"oathauth-disable-generic": "Onemogući",
 	"oathauth-invalid-data-format": "Naveden je nevrijedeći davatelj podataka za stvaranje ključa namijenjenoga izabranoj metodi autentifikacije",
 	"oathauth-disable-page-title": "Onemogućavanje $1",
 	"oathauth-enable-page-title": "Omogućavanje $1",
 	"oathauth-action-exclusive-to-2fa": "Radnju mogu izvršiti samo suradnici/suradnice koji/koje imaju omogućenu dvofaktorsku autentifikaciju.",
-	"oathauth-ui-available-modules": "Dostupne metode",
-	"oathauth-ui-general-help": "'''Multifaktorska autentifikacija''' ('''MFA''') autentifikacijska je metoda kojom se korisniku računala omogućava pristup tek nakon uspješnog unosa dva ili više potvrdnih dijelova (ili faktora) u autentifikacijski mehanizam: saznanje (ono što zna samo korisnik i nitko drugi), vlasništvo (ono što posjeduje samo korisnik i nitko drugi), te osobina (ono što je svojstveno korisniku i nikom drugom). [https://en.wikipedia.org/wiki/Multi-factor_authentication Pročitajte više]",
 	"oathauth-totp-description": "Jednokratna zaporka/kôd (TOTP) bazirana na vremenu kreiranja, proširenje je mogućnosti algoritma jednokratne zaporke zasnovane na HMAC-u (HOTP), koja uključuje generiranje jednokratne zaporke bez preuzimanja jedinstvenosti kôda iz trenutačnog vremena kad je zaporka kreirana.",
 	"oathauth-disable-method-warning": "Ako onemogućite dvofaktorsku autentifikacijsku metodu naziva $1, više nećete biti u mogućnosti rabiti tu metodu pri prijavljivanju, a svi će podatci povezani s tom autentifikacijskom metodom biti izbrisani.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nema omogućenu dvofaktorsku autentifikaciju.",
-	"group-oathauth-twofactorauth-member": "{{GENDER:$1|Suradnik kojemu|Suradnica kojoj}} je dopuštena uporaba dvofaktorske autentifikacije"
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nema omogućenu dvofaktorsku autentifikaciju."
 }

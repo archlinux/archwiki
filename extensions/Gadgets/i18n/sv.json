@@ -11,8 +11,8 @@
 			"M.M.S.",
 			"Sabelöga",
 			"Skalman",
-			"WikiPhoenix",
-			"Stefan2255"
+			"Stefan2255",
+			"WikiPhoenix"
 		]
 	},
 	"gadgets-desc": "Låter användare aktivera personliga [[Special:Gadgets|CSS- och JavaScript-finesser]] genom sina [[Special:Preferences#mw-prefsection-gadgets|inställningar]]",
@@ -76,5 +76,7 @@
 	"gadgets-validate-invaliddependencies": "Följande {{PLURAL:$2|beroende|beroenden}}:  saknas $1.",
 	"gadgets-validate-deprecateddependencies": "Följande {{PLURAL:$2|beroende|beroenden}} är föråldrade: $1 .",
 	"gadgets-supports-urlload": "Denna finess har stöd för att läsas in via webbadress med frågeparametern <code>?withgadget</code>.",
-	"gadgets-hidden": "Den här gadgeten är [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden dold], vilket betyder att den inte kommer att visas på inställningssidan."
+	"gadgets-hidden": "Den här gadgeten är [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden dold], vilket betyder att den inte kommer att visas på inställningssidan.",
+	"gadgets-subpage-invalid": "Ogiltig undersida \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Ej tillräckligt många undersideparametrar (ogiltig länk)."
 }

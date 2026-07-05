@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Elphie",
 			"HanV",
 			"Mainframe98",
 			"McDutchie",
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan",
-			"Elphie"
+			"Southparkfan"
 		]
 	},
 	"action-tboverride": "de lijst met verboden titels of gebruikersnamen te omzeilen",
@@ -24,7 +24,7 @@
 	"titleblacklist-forbidden-move": "“$2” kan niet hernoemd worden naar “$3” omdat de titel “$3” niet mag worden aangemaakt.\nDeze komt overeen met de volgende vermelding op de lijst met verboden titels: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "De bestandsnaam \"$2\" mag niet worden aangemaakt.\nHij komt overeen met de volgende vermelding op de lijst met verboden titels: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "De gebruikersnaam \"$2\" mag niet worden aangemaakt.\nHij komt overeen met de volgende vermelding op de lijst met verboden titels: <code>$1</code>",
-	"titleblacklist-invalid": "De volgende {{PLURAL:$1|regel|regels}} in de lijst met verboden titels {{PLURAL:$1|is|zijn}} ongeldig.\nVerbeter {{PLURAL:$1|hem|ze}} voordat u de lijst opslaat.",
+	"titleblacklist-invalid-error": "De volgende {{PLURAL:$1|regel|regels}} in de lijst met verboden titels {{PLURAL:$1|is|zijn}} incorrect. Verbeter de {{PLURAL:$1|titel|titels}} voordat u de lijst opslaat:\n$2",
 	"titleblacklist-override": "De lijst met verboden titels omzeilen",
 	"titleblacklist-override-help": "Gebruikers met toereikende rechten kunnen dit instellen om de lijst met verboden titels te laten negeren.",
 	"titleblacklist-warning": "<strong>Let op: Deze pagina kan alleen worden bewerkt door beheerders en andere gebruikers met het recht <code>tboverride</code> omdat ze overeenkomt met de volgende vermelding op de lijst met verboden titels:</strong><br /><code>$1</code>",

@@ -13,7 +13,6 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use Wikimedia\Rdbms\Database;
@@ -41,7 +40,7 @@ class CleanupSpam extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP, $wgLocalDatabases;
+		global $wgLocalDatabases;
 
 		$username = wfMessage( 'spambot_username' )->text();
 		$user = User::newSystemUser( $username );
@@ -50,7 +49,6 @@ class CleanupSpam extends Maintenance {
 		}
 		// Hack: Grant bot rights so we don't flood RecentChanges
 		$this->getServiceContainer()->getUserGroupManager()->addUserToGroup( $user, 'bot' );
-		StubGlobalUser::setUser( $user );
 
 		$spec = $this->getArg( 0 );
 
@@ -81,7 +79,7 @@ class CleanupSpam extends Maintenance {
 					if ( $count ) {
 						$found = true;
 						$cmd = wfShellWikiCmd(
-							"$IP/maintenance/cleanupSpam.php",
+							MW_INSTALL_PATH . '/maintenance/cleanupSpam.php',
 							[ '--wiki', $wikiId, $spec ]
 						);
 						// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.passthru

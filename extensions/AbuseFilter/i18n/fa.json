@@ -405,7 +405,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "قاعده‌مندسازی موجودیت‌های اچ‌تی‌ام‌ال به نویسه‌های یونیکد ($1)",
 	"abusefilter-edit-builder-group-vars": "متغیرها",
 	"abusefilter-edit-builder-vars-timestamp": "برچسب زمان یونیکسی تغییر ($1)",
-	"abusefilter-edit-builder-vars-accountname": "نام حساب و ایجاد حساب ($1)",
+	"abusefilter-edit-builder-vars-account-name": "نام حساب و ایجاد حساب ($1)",
 	"abusefilter-edit-builder-vars-action": "اقدام ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "سطرهای اضافه‌شده در ویرایش ($1)",
 	"abusefilter-edit-builder-vars-delta": "تغییر اندازهٔ صفحه در ویرایش ($1)",

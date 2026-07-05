@@ -2,7 +2,6 @@
 
 namespace PageImages\Tests\Hooks;
 
-use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\RepoGroup;
@@ -304,7 +303,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		/** @var ParserFileProcessingHookHandlers $handlerWrapper */
 		$handlerWrapper = TestingAccessWrapper::newFromObject(
 			new ParserFileProcessingHookHandlers(
-				$this->createMock( Config::class ),
+				new HashConfig(),
 				$this->getRepoGroup(),
 				$this->createMock( WANObjectCache::class ),
 				$this->createMock( HttpRequestFactory::class ),

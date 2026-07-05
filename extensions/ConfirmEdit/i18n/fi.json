@@ -48,5 +48,6 @@
 	"confirmedit-preview-valid": "kelvollinen",
 	"confirmedit-preview-invalid": "kelpaamaton",
 	"confirmedit-preview-description": "Seuraava taulukko näyttää listan tämän sivun riveistä ja mikäli se on pätevä IP-osoite tai IP-alue. Jos rivi on pätevä IP-osoite tai IP-alue, se tullaan jättämään CAPTCHA-varmennusten ulkopuolelle, mutta virheelliset rivit sivuutetaan. Esimerkki pätevästä IP-alueesta on: 69.208.0.0/16, joka pätee välille 69.208.0.0 – 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lisätietoja] IP-alueiden laskemisesta.",
-	"abusefilter-edit-action-showcaptcha": "Vaadi käyttäjää suorittamaan CAPTCHA jatkaakseen toimintoa. Käyttäjät, joilla on lupa ohittaa CAPTCHA, ovat vapautettuja tästä vaatimuksesta."
+	"abusefilter-edit-action-showcaptcha": "Vaadi CAPTCHA-vahvistusta toiminnon suorittamiseksi",
+	"abusefilter-edit-action-showcaptcha-help": "Käyttäjät, joilla on lupa ohittaa CAPTCHA, ovat vapautettuja tästä vaatimuksesta."
 }

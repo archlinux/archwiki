@@ -41,7 +41,7 @@ function bindSearchBoxHandler( searchBox, header ) {
  *
  * @param {HTMLElement} searchBox
  * @param {HTMLElement} header
- * @param {Element} searchToggle
+ * @param {HTMLElement} searchToggle
  */
 function bindToggleClickHandler( searchBox, header, searchToggle ) {
 	/**
@@ -103,7 +103,7 @@ function bindToggleClickHandler( searchBox, header, searchToggle ) {
  * elements. When the user clicks outside of SEARCH_BOX_SELECTOR, the class will
  * be removed.
  *
- * @param {HTMLElement|Element} searchToggle
+ * @param {HTMLElement} searchToggle
  */
 module.exports = function initSearchToggle( searchToggle ) {
 	const headerContainer =

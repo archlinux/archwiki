@@ -3,12 +3,12 @@
 		"authors": [
 			"Dreamy Jazz",
 			"Helix84",
+			"KormiSK",
 			"Luky001",
 			"Martin Kozák",
 			"Sudo77(new)",
 			"Teslaton",
 			"Vlad5250",
-			"KormiSK",
 			"Wizzard"
 		]
 	},
@@ -26,6 +26,9 @@
 	"action-checkuser": "kontrolovať IP adresu a dalšie údaje používateľa",
 	"action-checkuser-log": "zobraziť záznam kontrol používateľov",
 	"grouppage-checkuser": "{{ns:project}}:Revízia používateľa",
+	"checkuser-clienthints-value-is-browser-likely-bot": "Pravdepodobne robot",
+	"checkuser-clienthints-value-is-browser-indeterminate": "Neurčený prehliadač",
+	"checkuser-clienthints-value-is-browser-likely-browser": "Pravdepodobný prehliadač",
 	"checkuser-reason": "Dôvod:",
 	"checkuser-reason-api": "API: $1",
 	"checkuser-showlog": "Protokol kontrol",

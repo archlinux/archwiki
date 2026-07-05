@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"GrogeXaKaba",
+			"Letra.berdi",
 			"Quintino Lopes Castro Tavares",
 			"Waldir",
-			"Waldyrious",
-			"GrogeXaKaba",
-			"Letra.berdi"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector bédju (2010)",
@@ -56,9 +56,6 @@
 	"vector-toc-label": "Kuntiúdu",
 	"vector-toc-beginning": "Kumésu",
 	"vector-toc-toggle-button-label": "Alterna subisekson $1",
-	"vector-anon-user-menu-pages": "Pájinas pa iditoris diskunetadu",
-	"vector-anon-user-menu-pages-learn": "sabe más",
-	"vector-anon-user-menu-pages-label": "Sabe más sobri idison",
 	"vector-main-menu-tooltip": "Painél prinsipal",
 	"vector-toc-menu-tooltip": "Índisi",
 	"vector-toc-collapsible-button-label": "Alterna índisi",

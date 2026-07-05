@@ -9,7 +9,7 @@ namespace LoginNotify;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
-use MediaWiki\Hook\RecentChange_saveHook;
+use MediaWiki\RecentChanges\Hook\RecentChange_saveHook;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;

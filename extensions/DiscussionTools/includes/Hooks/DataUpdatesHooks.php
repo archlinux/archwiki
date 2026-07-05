@@ -20,12 +20,9 @@ use Throwable;
 
 class DataUpdatesHooks implements RevisionDataUpdatesHook {
 
-	private ThreadItemStore $threadItemStore;
-
 	public function __construct(
-		ThreadItemStore $threadItemStore
+		private readonly ThreadItemStore $threadItemStore,
 	) {
-		$this->threadItemStore = $threadItemStore;
 	}
 
 	/**

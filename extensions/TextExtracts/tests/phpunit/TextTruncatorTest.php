@@ -18,7 +18,7 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	 * @param string $expected
 	 */
 	public function testGetFirstSentences( $text, $sentences, $expected ) {
-		$truncator = new TextTruncator( false );
+		$truncator = new TextTruncator( false, '...' );
 		$this->assertSame( $expected, $truncator->getFirstSentences( $text, $sentences ) );
 	}
 
@@ -135,7 +135,7 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	 * @param string $expected
 	 */
 	public function testGetFirstChars( $text, $chars, $expected ) {
-		$truncator = new TextTruncator( false );
+		$truncator = new TextTruncator( false, '...' );
 		$this->assertSame( $expected, $truncator->getFirstChars( $text, $chars ) );
 	}
 
@@ -143,20 +143,21 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 		$text = 'Lullzy lulz are lullzy!';
 		$html = 'foo<tag>bar</tag>';
 		$longText = str_repeat( 'тест ', 50000 );
-		$longTextExpected = trim( str_repeat( 'тест ', 13108 ) );
+		$longTextExpected = trim( str_repeat( 'тест ', 13108 ) ) . '...';
 
 		return [
-			[ $text, -8, '' ],
-			[ $text, 0, '' ],
+			[ $text, -8, '...' ],
+			[ $text, 0, '...' ],
+			[ $text, 22, $text ],
 			[ $text, 100, $text ],
-			[ $text, 1, 'Lullzy' ],
-			[ $text, 6, 'Lullzy' ],
+			[ $text, 1, 'Lullzy...' ],
+			[ $text, 6, 'Lullzy...' ],
 			// [ $text, 7, 'Lullzy' ],
-			[ $text, 8, 'Lullzy lulz' ],
+			[ $text, 8, 'Lullzy lulz...' ],
 			// HTML processing
-			[ $html, 1, 'foo' ],
+			[ $html, 1, 'foo...' ],
 			// let HTML sanitizer clean it up later
-			[ $html, 4, 'foo<tag>' ],
+			[ $html, 4, 'foo<tag>...' ],
 			[ $html, 12, 'foo<tag>bar</tag>' ],
 			[ $html, 13, 'foo<tag>bar</tag>' ],
 			[ $html, 16, 'foo<tag>bar</tag>' ],
@@ -168,11 +169,12 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testTidyIntegration() {
-		$truncator = new TextTruncator( true );
+		$truncator = new TextTruncator( true, '...' );
 
-		$text = '<b>Aa. Bb.</b>';
+		$text = '<b>Aa. Bb. Cc. Dd.</b>';
 		$this->assertSame( '<p><b>Aa.</b></p>', $truncator->getFirstSentences( $text, 1 ) );
-		$this->assertSame( '<p><b>Aa</b></p>', $truncator->getFirstChars( $text, 4 ) );
+		$this->assertSame( '<p><b>Aa</b></p>...', $truncator->getFirstChars( $text, 4 ) );
+		$this->assertSame( $text, $truncator->getFirstChars( $text, 16 ) );
 	}
 
 }

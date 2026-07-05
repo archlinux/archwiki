@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"AmazingJus",
 			"Aputtu",
 			"Iketsi",
 			"Kaare",
@@ -8,8 +9,7 @@
 			"Qaqqalik",
 			"StarrySky",
 			"לערי ריינהארט",
-			"아라",
-			"AmazingJus"
+			"아라"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Sumut atassuseq|Sunut atassusit}}",
@@ -127,7 +127,7 @@
 	"newarticle": "(Nuutaq)",
 	"newarticletext": "Maanga innersuunneqarsimavutit quppernermut suli pilersinneqarsimanngitsumut.\nQupperneq pilersissagukku, boks-ip iluani allagit (takuuk [$1 ikiuutit] paasissutissaanerusut).\nMaanngarsimaguit kukkusumik, toortaat '''utimut''' tooruk.",
 	"anontalkpagetext": "---- ''Manna tassaavoq oqalliffik atuisumit anonym-iusumeersumit, konto-mik pilersitsisimanngitsumik imalt. atorneq ajugaanik.\nTaamaattumik IP-adressia kinaanerattut atortariaqassavarput.\nIP-adressi pigineqarsinnaavoq atuisunit arlalinnit.\nAtuisuuguit anonym-iusoq, isumaqarlutillu soqutiginngisannik oqaaseqarfigineqarlutit, qinnuigivatsigit [[Special:CreateAccount|atuisutut pilersitsissallutit]] aamma [[Special:UserLogin|iserlutit]], taava siunissami paarlattoornernik atuisuni arlalinni pinaveersaartoqarniassammat.''",
-	"noarticletext": "Maannamut una qupperneq allaffigineqanngilaq.\nTaamatut oqaasilimmik quppernerni allani [[Special:Search/{{PAGENAME}}|ujaasisinnaavutit]], <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} log-ini ujaasisinnavutillu] imaluunniit [{{fullurl:{{FULLPAGENAME}}|action=edit}} qupperneq pilersissinnaavat]</span>.",
+	"noarticletext": "Maannamut una qupperneq allaffigineqanngilaq.\nTaamatut oqaasilimmik quppernerni allani [[Special:Search/{{PAGENAME}}|ujaasisinnaavutit]], <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{urlencode:{{FULLPAGENAME}}}}}} log-ini ujaasisinnavutillu] imaluunniit [{{fullurl:{{FULLPAGENAME}}|action=edit}} qupperneq pilersissinnaavat]</span>.",
 	"previewnote": "Eqqaamallugu isikkua takutinneqaannarpoq, toqqorneqanngilaq suli!",
 	"editing": "Aaqqissorpaa $1",
 	"editingsection": "Aaqqissorpaa $1 (immikkoortoq)",
@@ -171,10 +171,7 @@
 	"search-suggest": "Una piviuk: $1",
 	"search-nonefound": "Ujaasineq inerneqanngilaq",
 	"mypreferences": "Inissiffissat",
-	"group-sysop": "Administratorit",
 	"skin-action-addsection": "Imm. nutaaq",
-	"action-move": "Nuuguk",
-	"action-protect": "Illersoruk",
 	"recentchanges": "Allannguutit kingulliit",
 	"recentchanges-legend": "Inissisimaffiit allannguutini kingullerni",
 	"recentchanges-summary": "Uani quppernermi '''{{SITENAME}}'''-mi allannguutit kingulliit malinnaavigisinnaavatit.",
@@ -288,10 +285,10 @@
 	"tooltip-n-recentchanges": "Wikimi allannguutit kingulliit",
 	"tooltip-n-randompage": "Allaaserisamukarit",
 	"tooltip-n-help": "Qanoq iliussaanga ...",
+	"tooltip-n-specialpages": "Quppernerit immikkut ittut nassaassaasinnaasut",
 	"tooltip-t-whatlinkshere": "Innersuussami saqqummiussat",
 	"tooltip-t-recentchangeslinked": "Massuma quppernerani allannguutit kingulliit",
 	"tooltip-t-upload": "Assinik mediafiilinilluunniit ilisigit",
-	"tooltip-t-specialpages": "Quppernerit immikkut ittut nassaassaasinnaasut",
 	"tooltip-t-print": "Quppernerup naqikkuminarnera",
 	"tooltip-t-permalink": "Massuma quppernerup taamaaqqaarnera",
 	"tooltip-ca-nstab-main": "Imarisaa takuuk",

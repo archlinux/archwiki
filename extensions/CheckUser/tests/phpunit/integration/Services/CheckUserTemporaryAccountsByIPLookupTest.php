@@ -1,23 +1,27 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup
  * @group CheckUser
  * @group Database
  */
 class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestCase {
 	use CheckUserTempUserTestTrait;
+	use MockAuthorityTrait;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -27,61 +31,161 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 	public function addDBDataOnce() {
 		$this->enableAutoCreateTempUser();
 
-		// Create some temp accounts and edits on different IPs:
+		// Create some temp accounts and edits on different IPs. Ensure they are
+		// created at different times, so we get consistent results when limits
+		// are applied.
+
 		// This temp account edits from 2 IPv4 IPs
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.1' );
-		ConvertibleTimestamp::setFakeTime( ConvertibleTimestamp::time() - 1000 );
+		ConvertibleTimestamp::setFakeTime( '20230405060706' );
 		$tempUser1 = $this->getServiceContainer()
 			->getTempUserCreator()
-			->create( '~check-user-test-01', new FauxRequest() )->getUser();
+			->create( '~check-user-test-01', $this->getFauxRequest( '127.0.0.1' ) )->getUser();
 		$this->editPage(
-			'Test page', 'Test Content 1A', 'test', NS_MAIN, $tempUser1
+			'Test page',
+			'Test Content 1A',
+			'test',
+			NS_MAIN,
+			$tempUser1
 		);
-		ConvertibleTimestamp::setFakeTime( false );
+		ConvertibleTimestamp::setFakeTime( '20230405060707' );
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.2' );
 		$this->editPage(
-			'Test page', 'Test Content 1B', 'test', NS_MAIN, $tempUser1
+			'Test page',
+			'Test Content 1B',
+			'test',
+			NS_MAIN,
+			$tempUser1
+		);
+		// Add another action at the same timestamp, from a different IP, to
+		// test ordering by two fields
+		RequestContext::getMain()->getRequest()->setIP( '127.0.0.3' );
+		$this->editPage(
+			'Test page',
+			'Test Content 1C',
+			'test',
+			NS_MAIN,
+			$tempUser1
 		);
 
 		// This temp account is created from $tempUser1's second edit IP and edits
 		// from there and also from an IPv6 IP
+		RequestContext::getMain()->getRequest()->setIP( '127.0.0.2' );
+		ConvertibleTimestamp::setFakeTime( '20230405060708' );
 		$tempUser2 = $this->getServiceContainer()
 			->getTempUserCreator()
-			->create( '~check-user-test-02', new FauxRequest() )->getUser();
+			->create( '~check-user-test-02', $this->getFauxRequest( '127.0.0.2' ) )
+			->getUser();
 		$this->editPage(
-			'Test page', 'Test Content 2A', 'test', NS_MAIN, $tempUser2
+			'Test page',
+			'Test Content 2A',
+			'test',
+			NS_MAIN,
+			$tempUser2
 		);
+		ConvertibleTimestamp::setFakeTime( '20230405060709' );
 		RequestContext::getMain()->getRequest()->setIP( '1:1:1:1:1:1:1:1' );
 		$this->editPage(
-			'Test page', 'Test Content 2B', 'test', NS_MAIN, $tempUser2
+			'Test page',
+			'Test Content 2B',
+			'test',
+			NS_MAIN,
+			$tempUser2
 		);
 
 		// This temp account edits from a different IPv6 IP
 		// but in the same 64 range as the second temp user as well and
 		// repeatedly from an IPv6 IP on a different range
+		ConvertibleTimestamp::setFakeTime( '20230405060710' );
 		RequestContext::getMain()->getRequest()->setIP( '1:1:1:1:1:1:1:2' );
 		$tempUser3 = $this->getServiceContainer()
 			->getTempUserCreator()
-			->create( '~check-user-test-03', new FauxRequest() )->getUser();
+			->create( '~check-user-test-03', $this->getFauxRequest( '1:1:1:1:1:1:1:2' ) )->getUser();
 		$this->editPage(
-			'Test page', 'Test Content 3A', 'test', NS_MAIN, $tempUser3
+			'Test page',
+			'Test Content 3A',
+			'test',
+			NS_MAIN,
+			$tempUser3
 		);
 		RequestContext::getMain()->getRequest()->setIP( '2:2:2:2:2:2:2:2' );
 		$this->editPage(
-			'Test page', 'Test Content 3B', 'test', NS_MAIN, $tempUser3
+			'Test page',
+			'Test Content 3B',
+			'test',
+			NS_MAIN,
+			$tempUser3
 		);
 		$this->editPage(
-			'Test page', 'Test Content 3C', 'test', NS_MAIN, $tempUser3
+			'Test page',
+			'Test Content 3C',
+			'test',
+			NS_MAIN,
+			$tempUser3
 		);
 
+		// Hide the user so we can test hideuser permissions
+		$blockStatus = $this->getServiceContainer()->getBlockUserFactory()
+			->newBlockUser(
+				$this->getServiceContainer()->getUserIdentityLookup()->getUserIdentityByName( '~check-user-test-03' ),
+				$this->getTestUser( [ 'sysop', 'suppress' ] )->getUser(),
+				'infinity',
+				'block to hide the test user',
+				[ 'isHideUser' => true ]
+			)->placeBlock();
+		$this->assertStatusGood( $blockStatus );
+
 		// This temp account doesn't share an IP with any other account
+		ConvertibleTimestamp::setFakeTime( '20230405060711' );
 		RequestContext::getMain()->getRequest()->setIP( '1.2.3.4' );
 		$tempUser4 = $this->getServiceContainer()
 			->getTempUserCreator()
-			->create( '~check-user-test-04', new FauxRequest() )->getUser();
+			->create( '~check-user-test-04', $this->getFauxRequest( '1.2.3.4' ) )->getUser();
 		$this->editPage(
-			'Test page', 'Test Content 4A', 'test', NS_MAIN, $tempUser4
+			'Test page',
+			'Test Content 4A',
+			'test',
+			NS_MAIN,
+			$tempUser4
 		);
+
+		ConvertibleTimestamp::setFakeTime( false );
+	}
+
+	private function getFauxRequest( string $ip ): FauxRequest {
+		$request = new FauxRequest();
+		$request->setIP( $ip );
+		return $request;
+	}
+
+	/**
+	 * @dataProvider provideTestExecuteGetIpsUsedCount
+	 */
+	public function testExecuteGetIpsUsedCount( $name, $limit, $expectedCount ) {
+		$checkUserTemporaryAccountsByIPLookup = $this->getObjectUnderTest();
+		$tempUserIdentity = $this->getServiceContainer()->getUserFactory()->newFromName( $name );
+		$ipsUsedCount = $checkUserTemporaryAccountsByIPLookup->getIpsUsedCount( $tempUserIdentity, $limit );
+		$this->assertEquals( $expectedCount, $ipsUsedCount );
+	}
+
+	public static function provideTestExecuteGetIpsUsedCount() {
+		return [
+			'Multiple IPs used' => [
+				'name' => '~check-user-test-01',
+				'limit' => null,
+				'expectedCount' => 3,
+			],
+			'Single IP used' => [
+				'name' => '~check-user-test-04',
+				'limit' => null,
+				'expectedCount' => 1,
+			],
+			'Limit respected' => [
+				'name' => '~check-user-test-01',
+				'limit' => 1,
+				'expectedCount' => 1,
+			],
+		];
 	}
 
 	/**
@@ -103,7 +207,7 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 			'Base case - Single IP, single account' => [
 				'ip' => '127.0.0.1',
 				'limit' => null,
-				'expectedRowCount' => 1,
+				'expectedCount' => 1,
 				'expectedAccounts' => [ '~check-user-test-01' ],
 			],
 			'Mutiple accounts found - Single IP, multiple accounts' => [
@@ -139,7 +243,7 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 			'Limit parameter is respected' => [
 				'ip' => '127.0.0.1',
 				'limit' => 0,
-				'expectedRowCount' => 1,
+				'expectedCount' => 1,
 				'expectedAccounts' => [ '~check-user-test-01' ],
 			],
 		];
@@ -198,6 +302,114 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 		);
 	}
 
+	public function testGetWhenReadOnly(): void {
+		// Get the authority before setting site read only, as otherwise
+		// the user would not be saved to the DB
+		$authority = $this->getTestUser( [ 'checkuser' ] )->getAuthority();
+
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+		$actualStatus = $this->getObjectUnderTest()->get(
+			'1.2.3.4',
+			$authority,
+			true,
+			123
+		);
+		$this->assertStatusError( 'readonlytext', $actualStatus );
+	}
+
+	public function testGetActiveTempAccountNamesWhenReadOnly(): void {
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+		$actualStatus = $this->getObjectUnderTest()->getActiveTempAccountNames(
+			$this->mockRegisteredUltimateAuthority(),
+			$this->getServiceContainer()->getUserFactory()->newFromName( '~check-user-test-01' ),
+			123
+		);
+		$this->assertStatusError( 'readonlytext', $actualStatus );
+	}
+
+	/**
+	 * @dataProvider provideTestExecuteGetActiveTempAccountNames
+	 */
+	public function testExecuteGetActiveTempAccountNames( $userName, $limit, $expected ) {
+		$checkUserTemporaryAccountsByIPLookup = $this->getObjectUnderTest();
+		$user = $this->getServiceContainer()->getUserFactory()->newFromName( $userName );
+		$performer = $this->mockRegisteredUltimateAuthority();
+		$status = $checkUserTemporaryAccountsByIPLookup
+			->getActiveTempAccountNames( $performer, $user, $limit );
+		$this->assertEqualsCanonicalizing( $expected, $status->getValue() );
+	}
+
+	public static function provideTestExecuteGetActiveTempAccountNames() {
+		return [
+			'Count comes from unique sets' => [
+				'userName' => '~check-user-test-01',
+				'limit' => null,
+				'expected' => [
+					'~check-user-test-01',
+					'~check-user-test-02',
+				],
+			],
+			'Count comes from sets with overlapping results' => [
+				'userName' => '~check-user-test-02',
+				'limit' => null,
+				'expected' => [
+					'~check-user-test-01',
+					'~check-user-test-02',
+					'~check-user-test-03',
+				],
+			],
+			'Count comes from single unique set' => [
+				'userName' => '~check-user-test-04',
+				'limit' => null,
+				'expected' => [ '~check-user-test-04' ],
+			],
+			'Don\'t exceed limit' => [
+				'userName' => '~check-user-test-02',
+				'limit' => 1,
+				'expected' => [ '~check-user-test-03' ],
+			],
+		];
+	}
+
+	public function testExecuteGetActiveTempAccountNamesNoPermissions() {
+		$checkUserTemporaryAccountsByIPLookup = $this->getObjectUnderTest();
+		$user = $this->getServiceContainer()->getUserFactory()->newFromName( '~check-user-test-01' );
+		$performer = $this->mockRegisteredNullAuthority();
+		$status = $checkUserTemporaryAccountsByIPLookup
+			->getActiveTempAccountNames( $performer, $user );
+		$this->assertInstanceOf( CheckUserPermissionStatus::class, $status );
+		$this->assertSame( null, $status->getValue() );
+	}
+
+	public function testExecuteGetActiveTempAccountNamesHiddenUserAndLogging() {
+		$checkUserTemporaryAccountsByIPLookup = $this->getObjectUnderTest();
+		$user = $this->getServiceContainer()->getUserFactory()->newFromName( '~check-user-test-02' );
+		// Use a real user so that we can test logging
+		$performer = $this->getTestUser( [ 'checkuser' ] )->getUser();
+		$status = $checkUserTemporaryAccountsByIPLookup
+			->getActiveTempAccountNames( $performer, $user );
+		$this->assertSame( [
+			'~check-user-test-02',
+			'~check-user-test-01',
+		], $status->getValue() );
+
+		// Test that a log entry was made
+		$this->runJobs();
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'logging' )
+			->where( [
+				'log_type' => TemporaryAccountLogger::LOG_TYPE,
+				'log_action' => TemporaryAccountLogger::ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS,
+				'log_actor' => $this->getServiceContainer()->getActorStore()
+					->findActorId( $performer, $this->getDb() ),
+				'log_title' => $user->getUserPage()->getDBkey(),
+				'log_namespace' => NS_USER,
+			] )
+			->caller( __METHOD__ )
+			->assertFieldValue( 1 );
+	}
+
 	/**
 	 * @dataProvider provideTestExecuteGetBucketedCount
 	 */
@@ -214,10 +426,15 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 				'bucketSchema' => null,
 				'expectedBucket' => [ 0, 0 ],
 			],
+			'exactly 1' => [
+				'count' => 1,
+				'bucketSchema' => null,
+				'expectedBucket' => [ 1, 1 ],
+			],
 			'range, lower bound' => [
 				'count' => 3,
 				'bucketSchema' => null,
-				'expectedBucket' => [ 3, 5 ],
+				'expectedBucket' => [ 2, 5 ],
 			],
 			'range, upper bound' => [
 				'count' => 10,
@@ -225,9 +442,9 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 				'expectedBucket' => [ 6, 10 ],
 			],
 			'max' => [
-				'count' => 11,
+				'count' => 101,
 				'bucketSchema' => null,
-				'expectedBucket' => [ 11, 11 ],
+				'expectedBucket' => [ 101, 101 ],
 			],
 			'custom schema, range' => [
 				'count' => 3,
@@ -261,6 +478,7 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 				'expectedResult' => [
 					'127.0.0.1',
 					'127.0.0.2',
+					'127.0.0.3',
 				],
 			],
 			'IPv4/6 mixed' => [
@@ -299,6 +517,9 @@ class CheckUserTemporaryAccountsByIPLookupTest extends MediaWikiIntegrationTestC
 		);
 	}
 
+	/**
+	 * @return CheckUserTemporaryAccountsByIPLookup
+	 */
 	public function getObjectUnderTest() {
 		/** @var CheckUserTemporaryAccountsByIPLookup $objectUnderTest */
 		$objectUnderTest = $this->getServiceContainer()->get( 'CheckUserTemporaryAccountsByIPLookup' );

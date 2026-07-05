@@ -49,6 +49,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Meer pagina's verwijderen]]",
 	"nuke-deletemore": "Meer pagina’s verwijderen",
 	"nuke-pattern": "SQL Like patroon (bijv. %) voor de paginanaam:",
+	"nuke-pattern-leading-wildcard": "Het patroon mag niet met <code>%</code> beginnen. Geef een voorvoegsel op vóór het jokerteken (bijvoorbeeld <code>Example%</code> in plaats van <code>%Example</code> ).",
 	"nuke-nolist": "Om verder te gaan, klikt u eerst op ‘{{int:nuke-submit-list}}’ en selecteert u vervolgens de pagina’s die in de wachtrij voor verwijdering moeten worden geplaatst.",
 	"nuke-nopages-global": "Er zijn geen pagina’s die aan de zoekopdracht voldoen.",
 	"nuke-searchnotice-minmorethanmax": "De minimumgrootte in bytes is meer dan de maximumgrootte in bytes. Geen enkele pagina kan dus aan deze criteria voldoen.",

@@ -69,5 +69,7 @@
 	"gadgets-validate-invaliddependencies": "Følgende {{PLURAL:$2|avhengighet|avhengigheter}} mangler: $1.",
 	"gadgets-validate-deprecateddependencies": "Følgende {{PLURAL:$2|avhengighet er utdatert|avhengigheter er utdaterte}}: $1.",
 	"gadgets-supports-urlload": "Denne tilleggsfunksjonen støtter lasting via URL med URL-parameteren <code>?withgadget</code>.",
-	"gadgets-hidden": "Denne tillggsfunksjonen er [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skjult], noe som betyr at den ikke blir vist på innstillingssiden."
+	"gadgets-hidden": "Denne tillggsfunksjonen er [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skjult], noe som betyr at den ikke blir vist på innstillingssiden.",
+	"gadgets-subpage-invalid": "Ugyldig underside: «<nowiki>$1</nowiki>»",
+	"gadgets-subpage-toofewparams": "Ikke nok undersideparametre (ugyldig lenke)."
 }

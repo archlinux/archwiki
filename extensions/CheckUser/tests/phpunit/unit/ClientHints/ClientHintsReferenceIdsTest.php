@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\ClientHints;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\ClientHints;
 
 use LogicException;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWikiUnitTestCase;
 use TypeError;
 use Wikimedia\TestingAccessWrapper;
@@ -12,7 +12,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds
+ * @covers \MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds
  */
 class ClientHintsReferenceIdsTest extends MediaWikiUnitTestCase {
 	public function testConstructorWithNoArgument() {
@@ -54,7 +54,10 @@ class ClientHintsReferenceIdsTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider provideAddReferenceIds */
 	public function testAddReferenceIds(
-		$initialInternalArrayValue, $referenceIds, $mapId, $expectedInternalArrayValue
+		$initialInternalArrayValue,
+		$referenceIds,
+		$mapId,
+		$expectedInternalArrayValue
 	) {
 		$objectUnderTest = new ClientHintsReferenceIds( $initialInternalArrayValue );
 		$objectUnderTest->addReferenceIds( $referenceIds, $mapId );

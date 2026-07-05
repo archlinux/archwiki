@@ -10,15 +10,12 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsSubscribe extends ApiBase {
 
-	private SubscriptionStore $subscriptionStore;
-
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		SubscriptionStore $subscriptionStore
+		private readonly SubscriptionStore $subscriptionStore,
 	) {
 		parent::__construct( $main, $name );
-		$this->subscriptionStore = $subscriptionStore;
 	}
 
 	/**

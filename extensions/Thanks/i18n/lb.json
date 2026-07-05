@@ -15,7 +15,6 @@
 	"thanks-error-invalid-log-id": "Näischt am Log fonnt",
 	"thanks-error-invalidrevision": "D'Versiouns-ID ass ongülteg.",
 	"thanks-error-revdeleted": "Merci konnt net geschéckt ginn, wëll d'Versioun geläscht gouf.",
-	"thanks-error-notitle": "Säitentitel konnt net ofgeruff ginn",
 	"thanks-error-invalidrecipient": "Kee gültegen Destinataire fonnt",
 	"thanks-error-invalidrecipient-bot": "Botte kann een net Merci soen",
 	"thanks-error-invalidrecipient-self": "Dir kënnt Iech net selwer Merci soen",

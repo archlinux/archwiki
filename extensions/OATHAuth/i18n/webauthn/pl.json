@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Matma Rex",
+			"Msz2001",
+			"Odder",
+			"Rail",
+			"Woytecr"
+		]
+	},
+	"oathauth-webauthn-module-label": "Klucz zabezpieczeń",
+	"oathauth-webauthn-javascript-required": "Aby korzystać z klucza zabezpieczającego, w przeglądarce musi być włączona obsługa JavaScriptu.",
+	"oathauth-webauthn-ui-login-prompt": "Dotknij swojego klucza zabezpieczającego lub wykonaj instrukcje podane przez przeglądarkę.",
+	"oathauth-webauthn-ui-add-key": "Dodaj klucz",
+	"oathauth-webauthn-error-browser-unsupported": "Ta przeglądarka nie wspiera protokołu autoryzacji przez klucz zabezpieczający lub jest on niedostępny na tej stronie. Spróbuj ponownie, korzystając z innej przeglądarki. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Więcej]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Ta przeglądarka nie wspiera protokołu autoryzacji przez klucz zabezpieczający lub jest on niedostępny na tej stronie.",
+	"oathauth-webauthn-error-auth-generic": "Proces autoryzacji został przerwany. Prosimy rozpocząć proces ponownie.",
+	"oathauth-webauthn-error-reg-generic": "Nie udało się zweryfikować twojego klucza. Prosimy rozpocząć proces ponownie.",
+	"oathauth-webauthn-registered-keys-section-name": "Zarejestrowane klucze",
+	"oathauth-webauthn-ui-remove-key": "Usuń",
+	"oathauth-webauthn-error-module-not-enabled": "Moduł „$1” nie jest włączony dla {{GENDER:$2|użytkownika|użytkowniczki}} „$2”.",
+	"oathauth-webauthn-error-verification-failed": "Weryfikacja nie powiodła się.",
+	"oathauth-webauthn-error-credentials-missing": "Poświadczenia WebAuthn nie zostały przesłane.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Użytkownik|Użytkowniczka}} „$1” nie może zarejestrować nowego poświadczenia.",
+	"oathauth-webauthn-error-invalid-new-key": "Nowy klucz zwrócony przed moduł nie jest wymaganego typu.",
+	"oathauth-webauthn-error-registration-failed": "Rejestracja nowego klucza zakończyła się niepowodzeniem.",
+	"oathauth-webauthn-ui-key-register-help": "Wybierz nazwę dla swojego klucza:",
+	"oathauth-webauthn-error-cannot-remove-key": "Klucz nie może zostać usunięty.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Informacje potrzebne do uwierzytelnienia nie mogły zostać pozyskane.",
+	"oathauth-webauthn-add-key-section-name": "Zarejestruj nowy klucz zabezpieczający",
+	"oathauth-webauthn-error-get-reginfo-fail": "Informacje potrzebne do zarejestrowania nie mogły zostać pozyskane.",
+	"oathauth-webauthn-module-description": "WebAuthn jest w fazie eksperymentalnej. Obecnie nie dostarcza możliwości odzyskania utraconych lub uszkodzonych urządzeń uwierzytelniających. \n\n[https://en.wikipedia.org/wiki/WebAuthn Dowiedz się więcej o WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Odśwież stronę",
+	"oathauth-webauthn-authentication-info-label": "Dane uwierzytelniające",
+	"oathauth-webauthn-authentication-info-help": "Dane uwierzytelniające przekazywane do klienta w celu uzyskania poświadczenia",
+	"oathauth-webauthn-credential-label": "Poświadczenie użytkownika",
+	"oathauth-webauthn-credential-help": "Poświadczenie użytkownika oparte na danych uwierzytelniajacych",
+	"oathauth-webauthn-add-security-key": "Dodaj klucz zabezpieczeń"
+}

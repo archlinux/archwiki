@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\RevokeTemporaryAccountViewerGroup;
+use MediaWiki\Extension\CheckUser\Maintenance\RevokeTemporaryAccountViewerGroup;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\User;
@@ -11,7 +11,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\RevokeTemporaryAccountViewerGroup
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\RevokeTemporaryAccountViewerGroup
  */
 class RevokeTemporaryAccountViewerGroupTest extends MaintenanceBaseTestCase {
 	use TempUserTestTrait;
@@ -45,14 +45,22 @@ class RevokeTemporaryAccountViewerGroupTest extends MaintenanceBaseTestCase {
 		ConvertibleTimestamp::setFakeTime( $twoDaysAgoTimestamp );
 		$inactivePrivilegedUser = $this->getMutableTestUser( [ 'temporary-account-viewer' ] );
 		$this->editPage(
-			'Test page', 'Test Content 1', 'test', NS_MAIN, $inactivePrivilegedUser->getAuthority()
+			'Test page',
+			'Test Content 1',
+			'test',
+			NS_MAIN,
+			$inactivePrivilegedUser->getAuthority()
 		);
 		ConvertibleTimestamp::setFakeTime( false );
 
 		// Generate an active user in the 'temporary-account-viewer' group
 		$activePrivilegedUser = $this->getMutableTestUser( [ 'temporary-account-viewer', 'sysop' ] );
 		$this->editPage(
-			'Test page', 'Test Content 2', 'test', NS_MAIN, $activePrivilegedUser->getAuthority()
+			'Test page',
+			'Test Content 2',
+			'test',
+			NS_MAIN,
+			$activePrivilegedUser->getAuthority()
 		);
 
 		// Generate an unprivileged user; this user exists to not be caught in any queries
@@ -76,12 +84,14 @@ class RevokeTemporaryAccountViewerGroupTest extends MaintenanceBaseTestCase {
 		// Assert that the inactive user no longer has membership in the group
 		$ugm = $services->getUserGroupManager();
 		$this->assertNotContains(
-			'temporary-account-viewer', $ugm->getUserGroups( $inactivePrivilegedUser->getUserIdentity() )
+			'temporary-account-viewer',
+			$ugm->getUserGroups( $inactivePrivilegedUser->getUserIdentity() )
 		);
 
 		// Assert that the active user still has membership
 		$this->assertContains(
-			'temporary-account-viewer', $ugm->getUserGroups( $activePrivilegedUser->getUserIdentity() )
+			'temporary-account-viewer',
+			$ugm->getUserGroups( $activePrivilegedUser->getUserIdentity() )
 		);
 
 		// Assert that the action was logged
@@ -110,7 +120,8 @@ class RevokeTemporaryAccountViewerGroupTest extends MaintenanceBaseTestCase {
 			->fetchField();
 		$this->assertIsString( $logComment );
 		$this->assertStringContainsString(
-			wfMessage( 'checkuser-temporary-account-autorevoke-userright-reason' )->text(), $logComment
+			wfMessage( 'checkuser-temporary-account-autorevoke-userright-reason' )->text(),
+			$logComment
 		);
 	}
 
@@ -118,7 +129,11 @@ class RevokeTemporaryAccountViewerGroupTest extends MaintenanceBaseTestCase {
 		// Generate an active user in the 'temporary-account-viewer' group
 		$activePrivilegedUser = $this->getMutableTestUser( [ 'temporary-account-viewer', 'sysop', 'foo' ] );
 		$this->editPage(
-			'Test page', 'Test Content 3', 'test', NS_MAIN, $activePrivilegedUser->getAuthority()
+			'Test page',
+			'Test Content 3',
+			'test',
+			NS_MAIN,
+			$activePrivilegedUser->getAuthority()
 		);
 
 		// Expect to expire the active account

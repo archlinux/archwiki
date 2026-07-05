@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Utils\BatchRowIterator;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';

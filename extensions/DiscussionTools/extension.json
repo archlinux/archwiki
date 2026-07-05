@@ -12,7 +12,7 @@
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.45",
+		"MediaWiki": ">= 1.46",
 		"extensions": {
 			"VisualEditor": "*",
 			"Linter": "*"
@@ -35,7 +35,15 @@
 	},
 	"ResourceModules": {
 		"ext.discussionTools.init.styles": {
-			"styles": "dt.init.less"
+			"styles": [
+				"init.styles/dt.init.less",
+				"init.styles/dt.init.mobilelede.less",
+				"init.styles/dt.init.newtopic.less",
+				"init.styles/dt.init.pageframe.less",
+				"init.styles/dt.init.replybuttons.less",
+				"init.styles/dt.init.topiccontainers.less",
+				"init.styles/dt.init.topicsubscriptions.less"
+			]
 		},
 		"ext.discussionTools.debug.styles": {
 			"styles": "dt.debug.less"
@@ -60,30 +68,31 @@
 					"config": {
 						"replyIndentation": "DiscussionToolsReplyIndentation",
 						"switchTime": "DiscussionToolsTimestampFormatSwitchTime",
-						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks",
-						"enablePermalinksFrontend": "DiscussionToolsEnablePermalinksFrontend"
+						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks"
 					}
 				},
 				"ReplyLinksController.js",
 				"CommentController.js",
 				"NewTopicController.js",
-				"modifier.js",
-				"utils.js",
-				"Parser.js",
-				"ThreadItemSet.js",
-				"ThreadItem.js",
-				"CommentItem.js",
-				"HeadingItem.js",
 				"CommentDetails.js",
 				"MemoryStorage.js",
 				"lib/moment-timezone/moment-timezone-with-data-1970-2030.js",
+				"clientUtils.js",
+				"commentparser/commentUtils.js",
+				"commentparser/modifier.js",
+				"commentparser/Parser.js",
+				"commentparser/ThreadItemSet.js",
+				"commentparser/ThreadItem.js",
+				"commentparser/CommentItem.js",
+				"commentparser/HeadingItem.js",
 				{
-					"name": "parser/data.json",
+					"name": "commentparser/data.json",
 					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getLocalData"
 				}
 			],
 			"styles": [
-				"dt.ui.NewTopicController.less"
+				"dt.ui.NewTopicController.less",
+				"dt.highlighter.less"
 			],
 			"dependencies": [
 				"ext.discussionTools.init.styles",
@@ -439,6 +448,7 @@
 		"discussiontools-comments-before-first-heading-category"
 	],
 	"Hooks": {
+		"ArticleParserOptions": "page",
 		"BeforeCreateEchoEvent": "echo",
 		"EchoGetBundleRules": "echo",
 		"EchoGetEventsForRevision": "echo",
@@ -446,6 +456,8 @@
 		"LoadExtensionSchemaUpdates": "installer",
 		"GetDoubleUnderscoreIDs": "parser",
 		"ApiMain::moduleManager": "api",
+		"APIGetAllowedParams": "api",
+		"APIAfterExecute": "api",
 		"ParserAfterTidy": "parser",
 		"ParserOutputPostCacheTransform": "parser",
 		"BeforeDisplayNoArticleText": "page",
@@ -482,6 +494,9 @@
 				"DiscussionTools.SubscriptionStore",
 				"UserNameUtils",
 				"UserOptionsLookup"
+			],
+			"optional_services": [
+				"MobileFrontend.Context"
 			]
 		},
 		"parser": {
@@ -570,14 +585,6 @@
 			"value": "default",
 			"description": "Override availability of DiscussionTools visual enhancements. 'default', 'available', or 'unavailable'."
 		},
-		"DiscussionTools_visualenhancements_pageframe": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools visual enhancements's page frame sub-feature. 'default', 'available', or 'unavailable'."
-		},
-		"DiscussionTools_visualenhancements_reply": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools visual enhancements's reply buttons sub-feature. 'default', 'available', or 'unavailable'."
-		},
 		"DiscussionTools_visualenhancements_reply_icon_languages": {
 			"value": {
 				"ar": true,
@@ -588,18 +595,6 @@
 			},
 			"description": "A dictionary of language codes which will receive an icon in their enhanced reply-button treatment, due to translation being very short (T323537). Language fallbacks will be checked unless a language is explicitly set to `false` (T352289). Normalized language codes are lower case.",
 			"merge_strategy": "provide_default"
-		},
-		"DiscussionToolsEnablePermalinksBackend": {
-			"value": true,
-			"description": "Enable the permalinks backend. Do not enable this unless the database tables exist."
-		},
-		"DiscussionToolsEnablePermalinksFrontend": {
-			"value": true,
-			"description": "Enable permalinks frontend features: 1. Convert signature timestamps to comment links. 2. Show notification when the target comment is found on another page."
-		},
-		"DiscussionToolsEnableThanks": {
-			"value": true,
-			"description": "Show a button to thank individual comments. Requires the 'Thanks' extension."
 		},
 		"DiscussionToolsAutoTopicSubEditor": {
 			"value": "any",

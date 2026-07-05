@@ -8,6 +8,7 @@ namespace MediaWiki\Storage;
 
 use InvalidArgumentException;
 use LogicException;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\Content;
@@ -33,7 +34,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
-use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
@@ -73,65 +73,15 @@ class PageUpdater implements PageUpdateCauses {
 	];
 
 	/**
-	 * @var UserIdentity
-	 */
-	private $author;
-
-	/**
 	 * TODO Remove this eventually.
-	 * @var WikiPage
 	 */
-	private $wikiPage;
+	private readonly WikiPage $wikiPage;
+	private readonly HookRunner $hookRunner;
 
 	/**
-	 * @var PageIdentity
-	 */
-	private $pageIdentity;
-
-	/**
-	 * @var DerivedPageDataUpdater
-	 */
-	private $derivedDataUpdater;
-
-	/**
-	 * @var IConnectionProvider
-	 */
-	private $dbProvider;
-
-	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/**
-	 * @var SlotRoleRegistry
-	 */
-	private $slotRoleRegistry;
-
-	/**
-	 * @var IContentHandlerFactory
-	 */
-	private $contentHandlerFactory;
-
-	/**
-	 * @var HookRunner
-	 */
-	private $hookRunner;
-
-	/**
-	 * @var HookContainer
-	 */
-	private $hookContainer;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
-
-	/**
-	 * @var bool see $wgUseAutomaticEditSummaries
+	 * @var bool see $wgUseAutomaticEditSummaries and $wgNamespacesWithoutAutoSummaries
 	 * @see $wgUseAutomaticEditSummaries
+	 * @see $wgNamespacesWithoutAutoSummaries
 	 */
 	private $useAutomaticEditSummaries = true;
 
@@ -161,30 +111,19 @@ class PageUpdater implements PageUpdateCauses {
 	 */
 	private $tags = [];
 
-	/**
-	 * @var RevisionSlotsUpdate
-	 */
-	private $slotsUpdate;
+	private readonly RevisionSlotsUpdate $slotsUpdate;
 
 	/**
 	 * @var PageUpdateStatus|null
 	 */
 	private $status = null;
 
-	/**
-	 * @var EditResultBuilder
-	 */
-	private $editResultBuilder;
+	private readonly EditResultBuilder $editResultBuilder;
 
 	/**
 	 * @var EditResult|null
 	 */
 	private $editResult = null;
-
-	/**
-	 * @var ServiceOptions
-	 */
-	private $serviceOptions;
 
 	/**
 	 * @var int
@@ -196,15 +135,9 @@ class PageUpdater implements PageUpdateCauses {
 	 */
 	private array $hints = [];
 
-	/** @var string[] */
-	private $softwareTags = [];
-
-	/** @var LoggerInterface */
-	private $logger;
-
 	/**
 	 * @param UserIdentity $author
-	 * @param PageIdentity $page
+	 * @param PageIdentity $pageIdentity
 	 * @param DerivedPageDataUpdater $derivedDataUpdater
 	 * @param IConnectionProvider $dbProvider
 	 * @param RevisionStore $revisionStore
@@ -220,38 +153,27 @@ class PageUpdater implements PageUpdateCauses {
 	 * @param WikiPageFactory $wikiPageFactory
 	 */
 	public function __construct(
-		UserIdentity $author,
-		PageIdentity $page,
-		DerivedPageDataUpdater $derivedDataUpdater,
-		IConnectionProvider $dbProvider,
-		RevisionStore $revisionStore,
-		SlotRoleRegistry $slotRoleRegistry,
-		IContentHandlerFactory $contentHandlerFactory,
-		HookContainer $hookContainer,
-		UserGroupManager $userGroupManager,
-		TitleFormatter $titleFormatter,
-		ServiceOptions $serviceOptions,
-		array $softwareTags,
-		LoggerInterface $logger,
-		WikiPageFactory $wikiPageFactory
+		private UserIdentity $author,
+		private readonly PageIdentity $pageIdentity,
+		private readonly DerivedPageDataUpdater $derivedDataUpdater,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly RevisionStore $revisionStore,
+		private readonly SlotRoleRegistry $slotRoleRegistry,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
+		private readonly HookContainer $hookContainer,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly TitleFormatter $titleFormatter,
+		private readonly ServiceOptions $serviceOptions,
+		private readonly array $softwareTags,
+		private readonly LoggerInterface $logger,
+		WikiPageFactory $wikiPageFactory,
 	) {
 		$serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->serviceOptions = $serviceOptions;
 
-		$this->author = $author;
-		$this->pageIdentity = $page;
-		$this->wikiPage = $wikiPageFactory->newFromTitle( $page );
-		$this->derivedDataUpdater = $derivedDataUpdater;
+		$this->wikiPage = $wikiPageFactory->newFromTitle( $pageIdentity );
 		$this->derivedDataUpdater->setCause( self::CAUSE_EDIT );
 
-		$this->dbProvider = $dbProvider;
-		$this->revisionStore = $revisionStore;
-		$this->slotRoleRegistry = $slotRoleRegistry;
-		$this->contentHandlerFactory = $contentHandlerFactory;
-		$this->hookContainer = $hookContainer;
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->userGroupManager = $userGroupManager;
-		$this->titleFormatter = $titleFormatter;
 
 		$this->slotsUpdate = new RevisionSlotsUpdate();
 		$this->editResultBuilder = new EditResultBuilder(
@@ -265,8 +187,6 @@ class PageUpdater implements PageUpdateCauses {
 				]
 			)
 		);
-		$this->softwareTags = $softwareTags;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -339,15 +259,6 @@ class PageUpdater implements PageUpdateCauses {
 	}
 
 	/**
-	 * @param UserIdentity $user
-	 *
-	 * @return User
-	 */
-	private static function toLegacyUser( UserIdentity $user ) {
-		return User::newFromIdentity( $user );
-	}
-
-	/**
 	 * After creation of the user during the save process, update the stored
 	 * UserIdentity.
 	 * @since 1.39
@@ -406,14 +317,14 @@ class PageUpdater implements PageUpdateCauses {
 
 	/**
 	 * Set whether null-edits should create a revision. Enabling this allows the creation of dummy
-	 * revisions ("null revisions") to mark events such as renaming in the page history.
+	 * revisions (aka null revisions) to mark events such as renaming in the page history.
 	 *
 	 * Callers should typically also call setOriginalRevisionId() to indicate the ID of the revision
 	 * that is being repeated. That ID can be obtained from grabParentRevision()->getId().
 	 *
 	 * @since 1.38
 	 *
-	 * @note this calls $this->setOriginalRevisionId() with the ID of the current revision,
+	 * @note this calls $this->setOriginalRevisionId() with the ID of the latest revision,
 	 * starting the CAS bracket by virtue of calling $this->grabParentRevision().
 	 *
 	 * @note saveRevision() will fail with a LogicException if setForceEmptyRevision( true )
@@ -467,10 +378,10 @@ class PageUpdater implements PageUpdateCauses {
 	 * Checks whether this update conflicts with another update performed between the client
 	 * loading data to prepare an edit, and the client committing the edit. This is intended to
 	 * detect user level "edit conflict" when the latest revision known to the client
-	 * is no longer the current revision when processing the update.
+	 * is no longer the latest revision when processing the update.
 	 *
 	 * An update expected to create a new page can be checked by setting $expectedParentRevision = 0.
-	 * Such an update is considered to have a conflict if a current revision exists (that is,
+	 * Such an update is considered to have a conflict if a latest revision exists (that is,
 	 * the page was created since the edit was initiated on the client).
 	 *
 	 * This method returning true indicates to calling code that edit conflict resolution should
@@ -483,9 +394,9 @@ class PageUpdater implements PageUpdateCauses {
 	 * @note A user level edit conflict is not the same as the "edit-conflict" status triggered by
 	 * a CAS failure. Calling this method establishes the CAS token, it does not check against it:
 	 * This method calls grabParentRevision(), and thus causes the expected parent revision
-	 * for the update to be fixed to the page's current revision at this point in time.
+	 * for the update to be fixed to the page's latest revision at this point in time.
 	 * It acts as a compare-and-swap (CAS) token in that it is guaranteed that saveRevision()
-	 * will fail with the "edit-conflict" status if the current revision of the page changes after
+	 * will fail with the "edit-conflict" status if the latest revision of the page changes after
 	 * hasEditConflict() (or grabParentRevision()) was called and before saveRevision() could insert
 	 * a new revision.
 	 *
@@ -504,14 +415,14 @@ class PageUpdater implements PageUpdateCauses {
 	}
 
 	/**
-	 * Returns the revision that was the page's current revision when grabParentRevision()
+	 * Returns the revision that was the page's latest revision when grabParentRevision()
 	 * was first called. This revision is the expected parent revision of the update, and will be
 	 * recorded as the new revision's parent revision (unless no new revision is created because
 	 * the content was not changed).
 	 *
 	 * This method MUST not be called after saveRevision() was called!
 	 *
-	 * The current revision determined by the first call to this method effectively acts a
+	 * The latest revision determined by the first call to this method effectively acts a
 	 * compare-and-swap (CAS) token which is checked by saveRevision(), which fails if any
 	 * concurrent updates created a new revision.
 	 *
@@ -520,7 +431,7 @@ class PageUpdater implements PageUpdateCauses {
 	 * conflicts via a 3-way merge. This protects against race conditions triggered by concurrent
 	 * updates.
 	 *
-	 * @see DerivedPageDataUpdater::grabCurrentRevision()
+	 * @see DerivedPageDataUpdater::grabLatestRevision()
 	 *
 	 * @note The expected parent revision is not to be confused with the logical base revision.
 	 * The base revision is specified by the client, the parent revision is determined from the
@@ -530,7 +441,7 @@ class PageUpdater implements PageUpdateCauses {
 	 * @return RevisionRecord|null the parent revision, or null of the page does not yet exist.
 	 */
 	public function grabParentRevision() {
-		return $this->derivedDataUpdater->grabCurrentRevision();
+		return $this->derivedDataUpdater->grabLatestRevision();
 	}
 
 	/**
@@ -707,6 +618,8 @@ class PageUpdater implements PageUpdateCauses {
 		$tags = $this->tags;
 		$editResult = $this->getEditResult();
 
+		// Add tags mw-blank, mw-new-redirect, mw-changed-redirect-target,
+		// mw-removed-redirect, mw-replace, and mw-contentmodelchange if appropriate.
 		foreach ( $this->slotsUpdate->getModifiedRoles() as $role ) {
 			$old_content = $this->getParentContent( $role );
 
@@ -719,6 +632,13 @@ class PageUpdater implements PageUpdateCauses {
 			if ( $tag ) {
 				$tags[] = $tag;
 			}
+		}
+
+		// Add tag mw-edited-other-users-js if appropriate.
+		$isUserJsConfigPage = $this->getTitle()->isUserJsConfigPage();
+		$isOwnUserSpace = $this->getTitle()->getRootText() === $this->author->getName();
+		if ( $isUserJsConfigPage && !$isOwnUserSpace ) {
+			$tags[] = ChangeTags::TAG_EDITED_OTHER_USERS_JS;
 		}
 
 		$tags = array_merge( $tags, $editResult->getRevertTags() );
@@ -830,7 +750,7 @@ class PageUpdater implements PageUpdateCauses {
 	 * Change an existing article or create a new article. Updates RC and all necessary caches,
 	 * optionally via the deferred update array. This does not check user permissions.
 	 *
-	 * It is guaranteed that saveRevision() will fail if the current revision of the page
+	 * It is guaranteed that saveRevision() will fail if the latest revision of the page
 	 * changes after grabParentRevision() was called and before saveRevision() can insert
 	 * a new revision, as per the CAS mechanism described above.
 	 *
@@ -930,20 +850,6 @@ class PageUpdater implements PageUpdateCauses {
 		$allowedByHook = $this->hookRunner->onMultiContentSave(
 			$renderedRevision, $this->author, $summary, $this->flags, $hookStatus
 		);
-		if ( $allowedByHook && $this->hookContainer->isRegistered( 'PageContentSave' ) ) {
-			// Also run the legacy hook.
-			// NOTE: WikiPage should only be used for the legacy hook,
-			// and only if something uses the legacy hook.
-			$mainContent = $this->derivedDataUpdater->getSlots()->getContent( SlotRecord::MAIN );
-
-			$legacyUser = self::toLegacyUser( $this->author );
-
-			// Deprecated since 1.35.
-			$allowedByHook = $this->hookRunner->onPageContentSave(
-				$this->getWikiPage(), $legacyUser, $mainContent, $summary,
-				(bool)( $this->flags & EDIT_MINOR ), null, null, $this->flags, $hookStatus
-			);
-		}
 
 		if ( !$allowedByHook ) {
 			// The hook has prevented this change from being saved.
@@ -953,7 +859,7 @@ class PageUpdater implements PageUpdateCauses {
 			}
 
 			$this->status = $hookStatus;
-			$this->logger->info( "Hook prevented page save", [ 'status' => $hookStatus ] );
+			$this->logger->info( 'Hook prevented page save', [ 'status' => $hookStatus ] );
 			return null;
 		}
 
@@ -1281,7 +1187,7 @@ class PageUpdater implements PageUpdateCauses {
 	}
 
 	/**
-	 * Update derived slots in an existing revision. If the revision is the current revision,
+	 * Update derived slots in an existing revision. If the revision is the latest revision,
 	 * this will update page_touched and trigger secondary updates.
 	 *
 	 * We do not have sufficient information to know whether to or how to update recentchanges
@@ -1322,9 +1228,7 @@ class PageUpdater implements PageUpdateCauses {
 			// NOTE: don't trigger a PageLatestRevisionChanged event!
 			$wikiPage = $this->getWikiPage(); // TODO: use for legacy hooks only!
 			$this->prepareDerivedDataUpdater(
-				$wikiPage,
 				$newRevisionRecord,
-				$revision->getComment(),
 				[],
 				[
 					PageLatestRevisionChangedEvent::FLAG_SILENT => true,
@@ -1385,12 +1289,12 @@ class PageUpdater implements PageUpdateCauses {
 		if ( $changed ) {
 			if ( $this->forceEmptyRevision ) {
 				throw new LogicException(
-					"Content was changed even though forceEmptyRevision() was called."
+					'Content has been changed even though setForceEmptyRevision( true ) was called.'
 				);
 			}
 			if ( $this->preventChange ) {
 				throw new LogicException(
-					"Content was changed even though preventChange() was called."
+					'Content has been changed even though preventChange() was called.'
 				);
 			}
 		}
@@ -1435,7 +1339,7 @@ class PageUpdater implements PageUpdateCauses {
 			// TODO: move to storage service
 			$wasRedirect = $this->derivedDataUpdater->wasRedirect();
 			if ( !$wikiPage->updateRevisionOn( $dbw, $newRevisionRecord, null, $wasRedirect ) ) {
-				throw new PageUpdateException( "Failed to update page row to use new revision." );
+				throw new PageUpdateException( 'Failed to update page row to use new revision.' );
 			}
 
 			$editResult = $this->getEditResult();
@@ -1452,9 +1356,7 @@ class PageUpdater implements PageUpdateCauses {
 			}
 
 			$this->prepareDerivedDataUpdater(
-				$wikiPage,
 				$newRevisionRecord,
-				$summary,
 				$tags
 			);
 
@@ -1471,9 +1373,7 @@ class PageUpdater implements PageUpdateCauses {
 			$newRevisionRecord = $oldRev;
 
 			$this->prepareDerivedDataUpdater(
-				$wikiPage,
 				$newRevisionRecord,
-				$summary,
 				[],
 				[ 'changed' => false ]
 			);
@@ -1518,7 +1418,7 @@ class PageUpdater implements PageUpdateCauses {
 	private function doCreate( CommentStoreComment $summary ): PageUpdateStatus {
 		if ( $this->preventChange ) {
 			throw new LogicException(
-				"Content was changed even though preventChange() was called."
+				'Content was changed even though preventChange is true.'
 			);
 		}
 		$wikiPage = $this->getWikiPage(); // TODO: use for legacy hooks only!
@@ -1564,7 +1464,7 @@ class PageUpdater implements PageUpdateCauses {
 		// Update the page record with revision data
 		// TODO: move to storage service
 		if ( !$wikiPage->updateRevisionOn( $dbw, $newRevisionRecord, 0, false ) ) {
-			throw new PageUpdateException( "Failed to update page row to use new revision." );
+			throw new PageUpdateException( 'Failed to update page row to use new revision.' );
 		}
 
 		$tags = $this->computeEffectiveTags();
@@ -1590,9 +1490,7 @@ class PageUpdater implements PageUpdateCauses {
 		}
 
 		$this->prepareDerivedDataUpdater(
-			$wikiPage,
 			$newRevisionRecord,
-			$summary,
 			$tags
 		);
 
@@ -1621,9 +1519,7 @@ class PageUpdater implements PageUpdateCauses {
 	}
 
 	private function prepareDerivedDataUpdater(
-		WikiPage $wikiPage,
 		RevisionRecord $newRevisionRecord,
-		CommentStoreComment $summary,
 		array $tags,
 		array $hintOverrides = []
 	) {

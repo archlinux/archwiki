@@ -12,7 +12,7 @@ use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MWFileProps;
+use MediaWiki\Utils\MWFileProps;
 use Wikimedia\Mime\MimeAnalyzer;
 
 /**
@@ -20,48 +20,18 @@ use Wikimedia\Mime\MimeAnalyzer;
  * examine a RecentChanges row.
  */
 class RCVariableGenerator extends VariableGenerator {
-	/**
-	 * @var RecentChange
-	 */
-	private $rc;
 
-	/** @var User */
-	private $contextUser;
-
-	/** @var MimeAnalyzer */
-	private $mimeAnalyzer;
-	/** @var RepoGroup */
-	private $repoGroup;
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/**
-	 * @param AbuseFilterHookRunner $hookRunner
-	 * @param UserFactory $userFactory
-	 * @param MimeAnalyzer $mimeAnalyzer
-	 * @param RepoGroup $repoGroup
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param RecentChange $rc
-	 * @param User $contextUser
-	 * @param VariableHolder|null $vars
-	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
 		UserFactory $userFactory,
-		MimeAnalyzer $mimeAnalyzer,
-		RepoGroup $repoGroup,
-		WikiPageFactory $wikiPageFactory,
-		RecentChange $rc,
-		User $contextUser,
+		private readonly MimeAnalyzer $mimeAnalyzer,
+		private readonly RepoGroup $repoGroup,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly RecentChange $rc,
+		private readonly User $contextUser,
 		?VariableHolder $vars = null
 	) {
 		parent::__construct( $hookRunner, $userFactory, $vars );
-
-		$this->mimeAnalyzer = $mimeAnalyzer;
-		$this->repoGroup = $repoGroup;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->rc = $rc;
-		$this->contextUser = $contextUser;
 	}
 
 	public function getVars(): ?VariableHolder {
@@ -154,12 +124,19 @@ class RCVariableGenerator extends VariableGenerator {
 			);
 		}
 
-		$this->vars->setVar( 'accountname', $name );
-
 		// $name is a valid title, so should pass the only check for UserFactory::RIGOR_NONE (the title does
 		// not include a "#" character).
 		$createdUser = $this->userFactory->newFromName( $name, UserFactory::RIGOR_NONE );
-		'@phan-var User $createdUser';
+		if ( $createdUser === null ) {
+			throw new \UnexpectedValueException( 'Failed to retrieve the created user' );
+		}
+		$this->vars->setVar( 'account_name', $name );
+		$this->vars->setLazyLoadVar(
+			'account_type',
+			'account-type',
+			[ 'autocreate' => $autocreate, 'createdUser' => $createdUser ]
+		);
+
 		$this->hookRunner->onAbuseFilterGenerateAccountCreationVars(
 			$this->vars, $userIdentity, $createdUser, $autocreate, $this->rc
 		);

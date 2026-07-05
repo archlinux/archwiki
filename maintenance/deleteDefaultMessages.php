@@ -13,7 +13,6 @@ require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\User\User;
@@ -79,7 +78,6 @@ class DeleteDefaultMessages extends Maintenance {
 		}
 		$userGroupManager = $services->getUserGroupManager();
 		$userGroupManager->addUserToGroup( $user, 'bot' );
-		StubGlobalUser::setUser( $user );
 
 		// Handle deletion
 		$this->output( "\n...deleting old default messages (this may take a long time!)...", 'msg' );

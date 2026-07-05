@@ -3,8 +3,8 @@
 		"authors": [
 			"Ainali",
 			"Sabelöga",
-			"WikiPhoenix",
-			"Stefan2255"
+			"Stefan2255",
+			"WikiPhoenix"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Kommentar med ID \"$1\" hittades inte.",
@@ -46,5 +46,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True för att prenumerera, false för att sluta prenumerera",
 	"apihelp-discussiontoolssubscribe-summary": "Prenumerera (eller sluta prenumerera) för att ta emot aviseringar om ett ämne.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID för kommentaren att tacka.",
-	"apihelp-discussiontoolsthank-summary": "Skicka ett offentligt tackmeddelande för en kommentar."
+	"apihelp-discussiontoolsthank-summary": "Skicka ett offentligt tackmeddelande för en kommentar.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Prenumerera automatiskt användaren på alla nya diskussionssidor som skapas av redigeringen. Använd 'ja' eller 'nej' för att åsidosätta en användares preferens (standardinställningen)."
 }

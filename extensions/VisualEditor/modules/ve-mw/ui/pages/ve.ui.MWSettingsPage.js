@@ -165,7 +165,7 @@ ve.ui.MWSettingsPage.static.extraMetaCheckboxes = [];
  * @param {string} label The label to show next to the checkbox
  */
 ve.ui.MWSettingsPage.static.addMetaCheckbox = function ( metaName, label ) {
-	this.extraMetaCheckboxes.push( { metaName: metaName, label: label } );
+	this.extraMetaCheckboxes.push( { metaName, label } );
 };
 
 /* Methods */

@@ -44,9 +44,6 @@
 	"vector-toc-label": "Yɛlkpana",
 	"vector-toc-beginning": "Pin'ilʋgʋn",
 	"vector-toc-toggle-button-label": "Diinm $1 pʋdigbil",
-	"vector-anon-user-menu-pages": "Ayiisi-mɛŋ sɔbidib lakir zin'is",
-	"vector-anon-user-menu-pages-learn": "Zamisim bɛdegʋ",
-	"vector-anon-user-menu-pages-label": "Zamisim bɛdegʋ Kat wa'ae nɛ a-maal sɔbʋg yɛla",
 	"vector-main-menu-tooltip": "Yɛlpkana zin'ig",
 	"vector-toc-menu-tooltip": "Yɛlmɛŋa teebul",
 	"vector-toc-collapsible-button-label": "Diinm yɔ'ɔg yɛlmɛŋa teebul la",
@@ -66,7 +63,5 @@
 	"vector-toc-unpinned-popup": "Teebul la yɛlkpana vudigi kpɛn' kpɛla na",
 	"vector-page-tools-unpinned-popup": "La'ad dɔɔg la vudigi kpɛn' kpɛla na",
 	"vector-main-menu-unpinned-popup": "La'ad Dɔmɛŋir la vudigi kpɛn' kpɛla na",
-	"vector-appearance-unpinned-popup": "Nindanwaasim dɔɔg vudigi kpɛn' kpɛla ni",
-	"vector-2022-beta-preview-label": "Suor paamʋg ya'alim tis (vector2022) karʋŋ",
-	"vector-2022-beta-preview-description": "Ieem suori kpɛn' karʋŋ paamʋg bɛllim paala la ni,nwɛnnɛ taipɔgirafi nɔbigir nɛ sabilig nɛɛsim."
+	"vector-appearance-unpinned-popup": "Nindanwaasim dɔɔg vudigi kpɛn' kpɛla ni"
 }

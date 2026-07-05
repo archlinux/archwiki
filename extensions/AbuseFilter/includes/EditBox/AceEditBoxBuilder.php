@@ -7,9 +7,9 @@ use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\AbuseFilterTokenizer;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
-use MessageLocalizer;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\Widget;
@@ -18,9 +18,6 @@ use OOUI\Widget;
  * Class responsible for building filter edit boxes with both the Ace and the plain version
  */
 class AceEditBoxBuilder extends EditBoxBuilder {
-
-	/** @var PlainEditBoxBuilder */
-	private $plainBuilder;
 
 	/**
 	 * @inheritDoc
@@ -32,10 +29,9 @@ class AceEditBoxBuilder extends EditBoxBuilder {
 		MessageLocalizer $messageLocalizer,
 		Authority $authority,
 		OutputPage $output,
-		PlainEditBoxBuilder $plainBuilder
+		private readonly PlainEditBoxBuilder $plainBuilder
 	) {
 		parent::__construct( $afPermManager, $keywordsManager, $messageLocalizer, $authority, $output );
-		$this->plainBuilder = $plainBuilder;
 	}
 
 	/**

@@ -1,5 +1,14 @@
 # Release History
 
+## RemexHtml 6.0.0 (2026-02-13)
+* New defaults for DOMBuilder:
+  - 'domImplementationClass' defaults to \Dom\Implementation on PHP 8.4.
+    This is a change from prior versions, which always defaulted to
+    \DOMImplementation. (Note that the release notes for 5.0.0
+    incorrectly stated that this change had already been made, but
+	the default was still \DOMImplementation in 5.0.0 and 5.1.0.)
+* Suppress deprecation warnings on PHP 8.4.
+
 ## RemexHtml 5.1.0 (2025-08-14)
 * Further bug-fixes for PHP 8.4 Dom\Document.
   - It is recommended to set `suppressHtmlNamespace=true` for
@@ -23,9 +32,6 @@
 ## RemexHtml 5.0.0 (2025-06-04)
 * Bug fixes for PHP 8.4 Dom\Document compatibility.
 * New options and defaults for DOMBuilder:
-  - 'domImplementationClass' defaults to \Dom\Implementation on PHP 8.4.
-    This is a change from prior versions, which always defaulted to
-    \DOMImplementation.
   - 'coercionWorkaround' selects the workaround for
     element/attribute/doctype character set mismatches between the
     HTML parser spec and the DOM spec.  Defaults to 'coerce' on PHP < 8.4,

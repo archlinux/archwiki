@@ -17,7 +17,7 @@
 		// List "MediaWiki" here so that it sorts first, and set a custom label
 		MediaWiki: 'MediaWiki core'
 	};
-	for ( const component of mw.config.get( 'wgTestModuleComponents' ) ) {
+	for ( const component of mw.config.get( 'wgTestModuleComponents' ).slice().sort() ) {
 		values[ component ] = values[ component ] ?? component;
 	}
 	QUnit.config.urlConfig.push( {
@@ -128,6 +128,7 @@
 	 * @param {Object} [localEnv]
 	 * @param {Object} [localEnv.config]
 	 * @param {Object} [localEnv.messages]
+	 * @return {Object} QUnit hooks
 	 */
 	QUnit.newMwEnvironment = function newMwEnvironment( localEnv ) {
 		localEnv = localEnv || {};

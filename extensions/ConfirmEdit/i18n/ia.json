@@ -32,5 +32,6 @@
 	"confirmedit-preview-valid": "valide",
 	"confirmedit-preview-invalid": "invalide",
 	"confirmedit-preview-description": "Le tabella sequente monstra un lista de lineas sur iste pagina e si se tracta de un adresse o intervallo IP valide. Si le linea es un adresse o intervallo IP valide, illo essera dispensate del verification CAPTCHA, ma le lineas invalide essera ignorate. Un exemplo de un intervallo IP valide es: 69.208.0.0/16 le qual coperi le adresses de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Lege plus] sur le calculation de un intervallo de adresses IP.",
-	"abusefilter-edit-action-showcaptcha": "Exiger que le usator completa un CAPTCHA pro poter continuar con le action. Le usatores con permission de saltar un CAPTCHA es exempte."
+	"abusefilter-edit-action-showcaptcha": "Exiger un CAPTCHA pro poter exequer le action",
+	"abusefilter-edit-action-showcaptcha-help": "Le usatores con le permission de saltar un CAPTCHA es exempte."
 }

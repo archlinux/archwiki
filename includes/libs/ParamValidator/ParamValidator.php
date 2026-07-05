@@ -757,9 +757,7 @@ class ParamValidator {
 		}
 
 		// Filter out nulls (strictly)
-		return array_filter( $info, static function ( $v ) {
-			return $v !== null;
-		} );
+		return array_filter( $info, static fn ( $v ) => $v !== null );
 	}
 
 	/**

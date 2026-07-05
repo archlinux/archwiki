@@ -12,11 +12,11 @@
 			"Red Winged Duck",
 			"Renessaince",
 			"StasDash",
+			"Ucukor",
 			"Vlad5250",
 			"W",
 			"Wizardist",
-			"Zedlik",
-			"Ucukor"
+			"Zedlik"
 		]
 	},
 	"abusefilter-desc": "Прыстасоўвае аўтаматычную эўрыстыку да рэдагаваньняў.",
@@ -368,7 +368,8 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Нармалізаваць HTML-існасьці у сымбалі юнікоду ($1)",
 	"abusefilter-edit-builder-group-vars": "Зьменныя",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-час зьмены ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Назва ўліковага запісу пры стварэньні ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Назва рахунку пры стварэньні ($1)",
+	"abusefilter-edit-builder-vars-account-type": "Тып рахунку пры стварэньні рахунку ($1)",
 	"abusefilter-edit-builder-vars-action": "Дзеяньне ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Колькасьць радкоў, дададзеных пры рэдагаваньні ($1)",
 	"abusefilter-edit-builder-vars-delta": "Зьмена памеру падчас рэдагаваньня ($1)",

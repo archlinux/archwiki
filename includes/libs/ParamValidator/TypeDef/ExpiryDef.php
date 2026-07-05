@@ -8,6 +8,7 @@ use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Type definition for expiry timestamps.
@@ -37,13 +38,13 @@ class ExpiryDef extends TypeDef {
 		$this->failIfNotString( $name, $value, $settings, $options );
 
 		try {
-			$expiry = self::normalizeExpiry( $value, TS_ISO_8601 );
+			$expiry = self::normalizeExpiry( $value, TS::ISO_8601 );
 		} catch ( InvalidArgumentException ) {
-			$this->failure( 'badexpiry', $name, $value, $settings, $options );
+			$this->fatal( 'badexpiry', $name, $value, $settings, $options );
 		}
 
-		if ( $expiry !== 'infinity' && $expiry < ConvertibleTimestamp::now( TS_ISO_8601 ) ) {
-			$this->failure( 'badexpiry-past', $name, $value, $settings, $options );
+		if ( $expiry !== 'infinity' && $expiry < ConvertibleTimestamp::now( TS::ISO_8601 ) ) {
+			$this->fatal( 'badexpiry-past', $name, $value, $settings, $options );
 		}
 
 		$max = $settings[self::PARAM_MAX] ?? null;
@@ -59,7 +60,7 @@ class ExpiryDef extends TypeDef {
 			);
 			$this->failure( $msg, $name, $value, $settings, $options, $dontUseMax );
 
-			return self::normalizeExpiry( $max, TS_ISO_8601 );
+			return self::normalizeExpiry( $max, TS::ISO_8601 );
 		}
 
 		return $expiry;
@@ -74,9 +75,7 @@ class ExpiryDef extends TypeDef {
 			->textListParams(
 				// Should be quoted or monospace for presentation purposes,
 				//   but textListParams() doesn't do this.
-				array_map( static function ( $val ) {
-					return "\"$val\"";
-				}, self::INFINITY_VALS )
+				array_map( static fn ( $val ) => "\"$val\"", self::INFINITY_VALS )
 			);
 
 		return $info;
@@ -85,7 +84,7 @@ class ExpiryDef extends TypeDef {
 	/**
 	 * Normalize a user-inputted expiry in ConvertibleTimestamp.
 	 * @param string|null $expiry
-	 * @param int|null $style null or in a format acceptable to ConvertibleTimestamp (TS_* constants)
+	 * @param int|TS|null $style null or in a format acceptable to ConvertibleTimestamp (TS::* constants)
 	 *
 	 * @return ConvertibleTimestamp|string|null Timestamp as ConvertibleTimestamp if $style is null, a string
 	 *  timestamp in $style is not null, 'infinity' if $expiry is one of the self::INFINITY_VALS,
@@ -93,7 +92,7 @@ class ExpiryDef extends TypeDef {
 	 *
 	 * @throws InvalidArgumentException if $expiry is invalid
 	 */
-	public static function normalizeExpiry( ?string $expiry = null, ?int $style = null ) {
+	public static function normalizeExpiry( ?string $expiry = null, $style = null ) {
 		if ( $expiry === null ) {
 			return null;
 		}
@@ -135,12 +134,12 @@ class ExpiryDef extends TypeDef {
 	 * Returns a normalized expiry or the max expiry if the given expiry exceeds it.
 	 * @param string|null $expiry
 	 * @param string|null $maxExpiryDuration
-	 * @param int|null $style null or in a format acceptable to ConvertibleTimestamp (TS_* constants)
+	 * @param int|TS|null $style null or in a format acceptable to ConvertibleTimestamp (TS::* constants)
 	 * @return ConvertibleTimestamp|string|null Timestamp as ConvertibleTimestamp if $style is null, a string
 	 *  timestamp in $style is not null, 'infinity' if $expiry is one of the self::INFINITY_VALS,
 	 *  or null if $expiry is null.
 	 */
-	public static function normalizeUsingMaxExpiry( ?string $expiry, ?string $maxExpiryDuration, ?int $style ) {
+	public static function normalizeUsingMaxExpiry( ?string $expiry, ?string $maxExpiryDuration, int|TS|null $style ) {
 		if ( self::expiryExceedsMax( $expiry, $maxExpiryDuration ) ) {
 			return self::normalizeExpiry( $maxExpiryDuration, $style );
 		}

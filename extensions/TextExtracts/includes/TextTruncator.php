@@ -13,15 +13,12 @@ use MediaWiki\MediaWikiServices;
  */
 class TextTruncator {
 	/**
-	 * @var bool Whether to tidy the output
+	 * @param bool $useTidy Whether to tidy the output
 	 */
-	private $useTidy;
-
-	/**
-	 * @param bool $useTidy
-	 */
-	public function __construct( bool $useTidy ) {
-		$this->useTidy = $useTidy;
+	public function __construct(
+		private readonly bool $useTidy,
+		private readonly string $ellipsis
+	) {
 	}
 
 	/**
@@ -77,7 +74,7 @@ class TextTruncator {
 	 */
 	public function getFirstChars( $text, $requestedLength ) {
 		if ( $requestedLength <= 0 ) {
-			return '';
+			return $text === '' ? '' : $this->ellipsis;
 		}
 
 		$length = mb_strlen( $text );
@@ -93,7 +90,8 @@ class TextTruncator {
 			return $text;
 		}
 
-		return $this->tidy( $truncatedText );
+		$truncatedText = $this->tidy( $truncatedText ) . $this->ellipsis;
+		return mb_strlen( $truncatedText ) < $length ? $truncatedText : $text;
 	}
 
 	/**

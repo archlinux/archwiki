@@ -17,37 +17,30 @@ There are three supported modes of running the tests.
 
 #### Headless
 
-The Selenium tests default to headless mode, unless a `DISPLAY` environment variable is set.
-This variable may be set on Linux desktop and XQuartz environments. To run headless there,
-unset the `DISPLAY` environment variable first.
+The Selenium tests default to browser headless mode in CI (passing --headless to the browser). In wdio.conf.js
+that is configured by `useBrowserHeadless: true`. To run headless on your local machine, you need pass that parameter.
 
-    npm run selenium-test
-
-Or:
-
-    DISPLAY= npm run selenium-test
+Run the test: `npm run selenium-test --useBrowserHeadless`
 
 ### Visible browser
 
-To see the browser window, ensure the `DISPLAY` variable is set. On Linux desktop and in XQuartz
-environments this is probably set already. On macOS, set it to a dummy value like `1`.
+By default you will see the browser window on your local machine.
 
-    DISPLAY=1 npm run selenium-test
+Run the test: `npm run selenium-test`
+
 
 ### Video recording
 
-To capture a video, the tests have to run in the context of an X11 server, with the `DISPLAY`
-environment variable set to its display name. If the shell has no X11 server or if you want
-to hide the output, you can also launch a virtual X11 display using Xvfb. Recording videos
-is currently supported only on Linux, and is triggered by the `DISPLAY` value starting with
-a colon (as Xvfb typically would).
+To capture a video, the tests have to run in the context of an X11 server. The wdio-mediawiki package
+start and stop XVFB automatically but since there's a bug in wdio you still need to export a DISPLAY-
+Recording videos is currently supported only on Linux, and is configured by the `recordVideo`setting. To
+record a video you need to have `recordVideo: true`.
 
 Example test run in [Fresh](https://gerrit.wikimedia.org/g/fresh).
 
     fresh-node -env -net
-    export DISPLAY=:1
-    Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
-    npm run selenium-test
+    export DISPLAY=:100
+    npm run selenium-test -- --recordVideo
 
 ## Filter
 

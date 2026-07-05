@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser;
+namespace MediaWiki\Extension\CheckUser;
 
 /**
  * An interface that provides several constants that are used
@@ -37,3 +37,10 @@ interface CheckUserQueryInterface {
 	/** @var string The virtual database domain for the suggested investigations feature */
 	public const VIRTUAL_DB_DOMAIN = 'virtual-checkuser';
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserQueryInterface::class, 'MediaWiki\\CheckUser\\CheckUserQueryInterface' );
+// @codeCoverageIgnoreEnd

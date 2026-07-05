@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"0x48fe75df30",
 			"500000000006城",
 			"A Chinese Wikipedian",
 			"Administrator66",
 			"Anterdc99",
+			"ExoHyper2026",
 			"GuoPC",
 			"Huajing",
 			"Hzy980512",
@@ -14,6 +16,7 @@
 			"Lily9814",
 			"LittlePaw365",
 			"Mishidexfc",
+			"Pawsdt",
 			"Peterxy12",
 			"Shizhao",
 			"SomeyaMako",
@@ -23,7 +26,8 @@
 			"沈澄心",
 			"范",
 			"铁桶",
-			"ExoHyper2026"
+			"Peterxy",
+			"Zhoucantd"
 		]
 	},
 	"rest-prefix-mismatch": "请求的路径（$1）不在REST API基本路径（$2）中",
@@ -113,10 +117,12 @@
 	"rest-module-default": "默认模块",
 	"rest-module-extra-routes-title": "MediaWiki REST API",
 	"rest-module-extra-routes-desc": "与模块不关联的 REST 端点",
-	"rest-module-specs.v0-title": "规格",
+	"rest-module-specs.v0-title": "规格API",
 	"rest-module-specs.v0-desc": "自文档模块为所有可用模块提供发现、规格和模式。",
-	"rest-module-content.v1-title": "页面内容",
+	"rest-module-content.v1-title": "内容API",
 	"rest-module-content.v1-desc": "提供对页面和修订内容的元数据内容的访问",
+	"rest-module-site.v1-title": "站点API",
+	"rest-module-site.v1-desc": "关于网站整体的信息，例如网站地图",
 	"rest-param-desc-mock-desc": "模拟描述。",
 	"rest-param-desc-revision-id": "修订版本ID",
 	"rest-param-desc-html-input-title": "HTML 输入转换标题",
@@ -306,5 +312,26 @@
 	"rest-endpoint-summ-post-page": "创建页面",
 	"rest-endpoint-summ-post-transform-wikitext-to-lint": "返回wikitext的lint错误",
 	"rest-endpoint-summ-post-transform-wikitext-to-html": "将Wikitext转换为HTML。",
-	"rest-endpoint-summ-post-transform-html-to-wikitext": "将HTML转换为Wikitext。"
+	"rest-endpoint-summ-post-transform-html-to-wikitext": "将HTML转换为Wikitext。",
+	"rest-requestheader-desc-acceptlanguage": "用户偏向的自然语言和地区。",
+	"rest-requestheader-desc-contenttype": "表明资源在内容编码前的初始媒体类型",
+	"rest-requestheader-desc-cookie": "允许服务器在客户端浏览器上存储状态信息，启用会话管理、个性化和跟踪等特性。",
+	"rest-requestheader-desc-authorization": "提供用于向服务器验证用户代理身份的凭据，从而允许访问受保护的资源。",
+	"rest-requestheader-desc-xrequestid": "支持对单个 HTTP 请求在分布式系统（如微服务、API 网关和负载均衡器）中的流转过程进行追踪并关联分析。",
+	"rest-requestheader-desc-useragent": "向网络服务器发送特征字符串，使得它们能识别请求客户端软件的应用程序、操作系统、供应商、版本中的一个或数个。",
+	"rest-requestheader-desc-ifmatch": "使请求具有条件，确保请求的操作（如更新或删除）仅当服务器上的资源与客户端提供的特定版本（由版本的ETag标识）相匹配时才执行。",
+	"rest-endpoint-desc-get-sitemap-index": "返回一个XML格式的列表，该列表包含了站点地图中可用的页面。默认索引为0；如果存在额外的索引，这些索引会被列在<code>robots.txt</code>文件中。每个索引最多关联10000个页面。",
+	"rest-endpoint-summ-get-sitemap-index": "获取站点的列表",
+	"rest-endpoint-desc-get-sitemap-page": "返回该网站上所有页面的XML列表。每条包含URL和最后编辑日期。每页最多包含10000条。",
+	"rest-endpoint-summ-get-sitemap-page": "获取每页文章位置列表",
+	"rest-param-desc-sitemap-index-id": "网页索引从0开始。其余可用的索引可在robots.txt中指定。",
+	"rest-param-desc-sitemap-page-id": "所需文章页面。",
+	"rest-param-desc-sitemap-include-namespace": "站点地图中包含的命名空间ID。若未指定，则使用站点默认的命名空间ID。",
+	"rest-responseheader-desc-cachecontrol": "指定浏览器的缓存行为，明确其刷新本地存储资源的频率。",
+	"rest-responseheader-desc-deprecation": "指定浏览器的缓存行为，明确其刷新本地存储资源的频率。",
+	"rest-responseheader-desc-contentlanguage": "通知客户端返回内容的受众所使用的自然语言。",
+	"rest-responseheader-desc-contenttype": "表明资源在内容编码前的初始媒体类型",
+	"rest-responseheader-desc-link": "提供在HTTP头中序列化一个或多个链接的方式。该方法允许服务器将客户端指向另一个资源，前述资源包含所请求资源的元数据。",
+	"rest-responseheader-desc-expires": "包含在HTTP缓存上下文中，响应被视为过期的日期和时间。",
+	"rest-responseheader-desc-location": "指示目标URL，主要有两个用途：重定向和标识新创建资源的位置。"
 }

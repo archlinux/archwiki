@@ -1,6 +1,7 @@
 [
 	{
 		"name": "cu_useragent_clienthints",
+		"comment": "A table which stores Client Hints data along with other selected data that is similar to Client Hints (such as browser headers that describe the browser, like x-is-browser on WMF wikis).",
 		"columns": [
 			{
 				"name": "uach_id",
@@ -10,13 +11,13 @@
 			},
 			{
 				"name": "uach_name",
-				"comment": "Name of the user-agent client hint. See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list.",
+				"comment": "Name of the user-agent client hint or other attribute similar to a Client Hint (such as x-is-browser header on WMF wikis). See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of Client Hints.",
 				"type": "string",
 				"options": { "notnull": true, "length": 32 }
 			},
 			{
 				"name": "uach_value",
-				"comment": "Value of the user-agent client hint, see https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of client hint names.",
+				"comment": "Value associated with uach_name. This may be Client Hints data or some other HTTP header data similar to Client Hints.",
 				"type": "string",
 				"options": { "notnull": true, "length": 255 }
 			}

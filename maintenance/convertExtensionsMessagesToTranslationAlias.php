@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Json\FormatJson;
+use MediaWiki\Language\LocalisationCache;
 use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart

@@ -17,6 +17,7 @@
 	},
 	"multimediaviewer-desc": "زيادة حجم الصور المصغرة في واجهة ملء الشاشة.",
 	"multimediaviewer-optin-pref": "تمكين <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About عارض الوسائط]</span>",
+	"multimediaviewer-disable-image-carousel-pref": "تعطيل عرض الصور المتحرك على موقع الجوال",
 	"multimediaviewer-file-page": "الذهاب إلى الصفحة التابعة للملف",
 	"multimediaviewer-repository-local": "مزيد من التفاصيل",
 	"multimediaviewer-datetime-created": "الإنشاء: $1",

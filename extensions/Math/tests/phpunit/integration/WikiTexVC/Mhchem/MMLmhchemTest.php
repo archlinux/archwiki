@@ -25,10 +25,6 @@ final class MMLmhchemTest extends MediaWikiIntegrationTestCase {
 	private static bool $LOGMHCHEM = false;
 	private static bool $SKIPXMLVALIDATION = false;
 	private static string $FILENAMEREF = __DIR__ . "/Mhchemv4mml.json";
-
-	private static bool $APPLYFILTER = false;
-	private static int $FILTERSTART = 92;
-	private static int $FILTERLENGTH = 1;
 	private static bool $GENERATEFILES = false;
 	private static string $GENERATEDHTMLFILE = __DIR__ . "/MMLmhchemTest-Output.html";
 	private static string $GENERATEDWIKIFILE = __DIR__ . "/chemtest.wiki";
@@ -133,10 +129,6 @@ final class MMLmhchemTest extends MediaWikiIntegrationTestCase {
 			$f[] = [ "tc#" . str_pad( $ctr, 3, '0', STR_PAD_LEFT ) . " " . $tcF->description,
 				(object)$tc ];
 			$ctr++;
-		}
-		// Filtering results by index if necessary
-		if ( self::$APPLYFILTER ) {
-			$f = array_slice( $f, self::$FILTERSTART, self::$FILTERLENGTH );
 		}
 		return $f;
 	}

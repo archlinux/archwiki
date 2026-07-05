@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsLookupResults;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsLookupResults;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiUnitTestCase;
 use ReflectionClass;
@@ -17,7 +17,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\UserAgentClientHintsLookup
+ * @covers \MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup
  */
 class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 	use MockServiceDependenciesTrait;
@@ -69,7 +69,9 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider provideGenerateUniqueClientHintsIdCombinations */
 	public function testGenerateUniqueClientHintsIdCombinations(
-		$referenceIdsToClientHintIds, $expectedReferenceIdsToClientHintIdsAfterCall, $expectedReturnArray
+		$referenceIdsToClientHintIds,
+		$expectedReferenceIdsToClientHintIdsAfterCall,
+		$expectedReturnArray
 	) {
 		/** @var UserAgentClientHintsLookup $objectUnderTest */
 		$objectUnderTest = $this->newServiceInstance( UserAgentClientHintsLookup::class, [] );
@@ -197,7 +199,7 @@ class UserAgentClientHintsLookupTest extends MediaWikiUnitTestCase {
 				[ 'cu_useragent_clienthints_map' ],
 				[ '*' ],
 				[ 'makeWhereFrom2d result' ],
-				'MediaWiki\CheckUser\Services\UserAgentClientHintsLookup::getClientHintsByReferenceIds',
+				'MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup::getClientHintsByReferenceIds',
 				[],
 				[]
 			)

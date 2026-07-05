@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Piramidion"
+			"Piramidion",
+			"Movses"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Відповідь на CAPTCHA",
-	"captcha-apihelp-param-captchaid": "Ідентифікатор CAPTCHA з попереднього запиту"
+	"captcha-apihelp-param-captchaid": "Ідентифікатор CAPTCHA з попереднього запиту",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Чи була капча hCaptcha примусово показана, наприклад, через розширення AbuseFilter (і тому використовувався більш обмежувальний sitekey). Встановіть це, якщо змінна конфігурації JS з такою ж назвою має значення «true» або якщо перша спроба використання цього API повернула помилку «forcecaptcha» із зазначеним «sitekey»."
 }

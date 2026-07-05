@@ -6,23 +6,18 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMethods;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 
 class Lr extends TexNode {
 
-	/** @var string */
-	private $left;
-	/** @var string */
-	private $right;
-	/** @var TexArray */
-	private $arg;
-
-	public function __construct( string $left, string $right, TexArray $arg ) {
+	public function __construct(
+		private readonly string $left,
+		private readonly string $right,
+		private readonly TexArray $arg,
+	) {
 		parent::__construct( $left, $right, $arg );
-		$this->left = $left;
-		$this->right = $right;
-		$this->arg = $arg;
 	}
 
 	public function getLeft(): string {
@@ -48,7 +43,7 @@ class Lr extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ): MMLbase {
 		// TBD  set attributes for right AND left correctly
 		$rightAttrs = [];
 		if ( $this->right == "." ) {
@@ -58,12 +53,12 @@ class Lr extends TexNode {
 		$bm = new BaseMethods();
 		$left = $bm->checkAndParseDelimiter( $this->left, $this, [], null, true,
 			TexClass::OPEN );
-		if ( !$left ) {
+		if ( $left->isEmpty() ) {
 			$left = new MMLmo( TexClass::OPEN, [], $this->right );
 		}
 		$right = $bm->checkAndParseDelimiter( $this->right, $this, $rightAttrs, null, true,
 			TexClass::CLOSE );
-		if ( !$right ) {
+		if ( $right->isEmpty() ) {
 			$right = new MMLmo( TexClass::CLOSE, $rightAttrs, $this->right );
 		}
 		// Don't apply outer ' inside the LR structure

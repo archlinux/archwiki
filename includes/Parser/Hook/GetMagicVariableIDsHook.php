@@ -1,0 +1,30 @@
+<?php
+
+namespace MediaWiki\Parser\Hook;
+
+/**
+ * This is a hook handler interface, see docs/Hooks.md.
+ * Use the hook name "GetMagicVariableIDs" to register handlers implementing this interface.
+ *
+ * @stable to implement
+ * @ingroup Hooks
+ */
+interface GetMagicVariableIDsHook {
+	/**
+	 * Use this hook to modify the list of magic variables.
+	 * Magic variables are localized with the magic word system,
+	 * and this hook is called by MagicWordFactory.
+	 *
+	 * If you register a magic variable id here, you should
+	 * handle it in the ParserGetVariableValueSwitch hook.
+	 *
+	 * @since 1.35
+	 *
+	 * @param string[] &$variableIDs array of magic word identifiers
+	 * @return bool|void True or no return value to continue or false to abort
+	 */
+	public function onGetMagicVariableIDs( &$variableIDs );
+}
+
+/** @deprecated class alias since 1.46 */
+class_alias( GetMagicVariableIDsHook::class, 'MediaWiki\\Hook\\GetMagicVariableIDsHook' );

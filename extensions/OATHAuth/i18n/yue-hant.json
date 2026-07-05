@@ -5,7 +5,7 @@
 			"Yueman"
 		]
 	},
-	"oathauth-desc": "用基於HMAC嘅一次性密碼提供認證支援",
+	"oathauth-desc": "使用基於HMAC嘅一次性密碼同WebAuthn協議提供認證支援",
 	"disableoathforuser": "停用用戶嘅兩步驗證",
 	"verifyoathforuser": "驗證兩步驗證狀態",
 	"oathauth-account": "戶口名：",
@@ -73,8 +73,6 @@
 	"oathauth-describe-provider": "兩步驟驗證(OATH)。",
 	"grant-group-authentication": "對自己同其他人執行認證動作",
 	"grant-oath": "存取自己同其他人嘅兩步驗證（OATH）資訊",
-	"right-oathauth-api-all": "查詢同驗證自己同其他人嘅OATH資訊",
-	"action-oathauth-api-all": "檢查OATH狀態",
 	"oathauth-user-not-found": "搵唔到呢個名嘅用戶帳戶",
 	"oath-log-name": "兩步驗證日誌",
 	"oath-log-header": "呢啲事件會追蹤用戶兩步驗證狀態嘅更改。",
@@ -84,8 +82,6 @@
 	"oathauth-ui-no-module": "未啟用",
 	"oathauth-ui-manage": "管理",
 	"oathmanage": "管理兩步驟驗證",
-	"oathauth-ui-not-enabled-modules": "其他認證方法",
-	"oathauth-ui-enabled-module": "啟用咗認證{{PLURAL:$1|方法}}",
 	"oathauth-enable-generic": "啟用",
 	"oathauth-disable-generic": "停用",
 	"oathauth-disable-page-title": "停用$1",
@@ -101,8 +97,19 @@
 	"oathauth-authenticator-delete-text": "剷走",
 	"oathauth-delete-warning-header": "剷走$1",
 	"oathauth-delete-confirm-box": "輸入\"{{int:oathauth-authenticator-delete-text}}\"嚟繼續",
+	"oathauth-delete-warning-final": "移除呢個方式會完全停用兩步驗證。\n\n同時會刪除晒所有恢復代碼同通行金鑰。\n\n<strong>咁做會令你嘅帳戶安全性降低。</strong>",
+	"oathauth-delete-warning-final-privileged-user": "你喺 {{SITENAME}} 有需要兩步驗證嘅權限。\n<strong>你可能會失去呢啲權限，要再手動申請。</strong>\n\n提示：喺移除之前加咗一個新方式先。",
 	"oathauth-delete-wrong-confirm-message": "最後移除金鑰輸入錯誤。請輸入「{{int:oathauth-authenticator-delete-text}}」嚟繼續",
 	"oathauth-delete-success": "<strong>$1</strong>剷走咗。",
 	"oathauth-created-at": "喺$1加入",
-	"oathauth-enable-success": "<strong>$1</strong>加入咗。"
+	"oathauth-enable-success": "<strong>$1</strong>加入咗。",
+	"oathauth-max-keys-exceeded": "認證方式數目已達上限",
+	"oathauth-max-keys-exceeded-message": "你已經達到認證方式數目上限（$1 個）。請喺加新嘅之前，移除定一個認證方式先。",
+	"oathauth-passkeys-header": "通行金鑰",
+	"oathauth-passkeys-placeholder": "通行金鑰比密碼更加安全，可以用解鎖裝置嘅同樣方式登入。",
+	"oathauth-passkeys-no2fa": "要加入通行金鑰，你要設定兩步驗證先。",
+	"oathauth-passkeys-add": "加入通行金鑰",
+	"oathauth-passkey-dialog-title": "加入通行金鑰",
+	"oathauth-passkey-dialog-back": "返去",
+	"oathauth-passkey-dialog-add": "加入通行金鑰"
 }

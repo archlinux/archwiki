@@ -1,8 +1,8 @@
 const
 	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
-	CommentItem = require( './CommentItem.js' ),
-	HeadingItem = require( './HeadingItem.js' ),
-	utils = require( './utils.js' );
+	CommentItem = require( './commentparser/CommentItem.js' ),
+	HeadingItem = require( './commentparser/HeadingItem.js' ),
+	utils = require( './commentparser/commentUtils.js' );
 let lastHighlightedPublishedComment = null;
 
 /**

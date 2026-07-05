@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
-use MediaWiki\CheckUser\HookHandler\Preferences;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\User;
@@ -18,7 +18,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\HookHandler\Preferences
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\Preferences
  */
 class PreferencesTest extends MediaWikiIntegrationTestCase {
 	/** @var (PermissionManager&MockObject) */
@@ -70,17 +70,11 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 		$prefs = [];
 
 		$this->permissionManager->method( 'userHasRight' )
-			->willReturnCallback( static function ( $user, $right ) use ( $options ) {
-				if ( $right === 'checkuser-temporary-account' ) {
-					return $options['hasRight'];
-				}
-				if ( $right === 'checkuser-temporary-account-no-preference' ) {
-					return $options['hasNoPreferenceRight'];
-				}
-				if ( $right === 'checkuser' ) {
-					return false;
-				}
-				return true;
+			->willReturnCallback( static fn ( $user, $action ) => match ( $action ) {
+				'checkuser-temporary-account' => $options['hasRight'],
+				'checkuser-temporary-account-no-preference' => $options['hasNoPreferenceRight'],
+				'checkuser' => false,
+				default => true
 			} );
 		$this->permissionManager->method( 'userHasAnyRight' )
 			->willReturnCallback( static function ( $user, ...$rights ) use ( $options ) {
@@ -157,9 +151,7 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 		$prefs = [];
 
 		$this->permissionManager->method( 'userHasRight' )
-			->willReturnCallback( static function ( $user, $right ) {
-				return $right === 'checkuser';
-			} );
+			->willReturnCallback( static fn ( $user, $right ) => $right === 'checkuser' );
 
 		$this->sut->onGetPreferences( $this->user, $prefs );
 
@@ -167,7 +159,8 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 		$actualOptions = $prefs['checkuser-helper-table-collapse-by-default']['options'];
 		// Check that the site config option looks correct.
 		$actualSiteConfigLabel = array_search(
-			Preferences::CHECKUSER_HELPER_USE_CONFIG_TO_COLLAPSE_BY_DEFAULT, $actualOptions
+			Preferences::CHECKUSER_HELPER_USE_CONFIG_TO_COLLAPSE_BY_DEFAULT,
+			$actualOptions
 		);
 		$this->assertSame(
 			"(checkuser-helper-table-collapse-by-default-preference-default: $expectedSiteConfigValue)",
@@ -220,7 +213,9 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideOnGetPreferencesValidatesAutoRevealPreference */
 	public function testOnGetPreferencesValidatesAutoRevealPreference(
-		bool $canUserUseAutoReveal, bool $isAutoRevealExpiryValid, mixed $autoRevealPreferenceValue,
+		bool $canUserUseAutoReveal,
+		bool $isAutoRevealExpiryValid,
+		mixed $autoRevealPreferenceValue,
 		string|null $expectedErrorMessageKey
 	) {
 		$this->autoRevealLookup->method( 'isAutoRevealAvailable' )
@@ -244,7 +239,9 @@ class PreferencesTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $this->user );
 
 		$actualValidationStatus = $prefs['checkuser-temporary-account-enable-auto-reveal']['validation-callback'](
-			$autoRevealPreferenceValue, [], $mockHtmlForm
+			$autoRevealPreferenceValue,
+			[],
+			$mockHtmlForm
 		);
 		if ( $expectedErrorMessageKey === null ) {
 			$this->assertStatusGood( $actualValidationStatus );

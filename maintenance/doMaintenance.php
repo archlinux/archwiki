@@ -25,7 +25,7 @@ if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) ) {
 
 // Wasn't included from the file scope, halt execution (probably wanted the class).
 // This typically happens when a maintenance script is executed using run.php.
-// @phan-suppress-next-line PhanSuspiciousValueComparisonInGlobalScope
+// @phan-suppress-next-line PhanRedundantValueComparisonInGlobalScope
 if ( !MaintenanceRunner::shouldExecute() && $maintClass != CommandLineInc::class ) {
 	return;
 }
@@ -39,7 +39,7 @@ if ( !$maintClass || !class_exists( $maintClass ) ) {
 // Define the MediaWiki entrypoint
 define( 'MEDIAWIKI', true );
 
-$IP = wfDetectInstallPath();
+$IP = wfDetectInstallPath(); // ensures MW_INSTALL_PATH is defined
 require_once "$IP/includes/AutoLoader.php";
 
 $runner = new MaintenanceRunner();
@@ -63,7 +63,7 @@ if ( !defined( 'MW_FINAL_SETUP_CALLBACK' ) ) {
 		$runner->setup( $settingsBuilder );
 	}
 
-	define( 'MW_FINAL_SETUP_CALLBACK', 'wfMaintenanceSetup' );
+	define( 'MW_FINAL_SETUP_CALLBACK', wfMaintenanceSetup( ... ) );
 }
 
 // Initialize MediaWiki (load settings, initialized session,

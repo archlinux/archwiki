@@ -42,8 +42,8 @@ class AbuseFilterHistoryPagerTest extends MediaWikiIntegrationTestCase {
 			'rules' => 'user_name = "1.2.3.5"',
 			'name' => 'Filter to be converted',
 			'privacy' => Flags::FILTER_PUBLIC,
-			'userIdentity' => $performer,
-			'timestamp' => $this->getDb()->timestamp( '20190825000000' ),
+			'lastEditor' => $performer,
+			'lastEditTimestamp' => '20190825000000',
 		] );
 		$this->assertStatusGood( $filterStore->saveFilter(
 			$authority, null, $firstFilterRevision, MutableFilter::newDefault()
@@ -56,8 +56,8 @@ class AbuseFilterHistoryPagerTest extends MediaWikiIntegrationTestCase {
 				'rules' => 'user_unnamed_ip = "1.2.3.5"',
 				'name' => 'Filter with protected variables',
 				'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
-				'userIdentity' => $performer,
-				'timestamp' => $this->getDb()->timestamp( '20190827000000' ),
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20190827000000',
 				'hitCount' => 1,
 			], [ 'tags' => [ 'test' ] ] ),
 			$firstFilterRevision
@@ -72,8 +72,8 @@ class AbuseFilterHistoryPagerTest extends MediaWikiIntegrationTestCase {
 				'rules' => 'user_name = "1.2.3.5"',
 				'name' => 'Protected filter without user_unnamed_ip',
 				'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
-				'userIdentity' => $performer,
-				'timestamp' => $this->getDb()->timestamp( '20180828000000' ),
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20180828000000',
 				'hitCount' => 1,
 			], [ 'tags' => [ 'test' ] ] ),
 			MutableFilter::newDefault()

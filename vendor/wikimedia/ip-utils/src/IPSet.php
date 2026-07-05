@@ -2,27 +2,15 @@
 /**
  * Copyright 2014, 2015 Brandon Black <blblack@gmail.com>
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  * @author Brandon Black <blblack@gmail.com>
  */
 namespace Wikimedia;
 
 use JsonSerializable;
+use function ord;
+use function strlen;
 
 /**
  * Matches IP addresses against a set of CIDR specifications
@@ -84,10 +72,10 @@ use JsonSerializable;
  */
 class IPSet implements JsonSerializable {
 	/** @var array|bool The root of the IPv4 matching tree */
-	private $root4 = false;
+	private array|bool $root4 = false;
 
 	/** @var array|bool The root of the IPv6 matching tree */
-	private $root6 = false;
+	private array|bool $root6 = false;
 
 	/**
 	 * Instantiate the object from an array of CIDR specs
@@ -109,9 +97,9 @@ class IPSet implements JsonSerializable {
 	 * @param string $cidr String CIDR spec, IPv[46], optional /mask (def all-1's)
 	 * @return bool Returns true on success, false on failure
 	 */
-	private function addCidr( $cidr ): bool {
+	private function addCidr( string $cidr ): bool {
 		// v4 or v6 check
-		if ( strpos( $cidr, ':' ) === false ) {
+		if ( !str_contains( $cidr, ':' ) ) {
 			$node =& $this->root4;
 			$defMask = '32';
 		} else {
@@ -120,7 +108,7 @@ class IPSet implements JsonSerializable {
 		}
 
 		// Default to all-1's mask if no netmask in the input
-		if ( strpos( $cidr, '/' ) === false ) {
+		if ( !str_contains( $cidr, '/' ) ) {
 			$net = $cidr;
 			$mask = $defMask;
 		} else {
@@ -133,19 +121,19 @@ class IPSet implements JsonSerializable {
 		// explicit integer convert, checked above
 		$mask = (int)$mask;
 
-		// convert $net to an array of integer bytes, length 4 or 16
 		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		$raw = @inet_pton( $net );
 		if ( $raw === false ) {
 			return false;
 		}
-		$rawOrd = array_map( 'ord', str_split( $raw ) );
 
 		// iterate the bits of the address while walking the tree structure for inserts
 		// at the end, $snode will point to the highest node that could only lead to a
 		// successful match (and thus can be set to true)
 		$snode =& $node;
 		$curBit = 0;
+		$lastByteIndex = -1;
+		$byteOrd = 0;
 		while ( 1 ) {
 			if ( $node === true ) {
 				// already added a larger supernet, no need to go deeper
@@ -158,10 +146,16 @@ class IPSet implements JsonSerializable {
 				return true;
 			}
 
+			$byteIndex = $curBit >> 3;
+			if ( $byteIndex !== $lastByteIndex ) {
+				$byteOrd = ord( $raw[$byteIndex] );
+				$lastByteIndex = $byteIndex;
+			}
+
 			if ( $node === false ) {
 				// create new subarray to go deeper
 				if ( !( $curBit & 7 ) && $curBit <= $mask - 8 ) {
-					$node = [ 'comp' => $rawOrd[$curBit >> 3], 'next' => false ];
+					$node = [ 'comp' => $byteOrd, 'next' => false ];
 				} else {
 					$node = [ false, false ];
 				}
@@ -169,7 +163,7 @@ class IPSet implements JsonSerializable {
 
 			if ( isset( $node['comp'] ) ) {
 				$comp = $node['comp'];
-				if ( $rawOrd[$curBit >> 3] === $comp && $curBit <= $mask - 8 ) {
+				if ( $byteOrd === $comp && $curBit <= $mask - 8 ) {
 					// whole byte matches, skip over the compressed node
 					$node =& $node['next'];
 					$snode =& $node;
@@ -188,7 +182,7 @@ class IPSet implements JsonSerializable {
 			}
 
 			$maskShift = 7 - ( $curBit & 7 );
-			$index = ( $rawOrd[$curBit >> 3] & ( 1 << $maskShift ) ) >> $maskShift;
+			$index = ( $byteOrd >> $maskShift ) & 1;
 			if ( $node[$index ^ 1] !== true ) {
 				// no adjacent subnet, can't form a supernet at this level
 				$snode =& $node[$index];
@@ -206,25 +200,31 @@ class IPSet implements JsonSerializable {
 	 * @param string $ip string IPv[46] address
 	 * @return bool True is match success, false is match failure
 	 */
-	public function match( $ip ): bool {
+	public function match( string $ip ): bool {
 		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		$raw = @inet_pton( $ip );
 		if ( $raw === false ) {
 			return false;
 		}
 
-		$rawOrd = array_map( 'ord', str_split( $raw ) );
-		if ( count( $rawOrd ) === 4 ) {
+		if ( strlen( $raw ) === 4 ) {
 			$node =& $this->root4;
 		} else {
 			$node =& $this->root6;
 		}
 
 		$curBit = 0;
+		$lastByteIndex = -1;
+		$byteOrd = 0;
 		while ( $node !== true && $node !== false ) {
+			$byteIndex = $curBit >> 3;
+			if ( $byteIndex !== $lastByteIndex ) {
+				$byteOrd = ord( $raw[$byteIndex] );
+				$lastByteIndex = $byteIndex;
+			}
 			if ( isset( $node['comp'] ) ) {
 				// compressed node, matches 1 whole byte on a byte boundary
-				if ( $rawOrd[$curBit >> 3] !== $node['comp'] ) {
+				if ( $byteOrd !== $node['comp'] ) {
 					return false;
 				}
 				$curBit += 8;
@@ -232,7 +232,7 @@ class IPSet implements JsonSerializable {
 			} else {
 				// uncompressed node, walk in the correct direction for the current bit-value
 				$maskShift = 7 - ( $curBit & 7 );
-				$node =& $node[( $rawOrd[$curBit >> 3] & ( 1 << $maskShift ) ) >> $maskShift];
+				$node =& $node[( $byteOrd >> $maskShift ) & 1];
 				++$curBit;
 			}
 		}
@@ -240,16 +240,11 @@ class IPSet implements JsonSerializable {
 		return $node;
 	}
 
-	/**
-	 * @param string $json
-	 *
-	 * @return IPSet
-	 */
-	public static function newFromJson( string $json ): IPSet {
+	public static function newFromJson( string $jsonState ): IPSet {
 		$ipset = new IPSet( [] );
-		$decoded = json_decode( $json, true );
-		$ipset->root4 = $decoded['ipv4'] ?? false;
-		$ipset->root6 = $decoded['ipv6'] ?? false;
+		$state = json_decode( $jsonState, true );
+		$ipset->root4 = $state['ipv4'] ?? false;
+		$ipset->root6 = $state['ipv6'] ?? false;
 
 		return $ipset;
 	}

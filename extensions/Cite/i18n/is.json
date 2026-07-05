@@ -25,7 +25,6 @@
 	"cite_error_empty_references_define": "Bæta þarf innihaldi við tilvísun með nafnið \"$1\".",
 	"cite-tracking-category-cite-error": "Síður með tilvísunarvillur",
 	"cite-tracking-category-cite-error-desc": "Síður í þessum flokki hafa villur í notkun heimildamerkja.",
-	"cite-tracking-category-cite-diffing-error-desc": "Síður í þessum flokki eru með villur í notkun tilvísunarmerkja, og þessar villur eru ekki framsettar á sama hátt í eldri túlkaranum og í Parsoid þeim nýrri.",
 	"cite-reference-previews-reference": "Tilvísun",
 	"cite-reference-previews-book": "Tilvísun í bók",
 	"cite-reference-previews-journal": "Tilvísun í tímarit",

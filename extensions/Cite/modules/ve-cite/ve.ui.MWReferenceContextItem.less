@@ -58,13 +58,6 @@
 
 		> .ve-ui-mwReferenceContextItem-editButton {
 			margin: 0 @spacing-50;
-
-			.skin-minerva & {
-				margin-right: 0.5em;
-				margin-top: 1em;
-				position: absolute;
-				right: 0;
-			}
 		}
 	}
 
@@ -111,6 +104,12 @@
 			bottom: 0;
 			pointer-events: none;
 		}
+	}
+}
+
+.ve-ui-mwReferenceContextItem.green-button { /* stylelint-disable-line */
+	.ve-ui-linearContextItem-actions .oo-ui-buttonElement-button {
+		background-color: @background-color-success-subtle !important; /* stylelint-disable-line */
 	}
 }
 

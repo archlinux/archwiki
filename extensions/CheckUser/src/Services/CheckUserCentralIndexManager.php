@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Jobs\UpdateUserCentralIndexJob;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Jobs\UpdateUserCentralIndexJob;
 use MediaWiki\JobQueue\Job;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\JobSpecification;
@@ -32,33 +32,16 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 		'CheckUserCuciUserRandomChanceDebounceCutoff',
 	];
 
-	private ServiceOptions $options;
-	private ILBFactory $lbFactory;
-	private CentralIdLookup $centralIdLookup;
-	private UserGroupManager $userGroupManager;
-	private JobQueueGroup $jobQueueGroup;
-	private TempUserConfig $tempUserConfig;
-	private UserFactory $userFactory;
-	private LoggerInterface $logger;
-
 	public function __construct(
-		ServiceOptions $options,
-		ILBFactory $lbFactory,
-		CentralIdLookup $centralIdLookup,
-		UserGroupManager $userGroupManager,
-		JobQueueGroup $jobQueueGroup,
-		TempUserConfig $tempUserConfig,
-		UserFactory $userFactory,
-		LoggerInterface $logger
+		private readonly ServiceOptions $options,
+		private readonly ILBFactory $lbFactory,
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly UserFactory $userFactory,
+		private readonly LoggerInterface $logger,
 	) {
-		$this->options = $options;
-		$this->lbFactory = $lbFactory;
-		$this->centralIdLookup = $centralIdLookup;
-		$this->userGroupManager = $userGroupManager;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->userFactory = $userFactory;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -76,7 +59,11 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 	 * @return void
 	 */
 	public function recordActionInCentralIndexes(
-		UserIdentity $performer, ?string $ip, string $domainID, string $timestamp, bool $hasRevisionId
+		UserIdentity $performer,
+		?string $ip,
+		string $domainID,
+		string $timestamp,
+		bool $hasRevisionId
 	) {
 		// Convert the timestamp to TS_MW format in case we are running on a postgres DB. This is a no-op on other
 		// DB types.
@@ -105,7 +92,11 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 	}
 
 	private function recordActionInTempEditCentralIndex(
-		UserIdentity $performer, ?string $ip, int $wikiMapId, string $timestamp, bool $hasRevisionId
+		UserIdentity $performer,
+		?string $ip,
+		int $wikiMapId,
+		string $timestamp,
+		bool $hasRevisionId
 	) {
 		// We only record edits performed by temporary accounts in this index, so return early if the performer
 		// is not a temporary account or if the action does not have a revision ID (i.e. not an edit). We also
@@ -159,7 +150,10 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 	 * @return void
 	 */
 	private function recordActionInUserCentralIndex(
-		UserIdentity $performer, ?string $ip, int $wikiMapId, string $timestamp
+		UserIdentity $performer,
+		?string $ip,
+		int $wikiMapId,
+		string $timestamp
 	) {
 		// Don't record actions by users in any of the configured groups that are marked as excluded.
 		if ( count( array_intersect(
@@ -189,7 +183,9 @@ class CheckUserCentralIndexManager implements CheckUserQueryInterface {
 
 		if ( !$centralId ) {
 			$centralId = $this->centralIdLookup->centralIdFromLocalUser(
-				$performer, CentralIdLookup::AUDIENCE_RAW, IDBAccessObject::READ_LATEST
+				$performer,
+				CentralIdLookup::AUDIENCE_RAW,
+				IDBAccessObject::READ_LATEST
 			);
 		}
 

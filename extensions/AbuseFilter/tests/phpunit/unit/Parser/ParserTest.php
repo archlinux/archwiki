@@ -1121,7 +1121,7 @@ class ParserTest extends ParserTestCase {
 
 	public static function provideArgsErrorsInSyntaxCheck() {
 		return [
-			[ 'accountname rlike "("', 'regexfailure' ],
+			[ 'account_name rlike "("', 'regexfailure' ],
 			[ 'contains_any( new_wikitext, "foo", 3/0 )', 'dividebyzero' ],
 			[ 'contains_any( added_lines, [ user_name, [ 3/0 ] ] )', 'dividebyzero' ],
 			[ 'rcount( "(", added_lines )', 'regexfailure' ],

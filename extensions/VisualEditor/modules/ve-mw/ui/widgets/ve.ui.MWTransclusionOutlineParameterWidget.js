@@ -1,6 +1,6 @@
 /**
  * A widget that represents a template parameter, with a checkbox to add/remove the parameter.
- * Modelled after {@see OO.ui.OutlineOptionWidget}. Also see {@see OO.ui.CheckboxMultioptionWidget}
+ * Modelled after {@link OO.ui.OutlineOptionWidget}. Also see {@link OO.ui.CheckboxMultioptionWidget}
  * for inspiration.
  *
  * @class
@@ -56,7 +56,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineParameterWidget, OO.ui.OptionWidget 
  * @param {jQuery.Event} e
  */
 ve.ui.MWTransclusionOutlineParameterWidget.prototype.onMouseDown = function ( e ) {
-	// Mouse clicks conflict with the click handler in {@see OO.ui.SelectWidget}
+	// Mouse clicks conflict with the click handler in {@link OO.ui.SelectWidget}
 	e.stopPropagation();
 };
 

@@ -12,6 +12,7 @@
 			"Liangent",
 			"LittlePaw365",
 			"Liuxinyu970226",
+			"Pawsdt",
 			"Qiyue2001",
 			"Shirayuki",
 			"Shizhao",
@@ -22,8 +23,7 @@
 			"Zhangjintao",
 			"乌拉跨氪",
 			"星海",
-			"아라",
-			"Pawsdt"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "编辑检查发现页面中添加了新的内容",
@@ -38,6 +38,10 @@
 	"tag-editcheck-tone-shown-description": "编辑检查认为部分内容的语气可能需要调整，并显示了UI",
 	"tag-editcheck-paste-shown": "编辑检查（粘贴）已显示",
 	"tag-editcheck-paste-shown-description": "编辑检查要求编辑者澄清其粘贴的内容，然后移除或确认允许该内容",
+	"tag-editsuggestion-seen": "已查看编辑建议",
+	"tag-editsuggestion-seen-description": "用户可能至少看到了一次编辑建议。",
+	"tag-editsuggestion-used": "已使用编辑建议",
+	"tag-editsuggestion-used-description": "用户至少采纳了一次编辑建议。",
 	"tag-visualeditor": "可视化编辑",
 	"tag-visualeditor-description": "使用[[{{MediaWiki:visualeditor-descriptionpagelink}}|可视化编辑器]]进行的编辑",
 	"tag-visualeditor-needcheck": "可视化编辑：需检查",

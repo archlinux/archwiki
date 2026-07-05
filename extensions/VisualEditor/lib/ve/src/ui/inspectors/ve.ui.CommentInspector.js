@@ -68,7 +68,7 @@ ve.ui.CommentInspector.prototype.initialize = function () {
 ve.ui.CommentInspector.prototype.getActionProcess = function ( action ) {
 	if ( action === 'remove' || action === 'insert' ) {
 		return new OO.ui.Process( () => {
-			this.close( { action: action } );
+			this.close( { action } );
 		} );
 	}
 	return ve.ui.CommentInspector.super.prototype.getActionProcess.call( this, action );
@@ -122,7 +122,7 @@ ve.ui.CommentInspector.prototype.getTeardownProcess = function ( data = {} ) {
 			const surfaceModel = this.getFragment().getSurface();
 
 			// data.action can be 'done', 'remove' or undefined (cancel)
-			if ( data.action === 'done' && this.textWidget.getValue() !== '' ) {
+			if ( data.action === 'done' && this.textWidget.getValue().trim() !== '' ) {
 				// Edit comment node
 				this.getFragment().changeAttributes( { text: this.textWidget.getValueAndWhitespace() } );
 				surfaceModel.applyStaging();

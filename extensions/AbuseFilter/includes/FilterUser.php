@@ -2,38 +2,23 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
 use Psr\Log\LoggerInterface;
 
 class FilterUser {
-	public const SERVICE_NAME = 'AbuseFilterFilterUser';
+	public const SERVICE_NAME = ServiceNames::FilterUser;
 
-	private MessageLocalizer $messageLocalizer;
-	private UserGroupManager $userGroupManager;
-	private UserNameUtils $userNameUtils;
-	private LoggerInterface $logger;
-
-	/**
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param UserGroupManager $userGroupManager
-	 * @param UserNameUtils $userNameUtils
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
-		MessageLocalizer $messageLocalizer,
-		UserGroupManager $userGroupManager,
-		UserNameUtils $userNameUtils,
-		LoggerInterface $logger
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly LoggerInterface $logger
 	) {
-		$this->messageLocalizer = $messageLocalizer;
-		$this->userGroupManager = $userGroupManager;
-		$this->userNameUtils = $userNameUtils;
-		$this->logger = $logger;
 	}
 
 	public function getAuthority(): Authority {
@@ -61,7 +46,9 @@ class FilterUser {
 	 */
 	private function getUser(): User {
 		$user = User::newSystemUser( $this->getFilterUserName(), [ 'steal' => true ] );
-		'@phan-var User $user';
+		if ( $user === null ) {
+			throw new \UnexpectedValueException( 'Failed to create AbuseFilter system user' );
+		}
 
 		// Promote user to 'sysop' so it doesn't look
 		// like an unprivileged account is blocking users

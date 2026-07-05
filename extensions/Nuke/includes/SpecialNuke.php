@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Nuke;
 
 use DateTime;
 use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Extension\Nuke\Form\SpecialNukeCodexUIRenderer;
@@ -12,8 +13,9 @@ use MediaWiki\Extension\Nuke\Form\SpecialNukeUIRenderer;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\JobQueue\JobQueueGroup;
-use MediaWiki\JobQueue\Jobs\DeletePageJob;
 use MediaWiki\Language\Language;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\DeletePageJob;
 use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Permissions\PermissionManager;
@@ -22,6 +24,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNamePrefixSearch;
@@ -75,6 +78,7 @@ class SpecialNuke extends SpecialPage {
 		private readonly Language $contentLanguage,
 		private readonly RedirectLookup $redirectLookup,
 		private readonly ?CheckUserTemporaryAccountsByIPLookup $checkUserTemporaryAccountsByIPLookup,
+		private readonly TitleFormatter $titleFormatter,
 	) {
 		parent::__construct( 'Nuke' );
 	}
@@ -288,7 +292,8 @@ class SpecialNuke extends SpecialPage {
 					$this->repoGroup,
 					$this->getLinkRenderer(),
 					$this->namespaceInfo,
-					$this->redirectLookup
+					$this->redirectLookup,
+					$this->titleFormatter
 				);
 			case 'htmlform':
 			default:
@@ -298,7 +303,8 @@ class SpecialNuke extends SpecialPage {
 					$this->repoGroup,
 					$this->getLinkRenderer(),
 					$this->namespaceInfo,
-					$this->redirectLookup
+					$this->redirectLookup,
+					$this->titleFormatter
 				);
 		}
 	}
@@ -414,7 +420,7 @@ class SpecialNuke extends SpecialPage {
 	 *   deletion. Can be either `"job"` to indicate that the page was queued for deletion, a
 	 *   {@link Status} to indicate if the page was successfully deleted, or `false` if the user
 	 *   did not select the page for deletion.
-	 * @param (Status|string|boolean)[] $deletedPageStatuses The status for each page queued for
+	 * @param array<string,Status|string> $deletedPageStatuses The status for each page queued for
 	 * @return void
 	 */
 	public function showResultPage( NukeContext $context, array $deletedPageStatuses ): void {
@@ -441,7 +447,7 @@ class SpecialNuke extends SpecialPage {
 	 * @param string[] $tempAccounts Temporary accounts to search for. This is passed directly
 	 *   instead of through context to ensure permissions checks happen first.
 	 *
-	 * @return array{0:Title,1:string|false,2?:string,3?:Title}[][]
+	 * @return array<array<int,array{0:Title,1:string|false,2?:string,3?:Title}>>
 	 */
 	protected function getNewPages(
 		NukeContext $context, bool &$hasExcludedResults, array $tempAccounts = []
@@ -547,11 +553,11 @@ class SpecialNuke extends SpecialPage {
 		//
 		// The first element of each group must always be the main page.
 		// This array is keyed by the main page ID.
-		/** @var array{0:Title,1:string|false,2?:string,3?:Title}[][] $pageGroups */
+		/** @var array<array<int,array{0:Title,1:string|false,2?:string,3?:Title}>> $pageGroups */
 		$pageGroups = [];
 
 		// A summative list of pages, to be used for associated queries.
-		/** @var Title[] $pageGroups */
+		/** @var Title[] $pages */
 		$pages = [];
 
 		foreach ( $result as $row ) {
@@ -686,7 +692,7 @@ class SpecialNuke extends SpecialPage {
 	/**
 	 * Does the actual deletion of the pages.
 	 *
-	 * @return array An associative array of statuses (or the string "job") keyed by the page title
+	 * @return array<string,Status|string> An associative array of statuses (or the string "job") keyed by page title
 	 * @throws PermissionsError
 	 */
 	protected function doDelete( NukeContext $context ): array {
@@ -742,6 +748,29 @@ class SpecialNuke extends SpecialPage {
 					false,
 					$user
 				);
+				if ( $status->isOK() && $status->value ) {
+					$logId = (int)$status->value;
+					// Tag both the log entry and the RecentChange entry.
+					// The RC is created in a POSTSEND deferred update by
+					// ManualLogEntry::publish(), queued via onTransactionPreCommitOrIdle
+					// inside DeletePage::deleteInternal(). To ensure our addTags() call
+					// runs after the RC exists, we queue it the same way: first via
+					// onTransactionPreCommitOrIdle (so it's registered after the publish
+					// callback), then via a POSTSEND deferred update.
+					$this->dbProvider->getPrimaryDatabase()
+						->onTransactionPreCommitOrIdle(
+							static function () use ( $logId ) {
+								DeferredUpdates::addCallableUpdate(
+									static function () use ( $logId ) {
+										MediaWikiServices::getInstance()->getChangeTagsStore()
+											->addTags( [ 'nuke' ], null, null, $logId );
+									},
+									DeferredUpdates::POSTSEND
+								);
+							},
+							__METHOD__
+						);
+				}
 			} else {
 				$job = new DeletePageJob( [
 					'namespace' => $title->getNamespace(),

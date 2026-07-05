@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joetaras"
+		]
+	},
+	"oathauth-webauthn-module-label": "Autendicazione web (WebAuthn)",
+	"oathauth-webauthn-ui-login-prompt": "Pe piacere tuècche 'a verifiche d'u dispositive tune o segue le 'struziune da 'u browser",
+	"oathauth-webauthn-ui-add-key": "Aggiunge chiave",
+	"oathauth-webauthn-error-browser-unsupported": "Stu browser non ge supporte WebAuthentication o non g'è disponibbele pe stu site web. Pe piacere pruève cu 'n'otre browser. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Lìgge de cchiù]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Stu browser non ge supporte WebAuthentication o non g'è disponibbele pe stu site web",
+	"oathauth-webauthn-error-auth-generic": "'U processe de autendicazione ha state inderrotte. Pe piacere accuminze 'u processe arrete",
+	"oathauth-webauthn-error-reg-generic": "Non ge pozze verificà 'a chiava toje. Pe piacere accuminze 'u processe de reggistrazione arrete",
+	"oathauth-webauthn-registered-keys-section-name": "Chiave reggistrate",
+	"oathauth-webauthn-ui-remove-key": "Live",
+	"oathauth-webauthn-error-module-not-enabled": "'U module \"$1\" non g'è abbilitate pe {{GENDER:$2|l'utende \"$2\"}}",
+	"oathauth-webauthn-error-verification-failed": "Verifiche fallite",
+	"oathauth-webauthn-error-cannot-register": "L'{{GENDER:$1|utende \"$1\"}} non ge pò reggistrà 'na credenziale nove",
+	"oathauth-webauthn-error-invalid-new-key": "'A chiave nove turnate da 'u module non g'è 'nu tipe cercate",
+	"oathauth-webauthn-error-registration-failed": "Reggistrazione d'a chiave nove fallite",
+	"oathauth-webauthn-ui-key-register-help": "Scacchie 'nu soprannome pa chiave toje",
+	"oathauth-webauthn-error-cannot-remove-key": "'A chiave non ge pò essere luate",
+	"oathauth-webauthn-error-get-authinfo-fail": "Le 'mbormaziune de autendicazione non ge ponne essere pigghiate.",
+	"oathauth-webauthn-add-key-section-name": "Reggìstre 'na chiave nove WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "Le 'mbormaziune de reggistraizone non ge ponne essere pigghiate.",
+	"oathauth-webauthn-module-description": "WebAuthn (Web Authentication) jè 'nu stàndàrd web pubblecate da 'u Consorzie World Wide Web (W3C). WebAuthn jè 'nu combonende prengepàle d'u Pruggette FIDO2 sotte 'a guide de FIDO Alliance. L'obbiettive d'u pruggette jè standardizzà 'n'inderfacce pe autendicà le utinde sus applecaziune web-based e servizie ausanne 'na crittografije a chaive pubbleche. [https://en.wikipedia.org/wiki/WebAuthn Lìgge de cchiù]",
+	"oathauth-webauthn-ui-reload-page-label": "Recareche 'a pàgene",
+	"oathauth-webauthn-authentication-info-label": "Date de autendicazione",
+	"oathauth-webauthn-authentication-info-help": "Date de autendicazione passate a 'u client pe pigghià le credenziale",
+	"oathauth-webauthn-credential-label": "Credenziale de l'utende",
+	"oathauth-webauthn-credential-help": "Credenziale de l'utende ca se basane sus a le date de autendicazione"
+}

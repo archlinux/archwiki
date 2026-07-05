@@ -326,7 +326,7 @@
 				const $box = context.$textarea;
 				let lang = mw.config.get( 'wgCodeEditorCurrentLanguage' );
 				let basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
-				if ( basePath.slice( 0, 2 ) === '//' ) {
+				if ( basePath.startsWith( '//' ) ) {
 					// ACE uses web workers, which have importScripts, which don't like relative links.
 					// This is a problem only when the assets are on another server, so this rewrite should suffice
 					// Protocol relative
@@ -344,6 +344,11 @@
 
 					$box.css( 'display', 'none' );
 					container.height( $box.height() );
+
+					// Make CodeEditor play nice with ResizingDragBar
+					mw.hook( 'ext.WikiEditor.resize' ).add( ( resizingBar ) => {
+						container.css( 'height', resizingBar.getResizedPane().height() );
+					} );
 
 					// Non-lazy loaded dependencies: Enable code completion
 					ace.require( 'ace/ext/language_tools' );
@@ -420,16 +425,6 @@
 						session.setMode( 'ace/mode/' + lang );
 					} );
 
-					// Use jQuery UI resizable() so that users can make the box taller
-
-					container.resizable( {
-						handles: 's',
-						minHeight: $box.height(),
-						resize: function () {
-
-							context.codeEditor.resize();
-						}
-					} );
 					$( '.wikiEditor-ui-toolbar' ).addClass( 'codeEditor-ui-toolbar' );
 
 					if ( selectedLine > 0 ) {

@@ -1,12 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\SuggestedInvestigations\Services;
+declare( strict_types=1 );
 
-use MediaWiki\CheckUser\Hook\HookRunner;
-use MediaWiki\CheckUser\SuggestedInvestigations\Model\CaseStatus;
-use MediaWiki\CheckUser\SuggestedInvestigations\Model\SuggestedInvestigationsCase;
-use MediaWiki\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
+namespace MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services;
+
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\Hook\HookRunner;
+use MediaWiki\Extension\CheckUser\Jobs\SuggestedInvestigationsAutoCloseForCaseJob;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\CaseStatus;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\SuggestedInvestigationsCase;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\SuggestedInvestigationsCaseUser;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
 
@@ -23,13 +28,17 @@ class SuggestedInvestigationsSignalMatchService {
 	public const EVENT_AUTOCREATE_ACCOUNT = 'autocreateaccount';
 	public const EVENT_SET_EMAIL = 'setemail';
 	public const EVENT_CONFIRM_EMAIL = 'confirmemail';
+	public const EVENT_SUCCESSFUL_EDIT = 'successfuledit';
+	public const EVENT_CHECKUSER_PRIVATE_EVENT = 'checkuser-private-event';
 
 	public function __construct(
 		private readonly ServiceOptions $options,
 		private readonly HookRunner $hookRunner,
 		private readonly SuggestedInvestigationsCaseLookupService $caseLookup,
 		private readonly SuggestedInvestigationsCaseManagerService $caseManager,
+		private readonly JobQueueGroup $jobQueueGroup,
 		private readonly LoggerInterface $logger,
+		private readonly SuggestedInvestigationsUserRevisionLookup $userRevisionLookup,
 	) {
 		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 	}
@@ -49,8 +58,11 @@ class SuggestedInvestigationsSignalMatchService {
 	 * @param string $eventType The type of event that has occurred to trigger signals being matched.
 	 *   One of the EVENT_* constants defined in this class, though custom event types may be triggered
 	 *   by private code.
+	 * @param array $extraData An array of extra data associated with the event that is set based on the
+	 *   $eventType. Currently the following values are supported:
+	 *   * 'revId' - Set when event type is {@link self::EVENT_SUCCESSFUL_EDIT}. The revision ID of the edit.
 	 */
-	public function matchSignalsAgainstUser( UserIdentity $userIdentity, string $eventType ): void {
+	public function matchSignalsAgainstUser( UserIdentity $userIdentity, string $eventType, array $extraData ): void {
 		// Don't attempt to evaluate signals unless the feature is enabled, as we may not have database tables
 		// to save suggested investigation cases to.
 		if ( !$this->options->get( 'CheckUserSuggestedInvestigationsEnabled' ) ) {
@@ -64,20 +76,31 @@ class SuggestedInvestigationsSignalMatchService {
 
 		$signalMatchResults = [];
 		$this->hookRunner->onCheckUserSuggestedInvestigationsSignalMatch(
-			$userIdentity, $eventType, $signalMatchResults
+			$userIdentity,
+			$eventType,
+			$signalMatchResults,
+			$extraData
 		);
 
 		foreach ( $signalMatchResults as $signalMatchResult ) {
+			/** @var SuggestedInvestigationsSignalMatchResult $signalMatchResult */
 			if ( !$signalMatchResult->isMatch() ) {
 				continue;
 			}
 
+			$caseUserIdentity = new SuggestedInvestigationsCaseUser(
+				$userIdentity,
+				$signalMatchResult->getUserInfoBitFlags()
+			);
+
 			if ( $signalMatchResult->valueMatchAllowsMerging() ) {
-				$this->processMergeableSignal( $userIdentity, $signalMatchResult );
+				$this->processMergeableSignal( $caseUserIdentity, $signalMatchResult );
 			} else {
-				$this->createNewCase( $userIdentity, $signalMatchResult );
+				$this->createNewCase( $caseUserIdentity, $signalMatchResult );
 			}
 		}
+
+		$this->bumpCaseTimestampForUserIfFirstEdit( $eventType, $userIdentity, $extraData );
 	}
 
 	/**
@@ -87,17 +110,11 @@ class SuggestedInvestigationsSignalMatchService {
 	 * * If there aren't, creates a new SI case for the user and signal.
 	 */
 	private function processMergeableSignal(
-		UserIdentity $user,
+		SuggestedInvestigationsCaseUser $user,
 		SuggestedInvestigationsSignalMatchResult $signal
 	): void {
-		$mergeableCases = $this->caseLookup->getCasesForSignal( $signal, [ CaseStatus::Open, CaseStatus::Invalid ] );
-
-		$hasInvalidCase = array_any(
-			$mergeableCases,
-			static fn ( $case ) => $case->getStatus() === CaseStatus::Invalid
-		);
-
-		if ( $hasInvalidCase ) {
+		$invalidCasesWithExactMatch = $this->caseLookup->getCasesForSignal( $signal, [ CaseStatus::Invalid ] );
+		if ( $invalidCasesWithExactMatch ) {
 			// Ignore the signal if there's an invalid case already
 			$this->logger->info(
 				'Not creating a Suggested Investigations case for signal "{signal}" with value "{value}", because'
@@ -110,10 +127,11 @@ class SuggestedInvestigationsSignalMatchService {
 			return;
 		}
 
+		$mergeableCases = $this->caseLookup->getMergeableCasesForSignal( $signal );
 		if ( count( $mergeableCases ) === 0 ) {
 			$this->createNewCase( $user, $signal );
 		} else {
-			$this->addUserToCases( $user, $mergeableCases );
+			$this->updateCases( $user, $signal, $mergeableCases );
 		}
 	}
 
@@ -121,26 +139,57 @@ class SuggestedInvestigationsSignalMatchService {
 	 * Creates a new SI case for the user and signal.
 	 */
 	private function createNewCase(
-		UserIdentity $user,
+		SuggestedInvestigationsCaseUser $user,
 		SuggestedInvestigationsSignalMatchResult $signal
 	): void {
 		$signals = [ $signal ];
 		$users = [ $user ];
 		$this->hookRunner->onCheckUserSuggestedInvestigationsBeforeCaseCreated(
-			$signals, $users
+			$signals,
+			$users
 		);
-		$this->caseManager->createCase( $users, $signals );
+		$caseId = $this->caseManager->createCase( $users, $signals );
+		$this->jobQueueGroup->lazyPush(
+			SuggestedInvestigationsAutoCloseForCaseJob::newSpec( $caseId, false )
+		);
 	}
 
 	/**
-	 * Adds the given user to all the SI cases provided.
-	 * @param UserIdentity $user
+	 * Adds the given user and signal to all the SI cases provided.
+	 *
+	 * @param SuggestedInvestigationsCaseUser $user
+	 * @param SuggestedInvestigationsSignalMatchResult $signal
 	 * @param SuggestedInvestigationsCase[] $cases
 	 */
-	private function addUserToCases( UserIdentity $user, array $cases ): void {
-		$users = [ $user ];
+	private function updateCases(
+		SuggestedInvestigationsCaseUser $user,
+		SuggestedInvestigationsSignalMatchResult $signal,
+		array $cases
+	): void {
 		foreach ( $cases as $case ) {
-			$this->caseManager->addUsersToCase( $case->getId(), $users );
+			$this->caseManager->updateCase( $case->getId(), [ $user ], [ $signal ] );
 		}
 	}
+
+	private function bumpCaseTimestampForUserIfFirstEdit(
+		string $eventType,
+		UserIdentity $userIdentity,
+		array $extraData
+	): void {
+		$revId = $extraData['revId'] ?? null;
+
+		if (
+			$eventType !== self::EVENT_SUCCESSFUL_EDIT
+			|| $revId === null
+			|| !$this->userRevisionLookup->isFirstEditByUser( $userIdentity, $revId )
+		) {
+			return;
+		}
+
+		$openCaseIds = $this->caseLookup->getOpenCaseIdsForUser( $userIdentity->getId() );
+		if ( $openCaseIds ) {
+			$this->caseManager->updateCasesUpdatedAtTimestamps( $openCaseIds );
+		}
+	}
+
 }

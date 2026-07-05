@@ -198,8 +198,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Teit}} juuri sadannen muokkauksesi. Lämpimät onnittelut!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Teit}} juuri tuhannennen muokkauksesi. Kiitos siitä, että olet tarmokas muokkaaja!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Teit}} juuri kymmenennentuhannennen muokkauksesi. Kiitos erittäin paljon!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Teit}} juuri sadannentuhannennen muokkauksesi. Kiitos\nuskomattomasta työstä!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Teit}} juuri miljoonannen muokkauksesi. Kiitos hämmästyttävästä työstä!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Teit}} juuri sadannentuhannennen muokkauksesi. Kiitos uskomattomasta työstäsi!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Teit}} juuri miljoonannen muokkauksesi. Kiitos hämmästyttävästä työstäsi!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Teit}} juuri kymmenennen miljoonannen muokkauksesi. Kiitos upeasta omistautumisestasi!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Muokkauksesi}}",
 	"notification-link-text-view-edit": "Näytä muokkaus",
@@ -264,7 +264,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|push-tilauksien hallitsija}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push-tilauksien hallitsijat",
 	"notification-subject-email-verify-email-reminder": "Varmenna {{GENDER:$1|sähköpostiosoitteesi}}",
-	"notification-header-verify-email-reminder": "<strong>Varmenna {{GENDER:$1|sähköpostiosoitteesi}},</strong> jotta tiedämme, että tunnuksesi sähköpostiosoite kuuluu sinulle.",
+	"notification-header-verify-email-reminder": "Hei $2!\n<strong>Varmenna {{GENDER:$1|sähköpostiosoitteesi}},</strong> jotta tiedämme, että tunnuksesi sähköpostiosoite kuuluu sinulle.",
 	"notification-link-text-verify-email-reminder": "Hallinnoi sähköpostiasetuksia",
 	"notification-verify-email-reminder-link-label": "Varmenna sähköpostiosoite"
 }

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use MediaWiki\Status\Status;
+use StatusValue;
 
 /**
  * @license GPL-2.0-or-later
@@ -10,10 +10,9 @@ use MediaWiki\Status\Status;
 class TemplateDataStatus {
 
 	/**
-	 * @param Status $status
 	 * @return array contains StatusValue ok and errors fields (does not serialize value)
 	 */
-	public static function jsonSerialize( Status $status ): array {
+	public static function jsonSerialize( StatusValue $status ): array {
 		if ( $status->isOK() ) {
 			return [ 'ok' => true ];
 		}
@@ -28,19 +27,19 @@ class TemplateDataStatus {
 	}
 
 	/**
-	 * @param Status|array|null $json contains StatusValue ok and errors fields (does not serialize value)
-	 * @return Status|null
+	 * @param StatusValue|array|null $json contains StatusValue ok and errors fields (does not serialize value)
+	 * @return StatusValue|null
 	 */
-	public static function newFromJson( $json ): ?Status {
+	public static function newFromJson( $json ): ?StatusValue {
 		if ( !is_array( $json ) ) {
 			return $json;
 		}
 
 		if ( $json['ok'] ) {
-			return Status::newGood();
+			return StatusValue::newGood();
 		}
 
-		$status = new Status();
+		$status = new StatusValue();
 		foreach ( $json['errors'] as $error ) {
 			$status->fatal( $error['message'], ...$error['params'] );
 		}

@@ -12,6 +12,7 @@ abstract class LuaInterpreter {
 	 * @param string $text The Lua source code
 	 * @param string $chunkName
 	 * @return mixed
+	 * @throws LuaError
 	 */
 	abstract public function loadString( $text, $chunkName );
 
@@ -22,6 +23,7 @@ abstract class LuaInterpreter {
 	 * @param mixed $func The function object
 	 * @param mixed ...$args Arguments to the function
 	 * @return array
+	 * @throws LuaError
 	 */
 	abstract public function callFunction( $func, ...$args );
 

@@ -56,9 +56,6 @@
 	"vector-toc-label": "Змест",
 	"vector-toc-beginning": "Пачатак",
 	"vector-toc-toggle-button-label": "Змяніць стан падраздзелу $1",
-	"vector-anon-user-menu-pages": "Старонкі для ананімных рэдактараў",
-	"vector-anon-user-menu-pages-learn": "даведацца больш",
-	"vector-anon-user-menu-pages-label": "Даведацца больш пра праўку",
 	"vector-main-menu-tooltip": "Галоўнае меню",
 	"vector-toc-menu-tooltip": "Змест",
 	"vector-toc-collapsible-button-label": "Пераключыць змест",
@@ -80,7 +77,6 @@
 	"vector-page-tools-unpinned-popup": "Меню інструментаў было перанесена сюды.",
 	"vector-main-menu-unpinned-popup": "Галоўнае меню перанесена сюды.",
 	"vector-appearance-unpinned-popup": "Меню афармлення пераехала сюды.",
-	"vector-2022-beta-preview-description": "Атрымайце ранні доступ да новых функцый чытання, такіх як паляпшэнне тыпаграфікі і цёмны рэжым.",
 	"vector-night-mode-gadget-warning": "Вы ўжываеце гаджэт цёмнай тэмы, які замінае гэтай магчымасці. [[Special:Preferences#mw-prefsection-gadgets|Адключыце гаджэт]], каб прымяніць цёмную тэму.",
 	"vector-night-mode-issue-reporting-link-label": "Паведаміць пра праблему з цёмным рэжымам",
 	"vector-night-mode-beta-tag": "(бэта)"

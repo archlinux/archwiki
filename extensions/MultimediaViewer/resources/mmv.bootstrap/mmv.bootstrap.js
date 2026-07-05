@@ -61,12 +61,24 @@ class MultimediaViewerBootstrap {
 	}
 
 	/**
+	 * Whether the beta UI should be used instead of the legacy viewer.
+	 * Activated by the ?mmvBeta=1 URL parameter on mobile (Minerva) only.
+	 * On desktop, the legacy viewer is always used.
+	 *
+	 * @return {boolean}
+	 */
+	isBetaMode() {
+		return new URLSearchParams( location.search ).get( 'mmvBeta' ) === '1' &&
+			mw.config.get( 'skin' ) === 'minerva';
+	}
+
+	/**
 	 * Routes to a given file.
 	 *
 	 * @param {string} fileName
 	 */
 	route( fileName ) {
-		this.viewerPromise = this.loadViewer( true );
+		this.viewerPromise = this.loadViewer();
 		this.viewerPromise.then( ( viewer ) => {
 			let fileTitle;
 			viewer.comingFromHashChange = true;
@@ -122,17 +134,12 @@ class MultimediaViewerBootstrap {
 	/**
 	 * Loads the mmv module asynchronously and passes the thumb data to it
 	 *
-	 * @param {boolean} [setupOverlay]
 	 * @return {jQuery.Promise}
 	 */
-	loadViewer( setupOverlay ) {
-		const deferred = $.Deferred();
-		let viewer;
-		let message;
-
+	loadViewer() {
 		// Don't load if someone has specifically stopped us from doing so
 		if ( mw.config.get( 'wgMediaViewer' ) !== true ) {
-			return deferred.reject();
+			return $.Deferred().reject();
 		}
 
 		if ( history.scrollRestoration ) {
@@ -144,44 +151,42 @@ class MultimediaViewerBootstrap {
 		// loadViewer is called on every click and hash change and setting up
 		// the overlay is not needed on all of those; this logic really should
 		// not be here.
-		if ( setupOverlay ) {
-			this.setupOverlay();
-		}
+		this.setupOverlay();
 
-		mw.loader.using( 'mmv', ( req ) => {
-			try {
-				viewer = this.getViewer( req );
-			} catch ( e ) {
-				message = e.message;
-				if ( e.stack ) {
-					message += `\n${ e.stack }`;
+		const moduleName = this.isBetaMode() ? 'mmv.ui.beta' : 'mmv';
+
+		return mw.loader.using( moduleName )
+			.then( ( require ) => {
+				if ( !this.viewer ) {
+					if ( this.isBetaMode() ) {
+						const { BetaViewer } = require( 'mmv.ui.beta' );
+						this.viewer = new BetaViewer();
+					} else {
+						const { MultimediaViewer } = require( 'mmv' );
+						this.viewer = new MultimediaViewer();
+					}
+					this.viewer.setupEventHandlers();
 				}
-				deferred.reject( message );
-				return;
-			}
-			deferred.resolve( viewer );
-		}, ( error ) => {
-			deferred.reject( error.message );
-		} );
 
-		return deferred.promise()
+				return this.viewer;
+			} )
 			.then(
-				( viewer2 ) => {
+				( viewer ) => {
 					if ( !this.viewerInitialized ) {
 						if ( this.thumbs.length ) {
-							viewer2.initWithThumbs( this.thumbs );
+							viewer.initWithThumbs( this.thumbs );
 						}
 
 						this.viewerInitialized = true;
 					}
-					return viewer2;
+					return viewer;
 				},
-				( message2 ) => {
-					mw.log.warn( message2 );
+				( error ) => {
+					mw.log.warn( error );
 					this.cleanupOverlay();
 					this.viewerIsBroken = true;
-					mw.notify( `Error loading MediaViewer: ${ message2 }` );
-					return $.Deferred().reject( message2 );
+					mw.notify( `Error loading MediaViewer: ${ error.message }` );
+					throw error;
 				}
 			).always( () => {
 				if ( this.$loadBar ) {
@@ -197,10 +202,11 @@ class MultimediaViewerBootstrap {
 	 */
 	processThumbs( $content ) {
 		// MMVB.processThumbs() is a callback for `wikipage.content` hook (see constructor)
-		// which as state in the documentation can be fired when content is added to the DOM
-		// https://doc.wikimedia.org/mediawiki-core/master/js/#!/api/mw.hook
-		// The content being added can contain thumbnails that the MultimediaViewer may need to
-		// process correctly and add the thumbs array, so it's necessary to invalidate the
+		// which is documentated as fired when new content is added to the DOM
+		// https://doc.wikimedia.org/mediawiki-core/master/js/Hooks.html#~event:'wikipage.content'
+		//
+		// The content being added can contain thumbnails that MultimediaViewer may need to
+		// process and add the thumbs array, so it's necessary to invalidate the
 		// viewer initialization state if this happens to let the MMVB.loadViewer() to process
 		// new images correctly
 		this.viewerInitialized = false;
@@ -212,10 +218,7 @@ class MultimediaViewerBootstrap {
 		}
 
 		this.$parsoidThumbs = $content.find(
-			'[typeof*="mw:File"] a.mw-file-description img, ' +
-			// TODO: Remove mw:Image when version 2.4.0 of the content is no
-			// longer supported
-			'[typeof*="mw:Image"] a.mw-file-description img'
+			'[typeof*="mw:File"] > a > img'
 		);
 
 		this.$thumbs = $content
@@ -248,10 +251,10 @@ class MultimediaViewerBootstrap {
 			'.noviewer', // MediaViewer has been specifically disabled for this image
 			'.noarticletext', // we are on an error page for a non-existing article, the image is part of some template
 			'#siteNotice',
-			'ul.mw-gallery-slideshow li.gallerybox' // thumbnails of a slideshow gallery
+			'ul.mw-gallery-slideshow li.gallerybox', // thumbnails of a slideshow gallery
+			'#mmv-carousel-root' // carousel items have their own click handlers
 		];
 		return $thumb.closest( selectors.join( ', ' ) ).length === 0;
-
 	}
 
 	/**
@@ -276,7 +279,7 @@ class MultimediaViewerBootstrap {
 					return;
 				}
 				this.preloadOnHoverTimer = setTimeout( () => {
-					mw.loader.load( 'mmv' );
+					mw.loader.load( this.isBetaMode() ? 'mmv.ui.beta' : 'mmv' );
 				}, this.hoverWaitDuration );
 			},
 			mouseleave: () => {
@@ -329,9 +332,9 @@ class MultimediaViewerBootstrap {
 			return;
 		}
 
-		// This is the data that will be passed onto the mmv
 		const image = new LightboxImage(
-			$thumb.prop( 'src' ),
+			// T422586: If 2x srcset is used, pass that to to GuessedThumbnailInfo instead
+			$thumb.prop( 'currentSrc' ) || $thumb.prop( 'src' ),
 			title,
 			this.thumbs.length,
 			this.thumbs.filter( ( t ) => t.filePageTitle.getPrefixedText() === title.getPrefixedText() ).length + 1,
@@ -351,15 +354,18 @@ class MultimediaViewerBootstrap {
 	 */
 	processParsoidThumb( thumb ) {
 		const $thumb = $( thumb );
-		const $link = $thumb.closest( 'a.mw-file-description' );
-		const $thumbContainer = $link.closest(
-			'[typeof*="mw:File"], ' +
-			// TODO: Remove mw:Image when version 2.4.0 of the content is
-			// no longer supported
-			'[typeof*="mw:Image"]'
-		);
+		let $link = $thumb.parent();
+		const $thumbContainer = $link.parent();
 		const title = mw.Title.newFromImg( $thumb );
 		let caption;
+
+		if ( !$link.hasClass( 'mw-file-description' ) ) {
+			if ( $link.next().hasClass( 'mw-file-magnify' ) ) {
+				$link = $link.next();
+			} else {
+				return;
+			}
+		}
 
 		if ( !this.isValidExtension( title ) ) {
 			// Short-circuit event handler and interface setup, because
@@ -381,9 +387,9 @@ class MultimediaViewerBootstrap {
 			caption = $link.prop( 'title' ) || undefined;
 		}
 
-		// This is the data that will be passed onto the mmv
 		const image = new LightboxImage(
-			$thumb.prop( 'src' ),
+			// T422586: If 2x srcset is used, pass that to to GuessedThumbnailInfo instead
+			$thumb.prop( 'currentSrc' ) || $thumb.prop( 'src' ),
 			title,
 			this.thumbs.length,
 			this.thumbs.filter( ( t ) => t.filePageTitle.getPrefixedText() === title.getPrefixedText() ).length + 1,
@@ -439,7 +445,7 @@ class MultimediaViewerBootstrap {
 	 * Shows a popup notifying the user
 	 */
 	showStatusInfo() {
-		mw.loader.using( 'oojs-ui-core' ).done( () => {
+		mw.loader.using( 'oojs-ui-core' ).then( () => {
 			const content = document.createElement( 'div' );
 			content.textContent = mw.msg( 'multimediaviewer-disable-info' );
 
@@ -589,22 +595,6 @@ class MultimediaViewerBootstrap {
 	}
 
 	/**
-	 * Instantiates a new viewer if necessary
-	 *
-	 * @param {Function} localRequire
-	 * @return {MultimediaViewer}
-	 */
-	getViewer( localRequire ) {
-		if ( this.viewer === undefined ) {
-			const { MultimediaViewer } = localRequire( 'mmv' );
-			this.viewer = new MultimediaViewer();
-			this.viewer.setupEventHandlers();
-		}
-
-		return this.viewer;
-	}
-
-	/**
 	 * Listens to events on the window/document
 	 */
 	setupEventHandlers() {
@@ -657,12 +647,19 @@ class MultimediaViewerBootstrap {
 				// Dark overlay should stay dark in dark mode
 				.addClass( 'mw-mmv-overlay mw-no-invert' );
 
+			if ( this.isBetaMode() ) {
+				this.$overlay.addClass( 'mw-mmv-overlay--beta' );
+			}
+
 			this.$loadBar = $( '<div>' )
 				.addClass( 'cdx-progress-bar' )
 				.attr( {
 					role: 'progressbar',
 					'aria-label': mw.msg( 'multimediaviewer-loading' )
-				} ).append( $( '<div>' ).addClass( 'cdx-progress-bar__bar' ) );
+				} )
+				.append(
+					$( '<div>' ).addClass( 'cdx-progress-bar__bar' )
+				);
 			this.$overlay.append( this.$loadBar );
 		}
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Api\CheckUser;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -21,50 +21,35 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 abstract class ApiQueryCheckUserAbstractResponse implements CheckUserQueryInterface {
 
-	protected ApiQueryCheckUser $module;
 	/** @var string The target of the check */
-	protected string $target;
+	protected readonly string $target;
 	/** @var string The reason provided for the check. This wrapped in the checkuser-reason-api message. */
-	protected string $reason;
+	protected readonly string $reason;
 	/** @var int The maximum number of results to return */
-	protected int $limit;
+	protected readonly int $limit;
 	/**
 	 * @var bool|null Null if the target is a username, true if the target is an IP,
 	 *   false if the target is an XFF IP.
 	 */
-	protected ?bool $xff;
+	protected readonly ?bool $xff;
 	/** @var string The cut-off timestamp in a format acceptable to the database */
-	protected string $timeCutoff;
+	protected readonly string $timeCutoff;
 
 	protected IReadableDatabase $dbr;
-	protected Config $config;
-	protected CheckUserLogService $checkUserLogService;
-	protected CheckUserLookupUtils $checkUserLookupUtils;
 
 	/**
-	 * @param ApiQueryCheckUser $module
-	 * @param IConnectionProvider $dbProvider
-	 * @param Config $config
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param CheckUserLogService $checkUserLogService
-	 * @param UserNameUtils $userNameUtils
-	 * @param CheckUserLookupUtils $checkUserLookupUtils
-	 *
 	 * @internal Use CheckUserApiResponseFactory::newFromRequest() instead
 	 */
 	public function __construct(
-		ApiQueryCheckUser $module,
+		protected readonly ApiQueryCheckUser $module,
 		IConnectionProvider $dbProvider,
-		Config $config,
+		protected readonly Config $config,
 		MessageLocalizer $messageLocalizer,
-		CheckUserLogService $checkUserLogService,
+		protected readonly CheckUserLogService $checkUserLogService,
 		UserNameUtils $userNameUtils,
-		CheckUserLookupUtils $checkUserLookupUtils
+		protected readonly CheckUserLookupUtils $checkUserLookupUtils,
 	) {
 		$this->dbr = $dbProvider->getReplicaDatabase();
-		$this->config = $config;
-		$this->checkUserLogService = $checkUserLogService;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
 		$requestParams = $module->extractRequestParams();
 
 		// Validate that a non-empty reason was provided if the force summary configuration is enabled.
@@ -107,7 +92,6 @@ abstract class ApiQueryCheckUserAbstractResponse implements CheckUserQueryInterf
 			$this->xff = null;
 		}
 
-		$this->module = $module;
 		$this->target = $target;
 		$this->reason = $reason;
 		$this->timeCutoff = $this->dbr->timestamp( $timeCutoff );

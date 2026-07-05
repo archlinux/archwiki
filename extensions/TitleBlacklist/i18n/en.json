@@ -15,7 +15,7 @@
 	"titleblacklist-forbidden-move": "\"$2\" cannot be moved to \"$3\", because the title \"$3\" has been banned from creation.\nIt matches the following disallowed titles list entry: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "The filename \"$2\" has been banned from creation.\nIt matches the following disallowed titles list entry: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "The username \"$2\" has been banned from creation.\nIt matches the following disallowed titles list entry: <code>$1</code>",
-	"titleblacklist-invalid": "The following {{PLURAL:$1|line|lines}} in the disallowed titles list {{PLURAL:$1|is|are}} invalid;\nplease correct {{PLURAL:$1|it|them}} before saving:",
+	"titleblacklist-invalid-error": "The following {{PLURAL:$1|line|lines}} in the disallowed titles list {{PLURAL:$1|is|are}} invalid;\nplease correct {{PLURAL:$1|it|them}} before saving:\n$2",
 	"titleblacklist-override": "Override the disallowed titles list if it matches",
 	"titleblacklist-override-help": "Users with sufficient privileges can set this to ignore the disallowed titles list checks.",
 	"titleblacklist-warning": "<strong>Warning: This page can only be edited by administrators and other users with the <code>tboverride</code> right because it matches the following disallowed titles list entry:</strong><br /><code>$1</code>",

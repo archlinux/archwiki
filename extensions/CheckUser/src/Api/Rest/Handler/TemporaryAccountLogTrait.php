@@ -1,11 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Permissions\Authority;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -37,21 +38,25 @@ trait TemporaryAccountLogTrait {
 			// T327906: 'cule_actor' and 'cule_timestamp' are selected
 			// only to satisfy Postgres requirement where all ORDER BY
 			// fields must be present in SELECT list.
-			->select( [ 'cule_log_id', 'cule_ip', 'cule_actor', 'cule_timestamp' ] )
+			->select( [ 'cule_log_id', 'cule_ip_hex', 'cule_actor', 'cule_timestamp' ] )
 			->from( 'cu_log_event' )
 			->where( [
 				'cule_actor' => $actorId,
 				'cule_log_id' => $logIds,
 			] )
-			->orderBy( [ 'cule_actor', 'cule_ip', 'cule_timestamp' ] )
+			->orderBy( [ 'cule_actor', 'cule_ip_hex', 'cule_timestamp' ] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
 		$ips = [];
 		foreach ( $rows as $row ) {
 			// In the unlikely case that there are rows with the same
-			// log ID, the final array will contain the most recent
-			$ips[$row->cule_log_id] = $row->cule_ip;
+			// log ID, the final array will contain the most recent.
+			// The IP hex can be null if CheckUser was just installed on a wiki
+			// and populateCheckUserTable.php was run.
+			if ( $row->cule_ip_hex !== null ) {
+				$ips[$row->cule_log_id] = IPUtils::formatHex( $row->cule_ip_hex );
+			}
 		}
 
 		// If some of our log IDs had no data, then try to see if we have this data in the
@@ -60,7 +65,7 @@ trait TemporaryAccountLogTrait {
 		$idsMissingAnIP = array_diff( $logIds, array_keys( $ips ) );
 		if ( count( $idsMissingAnIP ) ) {
 			$associatedRevisionIPs = $dbr->newSelectQueryBuilder()
-				->select( [ 'ls_log_id', 'cuc_ip', 'cuc_timestamp' ] )
+				->select( [ 'ls_log_id', 'cuc_ip_hex', 'cuc_timestamp' ] )
 				->from( 'logging' )
 				->join( 'log_search', null, 'log_id=ls_log_id' )
 				->join( 'cu_changes', null, 'ls_value=cuc_this_oldid' )
@@ -76,7 +81,11 @@ trait TemporaryAccountLogTrait {
 			foreach ( $associatedRevisionIPs as $row ) {
 				// In the unlikely case that there are rows with the same
 				// revision ID in cu_changes, the final array will contain the most recent
-				$ips[$row->ls_log_id] = $row->cuc_ip;
+				// The IP hex can be null if CheckUser was just installed on a wiki
+				// and populateCheckUserTable.php was run.
+				if ( $row->cuc_ip_hex !== null ) {
+					$ips[$row->ls_log_id] = IPUtils::formatHex( $row->cuc_ip_hex );
+				}
 			}
 		}
 

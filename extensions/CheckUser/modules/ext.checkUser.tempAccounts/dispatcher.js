@@ -8,6 +8,7 @@
 			require( './SpecialBlock.js' ).onLoad();
 			break;
 		case 'Recentchanges':
+		case 'Recentchangeslinked':
 		case 'Watchlist':
 			require( './initOnHook.js' )();
 			break;
@@ -15,6 +16,7 @@
 			if ( mw.config.get( 'wgRelevantUserName' ) &&
 				mw.util.isTemporaryUser( mw.config.get( 'wgRelevantUserName' ) ) ) {
 				require( './SpecialContributions.js' )( document, 'Contributions' );
+				require( './connectedAccounts/listToClipboard.js' )();
 			}
 			break;
 		case 'DeletedContributions':
@@ -46,7 +48,6 @@
 	let excludePages = [
 		'AbuseLog',
 		'IPContributions',
-		'GlobalContributions',
 		'Contributions',
 		'Recentchanges',
 		'Watchlist'

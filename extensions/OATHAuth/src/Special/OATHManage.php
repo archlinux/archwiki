@@ -1,44 +1,37 @@
 <?php
 
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use ErrorPageError;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
-use MediaWiki\Exception\PermissionsError;
-use MediaWiki\Exception\UserNotLoggedIn;
+use MediaWiki\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Exception\ErrorPageError;
+use MediaWiki\Extension\OATHAuth\Enforce2FA\Mandatory2FAChecker;
 use MediaWiki\Extension\OATHAuth\HTMLForm\DisableForm;
-use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
+use MediaWiki\Extension\OATHAuth\HTMLForm\OATHAuthOOUIHTMLForm;
 use MediaWiki\Extension\OATHAuth\HTMLForm\RecoveryCodesTrait;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
-use MediaWiki\Extension\OATHAuth\IModule;
-use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
+use MediaWiki\Extension\OATHAuth\Key\RecoveryCode;
+use MediaWiki\Extension\OATHAuth\Module\IModule;
 use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
-use MediaWiki\Session\CsrfTokenSet;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserGroupManager;
+use MediaWiki\WikiMap\WikiMap;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\HtmlSnippet;
@@ -57,23 +50,28 @@ class OATHManage extends SpecialPage {
 	public const ACTION_DELETE = 'delete';
 
 	protected OATHUser $oathUser;
-	protected bool $nonSpecialEnabledKeys;
 
-	/**
-	 * @var string
-	 */
-	protected $action;
+	protected string $action;
 
 	protected ?IModule $requestedModule;
+
+	private array $groupsRequiring2FA;
 
 	public function __construct(
 		private readonly OATHUserRepository $userRepo,
 		private readonly OATHAuthModuleRegistry $moduleRegistry,
+		private readonly Mandatory2FAChecker $mandatory2FAChecker,
 		private readonly AuthManager $authManager,
+		private readonly UserGroupManager $userGroupManager,
 	) {
-		// messages used: oathmanage (display "name" on Special:SpecialPages),
-		// right-oathauth-enable, action-oathauth-enable
-		parent::__construct( 'OATHManage', 'oathauth-enable' );
+		// messages used: oathmanage (display "name" on Special:SpecialPages)
+		parent::__construct( 'OATHManage' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		// messages used: right-oathauth-enable, action-oathauth-enable
+		return 'oathauth-enable';
 	}
 
 	/** @inheritDoc */
@@ -87,6 +85,11 @@ class OATHManage extends SpecialPage {
 	}
 
 	/** @inheritDoc */
+	public function doesWrites() {
+		return true;
+	}
+
+	/** @inheritDoc */
 	public function getDescription() {
 		return $this->msg( 'accountsecurity' );
 	}
@@ -94,7 +97,7 @@ class OATHManage extends SpecialPage {
 	/** @inheritDoc */
 	public function execute( $subPage ) {
 		$this->oathUser = $this->userRepo->findByUser( $this->getUser() );
-		$this->nonSpecialEnabledKeys = $this->oathUser->userHasNonSpecialEnabledKeys();
+		$this->groupsRequiring2FA = $this->get2FAGroupsData();
 
 		$this->getOutput()->enableOOUI();
 		$this->getOutput()->disallowUserJs();
@@ -104,26 +107,8 @@ class OATHManage extends SpecialPage {
 		parent::execute( $subPage );
 
 		if ( $this->action === self::ACTION_DELETE ) {
-			if (
-				$this->getRequest()->wasPosted() &&
-				$this->getContext()->getCsrfTokenSet()->matchTokenField()
-			) {
-				if ( !$this->isValidFinalKeyDeletion() ) {
-					$this->showDeleteWarning( true );
-					return;
-				}
-				// Delete the key, then redirect to the main view with a success message
-				$deletedKey = $this->deleteKey();
-				$deletedKeyName = $this->getKeyNameAndDescription( $deletedKey )['name'];
-				$this->maybeDeleteRecoveryCodes();
-				$this->getOutput()->redirect( $this->getPageTitle()->getFullURL( [
-					'deletesuccess' => $deletedKeyName
-				] ) );
-				return;
-			} elseif ( $this->getRequest()->getBool( 'warn' ) ) {
-				$this->showDeleteWarning( false );
-				return;
-			}
+			$this->showDeleteWarning();
+			return;
 		} elseif ( $this->requestedModule instanceof IModule ) {
 			// Performing an action on a requested module
 			$this->clearPage();
@@ -139,10 +124,6 @@ class OATHManage extends SpecialPage {
 		}
 	}
 
-	/**
-	 * @throws PermissionsError
-	 * @throws UserNotLoggedIn
-	 */
 	public function checkPermissions() {
 		$this->requireNamedUser();
 
@@ -160,22 +141,10 @@ class OATHManage extends SpecialPage {
 			$this->displayRestrictionError();
 		}
 
-		if ( !$this->oathUser->isTwoFactorAuthEnabled() && !$canEnable ) {
+		if ( !$canEnable && !$this->oathUser->isTwoFactorAuthEnabled() ) {
 			// No enabled module and cannot enable - nothing to do
 			$this->displayRestrictionError();
 		}
-	}
-
-	private function isValidFinalKeyDeletion(): bool {
-		$isNormalDelete = $this->getRequest()->getBool( 'normalDelete' );
-		if ( $isNormalDelete ) {
-			return true;
-		}
-
-		$expectedText = $this->msg( 'oathauth-authenticator-delete-text' )->text();
-		$actualText = $this->getRequest()->getText( 'remove-confirm-box' );
-
-		return $actualText === $expectedText;
 	}
 
 	private function setAction(): void {
@@ -191,10 +160,10 @@ class OATHManage extends SpecialPage {
 
 	/**
 	 * Get the name, description, and timestamp to display for a given key.
-	 * @param IAuthKey $key
-	 * @return array{name:string, description?:string, timestamp: ?string}
+	 * @param AuthKey $key
+	 * @return array{name:string, description?:string, timestamp:?string}
 	 */
-	private function getKeyNameAndDescription( IAuthKey $key ): array {
+	private function getKeyNameAndDescription( AuthKey $key ): array {
 		$keyName = $key->getFriendlyName();
 		$moduleName = $this->moduleRegistry->getModuleByKey( $key->getModule() )->getDisplayName()->text();
 		$createdTimestamp = null;
@@ -207,7 +176,7 @@ class OATHManage extends SpecialPage {
 			)->text();
 		}
 
-		// If the key has a non-empty name, use that, and set the description to the module name
+		// Use the key if it has a non-empty name and set the description to the module name
 		if ( $keyName !== null && trim( $keyName ) !== '' ) {
 			return [
 				'name' => $keyName,
@@ -223,23 +192,263 @@ class OATHManage extends SpecialPage {
 		];
 	}
 
+	private function canRemoveKeys(): bool {
+		if ( !$this->groupsRequiring2FA ) {
+			return true;
+		}
+		$numKeys = 0;
+		foreach ( $this->oathUser->getNonSpecialKeys() as $key ) {
+			if ( !$key->supportsPasswordlessLogin() ) {
+				$numKeys++;
+			}
+		}
+		// If there's exactly one proper key (non-special and non-passwordless), it cannot be removed, because
+		// then whole 2FA would be disabled for the user.
+		return $numKeys !== 1;
+	}
+
+	/**
+	 * Prepares data about the current user's groups that require 2FA
+	 */
+	private function get2FAGroupsData(): array {
+		global $wgConf;
+		'@phan-var \MediaWiki\Config\SiteConfiguration $wgConf';
+
+		$groupsRequiring2FA = $this->mandatory2FAChecker->getGroupsRequiring2FAAcrossWikiFarm( $this->getUser() );
+
+		// Keyed by wiki, then by page, with the value being an array of groups
+		$splitGroups = [];
+		foreach ( $groupsRequiring2FA as $wikiId => $groupsOnWiki ) {
+			if ( WikiMap::isCurrentWikiId( $wikiId ) ) {
+				$groupRemovalPages = $this->getConfig()->get( 'OATH2FARequiredGroupRemovalPages' ) ?? [];
+			} else {
+				$groupRemovalPages = $wgConf->get( 'wgOATH2FARequiredGroupRemovalPages', $wikiId ) ?? [];
+			}
+			foreach ( $groupsOnWiki as $group ) {
+				$relevantPage = $groupRemovalPages[$group] ?? $groupRemovalPages['*'] ?? '';
+				$splitGroups[$wikiId][$relevantPage][] = $group;
+			}
+		}
+
+		$lang = $this->getLanguage();
+		$result = [];
+		foreach ( $splitGroups as $wikiId => $pages ) {
+			$wiki = WikiMap::getWiki( $wikiId );
+			if ( $wiki === null && !WikiMap::isCurrentWikiId( $wikiId ) ) {
+				// Skip remote wikis that cannot be resolved via WikiMap.
+				continue;
+			}
+
+			foreach ( $pages as $page => $groups ) {
+				$groupNames = array_map(
+					fn ( $group ) => $lang->getGroupMemberName( $group, $this->getUser() ),
+					$groups
+				);
+
+				if ( $wiki !== null ) {
+					$wikiName = $wiki->getDisplayName();
+					$url = $page !== '' ? $wiki->getUrl( $page ) : '';
+				} else {
+					// If there's no $wgConf nor sites table, the current wiki may not be resolvable using WikiMap
+					// Fallback to local resolution of relevant settings
+					$wikiName = $this->getConfig()->get( MainConfigNames::Sitename );
+					$title = $page !== '' ? Title::newFromText( $page ) : null;
+					$url = $title ? $title->getFullURL() : '';
+				}
+
+				$result[] = [
+					'wiki' => $wikiName,
+					'page' => $page,
+					'url' => $url,
+					'groupNames' => $groupNames,
+				];
+			}
+		}
+		return $result;
+	}
+
+	private function build2FARequiredNotice(): string {
+		$codex = new Codex();
+		$lang = $this->getLanguage();
+		$message = $codex->message();
+		$message->setAttributes( [ 'class' => 'mw-special-OATHManage-mandatory-2fa' ] );
+		if ( $this->oathUser->isTwoFactorAuthEnabled() ) {
+			$message->setInline( true )
+				->setContentText( $this->msg( 'oathauth-2fa-required' )->text() );
+		} else {
+			$groupsPerWiki = [];
+			foreach ( $this->groupsRequiring2FA as $entry ) {
+				$groupsPerWiki[$entry['wiki']] = array_merge(
+					$groupsPerWiki[$entry['wiki']] ?? [],
+					$entry['groupNames']
+				);
+			}
+
+			$content = $this->msg( 'oathauth-2fa-required' )->parse();
+			$listItems = '';
+			foreach ( $groupsPerWiki as $wiki => $groups ) {
+				$listItems .= Html::rawElement( 'li', [], $this->msg(
+					'oathauth-2fa-required-groups-on-project',
+					count( $groups ),
+					$lang->listToText( $groups ),
+					$wiki
+				)->parse() );
+			}
+			$content .= Html::rawElement( 'ul', [], $listItems );
+			$message->setContentHtml( $codex->htmlSnippet()->setContent( $content )->build() );
+		}
+		return $message->build()->getHtml();
+	}
+
+	private function buildIrremovableKeyNotice(): string {
+		$lang = $this->getLanguage();
+		if ( count( $this->groupsRequiring2FA ) === 1 ) {
+			$entry = $this->groupsRequiring2FA[0];
+			if ( $entry['url'] ) {
+				$pageLink = '[' . $entry['url'] . ' ' . $entry['page'] . ']';
+			} else {
+				$pageLink = $this->msg( 'oathauth-2fa-groups-notice-unknown-page' )->parse();
+			}
+			$noticeContent = $this->msg( 'oathauth-2fa-groups-notice-single' )
+				->params(
+					count( $entry['groupNames'] ),
+					$lang->listToText( $entry['groupNames'] ),
+					$entry['wiki'],
+					$pageLink
+				)
+				->parse();
+		} else {
+			$totalGroups = 0;
+			foreach ( $this->groupsRequiring2FA as $entry ) {
+				$totalGroups += count( $entry['groupNames'] );
+			}
+
+			$noticeContent = $this->msg( 'oathauth-2fa-groups-notice-multiple' )->params( $totalGroups )->parse();
+			$noticeContent .= Html::rawElement(
+				'div',
+				[ 'class' => 'mw-special-OATHManage-2fa-groups-list-intro' ],
+				$this->msg( 'oathauth-2fa-groups-notice-multiple-links-intro' )->params( $totalGroups )->parse()
+			);
+			$noticeContent .= Html::openElement( 'ul' );
+
+			foreach ( $this->groupsRequiring2FA as $entry ) {
+				if ( $entry['url'] ) {
+					$pageLink = '[' . $entry['url'] . ' ' . $entry['page'] . ']';
+				} else {
+					$pageLink = $this->msg( 'oathauth-2fa-groups-notice-unknown-page' )->parse();
+				}
+				$content = $this->msg( 'oathauth-2fa-groups-notice-multiple-links-entry' )
+					->params(
+						count( $entry['groupNames'] ),
+						$lang->listToText( $entry['groupNames'] ),
+						$entry['wiki'],
+						$pageLink
+					)
+					->parse();
+				$noticeContent .= Html::rawElement( 'li', [], $content );
+			}
+			$noticeContent .= Html::closeElement( 'ul' );
+		}
+		$codex = new Codex();
+		return $codex->message()
+			->setType( 'warning' )
+			->setAttributes( [ 'class' => 'mw-special-OATHManage-2fa-groups-notice' ] )
+			->setContentHtml( $codex->htmlSnippet()->setContent( $noticeContent )->build() )
+			->build()
+			->getHtml();
+	}
+
+	private function buildKeyAccordion( AuthKey $key, string $noticeHtml = '', bool $removable = true ): string {
+		$codex = new Codex();
+		$keyData = $this->getKeyNameAndDescription( $key );
+		$keyAccordion = $codex->accordion()
+			->setTitle( $keyData['name'] )
+			// TODO support outlined Accordions in Codex-PHP (T416645)
+			->setAttributes( [ 'class' => 'cdx-accordion--separation-outline' ] );
+
+		$accordionDescription = $keyData['timestamp'] ?? $keyData['description'] ?? null;
+		if ( $accordionDescription !== null ) {
+			$keyAccordion->setDescription( $accordionDescription );
+		}
+
+		$keyAccordion
+			->setContentHtml( $codex->htmlSnippet()->setContent(
+				Html::rawElement( 'form', [
+						'action' => wfScript(),
+						'class' => 'mw-special-OATHManage-authmethods__method-actions'
+					],
+					Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
+					Html::hidden( 'module', $key->getModule() ) .
+					Html::hidden( 'keyId', $key->getId() ) .
+					Html::hidden( 'warn', '1' ) .
+					// TODO implement rename (T401775)
+					$codex->button()
+						->setLabel( $this->msg( 'oathauth-authenticator-delete' )->text() )
+						->setAction( 'destructive' )
+						->setWeight( 'primary' )
+						->setDisabled( !$removable )
+						->setType( 'submit' )
+						->setAttributes( [ 'name' => 'action', 'value' => self::ACTION_DELETE ] )
+						->build()
+						->getHtml()
+				) . $noticeHtml
+			)->build() );
+		return $keyAccordion->build()->getHtml();
+	}
+
+	private function buildVueData(): array {
+		$data = [
+			'modules' => [],
+			'keys' => [],
+			'passkeys' => [],
+			'groupsRequiring2FA' => $this->groupsRequiring2FA
+		];
+
+		foreach ( $this->moduleRegistry->getAllModules() as $module ) {
+			$labelMessage = $module->getAddKeyMessage();
+			if ( $labelMessage ) {
+				$data['modules'][] = [
+					'name' => $module->getName(),
+					'labelMessage' => $labelMessage->text()
+				];
+			}
+		}
+
+		foreach ( $this->oathUser->getNonSpecialKeys() as $key ) {
+			$keyData = [
+				'id' => $key->getId(),
+				'module' => $key->getModule()
+			] + $this->getKeyNameAndDescription( $key );
+
+			if ( $key->supportsPasswordlessLogin() ) {
+				$data['passkeys'][] = $keyData;
+			} else {
+				$data['keys'][] = $keyData;
+			}
+		}
+
+		return $data;
+	}
+
 	private function displayNewUI(): void {
-		$this->getOutput()->addModuleStyles( 'ext.oath.manage.styles' );
-		// TODO JS enhancement for rename and delete buttons
+		$output = $this->getOutput();
+		$output->addModuleStyles( 'ext.oath.manage.styles' );
+		$output->addModules( 'ext.oath.manage' );
+		$output->addJsConfigVars( 'wgOATHManageData', $this->buildVueData() );
 		$codex = new Codex();
 
-		// Delete success message, if applicable
+		// Show the delete success message, if applicable
 		$deletedKeyName = $this->getRequest()->getVal( 'deletesuccess' );
 		if ( $deletedKeyName !== null ) {
-			$this->getOutput()->addHTML( Html::successBox(
+			$output->addHTML( Html::successBox(
 				$this->msg( 'oathauth-delete-success' )->parse()
 			) );
 		}
 
-		// Add success message for newly enabled key
+		// Add the success message for newly enabled key
 		$addedKeyName = $this->getRequest()->getVal( 'addsuccess' );
 		if ( $addedKeyName !== null ) {
-			$this->getOutput()->addHTML(
+			$output->addHTML(
 				Html::successBox(
 					$this->msg( 'oathauth-enable-success' )->parse()
 				)
@@ -250,7 +459,7 @@ class OATHManage extends SpecialPage {
 		if ( $this->authManager->allowsAuthenticationDataChange(
 			new PasswordAuthenticationRequest(), false )->isGood()
 		) {
-			$this->getOutput()->addHTML(
+			$output->addHTML(
 				Html::rawElement( 'div', [ 'class' => 'mw-special-OATHManage-password' ],
 					Html::element( 'h3', [], $this->msg( 'oathauth-password-header' )->text() ) .
 					Html::rawElement( 'form', [
@@ -274,53 +483,37 @@ class OATHManage extends SpecialPage {
 		}
 
 		// 2FA section
+		$canRemoveKeys = $this->canRemoveKeys();
+		$irremovableKeyNotice = '';
+		if ( !$canRemoveKeys ) {
+			$irremovableKeyNotice = $this->buildIrremovableKeyNotice();
+		}
+
 		$keyAccordions = '';
-		$placeholderMessage = '';
-		foreach ( $this->oathUser->getKeys() as $key ) {
-			if ( $this->moduleRegistry->getModuleByKey( $key->getModule() )->isSpecial() ) {
+		$keyPlaceholder = '';
+		$mandatory2FAMessage = '';
+		$authmethodsClasses = [
+			'mw-special-OATHManage-authmethods'
+		];
+		foreach ( $this->oathUser->getNonSpecialKeys() as $key ) {
+			if ( $key->supportsPasswordlessLogin() ) {
+				// Keys that support passwordless login are displayed in the passkeys section instead
 				continue;
 			}
 
-			// TODO use outlined Accordions once these are available in Codex
-			$keyData = $this->getKeyNameAndDescription( $key );
-			$keyAccordion = $codex->accordion();
-
-			$keyAccordion->setTitle( $keyData['name'] );
-
-			$accordionDescription = $keyData['timestamp'] ?? $keyData['description'] ?? null;
-			if ( $accordionDescription !== null ) {
-				$keyAccordion->setDescription( $accordionDescription );
-			}
-
-			$keyAccordion
-				->setContentHtml( $codex->htmlSnippet()->setContent(
-					Html::rawElement( 'form', [
-							'action' => wfScript(),
-							'class' => 'mw-special-OATHManage-authmethods__method-actions'
-						],
-						Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
-						Html::hidden( 'module', $key->getModule() ) .
-						Html::hidden( 'keyId', $key->getId() ) .
-						Html::hidden( 'warn', '1' ) .
-						// TODO implement rename (T401775)
-						$codex->button()
-							->setLabel( $this->msg( 'oathauth-authenticator-delete' )->text() )
-							->setAction( 'destructive' )
-							->setWeight( 'primary' )
-							->setType( 'submit' )
-							->setAttributes( [ 'name' => 'action', 'value' => self::ACTION_DELETE ] )
-							->build()
-							->getHtml()
-					)
-				)->build() );
-			$keyAccordions .= $keyAccordion->build()->getHtml();
+			$keyAccordions .= $this->buildKeyAccordion( $key, $irremovableKeyNotice, $canRemoveKeys );
 		}
-		if ( !$this->oathUser->getKeys() ) {
+		if ( $keyAccordions === '' ) {
 			// User has no keys, display the placeholder message instead
-			$placeholderMessage = Html::element( 'p',
+			$keyPlaceholder = Html::element( 'p',
 				[ 'class' => 'mw-special-OATHManage-authmethods__placeholder' ],
 				$this->msg( 'oathauth-authenticator-placeholder' )->text()
 			);
+			$authmethodsClasses[] = 'mw-special-OATHManage-authmethods--no-keys';
+		}
+
+		if ( $this->groupsRequiring2FA ) {
+			$mandatory2FAMessage = $this->build2FARequiredNotice();
 		}
 
 		$moduleButtons = '';
@@ -338,58 +531,67 @@ class OATHManage extends SpecialPage {
 				->getHtml();
 		}
 
-		$authmethodsClasses = [
-			'mw-special-OATHManage-authmethods'
-		];
-		if ( !$this->oathUser->getKeys() ) {
-			$authmethodsClasses[] = 'mw-special-OATHManage-authmethods--no-keys';
-		}
-
-		$this->getOutput()->addHTML(
-			Html::rawElement( 'div', [ 'class' => $authmethodsClasses ],
-				Html::element( 'h3', [], $this->msg( 'oathauth-authenticator-header' )->text() ) .
-				$keyAccordions .
-				Html::rawElement( 'form', [
-						'action' => wfScript(),
-						'class' => 'mw-special-OATHManage-authmethods__addform'
-					],
-					Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
-					Html::hidden( 'action', 'enable' ) .
-					$placeholderMessage .
-					$moduleButtons
-				)
+		$authMethodsSection = Html::rawElement( 'div', [ 'class' => $authmethodsClasses ],
+			Html::element( 'h3', [], $this->msg( 'oathauth-authenticator-header' )->text() ) .
+			$mandatory2FAMessage . $keyAccordions .
+			Html::rawElement( 'form', [
+					'action' => wfScript(),
+					'class' => 'mw-special-OATHManage-authmethods__addform'
+				],
+				Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
+				Html::hidden( 'action', 'enable' ) .
+				$keyPlaceholder .
+				$moduleButtons
 			)
 		);
-	}
 
-	private function addEnabledHTML(): void {
-		$enabledModules = $this->getEnabledModules();
-		$this->addHeading( $this->msg( 'oathauth-ui-enabled-module', count( $enabledModules ) ) );
-		foreach ( $enabledModules as $module ) {
-			$this->addModuleHTML( $module );
+		// Passkeys section
+		$passkeySection = '';
+		$passkeyAccordions = '';
+		$passkeyPlaceholder = '';
+		$passkeyClasses = [ 'mw-special-OATHManage-passkeys' ];
+		foreach ( $this->oathUser->getNonSpecialKeys() as $key ) {
+			if ( !$key->supportsPasswordlessLogin() ) {
+				// Regular 2FA keys are displayed in the 2FA section below
+				continue;
+			}
+			$passkeyAccordions .= $this->buildKeyAccordion( $key );
 		}
-	}
-
-	private function addAlternativesHTML(): void {
-		$this->addHeading( $this->msg( 'oathauth-ui-not-enabled-modules' ) );
-		$this->addInactiveHTML();
-	}
-
-	private function nothingEnabled(): void {
-		$this->addHeading( $this->msg( 'oathauth-ui-available-modules' ) );
-		$this->addInactiveHTML();
-	}
-
-	private function addInactiveHTML(): void {
-		foreach ( $this->getAvailableModules() as $module ) {
-			$this->addModuleHTML( $module );
+		if ( $passkeyAccordions === '' ) {
+			$passkeyPlaceholder = Html::element( 'p',
+				[ 'class' => 'mw-special-OATHManage-passkeys__placeholder' ],
+				$this->msg( 'oathauth-passkeys-placeholder' )->text()
+			);
+			// Display an additional message if the user can't add passkeys
+			if ( $keyAccordions === '' ) {
+				$passkeyPlaceholder .= Html::element( 'p',
+					[ 'class' => 'mw-special-OATHManage-passkeys__placeholder' ],
+					 $this->msg( 'oathauth-passkeys-no2fa' )->text()
+				);
+			}
+			$passkeyClasses[] = 'mw-special-OATHManage-passkeys--no-keys';
 		}
-	}
+		// Only display the "Add passkey" button if the user can add passkeys
+		$passkeyAddButton = $keyAccordions === '' ? '' : $codex->button()
+			->setLabel( $this->msg( 'oathauth-passkeys-add' )->text() )
+			->setAttributes( [ 'class' => 'mw-special-OATHManage-passkeys__addbutton' ] )
+			->build()
+			->getHtml();
+		$passkeySection = Html::rawElement( 'div', [ 'class' => $passkeyClasses ],
+			Html::element( 'h3', [], $this->msg( 'oathauth-passkeys-header' )->text() ) .
+			$passkeyAccordions .
+			Html::rawElement( 'div', [ 'class' => 'mw-special-OATHManage-authmethods__addform' ],
+				$passkeyPlaceholder .
+				$passkeyAddButton
+			)
+		);
 
-	private function addGeneralHelp(): void {
-		$this->getOutput()->addHTML( $this->msg(
-			'oathauth-ui-general-help'
-		)->parseAsBlock() );
+		$output->addHTML( Html::rawElement( 'div', [ 'class' => 'mw-special-OATHManage-vue-container' ],
+			// If 2FA is enabled then put passkeys first, otherwise put 2FA first
+			$keyAccordions === '' ?
+				$authMethodsSection . $passkeySection :
+				$passkeySection . $authMethodsSection
+		) );
 	}
 
 	private function addModuleHTML( IModule $module ): void {
@@ -444,43 +646,44 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
-	 * Get the panel with special content for a module. This creates a very
-	 * basic layout, moreso even than getGenericContent, and assumes necessary
-	 * custom elements will be handled exclusively in addCustomContent() and
-	 * getManageForm().
+	 * Check max keys for a user and return true if max is exceeded
+	 * @return bool
 	 */
-	private function getSpecialContent( IModule $module ): PanelLayout {
-		$modulePanel = new PanelLayout( [
-			'framed' => true,
-			'expanded' => false,
-			'padded' => true
-		] );
-		$headerLayout = new HorizontalLayout();
-		$label = new LabelWidget( [
-			'label' => $module->getDisplayName()->text()
-		] );
-		$headerLayout->addItems( [ $label ] );
-		$modulePanel->appendContent( $headerLayout );
-		$modulePanel->appendContent( new HtmlSnippet(
-			$module->getDescriptionMessage()->parseAsBlock()
-		) );
-		return $modulePanel;
+	private function exceedsKeyLimit(): bool {
+		return count( $this->oathUser->getNonSpecialKeys() ) >= $this->getConfig()->get( 'OATHMaxKeysPerUser' );
 	}
 
 	private function addCustomContent( IModule $module, ?PanelLayout $panel = null ): void {
+		if ( $this->action === self::ACTION_ENABLE && $this->exceedsKeyLimit() ) {
+			throw new ErrorPageError(
+				'oathauth-max-keys-exceeded',
+				'oathauth-max-keys-exceeded-message',
+				[ Message::numParam( $this->getConfig()->get( 'OATHMaxKeysPerUser' ) ) ]
+			);
+		}
+
 		if ( $this->action === self::ACTION_DISABLE ) {
-			$form = new DisableForm( $this->oathUser, $this->userRepo, $module, $this->getContext() );
+			$form = new DisableForm(
+				$this->oathUser,
+				$this->userRepo,
+				$module,
+				$this->getContext(),
+				$this->moduleRegistry
+			);
 		} else {
 			$form = $module->getManageForm(
 				$this->action,
 				$this->oathUser,
 				$this->userRepo,
-				$this->getContext()
+				$this->getContext(),
+				$this->moduleRegistry
 			);
+
+			if ( $form === null ) {
+				return;
+			}
 		}
-		if ( $form === null || !$this->isValidFormType( $form ) ) {
-			return;
-		}
+
 		$form->setTitle( $this->getOutput()->getTitle() );
 		$this->ensureRequiredFormFields( $form, $module );
 		$form->setSubmitCallback( [ $form, 'onSubmit' ] );
@@ -501,43 +704,6 @@ class OATHManage extends SpecialPage {
 		}
 	}
 
-	private function deleteKey(): IAuthKey {
-		$keyToDelete = $this->oathUser->getKeyById( $this->getRequest()->getInt( 'keyId' ) );
-		if ( !$keyToDelete ) {
-			throw new ErrorPageError(
-				'oathauth-disable',
-				'oathauth-remove-nosuchkey'
-			);
-		}
-		$this->userRepo->removeKey( $this->oathUser, $keyToDelete, $this->getRequest()->getIP(), true );
-		return $keyToDelete;
-	}
-
-	/**
-	 * function to remove recovery codes as an auth factor if the user
-	 * has removed their final 2fa key. This functionality also exists
-	 * within the older DisableForm class)
-	 */
-	public function maybeDeleteRecoveryCodes(): bool {
-		// delete recovery codes if this is the last 2fa method for a user
-		if ( $this->oathUser->userHasNonSpecialEnabledKeys() ) {
-			return false;
-		}
-
-		$this->userRepo->removeAllOfType(
-			$this->oathUser,
-			RecoveryCodes::MODULE_NAME,
-			$this->getRequest()->getIP(),
-			true
-		);
-
-		return true;
-	}
-
-	private function addHeading( Message $message ): void {
-		$this->getOutput()->addHTML( Html::element( 'h2', [], $message->text() ) );
-	}
-
 	private function shouldShowGenericButtons(): bool {
 		return !$this->requestedModule instanceof IModule || !$this->isGenericAction();
 	}
@@ -555,43 +721,19 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
-	 * Verifies if the module is available to be enabled
-	 *
-	 * @param IModule $module
-	 * @return bool
+	 * Verifies if the module can be enabled
 	 */
 	private function isModuleAvailable( IModule $module ): bool {
-		$form = $module->getManageForm(
+		return $module->getManageForm(
 			static::ACTION_ENABLE,
 			$this->oathUser,
 			$this->userRepo,
-			$this->getContext()
-		);
-		if ( $form === '' ) {
-			return false;
-		}
-		return true;
+			$this->getContext(),
+			$this->moduleRegistry
+		) !== null;
 	}
 
-	/**
-	 * Verifies if the given form instance fulfills the required conditions
-	 *
-	 * @param mixed $form
-	 * @return bool
-	 */
-	private function isValidFormType( $form ): bool {
-		if ( !( $form instanceof HTMLForm ) ) {
-			return false;
-		}
-		$implements = class_implements( $form );
-		if ( !isset( $implements[IManageForm::class] ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private function ensureRequiredFormFields( IManageForm $form, IModule $module ): void {
+	private function ensureRequiredFormFields( OATHAuthOOUIHTMLForm $form, IModule $module ): void {
 		if ( !$form->hasField( 'module' ) ) {
 			$form->addHiddenField( 'module', $module->getName() );
 		}
@@ -602,7 +744,7 @@ class OATHManage extends SpecialPage {
 
 	/**
 	 * When performing an action on a module (like enable/disable),
-	 * page should contain only the form for that action.
+	 * the page should contain only the form for that action.
 	 */
 	private function clearPage(): void {
 		if ( $this->isGenericAction() ) {
@@ -626,44 +768,6 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
-	 * Returns modules currently enabled by the user.
-	 * @return IModule[]
-	 */
-	private function getEnabledModules(): array {
-		$modules = [];
-		$moduleNames = array_unique(
-			array_map(
-				static fn ( IAuthKey $key ) => $key->getModule(),
-				$this->oathUser->getKeys(),
-			)
-		);
-		foreach ( $moduleNames as $moduleName ) {
-			if ( !$this->moduleRegistry->getModuleByKey( $moduleName )->isSpecial() ) {
-				$modules[] = $this->moduleRegistry->getModuleByKey( $moduleName );
-			}
-		}
-		return $modules;
-	}
-
-	/**
-	 * Returns modules which are not enabled by the user, but the user would be able to enable them.
-	 * @return IModule[]
-	 */
-	private function getAvailableModules(): array {
-		$modules = [];
-		foreach ( $this->moduleRegistry->getAllModules() as $module ) {
-			if (
-				!$this->isModuleEnabled( $module )
-				&& $this->isModuleAvailable( $module )
-				&& !$module->isSpecial()
-			) {
-					$modules[] = $module;
-			}
-		}
-		return $modules;
-	}
-
-	/**
 	 * Returns special modules, which do not follow the constraints of standard modules.
 	 * @return IModule[]
 	 */
@@ -671,17 +775,30 @@ class OATHManage extends SpecialPage {
 		$modules = [];
 		foreach ( $this->moduleRegistry->getAllModules() as $module ) {
 			if ( $this->isModuleAvailable( $module ) && $module->isSpecial() ) {
-					$modules[] = $module;
+				$modules[] = $module;
 			}
 		}
 		return $modules;
 	}
 
-	private function hasAlternativeModules(): bool {
-		return (bool)$this->getAvailableModules();
+	/**
+	 * Checks local groups to see what groups a user is in
+	 * If any of the local groups are required, then the user is privileged
+	 */
+	private function isPrivilegedUser(): bool {
+		$requiredGroups = $this->getConfig()->get( 'OATHRequiredForGroups' );
+		if ( count( $requiredGroups ) === 0 ) {
+			return false;
+		}
+		$userGroups = $this->userGroupManager->getUserGroups( $this->oathUser->getUser() );
+		$a = array_intersect( $userGroups, $requiredGroups );
+		return count( $a ) > 0;
 	}
 
-	private function showDeleteWarning( bool $showWrongConfirmMessage ) {
+	/**
+	 * Show the delete key warning/confirmation form using HTMLForm.
+	 */
+	private function showDeleteWarning(): void {
 		$keyId = $this->getRequest()->getInt( 'keyId' );
 		$keyToDelete = $this->oathUser->getKeyById( $keyId );
 		if ( !$keyToDelete ) {
@@ -691,76 +808,112 @@ class OATHManage extends SpecialPage {
 			);
 		}
 
+		if ( !$keyToDelete->supportsPasswordlessLogin() && !$this->canRemoveKeys() ) {
+			throw new ErrorPageError(
+				'oathauth-disable',
+				'oathauth-remove-lastkey-required'
+			);
+		}
+
 		$keyName = $this->getKeyNameAndDescription( $keyToDelete )['name'];
 		$remainingKeys = array_filter(
 			$this->oathUser->getNonSpecialKeys(),
-			static fn ( $key ) => $key->getId() !== $keyId
+			static fn ( $key ) => $key->getId() !== $keyId && !$key->supportsPasswordlessLogin()
 		);
 		$lastKey = count( $remainingKeys ) === 0;
 
 		$this->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-delete-warning-header', $keyName ) );
-		$codex = new Codex();
+		$this->getOutput()->addModuleStyles( 'ext.oath.manage.styles' );
 
-		$warningMessage = $showWrongConfirmMessage ?
-				$this->msg( 'oathauth-delete-wrong-confirm-message' )->escaped() :
-				$this->msg( 'oathauth-delete-warning-final' )->escaped();
+		$formDescriptor = [];
+		$warningDescription = $this->msg( 'oathauth-delete-warning' )->parse();
 
-		$deleteWarningHTML =
-			( $lastKey ? Html::warningBox( $warningMessage ) : '' ) .
-			Html::element( 'p', [], $this->msg( 'oathauth-delete-warning' )->text() ) .
-			Html::rawElement( 'form', [ 'action' => wfScript(), 'method' => 'POST' ],
-				( $lastKey ? $codex->Field()
-					->setLabel( $codex->Label()
-						->setLabelText( $this->msg( 'oathauth-delete-confirm-box' )->escaped() )
-						->setInputId( 'remove-confirm-box' )
-						->build()
-					)
-					->setFields( [
-						$codex->TextInput()
-							->setName( 'remove-confirm-box' )
-							->setInputId( 'remove-confirm-box' )
-							->build()
-							->getHtml()
-					] )
-					->build()
-					->getHtml()
-				: '' ) .
-				Html::rawElement( 'div', [ 'class' => 'mw-special-OATHManage-delete-warning__actions' ],
-					Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
-					Html::hidden( 'module', $keyToDelete->getModule() ) .
-					Html::hidden( 'keyId', $keyId ) .
-					( !$lastKey ? Html::hidden( 'normalDelete', true ) : '' ) .
-					Html::hidden(
-						CsrfTokenSet::DEFAULT_FIELD_NAME,
-						$this->getContext()->getCsrfTokenSet()->getToken()
-					) .
-					$codex->button()
-						->setLabel( $this->msg( 'oathauth-authenticator-delete' )->text() )
-						->setAction( 'destructive' )
-						->setWeight( 'primary' )
-						->setType( 'submit' )
-						->setAttributes( [ 'name' => 'action', 'value' => self::ACTION_DELETE ] )
-						->build()
-						->getHtml() .
-					Html::linkButton( $this->msg( 'cancel' )->text(), [
-						'href' => $this->getPageTitle()->getLinkURL(),
-						'class' => 'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled',
-						'role' => 'button'
-					] )
-				)
+		if ( $lastKey ) {
+			$formDescriptor['warning'] = [
+				'type' => 'info',
+				'raw' => true,
+				'default' => Html::warningBox( $this->msg( 'oathauth-delete-warning-final' )->parse() ),
+			];
+			if ( $this->isPrivilegedUser() ) {
+				$warningDescription = $this->msg( 'oathauth-delete-warning-final-privileged-user' )->parse();
+			}
+		}
+
+		$formDescriptor['warning-description'] = [
+			'type' => 'info',
+			'raw' => true,
+			'default' => $warningDescription,
+		];
+
+		if ( $lastKey ) {
+			$formDescriptor['remove-confirm-box'] = [
+				'type' => 'text',
+				'label-message' => 'oathauth-delete-confirm-box',
+				'required' => true,
+				'validation-callback' => function ( $value ) {
+					$expectedText = $this->msg( 'oathauth-authenticator-delete-text' )->text();
+					return $value !== $expectedText
+						? $this->msg( 'oathauth-delete-wrong-confirm-message' )->text()
+						: true;
+				},
+			];
+		}
+
+		$form = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
+		$form->setTitle( $this->getPageTitle() );
+
+		$form->addHiddenField( 'action', self::ACTION_DELETE );
+		$form->addHiddenField( 'module', $keyToDelete->getModule() );
+		$form->addHiddenField( 'keyId', (string)$keyId );
+
+		$form->setSubmitDestructive();
+		$form->setSubmitTextMsg( 'oathauth-authenticator-delete' );
+		$form->showCancel();
+		$form->setCancelTarget( $this->getPageTitle() );
+		$form->setWrapperLegend( false );
+
+		$form->setSubmitCallback( function ( $formData ) use ( $keyToDelete, $keyName, $lastKey ) {
+			$this->userRepo->removeKey(
+				$this->oathUser,
+				$keyToDelete,
+				$this->getRequest()->getIP(),
+				true
 			);
 
-		$this->getOutput()->addHTML( Html::rawElement( 'div',
-			[ 'class' => 'mw-special-OATHManage-delete-warning' ],
-			$deleteWarningHTML
+			if ( $lastKey ) {
+				$this->userRepo->removeAll(
+				$this->oathUser,
+				$this->getRequest()->getIP(),
+				true
+				);
+
+				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
+					$logEntry = new ManualLogEntry( 'oath', 'disable-self' );
+					$logEntry->setPerformer( $this->getUser() );
+					$logEntry->setTarget( $this->getUser()->getUserPage() );
+					/** @var CheckUserInsert $checkUserInsert */
+					$checkUserInsert = MediaWikiServices::getInstance()->get( 'CheckUserInsert' );
+					$checkUserInsert->updateCheckUserData( $logEntry->getRecentChange() );
+				}
+			}
+
+			$this->getOutput()->redirect( $this->getPageTitle()->getFullURL( [
+				'deletesuccess' => $keyName
+			] ) );
+
+			return true;
+		} );
+
+		$this->getOutput()->addHTML( Html::openElement( 'div',
+			[ 'class' => 'mw-special-OATHManage-delete-warning' ]
 		) );
-		$this->getOutput()->addModuleStyles( 'ext.oath.manage.styles' );
+
+		$form->show();
+		$this->getOutput()->addHTML( Html::closeElement( 'div' ) );
 	}
 
 	/**
-	 * Adds html for all available special modules
-	 *
-	 * @return void|null
+	 * Adds HTML for all available special modules
 	 */
 	private function addSpecialModulesHTML(): void {
 		if ( !$this->oathUser->getKeys() ) {
@@ -772,77 +925,118 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
-	 * Adds special module html content
+	 * Adds special module HTML content
 	 *
 	 * Since special modules can vary in a number of ways from standard modules,
 	 * there isn't much benefit to further abstracting/genericizing display logic
 	 */
 	private function addSpecialModuleHTML( IModule $module ): void {
 		// only one special module type is currently supported
-		if ( $module->getName() === RecoveryCodes::MODULE_NAME ) {
+		if ( $module instanceof RecoveryCodes ) {
 			$this->getRecoveryCodesHTML( $module );
 		}
 	}
 
-	/** @return void|null */
-	private function getRecoveryCodesHTML( IModule $module ): void {
-		$keys = $this->oathUser->getKeysForModule( $module->getName() );
-		if ( count( $keys ) === 0 ) {
-			// This path should only be possible if a user had an existing TOTP or WebAuthn
-			// key, pre multi-module support. So let's create an empty Recovery Code Keys
-			// for them, since they will otherwise not yet exist.
-			RecoveryCodeKeys::maybeCreateOrUpdateRecoveryCodeKeys( $this->oathUser );
-			$keys = $this->oathUser->getKeysForModule( $module->getName() );
-		}
+	private function getRecoveryCodesHTML( RecoveryCodes $module ): void {
+		$key = $module->ensureExistence( $this->oathUser );
 
 		$this->getOutput()->addModuleStyles( 'ext.oath.recovery.styles' );
 		$this->getOutput()->addModules( 'ext.oath.recovery' );
 		$codex = new Codex();
-		$keyAccordions = '';
 		$placeholderMessage = '';
 
-		foreach ( $keys as $key ) {
-			/** @var RecoveryCodeKeys $key */
-			'@phan-var RecoveryCodeKeys $key';
-			$this->setOutputJsConfigVars(
-				array_map(
-					[ $this, 'tokenFormatterFunction' ],
-					$key->getRecoveryCodeKeys()
-				)
-			);
+		$this->setOutputJsConfigVars(
+			$this->getRecoveryCodesForDisplay( $key )
+		);
 
-			// TODO: use outlined Accordions once these are available in Codex
-			$keyData = $this->getKeyNameAndDescription( $key );
-			$keyAccordion = $codex->accordion()
-				->setTitle( $keyData['name'] );
-			$keyAccordion->setDescription(
+		$keyAccordion = $codex->accordion()
+			->setTitle( $module->getDisplayName()->text() )
+			->setDescription(
 				$this->msg( 'oathauth-recoverycodes' )->text()
-			);
-			$keyAccordion
+			)
+			// TODO support outlined Accordions in Codex-PHP (T416645)
+			->setAttributes( [ 'class' => 'cdx-accordion--separation-outline' ] )
+			->setContentHtml( $codex->htmlSnippet()->setContent(
+				Html::rawElement( 'form', [
+						'action' => wfScript(),
+						'class' => 'mw-special-OATHManage-authmethods__method-actions'
+					],
+					Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
+					Html::hidden( 'module', $key->getModule() ) .
+					Html::hidden( 'keyId', $key->getId() ) .
+					$this->createRecoveryCodesCopyButton() .
+					$this->createRecoveryCodesDownloadLink(
+						$this->getRecoveryCodesForDisplay( $key )
+					) .
+					$codex->button()
+						->setLabel( $this->msg(
+							'oathauth-recoverycodes-create-label',
+							$this->getConfig()->get( 'OATHRecoveryCodesCount' )
+						)->parse() )
+						->setType( 'submit' )
+						->setAttributes( [ 'name' => 'action', 'value' => 'create-' . $module->getName() ] )
+						->build()
+						->getHtml()
+				)
+			)->build() );
+		$accordionsHtml = $keyAccordion->build()->getHtml();
+
+		$expiringCodes = array_filter(
+			$key->getRecoveryCodes(),
+			static fn ( RecoveryCode $code ) => !$code->isPermanent()
+		);
+		if ( $expiringCodes ) {
+			$expiringCodesCount = count( $expiringCodes );
+			$maxExpiry = '';
+			foreach ( $expiringCodes as $code ) {
+				$codeExpiry = $code->getExpiryTimestamp();
+				if ( $codeExpiry && $codeExpiry > $maxExpiry ) {
+					$maxExpiry = $codeExpiry;
+				}
+			}
+			$temporaryCodesAccordion = $codex->accordion()
+				->setTitle(
+					$this->msg( 'oathauth-recoverycodes-temporary' )
+						->numParams( $expiringCodesCount )
+						->text()
+				)
+				->setDescription(
+					$this->msg( 'oathauth-recoverycodes-temporary-desc' )
+						->numParams( $expiringCodesCount )
+						->dateTimeParams( $maxExpiry )
+						->dateParams( $maxExpiry )
+						->timeParams( $maxExpiry )
+						->text()
+				)
+				// TODO support outlined Accordions in Codex-PHP (T416645)
+				->setAttributes( [ 'class' => 'cdx-accordion--separation-outline' ] )
 				->setContentHtml( $codex->htmlSnippet()->setContent(
+					$this->msg( 'oathauth-recoverycodes-temporary-intro' )
+						->numParams( $expiringCodesCount )
+						->parse() .
 					Html::rawElement( 'form', [
-							'action' => wfScript(),
-							'class' => 'mw-special-OATHManage-authmethods__method-actions'
-						],
+						'action' => wfScript(),
+						'class' => 'mw-special-OATHManage-authmethods__method-actions'
+					],
 						Html::hidden( 'title', $this->getPageTitle()->getPrefixedDBkey() ) .
 						Html::hidden( 'module', $key->getModule() ) .
 						Html::hidden( 'keyId', $key->getId() ) .
-						$this->createRecoveryCodesCopyButton() .
-						$this->createRecoveryCodesDownloadLink(
-							$key->getRecoveryCodeKeys()
-						) .
 						$codex->button()
 							->setLabel( $this->msg(
-								'oathauth-recoverycodes-create-label',
-								$this->getConfig()->get( 'OATHRecoveryCodesCount' )
-							) )
+								'oathauth-recoverycodes-temporary-remove-label'
+							)->parse() )
+							->setAction( 'destructive' )
+							->setWeight( 'primary' )
 							->setType( 'submit' )
-							->setAttributes( [ 'name' => 'action', 'value' => 'create-' . $module->getName() ] )
+							->setAttributes( [
+								'name' => 'action',
+								'value' => RecoveryCodes::ACTION_REMOVE_TEMPORARY
+							] )
 							->build()
 							->getHtml()
 					)
 				)->build() );
-			$keyAccordions .= $keyAccordion->build()->getHtml();
+			$accordionsHtml .= $temporaryCodesAccordion->build()->getHtml();
 		}
 
 		$authmethodsClasses = [
@@ -855,7 +1049,7 @@ class OATHManage extends SpecialPage {
 		$this->getOutput()->addHTML(
 			Html::rawElement( 'div', [ 'class' => $authmethodsClasses ],
 				Html::element( 'h3', [], $this->msg( 'oathauth-' . $module->getName() . '-header' )->text() ) .
-				$keyAccordions .
+				$accordionsHtml .
 				Html::rawElement( 'form', [
 						'action' => wfScript(),
 						'class' => 'mw-special-OATHManage-authmethods__addform'

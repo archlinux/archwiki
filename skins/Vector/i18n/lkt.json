@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Peter57770",
 			"AmazingJus",
+			"Peter57770",
 			"Tuwewanzi"
 		]
 	},
@@ -42,9 +42,6 @@
 	"skin-theme-exclusion-notice": "Óhiƞniyaƞ oyubláye kiƞ le ožáƞžaƞ owáƞyaƞke uƞ.",
 	"vector-toc-label": "Táku lel owápi",
 	"vector-toc-beginning": "Otȟókahe",
-	"vector-anon-user-menu-pages": "Tuwá yutȟókeča čhaž'óigwapi šni kiŋ tȟaóyublaye",
-	"vector-anon-user-menu-pages-learn": "Táku sáŋpȟa uŋspeič’ičhiya",
-	"vector-anon-user-menu-pages-label": "Yutȟókeča uŋspeič’ičhiya",
 	"vector-main-menu-tooltip": "Táku-waŋkatuya",
 	"vector-toc-menu-tooltip": "Táku lel Owápi",
 	"vector-site-nav-label": "Otȟáwokaške",

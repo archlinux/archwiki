@@ -263,7 +263,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "ചരം സ്ഥാപിക്കുക (set_var)",
 	"abusefilter-edit-builder-group-vars": "ചരങ്ങൾ",
 	"abusefilter-edit-builder-vars-timestamp": "മാറ്റത്തിന്റെ യുണിക്സ് സമയമുദ്ര",
-	"abusefilter-edit-builder-vars-accountname": "അംഗത്വനാമം (അംഗത്വ സൃഷ്ടിയിലുള്ളത്)",
+	"abusefilter-edit-builder-vars-account-name": "അംഗത്വനാമം (അംഗത്വ സൃഷ്ടിയിലുള്ളത്)",
 	"abusefilter-edit-builder-vars-action": "പ്രവൃത്തി",
 	"abusefilter-edit-builder-vars-addedlines": "തിരുത്തലിൽ കൂട്ടിച്ചേർക്കപ്പെട്ട വരികൾ",
 	"abusefilter-edit-builder-vars-delta": "തിരുത്തലിൽ മാറ്റം വന്ന വലിപ്പം",

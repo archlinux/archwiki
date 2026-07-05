@@ -23,7 +23,7 @@
 	"license-name": "MIT",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"callback": "MediaWiki\\Extension\\VisualEditor\\Hooks::onRegistration",
 	"ServiceWiringFiles": [
@@ -55,9 +55,6 @@
 			"description": "BetaFeatures integration has been removed. This option allows using the old beta feature preference values ('visualeditor-enable') on wikis where it was previously enabled, until it is migrated (T344762).",
 			"value": false
 		},
-		"VisualEditorEnableTocWidget": {
-			"value": false
-		},
 		"VisualEditorEnableHelpCompletion": {
 			"value": true
 		},
@@ -73,6 +70,12 @@
 			"value": false
 		},
 		"VisualEditorFeedbackTitle": {
+			"value": false
+		},
+		"VisualEditorSuggestionFeedbackAPIURL": {
+			"value": false
+		},
+		"VisualEditorSuggestionFeedbackTitle": {
 			"value": false
 		},
 		"VisualEditorPluginModules": {
@@ -139,15 +142,23 @@
 		},
 		"VisualEditorEditCheck": {
 			"value": false,
-			"description": "Enable experimental Edit Check feature. Can also be enabled using ?ecenable=1."
+			"description": "Enable Edit Check feature. Can also be enabled using ?ecenable=1."
 		},
-		"VisualEditorEditCheckLoadExperimental": {
+		"VisualEditorEnableEditCheckExperimental": {
 			"value": false,
-			"description": "Load experimental edit checks from the `editchecks/experimental` directory. Can be `false` to not load anything, `true` to load everything, or an array of filenames to load only those checks"
+			"description": "Enable all experimental edit checks."
 		},
 		"VisualEditorEditCheckABTest": {
 			"value": false,
 			"description": "A/B test Edit Check for all users. A/B bucket status will override VisualEditorEditCheck. Value is a check name to test."
+		},
+		"VisualEditorEnableEditCheckSuggestionsBeta": {
+			"value": false,
+			"description": "Enable the Edit Check Suggestions beta feature."
+		},
+		"VisualEditorEditCheckDefaultConfig": {
+			"value": {},
+			"description": "Override default Edit Check config. Same as editing [[MediaWiki:Editcheck-config.json]]."
 		},
 		"VisualEditorUseSingleEditTab": {
 			"value": false
@@ -162,12 +173,18 @@
 				"UserFactory",
 				"UserOptionsLookup",
 				"WatchlistManager",
+				"WatchlistLabelStore",
+				"WatchedItemStore",
 				"ContentTransformer",
 				"StatsFactory",
 				"WikiPageFactory",
 				"IntroMessageBuilder",
 				"PreloadedContentBuilder",
 				"SpecialPageFactory",
+				"LinkRenderer",
+				"LinkBatchFactory",
+				"RestrictionStore",
+				"TextboxBuilder",
 				"VisualEditor.ParsoidClientFactory"
 			]
 		},
@@ -213,8 +230,14 @@
 		"DifferenceEngineViewHeader": "VisualEditorHooks",
 		"TextSlotDiffRendererTablePrefix": "VisualEditorHooks",
 		"EditPage::showEditForm:fields": "VisualEditorHooks",
-		"GetPreferences": "VisualEditorHooks",
-		"GetBetaFeaturePreferences": "betapreferences",
+		"GetPreferences": [
+			"VisualEditorHooks",
+			"EditCheckHooks"
+		],
+		"GetBetaFeaturePreferences": [
+			"betapreferences",
+			"EditCheckBetaPreferences"
+		],
 		"ListDefinedTags": "VisualEditorHooks",
 		"MakeGlobalVariablesScript": "VisualEditorHooks",
 		"OutputPageBodyAttributes": "VisualEditorHooks",
@@ -248,25 +271,18 @@
 				"MainConfig",
 				"ConfigFactory"
 			]
+		},
+		"EditCheckBetaPreferences": {
+			"class": "MediaWiki\\Extension\\VisualEditor\\EditCheck\\BetaPreferenceHooks",
+			"services": [
+				"MainConfig",
+				"ConfigFactory"
+			]
 		}
 	},
 	"ResourceModules": {
-		"socket.io": {
-			"scripts": [
-				"lib/ve/lib/socket.io-client/socket.io.min.js"
-			]
-		},
-		"peerjs": {
-			"scripts": [
-				"lib/ve/lib/peerjs/peerjs.min.js"
-			]
-		},
-		"dompurify": {
-			"scripts": [
-				"lib/ve/lib/dompurify/purify.js"
-			]
-		},
 		"color-picker": {
+			"@todo": "This could be loaded as a veModule but is referenced by Extension:CollabPads",
 			"scripts": [
 				"lib/ve/lib/color-picker/color-picker.js"
 			],
@@ -274,18 +290,12 @@
 				"lib/ve/lib/color-picker/color-picker.css"
 			]
 		},
-		"unicodejs": {
-			"scripts": [
-				"lib/ve/lib/unicodejs/unicodejs.js"
-			]
-		},
-		"papaparse": {
-			"scripts": "lib/ve/lib/papaparse/papaparse.js"
-		},
 		"rangefix": {
+			"@todo": "Used outside of VE (DiscussionTools init) so could be upstreamed.",
 			"scripts": "lib/ve/lib/rangefix/rangefix.js"
 		},
 		"spark-md5": {
+			"@todo": "Used outside of VE (NotifyMe) so could be upstreamed.",
 			"scripts": "lib/ve/lib/spark-md5/spark-md5.js"
 		},
 		"ext.visualEditor.supportCheck": {
@@ -296,14 +306,14 @@
 			"group": "visualEditorA"
 		},
 		"ext.visualEditor.sanitize": {
+			"@todo": "This could be loaded as a veModule but is referenced by Extension:CollabPads",
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
 				"visualEditor.sanitize"
 			],
 			"group": "visualEditorA",
 			"dependencies": [
-				"ext.visualEditor.base",
-				"dompurify"
+				"ext.visualEditor.base"
 			]
 		},
 		"ext.visualEditor.progressBarWidget": {
@@ -369,11 +379,13 @@
 				"ext.visualEditor.supportCheck",
 				"ext.visualEditor.track",
 				"ext.visualEditor.progressBarWidget",
-				"ext.visualEditor.tempWikitextEditorWidget"
+				"ext.visualEditor.tempWikitextEditorWidget",
+				"ext.visualEditor.targetLoader"
 			],
 			"messages": [
 				"accesskey-ca-ve-edit",
-				"editsection"
+				"editsection",
+				"visualeditor-mweditmode-tooltip"
 			]
 		},
 		"ext.visualEditor.desktopArticleTarget.noscript": {
@@ -383,6 +395,7 @@
 			"group": "visualEditorA",
 			"scripts": [
 				"modules/ve-mw/preinit/ve.utils.parsoid.js",
+				"modules/ve-mw/preinit/ve.utils.client.js",
 				"modules/ve-mw/preinit/ve.init.mw.ArticleTargetLoader.js",
 				"modules/ve-mw/preinit/ve.init.mw.ArticleTargetSaver.js"
 			],
@@ -397,6 +410,7 @@
 				"mediawiki.storage"
 			],
 			"messages": [
+				"api-clientside-error-invalidresponse",
 				"visualeditor-autosave-modified-prompt-accept",
 				"visualeditor-autosave-modified-prompt-message",
 				"visualeditor-autosave-modified-prompt-reject",
@@ -453,7 +467,12 @@
 				"creating",
 				"editing",
 				"mw-widgets-abandonedit",
+				"ooui-dialog-message-reject",
+				"ooui-dialog-process-retry",
 				"pagetitle",
+				"visualeditor-help-tool",
+				"visualeditor-mweditmode-tooltip",
+				"visualeditor-pagemenu-tooltip",
 				"visualeditor-section-body-placeholder",
 				"visualeditor-section-title-placeholder"
 			]
@@ -480,7 +499,8 @@
 				"ext.visualEditor.mwlink"
 			],
 			"messages": [
-				"visualeditor-backbutton-tooltip"
+				"visualeditor-backbutton-tooltip",
+				"visualeditor-mweditmode-tooltip"
 			]
 		},
 		"ext.visualEditor.collabTarget": {
@@ -538,7 +558,6 @@
 			],
 			"messages": [
 				"collabpad",
-				"collabpad-doctitle",
 				"collabpad-import-subtitle"
 			]
 		},
@@ -568,6 +587,7 @@
 				"ext.visualEditor.supportCheck"
 			],
 			"messages": [
+				"visualeditor-rebase-client-connecting",
 				"visualeditor-rebase-corrupted-document-error",
 				"visualeditor-rebase-corrupted-document-title",
 				"collabpad",
@@ -582,6 +602,7 @@
 		"ext.visualEditor.collab": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
+				"peerjs",
 				"visualEditor.collab"
 			],
 			"scripts": [
@@ -589,7 +610,6 @@
 			],
 			"dependencies": [
 				"color-picker",
-				"peerjs",
 				"ext.visualEditor.core"
 			],
 			"messages": [
@@ -628,21 +648,23 @@
 			"packageFiles": [
 				"editcheck/modules/init.js",
 				"editcheck/modules/utils.js",
+				"editcheck/modules/EditCheckPerformance.js",
 				"editcheck/modules/controller.js",
 				"editcheck/modules/EditCheckPreSaveToolbarTools.js",
+				"editcheck/modules/EditCheckSuggestionsTool.js",
 				"editcheck/modules/EditCheckFactory.js",
 				"editcheck/modules/EditCheckAction.js",
 				"editcheck/modules/EditCheckActionWidget.js",
 				"editcheck/modules/EditCheckGutterSectionWidget.js",
+				"editcheck/modules/dialogs/EditCheckScrollIntoViewWidget.js",
 				"editcheck/modules/dialogs/EditCheckDialog.js",
 				"editcheck/modules/dialogs/FixedEditCheckDialog.js",
 				"editcheck/modules/dialogs/SidebarEditCheckDialog.js",
 				"editcheck/modules/dialogs/GutterSidebarEditCheckDialog.js",
 				"editcheck/modules/editchecks/BaseEditCheck.js",
+				"editcheck/modules/editchecks/ContentBranchNodeCheck.js",
+				"editcheck/modules/editchecks/LinkEditCheck.js",
 				"editcheck/modules/editchecks/AsyncTextCheck.js",
-				"editcheck/modules/editchecks/AddReferenceEditCheck.js",
-				"editcheck/modules/editchecks/ToneCheck.js",
-				"editcheck/modules/editchecks/PasteCheck.js",
 				{
 					"name": "editcheck/modules/config.json",
 					"callback": "\\MediaWiki\\Extension\\VisualEditor\\EditCheck\\ResourceLoaderData::getConfig"
@@ -654,16 +676,20 @@
 			"dependencies": [
 				"ext.visualEditor.core",
 				"ext.visualEditor.mwsave",
-				"unicodejs"
+				"oojs-ui.styles.icons-interactions"
 			],
 			"messages": [
+				"editcheck-action-dismiss",
 				"editcheck-dialog-action-no",
 				"editcheck-dialog-action-yes",
 				"editcheck-dialog-action-decline",
 				"editcheck-dialog-action-revise",
 				"editcheck-dialog-action-recheck",
+				"editcheck-dialog-action-replace",
 				"editcheck-dialog-action-back",
 				"editcheck-dialog-action-submit",
+				"editcheck-dialog-scroll-into-view",
+				"editcheck-dialog-toggle",
 				"editcheck-dialog-addref-description",
 				"editcheck-dialog-addref-reject-question",
 				"editcheck-dialog-addref-reject-description",
@@ -686,6 +712,11 @@
 				"editcheck-copyvio-keep-other",
 				"editcheck-copyvio-keep-notify",
 				"editcheck-copyvio-remove-notify",
+				"editcheck-double-bold-title",
+				"editcheck-double-bold-description",
+				"editcheck-double-bold-descriptionlink",
+				"editcheck-double-bold-action-remove",
+				"editcheck-textmatch-replace",
 				"editcheck-tone-title",
 				"editcheck-tone-title-acted",
 				"editcheck-tone-description",
@@ -697,11 +728,54 @@
 				"editcheck-tone-reject-uncertain",
 				"editcheck-tone-reject-other",
 				"editcheck-tone-thank",
+				"editcheck-yearlink-title",
+				"editcheck-yearlink-description",
+				"editcheck-yearlink-action-use",
+				"editcheck-action-update-link",
+				"editcheck-action-remove-link",
+				"editcheck-action-add-caption",
+				"editcheck-action-add-citation",
+				"editcheck-action-convert-reference",
+				"editcheck-external-link-title",
+				"editcheck-external-link-description",
+				"editcheck-external-link-descriptionlink",
+				"editcheck-external-link-convertlink",
+				"editcheck-duplicate-link-title",
+				"editcheck-duplicate-link-description",
+				"editcheck-duplicate-link-descriptionlink",
+				"editcheck-disambiguation-title",
+				"editcheck-disambiguation-description",
+				"editcheck-disambiguation-descriptionlink",
+				"editcheck-image-caption-title",
+				"editcheck-image-caption-description",
+				"editcheck-image-caption-descriptionlink",
+				"editcheck-headinglevel-title",
+				"editcheck-headinglevel-description",
+				"editcheck-headinglevel-descriptionlink",
+				"editcheck-headinglevel-action-adjust",
+				"editcheck-convertreference-title",
+				"editcheck-convertreference-description",
+				"editcheck-convertreference-descriptionlink",
 				"editcheck-reject-description",
 				"editcheck-review-title",
+				"editcheck-toolbar-suggestions-title",
+				"editcheck-toolbar-suggestions-count",
+				"editcheck-suggestions-turned-on",
+				"editcheck-suggestions-turned-off",
+				"editcheck-suggestions-more-available",
+				"editcheck-suggestions-none-left",
+				"editcheck-suggestionfeedback-label-about",
+				"editcheck-suggestionfeedback-label-report",
 				"visualeditor-backbutton-tooltip",
+				"visualeditor-contextitemwidget-label-close",
 				"next",
 				"last"
+			]
+		},
+		"ext.visualEditor.editCheck.special": {
+			"styles": [
+				"editcheck/modules/editCheck.special/editchecks.less",
+				"editcheck/modules/EditCheck.less"
 			]
 		},
 		"ext.visualEditor.core.utils": {
@@ -729,6 +803,7 @@
 		"ext.visualEditor.base": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
+				"unicodejs",
 				"visualEditor.core.utils.client",
 				"visualEditor.core.init"
 			],
@@ -736,7 +811,6 @@
 			"dependencies": [
 				"oojs",
 				"oojs-ui",
-				"unicodejs",
 				"jquery.client",
 				"ext.visualEditor.core.utils",
 				"ext.visualEditor.core.utils.parsing"
@@ -750,6 +824,7 @@
 				"modules/ve-mw/init/apiresponsecache/ve.init.mw.LinkCache.js",
 				"modules/ve-mw/init/apiresponsecache/ve.init.mw.ImageInfoCache.js",
 				"modules/ve-mw/init/apiresponsecache/ve.init.mw.GalleryImageInfoCache.js",
+				"modules/ve-mw/init/apiresponsecache/ve.init.mw.TemplateDataCache.js",
 				"modules/ve-mw/init/ve.init.mw.Platform.js",
 				"modules/ve-mw/init/ve.init.mw.Platform.init.js",
 				"modules/ve-mw/init/ve.init.mw.TargetFactory.js",
@@ -810,9 +885,9 @@
 				"accesskey-preview",
 				"accesskey-save",
 				"accesskey-watch",
-				"hidden-categories",
 				"newsectionsummary",
 				"parentheses",
+				"showpreview",
 				"summary-preview",
 				"tooltip-minoredit",
 				"tooltip-watch",
@@ -821,14 +896,10 @@
 				"visualeditor-editsummary",
 				"visualeditor-editsummary-characters-remaining",
 				"visualeditor-savedialog-keyboard-shortcut-submit",
-				"visualeditor-savedialog-label-publish-short",
-				"visualeditor-savedialog-label-publish-short-start",
 				"visualeditor-savedialog-label-resolve-conflict",
 				"visualeditor-savedialog-label-resume-editing",
 				"visualeditor-savedialog-label-review",
 				"visualeditor-savedialog-label-review-good",
-				"visualeditor-savedialog-label-save-short",
-				"visualeditor-savedialog-label-save-short-start",
 				"visualeditor-savedialog-review-nosummary",
 				"visualeditor-savedialog-review-visual",
 				"visualeditor-savedialog-review-wikitext",
@@ -846,6 +917,9 @@
 				"modules/ve-mw/init/ve.init.mw.ArticleTargetEvents.js",
 				"modules/ve-mw/ui/tools/ve.ui.MWEditModeTool.js"
 			],
+			"styles": [
+				"modules/ve-mw/init/styles/ve.init.mw.ArticleTarget.less"
+			],
 			"dependencies": [
 				"ext.visualEditor.mediawiki",
 				"ext.visualEditor.core",
@@ -857,6 +931,7 @@
 			],
 			"messages": [
 				"accesskey-save",
+				"api-clientside-error-invalidresponse",
 				"colon-separator",
 				"hidden-categories",
 				"pagecategories",
@@ -871,15 +946,18 @@
 				"savearticle-start",
 				"savechanges",
 				"savechanges-start",
-				"showpreview",
+				"visualeditor-fullpage-switch-label",
 				"visualeditor-loaderror-revidconflict",
 				"visualeditor-loaderror-wrongmode",
 				"visualeditor-mweditmodesource-progress",
 				"visualeditor-mweditmodeve-progress",
-				"visualeditor-pagemenu-tooltip",
 				"visualeditor-recreate",
 				"ooui-dialog-process-continue",
 				"visualeditor-redirect-description",
+				"visualeditor-savedialog-label-publish-short",
+				"visualeditor-savedialog-label-publish-short-start",
+				"visualeditor-savedialog-label-save-short",
+				"visualeditor-savedialog-label-save-short-start",
 				"visualeditor-savedialog-identify-anon",
 				"visualeditor-savedialog-identify-temp",
 				"visualeditor-savedialog-identify-user"
@@ -892,6 +970,8 @@
 		"ext.visualEditor.core": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
+				"papaparse",
+				"dompurify",
 				"visualEditor.core.root",
 				"visualEditor.core.model",
 				"visualEditor.core.view",
@@ -907,10 +987,8 @@
 				]
 			},
 			"dependencies": [
-				"unicodejs",
 				"rangefix",
 				"spark-md5",
-				"papaparse",
 				"jquery.client",
 				"ext.visualEditor.base",
 				"ext.visualEditor.supportCheck",
@@ -960,6 +1038,7 @@
 				"visualeditor-contextitemwidget-label-remove",
 				"visualeditor-contextitemwidget-label-secondary",
 				"visualeditor-contextitemwidget-label-view",
+				"visualeditor-debugbar-buildtest",
 				"visualeditor-debugbar-close",
 				"visualeditor-debugbar-inputdebug",
 				"visualeditor-debugbar-logrange",
@@ -1007,7 +1086,6 @@
 				"visualeditor-formatdropdown-format-heading6",
 				"visualeditor-formatdropdown-format-paragraph",
 				"visualeditor-formatdropdown-format-preformatted",
-				"visualeditor-help-tool",
 				"visualeditor-historybutton-redo-tooltip",
 				"visualeditor-historybutton-undo-tooltip",
 				"visualeditor-horizontalrule-tooltip",
@@ -1040,6 +1118,8 @@
 				"visualeditor-languageinspector-title",
 				"visualeditor-languageinspector-widget-changelang",
 				"visualeditor-languageinspector-widget-label-direction",
+				"visualeditor-languageinspector-widget-label-direction-ltr",
+				"visualeditor-languageinspector-widget-label-direction-rtl",
 				"visualeditor-languageinspector-widget-label-langcode",
 				"visualeditor-languageinspector-widget-label-language",
 				"visualeditor-linkcontext-label-change",
@@ -1103,35 +1183,23 @@
 				"visualeditor-toolbar-text-style"
 			]
 		},
-		"ext.visualEditor.commentAnnotation": {
-			"group": "visualEditorA",
-			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
-			"veModules": [
-				"visualEditor.commentAnnotation"
-			],
-			"dependencies": [
-				"ext.visualEditor.core"
-			],
-			"messages": [
-				"visualeditor-commentannotationcontextitem-comment"
-			]
-		},
 		"ext.visualEditor.rebase": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
-				"visualEditor.rebase"
+				"socket.io",
+				"visualEditor.rebase",
+				"visualEditor.commentAnnotation"
 			],
 			"group": "visualEditorA",
 			"dependencies": [
 				"ext.visualEditor.core",
 				"ext.visualEditor.sanitize",
-				"socket.io",
 				"color-picker",
 				"oojs-ui.styles.icons-user",
-				"ext.visualEditor.commentAnnotation",
 				"ext.visualEditor.checkList"
 			],
 			"messages": [
+				"visualeditor-commentannotationcontextitem-comment",
 				"visualeditor-rebase-client-author-name",
 				"visualeditor-rebase-client-connecting",
 				"visualeditor-rebase-corrupted-document-error",
@@ -1212,7 +1280,6 @@
 				"visualeditor-editingtabdialog-body",
 				"visualeditor-editingtabdialog-ok",
 				"visualeditor-editingtabdialog-title",
-				"visualeditor-mweditmode-tooltip",
 				"visualeditor-mweditmodesource-tool-current",
 				"visualeditor-mweditmodesource-tool-unavailable",
 				"visualeditor-mweditmodeve-popup-body",
@@ -1263,7 +1330,6 @@
 				"modules/ve-mw/ui/widgets/ve.ui.MWEditSummaryWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWLazyMultilineTextInputWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWTargetWidget.js",
-				"modules/ve-mw/ui/widgets/ve.ui.MWTocWidget.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWExtensionDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWExtensionPreviewDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWCommandHelpDialog.js",
@@ -1345,6 +1411,9 @@
 				"visualeditor-editnotices-tool",
 				"visualeditor-editnotices-tooltip",
 				"visualeditor-educationpopup-dismiss",
+				"visualeditor-expandable-less",
+				"visualeditor-expandable-more",
+				"visualeditor-expandableerror-toggle",
 				"visualeditor-feedback-defaultmessage",
 				"visualeditor-feedback-tool",
 				"visualeditor-help-label",
@@ -1367,7 +1436,8 @@
 				"visualeditor-tooltip-non-breaking-space",
 				"visualeditor-version-label",
 				"visualeditor-wikitext-progress",
-				"visualeditor-wikitext-warning-title"
+				"visualeditor-wikitext-warning-title",
+				"word-separator"
 			]
 		},
 		"ext.visualEditor.mwextensions": {
@@ -1447,6 +1517,11 @@
 			],
 			"dependencies": [
 				"ext.visualEditor.mwcore"
+			],
+			"messages": [
+				"visualeditor-dimensionswidget-px",
+				"visualeditor-dimensionswidget-times",
+				"visualeditor-mediasizewidget-sizeoptions-default"
 			]
 		},
 		"ext.visualEditor.mwimage": {
@@ -1465,13 +1540,13 @@
 			],
 			"dependencies": [
 				"ext.visualEditor.mwimage.core",
+				"mediawiki.util",
 				"mediawiki.widgets.MediaSearch",
 				"oojs-ui.styles.icons-media",
 				"ext.visualEditor.icons-licenses",
 				"moment"
 			],
 			"messages": [
-				"visualeditor-dialog-media-alttext-checkbox",
 				"visualeditor-dialog-media-alttext-section",
 				"visualeditor-dialog-media-alttext-section-help",
 				"visualeditor-dialog-media-change-image",
@@ -1511,6 +1586,8 @@
 				"visualeditor-dialog-media-type-thumb",
 				"visualeditor-dialog-media-upload",
 				"visualeditor-dialogbutton-media-tooltip",
+				"visualeditor-dimensionswidget-px",
+				"visualeditor-dimensionswidget-times",
 				"visualeditor-media-title-audio",
 				"visualeditor-media-title-image",
 				"visualeditor-media-title-video"
@@ -1560,6 +1637,7 @@
 				"visualeditor-linkinspector-illegal-title",
 				"visualeditor-linkinspector-invalid-blocked",
 				"visualeditor-linkinspector-invalid-external",
+				"visualeditor-linkinspector-title",
 				"visualeditor-linknodeinspector-add-label",
 				"visualeditor-linknodeinspector-title",
 				"visualeditor-magiclinknodeinspector-convert-link",
@@ -1603,7 +1681,6 @@
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryItemWidget.less",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryPopupWidget.less",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWCategoryWidget.less",
-				"modules/ve-mw/ui/styles/widgets/ve.ui.MWTocWidget.less",
 				"modules/ve-mw/ui/styles/dialogs/ve.ui.MWMetaDialog.less"
 			],
 			"dependencies": [
@@ -1612,6 +1689,9 @@
 				"mediawiki.action.view.redirectPage"
 			],
 			"messages": [
+				"colon-separator",
+				"pagecategorieslink",
+				"visualeditor-inspector-remove-tooltip",
 				"visualeditor-advancedsettings-tool",
 				"visualeditor-categories-tool",
 				"visualeditor-changedesc-mwcategory-sortkey-changed",
@@ -1731,7 +1811,6 @@
 				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineWikitextWidget.js"
 			],
 			"styles": [
-				"modules/ve-mw/ce/styles/nodes/ve.ce.MWTransclusionNode.less",
 				"modules/ve-mw/ui/styles/dialogs/ve.ui.MWTransclusionDialog.less",
 				"modules/ve-mw/ui/styles/layouts/ve.ui.MWTwoPaneTransclusionDialogLayout.less",
 				"modules/ve-mw/ui/styles/pages/ve.ui.MWTransclusionContentPage.less",
@@ -1760,8 +1839,12 @@
 				"mediawiki.widgets.UserInputWidget"
 			],
 			"messages": [
+				"comma-separator",
 				"quotation-marks",
 				"redirectedfrom",
+				"ooui-outline-control-move-up",
+				"ooui-outline-control-move-down",
+				"ooui-outline-control-remove",
 				"visualeditor-changedesc-mwtransclusion",
 				"visualeditor-dialog-template-title",
 				"visualeditor-dialog-transclusion-action-save",
@@ -1831,8 +1914,6 @@
 				"visualeditor-dialog-transclusion-wikitext-widget-aria-selected",
 				"visualeditor-dialog-transclusion-wikitext-widget-aria-selected-single",
 				"visualeditor-dialogbutton-template-tooltip",
-				"visualeditor-expandable-less",
-				"visualeditor-expandable-more",
 				"visualeditor-template-sandbox-subpage"
 			],
 			"factory": "MediaWiki\\Extension\\VisualEditor\\VisualEditorDataModule::addOptional",
@@ -1845,14 +1926,10 @@
 			}
 		},
 		"treeDiffer": {
+			"@todo": "This could be loaded in veModules if we can remove treeDiffer-global.js",
 			"scripts": [
 				"lib/ve/lib/treeDiffer/treeDiffer-dist.js",
 				"modules/ve-mw/treeDiffer-global.js"
-			]
-		},
-		"diffMatchPatch": {
-			"scripts": [
-				"lib/ve/lib/diff-match-patch/diff_match_patch_uncompressed.js"
 			]
 		},
 		"ext.visualEditor.checkList": {
@@ -1871,6 +1948,7 @@
 		"ext.visualEditor.diffing": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\VisualEditorFileModule",
 			"veModules": [
+				"diffMatchPatch",
 				"visualEditor.diffing"
 			],
 			"group": "visualEditorA",
@@ -1887,8 +1965,7 @@
 			},
 			"dependencies": [
 				"ext.visualEditor.core",
-				"treeDiffer",
-				"diffMatchPatch"
+				"treeDiffer"
 			],
 			"messages": [
 				"visualeditor-changedesc-align",
@@ -1973,6 +2050,7 @@
 				"ext.visualEditor.core"
 			],
 			"messages": [
+				"comma-separator",
 				"visualeditor-changedesc-mwlanguagevariant",
 				"visualeditor-mwlanguagevariant-disabled",
 				"visualeditor-mwlanguagevariant-filter",
@@ -2060,7 +2138,10 @@
 				"ext.visualEditor.mediawiki"
 			],
 			"messages": [
+				"visualeditor-dialog-table-caption",
 				"visualeditor-generating-wikitext-progress",
+				"visualeditor-table-format-data",
+				"visualeditor-table-format-header",
 				"visualeditor-wikitextconvert-convert",
 				"visualeditor-wikitextconvert-message",
 				"visualeditor-wikitextconvert-title"
@@ -2093,6 +2174,7 @@
 				"mediawiki.page.gallery.styles"
 			],
 			"messages": [
+				"visualeditor-dialog-media-alttext-checkbox",
 				"visualeditor-dialog-media-alttext-section",
 				"visualeditor-dialog-media-content-description-link",
 				"visualeditor-dialog-media-content-filename",
@@ -2219,6 +2301,7 @@
 			"modules/ve-mw/tests/dm/nodes/ve.dm.MWTransclusionNode.test.js",
 			"lib/ve/tests/dm/ve.dm.Document.test.js",
 			"modules/ve-mw/tests/dm/ve.dm.Document.test.js",
+			"lib/ve/tests/dm/ve.dm.TextFinder.test.js",
 			"lib/ve/tests/dm/ve.dm.HashValueStore.test.js",
 			"lib/ve/tests/dm/ve.dm.InternalList.test.js",
 			"lib/ve/tests/dm/ve.dm.InternalListNodeGroup.test.js",
@@ -2277,7 +2360,10 @@
 			"lib/ve/tests/init/ve.init.Target.test.js",
 			"lib/ve/tests/init/ve.init.ConflictableStorage.test.js",
 			"lib/ve/tests/ui/dialogs/ve.ui.FindAndReplaceDialog.test.js",
+			"lib/ve/tests/ui/dialogs/ve.ui.CommandHelpDialog.test.js",
+			"lib/ve/tests/ui/dialogs/ve.ui.TableDialog.test.js",
 			"lib/ve/tests/ui/ve.ui.Trigger.test.js",
+			"lib/ve/tests/ui/ve.ui.TriggerRegistry.test.js",
 			"lib/ve/tests/ui/ve.ui.Sequence.test.js",
 			"lib/ve/tests/ui/ve.ui.DiffElement.test.js",
 			"lib/ve/tests/ui/ve.ui.PreviewElement.test.js",
@@ -2300,7 +2386,11 @@
 			"modules/ve-mw/tests/ui/datatransferhandlers/ve.ui.UrlStringTransferHandler.test.js",
 			"modules/ve-mw/tests/ui/dialogs/ve.ui.MWTransclusionDialog.test.js",
 			"modules/ve-mw/tests/init/targets/ve.init.mw.DesktopArticleTarget.test.js",
+			"modules/ve-mw/tests/init/targets/ve.init.mw.ArticleTarget.test.js",
 			"lib/ve/tests/ui/inspectors/ve.ui.FragmentInspector.test.js",
+			"lib/ve/tests/ui/inspectors/ve.ui.LinkAnnotationInspector.test.js",
+			"lib/ve/tests/ui/inspectors/ve.ui.CommentInspector.test.js",
+			"lib/ve/tests/ui/inspectors/ve.ui.LanguageInspector.test.js",
 			"lib/ve/tests/ui/dialogs/ve.ui.FindAndReplaceDialog.test.js",
 			"modules/ve-mw/tests/ui/inspectors/ve.ui.FragmentInspector.test.js",
 			"modules/ve-mw/tests/ui/layouts/ve.ui.MWTwoPaneTransclusionDialogLayout.test.js",
@@ -2355,10 +2445,21 @@
 			"lib/ve/src/ve.freeze.js",
 			"lib/ve/rebaser/src/dm/ve.dm.RebaseServer.js",
 			"lib/ve/tests/dm/ve.dm.TestRebaseClient.js",
-			"lib/ve/tests/dm/ve.dm.TestRebaseServer.js"
+			"lib/ve/tests/dm/ve.dm.TestRebaseServer.js",
+			"editcheck/modules/tests/utils.js",
+			"editcheck/modules/tests/BaseEditCheck.test.js",
+			"editcheck/modules/tests/EditCheckAction.test.js",
+			"editcheck/modules/tests/EditCheckFactory.test.js",
+			"editcheck/modules/tests/PasteCheck.test.js",
+			"editcheck/modules/tests/YearLinkEditCheck.test.js",
+			"editcheck/modules/tests/HeadingLevelEditCheck.test.js",
+			"editcheck/modules/tests/DoubleBoldEditCheck.test.js",
+			"editcheck/modules/tests/DuplicateLinkEditCheck.test.js",
+			"editcheck/modules/tests/FakeHeadingEditCheck.test.js",
+			"editcheck/modules/tests/TextMatchEditCheck.test.js",
+			"editcheck/modules/tests/ImageCaptionEditCheck.test.js"
 		],
 		"dependencies": [
-			"unicodejs",
 			"ext.visualEditor.core",
 			"ext.visualEditor.mwcore",
 			"ext.visualEditor.mwformatting",
@@ -2372,8 +2473,21 @@
 			"ext.visualEditor.desktopArticleTarget.init",
 			"ext.visualEditor.desktopArticleTarget",
 			"ext.visualEditor.core.mobile",
+			"ext.visualEditor.editCheck",
+			"ext.visualEditor.editCheck.checks",
 			"ext.visualEditor.rebase"
-		]
+		],
+		"factory": "MediaWiki\\Extension\\VisualEditor\\VisualEditorDataModule::addOptional",
+		"optional": {
+			"Cite": {
+				"scripts": [
+					"editcheck/modules/tests/AddReferenceEditCheck.test.js"
+				],
+				"dependencies": [
+					"ext.cite.visualEditor"
+				]
+			}
+		}
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
@@ -2392,10 +2506,18 @@
 		"visualeditor-hidebetawelcome": 0,
 		"visualeditor-hidetabdialog": 0,
 		"visualeditor-newwikitext": 0,
-		"visualeditor-tabs": "remember-last"
+		"visualeditor-tabs": "remember-last",
+		"visualeditor-editcheck-suggestions-toggle": 1
 	},
 	"SpecialPages": {
-		"CollabPad": "MediaWiki\\Extension\\VisualEditor\\SpecialCollabPad"
+		"CollabPad": "MediaWiki\\Extension\\VisualEditor\\SpecialCollabPad",
+		"EditChecks": {
+			"class": "MediaWiki\\Extension\\VisualEditor\\SpecialEditChecks",
+			"services": [
+				"MainConfig",
+				"ConfigFactory"
+			]
+		}
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\VisualEditor\\": "includes/",

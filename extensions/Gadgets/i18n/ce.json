@@ -66,5 +66,7 @@
 	"gadgets-validate-invaliddependencies": "ХӀара {{PLURAL:$2|дозуш хилар|дозуш хилар дац}}: $1.",
 	"gadgets-validate-deprecateddependencies": "ХӀара {{PLURAL:$2|дозуш хилар|дозуш хиларш}} ширделла ду: $1.",
 	"gadgets-supports-urlload": "Гаджето гӀо до URL чохь <code>?withgadget</code> параметр лелош, чуйаккхарна.",
-	"gadgets-hidden": "ХӀара гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden къайлаха] йу, и бохург ду иза гойтур йац нисдаран гӀирсан агӀонан тӀехь."
+	"gadgets-hidden": "ХӀара гаджет [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden къайлаха] йу, и бохург ду иза гойтур йац нисдаран гӀирсан агӀонан тӀехь.",
+	"gadgets-subpage-invalid": "Нийса йоцу бухара агӀо «<nowiki>$1</nowiki>»",
+	"gadgets-subpage-toofewparams": "Бухара агӀонан параметраш тоьуш йац (гӀалате хьажорг)."
 }

@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.53.0
+ * OOUI v0.53.2
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2025 OOUI Team and other contributors.
+ * Copyright 2011–2026 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2025-09-03T22:03:24Z
+ * Date: 2026-04-21T12:46:11Z
  */
 .oo-ui-icon-arrowDown {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowDown.svg);
@@ -124,6 +124,9 @@
 .oo-ui-icon-infoFilled:lang(ar) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/lightbulb.svg);
 }
+.oo-ui-icon-merge {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/merge-ltr.svg);
+}
 .oo-ui-icon-qrCode {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/qrCode.svg);
 }
@@ -138,6 +141,9 @@
 }
 .oo-ui-icon-tag {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/tag-ltr.svg);
+}
+.oo-ui-icon-update {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/update-ltr.svg);
 }
 .oo-ui-icon-upload {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/upload.svg);
@@ -965,6 +971,12 @@
 }
 .oo-ui-icon-userAvatarOutline {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/userAvatarOutline.svg);
+}
+.oo-ui-icon-userBlocked {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userBlocked.svg);
+}
+.oo-ui-icon-userContributions {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userContributions-ltr.svg);
 }
 .oo-ui-icon-userGroup {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/userGroup-ltr.svg);

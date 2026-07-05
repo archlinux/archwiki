@@ -22,6 +22,7 @@
 	"cdx-table-pager-button-last-page": "Poslednja strona",
 	"cdx-table-pager-button-next-page": "Přichodna strona",
 	"cdx-table-pager-button-prev-page": "Předchadna strona",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 zapisk|$1 zapiskaj|$1 zapiski|$1 zapiskow}}",
 	"cdx-table-pager-items-per-page-default": "Wuslědki na stronu",
 	"cdx-table-pagination-status-message-determinate-long": "Pokazuja so wuslědki $1-$2 z $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 z $3",

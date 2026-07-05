@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Avengium",
+			"Canaan9801",
+			"Fitoschido",
+			"Jackiezelaya",
+			"MarcoAurelio"
+		]
+	},
+	"oathauth-webauthn-module-label": "Autenticación web (WebAuthn)",
+	"oathauth-webauthn-javascript-required": "Debe habilitar JavaScript en su navegador para utilizar una clave de seguridad.",
+	"oathauth-webauthn-ui-login-prompt": "Por favor toque su clave de seguridad o siga las instrucciones del navegador.",
+	"oathauth-webauthn-ui-add-key": "Añadir clave",
+	"oathauth-webauthn-error-browser-unsupported": "Este navegador no admite la autenticación con clave de seguridad o no está disponible para este sitio web. Inténtelo con otro navegador. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Leer más]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Este navegador no admite la autenticación de clave de seguridad o no está disponible para este sitio web.",
+	"oathauth-webauthn-error-auth-generic": "Se interrumpió el proceso de autenticación. Por favor reinicia el proceso.",
+	"oathauth-webauthn-error-reg-generic": "No se pudo verificar tu clave. Por favor reinicia el proceso de registro.",
+	"oathauth-webauthn-registered-keys-section-name": "Claves registradas",
+	"oathauth-webauthn-ui-remove-key": "Eliminar",
+	"oathauth-webauthn-error-module-not-enabled": "El módulo «$1» no está activado para {{GENDER:$2|el usuario|la usuaria}} «$2»",
+	"oathauth-webauthn-error-verification-failed": "Fallo en la verificación",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|El usuario|La usuaria}} \"$1\" no puede registrar una credencial nueva",
+	"oathauth-webauthn-error-invalid-new-key": "La nueva clave devuelta por el módulo no es del tipo requerido",
+	"oathauth-webauthn-error-registration-failed": "Fallo en el registro de una nueva clave",
+	"oathauth-webauthn-ui-key-register-help": "Eligir el apodo para tu clave",
+	"oathauth-webauthn-error-cannot-remove-key": "La clave no puede ser eliminada",
+	"oathauth-webauthn-error-get-authinfo-fail": "No se pudo recuperar la información de autenticación.",
+	"oathauth-webauthn-add-key-section-name": "Registrar nueva clave de seguridad",
+	"oathauth-webauthn-error-get-reginfo-fail": "No se pudo recuperar la información de registro.",
+	"oathauth-webauthn-module-description": "WebAuthn se encuentra en fase experimental. Actualmente no ofrece opciones de recuperación para dispositivos de autenticación perdidos o dañados. \n\n[https://en.wikipedia.org/wiki/WebAuthn Más información sobre WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Recargar página"
+}

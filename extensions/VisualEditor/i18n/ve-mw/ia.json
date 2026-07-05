@@ -5,6 +5,7 @@
 			"McDutchie"
 		]
 	},
+	"collabpad-disabled": "CollabPad non es activate sur iste wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importate de $1",
 	"collabpad": "CollabPad",
@@ -226,6 +227,7 @@
 	"visualeditor-educationpopup-dismiss": "Ben, io comprende",
 	"visualeditor-expandable-less": "Minus",
 	"visualeditor-expandable-more": "Plus",
+	"visualeditor-expandableerror-toggle": "Commutar visibilitate",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Titulo del pagina",
 	"visualeditor-formatdropdown-format-mw-heading2": "Titulo",
@@ -233,6 +235,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Subtitulo 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Subtitulo 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Subtitulo 4",
+	"visualeditor-fullpage-switch-label": "Modificar tote le pagina",
 	"visualeditor-generating-wikitext-progress": "Generante wikitexto",
 	"visualeditor-includes-noinclude-start": "Initio del contento excludite de extractos",
 	"visualeditor-includes-noinclude-end": "Fin del contento excludite de extractos",

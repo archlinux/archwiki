@@ -122,9 +122,7 @@ class EditTest extends MaintenanceBaseTestCase {
 		$testUser = $this->getTestUser()->getUser();
 		$testPage = $this->getExistingTestPage();
 		// Prevent all edits using a hook.
-		$this->setTemporaryHook( 'MultiContentSave', static function () {
-			return false;
-		} );
+		$this->setTemporaryHook( 'MultiContentSave', static fn () => false );
 		$this->commonTextExecute(
 			[ 'user' => $testUser->getName() ],
 			$testPage->getTitle()->getPrefixedText(),

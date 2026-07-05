@@ -10,8 +10,8 @@ class MessageLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'plain' => [ $this, 'messagePlain' ],
-			'check' => [ $this, 'messageCheck' ],
+			'plain' => $this->messagePlain( ... ),
+			'check' => $this->messageCheck( ... ),
 		];
 
 		// Get the correct default language from the parser
@@ -36,6 +36,7 @@ class MessageLibrary extends LibraryBase {
 	 *  - 'params': (array) Parameters for the Message. May be omitted if $setParams is false.
 	 * @param bool $setParams Whether to use $data['params']
 	 * @return Message
+	 * @throws LuaError
 	 */
 	private function makeMessage( $data, $setParams ) {
 		if ( isset( $data['rawMessage'] ) ) {
@@ -68,23 +69,22 @@ class MessageLibrary extends LibraryBase {
 
 	/**
 	 * Handler for messagePlain
-	 * @internal
 	 * @param array $data
 	 * @return string[]
 	 */
-	public function messagePlain( $data ) {
+	private function messagePlain( $data ) {
 		$msg = $this->makeMessage( $data, true );
 		return [ $msg->plain() ];
 	}
 
 	/**
 	 * Handler for messageCheck
-	 * @internal
 	 * @param string $what
 	 * @param array $data
 	 * @return bool[]
+	 * @throws LuaError
 	 */
-	public function messageCheck( $what, $data ) {
+	private function messageCheck( $what, $data ) {
 		if ( !in_array( $what, [ 'exists', 'isBlank', 'isDisabled' ] ) ) {
 			throw new LuaError( "invalid what for 'messageCheck'" );
 		}

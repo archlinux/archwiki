@@ -11,8 +11,8 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\User\UserEditTracker;
-use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
@@ -52,7 +52,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 			$throttleParams + [ 'groups' => [ 'user' ], 'count' => 3, 'period' => 60, 'id' => 1 ],
 			$cache ?? new HashBagOStuff(),
 			$editTracker ?? $this->createMock( UserEditTracker::class ),
-			$this->createMock( UserFactory::class ),
+			$this->createMock( UserRegistrationLookup::class ),
 			new NullLogger(),
 			false,
 			$globalFilter ? 'foo-db' : null

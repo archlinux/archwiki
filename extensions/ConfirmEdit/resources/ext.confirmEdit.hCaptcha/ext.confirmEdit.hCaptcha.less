@@ -7,6 +7,44 @@
 	padding-bottom: @spacing-100;
 }
 
+.ext-confirmEdit-captcha-privacy-policy {
+	font-size: @size-100;
+	margin-top: @spacing-50;
+}
+
+.ext-confirmEdit-hCaptcha-backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: @background-color-backdrop-light;
+	// Above dialog content (z-index 2-3) but below the challenge container
+	z-index: 5;
+}
+
+.ext-confirmEdit-hCaptcha-challengeContainer {
+	// Centered fixed overlay for the hCaptcha challenge iframe,
+	// placed outside the dialog to avoid overflow:hidden clipping.
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// Above the dialog (OOUI windows use z-index ~100+) and the backdrop
+	z-index: 1001;
+	// Allow clicks to pass through to the dialog beneath; the challenge
+	// iframe inside will receive its own pointer events.
+	pointer-events: none;
+
+	> * {
+		pointer-events: auto;
+	}
+}
+
 .ve-ui-mwSaveDialog-savePanel {
 	.hcaptcha-widget-container-hide-icon {
 		.oo-ui-iconElement-icon {

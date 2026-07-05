@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hamilton Abreu",
+			"ItsaMeSandy"
+		]
+	},
+	"oathauth-webauthn-module-label": "Autenticação da internet (WebAuthn)",
+	"oathauth-webauthn-ui-login-prompt": "Toque no seu dispositivo de verificação ou siga as instruções do ''browser'', por favor",
+	"oathauth-webauthn-ui-add-key": "Adicionar chave",
+	"oathauth-webauthn-error-browser-unsupported": "Este ''browser'' não suporta WebAuthentication ou ela não está disponível para este ''site'' da internet. Tente com um ''browser'' diferente, por favor. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Saiba mais]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Este ''browser'' não suporta WebAuthentication ou ela não está disponível para este ''site'' da internet.",
+	"oathauth-webauthn-error-auth-generic": "O processo de autenticação foi interrompido. Reinicie o processo de autenticação, por favor",
+	"oathauth-webauthn-error-reg-generic": "Não foi possível verificar a sua chave. Reinicie o processo de registo, por favor",
+	"oathauth-webauthn-registered-keys-section-name": "Chaves registadas",
+	"oathauth-webauthn-ui-remove-key": "Remover",
+	"oathauth-webauthn-error-module-not-enabled": "O módulo \"$1\" não está ativado para {{GENDER:$2|o utilizador|a utilizadora}} \"$2\"",
+	"oathauth-webauthn-error-verification-failed": "A verificação falhou",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|O utilizador|A utilizadora}} \"$1\" não pode registar uma nova credencial",
+	"oathauth-webauthn-error-invalid-new-key": "A chave nova devolvida pelo módulo não é do tipo obrigatório",
+	"oathauth-webauthn-error-registration-failed": "O registo da chave nova falhou",
+	"oathauth-webauthn-ui-key-register-help": "Escolha o apelido da sua chave",
+	"oathauth-webauthn-error-cannot-remove-key": "A chave não pode ser removida",
+	"oathauth-webauthn-error-get-authinfo-fail": "Não foi possível obter as informações de autenticação.",
+	"oathauth-webauthn-add-key-section-name": "Registar nova chave WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "Não foi possível obter as informações de registo.",
+	"oathauth-webauthn-module-description": "WebAuthn encontra-se num estado experimental. Actualmente não há opção de recuperação para dispositivos de autenticação perdidos ou danificados para este método.\n\n[https://em.wikipedia.org/wiki/WebAuthn Saiba mais sobre WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Recarregar a página",
+	"oathauth-webauthn-authentication-info-label": "Dados de autenticação",
+	"oathauth-webauthn-authentication-info-help": "Dados de autenticação passados ao cliente para obtenção de credenciais",
+	"oathauth-webauthn-credential-label": "Credencial do utilizador",
+	"oathauth-webauthn-credential-help": "Credencial do utilizador baseada nos dados de autenticação"
+}

@@ -3,6 +3,7 @@
 		"authors": [
 			"Ant176",
 			"Chqaz",
+			"Cookie4782",
 			"Darklanlan",
 			"Fryed-peach",
 			"Miya",
@@ -15,8 +16,7 @@
 			"Vigorous action",
 			"Whym",
 			"おはぐろ蜻蛉",
-			"아라",
-			"Cookie4782"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "編集チェックは新しいコンテンツがページに追加されたと判断した",
@@ -31,6 +31,10 @@
 	"tag-editcheck-tone-shown-description": "編集チェックは追加されたコンテンツに語調の調整が必要な箇所があると判断したため、UIが表示された",
 	"tag-editcheck-paste-shown": "編集チェック（転写）が表示",
 	"tag-editcheck-paste-shown-description": "編集チェックは編集者が貼り付けたコンテンツについて説明を求め、そのコンテンツは除去されたか、あるいは問題のないものであると確認された",
+	"tag-editsuggestion-seen": "編集のおすすめが表示",
+	"tag-editsuggestion-seen-description": "1つ以上の編集のおすすめが利用者に表示された可能性が高い",
+	"tag-editsuggestion-used": "編集のおすすめを実行",
+	"tag-editsuggestion-used-description": "1つ以上のおすすめされた編集が利用者によって実行された可能性が高い",
 	"tag-visualeditor": "ビジュアルエディター",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ビジュアルエディター]]を使用した編集",
 	"tag-visualeditor-needcheck": "ビジュアルエディター: 要確認",

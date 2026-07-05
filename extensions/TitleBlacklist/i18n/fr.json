@@ -30,7 +30,6 @@
 	"titleblacklist-forbidden-move": "La page intitulée « $2 » ne peut être déplacée vers « $3 » parce que ce titre a été interdit à la création. Il correspond à l’entrée suivante de la liste des titres interdits : <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Le fichier intitulé « $2 » est interdit à la création.\nIl correspond à l’entrée suivante de la liste des titres interdits : <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Le nom d’utilisateur « $2 » a été banni à la création.\nIl correspond à l’entrée suivante de la liste des titres interdits : <code>$1</code>",
-	"titleblacklist-invalid": "L{{PLURAL:$1|a|es}} ligne{{PLURAL:$1||s}} suivante{{PLURAL:$1||s}} dans la liste des titres interdits n{{PLURAL:$1|’es|e son}}t pas valide{{PLURAL:$1||s}} ; veuillez l{{PLURAL:$1|l|ls}} corriger avant de publier :",
 	"titleblacklist-override": "Passer outre la liste des titres interdits si cela correspond",
 	"titleblacklist-override-help": "Les utilisateurs avec des privilèges suffisants peuvent choisir d’ignorer les vérifications de la liste des titres interdits.",
 	"titleblacklist-warning": "<strong>Attention : cette page ne peut être modifiée que par des administrateurs et autres utilisateurs avec le droit <code>tboverride</code>, parce qu’elle correspond à l’entrée suivante de la liste des titres interdits :</strong><br /><code>$1</code>",

@@ -1,19 +1,24 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
 use CentralAuthTestUser;
 use GrowthExperiments\UserImpact\ComputedUserImpactLookup;
 use GrowthExperiments\UserImpact\UserImpact;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
-use MediaWiki\CheckUser\Services\CheckUserUserInfoCardService;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
+use MediaWiki\Extension\CheckUser\Services\CheckUserUserInfoCardService;
+use MediaWiki\Extension\CheckUser\Services\UserInfoCardBlockStatusCache;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model\CaseStatus;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Extension\GlobalBlocking\GlobalBlockingServices;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogPage;
@@ -31,12 +36,13 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group Database
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\CheckUserUserInfoCardService
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserUserInfoCardService
  */
 class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 
 	use CheckUserTempUserTestTrait;
 	use MockAuthorityTrait;
+	use SuggestedInvestigationsTestTrait;
 
 	private static User $tempUser1;
 	private static User $tempUser2;
@@ -103,7 +109,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$tempUserCreator = $this->getServiceContainer()->getTempUserCreator();
 		$result1 = $tempUserCreator->create( '~check-user-test-1', new FauxRequest() );
 		$result2 = $tempUserCreator->create( '~check-user-test-2', new FauxRequest() );
-		$this->assertTrue( $result1->isGood() && $result2->isGood() );
+		$this->assertStatusGood( $result1 );
+		$this->assertStatusGood( $result2 );
 
 		self::$tempUser1 = $result1->getUser();
 		self::$tempUser2 = $result2->getUser();
@@ -147,7 +154,9 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 				CheckUserUserInfoCardService::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
-			$services->getCentralIdLookup()
+			$services->getCentralIdLookup(),
+			$overrides[ 'UserInfoCardBlockStatusCache' ] ??
+				$services->get( 'CheckUserUserInfoCardBlockStatusCache' )
 		);
 	}
 
@@ -189,6 +198,7 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $this->getServiceContainer()->getGenderCache()->getGenderOf( $user ), $userInfo['gender'] );
 		$this->assertArrayHasKey( 'localRegistration', $userInfo );
 		$this->assertArrayHasKey( 'firstRegistration', $userInfo );
+		$this->assertFalse( $userInfo['hasLocalBlockGlobalBlockOrLock'] );
 		$this->assertSame( '<strong>Groups</strong>: Bureaucrats, Administrators', $userInfo['groups'] );
 		$this->assertSame(
 			[
@@ -426,11 +436,13 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 				CheckUserUserInfoCardService::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
-			$services->getCentralIdLookup()
+			$services->getCentralIdLookup(),
+			$services->get( 'CheckUserUserInfoCardBlockStatusCache' )
 		);
 		$targetUser = $this->getTestUser()->getUser();
 		$userInfo = $infoCardService->getUserInfo(
-			$this->getTestUser()->getAuthority(), $targetUser
+			$this->getTestUser()->getAuthority(),
+			$targetUser
 		);
 		$this->assertArrayContains( [
 			'name' => $targetUser->getName(),
@@ -443,6 +455,32 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayNotHasKey( 'thanksGiven', $userInfo );
 	}
 
+	public function testGetUserInfoHasLocalBlockGlobalBlockOrLockWhenBlocked(): void {
+		$this->markTestSkippedIfExtensionNotLoaded( 'GrowthExperiments' );
+		$targetUser = self::$testUser;
+		$mockCache = $this->createMock( UserInfoCardBlockStatusCache::class );
+		$mockCache->method( 'isIndefinitelyBlockedOrLocked' )->willReturn( true );
+
+		$userInfo = $this->getObjectUnderTest( [
+			'UserInfoCardBlockStatusCache' => $mockCache,
+		] )->getUserInfo( $this->mockRegisteredUltimateAuthority(), $targetUser );
+
+		$this->assertTrue( $userInfo['hasLocalBlockGlobalBlockOrLock'] );
+	}
+
+	public function testGetUserInfoHasLocalBlockGlobalBlockOrLockWhenNotBlocked(): void {
+		$this->markTestSkippedIfExtensionNotLoaded( 'GrowthExperiments' );
+		$targetUser = self::$testUser;
+		$mockCache = $this->createMock( UserInfoCardBlockStatusCache::class );
+		$mockCache->method( 'isIndefinitelyBlockedOrLocked' )->willReturn( false );
+
+		$userInfo = $this->getObjectUnderTest( [
+			'UserInfoCardBlockStatusCache' => $mockCache,
+		] )->getUserInfo( $this->mockRegisteredUltimateAuthority(), $targetUser );
+
+		$this->assertFalse( $userInfo['hasLocalBlockGlobalBlockOrLock'] );
+	}
+
 	public function testCheckUserChecksDataPoint() {
 		// CheckUserUserInfoCardService has dependencies provided by the GrowthExperiments extension.
 		$this->markTestSkippedIfExtensionNotLoaded( 'GrowthExperiments' );
@@ -451,7 +489,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			0,
 			$this->getObjectUnderTest()->getUserInfo(
-				$cuUserAuthority, $user
+				$cuUserAuthority,
+				$user
 			)['checkUserChecks']
 		);
 		$timestamp = (int)wfTimestamp( TS_UNIX, '20250611000000' );
@@ -482,7 +521,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 			->execute();
 
 		$result = $this->getObjectUnderTest()->getUserInfo(
-			$cuUserAuthority, $user
+			$cuUserAuthority,
+			$user
 		);
 		$this->assertSame(
 			2,
@@ -497,7 +537,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		);
 		// User without checkuser-log permission should not see any checkUser related output.
 		$result = $this->getObjectUnderTest()->getUserInfo(
-			$user, $user
+			$user,
+			$user
 		);
 		$this->assertArrayNotHasKey(
 			'checkuserChecks',
@@ -507,6 +548,65 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 			'checkUserLastCheck',
 			$result
 		);
+	}
+
+	/** @dataProvider provideSuggestedInvestigationsCaseCount */
+	public function testSuggestedInvestigationsCaseCount(
+		bool $featureEnabled,
+		bool $hasPermission,
+		int $expectedCaseCount,
+		bool $expectKeyPresent
+	) {
+		$this->enableSuggestedInvestigations();
+
+		$user = $this->getTestUser()->getUser();
+		$permissions = $hasPermission ? [ 'checkuser-suggested-investigations' ] : [];
+		$authority = $this->mockRegisteredAuthorityWithPermissions( $permissions );
+
+		/** @var SuggestedInvestigationsCaseManagerService $caseManager */
+		$caseManager = $this->getServiceContainer()->get( 'CheckUserSuggestedInvestigationsCaseManager' );
+		$signal = SuggestedInvestigationsSignalMatchResult::newPositiveResult( 'test', 'value', false );
+
+		$caseManager->createCase( [ $user ], [ $signal ] );
+
+		$resolvedCaseId = $caseManager->createCase( [ $user ], [ $signal ] );
+		$caseManager->setCaseStatus( $resolvedCaseId, CaseStatus::Resolved, 'resolved' );
+
+		if ( !$featureEnabled ) {
+			$this->disableSuggestedInvestigations();
+		}
+
+		$result = $this->getObjectUnderTest()->getUserInfo( $authority, $user );
+
+		if ( $expectKeyPresent ) {
+			$this->assertArrayHasKey( 'suggestedInvestigationsCaseCount', $result );
+			$this->assertSame( $expectedCaseCount, $result['suggestedInvestigationsCaseCount'] );
+		} else {
+			$this->assertArrayNotHasKey( 'suggestedInvestigationsCaseCount', $result );
+		}
+	}
+
+	public static function provideSuggestedInvestigationsCaseCount(): array {
+		return [
+			'Feature enabled, user has permission' => [
+				'featureEnabled' => true,
+				'hasPermission' => true,
+				'expectedCaseCount' => 2,
+				'expectKeyPresent' => true,
+			],
+			'Feature disabled, user has permission' => [
+				'featureEnabled' => false,
+				'hasPermission' => true,
+				'expectedCaseCount' => 0,
+				'expectKeyPresent' => false,
+			],
+			'Feature enabled, user lacks permission' => [
+				'featureEnabled' => true,
+				'hasPermission' => false,
+				'expectedCaseCount' => 0,
+				'expectKeyPresent' => false,
+			],
+		];
 	}
 
 	/** @dataProvider provideBlockLogDelete */
@@ -536,7 +636,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 			->caller( __METHOD__ )
 			->execute();
 
-		$this->assertSame( $canSee ? 1 : 0,
+		$this->assertSame(
+			$canSee ? 1 : 0,
 			$this->getObjectUnderTest()->getUserInfo( $user, $user )['pastBlocksOnLocalWiki']
 		);
 	}
@@ -583,7 +684,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			0,
 			$this->getObjectUnderTest()->getUserInfo(
-				$user, $user
+				$user,
+				$user
 			)['pastBlocksOnLocalWiki']
 		);
 		$this->getDb()->newInsertQueryBuilder()
@@ -604,7 +706,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			$canSee ? 1 : 0,
 			$this->getObjectUnderTest()->getUserInfo(
-				$user, $user
+				$user,
+				$user
 			)['pastBlocksOnLocalWiki'],
 			'Testing block in suppress log'
 		);
@@ -627,7 +730,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			$canSee ? 2 : 1,
 			$this->getObjectUnderTest()->getUserInfo(
-				$user, $user
+				$user,
+				$user
 			)['pastBlocksOnLocalWiki'],
 			'Testing block in both logs'
 		);
@@ -673,13 +777,14 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$userOptionsManager->setOption(
 			$user,
 			'checkuser-temporary-account-enable',
-		'1'
+			'1'
 		);
 		$userOptionsManager->saveOptions( $user );
 		$result = $this->getObjectUnderTest( [
 			'CheckUserGlobalContributionsLookup' => $this->mockContributionsLookup(),
 		] )->getUserInfo(
-			$authority, $user
+			$authority,
+			$user
 		);
 		$this->assertSame( true, $result['canAccessTemporaryAccountIpAddresses'] );
 
@@ -687,9 +792,34 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		$result = $this->getObjectUnderTest( [
 			'CheckUserGlobalContributionsLookup' => $this->mockContributionsLookup(),
 		] )->getUserInfo(
-			$newUser, $user
+			$newUser,
+			$user
 		);
 		$this->assertSame( false, $result['canAccessTemporaryAccountIpAddresses'] );
+	}
+
+	public function testCanAccessTemporaryAccountIPAddressesWhenTempAccountsNotKnown(): void {
+		$this->setGroupPermissions( 'sysop', 'checkuser-temporary-account-no-preference', true );
+		$user = $this->getTestSysop()->getUser();
+
+		$this->disableAutoCreateTempUser( [ 'known' => false ] );
+
+		$objectUnderTest = $this->getObjectUnderTest( [
+			'CheckUserGlobalContributionsLookup' => $this->mockContributionsLookup(),
+		] );
+		$result = $objectUnderTest->getUserInfo( $user, $user );
+		$this->assertSame( false, $result['canAccessTemporaryAccountIpAddresses'] );
+	}
+
+	public function testAuthorityGetsExactAccountsOnIPCount() {
+		$ipLookup = $this->createNoOpMock( CheckUserTemporaryAccountsByIPLookup::class );
+		$userInfoCardService = $this->getObjectUnderTest( [
+			'CheckUserTemporaryAccountsByIPLookup' => $ipLookup,
+		] );
+		$userInfoCardService->getUserInfo(
+			$this->getTestSysop()->getAuthority(),
+			self::$tempUser1
+		);
 	}
 
 	/**
@@ -788,7 +918,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		] );
 
 		$userInfo1 = $sut->getUserInfo( $performer, self::$tempUser1 );
-		$this->assertArrayContains( [
+		$this->assertArrayContains(
+			[
 				'name' => self::$tempUser1->getUser()->getName(),
 				'groups' => '',
 				'numberOfIpReveals' => 2,
@@ -798,7 +929,8 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$userInfo2 = $sut->getUserInfo( $performer, self::$tempUser2 );
-		$this->assertArrayContains( [
+		$this->assertArrayContains(
+			[
 				'name' => self::$tempUser2->getUser()->getName(),
 				'groups' => '',
 				'numberOfIpReveals' => 3,
@@ -1103,12 +1235,9 @@ class CheckUserUserInfoCardServiceTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testAccountsOnIPsCountNotShownForRegisteredUsers() {
-		$checkUserTemporaryAccountsByIPLookup = $this->createMock( CheckUserTemporaryAccountsByIPLookup::class );
-		$checkUserTemporaryAccountsByIPLookup
-			->expects( $this->never() )
-			->method( 'getBucketedCount' );
+		$ipLookup = $this->createNoOpMock( CheckUserTemporaryAccountsByIPLookup::class );
 		$userInfoCardService = $this->getObjectUnderTest( [
-			'CheckUserTemporaryAccountsByIPLookup' => $checkUserTemporaryAccountsByIPLookup,
+			'CheckUserTemporaryAccountsByIPLookup' => $ipLookup,
 		] );
 		$userInfoCardService->getUserInfo(
 			$this->getTestSysop()->getAuthority(),

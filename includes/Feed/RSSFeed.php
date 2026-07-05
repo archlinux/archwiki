@@ -9,6 +9,8 @@
 
 namespace MediaWiki\Feed;
 
+use Wikimedia\Timestamp\TimestampFormat as TS;
+
 /**
  * Generate an RSS feed.
  *
@@ -24,16 +26,17 @@ class RSSFeed extends ChannelFeed {
 	 */
 	private function formatTime( $ts ) {
 		if ( $ts ) {
-			return gmdate( 'D, d M Y H:i:s \G\M\T', (int)wfTimestamp( TS_UNIX, $ts ) );
+			return gmdate( 'D, d M Y H:i:s \G\M\T', (int)wfTimestamp( TS::UNIX, $ts ) );
 		}
 		return null;
 	}
 
 	/**
 	 * Output an RSS 2.0 header
+	 * @inheritDoc
 	 */
-	public function outHeader() {
-		$this->outXmlHeader();
+	public function outputHeader( $output ): void {
+		$this->outputXmlHeader( $output );
 		// Manually escaping rather than letting Mustache do it because Mustache
 		// uses htmlentities, which does not work with XML
 		$templateParams = [
@@ -51,9 +54,9 @@ class RSSFeed extends ChannelFeed {
 
 	/**
 	 * Output an RSS 2.0 item
-	 * @param FeedItem $item Item to be output
+	 * @inheritDoc
 	 */
-	public function outItem( $item ) {
+	public function outputItem( FeedItem $item, $output ): void {
 		// Manually escaping rather than letting Mustache do it because Mustache
 		// uses htmlentities, which does not work with XML
 		$templateParams = [
@@ -79,8 +82,9 @@ class RSSFeed extends ChannelFeed {
 
 	/**
 	 * Output an RSS 2.0 footer
+	 * @inheritDoc
 	 */
-	public function outFooter() {
+	public function outputFooter( $output ): void {
 		print "</channel></rss>";
 	}
 }

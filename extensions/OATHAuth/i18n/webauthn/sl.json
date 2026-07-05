@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar",
+			"Upwinxp"
+		]
+	},
+	"oathauth-webauthn-module-label": "Varnostni ključ",
+	"oathauth-webauthn-javascript-required": "Za uporabo WebAuthn mora biti v vašem brskalniku omogočen JavaScript.",
+	"oathauth-webauthn-ui-login-prompt": "Dotaknite se naprave za preverjanje ali sledite navodilom v brskalniku.",
+	"oathauth-webauthn-ui-add-key": "Dodaj ključ",
+	"oathauth-webauthn-error-browser-unsupported": "Ta brskalnik ne podpira WebAuthentication ali ta ni na voljo za to spletno mesto. Poskusite z drugim brskalnikom. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Več o tem]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Ta brskalnik ne podpira WebAuthentication ali ta ni na voljo za to spletno mesto.",
+	"oathauth-webauthn-error-auth-generic": "Postopek avtentikacije je bil prekinjen. Začnite postopek avtentikacije znova.",
+	"oathauth-webauthn-error-reg-generic": "Vašega ključa ni bilo mogoče preveriti. Začnite postopek registracije znova.",
+	"oathauth-webauthn-registered-keys-section-name": "Registrirani ključi",
+	"oathauth-webauthn-ui-remove-key": "Odstrani",
+	"oathauth-webauthn-error-module-not-enabled": "Modul »$1« za {{GENDER:$2|uporabnika »$2«|uporabnico »$2«|uporabnika_co »$2«}} ni vklopljen.",
+	"oathauth-webauthn-error-verification-failed": "Preverjanje je spodletelo.",
+	"oathauth-webauthn-error-credentials-missing": "Poverilnice WebAuthn niso bile poslane.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Uporabnik »$1«|Uporabnica »$1«|Uporabnik_ca »$1«}} ne more registrirati nove poverilnice.",
+	"oathauth-webauthn-error-invalid-new-key": "Novi ključ, ki ga vrne modul, ni zahtevane vrste.",
+	"oathauth-webauthn-error-registration-failed": "Registracija novega ključa ni uspela.",
+	"oathauth-webauthn-ui-key-register-help": "Izberite vzdevek za svoj ključ:",
+	"oathauth-webauthn-error-cannot-remove-key": "Ključa ni mogoče odstraniti.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Aventikacijskih podatkov ni bilo mogoče pridobiti.",
+	"oathauth-webauthn-add-key-section-name": "Registracija novega ključa WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "Registracijskih podatkov ni bilo mogoče pridobiti.",
+	"oathauth-webauthn-module-description": "WebAuthn je v eksperimentalnem stanju. Trenutno ni za to metodo na voljo nobena obnovitvena možnost za izgubljene ali poškodovane avtentikacijske naprave.\n\n[https://sl.wikipedia.org/wiki/WebAuthn Več o WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Znova naloži stran",
+	"oathauth-webauthn-authentication-info-label": "Avtentikacijski podatki",
+	"oathauth-webauthn-authentication-info-help": "Avtentikacijski podatki, posredovani odjemalcu za pridobitev poverilnice",
+	"oathauth-webauthn-credential-label": "Uporabnikove poverilnice",
+	"oathauth-webauthn-credential-help": "Uporabnikova poverilnica na podlagi avtentikacijskih podatkov",
+	"oathauth-webauthn-add-security-key": "Dodaj varnostni ključ"
+}

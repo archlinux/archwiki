@@ -11,38 +11,17 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerStatus;
 class RunnerData {
 
 	/**
-	 * @var array<string,RuleCheckerStatus>
-	 */
-	private $matchedFilters;
-
-	/**
-	 * @var array[]
-	 * @phan-var array<string,array{time:float,conds:int,result:bool}>
-	 */
-	private $profilingData;
-
-	/** @var float */
-	private $totalRuntime;
-
-	/** @var int */
-	private $totalConditions;
-
-	/**
-	 * @param RuleCheckerStatus[] $matchedFilters
-	 * @param array[] $profilingData
+	 * @param array<string,RuleCheckerStatus> $matchedFilters
+	 * @param array<string,array{time: float, conds: int, result: bool}> $profilingData
 	 * @param float $totalRuntime
 	 * @param int $totalConditions
 	 */
 	public function __construct(
-		array $matchedFilters = [],
-		array $profilingData = [],
-		float $totalRuntime = 0.0,
-		int $totalConditions = 0
+		private array $matchedFilters = [],
+		private array $profilingData = [],
+		private float $totalRuntime = 0.0,
+		private int $totalConditions = 0
 	) {
-		$this->matchedFilters = $matchedFilters;
-		$this->profilingData = $profilingData;
-		$this->totalRuntime = $totalRuntime;
-		$this->totalConditions = $totalConditions;
 	}
 
 	/**
@@ -70,14 +49,11 @@ class RunnerData {
 
 	/**
 	 * Get information about filter matches in backwards compatible format
-	 * @return bool[]
-	 * @phan-return array<string,bool>
+	 * @return array<string,bool>
 	 */
 	public function getMatchesMap(): array {
 		return array_map(
-			static function ( $status ) {
-				return $status->getResult();
-			},
+			static fn ( RuleCheckerStatus $status ) => $status->getResult(),
 			$this->matchedFilters
 		);
 	}
@@ -113,15 +89,12 @@ class RunnerData {
 
 	/**
 	 * Serialize data for edit stash
-	 * @return array
-	 * @phan-return array{matches:array<string,array>,runtime:float,condCount:int,profiling:array}
+	 * @return array{matches:array<string,array>,runtime:float,condCount:int,profiling:array}
 	 */
 	public function toArray(): array {
 		return [
 			'matches' => array_map(
-				static function ( $status ) {
-					return $status->toArray();
-				},
+				static fn ( RuleCheckerStatus $status ) => $status->toArray(),
 				$this->matchedFilters
 			),
 			'profiling' => $this->profilingData,
@@ -137,7 +110,7 @@ class RunnerData {
 	 */
 	public static function fromArray( array $value ): self {
 		return new self(
-			array_map( [ RuleCheckerStatus::class, 'fromArray' ], $value['matches'] ),
+			array_map( RuleCheckerStatus::fromArray( ... ), $value['matches'] ),
 			$value['profiling'],
 			$value['runtime'],
 			$value['condCount']

@@ -130,8 +130,6 @@ QUnit.test( 'Test initOnLoad when there are temporary account user links with on
 	server.respond( ( request ) => {
 		if ( request.url.includes( '/logs/' ) ) {
 			request.respond( 200, { 'Content-Type': 'application/json' }, '{"ips":{"1":"127.0.0.2"}}' );
-		} else if ( request.url.includes( '/revisions/' ) ) {
-			request.respond( 200, { 'Content-Type': 'application/json' }, '{"ips":{"1":"127.0.0.1","2":"1.2.3.4"}}' );
 		} else if ( request.url.endsWith( '/checkuser/v0/batch-temporaryaccount' ) ) {
 			request.respond( 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 				'~1': {

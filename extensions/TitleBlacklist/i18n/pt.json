@@ -17,7 +17,6 @@
 	"titleblacklist-forbidden-move": "\"$2\" não pode ser movido para \"$3\" já que foi bloqueada a criação do título \"$3\".\nO título corresponde à seguinte entrada da lista de títulos interditos: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Foi bloqueada a criação de ficheiros com o nome \"$2\".\nO nome corresponde à seguinte entrada da lista de títulos interditos: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Foi bloqueada a criação de utilizadores com o nome \"$2\".\nO nome corresponde à seguinte entrada da lista de títulos interditos: <code>$1</code>",
-	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte linha da lista de títulos interditos é inválida; corrija-a|As seguintes linhas da lista de títulos interditos são inválidas; corrija-as}} antes de gravar, por favor:",
 	"titleblacklist-override": "Contornar a lista de títulos interditos se houver coincidências",
 	"titleblacklist-override-help": "Os utilizadores com privilégios suficientes podem configurar isto para ignorar as verificações contra a lista de títulos interditos.",
 	"titleblacklist-warning": "<strong>Aviso: Esta página só pode ser editada por administradores e outros utilizadores com o privilégio <code>tboverride</code>, porque o título causa uma correspondência com a seguinte entrada da lista de títulos interditos:</strong><br /><code>$1</code>",

@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Agam Riyandana",
+			"Bennylin",
 			"Daud I.F. Argana",
 			"Hidayatsrf",
+			"Penyuwangi",
 			"Rachmat04",
 			"Robfirstname",
-			"Veracious",
-			"Penyuwangi",
-			"Bennylin"
+			"Veracious"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Melihat apakah sebuah Filter Penyalahgunaan sesuai dengan seperangkat variabel, sebuah suntingan, atau sebuah kejadian yang dicatat Filter Penyalahgunaan.",

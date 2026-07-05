@@ -25,9 +25,22 @@ table.mw-abuselog-details {
 	}
 }
 
+.mw-abusefilter-log-missinguserlink {
+	.cdx-mixin-link-red();
+	text-decoration-line: underline;
+	text-decoration-style: dotted;
+}
+
 .mw-abusefilter-log-hidden-entry {
 	text-decoration: line-through;
 	color: @color-disabled;
+	font-style: italic;
+}
+
+.mw-abusefilter-log-suppressed-entry {
+	text-decoration: line-through;
+	text-decoration-style: double;
+	color: @color-base;
 	font-style: italic;
 }
 
@@ -115,13 +128,14 @@ li.mw-abusefilter-changeslist-nomatch {
 	background-image: url( red_x.png );
 }
 
-#mw-abusefilter-edit-rules .mw-input {
+/* Increase the width of the editbox, mostly for read-only view */
+#mw-abusefilter-edit-rules .oo-ui-labelElement-label {
 	width: 100%; /* So that we can use relative width for mw-abusefilter-editor */
 }
 
-#mw-abusefilter-editing-form .mw-label {
-	/* See T231962, the 100% width set above may squeeze the labels */
-	white-space: nowrap;
+#mw-abusefilter-editing-main .oo-ui-fieldLayout.oo-ui-labelElement.oo-ui-fieldLayout-align-left > .oo-ui-fieldLayout-body > .oo-ui-fieldLayout-field,
+#mw-abusefilter-editing-main .oo-ui-fieldLayout.oo-ui-labelElement.oo-ui-fieldLayout-align-right > .oo-ui-fieldLayout-body > .oo-ui-fieldLayout-field {
+	width: 80%;
 }
 
 div.mw-abusefilter-editor {
@@ -210,4 +224,20 @@ span.ace_invalid.ace_deprecated { /* stylelint-disable-line selector-class-patte
 
 span.ace_support.ace_function { /* stylelint-disable-line selector-class-pattern */
 	color: #495dd0;
+}
+
+/* CodeMirror highlight customisation */
+
+#wpCodeMirrorFilterEditor {
+	border: 0;
+	cursor: auto;
+
+	textarea {
+		height: 100%;
+	}
+
+	.cm-editor { /* stylelint-disable-line selector-class-pattern */
+		resize: both;
+		background-color: var( --background-color-base, #fff );
+	}
 }

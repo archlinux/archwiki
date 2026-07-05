@@ -40,5 +40,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "گډون کولو لپاره رښتيا، گډون نه کولو لپاره ناسم",
 	"apihelp-discussiontoolssubscribe-summary": "د يوې سکالو په اړه د خبرتياوو ترلاسه کولو لپاره گډون کول (يا گډون پرېښودل).",
 	"apihelp-discussiontoolsthank-param-commentid": "د مننې کولو لپاره د څرگندونې پېژند.",
-	"apihelp-discussiontoolsthank-summary": "څرگندونې لپاره د ټولگړې مننې خبرتيا ولېږئ."
+	"apihelp-discussiontoolsthank-summary": "څرگندونې لپاره د ټولگړې مننې خبرتيا ولېږئ.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "کارن په خپلکاري ډول د هر نوي شنن‌مخ سکالوگانو ته چې د سمون له خوا رامنځټه شوې وي، گډون کې رانغاړل. د کارن د غوره‌توب (تلواليز) بدلولو لپاره 'هو' يا 'نه' وکاروئ."
 }

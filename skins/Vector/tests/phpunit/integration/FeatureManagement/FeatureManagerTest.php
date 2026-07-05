@@ -23,8 +23,6 @@ class FeatureManagerTest extends \MediaWikiIntegrationTestCase {
 			[ CONSTANTS::FEATURE_LIMITED_WIDTH, true, 'vector-feature-limited-width-clientpref-1' ],
 			[ CONSTANTS::FEATURE_TOC_PINNED, false, 'vector-feature-toc-pinned-clientpref-0' ],
 			[ CONSTANTS::FEATURE_TOC_PINNED, true, 'vector-feature-toc-pinned-clientpref-1' ],
-			[ CONSTANTS::FEATURE_NIGHT_MODE, false, 'vector-feature-night-mode-disabled' ],
-			[ CONSTANTS::FEATURE_NIGHT_MODE, true, 'vector-feature-night-mode-enabled' ],
 		];
 	}
 
@@ -50,11 +48,9 @@ class FeatureManagerTest extends \MediaWikiIntegrationTestCase {
 		$featureManager = $this->newFeatureManager();
 		$featureManager->registerSimpleRequirement( 'requirement', true );
 		$featureManager->registerSimpleRequirement( 'disabled', false );
-		$featureManager->registerFeature( Constants::FEATURE_NIGHT_MODE, [ 'requirement' ] );
 		$featureManager->registerFeature( Constants::FEATURE_LIMITED_WIDTH_CONTENT, [ 'disabled' ] );
 		$this->assertEquals(
 			[
-				'vector-feature-night-mode-enabled',
 				'vector-feature-limited-width-content-disabled'
 			],
 			$featureManager->getFeatureBodyClass()

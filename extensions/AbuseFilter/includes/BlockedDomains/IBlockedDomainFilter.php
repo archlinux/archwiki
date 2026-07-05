@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\BlockedDomains;
 
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
@@ -9,7 +10,7 @@ use MediaWiki\User\User;
 
 interface IBlockedDomainFilter {
 
-	public const SERVICE_NAME = 'AbuseFilterBlockedDomainFilter';
+	public const SERVICE_NAME = ServiceNames::BlockedDomainFilter;
 
 	/**
 	 * Check for any disallowed domains

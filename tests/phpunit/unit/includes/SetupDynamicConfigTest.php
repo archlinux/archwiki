@@ -18,6 +18,8 @@ use MediaWiki\Settings\DynamicDefaultValues;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Settings\Source\ReflectionSchemaSource;
 use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\LockManager\FSLockManager;
+use Wikimedia\LockManager\NullLockManager;
 
 class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 	/** @var string */
@@ -127,8 +129,6 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 			MainConfigNames::SharedPrefix => '',
 			MainConfigNames::SharedSchema => null,
 			MainConfigNames::MetaNamespace => 'MediaWiki',
-			MainConfigNames::EnableUserEmailMuteList => false,
-			'EnableUserEmailBlacklist' => false,
 			MainConfigNames::NamespaceProtection => [ NS_MEDIAWIKI => 'editinterface' ],
 			MainConfigNames::LockManagers => [ [
 				'name' => 'fsLockManager',
@@ -301,33 +301,6 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 			[
 				MainConfigNames::MimeTypeExclusions => [ 'evil', 'eviler' ],
 				'MimeTypeBlacklist' => [ 'eviler' ],
-			],
-		];
-		yield '$wgEnableUserEmailMuteList set' => [
-			[ MainConfigNames::EnableUserEmailMuteList => true ],
-			[
-				MainConfigNames::EnableUserEmailMuteList => true,
-				'EnableUserEmailBlacklist' => true,
-			],
-		];
-		yield '$wgEnableUserEmailMuteList and $wgEnableUserEmailBlacklist both true' => [
-			[
-				MainConfigNames::EnableUserEmailMuteList => true,
-				'EnableUserEmailBlacklist' => true,
-			],
-			[
-				MainConfigNames::EnableUserEmailMuteList => true,
-				'EnableUserEmailBlacklist' => true,
-			],
-		];
-		yield '$wgEnableUserEmailMuteList true and $wgEnableUserEmailBlacklist false' => [
-			[
-				MainConfigNames::EnableUserEmailMuteList => true,
-				'EnableUserEmailBlacklist' => false,
-			],
-			[
-				MainConfigNames::EnableUserEmailMuteList => false,
-				'EnableUserEmailBlacklist' => false,
 			],
 		];
 		yield '$wgShortPagesNamespaceExclusions set' => [
@@ -928,7 +901,7 @@ class SetupDynamicConfigTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * Test that if the variables $test are set after DefaultSettings.php is loaded, then
+	 * Test that if the variables $test are set after MainConfigSchema.php is loaded, then
 	 * DynamicDefaultValues and SetupDynamicConfig.php will result in the variables
 	 * in $expected being set to the given values.
 	 * (This does not test that other variables aren't also set.)

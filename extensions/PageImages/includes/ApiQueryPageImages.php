@@ -24,6 +24,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  * @author Sam Smith
  */
 class ApiQueryPageImages extends ApiQueryBase {
+
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,

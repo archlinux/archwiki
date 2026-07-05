@@ -155,7 +155,7 @@
 	"abusefilter-edit-builder-funcs-norm": "Normalisierje (norm)",
 	"abusefilter-edit-builder-funcs-count": "Antaal foan do Foarkuumnisse fon ju Teekenfoulge X in ju Teekenfoulge Y (count)",
 	"abusefilter-edit-builder-group-vars": "Variablen",
-	"abusefilter-edit-builder-vars-accountname": "Benutsernoome (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Benutsernoome (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Aktion",
 	"abusefilter-edit-builder-vars-addedlines": "Riegen bie ju Beoarbaidenge bietouföiged",
 	"abusefilter-edit-builder-vars-delta": "Grööte bie ju Beoarbaidenge annerd",

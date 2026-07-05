@@ -43,6 +43,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Tirtir bogag kale]]",
 	"nuke-deletemore": "Tirtir bogag badan oo dheeraad ah",
 	"nuke-pattern": "Qaabka SQL LIKE (tusaale %) ee magaca bogga:",
+	"nuke-pattern-leading-wildcard": "Qaabka lama bilaabi karo <code>%</code>. Fadlan ku dar bilow ka hor calaamadda wildcard (tusaale <code>Example%</code> halkii aad ka isticmaali lahayd <code>%Example</code>).",
 	"nuke-nolist": "Si aad u sii wadato, marka hore guji '{{int:nuke-submit-list}}', ka dibna dooro bogagga lagu dari doono safka tirtiridda.",
 	"nuke-nopages-global": "Ma jiraan bogag u dhigma raadinta.",
 	"nuke-searchnotice-minmorethanmax": "Cabbirka ugu yar ee baytyada ayaa ka weyn cabbirka ugu badan ee baytyada, sidaas darteed suurtagal ma aha in bog kasta uu buuxiyo shuruudahan.",

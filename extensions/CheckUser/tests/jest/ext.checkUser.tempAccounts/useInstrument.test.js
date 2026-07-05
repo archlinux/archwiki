@@ -1,3 +1,5 @@
+'use strict';
+
 const useInstrument = require( '../../../modules/ext.checkUser.tempAccounts/useInstrument.js' );
 
 describe( 'useInstrument', () => {

@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dhondup",
 			"Freeyak",
+			"Pecha-G.Dhargyal",
+			"Pecha-Tsewang",
 			"Phurbutsering",
 			"Tenzin Thoesam",
-			"ཁ་བཏགས་ནག་པོ",
-			"Pecha-Tsewang",
-			"Dhondup",
-			"Pecha-G.Dhargyal"
+			"ཁ་བཏགས་ནག་པོ"
 		]
 	},
 	"vector-languages": "སྐད་སྣ་",
@@ -40,7 +40,6 @@
 	"skin-theme-exclusion-notice": "ཤོག་ངོས་འདི་རྒྱུན་དུ་ཚོན་མདངས་དཀར་པོའི་རང་བཞིན་ཡིན།",
 	"vector-toc-label": "དཀར་ཆག",
 	"vector-toc-beginning": "མགོ་འཛུགས།",
-	"vector-anon-user-menu-pages": "ཐོ་འགོད་མེད་པའི་ཞུ་དག་པའི་ཤོག་ངོས།",
 	"vector-main-menu-label": "དེམས་བྱང་གཙོ་བོ།",
 	"vector-feature-custom-font-size-exclusion-notice": "ཤོག་ངོས་འདིར་རྟག་ཏུ་ཡིག་གཟུགས་ཆུང་བ་ལས་སྤྱོད་མི་ཐུབ།",
 	"vector-page-tools-label": "ལག་ཆའི་སྒམ་",

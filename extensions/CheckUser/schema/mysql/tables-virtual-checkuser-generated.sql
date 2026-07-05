@@ -4,14 +4,22 @@
 -- See https://www.mediawiki.org/wiki/Manual:Schema_changes
 CREATE TABLE /*_*/cusi_case (
   sic_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+  sic_url_identifier INT UNSIGNED NOT NULL,
   sic_status TINYINT UNSIGNED DEFAULT 0 NOT NULL,
   sic_status_reason VARBINARY(255) DEFAULT '' NOT NULL,
+  sic_status_changed_by INT UNSIGNED DEFAULT NULL,
   sic_created_timestamp BINARY(14) NOT NULL,
-  UNIQUE INDEX sic_status_created_timestamp_id (
-    sic_status, sic_created_timestamp,
+  sic_updated_timestamp BINARY(14) NOT NULL,
+  UNIQUE INDEX sic_status_updated_timestamp_id (
+    sic_status, sic_updated_timestamp,
     sic_id
   ),
-  UNIQUE INDEX sic_created_timestamp_id (sic_created_timestamp, sic_id),
+  UNIQUE INDEX sic_updated_timestamp_id (sic_updated_timestamp, sic_id),
+  UNIQUE INDEX sic_url_identifier (sic_url_identifier),
+  INDEX sic_status_changed_by_updated_timestamp_id (
+    sic_status_changed_by, sic_updated_timestamp,
+    sic_id
+  ),
   PRIMARY KEY(sic_id)
 ) /*$wgDBTableOptions*/;
 
@@ -19,6 +27,7 @@ CREATE TABLE /*_*/cusi_case (
 CREATE TABLE /*_*/cusi_user (
   siu_user_id INT UNSIGNED NOT NULL,
   siu_sic_id INT UNSIGNED NOT NULL,
+  siu_info INT UNSIGNED NOT NULL,
   INDEX siu_user_id (siu_user_id),
   PRIMARY KEY(siu_sic_id, siu_user_id)
 ) /*$wgDBTableOptions*/;
@@ -28,6 +37,11 @@ CREATE TABLE /*_*/cusi_signal (
   sis_sic_id INT UNSIGNED NOT NULL,
   sis_name VARBINARY(255) NOT NULL,
   sis_value VARBINARY(255) NOT NULL,
+  sis_trigger_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+  sis_trigger_type TINYINT(1) DEFAULT 0 NOT NULL,
   INDEX sis_sic_id (sis_sic_id),
-  PRIMARY KEY(sis_name, sis_value, sis_sic_id)
+  PRIMARY KEY(
+    sis_name, sis_value, sis_sic_id, sis_trigger_id,
+    sis_trigger_type
+  )
 ) /*$wgDBTableOptions*/;

@@ -38,7 +38,10 @@ ve.ui.MWWikitextPlainTextStringTransferHandler.static.name = 'wikitextPlainTextS
 
 ve.ui.MWWikitextPlainTextStringTransferHandler.static.types = [
 	...ve.ui.MWWikitextPlainTextStringTransferHandler.super.static.types,
-	'text/x-wiki'
+	'text/x-wiki',
+	// Support: Edge
+	// Format used by Microsoft Edge when copying from the address bar (T341281)
+	'text/link-preview'
 ];
 
 ve.ui.MWWikitextPlainTextStringTransferHandler.static.handlesPaste = true;
@@ -49,6 +52,19 @@ ve.ui.MWWikitextPlainTextStringTransferHandler.static.handlesPaste = true;
  * @inheritdoc
  */
 ve.ui.MWWikitextPlainTextStringTransferHandler.prototype.process = function () {
+	if ( this.item.type === 'text/link-preview' ) {
+		// data is a JSON string
+		try {
+			const parsed = JSON.parse( this.item.getAsString() );
+			if ( parsed.url && parsed.title ) {
+				this.resolve( parsed.url );
+			}
+		} catch ( err ) {
+		}
+		return;
+	}
+
+	// Actually plain text
 	this.resolve( this.item.getAsString() );
 };
 

@@ -36,7 +36,6 @@
 	"titleblacklist-forbidden-move": "「$3」という名前のページの作成が禁止されているため、「$2」を「$3」に移動できません。\nこれは以下の許可されていないページ名一覧の項目に一致します: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "「$2」という名前でのファイルのアップロードは禁止されています。\nこれは以下の許可されていないページ名の一覧の項目に一致します: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "利用者名「$2」の作成は禁止されています。\nこれは以下の許可されていないページ名一覧の項目と一致します: <code>$1</code>",
-	"titleblacklist-invalid": "許可されていないページ名一覧の以下の{{PLURAL:$1|行}}は無効{{PLURAL:$1|です}}。\n保存する前に{{PLURAL:$1|修正して}}ください:",
 	"titleblacklist-override": "照合した場合は許可されていないページ名の一覧を上書き",
 	"titleblacklist-override-help": "十分な権限を持つ利用者は、これを設定して、許可されていないタイトルリストのチェックを無視できます。",
 	"titleblacklist-warning": "<strong>警告: このページは下記の許可されていないページ名一覧の項目に一致しているため管理者と <code>tboverride</code> 権限のある利用者のみが編集できます:</strong><br /><code>$1</code>",

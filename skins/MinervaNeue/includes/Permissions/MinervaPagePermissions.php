@@ -45,36 +45,15 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	private Authority $performer;
 	private OutputPage $out;
 	private ContentHandler $contentHandler;
-	private SkinOptions $skinOptions;
-	private LanguagesHelper $languagesHelper;
-	private PermissionManager $permissionManager;
-	private IContentHandlerFactory $contentHandlerFactory;
-	private UserFactory $userFactory;
-	private WatchlistManager $watchlistManager;
 
-	/**
-	 * Initialize internal Minerva Permissions system
-	 * @param SkinOptions $skinOptions
-	 * @param LanguagesHelper $languagesHelper
-	 * @param PermissionManager $permissionManager
-	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param UserFactory $userFactory
-	 * @param WatchlistManager $watchlistManager
-	 */
 	public function __construct(
-		SkinOptions $skinOptions,
-		LanguagesHelper $languagesHelper,
-		PermissionManager $permissionManager,
-		IContentHandlerFactory $contentHandlerFactory,
-		UserFactory $userFactory,
-		WatchlistManager $watchlistManager
+		private readonly SkinOptions $skinOptions,
+		private readonly LanguagesHelper $languagesHelper,
+		private readonly PermissionManager $permissionManager,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
+		private readonly UserFactory $userFactory,
+		private readonly WatchlistManager $watchlistManager,
 	) {
-		$this->skinOptions = $skinOptions;
-		$this->languagesHelper = $languagesHelper;
-		$this->permissionManager = $permissionManager;
-		$this->contentHandlerFactory = $contentHandlerFactory;
-		$this->userFactory = $userFactory;
-		$this->watchlistManager = $watchlistManager;
 	}
 
 	/**

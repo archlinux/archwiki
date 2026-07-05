@@ -19,12 +19,13 @@
  */
 namespace MediaWiki\Extension\AbuseFilter\BlockedDomains;
 
-use MediaWiki\CheckUser\Hooks as CUHooks;
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Status\Status;
@@ -37,15 +38,10 @@ use MediaWiki\User\User;
  * @ingroup SpecialPage
  */
 class BlockedDomainFilter implements IBlockedDomainFilter {
-	private VariablesManager $variablesManager;
-	private IBlockedDomainStorage $blockedDomainStorage;
-
 	public function __construct(
-		VariablesManager $variablesManager,
-		IBlockedDomainStorage $blockedDomainStorage
+		private readonly VariablesManager $variablesManager,
+		private readonly IBlockedDomainStorage $blockedDomainStorage
 	) {
-		$this->variablesManager = $variablesManager;
-		$this->blockedDomainStorage = $blockedDomainStorage;
 	}
 
 	/** @inheritDoc */
@@ -55,7 +51,7 @@ class BlockedDomainFilter implements IBlockedDomainFilter {
 		$status = Status::newGood();
 		try {
 			$urls = $this->variablesManager->getVar( $vars, 'added_links', VariablesManager::GET_STRICT );
-		} catch ( UnsetVariableException $_ ) {
+		} catch ( UnsetVariableException ) {
 			return $status;
 		}
 
@@ -121,7 +117,9 @@ class BlockedDomainFilter implements IBlockedDomainFilter {
 			// (which is the default)
 			if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
 				$rc = $logEntry->getRecentChange( $logid );
-				CUHooks::updateCheckUserData( $rc );
+				/** @var CheckUserInsert $checkUserInsert */
+				$checkUserInsert = MediaWikiServices::getInstance()->get( 'CheckUserInsert' );
+				$checkUserInsert->updateCheckUserData( $rc );
 			}
 		} else {
 			// If the log is unrestricted, publish normally to RC,

@@ -265,7 +265,7 @@ class Shellbox {
 			if ( $component === ''
 				|| $component === '.'
 				|| $component === '..'
-				|| substr( $component, -1 ) === ':'
+				|| str_ends_with( $component, ':' )
 			) {
 				throw new ShellboxError( "Invalid relative file path \"$path\"" );
 			}

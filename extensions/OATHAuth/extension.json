@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -45,6 +45,12 @@
 					"user-locators": [
 						"MediaWiki\\Extension\\Notifications\\UserLocator::locateEventAgent"
 					]
+				},
+				"oathauth-recoverycodes-generated-for-user": {
+					"category": "system-noemail",
+					"group": "interactive",
+					"section": "alert",
+					"presentation-model": "MediaWiki\\Extension\\OATHAuth\\Notifications\\RecoveryCodesGeneratedForUserPresentationModel"
 				}
 			}
 		},
@@ -53,15 +59,16 @@
 				"recoverycodes": {
 					"class": "\\MediaWiki\\Extension\\OATHAuth\\Module\\RecoveryCodes",
 					"services": [
-						"OATHUserRepository"
+						"OATHAuth.UserRepository"
 					]
 				},
 				"totp": {
 					"class": "\\MediaWiki\\Extension\\OATHAuth\\Module\\TOTP",
 					"services": [
-						"OATHUserRepository"
+						"OATHAuth.UserRepository"
 					]
-				}
+				},
+				"webauthn": "MediaWiki\\Extension\\OATHAuth\\Module\\WebAuthn::factory"
 			}
 		}
 	},
@@ -74,6 +81,17 @@
 		"MediaWiki\\Extension\\OATHAuth\\Tests\\Unit\\": "tests/phpunit/unit/"
 	},
 	"AuthManagerAutoConfig": {
+		"primaryauth": {
+			"PasskeyPrimaryAuthenticationProvider": {
+				"class": "\\MediaWiki\\Extension\\OATHAuth\\Auth\\PasskeyPrimaryAuthenticationProvider",
+				"services": [
+					"OATHAuth.WebAuthnAuthenticator",
+					"OATHAuth.Logger",
+					"UserFactory"
+				],
+				"sort": 50
+			}
+		},
 		"secondaryauth": {
 			"OATHSecondaryAuthenticationProvider": {
 				"class": "\\MediaWiki\\Extension\\OATHAuth\\Auth\\SecondaryAuthenticationProvider",
@@ -89,11 +107,13 @@
 	},
 	"Hooks": {
 		"AuthChangeFormFields": "main",
+		"BeforePageDisplay": "main",
 		"GetPreferences": "main",
-		"getUserPermissionsErrors": "main",
 		"LoadExtensionSchemaUpdates": "updater",
+		"ReadPrivateUserRequirementsCondition": "main",
 		"UserEffectiveGroups": "main",
 		"UserGetRights": "main",
+		"UserRequirementsCondition": "main",
 		"UnitTestsAfterDatabaseSetup": "test",
 		"UnitTestsBeforeDatabaseTeardown": "test"
 	},
@@ -101,12 +121,12 @@
 		"main": {
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\HookHandler",
 			"services": [
-				"OATHUserRepository",
-				"OATHAuthModuleRegistry",
+				"OATHAuth.UserRepository",
+				"OATHAuth.ModuleRegistry",
+				"OATHAuth.Logger",
 				"PermissionManager",
 				"MainConfig",
-				"UserGroupManager",
-				"CentralIdLookupFactory"
+				"UserGroupManager"
 			]
 		},
 		"updater": {
@@ -121,10 +141,14 @@
 	},
 	"MessagesDirs": {
 		"OATHAuth": [
-			"i18n",
-			"i18n/api"
+			"i18n"
+		],
+		"WebAuthn": [
+			"i18n/webauthn",
+			"i18n/webauthn/api"
 		]
 	},
+	"callback": "MediaWiki\\Extension\\OATHAuth\\Hook\\RegistrationCallback::onRegistration",
 	"config": {
 		"OATHAuthWindowRadius": {
 			"value": 4,
@@ -134,29 +158,49 @@
 			"value": false,
 			"description": "Prefix for user account shown during enrollment."
 		},
-		"OATHExclusiveRights": {
-			"value": [],
-			"description": "List of permissions that are revoked from users who do not use two-factor authentication."
-		},
 		"OATHRequiredForGroups": {
 			"value": [],
-			"description": "List of user groups that must use two-factor authentication."
-		},
-		"OATHRolloutPercent": {
-			"value": 0,
-			"description": "Percentage of users to add to 2FA rollout."
+			"description": "DEPRECATED: List of user groups that must use two-factor authentication. See https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgRestrictedGroups#Requiring_2FA_for_a_user_group for an example of how to migrate this configuration."
 		},
 		"OATHSecretKey": {
 			"value": false,
 			"description": "A secret key value for encrypting OATH-related data which should be SODIUM_CRYPTO_SECRETBOX_KEYBYTES hexadecimal bytes (64 chars) in length. This variable is currently considered immutable. Do not publicly set this value."
 		},
-		"OATHPrioritizedModules": {
-			"value": [ "webauthn", "totp", "recoverycodes" ],
-			"description": "List of authentication methods in the order that they should be prioritized."
-		},
 		"OATHRecoveryCodesCount": {
 			"value": 10,
-			"description": "The default amount of recovery codes to generate for a given user."
+			"description": "The default amount of recovery codes to generate for a given user. Should be less than OATHMaxRecoveryCodesCount."
+		},
+		"OATHMaxRecoveryCodesCount": {
+			"value": 100,
+			"description": "The maximum number of recovery codes that a user can have. Both permanent and temporary codes are counted for this limit."
+		},
+		"OATHAdditionalRecoveryCodesValidityDays": {
+			"value": 7,
+			"description": "Number of days for which codes generated on Special:Recover2FAForUser will be valid."
+		},
+		"OATHMaxKeysPerUser": {
+			"value": 25,
+			"description": "Maximum amount of OATHAuth devices allowed per user."
+		},
+		"OATH2FARequiredGroupRemovalPages": {
+			"value": [],
+			"description": "An array of page names, where user can ask to have themselves removed from groups that require 2FA (keyed by the group name). The pages will be linked in the notice about 2FA being required for user. If there's no entry for the relevant group, key '*' will be used."
+		},
+		"OATHPasswordlessLogin": {
+			"value": false,
+			"description": "Allow passwordless login with passkeys."
+		},
+		"WebAuthnRelyingPartyName": {
+			"value": null,
+			"description": "Configures relying party name. If not defined, this defaults to $wgSitename."
+		},
+		"WebAuthnRelyingPartyID": {
+			"value": null,
+			"description": "Configures relying party ID. If not defined, this defaults to $wgServer."
+		},
+		"WebAuthnNewCredsDisabled": {
+			"value": false,
+			"description": "If true, new credentials cannot be added, see T354701."
 		}
 	},
 	"ResourceModules": {
@@ -190,6 +234,63 @@
 				"oathauth-recoverycodes-copy-success"
 			]
 		},
+		"ext.webauthn.passwordlessLogin": {
+			"scripts": [
+				"webauthn/util/Authenticator.js",
+				"webauthn/ui/LoginForm.js",
+				"webauthn/passwordlessLogin.js"
+			],
+			"dependencies": [
+				"ext.webauthn.ui.base"
+			]
+		},
+		"ext.oath.manage": {
+			"class": "MediaWiki\\ResourceLoader\\CodexModule",
+			"localBasePath": "modules/oathmanage",
+			"remoteExtPath": "OATHAuth/modules/oathmanage",
+			"packageFiles": [
+				"init.js",
+				"OATHManage.vue",
+				"AddPasskeyButton.vue",
+				"AddPasskeyDialog.vue",
+				"GroupsWith2FANotice.vue",
+				{
+					"name": "data.json",
+					"callback": "MediaWiki\\Extension\\OATHAuth\\Hook\\HookHandler::getOathManageModuleData"
+				}
+			],
+			"codexComponents": [
+				"CdxButton",
+				"CdxDialog",
+				"CdxMessage",
+				"CdxAccordion",
+				"useModelWrapper"
+			],
+			"messages": [
+				"oathauth-authenticator-header",
+				"oathauth-authenticator-placeholder",
+				"oathauth-authenticator-delete",
+				"oathauth-passkeys-header",
+				"oathauth-passkeys-placeholder",
+				"oathauth-passkeys-no2fa",
+				"oathauth-passkeys-add",
+				"oathauth-passkey-dialog-title",
+				"oathauth-passkey-dialog-text",
+				"oathauth-passkey-dialog-back",
+				"oathauth-passkey-dialog-add",
+				"oathauth-2fa-required",
+				"oathauth-2fa-required-groups-on-project",
+				"oathauth-2fa-groups-notice-single",
+				"oathauth-2fa-groups-notice-multiple",
+				"oathauth-2fa-groups-notice-multiple-links-intro",
+				"oathauth-2fa-groups-notice-multiple-links-entry",
+				"oathauth-2fa-groups-notice-unknown-page"
+			],
+			"dependencies": [
+				"ext.webauthn.Registrator",
+				"jquery.client"
+			]
+		},
 		"ext.oath.manage.styles": {
 			"class": "MediaWiki\\ResourceLoader\\CodexModule",
 			"styles": [
@@ -204,6 +305,84 @@
 				"CdxLabel",
 				"CdxTextInput"
 			]
+		},
+		"ext.webauthn.ui.base": {
+			"scripts": [
+				"webauthn/util/util.js",
+				"webauthn/ui/CredentialForm.js"
+			],
+			"dependencies": [
+				"ext.webauthn.ui.base.styles",
+				"oojs-ui",
+				"mediawiki.jqueryMsg"
+			],
+			"messages": [
+				"oathauth-webauthn-error-browser-unsupported",
+				"oathauth-webauthn-error-browser-unsupported-console",
+				"oathauth-webauthn-ui-reload-page-label"
+			]
+		},
+		"ext.webauthn.ui.base.styles": {
+			"styles": [
+				"webauthn/stylesheets/ui.base.styles.less"
+			]
+		},
+		"ext.webauthn.Registrator": {
+			"scripts": [
+				"webauthn/util/Registrator.js"
+			],
+			"dependencies": [
+				"ext.webauthn.ui.base"
+			],
+			"messages": [
+				"oathauth-webauthn-error-get-reginfo-fail",
+				"oathauth-webauthn-error-registration-failed",
+				"oathauth-webauthn-error-reg-generic"
+			]
+		},
+		"ext.webauthn.register": {
+			"scripts": [
+				"webauthn/ui/RegisterForm.js",
+				"webauthn/register.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.util",
+				"ext.webauthn.ui.base",
+				"ext.webauthn.Registrator"
+			]
+		},
+		"ext.webauthn.login": {
+			"scripts": [
+				"webauthn/util/Authenticator.js",
+				"webauthn/ui/LoginForm.js",
+				"webauthn/login.js"
+			],
+			"dependencies": [
+				"ext.webauthn.ui.base"
+			],
+			"messages": [
+				"oathauth-webauthn-error-get-authinfo-fail",
+				"oathauth-webauthn-error-auth-generic"
+			]
+		},
+		"ext.webauthn.manage": {
+			"scripts": [
+				"webauthn/util/Authenticator.js",
+				"webauthn/ui/ManageForm.js",
+				"webauthn/manage.js"
+			],
+			"styles": [
+				"webauthn/stylesheets/manage.styles.less"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"ext.webauthn.ui.base"
+			],
+			"messages": [
+				"oathauth-webauthn-error-get-authinfo-fail",
+				"oathauth-webauthn-error-auth-generic"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -214,38 +393,57 @@
 		"DisableOATHForUser": {
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\DisableOATHForUser",
 			"services": [
-				"OATHUserRepository",
+				"OATHAuth.UserRepository",
 				"UserFactory",
-				"CentralIdLookup"
+				"CentralIdLookup",
+				"ExtensionRegistry"
 			]
 		},
 		"OATHManage": {
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage",
 			"services": [
-				"OATHUserRepository",
-				"OATHAuthModuleRegistry",
-				"AuthManager"
+				"OATHAuth.UserRepository",
+				"OATHAuth.ModuleRegistry",
+				"OATHAuth.Mandatory2FAChecker",
+				"AuthManager",
+				"UserGroupManager"
+			]
+		},
+		"Recover2FAForUser": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\Recover2FAForUser",
+			"services": [
+				"OATHAuth.UserRepository",
+				"OATHAuth.ModuleRegistry",
+				"OATHAuth.Logger",
+				"UserFactory",
+				"CentralIdLookup",
+				"LinkRenderer",
+				"ExtensionRegistry",
+				"Emailer",
+				"UserOptionsLookup"
 			]
 		},
 		"VerifyOATHForUser": {
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\VerifyOATHForUser",
 			"services": [
-				"OATHUserRepository",
+				"OATHAuth.UserRepository",
 				"UserFactory",
-				"CentralIdLookup"
+				"CentralIdLookup",
+				"ExtensionRegistry"
 			]
 		}
 	},
 	"AvailableRights": [
 		"oathauth-enable",
-		"oathauth-api-all",
 		"oathauth-disable-for-user",
+		"oathauth-recover-for-user",
 		"oathauth-verify-user",
 		"oathauth-view-log"
 	],
 	"GroupPermissions": {
 		"*": {
 			"oathauth-disable-for-user": false,
+			"oathauth-recover-for-user": false,
 			"oathauth-view-log": false
 		},
 		"user": {
@@ -253,16 +451,13 @@
 		},
 		"sysop": {
 			"oathauth-disable-for-user": true,
+			"oathauth-recover-for-user": true,
 			"oathauth-verify-user": true,
 			"oathauth-view-log": true
-		},
-		"oathauth-twofactorauth": {
-			"oathauth-enable": true
 		}
 	},
 	"GrantPermissions": {
 		"oath": {
-			"oathauth-api-all": true,
 			"oathauth-verify-user": true
 		}
 	},
@@ -273,19 +468,13 @@
 		"oath": "internal"
 	},
 	"APIModules": {
-		"oathvalidate": {
-			"class": "\\MediaWiki\\Extension\\OATHAuth\\Api\\Module\\ApiOATHValidate",
+		"webauthn": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Api\\ApiWebAuthn",
 			"services": [
-				"OATHUserRepository",
-				"UserFactory"
-			]
-		}
-	},
-	"APIMetaModules": {
-		"oath": {
-			"class": "\\MediaWiki\\Extension\\OATHAuth\\Api\\Module\\ApiQueryOATH",
-			"services": [
-				"OATHUserRepository"
+				"AuthManager",
+				"OATHAuth.ModuleRegistry",
+				"OATHAuth.UserRepository",
+				"OATHAuth.WebAuthnAuthenticator"
 			]
 		}
 	},
@@ -302,6 +491,17 @@
 			]
 		},
 		"disableoath": {
+			"&can-bypass": false,
+			"user": [
+				5,
+				60
+			],
+			"user-global": [
+				5,
+				60
+			]
+		},
+		"recover-2fa": {
 			"&can-bypass": false,
 			"user": [
 				5,
@@ -335,7 +535,7 @@
 		"oath": "oath-log-header"
 	},
 	"LogActionsHandlers": {
-		"oath/*": "LogFormatter"
+		"oath/*": "MediaWiki\\Logging\\LogFormatter"
 	},
 	"LogRestrictions": {
 		"oath": "oathauth-view-log"
@@ -347,6 +547,9 @@
 			],
 			"disable-other": [
 				"disable-other"
+			],
+			"recover": [
+				"recover"
 			]
 		}
 	},

@@ -7,14 +7,14 @@ namespace MediaWiki\Extension\TemplateStyles;
  * @license GPL-2.0-or-later
  */
 
-use ContentHandler;
-use MapCacheLRU;
+use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFormatter;
-use Status;
+use Wikimedia\ObjectCache\MapCacheLRU;
 
 /**
  * Provide the styles for the parser

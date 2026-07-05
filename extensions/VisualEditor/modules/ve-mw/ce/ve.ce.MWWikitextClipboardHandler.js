@@ -41,7 +41,7 @@ ve.ce.MWWikitextClipboardHandler.prototype.onCopy = function ( e ) {
 			const slice = surface.getModel().getDocument().shallowCloneFromSelection( surface.getModel().getSelection() );
 			this.clipboardIndex++;
 			const clipboardKey = this.clipboardId + '-' + this.clipboardIndex;
-			this.clipboard = { slice: slice, hash: null };
+			this.clipboard = { slice, hash: null };
 			// Clone the elements in the slice
 			slice.data.cloneElements( true );
 			clipboardData.setData( this.constructor.static.clipboardKeyMimeType, clipboardKey );
@@ -122,7 +122,7 @@ ve.ce.MWWikitextClipboardHandler.prototype.afterPasteInsertExternalData = functi
 					name: 'wikitextPaste',
 					data: {
 						doc: pastedDocumentModel,
-						contextRange: contextRange,
+						contextRange,
 						fragment: targetFragment
 					}
 				} );

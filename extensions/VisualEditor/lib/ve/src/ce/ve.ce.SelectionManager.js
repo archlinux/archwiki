@@ -50,10 +50,11 @@ ve.ce.SelectionManager = function VeCeSelectionManager( surface ) {
 
 	// Events
 	// Debounce to prevent trying to draw every cursor position in history.
-	this.onSurfacePositionDebounced = ve.debounce( this.onSurfacePosition.bind( this ) );
+	const teardownCheck = () => !!this.surface;
+	this.onSurfacePositionDebounced = ve.debounceWithTest( teardownCheck, this.onSurfacePosition.bind( this ) );
 	this.getSurface().connect( this, { position: this.onSurfacePositionDebounced } );
 
-	this.onWindowScrollDebounced = ve.debounce( this.onWindowScroll.bind( this ), 250 );
+	this.onWindowScrollDebounced = ve.debounceWithTest( teardownCheck, this.onWindowScroll.bind( this ), 250 );
 	this.getSurface().getSurface().$scrollListener[ 0 ].addEventListener( 'scroll', this.onWindowScrollDebounced, { passive: true } );
 
 	this.$element.addClass( 've-ce-selectionManager' );
@@ -86,12 +87,16 @@ ve.ce.SelectionManager.prototype.destroy = function () {
 	this.$element.remove();
 	this.$overlay.remove();
 	this.getSurface().getSurface().$scrollListener[ 0 ].removeEventListener( 'scroll', this.onWindowScrollDebounced );
+
+	this.surface = null;
 };
 
 /**
  * Get the surface
  *
- * @return {ve.ce.Surface}
+ * Will return null after the selectionmanager has been destroyed
+ *
+ * @return {ve.ce.Surface|null}
  */
 ve.ce.SelectionManager.prototype.getSurface = function () {
 	return this.surface;
@@ -114,6 +119,10 @@ ve.ce.SelectionManager.prototype.getSurface = function () {
  */
 ve.ce.SelectionManager.prototype.drawSelections = function ( name, selections, options ) {
 	options = options || {};
+	const surface = this.getSurface();
+	if ( !surface ) {
+		return;
+	}
 	if ( !this.selectionGroups.has( name ) ) {
 		this.selectionGroups.set( name, new ve.ce.SelectionManager.SelectionGroup( name, this ) );
 	}
@@ -128,7 +137,7 @@ ve.ce.SelectionManager.prototype.drawSelections = function ( name, selections, o
 	selectionGroup.cancelIdleCallbacks();
 
 	if ( selections.length > this.viewportClippingLimit ) {
-		const viewportRange = this.getSurface().getViewportRange( true, this.viewportClippingPadding );
+		const viewportRange = surface.getViewportRange( true, this.viewportClippingPadding );
 		if ( viewportRange ) {
 			selections = selections.filter( ( selection ) => viewportRange.containsRange( selection.getModel().getCoveringRange() ) );
 			selectionGroup.setVisibleSelections( selections );
@@ -319,7 +328,7 @@ ve.ce.SelectionManager.prototype.getSelectionElementsCacheKey = function ( name,
  * @param {string} name Name of selection group
  * @param {ve.dm.Selection} selectionModel Selection model
  * @param {Object} [options] Selection options
- * @return {ve.ce.SelectionElements|null} Selection elements containing $selection and $overlay, null if not found
+ * @return {ve.ce.SelectionManager.SelectionElements|null} Selection elements containing $selection and $overlay, null if not found
  */
 ve.ce.SelectionManager.prototype.getCachedSelectionElements = function ( name, selectionModel, options ) {
 	const cacheKey = this.getSelectionElementsCacheKey( name, selectionModel, options );
@@ -329,7 +338,7 @@ ve.ce.SelectionManager.prototype.getCachedSelectionElements = function ( name, s
 /**
  * Store an recently drawn selection in the cache
  *
- * @param {ve.ce.SelectionElements} selectionElements Selection elements containing $selection and $overlay
+ * @param {ve.ce.SelectionManager.SelectionElements} selectionElements Selection elements containing $selection and $overlay
  * @param {string} name Name of selection group
  * @param {ve.dm.Selection} selectionModel Selection model
  * @param {Object} [options] Selection options
@@ -418,6 +427,9 @@ ve.ce.SelectionManager.prototype.updateDeactivatedSelection = function () {
 		return;
 	}
 	const surface = this.getSurface();
+	if ( !surface ) {
+		return;
+	}
 	const selection = surface.getSelection();
 
 	// Check we have a deactivated surface and a native selection
@@ -516,13 +528,17 @@ ve.ce.SelectionManager.SelectionGroup.prototype.empty = function () {
  * @param {ve.ce.Selection[]} selections
  */
 ve.ce.SelectionManager.SelectionGroup.prototype.setSelections = function ( selections ) {
+	const surface = this.selectionManager.getSurface();
+	if ( !surface ) {
+		return;
+	}
 	// Store selections so we can selectively remove anything that hasn't been
 	// redrawn at the exact same selection (oldSelections)
 	this.selections = selections;
 	// Assume all selections will be visible, unless clipped later
 	this.visibleSelections = selections;
 
-	const surfacemodel = this.selectionManager.getSurface().getModel();
+	const surfacemodel = surface.getModel();
 	// Store fragments so we can automatically update selections even after
 	// the document has been modified (which eventually fires a position event)
 	this.fragments = selections.map( ( selection ) => surfacemodel.getFragment( selection.getModel(), true, true ) );

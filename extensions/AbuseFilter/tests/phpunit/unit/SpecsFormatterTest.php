@@ -7,9 +7,9 @@ use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Language\Language;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -67,18 +67,14 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 
 	private function getMockLanguage(): Language {
 		$lang = $this->createMock( Language::class );
-		$lang->method( 'translateBlockExpiry' )->willReturnCallback( static function ( $x ) {
-			return "expiry-$x";
-		} );
-		$lang->method( 'commaList' )->willReturnCallback( static function ( $x ) {
-			return implode( ',', $x );
-		} );
-		$lang->method( 'listToText' )->willReturnCallback( static function ( $x ) {
-			return implode( ',', $x );
-		} );
-		$lang->method( 'semicolonList' )->willReturnCallback( static function ( $x ) {
-			return implode( ';', $x );
-		} );
+		$lang->method( 'translateBlockExpiry' )
+			->willReturnCallback( static fn ( $x ) => "expiry-$x" );
+		$lang->method( 'commaList' )
+			->willReturnCallback( static fn ( $x ) => implode( ',', $x ) );
+		$lang->method( 'listToText' )
+			->willReturnCallback( static fn ( $x ) => implode( ',', $x ) );
+		$lang->method( 'semicolonList' )
+			->willReturnCallback( static fn ( $x ) => implode( ';', $x ) );
 		return $lang;
 	}
 
@@ -123,9 +119,8 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	public function testFormatFlags( string $flags, string $expected ) {
 		$formatter = $this->getFormatter();
 		$lang = $this->createMock( Language::class );
-		$lang->method( 'commaList' )->willReturnCallback( static function ( $x ) {
-			return implode( ',', $x );
-		} );
+		$lang->method( 'commaList' )
+			->willReturnCallback( static fn ( $x ) => implode( ',', $x ) );
 		$this->assertSame( $expected, $formatter->formatFlags( $flags, $lang ) );
 	}
 
@@ -145,9 +140,8 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	public function testFormatFilterFlags( AbstractFilter $filter, string $expected ) {
 		$formatter = $this->getFormatter();
 		$lang = $this->createMock( Language::class );
-		$lang->method( 'commaList' )->willReturnCallback( static function ( $x ) {
-			return implode( ',', $x );
-		} );
+		$lang->method( 'commaList' )
+			->willReturnCallback( static fn ( $x ) => implode( ',', $x ) );
 		$this->assertSame( $expected, $formatter->formatFilterFlags( $filter, $lang ) );
 	}
 

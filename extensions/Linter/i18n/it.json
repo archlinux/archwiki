@@ -5,12 +5,13 @@
 			"Bultro",
 			"Candalua",
 			"Daimona Eaytoy",
+			"FL2226",
 			"Ontsed",
-			"Sakretsu",
-			"FL2226"
+			"Sakretsu"
 		]
 	},
 	"linterrors": "Errori di Lint",
+	"linttemplateerrors": "Transclusioni contenenti errori di lint",
 	"linter-category-bogus-image-options": "Parametri di \"File:\" inesistenti",
 	"linter-category-bogus-image-options-desc": "Queste pagine contengono inclusioni di immagini o altri file con parametri non validi.",
 	"linter-category-large-tables": "Tabelle grandi difficili da visualizzare sui dispositivi mobili",
@@ -63,6 +64,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Queste pagine hanno wikilink in collegamenti esterni che potrebbero essere corretti",
 	"linter-desc": "Traccia gli errori di validazione Lint da un servizio esterno e li mostra agli utenti.",
 	"linter-lints-prefix-search-page-desc": "Cerca le pagine con errori Lint per prefisso del titolo della pagina o titolo completo",
+	"linter-invalid-category": "Categoria non trovata o malformata",
 	"linter-invalid-title": "Namespace e/o nome pagina non trovati o non validi",
 	"linter-form-exact-match": "Cerca un titolo di pagina specifico",
 	"linter-form-prefix-match": "Cerca tutte le pagine che corrispondono al prefisso del titolo",
@@ -118,5 +120,8 @@
 	"linterrors-summary": "<strong>Nota:</strong> i conteggi degli errori non sono esatti, bensì stimati.",
 	"multi-part-template-block": "Generato da più di un template",
 	"pageinfo-linter": "Errori di Lint",
-	"pageinfo-linter-moreinfo": "Visualizza informazioni dettagliate sugli errori di Lint."
+	"pageinfo-linter-moreinfo": "Visualizza informazioni dettagliate sugli errori di Lint.",
+	"category-by-template-view": "Visualizza le transclusioni che contengono questi errori di lint.",
+	"category-by-template-desc": "Le transclusioni di queste pagine contengono '''[[Special:LintErrors/$1|$1]]''' errori lint. ''Si noti che alcune transclusioni potrebbero comparire in questo elenco a causa degli argomenti passati nella transclusione e non della sorgente della transclusione.''",
+	"linter-template-errors-index-desc": "Questi sono elenchi di transclusioni di pagine contenenti errori di lint. ''Si noti che alcune transclusioni potrebbero comparire in questi elenchi a causa degli argomenti passati alla transclusione e non a causa della sorgente della transclusione.''"
 }

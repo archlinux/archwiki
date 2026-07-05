@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dhondup",
 			"Freeyak",
-			"YeshiTuhden",
-			"Dhondup"
+			"YeshiTuhden"
 		]
 	},
 	"abusefilter-log-search-user": "བཀོལ་མི།",
@@ -18,6 +18,7 @@
 	"abusefilter-list-options-scope-local": "ས་གནས་ཀྱི་ལྦེ་ཁེ་",
 	"abusefilter-list-options-scope-global": "འཛམ་གླིང་གི་སྒྲིག་ཁྲིམས་",
 	"abusefilter-edit-subtitle-new": "ཤིག་ཚགས་བཟོ་ཞིན་",
+	"abusefilter-edit-makepublic": "'''ཁྱེད་ཀྱིས་གསང་བའི་ཚགས་བཤེར་ཞིག་ཡོངས་གྲགས་སུ་བཟོ་ལ་ཉེ་བས།''' འདི་ནི་ཁྱེད་ཀྱི་འཆར་གཞི་ཡིན་པ་གཏན་འཁེལ་བྱས་རྗེས། མུ་མཐུད་དུ་སྤེལ་བར་ \"{{int:abusefilter-edit-save}}\" ཡང་བསྐྱར་ཐེངས་གཅིག་གནོན་རོགས།",
 	"abusefilter-edit-new": "ཤོག་ཚགས་གསར་པ་",
 	"abusefilter-edit-group": "ཤོགཚགས་ཚོགས་པ་",
 	"abusefilter-edit-warn-other": "བརྡ་ཕྲིན་གཞན་",

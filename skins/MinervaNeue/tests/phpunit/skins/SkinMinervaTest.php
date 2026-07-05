@@ -27,8 +27,8 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 				'value' => '/wiki/Main_Page',
 			],
 			[
-				'key' => 'data-mw',
-				'value' => 'interface',
+				'key' => 'data-mw-interface',
+				'value' => '1',
 			]
 		],
 		'classes' => 'menu__item--home',
@@ -108,6 +108,8 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 		if ( $context ) {
 			$permissions->setContext( $context );
 		}
+		$this->markTestSkippedIfExtensionNotLoaded( 'TestKitchen' );
+
 		$skin = new SkinMinerva(
 			$services->getGenderCache(),
 			$services->getLinkRenderer(),
@@ -121,7 +123,16 @@ class SkinMinervaTest extends MediaWikiIntegrationTestCase {
 			$services->getRevisionLookup(),
 			$services->getUserIdentityUtils(),
 			$services->getUserOptionsManager(),
-			$services->getService( 'Vector.ConfigHelper' )
+			$services->getExtensionRegistry(),
+			$services->getService( 'Vector.ConfigHelper' ),
+			$services->getService( 'TestKitchen.ExperimentManager' ),
+			[
+				'name' => 'minerva',
+				'menus' => [
+					'notifications',
+					'associated-pages'
+				]
+			]
 		);
 		if ( $context ) {
 			$skin->setContext( $context );

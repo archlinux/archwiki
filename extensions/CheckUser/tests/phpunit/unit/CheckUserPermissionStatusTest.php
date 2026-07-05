@@ -1,12 +1,12 @@
 <?php
-namespace MediaWiki\CheckUser\Tests\Unit;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit;
 
 use MediaWiki\Block\Block;
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\CheckUserPermissionStatus
+ * @covers \MediaWiki\Extension\CheckUser\CheckUserPermissionStatus
  */
 class CheckUserPermissionStatusTest extends MediaWikiUnitTestCase {
 	public function testNewBlockedError(): void {

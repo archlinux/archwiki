@@ -12,10 +12,6 @@ use Wikibase\Lib\Formatters\SnakFormatter;
  * This class stores information about mathematical Wikibase items.
  */
 class MathWikibaseInfo {
-	/**
-	 * @var EntityId
-	 */
-	private $id;
 
 	/**
 	 * @var string|null the label of the item
@@ -37,10 +33,7 @@ class MathWikibaseInfo {
 	 */
 	private $hasParts = [];
 
-	/**
-	 * @var MathFormatter
-	 */
-	private $mathFormatter;
+	private readonly MathFormatter $mathFormatter;
 
 	/**
 	 * @var string|null
@@ -51,8 +44,10 @@ class MathWikibaseInfo {
 	 * @param EntityId $entityId
 	 * @param MathFormatter|null $mathFormatter to format math equations. Default format is HTML.
 	 */
-	public function __construct( EntityId $entityId, ?MathFormatter $mathFormatter = null ) {
-		$this->id = $entityId;
+	public function __construct(
+		private readonly EntityId $entityId,
+		?MathFormatter $mathFormatter = null,
+	) {
 		$this->mathFormatter = $mathFormatter ?: new MathFormatter( SnakFormatter::FORMAT_HTML );
 	}
 
@@ -99,7 +94,7 @@ class MathWikibaseInfo {
 	 * @return EntityId id
 	 */
 	public function getId() {
-		return $this->id;
+		return $this->entityId;
 	}
 
 	/**

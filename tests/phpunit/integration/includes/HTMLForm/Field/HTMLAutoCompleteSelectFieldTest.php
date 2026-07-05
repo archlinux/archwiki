@@ -37,7 +37,7 @@ class HTMLAutoCompleteSelectFieldTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testOptionalSelectElement() {
 		$htmlForm = $this->createMock( HTMLForm::class );
-		$htmlForm->method( 'msg' )->willReturnCallback( 'wfMessage' );
+		$htmlForm->method( 'msg' )->willReturnCallback( wfMessage( ... ) );
 
 		$params = [
 			'fieldname'         => 'Test',

@@ -9,7 +9,14 @@ global.mw = mockMediaWiki();
 
 global.mw.message = jest.fn( ( ...messageKeyAndParams ) => ( {
 	text: () => `(${ messageKeyAndParams.join( ', ' ) })`,
-	parse: () => `(${ messageKeyAndParams.join( ', ' ) })`,
+	// These mocks don't actually produce escaped/parsed content,
+	// leading to very different results in tests and in real code…
+	parse: () => `(${ messageKeyAndParams.map( ( p ) => {
+		if ( p instanceof Node ) {
+			return p.textContent;
+		}
+		return p;
+	} ).join( ', ' ) })`,
 	escaped: () => `(${ messageKeyAndParams.join( ', ' ) })`
 } ) );
 

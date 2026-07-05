@@ -41,8 +41,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "رقم المراجعة للاستخدام (الافتراض إلى المراجعة الأخيرة).",
 	"apihelp-discussiontoolspageinfo-param-prop": "أي الخصائص تريد الحصول عليها:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "استبعد توقيعات المستخدم من التعليقات (عند استخدام <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "علامات لتغيير المخرجات عند استخدام <var>prop=threaditemshtml</var> .",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "تمثيل سلاسل التعليق التي حُلِّلت من الصفحة",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "الصفحات الأخرى التي حُذِفَت التعليقات منها",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "قم بتضمين بيانات النشاط الإضافية حول أقدم وأحدث الردود (عند استخدام <var>prop=threaditemshtml</var> ).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "استبعاد توقيعات المستخدمين من التعليقات (عند استخدام <var>prop=threaditemshtml</var> ).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "لا تقم بتضمين شجرة الرد الكاملة، فقط قم بتوفير العناوين الرئيسية (عند استخدام <var>prop=threaditemshtml</var> ).",
 	"apihelp-discussiontoolspageinfo-summary": "إرجاع البيانات الوصفية المَطلُوبة لتهيئة أدوات النقاش.",
 	"apihelp-discussiontoolspreview-param-type": "نوع الرسالة المراد معاينتها",
 	"apihelp-discussiontoolspreview-param-wikitext": "المحتوى للمعاينة، بصورة نص الويكي.",
@@ -52,5 +56,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "صح للاشتراك، خطأ لإلغاء الاشتراك",
 	"apihelp-discussiontoolssubscribe-summary": "اشتراك (أو إلغاء الاشتراك) لتلقّي إخطارات حول موضوع.",
 	"apihelp-discussiontoolsthank-param-commentid": "معرف التعليق المراد شكره.",
-	"apihelp-discussiontoolsthank-summary": "إرسال إشعار شكر عام على تعليق."
+	"apihelp-discussiontoolsthank-summary": "إرسال إشعار شكر عام على تعليق.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "قم بإضافة المستخدم تلقائيًا إلى أي سلاسل نقاش جديدة يتم إنشاؤها بواسطة التعديل. استخدم \"نعم\" أو \"لا\" لتجاوز تفضيل المستخدم (الإعداد الافتراضي)."
 }

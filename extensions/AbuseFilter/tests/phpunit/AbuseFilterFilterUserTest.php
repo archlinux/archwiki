@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use Psr\Log\NullLogger;
 

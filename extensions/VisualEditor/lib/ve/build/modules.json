@@ -404,9 +404,11 @@
 			"src/dm/ve.dm.SurfaceFragment.js",
 			"src/dm/ve.dm.SourceSurfaceFragment.js",
 			"src/dm/ve.dm.DataString.js",
+			"src/dm/ve.dm.TextFinder.js",
 			"src/dm/ve.dm.Document.js",
 			"src/dm/ve.dm.DocumentSlice.js",
 			"src/dm/ve.dm.TableSlice.js",
+			"src/dm/ve.dm.NodeAnnotationRange.js",
 			"src/dm/ve.dm.LinearData.js",
 			"src/dm/ve.dm.HashValueStore.js",
 			"src/dm/converters/ve.dm.DomFromModelConverter.js",
@@ -506,6 +508,7 @@
 			"src/ce/ve.ce.ResizableNode.js",
 			"src/ce/ve.ce.TableCellableNode.js",
 			"src/ce/ve.ce.Selection.js",
+			"src/ce/ve.ce.PasteSourceDetectorRegistry.js",
 			"src/ce/ve.ce.ClipboardHandler.js",
 			"src/ce/ve.ce.DragDropHandler.js",
 			"src/ce/ve.ce.SelectionManager.js",
@@ -894,6 +897,7 @@
 			"tests/dm/ve.dm.LeafNode.test.js",
 			"tests/dm/nodes/ve.dm.TextNode.test.js",
 			"tests/dm/ve.dm.Document.test.js",
+			"tests/dm/ve.dm.TextFinder.test.js",
 			"tests/dm/ve.dm.HashValueStore.test.js",
 			"tests/dm/ve.dm.InternalList.test.js",
 			"tests/dm/ve.dm.InternalListNodeGroup.test.js",
@@ -950,6 +954,7 @@
 			"tests/init/ve.init.ConflictableStorage.test.js",
 			"tests/ui/ve.ui.DataTransferHandlerFactory.test.js",
 			"tests/ui/ve.ui.Trigger.test.js",
+			"tests/ui/ve.ui.TriggerRegistry.test.js",
 			"tests/ui/ve.ui.Sequence.test.js",
 			"tests/ui/ve.ui.DiffElement.test.js",
 			"tests/ui/ve.ui.PreviewElement.test.js",
@@ -965,7 +970,12 @@
 			"tests/ui/datatransferhandlers/ve.ui.DSVFileTransferHandler.test.js",
 			"tests/ui/datatransferhandlers/ve.ui.UrlStringTransferHandler.test.js",
 			"tests/ui/dialogs/ve.ui.FindAndReplaceDialog.test.js",
+			"tests/ui/dialogs/ve.ui.TableDialog.test.js",
+			"tests/ui/dialogs/ve.ui.CommandHelpDialog.test.js",
 			"tests/ui/inspectors/ve.ui.FragmentInspector.test.js",
+			"tests/ui/inspectors/ve.ui.LinkAnnotationInspector.test.js",
+			"tests/ui/inspectors/ve.ui.CommentInspector.test.js",
+			"tests/ui/inspectors/ve.ui.LanguageInspector.test.js",
 			"tests/ce/ve.ce.TestRunner.js",
 			"tests/ce/ve.ce.imetests.test.js",
 			"tests/ce/imetests/backspace-chromium-ubuntu-none.js",
@@ -1049,6 +1059,7 @@
 			"src/ui/windowmanagers/ve.ui.MobileWindowManager.js"
 		],
 		"styles": [
+			"src/init/styles/ve.init.Target-mobile.less",
 			"src/ui/styles/ve.ui.MobileContext.less"
 		],
 		"dependencies": [
@@ -1160,7 +1171,8 @@
 		],
 		"styles": [
 			"src/ce/styles/ve.ce.SurfaceSynchronizer.less",
-			"src/ui/styles/widgets/ve.ui.AuthorItemWidget.less"
+			"src/ui/styles/widgets/ve.ui.AuthorItemWidget.less",
+			"collab/styles/ve.ui.CollabProcessDialog.less"
 		],
 		"styleGroup": "read",
 		"dependencies": [
@@ -1207,8 +1219,16 @@
 			"demos/ve/demo.wikimediaui.less"
 		],
 		"dependencies": [
-			"visualEditor.desktop.standalone.demo"
+			"visualEditor.desktop.standalone.demo",
+			"visualEditor.standalone.wikimediaui.demo.dark"
 		]
+	},
+	"visualEditor.standalone.wikimediaui.demo.dark": {
+		"styles": [
+			"lib/codex-design-tokens/theme-wikimedia-ui-mode-dark.css",
+			"demos/ve/demo.wikimediaui.dark.less"
+		],
+		"styleGroup": "dark"
 	},
 	"visualEditor.mobile.standalone.demo": {
 		"scripts": [
@@ -1221,7 +1241,8 @@
 		],
 		"styleGroup": "read",
 		"dependencies": [
-			"visualEditor.standalone.demo"
+			"visualEditor.standalone.demo",
+			"visualEditor.standalone.wikimediaui.demo.dark"
 		]
 	},
 	"visualEditor.minimal.standalone.demo": {

@@ -4,8 +4,8 @@
 			"Macofe",
 			"Red Winged Duck",
 			"Renessaince",
-			"Zedlik",
-			"Ucukor"
+			"Ucukor",
+			"Zedlik"
 		]
 	},
 	"thanks-desc": "Дадае спасылкі для падзякаў удзельнікам за рэдагаваньні, камэнтары і г. д.",
@@ -19,13 +19,11 @@
 	"thanks-error-log-deleted": "Запытаны запіс журналу быў выдалены, і за яго немагчыма падзякаваць.",
 	"thanks-error-invalidrevision": "Няслушны ідэнтыфікатар вэрсіі",
 	"thanks-error-revdeleted": "Немагчыма адаслаць падзяку, бо вэрсія была выдаленая.",
-	"thanks-error-notitle": "Немагчыма атрымаць назву старонкі",
 	"thanks-error-invalidrecipient": "Ня знойдзены дзейны атрымальнік",
 	"thanks-error-invalidrecipient-bot": "Робатам падзякаць немагчыма",
 	"thanks-error-invalidrecipient-self": "Самім сабе дзякаваць нельга",
 	"thanks-error-notloggedin": "Ананімныя ўдзельнікі ня могуць адсылаць падзякі",
 	"thanks-error-ratelimited": "{{GENDER:$1|Вы}} перавысілі абмежаваньне хуткасьці выкананьня. Калі ласка, пачакайце крыху і паўтарыце спробу.",
-	"thanks-error-api-params": "Мусіць быць пададзены адзін з парамэтраў «revid» ці «logid»",
 	"thanks-thank-tooltip": "{{GENDER:$1|Адаслаць}} {{GENDER:$2|гэтаму карыстальніку|гэтай карыстальніцы}} падзяку",
 	"thanks-thank-tooltip-no": "{{GENDER:$1|Скасаваць}} абвестку пра падзяку",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Адаслаць}} абвестку пра падзяку",

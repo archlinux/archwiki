@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.45",
+		"MediaWiki": ">= 1.46",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -52,18 +52,12 @@
 		}
 	},
 	"JobClasses": {
-		"LoginNotifyChecks": {
-			"class": "LoginNotify\\DeferredChecksJob",
-			"services": [
-				"UserFactory",
-				"LoginNotify.LoginNotify"
-			]
-		},
 		"LoginNotifyPurgeSeen": {
 			"class": "LoginNotify\\PurgeSeenJob",
 			"services": [
 				"LoginNotify.LoginNotify"
-			]
+			],
+			"needsPage": false
 		}
 	},
 	"ServiceWiringFiles": [
@@ -124,18 +118,6 @@
 		"LoginNotifyMaxCookieRecords": {
 			"description": "Maximum number of users (records) to track as having successfully logged in on a particular device.",
 			"value": 6
-		},
-		"LoginNotifyCacheLoginIPExpiry": {
-			"description": "Set to false to disable caching IPs in memcache. Set to 0 to cache forever. Default 60 days.",
-			"value": 5184000
-		},
-		"LoginNotifyUseCheckUser": {
-			"description": "Use the CheckUser cu_changes table if it is available. This is redundant with LoginNotify's own table, available with MediaWiki 1.41. Since 1.43, setting this to true is deprecated and when set to true this method may be missing data due to CheckUser schema changes.",
-			"value": false
-		},
-		"LoginNotifyUseSeenTable": {
-			"description": "Use the loginnotify_seen_net table. This is redundant with LoginNotifyUseCheckUser although both can be enabled during migration.",
-			"value": true
 		},
 		"LoginNotifyUseCentralId": {
 			"description": "Use central user IDs in the loginnotify_seen_net table. This should be set to true if the loginnotify_seen_net is in a shared database. CentralAuth should be installed and all users should be attached to it.",

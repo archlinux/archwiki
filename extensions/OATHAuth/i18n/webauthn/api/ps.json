@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "د نوم‌ليکنې/تاييد بهير کې د پالنگر او مراجعينو ترمنځ د اړيکو لپاره ای‌پي‌آی چلنوال.",
+	"apihelp-oathauth-webauthn-param-func": "غوښتل شوې چارې نوم چې بايد ترسره شي.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "تاييد مالومات.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "نوم‌ليکنې مالومات.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "ايا هغه کونجي چې نوم‌ليکل کېږي د پاس کونجي حالت کې ده. (يوازې د نوم‌ليکنې‌مالومات‌اخيستلو لپاره.)"
+}

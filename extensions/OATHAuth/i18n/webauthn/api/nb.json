@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jon Harald Søby"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API-modul for å kommunisere mellom tjeneren og klienten under registrerings-/autentiseringsprosessen.",
+	"apihelp-oathauth-webauthn-param-func": "Navnet på funksjonen som skal kjøres.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Autentiseringsinformasjon.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Registreringsinformasjon.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Hvorvidt nøkkelen som registreres er i passnøkkelmodus. (Kun for getRegisterInfo.)"
+}

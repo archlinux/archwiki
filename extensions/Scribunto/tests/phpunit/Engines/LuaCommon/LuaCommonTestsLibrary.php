@@ -8,7 +8,7 @@ class LuaCommonTestsLibrary extends LibraryBase {
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'test' => [ $this, 'test' ],
+			'test' => $this->test( ... ),
 		];
 		$opts = [
 			'test' => 'Test option',
@@ -18,7 +18,7 @@ class LuaCommonTestsLibrary extends LibraryBase {
 	}
 
 	/** @inheritDoc */
-	public function test() {
+	private function test() {
 		return [ 'Test function' ];
 	}
 }

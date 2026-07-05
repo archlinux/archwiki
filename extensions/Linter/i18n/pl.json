@@ -11,6 +11,7 @@
 		]
 	},
 	"linterrors": "Błędy składniowe",
+	"linttemplateerrors": "Transkluzje zawierające błędy lintowania",
 	"linter-category-bogus-image-options": "Nieprawidłowe opcje pliku",
 	"linter-category-bogus-image-options-desc": "Te strony odwołują się do plików z podaniem nieistniejących opcji.",
 	"linter-category-large-tables": "Duże tabele, które trudno się czyta na urządzeniach mobilnych",
@@ -21,6 +22,8 @@
 	"linter-category-duplicate-ids-desc": "Te strony zawierają elementy z powielonymi wartościami atrybutu <code>id</code>.",
 	"linter-category-empty-heading": "Puste nagłówki",
 	"linter-category-empty-heading-desc": "Te strony mają puste nagłówki.",
+	"linter-category-template-arg-in-extension-tag": "Tag rozszerzenia z parametrem szablonu",
+	"linter-category-template-arg-in-extension-tag-desc": "Strony te zawierają znaczniki z rozszerzeń, w których zawarto odwołania do parametru szablonu, a który to nie zostanie poprawnie przetworzony.",
 	"linter-category-fostered": "Osierocona zawartość",
 	"linter-category-fostered-desc": "Na tych stronach występuje osierocona zawartość.",
 	"linter-category-fostered-transparent": "Osierocona niewidoczna zawartość",
@@ -63,6 +66,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Te strony mają wstawione linki wewnętrzne w kodzie linków zewnętrznych",
 	"linter-desc": "Śledzi błędy składniowe z usługi zewnętrznej i pokazuje je użytkownikom",
 	"linter-lints-prefix-search-page-desc": "Wyszukaj strony z błędami składniowymi według tytułu",
+	"linter-invalid-category": "Kategoria nie została znaleziona lub jest nieprawidłowo sformatowana",
 	"linter-invalid-title": "Nieprawidłowy tytuł lub przestrzeń nazw",
 	"linter-form-exact-match": "Dokładnie ten tytuł",
 	"linter-form-prefix-match": "Wszystkie strony o tytule rozpoczynającym się od tego przedrostka",
@@ -113,10 +117,14 @@
 	"linter-pager-title-header": "Tytuł strony",
 	"linter-pager-unclosed-quotes-in-heading-details": "Niedomknięty cytat powodujący wyciek spisu treści",
 	"linter-pager-wikilink-in-extlink-details": "Linki w linkach",
+	"linter-pager-template-arg-in-extension-tag-details": "Nazwa znacznika rozszerzenia wymagająca zmiany (oraz parametry szablonu w nim wywoływane)",
 	"linter-prefix-search-subpage": "Strony z błędami składniowymi mające tytuł lub zaczynające się na: $1",
 	"linterrors-subpage": "Błędy składniowe: $1",
 	"linterrors-summary": "<strong>Uwaga:</strong> Liczby elementów poszczególnych kategorii nie są dokładne, opierają się one na szacunkach.",
 	"multi-part-template-block": "Wynik nie pochodzi z jednego szablonu",
 	"pageinfo-linter": "Błędy składniowe",
-	"pageinfo-linter-moreinfo": "Zobacz szczegółowe informacje o błędach lintera."
+	"pageinfo-linter-moreinfo": "Zobacz szczegółowe informacje o błędach lintera.",
+	"category-by-template": "Transkluzje zawierające błędy lintera: $1",
+	"category-by-template-view": "Wyświetl transkluzje, które zawierają te błędy.",
+	"category-by-template-desc": "Transkluzje tych stron zawierają błędy lintera '''[[Special:LintErrors/$1|$1]]'''.  ''Uwaga: niektóre transkluzje tu wymienione są z powodu błędów w parametrach wywołania, a nie w samej stronie transkludowanej.''"
 }

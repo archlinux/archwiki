@@ -56,6 +56,7 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\ILBFactory;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * A handle for managing updates for derived page data on edit, import, purge, etc.
@@ -73,7 +74,7 @@ use Wikimedia\Rdbms\ILBFactory;
  * on the way to a more complete refactoring of WikiPage.
  *
  * When using a DerivedPageDataUpdater, the following life cycle must be observed:
- * grabCurrentRevision (optional), prepareContent (optional), prepareUpdate (required
+ * grabLatestRevision (optional), prepareContent (optional), prepareUpdate (required
  * for doUpdates). getCanonicalParserOutput, getSlots, and getSecondaryDataUpdates
  * require prepareContent or prepareUpdate to have been called first, to initialize the
  * DerivedPageDataUpdater.
@@ -89,70 +90,24 @@ use Wikimedia\Rdbms\ILBFactory;
  */
 class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
-	/**
-	 * @var UserIdentity|null
-	 */
-	private $user = null;
+	private ?UserIdentity $user = null;
+	private readonly WikiPage $wikiPage;
+	private readonly HookRunner $hookRunner;
+	private LoggerInterface $logger;
 
 	/**
-	 * @var WikiPage
+	 * @var string|null see $wgArticleCountMethod
 	 */
-	private $wikiPage;
-
-	/**
-	 * @var ParserCache
-	 */
-	private $parserCache;
-
-	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/**
-	 * @var Language
-	 */
-	private $contLang;
-
-	/**
-	 * @var JobQueueGroup
-	 */
-	private $jobQueueGroup;
-
-	/**
-	 * @var ILBFactory
-	 */
-	private $loadbalancerFactory;
-
-	/**
-	 * @var HookRunner
-	 */
-	private $hookRunner;
-
-	/**
-	 * @var DomainEventDispatcher
-	 */
-	private $eventDispatcher;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
-	/**
-	 * @var string see $wgArticleCountMethod
-	 */
-	private $articleCountMethod;
+	private ?string $articleCountMethod;
 
 	/**
 	 * Stores (most of) the $options parameter of prepareUpdate().
 	 * @see prepareUpdate()
 	 *
-	 * @var array
 	 * @phpcs:ignore Generic.Files.LineLength
-	 * @phan-var array{changed:bool,created:bool,moved:bool,cause:string,oldrevision:null|RevisionRecord,triggeringUser:null|UserIdentity,oldredirect:bool|null|string,oldcountable:bool|null|string,causeAction:null|string,causeAgent:null|string,editResult:null|EditResult}
+	 * @phan-var array{changed:bool,created:bool,cause:string,oldrevision:null|RevisionRecord,triggeringUser:null|UserIdentity,oldredirect:bool|null|string,oldcountable:bool|null|string,causeAction:null|string,causeAgent:null|string,editResult:null|EditResult,newrev:bool,oldtitle:null|PageIdentity,rcPatrolStatus:int,tags:array<string>,reason:null|string,emitEvents:bool}
 	 */
-	private $options = [
+	private array $options = [
 		'changed' => true,
 		// newrev is true if prepareUpdate is handling the creation of a new revision,
 		// as opposed to a null edit or a forced update.
@@ -177,8 +132,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 	/**
 	 * The state of the relevant row in page table before the edit.
-	 * This is determined by the first call to grabCurrentRevision, prepareContent,
-	 * or prepareUpdate (so it is only accessible in 'knows-current' or a later stage).
+	 * This is determined by the first call to grabLatestRevision(), prepareContent(),
+	 * or prepareUpdate() (so it is only accessible in 'knows-current' or a later stage).
 	 * If pageState was not initialized when prepareUpdate() is called, prepareUpdate() will
 	 * attempt to emulate the state of the page table before the edit.
 	 *
@@ -197,52 +152,24 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * @var array
 	 */
 	private $pageState = null;
-
-	/**
-	 * @var RevisionSlotsUpdate|null
-	 */
-	private $slotsUpdate = null;
-
-	/**
-	 * @var RevisionRecord|null
-	 */
-	private $parentRevision = null;
-
-	/**
-	 * @var RevisionRecord|null
-	 */
-	private $revision = null;
-
-	/**
-	 * @var RenderedRevision
-	 */
-	private $renderedRevision = null;
-
-	/** @var ?PageLatestRevisionChangedEvent */
-	private $pageLatestRevisionChangedEvent = null;
-
-	/**
-	 * @var RevisionRenderer
-	 */
-	private $revisionRenderer;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
+	private ?RevisionSlotsUpdate $slotsUpdate = null;
+	private ?RevisionRecord $parentRevision = null;
+	private ?RevisionRecord $revision = null;
+	private ?RenderedRevision $renderedRevision = null;
+	private ?PageLatestRevisionChangedEvent $pageLatestRevisionChangedEvent = null;
 
 	/**
 	 * @var bool Whether null-edits create a revision.
 	 */
-	private $forceEmptyRevision = false;
+	private bool $forceEmptyRevision = false;
 
 	/**
 	 * A stage identifier for managing the life cycle of this instance.
 	 * Possible stages are 'new', 'knows-current', 'has-content', 'has-revision', and 'done'.
 	 *
 	 * @see docs/pageupdater.md for documentation of the life cycle.
-	 *
-	 * @var string
 	 */
-	private $stage = 'new';
+	private string $stage = 'new';
 
 	/**
 	 * Transition table for managing the life cycle of DerivedPageDateUpdater instances.
@@ -274,76 +201,40 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		],
 	];
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var EditResultCache */
-	private $editResultCache;
-
-	/** @var ContentTransformer */
-	private $contentTransformer;
-
-	/** @var PageEditStash */
-	private $pageEditStash;
-
-	/** @var WANObjectCache */
-	private $mainWANObjectCache;
-
-	/** @var bool */
-	private $warmParsoidParserCache;
-
-	/** @var bool */
-	private $useRcPatrol;
-
-	private ChangeTagsStore $changeTagsStore;
+	private readonly bool $warmParsoidParserCache;
+	private readonly bool $useRcPatrol;
 
 	public function __construct(
 		ServiceOptions $options,
 		PageIdentity $page,
-		RevisionStore $revisionStore,
-		RevisionRenderer $revisionRenderer,
-		SlotRoleRegistry $slotRoleRegistry,
-		ParserCache $parserCache,
-		JobQueueGroup $jobQueueGroup,
-		Language $contLang,
-		ILBFactory $loadbalancerFactory,
-		IContentHandlerFactory $contentHandlerFactory,
+		private readonly RevisionStore $revisionStore,
+		private readonly RevisionRenderer $revisionRenderer,
+		private readonly SlotRoleRegistry $slotRoleRegistry,
+		private readonly ParserCache $parserCache,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly Language $contLang,
+		private readonly ILBFactory $loadbalancerFactory,
+		private readonly IContentHandlerFactory $contentHandlerFactory,
 		HookContainer $hookContainer,
-		DomainEventDispatcher $eventDispatcher,
-		EditResultCache $editResultCache,
-		ContentTransformer $contentTransformer,
-		PageEditStash $pageEditStash,
-		WANObjectCache $mainWANObjectCache,
+		private readonly DomainEventDispatcher $eventDispatcher,
+		private readonly EditResultCache $editResultCache,
+		private readonly ContentTransformer $contentTransformer,
+		private readonly PageEditStash $pageEditStash,
+		private readonly WANObjectCache $mainWANObjectCache,
 		WikiPageFactory $wikiPageFactory,
-		ChangeTagsStore $changeTagsStore
+		private readonly ChangeTagsStore $changeTagsStore,
 	) {
 		// TODO: Remove this cast eventually
 		$this->wikiPage = $wikiPageFactory->newFromTitle( $page );
 
-		$this->parserCache = $parserCache;
-		$this->revisionStore = $revisionStore;
-		$this->revisionRenderer = $revisionRenderer;
-		$this->slotRoleRegistry = $slotRoleRegistry;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->contLang = $contLang;
-		// XXX only needed for waiting for replicas to catch up; there should be a narrower
-		// interface for that.
-		$this->loadbalancerFactory = $loadbalancerFactory;
-		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->eventDispatcher = $eventDispatcher;
-		$this->editResultCache = $editResultCache;
-		$this->contentTransformer = $contentTransformer;
-		$this->pageEditStash = $pageEditStash;
-		$this->mainWANObjectCache = $mainWANObjectCache;
-		$this->changeTagsStore = $changeTagsStore;
 
 		$this->logger = new NullLogger();
 
 		$this->warmParsoidParserCache = $options
 			->get( MainConfigNames::ParsoidCacheConfig )['WarmParsoidParserCache'];
 		$this->useRcPatrol = $options
-			->get( MainConfigNames::UseRCPatrol );
+			->get( MainConfigNames::UseRCPatrol ) ?? false;
 	}
 
 	public function setLogger( LoggerInterface $logger ): void {
@@ -442,7 +333,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			throw new InvalidArgumentException( '$parentId should match the parent of $revision' );
 		}
 
-		// NOTE: For null revisions, $user may be different from $this->revision->getUser
+		// NOTE: For dummy revisions, $user may be different from $this->revision->getUser
 		// and also from $revision->getUser.
 		// But $user should always match $this->user.
 		if ( $user && $this->user && $user->getName() !== $this->user->getName() ) {
@@ -490,7 +381,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 	/**
 	 * Set whether null-edits should create a revision. Enabling this allows the creation of dummy
-	 * revisions ("null revisions") to mark events such as renaming in the page history.
+	 * revisions (aka null revisions) to mark events such as renaming in the page history.
 	 *
 	 * Must not be called once prepareContent() or prepareUpdate() have been called.
 	 *
@@ -508,10 +399,10 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * @param string $articleCountMethod "any" or "link".
+	 * @param string|null $articleCountMethod "any" or "link".
 	 * @see $wgArticleCountMethod
 	 */
-	public function setArticleCountMethod( $articleCountMethod ) {
+	public function setArticleCountMethod( ?string $articleCountMethod ) {
 		$this->articleCountMethod = $articleCountMethod;
 	}
 
@@ -542,10 +433,10 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 	/**
 	 * Determines whether the page being edited already existed.
-	 * Only defined after calling grabCurrentRevision() or prepareContent() or prepareUpdate()!
+	 * Only defined after calling grabLatestRevision() or prepareContent() or prepareUpdate()!
 	 *
 	 * @return bool
-	 * @throws LogicException if called before grabCurrentRevision
+	 * @throws LogicException if called before grabLatestRevision()
 	 */
 	public function pageExisted() {
 		$this->assertHasPageState( __METHOD__ );
@@ -570,7 +461,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		}
 
 		if ( !$this->pageState['oldId'] ) {
-			// If there was no current revision, there is no parent revision,
+			// If there was no latest revision, there is no parent revision,
 			// since the page didn't exist.
 			return null;
 		}
@@ -585,7 +476,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * Returns the revision that was the page's current revision when grabCurrentRevision()
+	 * Returns the revision that was the page's latest revision when grabLatestRevision()
 	 * was first called.
 	 *
 	 * @return RevisionRecord|null the original revision before the update, or null
@@ -597,7 +488,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * Returns the revision that was the page's current revision when grabCurrentRevision()
+	 * Returns the revision that was the page's latest revision when grabLatestRevision()
 	 * was first called.
 	 *
 	 * During an edit, that revision will act as the logical parent of the new revision.
@@ -605,18 +496,19 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * Some updates are performed based on the difference between the database state at the
 	 * moment this method is first called, and the state after the edit.
 	 *
-	 * @see docs/pageupdater.md for more information on when thie method can and should be called.
+	 * @see docs/pageupdater.md for more information on when this method can and should be called.
 	 *
-	 * @note After prepareUpdate() was called, grabCurrentRevision() will throw an exception
-	 * to avoid confusion, since the page's current revision is then the new revision after
+	 * @note After prepareUpdate() was called, grabLatestRevision() will throw an exception
+	 * to avoid confusion, since the page's latest revision is then the new revision after
 	 * the edit, which was presumably passed to prepareUpdate() as the $revision parameter.
 	 * Use getParentRevision() instead to access the revision that is the parent of the
 	 * new revision.
 	 *
-	 * @return RevisionRecord|null the page's current revision, or null if the page does not
+	 * @return RevisionRecord|null the page's latest revision, or null if the page does not
 	 * yet exist.
+	 * @since 1.46
 	 */
-	public function grabCurrentRevision() {
+	public function grabLatestRevision() {
 		if ( $this->pageState ) {
 			return $this->pageState['oldRevision'];
 		}
@@ -642,6 +534,14 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		$this->doTransition( 'knows-current' );
 
 		return $this->pageState['oldRevision'];
+	}
+
+	/**
+	 * @return RevisionRecord|null
+	 * @deprecated Since 1.46; use grabLatestRevision() instead
+	 */
+	public function grabCurrentRevision() {
+		return $this->grabLatestRevision();
 	}
 
 	/**
@@ -724,8 +624,8 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		}
 
 		if ( $this->isContentDeleted() ) {
-			// This should be irrelevant: countability only applies to the current revision,
-			// and the current revision is never suppressed.
+			// This should be irrelevant: countability only applies to the latest revision,
+			// and the latest revision is never suppressed.
 			return false;
 		}
 
@@ -740,7 +640,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			// whether it has links, and use that information with that slot's
 			// isCountable() method. However, that would break parity with
 			// WikiPage::isCountable, which uses the pagelinks table to determine
-			// whether the current revision has links.
+			// whether the latest revision has links.
 			$hasLinks = $this->getParserOutputForMetaData()->hasLinks();
 		}
 
@@ -788,7 +688,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * The derived data prepared for revision creation may then later be re-used by doUpdates(),
 	 * without the need to re-calculate.
 	 *
-	 * @see docs/pageupdater.md for more information on when thie method can and should be called.
+	 * @see docs/pageupdater.md for more information on when this method can and should be called.
 	 *
 	 * @note Calling this method more than once with the same $slotsUpdate
 	 * has no effect. Calling this method multiple times with different content will cause
@@ -834,7 +734,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 		$wikiPage = $this->getWikiPage(); // TODO: use only for legacy hooks!
 		$title = $this->getTitle();
 
-		$parentRevision = $this->grabCurrentRevision();
+		$parentRevision = $this->grabLatestRevision();
 
 		// The edit may have already been prepared via api.php?action=stashedit
 		$stashedEdit = false;
@@ -864,7 +764,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 		// NOTE: user and timestamp must be set, so they can be used for
 		// {{subst:REVISIONUSER}} and {{subst:REVISIONTIMESTAMP}} in PST!
-		$this->revision->setTimestamp( MWTimestamp::now( TS_MW ) );
+		$this->revision->setTimestamp( MWTimestamp::now( TS::MW ) );
 		$this->revision->setUser( $user );
 
 		// Set up ParserOptions to operate on the new revision
@@ -998,7 +898,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	private function assertHasPageState( string $method ) {
 		if ( !$this->pageState ) {
 			throw new LogicException(
-				'Must call grabCurrentRevision() or prepareContent() '
+				'Must call grabLatestRevision() or prepareContent() '
 				. 'or prepareUpdate() before calling ' . $method
 			);
 		}
@@ -1031,9 +931,9 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	}
 
 	/**
-	 * Whether the content of the current revision after the edit is different from the content of the
-	 * current revision before the edit. This will return false for a null-edit (no revision created),
-	 * as well as for a dummy revision (a "null-revision" that has the same content as its parent).
+	 * Whether the content of the latest revision after the edit is different from the content
+	 * of the latest revision before the edit. This will return false for a null-edit (no revision
+	 * created), as well as for a dummy revision (a revision with the same content as its parent).
 	 *
 	 * @warning at present, dummy revision would return false after prepareContent(),
 	 * but true after prepareUpdate()!
@@ -1136,15 +1036,15 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 * derived data e.g. in ApiPurge, RefreshLinksJob, and the refreshLinks
 	 * script.
 	 *
-	 * @see docs/pageupdater.md for more information on when thie method can and should be called.
+	 * @see docs/pageupdater.md for more information on when this method can and should be called.
 	 *
 	 * @note Calling this method more than once with the same revision has no effect.
 	 * $options are only used for the first call. Calling this method multiple times with
 	 * different revisions will cause an exception.
 	 *
-	 * @note If grabCurrentRevision() (or prepareContent()) has been called before
+	 * @note If grabLatestRevision() (or prepareContent()) has been called before
 	 * calling this method, $revision->getParentRevision() has to refer to the revision that
-	 * was the current revision at the time grabCurrentRevision() was called.
+	 * was the latest revision at the time grabLatestRevision() was called.
 	 *
 	 * @param RevisionRecord $revision
 	 * @param array $options Array of options. Supports the flags defined by
@@ -1258,7 +1158,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			// and "new revision without new content" (dummy revision).
 
 			if ( $oldId === $revision->getParentId() ) {
-				// NOTE: this may still be a NullRevision!
+				// NOTE: this may still be a dummy revision!
 				// New revision!
 				$this->options['changed'] = true;
 			} elseif ( $oldId === $revision->getId() ) {
@@ -1291,7 +1191,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			}
 		}
 
-		// If $this->pageState was not yet initialized by grabCurrentRevision or prepareContent,
+		// If $this->pageState was not yet initialized by grabLatestRevision() or prepareContent(),
 		// emulate the state of the page table before the edit, as good as we can.
 		if ( !$this->pageState ) {
 			$this->pageState = [
@@ -1350,7 +1250,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 				]
 			);
 
-			// XXX: Since we presumably are dealing with the current revision,
+			// XXX: Since we presumably are dealing with the latest revision,
 			// we could try to get the ParserOutput from the parser cache.
 		}
 
@@ -1448,7 +1348,6 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 			$this->isRedirect() || $this->wasRedirect()
 		);
 		if ( $this->options['cause'] === PageLatestRevisionChangedEvent::CAUSE_MOVE ) {
-			// @phan-suppress-next-line PhanTypeMismatchArgument Oldtitle is set along with moved
 			$linksUpdate->setMoveDetails( $this->options['oldtitle'] );
 		}
 
@@ -1776,6 +1675,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	private function triggerParserCacheUpdate() {
 		$this->assertHasRevision( __METHOD__ );
 
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$userParserOptions = ParserOptions::newFromUser( $this->user );
 
 		// Decide whether to save the final canonical parser output based on the fact that
@@ -1838,7 +1738,7 @@ class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 	 *   - defer: one of the DeferredUpdates constants, or false to run immediately after waiting
 	 *     for replication of the changes from the SecondaryDataUpdates hooks (default: false)
 	 *   - freshness: used with 'defer'; forces an update if the last update was before the given timestamp,
-	 *     even if the page and its dependencies didn't change since then (TS_MW; default: false)
+	 *     even if the page and its dependencies didn't change since then (TS::MW; default: false)
 	 * @since 1.32
 	 */
 	public function doSecondaryDataUpdates( array $options = [] ) {

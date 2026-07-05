@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alireza Ivaz",
+			"Ebrahim",
+			"Ebraminio",
+			"Huji",
+			"Jeeputer"
+		]
+	},
+	"oathauth-webauthn-module-label": "کلید امنیتی",
+	"oathauth-webauthn-javascript-required": "برای استفاده از کلید امنیتی، جاوااسکریپت باید در مرورگر شما فعال باشد.",
+	"oathauth-webauthn-ui-login-prompt": "از کلید امنیتی خود استفاده کنید یا دستورالعمل‌های مرورگر خود را دنبال کنید.",
+	"oathauth-webauthn-ui-add-key": "افزودن کلید",
+	"oathauth-webauthn-registered-keys-section-name": "کلیدهای ثبت‌شده",
+	"oathauth-webauthn-ui-remove-key": "حذف",
+	"oathauth-webauthn-error-registration-failed": "ثبت کلید جدید ناموفق بود.",
+	"oathauth-webauthn-ui-key-register-help": "برای کلیدتان لقبی انتخاب کنید:",
+	"oathauth-webauthn-error-cannot-remove-key": "کلید قابل حذف نیست.",
+	"oathauth-webauthn-add-key-section-name": "ثبت کلید نوی WebAuthn",
+	"oathauth-webauthn-module-description": "WebAuthn (اصالت‌سنجی وب) یک استاندارد وب است که توسط کنسرسیوم وب جهان‌گستر (W3C) منتشر شده است. WebAuthn جزئی مهم از پروژهٔ FIDO2 تحت نظارت اتحاد فیدو است. هدف این پروژه استانداردسازی یک رابط کاربری برای اصالت‌سنجی کاربران برای نرم‌افزارها و خدمات مبتنی بر وبی است که از رمزنگاری کلید عمومی استفاده می‌کنند. [https://en.wikipedia.org/wiki/WebAuthn بیشتر بخوانید]",
+	"oathauth-webauthn-ui-reload-page-label": "بارگیری دوبارۀ صفحه",
+	"oathauth-webauthn-add-security-key": "افزودن کلید امنیتی"
+}

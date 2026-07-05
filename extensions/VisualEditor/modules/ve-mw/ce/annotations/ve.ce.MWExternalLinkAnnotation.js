@@ -22,10 +22,16 @@ ve.ce.MWExternalLinkAnnotation = function VeCeMWExternalLinkAnnotation( model ) 
 	// DOM changes
 	const rel = model.getAttribute( 'rel' ) || '';
 	const relValues = rel.split( /\s+/ );
+	// If link comes from Parsoid with a specific rel value, apply the corresponding class.
 	if ( relValues.includes( 'mw:WikiLink/Interwiki' ) ) {
 		this.$anchor.addClass( 'extiw' );
-	} else {
+	} else if ( relValues.includes( 'mw:ExtLink' ) ) {
 		this.$anchor.addClass( 'external' );
+	} else {
+		// ...otherwise check the URL (newly created links)
+		ve.init.target.isInterwikiUrl( model.getAttribute( 'href' ) ).then( ( isInterwiki ) => {
+			this.$anchor.addClass( isInterwiki ? 'extiw' : 'external' );
+		} );
 	}
 };
 

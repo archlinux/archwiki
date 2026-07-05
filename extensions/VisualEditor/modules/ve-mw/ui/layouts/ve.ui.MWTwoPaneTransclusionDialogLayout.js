@@ -1,5 +1,5 @@
 /**
- * Specialized layout forked from and similar to {@see OO.ui.BookletLayout}, but to synchronize the
+ * Specialized layout forked from and similar to {@link OO.ui.BookletLayout}, but to synchronize the
  * sidebar and content pane of the transclusion dialog.
  *
  * Also owns the outline controls.
@@ -369,8 +369,8 @@ ve.ui.MWTwoPaneTransclusionDialogLayout.prototype.refreshControls = function () 
 	}
 
 	this.outlineControlsWidget.setButtonsEnabled( {
-		canMoveUp: canMoveUp,
-		canMoveDown: canMoveDown,
-		canBeDeleted: canBeDeleted
+		canMoveUp,
+		canMoveDown,
+		canBeDeleted
 	} );
 };

@@ -16,7 +16,6 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Page\Article;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 // @codeCoverageIgnoreStart
@@ -127,7 +126,7 @@ class RebuildFileCache extends Maintenance {
 				->orderBy( 'page_id', SelectQueryBuilder::SORT_ASC )
 				->caller( __METHOD__ )->fetchResultSet();
 
-			$this->beginTransaction( $dbw, __METHOD__ ); // for any changes
+			$this->beginTransactionRound( __METHOD__ ); // for any changes
 			foreach ( $res as $row ) {
 				$rebuilt = false;
 
@@ -158,14 +157,13 @@ class RebuildFileCache extends Maintenance {
 						}
 					}
 
-					AtEase::suppressWarnings(); // header notices
-
 					// 1. Cache ?action=view
 					// Be sure to reset the mocked request time (T24852)
 					$_SERVER['REQUEST_TIME_FLOAT'] = microtime( true );
 					ob_start();
 					$article->view();
-					$context->getOutput()->output();
+					// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- causes "header already sent" notices
+					@$context->getOutput()->output();
 					$context->getOutput()->clearHTML();
 					$viewHtml = ob_get_clean();
 					$viewCache->saveToFileCache( $viewHtml );
@@ -175,12 +173,11 @@ class RebuildFileCache extends Maintenance {
 					$_SERVER['REQUEST_TIME_FLOAT'] = microtime( true );
 					ob_start();
 					Action::factory( 'history', $article, $context )->show();
-					$context->getOutput()->output();
+					// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- causes "header already sent" notices
+					@$context->getOutput()->output();
 					$context->getOutput()->clearHTML();
 					$historyHtml = ob_get_clean();
 					$historyCache->saveToFileCache( $historyHtml );
-
-					AtEase::restoreWarnings();
 
 					if ( $rebuilt ) {
 						$this->output( "Re-cached page '$title' (id {$row->page_id})..." );
@@ -193,7 +190,7 @@ class RebuildFileCache extends Maintenance {
 					$this->output( "Page '$title' (id {$row->page_id}) not cacheable\n" );
 				}
 			}
-			$this->commitTransaction( $dbw, __METHOD__ ); // commit any changes
+			$this->commitTransactionRound( __METHOD__ ); // commit any changes
 
 			$blockStart += $batchSize;
 			$blockEnd += $batchSize;

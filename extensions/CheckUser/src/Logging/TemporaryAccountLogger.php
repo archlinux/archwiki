@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Logging;
+namespace MediaWiki\Extension\CheckUser\Logging;
 
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\ManualLogEntry;
@@ -39,6 +39,9 @@ class TemporaryAccountLogger {
 	/** @var string Represents a user globally viewing the temporary accounts on a specific IP address */
 	public const ACTION_VIEW_TEMPORARY_ACCOUNTS_ON_IP_GLOBAL = 'view-temp-accounts-on-ip-global';
 
+	/** @var string Represents a user viewing the temporary accounts that have shared IPs, without viewing the IP */
+	public const ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS = 'view-related-temporary-accounts';
+
 	/**
 	 * Represents a user enabling or disabling their own access to view IPs
 	 *
@@ -66,13 +69,6 @@ class TemporaryAccountLogger {
 	 */
 	public const LOG_TYPE = 'checkuser-temporary-account';
 
-	private ActorStore $actorStore;
-	private LoggerInterface $logger;
-	private IConnectionProvider $dbProvider;
-	private TitleFactory $titleFactory;
-
-	private int $delay;
-
 	/**
 	 * @param ActorStore $actorStore
 	 * @param LoggerInterface $logger
@@ -83,19 +79,13 @@ class TemporaryAccountLogger {
 	 * @throws ParameterAssertionException
 	 */
 	public function __construct(
-		ActorStore $actorStore,
-		LoggerInterface $logger,
-		IConnectionProvider $dbProvider,
-		TitleFactory $titleFactory,
-		int $delay
+		private readonly ActorStore $actorStore,
+		private readonly LoggerInterface $logger,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly TitleFactory $titleFactory,
+		private readonly int $delay,
 	) {
 		Assert::parameter( $delay > 0, 'delay', 'delay must be positive' );
-
-		$this->actorStore = $actorStore;
-		$this->logger = $logger;
-		$this->dbProvider = $dbProvider;
-		$this->titleFactory = $titleFactory;
-		$this->delay = $delay;
 	}
 
 	/**
@@ -115,7 +105,10 @@ class TemporaryAccountLogger {
 		$action = $global ?
 			self::ACTION_VIEW_TEMPORARY_ACCOUNTS_ON_IP_GLOBAL : self::ACTION_VIEW_TEMPORARY_ACCOUNTS_ON_IP;
 		$this->debouncedLog(
-			$performer, IPUtils::prettifyIP( $ip ), $action, $timestamp
+			$performer,
+			IPUtils::prettifyIP( $ip ),
+			$action,
+			$timestamp
 		);
 	}
 
@@ -149,9 +142,19 @@ class TemporaryAccountLogger {
 	}
 
 	/**
-	 * Log when the user enables their own access locally.
+	 * Logs the user (the performer) viewing temporary accounts that have shared IP addresses with
+	 * a temporary account.
 	 *
 	 * @param UserIdentity $performer
+	 * @param string $tempUser
+	 * @param int $timestamp
+	 */
+	public function logViewRelatedTemporaryAccounts( UserIdentity $performer, string $tempUser, int $timestamp ): void {
+		$this->debouncedLog( $performer, $tempUser, self::ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS, $timestamp );
+	}
+
+	/**
+	 * Log when the user enables their own access locally.
 	 */
 	public function logAccessEnabled( UserIdentity $performer ): void {
 		$this->logAccessChanged( $performer, self::ACTION_ACCESS_ENABLED );
@@ -159,8 +162,6 @@ class TemporaryAccountLogger {
 
 	/**
 	 * Log when the user disables their own access locally.
-	 *
-	 * @param UserIdentity $performer
 	 */
 	public function logAccessDisabled( UserIdentity $performer ): void {
 		$this->logAccessChanged( $performer, self::ACTION_ACCESS_DISABLED );
@@ -336,11 +337,19 @@ class TemporaryAccountLogger {
 
 		if ( $debounce ) {
 			$this->debouncedLog(
-				$performer, $target, $action, $timestamp, $params
+				$performer,
+				$target,
+				$action,
+				$timestamp,
+				$params
 			);
 		} else {
 			$this->log(
-				$performer, $target, $action, $params, $timestamp
+				$performer,
+				$target,
+				$action,
+				$params,
+				$timestamp
 			);
 		}
 	}
@@ -359,3 +368,10 @@ class TemporaryAccountLogger {
 		return new ManualLogEntry( self::LOG_TYPE, $subtype );
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( TemporaryAccountLogger::class, 'MediaWiki\\CheckUser\\Logging\\TemporaryAccountLogger' );
+// @codeCoverageIgnoreEnd

@@ -8,7 +8,7 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
  * This service can be used to manage the list of keywords recognized by the Parser
  */
 class KeywordsManager {
-	public const SERVICE_NAME = 'AbuseFilterKeywordsManager';
+	public const SERVICE_NAME = ServiceNames::KeywordsManager;
 
 	/**
 	 * Operators and functions that can be used in AbuseFilter code.
@@ -140,8 +140,10 @@ class KeywordsManager {
 		'vars' => [
 			// Generates abusefilter-edit-builder-vars-timestamp
 			'timestamp' => 'timestamp',
-			// Generates abusefilter-edit-builder-vars-accountname
-			'accountname' => 'accountname',
+			// Generates abusefilter-edit-builder-vars-account-name
+			'account_name' => 'account-name',
+			// Generates abusefilter-edit-builder-vars-account-type
+			'account_type' => 'account-type',
 			// Generates abusefilter-edit-builder-vars-action
 			'action' => 'action',
 			// Generates abusefilter-edit-builder-vars-addedlines
@@ -303,7 +305,7 @@ class KeywordsManager {
 	 * filter actions that were taken by filters
 	 * that used them.
 	 *
-	 * @var array
+	 * @var array<string,string>
 	 */
 	private const DISABLED_VARS = [
 		// Generates abusefilter-edit-builder-vars-old-text
@@ -332,6 +334,7 @@ class KeywordsManager {
 		'moved_to_prefixedtext' => 'moved_to_prefixedtitle',
 		'moved_to_articleid' => 'moved_to_id',
 		'all_links' => 'new_links',
+		'accountname' => 'account_name',
 	];
 
 	/** @var string[][] Final list of builder values */
@@ -340,11 +343,7 @@ class KeywordsManager {
 	/** @var string[] Final list of deprecated vars */
 	private $deprecatedVars;
 
-	/** @var AbuseFilterHookRunner */
-	private $hookRunner;
-
-	public function __construct( AbuseFilterHookRunner $hookRunner ) {
-		$this->hookRunner = $hookRunner;
+	public function __construct( private readonly AbuseFilterHookRunner $hookRunner ) {
 	}
 
 	public function getDisabledVariables(): array {

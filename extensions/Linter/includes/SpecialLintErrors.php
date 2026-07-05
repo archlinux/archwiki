@@ -20,10 +20,10 @@
 
 namespace MediaWiki\Linter;
 
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Request\WebRequest;
@@ -34,33 +34,20 @@ use MediaWiki\Title\TitleParser;
 
 class SpecialLintErrors extends SpecialPage {
 
-	private NamespaceInfo $namespaceInfo;
-	private TitleParser $titleParser;
-	private LinkCache $linkCache;
-	private PermissionManager $permissionManager;
-	private CategoryManager $categoryManager;
-	private TotalsLookup $totalsLookup;
-
 	/**
 	 * @var string|null
 	 */
 	private $category;
 
 	public function __construct(
-		NamespaceInfo $namespaceInfo,
-		TitleParser $titleParser,
-		LinkCache $linkCache,
-		PermissionManager $permissionManager,
-		CategoryManager $categoryManager,
-		TotalsLookup $totalsLookup
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly TitleParser $titleParser,
+		private readonly LinkCache $linkCache,
+		private readonly PermissionManager $permissionManager,
+		private readonly CategoryManager $categoryManager,
+		private readonly TotalsLookup $totalsLookup,
 	) {
 		parent::__construct( 'LintErrors' );
-		$this->namespaceInfo = $namespaceInfo;
-		$this->titleParser = $titleParser;
-		$this->linkCache = $linkCache;
-		$this->permissionManager = $permissionManager;
-		$this->categoryManager = $categoryManager;
-		$this->totalsLookup = $totalsLookup;
 	}
 
 	protected function showFilterForm( string $titleLabel ): void {
@@ -119,7 +106,13 @@ class SpecialLintErrors extends SpecialPage {
 		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
 		$form->setWrapperLegend( true );
 		if ( $this->category !== null ) {
-			$form->addHeaderHtml( $this->msg( "linter-category-{$this->category}-desc" )->parse() );
+			$temps = $this->titleParser->parseTitle( 'Special:LintTemplateErrors/' . $this->category );
+			$form->addHeaderHtml(
+				$this->msg( "linter-category-{$this->category}-desc" )->parse() . " " .
+					$this->getLinkRenderer()->makeLink(
+						$temps, $this->msg( "category-by-template-view" )->text()
+					)
+			);
 		}
 		$form->setMethod( 'get' );
 		$form->prepareForm()->displayForm( false );
@@ -203,6 +196,11 @@ class SpecialLintErrors extends SpecialPage {
 		);
 	}
 
+	private function getTemplate(): string {
+		$template = $this->getRequest()->getText( 'template' );
+		return in_array( $template, [ 'with', 'without', 'all' ], true ) ? $template : 'all';
+	}
+
 	/**
 	 * @param string|null $subPage
 	 */
@@ -224,7 +222,7 @@ class SpecialLintErrors extends SpecialPage {
 		$htmlTags = new HtmlTags( $this );
 		$allowedHtmlTags = $htmlTags->getAllowedHTMLTags();
 		$tag = $allowedHtmlTags[ $tagName ] ?? 'all';
-		$template = $this->getRequest()->getText( 'template' );
+		$template = $this->getTemplate();
 
 		// If the request contains a 'titlesearch' parameter, then the user entered a page title
 		// or just the first few characters of the title. They also may have entered the first few characters
@@ -249,8 +247,12 @@ class SpecialLintErrors extends SpecialPage {
 					$this->getLinkRenderer(),
 					$this->permissionManager,
 					null,
+					// FIXME: Should this be $titleSearch['namespaces']?
 					$namespaces,
-					$exactMatch, $titleSearch[ 'titlefield' ], $template, $tag
+					$exactMatch,
+					$titleSearch[ 'titlefield' ],
+					$template,
+					$tag
 				);
 				$out->addParserOutput(
 					$pager->getFullOutput(),
@@ -284,7 +286,7 @@ class SpecialLintErrors extends SpecialPage {
 			$title = $request->getText( 'titlecategorysearch' );
 			// For category-based searches, allow an undefined title to display all records
 			if ( $title === '' ) {
-				$titleCategorySearch = [ 'titlefield' => '', 'namespace' => $namespaces, 'pageid' => null ];
+				$titleCategorySearch = [ 'titlefield' => '', 'namespace' => $namespaces ];
 			} else {
 				$titleCategorySearch = $this->cleanTitle( $title, $namespaces );
 			}
@@ -298,8 +300,12 @@ class SpecialLintErrors extends SpecialPage {
 					$this->getLinkRenderer(),
 					$this->permissionManager,
 					$this->category,
+					// FIXME: Should this be $titleSearch['namespaces']?
 					$namespaces,
-					$exactMatch, $titleCategorySearch[ 'titlefield' ], $template, $tag
+					$exactMatch,
+					$titleCategorySearch[ 'titlefield' ],
+					$template,
+					$tag
 				);
 				$out->addParserOutput(
 					$pager->getFullOutput(),

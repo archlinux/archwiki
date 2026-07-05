@@ -26,8 +26,6 @@
 	"cite_error_empty_references_define": "Rühma \"$2\" <code>&lt;references&gt;</code>-siltide vahel oleval <code>&lt;ref&gt;</code>-sildil nimega \"$1\" puudub sisu.",
 	"cite-tracking-category-cite-error": "Viitamistõrgetega leheküljed",
 	"cite-tracking-category-cite-error-desc": "Selles kategoorias on leheküljed, kus viitamissilte on kasutatud valesti.",
-	"cite-tracking-category-cite-diffing-error": "Viitamistõrgetega leheküljed (kuvatakse erinevalt)",
-	"cite-tracking-category-cite-diffing-error-desc": "Selles kategoorias on leheküljed, kus viitamissilte on kasutatud valesti ning kus vana parseri ja Parsoidiga ei kuvata tõrkeid samal moel.",
 	"cite-tracking-category-ref-details": "Alamviiteid kasutavad leheküljed",
 	"cite-tracking-category-ref-details-desc": "Selles kategoorias on leheküljed, mis kasutavad sildi &lt;ref> atribuuti \"details\".",
 	"cite-reference-previews-reference": "Viide",
@@ -52,7 +50,7 @@
 	"cite-wikieditor-help-content-showreferences-description": "Viidete kuvamine",
 	"cite-wikieditor-help-content-reference-example-text1": "Lehekülje tekst.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Lingi tekst], täiendav tekst.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Lingi tekst]",
+	"cite-wikieditor-help-content-reference-example-text3": "Raamat",
 	"cite-wikieditor-help-content-reference-example-ref-id": "katse",
-	"cite-wikieditor-help-content-reference-example-extra-details": "Täiendavad üksikasjad"
+	"cite-wikieditor-help-content-reference-example-extra-details": "Lehekülg 76"
 }

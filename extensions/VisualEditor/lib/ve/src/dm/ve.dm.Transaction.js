@@ -231,7 +231,7 @@ ve.dm.Transaction.prototype.serialize = ve.dm.Transaction.prototype.toJSON;
  * @param {number} length Length > 0 of content data to retain
  */
 ve.dm.Transaction.prototype.pushRetainOp = function ( length ) {
-	this.operations.push( { type: 'retain', length: length } );
+	this.operations.push( { type: 'retain', length } );
 };
 
 /**
@@ -242,7 +242,7 @@ ve.dm.Transaction.prototype.pushRetainOp = function ( length ) {
  * @param {any} to Value to change attribute to, or undefined to remove
  */
 ve.dm.Transaction.prototype.pushAttributeOp = function ( key, from, to ) {
-	this.operations.push( { type: 'attribute', key: key, from: from, to: to } );
+	this.operations.push( { type: 'attribute', key, from, to } );
 };
 
 /**
@@ -272,11 +272,7 @@ ve.dm.Transaction.prototype.clone = function () {
  * @return {ve.dm.Transaction} Reverse of this transaction
  */
 ve.dm.Transaction.prototype.reversed = function () {
-	const tx = new this.constructor();
-
-	tx.isReversed = !this.isReversed;
-	for ( let i = 0, len = this.operations.length; i < len; i++ ) {
-		const op = this.operations[ i ];
+	const reversedOps = this.operations.map( ( op ) => {
 		const newOp = ve.copy( op );
 		const reverse = this.constructor.static.reversers[ op.type ] || {};
 		for ( const prop in reverse ) {
@@ -286,9 +282,10 @@ ve.dm.Transaction.prototype.reversed = function () {
 				newOp[ prop ] = reverse[ prop ][ op[ prop ] ];
 			}
 		}
-		tx.operations.push( newOp );
-	}
-	tx.authorId = this.authorId;
+		return newOp;
+	} );
+	const tx = new this.constructor( reversedOps, this.authorId );
+	tx.isReversed = !this.isReversed;
 	return tx;
 };
 
@@ -326,12 +323,7 @@ ve.dm.Transaction.prototype.getOperations = function () {
  * @return {boolean} Has operations of a given type
  */
 ve.dm.Transaction.prototype.hasOperationWithType = function ( type ) {
-	for ( let i = 0, len = this.operations.length; i < len; i++ ) {
-		if ( this.operations[ i ].type === type ) {
-			return true;
-		}
-	}
-	return false;
+	return this.operations.some( ( op ) => op.type === type );
 };
 
 /**
@@ -500,7 +492,7 @@ ve.dm.Transaction.prototype.getModifiedRange = function ( doc, options = {} ) {
 
 	let start, end;
 	opLoop:
-	for ( let i = 0, len = this.operations.length; i < len; i++ ) {
+	for ( let i = 0; i < this.operations.length; i++ ) {
 		const op = this.operations[ i ];
 		switch ( op.type ) {
 			case 'retain':
@@ -558,8 +550,7 @@ ve.dm.Transaction.prototype.getModifiedRange = function ( doc, options = {} ) {
 };
 
 /**
- * @typedef {Object} RangeAndLengthDiff
- * @memberof ve.dm.Transaction
+ * @typedef {Object} ve.dm.Transaction.RangeAndLengthDiff
  * @property {number} [start] Start offset of the active range
  * @property {number} [end] End offset of the active range
  * @property {number} [startOpIndex] Start operation index of the active range
@@ -577,7 +568,7 @@ ve.dm.Transaction.prototype.getActiveRangeAndLengthDiff = function () {
 		diff = 0;
 
 	let start, end, startOpIndex, endOpIndex;
-	for ( let i = 0, len = this.operations.length; i < len; i++ ) {
+	for ( let i = 0; i < this.operations.length; i++ ) {
 		const op = this.operations[ i ];
 		const active = op.type !== 'retain';
 		// Place start marker
@@ -603,11 +594,11 @@ ve.dm.Transaction.prototype.getActiveRangeAndLengthDiff = function () {
 		}
 	}
 	return {
-		start: start,
-		end: end,
-		startOpIndex: startOpIndex,
-		endOpIndex: endOpIndex,
-		diff: diff
+		start,
+		end,
+		startOpIndex,
+		endOpIndex,
+		diff
 	};
 };
 

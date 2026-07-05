@@ -16,11 +16,13 @@
 	}
 
 	&-password,
-	&-authmethods {
+	&-authmethods,
+	&-passkeys {
 		margin-bottom: @spacing-150;
 	}
 
-	&-authmethods {
+	&-authmethods,
+	&-passkeys {
 		// On wide screens, put the actions buttons side by side;
 		// on narrow screens, put them below each other
 		&__method-actions {
@@ -42,20 +44,24 @@
 		& &__placeholder {
 			color: @color-subtle;
 			margin-top: 0;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		&--no-keys &__addform {
 			border: @border-subtle;
 			padding: @spacing-75;
 		}
+	}
 
-		// TODO use outlined accordions once those are available in Codex
-		.cdx-accordion {
-			border: @border-subtle;
-		}
-
-		.cdx-accordion + .cdx-accordion {
-			margin-top: -@spacing-12;
+	&-passkeys {
+		&__addbutton {
+			// Hide the "Add passkey" button if JS is not available
+			.client-nojs & {
+				display: none;
+			}
 		}
 	}
 
@@ -67,21 +73,41 @@
 		margin: 0;
 	}
 
-	&-delete-warning__actions {
-		// On wide screens, put the "delete" and "cancel" buttons side by side;
-		// on narrow screens, put them below each other
-		display: flex;
-		gap: @spacing-75;
-		margin-top: @spacing-125;
+	&-delete-warning {
+		.mw-htmlform-submit-buttons {
+			display: flex;
 
-		@media ( max-width: @max-width-breakpoint-mobile ) {
-			flex-direction: column;
+			@media ( max-width: @max-width-breakpoint-mobile ) {
+				flex-direction: column;
+				gap: @spacing-75;
+
+				.oo-ui-buttonElement {
+					// Remove default horizontal margin when buttons are stacked
+					margin-right: 0;
+				}
+			}
+		}
+	}
+
+	&-mandatory-2fa {
+		margin-bottom: @spacing-25;
+
+		&.cdx-message--block {
+			margin-bottom: @spacing-75;
+		}
+	}
+
+	&-2fa-groups-notice {
+		margin-top: @spacing-75;
+
+		.mw-special-OATHManage-2fa-groups-list-intro {
+			margin-top: @spacing-75;
 		}
 	}
 
 	@media ( max-width: @max-width-breakpoint-mobile ) {
-		// On narrow screens, make all buttons full width
-		.cdx-button {
+		// On narrow screens, make all buttons full width (but not those inside dialogs)
+		.mw-body-content .cdx-button {
 			display: flex;
 			width: 100%;
 		}

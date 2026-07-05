@@ -38,7 +38,8 @@ return [
 			$services->getMainWANObjectCache(),
 			$services->getHttpRequestFactory(),
 			$services->getFormatterFactory(),
-			$services->getStatsFactory()
+			$services->getStatsFactory(),
+			$services->getLocalServerObjectCache()
 		);
 	},
 	'ConfirmEditLoadedCaptchasProvider' => static function ( MediaWikiServices $services ) {

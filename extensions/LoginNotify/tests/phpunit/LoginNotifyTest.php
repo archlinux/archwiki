@@ -1,7 +1,6 @@
 <?php
 
 use LoginNotify\LoginNotify;
-use MediaWiki\CheckUser as CU;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
@@ -42,9 +41,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 			"LoginNotifyCookieExpire" => 180 * $day,
 			"LoginNotifyCookieDomain" => null,
 			"LoginNotifyMaxCookieRecords" => 6,
-			"LoginNotifyCacheLoginIPExpiry" => 60 * $day,
-			"LoginNotifyUseCheckUser" => false,
-			"LoginNotifyUseSeenTable" => true,
 			"LoginNotifyUseCentralId" => false,
 			"LoginNotifySeenExpiry" => 180 * $day,
 			"LoginNotifySeenBucketSize" => 15 * $day,
@@ -344,46 +340,8 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function testUserIsInCache() {
-		$this->setUpLoginNotify( [ "LoginNotifyUseCheckUser" => true ] );
-		$u = $this->userFactory->newFromName( 'Xyzzy' );
-		$this->assertSame(
-			LoginNotify::USER_NO_INFO,
-			$this->inst->userIsInCache( $u, new FauxRequest() )
-		);
-
-		$this->inst->cacheLoginIP( $u );
-		$this->assertSame(
-			LoginNotify::USER_KNOWN,
-			$this->inst->userIsInCache( $u, new FauxRequest() )
-		);
-
-		$request = new FauxRequest();
-		$request->setIP( '10.1.2.3' );
-
-		$this->assertSame(
-			LoginNotify::USER_NOT_KNOWN,
-			$this->inst->userIsInCache( $u, $request )
-		);
-	}
-
-	public static function provideRecordFailureKnownCacheOrTable() {
-		return [
-			[ 'cache' ],
-			[ 'table' ]
-		];
-	}
-
-	/**
-	 * @dataProvider provideRecordFailureKnownCacheOrTable
-	 * @param string $type
-	 */
-	public function testRecordFailureKnownCacheOrTable( $type ) {
-		$config = [
-			'LoginNotifyUseCheckUser' => $type === 'cache',
-			'LoginNotifyUseSeenTable' => $type !== 'cache'
-		];
-		$this->setupRecordFailure( $config );
+	public function testRecordFailureKnown() {
+		$this->setupRecordFailure();
 		$user = $this->getTestUser()->getUser();
 		$this->inst->recordKnown( $user );
 
@@ -395,54 +353,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		$this->inst->recordFailure( $user );
 		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
 		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
-
-		// None of our jobs are expected
-		$this->runJobs( [ 'numJobs' => 0 ], [ 'type' => 'LoginNotifyChecks' ] );
-	}
-
-	public function testRecordFailureKnownCheckUser() {
-		$this->setupRecordFailureWithCheckUser();
-		$helper = new TestRecentChangesHelper;
-		$user = $this->getTestUser()->getUser();
-
-		// Make a fake edit in CheckUser
-		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
-			1, 1, 1, wfTimestampNow(), 0, 0 );
-		CU\Hooks::updateCheckUserData( $rc );
-
-		// Record failed login attempt from the same IP
-		$this->inst->recordFailure( $user );
-		$this->runJobs();
-		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
-
-		// Second failure will send a notification
-		$this->inst->recordFailure( $user );
-		$this->runJobs();
-		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
-		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
-	}
-
-	public function testRecordFailureUnknownCheckUser() {
-		$this->setupRecordFailureWithCheckUser();
-		$helper = new TestRecentChangesHelper;
-		$user = $this->getTestUser()->getUser();
-
-		// Make a fake edit in CheckUser
-		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
-			1, 1, 1, wfTimestampNow(), 0, 0 );
-		CU\Hooks::updateCheckUserData( $rc );
-
-		// Change the IP and record a failure
-		RequestContext::getMain()->getRequest()->setIP( '127.1.0.0' );
-		$this->inst->recordFailure( $user );
-		$this->runJobs();
-		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
-
-		// Record another failure and notify the user
-		$this->inst->recordFailure( $user );
-		$this->runJobs();
-		$this->assertNotificationCount( $user, 'login-fail-new', 1 );
-		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
 	}
 
 	public function testRecordFailureSeenExpired() {
@@ -488,35 +398,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
 	}
 
-	public function testSendSuccessNoticeCheckUser() {
-		$this->setupRecordFailureWithCheckUser();
-		$helper = new TestRecentChangesHelper;
-		$user = $this->getTestUser()->getUser();
-		$user->setEmail( 'test@test.mediawiki.org' );
-		$user->confirmEmail();
-		$user->saveSettings();
-
-		$emailSent = false;
-		$this->setTemporaryHook( 'EchoAbortEmailNotification',
-			static function () use ( &$emailSent ) {
-				$emailSent = true;
-				return false;
-			}
-		);
-
-		// Make a fake edit in CheckUser
-		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
-			1, 1, 1, wfTimestampNow(), 0, 0 );
-		CU\Hooks::updateCheckUserData( $rc );
-
-		// Change the IP and record a success
-		RequestContext::getMain()->getRequest()->setIP( '127.1.0.0' );
-		$this->inst->sendSuccessNotice( $user );
-		$this->runJobs();
-		$this->assertTrue( $emailSent );
-	}
-
-	public function testSendSuccessNoticeSeen() {
+	public function testSendSuccessNotice() {
 		$this->setupRecordFailure();
 		$user = $this->getTestUser()->getUser();
 		$user->setEmail( 'test@test.mediawiki.org' );
@@ -547,11 +429,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		];
 		$this->setUpLoginNotify( $config );
 		$this->overrideConfigValues( $config ); // for jobs
-	}
-
-	private function setupRecordFailureWithCheckUser() {
-		$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
-		$this->setupRecordFailure( [ 'LoginNotifyUseCheckUser' => true ] );
 	}
 
 	/**
@@ -629,11 +506,11 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser()->getUser();
 
 		$this->inst->setFakeTime( 0 ); // 1970
-		$this->inst->recordUserInSeenTable( $user );
+		$this->inst->recordKnown( $user );
 		$this->assertSeenCount( 1 );
 
 		$this->inst->setFakeTime( null ); // real current time
-		$this->inst->recordUserInSeenTable( $user );
+		$this->inst->recordKnown( $user );
 		$this->assertSeenCount( 2 );
 
 		$this->runJobs();

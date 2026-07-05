@@ -35,7 +35,14 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 		themeSelect = new OO.ui.ButtonSelectWidget().addItems( [
 			new OO.ui.ButtonOptionWidget( { data: 'wikimediaui', label: 'WikimediaUI' } ),
 			new OO.ui.ButtonOptionWidget( { data: 'apex', label: 'Apex' } )
-		] ).toggle( !OO.ui.isMobile() ); // Only one theme on mobile ATM
+		] ).toggle( !OO.ui.isMobile() ), // Only one theme on mobile ATM
+		darkModeSelect = new OO.ui.ButtonSelectWidget( {
+			items: [
+				new OO.ui.ButtonOptionWidget( { data: 'light', icon: 'bright', label: 'Light mode', invisibleLabel: true } ),
+				new OO.ui.ButtonOptionWidget( { data: 'dark', icon: 'moon', label: 'Dark mode', invisibleLabel: true } )
+			]
+		} ).setDisabled( theme === 'apex' ); // Dark mode only for WikimediaUI theme
+
 	let hashChanging = false,
 		currentLang = ve.init.platform.getUserLanguages()[ 0 ],
 		currentDir = target.$element.css( 'direction' ) || 'ltr';
@@ -91,6 +98,14 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 		}
 	} );
 
+	darkModeSelect.on( 'select', ( item ) => {
+		const isDark = item.getData() === 'dark';
+		// eslint-disable-next-line no-jquery/no-global-selector
+		$( '.stylesheet-dark' ).prop( 'disabled', !isDark );
+		$( document.documentElement ).toggleClass( 've-darkmode', isDark );
+	} );
+	darkModeSelect.selectItemByData( 'light' );
+
 	languageInput.setLangAndDir( currentLang, currentDir );
 	// Dir doesn't change on init but styles need to be set
 	updateStylesFromDir();
@@ -107,13 +122,8 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 		target.$element.attr( 'lang', currentLang );
 
 		// HACK: Override/restore message functions for qqx mode
-		if ( lang === 'qqx' ) {
-			ve.init.platform.getMessage = function ( key ) {
-				return key;
-			};
-		} else {
-			ve.init.platform.getMessage = ve.init.sa.Platform.prototype.getMessage;
-		}
+		ve.init.platform.getMessage = lang === 'qqx' ? ( key ) => key :
+			ve.init.sa.Platform.prototype.getMessage;
 
 		// Re-bind as getMessage may have changed
 		OO.ui.msg = ve.init.platform.getMessage.bind( ve.init.platform );
@@ -121,9 +131,9 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 		// HACK: Re-initialize page to load message files
 		ve.init.target.teardownToolbar();
 		ve.init.platform.initialize().done( () => {
-			for ( let i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
-				ve.demo.surfaceContainers[ i ].reload( currentLang, currentDir );
-			}
+			ve.demo.surfaceContainers.forEach( ( surfaceContainer ) => {
+				surfaceContainer.reload( currentLang, currentDir );
+			} );
 		} );
 	} );
 
@@ -136,7 +146,8 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 			languageInput.$element,
 			$divider.clone(),
 			deviceSelect.$element,
-			themeSelect.$element
+			themeSelect.$element,
+			darkModeSelect.$element
 		)
 	);
 
@@ -147,9 +158,9 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 			return false;
 		}
 		const pages = [];
-		for ( let i = 0; i < ve.demo.surfaceContainers.length; i++ ) {
-			pages.push( ve.demo.surfaceContainers[ i ].pageMenu.findSelectedItem().getData() );
-		}
+		ve.demo.surfaceContainers.forEach( ( surfaceContainer ) => {
+			pages.push( surfaceContainer.pageMenu.findSelectedItem().getData() );
+		} );
 		history.replaceState( null, '', '#!' + pages.join( ',' ) );
 	}
 
@@ -174,9 +185,9 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( () => {
 			pages = hash.slice( 2 ).split( ',' ).map( decodeURIComponent );
 		}
 		if ( pages.length ) {
-			for ( let i = 0; i < pages.length; i++ ) {
-				addSurfaceContainer( pages[ i ] );
-			}
+			pages.forEach( ( page ) => {
+				addSurfaceContainer( page );
+			} );
 		} else {
 			addSurfaceContainer( 'simple' );
 		}

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use MediaWiki\Status\Status;
+use StatusValue;
 use stdClass;
 
 /**
@@ -67,28 +67,26 @@ class TemplateDataValidator {
 
 	/**
 	 * @param mixed $data
-	 *
-	 * @return Status
 	 */
-	public function validate( $data ): Status {
+	public function validate( $data ): StatusValue {
 		if ( $data === null ) {
-			return Status::newFatal( 'templatedata-invalid-parse' );
+			return StatusValue::newFatal( 'templatedata-invalid-parse' );
 		}
 
 		if ( !( $data instanceof stdClass ) ) {
-			return Status::newFatal( 'templatedata-invalid-type', 'templatedata', 'object' );
+			return StatusValue::newFatal( 'templatedata-invalid-type', 'templatedata', 'object' );
 		}
 
 		foreach ( $data as $key => $value ) {
 			if ( !in_array( $key, self::VALID_ROOT_KEYS ) ) {
-				return Status::newFatal( 'templatedata-invalid-unknown', $key );
+				return StatusValue::newFatal( 'templatedata-invalid-unknown', $key );
 			}
 		}
 
 		// Root.description
 		if ( isset( $data->description ) ) {
 			if ( !$this->isValidInterfaceText( $data->description ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', 'description',
+				return StatusValue::newFatal( 'templatedata-invalid-type', 'description',
 					'string|object' );
 			}
 		}
@@ -100,38 +98,37 @@ class TemplateDataValidator {
 					$this->isValidCustomFormatString( $data->format )
 				)
 			) {
-				return Status::newFatal( 'templatedata-invalid-format', 'format' );
+				return StatusValue::newFatal( 'templatedata-invalid-format', 'format' );
 			}
 		}
 
 		// Root.params
 		if ( !isset( $data->params ) ) {
-			return Status::newFatal( 'templatedata-invalid-missing', 'params', 'object' );
+			return StatusValue::newFatal( 'templatedata-invalid-missing', 'params', 'object' );
 		}
 
 		if ( !( $data->params instanceof stdClass ) ) {
-			return Status::newFatal( 'templatedata-invalid-type', 'params', 'object' );
+			return StatusValue::newFatal( 'templatedata-invalid-type', 'params', 'object' );
 		}
 
 		return $this->validateParameters( $data->params ) ??
 			$this->validateParameterOrder( $data->paramOrder ?? null, $data->params ) ??
 			$this->validateSets( $data->sets ?? [], $data->params ) ??
 			$this->validateMaps( $data->maps ?? (object)[], $data->params ) ??
-			Status::newGood( $data );
+			StatusValue::newGood( $data );
 	}
 
 	/**
-	 * @param stdClass $params
-	 * @return Status|null Null on success, otherwise a Status object with the error message
+	 * @return StatusValue|null Null on success, otherwise a Status object with the error message
 	 */
-	private function validateParameters( stdClass $params ): ?Status {
+	private function validateParameters( stdClass $params ): ?StatusValue {
 		foreach ( $params as $paramName => $param ) {
 			if ( trim( $paramName ) === '' ) {
-				return Status::newFatal( 'templatedata-invalid-unnamed-parameter' );
+				return StatusValue::newFatal( 'templatedata-invalid-unnamed-parameter' );
 			}
 
 			if ( !( $param instanceof stdClass ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', "params.{$paramName}",
+				return StatusValue::newFatal( 'templatedata-invalid-type', "params.{$paramName}",
 					'object' );
 			}
 
@@ -141,7 +138,7 @@ class TemplateDataValidator {
 			}
 
 			if ( isset( $param->inherits ) && !isset( $params->{ $param->inherits } ) ) {
-				return Status::newFatal( 'templatedata-invalid-missing',
+				return StatusValue::newFatal( 'templatedata-invalid-missing',
 					"params.{$param->inherits}" );
 			}
 		}
@@ -150,14 +147,12 @@ class TemplateDataValidator {
 	}
 
 	/**
-	 * @param string $paramName
-	 * @param stdClass $param
-	 * @return Status|null Null on success, otherwise a Status object with the error message
+	 * @return StatusValue|null Null on success, otherwise a Status object with the error message
 	 */
-	private function validateParameter( string $paramName, stdClass $param ): ?Status {
+	private function validateParameter( string $paramName, stdClass $param ): ?StatusValue {
 		foreach ( $param as $key => $value ) {
 			if ( !in_array( $key, self::VALID_PARAM_KEYS ) ) {
-				return Status::newFatal( 'templatedata-invalid-unknown',
+				return StatusValue::newFatal( 'templatedata-invalid-unknown',
 					"params.{$paramName}.{$key}" );
 			}
 		}
@@ -165,7 +160,7 @@ class TemplateDataValidator {
 		// Param.label
 		if ( isset( $param->label ) ) {
 			if ( !$this->isValidInterfaceText( $param->label ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.label", 'string|object' );
 			}
 		}
@@ -173,7 +168,7 @@ class TemplateDataValidator {
 		// Param.required
 		if ( isset( $param->required ) ) {
 			if ( !is_bool( $param->required ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.required", 'boolean' );
 			}
 		}
@@ -181,7 +176,7 @@ class TemplateDataValidator {
 		// Param.suggested
 		if ( isset( $param->suggested ) ) {
 			if ( !is_bool( $param->suggested ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.suggested", 'boolean' );
 			}
 		}
@@ -189,7 +184,7 @@ class TemplateDataValidator {
 		// Param.description
 		if ( isset( $param->description ) ) {
 			if ( !$this->isValidInterfaceText( $param->description ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.description", 'string|object' );
 			}
 		}
@@ -197,7 +192,7 @@ class TemplateDataValidator {
 		// Param.example
 		if ( isset( $param->example ) ) {
 			if ( !$this->isValidInterfaceText( $param->example ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.example", 'string|object' );
 			}
 		}
@@ -205,7 +200,7 @@ class TemplateDataValidator {
 		// Param.deprecated
 		if ( isset( $param->deprecated ) ) {
 			if ( !is_bool( $param->deprecated ) && !is_string( $param->deprecated ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.deprecated", 'boolean|string' );
 			}
 		}
@@ -213,12 +208,12 @@ class TemplateDataValidator {
 		// Param.aliases
 		if ( isset( $param->aliases ) ) {
 			if ( !is_array( $param->aliases ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.aliases", 'array' );
 			}
 			foreach ( $param->aliases as $i => $alias ) {
 				if ( !is_int( $alias ) && !is_string( $alias ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
+					return StatusValue::newFatal( 'templatedata-invalid-type',
 						"params.{$paramName}.aliases[$i]", 'int|string' );
 				}
 			}
@@ -228,7 +223,7 @@ class TemplateDataValidator {
 		if ( isset( $param->autovalue ) ) {
 			if ( !is_string( $param->autovalue ) ) {
 				// TODO: Validate the autovalue values.
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.autovalue", 'string' );
 			}
 		}
@@ -236,7 +231,7 @@ class TemplateDataValidator {
 		// Param.default
 		if ( isset( $param->default ) ) {
 			if ( !$this->isValidInterfaceText( $param->default ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.default", 'string|object' );
 			}
 		}
@@ -244,12 +239,12 @@ class TemplateDataValidator {
 		// Param.type
 		if ( isset( $param->type ) ) {
 			if ( !is_string( $param->type ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.type", 'string' );
 			}
 
 			if ( !in_array( $param->type, $this->validParameterTypes ) ) {
-				return Status::newFatal( 'templatedata-invalid-value',
+				return StatusValue::newFatal( 'templatedata-invalid-value',
 					'params.' . $paramName . '.type' );
 			}
 		}
@@ -257,12 +252,12 @@ class TemplateDataValidator {
 		// Param.suggestedvalues
 		if ( isset( $param->suggestedvalues ) ) {
 			if ( !is_array( $param->suggestedvalues ) ) {
-				return Status::newFatal( 'templatedata-invalid-type',
+				return StatusValue::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.suggestedvalues", 'array' );
 			}
 			foreach ( $param->suggestedvalues as $i => $value ) {
 				if ( !is_string( $value ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
+					return StatusValue::newFatal( 'templatedata-invalid-type',
 						"params.{$paramName}.suggestedvalues[$i]", 'string' );
 				}
 			}
@@ -275,16 +270,16 @@ class TemplateDataValidator {
 	 * @param mixed $paramOrder
 	 * @param stdClass $params
 	 *
-	 * @return Status|null
+	 * @return StatusValue|null
 	 */
-	private function validateParameterOrder( $paramOrder, stdClass $params ): ?Status {
+	private function validateParameterOrder( $paramOrder, stdClass $params ): ?StatusValue {
 		if ( $paramOrder === null ) {
 			return null;
 		} elseif ( !is_array( $paramOrder ) ) {
-			return Status::newFatal( 'templatedata-invalid-type', 'paramOrder', 'array' );
+			return StatusValue::newFatal( 'templatedata-invalid-type', 'paramOrder', 'array' );
 		} elseif ( count( $paramOrder ) < count( (array)$params ) ) {
 			$missing = array_diff( array_keys( (array)$params ), $paramOrder );
-			return Status::newFatal( 'templatedata-invalid-missing',
+			return StatusValue::newFatal( 'templatedata-invalid-missing',
 				'paramOrder[ "' . implode( '", "', $missing ) . '" ]' );
 		}
 
@@ -293,10 +288,10 @@ class TemplateDataValidator {
 		$seen = [];
 		foreach ( $paramOrder as $i => $param ) {
 			if ( !isset( $params->$param ) ) {
-				return Status::newFatal( 'templatedata-invalid-value', "paramOrder[ \"$param\" ]" );
+				return StatusValue::newFatal( 'templatedata-invalid-value', "paramOrder[ \"$param\" ]" );
 			}
 			if ( isset( $seen[$param] ) ) {
-				return Status::newFatal( 'templatedata-invalid-duplicate-value',
+				return StatusValue::newFatal( 'templatedata-invalid-duplicate-value',
 					"paramOrder[$i]", "paramOrder[{$seen[$param]}]", $param );
 			}
 			$seen[$param] = $i;
@@ -308,47 +303,45 @@ class TemplateDataValidator {
 	/**
 	 * @param mixed $sets
 	 * @param stdClass $params
-	 *
-	 * @return Status|null
 	 */
-	private function validateSets( $sets, stdClass $params ): ?Status {
+	private function validateSets( $sets, stdClass $params ): ?StatusValue {
 		if ( !is_array( $sets ) ) {
-			return Status::newFatal( 'templatedata-invalid-type', 'sets', 'array' );
+			return StatusValue::newFatal( 'templatedata-invalid-type', 'sets', 'array' );
 		}
 
 		foreach ( $sets as $setNr => $setObj ) {
 			if ( !( $setObj instanceof stdClass ) ) {
-				return Status::newFatal( 'templatedata-invalid-value', "sets.{$setNr}" );
+				return StatusValue::newFatal( 'templatedata-invalid-value', "sets.{$setNr}" );
 			}
 
 			if ( !isset( $setObj->label ) ) {
-				return Status::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.label",
+				return StatusValue::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.label",
 					'string|object' );
 			}
 
 			if ( !$this->isValidInterfaceText( $setObj->label ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', "sets.{$setNr}.label",
+				return StatusValue::newFatal( 'templatedata-invalid-type', "sets.{$setNr}.label",
 					'string|object' );
 			}
 
 			if ( !isset( $setObj->params ) ) {
-				return Status::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.params",
+				return StatusValue::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.params",
 					'array' );
 			}
 
 			if ( !is_array( $setObj->params ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', "sets.{$setNr}.params",
+				return StatusValue::newFatal( 'templatedata-invalid-type', "sets.{$setNr}.params",
 					'array' );
 			}
 
 			if ( !$setObj->params ) {
-				return Status::newFatal( 'templatedata-invalid-empty-array',
+				return StatusValue::newFatal( 'templatedata-invalid-empty-array',
 					"sets.{$setNr}.params" );
 			}
 
 			foreach ( $setObj->params as $i => $param ) {
 				if ( !isset( $params->$param ) ) {
-					return Status::newFatal( 'templatedata-invalid-value',
+					return StatusValue::newFatal( 'templatedata-invalid-value',
 						"sets.{$setNr}.params[$i]" );
 				}
 			}
@@ -360,17 +353,15 @@ class TemplateDataValidator {
 	/**
 	 * @param mixed $maps
 	 * @param stdClass $params
-	 *
-	 * @return Status|null
 	 */
-	private function validateMaps( $maps, stdClass $params ): ?Status {
+	private function validateMaps( $maps, stdClass $params ): ?StatusValue {
 		if ( !( $maps instanceof stdClass ) ) {
-			return Status::newFatal( 'templatedata-invalid-type', 'maps', 'object' );
+			return StatusValue::newFatal( 'templatedata-invalid-type', 'maps', 'object' );
 		}
 
 		foreach ( $maps as $consumerId => $map ) {
 			if ( !( $map instanceof stdClass ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', "maps.$consumerId",
+				return StatusValue::newFatal( 'templatedata-invalid-type', "maps.$consumerId",
 					'object' );
 			}
 
@@ -383,31 +374,31 @@ class TemplateDataValidator {
 						if ( is_array( $value2 ) ) {
 							foreach ( $value2 as $key3 => $value3 ) {
 								if ( !is_string( $value3 ) ) {
-									return Status::newFatal( 'templatedata-invalid-type',
+									return StatusValue::newFatal( 'templatedata-invalid-type',
 										"maps.{$consumerId}.{$key}[$key2][$key3]", 'string' );
 								}
 								if ( !isset( $params->$value3 ) ) {
-									return Status::newFatal( 'templatedata-invalid-param', $value3,
+									return StatusValue::newFatal( 'templatedata-invalid-param', $value3,
 										"maps.$consumerId.{$key}[$key2][$key3]" );
 								}
 							}
 						} elseif ( is_string( $value2 ) ) {
 							if ( !isset( $params->$value2 ) ) {
-								return Status::newFatal( 'templatedata-invalid-param', $value2,
+								return StatusValue::newFatal( 'templatedata-invalid-param', $value2,
 									"maps.$consumerId.{$key}[$key2]" );
 							}
 						} else {
-							return Status::newFatal( 'templatedata-invalid-type',
+							return StatusValue::newFatal( 'templatedata-invalid-type',
 								"maps.{$consumerId}.{$key}[$key2]", 'string|array' );
 						}
 					}
 				} elseif ( is_string( $value ) ) {
 					if ( !isset( $params->$value ) ) {
-						return Status::newFatal( 'templatedata-invalid-param', $value,
+						return StatusValue::newFatal( 'templatedata-invalid-param', $value,
 							"maps.{$consumerId}.{$key}" );
 					}
 				} else {
-					return Status::newFatal( 'templatedata-invalid-type',
+					return StatusValue::newFatal( 'templatedata-invalid-type',
 						"maps.{$consumerId}.{$key}", 'string|array' );
 				}
 			}

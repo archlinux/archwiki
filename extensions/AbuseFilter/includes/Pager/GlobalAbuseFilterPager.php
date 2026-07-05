@@ -61,8 +61,12 @@ class GlobalAbuseFilterPager extends AbuseFilterPager {
 
 				return $lang->commaList( $statuses );
 			case 'af_hit_count':
-				// If the rule is hidden or protected, don't show it, even to privileged local admins
-				if ( FilterUtils::isHidden( $row->af_hidden ) || FilterUtils::isProtected( $row->af_hidden ) ) {
+				// If the rule is suppressed or hidden or protected, don't show it, even to privileged local admins
+				if (
+					FilterUtils::isSuppressed( $row->af_hidden ) ||
+					FilterUtils::isHidden( $row->af_hidden ) ||
+					FilterUtils::isProtected( $row->af_hidden )
+				) {
 					return '';
 				}
 				return $this->msg( 'abusefilter-hitcount' )->numParams( $value )->parse();

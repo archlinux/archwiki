@@ -112,7 +112,7 @@ ve.dm.TransactionSquasher.static.squash = function ( transactions ) {
 		throw new Error( 'Cannot squash empty transaction array' );
 	}
 	const squasher = new ve.dm.TransactionSquasher( transactions[ 0 ] );
-	for ( let i = 1, iLen = transactions.length; i < iLen; i++ ) {
+	for ( let i = 1; i < transactions.length; i++ ) {
 		squasher.squashIn( transactions[ i ] );
 	}
 	return squasher.getTransaction();
@@ -397,12 +397,7 @@ ve.dm.TransactionSquasher.prototype.processAttribute = function ( key, from, to 
 			// Modify in place
 			op.to = to;
 		} else {
-			op = {
-				type: 'attribute',
-				key: key,
-				from: from,
-				to: to
-			};
+			op = { type: 'attribute', key, from, to };
 			this.splitIfInterior();
 			this.operations.splice( this.index, 0, op );
 			this.attributeOperations[ key ] = op;

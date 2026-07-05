@@ -90,7 +90,7 @@ class KnownIPPreAuthenticationProviderTest extends MediaWikiUnitTestCase {
 			->with( $req->username )
 			->willReturn( $user );
 
-		$this->loginNotify->method( 'isKnownSystemFast' )
+		$this->loginNotify->method( 'isKnownSystem' )
 			->with( $user, $this->request )
 			->willReturn( LoginNotify::USER_KNOWN );
 
@@ -110,7 +110,7 @@ class KnownIPPreAuthenticationProviderTest extends MediaWikiUnitTestCase {
 			->with( $req->username )
 			->willReturn( $user );
 
-		$this->loginNotify->method( 'isKnownSystemFast' )
+		$this->loginNotify->method( 'isKnownSystem' )
 			->with( $user, $this->request )
 			->willReturn( LoginNotify::USER_NOT_KNOWN );
 

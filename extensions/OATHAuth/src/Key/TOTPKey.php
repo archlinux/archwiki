@@ -1,31 +1,15 @@
 <?php
 
-namespace MediaWiki\Extension\OATHAuth\Key;
-
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
+
+namespace MediaWiki\Extension\OATHAuth\Key;
 
 use Base32\Base32;
 use DomainException;
-use Exception;
 use jakobo\HOTP\HOTP;
 use MediaWiki\Context\RequestContext;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
-use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
@@ -34,6 +18,8 @@ use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat;
 
 /**
  * Class representing a two-factor key
@@ -42,15 +28,11 @@ use Wikimedia\ObjectCache\EmptyBagOStuff;
  *
  * @ingroup Extensions
  */
-class TOTPKey implements IAuthKey {
-	/** @var array TOTP binary secret */
-	private $secret;
+class TOTPKey extends AuthKey {
+	/** TOTP binary secret */
+	private array $secret;
 
-	/**
-	 * @return TOTPKey
-	 * @throws Exception
-	 */
-	public static function newFromRandom() {
+	public static function newFromRandom(): TOTPKey {
 		return new self(
 			null,
 			null,
@@ -79,11 +61,13 @@ class TOTPKey implements IAuthKey {
 		}
 
 		if ( isset( $data['nonce'] ) ) {
-			$encryptionHelper = OATHAuthServices::getInstance()->getEncryptionHelper();
+			$encryptionHelper = self::getEncryptionHelper();
 			if ( !$encryptionHelper->isEnabled() ) {
+				// @codeCoverageIgnoreStart
 				throw new UnexpectedValueException(
 					'Encryption is not configured but OATHAuth is attempting to use encryption'
 				);
+				// @codeCoverageIgnoreEnd
 			}
 			$data['encrypted_secret'] = $data['secret'];
 			$data['secret'] = $encryptionHelper->decrypt( $data['secret'], $data['nonce'] );
@@ -103,13 +87,14 @@ class TOTPKey implements IAuthKey {
 	}
 
 	public function __construct(
-		private readonly ?int $id,
-		private readonly ?string $friendlyName,
-		private readonly ?string $createdTimestamp,
+		?int $id,
+		?string $friendlyName,
+		?string $createdTimestamp,
 		string $secret,
 		string $encryptedSecret = '',
 		string $nonce = ''
 	) {
+		parent::__construct( $id, $friendlyName, $createdTimestamp );
 		// Currently hardcoded values; might be used in the future
 		$this->secret = [
 			'mode' => 'hotp',
@@ -121,20 +106,8 @@ class TOTPKey implements IAuthKey {
 		];
 	}
 
-	public function getId(): ?int {
-		return $this->id;
-	}
-
-	public function getFriendlyName(): ?string {
-		return $this->friendlyName;
-	}
-
 	public function getSecret(): string {
 		return $this->secret['secret'];
-	}
-
-	public function getCreatedTimestamp(): ?string {
-		return $this->createdTimestamp;
 	}
 
 	public function setEncryptedSecretAndNonce( string $encryptedSecret, string $nonce ) {
@@ -149,19 +122,15 @@ class TOTPKey implements IAuthKey {
 		];
 	}
 
-	/**
-	 * @param array $data
-	 * @param OATHUser $user
-	 * @return bool
-	 * @throws DomainException
-	 */
-	public function verify( $data, OATHUser $user ) {
+	public function verify( OATHUser $user, array $data ): bool {
 		global $wgOATHAuthWindowRadius;
 
 		$token = $data['token'] ?? '';
 
 		if ( $this->secret['mode'] !== 'hotp' ) {
+			// @codeCoverageIgnoreStart
 			throw new DomainException( 'OATHAuth extension does not support non-HOTP tokens' );
+			// @codeCoverageIgnoreEnd
 		}
 
 		// Prevent replay attacks
@@ -169,8 +138,10 @@ class TOTPKey implements IAuthKey {
 		$store = $services->getMainObjectStash();
 
 		if ( $store instanceof EmptyBagOStuff ) {
+			// @codeCoverageIgnoreStart
 			// Try and find some usable cache if the MainObjectStash isn't useful
 			$store = $services->getObjectCacheFactory()->getLocalServerInstance( CACHE_ANYTHING );
+			// @codeCoverageIgnoreEnd
 		}
 
 		$key = $store->makeKey( 'oathauth-totp', 'usedtokens', $user->getCentralId() );
@@ -180,7 +151,8 @@ class TOTPKey implements IAuthKey {
 			Base32::decode( $this->secret['secret'] ),
 			$this->secret['period'],
 			-$wgOATHAuthWindowRadius,
-			$wgOATHAuthWindowRadius
+			$wgOATHAuthWindowRadius,
+			(int)ConvertibleTimestamp::now( TimestampFormat::UNIX )
 		);
 
 		// Remove any whitespace from the received token, which can be an intended group separator
@@ -213,28 +185,6 @@ class TOTPKey implements IAuthKey {
 			return true;
 		}
 
-		// TODO: We should deprecate (T408043) logging in on the TOTP form using recovery codes, and eventually
-		// remove this ability (T408044).
-		$moduleDbKeysRecCodes = $user->getKeysForModule( RecoveryCodes::MODULE_NAME );
-
-		if ( array_key_exists( 0, $moduleDbKeysRecCodes ) ) {
-			/** @var RecoveryCodeKeys $recoveryCodeKeys */
-			$recoveryCodeKeys = array_shift( $moduleDbKeysRecCodes );
-			'@phan-var RecoveryCodeKeys $recoveryCodeKeys';
-			$res = $recoveryCodeKeys->verify( [ 'recoverycode' => $token ], $user );
-			if ( $res ) {
-				$logger->info(
-					// phpcs:ignore
-					"OATHAuth {user} used a recovery code from {clientip} on TOTP form.", [
-						'user' => $user->getUser()->getName(),
-						'clientip' => $clientIP
-					]
-				);
-			}
-
-			return $res;
-		}
-
 		return false;
 	}
 
@@ -252,7 +202,7 @@ class TOTPKey implements IAuthKey {
 
 	public function jsonSerialize(): array {
 		$encryptedData = $this->getEncryptedSecretAndNonce();
-		$encryptionHelper = OATHAuthServices::getInstance()->getEncryptionHelper();
+		$encryptionHelper = self::getEncryptionHelper();
 		if ( $encryptionHelper->isEnabled() && in_array( '', $encryptedData ) ) {
 			$data = $encryptionHelper->encrypt( $this->getSecret() );
 			$this->setEncryptedSecretAndNonce( $data['secret'], $data['nonce'] );
@@ -265,7 +215,11 @@ class TOTPKey implements IAuthKey {
 			$data = [ 'secret' => $this->getSecret() ];
 		}
 
-		$data['friendly_name'] = $this->friendlyName;
+		$data['friendly_name'] = $this->getFriendlyName();
 		return $data;
+	}
+
+	private static function getEncryptionHelper(): EncryptionHelper {
+		return OATHAuthServices::getInstance()->getEncryptionHelper();
 	}
 }

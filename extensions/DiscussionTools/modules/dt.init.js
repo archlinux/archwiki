@@ -96,12 +96,12 @@ if ( featuresEnabled.topicsubscription ) {
 
 module.exports = {
 	controller: controller,
-	Parser: require( './Parser.js' ),
-	parserData: require( './parser/data.json' ),
-	modifier: require( './modifier.js' ),
-	ThreadItem: require( './ThreadItem.js' ),
-	HeadingItem: require( './HeadingItem.js' ),
-	CommentItem: require( './CommentItem.js' ),
-	utils: require( './utils.js' ),
+	Parser: require( './commentparser/Parser.js' ),
+	parserData: require( './commentparser/data.json' ),
+	modifier: require( './commentparser/modifier.js' ),
+	ThreadItem: require( './commentparser/ThreadItem.js' ),
+	HeadingItem: require( './commentparser/HeadingItem.js' ),
+	CommentItem: require( './commentparser/CommentItem.js' ),
+	utils: require( './commentparser/commentUtils.js' ),
 	config: require( './config.json' )
 };

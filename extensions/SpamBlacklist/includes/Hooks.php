@@ -7,41 +7,45 @@ use MediaWiki\Api\ApiMessage;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
+use MediaWiki\Content\TextContent;
 use MediaWiki\Context\IContextSource;
-use MediaWiki\EditPage\EditPage;
 use MediaWiki\ExternalLinks\LinkFilter;
-use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\EditFilterMergedContentHook;
-use MediaWiki\Hook\UploadVerifyUploadHook;
-use MediaWiki\Html\Html;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Specials\Hook\UserCanChangeEmailHook;
 use MediaWiki\Status\Status;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\Hook\MultiContentSaveHook;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
 use MediaWiki\Storage\PageEditStash;
+use MediaWiki\Title\Title;
+use MediaWiki\Upload\Hook\UploadVerifyUploadHook;
+use MediaWiki\Upload\UploadBase;
 use MediaWiki\User\Hook\UserCanSendEmailHook;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use UploadBase;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Message\MessageValue;
 
 /**
  * Hooks for the spam blacklist extension
  */
 class Hooks implements
-	EditFilterHook,
+	MultiContentSaveHook,
 	EditFilterMergedContentHook,
 	UploadVerifyUploadHook,
 	PageSaveCompleteHook,
 	ParserOutputStashForEditHook,
-	UserCanSendEmailHook
+	UserCanSendEmailHook,
+	UserCanChangeEmailHook
 {
 
 	public function __construct(
@@ -89,7 +93,7 @@ class Hooks implements
 			);
 			if ( $stashedEdit ) {
 				// Try getting the value from edit stash
-				/** @var ParserOutput $output */
+				/** @var ParserOutput $pout */
 				$pout = $stashedEdit->output;
 			} else {
 				// Last resort, parse the page.
@@ -168,57 +172,73 @@ class Hooks implements
 		return false;
 	}
 
+	/** @inheritDoc */
+	public function onUserCanChangeEmail( $user, $oldaddr, $newaddr, &$status ) {
+		if ( $this->permissionManager->userHasRight( $user, 'sboverride' ) ) {
+			return true;
+		}
+
+		$blacklist = BaseBlacklist::getEmailBlacklist();
+		if ( $blacklist->checkUser( $user ) ) {
+			return true;
+		}
+
+		$status = Status::newFatal( 'spam-blacklisted-email-change' );
+		return false;
+	}
+
 	/**
-	 * Hook function for EditFilter
-	 * Confirm that a local blacklist page being saved is valid,
-	 * and toss back a warning to the user if it isn't.
-	 *
-	 * @param EditPage $editPage
-	 * @param string $text
-	 * @param string $section
-	 * @param string &$hookError
-	 * @param string $summary
+	 * @inheritDoc
 	 */
-	public function onEditFilter( $editPage, $text, $section, &$hookError, $summary ) {
-		$title = $editPage->getTitle();
+	public function onMultiContentSave( $renderedRevision, $user, $summary, $flags, $status ): bool {
+		$title = Title::newFromPageIdentity( $renderedRevision->getRevision()->getPage() );
 		$thisPageName = $title->getPrefixedDBkey();
 
 		if ( !BaseBlacklist::isLocalSource( $title ) ) {
 			wfDebugLog( 'SpamBlacklist',
 				"Spam blacklist validator: [[$thisPageName]] not a local blacklist\n"
 			);
-			return;
+			return true;
 		}
 
 		$type = BaseBlacklist::getTypeFromTitle( $title );
 		if ( $type === false ) {
-			return;
+			return true;
 		}
 
+		$content = $renderedRevision->getRevision()->getContent( SlotRecord::MAIN );
+		if ( !$content instanceof TextContent ) {
+			return true;
+		}
+		$text = $content->getText();
 		$lines = explode( "\n", $text );
 
 		$badLines = SpamRegexBatch::getBadLines( $lines, BaseBlacklist::getInstance( $type ) );
 		if ( $badLines ) {
 			wfDebugLog( 'SpamBlacklist',
 				"Spam blacklist validator: [[$thisPageName]] given invalid input lines: " .
-					implode( ', ', $badLines ) . "\n"
+				implode( ', ', $badLines ) . "\n"
 			);
 
 			$badList = "*<code>" .
 				implode( "</code>\n*<code>",
-					array_map( 'wfEscapeWikiText', $badLines ) ) .
+					array_map( wfEscapeWikiText( ... ), $badLines ) ) .
 				"</code>\n";
-			$hookError =
-				Html::errorBox(
-					wfMessage( 'spam-invalid-lines' )->numParams( $badLines )->parse() . "<br />" .
-					$badList
-					) .
-					"\n<br clear='all' />\n";
+			// We're passing a MessageValue to the StatusValue here so the parameters aren't wikitext-escaped.
+			$status->fatal( MessageValue::new(
+				'spam-invalid-lines-error',
+				[
+					Message::numParam( count( $badLines ) ),
+					$badList,
+				]
+			) );
+			return false;
 		} else {
 			wfDebugLog( 'SpamBlacklist',
 				"Spam blacklist validator: [[$thisPageName]] ok or empty blacklist\n"
 			);
 		}
+		return true;
 	}
 
 	/**

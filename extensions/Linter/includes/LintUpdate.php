@@ -33,22 +33,13 @@ use Wikimedia\Stats\StatsFactory;
 
 class LintUpdate extends DataUpdate {
 
-	private StatsFactory $statsFactory;
-	private WikiPageFactory $wikiPageFactory;
-	private ParserOutputAccess $parserOutputAccess;
-	private RenderedRevision $renderedRevision;
-
 	public function __construct(
-		StatsFactory $statsFactory,
-		WikiPageFactory $wikiPageFactory,
-		ParserOutputAccess $parserOutputAccess,
-		RenderedRevision $renderedRevision
+		private readonly StatsFactory $statsFactory,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly ParserOutputAccess $parserOutputAccess,
+		private readonly RenderedRevision $renderedRevision,
 	) {
 		parent::__construct();
-		$this->statsFactory = $statsFactory;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->parserOutputAccess = $parserOutputAccess;
-		$this->renderedRevision = $renderedRevision;
 	}
 
 	public function doUpdate() {
@@ -90,7 +81,7 @@ class LintUpdate extends DataUpdate {
 		// *local* cache, which prevents wasting effort on duplicate parses)
 		$status = $this->parserOutputAccess->getParserOutput(
 			$page, $pOptions, $rev,
-			ParserOutputAccess::OPT_NO_UPDATE_CACHE
+			[ ParserOutputAccess::OPT_NO_UPDATE_CACHE => true, ],
 		);
 		if ( $status->isOK() ) {
 			self::updateParserPerformanceStats(
@@ -126,7 +117,7 @@ class LintUpdate extends DataUpdate {
 		if ( $cpuTime === null || $wallTime === null ) {
 			return;
 		}
-		$statCounter = $statsFactory
+		$statsFactory
 			->getCounter( "lintupdate_parse_count" )
 			->setLabels( $labels )
 			->increment();
@@ -134,17 +125,17 @@ class LintUpdate extends DataUpdate {
 		// Average time can be computed by dividing this counter (over some
 		// time period) by the $statsCounter with label 'cache_miss' (for
 		// the same time period).
-		$statCpuTime = $statsFactory
+		$statsFactory
 			->getCounter( "lintupdate_parse_cpu_seconds" )
 			->setLabels( $labels )
 			->incrementBy( $cpuTime );
-		$statWallTime = $statsFactory
+		$statsFactory
 			->getCounter( "lintupdate_parse_wall_seconds" )
 			->setLabels( $labels )
 			->incrementBy( $wallTime );
 
 		// Collect HTML size comparison data
-		$statHtmlSize = $statsFactory
+		$statsFactory
 			->getCounter( "lintupdate_parse_html_bytes" )
 			->setLabels( $labels )
 			->incrementBy( strlen( $po->getRawText() ?? '' ) );

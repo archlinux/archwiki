@@ -4,6 +4,11 @@ local packageCache
 local packageModuleFunc
 local php
 local allowEnvFuncs = false
+local shareInvocationEnv = false
+local frameMap = setmetatable( {}, { __mode = 'k' } )
+local metatableMap = setmetatable( {}, { __mode = 'k' } )
+local sharedEnvs = {}
+local sharedEnvsMaxSize = 10
 local logBuffer = ''
 local loadedData = {}
 local loadedJsonData = {}
@@ -74,6 +79,9 @@ function mw.setupInterface( options )
 	if options.allowEnvFuncs then
 		allowEnvFuncs = true
 	end
+	if options.shareInvocationEnv then
+		shareInvocationEnv = true
+	end
 
 	-- Store the interface table
 	--
@@ -91,18 +99,76 @@ function mw.setupInterface( options )
 	packageCache = {}
 end
 
+local fieldOrder = { 'year', 'month', 'day', 'hour', 'min', 'sec' }
+-- month and day are 1-based in Lua's date tables (0 would mean the prior month/day).
+local fieldZero = { year = 0, month = 1, day = 1, hour = 0, min = 0, sec = 0 }
+-- Maximum number of seconds a single unit can span.
+local fieldMaxTtl = { year = 366 * 86400, month = 31 * 86400, day = 86400, hour = 3600, min = 60 }
+
+--- Compute the number of seconds until the next calendar boundary for the given unit.
+local function getBoundaryTtl( now, unit, isUtc )
+	if unit == 'sec' then
+		return 1
+	end
+
+	-- Build the next boundary by copying fields above the target from 'now',
+	-- incrementing the target, and zeroing everything below it.
+	local boundary = {}
+	local pastTarget = false
+	for _, field in ipairs( fieldOrder ) do
+		if field == unit then
+			boundary[field] = now[field] + 1
+			pastTarget = true
+		elseif pastTarget then
+			boundary[field] = fieldZero[field]
+		else
+			boundary[field] = now[field]
+		end
+	end
+
+	-- os.time() always applies a local-time offset. For UTC, pin isdst so
+	-- both sides get the same offset and it cancels out. For local times
+	-- near a DST transition, clamp to the unit's max to avoid overcaching.
+	if isUtc then
+		boundary.isdst = now.isdst
+	end
+	local ttl = os.time( boundary ) - os.time( now )
+	return math.min( ttl, fieldMaxTtl[unit] )
+end
+
+local function getDateFormatUnit( format )
+	if not format then
+		return 'sec'
+	end
+
+	local cleanedFormat = format:gsub( '%%%%', '' )
+	-- Check for E or O prefix allowed by Lua 5.2+
+	if cleanedFormat:find( '%%[EO]?[crsSTX+]' ) then
+		return 'sec'
+	elseif cleanedFormat:find( '%%[EO]?[MR]' ) then
+		return 'min'
+	elseif cleanedFormat:find( '%%[EO]?[HIkl]' ) then
+		return 'hour'
+	elseif cleanedFormat:find( '%%[EO]?[pPaAdejuwDFxUVWGg]' ) then
+		return 'day'
+	elseif cleanedFormat:find( '%%[EO]?[bBhm]' ) then
+		return 'month'
+	elseif cleanedFormat:find( '%%[EO]?[CYy]' ) then
+		return 'year'
+	end
+
+	-- Anything else falls back to a day-boundary TTL.
+	return 'day'
+end
+
 --- Create a table like the one os.date() returns, but with a metatable that sets TTLs as the values are looked at.
-local function wrapDateTable( now )
+local function wrapDateTable( now, isUtc )
 	return setmetatable( {}, {
 		__index = function( t, k )
-			if k == 'sec' then
-				php.setTTL( 1 )
-			elseif k == 'min' then
-				php.setTTL( 60 - now.sec )
-			elseif k == 'hour' then
-				php.setTTL( 3600 - now.min * 60 - now.sec )
+			if fieldZero[k] ~= nil then
+				php.setTTL( getBoundaryTtl( now, k, isUtc ), 'os.date *t .' .. k )
 			elseif now[k] ~= nil then
-				php.setTTL( 86400 - now.hour * 3600 - now.min * 60 - now.sec )
+				php.setTTL( getBoundaryTtl( now, 'day', isUtc ), 'os.date *t .' .. k )
 			end
 			t[k] = now[k]
 			return now[k]
@@ -113,32 +179,21 @@ end
 --- Wrappers for os.date() and os.time() that set the TTL of the output, if necessary
 local function ttlDate( format, time )
 	if time == nil and ( format == nil or type( format ) == 'string' ) then
-		local now = os.date( format and format:sub( 1, 1 ) == '!' and '!*t' or '*t' )
+		local isUtc = format and format:sub( 1, 1 ) == '!'
+		local now = os.date( isUtc and '!*t' or '*t' )
 		if format == '!*t' or format == '*t' then
-			return wrapDateTable( now )
+			return wrapDateTable( now, isUtc )
 		end
-		local cleanedFormat = format and format:gsub( '%%%%', '' )
-		if not format or cleanedFormat:find( '%%[EO]?[crsSTX+]' ) then
-			php.setTTL( 1 ) -- second
-		elseif cleanedFormat:find( '%%[EO]?[MR]' ) then
-			php.setTTL( 60 - now.sec ) -- minute
-		elseif cleanedFormat:find( '%%[EO]?[HIkl]' ) then
-			php.setTTL( 3600 - now.min * 60 - now.sec ) -- hour
-		elseif cleanedFormat:find( '%%[EO]?[pP]' ) then
-			php.setTTL( 43200 - ( now.hour % 12 ) * 3600 - now.min * 60 - now.sec ) -- am/pm
-		else
-			-- It's not worth the complexity to figure out the exact TTL of larger units than days.
-			-- If they haven't used anything shorter than days, then just set the TTL to expire at
-			-- the end of today.
-			php.setTTL( 86400 - now.hour * 3600 - now.min * 60 - now.sec )
-		end
+		local callerLabel = 'os.date(' .. ( format or '' ) .. ')'
+		local unit = getDateFormatUnit( format )
+		php.setTTL( getBoundaryTtl( now, unit, isUtc ), callerLabel )
 	end
 	return os.date( format, time )
 end
 
 local function ttlTime( t )
 	if t == nil then
-		php.setTTL( 1 )
+		php.setTTL( 1, 'os.time' )
 	end
 	return os.time( t )
 end
@@ -455,8 +510,28 @@ local function newFrame( frameId, ... )
 	return frame
 end
 
---- Set up a cloned environment for execution of a module chunk, then execute
--- the module in that environment. This is called by the host to implement
+--- Create a new cloned environment for module execution.
+-- @return table The new environment
+local function newEnv()
+	local env = mw.clone( _G )
+	makePackageModule( env )
+
+	-- These are unsafe
+	env.mw.makeProtectedEnvFuncs = nil
+	env.mw.executeModule = nil
+
+	if allowEnvFuncs then
+		env.setfenv, env.getfenv = mw.makeProtectedEnvFuncs( {[_G] = true}, {} )
+	else
+		env.setfenv = nil
+		env.getfenv = nil
+	end
+
+	return env
+end
+
+--- Set up a cloned (or shared, if shareInvocationEnv is enabled) environment for execution of a module chunk,
+-- then execute the module in that environment. This is called by the host to implement
 -- {{#invoke}}.
 --
 -- @param chunk The module chunk
@@ -465,22 +540,35 @@ end
 -- @return boolean Whether the requested value was able to be returned
 -- @return table|function|string The requested value, or if that was unable to be returned, the type of the value returned by the module
 function mw.executeModule( chunk, name, frame )
-	local env = mw.clone( _G )
-	makePackageModule( env )
+	local env
+	if shareInvocationEnv then
+		env = table.remove( sharedEnvs, 1 ) or newEnv()
+	else
+		env = newEnv()
+	end
 
-	-- These are unsafe
-	env.mw.makeProtectedEnvFuncs = nil
-	env.mw.executeModule = nil
+	local oldGetCurrentFrame
+	if shareInvocationEnv then
+		-- Reset the metatable so require( 'strict' ) doesn't affect subsequent invocations
+		setmetatable( env, nil )
+		-- Reset loaded packages so modules like strict are able to modify the metatable again if loaded.
+		-- Packages are cached anyway, so this shouldn't impact performance.
+		for k in pairs( env.package.loaded ) do
+			env.package.loaded[k] = nil
+		end
+		oldGetCurrentFrame = env.mw.getCurrentFrame
+	end
+
 	if name ~= false then -- console sets name to false when evaluating its code and nil when evaluating a module's
 		env.mw.getLogBuffer = nil
 		env.mw.clearLogBuffer = nil
 	end
-
-	if allowEnvFuncs then
-		env.setfenv, env.getfenv = mw.makeProtectedEnvFuncs( {[_G] = true}, {} )
-	else
-		env.setfenv = nil
-		env.getfenv = nil
+	if shareInvocationEnv and ( name == false or name == nil ) then
+		-- Restore getLogBuffer and clearLogBuffer, in case they were removed in the previous invocation.
+		-- We also do this if name == nil because both the init function and the actual execution share the same
+		-- environment.
+		env.mw.getLogBuffer = mw.getLogBuffer
+		env.mw.clearLogBuffer = mw.clearLogBuffer
 	end
 
 	env.os.date = ttlDate
@@ -493,7 +581,27 @@ function mw.executeModule( chunk, name, frame )
 
 	setfenv( chunk, env )
 
-	local res = chunk()
+	local res
+	if shareInvocationEnv then
+		local ok
+		ok, res = pcall( chunk )
+
+		if oldGetCurrentFrame ~= nil then
+			env.mw.getCurrentFrame = oldGetCurrentFrame
+		end
+
+		if name == nil and #sharedEnvs < sharedEnvsMaxSize then
+			-- If name is nil, then this is likely not a function invocation, so let's restore the env immediately
+			table.insert( sharedEnvs, getfenv( chunk ) )
+		end
+
+		if not ok then
+			error( res, 0 )
+		end
+	else
+		res = chunk()
+	end
+
 
 	if not name then -- catch console whether it's evaluating its own code or a module's
 		return true, res
@@ -501,13 +609,52 @@ function mw.executeModule( chunk, name, frame )
 	if type(res) ~= 'table' then
 		return false, type(res)
 	end
-	return true, res[name]
+
+	local func = res[name]
+	if shareInvocationEnv and name ~= nil then
+		if type( func ) == 'function' then
+			frameMap[func] = frame
+			metatableMap[func] = getmetatable( env )
+		end
+	end
+
+	return true, func
+end
+
+--- Execute a function chunk in a shared environment.
+-- @param chunk The function chunk
+-- @param frame The frame to pass to the function and return via mw.getCurrentFrame
+local function executeFunctionInSharedEnvironment( chunk, frame )
+	getfenv( chunk ).mw.getCurrentFrame = function ()
+		return frame
+	end
+
+	if metatableMap[chunk] then
+		setmetatable( getfenv( chunk ), metatableMap[chunk] )
+	end
+	-- We can't unpack 'ok' and 'res' here since functions can return multiple values
+	local pcallRes = { pcall( chunk, frame ) }
+	local ok = pcallRes[1]
+
+	setmetatable( getfenv( chunk ), nil )
+	if #sharedEnvs < sharedEnvsMaxSize then
+		table.insert( sharedEnvs, getfenv( chunk ) )
+	end
+
+	if not ok then
+		error( pcallRes[2], 0 )
+	end
+	table.remove( pcallRes, 1 )
+
+	return pcallRes
 end
 
 function mw.executeFunction( chunk )
 	local getCurrentFrame = getfenv( chunk ).mw.getCurrentFrame
 	local frame
-	if getCurrentFrame then
+	if shareInvocationEnv and frameMap[chunk] then
+		frame = frameMap[chunk]
+	elseif getCurrentFrame then
 		-- Normal case
 		frame = getCurrentFrame()
 	else
@@ -524,7 +671,12 @@ function mw.executeFunction( chunk )
 	end
 	executeFunctionDepth = executeFunctionDepth + 1
 
-	local results = { chunk( frame ) }
+	local results
+	if shareInvocationEnv then
+		results = executeFunctionInSharedEnvironment( chunk, frame )
+	else
+		results = { chunk( frame ) }
+	end
 
 	local stringResults = {}
 	for i, result in ipairs( results ) do

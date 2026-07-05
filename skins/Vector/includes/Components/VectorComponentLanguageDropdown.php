@@ -7,18 +7,7 @@ use MediaWiki\Title\Title;
  * VectorComponentLanguageButton component
  */
 class VectorComponentLanguageDropdown implements VectorComponent {
-	/** @var string */
-	private $label;
-	/** @var string */
-	private $ariaLabel;
-	/** @var string */
-	private $class;
-	/** @var int */
-	private $numLanguages;
-	/** @var array */
-	private $menuContentsData;
-	/** @var Title|null */
-	private $title;
+	private readonly array $menuContentsData;
 
 	/**
 	 * @param string $label human readable
@@ -31,20 +20,21 @@ class VectorComponentLanguageDropdown implements VectorComponent {
 	 * @param Title|null $title
 	 */
 	public function __construct(
-		string $label, string $ariaLabel, string $class, int $numLanguages,
+		private readonly string $label,
+		private readonly string $ariaLabel,
+		private string $class,
+		private readonly int $numLanguages,
 		// @todo: replace with >MenuContents class.
-		string $itemHTML, string $beforePortlet = '', string $afterPortlet = '', $title = null
+		string $itemHTML,
+		string $beforePortlet = '',
+		string $afterPortlet = '',
+		private readonly ?Title $title = null,
 	) {
-		$this->label = $label;
-		$this->ariaLabel = $ariaLabel;
-		$this->class = $class;
-		$this->numLanguages = $numLanguages;
 		$this->menuContentsData = [
 			'html-items' => $itemHTML,
 			'html-before-portal' => $beforePortlet,
 			'html-after-portal' => $afterPortlet,
 		];
-		$this->title = $title;
 	}
 
 	/**

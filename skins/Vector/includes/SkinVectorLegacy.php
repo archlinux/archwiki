@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Skins\Vector;
 
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Exception\MWException;
+use MediaWiki\Language\LanguageConverterFactory;
+use MediaWiki\Skin\Components\SkinComponentUtils;
 use MediaWiki\Skin\SkinMustache;
 use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\Skins\Vector\Components\VectorComponentSearchBox;
@@ -34,6 +36,47 @@ class SkinVectorLegacy extends SkinMustache {
 	 */
 	protected function runOnSkinTemplateNavigationHooks( SkinTemplate $skin, &$content_navigation ) {
 		parent::runOnSkinTemplateNavigationHooks( $skin, $content_navigation );
+		// For temp users, add createaccount right after user-page (before notifications)
+		$createAccountItem = [];
+		if ( $skin->getUser()->isTemp() ) {
+			$returnto = SkinComponentUtils::getReturnToParam(
+				$skin->getTitle(), $skin->getRequest(), $skin->getAuthority()
+			);
+			$createAccountItem['createaccount'] = $skin->buildCreateAccountData( $returnto );
+		}
+		$content_navigation['user-menu'] = array_merge(
+			$content_navigation['user-interface-preferences'],
+			$content_navigation['user-page'],
+			$createAccountItem,
+			$content_navigation['notifications'],
+			$content_navigation['user-menu']
+		);
+		unset(
+			$content_navigation['notifications'],
+			$content_navigation['user-interface-preferences'],
+			$content_navigation['user-page']
+		);
+
+		// Historically all special pages have a "Special pages" tab.
+		// This is not supported by the associated-pages menu so we add it here
+		// to retain classic behaviour.
+		$title = $skin->getOutput()->getTitle();
+		$associatedPages = $content_navigation['associated-pages'];
+		if ( count( $associatedPages ) === 0 && !$title->canExist() ) {
+			try {
+				$url = $skin->getRequest()->getRequestURL();
+			} catch ( MWException ) {
+				$url = false;
+			}
+			$content_navigation['associated-pages'] = [
+				'special' => [
+					'class' => 'selected',
+					'text' => $this->msg( 'nstab-special' )->text(),
+					'href' => $url,
+					'context' => 'subject',
+				]
+			] + $associatedPages;
+		}
 		Hooks::onSkinTemplateNavigation( $skin, $content_navigation );
 	}
 
@@ -80,10 +123,6 @@ class SkinVectorLegacy extends SkinMustache {
 	): array {
 		$isIconDropdown = false;
 		switch ( $key ) {
-			case 'data-user-menu':
-				$type = self::MENU_TYPE_DROPDOWN;
-				$isIconDropdown = true;
-				break;
 			case 'data-actions':
 			case 'data-variants':
 			case 'data-sticky-header-toc':
@@ -91,25 +130,18 @@ class SkinVectorLegacy extends SkinMustache {
 				break;
 			case 'data-views':
 			case 'data-associated-pages':
-			case 'data-namespaces':
 				$type = self::MENU_TYPE_TABS;
 				break;
-			case 'data-notifications':
-			case 'data-personal':
-			case 'data-user-page':
-			case 'data-vector-user-menu-overflow':
+			case 'data-user-menu':
 				$type = self::MENU_TYPE_DEFAULT;
+				// Set tooltip to empty string for the personal menu for both logged-in and logged-out users
+				// to avoid showing the tooltip for legacy version.
+				$portletData['html-tooltip'] = '';
+				$portletData['class'] .= ' vector-user-menu-legacy';
 				break;
 			default:
 				$type = self::MENU_TYPE_PORTAL;
 				break;
-		}
-
-		if ( $key === 'data-personal' ) {
-			// Set tooltip to empty string for the personal menu for both logged-in and logged-out users
-			// to avoid showing the tooltip for legacy version.
-			$portletData['html-tooltip'] = '';
-			$portletData['class'] .= ' vector-user-menu-legacy';
 		}
 
 		// Special casing for Variant to change label to selected.
@@ -119,7 +151,7 @@ class SkinVectorLegacy extends SkinMustache {
 				$this->languageConverterFactory,
 				$portletData,
 				$this->getTitle()->getPageLanguage(),
-				$this->msg( 'vector-language-variant-switcher-label' )
+				$this->msg( 'vector-language-variant-switcher-label' )->text()
 			);
 			$portletData[ 'label' ] = $variant->getTemplateData()[ 'data-variants-dropdown' ][ 'label' ];
 		}

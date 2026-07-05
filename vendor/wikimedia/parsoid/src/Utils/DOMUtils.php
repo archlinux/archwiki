@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -823,15 +824,6 @@ class DOMUtils {
 			$c = $c->nextSibling;
 		}
 		return false;
-	}
-
-	/**
-	 * @see DOMCompat::attributes()
-	 * @deprecated since 0.22; use DOMCompat::attributes()
-	 */
-	public static function attributes( Element $element ): array {
-		PHPUtils::deprecated( __METHOD__, "0.22" );
-		return DOMCompat::attributes( $element );
 	}
 
 	public static function isMetaDataTag( Element $node ): bool {

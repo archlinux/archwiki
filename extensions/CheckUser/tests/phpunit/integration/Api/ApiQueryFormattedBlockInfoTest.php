@@ -1,12 +1,12 @@
 <?php
-namespace MediaWiki\CheckUser\Tests\Integration\Api;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api;
 
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Tests\Api\ApiTestCase;
 
 /**
  * @group Database
- * @covers \MediaWiki\CheckUser\Api\ApiQueryFormattedBlockInfo
+ * @covers \MediaWiki\Extension\CheckUser\Api\ApiQueryFormattedBlockInfo
  */
 class ApiQueryFormattedBlockInfoTest extends ApiTestCase {
 	public function testShouldRejectAnonymousPerformer(): void {

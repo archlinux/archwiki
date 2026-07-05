@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
 use MediaWiki\Block\Block;
-use MediaWiki\CheckUser\HookHandler\AbuseFilterHandler;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
+use MediaWiki\Extension\CheckUser\HookHandler\AbuseFilterHandler;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
@@ -17,7 +17,7 @@ use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\AbuseFilterHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\AbuseFilterHandler
  * @group CheckUser
  * @group Database
  */
@@ -31,7 +31,7 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->markTestSkippedIfExtensionNotLoaded( 'Abuse Filter' );
 	}
 
-	private function getHookHandler() {
+	private function getHookHandler(): AbuseFilterHandler {
 		return new AbuseFilterHandler(
 			$this->getServiceContainer()->get( 'CheckUserTemporaryAccountLoggerFactory' ),
 			$this->getServiceContainer()->get( 'CheckUserPermissionManager' ),
@@ -61,7 +61,10 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->getTestSysop();
 		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), '~2024-01', [ 'other_protected_var' ], (int)wfTimestamp()
+			$performer->getUserIdentity(),
+			'~2024-01',
+			[ 'other_protected_var' ],
+			(int)wfTimestamp()
 		);
 		DeferredUpdates::doUpdates();
 
@@ -90,7 +93,10 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->getTestSysop();
 		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), '~2024-01', [ 'user_unnamed_ip', 'other_protected_var' ], (int)wfTimestamp()
+			$performer->getUserIdentity(),
+			'~2024-01',
+			[ 'user_unnamed_ip', 'other_protected_var' ],
+			(int)wfTimestamp()
 		);
 		DeferredUpdates::doUpdates();
 
@@ -128,10 +134,14 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		$performer = $this->getTestSysop();
 		$protectedVarsAccessLogger = AbuseFilterServices::getAbuseLoggerFactory()->getProtectedVarsAccessLogger();
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), '~2024-01', [ 'user_unnamed_ip' ]
+			$performer->getUserIdentity(),
+			'~2024-01',
+			[ 'user_unnamed_ip' ]
 		);
 		$protectedVarsAccessLogger->logViewProtectedVariableValue(
-			$performer->getUserIdentity(), '~2024-01', [ 'user_unnamed_ip' ]
+			$performer->getUserIdentity(),
+			'~2024-01',
+			[ 'user_unnamed_ip' ]
 		);
 		DeferredUpdates::doUpdates();
 
@@ -156,7 +166,7 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 			->assertFieldValue( 0 );
 	}
 
-	private function mockAllUsersHaveAcceptedIPRevealPreference() {
+	private function mockAllUsersHaveAcceptedIPRevealPreference(): void {
 		$this->setService(
 			'UserOptionsLookup',
 			new StaticUserOptionsLookup( [], [ 'checkuser-temporary-account-enable' => 1 ] )
@@ -188,7 +198,8 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		// Test that the hook does not attempt to validate if the user can see Temp account IP addresses
 		// if the temporary accounts feature is not known.
 		$this->setService(
-			'CheckUserPermissionManager', $this->createNoOpMock( CheckUserPermissionManager::class )
+			'CheckUserPermissionManager',
+			$this->createNoOpMock( CheckUserPermissionManager::class )
 		);
 		$canViewProtectedVariablesStatus = AbuseFilterServices::getPermissionManager()
 			->canViewProtectedVariables( $this->mockRegisteredUltimateAuthority(), $variables );
@@ -210,13 +221,16 @@ class AbuseFilterHandlerTest extends MediaWikiIntegrationTestCase {
 		$block->method( 'isSitewide' )
 			->willReturn( true );
 		$testAuthority = $this->mockUserAuthorityWithBlock(
-			$this->mockRegisteredUltimateAuthority()->getUser(), $block,
+			$this->mockRegisteredUltimateAuthority()->getUser(),
+			$block,
 			[ 'checkuser-temporary-account-no-preference' ]
 		);
 
 		$actualStatus = AbuseFilterPermissionStatus::newGood();
 		$this->getHookHandler()->onAbuseFilterCanViewProtectedVariables(
-			$testAuthority, [ 'user_unnamed_ip' ], $actualStatus
+			$testAuthority,
+			[ 'user_unnamed_ip' ],
+			$actualStatus
 		);
 
 		$this->assertStatusNotGood( $actualStatus );

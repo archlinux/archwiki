@@ -5,7 +5,6 @@ namespace MediaWiki\Extension\SpamBlacklist;
 use LogicException;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Wikimedia\AtEase\AtEase;
 
 /**
  * Email Blacklisting
@@ -51,10 +50,8 @@ class EmailBlacklist extends BaseBlacklist {
 			wfDebugLog( 'SpamBlacklist', "Excluding whitelisted email addresses from " .
 				count( $whitelists ) . " regexes: " . implode( ', ', $whitelists ) . "\n" );
 			foreach ( $whitelists as $regex ) {
-				AtEase::suppressWarnings();
-				$match = preg_match( $regex, $email );
-				AtEase::restoreWarnings();
-				if ( $match ) {
+				// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+				if ( @preg_match( $regex, $email ) ) {
 					// Whitelisted email
 					return true;
 				}
@@ -65,10 +62,8 @@ class EmailBlacklist extends BaseBlacklist {
 		wfDebugLog( 'SpamBlacklist', "Checking e-mail address against " . count( $blacklists ) .
 			" regexes: " . implode( ', ', $blacklists ) . "\n" );
 		foreach ( $blacklists as $regex ) {
-			AtEase::suppressWarnings();
-			$match = preg_match( $regex, $email );
-			AtEase::restoreWarnings();
-			if ( $match ) {
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			if ( @preg_match( $regex, $email ) ) {
 				return false;
 			}
 		}

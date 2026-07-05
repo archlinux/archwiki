@@ -54,6 +54,7 @@
 	"nuke-delete-more": "[[Special:Nuke|더 많은 문서를 삭제하기]]",
 	"nuke-deletemore": "더 많은 문서 삭제",
 	"nuke-pattern": "문서 이름의 SQL LIKE 패턴(예: %):",
+	"nuke-pattern-leading-wildcard": "패턴은 <code>%</code>로 시작할 수 없습니다. 와일드카드 앞에 접두사를 입력해 주세요 (예:<code>%Example</code> 대신 <code>Example%</code>).",
 	"nuke-nolist": "계속하려면 먼저 '{{int:nuke-submit-list}}'을 한 다음 삭제 대기열에 추가할 문서를 선택하십시오.",
 	"nuke-nopages-global": "검색과 일치하는 문서가 없습니다.",
 	"nuke-searchnotice-minmorethanmax": "최소 크기(바이트)가 최대 크기(바이트)를 초과하므로 어떤 문서도 이 기준을 충족할 수 없습니다.",

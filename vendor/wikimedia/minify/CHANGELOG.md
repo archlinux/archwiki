@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.10.0 (2026-01-08)
+
+Fixed:
+* JavaScriptMinifier: Optimize static property access with local variables (Ori Livneh)
+* JavaScriptMinifier: Optimize operator parsing with direct lookahead (Ori Livneh)
+* Cli: Fix jsdebug labels for states in generator functions (Timo Tijhof)
+
+Added:
+
+* JavaScriptMinifier: Add support for ES2018 `for-await-of` (Hannah Okwelum) [T387122](https://phabricator.wikimedia.org/T387122)
+
+Changed:
+
+* Raise required PHP to >= 8.1 (James D. Forrester)
+
 ## 2.9.0 (2025-03-25)
 
 Fixed:

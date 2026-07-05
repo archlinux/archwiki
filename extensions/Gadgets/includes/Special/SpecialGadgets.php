@@ -20,31 +20,36 @@
 
 namespace MediaWiki\Extension\Gadgets\Special;
 
-use InvalidArgumentException;
-use MediaWiki\Content\ContentHandler;
-use MediaWiki\Extension\Gadgets\Gadget;
-use MediaWiki\Extension\Gadgets\GadgetRepo;
-use MediaWiki\Html\Html;
-use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\Language\Language;
-use MediaWiki\MainConfigNames;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Message\Message;
-use MediaWiki\Parser\Sanitizer;
-use MediaWiki\Skin\SkinFactory;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\Title\Title;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
- * Special:Gadgets renders the data of MediaWiki:Gadgets-definition.
- *
- * @copyright 2007 Daniel Kinzler
+ * Wrapper page for Special:Gadgets subpages
  */
 class SpecialGadgets extends SpecialPage {
-	public function __construct(
-		private readonly Language $contentLanguage,
-		private readonly GadgetRepo $gadgetRepo,
-		private readonly SkinFactory $skinFactory,
-	) {
+	/**
+	 * List of subpage names to the subclass of ActionPage which handles them.
+	 */
+	private const SUBPAGE_LIST = [
+		'list' => [
+			'class' => ListPage::class,
+			'services' => [
+				'GadgetsRepo',
+				'ContentLanguage',
+				'SkinFactory'
+			],
+		],
+		'export' => [
+			'class' => ExportPage::class,
+			'services' => [
+				'GadgetsRepo'
+			]
+		]
+	];
+
+	public function __construct( private readonly ObjectFactory $objectFactory ) {
 		parent::__construct( 'Gadgets' );
 	}
 
@@ -58,393 +63,63 @@ class SpecialGadgets extends SpecialPage {
 	}
 
 	/**
-	 * @param string|null $par Parameters passed to the page
-	 */
-	public function execute( $par ) {
-		$parts = $par !== null ? explode( '/', $par ) : [];
-
-		if ( count( $parts ) >= 2 && $parts[0] === 'export' ) {
-			$this->showExportForm( $parts[1] );
-		} else {
-			$this->showMainForm();
-		}
-	}
-
-	/**
-	 * @param string $gadgetName
-	 * @return string
-	 */
-	private function makeAnchor( $gadgetName ) {
-		return 'gadget-' . Sanitizer::escapeIdForAttribute( $gadgetName );
-	}
-
-	/**
-	 * Displays form showing the list of installed gadgets
-	 */
-	public function showMainForm() {
-		$output = $this->getOutput();
-		$this->setHeaders();
-		$this->addHelpLink( 'Extension:Gadgets' );
-		$output->setPageTitleMsg( $this->msg( 'gadgets-title' ) );
-		$output->addWikiMsg( 'gadgets-pagetext' );
-
-		$gadgets = $this->gadgetRepo->getStructuredList();
-		if ( !$gadgets ) {
-			return;
-		}
-
-		$output->disallowUserJs();
-		$lang = $this->getLanguage();
-		$langSuffix = "";
-		if ( !$lang->equals( $this->contentLanguage ) ) {
-			$langSuffix = "/" . $lang->getCode();
-		}
-
-		$listOpen = false;
-
-		$editDefinitionMessage = $this->getUser()->isAllowed( 'editsitejs' )
-			? 'edit'
-			: 'viewsource';
-		$editInterfaceMessage = $this->getUser()->isAllowed( 'editinterface' )
-			? 'gadgets-editdescription'
-			: 'gadgets-viewdescription';
-		$editInterfaceMessageSection = $this->getUser()->isAllowed( 'editinterface' )
-			? 'gadgets-editsectiontitle'
-			: 'gadgets-viewsectiontitle';
-
-		$linkRenderer = $this->getLinkRenderer();
-		foreach ( $gadgets as $section => $entries ) {
-			if ( $section !== false && $section !== '' ) {
-				if ( $listOpen ) {
-					$output->addHTML( Html::closeElement( 'ul' ) . "\n" );
-					$listOpen = false;
-				}
-
-				// H2 section heading
-				$headingText = $this->msg( "gadget-section-$section" )->parse();
-				$output->addHTML( Html::rawElement( 'h2', [], $headingText ) . "\n" );
-
-				// Edit link for the section heading
-				$title = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-section-$section$langSuffix" );
-				$linkTarget = $title
-					? $linkRenderer->makeLink( $title, $this->msg( $editInterfaceMessageSection )->text(),
-						[], [ 'action' => 'edit' ] )
-					: htmlspecialchars( $section );
-				$output->addHTML( Html::rawElement( 'p', [],
-					$this->msg( 'parentheses' )->rawParams( $linkTarget )->escaped() ) . "\n" );
-			}
-
-			/**
-			 * @var Gadget $gadget
-			 */
-			foreach ( $entries as $gadget ) {
-				$name = $gadget->getName();
-				$title = Title::makeTitleSafe( NS_MEDIAWIKI, "Gadget-{$name}$langSuffix" );
-				if ( !$title ) {
-					continue;
-				}
-
-				$links = [];
-				$definitionTitle = $this->gadgetRepo->getGadgetDefinitionTitle( $name );
-				if ( $definitionTitle ) {
-					$links[] = $linkRenderer->makeLink(
-						$definitionTitle,
-						$this->msg( $editDefinitionMessage )->text(),
-						[],
-						[ 'action' => 'edit' ]
-					);
-				}
-				$links[] = $linkRenderer->makeLink(
-					$title,
-					$this->msg( $editInterfaceMessage )->text(),
-					[],
-					[ 'action' => 'edit' ]
-				);
-				$links[] = $linkRenderer->makeLink(
-					$this->getPageTitle( "export/{$name}" ),
-					$this->msg( 'gadgets-export' )->text()
-				);
-
-				$nameHtml = $this->msg( "gadget-{$name}" )->parse();
-
-				if ( !$listOpen ) {
-					$listOpen = true;
-					$output->addHTML( Html::openElement( 'ul' ) );
-				}
-
-				$actionsHtml = '&#160;&#160;' .
-					$this->msg( 'parentheses' )->rawParams( $lang->pipeList( $links ) )->escaped();
-				$output->addHTML(
-					Html::openElement( 'li', [ 'id' => $this->makeAnchor( $name ) ] ) .
-						$nameHtml . $actionsHtml
-				);
-				// Whether the next portion of the list item contents needs
-				// a line break between it and the next portion.
-				// This is set to false after lists, but true after lines of text.
-				$needLineBreakAfter = true;
-
-				// Portion: Show files, dependencies, speers
-				if ( $needLineBreakAfter ) {
-					$output->addHTML( '<br />' );
-				}
-				$output->addHTML(
-					$this->msg( 'gadgets-uses' )->escaped() .
-					$this->msg( 'colon-separator' )->escaped()
-				);
-				$links = [];
-				foreach ( $gadget->getPeers() as $peer ) {
-					$links[] = Html::element(
-						'a',
-						[ 'href' => '#' . $this->makeAnchor( $peer ) ],
-						$peer
-					);
-				}
-				foreach ( $gadget->getScriptsAndStyles() as $codePage ) {
-					$title = Title::newFromText( $codePage );
-					if ( !$title ) {
-						continue;
-					}
-					$links[] = $linkRenderer->makeLink( $title, $title->getText() );
-				}
-				$output->addHTML( $lang->commaList( $links ) );
-
-				if ( $gadget->isPackaged() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML( $this->msg( 'gadgets-packaged',
-						$this->gadgetRepo->titleWithoutPrefix( $gadget->getScripts()[0], $gadget->getName() ) ) );
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Legacy scripts
-				if ( $gadget->getLegacyScripts() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
-					$output->addHTML( Html::errorBox(
-						$this->msg( 'gadgets-legacy' )->parse(),
-						'',
-						'mw-gadget-legacy'
-					) );
-					$needLineBreakAfter = false;
-				}
-
-				if ( $gadget->requiresES6() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-requires-es6' )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required rights (optional)
-				$rights = [];
-				foreach ( $gadget->getRequiredRights() as $right ) {
-					$rights[] = Html::element(
-						'code',
-						[ 'title' => $this->msg( "right-$right" )->plain() ],
-						$right
-					);
-				}
-				if ( $rights ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-required-rights', $lang->commaList( $rights ), count( $rights ) )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required skins (optional)
-				$requiredSkins = $gadget->getRequiredSkins();
-				$skins = [];
-				$validskins = $this->skinFactory->getInstalledSkins();
-				foreach ( $requiredSkins as $skinid ) {
-					if ( isset( $validskins[$skinid] ) ) {
-						$skins[] = $this->msg( "skinname-$skinid" )->plain();
-					} else {
-						$skins[] = $skinid;
-					}
-				}
-				if ( $skins ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
-							->numParams( count( $skins ) )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required actions (optional)
-				$actions = [];
-				foreach ( $gadget->getRequiredActions() as $action ) {
-					$actions[] = Html::element( 'code', [], $action );
-				}
-				if ( $actions ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-required-actions', $lang->commaList( $actions ) )
-							->numParams( count( $actions ) )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required namespaces (optional)
-				$namespaces = $gadget->getRequiredNamespaces();
-				if ( $namespaces ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg(
-							'gadgets-required-namespaces',
-							$lang->commaList( array_map( function ( int $ns ) use ( $lang ) {
-								return $ns == NS_MAIN
-									? $this->msg( 'blanknamespace' )->text()
-									: $lang->getFormattedNsText( $ns );
-							}, $namespaces ) )
-						)->numParams( count( $namespaces ) )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required content models (optional)
-				$contentModels = [];
-				foreach ( $gadget->getRequiredContentModels() as $model ) {
-					$contentModels[] = Html::element(
-						'code',
-						[ 'title' => ContentHandler::getLocalizedName( $model, $lang ) ],
-						$model
-					);
-				}
-				if ( $contentModels ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-required-contentmodels',
-							$lang->commaList( $contentModels ),
-							count( $contentModels )
-						)->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show required categories (optional)
-				$categories = [];
-				foreach ( $gadget->getRequiredCategories() as $category ) {
-					$title = Title::makeTitleSafe( NS_CATEGORY, $category );
-					$categories[] = $title
-						? $linkRenderer->makeLink( $title, $category )
-						: htmlspecialchars( $category );
-				}
-				if ( $categories ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML(
-						$this->msg( 'gadgets-required-categories' )
-							->rawParams( $lang->commaList( $categories ) )
-							->numParams( count( $categories ) )->parse()
-					);
-					$needLineBreakAfter = true;
-				}
-				// Show if hidden
-				if ( $gadget->isHidden() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML( $this->msg( 'gadgets-hidden' )->parse() );
-					$needLineBreakAfter = true;
-				}
-
-				// Show if supports URL load
-				if ( $gadget->supportsUrlLoad() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML( $this->msg( 'gadgets-supports-urlload' )->parse() );
-					$needLineBreakAfter = true;
-				}
-
-				// Portion: Show on by default (optional)
-				if ( $gadget->isOnByDefault() ) {
-					if ( $needLineBreakAfter ) {
-						$output->addHTML( '<br />' );
-					}
-					$output->addHTML( $this->msg( 'gadgets-default' )->parse() );
-					$needLineBreakAfter = true;
-				}
-
-				// Show warnings
-				$warnings = $this->gadgetRepo->validationWarnings( $gadget );
-
-				if ( $warnings ) {
-					$output->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
-					$output->addHTML( Html::warningBox( implode( '<br/>', array_map( static function ( $msg ) {
-						return $msg->parse();
-					}, $warnings ) ) ) );
-					$needLineBreakAfter = false;
-				}
-
-				$output->addHTML( Html::closeElement( 'li' ) . "\n" );
-			}
-		}
-
-		if ( $listOpen ) {
-			$output->addHTML( Html::closeElement( 'ul' ) . "\n" );
-		}
-	}
-
-	/**
-	 * Exports a gadget with its dependencies in a serialized form
-	 * @param string $gadget Name of gadget to export
-	 */
-	public function showExportForm( $gadget ) {
-		$this->addHelpLink( 'Extension:Gadgets' );
-		$output = $this->getOutput();
-		try {
-			$g = $this->gadgetRepo->getGadget( $gadget );
-		} catch ( InvalidArgumentException ) {
-			$output->showErrorPage( 'error', 'gadgets-not-found', [ $gadget ] );
-			return;
-		}
-
-		$this->setHeaders();
-		$output->setPageTitleMsg( $this->msg( 'gadgets-export-title' ) );
-		$output->addWikiMsg( 'gadgets-export-text', $gadget, $g->getDefinition() );
-
-		$exportList = "MediaWiki:gadget-$gadget\n";
-		foreach ( $g->getScriptsAndStyles() as $page ) {
-			$exportList .= "$page\n";
-		}
-
-		$htmlForm = HTMLForm::factory( 'ooui', [], $this->getContext() );
-		$htmlForm
-			->setTitle( SpecialPage::getTitleFor( 'Export' ) )
-			->addHiddenField( 'pages', $exportList )
-			->addHiddenField( 'wpDownload', '1' )
-			->addHiddenField( 'templates', '1' )
-			->setAction( $this->getConfig()->get( MainConfigNames::Script ) )
-			->setMethod( 'get' )
-			->setSubmitText( $this->msg( 'gadgets-export-download' )->text() )
-			->prepareForm()
-			->displayForm( false );
-	}
-
-	/**
 	 * @inheritDoc
 	 */
 	protected function getGroupName() {
 		return 'wiki';
+	}
+
+	/**
+	 * @param string|null $par Parameters passed to the page
+	 */
+	public function execute( $par ) {
+		$parts = $par ? explode( '/', $par, 1 ) : [];
+		$subPage = $parts[0] ?? 'list';
+
+		$params = explode( '/', $subPage );
+		$pageName = array_shift( $params );
+		$page = $this->getSubpage( $pageName );
+		if ( !$page ) {
+			$this->getOutput()->setStatusCode( 404 );
+			throw new ErrorPageError( 'error', 'gadgets-subpage-invalid', [ $pageName ] );
+		}
+
+		if ( !( $page instanceof ListPage ) ) {
+			$this->setSubtitle();
+		}
+
+		$this->setHeaders();
+		$this->addHelpLink( 'Extension:Gadgets' );
+		$page->execute( $params );
+	}
+
+	/**
+	 * Get a _ActionPage subclass object for the given subpage name
+	 * @param string $name
+	 * @return null|ActionPage
+	 */
+	private function getSubpage( string $name ) {
+		if ( !isset( self::SUBPAGE_LIST[$name] ) ) {
+			return null;
+		}
+		/** @var ActionPage $page */
+		$page = $this->objectFactory->createObject(
+			self::SUBPAGE_LIST[$name],
+			[
+				'extraArgs' => [ $this ],
+				'assertClass' => ActionPage::class,
+			]
+		);
+		return $page;
+	}
+
+	/**
+	 * Set a navigation subtitle.
+	 */
+	private function setSubtitle() {
+		$title = $this->getPageTitle();
+		$linkRenderer = $this->getLinkRenderer();
+		$subtitle = '&lt; ' . $linkRenderer->makeKnownLink( $title, $this->msg( 'gadgets-title' )->text() );
+		$this->getOutput()->setSubtitle( $subtitle );
 	}
 }

@@ -5,11 +5,12 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.ui.MWLinkAction' );
+QUnit.module( 've.ui.MWLinkAction', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 
 QUnit.test( 'MW autolink', ( assert ) => {
+	const noChange = () => {};
 	const cases = [
 		{
 			msg: 'Strip trailing punctuation (but not matched parens)',
@@ -50,9 +51,8 @@ QUnit.test( 'MW autolink', ( assert ) => {
 			rangeOrSelection: new ve.Range( 1, 9 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 9 ),
-			expectedData: () => {
-				/* no change, no link */
-			}
+			expectedData: noChange,
+			expectedReturn: false
 		},
 		{
 			msg: 'Autolink valid PMID',
@@ -80,9 +80,8 @@ QUnit.test( 'MW autolink', ( assert ) => {
 			rangeOrSelection: new ve.Range( 1, 10 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 10 ),
-			expectedData: () => {
-				/* no change, no link */
-			}
+			expectedData: noChange,
+			expectedReturn: false
 		},
 		{
 			msg: 'Autolink valid ISBN',
@@ -110,9 +109,8 @@ QUnit.test( 'MW autolink', ( assert ) => {
 			rangeOrSelection: new ve.Range( 1, 19 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 19 ),
-			expectedData: () => {
-				/* no change, no link */
-			}
+			expectedData: noChange,
+			expectedReturn: false
 		}
 	];
 

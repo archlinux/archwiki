@@ -15,6 +15,7 @@
 			"Викиней"
 		]
 	},
+	"collabpad-disabled": "CollabPad ass op dëser Wiki net aktivéiert.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importéiert vu(n) $1",
 	"collabpad": "CollabPad",
@@ -227,6 +228,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Ënneriwwerschrëft 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Ënneriwwerschrëft 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Ënneriwwerschrëft 4",
+	"visualeditor-fullpage-switch-label": "Déi ganz Säit änneren",
 	"visualeditor-generating-wikitext-progress": "Wikitext gëtt generéiert",
 	"visualeditor-includes-includeonly": "Inhalt deen nëmmen dragesat gëtt",
 	"visualeditor-includes-documentation": "[//www.mediawiki.org/wiki/Special:MyLanguage/Transclusion#Partial_transclusion Gitt méi iwwer partiell Transklusioun gewuer]",

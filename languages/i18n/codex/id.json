@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bayahiu",
 			"Hidayatsrf",
-			"Rebeccayoga",
 			"HyperAnd",
-			"Bayahiu"
+			"Rebeccayoga"
 		]
 	},
 	"cdx-breadcrumb-navigation-label": "Remah roti",
@@ -25,6 +25,7 @@
 	"cdx-table-pager-button-last-page": "Halaman terakhir",
 	"cdx-table-pager-button-next-page": "Halaman selanjutnya",
 	"cdx-table-pager-button-prev-page": "Halaman sebelumnya",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 butir}}",
 	"cdx-table-pager-items-per-page-default": "Hasil per halaman",
 	"cdx-table-pagination-status-message-determinate-long": "Menampilkan hasil $1–$2 dari $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 dari $3",

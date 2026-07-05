@@ -26,10 +26,6 @@
 
 // Non-dialog styling for footer buttons
 #preferences {
-	// Support Edge: The `position: sticky` rule above causes the buttons to
-	// disappear in RTL languages on Microsoft Edge. This magically fixes the issue. See T220706.
-	filter: brightness( 1 );
-
 	/*
 	 * Use `position: sticky` on supported browsers, degrades gracefully in
 	 * all others, therefore no `@supports` feature query to reduce code complexity.
@@ -439,4 +435,11 @@ with params ?useskin=vector&useformat=mobile
 // TODO: Add native support for indentation to HTMLForm and/or PreferencesFormOOUI.
 .mw-prefs-indent .oo-ui-fieldLayout-body {
 	margin-left: 26px;
+}
+
+// apply to both JS and JS-disable cases
+.mw-widgets-languageSelectWidget-vue-container,
+.mw-widgets-languageSelectWidget {
+	width: 100%;
+	max-width: 50em;
 }

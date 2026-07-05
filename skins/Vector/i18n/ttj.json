@@ -46,9 +46,6 @@
 	"vector-toc-label": "Ebirumu",
 	"vector-toc-beginning": "Okubanza",
 	"vector-toc-toggle-button-label": "Hinduliza $1 akacweka",
-	"vector-anon-user-menu-pages": "Empapura z'abakozesa abayesigisize",
-	"vector-anon-user-menu-pages-learn": "yega muno",
-	"vector-anon-user-menu-pages-label": "Yega muno okuhingisa",
 	"vector-main-menu-tooltip": "Orukarra rw'emirimo orukuru",
 	"vector-toc-menu-tooltip": "Orukarra rw'ebirumu",
 	"vector-toc-collapsible-button-label": "Hinduliza orukarra rw'ebirumu",
@@ -70,8 +67,6 @@
 	"vector-page-tools-unpinned-popup": "Orukarra rw'ebikwato rwihirwe hanu.",
 	"vector-main-menu-unpinned-popup": "Orukarra rw'emirimo orukuru rwihirwe hanu.",
 	"vector-appearance-unpinned-popup": "Orukarra rw'enzooka rwihirwe hanu.",
-	"vector-2022-beta-preview-label": "Obutungibwa bw'Okusoma (Vekitoli 2022)",
-	"vector-2022-beta-preview-description": "Tunga kara obusobozi obuhyaka bw'obutungibwa bw'okusoma, nk'enkiza z'okuhandiika n'omulingo gw'omwirima.",
 	"vector-night-mode-issue-reporting-preload-title": "Ensobi y'omulingo gw'omwirima ha $1",
 	"vector-night-mode-beta-tag": "(bbeta)"
 }

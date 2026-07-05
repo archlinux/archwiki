@@ -48,7 +48,6 @@
 	"oathauth-throttled": "มีการพยายามยืนยันตัวตนมากเกินไป! กรุณารอ $1",
 	"oathauth-login-failed": "การยืนยันล้มเหลว",
 	"oathauth-describe-provider": "การยืนยันตัวตนสองขั้นตอน (OATH)",
-	"action-oathauth-api-all": "ตรวจสอบสถานะ OATH",
 	"oathauth-user-not-found": "ไม่พบบัญชีผู้ใช้ที่มีชื่อนี้",
 	"oath-log-name": "ปูมการยืนยันตัวตนสองขั้นตอน",
 	"log-action-filter-oath": "ประเภทของการดำเนินการการยืนยันตัวตนสองขั้นตอน:",

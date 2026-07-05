@@ -343,6 +343,7 @@ RLPAGEMODULES = {$pageModulesJson};
 		}
 
 		// Inline stylesheets (embedded only=styles)
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset False positive
 		if ( $data['embed']['styles'] ) {
 			$chunks[] = $this->getLoad(
 				$data['embed']['styles'],

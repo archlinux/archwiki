@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Revision\ArchivedRevisionLookup;
@@ -23,25 +23,17 @@ class CheckUserLookupUtils {
 
 	public const CONSTRUCTOR_OPTIONS = [ 'CheckUserCIDRLimit' ];
 
-	private ServiceOptions $options;
-	private IReadableDatabase $dbr;
-	private RevisionLookup $revisionLookup;
-	private ArchivedRevisionLookup $archivedRevisionLookup;
-	private LoggerInterface $logger;
+	private readonly IReadableDatabase $dbr;
 
 	public function __construct(
-		ServiceOptions $options,
+		private readonly ServiceOptions $options,
 		IConnectionProvider $dbProvider,
-		RevisionLookup $revisionLookup,
-		ArchivedRevisionLookup $archivedRevisionLookup,
-		LoggerInterface $logger
+		private readonly RevisionLookup $revisionLookup,
+		private readonly ArchivedRevisionLookup $archivedRevisionLookup,
+		private LoggerInterface $logger,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
 		$this->dbr = $dbProvider->getReplicaDatabase();
-		$this->revisionLookup = $revisionLookup;
-		$this->archivedRevisionLookup = $archivedRevisionLookup;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -139,10 +131,11 @@ class CheckUserLookupUtils {
 	 */
 	public function getIndexName( ?bool $xfor, string $table ): string {
 		// So that a code search can find existing usages:
-		// cuc_actor_ip_time, cule_actor_ip_time, cupe_actor_ip_time, cuc_xff_hex_time, cuc_ip_hex_time,
-		// cule_xff_hex_time, cule_ip_hex_time, cupe_xff_hex_time, cupe_ip_hex_time
+		// cuc_actor_ip_hex_time, cule_actor_ip_hex_time, cupe_actor_ip_hex_time,
+		// cuc_xff_hex_time, cuc_ip_hex_time, cule_xff_hex_time, cule_ip_hex_time,
+		// cupe_xff_hex_time, cupe_ip_hex_time
 		if ( $xfor === null ) {
-			return CheckUserQueryInterface::RESULT_TABLE_TO_PREFIX[$table] . 'actor_ip_time';
+			return CheckUserQueryInterface::RESULT_TABLE_TO_PREFIX[$table] . 'actor_ip_hex_time';
 		} else {
 			$type = $xfor ? 'xff' : 'ip';
 			return CheckUserQueryInterface::RESULT_TABLE_TO_PREFIX[$table] . $type . '_hex_time';
@@ -183,15 +176,28 @@ class CheckUserLookupUtils {
 			$logEntry->setParameters( $parsedLogParams );
 		}
 		$logEntry->setPerformer( $user );
+
+		$target = null;
 		if ( isset( $row->title ) && $row->title ) {
-			$logEntry->setTarget( Title::makeTitle( $row->namespace, $row->title ) );
+			$target = Title::makeTitle( $row->namespace, $row->title );
 		} elseif (
 			// page_id is the column name for Special:CheckUser. page is the column name for the CheckUser API.
 			( isset( $row->page ) && $row->page ) ||
 			( isset( $row->page_id ) && $row->page_id )
 		) {
-			$logEntry->setTarget( Title::newFromID( $row->page ?? $row->page_id ) );
+			$target = Title::newFromID( $row->page ?? $row->page_id );
 		}
+		if ( $target === null ) {
+			$this->logger->error(
+				'Missing target for log entry being displayed in CheckUser result interface',
+				[
+					'row' => $row,
+					'exception' => new RuntimeException(),
+				]
+			);
+		}
+		$logEntry->setTarget( $target ?? Title::makeTitle( NS_SPECIAL, 'Badtitle' ) );
+
 		$logEntry->setTimestamp( $row->timestamp );
 		$logEntry->setDeleted( $row->log_deleted );
 		return $logEntry;
@@ -219,3 +225,10 @@ class CheckUserLookupUtils {
 		return $revRecord;
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserLookupUtils::class, 'MediaWiki\\CheckUser\\Services\\CheckUserLookupUtils' );
+// @codeCoverageIgnoreEnd

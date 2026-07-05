@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\CheckUser\Api;
+namespace MediaWiki\Extension\CheckUser\Api;
 
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryBase;
@@ -9,15 +9,12 @@ use MediaWiki\Language\FormatterFactory;
  * An API module to allow the CheckUser UI to retrieve and display HTML-formatted block error messages.
  */
 class ApiQueryFormattedBlockInfo extends ApiQueryBase {
-	private FormatterFactory $formatterFactory;
-
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,
-		FormatterFactory $formatterFactory
+		private readonly FormatterFactory $formatterFactory,
 	) {
 		parent::__construct( $queryModule, $moduleName );
-		$this->formatterFactory = $formatterFactory;
 	}
 
 	public function execute() {

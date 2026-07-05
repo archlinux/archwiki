@@ -139,15 +139,6 @@ class MockSiteConfig extends SiteConfig {
 		return '/Category/';
 	}
 
-	public function bswRegexp(): string {
-		return '/' .
-				'NOGLOBAL|DISAMBIG|NOCOLLABORATIONHUBTOC|nocollaborationhubtoc|NOTOC|notoc|' .
-				'NOGALLERY|nogallery|FORCETOC|forcetoc|TOC|toc|NOEDITSECTION|noeditsection|' .
-				'NOTITLECONVERT|notitleconvert|NOTC|notc|NOCONTENTCONVERT|nocontentconvert|' .
-				'NOCC|nocc|NEWSECTIONLINK|NONEWSECTIONLINK|HIDDENCAT|INDEX|NOINDEX|STATICREDIRECT' .
-			'/';
-	}
-
 	/** @inheritDoc */
 	public function canonicalNamespaceId( string $name ): ?int {
 		return self::NAMESPACE_MAP[$name] ?? null;
@@ -230,16 +221,12 @@ class MockSiteConfig extends SiteConfig {
 
 	/** @inheritDoc */
 	public function getMWConfigValue( string $key ) {
-		switch ( $key ) {
-			case 'CiteResponsiveReferences':
-				return true;
-			case 'CiteResponsiveReferencesThreshold':
-				return 10;
-			case 'ParsoidExperimentalParserFunctionOutput':
-				return $this->v3pf;
-			default:
-				return null;
-		}
+		return match ( $key ) {
+			'CiteResponsiveReferences' => true,
+			'CiteResponsiveReferencesThreshold' => 10,
+			'ParsoidExperimentalParserFunctionOutput' => $this->v3pf,
+			default => null
+		};
 	}
 
 	public function rtl(): bool {
@@ -269,31 +256,17 @@ class MockSiteConfig extends SiteConfig {
 
 	/** @inheritDoc */
 	public function variantsFor( Bcp47Code $lang ): ?array {
-		switch ( $lang->toBcp47Code() ) {
-			case 'sr':
-				return [
+		return match ( $lang->toBcp47Code() ) {
+			'sr' => [
 				'base' => new Bcp47CodeValue( 'sr' ),
-				'fallbacks' => [
-					new Bcp47CodeValue( 'sr-Cyrl' )
-				]
-			];
-			case 'sr-Cyrl':
-				return [
+				'fallbacks' => [ new Bcp47CodeValue( 'sr-Cyrl' ) ]
+			],
+			'sr-Cyrl', 'sr-Latn' => [
 				'base' => new Bcp47CodeValue( 'sr' ),
-				'fallbacks' => [
-					new Bcp47CodeValue( 'sr' )
-				]
-			];
-			case 'sr-Latn':
-				return [
-				'base' => new Bcp47CodeValue( 'sr' ),
-				'fallbacks' => [
-					new Bcp47CodeValue( 'sr' )
-				]
-			];
-			default:
-				return null;
-		}
+				'fallbacks' => [ new Bcp47CodeValue( 'sr' ) ]
+			],
+			default => null
+		};
 	}
 
 	public function widthOption(): int {
@@ -303,6 +276,11 @@ class MockSiteConfig extends SiteConfig {
 	/** @inheritDoc */
 	protected function getVariableIDs(): array {
 		return []; // None for now
+	}
+
+	/** @inheritDoc */
+	protected function getDoubleUnderscoreIDs(): array {
+		return [ 'toc', 'notoc', ];
 	}
 
 	/** @inheritDoc */

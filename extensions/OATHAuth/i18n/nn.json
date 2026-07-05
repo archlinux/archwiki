@@ -20,9 +20,6 @@
 	"oathauth-module-totp-label": "TOTP (eingongsnykel)",
 	"oathauth-ui-manage": "Handsam",
 	"oathmanage": "Handsam tofaktorautentisering",
-	"oathauth-ui-not-enabled-modules": "Byt til annan metode",
-	"oathauth-ui-enabled-module": "Påslege autentiseringsmetode",
-	"oathauth-ui-available-modules": "Tilgjengelege metodar",
 	"notification-header-oathauth-enable": "Tofaktorautentisering er påslege på kontoen {{GENDER:$2|din}}.",
 	"notification-body-oathauth-enable": "Var det ikkje {{GENDER:$2|du}} som gjorde dette kan andre ha tilgang til kontoen din."
 }

@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dejan Savuljesku <savuljesku@hallowelt.com>",
+			"Umherirrender"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "{{doc-apihelp-summary|webauthn}}",
+	"apihelp-oathauth-webauthn-param-func": "{{doc-apihelp-param|webauthn|func}}",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "{{doc-apihelp-paramvalue|main|webauthn|getAuthInfo}}",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "{{doc-apihelp-paramvalue|main|webauthn|getRegisterInfo}}",
+	"apihelp-oathauth-webauthn-param-passkeymode": "{{doc-apihelp-paramvalue|main|webauthn|passkeyMode}}",
+	"apierror-oathauth-webauthn-module-missing": "API error message when the WebAuthn module is not registered or available.",
+	"apierror-oathauth-webauthn-missing-credential": "API error message when the credential parameter is missing from the register request.",
+	"apierror-oathauth-webauthn-invalid-credential": "API error message when the credential JSON cannot be decoded or is not a valid object.",
+	"apierror-oathauth-webauthn-reauthenticate": "API error message when the user must reauthenticate.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "{{doc-apihelp-paramvalue|webauthn|func|register}}",
+	"apihelp-oathauth-webauthn-param-credential": "{{doc-apihelp-param|webauthn|credential}}",
+	"apihelp-oathauth-webauthn-param-friendlyname": "{{doc-apihelp-param|webauthn|friendlyname}}"
+}

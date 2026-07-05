@@ -1,19 +1,19 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 use StatusValue;
 
 class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
@@ -44,27 +44,21 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 
 	public const ENABLE_USER_INFO_CARD = 'checkuser-userinfocard-enable';
 
-	private PermissionManager $permissionManager;
-	private TemporaryAccountLoggerFactory $loggerFactory;
-	private Config $config;
-	private UserOptionsLookup $userOptionsLookup;
-	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
-	private CheckUserPermissionManager $checkUserPermissionManager;
+	/**
+	 * @var string User option storing whether a user has seen the warning at the top of
+	 *   Special:SuggestedInvestigations to indicate the data it shows is private
+	 */
+	public const SUGGESTED_INVESTIGATIONS_PRIVATE_DATA_WARNING_SEEN =
+		'checkuser-suggested-investigations-private-data-warning-seen';
 
 	public function __construct(
-		PermissionManager $permissionManager,
-		TemporaryAccountLoggerFactory $loggerFactory,
-		Config $config,
-		UserOptionsLookup $userOptionsLookup,
-		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
-		CheckUserPermissionManager $checkUserPermissionManager
+		private readonly PermissionManager $permissionManager,
+		private readonly TemporaryAccountLoggerFactory $loggerFactory,
+		private readonly Config $config,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
 	) {
-		$this->permissionManager = $permissionManager;
-		$this->loggerFactory = $loggerFactory;
-		$this->config = $config;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->autoRevealLookup = $autoRevealLookup;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/**
@@ -72,6 +66,10 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	 */
 	public function onGetPreferences( $user, &$preferences ) {
 		$preferences[self::TEMPORARY_ACCOUNTS_ONBOARDING_DIALOG_SEEN] = [
+			'type' => 'api',
+		];
+
+		$preferences[self::SUGGESTED_INVESTIGATIONS_PRIVATE_DATA_WARNING_SEEN] = [
 			'type' => 'api',
 		];
 
@@ -98,7 +96,9 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 		];
 
 		if ( $this->permissionManager->userHasAnyRight(
-			$user, 'checkuser-temporary-account', 'checkuser-temporary-account-no-preference'
+			$user,
+			'checkuser-temporary-account',
+			'checkuser-temporary-account-no-preference'
 		) ) {
 			$needsToCheckIPRevealPreferenceToUseFeature =
 				$this->permissionManager->userHasRight( $user, 'checkuser-temporary-account' ) &&
@@ -232,7 +232,8 @@ class Preferences implements GetPreferencesHook, UserGetDefaultOptionsHook {
 	 * is the case.
 	 */
 	private function validateAutoRevealPreferenceValue(
-		mixed $preferenceValue, Authority $authority
+		mixed $preferenceValue,
+		Authority $authority
 	): StatusValue {
 		// Always allow users to unset the IP auto-reveal preference.
 		if ( $preferenceValue === null ) {

@@ -16,7 +16,7 @@
 	string html-after-content
 	string msg-navigation-heading
 	MenuDefinition data-portlets.data-personal
-	MenuDefinition data-portlets.data-namespaces
+	MenuDefinition data-portlets.data-associated-pages
 	MenuDefinition data-portlets.data-variants
 	MenuDefinition data-portlets.data-views
 	MenuDefinition data-portlets.data-actions
@@ -54,7 +54,7 @@
 		{{#data-portlets}}
 		{{>LegacyUserLinks}}
 		<div id="left-navigation">
-			{{#data-namespaces}}{{>LegacyMenu}}{{/data-namespaces}}
+			{{#data-associated-pages}}{{>LegacyMenu}}{{/data-associated-pages}}
 			{{#data-variants}}{{>LegacyMenu}}{{/data-variants}}
 		</div>
 		<div id="right-navigation">

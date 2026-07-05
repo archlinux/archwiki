@@ -95,6 +95,8 @@
 	"rest-module-specs.v0-desc": "O mòdolo d'aotodocomentaçión ch'o fornìsce e descovèrte, e specìfiche e i schêmi pe tùtti i mòdoli a dispoxiçión.",
 	"rest-module-content.v1-title": "Contegnûo da pàgina",
 	"rest-module-content.v1-desc": "O fornìsce l'intrâ a-o contegnûo e a-i metadata de pàgine e de verscioìn",
+	"rest-module-site.v1-title": "API do scîto",
+	"rest-module-site.v1-desc": "Informaçioìn in sciô scîto a rêo, cómme e màppe do scîto",
 	"rest-param-desc-mock-desc": "Nisciùnn-a descriçión",
 	"rest-param-desc-revision-id": "Identificatô de versción",
 	"rest-param-desc-html-input-title": "Tìtolo de trasformaçión de l'input HTML",

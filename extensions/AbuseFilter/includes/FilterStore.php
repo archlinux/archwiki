@@ -18,66 +18,19 @@ use Wikimedia\Rdbms\LBFactory;
  * @internal
  */
 class FilterStore {
-	public const SERVICE_NAME = 'AbuseFilterFilterStore';
+	public const SERVICE_NAME = ServiceNames::FilterStore;
 
-	/** @var ConsequencesRegistry */
-	private $consequencesRegistry;
-
-	/** @var LBFactory */
-	private $lbFactory;
-
-	/** @var ActorNormalization */
-	private $actorNormalization;
-
-	/** @var FilterProfiler */
-	private $filterProfiler;
-
-	/** @var FilterLookup */
-	private $filterLookup;
-
-	/** @var ChangeTagsManager */
-	private $tagsManager;
-
-	/** @var FilterValidator */
-	private $filterValidator;
-
-	/** @var FilterCompare */
-	private $filterCompare;
-
-	/** @var EmergencyCache */
-	private $emergencyCache;
-
-	/**
-	 * @param ConsequencesRegistry $consequencesRegistry
-	 * @param LBFactory $lbFactory
-	 * @param ActorNormalization $actorNormalization
-	 * @param FilterProfiler $filterProfiler
-	 * @param FilterLookup $filterLookup
-	 * @param ChangeTagsManager $tagsManager
-	 * @param FilterValidator $filterValidator
-	 * @param FilterCompare $filterCompare
-	 * @param EmergencyCache $emergencyCache
-	 */
 	public function __construct(
-		ConsequencesRegistry $consequencesRegistry,
-		LBFactory $lbFactory,
-		ActorNormalization $actorNormalization,
-		FilterProfiler $filterProfiler,
-		FilterLookup $filterLookup,
-		ChangeTagsManager $tagsManager,
-		FilterValidator $filterValidator,
-		FilterCompare $filterCompare,
-		EmergencyCache $emergencyCache
+		private readonly ConsequencesRegistry $consequencesRegistry,
+		private readonly LBFactory $lbFactory,
+		private readonly ActorNormalization $actorNormalization,
+		private readonly FilterProfiler $filterProfiler,
+		private readonly FilterLookup $filterLookup,
+		private readonly ChangeTagsManager $tagsManager,
+		private readonly FilterValidator $filterValidator,
+		private readonly FilterCompare $filterCompare,
+		private readonly EmergencyCache $emergencyCache
 	) {
-		$this->consequencesRegistry = $consequencesRegistry;
-		$this->lbFactory = $lbFactory;
-		$this->actorNormalization = $actorNormalization;
-		$this->filterProfiler = $filterProfiler;
-		$this->filterLookup = $filterLookup;
-		$this->tagsManager = $tagsManager;
-		$this->filterValidator = $filterValidator;
-		$this->filterCompare = $filterCompare;
-		$this->emergencyCache = $emergencyCache;
 	}
 
 	/**
@@ -205,6 +158,9 @@ class FilterStore {
 		$afhRow['afh_changed_fields'] = implode( ',', $differences );
 
 		$flags = [];
+		if ( FilterUtils::isSuppressed( $newRow['af_hidden'] ) ) {
+			$flags[] = 'suppressed';
+		}
 		if ( FilterUtils::isHidden( $newRow['af_hidden'] ) ) {
 			$flags[] = 'hidden';
 		}
@@ -288,7 +244,7 @@ class FilterStore {
 
 		// If the filter is already protected, it must remain protected even if
 		// the current filter doesn't use a protected variable anymore
-		// FIXME: Resposibility for this is currently unclear. It should be
+		// FIXME: Responsibility for this is currently unclear. It should be
 		// enforced prior to the FilterCompare::compareVersions call to avoid
 		// dummy filter versions.
 		$privacyLevel = $filter->getPrivacyLevel();

@@ -122,9 +122,7 @@ class FauxResponse extends WebResponse {
 		$cookieSecure = $cookieConfig->get( MainConfigNames::CookieSecure );
 		$cookieExpiration = $cookieConfig->get( MainConfigNames::CookieExpiration );
 		$cookieHttpOnly = $cookieConfig->get( MainConfigNames::CookieHttpOnly );
-		$options = array_filter( $options, static function ( $a ) {
-			return $a !== null;
-		} ) + [
+		$options = array_filter( $options, static fn ( $a ) => $a !== null ) + [
 			'prefix' => $cookiePrefix,
 			'domain' => $cookieDomain,
 			'path' => $cookiePath,

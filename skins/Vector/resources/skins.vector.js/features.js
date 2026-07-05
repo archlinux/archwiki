@@ -53,11 +53,13 @@ function toggleDocClasses( name, override, isNotClientPreference ) {
 	if ( isLoggedInOnlyFeature && !isNotClientPreference ) {
 		// try again using the legacy classes
 		return toggleDocClasses( name, override, true );
-	} else if ( classList.contains( featureClassDisabled ) || override === true ) {
+	} else if ( override === true ||
+			( override === undefined && classList.contains( featureClassDisabled ) ) ) {
 		classList.remove( featureClassDisabled );
 		classList.add( featureClassEnabled );
 		return true;
-	} else if ( classList.contains( featureClassEnabled ) || override === false ) {
+	} else if ( override === false ||
+			( override === undefined && classList.contains( featureClassEnabled ) ) ) {
 		classList.add( featureClassDisabled );
 		classList.remove( featureClassEnabled );
 		return false;
@@ -104,4 +106,4 @@ function getClass( name, featureEnabled, isClientPreference ) {
 	}
 }
 
-module.exports = { getClass, isEnabled, toggle, toggleDocClasses };
+module.exports = { getClass, isEnabled, toggle, toggleDocClasses, save };

@@ -260,7 +260,7 @@ $specialPageAliases = [
 	'RemoveCredentials'          => [ '移除凭据' ],
 	'Renameuser'                 => [ '重命名用户', '重新命名用户' ],
 	'ResetTokens'                => [ '重置密钥', '重置权标' ],
-	'Revisiondelete'             => [ '删除修订', '版本删除', '恢复修订' ],
+	'Revisiondelete'             => [ '版本删除', '删除修订', '恢复修订' ],
 	'RunJobs'                    => [ '运行工作' ],
 	'Search'                     => [ '搜索' ],
 	'Shortpages'                 => [ '短页面' ],
@@ -292,6 +292,7 @@ $specialPageAliases = [
 	'Wantedpages'                => [ '需要的页面', '待撰页面', '受损链接' ],
 	'Wantedtemplates'            => [ '需要的模板' ],
 	'Watchlist'                  => [ '监视列表' ],
+	'WatchlistLabels'            => [ '监视列表标签' ],
 	'Whatlinkshere'              => [ '链入页面' ],
 	'Withoutinterwiki'           => [ '无跨wiki', '无跨wiki链接页面' ],
 ];

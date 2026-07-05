@@ -13,6 +13,7 @@ class Node {
 	/**
 	 * @param string $type
 	 * @param array|Node|string $contents
+	 * @throws InternalError
 	 */
 	public function __construct( $type, $contents ) {
 		$this->type = $type;

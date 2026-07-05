@@ -3,10 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use Closure;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\SiteConfig;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -77,28 +77,27 @@ class ContentUtils {
 	public static function createAndLoadDocument(
 		string $html, array $options = []
 	): Document {
-		$options += [ 'markNew' => true, 'validateXMLNames' => true ];
-		$doc = DOMUtils::parseHTML( $html, $options['validateXMLNames'] );
-		DOMDataUtils::prepareDoc( $doc );
-		DOMDataUtils::visitAndLoadDataAttribs(
-			DOMCompat::getBody( $doc ), $options
-		);
-		DOMDataUtils::getBag( $doc )->loaded = true;
+		$doc = DOMUtils::parseHTML( $html, validateXMLNames: true );
+		DOMDataUtils::prepareAndLoadDoc( $doc, $options );
 		return $doc;
 	}
 
 	/**
 	 * @param Document $doc
 	 * @param string $html
-	 * @param array $options
+	 * @param ?array $options Not used
 	 * @return DocumentFragment
 	 */
 	public static function createAndLoadDocumentFragment(
-		Document $doc, string $html, array $options = []
+		Document $doc, string $html, ?array $options = null
 	): DocumentFragment {
+		if ( $options !== null ) {
+			// $options are deprecated and ignored
+			PHPUtils::deprecated( __METHOD__ . ' with $options', '0.23' );
+		}
 		$domFragment = $doc->createDocumentFragment();
 		DOMUtils::setFragmentInnerHTML( $domFragment, $html );
-		DOMDataUtils::visitAndLoadDataAttribs( $domFragment, $options );
+		DOMDataUtils::visitAndLoadDataAttribs( $domFragment );
 		return $domFragment;
 	}
 
@@ -145,7 +144,7 @@ class ContentUtils {
 	 * Ex: inline media captions that aren't rendered, language variant markup,
 	 *     attributes that are transcluded. More scenarios might be added later.
 	 *
-	 * @param ParsoidExtensionAPI|SiteConfig $siteConfig
+	 * @param SiteConfig $siteConfig
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param callable(DocumentFragment):bool $proc
 	 *        The processor that will process the embedded HTML.
@@ -153,31 +152,22 @@ class ContentUtils {
 	 *        and is expected to return true if that fragment was modified.
 	 */
 	public static function processAttributeEmbeddedDom(
-		$siteConfig, Element $elt, callable $proc
+		SiteConfig $siteConfig, Element $elt, callable $proc
 	): void {
-		if ( $siteConfig instanceof ParsoidExtensionAPI ) {
-			$siteConfig = $siteConfig->getSiteConfig();
-			$siteConfig->deprecated( __METHOD__ . ' with ParsoidExtensionAPI', '0.22' );
-		}
-		$str2df2str = static function ( string $html ) use ( $elt, $proc ): string {
-			$dom = ContentUtils::createAndLoadDocumentFragment(
-				$elt->ownerDocument, $html
-			);
-			$ret = $proc( $dom );
-			if ( $ret ) {
-				$html = ContentUtils::ppToXML( $dom, [
-					'innerXML' => true,
-					'fragment' => true,
-				] );
+		// Expanded attributes and media captions
+		if ( DOMUtils::matchTypeOf( $elt, '/^mw:ExpandedAttrs$/' ) ||
+			 WTUtils::isInlineMedia( $elt ) ) {
+			$dmw = DOMDataUtils::getDataMwIfExists( $elt );
+			foreach ( $dmw?->embeddedDocumentFragments() ?? [] as $df ) {
+				$proc( $df );
 			}
-			return $html;
-		};
-		self::processAttributeEmbeddedHTMLInternal( $siteConfig, $elt, $str2df2str );
+		}
 
-		if ( WTUtils::isInlineMedia( $elt ) ) {
-			$caption = DOMDataUtils::getDataMw( $elt )->caption ?? null;
-			if ( $caption !== null ) {
-				$proc( $caption );
+		// Language variant markup
+		if ( DOMUtils::matchTypeOf( $elt, '/^mw:LanguageVariant$/' ) ) {
+			$dmwv = DOMDataUtils::getDataMwVariant( $elt );
+			foreach ( $dmwv?->embeddedDocumentFragments() ?? [] as $df ) {
+				$proc( $df );
 			}
 		}
 
@@ -187,7 +177,7 @@ class ContentUtils {
 			$extConfig = $siteConfig->getExtTagConfig( $extTagName );
 			if ( $extConfig['options']['wt2html']['embedsDomInAttributes'] ?? false ) {
 				$tagHandler = $siteConfig->getExtTagImpl( $extTagName );
-				$extAPI = self::extApiWrapper( $siteConfig );
+				$extAPI = self::extApiWrapper( $siteConfig, $elt->ownerDocument );
 				$tagHandler->processAttributeEmbeddedDom( $extAPI, $elt, $proc );
 			}
 		}
@@ -196,93 +186,8 @@ class ContentUtils {
 			$config = $siteConfig->getPFragmentHandlerConfig( $key );
 			if ( $config['options']['embedsDomInAttributes'] ?? false ) {
 				$handler = $siteConfig->getPFragmentHandlerImpl( $key );
-				$extAPI = self::extApiWrapper( $siteConfig );
+				$extAPI = self::extApiWrapper( $siteConfig, $elt->ownerDocument );
 				$handler->processAttributeEmbeddedDom( $extAPI, $elt, $proc );
-			}
-		}
-	}
-
-	/**
-	 * Extensions might be interested in examining their content embedded
-	 * in data-mw attributes that don't otherwise show up in the DOM.
-	 *
-	 * Ex: inline media captions that aren't rendered, language variant markup,
-	 *     attributes that are transcluded. More scenarios might be added later.
-	 *
-	 * @deprecated since 0.21.
-	 * Don't use this directly: use ::processAttributeEmbeddedDom().
-	 * This method may omit content which is embedded natively as
-	 * DocumentFragments instead of as HTML strings.
-	 *
-	 * @param ParsoidExtensionAPI $extAPI
-	 * @param Element $elt The node whose data attributes need to be examined
-	 * @param Closure $proc The processor that will process the embedded HTML
-	 *        Signature: (string) -> string
-	 *        This processor will be provided the HTML string as input
-	 *        and is expected to return a possibly modified string.
-	 */
-	public static function processAttributeEmbeddedHTML(
-		ParsoidExtensionAPI $extAPI, Element $elt, Closure $proc
-	): void {
-		$extAPI->getSiteConfig()->deprecated( __METHOD__, "0.21" );
-		self::processAttributeEmbeddedHTMLInternal( $extAPI->getSiteConfig(), $elt, $proc );
-	}
-
-	private static function processAttributeEmbeddedHTMLInternal(
-		SiteConfig $siteConfig, Element $elt, Closure $proc
-	): void {
-		if ( !$elt->hasAttribute( 'typeof' ) ) {
-			return;
-		}
-
-		// Expanded attributes
-		if ( DOMUtils::matchTypeOf( $elt, '/^mw:ExpandedAttrs$/' ) ) {
-			$dmw = DOMDataUtils::getDataMw( $elt );
-			if ( $dmw->attribs ?? null ) {
-				foreach ( $dmw->attribs as $a ) {
-					// Look in both key and value of the DataMwAttrib
-					foreach ( [ 'key', 'value' ] as $part ) {
-						if ( !is_string( $a->$part ) && isset( $a->$part['html'] ) ) {
-							$a->$part['html'] = $proc( $a->$part['html'] );
-						}
-					}
-				}
-			}
-		}
-
-		// Language variant markup
-		if ( DOMUtils::matchTypeOf( $elt, '/^mw:LanguageVariant$/' ) ) {
-			$dmwv = DOMDataUtils::getJSONAttribute( $elt, 'data-mw-variant', null );
-			if ( $dmwv ) {
-				if ( isset( $dmwv->disabled ) ) {
-					$dmwv->disabled->t = $proc( $dmwv->disabled->t );
-				}
-				if ( isset( $dmwv->twoway ) ) {
-					foreach ( $dmwv->twoway as $l ) {
-						$l->t = $proc( $l->t );
-					}
-				}
-				if ( isset( $dmwv->oneway ) ) {
-					foreach ( $dmwv->oneway as $l ) {
-						$l->f = $proc( $l->f );
-						$l->t = $proc( $l->t );
-					}
-				}
-				if ( isset( $dmwv->filter ) ) {
-					$dmwv->filter->t = $proc( $dmwv->filter->t );
-				}
-				DOMDataUtils::setJSONAttribute( $elt, 'data-mw-variant', $dmwv );
-			}
-		}
-
-		// Process extension-specific embedded HTML
-		$extTagName = WTUtils::getExtTagName( $elt );
-		if ( $extTagName ) {
-			$extConfig = $siteConfig->getExtTagConfig( $extTagName );
-			if ( $extConfig['options']['wt2html']['embedsHTMLInAttributes'] ?? false ) {
-				$tagHandler = $siteConfig->getExtTagImpl( $extTagName );
-				$extAPI = self::extApiWrapper( $siteConfig );
-				$tagHandler->processAttributeEmbeddedHTML( $extAPI, $elt, $proc );
 			}
 		}
 	}
@@ -292,11 +197,12 @@ class ContentUtils {
 	 * a ParsoidExtensionAPI.
 	 */
 	private static function extApiWrapper(
-		SiteConfig $siteConfig
+		SiteConfig $siteConfig, Document $topLevelDoc
 	): ParsoidExtensionAPI {
 		// This is a backward-compatibility hack!
 		return new ParsoidExtensionAPI( new MockEnv( [
 			'siteConfig' => $siteConfig,
+			'topLevelDoc' => $topLevelDoc,
 		] ) );
 	}
 
@@ -305,16 +211,11 @@ class ContentUtils {
 	 * @param Env $env
 	 * @param Node $rootNode
 	 * @param callable $dsrFunc
-	 * @param ?ParsoidExtensionAPI $extAPI Deprecated (unused)
 	 */
 	public static function shiftDSR(
-		Env $env, Node $rootNode, callable $dsrFunc,
-		?ParsoidExtensionAPI $extAPI = null
+		Env $env, Node $rootNode, callable $dsrFunc
 	): void {
 		$siteConfig = $env->getSiteConfig();
-		if ( $extAPI !== null ) {
-			$siteConfig->deprecated( __METHOD__ . ' with ParsoidExtensionAPI', '0.22' );
-		}
 		$convertNode = static function ( Node $node ) use (
 			$siteConfig, $dsrFunc, &$convertNode
 		): void {
@@ -365,7 +266,6 @@ class ContentUtils {
 			// they want and so may be returned in subpipelines which could
 			// subsequently be shifted
 			if ( DOMUtils::matchTypeOf( $node, '#^mw:DOMFragment/sealed/\w+$#D' ) ) {
-				$dp = DOMDataUtils::getDataParsoid( $node );
 				if ( $dp->html ?? null ) {
 					DOMPostOrder::traverse( $dp->html, $convertNode );
 				}
@@ -411,14 +311,25 @@ class ContentUtils {
 			}
 		};
 		// Collect DSR offsets throughout the document
-		$collectDSR = static function ( DomSourceRange $dsr ) use ( $collect, $source ): DomSourceRange {
+		$collectDSR = static function ( DomSourceRange $dsr ) use ( $collect, $source, $env ): DomSourceRange {
 			// Validate DSR source
 			// FIXME T405759: $dsr->source shouldn't be null but we haven't
 			// fixed all our code yet.  Also, technically we
 			// could/should collect a list of all the different $dsr
 			// sources and then run this multiple times, once for each
 			// source text.
-			if ( $dsr->source !== null && $dsr->source !== $source ) {
+			if ( !(
+				$dsr->source === null || $dsr->source === $source
+			) ) {
+				// T409345
+				$env->log(
+					'error/wt2html',
+					"Bad source in ::convertOffsets (T409345): ",
+					$env->getContextTitle()->getFullText(),
+					mb_substr( $dsr->source->getSrcText(), 0, 100 )
+				);
+				// Don't collect (or mutate) this, we don't know where
+				// it came from.
 				return $dsr;
 			}
 			if ( $dsr->start !== null ) {

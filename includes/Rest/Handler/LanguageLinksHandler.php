@@ -2,7 +2,8 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Deferred\LinksUpdate\LangLinksTable;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Rest\Handler;
@@ -17,6 +18,7 @@ use MediaWiki\Title\TitleParser;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Class LanguageLinksHandler
@@ -119,7 +121,7 @@ class LanguageLinksHandler extends SimpleHandler {
 
 	private function fetchLinks( int $pageId ): array {
 		$result = [];
-		$res = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
+		$res = $this->dbProvider->getReplicaDatabase( LangLinksTable::VIRTUAL_DOMAIN )->newSelectQueryBuilder()
 			->select( [ 'll_title', 'll_lang' ] )
 			->from( 'langlinks' )
 			->where( [ 'll_from' => $pageId ] )
@@ -165,7 +167,7 @@ class LanguageLinksHandler extends SimpleHandler {
 		}
 
 		// XXX: use hash of the rendered HTML?
-		return '"' . $page->getLatest() . '@' . wfTimestamp( TS_MW, $page->getTouched() ) . '"';
+		return '"' . $page->getLatest() . '@' . wfTimestamp( TS::MW, $page->getTouched() ) . '"';
 	}
 
 	protected function getLastModified(): ?string {
@@ -181,6 +183,6 @@ class LanguageLinksHandler extends SimpleHandler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/PageLanguageLinks.json';
+		return __DIR__ . '/Schema/PageLanguageLinks.json';
 	}
 }

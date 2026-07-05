@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Variables;
 
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
@@ -16,27 +17,15 @@ use Wikimedia\IPUtils;
  * parse afl_var_dump from an abuse_filter_log row into a {@link VariableHolder}
  */
 class VariablesBlobStore {
-	public const SERVICE_NAME = 'AbuseFilterVariablesBlobStore';
-
-	private VariablesManager $varManager;
-	private BlobStoreFactory $blobStoreFactory;
-	private BlobStore $blobStore;
-	private AbuseFilterPermissionManager $permissionManager;
-
-	private ?string $centralDB;
+	public const SERVICE_NAME = ServiceNames::VariablesBlobStore;
 
 	public function __construct(
-		VariablesManager $varManager,
-		AbuseFilterPermissionManager $permissionManager,
-		BlobStoreFactory $blobStoreFactory,
-		BlobStore $blobStore,
-		?string $centralDB
+		private readonly VariablesManager $varManager,
+		private readonly AbuseFilterPermissionManager $permissionManager,
+		private readonly BlobStoreFactory $blobStoreFactory,
+		private readonly BlobStore $blobStore,
+		private readonly ?string $centralDB
 	) {
-		$this->varManager = $varManager;
-		$this->blobStoreFactory = $blobStoreFactory;
-		$this->blobStore = $blobStore;
-		$this->permissionManager = $permissionManager;
-		$this->centralDB = $centralDB;
 	}
 
 	/**

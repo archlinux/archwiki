@@ -10,15 +10,12 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class UnblockAutopromote extends ApiBase {
 
-	private BlockAutopromoteStore $afBlockAutopromoteStore;
-
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		BlockAutopromoteStore $afBlockAutopromoteStore
+		private readonly BlockAutopromoteStore $afBlockAutopromoteStore
 	) {
 		parent::__construct( $main, $action );
-		$this->afBlockAutopromoteStore = $afBlockAutopromoteStore;
 	}
 
 	/**

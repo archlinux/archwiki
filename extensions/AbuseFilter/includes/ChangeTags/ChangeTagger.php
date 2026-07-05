@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
@@ -12,18 +13,12 @@ use MediaWiki\User\UserIdentityValue;
  * @internal This interface should be improved and is not ready for external use
  */
 class ChangeTagger {
-	public const SERVICE_NAME = 'AbuseFilterChangeTagger';
+	public const SERVICE_NAME = ServiceNames::ChangeTagger;
 
-	/** @var array (Persistent) map of (action ID => string[]) */
+	/** @var array<string,string[]> (Persistent) map of (action ID => string[]) */
 	private static $tagsToSet = [];
 
-	/**
-	 * @var ChangeTagsManager
-	 */
-	private $changeTagsManager;
-
-	public function __construct( ChangeTagsManager $changeTagsManager ) {
-		$this->changeTagsManager = $changeTagsManager;
+	public function __construct( private readonly ChangeTagsManager $changeTagsManager ) {
 	}
 
 	/**
@@ -56,7 +51,7 @@ class ChangeTagger {
 	/**
 	 * @param string $id
 	 * @param bool $clear
-	 * @return array
+	 * @return string[]
 	 */
 	private function getTagsForID( string $id, bool $clear = true ): array {
 		$val = self::$tagsToSet[$id] ?? [];
@@ -69,7 +64,7 @@ class ChangeTagger {
 	/**
 	 * @param RecentChange $recentChange
 	 * @param bool $clear
-	 * @return array
+	 * @return string[]
 	 */
 	public function getTagsForRecentChange( RecentChange $recentChange, bool $clear = true ): array {
 		$id = $this->getIDFromRecentChange( $recentChange );
@@ -117,7 +112,11 @@ class ChangeTagger {
 		if ( str_contains( $specifier->getAction(), 'createaccount' ) ) {
 			// TODO Move this to ActionSpecifier?
 			$username = $specifier->getAccountName();
-			'@phan-var string $username';
+			if ( $username === null ) {
+				throw new \UnexpectedValueException(
+					'Expected string from ActionSpecifier::getAccountName()'
+				);
+			}
 			$title = new TitleValue( NS_USER, $username );
 		}
 

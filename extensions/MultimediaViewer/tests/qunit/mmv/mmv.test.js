@@ -1,45 +1,21 @@
 const { MultimediaViewer } = require( 'mmv' );
 const { getMultimediaViewer } = require( './mmv.testhelpers.js' );
-const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
+const { MultimediaViewerBootstrap, LightboxImage } = require( 'mmv.bootstrap' );
 const router = require( 'mediawiki.router' );
+const config = require( 'mmv/mmv/config.json' );
 
 QUnit.module( 'mmv', QUnit.newMwEnvironment( {
 	beforeEach: function () {
 		// prevent a real "back" navigation from taking place
 		this.sandbox.stub( router, 'back' );
+
+		// T277470: Apply consistent $wgMediaViewerUseThumbnailGuessing=false default
+		sinon.replace( config, 'useThumbnailGuessing', false );
 	},
 	afterEach: function () {
 		router.resetForTest();
 	}
 } ) );
-
-QUnit.test( 'eachPreloadableLightboxIndex()', ( assert ) => {
-	const viewer = getMultimediaViewer();
-	let expectedIndices;
-	let i;
-
-	viewer.preloadDistance = 3;
-	viewer.thumbs = [];
-
-	// 0..10
-	for ( i = 0; i < 11; i++ ) {
-		viewer.thumbs.push( { image: false } );
-	}
-
-	viewer.currentIndex = 2;
-	i = 0;
-	expectedIndices = [ 2, 3, 1, 4, 0, 5 ];
-	viewer.eachPreloadableLightboxIndex( ( index ) => {
-		assert.strictEqual( index, expectedIndices[ i++ ], 'preload on left edge' );
-	} );
-
-	viewer.currentIndex = 9;
-	i = 0;
-	expectedIndices = [ 9, 10, 8, 7, 6 ];
-	viewer.eachPreloadableLightboxIndex( ( index ) => {
-		assert.strictEqual( index, expectedIndices[ i++ ], 'preload on right edge' );
-	} );
-} );
 
 QUnit.test( 'Progress', function ( assert ) {
 	const imageDeferred = $.Deferred();
@@ -337,7 +313,7 @@ QUnit.test( 'New image loaded while another one is loading', function ( assert )
 		open: function () {},
 		empty: function () {} };
 	viewer.displayRealThumbnail = this.sandbox.stub();
-	viewer.eachPreloadableLightboxIndex = function () {};
+	viewer.pushLightboxImagesIntoQueue = function () {};
 	viewer.animateMetadataDivOnce = this.sandbox.stub().returns( $.Deferred().reject() );
 	viewer.imageProvider.get = this.sandbox.stub();
 	viewer.imageInfoProvider.get = () => $.Deferred().reject( {} );
@@ -479,140 +455,146 @@ QUnit.test( 'Viewer is closed then navigating to #foo/bar/baz (page section incl
 	} );
 } );
 
-QUnit.test( 'Refuse to load too-big thumbnails', ( assert ) => {
-	let expectedWidth;
-	const reuestedWidth = 1000;
-	const originalWidth = 50;
+QUnit.test.each( 'Refuse to load too-big thumbnail', {
+	'thumb for non-vector image should be capped to original size': {
+		thumb: $( '<img>' ).attr( {
+			src: 'https://example.test/images/0/0a/Foobar.png',
+			width: 200,
+			height: 150,
+			'data-file-width': '800',
+			'data-file-height': '600'
+		} )[ 0 ],
+		expected: 800
+	},
+	'thumb for vector image can be larger': {
+		thumb: $( '<img>' ).attr( {
+			src: 'https://example.test/images/thumb/1/1b/Foobar.svg/200px-Foobar.svg',
+			width: 200,
+			height: 150,
+			'data-file-width': '800',
+			'data-file-height': '600'
+		} )[ 0 ],
+		expected: 1000
+	}
+
+}, ( assert, { thumb, expected } ) => {
 	const viewer = getMultimediaViewer();
 
+	let actualWidth;
 	viewer.thumbnailInfoProvider.get = function ( fileTitle, sampleUrl, width ) {
-		assert.strictEqual( width, expectedWidth );
+		actualWidth = width;
 		return $.Deferred().reject();
 	};
 
-	// non-vector should be capped to original size
-	let title = mw.Title.newFromText( 'File:Foobar.png' );
-	expectedWidth = originalWidth;
-	viewer.fetchThumbnail( title, reuestedWidth, null, originalWidth, 60 );
-
-	// vector images can be aritrarily large
-	title = mw.Title.newFromText( 'File:Foobar.svg' );
-	expectedWidth = reuestedWidth;
-	viewer.fetchThumbnail( title, reuestedWidth, null, originalWidth, 60 );
+	const image = new LightboxImage(
+		thumb.src,
+		mw.Title.newFromImg( thumb ),
+		0,
+		1,
+		thumb,
+		'My caption'
+	);
+	viewer.fetchThumbnail( image, 1000 );
+	assert.strictEqual( actualWidth, expected, 'actual width' );
 } );
 
-QUnit.test( 'fetchThumbnail()', function ( assert ) {
-	let guessedThumbnailInfoStub;
-	let thumbnailInfoStub;
-	let imageStub;
-	let promise;
-	let useThumbnailGuessing;
+QUnit.test.each( 'fetchThumbnail()', {
+	'cannot guess falls back to API': {
+		sampleURL: 'https://example.test/thumb/8/8b/Copyleft.svg/300_guess_fail_no_px.png',
+		callCount: {
+			guessedThumbnailInfo: 1,
+			imageinfoApi: 1,
+			imageProvider: 1
+		},
+		imageProviderArgs: [ [ 'apiURL' ] ]
+	},
+	'guessed URL that loads is used': {
+		sampleURL: 'https://example.test/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
+		callCount: {
+			guessedThumbnailInfo: 1,
+			imageinfoApi: 0,
+			imageProvider: 1
+		},
+		imageProviderArgs: [ [ 'https://example.test/thumb/8/8b/Copyleft.svg/600px-Copyleft.svg.png' ] ]
+	},
+	'guessed URL that 404s falls back to API': {
+		sampleURL: 'https://example.test/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
+		imageLoadGuess: $.Deferred().reject(),
+		callCount: {
+			guessedThumbnailInfo: 1,
+			imageinfoApi: 1,
+			imageProvider: 2
+		},
+		imageProviderArgs: [
+			[ 'https://example.test/thumb/8/8b/Copyleft.svg/600px-Copyleft.svg.png' ],
+			[ 'apiURL' ]
+		]
+	},
+	'when the retry fallback fails fetchThumbnail should reject': {
+		sampleURL: 'https://example.test/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
+		imageLoadGuess: $.Deferred().reject(),
+		imageLoadApi: $.Deferred().reject(),
+		callCount: {
+			guessedThumbnailInfo: 1,
+			imageinfoApi: 1,
+			imageProvider: 2
+		},
+		imageProviderArgs: [
+			[ 'https://example.test/thumb/8/8b/Copyleft.svg/600px-Copyleft.svg.png' ],
+			[ 'apiURL' ]
+		],
+		promiseState: 'rejected'
+	},
+	'with useThumbnailGuessing=false the API is used directly': {
+		useThumbnailGuessing: false,
+		sampleURL: 'https://example.test/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
+		callCount: {
+			guessedThumbnailInfo: 0,
+			imageinfoApi: 1,
+			imageProvider: 1
+		},
+		imageProviderArgs: [
+			[ 'apiURL' ]
+		]
+	}
+}, ( assert, fixture ) => {
+	config.useThumbnailGuessing = fixture.useThumbnailGuessing ?? true;
+	const clock = sinon.useFakeTimers();
 	const viewer = new MultimediaViewer( {
 		language: function () {}
 	} );
-	const sandbox = this.sandbox;
-	const file = new mw.Title( 'File:Copyleft.svg' );
-	const sampleURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png';
-	const width = 100;
-	const originalWidth = 1000;
-	const originalHeight = 1000;
-	const image = {};
-	// custom clock ensures progress handlers execute in correct sequence
-	const clock = this.sandbox.useFakeTimers();
+	const guessedThumbnailInfoStub = sinon.spy( viewer.guessedThumbnailInfoProvider, 'get' );
+	const thumbnailInfoStub = viewer.thumbnailInfoProvider.get = sinon.stub()
+		.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
+	const imageStub = viewer.imageProvider.get = fixture.imageLoader ?? sinon.stub();
+	imageStub.returns( fixture.imageLoadGuess ?? $.Deferred().resolve( {} ) );
+	imageStub.withArgs( 'apiURL' ).returns( fixture.imageLoadApi ?? $.Deferred().resolve( {} ) );
 
-	function setupStubs() {
-		guessedThumbnailInfoStub = viewer.guessedThumbnailInfoProvider.get = sandbox.stub();
-		thumbnailInfoStub = viewer.thumbnailInfoProvider.get = sandbox.stub();
-		imageStub = viewer.imageProvider.get = sandbox.stub();
-	}
+	const thumb = $( '<img>' ).attr( {
+		src: fixture.sampleURL,
+		width: 300,
+		height: 300,
+		'data-file-width': '1000',
+		'data-file-height': '1000'
+	} )[ 0 ];
+	const image = new LightboxImage(
+		thumb.getAttribute( 'src' ),
+		new mw.Title( 'File:Copyleft.svg' ),
+		0,
+		1,
+		thumb,
+		'My caption'
+	);
+	const promise = viewer.fetchThumbnail( image, 600 );
 
-	useThumbnailGuessing = true;
-
-	// When we lack sample URL and original dimensions, the classic provider should be used
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.returns( $.Deferred().resolve( image ) );
-	promise = viewer.fetchThumbnail( file, width, '', originalWidth, originalHeight, useThumbnailGuessing );
 	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.called, false, 'When we lack sample URL and original dimensions, GuessedThumbnailInfoProvider is not called' );
-	assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When we lack sample URL and original dimensions, ThumbnailInfoProvider is called once' );
-	assert.strictEqual( imageStub.calledOnce, true, 'When we lack sample URL and original dimensions, ImageProvider is called once' );
-	assert.strictEqual( imageStub.calledWith( 'apiURL' ), true, 'When we lack sample URL and original dimensions, ImageProvider is called with the API url' );
-	assert.strictEqual( promise.state(), 'resolved', 'When we lack sample URL and original dimensions, fetchThumbnail resolves' );
-
-	// When the guesser bails out, the classic provider should be used
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().reject() );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.returns( $.Deferred().resolve( image ) );
-	promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
-	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser bails out, GuessedThumbnailInfoProvider is called once' );
-	assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When the guesser bails out, ThumbnailInfoProvider is called once' );
-	assert.strictEqual( imageStub.calledOnce, true, 'When the guesser bails out, ImageProvider is called once' );
-	assert.strictEqual( imageStub.calledWith( 'apiURL' ), true, 'When the guesser bails out, ImageProvider is called with the API url' );
-	assert.strictEqual( promise.state(), 'resolved', 'When the guesser bails out, fetchThumbnail resolves' );
-
-	// When the guesser returns an URL, that should be used
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.returns( $.Deferred().resolve( image ) );
-	promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
-	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, GuessedThumbnailInfoProvider is called once' );
-	assert.strictEqual( thumbnailInfoStub.called, false, 'When the guesser returns an URL, ThumbnailInfoProvider is not called' );
-	assert.strictEqual( imageStub.calledOnce, true, 'When the guesser returns an URL, ImageProvider is called once' );
-	assert.strictEqual( imageStub.calledWith( 'guessedURL' ), true, 'When the guesser returns an URL, ImageProvider is called with the guessed url' );
-	assert.strictEqual( promise.state(), 'resolved', 'When the guesser returns an URL, fetchThumbnail resolves' );
-
-	// When the guesser returns an URL, but that returns 404, image loading should be retried with the classic provider
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.withArgs( 'guessedURL' ).returns( $.Deferred().reject() );
-	imageStub.withArgs( 'apiURL' ).returns( $.Deferred().resolve( image ) );
-	promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
-	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, but that returns 404, GuessedThumbnailInfoProvider is called once' );
-	assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When the guesser returns an URL, but that returns 404, ThumbnailInfoProvider is called once' );
-	assert.strictEqual( imageStub.calledTwice, true, 'When the guesser returns an URL, but that returns 404, ImageProvider is called twice' );
-	assert.strictEqual( imageStub.getCall( 0 ).calledWith( 'guessedURL' ), true, 'When the guesser returns an URL, but that returns 404, ImageProvider is called first with the guessed url' );
-	assert.strictEqual( imageStub.getCall( 1 ).calledWith( 'apiURL' ), true, 'When the guesser returns an URL, but that returns 404, ImageProvider is called second with the guessed url' );
-	assert.strictEqual( promise.state(), 'resolved', 'When the guesser returns an URL, but that returns 404, fetchThumbnail resolves' );
-
-	// When even the retry fails, fetchThumbnail() should reject
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.withArgs( 'guessedURL' ).returns( $.Deferred().reject() );
-	imageStub.withArgs( 'apiURL' ).returns( $.Deferred().reject() );
-	promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
-	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.calledOnce, true, 'When even the retry fails, GuessedThumbnailInfoProvider is called once' );
-	assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When even the retry fails, ThumbnailInfoProvider is called once' );
-	assert.strictEqual( imageStub.calledTwice, true, 'When even the retry fails, ImageProvider is called twice' );
-	assert.strictEqual( imageStub.getCall( 0 ).calledWith( 'guessedURL' ), true, 'When even the retry fails, ImageProvider is called first with the guessed url' );
-	assert.strictEqual( imageStub.getCall( 1 ).calledWith( 'apiURL' ), true, 'When even the retry fails, ImageProvider is called second with the guessed url' );
-	assert.strictEqual( promise.state(), 'rejected', 'When even the retry fails, fetchThumbnail rejects' );
-
-	useThumbnailGuessing = false;
-
-	// When guessing is disabled, the classic provider is used
-	setupStubs();
-	guessedThumbnailInfoStub.returns( $.Deferred().resolve( { url: 'guessedURL' } ) );
-	thumbnailInfoStub.returns( $.Deferred().resolve( { url: 'apiURL' } ) );
-	imageStub.returns( $.Deferred().resolve( image ) );
-	promise = viewer.fetchThumbnail( file, width, sampleURL, originalWidth, originalHeight, useThumbnailGuessing );
-	clock.tick( 10 );
-	assert.strictEqual( guessedThumbnailInfoStub.called, false, 'When guessing is disabled, GuessedThumbnailInfoProvider is not called' );
-	assert.strictEqual( thumbnailInfoStub.calledOnce, true, 'When guessing is disabled, ThumbnailInfoProvider is called once' );
-	assert.strictEqual( imageStub.calledOnce, true, 'When guessing is disabled, ImageProvider is called once' );
-	assert.strictEqual( imageStub.calledWith( 'apiURL' ), true, 'When guessing is disabled, ImageProvider is called with the API url' );
-	assert.strictEqual( promise.state(), 'resolved', 'When guessing is disabled, fetchThumbnail resolves' );
-
-	clock.restore();
+	assert.propEqual( {
+		guessedThumbnailInfo: guessedThumbnailInfoStub.callCount,
+		imageinfoApi: thumbnailInfoStub.callCount,
+		imageProvider: imageStub.callCount
+	}, fixture.callCount, 'call counts' );
+	assert.deepEqual( imageStub.args, fixture.imageProviderArgs, 'ImageProvider arg' );
+	assert.strictEqual( promise.state(), fixture.promiseState ?? 'resolved', 'fetchThumbnail promise state' );
 } );
 
 QUnit.test( 'document.title', function ( assert ) {

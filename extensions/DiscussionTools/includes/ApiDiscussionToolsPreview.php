@@ -12,34 +12,23 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 class ApiDiscussionToolsPreview extends ApiBase {
 	use ApiDiscussionToolsTrait;
 	use ApiParsoidTrait;
 
-	private CommentParser $commentParser;
-	private VisualEditorParsoidClientFactory $parsoidClientFactory;
-	private TempUserCreator $tempUserCreator;
-	private UserFactory $userFactory;
-	private SkinFactory $skinFactory;
-
 	public function __construct(
 		ApiMain $main,
 		string $name,
-		VisualEditorParsoidClientFactory $parsoidClientFactory,
-		CommentParser $commentParser,
-		TempUserCreator $tempUserCreator,
-		UserFactory $userFactory,
-		SkinFactory $skinFactory
+		private readonly VisualEditorParsoidClientFactory $parsoidClientFactory,
+		private readonly CommentParser $commentParser,
+		private readonly TempUserCreator $tempUserCreator,
+		private readonly UserFactory $userFactory,
+		private readonly SkinFactory $skinFactory,
 	) {
 		parent::__construct( $main, $name );
-		$this->parsoidClientFactory = $parsoidClientFactory;
-		$this->commentParser = $commentParser;
-		$this->tempUserCreator = $tempUserCreator;
-		$this->userFactory = $userFactory;
-		$this->skinFactory = $skinFactory;
 	}
 
 	/**

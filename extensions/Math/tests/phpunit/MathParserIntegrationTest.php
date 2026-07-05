@@ -17,7 +17,8 @@ use Wikimedia\ObjectCache\WANObjectCache;
 class MathParserIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	private function setupDummyRendering() {
-		$this->overrideConfigValue( 'MathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_LATEXML ] );
+		$this->overrideConfigValue( 'MathValidModes',
+			[ MathConfig::MODE_SOURCE, MathConfig::MODE_LATEXML, MathConfig::MODE_NATIVE_MML ] );
 		$this->mergeMwGlobalArrayValue( 'wgDefaultUserOptions', [ 'math' => MathConfig::MODE_SOURCE ] );
 		$this->setService( 'Math.RendererFactory', new class(
 			new ServiceOptions( RendererFactory::CONSTRUCTOR_OPTIONS, [
@@ -50,7 +51,12 @@ class MathParserIntegrationTest extends MediaWikiIntegrationTestCase {
 					}
 
 					public function getHtmlOutput( bool $svg = true ): string {
-						return "<render>$this->mode:$this->tex</render>";
+						if ( isset( $this->params[ 'class' ] ) ) {
+							$class = ( ' class="' . $this->params[ 'class' ] . '"' );
+						} else {
+							$class = '';
+						}
+						return "<render$class>$this->mode:$this->tex</render>";
 					}
 
 					protected function getMathTableName() {
@@ -133,5 +139,35 @@ class MathParserIntegrationTest extends MediaWikiIntegrationTestCase {
 			)
 			->getRawText();
 		$this->assertStringMatchesFormat( '%A<a%S><render>source:formula</render></a>%A', $res );
+	}
+
+	public function testMathJaxMode() {
+		$this->setupDummyRendering();
+		$po = ParserOptions::newCanonical( 'canonical' );
+		$po->setOption( 'math', MathConfig::MODE_NATIVE_JAX );
+		$res = $this->getServiceContainer()
+			->getParser()
+			->parse(
+				'<math>formula</math>',
+				PageReferenceValue::localReference( NS_MAIN, __METHOD__ ),
+				$po
+			)
+			->getRawText();
+		$this->assertStringContainsString( '<render>native:formula</render>', $res );
+	}
+
+	public function testGetHtmlMathJaxIgnore() {
+		$this->setupDummyRendering();
+		$po = ParserOptions::newCanonical( 'canonical' );
+		$po->setOption( 'math', MathConfig::MODE_NATIVE_JAX );
+		$res = $this->getServiceContainer()
+			->getParser()
+			->parse(
+				'<math forcemathmode="native">formula</math>',
+				PageReferenceValue::localReference( NS_MAIN, __METHOD__ ),
+				$po
+			)
+			->getRawText();
+		$this->assertStringContainsString( '<render class="mathjax_ignore">native:formula</render>', $res );
 	}
 }

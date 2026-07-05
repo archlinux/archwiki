@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tofeiku",
-			"Hakimi97"
+			"Hakimi97",
+			"Tofeiku"
 		]
 	},
 	"syntaxhighlight-desc": "Menyediakan penyerlahan sintaks <code><syntaxhighlight></code> menggunakan [http://pygments.org/ Pygments - penyerlah sintaks Python]",

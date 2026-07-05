@@ -1,20 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
  */
 class MoveLogEntriesFromCuChangesWithoutReadOldColumnTest extends MaintenanceBaseTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {
@@ -40,11 +40,15 @@ class MoveLogEntriesFromCuChangesWithoutReadOldColumnTest extends MaintenanceBas
 		);
 		// Test no moving happened in the database
 		$this->assertRowCount(
-			0, 'cu_private_event', 'cupe_id',
+			0,
+			'cu_private_event',
+			'cupe_id',
 			'Rows were moved to cu_private_event when they should not have been moved.'
 		);
 		$this->assertRowCount(
-			1, 'cu_changes', 'cuc_id',
+			1,
+			'cu_changes',
+			'cuc_id',
 			'Rows were removed from cu_changes even though there was no move.'
 		);
 	}

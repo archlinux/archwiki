@@ -37,5 +37,6 @@
 	"confirmedit-preview-validity": "Валидност",
 	"confirmedit-preview-valid": "валидна",
 	"confirmedit-preview-invalid": "неважеће",
-	"abusefilter-edit-action-showcaptcha": "Корисник мора да реши CAPTCHA-у да настави са жељеном радњом. Корисници са правом заобилажења CAPTCHA-е су изузети."
+	"abusefilter-edit-action-showcaptcha": "Обавезна CAPTCHA-а, ради извршења радње",
+	"abusefilter-edit-action-showcaptcha-help": "Корисници с’ правом заобилажења CAPTCHA-е су изузети."
 }

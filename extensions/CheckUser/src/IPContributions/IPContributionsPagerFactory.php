@@ -1,16 +1,16 @@
 <?php
 
-namespace MediaWiki\CheckUser\IPContributions;
+namespace MediaWiki\Extension\CheckUser\IPContributions;
 
 use InvalidArgumentException;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\SpecialPage\ContributionsRangeTrait;
 use MediaWiki\Title\NamespaceInfo;
@@ -22,42 +22,19 @@ class IPContributionsPagerFactory {
 
 	use ContributionsRangeTrait;
 
-	private LinkRenderer $linkRenderer;
-	private LinkBatchFactory $linkBatchFactory;
-	private HookContainer $hookContainer;
-	private RevisionStore $revisionStore;
-	private NamespaceInfo $namespaceInfo;
-	private CommentFormatter $commentFormatter;
-	private UserFactory $userFactory;
-	private TempUserConfig $tempUserConfig;
-	private Config $config;
-	private CheckUserLookupUtils $lookupUtils;
-	private JobQueueGroup $jobQueueGroup;
-
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory,
-		HookContainer $hookContainer,
-		RevisionStore $revisionStore,
-		NamespaceInfo $namespaceInfo,
-		CommentFormatter $commentFormatter,
-		UserFactory $userFactory,
-		TempUserConfig $tempUserConfig,
-		Config $config,
-		CheckUserLookupUtils $lookupUtils,
-		JobQueueGroup $jobQueueGroup
+		private readonly LinkRenderer $linkRenderer,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly HookContainer $hookContainer,
+		private readonly RevisionStore $revisionStore,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly CommentFormatter $commentFormatter,
+		private readonly UserFactory $userFactory,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly Config $config,
+		private readonly CheckUserLookupUtils $lookupUtils,
+		private readonly JobQueueGroup $jobQueueGroup,
 	) {
-		$this->linkRenderer = $linkRenderer;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->hookContainer = $hookContainer;
-		$this->revisionStore = $revisionStore;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->commentFormatter = $commentFormatter;
-		$this->userFactory = $userFactory;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->config = $config;
-		$this->lookupUtils = $lookupUtils;
-		$this->jobQueueGroup = $jobQueueGroup;
 	}
 
 	/**

@@ -131,9 +131,7 @@ class AFPTreeNode {
 			return [ "ATOM({$this->children->type} {$this->children->value})" ];
 		}
 
-		$align = static function ( $line ) {
-			return '  ' . $line;
-		};
+		$align = static fn ( $line ) => "  $line";
 
 		$lines = [ $this->type ];
 		// @phan-suppress-next-line PhanTypeSuspiciousNonTraversableForeach children is array here

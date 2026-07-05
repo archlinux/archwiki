@@ -1,7 +1,8 @@
 const
+	clientUtils = require( './clientUtils.js' ),
 	// LanguageData::getLocalData()
-	parserData = require( './parser/data.json' ),
-	utils = require( './utils.js' );
+	parserData = require( './commentparser/data.json' ),
+	commentUtils = require( './commentparser/commentUtils.js' );
 
 const featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {};
 
@@ -27,7 +28,7 @@ function ReplyLinksController( $pageContainer ) {
 	this.$body = $( document.body );
 	this.onReplyLinkClickHandler = this.onReplyLinkClick.bind( this );
 	this.onReplyButtonClickHandler = this.onReplyButtonClick.bind( this );
-	this.onAddSectionLinkClickHandler = this.onAddSectionLinkClick.bind( this );
+	this.onAddSectionLinkMouseDownHandler = this.onAddSectionLinkMouseDown.bind( this );
 	this.onAnyLinkClickHandler = this.onAnyLinkClick.bind( this );
 
 	// Reply links
@@ -49,10 +50,10 @@ function ReplyLinksController( $pageContainer ) {
 	// "Add topic" link in the skin interface
 	if ( featuresEnabled.newtopictool ) {
 		// eslint-disable-next-line no-jquery/no-global-selector
-		const $addSectionTab = $( '#ca-addsection' );
-		if ( $addSectionTab.length ) {
-			this.$addSectionLink = $addSectionTab.find( 'a' );
-			this.$addSectionLink.on( 'click keypress', this.onAddSectionLinkClickHandler );
+		const $addSectionLink = $( '#ca-addsection a, a#ca-addsection' );
+		if ( $addSectionLink.length ) {
+			this.$addSectionLink = $addSectionLink;
+			this.$addSectionLink.on( 'mousedown keydown', this.onAddSectionLinkMouseDownHandler );
 
 			this.$addSectionLink.on( 'focusin mouseover touchstart', () => {
 				this.emit( 'link-interact' );
@@ -97,12 +98,12 @@ ReplyLinksController.prototype.onReplyButtonClick = function ( button ) {
 	this.emit( 'link-click', $linkSet.data( 'mw-thread-id' ), $linkSet );
 };
 
-ReplyLinksController.prototype.onAddSectionLinkClick = function ( e ) {
+ReplyLinksController.prototype.onAddSectionLinkMouseDown = function ( e ) {
 	if ( !this.isActivationEvent( e ) ) {
 		return;
 	}
 	// Disable VisualEditor's new section editor (in wikitext mode / NWE), to allow our own.
-	// We do this on first click, because we don't control the order in which our code and NWE code
+	// We do this on first mousedown, because we don't control the order in which our code and NWE code
 	// runs, so its event handlers may not be registered yet.
 	$( e.target ).closest( '#ca-addsection' ).off( '.ve-target' );
 
@@ -132,7 +133,7 @@ ReplyLinksController.prototype.onAnyLinkClick = function ( e ) {
 	}
 	e.preventDefault();
 
-	this.emit( 'link-click', utils.NEW_TOPIC_COMMENT_ID, $( e.currentTarget ), data );
+	this.emit( 'link-click', commentUtils.NEW_TOPIC_COMMENT_ID, $( e.currentTarget ), data );
 };
 
 /**
@@ -144,7 +145,7 @@ ReplyLinksController.prototype.onAnyLinkClick = function ( e ) {
 ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 	const searchParams = new URL( href ).searchParams;
 
-	let title = mw.Title.newFromText( utils.getTitleFromUrl( href ) || '' );
+	let title = mw.Title.newFromText( commentUtils.getTitleFromUrl( href ) || '' );
 	if ( !title ) {
 		return null;
 	}
@@ -212,7 +213,7 @@ ReplyLinksController.prototype.isActivationEvent = function ( e ) {
 		// Only handle keypresses on the "Enter" or "Space" keys
 		return false;
 	}
-	if ( e.type === 'click' && !utils.isUnmodifiedLeftClick( e ) ) {
+	if ( e.type === 'click' && !clientUtils.isUnmodifiedLeftClick( e ) ) {
 		// Only handle unmodified left clicks
 		return false;
 	}
@@ -346,7 +347,7 @@ ReplyLinksController.prototype.teardown = function () {
 
 	if ( featuresEnabled.newtopictool ) {
 		if ( this.$addSectionLink ) {
-			this.$addSectionLink.off( 'click keypress', this.onAddSectionLinkClickHandler );
+			this.$addSectionLink.off( 'mousedown keydown', this.onAddSectionLinkMouseDownHandler );
 		}
 		this.$body.off( 'click keypress', 'a', this.onAnyLinkClickHandler );
 	}

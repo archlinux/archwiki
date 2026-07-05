@@ -16,8 +16,6 @@
 	}
 
 	.branding-box {
-		opacity: @opacity-icon-subtle; // T251135
-
 		a {
 			float: left;
 			margin-left: 5px;
@@ -42,6 +40,12 @@
 					display: initial;
 				}
 			}
+
+			img {
+				// Applied to img tag only to support customizing the logo for special events
+				// https://www.mediawiki.org/wiki/Skin:Vector/Customizing_the_logo_for_special_events
+				opacity: @opacity-icon-subtle; // T251135
+			}
 		}
 	}
 
@@ -54,14 +58,6 @@
 	// Fix cursor for Safari
 	#searchInput { // stylelint-disable-line selector-max-id
 		cursor: text;
-	}
-
-	// FIXME: Delete this selector after cached HTML is resolved from I7d88ef62bffc7241f7778f5b079fcc9dc693eeaa
-	// stylelint-disable-next-line selector-max-id
-	.search-box > .cdx-text-input #searchInput,
-	.search-box > .cdx-text-input__input {
-		padding-left: 60px;
-		line-height: 1;
 	}
 }
 

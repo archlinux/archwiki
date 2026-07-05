@@ -13,9 +13,6 @@ class DatabaseCommentItem extends DatabaseThreadItem implements CommentItem {
 		getSubscribableHeading as protected traitGetSubscribableHeading;
 	}
 
-	private string $timestamp;
-	private string $author;
-
 	/**
 	 * @param ProperPageIdentity $page
 	 * @param RevisionRecord $rev
@@ -30,11 +27,10 @@ class DatabaseCommentItem extends DatabaseThreadItem implements CommentItem {
 	public function __construct(
 		ProperPageIdentity $page, RevisionRecord $rev,
 		string $name, string $id, ?DatabaseThreadItem $parent, $transcludedFrom, int $level,
-		string $timestamp, string $author
+		private readonly string $timestamp,
+		private readonly string $author,
 	) {
 		parent::__construct( $page, $rev, 'comment', $name, $id, $parent, $transcludedFrom, $level );
-		$this->timestamp = $timestamp;
-		$this->author = $author;
 	}
 
 	/**

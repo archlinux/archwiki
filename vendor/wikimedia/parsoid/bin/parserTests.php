@@ -5,6 +5,7 @@ require_once __DIR__ . '/../tools/Maintenance.php';
 
 use MediaWiki\Settings\SettingsBuilder;
 use SebastianBergmann\Diff\Differ;
+use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 use Wikimedia\Parsoid\ParserTests\Stats;
 use Wikimedia\Parsoid\ParserTests\Test;
 use Wikimedia\Parsoid\ParserTests\TestRunner;
@@ -209,7 +210,7 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 			],
 			'update-format' => [
 				'description' => 'format with which to update tests; only useful in conjunction ' .
-					'with update-tests or update-unexpected. Values: raw, noDsr, actualNormalized.',
+					'with update-tests or update-unexpected. Values: raw, noDsr (default), actualNormalized.',
 				'default' => 'noDsr',
 			]
 		], [
@@ -365,11 +366,26 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 			return;
 		}
 
+		if (
+			$file !== null &&
+			ScriptUtils::booleanOption( $options['quiet'] ?? null ) &&
+			$stats->allFailures() === 0 &&
+			!$knownFailuresChanged
+		) {
+			print 'SUMMARY:' .
+				TestUtils::colorString( $filename, $happiness ? 'green' : 'red' ) .
+				' --> ' . TestUtils::colorString( 'NO UNEXPECTED RESULTS', 'green' ) .
+				" (" . ( $stats->passedTests + $stats->failedTests ) . " tests)" .
+				"\n";
+				return;
+		}
+
 		if ( !$quieter ) {
 			print "==========================================================\n";
 			print 'SUMMARY:' . TestUtils::colorString( $filename, $happiness ? 'green' : 'red' ) .
 				"\n";
 		}
+
 		if ( $file !== null ) {
 			print 'Execution time: ' . round( ( hrtime( true ) - $stats->startTime ) / 1000000, 3 ) . "ms\n";
 		}
@@ -668,7 +684,8 @@ class ParserTests extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$a = preg_replace( '/\xA0/', "␣", $actual['normal'] );
 		// PORT_FIXME:
 		if ( !self::$differ ) {
-			self::$differ = new Differ();
+			$outputBuilder = new UnifiedDiffOutputBuilder;
+			self::$differ = new Differ( $outputBuilder );
 		}
 
 		$diffs = self::$differ->diff( $e, $a );

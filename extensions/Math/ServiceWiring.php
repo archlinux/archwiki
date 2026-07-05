@@ -14,6 +14,7 @@ use MediaWiki\Registration\ExtensionRegistry;
 use Wikibase\Client\WikibaseClient;
 use Wikibase\Lib\Formatters\SnakFormatter;
 
+/** @phpcs-require-sorted-array */
 return [
 	'Math.CheckerFactory' => static function ( MediaWikiServices $services ): InputCheckFactory {
 		return new InputCheckFactory(
@@ -31,6 +32,9 @@ return [
 			new ServiceOptions( MathConfig::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
 			ExtensionRegistry::getInstance()
 		);
+	},
+	'Math.MathMLTreeVisitor' => static function ( MediaWikiServices $services ): VisitorFactory {
+		return new VisitorFactory();
 	},
 	'Math.RendererFactory' => static function ( MediaWikiServices $services ): RendererFactory {
 		return new RendererFactory(
@@ -57,8 +61,5 @@ return [
 			new MathFormatter( SnakFormatter::FORMAT_HTML ),
 			LoggerFactory::getInstance( 'Math' )
 		);
-	},
-	'Math.MathMLTreeVisitor' => static function ( MediaWikiServices $services ): VisitorFactory {
-		return new VisitorFactory();
 	}
 ];

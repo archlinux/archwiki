@@ -56,7 +56,6 @@ class SimpleCallbacks implements Callbacks {
 			$file = new UploadedFile( $file );
 			$this->files[$name] = $file;
 		}
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable False positive
 		return $file;
 	}
 

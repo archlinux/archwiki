@@ -4,14 +4,15 @@ declare( strict_types = 1 );
 namespace Test\Parsoid\Wt2Html\DOM\Handlers;
 
 use PHPUnit\Framework\TestCase;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\Title;
 
 /**
  * based on tests/mocha/heading.ids.js
@@ -52,7 +53,8 @@ class HeadingsTest extends TestCase {
 		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$content = new MockPageContent( [ 'main' => $heading ] );
+		$title = Title::newFromText( 'TestPage', $siteConfig );
+		$content = new MockPageContent( [ 'main' => $heading ], $title );
 		$pageConfig = new MockPageConfig( $siteConfig, [], $content );
 		$html = $parsoid->wikitext2html( $pageConfig, [ "wrapSections" => false ] );
 

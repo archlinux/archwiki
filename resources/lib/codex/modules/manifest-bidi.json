@@ -16,6 +16,24 @@
       "Icon-bidi.css"
     ]
   },
+  "_ToastDisplay-bidi.css": {
+    "file": "ToastDisplay-bidi.css",
+    "src": "_ToastDisplay-bidi.css"
+  },
+  "_ToastDisplay.js": {
+    "file": "ToastDisplay.js",
+    "name": "ToastDisplay",
+    "imports": [
+      "src/components/message/Message.vue",
+      "_constants.js",
+      "src/composables/useSplitAttributes.ts",
+      "_useToast.js",
+      "__plugin-vue_export-helper.js"
+    ],
+    "css": [
+      "ToastDisplay-bidi.css"
+    ]
+  },
   "__plugin-vue_export-helper.js": {
     "file": "_plugin-vue_export-helper.js",
     "name": "_plugin-vue_export-helper"
@@ -28,12 +46,16 @@
     "file": "floating-ui.dom.js",
     "name": "floating-ui.dom"
   },
-  "_unwrapElement.js": {
-    "file": "unwrapElement.js",
-    "name": "unwrapElement",
+  "_floating-ui.vue.js": {
+    "file": "floating-ui.vue.js",
+    "name": "floating-ui.vue",
     "imports": [
       "_floating-ui.dom.js"
     ]
+  },
+  "_unwrapElement.js": {
+    "file": "unwrapElement.js",
+    "name": "unwrapElement"
   },
   "_useButtonGroupKeyboardNav.js": {
     "file": "useButtonGroupKeyboardNav.js",
@@ -69,9 +91,20 @@
     "file": "useOptionalModelWrapper.js",
     "name": "useOptionalModelWrapper"
   },
+  "_useScrollLock.js": {
+    "file": "useScrollLock.js",
+    "name": "useScrollLock",
+    "imports": [
+      "_unwrapElement.js"
+    ]
+  },
   "_useSlotContents.js": {
     "file": "useSlotContents.js",
     "name": "useSlotContents"
+  },
+  "_useToast.js": {
+    "file": "useToast.js",
+    "name": "useToast"
   },
   "src/components/accordion/Accordion.vue": {
     "file": "CdxAccordion.cjs",
@@ -202,6 +235,7 @@
       "_Icon.js",
       "_useI18nWithOverride.js",
       "src/composables/useResizeObserver.ts",
+      "_useScrollLock.js",
       "__plugin-vue_export-helper.js"
     ],
     "css": [
@@ -307,7 +341,7 @@
     "src": "src/components/menu-button/MenuButton.vue",
     "isEntry": true,
     "imports": [
-      "src/components/toggle-button/ToggleButton.vue",
+      "src/components/button/Button.vue",
       "src/components/menu/Menu.vue",
       "src/composables/useFieldData.ts",
       "src/composables/useFloatingMenu.ts",
@@ -393,10 +427,13 @@
     "src": "src/components/popover/Popover.vue",
     "isEntry": true,
     "imports": [
-      "_unwrapElement.js",
+      "_floating-ui.vue.js",
       "_Icon.js",
       "src/components/button/Button.vue",
       "_useI18nWithOverride.js",
+      "src/composables/useResizeObserver.ts",
+      "_useScrollLock.js",
+      "_unwrapElement.js",
       "_constants.js",
       "_floating-ui.dom.js",
       "__plugin-vue_export-helper.js"
@@ -602,6 +639,41 @@
       "CdxThumbnail-bidi.css"
     ]
   },
+  "src/components/toast/Toast.vue": {
+    "file": "CdxToast.cjs",
+    "name": "CdxToast",
+    "src": "src/components/toast/Toast.vue",
+    "isEntry": true,
+    "imports": [
+      "_ToastDisplay.js",
+      "_constants.js",
+      "_useToast.js",
+      "__plugin-vue_export-helper.js"
+    ]
+  },
+  "src/components/toast/ToastContainer.vue": {
+    "file": "CdxToastContainer.cjs",
+    "name": "CdxToastContainer",
+    "src": "src/components/toast/ToastContainer.vue",
+    "isEntry": true,
+    "imports": [
+      "_ToastDisplay.js",
+      "_useToast.js",
+      "__plugin-vue_export-helper.js"
+    ],
+    "css": [
+      "CdxToastContainer-bidi.css"
+    ]
+  },
+  "src/components/toast/useToast.ts": {
+    "file": "useToast.cjs",
+    "name": "useToast",
+    "src": "src/components/toast/useToast.ts",
+    "isEntry": true,
+    "imports": [
+      "_useToast.js"
+    ]
+  },
   "src/components/toggle-button-group/ToggleButtonGroup.vue": {
     "file": "CdxToggleButtonGroup.cjs",
     "name": "CdxToggleButtonGroup",
@@ -623,6 +695,7 @@
     "src": "src/components/toggle-button/ToggleButton.vue",
     "isEntry": true,
     "imports": [
+      "_constants.js",
       "_useIconOnlyButton.js",
       "__plugin-vue_export-helper.js"
     ],
@@ -715,6 +788,7 @@
     "src": "src/composables/useFloatingMenu.ts",
     "isEntry": true,
     "imports": [
+      "_floating-ui.vue.js",
       "_unwrapElement.js",
       "_floating-ui.dom.js"
     ]

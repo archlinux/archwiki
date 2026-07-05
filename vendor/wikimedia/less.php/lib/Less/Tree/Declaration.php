@@ -8,7 +8,7 @@ class Less_Tree_Declaration extends Less_Tree implements Less_Tree_HasValuePrope
 
 	/** @var string|array<Less_Tree_Keyword|Less_Tree_Variable> */
 	public $name;
-	/** @var Less_Tree[]|Less_Tree_Anonymous */
+	/** @var Less_Tree */
 	public $value;
 	/** @var string */
 	public $important;
@@ -171,6 +171,7 @@ class Less_Tree_Declaration extends Less_Tree implements Less_Tree_HasValuePrope
 		if ( !is_array( $this->value ) ) {
 
 			if ( method_exists( $value, 'markReferenced' ) ) {
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$value->markReferenced();
 			}
 		} else {

@@ -104,6 +104,10 @@ OO.mixinClass( ve.ui.MWEditModeSourceTool, ve.ui.MWEditModeTool );
  * @inheritdoc
  */
 ve.ui.MWEditModeSourceTool.prototype.switch = function () {
-	this.toolbar.getTarget().switchToWikitextEditor();
+	// T296575: Close all inspectors; similar to what ve.ui.WindowAction.open enforces
+	const inspectors = this.toolbar.getSurface().getContext().getInspectors();
+	inspectors.closeWindow( inspectors.getCurrentWindow() ).closed.always( () => {
+		this.toolbar.getTarget().switchToWikitextEditor();
+	} );
 };
 ve.ui.toolFactory.register( ve.ui.MWEditModeSourceTool );

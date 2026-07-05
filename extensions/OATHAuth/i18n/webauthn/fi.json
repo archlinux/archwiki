@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samoasambia"
+		]
+	},
+	"oathauth-webauthn-module-label": "Suojausavain",
+	"oathauth-webauthn-javascript-required": "JavaScriptin on oltava käytössä selaimessasi käyttääksesi suojausavainta.",
+	"oathauth-webauthn-ui-login-prompt": "Käytä suojausavaintasi tai seuraa selaimesi ohjeita.",
+	"oathauth-webauthn-ui-add-key": "Lisää avain",
+	"oathauth-webauthn-error-browser-unsupported": "Tämä selain ei tue suojausavaimella tunnistautumista tai se ei ole saatavilla tälle verkkosivustolle. Kokeile toista selainta. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Lisätietoja]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Tämä selain ei tue suojausavaimella tunnistautumista tai se ei ole saatavilla tälle verkkosivustolle.",
+	"oathauth-webauthn-error-auth-generic": "Tunnistautumisprosessi keskeytettiin. Aloita tunnistautuminen uudelleen.",
+	"oathauth-webauthn-error-reg-generic": "Avaintasi ei voitu vahvistaa. Aloita rekisteröintiprosessi uudelleen.",
+	"oathauth-webauthn-registered-keys-section-name": "Rekisteröidyt avaimet",
+	"oathauth-webauthn-ui-remove-key": "Poista",
+	"oathauth-webauthn-error-module-not-enabled": "{{GENDER:$2|Käyttäjällä}} ”$2” ei ole käytössä moduuli ”$1”.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn-vahvistus epäonnistui.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn-todennustietoja ei lähetetty.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Käyttäjä}} ”$1” ei voi rekisteröidä uusia todennustietoja.",
+	"oathauth-webauthn-error-invalid-new-key": "Moduulin palauttama uusi avain ei ole vaadittua tyyppiä.",
+	"oathauth-webauthn-error-registration-failed": "Uuden avaimen rekisteröinti epäonnistui.",
+	"oathauth-webauthn-ui-key-register-help": "Valitse nimi avaimellesi:",
+	"oathauth-webauthn-error-cannot-remove-key": "Avainta ei voi poistaa.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Tunnistautumistietoja ei voitu hakea.",
+	"oathauth-webauthn-add-key-section-name": "Rekisteröi uusi suojausavain",
+	"oathauth-webauthn-error-get-reginfo-fail": "Rekisteröintitietoja ei voitu hakea.",
+	"oathauth-webauthn-ui-reload-page-label": "Päivitä sivu",
+	"oathauth-webauthn-authentication-info-label": "Tunnistautumistiedot",
+	"oathauth-webauthn-authentication-info-help": "Asiakkaalle välitetyt tunnistautumistiedot todennustietojen hakemista varten",
+	"oathauth-webauthn-credential-label": "Käyttäjän todennustiedot",
+	"oathauth-webauthn-credential-help": "Käyttäjän todennustiedot tunnistautumistietojen perusteella",
+	"oathauth-webauthn-add-security-key": "Lisää suojausavain"
+}

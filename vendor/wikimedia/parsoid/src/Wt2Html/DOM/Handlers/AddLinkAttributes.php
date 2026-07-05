@@ -3,8 +3,9 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Handlers;
 
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\DTState;
 use Wikimedia\Parsoid\Utils\WTUtils;
@@ -31,31 +32,55 @@ class AddLinkAttributes {
 				if ( WTUtils::isATagFromURLLinkSyntax( $a ) ) {
 					$classInfoText = 'external free';
 				} elseif ( WTUtils::isATagFromMagicLinkSyntax( $a ) ) {
-					// PHP uses specific suffixes for RFC/PMID/ISBN (the last of
-					// which is an internal link, not an mw:ExtLink), but we'll
-					// keep it simple since magic links are deprecated.
-					$classInfoText = 'external mw-magiclink';
+					// Handled below
+					$classInfoText = null;
 				} else {
 					$classInfoText = 'external text';
 				}
 			} else {
 				$classInfoText = 'external autonumber';
 			}
-			$a->setAttribute( 'class', $classInfoText );
+			if ( $classInfoText !== null ) {
+				$a->setAttribute( 'class', $classInfoText );
+			}
 			$href = DOMCompat::getAttribute( $a, 'href' ) ?? '';
 			$attribs = $state->env->getExternalLinkAttribs( $href );
+			if ( ( $attribs['href'] ?? null ) === null ) {
+				// Blocked link: T420043
+				$a->removeAttribute( 'href' );
+			}
 			foreach ( $attribs as $key => $val ) {
 				if ( $key === 'rel' ) {
 					foreach ( $val as $v ) {
 						DOMUtils::addRel( $a, $v );
 					}
+				} elseif ( $key === 'class' ) {
+					DOMCompat::getClassList( $a )->add( ...$val );
 				} else {
 					$a->setAttribute( $key, $val );
 				}
 			}
+			if ( $attribs['href'] ?? null ) {
+				$state->env->getMetadata()->addExternalLink( $attribs['href'] );
+			}
 		} elseif ( DOMUtils::hasRel( $a, 'mw:WikiLink/Interwiki' ) ) {
 			DOMCompat::getClassList( $a )->add( 'extiw' );
 		}
+
+		if ( WTUtils::isATagFromMagicLinkSyntax( $a ) ) {
+			$ref = DOMDataUtils::getDataParsoid( $a )->getTemp()->ref;
+			$classInfoText = ( $ref === 'isbn' ) ? 'internal' : 'external';
+			// "mw-magiclink" here is for backwards compatibility
+			// with what Parsoid output prior to T329347
+			$classInfoText .= " mw-magiclink mw-magiclink-{$ref}";
+			$a->setAttribute( 'class', $classInfoText );
+			$state->env->getDataAccess()->addTrackingCategory(
+				$state->env->getPageConfig(),
+				$state->env->getMetadata(),
+				"magiclink-tracking-{$ref}"
+			);
+		}
+
 		return true;
 	}
 }

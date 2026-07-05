@@ -9,40 +9,19 @@ use MediaWiki\Revision\RevisionRecord;
 class DatabaseThreadItem implements JsonSerializable, ThreadItem {
 	use ThreadItemTrait;
 
-	private ProperPageIdentity $page;
-	private RevisionRecord $rev;
-	private string $type;
-	private string $name;
-	private string $id;
-	private ?self $parent;
 	/** @var self[] */
 	private array $replies = [];
-	/** @var string|bool */
-	private $transcludedFrom;
-	private int $level;
 
-	/**
-	 * @param ProperPageIdentity $page
-	 * @param RevisionRecord $rev
-	 * @param string $type
-	 * @param string $name
-	 * @param string $id
-	 * @param self|null $parent
-	 * @param bool|string $transcludedFrom
-	 * @param int $level
-	 */
 	public function __construct(
-		ProperPageIdentity $page, RevisionRecord $rev,
-		string $type, string $name, string $id, ?self $parent, $transcludedFrom, int $level
+		private readonly ProperPageIdentity $page,
+		private readonly RevisionRecord $rev,
+		private readonly string $type,
+		private readonly string $name,
+		private readonly string $id,
+		private readonly ?self $parent,
+		private readonly bool|string $transcludedFrom,
+		private readonly int $level,
 	) {
-		$this->page = $page;
-		$this->rev = $rev;
-		$this->name = $name;
-		$this->id = $id;
-		$this->type = $type;
-		$this->parent = $parent;
-		$this->transcludedFrom = $transcludedFrom;
-		$this->level = $level;
 	}
 
 	public function getPage(): ProperPageIdentity {

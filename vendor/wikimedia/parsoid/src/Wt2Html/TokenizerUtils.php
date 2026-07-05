@@ -10,13 +10,13 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -40,27 +40,17 @@ class TokenizerUtils {
 			return $e;
 		}
 
-		for ( $i = 0;  $i < count( $e );  $i++ ) {
-			$v = $e[$i];
+		foreach ( $e as $i => $v ) {
 			if ( is_array( $v ) ) {
 				// Change in assumption from a shallow array to a nested array.
-				if ( $res === null ) {
-					$res = array_slice( $e, 0, $i );
-				}
+				$res ??= array_slice( $e, 0, $i );
 				self::internalFlatten( $v, $res );
-			} elseif ( $v !== null ) {
-				if ( $res !== null ) {
-					$res[] = $v;
-				}
-			} else {
-				throw new \RuntimeException( __METHOD__ . ": found falsy element $v @ posn $i" );
+			} elseif ( $res !== null ) {
+				$res[] = $v;
 			}
 		}
 
-		if ( $res !== null ) {
-			$e = $res;
-		}
-		return $e;
+		return $res ?? $e;
 	}
 
 	/**
@@ -136,7 +126,7 @@ class TokenizerUtils {
 	 * @param string $pegSource
 	 * @param string $tagName
 	 * @param string $wtChar
-	 * @param mixed $attrInfo
+	 * @param ?array $attrInfo
 	 * @param SourceRange $tsr
 	 * @param int $endPos
 	 * @param mixed $content
@@ -144,7 +134,7 @@ class TokenizerUtils {
 	 * @return array (of tokens)
 	 */
 	public static function buildTableTokens(
-		string $pegSource, string $tagName, string $wtChar, $attrInfo,
+		string $pegSource, string $tagName, string $wtChar, ?array $attrInfo,
 		SourceRange $tsr, int $endPos, $content, bool $addEndTag = false
 	): array {
 		$dp = new DataParsoid;
@@ -155,21 +145,21 @@ class TokenizerUtils {
 				// Add a flag that indicates that the tokenizer didn't
 				// encounter a "|...|" attribute box. This is useful when
 				// deciding which <td>/<th> cells need attribute fixups.
-				$dp->setTempFlag( TempData::NO_ATTRS );
+				$dp->setTempFlag( TempData::TABLE_CELL_WITH_NO_ATTRIBUTE_SYNTAX );
 			} else {
 				if ( !$attrInfo[0] && $attrInfo[1] === "" ) {
 					// FIXME: Skip comments between the two "|" chars
 					// [ [], "", "|"] => "||" syntax for first <td> on line
 					$dp->setTempFlag( TempData::NON_MERGEABLE_TABLE_CELL );
-					$dp->setTempFlag( TempData::NO_ATTRS );
+					$dp->setTempFlag( TempData::TABLE_CELL_WITH_NO_ATTRIBUTE_SYNTAX );
 				}
 			}
 		} elseif ( $tagName === 'th' ) {
 			if ( !$attrInfo ) {
 				// Add a flag that indicates that the tokenizer didn't
-				// encounter a "|...|" attribute box. This is useful when
+				// encounter a "!...|" attribute box. This is useful when
 				// deciding which <td>/<th> cells need attribute fixups.
-				$dp->setTempFlag( TempData::NO_ATTRS );
+				$dp->setTempFlag( TempData::TABLE_CELL_WITH_NO_ATTRIBUTE_SYNTAX );
 
 				// FIXME: Skip comments between the two "!" chars
 				// "!!foo" in sol context parses as <th>!foo</th>
@@ -182,16 +172,16 @@ class TokenizerUtils {
 			}
 		}
 
-		$a = [];
+		$attrs = [];
 		if ( $attrInfo ) {
 			$dp->getTemp()->attrSrc = substr(
 				$pegSource, $tsr->start, $tsr->end - $tsr->start - strlen( $attrInfo[2] )
 			);
-			$a = $attrInfo[0];
-			if ( !$a ) {
+			$attrs = $attrInfo[0];
+			if ( !$attrs ) {
 				$dp->startTagSrc = $wtChar . $attrInfo[1];
 			}
-			if ( ( !$a && $attrInfo[2] ) || $attrInfo[2] !== '|' ) {
+			if ( ( !$attrs && $attrInfo[2] ) || $attrInfo[2] !== '|' ) {
 				// Variation from default
 				// 1. Separator present with an empty attribute block
 				// 2. Not "|"
@@ -214,7 +204,7 @@ class TokenizerUtils {
 			$dp->setTempFlag( TempData::AT_SRC_START );
 		}
 
-		$tokens = [ new TagTk( $tagName, $a, $dp ) ];
+		$tokens = [ new TagTk( $tagName, $attrs, $dp ) ];
 		PHPUtils::pushArray( $tokens, $content );
 
 		if ( $addEndTag ) {
@@ -317,7 +307,7 @@ class TokenizerUtils {
 				return $htmlOrEmpty && (
 					$stops['templateArg']
 					|| $stops['tableCellArg']
-					|| $stops['linkdesc']
+					|| ( $stops['linkdesc'] && $stops['tagType'] !== 'html' )
 					|| ( $stops['table']
 						&& $pos < strlen( $input ) - 1
 						&& preg_match( '/[}|]/', $c2 ) )
@@ -474,19 +464,13 @@ class TokenizerUtils {
 	 */
 	public static function enforceParserResourceLimits( Env $env, $token ): void {
 		if ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) {
-			$resource = null;
-			switch ( $token->getName() ) {
-				case 'listItem':
-					$resource = 'listItem';
-					break;
-				case 'template':
-					$resource = 'transclusion';
-					break;
-				case 'td':
-				case 'th':
-					$resource = 'tableCell';
-					break;
-			}
+			$resource = match ( $token->getName() ) {
+				'listItem' => 'listItem',
+				'template', 'template3' => 'transclusion',
+				'td',
+				'th' => 'tableCell',
+				default => null
+			};
 			if (
 				$resource !== null &&
 				$env->bumpWt2HtmlResourceUse( $resource ) === false

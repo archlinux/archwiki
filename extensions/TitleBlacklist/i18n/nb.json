@@ -20,7 +20,6 @@
 	"titleblacklist-forbidden-move": "«$2» kan ikke flyttes til «$3» fordi tittelen «$3» har blitt stengt for oppretting.\nDen tilsvarer følgende element i svartelistinga: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Filnavnet «$2» er blokkert for oppretting.\nDen matcher følgende svartelisteelement: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Brukernavnet «$2» kan ikke opprettes.\nDet tilsvarer følgende svartelisteelement: <code>$1</code>",
-	"titleblacklist-invalid": "Følgende {{PLURAL:$1|linje|linjer}} i tittelsvartelista er {{PLURAL:$1|ugyldig|ugyldige}}; vennligst korriger {{PLURAL:$1|den|dem}} før du lagrer:",
 	"titleblacklist-override": "Overstyr tittelsvarteliste hvis den matcher",
 	"titleblacklist-override-help": "Brukere med tilstrekkelige rettigheter kan sette denne for å ignorere sjekker mot tittelsvartelista.",
 	"titleblacklist-warning": "<strong>Advarsel: Denne siden kan kun redigeres av administratorer og andre brukere med <code>tboverride</code>-rettigheter fordi den matcher følgende oppslag i tittelsvartelista:</strong><br /><code>$1</code>",

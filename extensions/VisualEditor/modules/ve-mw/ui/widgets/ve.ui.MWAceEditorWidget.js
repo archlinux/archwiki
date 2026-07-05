@@ -275,7 +275,7 @@ ve.ui.MWAceEditorWidget.prototype.selectRange = function ( from, to ) {
 				row++;
 			}
 			const col = offset - pos;
-			return { row: row, column: col };
+			return { row, column: col };
 		}
 
 		const fromOffset = offsetToPos( from );

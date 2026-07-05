@@ -72,17 +72,53 @@
 	display: flex;
 	align-items: center;
 
+	// The user page menu may have after-portal content (e.g. temp user info button).
+	.vector-menu-content {
+		display: flex;
+	}
+
 	.vector-menu-content-list {
 		display: flex;
 		align-items: center;
 		font-size: @font-size-small;
 	}
 
+	.after-portlet-user-page,
 	.user-links-collapsible-item {
 		@media ( max-width: @max-width-breakpoint-mobile ) {
 			display: none;
 		}
 	}
+
+	// color the donate link progressive equal to a fake quiet progressive Codex Button component
+	/* stylelint-disable selector-max-specificity */
+	#pt-sitesupport-2 .cdx-button--fake-button--enabled.cdx-button--weight-quiet {
+		color: @color-progressive;
+
+		.mw-ui-icon-heart {
+			background-color: @background-color-progressive;
+		}
+
+		&:hover {
+			background-color: @background-color-progressive-subtle--hover;
+			color: @color-progressive--hover;
+
+			.mw-ui-icon-heart {
+				background-color: @background-color-progressive--hover;
+			}
+		}
+
+		&:active,
+		&.cdx-button--is-active {
+			background-color: @background-color-progressive-subtle--active;
+			color: @color-progressive--active;
+
+			.mw-ui-icon-heart {
+				background-color: @background-color-progressive--active;
+			}
+		}
+	}
+	/* stylelint-enable selector-max-specificity */
 }
 
 /**
@@ -90,29 +126,6 @@
  */
 .vector-user-menu-logged-in .vector-dropdown-label {
 	.mixin-vector-arrowed-dropdown-toggle();
-}
-
-/**
- * Logged-out dropdown user menu items- Special treatment for special links.
- */
-#p-user-menu-anon-editor .vector-menu-heading {
-	display: block;
-
-	a::before {
-		// Support: Chrome <= 76, Firefox <= 127, Safari <= 17.3.
-		content: '@{msg-parentheses-start}';
-		// Add alternative empty text for generated parentheses in assistive technology.
-		// Support: modern browsers.
-		// Refer to https://caniuse.com/mdn-css_properties_content_alt_text
-		content: '@{msg-parentheses-start}' / '';
-	}
-
-	a::after {
-		// Support: Chrome <= 76, Firefox <= 127, Safari <= 17.3.
-		content: '@{msg-parentheses-end}';
-		// Support: modern browsers.
-		content: '@{msg-parentheses-end}' / '';
-	}
 }
 
 /**

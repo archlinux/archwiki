@@ -6,6 +6,7 @@
 			"Doctore",
 			"Jacenty359",
 			"Krol111",
+			"MarMi wiki",
 			"Matma Rex",
 			"Mikołka",
 			"Msz2001",
@@ -18,8 +19,7 @@
 			"WTM",
 			"Woytecr",
 			"Wpedzich",
-			"아라",
-			"MarMi wiki"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Automatyczny pomocnik uważa, że do strony została dodana nowa treść",
@@ -34,6 +34,9 @@
 	"tag-editcheck-tone-shown-description": "Automatyczny pomocnik uważa, że konieczna może być zmiana brzmienia niektórych treści i odpowiedni komunikat został wyświetlony",
 	"tag-editcheck-paste-shown": "Kontrola edycji (wklejanie) – wyświetlono",
 	"tag-editcheck-paste-shown-description": "Automatyczny pomocnik zapytał o określenie się co do wklejonej przez edytującego treści, po czym treść ta została przez niego usunięta lub potwierdzona jako dozwolona",
+	"tag-editsuggestion-seen": "Widziano sugestię edycji",
+	"tag-editsuggestion-seen-description": "Użytkownik prawdopodobnie zobaczył co najmniej jedną sugestię edycji",
+	"tag-editsuggestion-used": "Użyto sugestii edycji",
 	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "Edycja z wykorzystaniem [[{{MediaWiki:visualeditor-descriptionpagelink}}|edytora wizualnego]]",
 	"tag-visualeditor-needcheck": "VisualEditor: do sprawdzenia",

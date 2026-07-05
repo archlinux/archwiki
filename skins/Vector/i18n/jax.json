@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Pitchrigi",
-			"Muhamad Izzul Fiqih"
+			"Muhamad Izzul Fiqih",
+			"Pitchrigi"
 		]
 	},
 	"vector-languages": "Baso",
@@ -30,7 +30,6 @@
 	"skin-theme-exclusion-notice": "Laman ko selalu make mode terang.",
 	"vector-toc-label": "Daftar isi",
 	"vector-toc-beginning": "Awal",
-	"vector-anon-user-menu-pages": "Laman penyunting yang lah keluar",
 	"vector-main-menu-label": "Menu utamo",
 	"vector-feature-custom-font-size-exclusion-notice": "Laman ko selalu make ukuran huruf kecik",
 	"vector-page-tools-label": "Pekakas",

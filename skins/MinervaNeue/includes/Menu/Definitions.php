@@ -24,7 +24,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Message\Message;
 use MediaWiki\Minerva\Menu\Entries\AuthMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
-use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
@@ -34,17 +34,13 @@ use MediaWiki\User\UserIdentity;
  */
 final class Definitions {
 
-	private SpecialPageFactory $specialPageFactory;
 	private IContextSource $context;
 	private UserIdentity $user;
 
-	/**
-	 * Initialize definitions helper class
-	 */
 	public function __construct(
-		SpecialPageFactory $specialPageFactory
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly ExtensionRegistry $extensionRegistry,
 	) {
-		$this->specialPageFactory = $specialPageFactory;
 	}
 
 	public function setContext( IContextSource $context ): self {
@@ -100,11 +96,11 @@ final class Definitions {
 	 */
 	public function insertNearbyIfSupported( Group $group ): void {
 		// Nearby link (if supported)
-		if ( $this->specialPageFactory->exists( 'Nearby' ) ) {
+		if ( $this->extensionRegistry->isLoaded( 'NearbyPages' ) ) {
 			$entry = $this->buildMenuEntry(
 				'nearby',
 				$this->context->msg( 'mobile-frontend-main-menu-nearby' )->text(),
-				SpecialPage::getTitleFor( 'Nearby' )->getLocalURL(),
+				$this->specialPageFactory->getTitleForAlias( 'Nearby' )->getLocalURL(),
 				'',
 				'mapPin',
 				true
@@ -125,7 +121,7 @@ final class Definitions {
 		$entry = $this->buildMenuEntry(
 			'settings',
 			$this->context->msg( 'mobile-frontend-main-menu-settings' )->text(),
-			SpecialPage::getTitleFor( 'MobileOptions' )
+			$this->specialPageFactory->getTitleForAlias( 'MobileOptions' )
 				->getLocalURL( [ 'returnto' => $returnToTitle ] ),
 			'',
 			null,
@@ -141,7 +137,7 @@ final class Definitions {
 		$entry = $this->buildMenuEntry(
 			'preferences',
 			$this->context->msg( 'preferences' )->text(),
-			SpecialPage::getTitleFor( 'Preferences' )->getLocalURL(),
+			$this->specialPageFactory->getTitleForAlias( 'Preferences' )->getLocalURL(),
 			'',
 			'settings',
 			true
@@ -191,7 +187,7 @@ final class Definitions {
 		$entry = $this->buildMenuEntry(
 			'recentchanges',
 			$this->context->msg( 'recentchanges' )->text(),
-			SpecialPage::getTitleFor( 'Recentchanges' )->getLocalURL(),
+			$this->specialPageFactory->getTitleForAlias( 'Recentchanges' )->getLocalURL(),
 			'',
 			'recentChanges',
 			true
@@ -206,7 +202,7 @@ final class Definitions {
 		$entry = $this->buildMenuEntry(
 			'specialPages',
 			$this->context->msg( 'specialpages' )->text(),
-			SpecialPage::getTitleFor( 'Specialpages' )->getLocalURL(),
+			$this->specialPageFactory->getTitleForAlias( 'Specialpages' )->getLocalURL(),
 			'',
 			null,
 			true

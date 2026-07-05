@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Nuke\Form;
 
-use HtmlArmor;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\Nuke\Form\HTMLForm\NukeDateTimeField;
@@ -16,12 +15,14 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use OOUI\FieldsetLayout;
 use OOUI\FormLayout;
 use OOUI\HtmlSnippet;
 use OOUI\MessageWidget;
 use OOUI\PanelLayout;
 use OOUI\Widget;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 class SpecialNukeHTMLFormUIRenderer extends SpecialNukeUIRenderer {
 
@@ -39,6 +40,7 @@ class SpecialNukeHTMLFormUIRenderer extends SpecialNukeUIRenderer {
 		private readonly LinkRenderer $linkRenderer,
 		private readonly NamespaceInfo $namespaceInfo,
 		private readonly RedirectLookup $redirectLookup,
+		private readonly TitleFormatter $titleFormatter,
 	) {
 		parent::__construct( $context );
 
@@ -190,7 +192,7 @@ class SpecialNukeHTMLFormUIRenderer extends SpecialNukeUIRenderer {
 				new MessageWidget( [
 					'classes' => [ 'ext-nuke-promptform-error' ],
 					'type' => 'error',
-					'label' => $validationResult
+					'label' => new HtmlSnippet( $validationResult )
 				] )
 			) );
 		}
@@ -258,7 +260,7 @@ class SpecialNukeHTMLFormUIRenderer extends SpecialNukeUIRenderer {
 		}
 
 		if ( strlen( $messageLabelOutput ) != 0 ) {
-			$out->addHTML( new MessageWidget( [
+			$out->addHTML( (string)new MessageWidget( [
 				'type' => 'warning',
 				'classes' => [ 'ext-nuke-promptform-error' ],
 				'label' => $messageLabelOutput,
@@ -353,7 +355,7 @@ class SpecialNukeHTMLFormUIRenderer extends SpecialNukeUIRenderer {
 			$html .= ' <span class="mw-changeslist-separator"></span> ' .
 				$this->msg(
 					'nuke-redirectsto',
-					$redirect->getText()
+					$this->titleFormatter->getPrefixedText( $redirect )
 				)->parse();
 		}
 

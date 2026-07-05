@@ -236,21 +236,20 @@ QUnit.test( 'ImageInfo get test', ( assert ) => {
 	} );
 } );
 
-QUnit.test( 'ImageInfo fail test', ( assert ) => {
+QUnit.test( 'ImageInfo fail test', async ( assert ) => {
 	const api = { get: function () {
 		return $.Deferred().resolve( {} );
 	} };
 	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
 	const imageInfoProvider = new ImageInfo( api );
 
-	imageInfoProvider.get( file ).fail( () => {
-		assert.true( true, 'promise rejected when no data is returned' );
-		done();
-	} );
+	await assert.rejects(
+		imageInfoProvider.get( file ),
+		'reject when no data is returned'
+	);
 } );
 
-QUnit.test( 'ImageInfo fail test 2', ( assert ) => {
+QUnit.test( 'ImageInfo fail test 2', async ( assert ) => {
 	const api = { get: function () {
 		return $.Deferred().resolve( {
 			query: {
@@ -263,16 +262,15 @@ QUnit.test( 'ImageInfo fail test 2', ( assert ) => {
 		} );
 	} };
 	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
 	const imageInfoProvider = new ImageInfo( api );
 
-	imageInfoProvider.get( file ).fail( () => {
-		assert.true( true, 'promise rejected when imageinfo is missing' );
-		done();
-	} );
+	await assert.rejects(
+		imageInfoProvider.get( file ),
+		'reject when imageinfo is missing'
+	);
 } );
 
-QUnit.test( 'ImageInfo missing page test', ( assert ) => {
+QUnit.test( 'ImageInfo missing page test', async ( assert ) => {
 	const api = { get: function () {
 		return $.Deferred().resolve( {
 			query: {
@@ -287,12 +285,11 @@ QUnit.test( 'ImageInfo missing page test', ( assert ) => {
 		} );
 	} };
 	const file = new mw.Title( 'File:Stuff.jpg' );
-	const done = assert.async();
 	const imageInfoProvider = new ImageInfo( api );
 
-	imageInfoProvider.get( file ).fail( ( errorMessage ) => {
-		assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',
-			'error message is set correctly for missing file' );
-		done();
-	} );
+	await assert.rejects(
+		imageInfoProvider.get( file ),
+		/file does not exist: File:Stuff.jpg/,
+		'error message for missing file'
+	);
 } );

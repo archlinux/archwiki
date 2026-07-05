@@ -7,7 +7,7 @@
 
 /**
  * Represents a not yet realized template invocation as long as the user is still searching for a
- * template name. Meant to be an item in a {@see ve.dm.MWTransclusionModel}.
+ * template name. Meant to be an item in a {@link ve.dm.MWTransclusionModel}.
  *
  * @class
  * @extends ve.dm.MWTransclusionPartModel

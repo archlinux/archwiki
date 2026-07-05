@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Rdbms\IReadableDatabase;

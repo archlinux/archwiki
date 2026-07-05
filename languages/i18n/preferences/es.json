@@ -5,6 +5,7 @@
 			"AVIADOR71",
 			"Agusbou2015",
 			"Alpertron",
+			"Amitie 10g",
 			"Armando-Martin",
 			"Benfutbol10",
 			"Ciencia Al Poder",
@@ -48,8 +49,7 @@
 			"VegaDark",
 			"Vivaelcelta",
 			"Whovian Biologist",
-			"ZealousBlaze",
-			"Amitie 10g"
+			"ZealousBlaze"
 		]
 	},
 	"preferences": "Preferencias",
@@ -228,6 +228,8 @@
 	"prefs-description-watchlist": "Administra y personaliza la lista de páginas que sigues.",
 	"prefs-editwatchlist": "Editar lista de seguimiento",
 	"prefs-editwatchlist-label": "Editar entradas de tu lista de seguimiento:",
+	"prefs-editwatchlistlabels-label": "Editar las etiquetas de lista de seguimiento:",
+	"prefs-managewatchlistlabels": "Ver y administrar las etiquetas de su lista de seguimiento",
 	"prefs-editwatchlist-edit": "Ver y quitar los títulos de tu lista de seguimiento",
 	"prefs-editwatchlist-raw": "Editar tu lista de seguimiento en modo texto",
 	"prefs-editwatchlist-clear": "Vaciar tu lista de seguimiento",

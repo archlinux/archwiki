@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"GuoPC",
+			"LowensteinYang"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API模块，用于在注册/身份验证过程中在服务器和客户端之间进行通信。",
+	"apihelp-oathauth-webauthn-param-func": "要执行的请求函数名称。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "验证信息。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "注册信息。",
+	"apihelp-oathauth-webauthn-param-passkeymode": "正在注册的密钥是否处于通行密钥模式。（仅适用于getRegisterInfo。）",
+	"apierror-oathauth-webauthn-module-missing": "WebAuthn模块不可用。",
+	"apierror-oathauth-webauthn-missing-credential": "未提供凭证数据。",
+	"apierror-oathauth-webauthn-invalid-credential": "凭证数据无效或格式错误。",
+	"apierror-oathauth-webauthn-reauthenticate": "您必须先通过Special:OATHManage重新身份验证，然后才能执行此操作。",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "为当前用户注册新的WebAuthn凭证。",
+	"apihelp-oathauth-webauthn-param-credential": "来自浏览器的JSON编码的WebAuthn凭证回应。",
+	"apihelp-oathauth-webauthn-param-friendlyname": "新凭证的便于理解的名称。"
+}

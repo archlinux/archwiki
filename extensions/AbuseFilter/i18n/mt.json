@@ -217,7 +217,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Issettja varjabbli (set_var)",
 	"abusefilter-edit-builder-group-vars": "Varjabbli",
 	"abusefilter-edit-builder-vars-timestamp": "Timestamp UNIX tal-modifika",
-	"abusefilter-edit-builder-vars-accountname": "Isem tal-kont (dakinhar tal-kreazzjoni)",
+	"abusefilter-edit-builder-vars-account-name": "Isem tal-kont (dakinhar tal-kreazzjoni)",
 	"abusefilter-edit-builder-vars-action": "Azzjoni",
 	"abusefilter-edit-builder-vars-addedlines": "Linji miżjuda mill-modifika",
 	"abusefilter-edit-builder-vars-delta": "Bidla fid-daqs wara l-modifika",

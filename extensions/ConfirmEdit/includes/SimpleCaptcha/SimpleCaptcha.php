@@ -2,13 +2,12 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\SimpleCaptcha;
 
-use MailAddress;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiEditPage;
 use MediaWiki\Auth\AuthenticationRequest;
-use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\TextContent;
+use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
@@ -19,9 +18,11 @@ use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\Mail\MailAddress;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -38,11 +39,21 @@ use OOUI\NumberInputWidget;
 use UnexpectedValueException;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * Demo CAPTCHA (not for production usage) and base class for real CAPTCHAs
  */
 class SimpleCaptcha {
+	/**
+	 * The session key that stores the UNIX timestamp when the AbuseFilter
+	 * "showcaptcha" consequence stops applying to the user represented by the session.
+	 *
+	 * This is used to enforce that `::shouldForceShowCaptcha` persists across
+	 * the requests made for a single action.
+	 */
+	public const ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY = 'confirmedit-captcha-consequence';
+
 	/** @var string */
 	protected static $messagePrefix = 'captcha';
 
@@ -368,19 +379,14 @@ class SimpleCaptcha {
 	/**
 	 * Check if the current IP is allowed to skip solving a captcha.
 	 * This checks the bypass list from two sources.
-	 *  1) From the server-side config array $wgCaptchaWhitelistIP (deprecated) or $wgCaptchaBypassIPs
+	 *  1) From the server-side config array $wgCaptchaBypassIPs
 	 *  2) From the local [[MediaWiki:Captcha-ip-whitelist]] message
 	 *
 	 * @return bool true if the IP can bypass a captcha, false if not
 	 */
 	private function canIPBypassCaptcha() {
-		global $wgCaptchaWhitelistIP, $wgCaptchaBypassIPs, $wgRequest;
+		global $wgCaptchaBypassIPs, $wgRequest;
 		$ip = $wgRequest->getIP();
-
-		// Deprecated; to be removed later
-		if ( $wgCaptchaWhitelistIP && IPUtils::isInRanges( $ip, $wgCaptchaWhitelistIP ) ) {
-			return true;
-		}
 
 		if ( $wgCaptchaBypassIPs && IPUtils::isInRanges( $ip, $wgCaptchaBypassIPs ) ) {
 			return true;
@@ -548,48 +554,35 @@ class SimpleCaptcha {
 		$title = $page->getTitle();
 		$this->trigger = '';
 
+		// If force show captcha is set (e.g., by AbuseFilter), bypass normal trigger checks
+		if ( $this->shouldForceShowCaptcha() && !$this->isCaptchaSolved() ) {
+			// Preserve existing action if set, otherwise default to 'edit'
+			if ( $this->action === null ) {
+				$this->action = CaptchaTriggers::EDIT;
+			}
+			wfDebug( "ConfirmEdit: force showing captcha for {$this->action}...\n" );
+			$this->trigger = sprintf( "force show trigger by '%s' at [[%s]] for %s",
+				$user->getName(),
+				$title->getPrefixedText(),
+				$this->action );
+			return true;
+		}
+
 		if ( $content instanceof Content ) {
 			if ( $content->getModel() == CONTENT_MODEL_WIKITEXT ) {
-				$newtext = $content->getNativeData();
+				'@phan-var WikitextContent $content';
+				$newtext = $content->getText();
 			} else {
 				$newtext = null;
 			}
 			$isEmpty = $content->isEmpty();
 		} else {
+			// $content is a non-null string here, so $newtext is also non-null
 			$newtext = $content;
 			$isEmpty = $content === '';
 		}
 
-		if ( $this->triggersCaptcha( 'edit', $title ) ) {
-			// Check on all edits
-			$this->trigger = sprintf( "edit trigger by '%s' at [[%s]]",
-				$user->getName(),
-				$title->getPrefixedText() );
-			$this->action = 'edit';
-			wfDebug( "ConfirmEdit: checking all edits...\n" );
-			return true;
-		}
-
-		if ( $this->triggersCaptcha( 'create', $title ) && !$title->exists() ) {
-			// Check if creating a page
-			$this->trigger = sprintf( "Create trigger by '%s' at [[%s]]",
-				$user->getName(),
-				$title->getPrefixedText() );
-			$this->action = 'create';
-			wfDebug( "ConfirmEdit: checking on page creation...\n" );
-			return true;
-		}
-
-		// The following checks are expensive and should be done only,
-		// if we can assume, that the edit will be saved
-		if ( !$request->wasPosted() ) {
-			wfDebug(
-				"ConfirmEdit: request not posted, assuming that no content will be saved -> no CAPTCHA check"
-			);
-			return false;
-		}
-
-		if ( !$isEmpty && $this->triggersCaptcha( 'addurl', $title ) ) {
+		if ( !$isEmpty && $request->wasPosted() && $this->triggersCaptcha( CaptchaTriggers::ADD_URL, $title ) ) {
 			// Only check edits that add URLs
 			if ( $content instanceof Content ) {
 				// Get links from the database
@@ -609,6 +602,7 @@ class SimpleCaptcha {
 				}
 			} else {
 				// Get link changes in the slowest way known to man
+				'@phan-var string $newtext';
 				$oldtext ??= $this->loadText( $title, $section );
 				$oldLinks = $this->findLinks( $title, $oldtext );
 				$newLinks = $this->findLinks( $title, $newtext );
@@ -619,14 +613,57 @@ class SimpleCaptcha {
 			$numLinks = count( $addedLinks );
 
 			if ( $numLinks > 0 ) {
-				$this->trigger = sprintf( "%dx url trigger by '%s' at [[%s]]: %s",
-					$numLinks,
+				$this->trigger = sprintf(
+					"URL trigger by '%s' at [[%s]] (%u URLs): %s",
 					$user->getName(),
 					$title->getPrefixedText(),
-					implode( ", ", $addedLinks ) );
-				$this->action = 'addurl';
+					$numLinks,
+					// T411168 Truncate the message if it contains too many URLs
+					$this->joinURLs( $addedLinks )
+				);
+
+				$this->action = CaptchaTriggers::ADD_URL;
+
+				// Set instance-specific config from CaptchaTriggers for addurl
+				// to allow per-trigger configuration (e.g., different sitekeys)
+				$config = MediaWikiServices::getInstance()->getMainConfig();
+				$captchaTriggers = $config->get( 'CaptchaTriggers' );
+				if ( is_array( $captchaTriggers[CaptchaTriggers::ADD_URL] ?? null ) ) {
+					$this->setConfig( $captchaTriggers[CaptchaTriggers::ADD_URL]['config'] ?? [] );
+				} else {
+					$this->setConfig( [] );
+				}
+
 				return true;
 			}
+		}
+
+		if ( $this->triggersCaptcha( CaptchaTriggers::EDIT, $title ) ) {
+			// Check on all edits
+			$this->trigger = sprintf( "edit trigger by '%s' at [[%s]]",
+				$user->getName(),
+				$title->getPrefixedText() );
+			$this->action = CaptchaTriggers::EDIT;
+			wfDebug( "ConfirmEdit: checking all edits...\n" );
+			return true;
+		}
+
+		if ( $this->triggersCaptcha( CaptchaTriggers::CREATE, $title ) && !$title->exists() ) {
+			// Check if creating a page
+			$this->trigger = sprintf( "Create trigger by '%s' at [[%s]]",
+				$user->getName(),
+				$title->getPrefixedText() );
+			$this->action = CaptchaTriggers::CREATE;
+			wfDebug( "ConfirmEdit: checking on page creation...\n" );
+			return true;
+		}
+
+		// The following checks are expensive and should be done only if we can assume that the edit will be saved
+		if ( !$request->wasPosted() ) {
+			wfDebug(
+				"ConfirmEdit: request not posted, assuming that no content will be saved -> no CAPTCHA check"
+			);
+			return false;
 		}
 
 		global $wgCaptchaRegexes;
@@ -655,7 +692,7 @@ class SimpleCaptcha {
 							$user->getName(),
 							$title->getPrefixedText(),
 							implode( ", ", $addedMatches ) );
-						$this->action = 'edit';
+						$this->action = CaptchaTriggers::EDIT;
 						return true;
 					}
 				}
@@ -679,6 +716,19 @@ class SimpleCaptcha {
 	 *  bypass this override.
 	 */
 	public function shouldForceShowCaptcha(): bool {
+		if ( $this->forceShowCaptcha ) {
+			return $this->forceShowCaptcha;
+		}
+
+		$expiry = (int)RequestContext::getMain()->getRequest()->getSession()->get(
+			self::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY,
+			0
+		);
+
+		// Update the local variable in order to avoid further lookups in the
+		// user session on next calls in case the session value is still valid.
+		$this->forceShowCaptcha = ( $expiry > ConvertibleTimestamp::time() );
+
 		return $this->forceShowCaptcha;
 	}
 
@@ -690,6 +740,33 @@ class SimpleCaptcha {
 	 */
 	public function setForceShowCaptcha( bool $forceShowCaptcha ): void {
 		$this->forceShowCaptcha = $forceShowCaptcha;
+
+		// The flag won't survive a page reload in cases when the user is taken
+		// back to the edit form with an error message stating that the captcha
+		// should be solved. Therefore, a session variable is used to make
+		// ::shouldForceShowCaptcha() return true even if it is called on an
+		// instance where setForceShowCaptcha() has not been explicitly called
+		// as part of handling the current request.
+		//
+		// Please note that makes the showcaptcha consequence to remain set for
+		// next requests instead of being set just for the current one.
+		//
+		// On the other hand, if the flag is explicitly set back to false, the
+		// session variable is removed.
+		$session = RequestContext::getMain()->getRequest()->getSession();
+		if ( $forceShowCaptcha ) {
+			$session->set(
+				self::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY,
+				ConvertibleTimestamp::time() +
+					MediaWikiServices::getInstance()->getMainConfig()->get(
+						'CaptchaAbuseFilterCaptchaConsequenceTTL'
+					)
+			);
+		} else {
+			$session->remove(
+				self::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY
+			);
+		}
 	}
 
 	/**
@@ -729,7 +806,7 @@ class SimpleCaptcha {
 	 * @return bool true if unknown, false if allowed
 	 */
 	private function filterLink( $url ) {
-		global $wgCaptchaWhitelist, $wgCaptchaIgnoredUrls;
+		global $wgCaptchaIgnoredUrls;
 		static $regexes = null;
 
 		if ( $regexes === null ) {
@@ -739,10 +816,6 @@ class SimpleCaptcha {
 				? []
 				: $this->buildRegexes( explode( "\n", $source->plain() ) );
 
-			// DEPRECATED
-			if ( $wgCaptchaWhitelist !== false ) {
-				array_unshift( $regexes, $wgCaptchaWhitelist );
-			}
 			if ( $wgCaptchaIgnoredUrls !== false ) {
 				array_unshift( $regexes, $wgCaptchaIgnoredUrls );
 			}
@@ -900,28 +973,9 @@ class SimpleCaptcha {
 		if ( !$this->doConfirmEdit( $page, $content, '', $context, $user ) ) {
 			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 			$status->statusData = [];
-			// give an error message for the user to know, what goes wrong here.
-			// this can't be done for addurl trigger, because this requires one "free" save
-			// for the user, which we don't know when they did it.
-			if ( $this->action === 'edit' ) {
-				// The default message is that the user failed a CAPTCHA, so show 'captcha-edit-fail'.
-				$message = 'captcha-edit-fail';
-				if ( $this->shouldForceShowCaptcha() ) {
-					// If an extension set the forceShowCaptcha property, then it likely means
-					// that the user already submitted an edit, and so the 'captcha-edit'
-					// message is more appropriate.
-					$message = 'captcha-edit';
-					[ , $word ] = $this->getCaptchaParamsFromRequest(
-						RequestContext::getMain()->getRequest()
-					);
-					// But if there's a word supplied in the request, then we should
-					// use 'captcha-edit-fail' as it indicates a failed attempt
-					// at solving the CAPTCHA by the user.
-					if ( $word ) {
-						$message = 'captcha-edit-fail';
-					}
-				}
-				$status->fatal( $message );
+			$fatalErrorMessage = $this->getConfirmEditMergedFatalStatusMessageKey();
+			if ( $fatalErrorMessage ) {
+				$status->fatal( $fatalErrorMessage );
 			}
 			$this->addCaptchaAPI( $status->statusData );
 			$key = CacheKeyHelper::getKeyForPage( $page );
@@ -929,6 +983,39 @@ class SimpleCaptcha {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Returns the message to be added to the {@link Status} provided to {@link self::confirmEditMerged}
+	 * method.
+	 */
+	protected function getConfirmEditMergedFatalStatusMessageKey(): null|string {
+		$message = null;
+
+		// give an error message for the user to know, what goes wrong here.
+		// this can't be done for addurl trigger, because this requires one "free" save
+		// for the user, which we don't know when they did it.
+		if ( $this->action === 'edit' ) {
+			// The default message is that the user failed a CAPTCHA, so show 'captcha-edit-fail'.
+			$message = 'captcha-edit-fail';
+			if ( $this->shouldForceShowCaptcha() ) {
+				// If an extension set the forceShowCaptcha property, then it likely means
+				// that the user already submitted an edit, and so the 'captcha-edit'
+				// message is more appropriate.
+				$message = 'captcha-edit';
+				[ , $word ] = $this->getCaptchaParamsFromRequest(
+					RequestContext::getMain()->getRequest()
+				);
+				// But if there's a word supplied in the request, then we should
+				// use 'captcha-edit-fail' as it indicates a failed attempt
+				// at solving the CAPTCHA by the user.
+				if ( $word ) {
+					$message = 'captcha-edit-fail';
+				}
+			}
+		}
+
+		return $message;
 	}
 
 	/**
@@ -951,7 +1038,7 @@ class SimpleCaptcha {
 	 * @param MailAddress $to
 	 * @param string $subject
 	 * @param string $text
-	 * @param string &$error
+	 * @param Status &$error
 	 * @return bool true to continue saving, false to abort and show a captcha form
 	 */
 	public function confirmEmailUser( $from, $to, $subject, $text, &$error ) {
@@ -1214,7 +1301,7 @@ class SimpleCaptcha {
 	public function showHelp( OutputPage $out ) {
 		$msg = wfMessage( static::$messagePrefix . 'help-text' );
 		if ( $msg->isDisabled() ) {
-			// Fallback to simplecaptchahelp-text
+			// Fallback to captchahelp-text
 			$msg = wfMessage( self::$messagePrefix . 'help-text' );
 		}
 
@@ -1267,12 +1354,12 @@ class SimpleCaptcha {
 			wfDebug( "ConfirmEdit: user group allows skipping captcha\n" );
 			$result = true;
 		}
-		if ( $this->canIPBypassCaptcha() ) {
-			wfDebug( "ConfirmEdit: user IP can bypass captcha" );
-			$result = true;
-		}
 		if ( $user->isSystemUser() ) {
 			wfDebug( "ConfirmEdit: system user skips captcha\n" );
+			$result = true;
+		}
+		if ( $this->canIPBypassCaptcha() ) {
+			wfDebug( "ConfirmEdit: user IP can bypass captcha\n" );
 			$result = true;
 		}
 
@@ -1282,5 +1369,56 @@ class SimpleCaptcha {
 		$hookRunner->onConfirmEditCanUserSkipCaptcha( $user, $result );
 
 		return $result;
+	}
+
+	/**
+	 * Given a list of URLs, returns them concatenated (separated by commas).
+	 *
+	 * In case the string resulting from concatenating all of them exceeds a
+	 * fixed max size of 4 kB, the last URLs are replaced by "...". However, if
+	 * no URL is shorter than 4 kB, the returned value will include the shortest
+	 * URL plus a ", ..." postfix indicating there are URLs that were omitted.
+	 *
+	 * @param string[] $urls URLs to be concatenated
+	 * @return string
+	 */
+	private function joinURLs( array $urls ): string {
+		if ( count( $urls ) === 0 ) {
+			return '';
+		}
+
+		usort(
+			$urls,
+			static fn ( $a, $b ) => strlen( $a ) <=> strlen( $b )
+		);
+
+		$urlString = '';
+
+		foreach ( $urls as $link ) {
+			if ( strlen( $link ) > 4090 ) {
+				// URLs from this one onward cannot fit individually within
+				// the size limit.
+				break;
+			}
+
+			$candidate = ( $urlString === '' ? $link : "{$urlString}, {$link}" );
+
+			// Ensure the list of URLs remains below 4kB. To do so, compare
+			// against 4090 to take into account the length of the postfix
+			// appended (5 chars) in case $candidate is too long.
+			if ( strlen( $candidate ) > 4090 ) {
+				$urlString .= ', ...';
+				break;
+			}
+
+			$urlString = $candidate;
+		}
+
+		if ( $urlString === '' ) {
+			// All URLs were > 4090 bytes, return the shortest one anyway
+			return ( $urls[0] ?? '' ) . ( count( $urls ) > 1 ? ', ...' : '' );
+		}
+
+		return $urlString;
 	}
 }

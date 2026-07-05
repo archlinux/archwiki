@@ -106,5 +106,6 @@
 	"checkuser-userinfocard-groups": "<strong>గుంపులు</strong>: $1",
 	"checkuser-userinfocard-global-groups": "<strong>సార్వత్రిక గుంపులు</strong>: $1",
 	"checkuser-userinfocard-chart-tooltip-label": "$1 ({{PLURAL:$2|$2 దిద్దుబాటు|$2 దిద్దుబాట్లు|0=దిద్దుబాట్లేమీ లేవు}})",
-	"checkuser-suggestedinvestigations-user-showless": "చివరి $1 {{PLURAL:$1|ఖాతాలను}} దాచు"
+	"checkuser-suggestedinvestigations-user-showless": "చివరి $1 {{PLURAL:$1|ఖాతాలను}} దాచు",
+	"checkuser-contributions-temporary-accounts-related-list-toggle-hide": "దాచు"
 }

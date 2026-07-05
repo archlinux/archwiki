@@ -35,13 +35,11 @@
 /* Common for Special:Allpages and Special:PrefixIndex */
 .mw-allpages-body,
 .mw-prefixindex-body {
-	columns: 22em 3;
-	break-inside: avoid-column;
-	page-break-inside: avoid;
-	-webkit-column-break-inside: avoid;
+	.column-width( 22em );
+	.column-count( 3 );
 
 	li {
-		break-inside: avoid;
+		.column-break-inside-avoid;
 	}
 }
 
@@ -105,10 +103,6 @@
 }
 
 /* Special:MergeHistory */
-.mw-special-MergeHistory .mw-mergehistory-explanation {
-	margin-top: 0;
-}
-
 .mw-special-MergeHistory [ type='radio' ] {
 	margin: 2px 2px 0 2px;
 }
@@ -139,7 +133,8 @@ th.mw-revdel-checkbox {
 }
 
 .mw-specialpages-list {
-	columns: 16em 2;
+	.column-width( 16em );
+	.column-count( 2 );
 
 	ul {
 		margin-top: 0;
@@ -163,6 +158,11 @@ th.mw-revdel-checkbox {
 .mw-protectedpages-unknown {
 	color: @color-subtle;
 	font-size: 90%;
+}
+
+/* Special:Mostlinkedtemplates */
+.mw-special-Mostlinkedtemplates .mw-spcontent .mw-redirect {
+	font-style: italic;
 }
 
 /* Special:PasswordPolicies */

@@ -1,11 +1,15 @@
 <?php
 
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
 use MediaWiki\Extension\SpamBlacklist\SpamBlacklist;
+use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Article;
+use MediaWiki\RecentChanges\RecentChange;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
@@ -159,6 +163,103 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 		} else {
 			$this->assertStatusError( 'spam-blacklisted-link', $status );
 		}
+	}
+
+	public function testLogFilterHitWhenLogHitsIsFalse() {
+		$this->prepareGlobals();
+		$this->overrideConfigValue( 'LogSpamBlacklistHits', false );
+
+		$this->spamFilter->logFilterHit(
+			$this->getTestUser()->getUser(),
+			Title::newFromText( 'Test' ),
+			'https://test.com'
+		);
+
+		$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->where( [ 'log_type' => 'spamblacklist' ] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
+	}
+
+	/** @dataProvider provideLogFilterHit */
+	public function testLogFilterHit( bool $checkUserInstalled ) {
+		$this->prepareGlobals();
+		$this->overrideConfigValue( 'LogSpamBlacklistHits', true );
+
+		// If CheckUser is installed for this test case, then expect that the log entry is sent to be stored
+		// in the CheckUser data tables. Otherwise, mock that it is not installed and expect no calls to do this
+		$logIdFromRecentChange = null;
+		if ( $checkUserInstalled ) {
+			$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
+
+			$mockCheckUserInsert = $this->createMock( CheckUserInsert::class );
+			$mockCheckUserInsert->expects( $this->once() )
+				->method( 'updateCheckUserData' )
+				->with( $this->callback( function ( $actualRecentChange ) use ( &$logIdFromRecentChange ) {
+					$this->assertInstanceOf( RecentChange::class, $actualRecentChange );
+					$logIdFromRecentChange = $actualRecentChange->getAttribute( 'rc_logid' );
+					return true;
+				} ) );
+			$this->setService( 'CheckUserInsert', $mockCheckUserInsert );
+		} else {
+			$mockExtensionRegistry = $this->createMock( ExtensionRegistry::class );
+			$mockExtensionRegistry->method( 'isLoaded' )
+				->with( 'CheckUser' )
+				->willReturn( false );
+			$this->setService( 'ExtensionRegistry', $mockExtensionRegistry );
+
+			$serviceContainer = $this->getServiceContainer();
+			if ( !$serviceContainer->hasService( 'CheckUserInsert' ) ) {
+				// define as no-op and override afterwards to use MediaWikiIntegrationTestCase service reset
+				$serviceContainer->defineService( 'CheckUserInsert', static fn () => null );
+			}
+			$this->setService(
+				'CheckUserInsert',
+				fn () => $this->fail( 'The CheckUserInsert service was expected to not be called' )
+			);
+		}
+
+		$performer = $this->getTestUser()->getUser();
+		$this->spamFilter->logFilterHit(
+			$performer,
+			Title::newFromText( 'Test' ),
+			'https://test.com'
+		);
+
+		$this->newSelectQueryBuilder()
+			->select( [ 'log_title', 'log_namespace', 'log_actor', 'log_params' ] )
+			->from( 'logging' )
+			->where( [ 'log_type' => 'spamblacklist', 'log_action' => 'hit' ] )
+			->caller( __METHOD__ )
+			->assertRowValue( [
+				'Test',
+				NS_MAIN,
+				$performer->getActorId(),
+				LogEntryBase::makeParamBlob( [ '4::url' => 'https://test.com' ] )
+			] );
+
+		if ( $logIdFromRecentChange !== null ) {
+			$logId = $this->newSelectQueryBuilder()
+				->select( 'log_id' )
+				->from( 'logging' )
+				->where( [ 'log_type' => 'spamblacklist', 'log_action' => 'hit' ] )
+				->caller( __METHOD__ )
+				->fetchField();
+			$this->assertSame(
+				(int)$logId,
+				$logIdFromRecentChange,
+				'Log ID in the RecentChange object passed to CheckUser differs to the log in the DB'
+			);
+		}
+	}
+
+	public static function provideLogFilterHit(): array {
+		return [
+			'CheckUser is installed' => [ true ],
+			'CheckUser is not installed' => [ false ],
+		];
 	}
 
 	private function prepareGlobals(): void {

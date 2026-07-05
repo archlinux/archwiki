@@ -106,6 +106,8 @@ function init( $container ) {
 			);
 
 			observer.observe( $newTopicWrapper[ 0 ] );
+			// We only need to check once, since this is inside a scroll handler
+			setTimeout( () => observer.disconnect() );
 
 			lastScrollTop = scrollTop;
 			wasScrollDown = isScrollDown;
@@ -118,7 +120,7 @@ function init( $container ) {
 	// helpful way, and moving them around tends to break the stickiness of the "Add topic" button.
 	/* eslint-disable no-jquery/no-global-selector */
 	if (
-		$( '.catlinks' ).filter( '[data-mw="interface"]' ).length ||
+		$( '.catlinks' ).filter( '[data-mw-interface]' ).length ||
 		$( '#page-secondary-actions' ).children().length ||
 		$( '.return-link' ).length
 	) {

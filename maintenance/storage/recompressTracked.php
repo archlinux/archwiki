@@ -8,13 +8,13 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+use MediaWiki\ExternalStore\ExternalStoreDB;
 use MediaWiki\Logger\LegacyLogger;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
-use Wikimedia\AtEase\AtEase;
 
 $optionsWithArgs = RecompressTracked::getOptionsWithArgs();
 require __DIR__ . '/../CommandLineInc.php';
@@ -124,7 +124,7 @@ class RecompressTracked {
 			$this->$name = $value;
 		}
 		$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
-		$this->store = $esFactory->getStore( 'DB' );
+		$this->store = $esFactory->getDatabaseStore();
 		if ( !$this->isChild ) {
 			$GLOBALS['wgDebugLogPrefix'] = "RCT M: ";
 		} elseif ( $this->childId !== false ) {
@@ -256,9 +256,8 @@ class RecompressTracked {
 				[ 'file', 'php://stdout', 'w' ],
 				[ 'file', 'php://stderr', 'w' ]
 			];
-			AtEase::suppressWarnings();
-			$proc = proc_open( "$cmd --child-id $i", $spec, $pipes );
-			AtEase::restoreWarnings();
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$proc = @proc_open( "$cmd --child-id $i", $spec, $pipes );
 			if ( !$proc ) {
 				$this->critical( "Error opening child process: $cmd" );
 				exit( 1 );
@@ -697,7 +696,7 @@ class CgzCopyTransaction {
 	public $parent;
 	/** @var class-string<HistoryBlob> */
 	public $blobClass;
-	/** @var ConcatenatedGzipHistoryBlob|false */
+	/** @var HistoryBlob|false */
 	public $cgz;
 	/** @var string[] */
 	public $referrers;

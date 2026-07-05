@@ -9,6 +9,7 @@ use Cite\Validator;
 use MediaWiki\Config\Config;
 use MediaWiki\Html\HtmlHelper;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Document;
@@ -24,7 +25,6 @@ use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwBody;
 use Wikimedia\Parsoid\NodeData\DataMwError;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\RemexHtml\HTMLData;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
@@ -139,7 +139,7 @@ class References {
 		bool $hasDifferingHtml
 	): ?string {
 		$refFragmentDp = DOMDataUtils::getDataParsoid( $refFragment );
-		if ( !empty( $refFragmentDp->empty ) || !self::hasRef( $extApi, $refFragment ) ) {
+		if ( !empty( $refFragmentDp->selfClose ) || !self::hasRef( $extApi, $refFragment ) ) {
 			return null;
 		}
 
@@ -194,10 +194,7 @@ class References {
 		$status = Validator::filterRefArguments( $refDataMw->getExtAttribs() ?? [], $isSubreferenceSupported );
 		$arguments = $status->getValue();
 
-		// Check for missing content, added ?? '' to fix T259676 crasher
-		// FIXME: See T260082 for a more complete description of cause and deeper fix
-		$isOnlyWhitespace = trim( $refDataMw->body->extsrc ?? '' ) === '';
-		$isEmptyBody = !empty( $refFragmentDp->empty ) || $isOnlyWhitespace;
+		$isEmptyBody = trim( $refDataMw->body->extsrc ?? '' ) === '';
 
 		$validator = new Validator( $referencesData->referenceListGroup() );
 		$text = !empty( $refFragmentDp->selfClose ) ? null : ( $isEmptyBody ? '' : 'dummy' );
@@ -209,10 +206,6 @@ class References {
 		) );
 
 		foreach ( $status->getMessages() as $msg ) {
-			// FIXME: This is only temporary, eventually we want all validation results to be used
-			if ( $msg->getKey() === 'cite_error_references_missing_key' ) {
-				continue;
-			}
 			$errs[] = ErrorUtils::fromMessageSpecifier( $msg );
 		}
 
@@ -222,7 +215,6 @@ class References {
 		$followName = (string)$arguments['follow'];
 		$refDir = (string)$arguments['dir'];
 		$details = $arguments['details'] ?? '';
-		$hasBody = isset( $refDataMw->body );
 
 		// Handle 'about' attribute with priority since it's
 		// only added when the wrapper is a template sibling.
@@ -251,26 +243,15 @@ class References {
 			}
 		}
 
-		// Wrap the attribute 'follow'
+		$hasValidFollow = false;
 		if ( $followName ) {
 			$this->wrapFollower( $doc, $refFragment, $about );
-		}
 
-		// Handle the attributes 'name' and 'follow'
-		$hasValidFollow = false;
-		if ( $refName ) {
-			$nameErrorMessage = $this->validator->validateName( $refName, $refGroup, $referencesData );
-			if ( $nameErrorMessage ) {
-				$errs[] = $nameErrorMessage;
-			}
-		} elseif ( $followName ) {
 			// Check that the followed ref exists
-			$followErrorMessage = $this->validator->validateFollow( $followName, $refGroup );
-			if ( $followErrorMessage ) {
-				$errs[] = $followErrorMessage;
-			} else {
+			$followThat = $refGroup->lookupRefByName( $followName );
+			if ( $followThat ) {
 				$hasValidFollow = true;
-				$ref = $refGroup->lookupRefByName( $followName );
+				$ref = $followThat;
 			}
 		}
 
@@ -282,19 +263,18 @@ class References {
 			// Create new, empty main ref
 			$ref ??= $referencesData->addRef( $refGroup, $refName, $refDir );
 
-			if ( $hasBody && !$isEmptyBody ) {
+			if ( !$isEmptyBody ) {
 				if ( !$ref->contentId ) {
 					// Create a main ref and transfer the tag body to it,
 					$ref->isSyntheticMainRef = true;
 					$ref->contentId = $contentId;
 				}
 				$refDataMw->mainBody = ParsoidAnchorFormatter::getNoteTextIdentifier( $ref );
-				// Flag to help reserialize main ref content into the subref when saving.
-				$refDataMw->isSubRefWithMainBody = 1;
 			}
 
-			// Switch $ref to a newly-created subref
-			$ref = $referencesData->addRef( $refGroup, $refName, $refDir, $details );
+			// Switch $ref to a newly-created subref (or reuse a duplicate)
+			$ref = $refGroup->lookupSubRefByDetails( $refName, $details ) ??
+				$referencesData->addRef( $refGroup, $refName, $refDir, $details );
 			// Move details attribute into subref content.
 			$ref->externalFragment = $extApi->wikitextToDOM( $details, [
 				'processInNewFrame' => true,
@@ -371,7 +351,7 @@ class References {
 			}
 		}
 		if ( $conflicts === self::CONFLICT_VISIBLE && $refFragmentHtml !== '' ) {
-			$errs[] = new DataMwError( 'cite_error_references_duplicate_key', [ $refName ] );
+			$errs[] = new DataMwError( 'cite_error_references_duplicate_key', [ $arguments['name'] ] );
 		}
 
 		$hasMissingContent = $isEmptyBody && !$ref->externalFragment;
@@ -382,9 +362,8 @@ class References {
 				// Empty the <sup> since we've serialized its children and
 				// removing it below asserts everything has been migrated out
 				DOMCompat::replaceChildren( $refFragment );
-				$refDataMw->body = DataMwBody::new( [
-					'html' => $refDataMw->body->extsrc ?? '',
-				] );
+				$refDataMw->body = new DataMwBody();
+				$refDataMw->body->setHtml( $extApi, $extApi->htmlToDom( $refFragmentHtml ) );
 			}
 		} else {
 			if ( $ref->contentId && !$hasValidFollow ) {
@@ -394,12 +373,14 @@ class References {
 			}
 			// Sub-references cannot have conflicting content, the conflict is on the main ref
 			$hasConflict = $conflicts !== self::CONFLICT_NONE && !$hasDetails;
-			$refDataMw->body = DataMwBody::new( [
-				// Prefer tracking the body via a short identifier instead of duplicating it
-				'id' => !$hasConflict ? ParsoidAnchorFormatter::getNoteTextIdentifier( $ref ) : null,
+			$refDataMw->body = new DataMwBody;
+			if ( $hasConflict ) {
 				// Conflicting bodies must be stored, otherwise the differences get lost
-				'html' => $hasConflict ? $refFragmentHtml : null,
-			] );
+				$refDataMw->body->setHtml( $extApi, $extApi->htmlToDom( $refFragmentHtml ) );
+			} else {
+				// Prefer tracking the body via a short identifier instead of duplicating it
+				$refDataMw->body->id = ParsoidAnchorFormatter::getNoteTextIdentifier( $ref );
+			}
 		}
 
 		$this->addLinkBackAttributes(
@@ -416,9 +397,15 @@ class References {
 			$refDataMw
 		);
 
-		// FIXME(T214241): Should the errors be added to data-mw if
-		// $isTplWrapper?  Here and other calls to addErrorsToNode.
-		ErrorUtils::addErrorsToNode( $linkBackSup, $errs );
+		// The current <ref> is inside <references>, and no previous <ref> had the same name. There
+		// are no (visible) nodes that can be used to track errors.
+		if ( $referencesData->inReferenceList() && !$ref->nodes ) {
+			$refGroup->inReferencesListErrors[$about] = $errs;
+		} else {
+			// FIXME(T214241): Should the errors be added to data-mw if
+			// $isTplWrapper?  Here and other calls to addErrorsToNode.
+			ErrorUtils::addErrorsToNode( $linkBackSup, $errs );
+		}
 
 		// refLink is the link to the citation
 		$refLink = $doc->createElement( 'a' );
@@ -524,16 +511,26 @@ class References {
 		ParsoidExtensionAPI $extApi, Element $refsNode,
 		ReferencesData $refsData, bool $autoGenerated = false
 	): void {
-		$isTemplateWrapper = DOMUtils::hasTypeOf( $refsNode, 'mw:Transclusion' );
+		// FIXME: This is only looking for two very specific spots. Should probably loop instead.
+		$parentElement = DOMCompat::getParentElement( $refsNode );
+		$previousSibling = $parentElement ? DOMCompat::getPreviousElementSibling( $parentElement ) : null;
+		$isTemplateWrapper = DOMUtils::hasTypeOf( $refsNode, 'mw:Transclusion' ) ||
+			// recognize cases where the references tag is wrapped in the template
+			( $parentElement && DOMUtils::hasTypeOf( $parentElement, 'mw:Transclusion' ) ) ||
+			// In the TemplateStyles case, the ref list is the second element
+			( $previousSibling && DOMUtils::hasTypeOf( $previousSibling, 'mw:Transclusion' ) );
 		$nodeDp = DOMDataUtils::getDataParsoid( $refsNode );
 		$groupName = $nodeDp->group ?? '';
 		$refGroup = $refsData->lookupRefGroup( $groupName );
 
-		// Iterate through the ref list to back-patch typeof and data-mw error
-		// information into ref for errors only known at time of references
-		// insertion.  Refs in the top level dom will be processed immediately,
+		// Iterate through the ref list to check for subrefs and
+		// back-patch typeof and data-mw error information into ref
+		// for errors only known at time of references insertion.
+		// Refs in the top level dom will be processed immediately,
 		// whereas embedded refs will be gathered for batch processing, since
 		// we need to parse embedded content to find them.
+		$hasSubref = false;
+
 		if ( $refGroup ) {
 			foreach ( $refGroup->toArray() as $ref ) {
 				// Mark all refs that are named without content
@@ -546,7 +543,16 @@ class References {
 						$refsData->embeddedErrors[$about] = [ $err ];
 					}
 				}
+
+				if ( $ref->subrefIndex !== null ) {
+					$hasSubref = true;
+				}
 			}
+		}
+
+		// add tracking category for subrefs
+		if ( $hasSubref ) {
+			$extApi->addTrackingCategory( 'cite-tracking-category-ref-details' );
 		}
 
 		// Note that `$sup`s here are probably all we really need to check for
@@ -582,8 +588,10 @@ class References {
 				}
 			}
 			foreach ( $refGroup->toArray() as $ref ) {
-				if ( $ref->isSyntheticMainRef ||
-					( array_key_exists( $ref->numberInGroup, $mainRefIndexes ) && $ref->contentId !== null )
+				if ( ( $ref->isSyntheticMainRef ||
+					( array_key_exists( $ref->numberInGroup, $mainRefIndexes ) && $ref->contentId !== null ) ) &&
+					// T415526: gradual migration away from synthetic ref
+					!$this->mainConfig->get( 'CiteRemoveSyntheticRefsUnsafe' )
 				) {
 					$sup = $doc->createElement( 'sup' );
 					DOMUtils::addAttributes( $sup, [
@@ -612,8 +620,6 @@ class References {
 
 		$nestedRefsHTML = array_merge( $nestedRefsHTML, $syntheticRefsHtml );
 
-		// FIXME: This check is relativly fragile.  When the references tag comes from a template
-		// that includes more content than just the <references> tag $isTemplateWrapper is false
 		if ( !$isTemplateWrapper ) {
 			$dataMw = DOMDataUtils::getDataMw( $refsNode );
 			// Mark this auto-generated so that we can skip this during
@@ -622,22 +628,21 @@ class References {
 				$dataMw->autoGenerated = true;
 			}
 			if ( $nestedRefsHTML ) {
-				$dataMw->body = DataMwBody::new( [
-					'html' => "\n" . implode( $nestedRefsHTML ),
-				] );
+				$dataMw->body = new DataMwBody;
+				$dataMw->body->setHtml( $extApi, $extApi->htmlToDom( "\n" . implode( $nestedRefsHTML ) ) );
 			} elseif ( !$autoGenerated && empty( $nodeDp->selfClose ) ) {
-				$dataMw->body = DataMwBody::new( [
-					'html' => '',
-				] );
+				$dataMw->body = new DataMwBody;
+				$dataMw->body->setHtml( $extApi, $extApi->htmlToDom( '' ) );
 			} else {
 				unset( $dataMw->body );
 			}
 			unset( $nodeDp->selfClose );
 		} elseif ( $syntheticRefsHtml ) {
 			$dataMw = DOMDataUtils::getDataMw( $refsNode );
-			$dataMw->body = DataMwBody::new( [
-				'html' => "\n" . implode( $syntheticRefsHtml ),
-			] );
+			$dataMw->body = new DataMwBody;
+			$dataMw->body->setHtml( $extApi, $extApi->htmlToDom(
+				"\n" . implode( $syntheticRefsHtml )
+			) );
 		}
 
 		$hasResponsiveWrapper = false;
@@ -662,13 +667,15 @@ class References {
 		// references before generating fresh references.
 		DOMCompat::replaceChildren( $refsNode );
 
+		// FIXME: There is another large `if ( $refGroup )` above, can these be merged?
 		if ( $refGroup ) {
+			$doc = $refsNode->ownerDocument;
 			foreach ( $refGroup->toArray() as $ref ) {
 				// Skip sub-references in the outer loop
 				if ( $ref->subrefIndex === null ) {
 					$refGroup->renderReferenceListElement( $extApi, $refsNode, $ref, $this->markSymbolRenderer );
 					// Render and append related sub-refs to main ref node
-					$subRefs = $this->renderSubReferencesList( $extApi, $refsNode->ownerDocument, $refGroup, $ref );
+					$subRefs = $this->renderSubReferencesList( $extApi, $doc, $refGroup, $ref );
 					if ( $subRefs ) {
 						$refsNode->lastChild->previousSibling->appendChild( $subRefs );
 					}
@@ -689,6 +696,35 @@ class References {
 				$destNode = $hasResponsiveWrapper ? DOMCompat::getParentElement( $refsNode ) : $refsNode;
 				ErrorUtils::addErrorsToNode( $destNode, [ $error ] );
 			}
+
+			// Handle errors that happened while being inside <references>
+			$afterReferencesList = $refsNode->nextSibling;
+			$i = 0;
+			foreach ( $refGroup->inReferencesListErrors as $about => $errors ) {
+				// TODO: Scan for the node via $about and attach the errors there, if possible
+				foreach ( $errors as $error ) {
+					if ( $hasResponsiveWrapper && $i++ ) {
+						$refsNode->parentNode->insertBefore( $doc->createElement( 'br' ), $afterReferencesList );
+						$refsNode->parentNode->insertBefore( $doc->createTextNode( "\n" ), $afterReferencesList );
+					}
+					$frag = ( new ErrorUtils( $extApi ) )->renderParsoidError( $error );
+					$span = DOMCompat::getFirstElementChild( $frag );
+					if ( !$hasResponsiveWrapper ) {
+						$refsNodeAbout = DOMCompat::getAttribute( $refsNode, 'about' );
+						if ( $refsNodeAbout ) {
+							$span->setAttribute( 'about', $refsNodeAbout );
+						}
+					}
+					// T384599: This workaround displays remaining errors under the reference list
+					$refsNode->parentNode->insertBefore( $span, $afterReferencesList );
+				}
+			}
+		}
+
+		// T364830: Remove any templated refslist with zero refs
+		if ( $refsNode->firstChild === null && WTUtils::fromTemplatedContent( $refsNode ) ) {
+			$nodeToDelete = $hasResponsiveWrapper ? $refsNode->parentNode : $refsNode;
+			$nodeToDelete->parentNode->removeChild( $nodeToDelete );
 		}
 
 		// Remove the group from refsData

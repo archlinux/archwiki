@@ -78,6 +78,7 @@ const {
 	cdxIconAlert,
 	cdxIconEdit,
 	cdxIconArticles,
+	cdxIconArticlesSearch,
 	cdxIconHeart,
 	cdxIconSearch,
 	cdxIconUserTemporary,
@@ -215,6 +216,10 @@ module.exports = exports = {
 		tempAccountsOnIpCount: {
 			type: Array,
 			default: () => ( [] )
+		},
+		suggestedInvestigationsCaseCount: {
+			type: Number,
+			default: 0
 		}
 	},
 	setup( props ) {
@@ -289,6 +294,7 @@ module.exports = exports = {
 		const maxEdits = mw.config.get( 'wgCheckUserGEUserImpactMaxEdits' ) || 1000;
 		const maxThanks = mw.config.get( 'wgCheckUserGEUserImpactMaxThanks' ) || 1000;
 		const canViewCheckUserLog = mw.config.get( 'wgCheckUserCanViewCheckUserLog' );
+		const canViewSuggestedInvestigations = mw.config.get( 'wgCheckUserCanViewSuggestedInvestigations' );
 		const canAccessTemporaryAccountLog = mw.config.get( 'wgCheckUserCanAccessTemporaryAccountLog' );
 		const canAccessTemporaryAccountIpAddresses = computed(
 			() => props.canAccessTemporaryAccountIpAddresses
@@ -402,6 +408,20 @@ module.exports = exports = {
 				}
 			}
 
+			if ( canViewSuggestedInvestigations && props.suggestedInvestigationsCaseCount > 0 ) {
+				const suggestedInvestigationsLink = mw.Title.makeTitle(
+					-1, 'SuggestedInvestigations'
+				).getUrl( { username: props.username, hideCasesWithNoUserEdits: 0 } );
+				rows.push( {
+					icon: cdxIconArticlesSearch,
+					iconClass: 'ext-checkuser-userinfocard-icon',
+					messageKey: 'checkuser-userinfocard-suggested-investigations',
+					mainValue: mw.language.convertNumber( props.suggestedInvestigationsCaseCount ),
+					mainLink: suggestedInvestigationsLink,
+					mainLinkLogId: 'suggested_investigations'
+				} );
+			}
+
 			if ( props.hasIpRevealInfo ) {
 				const row = {
 					icon: cdxIconUserTemporaryLocation,
@@ -437,10 +457,18 @@ module.exports = exports = {
 			if ( mw.util.isTemporaryUser( props.username ) && tempAccountsOnIpCount.length === 2 ) {
 				const bucketRangeStart = tempAccountsOnIpCount[ 0 ];
 				const bucketRangeEnd = tempAccountsOnIpCount[ 1 ];
-
 				let bucketMsgKey = 'checkuser-temporary-account-bucketcount-';
+
+				// Range start and end are the same if:
+				// 1. the user has the right to see exact counts
+				// 2. either 0 or 1 accounts were found
+				// 3. more accounts than the max were found
+				// Otherwise, the user sees a bucketed count.
 				if ( bucketRangeStart === bucketRangeEnd ) {
-					if ( bucketRangeStart === 0 ) {
+					// If a precise number is returned, the only time we want to show
+					// that there are more accounts is if it exceeds our defined limit
+					// of 101, per T412212
+					if ( bucketRangeStart < 101 ) {
 						bucketMsgKey += 'min';
 					} else {
 						bucketMsgKey += 'max';
@@ -533,7 +561,7 @@ p.ext-checkuser-userinfocard-groups {
 }
 
 .ext-checkuser-userinfocard-gradient {
-	height: @spacing-200;
+	height: @spacing-100;
 	position: fixed;
 	bottom: 0;
 	left: 0;

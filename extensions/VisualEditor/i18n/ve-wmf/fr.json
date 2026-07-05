@@ -31,6 +31,8 @@
 			"Rastus Vernon",
 			"Seb35",
 			"Sherbrooke",
+			"Sik666",
+			"SleaY",
 			"Thibaut120094",
 			"Tpt",
 			"Trizek",
@@ -39,9 +41,7 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"아라",
-			"Sik666",
-			"SleaY"
+			"아라"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck pense que du nouveau contenu a été ajouté à la page",
@@ -56,6 +56,10 @@
 	"tag-editcheck-tone-shown-description": "EditCheck pense qu'un ajustement du ton de certains contenus aurait pu être nécessaire, et l'interface utilisateur a été affichée",
 	"tag-editcheck-paste-shown": "Vérification des modifications (copier-coller) affichée",
 	"tag-editcheck-paste-shown-description": "La vérification des modifications a demandé des éclaircissements sur le contenu collé par le contributeur, que celui-ci a supprimé ou jugé comme étant autorisé.",
+	"tag-editsuggestion-seen": "Suggestion de modification vue",
+	"tag-editsuggestion-seen-description": "Au moins une suggestion de modification a potentiellement été vue par l’utilisateur",
+	"tag-editsuggestion-used": "Suggestion de modification utilisée",
+	"tag-editsuggestion-used-description": "Au moins une suggestion de modification a été prise en compte par l’utilisateur",
 	"tag-visualeditor": "Éditeur visuel",
 	"tag-visualeditor-description": "Modification effectuée avec l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|éditeur visuel]]",
 	"tag-visualeditor-needcheck": "Éditeur visuel : à vérifier",

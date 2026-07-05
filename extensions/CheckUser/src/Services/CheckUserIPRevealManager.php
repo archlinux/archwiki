@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Output\OutputPage;
@@ -14,19 +14,12 @@ class CheckUserIPRevealManager {
 	 */
 	public const CONSTRUCTOR_OPTIONS = [ 'CheckUserSpecialPagesWithoutIPRevealButtons' ];
 
-	private ServiceOptions $options;
-	private TempUserConfig $tempUserConfig;
-	private CheckUserPermissionManager $checkUserPermissionManager;
-
 	public function __construct(
-		ServiceOptions $options,
-		TempUserConfig $tempUserConfig,
-		CheckUserPermissionManager $checkUserPermissionManager
+		private readonly ServiceOptions $options,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/**
@@ -41,8 +34,9 @@ class CheckUserIPRevealManager {
 			return false;
 		}
 
-		$action = $out->getRequest()->getVal( 'action' );
+		$action = $out->getRequest()->getVal( 'action', 'view' );
 		if (
+			$action !== 'view' &&
 			$action !== 'history' &&
 			$action !== 'info' &&
 			$out->getRequest()->getRawVal( 'diff' ) === null &&

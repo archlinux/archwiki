@@ -6,9 +6,7 @@ use MediaWiki\Extension\Math\WikiTexVC\TexVC;
 use MediaWikiIntegrationTestCase;
 
 /**
- * Currently WIP functionalities of en-wiki-formulae.js testsuite.
- * All assertions are currently deactivated, cause high memory load on CI.
- * These tests can be run locally by enabling the ACTIVE flag.
+ * Tests TexVC against a large set of formulae from English Wikipedia.
  * File download of the json-input can be done by running:
  * $ cd maintenance && ./downloadMoreTexVCtests.sh
  * @covers \MediaWiki\Extension\Math\WikiTexVC\Parser
@@ -19,56 +17,39 @@ class EnWikiFormulaeTest extends MediaWikiIntegrationTestCase {
 
 	private const FILEPATH = __DIR__ . '/en-wiki-formulae-good.json';
 	private const REF_FILEPATH = __DIR__ . '/en-wiki-formulae-good-reference.json';
-	private const CHUNK_SIZE = 1000;
 
-	public static function setUpBeforeClass(): void {
-		self::checkFiles();
-		parent::setUpBeforeClass();
-	}
-
-	private static function checkFiles() {
+	public function setUp(): void {
 		if ( !file_exists( self::FILEPATH ) || !file_exists( self::REF_FILEPATH ) ) {
 			self::markTestSkipped( 'Missing test files. Required: ' .
 				self::FILEPATH . ' and ' .
 				self::REF_FILEPATH );
 		}
+		parent::setUp();
 	}
 
-		/**
-		 * Reads the json file to an object
-		 * @param string $filePath file to be read
-		 * @return array json with testcases
-		 */
+	/**
+	 * Reads the JSON file to an object
+	 * @param string $filePath file to be read
+	 * @return array JSON with testcases
+	 */
 	private static function getJSON( $filePath ): array {
-		self::checkFiles();
 		$file = file_get_contents( $filePath );
 		return json_decode( $file, true );
 	}
 
-	public static function provideTestCases(): \Generator {
+	private static function getTestCases(): array {
 		$group = [];
-		$groupNo = 1;
 		$references = self::getJSON( self::REF_FILEPATH );
 		foreach ( self::getJSON( self::FILEPATH ) as $key => $elem ) {
 			$group[$key] = [ $elem, $references[ $key ] ];
-			if ( count( $group ) >= self::CHUNK_SIZE ) {
-				yield "Group $groupNo" => [ $group ];
-				$groupNo++;
-				$group = [];
-			}
 		}
-		if ( count( $group ) > 0 ) {
-			yield "Group $groupNo" => [ $group ];
-		}
+		return $group;
 	}
 
-	/**
-	 * @dataProvider provideTestCases
-	 */
-	public function testRunCases( $testcase ) {
+	public function testRunCases() {
 		$texVC = new TexVC();
 
-		foreach ( $testcase as $hash => [ $tex, $ref ] ) {
+		foreach ( self::getTestCases() as $hash => [ $tex, $ref ] ) {
 			try {
 				$result = $texVC->check( $tex, [
 					"debug" => false,

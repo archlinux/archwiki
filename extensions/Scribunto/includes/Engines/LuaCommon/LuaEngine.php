@@ -3,15 +3,18 @@
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use Exception;
+use MediaWiki\Extension\Produnto\Runtime\ProduntoRuntime;
 use MediaWiki\Extension\Scribunto\ScribuntoContent;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
 use MediaWiki\Html\Html;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\CoreMagicVariables;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\PPNode;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use RuntimeException;
 use Wikimedia\Message\MessageValue;
@@ -20,15 +23,39 @@ use Wikimedia\ScopedCallback;
 abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Libraries to load. See also the 'ScribuntoExternalLibraries' hook.
-	 * @var array<string,class-string<LibraryBase>> Maps module names to PHP classes or definition arrays
+	 * Maps module names to PHP classes or definition arrays
 	 */
-	protected static $libraryClasses = [
+	private const LIBRARY_SPECS = [
 		'mw.site' => SiteLibrary::class,
 		'mw.uri' => UriLibrary::class,
 		'mw.ustring' => UstringLibrary::class,
-		'mw.language' => LanguageLibrary::class,
+		'mw.language' => [
+			'class' => LanguageLibrary::class,
+			'services' => [
+				'MainConfig',
+				'GenderCache',
+				'ContentLanguage',
+				'LanguageFactory',
+				'LanguageFallback',
+				'LanguageNameUtils',
+				'UserOptionsLookup',
+			]
+		],
 		'mw.message' => MessageLibrary::class,
-		'mw.title' => TitleLibrary::class,
+		'mw.title' => [
+			'class' => TitleLibrary::class,
+			'services' => [
+				'ContentLanguage',
+				'LinkBatchFactory',
+				'NamespaceInfo',
+				'ObjectFactory',
+				'RepoGroup',
+				'RestrictionStore',
+				'SpecialPageFactory',
+				'TitleFormatter',
+				'WikiPageFactory',
+			]
+		],
 		'mw.text' => TextLibrary::class,
 		'mw.html' => HtmlLibrary::class,
 		'mw.hash' => HashLibrary::class,
@@ -38,13 +65,14 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	/**
 	 * Paths for modules that may be loaded from Lua. See also the
 	 * 'ScribuntoExternalLibraryPaths' hook.
-	 * @var string[] Paths
 	 */
-	protected static $libraryPaths = [
+	private const LIBRARY_PATHS = [
 		'.',
 		'luabit',
 		'ustring',
 	];
+
+	private const MAX_EXPAND_CACHE_SIZE = 100;
 
 	/** @var bool */
 	protected $loaded = false;
@@ -63,6 +91,12 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @var array<string,?PPFrame>
 	 */
 	protected $currentFrames = [];
+
+	/**
+	 * @var string|null Title of the module currently being executed
+	 */
+	protected ?string $currentModuleName = null;
+
 	/**
 	 * @var array<string,string>|null
 	 */
@@ -76,7 +110,12 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 */
 	protected $addedScriptWarnings = 0;
 
-	private const MAX_EXPAND_CACHE_SIZE = 100;
+	/** @var ProduntoRuntime|null */
+	private $produntoRuntime = null;
+	/** @var callable[]|null */
+	private $moduleLoaders = null;
+	/** @var callable[]|null */
+	private $jsonLoaders = null;
 
 	/**
 	 * Create a new interpreter object
@@ -146,12 +185,14 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			}
 
 			$this->registerInterface( 'mwInit.lua', [] );
-			$this->mw = $this->registerInterface( 'mw.lua', $lib,
-				[ 'allowEnvFuncs' => $this->options['allowEnvFuncs'] ] );
+			$this->mw = $this->registerInterface( 'mw.lua', $lib, [
+				'allowEnvFuncs' => $this->options['allowEnvFuncs'],
+				'shareInvocationEnv' => $this->options['shareInvocationEnv'],
+			] );
 
-			$this->availableLibraries = $this->getLibraries( 'lua', self::$libraryClasses );
+			$this->availableLibraries = $this->getLibraries( 'lua', self::LIBRARY_SPECS );
 			foreach ( $this->availableLibraries as $name => $def ) {
-				$this->instantiatePHPLibrary( $name, $def, false );
+				$this->instantiatePHPLibrary( $def, false );
 			}
 		} catch ( Exception $ex ) {
 			$this->loaded = false;
@@ -235,6 +276,36 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param PPFrame|null $frame If null, an empty frame with no parent will be used
 	 * @return ScopedCallback
 	 */
+
+	/**
+	 * Track which module is currently executing, for cache-expiry attribution.
+	 * @param string $name The module's prefixed DB key
+	 * @return ScopedCallback Restores the previous module name on destruct
+	 */
+	public function setupCurrentModule( string $name ): ScopedCallback {
+		$old = $this->currentModuleName;
+		$this->currentModuleName = $name;
+		return new ScopedCallback( function () use ( $old ) {
+			$this->currentModuleName = $old;
+		} );
+	}
+
+	/**
+	 * @return string|null The currently executing module's name, if any
+	 */
+	public function getCurrentModuleName(): ?string {
+		return $this->currentModuleName;
+	}
+
+	/**
+	 * Set the current and parent frames for the duration of a Lua call.
+	 *
+	 * Returns a ScopedCallback that restores the previous frames and
+	 * expand cache when it goes out of scope.
+	 *
+	 * @param PPFrame|null $frame Frame to use, or null to create a new one
+	 * @return ScopedCallback
+	 */
 	private function setupCurrentFrames( ?PPFrame $frame = null ) {
 		if ( !$frame ) {
 			$frame = $this->getParser()->getPreprocessor()->newFrame();
@@ -285,6 +356,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param mixed $chunk As accepted by LuaInterpreter::callFunction()
 	 * @param PPFrame|null $frame
 	 * @return array
+	 * @throws LuaError
 	 */
 	public function executeFunctionChunk( $chunk, $frame ) {
 		// $resetFrames is a ScopedCallback, so it has a purpose even though it appears unused.
@@ -299,7 +371,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * Get data logged by modules
 	 * @return string Logged data
 	 */
-	protected function getLogBuffer() {
+	public function getLogBuffer() {
 		if ( !$this->loaded ) {
 			return '';
 		}
@@ -323,16 +395,16 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		if ( !$localize ) {
 			$keyMsg->inLanguage( 'en' )->useDatabase( false );
 		}
-		return Html::openElement( 'tr' ) .
-			Html::rawElement( 'th', [ 'colspan' => 2 ], $keyMsg->parse() ) .
-			Html::closeElement( 'tr' ) .
-			Html::openElement( 'tr' ) .
-			Html::openElement( 'td', [ 'colspan' => 2 ] ) .
-			Html::openElement( 'div', [ 'class' => 'mw-collapsible mw-collapsed' ] ) .
-			Html::element( 'pre', [ 'class' => 'scribunto-limitreport-logs' ], $logs ) .
-			Html::closeElement( 'div' ) .
-			Html::closeElement( 'td' ) .
-			Html::closeElement( 'tr' );
+		return Html::rawElement( 'tr', [],
+				Html::rawElement( 'th', [ 'colspan' => 2 ], $keyMsg->parse() )
+			) .
+			Html::rawElement( 'tr', [],
+				Html::rawElement( 'td', [ 'colspan' => 2 ],
+					Html::rawElement( 'div', [ 'class' => 'mw-collapsible mw-collapsed' ],
+						Html::element( 'pre', [ 'class' => 'scribunto-limitreport-logs' ], $logs )
+					)
+				)
+			);
 	}
 
 	/**
@@ -499,12 +571,11 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 	/**
 	 * Instantiate and register a library.
-	 * @param string $name
 	 * @param array|class-string<LibraryBase> $spec
 	 * @param bool $isDeferredLoad
 	 * @return array|null
 	 */
-	private function instantiatePHPLibrary( $name, $spec, $isDeferredLoad ) {
+	private function instantiatePHPLibrary( $spec, $isDeferredLoad ) {
 		// If it's _not_ a deferred load, and that the library is to be loaded
 		// as deferred (i.e. when explicitly `require`d), do not load the library.
 		if ( !$isDeferredLoad && ( $spec['deferLoad'] ?? false ) ) {
@@ -533,10 +604,10 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	public function loadPHPLibrary( $name ) {
 		$this->checkString( 'loadPHPLibrary', [ $name ], 0 );
 
-		$ret = null;
-		if ( isset( $this->availableLibraries[$name] ) ) {
-			$ret = $this->instantiatePHPLibrary( $name, $this->availableLibraries[$name], true );
-		}
+		$library = $this->availableLibraries[$name] ?? null;
+		$ret = $library !== null
+			? $this->instantiatePHPLibrary( $library, true )
+			: null;
 
 		return [ $ret ];
 	}
@@ -553,31 +624,100 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	public function loadPackage( $name ) {
 		$this->checkString( 'loadPackage', [ $name ], 0 );
 
-		# This is what Lua does for its built-in loaders
+		foreach ( $this->getModuleLoaders() as $loader ) {
+			$init = $loader( $name );
+			if ( $init ) {
+				return [ $init ];
+			}
+		}
+
+		return [];
+	}
+
+	/**
+	 * @return callable[]
+	 */
+	private function getModuleLoaders() {
+		if ( !$this->moduleLoaders ) {
+			$this->moduleLoaders = [ $this->loadModuleFromLocalFile( ... ) ];
+			if ( ExtensionRegistry::getInstance()->isLoaded( 'Produnto' ) ) {
+				$this->moduleLoaders[] = $this->loadModuleFromProdunto( ... );
+			}
+			$this->moduleLoaders[] = $this->loadModuleFromWiki( ... );
+		}
+		return $this->moduleLoaders;
+	}
+
+	/**
+	 * Load a module from a file bundled with Scribunto
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	private function loadModuleFromLocalFile( string $name ) {
+		// This is what Lua does for its built-in loaders
 		$luaName = str_replace( '.', '/', $name ) . '.lua';
-		$paths = $this->getLibraryPaths( 'lua', self::$libraryPaths );
+		$paths = $this->getLibraryPaths( 'lua', self::LIBRARY_PATHS );
 		foreach ( $paths as $path ) {
 			$fileName = $this->normalizeModuleFileName( "$path/$luaName" );
 			if ( !file_exists( $fileName ) ) {
 				continue;
 			}
 			$code = file_get_contents( $fileName );
-			$init = $this->interpreter->loadString( $code, "@$luaName" );
-			return [ $init ];
+			return $this->interpreter->loadString( $code, "@$luaName" );
 		}
+		return null;
+	}
 
+	/**
+	 * Load a module from a wiki page
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	private function loadModuleFromWiki( string $name ) {
 		$title = Title::newFromText( $name );
 		if ( !$title || !$title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
-			return [];
+			return null;
 		}
 
 		$module = $this->fetchModuleFromParser( $title );
-		if ( $module ) {
-			// @phan-suppress-next-line PhanUndeclaredMethod
-			return [ $module->getInitChunk() ];
+		if ( $module instanceof LuaModule ) {
+			return $module->getInitChunk();
+		} elseif ( $module ) {
+			throw new RuntimeException( 'Invalid module class: ' . get_class( $module ) );
 		} else {
-			return [];
+			return null;
 		}
+	}
+
+	/**
+	 * Load a module from Produnto
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	private function loadModuleFromProdunto( string $name ) {
+		$runtime = $this->getProduntoRuntime();
+		$info = $runtime->getModuleInfo( $name );
+		if ( !$info ) {
+			return null;
+		}
+		$runtime->maybeAddSandboxWarning( $this->getParser()->getOutput() );
+		return $this->interpreter->loadString(
+			$info->contents, "@{$info->packageName}/{$info->path}" );
+	}
+
+	/**
+	 * @return ProduntoRuntime
+	 */
+	private function getProduntoRuntime() {
+		if ( !$this->produntoRuntime ) {
+			$this->produntoRuntime = MediaWikiServices::getInstance()
+				->get( 'Produnto.RuntimeFactory' )
+				->create( $this->getParser()?->getOptions() );
+		}
+		return $this->produntoRuntime;
 	}
 
 	/**
@@ -658,12 +798,12 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * Handler for setTTL()
 	 * @internal
 	 * @param int $ttl
+	 * @param string $callerLabel Identifies the calling code for cache debugging
 	 */
-	public function setTTL( $ttl ) {
+	public function setTTL( $ttl, $callerLabel ) {
 		$this->checkNumber( 'setTTL', [ $ttl ], 0 );
-
-		$frame = $this->getFrameById( 'current' );
-		$frame->setTTL( $ttl );
+		$source = ( $this->currentModuleName ?? 'unknown' ) . " ($callerLabel)";
+		CoreMagicVariables::applyCacheExpiry( $this->getParser(), $ttl, null, $source );
 	}
 
 	/**
@@ -714,14 +854,15 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			throw new LuaError( "expandTemplate: invalid title \"$titleText\"" );
 		}
 
-		if ( $frame->depth >= $this->parser->getOptions()->getMaxTemplateDepth() ) {
+		$parser = $this->getParser();
+		if ( $frame->depth >= $parser->getOptions()->getMaxTemplateDepth() ) {
 			throw new LuaError( 'expandTemplate: template depth limit exceeded' );
 		}
 		if ( MediaWikiServices::getInstance()->getNamespaceInfo()->isNonincludable( $title->getNamespace() ) ) {
 			throw new LuaError( 'expandTemplate: template inclusion denied' );
 		}
 
-		[ $dom, $finalTitle ] = $this->parser->getTemplateDom( $title );
+		[ $dom, $finalTitle ] = $parser->getTemplateDom( $title );
 		if ( $dom === false ) {
 			throw new LuaError( "expandTemplate: template \"$titleText\" does not exist" );
 		}
@@ -730,7 +871,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			throw new LuaError( 'expandTemplate: template loop detected' );
 		}
 
-		$fargs = $this->getParser()->getPreprocessor()->newPartNodeArray( $args );
+		$fargs = $parser->getPreprocessor()->newPartNodeArray( $args );
 		$newFrame = $frame->newChild( $fargs, $finalTitle );
 		$text = $this->doCachedExpansion( $newFrame, $dom,
 			[
@@ -749,6 +890,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param array $args
 	 * @throws LuaError
 	 * @return array
+	 * @throws LuaError
 	 */
 	public function callParserFunction( $frameId, $function, $args ) {
 		$frame = $this->getFrameById( $frameId );
@@ -782,7 +924,8 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			);
 		}
 
-		$result = $this->parser->callParserFunction( $frame, $function, $args );
+		$parser = $this->getParser();
+		$result = $parser->callParserFunction( $frame, $function, $args );
 		if ( !$result['found'] ) {
 			throw new LuaError( "callParserFunction: function \"$function\" was not found" );
 		}
@@ -798,7 +941,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 		$text = $result['text'];
 		if ( $result['isChildObj'] ) {
-			$fargs = $this->getParser()->getPreprocessor()->newPartNodeArray( $args );
+			$fargs = $parser->getPreprocessor()->newPartNodeArray( $args );
 			$newFrame = $frame->newChild( $fargs, $result['title'] );
 			if ( $result['nowiki'] ) {
 				$text = $newFrame->expand( $text, PPFrame::RECOVER_ORIG );
@@ -813,7 +956,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 		# Replace raw HTML by a placeholder
 		if ( $result['isHTML'] ) {
-			$text = $this->parser->insertStripItem( $text );
+			$text = $parser->insertStripItem( $text );
 		} elseif ( $result['nowiki'] ) {
 			# Escape nowiki-style return values
 			$text = wfEscapeWikiText( $text );
@@ -913,7 +1056,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 		if ( is_scalar( $input ) ) {
 			$input = str_replace( [ "\r\n", "\r" ], "\n", $input );
-			$dom = $this->parser->getPreprocessor()->preprocessToObj(
+			$dom = $this->getParser()->getPreprocessor()->preprocessToObj(
 				$input, $frame->depth ? Parser::PTD_FOR_INCLUSION : 0 );
 		} else {
 			$dom = $input;
@@ -921,8 +1064,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		$ret = $frame->expand( $dom );
 		if ( !$frame->isVolatile() ) {
 			if ( count( $this->expandCache ) > self::MAX_EXPAND_CACHE_SIZE ) {
-				reset( $this->expandCache );
-				$oldHash = key( $this->expandCache );
+				$oldHash = array_key_first( $this->expandCache );
 				unset( $this->expandCache[$oldHash] );
 			}
 			$this->expandCache[$hash] = $ret;
@@ -935,27 +1077,73 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 *
 	 * @param string $title Title text, type-checked in Lua
 	 * @return string[]
+	 * @throws LuaError
 	 */
 	public function loadJsonData( $title ) {
 		$this->incrementExpensiveFunctionCount();
 
+		foreach ( $this->getJsonLoaders() as $loader ) {
+			$text = $loader( $title );
+			if ( $text !== null ) {
+				$json = FormatJson::decode( $text, true );
+				if ( is_array( $json ) ) {
+					$json = TextLibrary::reindexArrays( $json, false );
+				}
+				// We'll throw an error for non-tables on the Lua side
+				return [ $json ];
+			}
+		}
+		throw new LuaError(
+			"bad argument #1 to 'mw.loadJsonData' ('$title' is not a valid JSON page)"
+		);
+	}
+
+	/**
+	 * Load JSON text from a wiki page
+	 *
+	 * @param string $title
+	 * @return string|null
+	 */
+	private function loadJsonFromWiki( string $title ): ?string {
 		$titleObj = Title::newFromText( $title );
 		if ( !$titleObj || !$titleObj->exists() || !$titleObj->hasContentModel( CONTENT_MODEL_JSON ) ) {
-			throw new LuaError(
-				"bad argument #1 to 'mw.loadJsonData' ('$title' is not a valid JSON page)"
-			);
+			return null;
 		}
 
 		$parser = $this->getParser();
 		[ $text, $finalTitle ] = $parser->fetchTemplateAndTitle( $titleObj );
+		return $text ?: null;
+	}
 
-		$json = FormatJson::decode( $text, true );
-		if ( is_array( $json ) ) {
-			$json = TextLibrary::reindexArrays( $json, false );
+	/**
+	 * Load JSON text from Produnto
+	 *
+	 * @param string $title
+	 * @return string|null
+	 */
+	private function loadJsonFromProdunto( string $title ): ?string {
+		$parts = explode( '/', $title, 2 );
+		if ( count( $parts ) !== 2 ) {
+			return null;
 		}
-		// We'll throw an error for non-tables on the Lua side
+		$runtime = $this->getProduntoRuntime();
+		$result = $runtime->getFileContents( $parts[0], $parts[1] );
+		$runtime->maybeAddSandboxWarning( $this->getParser()->getOutput() );
+		return $result;
+	}
 
-		return [ $json ];
+	/**
+	 * @return callable[]
+	 */
+	private function getJsonLoaders() {
+		if ( !$this->jsonLoaders ) {
+			$this->jsonLoaders = [];
+			if ( ExtensionRegistry::getInstance()->isLoaded( 'Produnto' ) ) {
+				$this->jsonLoaders[] = $this->loadJsonFromProdunto( ... );
+			}
+			$this->jsonLoaders[] = $this->loadJsonFromWiki( ... );
+		}
+		return $this->jsonLoaders;
 	}
 
 	/**
@@ -1015,5 +1203,3 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		return true;
 	}
 }
-
-class_alias( LuaEngine::class, 'Scribunto_LuaEngine' );

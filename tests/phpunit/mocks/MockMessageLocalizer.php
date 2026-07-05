@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use Wikimedia\Message\MessageSpecifier;
 

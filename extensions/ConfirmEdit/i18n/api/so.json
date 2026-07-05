@@ -5,5 +5,6 @@
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Jawaabta CAPTCHA",
-	"captcha-apihelp-param-captchaid": "Aqoonsiga CAPTCHA ee codsiga hore"
+	"captcha-apihelp-param-captchaid": "Aqoonsiga CAPTCHA ee codsiga hore",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Haddii hCaptcha CAPTCHA la muujiyay si khasab ah, tusaale ahaan sababta ka dhalatay natiijo ka timid Shaandhaynta xadgudubka (sidaas darteedna loo adeegsaday sitekey aad u xaddidan). Calaamadee tan haddii doorashada JS ee isla magaca ah ay tahay true ama haddii isku daygii ugu horreeyay ee API uu soo celiyo qalad 'forcecaptcha' oo leh furaha goobta la cayimay."
 }

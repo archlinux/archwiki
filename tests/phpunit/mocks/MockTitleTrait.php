@@ -19,20 +19,20 @@ trait MockTitleTrait {
 	/**
 	 * @param string $text
 	 * @param array $props Additional properties to set. Supported keys:
-	 *        - id: int
-	 *        - namespace: int
-	 *        - fragment: string
-	 *        - interwiki: string
-	 *        - redirect: bool
-	 *        - language: Language
-	 *        - contentModel: string
-	 *        - revision: int
-	 *        - validRedirect: bool
+	 *   - id: int
+	 *   - namespace: int
+	 *   - fragment: string
+	 *   - interwiki: string
+	 *   - redirect: bool
+	 *   - language: Language
+	 *   - contentModel: string
+	 *   - revision: int
+	 *   - validRedirect: bool
 	 *
 	 * @return Title&MockObject
 	 */
 	private function makeMockTitle( string $text, array $props = [] ): Title&MockObject {
-		$ns = $props['namespace'] ?? 0;
+		$ns = $props['namespace'] ?? NS_MAIN;
 		if ( $ns < 0 ) {
 			$id = 0;
 		} else {
@@ -129,17 +129,11 @@ trait MockTitleTrait {
 	}
 
 	private function makeMockTitleFactory(): TitleFactory {
-		$factory = $this->createNoOpMock(
-			TitleFactory::class,
-			[ 'newFromText' ]
-		);
-
+		$factory = $this->createNoOpMock( TitleFactory::class, [ 'newFromText' ] );
 		$factory->method( 'newFromText' )->willReturnCallback(
-			function ( $text ) {
-				return $this->makeMockTitle( $text );
-			}
+			fn ( $text, $defaultNamespace = NS_MAIN ) =>
+				$this->makeMockTitle( $text, [ 'namespace' => $defaultNamespace ] )
 		);
-
 		return $factory;
 	}
 }

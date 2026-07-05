@@ -7,6 +7,7 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\JsonContent;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
@@ -26,13 +27,15 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Search\SearchEngine;
 use MediaWiki\Session\Session;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use SearchEngine;
 use StatusValue;
+use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -49,7 +52,22 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * @internal
  */
 class HookRunner implements
+	\MediaWiki\Actions\Hook\ActionBeforeFormDisplayHook,
+	\MediaWiki\Actions\Hook\ActionModifyFormFieldsHook,
+	\MediaWiki\Actions\Hook\CustomEditorHook,
 	\MediaWiki\Actions\Hook\GetActionNameHook,
+	\MediaWiki\Actions\Hook\HistoryPageToolLinksHook,
+	\MediaWiki\Actions\Hook\HistoryToolsHook,
+	\MediaWiki\Actions\Hook\InfoActionHook,
+	\MediaWiki\Actions\Hook\PageHistoryBeforeListHook,
+	\MediaWiki\Actions\Hook\PageHistoryLineEndingHook,
+	\MediaWiki\Actions\Hook\PageHistoryPager__doBatchLookupsHook,
+	\MediaWiki\Actions\Hook\PageHistoryPager__getQueryInfoHook,
+	\MediaWiki\Actions\Hook\RawPageViewBeforeOutputHook,
+	\MediaWiki\Actions\Hook\UnwatchArticleCompleteHook,
+	\MediaWiki\Actions\Hook\UnwatchArticleHook,
+	\MediaWiki\Actions\Hook\WatchArticleCompleteHook,
+	\MediaWiki\Actions\Hook\WatchArticleHook,
 	\MediaWiki\Auth\Hook\AuthenticationAttemptThrottledHook,
 	\MediaWiki\Auth\Hook\AuthManagerFilterProvidersHook,
 	\MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook,
@@ -70,13 +88,6 @@ class HookRunner implements
 	\MediaWiki\Cache\Hook\HtmlCacheUpdaterAppendUrlsHook,
 	\MediaWiki\Cache\Hook\HtmlCacheUpdaterVaryUrlsHook,
 	\MediaWiki\Cache\Hook\HTMLFileCache__useFileCacheHook,
-	\MediaWiki\Cache\Hook\MessageCacheFetchOverridesHook,
-	\MediaWiki\Cache\Hook\MessageCacheReplaceHook,
-	\MediaWiki\Cache\Hook\MessageCache__getHook,
-	\MediaWiki\Message\Hook\MessagePostProcessTextHook,
-	\MediaWiki\Message\Hook\MessagePostProcessHtmlHook,
-	\MediaWiki\Cache\Hook\MessagesPreLoadHook,
-	\MediaWiki\Hook\TitleSquidURLsHook,
 	\MediaWiki\ChangeTags\Hook\ChangeTagAfterDeleteHook,
 	\MediaWiki\ChangeTags\Hook\ChangeTagCanCreateHook,
 	\MediaWiki\ChangeTags\Hook\ChangeTagCanDeleteHook,
@@ -84,6 +95,7 @@ class HookRunner implements
 	\MediaWiki\ChangeTags\Hook\ChangeTagsAllowedAddHook,
 	\MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook,
 	\MediaWiki\ChangeTags\Hook\ListDefinedTagsHook,
+	\MediaWiki\Collation\Hook\Collation__factoryHook,
 	\MediaWiki\Content\Hook\ContentAlterParserOutputHook,
 	\MediaWiki\Content\Hook\ContentGetParserOutputHook,
 	\MediaWiki\Content\Hook\ContentHandlerForModelIDHook,
@@ -97,11 +109,14 @@ class HookRunner implements
 	\MediaWiki\Content\Hook\PlaceNewSectionHook,
 	\MediaWiki\Content\Hook\SearchDataForIndexHook,
 	\MediaWiki\Content\Hook\SearchDataForIndex2Hook,
-	\MediaWiki\Specials\Contribute\Hook\ContributeCardsHook,
+	\MediaWiki\Context\Hook\RequestContextCreateSkinHook,
+	\MediaWiki\Context\Hook\UserGetLanguageObjectHook,
+	\MediaWiki\Deferred\Hook\LinksUpdateCompleteHook,
+	\MediaWiki\Deferred\Hook\LinksUpdateHook,
+	\MediaWiki\Deferred\Hook\UserEditCountUpdateHook,
 	\MediaWiki\Diff\Hook\AbortDiffCacheHook,
 	\MediaWiki\Diff\Hook\ArticleContentOnDiffHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineAfterLoadNewTextHook,
-	\MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineLoadTextAfterNewContentIsLoadedHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineMarkPatrolledLinkHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineMarkPatrolledRCIDHook,
@@ -117,58 +132,41 @@ class HookRunner implements
 	\MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook,
 	\MediaWiki\Diff\Hook\DiffToolsHook,
 	\MediaWiki\Diff\Hook\NewDifferenceEngineHook,
-	\MediaWiki\Hook\AbortEmailNotificationHook,
-	\MediaWiki\Hook\AbortTalkPageEmailNotificationHook,
-	\MediaWiki\Hook\ActionBeforeFormDisplayHook,
-	\MediaWiki\Hook\ActionModifyFormFieldsHook,
-	\MediaWiki\Hook\AddNewAccountHook,
-	\MediaWiki\Output\Hook\AfterBuildFeedLinksHook,
-	\MediaWiki\Output\Hook\AfterFinalPageOutputHook,
-	\MediaWiki\Hook\AfterImportPageHook,
-	\MediaWiki\Hook\AfterParserFetchFileAndTitleHook,
+	\MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook,
+	\MediaWiki\Exception\Hook\LogExceptionHook,
+	\MediaWiki\Export\Hook\ModifyExportQueryHook,
+	\MediaWiki\Export\Hook\WikiExporter__dumpStableQueryHook,
+	\MediaWiki\Export\Hook\XmlDumpWriterOpenPageHook,
+	\MediaWiki\Export\Hook\XmlDumpWriterWriteRevisionHook,
+	\MediaWiki\FileRepo\Hook\FileTransformedHook,
+	\MediaWiki\FileRepo\Hook\FileUploadHook,
+	\MediaWiki\FileRepo\Hook\LocalFile__getHistoryHook,
+	\MediaWiki\FileRepo\Hook\LocalFilePurgeThumbnailsHook,
+	\MediaWiki\Gallery\Hook\GalleryGetModesHook,
 	\MediaWiki\Hook\AlternateEditHook,
 	\MediaWiki\Hook\AlternateEditPreviewHook,
-	\MediaWiki\Hook\AlternateUserMailerHook,
-	\MediaWiki\Hook\AncientPagesQueryHook,
 	\MediaWiki\Hook\ApiBeforeMainHook,
 	\MediaWiki\Hook\ArticleMergeCompleteHook,
-	\MediaWiki\Hook\ArticleRevisionVisibilitySetHook,
 	\MediaWiki\Hook\ArticleUpdateBeforeRedirectHook,
 	\MediaWiki\Hook\BadImageHook,
 	\MediaWiki\Hook\BeforeInitializeHook,
-	\MediaWiki\Output\Hook\BeforePageDisplayHook,
-	\MediaWiki\Output\Hook\BeforePageRedirectHook,
-	\MediaWiki\Hook\BeforeParserFetchFileAndTitleHook,
-	\MediaWiki\Hook\BeforeParserFetchTemplateRevisionRecordHook,
-	\MediaWiki\Hook\BeforeWelcomeCreationHook,
-	\MediaWiki\Hook\BitmapHandlerCheckImageAreaHook,
-	\MediaWiki\Hook\BitmapHandlerTransformHook,
-	\MediaWiki\Hook\BlockIpCompleteHook,
-	\MediaWiki\Hook\BlockIpHook,
-	\MediaWiki\Hook\BookInformationHook,
-	\MediaWiki\Hook\CanonicalNamespacesHook,
 	\MediaWiki\Hook\CategoryViewer__doCategoryQueryHook,
 	\MediaWiki\Hook\CategoryViewer__generateLinkHook,
-	\MediaWiki\Hook\ChangesListInitRowsHook,
-	\MediaWiki\Hook\ChangesListInsertArticleLinkHook,
-	\MediaWiki\Hook\ChangesListInsertLogEntryHook,
-	\MediaWiki\Hook\ChangeUserGroupsHook,
-	\MediaWiki\Hook\Collation__factoryHook,
 	\MediaWiki\Hook\ContentSecurityPolicyDefaultSourceHook,
 	\MediaWiki\Hook\ContentSecurityPolicyDirectivesHook,
 	\MediaWiki\Hook\ContentSecurityPolicyScriptSourceHook,
-	\MediaWiki\Hook\ContribsPager__getQueryInfoHook,
-	\MediaWiki\Hook\ContribsPager__reallyDoQueryHook,
-	\MediaWiki\Hook\ContributionsLineEndingHook,
-	\MediaWiki\Hook\ContributionsToolLinksHook,
-	\MediaWiki\Hook\CustomEditorHook,
-	\MediaWiki\Hook\DeletedContribsPager__reallyDoQueryHook,
-	\MediaWiki\Hook\DeletedContributionsLineEndingHook,
 	\MediaWiki\Hook\DeleteUnknownPreferencesHook,
 	\MediaWiki\Hook\EditFilterHook,
 	\MediaWiki\Hook\EditFilterMergedContentHook,
 	\MediaWiki\Hook\EditFormInitialTextHook,
 	\MediaWiki\Hook\EditFormPreloadTextHook,
+	\MediaWiki\Hook\EditPage__attemptSave_afterHook,
+	\MediaWiki\Hook\EditPage__attemptSaveHook,
+	\MediaWiki\Hook\EditPage__importFormDataHook,
+	\MediaWiki\Hook\EditPage__showEditForm_fieldsHook,
+	\MediaWiki\Hook\EditPage__showEditForm_initialHook,
+	\MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook,
+	\MediaWiki\Hook\EditPage__showStandardInputs_optionsHook,
 	\MediaWiki\Hook\EditPageBeforeConflictDiffHook,
 	\MediaWiki\Hook\EditPageBeforeEditButtonsHook,
 	\MediaWiki\Hook\EditPageBeforeEditToolbarHook,
@@ -178,225 +176,53 @@ class HookRunner implements
 	\MediaWiki\Hook\EditPageGetPreviewContentHook,
 	\MediaWiki\Hook\EditPageNoSuchSectionHook,
 	\MediaWiki\Hook\EditPageTosSummaryHook,
-	\MediaWiki\Hook\EditPage__attemptSaveHook,
-	\MediaWiki\Hook\EditPage__attemptSave_afterHook,
-	\MediaWiki\Hook\EditPage__importFormDataHook,
-	\MediaWiki\Hook\EditPage__showEditForm_fieldsHook,
-	\MediaWiki\Hook\EditPage__showEditForm_initialHook,
-	\MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook,
-	\MediaWiki\Hook\EditPage__showStandardInputs_optionsHook,
-	\MediaWiki\Hook\EmailUserCCHook,
-	\MediaWiki\Hook\EmailUserCompleteHook,
-	\MediaWiki\Hook\EmailUserFormHook,
-	\MediaWiki\Hook\EmailUserHook,
-	\MediaWiki\Hook\EmailUserPermissionsErrorsHook,
-	\MediaWiki\Mail\Hook\EmailUserAuthorizeSendHook,
-	\MediaWiki\Mail\Hook\EmailUserSendEmailHook,
-	\MediaWiki\Hook\EnhancedChangesListModifyBlockLineDataHook,
-	\MediaWiki\Hook\EnhancedChangesListModifyLineDataHook,
-	\MediaWiki\Hook\EnhancedChangesList__getLogTextHook,
-	\MediaWiki\Hook\ExtensionTypesHook,
-	\MediaWiki\Hook\FetchChangesListHook,
 	\MediaWiki\Hook\FileDeleteCompleteHook,
-	\MediaWiki\Hook\FileTransformedHook,
-	\MediaWiki\Hook\FileUndeleteCompleteHook,
-	\MediaWiki\Hook\FileUploadHook,
 	\MediaWiki\Hook\FormatAutocommentsHook,
-	\MediaWiki\Hook\GalleryGetModesHook,
 	\MediaWiki\Hook\GetBlockErrorMessageKeyHook,
-	\MediaWiki\Output\Hook\GetCacheVaryCookiesHook,
 	\MediaWiki\Hook\GetCanonicalURLHook,
 	\MediaWiki\Hook\GetDefaultSortkeyHook,
 	\MediaWiki\Hook\GetDoubleUnderscoreIDsHook,
-	\MediaWiki\Hook\GetExtendedMetadataHook,
 	\MediaWiki\Hook\GetFullURLHook,
-	\MediaWiki\Language\Hook\GetHumanTimestampHook,
 	\MediaWiki\Hook\GetInternalURLHook,
 	\MediaWiki\Hook\GetIPHook,
-	\MediaWiki\Language\Hook\GetLangPreferredVariantHook,
-	\MediaWiki\Hook\GetLinkColoursHook,
-	\MediaWiki\Hook\GetLocalURLHook,
 	\MediaWiki\Hook\GetLocalURL__ArticleHook,
 	\MediaWiki\Hook\GetLocalURL__InternalHook,
-	\MediaWiki\Hook\GetLogTypesOnUserHook,
-	\MediaWiki\Hook\GetMagicVariableIDsHook,
-	\MediaWiki\Hook\GetMetadataVersionHook,
-	\MediaWiki\Hook\GetNewMessagesAlertHook,
+	\MediaWiki\Hook\GetLocalURLHook,
+	\MediaWiki\Hook\GetRelativeTimestampHook,
 	\MediaWiki\Hook\GetSecurityLogContextHook,
 	\MediaWiki\Hook\GetSessionJwtDataHook,
-	\MediaWiki\Hook\GetRelativeTimestampHook,
 	\MediaWiki\Hook\GitViewersHook,
-	\MediaWiki\Hook\HistoryPageToolLinksHook,
-	\MediaWiki\Hook\HistoryToolsHook,
 	\MediaWiki\Hook\ImageBeforeProduceHTMLHook,
 	\MediaWiki\Hook\ImgAuthBeforeStreamHook,
 	\MediaWiki\Hook\ImgAuthModifyHeadersHook,
-	\MediaWiki\Hook\ImportHandleContentXMLTagHook,
-	\MediaWiki\Hook\ImportHandleLogItemXMLTagHook,
-	\MediaWiki\Hook\ImportHandlePageXMLTagHook,
-	\MediaWiki\Hook\ImportHandleRevisionXMLTagHook,
-	\MediaWiki\Hook\ImportHandleToplevelXMLTagHook,
 	\MediaWiki\Hook\ImportHandleUnknownUserHook,
-	\MediaWiki\Hook\ImportHandleUploadXMLTagHook,
-	\MediaWiki\Hook\ImportLogInterwikiLinkHook,
-	\MediaWiki\Hook\ImportSourcesHook,
-	\MediaWiki\Hook\InfoActionHook,
 	\MediaWiki\Hook\InitializeArticleMaybeRedirectHook,
-	\MediaWiki\Hook\InternalParseBeforeLinksHook,
-	\MediaWiki\Hook\IRCLineURLHook,
 	\MediaWiki\Hook\IsTrustedProxyHook,
-	\MediaWiki\Hook\IsUploadAllowedFromUrlHook,
-	\MediaWiki\Hook\IsValidEmailAddrHook,
-	\MediaWiki\Language\Hook\LanguageGetNamespacesHook,
-	\MediaWiki\Output\Hook\LanguageLinksHook,
-	\MediaWiki\Hook\LanguageSelectorHook,
-	\MediaWiki\Hook\LinkerMakeExternalImageHook,
-	\MediaWiki\Hook\LinkerMakeExternalLinkHook,
-	\MediaWiki\Hook\LinkerMakeMediaLinkFileHook,
-	\MediaWiki\Hook\LinksUpdateCompleteHook,
-	\MediaWiki\Hook\LinksUpdateHook,
-	\MediaWiki\Hook\LocalFilePurgeThumbnailsHook,
-	\MediaWiki\Hook\LocalFile__getHistoryHook,
-	\MediaWiki\Language\Hook\LocalisationCacheRecacheFallbackHook,
-	\MediaWiki\Language\Hook\LocalisationCacheRecacheHook,
-	\MediaWiki\Hook\LogEventsListGetExtraInputsHook,
-	\MediaWiki\Hook\LogEventsListLineEndingHook,
-	\MediaWiki\Hook\LogEventsListShowLogExtractHook,
-	\MediaWiki\Hook\LogExceptionHook,
-	\MediaWiki\Hook\LoginFormValidErrorMessagesHook,
-	\MediaWiki\Hook\LogLineHook,
-	\MediaWiki\Hook\LonelyPagesQueryHook,
-	\MediaWiki\Hook\MagicWordwgVariableIDsHook,
 	\MediaWiki\Hook\MaintenanceRefreshLinksInitHook,
 	\MediaWiki\Hook\MaintenanceShellStartHook,
 	\MediaWiki\Hook\MaintenanceUpdateAddParamsHook,
-	\MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook,
-	\MediaWiki\Hook\ManualLogEntryBeforePublishHook,
-	\MediaWiki\Hook\MarkPatrolledCompleteHook,
-	\MediaWiki\Hook\MarkPatrolledHook,
 	\MediaWiki\Hook\MediaWikiPerformActionHook,
 	\MediaWiki\Hook\MediaWikiServicesHook,
 	\MediaWiki\Hook\MimeMagicGuessFromContentHook,
 	\MediaWiki\Hook\MimeMagicImproveFromExtensionHook,
 	\MediaWiki\Hook\MimeMagicInitHook,
-	\MediaWiki\Hook\ModifyExportQueryHook,
 	\MediaWiki\Hook\MovePageCheckPermissionsHook,
 	\MediaWiki\Hook\MovePageIsValidMoveHook,
-	\MediaWiki\Hook\NamespaceIsMovableHook,
-	\MediaWiki\Hook\NewPagesLineEndingHook,
-	\MediaWiki\Hook\OldChangesListRecentChangesLineHook,
 	\MediaWiki\Hook\OpenSearchUrlsHook,
-	\MediaWiki\Hook\OtherAutoblockLogLinkHook,
-	\MediaWiki\Hook\OtherBlockLogLinkHook,
-	\MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook,
-	\MediaWiki\Output\Hook\OutputPageBeforeHTMLHook,
-	\MediaWiki\Output\Hook\OutputPageBodyAttributesHook,
-	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
-	\MediaWiki\Output\Hook\OutputPageParserOutputHook,
-	\MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook,
-	\MediaWiki\Hook\PageHistoryBeforeListHook,
-	\MediaWiki\Hook\PageHistoryLineEndingHook,
-	\MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook,
-	\MediaWiki\Hook\PageHistoryPager__getQueryInfoHook,
 	\MediaWiki\Hook\PageMoveCompleteHook,
 	\MediaWiki\Hook\PageMoveCompletingHook,
-	\MediaWiki\Hook\PageRenderingHashHook,
-	\MediaWiki\Hook\ParserAfterParseHook,
-	\MediaWiki\Hook\ParserAfterTidyHook,
-	\MediaWiki\Hook\ParserBeforeInternalParseHook,
-	\MediaWiki\Hook\ParserBeforePreprocessHook,
-	\MediaWiki\Hook\ParserCacheSaveCompleteHook,
-	\MediaWiki\Hook\ParserClearStateHook,
-	\MediaWiki\Hook\ParserClonedHook,
-	\MediaWiki\Hook\ParserFetchTemplateDataHook,
-	\MediaWiki\Hook\ParserFirstCallInitHook,
-	\MediaWiki\Hook\ParserGetVariableValueSwitchHook,
-	\MediaWiki\Hook\ParserGetVariableValueTsHook,
-	\MediaWiki\Hook\ParserLimitReportFormatHook,
-	\MediaWiki\Hook\ParserLimitReportPrepareHook,
-	\MediaWiki\Hook\ParserLogLinterDataHook,
-	\MediaWiki\Hook\ParserMakeImageParamsHook,
-	\MediaWiki\Hook\ParserModifyImageHTMLHook,
-	\MediaWiki\Hook\ParserOptionsRegisterHook,
-	\MediaWiki\Hook\ParserOutputPostCacheTransformHook,
-	\MediaWiki\Hook\ParserPreSaveTransformCompleteHook,
 	\MediaWiki\Hook\ParserTestGlobalsHook,
-	\MediaWiki\Hook\PasswordPoliciesForUserHook,
-	\MediaWiki\Hook\PostLoginRedirectHook,
 	\MediaWiki\Hook\PreferencesGetIconHook,
 	\MediaWiki\Hook\PreferencesGetLayoutHook,
-	\MediaWiki\Hook\PreferencesGetLegendHook,
-	\MediaWiki\Hook\PrefsEmailAuditHook,
-	\MediaWiki\Hook\UserCanChangeEmailHook,
 	\MediaWiki\Hook\ProtectionForm__buildFormHook,
 	\MediaWiki\Hook\ProtectionForm__saveHook,
 	\MediaWiki\Hook\ProtectionForm__showLogExtractHook,
 	\MediaWiki\Hook\ProtectionFormAddFormFieldsHook,
-	\MediaWiki\Hook\RandomPageQueryHook,
-	\MediaWiki\Hook\RawPageViewBeforeOutputHook,
-	\MediaWiki\Hook\RecentChangesPurgeRowsHook,
-	\MediaWiki\RecentChanges\Hook\RecentChangesPurgeQueryHook,
-	\MediaWiki\Hook\RecentChange_saveHook,
-	\MediaWiki\Hook\RejectParserCacheValueHook,
-	\MediaWiki\Hook\RequestContextCreateSkinHook,
 	\MediaWiki\Hook\SelfLinkBeginHook,
-	\MediaWiki\Hook\SendWatchlistEmailNotificationHook,
 	\MediaWiki\Hook\SetupAfterCacheHook,
-	\MediaWiki\Hook\ShortPagesQueryHook,
-	\MediaWiki\Hook\SidebarBeforeOutputHook,
-	\MediaWiki\Hook\SiteNoticeAfterHook,
-	\MediaWiki\Hook\SiteNoticeBeforeHook,
-	\MediaWiki\Hook\SkinAddFooterLinksHook,
-	\MediaWiki\Hook\SkinAfterBottomScriptsHook,
-	\MediaWiki\Hook\SkinAfterContentHook,
-	\MediaWiki\Hook\SkinBuildSidebarHook,
-	\MediaWiki\Hook\SkinCopyrightFooterMessageHook,
-	\MediaWiki\Hook\SkinEditSectionLinksHook,
-	\MediaWiki\Hook\SkinPreloadExistenceHook,
-	\MediaWiki\Hook\SkinSubPageSubtitleHook,
-	\MediaWiki\Hook\SkinTemplateGetLanguageLinkHook,
-	\MediaWiki\Hook\SkinTemplateNavigation__UniversalHook,
-	\MediaWiki\Hook\SoftwareInfoHook,
-	\MediaWiki\Hook\SpecialBlockModifyFormFieldsHook,
-	\MediaWiki\Hook\SpecialContributionsBeforeMainOutputHook,
-	\MediaWiki\Hook\SpecialContributions__formatRow__flagsHook,
-	\MediaWiki\Hook\SpecialCreateAccountBenefitsHook,
-	\MediaWiki\Hook\SpecialExportGetExtraPagesHook,
-	\MediaWiki\Hook\SpecialContributions__getForm__filtersHook,
-	\MediaWiki\Hook\SpecialListusersDefaultQueryHook,
-	\MediaWiki\Hook\SpecialListusersFormatRowHook,
-	\MediaWiki\Hook\SpecialListusersHeaderFormHook,
-	\MediaWiki\Hook\SpecialListusersHeaderHook,
-	\MediaWiki\Hook\SpecialListusersQueryInfoHook,
-	\MediaWiki\Hook\SpecialLogAddLogSearchRelationsHook,
-	\MediaWiki\Hook\SpecialLogResolveLogTypeHook,
-	\MediaWiki\Hook\SpecialMovepageAfterMoveHook,
-	\MediaWiki\Hook\SpecialMuteModifyFormFieldsHook,
-	\MediaWiki\Hook\SpecialNewpagesConditionsHook,
-	\MediaWiki\Hook\SpecialNewPagesFiltersHook,
-	\MediaWiki\Hook\SpecialPrefixIndexGetFormFiltersHook,
-	\MediaWiki\Hook\SpecialPrefixIndexQueryHook,
-	\MediaWiki\Hook\SpecialRandomGetRandomTitleHook,
-	\MediaWiki\Hook\SpecialRecentChangesPanelHook,
-	\MediaWiki\Hook\SpecialResetTokensTokensHook,
-	\MediaWiki\Hook\SpecialSearchCreateLinkHook,
-	\MediaWiki\Hook\SpecialSearchGoResultHook,
-	\MediaWiki\Hook\SpecialSearchNogomatchHook,
-	\MediaWiki\Hook\SpecialSearchProfilesHook,
-	\MediaWiki\Hook\SpecialSearchResultsAppendHook,
-	\MediaWiki\Hook\SpecialSearchResultsHook,
-	\MediaWiki\Hook\SpecialSearchResultsPrependHook,
-	\MediaWiki\Hook\SpecialSearchSetupEngineHook,
-	\MediaWiki\Hook\SpecialStatsAddExtraHook,
-	\MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook,
-	\MediaWiki\Hook\SpecialTrackingCategories__preprocessHook,
-	\MediaWiki\Hook\SpecialUploadCompleteHook,
-	\MediaWiki\Hook\SpecialVersionVersionUrlHook,
-	\MediaWiki\Hook\SpecialWatchlistGetNonRevisionTypesHook,
-	\MediaWiki\Hook\SpecialWhatLinksHereQueryHook,
-	\MediaWiki\Hook\TestCanonicalRedirectHook,
-	\MediaWiki\Hook\ThumbnailBeforeProduceHTMLHook,
+	\MediaWiki\Hook\SpecialLogGetSubpagesForPrefixSearchHook,
 	\MediaWiki\Hook\TempUserCreatedRedirectHook,
+	\MediaWiki\Hook\TestCanonicalRedirectHook,
 	\MediaWiki\Hook\TitleExistsHook,
 	\MediaWiki\Hook\TitleGetEditNoticesHook,
 	\MediaWiki\Hook\TitleGetRestrictionTypesHook,
@@ -404,57 +230,76 @@ class HookRunner implements
 	\MediaWiki\Hook\TitleIsMovableHook,
 	\MediaWiki\Hook\TitleMoveHook,
 	\MediaWiki\Hook\TitleMoveStartingHook,
-	\MediaWiki\Hook\UnblockUserCompleteHook,
-	\MediaWiki\Hook\UnblockUserHook,
-	\MediaWiki\Hook\UndeleteForm__showHistoryHook,
-	\MediaWiki\Hook\UndeleteForm__showRevisionHook,
-	\MediaWiki\Hook\UndeletePageToolLinksHook,
+	\MediaWiki\Hook\TitleSquidURLsHook,
 	\MediaWiki\Hook\UnitTestsAfterDatabaseSetupHook,
 	\MediaWiki\Hook\UnitTestsBeforeDatabaseTeardownHook,
 	\MediaWiki\Hook\UnitTestsListHook,
-	\MediaWiki\Hook\UnwatchArticleCompleteHook,
-	\MediaWiki\Hook\UnwatchArticleHook,
-	\MediaWiki\Hook\UpdateUserMailerFormattedPageStatusHook,
-	\MediaWiki\Hook\UploadCompleteHook,
-	\MediaWiki\Hook\UploadCreateFromRequestHook,
-	\MediaWiki\Hook\UploadFormInitDescriptorHook,
-	\MediaWiki\Hook\UploadFormSourceDescriptorsHook,
-	\MediaWiki\Hook\UploadForm_BeforeProcessingHook,
-	\MediaWiki\Hook\UploadForm_getInitialPageTextHook,
-	\MediaWiki\Hook\UploadForm_initialHook,
-	\MediaWiki\Hook\UploadStashFileHook,
-	\MediaWiki\Hook\UploadVerifyFileHook,
-	\MediaWiki\Hook\UploadVerifyUploadHook,
-	\MediaWiki\Hook\UserEditCountUpdateHook,
-	\MediaWiki\Hook\UserGetLanguageObjectHook,
-	\MediaWiki\Hook\UserLoginCompleteHook,
-	\MediaWiki\Hook\UserLogoutCompleteHook,
-	\MediaWiki\Hook\UserMailerChangeReturnPathHook,
-	\MediaWiki\Hook\UserMailerSplitToHook,
-	\MediaWiki\Hook\UserMailerTransformContentHook,
-	\MediaWiki\Hook\UserMailerTransformMessageHook,
-	\MediaWiki\Hook\UsersPagerDoBatchLookupsHook,
 	\MediaWiki\Hook\UserToolLinksEditHook,
-	\MediaWiki\Hook\ValidateExtendedMetadataCacheHook,
-	\MediaWiki\Hook\WantedPages__getQueryInfoHook,
-	\MediaWiki\Hook\WatchArticleCompleteHook,
-	\MediaWiki\Hook\WatchArticleHook,
-	\MediaWiki\Hook\WatchedItemQueryServiceExtensionsHook,
-	\MediaWiki\Hook\WatchlistEditorBeforeFormRenderHook,
-	\MediaWiki\Hook\WatchlistEditorBuildRemoveLineHook,
 	\MediaWiki\Hook\WebRequestPathInfoRouterHook,
 	\MediaWiki\Hook\WebResponseSetCookieHook,
-	\MediaWiki\Hook\WhatLinksHerePropsHook,
-	\MediaWiki\Hook\WikiExporter__dumpStableQueryHook,
-	\MediaWiki\Hook\XmlDumpWriterOpenPageHook,
-	\MediaWiki\Hook\XmlDumpWriterWriteRevisionHook,
+	\MediaWiki\Import\Hook\AfterImportPageHook,
+	\MediaWiki\Import\Hook\ImportHandleContentXMLTagHook,
+	\MediaWiki\Import\Hook\ImportHandleLogItemXMLTagHook,
+	\MediaWiki\Import\Hook\ImportHandlePageXMLTagHook,
+	\MediaWiki\Import\Hook\ImportHandleRevisionXMLTagHook,
+	\MediaWiki\Import\Hook\ImportHandleToplevelXMLTagHook,
+	\MediaWiki\Import\Hook\ImportHandleUploadXMLTagHook,
 	\MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook,
 	\MediaWiki\Interwiki\Hook\InterwikiLoadPrefixHook,
-	\MediaWiki\Language\Hook\LanguageGetTranslatedLanguageNamesHook,
+	\MediaWiki\JobQueue\Jobs\Hook\RecentChangesPurgeRowsHook,
+	\MediaWiki\Language\Hook\GetHumanTimestampHook,
+	\MediaWiki\Language\Hook\GetLangPreferredVariantHook,
 	\MediaWiki\Language\Hook\Language__getMessagesFileNameHook,
-	\MediaWiki\Linker\Hook\LinkerGenerateRollbackLinkHook,
+	\MediaWiki\Language\Hook\LanguageGetNamespacesHook,
+	\MediaWiki\Language\Hook\LanguageGetTranslatedLanguageNamesHook,
+	\MediaWiki\Language\Hook\LocalisationCacheRecacheFallbackHook,
+	\MediaWiki\Language\Hook\LocalisationCacheRecacheHook,
+	\MediaWiki\Language\Hook\MessageCache__getHook,
+	\MediaWiki\Language\Hook\MessageCacheFetchOverridesHook,
+	\MediaWiki\Language\Hook\MessageCacheReplaceHook,
+	\MediaWiki\Language\Hook\MessagesPreLoadHook,
 	\MediaWiki\Linker\Hook\HtmlPageLinkRendererBeginHook,
 	\MediaWiki\Linker\Hook\HtmlPageLinkRendererEndHook,
+	\MediaWiki\Linker\Hook\LinkerGenerateRollbackLinkHook,
+	\MediaWiki\Linker\Hook\LinkerMakeExternalImageHook,
+	\MediaWiki\Linker\Hook\LinkerMakeExternalLinkHook,
+	\MediaWiki\Linker\Hook\LinkerMakeExternalLinkWithContextHook,
+	\MediaWiki\Linker\Hook\LinkerMakeMediaLinkFileHook,
+	\MediaWiki\Linker\Hook\UserLinkRendererUserLinkPostRenderHook,
+	\MediaWiki\Logging\Hook\LogEventsListGetExtraInputsHook,
+	\MediaWiki\Logging\Hook\LogEventsListLineEndingHook,
+	\MediaWiki\Logging\Hook\LogEventsListShowLogExtractHook,
+	\MediaWiki\Logging\Hook\LogLineHook,
+	\MediaWiki\Logging\Hook\ManualLogEntryBeforePublishHook,
+	\MediaWiki\Mail\Hook\AlternateUserMailerHook,
+	\MediaWiki\Mail\Hook\EmailUserAuthorizeSendHook,
+	\MediaWiki\Mail\Hook\EmailUserSendEmailHook,
+	\MediaWiki\Mail\Hook\UserMailerChangeReturnPathHook,
+	\MediaWiki\Mail\Hook\UserMailerSplitToHook,
+	\MediaWiki\Mail\Hook\UserMailerTransformContentHook,
+	\MediaWiki\Mail\Hook\UserMailerTransformMessageHook,
+	\MediaWiki\Media\Hook\BitmapHandlerCheckImageAreaHook,
+	\MediaWiki\Media\Hook\BitmapHandlerTransformHook,
+	\MediaWiki\Media\Hook\GetExtendedMetadataHook,
+	\MediaWiki\Media\Hook\GetMetadataVersionHook,
+	\MediaWiki\Media\Hook\ThumbnailBeforeProduceHTMLHook,
+	\MediaWiki\Media\Hook\ValidateExtendedMetadataCacheHook,
+	\MediaWiki\Message\Hook\MessagePostProcessHtmlHook,
+	\MediaWiki\Message\Hook\MessagePostProcessTextHook,
+	\MediaWiki\Output\Hook\AfterBuildFeedLinksHook,
+	\MediaWiki\Output\Hook\AfterFinalPageOutputHook,
+	\MediaWiki\Output\Hook\BeforePageDisplayHook,
+	\MediaWiki\Output\Hook\BeforePageRedirectHook,
+	\MediaWiki\Output\Hook\GetCacheVaryCookiesHook,
+	\MediaWiki\Output\Hook\LanguageLinksHook,
+	\MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook,
+	\MediaWiki\Output\Hook\OutputPageAfterGetHeadLinksArrayHook,
+	\MediaWiki\Output\Hook\OutputPageBeforeHTMLHook,
+	\MediaWiki\Output\Hook\OutputPageBodyAttributesHook,
+	\MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook,
+	\MediaWiki\Output\Hook\OutputPageParserOutputHook,
+	\MediaWiki\Output\Hook\OutputPageRenderCategoryLinkHook,
+	\MediaWiki\Page\Hook\Article__MissingArticleConditionsHook,
 	\MediaWiki\Page\Hook\ArticleConfirmDeleteHook,
 	\MediaWiki\Page\Hook\ArticleDeleteAfterSuccessHook,
 	\MediaWiki\Page\Hook\ArticleDeleteCompleteHook,
@@ -472,7 +317,6 @@ class HookRunner implements
 	\MediaWiki\Page\Hook\ArticleViewFooterHook,
 	\MediaWiki\Page\Hook\ArticleViewHeaderHook,
 	\MediaWiki\Page\Hook\ArticleViewRedirectHook,
-	\MediaWiki\Page\Hook\Article__MissingArticleConditionsHook,
 	\MediaWiki\Page\Hook\BeforeDisplayNoArticleTextHook,
 	\MediaWiki\Page\Hook\CategoryAfterPageAddedHook,
 	\MediaWiki\Page\Hook\CategoryAfterPageRemovedHook,
@@ -497,9 +341,38 @@ class HookRunner implements
 	\MediaWiki\Page\Hook\ShowMissingArticleHook,
 	\MediaWiki\Page\Hook\WikiPageDeletionUpdatesHook,
 	\MediaWiki\Page\Hook\WikiPageFactoryHook,
-	\MediaWiki\Permissions\Hook\PermissionStatusAuditHook,
+	\MediaWiki\Parser\Hook\AfterParserFetchFileAndTitleHook,
+	\MediaWiki\Parser\Hook\BeforeParserFetchFileAndTitleHook,
+	\MediaWiki\Parser\Hook\BeforeParserFetchTemplateRevisionRecordHook,
+	\MediaWiki\Parser\Hook\GetLinkColoursHook,
+	\MediaWiki\Parser\Hook\GetMagicVariableIDsHook,
+	\MediaWiki\Parser\Hook\InternalParseBeforeLinksHook,
+	\MediaWiki\Parser\Hook\IsValidEmailAddrHook,
+	\MediaWiki\Parser\Hook\PageRenderingHashHook,
+	\MediaWiki\Parser\Hook\ParserAfterParseHook,
+	\MediaWiki\Parser\Hook\ParserAfterTidyHook,
+	\MediaWiki\Parser\Hook\ParserBeforeInternalParseHook,
+	\MediaWiki\Parser\Hook\ParserBeforePreprocessHook,
+	\MediaWiki\Parser\Hook\ParserCacheSaveCompleteHook,
+	\MediaWiki\Parser\Hook\ParserClearStateHook,
+	\MediaWiki\Parser\Hook\ParserClonedHook,
+	\MediaWiki\Parser\Hook\ParserFetchTemplateDataHook,
+	\MediaWiki\Parser\Hook\ParserFirstCallInitHook,
+	\MediaWiki\Parser\Hook\ParserGetVariableValueSwitchHook,
+	\MediaWiki\Parser\Hook\ParserGetVariableValueTsHook,
+	\MediaWiki\Parser\Hook\ParserLimitReportFormatHook,
+	\MediaWiki\Parser\Hook\ParserLimitReportPrepareHook,
+	\MediaWiki\Parser\Hook\ParserLogLinterDataHook,
+	\MediaWiki\Parser\Hook\ParserMakeImageParamsHook,
+	\MediaWiki\Parser\Hook\ParserModifyImageHTMLHook,
+	\MediaWiki\Parser\Hook\ParserOptionsRegisterHook,
+	\MediaWiki\Parser\Hook\ParserOutputPostCacheTransformHook,
+	\MediaWiki\Parser\Hook\ParserPreSaveTransformCompleteHook,
+	\MediaWiki\Parser\Hook\RejectParserCacheValueHook,
+	\MediaWiki\Password\Hook\PasswordPoliciesForUserHook,
 	\MediaWiki\Permissions\Hook\GetUserPermissionsErrorsExpensiveHook,
 	\MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook,
+	\MediaWiki\Permissions\Hook\PermissionStatusAuditHook,
 	\MediaWiki\Permissions\Hook\TitleQuickPermissionsHook,
 	\MediaWiki\Permissions\Hook\TitleReadWhitelistHook,
 	\MediaWiki\Permissions\Hook\UserCanHook,
@@ -510,6 +383,19 @@ class HookRunner implements
 	\MediaWiki\Permissions\Hook\UserIsEveryoneAllowedHook,
 	\MediaWiki\Preferences\Hook\GetPreferencesHook,
 	\MediaWiki\Preferences\Hook\PreferencesFormPreSaveHook,
+	\MediaWiki\RCFeed\Hook\IRCLineURLHook,
+	\MediaWiki\RecentChanges\Hook\ChangesListInitRowsHook,
+	\MediaWiki\RecentChanges\Hook\ChangesListInsertArticleLinkHook,
+	\MediaWiki\RecentChanges\Hook\ChangesListInsertLogEntryHook,
+	\MediaWiki\RecentChanges\Hook\EnhancedChangesList__getLogTextHook,
+	\MediaWiki\RecentChanges\Hook\EnhancedChangesListModifyBlockLineDataHook,
+	\MediaWiki\RecentChanges\Hook\EnhancedChangesListModifyLineDataHook,
+	\MediaWiki\RecentChanges\Hook\FetchChangesListHook,
+	\MediaWiki\RecentChanges\Hook\MarkPatrolledCompleteHook,
+	\MediaWiki\RecentChanges\Hook\MarkPatrolledHook,
+	\MediaWiki\RecentChanges\Hook\OldChangesListRecentChangesLineHook,
+	\MediaWiki\RecentChanges\Hook\RecentChange_saveHook,
+	\MediaWiki\RecentChanges\Hook\RecentChangesPurgeQueryHook,
 	\MediaWiki\RenameUser\Hook\RenameUserAbortHook,
 	\MediaWiki\RenameUser\Hook\RenameUserCompleteHook,
 	\MediaWiki\RenameUser\Hook\RenameUserPreRenameHook,
@@ -518,7 +404,7 @@ class HookRunner implements
 	\MediaWiki\Rest\Hook\SearchResultProvideDescriptionHook,
 	\MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook,
 	\MediaWiki\Revision\Hook\RevisionRecordInsertedHook,
-	\MediaWiki\Search\Hook\PrefixSearchBackendHook,
+	\MediaWiki\RevisionDelete\Hook\ArticleRevisionVisibilitySetHook,
 	\MediaWiki\Search\Hook\PrefixSearchExtractNamespaceHook,
 	\MediaWiki\Search\Hook\SearchableNamespacesHook,
 	\MediaWiki\Search\Hook\SearchAfterNoDirectMatchHook,
@@ -536,26 +422,137 @@ class HookRunner implements
 	\MediaWiki\Session\Hook\SessionCheckInfoHook,
 	\MediaWiki\Session\Hook\SessionMetadataHook,
 	\MediaWiki\Shell\Hook\WfShellWikiCmdHook,
-	\MediaWiki\Skins\Hook\SkinAfterPortletHook,
-	\MediaWiki\Skins\Hook\SkinPageReadyConfigHook,
+	\MediaWiki\Skin\Hook\GetNewMessagesAlertHook,
+	\MediaWiki\Skin\Hook\SidebarBeforeOutputHook,
+	\MediaWiki\Skin\Hook\SiteNoticeAfterHook,
+	\MediaWiki\Skin\Hook\SiteNoticeBeforeHook,
+	\MediaWiki\Skin\Hook\SkinAddFooterLinksHook,
+	\MediaWiki\Skin\Hook\SkinAfterBottomScriptsHook,
+	\MediaWiki\Skin\Hook\SkinAfterContentHook,
+	\MediaWiki\Skin\Hook\SkinAfterPortletHook,
+	\MediaWiki\Skin\Hook\SkinBuildSidebarHook,
+	\MediaWiki\Skin\Hook\SkinCopyrightFooterMessageHook,
+	\MediaWiki\Skin\Hook\SkinEditSectionLinksHook,
+	\MediaWiki\Skin\Hook\SkinPageReadyConfigHook,
+	\MediaWiki\Skin\Hook\SkinPreloadExistenceHook,
+	\MediaWiki\Skin\Hook\SkinSubPageSubtitleHook,
+	\MediaWiki\Skin\Hook\SkinTemplateGetLanguageLinkHook,
+	\MediaWiki\Skin\Hook\SkinTemplateNavigation__UniversalHook,
+	\MediaWiki\Skin\Hook\UndeletePageToolLinksHook,
 	\MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook,
 	\MediaWiki\SpecialPage\Hook\ChangeAuthenticationDataAuditHook,
 	\MediaWiki\SpecialPage\Hook\ChangesListSpecialPageQueryHook,
 	\MediaWiki\SpecialPage\Hook\ChangesListSpecialPageStructuredFiltersHook,
+	\MediaWiki\SpecialPage\Hook\CreateAccountShouldShowUsernamePolicyPopoverHook,
 	\MediaWiki\SpecialPage\Hook\RedirectSpecialArticleRedirectParamsHook,
+	\MediaWiki\SpecialPage\Hook\SpecialPage_initListHook,
 	\MediaWiki\SpecialPage\Hook\SpecialPageAfterExecuteHook,
 	\MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook,
 	\MediaWiki\SpecialPage\Hook\SpecialPageBeforeFormDisplayHook,
-	\MediaWiki\SpecialPage\Hook\SpecialPage_initListHook,
 	\MediaWiki\SpecialPage\Hook\WgQueryPagesHook,
+	\MediaWiki\Specials\Contribute\Hook\ContributeCardsHook,
+	\MediaWiki\Specials\Hook\AncientPagesQueryHook,
+	\MediaWiki\Specials\Hook\BeforeWelcomeCreationHook,
+	\MediaWiki\Specials\Hook\BlockIpCompleteHook,
+	\MediaWiki\Specials\Hook\BlockIpHook,
+	\MediaWiki\Specials\Hook\BookInformationHook,
+	\MediaWiki\Specials\Hook\ChangeUserGroupsHook,
+	\MediaWiki\Specials\Hook\ContribsPager__getQueryInfoHook,
+	\MediaWiki\Specials\Hook\ContribsPager__reallyDoQueryHook,
+	\MediaWiki\Specials\Hook\ContributionsLineEndingHook,
+	\MediaWiki\Specials\Hook\ContributionsToolLinksHook,
+	\MediaWiki\Specials\Hook\DeletedContribsPager__reallyDoQueryHook,
+	\MediaWiki\Specials\Hook\DeletedContributionsLineEndingHook,
+	\MediaWiki\Specials\Hook\EmailUserCCHook,
+	\MediaWiki\Specials\Hook\EmailUserCompleteHook,
+	\MediaWiki\Specials\Hook\EmailUserFormHook,
+	\MediaWiki\Specials\Hook\EmailUserHook,
+	\MediaWiki\Specials\Hook\EmailUserPermissionsErrorsHook,
+	\MediaWiki\Specials\Hook\ExtensionTypesHook,
+	\MediaWiki\Specials\Hook\FileUndeleteCompleteHook,
+	\MediaWiki\Specials\Hook\GetLogTypesOnUserHook,
+	\MediaWiki\Specials\Hook\ImportLogInterwikiLinkHook,
+	\MediaWiki\Specials\Hook\ImportSourcesHook,
+	\MediaWiki\Specials\Hook\LanguageSelectorHook,
+	\MediaWiki\Specials\Hook\LoginFormValidErrorMessagesHook,
+	\MediaWiki\Specials\Hook\LonelyPagesQueryHook,
+	\MediaWiki\Specials\Hook\NewPagesLineEndingHook,
+	\MediaWiki\Specials\Hook\OtherAutoblockLogLinkHook,
+	\MediaWiki\Specials\Hook\OtherBlockLogLinkHook,
+	\MediaWiki\Specials\Hook\PostLoginRedirectHook,
+	\MediaWiki\Specials\Hook\PreferencesGetLegendHook,
+	\MediaWiki\Specials\Hook\PrefsEmailAuditHook,
+	\MediaWiki\Specials\Hook\RandomPageQueryHook,
+	\MediaWiki\Specials\Hook\ShortPagesQueryHook,
+	\MediaWiki\Specials\Hook\SoftwareInfoHook,
+	\MediaWiki\Specials\Hook\SpecialBlockModifyFormFieldsHook,
+	\MediaWiki\Specials\Hook\SpecialContributions__formatRow__flagsHook,
+	\MediaWiki\Specials\Hook\SpecialContributions__getForm__filtersHook,
+	\MediaWiki\Specials\Hook\SpecialContributionsBeforeMainOutputHook,
+	\MediaWiki\Specials\Hook\SpecialCreateAccountBenefitsHook,
+	\MediaWiki\Specials\Hook\SpecialExportGetExtraPagesHook,
+	\MediaWiki\Specials\Hook\SpecialListusersDefaultQueryHook,
+	\MediaWiki\Specials\Hook\SpecialListusersFormatRowHook,
+	\MediaWiki\Specials\Hook\SpecialListusersHeaderFormHook,
+	\MediaWiki\Specials\Hook\SpecialListusersHeaderHook,
+	\MediaWiki\Specials\Hook\SpecialListusersQueryInfoHook,
+	\MediaWiki\Specials\Hook\SpecialLogAddLogSearchRelationsHook,
+	\MediaWiki\Specials\Hook\SpecialLogResolveLogTypeHook,
+	\MediaWiki\Specials\Hook\SpecialMovepageAfterMoveHook,
+	\MediaWiki\Specials\Hook\SpecialMuteModifyFormFieldsHook,
+	\MediaWiki\Specials\Hook\SpecialNewpagesConditionsHook,
+	\MediaWiki\Specials\Hook\SpecialNewPagesFiltersHook,
+	\MediaWiki\Specials\Hook\SpecialPrefixIndexGetFormFiltersHook,
+	\MediaWiki\Specials\Hook\SpecialPrefixIndexQueryHook,
+	\MediaWiki\Specials\Hook\SpecialRandomGetRandomTitleHook,
+	\MediaWiki\Specials\Hook\SpecialRecentChangesPanelHook,
+	\MediaWiki\Specials\Hook\SpecialResetTokensTokensHook,
+	\MediaWiki\Specials\Hook\SpecialSearchCreateLinkHook,
+	\MediaWiki\Specials\Hook\SpecialSearchGoResultHook,
+	\MediaWiki\Specials\Hook\SpecialSearchNogomatchHook,
+	\MediaWiki\Specials\Hook\SpecialSearchProfilesHook,
+	\MediaWiki\Specials\Hook\SpecialSearchResultsAppendHook,
+	\MediaWiki\Specials\Hook\SpecialSearchResultsHook,
+	\MediaWiki\Specials\Hook\SpecialSearchResultsPrependHook,
+	\MediaWiki\Specials\Hook\SpecialSearchSetupEngineHook,
+	\MediaWiki\Specials\Hook\SpecialStatsAddExtraHook,
+	\MediaWiki\Specials\Hook\SpecialTrackingCategories__generateCatLinkHook,
+	\MediaWiki\Specials\Hook\SpecialTrackingCategories__preprocessHook,
+	\MediaWiki\Specials\Hook\SpecialUploadCompleteHook,
+	\MediaWiki\Specials\Hook\SpecialVersionVersionUrlHook,
+	\MediaWiki\Specials\Hook\SpecialWhatLinksHereQueryHook,
+	\MediaWiki\Specials\Hook\UnblockUserCompleteHook,
+	\MediaWiki\Specials\Hook\UnblockUserHook,
+	\MediaWiki\Specials\Hook\UndeleteForm__showHistoryHook,
+	\MediaWiki\Specials\Hook\UndeleteForm__showRevisionHook,
+	\MediaWiki\Specials\Hook\UploadForm_BeforeProcessingHook,
+	\MediaWiki\Specials\Hook\UploadForm_getInitialPageTextHook,
+	\MediaWiki\Specials\Hook\UploadForm_initialHook,
+	\MediaWiki\Specials\Hook\UploadFormInitDescriptorHook,
+	\MediaWiki\Specials\Hook\UploadFormSourceDescriptorsHook,
+	\MediaWiki\Specials\Hook\UserCanChangeEmailHook,
+	\MediaWiki\Specials\Hook\UserLoginCompleteHook,
+	\MediaWiki\Specials\Hook\UserLogoutCompleteHook,
+	\MediaWiki\Specials\Hook\UsersPagerDoBatchLookupsHook,
+	\MediaWiki\Specials\Hook\WantedPages__getQueryInfoHook,
+	\MediaWiki\Specials\Hook\WatchlistEditorBeforeFormRenderHook,
+	\MediaWiki\Specials\Hook\WatchlistEditorBuildRemoveLineHook,
+	\MediaWiki\Specials\Hook\WhatLinksHerePropsHook,
 	\MediaWiki\Storage\Hook\ArticleEditUpdateNewTalkHook,
 	\MediaWiki\Storage\Hook\ArticlePrepareTextForEditHook,
 	\MediaWiki\Storage\Hook\BeforeRevertedTagUpdateHook,
 	\MediaWiki\Storage\Hook\MultiContentSaveHook,
-	\MediaWiki\Storage\Hook\PageContentSaveHook,
 	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
 	\MediaWiki\Storage\Hook\ParserOutputStashForEditHook,
 	\MediaWiki\Storage\Hook\RevisionDataUpdatesHook,
+	\MediaWiki\Title\Hook\CanonicalNamespacesHook,
+	\MediaWiki\Title\Hook\NamespaceIsMovableHook,
+	\MediaWiki\Upload\Hook\IsUploadAllowedFromUrlHook,
+	\MediaWiki\Upload\Hook\UploadCompleteHook,
+	\MediaWiki\Upload\Hook\UploadCreateFromRequestHook,
+	\MediaWiki\Upload\Hook\UploadStashFileHook,
+	\MediaWiki\Upload\Hook\UploadVerifyFileHook,
+	\MediaWiki\Upload\Hook\UploadVerifyUploadHook,
 	\MediaWiki\User\Hook\AutopromoteConditionHook,
 	\MediaWiki\User\Hook\ConfirmEmailCompleteHook,
 	\MediaWiki\User\Hook\EmailConfirmedHook,
@@ -563,7 +560,9 @@ class HookRunner implements
 	\MediaWiki\User\Hook\InvalidateEmailCompleteHook,
 	\MediaWiki\User\Hook\IsValidPasswordHook,
 	\MediaWiki\User\Hook\PingLimiterHook,
+	\MediaWiki\User\Hook\ReadPrivateUserRequirementsConditionHook,
 	\MediaWiki\User\Hook\SpecialPasswordResetOnSubmitHook,
+	\MediaWiki\User\Hook\User__mailPasswordInternalHook,
 	\MediaWiki\User\Hook\UserAddGroupHook,
 	\MediaWiki\User\Hook\UserArrayFromResultHook,
 	\MediaWiki\User\Hook\UserCanSendEmailHook,
@@ -574,30 +573,29 @@ class HookRunner implements
 	\MediaWiki\User\Hook\UserGetEmailHook,
 	\MediaWiki\User\Hook\UserGetReservedNamesHook,
 	\MediaWiki\User\Hook\UserGroupsChangedHook,
-	\MediaWiki\User\Hook\UserIsBlockedGloballyHook,
 	\MediaWiki\User\Hook\UserIsBotHook,
 	\MediaWiki\User\Hook\UserIsLockedHook,
 	\MediaWiki\User\Hook\UserLoadAfterLoadFromSessionHook,
 	\MediaWiki\User\Hook\UserLoadDefaultsHook,
 	\MediaWiki\User\Hook\UserLogoutHook,
 	\MediaWiki\User\Hook\UserPrivilegedGroupsHook,
-	\MediaWiki\Linker\Hook\UserLinkRendererUserLinkPostRenderHook,
 	\MediaWiki\User\Hook\UserRemoveGroupHook,
+	\MediaWiki\User\Hook\UserRequirementsConditionHook,
+	\MediaWiki\User\Hook\UserRequirementsConditionDisplayHook,
 	\MediaWiki\User\Hook\UserSaveSettingsHook,
 	\MediaWiki\User\Hook\UserSendConfirmationMailHook,
 	\MediaWiki\User\Hook\UserSetEmailAuthenticationTimestampHook,
 	\MediaWiki\User\Hook\UserSetEmailHook,
-	\MediaWiki\User\Hook\User__mailPasswordInternalHook,
+	\MediaWiki\User\Options\Hook\ConditionalDefaultOptionsAddConditionHook,
 	\MediaWiki\User\Options\Hook\LoadUserOptionsHook,
 	\MediaWiki\User\Options\Hook\LocalUserOptionsStoreSaveHook,
 	\MediaWiki\User\Options\Hook\SaveUserOptionsHook,
-	\MediaWiki\User\Options\Hook\ConditionalDefaultOptionsAddConditionHook
+	\MediaWiki\Watchlist\Hook\WatchedItemQueryServiceExtensionsHook
 {
-	/** @var HookContainer */
-	private $container;
 
-	public function __construct( HookContainer $container ) {
-		$this->container = $container;
+	public function __construct(
+		private readonly HookContainer $container,
+	) {
 	}
 
 	/** @inheritDoc */
@@ -617,22 +615,6 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onAbortEmailNotification( $editor, $title, $rc ) {
-		return $this->container->run(
-			'AbortEmailNotification',
-			[ $editor, $title, $rc ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onAbortTalkPageEmailNotification( $targetUser, $title ) {
-		return $this->container->run(
-			'AbortTalkPageEmailNotification',
-			[ $targetUser, $title ]
-		);
-	}
-
-	/** @inheritDoc */
 	public function onActionBeforeFormDisplay( $name, $form, $article ) {
 		return $this->container->run(
 			'ActionBeforeFormDisplay',
@@ -645,14 +627,6 @@ class HookRunner implements
 		return $this->container->run(
 			'ActionModifyFormFields',
 			[ $name, &$fields, $article ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onAddNewAccount( $user, $byEmail ) {
-		return $this->container->run(
-			'AddNewAccount',
-			[ $user, $byEmail ]
 		);
 	}
 
@@ -1496,7 +1470,7 @@ class HookRunner implements
 
 	/** @inheritDoc */
 	public function onTextSlotDiffRendererTablePrefix(
-		\TextSlotDiffRenderer $textSlotDiffRenderer,
+		TextSlotDiffRenderer $textSlotDiffRenderer,
 		IContextSource $context,
 		array &$parts
 	) {
@@ -1970,12 +1944,12 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onFormatAutocomments( &$comment, $pre, $auto, $post, $title,
+	public function onFormatAutocomments( &$comment, $pre, $extractedText, $post, $title,
 		$local, $wikiId
 	) {
 		return $this->container->run(
 			'FormatAutocomments',
-			[ &$comment, $pre, $auto, $post, $title, $local, $wikiId ]
+			[ &$comment, $pre, $extractedText, $post, $title, $local, $wikiId ]
 		);
 	}
 
@@ -2642,6 +2616,17 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
+	public function onLinkerMakeExternalLinkWithContext(
+		?string &$url, string &$text, array &$attribs,
+		string $linkType, ParsoidLinkTarget $contextTitle
+	) {
+		return $this->container->run(
+			'LinkerMakeExternalLinkWithContext',
+			[ &$url, &$text, &$attribs, $linkType, $contextTitle ]
+		);
+	}
+
+	/** @inheritDoc */
 	public function onLinkerMakeMediaLinkFile( $title, $file, &$html, &$attribs,
 		&$ret
 	) {
@@ -2773,6 +2758,14 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
+	public function onCreateAccountShouldShowUsernamePolicyPopover( $specialPage, &$show ) {
+		return $this->container->run(
+			'CreateAccountShouldShowUsernamePolicyPopover',
+			[ $specialPage, &$show ]
+		);
+	}
+
+	/** @inheritDoc */
 	public function onLogLine( $log_type, $log_action, $title, $paramArray,
 		&$comment, &$revert, $time
 	) {
@@ -2788,14 +2781,6 @@ class HookRunner implements
 		return $this->container->run(
 			'LonelyPagesQuery',
 			[ &$tables, &$conds, &$joinConds ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onMagicWordwgVariableIDs( &$variableIDs ) {
-		return $this->container->run(
-			'MagicWordwgVariableIDs',
-			[ &$variableIDs ]
 		);
 	}
 
@@ -3131,17 +3116,6 @@ class HookRunner implements
 		return $this->container->run(
 			'PageContentLanguage',
 			[ $title, &$pageLang, $userLang ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onPageContentSave( $wikiPage, $user, $content, &$summary,
-		$isminor, $iswatch, $section, $flags, $status
-	) {
-		return $this->container->run(
-			'PageContentSave',
-			[ $wikiPage, $user, $content, &$summary, $isminor, $iswatch,
-				$section, $flags, $status ]
 		);
 	}
 
@@ -3561,16 +3535,6 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onPrefixSearchBackend( $ns, $search, $limit, &$results,
-		$offset
-	) {
-		return $this->container->run(
-			'PrefixSearchBackend',
-			[ $ns, $search, $limit, &$results, $offset ]
-		);
-	}
-
-	/** @inheritDoc */
 	public function onPrefixSearchExtractNamespace( &$namespaces, &$search ) {
 		return $this->container->run(
 			'PrefixSearchExtractNamespace',
@@ -3631,6 +3595,19 @@ class HookRunner implements
 		return $this->container->run(
 			'RawPageViewBeforeOutput',
 			[ $obj, &$text ]
+		);
+	}
+
+	/** @inheritDoc */
+	public function onReadPrivateUserRequirementsCondition(
+		UserIdentity $performer,
+		UserIdentity $target,
+		array $conditions
+	): void {
+		$this->container->run(
+			'ReadPrivateUserRequirementsCondition',
+			[ $performer, $target, $conditions ],
+			[ 'abortable' => false ]
 		);
 	}
 
@@ -3889,14 +3866,6 @@ class HookRunner implements
 		return $this->container->run(
 			'SelfLinkBegin',
 			[ $nt, &$html, &$trail, &$prefix, &$ret ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onSendWatchlistEmailNotification( $targetUser, $title, $enotif ) {
-		return $this->container->run(
-			'SendWatchlistEmailNotification',
-			[ $targetUser, $title, $enotif ]
 		);
 	}
 
@@ -4212,6 +4181,18 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
+	public function onSpecialLogGetSubpagesForPrefixSearch(
+		IContextSource $context,
+		array &$subpages
+	): void {
+		$this->container->run(
+			'SpecialLogGetSubpagesForPrefixSearch',
+			[ $context, &$subpages ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	/** @inheritDoc */
 	public function onSpecialMovepageAfterMove( $movePage, $oldTitle, $newTitle ) {
 		return $this->container->run(
 			'SpecialMovepageAfterMove',
@@ -4456,14 +4437,6 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onSpecialWatchlistGetNonRevisionTypes( &$nonRevisionTypes ) {
-		return $this->container->run(
-			'SpecialWatchlistGetNonRevisionTypes',
-			[ &$nonRevisionTypes ]
-		);
-	}
-
-	/** @inheritDoc */
 	public function onSpreadAnyEditBlock( $user, bool &$blockWasSpread ) {
 		return $this->container->run(
 			'SpreadAnyEditBlock',
@@ -4580,10 +4553,10 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onTitleReadWhitelist( $title, $user, &$whitelisted ) {
+	public function onTitleReadWhitelist( $title, $user, &$allowed ) {
 		return $this->container->run(
 			'TitleReadWhitelist',
-			[ $title, $user, &$whitelisted ]
+			[ $title, $user, &$allowed ]
 		);
 	}
 
@@ -4672,14 +4645,6 @@ class HookRunner implements
 		return $this->container->run(
 			'UnwatchArticleComplete',
 			[ $user, $page ]
-		);
-	}
-
-	/** @inheritDoc */
-	public function onUpdateUserMailerFormattedPageStatus( &$formattedPageStatus ) {
-		return $this->container->run(
-			'UpdateUserMailerFormattedPageStatus',
-			[ &$formattedPageStatus ]
 		);
 	}
 
@@ -4933,14 +4898,6 @@ class HookRunner implements
 	}
 
 	/** @inheritDoc */
-	public function onUserIsBlockedGlobally( $user, $ip, &$blocked, &$block ) {
-		return $this->container->run(
-			'UserIsBlockedGlobally',
-			[ $user, $ip, &$blocked, &$block ]
-		);
-	}
-
-	/** @inheritDoc */
 	public function onUserIsBot( $user, &$isBot ) {
 		return $this->container->run(
 			'UserIsBot',
@@ -5070,6 +5027,28 @@ class HookRunner implements
 		return $this->container->run(
 			'UserRemoveGroup',
 			[ $user, &$group ]
+		);
+	}
+
+	/** @inheritDoc */
+	public function onUserRequirementsCondition( string|int $type, array $args, UserIdentity $user,
+		bool $isPerformingRequest, ?bool &$result
+	): void {
+		$this->container->run(
+			'UserRequirementsCondition',
+			[ $type, $args, $user, $isPerformingRequest, &$result ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	/** @inheritDoc */
+	public function onUserRequirementsConditionDisplay( string|int $type, array $args, IContextSource $context,
+		?MessageSpecifier &$messageSpec
+	): void {
+		$this->container->run(
+			'UserRequirementsConditionDisplay',
+			[ $type, $args, $context, &$messageSpec ],
+			[ 'abortable' => false ]
 		);
 	}
 

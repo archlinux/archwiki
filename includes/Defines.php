@@ -6,8 +6,8 @@
  * @file
  */
 
-require_once __DIR__ . '/libs/mime/defines.php';
-require_once __DIR__ . '/libs/rdbms/defines.php';
+require_once __DIR__ . '/libs/Mime/defines.php';
+require_once __DIR__ . '/libs/Rdbms/defines.php';
 
 use Wikimedia\Rdbms\IDatabase;
 
@@ -20,7 +20,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.45.4' );
+define( 'MW_VERSION', '1.46.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants

@@ -6,8 +6,8 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Warn;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Session\Session;
+use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\User\UserEditTracker;
-use MediaWiki\User\UserFactory;
 use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -27,7 +27,7 @@ class BuiltinPrioritiesTest extends MediaWikiUnitTestCase {
 			[],
 			$this->createMock( BagOStuff::class ),
 			$this->createMock( UserEditTracker::class ),
-			$this->createMock( UserFactory::class ),
+			$this->createMock( UserRegistrationLookup::class ),
 			new NullLogger(),
 			'',
 			false

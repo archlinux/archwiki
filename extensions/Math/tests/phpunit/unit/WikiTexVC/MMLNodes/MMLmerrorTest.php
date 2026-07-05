@@ -23,4 +23,11 @@ class MMLmerrorTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( [ 'mathvariant' => Variants::BOLD ], $mer->getAttributes() );
 		$this->assertEquals( $mer->getChildren(), [ $mt ] );
 	}
+
+	public function testFromString() {
+		$err = MMLmerror::newFromText( 'test' );
+
+		$this->assertInstanceOf( MMLmerror::class, $err );
+		$this->assertEquals( 'test', $err->getChildren()[0]->getText() );
+	}
 }

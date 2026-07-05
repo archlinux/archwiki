@@ -15,6 +15,7 @@ use MediaWiki\Language\Language;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
@@ -25,6 +26,7 @@ use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\User\UserIdentityValue;
+use MediaWiki\User\UserNameUtils;
 use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
 use UnexpectedValueException;
@@ -56,6 +58,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			$services['PermissionManager'] ?? $this->createMock( PermissionManager::class ),
 			$services['RestrictionStore'] ?? $this->createMock( RestrictionStore::class ),
 			$services['UserIdentityUtils'] ?? $this->createMock( UserIdentityUtils::class ),
+			$services['UserNameUtils'] ?? $this->createMock( UserNameUtils::class ),
 			$wikiID
 		);
 	}
@@ -144,10 +147,10 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	}
 
 	public static function provideUserRelatedVars(): Generator {
-		$getUserVar = static function ( $user, $method ): LazyLoadedVariable {
+		$getUserVar = static function ( $user, $method, $rc = null ): LazyLoadedVariable {
 			return new LazyLoadedVariable(
 				$method,
-				[ 'user' => $user, 'user-identity' => $user, 'rc' => null ]
+				[ 'user' => $user, 'user-identity' => $user, 'rc' => $rc ]
 			);
 		};
 
@@ -244,6 +247,54 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			return [ $var, [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
 		};
 		yield 'user_unnamed_ip for a temp user' => [ '127.0.0.1', $getMocks ];
+
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$rc = new RecentChange();
+			$rc->setAttribute( 'rc_ip', '127.0.0.2' );
+
+			// Mock that the request is using a different IP to assert that
+			// the RecentChange entry is only used as the IP source
+			$request = new FauxRequest();
+			$request->setIP( '127.0.0.1' );
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getRequest' )->willReturn( $request );
+			$user->method( 'getName' )->willReturn( '127.0.0.2' );
+
+			$var = $getUserVar( $user, 'user-unnamed-ip', $rc );
+			return [ $var, [] ];
+		};
+		yield 'user_unnamed_ip for an RC performed by an anon user' => [ '127.0.0.2', $getMocks ];
+
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$rc = new RecentChange();
+			$rc->setAttribute( 'rc_ip', '127.0.0.2' );
+
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getName' )->willReturn( 'Test User' );
+			$var = $getUserVar( $user, 'user-unnamed-ip', $rc );
+			return [ $var, [] ];
+		};
+		yield 'user_unnamed_ip for an RC performed by a named user' => [ null, $getMocks ];
+
+		$getMocks = static function ( $testCase ) use ( $getUserVar ) {
+			$rc = new RecentChange();
+			$rc->setAttribute( 'rc_ip', '127.0.0.2' );
+
+			$user = $testCase->createMock( User::class );
+			$mockUserIdentityUtils = $testCase->createMock( UserIdentityUtils::class );
+			$mockUserIdentityUtils->method( 'isTemp' )->with( $user )->willReturn( true );
+
+			// Mock that the request is using a different IP to assert that
+			// the RecentChange entry is only used as the IP source
+			$request = new FauxRequest();
+			$request->setIP( '127.0.0.1' );
+			$user = $testCase->createMock( User::class );
+			$user->method( 'getRequest' )->willReturn( $request );
+
+			$var = $getUserVar( $user, 'user-unnamed-ip', $rc );
+			return [ $var, [ 'UserIdentityUtils' => $mockUserIdentityUtils ] ];
+		};
+		yield 'user_unnamed_ip for an RC performed by a temp user' => [ '127.0.0.2', $getMocks ];
 
 		$groups = [ '*', 'group1', 'group2' ];
 		$getMocks = static function ( $testCase ) use ( $groups, $getUserVar ) {
@@ -409,4 +460,63 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 
 		// TODO _recent_contributors is tested in LazyVariableComputerDBTest
 	}
+
+	public static function provideAccountCreationRelatedVars() {
+		return [
+			'Create a named account' => [
+				'accountName' => 'Foo',
+				'autocreate' => false,
+				'expected' => 'named'
+			],
+			'Auto-create a named account' => [
+				'accountName' => 'Foo',
+				'autocreate' => true,
+				'expected' => 'named'
+			],
+			'Create a temporary account' => [
+				'accountName' => '~1',
+				'autocreate' => false,
+				'expected' => 'unknown'
+			],
+			'Auto-create a temporary account' => [
+				'accountName' => '~1',
+				'autocreate' => true,
+				'expected' => 'temp'
+			],
+			'Create an unknown account' => [
+				'accountName' => '1.2.3.4',
+				'autocreate' => false,
+				'expected' => 'unknown'
+			],
+			'Auto-create an unknown account' => [
+				'accountName' => '1.2.3.4',
+				'autocreate' => true,
+				'expected' => 'unknown'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideAccountCreationRelatedVars
+	 */
+	public function testAccountCreationRelatedVars( string $accountName, bool $autocreate, string $expected ) {
+		$createdUser = $this->createMock( User::class );
+		$createdUser->method( 'getName' )->willReturn( $accountName );
+		$userIdentityUtils = $this->createMock( UserIdentityUtils::class );
+		$userIdentityUtils->method( 'isTemp' )->willReturn( $accountName === '~1' );
+		$userNameUtils = $this->createMock( UserNameUtils::class );
+		$userNameUtils->method( 'isCreatable' )->willReturn( $accountName === 'Foo' );
+
+		$computer = $this->getComputer( [
+			'UserIdentityUtils' => $userIdentityUtils,
+			'UserNameUtils' => $userNameUtils
+		] );
+		$var = new LazyLoadedVariable(
+			'account-type',
+			[ 'autocreate' => $autocreate, 'createdUser' => $createdUser ]
+		);
+		$actual = $computer->compute( $var, new VariableHolder(), $this->getForbidComputeCB() )->toNative();
+		$this->assertSame( $expected, $actual );
+	}
+
 }

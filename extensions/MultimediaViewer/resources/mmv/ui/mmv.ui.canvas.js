@@ -15,8 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const HtmlUtils = require( '../mmv.HtmlUtils.js' );
-const ThumbnailWidthCalculator = require( '../mmv.ThumbnailWidthCalculator.js' );
+const { HtmlUtils, ThumbnailWidthCalculator } = require( 'mmv.common' );
 const UiElement = require( './mmv.ui.js' );
 
 /**

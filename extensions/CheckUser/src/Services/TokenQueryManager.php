@@ -1,14 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use MediaWiki\Request\WebRequest;
 
 class TokenQueryManager {
-	public TokenManager $tokenManager;
-
-	public function __construct( TokenManager $tokenManager ) {
-		$this->tokenManager = $tokenManager;
+	public function __construct(
+		private readonly TokenManager $tokenManager,
+	) {
 	}
 
 	/**

@@ -109,6 +109,7 @@ ve.ui.Surface = function VeUiSurface( target, dataOrDocOrSurface, config = {} ) 
 		bottom: 0,
 		left: 0
 	};
+	this.scrollPaddingSuppressed = false;
 	// Intiailised on first use
 	this.toolbarDialogs = {};
 
@@ -197,6 +198,12 @@ OO.inheritClass( ve.ui.Surface, OO.ui.Widget );
  * @param {boolean} readOnly The surface is read-only
  */
 
+/**
+ * The surface padding has changed
+ *
+ * @event ve.ui.Surface#padding
+ */
+
 /* Methods */
 
 /**
@@ -225,6 +232,12 @@ ve.ui.Surface.prototype.destroy = function () {
 	// Remove DOM elements
 	this.$element.remove();
 	this.globalOverlay.$element.remove();
+
+	// Reset scroll-padding
+	$( document.documentElement ).css( 'scroll-padding', '' );
+	// Reset padding to 0 and emit a final padding event
+	this.setPadding( { top: 0, right: 0, bottom: 0, left: 0 } );
+	this.emit( 'padding' );
 
 	// Let others know we have been destroyed
 	this.emit( 'destroy' );
@@ -372,6 +385,9 @@ ve.ui.Surface.prototype.getBoundingClientRect = function () {
 
 /**
  * Get measurements of the visible area of the surface viewport
+ *
+ * The bounding box returned is relative the viewport, e.g. a top
+ * value of 50 means the top 50px of the surface is outside the viewport.
  *
  * @return {Object|null} Object with top, bottom, left, right, width and height properties. Null if the surface is not attached.
  */
@@ -575,6 +591,11 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scr
 		selectionView = view.getSelection( selectionModel ),
 		isNative = selectionView.isNativeCursor();
 
+	// Scroll is suppressed, e.g. by selectAll
+	if ( view.noScrollSelecting ) {
+		return;
+	}
+
 	// We only care about the focus end of the selection, the anchor never
 	// moves and should be allowed off screen.
 	let clientRect = selectionView.getSelectionFocusRect();
@@ -629,9 +650,9 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function ( selectionModel, scr
 	padding.right += 5;
 
 	ve.scrollIntoView( clientRect, ve.extendObject( {
-		animate: animate,
+		animate,
 		scrollContainer: this.$scrollContainer[ 0 ],
-		padding: padding
+		padding
 	}, scrollConfig ) ).then( () => {
 		if ( isNative ) {
 			// TODO: This event has only even been emitted for native selection
@@ -701,6 +722,10 @@ ve.ui.Surface.prototype.updatePlaceholder = function () {
  * @param {boolean} [passive=false]
  */
 ve.ui.Surface.prototype.onViewPosition = function ( passive ) {
+	// This is often called by a debounced listener, so check the surface hasn't been destroyed
+	if ( !this.$element[ 0 ].parentNode ) {
+		return;
+	}
 	this.recalculatePadding(
 		// Don't scroll to this user's cursor if event is marked as passive
 		!passive
@@ -776,8 +801,7 @@ ve.ui.Surface.prototype.executeCommand = function ( commandName ) {
 };
 
 /**
- * @typedef {Object} Padding
- * @memberof ve.ui.Surface
+ * @typedef {Object} ve.ui.Surface.Padding
  * @property {number} [top] Top padding
  * @property {number} [right] Right padding
  * @property {number} [bottom] Bottom padding
@@ -815,6 +839,13 @@ ve.ui.Surface.prototype.getPadding = function () {
 	return this.padding;
 };
 
+/**
+ * Recalculate the content area padding based on the current state of the surface and visible components.
+ *
+ * This should be called when the surface is resized or when UI components are toggled.
+ *
+ * @param {boolean} [scrollSelection] Scroll selection into view after recalculating padding
+ */
 ve.ui.Surface.prototype.recalculatePadding = function ( scrollSelection ) {
 	const oldPadding = this.padding;
 	this.padding = ve.extendObject(
@@ -831,8 +862,11 @@ ve.ui.Surface.prototype.recalculatePadding = function ( scrollSelection ) {
 		ve.extendObject( this.padding, this.toolbarDialogs[ side ].getSurfacePadding() );
 	}
 	// Scroll selection into view if padding changed
-	if ( scrollSelection && !OO.compare( oldPadding, this.padding ) ) {
-		this.scrollSelectionIntoView();
+	if ( !OO.compare( oldPadding, this.padding ) ) {
+		if ( scrollSelection ) {
+			this.scrollSelectionIntoView();
+		}
+		this.emit( 'padding' );
 	}
 	this.adjustVisiblePadding();
 };
@@ -874,21 +908,48 @@ ve.ui.Surface.prototype.onViewActivation = function () {
  * to be scrolled to.
  */
 ve.ui.Surface.prototype.adjustVisiblePadding = function () {
+	// Prevent updating after surface has been destroyed
+	if ( !this.$element[ 0 ].parentNode ) {
+		return;
+	}
+	const padding = this.getPadding();
 	if ( OO.ui.isMobile() && !this.inTargetWidget ) {
-		const keyboardShown = this.getView().hasNativeCursorSelection();
 		let bottom;
-		if ( ve.init.platform.constructor.static.isIos() && keyboardShown ) {
+		if ( ve.init.platform.constructor.static.isIos() && this.getTarget().isVirtualKeyboardOpen() ) {
 			// iOS needs a whole extra page of padding when the virtual keyboard is shown.
 			// Note: we keep this padding when surface is deactivated-but-shown-as-activated
 			// so that the view doesn't shift when e.g. opening a toolbar toolgroup popup.
-			bottom = $( window ).height() - this.getPadding().top;
+			bottom = $( window ).height() - padding.top;
 		} else {
 			// otherwise just add padding to account for the context
-			bottom = this.getPadding().bottom;
+			bottom = padding.bottom;
 		}
 		this.getView().$attachedRootNode.css( 'padding-bottom', bottom );
-		this.scrollSelectionIntoView();
 	}
+
+	if ( this.scrollPaddingSuppressed ) {
+		$( document.documentElement ).css( 'scroll-padding', '0' );
+	} else {
+		$( document.documentElement ).css( {
+			'scroll-padding-top': padding.top + 'px',
+			'scroll-padding-right': padding.right + 'px',
+			'scroll-padding-bottom': padding.bottom + 'px',
+			'scroll-padding-left': padding.left + 'px'
+		} );
+	}
+};
+
+/**
+ * Suppress or unsuppress scroll padding adjustments.
+ *
+ * This is set by the sticky toolbar when it is focussed to prevent
+ * a bug in Chromium browsers (https://issues.chromium.org/issues/40749247)
+ *
+ * @param {boolean} scrollPaddingSuppressed
+ */
+ve.ui.Surface.prototype.suppressScrollPadding = function ( scrollPaddingSuppressed ) {
+	this.scrollPaddingSuppressed = scrollPaddingSuppressed;
+	this.adjustVisiblePadding();
 };
 
 /**
@@ -903,10 +964,10 @@ ve.ui.Surface.prototype.createProgress = function ( progressCompletePromise, lab
 	const progressBarDeferred = ve.createDeferred();
 
 	this.progresses.push( {
-		label: label,
+		label,
 		cancellable: !nonCancellable,
-		progressCompletePromise: progressCompletePromise,
-		progressBarDeferred: progressBarDeferred
+		progressCompletePromise,
+		progressBarDeferred
 	} );
 
 	this.showProgressDebounced();
@@ -917,7 +978,7 @@ ve.ui.Surface.prototype.createProgress = function ( progressCompletePromise, lab
 ve.ui.Surface.prototype.showProgress = function () {
 	const progresses = this.progresses;
 
-	this.dialogs.openWindow( 'progress', { progresses: progresses, $returnFocusTo: null } );
+	this.dialogs.openWindow( 'progress', { progresses, $returnFocusTo: null } );
 	this.progresses = [];
 };
 

@@ -138,4 +138,20 @@ class LocalCheckerTest extends MediaWikiIntegrationTestCase {
 		$actual = $checker->runCheck();
 		$this->assertArrayEquals( $fakeContent, $actual );
 	}
+
+	public function testBrokenResult() {
+		$fakeWAN = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
+		$fakeContent = [
+			'status' => 'i',
+			'broken' => 'content',
+		];
+		$fakeWAN->set( self::SAMPLE_KEY,
+			$fakeContent,
+			WANObjectCache::TTL_INDEFINITE,
+			[ 'version' => LocalChecker::VERSION ] );
+		$checker = new LocalChecker( $fakeWAN, '\sin x^2', 'tex' );
+		$checker->run();
+		$this->assertNull( $checker->getPresentationMathMLFragment() );
+		$this->assertEquals( 'math_unknown_error', $checker->getError()->getKey() );
+	}
 }

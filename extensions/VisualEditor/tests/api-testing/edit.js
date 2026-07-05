@@ -74,11 +74,11 @@ describe( 'Visual Editor API', () => {
 			const result = await alice.action(
 				'visualeditoredit',
 				{
-					page: page,
+					page,
 					paction: 'save',
-					token: token,
-					html: html,
-					summary: summary
+					token,
+					html,
+					summary
 				},
 				'post'
 			);
@@ -93,11 +93,11 @@ describe( 'Visual Editor API', () => {
 			const error = await alice.actionError(
 				'visualeditoredit',
 				{
-					page: page,
+					page,
 					paction: 'save',
-					token: token,
-					html: html,
-					summary: summary
+					token,
+					html,
+					summary
 				},
 				'post'
 			);
@@ -244,9 +244,9 @@ describe( 'Visual Editor API', () => {
 			{
 				page: title,
 				paction: 'diff',
-				token: token,
-				html: html,
-				summary: summary
+				token,
+				html,
+				summary
 			},
 			'post'
 		);
@@ -262,9 +262,9 @@ describe( 'Visual Editor API', () => {
 			{
 				page: title,
 				paction: 'serialize',
-				token: token,
-				html: html,
-				summary: summary
+				token,
+				html,
+				summary
 			},
 			'post'
 		);
@@ -283,9 +283,9 @@ describe( 'Visual Editor API', () => {
 			{
 				page: title,
 				paction: 'serializeforcache',
-				token: token,
-				html: html,
-				summary: summary
+				token,
+				html,
+				summary
 			},
 			'post'
 		);

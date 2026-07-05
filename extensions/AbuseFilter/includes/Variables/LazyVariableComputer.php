@@ -7,6 +7,7 @@ use MediaWiki\Content\ContentHandler;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\ExternalLinks\LinkFilter;
@@ -17,6 +18,7 @@ use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -29,9 +31,9 @@ use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
+use MediaWiki\User\UserNameUtils;
 use Psr\Log\LoggerInterface;
 use stdClass;
-use StringUtils;
 use UnexpectedValueException;
 use Wikimedia\Diff\Diff;
 use Wikimedia\Diff\UnifiedDiffFormatter;
@@ -40,13 +42,14 @@ use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Service used to compute lazy-loaded variable.
  * @internal
  */
 class LazyVariableComputer {
-	public const SERVICE_NAME = 'AbuseFilterLazyVariableComputer';
+	public const SERVICE_NAME = ServiceNames::LazyVariableComputer;
 
 	/**
 	 * @var float The amount of time to subtract from profiling
@@ -54,100 +57,24 @@ class LazyVariableComputer {
 	 */
 	public static $profilingExtraTime = 0;
 
-	/** @var TextExtractor */
-	private $textExtractor;
-
-	/** @var AbuseFilterHookRunner */
-	private $hookRunner;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var LBFactory */
-	private $lbFactory;
-
-	/** @var WANObjectCache */
-	private $wanCache;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var ParserFactory */
-	private $parserFactory;
-
-	/** @var UserEditTracker */
-	private $userEditTracker;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
-
-	/** @var UserIdentityUtils */
-	private $userIdentityUtils;
-
-	/** @var string */
-	private $wikiID;
-
-	/**
-	 * @param TextExtractor $textExtractor
-	 * @param AbuseFilterHookRunner $hookRunner
-	 * @param LoggerInterface $logger
-	 * @param LBFactory $lbFactory
-	 * @param WANObjectCache $wanCache
-	 * @param RevisionLookup $revisionLookup
-	 * @param RevisionStore $revisionStore
-	 * @param Language $contentLanguage
-	 * @param ParserFactory $parserFactory
-	 * @param UserEditTracker $userEditTracker
-	 * @param UserGroupManager $userGroupManager
-	 * @param PermissionManager $permissionManager
-	 * @param RestrictionStore $restrictionStore
-	 * @param UserIdentityUtils $userIdentityUtils
-	 * @param string $wikiID
-	 */
 	public function __construct(
-		TextExtractor $textExtractor,
-		AbuseFilterHookRunner $hookRunner,
-		LoggerInterface $logger,
-		LBFactory $lbFactory,
-		WANObjectCache $wanCache,
-		RevisionLookup $revisionLookup,
-		RevisionStore $revisionStore,
-		Language $contentLanguage,
-		ParserFactory $parserFactory,
-		UserEditTracker $userEditTracker,
-		UserGroupManager $userGroupManager,
-		PermissionManager $permissionManager,
-		RestrictionStore $restrictionStore,
-		UserIdentityUtils $userIdentityUtils,
-		string $wikiID
+		private readonly TextExtractor $textExtractor,
+		private readonly AbuseFilterHookRunner $hookRunner,
+		private readonly LoggerInterface $logger,
+		private readonly LBFactory $lbFactory,
+		private readonly WANObjectCache $wanCache,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly RevisionStore $revisionStore,
+		private readonly Language $contentLanguage,
+		private readonly ParserFactory $parserFactory,
+		private readonly UserEditTracker $userEditTracker,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly PermissionManager $permissionManager,
+		private readonly RestrictionStore $restrictionStore,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly string $wikiID
 	) {
-		$this->textExtractor = $textExtractor;
-		$this->hookRunner = $hookRunner;
-		$this->logger = $logger;
-		$this->lbFactory = $lbFactory;
-		$this->wanCache = $wanCache;
-		$this->revisionLookup = $revisionLookup;
-		$this->revisionStore = $revisionStore;
-		$this->contentLanguage = $contentLanguage;
-		$this->parserFactory = $parserFactory;
-		$this->userEditTracker = $userEditTracker;
-		$this->userGroupManager = $userGroupManager;
-		$this->permissionManager = $permissionManager;
-		$this->restrictionStore = $restrictionStore;
-		$this->userIdentityUtils = $userIdentityUtils;
-		$this->wikiID = $wikiID;
 	}
 
 	/**
@@ -157,8 +84,7 @@ class LazyVariableComputer {
 	 *
 	 * @param LazyLoadedVariable $var
 	 * @param VariableHolder $vars
-	 * @param callable $getVarCB
-	 * @phan-param callable(string $name):AFPData $getVarCB
+	 * @param callable(string $name):AFPData $getVarCB
 	 * @return AFPData
 	 */
 	public function compute( LazyLoadedVariable $var, VariableHolder $vars, callable $getVarCB ) {
@@ -357,25 +283,52 @@ class LazyVariableComputer {
 				$title = $parameters['title'];
 				$result = $this->restrictionStore->getRestrictions( $title, $action );
 				break;
+			case 'account-type':
+				/** @var User $createdUser */
+				$createdUser = $parameters['createdUser'];
+				$isTemp = $this->userIdentityUtils->isTemp( $createdUser );
+				if ( $parameters['autocreate'] && $isTemp ) {
+					$result = 'temp';
+				} elseif ( !$isTemp && $this->userNameUtils->isCreatable( $createdUser->getName() ) ) {
+					// At this point the account hasn't been written to the DB yet, so:
+					// - User::getId() is still 0
+					// - User::isRegistered() will always be false
+					// - and User::isNamed() can't be trusted here
+					//
+					// That means the only thing we can really rely on during pre-auth/pre-creation
+					// is the username itself. If it's not a temporary account and the username is
+					// creatable, then this is effectively a named account creation attempt.
+					$result = 'named';
+				} else {
+					$result = 'unknown';
+				}
+				break;
 			case 'user-unnamed-ip':
+				/** @var User $user */
 				$user = $parameters['user'];
 				$result = null;
 
-				// Don't return an IP for past events (eg. revisions, logs)
-				// This could leak IPs to users who don't have IP viewing rights
-				if ( !$parameters['rc'] &&
-					// Reveal IPs for:
-					// - temporary accounts: temporary account names will replace the IP in the `user_name`
-					//   variable. This variable restores this access.
-					// - logged-out users: This supports the transition to the use of temporary accounts
-					//   so that filter maintainers on pre-transition wikis can migrate `user_name` to `user_unnamed_ip`
-					//   where necessary and see no disruption on transition.
-					//
-					// This variable should only ever be exposed for these use cases and shouldn't be extended
-					// to registered accounts, as that would leak account PII to users without the right to see
-					// that information
-					( $this->userIdentityUtils->isTemp( $user ) || IPUtils::isIPAddress( $user->getName() ) ) ) {
-					$result = $user->getRequest()->getIP();
+				// Reveal IPs for:
+				// - temporary accounts: temporary account names will replace the IP in the `user_name`
+				//   variable. This variable restores this access.
+				// - logged-out users: This supports the transition to the use of temporary accounts
+				//   so that filter maintainers on pre-transition wikis can migrate `user_name` to `user_unnamed_ip`
+				//   where necessary and see no disruption on transition.
+				//
+				// This variable should only ever be exposed for these use cases and shouldn't be extended
+				// to registered accounts, as that would leak account PII to users without the right to see
+				// that information
+				if (
+					$this->userIdentityUtils->isTemp( $user ) ||
+					IPUtils::isIPAddress( $user->getName() )
+				) {
+					/** @var RecentChange|null $rc */
+					$rc = $parameters['rc'];
+					if ( $rc !== null ) {
+						$result = $rc->getAttribute( 'rc_ip' );
+					} else {
+						$result = $user->getRequest()->getIP();
+					}
 				}
 				break;
 			case 'user-type':
@@ -495,7 +448,7 @@ class LazyVariableComputer {
 
 	/**
 	 * @param PageIdentity $page
-	 * @return array
+	 * @return string[]
 	 */
 	private function getLinksFromDB( PageIdentity $page ): array {
 		$id = $page->getId();
@@ -585,11 +538,8 @@ class LazyVariableComputer {
 	private function getContentModelFromRevision( ?RevisionRecord $revision ): string {
 		// this is consistent with what is done on various places in RunVariableGenerator
 		// and RCVariableGenerator
-		if ( $revision !== null ) {
-			$content = $revision->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
-			return $content->getModel();
-		}
-		return '';
+		return $revision?->getContent( SlotRecord::MAIN, RevisionRecord::RAW )
+			->getModel() ?? '';
 	}
 
 	/**

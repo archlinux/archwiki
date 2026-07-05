@@ -1377,6 +1377,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$page,
 			$parsoid,
 			[],
+			$this->getServiceContainer()->getParsoidSiteConfig(),
 			$this->getPageConfigFactory( $page ),
 			$this->getServiceContainer()->getContentHandlerFactory()
 		) );
@@ -1427,49 +1428,49 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			'attribs' => [ 'oldid' => 1, 'pageName' => 'Test', 'pagelanguage' => $en ],
 			'wikitext' => null,
 			'html2WtMode' => false,
-			'expectedPageLanguage' => $en,
+			'expectedLanguage' => $en,
 		];
 
 		yield 'tryToCreatePageConfig with wikitext' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => 'Test', 'pagelanguage' => $en ],
 			'wikitext' => "=test=",
 			'html2WtMode' => false,
-			'expected page language' => $en,
+			'expectedLanguage' => $en,
 		];
 
 		yield 'tryToCreatePageConfig with html2WtMode set to true' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => 'Test', 'pagelanguage' => null ],
 			'wikitext' => null,
 			'html2WtMode' => true,
-			'expected page language' => $en,
+			'expectedLanguage' => $en,
 		];
 
 		yield 'tryToCreatePageConfig with both wikitext and html2WtMode' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => 'Test', 'pagelanguage' => $ar ],
 			'wikitext' => "=header=",
 			'html2WtMode' => true,
-			'expected page language' => $ar,
+			'expectedLanguage' => $ar,
 		];
 
 		yield 'Try to create a page config with pageName set to empty string' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => '', 'pagelanguage' => $de ],
 			'wikitext' => null,
 			'html2WtMode' => false,
-			'expected page language' => $de,
+			'expectedLanguage' => $de,
 		];
 
 		yield 'Try to create a page config with pageName set to zero string' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => '0', 'pagelanguage' => $de ],
 			'wikitext' => null,
 			'html2WtMode' => false,
-			'expected page language' => $de,
+			'expectedLanguage' => $de,
 		];
 
 		yield 'Try to create a page config with no page language' => [
 			'attribs' => [ 'oldid' => 1, 'pageName' => '', 'pagelanguage' => null ],
 			'wikitext' => null,
-			false,
-			'expected page language' => $en,
+			'html2WtMode' => false,
+			'expectedLanguage' => $en,
 		];
 	}
 
@@ -1551,6 +1552,23 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 				400
 			),
 		];
+
+		yield 'PageConfig for deleted revision when linting' => [
+			[
+				'oldid' => 1,
+				'pageName' => '',
+				'opts' => [ 'format' => 'lint' ],
+			],
+			'wikitext' => null,
+			'html2WtMode' => false,
+			'expected' => new LocalizedHttpException(
+				new MessageValue(
+					"rest-permission-denied-revision",
+					[ 'Not an available content version.' ]
+				),
+				403
+			),
+		];
 	}
 
 	/**
@@ -1564,6 +1582,11 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 		$html2WtMode,
 		HttpException $expected
 	) {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+		$this->revisionDelete( $firstRev );
+
 		try {
 			$this->newParsoidHandler()->tryToCreatePageConfig( $attribs, $wikitext, $html2WtMode );
 			$this->fail( 'Expected exception: ' . get_class( $expected ) );
@@ -1885,6 +1908,20 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 			$htmlHeaders
 		];
 
+		$attribs = [
+			'oldid' => 1, // will be replaced by a real revision id
+			'body_only' => true
+		];
+		$expectedText = [ '>First Revision Content<' ];
+		$unexpectedText = [ '<html' ];
+		yield 'should get from a title and revision (html, body_only)' => [
+			$attribs,
+			null,
+			$expectedText,
+			$unexpectedText,
+			$htmlHeaders
+		];
+
 		// should get from a title and revision (pagebundle) ///////////////////////////////////
 		$expectedText = [ // bits of json
 			'"body":"<!DOCTYPE html>',
@@ -2132,7 +2169,7 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 				if ( $index === 'data-parsoid' ) {
 					// FIXME: Assert headers as well
 					$this->assertArrayHasKey( 'body', $jsonData[$index] );
-					$this->assertSame( $exp['body'], $jsonData[$index]['body'] );
+					$this->assertEqualsCanonicalizing( $exp['body'], $jsonData[$index]['body'] );
 				} else {
 					$this->assertSame( $exp, $jsonData[$index] );
 				}
@@ -2306,5 +2343,51 @@ class ParsoidHandlerTest extends MediaWikiIntegrationTestCase {
 
 	// TODO: test wt2html failure modes
 	// TODO: test redlinks
+
+	public function testWt2html_Forbidden() {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+
+		$this->revisionDelete( $firstRev );
+		$pageConfig = $this->getPageConfig( $page, $firstRev );
+
+		$attribs = self::DEFAULT_ATTRIBS;
+		$attribs['opts']['from'] = 'wikitext';
+		$attribs['opts']['format'] = 'html';
+
+		$handler = $this->newParsoidHandler();
+		try {
+			$response = $handler->wt2html( $pageConfig, $attribs );
+			$this->fail( 'Should have thrown' );
+		} catch ( LocalizedHttpException $e ) {
+			$this->assertSame( 403, $e->getCode() );
+		}
+	}
+
+	public function testHtml2wt_Forbidden() {
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$firstRev = $this->editPage( $page, 'First' )->getNewRevision();
+		$secondRev = $this->editPage( $page, 'Second' )->getNewRevision();
+
+		$this->revisionDelete( $firstRev );
+		$pageConfig = $this->getPageConfig( $page, $firstRev );
+
+		$attribs = self::DEFAULT_ATTRIBS;
+		$attribs['oldid'] = $firstRev->getId();
+		$attribs['opts'] += self::DEFAULT_ATTRIBS['opts'];
+		$attribs['opts']['from'] ??= 'html';
+		$attribs['envOptions'] += self::DEFAULT_ATTRIBS['envOptions'];
+
+		$html = '<html lang="en"><body>123</body></html>';
+
+		$handler = $this->newParsoidHandler();
+		try {
+			$handler->html2wt( $pageConfig, $attribs, $html );
+			$this->fail( 'Should have thrown' );
+		} catch ( LocalizedHttpException $e ) {
+			$this->assertSame( 403, $e->getCode() );
+		}
+	}
 
 }

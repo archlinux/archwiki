@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  *
  * @file
  * @ingroup Maintenance
@@ -69,6 +56,7 @@ class UpdateSecretsToEncryptedFormat extends LoggedUpdateMaintenance {
 
 		$startTime = time();
 		$updatedCount = 0;
+		$alreadyEncrypted = 0;
 		$totalRows = 0;
 
 		$services = $this->getServiceContainer();
@@ -93,6 +81,7 @@ class UpdateSecretsToEncryptedFormat extends LoggedUpdateMaintenance {
 
 			if ( array_key_exists( 'nonce', $data ) ) {
 				// Already encrypted
+				$alreadyEncrypted++;
 				continue;
 			}
 
@@ -103,6 +92,7 @@ class UpdateSecretsToEncryptedFormat extends LoggedUpdateMaintenance {
 				$key = RecoveryCodeKeys::newFromArray( $data );
 			} else {
 				// Impossible
+				$this->output( "Unable to update row with oad_id {$row->oad_id} and oad_type {$row->oad_type}.\n" );
 				continue;
 			}
 
@@ -121,6 +111,9 @@ class UpdateSecretsToEncryptedFormat extends LoggedUpdateMaintenance {
 
 		$totalTimeInSeconds = time() - $startTime;
 		$this->output( "Done. Updated {$updatedCount} of {$totalRows} rows in {$totalTimeInSeconds} seconds.\n" );
+		if ( $alreadyEncrypted > 0 ) {
+			$this->output( "{$alreadyEncrypted} rows were already encrypted.\n" );
+		}
 		return true;
 	}
 

@@ -132,7 +132,7 @@ ve.dm.DomFromModelConverter.static.renderHtmlAttributeList = function ( original
 		return;
 	}
 
-	for ( let i = 0, ilen = originalDomElements.length; i < ilen; i++ ) {
+	for ( let i = 0; i < originalDomElements.length; i++ ) {
 		if ( !targetDomElements[ i ] ) {
 			continue;
 		}
@@ -140,7 +140,7 @@ ve.dm.DomFromModelConverter.static.renderHtmlAttributeList = function ( original
 		if ( !attrs ) {
 			continue;
 		}
-		for ( let j = 0, jlen = attrs.length; j < jlen; j++ ) {
+		for ( let j = 0; j < attrs.length; j++ ) {
 			if (
 				targetDomElements[ i ].nodeType === Node.ELEMENT_NODE &&
 				!targetDomElements[ i ].hasAttribute( attrs[ j ].name ) &&
@@ -178,6 +178,13 @@ ve.dm.DomFromModelConverter.static.renderHtmlAttributeList = function ( original
  */
 ve.dm.DomFromModelConverter.prototype.getStore = function () {
 	return this.store;
+};
+
+/**
+ * @return {ve.dm.InternalList|null}
+ */
+ve.dm.DomFromModelConverter.prototype.getInternalList = function () {
+	return this.internalList;
 };
 
 /**
@@ -357,7 +364,7 @@ ve.dm.DomFromModelConverter.prototype.getDomSubtreeFromModel = function ( model,
  * @param {ve.dm.LinearData.Item[]} data Linear model data
  * @param {HTMLElement} container DOM element to add the generated elements to. Should be empty.
  * @param {Array.<string|undefined>} [innerWhitespace] Inner whitespace if the container is the body
- * @throws Unbalanced data: looking for closing /type
+ * @throws {Error} Unbalanced data
  */
 ve.dm.DomFromModelConverter.prototype.getDomSubtreeFromData = function ( data, container, innerWhitespace ) {
 	const whitespaceHtmlChars = ve.visibleWhitespaceCharacters,
@@ -786,7 +793,7 @@ ve.dm.DomFromModelConverter.prototype.getDomSubtreeFromData = function ( data, c
 					// Add clone of internal data; we use a clone rather than a reference because
 					// we modify .veInternal.whitespace[1] in some cases
 					childDomElements[ 0 ].veInternal = ve.extendObject(
-						{ childDomElements: childDomElements },
+						{ childDomElements },
 						dataElement.internal ? ve.copy( dataElement.internal ) : {}
 					);
 					// Add elements

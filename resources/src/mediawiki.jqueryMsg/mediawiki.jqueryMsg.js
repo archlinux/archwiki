@@ -104,7 +104,7 @@ function appendWithoutParsing( $parent, children ) {
 	}
 
 	for ( i = 0, len = children.length; i < len; i++ ) {
-		if ( typeof children[ i ] !== 'object' ) {
+		if ( children[ i ] !== Object( children[ i ] ) ) {
 			children[ i ] = document.createTextNode( children[ i ] );
 		}
 		if ( children[ i ] instanceof $ && children[ i ].hasClass( 'mediaWiki_htmlEmitter' ) ) {
@@ -291,7 +291,7 @@ function Parser( options ) {
 	this.settings.onlyCurlyBraceTransform = ( this.settings.format === 'text' || this.settings.format === 'escaped' );
 	this.astCache = {};
 
-	this.emitter = new HtmlEmitter( this.settings.language, this.settings.magic );
+	this.emitter = new HtmlEmitter( this.settings.language, this.settings.magic, this.settings.messages );
 }
 
 Parser.prototype = {
@@ -342,7 +342,7 @@ Parser.prototype = {
 	 * n.b. We want to move this functionality to the server. Nothing here is required to be on the client.
 	 *
 	 * @param {string} input Message string wikitext
-	 * @throws Error
+	 * @throws {Error} Parse error
 	 * @return {any} abstract syntax tree
 	 */
 	wikiTextToAst: function ( input ) {
@@ -913,8 +913,9 @@ Parser.prototype = {
  * @class
  * @param {mw.language} language
  * @param {Object.<string,string>} [magic]
+ * @param {mw.Map} [messages]
  */
-function HtmlEmitter( language, magic ) {
+function HtmlEmitter( language, magic, messages ) {
 	this.language = language;
 	for ( const key in ( magic || {} ) ) {
 		const val = magic[ key ];
@@ -922,6 +923,8 @@ function HtmlEmitter( language, magic ) {
 			return val;
 		};
 	}
+
+	this.map = messages || mw.messages;
 
 	/**
 	 * (We put this method definition here, and not in prototype, to make sure it's not overwritten by any magic.)
@@ -1195,7 +1198,9 @@ HtmlEmitter.prototype = {
 
 				if ( target.search( new RegExp( '^(/|' + mw.config.get( 'wgUrlProtocols' ) + ')' ) ) !== -1 ) {
 					$el.attr( 'href', target );
-					if ( target.search( '^' + mw.config.get( 'wgArticlePath' ).replace( /\$1/g, '.+?' ) + '$' ) === -1 ) {
+					const externalRegex = '^(?:' + mw.config.get( 'wgArticlePath' ).replace( /\$1/g, '.+?' ) +
+						'|' + mw.config.get( 'wgScript' ) + '.+?)$';
+					if ( target.search( externalRegex ) === -1 ) {
 						$el.addClass( 'external' );
 					}
 				} else {
@@ -1371,7 +1376,7 @@ HtmlEmitter.prototype = {
 	 */
 	int: function ( nodes ) {
 		const msg = textify( nodes[ 0 ] );
-		return getMessageFunction()( mwString.lcFirst( msg ) );
+		return getMessageFunction( { messages: this.map } )( mwString.lcFirst( msg ) );
 	},
 
 	/**
@@ -1515,8 +1520,8 @@ mw.Message.prototype.parser = function ( format ) {
 		(
 			// jqueryMsg parser is needed for messages containing wikitext
 			!/\{\{|[<>[&]/.test( this.map.get( this.key ) ) &&
-			// jqueryMsg parser is needed when jQuery objects or DOM nodes are passed in as parameters
-			!this.parameters.some( ( param ) => param instanceof $ || ( param && param.nodeType !== undefined ) )
+			// jqueryMsg parser is needed when objects (e.g. jQuery objects or DOM nodes) are passed in as parameters
+			!this.parameters.some( ( param ) => param === Object( param ) )
 		)
 	) {
 		return oldParser.call( this, format );
@@ -1531,26 +1536,7 @@ mw.Message.prototype.parser = function ( format ) {
 	}
 	return this.map[ format ]( this.key, this.parameters );
 };
-
-/**
- * Parse the message to DOM nodes, rather than HTML string like {@link mw.Message#parse}.
- *
- * This method is only available when jqueryMsg is loaded.
- *
- * @example
- * const msg = mw.message( 'key' );
- * mw.loader.using(`mediawiki.jqueryMsg`).then(() => {
- *   if ( msg.isParseable() ) {
- *     const $node = msg.parseDom();
- *     $node.appendTo('body');
- *   }
- * })
- *
- * @since 1.27
- * @method parseDom
- * @memberof mw.Message.prototype
- * @return {jQuery}
- */
+// Replace parseDom with the "real" version
 mw.Message.prototype.parseDom = ( function () {
 	let failableParserFn;
 
@@ -1582,7 +1568,7 @@ mw.Message.prototype.parseDom = ( function () {
  * @return {boolean}
  */
 mw.Message.prototype.isParseable = function () {
-	const parser = new Parser();
+	const parser = new Parser( { messages: this.map } );
 	try {
 		parser.parse( this.key, this.parameters );
 		return true;

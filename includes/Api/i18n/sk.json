@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Luky001",
+			"Teslaton",
+			"Wizzard"
+		]
+	},
+	"apihelp-main-param-format": "Formát výstupu.",
+	"apierror-assertuserfailed": "Už nie ste prihlásení, takže akciu nebolo možné dokončiť."
+}

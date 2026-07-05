@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Content\Content;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionStatus;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\RCVariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\HookContainer\HookContainer;
@@ -36,7 +37,7 @@ class AbuseFilterHookRunner implements
 	AbuseFilterProtectedVarsAccessLoggerHook,
 	AbuseFilterShouldFilterActionHook
 {
-	public const SERVICE_NAME = 'AbuseFilterHookRunner';
+	public const SERVICE_NAME = ServiceNames::AbuseFilterHookRunner;
 
 	private HookContainer $hookContainer;
 

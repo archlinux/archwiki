@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Modul API-ja za komunikacijo med strežnikom in odjemalcem v postopku registracije/avtentikacije.",
+	"apihelp-oathauth-webauthn-param-func": "Ime zahtevane funkcije, ki naj se izvede.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Informacije o avtentikaciji.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Informacije o registraciji."
+}

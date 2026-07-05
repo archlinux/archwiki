@@ -4,8 +4,9 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\ConfirmEdit\Hooks\Handlers;
 
-use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\VisualEditor\Services\VisualEditorAvailabilityLookup;
 use MediaWiki\Output\Hook\MakeGlobalVariablesScriptHook;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -23,11 +24,13 @@ class MakeGlobalVariablesScriptHookHandler implements MakeGlobalVariablesScriptH
 
 	/**
 	 * @param ExtensionRegistry $extensionRegistry
+	 * @param Config $config
 	 * @param VisualEditorAvailabilityLookup|null $visualEditorAvailabilityLookup
 	 * @param MobileContext|null $mobileContext
 	 */
 	public function __construct(
 		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly Config $config,
 		private $visualEditorAvailabilityLookup = null,
 		private $mobileContext = null
 	) {
@@ -55,24 +58,65 @@ class MakeGlobalVariablesScriptHookHandler implements MakeGlobalVariablesScriptH
 			return;
 		}
 
+		if ( !$out->canUseWikiPage() ) {
+			$vars['wgConfirmEditCaptchaNeededForGenericEdit'] = false;
+			return;
+		}
+
 		$captchaNeededForEdit = false;
 
-		$action = $out->getTitle()->exists() ?
-			CaptchaTriggers::EDIT :
-			CaptchaTriggers::CREATE;
+		$action = Hooks::getCaptchaTriggerActionFromTitle( $out->getTitle() );
 		$captchaInstance = Hooks::getInstance( $action );
 		if (
-			$out->canUseWikiPage() &&
 			$captchaInstance->shouldCheck( $out->getWikiPage(), '', '', $out->getContext() )
 		) {
 			$captchaNeededForEdit = strtolower( $captchaInstance->getName() );
 		}
 
 		$vars['wgConfirmEditCaptchaNeededForGenericEdit'] = $captchaNeededForEdit;
-		if ( $captchaNeededForEdit ) {
-			$vars['wgConfirmEditHCaptchaSiteKey'] =
-				$captchaInstance->getConfig()['HCaptchaSiteKey'] ??
-				$out->getConfig()->get( 'HCaptchaSiteKey' );
+		$vars['wgConfirmEditForceShowCaptcha'] = $captchaInstance->shouldForceShowCaptcha();
+		if ( $captchaNeededForEdit === 'hcaptcha' ) {
+			$vars['wgConfirmEditHCaptchaVisualEditorOnLoadIntegrationEnabled'] = $visualEditorAvailable &&
+				$this->config->get( 'HCaptchaVisualEditorOnLoadIntegrationEnabled' );
+
+			$vars['wgConfirmEditHCaptchaSiteKey'] = $this->resolveHCaptchaSiteKey( $captchaInstance );
+		}
+
+		// We want to load the MobileFrontend hCaptcha module if the user may need
+		// to complete hCaptcha for their edit. This is intentionally not based on
+		// SimpleCaptcha::shouldCheck because if AbuseFilter is installed then
+		// a CAPTCHA may be required based on the content of the edit. Users who
+		// can skip captchas are excluded, since they will never be shown one.
+		if (
+			$mobileFrontendAvailable &&
+			$this->config->get( 'HCaptchaEnabledInMobileFrontend' ) &&
+			strtolower( $captchaInstance->getName() ) === 'hcaptcha' &&
+			!$captchaInstance->canSkipCaptcha( $out->getUser() )
+		) {
+			$requiredModule = 'ext.confirmEdit.hCaptcha';
+			$mfInitModulesKey = 'wgMobileFrontendSourceEditorInitializeModules';
+			$modulesToInit = $vars[$mfInitModulesKey] ?? [];
+
+			if ( !in_array( $requiredModule, $modulesToInit ) ) {
+				$modulesToInit[] = $requiredModule;
+			}
+
+			$vars[$mfInitModulesKey] = $modulesToInit;
+			$out->addModules( $requiredModule );
+
+			if ( $this->extensionRegistry->isLoaded( 'Abuse Filter' ) ) {
+				$vars['wgConfirmEditMobileHCaptchaAbuseFilterEnabled'] = true;
+			}
 		}
 	}
+
+	private function resolveHCaptchaSiteKey( SimpleCaptcha $captchaInstance ): string {
+		$config = $captchaInstance->getConfig();
+		$defaultSiteKey = (string)( $config['HCaptchaSiteKey'] ?? $this->config->get( 'HCaptchaSiteKey' ) );
+		if ( $captchaInstance->shouldForceShowCaptcha() ) {
+			return (string)( $config['HCaptchaAlwaysChallengeSiteKey'] ?? $defaultSiteKey );
+		}
+		return $defaultSiteKey;
+	}
+
 }

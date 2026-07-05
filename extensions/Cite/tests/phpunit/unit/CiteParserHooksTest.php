@@ -5,6 +5,8 @@ namespace Cite\Tests\Unit;
 use Cite\Cite;
 use Cite\CiteFactory;
 use Cite\Hooks\CiteParserHooks;
+use MediaWiki\Api\ApiQuerySiteinfo;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\StripState;
@@ -59,6 +61,17 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$text = '';
 		$citeParserHooks = $this->newCiteParserHooks( $citeFactory );
 		$citeParserHooks->onParserAfterParse( $parser, $text, $this->createMock( StripState::class ) );
+	}
+
+	public function testOnAPIQuerySiteInfoGeneralInfo() {
+		$api = $this->createMock( ApiQuerySiteinfo::class );
+		$api->expects( $this->once() )
+			->method( 'getConfig' )
+			->willReturn( new HashConfig( [ 'CiteResponsiveReferences' => false ] ) );
+
+		$data = [];
+		$this->newCiteParserHooks()->onAPIQuerySiteInfoGeneralInfo( $api, $data );
+		$this->assertSame( [ 'citeresponsivereferences' => false ], $data );
 	}
 
 }

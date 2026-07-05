@@ -7,6 +7,10 @@
 	justify-content: flex-end;
 	align-items: center;
 
+	@media ( max-width: @max-width-breakpoint-mobile ) {
+		flex-wrap: wrap;
+	}
+
 	&-blank {
 		box-shadow: none;
 	}
@@ -15,6 +19,10 @@
 		flex-grow: 1;
 		padding: 0;
 		border: 0;
+
+		@media ( max-width: @max-width-breakpoint-mobile ) {
+			flex-basis: 70%;
+		}
 	}
 
 	.vector-page-titlebar-toc.ve-active {

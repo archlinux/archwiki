@@ -4,11 +4,11 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
@@ -115,7 +115,8 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 		'@phan-var Element $node'; // @var Element $node
 
 		// Check if $node is a fostered node
-		$fostered = !empty( DOMDataUtils::getDataParsoid( $node )->fostered );
+		$nodeDp = DOMDataUtils::getDataParsoid( $node );
+		$fostered = !empty( $nodeDp->fostered );
 
 		$firstChild = DiffDOMUtils::firstNonSepChild( $node );
 		if ( $firstChild && $this->migrateFirstChild( $firstChild ) ) {
@@ -123,7 +124,7 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 			// if that start-tag is zero-width, or auto-inserted.
 			$tagWidth = Consts::$WtTagWidths[DOMUtils::nodeName( $node )] ?? null;
 			if ( ( $tagWidth && $tagWidth[0] === 0 && !WTUtils::isLiteralHTMLNode( $node ) ) ||
-				!empty( DOMDataUtils::getDataParsoid( $node )->autoInsertedStart )
+				!empty( $nodeDp->autoInsertedStart )
 			) {
 				$sentinel = $firstChild;
 				do {
@@ -148,7 +149,7 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 			'@phan-var Element $node'; // @var Element $node
 			if ( ( $tagWidth && $tagWidth[1] === 0 &&
 				!WTUtils::isLiteralHTMLNode( $node ) ) ||
-				( !empty( DOMDataUtils::getDataParsoid( $node )->autoInsertedEnd ) &&
+				( !empty( $nodeDp->autoInsertedEnd ) &&
 				// Except, don't migrate out of a table since the end meta
 				// marker may have been fostered and this is more likely to
 				// result in a flipped range that isn't enclosed.

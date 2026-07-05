@@ -131,8 +131,8 @@ class TimelessTemplate extends BaseTemplate {
 				Html::rawElement( 'div', [ 'id' => 'siteSub' ], $this->getMsg( 'tagline' )->parse() ) .
 				Html::rawElement( 'div', [ 'id' => 'mw-page-header-links' ],
 					$this->getPortlet(
-						'namespaces',
-						$this->pileOfTools['namespaces'],
+						'associated-pages',
+						$this->pileOfTools['associated-pages'],
 						'timeless-namespaces',
 						[ 'extra-classes' => 'tools-inline' ]
 					) .
@@ -188,7 +188,6 @@ class TimelessTemplate extends BaseTemplate {
 	 * @param array $setOptions miscellaneous overrides, see below
 	 *
 	 * @return string html
-	 * @suppress PhanTypeMismatchArgumentNullable
 	 */
 	protected function getPortlet( $name, $content, $msg = null, $setOptions = [] ) {
 		$skin = $this->getSkin();
@@ -286,15 +285,13 @@ class TimelessTemplate extends BaseTemplate {
 			$this->afterLangPortlet = $afterPortlet;
 		}
 
-		$html = Html::rawElement( 'div', $divOptions,
+		return Html::rawElement( 'div', $divOptions,
 			Html::rawElement( 'h3', $labelOptions, $msgString ) .
 			Html::rawElement( 'div', $bodyDivOptions,
 				$contentText .
 				$afterPortlet
 			)
 		);
-
-		return $html;
 	}
 
 	/**
@@ -438,9 +435,7 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getSidebarChunk( $id, $headerMessage, $content, $classes = [] ) {
-		$html = '';
-
-		$html .= Html::rawElement(
+		return Html::rawElement(
 			'div',
 			[
 				'id' => Sanitizer::escapeIdForAttribute( $id ),
@@ -453,8 +448,6 @@ class TimelessTemplate extends BaseTemplate {
 			) .
 			Html::rawElement( 'div', [ 'class' => 'sidebar-inner' ], $content )
 		);
-
-		return $html;
 	}
 
 	/**
@@ -550,34 +543,31 @@ class TimelessTemplate extends BaseTemplate {
 	 */
 	protected function getSearch() {
 		$skin = $this->getSkin();
-		$html = Html::openElement( 'div', [ 'class' => 'mw-portlet', 'id' => 'p-search' ] );
-
-		$html .= Html::rawElement(
-			'h3',
-			[ 'lang' => $this->get( 'userlang' ), 'dir' => $this->get( 'dir' ) ],
-			Html::rawElement( 'label', [ 'for' => 'searchInput' ], $this->getMsg( 'search' )->escaped() )
-		);
-
-		$html .= Html::rawElement( 'form', [ 'action' => $this->get( 'wgScript' ), 'id' => 'searchform' ],
-			Html::rawElement( 'div', [ 'id' => 'simpleSearch' ],
-				Html::rawElement( 'div', [ 'id' => 'searchInput-container' ],
-					$skin->makeSearchInput( [
-						'id' => 'searchInput'
-					] )
-				) .
-				Html::hidden( 'title', $this->get( 'searchtitle' ) ) .
-				$skin->makeSearchButton(
-					'fulltext',
-					[ 'id' => 'mw-searchButton', 'class' => 'searchButton mw-fallbackSearchButton' ]
-				) .
-				$skin->makeSearchButton(
-					'go',
-					[ 'id' => 'searchButton', 'class' => 'searchButton' ]
+		return Html::rawElement( 'div', [ 'class' => 'mw-portlet', 'id' => 'p-search' ],
+			Html::rawElement(
+				'h3',
+				[ 'lang' => $this->get( 'userlang' ), 'dir' => $this->get( 'dir' ) ],
+				Html::rawElement( 'label', [ 'for' => 'searchInput' ], $this->getMsg( 'search' )->escaped() )
+			) .
+			Html::rawElement( 'form', [ 'action' => $this->get( 'wgScript' ), 'id' => 'searchform' ],
+				Html::rawElement( 'div', [ 'id' => 'simpleSearch' ],
+					Html::rawElement( 'div', [ 'id' => 'searchInput-container' ],
+						$skin->makeSearchInput( [
+							'id' => 'searchInput'
+						] )
+					) .
+					Html::hidden( 'title', $this->get( 'searchtitle' ) ) .
+					$skin->makeSearchButton(
+						'fulltext',
+						[ 'id' => 'mw-searchButton', 'class' => 'searchButton mw-fallbackSearchButton' ]
+					) .
+					$skin->makeSearchButton(
+						'go',
+						[ 'id' => 'searchButton', 'class' => 'searchButton' ]
+					)
 				)
 			)
 		);
-
-		return $html . Html::closeElement( 'div' );
 	}
 
 	/**
@@ -613,17 +603,15 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getHeaderHack() {
-		$html = '';
-
 		// These are almost exactly the same and this is stupid.
-		$html .= Html::rawElement( 'div', [ 'id' => 'mw-header-hack', 'class' => 'color-bar' ],
+		return Html::rawElement( 'div', [ 'id' => 'mw-header-hack', 'class' => 'color-bar' ],
 			Html::rawElement( 'div', [ 'class' => 'color-middle-container' ],
 				Html::element( 'div', [ 'class' => 'color-middle' ] )
 			) .
 			Html::element( 'div', [ 'class' => 'color-left' ] ) .
 			Html::element( 'div', [ 'class' => 'color-right' ] )
-		);
-		$html .= Html::rawElement( 'div', [ 'id' => 'mw-header-nav-hack' ],
+		) .
+		Html::rawElement( 'div', [ 'id' => 'mw-header-nav-hack' ],
 			Html::rawElement( 'div', [ 'class' => 'color-bar' ],
 				Html::rawElement( 'div', [ 'class' => 'color-middle-container' ],
 					Html::element( 'div', [ 'class' => 'color-middle' ] )
@@ -632,8 +620,6 @@ class TimelessTemplate extends BaseTemplate {
 				Html::element( 'div', [ 'class' => 'color-right' ] )
 			)
 		);
-
-		return $html;
 	}
 
 	/**
@@ -676,7 +662,14 @@ class TimelessTemplate extends BaseTemplate {
 	protected function getUserLinks() {
 		$skin = $this->getSkin();
 		$user = $skin->getUser();
-		$personalTools = $skin->getPersonalToolsForMakeListItem( $this->get( 'personal_urls' ) );
+		$contentNavigation = $this->data['content_navigation'];
+		$personalUrls = array_merge(
+			$contentNavigation['user-interface-preferences'],
+			$contentNavigation['user-page'],
+			$contentNavigation['notifications'],
+			$contentNavigation['user-menu']
+		);
+		$personalTools = $skin->getPersonalToolsForMakeListItem( $personalUrls );
 		// Preserve standard username label to allow customisation (T215822)
 		$userName = $personalTools['userpage']['links'][0]['text'] ?? $user->getName();
 
@@ -832,7 +825,7 @@ class TimelessTemplate extends BaseTemplate {
 		$namespace = $title->getNamespace();
 
 		$sortedPileOfTools = [
-			'namespaces' => [],
+			'associated-pages' => [],
 			'page-primary' => [],
 			'page-secondary' => [],
 			'user' => [],
@@ -847,16 +840,18 @@ class TimelessTemplate extends BaseTemplate {
 
 		foreach ( $contentNavigation as $navKey => $navBlock ) {
 			// Just use namespaces items as they are
-			if ( $navKey == 'namespaces' ) {
+			if ( $navKey == 'associated-pages' ) {
 				if ( $namespace < 0 && count( $navBlock ) < 2 ) {
 					// Put special page ns_pages in the more pile so they're not so lonely
 					$sortedPileOfTools['page-tertiary'] = $navBlock;
 				} else {
-					$sortedPileOfTools['namespaces'] = $navBlock;
+					$sortedPileOfTools['associated-pages'] = $navBlock;
 				}
 			} elseif ( $navKey == 'variants' ) {
 				// wat
 				$sortedPileOfTools['variants'] = $navBlock;
+			} elseif ( in_array( $navKey, [ 'user-menu', 'notifications', 'user-page' ] ) ) {
+				// pass (handled later)
 			} else {
 				$pileOfEditTools = array_merge( $pileOfEditTools, $navBlock );
 			}
@@ -897,7 +892,7 @@ class TimelessTemplate extends BaseTemplate {
 				'watch',
 				'unwatch'
 			] ) ) {
-				$currentSet = 'namespaces';
+				$currentSet = 'associated-pages';
 			} elseif ( in_array( $navKey, [
 				'edit',
 				'view',
@@ -963,12 +958,12 @@ class TimelessTemplate extends BaseTemplate {
 			'proofreadPageNextLink',
 		];
 		foreach ( $tabs as $tab ) {
-			if ( isset( $sortedPileOfTools['namespaces'][$tab] ) ) {
-				$toMove = $sortedPileOfTools['namespaces'][$tab];
-				unset( $sortedPileOfTools['namespaces'][$tab] );
+			if ( isset( $sortedPileOfTools['associated-pages'][$tab] ) ) {
+				$toMove = $sortedPileOfTools['associated-pages'][$tab];
+				unset( $sortedPileOfTools['associated-pages'][$tab] );
 
 				// move to end!
-				$sortedPileOfTools['namespaces'][$tab] = $toMove;
+				$sortedPileOfTools['associated-pages'][$tab] = $toMove;
 			}
 		}
 

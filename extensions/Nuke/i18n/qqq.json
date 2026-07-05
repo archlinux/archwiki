@@ -59,6 +59,7 @@
 	"nuke-delete-more": "Used at the bottom of the Nuke (mass deletion) result page. This is not automatically linked, so it needs to include a link back to the Special:Nuke page.",
 	"nuke-deletemore": "Used at the bottom of the Nuke (mass deletion) result page.",
 	"nuke-pattern": "{{doc-important|Do not translate <code>LIKE</code>, it is an SQL operator.}}\nUsed as label for \"nuke pattern\" input box.",
+	"nuke-pattern-leading-wildcard": "Error message shown when the user enters a pattern starting with a <code>%</code> wildcard, which would cause slow database queries.",
 	"nuke-nolist": "Used if the user clicked on 'Continue' without first listing pages.\n\nRefers to {{msg-mw|Nuke-submit-list}}.\n\nSee also:\n* {{msg-mw|Nuke-nopages-global}}\n* {{msg-mw|Nuke-noselected}}",
 	"nuke-nopages-global": "Used if there are no pages to delete and the username is empty.\n\nSee also:\n* {{msg-mw|Nuke-nolist}}\n* {{msg-mw|Nuke-noselected}}",
 	"nuke-searchnotice-minmorethanmax": "Shown as a notice after running a search where the minimum size in bytes exceeds the maximum size in bytes, so it's not possible for any page to meet the users criteria.",

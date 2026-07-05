@@ -1,7 +1,5 @@
 const
-	mobile = require( 'mobile.startup' ),
 	ToggleList = require( '../../includes/Skins/ToggleList/ToggleList.js' ),
-	page = mobile.currentPage(),
 	// The top level menu.
 	selector = '.page-actions-menu',
 	// The secondary overflow submenu component container.
@@ -65,8 +63,8 @@ function checkForReadOnlyMode() {
  */
 function renderDownloadButton( window, overflowList ) {
 	const downloadPageAction = require( './downloadPageAction.js' ).downloadPageAction,
-		$downloadAction = downloadPageAction( page,
-			mw.config.get( 'wgMinervaDownloadNamespaces', [] ), window, !!overflowList );
+		$downloadAction = downloadPageAction(
+			mw.config, window, !!overflowList );
 
 	if ( $downloadAction ) {
 		mw.track( 'minerva.downloadAsPDF', {

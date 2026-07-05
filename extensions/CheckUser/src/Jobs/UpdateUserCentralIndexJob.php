@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Jobs;
+namespace MediaWiki\Extension\CheckUser\Jobs;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\JobQueue\Job;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -20,12 +20,13 @@ class UpdateUserCentralIndexJob extends Job implements CheckUserQueryInterface {
 	 */
 	public const TYPE = 'checkuserUpdateUserCentralIndexJob';
 
-	private IConnectionProvider $dbProvider;
-
 	/** @inheritDoc */
-	public function __construct( ?Title $title, array $params, IConnectionProvider $dbProvider ) {
+	public function __construct(
+		?Title $title,
+		array $params,
+		private readonly IConnectionProvider $dbProvider,
+	) {
 		parent::__construct( self::TYPE, $params );
-		$this->dbProvider = $dbProvider;
 	}
 
 	/** @return bool */

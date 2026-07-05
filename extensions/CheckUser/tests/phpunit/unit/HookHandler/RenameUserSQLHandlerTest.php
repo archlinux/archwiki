@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\RenameUserSQLHandler;
+use MediaWiki\Extension\CheckUser\HookHandler\RenameUserSQLHandler;
 use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWikiUnitTestCase;
 
 /**
  * @group CheckUser
- * @covers \MediaWiki\CheckUser\HookHandler\RenameUserSQLHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\RenameUserSQLHandler
  */
 class RenameUserSQLHandlerTest extends MediaWikiUnitTestCase {
 

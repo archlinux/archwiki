@@ -53,7 +53,7 @@
 	"abusefilter-edit-builder-op-bool-and": "Àti (&)",
 	"abusefilter-edit-builder-op-bool-or": "Tàbí (|)",
 	"abusefilter-edit-builder-group-funcs": "Àwọn ìgbéṣe",
-	"abusefilter-edit-builder-vars-accountname": "Orúkọ ìforúkọpamọ́ (nígbà ìdá ìforúkọpamọ́)",
+	"abusefilter-edit-builder-vars-account-name": "Orúkọ ìforúkọpamọ́ (nígbà ìdá ìforúkọpamọ́)",
 	"abusefilter-edit-builder-vars-action": "Ìgbéṣe",
 	"abusefilter-edit-builder-vars-newsize": "Ìtóbi ojúewé tuntun",
 	"abusefilter-edit-builder-vars-removedlines": "Àwọn ìlà tó jẹ́ yíyọkúrò nínú àtúnṣe",

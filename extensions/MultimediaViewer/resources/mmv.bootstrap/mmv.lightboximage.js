@@ -28,32 +28,68 @@ class LightboxImage {
 	 * @param {string} [caption] The caption, if any.
 	 */
 	constructor( fileLink, fileTitle, index, position, thumb, caption ) {
-		/** @property {string} Link to the file - generally a thumb URL */
+		/**
+		 * Link to the file - generally a thumb URL
+		 *
+		 * @member {string}
+		 */
 		this.src = fileLink;
 
-		/** @property {mw.Title} filePageTitle Title of the image's file page */
+		/**
+		 * Title of the image's file page
+		 *
+		 * @member {mw.Title}
+		 */
 		this.filePageTitle = fileTitle;
 
-		/** @property {number} index What number this image is in the array of indexed images */
+		/**
+		 * What number this image is in the array of indexed images
+		 *
+		 * @member {number}
+		 */
 		this.index = index;
 
-		/** @property {number} position The relative position of this image to others with same file */
+		/**
+		 * The relative position of this image to others with same file
+		 *
+		 * @member {number}
+		 */
 		this.position = position;
 
-		/** @property {HTMLImageElement} thumbnail The <img> element that holds the already-loaded thumbnail of the image */
+		/**
+		 * The <img> element that holds the already-loaded thumbnail of the image
+		 *
+		 * @member {HTMLImageElement}
+		 */
 		this.thumbnail = thumb;
 
-		/** @property {string} caption The caption of the image, if any */
+		/**
+		 * The caption of the image, if any
+		 *
+		 * @member {string}
+		 */
 		this.caption = caption;
 
-		/** @property {string} The alt text of the image */
-		this.alt = $( this.thumbnail ).attr( 'alt' );
+		/**
+		 * The alt text of the image
+		 *
+		 * @member {string}
+		 */
+		this.alt = $( thumb ).attr( 'alt' );
 
-		/** @property {number} originalWidth of the full-sized file (read from HTML data attribute, might be missing) */
-		this.originalWidth = parseInt( $( this.thumbnail ).data( 'file-width' ), 10 );
+		/**
+		 * Width of the full-sized file (read from HTML data attribute, might be missing)
+		 *
+		 * @member {number}
+		 */
+		this.originalWidth = parseInt( $( thumb ).attr( 'data-file-width' ), 10 );
 
-		/** @property {number} originalHeight Height of the full-sized file (read from HTML data attribute, might be missing) */
-		this.originalHeight = parseInt( $( this.thumbnail ).data( 'file-height' ), 10 );
+		/**
+		 * Height of the full-sized file (read from HTML data attribute, might be missing)
+		 *
+		 * @member {number}
+		 */
+		this.originalHeight = parseInt( $( thumb ).attr( 'data-file-height' ), 10 );
 	}
 }
 

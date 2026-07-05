@@ -1,0 +1,43 @@
+{
+    "name": "web-auth/cose-lib",
+    "type": "library",
+    "license": "MIT",
+    "description": "CBOR Object Signing and Encryption (COSE) For PHP",
+    "keywords": ["COSE", "RFC8152"],
+    "homepage": "https://github.com/web-auth",
+    "authors": [
+        {
+            "name": "Florent Morselli",
+            "homepage": "https://github.com/Spomky"
+        },
+        {
+            "name": "All contributors",
+            "homepage": "https://github.com/web-auth/cose/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "brick/math": "^0.9|^0.10|^0.11|^0.12|^0.13|^0.14|^0.15|^0.16|^0.17",
+        "spomky-labs/pki-framework": "^1.0"
+    },
+    "require-dev": {
+        "spomky-labs/cbor-php": "^3.2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cose\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cose\\Tests\\": "tests/"
+        }
+    },
+    "suggest": {
+        "ext-gmp": "For better performance, please install either GMP (recommended) or BCMath extension",
+        "ext-bcmath": "For better performance, please install either GMP (recommended) or BCMath extension",
+        "spomky-labs/cbor-php": "For COSE Signature support"
+    }
+}

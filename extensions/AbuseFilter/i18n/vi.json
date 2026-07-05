@@ -395,7 +395,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Chuẩn hóa các thực thể HTML thành ký tự Unicode ($1)",
 	"abusefilter-edit-builder-group-vars": "Biến",
 	"abusefilter-edit-builder-vars-timestamp": "Thời điểm thay đổi dạng Unix ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Tên tài khoản lúc mở tài khoản ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Tên tài khoản lúc mở tài khoản ($1)",
 	"abusefilter-edit-builder-vars-action": "Tác vụ ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Các dòng được thêm trong sửa đổi ($1)",
 	"abusefilter-edit-builder-vars-delta": "Kích cỡ thay đổi trong sửa đổi ($1)",

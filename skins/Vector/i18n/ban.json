@@ -57,9 +57,6 @@
 	"vector-toc-label": "Daging",
 	"vector-toc-beginning": "Pamahbah",
 	"vector-toc-toggle-button-label": "Maalih subséksi $1",
-	"vector-anon-user-menu-pages": "Kaca panguahan sampun medal log",
-	"vector-anon-user-menu-pages-learn": "pelajahin malih",
-	"vector-anon-user-menu-pages-label": "Pelajahin malih indik panguahan",
 	"vector-main-menu-tooltip": "Menu utama",
 	"vector-toc-menu-tooltip": "Daging cakepan",
 	"vector-toc-collapsible-button-label": "Maalih ''daftar isi''",
@@ -82,7 +79,5 @@
 	"vector-page-tools-unpinned-popup": "Menu piranti sampun kagingsirang meriki.",
 	"vector-main-menu-unpinned-popup": "Menu utama kagingsirang meriki.",
 	"vector-appearance-unpinned-popup": "Menu cingakan kagingsirang meriki.",
-	"vector-2022-beta-preview-label": "Aksesibilitas antuk Wacén (Vektor 2022)",
-	"vector-2022-beta-preview-description": "Ngamolihang aksés pamahbah ring pawigunan aksesibilitas wacén anyar, sekadi pamunggahan tipografi miwah mode peteng.",
 	"vector-night-mode-gadget-warning": "Ragané nganggén gawai mode peteng sané nganggu pawigunan niki. [[Special:Preferences#mw-prefsection-gadgets|Matiang gawai]] antuk nganggén mode peteng."
 }

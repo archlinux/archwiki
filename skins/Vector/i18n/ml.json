@@ -57,9 +57,6 @@
 	"vector-toc-label": "ഉള്ളടക്കം",
 	"vector-toc-beginning": "തുടക്കം",
 	"vector-toc-toggle-button-label": "$1 ഉപവിഭാഗവുമായി പരസ്പരം മാറുക",
-	"vector-anon-user-menu-pages": "ലോഗ് ഔട്ട് ചെയ്ത എഡിറ്റർമാർക്കുള്ള പേജുകൾ",
-	"vector-anon-user-menu-pages-learn": "കൂടുതൽ അറിയുക",
-	"vector-anon-user-menu-pages-label": "തിരുത്തലിനെ കുറിച്ച് കൂടുതൽ അറിയുക",
 	"vector-main-menu-tooltip": "പ്രധാന മെനു",
 	"vector-toc-menu-tooltip": "ഉള്ളടക്കപ്പട്ടിക",
 	"vector-toc-collapsible-button-label": "ഉള്ളടക്ക പട്ടിക പ്രദർശിപ്പിക്കുക / മറയ്ക്കുക",
@@ -82,7 +79,5 @@
 	"vector-page-tools-unpinned-popup": "ഉപകരണങ്ങൾ മെനു ഇവിടേക്ക് മാറ്റിയിരിക്കുന്നു.",
 	"vector-main-menu-unpinned-popup": "പ്രധാന മെനു ഇവിടേക്ക് മാറ്റിയിരിക്കുന്നു.",
 	"vector-appearance-unpinned-popup": "ദൃശ്യരൂപ മെനു ഇവിടേക്ക് മാറ്റിയിരിക്കുന്നു.",
-	"vector-2022-beta-preview-label": "വായനയ്ക്കുള്ള അഭിഗമ്യത (വെക്റ്റർ 2022)",
-	"vector-2022-beta-preview-description": "ടൈപ്പോഗ്രാഫിയിലെ മെച്ചപ്പെടുത്തലുകൾ, ശ്യാമരൂപം (ഡാർക്ക് മോഡ്) തുടങ്ങിയവ പോലെയുള്ള വായനാ അഭിഗമ്യതാ സവിശേഷതകൾ നേരത്തേ നേടുക.",
 	"vector-night-mode-beta-tag": "(ബീറ്റ)"
 }

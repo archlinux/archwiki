@@ -57,9 +57,6 @@
 	"vector-toc-label": "Naverok",
 	"vector-toc-beginning": "Destpêk",
 	"vector-toc-toggle-button-label": "Binêbeşa $1 bigire/veke",
-	"vector-anon-user-menu-pages": "Rûpelên ji bo edîtorên derketî",
-	"vector-anon-user-menu-pages-learn": "Zêdetir hîn bibe",
-	"vector-anon-user-menu-pages-label": "Di derbarê guhartinê de zêdetir hîn bibe",
 	"vector-main-menu-tooltip": "Menuya esasî",
 	"vector-toc-menu-tooltip": "Tabloya naverokê",
 	"vector-toc-collapsible-button-label": "Tabloya naverokê bigre/veke",
@@ -81,6 +78,5 @@
 	"vector-toc-unpinned-popup": "Tabloya naverokan neqlê vir kirine.",
 	"vector-page-tools-unpinned-popup": "Menûya amûran neqlê vir kirine.",
 	"vector-main-menu-unpinned-popup": "Menûya esasî neqlê vir kirine.",
-	"vector-appearance-unpinned-popup": "Menûya xuyakirinê neqlê vir kirine.",
-	"vector-2022-beta-preview-label": "Tercîhên Xwendinê (Vector 2022)"
+	"vector-appearance-unpinned-popup": "Menûya xuyakirinê neqlê vir kirine."
 }

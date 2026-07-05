@@ -65,14 +65,8 @@
 				"options": { "notnull": true }
 			},
 			{
-				"name": "cuc_ip",
-				"comment": "IP address, visible",
-				"type": "string",
-				"options": { "notnull": false, "length": 255, "default": "" }
-			},
-			{
 				"name": "cuc_ip_hex",
-				"comment": "IP address as hexidecimal",
+				"comment": "IP address as hexadecimal",
 				"type": "string",
 				"options": { "notnull": false, "length": 255 }
 			},
@@ -84,14 +78,8 @@
 			},
 			{
 				"name": "cuc_xff_hex",
-				"comment": "XFF header, last IP, as hexidecimal",
+				"comment": "XFF header, last IP, as hexadecimal",
 				"type": "string",
-				"options": { "notnull": false, "length": 255 }
-			},
-			{
-				"name": "cuc_agent",
-				"comment": "User agent",
-				"type": "binary",
 				"options": { "notnull": false, "length": 255 }
 			},
 			{
@@ -115,11 +103,6 @@
 			{
 				"name": "cuc_timestamp",
 				"columns": [ "cuc_timestamp" ],
-				"unique": false
-			},
-			{
-				"name": "cuc_actor_ip_time",
-				"columns": [ "cuc_actor", "cuc_ip", "cuc_timestamp" ],
 				"unique": false
 			},
 			{
@@ -159,12 +142,6 @@
 				"options": { "notnull": true }
 			},
 			{
-				"name": "cule_ip",
-				"comment": "IP address, visible",
-				"type": "string",
-				"options": { "notnull": false, "length": 255, "default": "" }
-			},
-			{
 				"name": "cule_ip_hex",
 				"comment": "IP address as hexadecimal",
 				"type": "string",
@@ -180,12 +157,6 @@
 				"name": "cule_xff_hex",
 				"comment": "XFF header, last IP, as hexadecimal",
 				"type": "string",
-				"options": { "notnull": false, "length": 255 }
-			},
-			{
-				"name": "cule_agent",
-				"comment": "User agent",
-				"type": "binary",
 				"options": { "notnull": false, "length": 255 }
 			},
 			{
@@ -209,11 +180,6 @@
 			{
 				"name": "cule_timestamp",
 				"columns": [ "cule_timestamp" ],
-				"unique": false
-			},
-			{
-				"name": "cule_actor_ip_time",
-				"columns": [ "cule_actor", "cule_ip", "cule_timestamp" ],
 				"unique": false
 			},
 			{
@@ -287,12 +253,6 @@
 				"options": { "notnull": true }
 			},
 			{
-				"name": "cupe_ip",
-				"comment": "IP address, visible",
-				"type": "string",
-				"options": { "notnull": false, "length": 255, "default": "" }
-			},
-			{
 				"name": "cupe_ip_hex",
 				"comment": "IP address as hexadecimal",
 				"type": "string",
@@ -311,22 +271,10 @@
 				"options": { "notnull": false, "length": 255 }
 			},
 			{
-				"name": "cupe_agent",
-				"comment": "User agent",
-				"type": "binary",
-				"options": { "notnull": false, "length": 255 }
-			},
-			{
 				"name": "cupe_agent_id",
 				"comment": "Foreign key to cu_useragent table on the cuua_id field. Represents the user agent string used for this log event.",
 				"type": "bigint",
 				"options": { "notnull": true, "unsigned": true, "default": 0 }
-			},
-			{
-				"name": "cupe_private",
-				"comment": "Private Data",
-				"type": "blob",
-				"options": { "notnull": false, "length": 16777215 }
 			}
 		],
 		"indexes": [
@@ -343,11 +291,6 @@
 			{
 				"name": "cupe_timestamp",
 				"columns": [ "cupe_timestamp" ],
-				"unique": false
-			},
-			{
-				"name": "cupe_actor_ip_time",
-				"columns": [ "cupe_actor", "cupe_ip", "cupe_timestamp" ],
 				"unique": false
 			},
 			{
@@ -387,6 +330,7 @@
 	},
 	{
 		"name": "cu_useragent_clienthints",
+		"comment": "A table which stores Client Hints data along with other selected data that is similar to Client Hints (such as browser headers that describe the browser, like x-is-browser on WMF wikis).",
 		"columns": [
 			{
 				"name": "uach_id",
@@ -396,13 +340,13 @@
 			},
 			{
 				"name": "uach_name",
-				"comment": "Name of the user-agent client hint. See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list.",
+				"comment": "Name of the user-agent client hint or other attribute similar to a Client Hint (such as x-is-browser header on WMF wikis). See https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of Client Hints.",
 				"type": "string",
 				"options": { "notnull": true, "length": 32 }
 			},
 			{
 				"name": "uach_value",
-				"comment": "Value of the user-agent client hint, see https://wicg.github.io/ua-client-hints/#http-ua-hints for a list of client hint names.",
+				"comment": "Value associated with uach_name. This may be Client Hints data or some other HTTP header data similar to Client Hints.",
 				"type": "string",
 				"options": { "notnull": true, "length": 255 }
 			}

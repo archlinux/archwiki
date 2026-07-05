@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tamzin",
-			"Palinasin"
+			"Palinasin",
+			"Tamzin"
 		]
 	},
 	"right-oathauth-disable-for-user": "ilo pi sona pona jan la ona li ken pini e kepeken",
 	"right-oathauth-verify-user": "ilo pi sona pona jan la ona li ken sona e kepeken",
 	"right-oathauth-view-log": "ilo pi sona pona jan la ona li ken lukin e pini ante",
 	"right-oathauth-enable": "ona li ken ken e ilo pi sona pona jan",
-	"right-oathauth-api-all": "nasin OAuth la ona li ken lukin e sona ona, e sona pi jan ante"
+	"oathauth-2fa-groups-notice-multiple-links-entry": "tawa kulupu $2 lon ma $3 la, $4",
+	"oathauth-2fa-groups-notice-unknown-page": "lipu li sona ala"
 }

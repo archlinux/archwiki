@@ -12,7 +12,7 @@ use MediaWiki\Title\Title;
  */
 class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 
-	private bool $useCodeEditor;
+	private readonly bool $useCodeEditor;
 
 	public function __construct(
 		Config $config,
@@ -29,12 +29,7 @@ class CodeEditorHooks implements CodeEditorGetPageLanguageHook {
 	 * @return bool
 	 */
 	public function onCodeEditorGetPageLanguage( Title $title, ?string &$languageCode, string $model, string $format ) {
-		if ( $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) && (
-				$this->useCodeEditor ||
-				// Temporary while CodeMirror is still in beta (T373711#11018957).
-				!( \MediaWiki\Extension\CodeEditor\Hooks::tempIsCodeMirrorEnabled() )
-			)
-		) {
+		if ( $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) && $this->useCodeEditor ) {
 			$engine = $this->engineFactory->getDefaultEngine();
 			if ( $engine->getCodeEditorLanguage() ) {
 				$languageCode = $engine->getCodeEditorLanguage();

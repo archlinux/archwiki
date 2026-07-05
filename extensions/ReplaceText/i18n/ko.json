@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bisang",
 			"Devunt",
 			"Hwangjy9",
 			"Kwj2772",
@@ -8,8 +9,7 @@
 			"Tensama0415",
 			"Yearning",
 			"Ykhwong",
-			"아라",
-			"Bisang"
+			"아라"
 		]
 	},
 	"replacetext": "문자열 찾아 바꾸기",

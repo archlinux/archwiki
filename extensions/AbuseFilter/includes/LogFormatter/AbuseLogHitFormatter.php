@@ -15,14 +15,11 @@ use MediaWiki\SpecialPage\SpecialPage;
  */
 class AbuseLogHitFormatter extends LogFormatter {
 
-	private SpecsFormatter $specsFormatter;
-
 	public function __construct(
 		LogEntry $entry,
-		SpecsFormatter $specsFormatter
+		private readonly SpecsFormatter $specsFormatter
 	) {
 		parent::__construct( $entry );
-		$this->specsFormatter = $specsFormatter;
 	}
 
 	/**
@@ -34,8 +31,7 @@ class AbuseLogHitFormatter extends LogFormatter {
 		$params = parent::getMessageParameters();
 
 		$filter_title = SpecialPage::getTitleFor( 'AbuseFilter', $entry['filter'] );
-		$filter_caption = $this->msg( 'abusefilter-log-detailedentry-local' )
-			->params( $entry['filter'] )
+		$filter_caption = $this->msg( 'abusefilter-log-detailedentry-local', $entry['filter'] )
 			->text();
 		$log_title = SpecialPage::getTitleFor( 'AbuseLog', $entry['log'] );
 		$log_caption = $this->msg( 'abusefilter-log-detailslink' )->text();

@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\Rest\Handler;
 
-use MediaWiki\CheckUser\Api\Rest\Handler\UserInfoHandler;
+use MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserInfoHandler;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -13,7 +13,7 @@ use MediaWikiIntegrationTestCase;
 use Wikimedia\Message\MessageValue;
 
 /**
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\UserInfoHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserInfoHandler
  * @group Database
  */
 class UserInfoHandlerTest extends MediaWikiIntegrationTestCase {

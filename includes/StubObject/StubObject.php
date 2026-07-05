@@ -120,8 +120,6 @@ class StubObject {
 			? [ 'factory' => $this->factory ]
 			: [ 'class' => $this->class ];
 
-		// ObjectFactory::getObjectFromSpec accepts an array, not just a callable (phan bug)
-		// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
 		return ObjectFactory::getObjectFromSpec( $params + [
 				'args' => $this->params,
 				'closure_expansion' => false,

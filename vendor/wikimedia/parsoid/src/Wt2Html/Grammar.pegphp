@@ -30,9 +30,11 @@ namespace Wikimedia\Parsoid\Wt2Html;
 	use Wikimedia\Parsoid\Tokens\PreprocTk;
 	use Wikimedia\Parsoid\Tokens\PreprocType;
 	use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-	use Wikimedia\Parsoid\Tokens\SourceRange;
+	use Wikimedia\Parsoid\Core\SourceRange;
 	use Wikimedia\Parsoid\Tokens\TagTk;
 	use Wikimedia\Parsoid\Tokens\Token;
+	use Wikimedia\Parsoid\Tokens\VariantInfo;
+	use Wikimedia\Parsoid\Tokens\VariantOption;
 	use Wikimedia\Parsoid\Utils\DOMDataUtils;
 	use Wikimedia\Parsoid\Utils\PHPUtils;
 	use Wikimedia\Parsoid\Utils\TokenUtils;
@@ -76,7 +78,7 @@ namespace Wikimedia\Parsoid\Wt2Html;
 			$this->frame->getSource();
 		$this->pipelineOpts = $tokenizer->getOptions();
 		// FIXME: inTemplate option may not always be set in
-		// standalone tokenizers user by some pipelines handlers.
+		// standalone tokenizers used by some pipelines handlers.
 		$this->pipelineOffset = $this->options['pipelineOffset'] ?? 0;
 		$this->extTags = $this->siteConfig->getExtensionTagNameMap();
 		$this->annotationsEnabledOnWiki = count( $this->siteConfig->getAnnotationTags() ) > 0;
@@ -305,8 +307,8 @@ tlb "tlb" =
 	}
 
 /*
- * Redirects can only occur as the first thing in a document.  See
- * WikitextContent::getRedirectTarget()
+ * Redirects can only occur as the first thing in a document.
+ * See WikitextContent::getRedirectTarget()
  */
 redirect =
 	rw:redirect_word
@@ -354,10 +356,12 @@ redirect_word =
  */
 block =
 /* Redirect has to be the first alternative; otherwise it gets parsed as a <ol>
- *  In practice, WikiContent::getRedirectTargetAndText() in MediaWiki strips
- *  the redirect from the source so it never sees it.
+ * In practice, WikiContent::getRedirectTargetAndText() in MediaWiki strips
+ * the redirect from the source so it never sees it. So, redirects should be
+ * ignored if they come from a template.
  */
-	&sof r:redirect cil:sol_transparent* bl:block_line? {
+	&sof &{ return empty( $this->pipelineOpts['inTemplate'] ); }
+	r:redirect cil:sol_transparent* bl:block_line? {
 		$this->hasSOLTransparentAtStart = true;
 		return array_merge( [ $r ], $cil, $bl ?: [] );
 	}
@@ -716,11 +720,7 @@ autoref =
 		$dp = new DataParsoid;
 		$dp->tsr = $tsr;
 		$dp->stx = 'magiclink';
-		$this->env->getDataAccess()->addTrackingCategory(
-			$this->env->getPageConfig(),
-			$this->env->getMetadata(),
-			'magiclink-tracking-' . strtolower($ref)
-		);
+		$dp->getTemp()->ref = strtolower( $ref );
 		return [
 			new SelfclosingTagTk( 'extlink', [
 					new KV( 'href', sprintf( $base_urls[$ref], $identifier ) ),
@@ -762,11 +762,7 @@ isbn =
 		$dp = new DataParsoid;
 		$dp->stx = 'magiclink';
 		$dp->tsr = $tsr;
-		$this->env->getDataAccess()->addTrackingCategory(
-			$this->env->getPageConfig(),
-			$this->env->getMetadata(),
-			'magiclink-tracking-isbn'
-		);
+		$dp->getTemp()->ref = 'isbn';
 		return [
 			new SelfclosingTagTk( 'extlink', [
 					new KV( 'href', 'Special:BookSources/' . $isbncode ),
@@ -881,7 +877,7 @@ ipv6urladdr =
 
 /*
  * Precedence: template arguments win over templates. See
- * http://www.mediawiki.org/wiki/Preprocessor_ABNF#Ideal_precedence
+ * https://www.mediawiki.org/wiki/Preprocessor_ABNF#Ideal_precedence
  * 4: {{{{·}}}} → {·{{{·}}}·}
  * 5: {{{{{·}}}}} → {{·{{{·}}}·}}
  * 6: {{{{{{·}}}}}} → {{{·{{{·}}}·}}}
@@ -890,19 +886,34 @@ ipv6urladdr =
  * and close as we find them.
  */
 tplarg_or_template =
-	parsoid_fragment_marker /
+	&('{{' hash) t:template3 { return $t; }  /
 	&'{{'
 	@(
-		&('{{' &('{{{'+ !'{') tplarg) @(template/broken_template)
-		/ @$('{' &('{{{'+ !'{'))? @tplarg
-		/ @$('{' &('{{' !'{'))? @template
+		&('{{' &(triple_brace+ not_a_brace) tplarg) @(template/broken_template)
+		/ &('{{' parsoid_fragment_marker_literal) @(template/broken_template)
+		/ '{' parsoid_fragment_marker
+		/ @$('{' &(triple_brace+ not_a_brace))? @tplarg
+		/ @$('{' &('{{' not_a_brace))? @template
 		/ broken_template
 	)
+
+template3 =
+	&"{{" p:preproc_piece<&preproc_sol=false>
+	&{ return $p instanceof PreprocTk && $p->type === PreprocType::BRACE && $p->count == 2; }
+{
+	// $p is cachable, so clone its dataParsoid to ensure we don't mutate it
+	$dp = clone $p->dataParsoid;
+	$dp->src = $this->text();
+	return new SelfclosingTagTk(
+	  'template3', $p->getBarredArgs(), $dp
+	);
+}
 
 tplarg_or_template_or_bust =
 	r:(tplarg_or_template / .)+ { return TokenizerUtils::flattenIfArray( $r ); }
 
 template =
+	parsoid_fragment_marker /
 	template_preproc<&preproc="}}">
 
 // The old preprocessor maintains a single stack of "closing token we
@@ -945,7 +956,8 @@ broken_template =
 
 template_preproc =
 	"{{" nl_comment_space*
-	target:inlineline_in_tpls
+	p:POSITION
+	target:inlineline_in_tpls?
 	params:(
 		nl_comment_space* "|"
 		@(
@@ -967,6 +979,9 @@ template_preproc =
 		// Insert target as first positional attribute, so that it can be
 		// generically expanded. The TemplateHandler then needs to shift it out
 		// again.
+		if ( $target === null ) {
+			$target = [ 'tokens' => '', 'srcOffsets' => new SourceRange( $p, $p, $this->source ) ];
+		}
 		array_unshift( $params, new KV( TokenizerUtils::flattenIfArray( $target['tokens'] ), '', $target['srcOffsets']->expandTsrK() ) );
 		$dp = new DataParsoid;
 		$dp->tsr = $this->tsrOffsets();
@@ -986,7 +1001,8 @@ parsoid_fragment_marker = marker:parsoid_fragment_marker_literal {
 }
 
 tplarg =
-	tplarg_preproc<&preproc="}}">
+	!("{" parsoid_fragment_marker_literal)
+	@tplarg_preproc<&preproc="}}">
 
 tplarg_preproc =
 	"{{{" nl_comment_space*
@@ -1113,9 +1129,11 @@ inlineline_in_tpls =
 // -{{{{ is (since {{{ has precedence over {{).
 
 lang_variant_or_tpl =
-	&('-{' &('{{{'+ !'{') tplarg) @lang_variant
-	/ @$('-' &('{{{'+ !'{')) @tplarg
-	/ @$('-' &('{{' '{{{'* !'{')) @template
+	&('-{' &(triple_brace+ not_a_brace) tplarg) @lang_variant
+	/ &('-{' parsoid_fragment_marker_literal) @lang_variant
+	/ @$('-' &(triple_brace+ not_a_brace)) @tplarg
+	/ '-' parsoid_fragment_marker
+	/ @$('-' &('{{' triple_brace* not_a_brace)) @template
 	/ &'-{' @lang_variant
 
 broken_lang_variant =
@@ -1152,7 +1170,9 @@ lang_variant_preproc =
 	)
 	ts:(
 		&{ return $f['raw']; }
-		lv:lang_variant_text { return [ [ 'text' => $lv ] ]; }
+		lv:lang_variant_text {
+			return [ new VariantOption( textTokens: $lv ) ];
+		}
 		/
 		&{ return !$f['raw']; }
 		@lang_variant_option_list
@@ -1161,23 +1181,25 @@ lang_variant_preproc =
 	lv1:("}-" @POSITION)
 	{
 		if ( !$this->env->langConverterEnabled() ) {
-			return [ '-{', $ts[0]['text']['tokens'], '}-' ];
+			return [ '-{', $ts[0]->textTokens['tokens'], '}-' ];
 		}
 		$lvsrc = substr( $this->input, $lv0, $lv1 - $lv0 );
 		$attribs = [];
 
-		foreach ( $ts as &$t ) {
+		foreach ( $ts as $t ) {
 			// move token strings into KV attributes so that they are
 			// properly expanded by early stages of the token pipeline
 			foreach ( [ 'text', 'from', 'to' ] as $fld ) {
-				if ( !isset( $t[$fld] ) ) {
+				$prop = $fld . "Tokens";
+				if ( $t->$prop === null ) {
 					continue;
 				}
 				$name = 'mw:lv' . count( $attribs );
 				// Note that AttributeExpander will expect the tokens array to be
 				// flattened.  We do that in lang_variant_text / lang_variant_nowiki
-				$attribs[] = new KV( $name, $t[$fld]['tokens'], $t[$fld]['srcOffsets']->expandTsrV() );
-				$t[$fld] = $name;
+				$attribs[] = new KV( $name, $t->$prop['tokens'], $t->$prop['srcOffsets']->expandTsrV() );
+				$t->$prop = null;
+				$t->$fld = $name;
 			}
 		}
 		unset( $t );
@@ -1190,11 +1212,13 @@ lang_variant_preproc =
 		$dp = new DataParsoid;
 		$dp->tsr = new SourceRange( $lv0, $lv1, $this->source );
 		$dp->src = $lvsrc;
-		$dp->flags = $flags;
-		$dp->variants = $variants;
-		$dp->original = $f['original'];
-		$dp->flagSp = $f['sp'];
-		$dp->texts = $ts;
+		$dp->getTemp()->variantInfo = new VariantInfo(
+			flags: $flags,
+			variants: $variants,
+			original: $f['original'],
+			flagSp: $f['sp'],
+			texts: $ts,
+		);
 
 		return [
 			new SelfclosingTagTk(
@@ -1295,7 +1319,8 @@ lang_variant_flags =
 lang_variant_flag =
 	f:[-+A-Z]           { return [ 'flag' => $f ]; }
 	/ v:lang_variant_name { return [ 'variant' => $v ]; }
-	/ b:$(!space_or_newline !nowiki [^{}|;])+ { return [ 'bogus' => $b ]; /* bad flag */}
+	// T417534: This production is overly complicated and should be dropped
+	/ b:$(!space_or_newline !nowiki [^{}|;\[\]])+ { return [ 'bogus' => $b ]; /* bad flag */}
 
 // language variant name, like zh, zh-cn, etc.
 lang_variant_name =
@@ -1315,12 +1340,17 @@ lang_variant_option_list =
 		if ( count($tr) > 0 ) {
 			$last = $tr[count($tr)-1];
 			if (preg_match('/^\s*$/Du', $last[1])) {
-				$rest[] = [ 'semi' => true, 'sp' => $last[1] ];
+				$rest[] = new VariantOption(
+					semi: true,
+					sp: [ $last[1] ],
+				);
 			}
 		}
 		return $rest;
 	}
-	/ lvtext:lang_variant_text { return [ [ 'text' => $lvtext ] ]; }
+	/ lvtext:lang_variant_text {
+		return [ new VariantOption( textTokens: $lvtext ) ];
+	}
 
 bogus_lang_variant_option =
 	lang_variant_text?
@@ -1331,12 +1361,12 @@ lang_variant_option =
 	sp3:$(space_or_newline*)
 	lvtext:(lang_variant_nowiki / lang_variant_text_no_semi)
 	{
-		return [
-			'twoway' => true,
-			'lang' => $lang,
-			'text' => $lvtext,
-			'sp' => [ $sp1, $sp2, $sp3 ]
-		];
+		return new VariantOption(
+			twoway: true,
+			lang: $lang,
+			textTokens: $lvtext,
+			sp: [ $sp1, $sp2, $sp3 ]
+		);
 	}
 	/ sp1:$(space_or_newline*)
 	from:(lang_variant_nowiki / lang_variant_text_no_semi_or_arrow)
@@ -1346,13 +1376,13 @@ lang_variant_option =
 	sp4:$(space_or_newline*)
 	to:(lang_variant_nowiki / lang_variant_text_no_semi)
 	{
-		return [
-			'oneway' => true,
-			'from' => $from,
-			'lang' => $lang,
-			'to' => $to,
-			'sp' => [ $sp1, $sp2, $sp3, $sp4 ]
-		];
+		return new VariantOption(
+			oneway: true,
+			fromTokens: $from,
+			lang: $lang,
+			toTokens: $to,
+			sp: [ $sp1, $sp2, $sp3, $sp4 ]
+		);
 	}
 
 // html2wt support: If a language name or conversion string can't be
@@ -1370,7 +1400,7 @@ lang_variant_nowiki =
 	}
 
 lang_variant_text =
-	tokens:(inlineline / "|" )*
+	tokens:(nested_block / "|" / newlineToken)*
 	{
 		return [
 			'tokens' => TokenizerUtils::flattenStringlist( $tokens ),
@@ -1694,13 +1724,27 @@ preproc_piece_template =
 	}
 
 // These lookahead rules are used to ensure rightward precedence
-// http://www.mediawiki.org/wiki/Preprocessor_ABNF#Ideal_precedence
+// https://www.mediawiki.org/wiki/Preprocessor_ABNF#Ideal_precedence
+// parsoid_fragment_marker has highest precedence
 
+triple_brace = $( "{" !parsoid_fragment_marker_literal "{{" )
+not_a_brace = &parsoid_fragment_marker_literal / !"{"
+
+// `x &preproc_piece_tplarg_lookahead` should be read as
+// "will matching (lower precedence) rule x ensure that everything
+// rightward of x is at tplarg priority or higher?"
 preproc_piece_tplarg_lookahead =
-	&("{{{"+ !"{") @preproc_piece_tplarg
+	&(triple_brace+ not_a_brace) @preproc_piece_tplarg
+	/ parsoid_fragment_marker_literal
 
+// `x &preproc_piece_template_lookahead` should be read as
+// "will matching (lower precedence) rule x ensure that everything
+// rightward of x is template priority or higher?" (ie
+// "template followed by templateargs")
+// (preproc_piece_template also matches parsoid_fragment_marker
+// which is "higher than template priority")
 preproc_piece_template_lookahead =
-	&("{{" "{{{"* !"{") @preproc_piece_template
+	&("{{" triple_brace* not_a_brace) @preproc_piece_template
 
 // Separate cached-and-not-inlined rule so we don't have to repeat our
 // search forward and can skip directly to the 'interesting' pieces when
@@ -1902,7 +1946,7 @@ normalized_tag_name = name:$[^\t\n\v />\0#]+ &{
 }
 
 /* Supporting a hash part of extension tag is T393795 */
-hash_part = $( "#" $[^\t\n\v />\0]+ )
+hash_part = $( hash $[^\t\n\v />\0]+ )
 
 tag_trailing_context = space_or_newline / "/>" / ">"
 
@@ -2182,7 +2226,7 @@ nowiki_text =
  * parsed as regular inline, but the source positions of the tag are added
  * to allow reconstructing the unparsed text from the input. */
 
-// See http://www.w3.org/TR/html5/syntax.html#tag-open-state and the following
+// See https://html.spec.whatwg.org/multipage/parsing.html#tag-open-state and the following
 // paragraphs.  Note that we don't enforce ascii alpha for the first character
 // here because we need to be more permissive for extension tag names.  That
 // happens in xmlish_tag below.
@@ -2215,6 +2259,13 @@ xmlish_tag =
 	">"
 	{
 		list($end, $name) = $start;
+
+		// In HTML5, only the ASCII chars are lower cased
+		// See https://html.spec.whatwg.org/multipage/parsing.html#tag-name-state
+		// However, extension tags can be multibyte and there'll be less to think
+		// about if we always reach for mb functions.  This precludes having
+		// html custom elements that differ only the casing but that's probably
+		// for the best.
 		$lcName = mb_strtolower( $name );
 
 		// Extension tags don't necessarily have the same semantics as html tags,
@@ -2305,7 +2356,7 @@ less_than = !html_or_empty @"<"
 
 // The arrangement of chars is to emphasize the split between what's disallowed
 // by html5 and what's necessary to give directive a chance.
-// See: http://www.w3.org/TR/html5/syntax.html#attributes-0
+// See: https://html.spec.whatwg.org/multipage/syntax.html#attributes-2
 generic_attribute_name =
 	first:(
 	  // From #before-attribute-name-state, < is omitted for directive
@@ -2375,13 +2426,13 @@ generic_att_value =
 // Missing end quote: accept |, !!, \r, and \n look-ahead as heuristic.
 // These need to be kept in sync with the table_attribute_preprocessor_text_*
 table_att_value =
-	s:$(space* "'") t:table_attribute_preprocessor_text_single? q:$("'" / &('!!' / [|\r\n])) {
+	s:$(space* "'") t:table_attribute_preprocessor_text_single? q:$("'" / &('!!' / [|\r\n] / '{{!}}')) {
 		return TokenizerUtils::getAttrVal( $t, $this->startOffset() + strlen( $s ), $this->endOffset() - strlen( $q ), $this->source );
 	}
-	/ s:$(space* '"') t:table_attribute_preprocessor_text_double? q:$('"' / &('!!' / [|\r\n])) {
+	/ s:$(space* '"') t:table_attribute_preprocessor_text_double? q:$('"' / &('!!' / [|\r\n] / '{{!}}')) {
 		return TokenizerUtils::getAttrVal( $t, $this->startOffset() + strlen( $s ), $this->endOffset() - strlen( $q ), $this->source );
 	}
-	/ s:$space* t:table_attribute_preprocessor_text &(space_or_newline/ eof / '!!' / '|') {
+	/ s:$space* t:table_attribute_preprocessor_text &(space_or_newline/ eof / '!!' / '|' / '{{!}}') {
 		return TokenizerUtils::getAttrVal( $t, $this->startOffset() + strlen( $s ), $this->endOffset(), $this->source );
 	}
 
@@ -2661,14 +2712,14 @@ table_heading_tags_parameterized =
 	}
 
 table_heading_tag =
-	arg:row_syntax_table_args?
+	args:row_syntax_table_args?
 	tagEndPos:POSITION
 	th:nested_block_in_table*
 	{
 		$tagStart = $this->startOffset();
 		$tsr = new SourceRange( $tagStart, $tagEndPos, $this->source );
 		return TokenizerUtils::buildTableTokens(
-			$this->input, 'th', '!', $arg, $tsr, $this->endOffset(), $th
+			$this->input, 'th', '!', $args, $tsr, $this->endOffset(), $th
 		);
 	}
 
@@ -2694,7 +2745,8 @@ table_data_tags =
 	// avoid recursion via nested_block_in_table
 	! <tableDataBlock>
 	p:pipe
-	![+-] td:table_data_tag
+	![+\-}]
+	td:table_data_tag
 	tds:tds {
 		// Avoid modifying a cached result
 		$td[0] = clone $td[0];
@@ -2709,8 +2761,7 @@ table_data_tags =
 	}
 
 table_data_tag =
-	! "}"
-	arg:row_syntax_table_args?
+	args:row_syntax_table_args?
 	// use inline_breaks to break on tr etc
 	tagEndPos:POSITION
 	td:nested_block_in_table*
@@ -2718,7 +2769,7 @@ table_data_tag =
 		$tagStart = $this->startOffset();
 		$tsr = new SourceRange( $tagStart, $tagEndPos, $this->source );
 		return TokenizerUtils::buildTableTokens(
-			$this->input, 'td', '|', $arg, $tsr, $this->endOffset(), $td
+			$this->input, 'td', '|', $args, $tsr, $this->endOffset(), $td
 		);
 	}
 
@@ -3008,7 +3059,7 @@ directive =
 
 wikilink_preprocessor_text =
 	r:(
-		t:$[^<[{\n\r\t|!\]}{ &\-]+
+		t:$[^<[{\n\r\t|!\]} &\-]+
 		/ !inline_breaks !pipe @( directive / $( !"]]" ( text_char / [!<\-\}\]\n\r] ) ) )
 	)+ {
 		return TokenizerUtils::flattenString( $r );
@@ -3081,7 +3132,7 @@ attribute_preprocessor_text_double =
 table_attribute_preprocessor_text =
 	r:(
 		$[^{}&<\-!\[ \t\n\r\x0c|]+
-		/ !inline_breaks @( directive / [{}&<\-!\[] )
+		/ !inline_breaks @( directive / [{}&<\-!\[|] )
 	)+ {
 		return TokenizerUtils::flattenString( $r );
 	}
@@ -3090,7 +3141,7 @@ table_attribute_preprocessor_text =
 table_attribute_preprocessor_text_single =
 	r:(
 		$[^{}&<\-!\['\r\n|]+
-		/ !inline_breaks @( directive / [{}&<\-!\[] )
+		/ !inline_breaks @( directive / [{}&<\-!\[|] )
 	)* {
 		return TokenizerUtils::flattenString( $r );
 	}
@@ -3099,10 +3150,13 @@ table_attribute_preprocessor_text_single =
 table_attribute_preprocessor_text_double =
 	r:(
 		$[^{}&<\-!\["\r\n|]+
-		/ !inline_breaks @( directive / [{}&<\-!\[] )
+		/ !inline_breaks @( directive / [{}&<\-!\[|] )
 	)* {
 		return TokenizerUtils::flattenString( $r );
 	}
+
+// Japanese uses "double wide hash" instead of `#` in localizations (T415405)
+hash = "#" / "＃"
 
 // Special-case support for those pipe templates
 pipe [inline] = "|" / "{{!}}"

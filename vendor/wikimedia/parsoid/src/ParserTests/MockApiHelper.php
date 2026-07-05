@@ -594,7 +594,7 @@ class MockApiHelper extends ApiHelper {
 	 * Image scaling computation helper.
 	 *
 	 * Linker.php in core calls File::transform(...) for each dimension (1x,
-	 * 1.5x, 2x) which then scales the image dimensions, using round/ceil/floor
+	 * 2x) which then scales the image dimensions, using round/ceil/floor
 	 * as appropriate to yield integer dimensions.  Note that the results
 	 * may be unintuitive due to the conversion to integer: eg, a 442px width
 	 * image may become 883px in 2x mode.  Resist the temptation to "optimize"
@@ -613,6 +613,10 @@ class MockApiHelper extends ApiHelper {
 	 * @param int|float|null &$theight Thumbnail height (inout parameter)
 	 */
 	public static function transformHelper( $width, $height, &$twidth, &$theight ): void {
+		if ( $width === 0 || $height === 0 ) {
+			$width = $twidth;
+			$height = $theight;
+		}
 		if ( $theight === null ) {
 			// File::scaleHeight in PHP
 			$theight = round( $height * $twidth / $width );
@@ -776,7 +780,7 @@ class MockApiHelper extends ApiHelper {
 			$info['thumburl'] = $turl;
 			// src set info; added to core API result as part of T226683
 			// See Linker.php::processResponsiveImages() in core
-			foreach ( [ 1.5, 2 ] as $scale ) {
+			foreach ( [ 2 ] as $scale ) {
 				$stwidth = $stheight = null;
 				if ( $origThumbWidth !== null ) {
 					$stwidth = round( $origThumbWidth * $scale );
@@ -1005,34 +1009,23 @@ class MockApiHelper extends ApiHelper {
 		// used in parser tests currently. This would need to be updated
 		// as more templates are added OR we need to rely on true parsing.
 		preg_match( '#<([A-Za-z][^\t\n\v />\0]*)#', $text, $match );
-		switch ( $match[1] ?? '' ) {
+		$res = match ( $match[1] ?? '' ) {
 			// FIXME: this isn't really used by the mocha tests
 			// since some mocha tests hit the production db, but
 			// when we fix that, they should go through this.
-			case 'templatestyles':
-				$res = "<style data-mw-deduplicate='TemplateStyles:r123456'>small { font-size: 120% } big { font-size: 80% }</style>"; // Silliness
-				break;
+			'templatestyles' => "<style data-mw-deduplicate='TemplateStyles:r123456'>small { font-size: 120% } big { font-size: 80% }</style>",
+			'translate' => $text,
+			'indicator',
+			'section' => '',
+			default => throw new Error( 'Unhandled extension type encountered in: ' . $text )
+		};
 
-			case 'translate':
-				$res = $text;
-				break;
-
-			case 'indicator':
-			case 'section':
-				$res = "";
-				break;
-
-			default:
-				throw new Error( 'Unhandled extension type encountered in: ' . $text );
-		}
-
-		$parse = [
+		return [ 'parse' => [
 			'text' => $res,
 			'categories' => [],
 			'modules' => [],
 			'modulestyles' => []
-		];
-		return [ 'parse' => $parse ];
+		] ];
 	}
 
 	/**

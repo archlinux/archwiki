@@ -199,6 +199,26 @@ class MockDataAccess extends DataAccess {
 				"mw-disambig",
 			]
 		],
+		"User:~2025-1" => [
+			"title" => "~2025-1",
+			"pageid" => 42,
+			"ns" => 0,
+			"revid" => 42,
+			"parentid" => 0,
+			'slots' => [
+				'main' => [
+					'contentmodel' => 'wikitext',
+					'contentformat' => 'text/x-wiki',
+					'*' => "This is a mock temp user page."
+				]
+			],
+			"linkclasses" => [
+				"mw-userlink",
+			],
+			"linkclasses-default" => [
+				"mw-tempuserlink",
+			]
+		],
 		"Special:Version" => [
 			"title" => "Version",
 			"pageid" => 107,
@@ -401,7 +421,7 @@ class MockDataAccess extends DataAccess {
 	}
 
 	/** @inheritDoc */
-	public function getPageInfo( $pageConfigOrTitle, array $titles ): array {
+	public function getPageInfo( $pageConfigOrTitle, array $titles, bool $defaultLinkCaption = false ): array {
 		$ret = [];
 		foreach ( $titles as $title ) {
 			$normTitle = $this->normTitle( $title );
@@ -410,13 +430,17 @@ class MockDataAccess extends DataAccess {
 				// Update data of the large page
 				$pageData['slots']['main']['*'] = str_repeat( 'a', $this->opts['maxWikitextSize'] ?? 1000000 );
 			}
+			$linkClasses = $pageData['linkclasses'] ?? [];
+			if ( $defaultLinkCaption ) {
+				$linkClasses = array_merge( $linkClasses, $pageData['linkclasses-default'] ?? [] );
+			}
 			$ret[$title] = [
 				'pageId' => $pageData['pageid'] ?? null,
 				'revId' => $pageData['revid'] ?? null,
 				'missing' => $pageData === null,
 				'known' => $pageData !== null,
 				'redirect' => $pageData['redirect'] ?? false,
-				'linkclasses' => $pageData['linkclasses'] ?? [],
+				'linkclasses' => $linkClasses,
 			];
 		}
 
@@ -552,32 +576,17 @@ class MockDataAccess extends DataAccess {
 	): string {
 		// Render to html the contents of known extension tags
 		preg_match( '#<([A-Za-z][^\t\n\v />\0]*)#', $wikitext, $match );
-		switch ( $match[1] ) {
-			case 'templatestyles':
-				// Silliness
-				$html = "<style data-mw-deduplicate='TemplateStyles:r123456'>" .
-					"small { font-size: 120% } big { font-size: 80% }</style>";
-				break;
-
-			case 'translate':
-				$html = $wikitext;
-				break;
-
-			case 'indicator':
-			case 'section':
-				$html = "";
-				break;
-
-			case 'math':
-				// phpcs:ignore Generic.Files.LineLength.TooLong
-				$html = '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>x</mi></mstyle></mrow></math>';
-				break;
-
-			default:
-				throw new Error( 'Unhandled extension type encountered in: ' . $wikitext );
-		}
-
-		return $html;
+		return match ( $match[1] ) {
+			'templatestyles' => "<style data-mw-deduplicate='TemplateStyles:r123456'>" .
+				'small { font-size: 120% } big { font-size: 80% }</style>',
+			'translate' => $wikitext,
+			'indicator',
+			'section' => '',
+			'math' => '<math xmlns="http://www.w3.org/1998/Math/MathML">' .
+				'<mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0">' .
+				'<mi>x</mi></mstyle></mrow></math>',
+			default => throw new Error( 'Unhandled extension type encountered in: ' . $wikitext )
+		};
 	}
 
 	/** @inheritDoc */
@@ -594,12 +603,13 @@ class MockDataAccess extends DataAccess {
 		}
 		$expanded = str_replace( '{{!}}', '|', $wikitext );
 		preg_match( '/{{1x\|(.*?)}}/s', $expanded, $match1 );
-		preg_match( '/{{#tag:ref\|(.*?)\|(.*?)}}/s', $expanded, $match2 );
+		preg_match( '/{{#tag:(.*?)\|(.*?)(?:\|(.*?))?}}/s', $expanded, $match2 );
 
 		if ( $match1 ) {
 			$ret = $match1[1];
 		} elseif ( $match2 ) {
-			$ret = "<ref {$match2[2]}>{$match2[1]}</ref>";
+			$attrs = isset( $match2[3] ) ? ' ' . $match2[3] : '';
+			$ret = "<{$match2[1]}{$attrs}>{$match2[2]}</{$match2[1]}>";
 		} elseif ( $wikitext === '{{colours of the rainbow}}' ) {
 			$ret = 'purple';
 		} elseif ( $wikitext === '{{REVISIONID}}' ) {
@@ -610,6 +620,8 @@ class MockDataAccess extends DataAccess {
 				Title::newFromText( 'Category:Mangle', $this->siteConfig ),
 				'ho'
 			);
+		} elseif ( $wikitext === '{{template with ext tag}}' ) {
+			$ret = '<gallery>File:{{{1|some}}}-{{{2|name}}}.jpg</gallery>';
 		} elseif ( $wikitext === '{{loop}}' ) {
 			$lit = LiteralStringPFragment::newFromLiteral( 'meh', null );
 			$wt = '{{loop}}';
@@ -632,7 +644,8 @@ class MockDataAccess extends DataAccess {
 			foreach ( $pageData['slots'] as $role => $data ) {
 				$content['role'] = $data['*'];
 			}
-			return new MockPageContent( $content );
+			$revid = $pageData['revid'];
+			return new MockPageContent( $content, $title, $revid );
 		} else {
 			return null;
 		}

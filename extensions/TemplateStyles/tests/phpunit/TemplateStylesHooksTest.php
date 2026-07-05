@@ -55,11 +55,12 @@ class TemplateStylesHooksTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideOnRegistration
-	 * @param array $textModelsToParse
-	 * @param bool $autoParseContent
-	 * @param array $expect
 	 */
-	public function testOnRegistration( $textModelsToParse, $autoParseContent, $expect ) {
+	public function testOnRegistration(
+		array $textModelsToParse,
+		bool $autoParseContent,
+		array $expect
+	) {
 		$this->overrideConfigValues( [
 			MainConfigNames::TextModelsToParse => $textModelsToParse,
 			'TemplateStylesAutoParseContent' => $autoParseContent,

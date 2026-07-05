@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ykhwong",
+			"Tensama0415"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "등록/인증 과정 중에 서버와 클라이언트 간 통신을 하기 위한 API 모듈입니다.",
+	"apihelp-oathauth-webauthn-param-func": "실행할 요청된 함수의 이름입니다.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "인증 정보입니다.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "등록 정보입니다.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "등록되려는 키가 패스키 모드인지 여부입니다. (getRegisterInfo에만 해당).",
+	"apierror-oathauth-webauthn-module-missing": "WebAuthn 모듈을 사용할 수 없습니다.",
+	"apierror-oathauth-webauthn-missing-credential": "자격 증명 정보가 제공되지 않았습니다.",
+	"apierror-oathauth-webauthn-invalid-credential": "자격 증명 데이터가 유효하지 않거나 형식이 잘못되었습니다.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "현재 사용자를 위한 새로운 WebAuthn 자격 증명을 등록합니다.",
+	"apihelp-oathauth-webauthn-param-credential": "브라우저에서 JSON 인코딩된 WebAuthn 자격 증명 응답입니다.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "새로운 자격 증명을 위한 친근한 이름입니다."
+}

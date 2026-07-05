@@ -6,6 +6,7 @@ namespace Wikimedia\Parsoid\Wikitext;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ContentModelHandler as IContentModelHandler;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
@@ -15,8 +16,8 @@ use Wikimedia\Parsoid\Html2Wt\RemoveRedLinks;
 use Wikimedia\Parsoid\Html2Wt\SelectiveSerializer;
 use Wikimedia\Parsoid\Html2Wt\WikitextSerializer;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMTraverser;
 use Wikimedia\Parsoid\Utils\Timing;
 
 class ContentModelHandler extends IContentModelHandler {
@@ -38,7 +39,7 @@ class ContentModelHandler extends IContentModelHandler {
 	 * Bring DOM to expected canonical form
 	 */
 	private function canonicalizeDOM(
-		Env $env, Document $doc
+		Env $env, Document $doc, bool $isSelectiveUpdate
 	): void {
 		Assert::invariant(
 			DOMDataUtils::isPreparedAndLoaded( $doc ),
@@ -57,8 +58,14 @@ class ContentModelHandler extends IContentModelHandler {
 		// and other clients that might have stripped them.
 		ContentUtils::stripUnnecessaryWrappersAndSyntheticNodes( $body );
 
-		$redLinkRemover = new RemoveRedLinks( $this->env );
-		$redLinkRemover->run( $body );
+		if ( !$isSelectiveUpdate ) {
+			$redLinkRemover = new DOMTraverser(
+				traverseWithTplInfo: false,
+				applyToAttributeEmbeddedHTML: true,
+			);
+			$redLinkRemover->addHandler( 'a', [ RemoveRedLinks::class, 'handler' ] );
+			$redLinkRemover->traverse( $env->getSiteConfig(), $body, null );
+		}
 	}
 
 	/**
@@ -113,19 +120,19 @@ class ContentModelHandler extends IContentModelHandler {
 			// FIXME(T266838): Create a new Env for this parse?  Something is
 			// needed to avoid this rigmarole.
 			$topLevelDoc = $env->getTopLevelDoc();
-			$env->setupTopLevelDoc();
 			// This effectively parses $selserData->revText for us because
 			// $selserData->revText = $env->getPageconfig()->getPageMainContent()
+			$env->setupTopLevelDoc();
 			$doc = $this->toDOM( $extApi );
+
+			// Now set up doc again for html2wt
 			$env->setupTopLevelDoc( $topLevelDoc );
+			DOMDataUtils::getBag( $topLevelDoc )->serializeNewEmptyDp = false;
 		} else {
-			$doc = ContentUtils::createAndLoadDocument(
-				$selserData->revHTML,
-				[ 'markNew' => true, 'validateXMLNames' => true, ]
-			);
+			$doc = ContentUtils::createAndLoadDocument( $selserData->revHTML );
 		}
 
-		$this->canonicalizeDOM( $env, $doc );
+		$this->canonicalizeDOM( $env, $doc, false );
 		$selserData->revDOM = $doc;
 	}
 
@@ -167,18 +174,14 @@ class ContentModelHandler extends IContentModelHandler {
 
 		if ( $selectiveUpdateData ) {
 			$doc = ContentUtils::createAndLoadDocument(
-				$selectiveUpdateData->revHTML,
-				[
-					'markNew' => false, // !isSelectiveUpdate
-					'validateXMLNames' => true,
-				]
+				$selectiveUpdateData->revHTML, [ 'serializeNewEmptyDp' => true ] // isSelectiveUpdate
 			);
 			Assert::invariant(
 				!DomPageBundle::isSingleDocument( $doc ),
 				"toplevelDoc should not be a single-document page bundle"
 			);
 			$env->setupTopLevelDoc( $doc );
-			$this->canonicalizeDOM( $env, $env->getTopLevelDoc() );
+			$this->canonicalizeDOM( $env, $env->getTopLevelDoc(), true );
 			$selectiveUpdateData->revDOM = $doc;
 			$doc = $pipelineFactory->selectiveDOMUpdate( $selectiveUpdateData );
 		} else {
@@ -242,7 +245,7 @@ class ContentModelHandler extends IContentModelHandler {
 		$siteConfig = $env->getSiteConfig();
 		$setupTiming = Timing::start( $siteConfig );
 
-		$this->canonicalizeDOM( $env, $env->getTopLevelDoc() );
+		$this->canonicalizeDOM( $env, $env->getTopLevelDoc(), false );
 
 		$serializerOpts = [ 'selserData' => $selectiveUpdateData ];
 		if ( $selectiveUpdateData ) {

@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\Math\Tests\WikiTexVC;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLComparator;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLTestUtil;
-use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLTestUtilHTML;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 use MediaWiki\Extension\Math\WikiTexVC\TexVC;
 use MediaWikiIntegrationTestCase;
@@ -14,60 +13,20 @@ use MediaWikiIntegrationTestCase;
  * It creates a list of basic LaTeX statements from the supported functions
  * of WikiTexVC from TexUtil.php.
  *
- *
- * For Re-Generating the testfile in case of change of macros in texutil.json:
- *
- * 1. Create a new ExportedTexUtilKeys.json by running this test with the ExportKeys flag
- * 2. Create a new TexUtil-Ref file from the new ExportedKeys.json file with maintenances scripts, by running such cmd:
- * "php extensions/Math/maintenance/JsonToMathML.php
- * /var/www/html/extensions/Math/tests/phpunit/unit/WikiTexVC/ExportedTexUtilKeys.json
- * /var/www/html/extensions/Math/TexUtil-Ref.json -i 2"
- * 3. If generated correctly shift the TexUtil-Ref file in its usual folder
  * WIP: This currently just generates MathML with WikiTexVC, but does not do
  * a comparison.
  *
  * @covers \MediaWiki\Extension\Math\WikiTexVC\TexVC
  */
 class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
-	/** @var float */
-	private static $SIMILARITYTRESH = 0.7;
-	/** @var bool */
-	private static $SKIPXMLVALIDATION = true;
-	/** @var bool */
-	private static $APPLYFILTER = false;
-	/** @var bool */
-	private static $APPLYCATEGORYFILTER = false;
-	/** @var string[] */
-	private static $SKIPPEDCATEGORIES = [ "mhchemtexified_required" ];
-	/** @var int */
-	private static $FILTERSTART = 38;
-	/** @var int */
-	private static $FILTERLENGTH = 1;
 
-	/** @var bool */
-	private static $GENERATEHTML = false;
-	/** @var string */
-	private static $GENERATEDHTMLFILE = __DIR__ . "/MMLGenerationTexUtilTest-Output.html";
 	/** @var string */
 	private static $MMLREFFILE = __DIR__ . "/TexUtil-Ref.json";
-
-	/** @var bool export the updated TexUtil-Tex to "./ExportedTexUtilKeys.json" */
-	private static $EXPORT_KEYS = false;
-
-	/** @var int[] */
-	private static $SKIPPEDINDICES = [ 434, 489 ];
 
 	/**
 	 * @dataProvider provideTestCases
 	 */
 	public function testTexVC( $title, $input ) {
-		if ( in_array( $input->ctr, self::$SKIPPEDINDICES, true ) ) {
-			MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $title, $input->tex, $input->mmlLaTeXML,
-				$input->mmlMathoid, "skipped", "skipped" ], false, self::$GENERATEHTML );
-			$this->addToAssertionCount( 1 );
-			return;
-		}
-
 		$texVC = new TexVC();
 		$useMHChem = self::getMHChem( $title ) || $input->type === "chem";
 
@@ -89,21 +48,9 @@ class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
 		if ( !$usedMMLRef ) {
 			$usedMMLRef = $input->mmlLaTeXML;
 		}
-		$compRes = $mmlComparator->compareMathML( $usedMMLRef, $mathMLtexVC );
-		MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $title, $input->tex, $input->mmlLaTeXML ??
-			"no ref", $input->mmlMathoid ?? "no ref", $mathMLtexVC, $compRes['similarityF'] ],
-			false, self::$GENERATEHTML );
-
+		$mmlComparator->compareMathML( $usedMMLRef, $mathMLtexVC );
 		// Comparing the result either to MathML result from Mathoid
-		if ( !self::$SKIPXMLVALIDATION ) {
-			if ( $compRes['similarityF'] >= self::$SIMILARITYTRESH ) {
-				$this->addToAssertionCount( 1 );
-			} else {
-				$this->assertXmlStringEqualsXmlString( $usedMMLRef, $mathMLtexVC );
-			}
-		} else {
-			$this->addToAssertionCount( 1 );
-		}
+		$this->addToAssertionCount( 1 );
 	}
 
 	private const SETS = [
@@ -210,6 +157,7 @@ class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
 		// it seems not supported for math, not in any other en_wiki test etc. probably make sense
 		// to drop or substitute with \\vert
 		"\\vline" => "\n\\begin{array}{|c||c|} a & b \\vline c  \\\\\n\\hline\n1&2 \n\\end{array}\n",
+		"\\ca" => "\\ca Fe"
 	];
 
 	/**
@@ -224,15 +172,6 @@ class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
 			$useMHChem = true;
 		}
 		return $useMHChem;
-	}
-
-	public static function setUpBeforeClass(): void {
-		MMLTestUtilHTML::generateHTMLstart( self::$GENERATEDHTMLFILE, [ "name", "TeX-Input", "MathML(LaTeXML)",
-			"MathML(Mathoid)", "MathML(WikiTexVC)", "F-Similarity" ], self::$GENERATEHTML );
-	}
-
-	public static function tearDownAfterClass(): void {
-		MMLTestUtilHTML::generateHTMLEnd( self::$GENERATEDHTMLFILE, self::$GENERATEHTML );
 	}
 
 	/**
@@ -251,19 +190,10 @@ class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
 		$overAllCtr = 0;
 		$finalCases = [];
 		foreach ( $groups  as $category => $group ) {
-			if ( self::$APPLYCATEGORYFILTER && in_array( $category, self::$SKIPPEDCATEGORIES, true ) ) {
-				continue;
-			}
 			$indexCtr = 0;
 			foreach ( $group as $case ) {
 				$title = "set#" . $overAllCtr . ": " . $category . $indexCtr;
-				if ( $refAssociative[$case] ) {
-					$finalCase = $refAssociative[$case];
-				} else {
-					$type = str_starts_with( $case, "ce" ) ? "chem" : "tex";
-					$finalCase = (object)[ "tex" => $case, "type" => $type, "ctr" => null ];
-				}
-
+				$finalCase = $refAssociative[$case];
 				if ( $category === "mhchemtexified_required" ) {
 					$finalCase->type = "chem";
 				}
@@ -274,17 +204,7 @@ class MMLGenerationTexUtilTest extends MediaWikiIntegrationTestCase {
 				$overAllCtr++;
 			}
 		}
-		if ( self::$APPLYFILTER ) {
-			$finalCases = array_slice( $finalCases, self::$FILTERSTART, self::$FILTERLENGTH );
-		}
-		if ( self::$EXPORT_KEYS ) {
-			// Creating a reference file for lookup in JsonToMathML maintenance script.
-			$dataToExport = [];
-			foreach ( $finalCases as $case ) {
-				$dataToExport[$case[1]->tex] = $case[1]->type;
-			}
-			self::writeToFile( __DIR__ . "/ExportedTexUtilKeys.json", $dataToExport );
-		}
+
 		return $finalCases;
 	}
 

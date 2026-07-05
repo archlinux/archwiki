@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Maintenance;
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Logger\LoggerFactory;

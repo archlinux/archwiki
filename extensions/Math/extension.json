@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -41,6 +41,12 @@
 		"MediaWiki\\Extension\\Math\\Hooks::onExtensionFunctions"
 	],
 	"HookHandlers": {
+		"EditPageHooksHandler": {
+			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\EditPageHooksHandler",
+			"services": [
+				"UserOptionsLookup"
+			]
+		},
 		"ParserHooksHandler": {
 			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\ParserHooksHandler",
 			"services": [
@@ -72,6 +78,7 @@
 		}
 	},
 	"Hooks": {
+		"EditPage::showEditForm:initial": "EditPageHooksHandler",
 		"ParserFirstCallInit": "ParserHooksHandler",
 		"ParserAfterTidy": "ParserHooksHandler",
 		"ParserOptionsRegister": "ParserHooksHandler",
@@ -232,15 +239,31 @@
 	},
 	"ForeignResourcesDir": "modules",
 	"ResourceModules": {
+		"ext.math.editpage": {
+			"packageFiles": [
+				"ext.math.editpage.js"
+			],
+			"messages": [
+				"math-editpage-insert-inline",
+				"math-editpage-insert-block"
+			]
+		},
 		"ext.math.mathjax": {
 			"group": "ext.math",
 			"scripts": [
 				"ext.math.mathjax.js",
-				"mathjax/es5/tex-chtml.js"
+				"mathjax/startup.js"
 			]
 		},
 		"ext.math.styles": {
-			"styles": "ext.math.css"
+			"styles": [
+				"ext.math.css",
+				"ext.math.less"
+			]
+		},
+		"ext.math.polyfills": {
+			"scripts": "ext.math.polyfills.js",
+			"skipFunction": "ext.math.polyfills.skip.js"
 		},
 		"ext.math.popup": {
 			"packageFiles": "ext.math.popup.js",

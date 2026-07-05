@@ -9,7 +9,6 @@
 namespace MediaWiki\Extension\WikiEditor;
 
 use MediaWiki\Api\ApiMessage;
-use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
 use MediaWiki\Config\Config;
@@ -17,19 +16,22 @@ use MediaWiki\Content\Content;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\ConfirmEdit\Hooks as ConfirmEditHooks;
-use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Hook\EditPage__attemptSave_afterHook;
 use MediaWiki\Hook\EditPage__attemptSaveHook;
 use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
 use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\Hook\EditPageGetPreviewContentHook;
-use MediaWiki\Hook\RecentChange_saveHook;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\FormatterFactory;
+use MediaWiki\Language\MessageLocalizer;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\RecentChanges\Hook\RecentChange_saveHook;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
@@ -38,10 +40,9 @@ use MediaWiki\Status\Status;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
+use MediaWiki\Utils\MWCryptRand;
 use MediaWiki\WikiMap\WikiMap;
-use MessageLocalizer;
 use MobileContext;
-use MWCryptRand;
 use WikimediaEvents\WikimediaEventsHooks;
 
 class Hooks implements
@@ -63,6 +64,8 @@ class Hooks implements
 	private static $tags = [ 'wikieditor' ];
 
 	public function __construct(
+		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly FormatterFactory $formatterFactory,
 		private readonly Config $config,
 		private readonly UserEditTracker $userEditTracker,
 		private readonly UserOptionsLookup $userOptionsLookup,
@@ -112,24 +115,27 @@ class Hooks implements
 			return;
 		}
 
-		$extensionRegistry = ExtensionRegistry::getInstance();
-		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) || !$extensionRegistry->isLoaded( 'WikimediaEvents' ) ) {
+		if (
+			!$this->extensionRegistry->isLoaded( 'EventLogging' ) ||
+			!$this->extensionRegistry->isLoaded( 'WikimediaEvents' )
+		) {
 			return;
 		}
-		if ( $extensionRegistry->isLoaded( 'MobileFrontend' ) && $this->mobileContext ) {
+		if ( $this->extensionRegistry->isLoaded( 'MobileFrontend' ) && $this->mobileContext ) {
 			if ( $this->mobileContext->shouldDisplayMobileView() ) {
 				// on a MobileFrontend page the logging should be handled by it
 				return;
 			}
 		}
 		$inSample = $this->inEventSample( $data['editing_session_id'] );
-		$shouldOversample = WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $article->getContext() );
+		$context = $article->getContext();
+		$shouldOversample = WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $context );
 
-		$user = $article->getContext()->getUser();
+		$user = $context->getUser();
 		$page = $article->getPage();
 		$title = $article->getTitle();
 		$revisionRecord = $page->getRevisionRecord();
-		$skin = $article->getContext()->getSkin();
+		$skin = $context->getSkin();
 
 		$data = [
 			'action' => $action,
@@ -187,17 +193,20 @@ class Hooks implements
 		Article $article,
 		string $sessionId
 	): bool {
-		$extensionRegistry = ExtensionRegistry::getInstance();
-		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) || !$extensionRegistry->isLoaded( 'WikimediaEvents' ) ) {
+		if (
+			!$this->extensionRegistry->isLoaded( 'EventLogging' ) ||
+			!$this->extensionRegistry->isLoaded( 'WikimediaEvents' )
+		) {
 			return false;
 		}
 		$inSample = $this->inEventSample( $sessionId );
-		$shouldOversample = WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $article->getContext() );
+		$context = $article->getContext();
+		$shouldOversample = WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $context );
 		if ( !$inSample && !$shouldOversample ) {
 			return false;
 		}
 
-		$user = $article->getContext()->getUser();
+		$user = $context->getUser();
 		$editCount = $this->userEditTracker->getUserEditCount( $user );
 		$data = [
 			'feature' => $feature,
@@ -233,10 +242,11 @@ class Hooks implements
 		}
 
 		$article = $editPage->getArticle();
-		$request = $article->getContext()->getRequest();
+		$context = $article->getContext();
+		$request = $context->getRequest();
 
 		// Add modules if enabled
-		$user = $article->getContext()->getUser();
+		$user = $context->getUser();
 		if ( $this->userOptionsLookup->getBoolOption( $user, 'usebetatoolbar' ) ) {
 			$outputPage->addModuleStyles( 'ext.wikiEditor.styles' );
 			$outputPage->addModules( 'ext.wikiEditor' );
@@ -248,7 +258,7 @@ class Hooks implements
 		// Don't run this if the request was posted - we don't want to log 'init' when the
 		// user just pressed 'Show preview' or 'Show changes', or switched from VE keeping
 		// changes.
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ) && !$request->wasPosted() ) {
+		if ( $this->extensionRegistry->isLoaded( 'EventLogging' ) && !$request->wasPosted() ) {
 			$data = [];
 			$data['editing_session_id'] = self::getEditingStatsId( $request );
 			$section = $request->getRawVal( 'section' );
@@ -302,14 +312,14 @@ class Hooks implements
 		);
 
 		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT
-			|| !ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ) ) {
+			|| !$this->extensionRegistry->isLoaded( 'EventLogging' ) ) {
 			return;
 		}
 
 		$req = $outputPage->getRequest();
 		$editingStatsId = self::getEditingStatsId( $req );
 
-		$shouldOversample = ExtensionRegistry::getInstance()->isLoaded( 'WikimediaEvents' ) &&
+		$shouldOversample = $this->extensionRegistry->isLoaded( 'WikimediaEvents' ) &&
 			WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $outputPage->getContext() );
 
 		$outputPage->addHTML(
@@ -440,7 +450,7 @@ class Hooks implements
 		$article = $editPage->getArticle();
 		$request = $article->getContext()->getRequest();
 		$statsId = $request->getRawVal( 'editingStatsId' );
-		if ( $statsId !== null ) {
+		if ( $request->getRawVal( 'wikieditorUsed' ) !== null && $statsId !== null ) {
 			$this->doEventLogging(
 				'saveAttempt',
 				$article,
@@ -458,21 +468,39 @@ class Hooks implements
 	 */
 	public function onEditPage__attemptSave_after( $editPage, $status, $resultDetails ) {
 		$article = $editPage->getArticle();
-		$request = $article->getContext()->getRequest();
+		$context = $article->getContext();
+		$request = $context->getRequest();
 		$statsId = $request->getRawVal( 'editingStatsId' );
-		if ( $statsId !== null ) {
+		// wikieditorUsed will be present in requests from WikiEditor either
+		// as an empty string or as "yes", if JavaScript is enabled
+		// editingStatsId is theoretically only supposed to be populated by WikiEditor
+		// but we cannot rely on this.
+		if ( $request->getRawVal( 'wikieditorUsed' ) !== null && $statsId !== null ) {
 			$data = [];
 			$data['editing_session_id'] = $statsId;
+
+			// The `wikieditorUsed` parameter is populated in ext.wikiEditor.js, so
+			// if the value is set, we know the submission had JavaScript enabled
+			$sourceHasJs = $request->getRawVal( 'wikieditorUsed' ) === 'yes' ?
+				'source-has-js' :
+				'source-no-js';
 
 			if ( $status->isOK() ) {
 				$action = 'saveSuccess';
 
-				if ( $request->getRawVal( 'wikieditorUsed' ) === 'yes' ) {
-					$this->doVisualEditorFeatureUseLogging(
-						'mwSave', 'source-has-js', $article, $statsId
-					);
-				}
+				$this->doVisualEditorFeatureUseLogging(
+					'mwSave',
+					$sourceHasJs,
+					$article,
+					$statsId
+				);
 			} else {
+				$this->doVisualEditorFeatureUseLogging(
+					'mwSaveFailure',
+					$sourceHasJs,
+					$article,
+					$statsId
+				);
 				$action = 'saveFailure';
 
 				// Compare to ve.init.mw.ArticleTargetEvents.js in VisualEditor.
@@ -501,10 +529,11 @@ class Hooks implements
 
 				$wikiPage = $editPage->getArticle()->getPage();
 
-				if ( ExtensionRegistry::getInstance()->isLoaded( 'ConfirmEdit' ) ) {
+				if ( $this->extensionRegistry->isLoaded( 'ConfirmEdit' ) ) {
 					$key = CacheKeyHelper::getKeyForPage( $wikiPage );
-					/** @var SimpleCaptcha $captcha */
-					$captcha = ConfirmEditHooks::getInstance();
+					$captcha = ConfirmEditHooks::getInstance(
+						ConfirmEditHooks::getCaptchaTriggerActionFromTitle( $article->getTitle() )
+					);
 					$activatedCaptchas = $captcha->getActivatedCaptchas();
 					if ( isset( $activatedCaptchas[$key] ) ) {
 						// TODO: :(
@@ -514,6 +543,14 @@ class Hooks implements
 
 				$data['save_failure_message'] = $code;
 				$data['save_failure_type'] = $typeMap[ $code ] ?? 'responseUnknown';
+				if ( $data['save_failure_type'] === 'responseUnknown' ) {
+					$statusFormatter = $this->formatterFactory->getStatusFormatter( $context );
+					LoggerFactory::getInstance( 'WikiEditor' )->info(
+						...$statusFormatter->getPsr3MessageAndContext( $status, [
+							'message' => $statusFormatter->getMessage( $status )->getKey()
+						] + $request->getSecurityLogContext( $context->getUser() )
+					) );
+				}
 			}
 
 			$this->doEventLogging( $action, $article, $data );
@@ -529,8 +566,9 @@ class Hooks implements
 	 */
 	public function onEditPageGetPreviewContent( $editPage, &$content ) {
 		// This hook is only called for non-live previews, so we don't need to check the uselivepreview user option.
-		$editingStatsId = $editPage->getContext()->getRequest()->getRawVal( 'editingStatsId' );
-		if ( $editingStatsId !== null ) {
+		$request = $editPage->getContext()->getRequest();
+		$editingStatsId = $request->getRawVal( 'editingStatsId' );
+		if ( $request->getRawVal( 'wikieditorUsed' ) !== null && $editingStatsId !== null ) {
 			$article = $editPage->getArticle();
 			$this->doVisualEditorFeatureUseLogging( 'preview', 'preview-nonlive', $article, $editingStatsId );
 		}

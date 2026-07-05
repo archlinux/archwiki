@@ -140,7 +140,6 @@ class Less_Tree {
 		) {
 			// for "symmetric results" force toCSS-based comparison via b.compare()
 			// of Quoted or Anonymous if either value is one of those
-			// @phan-suppress-next-line PhanUndeclaredMethod
 			return $a->compare( $b );
 		} elseif ( $bHasCompare ) {
 			$res = $b->compare( $a );
@@ -153,7 +152,6 @@ class Less_Tree {
 		}
 
 		// Less_Tree subclasses that have an array value: Less_Tree_Expression, Less_Tree_Value
-		// @phan-suppress-next-line PhanUndeclaredProperty
 		$aval = $a->value ?? [];
 		$bval = $b->value ?? [];
 		if ( !( $a instanceof Less_Tree_Expression || $a instanceof Less_Tree_Value ) ) {

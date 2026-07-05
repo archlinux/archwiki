@@ -58,9 +58,6 @@
 	"vector-toc-label": "Yaɣa",
 	"vector-toc-beginning": "Piligibu",
 	"vector-toc-toggle-button-label": "Toogili $1 zaɣ' bihibihi pubu",
-	"vector-anon-user-menu-pages": "Sabbu yaɣa zaŋ ti mali niŋ nima ban yi maliniŋ kpanjɔri ni",
-	"vector-anon-user-menu-pages-learn": "Bɔhima m-pahi",
-	"vector-anon-user-menu-pages-label": "Bɔhima pam pahi zaŋ jɛndi maliniŋ",
 	"vector-main-menu-tooltip": "Piligu shee",
 	"vector-toc-menu-tooltip": "Sabbu pubupubu teebuli",
 	"vector-toc-collapsible-button-label": "Cham gili yaɣayaɣa ŋan be teebuli maa puuni",
@@ -80,7 +77,5 @@
 	"empty-language-selector-body": "Paaji maa yaɣa maa bɛ saɣi dee zuliya nima zaa",
 	"vector-toc-unpinned-popup": "Yaɣayaɣa teebuli pubu pubu nyɛla din yihi shɛli n tahi na kpe.",
 	"vector-page-tools-unpinned-popup": "Tuma binyahiri kpanjɔɣu maa nyɛla din yi kpe",
-	"vector-main-menu-unpinned-popup": "Maŋmaŋa nyɛla bɛni. yihi shɛli kpe",
-	"vector-2022-beta-preview-label": "Vector 2022 beta",
-	"vector-2022-beta-preview-description": "Nyami vector 2022 nahiŋgbana pala ŋɔ yɔmyɔm"
+	"vector-main-menu-unpinned-popup": "Maŋmaŋa nyɛla bɛni. yihi shɛli kpe"
 }

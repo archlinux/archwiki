@@ -1,0 +1,225 @@
+<?php
+
+/**
+ * @license GPL-2.0-or-later
+ * @file
+ * @ingroup SpecialPage
+ */
+
+namespace MediaWiki\Specials;
+
+use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\NamespaceInfo;
+
+/**
+ * Show information about the different namespaces
+ *
+ * @since 1.43
+ * @author DannyS712
+ * @ingroup SpecialPage
+ */
+class SpecialNamespaceInfo extends SpecialPage {
+
+	public function __construct(
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly Language $contentLanguage
+	) {
+		parent::__construct( 'NamespaceInfo' );
+	}
+
+	/**
+	 * @param string|null $par
+	 */
+	public function execute( $par ) {
+		$this->setHeaders();
+		$this->outputHeader();
+
+		$out = $this->getOutput();
+
+		$idHeading = Html::element(
+			'th',
+			[],
+			$this->msg( 'namespaceinfo-heading-id' )->text()
+		);
+		$canonicalHeading = Html::element(
+			'th',
+			[],
+			$this->msg( 'namespaceinfo-heading-canonical' )->text()
+		);
+		$localHeading = Html::element(
+			'th',
+			[],
+			$this->msg( 'namespaceinfo-heading-local' )->text()
+		);
+		$aliasHeading = Html::element(
+			'th',
+			[],
+			$this->msg( 'namespaceinfo-heading-aliases' )->text()
+		);
+		$infoHeading = Html::element(
+			'th',
+			[],
+			$this->msg( 'namespaceinfo-heading-info' )->text()
+		);
+		$tableHeadingRow = Html::rawElement(
+			'tr',
+			[],
+			$idHeading . $canonicalHeading . $localHeading . $aliasHeading . $infoHeading
+		);
+
+		$allAliases = $this->contentLanguage->getNamespaceAliases();
+
+		$aliases = [];
+		foreach ( $allAliases as $alias => $ns ) {
+			$aliases[$ns][] = $alias;
+		}
+
+		$tableBodyRows = '';
+		foreach ( $this->getContentLanguage()->getFormattedNamespaces() as $ns => $localName ) {
+			$namespaceAliases = $aliases[$ns] ?? [];
+			$tableBodyRows .= $this->makeNamespaceRow( $ns, $localName, $namespaceAliases );
+		}
+
+		$table = Html::rawElement(
+			'table',
+			[ 'class' => 'wikitable' ],
+			$tableHeadingRow . $tableBodyRows
+		);
+
+		$out->addHtml( $table );
+	}
+
+	/**
+	 * Get the HTML for a row for a specific namespace
+	 *
+	 * @param int $ns
+	 * @param string $localName
+	 * @return string
+	 */
+	private function makeNamespaceRow( int $ns, string $localName, array $aliases = [] ): string {
+		$canonicalName = $this->namespaceInfo->getCanonicalName( $ns );
+		if ( $canonicalName ) {
+			$canonicalName = strtr( $canonicalName, '_', ' ' );
+		} else {
+			$canonicalName = '';
+		}
+
+		// Special handling for main namespace
+		if ( $ns === NS_MAIN ) {
+			$localName = $this->msg( 'blanknamespace' )->escaped();
+			$canonicalName = $this->msg( 'blanknamespace' )->inLanguage( 'en' )->escaped();
+		}
+
+		$description = $this->msg( 'namespaceinfo-description-ns' . $ns );
+		if ( $description->isDisabled() ) {
+			// Custom namespace with no message
+
+			if ( $this->namespaceInfo->isTalk( $ns ) ) {
+				$subjectNs = $this->namespaceInfo->getSubject( $ns );
+				$subjectName = strtr(
+					$this->namespaceInfo->getCanonicalName( $subjectNs ),
+					'_',
+					' '
+				);
+				$description = $this->msg( 'namespaceinfo-description-custom-talk',
+					$subjectName,
+					$subjectNs
+				);
+			} else {
+				$description = $this->msg( 'namespaceinfo-description-custom', $localName );
+			}
+		}
+		$descriptionText = $description->parse();
+
+		$properties = [];
+		if ( $ns >= NS_MAIN ) {
+			// Don't talk about immovable namespaces for virtual NS_SPECIAL or NS_MEDIA
+			$namespaceProtection = $this->getConfig()->get( 'NamespaceProtection' );
+			if ( isset( $namespaceProtection[$ns] ) ) {
+				$rightsNeeded = $namespaceProtection[$ns];
+				if ( !is_array( $rightsNeeded ) ) {
+					$rightsNeeded = [ $rightsNeeded ];
+				}
+				foreach ( $rightsNeeded as $right ) {
+					$properties[] = $this->msg( 'namespaceinfo-namespace-protection-right', $right )
+						->parse();
+				}
+			}
+
+			if ( !$this->namespaceInfo->isMovable( $ns ) ) {
+				$properties[] = $this->msg( 'namespaceinfo-namespace-immovable' )->parse();
+			}
+			if ( $this->namespaceInfo->isContent( $ns ) ) {
+				$properties[] = $this->msg( 'namespaceinfo-namespace-iscontent' )->parse();
+			}
+			if ( $this->namespaceInfo->hasSubpages( $ns ) ) {
+				$properties[] = $this->msg( 'namespaceinfo-namespace-subpages' )->parse();
+			}
+			if ( $this->namespaceInfo->isNonincludable( $ns ) ) {
+				$properties[] = $this->msg( 'namespaceinfo-namespace-nonincludable' )->parse();
+			}
+			$contentModel = $this->namespaceInfo->getNamespaceContentModel( $ns );
+			if ( $contentModel !== null ) {
+				$properties[] = $this->msg( 'namespaceinfo-namespace-default-contentmodel' )
+					->params( $contentModel )
+					->parse();
+			}
+		}
+
+		// Convert to a string
+		$namespaceProperties = '';
+		if ( $properties !== [] ) {
+			$namespaceProperties = Html::openElement( 'ul' );
+			foreach ( $properties as $propertyText ) {
+				$namespaceProperties .= Html::rawElement(
+					'li',
+					[],
+					$propertyText
+				);
+			}
+			$namespaceProperties .= Html::closeElement( 'ul' );
+		}
+
+		$namespaceAliases = '';
+		if ( $aliases !== [] ) {
+			if ( count( $aliases ) === 1 ) {
+				$namespaceAliases = htmlspecialchars( str_replace( '_', ' ', $aliases[0] ) );
+			} else {
+				$namespaceAliases = Html::openElement( 'ul' );
+				foreach ( $aliases as $alias ) {
+					// cleanup _ for display, since _ is only used internally and not for display
+					$alias = str_replace( "_", " ", $alias );
+					$namespaceAliases .= Html::element(
+						'li',
+						[],
+						$alias
+					);
+				}
+				$namespaceAliases .= Html::closeElement( 'ul' );
+			}
+
+		}
+
+		$idField = Html::rawElement( 'td', [], (string)$ns );
+		$canonicalField = Html::rawElement( 'td', [], $canonicalName );
+		$localField = Html::rawElement( 'td', [], $localName );
+		$aliasesField = Html::rawElement( 'td', [], $namespaceAliases );
+		$infoField = Html::rawElement( 'td', [], $descriptionText . $namespaceProperties );
+
+		return Html::rawElement(
+			'tr',
+			[],
+			$idField . $canonicalField . $localField . $aliasesField . $infoField
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getGroupName() {
+		return 'wiki';
+	}
+
+}

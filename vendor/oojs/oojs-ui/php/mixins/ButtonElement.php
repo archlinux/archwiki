@@ -22,6 +22,13 @@ trait ButtonElement {
 	protected $framed = false;
 
 	/**
+	 * Button size.
+	 *
+	 * @var string
+	 */
+	protected $size = 'medium';
+
+	/**
 	 * @var Tag
 	 */
 	protected $button;
@@ -29,6 +36,7 @@ trait ButtonElement {
 	/**
 	 * @param array $config Configuration options
 	 *      - bool $config['framed'] Render button with a frame (default: true)
+	 *      - string $config['size'] The size of the button, either 'small', 'medium' or 'large' (default: 'medium')
 	 */
 	public function initializeButtonElement( array $config = [] ) {
 		// Properties
@@ -42,6 +50,7 @@ trait ButtonElement {
 		$this->addClasses( [ 'oo-ui-buttonElement' ] );
 		$this->button->addClasses( [ 'oo-ui-buttonElement-button' ] );
 		$this->toggleFramed( $config['framed'] ?? true );
+		$this->setSize( $config['size'] ?? 'medium' );
 
 		// Add `role="button"` on `<a>` elements, where it's needed
 		if ( strtolower( $this->button->getTag() ) === 'a' ) {
@@ -53,6 +62,9 @@ trait ButtonElement {
 		$this->registerConfigCallback( function ( &$config ) {
 			if ( $this->framed !== true ) {
 				$config['framed'] = $this->framed;
+			}
+			if ( $this->size !== 'medium' ) {
+				$config['size'] = $this->size;
 			}
 		} );
 	}
@@ -67,6 +79,8 @@ trait ButtonElement {
 		$this->framed = $framed !== null ? (bool)$framed : !$this->framed;
 		$this->toggleClasses( [ 'oo-ui-buttonElement-framed' ], $this->framed );
 		$this->toggleClasses( [ 'oo-ui-buttonElement-frameless' ], !$this->framed );
+		// Changing framed changes the available sizes
+		$this->setSize( $this->size );
 		return $this;
 	}
 
@@ -77,6 +91,33 @@ trait ButtonElement {
 	 */
 	public function isFramed() {
 		return $this->framed;
+	}
+
+	/**
+	 * Get the button's size.
+	 *
+	 * @return string The button's size, either 'small', 'medium' or 'large'
+	 */
+	public function getSize() {
+		return $this->size;
+	}
+
+	/**
+	 * Set the button's size
+	 *
+	 * @param string $size The size of the button, either 'small', 'medium' or 'large'
+	 * @return $this
+	 */
+	public function setSize( string $size ) {
+		if ( !$this->isFramed() ) {
+			// Frameless buttons only support medium size
+			$size = 'medium';
+		}
+		$this->size = $size;
+		$this->toggleClasses( [ "oo-ui-buttonElement-size-small" ], $size === 'small' );
+		$this->toggleClasses( [ "oo-ui-buttonElement-size-medium" ], $size === 'medium' );
+		$this->toggleClasses( [ "oo-ui-buttonElement-size-large" ], $size === 'large' );
+		return $this;
 	}
 
 	/**

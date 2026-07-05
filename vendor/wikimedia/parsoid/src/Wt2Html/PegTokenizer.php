@@ -7,10 +7,12 @@ use Generator;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\Core\SourceString;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\EOFTk;
+use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
@@ -223,7 +225,10 @@ class PegTokenizer extends PipelineStage {
 			"|" . ( $this->options['enableOnlyInclude'] ?? false );
 		$res = $this->cache->lookup( $cacheKey, $text );
 		if ( $res !== null ) {
-			return $res;
+			$tokens = $res['value'];
+			// NOTE: Since $args['source'] is part of the cache key,
+			// we don't need to reset source in SourceRange properties in $tokens.
+			return $tokens;
 		}
 
 		if ( $this->tracing ) {
@@ -281,7 +286,7 @@ class PegTokenizer extends PipelineStage {
 		}
 
 		if ( is_array( $toks ) ) {
-			$this->cache->cache( $cacheKey, $toks, $text );
+			$this->cache->cache( $cacheKey, $toks, $this->frame?->getSource(), $text );
 		}
 
 		return $toks;
@@ -293,22 +298,21 @@ class PegTokenizer extends PipelineStage {
 	 * @param string|Source $text The input text
 	 * @param string $rule The rule name
 	 * @param bool $sol Start of line flag
+	 * @param ?SourceRange $tsr The optional position of $text in the Source
 	 * @return array|false Array of tokens/strings or false on error
 	 */
-	public function tokenizeAs( string|Source $text, string $rule, bool $sol ) {
+	public function tokenizeAs( string|Source $text, string $rule, bool $sol, ?SourceRange $tsr = null ) {
 		if ( $text instanceof Source ) {
 			$source = $text;
 			$text = $source->getSrcText();
 		} else {
-			// XXX T405759 Should probably take a SourceRange to allow
-			// tokenizing substrings of the original source.
 			$source = new SourceString( $text );
 		}
 		$args = [
 			'startRule' => $rule,
 			'sol' => $sol,
-			'pipelineOffset' => 0,
-			'source' => $source,
+			'pipelineOffset' => $tsr->start ?? 0,
+			'source' => $tsr->source ?? $source,
 		];
 		return $this->tokenizeSync( $text, $args );
 	}
@@ -323,6 +327,40 @@ class PegTokenizer extends PipelineStage {
 		// source in the TSR; if this is retokenizing part of the top-level
 		// source this should pass srcOffsets.
 		return $this->tokenizeAs( $text, 'url', /* sol */true );
+	}
+
+	/**
+	 * (Re)tokenize a template / parser function.
+	 * @param string $text
+	 * @param SourceRange $tsr The location of $text in the Source
+	 * @return SelfclosingTagTk|false A template token or false on error
+	 */
+	public function tokenizeTemplate( string $text, SourceRange $tsr ) {
+		$toks = $this->tokenizeAs( $text, 'template', false, $tsr );
+		if ( !is_array( $toks ) ) {
+			$toks = [ $toks ];
+		}
+		if ( count( $toks ) === 1 ) {
+			return $toks[0];
+		}
+		return false;
+	}
+
+	/**
+	 * (Re)tokenize a v3 template / parser function.
+	 * @param string $text
+	 * @param SourceRange $tsr The location of $text in the Source
+	 * @return SelfclosingTagTk|false A template3 token or false on error
+	 */
+	public function tokenizeTemplate3( string $text, SourceRange $tsr ) {
+		$toks = $this->tokenizeAs( $text, 'template3', false, $tsr );
+		if ( !is_array( $toks ) ) {
+			$toks = [ $toks ];
+		}
+		if ( count( $toks ) === 1 ) {
+			return $toks[0];
+		}
+		return false;
 	}
 
 	/**

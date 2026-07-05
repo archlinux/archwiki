@@ -53,9 +53,6 @@
 	"vector-toc-label": "Пуштросэз",
 	"vector-toc-beginning": "Кутскон",
 	"vector-toc-toggle-button-label": "$1 юрттэт ёзэз переключить кароно",
-	"vector-anon-user-menu-pages": "Сӧзнэтысь потэм редакторъёслы бамъёс",
-	"vector-anon-user-menu-pages-learn": "Тросгес тодыны",
-	"vector-anon-user-menu-pages-label": "Тупатонъёс сярысь пыр-почгес",
 	"vector-main-menu-tooltip": "Валтӥсь меню",
 	"vector-toc-menu-tooltip": "Йыръян",
 	"vector-toc-collapsible-button-label": "Йыръянэз переключить кароно",
@@ -74,7 +71,5 @@
 	"empty-language-selector-body": "Бамлэн пушкесэз мукет кылъёсын кутонтэм луэ.",
 	"vector-toc-unpinned-popup": "Йыръянэз татчы выжтэмын.",
 	"vector-page-tools-unpinned-popup": "Тӥрлыкъёсын меню татчы выжтэмын",
-	"vector-main-menu-unpinned-popup": "Валтӥсь меню татчы выжтэмын",
-	"vector-2022-beta-preview-label": "Вектор 2022 бета",
-	"vector-2022-beta-preview-description": "Vector 2022 -лэн выль луонлыкъёсыз сярысь азьло тодэтъёсты басьтэ"
+	"vector-main-menu-unpinned-popup": "Валтӥсь меню татчы выжтэмын"
 }

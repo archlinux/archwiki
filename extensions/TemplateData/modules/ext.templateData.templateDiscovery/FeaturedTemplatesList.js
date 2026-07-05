@@ -53,20 +53,26 @@ function FeaturedTemplatesList( config ) {
 						.text( mw.msg( 'templatedata-featured-list-empty' ) ) );
 				} else {
 					// Query the API for the template data
-					getTemplateData( featuredTemplates[ 0 ].titles ).then( ( templatesdata ) => {
+					const titles = featuredTemplates[ 0 ].titles;
+					getTemplateData( titles ).then( ( templatesdata ) => {
 						if ( templatesdata.pages === undefined ) {
 							return;
 						}
+						// Re-order the results.
+						const orderedPages = {};
 						for ( const pageId of Object.keys( templatesdata.pages ) ) {
 							const page = templatesdata.pages[ pageId ];
 							// Add `pageId` to the template data
 							page.pageId = pageId;
-							if ( page.missing ) {
-								// TODO: Handle this?
+							if ( page.missing || !titles.includes( page.title ) ) {
 								return;
 							}
-							this.addRowToList( page );
+							orderedPages[ page.title ] = page;
 						}
+						// Add to the list in the original order.
+						titles.forEach( ( title ) => {
+							this.addRowToList( orderedPages[ title ] );
+						} );
 					} );
 				}
 			}
@@ -93,7 +99,7 @@ function getCommunityConfiguration() {
 /**
  * Get the template data for a given set of templates.
  *
- * @param {array} templates Template titles.
+ * @param {Array} templates Template titles.
  * @return {Promise}
  */
 function getTemplateData( templates ) {

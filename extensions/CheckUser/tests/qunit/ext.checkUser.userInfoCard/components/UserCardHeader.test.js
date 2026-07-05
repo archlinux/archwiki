@@ -1,7 +1,7 @@
 'use strict';
 
 const { shallowMount } = require( 'vue-test-utils' );
-const UserCardHeader = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserCardHeader.vue' );
+const UserCardHeader = require( 'ext.checkUser.userInfoCard/components/UserCardHeader.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserCardHeader', QUnit.newMwEnvironment( {
 	beforeEach: function () {
@@ -131,6 +131,19 @@ QUnit.test( 'sets the correct aria-label on the close button', ( assert ) => {
 		closeButton.attributes( 'aria-label' ),
 		'(checkuser-userinfocard-close-button-aria-label)',
 		'Close button has correct aria-label'
+	);
+} );
+
+QUnit.test( 'shows blocked icon when hasLocalBlockGlobalBlockOrLock is true', ( assert ) => {
+	const defaultWrapper = mountComponent();
+	const blockedWrapper = mountComponent( { hasLocalBlockGlobalBlockOrLock: true } );
+
+	const defaultIcon = defaultWrapper.findAllComponents( { name: 'CdxIcon' } )[ 0 ].props( 'icon' );
+	const blockedIcon = blockedWrapper.findAllComponents( { name: 'CdxIcon' } )[ 0 ].props( 'icon' );
+	assert.notStrictEqual(
+		blockedIcon,
+		defaultIcon,
+		'Blocked user icon differs from the default user icon'
 	);
 } );
 

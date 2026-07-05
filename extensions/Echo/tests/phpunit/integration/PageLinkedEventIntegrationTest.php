@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Import\ImportStringSource;
+
 /**
  * @covers \MediaWiki\Extension\Notifications\Hooks::onLinksUpdateComplete
  * @group Database

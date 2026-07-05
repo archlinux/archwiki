@@ -2,7 +2,7 @@
 
 const { nextTick } = require( 'vue' );
 const { mount } = require( 'vue-test-utils' );
-const App = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/App.vue' );
+const App = require( 'ext.checkUser.userInfoCard/components/App.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.App', QUnit.newMwEnvironment( {
 	beforeEach: function () {
