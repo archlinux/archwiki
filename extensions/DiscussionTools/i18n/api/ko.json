@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Bluehill",
-			"MemphisA5",
-			"Ykhwong",
-			"아라",
 			"Jango",
+			"MemphisA5",
 			"Minejango2",
-			"Tensama0415"
+			"Tensama0415",
+			"Ykhwong",
+			"아라"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "ID가 ' $1 '인 댓글을 찾을 수 없습니다.",
@@ -38,8 +38,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "사용할 판 번호입니다. (기본값은 최신판입니다)",
 	"apihelp-discussiontoolspageinfo-param-prop": "가져올 속성:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "댓글에서 사용자 서명을 제외합니다 (<var>prop=threaditemshtml</var>을 사용할 때).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "<var>prop=threaditemshtml</var>을 사용할 때 출력을 변경하기 위해 플래그를 세웁니다.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "문서로부터 구문 분석된 댓글 스레드의 표현",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "다른 문서의 댓글이 어디로부터 끼워넣어졌는지",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "가장 오래된 답변과 최신 답변에 대한 추가 활동 데이터를 포함합니다 (<var>prop=threaditemshtml</var>을 사용할 때).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "댓글에서 사용자 서명을 제외합니다 (<var>prop=threaditemshtml</var>을 사용할 때).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "전체 답글 트리를 포함하지 말고 최상위 문단 제목만 제공합니다 ( <var>prop=threaditemshtml</var>을 사용하는 경우).",
 	"apihelp-discussiontoolspageinfo-summary": "토론 도구 초기화에 필요한 메타데이터를 반환합니다.",
 	"apihelp-discussiontoolspreview-param-type": "미리 볼 메시지의 유형",
 	"apihelp-discussiontoolspreview-param-wikitext": "위키텍스트 형식의 미리 볼 내용입니다.",
@@ -49,5 +53,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true는 구독이며, false는 구독 해지임",
 	"apihelp-discussiontoolssubscribe-summary": "주제에 관한 알림을 수신하기 위해 구독(또는 구독 해지)을 합니다.",
 	"apihelp-discussiontoolsthank-param-commentid": "감사를 표할 댓글의 ID입니다.",
-	"apihelp-discussiontoolsthank-summary": "의견에 대해 공개적인 감사 표현 알림을 보냅니다."
+	"apihelp-discussiontoolsthank-summary": "의견에 대해 공개적인 감사 표현 알림을 보냅니다.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "사용자를 편집으로 생성된 토론 문서 스레드에 자동으로 구독시킵니다. 'yes'나 'or'를 사용해서 사용자의 환경 설정 (기본값) 을 재정의합니다."
 }

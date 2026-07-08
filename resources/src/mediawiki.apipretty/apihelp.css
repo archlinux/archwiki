@@ -1,5 +1,10 @@
 /* stylelint-disable selector-class-pattern */
 
+.toc {
+	float: right;
+	margin: 0 0 1em 1em;
+}
+
 .apihelp-header {
 	margin-bottom: 0.1em;
 }
@@ -79,10 +84,6 @@ div.apihelp-linktrail {
 	margin-top: 1em;
 }
 
-.api-main-links {
-	text-align: center;
-}
-
 .api-main-links ul::before {
 	content: '[';
 }
@@ -98,22 +99,24 @@ div.apihelp-linktrail {
 	}
 
 	.apihelp-parameters dl,
-	.apihelp-examples dl,
-	.apihelp-permissions dl {
+	.apihelp-examples dl {
 		margin-left: 2em;
 	}
 
+	.apihelp-general dt,
 	.apihelp-parameters dt {
 		float: left;
 		clear: left;
 		min-width: 10em;
 	}
 
+	.apihelp-general dd,
 	.apihelp-parameters dd {
 		margin: 0 0 0.5em 10em;
 	}
 
-	.apihelp-parameters dd.info {
+	.apihelp-general dd + dd,
+	.apihelp-parameters dd + dd {
 		/* Indent subsequent lines when description is wrapped */
 		/* Support: Chrome – In Firefox and Safari, we could just use `text-indent: 2em hanging;` */
 		/* https://developer.mozilla.org/en-US/docs/Web/CSS/text-indent#browser_compatibility */

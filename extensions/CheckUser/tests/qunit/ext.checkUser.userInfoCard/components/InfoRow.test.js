@@ -1,7 +1,7 @@
 'use strict';
 
 const { shallowMount } = require( 'vue-test-utils' );
-const InfoRow = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/InfoRow.vue' );
+const InfoRow = require( 'ext.checkUser.userInfoCard/components/InfoRow.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.InfoRow' );
 

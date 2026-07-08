@@ -18,7 +18,6 @@
 	"cite_error_group_refs_without_references": "\"$1\" نام کے حوالے کے لیے ٹیگ <code>&lt;ref&gt;</code> ہیں، لیکن مماثل ٹیگ <code>&lt;references group=\"$1\"/&gt;</code> نہیں ملا یا پھر بند- ٹیگ <code>&lt;/ref&gt;</code> ناموجود ہے",
 	"cite-tracking-category-cite-error": "صفحات مع حوالہ جاتی اغلاط",
 	"cite-tracking-category-cite-error-desc": "اس زمرہ میں موجود صفحات میں حوالہ جاتی ٹیگز کو غلط استعمال کیا گیا ہے۔",
-	"cite-tracking-category-cite-diffing-error": "حوالہ جات میں بصری فرق کو حرکت دینے والے نقائص پر مشتمل صفحات",
 	"cite-reference-previews-reference": "حوالہ",
 	"cite-reference-previews-book": "کتابی حوالہ",
 	"cite-reference-previews-journal": "رسالہ کا حوالہ",

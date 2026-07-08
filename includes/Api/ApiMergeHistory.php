@@ -1,0 +1,139 @@
+<?php
+/**
+ * Copyright © 2015 Geoffrey Mon <geofbot@gmail.com>
+ *
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+namespace MediaWiki\Api;
+
+use MediaWiki\Page\MergeHistoryFactory;
+use MediaWiki\Title\Title;
+use Wikimedia\ParamValidator\ParamValidator;
+
+/**
+ * API Module to merge page histories
+ * @ingroup API
+ */
+class ApiMergeHistory extends ApiBase {
+
+	public function __construct(
+		ApiMain $mainModule,
+		string $moduleName,
+		private readonly MergeHistoryFactory $mergeHistoryFactory,
+	) {
+		parent::__construct( $mainModule, $moduleName );
+	}
+
+	public function execute() {
+		$this->useTransactionalTimeLimit();
+
+		$params = $this->extractRequestParams();
+
+		$this->requireOnlyOneParameter( $params, 'from', 'fromid' );
+		$this->requireOnlyOneParameter( $params, 'to', 'toid' );
+
+		// Get page objects (nonexistent pages get caught in MergeHistory::isValidMerge())
+		if ( isset( $params['from'] ) ) {
+			$fromTitle = Title::newFromText( $params['from'] );
+			if ( !$fromTitle || $fromTitle->isExternal() ) {
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['from'] ) ] );
+			}
+		} elseif ( isset( $params['fromid'] ) ) {
+			$fromTitle = Title::newFromID( $params['fromid'] );
+			if ( !$fromTitle ) {
+				$this->dieWithError( [ 'apierror-nosuchpageid', $params['fromid'] ] );
+			}
+		} else {
+			self::dieDebug( __METHOD__, 'unknown from parameter' );
+		}
+
+		if ( isset( $params['to'] ) ) {
+			$toTitle = Title::newFromText( $params['to'] );
+			if ( !$toTitle || $toTitle->isExternal() ) {
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['to'] ) ] );
+			}
+		} elseif ( isset( $params['toid'] ) ) {
+			$toTitle = Title::newFromID( $params['toid'] );
+			if ( !$toTitle ) {
+				$this->dieWithError( [ 'apierror-nosuchpageid', $params['toid'] ] );
+			}
+		} else {
+			self::dieDebug( __METHOD__, 'unknown to parameter' );
+		}
+
+		$status = $this->mergeHistoryFactory->newMergeHistory(
+			$fromTitle,
+			$toTitle,
+			$params['timestamp'],
+			$params['starttimestamp']
+		)->merge( $this->getAuthority(), $params['reason'] );
+		if ( !$status->isOK() ) {
+			$this->dieStatus( $status );
+		}
+
+		$r = [
+			'from' => $fromTitle->getPrefixedText(),
+			'to' => $toTitle->getPrefixedText(),
+			'timestamp' => $params['timestamp'],
+			'reason' => $params['reason']
+		];
+		$result = $this->getResult();
+
+		$result->addValue( null, $this->getModuleName(), $r );
+	}
+
+	/** @inheritDoc */
+	public function mustBePosted() {
+		return true;
+	}
+
+	/** @inheritDoc */
+	public function isWriteMode() {
+		return true;
+	}
+
+	/** @inheritDoc */
+	public function getAllowedParams() {
+		return [
+			'from' => null,
+			'fromid' => [
+				ParamValidator::PARAM_TYPE => 'integer'
+			],
+			'to' => null,
+			'toid' => [
+				ParamValidator::PARAM_TYPE => 'integer'
+			],
+			// This can either be a timestamp or a timestamp-with-ID pair; don't reject the latter in validation
+			'timestamp' => null,
+			'reason' => '',
+			'starttimestamp' => null
+		];
+	}
+
+	/** @inheritDoc */
+	public function needsToken() {
+		return 'csrf';
+	}
+
+	/** @inheritDoc */
+	protected function getExamplesMessages() {
+		return [
+			'action=mergehistory&from=Oldpage&to=Newpage&token=123ABC&' .
+			'reason=Reason'
+			=> 'apihelp-mergehistory-example-merge',
+			'action=mergehistory&from=Oldpage&to=Newpage&token=123ABC&' .
+			'reason=Reason&timestamp=2015-12-31T04%3A37%3A41Z' // TODO
+			=> 'apihelp-mergehistory-example-merge-timestamp',
+		];
+	}
+
+	/** @inheritDoc */
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Mergehistory';
+	}
+}
+
+/** @deprecated class alias since 1.43 */
+class_alias( ApiMergeHistory::class, 'ApiMergeHistory' );

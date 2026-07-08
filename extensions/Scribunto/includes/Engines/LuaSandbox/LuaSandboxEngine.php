@@ -11,18 +11,12 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
 
+/**
+ * @property LuaSandboxInterpreter|null $interpreter
+ */
 class LuaSandboxEngine extends LuaEngine {
 	/** @var array */
-	public $options;
-	/** @var bool */
-	public $loaded = false;
-	/** @var array */
 	protected $lineCache = [];
-
-	/**
-	 * @var LuaSandboxInterpreter
-	 */
-	protected $interpreter;
 
 	/** @inheritDoc */
 	public function getPerformanceCharacteristics() {
@@ -191,9 +185,9 @@ class LuaSandboxEngine extends LuaEngine {
 		$percentMsg->exists();
 
 		if ( $isHTML ) {
-			$report .= Html::openElement( 'tr' ) .
-				Html::rawElement( 'th', [ 'colspan' => 2 ], $keyMsg->parse() ) .
-				Html::closeElement( 'tr' ) .
+			$report .= Html::rawElement( 'tr', [],
+					Html::rawElement( 'th', [ 'colspan' => 2 ], $keyMsg->parse() )
+				) .
 				Html::openElement( 'tr' ) .
 				Html::openElement( 'td', [ 'colspan' => 2 ] ) .
 				Html::openElement( 'table' );

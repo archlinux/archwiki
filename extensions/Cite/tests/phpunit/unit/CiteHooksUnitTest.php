@@ -3,6 +3,7 @@
 namespace Cite\Tests\Unit;
 
 use Cite\Hooks\CiteHooks;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\StaticUserOptionsLookup;
 
@@ -20,6 +21,7 @@ class CiteHooksUnitTest extends \MediaWikiUnitTestCase {
 			->willReturn( 'Cite-tool-definition.json' );
 
 		( new CiteHooks(
+			$this->createNoOpMock( ExtensionRegistry::class ),
 			new StaticUserOptionsLookup( [] )
 		) )
 			->onContentHandlerDefaultModelFor( $title, $model );

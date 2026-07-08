@@ -107,9 +107,9 @@ ve.dm.ConverterTestCases.cases = {
 				&amp;quot;attrs&amp;quot;:{&amp;quot;group&amp;quot;:&amp;quot;g1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;foo&amp;quot;}}&apos;>
 				</sup>"}}'>
 				<ol>
-					<li><span typeof="mw:Extension/ref">Quux</span></li>
+					<li><span typeof="mw:Extension/ref" id="mw-reflist-item-1">Quux</span></li>
 					<li><span typeof="mw:Extension/ref" id="mw-cite-3">No name</span></li>
-					<li><span typeof="mw:Extension/ref">Ref in refs</span></li>
+					<li><span typeof="mw:Extension/ref" id="mw-reflist-item-3">Ref in refs</span></li>
 				</ol>
 			</div>
 		`,
@@ -152,15 +152,15 @@ ve.dm.ConverterTestCases.cases = {
 				&apos; class=\\"mw-ref reference\\"><a data-mw-group=\\"g1\\"><span class=\\"mw-reflink-text\\"><span class=\\"cite-bracket\\">[</span>g1 3<span class=\\"cite-bracket\\">]</span></span></a></sup>"}}'>
 					<ol class="mw-references references" data-mw-group="g1">
 						<li style='--footnote-number: "1.";'>
-							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>
+							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑</span></a>
 								 ${ ve.dm.ConverterTestCases.refListItemClipboard( 'Quux' ) }
 						</li>
 						<li style='--footnote-number: "2.";'>
-							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>
+							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑</span></a>
 								 ${ ve.dm.ConverterTestCases.refListItemClipboard( 'No name' ) }
 						</li>
 						<li style='--footnote-number: "3.";'>
-							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑ </span></a>
+							<a rel="mw:referencedBy" data-mw-group="g1"><span class="mw-linkback-text">↑</span></a>
 								 ${ ve.dm.ConverterTestCases.refListItemClipboard( 'Ref in refs' ) }
 						</li>
 					</ol>
@@ -352,7 +352,7 @@ ve.dm.ConverterTestCases.cases = {
 			<p><sup about="#mwt2" class="mw-ref reference" id="cite_ref-1" rel="dc:references" typeof="mw:Extension/ref" data-mw='{"name":"ref","body":{"id":"mw-reference-text-cite_note-1"},"attrs":{"group":"notes"}}'><a href="./Main_Page#cite_note-1" data-mw-group="notes"><span class="mw-reflink-text"><span class="cite-bracket">[</span>notes 1<span class="cite-bracket">]</span></span></a></sup></p>
 			<div class="mw-references-wrap" typeof="mw:Extension/references mw:Transclusion" about="#mwt4" data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"<references group=\\"notes\\" />"}},"i":0}}]}'>
 				<ol class="mw-references references" data-mw-group="notes">
-					<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" data-mw-group="notes" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>
+					<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" data-mw-group="notes" rel="mw:referencedBy"><span class="mw-linkback-text">↑</span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>
 				</ol>
 			</div>
 		`,
@@ -435,7 +435,7 @@ ve.dm.ConverterTestCases.cases = {
 			<div about="#mwt3" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"reflist","href":"./Template:Reflist"},"params":{},"i":0}}]}'>
 				<div typeof="mw:Extension/references" about="#mwt5" data-mw='{"name":"references","attrs":{}}'>
 					<ol class="mw-references references">
-						<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>
+						<li about="#cite_note-1" id="cite_note-1"><a href="./Main_Page#cite_ref-1" rel="mw:referencedBy"><span class="mw-linkback-text">↑</span></a> <span id="mw-reference-text-cite_note-1" class="mw-reference-text">Foo</span></li>
 					</ol>
 				</div>
 			</div>
@@ -449,7 +449,7 @@ ve.dm.ConverterTestCases.cases = {
 			<div typeof="mw:Extension/references" data-mw='{"name":"references","attrs":{}}'>
 				<ol class="mw-references references">
 					<li style='--footnote-number: "1.";'>
-						<a rel="mw:referencedBy"><span class="mw-linkback-text">↑ </span></a>
+						<a rel="mw:referencedBy"><span class="mw-linkback-text">↑</span></a>
 							 ${ ve.dm.ConverterTestCases.refListItemClipboard( 'Foo' ) }
 					</li>
 				</ol>

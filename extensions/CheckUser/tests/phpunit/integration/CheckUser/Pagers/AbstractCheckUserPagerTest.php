@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers;
 
-use MediaWiki\CheckUser\HookHandler\Preferences;
-use MediaWiki\CheckUser\Services\TokenManager;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Services\TokenManager;
 use MediaWiki\Extension\GlobalBlocking\GlobalBlockingServices;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\MainConfigNames;
@@ -13,8 +13,8 @@ use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -25,7 +25,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\AbstractCheckUserPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\AbstractCheckUserPager
  */
 class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 
@@ -57,7 +57,7 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 			$services->getService( 'CheckUserTokenQueryManager' ),
 			$services->getUserGroupManager(),
 			$services->getCentralIdLookup(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getSpecialPageFactory(),
 			$services->getUserIdentityLookup(),
 			$services->getService( 'CheckUserLogService' ),
@@ -75,7 +75,7 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 	 */
 	protected function setUpObject( $params = [] ) {
 		RequestContext::getMain()->setUser( $this->getTestUser( 'checkuser' )->getUser() );
-		$object = new DeAbstractedCheckUserPagerTest(
+		$object = new DeAbstractedCheckUserPager(
 			...$this->setUpObjectArguments( $params )
 		);
 		return TestingAccessWrapper::newFromObject( $object );
@@ -140,7 +140,10 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 		$user = UserIdentityValue::newAnonymous( $ip );
 		// Globally block the IP
 		GlobalBlockingServices::wrap( $this->getServiceContainer() )->getGlobalBlockManager()->block(
-			$ip, 'test', '1 week', $this->getTestUser( [ 'steward' ] )->getUserIdentity()
+			$ip,
+			'test',
+			'1 week',
+			$this->getTestUser( [ 'steward' ] )->getUserIdentity()
 		);
 		$this->assertSame(
 			[ '<strong>(' . wfMessage( 'checkuser-gblocked' )->escaped() . ')</strong>' ],
@@ -159,7 +162,10 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getMutableTestUser()->getUserIdentity();
 		// Globally block the test user
 		GlobalBlockingServices::wrap( $this->getServiceContainer() )->getGlobalBlockManager()->block(
-			$user->getName(), 'test', '1 week', $this->getTestUser( [ 'steward' ] )->getUserIdentity()
+			$user->getName(),
+			'test',
+			'1 week',
+			$this->getTestUser( [ 'steward' ] )->getUserIdentity()
 		);
 		$this->assertContains(
 			'<strong>(' . wfMessage( 'checkuser-gblocked' )->escaped() . ')</strong>',
@@ -202,7 +208,10 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideGetCheckUserHelperFieldset */
 	public function testGetCheckUserHelperFieldset(
-		$collapseByDefaultConfigValue, $userPreferenceValue, $shouldBeByDefaultCollapsed, $resultRowCount
+		$collapseByDefaultConfigValue,
+		$userPreferenceValue,
+		$shouldBeByDefaultCollapsed,
+		$resultRowCount
 	) {
 		$this->overrideConfigValue( 'CheckUserCollapseCheckUserHelperByDefault', $collapseByDefaultConfigValue );
 		$object = $this->setUpObject();
@@ -311,7 +320,8 @@ class AbstractCheckUserPagerTest extends MediaWikiIntegrationTestCase {
 				'dir' => 'prev', 'user' => $target,
 			],
 			$tokenManager->decode( RequestContext::getMain()->getRequest()->getSession(), $actualToken ),
-			false, true,
+			false,
+			true,
 			'CheckUser JWT token for paging returned unexpected data'
 		);
 

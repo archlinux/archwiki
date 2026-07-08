@@ -63,11 +63,9 @@ TEXT
 	 * @return bool
 	 */
 	public function execute() {
-		global $IP;
-
 		$component = $this->getOption( 'extension' ) ?? $this->getOption( 'skin' ) ?? '#core';
 		$foreignResourcesDirs = ExtensionRegistry::getInstance()->getAttribute( 'ForeignResourcesDir' )
-			+ [ '#core' => "{$IP}/resources/lib" ];
+			+ [ '#core' => MW_INSTALL_PATH . '/resources/lib' ];
 		if ( !array_key_exists( $component, $foreignResourcesDirs ) ) {
 			$this->fatalError( "Unknown component: $component\n" );
 		}
@@ -76,12 +74,8 @@ TEXT
 		$frm = new ForeignResourceManager(
 			$foreignResourcesFile,
 			dirname( $foreignResourcesFile ),
-			function ( $text ) {
-				$this->output( $text );
-			},
-			function ( $text ) {
-				$this->error( $text );
-			},
+			$this->output( ... ),
+			$this->error( ... ),
 			function ( $text ) {
 				if ( $this->hasOption( 'verbose' ) ) {
 					$this->output( $text );

@@ -122,7 +122,7 @@ module.exports = exports = defineComponent( {
 						message.value = mw.message(
 							'checkuser-tempaccount-specialblock-ips',
 							ipLinks.length,
-							Object.assign( mw.language.listToText( ipLinks ) )
+							document.createRange().createContextualFragment( mw.language.listToText( ipLinks ) )
 						).parse();
 					} else {
 						message.value = mw.message(

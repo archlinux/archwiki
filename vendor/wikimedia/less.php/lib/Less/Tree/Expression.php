@@ -12,6 +12,10 @@ class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProper
 	/** @var true|null */
 	public $parens = null;
 
+	/**
+	 * @param Less_Tree[] $value
+	 * @param bool $noSpacing
+	 */
 	public function __construct( $value, $noSpacing = false ) {
 		$this->value = $value;
 		$this->noSpacing = $noSpacing;
@@ -71,8 +75,10 @@ class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProper
 			$this->value[$i]->genCSS( $output );
 			if ( !$this->noSpacing && ( $i + 1 < $val_len ) ) {
 				// NOTE: Comma handling backported from Less.js 4.2.1 (T386077)
-				if ( !( $this->value[$i + 1] instanceof Less_Tree_Anonymous )
-					|| ( $this->value[$i + 1] instanceof Less_Tree_Anonymous && $this->value[$i + 1]->value !== ',' )
+				// Local variable helps phan to infer types on this condition
+				$nextVal = $this->value[$i + 1];
+				if ( !$nextVal instanceof Less_Tree_Anonymous
+					|| $nextVal->value !== ','
 				) {
 					$output->add( ' ' );
 				}

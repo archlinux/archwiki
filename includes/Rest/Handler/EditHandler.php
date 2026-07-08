@@ -7,6 +7,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\WebResponse;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\TokenAwareHandlerTrait;
@@ -17,6 +18,7 @@ use MediaWiki\Title\TitleFormatter;
 use MediaWiki\Title\TitleParser;
 use RuntimeException;
 use Wikimedia\Message\MessageValue;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * Base class for REST API handlers that perform page edits (main slot only).
@@ -66,6 +68,8 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 
 	/**
 	 * @inheritDoc
+	 * @phpcs:ignore Generic.Files.LineLength.TooLong
+	 * @param array{error?:string,edit?:array{result:string,title:string,newrevid:int,pageid:int,newtimestamp:string,contentmodel:string}} $data
 	 */
 	protected function mapActionModuleResult( array $data ) {
 		if ( isset( $data['error'] ) ) {
@@ -162,11 +166,27 @@ abstract class EditHandler extends ActionModuleBasedHandler {
 	protected function generateResponseSpec( string $method ): array {
 		$spec = parent::generateResponseSpec( $method );
 
-		$spec['201'][parent::OPENAPI_DESCRIPTION_KEY] = 'OK';
+		$spec['201'][parent::OPENAPI_DESCRIPTION_KEY] = 'Created';
 		$spec['201']['content']['application/json']['schema'] =
 			$spec['200']['content']['application/json']['schema'];
 
 		return $spec;
 	}
 
+	/**
+	 * @inheritDoc
+	 * @return array
+	 */
+	public function getHeaderParamSettings(): array {
+		return [
+			'Content-Type' => [
+				self::PARAM_SOURCE => 'header',
+				ParamValidator::PARAM_TYPE => 'string',
+				// RFC 7231 § 3.1.1.5 allows no Content-Type header, but we require it in
+				// Handler::parseBodyData(), and return a 415 if it is not present.
+				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-requestheader-desc-contenttype' ),
+			],
+		];
+	}
 }

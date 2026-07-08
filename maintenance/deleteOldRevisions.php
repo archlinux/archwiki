@@ -35,7 +35,7 @@ class DeleteOldRevisions extends Maintenance {
 	private function doDelete( bool $delete = false, array $pageIds = [] ) {
 		# Data should come off the master, wrapped in a transaction
 		$dbw = $this->getPrimaryDB();
-		$this->beginTransaction( $dbw, __METHOD__ );
+		$this->beginTransactionRound( __METHOD__ );
 
 		$pageConds = [];
 		$revConds = [];
@@ -49,16 +49,12 @@ class DeleteOldRevisions extends Maintenance {
 
 		# Get "active" revisions from the page table
 		$this->output( "Searching for active revisions..." );
-		$res = $dbw->newSelectQueryBuilder()
+		$latestRevs = $dbw->newSelectQueryBuilder()
 			->select( 'page_latest' )
 			->from( 'page' )
 			->where( $pageConds )
 			->caller( __METHOD__ )
-			->fetchResultSet();
-		$latestRevs = [];
-		foreach ( $res as $row ) {
-			$latestRevs[] = $row->page_latest;
-		}
+			->fetchFieldValues();
 		$this->output( "done.\n" );
 
 		# Get all revisions that aren't in this set
@@ -66,16 +62,12 @@ class DeleteOldRevisions extends Maintenance {
 		if ( count( $latestRevs ) > 0 ) {
 			$revConds[] = $dbw->expr( 'rev_id', '!=', $latestRevs );
 		}
-		$res = $dbw->newSelectQueryBuilder()
+		$oldRevs = $dbw->newSelectQueryBuilder()
 			->select( 'rev_id' )
 			->from( 'revision' )
 			->where( $revConds )
 			->caller( __METHOD__ )
-			->fetchResultSet();
-		$oldRevs = [];
-		foreach ( $res as $row ) {
-			$oldRevs[] = $row->rev_id;
-		}
+			->fetchFieldValues();
 		$this->output( "done.\n" );
 
 		# Inform the user of what we're going to do
@@ -97,7 +89,7 @@ class DeleteOldRevisions extends Maintenance {
 		}
 
 		# Purge redundant text records
-		$this->commitTransaction( $dbw, __METHOD__ );
+		$this->commitTransactionRound( __METHOD__ );
 		if ( $delete ) {
 			$this->purgeRedundantText( true );
 		}

@@ -7,8 +7,8 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathFormatter;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Site\Site;
 use MediaWikiUnitTestCase;
@@ -52,13 +52,13 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 			]
 		];
 
-	public static function setUpBeforeClass(): void {
+	public function setUp(): void {
 		ExtensionRegistry::enableForTest();
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'WikibaseClient' ) ) {
 			self::markTestSkipped( 'WikibaseClient is not installed. Skipping tests.' );
 		}
 		ExtensionRegistry::disableForTest();
-		parent::setUpBeforeClass();
+		parent::setUp();
 	}
 
 	public function getWikibaseConnectorWithExistingItems(

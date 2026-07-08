@@ -7,9 +7,9 @@
 			"Jim-by",
 			"Red Winged Duck",
 			"Renessaince",
+			"Ucukor",
 			"Vlad5250",
-			"Wizardist",
-			"Ucukor"
+			"Wizardist"
 		]
 	},
 	"checkuser-summary": "Гэты інструмэнт праглядае апошнія зьмены для атрыманьня ІР-адрасоў удзельніка альбо паказвае рэдагаваньні/зьвесткі ўдзельніка па ІР-адрасе.\nУдзельнікі і рэдагаваньні, якія рабіліся з ІР-адрасу, пазначаным ў загалоўках XFF, можна атрымаць, дадаўшы да ІР-адрасу «/xff». Падтрымліваюцца IPv4 (CIDR $1-32) і IPv6 (CIDR $2-128).\nЗ прычыны плённасьці, будуць паказаны ня больш за $3 рэдагаваньняў.\nКарыстайцеся гэтым інструмэнтам толькі згодна з правіламі.",
@@ -118,6 +118,9 @@
 	"checkuser-ip-auto-reveal-on-dialog-default-action": "Скасаваць",
 	"checkuser-userinfocard-enable-preference-description": "Уключыць [[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|картку з інфармацыяй пра карыстальніка]]",
 	"checkuser-userinfocard-enable-preference-help": "Паказваць побач зь імёнамі карыстальнікаў кнопку, якая адкрые выплыўнае вакенца з інфармацыяй пра рахунак.",
+	"checkuser-suggestedinvestigations-filter-button": "Фільтар",
+	"checkuser-suggestedinvestigations-filter-dialog-status-filter-header": "Статус",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "Рахунак",
 	"checkuser-suggestedinvestigations-header-status": "Статус",
 	"checkuser-suggestedinvestigations-change-status-dialog-status-list-header": "Статус"
 }

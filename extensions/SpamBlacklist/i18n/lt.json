@@ -13,7 +13,6 @@
 	"spam-blacklisted-email": "Draudžiamas el. pašto adresas",
 	"spam-blacklisted-email-text": "Jūsų el. pašto adresas dabar yra įtrauktas į draudžiamųjų sąrašą, kad negalėtumėte siųsti el. laiškų kitiems naudotojams.",
 	"spam-blacklisted-email-signup": "Nurodytasis el. pašto adresas dabar yra draudžiamas naudoti.",
-	"spam-invalid-lines": "{{PLURAL:$1|Ši brukalo juodojo sąrašo eilutė yra|Šios brukalo juodojo sąrašo eilutės yra}} {{PLURAL:$1|netinkama reguliarioji išraiška|netinkamos reguliariosios išraiškos}} ir {{PLURAL:$1|ją reikia|jas reikia}} pataisyti prieš išsaugant puslapį:",
 	"spam-blacklist-desc": "Reguliariomis išraiškomis grįstas anti brukalinis įrankis, leidžiantis puslapiuose esančias URL nuorodas ir prisiregistravusių naudotojų el. pašto adresus uždrausti",
 	"log-name-spamblacklist": "Brukalo juodojo sąrašo žurnalas",
 	"log-description-spamblacklist": "Čia pateikiami bandymai pridėti nuorodas, nukreipiančias į juodajame sąraše esančias svetaines.",

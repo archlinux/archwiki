@@ -35,9 +35,6 @@ class RendererFactoryTest extends MediawikiUnitTestCase {
 			->willReturn( $parameters['defaultMode'] ?? MathConfig::MODE_NATIVE_MML );
 
 		$logger = $this->createStub( LoggerInterface::class );
-		$logger
-			->method( 'debug' )
-			->willReturn( null );
 
 		$cache = $this->createStub( WANObjectCache::class );
 
@@ -50,7 +47,7 @@ class RendererFactoryTest extends MediawikiUnitTestCase {
 		);
 	}
 
-	public function determineModeDataProvider(): array {
+	public static function determineModeDataProvider(): array {
 		return [
 			[
 				[], [], MathConfig::MODE_SOURCE, MathConfig::MODE_SOURCE

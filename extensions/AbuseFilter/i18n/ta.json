@@ -185,7 +185,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "மாறியை (set_var) அமை",
 	"abusefilter-edit-builder-group-vars": "மாறிகள்",
 	"abusefilter-edit-builder-vars-timestamp": "மாற்றத்திற்கான, யுனிக்சின் நேரமுத்திரை",
-	"abusefilter-edit-builder-vars-accountname": "கணக்கின் பெயர் (கணக்குத் தொடக்கத்தின் போது)",
+	"abusefilter-edit-builder-vars-account-name": "கணக்கின் பெயர் (கணக்குத் தொடக்கத்தின் போது)",
 	"abusefilter-edit-builder-vars-action": "செயல்",
 	"abusefilter-edit-builder-vars-addedlines": "தொகுக்கும் போது சேர்க்கப்பட்ட வரிகள்",
 	"abusefilter-edit-builder-vars-delta": "தொகுக்கும் போது ஏற்பட்ட அளவு மாற்றம்",

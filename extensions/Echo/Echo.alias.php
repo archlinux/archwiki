@@ -243,6 +243,11 @@ $specialPageAliases['scn'] = [
 	'Notifications' => [ 'Notifiche' ],
 ];
 
+/** Slovak (slovenčina) */
+$specialPageAliases['sk'] = [
+	'Notifications' => [ 'Upozornenia' ],
+];
+
 /** Serbian (Cyrillic script) (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'Notifications' => [ 'Обавештења' ],

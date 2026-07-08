@@ -9,13 +9,6 @@ use MediaWiki\User\UserIdentity;
  * Representation of a subscription to a given topic.
  */
 class SubscriptionItem {
-	private UserIdentity $user;
-	private string $itemName;
-	private LinkTarget $linkTarget;
-	private int $state;
-	private ?string $createdTimestamp;
-	private ?string $notifiedTimestamp;
-
 	/**
 	 * @param UserIdentity $user
 	 * @param string $itemName
@@ -26,19 +19,13 @@ class SubscriptionItem {
 	 *                                       a notification (even if muted).
 	 */
 	public function __construct(
-		UserIdentity $user,
-		string $itemName,
-		LinkTarget $linkTarget,
-		int $state,
-		?string $createdTimestamp,
-		?string $notifiedTimestamp
+		private readonly UserIdentity $user,
+		private readonly string $itemName,
+		private readonly LinkTarget $linkTarget,
+		private readonly int $state,
+		private readonly ?string $createdTimestamp,
+		private readonly ?string $notifiedTimestamp
 	) {
-		$this->user = $user;
-		$this->itemName = $itemName;
-		$this->linkTarget = $linkTarget;
-		$this->state = $state;
-		$this->createdTimestamp = $createdTimestamp;
-		$this->notifiedTimestamp = $notifiedTimestamp;
 	}
 
 	public function getUserIdentity(): UserIdentity {

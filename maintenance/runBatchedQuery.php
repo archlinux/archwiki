@@ -14,6 +14,7 @@ require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Utils\BatchRowIterator;
 
 /**
  * Maintenance script to run a database query in batches and wait for replica DBs.

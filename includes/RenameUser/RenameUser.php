@@ -48,14 +48,7 @@ class RenameUser {
 	/** @var bool */
 	private $derived = false;
 
-	private CentralIdLookupFactory $centralIdLookupFactory;
-	private JobQueueGroupFactory $jobQueueGroupFactory;
-	private MovePageFactory $movePageFactory;
-	private UserFactory $userFactory;
-	private UserNameUtils $userNameUtils;
-	private PermissionManager $permissionManager;
-	private TitleFactory $titleFactory;
-	private LoggerInterface $logger;
+	private readonly LoggerInterface $logger;
 
 	/**
 	 * @internal For use by RenameUserFactory
@@ -64,39 +57,23 @@ class RenameUser {
 		MainConfigNames::LocalDatabases,
 	];
 
-	private array $localDatabases;
-
 	/**
-	 * @param ServiceOptions $options
-	 * @param CentralIdLookupFactory $centralIdLookupFactory
-	 * @param JobQueueGroupFactory $jobQueueGroupFactory
-	 * @param MovePageFactory $movePageFactory
-	 * @param UserFactory $userFactory
-	 * @param UserNameUtils $userNameUtils
-	 * @param PermissionManager $permissionManager
-	 * @param TitleFactory $titleFactory
-	 * @param User $performer
-	 * @param User $target
-	 * @param string $oldName
-	 * @param string $newName
-	 * @param string $reason
-	 * @param array $renameOptions
-	 *    Valid options:
-	 *    - forceGlobalDetach      : Force to detach from CentralAuth
-	 *    - movePages              : Whether user pages should be moved
-	 *    - suppressRedirect       : Whether to suppress redirects for user pages
-	 *    - derived                : Whether shared tables should be updated
-	 *        If derived is true, it is assumed that all shared tables have been updated.
+	 * Valid options for $renameOptions:
+	 *   - forceGlobalDetach      : Force to detach from CentralAuth
+	 *   - movePages              : Whether user pages should be moved
+	 *   - suppressRedirect       : Whether to suppress redirects for user pages
+	 *   - derived                : Whether shared tables should be updated
+	 *       If derived is true, it is assumed that all shared tables have been updated.
 	 */
 	public function __construct(
-		ServiceOptions $options,
-		CentralIdLookupFactory $centralIdLookupFactory,
-		JobQueueGroupFactory $jobQueueGroupFactory,
-		MovePageFactory $movePageFactory,
-		UserFactory $userFactory,
-		UserNameUtils $userNameUtils,
-		PermissionManager $permissionManager,
-		TitleFactory $titleFactory,
+		private readonly ServiceOptions $options,
+		private readonly CentralIdLookupFactory $centralIdLookupFactory,
+		private readonly JobQueueGroupFactory $jobQueueGroupFactory,
+		private readonly MovePageFactory $movePageFactory,
+		private readonly UserFactory $userFactory,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly PermissionManager $permissionManager,
+		private readonly TitleFactory $titleFactory,
 		User $performer,
 		User $target,
 		string $oldName,
@@ -105,15 +82,6 @@ class RenameUser {
 		array $renameOptions
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->localDatabases = $options->get( MainConfigNames::LocalDatabases );
-
-		$this->centralIdLookupFactory = $centralIdLookupFactory;
-		$this->movePageFactory = $movePageFactory;
-		$this->jobQueueGroupFactory = $jobQueueGroupFactory;
-		$this->userFactory = $userFactory;
-		$this->userNameUtils = $userNameUtils;
-		$this->permissionManager = $permissionManager;
-		$this->titleFactory = $titleFactory;
 		$this->logger = LoggerFactory::getInstance( 'RenameUser' );
 
 		foreach ( [
@@ -321,7 +289,7 @@ class RenameUser {
 
 		// Create jobs for other wikis if needed
 		if ( $this->userFactory->isUserTableShared() ) {
-			foreach ( $this->localDatabases as $database ) {
+			foreach ( $this->options->get( MainConfigNames::LocalDatabases ) as $database ) {
 				if ( $database == WikiMap::getCurrentWikiDbDomain()->getId() ) {
 					continue;
 				}
@@ -385,7 +353,7 @@ class RenameUser {
 	public function rename(): Status {
 		// renameuser is always required
 		if ( !$this->permissionManager->userHasRight( $this->performer, 'renameuser' ) ) {
-			return Status::newFatal( 'badaccess-groups', 'renameuser' );
+			return Status::newFatal( 'renameuser-error-local-rights' );
 		}
 
 		// for global renames, renameuser-global is also required
@@ -393,7 +361,7 @@ class RenameUser {
 		$userCentralAttached = $centralIdLookup && $centralIdLookup->isAttached( $this->target );
 		if ( ( $this->userFactory->isUserTableShared() || $userCentralAttached )
 			&& !$this->permissionManager->userHasRight( $this->performer, 'renameuser-global' ) ) {
-			return Status::newFatal( 'badaccess-groups', 'renameuser-global' );
+			return Status::newFatal( 'renameuser-error-global-rights' );
 		}
 
 		return $this->renameUnsafe();

@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dejan Savuljesku <savuljesku@hallowelt.com>"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API Module to communicate between server and client during registration/authentication process.",
+	"apihelp-oathauth-webauthn-param-func": "Name of the requested function to be executed.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Authentication information.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Registration information.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Whether the key being registered is in passkey mode. (Only for getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "The WebAuthn module is not available.",
+	"apierror-oathauth-webauthn-missing-credential": "No credential data was provided.",
+	"apierror-oathauth-webauthn-invalid-credential": "The credential data is invalid or malformed.",
+	"apierror-oathauth-webauthn-reauthenticate": "You must first reauthenticate through Special:OATHManage before you can take this action.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Register a new WebAuthn credential for the current user.",
+	"apihelp-oathauth-webauthn-param-credential": "JSON-encoded WebAuthn credential response from the browser.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Friendly name for the new credential."
+}

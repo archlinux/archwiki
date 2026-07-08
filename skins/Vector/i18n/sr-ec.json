@@ -64,9 +64,6 @@
 	"vector-toc-label": "Садржај",
 	"vector-toc-beginning": "(Врх)",
 	"vector-toc-toggle-button-label": "Садржај одељка $1",
-	"vector-anon-user-menu-pages": "Странице за одјављене уреднике",
-	"vector-anon-user-menu-pages-learn": "детаљније",
-	"vector-anon-user-menu-pages-label": "Детаљније о уређивању",
 	"vector-main-menu-tooltip": "Главни мени",
 	"vector-toc-menu-tooltip": "Садржај",
 	"vector-toc-collapsible-button-label": "Прикажи/сакриј садржај",
@@ -89,7 +86,6 @@
 	"vector-page-tools-unpinned-popup": "Мени са алаткама је премештен овде.",
 	"vector-main-menu-unpinned-popup": "Главни мени је премештен овде.",
 	"vector-appearance-unpinned-popup": "Мени за приказ је премештен овде.",
-	"vector-2022-beta-preview-label": "Приступачност за читање (Вектор 2022)",
 	"vector-night-mode-issue-reporting-link-label": "Пријавите проблем са тамним режимом",
 	"vector-night-mode-issue-reporting-link-notification": "Извештај примљен!",
 	"vector-night-mode-beta-tag": "(бета)"

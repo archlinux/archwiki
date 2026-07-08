@@ -18,6 +18,7 @@
 	"cite-reference-previews-journal": "جرنل جو حوالو",
 	"cite-reference-previews-news": "خبر جو حوالو",
 	"cite-reference-previews-note": "ڌيان ڏيو",
+	"cite-reference-previews-map": "نقشي جو حوالو",
 	"cite-reference-previews-web": "ويب حوالو",
 	"cite-reference-previews-collapsible-placeholder": "ھن حوالي ۾ ڪا شڪل شامل آھي جيڪا پيش-نگاھ ۾ نٿي ماپي.",
 	"cite-reference-previews-preference-label": "حوالن جون پيش-نگاھون فعال ڪريو (حوالن جون ڪو صفحو پڙھڻ دوران تڪڙيون پيش-نگاھون وٺو)",
@@ -34,6 +35,8 @@
 	"cite-wikieditor-help-content-showreferences-description": "حوالا ڏيکاريو",
 	"cite-wikieditor-help-content-reference-example-text1": "صفحي جو متن.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 ڳنڍڻي جو متن]، اضافي متن.",
+	"cite-wikieditor-help-content-reference-example-text3": "هڪ ڪتاب",
+	"cite-wikieditor-help-content-reference-example-extra-details": "صفحو 76",
 	"communityconfiguration-cite-title": "حوالو",
 	"communityconfiguration-cite-description": "حوالن جي فارميٽ ۽ ظاهري ڏيک کي مرتب ڪريو.",
 	"cite-configuration-submit": "تبديليون سانڍيو"

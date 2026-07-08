@@ -16,18 +16,10 @@ class CheckUserHandler implements
 	CheckUserInsertLogEventRowHook
 {
 
-	/** @var FilterUser */
-	private $filterUser;
-
-	/** @var UserIdentityUtils */
-	private $userIdentityUtils;
-
 	public function __construct(
-		FilterUser $filterUser,
-		UserIdentityUtils $userIdentityUtils
+		private readonly FilterUser $filterUser,
+		private readonly UserIdentityUtils $userIdentityUtils
 	) {
-		$this->filterUser = $filterUser;
-		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**

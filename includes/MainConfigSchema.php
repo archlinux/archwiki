@@ -15,7 +15,6 @@ use DateTime;
 use DateTimeZone;
 use Generator;
 use InvalidArgumentException;
-use LocalisationCache;
 use MediaWiki\Auth\CheckBlocksSecondaryAuthenticationProvider;
 use MediaWiki\Auth\EmailNotificationSecondaryAuthenticationProvider;
 use MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider;
@@ -37,7 +36,6 @@ use MediaWiki\FileRepo\LocalRepo;
 use MediaWiki\JobQueue\JobQueueDB;
 use MediaWiki\JobQueue\Jobs\AssembleUploadChunksJob;
 use MediaWiki\JobQueue\Jobs\CategoryCountUpdateJob;
-use MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob;
 use MediaWiki\JobQueue\Jobs\CdnPurgeJob;
 use MediaWiki\JobQueue\Jobs\DoubleRedirectJob;
 use MediaWiki\JobQueue\Jobs\HTMLCacheUpdateJob;
@@ -49,6 +47,7 @@ use MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob;
 use MediaWiki\JobQueue\Jobs\ThumbnailRenderJob;
 use MediaWiki\JobQueue\Jobs\UploadFromUrlJob;
 use MediaWiki\Json\RsaJwtCodec;
+use MediaWiki\Language\LocalisationCache;
 use MediaWiki\Logging\BlockLogFormatter;
 use MediaWiki\Logging\ContentModelLogFormatter;
 use MediaWiki\Logging\DeleteLogFormatter;
@@ -64,6 +63,7 @@ use MediaWiki\Logging\RightsLogFormatter;
 use MediaWiki\Logging\TagLogFormatter;
 use MediaWiki\Logging\UploadLogFormatter;
 use MediaWiki\Mail\EmaillingJob;
+use MediaWiki\ObjectCache\SqlBagOStuff;
 use MediaWiki\Page\DeleteLinksJob;
 use MediaWiki\Page\DeletePageJob;
 use MediaWiki\Password\Argon2Password;
@@ -74,8 +74,7 @@ use MediaWiki\Password\MWSaltedPassword;
 use MediaWiki\Password\PasswordPolicyChecks;
 use MediaWiki\Password\Pbkdf2PasswordUsingOpenSSL;
 use MediaWiki\Permissions\GrantsInfo;
-use MediaWiki\RCFeed\RedisPubSubFeedEngine;
-use MediaWiki\RCFeed\UDPRCFeedEngine;
+use MediaWiki\RecentChanges\CategoryMembershipChangeJob;
 use MediaWiki\RecentChanges\RecentChangeNotifyJob;
 use MediaWiki\RecentChanges\RecentChangesUpdateJob;
 use MediaWiki\RenameUser\Job\RenameUserDerivedJob;
@@ -87,16 +86,15 @@ use MediaWiki\Site\MediaWikiSite;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\CentralId\LocalIdLookup;
+use MediaWiki\User\Options\UserOptionsUpdateJob;
 use MediaWiki\User\Registration\LocalUserRegistrationProvider;
+use MediaWiki\User\UserEditCountInitJob;
+use MediaWiki\User\UserGroupExpiryJob;
 use MediaWiki\Watchlist\ActivityUpdateJob;
 use MediaWiki\Watchlist\ClearUserWatchlistJob;
 use MediaWiki\Watchlist\ClearWatchlistNotificationsJob;
 use MediaWiki\Watchlist\WatchlistExpiryJob;
 use ReflectionClass;
-use SqlBagOStuff;
-use UserEditCountInitJob;
-use UserGroupExpiryJob;
-use UserOptionsUpdateJob;
 use Wikimedia\EventRelayer\EventRelayerNull;
 use Wikimedia\ObjectCache\APCUBagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
@@ -641,7 +639,6 @@ class MainConfigSchema {
 	 * All path values can be either absolute or relative URIs
 	 *
 	 * The `1x` key is a path to the 1x version of square logo (should be 135x135 pixels)
-	 * The `1.5x` key is a path to the 1.5x version of square logo
 	 * The `2x` key is a path to the 2x version of square logo
 	 * The `svg` key is a path to the svg version of square logo
 	 * The `icon` key is a path to the version of the logo without wordmark and tagline
@@ -661,7 +658,6 @@ class MainConfigSchema {
 	 * @code
 	 * $wgLogos = [
 	 *    '1x' => 'path/to/1x_version.png',
-	 *    '1.5x' => 'path/to/1.5x_version.png',
 	 *    '2x' => 'path/to/2x_version.png',
 	 *    'svg' => 'path/to/svg_version.svg',
 	 *    'icon' => 'path/to/icon.png',
@@ -1899,11 +1895,9 @@ class MainConfigSchema {
 	public const SVGConverters = [
 		'default' => [
 			'ImageMagick' => '$path/convert -background "#ffffff00" -thumbnail $widthx$height\\! $input PNG:$output',
-			'sodipodi' => '$path/sodipodi -z -w $width -f $input -e $output',
-			'inkscape' => '$path/inkscape -z -w $width -f $input -e $output',
+			'inkscape' => '$path/inkscape -w $width -o $output $input',
 			'batik' => 'java -Djava.awt.headless=true -jar $path/batik-rasterizer.jar -w $width -d $output $input',
 			'rsvg' => '$path/rsvg-convert -w $width -h $height -o $output $input',
-			'imgserv' => '$path/imgserv-wrapper -i svg -o png -w$width $input $output',
 			'ImagickExt' => [ 'SvgHandler::rasterizeImagickExt', ],
 		],
 		'type' => 'map',
@@ -1942,15 +1936,15 @@ class MainConfigSchema {
 	/**
 	 * Whether native rendering by the browser agent is allowed
 	 *
-	 * Default is false. Setting it to true disables all SVG conversion.
-	 * Setting to the string 'partial' will only allow native rendering
+	 * Default is true, which disables all SVG conversion.
+	 * Setting it to the string 'partial' will only allow native rendering
 	 * when the filesize is below SVGNativeRenderingSizeLimit and if the
 	 * file contains at most 1 language.
 	 *
 	 * @since 1.41
 	 */
 	public const SVGNativeRendering = [
-		'default' => false,
+		'default' => true,
 		'type' => 'string|boolean',
 	];
 
@@ -2287,8 +2281,10 @@ class MainConfigSchema {
 			150,
 			180,
 			200,
+			220,
 			250,
-			300
+			300,
+			400,
 		],
 		'type' => 'list',
 	];
@@ -2338,14 +2334,24 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * When defined, is an array of image widths used as buckets for thumbnail generation.
+	 * An array of image widths used as reference buckets for thumbnail generation.
 	 *
-	 * The goal is to save resources by generating thumbnails based on reference buckets instead of
-	 * always using the original. This will incur a speed gain but cause a quality loss.
+	 * Speed up thumbnail generation and save server-side CPU/memory resources by
+	 * generating thumbnails based on reference buckets, instead of always re-scaling
+	 * the original. This performance gain comes at a small loss in quality.
 	 *
-	 * The buckets generation is chained, with each bucket generated based on the above bucket
-	 * when possible. File handlers have to opt into using that feature. For now only BitmapHandler
-	 * supports it.
+	 * If more than one bucket is set, the buckets are chained, with smaller buckets
+	 * generated from a higher bucket when possible. It is recommended that buckets
+	 * are whole multiples of each other (e.g. pick powers-of-2 like 256px/1024px,
+	 * or starting elsewhere such as 320px/1280px) to minimize loss of sharpness
+	 * through chaining (T69525).
+	 *
+	 * This feature is opt-in per media handler. By default, only JpegHandler enables this.
+	 *
+	 * @see MediaWiki\Media\MediaHandler::supportsBucketing
+	 * @see MediaWiki\FileRepo\File\File::getThumbnailBucket
+	 * @see $wgThumbnailMinimumBucketDistance
+	 * @since 1.24
 	 */
 	public const ThumbnailBuckets = [
 		'default' => null,
@@ -2353,19 +2359,24 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * When using thumbnail buckets as defined above, this sets the minimum distance to the bucket
-	 * above the requested size. The distance represents how many extra pixels of width the bucket
-	 * needs in order to be used as the reference for a given thumbnail. For example, with the
-	 * following buckets:
+	 * Minimum distance between requested width and a reference bucket.
 	 *
-	 * $wgThumbnailBuckets = [ 128, 256, 512 ];
+	 * When $wgThumbnailBuckets is enabled, this distance represents how many extra pixels of
+	 * width the bucket needs to qualify for use as a reference for a given thumbnail. This
+	 * distance minimizes loss of sharpness due to insufficient pixels to inform resizing.
 	 *
-	 * and a distance of 50:
+	 * For example, with the following buckets:
+	 *
+	 * $wgThumbnailBuckets = [ 320, 1280, 2560 ];
+	 *
+	 * It is recommended to generate a 300px thumbnail from the 1280px bucket and not
+	 * the 320px bucket. This is achieved by setting a distance of 50:
 	 *
 	 * $wgThumbnailMinimumBucketDistance = 50;
 	 *
-	 * If we want to render a thumbnail of width 220px, the 512px bucket will be used,
-	 * because 220 + 50 = 270 and the closest bucket bigger than 270px is 512.
+	 * @see $wgThumbnailBuckets
+	 * @see MediaWiki\FileRepo\File\File::getThumbnailBucket
+	 * @since 1.24
 	 */
 	public const ThumbnailMinimumBucketDistance = [
 		'default' => 50,
@@ -2468,10 +2479,13 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Generate and use thumbnails suitable for screens with 1.5 and 2.0 pixel densities.
+	 * Generate and use thumbnails suitable for High DPI screens with 2x pixel densities.
 	 *
-	 * This means a 320x240 use of an image on the wiki will also generate 480x360 and 640x480
-	 * thumbnails, output via the srcset attribute.
+	 * This means a 320x240 thumbnail on the wiki will also generate a 640x480
+	 * thumbnail, linked via the srcset attribute.
+	 *
+	 * @see MediaWiki\Linker\Linker::processResponsiveImages
+	 * @see wfThumbIsStandard
 	 */
 	public const ResponsiveImages = [
 		'default' => true,
@@ -2494,6 +2508,23 @@ class MainConfigSchema {
 	 * @since 1.35
 	 */
 	public const ImagePreconnect = [
+		'default' => false,
+	];
+
+	/**
+	 * Add tracking query parameters to URLs for media thumbnails and originals.
+	 *
+	 * The values include the site requesting the image (e.g. 'www.mediawiki.org'),
+	 * the software component involved (e.g. 'parser' or 'imageinfo') and the
+	 * format of the requested image ('original', 'thumbnail' or 'thumbnail_unscaled').
+	 *
+	 * These values are not used by MediaWiki, but they may be used by the server
+	 * hosting the files. The intended use case is applying different rate limits
+	 * depending on how and where the file is used.
+	 *
+	 * @since 1.46
+	 */
+	public const TrackMediaRequestProvenance = [
 		'default' => false,
 	];
 
@@ -2621,26 +2652,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Set to true to enable the Special Mute page. This allows users
-	 * to mute unwanted communications from other users, and is linked
-	 * to from emails originating from Special:Email.
-	 *
-	 * @since 1.34
-	 */
-	public const EnableSpecialMute = [
-		'default' => false,
-	];
-
-	/**
-	 * Set to true to enable user-to-user e-mail mutelist.
-	 *
-	 * @since 1.37; previously $wgEnableUserEmailBlacklist
-	 */
-	public const EnableUserEmailMuteList = [
-		'default' => false,
-	];
-
-	/**
 	 * If true put the sending user's email in a Reply-To header
 	 * instead of From (false). ($wgPasswordSender will be used as From.)
 	 *
@@ -2750,6 +2761,16 @@ class MainConfigSchema {
 	 */
 	public const EmailAuthentication = [
 		'default' => true,
+	];
+
+	/**
+	 * Whether to show a banner to logged-in users who have not yet confirmed their email address.
+	 *
+	 * Requires {@link MainConfigSchema::EmailAuthentication} to be enabled.
+	 */
+	public const EmailConfirmationBanner = [
+		'default' => false,
+		'type' => 'boolean',
 	];
 
 	/**
@@ -3098,9 +3119,6 @@ class MainConfigSchema {
 	 *                  If this is zero for any given server, no normal query traffic will be
 	 *                  sent to it. It will be excluded from lag checks in maintenance scripts.
 	 *                  The only way it can receive traffic is if groupLoads is used.
-	 *
-	 *   - groupLoads:  (optional) Array of load ratios, the key is the query group name. A query
-	 *                  may belong to several groups, the most specific group defined here is used.
 	 *
 	 *   - flags:       (optional) Bit field of properties:
 	 *                  - DBO_DEFAULT:    Transactional-ize web requests and use autocommit otherwise
@@ -4219,7 +4237,21 @@ class MainConfigSchema {
 					'minCpuTime' => 0
 				],
 			],
+			'postproc-pcache' => [ // postprocessing output cache
+				'default' => [ // all namespaces
+					// 0 means no threshold.
+					// Use PHP_INT_MAX to disable cache.
+					'minCpuTime' => PHP_INT_MAX
+				],
+			],
 			'parsoid-pcache' => [ // parsoid output cache
+				'default' => [ // all namespaces
+					// 0 means no threshold.
+					// Use PHP_INT_MAX to disable cache.
+					'minCpuTime' => 0
+				],
+			],
+			'postproc-parsoid-pcache' => [ // parsoid postprocessing output cache
 				'default' => [ // all namespaces
 					// 0 means no threshold.
 					// Use PHP_INT_MAX to disable cache.
@@ -4351,6 +4383,16 @@ class MainConfigSchema {
 	 */
 	public const UseSessionCookieJwt = [
 		'default' => false,
+	];
+
+	/**
+	 * The wiki's URL that would create, sign and issue JWTs using the configured
+	 * private key. The entity is identified by the `iss` claim in the JWT payload.
+	 *
+	 * @since 1.46
+	 */
+	public const JwtSessionCookieIssuer = [
+		'default' => null,
 	];
 
 	/**
@@ -4814,7 +4856,7 @@ class MainConfigSchema {
 	/** @name   Language, regional and character encoding settings */
 
 	/**
-	 * Site language code. See includes/languages/data/Names.php for languages
+	 * Site language code. See includes/Languages/Data/Names.php for languages
 	 * supported by MediaWiki out of the box. Not all languages listed there have
 	 * translations, see languages/messages/ for the list of languages with some
 	 * localisation.
@@ -5453,7 +5495,7 @@ class MainConfigSchema {
 				"mediawiki" => [
 					// Defaults to point at
 					// "$wgResourceBasePath/resources/assets/poweredby_mediawiki_88x31.png"
-					// plus srcset for 1.5x, 2x resolution variants.
+					// plus srcset for 2x resolution variant.
 					"src" => null,
 					"url" => "https://www.mediawiki.org/",
 					"alt" => "Powered by MediaWiki",
@@ -6351,6 +6393,20 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Namespaces to have auto-summary disabled for edits.
+	 * See Language.php for a list of namespaces.
+	 *
+	 * For example, namespaces with limited access can be added to avoid page contents
+	 * being leaked in edit summaries.
+	 *
+	 * @since 1.45
+	 */
+	public const NamespacesWithoutAutoSummaries = [
+		'default' => [],
+		'type' => 'list',
+	];
+
+	/**
 	 * Array of namespaces which can be deemed to contain valid "content", as far
 	 * as the site statistics are concerned. Useful if additional namespaces also
 	 * contain "content" which should be considered when generating a count of the
@@ -6769,6 +6825,17 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * List of domains that will be ignored in being tracked into externallinks table.
+	 *
+	 * Subdomains will be also ignored. So 'wikipedia.org' means 'fa.wikipedia.org'
+	 * will be also ignored.
+	 */
+	public const ExternalLinksIgnoreDomains = [
+		'default' => [],
+		'type' => 'array',
+	];
+
+	/**
 	 * Allow DISPLAYTITLE to change title display
 	 */
 	public const AllowDisplayTitle = [
@@ -7073,8 +7140,7 @@ class MainConfigSchema {
 	 * every check should have a corresponding passwordpolicies-policy-<check> message,
 	 * and every settings field other than 'value' should have a corresponding
 	 * passwordpolicies-policyflag-<flag> message (<check> and <flag> are in lowercase).
-	 * The check message receives the policy value as a parameter, the flag message
-	 * receives the flag value (or values if it's an array).
+	 * The check message receives the policy value as a parameter.
 	 *
 	 * @since 1.26
 	 * @see \MediaWiki\Password\PasswordPolicyChecks
@@ -7661,6 +7727,14 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Maximum number of userjs preferences allowed for each user
+	 */
+	public const UserJsPrefLimit = [
+		'default' => 100,
+		'type' => 'int',
+	];
+
+	/**
 	 * Characters to prevent during new account creations.
 	 *
 	 * This is used in a regular expression character class during
@@ -7905,28 +7979,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 *  Ipblocks table schema migration stage, for normalizing ipb_address field and
-	 * 	adding the block_target table.
-	 *
-	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
-	 *
-	 *   - SCHEMA_COMPAT_OLD
-	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-	 *   - SCHEMA_COMPAT_NEW
-	 *
-	 * History:
-	 *   - 1.42: Added
-	 *   - 1.43: Default changed from SCHEMA_COMPAT_OLD to SCHEMA_COMPAT_NEW
-	 *   - 1.43: Deprecated, ignored, SCHEMA_COMPAT_NEW is implied
-	 *
-	 * @deprecated since 1.43
-	 */
-	public const BlockTargetMigrationStage = [
-		'default' => SCHEMA_COMPAT_NEW,
-		'type' => 'integer',
-	];
-
-	/**
 	 * Pages anonymous user may see, set as an array of pages titles.
 	 *
 	 * **Example:**
@@ -8061,6 +8113,7 @@ class MainConfigSchema {
 				'changetags' => true,
 				'viewmywatchlist' => true,
 				'editmywatchlist' => true,
+				'createwithcontentmodel' => true,
 			],
 			'autoconfirmed' => [
 				'autoconfirmed' => true,
@@ -8242,6 +8295,49 @@ class MainConfigSchema {
 	public const GroupsRemoveFromSelf = [
 		'default' => [],
 		'type' => 'map',
+	];
+
+	/**
+	 * A map of group names to the conditions under which the group can be granted.
+	 * The requirements are specified in the same way as for autopromotion.
+	 *
+	 * If `canBeIgnored` is set to true, these restrictions can be bypassed by users
+	 * who have the `ignore-restricted-groups` permission.
+	 *
+	 * If either of the `memberConditions` or `updaterConditions` keys are omitted,
+	 * they default to an empty array (i.e. no conditions). The default value for
+	 * `canBeIgnored` is false.
+	 *
+	 * ```
+	 * $wgRestrictedGroups = [
+	 *     'sysop' => [
+	 *         'memberConditions' => [ APCOND_EDITCOUNT, 1000 ],
+	 *         'updaterConditions' => [ !, APCOND_ISBOT ],
+	 *         'canBeIgnored' => false,
+	 *     ]
+	 * ]
+	 * ```
+	 */
+	public const RestrictedGroups = [
+		'default' => [],
+		'type' => 'map',
+	];
+
+	/**
+	 * A list of user requirement conditions, which are considered private and therefore
+	 * shouldn't be used in computations before they are really needed. This helps to reduce
+	 * visibility of protected information about users.
+	 *
+	 * Using this setting does not fully prevent other users from inferring what is the result
+	 * of condition computation. For instance, a user rights log entry can still reveal that
+	 * the restrictions for the relevant group must have been satisfied.
+	 *
+	 * An example use of this setting is the Special:UserRights form, where all conditions
+	 * are evaluated on submission, but on viewing only the non-private ones are used.
+	 */
+	public const UserRequirementsPrivateConditions = [
+		'default' => [],
+		'type' => 'list',
 	];
 
 	/**
@@ -9089,6 +9185,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'pagelang' => true,
 			],
 			'editprotected' => [
@@ -9097,6 +9194,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'editprotected' => true,
 			],
 			'editmycssjs' => [
@@ -9105,6 +9203,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'editmyusercss' => true,
 				'editmyuserjson' => true,
 				'editmyuserjs' => true,
@@ -9119,6 +9218,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'editinterface' => true,
 				'edituserjson' => true,
 				'editsitejson' => true,
@@ -9129,6 +9229,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'editinterface' => true,
 				'edituserjson' => true,
 				'editsitejson' => true,
@@ -9143,6 +9244,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'createpage' => true,
 				'createtalk' => true,
 				'delete-redirect' => true,
@@ -9189,6 +9291,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'browsearchive' => true,
 				'deletedhistory' => true,
 				'deletedtext' => true,
@@ -9208,6 +9311,7 @@ class MainConfigSchema {
 				'applychangetags' => true,
 				'changetags' => true,
 				'editcontentmodel' => true,
+				'createwithcontentmodel' => true,
 				'editprotected' => true,
 				'protect' => true,
 			],
@@ -9364,6 +9468,16 @@ class MainConfigSchema {
 	public const BotPasswordsDatabase = [
 		'default' => false,
 		'type' => 'string|false',
+	];
+
+	/**
+	 * Maximum number of bot passwords a user can create.
+	 *
+	 * @since 1.46
+	 */
+	public const BotPasswordsLimit = [
+		'default' => 100,
+		'type' => 'int',
 	];
 
 	// endregion -- end of user rights settings
@@ -9580,17 +9694,6 @@ class MainConfigSchema {
 	 * @since 1.27
 	 */
 	public const SessionSecret = [
-		'default' => false,
-	];
-
-	/**
-	 * Enable the deprecated xslt option in the Action API.
-	 *
-	 * This is unsafe and allows users with the editinterface right to perform XSS.
-	 *
-	 * @see https://phabricator.wikimedia.org/T401995
-	 */
-	public const EnableUnsafeXsltOption = [
 		'default' => false,
 	];
 
@@ -10225,6 +10328,18 @@ class MainConfigSchema {
 		'default' => false,
 	];
 
+	/**
+	 * Fraction of HTTP errors received by mw.Api to log client-side using mw.errorLogger.logError().
+	 * Additional setup is required to record these logs somewhere.
+	 *
+	 * Currently only logs HTTP 429 errors, but this may be extended in the future.
+	 *
+	 * @since 1.46
+	 */
+	public const ApiClientErrorSampleRate = [
+		'default' => 1.0,
+	];
+
 	// endregion -- end of profiling, testing and debugging
 
 	/***************************************************************************/
@@ -10730,8 +10845,6 @@ class MainConfigSchema {
 	 *
 	 * FormattedRCFeed-specific options:
 	 * - 'uri' -- [required] The address to which the messages are sent.
-	 *   The uri scheme of this string will be looked up in $wgRCEngines
-	 *   to determine which FormattedRCFeed class to use.
 	 * - 'formatter' -- [required] The class (implementing RCFeedFormatter) which will
 	 *   produce the text to send. This can also be an object of the class.
 	 *   Formatters available by default: JSONRCFeedFormatter, XMLRCFeedFormatter,
@@ -10774,21 +10887,6 @@ class MainConfigSchema {
 	 */
 	public const RCFeeds = [
 		'default' => [],
-		'type' => 'map',
-	];
-
-	/**
-	 * Used by RecentChange::getEngine to find the correct engine for a given URI scheme.
-	 *
-	 * Keys are scheme names, values are names of FormattedRCFeed sub classes.
-	 *
-	 * @since 1.22
-	 */
-	public const RCEngines = [
-		'default' => [
-			'redis' => RedisPubSubFeedEngine::class,
-			'udp' => UDPRCFeedEngine::class,
-		],
 		'type' => 'map',
 	];
 
@@ -10996,6 +11094,7 @@ class MainConfigSchema {
 	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_MANUAL_REVERT
 	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_REVERTED
 	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_SERVER_SIDE_UPLOAD
+	 * @see \MediaWiki\ChangeTags\ChangeTags::TAG_IPBLOCK_APPEAL
 	 */
 	public const SoftwareTags = [
 		'default' => [
@@ -11011,6 +11110,8 @@ class MainConfigSchema {
 			'mw-manual-revert' => true,
 			'mw-reverted' => true,
 			'mw-server-side-upload' => true,
+			'mw-ipblock-appeal' => true,
+			'mw-edited-other-users-js' => true,
 		],
 		'type' => 'map',
 		'additionalProperties' => [ 'type' => 'boolean', ],
@@ -11095,6 +11196,26 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Whether to enable the watchlist labels feature.
+	 *
+	 * @since 1.46
+	 */
+	public const EnableWatchlistLabels = [
+		'default' => false,
+		'type' => 'boolean',
+	];
+
+	/**
+	 * Maximum number of labels a user can create for their watchlist.
+	 *
+	 * @since 1.46
+	 */
+	public const WatchlistLabelsMaxPerUser = [
+		'default' => 100,
+		'type' => 'integer',
+	];
+
+	/**
 	 * Chance of expired watchlist items being purged on any page edit.
 	 *
 	 * Only has effect if $wgWatchlistExpiry is true.
@@ -11126,16 +11247,6 @@ class MainConfigSchema {
 	public const WatchlistExpiryMaxDuration = [
 		'default' => '1 year',
 		'type' => '?string',
-	];
-
-	/**
-	 * Whether to enable pagination on Special:EditWatchlist (feature flag)
-	 *
-	 * @since 1.45
-	 */
-	public const EditWatchlistPaginate = [
-		'default' => false,
-		'type' => 'boolean',
 	];
 
 	/**
@@ -12660,15 +12771,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Log file or URL (TCP or UDP) to log API requests to, or false to disable
-	 * API request logging
-	 */
-	public const APIRequestLog = [
-		'default' => false,
-		'deprecated' => 'since 1.43; use api or api-request $wgDebugLogGroups channel',
-	];
-
-	/**
 	 * Set the timeout for the API help text cache. If set to 0, caching disabled
 	 */
 	public const APICacheHelpTimeout = [
@@ -12764,6 +12866,38 @@ class MainConfigSchema {
 	public const RestAPIAdditionalRouteFiles = [
 		'default' => [],
 		'type' => 'list',
+	];
+
+	/**
+	 * A list of OpenAPI specs to be made available for exploration on
+	 * Special:RestSandbox. If none are given, Special:RestSandbox is disabled.
+	 *
+	 * This is an associative array, arbitrary spec IDs to spec descriptions.
+	 * Each spec description is an array with the following keys:
+	 * - url: the URL that will return the OpenAPI spec.
+	 * - name: the name of the API, to be shown on Special:RestSandbox.
+	 *   Ignored if msg is given.
+	 * - msg: a message key for the name of the API, to be shown on
+	 *   Special:RestSandbox.
+	 * - file: optional module definition file name. If supplied, information therein is used for
+	 *   name and/or url. Info supplied directly in config (via url/name/msg) takes precedence.
+	 *
+	 * @unstable Introduced in 1.43. We may want to rename or change this to
+	 * accommodate the need to list external APIs in a central discovery
+	 * document.
+	 */
+	public const RestSandboxSpecs = [
+		'default' => [],
+		'type' => 'map',
+		'additionalProperties' => [
+			'type' => 'object',
+			'properties' => [
+				'url' => [ 'type' => 'string', 'format' => 'url' ],
+				'name' => [ 'type' => 'string' ],
+				'file' => [ 'type' => 'string' ],
+				'msg' => [ 'type' => 'string', 'description' => 'a message key' ]
+			],
+		]
 	];
 
 	// endregion -- End AJAX and API
@@ -13008,6 +13142,19 @@ class MainConfigSchema {
 	 */
 	public const AllowExternalReqID = [
 		'default' => false,
+	];
+
+	/**
+	 * How to generate the request ID when MediaWiki generates it internally.
+	 * Must be one of: 'rand24', 'uuid4'
+	 *
+	 * Default: 'rand24'
+	 *
+	 * @since 1.46
+	 */
+	public const GenerateReqIDFormat = [
+		'default' => 'rand24',
+		'type' => 'string',
 	];
 
 	// endregion -- End HTTP client
@@ -13349,6 +13496,17 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Whether Article should clone the ParserOutput before postprocessing.
+	 *
+	 * @unstable Temporary feature flag, T410923
+	 * @since 1.45
+	 */
+	public const CloneArticleParserOutput = [
+		'default' => true,
+		'type' => 'boolean',
+	];
+
+	/**
 	 * Whether parser functions should use Leximorph handlers instead of Language methods.
 	 *
 	 * @unstable Temporary feature flag, T389281
@@ -13357,6 +13515,43 @@ class MainConfigSchema {
 	public const UseLeximorph = [
 		'default' => false,
 		'type' => 'boolean',
+	];
+
+	/**
+	 * Whether to use the post-OutputTransform cache for legacy parses
+	 *
+	 * @unstable Temporary feature flag, T348255
+	 * @since 1.46
+	 */
+	public const UsePostprocCacheLegacy = [
+		'default' => false,
+		'type' => 'boolean'
+	];
+
+	/**
+	 * Whether to use the post-OutputTransform cache for Parsoid parses
+	 *
+	 * @unstable Temporary feature flag, T348255
+	 * @since 1.46
+	 */
+	public const UsePostprocCacheParsoid = [
+		'default' => true,
+		'type' => 'boolean'
+	];
+
+	/**
+	 * Sample rate for collecting statistics on unsafe key values in ParserCache.
+	 * Zero disables collection; 1000 means "1 in every 1000 parses will
+	 * be sampled".
+	 *
+	 * @warning This is EXPERIMENTAL and will disappear once analysis is
+	 *  complete.
+	 * @unstable temporary statistics gathering
+	 * @since 1.46
+	 */
+	public const ParserOptionsLogUnsafeSampleRate = [
+		'default' => 0,
+		'type' => 'integer'
 	];
 
 	// endregion -- End Miscellaneous

@@ -6,11 +6,16 @@ export const config = { ...wdioDefaults,
 	//
 	// Example:
 	// logLevel: 'info',
-
-	maxInstances: 4,
+	// To enable video recording, enable video and disable browser headless
+	// recordVideo: true,
+	// useBrowserHeadless: false,
+	//
+	// To enable screenshots on all tests, disable screenshotsOnFailureOnly
+	// screenshotsOnFailureOnly: false,
 	suites: {
 		daily: [
-			'specs/content_editable.js'
+			'specs/content_editable.js',
+			'specs/content_editable_formatting.js'
 		]
 	}
 };

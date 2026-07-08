@@ -194,8 +194,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} सौवाँ संपादन किया है; {{GENDER:$2|आपका}} दिल से धन्यवाद!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} सौवाँ संपादन किया है; एक श्रेष्ठ योगदानकर्ता होने के लिए {{GENDER:$2|आपका}} धन्यवाद!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} दस हज़ारवाँ संपादन किया है; {{GENDER:$2|आपका}} बहुत-बहुत धन्यवाद!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} एक लाखवाँ संपादन किया है; इस खूबसूरत योगदान के लिए {{GENDER:$2|आपका}} धन्यवाद!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} दस लाखवाँ संपादन किया है; इस चमकते योगदान के लिए {{GENDER:$2|आपका}} धन्यवाद!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} एक लाखवाँ संपादन किया है; इन खूबसूरत योगदानों के लिए {{GENDER:$2|आपका}} धन्यवाद!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} दस लाखवाँ संपादन किया है; इन चमकते योगदानों के लिए {{GENDER:$2|आपका}} धन्यवाद!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|आपने}} अभी-अभी {{GENDER:$2|अपना}} एक करोड़वाँ संपादन किया है; इस समर्पण के लिए {{GENDER:$2|आपका}} धन्यवाद!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|आपका}} सम्पादन",
 	"notification-link-text-view-edit": "संपादन देखें",
@@ -259,7 +259,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|पुश सदस्यता प्रबंधक}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:पुश सदस्यता प्रबंधक",
 	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|अपना}} ईमेल प्रमाणित करें",
-	"notification-header-verify-email-reminder": "कृपया <strong>{{GENDER:$1|अपना}} ईमेल प्रमाणित करें</strong> ताकि हमें पता चले कि आपके खाते पर मौजूद ईमेल पता आपका ही है।",
+	"notification-header-verify-email-reminder": "नमस्ते $2 जी,\nकृपया <strong>{{GENDER:$1|अपना}} ईमेल प्रमाणित करें</strong> ताकि हमें पता चले कि आपके खाते पर मौजूद ईमेल पता आपका ही है।",
 	"notification-link-text-verify-email-reminder": "ईमेल की वरीयताएँ प्रबंधित करें",
 	"notification-verify-email-reminder-link-label": "ईमेल की पुष्टि करें"
 }

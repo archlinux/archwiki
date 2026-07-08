@@ -18,7 +18,7 @@ use MediaWiki\User\User;
 
 class RemovedTopicPresentationModel extends EchoEventPresentationModel {
 
-	protected PlaintextEchoPresentationModelSection $section;
+	protected readonly PlaintextEchoPresentationModelSection $section;
 
 	/**
 	 * @inheritDoc

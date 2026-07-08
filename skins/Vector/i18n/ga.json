@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aindriu80",
 			"Kscanne",
 			"Kwekubo",
 			"Moydow",
-			"Tem",
-			"Aindriu80"
+			"Tem"
 		]
 	},
 	"skinname-vector": "Veicteoir",
@@ -38,7 +38,6 @@
 	"skin-theme-exclusion-notice": "Úsáideann an leathanach seo an mód sorcha i gcónaí.",
 	"vector-toc-label": "Clár ábhair",
 	"vector-toc-beginning": "Tús",
-	"vector-anon-user-menu-pages": "Leathanaigh d'eagarthóirí atá logáilte amach",
 	"vector-main-menu-label": "Príomh-roghchlár",
 	"vector-feature-custom-font-size-exclusion-notice": "Úsáideann an leathanach seo cló beag i gcónaí",
 	"vector-page-tools-label": "Uirlisí",

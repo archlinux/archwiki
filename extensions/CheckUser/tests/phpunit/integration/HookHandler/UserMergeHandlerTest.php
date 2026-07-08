@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\UserMergeHandler;
+use MediaWiki\Extension\CheckUser\HookHandler\UserMergeHandler;
 use MediaWikiIntegrationTestCase;
 
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\HookHandler\UserMergeHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\UserMergeHandler
  */
 class UserMergeHandlerTest extends MediaWikiIntegrationTestCase {
 

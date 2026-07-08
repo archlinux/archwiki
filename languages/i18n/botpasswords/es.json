@@ -5,6 +5,7 @@
 			"ElGatoSaez",
 			"Fitoschido",
 			"Jelou",
+			"JorgeElias2302",
 			"Macofe",
 			"MarcoAurelio",
 			"Tiberius1701"
@@ -30,6 +31,7 @@
 	"botpasswords-bad-appid": "El nombre del robot «$1» no es válido.",
 	"botpasswords-toolong-restrictions": "Se introdujeron demasiadas direcciones IP o intervalos.",
 	"botpasswords-toolong-grants": "Hay demasiados permisos seleccionados.",
+	"botpasswords-too-many": "Alcanzaste el límite máximo de $1 {{PLURAL:$1|contraseña de robot|contraseñas de robot}}. Por favor, elimina algunas contraseñas de robot existentes antes de crear otras nuevas.",
 	"botpasswords-insert-failed": "No se pudo agregar el nombre del bot «$1». ¿Ya ha sido añadido?",
 	"botpasswords-update-failed": "No se pudo actualizar el nombre del bot «$1». ¿Ha sido borrado?",
 	"botpasswords-created-title": "Se creó la contraseña de bot",

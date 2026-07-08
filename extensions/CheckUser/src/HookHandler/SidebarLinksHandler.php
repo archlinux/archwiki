@@ -1,37 +1,35 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
-use MediaWiki\Hook\SidebarBeforeOutputHook;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
+use MediaWiki\Skin\Hook\SidebarBeforeOutputHook;
 use MediaWiki\Skin\Skin;
+use MediaWiki\SpecialPage\ContributionsRangeTrait;
 use MediaWiki\SpecialPage\SpecialPage;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\User\TempUser\TempUserConfig;
+use Wikimedia\IPUtils;
 
 /**
  * Adds a link to users' GlobalContributions pages on user pages.
  */
 class SidebarLinksHandler implements SidebarBeforeOutputHook {
+	use ContributionsRangeTrait;
+
 	/**
 	 * Keys used to identify the new links added to $sidebar['TOOLBOX'].
 	 */
 	private const GLOBAL_CONTRIBUTIONS_KEY = 'global-contributions';
 	private const IP_AUTO_REVEAL_KEY = 'checkuser-ip-auto-reveal';
 
-	private Config $config;
-	private CheckUserPermissionManager $permissionManager;
-	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
-
 	public function __construct(
-		Config $config,
-		CheckUserPermissionManager $checkUserPermissionManager,
-		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup
+		private readonly Config $config,
+		private readonly CheckUserPermissionManager $permissionManager,
+		private readonly CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		private readonly TempUserConfig $tempUserConfig,
 	) {
-		$this->config = $config;
-		$this->permissionManager = $checkUserPermissionManager;
-		$this->autoRevealLookup = $autoRevealLookup;
 	}
 
 	/** @inheritDoc */
@@ -57,7 +55,7 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 			return;
 		}
 
-		$name = $skin->getRelevantUser()->getName();
+		$name = $skin->getPageTarget();
 		$targetTitle = SpecialPage::getTitleFor( 'GlobalContributions', $name );
 		$globalContributionsLink = [
 			'id' => 't-global-contributions',
@@ -88,16 +86,21 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 	 * @return bool
 	 */
 	private function shouldLinkToGlobalContributions( Skin $skin ): bool {
-		if ( !$skin->getRelevantUser() instanceof UserIdentity ) {
-			// A Relevant User is set when listing (Global / IP) Contributions
-			// by username or IP, but it isn't if the request refers to an IP
-			// range.
+		$target = $skin->getPageTarget();
+		if ( !$target ) {
+			return false;
+		}
+
+		if (
+			IPUtils::isValidRange( $target ) &&
+			!$this->isQueryableRange( $target, $this->config )
+		) {
 			return false;
 		}
 
 		$gcAccess = $this->permissionManager->canAccessUserGlobalContributions(
 			$skin->getAuthority(),
-			$skin->getRelevantUser()->getName()
+			$target
 		);
 
 		return $gcAccess->isGood();
@@ -148,7 +151,8 @@ class SidebarLinksHandler implements SidebarBeforeOutputHook {
 	 * @return bool
 	 */
 	private function shouldAddIPAutoReveal( Skin $skin ) {
-		if ( !$this->autoRevealLookup->isAutoRevealAvailable() ) {
+		if ( !$this->tempUserConfig->isKnown() ||
+			!$this->autoRevealLookup->isAutoRevealAvailable() ) {
 			return false;
 		}
 

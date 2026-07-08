@@ -326,7 +326,7 @@ class NukeContext {
 	 * @return string[]
 	 */
 	public function getAllPages(): array {
-		return array_merge( $this->getPages(), $this->getAssociatedPages() );
+		return array_unique( array_merge( $this->getPages(), $this->getAssociatedPages() ) );
 	}
 
 	/**
@@ -447,11 +447,11 @@ class NukeContext {
 			if ( !$this->hasOriginalPages() ) {
 				// No page list was requested. This is an early confirm attempt without having
 				// listed the pages at all. Show the list form again.
-				return $this->requestContext->msg( 'nuke-nolist' )->text();
+				return $this->requestContext->msg( 'nuke-nolist' )->parse();
 			} else {
 				// Pages were not requested but a page list exists. The user did not select any
 				// pages. Show the list form again.
-				return $this->requestContext->msg( 'nuke-noselected' )->text();
+				return $this->requestContext->msg( 'nuke-noselected' )->parse();
 			}
 		}
 
@@ -478,6 +478,27 @@ class NukeContext {
 			return $toValidationResult;
 		}
 
+		$patternValidationResult = $this->validatePattern( $this->pattern );
+		if ( $patternValidationResult !== true ) {
+			return $patternValidationResult;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate the page title pattern. Rejects patterns that start with a `%` wildcard,
+	 * as these produce LIKE queries with leading wildcards that cannot use database indexes
+	 * and cause query timeouts on large wikis.
+	 *
+	 * @param string $value The pattern to validate
+	 * @return string|true
+	 */
+	protected function validatePattern( string $value ) {
+		$trimmed = trim( $value );
+		if ( $trimmed !== '' && $trimmed[0] === '%' ) {
+			return $this->requestContext->msg( 'nuke-pattern-leading-wildcard' )->parse();
+		}
 		return true;
 	}
 
@@ -508,12 +529,12 @@ class NukeContext {
 						'avoid' => 'avoidhours',
 						'noabbrevs' => true
 					] )
-				)->text();
+				)->parse();
 			}
 		} catch ( \Exception ) {
 			// FIXME: This should be changed to use DateMalformedStringException when MediaWiki
 			// begins using PHP 8.3 as a minimum.
-			return $this->requestContext->msg( 'htmlform-date-invalid' )->text();
+			return $this->requestContext->msg( 'htmlform-date-invalid' )->parse();
 		}
 		return true;
 	}

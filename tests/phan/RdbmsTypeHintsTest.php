@@ -20,7 +20,7 @@ class RdbmsTypeHintsTest {
 
 		$expr = $db->expr( 'a', '=', 1 );
 		// Return value of ->and() etc. must be used
-		// @phan-suppress-next-line PhanPluginUseReturnValueKnown
+		// @phan-suppress-next-line PhanPluginUseReturnValueKnown, PhanNoDiscardReturnValueIgnored
 		$expr->and( 'a', '=', 1 );
 
 		// Typo in the operator

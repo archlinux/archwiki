@@ -3,8 +3,7 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use DataValues\StringValue;
-use MediaWiki\Config\ConfigException;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Site\Site;
 use Psr\Log\LoggerInterface;
@@ -69,7 +68,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					if ( $id === 'Q1' ) {
 						return new ItemId( 'Q1' );
 					} else {
-						throw new ConfigException();
+						throw new EntityIdParsingException();
 					}
 				} );
 
@@ -103,7 +102,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					if ( $id === '1' ) {
 						throw new EntityIdParsingException();
 					} else {
-						return null;
+						return new NumericPropertyId( $id );
 					}
 				} );
 
@@ -134,7 +133,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					if ( str_starts_with( $id, 'Q' ) ) {
 						return new ItemId( $id );
 					} else {
-						throw new ConfigException();
+						throw new EntityIdParsingException();
 					}
 				} );
 

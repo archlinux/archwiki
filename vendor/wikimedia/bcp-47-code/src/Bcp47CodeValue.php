@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -28,9 +14,8 @@ class Bcp47CodeValue implements Bcp47Code {
 
 	/**
 	 * The BCP 47 code corresponding to this language.
-	 * @var string
 	 */
-	private $code;
+	private string $code;
 
 	/**
 	 * Create a new instance of this value object representing a language with
@@ -51,7 +36,7 @@ class Bcp47CodeValue implements Bcp47Code {
 		return ( $this === $other ) || self::isSameCode( $this, $other );
 	}
 
-	public function __toString() {
+	public function __toString(): string {
 		return $this->toBcp47Code();
 	}
 
@@ -74,7 +59,7 @@ class Bcp47CodeValue implements Bcp47Code {
 	 * @param Bcp47Code $b
 	 * @return bool True if the bcp-47 codes should be considered equal
 	 */
-	public static function isSameCode( Bcp47Code $a, Bcp47Code $b ) {
+	public static function isSameCode( Bcp47Code $a, Bcp47Code $b ): bool {
 		return ( $a === $b ) || strcasecmp( $a->toBcp47Code(), $b->toBcp47Code() ) === 0;
 	}
 }

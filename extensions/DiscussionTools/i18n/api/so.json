@@ -32,8 +32,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "Lambarka nuqulka la adeegsanayo (caadi ahaan waa nuqulka ugu dambeeya).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Astaamaha la doonayo in la helo:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Ka saar saxiixyada isticmaalaha faallooyinka (marka la isticmaalayo <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Calammo lagu beddelayo natiijada marka la isticmaalayo <var>prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Matalaadda mawduucyada faallooyinka ee laga soo falanqeeyay bogga",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Bogagga kale ee faallooyinkooda laga soo gudbiyay",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Ku dar xog dheeraad ah oo ku saabsan hawlaha sida jawaabihii ugu horreeyay iyo kuwii ugu dambeeyay (marka la isticmaalayo <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Ka saar saxiixyada isticmaalaha faallooyinka (marka la isticmaalayo <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Ha ku darin geedka jawaabaha oo buuxa, kaliya bixi cinwaannada heerka koowaad (marka la isticmaalayo <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-summary": "Waxay soo celisaa xogta meta ah ee loo baahan yahay si loo bilaabo Qalabka doodda.",
 	"apihelp-discussiontoolspreview-param-type": "Nooca fariinta la doonayo in la eego horudhaceeda",
 	"apihelp-discussiontoolspreview-param-wikitext": "Nuxurka la doonayo in la eego horudhaceeda, oo ah wikitext.",
@@ -43,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Run si aad isu-diiwaangeliso, been si aad uga baxdo is-diiwaangelinta",
 	"apihelp-discussiontoolssubscribe-summary": "Is-diiwaangeli (ama ka bax is-diiwaangelinta) si aad u hesho ogeysiisyo ku saabsan mawduuc.",
 	"apihelp-discussiontoolsthank-param-commentid": "Aqoonsiga faallada lagu mahadcelinayo",
-	"apihelp-discussiontoolsthank-summary": "Dir ogeysiis mahadcelin dadweyne oo loogu talagalay faallo."
+	"apihelp-discussiontoolsthank-summary": "Dir ogeysiis mahadcelin dadweyne oo loogu talagalay faallo.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Si toos ah u is-diiwaangeli isticmaalaha mawduucyada cusub ee bogga wadahadalka ee lagu abuuray wax ka beddelka. Isticmaal 'haa' ama 'maya' si aad u beddesho doorashada isticmaalaha (taas oo ah tan caadiga ah)."
 }

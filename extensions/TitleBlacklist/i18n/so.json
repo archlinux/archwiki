@@ -17,6 +17,7 @@
 	"titleblacklist-forbidden-move": "\"$2\" looma wareejin karo \"$3\", sababtoo ah cinwaanka \"$3\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Magaca faylka \"$2\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Magaca isticmaalaha \"$2\" waa laga mamnuucay in la abuuro.\nWuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socda: <code>$1</code>",
+	"titleblacklist-invalid-error": "{{PLURAL:$1|Khadkan|Khadadkan}} soo socda ee ku jira liiska cinwaannada aan la oggolayn {{PLURAL:$1|waa khaldan yahay|waa khaldan yihiin}};\nfadlan sax {{PLURAL:$1|kan|kuwaas}} ka hor inta aadan kaydin:\n$2",
 	"titleblacklist-override": "Ka gudub liiska cinwaannada la reebay haddii uu is waafaqo",
 	"titleblacklist-override-help": "Isticmaalayaasha leh awood ku filan waxay u dejin karaan si ay u iska indha tiraan hubinta liiska cinwaannada la reebay.",
 	"titleblacklist-warning": "<strong>Digniin: Boggan waxaa kaliya wax ka beddeli kara maamulayaasha iyo isticmaalayaasha kale ee leh xuquuqda <code>tboverride</code> sababtoo ah wuxuu la mid yahay gelinta liiska cinwaannada la reebay ee soo socota:</strong><br /><code>$1</code>",

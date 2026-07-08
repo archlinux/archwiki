@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Nuke;
 
-use MediaWiki\Hook\ContributionsToolLinksHook;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\ContributionsToolLinksHook;
 use MediaWiki\Title\Title;
 use Wikimedia\IPUtils;
 

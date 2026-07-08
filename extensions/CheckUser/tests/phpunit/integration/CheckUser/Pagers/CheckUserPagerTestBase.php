@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Pagers;
 
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\FormOptions;
@@ -27,7 +27,7 @@ abstract class CheckUserPagerTestBase extends MediaWikiIntegrationTestCase {
 	 */
 	abstract protected function getDefaultRowFieldValues(): array;
 
-	protected function commonTestGetQueryInfo( $target, $xfor, $table, $expectedQueryInfo ) {
+	protected function commonTestGetQueryInfo( $target, $xfor, $table, $expectedQueryInfo ): void {
 		$object = $this->setUpObject();
 		$object->target = $target;
 		$object->xfor = $xfor;
@@ -57,7 +57,9 @@ abstract class CheckUserPagerTestBase extends MediaWikiIntegrationTestCase {
 	 * @return TestingAccessWrapper
 	 */
 	protected function setUpObject(
-		?UserIdentity $userIdentity = null, ?string $checkType = null, array $groups = [ 'checkuser' ]
+		?UserIdentity $userIdentity = null,
+		?string $checkType = null,
+		array $groups = [ 'checkuser' ]
 	) {
 		RequestContext::getMain()->setUser( $this->getTestUser( $groups )->getUser() );
 		$opts = new FormOptions();

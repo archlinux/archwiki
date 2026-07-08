@@ -1,49 +1,36 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\User\UserIdentity;
-use MessageLocalizer;
 
 /**
  * VectorComponentMainMenu component
  */
 class VectorComponentMainMenu implements VectorComponent {
-	/** @var array */
-	private $sidebarData;
-	/** @var array */
-	private $languageData;
-	/** @var MessageLocalizer */
-	private $localizer;
 	/** @var bool */
-	private $isPinned;
-	/** @var VectorComponentPinnableHeader|null */
-	private $pinnableHeader;
+	private $includeLanguages;
+	private readonly bool $isPinned;
+	private readonly VectorComponentPinnableHeader $pinnableHeader;
 	/** @var string */
 	public const ID = 'vector-main-menu';
 
-	/**
-	 * @param array $sidebarData
-	 * @param array $languageData
-	 * @param MessageLocalizer $localizer
-	 * @param UserIdentity $user
-	 * @param FeatureManager $featureManager
-	 * @param Skin $skin
-	 */
 	public function __construct(
-		array $sidebarData,
-		array $languageData,
-		MessageLocalizer $localizer,
-		UserIdentity $user,
-		FeatureManager $featureManager,
-		Skin $skin
+		private readonly array $sidebarData,
+		private readonly array $languageData,
+		private readonly MessageLocalizer $localizer,
+		private readonly UserIdentity $user,
+		private readonly FeatureManager $featureManager,
+		Skin $skin,
 	) {
-		$this->sidebarData = $sidebarData;
-		$this->languageData = $languageData;
-		$this->localizer = $localizer;
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_MAIN_MENU_PINNED );
+		$this->includeLanguages = $languageData && (
+			$featureManager->isFeatureEnabled( Constants::FEATURE_LANGUAGE_IN_MAIN_MENU ) ||
+			!$featureManager->isFeatureEnabled( Constants::FEATURE_LANGUAGE_IN_HEADER )
+		);
 
 		$this->pinnableHeader = new VectorComponentPinnableHeader(
 			$this->localizer,
@@ -57,8 +44,6 @@ class VectorComponentMainMenu implements VectorComponent {
 	 * @inheritDoc
 	 */
 	public function getTemplateData(): array {
-		$pinnableHeader = $this->pinnableHeader;
-
 		$portletsRest = [];
 		foreach ( $this->sidebarData[ 'array-portlets-rest' ] as $data ) {
 			$portletsRest[] = ( new VectorComponentMenu( $data ) )->getTemplateData();
@@ -72,8 +57,9 @@ class VectorComponentMainMenu implements VectorComponent {
 		return $pinnableElement->getTemplateData() + $pinnableContainer->getTemplateData() + [
 			'data-portlets-first' => $firstPortlet->getTemplateData(),
 			'array-portlets-rest' => $portletsRest,
-			'data-pinnable-header' => $pinnableHeader ? $pinnableHeader->getTemplateData() : null,
+			'data-pinnable-header' => $this->pinnableHeader->getTemplateData(),
 			'data-languages' => $languageMenu->getTemplateData(),
+			'is-languages-included' => $this->includeLanguages,
 		];
 	}
 }

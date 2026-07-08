@@ -298,6 +298,25 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				'name' => 'test',
 			]
 		];
+
+		yield 'boolean parameter with default' => [
+			[
+				ParamValidator::PARAM_TYPE => 'boolean',
+				Validator::PARAM_SOURCE => 'query',
+				ParamValidator::PARAM_REQUIRED => false,
+				ParamValidator::PARAM_DEFAULT => true,
+			],
+			[
+				'schema' => [
+					'type' => 'boolean',
+					'default' => true,
+				],
+				'required' => false,
+				'description' => 'test parameter',
+				'in' => 'query',
+				'name' => 'test',
+			]
+		];
 	}
 
 	/**
@@ -809,6 +828,44 @@ class ValidatorTest extends MediaWikiUnitTestCase {
 				'options' => [],
 				'expected' => null,
 				'expectedException' => InvalidArgumentException::class
+			],
+
+			// Test case 7: Header params converts headerLists to string
+			[
+				'source' => 'header',
+				'requestData' => new RequestData( [ 'headers' => [ 'param1' => 'en' ] ] ),
+				'options' => [
+					'type' => 'string'
+				],
+				'expected' => 'en'
+			],
+
+			// Test case 8: Multiple header params values return comma separated string
+			[
+				'source' => 'header',
+				'requestData' => new RequestData( [ 'headers' =>
+					[ 'param1' =>
+						[ 'en, tg-latn;q=1', 'tg-latn' ]
+					]
+				] ),
+				'options' => [
+					'type' => 'string'
+				],
+				'expected' => 'en, tg-latn;q=1, tg-latn'
+			],
+
+			// Test case 9: Skip conversion to string if Handler expected type is array
+			[
+				'source' => 'header',
+				'requestData' => new RequestData( [ 'headers' =>
+					[ 'param1' =>
+						[ 'en, tg-latn;q=1', 'tg-latn' ]
+					]
+				] ),
+				'options' => [
+					'type' => 'array'
+				],
+				'expected' => [ 'en, tg-latn;q=1', 'tg-latn' ]
 			],
 		];
 	}

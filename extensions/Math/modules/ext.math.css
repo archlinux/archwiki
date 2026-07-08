@@ -120,3 +120,7 @@ mtd.mwe-math-columnalign-r {
 	text-align: -webkit-right;
 	padding-right: 0;
 }
+
+mo.mwe-math-vec {
+	transform: scale( 0.75 );
+}

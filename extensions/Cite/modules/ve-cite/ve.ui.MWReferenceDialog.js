@@ -7,7 +7,6 @@
  * @license MIT
  */
 
-const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
 const MWReferenceModel = require( './ve.dm.MWReferenceModel.js' );
 const MWReferenceNode = require( './ve.dm.MWReferenceNode.js' );
 const MWReferenceEditPanel = require( './ve.ui.MWReferenceEditPanel.js' );
@@ -25,7 +24,9 @@ ve.ui.MWReferenceDialog = function VeUiMWReferenceDialog( config ) {
 	ve.ui.MWReferenceDialog.super.call( this, config );
 
 	// Properties
-	this.reuseReference = false;
+	this.createSubRefMode = false;
+	this.editReferenceMode = false;
+	this.reuseReferenceMode = false;
 };
 
 /* Inheritance */
@@ -84,7 +85,7 @@ ve.ui.MWReferenceDialog.prototype.onEditPanelInputChange = function ( change ) {
 /**
  * Handle search results ref reuse events.
  *
- * @param {MWReferenceModel} ref
+ * @param {ve.dm.MWReferenceModel} ref
  */
 ve.ui.MWReferenceDialog.prototype.onReuseSearchResultsReuse = function ( ref ) {
 	if ( this.selectedNode instanceof MWReferenceNode ) {
@@ -92,11 +93,9 @@ ve.ui.MWReferenceDialog.prototype.onReuseSearchResultsReuse = function ( ref ) {
 		this.selectedNode = null;
 	}
 
-	// Special case for sub-references: create a copy so both can be edited independently
 	if ( ref.isSubRef() ) {
 		// Phabricator T396734
 		ve.track( 'activity.subReference', { action: 'reuse-choose-subref' } );
-		ref = MWReferenceModel.static.copySubReference( ref, this.getFragment().getDocument() );
 	}
 
 	// Collapse returns a new fragment, so update this.fragment
@@ -109,17 +108,14 @@ ve.ui.MWReferenceDialog.prototype.onReuseSearchResultsReuse = function ( ref ) {
 };
 
 ve.ui.MWReferenceDialog.prototype.setCreateSubRefPanel = function ( mainRef ) {
-	const newRef = new MWReferenceModel( this.getFragment().getDocument() );
-	newRef.mainRefKey = mainRef.getListKey();
+	const newRef = MWReferenceModel.static.newEmptyRef( this.getFragment().getDocument() );
+	newRef.mainListKey = mainRef.getListKey();
+	newRef.mainListIndex = mainRef.getListIndex();
 	newRef.group = mainRef.getGroup();
 
 	this.title.setLabel( ve.msg( 'cite-ve-dialog-reference-title-details' ) );
-	this.panels.setItem( this.editPanel );
-
-	const docRefs = MWDocumentReferences.static.refsForDoc(
-		this.getFragment().getDocument()
-	);
-	this.editPanel.setDocumentReferences( docRefs );
+	this.actions.setMode( 'insert' );
+	this.actions.setAbilities( { insert: false } );
 
 	this.editPanel.setReferenceForEditing( newRef );
 	this.editPanel.setReadOnly( this.isReadOnly() );
@@ -133,7 +129,7 @@ ve.ui.MWReferenceDialog.prototype.setCreateSubRefPanel = function ( mainRef ) {
 ve.ui.MWReferenceDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWReferenceDialog.super.prototype.getReadyProcess.call( this, data )
 		.next( () => {
-			if ( this.reuseReference ) {
+			if ( this.reuseReferenceMode ) {
 				this.reuseSearch.getQuery().focus().select();
 			} else {
 				this.editPanel.focus();
@@ -191,6 +187,7 @@ ve.ui.MWReferenceDialog.prototype.openReusePanel = function () {
 
 	// https://phabricator.wikimedia.org/T362347
 	ve.track( 'activity.' + this.constructor.static.name, { action: 'dialog-open-reuse' } );
+	this.trackedInputChange = false;
 };
 
 /**
@@ -200,41 +197,51 @@ ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'insert' || action === 'done' ) {
 		return new OO.ui.Process( () => {
 			let ref = this.editPanel.getReferenceFromEditing();
+			const newListGroup = 'mwReference/' + ref.group;
 			const nodeGroup = this.getFragment().getDocument()
-				.getInternalList().getNodeGroup( 'mwReference/' + ref.group );
-			if ( !( this.selectedNode instanceof MWReferenceNode ) ) {
+				.getInternalList().getNodeGroup( newListGroup );
+			const changeAll = this.editPanel.getChangeAllCheckboxState();
+
+			if ( !this.editReferenceMode && !this.createSubRefMode ) {
 				// Collapse returns a new fragment, so update this.fragment
 				this.fragment = this.getFragment().collapseToEnd();
 				ref.insertIntoFragment( this.getFragment() );
 			} else if ( this.createSubRefMode ) {
 				// We're creating a new sub-ref by replacing a main ref
-				// make sure there's a synth main ref to save the main body
-				const mainNodes = nodeGroup.getAllReuses( ref.mainRefKey ) || [];
-				const foundExistingSynthMain = mainNodes.some(
-					( node ) => ve.getProp( node.getAttribute( 'mw' ), 'isSyntheticMainRef' ) );
-				if ( !foundExistingSynthMain && mainNodes.length ) {
+				// make sure there's a list defined or synthetic main ref to save the main body
+				const mainNodes = nodeGroup.getAllReuses( ref.mainListKey ) || [];
+				const foundExistingListDefinedRef = mainNodes.some(
+					( node ) => ve.getProp( node.getAttribute( 'mw' ), 'isSyntheticMainRef' ) ||
+						node.findParent( ve.dm.MWReferencesListNode ) );
+				if ( !foundExistingListDefinedRef && mainNodes.length ) {
 					const mainNodeToCopy = mainNodes
 						.find( ( node ) => node.getAttribute( 'refListItemId' ) ) || mainNodes[ 0 ];
 					mainNodeToCopy.copySyntheticRefIntoReferencesList( this.getFragment().getSurface() );
 				}
 
-				// Check if the main node we're replacing was keeping the content
-				const contentsUsed = this.selectedNode.getAttribute( 'contentsUsed' );
+				let nodesToConvert = [ this.selectedNode ];
+				if ( changeAll ) {
+					// filter out main nodes that are list defined
+					nodesToConvert = mainNodes.filter( ( node ) => !node.findParent( ve.dm.MWReferencesListNode ) );
+				}
 
-				// When creating a sub-ref we're always replacing the selected node
-				this.getFragment().removeContent();
-				// Collapse returns a new fragment, so update this.fragment
-				this.fragment = this.getFragment().collapseToEnd();
-				ref.insertIntoFragment( this.getFragment(), contentsUsed );
+				const surface = this.getFragment().getSurface();
+				// convert all nodes to sub-refs
+				nodesToConvert.forEach( ( node ) => {
+					const contentsUsed = node.getAttribute( 'contentsUsed' );
+					surface.setLinearSelection( node.getOuterRange() );
+					ref.insertIntoFragment( new ve.dm.SurfaceFragment( surface ), contentsUsed );
+				} );
 
 				// Phabricator T396734
 				ve.track( 'activity.subReference', { action: 'dialog-done-add-details' } );
 			} else {
 				if ( ref.isSubRef() ) {
-					// We don't want to edit all sub-ref reuses. If there's one here we need
-					// to generate new keys and insert the sub-ref as new node to split it.
-					const subRefReuses = nodeGroup.getAllReuses( ref.listKey ) || [];
-					if ( subRefReuses.length > 1 ) {
+					const subRefReuses = nodeGroup.getAllReusesByListIndex( ref.listIndex ) || [];
+
+					// Editing defaults to changing all, if the change all checkbox is not selected,
+					// we need to generate new keys and insert the sub-ref as new node to split it.
+					if ( subRefReuses.length > 1 && !changeAll ) {
 						ref = MWReferenceModel.static.copySubReference( ref, this.getFragment().getDocument() );
 						this.getFragment().removeContent();
 						ref.insertIntoFragment( this.getFragment() );
@@ -242,6 +249,8 @@ ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 					// Phabricator T396734
 					ve.track( 'activity.subReference', { action: 'dialog-done-edit-details' } );
 				}
+
+				ref.updateGroup( this.getFragment().getSurface() );
 				ref.updateInternalItem( this.getFragment().getSurface() );
 			}
 			this.close( { action } );
@@ -254,46 +263,56 @@ ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
  * @override
  * @param {Object} [data] Setup data
  * @param {boolean} [data.reuseReference=false] Open the dialog in "use existing reference" mode
- * @param {MWReferenceModel} [data.createSubRef] Open the dialog to add additional details to a reuse
+ * @param {ve.dm.MWReferenceModel} [data.createSubRef] Open the dialog to add additional details to a reuse
+ * @param {ve.dm.MWReferenceModel} [data.refToEdit] Open the dialog to edit a specific reference
  */
 ve.ui.MWReferenceDialog.prototype.getSetupProcess = function ( data ) {
 	data = data || {};
 	return ve.ui.MWReferenceDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( () => {
+			const doc = this.getFragment().getDocument();
 			this.createSubRefMode = false;
-			this.reuseReference = !!data.reuseReference;
-			if ( this.reuseReference ) {
-				this.reuseSearch.setInternalList( this.getFragment().getDocument().getInternalList() );
-				this.openReusePanel();
-			} else if ( data.createSubRef ) {
-				this.actions.setMode( 'edit' );
-				this.actions.setAbilities( { done: false } );
-				this.setCreateSubRefPanel( data.createSubRef );
-				this.createSubRefMode = true;
-			} else {
-				this.panels.setItem( this.editPanel );
-				const docRefs = MWDocumentReferences.static.refsForDoc(
-					this.getFragment().getDocument()
-				);
-				this.editPanel.setDocumentReferences( docRefs );
+			this.editReferenceMode = false;
+			this.reuseReferenceMode = !!data.reuseReference;
 
-				let ref;
-				if ( this.selectedNode instanceof MWReferenceNode ) {
-					// edit an existing reference
-					ref = MWReferenceModel.static.newFromReferenceNode( this.selectedNode );
-					if ( ref.isSubRef() ) {
-						this.title.setLabel( ve.msg( 'cite-ve-dialog-reference-title-details' ) );
-					}
-					this.actions.setAbilities( { done: false } );
-				} else {
-					// create a new reference
-					ref = new MWReferenceModel( this.getFragment().getDocument() );
-					this.actions.setAbilities( { insert: false } );
-				}
-				this.editPanel.setReferenceForEditing( ref );
-				this.editPanel.setReadOnly( this.isReadOnly() );
+			// open the reuse panel
+			if ( this.reuseReferenceMode ) {
+				this.reuseSearch.setInternalList( doc.getInternalList() );
+				this.openReusePanel();
+				return;
 			}
 
+			// editing or creating a reference
+			this.panels.setItem( this.editPanel );
+			this.editPanel.setInternalList( doc.getInternalList() );
+
+			this.actions.setMode( 'insert' );
+			this.actions.setAbilities( { insert: false } );
+
+			if ( data.createSubRef ) {
+				this.createSubRefMode = true;
+				this.setCreateSubRefPanel( data.createSubRef );
+				return;
+			}
+
+			let ref;
+			this.editReferenceMode = !!data.refToEdit || this.selectedNode instanceof MWReferenceNode;
+			if ( this.editReferenceMode ) {
+				ref = data.refToEdit || MWReferenceModel.static.newFromReferenceNode( this.selectedNode );
+				if ( ref.isSubRef() ) {
+					this.title.setLabel( ve.msg( 'cite-ve-dialog-reference-title-details' ) );
+				}
+				// T367910: Temporarily disable Citoid's replace feature when the ReferenceList
+				// is selected
+				const canReplace = this.getFragment().getSurface()
+					.getSelectedNode() instanceof MWReferenceNode;
+				this.actions.setMode( 'edit' );
+				this.actions.setAbilities( { done: false, replace: canReplace } );
+			} else {
+				ref = ve.dm.MWReferenceModel.static.newEmptyRef( doc );
+			}
+			this.editPanel.setReferenceForEditing( ref );
+			this.editPanel.setReadOnly( this.isReadOnly() );
 			this.trackedInputChange = false;
 		} );
 };

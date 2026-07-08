@@ -7,11 +7,11 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMTraverser;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -45,7 +45,7 @@ class ConversionTraverser extends DOMTraverser {
 		$this->guesser = $guesser;
 		$this->machine = $machine;
 
-		// No conversion inside <code>, <script>, <pre>, <cite>
+		// No conversion inside <code>, <script>, <pre>, <cite>, or <style>
 		// (See adhoc regexps inside LanguageConverter.php::autoConvert)
 		// XXX: <cite> ought to probably be handled more generically
 		// as extension output, not special-cased as a HTML tag.
@@ -233,21 +233,23 @@ class ConversionTraverser extends DOMTraverser {
 		if ( !DOMUtils::hasTypeOf( $el, 'mw:LanguageVariant' ) ) {
 			return true; /* not language converter markup */
 		}
-		$dmv = DOMDataUtils::getJSONAttribute( $el, 'data-mw-variant', [] );
-		if ( isset( $dmv->disabled ) ) {
-			DOMCompat::setInnerHTML( $el, $dmv->disabled->t );
-			// XXX check handling of embedded data-parsoid
-			// XXX check handling of nested constructs
+		$dmv = DOMDataUtils::getDataMwVariant( $el );
+		if ( $dmv->disabled ?? false ) {
+			$df = DOMDataUtils::cloneDocumentFragment( $dmv->disabled );
+			while ( $el->firstChild !== null ) {
+				$el->removeChild( $el->firstChild );
+			}
+			DOMCompat::appendChild( $el, $df );
 			return $el->nextSibling;
-		} elseif ( isset( $dmv->twoway ) ) {
+		} elseif ( $dmv->twoway ?? false ) {
 			// FIXME
-		} elseif ( isset( $dmv->oneway ) ) {
+		} elseif ( $dmv->oneway ?? false ) {
 			// FIXME
-		} elseif ( isset( $dmv->name ) ) {
+		} elseif ( $dmv->name ?? false ) {
 			// FIXME
-		} elseif ( isset( $dmv->filter ) ) {
+		} elseif ( $dmv->filter ?? false ) {
 			// FIXME
-		} elseif ( isset( $dmv->describe ) ) {
+		} elseif ( $dmv->describe ?? false ) {
 			// FIXME
 		}
 		return true;

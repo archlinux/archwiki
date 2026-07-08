@@ -3,9 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\NodeData;
 
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -23,15 +24,19 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  */
 #[\AllowDynamicProperties]
 class NodeData {
+	public const PERSISTENT_ATTR_NAMES = [ 'parsoid', 'mw' ];
+
 	/**
 	 * The unserialized data-parsoid attribute
+	 * @var array|DataParsoid|null
 	 */
-	public ?DataParsoid $parsoid = null;
+	public $parsoid = null;
 
 	/**
 	 * The unserialized data-mw attribute
+	 * @var array|DataMw|null
 	 */
-	public ?DataMw $mw = null;
+	public $mw = null;
 
 	public function __clone() {
 		// PHP performs a shallow clone then calls this method.
@@ -63,27 +68,95 @@ class NodeData {
 			return $nd;
 		}
 
+		// It is the responsibility of callers to ensure nd->mw is not in json-blob form.
 		// Avoid cloning sealed DOMFragments that may occur in expanded attributes
 		foreach ( $nd->mw->attribs ?? [] as $attr ) {
 			// Look for DOMFragments in both key and value of DataMwAttrib
 			foreach ( [ 'key', 'value' ] as $part ) {
-				if (
-					isset( $attr->$part['html'] ) &&
-					str_contains( $attr->$part['html'], 'mw:DOMFragment/sealed' )
-				) {
-					$doc = DOMUtils::parseHTML( $attr->$part['html'] );
-					DOMUtils::visitDOM( $doc, static function ( Node $node ) {
+				if ( isset( $attr->$part['html'] ) ) {
+					$df = $attr->$part['html'];
+					DOMUtils::visitDOM( $df, static function ( Node $node ) {
 						if (
 							DOMUtils::matchTypeOf( $node, '#^mw:DOMFragment/sealed/\w+$#D' )
 						) {
-							DOMCompat::getParentElement( $node )->removeChild( $node );
+							'@phan-var Element $node';
+							DOMCompat::remove( $node );
 						}
 					} );
-					$attr->$part['html'] = DOMCompat::getInnerHTML( DOMCompat::getBody( $doc ) );
 				}
 			}
 		}
 
 		return $nd;
 	}
+
+	/**
+	 * Get data meta wiki info from a node.
+	 */
+	public function getDataMw( Element $node ): DataMw {
+		// Fast path
+		$dmw = $this->mw;
+		if ( $dmw instanceof DataMw ) {
+			return $dmw;
+		}
+		// Fall back to generic case
+		return DOMDataUtils::getAttributeObjectDefault( $node, 'data-mw', DataMw::hint() );
+	}
+
+	/**
+	 * Get data meta wiki info from a node.
+	 */
+	public function getDataMwIfExists( Element $node ): ?DataMw {
+		// Fast path
+		$dmw = $this->mw;
+		if ( $dmw instanceof DataMw ) {
+			return $dmw;
+		}
+		// Fall back to generic case
+		return DOMDataUtils::getAttributeObject( $node, 'data-mw', DataMw::hint() );
+	}
+
+	/**
+	 * Set data meta wiki info from a node.
+	 */
+	public function setDataMw( Element $node, ?DataMw $dmw ): void {
+		// Fast path
+		if ( $dmw !== null && $this->mw instanceof DataMw ) {
+			$this->mw = $dmw;
+			return;
+		}
+		// Generic case
+		if ( $dmw === null ) {
+			DOMDataUtils::removeAttributeObject( $node, 'data-mw' );
+		} else {
+			DOMDataUtils::setAttributeObject( $node, 'data-mw', $dmw, DataMw::hint() );
+		}
+	}
+
+	/**
+	 * Get data parsoid info from a node.
+	 */
+	public function getDataParsoid( Element $node ): DataParsoid {
+		// Fast path
+		$dp = $this->parsoid;
+		if ( $dp instanceof DataParsoid ) {
+			return $dp;
+		}
+		// Fall back to generic case
+		return DOMDataUtils::getAttributeObjectDefault( $node, 'data-parsoid', DataParsoid::hint() );
+	}
+
+	/**
+	 * Set data parsoid info on a node.
+	 */
+	public function setDataParsoid( Element $node, DataParsoid $dp ): void {
+		// Fast path
+		if ( $this->parsoid instanceof DataParsoid ) {
+			$this->parsoid = $dp;
+			return;
+		}
+		// Generic case
+		DOMDataUtils::setAttributeObject( $node, 'data-parsoid', $dp, DataParsoid::hint() );
+	}
+
 }

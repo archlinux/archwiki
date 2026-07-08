@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"DiGro",
+			"Erik Baas",
 			"Hex",
 			"Huhbakker",
 			"Mainframe98",
 			"McDutchie",
 			"Siebrand",
-			"Sjoerddebruin",
-			"Erik Baas"
+			"Sjoerddebruin"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Er is geen serialisatie met die sleutel in de cache gevonden",

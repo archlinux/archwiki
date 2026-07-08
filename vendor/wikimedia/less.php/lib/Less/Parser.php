@@ -226,6 +226,7 @@ class Less_Parser {
 		$locale = setlocale( LC_NUMERIC, 0 );
 		setlocale( LC_NUMERIC, "C" );
 
+		$css = '';
 		try {
 			$root = new Less_Tree_Ruleset( null, $this->rules );
 			$root->root = true;
@@ -340,7 +341,6 @@ class Less_Parser {
 				$return = [];
 				if ( is_array( $var->value ) ) {
 					// in compilation phase, Less_Tree_Anonymous::$val can be a Less_Tree[]
-					// @phan-suppress-next-line PhanTypeMismatchForeach
 					foreach ( $var->value as $value ) {
 						/** @var Less_Tree $value */
 						$return[ $value->name ] = $this->getVariableValue( $value );
@@ -599,7 +599,7 @@ class Less_Parser {
 	 * files may be imported. The value is an optional public URL or URL base path that corresponds to
 	 * the same directory (use empty string otherwise). The value may also be a closure, in
 	 * which case the key is ignored.
-	 * @phan-param array<string,string|callable> $dirs
+	 * @phan-param array<string,string|callable>|callable[] $dirs
 	 */
 	public function SetImportDirs( $dirs ) {
 		self::$options['import_dirs'] = [];

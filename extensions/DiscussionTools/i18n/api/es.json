@@ -47,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nombre del tema al que hay que suscribirse (o darse de baja)",
 	"apihelp-discussiontoolssubscribe-param-page": "Una página en la que aparece el tema",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Verdadero para suscribirse, falso para darse de baja",
-	"apihelp-discussiontoolssubscribe-summary": "Subscribe (or unsubscribe) to receive notifications about a topic."
+	"apihelp-discussiontoolssubscribe-summary": "Subscribe (or unsubscribe) to receive notifications about a topic.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Suscribir automáticamente al usuario a cualquier hilo de discusión creado tras la edición. Use \"sí\" o \"no\" para anular la preferencia del usuario (predeterminado)."
 }

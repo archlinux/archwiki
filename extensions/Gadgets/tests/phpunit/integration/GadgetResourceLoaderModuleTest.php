@@ -50,7 +50,7 @@ class GadgetResourceLoaderModuleTest extends MediaWikiIntegrationTestCase {
 		$g = $this->makeGadget( '*foo [ResourceLoader|package|codexIcons=cdxIconInfo]|foo.js|foo.vue' );
 		$this->assertEquals( [ 'cdxIconInfo' ], $g->getCodexIcons() );
 		$module = $this->makeGadgetModule( $g );
-		$module->setConfig( new HashConfig( [ MainConfigNames::CodexDevelopmentDir => null ] ) );
+		$module->getConfig()->set( MainConfigNames::CodexDevelopmentDir, null );
 		$content = $module->getScript( $context );
 		$this->assertArrayHasKey( 'icons.json', $content['files'] );
 		$this->assertArrayHasKey( 'cdxIconInfo', $content['files']['icons.json']['content'] );

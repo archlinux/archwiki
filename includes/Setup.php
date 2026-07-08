@@ -52,6 +52,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Registration\MissingExtensionException;
 use MediaWiki\Request\HeaderCallback;
@@ -62,10 +63,8 @@ use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Settings\Source\PhpSettingsSource;
 use MediaWiki\Settings\Source\ReflectionSchemaSource;
 use MediaWiki\Settings\WikiFarmSettingsLoader;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\RequestTimeout\RequestTimeout;
@@ -96,11 +95,11 @@ if ( !defined( 'MW_ENTRY_POINT' ) ) {
 	define( 'MW_ENTRY_POINT', 'unknown' );
 }
 
-// The $IP variable is defined for use by LocalSettings.php.
-// It is made available as a global variable for backwards compatibility.
-//
-// Source code should use the MW_INSTALL_PATH constant instead.
-global $IP;
+/**
+ * @internal For read-only use in LocalSettings.php.
+ *
+ * Source code should use the MW_INSTALL_PATH constant instead (T56483).
+ */
 $IP = wfDetectInstallPath(); // ensures MW_INSTALL_PATH is defined
 
 /**
@@ -159,7 +158,7 @@ HeaderCallback::register();
 // Tell HttpStatus to use HeaderCallback for reporting warnings when
 // attempting to set headers after the headers have already been sent.
 HttpStatus::registerHeadersSentCallback(
-	[ HeaderCallback::class, 'warnIfHeadersSent' ]
+	HeaderCallback::warnIfHeadersSent( ... )
 );
 
 // Set the encoding used by PHP for reading HTTP input, and writing output.
@@ -261,7 +260,7 @@ $wgSettings->apply();
 require __DIR__ . '/SetupDynamicConfig.php';
 
 if ( defined( 'MW_AUTOLOAD_TEST_CLASSES' ) ) {
-	require_once __DIR__ . '/../tests/common/TestsAutoLoader.php';
+	require_once __DIR__ . '/../tests/Common/TestsAutoLoader.php';
 }
 
 // Start time limit
@@ -548,17 +547,7 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 }
 
 // Explicit globals, so this works with bootstrap.php
-global $wgUser, $wgLang, $wgOut, $wgTitle;
-
-/**
- * @var User $wgUser
- * @deprecated since 1.35, use an available context source when possible, or, as a backup,
- * RequestContext::getMain()
- */
-$wgUser = new StubGlobalUser( RequestContext::getMain()->getUser() ); // BackCompat
-register_shutdown_function( static function () {
-	StubGlobalUser::$destructorDeprecationDisarmed = true;
-} );
+global $wgLang, $wgOut, $wgTitle;
 
 /**
  * @var Language|StubUserLang $wgLang
@@ -596,10 +585,7 @@ if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	) {
 		MediaWikiServices::getInstance()->getAuthManager()->autoCreateUser(
 			$sessionUser,
-			MediaWiki\Auth\AuthManager::AUTOCREATE_SOURCE_SESSION,
-			true,
-			true,
-			$sessionUser
+			MediaWiki\Auth\AuthManager::AUTOCREATE_SOURCE_SESSION
 		);
 	}
 	unset( $sessionUser );

@@ -11,6 +11,7 @@ use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
@@ -18,7 +19,6 @@ use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
@@ -226,13 +226,16 @@ class TestRunner {
 		$this->stats = new Stats();
 		$this->stats->modes = $newModes;
 
-		$this->mockApi = new MockApiHelper( null, fn ( $title )=>$this->normalizeTitleKey( $title ) );
+		$this->mockApi = new MockApiHelper( null, $this->normalizeTitleKey( ... ) );
 		$this->siteConfig = new SiteConfig( $this->mockApi, [] );
 		$this->dataAccess = new DataAccess( $this->mockApi, $this->siteConfig, [ 'stripProto' => false ] );
 		$this->dummyEnv = new Env(
 			$this->siteConfig,
 			// Unused; needed to satisfy Env signature requirements
-			new MockPageConfig( $this->siteConfig, [], new MockPageContent( [ 'main' => '' ] ) ),
+			new MockPageConfig(
+				$this->siteConfig, [],
+				new MockPageContent( [ 'main' => '' ], Title::newFromText( 'Parser Test', $this->siteConfig ) ),
+			),
 			// Unused; needed to satisfy Env signature requirements
 			$this->dataAccess,
 			// Unused; needed to satisfy Env signature requirements
@@ -317,7 +320,10 @@ class TestRunner {
 		}
 		if ( !ScriptUtils::booleanOption( $options['quieter'] ?? '' ) ) {
 			if ( $this->knownFailuresPath ) {
-				error_log( 'Loaded known failures from ' . $this->knownFailuresPath );
+				// Only report if we failed to find a known failures file.
+				if ( !ScriptUtils::booleanOption( $options['quiet'] ?? '' ) ) {
+					error_log( 'Loaded known failures from ' . $this->knownFailuresPath );
+				}
 			} else {
 				error_log( 'No known failures found.' );
 			}
@@ -349,9 +355,9 @@ class TestRunner {
 			// Since this was set when serializing we need to setup a new doc
 			$env->setupTopLevelDoc();
 		}
-		$handler = $env->getContentHandler();
+		// ParserTests don't go through src/Parsoid.php and hence require this here
 		$extApi = new ParsoidExtensionAPI( $env );
-		$doc = $handler->toDOM( $extApi );
+		$doc = $env->getContentHandler()->toDOM( $extApi );
 		DOMDataUtils::visitAndStoreDataAttribs( DOMCompat::getBody( $doc ), [
 			'storeInPageBundle' => false,
 		] );
@@ -377,15 +383,7 @@ class TestRunner {
 				!DOMDataUtils::isPreparedAndLoaded( $doc ),
 				"doc should not be prepared and loaded already"
 		);
-		DOMDataUtils::prepareDoc( $doc );
-		DOMDataUtils::visitAndLoadDataAttribs(
-			DOMCompat::getBody( $doc ), [
-				'markNew' => true, 'validateXMLNames' => true,
-			]
-		);
-		// Mark the document as loaded so we can try to catch errors which
-		// might try to reload this again later.
-		DOMDataUtils::getBag( $doc )->loaded = true;
+		DOMDataUtils::prepareAndLoadDoc( $doc );
 
 		$env->setupTopLevelDoc( $doc );
 		$extApi = new ParsoidExtensionAPI( $env );
@@ -401,6 +399,10 @@ class TestRunner {
 	private function runTest( Test $test, string $mode, array $options ): void {
 		$test->time = [];
 		$testOpts = $test->options;
+		if ( $testOpts['langconv'] ?? null ) {
+			// Variant conversion is moving to core
+			return;
+		}
 
 		// These changes are for environment options that change between runs of
 		// different modes. See `processTest` for changes per test.
@@ -571,7 +573,10 @@ class TestRunner {
 		}
 
 		if ( isset( $opts['extlinks'] ) ) {
-			foreach ( $output->getExternalLinks() as $url => $_ignore ) {
+			$extLinks = $output->getExternalLinks();
+			// This is a set, variations in array order shouldn't matter
+			sort( $extLinks );
+			foreach ( $extLinks  as $url ) {
 				$after[] = "extlink=$url";
 			}
 		}
@@ -966,9 +971,13 @@ class TestRunner {
 							 '(?:(?!!!\s*end)[\s\S])*' .
 							 ')(' . preg_quote( $fail['expected'], '/' ) .
 							 ')/m';
+						$hadDataParsoid = str_contains( $fail['expected'], 'data-parsoid' );
 						$fail['noDsr'] = $fail['raw'];
 						if ( $updateFormat === 'noDsr' && $mode !== 'metadata' ) {
-							$fail['noDsr'] = TestUtils::filterDsr( $fail['noDsr'] );
+							$fail['noDsr'] = TestUtils::filterDsr(
+								$fail['noDsr'],
+								removeDataParsoid: !$hadDataParsoid
+							);
 						}
 						$fileContent = preg_replace_callback(
 							$exp,
@@ -1173,7 +1182,7 @@ class TestRunner {
 		// Ensure ParserHook is always registered!
 		$teardown[] = $this->siteConfig->registerParserTestExtension( ParserHook::class );
 
-		$test->testAllModes( $targetModes, $options, Closure::fromCallable( [ $this, 'runTest' ] ) );
+		$test->testAllModes( $targetModes, $options, Closure::fromCallable( $this->runTest( ... ) ) );
 
 		foreach ( array_reverse( $teardown ) as $t ) {
 			$t();
@@ -1271,18 +1280,22 @@ class TestRunner {
 	}
 
 	private function shouldSkipTest( Test $test, array $testOpts ): bool {
-		// ensure that test is not skipped if it has a wikitext/edited or
-		// html/parsoid+langconv section (but not a parsoid html section)
+		// ensure that test is not skipped if it has a wikitext/edited
+		// section (but not a parsoid html section)
 		$haveHtml =
 			( $test->parsoidHtml !== null ) || isset( $test->sections['wikitext/edited'] ) ||
 			isset( $test->sections['html/parsoid+standalone'] ) ||
-			isset( $test->sections['html/parsoid+langconv'] ) ||
 			self::getStandaloneMetadataSection( $test ) !== null;
 		$hasHtmlParsoid =
 			isset( $test->sections['html/parsoid'] ) || isset( $test->sections['html/parsoid+standalone'] );
+		// Skip tests using the langconv option, as that implementation is
+		// being moved to core.
+		if ( $testOpts['langconv'] ?? null ) {
+			return true;
+		}
 
 		// Skip test whose title does not match --filter
-		// or which is disabled or php-only
+		// or which is disabled or php-only or uses langconv
 		return ( $test->wikitext === null || !$haveHtml || ( isset( $testOpts['disabled'] ) && !$this->runDisabled ) ||
 			( isset( $testOpts['php'] ) && !( $hasHtmlParsoid || $this->runPHP ) ) ||
 			!$test->matchesFilter( $this->testFilter ) );

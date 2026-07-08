@@ -14,7 +14,6 @@ class WikibaseEntitySelector extends SearchInputWidget {
 	private const ALLOWED_TYPES = [ 'entity-schema', 'form', 'item', 'lexeme', 'property', 'sense' ];
 
 	public function __construct( array $config = [] ) {
-		// @phan-suppress-next-line PhanUndeclaredStaticMethod https://github.com/phan/phan/issues/5044
 		parent::__construct( $config );
 		$paramType = $config['paramType'] ?? false;
 		if ( $paramType ) {

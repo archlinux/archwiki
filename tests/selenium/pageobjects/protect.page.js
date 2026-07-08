@@ -28,9 +28,14 @@ class ProtectPage extends Page {
 	async protect( title, reason ) {
 		await this.open( title );
 		await this.reason.setValue( reason );
+		await this.confirmProtectionEdit.scrollIntoView();
 		await this.confirmProtectionEdit.click();
 		await this.allowOnlyAdministrators.click();
+		await this.submit.scrollIntoView();
 		await this.submit.click();
+		await browser.waitUntil(
+			async () => !/[?&]action=protect(?:&|$)/.test( await browser.getUrl() )
+		);
 	}
 
 }

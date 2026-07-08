@@ -5,11 +5,11 @@ namespace MediaWiki\Extension\Scribunto;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Html\Html;
+use MediaWiki\ObjectCache\ObjectCacheFactory;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Title\Title;
-use ObjectCacheFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -29,9 +29,6 @@ class ApiScribuntoConsole extends ApiBase {
 		parent::__construct( $main, $action );
 	}
 
-	/**
-	 * @suppress PhanTypePossiblyInvalidDimOffset
-	 */
 	public function execute() {
 		$params = $this->extractRequestParams();
 
@@ -53,7 +50,7 @@ class ApiScribuntoConsole extends ApiBase {
 		if ( $params['session'] ) {
 			$session = $cache->get( $sessionKey );
 		}
-		if ( !isset( $session['version'] ) ) {
+		if ( !is_array( $session ) || !isset( $session['version'] ) ) {
 			$session = $this->newSession();
 			$sessionIsNew = true;
 		}
@@ -113,7 +110,7 @@ class ApiScribuntoConsole extends ApiBase {
 	 *  - 'question': (string) Lua code to run.
 	 * @return array Result data
 	 */
-	protected function runConsole( array $params ) {
+	private function runConsole( array $params ) {
 		$parser = $this->parserFactory->getInstance();
 		$options = new ParserOptions( $this->getUser() );
 		$parser->startExternalParse( $params['title'], $options, Parser::OT_HTML, true );
@@ -123,6 +120,7 @@ class ApiScribuntoConsole extends ApiBase {
 		} catch ( ScribuntoException $e ) {
 			$trace = $e->getScriptTraceHtml();
 			$message = $e->getMessage();
+			$log = $e->getLog() ? [ 'print' => $e->getLog() ] : [];
 			$html = Html::element( 'p', [], $message );
 			if ( $trace !== false ) {
 				$html .= Html::element( 'p',
@@ -135,7 +133,8 @@ class ApiScribuntoConsole extends ApiBase {
 				'type' => 'error',
 				'html' => $html,
 				'message' => $message,
-				'messagename' => $e->getMessageName() ];
+				'messagename' => $e->getMessageName()
+			] + $log;
 		}
 		return [
 			'type' => 'normal',
@@ -147,7 +146,7 @@ class ApiScribuntoConsole extends ApiBase {
 	/**
 	 * @return array
 	 */
-	protected function newSession() {
+	private function newSession() {
 		return [
 			'content' => '',
 			'questions' => [],

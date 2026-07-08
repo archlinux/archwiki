@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mainframe98"
+			"Mainframe98",
+			"Siebrand"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Antwoord op de CAPTCHA",
-	"captcha-apihelp-param-captchaid": "CAPTCHA-ID van de vorige aanvraag"
+	"captcha-apihelp-param-captchaid": "CAPTCHA-ID van de vorige aanvraag",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Of de weergegeven hCaptcha CAPTCHA geforceerd werd weergegeven, bijvoorbeeld door een gevolg van een AbuseFilter-uitreiding (en dus een restrictievere sitekey gebruikte). Stel dit in als de JS-configuratievariabele met dezelfde naam waar is of als de eerste poging om deze API te gebruiken een 'forcecaptcha'-fout met een opgegeven sitekey opleverde."
 }

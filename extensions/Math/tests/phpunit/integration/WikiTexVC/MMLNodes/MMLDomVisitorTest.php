@@ -9,6 +9,7 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\VisitorFactory;
 
 /**
  * Test the results of MathFormatter
@@ -39,6 +40,41 @@ class MMLDomVisitorTest extends MediaWikiIntegrationTestCase {
 			'<mrow data-mjx-texclass="ORD"></mrow>',
 			$visitor->getHTML()
 		);
+	}
+
+	public function testGetTextFromLeafNode() {
+		$visitor = new MMLDomVisitor();
+		$mi = new MMLmi( '', [], 'x' );
+		$visitor->visit( $mi );
+		$this->assertSame( 'x', $visitor->getText() );
+	}
+
+	public function testGetTextFromNestedStructure() {
+		$visitor = new MMLDomVisitor();
+		$mi = new MMLmi( '', [], 'x' );
+		$mo = new MMLmo( '', [], '=' );
+		$mn = new MMLmn( '', [], '5' );
+		$mrow = new MMLmrow( '', [], $mi, $mo, $mn );
+		$visitor->visit( $mrow );
+		$this->assertSame( 'x=5', $visitor->getText() );
+	}
+
+	public function testGetTextFromMixedChildren() {
+		$visitor = new MMLDomVisitor();
+		$mrow = new MMLmrow( '', [],
+			new MMLmo( '', [], '+' ),
+			'<mo>&#x27F9;</mo>',
+			new MMLmn( '', [], '2' )
+		);
+		$mrow->accept( $visitor );
+		$this->assertSame( '+&#x27F9;2', $visitor->getText() );
+	}
+
+	public function testEmptyElementReturnsEmptyString() {
+		$visitor = new MMLDomVisitor();
+		$emptyNode = new MMLbase( 'mrow', '', [], '' );
+		$visitor->visit( $emptyNode );
+		$this->assertSame( '', $visitor->getText() );
 	}
 
 	public function testStringCastLeafNode() {
@@ -251,5 +287,46 @@ class MMLDomVisitorTest extends MediaWikiIntegrationTestCase {
 		$visitor = new MMLDomVisitor();
 		$this->expectException( InvalidArgumentException::class );
 		$visitor->visit( $array );
+	}
+
+	public function testGetTextContentWithStringChild() {
+		$visitorFactory = new VisitorFactory();
+		$base = new MMLarray( '', null, 'simple string' );
+		$base->setVisitorFactory( $visitorFactory );
+		$this->assertSame( 'simple string', $base->getTextContent() );
+	}
+
+	public function testGetTextContentWithMultipleStrings() {
+		$base = new MMLarray( '', null, 'first string', ' second string', ' third string' );
+		$this->assertSame( 'first string second string third string', $base->getTextContent() );
+	}
+
+	public function testGetTextContentWithMMLbaseChild() {
+		$mockVisitor = $this->createMock( MMLDomVisitor::class );
+		$mockVisitor->method( 'getText' )->willReturn( 'example text' );
+
+		$visitorFactory = $this->createMock( VisitorFactory::class );
+		$visitorFactory->method( 'createVisitor' )->willReturn( $mockVisitor );
+
+		$mmlBaseChild = new MMLbase( 'test', '', [] );
+		$mmlBaseChild->setVisitorFactory( $visitorFactory );
+
+		$base = new MMLarray( '', null, $mmlBaseChild );
+		$this->assertSame( 'example text', $base->getTextContent() );
+	}
+
+	public function testGetTextContentWithExceptionInChild() {
+		$mockVisitor = $this->createMock( MMLDomVisitor::class );
+		$mockVisitor->method( 'visit' )->willThrowException( new \DOMException( 'Test Exception' ) );
+		$mockVisitor->method( 'getText' )->willReturn( 'example text' );
+
+		$visitorFactory = $this->createMock( VisitorFactory::class );
+		$visitorFactory->method( 'createVisitor' )->willReturn( $mockVisitor );
+
+		$mmlBaseChild = new MMLbase( 'test', '', [] );
+		$mmlBaseChild->setVisitorFactory( $visitorFactory );
+
+		$base = new MMLarray( '', null, $mmlBaseChild, ' and another string' );
+		$this->assertSame( ' and another string', $base->getTextContent() );
 	}
 }

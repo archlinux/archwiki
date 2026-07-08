@@ -4,7 +4,7 @@
  * @copyright See AUTHORS.txt
  */
 
-QUnit.module( 've.ce.Document (MW)' );
+QUnit.module( 've.ce.Document (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

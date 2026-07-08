@@ -44,7 +44,8 @@
 	"rest-parsoid-resource-exceeded": "Limite delle risorse superato",
 	"rest-invalid-transform": "Trasformazione non valida: da $1 a $2",
 	"rest-unknown-parsoid-transformation": "Trasformazione sconosciuta.",
-	"rest-module-content.v1-title": "Contenuto della pagina",
+	"rest-module-content.v1-title": "API di contenuti",
+	"rest-module-site.v1-title": "API del sito",
 	"rest-param-desc-revision-id": "Identificativo versione",
 	"rest-param-desc-compare-to": "Identificativo versione da confrontare con la base",
 	"rest-param-desc-search-limit": "Numero massimo di risultati di ricerca da restituire, tra 1 e 100. Predefinito: 50",
@@ -70,5 +71,6 @@
 	"rest-endpoint-summ-get-page-title-media": "Ottieni i file sulla pagina",
 	"rest-endpoint-summ-get-file-title": "Ottieni file",
 	"rest-endpoint-summ-post-page": "Crea pagina",
-	"rest-endpoint-summ-post-transform-html-to-wikitext": "Converti HTML in wikitesto"
+	"rest-endpoint-summ-post-transform-html-to-wikitext": "Converti HTML in wikitesto",
+	"rest-responseheader-desc-deprecation": "Determina il comportamento di memorizzazione nella cache per un browser, comunicandogli la frequenza con cui aggiornare le risorse memorizzate localmente."
 }

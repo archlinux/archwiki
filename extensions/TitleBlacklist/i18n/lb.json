@@ -13,7 +13,6 @@
 	"titleblacklist-forbidden-move": "\"$2\" kann net op \"$3\" geréckelt ginn, well den Titel \"$3\" net däerf ugeluecht ginn.\nEn entsprécht dësem Element aus der Lëscht vun net erlaabten Titelen: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "De Fichiersnumm \"$2\" kann net benotzt ginn.\nHien ass identesch mat dësem Numm vun der schwaarzer Lëscht (black list): <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "De Benotzermumm \"$2\" gouf gespaart fir benotzt ze ginn.\nEn ass sou op der Lëscht vun den net erlaabten Titelen:\n<code>$1</code>",
-	"titleblacklist-invalid": "Dës {{PLURAL:$1|Linn|Linnen}} op der schwaarzer Lëscht vun den {{PLURAL:$1|Titelen ass|Titele sinn}} net valabel;\nverbessert se virum späicheren:",
 	"titleblacklist-override": "D'Lëscht vun den net erlaabten Titelen ignoréieren wann correspondéiert",
 	"right-tboverride": "D'Lëscht vun den net erlaabten Titelen a Benotzernimm ignoréieren",
 	"right-tboverride-account": "D'Lëscht vun den net erlaabte Benotzernimm iwwergoen"

@@ -16,8 +16,10 @@ use Wikimedia\CSS\Objects\Token;
  */
 class TemplateStylesMatcherFactory extends \Wikimedia\CSS\Grammar\MatcherFactory {
 
+	private array $fileNames = [];
+
 	/**
-	 * @param array $allowedDomains See $wgTemplateStylesAllowedUrls
+	 * @param array<string,string[]> $allowedDomains See $wgTemplateStylesAllowedUrls
 	 */
 	public function __construct(
 		private readonly array $allowedDomains,
@@ -35,11 +37,7 @@ class TemplateStylesMatcherFactory extends \Wikimedia\CSS\Grammar\MatcherFactory
 		$url = preg_replace_callback( '/%[2-7][0-9A-Fa-f]/', static function ( $m ) {
 			$char = urldecode( $m[0] );
 			/** @phan-suppress-next-line PhanParamSuspiciousOrder */
-			if ( strpos( '"#%<>[\]^`{|}/?&=+;', $char ) === false ) {
-				# Unescape it
-				return $char;
-			}
-			return $m[0];
+			return str_contains( '"#%<>[\]^`{|}/?&=+;', $char ) ? $m[0] : $char;
 		}, $url );
 
 		// Don't allow unescaped \ or /../ in the non-query part of the URL
@@ -51,7 +49,11 @@ class TemplateStylesMatcherFactory extends \Wikimedia\CSS\Grammar\MatcherFactory
 		// Check if it is allowed
 		$regexes = $this->allowedDomains[$type] ?? [];
 		foreach ( $regexes as $regex ) {
-			if ( preg_match( $regex, $url ) ) {
+			$m = [];
+			if ( preg_match( $regex, $url, $m ) ) {
+				if ( isset( $m['filename'] ) && $m['filename'] !== '' ) {
+					$this->fileNames[] = rawurldecode( $m['filename'] );
+				}
 				return true;
 			}
 		}
@@ -83,5 +85,22 @@ class TemplateStylesMatcherFactory extends \Wikimedia\CSS\Grammar\MatcherFactory
 			} );
 		}
 		return $this->cache[$key];
+	}
+
+	/**
+	 * Clear list of captured file names from urls
+	 */
+	public function clearFileNames() {
+		$this->fileNames = [];
+	}
+
+	/**
+	 * Get a list of filenames captured from used URLs
+	 *
+	 * This corresponds to filename named group in the URL regex
+	 * @return array
+	 */
+	public function getFileNames() {
+		return $this->fileNames;
 	}
 }

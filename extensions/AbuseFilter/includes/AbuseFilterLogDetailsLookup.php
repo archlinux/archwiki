@@ -14,7 +14,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class AbuseFilterLogDetailsLookup {
 
-	public const SERVICE_NAME = 'AbuseFilterLogDetailsLookup';
+	public const SERVICE_NAME = ServiceNames::LogDetailsLookup;
 
 	public function __construct(
 		private readonly IConnectionProvider $dbProvider,

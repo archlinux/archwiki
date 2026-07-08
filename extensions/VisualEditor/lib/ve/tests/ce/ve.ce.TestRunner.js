@@ -29,8 +29,7 @@ ve.ce.TestOffset = function VeCeTestOffset( direction, offset ) {
 };
 
 /**
- * @typedef {Object} OffsetInfo
- * @memberof ve.ce.TestOffset
+ * @typedef {Object} ve.ce.TestOffset.OffsetInfo
  * @property {number} [consumed] The number of code units consumed (if n out of range)
  * @property {Node} [node] The node containing the offset (if n in range)
  * @property {number} [offset] The offset in code units / child elements (if n in range)
@@ -69,7 +68,7 @@ ve.ce.TestOffset.static.findTextOffset = function ( node, n, reversed ) {
 			const offset = reversed ? node.textContent.length - n : n;
 			const slice = node.textContent.slice( 0, offset ) + '|' +
 				node.textContent.slice( offset );
-			return { node: node, offset: offset, slice: slice };
+			return { node, offset, slice };
 		} else {
 			return { consumed: node.textContent.length + 1 };
 		}
@@ -85,7 +84,7 @@ ve.ce.TestOffset.static.findTextOffset = function ( node, n, reversed ) {
 
 	if ( childNodes.length === 0 ) {
 		if ( n === 0 ) {
-			return { node: node, offset: 0, slice: '|' };
+			return { node, offset: 0, slice: '|' };
 		}
 		return { consumed: 0 };
 	}
@@ -107,12 +106,12 @@ ve.ce.TestOffset.static.findTextOffset = function ( node, n, reversed ) {
 				consumed += 1;
 				if ( consumed === n ) {
 					// TODO: create a reasonable 'slice' string
-					return { node: node, offset: i + 1, slice: 'XXX' };
+					return { node, offset: i + 1, slice: 'XXX' };
 				}
 			}
 		}
 	}
-	return { consumed: consumed };
+	return { consumed };
 };
 
 /**

@@ -215,7 +215,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		array $argv,
 		?string $inReferencesGroup,
 		array $initialRefs,
-		string $expectOutput,
+		string $expectedOutput,
 		?string $expectedError,
 		array $expectedRefs,
 		bool $isSectionPreview = false
@@ -242,7 +242,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 		$spy->referenceStack = $referenceStack;
 
 		$result = $spy->guardedRef( $mockParser, $text, $argv );
-		$this->assertSame( $expectOutput, $result );
+		$this->assertSame( $expectedOutput, $result );
 		if ( $expectedError ) {
 			$this->assertStatusError( $expectedError, $spy->mReferencesErrors );
 		} else {
@@ -376,7 +376,7 @@ class CiteTest extends \MediaWikiIntegrationTestCase {
 				'argv' => [ 'name' => 'a' ],
 				'inReferencesGroup' => '',
 				'initialRefs' => [],
-				'expectOutput' => '',
+				'expectedOutput' => '',
 				'expectedError' => null,
 				'expectedRefs' => [
 					'' => [

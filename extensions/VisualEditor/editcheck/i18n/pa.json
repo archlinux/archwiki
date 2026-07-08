@@ -4,5 +4,13 @@
 			"Cabal"
 		]
 	},
-	"editcheck-review-title": "ਤਬਦੀਲੀਆਂ ਪਰਖੋ"
+	"editchecks": "ਜਾਂਚਾਂ ਦੀ ਸੋਧ ਕਰੋ",
+	"editcheck-toolbar-suggestions-title": "ਸੁਝਾਅ ਵਿਖਾਓ/ਲੁਕਾਓ",
+	"editcheck-review-title": "ਤਬਦੀਲੀਆਂ ਪਰਖੋ",
+	"editcheck-specialeditchecks-disabled": "ਇਸ ਵਿਕੀ 'ਤੇ ਸੋਧ-ਪਰਖਾਂ ਚਾਲੂ ਨਹੀਂ ਹਨ।",
+	"editcheck-specialeditchecks-header-base": "ਮੁੱਢਲੀ ਬਣਤਰ",
+	"editcheck-specialeditchecks-col-title": "ਸਿਰਲੇਖ",
+	"editcheck-specialeditchecks-col-name": "ਨਾਂ",
+	"editcheck-specialeditchecks-config-summary": "ਬਣਤਰ",
+	"editcheck-specialeditchecks-config-default": "ਮੂਲ ਬਣਤਰ"
 }

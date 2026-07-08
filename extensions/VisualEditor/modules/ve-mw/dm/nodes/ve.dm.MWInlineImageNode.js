@@ -91,7 +91,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 		mediaTag: img.nodeName.toLowerCase(),
 		type: types.frameType,
 		src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
-		href: href,
+		href,
 		imageClassAttr: img.getAttribute( 'class' ),
 		imgWrapperClassAttr: imgWrapper.getAttribute( 'class' ),
 		resource: img.getAttribute( 'resource' ),
@@ -100,8 +100,8 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 		height: height !== null && height !== '' ? +height : null,
 		alt: img.getAttribute( 'alt' ),
 		mw: mwData,
-		isError: isError,
-		errorText: errorText
+		isError,
+		errorText
 	};
 
 	// Extract individual classes
@@ -115,15 +115,14 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 
 	// Vertical alignment
 	attributes.valign = 'default';
-	[ 'midde', 'baseline', 'sub', 'super', 'top', 'text-top', 'bottom', 'text-bottom' ].some( ( valign ) => {
+	for ( const valign of [ 'middle', 'baseline', 'sub', 'super', 'top', 'text-top', 'bottom', 'text-bottom' ] ) {
 		const className = 'mw-valign-' + valign;
 		if ( classes.includes( className ) ) {
 			attributes.valign = valign;
 			recognizedClasses.push( className );
-			return true;
+			break;
 		}
-		return false;
-	} );
+	}
 
 	// Border
 	if ( classes.includes( 'mw-image-border' ) ) {
@@ -140,7 +139,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 	// Store unrecognized classes so we can restore them on the way out
 	attributes.unrecognizedClasses = OO.simpleArrayDifference( classes, recognizedClasses );
 
-	const dataElement = { type: this.name, attributes: attributes };
+	const dataElement = { type: this.name, attributes };
 
 	this.storeGeneratedContents( dataElement, dataElement.attributes.src, converter.getStore() );
 

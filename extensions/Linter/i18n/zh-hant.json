@@ -7,16 +7,17 @@
 			"Kanashimi",
 			"Kly",
 			"LNDDYL",
+			"Lakejason0",
 			"Liuxinyu970226",
 			"Xiplus",
 			"優枰",
 			"捍粵者",
 			"沈澄心",
-			"蘭斯特",
-			"Lakejason0"
+			"蘭斯特"
 		]
 	},
 	"linterrors": "Lint錯誤",
+	"linttemplateerrors": "模板產生 lint 錯誤",
 	"linter-category-bogus-image-options": "不正確的檔案選項",
 	"linter-category-bogus-image-options-desc": "這些頁面有些圖片或檔案含有錯誤的選項。",
 	"linter-category-large-tables": "難以在行動裝置上檢視的巨大表格",
@@ -27,6 +28,8 @@
 	"linter-category-duplicate-ids-desc": "這些頁面含有重複 id 屬性的元素。",
 	"linter-category-empty-heading": "空標題",
 	"linter-category-empty-heading-desc": "這些頁面含有空標題。",
+	"linter-category-template-arg-in-extension-tag": "帶有模板參數的擴充標籤",
+	"linter-category-template-arg-in-extension-tag-desc": "這些頁面包含帶有模板參數的擴充標籤，因此無法正確嵌入。",
 	"linter-category-fostered": "表格內容嵌套錯誤",
 	"linter-category-fostered-desc": "這些頁面含有內容嵌套錯誤的表格。",
 	"linter-category-fostered-transparent": "渲染後透明的表格內容嵌套錯誤",
@@ -69,6 +72,7 @@
 	"linter-category-wikilink-in-extlink-desc": "這些頁面所擁有在外部連結裡的 wiki 連結可被修正",
 	"linter-desc": "自外部服務追蹤 lint 錯誤，並且對使用者顯示",
 	"linter-lints-prefix-search-page-desc": "按頁面標題前綴或完整標題搜尋有 lint 錯誤的頁面",
+	"linter-invalid-category": "未找到分類或格式錯誤",
 	"linter-invalid-title": "未找到命名空間與/或頁面名稱，或是格式錯誤",
 	"linter-form-exact-match": "搜尋特定頁面標題",
 	"linter-form-prefix-match": "搜尋匹配標題前綴的所有頁面",
@@ -119,10 +123,13 @@
 	"linter-pager-title-header": "頁面標題",
 	"linter-pager-unclosed-quotes-in-heading-details": "未閉合引號從目次中溢出",
 	"linter-pager-wikilink-in-extlink-details": "連結嵌套",
+	"linter-pager-template-arg-in-extension-tag-details": "需要更新的擴充標籤名（及其內部使用的模板參數名）",
 	"linter-prefix-search-subpage": "帶有 lint 錯誤的頁面，匹配標題前綴或是完整標題：$1",
 	"linterrors-subpage": "Lint錯誤：$1",
 	"linterrors-summary": "<strong>注意：</strong>分類的數量並不精確，這是估計值。",
 	"multi-part-template-block": "輸出並非來自單一個模板",
 	"pageinfo-linter": "Lint 錯誤",
-	"pageinfo-linter-moreinfo": "查看 lint 錯誤的詳細資訊。"
+	"pageinfo-linter-moreinfo": "查看 lint 錯誤的詳細資訊。",
+	"category-by-template-view": "查看會產生這些 lint 錯誤的模板。",
+	"category-by-template-desc": "這些模板會產生 '''$1''' lint 錯誤。"
 }

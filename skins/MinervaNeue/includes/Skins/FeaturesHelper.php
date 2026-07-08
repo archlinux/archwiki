@@ -8,12 +8,9 @@ use MediaWiki\Title\Title;
 
 class FeaturesHelper {
 
-	private ?ConfigHelper $configHelper;
-
 	public function __construct(
-		?ConfigHelper $configHelper
+		private readonly ?ConfigHelper $configHelper,
 	) {
-		$this->configHelper = $configHelper;
 	}
 
 	/**

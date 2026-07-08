@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Jobs;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Jobs;
 
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob
+ * @covers \MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob
  * @group CheckUser
  */
 class LogTemporaryAccountAccessJobTest extends MediaWikiUnitTestCase {

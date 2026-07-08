@@ -43,9 +43,7 @@ ve.dm.MWIncludesNode.static.toDataElement = function ( domElements ) {
 
 	const dataElement = {
 		type: 'mwIncludes',
-		attributes: {
-			type: type
-		}
+		attributes: { type }
 	};
 
 	if ( mwDataJSON !== null ) {

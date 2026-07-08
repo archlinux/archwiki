@@ -3,8 +3,8 @@
 namespace MediaWiki\Tests\Rest\Handler;
 
 use Exception;
-use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Hook\ParserLogLinterDataHook;
 use MediaWiki\Rest\Handler\PageLintHandler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;

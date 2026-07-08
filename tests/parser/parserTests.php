@@ -15,8 +15,13 @@ require_once __DIR__ . '/../../maintenance/Maintenance.php';
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Specials\SpecialVersion;
-use MediaWiki\Tests\AnsiTermColorer;
-use MediaWiki\Tests\DummyTermColorer;
+use MediaWiki\Tests\Common\Parser\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\DbTestPreviewer;
+use MediaWiki\Tests\Common\Parser\DbTestRecorder;
+use MediaWiki\Tests\Common\Parser\DummyTermColorer;
+use MediaWiki\Tests\Common\Parser\MultiTestRecorder;
+use MediaWiki\Tests\Common\Parser\ParserTestPrinter;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
 use Wikimedia\Parsoid\Utils\ScriptUtils;
 
 define( 'MW_AUTOLOAD_TEST_CLASSES', true );
@@ -109,19 +114,11 @@ class ParserTestsMaintenance extends Maintenance {
 		$version = SpecialVersion::getVersion( 'nodb' );
 		echo "This is MediaWiki version {$version}.\n\n";
 
-		// Only colorize output if stdout is a terminal.
-		$color = !wfIsWindows() && Maintenance::posix_isatty( 1 );
-
 		if ( $this->hasOption( 'color' ) ) {
-			switch ( $this->getOption( 'color' ) ) {
-				case 'no':
-					$color = false;
-					break;
-				case 'yes':
-				default:
-					$color = true;
-					break;
-			}
+			$color = $this->getOption( 'color' ) !== 'no';
+		} else {
+			// Only colorize output if stdout is a terminal.
+			$color = !wfIsWindows() && Maintenance::posix_isatty( 1 );
 		}
 
 		$record = $this->hasOption( 'record' );
@@ -196,7 +193,14 @@ class ParserTestsMaintenance extends Maintenance {
 
 		// Default parser tests and any set from extensions or local config
 		$dirs = $this->getOption( 'dir', [] );
-		$files = $this->getOption( 'file', ParserTestRunner::getParserTestFiles( $dirs ) );
+		if ( $this->hasOption( 'file' ) ) {
+			$files = [];
+			foreach ( $this->getOption( 'file' ) as $file ) {
+				array_push( $files, ...glob( $file ) );
+			}
+		} else {
+			$files = ParserTestRunner::getParserTestFiles( $dirs );
+		}
 		$norm = $this->hasOption( 'norm' ) ? explode( ',', $this->getOption( 'norm' ) ) : [];
 
 		$selserOpt = $this->getOption( 'selser', false ); /* can also be 'noauto' */

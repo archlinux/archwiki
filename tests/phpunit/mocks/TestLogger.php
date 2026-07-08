@@ -38,7 +38,7 @@ class TestLogger extends \Psr\Log\AbstractLogger {
 	/**
 	 * Set the "collect" flag
 	 * @param bool $collect
-	 * @return TestLogger $this
+	 * @return $this
 	 */
 	public function setCollect( $collect ) {
 		$this->collect = $collect;
@@ -50,7 +50,7 @@ class TestLogger extends \Psr\Log\AbstractLogger {
 	 *
 	 * @param bool $collectContext
 	 * @since 1.29
-	 * @return TestLogger $this
+	 * @return $this
 	 */
 	public function setCollectContext( $collectContext ) {
 		$this->collectContext = $collectContext;

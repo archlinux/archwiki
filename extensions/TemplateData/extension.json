@@ -17,7 +17,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -392,7 +392,7 @@
 			"description": "The maximum number of favorite templates that can be stored."
 		},
 		"TemplateDataEnableCategoryBrowser": {
-			"value": false,
+			"value": true,
 			"description": "Enable the category browser for the template discovery widget."
 		},
 		"TemplateDataCategoryBrowserItem": {
@@ -400,7 +400,7 @@
 			"description": "Wikibase entity ID with which to look up the category browser's root category."
 		},
 		"TemplateDataEnableFeaturedTemplates": {
-			"value": false,
+			"value": true,
 			"description": "Enable the featured templates functionality."
 		}
 	},

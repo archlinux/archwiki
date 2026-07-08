@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eduardo Addad de Oliveira",
+			"Eduardoaddad"
+		]
+	},
+	"oathauth-webauthn-module-label": "Web Authentication (WebAuthn)",
+	"oathauth-webauthn-ui-login-prompt": "Toque no seu dispositivo de verificação ou siga as instruções do navegador",
+	"oathauth-webauthn-ui-add-key": "Adicionar chave",
+	"oathauth-webauthn-error-browser-unsupported": "Este navegador não suporta WebAuthentication ou não está disponível para este site. Por favor, tente com um navegador diferente. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Leia mais]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Este navegador não suporta WebAuthentication ou não está disponível para este site",
+	"oathauth-webauthn-error-auth-generic": "O processo de autenticação foi interrompido. Por favor, inicie o processo de autenticação novamente",
+	"oathauth-webauthn-error-reg-generic": "Não foi possível verificar sua chave. Por favor, inicie o processo de registro novamente",
+	"oathauth-webauthn-registered-keys-section-name": "Chaves registradas",
+	"oathauth-webauthn-ui-remove-key": "Remover",
+	"oathauth-webauthn-error-module-not-enabled": "Módulo \"$1\" não está ativado para {{GENDER:$2|o usuário|a usuária}} \"$2\"",
+	"oathauth-webauthn-error-verification-failed": "Verificação falhou",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|O usuário|A usuária}} \"$1\" não pode registrar uma nova credencial",
+	"oathauth-webauthn-error-invalid-new-key": "A nova chave retornada pelo módulo não é do tipo obrigatório",
+	"oathauth-webauthn-error-registration-failed": "Novo registro de chave falhou",
+	"oathauth-webauthn-ui-key-register-help": "Escolha o apelido para sua chave",
+	"oathauth-webauthn-error-cannot-remove-key": "A chave não pode ser removida",
+	"oathauth-webauthn-error-get-authinfo-fail": "Não foi possível recuperar as informações de autenticação",
+	"oathauth-webauthn-add-key-section-name": "Registrar nova chave WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "Não foi possível recuperar as informações de registro.",
+	"oathauth-webauthn-module-description": "WebAuthn (autenticação da Web) é um padrão da Web publicado pelo World Wide Web Consortium (W3C). O WebAuthn é um componente essencial do Projeto FIDO2, sob a orientação da Aliança FIDO. O objetivo do projeto é padronizar uma interface para autenticar usuários em aplicativos e serviços baseados na Web usando criptografia de chave pública. [https://en.wikipedia.org/wiki/WebAuthn Leia mais]",
+	"oathauth-webauthn-ui-reload-page-label": "Atualizar página",
+	"oathauth-webauthn-authentication-info-label": "Dados de autenticação",
+	"oathauth-webauthn-authentication-info-help": "Dados de autenticação passados para o cliente para recuperação de credenciais",
+	"oathauth-webauthn-credential-label": "Credencial do usuário",
+	"oathauth-webauthn-credential-help": "Credencial do usuário com base nos dados de autenticação",
+	"oathauth-webauthn-add-security-key": "Adicionar uma chave de segurança"
+}

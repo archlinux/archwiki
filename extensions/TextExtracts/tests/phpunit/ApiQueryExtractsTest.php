@@ -11,7 +11,7 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\TextExtracts\ApiQueryExtracts;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Title\Title;

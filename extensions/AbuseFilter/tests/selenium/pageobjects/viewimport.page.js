@@ -1,6 +1,4 @@
-'use strict';
-
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class ViewImportPage extends Page {
 	get importData() {
@@ -21,4 +19,4 @@ class ViewImportPage extends Page {
 		return super.openTitle( 'Special:AbuseFilter/import' );
 	}
 }
-module.exports = new ViewImportPage();
+export const viewImportPage = new ViewImportPage();

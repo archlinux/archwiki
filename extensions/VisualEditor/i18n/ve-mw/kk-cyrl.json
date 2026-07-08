@@ -4,10 +4,10 @@
 			"Arystanbek",
 			"Casserium",
 			"Darzz",
+			"Moonborn",
 			"TMg",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең",
-			"Moonborn"
+			"СеніңШешең"
 		]
 	},
 	"tooltip-ca-ve-edit": "Бұл бетті өңдеу",
@@ -140,6 +140,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Ішкі бөлім 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Ішкі бөлім 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Ішкі бөлім 4",
+	"visualeditor-fullpage-switch-label": "Бүкіл бетті өңдеу",
 	"visualeditor-languages-tool": "Тілдер",
 	"visualeditor-linkinspector-button-link-external": "Сыртқы сілтеме",
 	"visualeditor-linkinspector-button-link-internal": "Беттерді іздеу",

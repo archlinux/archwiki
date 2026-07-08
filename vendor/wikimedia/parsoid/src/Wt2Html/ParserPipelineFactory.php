@@ -107,6 +107,7 @@ class ParserPipelineFactory {
 				[ 'nodeName' => 'dt', 'action' => [ LiFixups::class, 'migrateTrailingSolTransparentLinks' ] ],
 				[ 'nodeName' => 'dd', 'action' => [ LiFixups::class, 'migrateTrailingSolTransparentLinks' ] ],
 				// 2. Fix up issues from templated table cells and table cell attributes
+				[ 'nodeName' => 'table', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
 				[ 'nodeName' => 'td', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
 				[ 'nodeName' => 'th', 'action' => [ TableFixups::class, 'handleTableCellTemplates' ] ],
 			]
@@ -205,7 +206,8 @@ class ParserPipelineFactory {
 		'media', 'migrate-metas', 'migrate-nls', 'dsr', 'tplwrap',
 		'ann-ids', 'annwrap',
 		'fixups', 'linkclasses',
-		'linkneighbours+dom-unpack'
+		'linkneighbours+dom-unpack',
+		'redlinks'
 	];
 
 	// NOTES about ordering:
@@ -224,18 +226,22 @@ class ParserPipelineFactory {
 		// content of all extensions (wikitext-produced or not).
 		'displayspace',
 		'dedupe-styles',
-		'lang-converter', 'redlinks',
+		'lang-converter',
 		'gen-anchors', # depends on lang-converter
 		'linter', 'strip-metas',
 		'dedupe-heading-ids',
-		'sections', 'convertoffsets', 'cleanup',
+		'sections', 'convertoffsets',
 		'embedded-docs',
+		// Cleanup after traversing embedded docs
+		// This is mainly an issue when linting the Cite extension since
+		// content for nodes in embedded docs may be stored in the top level doc.
+		'cleanup',
 		'markDiscardableDP', 'addmetadata'
 	];
 
 	// Skipping sections, addmetadata from the above pipeline
 	//
-	// FIXME: Skip extpp, lang-converter, redlinks, gen-anchors, dedupe-heading-ids, convertoffsets for now.
+	// FIXME: Skip extpp, lang-converter, gen-anchors, dedupe-heading-ids, convertoffsets for now.
 	// This replicates behavior prior to this refactor.
 	public const FULL_PARSE_EMBEDDED_DOC_DOM_TRANSFORMS = [
 		// Even though displayspace *could* be run in the nested pipeline,
@@ -246,8 +252,8 @@ class ParserPipelineFactory {
 		'dedupe-styles',
 		'linter',
 		'strip-metas',
-		'cleanup',
 		'embedded-docs', // Need to run this recursively
+		'cleanup',
 		'markDiscardableDP'
 	];
 
@@ -258,7 +264,6 @@ class ParserPipelineFactory {
 		// with french spacing, we should run it once on the full DOM including
 		// content of all extensions (wikitext-produced or not).
 		'displayspace',
-		'redlinks',
 		'gen-anchors',
 		'strip-metas',
 		'convertoffsets', 'cleanup',
@@ -520,7 +525,7 @@ class ParserPipelineFactory {
 			$proc = self::DOM_PROCESSOR_CONFIG[$name];
 			if ( !is_array( $proc ) ) {
 				$proc = [
-					'name' => Utils::stripNamespace( $proc ),
+					'name' => Utils::stripPHPNamespace( $proc ),
 					'Processor' => $proc,
 				];
 			}

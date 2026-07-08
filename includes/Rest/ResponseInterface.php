@@ -49,7 +49,7 @@ interface ResponseInterface {
 	 *
 	 * @return int Status code.
 	 */
-	public function getStatusCode();
+	public function getStatusCode(): int;
 
 	/**
 	 * Gets the response reason phrase associated with the status code.
@@ -64,7 +64,7 @@ interface ResponseInterface {
 	 * @see http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 	 * @return string Reason phrase; must return an empty string if none present.
 	 */
-	public function getReasonPhrase();
+	public function getReasonPhrase(): string;
 
 	// ResponseInterface mutation
 
@@ -94,7 +94,7 @@ interface ResponseInterface {
 	 *
 	 * @return string HTTP protocol version.
 	 */
-	public function getProtocolVersion();
+	public function getProtocolVersion(): string;
 
 	/**
 	 * Retrieves all message header values.
@@ -121,7 +121,7 @@ interface ResponseInterface {
 	 *     Each key MUST be a header name, and each value MUST be an array of
 	 *     strings for that header.
 	 */
-	public function getHeaders();
+	public function getHeaders(): array;
 
 	/**
 	 * Checks if a header exists by the given case-insensitive name.
@@ -131,7 +131,7 @@ interface ResponseInterface {
 	 *     name using a case-insensitive string comparison. Returns false if
 	 *     no matching header name is found in the message.
 	 */
-	public function hasHeader( $name );
+	public function hasHeader( string $name ): bool;
 
 	/**
 	 * Retrieves a message header value by the given case-insensitive name.
@@ -147,7 +147,7 @@ interface ResponseInterface {
 	 *    header. If the header does not appear in the message, this method MUST
 	 *    return an empty array.
 	 */
-	public function getHeader( $name );
+	public function getHeader( string $name ): array;
 
 	/**
 	 * Retrieves a comma-separated string of the values for a single header.
@@ -168,7 +168,7 @@ interface ResponseInterface {
 	 *    concatenated together using a comma. If the header does not appear in
 	 *    the message, this method MUST return an empty string.
 	 */
-	public function getHeaderLine( $name );
+	public function getHeaderLine( string $name ): string;
 
 	/**
 	 * Gets the body of the message.

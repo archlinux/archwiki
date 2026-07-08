@@ -5,5 +5,6 @@
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Antwort an das CAPTCHA",
-	"captcha-apihelp-param-captchaid": "CAPTCHA-Kennung der vorherigen Anfrage"
+	"captcha-apihelp-param-captchaid": "CAPTCHA-Kennung der vorherigen Anfrage",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Ob das angezeigte hCaptcha-CAPTCHA zwangsweise angezeigt wurde, beispielsweise als Folge einer AbuseFilter-Erweiterung (und daher ein restriktiverer Sitekey verwendet wurde). Setze diese Option, wenn die gleichnamige JS-Konfigurationsvariable auf „true“ gesetzt ist oder wenn der erste Versuch, diese API zu nutzen, einen „forcecaptcha“-Fehler mit einem angegebenen Sitekey zurückgegeben hat."
 }

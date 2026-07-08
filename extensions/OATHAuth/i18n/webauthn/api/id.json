@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Penyuwangi"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Modul API untuk berkomunikasi antara peladen dan kelayan selama proses pendaftaran/autentikasi."
+}

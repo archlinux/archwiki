@@ -142,5 +142,3 @@ class EchoMentionPresentationModel extends EchoEventPresentationModel {
 		return 'notification-mention-email-subject';
 	}
 }
-
-class_alias( EchoMentionPresentationModel::class, 'EchoMentionPresentationModel' );

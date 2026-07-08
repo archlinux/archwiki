@@ -16,14 +16,6 @@ use MediaWiki\User\UserNameUtils;
  * @since 1.44
  */
 class RenameUserFactory {
-	private ServiceOptions $options;
-	private CentralIdLookupFactory $centralIdLookupFactory;
-	private JobQueueGroupFactory $jobQueueGroupFactory;
-	private MovePageFactory $movePageFactory;
-	private UserFactory $userFactory;
-	private UserNameUtils $userNameUtils;
-	private PermissionManager $permissionManager;
-	private TitleFactory $titleFactory;
 
 	/**
 	 * @internal Use only in ServiceWiring
@@ -31,25 +23,16 @@ class RenameUserFactory {
 	public const CONSTRUCTOR_OPTIONS = RenameUser::CONSTRUCTOR_OPTIONS;
 
 	public function __construct(
-		ServiceOptions $options,
-		CentralIdLookupFactory $centralIdLookupFactory,
-		JobQueueGroupFactory $jobQueueGroupFactory,
-		MovePageFactory $movePageFactory,
-		UserFactory $userFactory,
-		UserNameUtils $userNameUtils,
-		PermissionManager $permissionManager,
-		TitleFactory $titleFactory
+		private readonly ServiceOptions $options,
+		private readonly CentralIdLookupFactory $centralIdLookupFactory,
+		private readonly JobQueueGroupFactory $jobQueueGroupFactory,
+		private readonly MovePageFactory $movePageFactory,
+		private readonly UserFactory $userFactory,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly PermissionManager $permissionManager,
+		private readonly TitleFactory $titleFactory,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-
-		$this->options = $options;
-		$this->centralIdLookupFactory = $centralIdLookupFactory;
-		$this->movePageFactory = $movePageFactory;
-		$this->jobQueueGroupFactory = $jobQueueGroupFactory;
-		$this->userFactory = $userFactory;
-		$this->userNameUtils = $userNameUtils;
-		$this->permissionManager = $permissionManager;
-		$this->titleFactory = $titleFactory;
 	}
 
 	/**

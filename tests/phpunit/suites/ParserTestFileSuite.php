@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
 use PHPUnit\Framework\TestSuite;
 use Wikimedia\Parsoid\ParserTests\TestFileReader;
 use Wikimedia\Parsoid\ParserTests\TestMode as ParserTestMode;

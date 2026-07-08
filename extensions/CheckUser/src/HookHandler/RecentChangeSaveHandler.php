@@ -1,27 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\Services\CheckUserInsert;
-use MediaWiki\Hook\RecentChange_saveHook;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\JobSpecification;
+use MediaWiki\RecentChanges\Hook\RecentChange_saveHook;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class RecentChangeSaveHandler implements RecentChange_saveHook {
 
-	private CheckUserInsert $checkUserInsert;
-	private JobQueueGroup $jobQueueGroup;
-	private IConnectionProvider $dbProvider;
-
 	public function __construct(
-		CheckUserInsert $checkUserInsert,
-		JobQueueGroup $jobQueueGroup,
-		IConnectionProvider $dbProvider
+		private readonly CheckUserInsert $checkUserInsert,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly IConnectionProvider $dbProvider,
 	) {
-		$this->checkUserInsert = $checkUserInsert;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->dbProvider = $dbProvider;
 	}
 
 	/**
@@ -31,7 +24,12 @@ class RecentChangeSaveHandler implements RecentChange_saveHook {
 	 * @inheritDoc
 	 */
 	public function onRecentChange_save( $recentChange ) {
-		$this->checkUserInsert->updateCheckUserData( $recentChange );
+		// We silence replica warnings here because the save of a RecentChanges entry
+		// will cause writes to the DB. This is not the fault of CheckUser because it
+		// is only listening for these events (see for an example T340898).
+		// Therefore having more warnings that may imply the issue is from CheckUser only
+		// adds log spam.
+		$this->checkUserInsert->updateCheckUserData( $recentChange, true );
 		$this->maybePruneIPData();
 	}
 

@@ -170,10 +170,7 @@ ve.ce.FocusableNode.static.getRectsForElement = function ( $element, relativeRec
 
 	const boundingRect = ve.getBoundingRect( rects );
 
-	return {
-		rects: rects,
-		boundingRect: boundingRect
-	};
+	return { rects, boundingRect };
 };
 
 /* Methods */
@@ -328,10 +325,10 @@ ve.ce.FocusableNode.prototype.updateInvisibleIconSync = function ( showIcon ) {
 			$firstElement.empty().css( 'display', 'inline-block' );
 		}
 		$firstElement
-			.addClass( 've-ce-focusableNode-invisible' )
+			.addClass( 've-ce-focusableNode-invisible ve-ce-surface-interface' )
 			.prepend( this.icon.$element );
 	} else if ( this.icon ) {
-		this.$element.removeClass( 've-ce-focusableNode-invisible' );
+		this.$element.removeClass( 've-ce-focusableNode-invisible ve-ce-surface-interface' );
 		this.icon.$element.detach();
 	}
 };
@@ -343,6 +340,8 @@ ve.ce.FocusableNode.prototype.createInvisibleIcon = function () {
 	if ( this.icon ) {
 		return;
 	}
+	// Label is set in updateInvisibleIconLabel
+	// eslint-disable-next-line mediawiki/no-unlabeled-buttonwidget
 	this.icon = new OO.ui.ButtonWidget( {
 		classes: [ 've-ce-focusableNode-invisibleIcon' ],
 		framed: false,
@@ -727,17 +726,17 @@ ve.ce.FocusableNode.prototype.positionHighlights = function () {
 		// Append something selectable for right-click copy
 		.append( $( '<span>' ).addClass( 've-ce-focusableNode-highlight-selectable' ).text( '\u00a0' ) );
 
-	for ( let i = 0, l = this.rects.length; i < l; i++ ) {
+	this.rects.forEach( ( rect ) => {
 		const $highlight = this.createHighlight();
 		this.$highlights.append(
 			$highlight.css( {
-				top: this.rects[ i ].top,
-				left: this.rects[ i ].left,
-				width: this.rects[ i ].width,
-				height: this.rects[ i ].height
+				top: rect.top,
+				left: rect.left,
+				width: rect.width,
+				height: rect.height
 			} )
 		);
-	}
+	} );
 };
 
 /**

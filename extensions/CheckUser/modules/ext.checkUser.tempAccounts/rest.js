@@ -7,10 +7,12 @@
  * @param {Object} revIds
  * @param {Object} logIds
  * @param {Object} aflIds
+ * @param {string} [wikiUrl] The URL pattern for an external wiki in the format
+ *  returned by PHP's Site::getPath, or undefined if querying the local wiki
  * @param {boolean} [retryOnTokenMismatch]
  * @return {Promise}
  */
-function performRevealRequest( target, revIds, logIds, aflIds, retryOnTokenMismatch ) {
+function performRevealRequest( target, revIds, logIds, aflIds, wikiUrl, retryOnTokenMismatch ) {
 	if ( retryOnTokenMismatch === undefined ) {
 		// Default value for the argument is true.
 		retryOnTokenMismatch = true;
@@ -46,7 +48,7 @@ function performRevealRequest( target, revIds, logIds, aflIds, retryOnTokenMisma
 		request[ target ].abuseLogIds = makeStringIDs( aflIds );
 	}
 
-	performBatchRevealRequestInternal( request, retryOnTokenMismatch )
+	performBatchRevealRequestInternal( request, wikiUrl, retryOnTokenMismatch )
 		.then( ( data ) => {
 			let key;
 			if ( isAbuseFilterLogLookup( aflIds ) ) {
@@ -147,22 +149,28 @@ const requests = {};
  * Reveal multiple IP addresses in a single request.
  *
  * @param {BatchRevealRequest} request
- * @param {boolean} retryOnTokenMismatch
+ * @param {string} [wikiUrl] The URL pattern for an external wiki in the format
+ *  returned by PHP's Site::getPath, or undefined if querying the local wiki
+ * @param {boolean} [retryOnTokenMismatch]
  * @return {Promise}
  */
-function performBatchRevealRequest( request, retryOnTokenMismatch ) {
+function performBatchRevealRequest( request, wikiUrl, retryOnTokenMismatch ) {
 	if ( retryOnTokenMismatch === undefined ) {
 		// Default value for the argument is true.
 		retryOnTokenMismatch = true;
 	}
 
-	// De-duplicate requests using the same request parameters.
-	const serialized = JSON.stringify( request );
+	// De-duplicate requests to the same wiki using the same request parameters.
+	const serialized = JSON.stringify( { url: wikiUrl, request: request } );
 	if ( Object.prototype.hasOwnProperty.call( requests, serialized ) ) {
 		return requests[ serialized ];
 	}
 
-	const requestPromise = performBatchRevealRequestInternal( request, retryOnTokenMismatch )
+	const requestPromise = performBatchRevealRequestInternal(
+		request,
+		wikiUrl,
+		retryOnTokenMismatch
+	)
 		.then( ( response ) => {
 			delete requests[ serialized ];
 			return response;
@@ -179,13 +187,22 @@ function performBatchRevealRequest( request, retryOnTokenMismatch ) {
 
 /**
  * @param {BatchRevealRequest} request
+ * @param {string|undefined} wikiUrl The URL pattern for an external wiki in the format
+ *  returned by PHP's Site::getPath, or undefined if querying the local wiki
  * @param {boolean} retryOnTokenMismatch
  * @return {Promise}
  */
-function performBatchRevealRequestInternal( request, retryOnTokenMismatch ) {
-	const restApi = new mw.Rest();
-	const api = new mw.Api();
+function performBatchRevealRequestInternal( request, wikiUrl, retryOnTokenMismatch ) {
 	const deferred = $.Deferred();
+
+	let api, restApi;
+	if ( wikiUrl ) {
+		api = new mw.ForeignApi( wikiUrl.replace( '$1', 'api.php' ) );
+		restApi = new mw.ForeignRest( wikiUrl.replace( '$1', 'rest.php' ), api );
+	} else {
+		api = new mw.Api();
+		restApi = new mw.Rest();
+	}
 
 	api.getToken( 'csrf' ).then( ( token ) => {
 		restApi.post( '/checkuser/v0/batch-temporaryaccount', { token: token, users: request } ).then(
@@ -196,7 +213,7 @@ function performBatchRevealRequestInternal( request, retryOnTokenMismatch ) {
 				if ( retryOnTokenMismatch && isBadTokenError( errObject ) ) {
 					// The CSRF token has expired. Retry the POST with a new token.
 					api.badToken( 'csrf' );
-					performBatchRevealRequestInternal( request, false ).then(
+					performBatchRevealRequestInternal( request, wikiUrl, false ).then(
 						( data ) => {
 							deferred.resolve( data );
 						},

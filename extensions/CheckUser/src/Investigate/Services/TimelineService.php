@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Investigate\Services;
+namespace MediaWiki\Extension\CheckUser\Investigate\Services;
 
 use LogicException;
 use Wikimedia\IPUtils;
@@ -28,7 +28,7 @@ class TimelineService extends ChangeService {
 	): array {
 		// Split the targets into users and IP addresses, so that two queries can be made (one for the users and one
 		// for the IPs) and then unioned together.
-		$ipTargets = array_filter( $targets, [ IPUtils::class, 'isIPAddress' ] );
+		$ipTargets = array_filter( $targets, IPUtils::isIPAddress( ... ) );
 		$userTargets = array_diff( $targets, $ipTargets );
 
 		$dbr = $this->dbProvider->getReplicaDatabase();
@@ -41,7 +41,12 @@ class TimelineService extends ChangeService {
 			// query will not be run.
 			if ( count( $ipTargets ) ) {
 				$ipTargetsQuery = $this->getQueryBuilderForTable(
-					$table, $ipTargets, true, $excludeTargets, $start, $limit
+					$table,
+					$ipTargets,
+					true,
+					$excludeTargets,
+					$start,
+					$limit
 				);
 				if ( $ipTargetsQuery !== null ) {
 					if ( $excludeTempAccounts ) {
@@ -62,7 +67,12 @@ class TimelineService extends ChangeService {
 					$userTargets;
 
 				$userTargetsQuery = $this->getQueryBuilderForTable(
-					$table, $newUserTargets, false, $excludeTargets, $start, $limit
+					$table,
+					$newUserTargets,
+					false,
+					$excludeTargets,
+					$start,
+					$limit
 				);
 				if ( $userTargetsQuery !== null ) {
 					$unionQueryBuilder->add( $userTargetsQuery );
@@ -99,9 +109,10 @@ class TimelineService extends ChangeService {
 		return [
 			'tables' => [ 'a' => new Subquery( $derivedTable ) ],
 			'fields' => [
-				'namespace', 'title', 'timestamp', 'page_id', 'ip', 'xff', 'agent', 'id', 'user', 'user_text', 'actor',
-				'comment_text', 'comment_data', 'type', 'this_oldid', 'last_oldid', 'minor',
-				'log_type', 'log_action', 'log_params', 'log_deleted', 'log_id',
+				'namespace', 'title', 'timestamp', 'page_id', 'ip_hex', 'xff', 'agent', 'id',
+				'user', 'user_text', 'actor', 'comment_text', 'comment_data', 'type',
+				'this_oldid', 'last_oldid', 'minor', 'log_type', 'log_action', 'log_params',
+				'log_deleted', 'log_id',
 			],
 		];
 	}
@@ -112,7 +123,7 @@ class TimelineService extends ChangeService {
 			'title' => $this->castValueToType( 'Null', 'text' ),
 			'timestamp' => $this->castValueToType( 'Null', 'timestampz' ),
 			'page_id' => $this->castValueToType( 'Null', 'int' ),
-			'ip' => $this->castValueToType( 'Null', 'varchar' ),
+			'ip_hex' => $this->castValueToType( 'Null', 'varchar' ),
 			'xff' => $this->castValueToType( 'Null', 'text' ),
 			'agent' => $this->castValueToType( 'Null', 'text' ),
 			'id' => $this->castValueToType( 'Null', 'int' ),
@@ -157,7 +168,12 @@ class TimelineService extends ChangeService {
 	 *    be generated.
 	 */
 	private function getQueryBuilderForTable(
-		string $table, array $targets, bool $targetsAreIPs, array $excludeTargets, string $start, int $limit
+		string $table,
+		array $targets,
+		bool $targetsAreIPs,
+		array $excludeTargets,
+		string $start,
+		int $limit
 	): ?SelectQueryBuilder {
 		// Get the query builder for the table which has all table-specific information added but needs the
 		// table non-specific information added.
@@ -215,7 +231,7 @@ class TimelineService extends ChangeService {
 		// Common fields for all queries
 		$fields = [
 			'namespace' => 'cuc_namespace', 'title' => 'cuc_title', 'timestamp' => 'cuc_timestamp',
-			'page_id' => 'cuc_page_id', 'ip' => 'cuc_ip', 'xff' => 'cuc_xff', 'agent' => 'cuc_agent',
+			'page_id' => 'cuc_page_id', 'ip_hex' => 'cuc_ip_hex', 'xff' => 'cuc_xff', 'agent' => 'cuua_text',
 			'id' => 'cuc_id', 'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cuc_actor',
 			'comment_text', 'comment_data', 'type' => 'cuc_type',
 		];
@@ -233,6 +249,7 @@ class TimelineService extends ChangeService {
 			->from( 'cu_changes' )
 			->join( 'actor', null, 'actor_id=cuc_actor' )
 			->join( 'comment', null, 'comment_id=cuc_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cuc_agent_id' )
 			->where( $targetsExpr )
 			->caller( __METHOD__ );
 		if ( $dbr->unionSupportsOrderAndLimit() ) {
@@ -262,7 +279,7 @@ class TimelineService extends ChangeService {
 		// Common fields for all queries
 		$fields = [
 			'namespace' => 'log_namespace', 'title' => 'log_title', 'timestamp' => 'cule_timestamp',
-			'page_id' => 'log_page', 'ip' => 'cule_ip', 'xff' => 'cule_xff', 'agent' => 'cule_agent',
+			'page_id' => 'log_page', 'ip_hex' => 'cule_ip_hex', 'xff' => 'cule_xff', 'agent' => 'cuua_text',
 			'id' => 'cule_id', 'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cule_actor',
 			'comment_text', 'comment_data', 'type' => $this->castValueToType( (string)RC_LOG, 'smallint' ),
 		];
@@ -281,6 +298,7 @@ class TimelineService extends ChangeService {
 			->join( 'actor', null, 'actor_id=cule_actor' )
 			->join( 'logging', null, 'log_id=cule_log_id' )
 			->join( 'comment', null, 'comment_id=log_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cule_agent_id' )
 			->where( $targetsExpr )
 			->caller( __METHOD__ );
 		if ( $dbr->unionSupportsOrderAndLimit() ) {
@@ -299,7 +317,8 @@ class TimelineService extends ChangeService {
 	 *   could be generated.
 	 */
 	private function getPartialQueryBuilderForCuPrivateEvent(
-		array $targets, bool $targetsAreIPs
+		array $targets,
+		bool $targetsAreIPs
 	): ?SelectQueryBuilder {
 		$targetsExpr = $this->buildTargetExprMultiple( $targets, self::PRIVATE_LOG_EVENT_TABLE );
 		// Don't run the query if no targets are valid.
@@ -313,7 +332,7 @@ class TimelineService extends ChangeService {
 		// Common fields for all queries
 		$fields = [
 			'namespace' => 'cupe_namespace', 'title' => 'cupe_title', 'timestamp' => 'cupe_timestamp',
-			'page_id' => 'cupe_page', 'ip' => 'cupe_ip', 'xff' => 'cupe_xff', 'agent' => 'cupe_agent',
+			'page_id' => 'cupe_page', 'ip_hex' => 'cupe_ip_hex', 'xff' => 'cupe_xff', 'agent' => 'cuua_text',
 			'id' => 'cupe_id', 'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cupe_actor',
 			'comment_text', 'comment_data', 'type' => $this->castValueToType( (string)RC_LOG, 'smallint' ),
 		];
@@ -334,6 +353,7 @@ class TimelineService extends ChangeService {
 			->select( $fields )
 			->from( 'cu_private_event' )
 			->join( 'comment', null, 'comment_id=cupe_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cupe_agent_id' )
 			->where( $targetsExpr )
 			->caller( __METHOD__ );
 		if ( $targetsAreIPs ) {

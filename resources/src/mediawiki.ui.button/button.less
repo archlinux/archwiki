@@ -1,6 +1,6 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
-@import 'mediawiki.ui/mixins.buttons.less';
+@import 'mixins.button.less';
 
 /* stylelint-disable selector-class-pattern */
 
@@ -58,24 +58,8 @@
 	}
 
 	&.mw-ui-icon-element {
-		&:not( .mw-ui-icon-with-label-desktop ) {
-			/* stylelint-disable-next-line declaration-no-important */
-			color: transparent !important;
-
-			span:not( .mw-ui-icon ) {
-				.mixin-screen-reader-text();
-			}
-		}
-
-		@media all and ( max-width: @max-width-breakpoint-tablet ) {
-			span:not( .mw-ui-icon ) {
-				.mixin-screen-reader-text();
-			}
-
-			&.mw-ui-icon-with-label-desktop {
-				/* stylelint-disable-next-line declaration-no-important */
-				color: transparent !important;
-			}
+		span:not( .mw-ui-icon ) {
+			.mixin-screen-reader-text();
 		}
 	}
 

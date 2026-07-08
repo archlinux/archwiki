@@ -9,6 +9,7 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\Config;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\Hook\LinksUpdateCompleteHook;
 use MediaWiki\Deferred\LinksUpdate\LinksTable;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
 use MediaWiki\Extension\Notifications\Controller\ModerationController;
@@ -20,14 +21,7 @@ use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Notifications\UserRightsNotification;
 use MediaWiki\Extension\Notifications\Push\Api\ApiEchoPushSubscriptions;
-use MediaWiki\Hook\EmailUserCompleteHook;
-use MediaWiki\Hook\GetNewMessagesAlertHook;
-use MediaWiki\Hook\LinksUpdateCompleteHook;
-use MediaWiki\Hook\LoginFormValidErrorMessagesHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
-use MediaWiki\Hook\RecentChange_saveHook;
-use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
-use MediaWiki\Hook\SpecialMuteModifyFormFieldsHook;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HTMLForm\Field\HTMLCheckMatrix;
 use MediaWiki\Language\Language;
@@ -37,6 +31,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Notification\NotificationService;
 use MediaWiki\Notification\RecipientSet;
+use MediaWiki\Notification\Types\WikiNotification;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\Hook\OutputPageCheckLastModifiedHook;
 use MediaWiki\Output\OutputPage;
@@ -47,6 +42,7 @@ use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Preferences\MultiTitleFilter;
 use MediaWiki\Preferences\MultiUsernameFilter;
+use MediaWiki\RecentChanges\Hook\RecentChange_saveHook;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
@@ -54,9 +50,14 @@ use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Skin\Hook\GetNewMessagesAlertHook;
+use MediaWiki\Skin\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\EmailUserCompleteHook;
+use MediaWiki\Specials\Hook\LoginFormValidErrorMessagesHook;
+use MediaWiki\Specials\Hook\SpecialMuteModifyFormFieldsHook;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\CentralId\CentralIdLookup;
@@ -120,6 +121,7 @@ class Hooks implements
 		private readonly UserEditTracker $userEditTracker,
 		private readonly UserFactory $userFactory,
 		private readonly UserOptionsManager $userOptionsManager,
+		private readonly ?MobileContext $mobileContext,
 	) {
 		$this->statsFactory = $statsFactory->withComponent( 'Echo' );
 	}
@@ -504,7 +506,7 @@ class Hooks implements
 				// * prefs-mutedpageslist
 				'section' => 'echo/mutedpageslist',
 				'showMissing' => false,
-				'excludeDynamicNamespaces' => true,
+				'creatable' => true,
 				'filter' => new MultiTitleFilter(),
 			];
 		}
@@ -534,17 +536,12 @@ class Hooks implements
 	 * @param UserIdentity $userId user that was changed
 	 * @param string[] $add strings corresponding to groups added
 	 * @param string[] $remove strings corresponding to groups removed
-	 * @param User|bool $performer
+	 * @param User|bool $performer User who performed the change, or false for automatic changes
 	 * @param string|bool $reason Reason given by the user changing the rights
 	 * @param array $oldUGMs
 	 * @param array $newUGMs
 	 */
 	public function onUserGroupsChanged( $userId, $add, $remove, $performer, $reason, $oldUGMs, $newUGMs ) {
-		if ( !$performer ) {
-			// TODO: Implement support for autopromotion
-			return;
-		}
-
 		if ( $userId->getWikiId() !== WikiAwareEntity::LOCAL ) {
 			// TODO: Support external users
 			return;
@@ -552,8 +549,38 @@ class Hooks implements
 
 		$user = $this->userFactory->newFromUserIdentity( $userId );
 
+		// Automatic changes (e.g. expiry) have no performer
+		if ( !$performer ) {
+			if ( $remove ) {
+				$systemUser = self::getSystemUser();
+				if ( !$systemUser ) {
+					// loading the system user can fail in readOnly mode. skip the
+					// Echo side-effect rather than breaking the rights expiry flow
+					return;
+				}
+
+				$notification = new WikiNotification(
+					'user-rights',
+					$user->getUserPage(),
+					$systemUser,
+					[
+						'user' => $user->getId(),
+						'remove' => $remove,
+						'automatic' => true,
+					]
+				);
+
+				$this->notificationService->notify(
+					$notification,
+					new RecipientSet( [ $user ] )
+				);
+			}
+
+			return;
+		}
+
+		// Don't notify for self changes
 		if ( $user->equals( $performer ) ) {
-			// Don't notify for self changes
 			return;
 		}
 
@@ -821,9 +848,7 @@ class Hooks implements
 		// Add notifications items to personal URLs
 		// (On mobile, they're combined into one for reasons lost to mists of time)
 		// TODO: Make this a skin option (T299229), and remove other Minerva special-cases below.
-		$isMobile = ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
-			// @phan-suppress-next-line PhanUndeclaredClassMethod
-			MobileContext::singleton()->shouldDisplayMobileView();
+		$isMobile = $this->mobileContext && $this->mobileContext->shouldDisplayMobileView();
 		$sections = $skinName === 'minerva' && $isMobile
 			? [ AttributeManager::ALL ]
 			: [ AttributeManager::ALERT, AttributeManager::MESSAGE ];
@@ -1327,6 +1352,21 @@ class Hooks implements
 				ApiEchoPushSubscriptions::class
 			);
 		}
+	}
+
+	/**
+	 * Get the system user for automated notifications.
+	 * @return User|null Null if the system user could not be loaded (e.g. in read-only mode)
+	 */
+	private static function getSystemUser(): ?User {
+		static $systemUser = null;
+		if ( $systemUser === null ) {
+			$systemUser = User::newSystemUser(
+				User::MAINTENANCE_SCRIPT_USER,
+				[ 'steal' => true ]
+			) ?: null;
+		}
+		return $systemUser;
 	}
 
 	/**

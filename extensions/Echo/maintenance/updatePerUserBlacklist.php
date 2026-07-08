@@ -7,6 +7,7 @@
 
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 
 // @codeCoverageIgnoreStart
 require_once getenv( 'MW_INSTALL_PATH' ) !== false

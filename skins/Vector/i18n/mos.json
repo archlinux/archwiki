@@ -51,9 +51,6 @@
 	"vector-toc-label": "Sõng sẽn be pʋgẽ",
 	"vector-toc-beginning": "Sɩngr",
 	"vector-toc-toggle-button-label": "Yãk-y n tool-y neda $1",
-	"vector-anon-user-menu-pages": "Pags nins sẽn yaa seb-gʋlsdb sẽn yi b loogrã yĩnga",
-	"vector-anon-user-menu-pages-learn": "bãng bũmb wʋsg",
-	"vector-anon-user-menu-pages-label": "Bao n bãng bũmb wʋsg sẽn wilgd tɩ b tõe n sak n tall yam n tall n tall n maandẽ",
 	"vector-main-menu-tooltip": "Manusẽ wã",
 	"vector-toc-menu-tooltip": "Sõsg ning sẽn be Biiblã pʋgẽ wã",
 	"vector-toc-collapsible-button-label": "Yãk- y taabl-kãsengã",
@@ -73,7 +70,5 @@
 	"vector-toc-unpinned-popup": "B kɩtame tɩ b tall seb-kãngã n kẽng be.",
 	"vector-page-tools-unpinned-popup": "B kɩtame tɩ b yãk rɩɩb sẽn yaa kãseng n yɩɩd fãa.",
 	"vector-main-menu-unpinned-popup": "B kɩtame tɩ b yãk rɩɩb sẽn yaa kãseng n yɩɩd fãa.",
-	"vector-appearance-unpinned-popup": "B sẽn yã wã, b leb n kẽnga be.",
-	"vector-2022-beta-preview-label": "Sõng-y n bãng-y y sẽn tõe n paam n karem bũmb ninsã (vector 2022)",
-	"vector-2022-beta-preview-description": "Bao n bãnge, n bãnge la b bãnge, la b bãng b sẽn tõe n karem to-to wã."
+	"vector-appearance-unpinned-popup": "B sẽn yã wã, b leb n kẽnga be."
 }

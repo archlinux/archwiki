@@ -4,11 +4,13 @@
 			"Papuass"
 		]
 	},
+	"editchecks": "Labošanas pārbaudes",
 	"editcheck-dialog-action-no": "Nē",
 	"editcheck-dialog-action-yes": "Jā",
 	"editcheck-dialog-action-recheck": "Pārbaudīt vēlreiz",
 	"editcheck-dialog-action-back": "Atpakaļ",
 	"editcheck-dialog-action-submit": "Iesniegt",
+	"editcheck-dialog-toggle": "Pārslēgt redzamību",
 	"editcheck-dialog-addref-description": "Palīdzi lasītājiem saprast, no kurienes nāk šī informācija, pievienojot atsauci.",
 	"editcheck-dialog-addref-reject-question": "Kāpēc tu nepievienoji atsauci?",
 	"editcheck-dialog-addref-reject-description": "Citi redaktori vēlētos uzzināt vairāk par tavu lēmumu noraidīt atsauci.",
@@ -23,5 +25,12 @@
 	"editcheck-copyvio-prompt": "Vai tu uzrakstīji šo tekstu?",
 	"editcheck-copyvio-action-keep": "Jā, paturēt to",
 	"editcheck-copyvio-action-remove": "Nē, noņemt to",
-	"editcheck-review-title": "Pārskatīt izmaiņas"
+	"editcheck-action-convert-reference": "Pārveidot",
+	"editcheck-review-title": "Pārskatīt izmaiņas",
+	"editcheck-specialeditchecks-col-title": "Nosaukums",
+	"editcheck-specialeditchecks-col-name": "Vārds",
+	"editcheck-specialeditchecks-col-appearance": "Izskats",
+	"editcheck-specialeditchecks-abtest": "(A/B tests)",
+	"editcheck-specialeditchecks-config-summary": "Konfigurācija",
+	"editcheck-specialeditchecks-config-default": "Noklusējuma konfigurācija"
 }

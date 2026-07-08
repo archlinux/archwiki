@@ -9,10 +9,10 @@
 			"Mikalai Udodau",
 			"No Sleep till Krupki",
 			"Tomato Cream",
+			"Ucukor",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
-			"Чаховіч Уладзіслаў",
-			"Ucukor"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"echo-desc": "Сістэма апавяшчэння ўдзельнікаў пра падзеі і паведамленні",
@@ -179,7 +179,7 @@
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} тысячную праўку; дзякуй {{GENDER:$2|Вам}} за вялікі ўнёсак!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} дзесяцітысячную праўку; велізарны {{GENDER:$2|Вам}} дзякуй!",
 	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} статысячную праўку; дзякуй {{GENDER:$2|Вам}} за цудоўны ўнёсак!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} мільённую праўку; дзякуй {{GENDER:$2|Вам}} за неверагодны ўнёсак!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} мільённую праўку; дзякуй {{GENDER:$2|Вам}} за неймаверны ўнёсак!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Вы}} толькі што зрабілі {{GENDER:$2|сваю}} дзесяцімільённую праўку; дзякуй {{GENDER:$2|вам}} за цудоўны ўнёсак!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Ваша}} праўка",
 	"notification-link-text-view-edit": "Прагляд праўкі",

@@ -2,10 +2,20 @@ const extensionAssetsPath = mw.config.get( 'wgExtensionAssetsPath' );
 window.MathJax = {
 	loader: {
 		// see https://docs.mathjax.org/en/latest/input/mathml.html
-		load: [ '[mml]/mml3' ],
+		load: [
+			// allow MathML input
+			'input/mml',
+			// render only when visible
+			'ui/lazy',
+			// output as SVG to look like the mathoid output
+			'output/svg',
+			// somehow a bug?
+			'output/chtml'
+		],
 		// see https://docs.mathjax.org/en/latest/options/startup/loader.html
 		paths: {
-			mathjax: extensionAssetsPath + '/Math/modules/mathjax/es5'
+			mathjax: extensionAssetsPath + '/Math/modules/mathjax',
+			fonts: extensionAssetsPath + '/Math/modules'
 		}
 	},
 	// helper function for https://phabricator.wikimedia.org/T375932
@@ -23,71 +33,108 @@ window.MathJax = {
 			data1[ 3 ] = Object.assign( {}, data2[ 3 ], { f: font, c: String.fromCharCode( 0x41 + i ) } );
 		}
 	},
-
-	startup: {
-		ready() {
-			window.MathJax.startup.defaultReady();
-			// See https://phabricator.wikimedia.org/T375932 and the suggested fix from
-			// https://github.com/mathjax/MathJax/issues/3292#issuecomment-2383760829
-			// Makes rendering of \matcal look similar to the browsers MathML rendering
-			// and the old image rendering.
-			// Note that \mathsrc (which is unsupported by texvc) would map to the
-			// same unicode chars and thus should not be activated.
-			const variant = window.MathJax.startup.document.outputJax.font.variant;
-			const map = { 1: 0x212C, 4: 0x2130, 5: 0x2131, 7: 0x210B, 8: 0x2110, 11: 0x2112, 12: 0x2133, 17: 0x211B };
-			window.MathJax.config.remapChars( variant.normal, variant[ '-tex-calligraphic' ], 0x1D49C, map, 'C' );
-			window.MathJax.config.remapChars( variant.normal, variant[ '-tex-bold-calligraphic' ], 0x1D4D0, {}, 'CB' );
-			// See https://phabricator.wikimedia.org/T375241 and the suggested startup function from
-			// https://github.com/mathjax/MathJax/issues/3030#issuecomment-1490520850
-			// This workaround will be included in the MathJax 4 release and no longer be
-			// required when we upgrade to MathJax 4.
-			const { Mml3 } = window.MathJax._.input.mathml.mml3.mml3;
-			const mml3 = new Mml3( window.MathJax.startup.document );
-			const adaptor = window.MathJax.startup.document.adaptor;
-			const processor = new XSLTProcessor();
-			const parsed = adaptor.parse( Mml3.XSLT, 'text/xml' );
-			processor.importStylesheet( parsed );
-			mml3.transform = ( node ) => {
-				// MathJax does not support a-tags but it supports href attributes in math elements
-				[].forEach.call( document.querySelectorAll( 'mi a, mo a, mtext a' ), ( aTag ) => {
-					const parentElement = aTag.parentElement;
-					if ( aTag.hasAttribute( 'href' ) ) {
-						parentElement.setAttribute( 'href', aTag.getAttribute( 'href' ) );
-						parentElement.setAttribute( 'title', aTag.getAttribute( 'title' ) );
-					}
-					parentElement.textContent = aTag.textContent;
-				} );
-				[].forEach.call( document.querySelectorAll( 'mtd' ), ( mtd ) => {
-					const classList = mtd.classList;
-					for ( const side of [ 'l', 'r' ] ) {
-						const key = 'mwe-math-columnalign-' + side;
-						if ( classList.contains( key ) ) {
-							mtd.setAttribute( 'columnalign', { l: 'left', r: 'right' }[ side ] );
-							classList.remove( key );
-							break;
+	mml: {
+		// allow links
+		allowHtmlInTokenNodes: true,
+		mmlFilters: [
+			// from https://github.com/mathjax/MathJax/issues/3540
+			( { data } ) => {
+				const mtables = data.querySelectorAll( 'mtable.mwe-math-smallmatrix' );
+				for ( const mtable of Array.from( mtables ) ) {
+					mtable.setAttribute( 'data-mjx-smallmatrix', 'true' );
+					mtable.setAttribute( 'rowspacing', '.2em' );
+					mtable.setAttribute( 'columnspacing', '0.333em' );
+					const mstyle = document.createElementNS( 'http://www.w3.org/1998/Math/MathML', 'mstyle' );
+					mstyle.setAttribute( 'scriptlevel', '1' );
+					mtable.replaceWith( mstyle );
+					mstyle.appendChild( mtable );
+				}
+			}
+		],
+		postFilters: [
+			( { data } ) => {
+				data.walkTree( ( node ) => {
+					if ( node.isKind( 'mtd' ) && node.attributes.isSet( 'class' ) ) {
+						for ( const side of [ 'l', 'r' ] ) {
+							const key = 'mwe-math-columnalign-' + side;
+							const classes = node.attributes.get( 'class' ).split( /\s+/ );
+							if ( classes.includes( key ) ) {
+								classes.splice( classes.indexOf( key ), 1 );
+								if ( classes.length ) {
+									node.attributes.set( 'class', classes.join( '' ) );
+								} else {
+									node.attributes.unset( 'class' );
+								}
+								node.attributes.set( 'columnalign', { l: 'left', r: 'right' }[ side ] );
+								break;
+							}
 						}
 					}
 				} );
-				const div = adaptor.node( 'div', {}, [ adaptor.clone( node ) ] );
-				const dom = adaptor.parse( adaptor.serializeXML( div ), 'text/xml' );
-				const mml = processor.transformToDocument( dom );
-				return ( mml ? adaptor.tags( mml, 'math' )[ 0 ] : node );
+			}
+		]
+	},
+	startup: {
+		// MathJax creates anchor tags from MathML elements with href attributes.
+		// But it does not add the title attributes from these elements
+		// that we need for the extension Popups
+		ready() {
+			const { MML } = window.MathJax._.core.MmlTree.MML;
+			MML.a = MML.mrow;
+			const { ChtmlWrapper } = window.MathJax._.output.chtml.Wrapper;
+			ChtmlWrapper.prototype.handleHref = function ( parents ) {
+				if ( !this.node.attributes.hasExplicit( 'href' ) ) {
+					return parents;
+				}
+				const attrs = { href: this.node.attributes.get( 'href' ) };
+				if ( this.node.attributes.hasExplicit( 'title' ) ) {
+					attrs.title = this.node.attributes.get( 'title' );
+				}
+				return parents.map(
+					( parent ) => this.adaptor.append( parent, this.html( 'a', attrs ) )
+				);
 			};
-			// inputJax[0] did not work as per https://github.com/mathjax/MathJax/issues/3287#issuecomment-2363843017
-			const MML = window.MathJax.startup.document.inputJax[ 1 ];
-			MML.mmlFilters.items.pop(); // remove old filter
-			MML.mmlFilters.add( mml3.mmlFilter.bind( mml3 ) );
-			// Add title attribute for popups
-			window.MathJax.typesetPromise().then( () => {
-				[].forEach.call( document.querySelectorAll( 'a [title]' ), ( ( child ) => {
-					const parentAnchor = child.closest( 'a' );
-					const title = child.getAttribute( 'title' );
-					if ( parentAnchor && title ) {
-						parentAnchor.setAttribute( 'title', title );
-						child.removeAttribute( 'title' );
+			const { FindMathML } = window.MathJax._.input.mathml.FindMathML;
+			const { combineDefaults } = window.MathJax._.components.global;
+			// from https://github.com/mathjax/MathJax/issues/2770#issuecomment-920428602
+			class MyFindMathML extends FindMathML {
+				processMath( set ) {
+					const adaptor = this.adaptor;
+					for ( const node of set.values() ) {
+						if ( adaptor.hasClass( node, 'mathjax_ignore' ) ) {
+							set.delete( node );
+						}
 					}
-				} ) );
+					return super.processMath( set );
+				}
+			}
+			combineDefaults( window.MathJax.config, 'mml', { FindMathML: new MyFindMathML() } );
+			window.MathJax.startup.defaultReady();
+		},
+		// See https://phabricator.wikimedia.org/T375932 and the suggested fix from
+		// https://github.com/mathjax/MathJax/issues/3292#issuecomment-3487698042
+		// Makes rendering of \matcal look similar to the browsers MathML rendering
+		// and the old image rendering.
+		// Note that \mathsrc (which is unsupported by texvc) would map to the
+		// same unicode chars and thus should not be activated.
+		pageReady() {
+			const font = window.MathJax.startup.document.outputJax.font;
+			Object.assign( font, {
+				fontLoadDynamicFile: font.loadDynamicFile,
+				async loadDynamicFile( dynamic ) {
+					await this.fontLoadDynamicFile( dynamic );
+					if ( dynamic.file === 'script' ) {
+						await this.fontLoadDynamicFile( this.constructor.dynamicFiles.calligraphic );
+						const variant = font.variant;
+						const map = { 1: 0x212C, 4: 0x2130, 5: 0x2131, 7: 0x210B, 8: 0x2110, 11: 0x2112, 12: 0x2133, 17: 0x211B };
+						window.MathJax.config.remapChars( variant.normal, variant[ '-tex-calligraphic' ], 0x1D49C, map, 'C' );
+						window.MathJax.config.remapChars( variant.normal, variant[ '-tex-bold-calligraphic' ], 0x1D4D0, {}, 'CB' );
+					}
+				}
 			} );
-		}
+			return window.MathJax.startup.defaultPageReady().then( () => {
+			} );
+		},
+		output: 'svg'
 	}
 };

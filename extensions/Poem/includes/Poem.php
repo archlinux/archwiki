@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Poem;
 
-use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\Sanitizer;

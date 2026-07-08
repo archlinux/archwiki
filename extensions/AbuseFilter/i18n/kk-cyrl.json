@@ -6,10 +6,10 @@
 			"Casserium",
 			"GaiJin",
 			"Hedeyohu22",
+			"Moonborn",
 			"U.ayaao.p",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең",
-			"Moonborn"
+			"СеніңШешең"
 		]
 	},
 	"abusefilter": "Бұзақылықты сүзгілеуді басқару",
@@ -221,7 +221,7 @@
 	"abusefilter-edit-builder-group-misc": "Әртүрлі",
 	"abusefilter-edit-builder-group-funcs": "Функциялар",
 	"abusefilter-edit-builder-group-vars": "Айнымалылар",
-	"abusefilter-edit-builder-vars-accountname": "Тіркелім аты (аккаунт тіркеу кезінде)",
+	"abusefilter-edit-builder-vars-account-name": "Тіркелім аты (аккаунт тіркеу кезінде)",
 	"abusefilter-edit-builder-vars-action": "Әрекет",
 	"abusefilter-edit-builder-vars-addedlines": "Өңдемеде жолдарды қосуы",
 	"abusefilter-edit-builder-vars-delta": "Өңдеменің өзгеріс мөлшері",

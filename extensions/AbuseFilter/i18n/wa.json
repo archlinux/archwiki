@@ -50,7 +50,7 @@
 	"abusefilter-edit-builder-funcs-substr": "Dizo-tchinne (substr)",
 	"abusefilter-edit-builder-group-vars": "Variåves",
 	"abusefilter-edit-builder-vars-timestamp": "Date Unix do candjmint",
-	"abusefilter-edit-builder-vars-accountname": "No d' elodjaedje (å moumint d' l' edjîstraedje)",
+	"abusefilter-edit-builder-vars-account-name": "No d' elodjaedje (å moumint d' l' edjîstraedje)",
 	"abusefilter-edit-builder-vars-action": "Accion",
 	"abusefilter-edit-builder-vars-addedlines": "Royes radjoutêyes avou l' candjmint",
 	"abusefilter-edit-builder-vars-delta": "Diferince di grandeu avou l' candjmint",

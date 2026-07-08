@@ -6,6 +6,6 @@ API and associated scaffolding classes (see https://phabricator.wikimedia.org/T2
 https://gerrit.wikimedia.org/r/#/c/mediawiki/skins/Vector/+/572323/). This document aims to list
 the steps required to get from this system to something as powerful as Piotr's.
 
-1. Consider supporing memoization of those requirements (see https://gerrit.wikimedia.org/r/#/c/mediawiki/skins/Vector/+/573626/7/includes/FeatureManagement/FeatureManager.php@68)
+1. Consider supporting memoization of those requirements (see https://gerrit.wikimedia.org/r/#/c/mediawiki/skins/Vector/+/573626/7/includes/FeatureManagement/FeatureManager.php@68)
 2. Add support for getting all requirements
 3. Add support for getting all features enabled when a requirement is enabled/disabled

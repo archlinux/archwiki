@@ -2,30 +2,26 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
+use MediaWiki\Actions\Hook\HistoryPageToolLinksHook;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
+use MediaWiki\Linker\Hook\HtmlPageLinkRendererEndHook;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Skin\Hook\UndeletePageToolLinksHook;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\ContributionsToolLinksHook;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use Wikimedia\IPUtils;
 
 class ToolLinksHandler implements
-	\MediaWiki\Hook\ContributionsToolLinksHook,
-	\MediaWiki\Hook\HistoryPageToolLinksHook,
-	\MediaWiki\Hook\UndeletePageToolLinksHook
+	ContributionsToolLinksHook,
+	HistoryPageToolLinksHook,
+	UndeletePageToolLinksHook,
+	HtmlPageLinkRendererEndHook
 {
-
-	/** @var AbuseFilterPermissionManager */
-	private $afPermManager;
-
-	/**
-	 * ToolLinksHandler constructor.
-	 */
-	public function __construct( AbuseFilterPermissionManager $afPermManager ) {
-		$this->afPermManager = $afPermManager;
+	public function __construct( private readonly AbuseFilterPermissionManager $afPermManager ) {
 	}
 
 	/**
@@ -36,9 +32,8 @@ class ToolLinksHandler implements
 	 */
 	public function onContributionsToolLinks( $id, Title $nt, array &$tools, SpecialPage $sp ) {
 		$username = $nt->getText();
-		if ( $this->afPermManager->canViewAbuseLog( $sp->getAuthority() )
-			&& !IPUtils::isValidRange( $username )
-		) {
+
+		if ( $this->afPermManager->canViewAbuseLog( $sp->getAuthority() ) ) {
 			$linkRenderer = $sp->getLinkRenderer();
 			$tools['abuselog'] = $linkRenderer->makeLink(
 				$this->getSpecialPageTitle(),
@@ -95,4 +90,16 @@ class ToolLinksHandler implements
 			? new TitleValue( NS_SPECIAL, SpecialAbuseLog::PAGE_NAME )
 			: SpecialPage::getTitleFor( SpecialAbuseLog::PAGE_NAME );
 	}
+
+	/** @inheritDoc */
+	public function onHtmlPageLinkRendererEnd( $linkRenderer, $target, $isKnown, &$text, &$attribs, &$ret ) {
+		if ( str_contains( $attribs['class'], 'mw-abusefilter-log-missinguserlink' ) ) {
+			$attribs['title'] = wfMessage(
+				'abusefilter-log-missinguserlink-title',
+				Title::newFromLinkTarget( $target )->getPrefixedText()
+			)->inUserLanguage()->text();
+		}
+		return true;
+	}
+
 }

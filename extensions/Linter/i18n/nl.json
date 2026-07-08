@@ -14,11 +14,12 @@
 			"Patio",
 			"Robin van der Vliet",
 			"Romaine",
-			"Sjoerddebruin",
-			"Siebrand"
+			"Siebrand",
+			"Sjoerddebruin"
 		]
 	},
 	"linterrors": "Lintfouten",
+	"linttemplateerrors": "Transclusies die lintfouten bevatten",
 	"linter-category-bogus-image-options": "Onjuist opgegeven opties mediabestand",
 	"linter-category-bogus-image-options-desc": "Deze pagina's bevatten mediabestanden met onjuist opgegeven opties.",
 	"linter-category-large-tables": "Grote tabellen die moeilijk te bekijken zijn op mobiel",
@@ -29,6 +30,8 @@
 	"linter-category-duplicate-ids-desc": "Deze pagina’s bevatten elementen met dubbele ‘id’-attributen.",
 	"linter-category-empty-heading": "Lege koppen",
 	"linter-category-empty-heading-desc": "Deze pagina’s hebben lege koppen.",
+	"linter-category-template-arg-in-extension-tag": "Uitbreidingstag met sjabloonparameter",
+	"linter-category-template-arg-in-extension-tag-desc": "Deze pagina’s bevatten een tag van een uitbreiding met een sjabloonparameter. Dit kan niet correct in the pagina ingevoegd worden.",
 	"linter-category-fostered": "Misplaatste inhoud",
 	"linter-category-fostered-desc": "Deze pagina's hebben misplaatste inhoud.",
 	"linter-category-fostered-transparent": "Misplaatste onzichtbare inhoud",
@@ -71,6 +74,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Deze pagina's hebben wikikoppelingen in externe koppelingen die kunnen worden opgelost",
 	"linter-desc": "Spoor lint-fouten op met een externe dienst en geef deze weer aan de gebruikers",
 	"linter-lints-prefix-search-page-desc": "Zoeken naar pagina's met lintfouten op voorvoegsel van de paginatitel of volledige titel",
+	"linter-invalid-category": "Categorie niet gevonden of onjuist opgemaakt",
 	"linter-invalid-title": "Naamruimte en/of paginanaam niet gevonden of misvormd",
 	"linter-form-exact-match": "Zoek naar een specifieke paginatitel",
 	"linter-form-prefix-match": "Zoek naar alle pagina's met een gemeenschappelijk titelvoorvoegsel",
@@ -121,10 +125,16 @@
 	"linter-pager-title-header": "Paginatitel",
 	"linter-pager-unclosed-quotes-in-heading-details": "Niet-afgesloten aanhalingsteken dat uit de inhoudsopgave lekt",
 	"linter-pager-wikilink-in-extlink-details": "Koppelingen in koppelingen",
+	"linter-pager-template-arg-in-extension-tag-details": "De naam van de uitbreidingstag die moet worden bijgewerkt (en de sjabloonparameters die erin worden gebruikt)",
 	"linter-prefix-search-subpage": "Pagina's met lintfouten die overeenkomen met het voorvoegsel van de titel of de volledige titel: $1",
 	"linterrors-subpage": "Lintfouten: $1",
 	"linterrors-summary": "<strong>Let op:</strong> De categorietellingen zijn niet exact, maar komen voort uit schattingen.",
 	"multi-part-template-block": "Uitvoer komt niet van een enkel sjabloon",
+	"parser-function": "Uitvoer van een parserfunctie",
 	"pageinfo-linter": "Lintfouten",
-	"pageinfo-linter-moreinfo": "Gedetailleerde informatie bekijken over de lintfouten."
+	"pageinfo-linter-moreinfo": "Gedetailleerde informatie bekijken over de lintfouten.",
+	"category-by-template": "Transclusies die lintfouten bevatten: $1",
+	"category-by-template-view": "Transclusies bekijken die deze lintfouten bevatten.",
+	"category-by-template-desc": "Transclusies van deze pagina's bevatten '''[[Special:LintErrors/$1|$1]]''' lintfouten. ''Merk op dat sommige transclusies in deze lijst kunnen verschijnen vanwege de argumenten die aan de transclusie worden doorgegeven en niet vanwege de broncode van de transclusie.''",
+	"linter-template-errors-index-desc": "Dit zijn lijsten met transclusies van pagina's die lintfouten bevatten. ''Merk op dat sommige transclusies in deze lijsten kunnen voorkomen vanwege de argumenten die aan de transclusie zijn doorgegeven en niet vanwege de bron van de transclusie.''"
 }

@@ -13,14 +13,15 @@
 			"Liuxinyu970226",
 			"Mywood",
 			"PhiLiP",
+			"SaoMikoto",
+			"Saoutax",
 			"Shinjiman",
 			"Stang",
 			"Xiaomingyan",
 			"Xiplus",
 			"Yfdyh000",
 			"铁桶",
-			"阿pp",
-			"SaoMikoto"
+			"阿pp"
 		]
 	},
 	"nuke": "大量删除",
@@ -62,6 +63,7 @@
 	"nuke-delete-more": "[[Special:Nuke|删除更多页面]]",
 	"nuke-deletemore": "删除更多页面",
 	"nuke-pattern": "页面名称的SQL LIKE模式（例如%）：",
+	"nuke-pattern-leading-wildcard": "该模式不能以 <code>%</code> 开头。请在通配符前提供一个前缀（例如使用<code>Example%</code>而不是<code>%Example</code>）。",
 	"nuke-nolist": "要继续，请先“{{int:nuke-submit-list}}”，然后选择要加入队列以供删除的页面。",
 	"nuke-nopages-global": "没有匹配搜索条件的页面。",
 	"nuke-searchnotice-minmorethanmax": "最小字节数超过了最大字节数，因此没有任何页面能够满足此条件。",

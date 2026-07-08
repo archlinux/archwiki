@@ -1,0 +1,104 @@
+{
+	"before": {
+		"name": "cusi_case",
+		"comment": "A table used to store suggested investigations to be shown to a checkuser. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "sic_id",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "sic_status",
+				"comment": "Integer acting as an enum, which represents the status of this case. Open is 0, Closed as resolved is 1, Closed as invalid is 2",
+				"type": "mwtinyint",
+				"options": { "unsigned": true, "notnull": true, "default": 0 }
+			},
+			{
+				"name": "sic_status_reason",
+				"comment": "The reason given for changing sic_status to either closed as resolved (1) or closed as invalid (2).",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "sic_created_timestamp",
+				"comment": "The timestamp representing when the case was created by the system.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "sic_status_created_timestamp_id",
+				"columns": [ "sic_status", "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used for several things. Allows sorting and paging the Codex table by the 'Status' column (the created timestamp and ID are used to ensure unique paging). Also allows the system to find the newest open case given a pre-determined list of sic_id values, so the system can add new users to an existing case."
+			},
+			{
+				"name": "sic_created_timestamp_id",
+				"columns": [ "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used to sort and page cases by their creation timestamp (the ID makes paging consistent in case two cases have the same creation timestamp) for the Codex table on the Special page for Suggested investigations."
+			}
+		],
+		"pk": [ "sic_id" ]
+	},
+	"after": {
+		"name": "cusi_case",
+		"comment": "A table used to store suggested investigations to be shown to a checkuser. Used by the the Suggested investigations feature of the CheckUser extension.",
+		"columns": [
+			{
+				"name": "sic_id",
+				"comment": "Primary key",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true, "autoincrement": true }
+			},
+			{
+				"name": "sic_url_identifier",
+				"comment": "A randomised ID which is used in a hexadecimal format to provide a URL to the case. Using a random number avoids exposing how many cases exist or when the case was created when it is included in a URL.",
+				"type": "integer",
+				"options": { "unsigned": true, "notnull": true, "default": 0 }
+			},
+			{
+				"name": "sic_status",
+				"comment": "Integer acting as an enum, which represents the status of this case. Open is 0, Closed as resolved is 1, Closed as invalid is 2",
+				"type": "mwtinyint",
+				"options": { "unsigned": true, "notnull": true, "default": 0 }
+			},
+			{
+				"name": "sic_status_reason",
+				"comment": "The reason given for changing sic_status to either closed as resolved (1) or closed as invalid (2).",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "sic_created_timestamp",
+				"comment": "The timestamp representing when the case was created by the system.",
+				"type": "mwtimestamp",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "sic_status_created_timestamp_id",
+				"columns": [ "sic_status", "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used for several things. Allows sorting and paging the Codex table by the 'Status' column (the created timestamp and ID are used to ensure unique paging). Also allows the system to find the newest open case given a pre-determined list of sic_id values, so the system can add new users to an existing case."
+			},
+			{
+				"name": "sic_created_timestamp_id",
+				"columns": [ "sic_created_timestamp", "sic_id" ],
+				"unique": true,
+				"comment": "Used to sort and page cases by their creation timestamp (the ID makes paging consistent in case two cases have the same creation timestamp) for the Codex table on the Special page for Suggested investigations."
+			},
+			{
+				"name": "sic_url_identifier",
+				"columns": [ "sic_url_identifier" ],
+				"unique": false,
+				"comment": "Allows searching for cases based on their URL identifier (such as when a user loads the special page for a given case using this identifier). Secondly, allows the system to check if another case already uses a given URL identifier so that a unique URL identifier can be given to a new case. This index will be unique once the value is populated for pre-existing rows."
+			}
+		],
+		"pk": [ "sic_id" ]
+	}
+}

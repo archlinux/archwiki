@@ -1,3 +1,118 @@
+# 2.5.1 / 2026-04-24
+
+## Code
+- useFocusTrap: Don't move focus away from elements inside the anchor (Roan Kattouw)
+
+## Documentation
+- useFocusTrap, docs: Add comment with task number for T424313 (Roan Kattouw)
+
+# 2.5.0 / 2026-04-17
+
+## Features
+- InfoChip, Message: Add new statuses (Derek Torsani)
+- ProgressBar: Add determinate variation with updated styles and guidance (Michelle)
+- Dialog: Update responsive behavior (Derek Torsani)
+- ToggleButton: Add size property (Dillon Hardy)
+- Popover: Add focus trap logic and extract it to reusable composable (Daphne Smit)
+- Popover: Add bottom sheet variant for mobile devices (Daphne Smit)
+- Popover: refactor bottom sheet implementation (Daphne Smit)
+
+## Styles
+- TextInput, ChipInput, styles: update border-radius (Derek Torsani)
+- Tabs: Correct color use in focus:visible state (Derek Torsani)
+- Select: Remove icon and extra padding for multiselect (adarsh2406)
+
+## Tokens
+- token: Update @border-color-progressive (Derek Torsani)
+
+## Code
+- Add numeric type to component demo controls (Michelle)
+- Transform to ES2017 features consistently across the codebase (Volker E.)
+
+## Build
+- build: Update Node version to 20.20.2 in packages, not just .nvmrc (Volker E.)
+- build: upgrade eslint-config-wikimedia and typescript* dependencies (Volker E.)
+- build: Update 'svgo' and 'svglint' dependencies to latest (Volker E.)
+- build: Upgrade stylelint-config-wikimedia and stylelint deps to latest (Volker E.)
+- build: Update npm-shrinkwrap.json for the Node version change to 20.20.2 (Roan Kattouw)
+- nvmrc: Update required Node version from 20.19.5 to 20.20.2 now that CI uses it (James D. Forrester)
+- Jest: Fix test warnings because of props and other issues (Daphne Smit)
+
+## Documentation
+- components: Add more flexible guidance for using icons with actions (Derek Torsani)
+- docs: Make 'notice' type default for Message and InfoChip (Anne Tomasevich)
+- docs: Fix typo in 'data-visualization.md' (Volker E.)
+- InfoChip, Message, docs: Amend guidance on new statuses (Derek Torsani)
+- docs: Use correct MenuButtonWithIcon demo (Volker E.)
+- docs: Fix typos in documentation and Link mixin (Volker E.)
+- docs: Add writing for machine-assisted experiences guidelines (Derek Torsani)
+
+# 2.4.0 / 2026-03-03
+
+## Features
+- Toast: Add Toast component with ToastContainer and useToast (Daphne Smit)
+- Toast: Standardize actionButtonLabel prop name (Anne Tomasevich)
+- TypeaheadSearch: Fix composition event overriding input value (bernardwang)
+- MultiselectLookup: Add support for search query highlighting (Eileen M)
+- Message: change font weight in inline Messages (Derek Torsani)
+- Field: update responsive spacing on Fields (Derek Torsani)
+
+## Tokens
+- Token, Button: Add new token for update default button label color (Derek Torsani)
+
+## Icons
+- icons: Add 'userBlocked' icon (Kosta Harlan)
+
+## Build
+- build: npm quick-build, provide an alias for build:vite in codex workspace (Sergio Gimeno)
+- build: update browserslist-db to v1.0.30001770 (Volker E.)
+
+## Documentation
+- docs: Fix typo in colors.md (Lauralyn Watson)
+
+# 2.3.4 / 2026-01-27
+
+## Features
+- MenuButton: replace internal toggle button with button (Lauralyn Watson)
+
+## Styles
+- Fix semicolon inside @supports condition (Simon Legner)
+
+## Code
+- Table: Span empty state across selection column (Doğu Abaris)
+- TAHS: add composition events to SearchInput and TextInput (bernardwang)
+- MenuButton: Fix styling when Menu is teleported (Roan Kattouw)
+
+## Tokens
+- tokens: Add new background highlight target text color token (Derek Torsani)
+
+## Documentation
+- docs: Improve button size descriptions (Volker E.)
+
+# 2.3.3 / 2025-11-25
+
+## Features
+- Dialog, Popover: Automatically apply stackedActions on small screens (angrezichatterbox)
+- Dialog: Make Dialog full screen on small screens (angrezichatterbox)
+- Dialog: Always show close button in full-screen mode (Roan Kattouw)
+
+## Styles
+- Dialog, Popover: Clean up responsiveness styles (Roan Kattouw)
+- Accordion: Unbreak markup in titles and descriptions (Roan Kattouw)
+
+## Tokens
+- tokens: update blue50 value (bmartinezcalvo)
+
+## Build
+- build: Export work-in-progress mixins to 'dist/mixins/wip' (Volker E.)
+- build, docs: Raise target to ES2017 and supporting browsers (Volker E.)
+
+## Documentation
+- docs: fix minor typo (Lauralyn Watson)
+- docs: Fix shadow page typo (Derek Torsani)
+- docs: Update Tabs and ToggleButtonGroup usage guidance (Derek Torsani)
+- Dialog, Popover, docs: Update stackedActions docs for new responsiveness behavior (Roan Kattouw)
+
 # 2.3.2 / 2025-09-25
 
 ## Styles

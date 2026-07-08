@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Thanks\Tests\Integration;
 
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialLog;
-use SpecialPageTestBase;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 
 /**
  * @covers \MediaWiki\Extension\Thanks\Hooks

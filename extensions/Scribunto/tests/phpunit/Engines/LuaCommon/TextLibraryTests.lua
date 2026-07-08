@@ -77,6 +77,11 @@ local tests = {
 		args = { '&lt;&gt;&amp;&quot; &#102;&#111;&#x6f; &#x0066;&#00111;&#x6F; &hearts; &amp;quot;', true },
 		expect = { '<>&" foo foo ♥ &quot;' }
 	},
+	{ name = 'decode named entity aliases',
+		func = mw.text.decode,
+		args = { '&epsi;&epsilon;&thinsp;&ThinSpace;&hearts;&heartsuit;', true },
+		expect = { 'εε\226\128\137\226\128\137♥♥' }
+	},
 
 	{ name = 'nowiki',
 		func = mw.text.nowiki,

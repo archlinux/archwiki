@@ -2,26 +2,25 @@
 
 namespace PageImages;
 
-use MapCacheLRU;
+use MediaWiki\Actions\Hook\InfoActionHook;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\Hook\ApiOpenSearchSuggestHook;
-use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\RepoGroup;
-use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
+use Wikimedia\ObjectCache\MapCacheLRU;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -65,10 +64,6 @@ class PageImages implements
 	public const PROP_NAME_FREE = 'page_image_free';
 
 	private static ?MapCacheLRU $cache = null;
-
-	private static function factory(): self {
-		return MediaWikiServices::getInstance()->getService( 'PageImages.PageImages' );
-	}
 
 	public function __construct(
 		private readonly Config $config,
@@ -125,19 +120,6 @@ class PageImages implements
 			return self::getPropName( true );
 		}
 		return [ self::getPropName( true ), self::getPropName( false ) ];
-	}
-
-	/**
-	 * Return page image for a given title
-	 *
-	 * @deprecated since 1.45, use getImage instead
-	 * @param Title $title Title to get page image for
-	 * @return File|false
-	 */
-	public static function getPageImage( Title $title ) {
-		wfDeprecated( __METHOD__, '1.45' );
-		// Cast any cacheable null to false
-		return self::factory()->getImage( $title ) ?? false;
 	}
 
 	/**

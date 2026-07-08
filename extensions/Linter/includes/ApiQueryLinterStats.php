@@ -25,15 +25,12 @@ use MediaWiki\Api\ApiResult;
 
 class ApiQueryLinterStats extends ApiQueryBase {
 
-	private TotalsLookup $totalsLookup;
-
 	public function __construct(
 		ApiQuery $queryModule,
 		string $moduleName,
-		TotalsLookup $totalsLookup
+		private readonly TotalsLookup $totalsLookup,
 	) {
 		parent::__construct( $queryModule, $moduleName, 'lntrst' );
-		$this->totalsLookup = $totalsLookup;
 	}
 
 	/**

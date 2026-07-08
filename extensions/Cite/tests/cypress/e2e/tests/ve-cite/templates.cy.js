@@ -12,24 +12,22 @@ let usesCitoid;
 describe( 'Re-using refs in Visual Editor using templates', () => {
 
 	before( () => {
-		cy.clearCookies();
-		helper.loginAsAdmin();
-
-		// Skip tests when VisualEditor is not loaded
-		helper.waitForMWLoader();
-		cy.window().then( async ( win ) => {
-			cy.skipOn( !win.mw.loader.getModuleNames().includes( 'ext.cite.VisualEditor' ) );
+		veHelper.checkModuleDependencies().then( ( deps ) => {
+			cy.skipOn( !deps.visualEditor || !deps.templateData );
+			usesCitoid = deps.citoid;
 		} );
 
+		cy.clearCookies();
+		helper.loginAsAdmin();
 		helper.editPage( 'MediaWiki:Cite-tool-definition.json', JSON.stringify( [
 			{
-				name: 'Webseite',
-				icon: 'ref-cite-web',
+				name: 'web',
+				title: 'Webseite',
 				template: 'Internetquelle'
 			},
 			{
-				name: 'Literatur',
-				icon: 'ref-cite-book',
+				name: 'book',
+				title: 'Literatur',
 				template: 'Literatur'
 			}
 		] ) );
@@ -41,16 +39,12 @@ describe( 'Re-using refs in Visual Editor using templates', () => {
 		cy.clearCookies();
 		helper.editPage( title, wikiText );
 
-		cy.window().then( async ( win ) => {
-			usesCitoid = win.mw.loader.getModuleNames().includes( 'ext.citoid.visualEditor' );
-		} );
-
 		veHelper.setVECookiesToDisableDialogs();
 		veHelper.openVEForEditingReferences( title, usesCitoid );
 	} );
 
 	it( 'should add a template reference and verify correct content in both saved and edit mode', () => {
-		cy.contains( '.mw-reflink-text', '[1]' ).type( '{rightarrow}' );
+		cy.contains( '.ve-ui-surface  .mw-reflink-text', '[1]' ).type( '{rightarrow}' );
 
 		if ( usesCitoid ) {
 			cy.get( '.ve-ui-toolbar-group-citoid' ).click();
@@ -67,9 +61,9 @@ describe( 'Re-using refs in Visual Editor using templates', () => {
 
 		} else {
 			cy.get( '.ve-ui-toolbar-group-cite' ).click();
-			cy.get( '.oo-ui-tool-name-cite-Literatur' ).contains( 'Literatur' )
+			cy.get( '.oo-ui-tool-name-cite-book' ).contains( 'Literatur' )
 				.should( 'be.visible' );
-			cy.get( '.oo-ui-tool-name-cite-Webseite' ).contains( 'Webseite' ).click();
+			cy.get( '.oo-ui-tool-name-cite-web' ).contains( 'Webseite' ).click();
 		}
 
 		// Tempalte dialog is displayed with correct content

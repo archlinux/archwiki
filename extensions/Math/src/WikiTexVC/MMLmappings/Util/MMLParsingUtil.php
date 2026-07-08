@@ -156,17 +156,16 @@ class MMLParsingUtil {
 	}
 
 	/**
-	 * Converts a rendered MathML string to a XML tree and adds the attributes from input
-	 * to the top-level element.Valid attributes for adding are "arg" and "intent.
+	 * Adds the intent attributes to the top-level MathML node.
+	 * Valid attributes for adding are "arg" and "intent".
 	 * It overwrites pre-existing attributes in the top-level element.
-	 * TBD: currently contains a hacky way to remove xml header in the output string
-	 * example:" <msup intent="_($op,_of,$arg)">" intent attributes comes from input variables
-	 * @param string $renderedMML defines input MathML string
+	 * Example: <msup intent="_($op,_of,$arg)">
+	 * @param MMLbase $renderedMML defines input MathML tree
 	 * @param array $intentContentAtr defines attributes to add
-	 * @return string MML with added attributes
+	 * @return MMLbase MML with added attributes
 	 */
-	public static function forgeIntentToTopElement( string $renderedMML, $intentContentAtr ) {
-		if ( !$intentContentAtr || !$renderedMML ) {
+	public static function forgeIntentToTopElement( MMLbase $renderedMML, array $intentContentAtr ): MMLbase {
+		if ( !$intentContentAtr || $renderedMML->isEmpty() ) {
 			return $renderedMML;
 		}
 
@@ -174,53 +173,40 @@ class MMLParsingUtil {
 	}
 
 	/**
-	 * Add parameters from aattributes to the MML string
-	 * @param string $renderedMML defines input MathML string
+	 * Add parameters from attributes to the MathML tree.
+	 * @param MMLbase $renderedMML defines input MathML tree
 	 * @param array $intentContentAtr defines attributes to add
 	 * @param string $elementTag element tag when using foundNodes
 	 * @param bool $useFoundNodes use found nodes
-	 * @return string MML with added attributes
+	 * @return MMLbase MML with added attributes
 	 */
 	public static function addAttributesToMML(
-		string $renderedMML, array $intentContentAtr, string $elementTag, bool $useFoundNodes = false
-	): string {
-		$xml = simplexml_load_string( $renderedMML );
-		if ( !$xml ) {
-			return "";
+		MMLbase $renderedMML, array $intentContentAtr, string $elementTag, bool $useFoundNodes = false
+	): MMLbase {
+		if ( $renderedMML->isEmpty() ) {
+			return $renderedMML;
 		}
 		if ( $useFoundNodes ) {
-			$foundNodes = $xml->xpath( $elementTag );
-			if ( !( $foundNodes !== null && count( $foundNodes ) >= 1 ) ) {
-				return $renderedMML;
-			}
+			// implementation missing T423966
+			return $renderedMML;
+		}
+		if ( isset( $intentContentAtr["intent"] ) && is_string( $intentContentAtr["intent"] ) ) {
+			$renderedMML->setAttribute( "intent", $intentContentAtr["intent"] );
 		}
 
-		if ( isset( $intentContentAtr["intent"] ) ) {
-			if ( isset( $xml["intent"] ) ) {
-				$xml["intent"] = $intentContentAtr["intent"];
-			} elseif ( $intentContentAtr["intent"] != null && is_string( $intentContentAtr["intent"] ) ) {
-				$xml->addAttribute( "intent", $intentContentAtr["intent"] );
-			}
+		if ( isset( $intentContentAtr["arg"] ) && is_string( $intentContentAtr["arg"] ) ) {
+			$renderedMML->setAttribute( "arg", $intentContentAtr["arg"] );
 		}
-		if ( isset( $intentContentAtr["arg"] ) ) {
-			if ( isset( $xml["arg"] ) ) {
-				$xml["arg"] = $intentContentAtr["arg"];
-			} elseif ( $intentContentAtr["arg"] != null && is_string( $intentContentAtr["arg"] ) ) {
-				$xml->addAttribute( "arg", $intentContentAtr["arg"] );
-			}
-		}
-
-		$hackyXML = str_replace( "<?xml version=\"1.0\"?>", "", $xml->asXML() );
-		return str_replace( "\n", "", $hackyXML );
+		return $renderedMML;
 	}
 
 	public static function forgeIntentToSpecificElement(
-		string $renderedMML, array $intentContentAtr, string $elementTag
-	): string {
-		if ( !$intentContentAtr || !$renderedMML || !$elementTag ) {
+		MMLbase $renderedMML, array $intentContentAtr, string $elementTag
+	): MMLbase {
+		if ( !$intentContentAtr || !$elementTag || $renderedMML->isEmpty() ) {
 			return $renderedMML;
 		}
-		return self::addAttributesToMML( $elementTag, $intentContentAtr, $elementTag, true );
+		return self::addAttributesToMML( $renderedMML, $intentContentAtr, $elementTag, true );
 	}
 
 }

@@ -170,7 +170,7 @@
 	"abusefilter-edit-builder-funcs-norm": "नियमित (norm)",
 	"abusefilter-edit-builder-funcs-substr": "सबस्ट्रिंग (substr)",
 	"abusefilter-edit-builder-group-vars": "अस्थायी",
-	"abusefilter-edit-builder-vars-accountname": "खाता नाम (खाता निर्माण समय में)",
+	"abusefilter-edit-builder-vars-account-name": "खाता नाम (खाता निर्माण समय में)",
 	"abusefilter-edit-builder-vars-action": "क्रिया",
 	"abusefilter-edit-builder-vars-addedlines": "सम्पादन में जोड़ गेल लाइन सभ",
 	"abusefilter-edit-builder-vars-delta": "सम्पादनमे आकार परिवर्तन",

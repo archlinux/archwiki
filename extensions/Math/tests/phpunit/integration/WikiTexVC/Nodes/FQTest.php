@@ -3,8 +3,11 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use ArgumentCountError;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\FQ;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
 use MediaWikiIntegrationTestCase;
@@ -72,5 +75,55 @@ class FQTest extends MediaWikiIntegrationTestCase {
 	public function testGreek() {
 		$fq = new FQ( new Literal( '\\alpha' ), new Literal( 'b' ), new Literal( 'c' ) );
 		$this->assertStringContainsString( 'msubsup', $fq->toMMLTree() );
+	}
+
+	public function testNoLimits() {
+		$fq = new FQ( new Literal( '\\nolimits' ), new Literal( '0' ), new Literal( '1' ) );
+		$state = [ 'limits' => new Literal( '\\int ' ) ];
+		$this->assertStringContainsString( 'msubsup', $fq->toMMLTree( [], $state ) );
+	}
+
+	public function testNoLimitsTextStyle() {
+		$fq = new FQ( new Literal( '\\nolimits' ), new Literal( '0' ), new Literal( '1' ) );
+		$state = [ 'limits' => new Literal( '\\int ' ), 'styleargs' => [ 'displaystyle' => 'inline' ] ];
+		$this->assertStringContainsString( 'msubsup', $fq->toMMLTree( [], $state ) );
+	}
+
+	public function testLimits() {
+		$fq = new FQ( new Literal( '\\limits' ), new Literal( '0' ), new Literal( '1' ) );
+		$state = [ 'limits' => new Literal( '\\int ' ) ];
+		$this->assertStringContainsString( 'munderover', $fq->toMMLTree( [], $state ) );
+	}
+
+	public function testDqLimits() {
+		$fq = new DQ( new Literal( '\\lim' ), new Literal( 'x' ) );
+		$state = [ 'limits' => new Literal( '\\lim ' ) ];
+		$this->assertStringContainsString( 'munder', $fq->toMMLTree( [], $state ) );
+	}
+
+	public function testSideset() {
+		$fq = new FQ( new TexArray(), new Literal( '0' ), new Literal( '1' ) );
+		$state = [ 'sideset' => true ];
+		$this->assertInstanceOf( MMLarray::class, $fq->toMMLTree( [], $state ) );
+	}
+
+	public function testOverOperator() {
+		$fq = new FQ( new Fun1( '\\overbrace', new Literal( 'x' ) ), new Literal( '0' ), new Literal( '1' ) );
+		$this->assertStringContainsString( 'munderover', $fq->toMMLTree() );
+	}
+
+	public function testUnderbrace() {
+		$fq = new DQ( new Fun1( '\\underbrace', new Literal( 'x' ) ), new Literal( 'y' ) );
+		$this->assertStringContainsString( 'munder', $fq->toMMLTree() );
+	}
+
+	public function testEmptyDq() {
+		$fq = new DQ( new TexArray(), new TexArray() );
+		$this->assertTrue( $fq->toMMLTree()->isEmpty() );
+	}
+
+	public function testDqSum() {
+		$fq = new DQ( new Literal( '\\sum' ), new Literal( 'n' ) );
+		$this->assertStringContainsString( 'munder', $fq->toMMLTree() );
 	}
 }

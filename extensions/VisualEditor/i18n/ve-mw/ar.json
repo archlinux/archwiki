@@ -41,6 +41,7 @@
 			"مشعل الحربي"
 		]
 	},
+	"collabpad-disabled": "لم يتم تفعيل CollabPad في هذه الويكي.",
 	"collabpad-doctitle": "كولاب باد: $1",
 	"collabpad-import-subtitle": "مستورد من $1",
 	"collabpad": "كولاب باد",
@@ -264,6 +265,7 @@
 	"visualeditor-educationpopup-dismiss": "فهمت",
 	"visualeditor-expandable-less": "أقل",
 	"visualeditor-expandable-more": "المزيد",
+	"visualeditor-expandableerror-toggle": "إظهار/إخفاء",
 	"visualeditor-feedback-defaultmessage": "مسار: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "عنوان الصفحة",
 	"visualeditor-formatdropdown-format-mw-heading2": "عنوان",
@@ -271,6 +273,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "عنوان فرعي 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "عنوان فرعي 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "عنوان فرعي 4",
+	"visualeditor-fullpage-switch-label": "تعديل كل الصفحة",
 	"visualeditor-generating-wikitext-progress": "توليد نص الويكي",
 	"visualeditor-includes-noinclude-start": "بداية المحتوى المستبعد من المقتطفات",
 	"visualeditor-includes-noinclude-end": "نهاية المحتوى المستبعد من المقتطفات",

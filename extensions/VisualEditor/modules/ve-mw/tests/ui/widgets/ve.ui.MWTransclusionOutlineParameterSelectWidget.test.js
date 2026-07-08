@@ -1,4 +1,4 @@
-QUnit.module( 've.ui.MWTransclusionOutlineParameterSelectWidget' );
+QUnit.module( 've.ui.MWTransclusionOutlineParameterSelectWidget', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'static item constructor', ( assert ) => {
 	const item = ve.ui.MWTransclusionOutlineParameterSelectWidget.static.createItem( { data: 'p1' } );

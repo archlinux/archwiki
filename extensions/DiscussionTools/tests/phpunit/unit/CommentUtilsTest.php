@@ -17,10 +17,10 @@ class CommentUtilsTest extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideLinearWalk
 	 */
-	public function testLinearWalk( string $name, string $htmlPath, string $expectedPath ) {
-		$html = static::getHtml( $htmlPath );
+	public function testLinearWalk( string $name, string $dom, string $expected ) {
+		$html = static::getHtml( $dom );
 		$doc = static::createDocument( $html );
-		$expected = static::getJson( $expectedPath );
+		$expectedArray = static::getJson( $expected );
 
 		$actual = [];
 		CommentUtils::linearWalk( $doc, static function ( $event, $node ) use ( &$actual ) {
@@ -35,14 +35,14 @@ class CommentUtilsTest extends MediaWikiUnitTestCase {
 
 		// Optionally write updated content to the JSON files
 		if ( getenv( 'DISCUSSIONTOOLS_OVERWRITE_TESTS' ) ) {
-			static::overwriteJsonFile( $expectedPath, $actual );
+			static::overwriteJsonFile( $expected, $actual );
 		}
 
-		static::assertEquals( $expected, $actual, $name );
+		static::assertEquals( $expectedArray, $actual, $name );
 
 		$expectedBackwards = array_map(
 			static fn ( $a ) => ( $a[0] === 'e' ? 'leave' : 'enter' ) . substr( $a, 5 ),
-			array_reverse( $expected )
+			array_reverse( $expectedArray )
 		);
 		static::assertEquals( $expectedBackwards, $actualBackwards, $name . ' (backwards)' );
 	}

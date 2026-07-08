@@ -54,14 +54,14 @@ class CommentStoreComment {
 	/**
 	 * Create a new, unsaved CommentStoreComment
 	 *
-	 * @param string|Message|CommentStoreComment $comment Comment text or Message object.
+	 * @param string|Message|self $comment Comment text or Message object.
 	 *  A CommentStoreComment is also accepted here, in which case it is returned unchanged.
 	 * @param array|null $data Structured data to store. Keys beginning with '_' are reserved.
 	 *  Ignored if $comment is a CommentStoreComment.
-	 * @return CommentStoreComment
+	 * @return self
 	 */
 	public static function newUnsavedComment( $comment, ?array $data = null ) {
-		if ( $comment instanceof CommentStoreComment ) {
+		if ( $comment instanceof self ) {
 			return $comment;
 		}
 
@@ -79,9 +79,9 @@ class CommentStoreComment {
 			$text = $message->inLanguage( MediaWikiServices::getInstance()->getContentLanguage() )
 				->setInterfaceMessageFlag( true )
 				->text();
-			return new CommentStoreComment( null, $text, $message, $data );
+			return new self( null, $text, $message, $data );
 		} else {
-			return new CommentStoreComment( null, $comment, null, $data );
+			return new self( null, $comment, null, $data );
 		}
 	}
 }

@@ -107,7 +107,7 @@
 	"echo-api-failure-cross-wiki": "Tilgang til det eksterne domenet ble avvist.",
 	"echo-notification-placeholder": "Det er ingen beskjeder.",
 	"echo-notification-placeholder-filters": "Ingen beskjeder oppfyller disse kriteriene.",
-	"echo-notification-loginrequired": "Du må logge inn for å se beskjedene dine.",
+	"echo-notification-loginrequired": "Du må logge inn for å se varslene dine.",
 	"echo-notification-popup-loginrequired": "Logg inn for å se beskjedene dine.",
 	"echo-notification-markasread": "Merk som lest",
 	"echo-notification-markasunread": "Merk som ulest",
@@ -167,6 +167,7 @@
 	"notification-header-user-rights-add-only": "Brukerrettighetene {{GENDER:$4|dine}} har blitt {{GENDER:$1|endret}}. Du er nå medlem av: $2.",
 	"notification-header-user-rights-remove-only": "Brukerrettighetene {{GENDER:$4|dine}} har blitt {{GENDER:$1|endret}}. Du er ikke lengre medlem av: $2.",
 	"notification-header-user-rights-add-and-remove": "Brukerrettighetene {{GENDER:$6|dine}} har blitt {{GENDER:$1|endret}}. Du er nå medlem av: $2. Du er ikke lengre medlem av: $4.",
+	"notification-header-user-rights-expiry": "Medlemsskapet {{GENDER:$3|ditt}} i følgende {{PLURAL:$2|gruppe|grupper}} har utløpt automatisk: $1.",
 	"notification-header-user-rights-expiry-change": "Utløpstiden for medlemskapet {{GENDER:$4|ditt}} i følgende {{PLURAL:$3|gruppe|grupper}} har blitt {{GENDER:$1|endret}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Velkommen}} til {{SITENAME}}, $1! Vi er glade for at {{GENDER:$2|du}} er her.",
 	"notification-header-mention-summary": "$1 {{GENDER:$2|nevnte}} {{GENDER:$3|deg}} i en redigeringsforklaring på <strong>$4</strong>.",
@@ -203,6 +204,7 @@
 	"notification-reverted-email-subject2": "{{PLURAL:$4|Redigeringen din|Redigeringene dine}} på {{SITENAME}} ble {{GENDER:$2|tilbakestilt}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$2|nevnte}} {{GENDER:$3|deg}} på {{SITENAME}}",
 	"notification-user-rights-email-subject": "Brukerrettighetene {{GENDER:$3|dine}} har blitt endret på {{SITENAME}}",
+	"notification-user-rights-expiry-email-subject": "Brukerrettighetene {{GENDER:$3|dine}} på {{SITENAME}} har utløpt",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1s}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1m}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1t}}",
@@ -254,7 +256,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|push-abonnementsbehandler}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push-abonnementsbehandlere",
 	"notification-subject-email-verify-email-reminder": "Bekreft e-postadressa {{GENDER:$1|di}}",
-	"notification-header-verify-email-reminder": "<strong>Bekreft e-postadressa {{GENDER:$1|di}}</strong> så vi vet at e-postadressa tilhører deg.",
+	"notification-header-verify-email-reminder": "Hei, $2.\n\n<strong>Bekreft e-postadressa {{GENDER:$1|di}}</strong> så vi vet at e-postadressa tilhører deg.",
 	"notification-link-text-verify-email-reminder": "Behandle e-postinnstillinger",
 	"notification-verify-email-reminder-link-label": "Bekreft e-post"
 }

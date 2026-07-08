@@ -5,10 +5,9 @@ namespace MediaWiki\Extension\Math;
 use DataValues\StringValue;
 use Exception;
 use InvalidArgumentException;
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Site\Site;
 use Psr\Log\LoggerInterface;
 use Wikibase\Client\RepoLinker;
@@ -44,33 +43,6 @@ class MathWikibaseConnector {
 		'MathWikibasePropertyIdSymbolRepresents'
 	];
 
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var RepoLinker */
-	private $repoLinker;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
-	/** @var EntityRevisionLookup */
-	private $entityRevisionLookup;
-
-	/** @var Site */
-	private $site;
-
-	/** @var FallbackLabelDescriptionLookupFactory */
-	private $labelDescriptionLookupFactory;
-
-	/** @var MathFormatter */
-	private $mathFormatter;
-
-	/** @var EntityIdParser */
-	private $idParser;
-
 	/** @var PropertyId|null */
 	private $propertyIdHasPart;
 
@@ -86,40 +58,19 @@ class MathWikibaseConnector {
 	/** @var PropertyId|null */
 	private $propertyIdSymbolRepresents;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param RepoLinker $repoLinker
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param EntityRevisionLookup $entityRevisionLookup
-	 * @param FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory
-	 * @param Site $site
-	 * @param EntityIdParser $entityIdParser
-	 * @param MathFormatter $mathFormatter
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
 		ServiceOptions $options,
-		RepoLinker $repoLinker,
-		LanguageFactory $languageFactory,
-		LanguageNameUtils $languageNameUtils,
-		EntityRevisionLookup $entityRevisionLookup,
-		FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory,
-		Site $site,
-		EntityIdParser $entityIdParser,
-		MathFormatter $mathFormatter,
-		LoggerInterface $logger
+		private readonly RepoLinker $repoLinker,
+		private readonly LanguageFactory $languageFactory,
+		private readonly LanguageNameUtils $languageNameUtils,
+		private readonly EntityRevisionLookup $entityRevisionLookup,
+		private readonly FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory,
+		private Site $site,
+		private readonly EntityIdParser $entityIdParser,
+		private readonly MathFormatter $mathFormatter,
+		private readonly LoggerInterface $logger,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->repoLinker = $repoLinker;
-		$this->languageFactory = $languageFactory;
-		$this->languageNameUtils = $languageNameUtils;
-		$this->entityRevisionLookup = $entityRevisionLookup;
-		$this->labelDescriptionLookupFactory = $labelDescriptionLookupFactory;
-		$this->site = $site;
-		$this->idParser = $entityIdParser;
-		$this->mathFormatter = $mathFormatter;
-		$this->logger = $logger;
 
 		$this->propertyIdHasPart = $this->loadPropertyId(
 			$options->get( "MathWikibasePropertyIdHasPart" )
@@ -141,12 +92,17 @@ class MathWikibaseConnector {
 	/**
 	 * Returns the given PropertyId if available.
 	 * @param string $propertyId the string of the Wikibase property
-	 * @return EntityId|null the property object or null if unavailable
+	 * @return PropertyId|null the property object or null if unavailable
 	 */
-	private function loadPropertyId( string $propertyId ): ?EntityId {
+	private function loadPropertyId( string $propertyId ): ?PropertyId {
 		try {
-			return $this->idParser->parse( $propertyId );
-		} catch ( ConfigException ) {
+			$pid = $this->entityIdParser->parse( $propertyId );
+			if ( $pid instanceof PropertyId ) {
+				return $pid;
+			} else {
+				throw new EntityIdParsingException( "Property $propertyId is not of type property" );
+			}
+		} catch ( EntityIdParsingException ) {
 			return null;
 		}
 	}
@@ -183,7 +139,7 @@ class MathWikibaseConnector {
 
 		$langLookup = $this->labelDescriptionLookupFactory->newLabelDescriptionLookup( $lang );
 		try {
-			$entityId = $this->idParser->parse( $qid ); // exception if the given ID is invalid
+			$entityId = $this->entityIdParser->parse( $qid ); // exception if the given ID is invalid
 			$entityRevision = $this->entityRevisionLookup->getEntityRevision( $entityId );
 		} catch ( EntityIdParsingException ) {
 			throw new InvalidArgumentException( "Invalid Wikibase ID." );
@@ -191,7 +147,7 @@ class MathWikibaseConnector {
 			throw new InvalidArgumentException( "Non-existing Wikibase ID." );
 		}
 
-		if ( !$entityId || !$entityRevision ) {
+		if ( !$entityRevision ) {
 			throw new InvalidArgumentException( "Non-existing Wikibase ID." );
 		}
 
@@ -392,7 +348,7 @@ class MathWikibaseConnector {
 		foreach ( $parts as $part ) {
 			$partMap = [];
 			$partMap['url'] = $this->fetchPageUrl(
-				$this->idParser->parse(
+				$this->entityIdParser->parse(
 					$part->getId()->getSerialization() ) ) ?? '';
 			$partMap['title'] = $part->getLabel() ?? '';
 			$resultMap[$part->getSymbol()->getValue()] = $partMap;

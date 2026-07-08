@@ -82,5 +82,7 @@
 	"prefs-math": "Matematika",
 	"mathstatus": "Stanje matematike",
 	"datatypes-type-math": "Matematički izraz",
-	"wikibase-listdatatypes-math-head": "Matematički izraz"
+	"wikibase-listdatatypes-math-head": "Matematički izraz",
+	"math-editpage-insert-inline": "Matematička formula (u redu)",
+	"math-editpage-insert-block": "Matematička formula (blok)"
 }

@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMethods;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
+use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
 
 class TexNode {
 
@@ -27,15 +28,33 @@ class TexNode {
 		$this->args = $args;
 	}
 
+	public function getLocalCallback( string $input, array $passedArgs,
+									 array $operatorContent, array &$state ): MMLbase {
+		$cb = TexUtil::getInstance()->callback( trim( $input ) );
+		if ( !$cb ) {
+			return new MMLarray();
+		}
+		if ( is_string( $cb ) ) {
+			$cb = [ $cb ];
+		}
+		if ( preg_match( '#^' .
+			preg_quote( static::class ) .
+			'::(?<method>\\w+)$#', $cb[0], $m ) ) {
+			return $this->{$m['method']}( $passedArgs, $operatorContent, $input, $cb, $state );
+		} else {
+			return new MMLarray();
+		}
+	}
+
 	/**
 	 * @param string $input
 	 * @param array $passedArgs
 	 * @param mixed|null $operatorContent
-	 * @return MMLbase|string|null
+	 * @return MMLbase
 	 */
-	protected function parseToMML( $input, $passedArgs, $operatorContent ) {
+	protected function parseToMML( $input, $passedArgs, $operatorContent ): MMLbase {
 		$parsed = BaseMethods::checkAndParse( $input, $passedArgs, $operatorContent, $this );
-		if ( $parsed ) {
+		if ( !$parsed->isEmpty() ) {
 			return $parsed;
 		}
 		$name = strtoupper( self::class );
@@ -64,9 +83,9 @@ class TexNode {
 	/**
 	 * @param array $arguments
 	 * @param array &$state
-	 * @return MMLbase|string|null
+	 * @return MMLbase
 	 */
-	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+	public function toMMLTree( array $arguments = [], array &$state = [] ): MMLbase {
 		return new MMLarray( ...array_map(
 			fn ( $child ) => $this->processChildMML( $child, $arguments, $state ),
 			$this->args
@@ -77,13 +96,13 @@ class TexNode {
 	 * @param mixed $child
 	 * @param array $arguments
 	 * @param array &$state
-	 * @return MMLbase|null
+	 * @return MMLbase
 	 */
-	private function processChildMML( $child, array $arguments, array &$state ): ?MMLbase {
+	private function processChildMML( $child, array $arguments, array &$state ): MMLbase {
 		if ( $child instanceof self ) {
 			return $child->toMMLTree( $arguments, $state );
 		}
-		return null;
+		return new MMLarray();
 	}
 
 	/**

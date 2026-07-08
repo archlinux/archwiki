@@ -45,10 +45,6 @@ const TOC_CONTENTS_ID = 'mw-panel-toc-list';
  */
 
 /**
- * @callback onTogglePinned
- */
-
-/**
  * @callback tableOfContents
  * @param {TableOfContentsProps} props
  * @return {TableOfContents}
@@ -61,7 +57,6 @@ const TOC_CONTENTS_ID = 'mw-panel-toc-list';
  * @property {onHashChange} onHashChange Called when a hash change event
  * matches the id of a LINK_CLASS anchor element.
  * @property {onToggleClick} [onToggleClick] Called when an arrow is clicked.
- * @property {onTogglePinned} onTogglePinned Called when pinned toggle buttons are clicked.
  */
 
 /**
@@ -377,18 +372,6 @@ module.exports = function tableOfContents( props ) {
 	}
 
 	/**
-	 * Bind event listener for clicking on show/hide Table of Contents links.
-	 */
-	function bindPinnedToggleListeners() {
-		const toggleButtons = document.querySelectorAll( '.vector-toc-pinnable-header button' );
-		toggleButtons.forEach( ( btn ) => {
-			btn.addEventListener( 'click', () => {
-				props.onTogglePinned();
-			} );
-		} );
-	}
-
-	/**
 	 * Bind event listeners for clicking on section headings and toggle buttons.
 	 */
 	function bindSubsectionToggleListeners() {
@@ -447,7 +430,6 @@ module.exports = function tableOfContents( props ) {
 
 		// Bind event listeners.
 		bindSubsectionToggleListeners();
-		bindPinnedToggleListeners();
 		bindHashChangeListener();
 	}
 

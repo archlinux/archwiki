@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\Notifications\Controller;
 
 use InvalidArgumentException;
 use Iterator;
-use MapCacheLRU;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\CachedList;
@@ -23,6 +22,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\ObjectCache\MapCacheLRU;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -337,8 +337,20 @@ class NotificationController {
 		}
 		return $blacklist->contains( $event->getAgent()->getName() ) ||
 			( $wgEchoPerUserBlacklist &&
-				$event->getType() === 'page-linked' &&
+				self::doesPageLinkMuteListApply( $event->getType() ) &&
 				self::isPageLinkedTitleMutedByUser( $event->getTitle(), $user ) );
+	}
+
+	/**
+	 * Check whether the specific notification type is opted in to the pagelink mute list.
+	 *
+	 * @param string $type Notification type
+	 * @return bool
+	 */
+	private static function doesPageLinkMuteListApply( string $type ): bool {
+		global $wgEchoNotifications;
+		return isset( $wgEchoNotifications[$type]['apply-page-link-mute'] )
+			&& $wgEchoNotifications[$type]['apply-page-link-mute'];
 	}
 
 	/**
@@ -462,17 +474,16 @@ class NotificationController {
 		$type = $event->getType();
 		$result = [];
 		foreach ( $attributeManager->getUserCallable( $type, $locator ) as $callable ) {
-			// locator options can be set per-event by using an array with
-			// name as first parameter.
+			// Extra per-event parameters can be passed to the locator function by using an array,
+			// in which the first element is the callable, and remaining elements are the parameters.
 			if ( is_array( $callable ) ) {
-				$options = $callable;
-				$spliced = array_splice( $options, 0, 1, [ $event ] );
-				$callable = reset( $spliced );
+				$extraParams = $callable;
+				$callable = array_shift( $extraParams );
 			} else {
-				$options = [ $event ];
+				$extraParams = [];
 			}
 			if ( is_callable( $callable ) ) {
-				$result[] = $callable( ...$options );
+				$result[] = $callable( $event, ...$extraParams );
 			} else {
 				wfDebugLog( __CLASS__, __FUNCTION__ . ": Invalid $locator returned for $type" );
 			}

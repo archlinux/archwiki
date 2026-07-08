@@ -6,7 +6,7 @@
 </template>
 
 <script>
-const { CdxMessage } = require( '@wikimedia/codex' );
+const { CdxMessage } = require( '../codex.js' );
 
 // @vue/component
 module.exports = exports = {

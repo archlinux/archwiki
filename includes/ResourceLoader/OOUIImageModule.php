@@ -103,7 +103,7 @@ class OOUIImageModule extends ImageModule {
 	 * Read JSON from a file, and transform all paths in it to be relative to the module's base path.
 	 *
 	 * @since 1.34
-	 * @param string $dataPath Path relative to the module's base bath
+	 * @param string|FilePath $dataPath Path relative to the module's base bath
 	 * @return array|false
 	 */
 	protected function readJSONFile( $dataPath ) {

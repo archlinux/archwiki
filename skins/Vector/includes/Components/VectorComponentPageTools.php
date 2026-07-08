@@ -1,26 +1,17 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
-use MessageLocalizer;
 
 /**
  * VectorComponentPageTools component
  */
 class VectorComponentPageTools implements VectorComponent {
 
-	/** @var array */
-	private $menus;
-
-	/** @var MessageLocalizer */
-	private $localizer;
-
-	/** @var bool */
-	private $isPinned;
-
-	/** @var VectorComponentPinnableHeader */
-	private $pinnableHeader;
+	private readonly bool $isPinned;
+	private readonly VectorComponentPinnableHeader $pinnableHeader;
 
 	/** @var string */
 	public const ID = 'vector-page-tools';
@@ -31,18 +22,11 @@ class VectorComponentPageTools implements VectorComponent {
 	/** @var string */
 	private const ACTIONS_ID = 'p-cactions';
 
-	/**
-	 * @param array $menus
-	 * @param MessageLocalizer $localizer
-	 * @param FeatureManager $featureManager
-	 */
 	public function __construct(
-		array $menus,
-		MessageLocalizer $localizer,
-		FeatureManager $featureManager
+		private readonly array $menus,
+		private readonly MessageLocalizer $localizer,
+		FeatureManager $featureManager,
 	) {
-		$this->menus = $menus;
-		$this->localizer = $localizer;
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_PAGE_TOOLS_PINNED );
 		$this->pinnableHeader = new VectorComponentPinnableHeader(
 			$localizer,

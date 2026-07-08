@@ -220,7 +220,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Vaänalischi sedze (set_var)",
 	"abusefilter-edit-builder-group-vars": "Vaänalischi",
 	"abusefilter-edit-builder-vars-timestamp": "Zaidschdembl vunde Änarung im Unix-Foamad",
-	"abusefilter-edit-builder-vars-accountname": "Benudzanoame (baim Erschdelle vunem Benudzakondo)",
+	"abusefilter-edit-builder-vars-account-name": "Benudzanoame (baim Erschdelle vunem Benudzakondo)",
 	"abusefilter-edit-builder-vars-action": "Agzion",
 	"abusefilter-edit-builder-vars-addedlines": "Zaile inde B'awaidung dzugfieschd",
 	"abusefilter-edit-builder-vars-delta": "Greeßeänarung inde B'awaidung",

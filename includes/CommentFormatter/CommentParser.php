@@ -2,9 +2,6 @@
 
 namespace MediaWiki\CommentFormatter;
 
-use MediaWiki\Cache\LinkBatch;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\RepoGroup;
 use MediaWiki\HookContainer\HookContainer;
@@ -14,6 +11,9 @@ use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Page\LinkBatch;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -208,23 +208,20 @@ class CommentParser {
 		$wikiId = false
 	) {
 		$comment = preg_replace_callback(
-		// To detect the presence of content before or after the
-		// auto-comment, we use capturing groups inside optional zero-width
-		// assertions. But older versions of PCRE can't directly make
-		// zero-width assertions optional, so wrap them in a non-capturing
-		// group.
+			// To detect the presence of content before or after the
+			// auto-comment, we use capturing groups inside optional zero-width
+			// assertions. But older versions of PCRE can not directly make
+			// zero-width assertions optional, so wrap them in a non-capturing
+			// group.
 			'!(?:(?<=(.)))?/\*\s*(.*?)\s*\*/(?:(?=(.)))?!',
 			function ( $match ) use ( $selfLinkTarget, $samePage, $wikiId ) {
-				// Ensure all match positions are defined
-				$match += [ '', '', '', '' ];
-
-				$pre = $match[1] !== '';
-				$auto = $match[2];
-				$post = $match[3] !== '';
+				$pre = ( $match[1] ?? '' ) !== '';
+				$section = ( $match[2] ?? '' );
+				$post = ( $match[3] ?? '' ) !== '';
 				$comment = null;
 
 				$this->hookRunner->onFormatAutocomments(
-					$comment, $pre, $auto, $post,
+					$comment, $pre, $section, $post,
 					Title::castFromLinkTarget( $selfLinkTarget ),
 					$samePage,
 					$wikiId );
@@ -232,47 +229,52 @@ class CommentParser {
 					return $comment;
 				}
 
-				if ( $selfLinkTarget ) {
-					$section = $auto;
-					# Remove links that a user may have manually put in the autosummary
-					# This could be improved by copying as much of Parser::stripSectionName as desired.
-					$section = str_replace( [
-						'[[:',
-						'[[',
-						']]'
-					], '', $section );
+				// HTML has already been escaped in preprocessInternal(), so treat this as HTML from this point
+				$parsedSection = $section;
 
-					$section = substr( Parser::guessSectionNameFromStrippedText( $section ), 1 );
-					if ( $section !== '' ) {
+				if ( $selfLinkTarget ) {
+					$decodedSection = substr( Parser::guessSectionNameFromStrippedText(
+						// Remove links that a user may have manually put in the autosummary
+						// This could be improved by copying as much of Parser::stripSectionName as desired.
+						str_replace( [ '[[:', '[[', ']]' ], '', $section )
+					), 1 );
+					if ( $decodedSection !== '' || $section === '' ) {
 						if ( $samePage ) {
-							$sectionTitle = new TitleValue( NS_MAIN, '', $section );
+							$targetWithSection = new TitleValue( NS_MAIN, '', $decodedSection );
 						} else {
-							$sectionTitle = $selfLinkTarget->createFragmentTarget( $section );
+							$targetWithSection = $selfLinkTarget->createFragmentTarget( $decodedSection );
 						}
-						$auto = $this->makeSectionLink(
-							$sectionTitle,
+						if ( $section === '' ) {
+							// Special case for edits to the zeroth section (T412472).
+							$linkHtml = wfMessage( 'autocomment-top' )->inLanguage( $this->userLang )->escaped();
+						} else {
+							$linkHtml = $parsedSection;
+						}
+						$parsedSection = $this->makeSectionLink(
+							$targetWithSection,
 							$this->userLang->getArrow() .
-								Html::rawElement( 'bdi', [ 'dir' => $this->userLang->getDir() ], $auto ),
+								Html::rawElement( 'bdi', [ 'dir' => $this->userLang->getDir() ], $linkHtml ),
 							$wikiId,
 							$selfLinkTarget
 						);
 					}
 				}
-				if ( $pre ) {
-					# written summary $presep autocomment (summary /* section */)
-					$pre = wfMessage( 'autocomment-prefix' )->inContentLanguage()->escaped();
-				}
 				if ( $post ) {
 					# autocomment $postsep written summary (/* section */ summary)
-					$auto .= wfMessage( 'colon-separator' )->inContentLanguage()->escaped();
+					$parsedSection .= wfMessage( 'colon-separator' )->inContentLanguage()->escaped();
 				}
-				if ( $auto ) {
-					$auto = Html::rawElement( 'span', [ 'class' => 'autocomment' ], $auto );
+				if ( $parsedSection ) {
+					$parsedSection = Html::rawElement( 'span', [ 'class' => 'autocomment' ], $parsedSection );
+				}
+				if ( $pre ) {
+					# written summary $presep autocomment (summary /* section */)
+					$parsedSection = wfMessage( 'autocomment-prefix' )->inContentLanguage()->escaped()
+						. $parsedSection;
 				}
 
 				// Make sure any brackets (which the user could have input in the edit summary)
 				// in the generated autocomment HTML don't trigger additional link processing (T406664).
-				return str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], $pre . $auto );
+				return str_replace( [ '[', ']' ], [ '&#91;', '&#93;' ], $parsedSection );
 			},
 			$comment
 		);
@@ -284,7 +286,7 @@ class CommentParser {
 	 * the link class does not depend on whether the link is known.
 	 *
 	 * @param LinkTarget $target
-	 * @param string $text
+	 * @param string $html
 	 * @param string|false|null $wikiId Id of the wiki to link to (if not the local wiki),
 	 *  as used by WikiMap.
 	 * @param LinkTarget $contextTitle
@@ -292,7 +294,7 @@ class CommentParser {
 	 * @return string HTML link
 	 */
 	private function makeSectionLink(
-		LinkTarget $target, $text, $wikiId, LinkTarget $contextTitle
+		LinkTarget $target, $html, $wikiId, LinkTarget $contextTitle
 	) {
 		if ( $wikiId !== null && $wikiId !== false && !$target->isExternal() ) {
 			return $this->linkRenderer->makeExternalLink(
@@ -304,11 +306,18 @@ class CommentParser {
 						':' . $target->getDBkey(),
 					$target->getFragment()
 				),
-				new HtmlArmor( $text ), // Already escaped
+				new HtmlArmor( $html ), // Already escaped
 				$contextTitle
 			);
+		} elseif ( !$target->hasFragment() && $target->getText() === '' && $target->getNamespace() === NS_MAIN ) {
+			// Special case for edits to the zeroth section (T412472) when linking within the same page.
+			// All of the LinkTarget classes treat this as a link to the main page.
+			// We want to link to the top of the current page.
+			return Html::rawElement( 'a', [
+				'href' => '#',
+			], $html );
 		}
-		return $this->linkRenderer->makePreloadedLink( $target, new HtmlArmor( $text ), '' );
+		return $this->linkRenderer->makePreloadedLink( $target, new HtmlArmor( $html ), '' );
 	}
 
 	/**
@@ -430,8 +439,7 @@ class CommentParser {
 				if ( $linkMarker ) {
 					// If the link is still valid, go ahead and replace it in!
 					$comment = preg_replace(
-						// @phan-suppress-next-next-line PhanPossiblyUndeclaredVariable linkRegexp set when used
-						// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal linkRegexp set when used
+						// @phan-suppress-next-line PhanPossiblyUndeclaredVariable linkRegexp set when used
 						$linkRegexp,
 						StringUtils::escapeRegexReplacement( $linkMarker ),
 						$comment,

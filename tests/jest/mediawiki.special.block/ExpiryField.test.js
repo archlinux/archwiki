@@ -14,8 +14,7 @@ const presetTestCases = [
 			blockExpiryPreset: 'indefinite'
 		},
 		expected: {
-			expiryType: 'preset-duration',
-			presetDuration: 'infinite'
+			expiryType: 'indefinite'
 		}
 	},
 	{
@@ -29,8 +28,7 @@ const presetTestCases = [
 			}
 		},
 		expected: {
-			expiryType: 'preset-duration',
-			presetDuration: 'indefinite'
+			expiryType: 'indefinite'
 		}
 	},
 	{

@@ -8,6 +8,7 @@
 			"Fotis A.",
 			"Geraki",
 			"Gpbiza",
+			"Jimkats",
 			"KonVog",
 			"NikosLikomitros",
 			"Nikosgranturismogt",
@@ -15,8 +16,7 @@
 			"Omnipaedista",
 			"Protnet",
 			"ZaDiak",
-			"Αντιγόνη",
-			"Jimkats"
+			"Αντιγόνη"
 		]
 	},
 	"vector-skin-desc": "Παρέχει 2 Vector θέματα:\n* 2011 - Τη σύγχρονη έκδοση του MonoBook με φρέσκια εμφάνιση και πολλές βελτιώσεις στη χρηστικότητα.\n* 2022 - Το Vector που δημιουργήθηκε ως μέρος του έργου [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements] του WMF.",
@@ -65,9 +65,6 @@
 	"vector-toc-label": "Περιεχόμενα",
 	"vector-toc-beginning": "Αρχή",
 	"vector-toc-toggle-button-label": "Εναλλαγή $1 υποενότητας",
-	"vector-anon-user-menu-pages": "Σελίδες για αποσυνδεμένους συντάκτες",
-	"vector-anon-user-menu-pages-learn": "μάθετε περισσότερα",
-	"vector-anon-user-menu-pages-label": "Μάθετε περισσότερα σχετικά με την επεξεργασία",
 	"vector-main-menu-tooltip": "Κύριο μενού",
 	"vector-toc-menu-tooltip": "Πίνακας Περιεχομένων",
 	"vector-toc-collapsible-button-label": "Εναλλαγή του πίνακα περιεχομένων",
@@ -90,8 +87,6 @@
 	"vector-page-tools-unpinned-popup": "Το μενού εργαλείων έχει μεταφερθεί εδώ.",
 	"vector-main-menu-unpinned-popup": "Το κύριο μενού έχει μεταφερθεί εδώ.",
 	"vector-appearance-unpinned-popup": "Το μενού εμφάνισης μεταφέρθηκε εδώ.",
-	"vector-2022-beta-preview-label": "Προσβασιμότητα Ανάγνωσης (Vector 2022)",
-	"vector-2022-beta-preview-description": "Πάρτε νωρίς πρόσβαση στα νέα χαρακτηριστικά προσβασιμότητας ανάγνωσης, όπως βελτιώσεις στην τυπογραφία και τη σκοτεινή λειτουργία.",
 	"vector-night-mode-gadget-warning": "Χρησιμοποιείτε ένα gadget σκοτεινής λειτουργίας που παρεμβαίνει σε αυτήν τη λειτουργία. [[Special:Preferences#mw-prefsection-gadgets|Απενεργοποιήστε το gadget]] για να χρησιμοποιήσετε τη σκοτεινή λειτουργία.",
 	"vector-night-mode-issue-reporting-link-label": "Αναφέρετε ένα πρόβλημα με τη σκοτεινή λειτουργία",
 	"vector-night-mode-issue-reporting-link-notification": "Η αναφορά παραλήφθηκε!",

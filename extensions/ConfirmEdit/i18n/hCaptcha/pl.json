@@ -17,7 +17,11 @@
 	"hcaptcha-challenge-closed": "Aby kontynuować, musisz wypełnić captcha.",
 	"hcaptcha-challenge-expired": "Upłynął czas na wypełnienie captchy. Spróbuj ponownie.",
 	"hcaptcha-generic-error": "Wystąpił błąd podczas ładowania formularza. Aby kontynuować, musisz odświeżyć stronę.",
+	"hcaptcha-internal-error": "Wystąpił błąd wewnętrzny podczas wysyłania formularza. Spróbuj ponownie.",
+	"hcaptcha-network-error": "Wystąpił błąd sieciowy podczas wysyłania formularza. Upewnij się, że masz działające połączenie i spróbuj ponownie.",
+	"hcaptcha-rate-limited": "Było zbyt wiele prób rozwiązania captcha. Proszę odczekać chwilę, zanim spróbujesz ponownie.",
 	"hcaptcha-loading-indicator-label": "Proszę czekać, aż zakończymy ładowanie formularza...",
 	"hcaptcha-missing-token": "Nie udało nam się jeszcze załadować formularza. Poczekaj kilka sekund i spróbuj ponownie.",
-	"hcaptcha-noscript": "Aby kontynuować, wymagany jest JavaScript. Włącz JavaScript w ustawieniach przeglądarki i odśwież stronę."
+	"hcaptcha-noscript": "Aby kontynuować, wymagany jest JavaScript. Włącz JavaScript w ustawieniach przeglądarki i odśwież stronę.",
+	"hcaptcha-force-show-captcha-edit": "Aby zapisać edycję, prześlij formularz ponownie i wykonaj zadanie captcha."
 }

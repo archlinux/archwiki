@@ -25,7 +25,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * @todo Cache exceptions
  */
 class FilterLookup implements IDBAccessObject {
-	public const SERVICE_NAME = 'AbuseFilterFilterLookup';
+	public const SERVICE_NAME = ServiceNames::FilterLookup;
 
 	// Used in getClosestVersion
 	public const DIR_PREV = 'prev';
@@ -55,19 +55,9 @@ class FilterLookup implements IDBAccessObject {
 	private $lastVersionCache = [];
 
 	/**
-	 * @var int[][] [ filter => [ historyID => [ prev, next ] ] ]
-	 * @phan-var array<int,array<int,array{prev?:int,next?:int}>>
+	 * @var array<int,array<int,array{prev?:int,next?:int}>> [ filter => [ historyID => [ prev, next ] ] ]
 	 */
 	private $closestVersionsCache = [];
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var WANObjectCache */
-	private $wanCache;
-
-	/** @var CentralDBManager */
-	private $centralDBManager;
 
 	/**
 	 * @var bool Flag used in PHPUnit tests to "hide" local filters when testing global ones, so that we can use the
@@ -75,19 +65,11 @@ class FilterLookup implements IDBAccessObject {
 	 */
 	private bool $localFiltersHiddenForTest = false;
 
-	/**
-	 * @param ILoadBalancer $loadBalancer
-	 * @param WANObjectCache $cache
-	 * @param CentralDBManager $centralDBManager
-	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
-		WANObjectCache $cache,
-		CentralDBManager $centralDBManager
+		private readonly ILoadBalancer $loadBalancer,
+		private readonly WANObjectCache $wanCache,
+		private readonly CentralDBManager $centralDBManager
 	) {
-		$this->loadBalancer = $loadBalancer;
-		$this->wanCache = $cache;
-		$this->centralDBManager = $centralDBManager;
 	}
 
 	/**
@@ -148,7 +130,7 @@ class FilterLookup implements IDBAccessObject {
 					[
 						'checkKeys' => [ $globalRulesKey ],
 						'lockTSE' => 300,
-						'version' => 3
+						'version' => 4
 					]
 				);
 			} else {
@@ -394,7 +376,10 @@ class FilterLookup implements IDBAccessObject {
 		$protected = in_array( 'protected', $flags, true ) ?
 			Flags::FILTER_USES_PROTECTED_VARS :
 			0;
-		return $hidden | $protected;
+		$suppressed = in_array( 'suppressed', $flags, true ) ?
+			Flags::FILTER_SUPPRESSED :
+			0;
+		return $hidden | $protected | $suppressed;
 	}
 
 	/**

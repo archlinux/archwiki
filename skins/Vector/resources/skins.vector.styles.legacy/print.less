@@ -15,7 +15,9 @@ body {
 }
 
 // Tables, thumbs and lists are sans-serif in print mode (unlike screen mode) because these will render
-// more legibly on print media in a smaller font sizes
+// more legibly on print media in a smaller font sizes.
+// Apply `@font-family-sans--fallback` as long as we don't provide print specific design tokens.
+// Refer to T173023 for details.
 .printfooter,
 .mw-footer,
 .thumb,
@@ -32,7 +34,7 @@ h4,
 h5,
 .mw-heading6,
 h6 {
-	font-family: @font-family-sans;
+	font-family: @font-family-sans--fallback;
 }
 
 // Images, such as formulas, render best in serif. Math fallback images, for example, have an

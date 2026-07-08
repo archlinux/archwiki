@@ -255,7 +255,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Set variabel (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variablar",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-tidsstempelet ved endringa",
-	"abusefilter-edit-builder-vars-accountname": "Kontonamn (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Kontonamn (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Handling",
 	"abusefilter-edit-builder-vars-addedlines": "Liner lagde til i endring",
 	"abusefilter-edit-builder-vars-delta": "Storleiksskilnad i endring",

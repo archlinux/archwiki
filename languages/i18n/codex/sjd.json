@@ -5,6 +5,7 @@
 		]
 	},
 	"cdx-message-dismiss-button-label": "Ка̄һтӭ",
+	"cdx-table-pager-items-per-page-current": "$1 {{PLURAL:$1|эльменнт|эльмент|эльменнтэ}}",
 	"cdx-table-pager-items-per-page-default": "Пуадтмуж югке лыстэсьт",
 	"cdx-table-no-data-message": "Евла да̄ннэ."
 }

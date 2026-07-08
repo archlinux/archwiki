@@ -3,15 +3,13 @@
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
 use MediaWiki\Extension\OATHAuth\Maintenance\MoveRecoveryCodesFromTOTP;
+use MediaWiki\Extension\OATHAuth\Maintenance\PopulateUserHandles;
 use MediaWiki\Extension\OATHAuth\Maintenance\UpdateForMultipleDevicesSupport;
-use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 
-	/**
-	 * @param DatabaseUpdater $updater
-	 */
+	/** @inheritDoc */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
 		$type = $updater->getDB()->getType();
 		$baseDir = dirname( __DIR__, 2 );
@@ -35,6 +33,13 @@ class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 
 		// 1.45
 		$updater->addPostDatabaseUpdateMaintenance( MoveRecoveryCodesFromTOTP::class );
+
+		// 1.46
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			'virtual-oathauth', 'addTable', 'oathauth_user_handles',
+			"$typePath/patch-add-oathauth_user_handles.sql", true
+		] );
+		$updater->addPostDatabaseUpdateMaintenance( PopulateUserHandles::class );
 
 		// add new updates here
 	}

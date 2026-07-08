@@ -381,7 +381,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizovat HTML entity na znaky unicode (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Proměnné",
 	"abusefilter-edit-builder-vars-timestamp": "Čas editace v unixovém formátu",
-	"abusefilter-edit-builder-vars-accountname": "Uživatelské jméno (při zakládání nového účtu)",
+	"abusefilter-edit-builder-vars-account-name": "Uživatelské jméno (při zakládání nového účtu)",
 	"abusefilter-edit-builder-vars-action": "Operace",
 	"abusefilter-edit-builder-vars-addedlines": "Řádky přidané při editaci",
 	"abusefilter-edit-builder-vars-delta": "Změna velikosti způsobená editací",

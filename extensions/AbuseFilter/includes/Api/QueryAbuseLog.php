@@ -23,6 +23,7 @@ use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryBase;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseLogConditionFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseLoggerFactory;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
@@ -31,14 +32,18 @@ use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
+use MediaWiki\Extension\AbuseFilter\TemporaryAccountIPsViewerSpecification;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\IPUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Query module to list abuse log entries.
@@ -51,33 +56,21 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class QueryAbuseLog extends ApiQueryBase {
 
-	private FilterLookup $afFilterLookup;
-	private AbuseFilterPermissionManager $afPermManager;
-	private VariablesBlobStore $afVariablesBlobStore;
-	private VariablesManager $afVariablesManager;
-	private UserFactory $userFactory;
-	private AbuseLoggerFactory $abuseLoggerFactory;
-	private RuleCheckerFactory $ruleCheckerFactory;
-
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
-		FilterLookup $afFilterLookup,
-		AbuseFilterPermissionManager $afPermManager,
-		VariablesBlobStore $afVariablesBlobStore,
-		VariablesManager $afVariablesManager,
-		UserFactory $userFactory,
-		AbuseLoggerFactory $abuseLoggerFactory,
-		RuleCheckerFactory $ruleCheckerFactory
+		private readonly FilterLookup $afFilterLookup,
+		private readonly AbuseFilterPermissionManager $afPermManager,
+		private readonly VariablesBlobStore $afVariablesBlobStore,
+		private readonly VariablesManager $afVariablesManager,
+		private readonly UserFactory $userFactory,
+		private readonly AbuseLoggerFactory $abuseLoggerFactory,
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly AbuseLogConditionFactory $abuseLogConditionFactory,
+		private readonly TemporaryAccountIPsViewerSpecification $tempAccountIPsViewerSpecification,
+		private readonly ReadOnlyMode $readOnlyMode,
 	) {
 		parent::__construct( $query, $moduleName, 'afl' );
-		$this->afFilterLookup = $afFilterLookup;
-		$this->afPermManager = $afPermManager;
-		$this->afVariablesBlobStore = $afVariablesBlobStore;
-		$this->afVariablesManager = $afVariablesManager;
-		$this->userFactory = $userFactory;
-		$this->abuseLoggerFactory = $abuseLoggerFactory;
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
 	}
 
 	/**
@@ -111,6 +104,7 @@ class QueryAbuseLog extends ApiQueryBase {
 		}
 
 		$canViewPrivate = $this->afPermManager->canViewPrivateFiltersLogs( $performer );
+		$canViewSuppressed = $this->afPermManager->canViewSuppressed( $performer );
 
 		// Map of [ [ id, global ], ... ]
 		$searchFilters = [];
@@ -136,19 +130,27 @@ class QueryAbuseLog extends ApiQueryBase {
 					$filter = $lookup->getFilter( $filterID, $global );
 					$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
 					$usedVariables = $ruleChecker->getUsedVars( $filter->getRules() );
-				} catch ( CentralDBNotAvailableException $_ ) {
-					// Conservatively assume that it's hidden and protected, like in AbuseLogPager::doFormatRow.
+				} catch ( CentralDBNotAvailableException ) {
+					// Conservatively assume that it's suppressed, hidden and protected,
+					// like in AbuseLogPager::doFormatRow.
 					// Also assume that the filter contains all protected variables for the same reasons.
 					$filter = MutableFilter::newDefault();
 					$filter->setHidden( true );
 					$filter->setProtected( true );
+					$filter->setSuppressed( true );
 					$usedVariables = $this->afPermManager->getProtectedVariables();
-				} catch ( FilterNotFoundException $_ ) {
+				} catch ( FilterNotFoundException ) {
 					// If no filter is found, assume it has no restrictions (is public and uses no protected
 					// variables) because it should be an non-existing filter ID.
 					$filter = MutableFilter::newDefault();
 					$usedVariables = [];
 					$foundInvalid = true;
+				}
+
+				if ( !$canViewSuppressed && $filter->isSuppressed() ) {
+					$this->dieWithError(
+						[ 'apierror-permissiondenied', $this->msg( 'action-abusefilter-log-suppressed' ) ]
+					);
 				}
 
 				if ( !$canViewPrivate && $filter->isHidden() ) {
@@ -209,27 +211,7 @@ class QueryAbuseLog extends ApiQueryBase {
 		$this->addWhereRange( 'afl_timestamp', $params['dir'], $params['start'], $params['end'] );
 
 		if ( isset( $params['user'] ) ) {
-			$u = $this->userFactory->newFromName( $params['user'] );
-			if ( $u ) {
-				// Username normalisation
-				$params['user'] = $u->getName();
-				$userId = $u->getId();
-			} elseif ( IPUtils::isIPAddress( $params['user'] ) ) {
-				// It's an IP, sanitize it
-				$params['user'] = IPUtils::sanitizeIP( $params['user'] );
-				$userId = 0;
-			}
-
-			if ( isset( $userId ) ) {
-				// Only add the WHERE for user in case it's either a valid user
-				// (but not necessary an existing one) or an IP.
-				$this->addWhere(
-					[
-						'afl_user' => $userId,
-						'afl_user_text' => $params['user']
-					]
-				);
-			}
+			$this->addUserFilter( $performer, $params['user'] );
 		}
 
 		$this->addWhereIf( [ 'afl_deleted' => 0 ], !$this->afPermManager->canSeeHiddenLogEntries( $performer ) );
@@ -247,14 +229,12 @@ class QueryAbuseLog extends ApiQueryBase {
 			if ( $filterConds['local'] ) {
 				$conds[] = $dbr->andExpr( [
 					'afl_global' => 0,
-					// @phan-suppress-previous-line PhanTypeMismatchArgument Array is non-empty
 					'afl_filter_id' => $filterConds['local'],
 				] );
 			}
 			if ( $filterConds['global'] ) {
 				$conds[] = $dbr->andExpr( [
 					'afl_global' => 1,
-					// @phan-suppress-previous-line PhanTypeMismatchArgument Array is non-empty
 					'afl_filter_id' => $filterConds['global'],
 				] );
 			}
@@ -354,16 +334,20 @@ class QueryAbuseLog extends ApiQueryBase {
 						}
 
 						if ( $filterObj->isProtected() ) {
-							// user_name or accountname should always exist -- just in case
-							// if it doesn't, unset the protected variables since they shouldn't be accessed if
-							// the access isn't logged
-							if ( isset( $entry['details']['user_name'] ) ||
-								isset( $entry['details']['accountname'] )
+							// We need to log any access of protected variable values. If the site is
+							// in read only or user_name or account_name don't exist, then just blank
+							// the protected variable values because we cannot create a log
+							if (
+								!$this->readOnlyMode->isReadOnly() &&
+								(
+									isset( $entry['details']['user_name'] ) ||
+									isset( $entry['details']['account_name'] )
+								)
 							) {
 								$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 								$logger->logViewProtectedVariableValue(
 									$performer->getUser(),
-									$entry['details']['user_name'] ?? $entry['details']['accountname'],
+									$entry['details']['user_name'] ?? $entry['details']['account_name'],
 									$protectedVariableValuesShown
 								);
 							} else {
@@ -393,6 +377,56 @@ class QueryAbuseLog extends ApiQueryBase {
 			}
 		}
 		$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'item' );
+	}
+
+	/**
+	 * Updates the query params and the internal query builder to include the
+	 * parameters and clauses required for filtering out entries not associated
+	 * with the provided username, IP or IP range.
+	 *
+	 * @param Authority $performer The authority listing the AF logs.
+	 * @param string $userName Username or IP address to filter for.
+	 * @return void
+	 */
+	private function addUserFilter( Authority $performer, string $userName ): void {
+		if ( IPUtils::isIPAddress( $userName ) ) {
+			$cleanIP = IPUtils::sanitizeIP( $userName );
+			$canAccessTempAccountIPs =
+				$this->tempAccountIPsViewerSpecification->isSatisfiedBy(
+					$performer
+				);
+
+			if ( !$canAccessTempAccountIPs ) {
+				// Gets entries associated with anonymous users identified by
+				// their IPs (i.e. filter by afl_user_text; legacy behaviour).
+				$expression = $this->abuseLogConditionFactory
+					->getUserFilterByUserIdentity(
+						new UserIdentityValue( 0, $cleanIP )
+					);
+			} else {
+				// Gets entries associated with anonymous users identified by
+				// their IPs (i.e. filter by afl_user_text; legacy behavior) as
+				// well as entries associated with temp accounts under the
+				// provided IP (i.e. filter by afl_ip_hex).
+				$expression = $this->abuseLogConditionFactory
+					->getUserFilterByIPAddress( $cleanIP );
+			}
+
+			if ( $expression ) {
+				$this->getQueryBuilder()->conds( $expression );
+			}
+		} else {
+			$user = $this->userFactory->newFromName( $userName );
+
+			if ( $user ) {
+				$expression = $this->abuseLogConditionFactory
+					->getUserFilterByUserIdentity( $user );
+
+				if ( $expression ) {
+					$this->addWhere( $expression );
+				}
+			}
+		}
 	}
 
 	/**

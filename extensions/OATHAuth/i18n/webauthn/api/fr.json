@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Escargot bleu",
+			"Mahabarata"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Module API pour communiquer entre serveur et client pendant le processus d’inscription/authentification.",
+	"apihelp-oathauth-webauthn-param-func": "Nom de la requête à exécuter souhaitée.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Informations d'authentification.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Informations d'inscription.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "La clé enregistrée est en mode clé de passe (seulement pour getRegisterInfo)."
+}

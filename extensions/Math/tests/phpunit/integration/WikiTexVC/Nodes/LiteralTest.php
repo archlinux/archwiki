@@ -138,4 +138,10 @@ class LiteralTest extends MediaWikiIntegrationTestCase {
 		$n = new Literal( '\\operatorname{asdf' );
 		$this->assertNull( $n->getArgFromCurlies() );
 	}
+
+	public function testNamedOperator() {
+		$node = new Literal( '\\gcd' );
+		$result = $node->toMMLTree();
+		$this->assertStringContainsString( '>gcd</mo>', (string)$result );
+	}
 }

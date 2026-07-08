@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\CommentTk;
@@ -13,7 +14,6 @@ use Wikimedia\Parsoid\Tokens\IndentPreTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Tokens\XMLTagTk;
@@ -251,7 +251,14 @@ class PreHandler extends LineBasedHandler {
 			$indentPreTk = new IndentPreTk;
 			$indentPreTk->addToken( new TagTk( 'pre', [], $da ) );
 			for ( $j = 0; $j < $i + 1; $j++ ) {
-				$indentPreTk->addToken( $this->tokens[$j] );
+				$t = $this->tokens[$j];
+				// The ListHandler will ignore IndentPreTk tokens but
+				// we might have tokenized a listItem on this line from
+				// a template so turn it back to text
+				if ( $t instanceof XMLTagTk && $t->getName() === 'listItem' ) {
+					$t = $t->getAttributeKV( 'bullets' )->srcOffsets->value->substr();
+				}
+				$indentPreTk->addToken( $t );
 			}
 			$indentPreTk->addToken( new EndTagTk( 'pre' ) );
 

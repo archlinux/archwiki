@@ -54,11 +54,12 @@ class ToolLinksHandlerTest extends MediaWikiUnitTestCase {
 		$handler = $this->getToolLinksHandler();
 		$sp = $this->createMock( SpecialPage::class );
 		$sp->method( 'getUser' )->willReturn( $this->createMock( User::class ) );
+		$sp->method( 'msg' )->willReturn( $this->createMock( Message::class ) );
 		$title = $this->createMock( Title::class );
 		$title->method( 'getText' )->willReturn( '1.1.0.0/16' );
 		$tools = [];
 		$handler->onContributionsToolLinks( 1, $title, $tools, $sp );
-		$this->assertCount( 0, $tools );
+		$this->assertArrayHasKey( 'abuselog', $tools );
 	}
 
 	public function testOnHistoryPageToolLinks() {

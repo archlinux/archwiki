@@ -1,37 +1,24 @@
 <?php
 
-namespace MediaWiki\CheckUser\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Investigate\Pagers;
 
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\Investigate\Services\CompareService;
-use MediaWiki\CheckUser\Investigate\Utilities\DurationManager;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Investigate\Services\CompareService;
+use MediaWiki\Extension\CheckUser\Investigate\Utilities\DurationManager;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\User\UserFactory;
 
 class ComparePagerFactory implements PagerFactory {
-	private LinkRenderer $linkRenderer;
-	private TokenQueryManager $tokenQueryManager;
-	private DurationManager $durationManager;
-	private CompareService $compare;
-	private UserFactory $userFactory;
-	private LinkBatchFactory $linkBatchFactory;
-
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		TokenQueryManager $tokenQueryManager,
-		DurationManager $durationManager,
-		CompareService $compare,
-		UserFactory $userFactory,
-		LinkBatchFactory $linkBatchFactory
+		private readonly LinkRenderer $linkRenderer,
+		private readonly TokenQueryManager $tokenQueryManager,
+		private readonly DurationManager $durationManager,
+		private readonly CompareService $compare,
+		private readonly UserFactory $userFactory,
+		private readonly LinkBatchFactory $linkBatchFactory,
 	) {
-		$this->linkRenderer = $linkRenderer;
-		$this->tokenQueryManager = $tokenQueryManager;
-		$this->durationManager = $durationManager;
-		$this->compare = $compare;
-		$this->userFactory = $userFactory;
-		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
 	/**

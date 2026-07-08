@@ -18,7 +18,7 @@
  * @file
  */
 
-namespace MediaWiki\CheckUser\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\GlobalContributions;
 
 /**
  * Value Object encapsulating information about a given set of rights
@@ -30,7 +30,7 @@ class ExternalPermissions {
 
 	public function __construct(
 		private readonly array $permissions = [],
-		private readonly bool $encounteredLookupError = false
+		private readonly bool $encounteredLookupError = false,
 	) {
 	}
 
@@ -49,12 +49,7 @@ class ExternalPermissions {
 	public function hasPermission( string $right, string $wikiId ): bool {
 		// The array at [wiki][right] contains the error messages related to the user
 		// not having that right. Therefore, check if the array exists and is empty.
-
-		// Assign, so that Phan doesn't complain about modifying $this->permissions.
-		$permissions = $this->permissions;
-
-		return isset( $permissions[ $wikiId ][ $right ] ) &&
-			count( $permissions[ $wikiId ][ $right ] ) === 0;
+		return ( $this->permissions[$wikiId][$right] ?? null ) === [];
 	}
 
 	/**
@@ -62,9 +57,7 @@ class ExternalPermissions {
 	 * @return list<string>
 	 */
 	public function getPermissionsOnWiki( string $wikiId ): array {
-		$rights = $this->permissions[$wikiId] ?? [];
-		$rights = array_filter( $rights, static fn ( $errors ) => count( $errors ) === 0 );
-		return array_keys( $rights );
+		return array_keys( $this->permissions[$wikiId] ?? [], [] );
 	}
 
 	/**
@@ -80,6 +73,6 @@ class ExternalPermissions {
 	 * Returns true if the instance stores permissions from at least one wiki.
 	 */
 	public function hasAnyWiki(): bool {
-		return count( $this->permissions ) > 0;
+		return (bool)$this->permissions;
 	}
 }

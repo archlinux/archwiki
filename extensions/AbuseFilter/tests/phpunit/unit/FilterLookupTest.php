@@ -410,13 +410,13 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 		$data = self::provideRowsAndFilters();
 		$db = $this->getDBWithMockRows(
 			array_column( $data, 'row' ),
-			array_merge( ...array_column( $data, 'actions' ) )
+			array_merge( ...array_column( $data, 'actionsRows' ) )
 		);
 		$filterLookup = $this->getLookup( $db, false, null );
 
 		$expected = [];
 		/** @var Filter $filter */
-		foreach ( array_column( $data, 'filter' ) as $filter ) {
+		foreach ( array_column( $data, 'expected' ) as $filter ) {
 			$expected[$filter->getID()] = $filter;
 		}
 
@@ -437,13 +437,13 @@ class FilterLookupTest extends MediaWikiUnitTestCase {
 		$data = self::provideRowsAndFilters();
 		$db = $this->getDBWithMockRows(
 			array_column( $data, 'row' ),
-			array_merge( ...array_column( $data, 'actions' ) )
+			array_merge( ...array_column( $data, 'actionsRows' ) )
 		);
 		$filterLookup = $this->getLookup( $db, 'some_db', null, $isCentral );
 
 		$expected = [];
 		/** @var Filter $filter */
-		foreach ( array_column( $data, 'filter' ) as $filter ) {
+		foreach ( array_column( $data, 'expected' ) as $filter ) {
 			$key = 'global-' . $filter->getID();
 			$expected[$key] = $filter;
 		}

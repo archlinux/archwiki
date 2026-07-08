@@ -34,7 +34,7 @@ class PermissionStatusTest extends MediaWikiUnitTestCase {
 
 		$this->assertSame( $block, $status->getBlock() );
 		$this->assertTrue( $status->isBlocked() );
-		$this->assertFalse( $status->isOK() );
+		$this->assertStatusNotOK( $status );
 	}
 
 	public function testRateLimitExceeded() {

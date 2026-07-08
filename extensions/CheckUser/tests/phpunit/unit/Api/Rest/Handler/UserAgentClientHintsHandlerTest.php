@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Api\Rest\Handler;
 
-use MediaWiki\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
@@ -25,11 +25,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler
  */
 class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 	use HandlerTestTrait;
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 	use MockServiceDependenciesTrait;
 
 	private function getObjectUnderTest( array $overrides ): UserAgentClientHintsHandler {
@@ -69,7 +69,10 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			new LocalizedHttpException( new MessageValue( 'rest-bad-json-body' ), 400 )
 		);
 		$this->executeHandler(
-			$handler, new RequestData( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] ), [], [],
+			$handler,
+			new RequestData( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] ),
+			[],
+			[],
 			[ 'type' => 'revision', 'id' => 1 ]
 		);
 	}
@@ -95,8 +98,11 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			new LocalizedHttpException( new MessageValue( 'rest-unsupported-content-type' ), 415 )
 		);
 		$this->executeHandler(
-			$handler, new RequestData( [ 'headers' => [ 'Content-Type' => 'application/x-www-form-urlencoded' ] ] ),
-			[], [], [ 'type' => 'revision', 'id' => 1 ]
+			$handler,
+			new RequestData( [ 'headers' => [ 'Content-Type' => 'application/x-www-form-urlencoded' ] ] ),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ]
 		);
 	}
 
@@ -121,7 +127,10 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			new LocalizedHttpException( new MessageValue( 'rest-bad-json-body' ), 400 )
 		);
 		$this->executeHandler(
-			$handler, new RequestData( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] ), [], [],
+			$handler,
+			new RequestData( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] ),
+			[],
+			[],
 			[ 'type' => 'revision', 'id' => 1 ]
 		);
 	}
@@ -137,7 +146,12 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		);
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'unsupported', 'id' => 1 ], $validatedBody
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'unsupported', 'id' => 1 ],
+			$validatedBody
 		);
 	}
 
@@ -154,7 +168,12 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		);
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], $validatedBody
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			$validatedBody
 		);
 	}
 
@@ -173,13 +192,19 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		$revisionStore->method( 'getRevisionById' )->willReturn( $revision );
 		$this->expectExceptionObject(
 			new LocalizedHttpException(
-				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ), 403
+				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ),
+				403
 			)
 		);
 		$handler = $this->getObjectUnderTest( [ 'config' => $config, 'revisionStore' => $revisionStore ] );
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], $validatedBody
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			$validatedBody
 		);
 	}
 
@@ -196,13 +221,19 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		$revisionStore->method( 'getRevisionById' )->willReturn( $revision );
 		$this->expectExceptionObject(
 			new LocalizedHttpException(
-				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ), 403
+				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ),
+				403
 			)
 		);
 		$handler = $this->getObjectUnderTest( [ 'config' => $config, 'revisionStore' => $revisionStore ] );
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], $validatedBody
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			$validatedBody
 		);
 	}
 
@@ -220,11 +251,17 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			new LocalizedHttpException(
 				new MessageValue( 'checkuser-api-useragent-clienthints-revision-user-mismatch' ),
 				401
-			) );
+			)
+		);
 		$handler = $this->getObjectUnderTest( [ 'config' => $config, 'revisionStore' => $revisionStore ] );
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], $validatedBody
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			$validatedBody
 		);
 	}
 
@@ -245,12 +282,20 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			->willReturn( new UserIdentityValue( 456, 'Foo' ) );
 		$this->expectExceptionObject(
 			new LocalizedHttpException(
-				new MessageValue( 'checkuser-api-useragent-clienthints-revision-user-mismatch' ), 401
-			) );
+				new MessageValue( 'checkuser-api-useragent-clienthints-revision-user-mismatch' ),
+				401
+			)
+		);
 		$handler = $this->getObjectUnderTest( [ 'config' => $config, 'revisionStore' => $revisionStore ] );
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], $validatedBody, $authority
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			$validatedBody,
+			$authority
 		);
 	}
 
@@ -278,7 +323,13 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			'userAgentClientHintsManager' => $userAgentClientHintsManager,
 		] );
 		$response = $this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], [ 'test' => 1 ], $authority
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			[ 'test' => 1 ],
+			$authority
 		);
 		$this->assertSame(
 			json_encode( [
@@ -308,7 +359,7 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 			->willReturn( $user );
 		$userAgentClientHintsManager = $this->createMock( UserAgentClientHintsManager::class );
 		$userAgentClientHintsManager->method( 'insertClientHintValues' )
-			->willReturn( StatusValue::newFatal( 'error', [ 1 ] ) );
+			->willReturn( StatusValue::newFatal( 'error', 1 ) );
 		$handler = $this->getObjectUnderTest( [
 			'config' => $config, 'revisionStore' => $revisionStore,
 			'userAgentClientHintsManager' => $userAgentClientHintsManager,
@@ -316,7 +367,13 @@ class UserAgentClientHintsHandlerTest extends MediaWikiUnitTestCase {
 		$this->expectException( LocalizedHttpException::class );
 		$this->expectExceptionMessage( 'error' );
 		$this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'revision', 'id' => 1 ], [ 'test' => 1 ], $authority
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'revision', 'id' => 1 ],
+			[ 'test' => 1 ],
+			$authority
 		);
 	}
 

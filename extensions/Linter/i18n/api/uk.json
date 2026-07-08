@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Movses",
 			"Piramidion",
-			"Ата",
-			"Movses"
+			"Ата"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Отримати список Lint-помилок",

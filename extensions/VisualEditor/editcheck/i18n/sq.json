@@ -3,5 +3,8 @@
 		"authors": [
 			"INNERLMNT"
 		]
-	}
+	},
+	"editcheck-dialog-action-replace": "Zëvendëso",
+	"editcheck-suggestionfeedback-label-about": "Rreth sugjerimeve",
+	"editcheck-suggestionfeedback-label-report": "Raporto një problem"
 }

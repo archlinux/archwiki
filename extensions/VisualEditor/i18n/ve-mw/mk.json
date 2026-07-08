@@ -8,6 +8,7 @@
 			"Vlad5250"
 		]
 	},
+	"collabpad-disabled": "CollabPad не е овозможен на ова вики.",
 	"collabpad-doctitle": "Соработна тетратка: $1",
 	"collabpad-import-subtitle": "Увезено од $1",
 	"collabpad": "Соработна тетратка",
@@ -229,6 +230,7 @@
 	"visualeditor-educationpopup-dismiss": "Јасно",
 	"visualeditor-expandable-less": "Помалку",
 	"visualeditor-expandable-more": "Повеќе",
+	"visualeditor-expandableerror-toggle": "Префрли видливост",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Наслов на страницата",
 	"visualeditor-formatdropdown-format-mw-heading2": "Заглавие",
@@ -236,6 +238,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Подзаглавие 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Подзаглавие 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Подзаглавие 4",
+	"visualeditor-fullpage-switch-label": "Уреди цела страница",
 	"visualeditor-generating-wikitext-progress": "Создавање на викитекст",
 	"visualeditor-includes-noinclude-start": "Почеток на содржината изземена од извадоци",
 	"visualeditor-includes-noinclude-end": "Крај на содржината изземена од извадоци",

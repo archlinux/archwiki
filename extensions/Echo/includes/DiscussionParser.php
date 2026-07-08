@@ -944,31 +944,6 @@ abstract class DiscussionParser {
 	}
 
 	/**
-	 * Determines whether the input is a signed comment.
-	 *
-	 * @param string $text The text to check.
-	 * @param User|bool $user If set, will only return true if the comment is
-	 *  signed by this user.
-	 * @param Title|null $title
-	 * @return bool
-	 */
-	public static function isSignedComment( $text, $user = false, ?Title $title = null ) {
-		$userData = self::getUserFromLine( $text, $title );
-
-		if ( $userData === false ) {
-			return false;
-		} elseif ( $user === false ) {
-			return true;
-		}
-
-		[ , $foundUser ] = $userData;
-		$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
-
-		return $userNameUtils->getCanonical( $foundUser, UserNameUtils::RIGOR_NONE ) ===
-			$userNameUtils->getCanonical( $user, UserNameUtils::RIGOR_NONE );
-	}
-
-	/**
 	 * Finds the start position, if any, of the timestamp on a line
 	 *
 	 * @param string $line The line to search for a signature on

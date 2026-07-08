@@ -51,7 +51,7 @@ structure = ":" ("common" / "structure" / "chemistry" /"matrix" / "equations" / 
 {
 	return substr($this->text(),1);
 }
-application = intent:intent hint:hint? args:("(" WS? arguments:arguments? WS? ")")+
+application = intent:intent hint:hint? args:("(" WS? intent_arguments:intent_arguments? WS? ")")+
 {
     $argsF = [];
     foreach ($args as $arg) {
@@ -65,7 +65,7 @@ application = intent:intent hint:hint? args:("(" WS? arguments:arguments? WS? ")
      ];
    return $returnObj;
 }
-arguments = WS? first:start WS? rest:(","  WS? start WS?)*
+intent_arguments = WS? first:start WS? rest:(","  WS? start WS?)*
 {
       $args = [$first];
       foreach ($rest as $arg) {

@@ -7,6 +7,7 @@
 		]
 	},
 	"linterrors": "लिंट त्रुटियाँ",
+	"linttemplateerrors": "लिंट त्रुटियों वाले ट्रांसक्लूशन्स",
 	"linter-category-bogus-image-options": "बनावटी फ़ाइल विकल्प",
 	"linter-category-bogus-image-options-desc": "इन पृष्ठों पर बनावटी विकल्पों वाली फ़ाइलें हैं।",
 	"linter-category-large-tables": "बड़े टेबल्स जिन्हें मोबाइल पर देखना मुश्किल है",
@@ -17,6 +18,8 @@
 	"linter-category-duplicate-ids-desc": "इन पृष्ठों पर नकली id एट्रीब्यूट्स वाले तत्व हैं।",
 	"linter-category-empty-heading": "खाली हेडिंग्स",
 	"linter-category-empty-heading-desc": "इन पृष्ठों पर खाली हेडिंग्स हैं।",
+	"linter-category-template-arg-in-extension-tag": "साँचे के पैरामीटर वाला एक्सटेंशन टैग",
+	"linter-category-template-arg-in-extension-tag-desc": "इन पृष्ठों पर एक्सटेंशन टैग्स हैं जिन पर साँचे के पैरामीटर्स हैं, जो कि ठीक से ट्रांसक्लूड नहीं होते हैं।",
 	"linter-category-fostered": "आश्रित सामग्री",
 	"linter-category-fostered-desc": "इन पृष्ठों पर आश्रित सामग्री है।",
 	"linter-category-fostered-transparent": "आश्रित रेंडर-पारदर्शी सामग्री",
@@ -59,6 +62,7 @@
 	"linter-category-wikilink-in-extlink-desc": "इन पृष्ठों पर बाहरी कड़ियों के अंदर विकिकड़ियाँ हैं जिन्हें ठीक किया जा सकता है",
 	"linter-desc": "एक बाहरी सेवा से लिंट त्रुटियाँ ट्रैक करके सदस्यों को दर्शाता है",
 	"linter-lints-prefix-search-page-desc": "पृष्ठ शीर्षक उपसर्ग या पूरे शीर्षक से लिंट त्रुटियों वाले पृष्ठ खोजें",
+	"linter-invalid-category": "श्रेणी नहीं मिली या विकृत है",
 	"linter-invalid-title": "नामस्थान और/या पृष्ठ नाम नहीं मिला या विकृत है",
 	"linter-form-exact-match": "कोई विशिष्ट पृष्ठ शीर्षक खोजें",
 	"linter-form-prefix-match": "शीर्षक उपसर्ग से मेल खाने वाले सभी पृष्ठ खोजें",
@@ -109,10 +113,15 @@
 	"linter-pager-title-header": "पृष्ठ शीर्षक",
 	"linter-pager-unclosed-quotes-in-heading-details": "बंद न की गई सूक्ति जो विषयसूची से बाहर निकल आई है",
 	"linter-pager-wikilink-in-extlink-details": "कड़ियों में कड़ियाँ",
+	"linter-pager-template-arg-in-extension-tag-details": "अपडेट की आवश्यकता वाला एक्सटेंशन टैग (और उसके अंदर प्रयुक्त पैरामीटर्स)",
 	"linter-prefix-search-subpage": "शीर्षक उपसर्ग या पूरे शीर्षक से मेल खाने वाली लिंट त्रुटियों वाले पृष्ठ: $1",
 	"linterrors-subpage": "लिंट त्रुटियाँ: $1",
 	"linterrors-summary": "<strong>नोट:</strong> श्रेणियों की गणनाएँ सटीक नहीं हैं, बल्कि अनुमानों पर आधारित हैं।",
 	"multi-part-template-block": "आउटपुट किसी एक साँचे से नहीं",
+	"parser-function": "पार्सर फ़ंक्शन से प्राप्त आउटपुट",
 	"pageinfo-linter": "लिंट त्रुटियाँ",
-	"pageinfo-linter-moreinfo": "लिंट त्रुटियों के बारे में विस्तृत जानकारी देखें।"
+	"pageinfo-linter-moreinfo": "लिंट त्रुटियों के बारे में विस्तृत जानकारी देखें।",
+	"category-by-template": "लिंट त्रुटियों त्रुटियों वाले ट्रांसक्लूशन्स: $1",
+	"category-by-template-view": "इन लिंट त्रुटियों को उत्पन्न करने वाले ट्रांसक्लूशन्स देखें।",
+	"category-by-template-desc": "इन पृष्ठों के ट्रांसकूलशन्स में '''[[Special:LintErrors/$1|$1]]''' लिंट त्रुटियाँ हैं। ''ध्यान रखें कि कुछ ट्रांसक्लूशन्स, ट्रांसक्लूशन के स्रोत में किसी त्रुटि की जगह, ट्रांसक्लूशन में प्रदान किए गए तर्कों के कारण इस सूची में दिख सकते हैं।''"
 }

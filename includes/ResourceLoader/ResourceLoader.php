@@ -37,7 +37,6 @@ use RuntimeException;
 use stdClass;
 use Throwable;
 use UnexpectedValueException;
-use Wikimedia\DependencyStore\DependencyStore;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\Minify\CSSMin;
 use Wikimedia\Minify\IdentityMinifierState;
@@ -53,6 +52,7 @@ use Wikimedia\RequestTimeout\TimeoutException;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 use Wikimedia\WrappedString;
 
 /**
@@ -155,7 +155,7 @@ class ResourceLoader implements LoggerAwareInterface {
 		$this->maxageUnversioned = $params['maxageUnversioned'] ?? 5 * 60;
 
 		$this->config = $config;
-		$this->logger = $logger ?: new NullLogger();
+		$this->logger = $logger ?? new NullLogger();
 
 		$services = MediaWikiServices::getInstance();
 		$this->hookContainer = $services->getHookContainer();
@@ -173,8 +173,7 @@ class ResourceLoader implements LoggerAwareInterface {
 			new MessageBlobStore( $this, $this->logger, $services->getMainWANObjectCache() )
 		);
 
-		$tracker = $tracker ?: new DependencyStore( new HashBagOStuff() );
-		$this->setDependencyStore( $tracker );
+		$this->setDependencyStore( $tracker ?? new DependencyStore( new HashBagOStuff() ) );
 	}
 
 	/**
@@ -426,6 +425,9 @@ class ResourceLoader implements LoggerAwareInterface {
 		$depsByEntity = $this->depStore->retrieveMulti(
 			$entitiesByModule
 		);
+
+		$modulesWithMessages = [];
+
 		// Inject the indirect file dependencies for all the modules
 		foreach ( $moduleNames as $moduleName ) {
 			$module = $this->getModule( $moduleName );
@@ -434,25 +436,23 @@ class ResourceLoader implements LoggerAwareInterface {
 				$deps = $depsByEntity[$entity];
 				$paths = $deps['paths'];
 				$module->setFileDependencies( $context, $paths );
+
+				if ( $module->getMessages() ) {
+					$modulesWithMessages[$moduleName] = $module;
+				}
 			}
 		}
 
 		WikiModule::preloadTitleInfo( $context, $moduleNames );
 
 		// Prime in-object cache for message blobs for modules with messages
-		$modulesWithMessages = [];
-		foreach ( $moduleNames as $moduleName ) {
-			$module = $this->getModule( $moduleName );
-			if ( $module && $module->getMessages() ) {
-				$modulesWithMessages[$moduleName] = $module;
+		if ( $modulesWithMessages ) {
+			$lang = $context->getLanguage();
+			$store = $this->getMessageBlobStore();
+			$blobs = $store->getBlobs( $modulesWithMessages, $lang );
+			foreach ( $blobs as $moduleName => $blob ) {
+				$modulesWithMessages[$moduleName]->setMessageBlob( $blob, $lang );
 			}
-		}
-		// Prime in-object cache for message blobs for modules with messages
-		$lang = $context->getLanguage();
-		$store = $this->getMessageBlobStore();
-		$blobs = $store->getBlobs( $modulesWithMessages, $lang );
-		foreach ( $blobs as $moduleName => $blob ) {
-			$modulesWithMessages[$moduleName]->setMessageBlob( $blob, $lang );
 		}
 	}
 
@@ -768,20 +768,20 @@ class ResourceLoader implements LoggerAwareInterface {
 			}
 		}
 
+		// @phan-suppress-next-line SecurityCheck-XSS
 		echo $response;
 	}
 
 	/**
 	 * Send stats about the time used to build the response
-	 * @return ScopedCallback
 	 */
-	protected function measureResponseTime() {
+	#[\NoDiscard]
+	protected function measureResponseTime(): ScopedCallback {
 		$requestStart = $_SERVER['REQUEST_TIME_FLOAT'];
 		return new ScopedCallback( function () use ( $requestStart ) {
 			$statTiming = microtime( true ) - $requestStart;
 
 			$this->statsFactory->getTiming( 'resourceloader_response_time_seconds' )
-				->copyToStatsdAt( 'resourceloader.responseTime' )
 				->observe( 1000 * $statTiming );
 		} );
 	}
@@ -851,7 +851,7 @@ class ResourceLoader implements LoggerAwareInterface {
 				: ''
 			);
 			header( "Cache-Control: public, max-age=$maxage, s-maxage=$maxage" . $staleDirective );
-			header( 'Expires: ' . ConvertibleTimestamp::convert( TS_RFC2822, time() + $maxage ) );
+			header( 'Expires: ' . ConvertibleTimestamp::convert( TS::RFC2822, time() + $maxage ) );
 		}
 
 		foreach ( $this->extraHeaders as $header ) {
@@ -1149,13 +1149,9 @@ MESSAGE;
 			);
 
 			$mapType = $context->isSourceMap() ? 'map-js' : 'minify-js';
-			$statsdNamespace = implode( '.', [
-				"resourceloader_cache", $mapType, $isHit ? 'hit' : 'miss'
-			] );
 			$this->statsFactory->getCounter( 'resourceloader_cache_total' )
 				->setLabel( 'type', $mapType )
 				->setLabel( 'status', $isHit ? 'hit' : 'miss' )
-				->copyToStatsdAt( [ $statsdNamespace ] )
 				->increment();
 		} else {
 			[ $response, $offsetArray ] = $callback();
@@ -1477,9 +1473,13 @@ MESSAGE;
 	 * single stylesheet with "@media" blocks.
 	 *
 	 * @param array<string,string|string[]> $stylePairs Map from media type to CSS string(s)
+	 * @param WebRequest|null $request Null (deprecated since 1.46) falls back to $wgRequest
 	 * @return string[] CSS strings
 	 */
-	public static function makeCombinedStyles( array $stylePairs ) {
+	public static function makeCombinedStyles( array $stylePairs, $request = null ) {
+		if ( $request === null ) {
+			wfDeprecated( __METHOD__ . ' with null $request', '1.46' );
+		}
 		$out = [];
 		foreach ( $stylePairs as $media => $styles ) {
 			// FileModule::getStyle can return the styles as a string or an
@@ -1493,7 +1493,7 @@ MESSAGE;
 				}
 				// Transform the media type based on request params and config
 				// The way that this relies on $wgRequest to propagate request params is slightly evil
-				$media = OutputPage::transformCssMedia( $media );
+				$media = OutputPage::transformCssMedia( $media, $request );
 
 				if ( $media === '' || $media == 'all' ) {
 					$out[] = $style;
@@ -1604,10 +1604,10 @@ MESSAGE;
 	 *  - string: module name
 	 *  - string: module version
 	 *  - array|null: List of dependencies (optional)
-	 *  - string|null: Module group (optional)
+	 *  - int|null: Module group (optional)
 	 *  - string|null: Name of foreign module source, or 'local' (optional)
 	 *  - string|null: Script body of a skip function (optional)
-	 * @phan-param array<int,array{0:string,1:string,2?:?array,3?:?string,4?:?string,5?:?string}> $modules
+	 * @phan-param array<int,array{0:string,1:string,2?:?array,3?:?int,4?:?string,5?:?string}> $modules
 	 * @return string JavaScript code
 	 */
 	public static function makeLoaderRegisterScript(
@@ -1714,11 +1714,12 @@ MESSAGE;
 	 * @return string JavaScript code
 	 * @throws LogicException
 	 *
-	 * @deprecated since 1.44, Consider using package files instead or
-	 * you can return mw.config.set() combined with RL\Context::encodeJson, if available.
-	 * If not, use FormatJson::encode.
+	 * @deprecated since 1.44; hard-deprecated since 1.46. Consider using package files
+	 * instead or you can return mw.config.set() combined with RL\Context::encodeJson,
+	 * if available. If not, use FormatJson::encode.
 	 */
 	public static function makeConfigSetScript( array $configuration ) {
+		wfDeprecated( __METHOD__, '1.44' );
 		$json = self::encodeJsonForScript( $configuration );
 		if ( $json === false ) {
 			$e = new LogicException(
@@ -2070,20 +2071,17 @@ MESSAGE;
 		);
 
 		$status = 'hit';
-		$incKey = "resourceloader_cache.$filter.$status";
 		$result = $cache->getWithSetCallback(
 			$key,
 			BagOStuff::TTL_DAY,
-			static function () use ( $filter, $data, &$incKey, &$status ) {
+			static function () use ( $filter, $data, &$status ) {
 				$status = 'miss';
-				$incKey = "resourceloader_cache.$filter.$status";
 				return self::applyFilter( $filter, $data );
 			}
 		);
 		$statsFactory->getCounter( 'resourceloader_cache_total' )
 			->setLabel( 'type', $filter )
 			->setLabel( 'status', $status )
-			->copyToStatsdAt( [ $incKey ] )
 			->increment();
 
 		// Use $data on cache failure

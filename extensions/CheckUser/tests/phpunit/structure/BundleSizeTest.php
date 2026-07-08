@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Structure;
+namespace MediaWiki\Extension\CheckUser\Tests\Structure;
 
 class BundleSizeTest extends \MediaWiki\Tests\Structure\BundleSizeTestBase {
 

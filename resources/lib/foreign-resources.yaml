@@ -115,21 +115,26 @@ CLDRPluralRuleParser:
   license: MIT
   homepage: https://github.com/santhoshtr/CLDRPluralRuleParser
   authors: Santhosh Thottingal
-  version: 1.3.1-0dda851
-  purl: pkg:github/santhoshtr/CLDRPluralRuleParser@0dda851#src/CLDRPluralRuleParser.js
-  type: file
-  src: https://raw.githubusercontent.com/santhoshtr/CLDRPluralRuleParser/0dda851/src/CLDRPluralRuleParser.js
-  integrity: sha384-M4taeYYG2+9Ob1/La16iO+zlRRmBV5lBR3xUKkQT6kfkJ0aLbCi6yc0RYI1BDzdh
+  version: 1.6.5
+  purl: pkg:npm/santhoshtr/CLDRPluralRuleParser@1.6.5
+  type: tar
+  src: https://registry.npmjs.org/cldrpluralruleparser/-/cldrpluralruleparser-1.6.5.tgz
+  integrity: sha384-2X605FbWe/KeH5YGArppcb6YNh94K20RVin0MdFjIZpTE79G0LW9CHhIdJhL0ReK
+  dest:
+    package/dist/cjs/*: cjs
+    package/src/*: src
+    package/README.md:
+    package/LICENSE.txt:
 
 codex:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 2.3.2
-  purl: pkg:npm/@wikimedia/codex@2.3.2
+  version: 2.5.1
+  purl: pkg:npm/@wikimedia/codex@2.5.1
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-2.3.2.tgz
-  integrity: sha384-HkMG14/qVTD4yEt6W0qJUoW6Jorjja4oaHxT560RPdE4HLiDaiyc+1DXRDjOl0t6
+  src: https://registry.npmjs.org/@wikimedia/codex/-/codex-2.5.1.tgz
+  integrity: sha384-fEcDJkr+jzB5M1GEfj+hBCf2CpqHPjvtgD0247tPQ2ZCSCWDpM7HHMyCd1DCvnrS
   dest:
     package/dist/codex.cjs:
     package/dist/codex.js:
@@ -146,11 +151,11 @@ codex-design-tokens:
   license: GPL-2.0+
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 2.3.2
-  purl: pkg:npm/@wikimedia/codex-design-tokens@2.3.2
+  version: 2.5.1
+  purl: pkg:npm/@wikimedia/codex-design-tokens@2.5.1
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-2.3.2.tgz
-  integrity: sha384-yNtvAdpM/AHB332n1pR/GZkqT5MatikEnCiQjWCRWqgUsqkBdcuSRnuwF79JGiA8
+  src: https://registry.npmjs.org/@wikimedia/codex-design-tokens/-/codex-design-tokens-2.5.1.tgz
+  integrity: sha384-bLYwo3KX+uUgD7el3ZuhksjFffF/39XTL8750VpIIcbm7XPvrafoJM5IfhvGjSGS
   dest:
     package/dist/theme-*.less:
     package/dist/theme-wikimedia-ui-root.css:
@@ -162,11 +167,11 @@ codex-icons:
   license: MIT
   homepage: https://doc.wikimedia.org/codex/
   authors: Design System team, Wikimedia Foundation
-  version: 2.3.2
-  purl: pkg:npm/@wikimedia/codex-icons@2.3.2
+  version: 2.5.1
+  purl: pkg:npm/@wikimedia/codex-icons@2.5.1
   type: tar
-  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-2.3.2.tgz
-  integrity: sha384-fJmNuSQurBxTkHV126/vxk2XrOpXJH35CtLZG9dFeF2q1DDg4ylyrHWtIbsjZxuc
+  src: https://registry.npmjs.org/@wikimedia/codex-icons/-/codex-icons-2.5.1.tgz
+  integrity: sha384-g27FJwEpKJ0ozDfwhDeaKallRZIBtzoxr2/Ill8heZN7UpRSRJzylt+8113mE2zq
   dest:
     package/dist/codex-icons.json:
     package/dist/codex-icon-paths.less:
@@ -345,11 +350,11 @@ ooui:
   license: MIT
   homepage: https://www.mediawiki.org/wiki/OOUI
   authors: OOUI Team and other contributors
-  version: 0.53.0
-  purl: pkg:npm/oojs-ui@0.53.0
+  version: 0.53.2
+  purl: pkg:npm/oojs-ui@0.53.2
   type: tar
-  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.53.0.tgz
-  integrity: sha384-y7oUrg4Fr2pMgJcXX0x77xFpaYRulHBfe1RBHREGylln/aOBMyhZTpqeUYD1eHxs
+  src: https://registry.npmjs.org/oojs-ui/-/oojs-ui-0.53.2.tgz
+  integrity: sha384-BJpe/YgUOwCvSMJsYoECJIljInux8b9C5qfAlih0q9MDe6b1l3g1KmSC0EXQ9feX
 
   dest:
     # Main stuff

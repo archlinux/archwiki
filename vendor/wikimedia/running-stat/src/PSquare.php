@@ -1,4 +1,6 @@
 <?php
+declare( strict_types = 1 );
+
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +23,6 @@
 
 namespace Wikimedia;
 
-use Serializable;
-
 /**
  * Represents a running, online estimate of a p-quantile for a series
  * of observations using the P-squared algorithm.
@@ -31,44 +31,44 @@ use Serializable;
  * Percentiles and Histograms without Storing Observations," Communications of
  * the ACM, October 1985 by R. Jain and I. Chlamtac.
  */
-class PSquare implements Serializable {
+class PSquare {
 	/**
 	 * Percentile to estimate.
 	 * @var float $p
 	 */
-	private $p;
+	private float $p;
 
 	/**
 	 * Position of each marker.
 	 * @var int[] $positions
 	 */
-	private $positions;
+	private array $positions;
 
 	/**
 	 * Desired position of each marker.
 	 * @var float[] $desired
 	 */
-	private $desired;
+	private array $desired;
 
 	/** @var float[] $increments */
-	private $increments;
+	private array $increments;
 
 	/**
 	 * Number of observations.
 	 * @var int $numObservations
 	 */
-	private $numObservations = 0;
+	private int $numObservations = 0;
 
 	/**
 	 * Height of each marker.
 	 * @var float[] $heights
 	 */
-	private $heights = [];
+	private array $heights = [];
 
 	/**
 	 * @param float $p the percentile (defaults to 0.5, or median).
 	 */
-	public function __construct( $p = 0.5 ) {
+	public function __construct( float $p = 0.5 ) {
 		$this->p = $p;
 		$this->positions = [ 0, 1, 2, 3, 4 ];
 		$this->desired = [ 0, ( 2 * $p ), ( 4 * $p ), 2 + ( 2 * $p ), 4 ];
@@ -91,9 +91,6 @@ class PSquare implements Serializable {
 		];
 	}
 
-	/**
-	 * @param array $data
-	 */
 	public function __unserialize( array $data ): void {
 		$this->p = $data['percentile'];
 		$this->positions = $data['positions'];
@@ -103,25 +100,10 @@ class PSquare implements Serializable {
 		$this->heights = $data['heights'];
 	}
 
-	public function serialize() {
-		// TODO: Remove once PHP 7.4+ is required
-		return serialize( $this->__serialize() );
-	}
-
-	/**
-	 * @param string $serialized
-	 */
-	public function unserialize( $serialized ): void {
-		// TODO: Remove once PHP 7.4+ is required
-		$this->__unserialize( unserialize( $serialized ) );
-	}
-
 	/**
 	 * Get the total number of accumulated observations.
-	 *
-	 * @return int
 	 */
-	public function getCount() {
+	public function getCount(): int {
 		return $this->numObservations;
 	}
 
@@ -130,7 +112,7 @@ class PSquare implements Serializable {
 	 *
 	 * @param int|float $x Value to add
 	 */
-	public function addObservation( $x ) {
+	public function addObservation( int|float $x ): void {
 		$this->numObservations++;
 
 		if ( $this->numObservations <= 5 ) {
@@ -198,7 +180,7 @@ class PSquare implements Serializable {
 	 * @param int $d always -1 or 1
 	 * @return float ideal height of marker
 	 */
-	private function computeParabolic( $i, $d ) {
+	private function computeParabolic( int $i, int $d ): float {
 		$q     = $this->heights[$i];
 		$qPrev = $this->heights[$i - 1];
 		$qNext = $this->heights[$i + 1];
@@ -223,7 +205,7 @@ class PSquare implements Serializable {
 	 * @param int $d always -1 or 1
 	 * @return float ideal height of marker
 	 */
-	private function computeLinear( $i, $d ) {
+	private function computeLinear( int $i, int $d ): float {
 		$q = $this->heights[$i];
 		$n = $this->positions[$i];
 		return ( $q + $d *
@@ -234,18 +216,17 @@ class PSquare implements Serializable {
 
 	/**
 	 * Get the estimated p-quantile value.
-	 *
-	 * @return float
 	 */
-	public function getValue() {
+	public function getValue(): float {
 		// If we have five samples or fewer, fall back to a naive method.
 		if ( $this->getCount() <= 5 ) {
 			sort( $this->heights );
 			$i = $this->p * count( $this->heights );
+			$index = (int)$i;
 			if ( $i === floor( $i ) ) {
-				return ( $this->heights[$i - 1] + $this->heights[$i] ) / 2;
+				return ( $this->heights[$index - 1] + $this->heights[$index] ) / 2;
 			} else {
-				return $this->heights[floor( $i )];
+				return $this->heights[$index];
 			}
 		}
 

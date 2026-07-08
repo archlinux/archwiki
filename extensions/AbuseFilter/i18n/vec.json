@@ -219,7 +219,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Inposta variabile (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variabili",
 	"abusefilter-edit-builder-vars-timestamp": "Timestamp de modifica Unix",
-	"abusefilter-edit-builder-vars-accountname": "Nome de l'utensa (al momento de la creassion)",
+	"abusefilter-edit-builder-vars-account-name": "Nome de l'utensa (al momento de la creassion)",
 	"abusefilter-edit-builder-vars-action": "Azion",
 	"abusefilter-edit-builder-vars-addedlines": "Righe zontà da la modifica",
 	"abusefilter-edit-builder-vars-delta": "Canbiamento de dimension de la modifica",

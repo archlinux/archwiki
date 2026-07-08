@@ -3,6 +3,8 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1nb;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
@@ -75,6 +77,65 @@ class TexArrayTest extends MediaWikiIntegrationTestCase {
 	public function testExtractSubscripts() {
 		$n = new TexArray( new TexNode( '' ) );
 		$this->assertEquals( [], $n->extractSubscripts(), 'Should extract subscripts' );
+	}
+
+	public function testAddNotAppendsOverlayToMMLmoWhenNotFlagIsSet() {
+		$state = [ 'not' => true ];
+		$mmlmo = new MMLmo( "", [], "∈" );
+
+		$ta = new TexArray();
+		$result = $ta->addNot( $state, $mmlmo );
+
+		$this->assertInstanceOf( MMLmo::class, $result );
+		$this->assertEquals(
+			"∈&#x338;",
+			$result->getText(),
+			'Should append "not" overlay (U+0338) to MMLmo text'
+		);
+	}
+
+	public function testAddNotDoesNothingWhenNotFlagIsNotSet() {
+		$state = [];
+		$mmlmo = new MMLmo( "", [], "∈" );
+
+		$ta = new TexArray();
+		$result = $ta->addNot( $state, $mmlmo );
+
+		$this->assertInstanceOf( MMLmo::class, $result );
+		$this->assertEquals(
+			"∈",
+			$result->getText(),
+			'Should not modify text for unset "not" flag'
+		);
+	}
+
+	public function testAddNotDoesNotProcessNonMMLmoObjects() {
+		$state = [ 'not' => true ];
+		$nonMMLmo = new MMLbase( 'dummy' );
+
+		$ta = new TexArray();
+		$result = $ta->addNot( $state, $nonMMLmo );
+
+		$this->assertEquals( $nonMMLmo, $result, 'Should not modify non-MMLmo objects' );
+	}
+
+	public function testAddNotDoesNotProcessStringInput() {
+		$state = [ 'not' => true ];
+		$input = '∈';
+
+		$ta = new TexArray();
+		$result = $ta->addNot( $state, $input );
+
+		$this->assertSame( $input, $result, 'Should not modify string input' );
+	}
+
+	public function testAddNotDoesNotProcessNullInput() {
+		$state = [ 'not' => true ];
+
+		$ta = new TexArray();
+		$result = $ta->addNot( $state, null );
+
+		$this->assertNull( $result, 'Should not modify null input' );
 	}
 
 	public function testUnshift() {
@@ -157,6 +218,20 @@ class TexArrayTest extends MediaWikiIntegrationTestCase {
 		$n = new TexArray( new Literal( 'A' ) );
 		$state = [ 'deriv' => 1 ];
 		$mml = $n->toMMLTree( [], $state );
+		$this->assertStringContainsString( '&#x2032;</mo>', $mml );
+	}
+
+	public function testRenderNullDeriv() {
+		$n = new TexArray( new Literal( 'A' ) );
+		$state = [ 'deriv' => 1 ];
+		$mml = $n->addDerivativesContext( $state, null );
+		$this->assertStringContainsString( '&#x2032;</mo>', $mml );
+	}
+
+	public function testRenderStringDeriv() {
+		$n = new TexArray( new Literal( 'A' ) );
+		$state = [ 'deriv' => 1 ];
+		$mml = $n->addDerivativesContext( $state, "k" );
 		$this->assertStringContainsString( '&#x2032;</mo>', $mml );
 	}
 }

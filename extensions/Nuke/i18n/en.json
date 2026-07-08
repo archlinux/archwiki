@@ -44,6 +44,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Delete more pages]]",
 	"nuke-deletemore": "Delete more pages",
 	"nuke-pattern": "SQL LIKE pattern (e.g. %) for the page name:",
+	"nuke-pattern-leading-wildcard": "The pattern cannot start with <code>%</code>. Please provide a prefix before the wildcard (e.g. <code>Example%</code> instead of <code>%Example</code>).",
 	"nuke-nolist": "To continue, first '{{int:nuke-submit-list}}' and then select pages that will be queued for deletion.",
 	"nuke-nopages-global": "No pages match the search.",
 	"nuke-searchnotice-minmorethanmax": "The minimum size in bytes exceeds the maximum size in bytes, so it's not possible for any page to meet this criteria.",

@@ -3,12 +3,13 @@
 namespace MediaWiki\Extension\Thanks\Storage;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\Hooks;
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\InvalidLogType;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\LogDeleted;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\User;
@@ -26,6 +27,7 @@ class LogStore {
 	public function __construct(
 		protected readonly IConnectionProvider $conn,
 		protected readonly ActorNormalization $actorNormalization,
+		protected readonly ExtensionRegistry $extensionRegistry,
 		protected readonly ServiceOptions $serviceOptions,
 	) {
 		$serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
@@ -54,10 +56,11 @@ class LogStore {
 		$logId = $logEntry->insert();
 		$logEntry->publish( $logId, 'udp' );
 
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
-			$recentChange = $logEntry->getRecentChange();
+		if ( $this->extensionRegistry->isLoaded( 'CheckUser' ) ) {
 			// TODO: This should be done in a separate hook handler
-			Hooks::updateCheckUserData( $recentChange );
+			/** @var CheckUserInsert $checkUserInsert */
+			$checkUserInsert = MediaWikiServices::getInstance()->get( 'CheckUserInsert' );
+			$checkUserInsert->updateCheckUserData( $logEntry->getRecentChange( $logId ) );
 		}
 	}
 

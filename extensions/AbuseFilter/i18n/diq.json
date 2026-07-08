@@ -358,7 +358,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Esteyanê HTML be karakteranê unicodeya normalize kerê (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Vurnegeri",
 	"abusefilter-edit-builder-vars-timestamp": "Vurnayîşê unix pulê wextî",
-	"abusefilter-edit-builder-vars-accountname": "Nameyê hesabî (ser hesab viraştîşî)",
+	"abusefilter-edit-builder-vars-account-name": "Nameyê hesabî (ser hesab viraştîşî)",
 	"abusefilter-edit-builder-vars-action": "Kerdış",
 	"abusefilter-edit-builder-vars-addedlines": "Dizeyan ke nuşte de debiyo",
 	"abusefilter-edit-builder-vars-delta": "Vurnayîşê ebatî ke nuştiş de",

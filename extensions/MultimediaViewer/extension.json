@@ -20,22 +20,32 @@
 		"Jon Robson",
 		"Derk-Jan Hartman",
 		"Chris McMahon",
-		"Bartosz Dziewoński"
+		"Bartosz Dziewoński",
+		"Brooke Vibber",
+		"Eric Gardner",
+		"Kimberly Sarabia",
+		"Marco Fossati"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:MultimediaViewer",
 	"descriptionmsg": "multimediaviewer-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
 			"i18n"
 		]
 	},
+	"ExtensionMessagesFiles": {
+		"MultimediaViewerMagic": "MultimediaViewer.i18n.magic.php"
+	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\MultimediaViewer\\": "includes/"
+	},
+	"AutoloadClasses": {
+		"MediaWiki\\Extension\\MultimediaViewer\\ThumbExtractor": "includes/ThumbExtractor.php"
 	},
 	"ResourceModules": {
 		"mmv": {
@@ -52,18 +62,6 @@
 				},
 				"mmv/mmv.js",
 				"mmv/logging/mmv.logging.ViewLogger.js",
-				"mmv/model/mmv.model.License.js",
-				"mmv/model/mmv.model.Image.js",
-				"mmv/model/mmv.model.Thumbnail.js",
-				"mmv/model/mmv.model.TaskQueue.js",
-				"mmv/model/mmv.model.ThumbnailWidth.js",
-				"mmv/provider/mmv.provider.Api.js",
-				"mmv/provider/mmv.provider.ImageInfo.js",
-				"mmv/provider/mmv.provider.ThumbnailInfo.js",
-				"mmv/provider/mmv.provider.GuessedThumbnailInfo.js",
-				"mmv/provider/mmv.provider.Image.js",
-				"mmv/mmv.HtmlUtils.js",
-				"mmv/mmv.ThumbnailWidthCalculator.js",
 				"mmv/ui/mmv.ui.js",
 				"mmv/ui/mmv.ui.dialog.js",
 				"mmv/ui/mmv.ui.description.js",
@@ -98,7 +96,8 @@
 				"mediawiki.user",
 				"mediawiki.util",
 				"mmv.bootstrap",
-				"mmv.codex"
+				"mmv.codex",
+				"mmv.common"
 			],
 			"messages": [
 				"license-header",
@@ -269,6 +268,84 @@
 				"mmv.ui.restriction/mmv.ui.restriction.less"
 			]
 		},
+		"mmv.carousel": {
+			"localBasePath": "resources/mmv.carousel",
+			"remoteExtPath": "MultimediaViewer/resources/mmv.carousel",
+			"packageFiles": [
+				"carousel.js"
+			],
+			"dependencies": [
+				"mmv.bootstrap",
+				"mediawiki.router"
+			]
+		},
+		"mmv.carousel.styles": {
+			"localBasePath": "resources/mmv.carousel.styles",
+			"remoteExtPath": "MultimediaViewer/resources/mmv.carousel.styles",
+			"styles": [
+				"carousel.less"
+			]
+		},
+		"mmv.ui.beta": {
+			"packageFiles": [
+				"mmv.ui.beta/init.js",
+				"mmv.ui.beta/BetaViewer.js",
+				"mmv.ui.beta/App.vue",
+				"mmv.ui.beta/LightboxHeader.vue",
+				"mmv.ui.beta/LightboxImage.vue",
+				"mmv.ui.beta/LightboxCaption.vue",
+				"mmv.ui.beta/LightboxNav.vue",
+				"mmv.ui.beta/thumbnailGuessing.js",
+				"mmv.ui.beta/useFocusTrap.js",
+				{
+					"name": "mmv.ui.beta/icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [ "cdxIconClose", "cdxIconPrevious", "cdxIconNext" ]
+				}
+			],
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex",
+				"mmv.bootstrap",
+				"mmv.common",
+				"mediawiki.router",
+				"mediawiki.Title",
+				"mediawiki.util",
+				"mediawiki.api"
+			],
+			"messages": [
+				"multimediaviewer-close-popup-text",
+				"multimediaviewer-next-image-alt-text",
+				"multimediaviewer-prev-image-alt-text",
+				"multimediaviewer-current-image-number",
+				"multimediaviewer-file-page",
+				"multimediaviewer-description-page-button-text"
+			]
+		},
+		"mmv.common": {
+			"packageFiles": [
+				"mmv.common/index.js",
+				{
+					"name": "mmv.common/config.json",
+					"callback": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::getCommonConfig"
+				},
+				"mmv.common/mmv.HtmlUtils.js",
+				"mmv.common/mmv.ThumbnailWidthCalculator.js",
+				"mmv.common/model/mmv.model.ThumbnailWidth.js",
+				"mmv.common/model/mmv.model.License.js",
+				"mmv.common/model/mmv.model.Image.js",
+				"mmv.common/model/mmv.model.Thumbnail.js",
+				"mmv.common/provider/mmv.provider.Api.js",
+				"mmv.common/provider/mmv.provider.GuessedThumbnailInfo.js",
+				"mmv.common/provider/mmv.provider.Image.js",
+				"mmv.common/provider/mmv.provider.ImageInfo.js",
+				"mmv.common/provider/mmv.provider.ThumbnailInfo.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.Title"
+			]
+		},
 		"mmv.bootstrap": {
 			"packageFiles": [
 				{
@@ -321,7 +398,6 @@
 			"tests/qunit/mmv/mmv.HtmlUtils.test.js",
 			"tests/qunit/mmv/logging/mmv.logging.ViewLogger.test.js",
 			"tests/qunit/mmv/model/mmv.model.test.js",
-			"tests/qunit/mmv/model/mmv.model.TaskQueue.test.js",
 			"tests/qunit/mmv/model/mmv.model.License.test.js",
 			"tests/qunit/mmv/model/mmv.model.Image.test.js",
 			"tests/qunit/mmv/provider/mmv.provider.Api.test.js",
@@ -347,7 +423,9 @@
 			"tests/qunit/mmv/mmv.testhelpers.js"
 		],
 		"dependencies": [
+			"mmv.carousel",
 			"mmv.bootstrap",
+			"mmv.common",
 			"mmv",
 			"mmv.ui.reuse"
 		]
@@ -357,6 +435,7 @@
 		"GetPreferences": "main",
 		"BeforePageDisplay": "main",
 		"CategoryPageView": "main",
+		"GetDoubleUnderscoreIDs": "main",
 		"ResourceLoaderGetConfigVars": "main",
 		"MakeGlobalVariablesScript": "main",
 		"ThumbnailBeforeProduceHTML": "main"
@@ -367,7 +446,8 @@
 			"services": [
 				"MainConfig",
 				"SpecialPageFactory",
-				"UserOptionsLookup"
+				"UserOptionsLookup",
+				"PageProps"
 			],
 			"optional_services": [
 				"MobileFrontend.Context"
@@ -376,16 +456,23 @@
 	},
 	"config": {
 		"MediaViewerExtensions": {
+			"description": "File extension allowlist, based on https://commons.wikimedia.org/wiki/Special:MediaStatistics. Remove an entry to exclude all images with that extension.",
 			"value": {
+				"bmp": "default",
+				"djv": "default",
 				"djvu": "default",
+				"gif": "default",
 				"jpg": "default",
 				"jpeg": "default",
-				"gif": "default",
-				"svg": "default",
+				"jpe": "default",
+				"jps": "default",
 				"png": "default",
-				"tiff": "default",
+				"apng": "default",
+				"svg": "default",
 				"tif": "default",
-				"webp": "default"
+				"tiff": "default",
+				"webp": "default",
+				"xcf": "default"
 			}
 		},
 		"MediaViewerUseThumbnailGuessing": {
@@ -420,6 +507,47 @@
 		"MediaViewerRecordVirtualViewBeaconURI": {
 			"description": "If set, records a virtual view via the provided beacon URI.",
 			"value": false
+		},
+		"MediaViewerMobileCarousel": {
+			"description": "Enables the mobile carousel module for MultimediaViewer.",
+			"value": false
+		},
+		"MediaViewerExcludedImageSelectors": {
+			"description": "CSS selectors for images that should be excluded. These selectors typically indicate template-generated images, placeholders, or images that don't make sense in a carousel or gallery context.",
+			"value": [
+				".clade",
+				".navbox",
+				".noprint",
+				"a.mw-file-description[href$=\":No_photo.svg\"]",
+				"a.mw-file-description[href$=\":No-photo.svg\"]",
+				"a.mw-file-description[href$=\":No-image.png\"]",
+				"a.mw-file-description[href$=\":Noimage.svg\"]",
+				"a.mw-file-description[href$=\":Noimage.png\"]",
+				"a.mw-file-description[href$=\":Noimage_2-1.png\"]",
+				"a.mw-file-description[href$=\":Noimage_MC.png\"]",
+				"a.mw-file-description[href$=\":Brak_obrazka.svg\"]",
+				"a.mw-file-description[href$=\":Brak_zdjęcia.svg\"]",
+				"a.mw-file-description[href$=\":Ensin_imaxe.svg\"]",
+				"a.mw-file-description[href$=\":Image_non_disponible_portrait.svg\"]",
+				"a.mw-file-description[href$=\":ImageNA.svg\"]",
+				"a.mw-file-description[href$=\":Noenzyimage.png\"]",
+				"a.mw-file-description[href$=\":Imagem_em_falta.svg\"]",
+				"a.mw-file-description[href$=\":Falta_imagem_aves.svg\"]",
+				"a.mw-file-description[href$=\":Man_silhouette.svg\"]",
+				"a.mw-file-description[href$=\":Replace_this_image_male.svg\"]",
+				"a.mw-file-description[href$=\":Replace_this_image_female.svg\"]",
+				"a.mw-file-description[href$=\":Placeholder_no_text.svg\"]",
+				"a.mw-file-description[href$=\":Blank_50px.png\"]",
+				"a.mw-file-description[href$=\":Blank1x1.svg\"]",
+				"a.mw-file-description[href$=\":Cross.svg\"]",
+				"a.mw-file-description[href$=\":Image_PlaceHolder.png\"]",
+				"a.mw-file-description[href$=\":No_image_available.svg\"]",
+				"a.mw-file-description[href$=\":Image_manquante.png\"]",
+				"a.mw-file-description[href$=\":No_free_image.png\"]",
+				"a.mw-file-description[href$=\":No_free_image.svg\"]",
+				"a.mw-file-description[href$=\":Noantimage.svg\"]",
+				"a.mw-file-description[href$=\":Nosnail.png\"]"
+			]
 		}
 	},
 	"manifest_version": 2

@@ -77,5 +77,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Manca la seguente dipendenza|Mancano le seguenti dipendenze}}: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|La seguente dipendenza è deprecata|Le seguenti dipendenze sono deprecate}}: $1.",
 	"gadgets-supports-urlload": "Questo accessorio supporta il caricamento tramite URL con il parametro query <code>?withgadget</code> .",
-	"gadgets-hidden": "Questo gadget è [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden nascosto], il che significa che non apparirà nella pagina delle preferenze."
+	"gadgets-hidden": "Questo gadget è [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden nascosto], il che significa che non apparirà nella pagina delle preferenze.",
+	"gadgets-subpage-invalid": "Sottopagina non valida \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Parametri della sottopagina non sufficienti (collegamento non valido)."
 }

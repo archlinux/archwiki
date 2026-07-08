@@ -11,11 +11,11 @@
 			"Liuxinyu970226",
 			"PhiLiP",
 			"Shinjiman",
+			"Wilf233",
 			"Xiaomingyan",
 			"Xiplus",
 			"乌拉跨氪",
-			"列维劳德",
-			"Wilf233"
+			"列维劳德"
 		]
 	},
 	"action-tboverride": "忽略禁用标题与用户名名单",
@@ -31,7 +31,7 @@
 	"titleblacklist-forbidden-move": "标题 \"$3\" 已被禁止创建，\"$2\" 无法移动至 \"$3\"。\n其与以下禁用标题名单项匹配： <code>$1</code>",
 	"titleblacklist-forbidden-upload": "文件名称“$2”已被禁止创建。\n其与以下禁用标题名单项匹配：<code>$1</code>",
 	"titleblacklist-forbidden-new-account": "用户名“$2”已被禁止创建。\n其与以下禁用标题名单项匹配：<code>$1</code>",
-	"titleblacklist-invalid": "禁用标题名单中以下{{PLURAL:$1|一行|多行}}无效；请在保存前改正{{PLURAL:$1|它|它们}}：",
+	"titleblacklist-invalid-error": "禁用标题名单中以下{{PLURAL:$1|一行|多行}}无效；请完成修正后再保存：\n$2",
 	"titleblacklist-override": "若匹配禁用标题名单则忽略它",
 	"titleblacklist-override-help": "有足够特权的用户才可以将其设置为略过禁用标题名单检查。",
 	"titleblacklist-warning": "<strong>警告：此页面只能由管理员和其他拥有<code>tboverride</code>权限的用户编辑，因为它匹配以下禁用标题名单：</strong><br /><code>$1</code>",

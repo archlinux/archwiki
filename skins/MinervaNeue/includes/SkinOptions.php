@@ -27,6 +27,7 @@ use MediaWiki\Minerva\Skins\SkinUserPageHelper;
 use MediaWiki\Skin\Skin;
 use MobileContext;
 use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * A wrapper for all available Skin options.
@@ -79,15 +80,10 @@ final class SkinOptions {
 		self::NIGHT_MODE => false,
 	];
 
-	private HookContainer $hookContainer;
-	private SkinUserPageHelper $skinUserPageHelper;
-
 	public function __construct(
-		HookContainer $hookContainer,
-		SkinUserPageHelper $skinUserPageHelper
+		private readonly HookContainer $hookContainer,
+		private readonly SkinUserPageHelper $skinUserPageHelper,
 	) {
-		$this->hookContainer = $hookContainer;
-		$this->skinUserPageHelper = $skinUserPageHelper;
 	}
 
 	/**
@@ -144,8 +140,7 @@ final class SkinOptions {
 	): void {
 		// setSkinOptions is not available
 		if ( $skin instanceof SkinMinerva ) {
-			$services = MediaWikiServices::getInstance();
-			$featuresManager = $services
+			$featuresManager = MediaWikiServices::getInstance()
 				->getService( 'MobileFrontend.FeaturesManager' );
 			$title = $skin->getTitle();
 
@@ -173,6 +168,18 @@ final class SkinOptions {
 				$requiresHistoryLink = false;
 			}
 
+			$personalMenu = $featuresManager->isFeatureAvailableForCurrentUser(
+				'MinervaPersonalMenu'
+			);
+			$advancedMenu = $featuresManager->isFeatureAvailableForCurrentUser(
+				'MinervaAdvancedMainMenu'
+			);
+			if ( !$personalMenu && $advancedMenu ) {
+				throw new RuntimeException(
+					'Enabling $wgMinervaAdvancedMainMenu requires $wgMinervaPersonalMenu ' .
+						'to avoid loss of login features'
+				);
+			}
 			$this->setMultiple( [
 				self::SHOW_DONATE_BANNER => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateBanner' ),
 				self::SHOW_DONATE => $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaDonateLink' ),
@@ -183,12 +190,8 @@ final class SkinOptions {
 				self::PAGE_ISSUES
 					=> $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaPageIssuesNewTreatment' ),
 				self::MOBILE_OPTIONS => true,
-				self::PERSONAL_MENU => $featuresManager->isFeatureAvailableForCurrentUser(
-					'MinervaPersonalMenu'
-				),
-				self::MAIN_MENU_EXPANDED => $featuresManager->isFeatureAvailableForCurrentUser(
-					'MinervaAdvancedMainMenu'
-				),
+				self::PERSONAL_MENU => $personalMenu,
+				self::MAIN_MENU_EXPANDED => $advancedMenu,
 				self::HISTORY_IN_PAGE_ACTIONS => $requiresHistoryLink ?
 					true : $featuresManager->isFeatureAvailableForCurrentUser( 'MinervaHistoryInPageActions' ),
 				self::TOOLBAR_SUBMENU => $isUserPageOrUserTalkPage ?

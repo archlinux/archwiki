@@ -83,6 +83,11 @@ class StubMetadataCollector implements ContentMetadataCollector {
 
 	/** @inheritDoc */
 	public function addWarningMsg( string $msg, ...$args ): void {
+		if ( isset( $this->mWarningMsgs[$msg] ) ) {
+			// Destructive update; this is discouraged because it
+			// disables selective update.
+			$this->setOutputFlag( 'prevent-selective-update' );
+		}
 		$this->mWarningMsgs[$msg] = $args;
 	}
 
@@ -321,6 +326,7 @@ class StubMetadataCollector implements ContentMetadataCollector {
 				"Conflicting strategies for $which $key"
 			);
 			// Destructive update for compatibility; this is deprecated!
+			$this->setOutputFlag( 'prevent-selective-update' );
 			unset( $this->storage[$which][$key] );
 			$this->collect( $which, $key, $value, $strategy );
 			return;
@@ -329,11 +335,9 @@ class StubMetadataCollector implements ContentMetadataCollector {
 			if ( ( $this->storage[$which][$key]['value'] ?? null ) === $value ) {
 				return; // already exists with the desired value
 			}
-			$this->logger->log(
-				LogLevel::WARNING,
-				"Multiple writes to a write-once: $which $key"
-			);
-			// Destructive update for compatibility; this is deprecated!
+			// Destructive update for compatibility; this is discouraged
+			// because it disables selective update.
+			$this->setOutputFlag( 'prevent-selective-update' );
 			unset( $this->storage[$which][$key] );
 			$this->collect( $which, $key, $value, $strategy );
 			return;
@@ -443,9 +447,9 @@ class StubMetadataCollector implements ContentMetadataCollector {
 
 	/**
 	 * @param string $name
-	 * @return ?string
+	 * @return null|int|float|string
 	 */
-	public function getPageProperty( string $name ): ?string {
+	public function getPageProperty( string $name ) {
 		return $this->get( 'properties', $name, self::MERGE_STRATEGY_WRITE_ONCE );
 	}
 

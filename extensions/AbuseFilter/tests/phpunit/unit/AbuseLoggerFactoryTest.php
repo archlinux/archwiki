@@ -21,7 +21,7 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
@@ -52,7 +52,7 @@ class AbuseLoggerFactoryTest extends MediaWikiUnitTestCase {
 			),
 			'wikiID',
 			'1.2.3.4',
-			$this->createMock( LoggerInterface::class ),
+			new NullLogger(),
 			$this->createMock( AbuseFilterHookRunner::class )
 		);
 		$logger = $factory->newLogger(

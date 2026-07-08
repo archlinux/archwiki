@@ -1,19 +1,19 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Jobs;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Jobs;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\Jobs\StoreClientHintsDataJob;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\Jobs\StoreClientHintsDataJob;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Jobs\StoreClientHintsDataJob
+ * @covers \MediaWiki\Extension\CheckUser\Jobs\StoreClientHintsDataJob
  * @group CheckUser
  */
 class StoreClientHintsDataJobTest extends MediaWikiUnitTestCase {
 
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	public function testShouldCreateValidSpecification() {
 		$clientHintsData = $this->getExampleClientHintsDataObjectFromJsApi();

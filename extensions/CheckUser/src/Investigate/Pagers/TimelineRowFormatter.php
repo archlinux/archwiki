@@ -1,11 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Investigate\Pagers;
 
-use HtmlArmor;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\Linker;
@@ -24,47 +23,24 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserRigorOptions;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\IPUtils;
 
 class TimelineRowFormatter {
-	private LinkRenderer $linkRenderer;
-	private CheckUserLookupUtils $checkUserLookupUtils;
-	private TitleFormatter $titleFormatter;
-	private SpecialPageFactory $specialPageFactory;
-	private UserFactory $userFactory;
-	private CommentFormatter $commentFormatter;
-	private CommentStore $commentStore;
-	private LogFormatterFactory $logFormatterFactory;
-
 	private array $message = [];
 
-	private Language $language;
-
-	private User $user;
-
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		CheckUserLookupUtils $checkUserLookupUtils,
-		TitleFormatter $titleFormatter,
-		SpecialPageFactory $specialPageFactory,
-		CommentFormatter $commentFormatter,
-		UserFactory $userFactory,
-		CommentStore $commentStore,
-		LogFormatterFactory $logFormatterFactory,
-		User $user,
-		Language $language
+		private readonly LinkRenderer $linkRenderer,
+		private readonly CheckUserLookupUtils $checkUserLookupUtils,
+		private readonly TitleFormatter $titleFormatter,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly CommentFormatter $commentFormatter,
+		private readonly UserFactory $userFactory,
+		private readonly CommentStore $commentStore,
+		private readonly LogFormatterFactory $logFormatterFactory,
+		private readonly User $user,
+		private readonly Language $language,
 	) {
-		$this->linkRenderer = $linkRenderer;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
-		$this->titleFormatter = $titleFormatter;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->commentFormatter = $commentFormatter;
-		$this->userFactory = $userFactory;
-		$this->commentStore = $commentStore;
-		$this->logFormatterFactory = $logFormatterFactory;
-		$this->user = $user;
-		$this->language = $language;
-
 		$this->preCacheMessages();
 	}
 
@@ -77,8 +53,8 @@ class TimelineRowFormatter {
 	 */
 	public function getFormattedRowItems( \stdClass $row ): array {
 		// Use the IP as the $row->user_text if the actor ID is NULL and the IP is not NULL (T353953).
-		if ( $row->actor === null && $row->ip ) {
-			$row->user_text = $row->ip;
+		if ( $row->actor === null && $row->ip_hex !== null ) {
+			$row->user_text = IPUtils::formatHex( $row->ip_hex );
 		}
 
 		$user = $this->userFactory->newFromUserIdentity(
@@ -108,7 +84,7 @@ class TimelineRowFormatter {
 				'time' => $this->getTime( $row->timestamp ),
 				'userLinks' => $this->getUserLinks( $row, $revRecord, $logEntry ),
 				'actionText' => $this->getActionText( $logEntry ),
-				'ipInfo' => $this->getIpInfo( $row->ip ),
+				'ipInfo' => $this->getIpInfo( $row->ip_hex ),
 				'userAgent' => $this->getUserAgent( $row->agent ?? '' ),
 				'comment' => $this->getComment( $row, $revRecord, $logEntry ),
 			],
@@ -141,20 +117,15 @@ class TimelineRowFormatter {
 		return $this->commentFormatter->formatBlock( $comment, null, false, null, false );
 	}
 
-	/**
-	 * @param string $ip
-	 * @return string
-	 */
-	private function getIpInfo( string $ip ): string {
+	private function getIpInfo( ?string $ipHex ): string {
+		if ( !$ipHex ) {
+			return '';
+		}
 		// Note: in the old check user this links to self with ip as target. Can't do now
 		// because of token. We could prefill a new investigation tab
-		return IPUtils::prettifyIP( $ip );
+		return IPUtils::prettifyIP( IPUtils::formatHex( $ipHex ) );
 	}
 
-	/**
-	 * @param string $userAgent
-	 * @return string
-	 */
 	private function getUserAgent( string $userAgent ): string {
 		return htmlspecialchars( $userAgent );
 	}
@@ -176,10 +147,6 @@ class TimelineRowFormatter {
 		return $logFormatter->getActionText();
 	}
 
-	/**
-	 * @param \stdClass $row
-	 * @return string
-	 */
 	private function getTitleLink( \stdClass $row ): string {
 		if ( $row->type == RC_LOG ) {
 			return '';
@@ -300,10 +267,6 @@ class TimelineRowFormatter {
 			)->escaped();
 	}
 
-	/**
-	 * @param \stdClass $row
-	 * @return string
-	 */
 	private function getHistoryLink( \stdClass $row ): string {
 		if ( $row->type == RC_NEW || $row->type == RC_LOG ) {
 			return '';
@@ -334,13 +297,10 @@ class TimelineRowFormatter {
 			)->escaped();
 	}
 
-	/**
-	 * @param int $type
-	 * @return string
-	 */
 	private function getNewPageFlag( int $type ): string {
 		if ( $type == RC_NEW ) {
-			return Html::rawElement( 'span',
+			return Html::rawElement(
+				'span',
 				[ 'class' => 'newpage' ],
 				$this->message['newpageletter']
 			);
@@ -348,10 +308,6 @@ class TimelineRowFormatter {
 		return '';
 	}
 
-	/**
-	 * @param bool $minor
-	 * @return string
-	 */
 	private function getMinorFlag( bool $minor ): string {
 		if ( $minor ) {
 			return Html::rawElement(
@@ -363,10 +319,6 @@ class TimelineRowFormatter {
 		return '';
 	}
 
-	/**
-	 * @param string $timestamp
-	 * @return string
-	 */
 	private function getTime( string $timestamp ): string {
 		return htmlspecialchars(
 			$this->language->userTime( wfTimestamp( TS_MW, $timestamp ), $this->user )
@@ -432,7 +384,9 @@ class TimelineRowFormatter {
 			}
 
 			$links = Html::rawElement(
-				'span', [], Linker::userLink( $userId, $user->getName() )
+				'span',
+				[],
+				Linker::userLink( $userId, $user->getName() )
 			);
 
 			$links .= Linker::userToolLinksRedContribs(

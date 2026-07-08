@@ -54,38 +54,37 @@ class SchemaGeneratorTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideJsonSchemasPaths
 	 */
-	public function testNormalizePath( string $expected, string $jsonSchemaPath, string $IP, string $extensionDirectory ) {
+	public function testNormalizePath(
+		string $expected,
+		string $jsonSchema,
+		string $installPath,
+		string $extensionDirectory
+	) {
 		$this->assertEquals(
 			$expected,
-			SchemaGenerator::normalizePath( $jsonSchemaPath, $IP, $extensionDirectory )
+			SchemaGenerator::normalizePath( $jsonSchema, $installPath, $extensionDirectory )
 		);
 	}
 
 	public static function provideJsonSchemasPaths() {
-		global $IP;
-		// (expected, path, $IP, $extensionDirectory)
+		// ($expected, $jsonSchema, $installPath, $extensionDirectory)
 		return [
-			'Core patch absolute path '
-			. 'then path is relative to $IP' => [
+			'Core patch under core root' => [
 				'tests/phpunit/data/schema-maintenance/patch-no_change.json',
 				self::DATA_DIR . '/patch-no_change.json',
-				$IP,
-				$IP . '/extensions'
+				MW_INSTALL_PATH,
+				MW_INSTALL_PATH . '/extensions'
 			],
-			'Extension directory under $IP '
-			. 'then path is relative to the extension root. '
-			=> [
+			'Extension patch with default wgExtensionDirectory under core root' => [
 				'db_patches/patch.json',
 				self::DATA_DIR . '/extensions/FooExt/db_patches/patch.json',
-				self::DATA_DIR, // used as $IP
+				self::DATA_DIR, // used as MW_INSTALL_PATH
 				self::DATA_DIR . '/extensions'
 			],
-			'Extension directory outside of $IP '
-			. 'then path is relative to the extension root. '
-			=> [
+			'Extension patch with custom wgExtensionDirectory outside core root' => [
 				'db_patches/patch.json',
 				self::DATA_DIR . '/extensions/FooExt/db_patches/patch.json',
-				$IP . '/includes', // not a parent of self::DATA_DIR
+				MW_INSTALL_PATH . '/includes', // not a parent of self::DATA_DIR
 				self::DATA_DIR . '/extensions'
 			],
 		];

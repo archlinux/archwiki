@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
-use MediaWiki\Config\Config;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
 use MediaWiki\Extension\OATHAuth\OATHUser;
@@ -15,6 +13,7 @@ use OOUI\FieldLayout;
 use OOUI\HtmlSnippet;
 use OOUI\Widget;
 use UnexpectedValueException;
+use Wikimedia\Timestamp\TimestampFormat;
 
 /**
  * Helper trait to display and manage recovery codes within various contexts
@@ -25,9 +24,6 @@ trait RecoveryCodesTrait {
 
 	/** @return OutputPage */
 	abstract public function getOutput();
-
-	/** @return Config */
-	abstract public function getConfig();
 
 	/** @return Language */
 	abstract public function getLanguage();
@@ -40,14 +36,16 @@ trait RecoveryCodesTrait {
 	abstract public function msg( $key, ...$params );
 
 	/**
-	 * Retrieve current recovery codes for display purposes
+	 * Retrieve current permanent recovery codes for display purposes
 	 *
 	 * The characters of the token are split in groups of 4
 	 */
-	public function getRecoveryCodesForDisplay( IAuthKey $key ): array {
-		/** @var RecoveryCodeKeys $key */
-		'@phan-var RecoveryCodeKeys $key';
-		return array_map( [ $this, 'tokenFormatterFunction' ], $key->getRecoveryCodeKeys() );
+	public function getRecoveryCodesForDisplay( RecoveryCodeKeys $key ): array {
+		$permanentCodes = array_filter( $key->getRecoveryCodes(), static fn ( $code ) => $code->isPermanent() );
+		return array_map(
+			fn ( $code ) => $this->tokenFormatterFunction( $code->getCode() ),
+			array_values( $permanentCodes )
+		);
 	}
 
 	public function setOutputJsConfigVars( array $recoveryCodes ) {
@@ -60,41 +58,46 @@ trait RecoveryCodesTrait {
 	 * @param string $token Token to format
 	 * @return string The token formatted for display
 	 */
-	private function tokenFormatterFunction( $token ) {
+	private function tokenFormatterFunction( string $token ): string {
 		return implode( ' ', str_split( $token, 4 ) );
 	}
 
 	private function generateRecoveryCodesContent( array $recoveryCodes, bool $displayExisting = false ): FieldLayout {
-		$now = wfTimestampNow();
-
+		/** @var RecoveryCodeKeys[] $moduleDbKeys */
 		$moduleDbKeys = $this->oathUser->getKeysForModule( RecoveryCodes::MODULE_NAME );
+		'@phan-var RecoveryCodeKeys[] $moduleDbKeys';
 
-		if ( count( $moduleDbKeys ) > RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
+		if ( count( $moduleDbKeys ) > RecoveryCodes::RECOVERY_CODE_MODULE_COUNT ) {
 			throw new UnexpectedValueException( $this->msg( 'oathauth-recoverycodes-too-many-instances' )->escaped() );
 		}
 
-		if ( $displayExisting && count( $moduleDbKeys ) === RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
-			$recoveryCodes = array_map(
-				[ $this, 'tokenFormatterFunction' ],
-				// @phan-suppress-next-line PhanUndeclaredMethod
-				array_shift( $moduleDbKeys )->getRecoveryCodeKeys()
-			);
+		if ( $displayExisting && count( $moduleDbKeys ) === RecoveryCodes::RECOVERY_CODE_MODULE_COUNT ) {
+			$key = array_shift( $moduleDbKeys );
+			$recoveryCodes = $this->getRecoveryCodesForDisplay( $key );
+
+			$timestamp = $key->getCreatedTimestamp();
 			$snippet = '<p>' . $this->msg( 'oathauth-recoverycodes-exist' )->escaped() . '</p>';
 		} else {
+			$timestamp = wfTimestampNow();
 			$snippet =
 				'<strong>' . $this->msg( 'oathauth-recoverycodes-important' )->escaped() . '</strong><p>' .
-				$this->msg( 'oathauth-recoverycodes' )->escaped() . '</p><p>' .
-				$this->msg( 'rawmessage' )->rawParams(
-					$this->msg(
-						'oathauth-recoverytokens-createdat',
-						$this->getLanguage()->userTimeAndDate( $now, $this->oathUser->getUser() )
-					)->parse()
-					. $this->msg( 'word-separator' )->escaped()
-					. $this->msg( 'parentheses' )->rawParams( wfTimestamp( TS_ISO_8601, $now ) )->escaped()
-				) . '</p>';
+				$this->msg( 'oathauth-recoverycodes' )->escaped() . '</p>';
 		}
 
-		$snippet .= $this->createResourceList( $recoveryCodes ) . '<br />' .
+		$snippet .= '<p>' .
+			$this->msg( 'rawmessage' )->rawParams(
+				$this->msg(
+					'oathauth-recoverytokens-createdat',
+					$this->getLanguage()->userTimeAndDate( $timestamp, $this->oathUser->getUser() )
+				)->parse()
+				. $this->msg( 'word-separator' )->escaped()
+				. $this->msg( 'parentheses' )->rawParams(
+					wfTimestamp( TimestampFormat::ISO_8601, $timestamp )
+				)->escaped()
+			) .
+			'</p>' .
+			$this->createResourceList( $recoveryCodes ) .
+			'<br />' .
 			$this->createRecoveryCodesCopyButton() .
 			$this->createRecoveryCodesDownloadLink( $recoveryCodes );
 

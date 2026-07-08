@@ -34,9 +34,6 @@ class SyntaxChecker {
 	 */
 	private $treeRoot;
 
-	/** @var KeywordsManager */
-	private $keywordsManager;
-
 	public const MCONSERVATIVE = 'MODE_CONSERVATIVE';
 	public const MLIBERAL = 'MODE_LIBERAL';
 	public const DUMMYPOS = 0;
@@ -63,27 +60,14 @@ class SyntaxChecker {
 	 */
 	private $mode;
 
-	/**
-	 * @var bool Whether we want to check for unused variables
-	 */
-	private $checkUnusedVars;
-
-	/**
-	 * @param AFPSyntaxTree $tree
-	 * @param KeywordsManager $keywordsManager
-	 * @param string $mode
-	 * @param bool $checkUnusedVars
-	 */
 	public function __construct(
 		AFPSyntaxTree $tree,
-		KeywordsManager $keywordsManager,
+		private readonly KeywordsManager $keywordsManager,
 		string $mode = self::MCONSERVATIVE,
-		bool $checkUnusedVars = false
+		private readonly bool $checkUnusedVars = false
 	) {
 		$this->treeRoot = $tree->getRoot();
-		$this->keywordsManager = $keywordsManager;
 		$this->mode = $mode;
-		$this->checkUnusedVars = $checkUnusedVars;
 	}
 
 	/**
@@ -96,9 +80,7 @@ class SyntaxChecker {
 			return;
 		}
 		$bound = $this->check( $this->desugar( $this->treeRoot ), [] );
-		$unused = array_keys( array_filter( $bound, static function ( $v ) {
-			return !$v;
-		} ) );
+		$unused = array_keys( $bound, false, true );
 		if ( $this->checkUnusedVars && $unused ) {
 			throw new UserVisibleException(
 				'unusedvars',
@@ -407,8 +389,8 @@ class SyntaxChecker {
 	 *	   a literal string.
 	 *
 	 * @param AFPTreeNode $node
-	 * @param bool[] $bound Map of [ variable_name => used ]
-	 * @return bool[] Map of [ variable_name => used ]
+	 * @param array<string,bool> $bound Map of [ variable_name => used ]
+	 * @return array<string,bool> Map of [ variable_name => used ]
 	 * @throws UserVisibleException
 	 * @throws InternalException
 	 */
@@ -531,9 +513,9 @@ class SyntaxChecker {
 	}
 
 	/**
-	 * @param array $left
-	 * @param array $right
-	 * @return array
+	 * @param array<string,bool> $left
+	 * @param array<string,bool> $right
+	 * @return array<string,bool>
 	 */
 	private function mapUnion( array $left, array $right ): array {
 		foreach ( $right as $key => $val ) {
@@ -547,9 +529,9 @@ class SyntaxChecker {
 	}
 
 	/**
-	 * @param array $left
-	 * @param array $right
-	 * @return array
+	 * @param array<string,bool> $left
+	 * @param array<string,bool> $right
+	 * @return array<string,bool>
 	 */
 	private function mapIntersect( array $left, array $right ): array {
 		$keys = array_intersect_key( $left, $right );
@@ -563,8 +545,8 @@ class SyntaxChecker {
 	/**
 	 * @param string $var
 	 * @param int $pos
-	 * @param array $bound
-	 * @return array
+	 * @param array<string,bool> $bound
+	 * @return array<string,bool>
 	 */
 	private function assignVar( string $var, int $pos, array $bound ): array {
 		$var = strtolower( $var );
@@ -582,8 +564,8 @@ class SyntaxChecker {
 	/**
 	 * @param string $var
 	 * @param int $pos
-	 * @param array $bound
-	 * @return array
+	 * @param array<string,bool> $bound
+	 * @return array<string,bool>
 	 */
 	private function lookupVar( string $var, int $pos, array $bound ): array {
 		$var = strtolower( $var );

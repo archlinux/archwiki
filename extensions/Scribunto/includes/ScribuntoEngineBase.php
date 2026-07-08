@@ -46,11 +46,6 @@ abstract class ScribuntoEngineBase {
 	protected $title;
 
 	/**
-	 * @var array
-	 */
-	protected $options;
-
-	/**
 	 * @var (ScribuntoModuleBase|null)[]
 	 */
 	protected $modules = [];
@@ -93,8 +88,9 @@ abstract class ScribuntoEngineBase {
 	 * @param array $options Associative array of options:
 	 *    - parser:            A Parser object
 	 */
-	public function __construct( array $options ) {
-		$this->options = $options;
+	public function __construct(
+		protected readonly array $options,
+	) {
 		if ( isset( $options['parser'] ) ) {
 			$this->parser = $options['parser'];
 		}
@@ -165,7 +161,7 @@ abstract class ScribuntoEngineBase {
 	public function fetchModuleFromParser( Title $title ) {
 		$key = $title->getPrefixedDBkey();
 		if ( !array_key_exists( $key, $this->modules ) ) {
-			[ $text, $finalTitle ] = $this->parser->fetchTemplateAndTitle( $title );
+			[ $text, $finalTitle ] = $this->getParser()->fetchTemplateAndTitle( $title );
 			if ( $text === false ) {
 				$this->modules[$key] = null;
 				return null;
@@ -177,7 +173,6 @@ abstract class ScribuntoEngineBase {
 			}
 			// $finalKey may be different from $key in the case of redirects;
 			// store the module in both places.
-			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$this->modules[$key] = $this->modules[$finalKey];
 		}
 		return $this->modules[$key];

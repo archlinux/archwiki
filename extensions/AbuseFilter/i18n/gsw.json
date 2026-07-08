@@ -216,7 +216,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Variable setze (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variable",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-Zytstämpfel vu dr Änderig",
-	"abusefilter-edit-builder-vars-accountname": "Benutzername (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Benutzername (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Aktion",
 	"abusefilter-edit-builder-vars-addedlines": "Zyyle bi dr Bearbeitig zuegfiegt",
 	"abusefilter-edit-builder-vars-delta": "Greßi bi dr Bearbeitig gänderet",

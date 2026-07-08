@@ -4,7 +4,8 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\NodeData;
 
 use Wikimedia\Parsoid\Core\DomSourceRange;
-use Wikimedia\Parsoid\Tokens\SourceRange;
+use Wikimedia\Parsoid\Core\SourceRange;
+use Wikimedia\Parsoid\Tokens\VariantInfo;
 use Wikimedia\Parsoid\Utils\Utils;
 
 /**
@@ -31,6 +32,13 @@ use Wikimedia\Parsoid\Utils\Utils;
  * Used to shuttle tokens to the end of a stage in the TokenHandlerPipeline
  * @property array|null $shuttleTokens
  *
+ * Unparsed components of a language variant rule token.
+ * @property ?VariantInfo $variantInfo
+ *
+ * Used to shuttle DataMwVariant through the Token so it can be set on
+ * the element rich attribute during tree building.
+ * @property ?DataMwVariant $variantData
+ *
  * Section data associated with a heading
  * @property ?array{line:string,linkAnchor:string} $section
  *
@@ -44,6 +52,14 @@ use Wikimedia\Parsoid\Utils\Utils;
  *
  * Node represents empty extension content
  * @property bool|null $empty
+ *
+ * Only set on some table cells. If true, this node encountered
+ * an attribute terminator token in attribute position in the
+ * AttributeExpander pass.
+ * @property bool|null $cellAttrTerminatorSeen
+ *
+ * Magic link type
+ * @property string|null $ref
  */
 #[\AllowDynamicProperties]
 class TempData {
@@ -57,7 +73,7 @@ class TempData {
 	 * The tokenizer sets this on table cells originating in wikitext-style syntax
 	 * with no attributes set in the input.
 	 */
-	public const NO_ATTRS = 1 << 1;
+	public const TABLE_CELL_WITH_NO_ATTRIBUTE_SYNTAX = 1 << 1;
 
 	/**
 	 * The tokenizer sets this on table cells that use "||" or "!!" style syntax for
@@ -93,8 +109,8 @@ class TempData {
 	public const WRAPPER = 1 << 6;
 
 	/**
-	 * This is set on wrapper tokens created by PipelineUtils::encapsulateExpansionHTML()
-	 * to propagate the setDSR option to that function.
+	 * This is set on wrapper tokens created by PipelineUtils::tunnelDOMThroughTokens()
+	 * to propagate the setDSR option to UnpackDOMFragments.
 	 */
 	public const SET_DSR = 1 << 7;
 
@@ -126,10 +142,13 @@ class TempData {
 	public const BOGUS_PX = 1 << 12;
 
 	/**
-	 * This is set on wrapper tokens created by PipelineUtils::encapsulateExpansionHTML()
-	 * to propagate the fromCache option to that function.
+	 * Tells the serializer to discard this data-parsoid attribute.
+	 * Removing the data-parsoid instead of marking it discardable is
+	 * not helpful because DOMDataUtils::getDataParsoid() will instantiate
+	 * a new one if code downstream of the cleanup calls it which defeats
+	 * the purpose of removal in the first place.
 	 */
-	public const FROM_CACHE = 1 << 13;
+	public const DISCARDABLE_DP = 1 << 13;
 
 	/**
 	 * All elements inserted by TreeBuilderStage receive an integer ID. It is used

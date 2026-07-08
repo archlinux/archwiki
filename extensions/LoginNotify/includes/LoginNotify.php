@@ -11,29 +11,22 @@ namespace LoginNotify;
 use LogicException;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\JobSpecification;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\User;
-use MediaWiki\WikiMap\WikiMap;
-use MWCryptRand;
+use MediaWiki\Utils\MWCryptRand;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
-use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\IExpression;
-use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
-use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Stats\StatsFactory;
 
 /**
@@ -46,7 +39,6 @@ class LoginNotify implements LoggerAwareInterface {
 	public const CONSTRUCTOR_OPTIONS = [
 		'LoginNotifyAttemptsKnownIP',
 		'LoginNotifyAttemptsNewIP',
-		'LoginNotifyCacheLoginIPExpiry',
 		'LoginNotifyCheckKnownIPs',
 		'LoginNotifyCookieDomain',
 		'LoginNotifyCookieExpire',
@@ -57,8 +49,6 @@ class LoginNotify implements LoggerAwareInterface {
 		'LoginNotifySecretKey',
 		'LoginNotifySeenBucketSize',
 		'LoginNotifySeenExpiry',
-		'LoginNotifyUseCheckUser',
-		'LoginNotifyUseSeenTable',
 		'LoginNotifyUseCentralId',
 		'SecretKey',
 		'UpdateRowsPerQuery'
@@ -162,14 +152,13 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Is the current computer known to be used by the current user (fast checks)
-	 * To be used for checks that are fast enough to be run at the moment the user logs in.
+	 * Is the current computer known to be used by the current user?
 	 *
 	 * @param User $user User in question
 	 * @param WebRequest $request
 	 * @return string One of USER_* constants
 	 */
-	public function isKnownSystemFast( User $user, WebRequest $request ) {
+	public function isKnownSystem( User $user, WebRequest $request ) {
 		$logContext = [ 'user' => $user->getName() ];
 		$result = $this->userIsInCookie( $user, $request );
 		if ( $result === self::USER_KNOWN ) {
@@ -177,26 +166,15 @@ class LoginNotify implements LoggerAwareInterface {
 			return $result;
 		}
 
-		if ( $this->config->get( 'LoginNotifyUseSeenTable' ) ) {
-			$id = $this->getMaybeCentralId( $user );
-			$hash = $this->getSeenHash( $request, $id );
-			$result = $this->mergeResults( $result, $this->userIsInSeenTable( $id, $hash ) );
-			if ( $result === self::USER_KNOWN ) {
-				$this->log->debug( 'Found user {user} in table', $logContext );
-				return $result;
-			}
+		$id = $this->getMaybeCentralId( $user );
+		$hash = $this->getSeenHash( $request, $id );
+		$result = $this->mergeResults( $result, $this->userIsInSeenTable( $id, $hash ) );
+		if ( $result === self::USER_KNOWN ) {
+			$this->log->debug( 'Found user {user} in table', $logContext );
+			return $result;
 		}
 
-		// No need for caching unless CheckUser will be used
-		if ( $this->config->get( 'LoginNotifyUseCheckUser' ) ) {
-			$result = $this->mergeResults( $result, $this->userIsInCache( $user, $request ) );
-			if ( $result === self::USER_KNOWN ) {
-				$this->log->debug( 'Found user {user} in cache', $logContext );
-				return $result;
-			}
-		} else {
-			$result = self::USER_NOT_KNOWN;
-		}
+		$result = self::USER_NOT_KNOWN;
 
 		$this->log->debug( 'Fast checks for {user}: {result}', [
 			'user' => $user->getName(),
@@ -207,70 +185,7 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Is the current computer known to be used by the current user (slow checks)
-	 * These checks are slow enough to be run via the job queue
-	 *
-	 * @param User $user User in question
-	 * @param string $subnet User's current subnet
-	 * @param string $resultSoFar Value returned by isKnownSystemFast() or null if
-	 *        not available.
-	 * @return bool true if the user has used this computer before
-	 */
-	private function isKnownSystemSlow( User $user, $subnet, $resultSoFar ) {
-		$result = $this->checkUserAllWikis( $user, $subnet );
-
-		$this->log->debug( 'Checking user {user} from {subnet} (result so far: {soFar}): {result}',
-			[
-				'function' => __METHOD__,
-				'user' => $user->getName(),
-				'subnet' => $subnet,
-				'result' => $result,
-				'soFar' => json_encode( $resultSoFar ),
-			]
-		);
-
-		$result = $this->mergeResults( $result, $resultSoFar );
-
-		// If we have no CheckUser data for the user, and there was no cookie
-		// supplied, then treat the computer as known.
-		if ( $result === self::USER_NO_INFO ) {
-			// We have to be careful here. Whether $cookieResult is
-			// self::USER_NO_INFO, is under control of the attacker.
-			// If checking CheckUser is disabled, then we should not
-			// hit this branch.
-
-			$this->log->info(
-				"Assuming the user {user} is from a known IP since no info is available",
-				[
-					'method' => __METHOD__,
-					'user' => $user->getName()
-				]
-			);
-			return true;
-		}
-
-		return $result === self::USER_KNOWN;
-	}
-
-	/**
-	 * Check if we cached this user's ip address from last login.
-	 *
-	 * @param User $user User in question
-	 * @param WebRequest $request
-	 * @return string One of USER_* constants
-	 */
-	private function userIsInCache( User $user, WebRequest $request ) {
-		$ipPrefix = $this->getIPNetwork( $request->getIP() );
-		$key = $this->getKey( $user, 'prevSubnet' );
-		$res = $this->cache->get( $key );
-		if ( $res !== false ) {
-			return $res === $ipPrefix ? self::USER_KNOWN : self::USER_NOT_KNOWN;
-		}
-		return self::USER_NO_INFO;
-	}
-
-	/**
-	 * Check if the user is in our own table in a non-expired bucket
+	 * Check if the user is the seen table in a non-expired bucket
 	 *
 	 * @param int $centralUserId
 	 * @param int|string $hash
@@ -291,14 +206,7 @@ class LoginNotify implements LoggerAwareInterface {
 			] )
 			->caller( __METHOD__ )
 			->fetchField();
-		if ( $seen ) {
-			return self::USER_KNOWN;
-		} elseif ( $this->config->get( 'LoginNotifyUseCheckUser' ) ) {
-			// We still need to check CheckUser
-			return self::USER_NO_INFO;
-		} else {
-			return self::USER_NOT_KNOWN;
-		}
+		return $seen ? self::USER_KNOWN : self::USER_NOT_KNOWN;
 	}
 
 	/**
@@ -459,171 +367,6 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Is the subnet of the current IP in the CheckUser data for the user.
-	 *
-	 * If CentralAuth is installed, this will check not only the current wiki,
-	 * but also the ten wikis where user has most edits on.
-	 *
-	 * @param User $user User in question
-	 * @param string $subnet User's current subnet
-	 * @return string One of USER_* constants
-	 */
-	private function checkUserAllWikis( User $user, $subnet ) {
-		Assert::parameter( $user->isRegistered(), '$user', 'User must be logged in' );
-
-		if ( !$this->config->get( 'LoginNotifyCheckKnownIPs' )
-			|| !$this->isCheckUserInstalled()
-		) {
-			// CheckUser checks disabled.
-			// Note: It's important this be USER_NOT_KNOWN and not USER_NO_INFO.
-			return self::USER_NOT_KNOWN;
-		}
-
-		$dbr = $this->lbFactory->getReplicaDatabase();
-		$result = $this->checkUserOneWiki( $user->getId(), $subnet, $dbr );
-		if ( $result === self::USER_KNOWN ) {
-			return $result;
-		}
-
-		if ( $result === self::USER_NO_INFO
-			&& $this->userHasCheckUserData( $user->getId(), $dbr )
-		) {
-			$result = self::USER_NOT_KNOWN;
-		}
-
-		// Also check checkuser table on the top ten wikis where this user has
-		// edited the most. We only do top ten, to limit the worst-case where the
-		// user has accounts on 800 wikis.
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'CentralAuth' ) ) {
-			$globalUser = CentralAuthUser::getInstance( $user );
-			if ( $globalUser->exists() ) {
-				// This is expensive, up to ~5 seconds (T167731)
-				$info = $globalUser->queryAttached();
-				// Already checked the local wiki.
-				unset( $info[WikiMap::getCurrentWikiId()] );
-				usort( $info,
-					static function ( $a, $b ) {
-						// descending order
-						return $b['editCount'] - $a['editCount'];
-					}
-				);
-				$count = 0;
-				foreach ( $info as $localInfo ) {
-					if ( !isset( $localInfo['id'] ) || !isset( $localInfo['wiki'] ) ) {
-						break;
-					}
-					if ( $count > 10 || $localInfo['editCount'] < 1 ) {
-						break;
-					}
-
-					$wiki = $localInfo['wiki'];
-					$lb = $this->lbFactory->getMainLB( $wiki );
-					$dbrLocal = $lb->getMaintenanceConnectionRef( DB_REPLICA, [], $wiki );
-
-					if ( !$this->hasCheckUserTables( $dbrLocal ) ) {
-						// Skip this wiki, no CheckUser table.
-						continue;
-					}
-					$res = $this->checkUserOneWiki(
-						$localInfo['id'],
-						$subnet,
-						$dbrLocal
-					);
-
-					if ( $res === self::USER_KNOWN ) {
-						return $res;
-					}
-					if ( $result === self::USER_NO_INFO
-						 && $this->userHasCheckUserData( $user->getId(), $dbr )
-					) {
-						$result = self::USER_NOT_KNOWN;
-					}
-					$count++;
-				}
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Actually do the query of the CheckUser table.
-	 *
-	 * @note This catches and ignores database errors.
-	 * @param int $userId User ID number (Not necessarily for the local wiki)
-	 * @param string $ipFragment Prefix to match against cuc_ip (from $this->getIPNetwork())
-	 * @param IReadableDatabase $dbr A database connection (possibly foreign)
-	 * @return string One of USER_* constants
-	 */
-	private function checkUserOneWiki( $userId, $ipFragment, IReadableDatabase $dbr ) {
-		// The index is on (cuc_actor, cuc_ip, cuc_timestamp), instead of
-		// cuc_ip_hex which would be ideal, but CheckUser was not designed for
-		// this specific use case and we couldn't be bothered to update it.
-		// Although it would be 100x faster to use a single global summary
-		// table instead of connecting to the database of each wiki separately.
-		$IPHasBeenUsedBefore = $dbr->newSelectQueryBuilder()
-			->select( '1' )
-			->from( 'cu_changes' )
-			->join( 'actor', null, 'actor_id = cuc_actor' )
-			->where( [
-				'actor_user' => $userId,
-				$dbr->expr( 'cuc_ip', IExpression::LIKE, new LikeValue(
-					$ipFragment,
-					$dbr->anyString()
-				) )
-			] )
-			->caller( __METHOD__ )
-			->fetchField();
-		return $IPHasBeenUsedBefore ? self::USER_KNOWN : self::USER_NO_INFO;
-	}
-
-	/**
-	 * Check if we have any CheckUser info for this user
-	 *
-	 * If we have no info for user, we maybe don't treat it as
-	 * an unknown IP, since user has no known IPs.
-	 *
-	 * @param int $userId User id number (possibly on foreign wiki)
-	 * @param IReadableDatabase $dbr DB connection (possibly to foreign wiki)
-	 * @return bool
-	 */
-	private function userHasCheckUserData( $userId, IReadableDatabase $dbr ) {
-		$haveIPInfo = $dbr->newSelectQueryBuilder()
-			->select( '1' )
-			->from( 'cu_changes' )
-			->join( 'actor', null, 'actor_id = cuc_actor' )
-			->where( [ 'actor_user' => $userId ] )
-			->caller( __METHOD__ )
-			->fetchField();
-
-		return (bool)$haveIPInfo;
-	}
-
-	/**
-	 * Does this wiki have a CheckUser table?
-	 *
-	 * @param IMaintainableDatabase $dbr Database to check
-	 * @return bool
-	 */
-	private function hasCheckUserTables( IMaintainableDatabase $dbr ) {
-		if ( !$dbr->tableExists( 'cu_changes', __METHOD__ ) ) {
-			$this->log->warning( "No CheckUser table on {wikiId}", [
-				'method' => __METHOD__,
-				'wikiId' => $dbr->getDomainID()
-			] );
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Whether CheckUser extension is installed
-	 * @return bool
-	 */
-	private function isCheckUserInstalled() {
-		return ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' );
-	}
-
-	/**
 	 * Give the user a cookie saying that they've previously logged in from this computer.
 	 *
 	 * @note If user already has a cookie, this will refresh it.
@@ -647,7 +390,7 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Give the user a cookie and store the address in memcached and the DB.
+	 * Give the user a cookie and store the address in the DB.
 	 *
 	 * It is expected this be called upon successful log in.
 	 *
@@ -662,53 +405,14 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Store the user's IP address in memcached and the DB
-	 *
-	 * @param User $user
-	 * @return void
-	 */
-	public function recordKnown( User $user ) {
-		if ( !$user->isNamed() ) {
-			return;
-		}
-		$this->cacheLoginIP( $user );
-		$this->recordUserInSeenTable( $user );
-
-		$this->log->debug( 'Recording user {user} as known',
-			[
-				'function' => __METHOD__,
-				'user' => $user->getName(),
-			]
-		);
-	}
-
-	/**
-	 * Cache the current IP subnet as being a known location for the given user.
-	 *
-	 * @param User $user The user.
-	 */
-	private function cacheLoginIP( User $user ) {
-		// For simplicity, this only stores the last IP subnet used.
-		// It's assumed that most of the time, we'll be able to rely on
-		// the cookie or CheckUser data.
-		$expiry = $this->config->get( 'LoginNotifyCacheLoginIPExpiry' );
-		$useCU = $this->config->get( 'LoginNotifyUseCheckUser' );
-		if ( $useCU && $expiry !== false ) {
-			$ipPrefix = $this->getIPNetwork( $user->getRequest()->getIP() );
-			$key = $this->getKey( $user, 'prevSubnet' );
-			$this->cache->set( $key, $ipPrefix, $expiry );
-		}
-	}
-
-	/**
 	 * If the user/subnet combination is not already in the database, add it.
 	 * Also queue a job to clean up expired rows, if necessary.
 	 *
 	 * @param User $user
 	 * @return void
 	 */
-	private function recordUserInSeenTable( User $user ) {
-		if ( !$this->config->get( 'LoginNotifyUseSeenTable' ) ) {
+	public function recordKnown( User $user ) {
+		if ( !$user->isNamed() ) {
 			return;
 		}
 		$id = $this->getMaybeCentralId( $user );
@@ -759,6 +463,13 @@ class LoginNotify implements LoggerAwareInterface {
 					->execute();
 			},
 			$fname
+		);
+
+		$this->log->debug( 'Recording user {user} as known',
+			[
+				'function' => __METHOD__,
+				'user' => $user->getName(),
+			]
 		);
 	}
 
@@ -1153,31 +864,11 @@ class LoginNotify implements LoggerAwareInterface {
 			return;
 		}
 
-		$known = $this->isKnownSystemFast( $user, $user->getRequest() );
+		$known = $this->isKnownSystem( $user, $user->getRequest() );
 		if ( $known === self::USER_KNOWN ) {
 			$this->recordLoginFailureFromKnownSystem( $user );
-		} elseif ( $this->config->get( 'LoginNotifyUseCheckUser' ) ) {
-			$this->createJob( DeferredChecksJob::TYPE_LOGIN_FAILED,
-				$user, $user->getRequest(), $known
-			);
 		} else {
 			$this->recordLoginFailureFromUnknownSystem( $user );
-		}
-	}
-
-	/**
-	 * Asynchronous part of recordFailure(), to be called from DeferredChecksJob
-	 *
-	 * @param User $user User in question
-	 * @param string $subnet User's current subnet
-	 * @param string $resultSoFar Value returned by isKnownSystemFast()
-	 */
-	public function recordFailureDeferred( User $user, $subnet, $resultSoFar ) {
-		$isKnown = $this->isKnownSystemSlow( $user, $subnet, $resultSoFar );
-		if ( !$isKnown ) {
-			$this->recordLoginFailureFromUnknownSystem( $user );
-		} else {
-			$this->recordLoginFailureFromKnownSystem( $user );
 		}
 	}
 
@@ -1190,16 +881,12 @@ class LoginNotify implements LoggerAwareInterface {
 		if ( !$this->config->get( 'LoginNotifyEnableOnSuccess' ) ) {
 			return;
 		}
-		$result = $this->isKnownSystemFast( $user, $user->getRequest() );
+		$result = $this->isKnownSystem( $user, $user->getRequest() );
 		if ( $result === self::USER_KNOWN ) {
 			// No need to notify
 			$this->incrStats( 'successes_total',
 				[ 'status' => 'success', 'kind' => 'known', 'notified' => 'no' ],
 				'success.muted.total'
-			);
-		} elseif ( $this->config->get( 'LoginNotifyUseCheckUser' ) ) {
-			$this->createJob( DeferredChecksJob::TYPE_LOGIN_SUCCESS,
-				$user, $user->getRequest(), $result
 			);
 		} elseif ( $result === self::USER_NOT_KNOWN ) {
 			$this->incrStats( 'successes_total',
@@ -1208,62 +895,6 @@ class LoginNotify implements LoggerAwareInterface {
 			);
 			$this->sendNotice( $user, 'login-success' );
 		}
-	}
-
-	/**
-	 * Asynchronous part of sendSuccessNotice(), to be called from DeferredChecksJob
-	 *
-	 * @param User $user User in question
-	 * @param string $subnet User's current subnet
-	 * @param string $resultSoFar Value returned by isKnownSystemFast()
-	 */
-	public function sendSuccessNoticeDeferred( User $user, $subnet, $resultSoFar ) {
-		$isKnown = $this->isKnownSystemSlow( $user, $subnet, $resultSoFar );
-		if ( $isKnown ) {
-			$this->log->debug( 'Found data for user {user} from {subnet}',
-				[
-					'function' => __METHOD__,
-					'user' => $user->getName(),
-					'subnet' => $subnet,
-				]
-			);
-		} else {
-			$this->incrStats( 'successes_total',
-				[ 'status' => 'success', 'kind' => 'LoginNotifyUseCheckUser', 'notified' => 'yes' ],
-				'success.notifications'
-			);
-			$this->sendNotice( $user, 'login-success' );
-		}
-	}
-
-	/**
-	 * Create and enqueue a job to do asynchronous processing of user login success/failure
-	 *
-	 * @param string $type Job type, one of DeferredChecksJob::TYPE_* constants
-	 * @param User $user User in question
-	 * @param WebRequest $request
-	 * @param string $resultSoFar Value returned by isKnownSystemFast()
-	 */
-	private function createJob( $type, User $user, WebRequest $request, $resultSoFar ) {
-		$subnet = $this->getIPNetwork( $request->getIP() );
-		$job = new JobSpecification( 'LoginNotifyChecks',
-			[
-				'checkType' => $type,
-				'userId' => $user->getId(),
-				'subnet' => $subnet,
-				'resultSoFar' => $resultSoFar,
-			]
-		);
-		$this->jobQueueGroup->lazyPush( $job );
-
-		$this->log->debug( 'Login {status}, creating a job to verify {user}, result so far: {result}',
-			[
-				'function' => __METHOD__,
-				'status' => $type,
-				'user' => $user->getName(),
-				'result' => $resultSoFar,
-			]
-		);
 	}
 
 	/**

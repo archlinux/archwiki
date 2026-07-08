@@ -1,17 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\IPContributions;
+namespace MediaWiki\Extension\CheckUser\IPContributions;
 
 use LogicException;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\ContributionsPager;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\NamespaceInfo;
@@ -21,10 +21,6 @@ use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IExpression;
 
 class IPContributionsPager extends ContributionsPager {
-	private TempUserConfig $tempUserConfig;
-	private CheckUserLookupUtils $checkUserLookupUtils;
-	private JobQueueGroup $jobQueueGroup;
-
 	/**
 	 * @param LinkRenderer $linkRenderer
 	 * @param LinkBatchFactory $linkBatchFactory
@@ -48,12 +44,12 @@ class IPContributionsPager extends ContributionsPager {
 		NamespaceInfo $namespaceInfo,
 		CommentFormatter $commentFormatter,
 		UserFactory $userFactory,
-		TempUserConfig $tempUserConfig,
-		CheckUserLookupUtils $checkUserLookupUtils,
-		JobQueueGroup $jobQueueGroup,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly CheckUserLookupUtils $checkUserLookupUtils,
+		private readonly JobQueueGroup $jobQueueGroup,
 		IContextSource $context,
 		array $options,
-		?UserIdentity $target = null
+		?UserIdentity $target = null,
 	) {
 		parent::__construct(
 			$linkRenderer,
@@ -67,10 +63,6 @@ class IPContributionsPager extends ContributionsPager {
 			$options,
 			$target
 		);
-		$this->tempUserConfig = $tempUserConfig;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
-		$this->jobQueueGroup = $jobQueueGroup;
-
 		if ( $this->isArchive ) {
 			$this->revisionIdField = 'ar_rev_id';
 			$this->revisionParentIdField = 'ar_parent_id';
@@ -118,7 +110,6 @@ class IPContributionsPager extends ContributionsPager {
 					'ar_deleted',
 					'ar_len',
 					'ar_parent_id',
-					'ar_sha1',
 					'ar_actor',
 					'ar_user' => 'cu_changes_actor.actor_user',
 					'ar_user_text' => 'cu_changes_actor.actor_name',
@@ -145,7 +136,6 @@ class IPContributionsPager extends ContributionsPager {
 					'rev_deleted',
 					'rev_len',
 					'rev_parent_id',
-					'rev_sha1',
 					'rev_comment_text' => 'cu_changes_comment.comment_text',
 					'rev_comment_data' => 'cu_changes_comment.comment_data',
 					'rev_comment_cid' => 'cu_changes_comment.comment_id',

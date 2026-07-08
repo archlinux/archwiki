@@ -10,6 +10,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
+use ReflectionUnionType;
 
 /**
  * Tests that all arguments passed into HookRunner are passed along to HookContainer.
@@ -162,6 +163,10 @@ abstract class HookRunnerTestBase extends MediaWikiUnitTestCase {
 		if ( !$paramType ) {
 			// Return a string for all the untyped parameters, good enough for our purposes.
 			return $param->getName();
+		}
+		if ( $paramType instanceof ReflectionUnionType ) {
+			// All types in the union are valid, choose a value of the first type
+			$paramType = $paramType->getTypes()[0];
 		}
 		$paramName = $paramType->getName();
 		if ( $paramName === 'string' ) {

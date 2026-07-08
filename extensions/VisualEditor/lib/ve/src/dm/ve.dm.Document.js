@@ -60,9 +60,6 @@ ve.dm.Document = function VeDmDocument(
 	this.readOnly = false;
 	this.attachedRoot = this.documentNode;
 
-	// Sparse array
-	this.branchNodeFromOffsetCache = [];
-
 	if ( data instanceof ve.dm.LinearData ) {
 		this.data = data;
 	} else {
@@ -85,6 +82,15 @@ ve.dm.Document = function VeDmDocument(
 	}
 	this.htmlDocument = htmlDocument;
 	this.persistentStorage = persistentStorage;
+
+	// A separate store of cached data for any ve.dm.Node in the tree (not arranged by
+	// document tree hierarchy: stored directly here with the node as a key). During
+	// transaction processing, as each node is modified, its store is deleted if present,
+	// with this rule applying recursively to ancestors.
+	this.cachedData = new Map();
+
+	// Set to true during transaction processing: the cache is not read or grown
+	this.bypassCachedData = false;
 };
 
 /* Inheritance */
@@ -112,6 +118,13 @@ OO.inheritClass( ve.dm.Document, ve.Document );
  *
  * @event ve.dm.Document#storage
  */
+
+/* Static properties */
+
+/**
+ * @property {symbol} Terminal key in the #cachedData key tree
+ */
+ve.dm.Document.static.CACHED_DATA_VALUE = Symbol( 'CACHED_DATA_VALUE' );
 
 /* Static methods */
 
@@ -412,8 +425,18 @@ ve.dm.Document.prototype.commit = function ( transaction, isStaging ) {
 		throw new Error( 'Cannot commit a transaction that has already been committed' );
 	}
 	this.emit( 'precommit', transaction );
-	this.branchNodeFromOffsetCache = [];
-	new ve.dm.TransactionProcessor( this, transaction, isStaging ).process();
+
+	// Invalidate whole-document cached data immediately
+	this.cachedData.delete( this.documentNode );
+
+	// Don't use cached data during transaction processing (but do invalidate items as appropriate)
+	this.bypassCachedData = true;
+
+	try {
+		new ve.dm.TransactionProcessor( this, transaction, isStaging ).process();
+	} finally {
+		this.bypassCachedData = false;
+	}
 	this.completeHistory.pushTransaction( transaction, this.store.getLength() );
 	this.emit( 'transact', transaction );
 };
@@ -981,13 +1004,18 @@ ve.dm.Document.prototype.getRelativeRange = function ( range, direction, unit, e
 /**
  * Get the nearest node matching a test.
  *
- * @param {Function} test Function to test whether a node matches, called with the nodeType
+ * @param {Function|string} testOrNodeType Function to test whether a node matches, called with the nodeType,
+ *  or exact nodeType to match.
  * @param {number} offset Offset to start looking at
  * @param {number} direction Direction to look in, +1 or -1
  * @param {number} limit Stop looking after reaching certain offset
  * @return {ve.dm.Node|null} Nearest matching node, or null if not found
  */
-ve.dm.Document.prototype.getNearestNodeMatching = function ( test, offset, direction, limit ) {
+ve.dm.Document.prototype.getNearestNodeMatching = function ( testOrNodeType, offset, direction, limit ) {
+	const test = typeof testOrNodeType === 'function' ?
+		testOrNodeType :
+		( nodeType ) => nodeType === testOrNodeType;
+
 	// It is never an offset of the node, but just an offset for which getNodeFromOffset should
 	// return that node. Usually it would be node offset + 1 or offset of node closing tag.
 	let coveredOffset;
@@ -1100,10 +1128,12 @@ ve.dm.Document.prototype.getBranchNodeFromOffset = function ( offset ) {
 	if ( offset < 0 || offset > this.data.getLength() ) {
 		throw new Error( 've.dm.Document.getBranchNodeFromOffset(): offset ' + offset + ' is out of bounds' );
 	}
-	if ( !this.branchNodeFromOffsetCache[ offset ] ) {
-		this.branchNodeFromOffsetCache[ offset ] = ve.Document.prototype.getBranchNodeFromOffset.call( this, offset );
-	}
-	return this.branchNodeFromOffsetCache[ offset ];
+	return this.getOrInsertCachedData(
+		this.documentNode,
+		() => ve.Document.prototype.getBranchNodeFromOffset.call( this, offset ),
+		'branchNodeFromOffset',
+		offset
+	);
 };
 
 /**
@@ -1174,9 +1204,6 @@ ve.dm.Document.prototype.rebuildTreeNode = function ( rootNode ) {
 	const removedNodes = ve.batchSplice( rootNode, 0, rootNode.getChildren().length, addedNodes );
 
 	this.updateNodesByType( addedNodes, removedNodes );
-
-	// Clear branch node cache
-	this.branchNodeFromOffsetCache = [];
 };
 
 /**
@@ -1255,8 +1282,7 @@ ve.dm.Document.prototype.getNodesByType = function ( type, sort ) {
 };
 
 /**
- * @typedef FixedInsertion
- * @memberof ve.dm.Document
+ * @typedef ve.dm.Document.FixedInsertion
  * @property {ve.dm.LinearData.Item[]} data Possibly modified copy of `data`
  * @property {number} offset Possibly modified offset
  * @property {number} remove Number of elements to remove after the modified `offset`
@@ -1584,9 +1610,9 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 	}
 
 	return {
-		offset: offset,
+		offset,
 		data: newData,
-		remove: remove,
+		remove,
 		insertedDataOffset: insertedDataOffset !== 0 ? insertedDataOffset : undefined,
 		insertedDataLength: insertedDataLength !== newData.length ? insertedDataLength : undefined
 	};
@@ -1623,10 +1649,10 @@ ve.dm.Document.prototype.newFromHtml = function ( html, importRules ) {
 /**
  * Find a text string within the document
  *
- * @param {string|Set<string>|RegExp} query Text to find. Either a string, set of strings, or a RegExp with the /g flag
+ * @param {string|Set<string>|RegExp|ve.dm.TextFinder} query Text to find. Either a string, set of strings, RegExp with the /g flag, or ve.dm.TextFinder instance
  * @param {Object} [options] Search options
  * @param {boolean} [options.searchRange] Range to search. Defaults to the attached root.
- * @param {boolean} [options.caseSensitiveString] Case sensitive search for a string query. Ignored by regexes (use 'i' flag).
+ * @param {boolean} [options.caseSensitiveString] Case sensitive search for a string query. Ignored by regexes (use 'i' flag)
  * @param {boolean} [options.diacriticInsensitiveString] Diacritic insensitive search for a string query. Ignored by regexes and sets of strings.
  *  Only works in browsers which support the Internationalization API
  * @param {boolean} [options.noOverlaps] Avoid overlapping matches
@@ -1638,129 +1664,31 @@ ve.dm.Document.prototype.findText = function ( query, options = {} ) {
 		searchRange = options.searchRange || this.getAttachedRootRange();
 	let ranges = [];
 
-	if ( query instanceof RegExp ) {
-		if ( !query.global ) {
-			throw new Error( 'The /g flag must be set on the query RegExp' );
-		}
-		// Avoid multi-line matching by only matching within content (text or content elements)
-		data.forEachRunOfContent( searchRange, ( off, line ) => {
-			query.lastIndex = 0;
-			let match;
-			while ( ( match = query.exec( line ) ) !== null ) {
-				let matchText = match[ 0 ];
-
-				// Skip empty string matches (e.g. with .*)
-				if ( matchText.length === 0 ) {
-					// Set lastIndex to the next character to avoid an infinite
-					// loop. Browsers differ in whether they do this for you
-					// for empty matches; see
-					// http://blog.stevenlevithan.com/archives/exec-bugs
-					query.lastIndex = match.index + 1;
-					continue;
-				}
-
-				// Content elements' open/close data is replaced by the replacement character U+FFFC.
-				// Ensure that matches of U+FFFC contain the entire element (opening and closing data).
-				// The U+FFFC placeholder is only used for elements which "are content" (.static.isContent
-				// is true), and such elements are guaranteed to not contain content, so this is safe.
-				// Note, however, that this character is allowed to appear in normal text (eww),
-				// so we consult the actual document data to make sure we actually matched an element.
-
-				// 1/2: If we matched opening U+FFFC at the end, extend the match forwards by 1.
-				if (
-					matchText[ matchText.length - 1 ] === '\uFFFC' &&
-					data.isOpenElementData( off + match.index + matchText.length - 1 ) &&
-					data.isCloseElementData( off + match.index + matchText.length )
-				) {
-					matchText += '\uFFFC';
-					query.lastIndex += 1;
-				}
-
-				// 2/2: If we matched closing U+FFFC at the beginning, skip the match.
-				// (We do not extend the match backwards to avoid overlapping matches.)
-				if (
-					matchText[ 0 ] === '\uFFFC' &&
-					data.isOpenElementData( off + match.index - 1 ) &&
-					data.isCloseElementData( off + match.index )
-				) {
-					// Continue matching at the next character, rather than the end of this match.
-					query.lastIndex = match.index + 1;
-					continue;
-				}
-
-				ranges.push( new ve.Range(
-					off + match.index,
-					off + match.index + matchText.length
-				) );
-				if ( !options.noOverlaps ) {
-					query.lastIndex = match.index + 1;
-				}
-			}
-		} );
-	} else if ( query instanceof Set ) {
-		if ( query.size === 0 ) {
-			return [];
-		}
-
-		if ( !options.caseSensitiveString ) {
-			query = new Set( Array.from( query ).map( ( s ) => s.toLocaleLowerCase( this.lang ) ) );
-		}
-
-		let minLen = Infinity,
-			maxLen = 0;
-		query.forEach( ( s ) => {
-			minLen = Math.min( minLen, s.length );
-			maxLen = Math.max( maxLen, s.length );
-		} );
-
-		data.forEachRunOfContent( searchRange, ( off, line ) => {
-			if ( !options.caseSensitiveString ) {
-				line = line.toLocaleLowerCase( this.lang );
-			}
-
-			// For each possible length, do a sliding window search on the normalized line
-			for ( let len = minLen; len <= maxLen; len++ ) {
-				for ( let i = 0; i <= line.length - len; i++ ) {
-					const substr = line.slice( i, i + len );
-					if ( query.has( substr ) ) {
-						ranges.push( new ve.Range( off + i, off + i + len ) );
-						if ( options.noOverlaps ) {
-							i += len - 1;
-						}
-					}
-				}
-			}
-		} );
-	} else {
-		const qLen = query.length;
-		let sensitivity;
-		if ( options.diacriticInsensitiveString ) {
-			sensitivity = options.caseSensitiveString ? 'case' : 'base';
-		} else {
-			sensitivity = options.caseSensitiveString ? 'variant' : 'accent';
-		}
-		// Intl is only used browser clients
-		const compare = new Intl.Collator( this.lang, { sensitivity: sensitivity } ).compare;
-		// Iterate up to (and including) offset textLength - queryLength. Beyond that point
-		// there is not enough room for the query to exist
-		for ( let offset = searchRange.start, l = searchRange.end - qLen; offset <= l; offset++ ) {
-			let j = 0;
-			while ( compare( data.getCharacterData( offset + j ), query[ j ] ) === 0 ) {
-				j++;
-				if ( j === qLen ) {
-					ranges.push( new ve.Range( offset, offset + qLen ) );
-					offset += options.noOverlaps ? qLen - 1 : 0;
-					break;
-				}
-			}
-		}
+	if ( query instanceof Set ) {
+		query = new ve.dm.SetTextFinder( query, ve.extendObject( { lang: this.lang }, options ) );
+	} else if ( query instanceof RegExp ) {
+		query = new ve.dm.RegExpTextFinder( query, options );
+	} else if ( typeof query === 'string' ) {
+		query = new ve.dm.StringTextFinder( query, ve.extendObject( { lang: this.lang }, options ) );
 	}
+	// Else query is already a ve.dm.TextFinder
 
-	if ( options.wholeWord ) {
-		const dataString = new ve.dm.DataString( this.getData() );
-		ranges = ranges.filter( ( range ) => unicodeJS.wordbreak.isBreak( dataString, range.start ) &&
-				unicodeJS.wordbreak.isBreak( dataString, range.end ) );
-	}
+	data.forEachRunOfContent( searchRange, ( off, line ) => {
+		ranges.push( ...query.find( line ).map(
+			( [ start, end ] ) => new ve.Range( off + start, off + end )
+		) );
+	} );
+
+	ranges = ranges.filter(
+		// Remove matches that start on a close tag
+		( range ) => !data.isCloseElementData( range.start )
+	).map( ( range ) => {
+		// Extend matches that end on an open tag, if a close tag follows immediately
+		if ( data.isOpenElementData( range.end - 1 ) && data.isCloseElementData( range.end ) ) {
+			return new ve.Range( range.start, range.end + 1 );
+		}
+		return range;
+	} );
 
 	return ranges;
 };
@@ -1831,7 +1759,7 @@ ve.dm.Document.prototype.getDir = function () {
 ve.dm.Document.prototype.setStorage = function ( keyOrStorage, value ) {
 	if ( typeof keyOrStorage === 'string' ) {
 		// Attempt to JSON-serialize the value now so an error can be thrown if necessary.
-		JSON.stringify( { value: value } );
+		JSON.stringify( { value } );
 		this.persistentStorage[ keyOrStorage ] = value;
 		this.emit( 'storage' );
 	} else {
@@ -1851,4 +1779,68 @@ ve.dm.Document.prototype.getStorage = function ( key ) {
 	} else {
 		return this.persistentStorage;
 	}
+};
+
+/**
+ * Clear the cached data stored for a given node and all its ancestors.
+ *
+ * To be called while processing transactions, on each modified node, as the modification happens.
+ *
+ * @param {ve.dm.Node} node The relevant node
+ */
+ve.dm.Document.prototype.clearCachedData = function ( node ) {
+	// Ascend the DM node tree, deleting cached data at each level
+	while ( node ) {
+		this.cachedData.delete( node );
+		node = node.parent;
+	}
+};
+
+/**
+ * Fetch or generate data, to store against a particular branch node until that node changes
+ *
+ * When a branch node changes, the data stored against it will be deleted
+ *
+ * @param {ve.dm.BranchNode} [node=this.documentNode] The relevant branch node (on whose contents the value depends)
+ * @param {Function} callback Called to generate the cached value if not already present; passed the document model
+ * @param {...any} keys A hierarchical chain of valid keys for a Map, implying a tree structure in the node's store
+ * @return {any}
+ */
+ve.dm.Document.prototype.getOrInsertCachedData = function ( node, callback, ...keys ) {
+	// Support omitting the node argument
+	if ( typeof node === 'function' ) {
+		keys.unshift( callback );
+		callback = node;
+		node = this.documentNode;
+	}
+
+	if ( this.bypassCachedData ) {
+		// The cache is disabled, most likely because we're in the middle of
+		// applying a transaction
+		ve.log( 'VisualEditor: attempted to cache data while cache disabled', ...keys );
+		return callback( this );
+	}
+
+	if ( !this.cachedData.has( node ) ) {
+		this.cachedData.set( node, new Map() );
+	}
+	let data = this.cachedData.get( node );
+
+	// Within the values stored for this node, descend the key tree according to `keys`,
+	// adding new nodes if required
+	for ( const key of keys ) {
+		if ( !data.has( key ) ) {
+			data.set( key, new Map() );
+		}
+		data = data.get( key );
+	}
+
+	const CACHED_DATA_VALUE = ve.dm.Document.static.CACHED_DATA_VALUE;
+
+	if ( !data.has( CACHED_DATA_VALUE ) ) {
+		// Cache miss, so fill the cache
+		const value = callback( this );
+		data.set( CACHED_DATA_VALUE, value );
+	}
+	return data.get( CACHED_DATA_VALUE );
 };

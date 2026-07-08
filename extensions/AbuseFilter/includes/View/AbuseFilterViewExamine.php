@@ -26,87 +26,33 @@ use MediaWiki\RecentChanges\RecentChangeStore;
 use MediaWiki\Title\Title;
 use OOUI;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 class AbuseFilterViewExamine extends AbuseFilterView {
 	/**
 	 * @var string The rules of the filter we're examining
 	 */
 	private $testFilter;
-	/**
-	 * @var LBFactory
-	 */
-	private $lbFactory;
-	/**
-	 * @var FilterLookup
-	 */
-	private $filterLookup;
-	/**
-	 * @var EditBoxBuilderFactory
-	 */
-	private $boxBuilderFactory;
-	/**
-	 * @var VariablesBlobStore
-	 */
-	private $varBlobStore;
-	/**
-	 * @var VariablesFormatter
-	 */
-	private $variablesFormatter;
-	/**
-	 * @var VariablesManager
-	 */
-	private $varManager;
-	/**
-	 * @var VariableGeneratorFactory
-	 */
-	private $varGeneratorFactory;
 
-	private AbuseLoggerFactory $abuseLoggerFactory;
-	private RecentChangeStore $recentChangeStore;
-
-	/**
-	 * @param LBFactory $lbFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param FilterLookup $filterLookup
-	 * @param EditBoxBuilderFactory $boxBuilderFactory
-	 * @param VariablesBlobStore $varBlobStore
-	 * @param VariablesFormatter $variablesFormatter
-	 * @param VariablesManager $varManager
-	 * @param VariableGeneratorFactory $varGeneratorFactory
-	 * @param AbuseLoggerFactory $abuseLoggerFactory
-	 * @param RecentChangeStore $recentChangeStore
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param string $basePageName
-	 * @param array $params
-	 */
 	public function __construct(
-		LBFactory $lbFactory,
+		private readonly LBFactory $lbFactory,
 		AbuseFilterPermissionManager $afPermManager,
-		FilterLookup $filterLookup,
-		EditBoxBuilderFactory $boxBuilderFactory,
-		VariablesBlobStore $varBlobStore,
-		VariablesFormatter $variablesFormatter,
-		VariablesManager $varManager,
-		VariableGeneratorFactory $varGeneratorFactory,
-		AbuseLoggerFactory $abuseLoggerFactory,
-		RecentChangeStore $recentChangeStore,
+		private readonly FilterLookup $filterLookup,
+		private readonly EditBoxBuilderFactory $boxBuilderFactory,
+		private readonly VariablesBlobStore $varBlobStore,
+		private readonly VariablesFormatter $variablesFormatter,
+		private readonly VariablesManager $varManager,
+		private readonly VariableGeneratorFactory $varGeneratorFactory,
+		private readonly AbuseLoggerFactory $abuseLoggerFactory,
+		private readonly RecentChangeStore $recentChangeStore,
+		private readonly ReadOnlyMode $readOnlyMode,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
-		$this->lbFactory = $lbFactory;
-		$this->filterLookup = $filterLookup;
-		$this->boxBuilderFactory = $boxBuilderFactory;
-		$this->varBlobStore = $varBlobStore;
-		$this->variablesFormatter = $variablesFormatter;
 		$this->variablesFormatter->setMessageLocalizer( $context );
-		$this->varManager = $varManager;
-		$this->varGeneratorFactory = $varGeneratorFactory;
-		$this->abuseLoggerFactory = $abuseLoggerFactory;
-		$this->recentChangeStore = $recentChangeStore;
 	}
 
 	/**
@@ -272,10 +218,15 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$vars = VariableHolder::newFromArray( $varsArray );
 
 		if ( count( $protectedVariableValuesShown ) ) {
+			if ( $this->readOnlyMode->isReadOnly() ) {
+				$out->addWikiMsg( 'readonlytext', $this->readOnlyMode->getReason() );
+				return;
+			}
+
 			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 			$logger->logViewProtectedVariableValue(
 				$this->getUser(),
-				$varsArray['user_name'] ?? $varsArray['accountname'],
+				$varsArray['user_name'] ?? $varsArray['account_name'],
 				$protectedVariableValuesShown
 			);
 		}
@@ -317,11 +268,12 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 
 		try {
 			$filter = $this->filterLookup->getFilter( $row->afl_filter_id, $row->afl_global );
-		} catch ( CentralDBNotAvailableException $_ ) {
-			// Conservatively assume that it's hidden and protected, like in AbuseLogPager::doFormatRow
+		} catch ( CentralDBNotAvailableException ) {
+			// Conservatively assume that it's hidden and protected and suppressed, like in AbuseLogPager::doFormatRow
 			$filter = MutableFilter::newDefault();
 			$filter->setProtected( true );
 			$filter->setHidden( true );
+			$filter->setSuppressed( true );
 		}
 		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $filter ) ) {
 			$out->addWikiMsg( 'abusefilter-log-cannot-see-details' );
@@ -334,6 +286,8 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 				$msg = 'abusefilter-log-details-hidden';
 			} elseif ( $visibility === SpecialAbuseLog::VISIBILITY_HIDDEN_IMPLICIT ) {
 				$msg = 'abusefilter-log-details-hidden-implicit';
+			} elseif ( $visibility === SpecialAbuseLog::VISIBILITY_SUPPRESSED ) {
+				$msg = 'abusefilter-log-details-suppressed';
 			} else {
 				throw new LogicException( "Unexpected visibility $visibility" );
 			}
@@ -342,6 +296,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		}
 
 		$vars = $this->varBlobStore->loadVarDump( $row );
+		$varsArray = $this->varManager->dumpAllVars( $vars, $this->afPermManager->getProtectedVariables() );
 
 		// Check that the user can see the protected variables that are being examined if the filter is protected.
 		$userAuthority = $this->getAuthority();
@@ -371,39 +326,27 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 				);
 				return;
 			}
-		}
 
-		// AbuseFilter logs created before T390086 may have protected variables present in the variable dump
-		// when the filter itself isn't protected. This is because a different filter matched against the
-		// a protected variable which caused the value to be added to the var dump for the public filter
-		// match.
-		// We shouldn't block access to the details of an otherwise public filter hit so
-		// instead only check for access to the protected variables and redact them if the user
-		// shouldn't see them.
-		$protectedVariableValuesShown = [];
-		$varsArray = $this->varManager->dumpAllVars( $vars, $this->afPermManager->getProtectedVariables() );
-		foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
-			if ( isset( $varsArray[$protectedVariable] ) ) {
-				// Try each variable at a time, as the user may be able to see some but not all of the
-				// protected variables. We only want to redact what is necessary to redact.
-				$canViewProtectedVariable = $this->afPermManager
-					->canViewProtectedVariables( $userAuthority, [ $protectedVariable ] )->isGood();
-				if ( !$canViewProtectedVariable ) {
-					$varsArray[$protectedVariable] = '';
-				} else {
+			$protectedVariableValuesShown = [];
+			foreach ( $this->afPermManager->getProtectedVariables() as $protectedVariable ) {
+				if ( isset( $varsArray[$protectedVariable] ) ) {
 					$protectedVariableValuesShown[] = $protectedVariable;
 				}
 			}
-		}
-		$vars = VariableHolder::newFromArray( $varsArray );
 
-		if ( $filter->isProtected() ) {
-			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
-			$logger->logViewProtectedVariableValue(
-				$userAuthority->getUser(),
-				$varsArray['user_name'] ?? $varsArray['accountname'],
-				$protectedVariableValuesShown
-			);
+			if ( count( $protectedVariableValuesShown ) ) {
+				if ( $this->readOnlyMode->isReadOnly() ) {
+					$out->addWikiMsg( 'readonlytext', $this->readOnlyMode->getReason() );
+					return;
+				}
+
+				$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
+				$logger->logViewProtectedVariableValue(
+					$userAuthority->getUser(),
+					$varsArray['user_name'] ?? $varsArray['account_name'],
+					$protectedVariableValuesShown
+				);
+			}
 		}
 
 		$out->addJsConfigVars( [

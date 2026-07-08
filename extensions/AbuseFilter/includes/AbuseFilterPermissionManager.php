@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\AbuseFilter;
 
 use LogicException;
-use MapCacheLRU;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
@@ -16,13 +15,14 @@ use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\TempUser\TempUserConfig;
+use Wikimedia\ObjectCache\MapCacheLRU;
 
 /**
  * This class simplifies the interactions between the AbuseFilter code and Authority, knowing
  * what rights are required to perform AF-related actions.
  */
 class AbuseFilterPermissionManager {
-	public const SERVICE_NAME = 'AbuseFilterPermissionManager';
+	public const SERVICE_NAME = ServiceNames::PermManager;
 
 	/**
 	 * @var string[] All protected variables
@@ -31,23 +31,14 @@ class AbuseFilterPermissionManager {
 
 	private MapCacheLRU $canViewProtectedVariablesCache;
 
-	private TempUserConfig $tempUserConfig;
-	private ExtensionRegistry $extensionRegistry;
-	private RuleCheckerFactory $ruleCheckerFactory;
-	private AbuseFilterHookRunner $hookRunner;
-
 	public function __construct(
-		TempUserConfig $tempUserConfig,
-		ExtensionRegistry $extensionRegistry,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly ExtensionRegistry $extensionRegistry,
 		AbuseFilterProtectedVariablesLookup $protectedVariablesLookup,
-		RuleCheckerFactory $ruleCheckerFactory,
-		AbuseFilterHookRunner $hookRunner
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly AbuseFilterHookRunner $hookRunner
 	) {
-		$this->tempUserConfig = $tempUserConfig;
-		$this->extensionRegistry = $extensionRegistry;
 		$this->protectedVariables = $protectedVariablesLookup->getAllProtectedVariables();
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->hookRunner = $hookRunner;
 
 		$this->canViewProtectedVariablesCache = new MapCacheLRU( 10 );
 	}
@@ -72,6 +63,12 @@ class AbuseFilterPermissionManager {
 	 * @return bool
 	 */
 	public function canEditFilter( Authority $performer, AbstractFilter $filter ): bool {
+		// A user with viewsuppressed can view suppressed filters but if they lack
+		// the suppressrevision right then they shouldn't be able to edit it (T414011)
+		if ( $filter->isSuppressed() && !$this->canSuppress( $performer ) ) {
+			return false;
+		}
+
 		return (
 			$this->canEdit( $performer ) &&
 			!( $filter->isGlobal() && !$this->canEditGlobal( $performer ) )
@@ -96,6 +93,34 @@ class AbuseFilterPermissionManager {
 				'abusefilter-modify',
 				'abusefilter-view-private'
 			)
+		);
+	}
+
+	/**
+	 * Can the user view a suppressed filter or log entry?
+	 *
+	 * @param Authority $performer
+	 * @return bool
+	 */
+	public function canViewSuppressed( Authority $performer ): bool {
+		$block = $performer->getBlock();
+		return (
+			!( $block && $block->isSitewide() ) &&
+			$performer->isAllowed( 'viewsuppressed' )
+		);
+	}
+
+	/**
+	 * Can the user suppress a filter or log entry?
+	 *
+	 * @param Authority $performer
+	 * @return bool
+	 */
+	public function canSuppress( Authority $performer ): bool {
+		$block = $performer->getBlock();
+		return (
+			!( $block && $block->isSitewide() ) &&
+			$performer->isAllowed( 'suppressrevision' )
 		);
 	}
 
@@ -293,6 +318,10 @@ class AbuseFilterPermissionManager {
 	 */
 	public function canSeeLogDetailsForFilter( Authority $performer, AbstractFilter $filter ): bool {
 		if ( !$this->canSeeLogDetails( $performer ) ) {
+			return false;
+		}
+
+		if ( $filter->isSuppressed() && !$this->canViewSuppressed( $performer ) ) {
 			return false;
 		}
 

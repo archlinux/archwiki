@@ -7,6 +7,7 @@
 			"Catrope",
 			"Daimona Eaytoy",
 			"Darth Kule",
+			"Dream Indigo",
 			"Eleonora negri",
 			"Elitre",
 			"Fringio",
@@ -21,8 +22,7 @@
 			"Pietrodn",
 			"Raoli",
 			"Sakretsu",
-			"Vituzzu",
-			"Dream Indigo"
+			"Vituzzu"
 		]
 	},
 	"echo-desc": "Sistema per notificare agli utenti messaggi ed eventi",
@@ -167,8 +167,8 @@
 	"notification-header-thank-you-100-edit": "Hai appena fatto la tua centesima modifica; {{GENDER:$2|ti}} ringraziamo molto!",
 	"notification-header-thank-you-1000-edit": "Hai appena fatto la tua millesima modifica; grazie per essere {{GENDER:$2|un grande contributore|una grande contributrice}}!",
 	"notification-header-thank-you-10000-edit": "Hai appena fatto la tua decimillesima modifica; {{GENDER:$2|ti}} ringraziamo molto!",
-	"notification-header-thank-you-100000-edit": "Hai appena fatto la tua centomillesima modifica; grazie per il {{GENDER:$2|tuo}} incredibile contributo!",
-	"notification-header-thank-you-1000000-edit": "Hai appena fatto la tua milionesima modifica; grazie per il {{GENDER:$2|tuo}} strabiliante contributo!",
+	"notification-header-thank-you-100000-edit": "Hai appena fatto la tua centomillesima modifica; grazie per i {{GENDER:$2|tuoi}} incredibili contributi!",
+	"notification-header-thank-you-1000000-edit": "Hai appena fatto la tua milionesima modifica; grazie per i {{GENDER:$2|tuoi}} strabilianti contributi!",
 	"notification-header-thank-you-10000000-edit": "Hai appena fatto la tua diecimilionesima modifica; grazie per il {{GENDER:$2|tuo}} incredibile contributo!",
 	"notification-link-thank-you-edit": "La {{GENDER:$1|tua}} modifica",
 	"notification-link-text-view-edit": "Vedi modifica",

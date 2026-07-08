@@ -69,5 +69,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Falta a seguinte dependencia|Faltan as seguintes dependencias}}: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|A seguinte dependencia está obsoleta|As seguintes dependencias están obsoletas}}: $1.",
 	"gadgets-supports-urlload": "Este trebello soporta a carga mediante un enderezo URL co parámetro de pescuda <code>?withgadget</code>.",
-	"gadgets-hidden": "Este trebello está [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden agochado], o que significa que non aparecerá na páxina de preferencias."
+	"gadgets-hidden": "Este trebello está [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden agochado], o que significa que non aparecerá na páxina de preferencias.",
+	"gadgets-subpage-invalid": "A subpáxina \"<nowiki>$1</nowiki>\" non é válida",
+	"gadgets-subpage-toofewparams": "Non hai suficientes parámetros de subpáxina (ligazón non válida)."
 }

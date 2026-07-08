@@ -19,8 +19,10 @@ use MediaWiki\Message\Message;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use Psr\Log\LoggerInterface;
-use StringUtils;
+use Wikimedia\Message\MessageParam;
+use Wikimedia\Message\MessageSpecifier as MsgSp;
 use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * Abstract base class with static methods for rendering the <math> tags using
@@ -161,13 +163,13 @@ abstract class MathRenderer {
 	 * TODO: update to MathML
 	 * Returns an internationalized HTML error string
 	 *
-	 * @param string $msg message key for specific error
-	 * @param string ...$parameters zero or more message
-	 *  parameters for specific error
+	 * @param string $msg message key for the specific error
+	 * @param MessageParam|MsgSp|string|int|float|list<MessageParam|MsgSp|string|int|float> ...$parameters
+	 * See Message::params()
 	 *
 	 * @return string HTML error string
 	 */
-	public function getError( $msg, ...$parameters ) {
+	public function getError( string $msg, ...$parameters ): string {
 		if ( $this->rawError ) {
 			return 'Error: ' . $msg . ' param ' . implode( ',', $parameters );
 		}

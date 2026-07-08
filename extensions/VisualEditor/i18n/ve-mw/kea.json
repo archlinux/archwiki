@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"GrogeXaKaba",
+			"Letra.berdi",
 			"Quintino Lopes Castro Tavares",
 			"Waldir",
-			"Waldyrious",
-			"GrogeXaKaba",
-			"Letra.berdi"
+			"Waldyrious"
 		]
 	},
+	"collabpad-disabled": "CollabPad ka sta ativadu na es uiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Nportadu di $1",
 	"collabpad": "CollabPad",
@@ -229,6 +230,7 @@
 	"visualeditor-educationpopup-dismiss": "Ntendedu",
 	"visualeditor-expandable-less": "Ménus",
 	"visualeditor-expandable-more": "Más",
+	"visualeditor-expandableerror-toggle": "Alterna vizibilidadi",
 	"visualeditor-feedback-defaultmessage": "Nderésu URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Titlu di pájina",
 	"visualeditor-formatdropdown-format-mw-heading2": "Titlu di nívi 2",
@@ -236,6 +238,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Titlu di nívi 4",
 	"visualeditor-formatdropdown-format-mw-heading5": "Titlu di nívi 5",
 	"visualeditor-formatdropdown-format-mw-heading6": "Titlu di nívi 6",
+	"visualeditor-fullpage-switch-label": "Idita pájina nter",
 	"visualeditor-generating-wikitext-progress": "Testu uiki sa-ta jeradu",
 	"visualeditor-includes-noinclude-start": "Kumésu di kuntiúdu ki ta ser skluídu di trexus",
 	"visualeditor-includes-noinclude-end": "Fin di kuntiúdu ki ta ser skluídu di trexus",

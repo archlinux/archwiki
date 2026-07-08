@@ -5,7 +5,7 @@ namespace Cite\Tests\Unit;
 use Cite\AlphabetsProvider;
 use Cite\Cite;
 use Cite\CiteFactory;
-use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Parser\Parser;
 use Wikimedia\TestingAccessWrapper;
 
@@ -17,7 +17,7 @@ class CiteFactoryTest extends \MediaWikiUnitTestCase {
 
 	private function newCiteFactory(): CiteFactory {
 		return new CiteFactory(
-			$this->createNoOpMock( Config::class ),
+			new HashConfig(),
 			$this->createNoOpMock( AlphabetsProvider::class ),
 			null
 		);

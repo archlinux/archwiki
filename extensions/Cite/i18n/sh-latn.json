@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"cite-desc": "Dodaje oznake <code>&lt;ref&gt;</code> i <code>&lt;references/&gt;</code> za citiranja",

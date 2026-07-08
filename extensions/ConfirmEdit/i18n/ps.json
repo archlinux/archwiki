@@ -34,5 +34,6 @@
 	"confirmedit-preview-valid": "چلېدو‌ ور",
 	"confirmedit-preview-invalid": "ناچله",
 	"confirmedit-preview-description": "لاندې لښتيال په مخ کې د کرښو لړليک ښيي او دا چې دا يو باوري وېبپته ده يا د وېبپتې بريد. که چېرې يوه کرښه باوري وېبپته يا د وېبپتې بريد وي؛ نو دا به د کپچا سم‌کتنې نه وويستل شي؛ خو ناسمې کرښې به له پامه وغورځول شي. د يو باوري وېبپتې بريد يوه بېلگه به دا وي: 69.208.0.0/16 چې له 69.208.0.0 څخه تر 69.208.255.255 پورې ځي. د وېبپتو بريد ارزونې په اړه  [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix نور مالومات].",
-	"abusefilter-edit-action-showcaptcha": "د پام‌وړ چارې ترسره کولو لپاره کارن بايد کپچا بشپړه کړئ. هغه کارنان چې د کپچا پرېښودلو لاسرسی لري له دې چارې بښلي دي."
+	"abusefilter-edit-action-showcaptcha": "د چارې تراسروي لپاره کپچا تاييد ته اړتيا ده",
+	"abusefilter-edit-action-showcaptcha-help": "هغه کارنان چې د کپچا پرېښودو اجازې لري، ترې بښلې دي."
 }

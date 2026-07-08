@@ -15,6 +15,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\StringStream;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Utils\UrlUtils;
@@ -54,13 +55,13 @@ class OpenSearchDescriptionHandler extends Handler {
 		$ctype = $this->getContentType();
 
 		$response = $this->getResponseFactory()->create();
-		$response->setHeader( 'Content-type', $ctype );
+		$response->setHeader( ResponseHeaders::CONTENT_TYPE, $ctype );
 
 		// Set an Expires header so that CDN can cache it for a short time
 		// Short enough so that the sysadmin barely notices when $wgSitename is changed
 		$expiryTime = 600; # 10 minutes
-		$response->setHeader( 'Expires', gmdate( 'D, d M Y H:i:s', time() + $expiryTime ) . ' GMT' );
-		$response->setHeader( 'Cache-control', 'max-age=600' );
+		$response->setHeader( ResponseHeaders::EXPIRES, gmdate( 'D, d M Y H:i:s', time() + $expiryTime ) . ' GMT' );
+		$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'max-age=600' );
 
 		$body = new StringStream();
 
@@ -191,4 +192,18 @@ class OpenSearchDescriptionHandler extends Handler {
 		];
 	}
 
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::CONTENT_TYPE => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::CONTENT_TYPE
+				],
+				ResponseHeaders::EXPIRES => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::EXPIRES
+				]
+			]
+		);
+	}
 }

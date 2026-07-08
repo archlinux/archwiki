@@ -12,16 +12,6 @@ use MediaWiki\User\UserIdentity;
  * @todo Add the timestamp
  */
 class ActionSpecifier {
-	/** @var string */
-	private $action;
-	/** @var LinkTarget */
-	private $title;
-	/** @var UserIdentity */
-	private $user;
-	/** @var string */
-	private $requestIP;
-	/** @var string|null */
-	private $accountName;
 
 	/**
 	 * @param string $action Action being filtered (e.g. 'edit' or 'createaccount')
@@ -32,16 +22,15 @@ class ActionSpecifier {
 	 * @param string|null $accountName Required iff the action is an account creation
 	 */
 	public function __construct(
-		string $action, LinkTarget $title, UserIdentity $user, string $requestIP, ?string $accountName
+		private readonly string $action,
+		private readonly LinkTarget $title,
+		private readonly UserIdentity $user,
+		private readonly string $requestIP,
+		private readonly ?string $accountName
 	) {
 		if ( $accountName === null && str_contains( $action, 'createaccount' ) ) {
 			throw new InvalidArgumentException( '$accountName required for account creations' );
 		}
-		$this->action = $action;
-		$this->title = $title;
-		$this->user = $user;
-		$this->requestIP = $requestIP;
-		$this->accountName = $accountName;
 	}
 
 	public function getAction(): string {

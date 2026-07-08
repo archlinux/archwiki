@@ -27,6 +27,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -41,7 +42,7 @@ use Wikimedia\Rdbms\LikeValue;
 class NamespaceDupes extends Maintenance {
 
 	/**
-	 * Total number of pages that need fixing that are automatically resolveable
+	 * Total number of pages that need fixing that are automatically resolvable
 	 * @var int
 	 */
 	private $resolvablePages = 0;
@@ -53,7 +54,7 @@ class NamespaceDupes extends Maintenance {
 	private $totalPages = 0;
 
 	/**
-	 * Total number of links that need fixing that are automatically resolveable
+	 * Total number of links that need fixing that are automatically resolvable
 	 * @var int
 	 */
 	private $resolvableLinks = 0;
@@ -65,7 +66,7 @@ class NamespaceDupes extends Maintenance {
 	private $totalLinks = 0;
 
 	/**
-	 * Total number of links deleted because they weren't automatically resolveable due to the
+	 * Total number of links deleted because they weren't automatically resolvable due to the
 	 * target already existing
 	 * @var int
 	 */
@@ -87,9 +88,6 @@ class NamespaceDupes extends Maintenance {
 			false, true );
 		$this->addOption( 'dest-namespace', "In combination with --source-pseudo-namespace, " .
 			"specify the namespace ID of the destination.", false, true );
-		$this->addOption( 'move-talk', "If this is specified, pages in the Talk namespace that " .
-			"begin with a conflicting prefix will be renamed, for example " .
-			"Talk:File:Foo -> File_Talk:Foo" );
 	}
 
 	public function execute() {
@@ -98,7 +96,6 @@ class NamespaceDupes extends Maintenance {
 			'merge' => $this->hasOption( 'merge' ),
 			'add-suffix' => $this->getOption( 'add-suffix', '' ),
 			'add-prefix' => $this->getOption( 'add-prefix', '' ),
-			'move-talk' => $this->hasOption( 'move-talk' ),
 			'source-pseudo-namespace' => $this->getOption( 'source-pseudo-namespace', '' ),
 			'dest-namespace' => intval( $this->getOption( 'dest-namespace', 0 ) )
 		];
@@ -125,13 +122,12 @@ class NamespaceDupes extends Maintenance {
 	 */
 	private function checkAll( $options ) {
 		$contLang = $this->getServiceContainer()->getContentLanguage();
+		$interwikis = [];
 		$spaces = [];
 
-		// List interwikis first, so they'll be overridden
-		// by any conflicting local namespaces.
 		foreach ( $this->getInterwikiList() as $prefix ) {
 			$name = $contLang->ucfirst( $prefix );
-			$spaces[$name] = 0;
+			$interwikis[$name] = 0;
 		}
 
 		// Now pull in all canonical and alias namespaces...
@@ -157,13 +153,14 @@ class NamespaceDupes extends Maintenance {
 		// since we're doing case-sensitive searches in the db.
 		$capitalLinks = $this->getConfig()->get( MainConfigNames::CapitalLinks );
 		foreach ( $spaces as $name => $ns ) {
-			$moreNames = [];
-			$moreNames[] = $contLang->uc( $name );
-			$moreNames[] = $contLang->ucfirst( $contLang->lc( $name ) );
-			$moreNames[] = $contLang->ucwords( $name );
-			$moreNames[] = $contLang->ucwords( $contLang->lc( $name ) );
-			$moreNames[] = $contLang->ucwordbreaks( $name );
-			$moreNames[] = $contLang->ucwordbreaks( $contLang->lc( $name ) );
+			$moreNames = [
+				$contLang->uc( $name ),
+				$contLang->ucfirst( $contLang->lc( $name ) ),
+				$contLang->ucwords( $name ),
+				$contLang->ucwords( $contLang->lc( $name ) ),
+				$contLang->ucwordbreaks( $name ),
+				$contLang->ucwordbreaks( $contLang->lc( $name ) ),
+			];
 			if ( !$capitalLinks ) {
 				foreach ( $moreNames as $altName ) {
 					$moreNames[] = $contLang->lcfirst( $altName );
@@ -176,6 +173,9 @@ class NamespaceDupes extends Maintenance {
 				}
 			}
 		}
+
+		// Add interwikis after all namespaces are set up to make sure namespaces overwrite interwikis
+		$spaces += $interwikis;
 
 		// Sort by namespace index, and if there are two with the same index,
 		// break the tie by sorting by name
@@ -277,7 +277,7 @@ class NamespaceDupes extends Maintenance {
 	 * @return bool
 	 */
 	private function checkNamespace( $ns, $name, $options ) {
-		$targets = $this->getTargetList( $ns, $name, $options );
+		$targets = $this->getTargetList( $ns, $name );
 		$count = $targets->numRows();
 		$this->totalPages += $count;
 		if ( $count == 0 ) {
@@ -450,10 +450,6 @@ class NamespaceDupes extends Maintenance {
 		if ( isset( $linksMigration::$mapping[$table] ) ) {
 			$sqb->queryInfo( $linksMigration->getQueryInfo( $table ) );
 			[ $namespaceField, $titleField ] = $linksMigration->getTitleFields( $table );
-			$schemaMigrationStage = $linksMigration::$mapping[$table]['config'] === -1
-				? MIGRATION_NEW
-				// @phan-suppress-next-line PhanTypeMismatchArgument
-				: $this->getConfig()->get( $linksMigration::$mapping[$table]['config'] );
 			$linkTargetLookup = $this->getServiceContainer()->getLinkTargetLookup();
 			$targetIdField = $linksMigration::$mapping[$table]['target_id'];
 		} else {
@@ -462,7 +458,6 @@ class NamespaceDupes extends Maintenance {
 			$titleField = "{$fieldPrefix}_title";
 			$sqb->fields( [ $namespaceField, $titleField ] );
 			// Variables only used for links migration, init only
-			$schemaMigrationStage = -1;
 			$linkTargetLookup = null;
 			$targetIdField = '';
 		}
@@ -502,14 +497,9 @@ class NamespaceDupes extends Maintenance {
 				}
 
 				if ( isset( $linksMigration::$mapping[$table] ) ) {
-					$setValue = [];
-					if ( $schemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
-						$setValue[$targetIdField] = $linkTargetLookup->acquireLinkTargetId( $destTitle, $dbw );
-					}
-					if ( $schemaMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
-						$setValue["{$fieldPrefix}_namespace"] = $destTitle->getNamespace();
-						$setValue["{$fieldPrefix}_title"] = $destTitle->getDBkey();
-					}
+					$setValue = [
+						$targetIdField => $linkTargetLookup->acquireLinkTargetId( $destTitle, $dbw )
+					];
 					$whereCondition = $linksMigration->getLinksConditions(
 						$table,
 						new TitleValue( 0, $row->$titleField )
@@ -603,15 +593,13 @@ class NamespaceDupes extends Maintenance {
 	 *
 	 * @param int $ns Destination namespace id
 	 * @param string $name Prefix that is being made a namespace
-	 * @param array $options Associative array of validated command-line options
 	 *
 	 * @return IResultWrapper
 	 */
-	private function getTargetList( $ns, $name, $options ) {
+	private function getTargetList( $ns, $name ) {
 		$dbw = $this->getPrimaryDB();
 
 		if (
-			$options['move-talk'] &&
 			$this->getServiceContainer()->getNamespaceInfo()->isSubject( $ns )
 		) {
 			$checkNamespaces = [ NS_MAIN, NS_TALK ];
@@ -648,7 +636,7 @@ class NamespaceDupes extends Maintenance {
 		$destNS = $ns;
 		$nsInfo = $this->getServiceContainer()->getNamespaceInfo();
 		if ( $sourceNs == NS_TALK && $nsInfo->isSubject( $ns ) ) {
-			// This is an associated talk page moved with the --move-talk feature.
+			// This is an associated talk page
 			$destNS = $nsInfo->getTalk( $destNS );
 		}
 		return [ $destNS, $dbk ];
@@ -700,7 +688,7 @@ class NamespaceDupes extends Maintenance {
 	private function movePage( $id, LinkTarget $newLinkTarget ) {
 		$dbw = $this->getPrimaryDB();
 
-		$dbw->newUpdateQueryBuilder()
+		$update = $dbw->newUpdateQueryBuilder()
 			->update( 'page' )
 			->set( [
 				"page_namespace" => $newLinkTarget->getNamespace(),
@@ -709,15 +697,17 @@ class NamespaceDupes extends Maintenance {
 			->where( [
 				"page_id" => $id,
 			] )
-			->caller( __METHOD__ )
-			->execute();
+			->caller( __METHOD__ );
+		$update->execute();
+		$this->getServiceContainer()->getLinkWriteDuplicator()->duplicate( $update );
 
 		// Update *_from_namespace in links tables
 		$fromNamespaceTables = [
 			[ 'templatelinks', 'tl', [ 'tl_target_id' ] ],
-			[ 'imagelinks', 'il', [ 'il_to' ] ],
 			[ 'pagelinks', 'pl', [ 'pl_target_id' ] ],
+			[ 'imagelinks', 'il', [ 'il_target_id' ] ],
 		];
+
 		$updateRowsPerQuery = $this->getConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 
 		foreach ( $fromNamespaceTables as [ $table, $fieldPrefix, $additionalPrimaryKeyFields ] ) {
@@ -727,11 +717,7 @@ class NamespaceDupes extends Maintenance {
 				'pagelinks' => PageLinksTable::VIRTUAL_DOMAIN,
 			];
 
-			if ( isset( $domainMap[$table] ) ) {
-				$dbw = $this->getServiceContainer()->getConnectionProvider()->getPrimaryDatabase( $domainMap[$table] );
-			} else {
-				$dbw = $this->getPrimaryDB();
-			}
+			$dbw = $this->getServiceContainer()->getConnectionProvider()->getPrimaryDatabase( $domainMap[$table] );
 
 			$fromField = "{$fieldPrefix}_from";
 			$fromNamespaceField = "{$fieldPrefix}_from_namespace";
@@ -835,11 +821,13 @@ class NamespaceDupes extends Maintenance {
 				$this->beginTransactionRound( __METHOD__ );
 			}
 		}
-		$dbw->newDeleteQueryBuilder()
+
+		$delete = $dbw->newDeleteQueryBuilder()
 			->deleteFrom( 'page' )
 			->where( [ 'page_id' => $id ] )
-			->caller( __METHOD__ )
-			->execute();
+			->caller( __METHOD__ );
+		$delete->execute();
+		$this->getServiceContainer()->getLinkWriteDuplicator()->duplicate( $delete );
 		$this->commitTransactionRound( __METHOD__ );
 
 		/* Call LinksDeletionUpdate to delete outgoing links from the old title,

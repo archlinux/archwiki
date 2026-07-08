@@ -1,15 +1,15 @@
 <?php
-namespace MediaWiki\CheckUser\Tests\Integration\Api\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\GlobalContributions;
 
-use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPager;
-use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPagerFactory;
+use MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPager;
+use MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPagerFactory;
 use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**
  * @group Database
- * @covers \MediaWiki\CheckUser\Api\GlobalContributions\ApiQueryGlobalContributions
+ * @covers \MediaWiki\Extension\CheckUser\Api\GlobalContributions\ApiQueryGlobalContributions
  */
 class ApiQueryGlobalContributionsTest extends ApiTestCase {
 	private GlobalContributionsPagerFactory $pagerFactory;

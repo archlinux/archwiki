@@ -18,36 +18,23 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\RecentChanges\RecentChangeLookup;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 class CheckMatch extends ApiBase {
-
-	private RuleCheckerFactory $ruleCheckerFactory;
-	private AbuseFilterPermissionManager $afPermManager;
-	private VariablesBlobStore $afVariablesBlobStore;
-	private VariableGeneratorFactory $afVariableGeneratorFactory;
-	private FilterLookup $filterLookup;
-	private AbuseLoggerFactory $abuseLoggerFactory;
-	private RecentChangeLookup $recentChangeLookup;
 
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		RuleCheckerFactory $ruleCheckerFactory,
-		AbuseFilterPermissionManager $afPermManager,
-		VariablesBlobStore $afVariablesBlobStore,
-		VariableGeneratorFactory $afVariableGeneratorFactory,
-		FilterLookup $filterLookup,
-		AbuseLoggerFactory $abuseLoggerFactory,
-		RecentChangeLookup $recentChangeLookup
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly AbuseFilterPermissionManager $afPermManager,
+		private readonly VariablesBlobStore $afVariablesBlobStore,
+		private readonly VariableGeneratorFactory $afVariableGeneratorFactory,
+		private readonly FilterLookup $filterLookup,
+		private readonly AbuseLoggerFactory $abuseLoggerFactory,
+		private readonly RecentChangeLookup $recentChangeLookup,
+		private readonly ReadOnlyMode $readOnlyMode,
 	) {
 		parent::__construct( $main, $action );
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->afPermManager = $afPermManager;
-		$this->afVariablesBlobStore = $afVariablesBlobStore;
-		$this->afVariableGeneratorFactory = $afVariableGeneratorFactory;
-		$this->filterLookup = $filterLookup;
-		$this->abuseLoggerFactory = $abuseLoggerFactory;
-		$this->recentChangeLookup = $recentChangeLookup;
 	}
 
 	/**
@@ -111,7 +98,7 @@ class CheckMatch extends ApiBase {
 
 			$vars = $this->afVariablesBlobStore->loadVarDump( $row );
 
-			// Check that the user can see all the protected filters in the abuse_filter_log log.
+			// Check that the user can see all the protected variables in the abuse_filter_log log.
 			if ( $filter->isProtected() ) {
 				$permStatus = $this->afPermManager->canViewProtectedVariables(
 					$this->getAuthority(), array_keys( $vars->getVars() )
@@ -153,19 +140,26 @@ class CheckMatch extends ApiBase {
 		foreach ( $this->afPermManager->getUsedProtectedVariables( $usedVars ) as $protectedVariable ) {
 			if ( $vars->varIsSet( $protectedVariable ) ) {
 				$protectedVariableValue = $vars->getVarThrow( $protectedVariable );
-				if ( !( $protectedVariableValue instanceof LazyLoadedVariable ) && $protectedVariableValue !== null ) {
+				if (
+					!( $protectedVariableValue instanceof LazyLoadedVariable ) &&
+					$protectedVariableValue->toNative() !== null
+				) {
 					$protectedVariableValuesShown[] = $protectedVariable;
 				}
 			}
 		}
 
 		if ( count( $protectedVariableValuesShown ) ) {
-			// Either 'user_name' or 'accountname' should be set which are not lazily loaded, so get one of
+			if ( $this->readOnlyMode->isReadOnly() ) {
+				$this->dieReadOnly();
+			}
+
+			// Either 'user_name' or 'account_name' should be set which are not lazily loaded, so get one of
 			// them to use as the target
 			if ( $vars->varIsSet( 'user_name' ) ) {
 				$target = $vars->getComputedVariable( 'user_name' )->toNative();
 			} else {
-				$target = $vars->getComputedVariable( 'accountname' )->toNative();
+				$target = $vars->getComputedVariable( 'account_name' )->toNative();
 			}
 			$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 			$logger->logViewProtectedVariableValue( $this->getUser(), $target, $protectedVariableValuesShown );

@@ -20,7 +20,6 @@ class EchoModelFormatter extends EchoEventFormatter {
 			$data['links']['primary']['url'] = $urlUtils->expand( $data['links']['primary']['url'] );
 		}
 
-		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		foreach ( $data['links']['secondary'] as &$link ) {
 			$link['url'] = $urlUtils->expand( $link['url'] ?? '' );
 		}

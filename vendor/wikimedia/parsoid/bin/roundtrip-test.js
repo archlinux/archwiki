@@ -25,7 +25,7 @@ var MockEnv = require('../tests/MockEnv.js').MockEnv;
 
 var defaultContentVersion = '2.8.0';
 
-var MAX_RETRIES = 10;
+var MAX_RETRIES = 5;
 
 function displayDiff(type, count) {
 	var pad = (10 - type.length);  // Be positive!
@@ -522,6 +522,14 @@ var checkIfSignificant = function(offsets, data) {
 	normalizeDocumentHTML(oldBody.ownerDocument.body);
 	normalizeDocumentHTML(newBody.ownerDocument.body);
 
+	/*
+	console.log("---------NEW RAW HTML---------\n" + data.newHTML.body);
+	console.log("---------NEW DP---------------\n" + JSON.stringify(data.newDp.body));
+
+	console.log("---------OLD DOC HTML---------\n" + oldBody.ownerDocument.body.innerHTML);
+	console.log("---------NEW DOC HTML---------\n" + newBody.ownerDocument.body.innerHTML);
+	*/
+
 	var i, offset;
 	var results = [];
 	// Use the full tests for fostered content.
@@ -560,11 +568,6 @@ var checkIfSignificant = function(offsets, data) {
 			// console.log(Diff.diffLines(normalizedOld, normalizedNew));
 		}
 	}
-
-	/*
-	console.log("---------OLD DOC HTML---------\n" + oldBody.ownerDocument.body.innerHTML);
-	console.log("---------NEW DOC HTML---------\n" + newBody.ownerDocument.body.innerHTML);
-	*/
 
 	// FIXME: In this code path below, the returned diffs might
 	// underreport syntactic diffs since these are based on
@@ -649,6 +652,9 @@ var parsoidPost = Promise.async(function *(profile, options) {
 	}
 	httpOptions.uri = uri;
 	httpOptions.proxy = options.proxy;
+	if (options.headers) {
+		Object.assign(httpOptions.headers, options.headers);
+	}
 
 	var result = yield issueRequest(httpOptions);
 	var body = result[1];
@@ -694,6 +700,14 @@ var roundTripDiff = Promise.async(function *(profile, parsoidOptions, data) {
 	data.oldLineLengths = genLineLengths(data.oldWt);
 	data.newLineLengths = genLineLengths(data.newWt);
 
+	/*
+	console.log("---------OLD WT---------\n" + data.oldWt);
+	console.log("---------NEW WT---------\n" + data.newWt);
+
+	console.log("---------OLD RAW HTML---------\n" + data.oldHTML.body);
+	console.log("---------OLD DP---------------\n" + JSON.stringify(data.oldDp.body));
+	*/
+
 	// Newline normalization to see if we can get to identical wt.
 	var wt1 = normalizeWikitext(data.oldWt, normOpts);
 	var wt2 = normalizeWikitext(data.newWt, normOpts);
@@ -729,6 +743,8 @@ var roundTripDiff = Promise.async(function *(profile, parsoidOptions, data) {
 var httpClient;
 
 var issueRequest = function(httpOptions) {
+	// Avoid hanging forever on very large pages =(
+	httpOptions.timeout = 120 * 1000;
 	if (httpClient) {
 		return httpClient.request(httpOptions);
 	} else {
@@ -780,13 +796,15 @@ var runTests = Promise.async(function *(title, options, formatter) {
 	const uriOpts = options.parsoidURLOpts;
 	let uri = uriOpts.baseUrl;
 	let proxy;
+
+	// Replace DOMAIN placeholder
+	uri = uri.replace(/DOMAIN/, domain);
+
 	if (uriOpts.proxy) {
 		proxy = uriOpts.proxy.host;
 		if (uriOpts.proxy.port) {
 			proxy += ":" + uriOpts.proxy.port;
 		}
-		// Special support for the WMF cluster
-		uri = uri.replace(/DOMAIN/, domain);
 	}
 
 	// make sure the Parsoid URI ends on /
@@ -798,6 +816,7 @@ var runTests = Promise.async(function *(title, options, formatter) {
 		proxy: proxy,
 		title: encodeURIComponent(title),
 		outputContentVersion: options.outputContentVersion || defaultContentVersion,
+		headers: uriOpts.headers  || null,
 	};
 	var uri2 = parsoidOptions.uri + 'page/wikitext/' + parsoidOptions.title;
 	if (options.oldid) {
@@ -814,9 +833,7 @@ var runTests = Promise.async(function *(title, options, formatter) {
 			method: 'GET',
 			uri: uri2,
 			proxy: proxy,
-			headers: {
-				'User-Agent': UA,
-			},
+			headers: Object.assign({ 'User-Agent': UA }, uriOpts.headers || {} ),
 		});
 		profile.time.start = JSUtils.startTime();
 		// We may have been redirected to the latest revision.  Record the
@@ -963,6 +980,11 @@ if (require.main === module) {
 			default: false,
 			alias: 'c',
 		},
+		headers: {
+			description: 'Extra HTTP headers as a JSON string, e.g. \'{"X-Foo":"bar"}\'',
+			boolean: false,
+			default: null,
+		},
 	};
 
 	Promise.async(function *() {
@@ -988,6 +1010,9 @@ if (require.main === module) {
 		argv.parsoidURLOpts = { baseUrl: argv.parsoidURL };
 		if (argv.proxyURL) {
 			argv.parsoidURLOpts.proxy = { host: argv.proxyURL };
+		}
+		if (argv.headers) {
+			argv.parsoidURLOpts.headers = JSON.parse(argv.headers);
 		}
 		var formatter = ScriptUtils.booleanOption(argv.xml) ? xmlFormat : plainFormat;
 		var r = yield runTests(title, argv, formatter);

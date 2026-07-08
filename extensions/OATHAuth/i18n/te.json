@@ -7,7 +7,6 @@
 		]
 	},
 	"oathauth-prefs-label": "రెండు-విధాల (Two-factor) ధృవీకరణ:",
-	"action-oathauth-api-all": "OATH స్థితి గమనించండి",
 	"oathauth-ui-no-module": "ఏవీ చేతనంగా లేవు",
 	"oathauth-ui-manage": "నిర్వహించు",
 	"notification-header-oathauth-enable": "{{GENDER:$2|మీ ఖాతాకు}} రెండంచల ఆథెంటికేషన్ను చేతనం చేసాం.",

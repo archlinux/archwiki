@@ -297,9 +297,7 @@ class DeleteAutoPatrolLogsTest extends MaintenanceBaseTestCase {
 		];
 
 		$remainingLogs = array_map(
-			static function ( $val ) {
-				return (array)$val;
-			},
+			static fn ( $val ) => (array)$val,
 			iterator_to_array( $remainingLogs, false )
 		);
 

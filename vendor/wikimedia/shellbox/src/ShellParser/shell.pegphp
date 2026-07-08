@@ -68,10 +68,6 @@ program =
 	{
 		return $this->node( 'program', $commands );
 	}
-	/ linebreak
-	{
-		return $this->node( 'program', [] );
-	}
 
 complete_commands =
 	(

@@ -1,24 +1,24 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\HookHandler\RecentChangeSaveHandler;
-use MediaWiki\CheckUser\Services\CheckUserCentralIndexManager;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
+use MediaWiki\Extension\CheckUser\HookHandler\RecentChangeSaveHandler;
+use MediaWiki\Extension\CheckUser\Services\CheckUserCentralIndexManager;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\RecentChangeSaveHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\RecentChangeSaveHandler
  * @group Database
  * @group CheckUser
  */
 class RecentChangeSaveHandlerTest extends MediaWikiIntegrationTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 	use CheckUserTempUserTestTrait;
 
 	private function getObjectUnderTest(): RecentChangeSaveHandler {
@@ -80,8 +80,8 @@ class RecentChangeSaveHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providePruneIPDataData
-	 * @covers \MediaWiki\CheckUser\Jobs\PruneCheckUserDataJob
-	 * @covers \MediaWiki\CheckUser\Services\CheckUserDataPurger
+	 * @covers \MediaWiki\Extension\CheckUser\Jobs\PruneCheckUserDataJob
+	 * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserDataPurger
 	 */
 	public function testPruneIPDataData( int $currentTime, int $maxCUDataAge, array $timestamps, int $afterCount ) {
 		// Check that PruneCheckUserDataJob::run will call CheckUserCentralIndexManager::purgeExpiredRows
@@ -118,33 +118,69 @@ class RecentChangeSaveHandlerTest extends MediaWikiIntegrationTestCase {
 				$expectedRow
 			);
 		}
-		$this->assertRowCount( count( $timestamps ), 'cu_changes', 'cuc_id',
-			'cu_changes was not set up correctly for the test.' );
-		$this->assertRowCount( count( $timestamps ), 'cu_private_event', 'cupe_id',
-			'cu_private_event was not set up correctly for the test.' );
-		$this->assertRowCount( count( $timestamps ), 'cu_log_event', 'cule_id',
-			'cu_log_event was not set up correctly for the test.' );
+		$this->assertRowCount(
+			count( $timestamps ),
+			'cu_changes',
+			'cuc_id',
+			'cu_changes was not set up correctly for the test.'
+		);
+		$this->assertRowCount(
+			count( $timestamps ),
+			'cu_private_event',
+			'cupe_id',
+			'cu_private_event was not set up correctly for the test.'
+		);
+		$this->assertRowCount(
+			count( $timestamps ),
+			'cu_log_event',
+			'cule_id',
+			'cu_log_event was not set up correctly for the test.'
+		);
 		ConvertibleTimestamp::setFakeTime( $currentTime );
 		$object = TestingAccessWrapper::newFromObject( $this->getObjectUnderTest() );
 		$object->pruneIPData();
 		$this->getServiceContainer()->getJobRunner()->run( [ 'type' => 'checkuserPruneCheckUserDataJob' ] );
 		// Check that all the old entries are gone
-		$this->assertRowCount( 0, 'cu_changes', 'cuc_id',
+		$this->assertRowCount(
+			0,
+			'cu_changes',
+			'cuc_id',
 			'cu_changes has stale entries after calling pruneIPData.',
-			[ $this->getDb()->expr( 'cuc_timestamp', '<', $logEntryCutoff ) ] );
-		$this->assertRowCount( 0, 'cu_private_event', 'cupe_id',
+			[ $this->getDb()->expr( 'cuc_timestamp', '<', $logEntryCutoff ) ]
+		);
+		$this->assertRowCount(
+			0,
+			'cu_private_event',
+			'cupe_id',
 			'cu_private_event has stale entries after calling pruneIPData.',
-			[ $this->getDb()->expr( 'cupe_timestamp ', '<', $logEntryCutoff ) ] );
-		$this->assertRowCount( 0, 'cu_log_event', 'cule_id',
+			[ $this->getDb()->expr( 'cupe_timestamp ', '<', $logEntryCutoff ) ]
+		);
+		$this->assertRowCount(
+			0,
+			'cu_log_event',
+			'cule_id',
 			'cu_log_event has stale entries after calling pruneIPData.',
-			[ $this->getDb()->expr( 'cule_timestamp', '<', $logEntryCutoff ) ] );
+			[ $this->getDb()->expr( 'cule_timestamp', '<', $logEntryCutoff ) ]
+		);
 		// Assert that no still in date entries were removed
-		$this->assertRowCount( $afterCount, 'cu_changes', 'cuc_id',
-			'cu_changes is missing rows that were not stale after calling pruneIPData.' );
-		$this->assertRowCount( $afterCount, 'cu_private_event', 'cupe_id',
-			'cu_private_event is missing rows that were not stale after calling pruneIPData.' );
-		$this->assertRowCount( $afterCount, 'cu_log_event', 'cule_id',
-			'cu_log_event is missing rows that were not stale after calling pruneIPData.' );
+		$this->assertRowCount(
+			$afterCount,
+			'cu_changes',
+			'cuc_id',
+			'cu_changes is missing rows that were not stale after calling pruneIPData.'
+		);
+		$this->assertRowCount(
+			$afterCount,
+			'cu_private_event',
+			'cupe_id',
+			'cu_private_event is missing rows that were not stale after calling pruneIPData.'
+		);
+		$this->assertRowCount(
+			$afterCount,
+			'cu_log_event',
+			'cule_id',
+			'cu_log_event is missing rows that were not stale after calling pruneIPData.'
+		);
 	}
 
 	public static function providePruneIPDataData() {

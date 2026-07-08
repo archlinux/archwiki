@@ -11,7 +11,6 @@ namespace MediaWiki\Output;
 use CSSJanus;
 use Exception;
 use InvalidArgumentException;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\Config;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\JavaScriptContent;
@@ -31,6 +30,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Message\Message;
 use MediaWiki\Page\Article;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Parser\Parser;
@@ -65,6 +65,7 @@ use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\RelPath;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 use Wikimedia\WrappedString;
 use Wikimedia\WrappedStringList;
 
@@ -877,7 +878,7 @@ class OutputPage extends ContextSource {
 			return false;
 		}
 
-		$timestamp = wfTimestamp( TS_MW, $timestamp );
+		$timestamp = wfTimestamp( TS::MW, $timestamp );
 		$modifiedTimes = [
 			'page' => $timestamp,
 			'user' => $this->getUser()->getTouched(),
@@ -889,14 +890,14 @@ class OutputPage extends ContextSource {
 			// change (site configuration, default preferences, skin HTML, interface messages,
 			// URLs to other files and services) and must roll-over in a timely manner (T46570)
 			$modifiedTimes['sepoch'] = wfTimestamp(
-				TS_MW,
+				TS::MW,
 				time() - $config->get( MainConfigNames::CdnMaxAge )
 			);
 		}
 		$this->getHookRunner()->onOutputPageCheckLastModified( $modifiedTimes, $this );
 
 		$maxModified = max( $modifiedTimes );
-		$this->mLastModified = wfTimestamp( TS_RFC2822, $maxModified );
+		$this->mLastModified = wfTimestamp( TS::RFC2822, $maxModified );
 
 		$clientHeader = $this->getRequest()->getHeader( 'If-Modified-Since' );
 		if ( $clientHeader === false ) {
@@ -917,7 +918,7 @@ class OutputPage extends ContextSource {
 				. ": unable to parse the client's If-Modified-Since header: $clientHeader" );
 			return false;
 		}
-		$clientHeaderTime = wfTimestamp( TS_MW, $clientHeaderTime );
+		$clientHeaderTime = wfTimestamp( TS::MW, $clientHeaderTime );
 
 		# Make debug info
 		$info = '';
@@ -925,13 +926,13 @@ class OutputPage extends ContextSource {
 			if ( $info !== '' ) {
 				$info .= ', ';
 			}
-			$info .= "$name=" . wfTimestamp( TS_ISO_8601, $value );
+			$info .= "$name=" . wfTimestamp( TS::ISO_8601, $value );
 		}
 
 		wfDebug( __METHOD__ . ': client sent If-Modified-Since: ' .
-			wfTimestamp( TS_ISO_8601, $clientHeaderTime ), 'private' );
+			wfTimestamp( TS::ISO_8601, $clientHeaderTime ), 'private' );
 		wfDebug( __METHOD__ . ': effective Last-Modified: ' .
-			wfTimestamp( TS_ISO_8601, $maxModified ), 'private' );
+			wfTimestamp( TS::ISO_8601, $maxModified ), 'private' );
 		if ( $clientHeaderTime < $maxModified ) {
 			wfDebug( __METHOD__ . ": STALE, $info", 'private' );
 			return false;
@@ -960,7 +961,7 @@ class OutputPage extends ContextSource {
 	 *        wfTimestamp()
 	 */
 	public function setLastModified( $timestamp ) {
-		$this->mLastModified = wfTimestamp( TS_RFC2822, $timestamp );
+		$this->mLastModified = wfTimestamp( TS::RFC2822, $timestamp );
 	}
 
 	/**
@@ -1241,11 +1242,11 @@ class OutputPage extends ContextSource {
 		$text = $this->getDisplayTitle();
 
 		// Create a regexp with matching groups as placeholders for the namespace, separator and main text
-		$pageTitleRegexp = '/^' . str_replace(
+		$pageTitleRegexp = '/' . str_replace(
 			preg_quote( '(.+?)', '/' ),
 			'(.+?)',
 			preg_quote( Parser::formatPageTitle( '(.+?)', '(.+?)', '(.+?)' ), '/' )
-		) . '$/';
+		) . '/';
 		$matches = [];
 		if ( preg_match( $pageTitleRegexp, $text, $matches ) ) {
 			// The regexp above could be manipulated by malicious user input,
@@ -1780,7 +1781,7 @@ class OutputPage extends ContextSource {
 	/**
 	 * Ensure that the category lists are sorted, so that we don't
 	 * inadvertently depend on the exact evaluation order of various
-	 * ParserOutput fragments.
+	 * ParserOutput fragments. Also, remove duplicates.
 	 */
 	private function maybeSortCategories(): void {
 		if ( $this->mCategoriesSorted ) {
@@ -1800,6 +1801,9 @@ class OutputPage extends ContextSource {
 					$a['link'] <=> $b['link'];
 			} );
 		}
+		// Remove duplicate entries
+		$this->mCategoryData = array_values( array_unique( $this->mCategoryData, SORT_REGULAR ) );
+
 		// Rebuild mCategories and mCategoryLinks
 		$this->mCategories = [
 			'hidden' => [],
@@ -2338,7 +2342,7 @@ class OutputPage extends ContextSource {
 	 *
 	 * Consider whether RequestContext::getLanguage (e.g. OutputPage::getLanguage
 	 * or Skin::getLanguage) or MediaWikiServices::getContentLanguage is more
-	 * appropiate first for your use case.
+	 * appropriate first for your use case.
 	 *
 	 * @since 1.42
 	 * @return Language
@@ -2525,6 +2529,7 @@ class OutputPage extends ContextSource {
 		// used to mark individual language links.
 		$linkFlags = [];
 		$languageLinks = $this->getLanguageLinks();
+		sort( $languageLinks );
 		// This hook can be used to remove/replace language links
 		$this->getHookRunner()->onLanguageLinks( $this->getTitle(), $languageLinks, $linkFlags );
 		$this->metadata->clearLanguageLinks();
@@ -2657,9 +2662,16 @@ class OutputPage extends ContextSource {
 			$parserOptions = $this->internalParserOptions( false );
 		}
 		$poOptions ??= [];
+
+		/** @deprecated please postprocess then use ::addPostProcessedParserOutput() */
 		$text = $this->getParserOutputText( $parserOutput, $parserOptions, $poOptions );
 		$this->addParserOutputMetadata( $parserOutput );
 		$this->addParserOutputText( $text, $poOptions );
+	}
+
+	public function addPostProcessedParserOutput( ParserOutput $parserOutput ) {
+		$this->addParserOutputMetadata( $parserOutput );
+		$this->addParserOutputText( $parserOutput->getContentHolderText() );
 	}
 
 	/**
@@ -2828,7 +2840,7 @@ class OutputPage extends ContextSource {
 			return;
 		}
 
-		$age = MWTimestamp::time() - (int)wfTimestamp( TS_UNIX, $mtime );
+		$age = MWTimestamp::time() - (int)wfTimestamp( TS::UNIX, $mtime );
 		$adaptiveTTL = max( 0.9 * $age, $minTTL );
 		$adaptiveTTL = min( $adaptiveTTL, $maxTTL );
 
@@ -3105,8 +3117,6 @@ class OutputPage extends ContextSource {
 			// E.g. HTTP headers, or query parameter tokens, OAuth, etc.
 			} elseif ( $this->getRequest()->getSession()->isPersistent() ) {
 				$privateReason = 'session';
-			} elseif ( $this->isPrintable() ) {
-				$privateReason = 'printable';
 			} elseif ( $this->mCdnMaxage == 0 ) {
 				$privateReason = 'no-maxage';
 			} elseif ( $this->haveCacheVaryCookies() ) {
@@ -3182,9 +3192,14 @@ class OutputPage extends ContextSource {
 
 		if ( $this->mRedirect != '' ) {
 			$services = MediaWikiServices::getInstance();
-			// Modern standards don't require redirect URLs to be absolute, but make it so just in case.
-			// Note that this doesn't actually guarantee an absolute URL: relative-path URLs are left intact.
-			$this->mRedirect = (string)$services->getUrlUtils()->expand( $this->mRedirect, PROTO_CURRENT );
+			// We do not expand redirect destinations to a full URL, because:
+			// * Relative URLs are widely supported and valid under the HTTP 1.1 spec (RFC 7131).
+			// * Expanding a absolute-path URL like "/wiki/Foo" can cause surprising cross-domain
+			//   redirects (T406402).
+			// * Expanding a relative-path URL like "../Foo" using UrlUtils::expand would corrupt
+			//   the path instead of resolving against the current document location.
+			// * Expanding a protocol-relative URL like "//example.org/Foo" would compromise
+			//   cacheability of the redirect response.
 
 			$redirect = $this->mRedirect;
 			$code = $this->mRedirectCode;
@@ -3195,7 +3210,7 @@ class OutputPage extends ContextSource {
 					if ( !$config->get( MainConfigNames::DebugRedirects ) ) {
 						$response->statusHeader( (int)$code );
 					}
-					$this->mLastModified = wfTimestamp( TS_RFC2822 );
+					$this->mLastModified = wfTimestamp( TS::RFC2822 );
 				}
 				if ( $config->get( MainConfigNames::VaryOnXFP ) ) {
 					$this->addVaryHeader( 'X-Forwarded-Proto' );
@@ -3276,7 +3291,7 @@ class OutputPage extends ContextSource {
 			if ( $skinOptions['format'] === 'json' ) {
 				$response->header( 'Content-type: application/json; charset=UTF-8' );
 				return json_encode( [
-					$this->msg( 'skin-json-warning' )->escaped() => $this->msg( 'skin-json-warning-message' )->escaped()
+					'@WARNING' => $this->msg( 'skin-json-warning-message' )->escaped()
 				] + $sk->getTemplateData() );
 			}
 			$response->header( 'Content-type: ' . $config->get( MainConfigNames::MimeType ) . '; charset=UTF-8' );
@@ -3370,6 +3385,8 @@ class OutputPage extends ContextSource {
 			$this->addWikiMsgArray( $msg, $params );
 		}
 
+		$this->addJsConfigVars( 'wgErrorPageMessageKey', is_string( $msg ) ? $msg : $msg->getKey() );
+
 		$this->returnToMain( null, $returnto, $returntoquery );
 	}
 
@@ -3387,14 +3404,12 @@ class OutputPage extends ContextSource {
 		$services = MediaWikiServices::getInstance();
 		$groupPermissionsLookup = $services->getGroupPermissionsLookup();
 
-		// For some actions (read, edit, create and upload), display a "login to do this action"
-		// error if all of the following conditions are met:
+		// Display a "login to do this action" error if all of the following conditions are met:
 		// 1. the user is not logged in as a named user, and so cannot be added to groups
 		// 2. the only error is insufficient permissions (i.e. no block or something else)
 		// 3. the error can be avoided simply by logging in
 
-		if ( in_array( $action, [ 'read', 'edit', 'createpage', 'createtalk', 'upload' ] )
-			&& !$this->getUser()->isNamed() && count( $messages ) == 1
+		if ( !$this->getUser()->isNamed() && count( $messages ) == 1
 			&& ( $messages[0]->getKey() == 'badaccess-groups' || $messages[0]->getKey() == 'badaccess-group0' )
 			&& ( $groupPermissionsLookup->groupHasPermission( 'user', $action )
 				|| $groupPermissionsLookup->groupHasPermission( 'autoconfirmed', $action ) )
@@ -3407,6 +3422,7 @@ class OutputPage extends ContextSource {
 			# from the request instead, if there was one.
 			$request = $this->getRequest();
 			$returnto = Title::newFromText( $request->getText( 'title' ) );
+			$extraParams = [];
 			if ( $action == 'edit' ) {
 				$msg = 'whitelistedittext';
 				$displayReturnto = $returnto;
@@ -3414,10 +3430,13 @@ class OutputPage extends ContextSource {
 				$msg = 'nocreatetext';
 			} elseif ( $action == 'upload' ) {
 				$msg = 'uploadnologintext';
-			} else {
-				# Read
+			} elseif ( $action === 'read' ) {
 				$msg = 'loginreqpagetext';
 				$displayReturnto = Title::newMainPage();
+			} else {
+				$msg = 'permissionerror-login';
+				$action_desc = $this->msg( "action-$action" )->plain();
+				$extraParams = [ $action_desc ];
 			}
 
 			$query = [];
@@ -3446,7 +3465,12 @@ class OutputPage extends ContextSource {
 
 			$this->prepareErrorPage();
 			$this->setPageTitleMsg( $this->msg( 'loginreqtitle' ) );
-			$this->addHTML( $this->msg( $msg )->rawParams( $loginLink )->params( $loginUrl )->parse() );
+			$this->addHTML( $this->msg( $msg )
+				->rawParams( $loginLink )
+				->params( $loginUrl )
+				->params( $extraParams )
+				->parse()
+			);
 
 			# Don't return to a page the user can't read otherwise
 			# we'll end up in a pointless loop
@@ -3492,7 +3516,21 @@ class OutputPage extends ContextSource {
 			return '';
 		}
 
-		$messages = array_map( fn ( $msg ) => $this->msg( $msg ), $status->getMessages() );
+		if ( !$status->hasMessagesExcept( 'badaccess-group0' ) ) {
+			// We don't know why you can't do it; admit that rather than saying the circular
+			// "you don't have permission to do this because you are not allowed to do this"
+			if ( $action === null ) {
+				// We don't know what you were trying to do either.
+				// At least say just "You are not allowed to do that" once rather than twice
+				$text = $this->msg( 'badaccess-group0' )->plain();
+			} else {
+				$action_desc = $this->msg( "action-$action" )->plain();
+				$text = $this->msg( 'permissionserrorstext-withaction-noreason', $action_desc )->plain();
+			}
+			return Html::rawElement( 'div', [ 'class' => 'permissions-errors' ], $text );
+		}
+
+		$messages = array_map( $this->msg( ... ), $status->getMessages() );
 
 		if ( $action == null ) {
 			$text = $this->msg( 'permissionserrorstext', count( $messages ) )->plain() . "\n\n";
@@ -3738,8 +3776,26 @@ class OutputPage extends ContextSource {
 				'noscript',
 				'user.styles',
 			] );
+			$generalModules = $this->getModules( /*filter*/ true );
+			$moduleStyles = $this->getModuleStyles( /*filter*/ true );
 
-			// Prepare exempt modules for buildExemptModules()
+			// Preload getTitleInfo for:
+			// * $moduleStyles:
+			//   For isKnownEmpty() calls below when computing $exemptGroups,
+			//   and for isKnownEmpty() calls in RL\ClientHtml when creating stylesheet links.
+			// * any WikiModule in $generalModules:
+			//   For isKnownEmpty() calls in RL\ClientHtml skipping empty user/embedded JS modules.
+			$preloadBatch = $moduleStyles;
+			foreach ( $generalModules as $name ) {
+				$module = $rl->getModule( $name );
+				if ( $module && $module instanceof RL\WikiModule ) {
+					$preloadBatch[] = $name;
+				}
+			}
+			RL\WikiModule::preloadTitleInfo( $context, $preloadBatch );
+
+			// Filter out style modules that buildExemptModules() should handle
+			// instead of RL\ClientHtml
 			$exemptGroups = [
 				RL\Module::GROUP_SITE => [],
 				RL\Module::GROUP_NOSCRIPT => [],
@@ -3747,16 +3803,6 @@ class OutputPage extends ContextSource {
 				RL\Module::GROUP_USER => []
 			];
 			$exemptStates = [];
-			$moduleStyles = $this->getModuleStyles( /*filter*/ true );
-
-			// Preload getTitleInfo for isKnownEmpty calls below and in RL\ClientHtml
-			// Separate user-specific batch for an improved cache-hit ratio.
-			$userBatch = [ 'user.styles', 'user' ];
-			$siteBatch = array_diff( $moduleStyles, $userBatch );
-			RL\WikiModule::preloadTitleInfo( $context, $siteBatch );
-			RL\WikiModule::preloadTitleInfo( $context, $userBatch );
-
-			// Filter out modules handled by buildExemptModules()
 			$moduleStyles = array_filter( $moduleStyles,
 				static function ( $name ) use ( $rl, $context, &$exemptGroups, &$exemptStates ) {
 					$module = $rl->getModule( $name );
@@ -3807,7 +3853,7 @@ class OutputPage extends ContextSource {
 				'clientPrefCookiePrefix' => $clientPrefCookiePrefix,
 			] );
 			$rlClient->setConfig( $this->getJSVars( self::JS_VAR_EARLY ) );
-			$rlClient->setModules( $this->getModules( /*filter*/ true ) );
+			$rlClient->setModules( $generalModules );
 			$rlClient->setModuleStyles( $moduleStyles );
 			$rlClient->setExemptStates( $exemptStates );
 			$this->rlClient = $rlClient;
@@ -3828,12 +3874,23 @@ class OutputPage extends ContextSource {
 
 		$rlHtmlAtribs = $this->getRlClient()->getDocumentAttributes();
 		$skinHtmlAttribs = $sk->getHtmlElementAttributes();
+
+		$lookupService = $services->getUserOptionsLookup();
+		$user = $this->getUser();
+		$thumbnailIndex = $lookupService->getOption( $user, 'thumbsize' );
+		$thumbnailSize = $config->get( 'ThumbLimits' )[ $thumbnailIndex ] ?? 250;
+		$thumbValue = $thumbnailSize === 250 ? 'standard' : (
+			$thumbnailSize < 250 ? 'small' : 'large'
+		);
 		// Combine the classes from different sources, and convert to a string, which is needed below
 		$htmlClass = Html::expandClassList( [
 			Html::expandClassList( $rlHtmlAtribs['class'] ?? [] ),
 			Html::expandClassList( $skinHtmlAttribs['class'] ?? [] ),
-			Html::expandClassList( $this->mAdditionalHtmlClasses )
+			Html::expandClassList( $this->mAdditionalHtmlClasses ),
+			// This uses `-clientpref-` for now to support future customization for anonymous users.
+			'skin-theme-clientpref-thumb-' . $thumbValue,
 		] );
+
 		if ( $htmlClass === '' ) {
 			$htmlClass = null;
 		}
@@ -3877,7 +3934,7 @@ class OutputPage extends ContextSource {
 
 		// See Article:showDiffPage for class to support article diff styling
 
-		$underline = $services->getUserOptionsLookup()->getOption( $this->getUser(), 'underline' );
+		$underline = $lookupService->getOption( $user, 'underline' );
 		if ( $underline < 2 ) {
 			// The following classes can be used here:
 			// * mw-underline-always
@@ -3907,6 +3964,15 @@ class OutputPage extends ContextSource {
 		$this->getHookRunner()->onOutputPageBodyAttributes( $this, $sk, $bodyAttrs );
 
 		$pieces[] = Html::openElement( 'body', $bodyAttrs );
+
+		// Add dedicated ARIA live region container for notifications to assistive technology users.
+		// Note that `aria-atomic="false"` and `aria-relevant="additions text"` are the default
+		// values and therefore not duplicated below.
+		$pieces[] = Html::rawElement( 'div', [
+			'id' => 'mw-aria-live-region',
+			'class' => 'mw-aria-live-region',
+			'aria-live' => 'polite',
+		], '' );
 
 		return self::combineWrappedStrings( $pieces );
 	}
@@ -4144,9 +4210,10 @@ class OutputPage extends ContextSource {
 			$vars['wgUserIsTemp'] = $user->isTemp();
 			$vars['wgUserEditCount'] = $user->getEditCount();
 			$userReg = $user->getRegistration();
-			$vars['wgUserRegistration'] = $userReg ? (int)wfTimestamp( TS_UNIX, $userReg ) * 1000 : null;
+			$vars['wgUserRegistration'] = $userReg ? (int)wfTimestamp( TS::UNIX, $userReg ) * 1000 : null;
 			$userFirstReg = $services->getUserRegistrationLookup()->getFirstRegistration( $user );
-			$vars['wgUserFirstRegistration'] = $userFirstReg ? (int)wfTimestamp( TS_UNIX, $userFirstReg ) * 1000 : null;
+			$vars['wgUserFirstRegistration'] = $userFirstReg ?
+				(int)wfTimestamp( TS::UNIX, $userFirstReg ) * 1000 : null;
 			// Get the revision ID of the oldest new message on the user's talk
 			// page. This can be used for constructing new message alerts on
 			// the client side.
@@ -4814,7 +4881,7 @@ class OutputPage extends ContextSource {
 		}
 
 		if ( isset( $options['media'] ) ) {
-			$media = self::transformCssMedia( $options['media'] );
+			$media = self::transformCssMedia( $options['media'], $this->getRequest() );
 			if ( $media === null ) {
 				return '';
 			}
@@ -4925,13 +4992,18 @@ class OutputPage extends ContextSource {
 	 * Transform "media" attribute based on request parameters
 	 *
 	 * @param string $media Current value of the "media" attribute
+	 * @param WebRequest|null $request Null (deprecated since 1.46) falls back to $wgRequest
 	 * @return string|null Modified value of the "media" attribute, or null to disable
 	 * this stylesheet
 	 */
-	public static function transformCssMedia( $media ) {
-		global $wgRequest;
+	public static function transformCssMedia( $media, $request = null ) {
+		if ( $request === null ) {
+			wfDeprecated( __METHOD__ . ' with null $request', '1.46' );
+			global $wgRequest;
+			$request = $wgRequest;
+		}
 
-		if ( $wgRequest->getBool( 'printable' ) ) {
+		if ( $request->getBool( 'printable' ) ) {
 			// When browsing with printable=yes, apply "print" media styles
 			// as if they are screen styles (no media, media="").
 			if ( $media === 'print' ) {

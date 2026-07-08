@@ -191,7 +191,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Variabel setten (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variablen",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-Tiedstempel vun Ännern",
-	"abusefilter-edit-builder-vars-accountname": "Brukernaam (bi dat Opstellen vun dat Brukerkonto)",
+	"abusefilter-edit-builder-vars-account-name": "Brukernaam (bi dat Opstellen vun dat Brukerkonto)",
 	"abusefilter-edit-builder-vars-action": "Akschoon",
 	"abusefilter-edit-builder-vars-addedlines": "Toföögt Regen",
 	"abusefilter-edit-builder-vars-delta": "Üm woveel hett sik de Siedengrött ännert",

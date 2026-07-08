@@ -35,27 +35,15 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class AbuseLogPrivateDetails extends ApiBase {
 
-	private AbuseFilterPermissionManager $afPermManager;
-
-	private IConnectionProvider $dbProvider;
-
-	private AbuseFilterLogDetailsLookup $afLogPrivateDetailsLookup;
-
-	private FilterLookup $afFilterLookup;
-
 	public function __construct(
 		ApiMain $main,
 		string $action,
-		AbuseFilterPermissionManager $afPermManager,
-		IConnectionProvider $dbProvider,
-		AbuseFilterLogDetailsLookup $afLogPrivateDetailsLookup,
-		FilterLookup $afFilterLookup
+		private readonly AbuseFilterPermissionManager $afPermManager,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly AbuseFilterLogDetailsLookup $afLogPrivateDetailsLookup,
+		private readonly FilterLookup $afFilterLookup
 	) {
 		parent::__construct( $main, $action );
-		$this->afPermManager = $afPermManager;
-		$this->dbProvider = $dbProvider;
-		$this->afLogPrivateDetailsLookup = $afLogPrivateDetailsLookup;
-		$this->afFilterLookup = $afFilterLookup;
 	}
 
 	/**

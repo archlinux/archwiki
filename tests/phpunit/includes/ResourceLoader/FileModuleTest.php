@@ -8,6 +8,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\FilePath;
+use MediaWiki\ResourceLoader\LessVarFileModule;
+use MediaWiki\ResourceLoader\MessageBlobStore;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Skin\SkinFactory;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
@@ -16,6 +18,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group ResourceLoader
+ * @covers \MediaWiki\ResourceLoader\DependencyStore
  * @covers \MediaWiki\ResourceLoader\FileModule
  */
 class FileModuleTest extends ResourceLoaderTestCase {
@@ -480,50 +483,44 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		yield 'identical Less variables' => [ $x, $x, true ];
 
 		$a = [
-			'packageFiles' => [ [ 'name' => 'data.json', 'callback' => static function () {
-				return [ 'aaa' ];
-			} ] ]
+			'packageFiles' => [ [ 'name' => 'data.json', 'callback' => static fn () => [ 'aaa' ] ] ]
 		];
 		$b = [
-			'packageFiles' => [ [ 'name' => 'data.json', 'callback' => static function () {
-				return [ 'bbb' ];
-			} ] ]
+			'packageFiles' => [ [ 'name' => 'data.json', 'callback' => static fn () => [ 'bbb' ] ] ]
 		];
 		yield 'packageFiles with different callback' => [ $a, $b, false ];
 
 		$a = [
-			'packageFiles' => [ [ 'name' => 'aaa.json', 'callback' => static function () {
-				return [ 'x' ];
-			} ] ]
+			'packageFiles' => [ [ 'name' => 'aaa.json', 'callback' => static fn () => [ 'x' ] ] ]
 		];
 		$b = [
-			'packageFiles' => [ [ 'name' => 'bbb.json', 'callback' => static function () {
-				return [ 'x' ];
-			} ] ]
+			'packageFiles' => [ [ 'name' => 'bbb.json', 'callback' => static fn () => [ 'x' ] ] ]
 		];
 		yield 'packageFiles with different file name and a callback' => [ $a, $b, false ];
 
 		$a = [
-			'packageFiles' => [ [ 'name' => 'data.json', 'versionCallback' => static function () {
-				return [ 'A-version' ];
-			}, 'callback' => static function () {
-				throw new LogicException( 'Unexpected computation' );
-			} ] ]
+			'packageFiles' => [ [
+				'name' => 'data.json',
+				'versionCallback' => static fn () => [ 'A-version' ],
+				'callback' => static function () {
+					throw new LogicException( 'Unexpected computation' );
+				}
+			] ]
 		];
 		$b = [
-			'packageFiles' => [ [ 'name' => 'data.json', 'versionCallback' => static function () {
-				return [ 'B-version' ];
-			}, 'callback' => static function () {
-				throw new LogicException( 'Unexpected computation' );
-			} ] ]
+			'packageFiles' => [ [
+				'name' => 'data.json',
+				'versionCallback' => static fn () => [ 'B-version' ],
+				'callback' => static function () {
+					throw new LogicException( 'Unexpected computation' );
+				}
+			] ]
 		];
 		yield 'packageFiles with different versionCallback' => [ $a, $b, false ];
 
 		$a = [
 			'packageFiles' => [ [ 'name' => 'aaa.json',
-				'versionCallback' => static function () {
-					return [ 'X-version' ];
-				},
+				'versionCallback' => static fn () => [ 'X-version' ],
 				'callback' => static function () {
 					throw new LogicException( 'Unexpected computation' );
 				}
@@ -531,9 +528,7 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		];
 		$b = [
 			'packageFiles' => [ [ 'name' => 'bbb.json',
-				'versionCallback' => static function () {
-					return [ 'X-version' ];
-				},
+				'versionCallback' => static fn () => [ 'X-version' ],
 				'callback' => static function () {
 					throw new LogicException( 'Unexpected computation' );
 				}
@@ -681,9 +676,7 @@ class FileModuleTest extends ResourceLoaderTestCase {
 						[ 'name' => 'bar.js', 'content' => "console.log('Hello');" ],
 						[
 							'name' => 'data.json',
-							'versionCallback' => static function ( $context ) {
-								return 'x';
-							},
+							'versionCallback' => static fn ( $context ) => 'x',
 							'callback' => static function ( $context, $config, $extra ) {
 								return [ 'langCode' => $context->getLanguage(), 'extra' => $extra ];
 							},
@@ -920,9 +913,6 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		$this->assertTrue( $module->requiresES6(), 'requiresES6 is true when set to true' );
 	}
 
-	/**
-	 * @covers \Wikimedia\DependencyStore\DependencyStore
-	 */
 	public function testIndirectDependencies() {
 		$context = $this->getResourceLoaderContext();
 		$moduleInfo = [
@@ -944,9 +934,6 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		);
 	}
 
-	/**
-	 * @covers \Wikimedia\DependencyStore\DependencyStore
-	 */
 	public function testIndirectDependenciesUpdate() {
 		$context = $this->getResourceLoaderContext();
 		$tempDir = $this->getNewTempDirectory();
@@ -981,6 +968,70 @@ class FileModuleTest extends ResourceLoaderTestCase {
 			[ 'resources/mymodule/pink.less' ],
 			$module->getFileDependencies( $context )
 		);
+	}
+
+	public function testGetMessagesOverride() {
+		$context = $this->getResourceLoaderContext();
+
+		$msgBlobStore = $this->createMock( MessageBlobStore::class );
+		$msgBlobStore->method( 'getBlob' )->willReturn( '{"test-message":"Hello",' .
+			'"test-world":"World"}' );
+		$context->getResourceLoader()->setMessageBlobStore( $msgBlobStore );
+
+		$options = [
+			'messages' => [ 'test-message' ]
+		];
+
+		$module = new class( $options ) extends FileModule {
+			public function __construct( $options = [] ) {
+				parent::__construct( $options );
+			}
+
+			public function getMessages() {
+				$messages = parent::getMessages();
+				$messages[] = 'test-world';
+				return $messages;
+			}
+		};
+		$module->setName( 'testing' );
+
+		$this->assertEquals( '{"test-message":"Hello","test-world":"World"}',
+			$module->getModuleContent( $context )['messagesBlob'] );
+	}
+
+	public function testGetMessagesOverrideWithLessMessages() {
+		$context = $this->getResourceLoaderContext();
+
+		$msgBlobStore = $this->createMock( MessageBlobStore::class );
+		$msgBlobStore->method( 'getBlob' )->willReturn( '{"test-hello":"Hello",' .
+			'"test-world":"World","parentheses-start":"{","parentheses-end":"}",' .
+			'"colon-separator":":"}' );
+		$context->getResourceLoader()->setMessageBlobStore( $msgBlobStore );
+
+		$options = [
+			'messages' => [ 'test-hello', 'parentheses-start', 'parentheses-end' ],
+			'lessMessages' => [ 'test-world', 'colon-separator', 'parentheses-start',
+				'parentheses-end' ]
+		];
+		$module = new class( $options ) extends LessVarFileModule {
+			public function __construct( $options = [] ) {
+				parent::__construct( $options );
+			}
+
+			public function getMessages() {
+				$messages = parent::getMessages();
+				$messages[] = 'test-world';
+				return $messages;
+			}
+
+		};
+		$module->setName( 'testing-two' );
+
+		$this->assertEquals( '{"test-hello":"Hello","test-world":"World",' .
+			'"parentheses-start":"{","parentheses-end":"}"}', $module->getModuleContent( $context )['messagesBlob'] );
+		$this->assertEquals( [ 'msg-colon-separator' => '":"', 'msg-parentheses-end' => '"}"',
+				'msg-parentheses-start' => '"{"', 'msg-test-world' => '"World"' ],
+				$module->getDefinitionSummary( $context )[1]['lessVars'] );
 	}
 
 	public function newModuleRequest( $moduleInfo, $context ) {

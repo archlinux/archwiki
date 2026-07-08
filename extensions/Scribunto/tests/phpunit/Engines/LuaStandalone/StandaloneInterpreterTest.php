@@ -13,6 +13,7 @@ use MediaWiki\Extension\Scribunto\Engines\LuaStandalone\LuaStandaloneInterpreter
 use MediaWiki\Extension\Scribunto\Engines\LuaStandalone\LuaStandaloneInterpreterFunction;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
 use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaInterpreterTestBase;
+use MediaWiki\Shell\Shell;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
@@ -31,9 +32,19 @@ class StandaloneInterpreterTest extends LuaInterpreterTestBase {
 		'cpuLimit' => 30,
 	];
 
+	/**
+	 * @param int $pid
+	 * @return int
+	 * @throws Exception
+	 */
 	private function getVsize( $pid ) {
-		$size = wfShellExec( wfEscapeShellArg( 'ps', '-p', $pid, '-o', 'vsz', '--no-headers' ) );
-		return trim( $size ) * 1024;
+		$size = Shell::command( 'ps', '-p', $pid, '-o', 'vsz', '--no-headers' )->execute();
+		if ( $size->getExitCode() != 0 ) {
+			throw new Exception( "Failed to get vsize for process $pid \n" .
+				"Exit code: " . $size->getExitCode() );
+		} else {
+			return trim( $size->getStdout() ) * 1024;
+		}
 	}
 
 	protected function newInterpreter( $opts = [] ) {

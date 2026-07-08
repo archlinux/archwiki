@@ -39,18 +39,13 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  */
 class QueryAbuseFilters extends ApiQueryBase {
 
-	private AbuseFilterPermissionManager $afPermManager;
-	private FilterLookup $filterLookup;
-
 	public function __construct(
 		ApiQuery $query,
 		string $moduleName,
-		AbuseFilterPermissionManager $afPermManager,
-		FilterLookup $filterLookup
+		private readonly AbuseFilterPermissionManager $afPermManager,
+		private readonly FilterLookup $filterLookup
 	) {
 		parent::__construct( $query, $moduleName, 'abf' );
-		$this->afPermManager = $afPermManager;
-		$this->filterLookup = $filterLookup;
 	}
 
 	/**
@@ -71,6 +66,7 @@ class QueryAbuseFilters extends ApiQueryBase {
 		$fld_user = isset( $prop['lasteditor'] );
 		$fld_time = isset( $prop['lastedittime'] );
 		$fld_status = isset( $prop['status'] );
+		$fld_suppressed = isset( $prop['suppressed'] );
 		$fld_private = isset( $prop['private'] );
 		$fld_protected = isset( $prop['protected'] );
 
@@ -123,6 +119,7 @@ class QueryAbuseFilters extends ApiQueryBase {
 		$res = $this->select( __METHOD__ );
 
 		$showhidden = $this->afPermManager->canViewPrivateFilters( $this->getAuthority() );
+		$showSuppressed = $this->afPermManager->canViewSuppressed( $this->getAuthority() );
 
 		$count = 0;
 		foreach ( $res as $row ) {
@@ -139,7 +136,9 @@ class QueryAbuseFilters extends ApiQueryBase {
 
 			// Hide the pattern and non-public comments from the API response if the user would not
 			// be able to open the editor for the filter.
-			$canViewExtendedDetailsAboutFilter = ( !$filter->isHidden() || $showhidden );
+			$canViewExtendedDetailsAboutFilter =
+				( !$filter->isHidden() || $showhidden )
+				&& ( !$filter->isSuppressed() || $showSuppressed );
 
 			if ( $filter->isProtected() && $canViewExtendedDetailsAboutFilter ) {
 				$canViewExtendedDetailsAboutFilter = $this->afPermManager
@@ -176,6 +175,10 @@ class QueryAbuseFilters extends ApiQueryBase {
 					TS_ISO_8601, $filter->getLastEditInfo()->getTimestamp()
 				);
 			}
+			if ( $fld_suppressed && $filter->isSuppressed() ) {
+				$entry['suppressed'] = '';
+			}
+
 			if ( $fld_private && $filter->isHidden() ) {
 				$entry['private'] = '';
 			}

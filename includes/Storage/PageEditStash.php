@@ -26,6 +26,7 @@ use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Stats\StatsFactory;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Manage the pre-emptive page parsing for edits to wiki pages.
@@ -39,10 +40,7 @@ use Wikimedia\Stats\StatsFactory;
  * @ingroup Page
  */
 class PageEditStash {
-	/** @var ParserOutputStashForEditHook */
-	private $hookRunner;
-	/** @var int */
-	private $initiator;
+	private readonly ParserOutputStashForEditHook $hookRunner;
 
 	public const ERROR_NONE = 'stashed';
 	public const ERROR_PARSE = 'error_parse';
@@ -91,10 +89,9 @@ class PageEditStash {
 		private WikiPageFactory $wikiPageFactory,
 		private JsonCodec $jsonCodec,
 		HookContainer $hookContainer,
-		$initiator
+		private readonly int $initiator,
 	) {
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->initiator = $initiator;
 	}
 
 	/**
@@ -146,7 +143,7 @@ class PageEditStash {
 			$newKey = $this->getStashKey( $page, $contentHash, $user, $other_version );
 			$editInfo = $this->getStashValue( $newKey );
 		}
-		if ( $editInfo && (int)wfTimestamp( TS_UNIX, $editInfo->timestamp ) >= $cutoffTime ) {
+		if ( $editInfo && (int)wfTimestamp( TS::UNIX, $editInfo->timestamp ) >= $cutoffTime ) {
 			$alreadyCached = true;
 		} else {
 			$pageUpdater->setContent( SlotRecord::MAIN, $content );
@@ -283,7 +280,7 @@ class PageEditStash {
 			return false;
 		}
 
-		$age = time() - (int)wfTimestamp( TS_UNIX, $editInfo->output->getCacheTime() );
+		$age = time() - (int)wfTimestamp( TS::UNIX, $editInfo->output->getCacheTime() );
 		$logContext['age'] = $age;
 
 		$isCacheUsable = true;
@@ -351,14 +348,10 @@ class PageEditStash {
 	}
 
 	private function incrCacheReadStats( string $result, string $reason, Content $content ): void {
-		static $subtypeByResult = [ 'miss' => 'cache_misses', 'hit' => 'cache_hits' ];
 		$this->stats->getCounter( "editstash_cache_checks_total" )
 			->setLabel( 'reason', $reason )
 			->setLabel( 'result', $result )
 			->setLabel( 'model', $content->getModel() )
-			->copyToStatsdAt( [
-				'editstash.' . $subtypeByResult[ $result ] . '.' . $reason,
-				'editstash_by_model.' . $content->getModel() . '.' . $subtypeByResult[ $result ] . '.' . $reason ] )
 			->increment();
 	}
 
@@ -411,7 +404,7 @@ class PageEditStash {
 
 	/**
 	 * @param UserIdentity $user
-	 * @return string|null TS_MW timestamp or null
+	 * @return string|null TS::MW timestamp or null
 	 */
 	private function lastEditTime( UserIdentity $user ): ?string {
 		$time = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
@@ -422,7 +415,7 @@ class PageEditStash {
 			->caller( __METHOD__ )
 			->fetchField();
 
-		return wfTimestampOrNull( TS_MW, $time );
+		return wfTimestampOrNull( TS::MW, $time );
 	}
 
 	/**
@@ -444,7 +437,7 @@ class PageEditStash {
 	 *
 	 * This key can be used for caching prepared edits provided:
 	 *   - a) The $user was used for PST options
-	 *   - b) The parser output was made from the PST using cannonical matching options
+	 *   - b) The parser output was made from the PST using canonical matching options
 	 *
 	 * @param PageIdentity $page
 	 * @param string $contentHash Result of getContentHash()
@@ -492,7 +485,7 @@ class PageEditStash {
 		$parserOutput = $stashInfo->output;
 		// If an item is renewed, mind the cache TTL determined by config and parser functions.
 		// Put an upper limit on the TTL to avoid extreme template/file staleness.
-		$age = time() - (int)wfTimestamp( TS_UNIX, $parserOutput->getCacheTime() );
+		$age = time() - (int)wfTimestamp( TS::UNIX, $parserOutput->getCacheTime() );
 		$ttl = min( $parserOutput->getCacheExpiry() - $age, self::MAX_CACHE_TTL );
 		// Avoid extremely stale user signature timestamps (T84843)
 		if ( $parserOutput->getOutputFlag( ParserOutputFlags::USER_SIGNATURE ) ) {

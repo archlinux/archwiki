@@ -1,18 +1,19 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Logging;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Logging;
 
-use LogFormatterTestCase;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Tests\Logging\LogFormatterTestCase;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
 
 /**
  * @group CheckUser
- * @group Database For checking if temp accounts are expired and style them as such
+ * @group Database
+ * Uses database for checking if temp accounts are expired and style them as such
  *
- * @covers \MediaWiki\CheckUser\Logging\TemporaryAccountLogFormatter
+ * @covers \MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogFormatter
  */
 class TemporaryAccountLogFormatterTest extends LogFormatterTestCase {
 	public function setUp(): void {
@@ -115,6 +116,18 @@ class TemporaryAccountLogFormatterTest extends LogFormatterTestCase {
 				],
 				'extra' => [
 					'text' => 'Sysop viewed IP addresses for ~2024-01',
+					'api' => [],
+				],
+			],
+			'View related temporary accounts' => [
+				'row' => [
+					'type' => 'checkuser-temporary-account',
+					'action' => TemporaryAccountLogger::ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS,
+					'user_text' => 'Sysop', 'title' => '~2024-01', 'namespace' => NS_USER,
+					'params' => [],
+				],
+				'extra' => [
+					'text' => 'Sysop viewed related temporary accounts for ~2024-01',
 					'api' => [],
 				],
 			],

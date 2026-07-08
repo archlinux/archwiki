@@ -6,7 +6,7 @@ namespace MediaWiki\OutputTransform\Stages;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Language\LanguageFactory;
 use MediaWiki\OutputTransform\ContentTextTransformStage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
@@ -30,12 +30,25 @@ class AddWrapperDivClass extends ContentTextTransformStage {
 		$this->contentLang = $contentLang;
 	}
 
-	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
-		return ( $options['wrapperDivClass'] ?? $po->getWrapperDivClass() ) !== '' && !( $options['unwrap'] ?? false );
+	/**
+	 * Returns the class name for the wrapper div, or null if no wrapper
+	 * div should be added.
+	 */
+	public static function wrapperDivClass( ParserOutput $po, ParserOptions $popts, array $options = [] ): ?string {
+		$wrapperDivClass = $options['wrapperDivClass'] ?? $po->getWrapperDivClass();
+		if ( $wrapperDivClass === '' || ( $options['unwrap'] ?? false ) ) {
+			// Don't wrap!
+			return null;
+		}
+		return $wrapperDivClass;
 	}
 
-	protected function transformText( string $text, ParserOutput $po, ?ParserOptions $popts, array &$options ): string {
-		$wrapperDivClass = $options['wrapperDivClass'] ?? $po->getWrapperDivClass();
+	public function shouldRun( ParserOutput $po, ParserOptions $popts, array $options = [] ): bool {
+		return self::wrapperDivClass( $po, $popts, $options ) !== null;
+	}
+
+	protected function transformText( string $text, ParserOutput $po, ParserOptions $popts, array &$options ): string {
+		$wrapperDivClass = self::wrapperDivClass( $po, $popts, $options );
 		$pageLang = $this->getLanguageWithFallbackGuess( $po );
 		$extraAttrs = [];
 		$parsoidVersion = $po->getExtensionData( 'core:parsoid-version' );

@@ -11,16 +11,11 @@ class SpecialFindComment extends FormSpecialPage {
 
 	private const LIST_LIMIT = 50;
 
-	private ThreadItemStore $threadItemStore;
-	private ThreadItemFormatter $threadItemFormatter;
-
 	public function __construct(
-		ThreadItemStore $threadItemStore,
-		ThreadItemFormatter $threadItemFormatter
+		private readonly ThreadItemStore $threadItemStore,
+		private readonly ThreadItemFormatter $threadItemFormatter,
 	) {
 		parent::__construct( 'FindComment' );
-		$this->threadItemStore = $threadItemStore;
-		$this->threadItemFormatter = $threadItemFormatter;
 	}
 
 	/**

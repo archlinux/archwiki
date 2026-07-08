@@ -14,4 +14,8 @@ class MMLmerror extends MMLbase {
 	public function __construct( string $texclass = "", array $attributes = [], ...$children ) {
 		parent::__construct( "merror", $texclass, $attributes, ...$children );
 	}
+
+	public static function newFromText( string $message ): MMLmerror {
+		return new MMLmerror( "", [], new MMLmtext( '', [], $message ) );
+	}
 }

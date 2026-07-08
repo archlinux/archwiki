@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\Rest\Handler;
 
 use MediaWiki\Auth\AuthenticationResponse;
-use MediaWiki\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler;
-use MediaWiki\CheckUser\HookHandler\CheckUserPrivateEventsHandler;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler;
+use MediaWiki\Extension\CheckUser\HookHandler\CheckUserPrivateEventsHandler;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
@@ -20,11 +20,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\UserAgentClientHintsHandler
  */
 class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 	use HandlerTestTrait;
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 	use MockServiceDependenciesTrait;
 	use TempUserTestTrait;
 
@@ -48,7 +48,11 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$this->getObjectUnderTest(), new RequestData(), [], [], [ 'type' => 'privatelog', 'id' => 123 ],
+			$this->getObjectUnderTest(),
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'privatelog', 'id' => 123 ],
 			$validatedBody
 		);
 	}
@@ -58,12 +62,17 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( 'CheckUserClientHintsRestApiMaxTimeLag', 5 );
 		$this->expectExceptionObject(
 			new LocalizedHttpException(
-				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ), 403
+				new MessageValue( 'checkuser-api-useragent-clienthints-called-too-late' ),
+				403
 			)
 		);
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$this->getObjectUnderTest(), new RequestData(), [], [], [ 'type' => 'privatelog', 'id' => 1 ],
+			$this->getObjectUnderTest(),
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'privatelog', 'id' => 1 ],
 			$validatedBody
 		);
 	}
@@ -71,12 +80,18 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testUserNotEqualToPrivateEventPerformer() {
 		ConvertibleTimestamp::setFakeTime( '20230405060710' );
 		$this->expectExceptionObject( new LocalizedHttpException(
-			new MessageValue( 'checkuser-api-useragent-clienthints-revision-user-mismatch' ), 401
+			new MessageValue( 'checkuser-api-useragent-clienthints-revision-user-mismatch' ),
+			401
 		) );
 		$validatedBody = [ 'brands' => [ 'foo', 'bar' ], 'mobile' => true ];
 		$this->executeHandler(
-			$this->getObjectUnderTest(), new RequestData(), [], [], [ 'type' => 'privatelog', 'id' => 1 ],
-			$validatedBody, $this->getTestUser()->getAuthority()
+			$this->getObjectUnderTest(),
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'privatelog', 'id' => 1 ],
+			$validatedBody,
+			$this->getTestUser()->getAuthority()
 		);
 	}
 
@@ -86,8 +101,13 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 		// Call the REST API
 		$handler = $this->getObjectUnderTest();
 		$response = $this->executeHandler(
-			$handler, new RequestData(), [], [], [ 'type' => 'privatelog', 'id' => $id ],
-			[ 'mobile' => true ], $performerCallback()
+			$handler,
+			new RequestData(),
+			[],
+			[],
+			[ 'type' => 'privatelog', 'id' => $id ],
+			[ 'mobile' => true ],
+			$performerCallback()
 		);
 		// Check that the call resulted in data being inserted to the relevant tables.
 		$this->newSelectQueryBuilder()
@@ -117,7 +137,8 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testDataAlreadyExists() {
 		$this->expectExceptionObject(
 			new LocalizedHttpException(
-				new MessageValue( 'checkuser-api-useragent-clienthints-mappings-exist' ), 400
+				new MessageValue( 'checkuser-api-useragent-clienthints-mappings-exist' ),
+				400
 			)
 		);
 		// Run the code that successfully inserts data to the Client Hints data tables twice. The second call should
@@ -143,7 +164,9 @@ class UserAgentClientHintsHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 		$performer = $this->getMutableTestUser()->getUser();
 		$hooks->onUser__mailPasswordInternal(
-			$performer, '1.2.3.4', $this->getTestSysop()->getUser()
+			$performer,
+			'1.2.3.4',
+			$this->getTestSysop()->getUser()
 		);
 		// Create a failed login attempt so that we can test with cu_private_event rows which have cupe_actor as NULL
 		$hooks->onAuthManagerLoginAuthenticateAudit(

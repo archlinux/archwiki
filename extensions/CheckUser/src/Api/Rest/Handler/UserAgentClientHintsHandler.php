@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\TokenAwareHandlerTrait;
@@ -14,6 +14,7 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserIdentityValue;
 use TypeError;
+use Wikimedia\IPUtils;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -31,24 +32,13 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 class UserAgentClientHintsHandler extends SimpleHandler {
 	use TokenAwareHandlerTrait;
 
-	private Config $config;
-	private RevisionStore $revisionStore;
-	private UserAgentClientHintsManager $userAgentClientHintsManager;
-	private IConnectionProvider $dbProvider;
-	private ActorStore $actorStore;
-
 	public function __construct(
-		Config $config,
-		RevisionStore $revisionStore,
-		UserAgentClientHintsManager $userAgentClientHintsManager,
-		IConnectionProvider $dbProvider,
-		ActorStore $actorStore
+		private readonly Config $config,
+		private readonly RevisionStore $revisionStore,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly ActorStore $actorStore,
 	) {
-		$this->config = $config;
-		$this->revisionStore = $revisionStore;
-		$this->userAgentClientHintsManager = $userAgentClientHintsManager;
-		$this->dbProvider = $dbProvider;
-		$this->actorStore = $actorStore;
 	}
 
 	/**
@@ -66,7 +56,8 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		if ( !$this->config->get( 'CheckUserClientHintsEnabled' ) ) {
 			// Pretend the route doesn't exist if the feature flag is off.
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-no-match' ), 404
+				new MessageValue( 'rest-no-match' ),
+				404
 			);
 		}
 		$data = $this->getValidatedBody();
@@ -105,17 +96,13 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		} else {
 			// If the type is not supported, pretend the route doesn't exist.
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-no-match' ), 404
+				new MessageValue( 'rest-no-match' ),
+				404
 			);
 		}
 		$status = $this->userAgentClientHintsManager->insertClientHintValues( $clientHints, $identifier, $type );
 		if ( !$status->isGood() ) {
-			$error = $status->getErrors()[0];
-			// A client hints mapping entry already exists.
-			throw new LocalizedHttpException(
-				new MessageValue( $error['message'], $error['params'][0] ),
-				400
-			);
+			throw new LocalizedHttpException( MessageValue::newFromSpecifier( $status->getMessages()[0] ), 400 );
 		}
 
 		return $this->getResponseFactory()->createJson( [
@@ -140,7 +127,9 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		$revision = $this->revisionStore->getRevisionById( $revisionId );
 		if ( !$revision ) {
 			throw new LocalizedHttpException(
-				new MessageValue( 'rest-nonexistent-revision', [ $revisionId ] ), 404 );
+				new MessageValue( 'rest-nonexistent-revision', [ $revisionId ] ),
+				404
+			);
 		}
 		$this->performTimestampValidation( $revision->getTimestamp(), 'revision', $revisionId );
 		// Check the performer of the action is the same as the user submitting this REST API request
@@ -173,7 +162,7 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		// Fetch details about the private event with ID $privateLogId
 		$dbr = $this->dbProvider->getReplicaDatabase();
 		$privateEventRow = $dbr->newSelectQueryBuilder()
-			->select( [ 'cupe_timestamp', 'cupe_actor', 'cupe_ip' ] )
+			->select( [ 'cupe_timestamp', 'cupe_actor', 'cupe_ip_hex' ] )
 			->from( 'cu_private_event' )
 			->where( [ 'cupe_id' => $privateLogId ] )
 			->caller( __METHOD__ )
@@ -181,16 +170,20 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		if ( $privateEventRow === false ) {
 			throw new LocalizedHttpException(
 				new MessageValue(
-					'checkuser-api-useragent-clienthints-nonexistent-id', [ 'privatelog', $privateLogId ]
+					'checkuser-api-useragent-clienthints-nonexistent-id',
+					[ 'privatelog', $privateLogId ]
 				),
 				404
 			);
 		}
 		$this->performTimestampValidation( $privateEventRow->cupe_timestamp, 'privatelog', $privateLogId );
 		// Check the performer of the action is the same as the user submitting this REST API request
-		if ( $privateEventRow->cupe_actor === null && $privateEventRow->cupe_ip ) {
+		if ( $privateEventRow->cupe_actor === null && $privateEventRow->cupe_ip_hex !== null ) {
 			// Use the IP as the user_text if the actor ID is NULL and the IP is not NULL (T353953).
-			$performingUser = new UserIdentityValue( 0, $privateEventRow->cupe_ip );
+			$performingUser = new UserIdentityValue(
+				0,
+				IPUtils::formatHex( $privateEventRow->cupe_ip_hex )
+			);
 		} else {
 			$performingUser = $this->actorStore->getActorById( $privateEventRow->cupe_actor, $dbr );
 		}
@@ -218,7 +211,9 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 	 * @throws LocalizedHttpException If the validation fails, this exception will be raised.
 	 */
 	private function performTimestampValidation(
-		?string $associatedEntryTimestamp, string $type, int $identifier
+		?string $associatedEntryTimestamp,
+		string $type,
+		int $identifier
 	): void {
 		// Check that the API was not called too long after the edit
 		$cutoff = ConvertibleTimestamp::time() - $this->config->get( 'CheckUserClientHintsRestApiMaxTimeLag' );
@@ -302,3 +297,13 @@ class UserAgentClientHintsHandler extends SimpleHandler {
 		] + $this->getTokenParamDefinition();
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	UserAgentClientHintsHandler::class,
+	'MediaWiki\\CheckUser\\Api\\Rest\\Handler\\UserAgentClientHintsHandler'
+);
+// @codeCoverageIgnoreEnd

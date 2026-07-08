@@ -10,7 +10,7 @@
 </template>
 
 <script>
-const { CdxIcon } = require( '@wikimedia/codex' );
+const { CdxIcon } = require( '../codex.js' );
 
 // @vue/component
 module.exports = exports = {

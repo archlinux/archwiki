@@ -12,6 +12,7 @@ import WDIOReporter from '@wdio/reporter';
 const getValidPrometheusTagName = ( name ) => name.replace( /\W+/g, '_' ).toLowerCase();
 
 /**
+ *
  * Formats a single Prometheus text format line.
  *
  * @param {string} name - Metric name (must already follow Prometheus naming conventions).
@@ -41,7 +42,7 @@ function getSpecDuration( suiteMetrics ) {
 	for ( const { duration } of suiteMetrics ) {
 		specDuration += duration;
 	}
-	return specDuration.toFixed( 3 );
+	return specDuration;
 }
 
 /**
@@ -98,7 +99,9 @@ class PrometheusFileReporter extends WDIOReporter {
 				failed: 0,
 				skipped: 0,
 				retries: 0,
-				maxDuration: 0
+				testDurationSecondsMax: 0,
+				testDurationSecondsSum: 0,
+				testDurationSecondsCount: 0
 			};
 			this.spec.totalTests++;
 		}
@@ -108,7 +111,11 @@ class PrometheusFileReporter extends WDIOReporter {
 		const testDurationInSeconds = ( test.end - test.start ) / 1000;
 		const myTest = this.testMetrics[ test.uid ];
 		myTest.passed++;
-		myTest.maxDuration = Math.max( myTest.maxDuration, testDurationInSeconds );
+		myTest.testDurationSecondsMax = Math.max(
+			myTest.testDurationSecondsMax, testDurationInSeconds
+		);
+		myTest.testDurationSecondsSum += testDurationInSeconds;
+		myTest.testDurationSecondsCount += 1;
 		this.spec.passed++;
 	}
 
@@ -116,7 +123,11 @@ class PrometheusFileReporter extends WDIOReporter {
 		const testDurationInSeconds = ( test.end - test.start ) / 1000;
 		const myTest = this.testMetrics[ test.uid ];
 		myTest.failed++;
-		myTest.maxDuration = Math.max( myTest.maxDuration, testDurationInSeconds );
+		myTest.testDurationSecondsMax = Math.max(
+			myTest.testDurationSecondsMax, testDurationInSeconds
+		);
+		myTest.testDurationSecondsSum += testDurationInSeconds;
+		myTest.testDurationSecondsCount += 1;
 		this.spec.failed++;
 	}
 
@@ -129,7 +140,9 @@ class PrometheusFileReporter extends WDIOReporter {
 				failed: 0,
 				skipped: 1,
 				retries: 0,
-				maxDuration: 0
+				testDurationSecondsMax: 0,
+				testDurationSecondsSum: 0,
+				testDurationSecondsCount: 0
 			};
 			this.spec.totalTests++;
 		}
@@ -155,6 +168,7 @@ class PrometheusFileReporter extends WDIOReporter {
 		specMetrics.labels = labels;
 		specMetrics.tests = Object.values( this.testMetrics );
 		const outputPath = path.join( this.outputDir, 'specs-' + workerId + '.json' );
+		// eslint-disable-next-line security/detect-non-literal-fs-filename
 		writeFileSync( outputPath, JSON.stringify( specMetrics ), { encoding: 'utf-8' } );
 	}
 }
@@ -166,15 +180,19 @@ function writeAllProjectMetrics( metricsDir, fileName ) {
 		skipped: 0,
 		retries: 0,
 		totalTests: 0,
-		duration: 0
+		duration: 0,
+		testDurationSecondsSum: 0,
+		testDurationSecondsCount: 0
 	};
 	const tests = [];
 
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
 	for ( const file of readdirSync( metricsDir ) ) {
 		if ( !file.startsWith( 'specs-' ) || !file.endsWith( '.json' ) ) {
 			continue;
 		}
 		const filePath = path.join( metricsDir, file );
+		// eslint-disable-next-line security/detect-non-literal-fs-filename
 		const data = JSON.parse( readFileSync( filePath, 'utf-8' ) );
 
 		// We have read the raw data, renmove it since we only need the .prom
@@ -187,17 +205,31 @@ function writeAllProjectMetrics( metricsDir, fileName ) {
 		projectMetrics.totalTests += data.totalTests;
 		projectMetrics.duration += Number( data.duration );
 		projectMetrics.labels = data.labels;
-		tests.push( ...data.tests );
+		for ( const test of data.tests ) {
+			tests.push( test );
+			projectMetrics.testDurationSecondsSum += test.testDurationSecondsSum;
+			projectMetrics.testDurationSecondsCount += test.testDurationSecondsCount;
+		}
 	}
 
-	projectMetrics.duration.toFixed( 3 );
+	const seen = new Set();
+	const uniqueTests = tests.filter( ( test ) => {
+		if ( seen.has( test.name ) ) {
+			return false;
+		}
+		seen.add( test.name );
+		return true;
+	} );
 
 	const lines = [];
 	const labels = projectMetrics.labels;
+
+	const flakyTestsInRun = uniqueTests.filter( ( test ) => test.failed > 0 && test.retries > 0 ).length;
+
 	// Add Project metrics
 	lines.push( '# HELP wdio_project_duration_seconds Total duration of all test suites per project' );
 	lines.push( '# TYPE wdio_project_duration_seconds gauge' );
-	lines.push( formatMetric( 'wdio_project_duration_seconds', projectMetrics.duration, { ...labels } ) );
+	lines.push( formatMetric( 'wdio_project_duration_seconds', projectMetrics.duration.toFixed( 3 ), { ...labels } ) );
 
 	lines.push( '# HELP wdio_project_passed Number of tests passed per project' );
 	lines.push( '# TYPE wdio_project_passed gauge' );
@@ -219,10 +251,28 @@ function writeAllProjectMetrics( metricsDir, fileName ) {
 	lines.push( '# TYPE wdio_project_tests gauge' );
 	lines.push( formatMetric( 'wdio_project_tests', projectMetrics.totalTests, { ...labels } ) );
 
+	lines.push( '# HELP wdio_project_test_duration_seconds_sum Sum of all test execution durations in this project (seconds)' );
+	lines.push( '# TYPE wdio_project_test_duration_seconds_sum gauge' );
+	lines.push( formatMetric( 'wdio_project_test_duration_seconds_sum', projectMetrics.testDurationSecondsSum.toFixed( 3 ), { ...labels } )
+	);
+
+	lines.push( '# HELP wdio_project_test_duration_seconds_count Number of test executions contributing to duration' );
+	lines.push( '# TYPE wdio_project_test_duration_seconds_count gauge' );
+	lines.push( formatMetric( 'wdio_project_test_duration_seconds_count', projectMetrics.testDurationSecondsCount, { ...labels } )
+	);
+
+	lines.push( '# HELP wdio_project_flaky_tests Number of distinct tests that were flaky in this project' );
+	lines.push( '# TYPE wdio_project_flaky_tests gauge' );
+	lines.push( formatMetric( 'wdio_project_flaky_tests', flakyTestsInRun, { ...labels } ) );
+
+	lines.push( '# HELP wdio_project_flaky 1 if any flaky test occurred in this project, else 0' );
+	lines.push( '# TYPE wdio_project_flaky gauge' );
+	lines.push( formatMetric( 'wdio_project_flaky', Number( flakyTestsInRun > 0 ), { ...labels } ) );
+
 	// Add test metrics
 
 	let addMetaData = true;
-	for ( const test of tests ) {
+	for ( const test of uniqueTests ) {
 		const testLabels = { ...labels, test: test.name };
 
 		if ( addMetaData ) {
@@ -244,18 +294,29 @@ function writeAllProjectMetrics( metricsDir, fileName ) {
 
 			lines.push( '# HELP wdio_test_duration_max_seconds Max observed test duration (seconds per test)' );
 			lines.push( '# TYPE wdio_test_duration_max_seconds gauge' );
-			lines.push( formatMetric( 'wdio_test_duration_max_seconds', test.maxDuration.toFixed( 3 ), { ...testLabels } ) );
+			lines.push( formatMetric( 'wdio_test_duration_max_seconds', test.testDurationSecondsMax.toFixed( 3 ), { ...testLabels } ) );
+
+			lines.push( '# HELP wdio_test_flaky 1 if the test failed and retried at least once in this run, else 0' );
+			lines.push( '# TYPE wdio_test_flaky gauge' );
+			lines.push( formatMetric( 'wdio_test_flaky', Number( test.failed > 0 && test.retries > 0 ), testLabels ) );
+
 			addMetaData = false;
 		} else {
 			lines.push( formatMetric( 'wdio_test_passed', test.passed, testLabels ) );
 			lines.push( formatMetric( 'wdio_test_failed', test.failed, testLabels ) );
 			lines.push( formatMetric( 'wdio_test_skipped', test.skipped, testLabels ) );
 			lines.push( formatMetric( 'wdio_test_retries', test.retries, testLabels ) );
-			lines.push( formatMetric( 'wdio_test_duration_max_seconds', test.maxDuration.toFixed( 3 ), { ...testLabels } ) );
+			lines.push( formatMetric( 'wdio_test_duration_max_seconds', test.testDurationSecondsMax.toFixed( 3 ), { ...testLabels } ) );
+			lines.push( formatMetric( 'wdio_test_flaky', Number( test.failed > 0 && test.retries > 0 ), testLabels ) );
+
 		}
 	}
-	const projectName = projectMetrics.labels.project;
-	writeFileSync( path.join( metricsDir, `${ projectName }-${ fileName }.prom` ), `${ lines.join( '\n' ) }\n`, 'utf-8' );
+	// Only write the file if we have any tests https://phabricator.wikimedia.org/T407831
+	if ( projectMetrics.totalTests > 0 ) {
+		const projectName = projectMetrics.labels.project;
+		// eslint-disable-next-line security/detect-non-literal-fs-filename
+		writeFileSync( path.join( metricsDir, `${ projectName }-${ fileName }.prom` ), `${ lines.join( '\n' ) }\n`, 'utf-8' );
+	}
 }
 
 export {

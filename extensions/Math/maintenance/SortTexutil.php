@@ -3,6 +3,7 @@
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 // @codeCoverageIgnoreEnd
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Maintenance\Maintenance;
 
 class SortTexutil extends Maintenance {
@@ -13,7 +14,7 @@ class SortTexutil extends Maintenance {
 		$jsonContent = json_decode( file_get_contents( $jsonFilePath ), true );
 
 		if ( $jsonContent === null ) {
-			die( "Failed to decode texutil.json. Please check the file format.\n" );
+			$this->fatalError( "Failed to decode texutil.json. Please check the file format.\n" );
 		}
 
 		foreach ( $jsonContent as $key => $value ) {
@@ -22,19 +23,13 @@ class SortTexutil extends Maintenance {
 		}
 		// Sort the entire file
 		ksort( $jsonContent );
-		$jsonString = json_encode( $jsonContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
-
-		$jsonStringWithTabs = preg_replace_callback( '/^( +)/m', static function ( $matches ) {
-				// Convert spaces to tabs (assuming 4 spaces per tab level)
-				return str_repeat( "\t", strlen( $matches[1] ) / 4 );
-		}, $jsonString ) . "\n";
-		// prevent eslint error  Unnecessary escape character: \/  no-useless-escape
-		$jsonStringWithTabs = str_replace( '\/', '/', $jsonStringWithTabs );
-
-		file_put_contents( $jsonFilePath, $jsonStringWithTabs );
-
-		echo "texutil.json successfully sorted.\n";
+		file_put_contents(
+			$jsonFilePath,
+			FormatJson::encode( $jsonContent, "\t", FormatJson::ALL_OK ) . "\n"
+		);
+		$this->output( "texutil.json successfully sorted.\n" );
 	}
+
 }
 // @codeCoverageIgnoreStart
 $maintClass = SortTexutil::class;

@@ -1,5 +1,70 @@
 # OOUI Release History
 
+## v0.53.2 / 2026-04-20
+
+### Features
+* ButtonElement: Add support for small/large buttons (Ed Sanders)
+* Change "Dismiss" to "Back" when showing ProcessDialog errors. (Ed Sanders)
+* FloatableElement: Account for viewport spacing when positioning (Sarthak Singh)
+* Make menuToolGroup handle fixed width (Ed Sanders)
+* OO.ui.TagMultiselectWidget: Skip parts of onChange handler when disabled (Umherirrender)
+* SelectWidget: Use native event binding for focusin/out (Ed Sanders)
+### Styles
+* Add missing userContributions to Apex theme (Ed Sanders)
+* MessageWidget: Add border radius (Ed Sanders)
+* Update background colors of flagged normal buttons (Ed Sanders)
+### Icons
+* Add destructive variant for stop icon (Sebastian Berlin)
+* icons: Add 'userBlocked' icon (Kosta Harlan)
+### Code
+* Add script to check files/icons exist in wikimediaui and apex (Ed Sanders)
+* AUTHORS.txt: Update for the past three years (James D. Forrester)
+* build: Drop grunt-contrib-watch, old, unmaintained, and unused (James D. Forrester)
+* build: Updating dependencies ([BOT] libraryupgrader)
+* build: Updating follow-redirects to 1.16.0 ([BOT] libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.20.0 (Umherirrender)
+* build: Updating npm dependencies ([BOT] libraryupgrader)
+* build: Upgrade eslint-config-wikimedia from 0.31.0 to 0.32.3 and make pass (James D. Forrester)
+* build: Upgrade jsdoc-wmf-theme from 1.1.0 to 1.2.0 (James D. Forrester)
+* build: Upgrade mediawiki/mediawiki-phan-config from 0.17.0 to 0.18.0 (James D. Forrester)
+* build: Upgrade mediawiki-phan-config to 0.19.0 for PHP 8.5 support (James D. Forrester)
+* build: Upgrade PHPUnit from 10.5.58 to 10.5.63 to unblock CI (James D. Forrester)
+* build: Upgrade qunit from 2.24.1 to 2.25.0 (James D. Forrester)
+* build: Upgrade stylelint-config-wikimedia from 0.18.0 to 0.19.1 and grunt-stylelint from 0.20.1 to 0.21.0 (James D. Forrester)
+* docs: Fix release date for v0.53.1 (Bartosz Dziewoński)
+* Documentation: Add warning to getViewportSpacing about diaglos (Ed Sanders)
+* Raise jsdoc version from 4.0.4 to 4.0.5 (James D. Forrester)
+* Remove Rake (Ed Sanders)
+* testsuitegenerator: Port from Ruby to JS (Ed Sanders)
+* testsuitegenerator: Use tabs for indentation (Ed Sanders)
+
+## v0.53.1 / 2025-12-17
+
+### Styles
+* Fix text ellipsis in DropdownWidget (Ed Sanders)
+
+### Icons
+* icons: Add 'merge' and 'update' icons to 'content' pack (Volker E.)
+
+### Code
+* Add missing preventDefault to SearchWidget.onQueryKeydown (Thiemo Kreuz)
+* CheckboxMultiselectInputWidget: Save disabled state of options for infusion (Bartosz Dziewoński)
+* Don't assume ESCAPE will de-focus a SelectWidget (Ed Sanders)
+* Element#scrollIntoView: Support alignment to other edges (Ed Sanders)
+* Follow-up I6f17842c: Dialog: Abort executeAction with a resolved promise (Ed Sanders)
+* PopupToolGroup: Fix popup filling available space with align: 'after' (Bartosz Dziewoński)
+* SelectFileInputWidget: fix compareFile (Derk-Jan Hartman)
+* SelectWidget: Fix removeItems() interaction with 'multiselect' (Bartosz Dziewoński)
+* SelectWidget: Use focusin/out instead of focus/blur (Ed Sanders)
+* TabIndexedElement: Provide a default setLabelledBy() method (Bartosz Dziewoński)
+* demos: Fix demo source code not working if default config is empty (Bartosz Dziewoński)
+* docs: Add missing task number in a comment (Bartosz Dziewoński)
+* Fix incomplete documentation for "enter" event (Thiemo Kreuz)
+* build: Add ockcyp/covers-validator to validate @covers annotations (Umherirrender)
+* build: Update phpunit/phpunit to 10.5.58 (Umherirrender)
+* build: Updating mediawiki/mediawiki-codesniffer to 48.0.0 ([BOT] libraryupgrader)
+* tests: Don't use ReflectionProperty::setAccessible(), it's a no-op now (Sam Reed)
+
 ## v0.53.0 / 2025-09-03
 
 ### Features

@@ -18,6 +18,7 @@
 	"hcaptcha-privacy-policy": "Este site é protegido pelo hCaptcha e aplicam-se seus [https://www.hcaptcha.com/terms Termos de Serviço] e sua [https://www.hcaptcha.com/privacy Política de Privacidade].",
 	"hcaptcha-challenge-closed": "Por favor, resolva o desafio antes de enviar o formulário.",
 	"hcaptcha-challenge-expired": "O prazo para resolver o desafio expirou. Por favor, tente novamente.",
+	"hcaptcha-rate-limited": "Limite do hCaptcha excedido. Recarregue a página e tente novamente.",
 	"hcaptcha-loading-indicator-label": "Aguarde enquanto a proteção contra spam do hCaptcha é inicializada",
 	"hcaptcha-missing-token": "Este formulário está protegido por um desafio hCaptcha. Aguarde o desafio aparecer antes de enviar o formulário. Certifique-se de que o JavaScript esteja habilitado."
 }

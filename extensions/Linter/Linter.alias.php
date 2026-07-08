@@ -23,6 +23,7 @@ $specialPageAliases = [];
 /** English (English) */
 $specialPageAliases['en'] = [
 	'LintErrors' => [ 'LintErrors' ],
+	'LintTemplateErrors' => [ 'LintTemplateErrors' ],
 ];
 
 /** Azerbaijani (Azərbaycanca) */
@@ -63,6 +64,11 @@ $specialPageAliases['nn'] = [
 /** Polish (polski) */
 $specialPageAliases['pl'] = [
 	'LintErrors' => [ 'Błędy_składniowe', 'Błędy_lintera' ],
+];
+
+/** Slovak (slovenčina) */
+$specialPageAliases['sk'] = [
+	'LintErrors' => [ 'ChybyNájdenéLintom' ],
 ];
 
 /** Serbian (Cyrillic script) (српски (ћирилица)‎) */

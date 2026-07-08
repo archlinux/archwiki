@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
 use MediaWiki\SpecialPage\SpecialPage;

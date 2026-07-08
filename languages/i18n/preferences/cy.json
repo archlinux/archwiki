@@ -180,6 +180,8 @@
 	"prefs-description-watchlist": "Rheoli a phersonoli'r rhestr o dudalennau rydych chi'n eu holrhain.",
 	"prefs-editwatchlist": "Golygu rhestr wylio",
 	"prefs-editwatchlist-label": "Golygu cofnodion ar eich rhestr wylio:",
+	"prefs-editwatchlistlabels-label": "Golygu labeli rhestr wylio:",
+	"prefs-managewatchlistlabels": "Gweld a rheoli labeli eich rhestr wylio",
 	"prefs-editwatchlist-edit": "Gosod a dileu teitlau o'ch rhestr wylio",
 	"prefs-editwatchlist-raw": "Golygu cod eich rhestr wylio",
 	"prefs-editwatchlist-clear": "Clirio eich rhestr wylio",

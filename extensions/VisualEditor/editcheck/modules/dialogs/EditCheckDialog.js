@@ -19,6 +19,8 @@ ve.ui.EditCheckDialog = function VeUiEditCheckDialog() {
 	this.$element.addClass( 've-ui-editCheckDialog' );
 
 	this.acting = false;
+
+	this.afterRefreshDebounced = ve.debounce( this.afterRefresh.bind( this ) );
 };
 
 /* Inheritance */
@@ -48,18 +50,36 @@ ve.ui.EditCheckDialog.prototype.initialize = function () {
 		framed: false,
 		label: ve.msg( 'visualeditor-contextitemwidget-label-close' ),
 		invisibleLabel: true,
-		icon: 'expand'
+		icon: 'close'
 	} ).connect( this, {
 		click: 'onCloseButtonClick'
 	} );
 
+	this.scrollIntoView = new ve.ui.EditCheckScrollIntoViewWidget();
+	this.scrollIntoView.connect( this, {
+		showClick: 'onScrollIntoViewShowClick',
+		closeClick: 'onScrollIntoViewCloseClick'
+	} );
+
+	this.collapseExpandButton = new OO.ui.ButtonWidget( {
+		classes: [ 've-ui-editCheckDialog-collapseExpand' ],
+		framed: false,
+		label: ve.msg( 'editcheck-dialog-toggle' ),
+		invisibleLabel: true,
+		icon: 'expand'
+	} ).connect( this, {
+		click: 'onCollapseExpandButtonClick'
+	} );
+
 	this.currentOffset = null;
+	this.currentAction = null;
 	this.currentActions = null;
 
 	this.footerLabel = new OO.ui.LabelWidget();
 	this.previousButton = new OO.ui.ButtonWidget( {
 		icon: 'collapse',
 		title: ve.msg( 'last' ),
+		label: ve.msg( 'last' ),
 		invisibleLabel: true,
 		framed: false
 	} ).connect( this, {
@@ -68,6 +88,7 @@ ve.ui.EditCheckDialog.prototype.initialize = function () {
 	this.nextButton = new OO.ui.ButtonWidget( {
 		icon: 'expand',
 		title: ve.msg( 'next' ),
+		label: ve.msg( 'next' ),
 		invisibleLabel: true,
 		framed: false
 	} ).connect( this, {
@@ -83,21 +104,30 @@ ve.ui.EditCheckDialog.prototype.initialize = function () {
 	} );
 
 	this.$actions = $( '<div>' );
-	this.$body.append( this.closeButton.$element, this.$actions, this.footer.$element );
-	if ( mw.editcheck.experimental ) {
-		const $warning = new OO.ui.MessageWidget( {
-			type: 'error',
-			label: 'Currently using experimental edit checks. For testing purposes only.',
-			inline: true
-		} ).$element.css( {
-			'white-space': 'normal',
-			margin: '0.5em 1em'
-		} );
-		if ( OO.ui.isMobile() ) {
-			this.footer.$element.before( $warning );
-		} else {
-			this.$body.append( $warning );
-		}
+	this.$body.append(
+		this.closeButton.$element,
+		this.collapseExpandButton.$element,
+		this.$actions,
+		this.scrollIntoView.$element,
+		this.footer.$element
+	);
+};
+
+/**
+ * Handle click events from scroll-into-view's show button.
+ */
+ve.ui.EditCheckDialog.prototype.onScrollIntoViewShowClick = function () {
+	this.controller.focusAction( this.currentActions[ 0 ], true, true );
+};
+
+/**
+ * Handle click events from scroll-into-view's close button.
+ */
+ve.ui.EditCheckDialog.prototype.onScrollIntoViewCloseClick = function () {
+	if ( this.scrollIntoView ) {
+		this.scrollIntoView.$element.remove();
+		this.scrollIntoView.clear();
+		this.scrollIntoView = null;
 	}
 };
 
@@ -117,7 +147,32 @@ ve.ui.EditCheckDialog.prototype.onActionsUpdated = function ( listener, actions,
 	if ( this.updateFilter ) {
 		actions = this.updateFilter( actions, newActions, discardedActions, this.currentActions );
 	}
-	this.showActions( actions, newActions, rejected );
+
+	this.showActions(
+		this.controller.filterActionsForDisplay( actions ),
+		this.controller.filterActionsForDisplay( newActions ),
+		rejected
+	);
+};
+
+ve.ui.EditCheckDialog.prototype.onActionsUpdatedProgress = function ( listener, action, oldAction ) {
+	if ( this.inBeforeSave !== ( listener === 'onBeforeSave' ) ) {
+		return;
+	}
+	if ( oldAction ) {
+		// This can settle out in onActionsUpdated
+		return;
+	}
+	let actions = ve.copy( this.currentActions );
+	actions.push( action );
+	actions.sort( mw.editcheck.EditCheckAction.static.compareStarts );
+	if ( this.updateFilter ) {
+		actions = this.updateFilter( actions, [ action ], [], this.currentActions );
+	}
+	if ( actions.includes( action ) ) {
+		this.renderAction( action );
+		this.afterRefreshDebounced();
+	}
 };
 
 /**
@@ -128,29 +183,47 @@ ve.ui.EditCheckDialog.prototype.onActionsUpdated = function ( listener, actions,
  * @param {boolean} lastActionRejected Last action was rejected/dismissed
  */
 ve.ui.EditCheckDialog.prototype.showActions = function ( actions, newActions, lastActionRejected ) {
-	let currentAction;
-	if ( this.currentActions && this.currentOffset !== null && actions.includes( this.currentActions[ this.currentOffset ] ) ) {
-		currentAction = this.currentActions[ this.currentOffset ];
-	}
-	this.currentActions = actions;
 	if ( actions.length === 0 ) {
 		this.close( { action: lastActionRejected ? 'reject' : 'complete' } );
 		return;
 	}
+	this.currentActions = actions;
 
 	this.refresh();
 
-	if ( currentAction ) {
-		// This just adjusts so the previously selected check remains selected:
-		this.setCurrentOffset( actions.indexOf( currentAction ), false, true );
-	} else if ( newActions.length > 0 ) {
-		this.setCurrentOffset( actions.indexOf( newActions[ 0 ] ), false, false );
-	} else if ( this.constructor.static.alwaysFocusAction ) {
-		// This dialog always wants to have an action focused, so slip the focus onto
-		// a nearby action if the current one was removed.
-		const newOffset = Math.min( this.currentOffset, actions.length - 1 );
-		this.setCurrentOffset( newOffset, true, false );
+	let currentAction = this.currentAction;
+	let fromUserAction = false;
+	if ( currentAction && !actions.includes( this.currentAction ) ) {
+		// The current action has been removed. Was this a replacement with an
+		// equivalent action due to a focus-change? (Allow overlaps in
+		// equals, because the most likely reason for this would be an edit
+		// causing the range covered to shift.)
+		const replacementAction = actions.find( ( action ) => action.equals( currentAction, true ) );
+		if ( replacementAction ) {
+			currentAction = replacementAction;
+		} else {
+			currentAction = null;
+			if ( this.constructor.static.alwaysFocusAction ) {
+				fromUserAction = true;
+			}
+		}
 	}
+	if ( !this.currentAction && newActions.length > 0 ) {
+		// There was no focused action, and new actions have arrived
+		currentAction = newActions[ 0 ];
+	}
+	if ( !currentAction && this.constructor.static.alwaysFocusAction ) {
+		// This dialog must always have an action focused
+		if ( this.currentOffset !== null ) {
+			// There was a focused action, so slip the focus onto an adjacent action
+			const newOffset = Math.min( this.currentOffset, actions.length - 1 );
+			currentAction = actions[ newOffset ];
+		} else {
+			// There wasn't a focused action, so focus the first available action
+			currentAction = actions[ 0 ];
+		}
+	}
+	this.setCurrentAction( currentAction, fromUserAction, currentAction === this.currentAction );
 };
 
 /**
@@ -167,50 +240,66 @@ ve.ui.EditCheckDialog.prototype.hasAction = function ( action ) {
  * Refresh the action list
  */
 ve.ui.EditCheckDialog.prototype.refresh = function () {
+	if ( this.scrollIntoView ) {
+		this.scrollIntoView.clear();
+	}
+
 	this.$actions.empty();
 
-	this.currentActions.forEach( ( action, index ) => {
-		const widget = action.render( index !== this.currentOffset, this.singleAction, this.surface );
-		widget.on( 'togglecollapse', this.onToggleCollapse, [ action, index ], this );
-		action.off( 'act' ).on( 'act', this.onAct, [ action, widget ], this );
-
-		this.$actions.append( widget.$element );
-
-		// for scrolling later
-		action.widget = widget;
+	this.currentActions.forEach( ( action ) => {
+		this.renderAction( action );
 	} );
+
+	this.afterRefresh();
+};
+
+ve.ui.EditCheckDialog.prototype.afterRefresh = function () {
+	if ( this.scrollIntoView ) {
+		this.scrollIntoView.update();
+	}
 
 	// Update positions immediately to prevent flicker
 	this.controller.updatePositions();
 };
 
+ve.ui.EditCheckDialog.prototype.renderAction = function ( action ) {
+	const widget = action.render( action !== this.currentAction, this.singleAction, this.surface );
+	widget.on( 'togglecollapse', this.onToggleCollapse, [ action ], this );
+	action.off( 'act', this.onAct, this ).on( 'act', this.onAct, [ action, widget ], this );
+
+	this.$actions.append( widget.$element );
+	if ( this.scrollIntoView && action.isSuggestion() ) {
+		this.scrollIntoView.observe( widget.$element[ 0 ] );
+	}
+};
+
 /**
- * Set the offset of the current check, within the list of all checks.
+ * Set currently active check
  *
- * @param {number|null} offset New offset
+ * @param {mw.editcheck.EditCheckAction|null} action New action
  * @param {boolean} fromUserAction The change was triggered by a user action
  * @param {boolean} [internal] Change was triggered internally
  */
-ve.ui.EditCheckDialog.prototype.setCurrentOffset = function ( offset, fromUserAction, internal ) {
+ve.ui.EditCheckDialog.prototype.setCurrentAction = function ( action, fromUserAction, internal ) {
 	// TODO: work out how to tell the window to recalculate height here
 
-	if ( offset === null || offset === -1 ) {
-		/* That's valid, carry on */
+	let offset = this.currentActions.indexOf( action );
+	if ( !this.currentActions || !this.currentActions.includes( action ) ) {
+		action = null;
 		offset = null;
-	} else if ( !Number.isSafeInteger( offset ) || ( offset < 0 || offset > ( this.currentActions.length - 1 ) ) ) {
-		throw new Error( `Bad offset ${ offset }, expected an integer between 0 and ${ this.currentActions.length - 1 }` );
 	}
 
+	this.currentAction = action;
 	this.currentOffset = offset;
 
-	this.currentActions.forEach( ( action, i ) => {
-		action.widget.toggleCollapse( i !== this.currentOffset );
+	this.currentActions.forEach( ( cAction, i ) => {
+		cAction.widget.toggleCollapse( i !== offset );
 	} );
 
-	if ( this.currentOffset !== null ) {
+	if ( offset !== null ) {
 		this.footerLabel.setLabel(
 			ve.msg( 'visualeditor-find-and-replace-results',
-				ve.init.platform.formatNumber( this.currentOffset + 1 ),
+				ve.init.platform.formatNumber( offset + 1 ),
 				ve.init.platform.formatNumber( this.currentActions.length )
 			)
 		);
@@ -228,7 +317,7 @@ ve.ui.EditCheckDialog.prototype.setCurrentOffset = function ( offset, fromUserAc
 
 	if ( !internal ) {
 		this.controller.focusAction(
-			this.currentActions[ this.currentOffset ],
+			action,
 			// Scroll selection into view if user interacted with dialog
 			fromUserAction,
 			// Scroll to top of page in desktop fixed dialog (pre-save)
@@ -238,10 +327,27 @@ ve.ui.EditCheckDialog.prototype.setCurrentOffset = function ( offset, fromUserAc
 };
 
 /**
+ * Set the offset of the current check, within the list of all checks.
+ *
+ * @param {number|null} offset New offset
+ * @param {boolean} fromUserAction The change was triggered by a user action
+ * @param {boolean} [internal] Change was triggered internally
+ */
+ve.ui.EditCheckDialog.prototype.setCurrentOffset = function ( offset, fromUserAction, internal ) {
+	if ( offset === null || offset === -1 ) {
+		/* That's valid, carry on */
+		offset = null;
+	} else if ( !Number.isSafeInteger( offset ) || ( offset < 0 || offset > ( this.currentActions.length - 1 ) ) ) {
+		throw new Error( `Bad offset ${ offset }, expected an integer between 0 and ${ this.currentActions.length - 1 }` );
+	}
+	this.setCurrentAction( this.currentActions[ offset ] || null, fromUserAction, internal );
+};
+
+/**
  * Update the disabled state of the navigation buttons
  */
 ve.ui.EditCheckDialog.prototype.updateNavigationState = function () {
-	const currentAction = this.currentActions[ this.currentOffset ];
+	const currentAction = this.currentAction;
 	if ( currentAction ) {
 		currentAction.widget.setDisabled( this.acting );
 	}
@@ -264,7 +370,8 @@ ve.ui.EditCheckDialog.prototype.updateNavigationState = function () {
  * @param {boolean} scrollTo Scroll the action's selection into view
  */
 ve.ui.EditCheckDialog.prototype.onFocusAction = function ( action, index, scrollTo ) {
-	this.setCurrentOffset( this.currentActions.indexOf( action ), scrollTo, true );
+	this.setCurrentAction( action, scrollTo, true );
+	this.onScrollIntoViewCloseClick();
 };
 
 /**
@@ -274,6 +381,7 @@ ve.ui.EditCheckDialog.prototype.getSetupProcess = function ( data, process ) {
 	return process.first( () => {
 		this.controller = data.controller;
 		this.controller.on( 'actionsUpdated', this.onActionsUpdated, false, this );
+		this.controller.on( 'actionsUpdatedProgress', this.onActionsUpdatedProgress, false, this );
 		this.controller.on( 'focusAction', this.onFocusAction, false, this );
 
 		const actions = data.actions || this.controller.getActions();
@@ -287,11 +395,20 @@ ve.ui.EditCheckDialog.prototype.getSetupProcess = function ( data, process ) {
 
 		// Reset currentOffset so that reusing the dialog multiple times in a
 		// session won't produce unexpected behavior. (T404661)
+		this.acting = false;
 		this.currentOffset = null;
+		this.currentAction = null;
+
+		this.toggle( !this.surface.getTarget().isVirtualKeyboardOpen() );
+		this.surface.getTarget().off( 'virtualKeyboardChange' );
+		this.surface.getTarget().on( 'virtualKeyboardChange', ( isOpen ) => {
+			this.toggle( !isOpen );
+		} );
+
+		this.closeButton.toggle( OO.ui.isMobile() && !this.inBeforeSave );
+		this.collapseExpandButton.toggle( OO.ui.isMobile() && this.inBeforeSave );
 
 		this.singleAction = this.inBeforeSave || OO.ui.isMobile();
-
-		this.closeButton.toggle( OO.ui.isMobile() );
 		if ( data.footer !== undefined ) {
 			this.footer.toggle( data.footer );
 		} else {
@@ -299,9 +416,14 @@ ve.ui.EditCheckDialog.prototype.getSetupProcess = function ( data, process ) {
 		}
 		this.$element.toggleClass( 've-ui-editCheckDialog-singleAction', this.singleAction );
 
-		this.surface.context.hide();
+		if ( this.surface.context.isVisible() ) {
+			// Don't unconditionally do this, because the mobile context
+			// triggers a setTimeout'd resize event that scrolls the
+			// selection into view, potentially overriding our own scrolling.
+			this.surface.context.hide();
+		}
 
-		this.showActions( actions, actions );
+		this.showActions( actions, data.newActions || [] );
 		if ( this.onPosition ) {
 			// This currently only applies to SidebarEditCheckDialog but needs to be
 			// called immediately so margin-top is set before the animation starts.
@@ -316,6 +438,7 @@ ve.ui.EditCheckDialog.prototype.getSetupProcess = function ( data, process ) {
 ve.ui.EditCheckDialog.prototype.getTeardownProcess = function ( data, process ) {
 	return process.next( () => {
 		this.controller.off( 'actionsUpdated', this.onActionsUpdated, this );
+		this.controller.off( 'actionsUpdatedProgress', this.onActionsUpdatedProgress, this );
 		this.controller.off( 'focusAction', this.onFocusAction, this );
 		this.$actions.empty();
 	}, this );
@@ -370,30 +493,17 @@ ve.ui.EditCheckDialog.prototype.onAct = function ( action, widget, promise ) {
  * Handle 'togglecollapse' events from the mw.widget.EditCheckActionWidget.
  *
  * @param {mw.editcheck.EditCheckAction} action Action being expanded/collapsed
- * @param {number} index Index of action in list
  */
 ve.ui.EditCheckDialog.prototype.onToggleCollapse = function ( action ) {
 	if ( action.widget.collapsed ) {
 		// Expand
-		this.setCurrentOffset( this.currentActions.indexOf( action ), true );
+		this.setCurrentAction( action, true, false );
 		if ( !OO.ui.isMobile() ) {
-			const surfaceModel = this.surface.getModel();
-			const checkRange = action.getFocusSelection().getCoveringRange();
-			const surfaceRange = surfaceModel.getSelection().getCoveringRange();
-			// Collapse and move the selection to the nearest part of the check range
-			// Don't alter it if it touches the check range
-			if ( surfaceRange === null || surfaceRange.end < checkRange.start ) {
-				surfaceModel.setLinearSelection( new ve.Range( checkRange.start ) );
-				this.surface.getView().activate();
-				this.surface.getView().focus();
-			} else if ( surfaceRange.start > checkRange.end ) {
-				surfaceModel.setLinearSelection( new ve.Range( checkRange.end ) );
-				this.surface.getView().activate();
-				this.surface.getView().focus();
-			}
+			this.controller.setIgnoreNextSelectionChange();
+			action.select( this.surface );
 		}
 	} else {
-		this.setCurrentOffset( null );
+		this.setCurrentAction( null );
 	}
 };
 
@@ -401,10 +511,20 @@ ve.ui.EditCheckDialog.prototype.onToggleCollapse = function ( action ) {
  * Handle click events from the close button.
  */
 ve.ui.EditCheckDialog.prototype.onCloseButtonClick = function () {
+	this.close();
+	if ( OO.ui.isMobile() ) {
+		this.controller.focusAction( null );
+	}
+};
+
+/**
+ * Handle click events from the collapse/expand button.
+ */
+ve.ui.EditCheckDialog.prototype.onCollapseExpandButtonClick = function () {
 	// eslint-disable-next-line no-jquery/no-class-state
 	const collapse = !this.$element.hasClass( 've-ui-editCheckDialog-collapsed' );
 	this.$element.toggleClass( 've-ui-editCheckDialog-collapsed', collapse );
-	this.closeButton.setIcon( collapse ? 'collapse' : 'expand' );
+	this.collapseExpandButton.setIcon( collapse ? 'collapse' : 'expand' );
 };
 
 /**

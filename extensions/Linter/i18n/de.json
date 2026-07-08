@@ -2,15 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Brettchenweber",
+			"IWL04",
 			"Inkowik",
 			"Kghbln",
 			"Metalhead64",
-			"TomatoCake",
-			"IWL04",
-			"PerfektesChaos"
+			"PerfektesChaos",
+			"TomatoCake"
 		]
 	},
 	"linterrors": "Lint-Fehler",
+	"linttemplateerrors": "Transklusionen, die Lint-Fehler enthalten",
 	"linter-category-bogus-image-options": "Fehlerhafte Dateioptionen",
 	"linter-category-bogus-image-options-desc": "Diese Seiten haben Dateien mit fehlerhaften Optionen.",
 	"linter-category-large-tables": "Große Tabellen, die auf dem Handy schlecht zu sehen sind",
@@ -21,6 +22,8 @@
 	"linter-category-duplicate-ids-desc": "Diese Seiten haben Elemente mit doppelten ID-Attributen.",
 	"linter-category-empty-heading": "Leere Überschriften",
 	"linter-category-empty-heading-desc": "Diese Seiten haben leere Überschriften.",
+	"linter-category-template-arg-in-extension-tag": "Erweiterungstag mit Vorlagenparameter",
+	"linter-category-template-arg-in-extension-tag-desc": "Diese Seiten haben einen Erweiterungstag mit Vorlagenparameter, der nicht ordnungsgemäß aufgebaut ist.",
 	"linter-category-fostered": "Falsch verschachtelter Inhalt",
 	"linter-category-fostered-desc": "Diese Seiten haben falsch verschachtelte Inhalte.",
 	"linter-category-fostered-transparent": "Verschalteter rendering-transparenter Inhalt",
@@ -63,6 +66,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Diese Seiten haben Wikilinks in externen Links, die korrigiert werden können.",
 	"linter-desc": "Ermöglicht das Ermitteln von Wikitext-Fehlern mit Hilfe eines externen Dienstes und zeigt diese Benutzern an",
 	"linter-lints-prefix-search-page-desc": "Suche nach Seiten mit Lint-Fehlern anhand des Präfixes des Seitentitels oder des vollständigen Titels",
+	"linter-invalid-category": "Kategorie nicht gefunden oder fehlerhaft",
 	"linter-invalid-title": "Namensraum und/oder Seitenname nicht gefunden oder falsch geformt",
 	"linter-form-exact-match": "Suche nach einem bestimmten Seitentitel",
 	"linter-form-prefix-match": "Suche nach allen Seiten, die dem Titelpräfix entsprechen",
@@ -113,10 +117,16 @@
 	"linter-pager-title-header": "Seitentitel",
 	"linter-pager-unclosed-quotes-in-heading-details": "Nicht geschlossenes Anführungszeichen, das das Inhaltsverzeichnis auslaufen lässt.",
 	"linter-pager-wikilink-in-extlink-details": "Links in Links",
+	"linter-pager-template-arg-in-extension-tag-details": "Erweiterungs-Tag-Name, der aktualisiert werden muss (und darin verwendete Vorlagenparameter)",
 	"linter-prefix-search-subpage": "Seiten mit Lintfehlern, die dem Titelpräfix oder dem vollständigen Titel entsprechen: $1",
 	"linterrors-subpage": "Lint-Fehler: $1",
 	"linterrors-summary": "<strong>Hinweis:</strong> Die Zähler für Kategorien sind nicht genau, sondern basieren auf Schätzungen.",
 	"multi-part-template-block": "Ausgabe nicht von einer einzelnen Vorlage",
+	"parser-function": "Ausgabe einer Parserfunktion",
 	"pageinfo-linter": "Lint-Fehler",
-	"pageinfo-linter-moreinfo": "Detaillierte Informationen zu den Lint-Fehlern anzeigen"
+	"pageinfo-linter-moreinfo": "Detaillierte Informationen zu den Lint-Fehlern anzeigen",
+	"category-by-template": "Vorlagen, die Lint-Fehler auslösen: $1",
+	"category-by-template-view": "Transklusionen anzeigen, die diese Lint-Fehler enthalten.",
+	"category-by-template-desc": "Die Transklusionen dieser Seiten enthalten Lint-Fehler vom Typ '''[[Special:LintErrors/$1|$1]]'''. ''Beachte, dass einige Transklusionen aufgrund der an die Transklusion übergebenen Argumente und nicht aufgrund der Transklusionsquelle in dieser Liste erscheinen können.''",
+	"linter-template-errors-index-desc": "Dies sind Listen von Transklusionen von Seiten, die Lint-Fehler enthalten. ''Beachte, dass einige Transklusionen aufgrund der an die Transklusion übergebenen Argumente und nicht aufgrund der Transklusionsquelle in diesen Listen erscheinen können.''"
 }

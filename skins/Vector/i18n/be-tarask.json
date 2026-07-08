@@ -5,8 +5,8 @@
 			"Nieszczarda2",
 			"Red Winged Duck",
 			"Renessaince",
-			"Wizardist",
-			"Ucukor"
+			"Ucukor",
+			"Wizardist"
 		]
 	},
 	"skinname-vector": "Стары Вэктар (2010)",
@@ -56,9 +56,6 @@
 	"vector-toc-label": "Зьмест",
 	"vector-toc-beginning": "Пачатак",
 	"vector-toc-toggle-button-label": "Пераключыць падразьдзел $1",
-	"vector-anon-user-menu-pages": "Старонкі для неаўтарызаваных рэдактараў",
-	"vector-anon-user-menu-pages-learn": "даведацца болей",
-	"vector-anon-user-menu-pages-label": "Даведайцеся пра рэдагаваньне болей",
 	"vector-main-menu-tooltip": "Галоўнае мэню",
 	"vector-toc-menu-tooltip": "Зьмест",
 	"vector-toc-collapsible-button-label": "Схаваць/паказаць зьмест",
@@ -75,7 +72,5 @@
 	"tooltip-vector-anon-user-menu-title": "Болей парамэтраў",
 	"vector-prefs-limited-width": "Уключыць рэжым абмежаванай шырыні",
 	"vector-prefs-limited-width-help": "Уключыць рэжым абмежаванай шырыні дзеля лепшага чытаньня.",
-	"vector-appearance-unpinned-popup": "Мэню выгляду перасунулася сюды.",
-	"vector-2022-beta-preview-label": "Даступнасьць для чытаньня (Вэктар-2022)",
-	"vector-2022-beta-preview-description": "Атрымайце раньні доступ да новых функцыяў чытаньня, такіх як паляпшэньне тыпаграфікі і цёмны рэжым."
+	"vector-appearance-unpinned-popup": "Мэню выгляду перасунулася сюды."
 }

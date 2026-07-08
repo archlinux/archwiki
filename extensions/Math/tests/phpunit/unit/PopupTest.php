@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use MediaWiki\Extension\Math\Rest\Popup;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\RequestData;

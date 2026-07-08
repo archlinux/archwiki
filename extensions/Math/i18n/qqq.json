@@ -129,5 +129,7 @@
 	"math-wikibase-special-form-button": "The button label to submits the form to request a wikibase id.",
 	"math-wikibase-special-error-header": "The header of the error page. Will be shown when an error occurred on the special page.\n{{Identical|Error}}",
 	"math-wikibase-special-error-invalid-argument": "The error text if the requested wikibase does not exist.",
-	"math-wikibase-special-error-unknown": "The error text when an unkown error occurred during fetching the information.\nFurther information about the error can be found in the logs."
+	"math-wikibase-special-error-unknown": "The error text when an unkown error occurred during fetching the information.\nFurther information about the error can be found in the logs.",
+	"math-editpage-insert-inline": "Title for the toolbar button to insert an inline math formula in Extension:WikiEditor. Also used as the description of the equivalent keyboard shortcut in Extension:CodeMirror.",
+	"math-editpage-insert-block": "Title for the toolbar button to insert a block math formula in Extension:WikiEditor. Also used as the description of the equivalent keyboard shortcut in Extension:CodeMirror."
 }

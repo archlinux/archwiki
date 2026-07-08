@@ -3,35 +3,21 @@
 namespace MediaWiki\Extension\AbuseFilter\Variables;
 
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Html\Html;
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * Pretty-prints the content of a VariableHolder for use e.g. in AbuseLog hit details
  */
 class VariablesFormatter {
-	public const SERVICE_NAME = 'AbuseFilterVariablesFormatter';
+	public const SERVICE_NAME = ServiceNames::VariablesFormatter;
 
-	/** @var KeywordsManager */
-	private $keywordsManager;
-	/** @var VariablesManager */
-	private $varManager;
-	/** @var MessageLocalizer */
-	private $messageLocalizer;
-
-	/**
-	 * @param KeywordsManager $keywordsManager
-	 * @param VariablesManager $variablesManager
-	 * @param MessageLocalizer $messageLocalizer
-	 */
 	public function __construct(
-		KeywordsManager $keywordsManager,
-		VariablesManager $variablesManager,
-		MessageLocalizer $messageLocalizer
+		private readonly KeywordsManager $keywordsManager,
+		private readonly VariablesManager $varManager,
+		private MessageLocalizer $messageLocalizer
 	) {
-		$this->keywordsManager = $keywordsManager;
-		$this->varManager = $variablesManager;
-		$this->messageLocalizer = $messageLocalizer;
 	}
 
 	public function setMessageLocalizer( MessageLocalizer $messageLocalizer ): void {

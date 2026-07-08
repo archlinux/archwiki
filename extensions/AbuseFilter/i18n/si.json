@@ -206,7 +206,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "විචල්‍ය සකසන්න (විච_සක)",
 	"abusefilter-edit-builder-group-vars": "විචල්‍යයන්",
 	"abusefilter-edit-builder-vars-timestamp": "වෙනස්කමේ යුනික්ස් කාලමුද්‍රාව",
-	"abusefilter-edit-builder-vars-accountname": "ගිණුම් නාමය (ගිණුම් තැනීමේ තිබු)",
+	"abusefilter-edit-builder-vars-account-name": "ගිණුම් නාමය (ගිණුම් තැනීමේ තිබු)",
 	"abusefilter-edit-builder-vars-action": "කාර්යය",
 	"abusefilter-edit-builder-vars-addedlines": "සංස්කරණයේදී එක් කල පේළි",
 	"abusefilter-edit-builder-vars-delta": "සංස්කරණයේදී ප්‍රමාණාත්මක වෙනස්කම",

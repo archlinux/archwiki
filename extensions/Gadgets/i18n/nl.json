@@ -77,5 +77,7 @@
 	"gadgets-validate-invaliddependencies": "De volgende {{PLURAL:$2|afhankelijkheid ontbreekt|afhankelijkheden ontbreken}}: $1.",
 	"gadgets-validate-deprecateddependencies": "De volgende {{PLURAL:$2|afhankelijkheid is|afhankelijkheden zijn}} verouderd: $1.",
 	"gadgets-supports-urlload": "Deze gadget ondersteunt het laden via een URL met de queryparameter <code>?withgadget</code>.",
-	"gadgets-hidden": "Deze gadget is [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden verborgen], wat betekent dat deze niet op de voorkeurenpagina wordt weergegeven."
+	"gadgets-hidden": "Deze gadget is [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden verborgen], wat betekent dat deze niet op de voorkeurenpagina wordt weergegeven.",
+	"gadgets-subpage-invalid": "Ongeldige subpagina \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Onvoldoende subpaginaparameters (ongeldige koppeling)."
 }

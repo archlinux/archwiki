@@ -1,4 +1,5 @@
 const languageButton = require( './languageButton.js' ),
+	// Note: the entire module is exported later for use inside WikimediaEvents
 	pinnableElement = require( './pinnableElement.js' ),
 	searchToggle = require( './searchToggle.js' ),
 	portletsManager = require( './portlets.js' ),
@@ -54,11 +55,12 @@ function main( window ) {
 	watchstar();
 	// Initialize the search toggle for the main header only. The sticky header
 	// toggle is initialized after Codex search loads.
+	/** @type {HTMLElement|null} */
 	const searchToggleElement = document.querySelector( '.mw-header .search-toggle' );
 	if ( searchToggleElement ) {
 		searchToggle( searchToggleElement );
 	}
-	pinnableElement.initPinnableElement();
+	pinnableElement.init();
 	// Initializes the TOC and sticky header, behaviour of which depend on scroll behaviour.
 	setupIntersectionObservers.main();
 	// Apply body styles to teleported elements

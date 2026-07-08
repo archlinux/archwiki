@@ -11,6 +11,7 @@
 			"El libre",
 			"Fitoschido",
 			"Gemmaa",
+			"J0anJosep",
 			"Jaumeortola",
 			"Jmarchn",
 			"Jordiventura96",
@@ -31,8 +32,7 @@
 			"Toniher",
 			"Townie",
 			"Vfc",
-			"Vriullop",
-			"J0anJosep"
+			"Vriullop"
 		]
 	},
 	"abusefilter-desc": "Aplica heurística automàtica a les edicions",
@@ -111,6 +111,7 @@
 	"abusefilter-log-noactions": "cap",
 	"abusefilter-log-noactions-filter": "Cap",
 	"abusefilter-log-details-diff": "Canvis fets en l'edició",
+	"abusefilter-log-missinguserlink-title": "$1 (el compte no existeix)",
 	"abusefilter-log-linkoncontribs": "registre d'abusos",
 	"abusefilter-log-linkoncontribs-text": "Registre d'abusos d'{{GENDER:$1|aquest usuari|aquesta usuària}}",
 	"abusefilter-log-linkonhistory": "visualitza el registre d'abusos",
@@ -327,7 +328,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Defineix variable ($1)",
 	"abusefilter-edit-builder-group-vars": "Variables",
 	"abusefilter-edit-builder-vars-timestamp": "Datació Unix del canvi ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Nom del compte a la creació ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Nom del compte a la creació ($1)",
 	"abusefilter-edit-builder-vars-action": "Acció ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Línies afegides en l'edició ($1)",
 	"abusefilter-edit-builder-vars-delta": "Canvi de mida en l'edició ($1)",

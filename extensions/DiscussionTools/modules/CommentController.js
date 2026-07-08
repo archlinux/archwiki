@@ -1,16 +1,12 @@
 const
 	controller = require( './controller.js' ),
-	modifier = require( './modifier.js' ),
+	modifier = require( './commentparser/modifier.js' ),
 	dtConf = require( './config.json' ),
 	CommentDetails = require( './CommentDetails.js' ),
-	CommentItem = require( './CommentItem.js' ),
-	scrollPadding = {
-		// eslint-disable-next-line no-jquery/no-class-state
-		top: 10 + ( $( document.documentElement ).hasClass( 'vector-feature-sticky-header-enabled' ) ? 50 : 0 ),
-		bottom: 10
-	},
+	CommentItem = require( './commentparser/CommentItem.js' ),
 	defaultVisual = controller.defaultVisual,
 	enable2017Wikitext = controller.enable2017Wikitext;
+
 /**
  * Handles setup, save and teardown of commenting widgets
  *
@@ -45,18 +41,48 @@ OO.mixinClass( CommentController, OO.EventEmitter );
 
 /**
  * Get the latest revision ID of the page.
+ * Also get the canonical page name if we encounter
+ * variant-conversion or a redirect target if there's
+ * a redirection.
  *
  * @param {string} pageName
  * @return {jQuery.Promise}
  */
-function getLatestRevId( pageName ) {
+function getLatestPageInfo( pageName ) {
 	return controller.getApi().get( {
 		action: 'query',
 		prop: 'revisions',
 		rvprop: 'ids',
 		rvlimit: 1,
-		titles: pageName
-	} ).then( ( resp ) => resp.query.pages[ 0 ].revisions[ 0 ].revid );
+		titles: pageName,
+		converttitles: true,
+		redirects: true
+	} ).then( ( resp ) => {
+		const q = resp.query,
+			revId = q.pages[ 0 ].revisions[ 0 ].revid,
+			variantTitle = q.converted && q.converted[ 0 ] && q.converted[ 0 ].to,
+			redirectTitle = q.redirects && q.redirects[ 0 ] && q.redirects[ 0 ].to;
+
+		return { revId, variantTitle, redirectTitle };
+	} );
+}
+
+/**
+ * Get scroll padding
+ *
+ * As scroll-padding-top can change, we need to compute
+ * this every time we scroll.
+ *
+ * @return {Object} Scroll padding
+ */
+function getScrollPadding() {
+	const scrollPaddingTopString = getComputedStyle( document.documentElement ).getPropertyValue( 'scroll-padding-top' ) || '';
+	const scrollPaddingTopValue = scrollPaddingTopString !== 'auto' && scrollPaddingTopString !== '' ?
+		parseFloat( scrollPaddingTopString ) : 0;
+	return {
+		top: 50 + scrollPaddingTopValue,
+		bottom: 10
+	};
 }
 
 /**
@@ -71,17 +97,26 @@ CommentController.prototype.getTranscludedFromSource = function () {
 		threadItem = this.getThreadItem();
 
 	function followTransclusion( recursionLimit, code, data ) {
-		let errorData;
+		let errorData, transclusionTitle;
+
 		if ( recursionLimit > 0 && code === 'comment-is-transcluded' ) {
 			errorData = data.errors[ 0 ].data;
-			if ( errorData.follow && typeof errorData.transcludedFrom === 'string' ) {
-				return getLatestRevId( errorData.transcludedFrom ).then(
+			transclusionTitle = errorData.transcludedFrom;
+
+			if ( errorData.follow && typeof transclusionTitle === 'string' ) {
+				return getLatestPageInfo( transclusionTitle ).then(
 					// Fetch the transcluded page, until we cross the recursion limit
-					( latestRevId ) => controller.checkThreadItemOnPage( errorData.transcludedFrom, latestRevId, threadItem )
-						.catch( followTransclusion.bind( null, recursionLimit - 1 ) )
-				);
+					( { revId, variantTitle, redirectTitle } ) => {
+						// Prefer variant title first, redirect target if any, and then the
+						// title text as used in the transclusion wikitext. (T408324, T413968)
+						const pageName2 = variantTitle || redirectTitle || transclusionTitle;
+
+						return controller.checkThreadItemOnPage( pageName2, revId, threadItem )
+							.catch( followTransclusion.bind( null, recursionLimit - 1 ) );
+					} );
 			}
 		}
+
 		return $.Deferred().reject( code, data );
 	}
 
@@ -186,8 +221,8 @@ CommentController.prototype.setup = function ( options ) {
 			// we wrap this loading message in another element.
 			$( '<span>' ).text( mw.msg( 'discussiontools-replywidget-loading' ) )
 		);
-		const scrollPaddingCollapsed = OO.copy( scrollPadding );
-		// We don't know exactly how tall the widge will be, but leave room for one line
+		const scrollPaddingCollapsed = getScrollPadding();
+		// We don't know exactly how tall the widget will be, but leave room for one line
 		// of preview in source mode (~270px). Visual mode is ~250px.
 		scrollPaddingCollapsed.bottom += 270;
 		OO.ui.Element.static.scrollIntoView( this.newListItem, {
@@ -388,7 +423,7 @@ CommentController.prototype.focus = function () {
  */
 CommentController.prototype.showAndFocus = function () {
 	this.replyWidgetPromise.then( ( replyWidget ) => {
-		replyWidget.scrollElementIntoView( { padding: scrollPadding } )
+		replyWidget.scrollElementIntoView( { padding: getScrollPadding() } )
 			.then( () => {
 				this.focus();
 			} );
@@ -715,7 +750,7 @@ CommentController.prototype.switchToWikitext = function () {
 
 		return $.when( wikitextPromise, this.replyWidgetPromise ).then( ( wikitext, newWidget ) => {
 			// To prevent the "Reply" / "Cancel" buttons from shifting when the preview loads,
-			// wait for the preview (but no longer than 500 ms) before swithing the editors.
+			// wait for the preview (but no longer than 500 ms) before switching the editors.
 			newWidget.preparePreview( wikitext ).then( previewDeferred.resolve );
 			setTimeout( previewDeferred.resolve, 500 );
 

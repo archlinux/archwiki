@@ -18,6 +18,7 @@ ve.ui.contextItemFactory.register( require( './ve.ui.MWReferencesListContextItem
 ve.ui.contextItemFactory.register( require( './ve.ui.MWCitationNeededContextItem.js' ) );
 
 ve.ui.actionFactory.register( require( './ve.ui.MWCitationAction.js' ) );
+ve.ui.actionFactory.register( require( './ve.ui.MWEditReferenceNodeAction.js' ) );
 
 const MWUseExistingReferenceCommand = require( './ve.ui.MWUseExistingReferenceCommand.js' );
 const MWReferencesListCommand = require( './ve.ui.MWReferencesListCommand.js' );
@@ -48,12 +49,31 @@ ve.ui.mwWikitextTransferRegistry.register( 'reference', /<ref[^>]*>/ );
 
 ve.ui.HelpCompletionAction.static.toolGroups.cite = { mergeWith: 'insert' };
 
-// TODO: Remove after Citoid and ContentTranslation are updated to not use this any more
-ve.ui.mwCitationTools = require( './ve.ui.MWCitationTools.json' );
-// TODO: We could merge the two init files. Is this worth it?
 require( './ve.ui.MWReference.init.js' );
+require( './ve.ui.MWCitationTools.init.js' );
 
+// Virtual file declared via extension.json, actual source is ContentLanguage.php
 const data = require( './ve.ui.contentLanguage.json' );
 for ( const languageCode in data ) {
 	mw.language.setData( languageCode, data[ languageCode ] );
+}
+
+if ( window.QUnit ) {
+	module.exports = {
+		test: {
+			MWDataTransitionHelper: require( './ve.dm.MWDataTransitionHelper.js' ),
+			MWDocumentReferences: require( './ve.dm.MWDocumentReferences.js' ),
+			MWGroupReferences: require( './ve.dm.MWGroupReferences.js' ),
+			MWReferenceEditPanel: require( './ve.ui.MWReferenceEditPanel.js' ),
+			MWReferenceGroupInputWidget: require( './ve.ui.MWReferenceGroupInputWidget.js' ),
+			MWReferenceKeyGenerator: require( './ve.dm.MWReferenceKeyGenerator.js' ),
+			MWReferenceModel: require( './ve.dm.MWReferenceModel.js' ),
+			MWReferenceNode: require( './ve.dm.MWReferenceNode.js' ),
+			MWReferenceResultWidget: require( './ve.ui.MWReferenceResultWidget.js' ),
+			MWReferenceSearchWidget: require( './ve.ui.MWReferenceSearchWidget.js' ),
+			MWReferencesListDialog: require( './ve.ui.MWReferencesListDialog.js' ),
+			MWReferencesListNode: require( './ve.dm.MWReferencesListNode.js' ),
+			MWUseExistingReferenceCommand: require( './ve.ui.MWUseExistingReferenceCommand.js' )
+		}
+	};
 }

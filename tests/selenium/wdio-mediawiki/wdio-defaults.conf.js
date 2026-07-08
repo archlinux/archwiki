@@ -9,33 +9,22 @@
  */
 
 let ffmpeg;
-import fs from 'fs';
+import os from 'os';
 import path from 'path';
+import { getChromeOptions } from './chromeOptions.js';
+import { setupProcessHandlers } from './processHandlers.js';
 import { PrometheusFileReporter, writeAllProjectMetrics } from './PrometheusFileReporter.js';
 const logPath = process.env.LOG_DIR || path.join( process.cwd(), 'tests/selenium/log' );
-import { makeFilenameDate, saveScreenshot, startVideo, stopVideo } from 'wdio-mediawiki';
-// T355556: remove when T324766 is resolved
-import dns from 'dns';
+
+import { logBrowserInformation, logSystemInformation, makeFilenameDate, saveScreenshot, setDisplay, startVideo, stopVideo, startXvfb, stopXvfb } from 'wdio-mediawiki';
+
+let xvfbProcesses = [];
 
 if ( !process.env.MW_SERVER || !process.env.MW_SCRIPT_PATH ) {
 	throw new Error( 'MW_SERVER or MW_SCRIPT_PATH not defined.\nSee https://www.mediawiki.org/wiki/Selenium/How-to/Set_environment_variables\n' );
 }
 
-process.on( 'uncaughtException', ( error ) => {
-	console.error( 'Caught uncaughtException: ', error );
-	// eslint-disable-next-line n/no-process-exit
-	process.exit( 1 );
-} );
-
-process.on( 'unhandledRejection', ( reason, promise ) => {
-	console.log( 'Unhandled Rejection at:', promise, 'reason:', reason );
-} );
-
-[ 'SIGINT', 'SIGTERM' ].forEach( ( signal ) => process.on( signal, () => {
-	// eslint-disable-next-line no-underscore-dangle
-	console.log( `Received ${ signal }. Active handles:`, process._getActiveHandles() );
-} )
-);
+setupProcessHandlers();
 
 /**
  * For more details documentation and available options:
@@ -62,7 +51,9 @@ export const config = {
 	// Define the different browser configurations to use ("capabilities") here.
 	// ============
 
-	maxInstances: 1,
+	maxInstances: process.env.CI ? Math.floor( os.cpus().length * 0.75 ) : 1,
+	// Make sure wdio do not try to start XVFB (we do that ourselves when needed)
+	autoXvfb: false,
 	capabilities: [ {
 		// ======
 		// Custom conf keys for MediaWiki
@@ -77,6 +68,9 @@ export const config = {
 		// It is also used by afterTest for capturing screenshots.
 		'mw:screenshotPath': logPath,
 
+		// Browser width and height
+		'mw:width': 1280,
+		'mw:height': 1024,
 		// For Chrome/Chromium https://www.w3.org/TR/webdriver
 		browserName: 'chrome',
 		// Use correct browser and driver in CI
@@ -88,50 +82,7 @@ export const config = {
 		// Can be changed when we update to newer browser versions
 		// Bidi is still under development in Chrome/Firefox
 		'wdio:enforceWebDriverClassic': true,
-		'goog:chromeOptions': {
-			...( process.env.CI && {
-				binary: '/usr/bin/chromium'
-			} ),
-			// If DISPLAY is set, assume developer asked non-headless or CI with Xvfb.
-			// Otherwise, use --headless.
-			args: [
-				// Dismissed Chrome's `Save password?` popup
-				'--enable-automation',
-				...( process.env.DISPLAY ? [] : [ '--headless' ] ),
-				// Chrome sandbox does not work in Docker. Disable GPU to prevent crashes (T389536#10677201)
-				...( fs.existsSync( '/.dockerenv' ) ? [ '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage' ] : [] ),
-				// Disable as much as possible to make Chrome clean
-				// https://github.com/GoogleChrome/chrome-launcher/blob/main/docs/chrome-flags-for-tools.md
-				'--ash-no-nudges',
-				'--disable-background-networking',
-				'--disable-background-timer-throttling',
-				'--disable-backgrounding-occluded-windows',
-				'--disable-breakpad',
-				'--disable-client-side-phishing-detection',
-				'--disable-component-extensions-with-background-page',
-				'--disable-component-update',
-				'--disable-default-apps',
-				'--disable-domain-reliability',
-				'--disable-features=InterestFeedContentSuggestions',
-				'--disable-features=Translate',
-				'--disable-fetching-hints-at-navigation-start',
-				'--disable-hang-monitor',
-				'--disable-infobars',
-				'--disable-ipc-flooding-protection',
-				'--disable-prompt-on-repost',
-				'--disable-renderer-backgrounding',
-				'--disable-sync',
-				'--disable-search-engine-choice-screen',
-				'--disable-site-isolation-trials',
-				'--mute-audio',
-				'--no-default-browser-check',
-				'--no-first-run',
-				'--propagate-iph-for-testing',
-				// Workaround inputs not working consistently post-navigation on Chrome 90
-				// https://issuetracker.google.com/issues/42322798
-				'--allow-pre-commit-input'
-			]
-		}
+		'goog:chromeOptions': getChromeOptions( Boolean( process.env.CI ) )
 	} ],
 
 	// ===================
@@ -159,6 +110,17 @@ export const config = {
 		ui: 'bdd',
 		timeout: process.env.DEBUG ? ( 60 * 60 * 1000 ) : ( 60 * 1000 )
 	},
+	// By default we do not record videos and you can turn it on in CI
+	// Make sure to add it to true and change useBrowserHeadless to false
+	recordVideo: false,
+	// Always use headless in CI (if you do not override it),
+	// DISPLAY= forces headless and DISPLAY=<anything> forces non headless.
+	// When DISPLAY is not set locally, defaults to headless.
+	useBrowserHeadless: Boolean( process.env.CI ) ||
+		!process.env.DISPLAY,
+	// Only take screenshots on test failures. Setting this to false will take screenshots
+	// independently if a test works or fail
+	screenshotsOnFailureOnly: true,
 	// See also: https://webdriver.io/docs/dot-reporter
 	reporters: [
 		// See also: https://webdriver.io/docs/spec-reporter
@@ -193,22 +155,54 @@ export const config = {
 	 * Gets executed once before all workers get launched.
 	 *
 	 * @param {Object} wdioConfig wdio configuration object
+	 * @param {Object[]} capabilities
 	 */
-	onPrepare: function ( wdioConfig ) {
+	onPrepare: function ( wdioConfig, capabilities ) {
 		console.log( `Run test targeting ${ wdioConfig.baseUrl }` );
+		logSystemInformation();
+		console.log( `[Configuration] maxInstances ${ wdioConfig.maxInstances } (max test suites running in parallel) ` );
+
+		const { maxInstances, useBrowserHeadless, recordVideo } = wdioConfig;
+
+		// When we pass on as CLI the parameters will be strings
+		const isHeadless = useBrowserHeadless === true || useBrowserHeadless === 'true';
+		const isRecording = recordVideo === true || recordVideo === 'true';
+
+		if ( !isHeadless && isRecording ) {
+			xvfbProcesses = startXvfb( maxInstances, capabilities[ 0 ][ 'mw:width' ], capabilities[ 0 ][ 'mw:height' ] );
+		}
 	},
+
 	/**
 	 * Gets executed just before initializing the webdriver session and test framework.
 	 * It allows you to manipulate configurations depending on the capability or spec.
 	 *
-	 * @param {Object} config wdio configuration object
+	 * @param {Object} configuration wdio configuration object
 	 * @param {Array.<Object>} capabilities list of capabilities details
-	 * @param {Array.<string>} specs List of spec file paths that are to be run
 	 */
-	// T355556: remove when T324766 is resolved
-	beforeSession: function () {
-		// eslint-disable-next-line n/no-unsupported-features/node-builtins
-		dns.setDefaultResultOrder( 'ipv4first' );
+	beforeSession: function ( configuration, capabilities ) {
+		const { useBrowserHeadless, recordVideo } = configuration;
+		// When we pass on as CLI the parameters will be strings
+		const isHeadless = useBrowserHeadless === true || useBrowserHeadless === 'true';
+		const isRecording = recordVideo === true || recordVideo === 'true';
+		if ( isHeadless === true ) {
+			capabilities[ 'goog:chromeOptions' ].args.push( '--headless' );
+		} else if ( isRecording === true ) {
+			setDisplay( configuration.maxInstances );
+		}
+	},
+
+	/**
+	 * Gets executed before test execution begins. At this point you can access to all global
+	 * variables like `browser`. It is the perfect place to define custom commands.
+	 *
+	 * @param {Array.<Object>} capabilities list of capabilities details
+	 * @param {Array.<string>} specs        List of spec file paths that are to be run
+	 * @param {Object}         browser      instance of created browser/device session
+	 */
+	before: async function ( capabilities, specs, browser ) {
+		await browser.setWindowSize( browser.options.capabilities[ 'mw:width' ], browser.options.capabilities[ 'mw:height' ] );
+		await logBrowserInformation( browser );
 	},
 
 	/**
@@ -217,7 +211,9 @@ export const config = {
 	 * @param {Object} test Mocha Test object
 	 */
 	beforeTest: async function ( test ) {
-		ffmpeg = await startVideo( ffmpeg, `${ test.parent }-${ test.title }` );
+		if ( browser.options.recordVideo === true ) {
+			ffmpeg = await startVideo( ffmpeg, `${ test.parent }-${ test.title }` );
+		}
 	},
 
 	/**
@@ -229,9 +225,14 @@ export const config = {
 	 */
 	afterTest: async function ( test, context, result ) {
 		try {
-			await saveScreenshot( `${ test.parent }-${ test.title }${ result.passed ? '' : '-failed' }` );
+			const hasFailed = result?.passed === false || Boolean( result?.error );
+			if ( browser.options.screenshotsOnFailureOnly !== true || hasFailed ) {
+				await saveScreenshot( `${ test.parent }-${ test.title }${ hasFailed ? '-failed' : '' }` );
+			}
 		} finally {
-			stopVideo( ffmpeg );
+			if ( browser.options.recordVideo === true ) {
+				stopVideo( ffmpeg );
+			}
 		}
 	},
 
@@ -239,6 +240,7 @@ export const config = {
 	 * Executed after all runners are done.
 	 */
 	onComplete() {
+		stopXvfb( xvfbProcesses );
 		const random = Math.random().toString( 16 ).slice( 2, 10 );
 		const fileName = `project-metrics-${ makeFilenameDate() }-${ random }`;
 		writeAllProjectMetrics( logPath, fileName );

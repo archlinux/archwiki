@@ -13,10 +13,10 @@ use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\Upload\UploadBase;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
-use MWFileProps;
-use UploadBase;
+use MediaWiki\Utils\MWFileProps;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Mime\MimeAnalyzer;
 
@@ -25,49 +25,18 @@ use Wikimedia\Mime\MimeAnalyzer;
  * an action.
  */
 class RunVariableGenerator extends VariableGenerator {
-	/**
-	 * @var User
-	 */
-	private $user;
 
-	/**
-	 * @var Title
-	 */
-	private $title;
-
-	/** @var TextExtractor */
-	private $textExtractor;
-	/** @var MimeAnalyzer */
-	private $mimeAnalyzer;
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/**
-	 * @param AbuseFilterHookRunner $hookRunner
-	 * @param UserFactory $userFactory
-	 * @param TextExtractor $textExtractor
-	 * @param MimeAnalyzer $mimeAnalyzer
-	 * @param WikiPageFactory $wikiPageFactory
-	 * @param User $user
-	 * @param Title $title
-	 * @param VariableHolder|null $vars
-	 */
 	public function __construct(
 		AbuseFilterHookRunner $hookRunner,
 		UserFactory $userFactory,
-		TextExtractor $textExtractor,
-		MimeAnalyzer $mimeAnalyzer,
-		WikiPageFactory $wikiPageFactory,
-		User $user,
-		Title $title,
+		private readonly TextExtractor $textExtractor,
+		private readonly MimeAnalyzer $mimeAnalyzer,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly User $user,
+		private readonly Title $title,
 		?VariableHolder $vars = null
 	) {
 		parent::__construct( $hookRunner, $userFactory, $vars );
-		$this->textExtractor = $textExtractor;
-		$this->mimeAnalyzer = $mimeAnalyzer;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->user = $user;
-		$this->title = $title;
 	}
 
 	/**
@@ -129,7 +98,7 @@ class RunVariableGenerator extends VariableGenerator {
 		// Don't treat content model change as null edit though.
 		if (
 			$content->equals( $oldContent ) ||
-			( $oldContent->getModel() === $content->getModel() && strcmp( $oldAfText, $text ) === 0 )
+			( $oldContent->getModel() === $content->getModel() && $oldAfText === $text )
 		) {
 			return null;
 		}
@@ -343,7 +312,9 @@ class RunVariableGenerator extends VariableGenerator {
 
 				$this->setLastEditAge( $revRec, 'page' );
 				$oldcontent = $revRec->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
-				'@phan-var Content $oldcontent';
+				if ( $oldcontent === null ) {
+					throw new \UnexpectedValueException( 'Failed to retrieve the old page content' );
+				}
 				$oldtext = $this->textExtractor->contentToString( $oldcontent );
 
 				// Page text is ignored for uploads when the page already exists
@@ -399,7 +370,12 @@ class RunVariableGenerator extends VariableGenerator {
 		}
 
 		$this->vars->setVar( 'action', $autocreate ? 'autocreateaccount' : 'createaccount' );
-		$this->vars->setVar( 'accountname', $createdUser->getName() );
+		$this->vars->setVar( 'account_name', $createdUser->getName() );
+		$this->vars->setLazyLoadVar(
+			'account_type',
+			'account-type',
+			[ 'autocreate' => $autocreate, 'createdUser' => $createdUser ]
+		);
 		$this->addGenericVars();
 
 		$this->hookRunner->onAbuseFilterGenerateAccountCreationVars(

@@ -8,6 +8,7 @@
 			"Goombiis",
 			"Grind24",
 			"Hello71",
+			"JLTRY",
 			"Macofe",
 			"Mahabarata",
 			"Mattho69",
@@ -22,7 +23,7 @@
 			"Wyz",
 			"Yona b",
 			"Zebulon84",
-			"JLTRY"
+			"Jérémy-Günther-Heinz Jähnick"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -135,5 +136,7 @@
 	"math-wikibase-special-form-button": "Demander des informations",
 	"math-wikibase-special-error-header": "Erreur",
 	"math-wikibase-special-error-invalid-argument": "L’ID de l’élément Wikibase que vous avez spécifié n’existe pas.",
-	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase."
+	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase.",
+	"math-editpage-insert-inline": "Formule mathématique (en ligne)",
+	"math-editpage-insert-block": "Formule mathématique (bloc)"
 }

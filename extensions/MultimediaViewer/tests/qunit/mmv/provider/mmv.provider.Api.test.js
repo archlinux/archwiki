@@ -58,70 +58,74 @@ QUnit.test( 'apiGetWithMaxAge()', function ( assert ) {
 	assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage can be overridden to unset' );
 } );
 
-QUnit.test( 'getCachedPromise success', ( assert ) => {
+QUnit.test( 'getCachedPromise success', async ( assert ) => {
 	const api = { get: function () {} };
 	const apiProvider = new Api( api );
-	const oldMwLog = mw.log;
-	let promiseShouldBeCached = false;
+	const logSpy = sinon.spy( mw, 'log' );
 
-	mw.log = function () {
-		assert.true( false, 'mw.log should not have been called' );
-	};
-
-	const promiseSource = function ( result ) {
+	let sourceCalled = 0;
+	function promiseSource( result ) {
 		return function () {
-			assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
+			sourceCalled++;
 			return $.Deferred().resolve( result );
 		};
-	};
+	}
 
-	apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).done( ( result ) => {
-		assert.strictEqual( result, 1, 'result comes from the promise source' );
-	} );
+	assert.strictEqual(
+		await apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ),
+		1,
+		'fresh foo result'
+	);
+	assert.strictEqual(
+		await apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ),
+		2,
+		'fresh bar result'
+	);
 
-	apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).done( ( result ) => {
-		assert.strictEqual( result, 2, 'result comes from the promise source' );
-	} );
+	sourceCalled = 0;
+	assert.strictEqual(
+		await apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ),
+		1,
+		'cached foo result'
+	);
+	assert.strictEqual( sourceCalled, 0, 'uncached calls' );
 
-	promiseShouldBeCached = true;
-	apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).done( ( result ) => {
-		assert.strictEqual( result, 1, 'result comes from cache' );
-	} );
-
-	mw.log = oldMwLog;
+	assert.strictEqual( logSpy.callCount, 0, 'mw.log should not have been called' );
 } );
 
-QUnit.test( 'getCachedPromise failure', ( assert ) => {
+QUnit.test( 'getCachedPromise failure', async ( assert ) => {
 	const api = { get: function () {} };
 	const apiProvider = new Api( api );
-	const oldMwLog = mw.log;
-	let promiseShouldBeCached = false;
+	const logSpy = sinon.spy( mw, 'log' );
 
-	mw.log = function () {
-		assert.true( true, 'mw.log was called' );
-	};
-
-	const promiseSource = function ( result ) {
+	let sourceCalled = 0;
+	function promiseSource( result ) {
 		return function () {
-			assert.strictEqual( promiseShouldBeCached, false, 'promise was not cached' );
+			sourceCalled++;
 			return $.Deferred().reject( result );
 		};
-	};
+	}
 
-	apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ).fail( ( result ) => {
-		assert.strictEqual( result, 1, 'result comes from the promise source' );
-	} );
+	await assert.rejects(
+		apiProvider.getCachedPromise( 'foo', promiseSource( 1 ) ),
+		( result ) => result === 1,
+		'fresh foo rejection'
+	);
+	await assert.rejects(
+		apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ),
+		( result ) => result === 2,
+		'fresh bar rejection'
+	);
 
-	apiProvider.getCachedPromise( 'bar', promiseSource( 2 ) ).fail( ( result ) => {
-		assert.strictEqual( result, 2, 'result comes from the promise source' );
-	} );
+	sourceCalled = 0;
+	await assert.rejects(
+		apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ),
+		( result ) => result === 1,
+		'cached foo rejection'
+	);
+	assert.strictEqual( sourceCalled, 0, 'uncached calls' );
 
-	promiseShouldBeCached = true;
-	apiProvider.getCachedPromise( 'foo', promiseSource( 3 ) ).fail( ( result ) => {
-		assert.strictEqual( result, 1, 'result comes from cache' );
-	} );
-
-	mw.log = oldMwLog;
+	assert.strictEqual( logSpy.called, true, 'mw.log was called' );
 } );
 
 QUnit.test( 'getErrorMessage', ( assert ) => {
@@ -142,11 +146,9 @@ QUnit.test( 'getErrorMessage', ( assert ) => {
 	assert.strictEqual( apiProvider.getErrorMessage( {} ), 'unknown error', 'missing error message is handled' );
 } );
 
-QUnit.test( 'getQueryPage', ( assert ) => {
+QUnit.test( 'getQueryPage', async ( assert ) => {
 	const api = { get: function () {} };
 	const apiProvider = new Api( api );
-	const done = assert.async( 5 );
-
 	const data = {
 		query: {
 			pages: [
@@ -157,40 +159,28 @@ QUnit.test( 'getQueryPage', ( assert ) => {
 		}
 	};
 
-	apiProvider.getQueryPage( data ).then( ( field ) => {
-		assert.strictEqual( field, data.query.pages[ 0 ], 'specified page is found' );
-		done();
-	} );
+	const field = await apiProvider.getQueryPage( data );
+	assert.strictEqual( field, data.query.pages[ 0 ], 'specified page is found' );
 
-	apiProvider.getQueryPage( {} ).fail( () => {
-		assert.true( true, 'promise rejected when data is missing' );
-		done();
-	} );
-
-	apiProvider.getQueryPage( { data: { query: {} } } ).fail( () => {
-		assert.true( true, 'promise rejected when pages are missing' );
-		done();
-	} );
-
-	apiProvider.getQueryPage( { data: { query: { pages: [] } } } ).fail( () => {
-		assert.true( true, 'promise rejected when pages are empty' );
-		done();
-	} );
-
-	apiProvider.getQueryPage( {
-		query: {
-			pages: [
-				{
-					title: 'File:Stuff.jpg'
-				},
-				{
-					title: 'File:OtherStuff.jpg'
-				}
-			]
-		}
-	} ).fail( () => {
-		assert.true( true, 'promise rejected when data contains two entries' );
-		done();
-	} );
-
+	await assert.rejects( apiProvider.getQueryPage( {} ), 'data is missing' );
+	await assert.rejects( apiProvider.getQueryPage( { data: { query: {} } } ), 'pages are missing' );
+	await assert.rejects(
+		apiProvider.getQueryPage( { data: { query: { pages: [] } } } ),
+		'pages are empty'
+	);
+	await assert.rejects(
+		apiProvider.getQueryPage( {
+			query: {
+				pages: [
+					{
+						title: 'File:Stuff.jpg'
+					},
+					{
+						title: 'File:OtherStuff.jpg'
+					}
+				]
+			}
+		} ),
+		'promise rejected when data contains two entries'
+	);
 } );

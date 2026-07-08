@@ -222,7 +222,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Становити перемінну (set_var)",
 	"abusefilter-edit-builder-group-vars": "Перемінны",
 	"abusefilter-edit-builder-vars-timestamp": "Час едітованя в уніксовім форматї",
-	"abusefilter-edit-builder-vars-accountname": "Імя конта (при створїню нового конта)",
+	"abusefilter-edit-builder-vars-account-name": "Імя конта (при створїню нового конта)",
 	"abusefilter-edit-builder-vars-action": "Дїя",
 	"abusefilter-edit-builder-vars-addedlines": "Рядкы приданы почас едітованя",
 	"abusefilter-edit-builder-vars-delta": "Зміна розміру способена едітованём",

@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC\Nodes;
 
 use ArgumentCountError;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1nb;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexNode;
@@ -60,5 +61,10 @@ class UQTest extends MediaWikiIntegrationTestCase {
 		$uq = new UQ( new Fun1nb( '\\overarc', new Literal( 'a' ) ), new Literal( 'b' ) );
 		$this->assertStringContainsString( '<mover', $uq->toMMLTree(),
 			'Over_operators be rendered over the operator.' );
+	}
+
+	public function testEmptyBaseMML() {
+		$uq = new UQ( new TexNode(), new Literal( 'b' ) );
+		$this->assertInstanceOf( MMLmi::class, $uq->toMMLTree()->getChildren()[0] );
 	}
 }

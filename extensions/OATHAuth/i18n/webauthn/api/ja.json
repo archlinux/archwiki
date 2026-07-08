@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Shulmj"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "登録/認証プロセスの時に使用するサーバーとクライアントをつながる API モジュール。",
+	"apihelp-oathauth-webauthn-param-func": "リクエストした実行したい関数の名前。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "認証情報。",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "登録情報。"
+}

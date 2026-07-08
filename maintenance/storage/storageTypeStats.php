@@ -51,7 +51,7 @@ class StorageTypeStats extends Maintenance {
 SQL;
 
 		for ( $rangeStart = 0; $rangeStart < $endId; $rangeStart += $binSize ) {
-			if ( $rangeStart / $binSize % 10 == 0 ) {
+			if ( intdiv( $rangeStart, $binSize ) % 10 === 0 ) {
 				echo "$rangeStart\r";
 			}
 			$res = $dbr->newSelectQueryBuilder()
@@ -69,7 +69,6 @@ SQL;
 				}
 				$class = $row->class;
 				$count = $row->count;
-				// @phan-suppress-next-line PhanImpossibleConditionInLoop False positive
 				if ( !isset( $stats[$flags][$class] ) ) {
 					$stats[$flags][$class] = [
 						'count' => 0,

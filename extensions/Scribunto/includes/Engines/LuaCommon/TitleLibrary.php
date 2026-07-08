@@ -4,13 +4,21 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use LogicException;
 use MediaWiki\Content\Content;
+use MediaWiki\FileRepo\RepoGroup;
+use MediaWiki\Language\Language;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 class TitleLibrary extends LibraryBase {
 	// Note these caches are naturally limited to
@@ -18,38 +26,55 @@ class TitleLibrary extends LibraryBase {
 	// addition besides the one for the current page calls
 	// incrementExpensiveFunctionCount()
 	/** @var Title[] */
-	private $titleCache = [];
+	private array $titleCache = [];
 	/** @var (Title|null)[] */
-	private $idCache = [ 0 => null ];
+	private array $idCache = [ 0 => null ];
 
 	/** @var TitleAttributeResolver[] */
 	private array $attributeResolvers = [];
 
+	public function __construct(
+		LuaEngine $engine,
+		private readonly Language $contentLanguage,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly ObjectFactory $objectFactory,
+		private readonly RepoGroup $repoGroup,
+		private readonly RestrictionStore $restrictionStore,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly TitleFormatter $titleFormatter,
+		private readonly WikiPageFactory $wikiPageFactory,
+	) {
+		parent::__construct( $engine );
+	}
+
 	/** @inheritDoc */
 	public function register() {
 		$lib = [
-			'newTitle' => [ $this, 'newTitle' ],
-			'newBatchLookupExistence' => [ $this, 'newBatchLookupExistence' ],
-			'makeTitle' => [ $this, 'makeTitle' ],
-			'getExpensiveData' => [ $this, 'getExpensiveData' ],
-			'getUrl' => [ $this, 'getUrl' ],
-			'getContent' => [ $this, 'getContent' ],
-			'getCategories' => [ $this, 'getCategories' ],
-			'getFileInfo' => [ $this, 'getFileInfo' ],
-			'protectionLevels' => [ $this, 'protectionLevels' ],
-			'cascadingProtection' => [ $this, 'cascadingProtection' ],
-			'redirectTarget' => [ $this, 'redirectTarget' ],
-			'recordVaryFlag' => [ $this, 'recordVaryFlag' ],
-			'getPageLangCode' => [ $this, 'getPageLangCode' ],
-			'getAttributeValue' => [ $this, 'getAttributeValue' ],
+			'newTitle' => $this->newTitle( ... ),
+			'newBatchLookupExistence' => $this->newBatchLookupExistence( ... ),
+			'makeTitle' => $this->makeTitle( ... ),
+			'getExpensiveData' => $this->getExpensiveData( ... ),
+			'getUrl' => $this->getUrl( ... ),
+			'getContent' => $this->getContent( ... ),
+			'getCategories' => $this->getCategories( ... ),
+			'getFileInfo' => $this->getFileInfo( ... ),
+			'getFileMetadata' => $this->getFileMetadata( ... ),
+			'protectionLevels' => $this->protectionLevels( ... ),
+			'cascadingProtection' => $this->cascadingProtection( ... ),
+			'redirectTarget' => $this->redirectTarget( ... ),
+			'recordVaryFlag' => $this->recordVaryFlag( ... ),
+			'getPageLangCode' => $this->getPageLangCode( ... ),
+			'getAttributeValue' => $this->getAttributeValue( ... ),
 		];
 		$title = $this->getTitle();
 
 		$extensionRegistry = ExtensionRegistry::getInstance();
-		$objectFactory = MediaWikiServices::getInstance()->getObjectFactory();
 		$extraTitleAttributes = $extensionRegistry->getAttribute( 'ScribuntoLuaExtraTitleAttributes' );
 		foreach ( $extraTitleAttributes as $key => $value ) {
-			$resolver = $objectFactory->createObject( $value, [ 'assertClass' => TitleAttributeResolver::class ] );
+			$resolver = $this->objectFactory->createObject( $value, [
+				'assertClass' => TitleAttributeResolver::class
+			] );
 			$resolver->setEngine( $this->getEngine() );
 			$this->attributeResolvers[$key] = $resolver;
 		}
@@ -66,19 +91,20 @@ class TitleLibrary extends LibraryBase {
 	 * @param int $argIdx Argument index (for errors)
 	 * @param mixed &$arg Argument
 	 * @param int|null $default Default value, if $arg is null
+	 * @throws LuaError
 	 */
 	private function checkNamespace( $name, $argIdx, &$arg, $default = null ) {
 		if ( $arg === null && $default !== null ) {
 			$arg = $default;
 		} elseif ( is_numeric( $arg ) ) {
 			$arg = (int)$arg;
-			if ( !MediaWikiServices::getInstance()->getNamespaceInfo()->exists( $arg ) ) {
+			if ( !$this->namespaceInfo->exists( $arg ) ) {
 				throw new LuaError(
 					"bad argument #$argIdx to '$name' (unrecognized namespace number '$arg')"
 				);
 			}
 		} elseif ( is_string( $arg ) ) {
-			$ns = MediaWikiServices::getInstance()->getContentLanguage()->getNsIndex( $arg );
+			$ns = $this->contentLanguage->getNsIndex( $arg );
 			if ( $ns === false ) {
 				throw new LuaError(
 					"bad argument #$argIdx to '$name' (unrecognized namespace name '$arg')"
@@ -109,8 +135,7 @@ class TitleLibrary extends LibraryBase {
 			'thePartialUrl' => $title->getPartialURL(),
 		];
 		if ( $ns === NS_SPECIAL ) {
-			$ret['exists'] = MediaWikiServices::getInstance()
-				->getSpecialPageFactory()->exists( $title->getDBkey() );
+			$ret['exists'] = $this->specialPageFactory->exists( $title->getDBkey() );
 		}
 		if ( $ns !== NS_FILE && $ns !== NS_MEDIA ) {
 			$ret['file'] = false;
@@ -125,11 +150,11 @@ class TitleLibrary extends LibraryBase {
 	 * title for repeated lookups. It may call incrementExpensiveFunctionCount() if
 	 * the title is not already cached.
 	 *
-	 * @internal
 	 * @param string $text Title text
 	 * @return array Lua data
+	 * @throws LuaError
 	 */
-	public function getExpensiveData( $text ) {
+	private function getExpensiveData( $text ) {
 		$this->checkType( 'getExpensiveData', 1, $text, 'string' );
 		$title = Title::newFromText( $text );
 		if ( !$title ) {
@@ -172,8 +197,7 @@ class TitleLibrary extends LibraryBase {
 			'contentModel' => $title->getContentModel(),
 		];
 		if ( $title->getNamespace() === NS_SPECIAL ) {
-			$ret['exists'] = MediaWikiServices::getInstance()
-				->getSpecialPageFactory()->exists( $title->getDBkey() );
+			$ret['exists'] = $this->specialPageFactory->exists( $title->getDBkey() );
 		} else {
 			// bug 70495: don't just check whether the ID != 0
 			$ret['exists'] = $title->exists();
@@ -186,19 +210,19 @@ class TitleLibrary extends LibraryBase {
 	 *
 	 * This allows batching of lookups of expensive title properties.
 	 *
-	 * @internal
 	 * @param array $list Table of strings to turn into titles (1-indexed)
 	 * @param mixed $defaultNamespace
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function newBatchLookupExistence( $list, $defaultNamespace = null ) {
+	private function newBatchLookupExistence( $list, $defaultNamespace = null ) {
 		$this->checkType( 'mw.title.newBatch', 1, $list, 'table' );
 		$this->checkNamespace( 'mw.title.newBatch', 2, $defaultNamespace, NS_MAIN );
 		$returnValue = [];
 		// array of prefixedDbKey -> what indexes to put it in returned table
 		$returnMapping = [];
 		$expensiveCount = 0;
-		$lb = MediaWikiServices::getInstance()->getLinkBatchFactory()->newLinkBatch();
+		$lb = $this->linkBatchFactory->newLinkBatch();
 		$lb->setCaller( __METHOD__ );
 		for ( $i = 1; $i < count( $list ) + 1; $i++ ) {
 			if ( !isset( $list[$i] ) ) {
@@ -275,13 +299,13 @@ class TitleLibrary extends LibraryBase {
 	 * Calls Title::newFromID or Title::newFromTitle as appropriate for the
 	 * arguments.
 	 *
-	 * @internal
 	 * @param string|int $text_or_id Title or page_id to fetch
 	 * @param string|int|null $defaultNamespace Namespace name or number to use if
 	 *  $text_or_id doesn't override
 	 * @return array Lua data
+	 * @throws LuaError
 	 */
-	public function newTitle( $text_or_id, $defaultNamespace = null ) {
+	private function newTitle( $text_or_id, $defaultNamespace = null ) {
 		$type = $this->getLuaType( $text_or_id );
 		if ( $type === 'number' ) {
 			if ( array_key_exists( $text_or_id, $this->idCache ) ) {
@@ -323,14 +347,14 @@ class TitleLibrary extends LibraryBase {
 	 *
 	 * Calls Title::makeTitleSafe.
 	 *
-	 * @internal
 	 * @param string|int $ns Namespace
 	 * @param string $text Title text
 	 * @param string|null $fragment URI fragment
 	 * @param string|null $interwiki Interwiki code
 	 * @return array Lua data
+	 * @throws LuaError
 	 */
-	public function makeTitle( $ns, $text, $fragment = null, $interwiki = null ) {
+	private function makeTitle( $ns, $text, $fragment = null, $interwiki = null ) {
 		$this->checkNamespace( 'makeTitle', 1, $ns );
 		$this->checkType( 'makeTitle', 2, $text, 'string' );
 		$this->checkTypeOptional( 'makeTitle', 3, $fragment, 'string', '' );
@@ -348,14 +372,14 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Get a URL referring to this title
-	 * @internal
 	 * @param string $text Title text.
 	 * @param string $which 'fullUrl', 'localUrl', or 'canonicalUrl'
 	 * @param string|array|null $query Query string or query string data.
 	 * @param string|null $proto 'http', 'https', 'relative', or 'canonical'
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function getUrl( $text, $which, $query = null, $proto = null ) {
+	private function getUrl( $text, $which, $query = null, $proto = null ) {
 		static $protoMap = [
 			'http' => PROTO_HTTP,
 			'https' => PROTO_HTTPS,
@@ -406,20 +430,21 @@ class TitleLibrary extends LibraryBase {
 			return null;
 		}
 
-		if ( MediaWikiServices::getInstance()->getNamespaceInfo()->isNonincludable( $title->getNamespace() ) ) {
+		if ( $this->namespaceInfo->isNonincludable( $title->getNamespace() ) ) {
 			return null;
 		}
 
-		$rev = $this->getParser()->fetchCurrentRevisionRecordOfTitle( $title );
+		$parser = $this->getParser();
+		$rev = $parser->fetchCurrentRevisionRecordOfTitle( $title );
 
 		if ( $title->equals( $this->getTitle() ) ) {
-			$parserOutput = $this->getParser()->getOutput();
+			$parserOutput = $parser->getOutput();
 			$parserOutput->setOutputFlag( ParserOutputFlags::VARY_REVISION_SHA1 );
 			$parserOutput->setRevisionUsedSha1Base36( $rev ? $rev->getSha1() : '' );
 			wfDebug( __METHOD__ . ": set vary-revision-sha1 for '$title'" );
 		} else {
 			// Record in templatelinks, so edits cause the page to be refreshed
-			$this->getParser()->getOutput()->addTemplate(
+			$parser->getOutput()->addTemplate(
 				$title, $title->getArticleID(), $title->getLatestRevID()
 			);
 		}
@@ -443,28 +468,27 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Handler for getContent
-	 * @internal
 	 * @param string $text
 	 * @return string[]|null[]
 	 */
-	public function getContent( $text ) {
+	private function getContent( $text ) {
 		$this->checkType( 'getContent', 1, $text, 'string' );
 		$content = $this->getContentInternal( $text );
 		return [ $content ? $content->serialize() : null ];
 	}
 
 	/**
-	 * @internal
 	 * @param string $text
 	 * @return string[][]
+	 * @throws LuaError
 	 */
-	public function getCategories( $text ) {
+	private function getCategories( $text ) {
 		$this->checkType( 'getCategories', 1, $text, 'string' );
 		$title = Title::newFromText( $text );
 		if ( !$title ) {
 			return [ [] ];
 		}
-		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
+		$page = $this->wikiPageFactory->newFromTitle( $title );
 		$this->incrementExpensiveFunctionCount();
 
 		$parserOutput = $this->getParser()->getOutput();
@@ -485,11 +509,11 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Handler for getFileInfo
-	 * @internal
 	 * @param string $text
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function getFileInfo( $text ) {
+	private function getFileInfo( $text ) {
 		$this->checkType( 'getFileInfo', 1, $text, 'string' );
 		$title = Title::newFromText( $text );
 		if ( !$title ) {
@@ -501,7 +525,7 @@ class TitleLibrary extends LibraryBase {
 		}
 
 		$this->incrementExpensiveFunctionCount();
-		$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
+		$file = $this->repoGroup->findFile( $title );
 		if ( !$file ) {
 			return [ [ 'exists' => false ] ];
 		}
@@ -535,13 +559,85 @@ class TitleLibrary extends LibraryBase {
 	}
 
 	/**
+	 * Get Exif-style metadata for a file
+	 *
+	 * This uses $file->getCommonMetaArray not $file->getMetadataArray().
+	 * getMetadataArray() is defined entirely by the handler, while getCommonMetaArray
+	 * should use the same format for all handlers.
+	 *
+	 * Fetching metadata requires an additional DB request beyond just fetching the
+	 * file so increment the expensive function counter again.
+	 *
+	 * @param string $text File name to lookup
+	 * @return array
+	 * @throws LuaError
+	 */
+	private function getFileMetadata( $text ) {
+		// Redo these checks just in case, but we should never be able
+		// to get here if any of them are false except for race conditions.
+		$this->checkType( 'getFileMetadata', 1, $text, 'string' );
+		$title = Title::newFromText( $text );
+		if ( !$title ) {
+			return [ [] ];
+		}
+		$ns = $title->getNamespace();
+		if ( $ns !== NS_FILE && $ns !== NS_MEDIA ) {
+			return [ [] ];
+		}
+
+		$this->incrementExpensiveFunctionCount();
+		$file = $this->repoGroup->findFile( $title );
+		if ( !$file ) {
+			return [ [] ];
+		}
+		return [ $this->normalizeMetadata( $file->getCommonMetaArray() ) ];
+	}
+
+	/**
+	 * Normalize metadata array (Change to 1-based indexing)
+	 *
+	 * MediaWiki distinguishes between handler does not support metadata and
+	 * a particular image just doesn't have metadata, but we are going to return
+	 * an empty array in both cases.
+	 *
+	 * The general format of the metadata array is:
+	 * [
+	 *   'field name' => 'simple value',
+	 *   'field2' => [ 'item1', 'item2', '_type' => 'ul' ],
+	 *   'lang field' => [ 'en' => 'English text', 'de' => 'German text', '_type' => 'x-default' ]
+	 * ]
+	 * In the UI metadata field names are translated with i18n messages, but we just have keys.
+	 *
+	 * @param bool|array $arr Associative array or false if media type doesn't support
+	 * @return array One based array.
+	 */
+	private function normalizeMetadata( $arr ) {
+		if ( $arr === false ) {
+			return [];
+		}
+		// The metadata array contains string keys
+		// The values can be either a string or an array.
+		// If the value is an array it can contain both numeric
+		// and string keys.
+		foreach ( $arr as &$entry ) {
+			if ( is_array( $entry ) ) {
+				// Note: We cannot use makeArrayOneBased as it
+				// modifies string keys.
+				array_unshift( $entry, null );
+				unset( $entry[0] );
+			}
+		}
+		return $arr;
+	}
+
+	/**
 	 * Handler for getAttributeValue
-	 * @internal
 	 * @param string $text
 	 * @param string $attribute
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function getAttributeValue( $text, $attribute ) {
+	private function getAttributeValue( $text, $attribute ) {
 		$this->checkType( 'getAttributeValue', 1, $text, 'string' );
 		$this->checkType( 'getAttributeValue', 2, $attribute, 'string' );
 		$title = Title::newFromText( $text );
@@ -568,58 +664,51 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Handler for protectionLevels
-	 * @internal
 	 * @param string $text
 	 * @return array
 	 */
-	public function protectionLevels( $text ) {
+	private function protectionLevels( $text ) {
 		$this->checkType( 'protectionLevels', 1, $text, 'string' );
 		$title = Title::newFromText( $text );
 		if ( !$title ) {
 			return [ null ];
 		}
 
-		$restrictionStore = MediaWikiServices::getInstance()->getRestrictionStore();
-
-		if ( !$restrictionStore->areRestrictionsLoaded( $title ) ) {
+		if ( !$this->restrictionStore->areRestrictionsLoaded( $title ) ) {
 			$this->incrementExpensiveFunctionCount();
 		}
 		return [ array_map(
-			[ self::class, 'makeArrayOneBased' ],
-			$restrictionStore->getAllRestrictions( $title )
+			self::makeArrayOneBased( ... ),
+			$this->restrictionStore->getAllRestrictions( $title )
 		) ];
 	}
 
 	/**
 	 * Handler for cascadingProtection
-	 * @internal
 	 * @param string $text
 	 * @return array
 	 */
-	public function cascadingProtection( $text ) {
+	private function cascadingProtection( $text ) {
 		$this->checkType( 'cascadingProtection', 1, $text, 'string' );
 		$title = Title::newFromText( $text );
 		if ( !$title ) {
 			return [ null ];
 		}
+		$titleFormatter = $this->titleFormatter;
 
-		$restrictionStore = MediaWikiServices::getInstance()->getRestrictionStore();
-		$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
-
-		if ( !$restrictionStore->areCascadeProtectionSourcesLoaded( $title ) ) {
+		if ( !$this->restrictionStore->areCascadeProtectionSourcesLoaded( $title ) ) {
 			$this->incrementExpensiveFunctionCount();
 		}
 
-		[ $sources, $restrictions ] = $restrictionStore->getCascadeProtectionSources( $title );
+		[ $sources, $restrictions ] = $this->restrictionStore->getCascadeProtectionSources( $title );
 
 		return [ [
 			'sources' => self::makeArrayOneBased( array_map(
-				static function ( $t ) use ( $titleFormatter ) {
-					return $titleFormatter->getPrefixedText( $t );
-				},
-				$sources ) ),
+				$titleFormatter->getPrefixedText( ... ),
+				$sources
+			) ),
 			'restrictions' => array_map(
-				[ self::class, 'makeArrayOneBased' ],
+				self::makeArrayOneBased( ... ),
 				$restrictions
 			)
 		] ];
@@ -627,11 +716,11 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Handler for redirectTarget
-	 * @internal
 	 * @param string $text
 	 * @return string[]|null[]
+	 * @throws LuaError
 	 */
-	public function redirectTarget( $text ) {
+	private function redirectTarget( $text ) {
 		$this->checkType( 'redirectTarget', 1, $text, 'string' );
 		$content = $this->getContentInternal( $text );
 		$redirTitle = $content ? $content->getRedirectTarget() : null;
@@ -640,12 +729,12 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Record a ParserOutput flag when the current title is accessed
-	 * @internal
 	 * @param string $text
 	 * @param string $flag
 	 * @return array
+	 * @throws LuaError
 	 */
-	public function recordVaryFlag( $text, $flag ) {
+	private function recordVaryFlag( $text, $flag ) {
 		$this->checkType( 'recordVaryFlag', 1, $text, 'string' );
 		$this->checkType( 'recordVaryFlag', 2, $flag, 'string' );
 		$title = Title::newFromText( $text );
@@ -659,11 +748,10 @@ class TitleLibrary extends LibraryBase {
 
 	/**
 	 * Handler for getPageLangCode
-	 * @internal
 	 * @param string $text Title text.
 	 * @return array<?string>
 	 */
-	public function getPageLangCode( $text ) {
+	private function getPageLangCode( $text ) {
 		$title = Title::newFromText( $text );
 		if ( $title ) {
 			// If the page language is coming from the page record, we've

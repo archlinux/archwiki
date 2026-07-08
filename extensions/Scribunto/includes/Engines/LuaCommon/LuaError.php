@@ -7,16 +7,11 @@ use MediaWiki\Html\Html;
 use MediaWiki\Title\Title;
 
 class LuaError extends ScribuntoException {
-	/** @var string */
-	public $luaMessage;
-
-	/**
-	 * @param string $message
-	 * @param array $options
-	 */
-	public function __construct( $message, array $options = [] ) {
-		$this->luaMessage = $message;
-		$options += [ 'args' => [ $message ] ];
+	public function __construct(
+		public readonly string $luaMessage,
+		array $options = [],
+	) {
+		$options += [ 'args' => [ $luaMessage ] ];
 		if ( isset( $options['module'] ) && isset( $options['line'] ) ) {
 			$msg = 'scribunto-lua-error-location';
 		} else {
@@ -91,5 +86,3 @@ class LuaError extends ScribuntoException {
 		return $s;
 	}
 }
-
-class_alias( LuaError::class, 'Scribunto_LuaError' );

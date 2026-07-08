@@ -37,7 +37,7 @@ ve.dm.MWFlaggedMetaItem.static.toDataElement = function ( domElements ) {
 		property = this.matchRdfaTypes[ 0 ];
 	}
 
-	return { type: this.name, attributes: { property: property } };
+	return { type: this.name, attributes: { property } };
 };
 
 ve.dm.MWFlaggedMetaItem.static.toDomElements = function ( dataElement, doc, converter ) {

@@ -20,27 +20,28 @@
 
 namespace MediaWiki\Minerva;
 
-use DifferenceEngine;
 use MediaWiki\Config\Config;
+use MediaWiki\Diff\DifferenceEngine;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
-use MediaWiki\Hook\FetchChangesListHook;
 use MediaWiki\Hook\PreferencesGetLayoutHook;
-use MediaWiki\Hook\UserLogoutCompleteHook;
 use MediaWiki\Html\Html;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\RecentChanges\Hook\FetchChangesListHook;
 use MediaWiki\RecentChanges\OldChangesList;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Skin\Hook\SkinPageReadyConfigHook;
 use MediaWiki\Skin\Skin;
-use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Helpers\LoginHelper;
+use MediaWiki\Specials\Hook\UserLogoutCompleteHook;
 use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MobileContext;
@@ -66,21 +67,12 @@ class Hooks implements
 {
 	public const FEATURE_OVERFLOW_PAGE_ACTIONS = 'MinervaOverflowInPageActions';
 
-	private ConfiguredReadOnlyMode $configuredReadOnlyMode;
-	private SkinOptions $skinOptions;
-	private UserOptionsLookup $userOptionsLookup;
-	private ?MobileContext $mobileContext;
-
 	public function __construct(
-		ConfiguredReadOnlyMode $configuredReadOnlyMode,
-		SkinOptions $skinOptions,
-		UserOptionsLookup $userOptionsLookup,
-		?MobileContext $mobileContext
+		private readonly ConfiguredReadOnlyMode $configuredReadOnlyMode,
+		private readonly SkinOptions $skinOptions,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly ?MobileContext $mobileContext,
 	) {
-		$this->configuredReadOnlyMode = $configuredReadOnlyMode;
-		$this->skinOptions = $skinOptions;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->mobileContext = $mobileContext;
 	}
 
 	/**
@@ -170,6 +162,7 @@ class Hooks implements
 	 */
 	public function onSpecialPageBeforeExecute( $special, $subpage ) {
 		$name = $special->getName();
+		$loginHelper = new LoginHelper( $special->getContext() );
 		if ( !in_array( $name, [ 'Recentchanges', 'Userlogin', 'CreateAccount' ] ) ) {
 			return;
 		}
@@ -196,7 +189,8 @@ class Hooks implements
 				!$request->getCheck( 'warning' ) &&
 				!$request->getCheck( 'notice' ) &&
 				!$special->getUser()->isRegistered() &&
-				!$request->wasPosted()
+				!$request->wasPosted() &&
+				!$loginHelper->isDisplayModePopup()
 			) {
 				$request->setVal( 'notice', 'mobile-frontend-generic-login-new' );
 			}
@@ -232,10 +226,9 @@ class Hooks implements
 		if ( $skin === 'minerva' ) {
 			// This is to let the UI adjust itself to a wiki that is always read-only.
 			// Ignore temporary read-only on live wikis, requires heavy DB check (T233458).
-			$roConf = $this->configuredReadOnlyMode;
 			$vars += [
 				'wgMinervaABSamplingRate' => $config->get( 'MinervaABSamplingRate' ),
-				'wgMinervaReadOnly' => $roConf->isReadOnly(),
+				'wgMinervaReadOnly' => $this->configuredReadOnlyMode->isReadOnly(),
 			];
 		}
 	}
@@ -280,7 +273,7 @@ class Hooks implements
 			// which creates an unpredictable testing environment so it is better to match production.
 			// NOTE: This is enabled despite the well documented problems with the current design on T111565.
 			$config['collapsible'] = true;
-			$config['selectorLogoutLink'] = 'a.menu__item--logout[data-mw="interface"]';
+			$config['selectorLogoutLink'] = 'a.menu__item--logout[data-mw-interface]';
 		}
 	}
 

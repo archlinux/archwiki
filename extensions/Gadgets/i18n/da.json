@@ -69,5 +69,7 @@
 	"gadgets-validate-invaliddependencies": "Følgende {{PLURAL:$2|afhængighed|afhængigheder}} mangler: $1 .",
 	"gadgets-validate-deprecateddependencies": "Følgende {{PLURAL:$2|afhængighed er|afhængigheder er}} udfaset: $1.",
 	"gadgets-supports-urlload": "Denne gadget understøtter indlæsning via URL med forespørgselsparameteren <code>?withgadget</code>.",
-	"gadgets-hidden": "Denne gadget er [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skjult], hvilket betyder, at den ikke vises på indstillingssiden."
+	"gadgets-hidden": "Denne gadget er [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skjult], hvilket betyder, at den ikke vises på indstillingssiden.",
+	"gadgets-subpage-invalid": "Ugyldig underside \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Ikke tilstrækkeligt mange undersideparametre (ugyldigt link)."
 }

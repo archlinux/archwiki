@@ -32,12 +32,13 @@ use MediaWiki\Minerva\Skins\SkinUserPageHelper;
 return [
 	'Minerva.LanguagesHelper' => static function ( MediaWikiServices $services ): LanguagesHelper {
 		return new LanguagesHelper(
-			$services->getLanguageConverterFactory()
+			$services->getLanguageConverterFactory(),
 		);
 	},
 	'Minerva.Menu.Definitions' => static function ( MediaWikiServices $services ): Definitions {
 		return new Definitions(
-			$services->getSpecialPageFactory()
+			$services->getSpecialPageFactory(),
+			$services->getExtensionRegistry(),
 		);
 	},
 	'Minerva.Menu.PageActions' => static function ( MediaWikiServices $services ): PageActions {
@@ -46,7 +47,7 @@ return [
 			$services->getService( 'Minerva.Permissions' ),
 			$services->getService( 'Minerva.SkinOptions' ),
 			$services->getService( 'Minerva.SkinUserPageHelper' ),
-			$services->getWatchlistManager()
+			$services->getWatchlistManager(),
 		);
 	},
 	'Minerva.Permissions' => static function ( MediaWikiServices $services ): IMinervaPagePermissions {
@@ -56,19 +57,19 @@ return [
 			$services->getPermissionManager(),
 			$services->getContentHandlerFactory(),
 			$services->getUserFactory(),
-			$services->getWatchlistManager()
+			$services->getWatchlistManager(),
 		);
 	},
 	'Minerva.SkinOptions' => static function ( MediaWikiServices $services ): SkinOptions {
 		return new SkinOptions(
 			$services->getHookContainer(),
-			$services->getService( 'Minerva.SkinUserPageHelper' )
+			$services->getService( 'Minerva.SkinUserPageHelper' ),
 		);
 	},
 	'Minerva.SkinUserPageHelper' => static function ( MediaWikiServices $services ): SkinUserPageHelper {
 		return new SkinUserPageHelper(
 			$services->getUserFactory(),
-			$services->getUserNameUtils()
+			$services->getUserNameUtils(),
 		);
 	},
 ];

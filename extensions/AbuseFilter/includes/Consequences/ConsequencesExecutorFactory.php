@@ -5,54 +5,24 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\User\UserIdentityUtils;
 use Psr\Log\LoggerInterface;
 
 class ConsequencesExecutorFactory {
-	public const SERVICE_NAME = 'AbuseFilterConsequencesExecutorFactory';
+	public const SERVICE_NAME = ServiceNames::ConsequencesExecutorFactory;
 
-	/** @var ConsequencesLookup */
-	private $consLookup;
-	/** @var ConsequencesFactory */
-	private $consFactory;
-	/** @var ConsequencesRegistry */
-	private $consRegistry;
-	/** @var FilterLookup */
-	private $filterLookup;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var UserIdentityUtils */
-	private $userIdentityUtils;
-	/** @var ServiceOptions */
-	private $options;
-
-	/**
-	 * @param ConsequencesLookup $consLookup
-	 * @param ConsequencesFactory $consFactory
-	 * @param ConsequencesRegistry $consRegistry
-	 * @param FilterLookup $filterLookup
-	 * @param LoggerInterface $logger
-	 * @param UserIdentityUtils $userIdentityUtils
-	 * @param ServiceOptions $options
-	 */
 	public function __construct(
-		ConsequencesLookup $consLookup,
-		ConsequencesFactory $consFactory,
-		ConsequencesRegistry $consRegistry,
-		FilterLookup $filterLookup,
-		LoggerInterface $logger,
-		UserIdentityUtils $userIdentityUtils,
-		ServiceOptions $options
+		private readonly ConsequencesLookup $consLookup,
+		private readonly ConsequencesFactory $consFactory,
+		private readonly ConsequencesRegistry $consRegistry,
+		private readonly FilterLookup $filterLookup,
+		private readonly LoggerInterface $logger,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly ServiceOptions $options
 	) {
-		$this->consLookup = $consLookup;
-		$this->consFactory = $consFactory;
-		$this->consRegistry = $consRegistry;
-		$this->filterLookup = $filterLookup;
-		$this->logger = $logger;
-		$this->userIdentityUtils = $userIdentityUtils;
 		$options->assertRequiredOptions( ConsequencesExecutor::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
 	}
 
 	/**

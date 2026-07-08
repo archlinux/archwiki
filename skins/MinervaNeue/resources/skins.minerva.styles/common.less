@@ -28,6 +28,8 @@
 	min-height: 100%;
 	position: relative;
 	background-color: @background-color-interactive;
+	// T370943: Give a z-index to establish stacking context
+	z-index: @z-index-base;
 }
 
 .content {

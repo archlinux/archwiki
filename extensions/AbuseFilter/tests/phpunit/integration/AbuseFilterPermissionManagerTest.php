@@ -46,9 +46,9 @@ class AbuseFilterPermissionManagerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideCanSeeIPForFilterLog */
 	public function testCanSeeIPForFilterLog(
-		bool $checkUserResult,
+		bool $canViewTempIPs,
 		bool $canSeeLogDetails,
-		bool $isTemp,
+		bool $logUserIsTemp,
 		bool $expected,
 		bool $withCheckUser = false,
 	) {
@@ -59,7 +59,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiIntegrationTestCase {
 		$this->enableAutoCreateTempUser();
 
 		$permissions = [];
-		if ( $checkUserResult ) {
+		if ( $canViewTempIPs ) {
 			$permissions[] = 'checkuser-temporary-account-no-preference';
 		}
 		if ( $canSeeLogDetails ) {
@@ -67,7 +67,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiIntegrationTestCase {
 		}
 		$performer = $this->mockRegisteredAuthorityWithPermissions( $permissions );
 		$filter = MutableFilter::newDefault();
-		$userName = $isTemp ? '~12345' : 'Test';
+		$userName = $logUserIsTemp ? '~12345' : 'Test';
 
 		// Mock ExtensionRegistry service to say whether the CheckUser extension is loaded,
 		// so we can mock it isn't loaded when it actually is

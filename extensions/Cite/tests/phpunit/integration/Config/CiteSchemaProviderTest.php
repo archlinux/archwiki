@@ -4,8 +4,8 @@ declare( strict_types = 1 );
 
 namespace Cite\Tests\Integration\Config;
 
-use ExtensionRegistry;
 use MediaWiki\Extension\CommunityConfiguration\Tests\SchemaProviderTestCase;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiIntegrationTestCase;
 
 // TODO: Rewrite CommunityConfiguration helper to allow composition instead of inheritence.

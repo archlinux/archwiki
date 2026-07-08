@@ -130,8 +130,7 @@ ve.dm.TreeCursor.prototype.checkLinearOffset = function () {
 };
 
 /**
- * @typedef {Object} Step
- * @memberof ve.dm.TreeCursor
+ * @typedef {Object} ve.dm.TreeCursor.Step
  * @property {string} type open|close|cross|crosstext
  * @property {number} length Linear length of the step (integer >= 1)
  * @property {number[]} path Offset path from the root to the node containing the stepped item
@@ -168,7 +167,7 @@ ve.dm.TreeCursor.prototype.stepAtMost = function ( maxLength ) {
 		length = Math.min( maxLength, this.node.length - this.offset );
 		step = {
 			type: 'crosstext',
-			length: length,
+			length,
 			path: this.path.slice(),
 			node: this.node,
 			offset: this.offset,
@@ -196,11 +195,11 @@ ve.dm.TreeCursor.prototype.stepAtMost = function ( maxLength ) {
 	length = item.getOuterLength();
 	step = {
 		type: 'cross',
-		length: length,
+		length,
 		path: this.path.slice(),
 		node: this.node,
 		offset: this.offset,
-		item: item
+		item
 	};
 	this.offset++;
 	this.lastStep = step;
@@ -225,11 +224,11 @@ ve.dm.TreeCursor.prototype.stepIn = function () {
 	const length = item.type === 'text' ? 0 : 1;
 	const step = {
 		type: 'open',
-		length: length,
+		length,
 		path: this.path.slice(),
 		node: this.node,
 		offset: this.offset,
-		item: item
+		item
 	};
 	this.path.push( this.offset );
 	this.nodes.push( item );
@@ -273,7 +272,7 @@ ve.dm.TreeCursor.prototype.stepOut = function () {
 		path: this.path.slice(),
 		node: this.node,
 		offset: this.offset,
-		item: item
+		item
 	};
 	this.offset++;
 	this.lastStep = step;

@@ -20,7 +20,6 @@
 	"thanks-error-log-deleted": "Traženi unos u dnevniku je obrisan i zahvalnica se ne može uputiti.",
 	"thanks-error-invalidrevision": "ID izmene nije važeći.",
 	"thanks-error-revdeleted": "Nije moguće poslati zahvalnicu jer je izmena izbrisana.",
-	"thanks-error-notitle": "Nije moguće preuzeti naslov stranice.",
 	"thanks-error-invalidrecipient": "Nije pronađen važeći primalac",
 	"thanks-error-invalidrecipient-bot": "Ne možete da se zahvalite botovima",
 	"thanks-error-invalidrecipient-self": "Ne možete da se zahvalite sami sebi",

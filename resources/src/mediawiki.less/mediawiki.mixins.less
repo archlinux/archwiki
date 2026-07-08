@@ -12,14 +12,12 @@
 
 .hyphens( @value: auto ) {
 	& when ( @value = auto ) {
-		// Legacy `word-wrap`; Edge 12+, Firefox 3.5+, Chrome 4+, Safari 3.1+,
-		//   Opera 11.5+, iOS 3.2+, Android 2.1+
-		// `overflow-wrap` is W3 standard, but it doesn't seem as if browser vendors
-		//   will abandon `word-wrap` (it has wider support), therefore no duplication.
-		word-wrap: break-word;
+		// Support (`break-word`/`normal`): Firefox 49+, Chrome 23+, Edge 18+, Safari 6.1+, iOS 7+,
+		// Android 4.4+, Opera 12.1+
+		overflow-wrap: break-word;
 	}
 	& when ( @value = none ) {
-		word-wrap: normal;
+		overflow-wrap: normal;
 	}
 
 	// CSS3 hyphenation
@@ -62,8 +60,6 @@
 .margin-block( @start, @end ) {
 	margin-top: @start;
 	margin-bottom: @end;
-	-webkit-margin-before: @start; // Archaic WebKit/Chrome versions
-	-webkit-margin-after: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	margin-block-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	margin-block-end: @end;
@@ -75,8 +71,6 @@
 .margin-inline( @start, @end ) {
 	margin-left: @start;
 	margin-right: @end;
-	-webkit-margin-start: @start; // Archaic WebKit/Chrome versions
-	-webkit-margin-end: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	margin-inline-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	margin-inline-end: @end;
@@ -88,8 +82,6 @@
 .padding-block( @start, @end ) {
 	padding-top: @start;
 	padding-bottom: @end;
-	-webkit-padding-before: @start; // Archaic WebKit/Chrome versions
-	-webkit-padding-after: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	padding-block-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	padding-block-end: @end;
@@ -101,8 +93,6 @@
 .padding-inline( @start, @end ) {
 	padding-left: @start;
 	padding-right: @end;
-	-webkit-padding-start: @start; // Archaic WebKit/Chrome versions
-	-webkit-padding-end: @end;
 	/* stylelint-disable declaration-block-no-redundant-longhand-properties */
 	padding-inline-start: @start; // Firefox 41, Safari 12.1, Chrome 69, Opera 56
 	padding-inline-end: @end;
@@ -199,4 +189,42 @@
 	border: 0;
 	padding: 0;
 	overflow: hidden;
+}
+
+.solid-to-opacity( @color, @opacity, @background: #fff ) {
+	@result: fade( ( ( @color - ( 1 - @opacity ) * ( @background ) ) / @opacity ), @opacity * 100 );
+}
+
+/**
+ * Compute the most transparent color that appears the same as @color
+ * when overlaid on the given @background.
+ *
+ * @example
+ *   background-color: .solid-to-minimum-opacity( #eaecf0 )[ @result ];
+ *
+ * @param {Color} @color The solid color to approximate with transparency
+ * @param {Color} [@background=white] The background color to overlay on
+ * @return {Color} @result
+ */
+.solid-to-minimum-opacity( @color, @background: #fff ) {
+	@opacity: 1 - ( min( red( @color ), green( @color ), blue( @color ) ) / 255 );
+	@result: .solid-to-opacity( @color, @opacity, @background )[ @result ];
+}
+
+// Generate selectors for custom dark mode styles.
+// Use design tokens instead of this mixin if possible.
+// See https://doc.wikimedia.org/codex/latest/design-tokens/color.html
+.darkmode-override( @rules ) {
+	@media screen {
+		html.skin-theme-clientpref-night & {
+			@rules();
+		}
+	}
+
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+	@media screen and ( prefers-color-scheme: dark ) {
+		html.skin-theme-clientpref-os & {
+			@rules();
+		}
+	}
 }

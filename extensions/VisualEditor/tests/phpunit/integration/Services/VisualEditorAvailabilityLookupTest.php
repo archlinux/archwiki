@@ -67,7 +67,7 @@ class VisualEditorAvailabilityLookupTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideIsAvailable */
 	public function testIsAvailable(
-		string $contentModel, int $namespace, string $veActionValue, array $userOptions,
+		string $contentModel, int $namespace, string $veaction, array $userOptions,
 		bool $enableBetaFeatureConfigValue, bool $expectedReturnValue
 	) {
 		$this->overrideConfigValues( [
@@ -83,7 +83,7 @@ class VisualEditorAvailabilityLookupTest extends MediaWikiIntegrationTestCase {
 		$title = $this->makeMockTitle( 'Test', [ 'namespace' => $namespace, 'contentModel' => $contentModel ] );
 
 		$request = new FauxRequest();
-		$request->setVal( 'veaction', $veActionValue );
+		$request->setVal( 'veaction', $veaction );
 
 		$userIdentity = UserIdentityValue::newRegistered( 1, 'TestUser' );
 

@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"oathauth-webauthn-module-label": "Clave de securitate",
+	"oathauth-webauthn-javascript-required": "JavaScript debe esser activate in tu navigator pro usar un clave de securitate.",
+	"oathauth-webauthn-ui-login-prompt": "Usa tu clave de securitate o seque le instructiones de tu navigator.",
+	"oathauth-webauthn-ui-add-key": "Adder clave",
+	"oathauth-webauthn-error-browser-unsupported": "Iste navigator non supporta le authentication per clave de securitate o illo non es disponibile pro iste sito web. Per favor tenta lo con un altere navigator. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Leger plus]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Iste navigator non supporta le authentication per clave de securitate, o illo non es disponibile pro iste sito web.",
+	"oathauth-webauthn-error-auth-generic": "Le processo de authentication ha essite interrumpite. Per favor recomencia le processo de authentication.",
+	"oathauth-webauthn-error-reg-generic": "Non poteva verificar tu clave. Per favor recomencia le processo de authentication.",
+	"oathauth-webauthn-registered-keys-section-name": "Claves registrate",
+	"oathauth-webauthn-ui-remove-key": "Remover",
+	"oathauth-webauthn-error-module-not-enabled": "Le modulo “$1” non es activate pro le usat{{GENDER:$2|or|rice}} “$2”.",
+	"oathauth-webauthn-error-verification-failed": "Verification WebAuthn fallite.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Le verification del clave de accesso ha fallite.",
+	"oathauth-webauthn-error-credentials-missing": "Le credentiales WebAuthn non ha essite inviate.",
+	"oathauth-webauthn-error-cannot-register": "Le usat{{GENDER:$1|or|rice}} “$1” non pote registrar un nove credential.",
+	"oathauth-webauthn-error-invalid-new-key": "Le nove clave restituite per le modulo non es del typo requisite.",
+	"oathauth-webauthn-error-registration-failed": "Le registration del nove clave ha fallite.",
+	"oathauth-webauthn-ui-key-register-help": "Elige le pseudonymo pro tu clave:",
+	"oathauth-webauthn-error-cannot-remove-key": "Le clave non pote esser removite.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Le information sur le authentication non poteva esser recuperate.",
+	"oathauth-webauthn-add-key-section-name": "Registrar un nove clave de securitate",
+	"oathauth-webauthn-error-get-reginfo-fail": "Le information sur le inscription non poteva esser recuperate.",
+	"oathauth-webauthn-module-description": "WebAuthn es in un stato experimental. Illo non forni ancora alcun option de recuperation pro apparatos de authentication perdite o damnificate.\n\n[https://en.wikipedia.org/wiki/WebAuthn Lege plus sur WebAuthn].",
+	"oathauth-webauthn-ui-reload-page-label": "Recargar pagina",
+	"oathauth-webauthn-authentication-info-label": "Datos de authentication",
+	"oathauth-webauthn-authentication-info-help": "Datos de authentication passate al cliente pro obtener credentiales",
+	"oathauth-webauthn-credential-label": "Credential del usator",
+	"oathauth-webauthn-credential-help": "Credential del usator basate sur le datos de authentication",
+	"oathauth-webauthn-add-security-key": "Adder un clave de securitate",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Usar clave de securitate o clave de accesso"
+}

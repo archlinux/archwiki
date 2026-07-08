@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bisang",
 			"Bluehill",
 			"Bluemersen",
 			"ChongDae",
@@ -18,6 +19,7 @@
 			"Nuevo Paso",
 			"Priviet",
 			"Revi",
+			"Tensama0415",
 			"ToePeu",
 			"Underbaaar",
 			"Whatback11",
@@ -26,8 +28,6 @@
 			"렌즈",
 			"밝은소년",
 			"아라",
-			"Bisang",
-			"Tensama0415",
 			"解浪"
 		]
 	},
@@ -49,6 +49,8 @@
 	"username": "{{GENDER:$1|사용자 이름}}:",
 	"prefs-memberingroups": "{{GENDER:$2|소속}} {{PLURAL:$1|그룹}}:",
 	"group-membership-link-with-expiry": "$1 ($2 까지)",
+	"prefs-memberingroupsdisabled": "{{GENDER:$2|비활성화된}} {{PLURAL:$1|그룹|그룹들}}:",
+	"prefs-memberingroupsdisabled-help": "{{GENDER:$2|당신}}은 더 이상 {{PLURAL:$1|이 그룹|이 그룹들}}의 구성원이 되기 위한 [[$3|조건]]을 충족하지 못하므로 {{PLURAL:$1|이 그룹|이 그룹들}}이 부여한 권한을 사용할 수 없습니다.",
 	"prefs-edits": "편집 수:",
 	"prefs-registration": "등록 시간:",
 	"yourrealname": "실명:",
@@ -207,6 +209,8 @@
 	"prefs-description-watchlist": "추적하는 페이지 목록을 관리하고 개인에 맞게 수정합니다.",
 	"prefs-editwatchlist": "주시문서 목록 편집",
 	"prefs-editwatchlist-label": "주시문서 목록의 항목을 편집합니다:",
+	"prefs-editwatchlistlabels-label": "주시문서 목록 레이블 편집:",
+	"prefs-managewatchlistlabels": "주시문서 목록 레이블 표시 및 관리",
 	"prefs-editwatchlist-edit": "주시문서 목록의 제목 보기 및 지우기",
 	"prefs-editwatchlist-raw": "주시문서 목록 직접 편집하기",
 	"prefs-editwatchlist-clear": "주시문서 목록 비우기",

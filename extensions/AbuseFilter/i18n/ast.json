@@ -335,7 +335,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizar les entidaes HTML como caráuteres unicode (saniar)",
 	"abusefilter-edit-builder-group-vars": "Variables",
 	"abusefilter-edit-builder-vars-timestamp": "Hora Unix del cambiu",
-	"abusefilter-edit-builder-vars-accountname": "Nome de la cuenta (al crear la cuenta)",
+	"abusefilter-edit-builder-vars-account-name": "Nome de la cuenta (al crear la cuenta)",
 	"abusefilter-edit-builder-vars-action": "Aición",
 	"abusefilter-edit-builder-vars-addedlines": "Llinies amestaes na edición",
 	"abusefilter-edit-builder-vars-delta": "Cambiu de tamañu na edición",

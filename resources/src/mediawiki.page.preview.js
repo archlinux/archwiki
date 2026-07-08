@@ -18,28 +18,12 @@
 		}
 
 		$summaryPreview.append(
-			mw.message( 'summary-preview' ).parse(),
+			mw.message( 'summary-preview' ).parseDom(),
 			' ',
-			$( '<span>' ).addClass( 'comment' ).html( parenthesesWrap( parse.parsedsummary ) )
+			$( '<span>' ).addClass( 'comment' ).append(
+				mw.message( 'parentheses', $( $.parseHTML( parse.parsedsummary ) ) ).parseDom()
+			)
 		);
-	}
-
-	/**
-	 * Wrap a string in parentheses.
-	 *
-	 * @private
-	 * @param {string} str
-	 * @return {string}
-	 */
-	function parenthesesWrap( str ) {
-		if ( str === '' ) {
-			return str;
-		}
-		// There is no equivalent to rawParams
-		return mw.message( 'parentheses' ).escaped()
-			// Specify a function as the replacement,
-			// so that "$" characters in str are not interpreted.
-			.replace( '$1', () => str );
 	}
 
 	/**
@@ -216,20 +200,21 @@
 
 			const wordSep = mw.message( 'word-separator' ).escaped();
 			return getRestrictionsText( template.apiData.protection || [] )
-				.then( ( restrictionsList ) => {
-					// restrictionsList is a comma-separated parentheses-wrapped localized list of restriction level names.
-					const editLinkParens = parenthesesWrap( $editLink[ 0 ].outerHTML );
-					const $li = $( '<li>' ).append( $link, wordSep, editLinkParens, wordSep, restrictionsList );
-					$list.append( $li );
+				.then( ( $restrictionsList ) => {
+					// $restrictionsList is a comma-separated parentheses-wrapped localized list of restriction level names.
+					const $editLinkParens = mw.message( 'parentheses', $editLink ).parseDom();
+					$list.append(
+						$( '<li>' ).append( $link, wordSep, $editLinkParens, wordSep, $restrictionsList )
+					);
 				} );
 		} else {
 			$list.append( $( '<li>' ).append( $link ) );
-			return $.Deferred().resolve( '' );
+			return $.Deferred().resolve( $() );
 		}
 	}
 
 	/**
-	 * Get a localized string listing the restriction levels for a template.
+	 * Get a jQuery object listing the localized restriction levels for a template.
 	 *
 	 * This should match the logic from TemplatesOnThisPageFormatter::getRestrictionsText().
 	 *
@@ -238,39 +223,31 @@
 	 * @return {jQuery.Promise}
 	 */
 	function getRestrictionsText( restrictions ) {
-		let msg = '';
-		if ( !restrictions ) {
-			return $.Deferred().resolve( msg );
-		}
+		// API also returns e.g. move protections, which we don't want here
+		restrictions = restrictions.filter( ( r ) => r.type === 'edit' );
 
-		// Record other restriction levels, in case it's protected for others.
-		const restrictionLevels = [];
-		restrictions.forEach( ( r ) => {
-			if ( r.type !== 'edit' ) {
-				return;
-			}
-			if ( r.level === 'sysop' ) {
-				msg = mw.msg( 'template-protected' );
-			} else if ( r.level === 'autoconfirmed' ) {
-				msg = mw.msg( 'template-semiprotected' );
-			} else {
-				restrictionLevels.push( r.level );
-			}
-		} );
-
-		// If sysop or autoconfirmed, use that.
-		if ( msg !== '' ) {
-			return $.Deferred().resolve( msg );
-		}
-
-		// Otherwise, if the edit restriction isn't one of the backwards-compatible ones,
-		// use the (possibly custom) restriction-level-* messages.
-		const msgs = [];
-		restrictionLevels.forEach( ( level ) => {
-			msgs.push( 'restriction-level-' + level );
-		} );
-		if ( msgs.length === 0 ) {
+		if ( restrictions.length === 0 ) {
 			return $.Deferred().resolve( '' );
+		}
+
+		// Construct the message from restriction-level-*
+		// e.g. restriction-level-sysop, restriction-level-autoconfirmed
+		const msgs = [];
+		restrictions.forEach( ( r ) => {
+			msgs.push( 'restriction-level-' + r.level );
+		} );
+
+		// Check backwards-compatible messages for the built-in protection levels,
+		// wrap custom levels in parentheses
+		let msg;
+		if ( restrictions.length === 1 && restrictions[ 0 ].level === 'sysop' ) {
+			msg = mw.message( 'template-protected' );
+		} else if ( restrictions.length === 1 && restrictions[ 0 ].level === 'autoconfirmed' ) {
+			msg = mw.message( 'template-semiprotected' );
+		}
+		if ( !msg || !msg.exists() || msg.plain() === '' || msg.plain() === '-' ) {
+			// By default wrap protection levels in parentheses
+			msg = mw.message( 'parentheses' );
 		}
 
 		// Custom restriction levels don't have their messages loaded, so we have to do that.
@@ -282,7 +259,9 @@
 				( m ) => mw.message( m ).parse()
 			);
 			// There's no commaList in JS, so just join with commas (doesn't handle the last item).
-			return parenthesesWrap( localizedMessages.join( mw.message( 'comma-separator' ).escaped() ) );
+			return msg.params(
+				$( $.parseHTML( localizedMessages.join( mw.message( 'comma-separator' ).escaped() ) ) )
+			).parseDom();
 		} );
 	}
 
@@ -331,24 +310,33 @@
 				.append( config.previewHeader )
 			);
 
-		const warningContentElement = $( '<div>' )
-			.append(
-				// TemplateSandbox will insert a jQuery here.
-				config.previewNote,
-				' ',
-				$( '<span>' )
-					.addClass( 'mw-continue-editing' )
-					.append( $( '<a>' )
-						.attr( 'href', '#' + config.$formNode.attr( 'id' ) )
-						.text( arrow + ' ' + mw.msg( 'continue-editing' ) )
-					),
-				response.parse.parsewarningshtml.map( ( warning ) => $( '<p>' ).append( warning ) )
-			)[ 0 ];
-		const warningMessageElement = util.messageBox(
-			warningContentElement,
-			'warning'
-		);
-		$previewHeader.append( warningMessageElement );
+		// util.messageBox takes a Node, so we have to work around this by using a DocumentFragment and a Range
+		const warningsFragment = document.createDocumentFragment();
+		const range = document.createRange();
+
+		response.parse.parsewarningshtml.forEach( ( warningHtml ) => {
+			warningsFragment.appendChild( range.createContextualFragment( warningHtml + '<br>' ) );
+		} );
+		if ( warningsFragment.hasChildNodes() ) {
+			$previewHeader.append( util.messageBox( warningsFragment, 'warning' ) );
+		}
+
+		const previewNoteElement = $( '<div>' ).append(
+			// TemplateSandbox will insert a jQuery here.
+			config.previewNote,
+			' ',
+			$( '<span>' )
+				.addClass( 'mw-continue-editing' )
+				.append( $( '<a>' )
+					.attr( 'href', '#' + config.$formNode.attr( 'id' ) )
+					.text( arrow + ' ' + mw.msg( 'continue-editing' ) )
+				)
+		)[ 0 ];
+		$previewHeader.append( util.messageBox(
+			previewNoteElement,
+			'notice'
+		) );
+
 		config.$previewNode.prepend( $previewHeader );
 	}
 
@@ -405,7 +393,7 @@
 		if ( response.parse.categorieshtml ) {
 			$content = $( $.parseHTML( response.parse.categorieshtml ) );
 			mw.hook( 'wikipage.categories' ).fire( $content );
-			$( '.catlinks[data-mw="interface"]' ).replaceWith( $content );
+			$( '.catlinks[data-mw-interface]' ).replaceWith( $content );
 		}
 
 		// Table of contents.
@@ -672,9 +660,11 @@
 	 *   - After finishing the preview, a reminder that it's only a preview, or an error message in
 	 *     case a request has failed, will be shown at the top of the preview.
 	 * @param {Node|Node[]|jQuery|string} [config.previewHeader=null] Content of `<h2>` element at
-	 *   the top of the preview notes. Required if `isLivePreview` is true.
+	 *   the top of the preview notes. If `isLivePreview` is true then this must be set, either at
+	 *   entry or by the responseHandler callback.
 	 * @param {Node|Node[]|jQuery|string} [config.previewNote=null] Main text of the first preview
-	 *   note. Required if `isLivePreview` is true.
+	 *   note. If `isLivePreview` is true then this must be set, either at entry or by the
+	 *   responseHandler callback.
 	 * @param {string} [config.title=mw.config.get( 'wgPageName' )] The title of the page being previewed.
 	 * @param {string} [config.titleParam='title'] Name of the parse API parameter to pass `title` to.
 	 * @param {string} [config.textParam='text'] Name of the parse API parameter to pass the content
@@ -684,6 +674,9 @@
 	 * @param {module:mediawiki.page.preview~responseHandler} [config.responseHandler=null] Callback
 	 *   to run right after the API responses are received. This allows the config and response
 	 *   objects to be modified before the preview is shown.
+	 * @param {jQuery|string} [config.responseValidationError=null] This may be set by the response
+	 *   handler. If it is set, the specified error message will be shown and the response will not
+	 *   be handled.
 	 * @param {boolean} [config.createSpinner=false] Creates `$spinnerNode` and inserts it before
 	 *   `$previewNode` if one doesn't already exist and the module `jquery.spinner` is loaded.
 	 * @param {string[]} [config.loadingSelectors=getLoadingSelectors()] An array of query selectors
@@ -819,6 +812,15 @@
 						config.responseHandler( config, parseResponse[ 0 ], diffResponse[ 0 ] );
 					} else {
 						config.responseHandler( config, parseResponse[ 0 ] );
+					}
+					const error = config.responseValidationError;
+					if ( error !== undefined && error !== null ) {
+						if ( typeof error === 'string' ) {
+							showError( config, $( '<div>' ).text( error ) );
+						} else {
+							showError( config, error );
+						}
+						return;
 					}
 				}
 

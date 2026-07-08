@@ -6,6 +6,7 @@ namespace Wikimedia\Parsoid\Utils;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -32,13 +33,6 @@ class WTUtils {
 		'#(?:^|\s)(mw:(?:Transclusion|Param|LanguageVariant|Extension(/\S+)))(?=$|\s)#D';
 
 	/**
-	 * Regex corresponding to FIRST_ENCAP_REGEXP, but excluding extensions. If FIRST_ENCAP_REGEXP is
-	 * updated, this one should be as well.
-	 */
-	private const NON_EXTENSION_ENCAP_REGEXP =
-		'#(?:^|\s)(mw:(?:Transclusion|Param|LanguageVariant))(?=$|\s)#D';
-
-	/**
 	 * Regexp for checking marker metas typeofs representing
 	 * transclusion markup or template param markup.
 	 */
@@ -49,6 +43,14 @@ class WTUtils {
 	 * annotation markup
 	 */
 	public const ANNOTATION_META_TYPE_REGEXP = '#^mw:(?:Annotation/([\w\d]+))(?:/End)?$#uD';
+
+	/**
+	 * Checks if a token/node has a rel attribute that matches this regexp.
+	 * Tokens matching this and embedded in a table-cell attribute position
+	 * stops attribute processing in that cell.
+	 */
+	// phpcs:ignore Generic.Files.LineLength.TooLong
+	public const WIKILINK_SYNTAX_CONSTRUCTS_REGEXP = '#^mw:(WikiLink(/Interwiki)?|MediaLink|PageProp/(Category|Language))$#';
 
 	/**
 	 * Check whether a node's data-parsoid object includes
@@ -138,8 +140,7 @@ class WTUtils {
 		}
 
 		$dp = DOMDataUtils::getDataParsoid( $node );
-		return DOMUtils::hasRel( $node, 'mw:ExtLink' ) &&
-			isset( $dp->stx ) && $dp->stx === 'magiclink';
+		return isset( $dp->stx ) && $dp->stx === 'magiclink';
 	}
 
 	/**
@@ -181,34 +182,6 @@ class WTUtils {
 	public static function isTplEndMarkerMeta( Node $node ): bool {
 		$t = DOMUtils::matchNameAndTypeOf( $node, 'meta', self::TPL_META_TYPE_REGEXP );
 		return $t !== null && str_ends_with( $t, '/End' );
-	}
-
-	/**
-	 * Find the first wrapper element of encapsulated content.
-	 */
-	public static function findFirstEncapsulationWrapperNode( Node $node ): ?Element {
-		if ( !self::isEncapsulatedDOMForestRoot( $node ) ) {
-			return null;
-		}
-		'@phan-var Element $node'; // @var ?Element $elt
-		$about = DOMCompat::getAttribute( $node, 'about' );
-		$prev = $node;
-		do {
-			$node = $prev;
-			$prev = DiffDOMUtils::previousNonDeletedSibling( $node );
-		} while (
-			$prev instanceof Element &&
-			DOMCompat::getAttribute( $prev, 'about' ) === $about
-		);
-		// NOTE: findFirstEncapsulationWrapperNode can be called by code
-		// even before templates have been fully encapsulated everywhere.
-		// ProcessTreeBuilderFixups::removeAutoInsertedEmptyTags is the main
-		// culprit here and it makes the contract for this helper murky
-		// by hiding potential brokenness since this should never return null
-		// once all templates have been encapsulated!
-		$elt = self::isFirstEncapsulationWrapperNode( $node ) ? $node : null;
-		'@phan-var ?Element $elt'; // @var ?Element $elt
-		return $elt;
 	}
 
 	/**
@@ -277,7 +250,7 @@ class WTUtils {
 	public static function isEncapsulatedDOMForestRoot( Node $node ): bool {
 		$about = $node instanceof Element ? DOMCompat::getAttribute( $node, 'about' ) : null;
 		// FIXME: Ensure that our DOM spec clarifies this expectation
-		return $about !== null && Utils::isParsoidObjectId( $about );
+		return $about !== null && CounterType::TRANSCLUSION_ABOUT->matches( $about );
 	}
 
 	/**
@@ -410,10 +383,10 @@ class WTUtils {
 	 * that outputs MediaWiki Core DOM Spec HTML (https://www.mediawiki.org/wiki/Specs/HTML)
 	 */
 	public static function isExtensionOutputtingCoreMwDomSpec( Node $node, Env $env ): bool {
-		if ( DOMUtils::matchTypeOf( $node, self::NON_EXTENSION_ENCAP_REGEXP ) !== null ) {
+		$extTagName = self::getExtTagName( $node );
+		if ( $extTagName === null ) {
 			return false;
 		}
-		$extTagName = self::getExtTagName( $node );
 		$extConfig = $env->getSiteConfig()->getExtTagConfig( $extTagName );
 		$htmlType = $extConfig['options']['outputHasCoreMwDomSpecMarkup'] ?? null;
 		return $htmlType === true;
@@ -457,15 +430,42 @@ class WTUtils {
 	}
 
 	/**
-	 * Is the $node from extension content?
-	 * @param Node $node
-	 * @param ?string $extType If non-null, checks for that specific extension
-	 * @return bool
+	 * Find the first wrapper element of encapsulated content.
 	 */
-	public static function fromExtensionContent( Node $node, ?string $extType = null ): bool {
-		$re = $extType ? "#mw:Extension/$extType#" : "#mw:Extension/\w+#";
-		while ( $node && !DOMUtils::atTheTop( $node ) ) {
-			if ( DOMUtils::matchTypeOf( $node, $re ) ) {
+	public static function findFirstEncapsulationWrapperNode(
+		Node $node,
+		string $encapTypeofRE = self::FIRST_ENCAP_REGEXP
+	): ?Element {
+		if ( !$node instanceof Element ) {
+			return null;
+		}
+		$about = DOMCompat::getAttribute( $node, 'about' );
+		// No need to check if this is the right about id.
+		// We are validated by the typeof below.
+		if ( $about === null ) {
+			return null;
+		}
+		$prev = $node;
+		do {
+			$node = $prev;
+			$prev = DiffDOMUtils::previousNonDeletedSibling( $node );
+		} while (
+			$prev instanceof Element &&
+			DOMCompat::getAttribute( $prev, 'about' ) === $about
+		);
+		'@phan-var ?Element $node'; // @var ?Element $node
+		return DOMUtils::matchTypeOf( $node, $encapTypeofRE ) ? $node : null;
+	}
+
+	/**
+	 * Is $node from encapsulated (template, extension, etc.) content?
+	 */
+	public static function fromEncapsulatedContentHelper( Node $node, string $typeofRE ): bool {
+		if ( !( $node instanceof Element ) ) {
+			$node = $node->parentNode;
+		}
+		while ( !DOMUtils::atTheTop( $node ) ) {
+			if ( self::findFirstEncapsulationWrapperNode( $node, $typeofRE ) !== null ) {
 				return true;
 			}
 			$node = $node->parentNode;
@@ -474,16 +474,30 @@ class WTUtils {
 	}
 
 	/**
+	 * Is the $node from templated content?
+	 * @param Node $node
+	 * @return bool
+	 */
+	public static function fromTemplatedContent( Node $node ): bool {
+		return self::fromEncapsulatedContentHelper( $node, "#mw:Transclusion#" );
+	}
+
+	/**
+	 * Is the $node from extension content?
+	 * @param Node $node
+	 * @param ?string $extType If non-null, checks for that specific extension
+	 * @return bool
+	 */
+	public static function fromExtensionContent( Node $node, ?string $extType = null ): bool {
+		$re = $extType ? "#mw:Extension/$extType#" : "#mw:Extension/\w+#";
+		return self::fromEncapsulatedContentHelper( $node, $re );
+	}
+
+	/**
 	 * Is $node from encapsulated (template, extension, etc.) content?
 	 */
 	public static function fromEncapsulatedContent( Node $node ): bool {
-		while ( $node && !DOMUtils::atTheTop( $node ) ) {
-			if ( self::findFirstEncapsulationWrapperNode( $node ) !== null ) {
-				return true;
-			}
-			$node = $node->parentNode;
-		}
-		return false;
+		return self::fromEncapsulatedContentHelper( $node, self::FIRST_ENCAP_REGEXP );
 	}
 
 	/**

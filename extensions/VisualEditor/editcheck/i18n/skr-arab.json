@@ -4,5 +4,8 @@
 			"Saraiki"
 		]
 	},
-	"editcheck-dialog-action-decline": "انکار کرو"
+	"editcheck-dialog-action-decline": "انکار کرو",
+	"editcheck-dialog-action-replace": "بدل گھنو",
+	"editcheck-action-convert-reference": "تبدیل کرو",
+	"editcheck-specialeditchecks-col-title": "عنوان"
 }

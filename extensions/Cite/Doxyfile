@@ -1,0 +1,32 @@
+PROJECT_NAME           = Cite
+PROJECT_BRIEF          = "The Cite extension allows a user to create references as footnotes on a page."
+
+OUTPUT_DIRECTORY       = docs
+HTML_OUTPUT            = php
+
+# Interpret the first line of a comment as a brief description?
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+
+INPUT                  = .
+EXCLUDE_PATTERNS       = doc docs vendor node_modules tests
+FILE_PATTERNS          = *.php
+
+# Search through subdirectories for input files?
+RECURSIVE              = YES
+
+# NOTE: USE_MDFILE_AS_MAINPAGE requires that the specified file is included as an input file.
+USE_MDFILE_AS_MAINPAGE = ./README.md
+INPUT                 += ./README.md
+
+HTML_DYNAMIC_SECTIONS  = YES
+GENERATE_TREEVIEW      = YES
+TREEVIEW_WIDTH         = 250
+
+GENERATE_LATEX         = NO
+
+# Cite-specific customizations
+ALIASES                = "license=\copyright" \
+						 "inheritDoc=\inheritdoc"
+AUTOLINK_IGNORE_WORDS  = Cite
+SHOW_NAMESPACES        = NO

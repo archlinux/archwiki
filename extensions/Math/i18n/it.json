@@ -5,12 +5,12 @@
 			"Fringio",
 			"Horcrux92",
 			"Macofe",
+			"Neonsn0w",
 			"Pierpao",
 			"Ricordisamoa",
 			"Sakretsu",
 			"Statix64",
-			"Valepert",
-			"Neonsn0w"
+			"Valepert"
 		]
 	},
 	"math-desc": "Esegue il rendering di formule matematiche tra i tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -112,5 +112,7 @@
 	"math-wikibase-special-form-button": "Richiedi informazioni",
 	"math-wikibase-special-error-header": "Errore",
 	"math-wikibase-special-error-invalid-argument": "L'ID elemento Wikibase indicato non esiste.",
-	"math-wikibase-special-error-unknown": "Si è verificato un errore sconosciuto durante il recupero dei dati da Wikibase."
+	"math-wikibase-special-error-unknown": "Si è verificato un errore sconosciuto durante il recupero dei dati da Wikibase.",
+	"math-editpage-insert-inline": "Formula matematica (in linea)",
+	"math-editpage-insert-block": "Formula matematica (blocco)"
 }

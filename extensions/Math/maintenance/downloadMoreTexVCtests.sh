@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Downloads files which contain input and supposed output for some tests of WikiTexVC within this extension.
-
-# The tests are deactivated by default. They can be found and activated with a flag in:
-# - EnWikiFormulaeTest.php
-# - ChemRegressionTest.php
+#
+# The tests are deactivated by default. Running this script to download the files activates the tests in
+# EnWikiFormulaeTest and andChemRegressionTest.
 
 # Downloads the file containing all english wikipedia formula to the testfolder
 FILEPATH=../tests/phpunit/integration/WikiTexVC/en-wiki-formulae-good.json

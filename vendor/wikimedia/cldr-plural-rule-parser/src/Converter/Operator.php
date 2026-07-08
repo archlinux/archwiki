@@ -1,4 +1,6 @@
 <?php
+declare( strict_types = 1 );
+
 /**
  * @author Niklas Laxström, Tim Starling
  * @license GPL-2.0-or-later

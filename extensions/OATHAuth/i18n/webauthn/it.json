@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16",
+			"FL2226",
+			"Lorem Ipsum"
+		]
+	},
+	"oathauth-webauthn-ui-login-prompt": "Usa la tua chiave di sicurezza o segui le istruzioni del browser.",
+	"oathauth-webauthn-ui-add-key": "Aggiungi chiave",
+	"oathauth-webauthn-registered-keys-section-name": "Chiavi registrate",
+	"oathauth-webauthn-error-verification-failed": "Verifica WebAuthn non riuscita.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Verifica della passkey non riuscita.",
+	"oathauth-webauthn-ui-reload-page-label": "Ricarica la pagina",
+	"oathauth-webauthn-authentication-info-label": "Dati di autenticazione",
+	"oathauth-webauthn-credential-label": "Credenziali utente",
+	"oathauth-webauthn-credential-help": "Credenziali dell'utente basate sui dati di autenticazione",
+	"oathauth-webauthn-add-security-key": "Aggiungi una chiave di sicurezza",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Utilizza chiave di sicurezza o passkey"
+}

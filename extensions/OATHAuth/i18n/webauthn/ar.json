@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Meno25",
+			"Mohammed Qays",
+			"ديفيد"
+		]
+	},
+	"oathauth-webauthn-module-label": "مفتاح الأمان",
+	"oathauth-webauthn-javascript-required": "يجب تفعيل جافا سكريبت في متصفحك لاستخدام مفتاح الأمان.",
+	"oathauth-webauthn-ui-login-prompt": "استخدم مفتاح الأمان الخاص بك أو اتبع تعليمات متصفحك.",
+	"oathauth-webauthn-ui-add-key": "إضافة مفتاح",
+	"oathauth-webauthn-error-browser-unsupported": "لا يدعم هذا المتصفح مصادقة مفتاح الأمان، أو أنها غير متوفرة لهذا الموقع. يُرجى المحاولة باستخدام متصفح آخر. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support اقرأ المزيد]",
+	"oathauth-webauthn-error-browser-unsupported-console": "لا يدعم هذا المتصفح مصادقة مفتاح الأمان، أو أنها غير متوفرة لهذا الموقع الإلكتروني.",
+	"oathauth-webauthn-error-auth-generic": "انقطعت عملية المصادقة. يُرجى إعادة بدء العملية.",
+	"oathauth-webauthn-error-reg-generic": "تعذر التحقق من مفتاحك. يُرجى بدء عملية التسجيل مجددًا.",
+	"oathauth-webauthn-registered-keys-section-name": "مفاتيح مسجلة",
+	"oathauth-webauthn-ui-remove-key": "إزالة",
+	"oathauth-webauthn-error-module-not-enabled": "الوحدة \"$1\" غير فعالة {{GENDER:$2|للمستخدم \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "فشل التحقق من WebAuthn.",
+	"oathauth-webauthn-error-passkey-verification-failed": "فشلت عملية التحقق من رمز المرور.",
+	"oathauth-webauthn-error-credentials-missing": "لم يتم إرسال بيانات اعتماد WebAuthn.",
+	"oathauth-webauthn-error-cannot-register": "لا يمكن {{GENDER:$1|للمستخدم \"$1\"}} تسجيل بيانات اعتماد جديدة.",
+	"oathauth-webauthn-error-invalid-new-key": "المفتاح الجديد الذي أعادته الوحدة ليس من النوع المطلوب.",
+	"oathauth-webauthn-error-registration-failed": "فشل تسجيل المفتاح الجديد.",
+	"oathauth-webauthn-ui-key-register-help": "اختر اللقب لمفتاحك:",
+	"oathauth-webauthn-error-cannot-remove-key": "لا يمكن إزالة المفتاح.",
+	"oathauth-webauthn-error-get-authinfo-fail": "لا يمكن استرداد معلومات المصادقة.",
+	"oathauth-webauthn-add-key-section-name": "تسجيل مفتاح أمان جديد",
+	"oathauth-webauthn-error-get-reginfo-fail": "لا يمكن استرجاع معلومات التسجيل.",
+	"oathauth-webauthn-module-description": "لا يزال WebAuthn في مرحلة تجريبية. ولا يوفر حاليًا أي خيار لاستعادة أجهزة المصادقة المفقودة أو التالفة. \n\n[https://en.wikipedia.org/wiki/WebAuthn تعرف على المزيد حول WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "إعادة تحميل الصفحة",
+	"oathauth-webauthn-authentication-info-label": "بيانات المصادقة",
+	"oathauth-webauthn-authentication-info-help": "تم تمرير بيانات المصادقة إلى العميل لاسترداد بيانات الاعتماد",
+	"oathauth-webauthn-credential-label": "بيانات اعتماد المستخدم",
+	"oathauth-webauthn-credential-help": "اعتماد المستخدم على أساس بيانات المصادقة",
+	"oathauth-webauthn-add-security-key": "إضافة مفتاح أمان",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "استخدم مفتاح الأمان أو رمز المرور"
+}

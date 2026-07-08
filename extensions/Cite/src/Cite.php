@@ -137,7 +137,7 @@ class Cite {
 		$arguments = $status->getValue();
 
 		// When it's null it means the attribute is allowed, but not used
-		if ( isset( $arguments['details'] ) ) {
+		if ( ( $arguments['details'] ?? '' ) !== '' ) {
 			$parser->addTrackingCategory( self::DETAILS_TRACKING_CATEGORY );
 		}
 

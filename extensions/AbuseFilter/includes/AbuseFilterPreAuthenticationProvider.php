@@ -16,14 +16,6 @@ use Wikimedia\Stats\IBufferingStatsdDataFactory;
  * to keep the log cleaner.
  */
 class AbuseFilterPreAuthenticationProvider extends AbstractPreAuthenticationProvider {
-	/** @var VariableGeneratorFactory */
-	private $variableGeneratorFactory;
-	/** @var FilterRunnerFactory */
-	private $filterRunnerFactory;
-	/** @var IBufferingStatsdDataFactory */
-	private $statsd;
-	/** @var UserFactory */
-	private $userFactory;
 
 	/**
 	 * @param VariableGeneratorFactory $variableGeneratorFactory
@@ -32,15 +24,11 @@ class AbuseFilterPreAuthenticationProvider extends AbstractPreAuthenticationProv
 	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
-		VariableGeneratorFactory $variableGeneratorFactory,
-		FilterRunnerFactory $filterRunnerFactory,
-		IBufferingStatsdDataFactory $statsd,
-		UserFactory $userFactory
+		private readonly VariableGeneratorFactory $variableGeneratorFactory,
+		private readonly FilterRunnerFactory $filterRunnerFactory,
+		private readonly IBufferingStatsdDataFactory $statsd,
+		private readonly UserFactory $userFactory
 	) {
-		$this->variableGeneratorFactory = $variableGeneratorFactory;
-		$this->filterRunnerFactory = $filterRunnerFactory;
-		$this->statsd = $statsd;
-		$this->userFactory = $userFactory;
 	}
 
 	/**

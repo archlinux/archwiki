@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Tests\Logging\LogFormatterTestCase;
+
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\LogFormatter\ProtectedVarsAccessLogFormatter
  */

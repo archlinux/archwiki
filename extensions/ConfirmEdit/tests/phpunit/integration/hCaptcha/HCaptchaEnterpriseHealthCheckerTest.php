@@ -26,15 +26,32 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 		$this->installMockHttp(
 			$this->makeFakeHttpRequest()
 		);
-		/** @var HCaptchaEnterpriseHealthChecker $healthChecker */
-		$healthChecker = $this->getServiceContainer()->getService( 'HCaptchaEnterpriseHealthChecker' );
+		$statsHelper = StatsFactory::newUnitTestingHelper()->withComponent( 'ConfirmEdit' );
+		$services = $this->getServiceContainer();
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			new NullLogger(),
+			$services->getObjectCacheFactory()->getLocalClusterInstance(),
+			$services->getMainWANObjectCache(),
+			$services->getHttpRequestFactory(),
+			$services->getFormatterFactory(),
+			$statsHelper->getStatsFactory(),
+			new HashBagOStuff()
+		);
 		for ( $i = 1; $i <= 10; $i++ ) {
 			$healthChecker->incrementSiteVerifyApiErrorCount();
 		}
 		$this->assertFalse( $healthChecker->isAvailable() );
+		$this->assertSame( 1, $statsHelper->count(
+			'hcaptcha_enterprise_failover_total{reason="siteverify_errors"}' )
+		);
 	}
 
 	public function testIncrementSiteverifyApiErrorCountBelowThreshold() {
+		$this->overrideConfigValue( 'HCaptchaApiUrlIntegrityHash', '' );
 		$this->installMockHttp(
 			$this->makeFakeHttpRequest()
 		);
@@ -53,23 +70,133 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $healthChecker->isAvailable() );
 	}
 
-	public function testHttpFailures() {
-		$this->installMockHttp(
-			$this->makeFakeHttpRequest( '', 500 )
+	public function testServerCacheHit() {
+		$serverCache = new HashBagOStuff();
+		// Pre-populate the server cache with "available"
+		$serverCache->set(
+			$serverCache->makeGlobalKey( 'confirmedit-hcaptcha-available' ),
+			1
 		);
-		/** @var HCaptchaEnterpriseHealthChecker $healthChecker */
-		$healthChecker = $this->getServiceContainer()->getService( 'HCaptchaEnterpriseHealthChecker' );
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$this->getServiceContainer()->getMainConfig()
+			),
+			new NullLogger(),
+			$this->createNoOpMock( BagOStuff::class ),
+			$this->createNoOpMock( WANObjectCache::class ),
+			$this->createNoOpMock( HttpRequestFactory::class ),
+			$this->createNoOpMock( FormatterFactory::class ),
+			StatsFactory::newNull(),
+			$serverCache
+		);
+		// Should return true from server cache without touching WANObjectCache or HTTP.
+		$this->assertTrue( $healthChecker->isAvailable() );
+	}
+
+	public function testServerCacheHitUnavailable() {
+		$serverCache = new HashBagOStuff();
+		// Pre-populate the server cache with "unavailable"
+		$serverCache->set(
+			$serverCache->makeGlobalKey( 'confirmedit-hcaptcha-available' ),
+			0
+		);
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$this->getServiceContainer()->getMainConfig()
+			),
+			new NullLogger(),
+			$this->createNoOpMock( BagOStuff::class ),
+			$this->createNoOpMock( WANObjectCache::class ),
+			$this->createNoOpMock( HttpRequestFactory::class ),
+			$this->createNoOpMock( FormatterFactory::class ),
+			StatsFactory::newNull(),
+			$serverCache
+		);
+		// Should return false from server cache without touching WANObjectCache or HTTP.
 		$this->assertFalse( $healthChecker->isAvailable() );
 	}
 
-	public function testInFailoverMode() {
+	public function testHttpFailuresBelowThreshold() {
+		$this->installMockHttp(
+			$this->makeFakeHttpRequest( '', 500 )
+		);
+		$logger = new TestLogger( true );
+		$services = $this->getServiceContainer();
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$logger,
+			$services->getObjectCacheFactory()->getLocalClusterInstance(),
+			$services->getMainWANObjectCache(),
+			$services->getHttpRequestFactory(),
+			$services->getFormatterFactory(),
+			$services->getStatsFactory(),
+			new HashBagOStuff()
+		);
+		// A single failure should not trigger failover (default threshold is 3).
+		$this->assertTrue( $healthChecker->isAvailable() );
+		$logMessages = array_column( $logger->getBuffer(), 1 );
+		$this->assertContains(
+			'apiUrl check failed on all {maxAttempts} attempts',
+			$logMessages
+		);
+		$this->assertContains(
+			'apiUrl check failed, error count {count} below threshold {threshold}',
+			$logMessages
+		);
+	}
+
+	public function testHttpFailuresAboveThreshold() {
+		$this->overrideConfigValue( 'HCaptchaEnterpriseHealthCheckApiUrlErrorThreshold', 3 );
+		$this->installMockHttp(
+			$this->makeFakeHttpRequest( '', 500 )
+		);
+		$statsHelper = StatsFactory::newUnitTestingHelper()->withComponent( 'ConfirmEdit' );
+		$services = $this->getServiceContainer();
+		$bagOStuff = $services->getObjectCacheFactory()->getLocalClusterInstance();
+		// Simulate that we're already at 2 errors (one below the threshold of 3).
+		// The next failure will push us to 3, meeting the threshold.
+		$bagOStuff->incrWithInit(
+			$bagOStuff->makeGlobalKey( 'confirmedit-hcaptcha-apiurl-error-count' ),
+			BagOStuff::TTL_MINUTE * 30
+		);
+		$bagOStuff->incrWithInit(
+			$bagOStuff->makeGlobalKey( 'confirmedit-hcaptcha-apiurl-error-count' ),
+			BagOStuff::TTL_MINUTE * 30
+		);
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			new NullLogger(),
+			$bagOStuff,
+			$services->getMainWANObjectCache(),
+			$services->getHttpRequestFactory(),
+			$services->getFormatterFactory(),
+			$statsHelper->getStatsFactory(),
+			new HashBagOStuff()
+		);
+		$this->assertFalse( $healthChecker->isAvailable() );
+		$this->assertSame( 1, $statsHelper->count(
+			'hcaptcha_enterprise_failover_total{reason="apiurl_errors"}' )
+		);
+	}
+
+	public function testCachedUnavailable() {
 		$bag = new HashBagOStuff();
 		$wanObjectCacheMock = new WANObjectCache( [
 			'cache' => $bag,
 		] );
+		// Simulate a previous health check that cached unavailability (e.g.
+		// the callback returned 0 with a 10-minute TTL).
 		$wanObjectCacheMock->set(
-			$wanObjectCacheMock->makeGlobalKey( 'confirmedit-hcaptcha-failover-mode' ),
-			true
+			$wanObjectCacheMock->makeGlobalKey( 'confirmedit-hcaptcha-available' ),
+			0
 		);
 		$statsHelper = StatsFactory::newUnitTestingHelper()->withComponent( 'ConfirmEdit' );
 		$healthChecker = new HCaptchaEnterpriseHealthChecker(
@@ -82,7 +209,8 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 			$wanObjectCacheMock,
 			$this->createNoOpMock( HttpRequestFactory::class ),
 			$this->createNoOpMock( FormatterFactory::class ),
-			$statsHelper->getStatsFactory()
+			$statsHelper->getStatsFactory(),
+			new HashBagOStuff()
 		);
 		$this->assertFalse( $healthChecker->isAvailable() );
 		$this->assertSame( 1, $statsHelper->count(
@@ -97,6 +225,7 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 			$this->makeFakeHttpRequest( 'bar' )
 		);
 
+		$statsHelper = StatsFactory::newUnitTestingHelper()->withComponent( 'ConfirmEdit' );
 		$services = $this->getServiceContainer();
 		$healthChecker = new HCaptchaEnterpriseHealthChecker(
 			new ServiceOptions(
@@ -108,16 +237,25 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 			$services->getMainWANObjectCache(),
 			$services->getHttpRequestFactory(),
 			$services->getFormatterFactory(),
-			$services->getStatsFactory()
+			$statsHelper->getStatsFactory(),
+			new HashBagOStuff()
 		);
 		$this->assertFalse( $healthChecker->isAvailable() );
-		$this->assertEquals(
-			'Entering failover mode',
-			$logger->getBuffer()[0][1]
+		$logMessages = array_column( $logger->getBuffer(), 1 );
+		$this->assertContains(
+			'apiUrl check failed on all {maxAttempts} attempts',
+			$logMessages
 		);
-		$this->assertEquals(
+		$this->assertContains(
 			'Integrity hash {parameter1} does not match expected {parameter2}',
-			$logger->getBuffer()[1][1]
+			$logMessages
+		);
+		$this->assertContains(
+			'apiUrl integrity check failure, entering immediate failover',
+			$logMessages
+		);
+		$this->assertSame( 1, $statsHelper->count(
+			'hcaptcha_enterprise_failover_total{reason="integrity_failure"}' )
 		);
 	}
 
@@ -139,16 +277,22 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 			$services->getMainWANObjectCache(),
 			$services->getHttpRequestFactory(),
 			$services->getFormatterFactory(),
-			$services->getStatsFactory()
+			$services->getStatsFactory(),
+			new HashBagOStuff()
 		);
 		$this->assertFalse( $healthChecker->isAvailable() );
-		$this->assertEquals(
-			'Entering failover mode',
-			$logger->getBuffer()[0][1]
+		$logMessages = array_column( $logger->getBuffer(), 1 );
+		$this->assertContains(
+			'apiUrl check failed on all {maxAttempts} attempts',
+			$logMessages
 		);
-		$this->assertEquals(
+		$this->assertContains(
 			'Invalid hash algorithm: {parameter1}',
-			$logger->getBuffer()[1][1]
+			$logMessages
+		);
+		$this->assertContains(
+			'apiUrl integrity check failure, entering immediate failover',
+			$logMessages
 		);
 	}
 
@@ -173,9 +317,90 @@ class HCaptchaEnterpriseHealthCheckerTest extends MediaWikiIntegrationTestCase {
 			$services->getMainWANObjectCache(),
 			$services->getHttpRequestFactory(),
 			$services->getFormatterFactory(),
-			$services->getStatsFactory()
+			$services->getStatsFactory(),
+			new HashBagOStuff()
 		);
 		$this->assertTrue( $healthChecker->isAvailable() );
 		$this->assertEquals( [], $logger->getBuffer() );
+	}
+
+	public function testRetrySucceedsOnLaterAttempt() {
+		$this->overrideConfigValues( [
+			'HCaptchaApiUrlIntegrityHash' => '',
+			'HCaptchaEnterpriseHealthCheckApiUrlRetryCount' => 2,
+			'HCaptchaEnterpriseHealthCheckApiUrlRetryDelayMs' => 0,
+		] );
+		// First request fails (500), subsequent requests succeed (200).
+		$this->installMockHttp( [
+			$this->makeFakeHttpRequest( '', 500 ),
+			$this->makeFakeHttpRequest( 'ok', 200 ),
+		] );
+		$logger = new TestLogger( true );
+		$services = $this->getServiceContainer();
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$logger,
+			$services->getObjectCacheFactory()->getLocalClusterInstance(),
+			$services->getMainWANObjectCache(),
+			$services->getHttpRequestFactory(),
+			$services->getFormatterFactory(),
+			$services->getStatsFactory(),
+			new HashBagOStuff()
+		);
+		$this->assertTrue( $healthChecker->isAvailable() );
+		$logMessages = array_column( $logger->getBuffer(), 1 );
+		$this->assertContains(
+			'apiUrl check attempt {attempt} of {maxAttempts} failed, retrying in {retryDelayMs}ms',
+			$logMessages
+		);
+		$this->assertContains(
+			'apiUrl check failed on first attempt but succeeded on attempt {attempt} of {maxAttempts}',
+			$logMessages
+		);
+	}
+
+	public function testRetryCountZeroDisablesRetries() {
+		$this->overrideConfigValues( [
+			'HCaptchaEnterpriseHealthCheckApiUrlRetryCount' => 0,
+			'HCaptchaEnterpriseHealthCheckApiUrlRetryDelayMs' => 0,
+		] );
+		// Only one request, and it fails.
+		$this->installMockHttp(
+			$this->makeFakeHttpRequest( '', 500 )
+		);
+		$logger = new TestLogger( true );
+		$services = $this->getServiceContainer();
+		$healthChecker = new HCaptchaEnterpriseHealthChecker(
+			new ServiceOptions(
+				HCaptchaEnterpriseHealthChecker::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig()
+			),
+			$logger,
+			$services->getObjectCacheFactory()->getLocalClusterInstance(),
+			$services->getMainWANObjectCache(),
+			$services->getHttpRequestFactory(),
+			$services->getFormatterFactory(),
+			$services->getStatsFactory(),
+			new HashBagOStuff()
+		);
+		// Should still be available because error count is below threshold,
+		// but no retry log messages should appear.
+		$this->assertTrue( $healthChecker->isAvailable() );
+		$logMessages = array_column( $logger->getBuffer(), 1 );
+		$this->assertNotContains(
+			'apiUrl check failed on all {maxAttempts} attempts',
+			$logMessages
+		);
+		$this->assertNotContains(
+			'apiUrl check failed on first attempt but succeeded on attempt {attempt} of {maxAttempts}',
+			$logMessages
+		);
+		$this->assertContains(
+			'apiUrl check failed, error count {count} below threshold {threshold}',
+			$logMessages
+		);
 	}
 }

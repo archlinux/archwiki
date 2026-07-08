@@ -268,9 +268,7 @@ parsoid=wt2html,selser
 }} X'' {{1x|<span></span>
 }} Y
 !! html/parsoid
- <span about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"\n"}},"i":0}}]}'>
-</span><pre><i data-parsoid='{"autoInsertedEnd":true}'></i><span about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"\n"}},"i":0}}]}'>
-</span>X<i about="#mwt3" typeof="mw:Transclusion" data-parsoid='{"autoInsertedEnd":true,"firstWikitextNode":"I","pi":[[{"k":"1"}]]}' data-mw='{"parts":["&apos;&apos; ",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;span>&lt;/span>\n"}},"i":0}}]}'> <span></span></i><span about="#mwt3">
+ <span class="mw-empty-elt" about="#mwt1" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"\n"}},"i":0}}]}'></span><pre><i data-parsoid='{"autoInsertedEnd":true}'></i><span class="mw-empty-elt" about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"pi":[[{"k":"1"}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"\n"}},"i":0}}]}'></span>X<i about="#mwt3" typeof="mw:Transclusion" data-parsoid='{"autoInsertedEnd":true,"firstWikitextNode":"I","pi":[[{"k":"1"}]]}' data-mw='{"parts":["&apos;&apos; ",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"&lt;span>&lt;/span>\n"}},"i":0}}]}'> <span></span></i><span about="#mwt3">
 </span>Y</pre>
 !! html/php
 <pre><i></i>
@@ -894,4 +892,21 @@ Preserving leading whitespace in indent-pre suppressing contexts
  bar
 </li>
 </ol>
+!! end
+
+## From T2529, legacy will put the bullet at SOL
+!! test
+Indent pre and list items
+!! wikitext
+ {{1x|*test}}
+
+ *123
+!! html/php
+<ul><li>test</li></ul>
+<pre>*123
+</pre>
+!! html/parsoid+integrated
+<pre><span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"*test"}},"i":0}}]}'>*test</span></pre>
+
+<pre>*123</pre>
 !! end

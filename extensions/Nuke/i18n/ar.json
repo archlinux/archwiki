@@ -48,6 +48,7 @@
 	"nuke-delete-more": "[[Special:Nuke|حذف المزيد من الصفحات]]",
 	"nuke-deletemore": "حذف المزيد من الصفحات",
 	"nuke-pattern": "نمط يشبه إس كيو إل (على سبيل المثال %) لاسم الصفحة:",
+	"nuke-pattern-leading-wildcard": "لا يمكن أن يبدأ النمط بعلامة <code>%</code> . يرجى تقديم بادئة قبل رمز البدل (مثلاً <code>Example%</code> بدلاً من <code>%Example</code> ).",
 	"nuke-nolist": "للمتابعة، قم أولاً بكتابة '{{int:nuke-submit-list}}' ثم حدد الصفحات التي سيتم وضعها في قائمة الانتظار للحذف.",
 	"nuke-nopages-global": "لا توجد صفحات تطابق البحث.",
 	"nuke-searchnotice-minmorethanmax": "الحد الأدنى للحجم بالبايت يتجاوز الحد الأقصى للحجم بالبايت، لذا فليس من الممكن لأي صفحة تلبية هذا المعيار.",

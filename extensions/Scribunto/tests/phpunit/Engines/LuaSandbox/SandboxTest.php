@@ -2,18 +2,16 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaSandbox;
 
-use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaEngineUnitTestBase;
+use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaSandboxUnitTestBase;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine
+ * @group Lua
+ * @group LuaSandbox
  */
-class SandboxTest extends LuaEngineUnitTestBase {
+class SandboxTest extends LuaSandboxUnitTestBase {
 	/** @inheritDoc */
 	protected static $moduleName = 'SandboxTests';
-
-	public static function suite( $className ) {
-		return self::makeSuite( $className, 'LuaSandbox' );
-	}
 
 	protected function getTestModules() {
 		return parent::getTestModules() + [

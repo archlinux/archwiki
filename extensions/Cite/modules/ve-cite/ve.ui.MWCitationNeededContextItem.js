@@ -13,7 +13,7 @@
  * @constructor
  * @extends ve.ui.MWDefinedTransclusionContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
- * @param {ve.dm.Model} model Model the item is related to
+ * @param {ve.dm.MWTransclusionNode} model Model the item is related to
  * @param {Object} [config]
  */
 ve.ui.MWCitationNeededContextItem = function VeUiMWCitationNeededContextItem() {
@@ -94,7 +94,7 @@ ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
 	// TODO: This assumes Citoid is installed...
 	const action = ve.ui.actionFactory.create( 'citoid', surface );
 	promise.then( ( inStaging ) => {
-		action.open( true, undefined, inStaging );
+		action.open( { replace: true, inStaging } );
 	} );
 	ve.track( 'activity.' + this.constructor.static.name, { action: 'context-add-citation' } );
 };

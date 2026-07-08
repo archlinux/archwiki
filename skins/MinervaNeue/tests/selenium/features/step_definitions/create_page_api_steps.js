@@ -1,11 +1,9 @@
 import { ArticlePage } from '../support/world.js';
 import RunJobs from 'wdio-mediawiki/RunJobs.js';
-import { mwbot } from 'wdio-mediawiki/Api.js';
+import { createApiClient } from 'wdio-mediawiki/Api.js';
 import Page from 'wdio-mediawiki/Page.js';
-import MWBot from 'mwbot';
 import {
 	iAmOnPage,
-	createPages,
 	createPage } from './common_steps.js';
 
 const iAmInAWikiThatHasCategories = async ( title ) => {
@@ -18,14 +16,12 @@ const iAmInAWikiThatHasCategories = async ( title ) => {
             [[Category:Selenium hidden category]]
         `;
 
-	await createPages( [
-		[ 'create', 'Category:Selenium artifacts', msg ],
-		[ 'create', 'Category:Test category', msg ],
-		[ 'create', 'Category:Selenium hidden category', '__HIDDENCAT__' ]
-	] );
+	const api = await createApiClient();
+	await api.edit( 'Category:Selenium artifacts', msg );
+	await api.edit( 'Category:Test category', msg );
+	await api.edit( 'Category:Selenium hidden category', '__HIDDENCAT__' );
 
-	const bot = await mwbot();
-	await bot.edit( title, wikitext );
+	await api.edit( title, wikitext );
 
 	// The category overlay uses the category API
 	// which will only return results if the job queue has completed.
@@ -36,16 +32,12 @@ const iAmInAWikiThatHasCategories = async ( title ) => {
 const iAmOnAPageThatHasTheFollowingEdits = async function ( table ) {
 	const randomString = Math.random().toString( 36 ).slice( 7 ),
 		pageTitle = `Selenium_diff_test_${ randomString }`,
-		edits = table.rawTable.map( ( row, i ) => [ i === 0 ? 'create' : 'edit', pageTitle, row[ 0 ] ] );
+		edits = table.rawTable.map( ( row ) => [ pageTitle, row[ 0 ] ] );
 
-	const bot = new MWBot();
-	await bot.loginGetEditToken( {
-		username: browser.options.username,
-		password: browser.options.password,
-		apiUrl: `${ browser.options.baseUrl }/api.php`
-	} );
-
-	await bot.batch( edits );
+	const api = await createApiClient();
+	for ( const [ title, text ] of edits ) {
+		await api.edit( title, text );
+	}
 
 	RunJobs.run();
 	await ArticlePage.open( pageTitle );

@@ -2,7 +2,7 @@
 
 const utils = require( '@vue/test-utils' ),
 	{ nextTick } = require( 'vue' ),
-	{ waitFor, mockByteLength } = require( '../../utils.js' );
+	{ mockByteLength, mockJSConfig } = require( '../../utils.js' );
 
 // Need to run this here as the import of ChangeInvestigationStatusDialog.vue
 // without mediawiki.String defined causes errors in running these tests.
@@ -23,7 +23,11 @@ jest.mock(
 const ChangeInvestigationStatusDialog = require( '../../../../modules/ext.checkUser.suggestedInvestigations/components/ChangeInvestigationStatusDialog.vue' );
 
 const renderComponent = ( props ) => utils.mount( ChangeInvestigationStatusDialog, {
-	props: Object.assign( {}, { caseId: 1, initialStatus: 'open', initialStatusReason: '' }, props )
+	props: Object.assign(
+		{},
+		{ caseId: 1, initialStatus: 'open', initialStatusReason: '', caseSignals: [ 'dev-signal-1' ] },
+		props
+	)
 } );
 
 /**
@@ -33,11 +37,19 @@ const renderComponent = ( props ) => utils.mount( ChangeInvestigationStatusDialo
  * @param {{
  *          caseId: number,
  *          initialStatus: 'open'|'resolved'|'invalid',
- *          initialStatusReason: string
+ *          initialStatusReason: string,
+ *          caseSignals: string[]
  *        }} props Passed through to {@link renderComponent}
  * @return {{ wrapper, dialog }} The dialog component and wrapper
  */
 const commonComponentTest = async ( props ) => {
+	mockJSConfig( {
+		wgCheckUserSuggestedInvestigationsSignals: [
+			{ name: 'dev-signal-1', invalidStatusWarningMessage: 'Dev signal 1 warning' },
+			{ name: 'dev-signal-2' }
+		]
+	} );
+
 	// Render the component and wait for CdxDialog to run some code
 	const wrapper = renderComponent( props );
 	await nextTick();
@@ -146,6 +158,26 @@ const commonValidateStatusReasonField = ( dialog, status, expectedStatusReason )
 	return statusReasonField;
 };
 
+/**
+ * Validates that the invalid status warning appears with the expected text or
+ * does not appear
+ *
+ * @param {*} dialog The component for the dialog
+ * @param {string} expectedText The expected text in the warning message, or empty string
+ *   if the warning message should not be shown
+ */
+const commonValidateInvalidStatusWarningMessage = ( dialog, expectedText ) => {
+	const invalidStatusWarningMessage = dialog.find(
+		'.ext-checkuser-suggestedinvestigations-change-status-dialog-invalid-status-warning'
+	);
+	if ( expectedText ) {
+		expect( invalidStatusWarningMessage.exists() ).toEqual( true );
+		expect( invalidStatusWarningMessage.text() ).toContain( expectedText );
+	} else {
+		expect( invalidStatusWarningMessage.exists() ).toEqual( false );
+	}
+};
+
 describe( 'Suggested Investigations change status dialog', () => {
 	beforeEach( () => {
 		jest.spyOn( mw.language, 'convertNumber' ).mockImplementation( ( number ) => number );
@@ -162,12 +194,11 @@ describe( 'Suggested Investigations change status dialog', () => {
 	it( 'Renders correctly for initial open status with no pre-filled reason', async () => {
 		const { dialog } = await commonComponentTest( { initialStatus: 'open' } );
 
-		// Expect that the reason field does not exist, as it should not be present if
-		// no reason was already set and the selected status is open
+		// Expect that the reason field exists, as it should always be shown
 		const statusReasonField = dialog.find(
 			'.ext-checkuser-suggestedinvestigations-change-status-dialog-status-reason'
 		);
-		expect( statusReasonField.exists() ).toEqual( false );
+		expect( statusReasonField.exists() ).toEqual( true );
 	} );
 
 	it( 'Renders correctly for initial resolved status with no pre-filled reason', async () => {
@@ -175,16 +206,33 @@ describe( 'Suggested Investigations change status dialog', () => {
 
 		// The status reason field should always exist when the status is not "open"
 		commonValidateStatusReasonField( dialog, 'resolved', '' );
+
+		commonValidateInvalidStatusWarningMessage( dialog, '' );
 	} );
 
 	it( 'Renders correctly for initial invalid status', async () => {
 		const { dialog } = await commonComponentTest( {
 			initialStatus: 'invalid',
-			initialStatusReason: 'test'
+			initialStatusReason: 'test',
+			caseSignals: [ 'dev-signal-2', 'dev-signal-1' ]
 		} );
 
 		// The status reason field should always exist when the status is not "open"
 		commonValidateStatusReasonField( dialog, 'invalid', 'test' );
+
+		commonValidateInvalidStatusWarningMessage( dialog, 'Dev signal 1 warning' );
+	} );
+
+	it( 'Renders no invalid status warning message if case signals have no warning message defined', async () => {
+		const { dialog } = await commonComponentTest( {
+			initialStatus: 'invalid',
+			initialStatusReason: 'test123',
+			caseSignals: [ 'dev-signal-2' ]
+		} );
+
+		commonValidateStatusReasonField( dialog, 'invalid', 'test123' );
+
+		commonValidateInvalidStatusWarningMessage( dialog, '' );
 	} );
 
 	it( 'Renders correctly for initial open status with prefilled reason', async () => {
@@ -195,27 +243,8 @@ describe( 'Suggested Investigations change status dialog', () => {
 
 		// The status reason field should always exist when the status is not "open"
 		commonValidateStatusReasonField( dialog, 'open', 'testing' );
-	} );
 
-	it( 'Empty status reason field disappears when switching from resolved to open status', async () => {
-		const { dialog } = await commonComponentTest( {
-			initialStatus: 'resolved',
-			initialStatusReason: ''
-		} );
-
-		// The status reason field should always exist when the status is not "open"
-		commonValidateStatusReasonField( dialog, 'resolved', '' );
-
-		// Switch the status radio to "open" and wait for the change to be propagated
-		const openStatusRadioOption = dialog.find(
-			'input[name=checkuser-suggestedinvestigations-change-status-dialog-status-option][value=open]'
-		);
-		await openStatusRadioOption.setChecked();
-		await waitFor( () => !dialog.find( '.ext-checkuser-suggestedinvestigations-change-status-dialog-status-reason' ).exists() );
-
-		// Validate that the reason field did not disappear with the change in status
-		const statusReasonField = dialog.find( '.ext-checkuser-suggestedinvestigations-change-status-dialog-status-reason' );
-		expect( statusReasonField.exists() ).toEqual( false );
+		commonValidateInvalidStatusWarningMessage( dialog, '' );
 	} );
 
 	it( 'Keeps status reason field when text present and switching to "open" status', async () => {
@@ -243,6 +272,9 @@ describe( 'Suggested Investigations change status dialog', () => {
 		// Validate that the reason field did not disappear with the change in status
 		const statusReasonField = dialog.find( '.ext-checkuser-suggestedinvestigations-change-status-dialog-status-reason' );
 		expect( statusReasonField.exists() ).toEqual( true );
+
+		// Validate the invalid status warning did not appear, because the new status is not invalid
+		commonValidateInvalidStatusWarningMessage( dialog, '' );
 	} );
 
 	it( 'Closes dialog if "Cancel" button pressed', async () => {
@@ -259,7 +291,9 @@ describe( 'Suggested Investigations change status dialog', () => {
 	} );
 
 	it( 'Makes API request when "Submit" button pressed with successful API response', async () => {
-		mockSetCaseStatus.mockResolvedValue( { caseId: 123, status: 'resolved', reason: 'test' } );
+		mockSetCaseStatus.mockResolvedValue(
+			{ caseId: 123, status: 'resolved', reason: 'test', formattedReason: 'test' }
+		);
 
 		const { dialog, wrapper } = await commonComponentTest( { caseId: 123, initialStatus: 'invalid' } );
 
@@ -286,7 +320,7 @@ describe( 'Suggested Investigations change status dialog', () => {
 		// and the code to update the DOM outside the component has been made.
 		expect( wrapper.vm.open ).toEqual( false );
 		expect( mockSetCaseStatus ).toHaveBeenCalledWith( 123, 'resolved', 'test' );
-		expect( mockUpdateCaseStatusOnPage ).toHaveBeenCalledWith( 123, 'resolved', 'test' );
+		expect( mockUpdateCaseStatusOnPage ).toHaveBeenCalledWith( 123, 'resolved', 'test', 'test' );
 	} );
 
 	const failedAPIResponseTestCases = {
@@ -385,7 +419,7 @@ describe( 'Suggested Investigations change status dialog', () => {
 		await submitButton.trigger( 'click' );
 
 		promisesToResolve.forEach( ( promiseResolver ) => {
-			promiseResolver( { caseId: 123, status: 'resolved', reason: 'test' } );
+			promiseResolver( { caseId: 123, status: 'resolved', reason: 'test', formattedReason: 'test' } );
 		} );
 
 		expect( wrapper.vm.open ).toEqual( false );
@@ -394,6 +428,6 @@ describe( 'Suggested Investigations change status dialog', () => {
 		expect( mockSetCaseStatus ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetCaseStatus ).toHaveBeenCalledWith( 123, 'resolved', 'test' );
 		expect( mockUpdateCaseStatusOnPage ).toHaveBeenCalledTimes( 1 );
-		expect( mockUpdateCaseStatusOnPage ).toHaveBeenCalledWith( 123, 'resolved', 'test' );
+		expect( mockUpdateCaseStatusOnPage ).toHaveBeenCalledWith( 123, 'resolved', 'test', 'test' );
 	} );
 } );

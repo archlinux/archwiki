@@ -17,7 +17,7 @@ class LoginPage extends Page {
 	}
 
 	get userPage() {
-		return $( '#pt-userpage' );
+		return $( '[id^="pt-userpage"]' );
 	}
 
 	async open() {
@@ -25,7 +25,7 @@ class LoginPage extends Page {
 	}
 
 	async getActualUsername() {
-		return browser.execute( () => mw.config.get( 'wgUserName' ) );
+		return this.userPage.getText();
 	}
 
 	async login( username, password ) {

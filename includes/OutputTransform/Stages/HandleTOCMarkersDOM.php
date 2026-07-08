@@ -3,13 +3,12 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\OutputTransform\Stages;
 
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\OutputTransform\ContentDOMTransformStage;
-use ParserOptions;
-use ParserOutput;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\Parsoid\DOM\Document;
@@ -20,12 +19,12 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 
 class HandleTOCMarkersDOM extends ContentDOMTransformStage {
 
-	public function shouldRun( ParserOutput $po, ?ParserOptions $popts, array $options = [] ): bool {
+	public function shouldRun( ParserOutput $po, ParserOptions $popts, array $options = [] ): bool {
 		return !( $options['allowTOC'] ?? true ) || ( $options['injectTOC'] ?? true );
 	}
 
 	public function transformDOM(
-		DocumentFragment $df, ParserOutput $po, ?ParserOptions $popts, array &$options
+		DocumentFragment $df, ParserOutput $po, ParserOptions $popts, array &$options
 	): DocumentFragment {
 		$markers = DOMCompat::querySelectorAll( $df, "meta[property='mw:PageProp/toc']" );
 		$replaced = false;
@@ -35,21 +34,20 @@ class HandleTOCMarkersDOM extends ContentDOMTransformStage {
 			if ( $replaced || !( $options['allowTOC'] ?? true ) ) {
 				$marker->remove();
 			} elseif ( ( $options['allowTOC'] ?? true ) && ( $options['injectTOC'] ?? true ) ) {
-				$this->injectToc( $po, $options, $marker );
+				$this->injectToc( $po, $popts, $options, $marker );
 				$replaced = true;
 			}
 		}
 		return $df;
 	}
 
-	private function injectToc( ParserOutput $po, array $options, Element $marker ) {
+	private function injectToc( ParserOutput $po, ParserOptions $popts, array $options, Element $marker ) {
 		$numSections = count( $po->getSections() );
 		if ( $numSections === 0 ) {
 			$marker->remove();
 			return;
 		}
 		$tocData = $po->getTOCData();
-		$lang = $this->resolveUserLanguage( $options );
 		$maxTocLevel = $options['maxtoclevel'] ?? null;
 		if ( $maxTocLevel === null ) {
 			// Use wiki-configured default
@@ -59,18 +57,16 @@ class HandleTOCMarkersDOM extends ContentDOMTransformStage {
 		}
 		$doc = $marker->ownerDocument;
 		Assert::invariant( $doc !== null, 'marker without document owner' );
-		$toc = $this->generateToc( $tocData, $lang, $doc, $maxTocLevel );
-		if ( $toc ) {
+		if ( $tocData !== null ) {
+			$lang = $popts->getUserLangObj();
+			$toc = $this->generateToc( $tocData, $lang, $doc, $maxTocLevel );
 			$marker->replaceWith( $toc );
 		} else {
 			$marker->remove();
 		}
 	}
 
-	private function generateToc( ?TocData $tocData, Language $lang, Document $doc, int $maxTocLevel ): ?Element {
-		if ( !$tocData ) {
-			return null;
-		}
+	private function generateToc( TocData $tocData, Language $lang, Document $doc, int $maxTocLevel ): Element {
 		$customTitleKey = $tocData->getExtensionData( 'mw:title' );
 		$customId = $tocData->getExtensionData( 'mw:id' );
 		$customClass = $tocData->getExtensionData( 'mw:class' );
@@ -184,7 +180,7 @@ class HandleTOCMarkersDOM extends ContentDOMTransformStage {
 							$doc,
 							'span',
 							[ 'class' => 'toctext' ],
-							$fragTocLine->hasChildNodes() ? $fragTocLine : ''
+							$fragTocLine
 						)
 					)
 				);
@@ -195,25 +191,5 @@ class HandleTOCMarkersDOM extends ContentDOMTransformStage {
 			}
 		}
 		return $top;
-	}
-
-	/**
-	 * Extracts the userLanguage from the $options array, with a fallback on skin language and request
-	 * context language
-	 * @param array $options
-	 * @return Language
-	 */
-	private function resolveUserLanguage( array $options ): Language {
-		$userLang = $options['userLang'] ?? null;
-		$skin = $options['skin'] ?? null;
-		if ( ( !$userLang ) && $skin ) {
-			// TODO: We probably don't need a full Skin option here
-			$userLang = $skin->getLanguage();
-		}
-		if ( !$userLang ) {
-			// T348853 passing either userLang or skin will be mandatory in the future
-			$userLang = RequestContext::getMain()->getLanguage();
-		}
-		return $userLang;
 	}
 }

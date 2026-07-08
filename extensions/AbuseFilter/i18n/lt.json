@@ -339,7 +339,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Priskirti kintamajam (set_var)",
 	"abusefilter-edit-builder-group-vars": "Kintamieji",
 	"abusefilter-edit-builder-vars-timestamp": "Pakeitimo laikas",
-	"abusefilter-edit-builder-vars-accountname": "Sąskaitos vardas (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Sąskaitos vardas (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Veiksmas ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Eilutės, kurios įstatytos redaguojant",
 	"abusefilter-edit-builder-vars-delta": "Dydis pakeistas redaguojant",

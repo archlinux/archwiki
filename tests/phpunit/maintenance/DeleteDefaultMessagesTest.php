@@ -93,7 +93,7 @@ class DeleteDefaultMessagesTest extends MaintenanceBaseTestCase {
 		);
 		$this->expectOutputRegex(
 			"/Checking existence of old default messages\.\.\.\n" .
-			"\.\.\.deleting old default messages.*done!\n/"
+			"\.\.\.deleting old default messages.*done!/"
 		);
 	}
 

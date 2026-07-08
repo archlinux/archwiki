@@ -5,11 +5,12 @@ namespace Cite\Tests\Unit;
 use Cite\Parsoid\RefTagHandler;
 use MediaWiki\Config\HashConfig;
 use MediaWikiUnitTestCase;
+use Wikimedia\Parsoid\Ext\ContentUtils;
+use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwBody;
-use Wikimedia\Parsoid\Utils\DOMDataUtils;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
  * @covers \Cite\Parsoid\RefTagHandler
@@ -17,22 +18,31 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  */
 class RefTagHandlerTest extends MediaWikiUnitTestCase {
 
-	public function testProcessAttributeEmbeddedHTML() {
-		$doc = DOMUtils::parseHTML( '' );
-		DOMDataUtils::prepareDoc( $doc );
+	public function testProcessAttributeEmbeddedDom() {
+		$env = new MockEnv( [] );
+		$extApi = new ParsoidExtensionAPI( $env );
+		$doc = ContentUtils::createAndLoadDocument( '' );
 		$elt = $doc->createElement( 'a' );
+		$df = $doc->createDocumentFragment();
+		$df->textContent = 'old';
+		$body = new DataMwBody;
+		$body->setHtml( $extApi, $df );
 		DOMDataUtils::setDataMw( $elt, new DataMw( [
-			'body' => DataMwBody::new( [ 'html' => 'old' ] ),
+			'body' => $body,
 		] ) );
 
 		$group = new RefTagHandler( new HashConfig( [ 'CiteSubReferencing' => false ] ) );
-		$group->processAttributeEmbeddedHTML(
-			$this->createNoOpMock( ParsoidExtensionAPI::class ),
+		$group->processAttributeEmbeddedDom(
+			$extApi,
 			$elt,
-			static fn () => 'new'
+			static function ( $df ) {
+				$df->textContent = 'new';
+				return true;
+			}
 		);
 
-		$this->assertSame( 'new', DOMDataUtils::getDataMw( $elt )->body->html );
+		$actual = DOMDataUtils::getDataMw( $elt )->body->getHtml( $extApi );
+		$this->assertSame( 'new', $actual->textContent );
 	}
 
 	// TODO: Incomplete, there are a few more public methods to test

@@ -23,9 +23,6 @@ class InputBox {
 
 	/* Fields */
 
-	/** @var Config */
-	private $config;
-	private ExtensionRegistry $extensionRegistry;
 	/** @var Parser */
 	private $mParser;
 	/** @var string */
@@ -81,9 +78,11 @@ class InputBox {
 	/** @var string */
 	private $mDir = '';
 	/** @var string */
-	private $mSearchFilter = '';
-	/** @var string */
 	private $mSearchEngine = '';
+	/** @var string One of 'image', 'video', 'audio', 'page', or 'other'. */
+	private string $mSearchType = '';
+	/** @var string */
+	private $mSearchFilter = '';
 	/** @var string */
 	private $mTour = '';
 	/** @var string */
@@ -97,12 +96,10 @@ class InputBox {
 	 * @param Parser $parser
 	 */
 	public function __construct(
-		Config $config,
-		ExtensionRegistry $extensionRegistry,
+		private readonly Config $config,
+		private readonly ExtensionRegistry $extensionRegistry,
 		$parser
 	) {
-		$this->config = $config;
-		$this->extensionRegistry = $extensionRegistry;
 		$this->mParser = $parser;
 		// Default value for dir taken from the page language (bug 37018)
 		$this->mDir = $this->mParser->getTargetLanguage()->getDir();
@@ -246,6 +243,10 @@ class InputBox {
 
 		if ( $this->mSearchFilter !== '' ) {
 			$htmlOut .= Html::hidden( 'searchfilter', $this->mSearchFilter );
+		}
+
+		if ( $this->mSearchType !== '' && $this->mSearchEngine === 'MediaSearch' ) {
+			$htmlOut .= Html::hidden( 'type', $this->mSearchType );
 		}
 
 		if ( $this->mTour !== '' ) {
@@ -494,7 +495,6 @@ class InputBox {
 		if ( $this->mMinor !== null ) {
 			$htmlOut .= Html::hidden( 'minor', $this->mMinor );
 		}
-		// @phan-suppress-next-line PhanSuspiciousValueComparison False positive
 		if ( $this->mType === 'comment' ) {
 			$htmlOut .= Html::hidden( 'section', 'new' );
 			if ( $this->mUseDT ) {
@@ -713,6 +713,7 @@ class InputBox {
 			'prefix' => 'mPrefix',
 			'dir' => 'mDir',
 			'searchengine' => 'mSearchEngine',
+			'searchtype' => 'mSearchType',
 			'searchfilter' => 'mSearchFilter',
 			'tour' => 'mTour',
 			'arialabel' => 'mTextBoxAriaLabel'
@@ -829,15 +830,19 @@ REGEX;
 	 * @return string Local URL of the search page.
 	 */
 	private function buildSearchActionUrl(): string {
+		// If MediaSearch isn't installed then use Special:Search.
+		if ( !$this->extensionRegistry->isLoaded( 'MediaSearch' ) ) {
+			return SpecialPage::getTitleFor( 'Search' )->getLocalUrl();
+		}
+
+		// If it is installed, optionally use it.
 		if ( in_array( $this->mSearchEngine, [ 'Search', 'MediaSearch' ] ) ) {
 			// Use the provided `searchengine=` parameter if it's valid.
 			$searchSpecialPage = $this->mSearchEngine;
 		} else {
 			// Otherwise, the use search-special-page preference.
 			$searchSpecialPage = $this->config->get( 'DefaultUserOptions' )['search-special-page'] ?? 'Search';
-			if ( $this->extensionRegistry->isLoaded( 'MediaSearch' )
-				&& $this->mParser->getUserIdentity()->isRegistered()
-			) {
+			if ( $this->mParser->getUserIdentity()->isRegistered() ) {
 				$this->mParser->getOutput()->addModules( [ 'ext.inputBox' ] );
 				$this->mParser->getOutput()->setJsConfigVar( 'SpecialSearchPages', [
 					'Search' => SpecialPage::getTitleFor( 'Search' )->getFullText(),

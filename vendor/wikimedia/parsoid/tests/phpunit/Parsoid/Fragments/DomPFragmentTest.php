@@ -5,6 +5,7 @@ namespace Test\Parsoid\Fragments;
 
 use Wikimedia\JsonCodec\JsonClassCodec;
 use Wikimedia\JsonCodec\JsonCodec;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Fragments\DomPFragment;
@@ -12,7 +13,6 @@ use Wikimedia\Parsoid\Fragments\HtmlPFragment;
 use Wikimedia\Parsoid\Fragments\LiteralStringPFragment;
 use Wikimedia\Parsoid\Fragments\PFragment;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
@@ -60,9 +60,6 @@ class DomPFragmentTest extends PFragmentTestCase {
 	 */
 	public function testCodec() {
 		$ext = $this->newExtensionAPI();
-		$df = $ext->getTopLevelDoc()->createDocumentFragment();
-		DOMUtils::setFragmentInnerHTML( $df, "<b>foo</b>" );
-		$f = DomPFragment::newFromDocumentFragment( $df, null );
 		$codec = new JsonCodec();
 		$codec->addCodecFor( DocumentFragment::class, new class( $ext ) implements JsonClassCodec {
 			private ParsoidExtensionAPI $ext;
@@ -83,8 +80,7 @@ class DomPFragmentTest extends PFragmentTestCase {
 			public function newFromJsonArray( string $className, array $json ) {
 				return ContentUtils::createAndLoadDocumentFragment(
 					$this->ext->getTopLevelDoc(),
-					$json['html'],
-					[ 'markNew' => true ]
+					$json['html']
 				);
 			}
 
@@ -92,6 +88,9 @@ class DomPFragmentTest extends PFragmentTestCase {
 				return null;
 			}
 		} );
+		$df = $ext->getTopLevelDoc()->createDocumentFragment();
+		DOMUtils::setFragmentInnerHTML( $df, "<b>foo</b>" );
+		$f = DomPFragment::newFromDocumentFragment( $df, null );
 		$hint = PFragment::hint();
 		$json = $codec->toJsonString( $f, $hint );
 		$f = $codec->newFromJsonString( $json, $hint );

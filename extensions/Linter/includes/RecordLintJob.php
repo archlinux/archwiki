@@ -25,29 +25,14 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageReference;
 
 class RecordLintJob extends Job {
-	private TotalsLookup $totalsLookup;
-	private Database $database;
-	private CategoryManager $categoryManager;
-
-	/**
-	 * RecordLintJob constructor.
-	 * @param PageReference $page
-	 * @param array $params
-	 * @param TotalsLookup $totalsLookup
-	 * @param Database $database
-	 * @param CategoryManager $categoryManager
-	 */
 	public function __construct(
 		PageReference $page,
 		array $params,
-		TotalsLookup $totalsLookup,
-		Database $database,
-		CategoryManager $categoryManager
+		private readonly TotalsLookup $totalsLookup,
+		private readonly Database $database,
+		private readonly CategoryManager $categoryManager,
 	) {
 		parent::__construct( 'RecordLintJob', $page, $params );
-		$this->totalsLookup = $totalsLookup;
-		$this->database = $database;
-		$this->categoryManager = $categoryManager;
 	}
 
 	/** @inheritDoc */

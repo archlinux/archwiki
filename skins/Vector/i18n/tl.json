@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"AnakngAraw",
+			"Chlod",
 			"Filipinayzd",
 			"GinawaSaHapon",
 			"Ianlopez1115",
 			"Jojit fb",
 			"Qwrop",
-			"Sky Harbor",
-			"Chlod"
+			"Sky Harbor"
 		]
 	},
 	"skinname-vector": "Legacy na Vector (2010)",
@@ -58,9 +58,6 @@
 	"vector-toc-label": "Mga nilalaman",
 	"vector-toc-beginning": "Simula",
 	"vector-toc-toggle-button-label": "Ipakita/Itago ang subseksyon na $1",
-	"vector-anon-user-menu-pages": "Mga pahina para sa naka-logout na mga patnugot o editor",
-	"vector-anon-user-menu-pages-learn": "alamin pa",
-	"vector-anon-user-menu-pages-label": "Alamin pa ang tungkol sa pagpapatnugot",
 	"vector-main-menu-tooltip": "Pangunahing pagpipilian",
 	"vector-toc-menu-tooltip": "Talaan ng mga Nilalaman",
 	"vector-toc-collapsible-button-label": "Itago/Ipakita ang talaan ng mga nilalaman",

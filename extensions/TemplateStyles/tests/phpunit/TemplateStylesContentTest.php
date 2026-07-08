@@ -5,6 +5,7 @@ use MediaWiki\Content\CssContent;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Extension\TemplateStyles\TemplateStylesContent;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Content\TextContentTest;
 
 /**
  * @group TemplateStyles

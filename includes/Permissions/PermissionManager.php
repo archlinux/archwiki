@@ -2,6 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  * @file
+ * @phan-file-suppress PhanUnusedPrivateMethodParameter
  */
 namespace MediaWiki\Permissions;
 
@@ -40,6 +41,8 @@ use MediaWiki\User\UserIdentityLookup;
 use StatusValue;
 use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageSpecifier;
+use Wikimedia\Message\MessageValue;
+use Wikimedia\Rdbms\IDBAccessObject;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -130,6 +133,7 @@ class PermissionManager {
 		'browsearchive',
 		'changetags',
 		'createaccount',
+		'createwithcontentmodel',
 		'createpage',
 		'createtalk',
 		'delete',
@@ -158,6 +162,7 @@ class PermissionManager {
 		'edituserjson',
 		'edituserjs',
 		'hideuser',
+		'ignore-restricted-groups',
 		'import',
 		'importupload',
 		'interwiki',
@@ -273,7 +278,7 @@ class PermissionManager {
 	 *
 	 * @return bool
 	 */
-	public function userCan( $action, User $user, LinkTarget $page, $rigor = self::RIGOR_SECURE ): bool {
+	public function userCan( $action, User $user, LinkTarget $page, $rigor = self::RIGOR_FULL ): bool {
 		return $this->getPermissionStatus( $action, $user, $page, $rigor, true )->isGood();
 	}
 
@@ -686,7 +691,7 @@ class PermissionManager {
 		}
 
 		if ( !$allowed ) {
-			# If the title is not whitelisted, give extensions a chance to do so...
+			// If the title is not allowed, give extensions a chance to do so
 			$this->hookRunner->onTitleReadWhitelist( $title, $user, $allowed );
 			if ( !$allowed ) {
 				$this->missingPermissionError( $action, $short, $status );
@@ -730,20 +735,41 @@ class PermissionManager {
 	 * @return PermissionStatus
 	 */
 	public function newFatalPermissionDeniedStatus( $permission, IContextSource $context ): StatusValue {
-		$groups = [];
-		foreach ( $this->groupPermissionsLookup->getGroupsWithPermission( $permission ) as $group ) {
-			$groups[] = UserGroupMembership::getLinkWiki( $group, $context );
+		$groups = $this->groupPermissionsLookup->getGroupsWithPermission( $permission );
+		if ( !$groups ) {
+			$status = PermissionStatus::newFatal( 'badaccess-group0' );
+			$status->setPermission( $permission );
+			return $status;
 		}
 
-		if ( $groups ) {
-			return PermissionStatus::newFatal(
-				'badaccess-groups',
-				Message::listParam( $groups, ListType::COMMA ),
-				count( $groups )
+		$groupLinks = array_map(
+			static fn ( $group ) => UserGroupMembership::getLinkWiki( $group, $context ),
+			$groups
+		);
+
+		$userDisabledGroups = $this->userGroupManager->getUserDisabledGroups( $context->getUser() );
+		$groupIntersection = array_intersect( $groups, $userDisabledGroups );
+		if ( $groupIntersection !== [] ) {
+			$groupIntersectionNames = array_map(
+				static fn ( $group ) => $context->getLanguage()->getGroupName( $group ),
+				$groupIntersection
 			);
+			$status = PermissionStatus::newFatal(
+				'badaccess-groups-disabled',
+				Message::listParam( $groupLinks, ListType::COMMA ),
+				count( $groupLinks ),
+				Message::listParam( $groupIntersectionNames, ListType::COMMA ),
+				count( $groupIntersectionNames )
+			);
+			$status->setPermission( $permission );
+			return $status;
 		}
 
-		$status = PermissionStatus::newFatal( 'badaccess-group0' );
+		$status = PermissionStatus::newFatal(
+			'badaccess-groups',
+			Message::listParam( $groupLinks, ListType::COMMA ),
+			count( $groupLinks )
+		);
 		$status->setPermission( $permission );
 		return $status;
 	}
@@ -1091,7 +1117,11 @@ class PermissionManager {
 	): void {
 		// TODO: remove & rework upon further use of LinkTarget
 		$title = Title::newFromLinkTarget( $page );
-		foreach ( $this->restrictionStore->getRestrictions( $title, $action ) as $right ) {
+		foreach ( $this->restrictionStore->getRestrictions( $title, $action ) as $level ) {
+			// Messages: restriction-level-sysop, restriction-level-autoconfirmed
+			$levelMsg = MessageValue::new( "restriction-level-$level" );
+
+			$right = $level;
 			// Backwards compatibility, rewrite sysop -> editprotected
 			if ( $right === 'sysop' ) {
 				$right = 'editprotected';
@@ -1104,11 +1134,15 @@ class PermissionManager {
 				continue;
 			}
 			if ( !$this->userHasRight( $user, $right ) ) {
-				$status->fatal( 'protectedpagetext', $right, $action );
+				// The parameters are not used by the default message text,
+				// but they're available to be used in on-wiki overrides
+				$status->fatal( 'protectedpagetext', $right, $action, $levelMsg );
 			} elseif ( $this->restrictionStore->areRestrictionsCascading( $title ) &&
 				!$this->userHasRight( $user, 'protect' )
 			) {
-				$status->fatal( 'protectedpagetext', 'protect', $action );
+				// The parameters are not used by the default message text,
+				// but they're available to be used in on-wiki overrides
+				$status->fatal( 'protectedpagetext', 'protect', $action, $levelMsg );
 			}
 		}
 	}
@@ -1553,15 +1587,17 @@ class PermissionManager {
 	 *
 	 * @since 1.34
 	 * @param UserIdentity $user
+	 * @param bool $includePrivateInfo If false, the function will pretend that the user has some rights
+	 *      even though they don't (or vice versa), not to leak certain private information when it shouldn't be leaked
 	 * @return string[] permission names
 	 */
-	public function getUserPermissions( UserIdentity $user ): array {
-		$rightsCacheKey = $this->getRightsCacheKey( $user );
+	public function getUserPermissions( UserIdentity $user, bool $includePrivateInfo = true ): array {
+		$rightsCacheKey = $this->getRightsCacheKey( $user, $includePrivateInfo );
 		if ( !isset( $this->usersRights[ $rightsCacheKey ] ) ) {
 			$userObj = $this->userFactory->newFromUserIdentity( $user );
-			$rights = $this->groupPermissionsLookup->getGroupPermissions(
-				$this->userGroupManager->getUserEffectiveGroups( $user )
-			);
+			$effectiveGroups = $this->userGroupManager->getUserEffectiveGroups(
+				$user, IDBAccessObject::READ_NORMAL, false, $includePrivateInfo );
+			$rights = $this->groupPermissionsLookup->getGroupPermissions( $effectiveGroups );
 			// Hook requires a full User object
 			$this->hookRunner->onUserGetRights( $userObj, $rights );
 
@@ -1621,7 +1657,9 @@ class PermissionManager {
 	 */
 	public function invalidateUsersRightsCache( $user = null ): void {
 		if ( $user !== null ) {
-			$rightsCacheKey = $this->getRightsCacheKey( $user );
+			$rightsCacheKey = $this->getRightsCacheKey( $user, false );
+			unset( $this->usersRights[ $rightsCacheKey ] );
+			$rightsCacheKey = $this->getRightsCacheKey( $user, true );
 			unset( $this->usersRights[ $rightsCacheKey ] );
 		} else {
 			$this->usersRights = [];
@@ -1630,12 +1668,13 @@ class PermissionManager {
 
 	/**
 	 * Get a unique key for user rights cache.
-	 *
-	 * @param UserIdentity $user
-	 * @return string
 	 */
-	private function getRightsCacheKey( UserIdentity $user ): string {
-		return $user->isRegistered() ? "u:{$user->getId()}" : "anon:{$user->getName()}";
+	private function getRightsCacheKey( UserIdentity $user, bool $includePrivateInfo ): string {
+		$key = $user->isRegistered() ? "u:{$user->getId()}" : "anon:{$user->getName()}";
+		if ( $includePrivateInfo ) {
+			$key .= ':private';
+		}
+		return $key;
 	}
 
 	/**
@@ -1864,9 +1903,9 @@ class PermissionManager {
 	 * @since 1.34
 	 * @param UserIdentity $user
 	 * @param string|string[] $rights
-	 * @return ScopedCallback
 	 */
-	public function addTemporaryUserRights( UserIdentity $user, $rights ) {
+	#[\NoDiscard]
+	public function addTemporaryUserRights( UserIdentity $user, $rights ): ScopedCallback {
 		$userId = $user->getId();
 		$nextKey = count( $this->temporaryUserRights[$userId] ?? [] );
 		$this->temporaryUserRights[$userId][$nextKey] = (array)$rights;
@@ -1887,7 +1926,9 @@ class PermissionManager {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new LogicException( __METHOD__ . ' can not be called outside of tests' );
 		}
-		$this->usersRights[ $this->getRightsCacheKey( $user ) ] =
+		$this->usersRights[ $this->getRightsCacheKey( $user, false ) ] =
+			is_array( $rights ) ? $rights : [ $rights ];
+		$this->usersRights[ $this->getRightsCacheKey( $user, true ) ] =
 			is_array( $rights ) ? $rights : [ $rights ];
 	}
 

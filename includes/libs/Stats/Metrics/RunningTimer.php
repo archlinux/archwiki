@@ -21,20 +21,22 @@ class RunningTimer {
 	/** @var TimingMetric|NullMetric */
 	private $metric;
 	private ?float $startTime;
+	private array $workingLabels;
 
-	public function __construct( float $startTime, TimingMetric $metric ) {
+	public function __construct( float $startTime, TimingMetric $metric, array $initialLabels ) {
 		$this->startTime = $startTime;
 		$this->metric = $metric;
+		$this->workingLabels = $initialLabels;
 	}
 
 	/**
 	 * Handle for MetricInterface::setLabel
 	 *
 	 * @see MetricInterface::setLabel
-	 * @return self
+	 * @return $this
 	 */
 	public function setLabel( string $key, string $value ) {
-		$this->metric = $this->metric->setLabel( $key, $value );
+		$this->workingLabels[$key] = $value;
 		return $this;
 	}
 
@@ -42,10 +44,10 @@ class RunningTimer {
 	 * Handle for MetricInterface::setLabels
 	 *
 	 * @see MetricInterface::setLabels
-	 * @return self
+	 * @return $this
 	 */
 	public function setLabels( array $labels ) {
-		$this->metric = $this->metric->setLabels( $labels );
+		$this->workingLabels = $labels;
 		return $this;
 	}
 
@@ -60,6 +62,13 @@ class RunningTimer {
 			);
 			return;
 		}
+		// T406170 - move setting labels near recording the sample.
+		//
+		// Downstream label changes can affect upstream usage because they're the same
+		// metric instance.  Here, we'll assume any labels set when the metric was
+		// initially declared or changed against the RunningTimer instance are correct
+		// and set them before sample capture time.
+		$this->metric = $this->metric->setLabels( $this->workingLabels );
 		$this->metric->observeNanoseconds( ConvertibleTimestamp::hrtime() - $this->startTime );
 		$this->startTime = null;
 	}

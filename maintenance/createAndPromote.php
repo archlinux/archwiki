@@ -18,6 +18,7 @@ use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Password\PasswordError;
+use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -149,7 +150,9 @@ class CreateAndPromote extends Maintenance {
 			$status = $this->getServiceContainer()->getAuthManager()->autoCreateUser(
 				$user,
 				AuthManager::AUTOCREATE_SOURCE_MAINT,
-				false
+				false,
+				true,
+				new UltimateAuthority( User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] ) )
 			);
 			if ( !$status->isGood() ) {
 				$this->fatalError( $status );
@@ -173,15 +176,16 @@ class CreateAndPromote extends Maintenance {
 					'password' => $password,
 					'retype' => $password,
 				] );
-				if ( !$status->isGood() ) {
-					throw new PasswordError( $status->getMessage( false, false, 'en' )->text() );
-				}
-				if ( $exists ) {
-					$this->output( "Password set.\n" );
-					$user->saveSettings();
-				}
 			} catch ( PasswordError $pwe ) {
-				$this->fatalError( 'Setting the password failed: ' . $pwe->getMessage() );
+				$this->fatalError( 'Unexpected PasswordError: ' . $pwe->getMessage() );
+			}
+			if ( !$status->isGood() ) {
+				$this->output( "Setting the password failed.\n" );
+				$this->fatalError( $status );
+			}
+			if ( $exists ) {
+				$this->output( "Password set.\n" );
+				$user->saveSettings();
 			}
 		}
 

@@ -10,9 +10,9 @@ const dropdownMenus = require( './dropdownMenus.js' );
 /**
  * Creates default portlet.
  *
- * @param {Element} portlet
+ * @param {HTMLElement} portlet
  * @param {boolean} isDropdown
- * @return {Element}
+ * @return {HTMLElement}
  */
 function addDefaultPortlet( portlet, isDropdown ) {
 	const ul = portlet.querySelector( 'ul' );
@@ -50,8 +50,8 @@ function addDefaultPortlet( portlet, isDropdown ) {
  * A hook handler for util.addPortlet hook.
  * It creates a portlet based on the hint, and adabt it to vector skin.
  *
- * @param {Element} content
- * @return {Element}
+ * @param {HTMLElement} content
+ * @return {HTMLElement}
  */
 function makeDropdown( content ) {
 	const id = content.id;
@@ -95,9 +95,9 @@ function makeDropdown( content ) {
  * It creates a portlet based on the hint, and adapt it to vector skin.
  * If #p-cactions is used, the new portlet will be converted into a dropdown.
  *
- * @param {Element} portlet
+ * @param {HTMLElement} portlet
  * @param {string|null} before
- * @return {Element}
+ * @return {HTMLElement}
  */
 function addPortletHandler( portlet, before ) {
 
@@ -120,12 +120,14 @@ function addPortletHandler( portlet, before ) {
 }
 
 /**
- * @return {{addPortletHandler: (function(Element, string): Element)}}
+ * @return {{addPortletHandler: (function(HTMLElement, string): HTMLElement)}}
  */
 function main() {
 	mw.hook( 'util.addPortlet' ).add( addPortletHandler );
 	// Update any portlets that were created prior to the hook being registered.
-	document.querySelectorAll( '.mw-portlet-js' ).forEach( ( node ) => {
+	/** @type {NodeListOf<HTMLElement>} */
+	const portlets = document.querySelectorAll( '.mw-portlet-js' );
+	portlets.forEach( ( node ) => {
 		const nextID = node && node.nextElementSibling && node.nextElementSibling.id;
 		addPortletHandler( node, nextID ? `#${ nextID }` : null );
 	} );

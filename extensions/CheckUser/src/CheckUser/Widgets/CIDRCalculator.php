@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser\Widgets;
+namespace MediaWiki\Extension\CheckUser\CheckUser\Widgets;
 
 use MediaWiki\HTMLForm\CollapsibleFieldsetLayout;
 use MediaWiki\Output\OutputPage;
@@ -13,7 +13,7 @@ use OOUI\Widget;
 
 class CIDRCalculator {
 
-	private bool $mCollapsible;
+	private readonly bool $mCollapsible;
 
 	/**
 	 * Text to be shown as the legend for
@@ -24,11 +24,9 @@ class CIDRCalculator {
 	 */
 	private $mWrapperLegend;
 
-	private array $mWrapperAttributes;
+	private readonly array $mWrapperAttributes;
 
-	private bool $mCollapsed;
-
-	private OutputPage $out;
+	private readonly bool $mCollapsed;
 
 	/**
 	 * @param OutputPage $out
@@ -41,9 +39,10 @@ class CIDRCalculator {
 	 *   * collapsed - whether to have the wrapper fieldset be collapsed by default
 	 *      (boolean with default of false)
 	 */
-	public function __construct( OutputPage $out, array $config = [] ) {
-		$this->out = $out;
-
+	public function __construct(
+		private readonly OutputPage $out,
+		array $config = [],
+	) {
 		// Just in case the modules were not loaded
 		$out->addModules( [ 'ext.checkUser', 'ext.checkUser.styles' ] );
 		$this->mCollapsible = $config['collapsable'] ?? false;
@@ -54,8 +53,6 @@ class CIDRCalculator {
 
 	/**
 	 * Get the string (HTML) representation of the calculator
-	 *
-	 * @return string
 	 */
 	public function toString(): string {
 		return $this->getHtml();
@@ -63,8 +60,6 @@ class CIDRCalculator {
 
 	/**
 	 * Get the HTML for the calculator.
-	 *
-	 * @return string
 	 */
 	public function getHtml(): string {
 		$items = [];

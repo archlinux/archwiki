@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"oathauth-webauthn-module-label": "Təhlükəsizlik açarı",
+	"oathauth-webauthn-javascript-required": "Təhlükəsizlik açarı istifadə etmək üçün brauzerinizdə JavaScript aktiv olmalıdır.",
+	"oathauth-webauthn-ui-login-prompt": "Təhlükəsizlik açarınızdan istifadə edin və ya brauzerinizin təlimatlarına əməl edin.",
+	"oathauth-webauthn-ui-add-key": "Açar əlavə et",
+	"oathauth-webauthn-error-browser-unsupported": "Bu brauzer təhlükəsizlik açarı ilə autentifikasiyanı dəstəkləmir və ya bu veb-sayt üçün əlçatan deyil. Fərqli brauzerlə cəhd edin. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Ətraflı öyrənin]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Bu brauzer təhlükəsizlik açarı ilə autentifikasiyanı dəstəkləmir və ya bu veb-sayt üçün əlçatan deyil.",
+	"oathauth-webauthn-error-auth-generic": "Doğrulama prosesi dayandı. Zəhmət olmasa, autentifikasiya prosesini yenidən başladın.",
+	"oathauth-webauthn-error-reg-generic": "Açarınızı doğrulamaq mümkün olmadı. Zəhmət olmasa, qeydiyyat prosesini yenidən başladın.",
+	"oathauth-webauthn-registered-keys-section-name": "Əlavə edilmiş açarlar",
+	"oathauth-webauthn-ui-remove-key": "Sil",
+	"oathauth-webauthn-error-module-not-enabled": "\"$1\" modulu {{GENDER:$2|\"$2\"}} üçün aktiv deyil.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn doğrulaması uğursuz oldu.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Keçid açarı təsdiqlənməsi uğursuz oldu.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn identifikasiyaları göndərilmədi.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|İstifadəçi \"$1\"}} yeni identifikasiyasını qeydiyyatdan keçirə bilməz.",
+	"oathauth-webauthn-error-invalid-new-key": "Modul tərəfindən qaytarılan yeni açar tələb olunan tipdə deyil.",
+	"oathauth-webauthn-error-registration-failed": "Yeni açar qeydiyyatı uğursuz oldu.",
+	"oathauth-webauthn-ui-key-register-help": "Açarınız üçün ləqəb seçin:",
+	"oathauth-webauthn-error-cannot-remove-key": "Açarı silmək mümkün deyil.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Doğrulama məlumatını əldə etmək mümkün olmadı.",
+	"oathauth-webauthn-add-key-section-name": "Yeni təhlükəsizlik açarı əlavə et",
+	"oathauth-webauthn-error-get-reginfo-fail": "Qeydiyyat məlumatını əldə etmək mümkün olmadı.",
+	"oathauth-webauthn-module-description": "WebAuthn eksperimental vəziyyətdədir. İtirilmiş və ya zədələnmiş identifikasiya cihazları üçün bərpa mümkün deyil. \n\n[https://en.wikipedia.org/wiki/WebAuthn WebAuthn haqqında ətraflı öyrənin]",
+	"oathauth-webauthn-ui-reload-page-label": "Səhifəni yenidən yüklə",
+	"oathauth-webauthn-authentication-info-label": "Autentifikasiya datası",
+	"oathauth-webauthn-authentication-info-help": "Autentifikasiya məlumatları identifikasiyanın axtarışı üçün müştəriyə ötürülür",
+	"oathauth-webauthn-credential-label": "İstifadəçi identifikasiyası",
+	"oathauth-webauthn-credential-help": "Doğrulama məlumatlarına əsaslanan istifadəçi identifikasiyası",
+	"oathauth-webauthn-add-security-key": "Təhlükəsizlik açarı əlavə et",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Təhlükəsizlik və ya keçid açarından istifadə et"
+}

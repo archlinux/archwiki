@@ -18,9 +18,10 @@
  * @file
  */
 
-namespace MediaWiki\CheckUser\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Maintenance;
 
-use MediaWiki\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use Psr\Log\NullLogger;
 use Wikimedia\Services\NoSuchServiceException;
@@ -70,18 +71,25 @@ class PopulateCulComment extends LoggedUpdateMaintenance {
 			/** @var CheckUserLogService $checkUserLogService */
 			$checkUserLogService = $services->get( 'CheckUserLogService' );
 		} catch ( NoSuchServiceException ) {
-			# CheckUser ServiceWiring files may not loaded until
-			#  postDatabaseUpdateMaintenance is run.
-			# If this is the case, manually get the service.
+			// If running the script in the context of update.php,
+			// the CheckUser services may not have been loaded yet.
+			// Therefore manually construct the CheckUserLogService so we can use it.
 			$checkUserLogService = new CheckUserLogService(
-				$services->getDBLoadBalancerFactory(),
+				$services->getConnectionProvider(),
 				$services->getCommentStore(),
 				$services->getCommentFormatter(),
 				// No need to log as this maintenance script does not use any methods
 				//  that use the logger.
 				new NullLogger(),
 				$services->getActorStore(),
-				$services->getUserIdentityLookup()
+				$services->getUserIdentityLookup(),
+				// The ServiceOptions is not used in the methods used by this script,
+				// so just set the default values (as we may not have CheckUser config
+				// loaded yet)
+				new ServiceOptions(
+					CheckUserLogService::CONSTRUCTOR_OPTIONS,
+					[ 'CheckUserLogMaxRangeToShowInLog' => false ]
+				)
 			);
 		}
 		$mainLb = $services->getDBLoadBalancerFactory()->getMainLB();
@@ -102,7 +110,7 @@ class PopulateCulComment extends LoggedUpdateMaintenance {
 			return true;
 		}
 
-		if ( !$dbw->fieldExists( 'cu_log', 'cul_reason' ) ) {
+		if ( !$dbw->fieldExists( 'cu_log', 'cul_reason', __METHOD__ ) ) {
 			$this->output( "The cul_reason field does not exist which is needed for migration.\n" );
 			return true;
 		}
@@ -131,7 +139,8 @@ class PopulateCulComment extends LoggedUpdateMaintenance {
 			foreach ( $res as $row ) {
 				$culReasonId = $commentStore->createComment( $dbw, $row->cul_reason )->id;
 				$culReasonPlaintextId = $commentStore->createComment(
-					$dbw, $checkUserLogService->getPlaintextReason( $row->cul_reason )
+					$dbw,
+					$checkUserLogService->getPlaintextReason( $row->cul_reason )
 				)->id;
 
 				if ( !$culReasonId || !$culReasonPlaintextId ) {

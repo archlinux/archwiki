@@ -313,7 +313,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normigi HTML-entojn en Unikodajn skribsignojn (seninfektigi)",
 	"abusefilter-edit-builder-group-vars": "Variabloj",
 	"abusefilter-edit-builder-vars-timestamp": "Uniksa tempindiko de ŝanĝo",
-	"abusefilter-edit-builder-vars-accountname": "Uzantnomo (dum konta kreado)",
+	"abusefilter-edit-builder-vars-account-name": "Uzantnomo (dum konta kreado)",
 	"abusefilter-edit-builder-vars-action": "Ago",
 	"abusefilter-edit-builder-vars-addedlines": "Linioj aldonitaj en redakto",
 	"abusefilter-edit-builder-vars-delta": "Grandeca ŝanĝo en redakto",

@@ -11,6 +11,7 @@
 namespace MediaWiki\Extension\VisualEditor;
 
 use MediaWiki\Actions\ActionEntryPoint;
+use MediaWiki\Actions\Hook\CustomEditorHook;
 use MediaWiki\Auth\Hook\UserLoggedInHook;
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
@@ -20,16 +21,13 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook;
+use MediaWiki\Diff\TextSlotDiffRenderer;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\VisualEditor\EditCheck\ApiEditCheckReferenceUrl;
 use MediaWiki\Extension\VisualEditor\Services\VisualEditorAvailabilityLookup;
 use MediaWiki\Hook\BeforeInitializeHook;
-use MediaWiki\Hook\CustomEditorHook;
 use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
 use MediaWiki\Hook\ParserTestGlobalsHook;
-use MediaWiki\Hook\RecentChange_saveHook;
-use MediaWiki\Hook\SkinEditSectionLinksHook;
-use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\Language;
@@ -41,12 +39,15 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Preferences\Hook\PreferencesFormPreSaveHook;
+use MediaWiki\RecentChanges\Hook\RecentChange_saveHook;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Skin\Hook\SkinEditSectionLinksHook;
+use MediaWiki\Skin\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinTemplate;
 use MediaWiki\SpecialPage\Hook\RedirectSpecialArticleRedirectParamsHook;
@@ -56,7 +57,6 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use OOUI\ButtonGroupWidget;
 use OOUI\ButtonWidget;
-use TextSlotDiffRenderer;
 
 class Hooks implements
 	TextSlotDiffRendererTablePrefixHook,
@@ -104,6 +104,8 @@ class Hooks implements
 		'editcheck-tone',
 		'editcheck-tone-shown',
 		'editcheck-paste-shown',
+		'editsuggestion-seen',
+		'editsuggestion-used',
 		// No longer in active use:
 		'editcheck-references-activated',
 		'editcheck-reference-decline-common-knowledge',
@@ -155,18 +157,10 @@ class Hooks implements
 			$services->getService( 'MobileFrontend.Context' )
 				->shouldDisplayMobileView()
 		) ) {
-			$output->addModules( [
-				'ext.visualEditor.desktopArticleTarget.init',
-				'ext.visualEditor.targetLoader'
-			] );
+			$output->addModules( 'ext.visualEditor.desktopArticleTarget.init' );
 			$output->addModuleStyles( [ 'ext.visualEditor.desktopArticleTarget.noscript' ] );
-		}
-		if (
-			$services->getUserOptionsLookup()->getOption( $skin->getUser(), 'visualeditor-collab' ) ||
-			// Joining a collab session
-			$output->getRequest()->getVal( 'collabSession' )
-		) {
-			$output->addModules( 'ext.visualEditor.collab' );
+		} else {
+			$output->addModules( 'ext.visualEditor.targetLoader' );
 		}
 
 		// add scroll offset js variable to output
@@ -187,6 +181,11 @@ class Hooks implements
 			'wgEditSubmitButtonLabelPublish',
 			$veConfig->get( 'EditSubmitButtonLabelPublish' )
 		);
+
+		// TODO: Move to EditCheck
+		$isDisambiguation = $output->getTitle()->exists() &&
+			$services->getPageProps()->getProperties( $output->getTitle(), 'disambiguation' ) !== [];
+		$output->addJsConfigVars( 'wgVisualEditorPageIsDisambiguation', $isDisambiguation );
 
 		// Don't index VE edit pages (T319124)
 		if ( $output->getRequest()->getVal( 'veaction' ) ) {
@@ -489,8 +488,6 @@ class Hooks implements
 		$config = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 
-		self::onSkinTemplateNavigationSpecialPage( $skin, $links );
-
 		if (
 			$this->extensionRegistry->isLoaded( 'MobileFrontend' ) &&
 			$services->getService( 'MobileFrontend.Context' )->shouldDisplayMobileView()
@@ -591,7 +588,7 @@ class Hooks implements
 				// Set veaction=edit
 				$veParams['veaction'] = 'edit';
 				$veTabMessage = $tabMessages[$action];
-				$veTabText = $veTabMessage === null ? $data['text'] :
+				$veTabText = $veTabMessage === null ? ( $data['text'] ?? '' ) :
 					$skin->msg( $veTabMessage )->text();
 				if ( $isRemote ) {
 					// The following messages can be used here:
@@ -677,7 +674,6 @@ class Hooks implements
 					$editTab['icon'] = $skinHasEditIcons ? 'wikiText' : null;
 					// Inject the VE tab before or after the edit tab
 					if ( $config->get( 'VisualEditorTabPosition' ) === 'before' ) {
-						// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 						$editTab['class'] .= ' collapsible';
 						$newViews['ve-edit'] = $veTab;
 						$newViews['edit'] = $editTab;
@@ -706,32 +702,6 @@ class Hooks implements
 			}
 		}
 		$links['views'] = $newViews;
-	}
-
-	/**
-	 * @param SkinTemplate $skin The skin template on which the UI is built.
-	 * @param array &$links Navigation links.
-	 */
-	private static function onSkinTemplateNavigationSpecialPage( SkinTemplate $skin, array &$links ) {
-		$title = $skin->getTitle();
-		if ( !$title || !$title->isSpecialPage() ) {
-			return;
-		}
-		[ $special, $subPage ] = MediaWikiServices::getInstance()->getSpecialPageFactory()
-			->resolveAlias( $title->getDBkey() );
-		if ( $special !== 'CollabPad' ) {
-			return;
-		}
-		$links['namespaces']['special']['text'] = $skin->msg( 'collabpad' )->text();
-		$subPageTitle = Title::newFromText( $subPage );
-		if ( $subPageTitle ) {
-			$links['namespaces']['special']['href'] = SpecialPage::getTitleFor( $special )->getLocalURL();
-			$links['namespaces']['special']['class'] = '';
-
-			$links['namespaces']['pad']['text'] = $subPageTitle->getPrefixedText();
-			$links['namespaces']['pad']['href'] = '';
-			$links['namespaces']['pad']['class'] = 'selected';
-		}
 	}
 
 	/**
@@ -1122,9 +1092,6 @@ class Hooks implements
 		$vars['wgVisualEditorConfig'] = [
 			'usePageImages' => $this->extensionRegistry->isLoaded( 'PageImages' ),
 			'usePageDescriptions' => $this->extensionRegistry->isLoaded( 'WikibaseClient' ),
-			'isBeta' => $veConfig->get( 'VisualEditorEnableBetaFeature' ),
-			'disableForAnons' => $veConfig->get( 'VisualEditorDisableForAnons' ),
-			'preloadModules' => $veConfig->get( 'VisualEditorPreloadModules' ),
 			'namespaces' => $availableNamespaces,
 			'contentModels' => $availableContentModels,
 			'pluginModules' => array_merge(
@@ -1134,34 +1101,51 @@ class Hooks implements
 			),
 			'thumbLimits' => $coreConfig->get( 'ThumbLimits' ),
 			'galleryOptions' => $coreConfig->get( 'GalleryOptions' ),
-			'tabPosition' => $veConfig->get( 'VisualEditorTabPosition' ),
-			'tabMessages' => array_filter( $veConfig->get( 'VisualEditorTabMessages' ) ),
-			'singleEditTab' => $veConfig->get( 'VisualEditorUseSingleEditTab' ),
-			'enableVisualSectionEditing' => $veConfig->get( 'VisualEditorEnableVisualSectionEditing' ),
-			'showBetaWelcome' => $veConfig->get( 'VisualEditorShowBetaWelcome' ),
-			'allowExternalLinkPaste' => $veConfig->get( 'VisualEditorAllowExternalLinkPaste' ),
-			'enableHelpCompletion' => $veConfig->get( 'VisualEditorEnableHelpCompletion' ),
-			'enableTocWidget' => $veConfig->get( 'VisualEditorEnableTocWidget' ),
-			'enableWikitext' => $veConfig->get( 'VisualEditorEnableWikitext' ),
-			'useChangeTagging' => $veConfig->get( 'VisualEditorUseChangeTagging' ),
-			'editCheckTagging' => $veConfig->get( 'VisualEditorEditCheckTagging' ),
-			'editCheck' => $veConfig->get( 'VisualEditorEditCheck' ),
-			'editCheckExperimental' => (bool)$veConfig->get( 'VisualEditorEditCheckLoadExperimental' ),
-			'editCheckABTest' => $veConfig->get( 'VisualEditorEditCheckABTest' ),
 			'editCheckReliabilityAvailable' => ApiEditCheckReferenceUrl::isAvailable(),
 			'namespacesWithSubpages' => $namespacesWithSubpagesEnabled,
 			'specialBooksources' => urldecode( SpecialPage::getTitleFor( 'Booksources' )->getPrefixedURL() ),
-			'rebaserUrl' => $veConfig->get( 'VisualEditorRebaserURL' ),
-			'feedbackApiUrl' => $veConfig->get( 'VisualEditorFeedbackAPIURL' ),
-			'feedbackTitle' => $veConfig->get( 'VisualEditorFeedbackTitle' ),
-			'sourceFeedbackTitle' => $veConfig->get( 'VisualEditorSourceFeedbackTitle' ),
-			'mobileInsertMenu' => $veConfig->get( 'VisualEditorMobileInsertMenu' ),
-			// TODO: Remove when all usages in .js files are removed
-			'transclusionDialogNewSidebar' => true,
 			'cirrusSearchLookup' => $this->extensionRegistry->isLoaded( 'CirrusSearch' ),
 			'defaultSortPrefix' => $defaultSortPrefix,
 			'displayTitlePrefix' => $displayTitlePrefix,
 		];
+
+		// VisualEditor config keys, automatically mapped to config vars:
+		//   VisualEditorAllowExternalLinkPaste -> allowExternalLinkPaste
+		$veConfigKeys = [
+			'VisualEditorDisableForAnons',
+			'VisualEditorEnableBetaFeature',
+			'VisualEditorPreloadModules',
+			'VisualEditorTabPosition',
+			'VisualEditorTabMessages',
+			'VisualEditorUseSingleEditTab',
+			'VisualEditorEnableVisualSectionEditing',
+			'VisualEditorShowBetaWelcome',
+			'VisualEditorAllowExternalLinkPaste',
+			'VisualEditorEnableHelpCompletion',
+			'VisualEditorEnableWikitext',
+			'VisualEditorRebaserURL',
+			'VisualEditorFeedbackAPIURL',
+			'VisualEditorSuggestionFeedbackAPIURL',
+			'VisualEditorUseChangeTagging',
+			'VisualEditorEditCheckTagging',
+			'VisualEditorEditCheck',
+			'VisualEditorEditCheckABTest',
+			'VisualEditorEnableEditCheckExperimental',
+			'VisualEditorEnableEditCheckSuggestionsBeta',
+			'VisualEditorFeedbackTitle',
+			'VisualEditorSourceFeedbackTitle',
+			'VisualEditorSuggestionFeedbackTitle',
+			'VisualEditorMobileInsertMenu',
+		];
+
+		foreach ( $veConfigKeys as $key ) {
+			$jsKey = lcfirst( preg_replace( '/^VisualEditor/', '', $key ) );
+			$value = $veConfig->get( $key );
+			if ( $key === 'VisualEditorTabMessages' ) {
+				$value = array_filter( $value );
+			}
+			$vars['wgVisualEditorConfig'][$jsKey] = $value;
+		}
 
 		// This can be removed and the module added in TemplateData's extension.json
 		// after the feature flag has been removed. T377976.

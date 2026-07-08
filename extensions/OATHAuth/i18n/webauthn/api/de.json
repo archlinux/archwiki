@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"apihelp-oathauth-webauthn-summary": "API-Modul zur Kommunikation zwischen Server und Client während des Registrierungs-Authentifizierungsprozesses.",
+	"apihelp-oathauth-webauthn-param-func": "Name der gewünschten Funktion, die ausgeführt werden soll.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Authentifizierungsinformationen.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Registrierungsinformationen.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Ob sich der zu registrierende Schlüssel im Passkey-Modus befindet. (Nur für getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "Das WebAuthn-Modul ist nicht verfügbar.",
+	"apierror-oathauth-webauthn-missing-credential": "Es wurden keine Anmeldeinformationen angegeben.",
+	"apierror-oathauth-webauthn-invalid-credential": "Die Anmeldedaten sind ungültig oder fehlerhaft.",
+	"apierror-oathauth-webauthn-reauthenticate": "{{#FORMAL:Du musst dich|Sie müssen sich}} zuerst über Special:OATHManage erneut authentifizieren, bevor {{#FORMAL:du|Sie}} diese Aktion ausführen {{#FORMAL:kannst|können}}.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Registriere neue WebAuthn-Anmeldeinformationen für den aktuellen Benutzer.",
+	"apihelp-oathauth-webauthn-param-credential": "JSON-kodierte WebAuthn-Anmeldeinformationen vom Browser.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Ein bezeichnender Name für die neuen Anmeldeinformationen."
+}

@@ -1,14 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Darafsh",
 			"Jeeputer",
-			"LordProfo",
-			"Darafsh"
+			"LordProfo"
 		]
 	},
+	"editchecks": "بررسی‌های ویرایش",
 	"editcheck-dialog-action-no": "خیر",
 	"editcheck-dialog-action-yes": "بله",
 	"editcheck-dialog-action-recheck": "بررسی دوباره",
+	"editcheck-dialog-toggle": "تغییر پدیداری",
 	"editcheck-dialog-addref-description": "با افزودن یک یادکرد، به مخاطبان در یافتن مبدأ این اطلاعات کمک کنید.",
 	"editcheck-dialog-addref-reject-question": "چرا نمی‌خواهید یادکرد اضافه کنید؟",
 	"editcheck-dialog-addref-reject-description": "سایر ویرایشگران ممکن است بخواهند از دلیل تصمیم شما برای رد کردن یادکرد آگاه شوند.",
@@ -20,7 +22,7 @@
 	"editcheck-dialog-addref-title": "افزودن یک یادکرد",
 	"editcheck-dialog-title": "پیش از انتشار",
 	"editcheck-copyvio-title": "متن چسبانده‌شده",
-	"editcheck-copyvio-description": "به‌عنوان یک قاعدهٔ کلی، متن را از سایر منابع کپی نکنید. چنین کاری معمولاً ترکیبی است از نقض حق تکثیر و سرقت ادبی.",
+	"editcheck-copyvio-description": "لطفاً از کپی کردن متن از منابع دیگر بپرهیزید، حتی اگر تغییراتی در آن ایجاد کرده‌اید یا آن را ارجاع داده‌اید. این کار می‌تواند به‌عنوان [{{int:editcheck-copyvio-descriptionlink}} نقض حق تکثیر یا سرقت ادبی] در نظر گرفته شود و ممکن است به حذف محتوای افزوده‌شده توسط شما یا قطع دسترسی ویرایشی حساب کاربری شما منجر شود.",
 	"editcheck-copyvio-action-keep": "بله، نگهش دار",
 	"editcheck-copyvio-action-remove": "خیر، حذفش کن",
 	"editcheck-copyvio-keep-description": "برای سایر ویرایشگران مهم است که دربارهٔ دلیل شما برای نگه داشتن این متن چسبانده‌شده بیشتر بدانند.",
@@ -29,9 +31,12 @@
 	"editcheck-copyvio-keep-other": "سایر",
 	"editcheck-copyvio-keep-notify": "از این که دلیل نگه داشتن متن چسبانده‌شده را به اشتراک گذاشتید ممنونیم!",
 	"editcheck-copyvio-remove-notify": "از این که این متن را حذف کردید ممنونیم!",
-	"editcheck-tone-description": "کاربران دیگر معمولاً چنین جمله‌بندی‌هایی را اصلاح می‌کنند، زیرا معتقدند که لحن آن نامتعادل است. [$1 بیشتر بدانید]",
+	"editcheck-preference-suggestions-label": "حالت پیشنهاد",
+	"editcheck-preference-suggestions-description": "پیشنهادهای ویرایشی پیکربندی‌شده توسط جامعه برای بهبود مقاله‌ها. در [[:mw:Special:MyLanguage/VisualEditor|ویرایشگر دیداری]] در دسترس است.",
+	"editcheck-tone-description": "کاربران دیگر معمولاً چنین جمله‌بندی‌هایی را اصلاح می‌کنند، زیرا معتقدند که لحن آن نامتعادل است. [{{int:editcheck-tone-descriptionlink}} بیشتر بدانید]",
 	"editcheck-tone-thank": "از این که این لحن را بازبینی کردید ممنونیم!",
 	"editcheck-review-title": "بازبینی تغییرات",
+	"editcheck-specialeditchecks-col-appearance": "ظاهر",
 	"tag-editcheck-reference-decline-common-knowledge": "بررسی ویرایش (ارجاعات) رد شد (دانش عمومی)",
 	"tag-editcheck-reference-decline-common-knowledge-description": "ارجاع بررسی ویرایش تحت عنوان دانش عمومی رد شد",
 	"tag-editcheck-reference-decline-irrelevant": "بررسی ویرایش (ارجاعات) رد شد (نامرتبط)",

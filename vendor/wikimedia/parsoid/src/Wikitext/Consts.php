@@ -16,6 +16,7 @@ class Consts {
 	public static array $Output;
 	public static array $WtTagWidths;
 	public static array $ZeroWidthWikitextTags;
+	/** @var array<string,string> */
 	public static array $LCFlagMap;
 	public static array $LCNameMap;
 	public static array $blockElems;
@@ -99,7 +100,11 @@ class Consts {
 				'i', 'ins',
 				'kbd',
 				'li',
+				# Link and meta are conditionally allowed.
+				# See \Wikimedia\Parsoid\Core\Sanitizer::escapeLiteralHTMLTag
+				'link',
 				'mark',
+				'meta',
 				'ol',
 				'p', 'pre',
 				'q',

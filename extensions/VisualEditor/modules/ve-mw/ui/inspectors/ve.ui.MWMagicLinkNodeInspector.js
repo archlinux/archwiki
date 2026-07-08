@@ -93,7 +93,7 @@ ve.ui.MWMagicLinkNodeInspector.prototype.getActionProcess = function ( action ) 
 	}
 	if ( action === 'convert' ) {
 		return new OO.ui.Process( () => {
-			this.close( { action: action } );
+			this.close( { action } );
 		} );
 	}
 	return ve.ui.MWMagicLinkNodeInspector.super.prototype.getActionProcess.call( this, action );

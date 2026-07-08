@@ -44,7 +44,6 @@ class MutableFilter extends Filter {
 		return new self(
 			$filter->getSpecs(),
 			$filter->getFlags(),
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable One is guaranteed to be set
 			$filter->actions ?? $filter->actionsCallback,
 			$filter->getLastEditInfo(),
 			$filter->getID(),
@@ -86,6 +85,10 @@ class MutableFilter extends Filter {
 
 	public function setDeleted( bool $deleted ): void {
 		$this->flags->setDeleted( $deleted );
+	}
+
+	public function setSuppressed( bool $suppressed ): void {
+		$this->flags->setSuppressed( $suppressed );
 	}
 
 	public function setHidden( bool $hidden ): void {

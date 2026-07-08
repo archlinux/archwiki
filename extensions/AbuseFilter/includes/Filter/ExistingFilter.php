@@ -9,8 +9,7 @@ class ExistingFilter extends Filter {
 	/**
 	 * @param Specs $specs
 	 * @param Flags $flags
-	 * @param callable|array[] $actions Array with params or callable that will return them
-	 * @phan-param array[]|callable():array[] $actions
+	 * @param array[]|callable():array[] $actions Array with params or callable that will return them
 	 * @param LastEditInfo $lastEditInfo
 	 * @param int $id
 	 * @param int|null $hitCount

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Jlrb+"
+		]
+	},
+	"oathauth-webauthn-module-label": "Autenticació per web (WebAuthn)",
+	"oathauth-webauthn-ui-login-prompt": "Toca el teu dispositiu de verificació o segueix les instruccions del navegador",
+	"oathauth-webauthn-ui-add-key": "Afegeix una clau",
+	"oathauth-webauthn-error-browser-unsupported": "Aquest navegador no és compatible amb WebAuthentication o no és disponible per a aquest lloc web. Prova-ho amb un altre navegador. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Llegeix més]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Aquest navegador no és compatible amb WebAuthentication o no és disponible per a aquest lloc web",
+	"oathauth-webauthn-error-auth-generic": "S'ha interromput el procés d'autenticació. Recomenceu el procés d'autenticació",
+	"oathauth-webauthn-error-reg-generic": "No s'ha pogut verificar la teva clau. Recomença el procés d'inscripció",
+	"oathauth-webauthn-registered-keys-section-name": "Claus inscrites",
+	"oathauth-webauthn-ui-remove-key": "Suprimeix",
+	"oathauth-webauthn-error-module-not-enabled": "El mòdul \"$1\" no és habilitat per a {{GENDER:$2|user \"$2\"}}",
+	"oathauth-webauthn-error-verification-failed": "La verificació ha fallat",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1| Usuari \"$1\"}} no pot registrar una nova credencial",
+	"oathauth-webauthn-error-invalid-new-key": "La nova clau generada pel mòdul no és del tipus demanat",
+	"oathauth-webauthn-error-registration-failed": "La nova clau d'inscripció ha fallat",
+	"oathauth-webauthn-ui-key-register-help": "Tria un nom d'usuari per a la teva clau",
+	"oathauth-webauthn-error-cannot-remove-key": "La clau no pot eliminada",
+	"oathauth-webauthn-error-get-authinfo-fail": "No s'ha pogut recuperar la informació d'autenticació.",
+	"oathauth-webauthn-add-key-section-name": "Inscriu una nova clau WebAuthn",
+	"oathauth-webauthn-error-get-reginfo-fail": "No s'ha pogut recuperar la informació d'inscripció.",
+	"oathauth-webauthn-module-description": "WebAuthn (Web Authentication) és un estàndard de web publicat pel World Wide Web Consortium (W3C). WebAuthn és un component essencial del Projecte FIDO2 dirigit per FIDO Alliance. L'objectiu del projecte és estandarditzar una interfície per autenticar usuaris en aplicacions i serveis web usant criptografia de clau pública. [Https://en.wikipedia.org/wiki/WebAuthn Llegeix més]",
+	"oathauth-webauthn-ui-reload-page-label": "Recarrega la pàgina"
+}

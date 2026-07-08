@@ -10,6 +10,7 @@
 	"right-checkuser-temporary-account-no-preference": "sijelo pi nimi ala la ona li ken lukin e nanpa IP, li wile ala toki e wile ni tawa ilo",
 	"right-checkuser-temporary-account-log": "sijelo pi nimi ala la ona li ken lukin e pini lukin pi nanpa IP",
 	"right-checkuser-temporary-account-auto-reveal": "sijelo pi nimi ala la ona li ken lukin e nanpa IP ale",
+	"right-checkuser-suggested-investigations": "sona pi nanpa IP la ona li ken lukin e [[Special:SuggestedInvestigations|alasa pi pona ken]]",
 	"checkuser-ip-contributions-deleted-contributions-link": "pali weka",
 	"checkuser-global-contributions-link": "pali pi ma ale",
 	"checkuser-global-contributions-link-sidebar": "pali pi ma ale",

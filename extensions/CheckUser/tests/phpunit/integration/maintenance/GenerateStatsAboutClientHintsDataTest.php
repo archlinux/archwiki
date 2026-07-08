@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\GenerateStatsAboutClientHintsData;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\GenerateStatsAboutClientHintsData;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -12,10 +12,10 @@ use MediaWiki\WikiMap\WikiMap;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\Maintenance\GenerateStatsAboutClientHintsData
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\GenerateStatsAboutClientHintsData
  */
 class GenerateStatsAboutClientHintsDataTest extends MaintenanceBaseTestCase {
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	protected function getMaintenanceClass() {
 		return GenerateStatsAboutClientHintsData::class;

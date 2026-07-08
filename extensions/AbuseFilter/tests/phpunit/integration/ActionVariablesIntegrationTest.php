@@ -224,7 +224,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 			'params' => [ 'text' => $new, 'summary' => $summary ],
 			'oldContent' => new WikitextContent( $old ),
 		];
-		// phpcs:enable Generic.Files.LineLength
+		// phpcs:enable
 
 		$old = 'This edit will be pretty smal';
 		$new = $old . 'l';
@@ -357,7 +357,8 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		yield 'create account anonymously' => [
 			'expected' => [
 				'action' => 'createaccount',
-				'accountname' => 'New account',
+				'account_name' => 'New account',
+				'account_type' => 'named',
 			],
 			'accountName' => 'New account',
 		];
@@ -365,7 +366,8 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		yield 'create account by an existing user' => [
 			'expected' => [
 				'action' => 'createaccount',
-				'accountname' => 'New account',
+				'account_name' => 'New account',
+				'account_type' => 'named',
 				'user_name' => 'Account creator',
 				'user_editcount' => 0,
 			],
@@ -377,7 +379,8 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		yield 'autocreate an account' => [
 			'expected' => [
 				'action' => 'autocreateaccount',
-				'accountname' => 'New account',
+				'account_name' => 'New account',
+				'account_type' => 'named',
 			],
 			'accountName' => 'New account',
 			'autocreate' => true,
@@ -386,6 +389,7 @@ class ActionVariablesIntegrationTest extends ApiTestCase {
 		yield 'autocreate a temporary account' => [
 			'expected' => [
 				'action' => 'autocreateaccount',
+				'account_type' => 'temp',
 				'user_unnamed_ip' => '127.0.0.1',
 			],
 			'accountName' => null,

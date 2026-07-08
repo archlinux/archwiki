@@ -11,6 +11,23 @@ body {
 	color: @color-base;
 }
 
+.client-js.vector-sticky-header-enabled {
+	// T290518: When the sticky header is enabled (feature flag is on, js is
+	// enabled, and viewport is at higher resolutions), add scroll padding to the
+	// root element. This is needed so that the sticky header does not overlap the
+	// top of an element when the URI has a hash fragment (e.g. when the user clicks
+	// a jump link) and when the user tabs through elements in reverse order.
+	//
+	// Please note that this class must be independent of the
+	// .vector-sticky-header-visible class to correctly handle situations where the
+	// sticky header isn't visible yet but we still need scroll padding applied
+	// (e.g. when the user navigates to a page with a hash fragment in the URI).
+	//
+	// As hash fragment scrolling can happen before JS is loaded, we need to
+	// apply this property early, as opposed to in stickyHeader.less (T406114).
+	scroll-padding-top: @height-header;
+}
+
 .mw-body,
 .parsoid-body {
 	direction: ltr;

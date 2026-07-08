@@ -86,7 +86,7 @@ class AbuseFilterConsequencesTest extends MediaWikiIntegrationTestCase {
 	private $user;
 
 	// phpcs:disable Generic.Files.LineLength
-	/** @var array Filters that may be created, their key is the ID. */
+	/** @var array<int,array> Filters that may be created, their key is the ID. */
 	private const FILTERS = [
 		1 => [
 			'af_pattern' => 'added_lines irlike "foo"',
@@ -311,7 +311,7 @@ class AbuseFilterConsequencesTest extends MediaWikiIntegrationTestCase {
 			'actions' => []
 		],
 	];
-	// phpcs:enable Generic.Files.LineLength
+	// phpcs:enable
 
 	/**
 	 * @inheritDoc
@@ -510,7 +510,7 @@ class AbuseFilterConsequencesTest extends MediaWikiIntegrationTestCase {
 	 * Executes an action to filter
 	 *
 	 * @param array $params Parameters of the action
-	 * @return Status
+	 * @return Status<int>
 	 */
 	private function doAction( $params ) {
 		$target = Title::newFromTextThrow( $params['target'] );

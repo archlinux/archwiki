@@ -32,9 +32,9 @@ class HTMLFormFieldTest extends MediaWikiIntegrationTestCase {
 		$context = new DerivativeContext( RequestContext::getMain() );
 		$context->setRequest( $request );
 		$form = HTMLForm::factory( 'ooui', $descriptor, $context );
-		$form->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) )->setSubmitCallback( static function () {
-			return true;
-		} )->prepareForm();
+		$form->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) )
+			->setSubmitCallback( static fn () => true )
+			->prepareForm();
 		$status = $form->trySubmit();
 		$this->assertTrue( $status );
 		// HTMLFormFieldCloner would create special template fields for JS users,
@@ -565,7 +565,7 @@ class HTMLFormFieldTest extends MediaWikiIntegrationTestCase {
 			'Good Status' => [ Status::newGood(), true ],
 			'Fatal Status' => [ Status::newFatal( 'test-fatal' ), "<p>⧼test-fatal⧽\n</p>" ],
 			'Good StatusValue' => [ StatusValue::newGood(), true ],
-			'Fatal StatusValue' => [ Status::newFatal( 'test-fatal' ), "<p>⧼test-fatal⧽\n</p>" ],
+			'Fatal StatusValue' => [ StatusValue::newFatal( 'test-fatal' ), "<p>⧼test-fatal⧽\n</p>" ],
 			'String' => [ '<strong>Invalid input</strong>', '<strong>Invalid input</strong>' ],
 			'True' => [ true, true ],
 			'False' => [ false, false ]

@@ -7,6 +7,7 @@
 			"Lejonel",
 			"Lokal Profil",
 			"M.M.S.",
+			"Stefan2255",
 			"WikiPhoenix"
 		]
 	},
@@ -23,7 +24,6 @@
 	"titleblacklist-forbidden-move": "Sidan \"$2\" kan inte flyttas till \"$3\", eftersom titeln \"$3\" har förbjudits från att skapas.\nDen matchar följande element i listan över otillåtna sidtitlar: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Filnamnet \"$2\" har stoppats från att skapas.\nDet matchar följande element i listan över otillåtna sidtitlar: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Användarnamnet \"$2\" har stoppats från att skapas.\nDet matchar följande element i listan över otillåtna titlar: <code>$1</code>",
-	"titleblacklist-invalid": "Följande {{PLURAL:$1|rad|rader}} i listan över otillåtna titlar är {{PLURAL:$1|felaktig|felaktiga}}; {{PLURAL:$1|den|de}} måste rättas innan du kan spara:",
 	"titleblacklist-override": "Åsidosätt listan över otillåtna titlar om det matchar",
 	"titleblacklist-override-help": "Användare med tillräckliga behörigheter kan ändra detta till att hoppa över att kontrollera listan över otillåtna titlar.",
 	"titleblacklist-warning": "<strong>Varning: Denna sida kan endast redigeras av administratörer och andra användare med rättigheten <code>tboverride</code> eftersom den matchar följande post i listan över otillåtna titlar:</strong><br /><code>$1</code>",

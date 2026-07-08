@@ -8,16 +8,7 @@ namespace MediaWiki\Extension\AbuseFilter\Parser;
  * evalTree function in the evaluator.
  */
 class AFPSyntaxTree {
-	/**
-	 * @var AFPTreeNode|null
-	 */
-	private $rootNode;
-
-	/**
-	 * @param AFPTreeNode|null $root
-	 */
-	public function __construct( ?AFPTreeNode $root = null ) {
-		$this->rootNode = $root;
+	public function __construct( private readonly ?AFPTreeNode $rootNode = null ) {
 	}
 
 	public function getRoot(): ?AFPTreeNode {

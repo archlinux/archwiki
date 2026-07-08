@@ -40,7 +40,7 @@
 	"abusefilter-edit-builder-group-funcs": "Fungsi",
 	"abusefilter-edit-builder-funcs-length": "Panjang string (length)",
 	"abusefilter-edit-builder-group-vars": "Variabel",
-	"abusefilter-edit-builder-vars-accountname": "Sandiasma (dina nyieun akun)",
+	"abusefilter-edit-builder-vars-account-name": "Sandiasma (dina nyieun akun)",
 	"abusefilter-edit-builder-vars-movedfrom-ns": "Ngaranspasi tina pangalihan kaca sumber",
 	"abusefilter-action-degroup": "Kaluarkeun tina gorombolan"
 }

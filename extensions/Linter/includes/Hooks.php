@@ -20,27 +20,27 @@
 
 namespace MediaWiki\Linter;
 
+use MediaWiki\Actions\Hook\InfoActionHook;
 use MediaWiki\Api\ApiQuerySiteinfo;
 use MediaWiki\Api\Hook\APIQuerySiteInfoGeneralInfoHook;
 use MediaWiki\Config\Config;
-use MediaWiki\Content\Content;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Deferred\MWCallableUpdate;
-use MediaWiki\Hook\InfoActionHook;
-use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
-use MediaWiki\Page\Hook\WikiPageDeletionUpdatesHook;
+use MediaWiki\Page\Hook\PageDeletionDataUpdatesHook;
 use MediaWiki\Page\ParserOutputAccess;
-use MediaWiki\Page\WikiPage;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\Hook\ParserLogLinterDataHook;
 use MediaWiki\Revision\RenderedRevision;
+use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Skin\Skin;
+use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\Hook\RevisionDataUpdatesHook;
 use MediaWiki\Title\Title;
@@ -51,18 +51,11 @@ class Hooks implements
 	BeforePageDisplayHook,
 	InfoActionHook,
 	ParserLogLinterDataHook,
-	WikiPageDeletionUpdatesHook,
-	RevisionDataUpdatesHook
+	PageDeletionDataUpdatesHook,
+	RevisionDataUpdatesHook,
+	WgQueryPagesHook
 {
-	private LinkRenderer $linkRenderer;
-	private JobQueueGroup $jobQueueGroup;
-	private StatsFactory $statsFactory;
-	private WikiPageFactory $wikiPageFactory;
-	private ParserOutputAccess $parserOutputAccess;
-	private CategoryManager $categoryManager;
-	private TotalsLookup $totalsLookup;
-	private Database $database;
-	private bool $parseOnDerivedDataUpdates;
+	private readonly bool $parseOnDerivedDataUpdates;
 
 	/**
 	 * This should match Parsoid's PageConfig::hasLintableContentModel()
@@ -70,24 +63,16 @@ class Hooks implements
 	public const LINTABLE_CONTENT_MODELS = [ CONTENT_MODEL_WIKITEXT, 'proofread-page' ];
 
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		JobQueueGroup $jobQueueGroup,
-		StatsFactory $statsFactory,
-		WikiPageFactory $wikiPageFactory,
-		ParserOutputAccess $parserOutputAccess,
-		CategoryManager $categoryManager,
-		TotalsLookup $totalsLookup,
-		Database $database,
+		private readonly LinkRenderer $linkRenderer,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly StatsFactory $statsFactory,
+		private readonly WikiPageFactory $wikiPageFactory,
+		private readonly ParserOutputAccess $parserOutputAccess,
+		private readonly CategoryManager $categoryManager,
+		private readonly TotalsLookup $totalsLookup,
+		private readonly Database $database,
 		Config $config
 	) {
-		$this->linkRenderer = $linkRenderer;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->statsFactory = $statsFactory;
-		$this->wikiPageFactory = $wikiPageFactory;
-		$this->parserOutputAccess = $parserOutputAccess;
-		$this->categoryManager = $categoryManager;
-		$this->totalsLookup = $totalsLookup;
-		$this->database = $database;
 		$this->parseOnDerivedDataUpdates = $config->get( 'LinterParseOnDerivedDataUpdate' );
 	}
 
@@ -125,19 +110,20 @@ class Hooks implements
 	}
 
 	/**
-	 * Hook: WikiPageDeletionUpdates
+	 * Hook: PageDeletionDataUpdates
 	 *
 	 * Remove entries from the linter table upon page deletion
 	 *
-	 * @param WikiPage $wikiPage
-	 * @param Content $content
-	 * @param array &$updates
+	 * @param Title $title
+	 * @param RevisionRecord $revision
+	 * @param DeferrableUpdate[] &$updates
+	 * @return bool|void
 	 */
-	public function onWikiPageDeletionUpdates( $wikiPage, $content, &$updates ) {
+	public function onPageDeletionDataUpdates( $title, $revision, &$updates ) {
 		// The article id of the title is set to 0 when the page is deleted so
 		// capture it before creating the callback.
-		$id = $wikiPage->getId();
-		$ns = $wikiPage->getNamespace();
+		$id = $revision->getPage()->getId();
+		$ns = $title->getNamespace();
 
 		$updates[] = new MWCallableUpdate( function () use ( $id, $ns ) {
 			$this->totalsLookup->updateStats(
@@ -321,4 +307,10 @@ class Hooks implements
 			$renderedRevision,
 		);
 	}
+
+	/** @inheritDoc */
+	public function onWgQueryPages( &$qp ): void {
+		$qp[] = [ SpecialLintTemplateErrors::class, 'LintTemplateErrors' ];
+	}
+
 }

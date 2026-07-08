@@ -80,5 +80,6 @@
 	"rest-unsupported-transform-input": "Entrada não suportada: $1",
 	"rest-bad-etag": "ETag incorreta: $1",
 	"rest-module": "Módulo",
-	"rest-module-content.v1-title": "Conteúdo da página"
+	"rest-module-content.v1-title": "Conteúdo da página",
+	"rest-module-site.v1-title": "API do site"
 }

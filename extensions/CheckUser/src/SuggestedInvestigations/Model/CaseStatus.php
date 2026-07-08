@@ -19,7 +19,7 @@
  * @file
  */
 
-namespace MediaWiki\CheckUser\SuggestedInvestigations\Model;
+namespace MediaWiki\Extension\CheckUser\SuggestedInvestigations\Model;
 
 /**
  * Lists the different statuses a SuggestedInvestigations case can be
@@ -30,4 +30,27 @@ enum CaseStatus: int {
 	case Open = 0;
 	case Resolved = 1;
 	case Invalid = 2;
+
+	/**
+	 * Given a string representation of the name of a status, return the associated
+	 * {@link CaseStatus} enum value or null if it did not match.
+	 */
+	public static function newFromStringName( string $status ): ?CaseStatus {
+		return match ( strtolower( $status ) ) {
+			'open' => CaseStatus::Open,
+			'invalid' => CaseStatus::Invalid,
+			'resolved', 'closed' => CaseStatus::Resolved,
+			default => null,
+		};
+	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	CaseStatus::class,
+	'MediaWiki\\CheckUser\\SuggestedInvestigations\\Model\\CaseStatus'
+);
+// @codeCoverageIgnoreEnd

@@ -399,7 +399,6 @@ class Tokenizer {
 	protected function executeInternal( $loop ) {
 		$eof = false;
 
-		// @phan-suppress-next-line PhanPossiblyInfiniteLoop
 		do {
 			switch ( $this->state ) {
 				case self::STATE_DATA:
@@ -1325,9 +1324,7 @@ class Tokenizer {
 		} elseif ( $count ) {
 			$this->pos = $m[$count - 1][0][1] + strlen( $m[$count - 1][0][0] );
 			$attribs = $this->lazyAttributes
-				? new LazyAttributes( $m, function ( $m ) {
-					return $this->interpretAttribMatches( $m );
-				} )
+				? new LazyAttributes( $m, $this->interpretAttribMatches( ... ) )
 				: new PlainAttributes( $this->interpretAttribMatches( $m ) );
 		} else {
 			$attribs = new PlainAttributes();

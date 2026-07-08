@@ -2,13 +2,13 @@
 	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
 	"bomFormat": "CycloneDX",
 	"specVersion": "1.6",
-	"serialNumber": "urn:uuid:e6bad5cc-16d4-4474-a9d2-0786850fd460",
+	"serialNumber": "urn:uuid:7d9cc192-20d5-47ce-bb6c-d07dba688ae1",
 	"version": 1,
 	"components": [
 		{
 			"type": "library",
 			"name": "CLDRPluralRuleParser",
-			"version": "1.3.1-0dda851",
+			"version": "1.6.5",
 			"licenses": [
 				{
 					"license": {
@@ -16,7 +16,7 @@
 					}
 				}
 			],
-			"purl": "pkg:github/santhoshtr/CLDRPluralRuleParser@0dda851#src/CLDRPluralRuleParser.js",
+			"purl": "pkg:npm/santhoshtr/CLDRPluralRuleParser@1.6.5",
 			"authors": [
 				{
 					"name": "Santhosh Thottingal"
@@ -32,7 +32,7 @@
 		{
 			"type": "library",
 			"name": "codex",
-			"version": "2.3.2",
+			"version": "2.5.1",
 			"licenses": [
 				{
 					"license": {
@@ -40,7 +40,7 @@
 					}
 				}
 			],
-			"purl": "pkg:npm/@wikimedia/codex@2.3.2",
+			"purl": "pkg:npm/@wikimedia/codex@2.5.1",
 			"authors": [
 				{
 					"name": "Design System team"
@@ -59,7 +59,7 @@
 		{
 			"type": "library",
 			"name": "codex-design-tokens",
-			"version": "2.3.2",
+			"version": "2.5.1",
 			"licenses": [
 				{
 					"license": {
@@ -67,7 +67,7 @@
 					}
 				}
 			],
-			"purl": "pkg:npm/@wikimedia/codex-design-tokens@2.3.2",
+			"purl": "pkg:npm/@wikimedia/codex-design-tokens@2.5.1",
 			"authors": [
 				{
 					"name": "Design System team"
@@ -86,7 +86,7 @@
 		{
 			"type": "library",
 			"name": "codex-icons",
-			"version": "2.3.2",
+			"version": "2.5.1",
 			"licenses": [
 				{
 					"license": {
@@ -94,7 +94,7 @@
 					}
 				}
 			],
-			"purl": "pkg:npm/@wikimedia/codex-icons@2.3.2",
+			"purl": "pkg:npm/@wikimedia/codex-icons@2.5.1",
 			"authors": [
 				{
 					"name": "Design System team"
@@ -411,7 +411,7 @@
 		{
 			"type": "library",
 			"name": "ooui",
-			"version": "0.53.0",
+			"version": "0.53.2",
 			"licenses": [
 				{
 					"license": {
@@ -419,7 +419,7 @@
 					}
 				}
 			],
-			"purl": "pkg:npm/oojs-ui@0.53.0",
+			"purl": "pkg:npm/oojs-ui@0.53.2",
 			"authors": [
 				{
 					"name": "OOUI Team and other contributors"

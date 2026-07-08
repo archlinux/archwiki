@@ -7,7 +7,7 @@ use Cite\AnchorFormatter;
 
 /**
  * Contains small pieces of additional knowledge that is specific to the Parsoid implementation and
- * doesn't belong to the generic {@see AnchorFormatter}.
+ * doesn't belong to the generic {@link AnchorFormatter}.
  *
  * @license GPL-2.0-or-later
  */

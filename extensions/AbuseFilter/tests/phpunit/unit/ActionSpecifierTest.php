@@ -19,13 +19,13 @@ class ActionSpecifierTest extends MediaWikiUnitTestCase {
 		$title = new TitleValue( NS_MAIN, 'Foobar' );
 		$user = new UserIdentityValue( 42, 'John Doe' );
 		$ip = '127.0.0.1';
-		$accountname = 'foobar';
-		$spec = new ActionSpecifier( $action, $title, $user, $ip, $accountname );
+		$accountName = 'foobar';
+		$spec = new ActionSpecifier( $action, $title, $user, $ip, $accountName );
 		$this->assertSame( $action, $spec->getAction(), 'action' );
 		$this->assertSame( $title, $spec->getTitle(), 'title' );
 		$this->assertSame( $user, $spec->getUser(), 'user' );
 		$this->assertSame( $ip, $spec->getIP(), 'IP' );
-		$this->assertSame( $accountname, $spec->getAccountName(), 'accountname' );
+		$this->assertSame( $accountName, $spec->getAccountName(), 'accountName' );
 	}
 
 	public function testInvalidAccountName() {

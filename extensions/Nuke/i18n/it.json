@@ -7,9 +7,9 @@
 			"Daimona Eaytoy",
 			"Darth Kule",
 			"F. Cosoleto",
+			"FL2226",
 			"Nemo bis",
 			"Sakretsu",
-			"FL2226",
 			"Titore"
 		]
 	},
@@ -35,6 +35,7 @@
 	"nuke-skipped-summary": "{{PLURAL:$1|'''Una pagina''' non è stata selezionata|'''$1 pagine''' non sono state selezionate}} per la cancellazione.",
 	"nuke-delete-more": "[[Special:Nuke|Cancella altre pagine]]",
 	"nuke-pattern": "Pattern SQL LIKE (ad esempio %) per il nome della pagina:",
+	"nuke-pattern-leading-wildcard": "Il pattern non può iniziare con <code>%</code>. Si prega di fornire un prefisso prima del carattere jolly (come in <code>Esempio%</code> invece di <code>%Esempio</code> ).",
 	"nuke-nopages-global": "Non ci sono pagine che corrispondono alla tua ricerca.",
 	"nuke-viewchanges": "cronologia",
 	"nuke-namespace": "Limita ai namespace:",

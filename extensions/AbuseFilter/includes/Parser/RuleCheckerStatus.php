@@ -6,11 +6,6 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\ExceptionBase;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
 
 class RuleCheckerStatus extends ParserStatus {
-	/** @var bool */
-	private $result;
-	/** @var bool */
-	private $warmCache;
-
 	/**
 	 * @param bool $result Whether the rule matched
 	 * @param bool $warmCache Whether we retrieved the AST from cache
@@ -19,15 +14,13 @@ class RuleCheckerStatus extends ParserStatus {
 	 * @param int $condsUsed
 	 */
 	public function __construct(
-		bool $result,
-		bool $warmCache,
+		private readonly bool $result,
+		private readonly bool $warmCache,
 		?ExceptionBase $excep,
 		array $warnings,
 		int $condsUsed
 	) {
 		parent::__construct( $excep, $warnings, $condsUsed );
-		$this->result = $result;
-		$this->warmCache = $warmCache;
 	}
 
 	public function getResult(): bool {
@@ -67,7 +60,7 @@ class RuleCheckerStatus extends ParserStatus {
 			$value['result'],
 			$value['warmCache'],
 			$excClass !== null ? $excClass::fromArray( $value['exception'] ) : null,
-			array_map( [ UserVisibleWarning::class, 'fromArray' ], $value['warnings'] ),
+			array_map( UserVisibleWarning::fromArray( ... ), $value['warnings'] ),
 			$value['condsUsed']
 		);
 	}

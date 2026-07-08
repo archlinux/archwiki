@@ -1,12 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Api\CheckUser;
 
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogFormatter;
 use MediaWiki\Logging\LogFormatterFactory;
@@ -18,7 +19,6 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
 use stdClass;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -28,49 +28,31 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse {
 
-	private MessageLocalizer $messageLocalizer;
-	private UserIdentityLookup $userIdentityLookup;
-	private CommentStore $commentStore;
-	private UserFactory $userFactory;
-	private LogFormatterFactory $logFormatterFactory;
-
 	/**
-	 * @param ApiQueryCheckUser $module
-	 * @param IConnectionProvider $dbProvider
-	 * @param Config $config
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param CheckUserLogService $checkUserLogService
-	 * @param UserNameUtils $userNameUtils
-	 * @param CheckUserLookupUtils $checkUserLookupUtils
-	 * @param UserIdentityLookup $userIdentityLookup
-	 * @param CommentStore $commentStore
-	 * @param UserFactory $userFactory
-	 * @param LogFormatterFactory $logFormatterFactory
-	 *
 	 * @internal Use CheckUserApiResponseFactory::newFromRequest() instead
 	 */
 	public function __construct(
 		ApiQueryCheckUser $module,
 		IConnectionProvider $dbProvider,
 		Config $config,
-		MessageLocalizer $messageLocalizer,
+		private readonly MessageLocalizer $messageLocalizer,
 		CheckUserLogService $checkUserLogService,
 		UserNameUtils $userNameUtils,
 		CheckUserLookupUtils $checkUserLookupUtils,
-		UserIdentityLookup $userIdentityLookup,
-		CommentStore $commentStore,
-		UserFactory $userFactory,
-		LogFormatterFactory $logFormatterFactory
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly CommentStore $commentStore,
+		private readonly UserFactory $userFactory,
+		private readonly LogFormatterFactory $logFormatterFactory,
 	) {
 		parent::__construct(
-			$module, $dbProvider, $config, $messageLocalizer,
-			$checkUserLogService, $userNameUtils, $checkUserLookupUtils
+			$module,
+			$dbProvider,
+			$config,
+			$messageLocalizer,
+			$checkUserLogService,
+			$userNameUtils,
+			$checkUserLookupUtils
 		);
-		$this->messageLocalizer = $messageLocalizer;
-		$this->userIdentityLookup = $userIdentityLookup;
-		$this->commentStore = $commentStore;
-		$this->userFactory = $userFactory;
-		$this->logFormatterFactory = $logFormatterFactory;
 	}
 
 	/** @inheritDoc */
@@ -85,15 +67,15 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 		$actions = [];
 		foreach ( $res as $row ) {
 			// Use the IP as the $row->user_text if the actor ID is NULL and the IP is not NULL (T353953).
-			if ( $row->actor === null && $row->ip ) {
-				$row->user_text = $row->ip;
+			if ( $row->actor === null && $row->ip_hex !== null ) {
+				$row->user_text = IPUtils::formatHex( $row->ip_hex );
 			}
 			$action = [
 				'timestamp' => ConvertibleTimestamp::convert( TS_ISO_8601, $row->timestamp ),
 				'ns'        => intval( $row->namespace ),
 				'title'     => $row->title,
 				'user'      => $row->user_text,
-				'ip'        => $row->ip,
+				'ip'        => $row->ip_hex !== null ? IPUtils::formatHex( $row->ip_hex ) : null,
 				'agent'     => $row->agent,
 			];
 
@@ -171,7 +153,12 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 			$userId = $this->userIdentityLookup->getUserIdentityByName( $this->target )->getId();
 		}
 		$this->checkUserLogService->addLogEntry(
-			$this->module->getUser(), $logType, $targetType, $this->target, $this->reason, $userId
+			$this->module->getUser(),
+			$logType,
+			$targetType,
+			$this->target,
+			$this->reason,
+			$userId
 		);
 		return $actions;
 	}
@@ -243,20 +230,20 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 
 	/** @inheritDoc */
 	protected function getPartialQueryBuilderForCuChanges(): SelectQueryBuilder {
-		$queryBuilder = $this->dbr->newSelectQueryBuilder()
+		return $this->dbr->newSelectQueryBuilder()
 			->select( [
 				'namespace' => 'cuc_namespace', 'title' => 'cuc_title',
 				'page' => 'cuc_page_id', 'timestamp' => 'cuc_timestamp',
 				'minor' => 'cuc_minor', 'type' => 'cuc_type', 'this_oldid' => 'cuc_this_oldid',
-				'ip' => 'cuc_ip', 'xff' => 'cuc_xff', 'agent' => 'cuc_agent',
+				'ip_hex' => 'cuc_ip_hex', 'xff' => 'cuc_xff', 'agent' => 'cuua_text',
 				'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cuc_actor',
 				'comment_text', 'comment_data',
 			] )
 			->from( 'cu_changes' )
 			->join( 'actor', null, 'actor_id=cuc_actor' )
 			->join( 'comment', null, 'comment_id=cuc_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cuc_agent_id' )
 			->where( $this->dbr->expr( 'cuc_timestamp', '>', $this->timeCutoff ) );
-		return $queryBuilder;
 	}
 
 	/** @inheritDoc */
@@ -272,7 +259,7 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 			->select( [
 				'namespace' => 'log_namespace', 'title' => 'log_title',
 				'page_id' => 'log_page', 'timestamp' => 'cule_timestamp', 'type' => $typeValue,
-				'ip' => 'cule_ip', 'xff' => 'cule_xff', 'agent' => 'cule_agent',
+				'ip_hex' => 'cule_ip_hex', 'xff' => 'cule_xff', 'agent' => 'cuua_text',
 				'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cule_actor',
 				'comment_text', 'comment_data',
 				'log_type' => 'log_type', 'log_action' => 'log_action',
@@ -282,6 +269,7 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 			->join( 'actor', null, 'actor_id=cule_actor' )
 			->join( 'logging', null, 'log_id=cule_log_id' )
 			->join( 'comment', null, 'comment_id=log_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cule_agent_id' )
 			->where( $this->dbr->expr( 'cule_timestamp', '>', $this->timeCutoff ) );
 	}
 
@@ -298,7 +286,7 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 			->select( [
 				'namespace' => 'cupe_namespace', 'title' => 'cupe_title',
 				'page_id' => 'cupe_page', 'timestamp' => 'cupe_timestamp', 'type' => $typeValue,
-				'ip' => 'cupe_ip', 'xff' => 'cupe_xff', 'agent' => 'cupe_agent',
+				'ip_hex' => 'cupe_ip_hex', 'xff' => 'cupe_xff', 'agent' => 'cuua_text',
 				'user' => 'actor_user', 'user_text' => 'actor_name', 'actor' => 'cupe_actor',
 				'comment_text', 'comment_data',
 				'log_type' => 'cupe_log_type', 'log_action' => 'cupe_log_action',
@@ -308,6 +296,7 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 			] )
 			->from( 'cu_private_event' )
 			->join( 'comment', null, 'comment_id=cupe_comment_id' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cupe_agent_id' )
 			->where( $this->dbr->expr( 'cupe_timestamp', '>', $this->timeCutoff ) );
 		if ( $this->xff === null ) {
 			// We only need a JOIN if the target of the check is a username because the username will have a valid

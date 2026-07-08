@@ -13,23 +13,21 @@ use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\TransactionRoundDefiningUpdate;
 use MediaWiki\Exception\MWExceptionHandler;
-use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
 use MediaWiki\JobQueue\JobRunner;
+use MediaWiki\Language\MessageCache;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebResponse;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Specials\SpecialRunJobs;
 use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
-use MessageCache;
-use Profiler;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\Http\HttpStatus;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\LBFactory;
@@ -43,7 +41,7 @@ use Wikimedia\Telemetry\TracerState;
 /**
  * @defgroup entrypoint Entry points
  *
- * Web entry points reside in top-level MediaWiki directory (i.e. installation path).
+ * Web entry points reside in the top-level MediaWiki directory (i.e., installation path).
  * These entry points handle web requests to interact with the wiki. Other PHP files
  * in the repository are not accessed directly from the web, but instead included by
  * an entry point.
@@ -59,8 +57,6 @@ use Wikimedia\Telemetry\TracerState;
  * @since 1.42, factored out of the previously existing MediaWiki class.
  */
 abstract class MediaWikiEntryPoint {
-	use ProtectedHookAccessorTrait;
-
 	private IContextSource $context;
 	private Config $config;
 	private ?int $outputCaptureLevel = null;
@@ -83,7 +79,7 @@ abstract class MediaWikiEntryPoint {
 
 	protected EntryPointEnvironment $environment;
 
-	private MediaWikiServices $mediaWikiServices;
+	protected MediaWikiServices $mediaWikiServices;
 
 	/**
 	 * @param IContextSource $context
@@ -722,6 +718,15 @@ abstract class MediaWikiEntryPoint {
 	 * @return bool Success
 	 */
 	protected function triggerAsyncJobs( $n, LoggerInterface $runJobsLogger ) {
+		if ( $this->postSendStrategy === self::DEFER_SET_LENGTH_AND_FLUSH ) {
+			// Do not trigger jobs for common HTTP responses without a body.
+			// Since Content-Length cannot be sent, then DEFER_SET_LENGTH_AND_FLUSH
+			// will cause the client to wait while PHP runs deferred updates.
+			if ( !in_array( http_response_code(), [ 200, 404 ], true ) ) {
+				return true;
+			}
+		}
+
 		// Do not send request if there are probably no jobs
 		$group = $this->getJobQueueGroupFactory()->makeJobQueueGroup();
 		if ( !$group->queuesHaveJobs( JobQueueGroup::TYPE_DEFAULT ) ) {
@@ -739,8 +744,8 @@ abstract class MediaWikiEntryPoint {
 		$host = $info['host'] ?? null;
 		$port = $info['port'] ?? ( $https ? 443 : 80 );
 
-		AtEase::suppressWarnings();
-		$sock = $host ? fsockopen(
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$sock = $host ? @fsockopen(
 			$https ? 'tls://' . $host : $host,
 			$port,
 			$errno,
@@ -748,7 +753,6 @@ abstract class MediaWikiEntryPoint {
 			// If it takes more than 100ms to connect to ourselves there is a problem...
 			0.100
 		) : false;
-		AtEase::restoreWarnings();
 
 		$invokedWithSuccess = true;
 		if ( $sock ) {
@@ -922,7 +926,7 @@ abstract class MediaWikiEntryPoint {
 	/**
 	 * Enable capturing of the current output buffer.
 	 *
-	 * There may be mutiple levels of output buffering. The level
+	 * There may be multiple levels of output buffering. The level
 	 * we are currently at, at the time of calling this method,
 	 * is the level that will be captured to later retrieve via
 	 * getCapturedOutput().

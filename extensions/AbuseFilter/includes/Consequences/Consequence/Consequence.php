@@ -8,11 +8,8 @@ use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
  * Base command-style class for consequences.
  */
 abstract class Consequence {
-	/** @var Parameters */
-	protected $parameters;
 
-	public function __construct( Parameters $parameters ) {
-		$this->parameters = $parameters;
+	public function __construct( protected readonly Parameters $parameters ) {
 	}
 
 	/**

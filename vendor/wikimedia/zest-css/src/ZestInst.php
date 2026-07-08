@@ -1,11 +1,12 @@
 <?php
+declare( strict_types = 1 );
 
 // @phan-file-suppress PhanUnusedClosureParameter
 
 namespace Wikimedia\Zest;
 
 /**
- * Zest.php (https://github.com/wikimedia/zest.php)
+ * Zest.php (https://github.com/wikimedia/mediawiki-libs-Zest)
  * Copyright (c) 2019, C. Scott Ananian. (MIT licensed)
  * PHP port based on:
  *
@@ -294,6 +295,9 @@ class ZestInst {
 		// DOMDocument hasn't had an "id attribute" set, even if the id
 		// exists in the document. See:
 		// http://php.net/manual/en/domdocument.getelementbyid.php
+		// PHP 8.4 will also return null if a deleted node was shadowing
+		// a still-existing-in-the-tree node:
+		// https://github.com/php/php-src/issues/20281
 		if ( $r !== null ) {
 			// Verify that this node is actually connected to the
 			// document (or to the context), since the element
@@ -301,6 +305,11 @@ class ZestInst {
 			// is deleted. (Also PHP's call is not scoped.)
 			// (Note that scoped getElementsById is *exclusive* of $context,
 			// so we start this search at r's parent node.)
+			if ( $context === $doc && $this->isStandardsMode( $context, $opts, true ) ) {
+				// PHP 8.4 promptly removes disconnected nodes from the index,
+				// so we can skip the context walk if the context was top level
+				return [ $r ];
+			}
 			for ( $parent = $r->parentNode; $parent; $parent = $parent->parentNode ) {
 				if ( $parent === $context ) {
 					return [ $r ];
@@ -490,8 +499,9 @@ class ZestInst {
 
 	/**
 	 * Handle `nth` Selectors
+	 * @return array{group:int,offset:int}
 	 */
-	private static function parseNth( string $param ): object {
+	private static function parseNth( string $param ): array {
 		$param = preg_replace( '/\s+/', '', $param );
 
 		if ( $param === 'even' ) {
@@ -506,7 +516,7 @@ class ZestInst {
 
 		$group = intval( ( $cap[1] ?? '' ) . ( $cap[2] ?? '1' ), 10 );
 		$offset = intval( ( $cap[3] ?? '' ) . ( $cap[4] ?? '0' ), 10 );
-		return (object)[
+		return [
 			'group' => $group,
 			'offset' => $offset,
 		];
@@ -519,9 +529,7 @@ class ZestInst {
 	 * @return callable(DOMNode,array):bool
 	 */
 	private static function nth( string $param, callable $test, bool $last ): callable {
-		$param = self::parseNth( $param );
-		$group = $param->group;
-		$offset = $param->offset;
+		[ 'group' => $group, 'offset' => $offset ] = self::parseNth( $param );
 		$find = ( !$last ) ? [ self::class, 'child' ] : [ self::class, 'lastChild' ];
 		$advance = ( !$last ) ? [ self::class, 'next' ] : [ self::class, 'prev' ];
 		return function ( $el, array $opts ) use ( $find, $test, $offset, $group, $advance ): bool {
@@ -574,7 +582,7 @@ class ZestInst {
 	 * Add a custom selector that takes 1 parameter, which is passed as a
 	 * string.
 	 * @param string $key Name of the selector
-	 * @param callable(string,ZestInst):(callable(DOMNode,array):bool)|callable(string):(callable(DOMNode,array):bool) $func
+	 * @param callable(string,ZestInst):(callable(DOMNode,array):bool) $func
 	 *   The selector match function
 	 */
 	public function addSelector1( string $key, callable $func ) {

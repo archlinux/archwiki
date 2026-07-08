@@ -10,7 +10,7 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\Maintenance\Maintenance;
+namespace MediaWiki\Maintenance;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -22,7 +22,7 @@ require_once __DIR__ . '/Maintenance.php';
  *
  * @ingroup Maintenance
  */
-class UpdateRestrictions extends Maintenance {
+class UpdateRestrictions extends LoggedUpdateMaintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Updates page_restrictions table from old page_restriction column' );
@@ -30,7 +30,7 @@ class UpdateRestrictions extends Maintenance {
 	}
 
 	/** @inheritDoc */
-	public function execute() {
+	public function doDBUpdates() {
 		$dbw = $this->getDB( DB_PRIMARY );
 		$batchSize = $this->getBatchSize();
 
@@ -93,7 +93,7 @@ class UpdateRestrictions extends Maintenance {
 				}
 			}
 
-			$this->beginTransaction( $dbw, __METHOD__ );
+			$this->beginTransactionRound( __METHOD__ );
 
 			// Insert new format protection settings for the pages in the current batch.
 			// Use INSERT IGNORE to ignore conflicts with new format settings that might exist for the page
@@ -104,14 +104,15 @@ class UpdateRestrictions extends Maintenance {
 				->caller( __METHOD__ )->execute();
 
 			// Clear out the legacy page.page_restrictions blob for this batch
-			$dbw->newUpdateQueryBuilder()
+			$update = $dbw->newUpdateQueryBuilder()
 				->update( 'page' )
 				->set( [ 'page_restrictions' => '' ] )
 				->where( [ 'page_id' => $pageIds ] )
-				->caller( __METHOD__ )
-				->execute();
+				->caller( __METHOD__ );
+			$update->execute();
+			$this->getServiceContainer()->getLinkWriteDuplicator()->duplicate( $update );
 
-			$this->commitTransaction( $dbw, __METHOD__ );
+			$this->commitTransactionRound( __METHOD__ );
 
 			$batchMinPageId = $batchMaxPageId;
 		} while ( $batchMaxPageId < $maxPageId );
@@ -150,6 +151,11 @@ class UpdateRestrictions extends Maintenance {
 		}
 
 		return $oldRestrictions;
+	}
+
+	/** @inheritDoc */
+	protected function getUpdateKey() {
+		return __CLASS__;
 	}
 }
 

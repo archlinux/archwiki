@@ -1,39 +1,38 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MailAddress;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
-use MediaWiki\CheckUser\EncryptedData;
-use MediaWiki\CheckUser\HookHandler\CheckUserPrivateEventsHandler;
-use MediaWiki\CheckUser\Jobs\StoreClientHintsDataJob;
-use MediaWiki\CheckUser\Services\CheckUserInsert;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Extension\CheckUser\HookHandler\CheckUserPrivateEventsHandler;
+use MediaWiki\Extension\CheckUser\Jobs\StoreClientHintsDataJob;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Logging\LogEntryBase;
+use MediaWiki\Mail\MailAddress;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use Profiler;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\CheckUserPrivateEventsHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\CheckUserPrivateEventsHandler
  * @group Database
  * @group CheckUser
  */
 class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 	use CheckUserTempUserTestTrait;
 
 	private function getObjectUnderTest( $entrypoint = null ): CheckUserPrivateEventsHandler {
@@ -54,13 +53,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	 * Re-define the CheckUserInsert service to expect no calls to any of its methods.
 	 * This is done to assert that no inserts to the database occur instead of having
 	 * to assert a row count of zero.
-	 *
-	 * @return void
 	 */
-	private function expectNoCheckUserInsertCalls() {
-		$this->setService( 'CheckUserInsert', function () {
-			return $this->createNoOpMock( CheckUserInsert::class );
-		} );
+	private function expectNoCheckUserInsertCalls(): void {
+		$this->setService( 'CheckUserInsert', $this->createNoOpMock( CheckUserInsert::class ) );
 	}
 
 	public function testUserLogoutComplete() {
@@ -73,7 +68,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 			$testUser->getName()
 		);
 		$this->assertRowCount(
-			1, 'cu_private_event', 'cupe_id',
+			1,
+			'cu_private_event',
+			'cupe_id',
 			'Should have logged the event to cu_private_event'
 		);
 	}
@@ -90,8 +87,11 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function doTestOnAuthManagerLoginAuthenticateAudit(
-		AuthenticationResponse $authResp, User $userObj,
-		string $userName, bool $isAnonPerformer, string $expectedLogAction,
+		AuthenticationResponse $authResp,
+		User $userObj,
+		string $userName,
+		bool $isAnonPerformer,
+		string $expectedLogAction,
 		bool $shouldCollectClientHintsData = true
 	): void {
 		if ( $isAnonPerformer ) {
@@ -165,7 +165,10 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideOnAuthManagerLoginAuthenticateAudit */
 	public function testOnAuthManagerLoginAuthenticateAudit(
-		string $authStatus, string $expectedLogAction, bool $isAnonPerformer, array $userGroups
+		string $authStatus,
+		string $expectedLogAction,
+		bool $isAnonPerformer,
+		array $userGroups
 	) {
 		$this->overrideConfigValues( [
 			'CheckUserLogLogins' => true,
@@ -180,7 +183,11 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->setLogger( 'CheckUser', $this->createNoOpMock( LoggerInterface::class ) );
 
 		$this->doTestOnAuthManagerLoginAuthenticateAudit(
-			$authResp, $userObj, $userName, $isAnonPerformer, $expectedLogAction
+			$authResp,
+			$userObj,
+			$userName,
+			$isAnonPerformer,
+			$expectedLogAction
 		);
 	}
 
@@ -218,7 +225,10 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideOnAuthManagerLoginAuthenticateAuditWithCentralAuthInstalled */
 	public function testOnAuthManagerLoginAuthenticateAuditWithCentralAuthInstalled(
-		array $authFailReasons, bool $existingUser, string $expectedLogAction, bool $isAnonPerformer
+		array $authFailReasons,
+		bool $existingUser,
+		string $expectedLogAction,
+		bool $isAnonPerformer
 	) {
 		$this->markTestSkippedIfExtensionNotLoaded( 'CentralAuth' );
 		$authResp = AuthenticationResponse::newFail(
@@ -236,7 +246,11 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$userName = $userObj->getName();
 
 		$this->doTestOnAuthManagerLoginAuthenticateAudit(
-			$authResp, $userObj, $userName, $isAnonPerformer, $expectedLogAction
+			$authResp,
+			$userObj,
+			$userName,
+			$isAnonPerformer,
+			$expectedLogAction
 		);
 	}
 
@@ -279,7 +293,12 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$authResp = $this->getMockAuthenticationResponseForStatus( AuthenticationResponse::PASS, $userName );
 
 		$this->doTestOnAuthManagerLoginAuthenticateAudit(
-			$authResp, $userObj, $userName, false, 'login-success', false
+			$authResp,
+			$userObj,
+			$userName,
+			false,
+			'login-success',
+			false
 		);
 	}
 
@@ -302,23 +321,35 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 					->select( 'cupe_id' )
 					->from( 'cu_private_event' )
 					->fetchField();
-				$this->assertArrayEquals(
+				$this->assertArrayContains(
 					[
-						$actualEventId,
-						[ 'Sec-CH-UA-Full-Version-List' => '?0', 'Sec-CH-UA-Bitness' => '"32"' ],
-						'privatelog',
+						'eventId' => $actualEventId,
+						'clientHintsHeaders' => [
+							'Sec-CH-UA-Full-Version-List' => '?0',
+							'Sec-CH-UA-Bitness' => '"32"',
+						],
+						'eventType' => 'privatelog',
 					],
-					$context
+					$context,
+					'Warning context was not as expected'
 				);
 			} );
 		$this->setLogger( 'CheckUser', $mockLogger );
 
 		$this->doTestOnAuthManagerLoginAuthenticateAudit(
-			$authResp, $userObj, $userName, false, 'login-success', false
+			$authResp,
+			$userObj,
+			$userName,
+			false,
+			'login-success',
+			false
 		);
 	}
 
-	private function getMockAuthenticationResponseForStatus( $status, $user = 'test' ) {
+	private function getMockAuthenticationResponseForStatus(
+		string $status,
+		string $user = 'test'
+	): AuthenticationResponse {
 		$req = $this->getMockForAbstractClass( AuthenticationRequest::class );
 		switch ( $status ) {
 			case AuthenticationResponse::PASS:
@@ -340,7 +371,11 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideOnAuthManagerLoginAuthenticateAuditNoSave */
 	public function testOnAuthManagerLoginAuthenticateAuditNoSave(
-		string $status, bool $validUser, array $userGroups, bool $logLogins, bool $logBots
+		string $status,
+		bool $validUser,
+		array $userGroups,
+		bool $logLogins,
+		bool $logBots
 	) {
 		$this->expectNoCheckUserInsertCalls();
 		$this->overrideConfigValues( [
@@ -394,8 +429,11 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function commonOnEmailUser(
-		MailAddress $to, MailAddress $from, array $cuPrivateWhere, bool $shouldCollectClientHintsData = true
-	) {
+		MailAddress $to,
+		MailAddress $from,
+		array $cuPrivateWhere,
+		bool $shouldCollectClientHintsData = true
+	): void {
 		// Call the method under test with the provided arguments and some mock arguments that are unused.
 		$subject = 'Test subject';
 		$text = 'Test text';
@@ -435,47 +473,6 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/** @covers \MediaWiki\CheckUser\EncryptedData */
-	public function testOnEmailWithCUPublicKeyDefined() {
-		// Test is broken on postgres DBs, so skip it for now.
-		$this->markTestSkippedIfDbType( 'postgres' );
-
-		if ( !in_array( 'rc4', openssl_get_cipher_methods() ) ) {
-			$this->markTestSkipped( 'Storing encrypted email data requires the RC4 cipher' );
-		}
-
-		// Generate a private/public key-pair to use in the test. This is needed to allow checking that the encrypted
-		// data that is stored in the database can be decrypted and the decrypted data is correct.
-		$privateKey = openssl_pkey_new( [
-			'digest_alg' => 'rc4', 'private_key_bits' => 1024, 'private_key_type' => OPENSSL_KEYTYPE_RSA,
-		] );
-		$this->overrideConfigValue( 'CUPublicKey', openssl_pkey_get_details( $privateKey )['key'] );
-		// Run the method under test.
-		$userTo = $this->getTestUser()->getUser();
-		$userFrom = $this->getTestSysop()->getUserIdentity();
-		$this->commonOnEmailUser(
-			new MailAddress( 'test@test.com', $userTo->getName() ),
-			new MailAddress( 'testing@test.com', $userFrom->getName() ),
-			[]
-		);
-		// Load the EncryptedData object from the database.
-		$encryptedData = unserialize(
-			$this->newSelectQueryBuilder()
-				->select( 'cupe_private' )
-				->from( 'cu_private_event' )
-				->caller( __METHOD__ )
-				->fetchField()
-		);
-		$this->assertInstanceOf( EncryptedData::class, $encryptedData );
-		// Check that the plaintext data remains the same after an encryption and decryption cycle.
-		// This also checks that the plaintext data being encrypted by the method under test is as expected.
-		$this->assertSame(
-			$userTo->getEmail() . ':' . $userTo->getId(),
-			$encryptedData->getPlaintext( $privateKey ),
-			'The encrypted data for a user email event could not be decrypted or was incorrect.'
-		);
-	}
-
 	public function testOnEmailUserLogParams() {
 		// Also use this test to check that Client Hints are only attempted to be collected if the feature is enabled.
 		$this->overrideConfigValue( 'CheckUserClientHintsEnabled', false );
@@ -501,7 +498,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$account = $this->getTestSysop()->getUser();
 		$this->getObjectUnderTest()->onUser__mailPasswordInternal( $performer, 'IGNORED', $account );
 		$this->assertRowCount(
-			1, 'cu_private_event', 'cupe_id',
+			1,
+			'cu_private_event',
+			'cupe_id',
 			'The row was not inserted or was inserted with the wrong data',
 			[
 				'cupe_actor' => $performer->getActorId(),
@@ -574,7 +573,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser()->getUser();
 		$this->getObjectUnderTest()->onLocalUserCreated( $user, false );
 		$this->assertRowCount(
-			1, 'cu_private_event', 'cupe_id',
+			1,
+			'cu_private_event',
+			'cupe_id',
 			'The row was not inserted or was inserted with the wrong data',
 			[
 				'cupe_actor'  => $user->getActorId(),
@@ -757,7 +758,8 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 
 	public function testClientHintsDataCollectedOnApiUserLogout() {
 		RequestContext::getMain()->getRequest()->setVal(
-			'checkuserclienthints', json_encode( [ 'architecture' => 'foo' ] )
+			'checkuserclienthints',
+			json_encode( [ 'architecture' => 'foo' ] )
 		);
 		$this->overrideConfigValues( [
 			'CheckUserLogLogins' => true,
@@ -831,7 +833,8 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testClientHintsDataNotCollectedOnApiUserLogoutIfPostDataMalformed() {
-		RequestContext::getMain()->getRequest()->setVal( 'checkuserclienthints',
+		RequestContext::getMain()->getRequest()->setVal(
+			'checkuserclienthints',
 			json_encode( [ 'platformVersion' => [ 'bar' ] ] )
 		);
 		$this->overrideConfigValues( [
@@ -873,7 +876,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		/** @var CheckUserInsert $checkUserInsert */
 		$checkUserInsert = $this->getServiceContainer()->get( 'CheckUserInsert' );
 		$insertedId = $checkUserInsert->insertIntoCuPrivateEventTable(
-			[], __METHOD__, $this->getTestUser()->getUser()
+			[],
+			__METHOD__,
+			$this->getTestUser()->getUser()
 		);
 		// Call the private method with a request that is a POST request and has transaction profiler set to be
 		// a POST request
@@ -884,7 +889,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 		$objectUnderTest = $this->getObjectUnderTest();
 		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
 		$objectUnderTest->storeClientHintsDataFromHeaders(
-			$insertedId, 'privatelog', $fauxRequest
+			$insertedId,
+			'privatelog',
+			$fauxRequest
 		);
 		// Expect Client Hints data to exist without having to run jobs for this event
 		$this->newSelectQueryBuilder()

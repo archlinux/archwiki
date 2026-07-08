@@ -1,14 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Jobs;
+namespace MediaWiki\Extension\CheckUser\Jobs;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\CheckUserCentralIndexManager;
-use MediaWiki\CheckUser\Services\CheckUserDataPurger;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\CheckUserCentralIndexManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserDataPurger;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\JobQueue\Job;
-use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -19,15 +20,26 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  */
 class PruneCheckUserDataJob extends Job implements CheckUserQueryInterface {
 	/** @inheritDoc */
-	public function __construct( $title, $params ) {
+	public function __construct(
+		$title,
+		array $params,
+		private readonly CheckUserCentralIndexManager $checkUserCentralIndexManager,
+		private readonly CheckUserDataPurger $checkUserDataPurger,
+		private readonly Config $config,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+	) {
 		parent::__construct( 'checkuserPruneCheckUserDataJob', $params );
 	}
 
 	/** @return bool */
 	public function run() {
-		$services = MediaWikiServices::getInstance();
+		$dbw = $this->dbProvider->getPrimaryDatabase( $this->params['domainID'] );
 
-		$dbw = $services->getConnectionProvider()->getPrimaryDatabase( $this->params['domainID'] );
+		// Exit early if the database is in read-only mode to avoid log spam
+		if ( $dbw->isReadOnly() ) {
+			return true;
+		}
 
 		// Get an exclusive lock to purge data from the CheckUser tables. This is done to avoid multiple jobs and/or
 		// the purgeOldData.php maintenance script attempting to purge at the same time.
@@ -40,29 +52,23 @@ class PruneCheckUserDataJob extends Job implements CheckUserQueryInterface {
 		// Generate a cutoff timestamp from the wgCUDMaxAge configuration setting. Generating a fixed cutoff now
 		// ensures that the cutoff remains the same throughout the job.
 		$cutoff = $dbw->timestamp(
-			ConvertibleTimestamp::time() - $services->getMainConfig()->get( 'CUDMaxAge' )
+			ConvertibleTimestamp::time() - $this->config->get( 'CUDMaxAge' )
 		);
 
 		$deletedReferenceIds = new ClientHintsReferenceIds();
 
-		/** @var CheckUserDataPurger $checkUserDataPurger */
-		$checkUserDataPurger = $services->get( 'CheckUserDataPurger' );
-
 		// Purge rows from each local CheckUser table that have an associated timestamp before the cutoff.
 		foreach ( self::RESULT_TABLES as $table ) {
-			$checkUserDataPurger->purgeDataFromLocalTable( $dbw, $table, $cutoff, $deletedReferenceIds, __METHOD__ );
+			$this->checkUserDataPurger
+				->purgeDataFromLocalTable( $dbw, $table, $cutoff, $deletedReferenceIds, __METHOD__ );
 		}
 
 		// Delete the Client Hints mapping rows associated with the rows purged in the above for loop.
-		/** @var UserAgentClientHintsManager $userAgentClientHintsManager */
-		$userAgentClientHintsManager = $services->get( 'UserAgentClientHintsManager' );
-		$userAgentClientHintsManager->deleteMappingRows( $deletedReferenceIds );
+		$this->userAgentClientHintsManager->deleteMappingRows( $deletedReferenceIds );
 
-		if ( $services->getMainConfig()->get( 'CheckUserWriteToCentralIndex' ) ) {
+		if ( $this->config->get( 'CheckUserWriteToCentralIndex' ) ) {
 			// Purge expired rows from the central index tables where the rows are associated with this wiki
-			/** @var CheckUserCentralIndexManager $checkUserCentralIndexManager */
-			$checkUserCentralIndexManager = $services->get( 'CheckUserCentralIndexManager' );
-			$checkUserCentralIndexManager->purgeExpiredRows( $cutoff, $this->params['domainID'] );
+			$this->checkUserCentralIndexManager->purgeExpiredRows( $cutoff, $this->params['domainID'] );
 		}
 
 		return true;

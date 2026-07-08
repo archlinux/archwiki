@@ -37,33 +37,19 @@ use Wikimedia\Timestamp\TimestampException;
  */
 class ThreadItemStore {
 
-	private Config $config;
-	private ILBFactory $dbProvider;
-	private ReadOnlyMode $readOnlyMode;
-	private PageStore $pageStore;
-	private RevisionStore $revStore;
-	private TitleFormatter $titleFormatter;
-	private ActorStore $actorStore;
-	private Language $language;
+	private readonly Config $config;
 
 	public function __construct(
 		ConfigFactory $configFactory,
-		ILBFactory $dbProvider,
-		ReadOnlyMode $readOnlyMode,
-		PageStore $pageStore,
-		RevisionStore $revStore,
-		TitleFormatter $titleFormatter,
-		ActorStore $actorStore,
-		Language $language
+		private readonly ILBFactory $dbProvider,
+		private readonly ReadOnlyMode $readOnlyMode,
+		private readonly PageStore $pageStore,
+		private readonly RevisionStore $revStore,
+		private readonly TitleFormatter $titleFormatter,
+		private readonly ActorStore $actorStore,
+		private readonly Language $language,
 	) {
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
-		$this->dbProvider = $dbProvider;
-		$this->readOnlyMode = $readOnlyMode;
-		$this->pageStore = $pageStore;
-		$this->revStore = $revStore;
-		$this->titleFormatter = $titleFormatter;
-		$this->actorStore = $actorStore;
-		$this->language = $language;
 	}
 
 	/**
@@ -71,7 +57,7 @@ class ThreadItemStore {
 	 * to allow failing softly in that case.
 	 */
 	public function isDisabled(): bool {
-		return !$this->config->get( 'DiscussionToolsEnablePermalinksBackend' );
+		return false;
 	}
 
 	/**
@@ -189,16 +175,16 @@ class ThreadItemStore {
 		// Mirrors CommentParser::truncateForId
 		$heading = trim( $this->language->truncateForDatabase( $heading, 80, '' ), '_' );
 
-		$dbw = $this->dbProvider->getPrimaryDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		// 1. Try to find items which have appeared on the page at some point
 		//    in its history.
 		$itemIdInPageHistoryQueryBuilder = $this->getIdsNamesBuilder()
 			->caller( __METHOD__ . ' case 1' )
 			->join( 'revision', null, [ 'rev_id = itr_revision_id' ] )
-			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+			->where( $dbr->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
 				'h-' . $heading . '-',
-				$dbw->anyString()
+				$dbr->anyString()
 			) ) )
 			// Has once appered on the specified page ID
 			->where( [ 'rev_page' => $articleId ] )
@@ -217,13 +203,13 @@ class ThreadItemStore {
 		$itemIdInSubPageQueryBuilder = $this->getIdsNamesBuilder()
 			->caller( __METHOD__ . ' case 2' )
 			->join( 'page', null, [ 'page_id = itp_page_id' ] )
-			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+			->where( $dbr->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
 				'h-' . $heading . '-',
-				$dbw->anyString()
+				$dbr->anyString()
 			) ) )
-			->where( $dbw->expr( 'page_title', IExpression::LIKE, new LikeValue(
+			->where( $dbr->expr( 'page_title', IExpression::LIKE, new LikeValue(
 				$title->getText() . '/',
-				$dbw->anyString()
+				$dbr->anyString()
 			) ) )
 			->where( [ 'page_namespace' => $title->getNamespace() ] )
 			->field( 'itid_itemid' );
@@ -240,9 +226,9 @@ class ThreadItemStore {
 		$itemIdInAnyPageQueryBuilder = $this->getIdsNamesBuilder()
 			->caller( __METHOD__ . ' case 3' )
 			->join( 'page', null, [ 'page_id = itp_page_id', 'page_latest = itr_revision_id' ] )
-			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+			->where( $dbr->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
 				'h-' . $heading . '-',
-				$dbw->anyString()
+				$dbr->anyString()
 			) ) )
 			->field( 'itid_itemid' )
 			// We only care if there is one, or more than one result
@@ -262,9 +248,9 @@ class ThreadItemStore {
 			->caller( __METHOD__ . ' case 4' )
 			->join( 'revision', null, [ 'rev_id = itr_revision_id' ] )
 			// Only comments, as non-talk headings are recorded
-			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+			->where( $dbr->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
 				'c-',
-				$dbw->anyString()
+				$dbr->anyString()
 			) ) )
 			// On the specified page ID
 			->where( [ 'rev_page' => $articleId ] )
@@ -402,12 +388,12 @@ class ThreadItemStore {
 			$parent = null;
 		}
 
-		$transcludedFrom = $row->itr_transcludedfrom === null ? false : (
-			$row->itr_transcludedfrom === '0' ? true :
-				$this->titleFormatter->getPrefixedText(
-					$this->pageStore->newPageRecordFromRow( $row )
-				)
-		);
+		if ( $row->itr_transcludedfrom && $row->page_id ) {
+			$transcludedFrom = $this->titleFormatter->getPrefixedText(
+				$this->pageStore->newPageRecordFromRow( $row ) );
+		} else {
+			$transcludedFrom = $row->itr_transcludedfrom === '0';
+		}
 
 		if ( $row->it_timestamp !== null && $row->it_actor !== null ) {
 			$author = $this->actorStore->newActorFromRow( $row )->getName();

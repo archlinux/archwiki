@@ -1,0 +1,24 @@
+@import 'mediawiki.skin.defaults.less';
+
+/* [[phab:T201233]] */
+@media ( max-width: @max-width-breakpoint-tablet ) {
+	.mwe-math-element-block,
+	dd .mwe-math-element-inline {
+		overflow-x: auto;
+		vertical-align: middle;
+		max-width: 100%;
+	}
+	/* [[phab:T416809]] */
+	dd .mwe-math-element-inline {
+		display: inline-block;
+	}
+	// support horizontal scrolling of `<math display="block">`
+	.mwe-math-element-block {
+		display: block;
+	}
+}
+
+mtable.mwe-math-smallmatrix mtd {
+	math-depth: add( 1 );
+	padding: 0 0.1665em 0 0.1665em;
+}

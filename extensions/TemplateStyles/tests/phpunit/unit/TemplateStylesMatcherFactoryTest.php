@@ -15,8 +15,9 @@ class TemplateStylesMatcherFactoryTest extends MediaWikiUnitTestCase {
 	 * @param string $type
 	 * @param string $url
 	 * @param bool $expect
+	 * @param string|null $filename Captured filename
 	 */
-	public function testUrls( $type, $url, $expect ) {
+	public function testUrls( $type, $url, $expect, $filename = null ) {
 		$factory = new TemplateStylesMatcherFactory( [
 			'test1' => [
 				'<^http://example\.com/test1/>',
@@ -28,17 +29,25 @@ class TemplateStylesMatcherFactoryTest extends MediaWikiUnitTestCase {
 			'anything' => [
 				'<.>',
 			],
+			'filename' => [
+				'<^http://example\.com/test3/(?\'filename\'.*)>',
+			],
 		] );
 
+		$filenames = $filename === null ? [] : [ $filename ];
 		$list = new ComponentValueList( [
 			new Token( Token::T_STRING, $url )
 		] );
+		$factory->clearFileNames();
 		$this->assertSame( $expect, (bool)$factory->urlstring( $type )->matchAgainst( $list ) );
+		$this->assertSame( $filenames, $factory->getFileNames() );
 
 		$list = new ComponentValueList( [
 			new Token( Token::T_URL, $url )
 		] );
+		$factory->clearFileNames();
 		$this->assertSame( $expect, (bool)$factory->url( $type )->matchAgainst( $list ) );
+		$this->assertSame( $filenames, $factory->getFileNames() );
 	}
 
 	public static function provideUrls() {
@@ -63,6 +72,10 @@ class TemplateStylesMatcherFactoryTest extends MediaWikiUnitTestCase {
 			[ 'anything', '../still/fails/though', false ],
 			[ 'anything', 'still/fails/..', false ],
 			[ 'anything', '..', false ],
+			[ 'filename', 'http://example.com/test3/foo.svg', true, 'foo.svg' ],
+			[ 'filename', 'http://example.com/test3/', true ],
+			[ 'filename', 'http://example.com/test55/foo.svg', false ],
+			[ 'filename', 'http://example.com/test3/unicode_%F0%9F%90%B6.png', true, 'unicode_🐶.png' ],
 		];
 	}
 

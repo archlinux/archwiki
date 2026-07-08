@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"HanV",
+			"Mainframe98",
+			"McDutchie",
+			"Romaine",
+			"Siebrand"
+		]
+	},
+	"oathauth-webauthn-module-label": "Beveiligingssleutel",
+	"oathauth-webauthn-javascript-required": "Om beveiligingssleutel te kunnen gebruiken, moet JavaScript in uw browser ingeschakeld zijn.",
+	"oathauth-webauthn-ui-login-prompt": "Gebruik uw beveiligingssleutel of volg de instructies van uw browser.",
+	"oathauth-webauthn-ui-add-key": "Sleutel toevoegen",
+	"oathauth-webauthn-error-browser-unsupported": "Deze browser ondersteunt geen beveiligingssleutelauthenticatie of is niet beschikbaar voor deze website. Probeer het met een andere browser. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Lees meer]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Deze browser ondersteunt geen beveiligingssleutelauthenticatie of is niet beschikbaar voor deze website.",
+	"oathauth-webauthn-error-auth-generic": "Het authenticatieproces is onderbroken. Start het authenticatieproces opnieuw.",
+	"oathauth-webauthn-error-reg-generic": "Kan uw sleutel niet verifiëren. Start het registratieproces opnieuw.",
+	"oathauth-webauthn-registered-keys-section-name": "Geregistreerde sleutels",
+	"oathauth-webauthn-ui-remove-key": "Verwijderen",
+	"oathauth-webauthn-error-module-not-enabled": "Module \"$1\" is niet ingeschakeld voor {{GENDER:$2|gebruiker \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn verificatie mislukt.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Passkey-controle mislukt.",
+	"oathauth-webauthn-error-credentials-missing": "Er zijn geen WebAuthn-aanmeldgegevens verzonden.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Gebruiker “$1”}} kan geen nieuwe aanmeldgegevens registreren.",
+	"oathauth-webauthn-error-invalid-new-key": "De nieuwe sleutel die door de module wordt geretourneerd, is niet van het vereiste type.",
+	"oathauth-webauthn-error-registration-failed": "Registratie nieuwe sleutel mislukt.",
+	"oathauth-webauthn-ui-key-register-help": "Kies de bijnaam voor uw sleutel:",
+	"oathauth-webauthn-error-cannot-remove-key": "Sleutel kan niet worden verwijderd.",
+	"oathauth-webauthn-error-get-authinfo-fail": "De authenticatie-informatie kon niet worden opgevraagd.",
+	"oathauth-webauthn-add-key-section-name": "Een nieuwe beveiligingssleutel registreren",
+	"oathauth-webauthn-error-get-reginfo-fail": "De registratiegegevens kon niet worden opgevraagd.",
+	"oathauth-webauthn-module-description": "WebAuthn bevindt zich in een experimentele fase. Het biedt momenteel geen hersteloptie voor verloren of beschadigde authenticatieapparaten. \n\n[https://en.wikipedia.org/wiki/WebAuthn Lees meer over WebAuthn].",
+	"oathauth-webauthn-ui-reload-page-label": "Pagina opnieuw laden",
+	"oathauth-webauthn-authentication-info-label": "Authenticatiegegevens",
+	"oathauth-webauthn-authentication-info-help": "Authenticatiegegevens worden doorgegeven aan de cliënt voor het ophalen van referenties",
+	"oathauth-webauthn-credential-label": "Aanmeldgegevens gebruiker",
+	"oathauth-webauthn-credential-help": "Aanmeldgegevens van de gebruiker, gebaseerd op authenticatiegegevens",
+	"oathauth-webauthn-add-security-key": "Een beveiligingssleutel toevoegen",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Gebruik de beveiligingssleutel"
+}

@@ -43,9 +43,6 @@
 	"vector-toc-label": "Прякс",
 	"vector-toc-beginning": "Ушеткс",
 	"vector-toc-toggle-button-label": "Лиякс туфтомс пяльксонь пяльксть $1",
-	"vector-anon-user-menu-pages": "Лопатне эсь прянь апак сёрматф петихненди",
-	"vector-anon-user-menu-pages-learn": "содамс сяда лама",
-	"vector-anon-user-menu-pages-label": "Сяда крхкаста петемать колга",
 	"vector-main-menu-tooltip": "Пряфкслопась",
 	"vector-toc-menu-tooltip": "Фкя-фкянь мельге моли кизефкснень няфтемасна",
 	"vector-toc-collapsible-button-label": "Пряфкслепнень лиякс туфтомасна",
@@ -64,7 +61,5 @@
 	"empty-language-selector-body": "Лопать лангса уликссь аш кода нолдамс тевс лия кяльхнень коряс.",
 	"vector-toc-unpinned-popup": "Уликссь ётафтф тяза.",
 	"vector-page-tools-unpinned-popup": "Кядъёнксонь пряфкслопась ульсь ётафтф тяза.",
-	"vector-main-menu-unpinned-popup": "Эрявикс пряфкслопась ульсь ётафтф тяза.",
-	"vector-2022-beta-preview-label": "Вектор 2022 бета",
-	"vector-2022-beta-preview-description": "Сявость сяда ингольдень ванондоматнень од векторть \n2022 кизонь."
+	"vector-main-menu-unpinned-popup": "Эрявикс пряфкслопась ульсь ётафтф тяза."
 }

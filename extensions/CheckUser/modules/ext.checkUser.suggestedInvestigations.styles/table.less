@@ -31,4 +31,79 @@ html.client-js .mw-checkuser-suggestedinvestigations-user-defaulthide {
 	&--edit {
 		.cdx-mixin-css-icon( @cdx-icon-edit );
 	}
+
+	&--filter {
+		.cdx-mixin-css-icon( @cdx-icon-funnel );
+	}
+
+	&--close {
+		.cdx-mixin-css-icon( @cdx-icon-close );
+	}
 }
+
+// Make the "Filter" button info chip look more like a progressive button to match the design spec
+.mw-checkuser-suggestedinvestigations-filter-button {
+	.mw-checkuser-suggestedinvestigations-filter-button-filters-applied-chip {
+		background-color: @background-color-progressive;
+		border: 0;
+		color: @color-inverted-fixed;
+	}
+}
+
+/* stylelint-disable selector-class-pattern */
+.cdx-message--user-dismissable.ext-checkuser-suggestedinvestigations-dismissable-warning {
+	transition: opacity 400ms;
+
+	&--fading {
+		opacity: 0;
+	}
+
+	&--hidden {
+		display: none;
+	}
+}
+
+// Hide the mobile "Filter" button when screen is wide enough and hide the desktop
+// "Filter" button when showing the mobile button
+// Additionally, hide the table caption when on mobile to reduce vertical space before
+// the first case
+.cdx-table:has( .ext-checkuser-suggestedinvestigations-table-with-navigation-bar ) {
+	.cdx-table-pager__start .mw-checkuser-suggestedinvestigations-filter-button {
+		float: right;
+	}
+
+	@media all and ( min-width: calc( @max-width-breakpoint-mobile + 1px ) ) {
+		.cdx-table-pager__start .mw-checkuser-suggestedinvestigations-filter-button {
+			display: none;
+		}
+	}
+
+	@media all and ( max-width: @max-width-breakpoint-mobile ) {
+		.cdx-table__header {
+			display: none;
+		}
+
+		.cdx-table-pager__start {
+			display: flex;
+			flex: auto;
+			justify-content: space-between;
+		}
+	}
+}
+
+.cdx-table:not( :has( .ext-checkuser-suggestedinvestigations-table-with-navigation-bar ) ) {
+	@media all and ( max-width: @max-width-breakpoint-mobile ) {
+		.cdx-table__header__caption {
+			display: none;
+		}
+
+		.cdx-table__header {
+			display: block;
+		}
+
+		.mw-checkuser-suggestedinvestigations-filter-button {
+			float: right;
+		}
+	}
+}
+/* stylelint-enable selector-class-pattern */

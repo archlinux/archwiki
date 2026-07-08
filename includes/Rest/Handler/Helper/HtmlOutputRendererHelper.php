@@ -8,15 +8,16 @@ namespace MediaWiki\Rest\Handler\Helper;
 use InvalidArgumentException;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\UnknownContentModelException;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
 use MediaWiki\Exception\HttpError;
-use MediaWiki\Exception\MWUnknownContentModelException;
 use MediaWiki\Language\LanguageCode;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Language\LanguageFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Page\PageRecord;
@@ -355,7 +356,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$handler = $this->contentHandlerFactory->getContentHandler( $model );
 			$content = $handler->unserializeContent( $source );
 			$this->setContent( $content );
-		} catch ( MWUnknownContentModelException ) {
+		} catch ( UnknownContentModelException ) {
 			throw new LocalizedHttpException( new MessageValue( "rest-bad-content-model", [ $model ] ), 400 );
 		}
 	}
@@ -449,7 +450,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	/**
 	 * Get a target language from an accept header
 	 */
-	private function getAcceptedTargetLanguage( string $targetLanguage ): string {
+	public static function getAcceptedTargetLanguage( string $targetLanguage ): string {
 		// We could try to identify the most desirable language here,
 		// following the rules for Accept-Language headers in RFC9100.
 		// For now, just take the first language code.
@@ -480,7 +481,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$stashSuccess = $this->parsoidOutputStash->set(
 				$parsoidStashKey,
 				new SelserContext(
-					PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput ),
+					PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $parserOutput ),
 					$parsoidStashKey->getRevisionID(),
 					$isFakeRevision ? $this->revisionOrId->getContent( SlotRecord::MAIN ) : null
 				)
@@ -488,7 +489,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			if ( !$stashSuccess ) {
 				$this->statsFactory->getCounter( 'htmloutputrendererhelper_stash_total' )
 					->setLabel( 'status', 'fail' )
-					->copyToStatsdAt( 'htmloutputrendererhelper.stash.fail' )
 					->increment();
 
 				$errorData = [ 'parsoid-stash-key' => $parsoidStashKey ];
@@ -504,7 +504,6 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			}
 			$this->statsFactory->getCounter( 'htmloutputrendererhelper_stash_total' )
 				->setLabel( 'status', 'save' )
-				->copyToStatsdAt( 'htmloutputrendererhelper.stash.save' )
 				->increment();
 		}
 
@@ -512,7 +511,9 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			$pb = $this->getPageBundle();
 
 			// Inject data-parsoid and data-mw attributes.
-			$parserOutput->setRawText( $pb->toInlineAttributeHtml() );
+			$parserOutput->setRawText( $pb->toInlineAttributeHtml(
+				siteConfig: $this->parsoidSiteConfig
+			) );
 		}
 
 		// Check if variant conversion has to be performed
@@ -627,19 +628,34 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		return $title->getPageLanguage();
 	}
 
+	// See ParserOptions::optionsHash
+	private function getDefaultVariant(): Bcp47Code {
+		$services = MediaWikiServices::getInstance();
+		$lang = Title::castFromPageIdentity( $this->page )->getPageLanguage();
+		$converter = $services->getLanguageConverterFactory()->getLanguageConverter( $lang );
+		return $this->languageFactory->getLanguage(
+			$converter->getPreferredVariant()
+		);
+	}
+
 	private function getParserOutput(): ParserOutput {
 		if ( !$this->parserOutput ) {
 			$this->parserOptions->setRenderReason( __METHOD__ );
 
 			$defaultLanguage = $this->getDefaultPageLanguage();
+			$defaultVariant = $this->getDefaultVariant();
 
 			if ( $this->pageLanguage
-				&& $this->pageLanguage->toBcp47Code() !== $defaultLanguage->toBcp47Code()
+				 && ( !$this->pageLanguage->isSameCodeAs( $defaultLanguage ) ||
+					 // T418549: if we're asking for the base but the URL
+					 // specifies a variant, we need to fork the cache
+					 // T267067 should fix this properly.
+					 !$this->pageLanguage->isSameCodeAs( $defaultVariant ) )
 			) {
 				$languageObj = $this->languageFactory->getLanguage( $this->pageLanguage );
 				$this->parserOptions->setTargetLanguage( $languageObj );
 				// Ensure target language splits the parser cache, when
-				// non-default; targetLangauge is not in
+				// non-default; targetLanguage is not in
 				// ParserOptions::$cacheVaryingOptionsHash for the legacy
 				// parser.
 				$this->parserOptions->addExtraKey( 'target=' . $languageObj->getCode() );
@@ -743,7 +759,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	public function getPageBundle(): HtmlPageBundle {
 		// XXX: converting between HtmlPageBundle and ParserOutput is inefficient!
 		$parserOutput = $this->getParserOutput();
-		$pb = PageBundleParserOutputConverter::pageBundleFromParserOutput( $parserOutput );
+		$pb = PageBundleParserOutputConverter::htmlPageBundleFromParserOutput( $parserOutput );
 
 		// Check if variant conversion has to be performed
 		// NOTE: Variant conversion is performed on the fly, and kept outside the stash.
@@ -839,9 +855,8 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		// If we have a revision and the ID is 0 or null, then it's a fake revision
 		// representing a preview.
 		$parsoidOptions = $this->parsoidOptions;
-		// NOTE: VisualEditor would set this flavor when transforming from Wikitext to HTML
-		//       for the purpose of editing when doing parsefragment (in body only mode).
-		if ( $this->flavor === 'fragment' || $this->getRevisionId() === null ) {
+
+		if ( $this->getRevisionId() === null ) {
 			$this->isCacheable = false;
 		}
 
@@ -925,39 +940,28 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			} catch ( ResourceLimitExceededException $e ) {
 				$status = Status::newFatal( 'parsoid-resource-limit-exceeded', $e->getMessage() );
 			}
-			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		} else {
 			'@phan-var RevisionRecord $revision';
-			$status = $this->parseUncacheable(
-				$this->page,
-				$revision,
-				$this->lenientRevHandling
-			);
-
-			// @phan-suppress-next-line PhanSuspiciousValueComparison
-			if ( $status->isOK() && $this->flavor === 'fragment' ) {
-				// Unwrap sections and return body_only content
-				// NOTE: This introduces an extra html -> dom -> html roundtrip
-				// This will get addressed once HtmlHolder work is complete
-				$parserOutput = $status->getValue();
-				$body = $parserOutput->getContentHolder()->getAsDom(
-					ContentHolder::BODY_FRAGMENT
-				);
-				$this->stripParsoidSectionTags( $body );
-			}
-			Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
+			$status = $this->parseUncacheable( $revision );
 		}
-
+		if ( $status->isOK() && $this->flavor === 'fragment' ) {
+			// Unwrap sections and return body_only content
+			// NOTE: This introduces an extra html -> dom -> html roundtrip
+			// This will get addressed once HtmlHolder work is complete
+			$parserOutput = $status->getValue();
+			$body = $parserOutput->getContentHolder()->getAsDom(
+				ContentHolder::BODY_FRAGMENT
+			);
+			'@phan-var DocumentFragment $body';
+			$this->stripParsoidSectionTags( $body );
+		}
+		Assert::invariant( $status->isOK() ? $status->getValue()->getRenderId() !== null : true, "no render id" );
 		return $status;
 	}
 
 	// See ParserOutputAccess::renderRevision() -- but of course this method
 	// bypasses any caching.
-	private function parseUncacheable(
-		PageIdentity $page,
-		RevisionRecord $revision,
-		bool $lenientRevHandling = false
-	): Status {
+	private function parseUncacheable( RevisionRecord $revision ): Status {
 		// Enforce caller expectation
 		$revId = $revision->getId();
 		if ( $revId !== 0 && $revId !== null ) {
@@ -980,7 +984,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			}
 			$parserOutput = $renderedRev->getRevisionParserOutput();
 			// Ensure this isn't accidentally cached
-			$parserOutput->updateCacheExpiry( 0 );
+			$parserOutput->updateCacheExpiry( 0, 'uncacheable-render' );
 			return Status::newGood( $parserOutput );
 		} catch ( ClientError $e ) {
 			return Status::newFatal( 'parsoid-client-error', $e->getMessage() );

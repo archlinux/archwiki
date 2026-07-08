@@ -1446,68 +1446,88 @@ ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ac
 	};
 	oop.inherits( AbuseFilterWorker, Mirror );
 
+	/** @type {?XMLHttpRequest} */
+	let currentRequest = null;
 	const parseCode = function ( code ) {
 		if ( !self.mwapipath ) {
 			// No API available? Pretend everything is fine.
-			return true;
+			return Promise.resolve( true );
 		}
-		const xhr = new XMLHttpRequest();
-		xhr.open(
-			'GET',
-			self.mwapipath + '?action=abusefilterchecksyntax&format=json&filter=' + encodeURIComponent( code ),
-			false
-		);
-		xhr.send();
-		if ( xhr.status !== 200 ) {
-			return true;
-		}
-		let data;
-		try {
-			data = JSON.parse( xhr.responseText );
-		} catch ( e ) {
-			return true;
-		}
-
-		if ( data.error ) {
-			// API error, pretend everything is fine.
-			return true;
-		}
-		return data.abusefilterchecksyntax;
+		return new Promise( ( resolve ) => {
+			const xhr = new XMLHttpRequest();
+			const url = self.mwapipath + '?action=abusefilterchecksyntax&format=json';
+			xhr.open( 'POST', url );
+			currentRequest = xhr;
+			xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+			xhr.setRequestHeader( 'Promise-Non-Write-API-Action', '1' );
+			xhr.onload = () => {
+				if ( currentRequest !== xhr ) {
+					// A request finished after being aborted (stale)
+					return;
+				}
+				currentRequest = null;
+				if ( xhr.status !== 200 ) {
+					resolve( true );
+				} else {
+					try {
+						const data = JSON.parse( xhr.responseText );
+						if ( data.error ) {
+							resolve( true );
+						} else {
+							resolve( data.abusefilterchecksyntax );
+						}
+					} catch ( e ) {
+						resolve( true );
+					}
+				}
+			};
+			xhr.onerror = xhr.onabort = () => {
+				if ( currentRequest === xhr ) {
+					currentRequest = null;
+				}
+				resolve( true );
+			};
+			// Sensitive information should not be put in the URL
+			xhr.send( 'filter=' + encodeURIComponent( code ) );
+		} );
 	};
 
 	( function () {
 		this.onUpdate = function () {
-			const results = parseCode( this.doc.getValue() );
-
-			if ( results === true ) {
-				// API error or something similar.
-				this.sender.emit( 'annotate', [] );
-				return;
+			if ( currentRequest ) {
+				currentRequest.abort();
 			}
-			let position;
-			const errors = [];
-			for ( const warning in results.warnings || {} ) {
-				position = this.doc.indexToPosition( results.warnings[ warning ].character );
-				errors.push( {
-					row: position.row,
-					column: position.column,
-					text: results.warnings[ warning ].message,
-					type: 'warning'
-				} );
-			}
-			if ( results.status !== 'ok' ) {
-				position = this.doc.indexToPosition( results.character );
-				// Note, we can put more things in here if the parser is changed to
-				// report all of them
-				errors.push( {
-					row: position.row,
-					column: position.column,
-					text: results.message,
-					// Can also be "warning" or "info"
-					type: 'error'
-				} );
-			}
-			this.sender.emit( 'annotate', errors );
+			parseCode( this.doc.getValue() ).then( ( results ) => {
+				if ( results === true ) {
+					// API error or something similar.
+					this.sender.emit( 'annotate', [] );
+					return;
+				}
+				let position;
+				const errors = [];
+				for ( const warning in results.warnings || {} ) {
+					position = this.doc.indexToPosition( results.warnings[ warning ].character );
+					errors.push( {
+						row: position.row,
+						column: position.column,
+						text: results.warnings[ warning ].message,
+						type: 'warning'
+					} );
+				}
+				if ( results.status !== 'ok' ) {
+					position = this.doc.indexToPosition( results.character );
+					// Note, we can put more things in here if the parser is changed to
+					// report all of them
+					errors.push( {
+						row: position.row,
+						column: position.column,
+						text: results.message,
+						// Can also be "warning" or "info"
+						type: 'error'
+					} );
+				}
+				this.sender.emit( 'annotate', errors );
+			} );
 		};
 	} ).call( AbuseFilterWorker.prototype );
 } );

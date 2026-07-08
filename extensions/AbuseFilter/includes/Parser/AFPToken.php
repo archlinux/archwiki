@@ -51,27 +51,10 @@ class AFPToken {
 	public const TCOMMA = 'T_COMMA';
 	public const TSTATEMENTSEPARATOR = 'T_STATEMENT_SEPARATOR';
 
-	/**
-	 * @var string One of the T* constant from this class
-	 */
-	public $type;
-	/**
-	 * @var mixed|null The actual value of the token
-	 */
-	public $value;
-	/**
-	 * @var int The code offset where this token is found
-	 */
-	public $pos;
-
-	/**
-	 * @param string $type
-	 * @param mixed|null $value
-	 * @param int $pos
-	 */
-	public function __construct( $type = self::TNONE, $value = null, $pos = 0 ) {
-		$this->type = $type;
-		$this->value = $value;
-		$this->pos = $pos;
+	public function __construct(
+		public readonly string $type = self::TNONE,
+		public readonly mixed $value = null,
+		public readonly int $pos = 0
+	) {
 	}
 }

@@ -18,3 +18,12 @@ CREATE TABLE /*_*/oathauth_devices (
 );
 
 CREATE INDEX oad_user ON /*_*/oathauth_devices (oad_user);
+
+
+CREATE TABLE /*_*/oathauth_user_handles (
+  oah_user INTEGER UNSIGNED NOT NULL,
+  oah_handle BLOB DEFAULT NULL,
+  PRIMARY KEY(oah_user)
+);
+
+CREATE UNIQUE INDEX oah_handle ON /*_*/oathauth_user_handles (oah_handle);

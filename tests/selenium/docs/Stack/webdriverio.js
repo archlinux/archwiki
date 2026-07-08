@@ -10,6 +10,7 @@ const baseUrl = `${ process.env.MW_SERVER }${ process.env.MW_SCRIPT_PATH }/index
 import { remote } from 'webdriverio';
 
 const browser = await remote( {
+	logLevel: 'error',
 	capabilities: {
 		browserName: 'chrome',
 		'goog:chromeOptions': {

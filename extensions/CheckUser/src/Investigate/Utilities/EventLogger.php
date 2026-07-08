@@ -1,17 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Investigate\Utilities;
+namespace MediaWiki\Extension\CheckUser\Investigate\Utilities;
 
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Registration\ExtensionRegistry;
 
 class EventLogger {
-	private ExtensionRegistry $extensionRegistry;
-
 	public function __construct(
-		ExtensionRegistry $extensionRegistry
+		private readonly ExtensionRegistry $extensionRegistry,
 	) {
-		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/**

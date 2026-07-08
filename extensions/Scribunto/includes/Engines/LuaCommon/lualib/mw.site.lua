@@ -11,10 +11,7 @@ function site.setupInterface( info )
 	site.scriptPath = info.scriptPath
 	site.stylePath = info.stylePath
 	site.currentVersion = info.currentVersion
-	site.stats = info.stats
-	site.stats.pagesInCategory = php.pagesInCategory
-	site.stats.pagesInNamespace = php.pagesInNamespace
-	site.stats.usersInGroup = php.usersInGroup
+	site.wikiId = info.wikiId
 	site.interwikiMap = php.interwikiMap
 
 	-- Process namespace list into more useful tables
@@ -68,6 +65,22 @@ function site.setupInterface( info )
 				end
 			end
 			return rawget( t, k )
+		end
+	} )
+
+	-- Lazy-load the stats table to avoid an unnecessary DB query if it's not used
+	setmetatable( site, {
+		__index = function( t, key )
+			if key == 'stats' then
+				local stats = php.loadStats()
+
+				stats.pagesInCategory = php.pagesInCategory
+				stats.pagesInNamespace = php.pagesInNamespace
+				stats.usersInGroup = php.usersInGroup
+
+				rawset( t, key, stats )
+				return stats
+			end
 		end
 	} )
 

@@ -1,21 +1,21 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWikiIntegrationTestCase;
 
 /**
  * @group Database
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\UserAgentClientHintsLookup
+ * @covers \MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup
  */
 class UserAgentClientHintsLookupTest extends MediaWikiIntegrationTestCase {
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	/**
 	 * Tests that ::getClientHintsByReferenceIds finds
@@ -32,7 +32,9 @@ class UserAgentClientHintsLookupTest extends MediaWikiIntegrationTestCase {
 		$userAgentClientHintsManager = $this->getServiceContainer()->get( 'UserAgentClientHintsManager' );
 		foreach ( $clientHintDataItems as $key => $clientHintData ) {
 			$userAgentClientHintsManager->insertClientHintValues(
-				$clientHintData, $referenceIdsToInsert[$key], 'revision'
+				$clientHintData,
+				$referenceIdsToInsert[$key],
+				'revision'
 			);
 		}
 		$referenceIds = new ClientHintsReferenceIds( [
@@ -43,7 +45,8 @@ class UserAgentClientHintsLookupTest extends MediaWikiIntegrationTestCase {
 		$lookupResult = $userAgentClientHintsLookup->getClientHintsByReferenceIds( $referenceIds );
 		foreach ( $referenceIdsToLookup as $key => $referenceId ) {
 			$lookupResultForReferenceId = $lookupResult->getClientHintsDataForReferenceId(
-				$referenceId, UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES
+				$referenceId,
+				UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES
 			);
 			$this->assertNotNull(
 				$lookupResultForReferenceId,

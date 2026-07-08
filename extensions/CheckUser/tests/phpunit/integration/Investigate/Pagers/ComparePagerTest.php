@@ -1,15 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Pagers;
 
 use LoggedServiceOptions;
-use MediaWiki\CheckUser\Investigate\Pagers\ComparePager;
-use MediaWiki\CheckUser\Investigate\Services\CompareService;
-use MediaWiki\CheckUser\Investigate\Utilities\DurationManager;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
-use MediaWiki\CheckUser\Tests\Integration\Investigate\CompareTabTestDataTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePager;
+use MediaWiki\Extension\CheckUser\Investigate\Services\CompareService;
+use MediaWiki\Extension\CheckUser\Investigate\Utilities\DurationManager;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
+use MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\CompareTabTestDataTrait;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Page\LinkBatch;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
@@ -17,13 +19,14 @@ use MediaWiki\User\UserIdentityLookup;
 use MediaWikiIntegrationTestCase;
 use TestAllServiceOptionsUsed;
 use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\ComparePager
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePager
  */
 class ComparePagerTest extends MediaWikiIntegrationTestCase {
 	use TestAllServiceOptionsUsed;
@@ -46,7 +49,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 			$overrides['durationManager'] ?? $services->get( 'CheckUserDurationManager' ),
 			$overrides['compareService'] ?? $services->get( 'CheckUserCompareService' ),
 			$overrides['userFactory'] ?? $services->getUserFactory(),
-			$services->getLinkBatchFactory()
+			$overrides['linkBatchFactory'] ?? $services->getLinkBatchFactory()
 		);
 	}
 
@@ -82,7 +85,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				[ 'agent' => '<b>test</b>' ], 'agent', '&lt;b&gt;test&lt;/b&gt;',
 			],
 			'ip is 1.2.3.4' => [
-				[ 'ip' => '1.2.3.4', 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ], 'ip',
+				[ 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ], 'ip_hex',
 				'<span class="ext-checkuser-compare-table-cell-ip">1.2.3.4</span>' .
 				'<div>(checkuser-investigate-compare-table-cell-actions: 1) ' .
 				'<span>(checkuser-investigate-compare-table-cell-other-actions: 11)</span></div>',
@@ -97,7 +100,8 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				'(checkuser-investigate-compare-table-cell-unregistered)',
 			],
 			'user_text as null' => [
-				[ 'user_text' => null, 'user' => 0, 'actor' => null, 'ip' => '1.2.3.5' ], 'user_text',
+				[ 'user_text' => null, 'user' => 0, 'actor' => null, 'ip_hex' => IPUtils::toHex( '1.2.3.5' ) ],
+				'user_text',
 				'(checkuser-investigate-compare-table-cell-unregistered)',
 			],
 		];
@@ -114,7 +118,8 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				'user' => self::$hiddenUser->getId(),
 				'actor' => self::$hiddenUser->getActorId(),
 			],
-			'user_text', '(rev-deleted-user)'
+			'user_text',
+			'(rev-deleted-user)'
 		);
 	}
 
@@ -138,7 +143,12 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 
 	/** @dataProvider provideGetCellAttrs */
 	public function testGetCellAttrs(
-		array $row, array $filteredTargets, array $ipTotalActions, $name, $expectedClasses, $otherExpectedAttributes
+		array $row,
+		array $filteredTargets,
+		array $ipTotalActions,
+		$name,
+		$expectedClasses,
+		$otherExpectedAttributes
 	) {
 		// Set the user language to qqx so that we can compare against the message keys and not the english version of
 		// the message key (which may change and then break the tests).
@@ -175,14 +185,14 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		return [
 			'$name as ip when IP $value is inside a filtered target IP range' => [
 				// The row set as $this->mCurrentRow in the object under test, provided as an array
-				[ 'ip' => '1.2.3.4', 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
+				[ 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
 				// The value of the filteredTargets property in the object under test (only used for ip and
 				// user_text $name values).
 				[ 'TestUser1', '1.2.3.0/24' ],
 				// The value of the ipTotalActions property in the object under test (only used for ip $name values).
 				[ IPUtils::toHex( '1.2.3.4' ) => 2 ],
 				// The $name argument to ::getCellAttrs
-				'ip',
+				'ip_hex',
 				// The expected classes for the cell
 				[
 					'ext-checkuser-compare-table-cell-target', 'ext-checkuser-compare-table-cell-ip-target',
@@ -191,32 +201,32 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				],
 				// The expected attributes for the cell (minus the class, as this is tested above).
 				[
-					'data-field' => 'ip', 'data-value' => '1.2.3.4',
+					'data-field' => 'ip_hex', 'data-value' => '1.2.3.4',
 					'data-sort-value' => IPUtils::toHex( '1.2.3.4' ), 'data-actions' => 1, 'data-all-actions' => 2,
 				],
 			],
 			'$name as ip when IP $value is a filtered target' => [
-				[ 'ip' => '1.2.3.4', 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
-				[ 'TestUser1', '1.2.3.4' ], [ IPUtils::toHex( '1.2.3.4' ) => 2 ], 'ip',
+				[ 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
+				[ 'TestUser1', '1.2.3.4' ], [ IPUtils::toHex( '1.2.3.4' ) => 2 ], 'ip_hex',
 				[
 					'ext-checkuser-compare-table-cell-target', 'ext-checkuser-compare-table-cell-ip-target',
 					'ext-checkuser-investigate-table-cell-pinnable',
 					'ext-checkuser-investigate-table-cell-interactive',
 				],
 				[
-					'data-field' => 'ip', 'data-value' => '1.2.3.4',
+					'data-field' => 'ip_hex', 'data-value' => '1.2.3.4',
 					'data-sort-value' => IPUtils::toHex( '1.2.3.4' ), 'data-actions' => 1, 'data-all-actions' => 2,
 				],
 			],
 			'$name as ip when IP is not in filtered targets array' => [
-				[ 'ip' => '1.2.3.4', 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
-				[], [ IPUtils::toHex( '1.2.3.4' ) => 2 ], 'ip',
+				[ 'ip_hex' => IPUtils::toHex( '1.2.3.4' ), 'total_actions' => 1 ],
+				[], [ IPUtils::toHex( '1.2.3.4' ) => 2 ], 'ip_hex',
 				[
 					'ext-checkuser-compare-table-cell-ip-target', 'ext-checkuser-investigate-table-cell-pinnable',
 					'ext-checkuser-investigate-table-cell-interactive',
 				],
 				[
-					'data-field' => 'ip', 'data-value' => '1.2.3.4',
+					'data-field' => 'ip_hex', 'data-value' => '1.2.3.4',
 					'data-sort-value' => IPUtils::toHex( '1.2.3.4' ), 'data-actions' => 1, 'data-all-actions' => 2,
 				],
 			],
@@ -231,7 +241,8 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				[ 'data-field' => 'user_text', 'data-value' => 'TestUser1', 'data-sort-value' => 'TestUser1' ],
 			],
 			'$name as user_text with $value as null' => [
-				[ 'user_text' => null, 'actor' => null, 'ip' => '1.2.3.5' ], [], [], 'user_text',
+				[ 'user_text' => null, 'actor' => null, 'ip_hex' => IPUtils::toHex( '1.2.3.5' ) ], [], [],
+				'user_text',
 				[ 'ext-checkuser-investigate-table-cell-interactive' ],
 				[ 'data-sort-value' => '1.2.3.5' ],
 			],
@@ -255,7 +266,10 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		RequestContext::getMain()->setAuthority( $this->mockRegisteredAuthorityWithoutPermissions( [ 'hideuser' ] ) );
 		$this->testGetCellAttrs(
 			[ 'user_text' => self::$hiddenUser->getName(), 'actor' => self::$hiddenUser->getActorId() ],
-			[], [], 'user_text', [ 'ext-checkuser-investigate-table-cell-interactive' ],
+			[],
+			[],
+			'user_text',
+			[ 'ext-checkuser-investigate-table-cell-interactive' ],
 			[
 				'data-field' => 'user_text',
 				'data-value' => '(rev-deleted-user)', 'data-sort-value' => '(rev-deleted-user)',
@@ -266,7 +280,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideDoQuery
 	 */
-	public function testDoQuery( $targets, $excludeTargets, $expected ) {
+	public function testDoQuery( array $targets, array $excludeTargets, int $expectedRowCount ) {
 		$services = $this->getServiceContainer();
 
 		$tokenQueryManager = $this->getMockBuilder( TokenQueryManager::class )
@@ -309,7 +323,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 				CompareService::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$userIdentityLookup,
 			$services->get( 'CheckUserLookupUtils' ),
 			$services->getTempUserConfig()
@@ -324,7 +338,7 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		] );
 		$pager->doQuery();
 
-		$this->assertSame( $expected, $pager->mResult->numRows() );
+		$this->assertSame( $expectedRowCount, $pager->mResult->numRows() );
 	}
 
 	public static function provideDoQuery() {
@@ -341,6 +355,39 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
+	public function testDoBatchLookups(): void {
+		$mockLinkBatch = $this->createMock( LinkBatch::class );
+
+		$mockLinkBatchFactory = $this->createMock( LinkBatchFactory::class );
+		$mockLinkBatchFactory->method( 'newLinkBatch' )
+			->willReturn( $mockLinkBatch );
+
+		$objectUnderTest = $this->getObjectUnderTest( [
+			'linkBatchFactory' => $mockLinkBatchFactory,
+		] );
+		$objectUnderTest->mResult = new FakeResultWrapper( [
+			[ 'user_text' => null, 'ip_hex' => IPUtils::toHex( '1.2.3.67' ), 'user' => null ],
+			[ 'user_text' => '1.2.3.45', 'ip_hex' => IPUtils::toHex( '1.2.3.45' ), 'user' => 0 ],
+			[ 'user_text' => 'Testing', 'ip_hex' => IPUtils::toHex( '1.2.3.23' ), 'user' => 123 ],
+		] );
+
+		// Expect that the LinkBatch::addUser method is called for all the performers of the rows
+		// listed in the above fake results
+		$mockLinkBatch->method( 'addUser' )
+			->willReturnCallback( function ( UserIdentity $actualUserIdentity ) {
+				$this->assertContains(
+					$actualUserIdentity->getName(),
+					[ '1.2.3.67', '1.2.3.45', 'Testing' ],
+					'A user was added to the link batch that was not expected'
+				);
+			} );
+		$mockLinkBatch->expects( $this->once() )
+			->method( 'execute' );
+
+		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
+		$objectUnderTest->doBatchLookups();
+	}
+
 	public function addDBDataOnce() {
 		$this->addTestingDataToDB();
 
@@ -349,8 +396,11 @@ class ComparePagerTest extends MediaWikiIntegrationTestCase {
 		// Place a 'hideuser' block on the test user to hide the user
 		$blockStatus = $this->getServiceContainer()->getBlockUserFactory()
 			->newBlockUser(
-				$hiddenUser, $this->getTestUser( [ 'sysop', 'suppress' ] )->getUser(),
-				'infinity', 'block to hide the test user', [ 'isHideUser' => true ]
+				$hiddenUser,
+				$this->getTestUser( [ 'sysop', 'suppress' ] )->getUser(),
+				'infinity',
+				'block to hide the test user',
+				[ 'isHideUser' => true ]
 			)->placeBlock();
 		$this->assertStatusGood( $blockStatus );
 		self::$hiddenUser = $hiddenUser;

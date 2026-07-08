@@ -1,8 +1,6 @@
-const ResizingDragBar = require( './ResizingDragBar.js' );
 const TwoPaneLayout = require( './TwoPaneLayout.js' );
 const ErrorLayout = require( './ErrorLayout.js' );
 const ManualWidget = require( './ManualWidget.js' );
-const localStorage = require( 'mediawiki.storage' ).local;
 
 /**
  * @class
@@ -47,7 +45,8 @@ function RealtimePreview( context ) {
 		icon: 'reload',
 		framed: false,
 		accessKey: mw.msg( 'accesskey-wikieditor-realtimepreview' ),
-		title: mw.msg( 'wikieditor-realtimepreview-reload-title' )
+		label: mw.msg( 'wikieditor-realtimepreview-reload-title' ),
+		invisibleLabel: true
 	} );
 	this.reloadButton.connect( this, {
 		click: function () {
@@ -85,18 +84,6 @@ function RealtimePreview( context ) {
  * @private
  */
 RealtimePreview.prototype.createToolbarButton = function () {
-	const $uiText = this.context.$ui.find( '.wikiEditor-ui-text' );
-
-	// Fix the height of the textarea, before adding a resizing bar below it.
-	const height = this.context.$textarea.height();
-	$uiText.css( 'height', height + 'px' );
-	this.context.$textarea.removeAttr( 'rows cols' );
-	this.context.$textarea.addClass( 'ext-WikiEditor-realtimepreview-textbox' );
-
-	// Add the resizing bar.
-	const bottomDragBar = new ResizingDragBar( { isEW: false, id: 'ext-WikiEditor-bottom-dragbar' } );
-	$uiText.after( bottomDragBar.$element );
-
 	// Create and configure the toolbar button.
 	this.button = new OO.ui.ToggleButtonWidget( {
 		label: mw.msg( 'wikieditor-realtimepreview-preview' ),
@@ -114,9 +101,6 @@ RealtimePreview.prototype.createToolbarButton = function () {
 
 	// Hide or show the preview and toolbar button when the window is resized.
 	$( window ).on( 'resize', this.enableFeatureWhenScreenIsWideEnough.bind( this ) );
-
-	// Remove the old onboarding-status storage that was discontinued in March 2023.
-	localStorage.remove( 'WikiEditor-RealtimePreview-onboarding-dismissed' );
 };
 
 /**
@@ -379,7 +363,7 @@ RealtimePreview.prototype.doRealtimePreview = function ( forceUpdate ) {
 	const loadingSelectors = this.pagePreview.getLoadingSelectors()
 		// config.$previewNode below is a clone of #wikiPreview with a different selector!
 		// config.$diffNode defaults to #wikiDiff but is disabled below and never updated.
-		.filter( ( selector ) => selector.indexOf( '#wiki' ) !== 0 );
+		.filter( ( selector ) => !selector.startsWith( '#wiki' ) );
 	loadingSelectors.push( '.ext-WikiEditor-realtimepreview-preview' );
 	loadingSelectors.push( '.ext-WikiEditor-ManualWidget' );
 	loadingSelectors.push( '.ext-WikiEditor-realtimepreview-ErrorLayout' );

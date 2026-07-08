@@ -12,9 +12,11 @@ namespace Wikimedia\Parsoid\Wt2Html\TT;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\InternalException;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\Language\Language;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwAttrib;
@@ -25,11 +27,9 @@ use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Tokens\XMLTagTk;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
@@ -42,7 +42,6 @@ use Wikimedia\Parsoid\Wt2Html\PipelineContentCache;
 use Wikimedia\Parsoid\Wt2Html\TokenHandlerPipeline;
 
 class WikiLinkHandler extends XMLTagBasedHandler {
-	/** Disable caching till we fix cloning of DOM fragments in data-parsoid */
 	private static bool $cachingEnabled = true;
 
 	/**
@@ -301,7 +300,9 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 	 */
 	private function onWikiLink( Token $token ): array {
 		$env = $this->env;
-		$tsrStart = $token->dataParsoid->tsr->start ?? null;
+		$tsr = $token->dataParsoid->tsr ?? null;
+		$tsrSource = $tsr->source ?? null;
+		$tsrStart = $tsr->start ?? null;
 
 		// Check if we have cached output for this wikilink source.
 		// Given wikilink-syntax source, token output is deterministic
@@ -311,9 +312,12 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 		if ( $isCacheable ) {
 			$cachedOutput = $this->wikilinkCache->lookup( $src );
 			if ( $cachedOutput !== null ) {
-				$offset = $tsrStart - $cachedOutput['start'];
-				$toks = $cachedOutput['tokens'];
-				TokenUtils::shiftTokenTSR( $toks, $offset );
+				$toks = $cachedOutput['value']['tokens'];
+				TokenUtils::shiftTokenTSR(
+					$toks,
+					$tsrStart - $cachedOutput['value']['start'],
+					$tsrSource === $cachedOutput['source'] ? null : $tsrSource
+				);
 				TokenUtils::dedupeAboutIds( $env, $toks );
 				return $toks;
 			}
@@ -334,8 +338,8 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 		if ( is_array( $hrefKV->v ) ) {
 			// Use the expanded attr instead of trying to unpackDOMFragments
 			// since the fragment will have been released when expanding to DOM
-			$expandedVal = $token->fetchExpandedAttrValue( 'href' );
-			$expandedDom = DOMUtils::parseHTML( $expandedVal ?? '' );
+			$expandedDom = $token->fetchExpandedAttrValue( 'href' )
+				?? $env->getTopLevelDoc()->createDocumentFragment();
 			foreach ( DOMCompat::querySelectorAll( $expandedDom, '[typeof]' ) as $el ) {
 				if ( DOMUtils::matchTypeOf( $el, '#^mw:(Nowiki|Extension|DOMFragment/sealed)#' ) !== null ) {
 					return self::bailTokens( $this->manager, $token );
@@ -367,7 +371,7 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 		$isRedirect = (bool)$token->getAttributeV( 'redirect' );
 		$toks = $this->wikiLinkHandler( $token, $target, $isRedirect );
 		if ( $isCacheable ) {
-			$this->wikilinkCache->cache( $src, [ 'start' => $tsrStart, 'tokens' => $toks ] );
+			$this->wikilinkCache->cache( $src, [ 'start' => $tsrStart, 'tokens' => $toks ], $tsrSource );
 		}
 
 		return $toks;
@@ -1061,15 +1065,12 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 								// become mw:maybeContent that gets expanded
 								// below where $hasExpandableOpt is set.
 								'unpackDOMFragments' => true,
-								// FIXME: Sneaking in `env` to avoid changing the signature
-								'env' => $env
 							]
 						);
 						// Entity encode pipes since we wouldn't have split on
 						// them from fragments and we're about to attempt to
 						// when this function returns.
-						// This is similar to getting the shadow "href" below.
-						$resultStr .= preg_replace( '/\|/', '&vert;', $str, 1 );
+						$resultStr .= str_replace( '|', '&vert;', $str );
 						$optInfo = null; // might change the nature of opt
 						continue;
 					} else {
@@ -1103,9 +1104,6 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 
 					if ( self::isWikitextOpt( $env, $optInfo, $prefix, $resultStr ) ) {
 						$tokenType = $currentToken->getAttributeV( 'rel' );
-						// Using the shadow since entities (think pipes) would
-						// have already been decoded.
-						$tkHref = $currentToken->getAttributeShadowInfo( 'href' )['value'];
 						$isLink = $optInfo && $optInfo['ck'] === 'link';
 						// Reset the optInfo since we're changing the nature of it
 						$optInfo = null;
@@ -1114,8 +1112,15 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 							$tokenType === 'mw:ExtLink' &&
 							( $currentToken->dataParsoid->stx ?? '' ) === 'url'
 						) {
-							// Add the URL
-							$resultStr .= $tkHref;
+							// Add the URL and entity encode any pipes
+							// If the pipes are from entity decoding in the href,
+							// we don't want to split media options on them
+							// If the pipes are from template expansion, legacy
+							// would have considered them delineating a media option
+							// but let's not support that combination with the url
+							$resultStr .= str_replace(
+								'|', '&vert;', $currentToken->getAttributeV( 'href' )
+							);
 							// Tell our loop to skip to the end of this tag
 							$skipToEndOf = 'a';
 						} elseif ( $tokenType === 'mw:WikiLink/Interwiki' ) {
@@ -1480,6 +1485,7 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 
 		// Handle image default sizes and upright option after extracting all
 		// options
+		$uprightFactor = null;
 		if ( $format === 'framed' || $format === 'manualthumb' ) {
 			// width and height is ignored for framed and manualthumb images
 			// https://phabricator.wikimedia.org/T64258
@@ -1495,10 +1501,11 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 				$defaultWidth = $env->getSiteConfig()->widthOption();
 				if ( isset( $opts['upright'] ) ) {
 					if ( $opts['upright']['v'] === 'upright' ) {  // Simple option
-						$defaultWidth *= 0.75;
+						$uprightFactor = 0.75;
 					} else {
-						$defaultWidth *= $opts['upright']['v'];
+						$uprightFactor = (float)$opts['upright']['v'];
 					}
+					$defaultWidth *= $uprightFactor;
 					// round to nearest 10 pixels
 					$defaultWidth = 10 * round( $defaultWidth / 10 );
 				}
@@ -1506,21 +1513,14 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 			}
 		}
 
-		$rdfaType = 'mw:File';
-
 		// If the format is something we *recognize*, add the subtype
-		switch ( $format ) {
-			case 'manualthumb':  // FIXME(T305759): Does it deserve its own type?
-			case 'thumbnail':
-				$rdfaType .= '/Thumb';
-				break;
-			case 'framed':
-				$rdfaType .= '/Frame';
-				break;
-			case 'frameless':
-				$rdfaType .= '/Frameless';
-				break;
-		}
+		$rdfaType = 'mw:File' . match ( $format ) {
+			'manualthumb', // FIXME(T305759): Does it deserve its own type?
+			'thumbnail' => '/Thumb',
+			'framed' => '/Frame',
+			'frameless' => '/Frameless',
+			default => ''
+		};
 
 		// Tell VE that it shouldn't try to edit this
 		if ( !empty( $dataParsoid->uneditable ) ) {
@@ -1571,6 +1571,9 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 		}
 		if ( !empty( $size['height'] ) ) {
 			$span->addAttribute( 'data-height', (string)$size['height'] );
+		}
+		if ( $uprightFactor !== null ) {
+			$span->addAttribute( 'data-upright', (string)$uprightFactor );
 		}
 
 		$anchor = new TagTk( 'a' );
@@ -1725,13 +1728,10 @@ class WikiLinkHandler extends XMLTagBasedHandler {
 
 	/** @inheritDoc */
 	public function onTag( XMLTagTk $token ): ?array {
-		switch ( $token->getName() ) {
-			case 'wikilink':
-				return $this->onWikiLink( $token );
-			case 'mw:redirect':
-				return $this->onRedirect( $token );
-			default:
-				return null;
-		}
+		return match ( $token->getName() ) {
+			'wikilink' => $this->onWikiLink( $token ),
+			'mw:redirect' => $this->onRedirect( $token ),
+			default => null
+		};
 	}
 }

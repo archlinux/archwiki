@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"oathauth-webauthn-module-label": "Furaha amniga",
+	"oathauth-webauthn-javascript-required": "JavaScript waa in lagu hawlgeliyaa biraawsarkaaga si loo isticmaalo furaha amniga.",
+	"oathauth-webauthn-ui-login-prompt": "Isticmaal furaha amnigaaga ama raac tilmaamaha biraawsarkaaga.",
+	"oathauth-webauthn-ui-add-key": "Ku dar furaha",
+	"oathauth-webauthn-error-browser-unsupported-console": "Biraawsarkan ma taageero xaqiijinta furaha amniga, ama kuma jiro adeeggan boggan.",
+	"oathauth-webauthn-error-auth-generic": "Habka xaqiijinta waa la joojiyay. Fadlan mar kale bilow habka xaqiijinta.",
+	"oathauth-webauthn-error-reg-generic": "Lama xaqiijin karin furahaaga. Fadlan mar kale bilow habka diiwaangelinta.",
+	"oathauth-webauthn-registered-keys-section-name": "Furayaasha la diiwaangeliyay",
+	"oathauth-webauthn-ui-remove-key": "Ka saar",
+	"oathauth-webauthn-error-module-not-enabled": "Module-ka \"$1\" lama hawlgelin {{GENDER:$2|isticmaale \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "Xaqiijinta WebAuthn waa fashilantay.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Xaqiijinta furaha gelitaanka ayaa fashilantay.",
+	"oathauth-webauthn-error-credentials-missing": "Aqoonsiyada WebAuthn lama dirin.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Isticmaale \"$1\"}} ma diiwaangelin karo aqoonsi cusub.",
+	"oathauth-webauthn-error-invalid-new-key": "Furaha cusub ee uu soo celiyay module-ku ma aha nooca loo baahan yahay.",
+	"oathauth-webauthn-error-registration-failed": "Diiwaangelinta furaha cusub waa fashilantay.",
+	"oathauth-webauthn-ui-key-register-help": "Dooro naanaysta furahaaga:",
+	"oathauth-webauthn-error-cannot-remove-key": "Furaha lama tirtiri karo.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Lama soo heli karin macluumaadka xaqiijinta.",
+	"oathauth-webauthn-add-key-section-name": "Diiwaangeli furaha amniga cusub",
+	"oathauth-webauthn-error-get-reginfo-fail": "Lama soo heli karin macluumaadka diiwaangelinta.",
+	"oathauth-webauthn-module-description": "WebAuthn waxay ku jirtaa xaalad tijaabo ah. Hadda ma bixiso hab dib loogu soo ceshado qalabka xaqiijinta ee lumay ama dhaawacmay.\n\n[https://en.wikipedia.org/wiki/WebAuthn Wax badan ka baro WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Dib u soo rar bogga",
+	"oathauth-webauthn-authentication-info-label": "Xogta xaqiijinta",
+	"oathauth-webauthn-authentication-info-help": "Xogta xaqiijinta ee loo gudbiyay macmiilka si loo soo helo aqoonsiga",
+	"oathauth-webauthn-credential-label": "Aqoonsiga isticmaalaha",
+	"oathauth-webauthn-credential-help": "Aqoonsiga isticmaalaha ee ku saleysan xogta xaqiijinta",
+	"oathauth-webauthn-add-security-key": "Ku dar furaha amniga",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Isticmaal furaha amniga ama passkey"
+}

@@ -6,11 +6,10 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 
 class UstringLibraryNormalizationTestProvider extends LuaDataProvider {
 	/** @var resource|null */
-	protected $file = null;
+	private $file = null;
 	/** @var string[]|null */
-	protected $current = null;
-	/** @var array */
-	protected static $static = [
+	private ?array $current = null;
+	private const STATIC = [
 		'1E0A 0323;1E0C 0307;0044 0323 0307;1E0C 0307;0044 0323 0307;',
 		false
 	];
@@ -61,7 +60,7 @@ class UstringLibraryNormalizationTestProvider extends LuaDataProvider {
 		if ( $this->file ) {
 			$v = !feof( $this->file );
 		} else {
-			$v = $this->key < count( self::$static );
+			$v = $this->key < count( self::STATIC );
 		}
 		return $v;
 	}
@@ -78,7 +77,7 @@ class UstringLibraryNormalizationTestProvider extends LuaDataProvider {
 			if ( $this->file ) {
 				$line = fgets( $this->file );
 			} else {
-				$line = self::$static[$this->key];
+				$line = self::STATIC[$this->key];
 			}
 			$this->key++;
 			if ( preg_match( '/^((?:[0-9A-F ]+;){5})/', $line, $m ) ) {

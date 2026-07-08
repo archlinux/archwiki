@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"BuddhikaW88",
 			"Singhalawap",
 			"Thushara",
 			"දසනැබළයෝ",
 			"පසිඳු කාවින්ද",
-			"සුරනිමල",
-			"BuddhikaW88"
+			"සුරනිමල"
 		]
 	},
 	"vector-languages": "භාෂා",
@@ -39,7 +39,6 @@
 	"skin-theme-exclusion-notice": "මෙම පිටුව සැමවිටම අඩු මාදිලියේ පවතී.",
 	"vector-toc-label": "අන්තර්ගතයන්",
 	"vector-toc-beginning": "ආරම්භය",
-	"vector-anon-user-menu-pages": "නික්මූ සංස්කාරකවරුන් සඳහා පිටු",
 	"vector-main-menu-label": "ප්‍රධාන මෙනුව",
 	"vector-feature-custom-font-size-exclusion-notice": "මෙම පිටුව සැමවිටම කුඩා අකුරු ප්‍රමාණයක් භාවිතා කරයි",
 	"vector-page-tools-label": "මෙවලම්",

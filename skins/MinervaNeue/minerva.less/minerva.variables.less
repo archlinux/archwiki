@@ -1,19 +1,5 @@
 @import 'mediawiki.skin.variables.less';
 
-/**
- * System font stack for sans-serif fonts
- *
- * `-apple-system` ('San Francisco') – Support: Safari 9+ macOS and iOS, Firefox macOS
- * `BlinkMacSystemFont` ('San Francisco') – Chrome 48+ macOS and iOS
- * `Segoe UI` – Windows Vista & newer
- * `Roboto` – Android 4.0
- * `Lato` – Wikimedia Design choice, OFL licensed
- * `Helvetica, Arial, sans-serif` – (Generic) Web fallback
- * Note that CSS Fonts Module Level 4's `system-ui` value has resulted in unresolved
- * side-effects in certain OS/language combinations and is therefore not included as of now.
- */
-@font-family-base: @font-family-system-sans;
-
 @font-size-browser: 16; // Assumed browser default of `16px`.
 @font-size-root: 100%;
 // T282315: Use rem instead of em to avoid font-size compounding, resulting in smaller than intended text

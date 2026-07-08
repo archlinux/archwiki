@@ -79,6 +79,7 @@ abstract class PEGParserBase {
 	/**
 	 * @param string $description
 	 * @return never
+	 * @throws SyntaxError
 	 */
 	protected function expected( $description ) {
 		throw $this->buildException(
@@ -92,6 +93,7 @@ abstract class PEGParserBase {
 	/**
 	 * @param string $message
 	 * @return never
+	 * @throws SyntaxError
 	 */
 	protected function error( $message ) {
 		throw $this->buildException(
@@ -150,16 +152,12 @@ abstract class PEGParserBase {
 		if ( !isset( $s[$byteOffset] ) ) {
 			return;
 		}
-		$byte1 = ord( $s[$byteOffset++] );
-		if ( ( $byte1 & 0xc0 ) === 0xc0 ) {
-			$byteOffset++;
-		}
-		if ( ( $byte1 & 0xe0 ) === 0xe0 ) {
-			$byteOffset++;
-		}
-		if ( ( $byte1 & 0xf0 ) === 0xf0 ) {
-			$byteOffset++;
-		}
+		$byteOffset += match ( ord( $s[$byteOffset] ) & 0xf0 ) {
+			default => 1,
+			0xc0, 0xd0 => 2,
+			0xe0 => 3,
+			0xf0 => 4,
+		};
 	}
 
 	/**

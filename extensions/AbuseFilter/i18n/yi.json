@@ -180,7 +180,7 @@
 	"abusefilter-edit-builder-funcs-ip_in_range": "געפינט זיך די IP-אדרעס אין דעם דערגרייכונג-ארט?",
 	"abusefilter-edit-builder-group-vars": "וואַריאַבלען",
 	"abusefilter-edit-builder-vars-timestamp": "צײַטשטעמפל פון ענדערונג אין יוניקס פֿארמאט",
-	"abusefilter-edit-builder-vars-accountname": "קאנטע נאמען (ביים שאפֿן קאנטע)",
+	"abusefilter-edit-builder-vars-account-name": "קאנטע נאמען (ביים שאפֿן קאנטע)",
 	"abusefilter-edit-builder-vars-action": "אַקציע",
 	"abusefilter-edit-builder-vars-addedlines": "שורות צוגעלייגט בײַם ענדערן",
 	"abusefilter-edit-builder-vars-newsize": "נייע בלאט גרייס",

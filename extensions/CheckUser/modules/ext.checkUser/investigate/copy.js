@@ -12,7 +12,12 @@ module.exports = function addCopyFeature() {
 		function getSanitizedHtml( $table ) {
 			$table = $table.clone();
 
-			$table.find( '.oo-ui-widget, .ext-checkuser-investigate-table-options-container' ).remove();
+			const selectorsToRemove = [
+				'.cdx-button',
+				'.oo-ui-widget',
+				'.ext-checkuser-investigate-table-options-container'
+			];
+			$table.find( selectorsToRemove.join( ', ' ) ).remove();
 			$table.find( '.mw-userlink' )
 				.attr( 'rel', 'mw:ExtLink' )
 				.attr( 'href', function () {
@@ -44,7 +49,7 @@ module.exports = function addCopyFeature() {
 			copyTextLayout.textInput.pushPending();
 			const restApi = new mw.Rest();
 			const html = getSanitizedHtml( $( '.ext-checkuser-investigate-table-compare' ) );
-			restApi.post( '/v1/transform/html/to/wikitext/', { html: html } ).then( ( data ) => {
+			restApi.post( '/v1/transform/html/to/wikitext', { html: html } ).then( ( data ) => {
 				copyTextLayout.textInput.popPending();
 				copyTextLayout.textInput.setValue( data );
 			} );

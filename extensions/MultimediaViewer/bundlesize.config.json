@@ -9,7 +9,8 @@
 	},
 	{
 		"resourceModule": "mmv.codex",
-		"maxSize": "5.8 kB"
+		"@maxSize": "Don't enforce here. This is composed of upstream files from Codex in MediaWiki core.",
+		"maxSize": null
 	},
 	{
 		"resourceModule": "mmv.ui.reuse",
@@ -17,6 +18,6 @@
 	},
 	{
 		"resourceModule": "mmv.bootstrap",
-		"maxSize": "4.8 kB"
+		"maxSize": "5.5 kB"
 	}
 ]

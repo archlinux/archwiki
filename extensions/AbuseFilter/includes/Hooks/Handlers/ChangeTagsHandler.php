@@ -2,18 +2,16 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
+use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
+use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
 use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagsManager;
 
 class ChangeTagsHandler implements
-	\MediaWiki\ChangeTags\Hook\ListDefinedTagsHook,
-	\MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook
+	ListDefinedTagsHook,
+	ChangeTagsListActiveHook
 {
 
-	/** @var ChangeTagsManager */
-	private $changeTagsManager;
-
-	public function __construct( ChangeTagsManager $changeTagsManager ) {
-		$this->changeTagsManager = $changeTagsManager;
+	public function __construct( private readonly ChangeTagsManager $changeTagsManager ) {
 	}
 
 	/**

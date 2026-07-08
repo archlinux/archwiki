@@ -107,7 +107,7 @@
 	"abusefilter-edit-builder-op-bool-or": "अथवा (|)",
 	"abusefilter-edit-builder-group-misc": "अन्यानि",
 	"abusefilter-edit-builder-group-vars": "भङ्गुरम्",
-	"abusefilter-edit-builder-vars-accountname": "लेखायाः नाम (लेखनिर्माणावसरे)",
+	"abusefilter-edit-builder-vars-account-name": "लेखायाः नाम (लेखनिर्माणावसरे)",
 	"abusefilter-edit-builder-vars-action": "क्रिया",
 	"abusefilter-edit-builder-vars-delta": "सम्पादनस्य आकारपरिवर्तनम्",
 	"abusefilter-edit-builder-vars-newsize": "नूतनस्य पृष्ठस्य आकारः",

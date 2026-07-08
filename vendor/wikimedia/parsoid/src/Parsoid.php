@@ -16,6 +16,7 @@ use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
@@ -24,12 +25,13 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Language\LanguageConverter;
 use Wikimedia\Parsoid\Logger\LintLogger;
+use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Utils\ComputeSelectiveStats;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Histogram;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\DOM\Processors\AddRedLinks;
@@ -183,7 +185,6 @@ class Parsoid {
 			$options['skipLanguageConversionPass'] ?? false;
 		$envOptions['nativeTemplateExpansion'] =
 			$options['nativeTemplateExpansion'] ?? false;
-
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
@@ -411,6 +412,7 @@ class Parsoid {
 			$newPb = new HtmlPageBundle(
 				$out['html'],
 				$out['pb']->parsoid ?? null, $out['pb']->mw ?? null,
+				$out['pb']->counters ?? null,
 				$env->getOutputContentVersion(),
 				$headers,
 				$contentmodel
@@ -487,10 +489,12 @@ class Parsoid {
 		PageConfig $pageConfig, $doc, array $options = [],
 		?SelectiveUpdateData $selserData = null
 	): string {
-		Assert::invariant(
-			!DOMDataUtils::isPrepared( $doc ),
-			"document should not be already prepared"
-		);
+		if ( $doc instanceof Document ) {
+			Assert::invariant(
+				!DOMDataUtils::isPreparedAndLoaded( $doc ),
+				"document should not be already prepared and loaded"
+			);
+		}
 		$envOptions = $this->setupCommonOptions( $options );
 		if ( isset( $options['inputContentVersion'] ) ) {
 			$envOptions['inputContentVersion'] = $options['inputContentVersion'];
@@ -608,6 +612,20 @@ class Parsoid {
 		);
 		$doc = $env->getTopLevelDoc();
 
+		// NOTE: When $doc is prepared (with eager loading of attributes),
+		// 'parsoid' and 'mw' attributes are stashed in DataBag, and the
+		// 'annotation' and 'transclusion' counters in DataBag are also
+		// initialized. But $pb->counters['nodedata'] is not, because it
+		// is in encoded base64 form.
+		//
+		// FIXME: We should ideally be initializing $env->pageBundle
+		// from $pb in self::prepareAndLoadDocOrBundle, but it needs
+		// a bunch of code rejiggering in this file and in Env. That will
+		// be a followup refactoring when we work on lazy loading.
+		if ( isset( $pb->counters['nodedata'] ) ) {
+			$env->pageBundle->counters['nodedata'] = $pb->counters['nodedata'];
+		}
+
 		switch ( $update ) {
 			case 'convertoffsets':
 				// This method also calls Env::setCurrentOffsetType, which
@@ -616,10 +634,6 @@ class Parsoid {
 				ContentUtils::convertOffsets(
 					$env, $doc, $options['inputOffsetType'], $options['outputOffsetType']
 				);
-				if ( isset( $pb->parsoid['counter'] ) ) {
-					$internalPB = $env->pageBundle;
-					$internalPB->parsoid['counter'] = $pb->parsoid['counter'];
-				}
 				break;
 
 			case 'redlinks':
@@ -723,11 +737,15 @@ class Parsoid {
 	 * @param HtmlPageBundle $pageBundle
 	 */
 	public static function downgrade(
-		array $dg, HtmlPageBundle $pageBundle
+		array $dg, HtmlPageBundle $pageBundle, ?SiteConfig $siteConfig = null
 	): void {
+		if ( $siteConfig === null ) {
+			PHPUtils::deprecated( __METHOD__ . ' without siteConfig', '0.23' );
+			$siteConfig = new MockSiteConfig( [] );
+		}
 		foreach ( self::DOWNGRADES as [ 'from' => $dgFrom, 'to' => $dgTo, 'func' => $dgFunc ] ) {
 			if ( $dg['from'] === $dgFrom && $dg['to'] === $dgTo ) {
-				self::$dgFunc( $pageBundle );
+				self::$dgFunc( $pageBundle, $siteConfig );
 
 				// FIXME: Maybe this resolve should just be part of the $dg
 				$pageBundle->version = self::resolveContentVersion( $dg['to'] );
@@ -775,7 +793,7 @@ class Parsoid {
 	 *
 	 * @param HtmlPageBundle $pageBundle
 	 */
-	private static function downgrade999to2( HtmlPageBundle $pageBundle ): void {
+	private static function downgrade999to2( HtmlPageBundle $pageBundle, SiteConfig $siteConfig ): void {
 		// Effectively, skip applying data-parsoid.  Note that if we were to
 		// support a pb2html downgrade, we'd need to apply the full thing,
 		// but that would create complications where ids would be left behind.
@@ -783,9 +801,10 @@ class Parsoid {
 		$newHtmlPageBundle = new HtmlPageBundle(
 			$pageBundle->html,
 			null,
-			$pageBundle->mw
+			$pageBundle->mw,
+			$pageBundle->counters
 		);
-		$pageBundle->html = $newHtmlPageBundle->toInlineAttributeHtml();
+		$pageBundle->html = $newHtmlPageBundle->toInlineAttributeHtml( siteConfig: $siteConfig );
 
 		// Now, modify the pagebundle to the expected form.  This is important
 		// since, at least in the serialization path, the original pb will be
@@ -802,7 +821,6 @@ class Parsoid {
 	 * @return Document
 	 */
 	private static function prepareAndLoadDocOrBundle( $topLevelDoc ): Document {
-		$options = [ 'markNew' => true, 'validateXMLNames' => true, ];
 		// Recognize a "single document" page bundle.
 		if (
 			$topLevelDoc instanceof Document &&
@@ -818,7 +836,7 @@ class Parsoid {
 		// (without necessarily having to add attributes to the DOM)
 		if ( $topLevelDoc instanceof DomPageBundle ) {
 			// Skip preparation and loading, it's already done.
-			return $topLevelDoc->toDom( true, $options );
+			return $topLevelDoc->toDom();
 		}
 
 		// This is an unprepared/unloaded Document.
@@ -826,13 +844,7 @@ class Parsoid {
 			!DOMDataUtils::isPreparedAndLoaded( $topLevelDoc ),
 			"toplevelDoc should not be prepared and loaded already"
 		);
-		DOMDataUtils::prepareDoc( $topLevelDoc );
-		DOMDataUtils::visitAndLoadDataAttribs(
-			DOMCompat::getBody( $topLevelDoc ), $options
-		);
-		// Mark the document as loaded so we can try to catch errors which
-		// might try to reload this again later.
-		DOMDataUtils::getBag( $topLevelDoc )->loaded = true;
+		DOMDataUtils::prepareAndLoadDoc( $topLevelDoc );
 		return $topLevelDoc;
 	}
 

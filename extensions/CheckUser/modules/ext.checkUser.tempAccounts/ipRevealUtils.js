@@ -125,17 +125,77 @@ function setAutoRevealStatus( relativeExpiry ) {
 		return $.Deferred().reject( 'Expiry is invalid' ).promise();
 	}
 
+	const preferenceName = getAutoRevealStatusPreferenceName();
+
 	const api = new mw.Api();
 	return api.postWithToken( 'csrf', {
 		action: 'globalpreferences',
-		optionname: getAutoRevealStatusPreferenceName(),
+		optionname: preferenceName,
 		optionvalue: absoluteExpiry
-	} );
+	} ).then(
+		() => {
+			// Update mw.user.options to avoid needing another API call to find the expiry
+			mw.user.options.set(
+				preferenceName,
+				absoluteExpiry ? String( absoluteExpiry ) : null
+			);
+		}
+	);
+}
+
+/**
+ * Extracts a username from a URL address to their user page or contributions page.
+ *
+ * @param {string} urlString The URL to extract the username from.
+ * @return {string|undefined} The extracted username, or undefined if the URL is invalid or
+ *   does not point to a user page or contributions page.
+ */
+function getUserNameFromUrl( urlString ) {
+	const url = new URL( urlString, location.href );
+	if ( url.hostname !== location.hostname ) {
+		return undefined;
+	}
+
+	let pageTitle = '';
+	const indexPath = mw.config.get( 'wgScript' );
+	if ( url.pathname === indexPath ) {
+		// URL of the form /w/index.php?title=User:Example
+		// searchParams handles decoding
+		pageTitle = url.searchParams.get( 'title' );
+	} else {
+		// URL of the form /wiki/User:Example
+		const articlePath = mw.config.get( 'wgArticlePath' ).replace( /\$1$/, '' );
+		if ( !url.pathname.startsWith( articlePath ) ) {
+			return undefined;
+		}
+		pageTitle = decodeURIComponent( url.pathname.slice( articlePath.length ) );
+	}
+	const title = mw.Title.newFromText( pageTitle );
+	if ( title === null ) {
+		return undefined;
+	}
+
+	const nsUser = mw.config.get( 'wgNamespaceIds' ).user;
+	const nsSpecial = mw.config.get( 'wgNamespaceIds' ).special;
+
+	if ( title.getNamespaceId() === nsUser ) {
+		return title.getMainText();
+	}
+	if ( title.getNamespaceId() === nsSpecial ) {
+		// Ensure it's a contributions page
+		const mainText = title.getMainText();
+		const contribsPrefix = mw.config.get( 'wgCheckUserContribsPageLocalName' ) + '/';
+		if ( mainText.startsWith( contribsPrefix ) ) {
+			return mainText.slice( contribsPrefix.length );
+		}
+	}
+	return undefined;
 }
 
 module.exports = {
 	getRevealedStatus: getRevealedStatus,
 	setRevealedStatus: setRevealedStatus,
 	getAutoRevealStatus: getAutoRevealStatus,
-	setAutoRevealStatus: setAutoRevealStatus
+	setAutoRevealStatus: setAutoRevealStatus,
+	getUserNameFromUrl: getUserNameFromUrl
 };

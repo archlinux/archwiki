@@ -24,13 +24,13 @@
 			"Putnik",
 			"Redredsonia",
 			"Serhio Magpie",
+			"Shabe",
 			"Shaleych",
 			"Stjn",
 			"Translatobecomer",
 			"Vlad5250",
 			"Wikisaurus",
 			"Ядерный Трамвай",
-			"Shabe",
 			"Daisy40"
 		]
 	},
@@ -137,5 +137,7 @@
 	"math-wikibase-special-form-button": "Информация о запросе",
 	"math-wikibase-special-error-header": "Ошибка",
 	"math-wikibase-special-error-invalid-argument": "Указанный вами ID элемента Wikibase не существует.",
-	"math-wikibase-special-error-unknown": "Произошла неизвестная ошибка при получении данных из Wikibase."
+	"math-wikibase-special-error-unknown": "Произошла неизвестная ошибка при получении данных из Wikibase.",
+	"math-editpage-insert-inline": "Математическая формула (строчная)",
+	"math-editpage-insert-block": "Математическая формула (блочная)"
 }

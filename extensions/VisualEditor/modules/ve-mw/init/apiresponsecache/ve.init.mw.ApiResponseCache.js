@@ -22,15 +22,7 @@ ve.init.mw.ApiResponseCache = function VeInitMwApiResponseCache( api ) {
 
 	this.api = api || new mw.Api();
 
-	// Keys are titles, values are deferreds
-	this.deferreds = {};
-
-	// Keys are page names, values are link data objects
-	// This is kept for synchronous retrieval of cached values via #getCached
-	this.cacheValues = {};
-
-	// Array of page titles queued to be looked up
-	this.queue = [];
+	this.init();
 
 	this.schedule = ve.debounce( this.processQueue.bind( this ), 0 );
 };
@@ -64,6 +56,23 @@ ve.init.mw.ApiResponseCache.static.normalizeTitle = function ( title ) {
 };
 
 /* Methods */
+
+/**
+ * Initialize the caches.
+ *
+ * Can be called again to reset the cache, e.g. by tests
+ */
+ve.init.mw.ApiResponseCache.prototype.init = function () {
+	// Keys are titles, values are deferreds
+	this.deferreds = {};
+
+	// Keys are page names, values are link data objects
+	// This is kept for synchronous retrieval of cached values via #getCached
+	this.cacheValues = {};
+
+	// Array of page titles queued to be looked up
+	this.queue = [];
+};
 
 /**
  * Look up data about a title. If the data about this title is already in the cache, this
@@ -133,7 +142,7 @@ ve.init.mw.ApiResponseCache.prototype.set = function ( entries ) {
  *
  * @abstract
  * @param subqueue
- * @return {jQuery.Promise}
+ * @return {mw.Api~AbortablePromise}
  */
 ve.init.mw.ApiResponseCache.prototype.getRequestPromise = null;
 
@@ -144,9 +153,9 @@ ve.init.mw.ApiResponseCache.prototype.getRequestPromise = null;
  * @fires ve.init.mw.ApiResponseCache#add
  */
 ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
-	const rejectSubqueue = ( rejectQueue ) => {
+	const rejectSubqueue = ( rejectQueue, reason ) => {
 		for ( let i = 0, len = rejectQueue.length; i < len; i++ ) {
-			this.deferreds[ rejectQueue[ i ] ].reject();
+			this.deferreds[ rejectQueue[ i ] ].reject( reason );
 		}
 	};
 
@@ -156,7 +165,7 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 
 		const mappedTitles = [];
 		[ 'redirects', 'normalized', 'converted' ].forEach( ( map ) => {
-			ve.batchPush( mappedTitles, ( data.query && data.query[ map ] ) || [] );
+			ve.batchPush( mappedTitles, ( data.query && data.query[ map ] ) || data[ map ] || [] );
 		} );
 
 		if ( pages ) {
@@ -167,15 +176,15 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 				if ( processedPage !== undefined ) {
 					processed[ page.title ] = processedPage;
 				}
-			}
-			for ( let i = 0; i < mappedTitles.length; i++ ) {
-				// Locate the title in mapped titles, if any.
-				if ( mappedTitles[ i ].to === page.title ) {
-					const from = mappedTitles[ i ].fromencoded === '' ?
-						decodeURIComponent( mappedTitles[ i ].from ) :
-						mappedTitles[ i ].from;
-					processed[ from ] = processedPage;
-					break;
+				for ( let i = 0; i < mappedTitles.length; i++ ) {
+					// Locate the title in mapped titles, if any.
+					if ( mappedTitles[ i ].to === page.title ) {
+						const from = mappedTitles[ i ].fromencoded === '' ?
+							decodeURIComponent( mappedTitles[ i ].from ) :
+							mappedTitles[ i ].from;
+						processed[ from ] = processedPage;
+						break;
+					}
 				}
 			}
 			this.set( processed );
@@ -191,7 +200,12 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 
 			// Reject everything in subqueue; this will only reject the ones
 			// that weren't already resolved above, because .reject() on an
-			// already resolved Deferred is a no-op.
-			.then( rejectSubqueue.bind( null, subqueue ) );
+			// already resolved Deferred is a no-op. We override the reason
+			// parameter because passing the successful request data wouldn't
+			// be particularly helpful.
+			.then( rejectSubqueue.bind( null, subqueue, 'missing' ) )
+			// If the API request failed, the promise will have been rejected,
+			// and we need to pass that rejection on to this batch.
+			.catch( rejectSubqueue.bind( null, subqueue ) );
 	}
 };

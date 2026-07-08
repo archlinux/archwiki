@@ -37,9 +37,7 @@ ve.ui.MWExternalLinkAnnotationWidget.static.getAnnotationFromText = function ( v
 	} else {
 		return new ve.dm.MWExternalLinkAnnotation( {
 			type: 'link/mwExternal',
-			attributes: {
-				href: href
-			}
+			attributes: { href }
 		} );
 	}
 };
@@ -89,7 +87,7 @@ ve.ui.MWExternalLinkAnnotationWidget.prototype.getValidity = function () {
 			if ( mw.config.get( 'wgVisualEditorConfig' ).editCheckReliabilityAvailable ) {
 				return ( new mw.Api().get( {
 					action: 'editcheckreferenceurl',
-					url: url,
+					url,
 					formatversion: 2
 				} ) ).then( ( reliablityResults ) => {
 					if ( reliablityResults && reliablityResults.editcheckreferenceurl[ url ] === 'blocked' ) {

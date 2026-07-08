@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
+use MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
 use MediaWikiUnitTestCase;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -11,14 +11,14 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
  */
 class MoveLogEntriesFromCuChangesTest extends MediaWikiUnitTestCase {
 
 	public function testGetUpdateKey() {
 		$objectUnderTest = TestingAccessWrapper::newFromObject( new MoveLogEntriesFromCuChanges() );
 		$this->assertSame(
-			'MediaWiki\\CheckUser\\Maintenance\\MoveLogEntriesFromCuChanges',
+			'MediaWiki\\Extension\\CheckUser\\Maintenance\\MoveLogEntriesFromCuChanges',
 			$objectUnderTest->getUpdateKey(),
 			'::getUpdateKey did not return the expected value.'
 		);
@@ -35,7 +35,7 @@ class MoveLogEntriesFromCuChangesTest extends MediaWikiUnitTestCase {
 				[ 'cu_changes' ],
 				'*',
 				[],
-				'MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges::doDBUpdates',
+				'MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges::doDBUpdates',
 				[],
 				[]
 			)

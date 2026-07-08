@@ -1,3 +1,16 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+/**
+ * ESM-compatible __dirname helper
+ *
+ * @param {string} metaUrl - usually import.meta.url
+ * @return {string} directory name/path
+ */
+export function dirname( metaUrl ) {
+	return path.dirname( fileURLToPath( metaUrl ) );
+}
+
 /**
  * Generate a random number string with some additional extended ASCII.
  *
@@ -29,7 +42,7 @@ export async function isTargetNotWikitext( target ) {
 				action: 'query', prop: 'info', titles: target_,
 				format: 'json', formatversion: 2
 			} ).then( ( result ) => {
-				// Finally, return whether said page is wikitext (or would be, if it doesn't yet exist)
+				// Finally, check if the page is wikitext (or would be, if it doesn't yet exist)
 				done( result.query.pages[ 0 ].contentmodel !== 'wikitext' );
 			} );
 		} );

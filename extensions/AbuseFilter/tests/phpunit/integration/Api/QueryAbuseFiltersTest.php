@@ -75,8 +75,8 @@ class QueryAbuseFiltersTest extends ApiTestCase {
 				'rules' => 'user_unnamed_ip = "1.2.3.4"',
 				'name' => 'Filter with protected variables',
 				'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
-				'userIdentity' => $performer,
-				'timestamp' => $this->getDb()->timestamp( '20190827000000' ),
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20190827000000',
 				'hitCount' => 1,
 				'actions' => [ 'tags' => [ 'test' ] ],
 			] ),
@@ -92,8 +92,8 @@ class QueryAbuseFiltersTest extends ApiTestCase {
 				'rules' => 'user_name = "1.2.3.4"',
 				'name' => 'Filter without protected variables',
 				'privacy' => Flags::FILTER_PUBLIC,
-				'userIdentity' => $performer,
-				'timestamp' => '20000101000000',
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20000101000000',
 			] ),
 			MutableFilter::newDefault()
 		) );

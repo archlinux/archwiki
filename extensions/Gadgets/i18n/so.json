@@ -66,5 +66,7 @@
 	"gadgets-validate-invaliddependencies": "Ku tiirsanaanta soo socota {{PLURAL:$2|waa ka maqan|way ka maqan yihiin}}: $1",
 	"gadgets-validate-deprecateddependencies": "Ku tiirsanaanta soo socota {{PLURAL:$2|waa duugowday|waa duugoobeen}}: $1",
 	"gadgets-supports-urlload": "Aaladdan waxay taageertaa in lagu soo shubo URL iyadoo la adeegsanayo cabbirka su’aasha <code>?withgadget</code>.",
-	"gadgets-hidden": "Aaladdan waa [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden qarsoon], taasoo ka dhigan inaysan ka muuqan doonin bogga dookhyada."
+	"gadgets-hidden": "Aaladdan waa [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden qarsoon], taasoo ka dhigan inaysan ka muuqan doonin bogga dookhyada.",
+	"gadgets-subpage-invalid": "Bog hoosaadka \"<nowiki>$1</nowiki>\" waa khalad",
+	"gadgets-subpage-toofewparams": "Ma jiraan ku filan cabbirrada bog hoosaadka (xiriir aan sax ahayn)."
 }

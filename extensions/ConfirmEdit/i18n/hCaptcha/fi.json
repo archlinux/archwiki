@@ -18,7 +18,12 @@
 	"hcaptcha-challenge-closed": "Jatkaaksesi sinun on täytettävä captcha.",
 	"hcaptcha-challenge-expired": "Captchan täyttämisen aikaraja on umpeutunut. Yritä uudelleen.",
 	"hcaptcha-generic-error": "Lomaketta ladattaessa tapahtui virhe. Jatkaaksesi sinun on ladattava sivu uudelleen.",
+	"hcaptcha-internal-error": "Lomakkeen lähettämisessä tapahtui sisäinen virhe. Yritä uudelleen.",
+	"hcaptcha-network-error": "Lomakkeen lähettämisessä tapahtui verkkovirhe. Varmista, että sinulla on toimiva verkkoyhteys ja yritä uudelleen.",
+	"hcaptcha-rate-limited": "Captchan ratkaisemista on yritetty liian monta kertaa. Odota hetki ennen kuin yrität uudelleen.",
 	"hcaptcha-loading-indicator-label": "Odota hetki, kunnes lomakkeen lataus on valmis...",
 	"hcaptcha-missing-token": "Lomakkeen lataus ei ole vielä valmis. Odota muutama sekunti ja yritä uudelleen.",
-	"hcaptcha-noscript": "Jatkaminen vaatii JavaScriptia. Ota JavaScript käyttöön selaimesi asetuksista ja päivitä sivu."
+	"hcaptcha-noscript": "Jatkaminen vaatii JavaScriptia. Ota JavaScript käyttöön selaimesi asetuksista ja päivitä sivu.",
+	"hcaptcha-force-show-captcha-edit": "Lähetä lomake uudelleen ja suorita tehtävä tallentaaksesi muokkauksesi.",
+	"hcaptcha-visual-editor-error-handler-warning": "Lähetä lomake uudelleen tallentaaksesi muokkauksesi."
 }

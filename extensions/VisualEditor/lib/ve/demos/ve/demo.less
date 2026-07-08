@@ -4,11 +4,14 @@
  * @copyright See AUTHORS.txt
  */
 
+@import '../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+
 body {
 	margin: 0;
 	padding: 0;
 	overflow-y: scroll;
-	background: #fff;
+	background: @background-color-base;
+	color: @color-base;
 }
 
 /* Demo */
@@ -158,30 +161,5 @@ body {
 
 .ve-ui-debugBar {
 	padding: 1.5em;
-	border-top: 1px solid #ccc;
-}
-
-.ve-ui-debugBar-filibuster {
-	padding: 1.5em;
-}
-
-.ve-filibuster-changes {
-	border: 1px solid #f00;
-}
-
-.ve-filibuster-frame {
-	list-style: none;
-}
-
-.ve-filibuster-frame-expandable::before,
-.ve-filibuster-frame-collapsed::before {
-	content: '+';
-}
-
-.ve-filibuster-frame-expanded::before {
-	content: '-';
-}
-
-.ve-filibuster-frame-collapsed ul {
-	display: none;
+	border-top: 1px solid @border-color-subtle;
 }

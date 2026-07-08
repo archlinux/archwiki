@@ -2,19 +2,21 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
+use MediaWiki\Category\TrackingCategories;
+use MediaWiki\Config\Config;
 use MediaWiki\Content\CodeContentHandler;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Content\ValidationParams;
 use MediaWiki\Html\Html;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Parser\ParserOutput;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Status\Status;
 use MediaWiki\SyntaxHighlight\SyntaxHighlight;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 
 /**
  * Scribunto Content Handler
@@ -28,7 +30,12 @@ class ScribuntoContentHandler extends CodeContentHandler {
 
 	public function __construct(
 		string $modelId,
+		private readonly Config $config,
+		private readonly ParserFactory $parserFactory,
 		private readonly EngineFactory $engineFactory,
+		private readonly TitleFactory $titleFactory,
+		private readonly TrackingCategories $trackingCategories,
+		private readonly ?SyntaxHighlight $syntaxHighlight,
 	) {
 		parent::__construct( $modelId, [ CONTENT_FORMAT_TEXT ] );
 	}
@@ -88,8 +95,7 @@ class ScribuntoContentHandler extends CodeContentHandler {
 	 */
 	public function validate( TextContent $content, PageIdentity $page ) {
 		if ( !( $page instanceof Title ) ) {
-			$titleFactory = MediaWikiServices::getInstance()->getTitleFactory();
-			$page = $titleFactory->newFromPageIdentity( $page );
+			$page = $this->titleFactory->newFromPageIdentity( $page );
 		}
 
 		$engine = $this->engineFactory->getDefaultEngine( [ 'title' => $page ] );
@@ -110,7 +116,7 @@ class ScribuntoContentHandler extends CodeContentHandler {
 		$parserOptions = $cpoParams->getParserOptions();
 		$revId = $cpoParams->getRevId();
 		$generateHtml = $cpoParams->getGenerateHtml();
-		$parser = MediaWikiServices::getInstance()->getParserFactory()->getInstance();
+		$parser = $this->parserFactory->getInstance();
 		$sourceCode = $content->getText();
 		$docTitle = Scribunto::getDocPage( $title );
 		$docMsg = $docTitle ? wfMessage(
@@ -175,8 +181,11 @@ class ScribuntoContentHandler extends CodeContentHandler {
 			$html .= Html::rawElement( 'div', [ 'class' => 'errorbox' ],
 				$status->getHTML( 'scribunto-error-short', 'scribunto-error-long' )
 			);
-			$trackingCategories = MediaWikiServices::getInstance()->getTrackingCategories();
-			$trackingCategories->addTrackingCategory( $parserOutput, 'scribunto-module-with-errors-category', $page );
+			$this->trackingCategories->addTrackingCategory(
+				$parserOutput,
+				'scribunto-module-with-errors-category',
+				$page
+			);
 		}
 
 		if ( !$generateHtml ) {
@@ -205,13 +214,16 @@ class ScribuntoContentHandler extends CodeContentHandler {
 	 * @return string HTML
 	 */
 	private function highlight( $source, ParserOutput $parserOutput, $codeLang ) {
-		$useGeSHi = MediaWikiServices::getInstance()->getMainConfig()->get( 'ScribuntoUseGeSHi' );
 		if (
-			$useGeSHi && $codeLang && ExtensionRegistry::getInstance()->isLoaded( 'SyntaxHighlight' )
+			$this->config->get( 'ScribuntoUseGeSHi' ) &&
+			$codeLang &&
+			$this->syntaxHighlight
 		) {
-			/** @var SyntaxHighlight $syntaxHighlight */
-			$syntaxHighlight = MediaWikiServices::getInstance()->getService( 'SyntaxHighlight.SyntaxHighlight' );
-			$status = $syntaxHighlight->syntaxHighlight( $source, $codeLang, [ 'line' => true, 'linelinks' => 'L' ] );
+			$status = $this->syntaxHighlight->syntaxHighlight(
+				$source,
+				$codeLang,
+				[ 'line' => true, 'linelinks' => 'L' ]
+			);
 			if ( $status->isGood() ) {
 				// @todo replace addModuleStyles line with the appropriate call on
 				// SyntaxHighlight once one is created

@@ -268,7 +268,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Ipuwesto an kapilyangan (set_var)",
 	"abusefilter-edit-builder-group-vars": "Mga kapilyangan",
 	"abusefilter-edit-builder-vars-timestamp": "Unix panmarkang oras nin kaliwatan",
-	"abusefilter-edit-builder-vars-accountname": "Pangaran nin panindog (sa pagmukna nin panindog)",
+	"abusefilter-edit-builder-vars-account-name": "Pangaran nin panindog (sa pagmukna nin panindog)",
 	"abusefilter-edit-builder-vars-action": "An aksyon",
 	"abusefilter-edit-builder-vars-addedlines": "Mga linya na pinagdagdag sa pagliliwat",
 	"abusefilter-edit-builder-vars-delta": "Paghihira nin kasukulan sa pagliliwat",

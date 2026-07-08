@@ -37,10 +37,20 @@ ve.DiffMatchPatch.static.DIFF_CHANGE_INSERT = 2;
 
 /* Methods */
 
+/**
+ * @param {ve.dm.LinearData.Item} a
+ * @param {ve.dm.LinearData.Item} b
+ * @return {boolean}
+ */
 ve.DiffMatchPatch.prototype.isEqualChar = function ( a, b ) {
 	return a === b || ve.dm.LinearData.static.compareElements( a, b, this.store, this.store );
 };
 
+/**
+ * @param {ve.dm.LinearData.Item[]} a
+ * @param {ve.dm.LinearData.Item[]} b
+ * @return {boolean}
+ */
 ve.DiffMatchPatch.prototype.isEqualString = function ( a, b ) {
 	if ( a === b ) {
 		return true;
@@ -52,7 +62,7 @@ ve.DiffMatchPatch.prototype.isEqualString = function ( a, b ) {
 		return false;
 	}
 
-	for ( let i = 0, l = a.length; i < l; i++ ) {
+	for ( let i = 0; i < a.length; i++ ) {
 		if ( !this.isEqualChar( a[ i ], b[ i ] ) ) {
 			return false;
 		}
@@ -134,17 +144,15 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 	 * is always immediately followed by its close element.
 	 *
 	 * @param {ve.dm.LinearData.Item[]} data Linear data
-	 * @return {ve.dm.LinearData.Item[]} Linear data without close elements
 	 */
 	function removeCloseElements( data ) {
 		for ( let i = 0, ilen = data.length; i < ilen; i++ ) {
-			if ( data[ i ].type && data[ i ].type[ 0 ] === '/' ) {
+			if ( ve.dm.LinearData.static.isCloseElementData( data[ i ] ) ) {
 				data.splice( i, 1 );
 				ilen--;
 				i--;
 			}
 		}
-		return data;
 	}
 
 	/**
@@ -313,7 +321,7 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 
 		// In a sequence of -remove-insert-remove-insert- make the removes into a
 		// single action and the inserts into a single action
-		for ( let i = 0, ilen = diff.length; i < ilen; i++ ) {
+		for ( let i = 0; i < diff.length; i++ ) {
 			const action = diff[ i ][ 0 ];
 			const data = diff[ i ][ 1 ];
 			if ( action === DIFF_DELETE ) {
@@ -419,14 +427,14 @@ ve.DiffMatchPatch.prototype.getCleanDiff = function ( oldData, newData, options 
 	}
 
 	// Remove the close elements
-	oldData = removeCloseElements( oldData );
-	newData = removeCloseElements( newData );
+	removeCloseElements( oldData );
+	removeCloseElements( newData );
 
 	// Get the diff
 	const finalDiff = getCleanDiff( this.diff_main( oldData, newData, options ) );
 
 	// Re-insert the close elements
-	for ( let k = 0, klen = finalDiff.length; k < klen; k++ ) {
+	for ( let k = 0; k < finalDiff.length; k++ ) {
 		for ( let m = 0; m < finalDiff[ k ][ 1 ].length; m++ ) {
 			if ( finalDiff[ k ][ 1 ][ m ].type ) {
 				finalDiff[ k ][ 1 ].splice( m + 1, 0, {

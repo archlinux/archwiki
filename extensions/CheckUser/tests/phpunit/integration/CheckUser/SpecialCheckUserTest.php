@@ -1,26 +1,28 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser;
 
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager;
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager;
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager;
-use MediaWiki\CheckUser\CheckUser\SpecialCheckUser;
-use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
-use MediaWiki\CheckUser\Tests\SpecialCheckUserTestTrait;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager;
+use MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUser;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseManagerService;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Signals\SuggestedInvestigationsSignalMatchResult;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\SpecialCheckUserTestTrait;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
-use SpecialPageTestBase;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -29,10 +31,10 @@ use Wikimedia\TestingAccessWrapper;
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\CheckUser\SpecialCheckUser
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUser
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetActionsPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetIPsPager
  */
 class SpecialCheckUserTest extends SpecialPageTestBase {
 
@@ -75,17 +77,20 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		$object->opts->add( 'reason', '' );
 		$object->opts->add( 'period', 0 );
 		if ( $checkType === SpecialCheckUser::SUBTYPE_GET_IPS ) {
-			$this->assertInstanceOf( CheckUserGetIPsPager::class,
+			$this->assertInstanceOf(
+				CheckUserGetIPsPager::class,
 				$object->getPager( $checkType, $userIdentity, 'untested', $xfor ),
 				'The Get IPs checktype should return the Get IPs pager.'
 			);
 		} elseif ( $checkType === SpecialCheckUser::SUBTYPE_GET_ACTIONS ) {
-			$this->assertInstanceOf( CheckUserGetActionsPager::class,
+			$this->assertInstanceOf(
+				CheckUserGetActionsPager::class,
 				$object->getPager( $checkType, $userIdentity, 'untested', $xfor ),
 				'The Get actions checktype should return the Get actions pager.'
 			);
 		} elseif ( $checkType === SpecialCheckUser::SUBTYPE_GET_USERS ) {
-			$this->assertInstanceOf( CheckUserGetUsersPager::class,
+			$this->assertInstanceOf(
+				CheckUserGetUsersPager::class,
 				$object->getPager( $checkType, $userIdentity, 'untested', $xfor ),
 				'The Get users checktype should return the Get users pager.'
 			);
@@ -266,7 +271,10 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( '1.2.3.4', $resultHtml );
 
 		$this->verifyCheckUserLogEntryCreated(
-			$testCheckUser, 'Test check', self::$usernameTarget->getName(), 'userips'
+			$testCheckUser,
+			'Test check',
+			self::$usernameTarget->getName(),
+			'userips'
 		);
 	}
 
@@ -294,6 +302,8 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		$resultHtml = $this->assertAndGetByElementClass( $html, 'mw-checkuser-get-actions-results' );
 		$this->assertStringContainsString( '1.2.3.4', $resultHtml );
 		$this->assertStringContainsString( self::$usernameTarget->getName(), $resultHtml );
+
+		$this->assertStringContainsString( 'Testing user agent', $resultHtml );
 
 		// Verify the temporary account edit is shown or not shown, depending on the state of the filters
 		if ( $tempAccountsHidden ) {
@@ -333,14 +343,21 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		// Verify the temporary account edit is not shown, as the check was on a specific user and not their IP
 		$this->assertStringNotContainsString( self::$tempAccountTarget->getName(), $resultHtml );
 
+		$this->assertStringContainsString( 'Testing user agent', $resultHtml );
+
 		$this->verifyCheckUserLogEntryCreated(
-			$testCheckUser, 'Test check', self::$usernameTarget->getName(), 'useredits'
+			$testCheckUser,
+			'Test check',
+			self::$usernameTarget->getName(),
+			'useredits'
 		);
 	}
 
 	/** @dataProvider provideLinkToSuggestedInvestigationsPresent */
 	public function testLinkToSuggestedInvestigationsPresent(
-		bool $enabled, bool $hidden, bool $linkExpected
+		bool $enabled,
+		bool $hidden,
+		bool $linkExpected
 	) {
 		if ( $enabled ) {
 			$this->enableSuggestedInvestigations();
@@ -412,6 +429,8 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( '1.2.3.4', $resultHtml );
 		$this->assertStringContainsString( self::$usernameTarget->getName(), $resultHtml );
 
+		$this->assertStringContainsString( 'Testing user agent', $resultHtml );
+
 		// Verify the temporary account is shown or not shown, depending on the state of the filters
 		if ( $tempAccountsHidden ) {
 			$this->assertStringNotContainsString( self::$tempAccountTarget->getName(), $resultHtml );
@@ -429,11 +448,86 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 		];
 	}
 
+	public function testSINoticeNotShownWhenIPHasNoResults(): void {
+		$this->enableSuggestedInvestigations();
+		RequestContext::getMain()->setTitle( SpecialPage::getTitleFor( 'CheckUser' ) );
+
+		$testCheckUser = $this->getTestCheckUser();
+		$cuRequest = new FauxRequest(
+			[ 'checktype' => SpecialCheckUser::SUBTYPE_GET_USERS, 'user' => '5.6.7.8' ],
+			true
+		);
+		[ $html ] = $this->executeSpecialPage( '', $cuRequest, null, $testCheckUser );
+
+		$this->assertStringNotContainsString(
+			'(checkuser-ip-results-suggestedinvestigations-notice-link',
+			$html
+		);
+	}
+
+	/** @dataProvider provideSubtypesForSINotice */
+	public function testSINoticeShownForIPCheckWithOpenCases( string $checktype, string $subPage ): void {
+		$this->enableSuggestedInvestigations();
+		RequestContext::getMain()->setTitle( SpecialPage::getTitleFor( 'CheckUser' ) );
+
+		$testCheckUser = $this->getTestCheckUser();
+		$request = new FauxRequest(
+			[ 'checktype' => $checktype, 'reason' => 'Test SI notice' ],
+			true
+		);
+		[ $html ] = $this->executeSpecialPage( $subPage, $request, null, $testCheckUser );
+
+		$this->assertStringContainsString(
+			'(checkuser-ip-results-suggestedinvestigations-notice-link',
+			$html
+		);
+		$this->assertStringContainsString( 'Special:SuggestedInvestigations', $html );
+		$this->assertStringContainsString( self::$usernameTarget->getName(), $html );
+	}
+
+	public static function provideSubtypesForSINotice(): array {
+		return [
+			'Get users check on IP target' => [
+				'checktype' => SpecialCheckUser::SUBTYPE_GET_USERS,
+				'subPage' => '1.2.3.4',
+			],
+			'Get actions check on IP target' => [
+				'checktype' => SpecialCheckUser::SUBTYPE_GET_ACTIONS,
+				'subPage' => '1.2.3.4',
+			],
+		];
+	}
+
+	public function testSINoticeNotShownForGetActionsOnUsernameTarget(): void {
+		$this->enableSuggestedInvestigations();
+		RequestContext::getMain()->setTitle( SpecialPage::getTitleFor( 'CheckUser' ) );
+
+		$testCheckUser = $this->getTestCheckUser();
+		$request = new FauxRequest(
+			[ 'checktype' => SpecialCheckUser::SUBTYPE_GET_ACTIONS, 'reason' => 'Test notice username' ],
+			true
+		);
+		[ $html ] = $this->executeSpecialPage(
+			self::$usernameTarget->getName(),
+			$request,
+			null,
+			$testCheckUser
+		);
+
+		$this->assertStringNotContainsString(
+			'(checkuser-ip-results-suggestedinvestigations-notice-link',
+			$html
+		);
+	}
+
 	/**
 	 * Verifies that one row exists in cu_log which has the expected properties
 	 */
 	private function verifyCheckUserLogEntryCreated(
-		UserIdentity $expectedPerformer, string $expectedReason, string $expectedTarget, string $expectedLogType
+		UserIdentity $expectedPerformer,
+		string $expectedReason,
+		string $expectedTarget,
+		string $expectedLogType
 	): void {
 		$this->newSelectQueryBuilder()
 			->select( [ 'actor_name', 'comment_text', 'cul_target_text', 'cul_type' ] )
@@ -446,19 +540,28 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 			] );
 	}
 
-	public function addDBDataOnce() {
+	public function addDBDataOnce(): void {
 		$this->disableAutoCreateTempUser();
 		$usernameTarget = $this->getTestUser();
 
 		// Insert test edit(s) so that we get results in Special:CheckUser to look at.
 		// More rigorous testing is done in the tests that target each check subtype pager.
-		RequestContext::getMain()->getRequest()->setIP( '1.2.3.4' );
+		$request = RequestContext::getMain()->getRequest();
+		$request->setIP( '1.2.3.4' );
+		$request->setHeader( 'User-Agent', 'Testing user agent' );
 		$testPage = $this->getNonexistingTestPage();
 		$this->editPage(
-			$testPage, 'Test content', 'Test summary', NS_MAIN, $usernameTarget->getAuthority()
+			$testPage,
+			'Test content',
+			'Test summary',
+			NS_MAIN,
+			$usernameTarget->getAuthority()
 		);
 		$this->editPage(
-			$testPage, 'Test content2', 'Test summary', NS_MAIN,
+			$testPage,
+			'Test content2',
+			'Test summary',
+			NS_MAIN,
 			$this->getServiceContainer()->getUserFactory()->newAnonymous( '1.2.3.4' )
 		);
 		$this->enableAutoCreateTempUser();
@@ -468,5 +571,24 @@ class SpecialCheckUserTest extends SpecialPageTestBase {
 
 		self::$usernameTarget = $usernameTarget->getUserIdentity();
 		self::$tempAccountTarget = $tempUser;
+
+		// Create an open SI case for the username target
+		$this->enableSuggestedInvestigations();
+		/** @var SuggestedInvestigationsCaseManagerService $caseManager */
+		$caseManager = $this->getServiceContainer()
+			->getService( 'CheckUserSuggestedInvestigationsCaseManager' );
+		$caseManager->createCase(
+			[ UserIdentityValue::newRegistered(
+				self::$usernameTarget->getId(),
+				self::$usernameTarget->getName()
+			) ],
+			[
+				SuggestedInvestigationsSignalMatchResult::newPositiveResult(
+					'TestSignal',
+					'test-value',
+					false
+				),
+			]
+		);
 	}
 }

@@ -32,8 +32,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "O número de revisión a utilizar (por defecto, a última revisión).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Que propiedades obter:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Excluír as sinaturas dos usuarios dos comentarios (ao utilizar <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Indicadores para alterar a saída ao usar <var>prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Representación dos fíos de comentario analizados da páxina",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "De que outras páxinas se transcluíron os comentarios",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Incluír datos de actividade adicionais sobre as respostas máis antigas e máis recentes (ao utilizar <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Excluír as sinaturas dos usuarios dos comentarios (ao utilizar <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Non incluír a árbore de respostas completa, proporcionar só os títulos de nivel superior (ao utilizar <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-summary": "Devolve os metadatos necesarios para iniciar as ferramentas de conversa.",
 	"apihelp-discussiontoolspreview-param-type": "Tipo de mensaxe a previsualizar",
 	"apihelp-discussiontoolspreview-param-wikitext": "Contido a previsualizar, en formato de texto wiki.",
@@ -43,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Verdadeiro para subscribirse, falso para cancelar a subscrición",
 	"apihelp-discussiontoolssubscribe-summary": "Subscribirse (ou cancelar a subscrición) para recibir notificacións dun fío.",
 	"apihelp-discussiontoolsthank-param-commentid": "Identificador do comentario que agradecer.",
-	"apihelp-discussiontoolsthank-summary": "Enviar unha notificación pública de agradecemento por un comentario."
+	"apihelp-discussiontoolsthank-summary": "Enviar unha notificación pública de agradecemento por un comentario.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Subscribir automaticamente o usuario a calquera novo fío de conversa creado pola edición. Utiliza \"yes\" ou \"no\" para anular a preferencia dun usuario (a opción predeterminada)."
 }

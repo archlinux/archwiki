@@ -5,10 +5,9 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\Pager\AllMessagesTablePager;
-use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Specials\Pager\AllMessagesTablePager;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -55,7 +54,7 @@ class DeleteEqualMessages extends Maintenance {
 		$l10nCache = $services->getLocalisationCache();
 		$messageNames = $l10nCache->getSubitemList( 'en', 'messages' );
 		// Normalise message names for NS_MEDIAWIKI page_title
-		$messageNames = array_map( [ $contLang, 'ucfirst' ], $messageNames );
+		$messageNames = array_map( $contLang->ucfirst( ... ), $messageNames );
 
 		$statuses = AllMessagesTablePager::getCustomisedStatuses(
 			$messageNames,
@@ -167,7 +166,6 @@ class DeleteEqualMessages extends Maintenance {
 		if ( !$user ) {
 			$this->fatalError( "Invalid username" );
 		}
-		StubGlobalUser::setUser( $user );
 
 		// Hide deletions from RecentChanges
 		$userGroupManager = $services->getUserGroupManager();

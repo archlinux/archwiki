@@ -5,6 +5,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeValue;
 

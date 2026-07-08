@@ -20,7 +20,7 @@
 	"spam-blacklisted-email": "已禁止的電子郵件地址",
 	"spam-blacklisted-email-text": "您的電子郵件地址目前已被禁止，以防止您傳送郵件給其他使用者。",
 	"spam-blacklisted-email-signup": "提供的電子郵件地址目前已被禁止，無法使用。",
-	"spam-invalid-lines": "下列垃圾連結封鎖清單中有{{PLURAL:$1|一行|多行}}使用了無效的{{PLURAL:$1|正規表示法}}，{{PLURAL:$1|需要}}修正後才可儲存此頁面：",
+	"spam-blacklisted-email-change": "提供的電子郵件地址目前已被禁止，無法使用。",
 	"spam-blacklist-desc": "以正規表示法為基礎的防濫用工具，可封鎖列在頁面中的 URL 以及已註冊使用者的電子郵件位址。",
 	"log-name-spamblacklist": "垃圾連結封鎖清單日誌",
 	"log-description-spamblacklist": "此頁記錄了觸發垃圾連結封鎖清單的事件。",

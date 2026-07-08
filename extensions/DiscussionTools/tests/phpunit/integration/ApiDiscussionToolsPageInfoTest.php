@@ -35,7 +35,7 @@ class ApiDiscussionToolsPageInfoTest extends ApiTestCase {
 
 		$pageInfo = TestingAccessWrapper::newFromClass( ApiDiscussionToolsPageInfo::class );
 
-		$threadItemsHtml = $pageInfo->getThreadItemsHtml( $threadItemSet, false );
+		$threadItemsHtml = $pageInfo->getThreadItemsHtml( $threadItemSet, false, false, false );
 
 		// Optionally write updated content to the JSON files
 		if ( getenv( 'DISCUSSIONTOOLS_OVERWRITE_TESTS' ) ) {

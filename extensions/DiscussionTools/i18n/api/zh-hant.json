@@ -45,5 +45,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True 為訂閱，false 為取消訂閱",
 	"apihelp-discussiontoolssubscribe-summary": "訂閱（或取消訂閱）來接收有關話題的通知。",
 	"apihelp-discussiontoolsthank-param-commentid": "要感謝的留言 ID。",
-	"apihelp-discussiontoolsthank-summary": "傳送對留言的公開感謝通知。"
+	"apihelp-discussiontoolsthank-summary": "傳送對留言的公開感謝通知。",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "自動將使用者訂閱至由編輯建立的任何討論頁新主題。使用「是」或「否」來覆蓋使用者的偏好設定（預設值）。"
 }

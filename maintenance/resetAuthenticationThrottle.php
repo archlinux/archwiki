@@ -119,7 +119,6 @@ class ResetAuthenticationThrottle extends Maintenance {
 			'type' => 'botpassword',
 			'cache' => $objectCacheFactory->getLocalClusterInstance(),
 		] );
-		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable T240141
 		$botPasswordThrottler->clear( $username, $ip );
 
 		$this->output( "done\n" );

@@ -1,14 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Api\CheckUser;
 
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -16,18 +17,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse {
 
-	private UserIdentityLookup $userIdentityLookup;
-
 	/**
-	 * @param ApiQueryCheckUser $module
-	 * @param IConnectionProvider $dbProvider
-	 * @param Config $config
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param CheckUserLogService $checkUserLogService
-	 * @param UserNameUtils $userNameUtils
-	 * @param CheckUserLookupUtils $checkUserLookupUtils
-	 * @param UserIdentityLookup $userIdentityLookup
-	 *
 	 * @internal Use CheckUserApiResponseFactory::newFromRequest() instead
 	 */
 	public function __construct(
@@ -38,13 +28,17 @@ class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse
 		CheckUserLogService $checkUserLogService,
 		UserNameUtils $userNameUtils,
 		CheckUserLookupUtils $checkUserLookupUtils,
-		UserIdentityLookup $userIdentityLookup
+		private readonly UserIdentityLookup $userIdentityLookup,
 	) {
 		parent::__construct(
-			$module, $dbProvider, $config, $messageLocalizer,
-			$checkUserLogService, $userNameUtils, $checkUserLookupUtils
+			$module,
+			$dbProvider,
+			$config,
+			$messageLocalizer,
+			$checkUserLogService,
+			$userNameUtils,
+			$checkUserLookupUtils
 		);
-		$this->userIdentityLookup = $userIdentityLookup;
 	}
 
 	/** @inheritDoc */
@@ -59,7 +53,7 @@ class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse
 		$ips = [];
 		foreach ( $res as $row ) {
 			$timestamp = ConvertibleTimestamp::convert( TS_ISO_8601, $row->timestamp );
-			$ip = strval( $row->ip );
+			$ip = IPUtils::formatHex( $row->ip_hex );
 
 			if ( !isset( $ips[$ip] ) ) {
 				$ips[$ip] = [ 'end' => $timestamp, 'editcount' => 1 ];
@@ -76,7 +70,11 @@ class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse
 		}
 
 		$this->checkUserLogService->addLogEntry(
-			$this->module->getUser(), 'userips', 'user', $this->target, $this->reason,
+			$this->module->getUser(),
+			'userips',
+			'user',
+			$this->target,
+			$this->reason,
 			$this->userIdentityLookup->getUserIdentityByName( $this->target )->getId()
 		);
 		return $resultIPs;
@@ -96,9 +94,10 @@ class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse
 	/** @inheritDoc */
 	protected function getPartialQueryBuilderForCuChanges(): SelectQueryBuilder {
 		$queryBuilder = $this->dbr->newSelectQueryBuilder()
-			->select( [ 'timestamp' => 'cuc_timestamp', 'ip' => 'cuc_ip' ] )
+			->select( [ 'timestamp' => 'cuc_timestamp', 'ip_hex' => 'cuc_ip_hex' ] )
 			->from( 'cu_changes' )
 			->join( 'actor', null, 'actor_id=cuc_actor' )
+			->where( $this->dbr->expr( 'cuc_ip_hex', '!=', null ) )
 			->where( $this->dbr->expr( 'cuc_timestamp', '>', $this->timeCutoff ) );
 		return $queryBuilder;
 	}
@@ -106,18 +105,20 @@ class ApiQueryCheckUserUserIpsResponse extends ApiQueryCheckUserAbstractResponse
 	/** @inheritDoc */
 	protected function getPartialQueryBuilderForCuLogEvent(): SelectQueryBuilder {
 		return $this->dbr->newSelectQueryBuilder()
-			->select( [ 'timestamp' => 'cule_timestamp', 'ip' => 'cule_ip' ] )
+			->select( [ 'timestamp' => 'cule_timestamp', 'ip_hex' => 'cule_ip_hex' ] )
 			->from( 'cu_log_event' )
 			->join( 'actor', null, 'actor_id=cule_actor' )
+			->where( $this->dbr->expr( 'cule_ip_hex', '!=', null ) )
 			->where( $this->dbr->expr( 'cule_timestamp', '>', $this->timeCutoff ) );
 	}
 
 	/** @inheritDoc */
 	protected function getPartialQueryBuilderForCuPrivateEvent(): SelectQueryBuilder {
 		return $this->dbr->newSelectQueryBuilder()
-			->select( [ 'timestamp' => 'cupe_timestamp', 'ip' => 'cupe_ip' ] )
+			->select( [ 'timestamp' => 'cupe_timestamp', 'ip_hex' => 'cupe_ip_hex' ] )
 			->from( 'cu_private_event' )
 			->join( 'actor', null, 'actor_id=cupe_actor' )
+			->where( $this->dbr->expr( 'cupe_ip_hex', '!=', null ) )
 			->where( $this->dbr->expr( 'cupe_timestamp', '>', $this->timeCutoff ) );
 	}
 }

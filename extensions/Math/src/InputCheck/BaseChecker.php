@@ -16,19 +16,18 @@ use stdClass;
  * @author Moritz Schubotz
  */
 abstract class BaseChecker {
-	protected string $inputTeX;
 	protected ?string $validTeX = null;
 	/** @var bool */
 	protected $isValid = false;
-	protected bool $purge = false;
 
 	/**
-	 * @param string $tex the TeX InputString to be checked
+	 * @param string $inputTeX the TeX InputString to be checked
 	 * @param bool $purge if true, the cache will be purged
 	 */
-	public function __construct( $tex = '', bool $purge = false ) {
-		$this->inputTeX = $tex;
-		$this->purge = $purge;
+	public function __construct(
+		protected readonly string $inputTeX = '',
+		protected bool $purge = false,
+	) {
 		$this->isValid = false;
 	}
 

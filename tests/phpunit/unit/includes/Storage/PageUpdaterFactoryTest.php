@@ -32,6 +32,7 @@ class PageUpdaterFactoryTest extends MediaWikiUnitTestCase {
 			MainConfigNames::ParsoidCacheConfig => [
 				'WarmParsoidParserCache' => false
 			],
+			MainConfigNames::NamespacesWithoutAutoSummaries => null,
 		];
 
 		$lb = $this->createNoOpMock( LoadBalancer::class );

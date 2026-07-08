@@ -27,7 +27,7 @@ Empty function: {{#categorytree:}}
 {{#categorytree:}}
 !! html/php
 !! html/parsoid
-<p class="mw-empty-elt"><link typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":""},"parts":[{"template":{"target":{"wt":"#categorytree:","function":"categorytree"},"params":{},"i":0}}]}'/></p>
+<span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#categorytree:","function":"categorytree"},"params":{},"i":0}}]}'></span>
 !! end
 
 !! test
@@ -47,7 +47,7 @@ Function with Unknown category: {{#categorytree:Unknown category}}
 !! html/php
 <div class="CategoryTreeTag" data-ct-options="{&quot;mode&quot;:0,&quot;hideprefix&quot;:20,&quot;showcount&quot;:false,&quot;namespaces&quot;:false,&quot;notranslations&quot;:false}"><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
 !! html/parsoid
-<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Extension/categorytree mw:Transclusion" data-mw='{"name":"categorytree","attrs":{},"body":{"extsrc":"Unknown category"},"parts":[{"template":{"target":{"wt":"#categorytree:Unknown category","function":"categorytree"},"params":{},"i":0}}]}'><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
+<div class="CategoryTreeTag" data-ct-options='{"mode":0,"hideprefix":20,"showcount":false,"namespaces":false,"notranslations":false}' typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#categorytree:Unknown category","function":"categorytree"},"params":{},"i":0}}]}'><span class="CategoryTreeNotice">Category <i>Unknown category</i> not found</span></div>
 !! end
 
 !! test

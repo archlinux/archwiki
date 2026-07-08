@@ -374,7 +374,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "ทำให้เอนทิตีเอชทีเอ็มแอลเป็นมาตรฐานสู่อักขระยูนิโค้ด (sanitize)",
 	"abusefilter-edit-builder-group-vars": "ตัวแปร",
 	"abusefilter-edit-builder-vars-timestamp": "ตราเวลายูนิกซ์ของการเปลี่ยนแปลง ($1)",
-	"abusefilter-edit-builder-vars-accountname": "ชื่อบัญชี (เมื่อสร้างบัญชี)",
+	"abusefilter-edit-builder-vars-account-name": "ชื่อบัญชี (เมื่อสร้างบัญชี)",
 	"abusefilter-edit-builder-vars-action": "การกระทำ ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "บรรทัดที่เพิ่มในการแก้ไข ($1)",
 	"abusefilter-edit-builder-vars-delta": "การเปลี่ยนแปลงขนาดในการแก้ไข ($1)",

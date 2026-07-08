@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Papuass"
+		]
+	},
+	"oathauth-webauthn-ui-remove-key": "Noņemt",
+	"oathauth-webauthn-ui-reload-page-label": "Pārlādēt lapu"
+}

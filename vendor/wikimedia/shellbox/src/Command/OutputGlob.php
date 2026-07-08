@@ -108,7 +108,7 @@ abstract class OutputGlob {
 	 */
 	public function isMatch( $boxedName ) {
 		$ext = '.' . $this->extension;
-		return substr_compare( $boxedName, $this->prefix, 0, strlen( $this->prefix ) ) === 0
-			&& substr_compare( $boxedName, $ext, -strlen( $ext ) ) === 0;
+		return str_starts_with( $boxedName, $this->prefix )
+			&& str_ends_with( $boxedName, $ext );
 	}
 }

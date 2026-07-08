@@ -1,7 +1,7 @@
 <?php
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\CentralId\CentralIdLookup;
@@ -15,24 +15,12 @@ use Wikimedia\IPUtils;
  * Perform CheckUser-related permission checks.
  */
 class CheckUserPermissionManager {
-	private UserOptionsLookup $userOptionsLookup;
-
-	private SpecialPageFactory $specialPageFactory;
-
-	private CentralIdLookup $centralIdLookup;
-
-	private UserFactory $userFactory;
-
 	public function __construct(
-		UserOptionsLookup $userOptionsLookup,
-		SpecialPageFactory $specialPageFactory,
-		CentralIdLookup $centralIdLookup,
-		UserFactory $userFactory
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly SpecialPageFactory $specialPageFactory,
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly UserFactory $userFactory,
 	) {
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->specialPageFactory = $specialPageFactory;
-		$this->centralIdLookup = $centralIdLookup;
-		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -156,3 +144,10 @@ class CheckUserPermissionManager {
 		return $centralId !== 0;
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserPermissionManager::class, 'MediaWiki\\CheckUser\\Services\\CheckUserPermissionManager' );
+// @codeCoverageIgnoreEnd

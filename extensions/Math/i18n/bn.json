@@ -99,5 +99,7 @@
 	"math-wikibase-special-form-header": "সূত্রটির নাম উল্লেখ করুন:",
 	"math-wikibase-special-form-placeholder": "সূত্রটির শিরোনাম",
 	"math-wikibase-special-form-button": "তথ্যের অনুরোধ করুন",
-	"math-wikibase-special-error-header": "ত্রুটি"
+	"math-wikibase-special-error-header": "ত্রুটি",
+	"math-editpage-insert-inline": "গাণিতিক সূত্র (একক রেখা)",
+	"math-editpage-insert-block": "গাণিতিক সূত্র (ব্লক)"
 }

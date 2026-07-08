@@ -16,7 +16,6 @@
  * @param {Object} [config] Configuration options
  * @param {Object} [config.toolbarConfig={}] Configuration options for the toolbar
  * @param {Object} [config.toolbarGroups] Toolbar groups, defaults to this.constructor.static.toolbarGroups
- * @param {Object} [config.actionGroups] Toolbar groups, defaults to this.constructor.static.actionGroups
  * @param {string[]} [config.modes] Available editing modes. Defaults to static.modes
  * @param {string} [config.defaultMode] Default mode for new surfaces. Must be in this.modes and defaults to first item.
  * @param {boolean} [config.register=true] Register the target at ve.init.target
@@ -39,7 +38,6 @@ ve.init.Target = function VeInitTarget( config = {} ) {
 	this.toolbar = null;
 	this.toolbarConfig = config.toolbarConfig || {};
 	this.toolbarGroups = config.toolbarGroups || this.constructor.static.toolbarGroups;
-	this.actionGroups = config.actionGroups || this.constructor.static.actionGroups;
 	this.$scrollContainer = this.getScrollContainer();
 	this.$scrollListener = this.$scrollContainer.is( 'html, body' ) ?
 		$( OO.ui.Element.static.getWindow( this.$scrollContainer[ 0 ] ) ) :
@@ -68,6 +66,7 @@ ve.init.Target = function VeInitTarget( config = {} ) {
 	this.onDocumentVisibilityChangeHandler = this.onDocumentVisibilityChange.bind( this );
 	this.onTargetKeyDownHandler = this.onTargetKeyDown.bind( this );
 	this.onContainerScrollHandler = this.onContainerScroll.bind( this );
+	this.onVirtualKeyboardChangeThrottled = OO.ui.throttle( this.onVirtualKeyboardChange.bind( this ), 100 );
 	this.bindHandlers();
 };
 
@@ -83,6 +82,13 @@ OO.mixinClass( ve.init.Target, OO.EventEmitter );
  * Must be fired after the surface is initialized
  *
  * @event ve.init.Target#surfaceReady
+ */
+
+/**
+ * The virtual keyboard has been opened or closed
+ *
+ * @event ve.init.Target#virtualKeyboardChange
+ * @param {boolean} isOpen The virtual keyboard is open
  */
 
 /* Static Properties */
@@ -169,16 +175,6 @@ ve.init.Target.static.toolbarGroups = [
 	// visualeditor-help-tool message.
 	// TODO: Consider downstreaming this message.
 ];
-
-/**
- * Toolbar definition for the actions side of the toolbar
- *
- * @deprecated Use align:'after' in the regular toolbarGroups instead.
- * @static
- * @property {Array}
- * @inheritable
- */
-ve.init.Target.static.actionGroups = [];
 
 /**
  * List of commands which can be triggered anywhere from within the document
@@ -385,6 +381,14 @@ ve.init.Target.prototype.bindHandlers = function () {
 	} );
 	this.$element.on( 'keydown', this.onTargetKeyDownHandler );
 	this.$scrollListener[ 0 ].addEventListener( 'scroll', this.onContainerScrollHandler, { passive: true } );
+
+	if ( 'virtualKeyboard' in navigator ) {
+		$( navigator.virtualKeyboard ).on( 'geometrychange', this.onVirtualKeyboardChangeThrottled );
+	} else if ( 'visualViewport' in window ) {
+		this.viewportScrollContainer = OO.ui.Element.static.getClosestScrollableContainer( document.body );
+		this.initialClientHeight = this.viewportScrollContainer.clientHeight;
+		$( visualViewport ).on( 'resize', this.onVirtualKeyboardChangeThrottled );
+	}
 };
 
 /**
@@ -398,6 +402,11 @@ ve.init.Target.prototype.unbindHandlers = function () {
 	} );
 	this.$element.off( 'keydown', this.onTargetKeyDownHandler );
 	this.$scrollListener[ 0 ].removeEventListener( 'scroll', this.onContainerScrollHandler );
+	if ( 'virtualKeyboard' in navigator ) {
+		$( navigator.virtualKeyboard ).off( 'geometrychange', this.onVirtualKeyboardChangeThrottled );
+	} else if ( 'visualViewport' in window ) {
+		$( visualViewport ).off( 'resize', this.onVirtualKeyboardChangeThrottled );
+	}
 };
 
 /**
@@ -684,21 +693,6 @@ ve.init.Target.prototype.getToolbar = function () {
 };
 
 /**
- * Get the actions toolbar
- *
- * @deprecated
- * @return {ve.ui.TargetToolbar} Actions toolbar (same as the normal toolbar)
- */
-ve.init.Target.prototype.getActions = function () {
-	OO.ui.warnDeprecation( 'Target#getActions: Use #getToolbar instead ' +
-		'(actions toolbar has been merged into the normal toolbar)' );
-	if ( !this.actionsToolbar ) {
-		this.actionsToolbar = this.getToolbar();
-	}
-	return this.actionsToolbar;
-};
-
-/**
  * Set up the toolbar if it doesn't exist, and attach it to a surface
  *
  * If the toolbar already exists it can still be attached
@@ -710,12 +704,6 @@ ve.init.Target.prototype.setupToolbar = function ( newSurface ) {
 	// Create toolbar if it doesn't exist
 	if ( !this.toolbar ) {
 		const toolbar = this.toolbar = new ve.ui.PositionedTargetToolbar( this, this.toolbarConfig );
-		if ( this.actionGroups.length ) {
-			// Backwards-compatibility
-			if ( !this.actionsToolbar ) {
-				this.actionsToolbar = this.getToolbar();
-			}
-		}
 
 		if ( this.constructor.static.enforceResizesContent ) {
 			this.toggleResizesContent( true );
@@ -762,13 +750,7 @@ ve.init.Target.prototype.setupToolbar = function ( newSurface ) {
 			} );
 	}
 
-	// Connect to surface
-	this.actionGroups.forEach( ( group ) => {
-		group.align = 'after';
-	} );
-	const groups = [ ...this.toolbarGroups, ...this.actionGroups ];
-
-	this.toolbar.setup( groups, newSurface );
+	this.toolbar.setup( this.toolbarGroups, newSurface );
 	this.attachToolbar();
 	requestAnimationFrame( this.onContainerScrollHandler );
 };
@@ -830,9 +812,6 @@ ve.init.Target.prototype.teardownToolbar = function () {
 		this.toolbar.destroy();
 		this.toolbar = null;
 	}
-	if ( this.actionsToolbar ) {
-		this.actionsToolbar = null;
-	}
 	if ( this.constructor.static.enforceResizesContent ) {
 		this.toggleResizesContent( false );
 	}
@@ -881,4 +860,54 @@ ve.init.Target.prototype.toggleResizesContent = function ( set ) {
 	}
 
 	$viewportTag.attr( 'content', Object.keys( obj ).map( ( key ) => key + '=' + obj[ key ] ).join( ',' ) );
+};
+
+/**
+ * Handle virtual keyboard geometry change events.
+ *
+ * @fires ve.init.Target#virtualKeyboardChange
+ */
+ve.init.Target.prototype.onVirtualKeyboardChange = function () {
+	const virtualKeyboardOpen = this.isVirtualKeyboardOpen();
+	if ( virtualKeyboardOpen !== this.virtualKeyboardOpen ) {
+		this.virtualKeyboardOpen = virtualKeyboardOpen;
+		this.emit( 'virtualKeyboardChange', virtualKeyboardOpen );
+	}
+};
+
+/**
+ * Check if a virtual keyboard is open
+ *
+ * @return {boolean} Whether a keyboard is open
+ */
+ve.init.Target.prototype.isVirtualKeyboardOpen = function () {
+	if ( 'virtualKeyboard' in navigator ) {
+		// The VirtualKeyboard API is available. It has limited browser
+		// support and is only available on HTTPS, but has exactly the
+		// information we need.
+		return navigator.virtualKeyboard.boundingRect && navigator.virtualKeyboard.boundingRect.height > 0;
+	}
+	if ( !OO.ui.isMobile() ) {
+		// We let VirtualKeyboard go first before abandoning for non-mobile,
+		// because it should hopefully cover desktop cases as well when they
+		// crop up. After this point we have to make mobile-device specific
+		// assumptions.
+		return false;
+	}
+	if ( 'visualViewport' in window ) {
+		// The VisualViewport API is available. This is much more widely
+		// supported, but requires us to start guessing.
+		if ( ve.init.platform.constructor.static.isIos() ) {
+			return visualViewport.height < this.viewportScrollContainer.clientHeight;
+		}
+		// TODO: Support orientation changes?
+		return this.viewportScrollContainer.clientHeight < this.initialClientHeight;
+	} else if ( this.getSurface() ) {
+		// Fallback: assume that if there's a native selection the keyboard must
+		// be open. This isn't necessarily true, but is an okay approximation for
+		// our final fallback check.
+		// TODO: Check if selection is in a form input?
+		return this.getSurface().getView().hasNativeCursorSelection();
+	}
+	return false;
 };

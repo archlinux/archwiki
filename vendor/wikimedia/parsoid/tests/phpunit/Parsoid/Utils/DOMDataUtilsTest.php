@@ -4,16 +4,20 @@ declare( strict_types = 1 );
 
 namespace Test\Parsoid\Utils;
 
+use Wikimedia\Parsoid\Core\BasePageBundle;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomPageBundle;
 use Wikimedia\Parsoid\Core\HtmlPageBundle;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Mocks\MockEnv;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
+use Wikimedia\Parsoid\NodeData\DataMw;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @coversDefaultClass  \Wikimedia\Parsoid\Utils\DOMDataUtils
@@ -27,11 +31,11 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		$dpb = DomPageBundle::fromHtmlPageBundle( HtmlPageBundle::newEmpty(
 			"<p>Hello, world</p>"
 		) );
-		DOMDataUtils::prepareDoc( $dpb->doc );
+		DOMDataUtils::prepareAndLoadDoc( $dpb->doc );
 		$p = DOMCompat::querySelector( $dpb->doc, 'p' );
-		DOMDataUtils::storeInPageBundle( $dpb, $p, (object)[
-			'parsoid' => [ 'go' => 'team' ],
-			'mw' => [ 'test' => 'me' ],
+		TestingAccessWrapper::newFromClass( DOMDataUtils::class )->storeInPageBundle( $dpb, $p, (object)[
+			'parsoid' => '{"go":"team"}',
+			'mw' => '{"test":"me"}',
 		], DOMDataUtils::usedIdIndex( new MockSiteConfig( [] ), $p->ownerDocument ) );
 		$id = DOMCompat::getAttribute( $p, 'id' ) ?? '';
 		$this->assertNotEquals( '', $id );
@@ -66,7 +70,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	 */
 	public function testRichAttributeBackCompat1() {
 		$doc = ContentUtils::createAndLoadDocument(
-			"<p foo='flattened!' data-mw='{\"attribs\":[[\"foo\",{\"bar\":42}]]}'>Hello, world</p>"
+			"<p foo='flattened!' data-mw='{\"attribs\":[[\"foo\",{\"rich\":{\"bar\":42}}]]}'>Hello, world</p>"
 		);
 		$p = DOMCompat::querySelector( $doc, 'p' );
 
@@ -93,7 +97,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	 */
 	public function testRichAttributeBackCompat2() {
 		$doc = ContentUtils::createAndLoadDocument(
-			"<p foo='flattened!' data-mw='{\"attribs\":[[\"foo\",{\"bar\":42}],[{\"txt\":\"bar\",\"html\":\"&lt;b>bar&lt;/b>\"},{\"html\":\"xyz\"}]]}'>Hello, world</p>"
+			"<p foo='flattened!' data-mw='{\"attribs\":[[\"foo\",{\"rich\":{\"bar\":42}}],[{\"txt\":\"bar\",\"html\":\"&lt;b>bar&lt;/b>\"},{\"html\":\"xyz\"}]]}'>Hello, world</p>"
 		);
 		$p = DOMCompat::querySelector( $doc, 'p' );
 
@@ -116,6 +120,27 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 			'>Hello, world</p>',
 			$html
 		);
+	}
+
+	/**
+	 * @covers ::removeAttributeObject
+	 * @return void
+	 * Persistent attributes should not be removed, only set to null
+	 */
+	public function testRemovalOfPersistentDataAttributes() {
+		$doc = ContentUtils::createAndLoadDocument(
+			"<p>Hello, world</p>"
+		);
+		$p = DOMCompat::querySelector( $doc, 'p' );
+		$data = DOMDataUtils::getNodeData( $p );
+		$data->mw = new DataMw();
+		$data->parsoid = new DataParsoid();
+		DOMDataUtils::removeAttributeObject( $p, "data-mw" );
+		$this->assertNull( $data->mw );
+		$this->assertNotNull( $data->parsoid );
+		DOMDataUtils::removeAttributeObject( $p, "data-parsoid" );
+		$this->assertNull( $data->parsoid );
+		$this->assertNull( $data->mw );
 	}
 
 	/**
@@ -154,7 +179,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 			'<p' .
 			' foo="flattened!"' .
 			' typeof="mw:ExpandedAttrs"' .
-			' data-mw=\'{"attribs":[["foo",{"bar":"car"}]]}\'' .
+			' data-mw=\'{"attribs":[["foo",{"rich":{"bar":"car"}}]]}\'' .
 			' data-mw-foo=\'{"bar":"car"}\'' .
 			'>' .
 			'Hello, world</p>',
@@ -209,7 +234,8 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 			'<p data-mw-foo=\'{"rich":{"bar":"nested!"}}\' data-mw-bar=\'{"html":{"_h":"Nested and &lt;b>bold&lt;/b>!"}}\'>Hello, world</p>',
 			$html
 		);
-		DOMDataUtils::loadDataAttribs( $p, [] );
+
+		DOMDataUtils::visitAndLoadDataAttribs( $p );
 
 		// Values should be preserved!
 		$rd3 = DOMDataUtils::getAttributeObject( $p, 'data-mw-foo', SampleNestedRichData::class );
@@ -275,41 +301,43 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		}
 		// Serialize and deserialize (both serializations)
 		foreach ( [ true, false ] as $useFragmentBank ) {
-			$html = DomPageBundle::fromLoadedDocument( $doc, [
+			$siteConfig = new MockSiteConfig( [] );
+			$options = [
 				'useFragmentBank' => $useFragmentBank,
 				'discardDataParsoid' => true,
-				'siteConfig' => new MockSiteConfig( [] ),
-			] )->toInlineAttributeHtml();
+			];
+			$html = DomPageBundle::fromLoadedDocument( $doc, siteConfig: $siteConfig, options: $options )
+				->toInlineAttributeHtml( siteConfig: $siteConfig, options: $options );
 			$this->assertSame(
 				$useFragmentBank ?
 				"<!DOCTYPE html>\n<html><head>" .
-				'<template data-tid="g/SsaX6L">This is pretty <b>bold</b>!</template>' .
-				'<template data-tid="ie1lOoOR">ebb &amp; flow</template>' .
 				'<template data-tid="g/SsaX6L-1">This is pretty <b>bold</b>!</template>' .
-				'<template data-tid="ie1lOoOR-1">ebb &amp; flow</template>' .
+				'<template data-tid="ie1lOoOR">ebb &amp; flow</template>' .
+				'<template data-tid="g/SsaX6L-2">This is pretty <b>bold</b>!</template>' .
 				'</head><body><p ' .
 				'title="This is pretty bold!" ' .
 				'typeof="mw:ExpandedAttrs" ' .
 				'title2="ebb &amp; flow" ' .
-				'data-mw=\'{"attribs":[["title",{"_t":"g/SsaX6L"}],["title2",{"_t":"ie1lOoOR"}]]}\' ' .
 				'data-mw-foo=\'{"_t":"g/SsaX6L-1"}\' ' .
-				'data-mw-foo2=\'{"_t":"ie1lOoOR-1"}\'>' .
+				'data-mw-foo2=\'{"_t":"ie1lOoOR"}\' ' .
+				'data-mw=\'{"attribs":[["title",{"html":{"_t":"g/SsaX6L-2"}}]]}\'>' .
 				'Hello, world</p>' .
 				'</body></html>' :
 
 				"<!DOCTYPE html>\n<html><head></head><body>" .
 				'<p ' .
-				'typeof="mw:ExpandedAttrs" ' .
 				'title="This is pretty bold!" ' .
+				'typeof="mw:ExpandedAttrs" ' .
 				'title2="ebb &amp; flow" ' .
-				'data-mw=\'{"attribs":[' .
-				'["title",{"_h":"This is pretty &lt;b>bold&lt;/b>!"}],' .
-				'["title2",{"_h":"ebb &amp;amp; flow"}]]}\' ' .
 				'data-mw-foo=\'{"_h":"This is pretty &lt;b>bold&lt;/b>!"}\' ' .
-				'data-mw-foo2=\'{"_h":"ebb &amp;amp; flow"}\'>' .
+				'data-mw-foo2=\'{"_h":"ebb &amp;amp; flow"}\' ' .
+				'data-mw=\'{"attribs":[' .
+				'["title",{"html":"This is pretty &lt;b>bold&lt;/b>!"}]' .
+				']}\'>' .
 				'Hello, world</p>' .
 				'</body></html>',
-				$html
+				$html,
+				"useFragmentBank=" . ( $useFragmentBank ? "true" : "false" )
 			);
 			$doc = ContentUtils::createAndLoadDocument( $html );
 			$p = DOMCompat::querySelector( $doc, 'p' );
@@ -361,25 +389,28 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		}
 		// Serialize and deserialize (both serializations)
 		foreach ( [ true, false ] as $useFragmentBank ) {
-			$html = DomPageBundle::fromLoadedDocument( $doc, [
+			$siteConfig = new MockSiteConfig( [] );
+			$options = [
 				'useFragmentBank' => $useFragmentBank,
 				'discardDataParsoid' => true,
-				'siteConfig' => new MockSiteConfig( [] ),
-			] )->toInlineAttributeHtml();
+			];
+			$html = DomPageBundle::fromLoadedDocument( $doc, siteConfig: $siteConfig, options: $options )
+				->toInlineAttributeHtml( siteConfig: $siteConfig, options: $options );
 			$this->assertSame(
 				$useFragmentBank ?
 				"<!DOCTYPE html>\n<html><head>" .
-				'<template data-tid="uOo/VU3m"><b>be bold</b></template>' .
 				'<template data-tid="uOo/VU3m-1"><b>be bold</b></template>' .
-				'<template data-tid="g/SsaX6L">This is pretty <b title="be bold" typeof="mw:ExpandedAttrs" data-mw=\'{"attribs":[["title",{"_t":"uOo/VU3m"}]]}\' data-mw-foo=\'{"_t":"uOo/VU3m-1"}\'>bold</b>!</template>' .
 				'<template data-tid="uOo/VU3m-2"><b>be bold</b></template>' .
 				'<template data-tid="uOo/VU3m-3"><b>be bold</b></template>' .
-				'<template data-tid="g/SsaX6L-1">This is pretty <b title="be bold" typeof="mw:ExpandedAttrs" data-mw=\'{"attribs":[["title",{"_t":"uOo/VU3m-2"}]]}\' data-mw-foo=\'{"_t":"uOo/VU3m-3"}\'>bold</b>!</template>' .
+				'<template data-tid="g/SsaX6L-1">This is pretty <b title="be bold" typeof="mw:ExpandedAttrs" data-mw=\'{"attribs":[["title",{"html":{"_t":"uOo/VU3m-2"}}]]}\' data-mw-foo=\'{"_t":"uOo/VU3m-3"}\'>bold</b>!</template>' .
+				'<template data-tid="uOo/VU3m-4"><b>be bold</b></template>' .
+				'<template data-tid="g/SsaX6L-2">This is pretty <b title="be bold" typeof="mw:ExpandedAttrs" data-mw-foo=\'{"_t":"uOo/VU3m-1"}\' data-mw=\'{"attribs":[["title",{"html":{"_t":"uOo/VU3m-4"}}]]}\'>bold</b>!</template>' .
 				'</head><body><p ' .
 				'title="This is pretty bold!" ' .
 				'typeof="mw:ExpandedAttrs" ' .
-				'data-mw=\'{"attribs":[["title",{"_t":"g/SsaX6L"}]]}\' ' .
-				'data-mw-foo=\'{"_t":"g/SsaX6L-1"}\'>Hello, world</p>' .
+				'data-mw-foo=\'{"_t":"g/SsaX6L-1"}\' ' .
+				'data-mw=\'{"attribs":[["title",{"html":{"_t":"g/SsaX6L-2"}}]]}\'>' .
+				'Hello, world</p>' .
 				'</body></html>' :
 
 				"<!DOCTYPE html>\n<html><head></head><body>" .
@@ -387,19 +418,23 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 				'<p ' .
 				'typeof="mw:ExpandedAttrs" ' .
 				'title="This is pretty bold!" ' .
-				'data-mw=\'{"attribs":[["title",{"_h":' .
-				'"This is pretty &lt;b typeof=\"mw:ExpandedAttrs\" ' .
-				'title=\"be bold\" ' .
-				'data-mw=&apos;{\"attribs\":[[\"title\",{\"_h\":' .
-				'\"&amp;lt;b>be bold&amp;lt;/b>\"}]]}&apos; ' .
-				'data-mw-foo=&apos;{\"_h\":\"&amp;lt;b>be bold&amp;lt;/b>\"}&apos;>bold&lt;/b>!"}]]}\' ' .
 				'data-mw-foo=\'{"_h":' .
-				'"This is pretty &lt;b typeof=\"mw:ExpandedAttrs\" ' .
+				'"This is pretty &lt;b ' .
+				'typeof=\"mw:ExpandedAttrs\" ' .
 				'title=\"be bold\" ' .
-				'data-mw=&apos;{\"attribs\":[[\"title\",{\"_h\":' .
+				'data-mw=&apos;{\"attribs\":[[\"title\",{\"html\":' .
 				'\"&amp;lt;b>be bold&amp;lt;/b>\"}]]}&apos; ' .
 				'data-mw-foo=&apos;{\"_h\":' .
-				'\"&amp;lt;b>be bold&amp;lt;/b>\"}&apos;>bold&lt;/b>!"}\'>Hello, world</p>' .
+				'\"&amp;lt;b>be bold&amp;lt;/b>\"}&apos;>bold&lt;/b>!"}\' ' .
+				'data-mw=\'{"attribs":[["title",{"html":' .
+				'"This is pretty &lt;b ' .
+				'typeof=\"mw:ExpandedAttrs\" ' .
+				'title=\"be bold\" ' .
+				'data-mw-foo=&apos;{\"_h\":\"&amp;lt;b>be bold&amp;lt;/b>\"}&apos; ' .
+				'data-mw=&apos;{\"attribs\":[[\"title\",{\"html\":' .
+				'\"&amp;lt;b>be bold&amp;lt;/b>\"}]]}&apos;' .
+				'>bold&lt;/b>!"}]]}\'>' .
+				'Hello, world</p>' .
 				'</body></html>',
 				$html
 			);
@@ -429,7 +464,7 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	public function testRichAttributeDomPageBundle( bool $useFragmentBank ) {
 		$env = new MockEnv( [] );
 		$doc = ContentUtils::createAndLoadDocument(
-			"<p>Hello, world</p>", [ 'markNew' => false, ]
+			"<p>Hello, world</p>", [ 'serializeNewEmptyDp' => true ]
 		);
 		$p = DOMCompat::querySelector( $doc, 'p' );
 		$dp = DOMDataUtils::getDataParsoid( $p );
@@ -441,37 +476,39 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		$dp2->src = "test2";
 
 		// Serialize
-		$html = DomPageBundle::fromLoadedDocument( $doc, [
-			'useFragmentBank' => $useFragmentBank,
-			'siteConfig' => new MockSiteConfig( [] ),
-		] )->toSingleDocumentHtml();
+		$html = DomPageBundle::fromLoadedDocument(
+			$doc, siteConfig: new MockSiteConfig( [] ), options: [
+				'useFragmentBank' => $useFragmentBank,
+			] )->toSingleDocumentHtml();
 		$this->assertSame(
 			$useFragmentBank ?
 			"<!DOCTYPE html>\n<html><head>" .
 			'<template data-tid="uOo/VU3m"><b id="mwAQ">be bold</b></template>' .
 			'<script id="mw-pagebundle" type="application/x-mw-pagebundle">' .
-			'{"parsoid":{"counter":2,"ids":{' .
-			'"mwAA":{},' .
+			'{"parsoid":{"ids":{' .
+			'"mwAA":{"_type_":"stdClass"},' .
 			'"mwAQ":{"src":"test2"},' .
 			'"mwAg":{"src":"test1"}}' .
-			'},"mw":{"ids":[]}}</script></head>' .
+			'},"mw":{"ids":[]},' .
+			'"counters":{"nodedata":2,"annotation":0,"transclusion":1}}</script></head>' .
 			'<body id="mwAA"><p ' .
 			'title="be bold" ' .
 			'typeof="mw:ExpandedAttrs" ' .
-			'data-mw=\'{"attribs":[["title",{"_t":"uOo/VU3m"}]]}\' ' .
+			'data-mw=\'{"attribs":[["title",{"html":{"_t":"uOo/VU3m"}}]]}\' ' .
 			'id="mwAg">Hello, world</p></body></html>'
 			:
 			"<!DOCTYPE html>\n<html><head>" .
 			'<script id="mw-pagebundle" type="application/x-mw-pagebundle">' .
-			'{"parsoid":{"counter":2,"ids":{' .
-			'"mwAA":{},' .
+			'{"parsoid":{"ids":{' .
+			'"mwAA":{"_type_":"stdClass"},' .
 			'"mwAQ":{"src":"test2"},' .
 			'"mwAg":{"src":"test1"}}' .
-			'},"mw":{"ids":[]}}</script></head>' .
+			'},"mw":{"ids":[]},' .
+			'"counters":{"nodedata":2,"annotation":0,"transclusion":1}}</script></head>' .
 			'<body id="mwAA"><p ' .
 			'title="be bold" ' .
 			'typeof="mw:ExpandedAttrs" ' .
-			'data-mw=\'{"attribs":[["title",{"_h":"&lt;b id=\"mwAQ\">be bold&lt;/b>"}]]}\' ' .
+			'data-mw=\'{"attribs":[["title",{"html":"&lt;b id=\"mwAQ\">be bold&lt;/b>"}]]}\' ' .
 			'id="mwAg">Hello, world</p></body></html>',
 			$html
 		);
@@ -499,8 +536,9 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 	public function testCloneDocument() {
 		// Create a document with some data-parsoid and rich attributes
 		$doc = ContentUtils::createAndLoadDocument(
-			"<p>Hello, world</p>", [ 'markNew' => false, ]
+			"<p>Hello, world</p>", [ 'serializeNewEmptyDp' => true ]
 		);
+
 		$p = DOMCompat::querySelector( $doc, 'p' );
 		$p_dp = DOMDataUtils::getDataParsoid( $p );
 		$p_dp->src = "test1";
@@ -538,5 +576,448 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( $doc2, $dff2->ownerDocument );
 		$this->assertNotSame( $dff, $dff2 );
 		$this->assertSame( '<i>nice!</i>', DOMUtils::getFragmentInnerHTML( $dff2 ) );
+	}
+
+	/**
+	 * @covers ::cloneDocument
+	 */
+	public function testCloneInlineAttrsDocument() {
+		// Create a document with some data-parsoid and rich attributes
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p><span typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p>',
+			[ 'serializeNewEmptyDp' => true ]
+		);
+
+		// Clone the document before loading anything from $doc.
+		// This lets us test that cloning works under lazy-loading scenarios.
+		$doc2 = DOMDataUtils::cloneDocument( $doc );
+
+		$p = DOMCompat::getBody( $doc )->firstChild;
+		$span = $p->firstChild;
+		$p_dp = DOMDataUtils::getDataParsoid( $p );
+		$span_dp = DOMDataUtils::getDataParsoid( $span );
+		$dmv = DOMDataUtils::getDataMwVariant( $span );
+		$f1 = $dmv->disabled;
+		$f1_dp = DOMDataUtils::getDataParsoid( $f1->firstChild );
+
+		$p2 = DOMCompat::getBody( $doc2 )->firstChild;
+		$this->assertNotSame( $p, $p2 );
+		$span2 = $p2->firstChild;
+		$p2_dp = DOMDataUtils::getDataParsoid( $p2 );
+		$span2_dp = DOMDataUtils::getDataParsoid( $span2 );
+		$dmv2 = DOMDataUtils::getDataMwVariant( $span2 );
+		$f2 = $dmv2->disabled;
+		$f2_dp = DOMDataUtils::getDataParsoid( $f2->firstChild );
+
+		// Verify cloning at nested levels
+		$this->assertNotSame( $p_dp, $p2_dp );
+		$this->assertNotSame( $span_dp, $span2_dp );
+		$this->assertNotSame( $dmv, $dmv2 );
+		$this->assertNotSame( $f1_dp, $f2_dp );
+
+		// Since we are cloning documents, the data bags are also cloned
+		// and hence ids & data objects associated with the bags can be equal.
+		$p1_html = ContentUtils::toXML( $p );
+		$p2_html = ContentUtils::toXML( $p2 );
+		$this->assertSame( $p1_html, $p2_html );
+	}
+
+	/**
+	 * @covers ::cloneDocumentFragment
+	 */
+	public function testCloneInlineAttrsDocumentFragment() {
+		// Create a document with some data-parsoid and rich attributes
+		$doc = ContentUtils::createAndLoadDocument( '' );
+		$frag = ContentUtils::createAndLoadDocumentFragment(
+			$doc,
+			'<p><span typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p>'
+		);
+
+		// Clone the document fragment before loading anything from $doc.
+		// This lets us test that cloning works under lazy-loading scenarios.
+		$frag2 = DOMDataUtils::cloneDocumentFragment( $frag );
+
+		$p = $frag->firstChild;
+		$span = $p->firstChild;
+		$p_dp = DOMDataUtils::getDataParsoid( $p );
+		$span_dp = DOMDataUtils::getDataParsoid( $span );
+		$dmv = DOMDataUtils::getDataMwVariant( $span );
+		$f1 = $dmv->disabled;
+		$f1_dp = DOMDataUtils::getDataParsoid( $f1->firstChild );
+
+		$p2 = $frag2->firstChild;
+		$span2 = $p2->firstChild;
+		$p2_dp = DOMDataUtils::getDataParsoid( $p2 );
+		$span2_dp = DOMDataUtils::getDataParsoid( $span2 );
+		$dmv2 = DOMDataUtils::getDataMwVariant( $span2 );
+		$f2 = $dmv2->disabled;
+		$f2_dp = DOMDataUtils::getDataParsoid( $f2->firstChild );
+
+		// Verify cloning at nested levels
+		$this->assertNotSame( $p_dp, $p2_dp );
+		$this->assertNotSame( $span_dp, $span2_dp );
+		$this->assertNotSame( $dmv, $dmv2 );
+		$this->assertNotSame( $f1_dp, $f2_dp );
+
+		// Since we are cloning document fragments, the data bags are identical
+		// and hence the associated ids should not be identical.
+		$p1_html = ContentUtils::toXML( $p );
+		$p2_html = ContentUtils::toXML( $p2 );
+		$this->assertNotSame( $p1_html, $p2_html );
+	}
+
+	/**
+	 * @covers ::cloneDocument
+	 */
+	public function testClonePageBundleAttrsDocument() {
+		// Create a document with some data-parsoid and rich attributes
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => 2, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [ "mwAA" => [ "a" => "b" ], "mwAB" => [ "c" => "d" ], "mwAC" => [ "e" => "f" ] ] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p id="mwAA"><span id="mwAB" typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span id=\"mwAC\" typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p>',
+			[ 'loadFromPageBundle' => $inPb ]
+		);
+
+		// Clone the document before loading anything from $doc.
+		// This lets us test that cloning works under lazy-loading scenarios.
+		$doc2 = DOMDataUtils::cloneDocument( $doc );
+
+		$p = DOMCompat::getBody( $doc )->firstChild;
+		$span = $p->firstChild;
+		$p_dp = DOMDataUtils::getDataParsoid( $p );
+		$span_dp = DOMDataUtils::getDataParsoid( $span );
+		$dmv = DOMDataUtils::getDataMwVariant( $span );
+		$f1 = $dmv->disabled;
+		$f1_dp = DOMDataUtils::getDataParsoid( $f1->firstChild );
+
+		$p2 = DOMCompat::getBody( $doc2 )->firstChild;
+		$span2 = $p2->firstChild;
+		$p2_dp = DOMDataUtils::getDataParsoid( $p2 );
+		$span2_dp = DOMDataUtils::getDataParsoid( $span2 );
+		$dmv2 = DOMDataUtils::getDataMwVariant( $span2 );
+		$f2 = $dmv2->disabled;
+		$f2_dp = DOMDataUtils::getDataParsoid( $f2->firstChild );
+
+		// Verify cloning at nested levels
+		$this->assertNotSame( $p_dp, $p2_dp );
+		$this->assertNotSame( $span_dp, $span2_dp );
+		$this->assertNotSame( $dmv, $dmv2 );
+		$this->assertNotSame( $f1_dp, $f2_dp );
+
+		// Since we are cloning documents, the data bags are also cloned
+		// and hence ids & data objects associated with the bags are identical.
+		$p1_html = ContentUtils::toXML( $p );
+		$p2_html = ContentUtils::toXML( $p2 );
+		$this->assertSame( $p1_html, $p2_html );
+
+		// Dump the two docs to two different pagebundles
+		// They should be equal (but won't be the same object).
+		$outPb = DomPageBundle::newEmpty( $doc );
+		DOMDataUtils::storeAndUnprepareDoc( $doc, [
+			'storeInPageBundle' => $outPb,
+			'idIndex' => array_fill_keys( array_keys( $inPb->parsoid['ids'] ), true ),
+			'fragments' => []
+		] );
+
+		$outPb2 = DomPageBundle::newEmpty( $doc2 );
+		DOMDataUtils::storeAndUnprepareDoc( $doc2, [
+			'storeInPageBundle' => $outPb2,
+			'idIndex' => array_fill_keys( array_keys( $inPb->parsoid['ids'] ), true ),
+			'fragments' => []
+		] );
+
+		$this->assertEquals( $outPb->toJsonArray(), $outPb2->toJsonArray() );
+	}
+
+	/**
+	 * @covers ::cloneDocumentFragment
+	 */
+	public function testClonePageBundleAttrsDocumentFragment() {
+		// Create a document with some data-parsoid and rich attributes
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => 2, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [ "mwAA" => [ "a" => "b" ], "mwAB" => [ "c" => "d" ], "mwAC" => [ "e" => "f" ] ] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument( '', [ 'loadFromPageBundle' => $inPb ] );
+		$frag = ContentUtils::createAndLoadDocumentFragment(
+			$doc,
+			'<p id="mwAA"><span id="mwAB" typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span id=\"mwAC\" typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p>',
+		);
+
+		// Clone the document before loading anything from $doc.
+		// This lets us test that cloning works under lazy-loading scenarios.
+		$frag2 = DOMDataUtils::cloneDocumentFragment( $frag );
+
+		$p = $frag->firstChild;
+		$span = $p->firstChild;
+		$p_dp = DOMDataUtils::getDataParsoid( $p );
+		$span_dp = DOMDataUtils::getDataParsoid( $span );
+		$dmv = DOMDataUtils::getDataMwVariant( $span );
+		$f1 = $dmv->disabled;
+		$f1_dp = DOMDataUtils::getDataParsoid( $f1->firstChild );
+
+		$p2 = $frag2->firstChild;
+		$span2 = $p2->firstChild;
+		$p2_dp = DOMDataUtils::getDataParsoid( $p2 );
+		$span2_dp = DOMDataUtils::getDataParsoid( $span2 );
+		$dmv2 = DOMDataUtils::getDataMwVariant( $span2 );
+		$f2 = $dmv2->disabled;
+		$f2_dp = DOMDataUtils::getDataParsoid( $f2->firstChild );
+
+		// Verify cloning at nested levels
+		$this->assertNotSame( $p_dp, $p2_dp );
+		$this->assertNotSame( $span_dp, $span2_dp );
+		$this->assertNotSame( $dmv, $dmv2 );
+		$this->assertNotSame( $f1_dp, $f2_dp );
+
+		// Since we are cloning document fragments, the data bags are identical
+		// and hence the associated data-object-ids should not be identical.
+		$p1_html = ContentUtils::toXML( $p );
+		$p2_html = ContentUtils::toXML( $p2 );
+		$this->assertNotSame( $p1_html, $p2_html );
+
+		// Dump the doc & fragments to an output pagebundle
+		// We should see the ids deduplicated in the fragments
+		$outPb = DomPageBundle::newEmpty( $doc );
+		DOMDataUtils::storeAndUnprepareDoc( $doc, [
+			'storeInPageBundle' => $outPb,
+			'idIndex' => array_fill_keys( array_keys( $inPb->parsoid['ids'] ), true ),
+			'fragments' => [ $frag, $frag2 ]
+		] );
+
+		$this->assertCount( 6, $outPb->parsoid['ids'] );
+		// This might feel strange, but that is because 'mwAA', 'mwAB', 'mwAC' come
+		// after 'mwAQ', 'mwAg', 'mwAw' -- the newly assigned ids
+		$this->assertSame( 3, $outPb->counters['nodedata'] );
+	}
+
+	/**
+	 * @covers ::cloneDocumentFragment
+	 * @covers ::dedupeNodeData
+	 */
+	public function testFragmentCloningAndDedupeNodeData() {
+		// Create a document with some data-parsoid and rich attributes
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => 2, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [ "mwAA" => [ "a" => "b" ], "mwAB" => [ "c" => "d" ], "mwAC" => [ "e" => "f" ] ] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument( '', [ 'loadFromPageBundle' => $inPb ] );
+		$frag = ContentUtils::createAndLoadDocumentFragment(
+			$doc,
+			'<p id="mwAA"><span id="mwAB" typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span id=\"mwAC\" typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p>',
+		);
+
+		$p = DOMCompat::querySelector( $frag, 'p' );
+		$pClone = DOMDataUtils::cloneNode( $p, true );
+		$p->parentNode->appendChild( $pClone );
+
+		// Dump the doc & fragments to an output pagebundle
+		// We should see the ids deduplicated in the fragments
+		$outPb = DomPageBundle::newEmpty( $doc );
+		DOMDataUtils::storeAndUnprepareDoc( $doc, [
+			'storeInPageBundle' => $outPb,
+			'idIndex' => array_fill_keys( array_keys( $inPb->parsoid['ids'] ), true ),
+			'fragments' => [ $frag ]
+		] );
+		$this->assertCount( 6, $outPb->parsoid['ids'] );
+
+		// Six different ids with three of them deduplicated via data-x-id
+		$expectedFragHtml = '<p id="mwAA"><span id="mwAB" typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span id=\"mwAC\" typeof=\"mw:Entity\">foo&lt;/span>"}}\'></span></p><p id="mwAQ" data-x-id="mwAA"><span id="mwAw" typeof="mw:LanguageVariant" data-mw-variant=\'{"disabled":{"t":"&lt;span id=\"mwAg\" typeof=\"mw:Entity\" data-x-id=\"mwAC\">foo&lt;/span>"}}\' data-x-id="mwAB"></span></p>';
+		$this->assertSame( $expectedFragHtml, ContentUtils::toXML( $frag ) );
+	}
+
+	/**
+	 * @covers ::prepareAndLoadDoc
+	 * @covers ::visitAndLoadDataAttribs
+	 * @covers ::loadDataAttribs
+	 * @covers ::visitAndStoreDataAttribs
+	 * @covers ::storeRichAttributes
+	 * @covers ::storeDataAttribs
+	 * @covers ::storeInPageBundle
+	 */
+	public function testInlineAttrsToPageBundleDataParsoidLazyLoading(): void {
+		// inline dp -> pagebundle dp
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p data-parsoid=\'{"a":"b"}\' data-mw=\'{"c":"d"}\'>Hello, world</p>'
+		);
+
+		// Verify laziness
+		$bag = DOMDataUtils::getBag( $doc );
+		$reflection = new \ReflectionClass( $bag );
+		$bagData = $reflection->getProperty( 'dataObject' )->getValue( $bag );
+		// Two nodes: <body>, <p>
+		$this->assertCount( 2, $bagData );
+		// Node data loaded because counters are missing, but data-parsoid is not loaded
+		$this->assertNull( $bagData[0]->parsoid );
+		$this->assertNull( $bagData[0]->mw );
+		$this->assertNull( $bagData[1]->parsoid );
+		// data-mw is eagerly loaded because of trying to init annotation id counter
+		$this->assertSame( DataMw::class, get_class( $bagData[1]->mw ) );
+
+		$outPb = DomPageBundle::newEmpty( $doc );
+		$this->assertSame( [], $outPb->parsoid['ids'] );
+		$this->assertSame( -1, $outPb->counters['nodedata'] );
+		DOMDataUtils::visitAndStoreDataAttribs( $doc, [
+			'idIndex' => [],
+			'storeInPageBundle' => $outPb,
+		] );
+		$this->assertSame( [ "mwAA" => [ "a" => "b" ] ], $outPb->parsoid['ids'] );
+		$this->assertSame( 0, $outPb->counters['nodedata'] );
+		$this->assertSame( 0, $outPb->counters['annotation'] );
+		$this->assertSame( 1, $outPb->counters['transclusion'] );
+		$out = XHtmlSerializer::serialize( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
+		$this->assertSame( '<p data-mw=\'{"c":"d"}\' id="mwAA">Hello, world</p>', $out['html'] );
+	}
+
+	/**
+	 * @covers ::prepareAndLoadDoc
+	 * @covers ::visitAndLoadDataAttribs
+	 * @covers ::loadDataAttribs
+	 * @covers ::visitAndStoreDataAttribs
+	 * @covers ::storeRichAttributes
+	 * @covers ::storeDataAttribs
+	 * @covers ::storeInPageBundle
+	 */
+	public function testInlineAttrsToPageBundleDataMwLazyLoading(): void {
+		// inline attrs -> pagebundle
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => -1, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p data-parsoid=\'{"a":"b"}\' data-mw=\'{"c":"d"}\'>Hello, world</p>',
+			[ 'loadFromPageBundle' => $inPb ]
+		);
+
+		// Verify laziness
+		$bag = DOMDataUtils::getBag( $doc );
+		$reflection = new \ReflectionClass( $bag );
+		$bagData = $reflection->getProperty( 'dataObject' )->getValue( $bag );
+		// Two nodes: <body>, <p>
+		$this->assertCount( 2, $bagData );
+		// Node data loaded to init about id, but data-parsoid & data-mw are not loaded
+		// because the inPb provided counters (NOTE: current lazy loading code doesn't
+		// check that annotation counter has been provided.)
+		$this->assertNull( $bagData[0]->parsoid );
+		$this->assertNull( $bagData[0]->mw );
+		$this->assertNull( $bagData[1]->parsoid );
+		$this->assertNull( $bagData[1]->mw );
+
+		// pagebundle -> pagebundle
+		$outPb = new DomPageBundle( $doc, counters: $inPb->counters );
+		DOMDataUtils::visitAndStoreDataAttribs( $doc, [
+			'idIndex' => [],
+			'storeInPageBundle' => $outPb,
+		] );
+		$this->assertSame( [ "mwAA" => [ "a" => "b" ] ], $outPb->parsoid['ids'] );
+		$this->assertSame( 0, $outPb->counters['nodedata'] );
+		$this->assertSame( 0, $outPb->counters['annotation'] );
+		$this->assertSame( 1, $outPb->counters['transclusion'] );
+		$out = XHtmlSerializer::serialize( DOMCompat::getBody( $doc ), [ 'innerXML' => true ] );
+		$this->assertSame( '<p data-mw=\'{"c":"d"}\' id="mwAA">Hello, world</p>', $out['html'] );
+	}
+
+	/**
+	 * @covers ::prepareAndLoadDoc
+	 * @covers ::visitAndLoadDataAttribs
+	 * @covers ::loadDataAttribs
+	 * @covers ::visitAndStoreDataAttribs
+	 * @covers ::storeRichAttributes
+	 * @covers ::storeDataAttribs
+	 */
+	public function testInlineAttrsToInlineAttrsLazyLoading(): void {
+		// inline attrs -> pagebundle
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => -1, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p data-parsoid=\'{"a":"b"}\' data-mw=\'{"c":"d"}\'>Hello, world</p>',
+			[ 'loadFromPageBundle' => $inPb ]
+		);
+		$body = DOMCompat::getBody( $doc );
+		'@phan-var Element $p'; // @var Element $p
+		$p = $body->firstChild;
+
+		// Verify laziness
+		$bag = DOMDataUtils::getBag( $doc );
+		$reflection = new \ReflectionClass( $bag );
+		$bagData = $reflection->getProperty( 'dataObject' )->getValue( $bag );
+		// Two nodes: <body>, <p>
+		$this->assertCount( 2, $bagData );
+		// Node data loaded to init about id, but data-parsoid & data-mw are not loaded
+		// because the inPb provided counters (NOTE: current lazy loading code doesn't
+		// check that annotation counter has been provided.)
+		$this->assertNull( $bagData[0]->parsoid );
+		$this->assertNull( $bagData[0]->mw );
+		$this->assertNull( $bagData[1]->parsoid );
+		$this->assertNull( $bagData[1]->mw );
+		$this->assertSame( '{"a":"b"}', DOMCompat::getAttribute( $p, "data-parsoid" ) );
+		$this->assertSame( '{"c":"d"}', DOMCompat::getAttribute( $p, "data-mw" ) );
+		// Now load $p's data-mw and assert loaded state
+		DOMDataUtils::getDataMw( $p );
+		$this->assertFalse( $p->hasAttribute( "data-mw" ) );
+		$this->assertSame( DataMw::class, get_class( $bagData[1]->mw ) );
+
+		// pagebundle -> inline attributes
+		DOMDataUtils::visitAndStoreDataAttribs( $doc );
+		$out = XHtmlSerializer::serialize( $body, [ 'innerXML' => true ] );
+		$this->assertSame( '<p data-parsoid=\'{"a":"b"}\' data-mw=\'{"c":"d"}\'>Hello, world</p>', $out['html'] );
+	}
+
+	/**
+	 * @covers ::prepareAndLoadDoc
+	 * @covers ::visitAndLoadDataAttribs
+	 * @covers ::loadDataAttribs
+	 * @covers ::visitAndStoreDataAttribs
+	 * @covers ::storeRichAttributes
+	 * @covers ::storeDataAttribs
+	 */
+	public function testPageBundleToInlineAttrsLazyLoading(): void {
+		// pagebundle -> pagebundle
+		$inPb = new BasePageBundle(
+			counters: [ 'nodedata' => 0, 'annotation' => 0, 'transclusion' => 1 ],
+			parsoid: [ 'ids' => [ "mwAA" => [ "a" => "b" ] ] ],
+			mw: [ 'ids' => [] ],
+		);
+		$doc = ContentUtils::createAndLoadDocument(
+			'<p id="mwAA" data-mw=\'{"c":"d"}\'>Hello, world</p>',
+			[ 'loadFromPageBundle' => $inPb ]
+		);
+
+		$body = DOMCompat::getBody( $doc );
+		$p = $body->firstChild;
+
+		// Verify laziness
+		$bag = DOMDataUtils::getBag( $doc );
+		$reflection = new \ReflectionClass( $bag );
+		$bagData = $reflection->getProperty( 'dataObject' )->getValue( $bag );
+		// Two nodes: <body>, <p>
+		$this->assertCount( 2, $bagData );
+		// Node data loaded to init about id, but data-parsoid & data-mw are not loaded
+		// because the inPb provided counters (NOTE: current lazy loading code doesn't
+		// check that annotation counter has been provided.)
+		$this->assertNull( $bagData[0]->parsoid );
+		$this->assertNull( $bagData[0]->mw );
+		$this->assertNull( $bagData[1]->mw );
+		// Partial lazy load (i.e. cheap transfer from pagebundle),
+		// but DataParsoid class isn't intialized
+		$this->assertIsArray( $bagData[1]->parsoid );
+		// Load data-parsoid and assert that it is fully initialized
+		DOMDataUtils::getDataParsoid( $p );
+		$this->assertSame( DataParsoid::class, get_class( $bagData[1]->parsoid ) );
+
+		// pagebundle -> inline attributes
+		DOMDataUtils::visitAndStoreDataAttribs( $doc );
+		$out = XHtmlSerializer::serialize( $body, [ 'innerXML' => true ] );
+		// FIXME: id attribute is left behind even if we are serializing to inline attrs format
+		$this->assertSame( '<p id="mwAA" data-mw=\'{"c":"d"}\' data-parsoid=\'{"a":"b"}\'>Hello, world</p>', $out['html'] );
 	}
 }

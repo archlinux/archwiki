@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Jobs;
+namespace MediaWiki\Extension\CheckUser\Jobs;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\JobQueue\IJobSpecification;
 use MediaWiki\JobQueue\Job;
 use MediaWiki\JobQueue\JobSpecification;
@@ -19,12 +19,12 @@ class StoreClientHintsDataJob extends Job {
 	 */
 	public const TYPE = 'checkuserStoreClientHintsDataJob';
 
-	private UserAgentClientHintsManager $userAgentClientHintsManager;
-
 	/** @inheritDoc */
-	public function __construct( array $params, UserAgentClientHintsManager $userAgentClientHintsManager ) {
+	public function __construct(
+		array $params,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+	) {
 		parent::__construct( self::TYPE, $params );
-		$this->userAgentClientHintsManager = $userAgentClientHintsManager;
 	}
 
 	/**
@@ -58,7 +58,9 @@ class StoreClientHintsDataJob extends Job {
 	public function run(): bool {
 		$clientHintsData = ClientHintsData::newFromSerialisedJsonArray( $this->params['clientHintsData'] );
 		$this->userAgentClientHintsManager->insertClientHintValues(
-			$clientHintsData, $this->params['referenceId'], $this->params['referenceType']
+			$clientHintsData,
+			$this->params['referenceId'],
+			$this->params['referenceType']
 		);
 
 		return true;

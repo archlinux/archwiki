@@ -266,7 +266,7 @@ class MMLRenderTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testSumDisplaystyle() {
-		$input = "\sum_{k=1}^N k^2";
+		$input = "\\displaystyle \\sum_{k=1}^N k^2";
 		$mathMLtexVC = $this->generateMML( $input );
 		$this->assertStringContainsString( "<mstyle displaystyle=\"true\" scriptlevel=\"0\">", $mathMLtexVC );
 	}

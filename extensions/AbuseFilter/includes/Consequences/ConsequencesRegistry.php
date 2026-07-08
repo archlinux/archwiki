@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Consequences;
 
-// phpcs:ignore MediaWiki.Classes.UnusedUseStatement.UnusedUse
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Consequence;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use RuntimeException;
 
 class ConsequencesRegistry {
-	public const SERVICE_NAME = 'AbuseFilterConsequencesRegistry';
+	public const SERVICE_NAME = ServiceNames::ConsequencesRegistry;
 
 	private const DANGEROUS_ACTIONS = [
 		'block',
@@ -17,26 +17,19 @@ class ConsequencesRegistry {
 		'rangeblock'
 	];
 
-	/** @var AbuseFilterHookRunner */
-	private $hookRunner;
-	/** @var bool[] */
-	private $configActions;
-
 	/** @var string[]|null */
-	private $dangerousActionsCache;
-	/** @var callable[]|null */
-	private $customActionsCache;
+	private ?array $dangerousActionsCache = null;
+	/** @var array<string,callable>|null */
+	private ?array $customActionsCache = null;
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
-	 * @param bool[] $configActions
+	 * @param array<string,bool> $configActions
 	 */
 	public function __construct(
-		AbuseFilterHookRunner $hookRunner,
-		array $configActions
+		private readonly AbuseFilterHookRunner $hookRunner,
+		private readonly array $configActions,
 	) {
-		$this->hookRunner = $hookRunner;
-		$this->configActions = $configActions;
 	}
 
 	/**
@@ -68,8 +61,7 @@ class ConsequencesRegistry {
 	}
 
 	/**
-	 * @return callable[]
-	 * @phan-return array<string,callable(Parameters,array):Consequence>
+	 * @return array<string,callable(Parameters,array):Consequence>
 	 */
 	public function getCustomActions(): array {
 		if ( $this->customActionsCache === null ) {
@@ -99,12 +91,7 @@ class ConsequencesRegistry {
 	 * @return string[]
 	 */
 	public function getAllEnabledActionNames(): array {
-		$disabledActions = array_keys( array_filter(
-			$this->configActions,
-			static function ( $el ) {
-				return $el === false;
-			}
-		) );
+		$disabledActions = array_keys( $this->configActions, false, true );
 		return array_values( array_diff( $this->getAllActionNames(), $disabledActions ) );
 	}
 }

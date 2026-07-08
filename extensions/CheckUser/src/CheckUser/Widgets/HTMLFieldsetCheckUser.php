@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser\Widgets;
+namespace MediaWiki\Extension\CheckUser\CheckUser\Widgets;
 
 use MediaWiki\HTMLForm\CollapsibleFieldsetLayout;
 use MediaWiki\HTMLForm\OOUIHTMLForm;

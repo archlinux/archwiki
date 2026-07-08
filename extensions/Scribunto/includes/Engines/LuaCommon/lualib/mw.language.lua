@@ -2,7 +2,7 @@ local language = {}
 local php
 local util = require 'libraryUtil'
 
-function language.setupInterface()
+function language.setupInterface( opts )
 	-- Boilerplate
 	language.setupInterface = nil
 	php = mw_interface
@@ -13,6 +13,11 @@ function language.setupInterface()
 	mw.language = language
 	mw.getContentLanguage = language.getContentLanguage
 	mw.getLanguage = mw.language.new
+
+	-- Register constants
+	for name, value in pairs( opts.constants ) do
+		mw.language[name] = value
+	end
 
 	local lang = mw.getContentLanguage();
 
@@ -55,8 +60,8 @@ function language.fetchLanguageNames( inLanguage, include )
 	return php.fetchLanguageNames( inLanguage, include )
 end
 
-function language.getFallbacksFor( code )
-	return php.getFallbacksFor( code )
+function language.getFallbacksFor( code, mode )
+	return php.getFallbacksFor( code, mode )
 end
 
 function language.new( code )
@@ -171,9 +176,9 @@ function language.new( code )
 		end
 	end
 
-	function lang:getFallbackLanguages()
+	function lang:getFallbackLanguages( mode )
 		checkSelf( self, 'getFallbackLanguages' )
-		return language.getFallbacksFor( self.code )
+		return language.getFallbacksFor( self.code, mode )
 	end
 
 	return lang

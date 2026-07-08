@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\ClientHints;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\ClientHints;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWiki\Request\FauxRequest;
 use MediaWikiUnitTestCase;
 use TypeError;
@@ -11,10 +11,10 @@ use TypeError;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\ClientHints\ClientHintsData
+ * @covers \MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData
  */
 class ClientHintsDataTest extends MediaWikiUnitTestCase {
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	/** @dataProvider provideNewFromJsApi */
 	public function testNewFromJsApiAndJsonSerialize( array $dataFromJsApi, array $expectedValues ) {
@@ -28,7 +28,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	private static function getExampleJsApiData() {
+	private static function getExampleJsApiData(): array {
 		return [
 			'No client hint data' => [],
 			'Example Windows device using Chrome' => [
@@ -132,6 +132,9 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 			'Example Windows device using Chrome' => [
@@ -173,6 +176,9 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 			'Example Windows device using Chrome with duplicated data' => [
@@ -222,6 +228,9 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 			'Client Hints data contains deprecated uaFullVersion' => [
@@ -237,6 +246,9 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 			'Client Hints data contains deprecated uaFullVersion and empty array fullVersionList' => [
@@ -252,16 +264,23 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 		];
 	}
 
 	/** @dataProvider provideNewFromRequestHeaders */
-	public function testNewFromRequestHeaders( $requestHeaders, $expectedJsonArray ) {
+	public function testNewFromRequestHeaders(
+		array $requestHeaders,
+		array $collectOnly,
+		array $expectedJsonArray
+	): void {
 		$request = new FauxRequest();
 		$request->setHeaders( $requestHeaders );
-		$objectToTest = ClientHintsData::newFromRequestHeaders( $request );
+		$objectToTest = ClientHintsData::newFromRequestHeaders( $request, $collectOnly );
 		$this->assertArrayEquals(
 			$expectedJsonArray,
 			$objectToTest->jsonSerialize(),
@@ -274,8 +293,9 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 	public static function provideNewFromRequestHeaders() {
 		return [
 			'No client hint data' => [
-				[],
-				[
+				'requestHeaders' => [],
+				'collectOnly' => [],
+				'expectedJsonArray' => [
 					'architecture' => null,
 					'bitness' => null,
 					'brands' => null,
@@ -286,10 +306,13 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => null,
 					'platformVersion' => null,
 					'woW64' => null,
+					'isBrowser' => null,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 			'Example Windows device using Chrome' => [
-				[
+				'requestHeaders' => [
 					'SEC-CH-UA' => '"Chromium";v="114", "Google Chrome";v="114", "Not.A/Brand";v="8"',
 					'SEC-CH-UA-ARCH' => '"x86"',
 					'SEC-CH-UA-BITNESS' => '"64"',
@@ -300,8 +323,12 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'SEC-CH-UA-PLATFORM' => '"Windows"',
 					'SEC-CH-UA-PLATFORM-VERSION' => '"15.0.0"',
 					'SEC-CH-UA-WOW64' => '?0',
+					'x-is-browser' => '30',
+					'x-ja3n' => 'testing',
+					'x-ja4h' => 'testing2',
 				],
-				[
+				'collectOnly' => [],
+				'expectedJsonArray' => [
 					'architecture' => 'x86',
 					'bitness' => '64',
 					'brands' => [
@@ -338,10 +365,13 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Windows",
 					'platformVersion' => "15.0.0",
 					'woW64' => false,
+					'isBrowser' => 30,
+					'ja3n' => 'testing',
+					'ja4h' => 'testing2',
 				],
 			],
 			'Example Android device using Chrome' => [
-				[
+				'requestHeaders' => [
 					'SEC-CH-UA' => '"Chromium";v="114", "Google Chrome";v="114", "Not.A/Brand";v="99"',
 					'SEC-CH-UA-ARCH' => '""',
 					'SEC-CH-UA-BITNESS' => '"64"',
@@ -352,8 +382,10 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'SEC-CH-UA-PLATFORM' => '"Android"',
 					'SEC-CH-UA-PLATFORM-VERSION' => '"8.0.0"',
 					'SEC-CH-UA-WOW64' => '?0',
+					'x-is-browser' => '123',
 				],
-				[
+				'collectOnly' => [],
+				'expectedJsonArray' => [
 					'architecture' => '',
 					'bitness' => '64',
 					'brands' => [
@@ -390,6 +422,55 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 					'platform' => "Android",
 					'platformVersion' => "8.0.0",
 					'woW64' => false,
+					'isBrowser' => 123,
+					'ja3n' => null,
+					'ja4h' => null,
+				],
+			],
+			'Example Windows device using Chrome when only collecting some headers' => [
+				'requestHeaders' => [
+					'SEC-CH-UA' => '"Chromium";v="114", "Google Chrome";v="114", "Not.A/Brand";v="8"',
+					'SEC-CH-UA-ARCH' => '"x86"',
+					'SEC-CH-UA-BITNESS' => '"64"',
+					'SEC-CH-UA-FULL-VERSION-LIST' =>
+						'"Chromium";v="114.0.5735.199", "Google Chrome";v="114.0.5735.199", "Not.A/Brand";v="8.0.0.0"',
+					'SEC-CH-UA-MOBILE' => '?0',
+					'SEC-CH-UA-MODEL' => '""',
+					'SEC-CH-UA-PLATFORM' => '"Windows"',
+					'SEC-CH-UA-PLATFORM-VERSION' => '"15.0.0"',
+					'SEC-CH-UA-WOW64' => '?0',
+					'x-is-browser' => '30',
+					'x-ja3n' => 'testing',
+					'x-ja4h' => 'testing2',
+				],
+				'collectOnly' => [ 'isBrowser', 'bitness', 'brands' ],
+				'expectedJsonArray' => [
+					'architecture' => null,
+					'bitness' => '64',
+					'brands' => [
+						[
+							"brand" => "Chromium",
+							"version" => "114",
+						],
+						[
+							"version" => "114",
+							"brand" => "Google Chrome",
+						],
+						[
+							"brand" => "Not.A/Brand",
+							"version" => "8",
+						],
+					],
+					'formFactor' => null,
+					'fullVersionList' => null,
+					'mobile' => false,
+					'model' => null,
+					'platform' => null,
+					'platformVersion' => null,
+					'woW64' => null,
+					'isBrowser' => 30,
+					'ja3n' => null,
+					'ja4h' => null,
 				],
 			],
 		];
@@ -398,7 +479,7 @@ class ClientHintsDataTest extends MediaWikiUnitTestCase {
 	public function testNewFromRequestHeadersOnInvalidFullVersionListHeader() {
 		$this->expectException( TypeError::class );
 		$this->expectExceptionMessage( "Invalid header Sec-CH-UA-Full-Version-List" );
-		$this->testNewFromRequestHeaders( [ 'SEC-CH-UA-FULL-VERSION-LIST' => '"abc"' ], [] );
+		$this->testNewFromRequestHeaders( [ 'SEC-CH-UA-FULL-VERSION-LIST' => '"abc"' ], [], [] );
 	}
 
 	/** @dataProvider provideToDatabaseRows */

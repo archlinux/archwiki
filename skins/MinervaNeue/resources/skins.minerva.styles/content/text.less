@@ -1,11 +1,22 @@
+/* stylelint-disable no-descending-specificity */
 @import 'mediawiki.mixins.less';
 @import '../../../minerva.less/minerva.variables.less';
 @import '../../../minerva.less/minerva.mixins.less';
 
 .content {
 	p {
-		padding-bottom: 0.5em;
-		margin: 0.5em 0 0 0;
+		margin: 0.5em 0 1em 0;
+	}
+
+	p + ul,
+	p + ol,
+	p + table,
+	p + dl,
+	p + blockquote {
+		// Inline elements should have 0.5em total top spacing
+		// Use negative margin to account for 1em bottom margin on paragraphs
+		// This will not work for floated elements
+		margin-top: -0.5em;
 	}
 
 	hr {
@@ -102,3 +113,4 @@ sup,
 	// Avoid line-height issues caused by sup and sub
 	line-height: 1;
 }
+/* stylelint-enable no-descending-specificity */

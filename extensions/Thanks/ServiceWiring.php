@@ -11,6 +11,7 @@ return [
 		return new LogStore(
 			$services->getConnectionProvider(),
 			$services->getActorNormalization(),
+			$services->getExtensionRegistry(),
 			new ServiceOptions(
 				LogStore::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()

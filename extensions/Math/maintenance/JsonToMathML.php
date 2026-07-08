@@ -123,7 +123,7 @@ class JsonToMathML extends Maintenance {
 	 * @param array $fileData input read from json, format can differ
 	 * @return array uniform array
 	 */
-	private function formatInput( $fileData ) {
+	private function formatInput( array $fileData ): array {
 		$inputF = [];
 		switch ( $this->inputFormat ) {
 			case 0:
@@ -186,10 +186,9 @@ class JsonToMathML extends Maintenance {
 	 * @param string $filePath filepath to the json-file
 	 * @return array
 	 */
-	private function getJSON( string $filePath ) {
+	private function getJSON( string $filePath ): array {
 		$file = file_get_contents( $filePath );
-		$json = json_decode( $file, true );
-		return $json;
+		return json_decode( $file, true );
 	}
 
 	public function writeToFile( string $fullPath, array $allEntries ): void {
@@ -214,8 +213,7 @@ class JsonToMathML extends Maintenance {
 		$renderer = $this->getServiceContainer()->get( 'Math.RendererFactory' )
 			->getRenderer( $tex, $params, $renderingMode );
 		$renderer->render();
-		$mml = $renderer->getMathml();
-		return $mml;
+		return $renderer->getMathml();
 	}
 }
 

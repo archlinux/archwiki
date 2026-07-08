@@ -43,5 +43,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "«True» za podpisanje se, «false» za odpisanje se",
 	"apihelp-discussiontoolssubscribe-summary": "Podpisati se (ili odpisati se) za dobyvanje uvědomjenij o temě.",
 	"apihelp-discussiontoolsthank-param-commentid": "Identifikator komentara, za ktory trěba poblagodariti.",
-	"apihelp-discussiontoolsthank-summary": "Odpraviti publično poblagodarjenje za komentar."
+	"apihelp-discussiontoolsthank-summary": "Odpraviti publično poblagodarjenje za komentar.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Avtomatično podpiši koristnika na vsaku novu besědnu nit, stvorjenu tutoju pravkoju. Koristajte «da» ili «ne», da byste zaměnili (standardno) nastavjenje danogo koristnika."
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsBatchFormatterResults;
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\ClientHints\ClientHintsLookupResults;
 use MediaWiki\Config\ServiceOptions;
-use MessageLocalizer;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsBatchFormatterResults;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsLookupResults;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * A service that formats ClientHintsData objects into a human-readable
@@ -31,28 +31,24 @@ class UserAgentClientHintsFormatter {
 		"platform" => "checkuser-clienthints-name-platform",
 		"platformVersion" => "checkuser-clienthints-name-platform-version",
 		"woW64" => "checkuser-clienthints-name-wow64",
+		"isBrowser" => "checkuser-clienthints-name-is-browser",
+		"ja3n" => "checkuser-clienthints-name-ja3n",
+		"ja4h" => "checkuser-clienthints-name-ja4h",
 	];
-
-	private MessageLocalizer $messageLocalizer;
-	private ServiceOptions $options;
 
 	private array $msgCache;
 
 	public function __construct(
-		MessageLocalizer $messageLocalizer,
-		ServiceOptions $options
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly ServiceOptions $options,
 	) {
-		$this->messageLocalizer = $messageLocalizer;
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
 		$this->generateMsgCache();
 	}
 
 	/**
 	 * Generates a cache of messages that are used that also take no
 	 * parameters so that they do not need to be re-calculated each time.
-	 *
-	 * @return void
 	 */
 	private function generateMsgCache(): void {
 		foreach ( self::NAME_TO_MESSAGE_KEY as $msg ) {
@@ -85,10 +81,6 @@ class UserAgentClientHintsFormatter {
 		return new ClientHintsBatchFormatterResults( $referenceIdsToClientHintsDataIndex, $clientHintsDataObjects );
 	}
 
-	/**
-	 * @param ClientHintsData $clientHintsData
-	 * @return string
-	 */
 	public function formatClientHintsDataObject( ClientHintsData $clientHintsData ): string {
 		$clientHintsForDisplay = $this->options->get( 'CheckUserClientHintsForDisplay' );
 		// Combine Client Hints data where possible to reduce the length of the generated string.
@@ -110,14 +102,32 @@ class UserAgentClientHintsFormatter {
 							$brandAsString = $this->getBrandAsString( $brand, false );
 							if ( $brandAsString ) {
 								$dataAsStringArray[$clientHintName . '-' . $key] = $this->generateClientHintsListItem(
-									$clientHintName, $brandAsString
+									$clientHintName,
+									$brandAsString
 								);
 							}
 						}
 					}
 				} else {
+					$clientHintValue = $dataAsArray[$clientHintName];
+
+					if ( $clientHintName === 'isBrowser' && $dataAsArray[$clientHintName] !== null ) {
+						// If the Client Hint is the x-is-browser header, convert it to a human readable
+						// representation of the score
+						$score = intval( $dataAsArray[$clientHintName] );
+						if ( $score <= 20 ) {
+							$valueMsgKey = 'checkuser-clienthints-value-is-browser-likely-bot';
+						} elseif ( $score >= 80 ) {
+							$valueMsgKey = 'checkuser-clienthints-value-is-browser-likely-browser';
+						} else {
+							$valueMsgKey = 'checkuser-clienthints-value-is-browser-indeterminate';
+						}
+						$clientHintValue = $this->messageLocalizer->msg( $valueMsgKey )->escaped();
+					}
+
 					$dataAsStringArray[$clientHintName] = $this->generateClientHintsListItem(
-						$clientHintName, $dataAsArray[$clientHintName]
+						$clientHintName,
+						$clientHintValue
 					);
 				}
 			}
@@ -287,7 +297,7 @@ class UserAgentClientHintsFormatter {
 				// Remove the non-significant numbers from the version number if $significantOnly is set.
 				if ( array_key_exists( 'version', $item ) ) {
 					// If the 'version' key is set, then use this.
-					if ( strpos( $item['version'], '.' ) ) {
+					if ( str_contains( $item['version'], '.' ) ) {
 						// If there is a point, then remove all text after the . in the 'version'.
 						$item['version'] = substr( $item['version'], 0, strpos( $item['version'], '.' ) );
 					}

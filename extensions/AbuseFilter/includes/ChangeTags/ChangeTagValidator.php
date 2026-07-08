@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\ChangeTags;
 
 use MediaWiki\ChangeTags\ChangeTags;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Status\Status;
 
 /**
@@ -12,13 +13,9 @@ use MediaWiki\Status\Status;
  */
 class ChangeTagValidator {
 
-	public const SERVICE_NAME = 'AbuseFilterChangeTagValidator';
+	public const SERVICE_NAME = ServiceNames::ChangeTagValidator;
 
-	/** @var ChangeTagsManager */
-	private $changeTagsManager;
-
-	public function __construct( ChangeTagsManager $changeTagsManager ) {
-		$this->changeTagsManager = $changeTagsManager;
+	public function __construct( private readonly ChangeTagsManager $changeTagsManager ) {
 	}
 
 	/**

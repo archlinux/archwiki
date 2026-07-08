@@ -238,7 +238,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Postavi varijable (set_var)",
 	"abusefilter-edit-builder-group-vars": "Promijenjive",
 	"abusefilter-edit-builder-vars-timestamp": "Unix vremenski pečat izmjene",
-	"abusefilter-edit-builder-vars-accountname": "Ime korisničkog računa (u trenutku pravljenja)",
+	"abusefilter-edit-builder-vars-account-name": "Ime korisničkog računa (u trenutku pravljenja)",
 	"abusefilter-edit-builder-vars-action": "akcija",
 	"abusefilter-edit-builder-vars-addedlines": "Linije dodane u izmjeni",
 	"abusefilter-edit-builder-vars-delta": "Veličina promjenjena pri izmjeni",

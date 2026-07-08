@@ -98,8 +98,8 @@ module.exports = exports = {
 						type: 'success'
 					} );
 				},
-				( error ) => {
-					enableError.value = error;
+				() => {
+					enableError.value = mw.msg( 'checkuser-ip-auto-reveal-on-dialog-error-enable' );
 				}
 			);
 		}

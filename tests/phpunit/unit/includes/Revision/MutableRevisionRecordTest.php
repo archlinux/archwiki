@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use DummyContentForTesting;
 use InvalidArgumentException;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentity;
@@ -14,6 +13,7 @@ use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\RevisionSlotsUpdate;
+use MediaWiki\Tests\Mocks\Content\DummyContentForTesting;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
@@ -210,13 +210,11 @@ class MutableRevisionRecordTest extends MediaWikiUnitTestCase {
 		$this->assertSame( RevisionRecord::DELETED_USER, $record->getVisibility() );
 	}
 
-	public function testSetGetSha1() {
+	public function testGetSha1() {
 		$record = new MutableRevisionRecord(
 			PageIdentityValue::localIdentity( 1, NS_MAIN, 'Foo' )
 		);
 		$this->assertSame( 'phoiac9h4m842xq45sp7s6u21eteeq1', $record->getSha1() );
-		$record->setSha1( 'someHash' );
-		$this->assertSame( 'someHash', $record->getSha1() );
 	}
 
 	public function testResetSha1() {

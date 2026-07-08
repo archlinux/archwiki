@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Html2Wt;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -12,7 +13,6 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -427,6 +427,29 @@ class DOMNormalizer {
 	}
 
 	/**
+	 * Compare textContent to the href, noting that this matching doesn't handle all
+	 * possible simple-wiki-link scenarios that isSimpleWikiLink in link handler tackles
+	 */
+	private function hasMatchingContentAndTarget( Element $node ): bool {
+		// If it started out piped, don't bother, unless we're in edited content
+		// Normalization is skipped on unedited nodes in selser, so it's a good proxy
+		$dp = DOMDataUtils::getDataParsoid( $node );
+		if ( !$this->state->selserMode && ( $dp->stx ?? null ) === 'piped' ) {
+			return false;
+		}
+
+		if ( !$node->hasAttribute( 'href' ) ) {
+			return false;
+		}
+		$nodeHref = DOMCompat::getAttribute( $node, 'href' ) ?? '';
+
+		$targetString = str_replace( '_', ' ', PHPUtils::stripPrefix( $nodeHref, './' ) );
+		$contentString = str_replace( '_', ' ', $node->textContent );
+
+		return ( $contentString === $targetString );
+	}
+
+	/**
 	 * When an A tag is encountered, if there are format tags inside, move them outside
 	 * Also merge a single sibling A tag that is mergable
 	 * The link href and text must match for this normalization to take effect
@@ -446,11 +469,6 @@ class DOMNormalizer {
 			$fcNextSibling = DiffDOMUtils::nextNonDeletedSibling( $firstChild );
 		}
 
-		if ( !$node->hasAttribute( 'href' ) ) {
-			return $node;
-		}
-		$nodeHref = DOMCompat::getAttribute( $node, 'href' ) ?? '';
-
 		// If there are no tags to swap, we are done
 		if ( $firstChild instanceof Element &&
 			// No reordering possible with multiple children
@@ -459,9 +477,7 @@ class DOMNormalizer {
 			!$firstChild->hasAttribute( 'color' ) &&
 			!$firstChild->hasAttribute( 'style' ) &&
 			!$firstChild->hasAttribute( 'class' ) &&
-			// Compare textContent to the href, noting that this matching doesn't handle all
-			// possible simple-wiki-link scenarios that isSimpleWikiLink in link handler tackles
-			$node->textContent === PHPUtils::stripPrefix( $nodeHref, './' )
+			$this->hasMatchingContentAndTarget( $node )
 		) {
 			for (
 				$child = DiffDOMUtils::firstNonDeletedChild( $node );

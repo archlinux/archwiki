@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
+use MediaWiki\Tests\Common\Parser\PhpunitTestRecorder;
 use PHPUnit\Framework\TestSuite;
 use Wikimedia\ScopedCallback;
 

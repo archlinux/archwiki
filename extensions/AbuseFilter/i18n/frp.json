@@ -213,7 +213,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Dèfenir la variâbla (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variâbles",
 	"abusefilter-edit-builder-vars-timestamp": "Dâta Unix du changement",
-	"abusefilter-edit-builder-vars-accountname": "Nom du compto (pendent la crèacion du compto)",
+	"abusefilter-edit-builder-vars-account-name": "Nom du compto (pendent la crèacion du compto)",
 	"abusefilter-edit-builder-vars-action": "Accion",
 	"abusefilter-edit-builder-vars-addedlines": "Legnes apondues pendent lo changement",
 	"abusefilter-edit-builder-vars-delta": "Difèrence de talye pendent lo changement",

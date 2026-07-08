@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use DummyContentForTesting;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\RevisionArchiveRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Tests\Mocks\Content\DummyContentForTesting;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
@@ -20,11 +20,11 @@ class RevisionArchiveRecordTest extends MediaWikiUnitTestCase {
 	use RevisionRecordTests;
 
 	protected static function expectedDefaultFieldVisibility( int $field ): bool {
-		return [
+		return match ( $field ) {
 			RevisionRecord::DELETED_TEXT => false,
 			RevisionRecord::DELETED_COMMENT => false,
 			RevisionRecord::DELETED_USER => true,
-		][ $field ];
+		};
 	}
 
 	/**
@@ -52,7 +52,6 @@ class RevisionArchiveRecordTest extends MediaWikiUnitTestCase {
 			'ar_minor_edit' => 0,
 			'ar_parent_id' => '5',
 			'ar_len' => $slots->computeSize(),
-			'ar_sha1' => $slots->computeSha1(),
 		];
 
 		foreach ( $rowOverrides as $field => $value ) {

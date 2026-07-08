@@ -1,28 +1,28 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsLookupResults;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsFormatter;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsLookupResults;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsFormatter;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 use ReflectionClass;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\UserAgentClientHintsFormatter
+ * @covers \MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsFormatter
  */
 class UserAgentClientHintsFormatterTest extends MediaWikiUnitTestCase {
 	use MockServiceDependenciesTrait;
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	private function getObjectUnderTest(): UserAgentClientHintsFormatter {
 		$mockMessageLocalizer = $this->createMock( MessageLocalizer::class );
@@ -160,7 +160,10 @@ class UserAgentClientHintsFormatterTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider provideGenerateClientHintsListItem */
 	public function testGenerateClientHintsListItem(
-		$clientHintName, $clientHintValue, $expectedClientHintValueUsed, $msgCache
+		$clientHintName,
+		$clientHintValue,
+		$expectedClientHintValueUsed,
+		$msgCache
 	) {
 		// Use mock method under test with disabled constructor to avoid
 		// having to mock the MessageLocalizer twice.
@@ -226,7 +229,10 @@ class UserAgentClientHintsFormatterTest extends MediaWikiUnitTestCase {
 
 	/** @dataProvider provideCombineClientHintsData */
 	public function testCombineClientHintsData(
-		$dataAsArray, $clientHintsForDisplay, $expectedReturnValue, $expectedClientHintsForDisplayAfterCall
+		$dataAsArray,
+		$clientHintsForDisplay,
+		$expectedReturnValue,
+		$expectedClientHintsForDisplayAfterCall
 	) {
 		$objectUnderTest = $this->getObjectUnderTest();
 		// T287318 - TestingAccessWrapper::__call does not support pass-by-reference

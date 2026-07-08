@@ -7,16 +7,14 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Parser\ParserOutput;
 
+/**
+ * @property LuaStandaloneInterpreter|null $interpreter
+ */
 class LuaStandaloneEngine extends LuaEngine {
 	/** @var int|null */
 	protected static $clockTick;
 	/** @var array|false */
 	public $initialStatus;
-
-	/**
-	 * @var LuaStandaloneInterpreter
-	 */
-	protected $interpreter;
 
 	public function load() {
 		parent::load();

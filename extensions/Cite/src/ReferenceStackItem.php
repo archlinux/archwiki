@@ -39,10 +39,10 @@ class ReferenceStackItem {
 	 */
 	public ?string $name = null;
 	/**
-	 * Sequence number per {@see $group}, starting from 1. To be used in the footnote marker,
-	 * e.g. "[1]". Potentially unset when {@see $follow} is used.
+	 * Sequence number per {@link $group}, starting from 1. To be used in the footnote marker,
+	 * e.g. "[1]". Potentially unset when {@link $follow} is used.
 	 */
-	public ?int $numberInGroup;
+	public ?int $numberInGroup = null;
 	/**
 	 * @var ?string The content inside the <ref>…</ref> tag. Null for a
 	 * self-closing <ref /> without content. Also null for <ref></ref> without any
@@ -55,12 +55,12 @@ class ReferenceStackItem {
 	public ?self $hasMainRef = null;
 	/**
 	 * @var ?int Count how many subreferences point to a parent.  Corresponds to
-	 *   the last {@see subrefIndex} but this field belongs to the parent.
+	 *   the last {@link subrefIndex} but this field belongs to the parent.
 	 */
 	public ?int $subrefCount = null;
 	/**
 	 * @var ?int Sequence number for sub-references with the same details
-	 * attribute, starting from 1. {@see $numberInGroup} and this details index are
+	 * attribute, starting from 1. {@link $numberInGroup} and this details index are
 	 * combined to render a footnote marker like "[1.1]".
 	 */
 	public ?int $subrefIndex = null;

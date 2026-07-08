@@ -1,12 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\IPContributions;
+namespace MediaWiki\Extension\CheckUser\IPContributions;
 
 use MediaWiki\Block\DatabaseBlockStore;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Html\Html;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\ContributionsSpecialPage;
 use MediaWiki\Title\NamespaceInfo;
@@ -29,9 +30,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 class SpecialIPContributions extends ContributionsSpecialPage {
 	private const BASE_HELP_URL = 'https://www.mediawiki.org/wiki/Special:MyLanguage/Help:';
 
-	private IPContributionsPagerFactory $pagerFactory;
 	private ?IPContributionsPager $pager = null;
-	private CheckUserPermissionManager $checkUserPermissionManager;
 
 	public function __construct(
 		PermissionManager $permissionManager,
@@ -44,8 +43,8 @@ class SpecialIPContributions extends ContributionsSpecialPage {
 		UserIdentityLookup $userIdentityLookup,
 		DatabaseBlockStore $blockStore,
 		UserGroupAssignmentService $userGroupAssignmentService,
-		IPContributionsPagerFactory $pagerFactory,
-		CheckUserPermissionManager $checkUserPermissionManager
+		private readonly IPContributionsPagerFactory $pagerFactory,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
 	) {
 		parent::__construct(
 			$permissionManager,
@@ -60,8 +59,6 @@ class SpecialIPContributions extends ContributionsSpecialPage {
 			$userGroupAssignmentService,
 			'IPContributions'
 		);
-		$this->pagerFactory = $pagerFactory;
-		$this->checkUserPermissionManager = $checkUserPermissionManager;
 	}
 
 	/**
@@ -175,6 +172,9 @@ class SpecialIPContributions extends ContributionsSpecialPage {
 		// in the correct mode.
 		$this->opts['isArchive'] = $this->isArchive();
 
+		// IP reveal needs to be logged, so if in read only mode the special page cannot be used
+		$this->checkReadOnly();
+
 		parent::execute( $par );
 
 		// Setting $overrideBaseUrl=true is needed to prevent addHelpLink()
@@ -187,7 +187,7 @@ class SpecialIPContributions extends ContributionsSpecialPage {
 		$target = $this->opts['target'] ?? null;
 		if ( $target && !IPUtils::isIPAddress( $target ) ) {
 			$this->getOutput()->setSubtitle(
-				new MessageWidget( [
+				(string)new MessageWidget( [
 					'type' => 'error',
 					'label' => new HtmlSnippet(
 						$this->msg( 'checkuser-ip-contributions-target-error-no-ip-banner', $target )->parse()
@@ -270,6 +270,7 @@ class SpecialIPContributions extends ContributionsSpecialPage {
 
 		// Add subtitle text describing that the data shown is limited to wgCUDMaxAge seconds ago. The count should
 		// be in days, as this makes it easier to translate the message.
+		$contributionsSub .= Html::element( 'br' );
 		$contributionsSub .= $this->msg( 'checkuser-ip-contributions-subtitle' )
 			->numParams( round( $this->getConfig()->get( 'CUDMaxAge' ) / 86400 ) )
 			->parse();

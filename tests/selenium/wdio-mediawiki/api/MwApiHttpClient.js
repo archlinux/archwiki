@@ -37,8 +37,11 @@ export class MwApiHttpClient {
 			// eslint-disable-next-line n/no-unsupported-features/node-builtins
 			const signal = AbortSignal.timeout( 60000 );
 			// fetch was introduced in 18 and stable in 21.
+			// We do not follow redirects because fetch will switch POST to GET and set
+			// the response body to null
+			// See https://fetch.spec.whatwg.org/#http-redirect-fetch
 			// eslint-disable-next-line n/no-unsupported-features/node-builtins
-			const response = await fetch( url, { method: 'POST', headers, body, signal } );
+			const response = await fetch( url, { method: 'POST', headers, body, signal, redirect: 'error' } );
 			const text = await response.text();
 
 			if ( this.verbose ) {
@@ -46,19 +49,29 @@ export class MwApiHttpClient {
 			}
 
 			if ( !response.ok ) {
-				console.error( `[API] HTTP ${ response.status }: ${ response.statusText }` );
+				console.error( `[API] HTTP ${ response.status }: ${ response.statusText }`, text );
 				throw new Error( `HTTP ${ response.status }` );
 			}
 
 			// getSetCookie in NodeJS since 18.16.0
 			this.cookies.getCookiesFromHeaders( response.headers.getSetCookie() );
 
+			let data;
 			try {
-				return text ? JSON.parse( text ) : {};
+				data = text ? JSON.parse( text ) : {};
 			} catch ( error ) {
 				console.error( '[API] Failed getting response as JSON:', error.message, text );
 				throw error;
 			}
+
+			if ( data.error ) {
+				const code = data.error.code || 'unknown';
+				const info = data.error.info || JSON.stringify( data.error );
+				console.error( `[API] API Error: ${ code }: ${ info }` );
+				throw new Error( `${ code }: ${ info }` );
+			}
+
+			return data;
 		} catch ( error ) {
 			if ( error.name === 'AbortError' ) {
 				console.error( '[API] Network timeout:', error.message, { url: this.apiUrl } );

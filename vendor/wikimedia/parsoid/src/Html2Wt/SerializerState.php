@@ -9,13 +9,13 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\SelectiveUpdateData;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ConstrainedText;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -257,10 +257,10 @@ class SerializerState {
 	/** @var Env */
 	private $env;
 
-	/** @var Element */
+	/** @var Node */
 	public $currNode;
 
-	/** @var Element */
+	/** @var Node */
 	private $prevNode;
 
 	/** @var array */
@@ -474,12 +474,11 @@ class SerializerState {
 
 	/**
 	 * Like it says on the tin.
-	 * @param Node $node
+	 * @param Element|DocumentFragment $node
 	 */
 	public function updateModificationFlags( Node $node ): void {
 		$this->prevNodeUnmodified = $this->currNodeUnmodified;
 		$this->currNodeUnmodified = false;
-		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$this->prevNode = $node;
 	}
 

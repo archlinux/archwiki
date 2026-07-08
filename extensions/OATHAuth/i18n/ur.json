@@ -37,7 +37,6 @@
 	"oathauth-auth-ui": "براہ کرم اپنے آلہ توثیق ساز سے تصدیقی کوڈ یہاں درج کریں۔",
 	"oathauth-login-failed": "تصدیق ناکام ہوگئی۔",
 	"oathauth-describe-provider": "دو مرحلہ توثیق (OATH)۔",
-	"action-oathauth-api-all": "OATH کی صورت حال جانچنے",
 	"oathauth-user-not-found": "اس نام سے کوئی صارف کھاتہ نہیں ملا",
 	"oath-log-name": "نوشتہ دو مرحلہ توثیق",
 	"logentry-oath-disable-other": "$1 نے $3 کی دو مرحلہ توثیق کو {{GENDER:$2|غیر فعال کیا}}",
@@ -45,11 +44,9 @@
 	"oathauth-module-totp-label": "TOTP (یک وقتی ٹوکن)",
 	"oathauth-ui-manage": "انتظام",
 	"oathmanage": "دو مرحلہ توثیق کا انتظام",
-	"oathauth-ui-enabled-module": "توثیقی طریقہ فعال ہو گیا",
 	"oathauth-enable-generic": "فعال کریں",
 	"oathauth-disable-generic": "غیر فعال کریں",
 	"oathauth-disable-page-title": "$1 کو غیر فعال کریں",
 	"oathauth-enable-page-title": "$1 کو فعال کریں",
-	"oathauth-action-exclusive-to-2fa": "اس اقدام کو محض وہ صارفین انجام دے سکتے ہیں جنہوں نے دو مرحلہ توثیق کو فعال کیا ہو۔",
-	"oathauth-ui-available-modules": "دستیاب طریقے"
+	"oathauth-action-exclusive-to-2fa": "اس اقدام کو محض وہ صارفین انجام دے سکتے ہیں جنہوں نے دو مرحلہ توثیق کو فعال کیا ہو۔"
 }

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Waldyrious",
 			"GrogeXaKaba",
-			"Letra.berdi"
+			"Letra.berdi",
+			"Waldyrious"
 		]
 	},
 	"echo-desc": "Sistéma di nutifikason di uzuáris sobri ivéntus i mensájis",
@@ -35,6 +35,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} sentésimu idison; mutu obrigadu!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} milésimu idison; obrigadu pa es inórmi kulaburason!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} désimu milésimu idison; nu ta gardise-bu na divéra!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} sentésimu milésimu idison; nu ta gardise-bu pa bus nkrívi kuntributu!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} milionésimu idison; nu ta gardise-bu pa es didikason fabulozu!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Bu}} kaba di fasi {{GENDER:$2|bu}} désimu milionésimu idison; nu ka tene palabras pa gardise-bu pa es didikason brilianti!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Bu}} idison",
 	"notification-link-text-view-edit": "Udja idison",

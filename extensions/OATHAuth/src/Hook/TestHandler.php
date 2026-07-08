@@ -36,7 +36,7 @@ class TestHandler implements
 		$tables = array_map( static fn ( $tableSchema ) => $tableSchema['name'], $schema );
 		$dbw = $this->loadBalancer->getMaintenanceConnectionRef( DB_PRIMARY );
 		foreach ( $tables as $table ) {
-			$dbw->dropTable( $table );
+			$dbw->dropTable( $table, __METHOD__ );
 		}
 	}
 

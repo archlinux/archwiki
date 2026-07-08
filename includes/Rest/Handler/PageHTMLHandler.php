@@ -3,6 +3,7 @@
 namespace MediaWiki\Rest\Handler;
 
 use LogicException;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputHelper;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
 use MediaWiki\Rest\Handler\Helper\PageContentHelper;
@@ -10,9 +11,12 @@ use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\StringStream;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Message\MessageValue;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * A handler that returns Parsoid HTML for the following routes:
@@ -94,7 +98,7 @@ class PageHTMLHandler extends SimpleHandler {
 		);
 
 		if ( $redirectResponse !== null ) {
-			$redirectResponse->setHeader( 'Cache-Control', 'max-age=60' );
+			$redirectResponse->setHeader( ResponseHeaders::CACHE_CONTROL, 'max-age=60' );
 			return $redirectResponse;
 		}
 
@@ -175,6 +179,17 @@ class PageHTMLHandler extends SimpleHandler {
 		);
 	}
 
+	public function getHeaderParamSettings(): array {
+		return [
+			'Accept-Language' => [
+				self::PARAM_SOURCE => 'header',
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-requestheader-desc-acceptlanguage' ),
+			],
+		];
+	}
+
 	protected function generateResponseSpec( string $method ): array {
 		$spec = parent::generateResponseSpec( $method );
 
@@ -191,6 +206,6 @@ class PageHTMLHandler extends SimpleHandler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/ExistingPageHtml.json';
+		return __DIR__ . '/Schema/ExistingPageHtml.json';
 	}
 }

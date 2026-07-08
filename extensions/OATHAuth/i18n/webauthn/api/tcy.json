@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Vishwanatha Badikana"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "ನೋಂದಣಿ/ದೃಡೀಕರಣೊ ಬೇಲೆಡ್ ಸರ್ವರ್ ಬುಕ್ಕೊ ಕ್ಲೈಂಟ್ ನಡುಟು ಸಂವಹನೊ ನಡಪಾಯರ ಎಪಿಐ ಮಾಡ್ಯೂಲ್.",
+	"apihelp-oathauth-webauthn-param-func": "ಕಾರ್ಯಗತೊ ಮಲ್ಪೆರೆ ಕೇಂಡೊನ್‌ನ ಕಾರ್ಯೊದ ಪುದರ್.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "ದೃಡೀಕರಣ ಮಾಹಿತಿ.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "ನೋಂದಣಿ ಮಾಹಿತಿ."
+}

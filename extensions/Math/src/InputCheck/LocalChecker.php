@@ -17,17 +17,17 @@ class LocalChecker extends BaseChecker {
 	private ?Message $error = null;
 	private ?string $mathMl = null;
 
-	private string $type;
-	private WANObjectCache $cache;
-
 	private bool $isChecked = false;
 	private ?MathRenderer $context = null;
 	private ?HookContainer $hookContainer = null;
 
-	public function __construct( WANObjectCache $cache, string $tex = '', string $type = 'tex', bool $purge = false ) {
-		$this->cache = $cache;
+	public function __construct(
+		private readonly WANObjectCache $cache,
+		string $tex = '',
+		private readonly string $type = 'tex',
+		bool $purge = false,
+	) {
 		parent::__construct( $tex, $purge );
-		$this->type = $type;
 	}
 
 	public function isValid(): bool {
@@ -72,7 +72,7 @@ class LocalChecker extends BaseChecker {
 			$this->mathMl = $result['mathml'];
 		} else {
 			$this->error = $this->errorObjectToMessage(
-				(object)[ "error" => (object)$result["error"] ],
+				(object)[ "error" => (object)( $result["error"] ?? [] ) ],
 				"LocalCheck" );
 		}
 		$this->isChecked = true;

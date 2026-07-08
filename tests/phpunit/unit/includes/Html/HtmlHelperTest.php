@@ -42,9 +42,7 @@ class HtmlHelperTest extends MediaWikiUnitTestCase {
 
 		// Check the "legacy compatibility" mode, for void elements like <link>
 		$input = "<link data-test='<style data-mw-deduplicate=\"&nbsp;\"&gt;bar</style&gt;'>";
-		$shouldModifyCallback = static function ( SerializerNode $node ) {
-			return false;
-		};
+		$shouldModifyCallback = static fn ( SerializerNode $node ) => false;
 		// HTML5 output
 		$expectedOutput = '<link data-test="<style data-mw-deduplicate=&quot;&nbsp;&quot;>bar</style>">';
 		$output = HtmlHelper::modifyElements( $input, $shouldModifyCallback, $modifyCallbackInPlace, true );

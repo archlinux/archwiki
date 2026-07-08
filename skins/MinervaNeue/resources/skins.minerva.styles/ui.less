@@ -95,67 +95,6 @@ ul {
 	}
 }
 
-.search-box {
-	position: relative;
-}
-
-// Search input
-// Used in minerva header and search overlay header
-.search-box .search {
-	background-color: @background-color-base; // Support Fennec, Opera Mini: Remove default background, see T38490.
-	// Support Safari: Get rid of rounded corners.
-	-webkit-appearance: none;
-	width: 100%;
-	margin: 0;
-	height: 2.25em;
-	border: @border-width-base @border-style-base @border-color-inverted;
-	border-radius: @border-radius-base;
-	padding: @padding-vertical-search 0 @padding-vertical-search @padding-start-search-icon;
-	box-shadow: @box-shadow-drop-small;
-	// Keyboard focus is taken care of below at `.search:focus`.
-	outline: 0;
-	transition-property: border-color, box-shadow;
-	transition-duration: @transition-duration-medium;
-	font: inherit;
-	// Disable search background for cached HTML.
-	mask-image: none;
-
-	// [T139928] Hide all pseudo-elements added to search inputs in WebKit.
-	&::-webkit-search-decoration,
-	&::-webkit-search-cancel-button,
-	&::-webkit-search-results-button,
-	&::-webkit-search-results-decoration {
-		display: none;
-	}
-}
-
-// FIXME: Merge these styles with above after minerva typeahead is enabled everywhere
-.search-box--typeahead .search {
-	padding: 4px 0 4px @padding-start-search-icon;
-	height: unset;
-}
-
-// FIXME: Delete this selector after cached HTML is resolved from I7d88ef62bffc7241f7778f5b079fcc9dc693eeaa
-.search-box-icon-overlay {
-	position: absolute;
-	display: flex;
-	align-items: center;
-	left: 8px;
-	top: 0;
-	bottom: 0;
-
-	.cdx-text-input--has-start-icon & {
-		left: 23px;
-	}
-}
-
-// Provide focus styles only in non-JS and overlay to prevent double transition.
-.client-nojs .search-box .search:focus,
-.search-overlay .search-box .search:focus {
-	border-color: @border-color-progressive--focus;
-	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus, 0 1px 1px rgba( 0, 0, 0, 0.05 );
-}
-
 .content {
 	.mw-heading2,
 	h2 {
@@ -181,7 +120,6 @@ ul {
 	.mw-parser-output > h2,
 	.mw-parser-output[ data-mw-parsoid-version ] > section > .mw-heading2 {
 		border-bottom: @border-width-base @border-style-base @border-color-muted;
-		margin-bottom: @margin-heading;
 	}
 
 	.mw-parser-output {

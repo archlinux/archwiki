@@ -15,7 +15,10 @@ class LuaDataProvider implements Iterator {
 	/** @var int */
 	protected $key = 1;
 
-	public function __construct( LuaEngine $engine, string $moduleName ) {
+	public function __construct(
+		LuaEngine $engine,
+		string $moduleName,
+	) {
 		$this->engine = $engine;
 		$this->key = 1;
 		$module = $engine->fetchModuleFromParser(

@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Грешки од пречистувачот",
+	"linttemplateerrors": "Превметнувања со грешки во Lint",
 	"linter-category-bogus-image-options": "Лажни податотечни можности",
 	"linter-category-bogus-image-options-desc": "Овие страници имаат податотеки со лажни можности.",
 	"linter-category-large-tables": "Големи табели што тешко се гледаат на мобилен",
@@ -15,6 +16,8 @@
 	"linter-category-duplicate-ids-desc": "Овие страници иамат елементи со дуплирани атрибути за назнака.",
 	"linter-category-empty-heading": "Празни заглавија",
 	"linter-category-empty-heading-desc": "Овие страници имаат празни заглавија.",
+	"linter-category-template-arg-in-extension-tag": "Ознака за додаток со предложен параметар",
+	"linter-category-template-arg-in-extension-tag-desc": "Овие страници имаат ознака за додаток која содржи предложен параметар, што нема да се превметне правилно.",
 	"linter-category-fostered": "Погрешно сместена содржина",
 	"linter-category-fostered-desc": "Овие страници имаат погрешно сместена содржина.",
 	"linter-category-fostered-transparent": "Погрешно сместен испис на проѕирна содржина",
@@ -57,6 +60,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Овие страници имаат викиврски во надворешни врски кои можат да се поправат",
 	"linter-desc": "Следи грешки од пречистувачот од надворешна служба и ги прикажува на корисниците",
 	"linter-lints-prefix-search-page-desc": "Пребарајте страници со грешки на Lint по претставка на насловот на страницата или целосен наслов",
+	"linter-invalid-category": "Категоријата не е пронајдена или е погрешно срочена",
 	"linter-invalid-title": "Не го најдов именскиот простор и/или името на страницата, или пак стата е лошо срочена",
 	"linter-form-exact-match": "Пребарај одреден наслов на страница",
 	"linter-form-prefix-match": "Пребарај ги сите страници што одговараат на претставката на насловот",
@@ -107,10 +111,16 @@
 	"linter-pager-title-header": "Наслов на страницата",
 	"linter-pager-unclosed-quotes-in-heading-details": "Незатворен цитат што истекува од прегледот на содржината",
 	"linter-pager-wikilink-in-extlink-details": "Врски во врски",
+	"linter-pager-template-arg-in-extension-tag-details": "Име на ознака за додаток со потреба од поднова (и предложни параметри што се користат во неа)",
 	"linter-prefix-search-subpage": "Страници страници со грешки на Lint кои одговараат на претставка на наслов или целосен наслов: $1",
 	"linterrors-subpage": "Грешки од пречистувачот: $1",
 	"linterrors-summary": "<strong>Напомена:</strong> Бројот на категории не е точен, туку претставува проценка",
 	"multi-part-template-block": "Изводот не е од единствена предлошка",
+	"parser-function": "Извод од расчленувачка функција",
 	"pageinfo-linter": "Грешки од пречистувачот",
-	"pageinfo-linter-moreinfo": "Погледајте подробни информации за грешките во Lint."
+	"pageinfo-linter-moreinfo": "Погледајте подробни информации за грешките во Lint.",
+	"category-by-template": "Превметнувања со грешки во Lint: $1",
+	"category-by-template-view": "Погледајте ги превметнувањата што ги содржат овие грешки во Lint.",
+	"category-by-template-desc": "Превметнувања на овие страници содржат грешки во Lint со '''[[Special:LintErrors/$1|$1]]'''.  ''Имајте на ум дека некои превметнувања може да се јават на списокот поради аргументите што му се даваат на превметнувањето, а не на неговиот извор.''",
+	"linter-template-errors-index-desc": "Ова се списоци на превметнувања на страници што содржат гршеки во Lint.  ''Имајте на ум дека некои превметнувања може да се водат на списоков поради архументите што му се даваат на превметнувањето, а не неговиот извор.''"
 }

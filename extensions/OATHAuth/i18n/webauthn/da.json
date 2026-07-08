@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saederup92",
+			"Steenth"
+		]
+	},
+	"oathauth-webauthn-module-label": "Sikkerhedsnøgle",
+	"oathauth-webauthn-javascript-required": "JavaScript skal være aktiveret i din browser for at bruge en sikkerhedsnøgle.",
+	"oathauth-webauthn-ui-login-prompt": "Brug din sikkerhedsnøgle, eller følg instruktionerne i din browser.",
+	"oathauth-webauthn-ui-add-key": "Tilføj nøgle",
+	"oathauth-webauthn-error-browser-unsupported": "Denne browser understøtter ikke godkendelse med sikkerhedsnøgler, eller den er ikke tilgængelig for dette websted. Prøv venligst med en anden browser. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Læs mere]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Denne browser understøtter ikke godkendelse med sikkerhedsnøgler, eller den er ikke tilgængelig for dette websted.",
+	"oathauth-webauthn-error-auth-generic": "Godkendelsesprocessen blev afbrudt. Start godkendelsesprocessen igen.",
+	"oathauth-webauthn-error-reg-generic": "Din nøgle kunne ikke bekræftes. Start venligst registreringsprocessen igen.",
+	"oathauth-webauthn-registered-keys-section-name": "Registrerede nøgler",
+	"oathauth-webauthn-ui-remove-key": "Fjern",
+	"oathauth-webauthn-error-module-not-enabled": "Modulet \"$1\" er ikke aktiveret for {{GENDER:$2| brugeren \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn-bekræftelse mislykkedes.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Adgangsnøglebekræftelse mislykkedes.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn-legitimationsoplysningerne blev ikke sendt.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Bruger \"$1\"}} kan ikke registrere nye legitimationsoplysninger.",
+	"oathauth-webauthn-error-invalid-new-key": "Den nye nøgle, der returneres af modulet, er ikke af den påkrævede type.",
+	"oathauth-webauthn-error-registration-failed": "Registrering af ny nøgle mislykkedes.",
+	"oathauth-webauthn-ui-key-register-help": "Vælg kaldenavnet til din nøgle:",
+	"oathauth-webauthn-error-cannot-remove-key": "Nøglen kunne ikke fjernes.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Godkendelsesoplysningerne kunne ikke hentes.",
+	"oathauth-webauthn-add-key-section-name": "Registrer ny sikkerhedsnøgle",
+	"oathauth-webauthn-error-get-reginfo-fail": "Registreringsoplysningerne kunne ikke hentes.",
+	"oathauth-webauthn-module-description": "WebAuthn er i en eksperimentel tilstand. Den tilbyder i øjeblikket ingen gendannelsesmulighed for mistede eller beskadigede godkendelsesenheder. \n\n[https://en.wikipedia.org/wiki/WebAuthn Få mere at vide om WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Genindlæs siden",
+	"oathauth-webauthn-authentication-info-label": "Godkendelsesdata",
+	"oathauth-webauthn-authentication-info-help": "Godkendelsesdata videregivet til klienten til hentning af legitimationsoplysninger",
+	"oathauth-webauthn-credential-label": "Brugerlegitimation",
+	"oathauth-webauthn-credential-help": "Brugerlegitimationsoplysninger baseret på godkendelsesdata",
+	"oathauth-webauthn-add-security-key": "Tilføj en sikkerhedsnøgle",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Brug sikkerhedsnøgle eller adgangsnøgle"
+}

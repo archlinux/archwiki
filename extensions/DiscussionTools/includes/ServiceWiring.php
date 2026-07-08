@@ -8,7 +8,7 @@ use MediaWiki\MediaWikiServices;
 // as the @covers annotation cannot cover a specific file
 // This is fully tested in ServiceWiringTest.php
 // @codeCoverageIgnoreStart
-
+/** @phpcs-require-sorted-array */
 return [
 	'DiscussionTools.CommentParser' => static function ( MediaWikiServices $services ): CommentParser {
 		return new CommentParser(
@@ -36,6 +36,11 @@ return [
 			$services->getUserIdentityUtils()
 		);
 	},
+	'DiscussionTools.ThreadItemFormatter' => static function ( MediaWikiServices $services ): ThreadItemFormatter {
+		return new ThreadItemFormatter(
+			$services->getLinkRenderer()
+		);
+	},
 	'DiscussionTools.ThreadItemStore' => static function ( MediaWikiServices $services ): ThreadItemStore {
 		return new ThreadItemStore(
 			$services->getConfigFactory(),
@@ -46,11 +51,6 @@ return [
 			$services->getTitleFormatter(),
 			$services->getActorStore(),
 			$services->getContentLanguage()
-		);
-	},
-	'DiscussionTools.ThreadItemFormatter' => static function ( MediaWikiServices $services ): ThreadItemFormatter {
-		return new ThreadItemFormatter(
-			$services->getLinkRenderer()
 		);
 	},
 ];

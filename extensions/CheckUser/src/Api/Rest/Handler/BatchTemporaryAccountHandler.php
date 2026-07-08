@@ -1,20 +1,21 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLoggerFactory;
-use MediaWiki\CheckUser\Services\CheckUserExpiredIdsLookupService;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
+use MediaWiki\Extension\CheckUser\Services\CheckUserExpiredIdsLookupService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\ParamValidator\TypeDef\ArrayDef;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\User\ActorStore;
@@ -30,10 +31,6 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	use TemporaryAccountRevisionTrait;
 	use TemporaryAccountLogTrait;
 
-	private RevisionStore $revisionStore;
-	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
-	private TemporaryAccountLoggerFactory $loggerFactory;
-
 	public function __construct(
 		Config $config,
 		JobQueueGroup $jobQueueGroup,
@@ -42,13 +39,13 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 		IConnectionProvider $dbProvider,
 		ActorStore $actorStore,
 		BlockManager $blockManager,
-		RevisionStore $revisionStore,
+		private readonly RevisionStore $revisionStore,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
-		TemporaryAccountLoggerFactory $loggerFactory,
+		private readonly CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup,
+		private readonly TemporaryAccountLoggerFactory $loggerFactory,
 		ReadOnlyMode $readOnlyMode,
 		private readonly ExtensionRegistry $extensionRegistry,
-		private readonly CheckUserExpiredIdsLookupService $expiredIdsLookupService
+		private readonly CheckUserExpiredIdsLookupService $expiredIdsLookupService,
 	) {
 		parent::__construct(
 			$config,
@@ -61,9 +58,6 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 			$checkUserPermissionsManager,
 			$readOnlyMode
 		);
-		$this->revisionStore = $revisionStore;
-		$this->autoRevealLookup = $autoRevealLookup;
-		$this->loggerFactory = $loggerFactory;
 	}
 
 	/**
@@ -117,8 +111,15 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 		}
 
 		foreach ( $body['users'] ?? [] as $username => $params ) {
+			try {
+				$actorId = $this->getTemporaryAccountActorId( $username );
+			} catch ( LocalizedHttpException ) {
+				// Skip users that don't exist on this wiki, so that
+				// partial results can be returned for the valid ones.
+				continue;
+			}
 			$identifier = [
-				'actorId' => $this->getTemporaryAccountActorId( $username ),
+				'actorId' => $actorId,
 				'revIds' => $params['revIds'] ?? [],
 				'logIds' => $params['logIds'] ?? [],
 				'lastUsedIp' => $params['lastUsedIp'] ?? false,
@@ -233,20 +234,24 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	 * Returns the IPs associated with a given set of abuse_filter_log IDs.
 	 *
 	 * This method assumes that the AbuseFilter extension is installed.
+	 *
+	 * @param int[] $abuseFilterLogIds
+	 * @return array<int,string>
 	 */
 	private function getAbuseFilterLogIPs( array $abuseFilterLogIds ): array {
-		if ( count( $abuseFilterLogIds ) === 0 ) {
+		if ( !$abuseFilterLogIds ) {
 			return [];
 		}
 
 		$abuseFilterPrivateLogDetailsLookup = AbuseFilterServices::getLogDetailsLookup();
 		$abuseLogIps = $abuseFilterPrivateLogDetailsLookup->getIPsForAbuseFilterLogs(
-			$this->getAuthority(), $abuseFilterLogIds
+			$this->getAuthority(),
+			$abuseFilterLogIds
 		);
 
 		// Remove any IPs which are false (meaning the user could not see the abuse_filter_log row) and then
 		// return the list.
-		return array_filter( $abuseLogIps, static fn ( $value ) => $value !== false );
+		return array_filter( $abuseLogIps );
 	}
 
 	/**
@@ -337,11 +342,6 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	 * @inheritDoc
 	 */
 	public function getBodyParamSettings(): array {
-		$optionalUserProperties = [];
-		if ( $this->extensionRegistry->isLoaded( 'Abuse Filter' ) ) {
-			$optionalUserProperties['abuseLogIds'] = ArrayDef::makeListSchema( 'string' );
-		}
-
 		return [
 			'users' => [
 				self::PARAM_SOURCE => 'body',
@@ -353,7 +353,12 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 						'logIds' => ArrayDef::makeListSchema( 'string' ),
 						'lastUsedIp' => 'boolean',
 					],
-					$optionalUserProperties
+					[
+						// Allow this parameter unconditionally, becuase a wiki with AbuseFilter
+						// may make a batch request to a wiki without AbuseFilter, and not know
+						// to omit it.
+						'abuseLogIds' => ArrayDef::makeListSchema( 'string' ),
+					]
 				) ),
 			],
 		] + parent::getBodyParamSettings();

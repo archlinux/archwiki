@@ -8,6 +8,10 @@
 		if ( mw.util.isIPAddress( cidr, true ) ) {
 			$( '.mw-checkuser-cidr-tool-links', $form ).removeClass( 'mw-checkuser-cidr-tool-links-hidden' );
 			$( '.mw-checkuser-cidr-tool-links', $form ).html(
+				// Uses:
+				// * checkuser-cidr-tool-links-checkuser
+				// * checkuser-cidr-tool-links-checkuserlog
+				// * checkuser-cidr-tool-links-prefix
 				mw.message( 'checkuser-cidr-tool-links', cidr ).parse()
 			);
 			if ( !hasCheckUserRight ) {

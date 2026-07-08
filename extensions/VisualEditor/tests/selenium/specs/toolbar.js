@@ -6,16 +6,11 @@ describe( 'Toolbar', () => {
 	let name;
 
 	beforeEach( async () => {
+		await EditPage.clearBeforeUnload();
+
 		name = Util.getTestString();
 		await EditPage.openForEditing( name );
 		await EditPage.toolbar.waitForDisplayed( { timeout: 20000 } );
-	} );
-
-	afterEach( async () => {
-		// T269566: Popup with text
-		// 'Leave site? Changes that you made may not be saved. Cancel/Leave'
-		// appears after the browser tries to leave the page with the preview.
-		await browser.reloadSession();
 	} );
 
 	it( 'should open notices popup as soon as it loads', async () => {

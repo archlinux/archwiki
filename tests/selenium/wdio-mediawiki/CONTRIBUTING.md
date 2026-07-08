@@ -4,7 +4,7 @@
 
 1. Look for any outstanding bugs.
    Especially (unreleased) regressions should be addressed before a release.
-   <https://phabricator.wikimedia.org/tag/mediawiki-core-tests>
+   <https://phabricator.wikimedia.org/tag/browser_test_platform>
 
 2. Create or reset your `release` branch to the latest head of the repository
 
@@ -52,5 +52,6 @@
 
    ```bash
    # From tests/selenium/wdio-mediawiki/
+   npm login
    npm publish
    ```

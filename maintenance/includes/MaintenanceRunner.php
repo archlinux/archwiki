@@ -3,16 +3,16 @@
 namespace MediaWiki\Maintenance;
 
 use Exception;
-use LCStoreNull;
 use LogicException;
 use MediaWiki;
 use MediaWiki\Config\Config;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Language\LCStoreNull;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Profiler\Profiler;
 use MediaWiki\Settings\SettingsBuilder;
-use Profiler;
 use ReflectionClass;
 use Throwable;
 
@@ -536,8 +536,6 @@ class MaintenanceRunner {
 	 * @return void
 	 */
 	public function defineSettings() {
-		global $IP;
-
 		if ( $this->parameters->hasOption( 'conf' ) ) {
 			// Define the constant instead of directly setting $settingsFile
 			// to ensure consistency. wfDetectLocalSettingsFile() will return
@@ -548,7 +546,7 @@ class MaintenanceRunner {
 				$this->fatalError( "\nConfig file " . MW_CONFIG_FILE . " was not found or is not readable.\n\n" );
 			}
 		}
-		$settingsFile = wfDetectLocalSettingsFile( $IP );
+		$settingsFile = wfDetectLocalSettingsFile( MW_INSTALL_PATH );
 
 		if ( $this->parameters->hasOption( 'wiki' ) ) {
 			$wikiName = $this->parameters->getOption( 'wiki' );
@@ -577,18 +575,16 @@ class MaintenanceRunner {
 			//       But we only know that once we have instantiated the Maintenance object.
 			//       So go into no-settings mode for now, and fail later of the script doesn't support it.
 			if ( !defined( 'MW_CONFIG_CALLBACK' ) ) {
-				define( 'MW_CONFIG_CALLBACK', __CLASS__ . '::emulateConfig' );
+				define( 'MW_CONFIG_CALLBACK', self::emulateConfig( ... ) );
 			}
 			$this->withoutLocalSettings = true;
 		}
 	}
 
 	/**
-	 * @param SettingsBuilder $settings
-	 *
-	 * @internal Handler for MW_CONFIG_CALLBACK, used when no LocalSettings.php was found.
+	 * Handler for MW_CONFIG_CALLBACK, used when no LocalSettings.php was found.
 	 */
-	public static function emulateConfig( SettingsBuilder $settings ) {
+	private static function emulateConfig( SettingsBuilder $settings ) {
 		// NOTE: The config schema is already loaded at this point, so default values are known.
 
 		$settings->overrideConfigValues( [

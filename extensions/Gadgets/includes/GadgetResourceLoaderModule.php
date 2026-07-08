@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader as RL;
 
@@ -48,6 +49,17 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	 * @return array
 	 */
 	protected function getPages( RL\Context $context ) {
+		// In theory we could support these separately, but
+		// * gadget definitions assume both
+		// * it doesn't make sense to load half a gadget
+		// * it's poor UX to have some gadgets work and some not
+		// * historically this extension is only used when
+		//   a community permits both.
+		$config = $this->getConfig();
+		if ( !$config->get( MainConfigNames::UseSiteJs ) || !$config->get( MainConfigNames::UseSiteCss ) ) {
+			return [];
+		}
+
 		$gadget = $this->getGadget();
 		$pages = [];
 

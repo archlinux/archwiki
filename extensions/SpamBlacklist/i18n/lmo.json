@@ -11,7 +11,6 @@
 	"spam-blacklisted-email": "Adress de posta eletronica blocad",
 	"spam-blacklisted-email-text": "El to adress de posta eletronica adess l'è blocad quant al mandà di messagg de posta eletronica a di alter utent.",
 	"spam-blacklisted-email-signup": "L'adress de posta eletronica indicad, al moment l'è blocad.",
-	"spam-invalid-lines": "{{PLURAL:$1|Quella riga chì|Queste righe chì}} de la lista negra del ruf {{PLURAL:$1|a l'è una'espression regolar minga valida|a inn di espression regolar minga valide}}; a gh'è besogn de corrensger {{PLURAL:$1|l'eror|i eror}} inanz de salvà la pagina.",
 	"spam-blacklist-desc": "Arnes contra 'l ruf fondad sora i espression regolar per blocà i URL e i adress de posta eletronica di utent registrad",
 	"log-name-spamblacklist": "Register de la lista negra del ruf",
 	"log-description-spamblacklist": "'Sti aveniment chì i lassen sgiò di segn di ativazzion de la lista negra del ruf.",

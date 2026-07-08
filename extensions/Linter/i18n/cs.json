@@ -112,6 +112,7 @@
 	"linter-pager-title-header": "Název stránky",
 	"linter-pager-unclosed-quotes-in-heading-details": "Neuzavřený apostrof, který vyteče z tabulky s obsahem",
 	"linter-pager-wikilink-in-extlink-details": "Odkazy v odkazech",
+	"linter-pager-template-arg-in-extension-tag-details": "Název rozšiřující značky, kterou je potřeba upravit (a parametry šablony používané uvnitř)",
 	"linter-prefix-search-subpage": "Stránky s chybami Lintu odpovídající začátku či celému názvu: $1",
 	"linterrors-subpage": "Chyby nalezené Lintem: $1",
 	"linterrors-summary": "<strong>Poznámka:</strong> Počty u kategorií nejsou přesné, jsou založeny na odhadech.",

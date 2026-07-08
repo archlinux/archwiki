@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Diman Russkov",
+			"Okras",
+			"Vonavy",
+			"Shabe"
+		]
+	},
+	"oathauth-webauthn-module-label": "Ключ безопасности",
+	"oathauth-webauthn-ui-login-prompt": "Пожалуйста, прикоснитесь ключом безопасности или следуйте инструкциям в браузере.",
+	"oathauth-webauthn-ui-add-key": "Добавить ключ",
+	"oathauth-webauthn-error-browser-unsupported": "Этот браузер не поддерживает аутентификацию с помощью ключа безопасности, либо она недоступна для этого сайта. Пожалуйста, попробуйте другой браузер. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Подробнее]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Этот браузер не поддерживает аутентификацию с помощью ключа безопасности, либо она недоступна для этого сайта.",
+	"oathauth-webauthn-error-auth-generic": "Процесс аутентификации был прерван. Пожалуйста, начните процесс аутентификации снова.",
+	"oathauth-webauthn-error-reg-generic": "Не удалось подтвердить ваш ключ. Пожалуйста, начните процесс регистрации снова.",
+	"oathauth-webauthn-registered-keys-section-name": "Зарегистрированные ключи",
+	"oathauth-webauthn-ui-remove-key": "Удалить",
+	"oathauth-webauthn-error-module-not-enabled": "Модуль «$1» не включён для {{GENDER:$2|участника|участницы}} «$2».",
+	"oathauth-webauthn-error-verification-failed": "Проверка WebAuthn не удалась.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Участник|Участница}} «$1» не может зарегистрировать новые учётные данные.",
+	"oathauth-webauthn-error-invalid-new-key": "Новый ключ, возвращаемый модулем, не имеет требуемого типа.",
+	"oathauth-webauthn-error-registration-failed": "Регистрация нового ключа не удалась.",
+	"oathauth-webauthn-ui-key-register-help": "Выберите псевдоним для вашего ключа:",
+	"oathauth-webauthn-error-cannot-remove-key": "Ключ не может быть удалён.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Информация об аутентификации не может быть получена.",
+	"oathauth-webauthn-add-key-section-name": "Зарегистрировать новый ключ безопасности",
+	"oathauth-webauthn-error-get-reginfo-fail": "Информация о регистрации не может быть получена.",
+	"oathauth-webauthn-module-description": "WebAuthn находится в экспериментальном состоянии. В настоящее время нет возможности восстановления утерянных или повреждённых устройств аутентификации.\n\n[https://en.wikipedia.org/wiki/WebAuthn Подробнее о WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Перезагрузить страницу",
+	"oathauth-webauthn-add-security-key": "Добавить ключ безопасности"
+}

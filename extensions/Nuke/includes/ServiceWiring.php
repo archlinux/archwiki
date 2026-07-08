@@ -1,7 +1,7 @@
 <?php
 
+use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Registration\ExtensionRegistry;
 
 // PHPUnit doesn't understand code coverage for code outside of classes/functions,
 // like service wiring files. This *is* tested though, see
@@ -11,13 +11,14 @@ use MediaWiki\Registration\ExtensionRegistry;
 /*
  * CheckUser provides a service for this, but
  * we define our own nullable here to make CheckUser a soft dependency
+ * @phpcs-require-sorted-array
  */
 return [
 	'NukeIPLookup' => static function (
 		MediaWikiServices $services
-	) {
+	): ?CheckUserTemporaryAccountsByIPLookup {
 		// Allow IP lookups if CheckUser is present and temp user config is known and enabled
-		if ( !ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
+		if ( !$services->getExtensionRegistry()->isLoaded( 'CheckUser' ) ) {
 			return null;
 		}
 		$tempUserConfig = $services->getTempUserConfig();

@@ -4,14 +4,15 @@
 			"Ahonc",
 			"DDPAT",
 			"Ice bulldog",
+			"Movses",
 			"Piramidion",
-			"Vlad5250",
-			"Ата",
 			"Repakr",
-			"Movses"
+			"Vlad5250",
+			"Ата"
 		]
 	},
 	"linterrors": "Lint-помилки",
+	"linttemplateerrors": "Включення, які містять lint-помилки",
 	"linter-category-bogus-image-options": "Фальшиві опції файлу",
 	"linter-category-bogus-image-options-desc": "Ці сторінки мають файли з фальшивими опціями.",
 	"linter-category-large-tables": "Великі таблиці, які важко переглядати з мобільного",
@@ -22,6 +23,8 @@
 	"linter-category-duplicate-ids-desc": "Ці сторінки мають елементи з дубльованими ідентифікаторами тегів.",
 	"linter-category-empty-heading": "Порожні заголовки",
 	"linter-category-empty-heading-desc": "Ці сторінки мають порожні заголовки.",
+	"linter-category-template-arg-in-extension-tag": "Тег розширення з параметром шаблону",
+	"linter-category-template-arg-in-extension-tag-desc": "Ці сторінки мають тег розширення з параметром шаблону, який не буде правильно включено.",
 	"linter-category-fostered": "Присвоєний контент",
 	"linter-category-fostered-desc": "Ці сторінки містять присвоєний контент.",
 	"linter-category-fostered-transparent": "Присвоєний невидимий після рендерингу контент",
@@ -64,6 +67,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Ці сторінки мають вікіпосилання у зовнішніх посиланнях, які можна виправити",
 	"linter-desc": "Відстежування Lint-помилок із зовнішнього сервісу і показ їх користувачам",
 	"linter-lints-prefix-search-page-desc": "Шукати сторінки з lint-помилками за префіксом назви сторінки або повною назвою",
+	"linter-invalid-category": "Категорію не знайдено або її неправильно сформовано",
 	"linter-invalid-title": "Простір назв і/або назва сторінки не знайдені або деформовані",
 	"linter-form-exact-match": "Шукати конкретну назву сторінки",
 	"linter-form-prefix-match": "Шукати усі сторінки, які відповідають префіксу назви",
@@ -114,10 +118,16 @@
 	"linter-pager-title-header": "Назва сторінки",
 	"linter-pager-unclosed-quotes-in-heading-details": "Незакритий апостроф, який перетікає зі змісту",
 	"linter-pager-wikilink-in-extlink-details": "Посилання в посиланнях",
+	"linter-pager-template-arg-in-extension-tag-details": "Назва тегу розширення з необхідностю оновлення (і параметрів шаблону, використаних всередині неї)",
 	"linter-prefix-search-subpage": "Сторінки з lint-помилками, що відповідають префіксу назви або повній назві: $1",
 	"linterrors-subpage": "Lint-помилки: $1",
 	"linterrors-summary": "<strong>Примітка:</strong> підрахунок для категорій не є точним — він базується на приблизних значеннях.",
 	"multi-part-template-block": "Вивід більш ніж з одного шаблону",
+	"parser-function": "Вивід з функції парсера",
 	"pageinfo-linter": "Lint-помилки",
-	"pageinfo-linter-moreinfo": "Переглянути детальну інформацію про lint-помилки."
+	"pageinfo-linter-moreinfo": "Переглянути детальну інформацію про lint-помилки.",
+	"category-by-template": "Включення, які містять lint-помилки: $1",
+	"category-by-template-view": "Переглянути включення, що містять ці lint-помилки.",
+	"category-by-template-desc": "Включення цих сторінок містить lint-помилку '''[[Special:LintErrors/$1|$1]]'''. ''Зверніть увагу, що деякі включення можуть показуватися в цьому списку через значення аргументів, які передаються у включення, а не через саме джерело включення.''",
+	"linter-template-errors-index-desc": "Це є списком сторінок, що містить lint-помилки. ''Зверніть увагу, що деякі включення можуть показуватися в цьому списку через значення аргументів, які передаються у включення, а не через саме джерело включення.''"
 }

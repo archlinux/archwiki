@@ -6,6 +6,7 @@ namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -13,7 +14,6 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\WTSUtils;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwError;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -60,6 +60,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		if ( $info['mediatype'] === 'AUDIO' ) {
 			// FIXME: TMH uses 23 but VE wants 32
 			$height = /* height || */32; // Arguably, audio should respect a defined height
+			// FIXME: Default width should be scaled by the upright factor
 			$width = max( 35, $width ?: $env->getSiteConfig()->widthOption() );
 		}
 
@@ -267,6 +268,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 		$size = self::handleSize( $env, $attrs, $info );
 		DOMDataUtils::addNormalizedAttribute( $audio, 'height', (string)$size['height'], null, true );
 		DOMDataUtils::addNormalizedAttribute( $audio, 'width', (string)$size['width'], null, true );
+		// T133673: Inline style matches TMH
 		$audio->setAttribute( 'style', "width: {$size['width']}px;" );
 
 		// Hardcoded until defined heights are respected.
@@ -476,7 +478,6 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				} elseif ( $urlParser->tokenizeURL( $val ) !== false ) {
 					// An external link!
 					$href = Sanitizer::cleanUrl( $env->getSiteConfig(), $val, 'external' );
-					$anchor->setAttribute( 'href', $href );
 					// Similar to AddLinkAttributes
 					$extLinkAttribs = $env->getExternalLinkAttribs( $href );
 					foreach ( $extLinkAttribs as $key => $val ) {
@@ -484,6 +485,8 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 							foreach ( $val as $v ) {
 								DOMUtils::addRel( $anchor, $v );
 							}
+						} elseif ( $key === 'class' ) {
+							DOMCompat::getClassList( $anchor )->add( ...$val );
 						} else {
 							$anchor->setAttribute( $key, $val );
 						}
@@ -610,6 +613,10 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				'width' => (int)DOMCompat::getAttribute( $span, 'data-width' ) ?: null,
 				'height' => (int)DOMCompat::getAttribute( $span, 'data-height' ) ?: null,
 			];
+			$uprightFactor = DOMCompat::getAttribute( $span, 'data-upright' );
+			if ( $uprightFactor !== null ) {
+				$uprightFactor = (float)$uprightFactor;
+			}
 
 			$page = WTSUtils::getAttrFromDataMw( $dataMw, 'page', true );
 			if ( $page ) {
@@ -628,13 +635,21 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$thumbtime = WTSUtils::getAttrFromDataMw( $dataMw, 'thumbtime', true );
 			$starttime = WTSUtils::getAttrFromDataMw( $dataMw, 'starttime', true );
 			if ( $thumbtime || $starttime ) {
-				$seek = $thumbtime && $thumbtime->value !== null
+				$seek = $thumbtime && ( $thumbtime->value['txt'] ?? false )
 					? $thumbtime->value['txt']
-					: ( $starttime && $starttime->value !== null ? $starttime->value['txt'] : '' );
+					: ( $starttime->value['txt'] ?? '' );
 				$seek = self::parseTimeString( $seek );
 				if ( $seek !== null ) {
 					$dims['seek'] = $seek;
 				}
+			}
+
+			// Indicate that the width that was set was as a result of default sizing
+			if (
+				$dims['width'] !== null &&
+				DOMCompat::getClassList( $container )->contains( 'mw-default-size' )
+			) {
+				$dims['isDefault'] = true;
 			}
 
 			$attrs = [
@@ -669,6 +684,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$validContainers[] = [
 				'container' => $container,
 				'attrs' => $attrs,
+				'upright' => $uprightFactor,
 				// Pass the anchor because we did some work to find it above
 				'anchor' => $anchor,
 				'infoKey' => $infoKey,
@@ -707,6 +723,7 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 			$anchor = $c['anchor'];
 			$span = $anchor->firstChild;
 			$attrs = $c['attrs'];
+			$uprightFactor = $c['upright'];
 			$dataMw = DOMDataUtils::getDataMw( $container );
 			$errs = $c['errs'];
 
@@ -818,6 +835,12 @@ class AddMediaInfo implements Wt2HtmlDOMProcessor {
 				$attrs['dims']['lang'] ?? ''
 			);
 			$anchor->appendChild( $elt );
+
+			// Add style & class for upright images to support thumbnail scaling
+			if ( $uprightFactor !== null && $elt instanceof Element ) {
+				DOMCompat::getClassList( $elt )->add( 'mw-file-upright' );
+				$elt->setAttribute( 'style', "--mw-file-upright: {$uprightFactor}" );
+			}
 
 			$needsTMHModules = $needsTMHModules || ( !$isImage && !$errs );
 

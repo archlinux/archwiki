@@ -14,13 +14,14 @@ use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Extension\DiscussionTools\BatchModifyElements;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
 use MediaWiki\Hook\GetDoubleUnderscoreIDsHook;
-use MediaWiki\Hook\ParserAfterTidyHook;
-use MediaWiki\Hook\ParserOutputPostCacheTransformHook;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Hook\ParserAfterTidyHook;
+use MediaWiki\Parser\Hook\ParserOutputPostCacheTransformHook;
 use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
-use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
-use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Title\Title;
 
 class ParserHooks implements
@@ -29,7 +30,7 @@ class ParserHooks implements
 	ParserAfterTidyHook
 {
 
-	private Config $config;
+	private readonly Config $config;
 
 	public function __construct(
 		ConfigFactory $configFactory
@@ -76,6 +77,7 @@ class ParserHooks implements
 				$html = $batchModifyElements->apply( $html );
 				// Suppress the empty state
 				$pout->setExtensionData( 'DiscussionTools-isEmptyTalkPage', null );
+				$pout->setExtensionData( 'DiscussionTools-isPreview', true );
 			}
 
 			$pout->addModuleStyles( [ 'ext.discussionTools.init.styles' ] );
@@ -90,16 +92,38 @@ class ParserHooks implements
 	 * @inheritDoc
 	 */
 	public function onParserOutputPostCacheTransform( $parserOutput, &$text, &$options ): void {
-		$isPreview = $parserOutput->getOutputFlag( ParserOutputFlags::IS_PREVIEW );
-
-		// We want to run this hook only on Parsoid HTML for now.
-		// (and leave the onParserAfterTidy handler for legacy HTML).
-		if ( PageBundleParserOutputConverter::hasPageBundle( $parserOutput ) ) {
-			$titleDbKey = $parserOutput->getExtensionData( ParsoidParser::PARSOID_TITLE_KEY );
-			$title = Title::newFromDBkey( $titleDbKey );
-			'@phan-var Title $title';
-			$this->transformHtml( $parserOutput, $text, $title, $isPreview );
+		$popts = $options[ 'parserOptions' ] ?? null;
+		if ( $popts instanceof ParserOptions && $popts->isMessage() ) {
+			return;
 		}
+
+		// as per Id73a1b5751cfc055e84188bcb19583c72b84032f, this is always set when transforming HTML
+		// in DiscussionTools, so it's a reasonable way to not execute it twice for legacy content coming
+		// from the ParserCache
+		if ( ( $parserOutput->getExtensionData( 'DiscussionTools-isEmptyTalkPage' ) !== null ||
+				// well, there is an exception to that rule: if we're in preview mode, AND we're previewing in legacy
+				// mode, we reset DiscussionTools-isEmptyTalkPage to null - so in that case we also set isPreview, so
+				// that we can catch this case here. By definition this can't come from the cache; so there's no risk
+				// that the newly introduced flag isn't set if it is needed.
+				// TODO this MUST disappear once ParserAfterTidy is removed - this is only a temporary fix that won't
+				// be necessary once that happens.
+				$parserOutput->getExtensionData( 'DiscussionTools-isPreview' ) ) &&
+			 // T419830: sometimes parsoid recursive processes a small
+			 // component of the page?  But we should always run this pass
+			 // if we're using Parsoid.
+			 !( $popts instanceof ParserOptions && $popts->getUseParsoid() )
+		) {
+			return;
+		}
+
+		$linkTarget = $parserOutput->getTitle();
+		if ( !$linkTarget ) {
+			return;
+		}
+
+		$isPreview = $parserOutput->getOutputFlag( ParserOutputFlags::IS_PREVIEW );
+		$title = Title::newFromLinkTarget( $linkTarget );
+		$this->transformHtml( $parserOutput, $text, $title, $isPreview );
 	}
 
 	/**
@@ -114,8 +138,23 @@ class ParserHooks implements
 			return;
 		}
 
+		$output = $parser->getOutput();
+		// if we have a post-processing cache for legacy parses, we use the post-processing pipeline instead
+		// (and cache it there)
+		// we also don't want to try to do the post-processing if we're getting a page from the cache that
+		// doesn't yet hold its title.
+		if ( $output->getTitle() !== null &&
+			MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::UsePostprocCacheLegacy ) ) {
+			return;
+		}
+		// Don't invoke this hook from the ::parseExtensionTagAsTopLevelDoc()
+		// method in Parsoid, either.
+		if ( $pOpts->getUseParsoid() ) {
+			return;
+		}
+
 		$this->transformHtml(
-			$parser->getOutput(), $text, $parser->getTitle(), $pOpts->getIsPreview()
+			$output, $text, $parser->getTitle(), $pOpts->getIsPreview()
 		);
 	}
 

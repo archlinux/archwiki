@@ -106,6 +106,7 @@ class Less_Tree_Mixin_Definition extends Less_Tree_Ruleset {
 					$expression = new Less_Tree_Expression( $varargs );
 					array_unshift( $frame->rules, new Less_Tree_Declaration( $name, $expression->compile( $env ) ) );
 				} else {
+					// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 					$val = ( $arg && $arg['value'] ) ? $arg['value'] : false;
 
 					if ( $val ) {

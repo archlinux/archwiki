@@ -18,7 +18,6 @@
 	"titleblacklist-forbidden-move": "„$2“ nelze přesunout na název „$3“, protože název „$3“ je zakázáno vytvářet. Odpovídá následujícímu záznamu na černé listině: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Soubor s názvem „$2“ je zakázáno vytvářet. Název odpovídá následujícímu záznamu na černé listině: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Není dovoleno zaregistrovat uživatelské jméno „$2“.\nOdpovídá následujícímu záznamu na černé listině: <code>$1</code>",
-	"titleblacklist-invalid": "Na černé listině názvů {{PLURAL:$1|je následující řádka neplatný regulární výraz|jsou následující řádky neplatné regulární výrazy}} a je nutné {{PLURAL:$1|ji|je}} před uložením stránky opravit:",
 	"titleblacklist-override": "V případě shody ignorovat černou listinu názvů",
 	"titleblacklist-override-help": "Uživatelé s příslušným oprávněním mohou toto nastavit pro ignorování záznamů v černé listině názvů.",
 	"titleblacklist-warning": "<strong>Upozornění: Tuto stránku mohou editovat jen správci a další uživatelé s oprávněním <code>tboverride</code>, protože odpovídá následujícímu záznamu černé listiny názvů:</strong><br /><code>$1</code>",

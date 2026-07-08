@@ -56,9 +56,7 @@ class CompareParserCacheTest extends MaintenanceBaseTestCase {
 		// Add a hook that rejects all parser cache entries when they try to be fetched, so that our
 		// test page has no parser cache entry. This simulates that no cache entry is found for the page.
 		// It may not be called if no cache is created for the page.
-		$this->setTemporaryHook( 'RejectParserCacheValue', static function () {
-			return false;
-		} );
+		$this->setTemporaryHook( 'RejectParserCacheValue', static fn () => false );
 
 		$this->maintenance->setOption( 'namespace', 0 );
 		$this->maintenance->setOption( 'maxpages', 1 );

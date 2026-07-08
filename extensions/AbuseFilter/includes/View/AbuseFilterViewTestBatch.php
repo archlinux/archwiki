@@ -19,6 +19,7 @@ use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class AbuseFilterViewTestBatch extends AbuseFilterView {
@@ -28,61 +29,25 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	private static $mChangeLimit = 100;
 
 	/**
-	 * @var LBFactory
-	 */
-	private $lbFactory;
-	/**
 	 * @var string The text of the rule to test changes against
 	 */
 	private $testPattern;
-	/**
-	 * @var EditBoxBuilderFactory
-	 */
-	private $boxBuilderFactory;
-	/**
-	 * @var RuleCheckerFactory
-	 */
-	private $ruleCheckerFactory;
-	/**
-	 * @var VariableGeneratorFactory
-	 */
-	private $varGeneratorFactory;
-	private AbuseLoggerFactory $abuseLoggerFactory;
-	private RecentChangeFactory $recentChangeFactory;
 
-	/**
-	 * @param LBFactory $lbFactory
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param EditBoxBuilderFactory $boxBuilderFactory
-	 * @param RuleCheckerFactory $ruleCheckerFactory
-	 * @param VariableGeneratorFactory $varGeneratorFactory
-	 * @param AbuseLoggerFactory $abuseLoggerFactory
-	 * @param RecentChangeFactory $recentChangeFactory
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param string $basePageName
-	 * @param array $params
-	 */
 	public function __construct(
-		LBFactory $lbFactory,
+		private readonly LBFactory $lbFactory,
 		AbuseFilterPermissionManager $afPermManager,
-		EditBoxBuilderFactory $boxBuilderFactory,
-		RuleCheckerFactory $ruleCheckerFactory,
-		VariableGeneratorFactory $varGeneratorFactory,
-		AbuseLoggerFactory $abuseLoggerFactory,
-		RecentChangeFactory $recentChangeFactory,
+		private readonly EditBoxBuilderFactory $boxBuilderFactory,
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly VariableGeneratorFactory $varGeneratorFactory,
+		private readonly AbuseLoggerFactory $abuseLoggerFactory,
+		private readonly RecentChangeFactory $recentChangeFactory,
+		private readonly ReadOnlyMode $readOnlyMode,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
-		$this->lbFactory = $lbFactory;
-		$this->boxBuilderFactory = $boxBuilderFactory;
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->varGeneratorFactory = $varGeneratorFactory;
-		$this->abuseLoggerFactory = $abuseLoggerFactory;
-		$this->recentChangeFactory = $recentChangeFactory;
 	}
 
 	/**
@@ -272,6 +237,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 
 		$counter = 1;
 
+		$readOnlyErrorShown = false;
 		$contextUser = $this->getUser();
 		$ruleChecker->toggleConditionLimit( false );
 		foreach ( $res as $row ) {
@@ -306,7 +272,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 					$protectedVariableValue = $vars->getVarThrow( $protectedVariable );
 					if (
 						!( $protectedVariableValue instanceof LazyLoadedVariable ) &&
-						$protectedVariableValue !== null
+						$protectedVariableValue->toNative() !== null
 					) {
 						$protectedVariableValuesShown[] = $protectedVariable;
 					}
@@ -314,12 +280,22 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			}
 
 			if ( count( $protectedVariableValuesShown ) ) {
-				// Either 'user_name' or 'accountname' should be set which are not lazily loaded, so get one of
+				if ( $this->readOnlyMode->isReadOnly() ) {
+					if ( !$readOnlyErrorShown ) {
+						$form->addPreHtml( Html::errorBox(
+							$this->msg( 'readonlytext', $this->readOnlyMode->getReason() )->parse()
+						) );
+						$readOnlyErrorShown = true;
+					}
+					continue;
+				}
+
+				// Either 'user_name' or 'account_name' should be set which are not lazily loaded, so get one of
 				// them to use as the target
 				if ( $vars->varIsSet( 'user_name' ) ) {
 					$target = $vars->getComputedVariable( 'user_name' )->toNative();
 				} else {
-					$target = $vars->getComputedVariable( 'accountname' )->toNative();
+					$target = $vars->getComputedVariable( 'account_name' )->toNative();
 				}
 				$logger = $this->abuseLoggerFactory->getProtectedVarsAccessLogger();
 				$logger->logViewProtectedVariableValue( $this->getUser(), $target, $protectedVariableValuesShown );

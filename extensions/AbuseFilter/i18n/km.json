@@ -149,7 +149,7 @@
 	"abusefilter-edit-builder-funcs-count": "ចំនួនដងដែលជួរអក្សរ X មាននៅក្នុងជួរអក្សរ Y (count)",
 	"abusefilter-edit-builder-funcs-set_var": "កំណត់អថេរ (set_var)",
 	"abusefilter-edit-builder-group-vars": "អថេរ",
-	"abusefilter-edit-builder-vars-accountname": "ឈ្មោះគណនី(នៅលើការបង្កើតគណនី)",
+	"abusefilter-edit-builder-vars-account-name": "ឈ្មោះគណនី(នៅលើការបង្កើតគណនី)",
 	"abusefilter-edit-builder-vars-action": "សកម្មភាព",
 	"abusefilter-edit-builder-vars-addedlines": "បន្ទាត់ត្រូវបានបន្ថែមទៅក្នុងកំណែប្រែ",
 	"abusefilter-edit-builder-vars-newsize": "ទំហំទំព័រថ្មី",

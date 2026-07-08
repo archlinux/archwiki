@@ -3,6 +3,7 @@
 namespace MediaWiki\Tests\Storage;
 
 use LogicException;
+use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\JavaScriptContent;
@@ -28,7 +29,6 @@ use MediaWiki\Storage\EditResult;
 use MediaWiki\Tests\ExpectCallbackTrait;
 use MediaWiki\Tests\Language\LocalizationUpdateSpyTrait;
 use MediaWiki\Tests\Recentchanges\ChangeTrackingUpdateSpyTrait;
-use MediaWiki\Tests\ResourceLoader\ResourceLoaderUpdateSpyTrait;
 use MediaWiki\Tests\Search\SearchUpdateSpyTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -45,7 +45,6 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 	use ChangeTrackingUpdateSpyTrait;
 	use SearchUpdateSpyTrait;
 	use LocalizationUpdateSpyTrait;
-	use ResourceLoaderUpdateSpyTrait;
 	use ExpectCallbackTrait;
 
 	protected function setUp(): void {
@@ -101,7 +100,13 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			->caller( __METHOD__ )
 			->fetchRow();
 
-		return $row ? RecentChange::newFromRow( $row ) : null;
+		if ( $row ) {
+			return $this->getServiceContainer()
+				->getRecentChangeFactory()
+				->newRecentChangeFromRow( $row );
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -281,7 +286,7 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $updater->getEditResult()->isNew(), 'EditResult::isNew()' );
 		$this->assertFalse( $updater->getEditResult()->isRevert(), 'EditResult::isRevert()' );
 
-		// TODO: Test null revision (with different user): new revision!
+		// TODO: Test dummy revision (with different user): new revision!
 
 		$rev = $updater->getNewRevision();
 		$revContent = $rev->getContent( SlotRecord::MAIN );
@@ -483,9 +488,23 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 				'getAuthor'
 			);
 
+			$editResult = $event->getEditResult();
 			Assert::assertNotNull(
-				$event->getEditResult(),
+				$editResult,
 				'getEditResult'
+			);
+
+			// NOTE: $editResult->isNullEdit() returns true for dummy revisions! (T392333)
+			Assert::assertSame(
+				$event->isEffectiveContentChange(),
+				!$editResult->isNullEdit(),
+				'getEditResult()->isNullEdit()'
+			);
+
+			Assert::assertSame(
+				$event->isCreation(),
+				$editResult->isNew(),
+				'getEditResult()->isNew()'
 			);
 
 			if ( $old ) {
@@ -777,9 +796,6 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 
 		$this->expectSearchUpdates( 1 );
 		$this->expectLocalizationUpdate( $page->getNamespace() === NS_MEDIAWIKI ? 1 : 0 );
-		$this->expectResourceLoaderUpdates(
-			$content->getModel() === CONTENT_MODEL_JAVASCRIPT ? 1 : 0
-		);
 
 		// Perform edit
 		$updater = $page->newPageUpdater( $user );
@@ -824,12 +840,6 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 			$page->getNamespace() === NS_MEDIAWIKI ? 1 : 0
 		);
 
-		// NOTE: The resource loader cache is currently purged *twice*
-		// for null edits. That's not necessary and may change.
-		$this->expectResourceLoaderUpdates(
-			$content->getModel() === CONTENT_MODEL_JAVASCRIPT ? 2 : 0
-		);
-
 		// Do null edit
 		$updater = $page->newPageUpdater( $user );
 		$summary = CommentStoreComment::newUnsavedComment( 'Just a test' );
@@ -866,7 +876,6 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		// Do not update derived data on dummy revisions!
 		$this->expectSearchUpdates( 0 );
 		$this->expectLocalizationUpdate( 0 );
-		$this->expectResourceLoaderUpdates( 0 );
 
 		// Create dummy revision
 		$updater = $page->newPageUpdater( $user );
@@ -1147,6 +1156,66 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $updater->wasSuccessful(), 'wasSuccessful()' );
 		$this->assertNull( $updater->getNewRevision(), 'getNewRevision()' );
 		$this->assertStatusError( 'edit-conflict', $status, 'edit-conflict' );
+	}
+
+	/**
+	 * @dataProvider provideEditedOtherUsersJSTag
+	 * @covers \MediaWiki\Storage\PageUpdater::computeEffectiveTags()
+	 */
+	public function testEditedOtherUsersJsTag( $userName, $pageToEdit, $contentModel, $expected ) {
+		$title = Title::newFromText( $pageToEdit );
+		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
+		$page = $wikiPageFactory->newFromTitle( $title );
+
+		if ( $contentModel === CONTENT_MODEL_JAVASCRIPT ) {
+			$content = new JavaScriptContent( 'console.log("hi")' );
+		} else {
+			$content = new TextContent( 'Lorem' );
+		}
+
+		$user = $this->makeUser( $userName );
+		$updater = $page->newPageUpdater( $user );
+		$updater->setContent( SlotRecord::MAIN, $content );
+
+		$summary = CommentStoreComment::newUnsavedComment( 'test' );
+		$rev = $updater->saveRevision( $summary );
+
+		$this->assertNotNull( $rev );
+
+		$tagsStore = $this->getServiceContainer()->getChangeTagsStore();
+		$actual = $tagsStore->getTags( $this->getDb(), null, $rev->getId() );
+
+		// expected may be empty
+		foreach ( $expected as $tag ) {
+			$this->assertContains( $tag, $actual );
+		}
+	}
+
+	public static function provideEditedOtherUsersJSTag() {
+		yield 'own users js edited' => [
+			'myUserName' => 'Admin',
+			'pageToEdit' => 'User:Admin/common.js',
+			'contentModelOfPageToEdit' => CONTENT_MODEL_JAVASCRIPT,
+			'expectedEditTags' => [],
+		];
+		yield 'other users js edited' => [
+			'myUserName' => 'Admin',
+			'pageToEdit' => 'User:SomeoneElse/common.js',
+			'contentModelOfPageToEdit' => CONTENT_MODEL_JAVASCRIPT,
+			'expectedEditTags' => [ ChangeTags::TAG_EDITED_OTHER_USERS_JS ],
+		];
+		yield 'own users non-js edited' => [
+			'myUserName' => 'Admin',
+			'pageToEdit' => 'User:Admin/subpage',
+			'contentModelOfPageToEdit' => CONTENT_MODEL_WIKITEXT,
+			'expectedEditTags' => [],
+		];
+		yield 'other user non-js edited' => [
+			'myUserName' => 'Admin',
+			'pageToEdit' => 'User:SomeoneElse/subpage',
+			'contentModelOfPageToEdit' => CONTENT_MODEL_WIKITEXT,
+			'expectedEditTags' => [],
+		];
 	}
 
 	/**
@@ -1516,45 +1585,33 @@ class PageUpdaterTest extends MediaWikiIntegrationTestCase {
 	public static function provideMagicWords() {
 		yield 'PAGEID' => [
 			'Test {{PAGEID}} Test',
-			static function ( RevisionRecord $rev ) {
-				return $rev->getPageId();
-			}
+			static fn ( RevisionRecord $rev ) => $rev->getPageId(),
 		];
 
 		yield 'REVISIONID' => [
 			'Test {{REVISIONID}} Test',
-			static function ( RevisionRecord $rev ) {
-				return $rev->getId();
-			}
+			static fn ( RevisionRecord $rev ) => $rev->getId(),
 		];
 
 		yield 'REVISIONUSER' => [
 			'Test {{REVISIONUSER}} Test',
-			static function ( RevisionRecord $rev ) {
-				return $rev->getUser()->getName();
-			}
+			static fn ( RevisionRecord $rev ) => $rev->getUser()->getName(),
 		];
 
 		yield 'REVISIONTIMESTAMP' => [
 			'Test {{REVISIONTIMESTAMP}} Test',
-			static function ( RevisionRecord $rev ) {
-				return $rev->getTimestamp();
-			}
+			static fn ( RevisionRecord $rev ) => $rev->getTimestamp(),
 		];
 
 		yield 'subst:REVISIONUSER' => [
 			'Test {{subst:REVISIONUSER}} Test',
-			static function ( RevisionRecord $rev ) {
-				return $rev->getUser()->getName();
-			},
+			static fn ( RevisionRecord $rev ) => $rev->getUser()->getName(),
 			'subst'
 		];
 
 		yield 'subst:PAGENAME' => [
 			'Test {{subst:PAGENAME}} Test',
-			static function ( RevisionRecord $rev ) {
-				return 'PageUpdaterTest::testMagicWords';
-			},
+			static fn ( RevisionRecord $rev ) => 'PageUpdaterTest::testMagicWords',
 			'subst'
 		];
 	}

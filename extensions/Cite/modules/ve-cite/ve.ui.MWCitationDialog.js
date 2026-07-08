@@ -41,7 +41,7 @@ ve.ui.MWCitationDialog.static.name = 'cite';
 /**
  * Get the reference node to be edited.
  *
- * @return {MWReferenceNode|null} Reference node to be edited, null if none exists
+ * @return {ve.dm.MWReferenceNode|null} Reference node to be edited, null if none exists
  */
 ve.ui.MWCitationDialog.prototype.getReferenceNode = function () {
 	const selectedNode = this.getFragment().getSelectedNode();
@@ -57,26 +57,20 @@ ve.ui.MWCitationDialog.prototype.getReferenceNode = function () {
  * @override
  */
 ve.ui.MWCitationDialog.prototype.getSelectedNode = function () {
+	const surface = this.getFragment().getSurface();
 	const referenceNode = this.getReferenceNode();
+	const internalItem = ( this.referenceModel && this.referenceModel.findInternalItem( surface ) ) ||
+		( referenceNode && referenceNode.getInternalItem() );
 
-	if ( referenceNode ) {
-		const branches = referenceNode.getInternalItem().getChildren();
-		const leaves = branches &&
-			branches.length === 1 &&
-			branches[ 0 ].canContainContent() &&
-			branches[ 0 ].getChildren();
-		const transclusionNode = leaves &&
-			leaves.length === 1 &&
-			leaves[ 0 ] instanceof ve.dm.MWTransclusionNode &&
-			leaves[ 0 ];
-
-		// Only use the selected node if it is the same template as this dialog expects
-		if ( transclusionNode && transclusionNode.isSingleTemplate( this.citationTemplate ) ) {
-			return transclusionNode;
-		}
+	if ( !internalItem ) {
+		return null;
 	}
 
-	return null;
+	// Only use the node if it is the same template as this dialog expects
+	return ve.ui.MWCitationDialog.static.getTransclusionNodeWithTemplate(
+		internalItem,
+		this.citationTemplate
+	);
 };
 
 /**
@@ -94,6 +88,11 @@ ve.ui.MWCitationDialog.prototype.initialize = function ( data ) {
 
 /**
  * @override
+ * @param {Object} [data={}]
+ * @param {string} [data.inDialog]
+ * @param {string|string[]} [data.template]
+ * @param {string} [data.title]
+ * @param {ve.dm.MWReferenceModel} [data.refToEdit] Open the dialog to edit a specific reference
  */
 ve.ui.MWCitationDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWCitationDialog.super.prototype.getSetupProcess.call( this, data )
@@ -102,7 +101,7 @@ ve.ui.MWCitationDialog.prototype.getSetupProcess = function ( data ) {
 			this.inDialog = data.inDialog;
 			this.citationTemplate = data.template;
 			this.citationTitle = data.title;
-
+			this.referenceModel = data.refToEdit;
 			this.trackedCitationInputChange = false;
 		} )
 		.next( () => {
@@ -110,11 +109,16 @@ ve.ui.MWCitationDialog.prototype.getSetupProcess = function ( data ) {
 
 			// Initialization
 			this.referenceNode = this.getReferenceNode();
-			if ( this.referenceNode ) {
+			if ( !this.referenceModel && this.referenceNode ) {
 				this.referenceModel = MWReferenceModel.static.newFromReferenceNode(
 					this.referenceNode
 				);
 			}
+
+			// T367910: Temporarily disable Citoid's replace feature when the ReferenceList
+			// is selected
+			const canReplace = this.getFragment().getSurface().getSelectedNode() instanceof MWReferenceNode;
+			this.actions.setAbilities( { replace: canReplace } );
 		} );
 };
 
@@ -241,6 +245,34 @@ ve.ui.MWCitationDialog.prototype.onInputChange = function () {
 		ve.track( 'activity.' + this.constructor.static.name, { action: 'manual-template-input' } );
 		this.trackedCitationInputChange = true;
 	}
+};
+
+/**
+ * Get the TransclusionNode from an InternalItem if it's a single transclusion
+ * that fits a certain template.
+ *
+ * @param {ve.dm.InternalItemNode} internalItem
+ * @param {string|string[]} template
+ * @return {?ve.dm.MWTransclusionNode} null when there's no fitting single transclusion node
+ */
+ve.ui.MWCitationDialog.static.getTransclusionNodeWithTemplate = function (
+	internalItem,
+	template
+) {
+	const branches = internalItem.getChildren();
+	const leaves = branches.length === 1 &&
+		branches[ 0 ].canContainContent() &&
+		branches[ 0 ].getChildren();
+	const node = leaves &&
+		leaves.length === 1 &&
+		leaves[ 0 ];
+	if ( node instanceof ve.dm.MWTransclusionNode &&
+		node.isSingleTemplate( template )
+	) {
+		return node;
+	}
+
+	return null;
 };
 
 module.exports = ve.ui.MWCitationDialog;

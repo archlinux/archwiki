@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Storage;
 
-use DummyContentForTesting;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -12,6 +11,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\EditResultBuilder;
 use MediaWiki\Storage\PageUpdateException;
+use MediaWiki\Tests\Mocks\Content\DummyContentForTesting;
 use MediaWikiUnitTestCase;
 use MockTitleTrait;
 
@@ -91,14 +91,55 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * Tests the case when the new edit doesn't actually change anything on the page,
+	 * Tests the case when the edit doesn't actually create a revision,
 	 * i.e. is a null edit.
+	 *
+	 * @note intended semantics is unclear, see T392333
+	 *
 	 * @covers \MediaWiki\Storage\EditResult
 	 * @covers \MediaWiki\Storage\EditResultBuilder
 	 */
 	public function testNullEdit() {
 		$originalRevision = $this->getExistingRevision( 5 );
-		$erb = $this->getNewEditResultBuilder( $originalRevision );
+		$erb = $this->getNewEditResultBuilder();
+
+		$newRevision = $originalRevision;
+		$newRevision->setParentId( 5 );
+
+		$erb->setOriginalRevision( $originalRevision );
+		$erb->setRevisionRecord( $newRevision );
+		$er = $erb->buildEditResult();
+
+		$this->assertFalse( $er->isNew(), 'EditResult::isNew()' );
+		$this->assertTrue( $er->isNullEdit(), 'EditResult::isNullEdit()' );
+		$this->assertSame( $originalRevision->getId(), $er->getOriginalRevisionId(),
+			'EditResult::getOriginalRevisionId()' );
+		$this->assertFalse( $er->isRevert(), 'EditResult::isRevert()' );
+		$this->assertFalse( $er->isExactRevert(), 'EditResult::isExactRevert()' );
+		$this->assertNull( $er->getRevertMethod(), 'EditResult::getRevertMethod()' );
+		$this->assertNull( $er->getOldestRevertedRevisionId(),
+			'EditResult::getOldestRevertedRevisionId()' );
+		$this->assertNull( $er->getNewestRevertedRevisionId(),
+			'EditResult::getNewestRevertedRevisionId()' );
+		$this->assertSame( 0, $er->getUndidRevId(), 'EditResult::getUndidRevId' );
+		$this->assertArrayEquals( [], $er->getRevertTags(), 'EditResult::getRevertTags' );
+	}
+
+	/**
+	 * Tests the case when the new revision doesn't actually change anything on the page,
+	 * i.e. is a dummy revision.
+	 *
+	 * @note intended semantics is unclear, see T392333
+	 *
+	 * @covers \MediaWiki\Storage\EditResult
+	 * @covers \MediaWiki\Storage\EditResultBuilder
+	 */
+	public function testDummyRevision() {
+		$originalRevision = $this->getExistingRevision( 5 );
+		$erb = $this->getNewEditResultBuilder();
+
+		// Original revision is the parent revision (revert to parent),
+		// so it's a dummy revision.
 		$newRevision = $this->getExistingRevision( 6 );
 		$newRevision->setParentId( 5 );
 
@@ -146,7 +187,7 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	 */
 	public function testRollback( array $changeTags, array $expectedRevertTags ) {
 		$originalRevision = $this->getExistingRevision( 5 );
-		$erb = $this->getNewEditResultBuilder( $originalRevision, $changeTags );
+		$erb = $this->getNewEditResultBuilder( $changeTags );
 		$newRevision = $this->getExistingRevision( 225 );
 		// We change the parent id to something different, so it's not treated as a null edit
 		$newRevision->setParentId( 125 );
@@ -204,7 +245,7 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	 */
 	public function testUndo( array $changeTags, array $expectedRevertTags ) {
 		$originalRevision = $this->getExistingRevision( 5 );
-		$erb = $this->getNewEditResultBuilder( $originalRevision, $changeTags );
+		$erb = $this->getNewEditResultBuilder( $changeTags );
 		$newRevision = $this->getExistingRevision( 225 );
 		// We change the parent id to something different, so it's not treated as a null edit
 		$newRevision->setParentId( 124 );
@@ -266,10 +307,7 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Storage\EditResultBuilder
 	 */
 	public function testRevertWithoutOriginalRevision() {
-		$erb = $this->getNewEditResultBuilder(
-			null,
-			self::getSoftwareTags()
-		);
+		$erb = $this->getNewEditResultBuilder( self::getSoftwareTags() );
 		$newRevision = $this->getDummyRevision();
 
 		$erb->setRevisionRecord( $newRevision );
@@ -300,7 +338,6 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	 */
 	public function testManualRevertDetectionDisabled() {
 		$erb = $this->getNewEditResultBuilder(
-			null,
 			self::getSoftwareTags(),
 			0 // set the search radius to 0 to disable the feature entirely
 		);
@@ -339,28 +376,35 @@ class EditResultBuilderTest extends MediaWikiUnitTestCase {
 	 * Returns a RevisionRecord that pretends to have an ID and a page ID.
 	 *
 	 * @param int $id
+	 * @param ?string $text
+	 *
 	 * @return MutableRevisionRecord
 	 */
-	private function getExistingRevision( int $id = 1234 ): MutableRevisionRecord {
+	private function getExistingRevision(
+		int $id = 1234,
+		?string $text = null
+	): MutableRevisionRecord {
+		$text ??= 'Testing';
+
 		$revisionRecord = $this->getDummyRevision();
 		$revisionRecord->setId( $id );
 		$revisionRecord->setPageId( 5 );
-		$revisionRecord->setContent( SlotRecord::MAIN, new DummyContentForTesting( 'Testing' ) );
+		$revisionRecord->setContent(
+			SlotRecord::MAIN,
+			new DummyContentForTesting( $text )
+		);
 		return $revisionRecord;
 	}
 
 	/**
 	 * Convenience function for creating a new EditResultBuilder object.
 	 *
-	 * @param RevisionRecord|null $originalRevisionRecord RevisionRecord that should be returned
-	 *        by RevisionStore::getRevisionById.
 	 * @param string[] $changeTags
 	 * @param int $manualRevertSearchRadius
 	 *
 	 * @return EditResultBuilder
 	 */
 	private function getNewEditResultBuilder(
-		?RevisionRecord $originalRevisionRecord = null,
 		array $changeTags = [],
 		int $manualRevertSearchRadius = 15
 	) {

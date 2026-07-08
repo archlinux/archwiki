@@ -24,7 +24,7 @@ class LoginAttemptCounter {
 	/**
 	 * Increase bad login counter after a failed login.
 	 * The user might be required to solve a captcha if the count is high.
-	 * @param string $username
+	 * @param ?string $username
 	 * TODO use Throttler
 	 */
 	public function increaseBadLoginCounter( $username ) {
@@ -41,7 +41,7 @@ class LoginAttemptCounter {
 			$cache->incrWithInit( $key, $wgCaptchaBadLoginExpiration * 300 );
 		}
 
-		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
+		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username !== null ) {
 			$key = $this->badLoginPerUserKey( $username, $cache );
 			$cache->incrWithInit( $key, $wgCaptchaBadLoginPerUserExpiration );
 
@@ -52,10 +52,10 @@ class LoginAttemptCounter {
 
 	/**
 	 * Reset bad login counter after a successful login.
-	 * @param string $username
+	 * @param ?string $username
 	 */
 	public function resetBadLoginCounter( $username ) {
-		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username ) {
+		if ( $this->captcha->triggersCaptcha( CaptchaTriggers::BAD_LOGIN_PER_USER ) && $username !== null ) {
 			$cache = MediaWikiServices::getInstance()->getObjectCacheFactory()->getLocalClusterInstance();
 			$cache->delete( $this->badLoginPerUserKey( $username, $cache ) );
 			$cache->delete( $this->badLoginPerUserKey( $username, $cache, true ) );

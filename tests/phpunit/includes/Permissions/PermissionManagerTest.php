@@ -12,10 +12,11 @@ use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\SystemBlock;
-use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\FauxRequest;
@@ -25,6 +26,7 @@ use MediaWiki\Tests\Unit\MockBlockTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserGroupMembership;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiLangTestCase;
@@ -33,6 +35,7 @@ use stdClass;
 use TestAllServiceOptionsUsed;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * For the pure unit tests, see \MediaWiki\Tests\Unit\Permissions\PermissionManagerTest.
@@ -90,7 +93,8 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 				'undelete',
 				'deletedhistory',
 				'deletedtext',
-			]
+			],
+			MainConfigNames::RestrictedGroups => [],
 		] );
 
 		$this->setGroupPermissions( [
@@ -214,45 +218,45 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	public static function provideSpecialsAndNSPermissions() {
 		yield [
 			'namespace' => NS_SPECIAL,
-			'user permissions' => [],
-			'namespace protection' => [],
-			'expected permission errors' => [ [ 'badaccess-group0' ], [ 'ns-specialprotected' ] ],
-			'user can' => false,
+			'userPerms' => [],
+			'namespaceProtection' => [],
+			'expectedPermErrors' => [ [ 'badaccess-group0' ], [ 'ns-specialprotected' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'user permissions' => [ 'bogus' ],
-			'namespace protection' => [],
-			'expected permission errors' => [],
-			'user can' => true,
+			'userPerms' => [ 'bogus' ],
+			'namespaceProtection' => [],
+			'expectedPermErrors' => [],
+			'expectedUserCan' => true,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'user permissions' => [],
-			'namespace protection' => [],
-			'expected permission errors' => [ [ 'badaccess-group0' ] ],
-			'user can' => false,
+			'userPerms' => [],
+			'namespaceProtection' => [],
+			'expectedPermErrors' => [ [ 'badaccess-group0' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_USER,
-			'user permissions' => [],
-			'namespace protection' => [ NS_USER => [ 'bogus' ] ],
-			'expected permission errors' => [ [ 'badaccess-group0' ], [ 'namespaceprotected', 'User', 'bogus' ] ],
-			'user can' => false,
+			'userPerms' => [],
+			'namespaceProtection' => [ NS_USER => [ 'bogus' ] ],
+			'expectedPermErrors' => [ [ 'badaccess-group0' ], [ 'namespaceprotected', 'User', 'bogus' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MEDIAWIKI,
-			'user permissions' => [ 'bogus' ],
-			'namespace protection' => [],
-			'expected permission errors' => [ [ 'protectedinterface', 'bogus' ] ],
-			'user can' => false,
+			'userPerms' => [ 'bogus' ],
+			'namespaceProtection' => [],
+			'expectedPermErrors' => [ [ 'protectedinterface', 'bogus' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'user permissions' => [ 'bogus' ],
-			'namespace protection' => [],
-			'expected permission errors' => [],
-			'user can' => true,
+			'userPerms' => [ 'bogus' ],
+			'namespaceProtection' => [],
+			'expectedPermErrors' => [],
+			'expectedUserCan' => true,
 		];
 	}
 
@@ -391,91 +395,91 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 		// $title->mInterwiki, for the few cases those are needed
 		yield [
 			'namespace' => NS_MAIN,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'create',
-			'user permissions' => [ 'createpage' ],
-			'expected permission errors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
-			'user can' => false,
+			'userPerms' => [ 'createpage' ],
+			'expectedPermErrors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'title overrides' => [ 'protectedPermission' => 'editprotected' ],
+			'titleOverrides' => [ 'protectedPermission' => 'editprotected' ],
 			'action' => 'create',
-			'user permissions' => [ 'createpage', 'protect' ],
-			'expected permission errors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
-			'user can' => false,
+			'userPerms' => [ 'createpage', 'protect' ],
+			'expectedPermErrors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'title overrides' => [ 'protectedPermission' => 'editprotected' ],
+			'titleOverrides' => [ 'protectedPermission' => 'editprotected' ],
 			'action' => 'create',
-			'user permissions' => [ 'createpage', 'editprotected' ],
-			'expected permission errors' => [],
-			'user can' => true,
+			'userPerms' => [ 'createpage', 'editprotected' ],
+			'expectedPermErrors' => [],
+			'expectedUserCan' => true,
 		];
 		yield [
 			'namespace' => NS_MEDIA,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'move',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [ [ 'immobile-source-namespace', 'Media' ] ],
-			'user can' => false,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [ [ 'immobile-source-namespace', 'Media' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_HELP,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'move',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [],
-			'user can' => true,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [],
+			'expectedUserCan' => true,
 		];
 		yield [
 			'namespace' => NS_HELP,
-			'title overrides' => [ 'interwiki' => 'no' ],
+			'titleOverrides' => [ 'interwiki' => 'no' ],
 			'action' => 'move',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [ [ 'immobile-source-page' ] ],
-			'user can' => false,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [ [ 'immobile-source-page' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MEDIA,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'move-target',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [ [ 'immobile-target-namespace', 'Media' ] ],
-			'user can' => false,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [ [ 'immobile-target-namespace', 'Media' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_HELP,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'move-target',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [],
-			'user can' => true,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [],
+			'expectedUserCan' => true,
 		];
 		yield [
 			'namespace' => NS_HELP,
-			'title overrides' => [ 'interwiki' => 'no' ],
+			'titleOverrides' => [ 'interwiki' => 'no' ],
 			'action' => 'move-target',
-			'user permissions' => [ 'move' ],
-			'expected permission errors' => [ [ 'immobile-target-page' ] ],
-			'user can' => false,
+			'userPerms' => [ 'move' ],
+			'expectedPermErrors' => [ [ 'immobile-target-page' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'edit',
-			'user permissions' => [ 'createpage', 'edit' ],
-			'expected permission errors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
-			'user can' => false,
+			'userPerms' => [ 'createpage', 'edit' ],
+			'expectedPermErrors' => [ [ 'titleprotected', 'Useruser', 'test' ] ],
+			'expectedUserCan' => false,
 		];
 		yield [
 			'namespace' => NS_MAIN,
-			'title overrides' => [],
+			'titleOverrides' => [],
 			'action' => 'edit',
-			'user permissions' => [ 'edit' ],
-			'expected permission errors' => [ [ 'nocreate-loggedin' ] ],
-			'user can' => false,
+			'userPerms' => [ 'edit' ],
+			'expectedPermErrors' => [ [ 'nocreate-loggedin' ] ],
+			'expectedUserCan' => false,
 		];
 	}
 
@@ -1066,7 +1070,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$block = $blockStore->newUnsaved( [
 			'targetUser' => $user,
-			'expiry' => wfTimestamp( TS_MW, wfTimestamp() + ( 40 * 60 * 60 ) ),
+			'expiry' => wfTimestamp( TS::MW, wfTimestamp() + ( 40 * 60 * 60 ) ),
 			'allowUsertalk' => $options['allowUsertalk'] ?? false,
 			'sitewide' => !$restrictions,
 		] );
@@ -1469,8 +1473,8 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 
 	public static function provideDeletedViewerRights() {
 		yield [
-			'usergroup' => '*',
-			'user permissions' => [
+			'userGroup' => '*',
+			'userPerms' => [
 				'delete',
 				'deletedhistory',
 				'deletedtext',
@@ -1478,25 +1482,25 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 				'undelete',
 				'viewsuppressed'
 			],
-			'user can' => false
+			'expectedUserCan' => false
 		];
 		yield [
-			'usergroup' => 'deleted-viewer',
-			'user permissions' => [
+			'userGroup' => 'deleted-viewer',
+			'userPerms' => [
 				'delete',
 				'suppressrevision',
 				'undelete'
 			],
-			'user can' => false
+			'expectedUserCan' => false
 		];
 		yield [
-			'usergroup' => 'deleted-viewer',
-			'user permissions' => [
+			'userGroup' => 'deleted-viewer',
+			'userPerms' => [
 				'deletedhistory',
 				'deletedtext',
 				'viewsuppressed'
 			],
-			'user can' => true
+			'expectedUserCan' => true
 		];
 	}
 
@@ -1786,6 +1790,36 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 
 		$this->assertSame( [ 'edit' ], $permissions );
 		$this->assertTrue( $hookRan );
+	}
+
+	public function testFatalStatusWithDisabledGroups() {
+		$groupPermissions = $this->getConfVar( MainConfigNames::GroupPermissions );
+		$groupPermissions['sysop']['loremipsum'] = true;
+		$groupPermissions['interface-admin']['loremipsum'] = true;
+		$this->overrideConfigValues( [
+			MainConfigNames::GroupPermissions => $groupPermissions,
+			MainConfigNames::RestrictedGroups => [
+				'sysop' => [
+					'memberConditions' => [ APCOND_EDITCOUNT, 1000 ],
+				],
+			]
+		] );
+
+		$user = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setLanguage( 'qqx' );
+		$context->setUser( $user );
+		$status = $this->getServiceContainer()->getPermissionManager()
+			->newFatalPermissionDeniedStatus( 'loremipsum', $context );
+
+		$this->assertStatusMessage( 'badaccess-groups-disabled', $status );
+		$messageText = Message::newFromSpecifier( $status->getMessages()[0] )->inLanguage( 'qqx' )->text();
+		$linkSysop = UserGroupMembership::getLinkWiki( 'sysop', $context );
+		$linkIntAdmin = UserGroupMembership::getLinkWiki( 'interface-admin', $context );
+		$this->assertSame(
+			"(badaccess-groups-disabled: $linkSysop(comma-separator)$linkIntAdmin, 2, (group-sysop), 1)",
+			$messageText
+		);
 	}
 
 	/**

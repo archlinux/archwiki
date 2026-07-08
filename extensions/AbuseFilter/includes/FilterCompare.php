@@ -11,19 +11,15 @@ use MediaWiki\Extension\AbuseFilter\Filter\Filter;
  * @internal
  */
 class FilterCompare {
-	public const SERVICE_NAME = 'AbuseFilterFilterCompare';
+	public const SERVICE_NAME = ServiceNames::FilterCompare;
 
-	/** @var ConsequencesRegistry */
-	private $consequencesRegistry;
-
-	public function __construct( ConsequencesRegistry $consequencesRegistry ) {
-		$this->consequencesRegistry = $consequencesRegistry;
+	public function __construct( private readonly ConsequencesRegistry $consequencesRegistry ) {
 	}
 
 	/**
 	 * @param Filter $firstFilter
 	 * @param Filter $secondFilter
-	 * @return array Fields that are different
+	 * @return string[] Fields that are different
 	 */
 	public function compareVersions( Filter $firstFilter, Filter $secondFilter ): array {
 		// TODO: Avoid DB references here, re-add when saving the filter

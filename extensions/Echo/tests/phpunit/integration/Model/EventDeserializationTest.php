@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Notifications\Test\Integration;
 
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWikiIntegrationTestCase;
-use Psr\Log\Test\TestLogger;
+use TestLogger;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\Notifications\Model\Event
@@ -27,7 +27,7 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeseriazationWithLegacyPHP() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 
 		$extra = [
@@ -48,14 +48,14 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'PHPUnit', $eventExtra['msg'] );
 		$this->assertSame( 1, $eventExtra['value'] );
 
-		$this->assertFalse( $testLogger->hasWarningRecords() );
+		$this->assertSame( [], $testLogger->getBuffer() );
 	}
 
 	/**
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeseriazationWithJSONCoded() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 
 		$extra = [
@@ -77,14 +77,14 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'PHPUnit', $eventExtra['msg'] );
 		$this->assertSame( 1, $eventExtra['value'] );
 
-		$this->assertFalse( $testLogger->hasWarningRecords() );
+		$this->assertSame( [], $testLogger->getBuffer() );
 	}
 
 	/**
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeserializeWhenExtraIsIndexedArray() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 
 		$extra = [ 'first', 'second', 'third' ];
@@ -104,28 +104,28 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 'first', $legacyExtra[0] );
 		$this->assertSame( 'third', $legacyExtra[2] );
 
-		$this->assertFalse( $testLogger->hasWarningRecords() );
+		$this->assertSame( [], $testLogger->getBuffer() );
 	}
 
 	/**
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeserializeWhenExtraIsNull() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 
 		$row = $this->buildRow( 1, 'test', null );
 		$event = Event::newFromRow( (object)$row );
 		$this->assertSame( [], $event->getExtra() );
 
-		$this->assertFalse( $testLogger->hasWarningRecords() );
+		$this->assertSame( [], $testLogger->getBuffer() );
 	}
 
 	/**
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeserializeWhenItsEmptyArray() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 
 		$codec = $this->getServiceContainer()->getJsonCodec();
@@ -136,16 +136,15 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$legacyRow = $this->buildRow( 1, 'test', serialize( [] ) );
 		$legacyEvent = Event::newFromRow( (object)$legacyRow );
 		$this->assertSame( [], $legacyEvent->getExtra() );
-		$this->assertCount( 0, $testLogger->records );
 
-		$this->assertFalse( $testLogger->hasWarningRecords() );
+		$this->assertSame( [], $testLogger->getBuffer() );
 	}
 
 	/**
 	 * @covers ::deserializeExtra
 	 */
 	public function testDeserializeWhenCorruptedData() {
-		$testLogger = new TestLogger();
+		$testLogger = new TestLogger( true );
 		$this->setLogger( 'Echo', $testLogger );
 		$jsonCorruptedRow = $this->buildRow( 1, 'test', '{ ... corrupted[' );
 		$this->assertFalse( Event::newFromRow( (object)$jsonCorruptedRow ) );
@@ -153,8 +152,7 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$legacyCorruptedRow = $this->buildRow( 1, 'test', 'anything can be here' );
 		$this->assertFalse( Event::newFromRow( (object)$legacyCorruptedRow ) );
 
-		$this->assertTrue( $testLogger->hasWarningRecords() );
-		$this->assertCount( 2, $testLogger->recordsByLevel['warning'] );
+		$this->assertCount( 2, $testLogger->getBuffer() );
 	}
 
 }

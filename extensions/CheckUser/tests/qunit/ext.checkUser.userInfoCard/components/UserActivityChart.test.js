@@ -1,7 +1,7 @@
 'use strict';
 
 const { mount } = require( 'vue-test-utils' );
-const UserActivityChart = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/components/UserActivityChart.vue' );
+const UserActivityChart = require( 'ext.checkUser.userInfoCard/components/UserActivityChart.vue' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.UserActivityChart', QUnit.newMwEnvironment( {
 	beforeEach: function () {
@@ -35,6 +35,15 @@ QUnit.test( 'renders correctly with required props', ( assert ) => {
 	assert.true(
 		wrapper.find( '.ext-checkuser-userinfocard-activity-chart' ).exists(),
 		'Activity chart container exists'
+	);
+} );
+
+QUnit.test( 'does not render chart if totalLocalEdits is >= 1000', ( assert ) => {
+	const wrapper = mountComponent( { totalLocalEdits: 1000 } );
+
+	assert.false(
+		wrapper.find( '.ext-checkuser-userinfocard-activity-chart' ).exists(),
+		'Activity chart container does not exist'
 	);
 } );
 
@@ -85,9 +94,9 @@ QUnit.test( 'displays the correct activity chart label', ( assert ) => {
 	const wrapper = mountComponent();
 
 	assert.strictEqual(
-		wrapper.find( 'p' ).text(),
+		wrapper.find( 'span' ).text(),
 		'checkuser-userinfocard-activity-chart-label: 15',
-		'Paragraph displays the correct activity chart label'
+		'Element displays the correct activity chart label'
 	);
 } );
 
@@ -109,12 +118,12 @@ QUnit.test( 'Renders the timestamp of the last edit if provided', ( assert ) => 
 	const lastEditTimestampTag = wrapper.find( '.ext-checkuser-userinfocard-latest-edit-label' );
 	assert.true(
 		lastEditTimestampTag.exists(),
-		'Paragraph holding the last edit timestamp exists'
+		'Label holding the last edit timestamp exists'
 	);
 	assert.strictEqual(
 		lastEditTimestampTag.text(),
 		'checkuser-userinfocard-last-edit-timestamp-label: 10:42, 17 (september) 2025',
-		'Paragraph holding the last edit timestamp displays correct information'
+		'Label holding the last edit timestamp displays correct information'
 	);
 } );
 
@@ -126,6 +135,6 @@ QUnit.test( 'Does not render the timestamp of the last edit if not provided', ( 
 	const lastEditTimestampTag = wrapper.findComponent( '.ext-checkuser-userinfocard-latest-edit-label' );
 	assert.false(
 		lastEditTimestampTag.exists(),
-		'Paragraph holding the last edit timestamp does not exist'
+		'Label holding the last edit timestamp does not exist'
 	);
 } );

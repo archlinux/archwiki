@@ -98,7 +98,7 @@
 	"echo-api-failure-cross-wiki": "Пристапот до далечински домен е одбиен.",
 	"echo-notification-placeholder": "Нема известувања.",
 	"echo-notification-placeholder-filters": "Нема известувања што одговараат на зададеното.",
-	"echo-notification-loginrequired": "Мора да сте најавени за да ги видите известувањата.",
+	"echo-notification-loginrequired": "Мора да сте најавени за да ги гледате известувањата.",
 	"echo-notification-popup-loginrequired": "Најавете се за да ги погледате вашите известувања.",
 	"echo-notification-markasread": "Означи како прочитано",
 	"echo-notification-markasunread": "Означи како непрочитано",
@@ -158,6 +158,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Вашите}} кориснички права се {{GENDER:$1|изменети}}. Додадени сте во: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Вашите}} кориснички права се {{GENDER:$1|изменети}}. Повеќе не членувате во $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Вашите}} кориснички права се {{GENDER:$1|изменети}}. Додадени сте во: $2. Повеќе не членувате во: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|Вашето}} членство во {{PLURAL:$2|следнава група|следниве групи}} автоматски истече: $1.",
 	"notification-header-user-rights-expiry-change": "{{GENDER:$1|Изменет}} е истекот на {{GENDER:$4|вашето}} членство во {{PLURAL:$3|следнава група|следниве групи}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Добре дојдовте}} на {{SITENAME}}, $1! Драго ни е {{GENDER:$2|што сте}} тука.",
 	"notification-header-mention-summary": "$1  {{GENDER:$3|ве}} {{GENDER:$2|спомна}} во опис на уредувањето на <strong>$4</strong>.",
@@ -194,6 +195,7 @@
 	"notification-reverted-email-subject2": "{{GENDER:$2|На}} {{SITENAME}} {{PLURAL:$4|е вратено ваше уредување|се вратени ваши уредувања}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$3|ве}} {{GENDER:$2|спомна}} на {{SITENAME}}",
 	"notification-user-rights-email-subject": "{{GENDER:$3|Вашите}} кориснички права на {{SITENAME}} се изменети",
+	"notification-user-rights-expiry-email-subject": "Истекоа {{GENDER:$3|вашите}} кориснички права на {{SITENAME}}",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 с}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 м}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 ч}}",
@@ -245,7 +247,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|раководител на претплати на наметнувања}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Раководители на претплати на наметнувања",
 	"notification-subject-email-verify-email-reminder": "Потврдете ја {{GENDER:$1|вашата}} е-пошта",
-	"notification-header-verify-email-reminder": "<strong>Потврдете ја {{GENDER:$1|вашата}} е-пошта</strong> за да знаеме дека е-поштата на {{GENDER:$1|вашата}} сметка ви припаѓа {{GENDER:$1|вам}}.",
+	"notification-header-verify-email-reminder": "Здраво $2,\n<strong>Потврдете ја {{GENDER:$1|вашата}} е-пошта</strong> за да знаеме дека е-поштата на {{GENDER:$1|вашата}} сметка ви припаѓа {{GENDER:$1|вам}}.",
 	"notification-link-text-verify-email-reminder": "Упр. со нагодувања за е-пошта",
 	"notification-verify-email-reminder-link-label": "Потврди е-пошта"
 }

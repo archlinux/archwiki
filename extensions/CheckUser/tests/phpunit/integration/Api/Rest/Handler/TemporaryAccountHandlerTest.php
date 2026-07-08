@@ -1,13 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api\Rest\Handler;
 
+use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\Block\AbstractBlock;
 use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountHandler;
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\Api\Rest\Handler\TemporaryAccountHandler;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
@@ -18,17 +22,19 @@ use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
 use MediaWikiIntegrationTestCase;
+use Psr\Log\LoggerInterface;
 use Wikimedia\IPUtils;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\ReadOnlyMode;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountHandler
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\AbstractTemporaryAccountHandler
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\AbstractTemporaryAccountNameHandler
- * @covers \MediaWiki\CheckUser\Api\Rest\Handler\TemporaryAccountNameTrait
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\TemporaryAccountHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\AbstractTemporaryAccountHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\AbstractTemporaryAccountNameHandler
+ * @covers \MediaWiki\Extension\CheckUser\Api\Rest\Handler\TemporaryAccountNameTrait
  */
 class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 
@@ -67,7 +73,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 				'jobQueueGroup' => $this->createMock( JobQueueGroup::class ),
 				'permissionManager' => $permissionManager,
 				'userNameUtils' => $userNameUtils,
-				'dbProvider' => $services->getDBLoadBalancerFactory(),
+				'dbProvider' => $services->getConnectionProvider(),
 				'actorStore' => $actorStore,
 				'blockManager' => $services->getBlockManager(),
 				'checkUserPermissionManager' => $checkUserPermissionManager,
@@ -81,9 +87,6 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		) ) );
 	}
 
-	/**
-	 * @return Authority
-	 */
 	private function getAuthorityForSuccess(): Authority {
 		return $this->getTestUser()->getAuthority();
 	}
@@ -193,7 +196,13 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 			new LocalizedHttpException( new MessageValue( 'readonlytext', [ 'Maintenance' ] ), 503 )
 		);
 		$this->executeHandler(
-			$handler, $this->getRequestData(), [], [], [], [], $this->mockRegisteredUltimateAuthority()
+			$handler,
+			$this->getRequestData(),
+			[],
+			[],
+			[],
+			[],
+			$this->mockRegisteredUltimateAuthority()
 		);
 	}
 
@@ -461,47 +470,136 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
+	/**
+	 * @dataProvider provideExecuteLogs
+	 */
+	public function testExecuteLogs(
+		int $jobQueueGroupExpects,
+		int $loggerExpects,
+		array $preferences
+	): void {
+		$this->markTestSkippedIfExtensionNotLoaded( 'GlobalPreferences' );
+
+		ConvertibleTimestamp::setFakeTime( '20230406060708' );
+
+		$serviceOptions = new ServiceOptions(
+			CheckUserTemporaryAccountAutoRevealLookup::CONSTRUCTOR_OPTIONS,
+			$this->getServiceContainer()->getMainConfig()
+		);
+
+		$checkUserPermissionManager = $this->createMock( CheckUserPermissionManager::class );
+		$checkUserPermissionManager->method( 'canAccessTemporaryAccountIPAddresses' )
+			->willReturn( CheckUserPermissionStatus::newGood() );
+		$checkUserPermissionManager->method( 'canAutoRevealIPAddresses' )
+			->willReturn( CheckUserPermissionStatus::newGood() );
+
+		$preferencesFactory = $this->createMock( GlobalPreferencesFactory::class );
+		$preferencesFactory->method( 'getGlobalPreferencesValues' )
+			->willReturn( $preferences );
+
+		$autoRevealLookup = new CheckUserTemporaryAccountAutoRevealLookup(
+			$serviceOptions,
+			$preferencesFactory,
+			$checkUserPermissionManager
+		);
+
+		$jobQueueGroup = $this->createMock( JobQueueGroup::class );
+		$jobQueueGroup->expects( $this->exactly( $jobQueueGroupExpects ) )
+			->method( 'push' );
+
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->expects( $this->exactly( $loggerExpects ) )
+			->method( 'info' )
+			->with(
+				'{username} viewed IP addresses for {target}',
+				$this->callback( static function ( $context ) {
+					return $context['target'] === '*Unregistered_1';
+				} )
+			);
+
+		$this->setLogger( 'CheckUser', $logger );
+
+		$data = $this->executeHandlerAndGetBodyData(
+			$this->getTemporaryAccountHandler( [
+				'autoRevealLookup' => $autoRevealLookup,
+				'jobQueueGroup' => $jobQueueGroup,
+			] ),
+			$this->getRequestData(),
+			[],
+			[],
+			[],
+			[],
+			$this->getAuthorityForSuccess()
+		);
+	}
+
+	public static function provideExecuteLogs(): array {
+		ConvertibleTimestamp::setFakeTime( '20230406060708' );
+		$timeNow = ConvertibleTimestamp::time();
+		$validFutureTimestamp = $timeNow + 100;
+		$invalidFutureTimestamp = $timeNow + 9999999;
+		$pastTimestamp = $timeNow - 100;
+		ConvertibleTimestamp::setFakeTime( false );
+
+		return [
+			'The correct logger is called when auto-reveal is on with valid expiry' => [
+				'jobQueueGroupExpects' => 0,
+				'loggerExpects' => 1,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $validFutureTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is on with expiry too far in the future' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $invalidFutureTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is on with expiry in the past' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [ Preferences::ENABLE_IP_AUTO_REVEAL => $pastTimestamp ],
+			],
+			'The correct logger is called when auto-reveal is off' => [
+				'jobQueueGroupExpects' => 1,
+				'loggerExpects' => 0,
+				'preferences' => [],
+			],
+		];
+	}
+
 	public function addDBDataOnce() {
 		// Add test data for cu_changes
 		$testData = [
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.1',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.1' ),
 				'cuc_this_oldid' => 1,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20200101000000' ),
 			],
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.2',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.2' ),
 				'cuc_this_oldid' => 10,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20200102000000' ),
 			],
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.3',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.3' ),
 				'cuc_this_oldid' => 100,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20200103000000' ),
 			],
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.4',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.4' ),
 				'cuc_this_oldid' => 1000,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20200104000000' ),
 			],
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.5',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.5' ),
 				'cuc_this_oldid' => 10000,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20210105000000' ),
 			],
 			[
 				'cuc_actor'      => 1234,
-				'cuc_ip'         => '1.2.3.5',
 				'cuc_ip_hex'     => IPUtils::toHex( '1.2.3.5' ),
 				'cuc_this_oldid' => 100000,
 				'cuc_timestamp'  => $this->getDb()->timestamp( '20220101000000' ),
@@ -510,7 +608,7 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 
 		$commonData = [
 			'cuc_type'       => RC_EDIT,
-			'cuc_agent'      => 'foo user agent',
+			'cuc_agent_id'   => 0,
 			'cuc_namespace'  => NS_MAIN,
 			'cuc_title'      => 'Foo_Page',
 			'cuc_minor'      => 0,
@@ -533,21 +631,18 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$testData = [
 			[
 				'cule_actor'      => 1234,
-				'cule_ip'         => '1.2.3.4',
 				'cule_ip_hex'     => IPUtils::toHex( '1.2.3.4' ),
 				'cule_log_id'     => 1,
 				'cule_timestamp'  => $this->getDb()->timestamp( '20200104000000' ),
 			],
 			[
 				'cule_actor'      => 1234,
-				'cule_ip'         => '1.2.3.5',
 				'cule_ip_hex'     => IPUtils::toHex( '1.2.3.5' ),
 				'cule_log_id'     => 2,
 				'cule_timestamp'  => $this->getDb()->timestamp( '20220101000000' ),
 			],
 			[
 				'cule_actor'      => 1234,
-				'cule_ip'         => '1.2.3.6',
 				'cule_ip_hex'     => IPUtils::toHex( '1.2.3.6' ),
 				'cule_log_id'     => 3,
 				'cule_timestamp'  => $this->getDb()->timestamp( '20220109000000' ),
@@ -555,9 +650,9 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		];
 
 		$commonData = [
-			'cule_xff'     => 0,
-			'cule_xff_hex' => null,
-			'cule_agent'   => 'foo user agent',
+			'cule_xff'      => 0,
+			'cule_xff_hex'  => null,
+			'cule_agent_id' => 0,
 		];
 
 		$queryBuilder = $this->getDb()->newInsertQueryBuilder()
@@ -572,18 +667,16 @@ class TemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$testData = [
 			[
 				'cupe_actor'      => 1234,
-				'cupe_ip'         => '1.2.3.7',
 				'cupe_ip_hex'     => IPUtils::toHex( '1.2.3.7' ),
 				'cupe_timestamp'  => $this->getDb()->timestamp( '20220110000000' ),
 			],
 		];
 
 		$commonData = [
-			'cupe_agent'   => 'foo user agent',
-			'cupe_xff'     => 0,
-			'cupe_xff_hex' => null,
-			'cupe_params'  => '',
-			'cupe_private' => '',
+			'cupe_agent_id' => 0,
+			'cupe_xff'      => 0,
+			'cupe_xff_hex'  => null,
+			'cupe_params'   => '',
 		];
 
 		$queryBuilder = $this->getDb()->newInsertQueryBuilder()

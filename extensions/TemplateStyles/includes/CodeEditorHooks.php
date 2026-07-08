@@ -19,19 +19,10 @@ class CodeEditorHooks implements
 {
 	/**
 	 * Edit our CSS content model like core's CSS
-	 * @param Title $title Title being edited
-	 * @param string|null &$lang CodeEditor language to use
-	 * @param string $model Content model
-	 * @param string $format Content format
-	 * @return bool
+	 * @inheritDoc
 	 */
 	public function onCodeEditorGetPageLanguage( Title $title, ?string &$lang, string $model, string $format ): bool {
-		if ( $model === 'sanitized-css' && (
-				Hooks::getConfig()->get( 'TemplateStylesUseCodeEditor' ) ||
-				// Temporary while CodeMirror is still in beta (T373711#11018957).
-				!( \MediaWiki\Extension\CodeEditor\Hooks::tempIsCodeMirrorEnabled() )
-			)
-		) {
+		if ( $model === 'sanitized-css' && Hooks::getConfig()->get( 'TemplateStylesUseCodeEditor' ) ) {
 			$lang = 'css';
 			return false;
 		}

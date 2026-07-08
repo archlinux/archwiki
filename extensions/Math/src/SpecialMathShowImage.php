@@ -5,14 +5,14 @@ namespace MediaWiki\Extension\Math;
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\MainConfigNames;
-use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 
 /**
  * Description of SpecialMathShowSVG
  *
  * @author Moritz Schubotz (Physikerwelt)
  */
-class SpecialMathShowImage extends SpecialPage {
+class SpecialMathShowImage extends UnlistedSpecialPage {
 	/** @var bool */
 	private $noRender = false;
 	/** @var MathRenderer|null */
@@ -20,23 +20,11 @@ class SpecialMathShowImage extends SpecialPage {
 	/** @var string */
 	private $mode = MathConfig::MODE_MATHML;
 
-	/** @var MathConfig */
-	private $mathConfig;
-
-	/** @var RendererFactory */
-	private $rendererFactory;
-
 	public function __construct(
-		MathConfig $mathConfig,
-		RendererFactory $rendererFactory
+		private readonly MathConfig $mathConfig,
+		private readonly RendererFactory $rendererFactory,
 	) {
-		parent::__construct(
-			'MathShowImage',
-			'', // Don't restrict
-			false // Don't show on Special:SpecialPages - it's not useful interactively
-		);
-		$this->mathConfig = $mathConfig;
-		$this->rendererFactory = $rendererFactory;
+		parent::__construct( 'MathShowImage' );
 	}
 
 	/**

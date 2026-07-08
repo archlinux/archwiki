@@ -11,7 +11,6 @@
 	"spam-blacklisted-email": "Keelatud e-posti aadress",
 	"spam-blacklisted-email-text": "Sinu e-posti aadressilt on praegu keelatud teistele kasutajatele e-kirju saata.",
 	"spam-blacklisted-email-signup": "Selle e-posti aadressi kasutamine on praegu keelatud.",
-	"spam-invalid-lines": "{{PLURAL:$1|Järgmine rida|Järgmised read}} rämpspostituste blokeerimisnimekirjas on {{PLURAL:$1|vigane regulaaravaldis|vigased regulaaravaldised}} ja {{PLURAL:$1|see|need}} tuleb enne lehekülje salvestamist parandada:",
 	"spam-blacklist-desc": "Regulaaravaldisel põhinev rämpspostituste vastane tööriist, mis võimaldab keelata internetiaadresse lehekülgedel ning registreeritud kasutajate e-posti aadresse.",
 	"log-name-spamblacklist": "Rämpsu blokeerimisnimekirja logi",
 	"log-description-spamblacklist": "Siin on loetletud rämpspostituse blokeerimisnimekirja tabamused.",

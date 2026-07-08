@@ -4,27 +4,23 @@ namespace MediaWiki\Extension\AbuseFilter\Variables;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 
 /**
  * This service is used to generate the list of variables which are protected variables.
  */
 class AbuseFilterProtectedVariablesLookup {
-	public const SERVICE_NAME = 'AbuseFilterProtectedVariablesLookup';
+	public const SERVICE_NAME = ServiceNames::ProtectedVariablesLookup;
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterProtectedVariables',
 	];
 
-	private ServiceOptions $options;
-	private AbuseFilterHookRunner $hookRunner;
-
 	public function __construct(
-		ServiceOptions $options,
-		AbuseFilterHookRunner $hookRunner
+		private readonly ServiceOptions $options,
+		private readonly AbuseFilterHookRunner $hookRunner
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->hookRunner = $hookRunner;
 	}
 
 	/**

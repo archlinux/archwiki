@@ -1,0 +1,130 @@
+<?php
+
+namespace MediaWiki\Tests\Unit;
+
+use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\Page\MovePage;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWikiUnitTestCase;
+use MockTitleTrait;
+use PHPUnit\Framework\Assert;
+
+/**
+ * @covers \MediaWiki\Page\MovePage
+ * @method MovePage newServiceInstance(string $serviceClass, array $parameterOverrides)
+ */
+class MovePageTest extends MediaWikiUnitTestCase {
+	use MockTitleTrait;
+	use MockAuthorityTrait;
+	use MockServiceDependenciesTrait;
+
+	public static function provideCheckPermissions() {
+		yield 'all good and allowed' => [
+			'authoritySpec' => 'ultimate',
+			'good' => true,
+		];
+		yield 'cannot move' => [
+			'authoritySpec' => static function (
+				string $permission,
+				PageIdentity $page,
+				PermissionStatus $status
+			) {
+				if ( $permission === 'move' ) {
+					Assert::assertSame( 'Existent', $page->getDBkey() );
+					$status->fatal( 'test' );
+					return false;
+				}
+				return true;
+			},
+			'good' => false,
+		];
+		yield 'cannot edit old page' => [
+			'authoritySpec' => static function (
+				string $permission,
+				PageIdentity $page,
+				PermissionStatus $status
+			) {
+				if ( $permission === 'edit' && $page->getDBkey() === 'Existent' ) {
+					$status->fatal( 'test' );
+					return false;
+				}
+				return true;
+			},
+			'good' => false,
+		];
+		yield 'cannot move-target' => [
+			'authoritySpec' => static function (
+				string $permission,
+				PageIdentity $page,
+				PermissionStatus $status
+			) {
+				if ( $permission === 'move-target' ) {
+					Assert::assertSame( 'Existent2', $page->getDBkey() );
+					$status->fatal( 'test' );
+					return false;
+				}
+				return true;
+			},
+			'good' => false,
+		];
+		yield 'cannot edit new page' => [
+			'authoritySpec' => static function (
+				string $permission,
+				PageIdentity $page,
+				PermissionStatus $status
+			) {
+				if ( $permission === 'edit' && $page->getDBkey() === 'Existent2' ) {
+					$status->fatal( 'test' );
+					return false;
+				}
+				return true;
+			},
+			'good' => false,
+		];
+	}
+
+	/**
+	 * @dataProvider provideCheckPermissions
+	 */
+	public function testCheckPermissions( $authoritySpec, bool $good ) {
+		$authority = $authoritySpec === 'ultimate'
+			? $this->mockRegisteredUltimateAuthority()
+			: $this->mockAnonAuthority( $authoritySpec );
+		$spamChecker = $this->createNoOpMock( SpamChecker::class, [ 'checkSummary' ] );
+		$spamChecker->method( 'checkSummary' )->willReturn( false );
+		$mp = $this->newServiceInstance(
+			MovePage::class,
+			[
+				'oldTitle' => $this->makeMockTitle( 'Existent' ),
+				'newTitle' => $this->makeMockTitle( 'Existent2' ),
+				'spamChecker' => $spamChecker,
+			]
+		);
+		foreach ( [ 'checkPermissions', 'authorizeMove', 'probablyCanMove' ] as $method ) {
+			$permissionStatus = $mp->$method( $authority, 'Testing' );
+			$this->assertSame( $good, $permissionStatus->isGood() );
+		}
+	}
+
+	public function testCheckPermissions_spam() {
+		$spamChecker = $this->createNoOpMock( SpamChecker::class, [ 'checkSummary' ] );
+		$spamChecker->method( 'checkSummary' )
+			->willReturnCallback( static fn ( string $reason ) => $reason === 'SPAM' ? $reason : false );
+		$mp = $this->newServiceInstance(
+			MovePage::class,
+			[
+				'oldTitle' => $this->makeMockTitle( 'Existent' ),
+				'newTitle' => $this->makeMockTitle( 'Existent2' ),
+				'spamChecker' => $spamChecker,
+			]
+		);
+		foreach ( [ 'checkPermissions', 'authorizeMove', 'probablyCanMove' ] as $method ) {
+			$notSpamStatus = $mp->$method( $this->mockRegisteredUltimateAuthority(), 'NOT_SPAM' );
+			$this->assertStatusGood( $notSpamStatus );
+			$spamStatus = $mp->$method( $this->mockRegisteredUltimateAuthority(), 'SPAM' );
+			$this->assertStatusError( 'spamprotectiontext', $spamStatus );
+		}
+	}
+}

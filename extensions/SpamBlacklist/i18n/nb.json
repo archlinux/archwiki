@@ -11,7 +11,7 @@
 	"spam-blacklisted-email": "Forbudt epostadresse",
 	"spam-blacklisted-email-text": "Epostadressa di er forbudt fra å sende eposter til andre brukere.",
 	"spam-blacklisted-email-signup": "Den angitte epostadressa er forbudt.",
-	"spam-invalid-lines": "Følgende {{PLURAL:$1|linje|linjer}} i spamsvartelista er {{PLURAL:$1|et ugyldig regulært uttrykk|ugyldige regulære uttrykk}} og må rettes før siden lagres:",
+	"spam-blacklisted-email-change": "Den gitte e-postadressen er for tiden forbudt.",
 	"spam-blacklist-desc": "Antispamverktøy basert på regulære uttrykk som gjør det mulig å forby URL-er i sider og epostadresser for registrerte brukere",
 	"log-name-spamblacklist": "Spamfilterlogg",
 	"log-description-spamblacklist": "Disse hendelsene sporer treff på spamsvartelista.",

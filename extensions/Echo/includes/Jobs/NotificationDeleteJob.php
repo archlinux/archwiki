@@ -12,10 +12,13 @@ use MediaWiki\User\User;
 /**
  * This job is created when sending notifications to the target users.  The purpose
  * of this job is to delete older notifications when the number of notifications a
- * user has is more than $wgEchoMaxUpdateCount, it does not make sense to have tons
- * of notifications in the history while users wouldn't bother to click 'load more'
- * like 100 times to see them. What we gain from this is we could run expensive
- * queries otherwise that would requires adding index and data denormalization.
+ * user has is more than $wgEchoMaxUpdateCount and to delete notifications older than
+ * $wgEchoMaxNotificationAge seconds ago.
+ *
+ * It does not make sense to have tons of notifications in the history while users
+ * wouldn't bother to click 'load more' like 100 times to see them.
+ * What we gain from this is we could run expensive queries otherwise that would
+ * requires adding index and data denormalization.
  *
  * The initial job contains multiple users, which will in turn have individual jobs
  * queued for them.
@@ -34,7 +37,7 @@ class NotificationDeleteJob extends Job {
 	 * @return true
 	 */
 	public function run() {
-		global $wgEchoMaxUpdateCount;
+		global $wgEchoMaxUpdateCount, $wgEchoMaxNotificationAge;
 		if ( count( $this->params['userIds'] ) > 1 ) {
 			// If there are multiple users, queue a single job for each one
 			$jobs = [];
@@ -64,6 +67,9 @@ class NotificationDeleteJob extends Job {
 			$notifUser = NotifUser::newFromUser( $user );
 			$notifUser->resetNotificationCount();
 		}
+
+		// Also delete old notifications
+		$notifMapper->deleteByUserAndAge( $user, $wgEchoMaxNotificationAge );
 
 		return true;
 	}

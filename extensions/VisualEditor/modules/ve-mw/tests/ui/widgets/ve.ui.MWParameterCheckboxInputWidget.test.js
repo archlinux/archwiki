@@ -1,4 +1,4 @@
-QUnit.module( 've.ui.MWParameterCheckboxInputWidget' );
+QUnit.module( 've.ui.MWParameterCheckboxInputWidget', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'Constructor passes config to parent', ( assert ) => {
 	const widget = new ve.ui.MWParameterCheckboxInputWidget( { selected: true } );

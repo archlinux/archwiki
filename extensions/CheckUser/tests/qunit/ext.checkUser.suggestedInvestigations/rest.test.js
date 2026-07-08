@@ -19,12 +19,22 @@ QUnit.test( 'Test setCaseStatus for correct status name', ( assert ) => {
 	server.respond( ( request ) => {
 		assert.true( request.url.endsWith( '/checkuser/v0/suggestedinvestigations/case/1/update' ) );
 		request.respond(
-			200, { 'Content-Type': 'application/json' }, '{"caseId":1,"status":"resolved","reason":"Reason text"}'
+			200,
+			{ 'Content-Type': 'application/json' },
+			JSON.stringify( {
+				caseId: 1,
+				status: 'resolved',
+				reason: 'Reason text',
+				formattedReason: 'Reason text'
+			} )
 		);
 	} );
 
 	return rest.setCaseStatus( 1, 'resolved', 'Reason text' ).then( ( data ) => {
-		assert.deepEqual( data, { caseId: 1, status: 'resolved', reason: 'Reason text' } );
+		assert.deepEqual(
+			data,
+			{ caseId: 1, status: 'resolved', reason: 'Reason text', formattedReason: 'Reason text' }
+		);
 	} );
 } );
 
@@ -51,7 +61,14 @@ QUnit.test( 'Test setCaseStatus on bad CSRF token for first attempt', ( assert )
 			// response indicating that the CSRF token is invalid.
 			if ( csrfTokenUpdated ) {
 				request.respond(
-					200, { 'Content-Type': 'application/json' }, '{"caseId":1,"status":"resolved","reason":"Reason text"}'
+					200,
+					{ 'Content-Type': 'application/json' },
+					JSON.stringify( {
+						caseId: 1,
+						status: 'resolved',
+						reason: 'Reason text',
+						formattedReason: 'Reason text'
+					} )
 				);
 			} else {
 				request.respond(
@@ -79,6 +96,9 @@ QUnit.test( 'Test setCaseStatus on bad CSRF token for first attempt', ( assert )
 
 	// Call the method under test
 	return rest.setCaseStatus( 1, 'resolved', 'Reason text' ).then( ( data ) => {
-		assert.deepEqual( data, { caseId: 1, status: 'resolved', reason: 'Reason text' } );
+		assert.deepEqual(
+			data,
+			{ caseId: 1, status: 'resolved', reason: 'Reason text', formattedReason: 'Reason text' }
+		);
 	} );
 } );

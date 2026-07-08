@@ -4,11 +4,12 @@
 			"Amire80",
 			"Guycn2",
 			"IKhitron",
-			"YaronSh",
-			"Neriah"
+			"Neriah",
+			"YaronSh"
 		]
 	},
 	"linterrors": "שגיאות ניקיון",
+	"linttemplateerrors": "הכללות שמכילות שגיאות ניקיון",
 	"linter-category-bogus-image-options": "אפשרויות קובץ שגויות",
 	"linter-category-bogus-image-options-desc": "בדפים האלה יש אפשרויות קובץ שגויות.",
 	"linter-category-large-tables": "טבלאות גדולות שקשה לראות במכשירים ניידים",
@@ -19,6 +20,8 @@
 	"linter-category-duplicate-ids-desc": "בדפים אלה יש רכיבים עם תכונות id כפולות.",
 	"linter-category-empty-heading": "כותרות ריקות",
 	"linter-category-empty-heading-desc": "בדפים האלה יש כותרות ריקות.",
+	"linter-category-template-arg-in-extension-tag": "תג הרחבה עם פרמטר תבנית",
+	"linter-category-template-arg-in-extension-tag-desc": "בדפים האלה יש תגי הרחבה שמכילים פרמטר של תבנית, שלא יוכלל נכון.",
 	"linter-category-fostered": "תוכן מאומץ",
 	"linter-category-fostered-desc": "בדפים האלה יש תוכן מאומץ.",
 	"linter-category-fostered-transparent": "תוכן מאומץ ושקוף לתיצוג",
@@ -61,6 +64,7 @@
 	"linter-category-wikilink-in-extlink-desc": "בדפים האלה יש קישורי ויקי מקוננים בתוך קישורים חיצוניים שאפשר לתקן",
 	"linter-desc": "מעקב אחר שגיאות שנמצאו בבדיקת ניקיון על־ידי שירות חיצוני והצגתן למשתמשים",
 	"linter-lints-prefix-search-page-desc": "חיפוש דפים עם שגיאות ניקיון לפי תחילית כותרת דף או לפי כותרת שלמה",
+	"linter-invalid-category": "קטגוריה לא נמצאה או שגויה",
 	"linter-invalid-title": "מרחב שם או שם דף לא נמצא או שהוא פגום",
 	"linter-form-exact-match": "חיפוש כותרת דף מסוימת",
 	"linter-form-prefix-match": "חיפוש כל הדפים שמתאימים לתחילית כותרת",
@@ -111,10 +115,13 @@
 	"linter-pager-title-header": "כותרת הדף",
 	"linter-pager-unclosed-quotes-in-heading-details": "מירכאות לא סגורות שזולגות מתוכן עניינים",
 	"linter-pager-wikilink-in-extlink-details": "קישורים בתוך קישורים",
+	"linter-pager-template-arg-in-extension-tag-details": "שם תג הרחבה עם צורך בעדכון (ופרמטרים של תבנית שמשמשים בתוכו)",
 	"linter-prefix-search-subpage": "דפים עם שגיאות ניקיון שמתאימים לתחילית כותרת או כותרת שלמה: $1",
 	"linterrors-subpage": "שגיאות ניקיון: $1",
 	"linterrors-summary": "<strong>הערה:</strong> הספירה של הקטגוריות אינה מדויקת, היא מבוססת על אומדנים.",
 	"multi-part-template-block": "פלט שלא נוצר מתבנית בודדת",
 	"pageinfo-linter": "שגיאות ניקיון",
-	"pageinfo-linter-moreinfo": "הצגת מידע מפורט על שגיאות ניקיון."
+	"pageinfo-linter-moreinfo": "הצגת מידע מפורט על שגיאות ניקיון.",
+	"category-by-template": "הכללות שמכילות שגיאות ניקיון: $1",
+	"category-by-template-view": "הצגת הכללות שמכילות את שגיאות הניקיון האלו."
 }

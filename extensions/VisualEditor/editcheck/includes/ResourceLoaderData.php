@@ -9,7 +9,8 @@
 
 namespace MediaWiki\Extension\VisualEditor\EditCheck;
 
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
+use MediaWiki\MediaWikiServices;
 
 class ResourceLoaderData {
 
@@ -20,8 +21,11 @@ class ResourceLoaderData {
 	 * @return array Configuration data for edit checks
 	 */
 	public static function getConfig( MessageLocalizer $context ): array {
-		$raw_config = json_decode( $context->msg( 'editcheck-config.json' )->inContentLanguage()->plain(), true );
+		$onWikiConfig = json_decode( $context->msg( 'editcheck-config.json' )->inContentLanguage()->plain(), true );
 
-		return $raw_config ?? [];
+		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'visualeditor' );
+		$siteConfig = $config->get( 'VisualEditorEditCheckDefaultConfig' );
+
+		return array_merge_recursive( $siteConfig ?? [], $onWikiConfig ?? [] );
 	}
 }

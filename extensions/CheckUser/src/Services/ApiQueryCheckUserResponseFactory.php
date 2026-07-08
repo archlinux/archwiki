@@ -1,64 +1,39 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserIpUsersResponse;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserUserIpsResponse;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserIpUsersResponse;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserUserIpsResponse;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Logging\LogFormatterFactory;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class ApiQueryCheckUserResponseFactory {
 
-	private IConnectionProvider $dbProvider;
-	private Config $config;
-	private MessageLocalizer $messageLocalizer;
-	private CheckUserLogService $checkUserLogService;
-	private UserNameUtils $userNameUtils;
-	private CheckUserLookupUtils $checkUserLookupUtils;
-	private UserIdentityLookup $userIdentityLookup;
-	private CommentStore $commentStore;
-	private RevisionStore $revisionStore;
-	private ArchivedRevisionLookup $archivedRevisionLookup;
-	private UserFactory $userFactory;
-	private LogFormatterFactory $logFormatterFactory;
-
 	public function __construct(
-		IConnectionProvider $dbProvider,
-		Config $config,
-		MessageLocalizer $messageLocalizer,
-		CheckUserLogService $checkUserLogService,
-		UserNameUtils $userNameUtils,
-		CheckUserLookupUtils $checkUserLookupUtils,
-		UserIdentityLookup $userIdentityLookup,
-		CommentStore $commentStore,
-		RevisionStore $revisionStore,
-		ArchivedRevisionLookup $archivedRevisionLookup,
-		UserFactory $userFactory,
-		LogFormatterFactory $logFormatterFactory
+		private readonly IConnectionProvider $dbProvider,
+		private readonly Config $config,
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly CheckUserLogService $checkUserLogService,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly CheckUserLookupUtils $checkUserLookupUtils,
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly CommentStore $commentStore,
+		private readonly RevisionStore $revisionStore,
+		private readonly ArchivedRevisionLookup $archivedRevisionLookup,
+		private readonly UserFactory $userFactory,
+		private readonly LogFormatterFactory $logFormatterFactory,
 	) {
-		$this->dbProvider = $dbProvider;
-		$this->config = $config;
-		$this->messageLocalizer = $messageLocalizer;
-		$this->checkUserLogService = $checkUserLogService;
-		$this->userNameUtils = $userNameUtils;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
-		$this->userIdentityLookup = $userIdentityLookup;
-		$this->commentStore = $commentStore;
-		$this->revisionStore = $revisionStore;
-		$this->archivedRevisionLookup = $archivedRevisionLookup;
-		$this->userFactory = $userFactory;
-		$this->logFormatterFactory = $logFormatterFactory;
 	}
 
 	/**

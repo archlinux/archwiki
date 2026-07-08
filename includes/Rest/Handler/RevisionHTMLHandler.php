@@ -3,14 +3,18 @@
 namespace MediaWiki\Rest\Handler;
 
 use LogicException;
+use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\Handler\Helper\RevisionContentHelper;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\StringStream;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Message\MessageValue;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * A handler that returns Parsoid HTML for the following routes:
@@ -75,7 +79,7 @@ class RevisionHTMLHandler extends SimpleHandler {
 				$parserOutput = $this->htmlHelper->getHtml();
 				$response = $this->getResponseFactory()->create();
 				// TODO: need to respect content-type returned by Parsoid.
-				$response->setHeader( 'Content-Type', 'text/html' );
+				$response->setHeader( ResponseHeaders::CONTENT_TYPE, 'text/html' );
 				$this->htmlHelper->putHeaders( $response, $setContentLanguageHeader );
 				$this->contentHelper->setCacheControl( $response, $parserOutput->getCacheExpiry() );
 				$response->setBody( new StringStream( $parserOutput->getRawText() ) );
@@ -143,7 +147,7 @@ class RevisionHTMLHandler extends SimpleHandler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/ExistingRevisionHtml.json';
+		return __DIR__ . '/Schema/ExistingRevisionHtml.json';
 	}
 
 	public function getParamSettings(): array {
@@ -154,9 +158,36 @@ class RevisionHTMLHandler extends SimpleHandler {
 	}
 
 	/**
+	 * @inheritDoc
+	 * @return array
+	 */
+	public function getHeaderParamSettings(): array {
+		return [
+			'Accept-Language' => [
+				self::PARAM_SOURCE => 'header',
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => false,
+				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-requestheader-desc-acceptlanguage' ),
+			],
+		];
+	}
+
+	/**
 	 * @return bool
 	 */
 	protected function hasRepresentation() {
 		return $this->contentHelper->hasContent();
+	}
+
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::CONTENT_TYPE => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::CONTENT_TYPE
+				]
+			]
+		);
 	}
 }

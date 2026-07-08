@@ -197,16 +197,14 @@ ve.ce.ContentBranchNode.prototype.setupInlineSlugs = function () {
 };
 
 /**
- * @typedef {Object} UnicornInfo
- * @memberof ve.ce.ContentBranchNode
+ * @typedef {Object} ve.ce.ContentBranchNode.UnicornInfo
  * @property {boolean} hasCursor
  * @property {ve.dm.AnnotationSet|null} annotations
  * @property {HTMLElement[]|null} unicorns
  */
 
 /**
- * @typedef {HTMLElement} HTMLElementWithUnicorn
- * @memberof ve.ce.ContentBranchNode
+ * @typedef {HTMLElement} ve.ce.ContentBranchNode.HTMLElementWithUnicorn
  * @property {ve.ce.ContentBranchNode.UnicornInfo} unicornInfo Unicorn information
  */
 
@@ -283,9 +281,9 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 	};
 
 	// Gather annotated HTML from the child nodes
-	for ( let i = 0, ilen = this.children.length; i < ilen; i++ ) {
-		ve.batchPush( annotatedHtml, this.children[ i ].getAnnotatedHtml() );
-	}
+	this.children.forEach( ( child ) => {
+		ve.batchPush( annotatedHtml, child.getAnnotatedHtml() );
+	} );
 
 	// Set relCursor to collapsed selection offset, or -1 if none
 	// (in which case we don't need to worry about preannotation)
@@ -335,7 +333,7 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 	}
 
 	// Render HTML with annotations
-	for ( let i = 0, ilen = annotatedHtml.length; i < ilen; i++ ) {
+	for ( let i = 0; i < annotatedHtml.length; i++ ) {
 		let item;
 		let itemAnnotations;
 		if ( Array.isArray( annotatedHtml[ i ] ) ) {
@@ -390,7 +388,7 @@ ve.ce.ContentBranchNode.prototype.getRenderedContents = function () {
 				buffer = '';
 			}
 			// DOM equivalent of $( current ).append( item.clone() );
-			for ( let j = 0, jlen = item.length; j < jlen; j++ ) {
+			for ( let j = 0; j < item.length; j++ ) {
 				// Append a clone so as to not relocate the original node
 				const clone = item[ j ].cloneNode( true );
 				// Store a reference to the original node in a property
@@ -471,7 +469,7 @@ ve.ce.ContentBranchNode.prototype.renderContents = function () {
 	this.unicorns = unicornInfo.unicorns || null;
 
 	// Detach all child nodes from this.$element
-	for ( let i = 0, len = this.$element.length; i < len; i++ ) {
+	for ( let i = 0; i < this.$element.length; i++ ) {
 		const element = this.$element[ i ];
 		while ( element.firstChild ) {
 			element.removeChild( element.firstChild );

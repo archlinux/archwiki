@@ -5,42 +5,22 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences\Consequence;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentityUtils;
-use MessageLocalizer;
 
 /**
  * Consequence that blocks/delays autopromotion of a registered user.
  */
 class BlockAutopromote extends Consequence implements HookAborterConsequence, ReversibleConsequence {
-	/** @var int */
-	private $duration;
-	/** @var BlockAutopromoteStore */
-	private $blockAutopromoteStore;
-	/** @var MessageLocalizer */
-	private $messageLocalizer;
-	/** @var UserIdentityUtils */
-	private $userIdentityUtils;
-
-	/**
-	 * @param Parameters $params
-	 * @param int $duration
-	 * @param BlockAutopromoteStore $blockAutopromoteStore
-	 * @param MessageLocalizer $messageLocalizer
-	 * @param UserIdentityUtils $userIdentityUtils
-	 */
 	public function __construct(
 		Parameters $params,
-		int $duration,
-		BlockAutopromoteStore $blockAutopromoteStore,
-		MessageLocalizer $messageLocalizer,
-		UserIdentityUtils $userIdentityUtils
+		private readonly int $duration,
+		private readonly BlockAutopromoteStore $blockAutopromoteStore,
+		private readonly MessageLocalizer $messageLocalizer,
+		private readonly UserIdentityUtils $userIdentityUtils
 	) {
 		parent::__construct( $params );
-		$this->duration = $duration;
-		$this->blockAutopromoteStore = $blockAutopromoteStore;
-		$this->messageLocalizer = $messageLocalizer;
-		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**

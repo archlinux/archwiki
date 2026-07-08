@@ -150,32 +150,20 @@ ve.ce.MWBlockImageNode.prototype.updateClasses = function ( oldAlign ) {
  * @param {Object} [dimensions] Dimension object containing width & height
  */
 ve.ce.MWBlockImageNode.prototype.updateSize = function ( dimensions ) {
-	const isError = this.model.getAttribute( 'isError' );
-
-	if ( isError ) {
-		this.$element.css( { width: '', height: '' } );
+	if ( this.model.getAttribute( 'isError' ) ) {
 		return;
 	}
 
-	if ( !dimensions ) {
-		dimensions = {
-			width: this.model.getAttribute( 'width' ),
-			height: this.model.getAttribute( 'height' )
-		};
-	}
+	dimensions = dimensions || {
+		width: this.model.getAttribute( 'width' ),
+		height: this.model.getAttribute( 'height' )
+	};
 
-	this.$image.css( dimensions );
+	// Dimensions are applied as they are in read mode, via width/height attributes.
+	// Whatever approach we use needs to ensure that unloaded images have height to
+	// avoid breaking our scroll restoration logic (T411669)
+	this.$image.attr( dimensions );
 
-	const type = this.model.getAttribute( 'type' );
-	const borderImage = this.model.getAttribute( 'borderImage' );
-	const hasBorderOrFrame = ( type !== 'none' && type !== 'frameless' ) || borderImage;
-
-	// Make sure $element is sharing the dimensions, otherwise 'middle' and 'none'
-	// positions don't work properly
-	this.$element.css( {
-		width: dimensions.width + ( hasBorderOrFrame ? 2 : 0 ),
-		height: hasBorderOrFrame ? 'auto' : dimensions.height
-	} );
 	this.$element.toggleClass( 'mw-default-size', !!this.model.getAttribute( 'defaultSize' ) );
 };
 
@@ -273,6 +261,10 @@ ve.ce.MWBlockImageNode.prototype.onAttributeChange = function ( key, from, to ) 
 				break;
 		}
 	}
+
+	// Hack: updateSize applies width/height using attributes, not CSS, so
+	// remove the CSS applied by ResizableNode.
+	this.$resizable.css( { width: '', height: '' } );
 };
 
 /**
@@ -280,7 +272,11 @@ ve.ce.MWBlockImageNode.prototype.onAttributeChange = function ( key, from, to ) 
  */
 ve.ce.MWBlockImageNode.prototype.onResizableResizing = function ( dimensions ) {
 	if ( !this.outline ) {
+		// Mixin method
 		ve.ce.ResizableNode.prototype.onResizableResizing.call( this, dimensions );
+		// Hack: updateSize applies width/height using attributes, not CSS, so
+		// remove the CSS applied by ResizableNode.
+		this.$resizable.css( { width: '', height: '' } );
 
 		this.updateSize( dimensions );
 	}

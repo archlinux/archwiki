@@ -1,0 +1,20 @@
+<div class="mw-body">
+	<header>
+		{{#data-logos}}
+			<span class="mw-logo-container">
+				{{#wordmark}}
+				<img class="mw-logo-wordmark" alt="{{msg-sitetitle}}" src="{{src}}" style="{{style}}">
+				{{/wordmark}}
+				{{^wordmark}}
+				<strong class="mw-logo-wordmark">{{msg-sitetitle}}</strong>
+				{{/wordmark}}
+			</span>
+		{{/data-logos}}
+	</header>
+
+	<h1>{{{html-title}}}</h1>
+
+	<main>
+		{{{html-body-content}}}
+	</main>
+</div>

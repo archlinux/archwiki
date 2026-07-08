@@ -779,6 +779,31 @@
 			'⧼doesnt-exist⧽',
 			'int: where nested message does not exist'
 		);
+
+		// Ensure nested {{int:...}} markup is parsed with a custom mw.Map (T424167)
+		const customMap = new mw.Map();
+		customMap.set( {
+			'custom-int-parent': 'a{{int:custom-int-child}}c',
+			'custom-int-child': 'b',
+			'custom-int-missing': '{{int:custom-int-unknown}}'
+		} );
+
+		const customFormatText = jqueryMsg.getMessageFunction( {
+			messages: customMap,
+			format: 'text'
+		} );
+
+		assert.strictEqual(
+			customFormatText( 'custom-int-parent' ),
+			'abc',
+			'int: resolves nested message in custom mw.Map'
+		);
+
+		assert.strictEqual(
+			customFormatText( 'custom-int-missing' ),
+			'⧼custom-int-unknown⧽',
+			'int: missing nested message in custom mw.Map'
+		);
 	} );
 
 	QUnit.test( 'Ns', ( assert ) => {
@@ -1513,6 +1538,14 @@
 				BAR: 'bar'
 			},
 			'setParserDefaults updates the parser defaults'
+		);
+	} );
+
+	QUnit.test( 'Parse messages if one of the params is an object (T415939)', ( assert ) => {
+		mw.messages.set( 'non-wikitext-message', 'Test: $1' );
+		assert.strictEqual(
+			mw.message( 'non-wikitext-message', Object.assign( '<a href="/">Link</a>' ) ).parse(),
+			'Test: <a href="/">Link</a>'
 		);
 	} );
 }() );

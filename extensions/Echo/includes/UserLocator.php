@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use BatchRowIterator;
 use Iterator;
 use MediaWiki\Extension\Notifications\Iterator\CallbackIterator;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 use RecursiveIteratorIterator;
 
 class UserLocator {

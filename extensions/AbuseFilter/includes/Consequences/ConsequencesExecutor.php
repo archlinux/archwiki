@@ -25,57 +25,18 @@ class ConsequencesExecutor {
 		'AbuseFilterBlockAutopromoteDuration',
 	];
 
-	/** @var ConsequencesLookup */
-	private $consLookup;
-	/** @var ConsequencesFactory */
-	private $consFactory;
-	/** @var ConsequencesRegistry */
-	private $consRegistry;
-	/** @var FilterLookup */
-	private $filterLookup;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var UserIdentityUtils */
-	private $userIdentityUtils;
-	/** @var ServiceOptions */
-	private $options;
-	/** @var ActionSpecifier */
-	private $specifier;
-	/** @var VariableHolder */
-	private $vars;
-
-	/**
-	 * @param ConsequencesLookup $consLookup
-	 * @param ConsequencesFactory $consFactory
-	 * @param ConsequencesRegistry $consRegistry
-	 * @param FilterLookup $filterLookup
-	 * @param LoggerInterface $logger
-	 * @param UserIdentityUtils $userIdentityUtils
-	 * @param ServiceOptions $options
-	 * @param ActionSpecifier $specifier
-	 * @param VariableHolder $vars
-	 */
 	public function __construct(
-		ConsequencesLookup $consLookup,
-		ConsequencesFactory $consFactory,
-		ConsequencesRegistry $consRegistry,
-		FilterLookup $filterLookup,
-		LoggerInterface $logger,
-		UserIdentityUtils $userIdentityUtils,
-		ServiceOptions $options,
-		ActionSpecifier $specifier,
-		VariableHolder $vars
+		private readonly ConsequencesLookup $consLookup,
+		private readonly ConsequencesFactory $consFactory,
+		private readonly ConsequencesRegistry $consRegistry,
+		private readonly FilterLookup $filterLookup,
+		private readonly LoggerInterface $logger,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly ServiceOptions $options,
+		private readonly ActionSpecifier $specifier,
+		private readonly VariableHolder $vars
 	) {
-		$this->consLookup = $consLookup;
-		$this->consFactory = $consFactory;
-		$this->consRegistry = $consRegistry;
-		$this->filterLookup = $filterLookup;
-		$this->logger = $logger;
-		$this->userIdentityUtils = $userIdentityUtils;
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->specifier = $specifier;
-		$this->vars = $vars;
 	}
 
 	/**
@@ -93,14 +54,12 @@ class ConsequencesExecutor {
 
 		$messages = [];
 		foreach ( $actionsToTake as $filter => $actions ) {
-			foreach ( $actions as $action => $info ) {
-				[ $executed, $newMsg ] = $this->takeConsequenceAction( $info );
-
-				if ( $newMsg !== null ) {
-					$messages[] = $newMsg;
-				}
-				if ( $executed ) {
+			foreach ( $actions as $action => $consequence ) {
+				if ( $consequence->execute() ) {
 					$actionsTaken[$filter][] = $action;
+					if ( $consequence instanceof HookAborterConsequence ) {
+						$messages[] = Message::newFromSpecifier( $consequence->getMessage() );
+					}
 				}
 			}
 		}
@@ -230,11 +189,12 @@ class ConsequencesExecutor {
 	 */
 	private function applyConsequenceDisablers( array $consequencesByFilter ): array {
 		foreach ( $consequencesByFilter as $filter => $actions ) {
-			/** @var ConsequencesDisablerConsequence[] $consequenceDisablers */
-			$consequenceDisablers = array_filter( $actions, static function ( $el ) {
-				return $el instanceof ConsequencesDisablerConsequence;
-			} );
-			'@phan-var ConsequencesDisablerConsequence[] $consequenceDisablers';
+			$consequenceDisablers = [];
+			foreach ( $actions as $name => $action ) {
+				if ( $action instanceof ConsequencesDisablerConsequence ) {
+					$consequenceDisablers[$name] = $action;
+				}
+			}
 			uasort(
 				$consequenceDisablers,
 				static function ( ConsequencesDisablerConsequence $x, ConsequencesDisablerConsequence $y ) {
@@ -265,8 +225,11 @@ class ConsequencesExecutor {
 		foreach ( $consByFilter as $filter => $actions ) {
 			foreach ( $actions as $name => $cons ) {
 				if ( $name === 'block' ) {
-					/** @var Block $cons */
-					'@phan-var Block $cons';
+					if ( !( $cons instanceof Block ) ) {
+						throw new \TypeError(
+							'Expected Block consequence for "block" action'
+						);
+					}
 					$expiry = $cons->getExpiry();
 					$parsedExpiry = BlockUser::parseExpiryInput( $expiry );
 					if (
@@ -375,25 +338,11 @@ class ConsequencesExecutor {
 	}
 
 	/**
-	 * @param Consequence $consequence
-	 * @return array [ executed (bool), message (?Message) ]
-	 * @phan-return array{0:bool, 1:?Message}
-	 */
-	private function takeConsequenceAction( Consequence $consequence ): array {
-		$res = $consequence->execute();
-		if ( $res && $consequence instanceof HookAborterConsequence ) {
-			$message = Message::newFromSpecifier( $consequence->getMessage() );
-		}
-
-		return [ $res, $message ?? null ];
-	}
-
-	/**
 	 * Constructs a Status object as returned by executeFilterActions() from the list of
 	 * actions taken and the corresponding list of messages.
 	 *
-	 * @param array[] $actionsTaken associative array mapping each filter to the list if
-	 *                actions taken because of that filter.
+	 * @param array[] $actionsTaken associative array mapping each filter to the list of
+	 *   actions taken because of that filter.
 	 * @param Message[] $messages a list of Message objects
 	 *
 	 * @return Status

@@ -1,15 +1,17 @@
 % !TeX spellcheck = en_US
 \documentclass[a4paper,12pt]{report}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{bbold}
-\usepackage{cancel}
+\makeatletter
 \usepackage{texvc}
-\usepackage{mhchem}
-\usepackage{stix} %intbar
-%\usepackage{MnSymbol} %strokeint
-\usepackage{arcs}
+\@ifpackagelater{texvc}{2025-11-15}{%
+    % Do nothing, the required version is already loaded
+}{
+    % Load required packages for texvcjs
+    \usepackage{bbold}
+    \usepackage{mhchem}
+    \usepackage{stix} %intbar
+    \usepackage{arcs}
+}
+\makeatother
 \usepackage{url}
 \usepackage{parskip}
 \author{Moritz Schubotz}

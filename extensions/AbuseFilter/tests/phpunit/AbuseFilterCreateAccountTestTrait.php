@@ -20,7 +20,7 @@ trait AbuseFilterCreateAccountTestTrait {
 	 * If null, TempUserConfig::isEnabled must return true.
 	 * @param bool $autocreate
 	 * @param User|null $creator Defaults to the newly created user
-	 * @return StatusValue
+	 * @return StatusValue<int>
 	 */
 	protected function createAccount(
 		?string $accountName,

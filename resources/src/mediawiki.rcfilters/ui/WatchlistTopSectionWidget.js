@@ -60,8 +60,9 @@ const WatchlistTopSectionWidget = function MwRcfiltersUiWatchlistTopSectionWidge
 										'mw-rcfilters-ui-watchlistTopSectionWidget-editWatchlistButton' : undefined
 								)
 								.append(
-									// Do not append edit watchlist button in vector-2022 because it is redundant
-									mw.config.get( 'skin' ) !== 'vector-2022' && mw.config.get( 'skin' ) !== 'minerva' ?
+									// Do not append edit watchlist button in skins using p-associated-pages menu
+									// because it is redundant.
+									!$( '#p-associated-pages, [id^="ca-special-specialAssociatedNavigationLinks"]' ).length ?
 										$editWatchlistButtonLink : undefined
 								)
 						)

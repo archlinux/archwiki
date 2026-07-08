@@ -37,6 +37,8 @@
 	box-sizing: border-box;
 	// Height is viewport height - row gap above and below the container.
 	max-height: ~'calc( 100vh - ( @{grid-row-gap} * 2 ) )';
+	// Apply the same transition as the sticky header (T406237)
+	transition: top @transition-duration-medium @transition-sticky-header-timing-function, max-height @transition-duration-medium @transition-sticky-header-timing-function;
 }
 
 @media ( max-width: @max-width-breakpoint-tablet ) {

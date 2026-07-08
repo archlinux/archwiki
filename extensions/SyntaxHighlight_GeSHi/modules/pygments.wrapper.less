@@ -1,5 +1,47 @@
 @import 'mediawiki.skin.variables.less';
 
+.mw-highlight-lines pre,
+/* Increase specificty over mobile selectors */
+.content .mw-highlight-lines pre {
+	span[ id ] {
+		// Include context when following permalinks to individual lines of code.
+		// Example: https://example.org/wiki/MediaWiki:Common.js#L-10
+		// Instead of scrolling down until the selected line hits the top edge at 0,
+		// go a bit further until the selected line is at 20% from the top.
+		scroll-margin-top: 20vh;
+	}
+
+	.mw-content-ltr& {
+		/* @noflip */
+		padding-left: 3.5em;
+		/* @noflip */
+		box-shadow: inset 2.75em 0 0 @background-color-neutral;
+
+		.hll {
+			/* @noflip */
+			margin-left: -3.5em;
+			/* @noflip */
+			padding-left: 3.5em;
+		}
+	}
+
+	/* stylelint-disable-next-line no-descending-specificity */
+	.mw-content-rtl& {
+		/* @noflip */
+		padding-right: 3.5em;
+		/* @noflip */
+		box-shadow: inset -2.75em 0 0 @background-color-neutral;
+
+		/* stylelint-disable-next-line no-descending-specificity */
+		.hll {
+			/* @noflip */
+			margin-right: -3.5em;
+			/* @noflip */
+			padding-right: 3.5em;
+		}
+	}
+}
+
 .mw-highlight {
 	unicode-bidi: embed;
 
@@ -47,40 +89,6 @@
 	/* Highlight background of whole lines, not just text in them */
 	.hll {
 		display: block;
-	}
-
-	&-lines pre,
-	.content &-lines pre { // Increase specificty over mobile selectors
-
-		.mw-content-ltr& {
-			/* @noflip */
-			padding-left: 3.5em;
-			/* @noflip */
-			box-shadow: inset 2.75em 0 0 @background-color-neutral;
-
-			.hll {
-				/* @noflip */
-				margin-left: -3.5em;
-				/* @noflip */
-				padding-left: 3.5em;
-			}
-		}
-
-		/* stylelint-disable-next-line no-descending-specificity */
-		.mw-content-rtl& {
-			/* @noflip */
-			padding-right: 3.5em;
-			/* @noflip */
-			box-shadow: inset -2.75em 0 0 @background-color-neutral;
-
-			/* stylelint-disable-next-line no-descending-specificity */
-			.hll {
-				/* @noflip */
-				margin-right: -3.5em;
-				/* @noflip */
-				padding-right: 3.5em;
-			}
-		}
 	}
 
 	.linenos {

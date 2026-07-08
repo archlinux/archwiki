@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 
 /**
  * @group Database

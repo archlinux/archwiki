@@ -222,24 +222,21 @@ function doSomething() {
 !! test
 deprecated source tag adds tracking category
 !! options
-parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
-!! options
 cat
 nohtml
 !! wikitext
 <source lang="python">print('Hi')</source>
-!! html/php
+!! metadata
 cat=Pages_using_deprecated_source_tags sort=
 !! end
 
 !! test
 deprecated enclose option adds tracking category
 !! options
-parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 cat
 nohtml
 !! wikitext
 <syntaxhighlight enclose="none" lang="python">print('Hi')</syntaxhighlight>
-!! html/php
+!! metadata
 cat=Pages_using_deprecated_enclose_attributes sort=
 !! end

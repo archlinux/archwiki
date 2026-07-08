@@ -15,6 +15,7 @@
 			"Megakott",
 			"Mehman (WMF)",
 			"MidnightLG",
+			"Mitte27",
 			"Nemo bis",
 			"Okras",
 			"Ole Yves",
@@ -31,8 +32,7 @@
 			"Vlad5250",
 			"Yurina Tatiana",
 			"Александр Сигачёв",
-			"З. ӘЙЛЕ",
-			"Mitte27"
+			"З. ӘЙЛЕ"
 		]
 	},
 	"skinname-vector": "Вектор, устаревшая (2010)",
@@ -85,9 +85,6 @@
 	"vector-toc-label": "Содержание",
 	"vector-toc-beginning": "Начало",
 	"vector-toc-toggle-button-label": "Отобразить/Скрыть подраздел $1",
-	"vector-anon-user-menu-pages": "Страницы для неавторизованных редакторов",
-	"vector-anon-user-menu-pages-learn": "узнать больше",
-	"vector-anon-user-menu-pages-label": "Подробнее о редактировании",
 	"vector-main-menu-tooltip": "Главное меню",
 	"vector-toc-menu-tooltip": "Содержание",
 	"vector-toc-collapsible-button-label": "Отобразить/Скрыть содержание",
@@ -110,8 +107,6 @@
 	"vector-page-tools-unpinned-popup": "Меню инструментов было перемещено сюда.",
 	"vector-main-menu-unpinned-popup": "Главное меню перенесено сюда.",
 	"vector-appearance-unpinned-popup": "Меню оформления переехало сюда.",
-	"vector-2022-beta-preview-label": "Доступность для чтения (Vector 2022)",
-	"vector-2022-beta-preview-description": "Получите ранний доступ к новым функциям специальных возможностей для чтения, таким как улучшения типографики и тёмный режим.",
 	"vector-night-mode-gadget-warning": "Вы используете гаджет тёмной темы, который мешает работе этой функции. [[Special:Preferences#mw-prefsection-gadgets|Отключить гаджет]] для использования тёмной темы.",
 	"vector-night-mode-issue-reporting-notice-tooltip": "Сообщите, когда цвета тёмной темы затрудняют чтение.",
 	"vector-night-mode-issue-reporting-link-label": "Сообщить о проблеме с темным режимом",

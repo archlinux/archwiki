@@ -1,6 +1,6 @@
 const
 	CommentController = require( './CommentController.js' ),
-	HeadingItem = require( './HeadingItem.js' );
+	HeadingItem = require( './commentparser/HeadingItem.js' );
 
 /**
  * Handles setup, save and teardown of new topic widget

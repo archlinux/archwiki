@@ -11,7 +11,8 @@
 		"node_modules/jsdoc-wmf-theme/plugins/default"
 	],
 	"source": {
-		"include": [ "resources" ]
+		"include": [ "resources" ],
+		"exclude": [ "resources/mmv.ui.beta" ]
 	},
 	"sourceType": "module",
 	"templates": {

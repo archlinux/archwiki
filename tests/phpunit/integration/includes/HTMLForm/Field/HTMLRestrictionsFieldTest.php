@@ -12,9 +12,9 @@ use MediaWiki\Page\PageSelectQueryBuilder;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\Utils\MWRestrictions;
 use MediaWikiCoversValidator;
 use MediaWikiIntegrationTestCase;
-use MWRestrictions;
 use StatusValue;
 
 /**
@@ -26,7 +26,7 @@ class HTMLRestrictionsFieldTest extends MediaWikiIntegrationTestCase {
 
 	public function testConstruct() {
 		$htmlForm = $this->createMock( HTMLForm::class );
-		$htmlForm->method( 'msg' )->willReturnCallback( 'wfMessage' );
+		$htmlForm->method( 'msg' )->willReturnCallback( wfMessage( ... ) );
 		$languageMock = $this->createMock( Language::class );
 		$languageMock->method( 'getCode' )->willReturn( 'en' );
 		$titleMock = $this->createMock( Title::class );
@@ -69,9 +69,9 @@ class HTMLRestrictionsFieldTest extends MediaWikiIntegrationTestCase {
 		$queryBuilderMock->method( 'caller' )->willReturnSelf();
 		$pageStore->method( 'newSelectQueryBuilder' )->willReturn( $queryBuilderMock );
 
-		$form->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) )->setSubmitCallback( static function () {
-			return true;
-		} )->prepareForm();
+		$form->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) )
+			->setSubmitCallback( static fn () => true )
+			->prepareForm();
 		$status = $form->trySubmit();
 
 		if ( $status instanceof StatusValue ) {

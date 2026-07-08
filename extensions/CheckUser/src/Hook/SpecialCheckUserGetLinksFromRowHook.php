@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Hook;
+namespace MediaWiki\Extension\CheckUser\Hook;
 
-use MediaWiki\CheckUser\CheckUser\Pagers\AbstractCheckUserPager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\AbstractCheckUserPager;
 use stdClass;
 
 interface SpecialCheckUserGetLinksFromRowHook {
@@ -24,3 +24,13 @@ interface SpecialCheckUserGetLinksFromRowHook {
 		array &$links
 	);
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	SpecialCheckUserGetLinksFromRowHook::class,
+	'MediaWiki\\CheckUser\\Hook\\SpecialCheckUserGetLinksFromRowHook'
+);
+// @codeCoverageIgnoreEnd

@@ -22,10 +22,7 @@
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
 use MediaWiki\Config\Config;
-use MediaWiki\Extension\BetaFeatures\BetaFeatures;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
-use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
 use MediaWiki\User\UserIdentity;
 
@@ -68,15 +65,7 @@ use MediaWiki\User\UserIdentity;
  */
 class OverridableConfigRequirement implements Requirement {
 
-	private Config $config;
-
-	private UserIdentity $user;
-
-	private string $configName;
-
-	private string $requirementName;
-
-	private OverrideableRequirementHelper $helper;
+	private readonly OverrideableRequirementHelper $helper;
 
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
@@ -89,16 +78,12 @@ class OverridableConfigRequirement implements Requirement {
 	 * @param string $requirementName The name of the requirement presented to FeatureManager.
 	 */
 	public function __construct(
-		Config $config,
-		UserIdentity $user,
+		private readonly Config $config,
+		private readonly UserIdentity $user,
 		WebRequest $request,
-		string $configName,
-		string $requirementName
+		private readonly string $configName,
+		private readonly string $requirementName,
 	) {
-		$this->config = $config;
-		$this->user = $user;
-		$this->configName = $configName;
-		$this->requirementName = $requirementName;
 		$this->helper = new OverrideableRequirementHelper( $request, $requirementName );
 	}
 
@@ -129,8 +114,7 @@ class OverridableConfigRequirement implements Requirement {
 		if ( is_bool( $thisConfig ) ) {
 			$thisConfig = [
 				'logged_in' => $thisConfig,
-				'logged_out' => $thisConfig,
-				'beta' => $thisConfig,
+				'logged_out' => $thisConfig
 			];
 		} elseif ( array_key_exists( 'default', $thisConfig ) ) {
 			$thisConfig = [
@@ -139,8 +123,7 @@ class OverridableConfigRequirement implements Requirement {
 		} else {
 			$thisConfig = [
 				'logged_in' => $thisConfig['logged_in'] ?? false,
-				'logged_out' => $thisConfig['logged_out'] ?? false,
-				'beta' => $thisConfig['beta'] ?? false,
+				'logged_out' => $thisConfig['logged_out'] ?? false
 			];
 		}
 
@@ -148,23 +131,6 @@ class OverridableConfigRequirement implements Requirement {
 		$userConfig = array_key_exists( 'default', $thisConfig ) ?
 			$thisConfig[ 'default' ] :
 			$thisConfig[ $this->user->isRegistered() ? 'logged_in' : 'logged_out' ];
-		// Check if use has enabled beta features
-		$betaFeatureConfig = array_key_exists( 'beta', $thisConfig ) && $thisConfig[ 'beta' ];
-		$betaFeatureEnabled = in_array( $this->configName, Constants::VECTOR_BETA_FEATURES ) &&
-			$betaFeatureConfig && $this->isVector2022BetaFeatureEnabled();
-		// If user has enabled beta features, use beta config
-		return $betaFeatureEnabled ? $betaFeatureConfig : $userConfig;
-	}
-
-	/**
-	 * Check if user has enabled the Vector 2022 beta features
-	 */
-	public function isVector2022BetaFeatureEnabled(): bool {
-		return ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' ) &&
-			/* @phan-suppress-next-line PhanUndeclaredClassMethod */
-			BetaFeatures::isFeatureEnabled(
-			$this->user,
-			Constants::VECTOR_2022_BETA_KEY
-		);
+		return $userConfig;
 	}
 }

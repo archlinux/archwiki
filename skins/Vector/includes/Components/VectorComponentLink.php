@@ -2,24 +2,13 @@
 namespace MediaWiki\Skins\Vector\Components;
 
 use MediaWiki\Html\Html;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Linker\Linker;
-use MessageLocalizer;
 
 /**
  * VectorComponentLink component
  */
 class VectorComponentLink implements VectorComponent {
-	/** @var MessageLocalizer */
-	private $localizer;
-	/** @var string */
-	private $icon;
-	/** @var string */
-	private $href;
-	/** @var string */
-	private $text;
-	/** @var string */
-	private $accessKeyHint;
-
 	/**
 	 * @param string $href
 	 * @param string $text
@@ -28,12 +17,13 @@ class VectorComponentLink implements VectorComponent {
 	 * @param null|string $accessKeyHint will be used to derive HTML attributes such as title, accesskey
 	 *   and aria-label ("$accessKeyHint-label")
 	 */
-	public function __construct( string $href, string $text, $icon = null, $localizer = null, $accessKeyHint = null ) {
-		$this->href = $href;
-		$this->text = $text;
-		$this->icon = $icon;
-		$this->localizer = $localizer;
-		$this->accessKeyHint = $accessKeyHint;
+	public function __construct(
+		private readonly string $href,
+		private readonly string $text,
+		private readonly ?string $icon = null,
+		private readonly ?MessageLocalizer $localizer = null,
+		private readonly ?string $accessKeyHint = null,
+	) {
 	}
 
 	/**

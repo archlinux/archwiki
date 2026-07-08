@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Brettchenweber",
+			"Schmackes",
+			"Umherirrender"
+		]
+	},
+	"oathauth-webauthn-module-label": "Sicherheitsschlüssel",
+	"oathauth-webauthn-javascript-required": "JavaScript muss in deinem Browser aktiviert sein, um einen Sicherheitsschlüssel nutzen zu können.",
+	"oathauth-webauthn-ui-login-prompt": "Verwende deinen Sicherheitsschlüssel oder folge den Anweisungen deines Browsers.",
+	"oathauth-webauthn-ui-add-key": "Schlüssel hinzufügen",
+	"oathauth-webauthn-error-browser-unsupported": "Dieser Browser unterstützt Authentifizierung durch einen Sicherheitsschlüssel nicht oder ist für diese Website nicht verfügbar. Bitte versuche es mit einem anderen Browser. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Weiterlesen]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Dieser Browser unterstützt keine Authentifizierung durch einen Sicherheitsschlüssel, oder diese Funktion ist für diese Website nicht verfügbar.",
+	"oathauth-webauthn-error-auth-generic": "Der Authentifizierungsprozess wurde unterbrochen. Bitte starte den Authentifizierungsprozess erneut.",
+	"oathauth-webauthn-error-reg-generic": "Der Schlüssel konnte nicht überprüft werden. Bitte starte den Registrierungsprozess erneut.",
+	"oathauth-webauthn-registered-keys-section-name": "Registrierte Schlüssel",
+	"oathauth-webauthn-ui-remove-key": "Entfernen",
+	"oathauth-webauthn-error-module-not-enabled": "Das Modul „$1“ ist für {{GENDER:$2|Benutzer „$2“|Benutzerin „$2“}} nicht aktiviert.",
+	"oathauth-webauthn-error-verification-failed": "Die WebAuthn-Verifizierung ist fehlgeschlagen.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Die Passkey-Überprüfung ist fehlgeschlagen.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn-Anmeldeinformationen wurden nicht gesendet.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Benutzer „$1“}} kann einen neuen Berechtigungsnachweis nicht registrieren.",
+	"oathauth-webauthn-error-invalid-new-key": "Der vom Modul zurückgegebene neue Schlüssel ist nicht vom erforderlichen Typ.",
+	"oathauth-webauthn-error-registration-failed": "Neue Schlüsselregistrierung fehlgeschlagen.",
+	"oathauth-webauthn-ui-key-register-help": "Wähle einen Kurznamen für deinen Schlüssel:",
+	"oathauth-webauthn-error-cannot-remove-key": "Schlüssel kann nicht entfernt werden.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Authentifizierungsinformationen konnten nicht abgerufen werden.",
+	"oathauth-webauthn-add-key-section-name": "Registriere einen neuen Sicherheitsschlüssel",
+	"oathauth-webauthn-error-get-reginfo-fail": "Registrierungsinformationen konnten nicht abgerufen werden.",
+	"oathauth-webauthn-module-description": "WebAuthn befindet sich in einem experimentellen Stadium. Derzeit gibt es keine Wiederherstellungsoption für verlorene oder beschädigte Authentifizierungsgeräte.\n\n[https://de.wikipedia.org/wiki/WebAuthn Weitere Informationen über WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Seite neu laden",
+	"oathauth-webauthn-authentication-info-label": "Authentifizierungsdaten",
+	"oathauth-webauthn-authentication-info-help": "Authentifizierungsdaten, die an den Client zum Abrufen von Anmeldeinformationen übergeben werden",
+	"oathauth-webauthn-credential-label": "Anmeldedaten des Benutzers",
+	"oathauth-webauthn-credential-help": "Benutzerberechtigung basierend auf Authentifizierungsdaten",
+	"oathauth-webauthn-add-security-key": "Einen Sicherheitsschlüssel hinzufügen",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Sicherheitsschlüssel oder Passkey verwenden"
+}

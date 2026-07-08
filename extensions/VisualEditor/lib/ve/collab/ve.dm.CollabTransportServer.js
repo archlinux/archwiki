@@ -17,17 +17,13 @@ ve.dm.CollabTransportServer = function VeDmCollabTransportServer( startHeight ) 
 	this.startHeight = startHeight;
 	this.protocolServer = new ve.dm.ProtocolServer(
 		{
-			startHeight: startHeight,
+			startHeight,
 			// The server ID is arbitrary
 			serverId: 've-collab-server',
-			load: function () {
-				return Promise.resolve(
-					ve.dm.Change.static.deserialize( { transactions: [] } )
-				);
-			},
-			onNewChange: function () {
-				return Promise.resolve();
-			}
+			load: () => Promise.resolve(
+				ve.dm.Change.static.deserialize( { transactions: [] } )
+			),
+			onNewChange: () => Promise.resolve()
 		},
 		{
 			/* eslint-disable-next-line no-console */
@@ -58,12 +54,12 @@ ve.dm.CollabTransportServer.prototype.onConnection = function ( conn ) {
 	context.broadcast = function ( type, data ) {
 		const serialized = ve.collab.serialize( data );
 		connections.forEach( ( connection ) => {
-			connection.send( { type: type, data: serialized } );
+			connection.send( { type, data: serialized } );
 		} );
 	};
 	context.sendAuthor = function ( type, data ) {
 		const serialized = ve.collab.serialize( data );
-		conn.send( { type: type, data: serialized } );
+		conn.send( { type, data: serialized } );
 	};
 	conn.on( 'data', ( data ) => {
 		const type = data.type;

@@ -806,7 +806,7 @@ ve.ui.MWMediaDialog.prototype.getFileType = function ( url ) {
 	// WEBM, OGV, OGX;
 	// APNG;
 	// PDF, DJVU
-	return url.split( '.' ).pop().toUpperCase();
+	return mw.util.parseImageUrl( url ).name.split( '.' ).pop().toUpperCase();
 };
 
 /**
@@ -958,10 +958,9 @@ ve.ui.MWMediaDialog.prototype.updateFilenameFieldset = function () {
 	const title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( this.imageModel.getResourceName() ) );
 	const $link = $( '<a>' )
 		.addClass( 've-ui-mwMediaDialog-description-link' )
-		.attr( 'target', '_blank' )
-		.attr( 'rel', 'noopener' )
 		.text( ve.msg( 'visualeditor-dialog-media-content-description-link' ) );
 	ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl() );
+	ve.targetLinksToNewWindow( $link[ 0 ] );
 	this.filenameFieldset.setLabel(
 		$( '<span>' ).append(
 			$( document.createTextNode( this.imageModel.getFilename() + ' ' ) ),
@@ -1450,7 +1449,7 @@ ve.ui.MWMediaDialog.prototype.getActionProcess = function ( action ) {
 					this.fragment = this.imageModel.insertImageNode( this.getFragment() );
 				}
 
-				this.close( { action: action } );
+				this.close( { action } );
 			};
 			break;
 		default:

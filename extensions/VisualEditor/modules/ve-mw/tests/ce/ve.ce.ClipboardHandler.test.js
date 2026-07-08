@@ -10,6 +10,13 @@ QUnit.module( 've.ce.ClipboardHandler (MW)', ve.test.utils.newMwEnvironment() );
 /* Tests */
 
 QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
+	const extLink = {
+		type: 'link/mwExternal',
+		attributes: {
+			href: 'https://example.com/'
+		}
+	};
+
 	const cases = [
 		{
 			documentHtml: '<p></p>',
@@ -67,6 +74,102 @@ QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 				}
 			},
 			msg: 'External links not stripped, but only some protocols allowed'
+		},
+		{
+			rangeOrSelection: new ve.Range( 1 ),
+			pasteText: 'https://example.com/',
+			expectedRangeOrSelection: new ve.Range( 21 ),
+			expectedDefaultPrevented: true,
+			expectedOps: [
+				[
+					{ type: 'retain', length: 1 },
+					{
+						type: 'replace',
+						insert: [
+							...ve.dm.example.annotateText( 'https://example.com/', extLink )
+						],
+						remove: []
+					},
+					{ type: 'retain', length: 29 }
+				]
+			],
+			config: {
+				mode: 'visual'
+			},
+			msg: 'URL pasted as plain text, visual mode'
+		},
+		{
+			rangeOrSelection: new ve.Range( 1 ),
+			pasteText: 'https://example.com/',
+			expectedRangeOrSelection: new ve.Range( 21 ),
+			expectedDefaultPrevented: true,
+			expectedOps: [
+				[
+					{ type: 'retain', length: 1 },
+					{
+						type: 'replace',
+						insert: [
+							...'https://example.com/'
+						],
+						remove: []
+					},
+					{ type: 'retain', length: 29 }
+				]
+			],
+			config: {
+				mode: 'source'
+			},
+			msg: 'URL pasted as plain text, source mode'
+		},
+		{
+			rangeOrSelection: new ve.Range( 1 ),
+			pasteData: {
+				'text/link-preview': '{"description":"","domain":"example.com","filtered_terms":["exampl","exampl","domain"],"image_url":"","keywords":"","preferred_format":"text/html;content=titled-hyperlink","title":"Example Domain","type":"website","url":"https://example.com/"}'
+			},
+			expectedRangeOrSelection: new ve.Range( 15 ),
+			expectedDefaultPrevented: true,
+			expectedOps: [
+				[
+					{ type: 'retain', length: 1 },
+					{
+						type: 'replace',
+						insert: [
+							...ve.dm.example.annotateText( 'Example Domain', extLink )
+						],
+						remove: []
+					},
+					{ type: 'retain', length: 29 }
+				]
+			],
+			config: {
+				mode: 'visual'
+			},
+			msg: 'URL pasted as text/link-preview, visual mode'
+		},
+		{
+			rangeOrSelection: new ve.Range( 1 ),
+			pasteData: {
+				'text/link-preview': '{"description":"","domain":"example.com","filtered_terms":["exampl","exampl","domain"],"image_url":"","keywords":"","preferred_format":"text/html;content=titled-hyperlink","title":"Example Domain","type":"website","url":"https://example.com/"}'
+			},
+			expectedRangeOrSelection: new ve.Range( 21 ),
+			expectedDefaultPrevented: true,
+			expectedOps: [
+				[
+					{ type: 'retain', length: 1 },
+					{
+						type: 'replace',
+						insert: [
+							...'https://example.com/'
+						],
+						remove: []
+					},
+					{ type: 'retain', length: 29 }
+				]
+			],
+			config: {
+				mode: 'source'
+			},
+			msg: 'URL pasted as text/link-preview, source mode'
 		}
 	];
 

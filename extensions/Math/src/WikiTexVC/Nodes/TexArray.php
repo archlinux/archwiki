@@ -6,10 +6,12 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use Generator;
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\Tag;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\Util\MMLParsingUtil;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
@@ -111,7 +113,8 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	public function checkForLimits( TexNode $currentNode, ?TexNode $nextNode ): array {
 		// Preceding 'lim' in example: "\\lim_{x \\to 2}"
 		if ( ( $currentNode instanceof DQ || $currentNode instanceof FQ )
-			&& $currentNode->containsFunc( "\\lim" ) ) {
+			&& ( $currentNode->containsFunc( "\\lim" ) ||
+				$currentNode->containsFunc( '\\varinjlim' ) ) ) {
 
 			if ( $currentNode->getBase() instanceof TexArray ) {
 				return [ $currentNode->getBase()->getArgs()[0], false ];
@@ -134,13 +137,22 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 				// or a limit operator
 				|| ( trim( $currentNode->getArg() ) == "\\lim" ) ) ) ||
 		// or the special case of \operatorname
-		( $currentNode instanceof Fun1nb && $currentNode->getFname() == "\\operatorname" )
-		) ) {
+		( $currentNode instanceof Fun1nb && $currentNode->getFname() == "\\operatorname" ) ||
+		// special case of latex_function_names
+		( $currentNode instanceof TexArray && $currentNode->getLength() === 2 &&
+			$currentNode->first() instanceof Literal &&
+			// the parser adds a space after the function name (regardless of the user input
+			$currentNode->second() instanceof Literal &&
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$currentNode->second()->getArg() === " " &&
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			$tu->latex_function_names( $currentNode->first()->getArg() )
+		) ) ) {
 			return [ null, false ];
 		}
 
 		// Check whether the next node is a possible limits construct
-		if ( !( ( $nextNode instanceof DQ || $nextNode instanceof FQ )
+		if ( !( ( $nextNode instanceof DQ || $nextNode instanceof FQ || $nextNode instanceof UQ )
 			&& $nextNode->getBase() instanceof Literal
 			&& ( $nextNode->containsFunc( "\\limits" ) || $nextNode->containsFunc( "\\nolimits" ) )
 			) ) {
@@ -203,14 +215,16 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		return [ $hasNamedFct, $hasValidParameters ];
 	}
 
-	private function squashLiterals() {
+	private function squashLiterals( array &$arguments ): void {
 		$tmp = '';
 		foreach ( $this->args as $arg ) {
 			if ( !( $arg instanceof Literal ) ) {
+				unset( $arguments[ Tag::CLASSTAG  ] );
 				return;
 			}
 			// Don't squash if there is a macro in the literal
 			if ( preg_match( "/[\\\\]/", $arg->getArg() ) ) {
+				unset( $arguments[ Tag::CLASSTAG  ] );
 				return;
 			}
 			$tmp .= $arg->getArg();
@@ -250,22 +264,22 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ): MMLbase {
 		// Everything here is for parsing displaystyle, probably refactored to WikiTexVC grammar later
 		$mmlStyles = [ new MMLmrow() ]; // need root node to hold child nodes
 		$currentColor = null;
 
 		if ( array_key_exists( 'squashLiterals', $state ) ) {
-			$this->squashLiterals();
+			$this->squashLiterals( $arguments );
 		}
 		$this->squashNumbers();
 		$skip = 0;
 		foreach ( $this->args  as $key => $current ) {
+			$next = next( $this->args );
 			if ( $skip > 0 ) {
 				$skip--;
 				continue;
 			}
-			$next = next( $this->args );
 			$next = $next === false ? null : $next;
 			// Check for sideset
 			$foundSideset = $this->checkForSideset( $current, $next );
@@ -339,8 +353,6 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 			unset( $state['foundNamedFct'] );
 			unset( $state['not'] );
 			unset( $state['limits'] );
-			unset( $state['deriv'] );
-
 		}
 
 		while ( count( $mmlStyles ) > 1 ) {
@@ -351,6 +363,11 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 		$output = $mmlStyles[0]->getChildren();
 		if ( $this->curly && $this->getLength() > 1 ) {
 			return new MMLmrow( TexClass::ORD, [], ...$output );
+		}
+		// Bug: T417592
+		if ( $this->curly && $this->getLength() === 1 && ( $output[0] ?? null ) instanceof MMLmo ) {
+			$output[0]->setAttribute( 'lspace', '0' );
+			$output[0]->setAttribute( 'rspace', '0' );
 		}
 		return new MMLarray( ...$output );
 	}
@@ -364,6 +381,10 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 	 */
 	private function createMMLwithContext( ?string $currentColor, TexNode $currentNode, array &$state,
 										   array $arguments ) {
+		$ret = $currentNode->toMMLTree( $arguments, $state );
+		$ret = $this->addNot( $state, $ret );
+		$ret = $this->addDerivativesContext( $state, $ret );
+
 		if ( $currentColor ) {
 			if ( array_key_exists( "colorDefinitions", $state )
 				&& is_array( $state["colorDefinitions"] )
@@ -377,12 +398,28 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 				$resColor = TexUtil::getInstance()->color( ucfirst( $currentColor ) );
 				$displayedColor = $resColor ?: $currentColor;
 			}
-			$ret = new MMLmstyle( "", [ "mathcolor" => $displayedColor ],
-				$currentNode->toMMLTree( $arguments, $state ) );
-		} else {
-			$ret = $currentNode->toMMLTree( $arguments, $state );
+			$ret = new MMLmstyle( "", [ "mathcolor" => $displayedColor ], $ret );
 		}
-		return $this->addDerivativesContext( $state, $ret );
+		return $ret;
+	}
+
+	/**
+	 * Applies the TeX \not overlay to the returned operator node.
+	 *
+	 * When the parser state contains the 'not' flag and the current result is an <mo> leaf,
+	 * this appends U+0338 (COMBINING LONG SOLIDUS OVERLAY) to the operator's text, producing
+	 * the MathML representation of "not" operators.
+	 *
+	 * Otherwise, returns the original node unchanged.
+	 */
+	public function addNot( array $state, MMLbase|string|null $ret ): MMLbase|string|null {
+		// $state['not'] is set when a preceding \not token was encountered.
+		if ( !( $state['not'] ?? false ) || !( $ret instanceof MMLmo ) ) {
+			return $ret;
+		}
+		unset( $state['not'] );
+
+		return $ret->setText( $ret->getText() . '&#x338;' );
 	}
 
 	/**
@@ -406,6 +443,12 @@ class TexArray extends TexNode implements \ArrayAccess, \IteratorAggregate {
 				$derInfo = "&#x2057;";
 			} else {
 				$derInfo = str_repeat( "&#x2032;", $state["deriv"] );
+			}
+			unset( $state["deriv"] );
+			if ( is_string( $mml ) ) {
+				$mml = new MMLmi( $mml );
+			} elseif ( $mml === null || $mml->isEmpty() ) {
+				$mml = new MMLmrow();
 			}
 			$ret = MMLmsup::newSubtree( $mml, new MMLmo( "", [], $derInfo ) );
 			if ( ( $state['foundNamedFct'][0] ?? false ) && !( $state['foundNamedFct'][1] ?? true ) ) {

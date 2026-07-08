@@ -1,12 +1,29 @@
 @import 'mediawiki.skin.variables.less';
 
+.ext-checkuser-suggestedinvestigations-private-data-warning {
+	margin-bottom: @spacing-50;
+}
+
 .ext-checkuser-suggestedinvestigations-description {
 	display: inline-flex;
-	margin-bottom: @spacing-100;
+	margin-bottom: @spacing-50;
 
 	& > :first-child {
 		padding-right: @spacing-25;
+
+		p {
+			margin-bottom: 0;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
 	}
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.cdx-table:has( .ext-checkuser-suggestedinvestigations-table ) {
+	margin-top: @spacing-100;
 }
 
 .ext-checkuser-suggestedinvestigations-signals-popover-icon {

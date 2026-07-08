@@ -119,5 +119,7 @@
 	"math-wikibase-special-form-button": "Solicitar información",
 	"math-wikibase-special-error-header": "Erro",
 	"math-wikibase-special-error-invalid-argument": "O identificador de elemento de Wikibase especificado non existe.",
-	"math-wikibase-special-error-unknown": "Produciuse un erro descoñecido ao obter datos de Wikibase."
+	"math-wikibase-special-error-unknown": "Produciuse un erro descoñecido ao obter datos de Wikibase.",
+	"math-editpage-insert-inline": "Fórmula matemática (en liña)",
+	"math-editpage-insert-block": "Fórmula matemática (bloque)"
 }

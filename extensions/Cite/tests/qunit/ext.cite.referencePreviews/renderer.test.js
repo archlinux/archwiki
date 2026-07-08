@@ -8,7 +8,7 @@
 		mw.loader.getModuleNames().includes( 'ext.popups.main' ),
 		{
 			before() {
-				createReferencePreview = require( 'ext.cite.referencePreviews' ).private.createReferencePreview;
+				createReferencePreview = require( 'ext.cite.referencePreviews' ).test.createReferencePreview;
 			}
 		}
 	);

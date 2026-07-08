@@ -1,11 +1,3 @@
-interface JQueryStatic {
-	collapsibleTabs: CollapsibleTabsStatic;
-}
-
-interface JQuery {
-	collapsibleTabs(options: Partial<CollapsibleTabsOptions>): void;
-}
-
 /** A jQuery plugin that makes collapsible tabs for the Vector skin. */
 interface CollapsibleTabsOptions {
 	/** Optional tab selector. Defaults to `#p-views ul`. */
@@ -16,19 +8,27 @@ interface CollapsibleTabsOptions {
 	collapsible: string;
 	shifting: boolean;
 	expandedWidth: number;
-	expandCondition(eleWidth: number): boolean;
+	expandCondition( eleWidth: number ): boolean;
 	collapseCondition(): boolean;
+}
+
+interface JQuery {
+	collapsibleTabs( options: Partial<CollapsibleTabsOptions> ): void;
 }
 
 interface CollapsibleTabsStatic {
 	defaults: CollapsibleTabsOptions;
 	instances: JQuery[];
-	addData($collapsible: JQuery): void;
-	getSettings($collapsible: JQuery): CollapsibleTabsOptions;
+	addData( $collapsible: JQuery ): void;
+	getSettings( $collapsible: JQuery ): CollapsibleTabsOptions;
 	handleResize(): void;
-	moveToCollapsed($moving: JQuery): void;
-	moveToExpanded($moving: JQuery): void;
+	moveToCollapsed( $moving: JQuery ): void;
+	moveToExpanded( $moving: JQuery ): void;
 	calculateTabDistance(): number;
+}
+
+interface JQueryStatic {
+	collapsibleTabs: CollapsibleTabsStatic;
 }
 
 interface CollapsibleTabs extends CollapsibleTabsStatic, CollapsibleTabsOptions {}

@@ -5,11 +5,11 @@ namespace Wikimedia\Tests;
 use MediaWikiCoversValidator;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
-use Wikimedia\MapCacheLRU\MapCacheLRU;
+use Wikimedia\ObjectCache\MapCacheLRU;
 
 /**
  * @group Cache
- * @covers \Wikimedia\MapCacheLRU\MapCacheLRU
+ * @covers \Wikimedia\ObjectCache\MapCacheLRU
  */
 class MapCacheLRUTest extends TestCase {
 

@@ -39,9 +39,7 @@ ve.dm.MWAnnotationNode.static.toDataElement = function ( domElements ) {
 
 	const dataElement = {
 		type: 'mwAnnotation',
-		attributes: {
-			type: type
-		}
+		attributes: { type }
 	};
 
 	if ( mwDataJSON !== null ) {

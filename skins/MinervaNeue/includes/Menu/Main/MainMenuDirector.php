@@ -24,14 +24,14 @@ namespace MediaWiki\Minerva\Menu\Main;
  */
 final class MainMenuDirector {
 
-	private IMainMenuBuilder $builder;
 	private ?array $menuData = null;
 
 	/**
 	 * Director responsible for Main Menu building
 	 */
-	public function __construct( IMainMenuBuilder $builder ) {
-		$this->builder = $builder;
+	public function __construct(
+		private readonly IMainMenuBuilder $builder,
+	) {
 	}
 
 	/**
@@ -39,13 +39,15 @@ final class MainMenuDirector {
 	 *
 	 * @param array $userMenuPortletData
 	 * @param array $sidebar
+	 * @param bool $shouldShowAccountMenuItems
 	 * @return array
 	 */
-	public function getMenuData( array $userMenuPortletData, array $sidebar ): array {
+	public function getMenuData( array $userMenuPortletData, array $sidebar, bool $shouldShowAccountMenuItems ): array {
 		if ( $this->menuData === null ) {
 			$this->menuData = $this->buildMenu(
 				$userMenuPortletData,
-				$sidebar
+				$sidebar,
+				$shouldShowAccountMenuItems
 			);
 		}
 		return $this->menuData;
@@ -56,9 +58,10 @@ final class MainMenuDirector {
 	 *
 	 * @param array $userMenuPortletData
 	 * @param array $sidebar
+	 * @param bool $shouldShowAccountMenuItems
 	 * @return array
 	 */
-	private function buildMenu( array $userMenuPortletData, array $sidebar ): array {
+	private function buildMenu( array $userMenuPortletData, array $sidebar, bool $shouldShowAccountMenuItems ): array {
 		$builder = $this->builder;
 		$menuData = [
 			'items' => [
@@ -71,7 +74,7 @@ final class MainMenuDirector {
 			// sidebar comes from MediaWiki:Sidebar so we can't assume it doesn't exist.
 			$builder->getDiscoveryGroup( $sidebar['navigation'] ?? [] ),
 			$builder->getInteractionToolsGroup(),
-			$builder->getPersonalToolsGroup( $userMenuPortletData ),
+			$builder->getPersonalToolsGroup( $userMenuPortletData, $shouldShowAccountMenuItems ),
 			$builder->getSettingsGroup(),
 			$builder->getDonateGroup(),
 		];

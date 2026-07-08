@@ -140,9 +140,9 @@ class ViewLogger {
 			.on( 'blur.mmv-view-logger', () => this.stopViewDuration() );
 	}
 
-	/*
-			* Stops listening to events
-			*/
+	/**
+	 * Stops listening to events
+	 */
 	unattach() {
 		$( this.window ).off( '.mmv-view-logger' );
 		this.stopViewDuration();

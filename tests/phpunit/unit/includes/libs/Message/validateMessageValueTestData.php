@@ -31,6 +31,7 @@ class ValidateMessageValueTestData extends Maintenance {
 	}
 
 	public function execute() {
+		/** @var MessageSerializationTestTrait[] $tests */
 		$tests = [
 			DataMessageValueTest::class,
 			ListParamTest::class,
@@ -56,7 +57,7 @@ class ValidateMessageValueTestData extends Maintenance {
 	 * If the respective options are set in the constructor, this will create missing files or
 	 * update mismatching files.
 	 *
-	 * @param string $className
+	 * @param class-string $className
 	 * @param string $defaultDirectory
 	 * @param array $supportedFormats
 	 * @param array $testInstances

@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\TemplateData;
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Status\Status;
+use StatusValue;
 use stdClass;
 use Wikimedia\Rdbms\IReadableDatabase;
 
@@ -17,7 +17,7 @@ use Wikimedia\Rdbms\IReadableDatabase;
 class TemplateDataBlob {
 
 	protected readonly string $json;
-	protected readonly Status $status;
+	protected readonly StatusValue $status;
 
 	/**
 	 * Parse and validate passed JSON and create a blob handling
@@ -108,7 +108,7 @@ class TemplateDataBlob {
 		return null;
 	}
 
-	public function getStatus(): Status {
+	public function getStatus(): StatusValue {
 		return $this->status;
 	}
 

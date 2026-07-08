@@ -120,5 +120,7 @@
 	"math-wikibase-special-form-button": "Information anfordern",
 	"math-wikibase-special-error-header": "Fehler",
 	"math-wikibase-special-error-invalid-argument": "Die angegebene Wikibase-ID ist nicht vorhanden.",
-	"math-wikibase-special-error-unknown": "Fehler beim Holen der Daten von Wikibase."
+	"math-wikibase-special-error-unknown": "Fehler beim Holen der Daten von Wikibase.",
+	"math-editpage-insert-inline": "Mathematische Formel (inline)",
+	"math-editpage-insert-block": "Mathematische Formel (Block)"
 }

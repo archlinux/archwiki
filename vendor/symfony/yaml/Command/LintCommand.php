@@ -50,10 +50,7 @@ class LintCommand extends Command
         $this->isReadableProvider = null === $isReadableProvider ? null : $isReadableProvider(...);
     }
 
-    /**
-     * @return void
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addArgument('filename', InputArgument::IS_ARRAY, 'A file, a directory or "-" for reading from STDIN')
@@ -75,6 +72,9 @@ class LintCommand extends Command
                 Or of a whole directory:
 
                   <info>php %command.full_name% dirname</info>
+
+                The <info>--format</info> option specifies the format of the command output:
+
                   <info>php %command.full_name% dirname --format=json</info>
 
                 You can also exclude one or more specific files:
@@ -224,7 +224,7 @@ class LintCommand extends Command
         }
 
         foreach ($this->getDirectoryIterator($fileOrDirectory) as $file) {
-            if (!\in_array($file->getExtension(), ['yml', 'yaml'])) {
+            if (!\in_array($file->getExtension(), ['yml', 'yaml'], true)) {
                 continue;
             }
 
@@ -269,6 +269,7 @@ class LintCommand extends Command
         }
     }
 
+    /** @return string[] */
     private function getAvailableFormatOptions(): array
     {
         return ['txt', 'json', 'github'];

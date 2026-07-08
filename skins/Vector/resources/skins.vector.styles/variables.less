@@ -128,7 +128,8 @@
 
 // Transitions
 // Sticky header hide/show transition
-@transition-sticky-header: transform 250ms linear;
+@transition-sticky-header-timing-function: linear;
+@transition-sticky-header: transform @transition-duration-medium @transition-sticky-header-timing-function;
 
 //
 // Layout

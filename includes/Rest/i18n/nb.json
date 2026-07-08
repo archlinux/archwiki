@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"EdoAug",
+			"Fademaze",
 			"Jon Harald Søby",
-			"Laaknor",
-			"Fademaze"
+			"Laaknor"
 		]
 	},
 	"rest-prefix-mismatch": "Den forespurte stien ($1) var ikke i REST-API-ets grunnsti ($2)",
@@ -92,8 +92,10 @@
 	"rest-module-extra-routes-title": "MediaWikis REST-API",
 	"rest-module-extra-routes-desc": "REST-endepunkter som ikke er tilknyttet en modul",
 	"rest-module-specs.v0-title": "Spesifikasjoner",
-	"rest-module-content.v1-title": "Sideinnhold",
+	"rest-module-content.v1-title": "Innholds-API",
 	"rest-module-content.v1-desc": "Gir tilgang til innholdet og metadataene for sider og sideversjoner",
+	"rest-module-site.v1-title": "Nettsteds-API",
+	"rest-module-site.v1-desc": "Informasjon om nettstedet som helhet, slik som nettstedkart",
 	"rest-param-desc-mock-desc": "Testbeskrivelse.",
 	"rest-param-desc-revision-id": "Sideversjonsidentifikator",
 	"rest-param-desc-page-content-title": "Sidetittel i lesevennlig format",

@@ -15,7 +15,7 @@ class Stream extends Psr7\Stream implements CopyableStreamInterface {
 	}
 
 	/** @inheritDoc */
-	public function copyToStream( $target ) {
-		stream_copy_to_stream( $this->stream, $target );
+	public function copyToStream( $stream ) {
+		stream_copy_to_stream( $this->stream, $stream );
 	}
 }

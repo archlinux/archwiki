@@ -58,7 +58,8 @@ class SanitizerHandler extends UniversalTokenHandler {
 			$token instanceof XMLTagTk &&
 			TokenUtils::isHTMLTag( $token ) &&
 			( empty( $allowedTags[$token->getName()] ) ||
-				( $token instanceof EndTagTk && !empty( self::NO_END_TAG_SET[$token->getName()] ) ) )
+				( $token instanceof EndTagTk && !empty( self::NO_END_TAG_SET[$token->getName()] ) ) ||
+				Sanitizer::escapeLiteralHTMLTag( $token ) )
 		) { // unknown tag -- convert to plain text
 			if ( !$inTemplate && !empty( $token->dataParsoid->tsr ) ) {
 				// Just get the original token source, so that we can avoid
@@ -99,11 +100,14 @@ class SanitizerHandler extends UniversalTokenHandler {
 				// resultant dirty diffs should be acceptable.  But, this is something to do
 				// in the future once we have passed the initial tests of parsoid acceptance.
 				foreach ( $newAttrs as $k => $v ) {
+					if ( $v[3] ) {
+						$token->addAttribute( $k, $v[0] );
+						$token->setShadowInfo( $k, $v[0], $v[1] );
 					// explicit check against null to prevent discarding empty strings
-					if ( $v[0] !== null ) {
+					} elseif ( $v[0] !== null ) {
 						$token->addNormalizedAttribute( $k, $v[0], $v[1] );
 					} else {
-						$token->setShadowInfo( $v[2], $v[0], $v[1] );
+						$token->setShadowInfoIfModified( $v[2], $v[0], $v[1] );
 					}
 				}
 			} else {

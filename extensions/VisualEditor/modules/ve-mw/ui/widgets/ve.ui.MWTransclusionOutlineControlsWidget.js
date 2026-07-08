@@ -23,29 +23,39 @@ ve.ui.MWTransclusionOutlineControlsWidget = function OoUiOutlineControlsWidget()
 	this.addTemplateButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'puzzle',
-		title: ve.msg( 'visualeditor-dialog-transclusion-add-template-button' )
+		title: ve.msg( 'visualeditor-dialog-transclusion-add-template-button' ),
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-template-button' ),
+		invisibleLabel: true
 	} );
 	this.addWikitextButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'wikiText',
-		title: ve.msg( 'visualeditor-dialog-transclusion-add-wikitext' )
+		title: ve.msg( 'visualeditor-dialog-transclusion-add-wikitext' ),
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-wikitext' ),
+		invisibleLabel: true
 	} );
 	this.upButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'upTriangle',
 		title: ve.msg( 'ooui-outline-control-move-up' ),
+		label: ve.msg( 'ooui-outline-control-move-up' ),
+		invisibleLabel: true,
 		disabled: true
 	} );
 	this.downButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'downTriangle',
 		title: ve.msg( 'ooui-outline-control-move-down' ),
+		label: ve.msg( 'ooui-outline-control-move-down' ),
+		invisibleLabel: true,
 		disabled: true
 	} );
 	this.removeButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'trash',
 		title: ve.msg( 'ooui-outline-control-remove' ),
+		label: ve.msg( 'ooui-outline-control-remove' ),
+		invisibleLabel: true,
 		disabled: true
 	} );
 

@@ -10,7 +10,7 @@
  * invocations that strictly belong to each other (e.g. because they are unbalanced), possibly
  * mixed with raw wikitext snippets.
  *
- * Note the base class {@see ve.ui.MWTemplateDialog} alone does not allow to manage more than a
+ * Note the base class {@link ve.ui.MWTemplateDialog} alone does not allow to manage more than a
  * single template invocation. Most of the code for this feature set is exclusive to this subclass.
  *
  * @class
@@ -99,7 +99,7 @@ ve.ui.MWTransclusionDialog.prototype.onOutlineControlsMove = function ( places )
 	// Move part to new location, and if dialog is loaded switch to new part page
 	const promise = this.transclusionModel.addPart( part, newPlace );
 	if ( this.loaded && !this.preventReselection ) {
-		// FIXME: Should be handled internally {@see ve.ui.MWTwoPaneTransclusionDialogLayout}
+		// FIXME: Should be handled internally {@link ve.ui.MWTwoPaneTransclusionDialogLayout}
 		promise.then( this.bookletLayout.focusPart.bind( this.bookletLayout, part.getId() ) );
 	}
 };
@@ -204,7 +204,7 @@ ve.ui.MWTransclusionDialog.prototype.onReplacePart = function ( removed, added )
  * @private
  */
 ve.ui.MWTransclusionDialog.prototype.setupHotkeyTriggers = function () {
-	// Lower-case modifier and key names as specified in {@see ve.ui.Trigger}
+	// Lower-case modifier and key names as specified in {@link ve.ui.Trigger}
 	const isMac = ve.getSystemPlatform() === 'mac',
 		meta = isMac ? 'meta+' : 'ctrl+';
 	const hotkeys = {
@@ -243,10 +243,7 @@ ve.ui.MWTransclusionDialog.prototype.setupHotkeyTriggers = function () {
  * @param {RegExp} [validTypes]
  */
 ve.ui.MWTransclusionDialog.prototype.connectHotKeyBinding = function ( hotkey, handler, validTypes ) {
-	this.hotkeyTriggers[ hotkey ] = {
-		handler: handler,
-		validTypes: validTypes
-	};
+	this.hotkeyTriggers[ hotkey ] = { handler, validTypes };
 };
 
 /**
@@ -255,7 +252,7 @@ ve.ui.MWTransclusionDialog.prototype.connectHotKeyBinding = function ( hotkey, h
  * @param {string} hotkey
  */
 ve.ui.MWTransclusionDialog.prototype.addHotkeyToTitle = function ( element, hotkey ) {
-	// Separated with a space as in {@see OO.ui.Tool.updateTitle}
+	// Separated with a space as in {@link OO.ui.Tool.updateTitle}
 	element.setTitle( element.getTitle() + ' ' + new ve.ui.Trigger( hotkey ).getMessage() );
 };
 
@@ -405,7 +402,7 @@ ve.ui.MWTransclusionDialog.prototype.updateModeActionState = function () {
 		action.$button.attr( 'aria-expanded', isExpanded ? 1 : 0 );
 	} );
 
-	// The button is only visible on very narrow screens, {@see autoExpandSidebar}.
+	// The button is only visible on very narrow screens, {@link autoExpandSidebar}.
 	// It's always needed, except in the initial placeholder state.
 	const isInitialState = !isExpanded && this.transclusionModel.isEmpty(),
 		canCollapse = !isInitialState;
@@ -641,7 +638,7 @@ ve.ui.MWTemplateDialog.prototype.getMessageButton = function ( message, icon ) {
 			href: $link.attr( 'href' ),
 			target: '_blank',
 			flags: 'progressive',
-			icon: icon,
+			icon,
 			framed: false
 		} );
 	button.$button.attr( 'role', 'link' );

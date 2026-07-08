@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Tokens;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\SourceRange;
 
 /**
  * Represents a preprocessor "piece".  Contents of this token are
@@ -270,6 +271,38 @@ class PreprocTk extends Token {
 			$result[] = self::newContentsKV( [], $contents->srcOffsets->value );
 		}
 		return $result;
+	}
+
+	/**
+	 * Split this token by `|` and return target and named args.
+	 * @return list<KV>
+	 */
+	public function getBarredArgs(): array {
+		$parts = self::splitContentsBy(
+			'|', $this->getContentsKV()
+		);
+		$target = array_shift( $parts );
+		$target = new KV(
+			$target->v, '',
+			$target->srcOffsets->value->expandTsrK()
+		);
+		// Create args (increment by 2 to skip vertical bar separators)
+		$args = [];
+		for ( $i = 1; $i < count( $parts ); $i += 2 ) {
+			[ $key, $eq, $value ] = array_pad( self::splitContentsBy(
+				'=', $parts[$i], 1
+			), -3, null );
+			if ( $key === null ) {
+				$value->k = [ '' ];
+				$args[] = $value;
+			} else {
+				$args[] = new KV(
+					$key->v, $value->v,
+					$key->srcOffsets->value->join( $value->srcOffsets->value )
+				);
+			}
+		}
+		return [ $target, ...$args ];
 	}
 
 	/**

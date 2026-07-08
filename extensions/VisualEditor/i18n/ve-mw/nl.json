@@ -49,6 +49,7 @@
 			"सरोज कुमार ढकाल"
 		]
 	},
+	"collabpad-disabled": "CollabPad is niet ingeschakeld op deze wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Geïmporteerd van $1",
 	"collabpad": "CollabPad",
@@ -270,6 +271,7 @@
 	"visualeditor-educationpopup-dismiss": "Oké, ik begrijp het",
 	"visualeditor-expandable-less": "Minder",
 	"visualeditor-expandable-more": "Meer",
+	"visualeditor-expandableerror-toggle": "Zichtbaarheid in-/uitschakelen",
 	"visualeditor-feedback-defaultmessage": "Url: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Paginatitel",
 	"visualeditor-formatdropdown-format-mw-heading2": "Kopje",
@@ -277,6 +279,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Onderkop 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Onderkop 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Onderkop 4",
+	"visualeditor-fullpage-switch-label": "Volledige pagina bewerken",
 	"visualeditor-generating-wikitext-progress": "Wikitekst genereren",
 	"visualeditor-includes-noinclude-start": "Begin van inhoud uitgesloten van invoeging",
 	"visualeditor-includes-noinclude-end": "Einde van inhoud uitgesloten van invoeging",

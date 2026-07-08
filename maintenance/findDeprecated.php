@@ -26,7 +26,10 @@ class FileAwareNodeVisitor extends PhpParser\NodeVisitorAbstract {
 	/** @inheritDoc */
 	public function enterNode( PhpParser\Node $node ) {
 		$retVal = parent::enterNode( $node );
-		$node->filename = $this->currentFile;
+		// TODO: Make this work without dynamic property (T423054).
+		// "Warning: Creation of dynamic property PhpParser\Node\Stmt\Namespace_::$filename is deprecated"
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		@( $node->filename = $this->currentFile );
 		return $retVal;
 	}
 
@@ -150,8 +153,6 @@ class FindDeprecated extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP;
-
 		$files = $this->getFiles();
 		$chunkSize = (int)ceil( count( $files ) / 72 );
 
@@ -172,7 +173,8 @@ class FindDeprecated extends Maintenance {
 				continue;
 			}
 
-			$finder->setCurrentFile( substr( $file->getPathname(), strlen( $IP ) + 1 ) );
+			$installPath = $this->getMwInstallPath();
+			$finder->setCurrentFile( substr( $file->getPathname(), strlen( $installPath ) + 1 ) );
 			$nodes = $parser->parse( $code );
 			$traverser->traverse( $nodes );
 

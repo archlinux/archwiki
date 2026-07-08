@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -24,7 +24,7 @@
 		]
 	},
 	"Hooks": {
-		"APIQuerySiteInfoGeneralInfo": "main",
+		"APIQuerySiteInfoGeneralInfo": "parser",
 		"CommunityConfigurationProvider_initList": "communityconfiguration",
 		"ContentHandlerDefaultModelFor": "main",
 		"GetPreferences": "referencepreviews",
@@ -34,7 +34,10 @@
 		"EditPage::showEditForm:initial": "main",
 		"MakeGlobalVariablesScript": "referencepreviews",
 		"ResourceLoaderGetConfigVars": "main",
-		"ResourceLoaderRegisterModules": "referencepreviews",
+		"ResourceLoaderRegisterModules": [
+			"main",
+			"referencepreviews"
+		],
 		"UserGetDefaultOptions": "referencepreviews"
 	},
 	"HookHandlers": {
@@ -44,6 +47,7 @@
 		"main": {
 			"class": "Cite\\Hooks\\CiteHooks",
 			"services": [
+				"ExtensionRegistry",
 				"UserOptionsLookup"
 			]
 		},
@@ -69,27 +73,21 @@
 				"ext.cite.print.less": {
 					"media": "print"
 				}
-			},
-			"skinStyles": {
-				"minerva": "ext.cite.styles.minerva.less",
-				"vector-2022": "ext.cite.styles.vector2022.less"
 			}
 		},
 		"ext.cite.parsoid.styles": {
 			"localBasePath": "modules/parsoid-styles",
 			"remoteExtPath": "Cite/modules/parsoid-styles",
 			"class": "Cite\\ResourceLoader\\CiteCSSFileModule",
-			"styles": "ext.cite.parsoid.styles.less",
-			"skinStyles": {
-				"minerva": "ext.cite.parsoid.styles.minerva.less"
-			}
+			"styles": "ext.cite.parsoid.styles.less"
 		},
 		"ext.cite.ux-enhancements": {
 			"localBasePath": "modules",
 			"remoteExtPath": "Cite/modules",
 			"scripts": [
 				"ext.cite.a11y.js",
-				"ext.cite.highlighting.js"
+				"ext.cite.highlighting.js",
+				"ext.cite.track.js"
 			],
 			"styles": [
 				"ext.cite.a11y.less",
@@ -177,14 +175,17 @@
 					"ve-cite/converter/ve.dm.ConverterStoreTestCases.js",
 					"ve-cite/converter/ve.dm.ConverterSubReferenceTestCases.js",
 					"ve-cite/converter/ve.dm.ConverterTestCases.js",
+					"ve-cite/ve.dm.MWDataTransitionHelper.test.js",
 					"ve-cite/ve.dm.MWDocumentReferences.test.js",
 					"ve-cite/ve.dm.MWGroupReferences.test.js",
 					"ve-cite/ve.dm.InternalList.test.js",
 					"ve-cite/ve.dm.MWReferenceModel.test.js",
+					"ve-cite/ve.dm.MWReferenceKeyGenerator.test.js",
 					"ve-cite/ve.dm.MWReferenceNode.test.js",
 					"ve-cite/ve.dm.MWReferencesListNode.test.js",
 					"ve-cite/ve.dm.Transaction.test.js",
 					"ve-cite/ve.ce.ClipboardHandler.test.js",
+					"ve-cite/ve.ce.MWReferencesListNode.test.js",
 					"ve-cite/ve.ui.DiffElement.test.js",
 					"ve-cite/ve.ui.MWCitationDialogTool.test.js",
 					"ve-cite/ve.ui.MWReferenceContextItem.test.js",
@@ -264,10 +265,6 @@
 			"description": "Temporary feature flag while the sub-referencing feature (a way to nest citations and e.g. reference pages in a book) is in development.",
 			"value": false
 		},
-		"CiteSubRefMergeInDevelopment": {
-			"description": "Dev-only feature flag to temporarily hide risky parts of the feature to merge (i.e. \"reuse\") identical sub-references (see T406453). This might affect how sub-references are numbered, e.g. later sub-references get lower numbers when earlier ones are merged. It might also affect the behavior of VisualEditor.",
-			"value": false
-		},
 		"CiteVisualEditorOtherGroup": {
 			"description": "If VisualEditor should list the citation features as part of the existing \"Insert\" drop-down menu instead of a top-level \"Cite\" toolbar button.",
 			"value": false
@@ -303,6 +300,10 @@
 		"CiteDefaultBacklinkAlphabet": {
 			"description": "List of letters in the Alphabet to be used to auto-generate backlink labels. Separated by spaces. Defaults to English Alphabet \"a\" to \"z\" when not specified. Currently only used when CiteUseLegacyBacklinkLabels is set to false.",
 			"value": null
+		},
+		"CiteRemoveSyntheticRefsUnsafe": {
+			"description": "Only for development! This will stop the creation of synthetic list defined main refs.",
+			"value": false
 		}
 	},
 	"AutoloadNamespaces": {
@@ -312,7 +313,6 @@
 		"Cite\\Tests\\": "tests/phpunit/"
 	},
 	"TrackingCategories": [
-		"cite-tracking-category-cite-diffing-error",
 		"cite-tracking-category-cite-error",
 		"cite-tracking-category-ref-details"
 	],
@@ -339,7 +339,7 @@
 					"options": {
 						"wt2html": {
 							"unpackOutput": false,
-							"embedsHTMLInAttributes": true
+							"embedsDomInAttributes": true
 						},
 						"outputHasCoreMwDomSpecMarkup": true
 					}
@@ -354,7 +354,7 @@
 					},
 					"options": {
 						"wt2html": {
-							"embedsHTMLInAttributes": true
+							"embedsDomInAttributes": true
 						},
 						"html2wt": {
 							"format": "block"

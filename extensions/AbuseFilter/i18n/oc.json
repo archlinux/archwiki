@@ -248,7 +248,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Definir la variabla (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variablas",
 	"abusefilter-edit-builder-vars-timestamp": "Timestamp Unix de la modificacion",
-	"abusefilter-edit-builder-vars-accountname": "Nom del compte (al moment de la creacion del compte)",
+	"abusefilter-edit-builder-vars-account-name": "Nom del compte (al moment de la creacion del compte)",
 	"abusefilter-edit-builder-vars-action": "Accion",
 	"abusefilter-edit-builder-vars-addedlines": "Linhas apondudas al moment de la modificacion",
 	"abusefilter-edit-builder-vars-delta": "Talha modificada al moment de la modificacion",

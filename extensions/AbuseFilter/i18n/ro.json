@@ -362,7 +362,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizați entitățile HTML în caractere Unicode (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Variabile",
 	"abusefilter-edit-builder-vars-timestamp": "Data și ora Unix a modificării",
-	"abusefilter-edit-builder-vars-accountname": "Numele contului (la crearea contului)",
+	"abusefilter-edit-builder-vars-account-name": "Numele contului (la crearea contului)",
 	"abusefilter-edit-builder-vars-action": "Acțiune",
 	"abusefilter-edit-builder-vars-addedlines": "Linii adăugate în urma modificării",
 	"abusefilter-edit-builder-vars-delta": "Dimensiunea schimbării în editare",

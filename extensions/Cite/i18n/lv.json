@@ -29,7 +29,6 @@
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> iezīmei ar nosaukumu \"$1\", kas definēta <code>&lt;references&gt;</code> grupā \"$2\", nav satura.",
 	"cite-tracking-category-cite-error": "Lapas ar atsauču kļūdām",
 	"cite-tracking-category-cite-error-desc": "Lapās šajā kategorijā ir kļūdaini lietotas atsauču iezīmes.",
-	"cite-tracking-category-cite-diffing-error": "Lapas ar atsauču kļūdām, kas izraisa vizuālas atšķirības",
 	"cite-reference-previews-reference": "Atsauce",
 	"cite-reference-previews-book": "Grāmatas atsauce",
 	"cite-reference-previews-journal": "Publikācijas atsauce",

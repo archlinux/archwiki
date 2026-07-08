@@ -1,29 +1,24 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
-use MessageLocalizer;
 
 /**
  * VectorComponentAppearance component
  */
 class VectorComponentAppearance implements VectorComponent {
 
-	/** @var MessageLocalizer */
-	private $localizer;
-
-	/** @var bool */
-	private $isPinned;
+	private readonly bool $isPinned;
 
 	/** @var string */
 	public const ID = 'vector-appearance';
 
 	public function __construct(
-		MessageLocalizer $localizer,
-		FeatureManager $featureManager
+		private readonly MessageLocalizer $localizer,
+		FeatureManager $featureManager,
 	) {
-		$this->localizer = $localizer;
 		// FIXME: isPinned is no longer accurate because the appearance menu uses client preferences
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_APPEARANCE_PINNED );
 	}

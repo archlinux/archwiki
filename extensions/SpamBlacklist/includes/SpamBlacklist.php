@@ -2,17 +2,15 @@
 
 namespace MediaWiki\Extension\SpamBlacklist;
 
-use MediaWiki\CheckUser\Hooks as CUHooks;
+use MediaWiki\CheckUser\Services\CheckUserInsert;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Deferred\LinksUpdate\ExternalLinksTable;
 use MediaWiki\ExternalLinks\ExternalLinksLookup;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\Database;
 
 class SpamBlacklist extends BaseBlacklist {
@@ -122,9 +120,8 @@ class SpamBlacklist extends BaseBlacklist {
 				wfDebugLog( 'SpamBlacklist', "Excluding whitelisted URLs from " . count( $whitelists ) .
 					" regexes: " . implode( ', ', $whitelists ) . "\n" );
 				foreach ( $whitelists as $regex ) {
-					AtEase::suppressWarnings();
-					$newLinks = preg_replace( $regex, '', $links );
-					AtEase::restoreWarnings();
+					// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+					$newLinks = @preg_replace( $regex, '', $links );
 					if ( is_string( $newLinks ) ) {
 						// If there wasn't a regex error, strip the matching URLs
 						$links = $newLinks;
@@ -137,11 +134,8 @@ class SpamBlacklist extends BaseBlacklist {
 				" regexes: " . implode( ', ', $blacklists ) . "\n" );
 			$retVal = false;
 			foreach ( $blacklists as $regex ) {
-				AtEase::suppressWarnings();
-				$matches = [];
-				$check = ( preg_match_all( $regex, $links, $matches ) > 0 );
-				AtEase::restoreWarnings();
-				if ( $check ) {
+				// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+				if ( @preg_match_all( $regex, $links, $matches ) > 0 ) {
 					wfDebugLog( 'SpamBlacklist', "Match!\n" );
 					$ip = RequestContext::getMain()->getRequest()->getIP();
 					$fullUrls = [];
@@ -244,8 +238,9 @@ class SpamBlacklist extends BaseBlacklist {
 	 * @param string $url URL that the user attempted to add
 	 */
 	public function logFilterHit( User $user, $title, $url ) {
-		global $wgLogSpamBlacklistHits;
-		if ( $wgLogSpamBlacklistHits ) {
+		$services = MediaWikiServices::getInstance();
+
+		if ( $services->getMainConfig()->get( 'LogSpamBlacklistHits' ) ) {
 			$logEntry = new ManualLogEntry( 'spamblacklist', 'hit' );
 			$logEntry->setPerformer( $user );
 			$logEntry->setTarget( $title );
@@ -257,9 +252,12 @@ class SpamBlacklist extends BaseBlacklist {
 			if ( $log->isRestricted() ) {
 				// Make sure checkusers can see this action if the log is restricted
 				// (which is the default)
-				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
+				if ( $services->getExtensionRegistry()->isLoaded( 'CheckUser' ) ) {
 					$rc = $logEntry->getRecentChange( $logid );
-					CUHooks::updateCheckUserData( $rc );
+
+					/** @var CheckUserInsert $checkUserInsert */
+					$checkUserInsert = $services->get( 'CheckUserInsert' );
+					$checkUserInsert->updateCheckUserData( $rc );
 				}
 			} else {
 				// If the log is unrestricted, publish normally to RC,

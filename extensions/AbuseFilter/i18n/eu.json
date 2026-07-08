@@ -327,7 +327,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizatu HTML entitateak unicode karaktereetan (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Aldagaiak",
 	"abusefilter-edit-builder-vars-timestamp": "Unix aldatzeko denbora-marka",
-	"abusefilter-edit-builder-vars-accountname": "Kontuaren izena ( eta kontuaren sorkuntza)",
+	"abusefilter-edit-builder-vars-account-name": "Kontuaren izena ( eta kontuaren sorkuntza)",
 	"abusefilter-edit-builder-vars-action": "Ekintza",
 	"abusefilter-edit-builder-vars-addedlines": "Lerroak gehituta edizioan",
 	"abusefilter-edit-builder-vars-delta": "Tamaina-aldaketa edizioan",

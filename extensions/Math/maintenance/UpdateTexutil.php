@@ -15,7 +15,7 @@ class UpdateTexutil extends Maintenance {
 		$jsonContent = json_decode( file_get_contents( $jsonFilePath ), true );
 
 		if ( $jsonContent === null ) {
-			die( "Failed to decode texutil.json. Please check the file format.\n" );
+			$this->fatalError( "Failed to decode texutil.json. Please check the file format.\n" );
 		}
 		$tu = TexUtil::getInstance();
 		foreach ( $tu->getBaseElements()[self::GROUP] as $key => $value ) {
@@ -32,15 +32,15 @@ class UpdateTexutil extends Maintenance {
 		$jsonString = json_encode( $jsonContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
 
 		$jsonStringWithTabs = preg_replace_callback( '/^( +)/m', static function ( $matches ) {
-				// Convert spaces to tabs (assuming 4 spaces per tab level)
-				return str_repeat( "\t", strlen( $matches[1] ) / 4 );
+			// Convert spaces to tabs (assuming 4 spaces per tab level)
+			return str_repeat( "\t", strlen( $matches[1] ) / 4 );
 		}, $jsonString ) . "\n";
 		// prevent eslint error  Unnecessary escape character: \/  no-useless-escape
 		$jsonStringWithTabs = str_replace( '\/', '/', $jsonStringWithTabs );
 
 		file_put_contents( $jsonFilePath, $jsonStringWithTabs );
 
-		echo "texutil.json successfully updated.\n";
+		$this->output( "texutil.json successfully updated.\n" );
 	}
 }
 // @codeCoverageIgnoreStart

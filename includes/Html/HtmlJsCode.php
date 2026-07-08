@@ -42,7 +42,7 @@ class HtmlJsCode {
 	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
 	 * @param object|array $obj Object or associative array to encode
 	 * @param bool $pretty If true, add non-significant whitespace to improve readability.
-	 * @return HtmlJsCode
+	 * @return self
 	 */
 	public static function encodeObject( $obj, $pretty = false ) {
 		$parts = [];

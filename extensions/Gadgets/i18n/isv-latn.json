@@ -65,5 +65,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Nedostavaje slědujuča zavisnost|Nedostavajut slědujuče zavisnosti}}: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Slědujuča zavisnost jest zastarěla|Slědujuče zavisnosti sut zastarěle}}: $1.",
 	"gadgets-supports-urlload": "Tutoj gadžet poddrživaje včityvanje črěz URL s parametrom zapyta <code>?withgadget</code>.",
-	"gadgets-hidden": "Tutoj gadžet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], čto znači, že ne javi se na stranici vaših nastavjenij."
+	"gadgets-hidden": "Tutoj gadžet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], čto znači, že ne javi se na stranici vaših nastavjenij.",
+	"gadgets-subpage-invalid": "Nepravilna podstranica «<nowiki>$1</nowiki>»",
+	"gadgets-subpage-toofewparams": "Nedostatočno parametrov za podstranicu (nepravilny link)."
 }

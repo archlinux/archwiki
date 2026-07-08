@@ -622,6 +622,8 @@ ve.dm.mwExample.withMetaMetaData = [
 	undefined
 ];
 
+ve.dm.mwExample.alienExtLinkHtml = '<a typeof="mw:ExpandedAttrs" about="#mwt4" rel="mw:ExtLink nofollow" href="https://www.example.com/" class="external text" id="mwBQ" data-mw="{&quot;attribs&quot;:[[{&quot;txt&quot;:&quot;href&quot;},{&quot;html&quot;:&quot;<a rel=\\&quot;mw:ExtLink nofollow\\&quot; href=\\&quot;https://www.example.com/\\&quot; about=\\&quot;#mwt3\\&quot; typeof=\\&quot;mw:Transclusion\\&quot; class=\\&quot;external free\\&quot; data-parsoid=\'{\\&quot;stx\\&quot;:\\&quot;url\\&quot;,\\&quot;pi\\&quot;:[[{\\&quot;k\\&quot;:\\&quot;1\\&quot;}]],\\&quot;dsr\\&quot;:[36,67,null,null]}\' data-mw=\'{\\&quot;parts\\&quot;:[{\\&quot;template\\&quot;:{\\&quot;target\\&quot;:{\\&quot;wt\\&quot;:\\&quot;1x\\&quot;,\\&quot;href\\&quot;:\\&quot;./Template:1x\\&quot;},\\&quot;params\\&quot;:{\\&quot;1\\&quot;:{\\&quot;wt\\&quot;:\\&quot;https://www.example.com/\\&quot;}},\\&quot;i\\&quot;:0}}]}\'>https://www.example.com/</a>&quot;}]]}">x</a>';
+
 ve.dm.mwExample.domToDataCases = {
 	'adjacent annotations (data-parsoid)': {
 		preserveAnnotationDomElements: true,
@@ -1793,6 +1795,21 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: '/internalList' }
 		]
 	},
+	'external link with template-generated href (alienated)': {
+		body: '<p>' + ve.dm.mwExample.alienExtLinkHtml + '</p>',
+		base: ve.dm.mwExample.baseUri,
+		data: [
+			{ type: 'paragraph' },
+			{
+				type: 'alienInline',
+				originalDomElements: $.parseHTML( ve.dm.mwExample.alienExtLinkHtml )
+			},
+			{ type: '/alienInline' },
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
 	'internal link with template-generated href': {
 		body: '<p><a typeof="mw:ExpandedAttrs" about="#mwt2" rel="mw:WikiLink" href="./Test" title="Test" data-mw="{&quot;attribs&quot;:[[{&quot;txt&quot;:&quot;href&quot;},{&quot;html&quot;:&quot;<span about=\\&quot;#mwt1\\&quot; typeof=\\&quot;mw:Transclusion\\&quot; data-parsoid=\'{\\&quot;pi\\&quot;:[[{\\&quot;k\\&quot;:\\&quot;1\\&quot;}]],\\&quot;dsr\\&quot;:[2,14,null,null]}\' data-mw=\'{\\&quot;parts\\&quot;:[{\\&quot;template\\&quot;:{\\&quot;target\\&quot;:{\\&quot;wt\\&quot;:\\&quot;1x\\&quot;,\\&quot;href\\&quot;:\\&quot;./Template:1x\\&quot;},\\&quot;params\\&quot;:{\\&quot;1\\&quot;:{\\&quot;wt\\&quot;:\\&quot;test\\&quot;}},\\&quot;i\\&quot;:0}}]}\'>test</span>&quot;}]]}">x</a></p>',
 		base: ve.dm.mwExample.baseUri,
@@ -2200,6 +2217,26 @@ ve.dm.mwExample.domToDataCases = {
 				attributes: {
 					content: 'foo',
 					localizedPrefix: 'DISPLAYTITLE'
+				}
+			},
+			{ type: '/mwDisplayTitle' },
+			{ type: 'paragraph', internal: { generated: 'empty' } },
+			{ type: '/paragraph' },
+			{ type: 'internalList' },
+			{ type: '/internalList' }
+		]
+	},
+	'display title (noerror)': {
+		body: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"},"params":{"1":{"wt":"noerror"}}}},"\\n"]}\'></span>',
+		fromDataBody: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"},"params":{"1":{"wt":"noerror"}}}},"\\n"]}\'></span>',
+		normalizedBody: '<span typeof="mw:Transclusion" data-mw=\'{"parts":[{"template":{"target":{"wt":"DISPLAYTITLE:foo","function":"displaytitle"},"params":{"1":{"wt":"noerror"}}}}]}\'></span>',
+		data: [
+			{
+				type: 'mwDisplayTitle',
+				attributes: {
+					content: 'foo',
+					localizedPrefix: 'DISPLAYTITLE',
+					params: { 1: { wt: 'noerror' } }
 				}
 			},
 			{ type: '/mwDisplayTitle' },

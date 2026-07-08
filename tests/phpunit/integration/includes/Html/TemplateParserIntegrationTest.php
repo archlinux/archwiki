@@ -2,6 +2,7 @@
 
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Utils\FileContentsHasher;
 use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 
@@ -26,9 +27,7 @@ class TemplateParserIntegrationTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::SecretKey, false );
 
 		// Expect no cache interaction
-		$cache = $this->createMock( BagOStuff::class );
-		$cache->expects( $this->never() )->method( 'get' );
-		$cache->expects( $this->never() )->method( 'set' );
+		$cache = $this->createNoOpMock( BagOStuff::class );
 
 		$tp = new TemplateParser( self::DIR, $cache );
 		$this->assertEquals( self::RESULT, $tp->processTemplate( self::NAME, [] ) );

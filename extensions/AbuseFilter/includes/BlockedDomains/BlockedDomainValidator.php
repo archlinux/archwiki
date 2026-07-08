@@ -2,16 +2,14 @@
 
 namespace MediaWiki\Extension\AbuseFilter\BlockedDomains;
 
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Utils\UrlUtils;
 
 class BlockedDomainValidator {
 
-	public const SERVICE_NAME = 'AbuseFilterBlockedDomainValidator';
+	public const SERVICE_NAME = ServiceNames::BlockedDomainValidator;
 
-	private UrlUtils $urlUtils;
-
-	public function __construct( UrlUtils $urlUtils ) {
-		$this->urlUtils = $urlUtils;
+	public function __construct( private readonly UrlUtils $urlUtils ) {
 	}
 
 	/**

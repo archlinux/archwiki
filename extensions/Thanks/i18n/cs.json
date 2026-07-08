@@ -24,7 +24,6 @@
 	"thanks-error-log-deleted": "Požadovaný protokolovací záznam byl smazán a nelze za něj poděkovat.",
 	"thanks-error-invalidrevision": "ID revize je neplatné.",
 	"thanks-error-revdeleted": "Nepodařilo se odeslat poděkování, protože revize byla smazána.",
-	"thanks-error-notitle": "Nepodařilo se zjistit název stránky",
 	"thanks-error-invalidrecipient": "Nebyl nalezen platný příjemce",
 	"thanks-error-invalidrecipient-bot": "Robotům nelze děkovat",
 	"thanks-error-invalidrecipient-self": "Nemůžete děkovat {{GENDER:|sám|sama|sami}} sobě.",

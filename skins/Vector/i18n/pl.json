@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Chrumps",
+			"IOIOI",
 			"Matma Rex",
 			"Msz2001",
 			"Nux",
@@ -10,8 +11,7 @@
 			"Sp5uhe",
 			"Tar Lócesilion",
 			"WaldiSt",
-			"Woytecr",
-			"IOIOI"
+			"Woytecr"
 		]
 	},
 	"skinname-vector": "Stary Wektor (2010)",
@@ -64,9 +64,6 @@
 	"vector-toc-label": "Spis treści",
 	"vector-toc-beginning": "Początek",
 	"vector-toc-toggle-button-label": "Przełącz podsekcję $1",
-	"vector-anon-user-menu-pages": "Strony dla anonimowych edytorów",
-	"vector-anon-user-menu-pages-learn": "dowiedz się więcej",
-	"vector-anon-user-menu-pages-label": "Dowiedz się więcej na temat edytowania",
 	"vector-main-menu-tooltip": "Główne menu",
 	"vector-toc-menu-tooltip": "Spis treści",
 	"vector-toc-collapsible-button-label": "Przełącz stan spisu treści",
@@ -89,8 +86,6 @@
 	"vector-page-tools-unpinned-popup": "Menu z narzędziami przeniosło się tutaj.",
 	"vector-main-menu-unpinned-popup": "Główne menu zostało przeniesione tutaj.",
 	"vector-appearance-unpinned-popup": "Menu wyglądu strony przeniosło się tutaj.",
-	"vector-2022-beta-preview-label": "Ułatwienia czytania (Wektor 2022)",
-	"vector-2022-beta-preview-description": "Uzyskaj wczesny dostęp do nowych ułatwień czytania, takich jak usprawnienia typografii oraz tryb ciemny.",
 	"vector-night-mode-gadget-warning": "Używasz gadżetu dodającego tryb ciemny, który koliduje z tą funkcją. [[Special:Preferences#mw-prefsection-gadgets|Wyłącz gadżet]], aby korzystać z trybu ciemnego.",
 	"vector-night-mode-issue-reporting-notice-tooltip": "Zgłoś, gdy ciemny motyw czyni elementy strony trudnymi do przeczytania.",
 	"vector-night-mode-issue-reporting-link-label": "Zgłoś problem z trybem ciemnym",

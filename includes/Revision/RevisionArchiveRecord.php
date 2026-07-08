@@ -16,6 +16,7 @@ use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use stdClass;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * A RevisionRecord representing a revision of a deleted page persisted in the archive table.
@@ -55,7 +56,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 	) {
 		parent::__construct( $page, $slots, $wikiId );
 
-		$timestamp = MWTimestamp::convert( TS_MW, $row->ar_timestamp );
+		$timestamp = MWTimestamp::convert( TS::MW, $row->ar_timestamp );
 		Assert::parameter( is_string( $timestamp ), '$row->rev_timestamp', 'must be a valid timestamp' );
 
 		$this->mArchiveId = intval( $row->ar_id );
@@ -76,7 +77,6 @@ class RevisionArchiveRecord extends RevisionRecord {
 		$this->mMinorEdit = (bool)$row->ar_minor_edit;
 		$this->mDeleted = intval( $row->ar_deleted );
 		$this->mSize = isset( $row->ar_len ) ? intval( $row->ar_len ) : null;
-		$this->mSha1 = !empty( $row->ar_sha1 ) ? $row->ar_sha1 : null;
 
 		Assert::parameter(
 			$page->canExist(),
@@ -137,11 +137,7 @@ class RevisionArchiveRecord extends RevisionRecord {
 	 * @return string The revision hash, never null. May be computed on the fly.
 	 */
 	public function getSha1() {
-		// If hash is null, calculate it and remember (potentially SLOW!)
-		// This is for compatibility with old database rows that don't have the field set.
-		$this->mSha1 ??= $this->mSlots->computeSha1();
-
-		return $this->mSha1;
+		return $this->mSlots->computeSha1();
 	}
 
 	/**

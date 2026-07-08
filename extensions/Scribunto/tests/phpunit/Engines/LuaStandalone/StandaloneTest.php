@@ -2,18 +2,17 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaStandalone;
 
-use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaEngineUnitTestBase;
+use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaStandaloneUnitTestBase;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaStandalone\LuaStandaloneEngine
+ * @group Lua
+ * @group LuaStandalone
+ * @group Standalone
  */
-class StandaloneTest extends LuaEngineUnitTestBase {
+class StandaloneTest extends LuaStandaloneUnitTestBase {
 	/** @inheritDoc */
 	protected static $moduleName = 'StandaloneTests';
-
-	public static function suite( $className ) {
-		return self::makeSuite( $className, 'LuaStandalone' );
-	}
 
 	protected function setUp(): void {
 		parent::setUp();

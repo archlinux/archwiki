@@ -1,33 +1,26 @@
 # Release History
 
+## 4.4.0 (2025-12-18)
+* Require PHP 8.1 or later, drop support for PHP 7.4 and 8.0. (James D. Forrester)
+* composer: Allow psr/log ^3.0.0 (James D. Forrester) [T356451](https://phabricator.wikimedia.org/T356451)
+* composer: Allow monolog/monolog ^3.0.0 (Reedy)
+* composer: Update wikimedia/wikipeg to 6.0.0 (Arlo Breault, C. Scott Ananian)
+
 ## 4.3.0 (2025-05-27)
 * Improve function documentation in BoxedExecutorTestTrait
-* Stop building PHP 7.4-based images (T377038)
-* Remove PHP 7.4-based image variants (T377038)
-* build: Updating mediawiki/mediawiki-codesniffer to 47.0.0
-* Allow the use of wikimedia/wikipeg 5.0.0
-* Add PEGParser to phan's exclude_file_list
+* composer: Allow wikimedia/wikipeg 5.0.0
 
 ## 4.2.0 (2025-03-27)
-* build: Updating mediawiki/mediawiki-phan-config to 0.15.1
 * Replace call_user_func_array with dynamic function call
-* tests: Use coversNothing annotation
-* build: Updating mediawiki/mediawiki-codesniffer to 46.0.0
-* tests: Use explicit exit code to pass phan on php8.4
 * Document bubbled ClientExceptionInterface (T374117)
 
 ## 4.1.2 (2025-01-07)
 * Check that error level should be handled before throwing. Allows expected
   warnings and errors to be suppressed, rather than triggering a ShellboxError
-* build: Updating mediawiki/mediawiki-phan-config to 0.15.0
-* Add wmf-certificates to video variants
 * Pass pcov options to child process
-* build: Updating phpunit/phpunit to 9.6.21
-* build: Updating mediawiki/mediawiki-codesniffer to 45.0.0
 
 ## 4.1.1 (2024-10-29)
-* composer.json: Add changelog command (Reedy)
-* composer.json: Bump guzzle/guzzlehttp to 7.9.2 (Reedy)
+* composer: Update guzzle/guzzlehttp to 7.9.2 (Reedy)
 * Use explicit nullable type on parameter arguments (Reedy)
 
 ## 4.1.0 (2024-10-17)
@@ -36,12 +29,10 @@
   enabled, the client can enable allowUrlFiles to fully enable the feature for
   callers.
 * Fix bug in BoxedCommand::inputFileFromStream.
-* Require wikimedia/wikipeg 4.0.0.
+* composer: Require wikimedia/wikipeg 4.0.0.
 
 ## 4.0.2 (2024-03-05)
-* blubber: create videoscaler variant
-* dev: Replace blubberoid with blubber buildkit
-* Allow the use of wikimedia/wikipeg 4.0.0
+* composer: Allow wikimedia/wikipeg 4.0.0.
 
 ## 4.0.1 (2023-02-20)
 * In the Firejail wrapper, fix handling of empty environment variables.
@@ -64,7 +55,7 @@
 * Loosen guzzlehttp/guzzle requirement.
 
 ## 2.1.0 (2021-09-24)
-* Roll our own *nix shell escaping function, improving PHP 8 support
+* Roll our own Unix-like shell escaping function, improving PHP 8 support
   while still protecting against attacks using GBK locales by filtering
   them out of the environment.
 

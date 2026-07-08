@@ -89,13 +89,22 @@
 	"checkuser-userinfocard-menu-view-contributions": "Čuäʹjet {{GENDER:$1|õõʹnni}} muttsid",
 	"checkuser-userinfocard-menu-check-ip": "Taʹrǩǩed {{GENDER:$1|õõʹnni}} IP-addrõõzzid",
 	"checkuser-ipinfo-global-contributions-label": "Riâžldõkveiddsõs muttâz",
+	"checkuser-suggestedinvestigations-filter-button": "Siʹllʼjeei",
+	"checkuser-suggestedinvestigations-filter-dialog-title": "Siʹllʼjeei",
+	"checkuser-suggestedinvestigations-filter-dialog-close-button": "Piij ǩidd",
+	"checkuser-suggestedinvestigations-filter-dialog-show-results-button": "Čuäʹjet puåđõõzzid",
+	"checkuser-suggestedinvestigations-filter-dialog-status-filter-header": "Status",
+	"checkuser-suggestedinvestigations-filter-dialog-last-updated-today": "Täʹbbe",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "Õõʹnnitobldõk",
 	"checkuser-suggestedinvestigations-header-users": "Tobdldõõǥǥ",
 	"checkuser-suggestedinvestigations-header-status": "Status",
 	"checkuser-suggestedinvestigations-header-notes": "Lââʹssteâđ",
+	"checkuser-suggestedinvestigations-user-check-link-text": "taʹrǩǩed {{GENDER:$1|õõʹnni}}",
 	"checkuser-suggestedinvestigations-change-status-dialog-close-label": "Piij ǩidd",
 	"checkuser-suggestedinvestigations-change-status-dialog-cancel-btn": "Jõõsk",
 	"checkuser-suggestedinvestigations-change-status-dialog-submit-btn": "Vuõlttâd",
 	"checkuser-suggestedinvestigations-change-status-dialog-status-list-header": "Status",
 	"checkuser-suggestedinvestigations-change-status-dialog-status-reason-header": "Lââʹzzet teâđaid",
-	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "Piij ǩidd"
+	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "Piij ǩidd",
+	"checkuser-contributions-temporary-accounts-related-list-toggle-hide": "Čiõǥǥ"
 }

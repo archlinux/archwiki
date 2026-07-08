@@ -6,5 +6,6 @@
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Answer to the CAPTCHA",
-	"captcha-apihelp-param-captchaid": "CAPTCHA ID from previous request"
+	"captcha-apihelp-param-captchaid": "CAPTCHA ID from previous request",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Whether the shown hCaptcha CAPTCHA was force shown, such as by an AbuseFilter extension consequence (and so used a more restrictive sitekey). Set this if the JS configuration variable with the same name is true or if the first attempt to use this API returned a 'forcecaptcha' error with a specified sitekey."
 }

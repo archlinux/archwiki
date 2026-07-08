@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
-use LogicException;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
@@ -65,14 +64,10 @@ class VariablesManagerTest extends MediaWikiUnitTestCase {
 		$computer = $this->createMock( LazyVariableComputer::class );
 		$computer->method( 'compute' )->willReturnCallback(
 			static function ( LazyLoadedVariable $var ) {
-				switch ( $var->getMethod() ) {
-					case 'preftitle':
-						return new AFPData( AFPData::DSTRING, 'title' );
-					case 'lines':
-						return new AFPData( AFPData::DSTRING, 'lines' );
-					default:
-						throw new LogicException( 'Unrecognized value!' );
-				}
+				return match ( $var->getMethod() ) {
+					'preftitle' => new AFPData( AFPData::DSTRING, 'title' ),
+					'lines' => new AFPData( AFPData::DSTRING, 'lines' ),
+				};
 			}
 		);
 

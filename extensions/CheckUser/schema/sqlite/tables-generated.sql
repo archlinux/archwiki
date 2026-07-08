@@ -14,11 +14,9 @@ CREATE TABLE /*_*/cu_changes (
   cuc_last_oldid INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   cuc_type SMALLINT UNSIGNED DEFAULT 0 NOT NULL,
   cuc_timestamp BLOB NOT NULL,
-  cuc_ip VARCHAR(255) DEFAULT '',
   cuc_ip_hex VARCHAR(255) DEFAULT NULL,
   cuc_xff BLOB DEFAULT '',
   cuc_xff_hex VARCHAR(255) DEFAULT NULL,
-  cuc_agent BLOB DEFAULT NULL,
   cuc_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL
 );
 
@@ -27,8 +25,6 @@ CREATE INDEX cuc_ip_hex_time ON /*_*/cu_changes (cuc_ip_hex, cuc_timestamp);
 CREATE INDEX cuc_xff_hex_time ON /*_*/cu_changes (cuc_xff_hex, cuc_timestamp);
 
 CREATE INDEX cuc_timestamp ON /*_*/cu_changes (cuc_timestamp);
-
-CREATE INDEX cuc_actor_ip_time ON /*_*/cu_changes (cuc_actor, cuc_ip, cuc_timestamp);
 
 CREATE INDEX cuc_actor_ip_hex_time ON /*_*/cu_changes (
   cuc_actor, cuc_ip_hex, cuc_timestamp
@@ -40,11 +36,9 @@ CREATE TABLE /*_*/cu_log_event (
   cule_log_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   cule_actor BIGINT UNSIGNED NOT NULL,
   cule_timestamp BLOB NOT NULL,
-  cule_ip VARCHAR(255) DEFAULT '',
   cule_ip_hex VARCHAR(255) DEFAULT NULL,
   cule_xff BLOB DEFAULT '',
   cule_xff_hex VARCHAR(255) DEFAULT NULL,
-  cule_agent BLOB DEFAULT NULL,
   cule_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL
 );
 
@@ -53,10 +47,6 @@ CREATE INDEX cule_ip_hex_time ON /*_*/cu_log_event (cule_ip_hex, cule_timestamp)
 CREATE INDEX cule_xff_hex_time ON /*_*/cu_log_event (cule_xff_hex, cule_timestamp);
 
 CREATE INDEX cule_timestamp ON /*_*/cu_log_event (cule_timestamp);
-
-CREATE INDEX cule_actor_ip_time ON /*_*/cu_log_event (
-  cule_actor, cule_ip, cule_timestamp
-);
 
 CREATE INDEX cule_actor_ip_hex_time ON /*_*/cu_log_event (
   cule_actor, cule_ip_hex, cule_timestamp
@@ -74,13 +64,10 @@ CREATE TABLE /*_*/cu_private_event (
   cupe_comment_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
   cupe_page INTEGER UNSIGNED DEFAULT 0 NOT NULL,
   cupe_timestamp BLOB NOT NULL,
-  cupe_ip VARCHAR(255) DEFAULT '',
   cupe_ip_hex VARCHAR(255) DEFAULT NULL,
   cupe_xff BLOB DEFAULT '',
   cupe_xff_hex VARCHAR(255) DEFAULT NULL,
-  cupe_agent BLOB DEFAULT NULL,
-  cupe_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  cupe_private BLOB DEFAULT NULL
+  cupe_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL
 );
 
 CREATE INDEX cupe_ip_hex_time ON /*_*/cu_private_event (cupe_ip_hex, cupe_timestamp);
@@ -88,10 +75,6 @@ CREATE INDEX cupe_ip_hex_time ON /*_*/cu_private_event (cupe_ip_hex, cupe_timest
 CREATE INDEX cupe_xff_hex_time ON /*_*/cu_private_event (cupe_xff_hex, cupe_timestamp);
 
 CREATE INDEX cupe_timestamp ON /*_*/cu_private_event (cupe_timestamp);
-
-CREATE INDEX cupe_actor_ip_time ON /*_*/cu_private_event (
-  cupe_actor, cupe_ip, cupe_timestamp
-);
 
 CREATE INDEX cupe_actor_ip_hex_time ON /*_*/cu_private_event (
   cupe_actor, cupe_ip_hex, cupe_timestamp

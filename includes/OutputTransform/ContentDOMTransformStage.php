@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * OutputTransformStages that modify the content as a HTML DOM tree.
@@ -25,7 +26,7 @@ abstract class ContentDOMTransformStage extends OutputTransformStage {
 	 * @inheritDoc
 	 */
 	public function transform(
-		ParserOutput $po, ?ParserOptions $popts, array &$options
+		ParserOutput $po, ParserOptions $popts, array &$options
 	): ParserOutput {
 		$contentHolder = $po->getContentHolder();
 		$df = $contentHolder->getAsDom( ContentHolder::BODY_FRAGMENT ) ??
@@ -39,7 +40,7 @@ abstract class ContentDOMTransformStage extends OutputTransformStage {
 
 	/** Applies the transformation to a DOM document */
 	abstract public function transformDOM(
-		DocumentFragment $df, ParserOutput $po, ?ParserOptions $popts, array &$options
+		DocumentFragment $df, ParserOutput $po, ParserOptions $popts, array &$options
 	): DocumentFragment;
 
 	/**
@@ -63,12 +64,7 @@ abstract class ContentDOMTransformStage extends OutputTransformStage {
 		foreach ( $attribs as $key => $value ) {
 			$el->setAttribute( $key, $value );
 		}
-		foreach ( $children as $c ) {
-			if ( is_string( $c ) ) {
-				$c = $doc->createTextNode( $c );
-			}
-			$el->appendChild( $c );
-		}
+		DOMCompat::append( $el, ...$children );
 		return $el;
 	}
 }

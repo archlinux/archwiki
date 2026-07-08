@@ -179,7 +179,7 @@ module.exports = {
 								} else {
 									target = target.trim();
 									// Prepend http:// if there is no protocol
-									if ( !/^[a-z]+:\/\/./.test( target ) ) {
+									if ( !new RegExp( `^(?:${ mw.config.get( 'wgUrlProtocols' ) }).` ).test( target ) ) {
 										target = 'http://' + target;
 									}
 
@@ -220,7 +220,7 @@ module.exports = {
 									const escTarget = escapeExternalTarget( target );
 									const escText = escapeExternalText( text );
 
-									if ( escTarget === escText ) {
+									if ( escTarget === escText && !target.startsWith( '//' ) ) {
 										insertText = escTarget;
 									} else if ( text === '' ) {
 										insertText = '[' + escTarget + ']';
@@ -318,11 +318,15 @@ module.exports = {
 							}
 						}
 
+						const $dialog = $( this ).closest( '.ui-dialog' );
+						// Do not memorize the focused button when the dialog was
+						// opened last time
+						$dialog.removeData( 'dialogaction' );
+
 						if ( !$( this ).data( 'dialogkeypressset' ) ) {
 							$( this ).data( 'dialogkeypressset', true );
 							// Execute the action associated with the first button
 							// when the user presses Enter
-							const $dialog = $( this ).closest( '.ui-dialog' );
 							$dialog.on( 'keypress', ( e ) => {
 								if ( ( e.keyCode || e.which ) === 13 ) {
 									triggerButtonClick( $dialog );
@@ -731,11 +735,14 @@ module.exports = {
 					},
 					open: function () {
 						$( '#wikieditor-toolbar-table-dimensions-rows' ).trigger( 'focus' );
+						const $dialog = $( this ).closest( '.ui-dialog' );
+						// Do not memorize the focused button when the dialog was
+						// opened last time
+						$dialog.removeData( 'dialogaction' );
 						if ( !( $( this ).data( 'dialogkeypressset' ) ) ) {
 							$( this ).data( 'dialogkeypressset', true );
 							// Execute the action associated with the first button
 							// when the user presses Enter
-							const $dialog = $( this ).closest( '.ui-dialog' );
 							$dialog.on( 'keypress', ( e ) => {
 								if ( ( e.keyCode || e.which ) === 13 ) {
 									triggerButtonClick( $dialog );

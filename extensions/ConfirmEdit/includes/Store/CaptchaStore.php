@@ -48,7 +48,7 @@ abstract class CaptchaStore {
 		if ( !self::$instance instanceof self ) {
 			$captchaStorageClass = MediaWikiServices::getInstance()->getMainConfig()
 				->get( 'CaptchaStorageClass' );
-			if ( in_array( self::class, class_parents( $captchaStorageClass ) ) ) {
+			if ( is_subclass_of( $captchaStorageClass, self::class ) ) {
 				self::$instance = new $captchaStorageClass;
 			} else {
 				throw new ConfigException( "Invalid CaptchaStore class $captchaStorageClass" );

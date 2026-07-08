@@ -8,12 +8,12 @@
 /**
  * Creates default portlet.
  *
- * @param {Element} portlet
- * @return {Element}
+ * @param {HTMLElement} portlet
+ * @return {HTMLElement}
  */
 function addDefaultPortlet( portlet ) {
 	portlet.classList.add( 'vector-menu' );
-	const ul = portlet.querySelector( 'ul' );
+	const ul = /** @type {HTMLElement|null} */ portlet.querySelector( 'ul' );
 	if ( !ul ) {
 		return portlet;
 	}
@@ -54,8 +54,8 @@ function addDefaultPortlet( portlet ) {
  * A hook handler for util.addPortlet hook.
  * It creates a portlet based on the hint, and adabt it to vector skin.
  *
- * @param {Element} portlet
- * @return {Element}
+ * @param {HTMLElement} portlet
+ * @return {HTMLElement}
  */
 function addPortletHandler( portlet ) {
 	const parent = /** @type {HTMLElement} */( portlet.parentNode );
@@ -79,12 +79,14 @@ function addPortletHandler( portlet ) {
 }
 
 /**
- * @return {{addPortletHandler: (function(Element): Element)}}
+ * @return {{addPortletHandler: (function(HTMLElement): HTMLElement)}}
  */
 function main() {
 	mw.hook( 'util.addPortlet' ).add( addPortletHandler );
 	// Update any portlets that were created prior to the hook being registered.
-	document.querySelectorAll( '.mw-portlet-js' ).forEach( addPortletHandler );
+	/** @type {NodeListOf<HTMLElement>} */
+	const portlets = document.querySelectorAll( '.mw-portlet-js' );
+	portlets.forEach( addPortletHandler );
 	return {
 		addPortletHandler
 	};

@@ -21,7 +21,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"attributes": {
 		"DarkMode": {
@@ -37,13 +37,15 @@
 				"LanguageConverterFactory",
 				"Vector.FeatureManagerFactory"
 			],
+			"optional_services": [
+				"MobileFrontend.Context"
+			],
 			"args": [
 				{
 					"name": "vector-2022",
 					"wrapSiteNotice": true,
 					"templateDirectory": "includes/templates",
 					"template": "skin",
-					"tempUserBanner": true,
 					"responsive": true,
 					"toc": false,
 					"link": {
@@ -126,6 +128,16 @@
 					"bodyClasses": [
 						"skin-vector-legacy"
 					],
+					"menus": [
+						"user-interface-preferences",
+						"user-page",
+						"user-menu",
+						"notifications",
+						"views",
+						"actions",
+						"variants",
+						"associated-pages"
+					],
 					"scripts": [
 						"skins.vector.legacy.js"
 					],
@@ -197,8 +209,7 @@
 		"CentralAuthIsUIReloadRecommended": "VectorCentralAuthHooks",
 		"GetPreferences": "VectorHooks",
 		"LocalUserCreated": "VectorHooks",
-		"SkinPageReadyConfig": "VectorHooks",
-		"GetBetaFeaturePreferences": "VectorHooks"
+		"SkinPageReadyConfig": "VectorHooks"
 	},
 	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
@@ -223,7 +234,6 @@
 				{
 					"name": "resources/skins.vector.search/searchConfig.json",
 					"config": [
-						"ContentNamespaces",
 						"VectorTypeahead"
 					]
 				}
@@ -535,14 +545,6 @@
 			"value": false,
 			"description": "@var bool temporary config variable for controlling role out of tables. When enabled certain tables will be wrapped with a div"
 		},
-		"VectorNightMode": {
-			"value": {
-				"logged_out": false,
-				"logged_in": true,
-				"beta": false
-			},
-			"description": "@var array enables dark/night mode."
-		},
 		"VectorFontSizeConfigurableOptions": {
 			"value": {
 				"exclude": {
@@ -619,6 +621,13 @@
 		"VectorDefaultSkinVersionForNewAccounts": {
 			"value": null,
 			"description": "@var string|null The version ('2' for latest, '1' for legacy) of the Vector skin to **set** for newly created user accounts. **The value is persisted as a user preference.** This configuration is not used for preexisting accounts (see VectorDefaultSkinVersionForExistingAccounts) and only ever executed once at new account creation time. If it is null, no user preference will be set."
+		},
+		"VectorLanguageInMainMenu": {
+			"value": {
+				"logged_in": false,
+				"logged_out": false
+			},
+			"description": "@var array Use to force the languages to show in sidebar as well even when $wgVectorLanguageInHeader is set."
 		},
 		"VectorLanguageInHeader": {
 			"value": {

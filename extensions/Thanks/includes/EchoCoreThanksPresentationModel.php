@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Thanks;
 
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Logging\DatabaseLogEntry;
@@ -110,6 +111,12 @@ class EchoCoreThanksPresentationModel extends EchoEventPresentationModel {
 			}
 			$services = MediaWikiServices::getInstance();
 			$formatter = $services->getLogFormatterFactory()->newFromEntry( $logEntry );
+
+			// Override the language of the log entry excerpt (T410339) - there is no easier way to do this
+			$context = new DerivativeContext( $formatter->context );
+			$context->setLanguage( $this->language );
+			$formatter->context = $context;
+
 			$excerpt = $formatter->getPlainActionText();
 			// Turn wikitext into plaintext
 			$excerpt = $services->getCommentFormatter()->format( $excerpt );

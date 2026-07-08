@@ -15,16 +15,14 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Mhchem;
  */
 class MhchemRegExp {
 
-	/** @var string regular expression pattern as a string */
-	private string $regexp;
-
 	/**
 	 * Utility class to distinguish Regular expression strings defined in
 	 * the codebase of mhchemParser from regular strings.
-	 * @param string $pattern regular expression pattern, usually of the format "/regexp/"
+	 * @param string $regexp regular expression pattern, usually of the format "/regexp/"
 	 */
-	public function __construct( string $pattern ) {
-		$this->regexp = $pattern;
+	public function __construct(
+		private readonly string $regexp,
+	) {
 	}
 
 	public function getRegExp(): string {

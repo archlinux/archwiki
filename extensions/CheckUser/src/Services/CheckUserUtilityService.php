@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use MediaWiki\Request\ProxyLookup;
 use MediaWiki\Request\WebRequest;
@@ -8,17 +8,10 @@ use Wikimedia\IPUtils;
 
 class CheckUserUtilityService {
 
-	private ProxyLookup $proxyLookup;
-
-	private bool $usePrivateIPs;
-
-	/**
-	 * @param ProxyLookup $proxyLookup
-	 * @param bool $usePrivateIPs
-	 */
-	public function __construct( ProxyLookup $proxyLookup, bool $usePrivateIPs ) {
-		$this->proxyLookup = $proxyLookup;
-		$this->usePrivateIPs = $usePrivateIPs;
+	public function __construct(
+		private readonly ProxyLookup $proxyLookup,
+		private readonly bool $usePrivateIPs,
+	) {
 	}
 
 	/**
@@ -90,8 +83,15 @@ class CheckUserUtilityService {
 	}
 }
 
+// @codeCoverageIgnoreStart
 /**
  * Retain the old namespace for backwards compatibility.
  * @deprecated since 1.41
  */
-class_alias( CheckUserUtilityService::class, 'MediaWiki\CheckUser\CheckUserUtilityService' );
+class_alias( CheckUserUtilityService::class, 'MediaWiki\\CheckUser\\CheckUserUtilityService' );
+
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserUtilityService::class, 'MediaWiki\\CheckUser\\Services\\CheckUserUtilityService' );
+// @codeCoverageIgnoreEnd

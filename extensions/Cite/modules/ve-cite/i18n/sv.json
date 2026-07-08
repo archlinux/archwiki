@@ -21,15 +21,16 @@
 			"Sabelöga",
 			"Sendelbach",
 			"Skalman",
+			"Stefan2255",
 			"Tobulos1",
 			"Warrakkk",
-			"WikiPhoenix",
-			"Stefan2255"
+			"WikiPhoenix"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bok",
 	"visualeditor-cite-tool-name-journal": "Tidskrift",
 	"visualeditor-cite-tool-name-news": "Nyheter",
+	"visualeditor-cite-tool-name-map": "Karta",
 	"visualeditor-cite-tool-name-web": "Webbplats",
 	"cite-ve-changedesc-ref-group-both": "Referensgrupp ändrades från \"$1\" till \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "Referensgrupp ändrades från \"$1\" till den allmänna gruppen",
@@ -63,6 +64,8 @@
 	"cite-ve-dialog-subreference-help-dialog-head": "Nytt: Lägg till en detalj i en återanvänd referens",
 	"cite-ve-dialog-subreference-help-dialog-content": "När du återanvänder en referens kan du nu lägga till olika detaljer, såsom sidnummer eller citat, utan att upprepa hela referensen.<p><b>Använd den när:</b></p><ul><li>Att citera olika sidor eller volymer i en bok</li><li>Ange en tidsstämpel i en citerad podcast</li><li>Lägga till ett relevant citat från en källa</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "Läs mer om att lägga till information i en referens",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "Redigera all ($1) användning av dessa uppgifter.",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "Lägg till dessa detaljer till alla ($1) användningar av denna referens som ännu inte har några detaljer.",
 	"cite-ve-dialog-reference-title-details": "Detaljer",
 	"cite-ve-dialog-reference-useexisting-tool": "Återanvänd",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista över allmänna referenser",

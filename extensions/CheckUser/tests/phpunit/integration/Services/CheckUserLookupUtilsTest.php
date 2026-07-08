@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Revision\RevisionArchiveRecord;
@@ -11,10 +11,11 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserLookupUtils
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils
  * @group Database
  */
 class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
@@ -31,7 +32,8 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 			);
 		} else {
 			$this->assertEquals(
-				$expectedSql, $actualExpr->toSql( $this->getDb() ),
+				$expectedSql,
+				$actualExpr->toSql( $this->getDb() ),
 				'The SQL representation of the conditions for an IP or IP range target is not as expected.'
 			);
 		}
@@ -89,7 +91,8 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 		/** @var CheckUserLookupUtils $checkUserLookupUtils */
 		$checkUserLookupUtils = $this->getServiceContainer()->get( 'CheckUserLookupUtils' );
 		$this->assertSame(
-			$expected, $checkUserLookupUtils->isValidIPOrRange( $target ),
+			$expected,
+			$checkUserLookupUtils->isValidIPOrRange( $target ),
 			'The return value of ::isValidIPOrRange is not as expected.'
 		);
 	}
@@ -118,16 +121,17 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 		/** @var CheckUserLookupUtils $checkUserLookupUtils */
 		$checkUserLookupUtils = $this->getServiceContainer()->get( 'CheckUserLookupUtils' );
 		$this->assertSame(
-			$expectedIndexValue, $checkUserLookupUtils->getIndexName( $xfor, $table ),
+			$expectedIndexValue,
+			$checkUserLookupUtils->getIndexName( $xfor, $table ),
 			'Index name is not as expected.'
 		);
 	}
 
 	public static function provideGetIndexName() {
 		return [
-			'cu_changes with null xfor' => [ CheckUserQueryInterface::CHANGES_TABLE, null, 'cuc_actor_ip_time' ],
+			'cu_changes with null xfor' => [ CheckUserQueryInterface::CHANGES_TABLE, null, 'cuc_actor_ip_hex_time' ],
 			'cu_private_event with null xfor' => [
-				CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, null, 'cupe_actor_ip_time',
+				CheckUserQueryInterface::PRIVATE_LOG_EVENT_TABLE, null, 'cupe_actor_ip_hex_time',
 			],
 			'cu_log_event with false xfor' => [ CheckUserQueryInterface::LOG_EVENT_TABLE, false, 'cule_ip_hex_time' ],
 			'cu_private_event with true xfor' => [
@@ -142,7 +146,8 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->get( 'CheckUserLookupUtils' )
 		);
 		$this->assertSame(
-			$expectedReturnValue, $objectUnderTest->getIpHexColumn( $xfor, $table ),
+			$expectedReturnValue,
+			$objectUnderTest->getIpHexColumn( $xfor, $table ),
 			'Call to ::getIpHexColumn did not return the correct value.'
 		);
 	}
@@ -264,6 +269,72 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 		return [
 			[ 'page' ],
 			[ 'page_id' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetManualLogEntryFromRowWithMissingTarget
+	 */
+	public function testGetManualLogEntryFromRowWithMissingTarget( \stdClass $row ) {
+		$mockLogger = $this->createMock( LoggerInterface::class );
+		$mockLogger->method( 'error' )
+			->with(
+				'Missing target for log entry being displayed in CheckUser result interface',
+				$this->anything()
+			)
+			->willReturn( function ( $message, array $context ) use ( $row )  {
+				$this->assertSame( $row, $context['row'] );
+				$this->assertInstanceOf( RuntimeException::class, $context['exception'] );
+			} );
+		$this->setLogger( 'CheckUser', $mockLogger );
+
+		/** @var CheckUserLookupUtils $checkUserLookupUtils */
+		$checkUserLookupUtils = $this->getServiceContainer()->get( 'CheckUserLookupUtils' );
+		$actualLogEntry = $checkUserLookupUtils->getManualLogEntryFromRow(
+			$row,
+			UserIdentityValue::newRegistered( 1, 'User' )
+		);
+		// T333573: When no valid title or page ID is available, the target should
+		// fall back to Special:Badtitle instead of leaving $targetPage uninitialized.
+		$actualTarget = $actualLogEntry->getTarget();
+		$this->assertSame( NS_SPECIAL, $actualTarget->getNamespace() );
+		$this->assertSame( 'Badtitle', $actualTarget->getDBkey() );
+	}
+
+	public static function provideGetManualLogEntryFromRowWithMissingTarget() {
+		return [
+			'Row with empty title and no page ID' => [
+				(object)[
+					'log_type' => 'checkuser-private-event',
+					'log_action' => 'login-success',
+					'log_params' => LogEntryBase::makeParamBlob( [ '4::target' => 'User' ] ),
+					'log_deleted' => 0,
+					'timestamp' => '20220101000000',
+					'title' => '',
+					'namespace' => 0,
+				],
+			],
+			'Row with empty title and page ID of 0' => [
+				(object)[
+					'log_type' => 'checkuser-private-event',
+					'log_action' => 'login-success',
+					'log_params' => LogEntryBase::makeParamBlob( [ '4::target' => 'User' ] ),
+					'log_deleted' => 0,
+					'timestamp' => '20220101000000',
+					'title' => '',
+					'namespace' => 0,
+					'page_id' => 0,
+				],
+			],
+			'Row with no title or page fields' => [
+				(object)[
+					'log_type' => 'checkuser-private-event',
+					'log_action' => 'login-success',
+					'log_params' => LogEntryBase::makeParamBlob( [ '4::target' => 'User' ] ),
+					'log_deleted' => 0,
+					'timestamp' => '20220101000000',
+				],
+			],
 		];
 	}
 

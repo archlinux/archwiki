@@ -2,7 +2,7 @@
  * List of template parameters, each of which can be added or removed using a
  * checkbox.
  *
- * This is modelled after {@see OO.ui.OutlineSelectWidget}.  Currently we use
+ * This is modelled after {@link OO.ui.OutlineSelectWidget}.  Currently we use
  * the SelectWidget in multi-select mode, and selection maps to checked
  * checkboxes.
  *
@@ -49,7 +49,7 @@ OO.mixinClass( ve.ui.MWTransclusionOutlineParameterSelectWidget, ve.ui.MWAriaDes
 /* Events */
 
 /**
- * This is fired instead of the "choose" event from the {@see OO.ui.SelectWidget} base class when
+ * This is fired instead of the "choose" event from the {@link OO.ui.SelectWidget} base class when
  * pressing space on a parameter to toggle it or scroll it into view, without losing the focus.
  *
  * @event ve.ui.MWTransclusionOutlineParameterSelectWidget#templateParameterSpaceDown
@@ -92,7 +92,7 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.addItems = function (
 };
 
 ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.ensureVisibilityOfFirstCheckedParameter = function () {
-	// TODO: Replace with {@see OO.ui.SelectWidget.findFirstSelectedItem} when available
+	// TODO: Replace with {@link OO.ui.SelectWidget.findFirstSelectedItem} when available
 	const firstChecked = this.findSelectedItems()[ 0 ];
 	if ( firstChecked ) {
 		firstChecked.ensureVisibility( this.stickyHeaderHeight );

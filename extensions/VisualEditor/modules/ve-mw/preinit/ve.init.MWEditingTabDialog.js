@@ -82,7 +82,7 @@ mw.libs.ve.EditingTabDialog.prototype.getActionProcess = function ( action ) {
 			new mw.Api().saveOption( 'visualeditor-tabs', action ).then( () => {
 				actionWidget.popPending();
 				mw.user.options.set( 'visualeditor-tabs', action );
-				this.close( { action: action } );
+				this.close( { action } );
 			} );
 		} );
 	} else {

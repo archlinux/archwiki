@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
+			"SunAfterRain",
 			"Winston Sung",
-			"捍粵者",
-			"SunAfterRain"
+			"捍粵者"
 		]
 	},
 	"paramvalidator-badbool": "用於布林值參數「$1」的值「$2」無效。傳遞$3表示真，或傳遞$5表示否。",

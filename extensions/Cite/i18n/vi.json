@@ -4,10 +4,10 @@
 			"Doraemonluonbentoi",
 			"Louis Anderson",
 			"Minh Nguyen",
+			"NgocAnMaster",
 			"NguoiDungKhongDinhDanh",
 			"NguyenHung",
-			"Vinhtantran",
-			"NgocAnMaster"
+			"Vinhtantran"
 		]
 	},
 	"cite-desc": "Thêm các thẻ <code>&lt;ref&gt;</code> và <code>&lt;references&gt;</code> cho chú thích",
@@ -42,6 +42,7 @@
 	"cite-reference-previews-journal": "Chú thích tạp chí",
 	"cite-reference-previews-news": "Chú thích báo",
 	"cite-reference-previews-note": "Ghi chú",
+	"cite-reference-previews-map": "Chú thích bản đồ",
 	"cite-reference-previews-web": "Chú thích web",
 	"cite-reference-previews-collapsible-placeholder": "Chú thích này có chứa hình ảnh quá lớn để hiển thị trong bản xem trước.",
 	"cite-reference-previews-gadget-conflict-info-navpopups": "Bạn đang bật tiện ích [[$1|popup điều hướng]], do đó bạn sẽ không thấy các bản xem trước cung cấp bởi tính năng này. Tùy theo wiki của bạn, tiện ích này có thể có tên gọi khác nhau. Nếu bạn tiếp tục gặp vấn đề, vui lòng xem lại các tiện ích và kịch bản (script) thành viên của bạn, bao gồm cả các tiện ích và kịch bản toàn cục.",
@@ -63,6 +64,8 @@
 	"cite-wikieditor-help-content-showreferences-description": "Liệt kê các chú thích",
 	"cite-wikieditor-help-content-reference-example-text1": "Văn bản trang.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Văn bản liên kết], văn bản bổ sung.",
+	"cite-wikieditor-help-content-reference-example-text3": "Sách",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Trang 76",
 	"communityconfiguration-cite-title": "Chú thích",
 	"communityconfiguration-cite-description": "Tùy chỉnh định dạng và giao diện nguồn tham khảo.",
 	"cite-configuration-title": "Cấu hình Chú thích",

@@ -11,7 +11,6 @@
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Շնորհակալութիւն}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Շնորհակալութիւն}}}}",
 	"thanks-error-undefined": "Շնորհակալութիւն յայտնելու փորձը անյաջող էր։ Դարձեալ փորձէ՛։",
-	"thanks-error-notitle": "Էջին վերնագիրը չդարմացաւ",
 	"thanks-error-invalidrecipient-bot": "Մեքենքայիկներուն շնորհակալութիւն չենք կրնար յայտնել",
 	"thanks-error-invalidrecipient-self": "Դուն քեզի շնորհակալութիւն չես կրնար յայտնել",
 	"thanks-error-notloggedin": "Անանուն խմբագիրները չեն կրնար շնորհակալութիւն յայտնել",

@@ -116,7 +116,7 @@ ve.dm.MWTransclusionNode.static.toDataElement = function ( domElements, converte
 		type = isInline ? this.inlineType : this.blockType;
 
 	const dataElement = {
-		type: type,
+		type,
 		attributes: {
 			mw: mwData,
 			originalMw: mwDataJSON
@@ -208,7 +208,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		}
 	} else if ( converter.isForPreview() ) {
 		const modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
-		modelNode.setDocument( converter.internalList.getDocument() );
+		modelNode.setDocument( converter.getInternalList().getDocument() );
 		const viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		// HACK: Node must be attached to check for rendering
 		viewNode.$element.appendTo( 'body' );
@@ -268,7 +268,7 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 			const from = ( params[ param ].from || '' ).trim() || undefined,
 				to = ( params[ param ].to || '' ).trim() || undefined;
 			if ( from !== to ) {
-				const change = this.describeChange( param, { from: from, to: to } );
+				const change = this.describeChange( param, { from, to } );
 				if ( change ) {
 					if ( !paramChanges ) {
 						paramChanges = document.createElement( 'ul' );
@@ -467,16 +467,17 @@ ve.dm.MWTransclusionNode.prototype.getPartsList = function () {
 		const content = this.getAttribute( 'mw' );
 		for ( let i = 0; i < content.parts.length; i++ ) {
 			const part = content.parts[ i ];
-			// A template as serialized by {@see ve.dm.MWTemplateModel.serialize}
+			// A template as serialized by {@link ve.dm.MWTemplateModel#serialize}
 			if ( part.template ) {
 				const href = part.template.target.href,
 					page = href ? mw.libs.ve.normalizeParsoidResourceName( href ) : null;
 				this.partsList.push( {
 					template: part.template.target.wt,
-					templatePage: page
+					templatePage: page,
+					params: part.template.params
 				} );
 			} else {
-				// Raw wikitext as serialized by {@see ve.dm.MWTransclusionContentModel.serialize}
+				// Raw wikitext as serialized by {@link ve.dm.MWTransclusionContentModel#serialize}
 				this.partsList.push( { content: part } );
 			}
 		}
@@ -486,7 +487,7 @@ ve.dm.MWTransclusionNode.prototype.getPartsList = function () {
 };
 
 /**
- * Wrapper for static method, {@see ve.dm.MWTransclusionNode.static.getWikitext} above.
+ * Wrapper for static method, {@link ve.dm.MWTransclusionNode.static.getWikitext} above.
  *
  * @return {string} Wikitext
  */

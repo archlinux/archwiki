@@ -24,15 +24,16 @@
 	color: @color-subtle;
 	cursor: pointer;
 
-	/* FIXME: Mimics the Codex icon mixin. This should be replaced when T376497 is resolved. */
+	// FIXME: Mimics the Codex icon mixin. This should be replaced with
+	// a Codex Badge component T280708 when available.
 	.minerva-icon {
-		border-radius: @border-radius-circle;
-		border: @border-width-thick @border-style-base #54595d;
-		margin: auto;
-		height: @icon-size-medium;
-		width: @icon-size-medium;
 		background: @background-color-destructive;
-		border-color: @border-color-destructive;
+		width: @icon-size-medium;
+		height: @icon-size-medium;
+		margin: auto;
+		padding: @spacing-12;
+		border: @border-width-thick @border-style-base @border-color-transparent;
+		border-radius: @border-radius-circle;
 		-webkit-mask-image: none;
 		mask-image: none;
 

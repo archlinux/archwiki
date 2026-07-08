@@ -22,9 +22,10 @@
 
 namespace MonoBook;
 
-use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Output\Hook\OutputPageBodyAttributesHook;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Skin\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\Skin\Skin;
 use MediaWiki\Skin\SkinTemplate;
 
@@ -65,7 +66,24 @@ class Hooks implements
 		$title = $skin->getTitle();
 		if ( $skin->getSkinName() === 'monobook' ) {
 			$tabs = [];
-			$namespaces = $content_navigation['namespaces'];
+			$namespaces = $content_navigation['associated-pages'];
+			// Restore legacy special tab to namespaces menu
+			if ( count( $namespaces ) === 0 && !$title->canExist() ) {
+				try {
+					$url = $skin->getRequest()->getRequestURL();
+				} catch ( MWException ) {
+					$url = false;
+				}
+				$namespaces = [
+					'special' => [
+						'class' => 'selected',
+						'text' => $skin->msg( 'nstab-special' )->text(),
+						'href' => $url,
+						'context' => 'subject',
+					]
+				];
+				$content_navigation['associated-pages'] = $namespaces;
+			}
 			foreach ( $namespaces as $nsid => $attribs ) {
 				$id = $nsid . '-mobile';
 				$tabs[$id] = [] + $attribs;

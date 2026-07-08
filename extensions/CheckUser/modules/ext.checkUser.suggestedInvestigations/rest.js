@@ -5,7 +5,7 @@
  * @param {'open'|'resolved'|'invalid'} status
  * @param {string} reason
  * @param {boolean} [retryOnTokenMismatch=true]
- * @return {Promise}
+ * @return {Promise<{caseId: number, status: string, reason: string, formattedReason: string}>}
  */
 function setCaseStatus( caseId, status, reason, retryOnTokenMismatch ) {
 	const restApi = new mw.Rest();

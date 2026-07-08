@@ -55,11 +55,6 @@ class ApiQueryPageImagesTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function testConstructor() {
-		$instance = $this->newInstance();
-		$this->assertInstanceOf( ApiQueryPageImages::class, $instance );
-	}
-
 	public function testGetCacheMode() {
 		$instance = $this->newInstance();
 		$this->assertSame( 'public', $instance->getCacheMode( [] ) );

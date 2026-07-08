@@ -33,6 +33,7 @@
 	"checkuser-temporary-accounts-onboarding-dialog-temp-accounts-step-title": "ਆਰਜ਼ੀ ਖਾਤਾ ਕੀ ਏ?",
 	"checkuser-temporary-accounts-onboarding-dialog-save-preference": "ਤਰਜੀਹਾਂ ਸੰਭਾਲੋ",
 	"checkuser-investigateblock": "ਵਰਤੋਂਕਾਰਾਂ 'ਤੇ ਪਾਬੰਦੀ ਲਾਓ",
+	"checkuser-investigateblock-expiry": "ਮਿਆਦ ਪੁੱਗਣੀ",
 	"checkuser-investigateblock-reason": "ਕਾਰਨ",
 	"checkuser-investigateblock-options": "ਵਾਧੂ ਚੋਣਾਂ",
 	"checkuser-investigateblock-email-label": "ਈਮੇਲ ਭੇਜਣ ਤੋਂ ਰੋਕੋ",
@@ -107,8 +108,12 @@
 	"checkuser-userinfocard-error-title": "ਇੱਕ ਗਲਤੀ ਆਈ ਏ",
 	"checkuser-userinfocard-error-generic": "ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
 	"checkuser-ipinfo-global-contributions-label": "ਵਿਸ਼ਵ ਪੱਧਰੀ ਯੋਗਦਾਨ",
+	"checkuser-suggestedinvestigations-filter-dialog-close-button": "ਬੰਦ ਕਰੋ",
+	"checkuser-suggestedinvestigations-filter-dialog-show-results-button": "ਨਤੀਜੇ ਵਿਖਾਓ",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-header": "ਖਾਤਾ",
+	"checkuser-suggestedinvestigations-filter-dialog-username-filter-placeholder": "ਖਾਤੇ ਦਾ ਨਾਂ ਲਿਖੋ...",
+	"checkuser-suggestedinvestigations-back-to-main-page": "{{int:checkuser-suggestedinvestigations}} ਤੇ ਵਾਪਸ ਜਾਓ",
 	"checkuser-suggestedinvestigations-header-users": "ਖਾਤੇ",
-	"checkuser-suggestedinvestigations-header-created": "ਬਣਾਇਆ ਗਿਆ",
 	"checkuser-suggestedinvestigations-header-actions": "ਕਾਰਵਾਈਆਂ",
 	"checkuser-suggestedinvestigations-status-open": "ਖੋਲ੍ਹੀ ਏ",
 	"checkuser-suggestedinvestigations-status-resolved": "ਬੰਦ ਕੀਤਾ ਗਿਆ/ਕੀਤੀ ਗਈ",
@@ -116,5 +121,6 @@
 	"checkuser-suggestedinvestigations-change-status-dialog-close-label": "ਬੰਦ ਕਰੋ",
 	"checkuser-suggestedinvestigations-change-status-dialog-cancel-btn": "ਰੱਦ ਕਰੋ",
 	"checkuser-suggestedinvestigations-change-status-dialog-submit-btn": "ਹਵਾਲੇ ਕਰੋ",
-	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "ਬੰਦ ਕਰੋ"
+	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "ਬੰਦ ਕਰੋ",
+	"checkuser-suggestedinvestigations-invalid-status-warning-for-account-based-signal": "ਇਸ ਮਾਮਲੇ ਨੂੰ ਗ਼ਲਤ ਮਿੱਥਣ ਦਾ ਮਤਲਬ ਇਹ ਹੋਵੇਗਾ ਕਿ ਇਸ ਖਾਤੇ ਲਈ ਹੋਰ ਕੋਈ ਮਾਮਲਾ ਨਹੀਂ ਬਣਾਇਆ ਜਾਵੇਗਾ।"
 }

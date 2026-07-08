@@ -6,22 +6,16 @@ namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 class ChemFun2u extends TexNode {
 
-	/** @var string */
-	private $fname;
-	/** @var TexNode */
-	private $left;
-	/** @var TexNode */
-	private $right;
-
 	public function getFname(): string {
 		return $this->fname;
 	}
 
-	public function __construct( string $fname, TexNode $left, TexNode $right ) {
+	public function __construct(
+		private readonly string $fname,
+		private readonly TexNode $left,
+		private readonly TexNode $right,
+	) {
 		parent::__construct( $fname, $left, $right );
-		$this->fname = $fname;
-		$this->left = $left;
-		$this->right = $right;
 	}
 
 	public function getLeft(): TexNode {

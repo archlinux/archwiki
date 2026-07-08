@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Andriy.v",
+			"DDPAT",
+			"Ice bulldog",
+			"Movses",
+			"Piramidion",
+			"Ата"
+		]
+	},
+	"oathauth-webauthn-module-label": "Ключ безпеки",
+	"oathauth-webauthn-ui-login-prompt": "Використайте свій ключ безпеки або дотримуйтесь інструкцій вашого браузера.",
+	"oathauth-webauthn-ui-add-key": "Додати ключ",
+	"oathauth-webauthn-error-browser-unsupported": "Цей браузер не підтримує автентифікацію ключем безпеки, або вона недоступна для цього сайту. Будь ласка, спробуйте скористатися іншим браузером. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Дізнайтесь більше]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Цей браузер не підтримує автентифікацію ключем безпеки або вона недоступна для цього сайту.",
+	"oathauth-webauthn-error-auth-generic": "Процес автентифікації було перервано. Будь ласка, розпочніть процес автентифікації ще раз.",
+	"oathauth-webauthn-error-reg-generic": "Не вдалося верифікувати ваш ключ. Будь ласка, розпочніть процес реєстрації ще раз.",
+	"oathauth-webauthn-registered-keys-section-name": "Зареєстровані ключі",
+	"oathauth-webauthn-ui-remove-key": "Вилучити",
+	"oathauth-webauthn-error-module-not-enabled": "Модуль «$1» для {{GENDER:$2|користувача «$2»|користувачки «$2»}} не увімкнено.",
+	"oathauth-webauthn-error-verification-failed": "Верифікація вебавтентифікації зазнала невдачі.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Користувач «$1»|Користувачка «$1»}} не може зареєструвати нові облікові дані.",
+	"oathauth-webauthn-error-invalid-new-key": "Новий код, повернутий модулем, не є необхідного типу.",
+	"oathauth-webauthn-error-registration-failed": "Реєстрація нового ключа зазнала невдачі.",
+	"oathauth-webauthn-ui-key-register-help": "Виберіть нікнейм для свого ключа:",
+	"oathauth-webauthn-error-cannot-remove-key": "Ключа неможливо вилучити.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Не вдалося отримати інформацію щодо автентифікації.",
+	"oathauth-webauthn-add-key-section-name": "Зареєструвати новий ключ безпеки",
+	"oathauth-webauthn-error-get-reginfo-fail": "Не вдалося отримати інформацію щодо реєстрації.",
+	"oathauth-webauthn-module-description": "WebAuthn перебуває в експериментальному стані. Цей метод наразі не надає можливості відновлення втрачених або пошкоджених пристроїв автентифікації. \n\n[https://en.wikipedia.org/wiki/WebAuthn Дізнайтеся більше про WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Оновити сторінку",
+	"oathauth-webauthn-authentication-info-label": "Дані автентифікації",
+	"oathauth-webauthn-authentication-info-help": "Дані автентифікації передаються клієнту для пошуку облікових даних",
+	"oathauth-webauthn-credential-label": "Облікові дані користувача",
+	"oathauth-webauthn-credential-help": "Облікові дані користувача на основі даних автентифікації"
+}

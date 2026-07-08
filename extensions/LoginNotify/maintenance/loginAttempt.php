@@ -22,8 +22,7 @@ require_once "$IP/maintenance/Maintenance.php";
 /**
  * A maintenance script to programatically generate successful or failed login attempts for any
  * user, from any given IP address and with any given user-agent string. This script makes testing
- * LoginNotify and its interaction with other extensions (such as CheckUser) much easier for the
- * developers.
+ * LoginNotify much easier for the developers.
  */
 class LoginAttempt extends Maintenance {
 	/**

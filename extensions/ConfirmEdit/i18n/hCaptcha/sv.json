@@ -14,7 +14,11 @@
 	"hcaptcha-challenge-closed": "För att fortsätta måste du fylla i captcha.",
 	"hcaptcha-challenge-expired": "Tidsgränsen för att slutföra captcha-frågan har löpt ut. Försök igen.",
 	"hcaptcha-generic-error": "Det uppstod ett fel när formuläret lästes in. Du måste ladda sidan om för att fortsätta.",
+	"hcaptcha-internal-error": "Det uppstod ett internt fel när formuläret skickades. Försök igen.",
+	"hcaptcha-network-error": "Det uppstod ett nätverksfel när formuläret skickades. Kontrollera att du har en fungerande anslutning och försök igen.",
+	"hcaptcha-rate-limited": "Det har gjorts för många försök att lösa captchan. Vänta en stund innan du försöker igen.",
 	"hcaptcha-loading-indicator-label": "Vänta medan vi laddar formuläret...",
 	"hcaptcha-missing-token": "Vi är inte helt klara med att ladda formuläret. Vänta några sekunder och försök sedan igen.",
-	"hcaptcha-noscript": "JavaScript krävs för att fortsätta. Aktivera JavaScript i webbläsarinställningarna och uppdatera sidan."
+	"hcaptcha-noscript": "JavaScript krävs för att fortsätta. Aktivera JavaScript i webbläsarinställningarna och uppdatera sidan.",
+	"hcaptcha-force-show-captcha-edit": "Skicka in formuläret igen och slutför utmaningen för att spara din redigering."
 }

@@ -33,9 +33,6 @@
 	"vector-toc-label": "Һарцг",
 	"vector-toc-beginning": "Эклц",
 	"vector-toc-toggle-button-label": "$1 кесгиг нееҗ хаах",
-	"vector-anon-user-menu-pages": "Эврә нерәр невтрәд уга кергләчнрт зөрүлсн халхс",
-	"vector-anon-user-menu-pages-learn": "үлүг медх",
-	"vector-anon-user-menu-pages-label": "Ясврлхин талар үлүг медх",
 	"vector-main-menu-tooltip": "Үндсн цес",
 	"vector-toc-menu-tooltip": "Һарцг",
 	"vector-toc-collapsible-button-label": "Һарцгиг нееҗ хаах",
@@ -54,6 +51,5 @@
 	"empty-language-selector-body": "Халхин аһулһнь бусд келнд орчулгдад уга.",
 	"vector-toc-unpinned-popup": "Аһулһнь нааран шилҗүлгдв.",
 	"vector-page-tools-unpinned-popup": "Керглүрин цеснь нааран шилҗүлгдв.",
-	"vector-main-menu-unpinned-popup": "Үндсн цеснь нааран шилҗүлгдв.",
-	"vector-2022-beta-preview-label": "Vector 2022 beta"
+	"vector-main-menu-unpinned-popup": "Үндсн цеснь нааран шилҗүлгдв."
 }

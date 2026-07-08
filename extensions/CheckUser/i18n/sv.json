@@ -20,8 +20,8 @@
 			"Per",
 			"Sabelöga",
 			"Smetanakaviar",
-			"WikiPhoenix",
-			"Stefan2255"
+			"Stefan2255",
+			"WikiPhoenix"
 		]
 	},
 	"checkuser-summary": "Det här verktyget söker igenom de senaste ändringarna för att hämta IP-adresser för en användare, eller redigeringar och användare för en IP-adress.\nAnvändare och redigeringar kan visas med IP-adress från XFF genom att lägga till \"/xff\" efter IP-adressen. Verktyget stödjer IPv4 (CIDR $1-32) och IPv6 (CIDR $2-128).\nPå grund av prestandaskäl så visas inte mer än $3 redigeringar.\nAnvänd verktyget i enlighet med policy.",
@@ -199,14 +199,14 @@
 	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "Wikin hittades inte",
 	"checkuser-investigate-filters-legend": "Filter",
 	"checkuser-investigate-filters-exclude-targets-label": "Dölj följande användare eller IP-adresser",
-	"checkuser-investigate-timeline-notice-no-results": "Inga resultat: Ingen aktivitet har registrerats från dessa användare eller IP-adresser inom de senaste 90 dagarna",
+	"checkuser-investigate-timeline-notice-no-results": "Inga resultat: Ingen aktivitet har registrerats från dessa användare eller IP-adresser inom de senaste $1 dagarna",
 	"checkuser-investigate-timeline-notice-no-results-filters": "Inga resultat matchar dessa filteringskriterier. Försök att ta bort några filter för att utvidga sökningen.",
 	"checkuser-investigate-compare-copy-button-label": "Visa wikitext",
 	"checkuser-investigate-compare-copy-button-label-hide": "Dölj wikitext",
 	"checkuser-investigate-compare-toollinks-ipcheck": "Proxy-kontroll",
 	"checkuser-investigate-compare-copy-message-label": "Vill du kopiera denna information som en wikitexttabell?",
 	"checkuser-investigate-compare-notice-exceeded-limit": "På grund av tekniska begränsningar har antalet poster som kan visas uppnåtts. Data som returneras för följande mål är ofullständig: $1. Försök använda färre mål, mindre tidsintervall eller mindre IP-intervall.",
-	"checkuser-investigate-compare-notice-no-results": "Inga resultat: Dessa användare eller IP-adresser har inte redigerat inom de senaste 90 dagarna",
+	"checkuser-investigate-compare-notice-no-results": "Inga resultat: Dessa användare eller IP-adresser har inte redigerat inom de senaste $1 dagarna",
 	"checkuser-investigate-compare-notice-no-results-filters": "Inga resultat matchar dessa filteringskriterier. Försök att ta bort några filter för att utvidga sökningen.",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Visa alla IP-adress för denna användare",
 	"checkuser-investigate-compare-table-button-add-user-targets-label": "Visa alla användare på denna IP-adress",
@@ -247,6 +247,7 @@
 	"checkuser-global-contributions-target-placeholder": "Användarnamn, IP-adress eller -intervall",
 	"checkuser-global-contributions-search-form-wrapper": "Sök efter globala bidrag",
 	"checkuser-global-contributions-results-title": "Globala bidrag för $1",
+	"checkuser-global-contributions-page-when-no-namespace-translation-available": "Namnrymd[$1]:$2",
 	"checkuser-ip-auto-reveal-on-dialog-title": "Aktivera automatisk visning av IP-adresser",
 	"checkuser-ip-auto-reveal-on-dialog-default-action": "Avbryt",
 	"checkuser-ip-auto-reveal-on-dialog-primary-action": "Slå på",
@@ -267,6 +268,7 @@
 	"checkuser-tempaccount-reveal-blocked-header": "Visning av IP-adresser för tillfälliga konton är avstängd",
 	"checkuser-tempaccount-reveal-blocked-description": "Du har inte behörighet att använda den här funktionen av följande anledning:",
 	"checkuser-tempaccount-specialblock-ips": "Detta är en temporär användare som använder följande {{PLURAL:$1|IP-adress|IP-adresser}}: $2",
+	"checkuser-tempaccount-specialblock-ip-target": "Se [[Special:IPContributions/$1|bidrag från tillfälliga konto på denna IP]].",
 	"checkuser-temporary-account-log-name": "IP-visningslogg",
 	"checkuser-temporary-account-log-header": "Detta är en logg över:\n# Visning av IP-adresser som använts av ett tillfälligt konto\n# Visning av tillfälliga konton associerade med en IP-adress\n# Förändring av användarrättighetsnivåer för visning av IP-adresser som används av tillfälliga konton",
 	"logentry-checkuser-temporary-account-change-access": "$1 $4 {{GENDER:$2|hans|hennes|sin}} egen åtkomst för att se IP-adresser för tillfälliga konton",
@@ -314,5 +316,7 @@
 	"tooltip-t-global-contributions": "En lista över bidrag till alla wikier av {{GENDER:$1| den här användaren}}",
 	"checkuser-userinfocard-groups": "<strong>Grupper</strong> : $1",
 	"checkuser-userinfocard-global-groups": "<strong>Globala grupper</strong> : $1",
-	"checkuser-userinfocard-chart-tooltip-label": "$1 ({{PLURAL:$2|$2 redigering|$2 redigeringar|0=Inga redigeringar}})"
+	"checkuser-userinfocard-chart-tooltip-label": "$1 ({{PLURAL:$2|$2 redigering|$2 redigeringar|0=Inga redigeringar}})",
+	"checkuser-contributions-temporary-accounts-on-ip": "Tillfälliga konton på denna IP: $1",
+	"checkuser-contributions-temporary-accounts-on-ip-with-blocked": "Tillfälliga konton på denna IP: $1 (blockerade: $2 )"
 }

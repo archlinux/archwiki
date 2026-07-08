@@ -1,32 +1,32 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\GlobalContributions;
 
-use DOMDocument;
-use DOMXPath;
 use GlobalPreferences\GlobalPreferencesFactory;
 use LogicException;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
-use MediaWiki\CheckUser\GlobalContributions\SpecialGlobalContributions;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Jobs\UpdateUserCentralIndexJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Exception\ReadOnlyError;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
+use MediaWiki\Extension\CheckUser\GlobalContributions\SpecialGlobalContributions;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Jobs\UpdateUserCentralIndexJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\ContributionsRangeTrait;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use SpecialPageTestBase;
 use Wikimedia\IPUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\SpecialGlobalContributions
- * @covers \MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPager
- * @covers \MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\SpecialGlobalContributions
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPager
+ * @covers \MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob
  * @group CheckUser
  * @group Database
  */
@@ -128,13 +128,25 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		ConvertibleTimestamp::setFakeTime( $oneDayAgoTimestamp );
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.1' );
 		$this->editPage(
-			'Test page', 'Test Content 1', 'test', NS_MAIN, self::$sysop
+			'Test page',
+			'Test Content 1',
+			'test',
+			NS_MAIN,
+			self::$sysop
 		);
 		$this->editPage(
-			'Test page', 'Test Content 2', 'test', NS_MAIN, self::$tempUser1
+			'Test page',
+			'Test Content 2',
+			'test',
+			NS_MAIN,
+			self::$tempUser1
 		);
 		$this->editPage(
-			'Test page for deletion', 'Test Content', 'test', NS_MAIN, self::$tempUser1
+			'Test page for deletion',
+			'Test Content',
+			'test',
+			NS_MAIN,
+			self::$tempUser1
 		);
 		$title = Title::newFromText( 'Test page for deletion' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
@@ -143,13 +155,21 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// Do one edit at a different time, to test the pagination
 		ConvertibleTimestamp::setFakeTime( $oneWeekAgoTimestamp );
 		$this->editPage(
-			'Test page', 'Test Content 3', 'test', NS_MAIN, self::$tempUser2
+			'Test page',
+			'Test Content 3',
+			'test',
+			NS_MAIN,
+			self::$tempUser2
 		);
 
 		// Temp user edits again from a different IP
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.2' );
 		$this->editPage(
-			'Test page', 'Test Content 4', 'test', NS_MAIN, self::$tempUser1
+			'Test page',
+			'Test Content 4',
+			'test',
+			NS_MAIN,
+			self::$tempUser1
 		);
 
 		$this->runJobs( [ 'minJobs' => 0 ], [ 'type' => UpdateUserCentralIndexJob::TYPE ] );
@@ -157,7 +177,11 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// Do an edit by a named user which is should have been purged from CheckUser tables.
 		ConvertibleTimestamp::setFakeTime( $oneYearAgoTimestamp );
 		$this->editPage(
-			'Test page', 'Test Content 5', 'test', NS_MAIN, self::$sysop
+			'Test page',
+			'Test Content 5',
+			'test',
+			NS_MAIN,
+			self::$sysop
 		);
 
 		// Assert that the test data was inserted correctly to the cuci_user table, which is read by
@@ -199,7 +223,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 			if ( $this->isValidIPOrQueryableRange( $target, $this->getServiceContainer()->getMainConfig() ) ) {
 				// Test that a log entry was inserted for the viewing of this target if it was an IP.
 				$this->assertSame(
-					 1,
+					1,
 					$this->getDb()->newSelectQueryBuilder()
 						->from( 'logging' )
 						->where( [
@@ -250,6 +274,18 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		];
 	}
 
+	public function testExecuteForIPTargetWhenInReadOnlyMode(): void {
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+
+		$this->expectException( ReadOnlyError::class );
+		$this->executeSpecialPage(
+			'127.0.0.1/24',
+			new FauxRequest( [ 'dir' => 'prev' ] ),
+			null,
+			self::$checkuser
+		);
+	}
+
 	public function testExecuteTargetReverse() {
 		[ $html ] = $this->executeSpecialPage(
 			'127.0.0.1/24',
@@ -288,7 +324,8 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// Use occurrences of data attribute to determine how many rows, which should be one
 		// as all but one row is excluded by the start timestamp filter.
 		$this->assertSame(
-			1, substr_count( $html, 'data-mw-revid' ),
+			1,
+			substr_count( $html, 'data-mw-revid' ),
 			"Unexpected number of result rows in $html"
 		);
 
@@ -314,7 +351,8 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// Use occurrences of data attribute to determine how many rows, which should be one
 		// as all but one row is excluded by the end timestamp filter.
 		$this->assertSame(
-			1, substr_count( $html, 'data-mw-revid' ),
+			1,
+			substr_count( $html, 'data-mw-revid' ),
 			"Unexpected number of result rows in $html"
 		);
 
@@ -338,7 +376,8 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// the limit of 90 days when searching for temporary account contributions on an IP address.
 		$this->assertStringContainsString( 'mw-pager-body', $html );
 		$this->assertSame(
-			0, substr_count( $html, 'data-mw-revid' ),
+			0,
+			substr_count( $html, 'data-mw-revid' ),
 			"Unexpected number of result rows in $html"
 		);
 	}
@@ -374,7 +413,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 			null,
 			self::$checkuser
 		);
-		$softwareDefinedTags = MediaWikiServices::getInstance()
+		$softwareDefinedTags = $this->getServiceContainer()
 			->getChangeTagsStore()->getSoftwareTags( true );
 		foreach ( $softwareDefinedTags as $tag ) {
 			$this->assertStringContainsString( 'value=\'' . $tag . '\'', $html );
@@ -418,7 +457,11 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 		// User to be suppressed edits from a unique IP to avoid conflicts with IP searches in other tests
 		RequestContext::getMain()->getRequest()->setIP( '128.0.0.1' );
 		$this->editPage(
-			'Test page 2', 'Test content from user to be suppressed', 'test', NS_MAIN, self::$suppressedUser
+			'Test page 2',
+			'Test content from user to be suppressed',
+			'test',
+			NS_MAIN,
+			self::$suppressedUser
 		);
 		$this->runJobs( [ 'minJobs' => 0 ], [ 'type' => UpdateUserCentralIndexJob::TYPE ] );
 
@@ -677,17 +720,17 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 			true
 		);
 
-		$doc = new DOMDocument();
-		$doc->loadHTML( $html, LIBXML_NOERROR );
-		$entries = ( new DOMXpath( $doc ) )->query(
-			'//div[@id="mw-indicator-mw-helplink"]/a[@class="mw-helplink"]'
-		);
+		$doc = DOMUtils::parseHTML( $html );
+		$entries = iterator_to_array( DOMCompat::querySelectorAll(
+			$doc,
+			'div#mw-indicator-mw-helplink > a.mw-helplink'
+		) );
 
 		$this->assertNotEmpty( $entries );
 		$this->assertEquals(
 			"https://www.mediawiki.org/wiki/Special:MyLanguage/" .
 				"Help:Extension:CheckUser#Special:GlobalContributions_usage",
-			$entries[ 0 ]->getAttribute( 'href' )
+			DOMCompat::getAttribute( $entries[ 0 ], 'href' )
 		);
 	}
 }

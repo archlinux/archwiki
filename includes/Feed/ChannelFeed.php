@@ -10,9 +10,13 @@
 
 namespace MediaWiki\Feed;
 
+use LogicException;
+use MediaWiki\Debug\MWDebug;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Request\WebRequest;
 
 /**
  * Class to support the outputting of syndication feeds in Atom and RSS format.
@@ -44,12 +48,50 @@ abstract class ChannelFeed extends FeedItem {
 
 	/**
 	 * Generate Header of the feed
+	 *
+	 * Example: <code>print "<feed>";</code>
+	 * @param OutputPage $output
+	 * @stable to override
+	 * @since 1.46
+	 */
+	public function outputHeader( $output ): void {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outHeader', '1.46' ) ) {
+			$this->outHeader();
+			return;
+		}
+		throw new LogicException( 'Either outHeader() or outputHeader() needs to be implemented!' );
+	}
+
+	/**
+	 * Generate Header of the feed
 	 * @par Example:
 	 * @code
 	 * print "<feed>";
 	 * @endcode
+	 * @deprecated since 1.46; use outputFooter instead
 	 */
-	abstract public function outHeader();
+	public function outHeader() {
+		wfDeprecated( __METHOD__, '1.46' );
+		global $wgOut;
+		$this->outputHeader( $wgOut );
+	}
+
+	/**
+	 * Generate an item
+	 *
+	 * Example: <code>print "<item>...</item>";</code>
+	 * @param FeedItem $item
+	 * @param OutputPage $output
+	 * @stable to override
+	 * @since 1.46
+	 */
+	public function outputItem( FeedItem $item, $output ): void {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outItem', '1.46' ) ) {
+			$this->outItem( $item );
+			return;
+		}
+		throw new LogicException( 'Either outItem() or outputItem() needs to be implemented!' );
+	}
 
 	/**
 	 * Generate an item
@@ -58,8 +100,29 @@ abstract class ChannelFeed extends FeedItem {
 	 * print "<item>...</item>";
 	 * @endcode
 	 * @param FeedItem $item
+	 * @deprecated since 1.46; use outputItem instead
 	 */
-	abstract public function outItem( $item );
+	public function outItem( $item ) {
+		wfDeprecated( __METHOD__, '1.46' );
+		global $wgOut;
+		$this->outputItem( $item, $wgOut );
+	}
+
+	/**
+	 * Generate Footer of the feed
+	 *
+	 * Example: <code>print "</feed>";</code>
+	 * @param OutputPage $output
+	 * @stable to override
+	 * @since 1.46
+	 */
+	public function outputFooter( $output ): void {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'outFooter', '1.46' ) ) {
+			$this->outFooter();
+			return;
+		}
+		throw new LogicException( 'Either outFooter() or outputFooter() needs to be implemented!' );
+	}
 
 	/**
 	 * Generate Footer of the feed
@@ -67,24 +130,28 @@ abstract class ChannelFeed extends FeedItem {
 	 * @code
 	 * print "</feed>";
 	 * @endcode
+	 * @deprecated since 1.46; use outputFooter instead
 	 */
-	abstract public function outFooter();
+	public function outFooter() {
+		wfDeprecated( __METHOD__, '1.46' );
+		global $wgOut;
+		$this->outputFooter( $wgOut );
+	}
 
 	/**
 	 * Setup and send HTTP headers. Don't send any content;
 	 * content might end up being cached and re-sent with
 	 * these same headers later.
 	 *
-	 * This should be called from the outHeader() method,
-	 * but can also be called separately.
+	 * @param OutputPage $output
+	 * @since 1.46
 	 */
-	public function httpHeaders() {
-		global $wgOut;
+	public function sendHttpHeaders( $output ): void {
 		$varyOnXFP = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::VaryOnXFP );
 		# We take over from $wgOut, excepting its cache header info
-		$wgOut->disable();
-		$mimetype = $this->contentType();
+		$output->disable();
+		$mimetype = $this->contentType( $output->getRequest() );
 		header( "Content-type: $mimetype; charset=UTF-8" );
 		// @todo Maybe set a CSP header here at some point as defense in depth.
 		// need to figure out how that interacts with browser display of article
@@ -96,22 +163,34 @@ abstract class ChannelFeed extends FeedItem {
 		header( "Content-Disposition: inline; filename=\"feed.{$ext}\"" );
 
 		if ( $varyOnXFP ) {
-			$wgOut->addVaryHeader( 'X-Forwarded-Proto' );
+			$output->addVaryHeader( 'X-Forwarded-Proto' );
 		}
-		$wgOut->sendCacheControl();
+		$output->sendCacheControl();
+	}
+
+	/**
+	 * Setup and send HTTP headers. Don't send any content;
+	 * content might end up being cached and re-sent with
+	 * these same headers later.
+	 *
+	 * This should be called from the outHeader() method,
+	 * but can also be called separately.
+	 *
+	 * @deprecated since 1.46; use sendHttpHeaders() instead
+	 */
+	public function httpHeaders() {
+		wfDeprecated( __METHOD__, '1.46' );
+		global $wgOut;
+		$this->sendHttpHeaders( $wgOut );
 	}
 
 	/**
 	 * Return an internet media type to be sent in the headers.
 	 *
-	 * @stable to override
-	 *
-	 * @return string
+	 * @param WebRequest $request
 	 */
-	private function contentType() {
-		global $wgRequest;
-
-		$ctype = $wgRequest->getVal( 'ctype', 'application/xml' );
+	private function contentType( $request ): string {
+		$ctype = $request->getVal( 'ctype', 'application/xml' );
 		$allowedctypes = [
 			'application/xml',
 			'text/xml',
@@ -124,9 +203,23 @@ abstract class ChannelFeed extends FeedItem {
 
 	/**
 	 * Output the initial XML headers.
+	 *
+	 * @param OutputPage $output
+	 * @since 1.46
+	 */
+	protected function outputXmlHeader( $output ): void {
+		$this->sendHttpHeaders( $output );
+		echo '<?xml version="1.0"?>' . "\n";
+	}
+
+	/**
+	 * Output the initial XML headers.
+	 *
+	 * @deprecated since 1.46; use outputXmlHeader() instead
 	 */
 	protected function outXmlHeader() {
-		$this->httpHeaders();
-		echo '<?xml version="1.0"?>' . "\n";
+		wfDeprecated( __METHOD__, '1.46' );
+		global $wgOut;
+		$this->outputXmlHeader( $wgOut );
 	}
 }

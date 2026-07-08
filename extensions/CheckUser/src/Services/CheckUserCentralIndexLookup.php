@@ -1,8 +1,8 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -16,10 +16,9 @@ class CheckUserCentralIndexLookup implements CheckUserQueryInterface {
 	 */
 	private const MAX_ACTIVE_BATCH_SIZE = 1000;
 
-	private IConnectionProvider $dbProvider;
-
-	public function __construct( IConnectionProvider $dbProvider ) {
-		$this->dbProvider = $dbProvider;
+	public function __construct(
+		private readonly IConnectionProvider $dbProvider,
+	) {
 	}
 
 	/**
@@ -94,3 +93,10 @@ class CheckUserCentralIndexLookup implements CheckUserQueryInterface {
 			->fetchFieldValues();
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( CheckUserCentralIndexLookup::class, 'MediaWiki\\CheckUser\\Services\\CheckUserCentralIndexLookup' );
+// @codeCoverageIgnoreEnd

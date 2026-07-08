@@ -1,23 +1,11 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Extension\OATHAuth;
 
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -26,13 +14,18 @@ use MediaWiki\User\UserIdentity;
  * @ingroup Extensions
  */
 class OATHUser {
-	/** @var IAuthKey[] */
+	/** @var AuthKey[] */
 	private array $keys = [];
+
+	private ?string $userHandle = null;
 
 	/**
 	 * Constructor. Can't be called directly. Use OATHUserRepository::findByUser instead.
 	 */
-	public function __construct( private UserIdentity $user, private int $centralId ) {
+	public function __construct(
+		private readonly UserIdentity $user,
+		private readonly int $centralId,
+	) {
 	}
 
 	public function getUser(): UserIdentity {
@@ -60,16 +53,9 @@ class OATHUser {
 	}
 
 	/**
-	 * @return IAuthKey[]
-	 */
-	public function getRecoveryCodes() {
-		return $this->getKeysForModule( 'recoverycodes' );
-	}
-
-	/**
 	 * Get the key associated with this user.
 	 *
-	 * @return IAuthKey[]
+	 * @return AuthKey[]
 	 */
 	public function getKeys(): array {
 		return $this->keys;
@@ -77,33 +63,33 @@ class OATHUser {
 
 	/**
 	 * @param string $moduleName As in IModule::getName().
-	 * @return IAuthKey[]
+	 * @return AuthKey[]
 	 */
 	public function getKeysForModule( string $moduleName ): array {
 		return array_values(
 			array_filter(
 				$this->keys,
-				static fn ( IAuthKey $key ) => $key->getModule() === $moduleName
+				static fn ( AuthKey $key ) => $key->getModule() === $moduleName
 			)
 		);
 	}
 
-	public function getKeyById( int $id ): ?IAuthKey {
+	public function getKeyById( int $id ): ?AuthKey {
 		$matchingKeys = array_values(
 			array_filter(
 				$this->keys,
-				static fn ( IAuthKey $key ) => $key->getId() === $id
+				static fn ( AuthKey $key ) => $key->getId() === $id
 			)
 		);
 		return $matchingKeys[0] ?? null;
 	}
 
-	public function removeKey( IAuthKey $key ) {
+	public function removeKey( AuthKey $key ) {
 		$keyId = $key->getId();
 		$this->keys = array_values(
 			array_filter(
 				$this->keys,
-				static fn ( IAuthKey $key ) => $key->getId() !== $keyId
+				static fn ( AuthKey $key ) => $key->getId() !== $keyId
 			)
 		);
 	}
@@ -115,7 +101,7 @@ class OATHUser {
 		$this->keys = array_values(
 			array_filter(
 				$this->keys,
-				static fn ( IAuthKey $key ) => $key->getModule() !== $moduleName
+				static fn ( AuthKey $key ) => $key->getModule() !== $moduleName
 			)
 		);
 	}
@@ -123,23 +109,8 @@ class OATHUser {
 	/**
 	 * Adds a single key to the key array
 	 */
-	public function addKey( IAuthKey $key ) {
+	public function addKey( AuthKey $key ) {
 		$this->keys[] = $key;
-	}
-
-	/**
-	 * Gets the module instance associated with this user
-	 *
-	 * @return IModule|null
-	 * @deprecated Use {@link IAuthKey::getModule()} instead
-	 */
-	public function getModule() {
-		wfDeprecated( 'OATHUser::getModule()', '1.44', 'OATHAuth' );
-		if ( !$this->keys ) {
-			return null;
-		}
-		$key = $this->keys[0];
-		return OATHAuthServices::getInstance()->getModuleRegistry()->getModuleByKey( $key->getModule() );
 	}
 
 	/**
@@ -157,15 +128,15 @@ class OATHUser {
 	}
 
 	/**
-	 * Get all of the user's keys, but exclude special keys
-	 * @return IAuthKey[]
+	 * Get all the user's keys, but exclude special keys
+	 * @return AuthKey[]
 	 */
 	public function getNonSpecialKeys(): array {
 		$moduleRegistry = OATHAuthServices::getInstance()->getModuleRegistry();
 		return array_values(
 			array_filter(
 				$this->keys,
-				static fn ( IAuthKey $key ) => !$moduleRegistry->getModuleByKey( $key->getModule() )->isSpecial()
+				static fn ( AuthKey $key ) => !$moduleRegistry->getModuleByKey( $key->getModule() )->isSpecial()
 			)
 		);
 	}
@@ -176,5 +147,25 @@ class OATHUser {
 	 */
 	public function userHasNonSpecialEnabledKeys(): bool {
 		return count( $this->getNonSpecialKeys() ) > 0;
+	}
+
+	/**
+	 * Get the user's WebAuthn User Handle value. The User Handle appears in each of the user's
+	 * WebAuthn keys, and is used to identify the user based on one of their WebAuthn keys.
+	 * See also OATHUserRepository::findByUserHandle().
+	 *
+	 * For more information about User Handles, see
+	 * https://developers.yubico.com/WebAuthn/WebAuthn_Developer_Guide/User_Handle.html
+	 */
+	public function getUserHandle(): ?string {
+		return $this->userHandle;
+	}
+
+	/**
+	 * Set the User Handle. This should only be used by OATHUserRepository.
+	 * @internal
+	 */
+	public function setUserHandle( ?string $userHandle ): void {
+		$this->userHandle = $userHandle;
 	}
 }

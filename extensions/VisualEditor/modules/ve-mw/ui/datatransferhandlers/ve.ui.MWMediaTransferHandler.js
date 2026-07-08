@@ -43,7 +43,7 @@ ve.ui.MWMediaTransferHandler.prototype.process = function () {
 	const file = this.item.getAsFile();
 
 	const action = ve.ui.actionFactory.create( 'window', this.surface );
-	action.open( 'media', { file: file } );
+	action.open( 'media', { file } );
 
 	this.insertableDataDeferred.reject();
 };

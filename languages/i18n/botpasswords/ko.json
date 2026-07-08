@@ -4,8 +4,8 @@
 			"HDNua",
 			"Mooozi",
 			"Namoroka",
-			"Ykhwong",
-			"Tensama0415"
+			"Tensama0415",
+			"Ykhwong"
 		]
 	},
 	"botpasswords": "봇 비밀번호",
@@ -28,6 +28,7 @@
 	"botpasswords-bad-appid": "\"$1\"이라는 봇 이름은 유효하지 않습니다.",
 	"botpasswords-toolong-restrictions": "너무 많은 IP 주소 또는 대역이 입력되었습니다.",
 	"botpasswords-toolong-grants": "선택한 항목이 너무 많습니다.",
+	"botpasswords-too-many": "{{PLURAL:$1|봇 비밀번호}} 최대 허용 개수인 $1에 도달했습니다. 새 봇 비밀번호를 생성하기 전에 기존 봇 비밀번호를 일부 삭제하세요.",
 	"botpasswords-insert-failed": "\"$1\" 봇 이름을 추가하는데 실패했습니다. 이미 등록되지 않았는지 확인하기 바랍니다.",
 	"botpasswords-update-failed": "\"$1\" 봇 이름을 갱신하는데 실패했습니다. 이미 삭제되지 않았는지 확인하기 바랍니다.",
 	"botpasswords-created-title": "봇 비밀번호 생성",

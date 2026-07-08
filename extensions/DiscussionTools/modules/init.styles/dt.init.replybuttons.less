@@ -1,0 +1,129 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+/* stylelint-disable no-descending-specificity */
+.ext-discussiontools-init-replylink-buttons {
+	user-select: none;
+	display: none;
+
+	// If a site has text-indent set on content, it would be inherited here and cause excessive padding
+	text-indent: 0;
+	// Keep all buttons on one line
+	white-space: nowrap;
+
+	// Add space before the buttons using actual spaces rather than margin, so that they may collapse
+	// when the buttons wrap to a new line (T325416).
+	&::before {
+		// Must use character escapes to avoid CSS minifier messing up the spaces
+		content: '\20\20';
+		white-space: pre-wrap;
+	}
+
+	.ext-discussiontools-replytool-enabled & {
+		display: inline;
+
+		.client-nojs & {
+			display: none;
+		}
+	}
+
+	// Archived talk section (T295553)
+	.ext-discussiontools-replytool-enabled .mw-archivedtalk & {
+		display: none !important;
+	}
+
+	.ext-discussiontools-init-replylink {
+		&-reply {
+			cursor: pointer;
+		}
+
+		// Similar to mw-editsection-bracket
+		&-bracket {
+			color: @color-subtle;
+
+			&:not( :last-child ) {
+				.margin-inline( 0, 0.25em );
+			}
+
+			&:last-child {
+				.margin-inline( 0.25em, 0 );
+			}
+		}
+	}
+
+	.ext-discussiontools-init-replylink-open & > .ext-discussiontools-init-replylink-reply {
+		color: #72777d;
+		pointer-events: none;
+	}
+
+	&.ext-discussiontools-init-replylink-active > .ext-discussiontools-init-replylink-reply {
+		color: @color-base;
+		text-decoration: none;
+	}
+
+	.ext-discussiontools-init-section-overflowMenuButton.oo-ui-widget-enabled > .oo-ui-buttonElement-button > .oo-ui-iconElement-icon:not( .oo-ui-image-invert ) {
+		opacity: 0.5;
+	}
+
+	// Flip the icon in LTR interface languages. Un-flip it in RTL.
+	// TODO This should use a different icon, with the image itself flipped (T325664).
+	// stylelint-disable-next-line selector-class-pattern
+	body.ltr & .ext-discussiontools-init-replybutton .oo-ui-iconElement-icon.oo-ui-icon-share {
+		transform: scaleX( -1 );
+	}
+
+	@media print {
+		display: none !important;
+	}
+}
+
+.ext-discussiontools-init-replybutton.oo-ui-buttonElement {
+	display: none;
+}
+
+// Visual enhancements enabled
+.ext-discussiontools-visualenhancements-enabled {
+	// Reply buttons
+	.ext-discussiontools-init-replylink-bracket,
+	.ext-discussiontools-init-replylink-reply {
+		display: none;
+	}
+
+	.ext-discussiontools-init-replybutton {
+		display: inline-block;
+		margin-right: 0;
+	}
+
+	// Desktop
+	&:not( .mw-mf ) .ext-discussiontools-init-replylink-buttons .oo-ui-buttonElement {
+		// Slim height for inline placement. Minerva uses block placement.
+		margin-top: -8px;
+		margin-bottom: -8px;
+
+		&:not( .oo-ui-iconElement ) > .oo-ui-buttonElement-button {
+			padding: 4px 6px;
+		}
+
+		&.oo-ui-iconElement > .oo-ui-buttonElement-button {
+			padding-top: 4px;
+			padding-bottom: 4px;
+		}
+
+		&.oo-ui-buttonElement-frameless.oo-ui-labelElement:first-child {
+			// Cancel out 6px padding (set above) and 1px border (set in OOUI)
+			// to align the button text with surrounding text
+			margin-left: -7px;
+		}
+	}
+
+	// Mobile
+	// Use block placement for the reply buttons on mobile, to make them easier to tap.
+	&.mw-mf .ext-discussiontools-init-replylink-buttons {
+		display: block;
+
+		&::before {
+			// Remove the spaces that are used for inline placement (T325416), added at the top of this file.
+			content: '';
+		}
+	}
+}

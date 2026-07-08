@@ -3,7 +3,9 @@
 namespace MediaWiki\Tests\Rest\Handler;
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Rest\Handler\SitemapIndexHandler;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -13,8 +15,38 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 class SitemapIndexHandlerTest extends MediaWikiIntegrationTestCase {
 	use HandlerIntegrationTestTrait;
 
+	private function createHandler(): SitemapIndexHandler {
+		return new SitemapIndexHandler(
+			$this->getServiceContainer()->getMainConfig(),
+			$this->getServiceContainer()->getLanguageConverterFactory(),
+			$this->getServiceContainer()->getContentLanguage(),
+			$this->getServiceContainer()->getPermissionManager(),
+			$this->getServiceContainer()->getConnectionProvider()
+		);
+	}
+
 	public function addDBDataOnce() {
 		$this->editPage( 'Page', '.' );
+		$this->editPage( 'Page2', '.' );
+		$this->editPage( 'Page3', '.' );
+	}
+
+	public function testGetResponseExample() {
+		$handler = $this->createHandler();
+		$wrapper = TestingAccessWrapper::newFromObject( $handler );
+		$example = $wrapper->getResponseExample();
+		$this->assertStringContainsString( '<?xml version="1.0"', $example );
+		$this->assertStringContainsString( '<sitemapindex', $example );
+		$this->assertStringContainsString( '</sitemapindex>', $example );
+	}
+
+	public function testGenerateResponseSpec() {
+		$handler = $this->createHandler();
+		$wrapper = TestingAccessWrapper::newFromObject( $handler );
+		$spec = $wrapper->generateResponseSpec( 'GET' );
+		$this->assertArrayHasKey( '200', $spec );
+		$this->assertArrayHasKey( 'application/xml', $spec['200']['content'] );
+		$this->assertArrayNotHasKey( 'application/json', $spec['200']['content'] );
 	}
 
 	public static function provideExecute() {
@@ -39,6 +71,22 @@ XML
 XML
 			],
 		];
+	}
+
+	public function testExecuteMaxIndexSizeExceeded() {
+		ConvertibleTimestamp::setFakeTime( '2025-01-01T00:00:00' );
+		$this->overrideConfigValues( [
+			MainConfigNames::SitemapApiConfig => [
+				'enabled' => true,
+				'sitemapsPerIndex' => 1,
+				'pagesPerSitemap' => 2,
+				'expiry' => 3600,
+			]
+		] );
+		$response = $this->execute( [ 'path' => '/rest.php/site/v1/sitemap/0' ] );
+		$body = $response->getBody()->getContents();
+		$this->assertStringContainsString( 'maximum index size exceeded', $body );
+		$this->assertStringContainsString( 'sitemap/1', $body );
 	}
 
 	/**

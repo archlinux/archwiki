@@ -31,25 +31,25 @@ use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\EditPage__showReadOnlyForm_initialHook;
 use MediaWiki\Hook\EditPage__showStandardInputs_optionsHook;
 use MediaWiki\Hook\EditPageBeforeEditButtonsHook;
-use MediaWiki\Hook\ParserClearStateHook;
-use MediaWiki\Hook\ParserFirstCallInitHook;
-use MediaWiki\Hook\ParserLimitReportFormatHook;
-use MediaWiki\Hook\ParserLimitReportPrepareHook;
-use MediaWiki\Hook\SoftwareInfoHook;
 use MediaWiki\Html\Html;
+use MediaWiki\ObjectCache\ObjectCacheFactory;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
 use MediaWiki\Page\Hook\ArticleViewHeaderHook;
+use MediaWiki\Parser\Hook\ParserClearStateHook;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
+use MediaWiki\Parser\Hook\ParserLimitReportFormatHook;
+use MediaWiki\Parser\Hook\ParserLimitReportPrepareHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\PPFrame;
 use MediaWiki\Parser\PPNode;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
+use MediaWiki\Specials\Hook\SoftwareInfoHook;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
-use ObjectCacheFactory;
 use UtfNormal\Validator;
 use Wikimedia\ObjectCache\EmptyBagOStuff;
 use Wikimedia\PSquare;
@@ -398,8 +398,6 @@ class Hooks implements
 			}
 		}
 		if ( !$status->isOK() ) {
-			// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
-			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 			return false;
 		}
 

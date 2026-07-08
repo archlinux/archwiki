@@ -45,9 +45,6 @@ class SiteConfig extends ISiteConfig {
 	/** @var string */
 	private $savedRedirectRegexp;
 
-	/** @var string */
-	private $savedBswRegexp;
-
 	/** @var array<int,string> */
 	protected $nsNames = [];
 
@@ -88,6 +85,9 @@ class SiteConfig extends ISiteConfig {
 	private $apiVariables;
 
 	/** @var array|null */
+	private $apiDoubleUnderscores;
+
+	/** @var array|null */
 	private $apiFunctionHooks;
 
 	/** @var array|null */
@@ -114,7 +114,7 @@ class SiteConfig extends ISiteConfig {
 		'meta' => 'siteinfo',
 		'siprop' => 'general|protocols|namespaces|namespacealiases|magicwords|interwikimap|'
 			. 'languagevariants|defaultoptions|specialpagealiases|extensiontags|'
-			. 'functionhooks|variables',
+			. 'functionhooks|variables|doubleunderscores',
 	];
 
 	public function __construct( ApiHelper $api, array $opts ) {
@@ -236,6 +236,13 @@ class SiteConfig extends ISiteConfig {
 		$this->widthOption = $data['general']['thumblimits'][$data['defaultoptions']['thumbsize']];
 		$this->protocols = $data['protocols'];
 		$this->apiVariables = $data['variables'];
+		$this->apiDoubleUnderscores = $data['doubleunderscores'] ?? [
+			// default list of behavior switches, for MW < 1.45
+			'notoc', 'nogallery', 'forcetoc', 'toc', 'noeditsection',
+			'newsectionlink', 'nonewsectionlink', 'hiddencat',
+			'index', 'noindex', 'staticredirect', 'notitleconvert',
+			'nocontentconvert', 'disambiguation',
+		];
 		$this->apiFunctionHooks = PHPUtils::makeSet( $data['functionhooks'] );
 
 		// Process namespace data from API
@@ -252,7 +259,6 @@ class SiteConfig extends ISiteConfig {
 		}
 
 		// Process magic word data from API
-		$bsws = [];
 		$this->paramMWs = [];
 		$this->allMWs = [];
 
@@ -275,10 +281,6 @@ class SiteConfig extends ISiteConfig {
 			$allMWs = [];
 			foreach ( $mw['aliases'] as $alias ) {
 				$this->apiMagicWords[$mwName][] = $alias;
-				// Aliases for double underscore mws include the underscores
-				if ( str_starts_with( $alias, '__' ) && str_ends_with( $alias, '__' ) ) {
-					$bsws[$cs][] = preg_quote( substr( $alias, 2, -2 ), '@' );
-				}
 				if ( str_contains( $alias, '$1' ) ) {
 					$pmws[$cs][] = strtr( preg_quote( $alias, '/' ), [ '\\$1' => "(.*?)" ] );
 				}
@@ -290,8 +292,6 @@ class SiteConfig extends ISiteConfig {
 			}
 			$this->allMWs[$mwName] = '/^(?:' . $this->combineRegexArrays( $allMWs ) . ')$/D';
 		}
-
-		$bswRegexp = $this->combineRegexArrays( $bsws );
 
 		// Parse interwiki map data from the API
 		$this->interwikiMap = ConfigUtils::computeInterwikiMap( $data['interwikimap'] );
@@ -366,7 +366,6 @@ class SiteConfig extends ISiteConfig {
 
 		$this->savedCategoryRegexp = "@{$category}@";
 		$this->savedRedirectRegexp = "@{$redirect}@";
-		$this->savedBswRegexp = "@{$bswRegexp}@";
 	}
 
 	public function galleryOptions(): array {
@@ -531,22 +530,14 @@ class SiteConfig extends ISiteConfig {
 	/** @inheritDoc */
 	public function getMWConfigValue( string $key ) {
 		$this->loadSiteData();
-		switch ( $key ) {
-			// Hardcoded values for these 2 keys
-			case 'CiteResponsiveReferences':
-				return $this->siteData['citeresponsivereferences'] ?? false;
-
-			case 'CiteResponsiveReferencesThreshold':
-				return 10;
-
-			case 'ParsoidExperimentalParserFunctionOutput':
-				return $this->v3pf;
-
+		return match ( $key ) {
+			'CiteResponsiveReferences' => $this->siteData['citeresponsivereferences'] ?? false,
+			'CiteResponsiveReferencesThreshold' => 10,
+			'ParsoidExperimentalParserFunctionOutput' => $this->v3pf,
 			// We can add more hardcoded keys based on testing needs
 			// but null is the default for keys unsupported in this mode.
-			default:
-				return null;
-		}
+			default => null
+		};
 	}
 
 	public function rtl(): bool {
@@ -614,11 +605,6 @@ class SiteConfig extends ISiteConfig {
 		return $this->savedCategoryRegexp;
 	}
 
-	public function bswRegexp(): string {
-		$this->loadSiteData();
-		return $this->savedBswRegexp;
-	}
-
 	public function timezoneOffset(): int {
 		$this->loadSiteData();
 		return $this->siteData['timeoffset'];
@@ -639,6 +625,12 @@ class SiteConfig extends ISiteConfig {
 	protected function getVariableIDs(): array {
 		$this->loadSiteData();
 		return $this->apiVariables;
+	}
+
+	/** @inheritDoc */
+	protected function getDoubleUnderscoreIDs(): array {
+		$this->loadSiteData();
+		return $this->apiDoubleUnderscores;
 	}
 
 	/** @inheritDoc */

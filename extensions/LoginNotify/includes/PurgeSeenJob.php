@@ -3,15 +3,13 @@
 namespace LoginNotify;
 
 use MediaWiki\JobQueue\Job;
-use MediaWiki\Title\Title;
 
 class PurgeSeenJob extends Job {
 	public function __construct(
-		Title $title,
 		array $params,
 		private readonly LoginNotify $loginNotify,
 	) {
-		parent::__construct( 'LoginNotifyPurgeSeen', $title, $params );
+		parent::__construct( 'LoginNotifyPurgeSeen', $params );
 	}
 
 	/** @inheritDoc */

@@ -6,11 +6,16 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\ContentHandler;
+use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\DB\CloneDatabase;
 use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\ExternalStore\ExternalStore;
+use MediaWiki\ExternalStore\ExternalStoreDB;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\JobQueue\JobQueueMemory;
 use MediaWiki\Language\Language;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LegacyLogger;
 use MediaWiki\Logger\LegacySpi;
@@ -20,6 +25,7 @@ use MediaWiki\Logger\LoggingContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\Permissions\Authority;
@@ -29,8 +35,10 @@ use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\RevisionDelete\RevisionDeleter;
 use MediaWiki\SiteStats\SiteStatsInit;
 use MediaWiki\Storage\PageUpdateStatus;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -213,6 +221,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	private static WeakMap $originalTablePrefixes;
 	private static WeakMap $curTestClasses;
 	private static WeakMap $activeSchemaOverrides;
+
+	/** @var string[] */
+	private array $warningsToPrint = [];
 
 	/**
 	 * @stable to call
@@ -548,6 +559,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 
 		// Invalidate any Title objects cached by newFromText() or isMainPage() (T395214).
 		Title::clearCaches();
+
+		// Clear accessKeyCache in case a test changed the language
+		Linker::$accesskeycache = [];
 	}
 
 	/**
@@ -669,11 +683,7 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		self::resetNonServiceCaches();
 
 		// T46192 Do not attempt to send a real e-mail
-		$this->setTemporaryHook( 'AlternateUserMailer',
-			static function () {
-				return false;
-			}
-		);
+		$this->setTemporaryHook( 'AlternateUserMailer', static fn () => false );
 		ob_start( 'MediaWikiIntegrationTestCase::wfResetOutputBuffersBarrier' );
 	}
 
@@ -808,15 +818,21 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		$this->localServices = null;
 
 		// Reset context user, which is probably 127.0.0.1, as its loaded
-		// data is probably not valid. This used to manipulate $wgUser but
-		// since that is deprecated tests are more likely to be relying on
-		// RequestContext::getMain() instead.
+		// data is probably not valid.
 		// @todo Should we start setting the user to something nondeterministic
 		//  to encourage tests to be updated to not depend on it?
 		$user = RequestContext::getMain()->getUser();
 		// This has to happen after restoreMwServices(), as it depends on various services actually
 		// working and not being poorly mocked, e.g. SessionManager.
 		$user->clearInstanceCache( $user->mFrom );
+
+		// Output any test warnings at the end of the run, so they're visible but not disruptive.
+		if ( $this->warningsToPrint ) {
+			print( "Some tests raised warnings:\n" );
+			foreach ( $this->warningsToPrint as $warning ) {
+				print( $warning );
+			}
+		}
 	}
 
 	/**
@@ -1400,6 +1416,18 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 			'HttpRequestFactory',
 			static function ( MediaWikiServices $services ) {
 				return new NullHttpRequestFactory();
+			}
+		);
+
+		// Prevent CDN cache purge side effects from tests
+		$newServices->resetServiceForTesting( 'HTMLCacheUpdater' );
+		$newServices->redefineService(
+			'HTMLCacheUpdater',
+			static function ( MediaWikiServices $services ) {
+				return new NullHTMLCacheUpdater(
+					$services->getHookContainer(),
+					$services->getTitleFactory()
+				);
 			}
 		);
 
@@ -2386,16 +2414,10 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	 * @since 1.20
 	 *
 	 * @param array $elements
-	 *
-	 * @return array
+	 * @return array[]
 	 */
 	protected static function arrayWrap( array $elements ) {
-		return array_map(
-			static function ( $element ) {
-				return [ $element ];
-			},
-			$elements
-		);
+		return array_map( static fn ( $element ) => [ $element ], $elements );
 	}
 
 	/**
@@ -2463,7 +2485,7 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 			NS_HELP,
 			NS_PROJECT,
 			// prefer non-talk pages
-			...array_filter( $nsInfo->getValidNamespaces(), static fn ( $i ) => !$nsInfo->isTalk( $i ) ),
+			...array_filter( $nsInfo->getValidNamespaces(), $nsInfo->isSubject( ... ) ),
 			...$nsInfo->getValidNamespaces(),
 		] );
 
@@ -2653,7 +2675,7 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		$services = $this->getServiceContainer();
 		if ( $page instanceof WikiPage ) {
 			return $page;
-		} elseif ( $page instanceof PageIdentity ) {
+		} elseif ( $page instanceof PageReference ) {
 			return $services->getWikiPageFactory()->newFromTitle( $page );
 		} elseif ( $page instanceof LinkTarget ) {
 			return $services->getWikiPageFactory()->newFromLinkTarget( $page );
@@ -2671,9 +2693,12 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	protected function deletePage( $page, string $summary = '', ?Authority $deleter = null ): void {
 		$page = $this->makeWikiPage( $page );
 		$deleter ??= new UltimateAuthority( new UserIdentityValue( 0, 'MediaWiki default' ) );
-		MediaWikiServices::getInstance()->getDeletePageFactory()
+		$res = MediaWikiServices::getInstance()->getDeletePageFactory()
 			->newDeletePage( $page, $deleter )
 			->deleteUnsafe( $summary );
+		if ( !$res->isGood() ) {
+			$this->fail( "Could not delete page:\n$res" );
+		}
 	}
 
 	/**
@@ -2696,13 +2721,17 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		// Make sure the context user is set to a named user account, otherwise
 		// ::createList will fail when temp accounts are enabled, because
 		// that generates a log entry which requires a named or temp account actor
-		RequestContext::getMain()->setUser( $this->getTestUser()->getUser() );
-		RevisionDeleter::createList(
-			'revision', RequestContext::getMain(), $rev->getPage(), [ $rev->getId() ]
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setAuthority( new UltimateAuthority( $this->getTestSysop()->getUser() ) );
+		$res = RevisionDeleter::createList(
+			'revision', $context, $rev->getPage(), [ $rev->getId() ]
 		)->setVisibility( [
 			'value' => $value,
 			'comment' => $comment,
 		] );
+		if ( !$res->isGood() ) {
+			$this->fail( "Could not perform revision delete:\n$res" );
+		}
 	}
 
 	/**
@@ -2727,14 +2756,14 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	 * of jobs gets applied before trying to run jobs.
 	 *
 	 * @param array $assertOptions An associative array with the following options:
-	 *    - minJobs: The minimum number of jobs expected to be run, default 1
-	 *    - numJobs: The exact number of jobs expected to be run. If set, this
-	 *      overrides minJobs.
-	 *    - complete: Assert that the runner finished with "none-ready", which
-	 *      means execution stopped because the queue was empty. Default true.
-	 *    - ignoreErrorsMatchingFormat: Allow job errors where the error message
-	 *      matches the given format.
-	 * @param array $runOptions Options to pass through to JobRunner::run()
+	 *  - minJobs: The minimum number of jobs expected to be run, default 1
+	 *  - numJobs: The exact number of jobs expected to be run. If set, this
+	 *    overrides minJobs.
+	 *  - complete: Assert that the runner finished with "none-ready", which
+	 *    means execution stopped because the queue was empty. Default true.
+	 *  - ignoreErrorsMatchingFormat: Allow job errors where the error message
+	 *    matches the given format.
+	 * @param array $runOptions Options to pass through to {@link JobRunner::run()}
 	 *
 	 * @since 1.37
 	 */
@@ -2773,5 +2802,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 					"Error for job of type {$jobStatus['type']}" );
 			}
 		}
+	}
+
+	protected function addEndOfRunTestWarning( string $message ): void {
+		$this->warningsToPrint[] = $message;
 	}
 }

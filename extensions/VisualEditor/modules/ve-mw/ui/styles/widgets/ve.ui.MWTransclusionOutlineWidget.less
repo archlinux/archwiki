@@ -1,17 +1,6 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
-@selected-text-color: @color-progressive;
-// This shade on a white background results in #eaf3ff a.k.a. @background-color-progressive-subtle
-@selected-shading: rgba( 0, 109, 255, 0.082 );
-
-// This shade on a white background results in #eaecf0 a.k.a. @background-color-interactive
-@hover-shading: @background-color-button-quiet--active;
-
-@on-click-text-color: @color-progressive;
-// Same as .oo-ui-optionWidget-pressed, a.k.a. @background-color-primary--hover
-@on-click-shading: rgba( 41, 98, 204, 0.1 );
-
 .ve-ui-mwTransclusionOutlineWidget {
 	.ve-ui-mwTransclusionOutline-ariaHidden {
 		display: none;
@@ -42,31 +31,34 @@
 				display: block;
 				overflow: hidden;
 				padding: 8px 0 8px 36px;
+				// Remove border radius. Border is removed in hover/active states.
+				border-radius: 0;
 				text-overflow: ellipsis;
-
-				&:hover,
-				&:focus {
-					background-color: @hover-shading;
-				}
-
-				/* click */
-				&:active {
-					background-color: @on-click-shading;
-					color: @on-click-text-color;
-				}
 
 				> .oo-ui-iconElement-icon {
 					left: 10px;
 				}
 			}
 
-			/* selected */
-			&.oo-ui-optionWidget-selected > .oo-ui-buttonElement-button {
-				background-color: @selected-shading;
+			// Color styles copied from OO.ui.OutlineOptionWidget with some adjustments:
+			// - .oo-ui-optionWidget-highlighted is replaced with :hover
+			// - border color is removed
+			&:hover {
+				> .oo-ui-buttonElement-button {
+					background-color: @background-color-interactive;
+					color: @color-emphasized;
+					border-color: transparent;
+				}
+			}
 
-				&:hover {
-					background-color: @hover-shading;
-					color: @selected-text-color;
+			// Color styles copied from OO.ui.OutlineOptionWidget with some adjustments:
+			// - .oo-ui-optionWidget-pressed is replaced with .oo-ui-buttonElement-pressed
+			&.oo-ui-optionWidget-selected,
+			&.oo-ui-buttonElement-pressed {
+				> .oo-ui-buttonElement-button {
+					background-color: @background-color-progressive-subtle;
+					color: @color-progressive;
+					border-color: transparent;
 				}
 			}
 		}
@@ -107,10 +99,8 @@
 		margin: -4px 24px 0 24px;
 
 		.oo-ui-labelElement-label {
-			word-break: break-word;
-			word-wrap: break-word;
-			overflow-wrap: break-word;
 			white-space: normal;
+			overflow-wrap: break-word;
 		}
 	}
 
@@ -127,25 +117,23 @@
 		padding-top: 8px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		transition-property: background-color, color;
+		transition-duration: @transition-duration-base;
 
-		/* click */
-		&:active {
-			background-color: @on-click-shading;
-			color: @on-click-text-color;
-		}
-
-		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage {
-			background-color: @selected-shading;
-
-			&,
-			&.oo-ui-optionWidget-highlighted {
-				color: @selected-text-color;
-			}
-		}
-
+		// Color styles copied from OO.ui.OutlineOptionWidget:
 		&.oo-ui-optionWidget-highlighted {
-			background-color: @hover-shading;
+			background-color: @background-color-interactive;
 			color: @color-emphasized;
+		}
+
+		// Color styles copied from OO.ui.OutlineOptionWidget with some adjustments:
+		// - .oo-ui-optionWidget-selected is replaced with
+		//   .ve-ui-mwTransclusionOutlineParameterWidget-activePage so
+		//   that only the active page is highlighted, not all used parameters.
+		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage,
+		&.oo-ui-optionWidget-pressed {
+			background-color: @background-color-progressive-subtle;
+			color: @color-progressive;
 		}
 
 		&-hasValue {

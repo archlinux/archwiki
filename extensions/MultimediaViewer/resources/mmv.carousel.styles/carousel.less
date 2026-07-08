@@ -1,0 +1,81 @@
+@import 'mediawiki.skin.variables.less';
+@height-carousel: 175px;
+// Reserve space for the scrollbar. Scrollbar height is determined by browser
+@space-placeholder-scrollbar: @spacing-100;
+
+.mmv-carousel {
+	background: @background-color-neutral-subtle;
+	border-bottom: @border-width-base @border-style-base @border-color-subtle;
+	margin-top: @spacing-50;
+	margin-bottom: @space-placeholder-scrollbar + @spacing-50;
+	height: @height-carousel;
+
+	&__viewport {
+		overflow: auto hidden;
+		height: @size-full;
+	}
+
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+	&__items {
+		display: flex;
+		align-items: center;
+		list-style: none;
+		margin: 0;
+		height: @size-full;
+		gap: @spacing-35;
+	}
+
+	&__item {
+		flex: 0 0 auto;
+		cursor: pointer;
+		height: @size-full;
+
+		&-link {
+			display: block;
+			height: @size-full;
+
+			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+			&:focus-visible {
+				outline-offset: -2px;
+			}
+		}
+
+		&-image {
+			display: block;
+			height: @size-full;
+			width: auto;
+			object-fit: cover;
+			border-radius: @border-radius-base;
+			border: @border-subtle;
+			aspect-ratio: 105/104;
+			box-sizing: border-box;
+		}
+	}
+}
+
+// Override Minerva styles
+.content {
+	ul.mmv-carousel__items {
+		list-style-type: none;
+		padding-left: 0;
+		padding-inline: 0;
+	}
+
+	li.mmv-carousel__item {
+		margin-bottom: 0;
+	}
+
+	a > img.mmv-carousel__item-image {
+		/* stylelint-disable-next-line declaration-no-important */
+		max-width: unset !important;
+		/* stylelint-disable-next-line declaration-no-important */
+		height: @size-full !important;
+	}
+}
+
+// Override MMV wrapper styles. The element is no longer a positioned element
+// and therefore other CSS properties such as top, right, bottom, left, and
+// z-index will no longer have an effect.
+.mw-mmv-wrapper.mmv-carousel {
+	position: static;
+}

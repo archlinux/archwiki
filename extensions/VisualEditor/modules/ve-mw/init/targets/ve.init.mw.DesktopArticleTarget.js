@@ -227,7 +227,7 @@ ve.init.mw.DesktopArticleTarget.prototype.setupToolbar = function ( surface ) {
 	const mode = surface.getMode(),
 		wasSetup = !!this.toolbar;
 
-	ve.track( 'trace.setupToolbar.enter', { mode: mode } );
+	ve.track( 'trace.setupToolbar.enter', { mode } );
 
 	// Parent method
 	ve.init.mw.DesktopArticleTarget.super.prototype.setupToolbar.call( this, surface );
@@ -237,25 +237,23 @@ ve.init.mw.DesktopArticleTarget.prototype.setupToolbar = function ( surface ) {
 	// Allow the toolbar to start floating now if necessary
 	this.onContainerScroll();
 
-	ve.track( 'trace.setupToolbar.exit', { mode: mode } );
+	ve.track( 'trace.setupToolbar.exit', { mode } );
 	if ( !wasSetup ) {
 		toolbar.$element
-			.addClass( 've-init-mw-desktopArticleTarget-toolbar-open' );
-		if ( !toolbar.isFloating() ) {
-			toolbar.$element.css( 'height', '' );
-		}
+			.addClass( 've-init-mw-desktopArticleTarget-toolbar-open' )
+			.css( 'height', '' );
 		this.toolbarSetupDeferred.resolve();
 
 		this.toolbarSetupDeferred.then( () => {
 			const newSurface = this.getSurface();
 			// Check the surface wasn't torn down while the toolbar was animating
 			if ( newSurface ) {
-				ve.track( 'trace.initializeToolbar.enter', { mode: mode } );
+				ve.track( 'trace.initializeToolbar.enter', { mode } );
 				this.getToolbar().initialize();
 				newSurface.getView().emit( 'position' );
 				newSurface.getContext().updateDimensions();
-				ve.track( 'trace.initializeToolbar.exit', { mode: mode } );
-				ve.track( 'trace.activate.exit', { mode: mode } );
+				ve.track( 'trace.initializeToolbar.exit', { mode } );
+				ve.track( 'trace.activate.exit', { mode } );
 			}
 		} );
 	}
@@ -432,6 +430,7 @@ ve.init.mw.DesktopArticleTarget.prototype.afterActivate = function () {
 	$( 'html' )
 		// Remove ve-activating when loading for the first time,
 		// and when switching remove previous mode's class.
+		// All classes below must be removed in teardown
 		.removeClass( 've-activating ve-active-visual ve-active-source' )
 		.addClass( 've-active ve-active-' + this.getSurface().getMode() );
 
@@ -589,7 +588,7 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 	this.deactivatingDeferred = ve.createDeferred();
 	this.activating = false;
 	this.activatingDeferred.reject();
-	$( 'html' ).addClass( 've-deactivating' ).removeClass( 've-activated ve-active' );
+	$( 'html' ).addClass( 've-deactivating' ).removeClass( 've-activated ve-active ve-active-visual ve-active-source' );
 
 	this.emit( 'deactivate' );
 
@@ -718,15 +717,7 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 
 	this.activating = false;
 
-	// TODO: mwTocWidget should probably live in a ve.ui.MWSurface subclass
-	if ( mw.config.get( 'wgVisualEditorConfig' ).enableTocWidget ) {
-		surface.mwTocWidget = new ve.ui.MWTocWidget( this.getSurface() );
-		surface.once( 'destroy', () => {
-			surface.mwTocWidget.$element.remove();
-		} );
-	}
-
-	const metaList = this.getSurface().getModel().getDocument().getMetaList();
+	const metaList = surface.getModel().getDocument().getMetaList();
 
 	metaList.connect( this, {
 		insert: 'onMetaItemInserted',
@@ -862,6 +853,7 @@ ve.init.mw.DesktopArticleTarget.prototype.saveComplete = function ( data ) {
 				wgRevisionId: data.newrevid
 			} );
 
+			mw.config.set( 'wgPostEdit', 'saved' );
 			// Actually fire the postEdit hook, now that the save is complete
 			require( 'mediawiki.action.view.postEdit' ).fireHook( 'saved' );
 		}
@@ -951,7 +943,7 @@ ve.init.mw.DesktopArticleTarget.prototype.teardownToolbar = function () {
 		this.toolbar.$element
 			.css( 'height', '0' )
 			.addClass( 've-init-mw-desktopArticleTarget-toolbar-close' );
-		this.toolbar.$element.one( 'transitionend', () => {
+		ve.waitForTransition( this.toolbar.$element, () => {
 			// Parent method
 			ve.init.mw.DesktopArticleTarget.super.prototype.teardownToolbar.call( this );
 			deferred.resolve();
@@ -1474,7 +1466,7 @@ ve.init.mw.DesktopArticleTarget.prototype.reloadSurface = function ( newMode ) {
 	// Parent method
 	ve.init.mw.DesktopArticleTarget.super.prototype.reloadSurface.apply( this, arguments );
 
-	this.activatingDeferred.then( () => {
+	const promise = this.activatingDeferred.then( () => {
 		if ( newMode === 'source' ) {
 			mw.hook( 've.wikitextInteractive' ).fire();
 		}
@@ -1484,6 +1476,7 @@ ve.init.mw.DesktopArticleTarget.prototype.reloadSurface = function ( newMode ) {
 		this.setupTriggerListeners();
 	} );
 	this.toolbarSetupDeferred.resolve();
+	return promise;
 };
 
 /* Registration */

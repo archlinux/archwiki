@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"Aca"
+			"Aca",
+			"Winston Sung"
 		]
 	},
 	"apihelp-echomarkread-summary": "Označi sva obavještenja kao pročitana za trenutni korisnik.",

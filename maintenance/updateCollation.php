@@ -1,7 +1,8 @@
 <?php
 /**
- * Find all rows in the categorylinks table whose collation is out-of-date
- * (collation_name != $wgCategoryCollation) and repopulate cl_sortkey
+ * Find all rows in the configured source table (default: categorylinks)
+ * whose collation is out-of-date (collation_name != $wgCategoryCollation)
+ * and repopulate cl_sortkey
  * using the page title and cl_sortkey_prefix.
  *
  * @license GPL-2.0-or-later
@@ -14,19 +15,20 @@
 require_once __DIR__ . '/Maintenance.php';
 // @codeCoverageIgnoreEnd
 
+use MediaWiki\Collation\Collation;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * Maintenance script that will find all rows in the categorylinks table
- * whose collation is out-of-date.
+ * Maintenance script that will find all rows in the configured source table
+ * (default: categorylinks) whose collation is out-of-date.
  *
  * @ingroup Maintenance
  */
@@ -55,9 +57,12 @@ class UpdateCollation extends Maintenance {
 	/** @var string|null */
 	private $targetTable;
 
+	/** @var string */
+	private $table;
+
 	private bool $normalization = false;
 
-	/** @var IDatabase */
+	/** @var IReadableDatabase */
 	private $dbr;
 
 	/** @var IMaintainableDatabase */
@@ -89,7 +94,10 @@ TEXT
 			'use instead of $wgCategoryCollation. Usually you should not use this, ' .
 			'you should just update $wgCategoryCollation in LocalSettings.php.',
 			false, true );
-		$this->addOption( 'target-table', 'Copy rows from categorylinks into the ' .
+		$this->addOption( 'table', 'Table relative to which updates are generated. This ' .
+			'table will be updated in place, unless --target-table is set. Defaults to ' .
+			'categorylinks.', false, true );
+		$this->addOption( 'target-table', 'Copy rows from table into the ' .
 			'specified table instead of updating them in place.', false, true );
 		$this->addOption( 'only-migrate-normalization', 'Only backfill cl_collation_id ' .
 			'field from cl_collation', false );
@@ -134,8 +142,9 @@ TEXT
 		$this->force = $this->getOption( 'force' );
 		$this->dryRun = $this->getOption( 'dry-run' );
 		$this->verboseStats = $this->getOption( 'verbose-stats' );
-		$this->dbw = $this->getPrimaryDB();
+		$this->dbw = $this->getDB( DB_PRIMARY );
 		$this->dbr = $this->getReplicaDB();
+		$this->table = $this->getOption( 'table', 'categorylinks' );
 		$this->targetTable = $this->getOption( 'target-table' );
 		$this->normalization = $this->getOption( 'only-migrate-normalization', false );
 	}
@@ -154,7 +163,7 @@ TEXT
 				$this->output( "Creating table {$this->targetTable}\n" );
 				$this->dbw->query(
 					'CREATE TABLE ' . $this->dbw->tableName( $this->targetTable ) .
-					' LIKE ' . $this->dbw->tableName( 'categorylinks' ),
+					' LIKE ' . $this->dbw->tableName( $this->table ),
 					__METHOD__
 				);
 			}
@@ -188,7 +197,7 @@ TEXT
 					'cl_from', 'cl_target_id', 'cl_sortkey_prefix', 'cl_sortkey', $clType,
 					'cl_timestamp', 'collation_name', 'page_namespace', 'page_title'
 				] )
-				->from( 'categorylinks' )
+				->from( $this->table )
 				->join( 'collation', null, 'cl_collation_id = collation_id' )
 				// per T58041
 				->straightJoin( 'page', null, 'cl_from = page_id' )
@@ -232,7 +241,7 @@ TEXT
 	 */
 	private function updateBatch( IResultWrapper $res ) {
 		if ( !$this->dryRun ) {
-			$this->beginTransaction( $this->dbw, __METHOD__ );
+			$this->beginTransactionRound( __METHOD__ );
 		}
 		foreach ( $res as $row ) {
 			$title = Title::newFromRow( $row );
@@ -266,7 +275,7 @@ TEXT
 			} else {
 				$collationId = $this->collationNameStore->acquireId( $this->collationName );
 				$this->dbw->newUpdateQueryBuilder()
-					->update( 'categorylinks' )
+					->update( $this->table )
 					->set( [
 						'cl_sortkey' => $newSortKey,
 						'cl_sortkey_prefix' => $prefix,
@@ -281,7 +290,7 @@ TEXT
 			}
 		}
 		if ( !$this->dryRun ) {
-			$this->commitTransaction( $this->dbw, __METHOD__ );
+			$this->commitTransactionRound( __METHOD__ );
 		}
 	}
 
@@ -319,14 +328,14 @@ TEXT
 		if ( $this->dryRun ) {
 			$this->numRowsProcessed += count( $rowsToInsert );
 		} else {
-			$this->beginTransaction( $this->dbw, __METHOD__ );
+			$this->beginTransactionRound( __METHOD__ );
 			$this->dbw->newInsertQueryBuilder()
 				->insertInto( $this->targetTable )
 				->ignore()
 				->rows( $rowsToInsert )
 				->caller( __METHOD__ )->execute();
 			$this->numRowsProcessed += $this->dbw->affectedRows();
-			$this->commitTransaction( $this->dbw, __METHOD__ );
+			$this->commitTransactionRound( __METHOD__ );
 		}
 	}
 
@@ -371,7 +380,6 @@ TEXT
 			}
 			$val = $this->sizeHistogram[$i] ?? 0;
 			for ( $coarseIndex = 0; $coarseIndex < $numBins - 1; $coarseIndex++ ) {
-				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 				if ( $coarseBoundaries[$coarseIndex] > $i ) {
 					$coarseHistogram[$coarseIndex] += $val;
 					break;
@@ -390,7 +398,6 @@ TEXT
 		$prevBoundary = 0;
 		for ( $coarseIndex = 0; $coarseIndex < $numBins; $coarseIndex++ ) {
 			$val = $coarseHistogram[$coarseIndex] ?? 0;
-			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 			$boundary = $coarseBoundaries[$coarseIndex];
 			$this->output(
 				sprintf( "%-10s %-10d |%s\n",
@@ -404,11 +411,11 @@ TEXT
 	}
 
 	private function runNormalizationMigration() {
-		if ( !$this->dbw->fieldExists( 'categorylinks', 'cl_collation', __METHOD__ ) ) {
+		if ( !$this->dbw->fieldExists( $this->table, 'cl_collation', __METHOD__ ) ) {
 			$this->output( "The cl_collation column appears to already be normalized. Skipping.\n" );
 			return;
 		}
-		if ( !$this->dbw->fieldExists( 'categorylinks', 'cl_collation_id', __METHOD__ ) ) {
+		if ( !$this->dbw->fieldExists( $this->table, 'cl_collation_id', __METHOD__ ) ) {
 			$this->output( "The cl_collation_id column doesn't exist. Run update.php to create it.\n" );
 			return;
 		}
@@ -430,7 +437,7 @@ TEXT
 			$res = $this->dbw->newSelectQueryBuilder()
 				->select( [ 'cl_collation' ] )
 				->distinct()
-				->from( 'categorylinks' )
+				->from( $this->table )
 				->where( [ 'cl_collation_id' => 0 ] )
 				->andWhere(
 					$this->dbw->expr( 'cl_from', '>=', $batchValue )
@@ -444,7 +451,7 @@ TEXT
 					$collationName = $row->cl_collation;
 					$collationId = $this->collationNameStore->acquireId( $collationName );
 					$this->dbw->newUpdateQueryBuilder()
-						->update( 'categorylinks' )
+						->update( $this->table )
 						->set( [ 'cl_collation_id' => $collationId ] )
 						->where( [ 'cl_collation' => $collationName ] )
 						->andWhere(

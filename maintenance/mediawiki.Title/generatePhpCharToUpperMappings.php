@@ -29,12 +29,8 @@ class GeneratePhpCharToUpperMappings extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP;
-
-		$data = [];
-
 		$result = Shell::command(
-				[ 'node', $IP . '/maintenance/mediawiki.Title/generateJsToUpperCaseList.js' ]
+				[ 'node', MW_INSTALL_PATH . '/maintenance/mediawiki.Title/generateJsToUpperCaseList.js' ]
 			)
 			// Node allocates lots of memory
 			->limits( [ 'memory' => 1024 * 1024 ] )
@@ -49,6 +45,8 @@ class GeneratePhpCharToUpperMappings extends Maintenance {
 		'@phan-var string[] $jsUpperChars';
 
 		$contentLanguage = $this->getServiceContainer()->getContentLanguage();
+
+		$data = [];
 		for ( $i = 0; $i <= 0x10ffff; $i++ ) {
 			if ( $i >= 0xd800 && $i <= 0xdfff ) {
 				// Skip surrogate pairs
@@ -72,9 +70,9 @@ class GeneratePhpCharToUpperMappings extends Maintenance {
 			json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE )
 		) . "\n";
 		$outputPath = '/resources/src/mediawiki.Title/phpCharToUpper.json';
-		$file = fopen( $IP . $outputPath, 'w' );
+		$file = fopen( MW_INSTALL_PATH . $outputPath, 'w' );
 		if ( !$file ) {
-			$this->fatalError( "Unable to write file \"$IP$outputPath\"" );
+			$this->fatalError( "Unable to write file \"$outputPath\"" );
 		}
 		fwrite( $file, $mappingJson );
 

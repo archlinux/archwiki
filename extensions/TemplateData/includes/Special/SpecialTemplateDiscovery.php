@@ -2,15 +2,15 @@
 namespace MediaWiki\Extension\TemplateData\Special;
 
 use MediaWiki\Html\Html;
-use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 
 /**
  * @license GPL-2.0-or-later
  */
-class SpecialTemplateDiscovery extends SpecialPage {
+class SpecialTemplateDiscovery extends UnlistedSpecialPage {
 
 	public function __construct() {
-		parent::__construct( 'TemplateDiscovery', '', false );
+		parent::__construct( 'TemplateDiscovery' );
 	}
 
 	/**

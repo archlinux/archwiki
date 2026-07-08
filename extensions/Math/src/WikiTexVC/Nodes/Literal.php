@@ -5,8 +5,10 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseMethods;
+use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\BaseParsing;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\MathVariant;
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLarray;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmi;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmn;
@@ -15,20 +17,20 @@ use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmpadded;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmstyle;
 use MediaWiki\Extension\Math\WikiTexVC\TexUtil;
+use RuntimeException;
 
 class Literal extends TexNode {
 	private const CURLY_PATTERN = '/(?<start>[\\a-zA-Z\s]+)\{(?<arg>[^}]+)}/';
 
-	/** @var string */
-	private $arg;
 	/** @var string[] */
 	private $literals;
 	/** @var string[] */
 	private $extendedLiterals;
 
-	public function __construct( string $arg ) {
+	public function __construct(
+		private string $arg,
+	) {
 		parent::__construct( $arg );
-		$this->arg = $arg;
 		$this->literals = array_keys( TexUtil::getInstance()->getBaseElements()['is_literal'] );
 		$this->extendedLiterals = $this->literals;
 		array_push( $this->extendedLiterals, '\\infty', '\\emptyset' );
@@ -75,11 +77,11 @@ class Literal extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( $arguments = [], &$state = [] ) {
+	public function toMMLTree( $arguments = [], &$state = [] ): MMLbase {
 		if ( $this->arg === " " ) {
 			// Fixes https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Math/+/961711
 			// And they creation of empty mo elements.
-			return null;
+			return new MMLarray();
 		}
 		if ( isset( $state["intent-params"] ) ) {
 			foreach ( $state["intent-params"] as $intparam ) {
@@ -125,32 +127,42 @@ class Literal extends TexNode {
 		// Delimiters and operators should not be stretchy by default when used as literals
 		$noStretchArgs['stretchy'] ??= 'false';
 		$ret = $bm->checkAndParseOperator( $inputP, $this, $noStretchArgs, $operatorContent, $state, false );
-		if ( $ret ) {
+		if ( !$ret->isEmpty() ) {
 			return $ret;
 		}
 		// Sieve for mathchar07 chars
 		$bm = new BaseMethods();
 		$ret = $bm->checkAndParseMathCharacter( $inputP, $this, $arguments, $operatorContent, false );
-		if ( $ret ) {
+		if ( !$ret->isEmpty() ) {
 			return $ret;
 		}
 
 		// Sieve for Identifiers
 		$ret = $bm->checkAndParseIdentifier( $inputP, $this, $arguments, $operatorContent, false );
-		if ( $ret ) {
+		if ( !$ret->isEmpty() ) {
 			return $ret;
 		}
 		// Sieve for Delimiters
 		$ret = $bm->checkAndParseDelimiter( $input, $this, $noStretchArgs, $operatorContent );
-		if ( $ret ) {
+		if ( !$ret->isEmpty() ) {
 			return $ret;
 		}
 
+		$operatorContent = array_merge( $operatorContent ?? [], $state ?? [] );
+		try {
+			$cb = $this->getLocalCallback( $inputP, $arguments, $operatorContent, $state );
+		} catch ( RuntimeException ) {
+			// ignore exception
+			return new MMLarray();
+		}
+		if ( !$cb->isEmpty() ) {
+			return $cb;
+		}
 		// Sieve for Makros
 		$ret = BaseMethods::checkAndParse( $inputP, $arguments,
-			array_merge( $operatorContent ?? [], $state ?? [] ),
+			$operatorContent,
 			$this );
-		if ( $ret ) {
+		if ( !( $ret instanceof MMLarray ) || !$ret->isEmpty() ) {
 			return $ret;
 		}
 
@@ -162,7 +174,7 @@ class Literal extends TexNode {
 		$content = $this->changeUnicodeFontInput( $input, $state, $arguments );
 		if ( !( empty( $state['inHBox'] ) ) ) {
 			// No mi, if literal is from HBox
-			return $content;
+			return new MMLarray( $content );
 		}
 		// If falling through all sieves just creates an mi element
 
@@ -231,4 +243,23 @@ class Literal extends TexNode {
 		$this->arg .= $text;
 	}
 
+	protected function limits(): never {
+		throw new RuntimeException( 'limits should not be rendered explicitly' );
+	}
+
+	protected function namedFn( array $passedArgs, array $operatorContent,
+							  string $input, array $cb, array &$state ): MMLbase {
+		// Determine whether the named function should have an added apply function. The state is defined in
+		// parsing of TexArray
+		$applyFct = BaseParsing::getApplyFct( $operatorContent );
+		return new MMLarray( new MMLmi( "", $passedArgs, ltrim( $input, '\\' ) ), $applyFct );
+	}
+
+	protected function namedOp( array $passedArgs, array $operatorContent,
+							  string $input, array $cb, array &$state ): MMLbase {
+		/* Determine whether the named function should have an added apply function. The operatorContent is defined
+		 as state in parsing of TexArray */
+		$applyFct = BaseParsing::getApplyFct( $operatorContent );
+		return new MMLarray( new MMLmo( "", $passedArgs, $cb[1] ?? ltrim( $input, '\\' ) ), $applyFct );
+	}
 }

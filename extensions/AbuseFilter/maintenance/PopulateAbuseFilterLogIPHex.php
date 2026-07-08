@@ -44,7 +44,7 @@ class PopulateAbuseFilterLogIPHex extends LoggedUpdateMaintenance {
 
 		$mainLb = $this->getServiceContainer()->getDBLoadBalancerFactory()->getMainLB();
 		$maintainableDb = $mainLb->getMaintenanceConnectionRef( DB_PRIMARY );
-		if ( !$maintainableDb->fieldExists( 'abuse_filter_log', 'afl_ip' ) ) {
+		if ( !$maintainableDb->fieldExists( 'abuse_filter_log', 'afl_ip', __METHOD__ ) ) {
 			$this->output( "Nothing to do as afl_ip does not exist in abuse_filter_log.\n" );
 			return true;
 		}

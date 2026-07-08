@@ -100,7 +100,7 @@ ve.ui.MWMetaDialog.prototype.getAllWidgets = function () {
 				const widget = item.fieldWidget;
 				// we can recheck the value
 				widgetList.push( {
-					widget: widget,
+					widget,
 					name: pageName + '/' + fieldsetIndex + '/' + itemIndex,
 					hasChildren: widget.items !== undefined
 				} );
@@ -200,7 +200,7 @@ ve.ui.MWMetaDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'done' ) {
 		return new OO.ui.Process( () => {
 			surfaceModel.applyStaging();
-			this.close( { action: action } );
+			this.close( { action } );
 		} );
 	}
 
@@ -234,7 +234,7 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data = {} ) {
 			surfaceModel.pushStaging();
 
 			const config = {
-				data: data,
+				data,
 				isReadOnly: this.isReadOnly()
 			};
 

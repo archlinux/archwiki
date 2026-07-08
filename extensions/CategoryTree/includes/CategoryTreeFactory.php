@@ -5,10 +5,10 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\Config;
 use MediaWiki\Language\Language;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class CategoryTreeFactory {

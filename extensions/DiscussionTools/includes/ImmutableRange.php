@@ -31,10 +31,6 @@ use Wikimedia\Parsoid\DOM\Text;
  */
 class ImmutableRange {
 	private ?Node $mCommonAncestorContainer = null;
-	private Node $mEndContainer;
-	private int $mEndOffset;
-	private Node $mStartContainer;
-	private int $mStartOffset;
 
 	/**
 	 * Find the common ancestor container of two nodes
@@ -93,12 +89,11 @@ class ImmutableRange {
 	}
 
 	public function __construct(
-		Node $startNode, int $startOffset, Node $endNode, int $endOffset
+		private Node $startNode,
+		private int $startOffset,
+		private Node $endNode,
+		private int $endOffset,
 	) {
-		$this->mStartContainer = $startNode;
-		$this->mStartOffset = $startOffset;
-		$this->mEndContainer = $endNode;
-		$this->mEndOffset = $endOffset;
 	}
 
 	/**
@@ -108,22 +103,22 @@ class ImmutableRange {
 	public function __get( string $field ) {
 		switch ( $field ) {
 			case 'collapsed':
-				return $this->mStartContainer === $this->mEndContainer &&
-					$this->mStartOffset === $this->mEndOffset;
+				return $this->startNode === $this->endNode &&
+					$this->startOffset === $this->endOffset;
 			case 'commonAncestorContainer':
 				if ( !$this->mCommonAncestorContainer ) {
 					$this->mCommonAncestorContainer =
-						static::findCommonAncestorContainer( $this->mStartContainer, $this->mEndContainer );
+						static::findCommonAncestorContainer( $this->startNode, $this->endNode );
 				}
 				return $this->mCommonAncestorContainer;
 			case 'endContainer':
-				return $this->mEndContainer;
+				return $this->endNode;
 			case 'endOffset':
-				return $this->mEndOffset;
+				return $this->endOffset;
 			case 'startContainer':
-				return $this->mStartContainer;
+				return $this->startNode;
 			case 'startOffset':
-				return $this->mStartOffset;
+				return $this->startOffset;
 			default:
 				throw new RuntimeException( 'Invalid property: ' . $field );
 		}
@@ -160,12 +155,12 @@ class ImmutableRange {
 
 		switch ( $type ) {
 			case 'start':
-				$endContainer = $this->mEndContainer;
-				$endOffset = $this->mEndOffset;
+				$endContainer = $this->endNode;
+				$endOffset = $this->endOffset;
 				if (
-					self::getRootNode( $this->mStartContainer ) !== self::getRootNode( $node ) ||
+					self::getRootNode( $this->startNode ) !== self::getRootNode( $node ) ||
 					$this->computePosition(
-						$node, $offset, $this->mEndContainer, $this->mEndOffset
+						$node, $offset, $this->endNode, $this->endOffset
 					) === 'after'
 				) {
 					$endContainer = $node;
@@ -177,12 +172,12 @@ class ImmutableRange {
 				);
 
 			case 'end':
-				$startContainer = $this->mStartContainer;
-				$startOffset = $this->mStartOffset;
+				$startContainer = $this->startNode;
+				$startOffset = $this->startOffset;
 				if (
-					self::getRootNode( $this->mStartContainer ) !== self::getRootNode( $node ) ||
+					self::getRootNode( $this->startNode ) !== self::getRootNode( $node ) ||
 					$this->computePosition(
-						$node, $offset, $this->mStartContainer, $this->mStartOffset
+						$node, $offset, $this->startNode, $this->startOffset
 					) === 'before'
 				) {
 					$startContainer = $node;
@@ -204,8 +199,8 @@ class ImmutableRange {
 	 * @param Node $node The Node to check against.
 	 */
 	private function isPartiallyContainedNode( Node $node ): bool {
-		return CommentUtils::contains( $node, $this->mStartContainer ) xor
-			CommentUtils::contains( $node, $this->mEndContainer );
+		return CommentUtils::contains( $node, $this->startNode ) xor
+			CommentUtils::contains( $node, $this->endNode );
 	}
 
 	/**
@@ -217,12 +212,12 @@ class ImmutableRange {
 	 * @param Node $node The Node to check against.
 	 */
 	private function isFullyContainedNode( Node $node ): bool {
-		return static::getRootNode( $node ) === static::getRootNode( $this->mStartContainer )
-			&& $this->computePosition( $node, 0, $this->mStartContainer, $this->mStartOffset ) === 'after'
+		return static::getRootNode( $node ) === static::getRootNode( $this->startNode )
+			&& $this->computePosition( $node, 0, $this->startNode, $this->startOffset ) === 'after'
 			&& $this->computePosition(
 				// @phan-suppress-next-line PhanUndeclaredProperty
 				$node, $node->length ?? $node->childNodes->length,
-				$this->mEndContainer, $this->mEndOffset
+				$this->endNode, $this->endOffset
 			) === 'before';
 	}
 
@@ -234,19 +229,19 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#dom-range-extractcontents
 	 */
 	public function extractContents(): DocumentFragment {
-		$fragment = $this->mStartContainer->ownerDocument->createDocumentFragment();
+		$fragment = $this->startNode->ownerDocument->createDocumentFragment();
 
 		if (
-			$this->mStartContainer === $this->mEndContainer
-			&& $this->mStartOffset === $this->mEndOffset
+			$this->startNode === $this->endNode
+			&& $this->startOffset === $this->endOffset
 		) {
 			return $fragment;
 		}
 
-		$originalStartNode = $this->mStartContainer;
-		$originalStartOffset = $this->mStartOffset;
-		$originalEndNode = $this->mEndContainer;
-		$originalEndOffset = $this->mEndOffset;
+		$originalStartNode = $this->startNode;
+		$originalStartOffset = $this->startOffset;
+		$originalEndNode = $this->endNode;
+		$originalEndOffset = $this->endOffset;
 
 		if (
 			$originalStartNode === $originalEndNode
@@ -356,10 +351,10 @@ class ImmutableRange {
 			$clone = $firstPartiallyContainedChild->cloneNode();
 			$fragment->appendChild( $clone );
 			$subrange = clone $this;
-			$subrange->mStartContainer = $originalStartNode;
-			$subrange->mStartOffset = $originalStartOffset;
-			$subrange->mEndContainer = $firstPartiallyContainedChild;
-			$subrange->mEndOffset = count( $firstPartiallyContainedChild->childNodes );
+			$subrange->startNode = $originalStartNode;
+			$subrange->startOffset = $originalStartOffset;
+			$subrange->endNode = $firstPartiallyContainedChild;
+			$subrange->endOffset = count( $firstPartiallyContainedChild->childNodes );
 			$subfragment = $subrange->extractContents();
 			$clone->appendChild( $subfragment );
 		}
@@ -384,18 +379,18 @@ class ImmutableRange {
 			$clone = $lastPartiallyContainedChild->cloneNode();
 			$fragment->appendChild( $clone );
 			$subrange = clone $this;
-			$subrange->mStartContainer = $lastPartiallyContainedChild;
-			$subrange->mStartOffset = 0;
-			$subrange->mEndContainer = $originalEndNode;
-			$subrange->mEndOffset = $originalEndOffset;
+			$subrange->startNode = $lastPartiallyContainedChild;
+			$subrange->startOffset = 0;
+			$subrange->endNode = $originalEndNode;
+			$subrange->endOffset = $originalEndOffset;
 			$subfragment = $subrange->extractContents();
 			$clone->appendChild( $subfragment );
 		}
 
-		$this->mStartContainer = $newNode;
-		$this->mStartOffset = $newOffset;
-		$this->mEndContainer = $newNode;
-		$this->mEndOffset = $newOffset;
+		$this->startNode = $newNode;
+		$this->startOffset = $newOffset;
+		$this->endNode = $newNode;
+		$this->endOffset = $newOffset;
 
 		return $fragment;
 	}
@@ -405,19 +400,19 @@ class ImmutableRange {
 	 * @see https://dom.spec.whatwg.org/#dom-range-clonecontents
 	 */
 	public function cloneContents(): DocumentFragment {
-		$ownerDocument = $this->mStartContainer->ownerDocument;
+		$ownerDocument = $this->startNode->ownerDocument;
 		$fragment = $ownerDocument->createDocumentFragment();
 
-		if ( $this->mStartContainer === $this->mEndContainer
-			&& $this->mStartOffset === $this->mEndOffset
+		if ( $this->startNode === $this->endNode
+			&& $this->startOffset === $this->endOffset
 		) {
 			return $fragment;
 		}
 
-		$originalStartContainer = $this->mStartContainer;
-		$originalStartOffset = $this->mStartOffset;
-		$originalEndContainer = $this->mEndContainer;
-		$originalEndOffset = $this->mEndOffset;
+		$originalStartContainer = $this->startNode;
+		$originalStartOffset = $this->startOffset;
+		$originalEndContainer = $this->endNode;
+		$originalEndOffset = $this->endOffset;
 
 		if ( $originalStartContainer === $originalEndContainer
 			&& ( $originalStartContainer instanceof Text
@@ -574,33 +569,33 @@ class ImmutableRange {
 	 * @param Node $node The Node to be inserted.
 	 */
 	public function insertNode( Node $node ): void {
-		if ( ( $this->mStartContainer instanceof ProcessingInstruction
-				|| $this->mStartContainer instanceof Comment )
-			|| ( $this->mStartContainer instanceof Text
-				&& $this->mStartContainer->parentNode === null )
+		if ( ( $this->startNode instanceof ProcessingInstruction
+				|| $this->startNode instanceof Comment )
+			|| ( $this->startNode instanceof Text
+				&& $this->startNode->parentNode === null )
 		) {
 			throw new DOMException();
 		}
 
 		$referenceNode = null;
 
-		if ( $this->mStartContainer instanceof Text ) {
-			$referenceNode = $this->mStartContainer;
+		if ( $this->startNode instanceof Text ) {
+			$referenceNode = $this->startNode;
 		} else {
 			$referenceNode = $this
-				->mStartContainer
+				->startNode
 				->childNodes
-				->item( $this->mStartOffset );
+				->item( $this->startOffset );
 		}
 
 		$parent = !$referenceNode
-			? $this->mStartContainer
+			? $this->startNode
 			: $referenceNode->parentNode;
 		// TODO: Restore this validation check?
 		// $parent->ensurePreinsertionValidity( $node, $referenceNode );
 
-		if ( $this->mStartContainer instanceof Text ) {
-			$referenceNode = $this->mStartContainer->splitText( $this->mStartOffset );
+		if ( $this->startNode instanceof Text ) {
+			$referenceNode = $this->startNode->splitText( $this->startOffset );
 		}
 
 		if ( $node === $referenceNode ) {
@@ -773,28 +768,28 @@ class ImmutableRange {
 	 * @return int -1, 0, or 1
 	 */
 	public function compareBoundaryPoints( int $how, self $sourceRange ): int {
-		if ( static::getRootNode( $this->mStartContainer ) !== static::getRootNode( $sourceRange->startContainer ) ) {
+		if ( static::getRootNode( $this->startNode ) !== static::getRootNode( $sourceRange->startContainer ) ) {
 			throw new DOMException();
 		}
 
 		switch ( $how ) {
 			case static::START_TO_START:
-				$thisPoint = [ $this->mStartContainer, $this->mStartOffset ];
+				$thisPoint = [ $this->startNode, $this->startOffset ];
 				$otherPoint = [ $sourceRange->startContainer, $sourceRange->startOffset ];
 				break;
 
 			case static::START_TO_END:
-				$thisPoint = [ $this->mEndContainer, $this->mEndOffset ];
+				$thisPoint = [ $this->endNode, $this->endOffset ];
 				$otherPoint = [ $sourceRange->startContainer, $sourceRange->startOffset ];
 				break;
 
 			case static::END_TO_END:
-				$thisPoint = [ $this->mEndContainer, $this->mEndOffset ];
+				$thisPoint = [ $this->endNode, $this->endOffset ];
 				$otherPoint = [ $sourceRange->endContainer, $sourceRange->endOffset ];
 				break;
 
 			case static::END_TO_START:
-				$thisPoint = [ $this->mStartContainer, $this->mStartOffset ];
+				$thisPoint = [ $this->startNode, $this->startOffset ];
 				$otherPoint = [ $sourceRange->endContainer, $sourceRange->endOffset ];
 				break;
 

@@ -2,7 +2,11 @@
 
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
-use MediaWiki\Tests\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\AnsiTermColorer;
+use MediaWiki\Tests\Common\Parser\ParserTestResult;
+use MediaWiki\Tests\Common\Parser\ParserTestRunner;
+use MediaWiki\Tests\Common\Parser\TestFileEditor;
+use MediaWiki\Tests\Common\Parser\TestRecorder;
 use Wikimedia\Diff\Diff;
 use Wikimedia\Diff\UnifiedDiffFormatter;
 use Wikimedia\Parsoid\ParserTests\Test as ParserTest;
@@ -267,7 +271,6 @@ class ParserEditTests extends Maintenance {
 
 		# XXX originally isSubtest was a way to edit the +tidy vs +untidy
 		# portions of the test separately (I believe)
-		// @phan-suppress-next-line PhanUndeclaredProperty
 		if ( !empty( $testInfo->isSubtest ) ) {
 			# FIXME: this is orphan code, will never be true
 			$specs[] = 'Delete [s]ubtest';

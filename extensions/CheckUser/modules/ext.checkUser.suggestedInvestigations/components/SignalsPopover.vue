@@ -43,13 +43,23 @@ module.exports = exports = {
 		const open = ref( true );
 
 		const signals = mw.config.get( 'wgCheckUserSuggestedInvestigationsSignals' );
-		// Uses messages which start with
-		// "checkuser-suggestedinvestigations-risk-signals-popover-body" such as:
-		// * checkuser-suggestedinvestigations-risk-signals-popover-body-dev-signal-1
-		// * checkuser-suggestedinvestigations-risk-signals-popover-body-dev-signal-2
-		const signalDescriptions = signals.map( ( signal ) => mw.message(
-			'checkuser-suggestedinvestigations-risk-signals-popover-body-' + signal
-		).parse() );
+		const signalDescriptions = signals.map( ( signal ) => {
+			if ( typeof signal !== 'string' ) {
+				if ( signal.description ) {
+					return signal.description;
+				}
+
+				signal = signal.name;
+			}
+
+			// Uses messages which start with
+			// "checkuser-suggestedinvestigations-risk-signals-popover-body" such as:
+			// * checkuser-suggestedinvestigations-risk-signals-popover-body-dev-signal-1
+			// * checkuser-suggestedinvestigations-risk-signals-popover-body-dev-signal-2
+			return mw.message(
+				'checkuser-suggestedinvestigations-risk-signals-popover-body-' + signal
+			).parse();
+		} );
 
 		let popoverHtml = mw.message( 'checkuser-suggestedinvestigations-risk-signals-popover-body-intro' ).escaped();
 		popoverHtml += '<ul>' +

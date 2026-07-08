@@ -44,15 +44,17 @@ ve.dm.MWDisplayTitleMetaItem.static.toDataElement = function ( domElements ) {
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 	const wt = ( ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' ) || '' ) ||
 		ve.getProp( mwData, 'parts', '0', 'parserfunction', 'params', '1', 'wt' );
+	const params = ve.getProp( mwData, 'parts', '0', 'template', 'params' );
 	const localizedPrefix = wt.split( ':' )[ 0 ];
 	const content = wt.slice( localizedPrefix.length + 1 );
-	return {
+	const data = {
 		type: this.name,
-		attributes: {
-			localizedPrefix: localizedPrefix,
-			content: content
-		}
+		attributes: { localizedPrefix, content }
 	};
+	if ( params ) {
+		data.attributes.params = params;
+	}
+	return data;
 };
 
 ve.dm.MWDisplayTitleMetaItem.static.toDomElements = function ( dataElement, doc ) {
@@ -71,6 +73,10 @@ ve.dm.MWDisplayTitleMetaItem.static.toDomElements = function ( dataElement, doc 
 				}
 			]
 		};
+
+	if ( dataElement.attributes.params ) {
+		mwData.parts[ 0 ].template.params = dataElement.attributes.params;
+	}
 
 	if ( !dataElement.originalDomElementsHash ) {
 		// If this is a new addition to the page, we need to enforce a newline:

@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Elisardojm"
+			"Elisardojm",
+			"Toliño"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Resposta ó CAPTCHA",
-	"captcha-apihelp-param-captchaid": "Identificador de CAPTCHA da consulta anterior"
+	"captcha-apihelp-param-captchaid": "Identificador de CAPTCHA da consulta anterior",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Indica se o CAPTCHA hCaptcha se mostrou á forza, como por exemplo a consecuencia da extensión do filtro de abusos (e, polo tanto, se se empregou unha clave de sitio máis restritiva). Define isto se a variable de configuración JS co mesmo nome é «true» ou se o primeiro intento de usar esta API devolveu un erro «forcecaptcha» cunha clave de sitio especificada."
 }

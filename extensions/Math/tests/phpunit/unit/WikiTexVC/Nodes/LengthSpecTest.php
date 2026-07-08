@@ -40,5 +40,11 @@ class LengthSpecTest extends MediaWikiUnitTestCase {
 	public function testRenderLengthSpecLong() {
 		$lengthSpec = new LengthSpec( null, [ [ '1', '2', '3' ], '.', [ '4', '5', '6' ] ], 'pt' );
 		$this->assertEquals( '[123.456pt]', $lengthSpec->render() );
+		$this->assertEquals( '123.456pt', $lengthSpec->getCssLength() );
+	}
+
+	public function testCss() {
+		$lengthSpec = new LengthSpec( '-', [ null, [ '4', '5', '6' ] ], 'pt' );
+		$this->assertEquals( '-456pt', $lengthSpec->getCssLength() );
 	}
 }

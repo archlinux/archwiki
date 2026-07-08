@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Math\Tests\WikiTexVC;
 
 use LogicException;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\WikiTexVC\ParserUtil;
 use MediaWiki\Extension\Math\WikiTexVC\SyntaxError;
 use MediaWiki\Extension\Math\WikiTexVC\TexVC;
@@ -313,6 +314,16 @@ class ApiTest extends MediaWikiUnitTestCase {
 	public function testPreProcessStdClass() {
 		$this->expectException( LogicException::class );
 		$this->texVC->preProcessInput( false, [], new StdClass() );
+	}
+
+	public function testColonEquals() {
+		$result = $this->texVC->check( ':=' );
+		$this->assertEquals( '+', $result['status'] );
+		$this->assertEquals( ':=', $result['output'] );
+		// Check that the parse tree contains a single Literal node with ':='
+		$firstChild = $result['input']->first();
+		$this->assertInstanceOf( Literal::class, $firstChild );
+		$this->assertEquals( ':=', $firstChild->getArg() );
 	}
 
 }

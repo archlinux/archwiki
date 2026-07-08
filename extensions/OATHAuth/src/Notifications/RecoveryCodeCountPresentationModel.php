@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
-use MediaWiki\Extension\OATHAuth\OATHAuthServices;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
@@ -44,7 +44,7 @@ class RecoveryCodeCountPresentationModel extends EchoEventPresentationModel {
 		$msg->params(
 			$this->event->getExtraParam(
 				'generatedCount',
-				OATHAuthServices::getInstance()->getConfig()->get( 'OATHRecoveryCodesCount' )
+				MediaWikiServices::getInstance()->getMainConfig()->get( 'OATHRecoveryCodesCount' )
 			)
 		);
 		return $msg;

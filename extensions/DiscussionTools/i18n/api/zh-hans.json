@@ -41,8 +41,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "要使用的修订编号（默认为最后修订）。",
 	"apihelp-discussiontoolspageinfo-param-prop": "要获取的属性：",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "在留言内排除用户签名（当使用<var>prop=threaditemshtml</var>时）。",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "使用<var>prop=threaditemshtml</var>时用于更改输出的标记",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "从页面解析的留言帖子的表示形式",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "已被嵌入的其他页面留言",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "使用<var>prop=threaditemshtml</var>时包含关于最旧和最新回复的额外活动数据。",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "使用<var>prop=threaditemshtml</var>时从留言排除用户签名。",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "使用<var>prop=threaditemshtml</var>时不包含完整回复树，仅提供顶级标题。",
 	"apihelp-discussiontoolspageinfo-summary": "返回初始化讨论工具所需的元数据。",
 	"apihelp-discussiontoolspreview-param-type": "要预览留言的类型",
 	"apihelp-discussiontoolspreview-param-wikitext": "要以wikitext预览的内容。",
@@ -52,5 +56,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true为订阅，false为取消订阅",
 	"apihelp-discussiontoolssubscribe-summary": "订阅（或取消订阅）来接收有关话题的通知。",
 	"apihelp-discussiontoolsthank-param-commentid": "要感谢的留言ID。",
-	"apihelp-discussiontoolsthank-summary": "发送公开的感谢留言通知。"
+	"apihelp-discussiontoolsthank-summary": "发送公开的感谢留言通知。",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "自动将用户订阅至由编辑创建的任何讨论页新主题。使用“yes”或“no”来覆盖用户的参数参数设置（默认值）。"
 }

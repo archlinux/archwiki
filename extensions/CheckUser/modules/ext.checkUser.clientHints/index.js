@@ -71,7 +71,7 @@
 							}
 						);
 					} else {
-						mw.errorLogger.logError( new Error( errMessage ), 'error.checkuser' );
+						logError( 'Unable to submit client hints', errMessage );
 						deferred.reject( err, errObject );
 					}
 				} );
@@ -83,7 +83,7 @@
 				errObject.xhr.responseJSON.messageTranslations ) {
 					errMessage = errObject.xhr.responseJSON.messageTranslations.en;
 				}
-				mw.errorLogger.logError( new Error( errMessage ), 'error.checkuser' );
+				logError( 'Unable to get token for recording client hints', errMessage );
 				deferred.reject( err, errObject );
 			} );
 			return deferred.promise();
@@ -115,9 +115,23 @@
 			} catch ( err ) {
 				// Handle NotAllowedError, if the browser throws it.
 				mw.log.error( err );
-				mw.errorLogger.logError( new Error( err ), 'error.checkuser' );
+				logError( 'Unable to collect high entropy client hints', err.toString() );
 				return Promise.reject( err );
 			}
+		}
+
+		/**
+		 * Logs error to Logstash
+		 *
+		 * @param {string} message A message, without varying parts (not to spam Logstash)
+		 * @param {string} originalMessage Original error message, will be added to the log context
+		 */
+		function logError( message, originalMessage ) {
+			const loggedError = new Error( message );
+			/* eslint-disable camelcase */
+			loggedError.error_context = { originalMessage };
+			/* eslint-enable camelcase */
+			mw.errorLogger.logError( loggedError, 'error.checkuser' );
 		}
 
 		// Collect and send Client Hints data if the user has just performed a

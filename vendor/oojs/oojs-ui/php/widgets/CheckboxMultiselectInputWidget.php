@@ -124,6 +124,9 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 					'name' => $name,
 					'value' => $optValue,
 					'disabled' => $this->isDisabled() || $optDisabled,
+					// Distinguish the option being disabled from the whole widget being disabled
+					// for generating infusion config (T405416)
+					'data' => [ 'optionDisabled' => $optDisabled ],
 				] ),
 				[
 					'label' => $opt['label'] ?? $optValue,
@@ -160,7 +163,7 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 			$options[] = [
 				'data' => $widget->getValue(),
 				'label' => $field->getLabel(),
-				'disabled' => $widget->isDisabled(),
+				'disabled' => $widget->getData()['optionDisabled'],
 			];
 		}
 		$config['options'] = $options;

@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Math\InputCheck;
 use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Http\MWHttpRequest;
 use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
 use RuntimeException;
@@ -140,7 +141,7 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 
 	private function setFakeRequest( $returnStatus, $content ): void {
 		$fakeHTTP = $this->createMock( HttpRequestFactory::class );
-		$fakeRequest = $this->createMock( \MWHttpRequest::class );
+		$fakeRequest = $this->createMock( MWHttpRequest::class );
 		$fakeRequest->expects( $this->once() )->method( 'execute' )->willReturn( true );
 		$fakeRequest->expects( $this->once() )->method( 'getStatus' )->willReturn( $returnStatus );
 		if ( $content ) {

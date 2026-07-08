@@ -63,7 +63,7 @@
 		form.toggle( false );
 
 		modulePromise.then( () => {
-			target = ve.init.mw.targetFactory.create( 'collab', title, conf.rebaserUrl, { importTitle: importTitle } );
+			target = ve.init.mw.targetFactory.create( 'collab', title, conf.rebaserURL, { importTitle } );
 			// If the target emits a 'close' event (via the toolbar back button on mobile) then go to the landing page.
 			target.once( 'close', () => {
 				showForm( true );
@@ -86,7 +86,7 @@
 			surfaceModel.createSynchronizer(
 				mw.config.get( 'wgWikiID' ) + '/' + title.toString(),
 				{
-					server: conf.rebaserUrl,
+					server: conf.rebaserURL,
 					// TODO: server could communicate with MW (via oauth?) to know the
 					// current-user's name. Disable changing name if logged in?
 					// Communicate an I-am-a-valid-user flag to other clients?

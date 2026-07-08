@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
-use DummyNonTextContent;
 use Generator;
 use MediaWiki\Content\Content;
 use MediaWiki\Content\TextContent;
@@ -14,6 +13,7 @@ use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Tests\Mocks\Content\DummyNonTextContent;
 use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 
@@ -41,7 +41,7 @@ class TextExtractorTest extends MediaWikiUnitTestCase {
 	public static function provideRevisionToString() {
 		yield 'no revision' => [ null, false, '' ];
 
-		$page = new PageIdentityValue( 1, NS_MAIN, 'Foo', PageIdentityValue::LOCAL );
+		$page = PageIdentityValue::localIdentity( 1, NS_MAIN, 'Foo' );
 		$revRec = new MutableRevisionRecord( $page );
 		$revRec->setContent( SlotRecord::MAIN, new TextContent( 'Main slot text.' ) );
 

@@ -3,6 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Core;
 
+use Composer\Semver\Semver;
+use Wikimedia\Assert\Assert;
 use Wikimedia\JsonCodec\JsonCodecable;
 use Wikimedia\JsonCodec\JsonCodecableTrait;
 use Wikimedia\Parsoid\DOM\Document;
@@ -41,17 +43,42 @@ class BasePageBundle implements JsonCodecable {
 		 */
 		public ?array $mw = null,
 		/**
-		 * @var ?string
+		 * Records the max counter values for different counter types
+		 * @var ?array{nodedata?:int,annotation?:int,transclusion?:int}
 		 */
+		public ?array $counters = null,
 		public ?string $version = null,
 		/**
 		 * A map of HTTP headers: both name and value should be strings.
 		 * @var ?array<string,string>
 		 */
 		public ?array $headers = null,
-		/** @var ?string */
 		public ?string $contentmodel = null,
 	) {
+		Assert::invariant(
+			!isset( $parsoid['counter'] ), "counter removed in Parsoid 0.23"
+		);
+	}
+
+	/**
+	 * Check if this pagebundle is valid.
+	 * @param string $contentVersion Document content version to validate against.
+	 * @param ?string &$errorMessage Error message will be returned here.
+	 * @return bool
+	 */
+	public function validate(
+		string $contentVersion, ?string &$errorMessage = null
+	) {
+		if ( !$this->parsoid || !isset( $this->parsoid['ids'] ) ) {
+			$errorMessage = 'Invalid data-parsoid was provided.';
+			return false;
+		} elseif ( Semver::satisfies( $contentVersion, '^999.0.0' )
+			&& ( !$this->mw || !isset( $this->mw['ids'] ) )
+		) {
+			$errorMessage = 'Invalid data-mw was provided.';
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -67,6 +94,7 @@ class BasePageBundle implements JsonCodecable {
 			fragments: $fragments,
 			parsoid: $this->parsoid,
 			mw: $this->mw,
+			counters: $this->counters,
 			version: $this->version,
 			headers: $this->headers,
 			contentmodel: $this->contentmodel,
@@ -87,6 +115,7 @@ class BasePageBundle implements JsonCodecable {
 			fragments: $fragments,
 			parsoid: $this->parsoid,
 			mw: $this->mw,
+			counters: $this->counters,
 			version: $this->version,
 			headers: $this->headers,
 			contentmodel: $this->contentmodel,
@@ -100,6 +129,7 @@ class BasePageBundle implements JsonCodecable {
 		return new BasePageBundle(
 			parsoid: $this->parsoid,
 			mw: $this->mw,
+			counters: $this->counters,
 			version: $this->version,
 			headers: $this->headers,
 			contentmodel: $this->contentmodel,
@@ -121,6 +151,7 @@ class BasePageBundle implements JsonCodecable {
 	public function hasContent(): bool {
 		return $this->parsoid !== null ||
 			$this->mw !== null ||
+			$this->counters !== null ||
 			$this->version !== null ||
 			$this->headers !== null ||
 			$this->contentmodel !== null;
@@ -133,6 +164,7 @@ class BasePageBundle implements JsonCodecable {
 		return [
 			'parsoid' => $this->parsoid,
 			'mw' => $this->mw,
+			'counters' => $this->counters,
 			'version' => $this->version,
 			'headers' => $this->headers,
 			'contentmodel' => $this->contentmodel,
@@ -141,14 +173,19 @@ class BasePageBundle implements JsonCodecable {
 
 	/** @inheritDoc */
 	public static function newFromJsonArray( array $json ): BasePageBundle {
-		// Forward-compatibility with Parsoid 0.23
-		if ( isset( $json['counters']['nodedata'] ) ) {
-			$json['parsoid']['counter'] = $json['counters']['nodedata'];
+		if ( isset( $json['parsoid']['counter'] ) ) {
+			// Backward compatibility with Parsoid < 0.23
+			$json['counters'] ??= [
+				'nodedata' => $json['parsoid']['counter'],
+				'annotation' => -1,
+				'transclusion' => -1,
+			];
+			unset( $json['parsoid']['counter'] );
 		}
 		return new BasePageBundle(
-			// @phan-suppress-next-line PhanTypeMismatchArgument
 			parsoid: $json['parsoid'] ?? null,
 			mw: $json['mw'] ?? null,
+			counters: $json['counters'] ?? null,
 			version: $json['version'] ?? null,
 			headers: $json['headers'] ?? null,
 			contentmodel: $json['contentmodel'] ?? null

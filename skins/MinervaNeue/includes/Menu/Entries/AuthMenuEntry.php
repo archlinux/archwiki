@@ -17,14 +17,14 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\User\UserIdentity;
-use MessageLocalizer;
 
 /**
  * Model for a menu entry that represents log-in / profile+logout pair of links
  */
 final class AuthMenuEntry extends CompositeMenuEntry implements IProfileMenuEntry {
-	private ProfileMenuEntry $profileMenuEntry;
+	private readonly ProfileMenuEntry $profileMenuEntry;
 
 	/**
 	 * Initialize the Auth menu entry
@@ -36,7 +36,7 @@ final class AuthMenuEntry extends CompositeMenuEntry implements IProfileMenuEntr
 	public function __construct(
 		UserIdentity $user,
 		MessageLocalizer $messageLocalizer,
-		array $authLinksQuery
+		array $authLinksQuery,
 	) {
 		$this->profileMenuEntry = new ProfileMenuEntry( $user );
 		$entries = $user->isRegistered()

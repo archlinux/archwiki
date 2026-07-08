@@ -24,40 +24,14 @@ class RendererFactory {
 		'MathValidModes',
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var MathConfig */
-	private $mathConfig;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	private WANObjectCache $cache;
-
-	/**
-	 * @param ServiceOptions $serviceOptions
-	 * @param MathConfig $mathConfig
-	 * @param UserOptionsLookup $userOptionsLookup
-	 * @param LoggerInterface $logger
-	 * @param WANObjectCache $cache
-	 */
 	public function __construct(
-		ServiceOptions $serviceOptions,
-		MathConfig $mathConfig,
-		UserOptionsLookup $userOptionsLookup,
-		LoggerInterface $logger,
-		WANObjectCache $cache
+		private readonly ServiceOptions $serviceOptions,
+		private readonly MathConfig $mathConfig,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly LoggerInterface $logger,
+		private readonly WANObjectCache $cache,
 	) {
 		$serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $serviceOptions;
-		$this->mathConfig = $mathConfig;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->logger = $logger;
-		$this->cache = $cache;
 	}
 
 	/**
@@ -77,7 +51,7 @@ class RendererFactory {
 		if ( !in_array( $mode, $this->mathConfig->getValidRenderingModes(), true ) ) {
 			$mode = $this->userOptionsLookup->getDefaultOption( 'math' );
 		}
-		if ( $this->options->get( 'MathEnableExperimentalInputFormats' ) === true &&
+		if ( $this->serviceOptions->get( 'MathEnableExperimentalInputFormats' ) === true &&
 			$mode == MathConfig::MODE_MATHML &&
 			isset( $params['type'] )
 		) {
@@ -120,7 +94,7 @@ class RendererFactory {
 				break;
 			case MathConfig::MODE_MATHML:
 			default:
-				if ( $this->options->get( 'MathoidCli' ) ) {
+				if ( $this->serviceOptions->get( 'MathoidCli' ) ) {
 					$renderer = new MathMathMLCli( $tex, $params, $this->cache );
 				} else {
 					$renderer = new MathMathML( $tex, $params, $this->cache );

@@ -1,4 +1,4 @@
-QUnit.module( 've.ui.MWTransclusionOutlineWidget' );
+QUnit.module( 've.ui.MWTransclusionOutlineWidget', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'Constructor', ( assert ) => {
 	const widget = new ve.ui.MWTransclusionOutlineWidget();

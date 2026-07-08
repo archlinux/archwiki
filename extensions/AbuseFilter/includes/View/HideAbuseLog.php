@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseLogPager;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Html\Html;
@@ -14,34 +14,27 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Permissions\PermissionManager;
 use Wikimedia\Rdbms\LBFactory;
 
 class HideAbuseLog extends AbuseFilterView {
 
-	private LBFactory $lbFactory;
-	private LinkBatchFactory $linkBatchFactory;
-	private PermissionManager $permissionManager;
-	private VariablesBlobStore $variablesBlobStore;
-
 	/** @var int[] */
 	private $hideIDs;
 
 	public function __construct(
-		LBFactory $lbFactory,
+		private readonly LBFactory $lbFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory,
-		PermissionManager $permissionManager,
-		VariablesBlobStore $variablesBlobStore,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly PermissionManager $permissionManager,
+		private readonly FilterLookup $filterLookup,
+		private readonly VariablesBlobStore $variablesBlobStore,
 		string $basePageName
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, [] );
-		$this->lbFactory = $lbFactory;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->permissionManager = $permissionManager;
-		$this->variablesBlobStore = $variablesBlobStore;
 
 		$this->hideIDs = array_keys( $this->getRequest()->getArray( 'hideids', [] ) );
 	}
@@ -70,6 +63,7 @@ class HideAbuseLog extends AbuseFilterView {
 			$this->linkBatchFactory,
 			$this->permissionManager,
 			$this->afPermManager,
+			$this->filterLookup,
 			$this->variablesBlobStore,
 			$this->basePageName,
 			array_fill_keys( $this->hideIDs, $this->getRequest()->getVal( 'wpshoworhide' ) )
@@ -120,7 +114,7 @@ class HideAbuseLog extends AbuseFilterView {
 		HTMLForm::factory( 'ooui', $formInfo, $this->getContext() )
 			->setAction( $actionURL )
 			->setWrapperLegend( $this->msg( 'abusefilter-log-hide-legend' )->text() )
-			->setSubmitCallback( [ $this, 'saveHideForm' ] )
+			->setSubmitCallback( $this->saveHideForm( ... ) )
 			->showAlways();
 
 		// Show suppress log for this entry. Hack: since every suppression is performed on a

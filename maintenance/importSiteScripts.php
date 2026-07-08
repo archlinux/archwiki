@@ -10,7 +10,6 @@
 use MediaWiki\Content\ContentHandler;
 use MediaWiki\Json\FormatJson;
 use MediaWiki\Maintenance\Maintenance;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
@@ -42,7 +41,6 @@ class ImportSiteScripts extends Maintenance {
 			$user = User::newFromName( $username );
 		}
 		'@phan-var User $user';
-		StubGlobalUser::setUser( $user );
 
 		$baseUrl = $this->getArg( 1 );
 		$pageList = $this->fetchScriptList();

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aca",
 			"Kolega2357",
 			"OC Ripper",
 			"Vlad5250",
-			"Winston Sung",
-			"Aca"
+			"Winston Sung"
 		]
 	},
 	"popups-settings-option-math-tooltip": "Objašnjenje matematičkih formula pri prelasku strelice preko njih",

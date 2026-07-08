@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bisang",
 			"Bluehill",
 			"Bluemersen",
 			"Daisy2002",
@@ -17,14 +18,13 @@
 			"Nuevo Paso",
 			"Priviet",
 			"Revi",
+			"Tensama0415",
 			"YeBoy371",
 			"Ykhwong",
 			"관인생략",
 			"렌즈",
 			"밝은소년",
 			"아라",
-			"Tensama0415",
-			"Bisang",
 			"解浪"
 		]
 	},
@@ -180,6 +180,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|당신}}의 사용자 권한이 {{GENDER:$1|변경되었습니다}}. $2 권한을 부여받았습니다.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|당신}}의 사용자 권한이 {{GENDER:$1|변경되었습니다}}. 더 이상 $2 권한을 갖고 있지 않습니다.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|당신}}의 사용자 권한이 {{GENDER:$1|변경되었습니다}}. $2 권한을 받았지만, $4 권한은 더 이상 갖고 있지 않습니다.",
+	"notification-header-user-rights-expiry": "{{PLURAL:$2|그룹|그룹들}}에서의 {{GENDER:$3|당신}}의 멤버십이 자동으로 만료되었습니다: $1.",
 	"notification-header-user-rights-expiry-change": "{{PLURAL:$3|그룹|그룹들}}에서의 {{GENDER:$4|당신}}의 멤버십 만료 기간이 {{GENDER:$1|변경되었습니다}}: $2.",
 	"notification-header-welcome": "{{SITENAME}}에 오신 것을 {{GENDER:$2|환영}}합니다, $1님! 당신을 만나게 되어 기쁩니다.",
 	"notification-header-mention-summary": "$1님이 <strong>$4</strong>의 편집 요약에서 {{GENDER:$3|나를}} {{GENDER:$2|언급했습니다}}.",
@@ -216,6 +217,7 @@
 	"notification-reverted-email-subject2": "{{SITENAME}}의 {{GENDER:$3|당신}}의 {{PLURAL:$4|편집}}이 {{GENDER:$2|되돌려졌습니다}}",
 	"notification-mention-email-subject": "$1님이 {{SITENAME}}에서 {{GENDER:$3|나를}} {{GENDER:$2|언급했습니다}}",
 	"notification-user-rights-email-subject": "{{SITENAME}}에서 {{GENDER:$3|당신}}의 사용자 권한이 변경되었습니다",
+	"notification-user-rights-expiry-email-subject": "{{GENDER:$3|당신}}의 {{SITENAME}}에서의 사용자 권한이 만료되었습니다",
 	"notification-timestamp-ago-seconds": "$1초 전",
 	"notification-timestamp-ago-minutes": "$1분 전",
 	"notification-timestamp-ago-hours": "$1시간 전",
@@ -266,6 +268,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|푸시 구독 관리자}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:푸시 구독 관리자",
 	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|내}} 이메일 확인",
+	"notification-header-verify-email-reminder": "안녕하세요 $2님,\n귀하의 <strong>이메일 주소를 확인</strong>해 주세요. 그래야 {{GENDER:$1|귀하의}} 계정에 등록된 이메일 주소가 {{GENDER:$1|귀하의}} 소유인지 확인할 수 있습니다.",
 	"notification-link-text-verify-email-reminder": "이메일 환경 설정 관리",
 	"notification-verify-email-reminder-link-label": "이메일 확인"
 }

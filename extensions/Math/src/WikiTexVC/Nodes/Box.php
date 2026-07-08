@@ -5,20 +5,17 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 
 class Box extends TexNode {
 
-	/** @var string */
-	private $fname;
-	/** @var string */
-	private $arg;
-
-	public function __construct( string $fname, string $arg ) {
+	public function __construct(
+		private readonly string $fname,
+		private readonly string $arg,
+	) {
 		parent::__construct( $fname, $arg );
-		$this->fname = $fname;
-		$this->arg = $arg;
 	}
 
 	public function getFname(): string {
@@ -40,7 +37,7 @@ class Box extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+	public function toMMLTree( array $arguments = [], array &$state = [] ): MMLbase {
 		$arg = $this->getArg();
 
 		if ( strlen( $arg ) >= 1 ) {

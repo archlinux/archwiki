@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Tests\Revision;
 
-use DummyContentForTesting;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Revision\IncompleteRevisionException;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
+use MediaWiki\Tests\Mocks\Content\DummyContentForTesting;
 use MediaWikiUnitTestCase;
 
 /**
@@ -39,7 +39,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $record->hasContentId() );
 		$this->assertTrue( $record->hasRevision() );
 		$this->assertTrue( $record->isInherited() );
-		$this->assertSame( 'A', $record->getContent()->getNativeData() );
+		$this->assertSame( 'A', $record->getContent()->getDummyData() );
 		$this->assertSame( 5, $record->getSize() );
 		$this->assertSame( 'someHash', $record->getSha1() );
 		$this->assertSame( DummyContentForTesting::MODEL_ID, $record->getModel() );
@@ -56,19 +56,13 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$row = self::makeRow( [
 			'content_size' => null, // to be computed
 			'content_sha1' => null, // to be computed
-			'format_name' => static function () {
-				return CONTENT_FORMAT_WIKITEXT;
-			},
+			'format_name' => static fn () => CONTENT_FORMAT_WIKITEXT,
 			'slot_revision_id' => '2',
 			'slot_origin' => '2',
-			'slot_content_id' => static function () {
-				return null;
-			},
+			'slot_content_id' => static fn () => null,
 		] );
 
-		$content = static function () {
-			return new DummyContentForTesting( 'A' );
-		};
+		$content = static fn () => new DummyContentForTesting( 'A' );
 
 		$record = new SlotRecord( $row, $content );
 
@@ -76,7 +70,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $record->hasRevision() );
 		$this->assertFalse( $record->hasContentId() );
 		$this->assertFalse( $record->isInherited() );
-		$this->assertSame( 'A', $record->getContent()->getNativeData() );
+		$this->assertSame( 'A', $record->getContent()->getDummyData() );
 		$this->assertSame( 1, $record->getSize() );
 		$this->assertNotEmpty( $record->getSha1() );
 		$this->assertSame( DummyContentForTesting::MODEL_ID, $record->getModel() );
@@ -96,7 +90,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( $record->hasRevision() );
 		$this->assertFalse( $record->isInherited() );
 		$this->assertFalse( $record->hasOrigin() );
-		$this->assertSame( 'A', $record->getContent()->getNativeData() );
+		$this->assertSame( 'A', $record->getContent()->getDummyData() );
 		$this->assertSame( 1, $record->getSize() );
 		$this->assertNotEmpty( $record->getSha1() );
 		$this->assertSame( DummyContentForTesting::MODEL_ID, $record->getModel() );
@@ -247,7 +241,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $saved->hasContentId() );
 		$this->assertSame( 'theNewAddress', $saved->getAddress() );
 		$this->assertSame( 20, $saved->getContentId() );
-		$this->assertSame( 'A', $saved->getContent()->getNativeData() );
+		$this->assertSame( 'A', $saved->getContent()->getDummyData() );
 		$this->assertSame( 10, $saved->getRevision() );
 		$this->assertSame( 10, $saved->getOrigin() );
 		$this->assertFalse( $saved->isDerived() );
@@ -404,7 +398,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( $record->hasRevision() );
 		$this->assertFalse( $record->isInherited() );
 		$this->assertFalse( $record->hasOrigin() );
-		$this->assertSame( 'A', $record->getContent()->getNativeData() );
+		$this->assertSame( 'A', $record->getContent()->getDummyData() );
 		$this->assertSame( 1, $record->getSize() );
 		$this->assertNotEmpty( $record->getSha1() );
 		$this->assertSame( DummyContentForTesting::MODEL_ID, $record->getModel() );
@@ -423,7 +417,7 @@ class SlotRecordTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $saved->hasContentId() );
 		$this->assertSame( 'theNewAddress', $saved->getAddress() );
 		$this->assertSame( 20, $saved->getContentId() );
-		$this->assertSame( 'A', $saved->getContent()->getNativeData() );
+		$this->assertSame( 'A', $saved->getContent()->getDummyData() );
 		$this->assertSame( 10, $saved->getRevision() );
 		$this->assertSame( 10, $saved->getOrigin() );
 		$this->assertTrue( $saved->isDerived() );

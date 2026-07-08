@@ -35,21 +35,6 @@ class TrackingCategories {
 		MainConfigNames::EnableMagicLinks,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var TitleParser */
-	private $titleParser;
-
-	/** @var ExtensionRegistry */
-	private $extensionRegistry;
-
-	/** @var LoggerInterface */
-	private $logger;
-
 	/**
 	 * Tracking categories that exist in core
 	 */
@@ -79,19 +64,13 @@ class TrackingCategories {
 	];
 
 	public function __construct(
-		ServiceOptions $options,
-		NamespaceInfo $namespaceInfo,
-		TitleParser $titleParser,
-		LoggerInterface $logger
+		private readonly ServiceOptions $options,
+		private readonly ExtensionRegistry $extensionRegistry,
+		private readonly NamespaceInfo $namespaceInfo,
+		private readonly TitleParser $titleParser,
+		private readonly LoggerInterface $logger,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->namespaceInfo = $namespaceInfo;
-		$this->titleParser = $titleParser;
-		$this->logger = $logger;
-
-		// TODO convert ExtensionRegistry to a service and inject it
-		$this->extensionRegistry = ExtensionRegistry::getInstance();
 	}
 
 	/**

@@ -29,6 +29,7 @@ class ErrorWidget {
 	}
 
 	hide() {
+		this.$content.text( '' );
 		this.$element.hide();
 	}
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\IPContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\IPContributions;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\IPContributions\IPContributionsPager;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\IPContributions\IPContributionsPager;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\IPContributions\IPContributionsPagerFactory
+ * @covers \MediaWiki\Extension\CheckUser\IPContributions\IPContributionsPagerFactory
  * @group CheckUser
  * @group Database
  */

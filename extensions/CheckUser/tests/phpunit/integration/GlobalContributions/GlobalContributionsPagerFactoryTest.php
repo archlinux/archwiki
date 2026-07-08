@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\GlobalContributions;
 
-use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPager;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPager;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPagerFactory
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPagerFactory
  * @group CheckUser
  * @group Database
  */

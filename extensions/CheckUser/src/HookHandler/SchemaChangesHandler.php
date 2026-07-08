@@ -1,18 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
-use MediaWiki\CheckUser\Maintenance\FixTrailingSpacesInLogs;
-use MediaWiki\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup;
-use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
-use MediaWiki\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables;
-use MediaWiki\CheckUser\Maintenance\PopulateCheckUserTable;
-use MediaWiki\CheckUser\Maintenance\PopulateCucActor;
-use MediaWiki\CheckUser\Maintenance\PopulateCucComment;
-use MediaWiki\CheckUser\Maintenance\PopulateCulActor;
-use MediaWiki\CheckUser\Maintenance\PopulateCulComment;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
+use MediaWiki\Extension\CheckUser\Maintenance\FixTrailingSpacesInLogs;
+use MediaWiki\Extension\CheckUser\Maintenance\MigrateTemporaryAccountIPViewerGroup;
+use MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateCentralCheckUserIndexTables;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateCheckUserTable;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateCucComment;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateCulComment;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateSicUpdatedTimestamp;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateSicUrlIdentifier;
+use MediaWiki\Extension\CheckUser\Maintenance\PopulateUserAgentTable;
+use MediaWiki\Extension\CheckUser\Maintenance\QueueAutoCloseSICases;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQueryInterface {
@@ -46,191 +48,15 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 			"$base/$dbType/cuci_user.sql", true,
 		] );
 
-		if ( $dbType === 'mysql' ) {
-			// 1.38
-			$updater->addExtensionIndex(
-				'cu_changes',
-				'cuc_actor_ip_time',
-				"$base/$dbType/patch-cu_changes-actor-comment.sql"
-			);
-
-			// 1.39
-			$updater->modifyExtensionField(
-				'cu_changes',
-				'cuc_timestamp',
-				"$base/$dbType/patch-cu_changes-cuc_timestamp.sql"
-			);
-			$updater->addExtensionField(
-				'cu_log',
-				'cul_reason_id',
-				"$base/$dbType/patch-cu_log-comment_table_for_reason.sql"
-			);
-			$updater->addExtensionField(
-				'cu_log',
-				'cul_actor',
-				"$base/$dbType/patch-cu_log-actor.sql"
-			);
-		} elseif ( $dbType === 'sqlite' ) {
-			// 1.39
-			$updater->addExtensionIndex(
-				'cu_changes',
-				'cuc_actor_ip_time',
-				"$base/$dbType/patch-cu_changes-actor-comment.sql"
-			);
-			$updater->addExtensionField(
-				'cu_log',
-				'cul_reason_id',
-				"$base/$dbType/patch-cu_log-comment_table_for_reason.sql"
-			);
-			$updater->addExtensionField(
-				'cu_log',
-				'cul_actor',
-				"$base/$dbType/patch-cu_log-actor.sql"
-			);
-		} elseif ( $dbType === 'postgres' ) {
-			// 1.37
-			$updater->addExtensionUpdate( [ 'dropFkey', 'cu_log', 'cul_user' ] );
-			$updater->addExtensionUpdate( [ 'dropFkey', 'cu_log', 'cul_target_id' ] );
-			$updater->addExtensionUpdate( [ 'dropFkey', 'cu_changes', 'cuc_user' ] );
-			$updater->addExtensionUpdate( [ 'dropFkey', 'cu_changes', 'cuc_page_id' ] );
-
-			// 1.38
-			$updater->addExtensionUpdate(
-				[ 'addPgField', 'cu_changes', 'cuc_actor', 'INTEGER NOT NULL DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgField', 'cu_changes', 'cuc_comment_id', 'INTEGER NOT NULL DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'setDefault', 'cu_changes', 'cuc_user_text', '' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgIndex', 'cu_changes', 'cuc_actor_ip_time', '( cuc_actor, cuc_ip, cuc_timestamp )' ]
-			);
-
-			// 1.39
-			$updater->addExtensionIndex( 'cu_changes', 'cu_changes_pkey', "$base/$dbType/patch-cu_changes-pk.sql" );
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_namespace', 'INT', 'cuc_namespace::INT DEFAULT 0' ]
-			);
-			if ( $maintenanceDb->fieldExists( 'cu_log', 'cuc_user', __METHOD__ ) ) {
-				$updater->addExtensionUpdate(
-					[ 'changeNullableField', 'cu_changes', 'cuc_user', 'NOT NULL', true ]
-				);
-			}
-			if ( $maintenanceDb->fieldExists( 'cu_log', 'cuc_user_text', __METHOD__ ) ) {
-				$updater->addExtensionUpdate(
-					[ 'changeField', 'cu_changes', 'cuc_user_text', 'VARCHAR(255)', '' ]
-				);
-				$updater->addExtensionUpdate(
-					[ 'setDefault', 'cu_changes', 'cuc_user_text', '' ]
-				);
-			}
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_actor', 'BIGINT', 'cuc_actor::BIGINT DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_comment_id', 'BIGINT', 'cuc_comment_id::BIGINT DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_minor', 'SMALLINT', 'cuc_minor::SMALLINT DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_changes', 'cuc_page_id', 'NOT NULL', true ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'setDefault', 'cu_changes', 'cuc_page_id', 0 ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_changes', 'cuc_timestamp', 'NOT NULL', true ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_ip', 'VARCHAR(255)', '' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'setDefault', 'cu_changes', 'cuc_ip', '' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_ip_hex', 'VARCHAR(255)', '' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'setDefault', 'cu_changes', 'cuc_xff', '' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeField', 'cu_changes', 'cuc_xff_hex', 'VARCHAR(255)', '' ]
-			);
-			if ( $maintenanceDb->fieldExists( 'cu_changes', 'cuc_private', __METHOD__ ) ) {
-				$updater->addExtensionUpdate(
-					[ 'changeField', 'cu_changes', 'cuc_private', 'TEXT', '' ]
-				);
-			}
-			$updater->addExtensionIndex( 'cu_log', 'cu_log_pkey', "$base/$dbType/patch-cu_log-pk.sql" );
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_log', 'cul_timestamp', 'NOT NULL', true ]
-			);
-			if ( $maintenanceDb->fieldExists( 'cu_log', 'cul_user', __METHOD__ ) ) {
-				$updater->addExtensionUpdate(
-					[ 'changeNullableField', 'cu_log', 'cul_user', 'NOT NULL', true ]
-				);
-			}
-			$updater->addExtensionUpdate(
-				[ 'dropDefault', 'cu_log', 'cul_type' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_log', 'cul_target_id', 'NOT NULL', true ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'setDefault', 'cu_log', 'cul_target_id', 0 ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'dropDefault', 'cu_log', 'cul_target_text' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgField', 'cu_log', 'cul_reason_id', 'INTEGER NOT NULL DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgField', 'cu_log', 'cul_reason_plaintext_id', 'INTEGER NOT NULL DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgField', 'cu_log', 'cul_actor', 'INTEGER NOT NULL DEFAULT 0' ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'addPgIndex', 'cu_log', 'cul_actor_time', '( cul_actor, cul_timestamp )' ]
-			);
-		}
-
-		$updater->addExtensionUpdate( [
-			'runMaintenance',
-			PopulateCulActor::class,
-		] );
+		// 1.40
 		$updater->addExtensionUpdate( [
 			'runMaintenance',
 			PopulateCulComment::class,
-		] );
-		if ( $dbType === 'postgres' ) {
-			# For wikis which ran update.php after pulling the master branch of CheckUser between
-			#  4 June 2022 and 6 June 2022, the cul_reason_id and cul_reason_plaintext_id columns
-			#  were added but were by default NULL.
-			# This is needed for postgres installations that did the above. All other DB types
-			#  make the columns "NOT NULL" when removing the default.
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_log', 'cul_reason_id', 'NOT NULL', true ]
-			);
-			$updater->addExtensionUpdate(
-				[ 'changeNullableField', 'cu_log', 'cul_reason_plaintext_id', 'NOT NULL', true ]
-			);
-		}
-
-		$updater->addExtensionUpdate( [
-			'runMaintenance',
-			PopulateCucActor::class,
 		] );
 		$updater->addExtensionUpdate( [
 			'runMaintenance',
 			PopulateCucComment::class,
 		] );
-
-		// 1.40
 		$updater->addExtensionTable(
 			'cu_log_event',
 			"$base/$dbType/patch-cu_log_event-def.sql"
@@ -331,13 +157,19 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 			);
 		}
 		$updater->addPostDatabaseUpdateMaintenance( FixTrailingSpacesInLogs::class );
-		// If any columns are modified or removed from cu_private_event in the future, then make sure to only apply this
-		// patch if the later schema change has not yet been applied. Otherwise wikis using SQLite will have a DB error.
-		$updater->modifyExtensionField(
-			'cu_private_event',
-			'cupe_actor',
-			"$base/$dbType/patch-cu_private_event-modify-cupe_actor-nullable.sql"
-		);
+		// If using SQLite and the cupe_private column no longer exists exists, then this update has
+		// already been applied and we should skip it entirely because temporary tables used
+		// here would fail due to cupe_private no longer being a column
+		if (
+			$dbType !== 'sqlite' ||
+			$maintenanceDb->fieldExists( 'cu_private_event', 'cupe_private', __METHOD__ )
+		) {
+			$updater->modifyExtensionField(
+				'cu_private_event',
+				'cupe_actor',
+				"$base/$dbType/patch-cu_private_event-modify-cupe_actor-nullable.sql"
+			);
+		}
 		$updater->addExtensionTable( 'cu_useragent', "$base/$dbType/cu_useragent.sql" );
 		$updater->addExtensionField(
 			'cu_changes',
@@ -423,6 +255,89 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook, CheckUserQ
 		$updater->addExtensionUpdateOnVirtualDomain( [
 			self::VIRTUAL_DB_DOMAIN, 'addTable', 'cusi_signal',
 			"$base/$dbType/patch-cusi_signal-def.sql", true,
+		] );
+
+		// 1.46
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addField', 'cusi_case', 'sic_url_identifier',
+			"$base/$dbType/patch-cusi_case-add-sic_url_identifier.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'runMaintenance', PopulateSicUrlIdentifier::class,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addField', 'cusi_signal', 'sis_trigger_id',
+			"$base/$dbType/patch-cusi_signal-add-sis_trigger_id.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'modifyTableIfFieldNotExists', 'cusi_case', 'sic_updated_timestamp',
+			"$base/$dbType/patch-cusi_case-modify-sic_url_identifier.sql", true,
+			'sic_url_identifier',
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addField', 'cusi_case', 'sic_updated_timestamp',
+			"$base/$dbType/patch-cusi_case-add-sic_updated_timestamp.sql", true,
+		] );
+		$updater->dropExtensionField(
+			'cu_private_event',
+			'cupe_private',
+			"$base/$dbType/patch-cu_private_event-drop-cupe_private.sql"
+		);
+		$updater->addExtensionUpdate( [
+			'runMaintenance',
+			PopulateUserAgentTable::class,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN,
+			'runMaintenance',
+			PopulateSicUpdatedTimestamp::class,
+		] );
+		$updater->addPostDatabaseUpdateMaintenance( QueueAutoCloseSICases::class );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addField', 'cusi_user', 'siu_info',
+			"$base/$dbType/patch-cusi_user-add-siu_info.sql", true,
+		] );
+		$updater->dropExtensionField(
+			'cu_private_event',
+			'cupe_agent',
+			"$base/$dbType/patch-cu_private_event-drop-cupe_agent.sql"
+		);
+		$updater->dropExtensionField(
+			'cu_changes',
+			'cuc_agent',
+			"$base/$dbType/patch-cu_changes-drop-cuc_agent.sql"
+		);
+		$updater->dropExtensionField(
+			'cu_log_event',
+			'cule_agent',
+			"$base/$dbType/patch-cu_log_event-drop-cule_agent.sql"
+		);
+		$updater->dropExtensionField(
+			'cu_changes',
+			'cuc_ip',
+			"$base/$dbType/patch-cu_changes-drop-cuc_ip.sql"
+		);
+		$updater->dropExtensionField(
+			'cu_log_event',
+			'cule_ip',
+			"$base/$dbType/patch-cu_log_event-drop-cule_ip.sql"
+		);
+		$updater->dropExtensionField(
+			'cu_private_event',
+			'cupe_ip',
+			"$base/$dbType/patch-cu_private_event-drop-cupe_ip.sql"
+		);
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'modifyField', 'cusi_case', 'sic_updated_timestamp',
+			"$base/$dbType/patch-cusi_case-modify-sic_updated_timestamp-remove_default.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'dropIndex', 'cusi_case', 'sic_created_timestamp_id',
+			"$base/$dbType/patch-cusi_case-drop-sic_created_timestamp-indexes.sql", true,
+		] );
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			self::VIRTUAL_DB_DOMAIN, 'addField', 'cusi_case', 'sic_status_changed_by',
+			"$base/$dbType/patch-cusi_case-add-sic_status_changed_by.sql", true,
 		] );
 
 		if ( !$isCUInstalled ) {

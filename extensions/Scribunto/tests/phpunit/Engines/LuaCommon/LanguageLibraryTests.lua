@@ -57,7 +57,8 @@ end
 local function test_multi( func, ... )
 	local ret = {}
 	for i = 1, select( '#', ... ) do
-		ret[i] = func( select( i, ... ) )
+		arg = select( i, ... )
+		ret[i] = func( arg )
 	end
 	return unpack( ret, 1, select( '#', ... ) )
 end
@@ -134,6 +135,16 @@ return testframework.getTestProvider( {
 		expect = { {}, { 'en' }, { 'ar', 'en' }, {} }
 	},
 
+	{ name = 'getFallbacksFor (pt-br, strict)', func = mw.language.getFallbacksFor,
+		args = { 'pt-br', mw.language.FALLBACK_STRICT },
+		expect = { { 'pt' } } -- no 'en'
+	},
+
+	{ name = 'getFallbacksFor (en-gb, strict)', func = mw.language.getFallbacksFor,
+		args = { 'en-gb', mw.language.FALLBACK_STRICT },
+		expect = { { 'en' } }
+	},
+
 	{ name = 'isKnownLanguageTag', func = test_multi,
 		args = { mw.language.isKnownLanguageTag, 'en', 'not-a-real-code', 'extension code', '[[bogus]]' },
 		expect = { true, false, false, false }
@@ -195,6 +206,16 @@ return testframework.getTestProvider( {
 			{ {} },
 			{ { 'kk-latn', 'kk-cyrl', 'en' } },
 			{ { 'en' } },
+			{ {} },
+		}
+	},
+
+	{ name = 'lang:getFallbackLanguages (strict)', func = test_method,
+		args = { 'getFallbackLanguages', mw.language.FALLBACK_STRICT },
+		expect = {
+			{ {} },
+			{ { 'kk-latn', 'kk-cyrl' } },
+			{ {} },
 			{ {} },
 		}
 	},

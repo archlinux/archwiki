@@ -12,6 +12,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Export\WikiExporter;
 use MediaWiki\Maintenance\BackupDumper;
 
 // @codeCoverageIgnoreStart

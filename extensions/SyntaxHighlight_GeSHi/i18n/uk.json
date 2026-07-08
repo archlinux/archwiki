@@ -6,10 +6,10 @@
 			"DDPAT",
 			"Dars",
 			"Ice bulldog",
+			"Movses",
 			"Piramidion",
 			"Serhio Magpie",
-			"Ата",
-			"Movses"
+			"Ата"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",

@@ -19,7 +19,6 @@
 	"spam-blacklisted-email": "Alamat surel dilarang",
 	"spam-blacklisted-email-text": "Alamat surel Anda sedang dilarang mengirim surel kepada pengguna lain.",
 	"spam-blacklisted-email-signup": "Alamat surel yang dimasukkan saat ini sedang tidak boleh digunakan.",
-	"spam-invalid-lines": "{{PLURAL:$1|Baris|Baris-baris}} daftar hitam spam berikut adalah {{PLURAL:$1|ekspresi|ekspresi}} regular yang tak valid dan {{PLURAL:$1|perlu|perlu}} dikoreksi sebelum disimpan:",
 	"spam-blacklist-desc": "Alat anti-spam berbasis regex memungkinkan untuk memblokir URL daftar di halaman dan alamat email untuk pengguna terdaftar",
 	"log-name-spamblacklist": "Log daftar hitam spam",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} menyebabkan daftar blokir spam mencapai $3 ketika mencoba menambahkan $4.",

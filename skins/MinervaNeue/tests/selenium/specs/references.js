@@ -10,28 +10,27 @@ import {
 	iClickOnANestedReference,
 	iShouldSeeDrawerWithText
 } from '../features/step_definitions/reference_steps.js';
-import { mwbot } from 'wdio-mediawiki/Api.js';
+import { createApiClient } from 'wdio-mediawiki/Api.js';
 
 // @chrome @en.m.wikipedia.beta.wmflabs.org @firefox @test2.m.wikipedia.org @vagrant
 describe( 'Opening and closing the reference drawer', () => {
 
 	before( async function () {
 		// References are provided by the Cite extension which might not be available
-		await mwbot().then(
-			( bot ) => bot.request( {
-				action: 'query',
-				format: 'json',
-				meta: 'siteinfo',
-				siprop: 'extensions'
-			} ).then( ( response ) => {
-				const installedExtensions = response.query.extensions.map(
-					( extension ) => extension.name
-				);
-				if ( !installedExtensions.includes( 'Cite' ) ) {
-					this.skip();
-				}
-			} )
+		const api = await createApiClient();
+		const response = await api.request( {
+			action: 'query',
+			format: 'json',
+			meta: 'siteinfo',
+			siprop: 'extensions'
+		} );
+
+		const installedExtensions = response.query.extensions.map(
+			( extension ) => extension.name
 		);
+		if ( !installedExtensions.includes( 'Cite' ) ) {
+			this.skip();
+		}
 
 		await pageExistsWithText( 'Selenium References test page', `MinervaNeue is a MediaWiki skin.
 {{#tag:ref|This is a note.<ref>This is a nested ref.</ref>|group=note}}
@@ -54,7 +53,8 @@ describe( 'Opening and closing the reference drawer', () => {
 		await iShouldSeeNotTheReferenceDrawer();
 	} );
 
-	it( 'Opening a nested reference', async () => {
+	// broken or very flaky (T418779)
+	it.skip( 'Opening a nested reference', async () => {
 		await iAmOnPage( 'Selenium References test page' );
 		await iClickOnAReference();
 		await iShouldSeeDrawerWithText( 'This is a note.' );

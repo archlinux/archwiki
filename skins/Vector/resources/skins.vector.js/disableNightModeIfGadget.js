@@ -38,7 +38,7 @@ function disableNightModeForGadget() {
  * gadget rather than simply take you to the page
  * Note: The gadget names are similarly localized to the current language
  *
- * @param {Element} container an html element containing a link
+ * @param {HTMLElement} container an html element containing a link
  */
 function alterDisableLink( container ) {
 	const gadgetNames = mw.msg( 'vector-night-mode-gadget-names' );
@@ -83,6 +83,7 @@ function removeBetaNotice() {
  * to a conflicting gadget, providing a link to disable the gadget in favor of our night mode
  */
 function alterExclusionMessage() {
+	/** @type {HTMLElement|null} */
 	const noticeContainer = document.querySelector( '#skin-client-prefs-skin-theme .exclusion-notice' );
 	// if there's no exclusion notice, nothing we can do
 	if ( !noticeContainer ) {

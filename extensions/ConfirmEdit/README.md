@@ -233,4 +233,12 @@ $wgCaptchaRegexes = [];
  * Feature flag to toggle the list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions
  */
 $wgConfirmEditEnabledAbuseFilterCustomActions = [];
+
+/**
+ * Amount of time (in seconds) in which further user actions will require
+ * solving a captcha once an abuse filter triggers the showcaptcha consequence.
+ *
+ * Defaults to 120 seconds (2 minutes).
+ */
+$CaptchaAbuseFilterCaptchaConsequenceTTL = 180;  // 3 minutes
 ```

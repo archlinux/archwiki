@@ -72,6 +72,10 @@ return testframework.getTestProvider( {
 		func = type, args = { mw.site.currentVersion },
 		expect = { 'string' }
 	},
+	{ name = 'parameter set: wikiId',
+		func = type, args = { mw.site.wikiId },
+		expect = { 'string' }
+	},
 
 	{ name = 'parameter set: stats.pages',
 		func = type, args = { mw.site.stats.pages },

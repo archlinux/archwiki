@@ -91,6 +91,48 @@ class ParserFunctionsTest extends \MediaWikiIntegrationTestCase {
 		$this->assertTouched( 'Source', $fakeTime );
 	}
 
+	/**
+	 * When #time formats the current time with a seconds specifier,
+	 * the cache TTL is reduced. Verify that the expiry source is
+	 * attributed to the page title and the #time function.
+	 */
+	public function testTimeCacheExpirySource() {
+		ConvertibleTimestamp::setFakeTime( '2025-01-01T11:00:00' );
+
+		$this->editPage( 'TimeSource', '{{#time:s}}' );
+		$parserOutput = $this->parse( 'TimeSource' );
+
+		$this->assertSame( 'TimeSource (#time)',
+			$parserOutput->getCacheExpirySource() );
+	}
+
+	/**
+	 * Same as testTimeCacheExpirySource but for #timel (local time),
+	 * verifying that the source label uses "#timel" rather than "#time".
+	 */
+	public function testTimelCacheExpirySource() {
+		ConvertibleTimestamp::setFakeTime( '2025-01-01T11:00:00' );
+
+		$this->editPage( 'TimelSource', '{{#timel:s}}' );
+		$parserOutput = $this->parse( 'TimelSource' );
+
+		$this->assertSame( 'TimelSource (#timel)',
+			$parserOutput->getCacheExpirySource() );
+	}
+
+	/**
+	 * When #time is given an explicit date, the output is static and no
+	 * TTL reduction occurs, so no cache expiry source should be recorded.
+	 */
+	public function testTimeWithExplicitDateNoCacheExpirySource() {
+		ConvertibleTimestamp::setFakeTime( '2025-01-01T11:00:00' );
+
+		$this->editPage( 'TimeNoTTL', '{{#time:s|2025-06-15}}' );
+		$parserOutput = $this->parse( 'TimeNoTTL' );
+
+		$this->assertNull( $parserOutput->getCacheExpirySource() );
+	}
+
 	private function assertTouched( string $title, string $time ) {
 		$this->newSelectQueryBuilder()
 			->select( 'page_touched' )

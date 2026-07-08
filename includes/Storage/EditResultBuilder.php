@@ -59,15 +59,6 @@ class EditResultBuilder {
 	/** @var int|null */
 	private $revertAfterRevId = null;
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var string[] */
-	private $softwareTags;
-
-	/** @var ServiceOptions */
-	private $options;
-
 	/**
 	 * @param RevisionStore $revisionStore
 	 * @param string[] $softwareTags Array of currently enabled software change tags. Can be
@@ -75,15 +66,11 @@ class EditResultBuilder {
 	 * @param ServiceOptions $options Options for this instance.
 	 */
 	public function __construct(
-		RevisionStore $revisionStore,
-		array $softwareTags,
-		ServiceOptions $options
+		private readonly RevisionStore $revisionStore,
+		private readonly array $softwareTags,
+		private readonly ServiceOptions $options,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-
-		$this->revisionStore = $revisionStore;
-		$this->softwareTags = $softwareTags;
-		$this->options = $options;
 	}
 
 	public function buildEditResult(): EditResult {
@@ -252,6 +239,9 @@ class EditResultBuilder {
 
 	/**
 	 * Returns the revision that is being repeated or restored.
+	 * The contents of the original revision should be the same as the contents
+	 * of the new revision.
+	 *
 	 * Returns null if not set for this edit.
 	 *
 	 * @return RevisionRecord|null
@@ -288,6 +278,9 @@ class EditResultBuilder {
 
 	/**
 	 * An edit is a null edit if the original revision is equal to the parent revision.
+	 *
+	 * @note The term "null edit" is here understood to include dummy revisions,
+	 * which is different from how that term is used elsewhere in the code.
 	 */
 	private function isNullEdit(): bool {
 		if ( $this->isNew ) {

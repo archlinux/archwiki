@@ -5,28 +5,25 @@
 		$el: $( '<span>' )
 	} );
 	const Deferred = $.Deferred;
-	const windowChrome = { chrome: true };
-	const windowNotChrome = {};
 	const downloadAction = require( 'skins.minerva.scripts/downloadPageAction.js' );
 	const onClick = downloadAction.test.onClick;
 	const isAvailable = downloadAction.test.isAvailable;
 
-	class Page {
-		constructor( options ) {
-			this.isMissing = options.isMissing;
-			// eslint-disable-next-line no-underscore-dangle
-			this._isMainPage = !!options.isMainPage;
+	class MockConfig {
+		constructor( values ) {
+			this.values = Object.assign( {
+				wgArticleId: 300,
+				wgIsMainPage: false,
+				wgNamespaceNumber: 0,
+				wgMinervaDownloadNamespaces: VALID_SUPPORTED_NAMESPACES
+			}, values );
 		}
 
-		isMainPage() {
-			// eslint-disable-next-line no-underscore-dangle
-			return this._isMainPage;
-		}
-
-		getNamespaceId() {
-			return 0;
+		get( key ) {
+			return this.values[ key ];
 		}
 	}
+
 	QUnit.module( 'Minerva DownloadIcon', {
 		beforeEach: function () {
 			this.getOnClickHandler = function ( onLoadAllImages ) {
@@ -91,22 +88,14 @@
 		return d;
 	} );
 
-	QUnit.module( 'isAvailable()', {
+	QUnit.module( 'Minerva DownloadIcon isAvailable()', {
 		beforeEach: function () {
-			const page = new Page( {
-				id: 0,
-				title: 'Test',
-				isMissing: false,
-				isMainPage: false
-			} );
-			this.page = page;
+			this.config = new MockConfig( {} );
 			this.isAvailable = function ( ua ) {
-				return isAvailable( windowChrome, page, ua,
-					VALID_SUPPORTED_NAMESPACES );
+				return isAvailable( this.config, ua );
 			};
 			this.notChromeIsAvailable = function ( ua ) {
-				return isAvailable( windowNotChrome, page, ua,
-					VALID_SUPPORTED_NAMESPACES );
+				return isAvailable( this.config, ua );
 			};
 		}
 	} );
@@ -115,27 +104,26 @@
 		assert.true( this.isAvailable( VALID_UA ) );
 	} );
 
-	QUnit.test( 'isAvailable() handles properly not supported namespace', function ( assert ) {
-		assert.false( isAvailable( windowChrome, this.page, VALID_UA, [ 9999 ] ) );
+	QUnit.test( 'isAvailable() handles properly not supported namespace', ( assert ) => {
+		const config = new MockConfig( {
+			wgMinervaDownloadNamespaces: [ 9999 ]
+		} );
+		assert.false( isAvailable( config, VALID_UA ) );
 	} );
 
 	QUnit.test( 'isAvailable() handles missing pages', ( assert ) => {
-		const page = new Page( {
-			id: 0,
-			title: 'Missing',
-			isMissing: true
+		const config = new MockConfig( {
+			wgArticleId: 0
 		} );
-		assert.false( isAvailable( windowChrome, page, VALID_UA, VALID_SUPPORTED_NAMESPACES ) );
+		assert.false( isAvailable( config, VALID_UA ) );
 	} );
 
 	QUnit.test( 'isAvailable() handles properly main page', ( assert ) => {
-		const page = new Page( {
-			id: 0,
-			title: 'Test',
-			isMissing: false,
-			isMainPage: true
+		const config = new MockConfig( {
+			wgArticleId: 200,
+			wgIsMainPage: true
 		} );
-		assert.false( isAvailable( windowChrome, page, VALID_UA, VALID_SUPPORTED_NAMESPACES ) );
+		assert.false( isAvailable( config, VALID_UA ) );
 	} );
 
 	QUnit.test( 'isAvailable() returns false for iOS', function ( assert ) {

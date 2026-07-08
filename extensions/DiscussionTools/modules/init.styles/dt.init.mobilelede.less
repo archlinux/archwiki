@@ -1,0 +1,65 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+// DiscussionTools automatically enables most features on mobile.
+// When we detect that it's enabled, hide the lede section.
+// stylelint-disable-next-line selector-class-pattern
+.mw-mf.ns-talk.ext-discussiontools-replytool-enabled {
+	&.ext-discussiontools-init-lede-hidden {
+		// .mw-body-content selector prevents this applying to content in the preview (T318758)
+		// On non-existent pages MobileFrontend wrapping isn't there
+		.mw-body-content > .mw-talkpageheader,
+		/* Legacy parser */
+		.mw-body-content > .mf-section-0,
+		.mw-body-content > .mw-parser-output > .mf-section-0,
+		/* Parsoid */
+		.mw-body-content > .mw-parser-output > section[ data-mw-section-id='0' ] {
+			> *:not( .ext-discussiontools-emptystate ) {
+				display: none;
+			}
+
+			> .ext-discussiontools-emptystate {
+				border-top: 0;
+				margin-top: 0;
+			}
+		}
+	}
+
+	// Always hide the table of content. This is usually hidden by the mf-section-0 rules,
+	// but can sometimes appear elsewhere (e.g in the lede section overlay)
+	// stylelint-disable-next-line selector-class-pattern
+	.toc {
+		display: none;
+	}
+}
+
+.ext-discussiontools-init-lede-button-container {
+	margin: 0.5em 0;
+
+	@media print {
+		display: none !important;
+	}
+}
+
+// Boost specificity by adding .oo-ui-buttonElement
+.ext-discussiontools-init-lede-button.oo-ui-buttonElement {
+	> .oo-ui-buttonElement-button {
+		font-weight: normal;
+
+		> .oo-ui-labelElement-label {
+			color: @color-subtle;
+		}
+
+		// Boost specificity
+		> .oo-ui-iconElement-icon.oo-ui-iconElement-icon.oo-ui-iconElement-icon {
+			// When this opacity is applied to black color, we end up with exactly @color-subtle (`#54595d`)
+			opacity: @opacity-icon-subtle;
+		}
+	}
+}
+
+// Avoid double margin/padding caused by combining .oo-ui-panelLayout-padded and .content
+// stylelint-disable-next-line selector-class-pattern
+.ext-discussiontools-ui-ledeSectionDialog-content.oo-ui-panelLayout-padded.content {
+	margin: 0 auto;
+}

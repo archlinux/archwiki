@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Davidzdh",
+			"Dream Star.cn",
 			"LNDDYL",
 			"WAN233",
 			"逆襲的天邪鬼",
-			"Dream Star.cn",
-			"Davidzdh",
 			"Wilf233"
 		]
 	},
@@ -16,5 +16,6 @@
 	"checkuser-search": "尋",
 	"checkuser-search-submit": "尋",
 	"checkuser-helper-user": "用戶",
-	"checkuser-investigate-subtitle-cancel-button-label": "罷"
+	"checkuser-investigate-subtitle-cancel-button-label": "罷",
+	"checkuser-suggestedinvestigations-header-updated": "新矣"
 }

@@ -62,9 +62,6 @@
 	"vector-toc-label": "विषयसूची",
 	"vector-toc-beginning": "सुरुवात",
 	"vector-toc-toggle-button-label": "$1 उपखण्ड सक्षम गर्नुहोस्",
-	"vector-anon-user-menu-pages": "निर्गमन सम्पादकहरूका लागि पृष्ठहरू",
-	"vector-anon-user-menu-pages-learn": "थप जान्नुहोस्",
-	"vector-anon-user-menu-pages-label": "सम्पादन गर्ने बारे थप जान्नुहोस्",
 	"vector-main-menu-tooltip": "मुख्य सूचीपत्र",
 	"vector-toc-menu-tooltip": "विषयसूची",
 	"vector-toc-collapsible-button-label": "सामग्रीको तालिका सक्षम गर्नुहोस्",
@@ -87,8 +84,6 @@
 	"vector-page-tools-unpinned-popup": "उपकरणपट्टी यहाँ सारिएको छ।",
 	"vector-main-menu-unpinned-popup": "उपस्थिति मेनु यहाँ सारिएको छ।",
 	"vector-appearance-unpinned-popup": "उपस्थिति मेनु यहाँ सारिएको छ।",
-	"vector-2022-beta-preview-label": "पठनका लागि पहुँच (भेक्टर २०२२)",
-	"vector-2022-beta-preview-description": "टाइपोग्राफी सुधार र डार्क मोड जस्ता नयाँ पठन पहुँच सुविधाहरूमा प्रारम्भिक पहुँच प्राप्त गर्नुहोस्।",
 	"vector-night-mode-issue-reporting-link-notification": "प्रतिवेदन प्राप्त भयो!",
 	"vector-night-mode-beta-tag": "(परीक्षण)"
 }

@@ -4,7 +4,7 @@
  * @copyright See AUTHORS.txt
  */
 
-QUnit.module( 've.ui.UrlStringTransferHandler (MW)' );
+QUnit.module( 've.ui.UrlStringTransferHandler (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

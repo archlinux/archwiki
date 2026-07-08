@@ -101,7 +101,7 @@ class HistogramMetric {
 	/**
 	 * Adds a label $key with $value.  No order is respected.
 	 *
-	 * @return HistogramMetric
+	 * @return $this
 	 */
 	public function setLabel( string $key, string $value ): self {
 		// each metric will run its own validation logic
@@ -112,7 +112,7 @@ class HistogramMetric {
 	/**
 	 * Returns metric with cleared labels.
 	 *
-	 * @return HistogramMetric
+	 * @return $this
 	 */
 	public function fresh(): self {
 		$this->labels = [];

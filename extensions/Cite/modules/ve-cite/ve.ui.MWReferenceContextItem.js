@@ -18,7 +18,7 @@ const Options = require( './ve.ui.MWSubReferenceHelpDialogOptions.js' );
  * @constructor
  * @extends ve.ui.LinearContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
- * @param {ve.dm.Model} model Model the item is related to
+ * @param {ve.dm.MWReferenceNode} model Model the item is related to
  * @param {Object} [config]
  */
 ve.ui.MWReferenceContextItem = function VeUiMWReferenceContextItem() {
@@ -30,8 +30,22 @@ ve.ui.MWReferenceContextItem = function VeUiMWReferenceContextItem() {
 	this.detailsView = null;
 	/** @member {ve.dm.MWGroupReferences} */
 	this.groupRefs = null;
+	/** @member {ve.dm.InternalList} */
+	this.internalList = null;
 	// Initialization
 	this.$element.addClass( 've-ui-mwReferenceContextItem' );
+
+	if ( mw.testKitchen ) {
+		// See 'Machine-readable name' in https://test-kitchen.wikimedia.org/create-experiment
+		this.testKitchenExperiment = mw.testKitchen.compat.getExperiment( 'test-context-edit-color' );
+	}
+
+	if ( this.testKitchenExperiment &&
+		// See 'Variations' in https://test-kitchen.wikimedia.org/create-experiment
+		this.testKitchenExperiment.isAssignedGroup( 'green-button' )
+	) {
+		this.$element.addClass( 'green-button' );
+	}
 
 	this.showHelp = !OO.ui.isMobile() &&
 		!Options.loadBoolean( 'hide-subref-help' );
@@ -64,17 +78,17 @@ ve.ui.MWReferenceContextItem.static.commandName = 'reference';
  */
 ve.ui.MWReferenceContextItem.prototype.getMainRefPreview = function () {
 	// Render a placeholder for missing refs.
-	let refNode = this.getReferenceNode();
+	let internalItemNode = this.getInternalItemNode();
 	let errorMsgKey = 'cite-ve-referenceslist-missingref';
 
 	// Render main ref if this is a subref, or a placeholder if missing.
-	const mainRefKey = this.model.getAttribute( 'mainRefKey' );
-	if ( mainRefKey && refNode ) {
-		refNode = this.groupRefs.getInternalModelNode( mainRefKey );
+	const mainListIndex = this.model.getAttribute( 'mainListIndex' );
+	if ( mainListIndex !== undefined && internalItemNode ) {
+		internalItemNode = this.internalList.getItemNode( mainListIndex );
 		errorMsgKey = 'cite-ve-dialog-reference-missing-parent-ref';
 	}
 
-	if ( !refNode ) {
+	if ( !internalItemNode || !internalItemNode.getLength() ) {
 		return $( '<div>' )
 			.addClass( 've-ui-mwReferenceContextItem-muted' )
 			// The following messages are used here:
@@ -84,7 +98,7 @@ ve.ui.MWReferenceContextItem.prototype.getMainRefPreview = function () {
 	}
 
 	// Render normal ref.
-	this.view = new ve.ui.MWPreviewElement( refNode, { useView: true } );
+	this.view = new ve.ui.MWPreviewElement( internalItemNode, { useView: true } );
 	// The $element property may be rendered into asynchronously, update the
 	// context's size when the rendering is complete if that's the case
 	this.view.once( 'render', this.context.updateDimensions.bind( this.context ) );
@@ -99,7 +113,7 @@ ve.ui.MWReferenceContextItem.prototype.getMainRefPreview = function () {
  * @return {jQuery|undefined}
  */
 ve.ui.MWReferenceContextItem.prototype.getDetailsPreview = function () {
-	if ( !this.model.getAttribute( 'mainRefKey' ) ) {
+	if ( this.model.getAttribute( 'mainListIndex' ) === undefined ) {
 		return;
 	}
 
@@ -125,7 +139,7 @@ ve.ui.MWReferenceContextItem.prototype.getDetailsPreview = function () {
 		]
 	} );
 
-	this.detailsView = new ve.ui.MWPreviewElement( this.getReferenceNode(), { useView: true } );
+	this.detailsView = new ve.ui.MWPreviewElement( this.getInternalItemNode(), { useView: true } );
 	// The $element property may be rendered into asynchronously, update the
 	// context's size when the rendering is complete if that's the case
 	this.detailsView.once( 'render', this.context.updateDimensions.bind( this.context ) );
@@ -140,42 +154,29 @@ ve.ui.MWReferenceContextItem.prototype.getDetailsPreview = function () {
  * Override default edit button, when a subref is present.
  */
 ve.ui.MWReferenceContextItem.prototype.onEditButtonClick = function () {
-	const mainRefKey = this.model.getAttribute( 'mainRefKey' );
-	if ( !mainRefKey ) {
+	if ( this.testKitchenExperiment ) {
+		this.testKitchenExperiment.send( 'context-edit-click' );
+	}
+
+	const mainListIndex = this.model.getAttribute( 'mainListIndex' );
+	if ( mainListIndex === undefined ) {
 		ve.ui.LinearContextItem.prototype.onEditButtonClick.apply( this );
 		return;
 	}
 
-	// Edit the main ref--like when editing a list-defined ref!
-	// TODO: Make this into a reusable command.
-	const groupRefs = MWDocumentReferences.static
-		.refsForDoc( this.getFragment().getDocument() )
-		.getGroupRefs( this.model.getAttribute( 'listGroup' ) );
-	const mainRefNode = groupRefs.getRefNode( mainRefKey );
-	const mainModelItem = ve.ui.contextItemFactory.getRelatedItems( [ mainRefNode ] )
-		.find( ( item ) => item.name !== 'mobileActions' );
-
-	if ( mainModelItem ) {
-		const mainContextItem = ve.ui.contextItemFactory.lookup( mainModelItem.name );
-		if ( mainContextItem ) {
-			const surface = this.context.getSurface();
-			const command = surface.commandRegistry.lookup( mainContextItem.static.commandName );
-			const fragmentArgs = {
-				fragment: surface.getModel().getLinearFragment(
-					mainRefNode.getOuterRange(),
-					true
-				),
-				selectFragmentOnClose: false
-			};
-			const newArgs = ve.copy( command.args );
-			if ( command.name === 'reference' ) {
-				newArgs[ 1 ] = fragmentArgs;
-			} else {
-				ve.extendObject( newArgs[ 0 ], fragmentArgs );
-			}
-			command.execute( surface, newArgs, 'context' );
-		}
-	}
+	const editNodeAction = ve.ui.actionFactory.create(
+		'editNode',
+		this.context.getSurface(),
+		'context'
+	);
+	editNodeAction.execute(
+		MWReferenceModel.static.newFromMainNodeAttributes(
+			this.internalList.getDocument(),
+			this.model.getAttribute( 'listGroup' ),
+			this.model.getAttribute( 'mainListKey' ),
+			mainListIndex
+		)
+	);
 };
 
 /**
@@ -192,8 +193,8 @@ ve.ui.MWReferenceContextItem.prototype.onEditSubref = function () {
  * @return {jQuery|undefined}
  */
 ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
-	const listKey = this.model.getAttribute( 'mainRefKey' ) || this.model.getAttribute( 'listKey' );
-	const totalUsageCount = this.groupRefs.getTotalUsageCount( listKey );
+	const listIndex = this.model.getAttribute( 'mainListIndex' ) || this.model.getAttribute( 'listIndex' );
+	const totalUsageCount = this.groupRefs.getTotalUsageCount( listIndex );
 
 	if ( totalUsageCount <= 1 ) {
 		return;
@@ -223,12 +224,14 @@ ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
  * @return {jQuery|undefined}
  */
 ve.ui.MWReferenceContextItem.prototype.getAddDetailsButton = function () {
-	if ( !mw.config.get( 'wgCiteSubReferencing' ) || this.model.getAttribute( 'mainRefKey' ) ) {
+	if ( !mw.config.get( 'wgCiteSubReferencing' ) ||
+		this.model.isSubRef()
+	) {
 		return;
 	}
 
-	const listKey = this.model.getAttribute( 'listKey' );
-	if ( this.groupRefs.getTotalUsageCount( listKey ) < 2 ) {
+	const listIndex = this.model.getAttribute( 'listIndex' );
+	if ( this.groupRefs.getTotalUsageCount( listIndex ) < 2 ) {
 		return;
 	}
 
@@ -279,14 +282,14 @@ ve.ui.MWReferenceContextItem.prototype.getAddDetailsButton = function () {
  *
  * @return {ve.dm.InternalItemNode|null} Reference item node
  */
-ve.ui.MWReferenceContextItem.prototype.getReferenceNode = function () {
+ve.ui.MWReferenceContextItem.prototype.getInternalItemNode = function () {
 	if ( !this.model.isEditable() ) {
 		return null;
 	}
-	if ( !this.referenceNode ) {
-		this.referenceNode = this.groupRefs.getInternalModelNode( this.model.getAttribute( 'listKey' ) );
+	if ( !this.internalItemNode ) {
+		this.internalItemNode = this.internalList.getItemNode( this.model.getAttribute( 'listIndex' ) );
 	}
-	return this.referenceNode;
+	return this.internalItemNode;
 };
 
 /**
@@ -300,8 +303,10 @@ ve.ui.MWReferenceContextItem.prototype.getDescription = function () {
  * @override
  */
 ve.ui.MWReferenceContextItem.prototype.setup = function () {
-	this.groupRefs = MWDocumentReferences.static.refsForDoc( this.getFragment().getDocument() )
+	const doc = this.getFragment().getDocument();
+	this.groupRefs = MWDocumentReferences.static.refsForDoc( doc )
 		.getGroupRefs( this.model.getAttribute( 'listGroup' ) );
+	this.internalList = doc.getInternalList();
 
 	// Parent method
 	return ve.ui.MWReferenceContextItem.super.prototype.setup.apply( this, arguments );

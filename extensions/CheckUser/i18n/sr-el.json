@@ -237,7 +237,7 @@
 	"checkuser-global-contributions-api-lookup-error": "Došlo je do greške pri učitavanju podataka sa nekih vikija. Rezultati nisu kompletni. <strong>Možete pokušati ponovo.</strong>",
 	"checkuser-global-contributions-no-results-no-visible-contribs": "<strong>Nema rezultata za traženi termin.</strong> Korisnik „$1” nema vidljivih doprinosa.",
 	"checkuser-global-contributions-no-results-when-filters-applied": "<strong>Nema rezultata za dati upit.</strong> Možete pronaći doprinose ako promenite parametre pretrage.",
-	"checkuser-global-contributions-page-when-no-namespace-translation-available": "Imenski prostor<$1>:$2",
+	"checkuser-global-contributions-page-when-no-namespace-translation-available": "Imenski prostor[$1]:$2",
 	"checkuser-ip-auto-reveal-notification-on": "<strong>Prikazivanje IP adresa uključeno</strong>",
 	"checkuser-ip-auto-reveal-notification-off": "<strong>Prikazivanje IP adresa isključeno</strong>",
 	"checkuser-ip-auto-reveal-on-dialog-title": "Automatsko otkrivanje IP adresa",

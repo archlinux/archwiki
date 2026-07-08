@@ -31,7 +31,7 @@ OO.inheritClass( ve.dm.NodeFactory, ve.dm.ModelFactory );
  * @throws {Error} Unknown node type
  */
 ve.dm.NodeFactory.prototype.getDataElement = function ( type, attributes ) {
-	const element = { type: type };
+	const element = { type };
 	if ( Object.prototype.hasOwnProperty.call( this.registry, type ) ) {
 		attributes = ve.extendObject( {}, this.registry[ type ].static.defaultAttributes, attributes );
 		if ( !ve.isEmptyObject( attributes ) ) {
@@ -201,12 +201,7 @@ ve.dm.NodeFactory.prototype.canNodeTakeAnnotation = function ( type, annotation 
 	}
 	const disallowedList = this.registry[ type ].static.disallowedAnnotationTypes;
 
-	for ( let i = 0, len = disallowedList.length; i < len; i++ ) {
-		if ( annotation instanceof ve.dm.annotationFactory.lookup( disallowedList[ i ] ) ) {
-			return false;
-		}
-	}
-	return true;
+	return disallowedList.every( ( disallowedType ) => !( annotation instanceof ve.dm.annotationFactory.lookup( disallowedType ) ) );
 };
 
 /**

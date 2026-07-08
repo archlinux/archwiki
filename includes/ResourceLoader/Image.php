@@ -8,14 +8,14 @@ namespace MediaWiki\ResourceLoader;
 
 use DOMDocument;
 use InvalidArgumentException;
-use InvalidSVGException;
-use MediaWiki\Languages\LanguageFallback;
+use MediaWiki\Language\LanguageFallbackMode;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\InvalidSVGException;
+use MediaWiki\Media\SvgHandler;
+use MediaWiki\Media\SVGReader;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 use RuntimeException;
-use SvgHandler;
-use SVGReader;
 use Wikimedia\FileBackend\FileBackend;
 use Wikimedia\Minify\CSSMin;
 
@@ -145,7 +145,7 @@ class Image {
 	protected function getLangFallbacks( string $lang ): array {
 		return MediaWikiServices::getInstance()
 			->getLanguageFallback()
-			->getAll( $lang, LanguageFallback::STRICT );
+			->getAll( $lang, LanguageFallbackMode::STRICT );
 	}
 
 	/**

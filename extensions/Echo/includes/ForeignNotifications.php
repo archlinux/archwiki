@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications;
 
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
@@ -199,9 +200,10 @@ class ForeignNotifications {
 
 	/**
 	 * @param string[] $wikis
+	 * @param Language $lang User language
 	 * @return array[] [(string) wiki => (array) data]
 	 */
-	public static function getApiEndpoints( array $wikis ): array {
+	public static function getApiEndpoints( array $wikis, Language $lang ): array {
 		global $wgConf;
 		$wgConf->loadFullData();
 		$urlUtils = MediaWikiServices::getInstance()->getUrlUtils();
@@ -215,7 +217,7 @@ class ForeignNotifications {
 			$articlePath = $wgConf->get( 'wgArticlePath', $wiki, $major, [ 'lang' => $minor, 'site' => $major ] );
 
 			$data[$wiki] = [
-				'title' => static::getWikiTitle( $wiki, $siteFromDB ),
+				'title' => static::getWikiTitle( $wiki, $lang, $siteFromDB ),
 				'url' => $urlUtils->expand( $server . $scriptPath . '/api.php', PROTO_INTERNAL ),
 				// We need this to link to Special:Notifications page
 				'base' => $urlUtils->expand( $server . $articlePath, PROTO_INTERNAL ),
@@ -227,11 +229,12 @@ class ForeignNotifications {
 
 	/**
 	 * @param string $wikiId
+	 * @param Language $lang
 	 * @param array|null $siteFromDB $wgConf->siteFromDB( $wikiId ) result
 	 * @return mixed|string
 	 */
-	protected static function getWikiTitle( $wikiId, ?array $siteFromDB = null ) {
-		global $wgConf, $wgLang;
+	protected static function getWikiTitle( $wikiId, Language $lang, ?array $siteFromDB = null ) {
+		global $wgConf;
 
 		$msg = wfMessage( 'project-localized-name-' . $wikiId );
 		// check if WikimediaMessages localized project names are available
@@ -245,7 +248,7 @@ class ForeignNotifications {
 			// general project's sitename if there is no override
 			$wikiName = $wgConf->get( 'wgSitename', $wikiId ) ?: $wgConf->get( 'wgSitename', (string)$site );
 			$langName = MediaWikiServices::getInstance()->getLanguageNameUtils()
-				->getLanguageName( $langCode ?? '', $wgLang->getCode() );
+				->getLanguageName( $langCode ?? '', $lang->getCode() );
 
 			if ( !$langName ) {
 				// if we can't find a language name (in language-agnostic

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"JeffreyKim"
+			"JeffreyKim",
+			"Winston Sung"
 		]
 	},
 	"syntaxhighlight-desc": "用[http://pygments.org/ Pygments]以<code>&lt;syntaxhighlight&gt;</code>提供醒目提示",

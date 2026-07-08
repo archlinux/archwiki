@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Nuke\Test\Unit;
 
 use LogicException;
 use MediaWiki\Extension\Nuke\NukeQueryBuilder;
-use MediaWiki\Extension\Nuke\Test\NukeIntegrationTest;
+use MediaWiki\Extension\Nuke\Test\NukeIntegrationTestTrait;
 use MediaWikiIntegrationTestCase;
 
 /**
@@ -15,7 +15,7 @@ use MediaWikiIntegrationTestCase;
  */
 class NukeQueryBuilderTest extends MediaWikiIntegrationTestCase {
 
-	use NukeIntegrationTest;
+	use NukeIntegrationTestTrait;
 
 	private function newQueryBuilder( string $table ) {
 		$serviceContainer = $this->getServiceContainer();

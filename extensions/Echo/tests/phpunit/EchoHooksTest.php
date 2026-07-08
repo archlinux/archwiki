@@ -77,6 +77,7 @@ class EchoHooksTest extends MediaWikiIntegrationTestCase {
 			$services->getUserEditTracker(),
 			$services->getUserFactory(),
 			$services->getUserOptionsManager(),
+			null,
 		);
 		return $hooks;
 	}

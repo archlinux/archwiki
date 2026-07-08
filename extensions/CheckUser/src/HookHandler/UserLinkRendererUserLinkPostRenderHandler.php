@@ -1,29 +1,24 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
-use IContextSource;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Services\UserInfoCardBlockStatusCache;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Hook\UserLinkRendererUserLinkPostRenderHook;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
 
 class UserLinkRendererUserLinkPostRenderHandler implements UserLinkRendererUserLinkPostRenderHook {
 
-	private UserOptionsLookup $userOptionsLookup;
-	private UserNameUtils $userNameUtils;
-	private Config $config;
-
 	public function __construct(
-		UserOptionsLookup $userOptionsLookup,
-		UserNameUtils $userNameUtils,
-		Config $config
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly UserNameUtils $userNameUtils,
+		private readonly Config $config,
+		private readonly UserInfoCardBlockStatusCache $blockStatusCache,
 	) {
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->userNameUtils = $userNameUtils;
-		$this->config = $config;
 	}
 
 	public function onUserLinkRendererUserLinkPostRender(
@@ -41,29 +36,15 @@ class UserLinkRendererUserLinkPostRenderHandler implements UserLinkRendererUserL
 			$output->addModuleStyles( 'ext.checkUser.styles' );
 			$output->addModules( 'ext.checkUser.userInfoCard' );
 
-			if ( $this->config->has( 'GEUserImpactMaxEdits' ) ) {
-				$output->addJsConfigVars( [
-					'wgCheckUserGEUserImpactMaxEdits' => $this->config->get( 'GEUserImpactMaxEdits' ),
-				] );
+			$isBlocked = $this->blockStatusCache->isIndefinitelyBlockedOrLocked( $targetUser->getName() );
+
+			if ( $isBlocked ) {
+				$iconClass = 'userBlocked';
+			} elseif ( $this->userNameUtils->isTemp( $targetUser->getName() ) ) {
+				$iconClass = 'userTemporary';
+			} else {
+				$iconClass = 'userAvatar';
 			}
-
-			if ( $this->config->has( 'GEUserImpactMaxThanks' ) ) {
-				$output->addJsConfigVars( [
-					'wgCheckUserGEUserImpactMaxThanks' => $this->config->get( 'GEUserImpactMaxThanks' ),
-				] );
-			}
-
-			$output->addJsConfigVars(
-				'wgCheckUserEnableUserInfoCardInstrumentation',
-				$this->config->get( 'CheckUserEnableUserInfoCardInstrumentation' )
-			);
-
-			$output->addJsConfigVars(
-				'wgCheckUserUserInfoCardShowXToolsLink',
-				$this->config->get( 'CheckUserUserInfoCardShowXToolsLink' )
-			);
-
-			$iconClass = $this->userNameUtils->isTemp( $targetUser->getName() ) ? 'userTemporary' : 'userAvatar';
 			// CSS-only Codex icon button
 			$icon = Html::rawElement(
 				'span',
@@ -79,7 +60,8 @@ class UserLinkRendererUserLinkPostRenderHandler implements UserLinkRendererUserL
 					'href' => 'javascript:void(0)',
 					'role' => 'button',
 					'aria-label' => $context->msg(
-						'checkuser-userinfocard-toggle-button-aria-label', $targetUser->getName()
+						'checkuser-userinfocard-toggle-button-aria-label',
+						$targetUser->getName()
 					)->text(),
 					'aria-haspopover' => 'dialog',
 					'class' => "ext-checkuser-userinfocard-button cdx-button " .

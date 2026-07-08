@@ -1,23 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser;
+namespace MediaWiki\Extension\CheckUser\CheckUser;
 
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserLogPager;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserLogPager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
-use MediaWiki\Pager\ContribsPager;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Pager\ContribsPager;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserFactory;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
-use Wikimedia\Rdbms\LBFactory;
 
 class SpecialCheckUserLog extends SpecialPage {
 	/**
@@ -25,35 +25,25 @@ class SpecialCheckUserLog extends SpecialPage {
 	 */
 	protected array $opts;
 
-	private IReadableDatabase $dbr;
-
-	private LinkBatchFactory $linkBatchFactory;
-	private PermissionManager $permissionManager;
-	private CommentStore $commentStore;
-	private CommentFormatter $commentFormatter;
-	private CheckUserLogService $checkUserLogService;
-	private UserFactory $userFactory;
-	private ActorStore $actorStore;
+	private readonly IReadableDatabase $dbr;
 
 	public function __construct(
-		LinkBatchFactory $linkBatchFactory,
-		PermissionManager $permissionManager,
-		CommentStore $commentStore,
-		CommentFormatter $commentFormatter,
-		CheckUserLogService $checkUserLogService,
-		UserFactory $userFactory,
-		ActorStore $actorStore,
-		LBFactory $lbFactory
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly PermissionManager $permissionManager,
+		private readonly CommentStore $commentStore,
+		private readonly CommentFormatter $commentFormatter,
+		private readonly CheckUserLogService $checkUserLogService,
+		private readonly UserFactory $userFactory,
+		private readonly ActorStore $actorStore,
+		IConnectionProvider $dbProvider,
 	) {
-		parent::__construct( 'CheckUserLog', 'checkuser-log' );
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->permissionManager = $permissionManager;
-		$this->commentStore = $commentStore;
-		$this->commentFormatter = $commentFormatter;
-		$this->checkUserLogService = $checkUserLogService;
-		$this->userFactory = $userFactory;
-		$this->actorStore = $actorStore;
-		$this->dbr = $lbFactory->getReplicaDatabase();
+		parent::__construct( 'CheckUserLog' );
+		$this->dbr = $dbProvider->getReplicaDatabase();
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'checkuser-log';
 	}
 
 	/**
@@ -190,17 +180,15 @@ class SpecialCheckUserLog extends SpecialPage {
 				);
 			}
 
+			$html = '';
+			foreach ( $links as $link ) {
+				$html .= Html::rawElement( 'span', [], $link );
+			}
 			$this->getOutput()->addSubtitle( Html::rawElement(
-					'span',
-					[ "class" => "mw-checkuser-links-no-parentheses" ],
-					Html::openElement( 'span' ) .
-					implode(
-						Html::closeElement( 'span' ) . Html::openElement( 'span' ),
-						$links
-					) .
-					Html::closeElement( 'span' )
-				)
-			);
+				'span',
+				[ 'class' => 'mw-checkuser-links-no-parentheses' ],
+				$html
+			) );
 		}
 	}
 

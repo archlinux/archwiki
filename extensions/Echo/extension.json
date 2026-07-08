@@ -15,7 +15,7 @@
 	"license-name": "MIT",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"APIMetaModules": {
 		"notifications": {
@@ -535,6 +535,9 @@
 				"UserEditTracker",
 				"UserFactory",
 				"UserOptionsManager"
+			],
+			"optional_services": [
+				"MobileFrontend.Context"
 			]
 		},
 		"schema": {
@@ -573,7 +576,7 @@
 	],
 	"DeprecatedHooks": {
 		"EventInsertComplete": {
-			"deprecatedVersion": "1.45"
+			"deprecatedVersion": "1.46"
 		}
 	},
 	"config": {
@@ -599,7 +602,10 @@
 			"value": null
 		},
 		"EchoMaxUpdateCount": {
-			"value": 2000
+			"value": 10000
+		},
+		"EchoMaxNotificationAge": {
+			"value": 157783680
 		},
 		"EchoMaxMentionsCount": {
 			"value": 50
@@ -936,7 +942,8 @@
 						"web": true,
 						"email": true,
 						"expandable": true
-					}
+					},
+					"apply-page-link-mute": true
 				},
 				"minor-watchlist-change": {
 					"user-locators": [
@@ -1157,28 +1164,18 @@
 		"BackfillUnreadWikis": "maintenance/backfillUnreadWikis.php",
 		"EchoAttributeManager": "includes/AttributeManager.php",
 		"MediaWiki\\Extension\\Notifications\\AttributeManager": "includes/AttributeManager.php",
-		"EchoCallbackIterator": "includes/Iterator/CallbackIterator.php",
-		"MediaWiki\\Extension\\Notifications\\Iterator\\CallbackIterator": "includes/Iterator/CallbackIterator.php",
 		"EchoDiscussionParser": "includes/DiscussionParser.php",
 		"MediaWiki\\Extension\\Notifications\\DiscussionParser": "includes/DiscussionParser.php",
-		"EchoEditUserTalkPresentationModel": "includes/Formatters/EchoEditUserTalkPresentationModel.php",
-		"MediaWiki\\Extension\\Notifications\\Formatters\\EchoEditUserTalkPresentationModel": "includes/Formatters/EchoEditUserTalkPresentationModel.php",
 		"EchoEvent": "includes/Model/Event.php",
 		"MediaWiki\\Extension\\Notifications\\Model\\Event": "includes/Model/Event.php",
 		"EchoEventPresentationModel": "includes/Formatters/EchoEventPresentationModel.php",
 		"MediaWiki\\Extension\\Notifications\\Formatters\\EchoEventPresentationModel": "includes/Formatters/EchoEventPresentationModel.php",
-		"EchoMentionPresentationModel": "includes/Formatters/EchoMentionPresentationModel.php",
-		"MediaWiki\\Extension\\Notifications\\Formatters\\EchoMentionPresentationModel": "includes/Formatters/EchoMentionPresentationModel.php",
-		"EchoMentionStatusPresentationModel": "includes/Formatters/EchoMentionStatusPresentationModel.php",
-		"MediaWiki\\Extension\\Notifications\\Formatters\\EchoMentionStatusPresentationModel": "includes/Formatters/EchoMentionStatusPresentationModel.php",
 		"EchoNotification": "includes/Model/Notification.php",
 		"MediaWiki\\Extension\\Notifications\\Model\\Notification": "includes/Model/Notification.php",
 		"EchoNotificationMapper": "includes/Mapper/NotificationMapper.php",
 		"MediaWiki\\Extension\\Notifications\\Mapper\\NotificationMapper": "includes/Mapper/NotificationMapper.php",
 		"EchoNotifier": "includes/Notifier.php",
 		"MediaWiki\\Extension\\Notifications\\Notifier": "includes/Notifier.php",
-		"EchoPresentationModelSection": "includes/Formatters/EchoPresentationModelSection.php",
-		"MediaWiki\\Extension\\Notifications\\Formatters\\EchoPresentationModelSection": "includes/Formatters/EchoPresentationModelSection.php",
 		"EchoUserLocator": "includes/UserLocator.php",
 		"MediaWiki\\Extension\\Notifications\\UserLocator": "includes/UserLocator.php",
 		"GenerateSampleNotifications": "maintenance/generateSampleNotifications.php",
@@ -1188,9 +1185,7 @@
 		"RecomputeNotifCounts": "maintenance/recomputeNotifCounts.php",
 		"RemoveInvalidNotification": "maintenance/removeInvalidNotification.php",
 		"RemoveOrphanedEvents": "maintenance/removeOrphanedEvents.php",
-		"UpdatePerUserBlacklist": "maintenance/updatePerUserBlacklist.php",
-		"EchoPush\\PushNotifier": "includes/Push/PushNotifier.php",
-		"MediaWiki\\Extension\\Notifications\\Push\\PushNotifier": "includes/Push/PushNotifier.php"
+		"UpdatePerUserBlacklist": "maintenance/updatePerUserBlacklist.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Notifications\\": "includes/"

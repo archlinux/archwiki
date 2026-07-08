@@ -1,17 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\Test\Integration\Logging;
+namespace MediaWiki\Extension\CheckUser\Test\Integration\Logging;
 
-use LogFormatterTestCase;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Tests\Logging\LogFormatterTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 
 /**
  * @group CheckUser
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\Logging\CheckUserPrivateEventLogFormatter
+ * @covers \MediaWiki\Extension\CheckUser\Logging\CheckUserPrivateEventLogFormatter
  */
 class CheckUserPrivateEventLogFormatterTest extends LogFormatterTestCase {
 

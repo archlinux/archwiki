@@ -94,6 +94,7 @@ QUnit.test( 'Test enableMultiReveal', ( assert ) => {
 			{ targetId: revId, allIds: [ revId ] },
 			{},
 			{},
+			undefined,
 			$qunitFixture
 		) );
 		assert.strictEqual(
@@ -127,6 +128,7 @@ QUnit.test( 'Test enableMultiReveal', ( assert ) => {
 			isRevisionLookup,
 			isLogLookup,
 			isAbuseFilterLookup,
+			undefined,
 			batchResponse
 		]
 	);
@@ -148,6 +150,87 @@ QUnit.test( 'Test enableMultiReveal', ( assert ) => {
 		).text(),
 		'(checkuser-tempaccount-reveal-ip-button-label)',
 		'IP reveal button for revId 3 before multi reveal'
+	);
+} );
+
+QUnit.test( 'Test enableMultiReveal with mixed wikiUrl values', function ( assert ) {
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $qunitFixture = $( '#qunit-fixture' );
+
+	// Add some testing revision lines to test the multi-reveal functionality with mixed wikiUrl
+	const revisionLines = { 1: 'test/$1', 2: undefined };
+	Object.entries( revisionLines ).forEach( ( [ revId, wikiUrl ] ) => {
+		const $revisionLine = $( '<div>' )
+			.attr( 'data-mw-revid', revId )
+			.attr( 'data-wiki-url', wikiUrl );
+		$qunitFixture.append( $revisionLine );
+		// Add the temporary account user link
+		$revisionLine.append( makeTempUserLink( tempName1, wikiUrl ) );
+	} );
+
+	ipReveal.addIpRevealButtons( $qunitFixture );
+	ipReveal.enableMultiReveal( $qunitFixture );
+
+	// Set up spies on the buttons
+	const spies = {};
+	const sandbox = this.sandbox;
+	Object.keys( revisionLines ).forEach( ( revId ) => {
+		const $button = $qunitFixture.find( `[data-mw-revid="${ revId }"] .ext-checkuser-tempaccount-reveal-ip-button` );
+		spies[ revId ] = sandbox.spy();
+		$button.on( 'revealIp', spies[ revId ] );
+	} );
+
+	// Fire the userRevealed event with some data. The response includes extra data to ensure that
+	// it is not added to user link with the wrong URL.
+	const isRevisionLookup = true;
+	const isLogLookup = false;
+	const isAbuseFilterLookup = false;
+	const ips = {
+		1: '127.0.0.1',
+		2: '127.0.0.2'
+	};
+	const batchResponse = {
+		[ tempName1 ]: { revIps: ips, expired: { revIds: [], logIps: [] } }
+	};
+	const eventWikiUrl = 'test/$1';
+
+	$qunitFixture.trigger(
+		'userRevealed',
+		[
+			tempName1,
+			ips,
+			isRevisionLookup,
+			isLogLookup,
+			isAbuseFilterLookup,
+			eventWikiUrl,
+			batchResponse
+		]
+	);
+
+	// Check that the IP addresses were added correctly
+	assert.strictEqual(
+		$qunitFixture.find( '[data-mw-revid="1"] .ext-checkuser-tempaccount-reveal-ip' ).text(),
+		'127.0.0.1',
+		'IP reveal button 1 replaced with IP (matching wikiUrl)'
+	);
+	assert.strictEqual(
+		$qunitFixture.find(
+			'[data-mw-revid="2"] .ext-checkuser-tempaccount-reveal-ip-button'
+		).text(),
+		'(checkuser-tempaccount-reveal-ip-button-label)',
+		'IP reveal button for revId 2 not replaced (non-matching wikiUrl)'
+	);
+
+	// Check that trigger was called on the button that did not match the wikiUrl
+	assert.strictEqual(
+		spies[ 1 ].called,
+		false,
+		'trigger not called on button 1 (matching wikiUrl)'
+	);
+	assert.strictEqual(
+		spies[ 2 ].calledOnce,
+		true,
+		'trigger called on button 2 (non-matching wikiUrl)'
 	);
 } );
 
@@ -216,6 +299,7 @@ QUnit.test( 'Test enableMultiReveal with grouped recent changes', ( assert ) => 
 			line.revIds,
 			line.logIds,
 			line.aflIds,
+			undefined,
 			$qunitFixture
 		) );
 	} );
@@ -231,10 +315,16 @@ QUnit.test( 'Test enableMultiReveal with grouped recent changes', ( assert ) => 
 			0,
 			'Button removed after click'
 		);
+		const $revealedLatestIp = $( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture );
 		assert.strictEqual(
-			$( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).text(),
+			$revealedLatestIp.text(),
 			'127.0.0.3',
 			'Text of element that replaced button'
+		);
+		assert.strictEqual(
+			$revealedLatestIp.children().attr( 'title' ),
+			'(checkuser-tempaccount-reveal-ip-tooltip-latest)',
+			'Tooltip for revealed IP'
 		);
 
 		waitUntilElementDisappears( '[data-mw-revid="1"] .ext-checkuser-tempaccount-reveal-ip-button' ).then( () => {
@@ -244,10 +334,16 @@ QUnit.test( 'Test enableMultiReveal with grouped recent changes', ( assert ) => 
 				0,
 				'Button removed after click'
 			);
+			const $revealedRevisionIp = $( '[data-mw-revid="1"] .ext-checkuser-tempaccount-reveal-ip', $qunitFixture );
 			assert.strictEqual(
-				$( '[data-mw-revid="1"] .ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).text(),
+				$revealedRevisionIp.text(),
 				'127.0.0.1',
 				'Text of element that replaced button'
+			);
+			assert.strictEqual(
+				$revealedRevisionIp.children().attr( 'title' ),
+				'(checkuser-tempaccount-reveal-ip-tooltip-revision)',
+				'Tooltip for revealed IP'
 			);
 
 			waitUntilElementDisappears( '[data-mw-logid="1"] .ext-checkuser-tempaccount-reveal-ip-button' ).then( () => {
@@ -257,10 +353,16 @@ QUnit.test( 'Test enableMultiReveal with grouped recent changes', ( assert ) => 
 					0,
 					'Button removed after click'
 				);
+				const $revealedActionIp = $( '[data-mw-logid="1"] .ext-checkuser-tempaccount-reveal-ip', $qunitFixture );
 				assert.strictEqual(
-					$( '[data-mw-logid="1"] .ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).text(),
+					$revealedActionIp.text(),
 					'127.0.0.1',
 					'Text of element that replaced button'
+				);
+				assert.strictEqual(
+					$revealedActionIp.children().attr( 'title' ),
+					'(checkuser-tempaccount-reveal-ip-tooltip-action)',
+					'Tooltip for revealed IP'
 				);
 
 				done();
@@ -297,6 +399,16 @@ QUnit.test( 'Test addIpRevealButtons adds temporary account IP reveal buttons', 
 	const $tempAccountUserLink = makeTempUserLink( tempName3 );
 	$qunitFixture.append( $tempAccountUserLink );
 	temporaryAccountUserLinks.push( $tempAccountUserLink );
+	// Add a temporary account username that has no data-mw-target
+	mw.config.set( 'wgCheckUserContribsPageLocalName', 'Contributions' );
+	const $noTargetUserLink = $( '<a>' )
+		.addClass( 'mw-tempuserlink' )
+		.text( tempName1 )
+		.attr( 'href', mw.util.getUrl( 'Special:Contributions/' + tempName1 ) );
+	const $parserOutput = $( '<div>' ).addClass( 'mw-parser-output' );
+	$parserOutput.append( $noTargetUserLink );
+	$qunitFixture.append( $parserOutput );
+	temporaryAccountUserLinks.push( $noTargetUserLink );
 	// Verify that before the call to ::addIpRevealButtons there are no Show IP buttons
 	assert.strictEqual(
 		$qunitFixture.find( '.ext-checkuser-tempaccount-reveal-ip-button' ).length,
@@ -374,7 +486,25 @@ QUnit.test( 'Test makeButton creates expected button for blocked performer', ( a
 	);
 } );
 
-function performMakeButtonRequestTest( assert, responseCode, responseContent, expectedText ) {
+QUnit.test( 'Test makeButton creates expected button for external temporary user', ( assert ) => {
+	// Call the method under test
+	const elements = ipReveal.makeButton( tempName1, { targetId: 1, allIds: [ 1 ] }, {}, {}, 'testUrl' );
+	const [ $button ] = elements;
+
+	assert.strictEqual(
+		$button.data( 'wikiUrl' ),
+		'testUrl',
+		'Button external URL data'
+	);
+} );
+
+function performMakeButtonRequestTest(
+	assert,
+	responseCode,
+	responseContent,
+	expectedText,
+	expectedTitle
+) {
 	// We need the test to wait a small amount of time for the click events to finish.
 	const done = assert.async();
 	server.respond( ( request ) => {
@@ -395,10 +525,16 @@ function performMakeButtonRequestTest( assert, responseCode, responseContent, ex
 			0,
 			'Button removed after click'
 		);
+		const $revealedIp = $( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture );
 		assert.strictEqual(
-			$( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).text(),
+			$revealedIp.text(),
 			expectedText,
 			'Text of element that replaced button'
+		);
+		assert.strictEqual(
+			$revealedIp.children().attr( 'title' ),
+			expectedTitle,
+			'Tooltip for revealed IP'
 		);
 		done();
 	} );
@@ -426,7 +562,8 @@ QUnit.test( 'Test makeButton on button click for successful request but missing 
 			},
 			autoReveal: false
 		} ),
-		'(checkuser-tempaccount-reveal-ip-missing)'
+		'(checkuser-tempaccount-reveal-ip-missing)',
+		undefined
 	);
 } );
 
@@ -446,7 +583,8 @@ QUnit.test( 'Test makeButton on button click for successful request but expired 
 			},
 			autoReveal: false
 		} ),
-		'(checkuser-tempaccount-reveal-ip-expired)'
+		'(checkuser-tempaccount-reveal-ip-expired)',
+		undefined
 	);
 } );
 
@@ -466,7 +604,8 @@ QUnit.test( 'Test makeButton on button click for successful request with data', 
 			},
 			autoReveal: false
 		} ),
-		'127.0.0.1'
+		'127.0.0.1',
+		'(checkuser-tempaccount-reveal-ip-tooltip-revision)'
 	);
 } );
 
@@ -475,7 +614,7 @@ QUnit.test( 'Test enableAutoReveal replaces buttons with IPs', function ( assert
 	server.respond( ( request ) => {
 		const response = {};
 		response[ tempName1 ] = { revIps: { 1: '127.0.0.1', 2: '127.0.0.1' }, logIps: null, lastUsedIp: null };
-		response[ tempName2 ] = { revIps: { 3: '127.0.0.1' }, logIps: null, lastUsedIp: null };
+		response[ tempName2 ] = { revIps: { 3: '::1' }, logIps: null, lastUsedIp: null };
 		request.respond(
 			200,
 			{ 'Content-Type': 'application/json' },
@@ -497,6 +636,8 @@ QUnit.test( 'Test enableAutoReveal replaces buttons with IPs', function ( assert
 			username,
 			{ targetId: revId, allIds: [ revId ] },
 			{},
+			{},
+			undefined,
 			$qunitFixture
 		) );
 	} );
@@ -523,6 +664,120 @@ QUnit.test( 'Test enableAutoReveal replaces buttons with IPs', function ( assert
 			$( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).length,
 			3,
 			'Revealed IPs added'
+		);
+		assert.strictEqual(
+			$( '.ext-checkuser-tempaccount-reveal-ip64-anchor', $qunitFixture ).length,
+			1,
+			'Revealed IPv6s have /64 links added'
+		);
+
+		done();
+	} );
+} );
+
+QUnit.test( 'Test enableAutoReveal with mixed wikiUrls', function ( assert ) {
+	const done = assert.async();
+	server.respond( ( request ) => {
+		const response = {};
+		if ( request.url.includes( 'action=query' ) && request.url.includes( 'meta=tokens' ) ) {
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				JSON.stringify( {
+					query: { tokens: { csrftoken: '+\\' } }
+				} )
+			);
+			return;
+		}
+		if ( request.url.includes( '/checkuser/v0/batch-temporaryaccount' ) ) {
+			if ( request.url.startsWith( 'test1' ) ) {
+				response[ tempName1 ] = {
+					revIps: { 1: '127.0.0.1' },
+					logIps: null,
+					lastUsedIp: null,
+					autoReveal: true
+				};
+				response[ tempName2 ] = {
+					revIps: { 3: '127.0.0.3' },
+					logIps: null,
+					lastUsedIp: null,
+					autoReveal: true
+				};
+			} else if ( request.url.startsWith( 'test2' ) ) {
+				response[ tempName1 ] = {
+					revIps: { 2: '127.0.0.2' },
+					logIps: null,
+					lastUsedIp: null,
+					autoReveal: true
+				};
+			}
+			request.respond(
+				200,
+				{ 'Content-Type': 'application/json' },
+				JSON.stringify( response )
+			);
+		}
+	} );
+
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $qunitFixture = $( '#qunit-fixture' );
+
+	// Add some revision lines with temporary account links with different wikiUrls
+	const revisionLines = {
+		1: { username: tempName1, wikiUrl: 'test1/$1' },
+		2: { username: tempName1, wikiUrl: 'test2/$1' },
+		3: { username: tempName2, wikiUrl: 'test1/$1' }
+	};
+	Object.entries( revisionLines ).forEach( ( [ revId, data ] ) => {
+		const $revisionLine = $( '<div>' ).attr( 'data-mw-revid', revId );
+		$qunitFixture.append( $revisionLine );
+		const $tempAccountUserLink = makeTempUserLink( data.username, data.wikiUrl );
+		$revisionLine.append( $tempAccountUserLink );
+		$revisionLine.append( ipReveal.makeButton(
+			data.username,
+			{ targetId: revId, allIds: [ revId ] },
+			{},
+			{},
+			data.wikiUrl,
+			$qunitFixture
+		) );
+	} );
+
+	// Check that auto-reveal mode is switched on
+	const expiry = Math.round( Date.now() / 1000 ) + 3600;
+	const utilsMock = this.sandbox.mock( ipRevealUtils );
+	utilsMock.expects( 'setAutoRevealStatus' )
+		.once()
+		.withArgs( expiry )
+		.returns( $.Deferred().resolve() );
+
+	// Enable multi-reveal and switch on auto-reveal mode
+	ipReveal.enableMultiReveal( $qunitFixture );
+	ipReveal.enableAutoReveal( expiry, $qunitFixture );
+
+	// Check all IPs are revealed
+	waitUntilElementDisappears( '.ext-checkuser-tempaccount-reveal-ip-button' ).then( () => {
+		assert.strictEqual(
+			$( '.ext-checkuser-tempaccount-reveal-ip', $qunitFixture ).length,
+			3,
+			'Revealed IPs added'
+		);
+
+		// Check specific IPs
+		assert.strictEqual(
+			$qunitFixture.find( '[data-mw-revid="1"] .ext-checkuser-tempaccount-reveal-ip' ).text(),
+			'127.0.0.1',
+			'IP for revId 1 revealed'
+		);
+		assert.strictEqual(
+			$qunitFixture.find( '[data-mw-revid="2"] .ext-checkuser-tempaccount-reveal-ip' ).text(),
+			'127.0.0.2',
+			'IP for revId 2 revealed'
+		);
+		assert.strictEqual(
+			$qunitFixture.find( '[data-mw-revid="3"] .ext-checkuser-tempaccount-reveal-ip' ).text(),
+			'127.0.0.3',
+			'IP for revId 3 revealed'
 		);
 
 		done();

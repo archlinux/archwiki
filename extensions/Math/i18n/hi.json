@@ -124,5 +124,7 @@
 	"math-wikibase-special-form-button": "जानकारी का अनुरोध करें",
 	"math-wikibase-special-error-header": "त्रुटि",
 	"math-wikibase-special-error-invalid-argument": "आपका निर्दिष्ट विकिबेस आयटम ID मौजूद नहीं है।",
-	"math-wikibase-special-error-unknown": "विकिबेस से डेटा प्राप्त करते समय अज्ञात त्रुटि हुई।"
+	"math-wikibase-special-error-unknown": "विकिबेस से डेटा प्राप्त करते समय अज्ञात त्रुटि हुई।",
+	"math-editpage-insert-inline": "गणितीय सूत्र (इनलाइन)",
+	"math-editpage-insert-block": "गणितीय सूत्र (ब्लॉक)"
 }

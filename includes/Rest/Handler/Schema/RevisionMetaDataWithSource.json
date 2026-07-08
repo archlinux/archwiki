@@ -16,33 +16,40 @@
 	"properties": {
 		"id": {
 			"type": "integer",
-			"x-i18n-description": "rest-property-desc-revision-id"
+			"x-i18n-description": "rest-property-desc-revision-id",
+			"example": 1334073939
 		},
 		"size": {
 			"type": "integer",
-			"x-i18n-description": "rest-property-desc-revision-size"
+			"x-i18n-description": "rest-property-desc-revision-size",
+			"example": 238224
 		},
 		"delta": {
 			"type": "integer",
 			"nullable": true,
-			"x-i18n-description": "rest-property-desc-revision-delta"
+			"x-i18n-description": "rest-property-desc-revision-delta",
+			"example": 25
 		},
 		"comment": {
 			"type": "string",
 			"nullable": true,
-			"x-i18n-description": "rest-property-desc-revision-comment"
+			"x-i18n-description": "rest-property-desc-revision-comment",
+			"example": "Added isbn. Normalized parameter names."
 		},
 		"minor": {
 			"type": "boolean",
-			"x-i18n-description": "rest-property-desc-revision-minor"
+			"x-i18n-description": "rest-property-desc-revision-minor",
+			"example": false
 		},
 		"timestamp": {
 			"type": "string",
-			"x-i18n-description": "rest-property-desc-revision-timestamp"
+			"x-i18n-description": "rest-property-desc-revision-timestamp",
+			"example": "2026-01-21T10:50:43Z"
 		},
 		"content_model": {
 			"type": "string",
-			"x-i18n-description": "rest-property-desc-revision-content-model"
+			"x-i18n-description": "rest-property-desc-revision-content-model",
+			"example": "wikitext"
 		},
 		"page": {
 			"x-i18n-description": "rest-property-desc-revision-page",
@@ -54,15 +61,18 @@
 			"properties": {
 				"id": {
 					"type": "integer",
-					"x-i18n-description": "rest-property-desc-page-id"
+					"x-i18n-description": "rest-property-desc-page-id",
+					"example": 26903
 				},
 				"key": {
 					"type": "string",
-					"x-i18n-description": "rest-property-desc-page-key"
+					"x-i18n-description": "rest-property-desc-page-key",
+					"example": "Solar_System"
 				},
 				"title": {
 					"type": "string",
-					"x-i18n-description": "rest-property-desc-page-title"
+					"x-i18n-description": "rest-property-desc-page-title",
+					"example": "Solar System"
 				}
 			}
 		},
@@ -76,11 +86,13 @@
 			"properties": {
 				"url": {
 					"type": "string",
-					"x-i18n-description": "rest-property-desc-page-license-url-html"
+					"x-i18n-description": "rest-property-desc-page-license-url-html",
+					"example": "https://creativecommons.org/licenses/by-sa/4.0/deed.en"
 				},
 				"title": {
 					"type": "string",
-					"x-i18n-description": "rest-property-desc-page-license-title-html"
+					"x-i18n-description": "rest-property-desc-page-license-title-html",
+					"example": "Creative Commons Attribution-Share Alike 4.0"
 				}
 			}
 		},
@@ -95,17 +107,20 @@
 			"properties": {
 				"id": {
 					"type": "integer",
-					"x-i18n-description": "rest-property-desc-user-id"
+					"x-i18n-description": "rest-property-desc-user-id",
+					"example": 7903804
 				},
 				"name": {
 					"type": "string",
-					"x-i18n-description": "rest-property-desc-user-name"
+					"x-i18n-description": "rest-property-desc-user-name",
+					"example": "Citation bot"
 				}
 			}
 		},
 		"source": {
 			"type": "string",
-			"x-i18n-description": "rest-property-desc-revision-source"
+			"x-i18n-description": "rest-property-desc-revision-source",
+			"example": "{{Short description|Planetary system consisting of the Sun and..."
 		}
 	}
 }

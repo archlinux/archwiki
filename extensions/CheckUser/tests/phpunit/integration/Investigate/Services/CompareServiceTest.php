@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Services;
 
 use LogicException;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Investigate\Services\CompareService;
-use MediaWiki\CheckUser\Tests\Integration\Investigate\CompareTabTestDataTrait;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Investigate\Services\CompareService;
+use MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\CompareTabTestDataTrait;
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
@@ -25,8 +25,8 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Investigate\Services\CompareService
- * @covers \MediaWiki\CheckUser\Investigate\Services\ChangeService
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Services\CompareService
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Services\ChangeService
  */
 class CompareServiceTest extends MediaWikiIntegrationTestCase {
 
@@ -158,7 +158,8 @@ class CompareServiceTest extends MediaWikiIntegrationTestCase {
 				$this->assertStringNotContainsString( $columnPrefix . 'timestamp >=', $queryInfo['tables']['a'] );
 			} else {
 				$this->assertStringContainsString(
-					$columnPrefix . "timestamp >= '$start'", $queryInfo['tables']['a']
+					$columnPrefix . "timestamp >= '$start'",
+					$queryInfo['tables']['a']
 				);
 			}
 		}

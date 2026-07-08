@@ -40,19 +40,8 @@ use SpecialMobileHistory;
 
 class ToolbarBuilder {
 
-	/** @var Title Article title user is currently browsing */
-	private Title $title;
-	/** @var User Currently logged in user */
-	private User $user;
-	private IContextSource $context;
-	private IMinervaPagePermissions $permissions;
-	private SkinOptions $skinOptions;
-	private SkinUserPageHelper $relevantUserPageHelper;
-	private LanguagesHelper $languagesHelper;
-	/** @var bool Correlates to $wgWatchlistExpiry feature flag. */
-	private bool $watchlistExpiryEnabled;
-	private WatchlistManager $watchlistManager;
-	private Title $loginTitle;
+	private readonly bool $watchlistExpiryEnabled;
+	private readonly Title $loginTitle;
 
 	/**
 	 * ServiceOptions needed.
@@ -77,26 +66,18 @@ class ToolbarBuilder {
 	 * @param WatchlistManager $watchlistManager
 	 */
 	public function __construct(
-		Title $title,
-		User $user,
-		IContextSource $context,
-		IMinervaPagePermissions $permissions,
-		SkinOptions $skinOptions,
-		SkinUserPageHelper $relevantUserPageHelper,
-		LanguagesHelper $languagesHelper,
+		private readonly Title $title,
+		private readonly User $user,
+		private readonly IContextSource $context,
+		private readonly IMinervaPagePermissions $permissions,
+		private readonly SkinOptions $skinOptions,
+		private readonly SkinUserPageHelper $relevantUserPageHelper,
+		private readonly LanguagesHelper $languagesHelper,
 		ServiceOptions $options,
-		WatchlistManager $watchlistManager,
-		?Title $loginTitle = null
+		private readonly WatchlistManager $watchlistManager,
+		?Title $loginTitle = null,
 	) {
-		$this->title = $title;
-		$this->user = $user;
-		$this->context = $context;
-		$this->permissions = $permissions;
-		$this->skinOptions = $skinOptions;
-		$this->relevantUserPageHelper = $relevantUserPageHelper;
-		$this->languagesHelper = $languagesHelper;
 		$this->watchlistExpiryEnabled = $options->get( 'WatchlistExpiry' );
-		$this->watchlistManager = $watchlistManager;
 		$this->loginTitle = $loginTitle ?: SpecialPage::getTitleFor( 'Userlogin' );
 	}
 
@@ -317,7 +298,7 @@ class ToolbarBuilder {
 	protected function getHistoryUrl( Title $title ): string {
 		return ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
 			   SpecialMobileHistory::shouldUseSpecialHistory( $title, $this->user ) ?
-			SpecialPage::getTitleFor( 'History', $title )->getLocalURL() :
+			SpecialPage::getTitleFor( 'History', $title->getFullText() )->getLocalURL() :
 			$title->getLocalURL( [ 'action' => 'history' ] );
 	}
 

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"JeffreyKim"
+			"JeffreyKim",
+			"Winston Sung"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書",
 	"visualeditor-cite-tool-name-journal": "期刊",
 	"visualeditor-cite-tool-name-news": "新聞",
+	"visualeditor-cite-tool-name-map": "地圖",
 	"visualeditor-cite-tool-name-web": "網站",
 	"cite-ve-changedesc-ref-group-both": "引用群組由 \"$1\" 改為 \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "引用群組由 \"$1\" 改為一般群組",
@@ -41,6 +42,8 @@
 	"cite-ve-dialog-subreference-help-dialog-head": "新功能：為重用引用加入詳情",
 	"cite-ve-dialog-subreference-help-dialog-content": "當你重用一個引用嗰陣，而家可以加入唔同嘅詳情，例如頁碼或者引文，而唔使重複完整引用。<p><b>適合使用嘅情況：</b></p><ul><li>引用同一本書嘅唔同頁數或者卷數</li><li>指定引用播客入面嘅特定時間點</li><li>從來源加入相關嘅引文</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "了解多啲關於為引用加入詳情",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "編輯呢啲詳情嘅全部 ($1) 次使用。",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "將呢啲詳情加晒到呢個引用所有 ($1) 次使用入面尚未有詳情嘅地方。",
 	"cite-ve-dialog-reference-title-details": "詳情",
 	"cite-ve-dialog-reference-useexisting-tool": "翻用",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "一般參考一覽",

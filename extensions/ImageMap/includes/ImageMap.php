@@ -22,18 +22,18 @@ namespace MediaWiki\Extension\ImageMap;
 
 use MediaWiki\Config\Config;
 use MediaWiki\FileRepo\RepoGroup;
-use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\BadFileLookup;
+use MediaWiki\Parser\Hook\ParserFirstCallInitHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\WTUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 
 class ImageMap implements ParserFirstCallInitHook {
 
@@ -47,18 +47,11 @@ class ImageMap implements ParserFirstCallInitHook {
 		'top-right', 'bottom-right', 'bottom-left', 'top-left'
 	];
 
-	private BadFileLookup $badFileLookup;
-	private Config $config;
-	private RepoGroup $repoGroup;
-
 	public function __construct(
-		BadFileLookup $badFileLookup,
-		Config $config,
-		RepoGroup $repoGroup
+		private readonly BadFileLookup $badFileLookup,
+		private readonly Config $config,
+		private readonly RepoGroup $repoGroup,
 	) {
-		$this->badFileLookup = $badFileLookup;
-		$this->config = $config;
-		$this->repoGroup = $repoGroup;
 	}
 
 	/**
@@ -133,8 +126,7 @@ class ImageMap implements ParserFirstCallInitHook {
 					$parsedOptions .= '|none';
 				}
 
-				$imageHTML = $parser->makeImage( $imageTitle, $parsedOptions );
-				$parser->replaceLinkHolders( $imageHTML );
+				$imageHTML = $parser->makeImageHtml( $imageTitle, $parsedOptions );
 				$imageHTML = $parser->getStripState()->unstripBoth( $imageHTML );
 				$imageHTML = Sanitizer::normalizeCharReferences( $imageHTML );
 

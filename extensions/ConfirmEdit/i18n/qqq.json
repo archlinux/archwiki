@@ -49,5 +49,6 @@
 	"confirmedit-preview-valid": "Used to indicate a valid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Valid}}",
 	"confirmedit-preview-invalid": "Used to indicate an invalid IP address in the edit preview of [[MediaWiki:Captcha-ip-whitelist]].\n{{Identical|Invalid}}",
 	"confirmedit-preview-description": "Explains the edit preview of [[MediaWiki:Captcha-ip-whitelist]].",
-	"abusefilter-edit-action-showcaptcha": "Label shown in [[Special:AbuseFilter]] for the show CAPTCHA consequence."
+	"abusefilter-edit-action-showcaptcha": "Label shown in [[Special:AbuseFilter]] for the show CAPTCHA consequence.",
+	"abusefilter-edit-action-showcaptcha-help": "Help text shown in [[Special:AbuseFilter]] for the show CAPTCHA consequence."
 }

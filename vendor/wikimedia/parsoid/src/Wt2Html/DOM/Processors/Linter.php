@@ -7,6 +7,7 @@ namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 use stdClass;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -17,7 +18,6 @@ use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -178,13 +178,12 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * for every lint we find within this template's content. It could probably
 	 * be cached in tplInfo after it is computed once.
 	 *
-	 * @return ?array{multiPartTemplateBlock?: true, name?: string}
+	 * @return ?array{multiPartTemplateBlock?: true, parserFunction?: true, name?: string}
 	 */
 	public static function findEnclosingTemplateName( Env $env, ?stdClass $tplInfo ): ?array {
 		if ( !$tplInfo ) {
 			return null;
 		}
-
 		if ( !DOMUtils::hasTypeOf( $tplInfo->first, 'mw:Transclusion' ) ) {
 			return null;
 		}
@@ -195,27 +194,26 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// a non-string representation for them and a change in spec along with
 		// a version bump and all that song and dance. If linting accuracy in these
 		// scenarios become a problem, we can revisit this.
-		if (
-			!empty( $dmw->parts ) &&
-			count( $dmw->parts ) === 1
-		) {
-			$p0 = $dmw->parts[0];
-			if ( !( $p0 instanceof TemplateInfo ) ) {
-				throw new UnreachableException(
-					"a single part will always be a TemplateInfo not a string"
-				);
-			}
-			if ( $p0->href !== null ) { // Could be "function"
-				// PORT-FIXME: Should that be SiteConfig::relativeLinkPrefix() rather than './'?
-				$name = PHPUtils::stripPrefix( $p0->href, './' );
-			} else {
-				// type === 'templatearg' or 'template'
-				$name = trim( $p0->targetWt );
-			}
-			return [ 'name' => $name ];
-		} else {
+		if ( empty( $dmw->parts ) || count( $dmw->parts ) !== 1 ) {
 			return [ 'multiPartTemplateBlock' => true ];
 		}
+		$p0 = $dmw->parts[0];
+		if ( !( $p0 instanceof TemplateInfo ) ) {
+			throw new UnreachableException(
+				"a single part will always be a TemplateInfo not a string"
+			);
+		}
+		if ( $p0->func !== null ) {
+			return [ 'parserFunction' => true ];
+		}
+		if ( $p0->href !== null ) {
+			// PORT-FIXME: Should that be SiteConfig::relativeLinkPrefix() rather than './'?
+			$name = PHPUtils::stripPrefix( $p0->href, './' );
+		} else {
+			// type === 'templatearg' or 'template'
+			$name = trim( $p0->targetWt );
+		}
+		return [ 'name' => $name ];
 	}
 
 	/**
@@ -1365,6 +1363,38 @@ class Linter implements Wt2HtmlDOMProcessor {
 		}
 	}
 
+	private function lintTemplateArgInExtensionTag(
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
+	): void {
+		if (
+			// disabled in template namespace
+			$env->getContextTitle()->inNamespace( $env->getSiteConfig()->canonicalNamespaceId( 'template' ) )
+			|| !WTUtils::isExtensionOutputtingCoreMwDomSpec( $node, $env )
+		) {
+			return;
+		}
+
+		if ( !isset( $dp->src ) ) {
+			$env->log( 'warn', 'Expected src for node', WTUtils::getExtTagName( $node ) );
+			return;
+		}
+
+		$matches = [];
+		$wikitext = preg_replace( '#<nowiki>(?:(?!</nowiki>).)*</nowiki>#', '', $dp->src );
+		if ( preg_match_all( '#{{{(?:(?!}}}).)*}}}#', $wikitext, $matches ) > 0 ) {
+			$tplLintInfo = self::findEnclosingTemplateName( $env, $tplInfo );
+			$lintObj = [
+				'dsr' => self::findLintDSR( $tplLintInfo, $tplInfo, $dp->dsr ?? null ),
+				'templateInfo' => $tplLintInfo,
+				'params' => [
+					'ext-name' => WTUtils::getExtTagName( $node ),
+					'details' => $matches[0],
+				]
+			];
+			$env->recordLint( 'template-arg-in-extension-tag', $lintObj );
+		}
+	}
+
 	/**
 	 * Log wikitext fixups
 	 */
@@ -1386,6 +1416,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$this->lintFostered( $env, $node, $dp, $tplInfo );
 		$this->lintIds( $env, $node, $dp, $tplInfo );
 		$this->lintTemplateInsideLink( $env, $node, $dp, $tplInfo );
+		$this->lintTemplateArgInExtensionTag( $env, $node, $dp, $tplInfo );
 	}
 
 	/**

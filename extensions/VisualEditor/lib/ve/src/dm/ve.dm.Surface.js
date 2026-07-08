@@ -270,8 +270,7 @@ ve.dm.Surface.prototype.resetHistoryTrackingInterval = function () {
 };
 
 /**
- * @typedef {Object} UndoStackItem
- * @memberof ve.dm.Surface
+ * @typedef {Object} ve.dm.Surface.UndoStackItem
  * @property {number} start
  * @property {ve.dm.Transaction[]} transactions
  * @property {ve.dm.Selection} selection
@@ -301,8 +300,7 @@ ve.dm.Surface.prototype.isStaging = function () {
 };
 
 /**
- * @typedef {Object} StagingState
- * @memberof ve.dm.Surface
+ * @typedef {Object} ve.dm.Surface.StagingState
  * @property {ve.dm.Transaction[]} transactions Staging transactions
  * @property {ve.dm.Selection} selectionBefore Selection before transactions were applied
  * @property {boolean} allowUndo Allow undo while staging
@@ -913,7 +911,7 @@ ve.dm.Surface.prototype.changeInternal = function ( transactions, selection, ski
 			transactions = [ transactions ];
 		}
 		this.transacting = true;
-		for ( let i = 0, len = transactions.length; i < len; i++ ) {
+		for ( let i = 0; i < transactions.length; i++ ) {
 			if ( !transactions[ i ].isNoOp() ) {
 				let committed;
 				// The .commit() call below indirectly invokes setSelection()
@@ -1363,7 +1361,7 @@ ve.dm.Surface.prototype.setStorage = function ( storage, storageExpiry ) {
 	let isLocalStorage = false;
 	try {
 		// Accessing window.localStorage can throw an exception when it is disabled
-		// eslint-disable-next-line no-undef
+		// eslint-disable-next-line mediawiki/no-storage, no-undef
 		isLocalStorage = this.storage.store === window.localStorage;
 	} catch ( e ) {}
 

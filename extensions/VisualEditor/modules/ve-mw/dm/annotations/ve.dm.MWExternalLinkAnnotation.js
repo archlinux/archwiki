@@ -41,8 +41,16 @@ ve.dm.MWExternalLinkAnnotation.static.allowedRdfaTypes = null;
 
 ve.dm.MWExternalLinkAnnotation.static.toDataElement = function ( domElements, converter ) {
 	const domElement = domElements[ 0 ],
-		type = domElement.getAttribute( 'rel' ) || domElement.getAttribute( 'typeof' ) || domElement.getAttribute( 'property' ) || '',
-		types = type.trim().split( /\s+/ );
+		types = [
+			domElement.getAttribute( 'rel' ) || '',
+			domElement.getAttribute( 'typeof' ) || '',
+			domElement.getAttribute( 'property' ) || ''
+		].join( ' ' ).trim().split( /\s+/ );
+
+	if ( types.includes( 'mw:ExpandedAttrs' ) ) {
+		// Alienate links with template-generated attributes (T67362)
+		return null;
+	}
 
 	// If the link doesn't have a known RDFa type...
 	if ( !types.includes( 'mw:ExtLink' ) && !types.includes( 'mw:WikiLink/Interwiki' ) ) {
@@ -64,7 +72,7 @@ ve.dm.MWExternalLinkAnnotation.static.toDataElement = function ( domElements, co
 	// Parent method
 	const dataElement = ve.dm.MWExternalLinkAnnotation.super.static.toDataElement.apply( this, arguments );
 
-	dataElement.attributes.rel = type;
+	dataElement.attributes.rel = domElement.getAttribute( 'rel' );
 	return dataElement;
 };
 

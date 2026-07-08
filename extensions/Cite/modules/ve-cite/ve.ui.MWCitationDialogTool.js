@@ -10,11 +10,11 @@
 const MWReferenceDialogTool = require( './ve.ui.MWReferenceDialogTool.js' );
 
 /**
- * MediaWiki UserInterface citation dialog tool.
+ * Interface for tools that work with the {@link ve.ui.MWCitationDialog}
  *
  * @abstract
  * @constructor
- * @extends MWReferenceDialogTool
+ * @extends ve.ui.MWReferenceDialogTool
  * @param {OO.ui.Toolbar} toolbar
  * @param {Object} [config] Configuration options
  */
@@ -28,6 +28,13 @@ ve.ui.MWCitationDialogTool = function VeUiMWCitationDialogTool( toolbar, config 
 OO.inheritClass( ve.ui.MWCitationDialogTool, MWReferenceDialogTool );
 
 /* Static Properties */
+/**
+ * Used to prefix the static name of commands, tools and context items from citation tools.
+ *
+ * @property {string}
+ */
+ve.ui.MWCitationDialogTool.static.namePrefix = 'cite-';
+
 ve.ui.MWCitationDialogTool.static.group = 'cite';
 
 /**
@@ -46,22 +53,44 @@ ve.ui.MWCitationDialogTool.static.template = null;
  */
 ve.ui.MWCitationDialogTool.static.isCompatibleWith = function ( model ) {
 	const compatible = ve.ui.MWCitationDialogTool.super.static.isCompatibleWith.call( this, model );
-
-	if ( compatible && this.template ) {
-		// Check if content of the reference node contains only a template with the same name as
-		// this.template
-		const internalItem = model.getInternalItem();
-		const branches = internalItem ? internalItem.getChildren() : [];
-		if ( branches.length === 1 && branches[ 0 ].canContainContent() ) {
-			const leaves = branches[ 0 ].getChildren();
-			if ( leaves.length === 1 && leaves[ 0 ] instanceof ve.dm.MWTransclusionNode ) {
-				return leaves[ 0 ].isSingleTemplate( this.template );
-			}
-		}
+	if ( !compatible || !this.template ) {
 		return false;
 	}
 
-	return compatible;
+	return !!ve.ui.MWCitationDialog.static.getTransclusionNodeWithTemplate(
+		model.getInternalItem(),
+		this.template
+	);
+};
+
+/**
+ * Create a citation dialog tool from a MediaWiki:Cite-tool-definition.json entry
+ *
+ * @param {Object} toolDefinition
+ * @param {string} toolDefinition.icon
+ * @param {string} toolDefinition.name
+ * @param {string|string[]} toolDefinition.template
+ * @param {string} toolDefinition.title
+ * @return {ve.ui.MWCitationDialogTool}
+ */
+ve.ui.MWCitationDialogTool.static.newFromCitationToolsDefinition = function ( toolDefinition ) {
+	const name = this.namePrefix + toolDefinition.name;
+	const tool = function GeneratedMWCitationDialogTool() {
+		ve.ui.MWCitationDialogTool.apply( this, arguments );
+	};
+	OO.inheritClass( tool, ve.ui.MWCitationDialogTool );
+	tool.static.name = name;
+	tool.static.icon = toolDefinition.icon;
+	if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
+		tool.static.title = mw.msg( 'cite-ve-othergroup-item', toolDefinition.title );
+	} else {
+		tool.static.title = toolDefinition.title;
+	}
+	tool.static.commandName = name;
+	tool.static.template = toolDefinition.template;
+	tool.static.associatedWindows = [ name ];
+
+	return tool;
 };
 
 module.exports = ve.ui.MWCitationDialogTool;

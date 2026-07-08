@@ -1,17 +1,18 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use GrowthExperiments\UserImpact\UserImpactLookup;
 use InvalidArgumentException;
 use MediaWiki\Cache\GenderCache;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\CentralAuth\CentralAuthServices;
 use MediaWiki\Extension\CentralAuth\LocalUserNotFoundException;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Extension\GlobalBlocking\GlobalBlockingServices;
 use MediaWiki\Extension\GlobalBlocking\Services\GlobalBlockLookup;
 use MediaWiki\Logger\LoggerFactory;
@@ -44,6 +45,7 @@ class CheckUserUserInfoCardService {
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'CheckUserUserInfoCardCentralWikiId',
+		'CheckUserSuggestedInvestigationsEnabled',
 		'CUDMaxAge',
 	];
 
@@ -68,7 +70,8 @@ class CheckUserUserInfoCardService {
 		private readonly GenderCache $genderCache,
 		private readonly TempUserConfig $tempUserConfig,
 		private readonly ServiceOptions $options,
-		private readonly CentralIdLookup $centralIdLookup
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly UserInfoCardBlockStatusCache $blockStatusCache,
 	) {
 		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 	}
@@ -129,12 +132,12 @@ class CheckUserUserInfoCardService {
 	}
 
 	private function shouldShowNewArticlesCount( UserIdentity $userIdentity, int $editCount ): bool {
-		$user = $this->userFactory->newFromUserIdentity( $userIdentity );
-		if ( !$user->getRegistration() ) {
+		$registration = $this->userRegistrationLookup->getRegistration( $userIdentity );
+		if ( !$registration ) {
 			// Old account, no registration date, hide the new articles count
 			return false;
 		}
-		if ( $user->getRegistration() <= '20180701000000' ) {
+		if ( $registration <= '20180701000000' ) {
 			// Account registered before July 2018, when page creations were first logged,
 			// hide the new articles count
 			return false;
@@ -172,6 +175,9 @@ class CheckUserUserInfoCardService {
 		$userInfo['localRegistration'] = $this->userRegistrationLookup->getRegistration( $user );
 		$userInfo['firstRegistration'] = $this->userRegistrationLookup->getFirstRegistration( $user );
 		$userInfo['userPageIsKnown'] = $this->userPageIsKnown( $user );
+
+		$userInfo['hasLocalBlockGlobalBlockOrLock'] = $this->blockStatusCache
+			->isIndefinitelyBlockedOrLocked( $user->getName() );
 
 		$groups = $this->userGroupManager->getUserGroups( $user );
 		sort( $groups );
@@ -281,7 +287,10 @@ class CheckUserUserInfoCardService {
 
 			try {
 				$activeWikiIds = $this->globalContributionsLookup->getActiveWikisVisibleToUser(
-					$user->getName(), $authority, $this->context->getRequest(), $checkUserDataCutoff
+					$user->getName(),
+					$authority,
+					$this->context->getRequest(),
+					$checkUserDataCutoff
 				);
 			} catch ( InvalidArgumentException ) {
 				// No central user found or viewable, assume that the user is not active on any wiki
@@ -322,6 +331,22 @@ class CheckUserUserInfoCardService {
 			}
 		}
 
+		if (
+			$authority->isAllowed( 'checkuser-suggested-investigations' ) &&
+			$this->options->get( 'CheckUserSuggestedInvestigationsEnabled' )
+		) {
+			$cusiDbr = $this->dbProvider->getReplicaDatabase(
+				CheckUserQueryInterface::VIRTUAL_DB_DOMAIN
+			);
+			$caseCount = $cusiDbr->newSelectQueryBuilder()
+				->select( [ 'count' => 'COUNT(DISTINCT siu_sic_id)' ] )
+				->from( 'cusi_user' )
+				->where( [ 'siu_user_id' => $user->getId() ] )
+				->caller( __METHOD__ )
+				->fetchField();
+			$userInfo['suggestedInvestigationsCaseCount'] = (int)$caseCount;
+		}
+
 		$blocks = [];
 		if ( $this->extensionRegistry->isLoaded( 'CentralAuth' ) ) {
 			try {
@@ -329,7 +354,8 @@ class CheckUserUserInfoCardService {
 				$blocks = $centralAuthUser->getBlocks();
 			} catch ( LocalUserNotFoundException ) {
 				LoggerFactory::getInstance( 'CheckUser' )->info(
-					'Unable to get CentralAuthUser for user {user}', [
+					'Unable to get CentralAuthUser for user {user}',
+					[
 						'user' => $user->getName(),
 					]
 				);
@@ -371,14 +397,37 @@ class CheckUserUserInfoCardService {
 		// In case the user doesn't have suppressionlog rights, ensure that the value displayed here is at least 0.
 		$userInfo['pastBlocksOnLocalWiki'] = max( 0, $blockLogEntriesCount - count( $blocks[0] ?? [] ) );
 
-		$authorityPermissionStatus =
-			$this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses( $authority );
-		$userPermissionStatus = $this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses(
-			$this->userFactory->newFromUserIdentity( $user )
-		);
+		$userInfo['tempAccountsOnIPCount'] = [];
+		$userInfo['canAccessTemporaryAccountIpAddresses'] = false;
+		if ( $this->tempUserConfig->isKnown() ) {
+			$authorityPermissionStatus =
+				$this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses( $authority );
+			$userPermissionStatus = $this->checkUserPermissionManager->canAccessTemporaryAccountIPAddresses(
+				$this->userFactory->newFromUserIdentity( $user )
+			);
 
-		$userInfo['canAccessTemporaryAccountIpAddresses'] = $authorityPermissionStatus->isGood() &&
-			$userPermissionStatus->isGood();
+			$userInfo['canAccessTemporaryAccountIpAddresses'] = $authorityPermissionStatus->isGood() &&
+				$userPermissionStatus->isGood();
+
+			// If the user is a temporary account, get the number of accounts active on the same IPs/ranges
+			if ( $this->tempUserConfig->isTempName( $user->getName() ) ) {
+				// 101 is the maximum number of accounts we care about as defined by T412212
+				if ( $authorityPermissionStatus->isGood() ) {
+					// If performer has TAIV rights, show exact number of accounts
+					$exactCount = $this->checkUserTemporaryAccountsByIPLookup
+						->getAggregateActiveTempAccountCount( $user, 101 );
+					// Send this number to the front-end in the range format it expects
+					$userInfo['tempAccountsOnIPCount'] = [ $exactCount, $exactCount ];
+				} else {
+					// Otherwise, show the bucketed range
+					$bucketCount = $this->checkUserTemporaryAccountsByIPLookup->getBucketedCount(
+						$this->checkUserTemporaryAccountsByIPLookup
+							->getAggregateActiveTempAccountCount( $user, 101 )
+					);
+					$userInfo['tempAccountsOnIPCount'] = $bucketCount;
+				}
+			}
+		}
 
 		// Generate a URL to the Special:CentralAuth page for the user being viewed, preferring to have the
 		// URL be on a central wiki if one is defined.
@@ -394,19 +443,9 @@ class CheckUserUserInfoCardService {
 			}
 
 			$userInfo['specialCentralAuthUrl'] ??= SpecialPage::getTitleFor(
-				'CentralAuth', $this->getUserTitleKey( $user )
+				'CentralAuth',
+				$this->getUserTitleKey( $user )
 			)->getLinkURL();
-		}
-
-		// If the user is a temporary account, get the number of accounts active on the same IPs/ranges
-		$userInfo['tempAccountsOnIPCount'] = [];
-		if ( $this->tempUserConfig->isTempName( $user->getName() ) ) {
-			// 11 is the maximum number of accounts we care about as defined by T388718
-			$bucketCount = $this->checkUserTemporaryAccountsByIPLookup->getBucketedCount(
-				$this->checkUserTemporaryAccountsByIPLookup
-					->getAggregateActiveTempAccountCount( $user, 11 )
-			);
-			$userInfo['tempAccountsOnIPCount'] = $bucketCount;
 		}
 
 		$this->statsFactory->withComponent( 'CheckUser' )

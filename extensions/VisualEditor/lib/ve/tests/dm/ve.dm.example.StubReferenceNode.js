@@ -54,19 +54,19 @@ ve.dm.example.StubReferenceNode.static.toDataElement = function ( domElements, c
 	const name = refElement.getAttribute( 'name' );
 	const listKey = name ?
 		'literal/' + name :
-		'auto/' + converter.internalList.getNextUniqueNumber();
-	const queueResult = converter.internalList.queueItemHtml( listGroup, listKey, body );
+		'auto/' + converter.getInternalList().getNextUniqueNumber();
+	const queueResult = converter.getInternalList().queueItemHtml( listGroup, listKey, body );
 	const listIndex = queueResult.index;
 	const contentsUsed = ( body !== '' && queueResult.isNew );
 
 	const dataElement = {
 		type: this.name,
 		attributes: {
-			listIndex: listIndex,
-			listGroup: listGroup,
-			listKey: listKey,
-			refGroup: refGroup,
-			contentsUsed: contentsUsed
+			listGroup,
+			listKey,
+			listIndex,
+			refGroup,
+			contentsUsed
 		}
 	};
 	return dataElement;
@@ -128,18 +128,14 @@ ve.dm.example.StubReferenceNode.prototype.removeFromInternalList = function () {
 };
 
 ve.dm.example.StubReferenceNode.prototype.onAttributeChange = function ( key, from, to ) {
-	if (
-		( key !== 'listGroup' && key !== 'listKey' ) ||
-		( key === 'listGroup' && this.registeredListGroup === to ) ||
-		( key === 'listKey' && this.registeredListKey === to )
+	if ( ( key === 'listGroup' && this.registeredListGroup !== to ) ||
+		( key === 'listKey' && this.registeredListKey !== to )
 	) {
-		return;
+		// Need the old list keys and indexes, so we register them in addToInternalList
+		// They've already been updated in this.element.attributes before this code runs
+		this.removeFromInternalList();
+		this.addToInternalList();
 	}
-
-	// Need the old list keys and indexes, so we register them in addToInternalList
-	// They've already been updated in this.element.attributes before this code runs
-	this.removeFromInternalList();
-	this.addToInternalList();
 };
 
 /* Registration */

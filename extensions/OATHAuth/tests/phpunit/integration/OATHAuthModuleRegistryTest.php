@@ -1,32 +1,22 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  *
  * @file
  */
 
 namespace MediaWiki\Extension\OATHAuth\Tests\Integration;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @author Taavi Väänänen <hi@taavi.wtf>
+ * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry
  * @group Database
  */
 class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
@@ -52,18 +42,12 @@ class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::moduleExists
-	 */
 	public function testModuleExists() {
 		$registry = $this->makeTestRegistry();
 		$this->assertTrue( $registry->moduleExists( 'first' ) );
 		$this->assertFalse( $registry->moduleExists( 'nonexistent' ) );
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::getModuleIds
-	 */
 	public function testGetModuleIds() {
 		$registry = $this->makeTestRegistry();
 
@@ -71,5 +55,33 @@ class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
 			[ 'first', 'second', 'third' ],
 			array_keys( $registry->getModuleIds() )
 		);
+	}
+
+	public function testGetModuleId() {
+		$registry = $this->makeTestRegistry();
+		$this->assertSame( 1, $registry->getModuleId( 'first' ) );
+
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Module nonexistent does not seem to exist' );
+		$registry->getModuleId( 'nonexistent' );
+	}
+
+	public function testGetModuleByKey() {
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'No such two-factor module nonexistent' );
+
+		$registry = $this->makeTestRegistry();
+		$registry->getModuleByKey( 'nonexistent' );
+	}
+
+	public function testGetAllModules() {
+		$services = $this->getServiceContainer();
+		$registry = new OATHAuthModuleRegistry(
+			$services->getDBLoadBalancerFactory(),
+			$services->getObjectFactory(),
+			ExtensionRegistry::getInstance()->getAttribute( 'OATHAuthModules' ),
+		);
+
+		$this->assertCount( 3, $registry->getAllModules() );
 	}
 }

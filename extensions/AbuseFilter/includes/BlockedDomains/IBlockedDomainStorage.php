@@ -2,11 +2,12 @@
 
 namespace MediaWiki\Extension\AbuseFilter\BlockedDomains;
 
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Permissions\Authority;
 use StatusValue;
 
 interface IBlockedDomainStorage {
-	public const SERVICE_NAME = 'AbuseFilterBlockedDomainStorage';
+	public const SERVICE_NAME = ServiceNames::BlockedDomainStorage;
 
 	/**
 	 * Load the configuration page, with optional local-server caching.

@@ -15,7 +15,7 @@
  * @constructor
  * @param {Object} [element] Reference to element in linear model
  */
-ve.dm.Node = function VeDmNode( element ) {
+ve.dm.Node = function VeDmNode() {
 	// Parent constructor
 	ve.dm.Node.super.apply( this, arguments );
 
@@ -25,8 +25,6 @@ ve.dm.Node = function VeDmNode( element ) {
 
 	// Properties
 	this.length = 0;
-	this.offset = null;
-	this.element = element;
 };
 
 /**
@@ -342,21 +340,12 @@ ve.dm.Node.static.remapInternalListKeys = function () {
  * @return {boolean} The element is inline
  */
 ve.dm.Node.static.isHybridInline = function ( domElements, converter ) {
-	let allTagsInline = true;
-
-	for ( let i = 0, length = domElements.length; i < length; i++ ) {
-		if ( ve.isBlockElement( domElements[ i ] ) ) {
-			allTagsInline = false;
-			break;
-		}
-	}
-
 	// Force inline in content locations (but not wrappers)
 	return ( converter.isExpectingContent() && !converter.isInWrapper() ) ||
 		// ..also force inline in wrappers that we can't close
 		( converter.isInWrapper() && !converter.canCloseWrapper() ) ||
 		// ..otherwise just look at the tag names
-		allTagsInline;
+		Array.prototype.every.call( domElements, ( el ) => !ve.isBlockElement( el ) );
 };
 
 /**
@@ -417,6 +406,24 @@ ve.dm.Node.static.cloneElement = function ( element, store, preserveGenerated, r
  * @param {ve.dm.HashValueStore} store Hash-value store used by element
  */
 ve.dm.Node.static.resetAttributesForClone = function () {};
+
+/**
+ * Get the text content of the node for a given data element.
+ *
+ * Used by ve.dm.LinearData#getText (except in maintainIndices mode) when the user
+ * wants a plain text representation of the document data.
+ *
+ * The default implementation returns an empty string, but node classes can override this to
+ * return a string based on the data element, e.g. to return the character represented by an
+ * MWEntityNode.
+ *
+ * @static
+ * @param {Object} element Node data element
+ * @return {string} Text content of the node
+ */
+ve.dm.Node.static.getText = function () {
+	return '';
+};
 
 /* Methods */
 
@@ -759,33 +766,26 @@ ve.dm.Node.prototype.adjustLength = function ( adjustment ) {
  * @see ve.Node
  */
 ve.dm.Node.prototype.getOffset = function () {
-	if ( !this.parent ) {
+	if ( !this.parent || !this.getDocument() ) {
 		return 0;
 	}
 
-	if ( this.doc.isReadOnly() && this.offset !== null ) {
-		return this.offset;
-	}
-
-	// Find our index in the parent and add up lengths while we do so
-	const siblings = this.parent.children;
-	let offset = this.parent.getOffset() + ( this.parent === this.root ? 0 : 1 );
-	let i, len;
-	for ( i = 0, len = siblings.length; i < len; i++ ) {
-		if ( siblings[ i ] === this ) {
-			break;
+	return this.getDocument().getOrInsertCachedData( () => {
+		// Find our index in the parent and add up lengths while we do so
+		const siblings = this.parent.children;
+		let offset = this.parent.getOffset() + ( this.parent === this.root ? 0 : 1 );
+		let i, len;
+		for ( i = 0, len = siblings.length; i < len; i++ ) {
+			if ( siblings[ i ] === this ) {
+				break;
+			}
+			offset += siblings[ i ].getOuterLength();
 		}
-		offset += siblings[ i ].getOuterLength();
-	}
-	if ( i === len ) {
-		throw new Error( 'Node not found in parent\'s children array' );
-	}
-	if ( this.doc.isReadOnly() ) {
-		// Cache offset, only used in read-only mode (when the offset can't change)
-		// This cache is additionally cleared when leaving read-only mode in ve.dm.Document#setReadOnly
-		this.offset = offset;
-	}
-	return offset;
+		if ( i === len ) {
+			throw new Error( 'Node not found in parent\'s children array' );
+		}
+		return offset;
+	}, this, 'getOffset' );
 };
 
 /**
@@ -827,6 +827,15 @@ ve.dm.Node.prototype.canBeMergedWith = function ( node ) {
 		n2 = n2.getParent();
 	}
 	return true;
+};
+
+/**
+ * @see #static-getText
+ *
+ * @return {string} Text content of the node
+ */
+ve.dm.Node.prototype.getText = function () {
+	return this.constructor.static.getText( this.element );
 };
 
 /**

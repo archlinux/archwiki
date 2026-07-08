@@ -11,6 +11,7 @@ use MediaWiki\User\UserIdentityValue;
  * @covers \MediaWiki\Request\WebRequest
  *
  * @group WebRequest
+ * @group Database
  */
 class WebRequestTest extends MediaWikiIntegrationTestCase {
 	private const INTERNAL_SERVER = 'http://wiki.site';
@@ -266,7 +267,10 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetIntArray() {
-		$req = $this->mockWebRequest( [ 'x' => [ 'Value' ], 'y' => [ '0', '4.2', '-2' ] ] );
+		$req = $this->mockWebRequest( [
+			'x' => [ 'string', [], [ 'non-empty array' ] ],
+			'y' => [ '0', '4.2', '-2' ],
+		] );
 		$this->assertSame( [ 0 ], $req->getIntArray( 'x' ), 'Text becomes 0' );
 		$this->assertNull( $req->getIntArray( 'z' ), 'Not found' );
 		$this->assertSame( [ 0, 4, -2 ], $req->getIntArray( 'y' ) );
@@ -422,7 +426,12 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 				return true;
 			}
 		] );
-		$this->setService( 'ProxyLookup', new ProxyLookup( [], $cdn, $hookContainer ) );
+		$this->setService( 'ProxyLookup', new ProxyLookup(
+			[],
+			$cdn,
+			$hookContainer,
+			$this->getServiceContainer()->getLocalServerObjectCache()
+		) );
 
 		$request = new WebRequest();
 		$result = $request->getIP();
@@ -606,7 +615,12 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 		] );
 
 		$hookContainer = $this->createHookContainer();
-		$this->setService( 'ProxyLookup', new ProxyLookup( [], [], $hookContainer ) );
+		$this->setService( 'ProxyLookup', new ProxyLookup(
+			[],
+			[],
+			$hookContainer,
+			$this->getServiceContainer()->getLocalServerObjectCache()
+		) );
 
 		$request = new WebRequest();
 		# Next call should throw an exception about lacking an IP
@@ -776,6 +790,7 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( '127.0.0.1', $context['clientIp'] );
 		if ( $user ) {
 			$this->assertSame( $user->getName(), $context['user'] );
+			$this->assertFalse( $context['user_is_bot'] );
 		} else {
 			$this->assertArrayNotHasKey( 'user', $context );
 		}

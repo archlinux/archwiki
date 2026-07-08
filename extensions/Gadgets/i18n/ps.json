@@ -66,5 +66,7 @@
 	"gadgets-validate-invaliddependencies": "لاندې {{PLURAL:$2|تړاو ورک دی|تړاوونه ورک دي}}: $1.",
 	"gadgets-validate-deprecateddependencies": "لاندې {{PLURAL:$2|تړاو له پامه غورځول‌شوی|تړاوونه له پامه غورځول‌شوي}}: $1.",
 	"gadgets-supports-urlload": "دا ويښيارتوکی د  <code>?withgadget</code> په مرسته د وېبتړ له لارې د تپوس پاراميتر بارولو ملاتړ کوي.",
-	"gadgets-hidden": "دا ويښيارتوکی [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden پټ‌شوی]، په دې مانا چې دا به د غوره‌توبونو مخ کې ښکاره نشي."
+	"gadgets-hidden": "دا ويښيارتوکی [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden پټ‌شوی]، په دې مانا چې دا به د غوره‌توبونو مخ کې ښکاره نشي.",
+	"gadgets-subpage-invalid": "ناسم څېرمه مخ \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "د څېرمه‌مخ بسنې وړ پاراميترونه نشته (ناسم تړونی)."
 }

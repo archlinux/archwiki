@@ -8,6 +8,7 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreter;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotExecutableError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotFoundError;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
+use MediaWiki\Shell\Shell;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
@@ -16,11 +17,6 @@ use UtfNormal\Validator;
 class LuaStandaloneInterpreter extends LuaInterpreter {
 	/** @var int */
 	protected static $nextInterpreterId = 0;
-
-	/**
-	 * @var LuaStandaloneEngine
-	 */
-	public $engine;
 
 	/**
 	 * @var bool
@@ -63,13 +59,14 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	protected $callbacks;
 
 	/**
-	 * @param LuaStandaloneEngine $engine
-	 * @param array $options
 	 * @throws LuaInterpreterNotFoundError
 	 * @throws ScribuntoException
 	 * @throws LuaInterpreterNotExecutableError
 	 */
-	public function __construct( $engine, array $options ) {
+	public function __construct(
+		public readonly LuaStandaloneEngine $engine,
+		array $options,
+	) {
 		$this->id = self::$nextInterpreterId++;
 
 		if ( $options['errorFile'] === null ) {
@@ -109,12 +106,11 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 			}
 		}
 
-		$this->engine = $engine;
 		$this->enableDebug = !empty( $options['debug'] );
 		$this->logger = $options['logger'] ?? new NullLogger();
 
 		$pipes = null;
-		$cmd = wfEscapeShellArg(
+		$cmd = Shell::escape(
 			$options['luaPath'],
 			__DIR__ . '/mw_main.lua',
 			dirname( dirname( __DIR__ ) ),
@@ -123,7 +119,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 		);
 		if ( php_uname( 's' ) == 'Linux' ) {
 			// Limit memory and CPU
-			$cmd = wfEscapeShellArg(
+			$cmd = Shell::escape(
 				# proc_open() passes $cmd to 'sh -c' on Linux, so add an 'exec' to bypass it
 				'exec',
 				'/bin/sh',
@@ -206,7 +202,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 		// The output is expected to be one line, something like these:
 		// Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio
 		// LuaJIT 2.0.0 -- Copyright (C) 2005-2012 Mike Pall. http://luajit.org/
-		$cmd = wfEscapeShellArg( $options['luaPath'] ) . ' -v 2>&1';
+		$cmd = Shell::escape( $options['luaPath'] ) . ' -v 2>&1';
 		// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.popen
 		$handle = popen( $cmd, 'r' );
 		if ( $handle ) {
@@ -410,6 +406,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	 *
 	 * @param array $message
 	 * @return never
+	 * @throws ScribuntoException
 	 */
 	protected function handleError( $message ) {
 		$opts = [];
@@ -421,14 +418,15 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 		}
 		if ( isset( $message['trace'] ) ) {
 			foreach ( $message['trace'] as &$val ) {
-				$val = array_map( static function ( $val ) {
-					if ( is_string( $val ) ) {
-						$val = Validator::cleanUp( $val );
-					}
-					return $val;
-				}, $val );
+				$val = array_map(
+					static fn ( $s ) => is_string( $s ) ? Validator::cleanUp( $s ) : $s,
+					$val
+				);
 			}
 			$opts['trace'] = array_values( $message['trace'] );
+		}
+		if ( isset( $message['log'] ) && is_string( $message['log'] ) ) {
+			$opts['log'] = Validator::cleanUp( $message['log'] );
 		}
 		throw $this->engine->newLuaError( $message['value'], $opts );
 	}
@@ -437,6 +435,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	 * Send a protocol message to Lua, and handle any responses
 	 * @param array $msgToLua
 	 * @return mixed Response data
+	 * @throws ScribuntoException
 	 */
 	protected function dispatch( $msgToLua ) {
 		$this->sendMessage( $msgToLua );
@@ -463,13 +462,15 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	/**
 	 * Send a protocol message to Lua
 	 * @param array $msg
+	 * @throws ScribuntoException
 	 */
 	protected function sendMessage( $msg ) {
 		$this->debug( "TX ==> {$msg['op']}" );
 		$this->checkValid();
 		// Send the message
 		$encMsg = $this->encodeMessage( $msg );
-		if ( !fwrite( $this->writePipe, $encMsg ) ) {
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		if ( !@fwrite( $this->writePipe, $encMsg ) ) {
 			// Write error, probably the process has terminated
 			// If it has, handleIOError() will throw. If not, throw an exception ourselves.
 			$this->handleIOError();
@@ -480,11 +481,13 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	/**
 	 * Receive a protocol message from Lua
 	 * @return array
+	 * @throws ScribuntoException
 	 */
 	protected function receiveMessage() {
 		$this->checkValid();
 		// Read the header
-		$header = fread( $this->readPipe, 16 );
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$header = @fread( $this->readPipe, 16 );
 		if ( strlen( $header ) !== 16 ) {
 			$this->handleIOError();
 			throw $this->engine->newException( 'scribunto-luastandalone-read-error' );
@@ -495,7 +498,8 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 		$body = '';
 		$lengthRemaining = $length;
 		while ( $lengthRemaining ) {
-			$buffer = fread( $this->readPipe, $lengthRemaining );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$buffer = @fread( $this->readPipe, $lengthRemaining );
 			if ( $buffer === false || feof( $this->readPipe ) ) {
 				$this->handleIOError();
 				throw $this->engine->newException( 'scribunto-luastandalone-read-error' );
@@ -592,7 +596,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 						__METHOD__ . ': unable to convert function belonging to a different interpreter'
 					);
 				} else {
-					return 'chunks[' . intval( $var->id ) . ']';
+					return 'chunks[' . $var->id . ']';
 				}
 			case 'resource':
 				throw new InvalidArgumentException( __METHOD__ . ': unable to convert resource' );
@@ -607,6 +611,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	 * Verify protocol header and extract the body length.
 	 * @param string $header
 	 * @return int Length
+	 * @throws ScribuntoException
 	 */
 	protected function decodeHeader( $header ) {
 		$length = substr( $header, 0, 8 );

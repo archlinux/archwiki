@@ -21,7 +21,6 @@ namespace MediaWiki\Extension\ReplaceText;
 
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Exception\ErrorPageError;
-use MediaWiki\Exception\PermissionsError;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
 use MediaWiki\JobQueue\JobFactory;
@@ -32,6 +31,7 @@ use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Search\SearchEngineConfig;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\NamespaceInfo;
@@ -40,7 +40,6 @@ use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use OOUI;
-use SearchEngineConfig;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
@@ -77,12 +76,17 @@ class SpecialReplaceText extends SpecialPage {
 		private readonly UserFactory $userFactory,
 		private readonly UserOptionsLookup $userOptionsLookup,
 	) {
-		parent::__construct( 'ReplaceText', 'replacetext' );
+		parent::__construct( 'ReplaceText' );
 		$this->hookHelper = new HookHelper( $hookContainer );
 		$this->search = new Search(
 			$this->getConfig(),
 			$dbProvider
 		);
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'replacetext';
 	}
 
 	/**
@@ -96,9 +100,7 @@ class SpecialReplaceText extends SpecialPage {
 	 * @param null|string $query
 	 */
 	public function execute( $query ): void {
-		if ( !$this->getUser()->isAllowed( 'replacetext' ) ) {
-			throw new PermissionsError( 'replacetext' );
-		}
+		$this->checkPermissions();
 
 		// Replace Text can't be run with certain settings, due to the
 		// changes they make to the DB storage setup.
@@ -269,7 +271,7 @@ class SpecialReplaceText extends SpecialPage {
 						'type' => 'warning',
 						'label' => $warningLabel
 					] );
-					$out->addHTML( $warning );
+					$out->addHTML( (string)$warning );
 				}
 
 				$this->pageListForm( $titles_for_edit, $titles_for_move, $uneditable_titles, $unmoveable_titles );
@@ -745,7 +747,7 @@ class SpecialReplaceText extends SpecialPage {
 				'label' => $this->msg( 'replacetext_invertselections' )->text(),
 				'classes' => [ 'ext-replacetext-invert' ]
 			] );
-			$out->addHTML( $invertButton );
+			$out->addHTML( (string)$invertButton );
 		}
 
 		if ( count( $titles_for_edit ) > 0 ) {
@@ -776,7 +778,7 @@ class SpecialReplaceText extends SpecialPage {
 					'align' => 'inline',
 					'label' => new OOUI\HtmlSnippet( $labelText ),
 				] );
-				$out->addHTML( $layout );
+				$out->addHTML( (string)$layout );
 			}
 			$out->addHTML( '<br />' );
 		}
@@ -818,7 +820,7 @@ class SpecialReplaceText extends SpecialPage {
 			'maxLength' => CommentStore::COMMENT_CHARACTER_LIMIT,
 			'infusable' => true,
 		] );
-		$out->addHTML( new OOUI\FieldLayout( $summaryInput, [
+		$out->addHTML( (string)new OOUI\FieldLayout( $summaryInput, [
 			'align' => 'top',
 			'label' => new OOUI\HtmlSnippet( $this->msg( 'replacetext-summary-label' )->parse() ),
 		] ) );
@@ -829,7 +831,7 @@ class SpecialReplaceText extends SpecialPage {
 			'flags' => [ 'primary', 'progressive' ],
 			'label' => $this->msg( 'replacetext_replace' )->text()
 		] );
-		$out->addHTML( $submitButton );
+		$out->addHTML( (string)$submitButton );
 
 		$out->addHTML( '</form>' );
 
@@ -966,7 +968,7 @@ class SpecialReplaceText extends SpecialPage {
 	}
 
 	private function getToken(): string {
-		return $this->getContext()->getCsrfTokenSet()->getToken();
+		return $this->getContext()->getCsrfTokenSet()->getToken()->toString();
 	}
 
 	private function checkToken(): bool {

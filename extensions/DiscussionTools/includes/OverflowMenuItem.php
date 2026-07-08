@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\DiscussionTools;
 
 use JsonSerializable;
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 use Wikimedia\Message\MessageSpecifier;
 
 /**
@@ -18,12 +18,6 @@ class OverflowMenuItem implements JsonSerializable {
 	 */
 	private string $label;
 
-	private string $icon;
-	private MessageSpecifier|string $labelMsg;
-	private array $data;
-	private string $id;
-	private int $weight;
-
 	/**
 	 * @param string $id A unique identifier for the menu item, e.g. 'edit' or 'reportincident'
 	 * @param string $icon An OOUI icon name.
@@ -34,17 +28,12 @@ class OverflowMenuItem implements JsonSerializable {
 	 *   OOUI MenuOptionWidget in client-side code.
 	 */
 	public function __construct(
-		string $id,
-		string $icon,
-		MessageSpecifier|string $labelMsg,
-		int $weight = 0,
-		array $data = []
+		private readonly string $id,
+		private readonly string $icon,
+		private readonly MessageSpecifier|string $labelMsg,
+		private readonly int $weight = 0,
+		private readonly array $data = [],
 	) {
-		$this->id = $id;
-		$this->icon = $icon;
-		$this->labelMsg = $labelMsg;
-		$this->weight = $weight;
-		$this->data = $data;
 	}
 
 	public function parseLabel( MessageLocalizer $contextSource, array &$msgCache ): void {

@@ -222,7 +222,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Wariablu stajiś (set_var)",
 	"abusefilter-edit-builder-group-vars": "Wariable",
 	"abusefilter-edit-builder-vars-timestamp": "Unix casowy kołk změny",
-	"abusefilter-edit-builder-vars-accountname": "Kontowe mě (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Kontowe mě (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Akcija",
 	"abusefilter-edit-builder-vars-addedlines": "Smužki pśidane pśi wobźěłowanju",
 	"abusefilter-edit-builder-vars-delta": "Změnjenje wjelikosći pśi wobźěłowanju",

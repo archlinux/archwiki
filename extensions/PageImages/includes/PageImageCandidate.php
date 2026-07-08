@@ -7,7 +7,6 @@ use MediaWiki\FileRepo\File\File;
 
 /**
  * Value object to hold information about page image candidates.
- * @package PageImages
  */
 class PageImageCandidate implements JsonSerializable {
 

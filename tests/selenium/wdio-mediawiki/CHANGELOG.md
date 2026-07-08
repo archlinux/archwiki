@@ -1,5 +1,152 @@
 # Changelog
 
+## 6.5.1 / 2026-04-07
+
+This bug releas makes sure we log and throw errors if the MediaWiki API returns error in the response JSON.
+* Catch MediaWiki API errors and log (T422457)
+
+## 6.5.0 / 2026-03-20
+
+In 6.5.0 we changed how we choose hos many parallel tests suites that will run in CI. It wil now use 75%
+of the availible CPUs insted of a hard coded number. This will make tests faster on machines with more CPU
+and many test suites. We also log what maxInstances number that is used.
+
+* Log configured maxInstances (T420070)
+* Log response error from the API (T420005)
+* Set max number of parallel jobs to 75% of available CPUs in CI (T420185)
+
+## 6.4.0 / 2026-03-09
+There are two additions to this release. First we add the abilitry to add a cookie when talking to the
+MediaWiki API to make it easier to upgrade wdio-wikibase to later version. Then we also added logging
+of wdio-mediawiki and webdriver.io version to make it easier to see in the CI what versions are actually
+used.
+
+* Add option to set extra cookies for the API (T416128)
+* Log wdio and wdio-mediawiki version (T419201)
+
+## 6.3.3 / 2026-03-06
+In 6.3.0 how you run tests locally on your machine was changed so it always use a browser window. That
+change was unintentional and with this release we bring back the old behavoir check if DISPLAY is exported.
+
+* Bring back DISPLAY to enable/disable headless local (T418833)
+
+## 6.3.2 / 2026-02-20
+
+* Make it possible for users to wait for RunJobs.run() (T415658)
+
+## 6.3.1 / 2026-02-20
+
+* Await the client for RunJobs (T415658)
+
+## 6.3.0 / 2026-02-18
+
+This new release of wdio-mediawiki has one main focus:
+-  making core tests and tests that use wdio-mediawiki run faster in CI.
+The overall goal is to shorten the developer feedback loop.
+
+To achieve this, we are increasing the number of test suites that run in parallel.
+For you as a developer, this means that tests in different suites must not depend on each other.
+As stated in the documentation:
+> "Tests don't depend on others. The test suite should pass when tests are running in random order or in parallel."
+https://www.mediawiki.org/wiki/Selenium/Explanation/Anti-patterns
+
+With this release, we also start following WebdriverIO best practices by enabling Chrome headless mode by default.
+This reduces CPU usage in CI, since we Chrome in headless is faster and we will no longer record videos with FFmpeg by default.
+
+If you have failing tests in CI and the logs are not enough to debug the issue,
+you can still enable video recording by adding the following to your wdio configuration:
+
+```
+recordVideo: true,
+useBrowserHeadless: false,
+```
+
+We also removed default screenshots for passing tests. Instead of taking screenshots
+for both passing and failing tests, we now only create screenshots for failing tests.
+
+If you still need screenshots for passing tests, you can re-enable them temporarly with:
+```screenshotsOnFailureOnly: false```
+
+By reducing the time spent recording videos and taking screenshots for passing tests,
+we can spend more time running tests in parallel, which further improves CI speed and shortens the feedback loop.
+
+Finally, with this release we increase the default `maxInstances` setting from 1 to 6 when you run in CI.
+This means that if you have multiple test suites, they can run in parallel (up to 6 at the same time).
+We chose 6 because our CI environment has 8 cores and we need some head room for other things.
+
+For core tests, the speed improvements is huge. With some more tuning
+(running slow test first/split test suites) the performance win will be even higher. We are gonna quantify our
+wins in https://phabricator.wikimedia.org/T417654
+
+The full change list in this release:
+* Fix XVFB handling outside of CI (T417752)
+* Increase default max instances to 6 (T414904)
+* Run maxInstances 6 and headless only in CI by default (T417732)
+* Start one xvfb per maxInstance (NodeJS instance) (T344754)
+* Take screenshot only on failures (T416704)
+* Use headless as default (T411784)
+
+## 6.2.0 / 2026-02-12
+This release cleanup the default configuration code, add a helper method for dirname.
+The last change moves out settings for video and headless to make it easier to users
+to actually change those.
+
+* Add Util.dirname() helper for ESM compatibility (T407636)
+* Move Chrome setting/options out of configuration to new file (T414672)
+* Move process handlers out of configuration to new file (T414672)
+* Move video and headless configuration out of capabilities (T415057)
+
+## 6.1.0 / 2026-01-08
+
+The changes in 6.1.0 has a couple of focus areas.
+
+### Performance
+We decrease the overhead of using FFMPEG by following bsest practices. In CI
+this will makes tests 12-13% faster and use 26% less of CPU time.
+
+We also made it possible to disable video recording and run tests as true headless
+in CI using configuration to make it easier to measure performance wins by turning
+off video recordings.
+
+* Add configuration to enable/disable video recording (T410594)
+* Decrease FFmpeg overhead (T408328)
+* Make it possible to configure the --headless flag (T410607)
+
+### Prometheus
+There's been ongoing work to get Promethues metrics from Jenkins CI. The epic for that work
+is T412714. In this release there are a couple of bug fixes and some new metrics.
+
+* Add specific flaky metric for Prometheus (T413062)
+* Make it possible to collect average run time per project (T413064)
+* Cleanup how to handle numbers for duration (T412681)
+* Only write Promethues metrics if test runs (T407831)
+
+### Make our tool better
+There's a change here where we set the screen size. This is good because we never did that before
+and using headdless vs not using headless used different screensizes. We also added logging of
+browser/system information at startup to make it easier to spot differences when we run tests.
+
+* Set browser size to 1280x1024 (T409439)
+* Disable enable automation switch (T403827)
+* Log browser information (T411071)
+* Log system information on startup (T411069)
+
+### Documentation
+We updated documentation and code documentation.
+
+* Make it clear that the API calls do not follow redirects (T408087)
+* Document how dev-shm is used in CI (T408360)
+* Update mwbot update example (T406489)
+* Add documentation link to Chrome cli parameters (T408320)
+
+### Cleanup
+* Remove code from beforeSession() hook that is no longer needed (T355556)
+* Remove daily beta test for webdriver.io (T410889)
+* Remove unused code in Prometheus exporter (T412681)
+
+### Misc
+* Log out via special page T411278
+
 ## 6.0.0 / 2025-10-20
 
 With wdio-mediawiki 6.0 we replaced mwbot with internal code. This is a breaking change if you use any API functionality in your test and use the API from wdio-mediawiki. If you miss API functionality for your test, please create a task in Phabricator with the Test Platform tag.
@@ -14,7 +161,7 @@ const bot = await mwbot();
 ```
 We changed that to not expose our implementation so it's easier in the future to change API backend. This change removed the exposed mwbot() and made Api.js expose the API functions directly. The change was done in T404596.
 
-2. The next step removed the actual mwbot dependency and implements our own functionality to talk to the API (using built in NodeJS fetch). The change was done in T404361. You can see can see what you need to do to upgrade to 6.0 if you used mwbot in https://gerrit.wikimedia.org/g/mediawiki/extensions/examples.
+2. The next step removed the actual mwbot dependency and implements our own functionality to talk to the API (using built in NodeJS fetch). The change was done in T404361. There's an example in https://gerrit.wikimedia.org/r/c/mediawiki/extensions/examples/+/1197258 e what you need to do to upgrade to 6.0 if you used mwbot.
 
 If you don't pass on any user/password when setting up the API client the `browser.options.capabilities[ 'mw:user' ]` and `browser.options.capabilities[ 'mw:pwd' ]` will be used. For specific functions that need a username, you always need to pass on the username from this version.
 

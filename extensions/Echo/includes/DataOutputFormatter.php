@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoFlyoutFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoModelFormatter;
@@ -80,7 +79,7 @@ class DataOutputFormatter {
 		// Most notifications would be more than two days ago, check this
 		// first instead of checking 'today' then 'yesterday'
 		if ( $timeDiff > 172800 ) {
-			$date = self::getDateHeader( $user, $timestampMw );
+			$date = self::getDateHeader( $user, $lang, $timestampMw );
 		// 'Today'
 		} elseif ( str_starts_with( self::getUserLocalTime( $user, $now ), $dateFormat ) ) {
 			$date = wfMessage( 'echo-date-today' )->escaped();
@@ -88,7 +87,7 @@ class DataOutputFormatter {
 		} elseif ( str_starts_with( self::getUserLocalTime( $user, $now - 86400 ), $dateFormat ) ) {
 			$date = wfMessage( 'echo-date-yesterday' )->escaped();
 		} else {
-			$date = self::getDateHeader( $user, $timestampMw );
+			$date = self::getDateHeader( $user, $lang, $timestampMw );
 		}
 		// End creating date section header
 
@@ -208,13 +207,12 @@ class DataOutputFormatter {
 	 * Get the date header in user's format, 'May 10' or '10 May', depending
 	 * on user's date format preference
 	 * @param User $user
+	 * @param Language $lang
 	 * @param string $timestampMw
 	 * @return string
 	 */
-	protected static function getDateHeader( User $user, $timestampMw ) {
-		$lang = RequestContext::getMain()->getLanguage();
+	protected static function getDateHeader( User $user, Language $lang, $timestampMw ) {
 		$dateFormat = $lang->getDateFormatString( 'pretty', $user->getDatePreference() ?: 'default' );
-
 		return $lang->sprintfDate( $dateFormat, $timestampMw );
 	}
 

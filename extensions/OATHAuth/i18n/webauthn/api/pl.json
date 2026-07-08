@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Msz2001"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Moduł API do komunikacji pomiędzy serwerem a klientem podczas procesu rejestracji/uwierzytelniania.",
+	"apihelp-oathauth-webauthn-param-func": "Nazwa funkcji, która ma zostać wykonana.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Informacje uwierzytelniające.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Informacje o rejestracji."
+}

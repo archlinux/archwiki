@@ -13,30 +13,13 @@ use Wikimedia\ObjectCache\BagOStuff;
  */
 class BlockAutopromoteStore {
 
-	public const SERVICE_NAME = 'AbuseFilterBlockAutopromoteStore';
+	public const SERVICE_NAME = ServiceNames::BlockAutopromoteStore;
 
-	/**
-	 * @var BagOStuff
-	 */
-	private $store;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
-	/** @var FilterUser */
-	private $filterUser;
-
-	/**
-	 * @param BagOStuff $store
-	 * @param LoggerInterface $logger
-	 * @param FilterUser $filterUser
-	 */
-	public function __construct( BagOStuff $store, LoggerInterface $logger, FilterUser $filterUser ) {
-		$this->store = $store;
-		$this->logger = $logger;
-		$this->filterUser = $filterUser;
+	public function __construct(
+		private readonly BagOStuff $store,
+		private readonly LoggerInterface $logger,
+		private readonly FilterUser $filterUser
+	) {
 	}
 
 	/**

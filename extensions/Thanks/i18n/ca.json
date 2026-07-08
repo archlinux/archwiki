@@ -24,7 +24,6 @@
 	"thanks-error-log-deleted": "L'entrada de registre sol·licitada s'ha suprimit i no es pot enviar el seu agraïment.",
 	"thanks-error-invalidrevision": "L'identificador de revisió no és vàlid.",
 	"thanks-error-revdeleted": "No es pot enviar l'agraïment perquè la revisió s'ha suprimit.",
-	"thanks-error-notitle": "El títol de la pàgina no s'ha pogut recuperar",
 	"thanks-error-invalidrecipient": "No s'ha trobat un destinatari vàlid",
 	"thanks-error-invalidrecipient-bot": "No es pot agrair als bots",
 	"thanks-error-invalidrecipient-self": "No es pot agrair a un mateix",

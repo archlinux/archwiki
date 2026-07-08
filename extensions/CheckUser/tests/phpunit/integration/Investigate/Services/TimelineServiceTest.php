@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Services;
 
 use LogicException;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Investigate\Services\TimelineService;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Investigate\Services\TimelineService;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWikiIntegrationTestCase;
@@ -17,8 +17,8 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Investigate\Services\TimelineService
- * @covers \MediaWiki\CheckUser\Investigate\Services\ChangeService
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Services\TimelineService
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Services\ChangeService
  */
 class TimelineServiceTest extends MediaWikiIntegrationTestCase {
 
@@ -119,7 +119,8 @@ class TimelineServiceTest extends MediaWikiIntegrationTestCase {
 					$this->assertStringNotContainsString( $columnPrefix . 'timestamp >=', $queryInfo['tables']['a'] );
 				} else {
 					$this->assertStringContainsString(
-						$columnPrefix . "timestamp >= '$start'", $queryInfo['tables']['a']
+						$columnPrefix . "timestamp >= '$start'",
+						$queryInfo['tables']['a']
 					);
 				}
 			}

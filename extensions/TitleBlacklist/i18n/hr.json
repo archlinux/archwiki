@@ -17,7 +17,6 @@
 	"titleblacklist-forbidden-move": "\"$2\" ne može biti premješten na \"$3\", jer je naslov \"$3\" zabranjeno kreirati. Podudara se sa sljedećom stavkom popisa zabranjenih: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Ime datoteke \"$2\" je zabranjeno kreirati. Poklapa se sa stavkom popisa zabranjenih: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Suradnički račun \"$2\" je zabranjen za kreiranje.\nPoklapa se sa sljedećim izrazom iz crnog popisa: <code>$1</code>",
-	"titleblacklist-invalid": "Sljedeći {{PLURAL:$1|redak|redci}} u popisu zabranjenih naslova {{PLURAL:$1|je|su}} nedozvoljeni; molimo ispravite {{PLURAL:$1|ga|ih}} prije spremanja:",
 	"titleblacklist-override": "Zanemati popis nedopuštenih naslova ako postoji podudaranje",
 	"right-tboverride": "Premošćivanje naslova ili suradničkog imena na crnom popisu",
 	"right-tboverride-account": "Zaobilaženje popisa zabranjenih suradničkih imena"

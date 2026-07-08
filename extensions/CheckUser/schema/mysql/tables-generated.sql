@@ -14,16 +14,13 @@ CREATE TABLE /*_*/cu_changes (
   cuc_last_oldid INT UNSIGNED DEFAULT 0 NOT NULL,
   cuc_type TINYINT(3) UNSIGNED DEFAULT 0 NOT NULL,
   cuc_timestamp BINARY(14) NOT NULL,
-  cuc_ip VARCHAR(255) DEFAULT '',
   cuc_ip_hex VARCHAR(255) DEFAULT NULL,
   cuc_xff VARBINARY(255) DEFAULT '',
   cuc_xff_hex VARCHAR(255) DEFAULT NULL,
-  cuc_agent VARBINARY(255) DEFAULT NULL,
   cuc_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
   INDEX cuc_ip_hex_time (cuc_ip_hex, cuc_timestamp),
   INDEX cuc_xff_hex_time (cuc_xff_hex, cuc_timestamp),
   INDEX cuc_timestamp (cuc_timestamp),
-  INDEX cuc_actor_ip_time (cuc_actor, cuc_ip, cuc_timestamp),
   INDEX cuc_actor_ip_hex_time (
     cuc_actor, cuc_ip_hex, cuc_timestamp
   ),
@@ -36,18 +33,13 @@ CREATE TABLE /*_*/cu_log_event (
   cule_log_id INT UNSIGNED DEFAULT 0 NOT NULL,
   cule_actor BIGINT UNSIGNED NOT NULL,
   cule_timestamp BINARY(14) NOT NULL,
-  cule_ip VARCHAR(255) DEFAULT '',
   cule_ip_hex VARCHAR(255) DEFAULT NULL,
   cule_xff VARBINARY(255) DEFAULT '',
   cule_xff_hex VARCHAR(255) DEFAULT NULL,
-  cule_agent VARBINARY(255) DEFAULT NULL,
   cule_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
   INDEX cule_ip_hex_time (cule_ip_hex, cule_timestamp),
   INDEX cule_xff_hex_time (cule_xff_hex, cule_timestamp),
   INDEX cule_timestamp (cule_timestamp),
-  INDEX cule_actor_ip_time (
-    cule_actor, cule_ip, cule_timestamp
-  ),
   INDEX cule_actor_ip_hex_time (
     cule_actor, cule_ip_hex, cule_timestamp
   ),
@@ -66,19 +58,13 @@ CREATE TABLE /*_*/cu_private_event (
   cupe_comment_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
   cupe_page INT UNSIGNED DEFAULT 0 NOT NULL,
   cupe_timestamp BINARY(14) NOT NULL,
-  cupe_ip VARCHAR(255) DEFAULT '',
   cupe_ip_hex VARCHAR(255) DEFAULT NULL,
   cupe_xff VARBINARY(255) DEFAULT '',
   cupe_xff_hex VARCHAR(255) DEFAULT NULL,
-  cupe_agent VARBINARY(255) DEFAULT NULL,
   cupe_agent_id BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-  cupe_private MEDIUMBLOB DEFAULT NULL,
   INDEX cupe_ip_hex_time (cupe_ip_hex, cupe_timestamp),
   INDEX cupe_xff_hex_time (cupe_xff_hex, cupe_timestamp),
   INDEX cupe_timestamp (cupe_timestamp),
-  INDEX cupe_actor_ip_time (
-    cupe_actor, cupe_ip, cupe_timestamp
-  ),
   INDEX cupe_actor_ip_hex_time (
     cupe_actor, cupe_ip_hex, cupe_timestamp
   ),

@@ -168,6 +168,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Ваша}} корисничка права су {{GENDER:$1|промењена}}. Додати сте у следеће групе: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Ваша}} корисничка права су {{GENDER:$1|промењена}}. Више нисте члан следећих група: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Ваша}} корисничка права су {{GENDER:$1|промењена}}. Додати сте у следеће групе: $2. Више нисте члан следећих група: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|Ваше}} чланство у {{PLURAL:$2|следећој групи|следећим групама}} је аутоматски истекло: $1.",
 	"notification-header-user-rights-expiry-change": "Истек {{GENDER:$4|вашег}} чланства у {{PLURAL:$3|следећој групи|следећим групама}} је {{GENDER:$1|промењен}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Добро дошли}} на {{GRAMMAR:акузатив|{{SITENAME}}}}, $1! Драго нам је што {{GENDER:$2|сте}} овде.",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|Вас}} је {{GENDER:$2|поменуо|поменула}} у опису измене на страници <strong>$4</strong>.",
@@ -204,6 +205,7 @@
 	"notification-reverted-email-subject2": "{{PLURAL:$4|{{GENDER:$3|Ваша}} измена је {{GENDER:$2|враћена}}|Ваше измене су враћене}} на {{SITENAME}}.",
 	"notification-mention-email-subject": "$1 {{GENDER:$3|Вас}} је {{GENDER:$2|поменуо|поменула}} на {{SITENAME}}",
 	"notification-user-rights-email-subject": "{{GENDER:$3|Ваша}} корисничка права су промењена на {{SITENAME}}.",
+	"notification-user-rights-expiry-email-subject": "{{GENDER:$3|Ваша}} корисничка права на {{SITENAME}} су истекла",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 сек.}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 мин.}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 ч.}}",
@@ -251,7 +253,7 @@
 	"group-push-subscription-manager": "Менаџери претплата за обавештења",
 	"group-push-subscription-manager-member": "{{GENDER:$1|менаџер претплата за обавештења}}",
 	"notification-subject-email-verify-email-reminder": "{{GENDER:$1|Потврдите}} Ваш имејл",
-	"notification-header-verify-email-reminder": "Молимо <strong>потврдите {{GENDER:$1|своју}} имејл адресу</strong>. Да би били сигурни да имејл адреса на Вашем налогу припада Вама.",
+	"notification-header-verify-email-reminder": "Здраво $2,\nМолимо <strong>потврдите {{GENDER:$1|своју}} имејл адресу</strong>. Да би били сигурни да имејл адреса на Вашем налогу припада Вама.",
 	"notification-link-text-verify-email-reminder": "Имејл подешавања",
 	"notification-verify-email-reminder-link-label": "Потврдите имејл"
 }

@@ -1,19 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @license GPL-2.0-or-later
  */
 
 namespace MediaWiki\Extension\OATHAuth\Auth;
@@ -23,9 +10,9 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
+use MediaWiki\Extension\OATHAuth\OATHAuthLogger;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Message\Message;
-use MediaWiki\User\User;
 
 /**
  * AuthManager secondary authentication provider for TOTP second-factor authentication.
@@ -40,15 +27,11 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 	public function __construct(
 		private readonly TOTP $module,
 		private readonly OATHUserRepository $userRepository,
+		private readonly OATHAuthLogger $oathLogger,
 	) {
 	}
 
-	/**
-	 * @param string $action
-	 * @param array $options
-	 *
-	 * @return array
-	 */
+	/** @inheritDoc */
 	public function getAuthenticationRequests( $action, array $options ) {
 		// don't ask for anything initially, so the second factor is on a separate screen
 		return [];
@@ -57,10 +40,7 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 	/**
 	 * If the user has enabled two-factor authentication, request a second factor.
 	 *
-	 * @param User $user
-	 * @param array $reqs
-	 *
-	 * @return AuthenticationResponse
+	 * @inheritDoc
 	 */
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
 		$authUser = $this->userRepository->findByUser( $user );
@@ -69,15 +49,10 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 			return AuthenticationResponse::newAbstain();
 		}
 
-		return AuthenticationResponse::newUI(
-			[ new TOTPAuthenticationRequest() ],
-			wfMessage( 'oathauth-auth-ui' ),
-		);
+		return AuthenticationResponse::newUI( [ new TOTPAuthenticationRequest() ] );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
+	/** @inheritDoc */
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
 		/** @var TOTPAuthenticationRequest $request */
 		$request = AuthenticationRequest::getRequestByClass( $reqs, TOTPAuthenticationRequest::class );
@@ -86,8 +61,8 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 				wfMessage( 'oathauth-login-failed' ), 'error' );
 		}
 
-		// Don't increase pingLimiter, just check for limit exceeded.
-		if ( $user->pingLimiter( 'badoath', 0 ) ) {
+		// Check for (and increment) rate limiter before doing the auth
+		if ( $user->pingLimiter( 'badoath' ) ) {
 			return AuthenticationResponse::newUI(
 				[ new TOTPAuthenticationRequest() ],
 				new Message( 'oathauth-throttled' ),
@@ -102,13 +77,12 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 			return AuthenticationResponse::newPass();
 		}
 
-		// Increase rate limit counter for failed request
-		$user->pingLimiter( 'badoath' );
-
 		$this->logger->info( 'OATHAuth user {user} failed OTP token/recovery code from {clientip}', [
 			'user'     => $user->getName(),
 			'clientip' => $user->getRequest()->getIP(),
 		] );
+
+		$this->oathLogger->logFailedVerification( $user );
 
 		return AuthenticationResponse::newUI(
 			[ new TOTPAuthenticationRequest() ],
@@ -117,13 +91,7 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 		);
 	}
 
-	/**
-	 * @param User $user
-	 * @param User $creator
-	 * @param array $reqs
-	 *
-	 * @return AuthenticationResponse
-	 */
+	/** @inheritDoc */
 	public function beginSecondaryAccountCreation( $user, $creator, array $reqs ) {
 		return AuthenticationResponse::newAbstain();
 	}

@@ -4,6 +4,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Degroup;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityUtils;

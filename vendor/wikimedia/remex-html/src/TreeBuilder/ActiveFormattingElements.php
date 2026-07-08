@@ -11,14 +11,14 @@ class ActiveFormattingElements {
 	/**
 	 * The last (most recent) element in the list
 	 *
-	 * @var Marker|null
+	 * @var Marker|Element|null
 	 */
 	private $tail;
 
 	/**
 	 * The first (least recent) element in the list
 	 *
-	 * @var Marker|null
+	 * @var Marker|Element|null
 	 */
 	private $head;
 
@@ -341,10 +341,10 @@ class ActiveFormattingElements {
 			}
 			/** @var Element $node */
 			$s .= $node->getDebugTag();
-			if ( $node->nextNoah ) {
+			if ( $node->nextNoah instanceof Element ) {
 				$s .= " (noah sibling: " . $node->nextNoah->getDebugTag() . ')';
 			}
-			if ( $node->nextAFE && $node->nextAFE->prevAFE !== $node ) {
+			if ( $node->nextAFE instanceof Element && $node->nextAFE->prevAFE !== $node ) {
 				$s .= " (reverse link is wrong!)";
 			}
 			$s .= "\n";

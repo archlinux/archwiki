@@ -22,6 +22,7 @@
 	},
 	"multimediaviewer-desc": "Miniatuurafbeeldingen schermvullend weergeven.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About MediaViewer]</span> inschakelen",
+	"multimediaviewer-disable-image-carousel-pref": "Afbeeldingencarrousel uitschakelen op de mobiele site",
 	"multimediaviewer-file-page": "Naar de bestandspagina gaan",
 	"multimediaviewer-repository-local": "Meer informatie",
 	"multimediaviewer-datetime-created": "Gemaakt: $1",

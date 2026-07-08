@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
 use MediaWiki\Config\Config;
-use MessageLocalizer;
+use MediaWiki\Language\MessageLocalizer;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md in core.

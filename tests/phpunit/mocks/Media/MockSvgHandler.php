@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @license GPL-2.0-or-later
+ * @ingroup Media
+ */
+
+use MediaWiki\Media\SvgHandler;
+
+/**
+ * Fake handler for SVG images.
+ */
+class MockSvgHandler extends SvgHandler {
+	/** @inheritDoc */
+	public function doTransform( $image, $dstPath, $dstUrl, $params, $flags = 0 ) {
+		return MockImageHandler::doFakeTransform( $this, $image, $dstPath, $dstUrl, $params, $flags );
+	}
+
+	/** @inheritDoc */
+	public function doClientImage( $image, $params ) {
+		return $this->getClientScalingThumbnailImage( $image, $params );
+	}
+}

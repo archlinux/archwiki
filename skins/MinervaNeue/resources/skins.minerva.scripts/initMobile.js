@@ -7,7 +7,6 @@ module.exports = function () {
 		ms = require( 'mobile.startup' ),
 		PageHTMLParser = ms.PageHTMLParser,
 		permissions = mw.config.get( 'wgMinervaPermissions' ) || {},
-		notifyOnPageReload = ms.notifyOnPageReload,
 		time = ms.time,
 		DateFormatter = require( 'mediawiki.DateFormatter' ),
 		preInit = require( './preInit.js' ),
@@ -20,7 +19,6 @@ module.exports = function () {
 		TabScroll = require( './TabScroll.js' ),
 		router = require( 'mediawiki.router' ),
 		ctaDrawers = require( './ctaDrawers.js' ),
-		drawers = require( './drawers.js' ),
 		desktopMMV = mw.loader.getState( 'mmv.bootstrap' ),
 		overlayManager = ms.getOverlayManager(),
 		currentPage = ms.currentPage(),
@@ -183,41 +181,6 @@ module.exports = function () {
 	}
 
 	/**
-	 * @method
-	 * @param {jQuery.Event} ev
-	 */
-	function amcHistoryClickHandler( ev ) {
-		const self = this;
-		const amcOutreach = ms.amcOutreach;
-		const amcCampaign = amcOutreach.loadCampaign();
-		const onDismiss = function () {
-			notifyOnPageReload( mw.msg( 'mobile-frontend-amc-outreach-dismissed-message' ) );
-			window.location = self.href;
-		};
-		const drawer = amcCampaign.showIfEligible( amcOutreach.ACTIONS.onHistoryLink, onDismiss, currentPage.title, 'action=history' );
-
-		if ( drawer ) {
-			ev.preventDefault();
-			// stopPropagation is needed to prevent drawer from immediately closing
-			// when shown (drawers.js adds a click event to window when drawer is
-			// shown
-			ev.stopPropagation();
-
-			drawers.displayDrawer( drawer, {} );
-			drawers.lockScroll();
-		}
-	}
-
-	/**
-	 * @method
-	 * @param {jQuery} $lastModifiedLink
-	 * @ignore
-	 */
-	function initAmcHistoryLink( $lastModifiedLink ) {
-		$lastModifiedLink.one( 'click', amcHistoryClickHandler );
-	}
-
-	/**
 	 * Initialisation function for last modified times
 	 *
 	 * Enhances .modified-enhancement element
@@ -376,14 +339,12 @@ module.exports = function () {
 		// - references
 		references();
 		// - mobile redirect
-		mobileRedirect( ms.amcOutreach, currentPage );
+		mobileRedirect();
 
 		// Enhance timestamps on last-modified bar and watchlist
 		// to show relative time.
 		initModifiedInfo();
 		initRegistrationInfo();
-		// eslint-disable-next-line no-jquery/no-global-selector
-		initAmcHistoryLink( $( '.last-modified-bar__text a' ) );
 
 		if ( toolbarElement ) {
 			Toolbar.bind( window, toolbarElement );

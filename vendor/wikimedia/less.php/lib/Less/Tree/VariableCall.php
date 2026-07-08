@@ -49,7 +49,6 @@ class Less_Tree_VariableCall extends Less_Tree {
 				// @todo - note looks like dead code, do we need it ?
 				$rules = $detachedRuleset;
 			} elseif ( $detachedRuleset instanceof Less_Tree && is_array( $detachedRuleset->value ) ) {
-				// @phan-suppress-next-line PhanTypeMismatchArgument False positive
 				$rules = new Less_Tree_Ruleset( null, $detachedRuleset->value );
 			} else {
 				throw new Less_Exception_Compiler( 'Could not evaluate variable call ' . $this->variable );

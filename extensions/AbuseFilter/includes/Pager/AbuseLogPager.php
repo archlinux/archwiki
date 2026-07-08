@@ -2,13 +2,12 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Pager;
 
-use HtmlArmor;
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
+use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Html\Html;
@@ -16,6 +15,7 @@ use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\ReverseChronologicalPager;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\PermissionManager;
@@ -24,46 +24,24 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
 use stdClass;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class AbuseLogPager extends ReverseChronologicalPager {
-	/**
-	 * @var array
-	 */
-	private $conds;
-
-	/** @var string */
-	private $basePageName;
-
-	/**
-	 * @var string[] Map of [ id => show|hide ], for entries that we're currently (un)hiding
-	 */
-	private $hideEntries;
-
-	private LinkBatchFactory $linkBatchFactory;
-	private PermissionManager $permissionManager;
-	private AbuseFilterPermissionManager $afPermissionManager;
-	private VariablesBlobStore $varBlobStore;
 
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
-		array $conds,
-		LinkBatchFactory $linkBatchFactory,
-		PermissionManager $permManager,
-		AbuseFilterPermissionManager $afPermissionManager,
-		VariablesBlobStore $varBlobStore,
-		string $basePageName,
-		array $hideEntries = []
+		private readonly array $conds,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly PermissionManager $permissionManager,
+		private readonly AbuseFilterPermissionManager $afPermissionManager,
+		private readonly FilterLookup $filterLookup,
+		private readonly VariablesBlobStore $varBlobStore,
+		private readonly string $basePageName,
+		private array $hideEntries = []
 	) {
 		parent::__construct( $context, $linkRenderer );
-		$this->conds = $conds;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->permissionManager = $permManager;
-		$this->afPermissionManager = $afPermissionManager;
-		$this->varBlobStore = $varBlobStore;
-		$this->basePageName = $basePageName;
-		$this->hideEntries = $hideEntries;
 	}
 
 	/**
@@ -129,17 +107,24 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$diffUrl = wfAppendQuery( $diffUrl,
 					[ 'diff' => 'prev', 'oldid' => $row->afl_rev_id ] );
 
-				$diffLink = Linker::makeExternalLink( $diffUrl,
-					$this->msg( 'abusefilter-log-diff' )->text() );
+				$diffLink = $linkRenderer->makeExternalLink(
+					$diffUrl,
+					new HtmlArmor( $this->msg( 'abusefilter-log-diff' )->parse() ),
+					SpecialPage::getTitleFor( $this->basePageName )
+				);
 			}
 		}
 
 		if ( !$row->afl_wiki ) {
 			// Local user
-			$userLink = SpecialAbuseLog::getUserLinks( $row->afl_user, $row->afl_user_text );
+			$userLink = $this->getUserLinks(
+				$row->user_id ?? $row->afl_user,
+				$row->afl_user_text,
+				in_array( $row->afl_action, [ 'createaccount', 'autocreateaccount' ], true )
+			);
 		} else {
 			$userLink = WikiMap::foreignUserLink( $row->afl_wiki, $row->afl_user_text ) . ' ' .
-				$this->msg( 'parentheses' )->params( WikiMap::getWikiName( $row->afl_wiki ) )->escaped();
+				$this->msg( 'parentheses', WikiMap::getWikiName( $row->afl_wiki ) )->escaped();
 		}
 
 		$lang = $this->getLanguage();
@@ -164,17 +149,26 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		$global = $row->afl_global;
 
 		// Pull global filter description
-		$lookup = AbuseFilterServices::getFilterLookup();
 		try {
-			$filterObj = $lookup->getFilter( $filterID, $global );
+			$filterObj = $this->filterLookup->getFilter( $filterID, $global );
 			$escaped_comments = Sanitizer::escapeHtmlAllowEntities( $filterObj->getName() );
-		} catch ( CentralDBNotAvailableException $_ ) {
+		} catch ( CentralDBNotAvailableException ) {
 			$escaped_comments = $this->msg( 'abusefilter-log-description-not-available' )->escaped();
 			// either hide all filters, including not hidden/protected, or show all, including hidden/protected
 			// we choose the former
 			$filterObj = MutableFilter::newDefault();
 			$filterObj->setProtected( true );
 			$filterObj->setHidden( true );
+			$filterObj->setSuppressed( true );
+		}
+
+		// If the filter is suppressed, strike through the filter description to indicate this
+		if ( $filterObj->isSuppressed() ) {
+			$escaped_comments = Html::rawElement(
+				'span',
+				[ 'class' => 'mw-abusefilter-log-suppressed-entry' ],
+				$escaped_comments
+			);
 		}
 
 		// Determine if the user has access to the associated filter and also the details of the current log
@@ -234,11 +228,14 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$linkMsg = $this->msg( 'abusefilter-log-detailedentry-global' )
 					->numParams( $filterID );
 				if ( $centralDb !== null ) {
-					$globalURL = WikiMap::getForeignURL(
-						$centralDb,
-						'Special:AbuseFilter/' . $filterID
+					$filterLink = $linkRenderer->makeExternalLink(
+						WikiMap::getForeignURL(
+							$centralDb,
+							'Special:AbuseFilter/' . $filterID
+						),
+						$linkMsg->text(),
+						SpecialPage::getTitleFor( $this->basePageName )
 					);
-					$filterLink = Linker::makeExternalLink( $globalURL, $linkMsg->text() );
 				} else {
 					$filterLink = $linkMsg->escaped();
 				}
@@ -313,7 +310,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 
 	/**
 	 * Can this user see diffs generated by Special:Undelete for the page?
-	 * @see MediaWiki\Specials\SpecialUndelete
+	 * @see \MediaWiki\Specials\SpecialUndelete
 	 * @param LinkTarget $page
 	 *
 	 * @return bool
@@ -336,7 +333,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 
 	/**
 	 * Can this user see diffs generated by Special:Undelete?
-	 * @see MediaWiki\Specials\SpecialUndelete
+	 * @see \MediaWiki\Specials\SpecialUndelete
 	 *
 	 * @return bool
 	 */
@@ -350,11 +347,50 @@ class AbuseLogPager extends ReverseChronologicalPager {
 	}
 
 	/**
+	 * @param int $userId
+	 * @param string $userName
+	 * @param bool $isAccountCreation If true, suppress the block link when the username
+	 * is not registered locally.
+	 * @return string
+	 */
+	private function getUserLinks( $userId, string $userName, bool $isAccountCreation = false ): string {
+		static $cache = [];
+
+		// Use a single string key for simpler and faster cache lookups
+		$cacheKey = implode( '|', [ $userId, $userName, (int)$isAccountCreation ] );
+		if ( isset( $cache[$cacheKey] ) ) {
+			return $cache[$cacheKey];
+		}
+
+		$attributes = [];
+		$flags = 0;
+
+		// If the account does not exist locally, don't generate a block link since it can't be blocked
+		// Also make it visually explicit that the account does not exist
+		if ( !$userId && $isAccountCreation ) {
+			$attributes['class'] = 'mw-abusefilter-log-missinguserlink';
+			$flags |= Linker::TOOL_LINKS_NOBLOCK;
+			$this->getContext()->getOutput()->addModuleStyles( 'ext.abuseFilter' );
+		}
+
+		$userLink = $this->getLinkRenderer()->makeUserLink(
+			new UserIdentityValue( $userId, $userName ),
+			$this->getContext(),
+			null,
+			$attributes
+		);
+		$userToolLinks = Linker::userToolLinks( $userId, $userName, true, $flags );
+
+		$cache[$cacheKey] = $userLink . $userToolLinks;
+		return $cache[$cacheKey];
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getQueryInfo() {
 		$info = [
-			'tables' => [ 'abuse_filter_log', 'revision' ],
+			'tables' => [ 'abuse_filter_log', 'revision', 'user' ],
 			'fields' => [
 				'afl_id',
 				'afl_global',
@@ -372,6 +408,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				'afl_deleted',
 				'afl_rev_id',
 				'rev_id',
+				'user_id',
 			],
 			'conds' => $this->conds,
 			'join_conds' => [
@@ -381,6 +418,14 @@ class AbuseLogPager extends ReverseChronologicalPager {
 						'afl_wiki' => null,
 						$this->mDb->expr( 'afl_rev_id', '!=', null ),
 						'rev_id=afl_rev_id',
+					]
+				],
+				'user' => [
+					'LEFT JOIN',
+					[
+						'afl_wiki' => null,
+						'afl_action' => [ 'createaccount', 'autocreateaccount' ],
+						'afl_user_text=user_name',
 					]
 				],
 			],

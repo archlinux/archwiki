@@ -13,6 +13,7 @@ $specialPageAliases['en'] = [
 	'DisableOATHForUser' => [ 'DisableOATHForUser' ],
 	'OATHManage' => [ 'AccountSecurity', 'Manage_Two-factor_authentication', 'OATH_Manage',
 		'OATHManage', 'OATH', 'Two-factor_authentication', 'OATHAuth' ],
+	'Recover2FAForUser' => [ 'Recover2FAForUser' ],
 	'VerifyOATHForUser' => [ 'VerifyOATHForUser' ],
 ];
 
@@ -93,6 +94,14 @@ $specialPageAliases['pl'] = [
 	]
 ];
 
+/** Slovak (slovenčina) */
+$specialPageAliases['sk'] = [
+	'DisableOATHForUser' => [ 'DeaktivovaťDvojfaktorovúAutentifikáciuPoužívateľa' ],
+	'OATHManage' => [ 'ZabezpečenieÚčtu', 'DvojfaktorováAutentifikácia', 'SpravovaťDvojfaktorovúAutentifikáciu' ],
+	'Recover2FAForUser' => [ 'ObnoviťDvojfaktorovúAutentifikáciuPoužívateľa' ],
+	'VerifyOATHForUser' => [ 'OveriťDvojfaktorovúAutentifikáciuPoužívateľa' ],
+];
+
 /** Serbian Cyrillic (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'DisableOATHForUser' => [ 'Онемогућавање_двофакторске_потврде_идентитета' ],
@@ -135,4 +144,25 @@ $specialPageAliases['zh-hant'] = [
 $specialPageAliases['zh-hk'] = [
 	'DisableOATHForUser' => [ '停用用戶OATH' ],
 	'VerifyOATHForUser' => [ '確認用戶OATH' ],
+];
+
+/** Hebrew (עברית) */
+$specialPageAliases['he'] = [
+	'DisableOATHForUser' => [
+		'השבתת_אימות_דו־שלבי_של_משתמש',
+		'השבתת_אימות_דו_שלבי_של_משתמש',
+	],
+	'OATHManage' => [
+		'ניהול_אימות_דו־שלבי',
+		'ניהול_אימות_דו_שלבי',
+		'ניהול_OATH',
+		'אבטחת_חשבון',
+	],
+	'Recover2FAForUser' => [
+		'שחזור_אימות_דו־שלבי_של_משתמש',
+		'שחזור_אימות_דו_שלבי_של_משתמש',
+	],
+	'VerifyOATHForUser' => [
+		'וידוא OATH של משתמש',
+	],
 ];

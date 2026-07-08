@@ -166,9 +166,7 @@ class HTMLFormTest extends MediaWikiIntegrationTestCase {
 		if ( $formTokenSalt !== null ) {
 			$form->setTokenSalt( $formTokenSalt );
 		}
-		$form->setSubmitCallback( static function () {
-			return true;
-		} );
+		$form->setSubmitCallback( static fn () => true );
 
 		$this->assertSame( $shouldBeAuthorized, $form->tryAuthorizedSubmit() );
 	}

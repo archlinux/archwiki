@@ -1,15 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\GlobalContributions;
 
 use InvalidArgumentException;
 use LogicException;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
-use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionStore;
@@ -24,15 +23,14 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Stats\StatsFactory;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup
  * @group CheckUser
  */
 class CheckUserGlobalContributionsLookupTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param array $overrides Allow tests to stub out services as necessary
-	 * @return CheckUserGlobalContributionsLookup
 	 */
-	private function getLookupWithOverrides( $overrides ) {
+	private function getLookupWithOverrides( array $overrides ): CheckUserGlobalContributionsLookup {
 		$extensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$extensionRegistry->method( 'isLoaded' )
 			->willReturn( true );
@@ -42,7 +40,7 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiUnitTestCase {
 			$overrides['extensionRegistry'] ?? $extensionRegistry,
 			$overrides['centralIdLookup'] ?? $this->createMock( CentralIdLookup::class ),
 			$overrides['checkUserLookupUtils'] ?? $this->createMock( CheckUserLookupUtils::class ),
-			$overrides['config'] ?? $this->createMock( Config::class ),
+			$overrides['config'] ?? new HashConfig(),
 			$overrides['revisionStore'] ?? $this->createMock( RevisionStore::class ),
 			$overrides['apiRequestAggregator'] ?? $this->createMock( CheckUserApiRequestAggregator::class ),
 			$overrides['wanCache'] ?? $this->createMock( WANObjectCache::class ),
@@ -54,15 +52,14 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiUnitTestCase {
 	 * Convenience function to get a database with an expected query result
 	 *
 	 * @param string[] $activeWikis array of wikis to return as the query result
-	 * @return IConnectionProvider
 	 */
-	private function getMockDbProviderWithActiveWikiLookupResults( $activeWikis ) {
+	private function getMockDbProviderWithActiveWikiLookupResults( array $activeWikis ): IConnectionProvider {
 		// Mock fetching the recently active wikis
 		$queryBuilder = $this->createMock( SelectQueryBuilder::class );
 		$queryBuilder
-			->method( $this->logicalOr(
-				'select', 'from', 'distinct', 'where', 'join', 'caller', 'orderBy', 'groupBy'
-			) )
+			->method( $this->logicalOr( ...array_map( $this->identicalTo( ... ), [
+				'select', 'from', 'distinct', 'where', 'join', 'caller', 'orderBy', 'groupBy',
+			] ) ) )
 			->willReturnSelf();
 		$queryBuilder->method( 'fetchResultSet' )
 			->willReturn( new FakeResultWrapper( array_map(

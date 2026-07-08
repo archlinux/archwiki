@@ -169,6 +169,39 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( "data-qid=\"Q123\"", $out );
 	}
 
+	public function testGetHtmlOutputInlineMath() {
+		$math = new MathMathML( "a+b", [ 'display' => 'inline' ] );
+		$out = $math->getHtmlOutput();
+		$this->assertStringContainsString( 'mwe-math-mathml-inline', $out );
+		$this->assertStringNotContainsString( 'mwe-math-element-block', $out );
+	}
+
+	public function testGetHtmlOutputDisplayMath() {
+		$math = new MathMathML( "a+b", [ 'display' => 'block' ] );
+		$out = $math->getHtmlOutput();
+		$this->assertStringContainsString( 'mwe-math-mathml-display', $out );
+		$this->assertStringContainsString( 'mwe-math-element-block', $out );
+	}
+
+	public function testGetHtmlOutputSvgDisabled() {
+		$math = new MathMathML( "a+b" );
+		$out = $math->getHtmlOutput( false );
+		$this->assertStringNotContainsString( '<svg', $out );
+		$this->assertStringNotContainsString( 'mwe-math-mathml-a11y', $out );
+	}
+
+	public function testGetHtmlOutputId() {
+		$math = new MathMathML( "a+b", [ 'id' => 'unique.id' ] );
+		$out = $math->getHtmlOutput( false );
+		$this->assertStringContainsString( 'unique.id', $out );
+	}
+
+	public function testGetHtmlNoMathJax() {
+		$math = new MathMathML( "a+b", [ 'class' => 'mathjax_ignore' ] );
+		$out = $math->getHtmlOutput( false );
+		$this->assertStringContainsString( 'mathjax_ignore', $out );
+	}
+
 	public function testGetHtmlOutputInvalidQID() {
 		// test with not valid ID. An ID must match /Q\d+/
 		$math = new MathMathML( "a+b", [ "qid" => "123" ] );

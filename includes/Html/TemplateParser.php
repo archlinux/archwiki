@@ -7,10 +7,10 @@
 namespace MediaWiki\Html;
 
 use Exception;
-use FileContentsHasher;
 use LightnCandy\LightnCandy;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Utils\FileContentsHasher;
 use RuntimeException;
 use UnexpectedValueException;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -50,8 +50,8 @@ class TemplateParser {
 	 * @param BagOStuff|null $cache Read-write cache
 	 */
 	public function __construct( $templateDir = null, ?BagOStuff $cache = null ) {
-		$this->templateDir = $templateDir ?: __DIR__ . '/../templates';
-		$this->cache = $cache ?: MediaWikiServices::getInstance()->getObjectCacheFactory()
+		$this->templateDir = $templateDir ?: __DIR__ . '/../../resources/templates';
+		$this->cache = $cache ?? MediaWikiServices::getInstance()->getObjectCacheFactory()
 			->getLocalServerInstance( CACHE_ANYTHING );
 
 		// Do not add more flags here without discussion.

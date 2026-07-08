@@ -1,14 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\Services\CheckUserCentralIndexLookup;
+use MediaWiki\Extension\CheckUser\Services\CheckUserCentralIndexLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
 
 /**
  * @group Database
- * @covers \MediaWiki\CheckUser\Services\CheckUserCentralIndexLookup
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserCentralIndexLookup
  */
 class CheckUserCentralIndexLookupTest extends MediaWikiIntegrationTestCase {
 

@@ -8,7 +8,7 @@ namespace MediaWiki\Permissions;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Language\LanguageFactory;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\HtmlArmor\HtmlArmor;
@@ -140,10 +140,12 @@ class GrantsLocalization {
 	}
 
 	/**
-	 * Generate wikitext to display a list of grants. It will be in the format
-	 *     * <grant-group-$group>
-	 *     : <grant-$grant>; <grant-$grant>; ...
-	 *     * ...
+	 * Generate wikitext to display a list of grants. It will be in the format:
+	 * ```
+	 * * <grant-group-$group>
+	 * : <grant-$grant>; <grant-$grant>; ...
+	 * * ...
+	 * ```
 	 * with some HTML classes for styling.
 	 * @param string[]|null $grantsFilter If non-null, only display these grants.
 	 * @param Language|string|null $lang

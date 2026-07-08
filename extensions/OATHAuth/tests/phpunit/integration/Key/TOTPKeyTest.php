@@ -6,28 +6,18 @@ use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Extension\OATHAuth\OATHUser;
+use MediaWiki\Extension\OATHAuth\Tests\Integration\EncryptionTestTrait;
 use MediaWikiIntegrationTestCase;
 use SodiumException;
 
 /**
- * @covers \MediaWiki\Extension\OATHAuth\OATHAuthServices
- * @covers \MediaWiki\Extension\OATHAuth\OATHUser
+ * @covers \MediaWiki\Extension\OATHAuth\Key\AuthKey
  * @covers \MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys
  * @covers \MediaWiki\Extension\OATHAuth\Key\TOTPKey
+ * @covers \MediaWiki\Extension\OATHAuth\OATHAuthServices
  */
 class TOTPKeyTest extends MediaWikiIntegrationTestCase {
-	public function encryptionTestSetup() {
-		if ( !extension_loaded( 'sodium' ) ) {
-			$this->markTestSkipped( 'sodium extension not installed, skipping' );
-		}
-		$this->setMwGlobals( 'wgOATHSecretKey', 'f901c7d7ecc25c90229c01cec0efec1b521a5e2eb6761d29007dde9566c4536a' );
-		$this->getServiceContainer()->resetServiceForTesting( 'OATHAuth.EncryptionHelper' );
-		$this->assertTrue(
-			OATHAuthServices::getInstance( $this->getServiceContainer() )
-				->getEncryptionHelper()
-				->isEnabled(),
-		);
-	}
+	use EncryptionTestTrait;
 
 	public function testDeserialization(): void {
 		$key = TOTPKey::newFromRandom();
@@ -42,9 +32,9 @@ class TOTPKeyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFromArrayWithNonceNoEncryption(): void {
-		// bad nonce value will throw a sodium exception
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 
+		// bad nonce value will throw a sodium exception
 		$this->expectException( SodiumException::class );
 		TOTPKey::newFromArray( [
 			'secret' => '123456',
@@ -53,7 +43,7 @@ class TOTPKeyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFromArrayWithEncryption(): void {
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 
 		$key = TOTPKey::newFromRandom();
 		$data = $key->jsonSerialize();
@@ -73,11 +63,11 @@ class TOTPKeyTest extends MediaWikiIntegrationTestCase {
 
 	public function testNewFromArrayWithoutSecret(): void {
 		// We aren't setting secret, so this will return null
-		$this->assertSame( null, TOTPKey::newFromArray( [] ) );
+		$this->assertNull( TOTPKey::newFromArray( [] ) );
 	}
 
 	public function testJsonSerializerWithEncryption(): void {
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 		$key = TOTPKey::newFromRandom();
 		$data = $key->jsonSerialize();
 		$this->assertArrayHasKey( 'nonce', $data );
@@ -86,13 +76,11 @@ class TOTPKeyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testDoNotReencryptEncryptedKeyData(): void {
-		$this->encryptionTestSetup();
+		$this->encryptionIntegrationTestSetup();
 
 		$key = TOTPKey::newFromRandom();
-		$data = $key->jsonSerialize();
-		$encryptedData = $key->getEncryptedSecretAndNonce();
-		$oldEncryptedSecret = $encryptedData[0];
-		$oldNonce = $encryptedData[1];
+		$key->jsonSerialize();
+		[ $oldEncryptedSecret, $oldNonce ] = $key->getEncryptedSecretAndNonce();
 
 		$newData = $key->jsonSerialize();
 		$this->assertEquals( $oldEncryptedSecret, $newData['secret'] );
@@ -114,6 +102,6 @@ class TOTPKeyTest extends MediaWikiIntegrationTestCase {
 
 		$testData1 = [];
 		$key = TOTPKey::newFromRandom();
-		$this->assertSame( false, $key->verify( $testData1, $mockOATHUser ) );
+		$this->assertFalse( $key->verify( $mockOATHUser, $testData1 ) );
 	}
 }

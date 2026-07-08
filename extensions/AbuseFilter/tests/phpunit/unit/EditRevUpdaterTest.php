@@ -152,8 +152,7 @@ class EditRevUpdaterTest extends MediaWikiUnitTestCase {
 			->willReturnCallback( static function () use ( $localDB ) {
 				return new UpdateQueryBuilder( $localDB );
 			} );
-		$centralDB = $this->createMock( IDatabase::class );
-		$centralDB->expects( $this->never() )->method( 'newUpdateQueryBuilder' );
+		$centralDB = $this->createNoOpMock( IDatabase::class );
 		$updater = $this->getUpdater( $localDB, $centralDB );
 		$updater->setLastEditPage( $page );
 		$updater->setLogIdsForTarget( $goodTitleValue, $goodIDs );

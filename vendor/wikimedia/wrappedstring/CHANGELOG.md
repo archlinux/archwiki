@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.1.0 (2025-11-04)
+
+Fixed:
+
+* WrappedString: Fix PHP 8.1 warning for passing null to strlen (James D. Forrester)
+* WrappedStringList: Remove unused protected `extend()` method (Timo Tijhof)
+
+Changed:
+
+* Raise required PHP to 8.1+ (James D. Forrester)
+
 ## 4.0.1 (2021-08-04)
 
 Fixed:

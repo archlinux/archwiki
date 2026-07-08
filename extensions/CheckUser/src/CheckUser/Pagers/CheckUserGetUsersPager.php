@@ -1,29 +1,30 @@
 <?php
 
-namespace MediaWiki\CheckUser\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\CheckUser\Pagers;
 
 use LogicException;
 use MediaWiki\Block\DatabaseBlockStore;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\CheckUser\SpecialCheckUser;
-use MediaWiki\CheckUser\CheckUser\Widgets\HTMLFieldsetCheckUser;
-use MediaWiki\CheckUser\ClientHints\ClientHintsLookupResults;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
-use MediaWiki\CheckUser\Services\CheckUserUtilityService;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsFormatter;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
+use MediaWiki\Extension\CheckUser\CheckUser\SpecialCheckUser;
+use MediaWiki\Extension\CheckUser\CheckUser\Widgets\HTMLFieldsetCheckUser;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsLookupResults;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Extension\CheckUser\Services\CheckUserUtilityService;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsFormatter;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\ListToggle;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -42,7 +43,7 @@ use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
 
-class CheckUserGetUsersPager extends AbstractCheckUserPager {
+class CheckUserGetUsersPager extends AbstractCheckUserPager implements CheckUsernameResultInterface {
 	/** @var bool Whether the user performing this check has the block right. */
 	protected bool $canPerformBlocks;
 
@@ -59,7 +60,18 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 	private ?bool $shouldShowMassGlobalBlockButtons = null;
 
 	/** @var array[] */
-	protected $userSets;
+	protected array $userSets = [
+		'first' => [],
+		'last' => [],
+		'edits' => [],
+		'ids' => [],
+		'infosets' => [],
+		'agentsets' => [],
+		'clienthints' => [],
+	];
+
+	/** @var int[] User IDs that appear in at least one SI case */
+	private array $usersInSiCases = [];
 
 	/** @var string|false */
 	private $centralAuthToollink;
@@ -72,13 +84,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 
 	private ClientHintsLookupResults $clientHintsLookupResults;
 
-	private PermissionManager $permissionManager;
-	private UserEditTracker $userEditTracker;
-	private CheckUserUtilityService $checkUserUtilityService;
-	private UserAgentClientHintsLookup $clientHintsLookup;
-	private UserAgentClientHintsFormatter $clientHintsFormatter;
 	private ExtensionRegistry $extensionRegistry;
-	private LinkBatchFactory $linkBatchFactory;
 
 	public function __construct(
 		FormOptions $opts,
@@ -86,7 +92,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		bool $xfor,
 		string $logType,
 		TokenQueryManager $tokenQueryManager,
-		PermissionManager $permissionManager,
+		private readonly PermissionManager $permissionManager,
 		UserGroupManager $userGroupManager,
 		CentralIdLookup $centralIdLookup,
 		IConnectionProvider $dbProvider,
@@ -95,22 +101,39 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		UserFactory $userFactory,
 		CheckUserLogService $checkUserLogService,
 		CheckUserLookupUtils $checkUserLookupUtils,
-		UserEditTracker $userEditTracker,
-		CheckUserUtilityService $checkUserUtilityService,
-		UserAgentClientHintsLookup $clientHintsLookup,
-		UserAgentClientHintsFormatter $clientHintsFormatter,
+		private readonly UserEditTracker $userEditTracker,
+		private readonly CheckUserUtilityService $checkUserUtilityService,
+		private readonly UserAgentClientHintsLookup $clientHintsLookup,
+		private readonly UserAgentClientHintsFormatter $clientHintsFormatter,
 		UserOptionsLookup $userOptionsLookup,
 		DatabaseBlockStore $blockStore,
-		LinkBatchFactory $linkBatchFactory,
+		private readonly LinkBatchFactory $linkBatchFactory,
 		TempUserConfig $tempUserConfig,
+		private readonly SuggestedInvestigationsCaseLookupService $siCaseLookupService,
 		?IContextSource $context = null,
 		?LinkRenderer $linkRenderer = null,
-		?int $limit = null
+		?int $limit = null,
 	) {
-		parent::__construct( $opts, $target, $logType, $tokenQueryManager,
-			$userGroupManager, $centralIdLookup, $dbProvider, $specialPageFactory,
-			$userIdentityLookup, $checkUserLogService, $userFactory, $checkUserLookupUtils,
-			$userOptionsLookup, $blockStore, $tempUserConfig, $context, $linkRenderer, $limit );
+		parent::__construct(
+			$opts,
+			$target,
+			$logType,
+			$tokenQueryManager,
+			$userGroupManager,
+			$centralIdLookup,
+			$dbProvider,
+			$specialPageFactory,
+			$userIdentityLookup,
+			$checkUserLogService,
+			$userFactory,
+			$checkUserLookupUtils,
+			$userOptionsLookup,
+			$blockStore,
+			$tempUserConfig,
+			$context,
+			$linkRenderer,
+			$limit
+		);
 		$this->checkType = SpecialCheckUser::SUBTYPE_GET_USERS;
 		$this->xfor = $xfor;
 		$this->canPerformBlocks = $permissionManager->userHasRight( $this->getUser(), 'block' )
@@ -120,13 +143,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		$this->globalBlockingToollink = ExtensionRegistry::getInstance()->isLoaded( 'GlobalBlocking' )
 			? $this->getConfig()->get( 'CheckUserGBtoollink' ) : false;
 		$this->aliases = $this->getLanguage()->getSpecialPageAliases();
-		$this->permissionManager = $permissionManager;
-		$this->userEditTracker = $userEditTracker;
-		$this->checkUserUtilityService = $checkUserUtilityService;
-		$this->clientHintsLookup = $clientHintsLookup;
-		$this->clientHintsFormatter = $clientHintsFormatter;
 		$this->extensionRegistry = ExtensionRegistry::getInstance();
-		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
 	/**
@@ -202,20 +219,34 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		} else {
 			$templateParams['canPerformBlocksOrLocks'] = $this->shouldShowBlockFieldset();
 			$templateParams['userText'] = $user->getName();
-			$userNonExistent = !IPUtils::isIPAddress( $user ) && !$user->isRegistered();
+			$userNonExistent = !IPUtils::isIPAddress( $user->getName() ) && !$user->isRegistered();
 			if ( $userNonExistent ) {
 				$templateParams['userLinkClass'] = 'mw-checkuser-nonexistent-user';
 			}
-			$templateParams['userLink'] = Linker::userLink( $user->getId(), $user, $user );
-			$templateParams['userToolLinks'] = Linker::userToolLinksRedContribs(
+			$templateParams['userLink'] = Linker::userLink( $user->getId(), $user->getName(), $user->getName() );
+			$userToolLinkItems = Linker::userToolLinkArray(
 				$user->getId(),
-				$user,
-				$this->userEditTracker->getUserEditCount( $user ),
-				// don't render parentheses in HTML markup (CSS will provide)
+				$user->getName(),
+				true,
+				0,
+				$this->userEditTracker->getUserEditCount( $user )
+			);
+			// Add SI cases link for registered users that appear in at least one case
+			if ( in_array( $user->getId(), $this->usersInSiCases, true ) ) {
+				$userToolLinkItems[] = $this->getLinkRenderer()->makeKnownLink(
+					SpecialPage::getTitleFor( 'SuggestedInvestigations' ),
+					$this->msg( 'checkuser-si-cases-link' )->text(),
+					[ 'class' => 'mw-checkuser-si-cases-link' ],
+					[ 'username' => $user->getName(), 'hideCasesWithNoUserEdits' => '0' ]
+				);
+			}
+			// don't render parentheses in HTML markup (CSS will provide)
+			$templateParams['userToolLinks'] = Linker::renderUserToolLinksArray(
+				$userToolLinkItems,
 				false
 			);
 			if ( $userIsIP ) {
-				$templateParams['userLinks'] = $this->msg( 'checkuser-userlinks-ip', $user )->parse();
+				$templateParams['userLinks'] = $this->msg( 'checkuser-userlinks-ip', $user->getName() )->parse();
 			} elseif ( !$userNonExistent ) {
 				if ( $this->msg( 'checkuser-userlinks' )->exists() ) {
 					$templateParams['userLinks'] =
@@ -240,7 +271,8 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 						"Could not retrieve URL for CentralAuth: $this->centralAuthToollink"
 					);
 				}
-				$linkCA = Html::element( 'a',
+				$linkCA = Html::element(
+					'a',
 					[
 						'href' => $centralCAUrl . "/" . $user,
 						'title' => $this->msg( 'centralauth' )->text(),
@@ -265,7 +297,8 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 					$gblinkAlias = str_replace( '_', ' ', $spgb );
 
 					if ( $centralGBUrl !== false ) {
-						$linkGB = Html::element( 'a',
+						$linkGB = Html::element(
+							'a',
 							[
 								'href' => $centralGBUrl . "/" . $user,
 								'title' => $this->msg( 'globalblocking-block-submit-new' )->text(),
@@ -286,7 +319,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				}
 			}
 			// Check if this user or IP is blocked. If so, give a link to the block log...
-			$templateParams['flags'] = $this->userBlockFlags( $userIsIP ? $user : '', $user );
+			$templateParams['flags'] = $this->userBlockFlags( $userIsIP ? $user->getName() : '', $user );
 		}
 		// Show edit time range
 		$templateParams['timeRange'] = $this->getTimeRangeString(
@@ -297,7 +330,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		$templateParams['editCount'] = $this->userSets['edits'][$user_text];
 		// List out each IP/XFF combo for this username
 		$templateParams['infoSets'] = [];
-		for ( $i = ( count( $this->userSets['infosets'][$user_text] ) - 1 ); $i >= 0; $i-- ) {
+		for ( $i = count( $this->userSets['infosets'][$user_text] ); $i--; ) {
 			// users_infosets[$name][$i] is array of [ $row->ip, XFF ];
 			$row = [];
 			[ $clientIP, $xffString ] = $this->userSets['infosets'][$user_text][$i];
@@ -308,14 +341,14 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				// Flag our trusted proxies
 				[ $client ] = $this->checkUserUtilityService->getClientIPfromXFF( $xffString );
 				// XFF was trusted if client came from it
-				$trusted = ( $client === $clientIP );
+				$trusted = ( $client === IPUtils::canonicalize( $clientIP ) );
 				$row['xffTrusted'] = $trusted;
 				$row['xff'] = $this->getSelfLink( $xffString, [ 'user' => $client . '/xff' ] );
 			}
 			$templateParams['infoSets'][] = $row;
 		}
 		// List out each agent for this username
-		for ( $i = ( count( $this->userSets['agentsets'][$user_text] ) - 1 ); $i >= 0; $i-- ) {
+		for ( $i = count( $this->userSets['agentsets'][$user_text] ); $i--; ) {
 			$templateParams['agentsList'][] = $this->userSets['agentsets'][$user_text][$i];
 		}
 
@@ -367,6 +400,7 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 			'agentsets' => [],
 			'clienthints' => [],
 		];
+		$this->usersInSiCases = [];
 		$referenceIdsForLookup = new ClientHintsReferenceIds();
 
 		$batch = $this->linkBatchFactory->newLinkBatch();
@@ -374,8 +408,8 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 
 		foreach ( $result as $row ) {
 			// Use the IP as the user_text if the actor ID is NULL and the IP is not NULL (T353953).
-			if ( $row->actor === null && $row->ip ) {
-				$row->user_text = $row->ip;
+			if ( $row->actor === null && $row->ip_hex !== null ) {
+				$row->user_text = IPUtils::formatHex( $row->ip_hex );
 			}
 
 			if ( !array_key_exists( $row->user_text, $this->userSets['edits'] ) ) {
@@ -400,7 +434,8 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 			$this->userSets['edits'][$row->user_text]++;
 			$this->userSets['first'][$row->user_text] = $row->timestamp;
 			// Prettify IP
-			$formattedIP = IPUtils::prettifyIP( $row->ip ) ?? $row->ip;
+			$ip = $row->ip_hex !== null ? IPUtils::formatHex( $row->ip_hex ) : '';
+			$formattedIP = IPUtils::prettifyIP( $ip ) ?? $ip;
 			// Treat blank or NULL xffs as empty strings
 			$xff = empty( $row->xff ) ? null : $row->xff;
 			$xff_ip_combo = [ $formattedIP, $xff ];
@@ -409,14 +444,30 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				$this->userSets['infosets'][$row->user_text][] = $xff_ip_combo;
 			}
 			// Add this agent string if it's not already there; 10 max.
+			$displayableAgent = $this->getDisplayableUserAgent( $row->agent );
 			if ( count( $this->userSets['agentsets'][$row->user_text] ) < 10 ) {
-				if ( !in_array( $row->agent, $this->userSets['agentsets'][$row->user_text] ) ) {
-					$this->userSets['agentsets'][$row->user_text][] = $row->agent;
+				if ( !in_array( $displayableAgent, $this->userSets['agentsets'][$row->user_text] ) ) {
+					$this->userSets['agentsets'][$row->user_text][] = $displayableAgent;
 				}
 			}
 		}
 
 		$batch->execute();
+
+		// Batch lookup which registered users appear in at least one SI case
+		if (
+			$this->siCaseLookupService->areSuggestedInvestigationsEnabled() &&
+			$this->getAuthority()->isAllowed( 'checkuser-suggested-investigations' )
+		) {
+			$registeredUserIds = array_keys( $this->getResultUsernameMap() );
+			if ( $registeredUserIds ) {
+				$this->usersInSiCases = $this->siCaseLookupService
+					->getUserIdsWithCases( $registeredUserIds );
+				if ( $this->usersInSiCases ) {
+					$this->getOutput()->addModules( 'ext.checkUser.suggestedInvestigations' );
+				}
+			}
+		}
 
 		// Lookup the Client Hints data objects from the DB
 		// and then batch format the ClientHintsData objects
@@ -458,7 +509,9 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 			$this->opts->getValue( 'wpHideTemporaryAccounts' )
 		) {
 			$temporaryAccountsFilterExpr = $this->tempUserConfig->getMatchCondition(
-				$this->getDatabase(), 'actor_name', IExpression::NOT_LIKE
+				$this->getDatabase(),
+				'actor_name',
+				IExpression::NOT_LIKE
 			);
 			if ( $table === self::PRIVATE_LOG_EVENT_TABLE ) {
 				$temporaryAccountsFilterExpr = $this->getDatabase()->expr( 'cupe_actor', '=', null )
@@ -475,9 +528,9 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		return [
 			'fields' => [
 				'timestamp' => 'cuc_timestamp',
-				'ip' => 'cuc_ip',
-				'agent' => 'cuc_agent',
+				'ip_hex' => 'cuc_ip_hex',
 				'xff' => 'cuc_xff',
+				'agent' => 'cuua_text',
 				'actor' => 'cuc_actor',
 				'user' => 'actor_cuc_actor.actor_user',
 				'user_text' => 'actor_cuc_actor.actor_name',
@@ -486,9 +539,12 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				],
 				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
 			],
-			'tables' => [ 'cu_changes', 'actor_cuc_actor' => 'actor' ],
+			'tables' => [ 'cu_changes', 'actor_cuc_actor' => 'actor', 'cu_useragent' ],
 			'conds' => [],
-			'join_conds' => [ 'actor_cuc_actor' => [ 'JOIN', 'actor_cuc_actor.actor_id=cuc_actor' ] ],
+			'join_conds' => [
+				'actor_cuc_actor' => [ 'JOIN', 'actor_cuc_actor.actor_id=cuc_actor' ],
+				'cu_useragent' => [ 'LEFT JOIN', 'cuua_id = cuc_agent_id' ],
+			],
 			'options' => [],
 		];
 	}
@@ -498,9 +554,9 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		return [
 			'fields' => [
 				'timestamp' => 'cule_timestamp',
-				'ip' => 'cule_ip',
-				'agent' => 'cule_agent',
+				'ip_hex' => 'cule_ip_hex',
 				'xff' => 'cule_xff',
+				'agent' => 'cuua_text',
 				'actor' => 'cule_actor',
 				'user' => 'actor_cule_actor.actor_user',
 				'user_text' => 'actor_cule_actor.actor_name',
@@ -509,9 +565,12 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				],
 				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_LOG_EVENT,
 			],
-			'tables' => [ 'cu_log_event', 'actor_cule_actor' => 'actor' ],
+			'tables' => [ 'cu_log_event', 'actor_cule_actor' => 'actor', 'cu_useragent' ],
 			'conds' => [],
-			'join_conds' => [ 'actor_cule_actor' => [ 'JOIN', 'actor_cule_actor.actor_id=cule_actor' ] ],
+			'join_conds' => [
+				'actor_cule_actor' => [ 'JOIN', 'actor_cule_actor.actor_id=cule_actor' ],
+				'cu_useragent' => [ 'LEFT JOIN', 'cuua_id = cule_agent_id' ],
+			],
 			'options' => [],
 		];
 	}
@@ -521,9 +580,9 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		return [
 			'fields' => [
 				'timestamp' => 'cupe_timestamp',
-				'ip' => 'cupe_ip',
-				'agent' => 'cupe_agent',
+				'ip_hex' => 'cupe_ip_hex',
 				'xff' => 'cupe_xff',
+				'agent' => 'cuua_text',
 				'actor' => 'cupe_actor',
 				'user' => 'actor_cupe_actor.actor_user',
 				'user_text' => 'actor_cupe_actor.actor_name',
@@ -532,9 +591,12 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 				],
 				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT,
 			],
-			'tables' => [ 'cu_private_event', 'actor_cupe_actor' => 'actor' ],
+			'tables' => [ 'cu_private_event', 'actor_cupe_actor' => 'actor', 'cu_useragent' ],
 			'conds' => [],
-			'join_conds' => [ 'actor_cupe_actor' => [ 'LEFT JOIN', 'actor_cupe_actor.actor_id=cupe_actor' ] ],
+			'join_conds' => [
+				'actor_cupe_actor' => [ 'LEFT JOIN', 'actor_cupe_actor.actor_id=cupe_actor' ],
+				'cu_useragent' => [ 'LEFT JOIN', 'cuua_id = cupe_agent_id' ],
+			],
 			'options' => [],
 		];
 	}
@@ -668,6 +730,18 @@ class CheckUserGetUsersPager extends AbstractCheckUserPager {
 		}
 
 		return $this->shouldShowBlockFieldset;
+	}
+
+	/** @inheritDoc */
+	public function getResultUsernameMap(): array {
+		$result = [];
+		foreach ( $this->userSets['ids'] as $userName => $userId ) {
+			if ( $userId > 0 && !IPUtils::isIPAddress( $userName ) ) {
+				$result[$userId] = $userName;
+			}
+		}
+
+		return $result;
 	}
 
 	/** @inheritDoc */

@@ -421,7 +421,7 @@ ve.ui.MWSaveDialog.prototype.showMessage = function ( name, label, config ) {
 	if ( !this.messages[ name ] ) {
 		const messageWidget = new OO.ui.MessageWidget( ve.extendObject( {
 			classes: [ 've-ui-mwSaveDialog-message' ],
-			label: label,
+			label,
 			inline: true,
 			type: 'warning'
 		}, config ) );
@@ -811,15 +811,25 @@ ve.ui.MWSaveDialog.prototype.getSetupProcess = function ( data ) {
 			// HACK: Change layout when wpWatchlistExpiry is present to force wpWatchthis
 			// onto a new line, hopefully with the expiry dropdown
 			this.$saveCheckboxes.toggleClass( 've-ui-mwSaveDialog-checkboxes-withExpiry', !!this.checkboxesByName.wpWatchlistExpiry );
+			this.$saveCheckboxes.toggleClass( 've-ui-mwSaveDialog-checkboxes-withWatchlistLabels', !!this.checkboxesByName.wpWatchlistLabels );
 			// Toggle the watchlist-expiry dropdown's disabled state according to the
 			// selected state of the watchthis checkbox.
-			if ( this.checkboxesByName.wpWatchthis && this.checkboxesByName.wpWatchlistExpiry ) {
-				// Set initial state to match the watchthis checkbox.
-				this.checkboxesByName.wpWatchlistExpiry.setDisabled( !this.checkboxesByName.wpWatchthis.isSelected() );
-				// Change state on every change of the watchthis checkbox.
-				this.checkboxesByName.wpWatchthis.on( 'change', ( enabled ) => {
-					this.checkboxesByName.wpWatchlistExpiry.setDisabled( !enabled );
-				} );
+			if ( this.checkboxesByName.wpWatchthis ) {
+				const setWatchDependentFieldsDisabled = ( enabled ) => {
+					if ( this.checkboxesByName.wpWatchlistExpiry ) {
+						this.checkboxesByName.wpWatchlistExpiry.setDisabled( !enabled );
+					}
+					if ( this.checkboxesByName.wpWatchlistLabels ) {
+						this.checkboxesByName.wpWatchlistLabels.setDisabled( !enabled );
+					}
+				};
+
+				setWatchDependentFieldsDisabled( this.checkboxesByName.wpWatchthis.isSelected() );
+				if ( this.onWatchCheckboxChange ) {
+					this.checkboxesByName.wpWatchthis.off( 'change', this.onWatchCheckboxChange );
+				}
+				this.onWatchCheckboxChange = setWatchDependentFieldsDisabled;
+				this.checkboxesByName.wpWatchthis.on( 'change', this.onWatchCheckboxChange );
 			}
 
 			function trackCheckbox( n ) {

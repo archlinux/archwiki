@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use InvalidArgumentException;
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
@@ -18,6 +18,7 @@ use StatusValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -31,34 +32,20 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 	public const CONSTRUCTOR_OPTIONS = [
 		'CheckUserMaximumRowCount',
 	];
-	private JobQueueGroup $jobQueueGroup;
-	private IConnectionProvider $connectionProvider;
-	private ServiceOptions $serviceOptions;
-	private TempUserConfig $tempUserConfig;
-	private UserFactory $userFactory;
-	private UserOptionsLookup $userOptionsLookup;
-	private PermissionManager $permissionManager;
-	private CheckUserLookupUtils $checkUserLookupUtils;
 
 	public function __construct(
-		ServiceOptions $serviceOptions,
-		IConnectionProvider $connectionProvider,
-		JobQueueGroup $jobQueueGroup,
-		TempUserConfig $tempUserConfig,
-		UserFactory $userFactory,
-		PermissionManager $permissionManager,
-		UserOptionsLookup $userOptionsLookup,
-		CheckUserLookupUtils $checkUserLookupUtils
+		private readonly ServiceOptions $serviceOptions,
+		private readonly IConnectionProvider $connectionProvider,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly TempUserConfig $tempUserConfig,
+		private readonly UserFactory $userFactory,
+		private readonly PermissionManager $permissionManager,
+		private readonly CheckUserPermissionManager $checkUserPermissionManager,
+		private readonly UserOptionsLookup $userOptionsLookup,
+		private readonly CheckUserLookupUtils $checkUserLookupUtils,
+		private readonly ReadOnlyMode $readOnlyMode,
 	) {
 		$serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->serviceOptions = $serviceOptions;
-		$this->connectionProvider = $connectionProvider;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->tempUserConfig = $tempUserConfig;
-		$this->userFactory = $userFactory;
-		$this->userOptionsLookup = $userOptionsLookup;
-		$this->permissionManager = $permissionManager;
-		$this->checkUserLookupUtils = $checkUserLookupUtils;
 	}
 
 	/**
@@ -68,7 +55,7 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 	 *   create a log entry. Classes that extend AbstractTemporaryAccountHandler don't need to set this to true,
 	 *   because AbstractTemporaryAccountHandler creates a log entry.
 	 * @param int|null $limit The maximum number of rows to fetch.
-	 * @return StatusValue A good status will have a list of account names or empty list if none were found;
+	 * @return StatusValue<string[]> A good status will have a list of account names or empty list if none were found;
 	 *  a bad status will have the relevant permission error encountered
 	 * @throws InvalidArgumentException If the $ip could not be parsed as a valid IP or range
 	 */
@@ -82,6 +69,10 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 		}
 
 		if ( $shouldLog ) {
+			if ( $this->readOnlyMode->isReadOnly() ) {
+				return StatusValue::newFatal( 'readonlytext', $this->readOnlyMode->getReason() );
+			}
+
 			$this->jobQueueGroup->push(
 				LogTemporaryAccountAccessJob::newSpec(
 					$authority->getUser(),
@@ -146,7 +137,10 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 			->where( $this->tempUserConfig->getMatchCondition( $dbr, 'actor_name', IExpression::LIKE ) )
 			->where( $ipConds )
 			->groupBy( 'actor_name' )
-			->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
+			->orderBy( [
+				'timestamp ' . SelectQueryBuilder::SORT_DESC,
+				'actor_name ' . SelectQueryBuilder::SORT_ASC,
+			] )
 			->limit( $limit )
 			->caller( __METHOD__ )
 			->fetchResultSet();
@@ -171,7 +165,10 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 			->where( $this->tempUserConfig->getMatchCondition( $dbr, 'actor_name', IExpression::LIKE ) )
 			->where( $ipConds )
 			->groupBy( 'actor_name' )
-			->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
+			->orderBy( [
+				'timestamp ' . SelectQueryBuilder::SORT_DESC,
+				'actor_name ' . SelectQueryBuilder::SORT_ASC,
+			] )
 			->limit( $limit )
 			->caller( __METHOD__ )
 			->fetchResultSet();
@@ -184,15 +181,93 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 	}
 
 	/**
+	 * Given a temporary account, return the count of temporary accounts that
+	 * have shared the same IPs.
+	 *
+	 * Since this is an aggregate, a permissions check is not needed.
+	 *
+	 * @param UserIdentity $user The temporary account to start lookup with
+	 * @param int|null $limit The maximum number of rows to fetch
+	 * @return int Final count, up to the limit if one is passed
+	 */
+	public function getAggregateActiveTempAccountCount( UserIdentity $user, ?int $limit = null ): int {
+		$accounts = $this->getActiveTempAccounts( $user, $limit );
+		return $limit ? min( $limit, count( $accounts ) ) : count( $accounts );
+	}
+
+	/**
+	 * Given a temporary account, return the names of the temporary accounts
+	 * that have shared the same IPs.
+	 *
+	 * This checks that the Authority can view temporary account IPs and
+	 * removes any names that the Authority is not allowed to see.
+	 *
+	 * @param Authority $authority The authority making the request
+	 * @param UserIdentity $user The temporary account to start lookup with
+	 * @param int|null $limit The maximum number of names to fetch
+	 * @return StatusValue<string[]> A good status with an array of names of
+	 *  related temporary accounts, up to the limit if one is passed, or a
+	 *  CheckUserPermissionStatus if the performer does not have permission
+	 *  to view temporary account IPs.
+	 */
+	public function getActiveTempAccountNames(
+		Authority $authority,
+		UserIdentity $user,
+		?int $limit = null
+	): StatusValue {
+		$status = $this->checkUserPermissionManager
+			->canAccessTemporaryAccountIPAddresses( $authority );
+
+		if ( !$status->isGood() ) {
+			return $status;
+		}
+
+		if ( $this->readOnlyMode->isReadOnly() ) {
+			return StatusValue::newFatal( 'readonlytext', $this->readOnlyMode->getReason() );
+		}
+
+		$this->jobQueueGroup->push(
+			LogTemporaryAccountAccessJob::newSpec(
+				$authority->getUser(),
+				$user->getName(),
+				TemporaryAccountLogger::ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS
+			)
+		);
+
+		$accounts = $this->getActiveTempAccounts( $user, $limit );
+
+		// TODO: Remove hidden names in ::getTempAccountsFromIPAddress
+		if ( !$authority->isAllowed( 'hideuser' ) ) {
+			foreach ( $accounts as $name => $canSee ) {
+				if ( $this->userFactory->newFromName( $name )->isHidden() ) {
+					$accounts[$name] = null;
+				}
+			}
+			$accounts = array_filter( $accounts );
+		}
+
+		if ( $limit && $limit < count( $accounts ) ) {
+			$accounts = array_slice( $accounts, 0, $limit );
+		}
+
+		return StatusValue::newGood( array_keys( $accounts ) );
+	}
+
+	/**
+	 * Note that this does not check permissions, handle logging or handle
+	 * hidden temporary accounts.
+	 *
 	 * Given a temporary account:
 	 * 1. Find all IPs associated with the account
 	 * 2. Find all temp accounts on all the IPs
-	 * 3. Return the sum of them
+	 * 3. Return the user names (there may be more than the limit)
+	 *
 	 * @param UserIdentity $user The temporary account to start lookup with
-	 * @param int|null $limit The maximum number of rows to fetch
-	 * @return int Final sum, up to the limit if one is passed
+	 * @param int|null $limit The maximum number of accounts to fetch
+	 * @return array Array with temporary account name keys, which may be
+	 *  longer than the limit
 	 */
-	public function getAggregateActiveTempAccountCount( UserIdentity $user, ?int $limit = null ) {
+	private function getActiveTempAccounts( UserIdentity $user, ?int $limit = null ): array {
 		if ( !$this->tempUserConfig->isTempName( $user->getName() ) ) {
 			throw new InvalidArgumentException( 'Invalid user passed; only temporary accounts are supported' );
 		}
@@ -220,7 +295,8 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 				$accounts[ $account ] = true;
 			}
 		}
-		return $limit ? min( $limit, count( $accounts ) ) : count( $accounts );
+
+		return $accounts;
 	}
 
 	/**
@@ -245,11 +321,14 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 	public function getBucketedCount( int $count, ?array $buckets = null ): array {
 		if ( $buckets === null ) {
 			$buckets = [
-				'max' => 11,
+				'max' => 101,
 				'ranges' => [
-					[ 1, 2 ],
-					[ 3, 5 ],
+					[ 1, 1 ],
+					[ 2, 5 ],
 					[ 6, 10 ],
+					[ 11, 20 ],
+					[ 21, 50 ],
+					[ 51, 100 ],
 				],
 			];
 		}
@@ -289,18 +368,14 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 		$sorted = [];
 		foreach ( $entities as $entitySet ) {
 			foreach ( $entitySet as $entity => $timestamp ) {
-				if ( !isset( $sorted[$entity] ) ) {
-					$sorted[$entity] = $timestamp;
-				} elseif ( $sorted[$entity] < $timestamp ) {
+				if ( !isset( $sorted[$entity] ) || $sorted[$entity] < $timestamp ) {
 					$sorted[$entity] = $timestamp;
 				}
 			}
 		}
 
 		// Results may be out of order, re-order them by timestamp descending
-		uasort( $sorted, static function ( $a, $b ) {
-			return ( $a <=> $b ) * -1;
-		} );
+		arsort( $sorted );
 
 		// Drop the timestamp as we only care about the entity value which is now sorted in descending time order
 		$sorted = array_keys( $sorted );
@@ -338,12 +413,15 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 			->groupBy( 'cuc_ip_hex' )
 			->from( 'cu_changes' )
 			// T338276
-			->useIndex( 'cuc_actor_ip_time' )
+			->useIndex( 'cuc_actor_ip_hex_time' )
 			->join( 'actor', null, 'cuc_actor=actor_id' )
 			->where( [
 				'actor_name' => $user->getName(),
 			] )
-			->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
+			->orderBy( [
+				'timestamp ' . SelectQueryBuilder::SORT_DESC,
+				'cuc_ip_hex ' . SelectQueryBuilder::SORT_ASC,
+			] )
 			->limit( $limit )
 			->caller( __METHOD__ )
 			->fetchResultSet();
@@ -359,12 +437,15 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 			->groupBy( 'cule_ip_hex' )
 			->from( 'cu_log_event' )
 			// T338276
-			->useIndex( 'cule_actor_ip_time' )
+			->useIndex( 'cule_actor_ip_hex_time' )
 			->join( 'actor', null, 'cule_actor=actor_id' )
 			->where( [
 				'actor_name' => $user->getName(),
 			] )
-			->orderBy( 'timestamp', SelectQueryBuilder::SORT_DESC )
+			->orderBy( [
+				'timestamp ' . SelectQueryBuilder::SORT_DESC,
+				'cule_ip_hex ' . SelectQueryBuilder::SORT_ASC,
+			] )
 			->limit( $limit )
 			->caller( __METHOD__ )
 			->fetchResultSet();
@@ -376,6 +457,20 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 		}
 
 		return $this->sortEntitiesByTimestamp( $limit, $distinctCuChangesIPs, $distinctCuLogEventIPs );
+	}
+
+	/**
+	 * Given a temporary account, return the count of IPs that the account has used.
+	 *
+	 * This doesn't do any permissions checks so it should be called from a handler that does.
+	 *
+	 * @param UserIdentity $user The temporary account to start lookup with
+	 * @param int|null $limit The maximum number of rows to fetch
+	 * @return int Final count, up to the limit if one is passed
+	 */
+	public function getIpsUsedCount( UserIdentity $user, ?int $limit = null ): int {
+		$ips = $this->getDistinctIPsFromTempAccount( $user );
+		return $limit ? min( $limit, count( $ips ) ) : count( $ips );
 	}
 
 	private function checkPermissions( Authority $authority ): StatusValue {
@@ -423,3 +518,13 @@ class CheckUserTemporaryAccountsByIPLookup implements CheckUserQueryInterface {
 		return $limit;
 	}
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	CheckUserTemporaryAccountsByIPLookup::class,
+	'MediaWiki\\CheckUser\\Services\\CheckUserTemporaryAccountsByIPLookup'
+);
+// @codeCoverageIgnoreEnd

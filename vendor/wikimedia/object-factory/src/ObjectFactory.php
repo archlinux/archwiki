@@ -1,20 +1,6 @@
 <?php
 /**
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -99,16 +85,12 @@ class ObjectFactory {
 	 * This calls getObjectFromSpec(), with the ContainerInterface that was
 	 * passed to the constructor passed as `$options['serviceContainer']`.
 	 *
-	 * @phan-template T
-	 * @phpcs:disable Generic.Files.LineLength
-	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
-	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:string} $options
-	 * @phpcs:enable
-	 * @phan-return T|object
+	 * @template T of object
 	 *
-	 * @param array|string|callable $spec Specification array, or (when the respective
-	 *   $options flag is set) a class name or callable. Allowed fields (see class
-	 *   documentation for more details):
+	 * @phpcs:ignore Generic.Files.LineLength
+	 * @param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
+	 *   Specification array, or (when the respective $options flag is set) a class name or callable. Allowed fields
+	 *   (see class documentation for more details):
 	 *   - 'class': (string) Class of the object to create. If 'factory' is also specified,
 	 *     it will be used to validate the object.
 	 *   - 'factory': (callable) Factory method for creating the object.
@@ -128,7 +110,8 @@ class ObjectFactory {
 	 *   - 'spec_is_arg': (bool, default false) When true, 'args' is ignored and the entire
 	 *     specification array is passed as an argument.
 	 *   One of 'class' and 'factory' is required.
-	 * @param array $options Allowed keys are
+	 * @param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:class-string<T>} $options
+	 *  Allowed keys are:
 	 *  - 'allowClassName': (bool) If set and truthy, $spec may be a string class name.
 	 *    In this case, it will be treated as if it were `[ 'class' => $spec ]`.
 	 *  - 'allowCallable': (bool) If set and truthy, $spec may be a callable. In this
@@ -137,33 +120,30 @@ class ObjectFactory {
 	 *    will come before services and normal args.
 	 *  - 'assertClass': (string) Throw an UnexpectedValueException if the spec
 	 *    does not create an object of this class.
-	 * @return object
+	 * @return T
 	 * @throws InvalidArgumentException when object specification is not valid.
 	 * @throws UnexpectedValueException when the factory returns a non-object, or
 	 *  the object is not an instance of the specified class.
 	 */
 	public function createObject( $spec, array $options = [] ) {
 		$options['serviceContainer'] = $this->serviceContainer;
-		// ObjectFactory::getObjectFromSpec accepts an array, not just a callable (phan bug)
-		// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
 		return static::getObjectFromSpec( $spec, $options );
 	}
 
 	/**
 	 * Instantiate an object based on a specification array.
 	 *
-	 * @phan-template T
-	 * @phpcs:disable Generic.Files.LineLength
-	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
-	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:string,serviceContainer?:ContainerInterface} $options
-	 * @phpcs:enable
-	 * @phan-return T|object
+	 * @template T of object
 	 *
-	 * @param array|string|callable $spec As for createObject().
-	 * @param array $options As for createObject(). Additionally:
+	 * @phpcs:disable Generic.Files.LineLength
+	 * @param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
+	 *  As for createObject().
+	 * @param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:class-string<T>,serviceContainer?:ContainerInterface} $options
+	 *  As for createObject(). Additionally:
 	 *  - 'serviceContainer': (ContainerInterface) PSR-11 service container to use
 	 *    to handle 'services'.
-	 * @return object
+	 * @phpcs:enable
+	 * @return T
 	 * @throws InvalidArgumentException when object specification is not valid.
 	 * @throws InvalidArgumentException when $spec['services'] or $spec['optional_services']
 	 *  is used without $options['serviceContainer'] being set and implementing ContainerInterface.
@@ -181,7 +161,7 @@ class ObjectFactory {
 			$args = $spec['args'] ?? [];
 
 			// $args should be a non-associative array; show nice error if that's not the case
-			if ( $args && array_keys( $args ) !== range( 0, count( $args ) - 1 ) ) {
+			if ( !array_is_list( $args ) ) {
 				throw new InvalidArgumentException( '\'args\' cannot be an associative array' );
 			}
 
@@ -257,7 +237,7 @@ class ObjectFactory {
 				if ( $expandArgs ) {
 					$margs = static::expandClosures( $margs );
 				}
-				call_user_func_array( [ $obj, $method ], $margs );
+				$obj->$method( ...$margs );
 			}
 		}
 

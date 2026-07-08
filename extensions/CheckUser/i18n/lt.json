@@ -7,8 +7,8 @@
 			"Mantak111",
 			"Matasg",
 			"Nokeoo",
-			"Zygimantus",
-			"Tomasdd"
+			"Tomasdd",
+			"Zygimantus"
 		]
 	},
 	"checkuser-desc": "Suteikia naudotojams, turintiems atitinkamas teises, galimybę patikrinti naudotojo IP adresus ir kitą informaciją",
@@ -130,13 +130,13 @@
 	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "Viki nerasta",
 	"checkuser-investigate-filters-legend": "Filtrai",
 	"checkuser-investigate-filters-exclude-targets-label": "Slėpti šiuos naudotojus ar IP adresus",
-	"checkuser-investigate-timeline-notice-no-results": "Rezultatų nėra: per pastarąsias 90 dienų nebuvo užfiksuota jokia šių naudotojų ar IP adresų veikla",
+	"checkuser-investigate-timeline-notice-no-results": "Rezultatų nėra: per pastarąsias $1 dienų nebuvo užfiksuota jokia šių naudotojų ar IP adresų veikla",
 	"checkuser-investigate-timeline-notice-no-results-filters": "Šiuos filtravimo kriterijus atitinkančių rezultatų nėra. Pabandykite pašalinti kai kuriuos filtrus, kad išplėstumėte paiešką.",
 	"checkuser-investigate-compare-copy-button-label": "Rodyti vikitekstą",
 	"checkuser-investigate-compare-copy-button-label-hide": "Slėpti vikitekstą",
 	"checkuser-investigate-compare-copy-message-label": "Ar norėtumėte nukopijuoti šią informaciją kaip vikiteksto lentelę?",
 	"checkuser-investigate-compare-notice-exceeded-limit": "Dėl techninių apribojimų pasiektas įrašų, kuriuos galima pateikti, skaičius. Pateikti šių tikslų duomenys yra neišsamūs: $1 . Pabandykite naudoti mažiau tikslų, mažesnį laiko langą arba siauresnius IP diapazonus.",
-	"checkuser-investigate-compare-notice-no-results": "Rezultatų nėra: per pastarąsias 90 dienų šie naudotojai ar IP adresai neredagavo",
+	"checkuser-investigate-compare-notice-no-results": "Rezultatų nėra: per pastarąsias $1 dienų šie naudotojai ar IP adresai neredagavo",
 	"checkuser-investigate-compare-notice-no-results-filters": "Šiuos filtravimo kriterijus atitinkančių rezultatų nėra. Pabandykite pašalinti kai kuriuos filtrus, kad išplėstumėte paiešką.",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Rodyti visus šio naudotojo IP adresus",
 	"checkuser-investigate-compare-table-button-add-user-targets-label": "Rodyti visus šio IP naudotojus",

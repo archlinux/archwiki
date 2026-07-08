@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"APIModules": {
 		"scribunto-console": {
@@ -26,7 +26,14 @@
 		"Scribunto": {
 			"class": "MediaWiki\\Extension\\Scribunto\\ScribuntoContentHandler",
 			"services": [
-				"Scribunto.EngineFactory"
+				"MainConfig",
+				"ParserFactory",
+				"Scribunto.EngineFactory",
+				"TitleFactory",
+				"TrackingCategories"
+			],
+			"optional_services": [
+				"SyntaxHighlight.SyntaxHighlight"
 			]
 		}
 	},
@@ -44,22 +51,8 @@
 		"ScribuntoMagic": "Scribunto.magic.php",
 		"ScribuntoNamespaces": "Scribunto.namespaces.php"
 	},
-	"AutoloadClasses": {
-		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LibraryBase": "includes/Engines/LuaCommon/LibraryBase.php",
-		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaEngine": "includes/Engines/LuaCommon/LuaEngine.php",
-		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaError": "includes/Engines/LuaCommon/LuaError.php",
-		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneInterpreterFunction": "includes/Engines/LuaStandalone/LuaStandaloneInterpreterFunction.php",
-		"Scribunto_LuaEngine": "includes/Engines/LuaCommon/LuaEngine.php",
-		"Scribunto_LuaError": "includes/Engines/LuaCommon/LuaError.php",
-		"Scribunto_LuaLibraryBase": "includes/Engines/LuaCommon/LibraryBase.php",
-		"Scribunto_LuaStandaloneInterpreterFunction": "includes/Engines/LuaStandalone/LuaStandaloneInterpreterFunction.php"
-	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Scribunto\\": "includes/"
-	},
-	"TestAutoloadClasses": {
-		"MediaWiki\\Extension\\Scribunto\\Tests\\Engines\\LuaCommon\\LuaEngineTestBase": "tests/phpunit/Engines/LuaCommon/LuaEngineTestBase.php",
-		"Scribunto_LuaEngineTestBase": "tests/phpunit/Engines/LuaCommon/LuaEngineTestBase.php"
 	},
 	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\Scribunto\\Tests\\": "tests/phpunit/"
@@ -169,7 +162,8 @@
 				" * allowEnvFuncs - Set this to true to allow setfenv() and getfenv() in user code. Note that these functions have been removed in Lua 5.2. Scribunto does not yet support Lua 5.2, but we expect support will be implemented in the future, and there is no guarantee that a simulation of setfenv() and getfenv() will be provided",
 				" * maxLangCacheSize - The maximum number of languages about which data can be requested. The cost is about 1.5MB of memory usage per language on default installations (during recache), but if recaching is disabled with `$wgLocalisationCacheConf['manualRecache'] = false;` then memory usage is perhaps 10x smaller",
 				" * errorFile - A filename to act as the destination for stderr from the Lua binary. This may provide useful error information if Lua fails to run. Set this to null to discard stderr output",
-				" * luaPath - The location of the Lua binary, or null to use the bundled binary"
+				" * luaPath - The location of the Lua binary, or null to use the bundled binary",
+				" * shareInvocationEnv - Set this to false to give each module invocation its own separate global environment. If true, all module invocations share the same global environment, which improves performance but may cause conflicts"
 			],
 			"value": {
 				"luasandbox": {
@@ -178,7 +172,8 @@
 					"cpuLimit": 7,
 					"profilerPeriod": 0.02,
 					"allowEnvFuncs": false,
-					"maxLangCacheSize": 30
+					"maxLangCacheSize": 30,
+					"shareInvocationEnv": false
 				},
 				"luastandalone": {
 					"class": "MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneEngine",
@@ -187,7 +182,8 @@
 					"memoryLimit": 52428800,
 					"cpuLimit": 7,
 					"allowEnvFuncs": false,
-					"maxLangCacheSize": 30
+					"maxLangCacheSize": 30,
+					"shareInvocationEnv": false
 				},
 				"luaautodetect": {
 					"implementation": "autodetect"

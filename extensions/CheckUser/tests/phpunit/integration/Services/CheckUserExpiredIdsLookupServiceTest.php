@@ -1,11 +1,7 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\Services\CheckUserExpiredIdsLookupService;
-use MediaWiki\CheckUser\Tests\Integration\AbuseFilter\FilterFactoryProxyTrait;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\WikitextContent;
@@ -13,6 +9,10 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Extension\CheckUser\Services\CheckUserExpiredIdsLookupService;
+use MediaWiki\Extension\CheckUser\Tests\Integration\AbuseFilter\FilterFactoryProxyTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Page\WikiPage;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -28,11 +28,11 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group Database
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\CheckUserExpiredIdsLookupService
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserExpiredIdsLookupService
  */
 class CheckUserExpiredIdsLookupServiceTest extends MediaWikiIntegrationTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 	use CheckUserTempUserTestTrait;
 	use FilterFactoryProxyTrait;
 

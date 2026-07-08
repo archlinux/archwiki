@@ -19,15 +19,10 @@ class MobileFrontendHooks implements
 	MobileFrontendFeaturesRegistrationHook,
 	RequestContextCreateSkinMobileHook
 {
-	private ConfigFactory $configFactory;
-	private SkinOptions $skinOptions;
-
 	public function __construct(
-		ConfigFactory $configFactory,
-		SkinOptions $skinOptions
+		private readonly ConfigFactory $configFactory,
+		private readonly SkinOptions $skinOptions,
 	) {
-		$this->configFactory = $configFactory;
-		$this->skinOptions = $skinOptions;
 	}
 
 	/**

@@ -1,13 +1,14 @@
 <?php
 
-namespace MediaWiki\CheckUser\Jobs;
+namespace MediaWiki\Extension\CheckUser\Jobs;
 
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
 use MediaWiki\JobQueue\IJobSpecification;
 use MediaWiki\JobQueue\Job;
 use MediaWiki\JobQueue\JobSpecification;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityLookup;
 
 /**
  * Log when a user views the IP addresses of a temporary account or the user views the temporary accounts
@@ -22,7 +23,12 @@ class LogTemporaryAccountAccessJob extends Job {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct( $title, $params ) {
+	public function __construct(
+		$title,
+		array $params,
+		private readonly TemporaryAccountLoggerFactory $temporaryAccountLoggerFactory,
+		private readonly UserIdentityLookup $userIdentityLookup,
+	) {
 		parent::__construct( self::TYPE, $params );
 	}
 
@@ -58,10 +64,7 @@ class LogTemporaryAccountAccessJob extends Job {
 	 * @return bool
 	 */
 	public function run() {
-		$services = MediaWikiServices::getInstance();
-
-		$performer = $services
-			->getUserIdentityLookup()
+		$performer = $this->userIdentityLookup
 			->getUserIdentityByName( $this->params['performer'] );
 		$target = $this->params['target'];
 		$timestamp = $this->params['timestamp'];
@@ -73,15 +76,15 @@ class LogTemporaryAccountAccessJob extends Job {
 		}
 
 		/** @var TemporaryAccountLogger $logger */
-		$logger = $services
-			->get( 'CheckUserTemporaryAccountLoggerFactory' )
-			->getLogger();
+		$logger = $this->temporaryAccountLoggerFactory->getLogger();
 		if ( $type === TemporaryAccountLogger::ACTION_VIEW_IPS ) {
 			$logger->logViewIPs( $performer, $target, $timestamp );
 		} elseif ( $type === TemporaryAccountLogger::ACTION_VIEW_TEMPORARY_ACCOUNTS_ON_IP ) {
 			$logger->logViewTemporaryAccountsOnIP( $performer, $target, $timestamp );
 		} elseif ( $type === TemporaryAccountLogger::ACTION_VIEW_TEMPORARY_ACCOUNTS_ON_IP_GLOBAL ) {
 			$logger->logViewTemporaryAccountsOnIP( $performer, $target, $timestamp, true );
+		} elseif ( $type === TemporaryAccountLogger::ACTION_VIEW_RELATED_TEMPORARY_ACCOUNTS ) {
+			$logger->logViewRelatedTemporaryAccounts( $performer, $target, $timestamp );
 		} else {
 			$this->setLastError( "Invalid type '$type'" );
 			return false;

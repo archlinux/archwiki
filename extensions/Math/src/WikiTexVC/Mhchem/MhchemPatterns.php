@@ -353,7 +353,7 @@ class MhchemPatterns {
 				return null;
 			},
 			'amount2' => function ( $input ) {
-				/* @phan-suppress-next-line PhanInfiniteRecursion, PhanUndeclaredInvokeInCallable */
+				/* @phan-suppress-next-line PhanInfiniteRecursion */
 				return $this->patterns['amount']( $input );
 			},
 			'(KV letters),' => new Reg( "/^(?:[A-Z][a-z]{0,2}|i)(?=,)/" ),
@@ -413,8 +413,6 @@ class MhchemPatterns {
 		}
 
 		if ( is_callable( $pattern ) ) {
-			// $pattern cannot be an instance of MhchemRegExp here, which causes this warning.
-			/* @phan-suppress-next-line PhanUndeclaredInvokeInCallable */
 			return $this->patterns[$m]( $input );
 		}
 

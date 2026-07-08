@@ -3,12 +3,12 @@
 		"authors": [
 			"Daud I.F. Argana",
 			"Ezagren",
+			"Fafau06",
 			"Iwan Novirion",
+			"Penyuwangi",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana",
-			"Penyuwangi",
-			"Fafau06"
+			"William Surya Permana"
 		]
 	},
 	"oathauth-desc": "Memberikan dukungan otentikasi menggunakan kata sandi sekali-pakai berbasis HMAC",
@@ -57,8 +57,6 @@
 	"oathauth-describe-provider": "Otentikasi dua faktor (OATH).",
 	"grant-group-authentication": "Melakukan proses otentikasi untuk diri sendiri dan pengguna lain",
 	"grant-oath": "Akses informasi otentikasi dua faktor (OATH) untuk diri sendiri dan pengguna lain",
-	"right-oathauth-api-all": "Meminta dan memvalidasi informasi OATH untuk diri sendiri dan pengguna lain",
-	"action-oathauth-api-all": "cek status OATH",
 	"oathauth-user-not-found": "Tidak ada pengguna ditemukan dengan nama tersebut",
 	"oath-log-name": "Log otentikasi dua faktor",
 	"oath-log-header": "Peristiwa ini melacak perubahan status otentikasi dua faktor pengguna.",
@@ -68,20 +66,21 @@
 	"oathauth-module-totp-label": "KSSW (token sekali-pakai)",
 	"oathauth-ui-manage": "Atur",
 	"oathmanage": "Atur otentikasi dua faktor",
-	"oathauth-ui-not-enabled-modules": "Ganti ke metode lain",
-	"oathauth-ui-enabled-module": "Aktifkan metode otentikasi",
 	"oathauth-enable-generic": "Aktif",
 	"oathauth-disable-generic": "Nonaktif",
 	"oathauth-invalid-data-format": "Penyedia data gagal membuat kunci otentikasi yang dipilih",
 	"oathauth-disable-page-title": "Aktif $1",
 	"oathauth-enable-page-title": "Nonaktif $1",
 	"oathauth-action-exclusive-to-2fa": "Tindakan ini hanya dapat dilakukan oleh pengguna yang menyalakan otentikasi dua faktor.",
-	"oathauth-ui-available-modules": "Metode yang ada",
-	"oathauth-ui-general-help": "'' 'Otentikasi dua faktor' '' ('' 'O2F' '') adalah metode otentikasi di mana pengguna komputer diberikan akses hanya setelah berhasil menyajikan dua buah bukti (atau faktor) pada mekanisme otentikasi: pengetahuan (sesuatu yang diketahui oleh pengguna dan hanya pengguna) dan kepemilikan (sesuatu yang dimiliki pengguna dan hanya pengguna). [https://id.wikipedia.org/wiki/Otentikasi_dua_faktor Baca selengkapnya]",
 	"oathauth-totp-description": "Algoritma Kata Sandi Sekali-pakai berbasis Waktu (KSSW) adalah ekstensi dari algoritma Kata Sandi Sekali-pakai berbasis HMAC (KSSH) yang menghasilkan kata sandi sekali pakai dengan cara mengambil keunikan dari waktu terkini.",
 	"oathauth-disable-method-warning": "Jika Anda mematikan metode autentikasi dua faktor $1, Anda tidak akan lagi bisa menggunakan metode ini ketika masuk log, dan semua data yang terkait dengan metode autentikasi ini akan dihapus.",
 	"oathauth-totp-disable-warning": "Anda tidak akan lagi bisa menggunakan perangkat autentikasi yang didaftarkan dengan akun ini. Semua token cadangan yang terkait dengan akun ini akan menjadi tidak valid.",
 	"oathauth-invalidrequest": "Permintaan tidak sah",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} menyalakan autentikasi dua faktor.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} tidak menyalakan autentikasi dua faktor."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} tidak menyalakan autentikasi dua faktor.",
+	"oathauth-passkeys-header": "Kunci Sandi",
+	"oathauth-passkeys-placeholder": "Kunci sandi lebih aman daripada kata sandi, dan memungkinkan Anda masuk dengan cara yang sama seperti saat membuka kunci perangkat Anda.",
+	"oathauth-passkeys-no2fa": "Untuk menambahkan kunci sandi, Anda harus terlebih dahulu mengatur autentikasi dua faktor.",
+	"oathauth-passkeys-add": "Tambah kunci sandi",
+	"oathauth-passkey-dialog-back": "Kembali"
 }

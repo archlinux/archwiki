@@ -1,8 +1,8 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Message\Message;
-use MessageLocalizer;
 
 /**
  * VectorComponentStickyHeader component
@@ -11,17 +11,20 @@ class VectorComponentStickyHeader implements VectorComponent {
 	private const TALK_ICON = [
 		'icon' => 'speechBubbles',
 		'id' => 'ca-talk-sticky-header',
-		'event' => 'talk-sticky-header'
+		'event' => 'talk-sticky-header',
+		'class' => ''
 	];
 	private const SUBJECT_ICON = [
 		'icon' => 'article',
 		'id' => 'ca-subject-sticky-header',
-		'event' => 'subject-sticky-header'
+		'event' => 'subject-sticky-header',
+		'class' => ''
 	];
 	private const HISTORY_ICON = [
 		'icon' => 'wikimedia-history',
 		'id' => 'ca-history-sticky-header',
 		'event' => 'history-sticky-header',
+		'class' => ''
 	];
 	// Event and icon will be updated depending on watchstar state
 	private const WATCHSTAR_ICON = [
@@ -48,45 +51,29 @@ class VectorComponentStickyHeader implements VectorComponent {
 		'id' => 'ca-ve-edit-sticky-header',
 		'event' => 've-edit-sticky-header',
 		'icon' => 'wikimedia-edit',
+		'class' => ''
 	];
 	private const EDIT_WIKITEXT_ICON = [
 		'id' => 'ca-edit-sticky-header',
 		'event' => 'wikitext-edit-sticky-header',
 		'icon' => 'wikimedia-wikiText',
+		'class' => ''
 	];
 	private const EDIT_PROTECTED_ICON = [
 		'href' => '#',
 		'id' => 'ca-viewsource-sticky-header',
 		'event' => 've-edit-protected-sticky-header',
 		'icon' => 'wikimedia-editLock',
+		'class' => ''
 	];
 
-	/** @var MessageLocalizer */
-	private $localizer;
-	/** @var VectorComponent */
-	private $search;
-	/** @var VectorComponent|null */
-	private $langButton;
-
-	/** @var bool */
-	private $visualEditorTabPositionFirst;
-
-	/**
-	 * @param MessageLocalizer $localizer
-	 * @param VectorComponent $searchBox
-	 * @param VectorComponent|null $langButton
-	 * @param bool $visualEditorTabPositionFirst
-	 */
 	public function __construct(
-		MessageLocalizer $localizer,
-		VectorComponent $searchBox,
-		$langButton = null,
-		bool $visualEditorTabPositionFirst = false
+		private readonly MessageLocalizer $localizer,
+		private readonly VectorComponent $search,
+		private readonly ?VectorComponent $langButton = null,
+		private readonly bool $visualEditorTabPositionFirst = false,
+		private readonly bool $isReadingListsEnabled = false,
 	) {
-		$this->search = $searchBox;
-		$this->langButton = $langButton;
-		$this->localizer = $localizer;
-		$this->visualEditorTabPositionFirst = $visualEditorTabPositionFirst;
 	}
 
 	/**
@@ -106,10 +93,9 @@ class VectorComponentStickyHeader implements VectorComponent {
 		$icons = [
 			self::TALK_ICON,
 			self::SUBJECT_ICON,
-			self::HISTORY_ICON,
-			self::WATCHSTAR_ICON,
-			self::BOOKMARK_ICON,
+			self::HISTORY_ICON
 		];
+		$icons[] = $this->isReadingListsEnabled ? self::BOOKMARK_ICON : self::WATCHSTAR_ICON;
 		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_VE_ICON : self::EDIT_WIKITEXT_ICON;
 		$icons[] = $this->visualEditorTabPositionFirst ? self::EDIT_WIKITEXT_ICON : self::EDIT_VE_ICON;
 		$icons[] = self::EDIT_PROTECTED_ICON;
@@ -120,7 +106,7 @@ class VectorComponentStickyHeader implements VectorComponent {
 				"",
 				$icon[ 'icon' ],
 				$icon[ 'id' ],
-				$icon[ 'class' ] ?? '',
+				$icon['class'],
 				[
 					'tabindex' => '-1',
 					'data-event-name' => $icon[ 'event' ],
@@ -164,7 +150,7 @@ class VectorComponentStickyHeader implements VectorComponent {
 	 */
 	private function getSearchButton( $searchBoxData ) {
 		return new VectorComponentButton(
-			$this->msg( 'search' ),
+			$this->msg( 'search' )->text(),
 			'search',
 			null,
 			'vector-sticky-header-search-toggle',

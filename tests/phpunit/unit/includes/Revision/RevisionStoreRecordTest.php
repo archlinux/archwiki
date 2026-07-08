@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use DummyContentForTesting;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Tests\Mocks\Content\DummyContentForTesting;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 
@@ -48,7 +48,6 @@ class RevisionStoreRecordTest extends MediaWikiUnitTestCase {
 			'rev_minor_edit' => 0,
 			'rev_parent_id' => '5',
 			'rev_len' => $slots->computeSize(),
-			'rev_sha1' => $slots->computeSha1(),
 			'page_latest' => '18',
 		];
 

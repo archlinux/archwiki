@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
@@ -12,6 +13,7 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Rest\CorsUtils;
 use MediaWiki\Rest\EntryPoint;
 use MediaWiki\Rest\Handler;
+use MediaWiki\Rest\Module\ModuleManager;
 use MediaWiki\Rest\PathTemplateMatcher\PathMatcher;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\ResponseFactory;
@@ -242,13 +244,21 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$handler = $module->getHandlerForPath( $path, $request, false );
 
 			$params = $handler->getParamSettings();
+			$paramsAllowedSources = [ 'path', 'query' ];
 			foreach ( $params as $param => $settings ) {
-				$this->assertParameter( $param, $settings, $message . " Parameter $param" );
+				$this->assertParameter( $param, $settings, $paramsAllowedSources, $message . " Parameter $param" );
+			}
+			$headerParams = $handler->getHeaderParamSettings();
+			$headerParamsAllowedSources = [ 'header' ];
+			foreach ( $headerParams as $param => $settings ) {
+				$this->assertParameter(
+					$param, $settings, $headerParamsAllowedSources, $message . " Parameter $param"
+				);
 			}
 		}
 	}
 
-	private function assertParameter( string $name, $settings, $msg ) {
+	private function assertParameter( string $name, $settings, $paramAllowedSources, $msg ) {
 		$router = TestingAccessWrapper::newFromObject( $this->getTestRouter() );
 
 		$dataName = $this->dataName();
@@ -262,6 +272,11 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 		$ret['allowedKeys'][] = Handler::PARAM_DESCRIPTION;
 		if ( !in_array( $settings[Handler::PARAM_SOURCE] ?? '', Validator::KNOWN_PARAM_SOURCES, true ) ) {
 			$ret['issues'][Handler::PARAM_SOURCE] = "PARAM_SOURCE must be one of " . implode( ', ', Validator::KNOWN_PARAM_SOURCES );
+		}
+
+		// Check that 'header' source is not in getParamSettings and 'path'/'query' are not in getHeaderParamSettings
+		if ( !in_array( $settings[Handler::PARAM_SOURCE] ?? '', $paramAllowedSources, true ) ) {
+			$ret['issues'][Handler::PARAM_SOURCE] = "PARAM_SOURCE must be in the right param settings function";
 		}
 
 		// Check that "array" type is not used in getParamSettings
@@ -333,9 +348,14 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideModuleDefinitionFiles() {
-		$conf = MediaWikiServices::getInstance()->getMainConfig();
-		$entryPoint = TestingAccessWrapper::newFromClass( EntryPoint::class );
-		$routeFiles = $entryPoint->getRouteFiles( $conf );
+		$services = MediaWikiServices::getInstance();
+		$conf = $services->getMainConfig();
+		$moduleManager = new ModuleManager(
+			new ServiceOptions( ModuleManager::CONSTRUCTOR_OPTIONS, $conf ),
+			$services->getLocalServerObjectCache(),
+			new ResponseFactory( [] ),
+		);
+		$routeFiles = $moduleManager->getRouteFiles();
 
 		foreach ( $routeFiles as $file ) {
 			$moduleSpec = self::loadJsonData( $file );
@@ -399,6 +419,33 @@ class RestStructureTest extends MediaWikiIntegrationTestCase {
 			$info = $module->getOpenApiInfo();
 
 			$this->assertMatchesJsonSchema( $infoSchema, $info, self::SPEC_FILES, "Module '$moduleName'" );
+		}
+	}
+
+	public function testGetResponseBodySchema(): void {
+		static $metaSchema = [ '$ref' =>
+			'http://json-schema.org/draft-04/schema#'
+		];
+
+		$router = $this->getTestRouter();
+		foreach ( $router->getModuleIds() as $moduleName ) {
+			$module = $router->getModule( $moduleName );
+
+			foreach ( $module->getDefinedPaths() as $path => $methods ) {
+
+				foreach ( $methods as $method ) {
+					$handler = $module->getHandlerForPath( $path, new RequestData( [ 'method' => $method ] ), false );
+					$handler = TestingAccessWrapper::newFromObject( $handler );
+
+					$responseBodySchema = $handler->getResponseBodySchema( $method );
+
+					if ( $responseBodySchema === null ) {
+						continue;
+					}
+
+					$this->assertMatchesJsonSchema( $metaSchema, $responseBodySchema, self::SPEC_FILES, "Module '$moduleName'" );
+				}
+			}
 		}
 	}
 

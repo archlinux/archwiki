@@ -56,12 +56,17 @@ $specialPageAliases['ur'] = [
 	'MathStatus' => [ 'کیفیت_ریاضی' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Chinese (中文) */
+$specialPageAliases['zh'] = [
+	'MathStatus' => [ 'MathStatus' ],
+];
+
+/** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'MathStatus' => [ '数学状态' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'MathStatus' => [ '數學狀態' ],
 ];

@@ -1,55 +1,69 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
-use MediaWiki\CheckUser\Services\CheckUserInsert;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\IMaintainableDatabase;
-use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\MoveLogEntriesFromCuChanges
  */
 class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {
 		return MoveLogEntriesFromCuChanges::class;
 	}
 
-	protected function commonTestNoMove( $expectedCuChangesCount, $expectedCuPrivateRowCount = 0 ) {
+	protected function commonTestNoMove(
+		int $expectedCuChangesCount,
+		int $expectedCuPrivateRowCount = 0
+	): void {
 		$this->assertRowCount(
-			$expectedCuPrivateRowCount, 'cu_private_event', 'cupe_id',
+			$expectedCuPrivateRowCount,
+			'cu_private_event',
+			'cupe_id',
 			'Rows were moved to cu_private_event when they should not have been moved.'
 		);
 		$this->assertRowCount(
-			$expectedCuChangesCount, 'cu_changes', 'cuc_id',
+			$expectedCuChangesCount,
+			'cu_changes',
+			'cuc_id',
 			'Rows were removed from cu_changes even though there was no move.'
 		);
 	}
 
 	protected function commonTestMoved(
-		$expectedCuChangesRowCount, $expectedCuChangesRowCountWithOnlyReadOld, $expectedCuPrivateRowCount
-	) {
+		$expectedCuChangesRowCount,
+		$expectedCuChangesRowCountWithOnlyReadOld,
+		$expectedCuPrivateRowCount
+	): void {
 		$this->assertRowCount(
-			$expectedCuPrivateRowCount, 'cu_private_event', 'cupe_id',
+			$expectedCuPrivateRowCount,
+			'cu_private_event',
+			'cupe_id',
 			'Rows were moved to cu_private_event when they should not have been moved.'
 		);
 		$this->assertRowCount(
-			$expectedCuChangesRowCountWithOnlyReadOld, 'cu_changes', 'cuc_id',
+			$expectedCuChangesRowCountWithOnlyReadOld,
+			'cu_changes',
+			'cuc_id',
 			'Rows were not successfully marked as being only for READ_OLD in cu_changes.',
 			[ 'cuc_only_for_read_old' => 1 ]
 		);
 		$this->assertRowCount(
-			$expectedCuChangesRowCount, 'cu_changes', 'cuc_id',
+			$expectedCuChangesRowCount,
+			'cu_changes',
+			'cuc_id',
 			'Rows were removed from cu_changes when they should not have been.'
 		);
 	}
@@ -77,6 +91,7 @@ class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 				[],
 				$expectedRow
 			);
+
 			// Insert rows for log entries, which need moving.
 			$attribs = self::getDefaultRecentChangeAttribs();
 			$rcRow = [
@@ -90,25 +105,31 @@ class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 				'cuc_type'       => RC_LOG,
 				'cuc_page_id'    => $attribs['rc_cur_id'],
 				'cuc_timestamp'  => $this->getDb()->timestamp( $attribs['rc_timestamp'] ),
+				// cuc_agent_id did not exist when this script was created, so
+				// for compatability this column is ignored and cuc_agent is instead read
+				// by the code we are testing
+				'cuc_agent'      => 'Test agent',
+				'cuc_agent_id'   => 0,
 			];
 
 			/** @var CheckUserInsert $checkUserInsert */
 			$checkUserInsert = $this->getServiceContainer()->get( 'CheckUserInsert' );
 			$checkUserInsert->insertIntoCuChangesTable(
-				$rcRow, __METHOD__, new UserIdentityValue( $attribs['rc_user'], $attribs['rc_user_text'] )
+				$rcRow,
+				__METHOD__,
+				new UserIdentityValue( $attribs['rc_user'], $attribs['rc_user_text'] )
 			);
 		}
 		$this->assertRowCount(
-			$numberOfRows, 'cu_changes', 'cuc_id',
+			$numberOfRows,
+			'cu_changes',
+			'cuc_id',
 			'Database not set up correctly for the test'
 		);
 		// Run the script
-		/** @var TestingAccessWrapper $maintenance */
-		// Make a copy to prevent syntax error warnings for accessing protected method setBatchSize.
-		$maintenance = $this->maintenance;
-		$maintenance->setBatchSize( $batchSize );
+		$this->maintenance->loadWithArgv( [ '--batch-size', $batchSize ] );
 		$this->assertTrue(
-			$maintenance->execute(),
+			$this->maintenance->execute(),
 			'execute() should have returned true as moving entries should have completed successfully.'
 		);
 		// Test entries were moved
@@ -124,16 +145,21 @@ class MoveLogEntriesFromCuChangesTest extends MaintenanceBaseTestCase {
 	}
 
 	protected function getSchemaOverrides( IMaintainableDatabase $db ) {
-		// Create the now removed columns (cuc_only_for_read_old, cuc_actiontext, and cuc_private) in cu_changes
-		// necessary for the script to run.
+		// The script relies on the state of the CheckUser result tables from 1.41. This means
+		// that we need to re-add the following columns for the tests to pass:
+		// * cuc_only_for_read_old in cu_changes
+		// * cuc_actiontext in cu_changes
+		// * cuc_agent in cu_changes
+		// * cupe_agent in cu_private_event
 		$sqlPatchesDir = __DIR__ . '/patches/' . $db->getType();
 		return [
 			'scripts' => [
 				$sqlPatchesDir . '/patch-cu_changes-add-cuc_only_for_read_old.sql',
 				$sqlPatchesDir . '/patch-cu_changes-add-cuc_actiontext.sql',
-				$sqlPatchesDir . '/patch-cu_changes-add-cuc_private.sql',
+				$sqlPatchesDir . '/patch-cu_changes-add-cuc_agent.sql',
+				$sqlPatchesDir . '/patch-cu_private_event-add-cupe_agent.sql',
 			],
-			'alter' => [ 'cu_changes' ],
+			'alter' => [ 'cu_changes', 'cu_private_event' ],
 		];
 	}
 }

@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -18,6 +18,16 @@
 				{
 					"name": "timeless",
 					"bodyOnly": true,
+					"menus": [
+						"user-interface-preferences",
+						"user-page",
+						"user-menu",
+						"notifications",
+						"associated-pages",
+						"views",
+						"actions",
+						"variants"
+					],
 					"template": "MediaWiki\\Skin\\Timeless\\TimelessTemplate",
 					"responsive": true,
 					"styles": [
@@ -141,7 +151,6 @@
 			"+ext.visualEditor.desktopArticleTarget.noscript": "resources/extensions/VisualEditor.article.less",
 			"+ext.visualEditor.mwwikitext": "resources/extensions/VisualEditor.mwwikitext.less",
 			"+ext.CodeMirror.visualEditor": "resources/extensions/VisualEditor.CodeMirror.less",
-			"+ext.CodeMirror.v6.visualEditor": "resources/extensions/VisualEditor.CodeMirror.less",
 			"+ext.dismissableSiteNotice.styles": "resources/extensions/DismissableSiteNotice.less",
 			"+ext.MWOAuth.AuthorizeForm": "resources/extensions/MWOAuth.AuthorizeForm.less",
 			"+ext.wikiLove.icon": "resources/extensions/WikiLove.icon.less",

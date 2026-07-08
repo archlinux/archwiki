@@ -135,5 +135,7 @@
 	"math-wikibase-special-form-button": "请求信息",
 	"math-wikibase-special-error-header": "错误",
 	"math-wikibase-special-error-invalid-argument": "您指定的Wikibase项ID不存在。",
-	"math-wikibase-special-error-unknown": "从Wikibase提取数据时发生未知错误。"
+	"math-wikibase-special-error-unknown": "从Wikibase提取数据时发生未知错误。",
+	"math-editpage-insert-inline": "数学公式（行内）",
+	"math-editpage-insert-block": "数学公式（块级）"
 }

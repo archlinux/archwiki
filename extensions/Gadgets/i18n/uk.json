@@ -10,17 +10,17 @@
 			"Ice bulldog",
 			"Lxlalexlxl",
 			"Mike140",
+			"MonX94",
 			"Olvin",
 			"Piramidion",
 			"Prima klasy4na",
 			"RLuts",
+			"Repakr",
 			"Riwnodennyk",
 			"Sodmy",
 			"Ата",
 			"Пан Хаунд",
-			"Тест",
-			"MonX94",
-			"Repakr"
+			"Тест"
 		]
 	},
 	"gadgets-desc": "Дозволяє користувачам обирати [[Special:Gadgets|CSS- та JavaScript-додатки]] у своїх [[Special:Preferences#mw-prefsection-gadgets|налаштуваннях]]",
@@ -80,5 +80,7 @@
 	"gadgets-validate-invaliddependencies": "Відсутні {{PLURAL:$2|наступна залежність|наступні залежності}}: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Ця залежність застаріла|Ці залежності застарілі}}: $1.",
 	"gadgets-supports-urlload": "Цей додаток підтримує завантаження через використання параметра <code>?withgadget</code> в URL.",
-	"gadgets-hidden": "Цей додаток [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden прихований], що означає, що він не відображатиметься у налаштуваннях."
+	"gadgets-hidden": "Цей додаток [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden прихований], що означає, що він не відображатиметься у налаштуваннях.",
+	"gadgets-subpage-invalid": "Недійсна підсторінка «<nowiki>$1</nowiki>»",
+	"gadgets-subpage-toofewparams": "Не вистачає параметрів підсторінки (помилкове посилання)."
 }

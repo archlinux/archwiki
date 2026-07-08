@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"BaRaN6161 TURK",
-			"MuratTheTurkish"
+			"MuratTheTurkish",
+			"HakanIST"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "CAPTCHA'ya cevap verin",
-	"captcha-apihelp-param-captchaid": "Önceki isteğin CAPTCHA kimliği"
+	"captcha-apihelp-param-captchaid": "Önceki isteğin CAPTCHA kimliği",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Gösterilen hCaptcha CAPTCHA'nın, örneğin bir AbuseFilter uzantısı sonucu (ve dolayısıyla daha kısıtlayıcı bir sitekey kullanılarak) zorla gösterilip gösterilmediği. Aynı ada sahip JS yapılandırma değişkeni doğruysa veya bu API'yi kullanma girişiminin ilk denemesi belirtilen bir sitekey ile 'forcecaptcha' hatası döndürdüyse bunu ayarlayın."
 }

@@ -27,7 +27,6 @@ CREATE TABLE archive (
   ar_len INT DEFAULT NULL,
   ar_page_id INT DEFAULT NULL,
   ar_parent_id INT DEFAULT NULL,
-  ar_sha1 TEXT DEFAULT '' NOT NULL,
   PRIMARY KEY(ar_id)
 );
 
@@ -355,15 +354,16 @@ CREATE INDEX img_media_mime ON image (
 
 CREATE TABLE imagelinks (
   il_from INT DEFAULT 0 NOT NULL,
-  il_to TEXT DEFAULT '' NOT NULL,
+  il_target_id BIGINT NOT NULL,
   il_from_namespace INT DEFAULT 0 NOT NULL,
-  PRIMARY KEY(il_from, il_to)
+  PRIMARY KEY(il_from, il_target_id)
 );
 
-CREATE INDEX il_to ON imagelinks (il_to, il_from);
+CREATE INDEX il_target_id ON imagelinks (il_target_id, il_from);
 
-CREATE INDEX il_backlinks_namespace ON imagelinks (
-  il_from_namespace, il_to, il_from
+CREATE INDEX il_backlinks_namespace_target_id ON imagelinks (
+  il_from_namespace, il_target_id,
+  il_from
 );
 
 
@@ -517,8 +517,6 @@ CREATE TABLE objectcache (
   keyname TEXT DEFAULT '' NOT NULL,
   value TEXT DEFAULT NULL,
   exptime TIMESTAMPTZ NOT NULL,
-  modtoken VARCHAR(17) DEFAULT '00000000000000000' NOT NULL,
-  flags INT DEFAULT NULL,
   PRIMARY KEY(keyname)
 );
 
@@ -686,7 +684,6 @@ CREATE TABLE recentchanges (
   rc_cur_id INT DEFAULT 0 NOT NULL,
   rc_this_oldid INT DEFAULT 0 NOT NULL,
   rc_last_oldid INT DEFAULT 0 NOT NULL,
-  rc_type SMALLINT DEFAULT 0 NOT NULL,
   rc_source TEXT NOT NULL,
   rc_patrolled SMALLINT DEFAULT 0 NOT NULL,
   rc_ip TEXT DEFAULT '' NOT NULL,
@@ -718,11 +715,6 @@ CREATE INDEX rc_ns_actor ON recentchanges (rc_namespace, rc_actor);
 
 CREATE INDEX rc_actor ON recentchanges (rc_actor, rc_timestamp);
 
-CREATE INDEX rc_name_type_patrolled_timestamp ON recentchanges (
-  rc_namespace, rc_type, rc_patrolled,
-  rc_timestamp
-);
-
 CREATE INDEX rc_name_source_patrolled_timestamp ON recentchanges (
   rc_namespace, rc_source, rc_patrolled,
   rc_timestamp
@@ -753,7 +745,6 @@ CREATE TABLE revision (
   rev_deleted SMALLINT DEFAULT 0 NOT NULL,
   rev_len INT DEFAULT NULL,
   rev_parent_id BIGINT DEFAULT NULL,
-  rev_sha1 TEXT DEFAULT '' NOT NULL,
   PRIMARY KEY(rev_id)
 );
 
@@ -1008,3 +999,22 @@ CREATE TABLE watchlist_expiry (
 );
 
 CREATE INDEX we_expiry ON watchlist_expiry (we_expiry);
+
+
+CREATE TABLE watchlist_label (
+  wll_id SERIAL NOT NULL,
+  wll_user INT NOT NULL,
+  wll_name TEXT NOT NULL,
+  PRIMARY KEY(wll_id)
+);
+
+CREATE UNIQUE INDEX wll_user_name ON watchlist_label (wll_user, wll_name);
+
+
+CREATE TABLE watchlist_label_member (
+  wlm_label INT NOT NULL,
+  wlm_item INT NOT NULL,
+  PRIMARY KEY(wlm_label, wlm_item)
+);
+
+CREATE INDEX wlm_item ON watchlist_label_member (wlm_item);

@@ -14,6 +14,9 @@
 use MediaWiki\FileRepo\FileRepo;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Upload\Exception\UploadStashException;
+use MediaWiki\Upload\UploadStash;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 // @codeCoverageIgnoreStart
 require_once __DIR__ . '/Maintenance.php';
@@ -43,23 +46,17 @@ class CleanupUploadStash extends Maintenance {
 		$cutoff = time() - (int)$this->getConfig()->get( MainConfigNames::UploadStashMaxAge );
 
 		$this->output( "Getting list of files to clean up...\n" );
-		$res = $dbr->newSelectQueryBuilder()
+		$keys = $dbr->newSelectQueryBuilder()
 			->select( 'us_key' )
 			->from( 'uploadstash' )
 			->where( $dbr->expr( 'us_timestamp', '<', $dbr->timestamp( $cutoff ) ) )
 			->caller( __METHOD__ )
-			->fetchResultSet();
+			->fetchFieldValues();
 
 		// Delete all registered stash files...
-		if ( $res->numRows() == 0 ) {
+		if ( !$keys ) {
 			$this->output( "No stashed files to cleanup according to the DB.\n" );
 		} else {
-			// finish the read before starting writes.
-			$keys = [];
-			foreach ( $res as $row ) {
-				$keys[] = $row->us_key;
-			}
-
 			$this->output( 'Removing ' . count( $keys ) . " file(s)...\n" );
 			// this could be done some other, more direct/efficient way, but using
 			// UploadStash's own methods means it's less likely to fall accidentally
@@ -94,7 +91,7 @@ class CleanupUploadStash extends Maintenance {
 		$i = 0;
 		$batch = [];
 		foreach ( $iterator as $file ) {
-			if ( wfTimestamp( TS_UNIX, $tempRepo->getFileTimestamp( "$dir/$file" ) ) < $cutoff ) {
+			if ( wfTimestamp( TS::UNIX, $tempRepo->getFileTimestamp( "$dir/$file" ) ) < $cutoff ) {
 				$batch[] = [ 'op' => 'delete', 'src' => "$dir/$file" ];
 				if ( count( $batch ) >= $this->getBatchSize() ) {
 					$this->doOperations( $tempRepo, $batch );
@@ -124,7 +121,7 @@ class CleanupUploadStash extends Maintenance {
 		$i = 0;
 		$batch = [];
 		foreach ( $iterator as $file ) {
-			if ( wfTimestamp( TS_UNIX, $tempRepo->getFileTimestamp( "$dir/$file" ) ) < $cutoff ) {
+			if ( wfTimestamp( TS::UNIX, $tempRepo->getFileTimestamp( "$dir/$file" ) ) < $cutoff ) {
 				$batch[] = [ 'op' => 'delete', 'src' => "$dir/$file" ];
 				if ( count( $batch ) >= $this->getBatchSize() ) {
 					$this->doOperations( $tempRepo, $batch );

@@ -161,7 +161,7 @@ ve.ui.MWCategoryWidget.prototype.getCategoryItemFromValue = function ( value ) {
 
 	return {
 		name: this.categoryPrefix + value,
-		value: value,
+		value,
 		metaItem: {}
 	};
 };
@@ -382,9 +382,7 @@ ve.ui.MWCategoryWidget.prototype.addItems = function ( items, index ) {
 
 			const itemTitle = new mw.Title( item.name, mw.config.get( 'wgNamespaceIds' ).category );
 			// Create a widget using the item data
-			config = {
-				item: item
-			};
+			config = { item };
 			let cachedData;
 			if ( Object.prototype.hasOwnProperty.call( this.categoryRedirects, itemTitle.getPrefixedText() ) ) {
 				config.redirectTo = new mw.Title(

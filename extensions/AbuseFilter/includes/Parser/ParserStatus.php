@@ -6,26 +6,16 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\ExceptionBase;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
 
 class ParserStatus {
-	/** @var ExceptionBase|null */
-	protected $excep;
-	/** @var UserVisibleWarning[] */
-	protected $warnings;
-	/** @var int */
-	protected $condsUsed;
-
 	/**
 	 * @param ExceptionBase|null $excep An exception thrown while parsing, or null if it parsed correctly
 	 * @param UserVisibleWarning[] $warnings
 	 * @param int $condsUsed
 	 */
 	public function __construct(
-		?ExceptionBase $excep,
-		array $warnings,
-		int $condsUsed
+		protected readonly ?ExceptionBase $excep,
+		protected readonly array $warnings,
+		protected readonly int $condsUsed
 	) {
-		$this->excep = $excep;
-		$this->warnings = $warnings;
-		$this->condsUsed = $condsUsed;
 	}
 
 	public function getException(): ?ExceptionBase {

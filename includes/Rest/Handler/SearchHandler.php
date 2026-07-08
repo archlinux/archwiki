@@ -3,10 +3,9 @@
 namespace MediaWiki\Rest\Handler;
 
 use InvalidArgumentException;
-use ISearchResultSet;
-use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Page\RedirectLookup;
@@ -15,14 +14,16 @@ use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\Handler\Helper\RestStatusTrait;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
+use MediaWiki\Search\ISearchResultSet;
+use MediaWiki\Search\SearchEngine;
+use MediaWiki\Search\SearchEngineConfig;
+use MediaWiki\Search\SearchEngineFactory;
+use MediaWiki\Search\SearchResult;
 use MediaWiki\Search\SearchResultThumbnailProvider;
+use MediaWiki\Search\SearchSuggestion;
 use MediaWiki\Title\TitleFormatter;
-use SearchEngine;
-use SearchEngineConfig;
-use SearchEngineFactory;
-use SearchResult;
-use SearchSuggestion;
 use StatusValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -396,10 +397,16 @@ class SearchHandler extends Handler {
 			// in the CDN, especially for short prefixes.
 			// See also $wgSearchSuggestCacheExpiry and ApiOpenSearch
 			if ( $this->permissionManager->isEveryoneAllowed( 'read' ) ) {
-				$response->setHeader( 'Cache-Control', 'public, max-age=' . $this->completionCacheExpiry );
+				$cacheControl = 'public, max-age=' . $this->completionCacheExpiry;
 			} else {
-				$response->setHeader( 'Cache-Control', 'no-store, max-age=0' );
+				$cacheControl = 'no-store, max-age=0';
 			}
+			$response->setHeader( ResponseHeaders::CACHE_CONTROL, $cacheControl );
+		}
+		$searchId = $searchEngine->getFeatureData( SearchEngine::SEARCH_ID );
+		if ( $searchId ) {
+			// if the search backend provides a search id propagate it via headers.
+			$response->setHeader( 'X-Search-ID', $searchId );
 		}
 
 		return $response;
@@ -427,6 +434,6 @@ class SearchHandler extends Handler {
 	}
 
 	public function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/SearchResults.json';
+		return __DIR__ . '/Schema/SearchResults.json';
 	}
 }

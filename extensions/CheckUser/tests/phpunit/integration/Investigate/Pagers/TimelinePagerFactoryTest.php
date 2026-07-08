@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate\Pagers;
 
-use MediaWiki\CheckUser\Investigate\Pagers\TimelinePager;
-use MediaWiki\CheckUser\Investigate\Pagers\TimelinePagerFactory;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelinePager;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelinePagerFactory;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\TimelinePagerFactory
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelinePagerFactory
  * @group CheckUser
  * @group Database
  */

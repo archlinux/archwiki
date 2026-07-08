@@ -12,11 +12,12 @@
 			"Rapsar",
 			"SaldırganSincap",
 			"Sezgin İbiş",
-			"Vito Genovese",
-			"ToprakM"
+			"ToprakM",
+			"Vito Genovese"
 		]
 	},
 	"linterrors": "Lint hataları",
+	"linttemplateerrors": "Kodlama hataları bulunan içeri aktarımlar",
 	"linter-category-bogus-image-options": "Sahte dosya seçenekleri",
 	"linter-category-bogus-image-options-desc": "Bu sayfalarda sahte seçenekli dosyalar var.",
 	"linter-category-large-tables": "Taşınabilir aygıtlarda görüntülenmesi zor olan Büyük Tablolar",
@@ -112,5 +113,6 @@
 	"linterrors-summary": "<strong>Not:</strong> Kategorilerde gösterilen sayımlar tam değildir, tahmine dayalıdır.",
 	"multi-part-template-block": "Çıktı tek bir şablondan değil",
 	"pageinfo-linter": "Lint hataları",
-	"pageinfo-linter-moreinfo": "Lint hataları hakkında ayrıntılı bilgiye ulaşın."
+	"pageinfo-linter-moreinfo": "Lint hataları hakkında ayrıntılı bilgiye ulaşın.",
+	"category-by-template-desc": "Bu sayfanın içe aktarımları '''[[Special:LintErrors/$1|$1]]''' kodlama hatası barındırıyor. ''Not: Bazı içeri aktarımların bu listede görünmesinin nedeni, asıl kaynak sayfadaki bir hata değil, içeri aktarma işlemi sırasında dışarıdan gelen parametreler olabilir.''"
 }

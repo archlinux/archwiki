@@ -31,7 +31,7 @@ ol.mw-references {
 	 * counters continue to be incremented. As of now, the rule in ext.cite.styles.less
 	 * is the one that seems to be winning.
 	 **/
-	counter-reset: mw-ref-extends-parent mw-references list-item;
+	counter-reset: mw-ref-details-parent mw-references list-item;
 
 	> li {
 		/**
@@ -44,7 +44,7 @@ ol.mw-references {
 		 * counters continue to be incremented. As of now, the rule in ext.cite.styles.less
 		 * is the one that seems to be winning.
 		 **/
-		counter-increment: mw-ref-extends-parent mw-references;
+		counter-increment: mw-ref-details-parent mw-references;
 	}
 }
 
@@ -60,6 +60,11 @@ span[ rel~='mw:referencedBy' ] {
 		line-height: 1;
 		vertical-align: super; /* <sup> use in Cite */
 		font-size: smaller; /* <sup> use in Cite */
+
+		// Match sup style in Minerva's skins.minerva.styles/content/text.less
+		.skin-minerva & {
+			font-size: 0.75em;
+		}
 	}
 
 	a::after {

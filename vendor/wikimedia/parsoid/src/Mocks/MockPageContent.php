@@ -4,8 +4,13 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Mocks;
 
 use Wikimedia\Parsoid\Config\PageContent;
+use Wikimedia\Parsoid\Core\LinkTarget;
+use Wikimedia\Parsoid\Utils\TitleValue;
 
 class MockPageContent extends PageContent {
+
+	private LinkTarget $title;
+	private ?int $revid;
 
 	/**
 	 * Alas, this is public because parserTests is reaching in and altering
@@ -24,10 +29,22 @@ class MockPageContent extends PageContent {
 	 *   - redirect: (string, optional) The redirect target (same format as PageConfig::getTitle),
 	 *     if this content is a redirect.
 	 */
-	public function __construct( array $data ) {
+	public function __construct( array $data, ?LinkTarget $title = null, ?int $revid = null ) {
+		$this->title = $title ?? TitleValue::tryNew( 0, 'TestPage' );
 		foreach ( $data as $role => $v ) {
 			$this->data[$role] = is_string( $v ) ? [ 'content' => $v ] : $v;
 		}
+		$this->revid = $revid;
+	}
+
+	/** @inheritDoc */
+	public function getLinkTarget(): LinkTarget {
+		return $this->title;
+	}
+
+	/** @inheritDoc */
+	public function getRevisionId(): ?int {
+		return $this->revid;
 	}
 
 	/** @inheritDoc */

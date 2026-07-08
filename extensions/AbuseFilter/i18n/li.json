@@ -220,7 +220,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Stèl variabele in (set_var)",
 	"abusefilter-edit-builder-group-vars": "Varrejabele",
 	"abusefilter-edit-builder-vars-timestamp": "VerangeringsUNIX-tiedstempel",
-	"abusefilter-edit-builder-vars-accountname": "Gebroekersnaom (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Gebroekersnaom (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Aksje",
 	"abusefilter-edit-builder-vars-addedlines": "Regel toegevoeg in bwèrking",
 	"abusefilter-edit-builder-vars-delta": "Groeadje angering",

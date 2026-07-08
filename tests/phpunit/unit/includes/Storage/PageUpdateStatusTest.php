@@ -15,7 +15,7 @@ class PageUpdateStatusTest extends MediaWikiUnitTestCase {
 	public function testNewRevision() {
 		$status = PageUpdateStatus::newEmpty( false );
 
-		$this->assertTrue( $status->isOK() );
+		$this->assertStatusOK( $status );
 		$this->assertFalse( $status->wasRevisionCreated() );
 		$this->assertFalse( $status->wasPageCreated() );
 
@@ -30,7 +30,7 @@ class PageUpdateStatusTest extends MediaWikiUnitTestCase {
 	public function testWasPageCreated() {
 		$status = PageUpdateStatus::newEmpty( true );
 
-		$this->assertTrue( $status->isOK() );
+		$this->assertStatusOK( $status );
 		$this->assertFalse( $status->wasPageCreated() );
 
 		$page = PageIdentityValue::localIdentity( 7, NS_MAIN, 'Test' );

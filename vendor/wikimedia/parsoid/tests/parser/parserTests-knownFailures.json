@@ -28,7 +28,7 @@
 		"wt2wt": "<includeonly>\n|+foo</includeonly>\n{|\n{{1x|{{!}}-}}<includeonly>\n|+foo</includeonly>\n|bar\n|}"
 	},
 	"8. Encapsulate foster-parented transclusion content": {
-		"wt2wt": "{{1x|a\n}}\n{|{{1x|style='color:red'}}\n|-\n|b\n|}\n"
+		"wt2wt": "{{1x|a\n}}\n{|{{1x|style='color:red'}}\n|-\n|b\n|}"
 	},
 	"<pre> inside a link": {
 		"wt2wt": "[[Main<pre> Page</pre>]] [[Main Page|the main page]]<pre>[it's not very good]</pre>"
@@ -64,7 +64,7 @@
 		"wt2wt": "<font color=\"\">foo</font>"
 	},
 	"Extension tag with embedded html": {
-		"wt2html": "<p data-parsoid='{\"dsr\":[0,52,0,0]}'><span typeof=\"mw:Extension/embedtag\" about=\"#mwt\" data-parsoid='{\"dsr\":[0,52,10,11]}' data-mw='{\"name\":\"embedtag\",\"attrs\":{},\"body\":{\"html\":\"Content with a &lt;a rel=\\\"mw:WikiLink\\\" href=\\\"./Broken_link\\\" title=\\\"Broken link\\\" data-parsoid=&apos;{\\\"stx\\\":\\\"simple\\\",\\\"a\\\":{\\\"href\\\":\\\"./Broken_link\\\"},\\\"sa\\\":{\\\"href\\\":\\\"broken link\\\"},\\\"dsr\\\":[25,40,2,2]}&apos;>broken link&lt;/a>.\"}}'></span></p>"
+		"wt2html": "<p data-parsoid='{\"dsr\":[0,52,0,0]}'><span typeof=\"mw:Extension/embedtag\" about=\"#mwt\" data-parsoid='{\"dsr\":[0,52,10,11]}' data-mw='{\"name\":\"embedtag\",\"attrs\":{},\"body\":{\"html\":\"Content with a &lt;a rel=\\\"mw:WikiLink\\\" href=\\\"./Broken_link?action=edit&amp;amp;redlink=1\\\" title=\\\"Broken link\\\" class=\\\"new\\\" typeof=\\\"mw:LocalizedAttrs\\\" data-mw-i18n=&apos;{\\\"title\\\":{\\\"lang\\\":\\\"x-page\\\",\\\"key\\\":\\\"red-link-title\\\",\\\"params\\\":[\\\"Broken link\\\"]}}&apos; data-parsoid=&apos;{\\\"stx\\\":\\\"simple\\\",\\\"a\\\":{\\\"href\\\":\\\"./Broken_link\\\"},\\\"sa\\\":{\\\"href\\\":\\\"broken link\\\"},\\\"dsr\\\":[25,40,2,2]}&apos;>broken link&lt;/a>.\"}}'></span></p>"
 	},
 	"Fuzz testing: Parser13": {
 		"wt2wt": "{| \n| http: / a |\n|}"
@@ -129,10 +129,6 @@
 	},
 	"Render invalid page names as plain text (T53090)": {
 		"wt2wt": "[[./../foo|bar]]\n[[foo�|bar]]\n[[foo/.|bar]]\n[[foo/..|bar]]\n<nowiki>[[foo~~~bar]]</nowiki>\n[[foo>bar]]\n[[foo[bar]]\n[[.]]\n[[..]]\n[[foo././bar]]\n[[foo[http://example.com]xyz]]\n\n[[{{1x|./../foo}}|bar]]\n[[{{1x|foo/.}}|bar]]\n[[{{1x|foo/..}}|bar]]\n[[{{1x|foo~~~~bar}}]]\n[[{{1x|foo>bar}}]]\n[[{{1x|foo././bar}}]]\n[[{{1x|foo{bar}}]]\n[[{{1x|foo}bar}}]]\n[[{{1x|foo[bar}}]]\n[[{{1x|foo]bar}}]]\n[[{{1x|foo<bar}}]]"
-	},
-	"Sanitizer: Validating that <meta> and <link> work, but only for Microdata": {
-		"wt2html": "<div itemscope=\"\" data-parsoid='{\"stx\":\"html\",\"dsr\":[0,308,15,6]}'>\n\t<p data-parsoid='{\"dsr\":[17,301,0,0]}'>&lt;meta itemprop=\"hello\" content=\"world\">\n\t&lt;meta http-equiv=\"refresh\" content=\"5\">\n\t&lt;meta itemprop=\"hello\" http-equiv=\"refresh\" content=\"5\">\n\t&lt;link itemprop=\"hello\" href=\"{{SERVER}}\">\n\t&lt;link rel=\"stylesheet\" href=\"{{SERVER}}\">\n\t&lt;link rel=\"stylesheet\" itemprop=\"hello\" href=\"{{SERVER}}\"></p>\n</div>",
-		"wt2wt": "<div itemscope=\"\">\n\t<nowiki><meta itemprop=\"hello\" content=\"world\"></nowiki>\n\t<nowiki><meta http-equiv=\"refresh\" content=\"5\"></nowiki>\n\t<nowiki><meta itemprop=\"hello\" http-equiv=\"refresh\" content=\"5\"></nowiki>\n\t<nowiki><link itemprop=\"hello\" href=\"{{SERVER}}\"></nowiki>\n\t<nowiki><link rel=\"stylesheet\" href=\"{{SERVER}}\"></nowiki>\n\t<nowiki><link rel=\"stylesheet\" itemprop=\"hello\" href=\"{{SERVER}}\"></nowiki>\n</div>"
 	},
 	"Self closed html pairs (T7487)": {
 		"wt2html": "<center data-parsoid='{\"stx\":\"html\",\"dsr\":[0,47,8,9]}'><font id=\"bug\" data-parsoid='{\"stx\":\"html\",\"selfClose\":true,\"dsr\":[8,25,17,0]}'></font>Centered text</center>\n<div data-parsoid='{\"stx\":\"html\",\"dsr\":[48,88,5,6]}'><font id=\"bug2\" data-parsoid='{\"stx\":\"html\",\"selfClose\":true,\"dsr\":[53,71,18,0]}'></font>In div text</div>"
@@ -218,9 +214,6 @@
 	"Templates: Ugly nesting: 1. Quotes opened/closed across templates (1x)": {
 		"wt2html": "<p data-parsoid='{\"dsr\":[0,34,0,0]}'><i about=\"#mwt\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[{\"k\":\"1\"}],[{\"k\":\"1\"}],[{\"k\":\"1\"}]],\"dsr\":[0,34,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"1x\",\"href\":\"./Template:1x\"},\"params\":{\"1\":{\"wt\":\"&apos;&apos;a\"}},\"i\":0}},{\"template\":{\"target\":{\"wt\":\"1x\",\"href\":\"./Template:1x\"},\"params\":{\"1\":{\"wt\":\"b&apos;&apos;c&apos;&apos;d\"}},\"i\":1}},{\"template\":{\"target\":{\"wt\":\"1x\",\"href\":\"./Template:1x\"},\"params\":{\"1\":{\"wt\":\"&apos;&apos;e\"}},\"i\":2}}]}'>ab</i><span about=\"#mwt\">c</span><i about=\"#mwt\">d</i><span about=\"#mwt\">e</span></p>"
 	},
-	"Templates: Ugly templates: 4. newline-only template parameter inconsistency": {
-		"wt2html": "<span about=\"#mwt\" typeof=\"mw:Transclusion\" data-parsoid='{\"pi\":[[{\"k\":\"1\"}]],\"dsr\":[0,8,null,null]}' data-mw='{\"parts\":[{\"template\":{\"target\":{\"wt\":\"1x\",\"href\":\"./Template:1x\"},\"params\":{\"1\":{\"wt\":\"\\n\"}},\"i\":0}}]}'>\n</span>"
-	},
 	"Trailing newlines in a deep dom-subtree that ends a wikitext line should be migrated out": {
 		"wt2wt": "{|\n|<small>foo\n\nbar\n|}\n\n{|\n|<small>foo<small>\n|}"
 	},
@@ -241,6 +234,9 @@
 	},
 	"Wikilink in wikilink": {
 		"wt2wt": "[[Hi|[[Ho]]<nowiki>]]</nowiki>"
+	},
+	"anchorencode encodes like the TOC generator: (T20431)": {
+		"wt2wt": "===_ +:.3A%3A _ &&amp;]] x===\n{{anchorencode: _ +:.3A%3A _ &&amp;<nowiki>]] x</nowiki>}}\n\n__NOEDITSECTION__"
 	},
 	"div with illegal double attributes": {
 		"wt2wt": "<div id=\"b\">HTML rocks</div>"

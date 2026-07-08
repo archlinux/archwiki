@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"ValidSkinNames": {
 		"monobook": {
@@ -26,6 +26,16 @@
 					],
 					"styles": [
 						"skins.monobook.styles"
+					],
+					"menus": [
+						"user-page",
+						"user-interface-preferences",
+						"notifications",
+						"user-menu",
+						"associated-pages",
+						"views",
+						"actions",
+						"variants"
 					],
 					"messages": [
 						"tagline",

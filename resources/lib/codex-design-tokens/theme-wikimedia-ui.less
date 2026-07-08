@@ -1,5 +1,5 @@
 
-// Codex Design Tokens v2.3.2
+// Codex Design Tokens v2.5.1
 // Design System for Wikimedia
 // See https://doc.wikimedia.org/codex/latest/design-tokens/overview.html
 
@@ -7,6 +7,7 @@
 @color-base-fixed: var( --color-base-fixed, #202122 );
 @color-base--hover: var( --color-base--hover, #404244 );
 @color-emphasized: var( --color-emphasized, #101418 );
+@color-neutral: var( --color-neutral, #404244 );
 @color-subtle: var( --color-subtle, #54595d );
 @color-placeholder: var( --color-placeholder, #72777d );
 @color-disabled: var( --color-disabled, #a2a9b1 );
@@ -37,6 +38,7 @@
 @color-icon-warning: var( --color-icon-warning, #ab7f2a );
 @color-icon-success: var( --color-icon-success, #099979 );
 @color-icon-notice: var( --color-icon-notice, #72777d );
+@color-icon-progressive: var( --color-icon-progressive, #36c );
 @color-content-added: var( --color-content-added, #006400 );
 @color-content-removed: var( --color-content-removed, #8b0000 );
 @opacity-base: 1;
@@ -172,6 +174,7 @@
 @transition-property-fade: opacity;
 @transition-property-icon: color;
 @transition-property-icon-css-only: background-color;
+@transition-property-toast: opacity, transform;
 @transition-property-toggle-switch-grip: background-color, border-color, transform;
 @transition-timing-function-system: ease;
 @transition-timing-function-user: ease-out;
@@ -216,7 +219,7 @@
 @background-color-progressive--hover: var( --background-color-progressive--hover, #3056a9 );
 @background-color-progressive--active: var( --background-color-progressive--active, #233566 );
 @background-color-progressive--focus: var( --background-color-progressive--focus, #36c );
-@background-color-progressive-subtle: var( --background-color-progressive-subtle, #f1f4fd );
+@background-color-progressive-subtle: var( --background-color-progressive-subtle, #e8eeff );
 @background-color-progressive-subtle--hover: var( --background-color-progressive-subtle--hover, #d9e2ff );
 @background-color-progressive-subtle--active: var( --background-color-progressive-subtle--active, #b6d4fb );
 @background-color-destructive: var( --background-color-destructive, #bf3c2c );
@@ -237,6 +240,7 @@
 @background-color-notice-subtle: var( --background-color-notice-subtle, #eaecf0 );
 @background-color-content-added: var( --background-color-content-added, #a3d3ff );
 @background-color-content-removed: var( --background-color-content-removed, #ffe49c );
+@background-color-target-text: var( --background-color-target-text, #ffead4 );
 @background-color-transparent: var( --background-color-transparent, transparent );
 @background-color-backdrop-light: var( --background-color-backdrop-light, rgba( 255, 255, 255, 0.65 ) ); // Backdrop is the term used by CSS Fullscreen API and is used to dim the background when a modal Dialog is open. Also known as overlay mask.
 @background-color-backdrop-dark: var( --background-color-backdrop-dark, rgba( 0, 0, 0, 0.65 ) );
@@ -297,7 +301,7 @@
 @border-color-disabled: var( --border-color-disabled, #c8ccd1 );
 @border-color-inverted: var( --border-color-inverted, #fff );
 @border-color-inverted-fixed: var( --border-color-inverted-fixed, #fff ); // The same as color-inverted in light mode, but does not change in dark mode. Use this for things that should be white in both modes.
-@border-color-progressive: var( --border-color-progressive, #6485d1 );
+@border-color-progressive: var( --border-color-progressive, #36c );
 @border-color-progressive--hover: var( --border-color-progressive--hover, #3056a9 );
 @border-color-progressive--active: var( --border-color-progressive--active, #233566 );
 @border-color-progressive--focus: var( --border-color-progressive--focus, #36c );

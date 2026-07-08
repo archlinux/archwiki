@@ -15,8 +15,8 @@ use MediaWiki\Page\WikiPage;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWikiIntegrationTestCase;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\Pager\AbuseLogPager
@@ -37,8 +37,8 @@ class AbuseLogPagerTest extends MediaWikiIntegrationTestCase {
 			'rules' => 'user_name = "1.2.3.5"',
 			'name' => 'Filter 1',
 			'privacy' => Flags::FILTER_PUBLIC,
-			'userIdentity' => $performer,
-			'timestamp' => $this->getDb()->timestamp( '20190825000000' ),
+			'lastEditor' => $performer,
+			'lastEditTimestamp' => '20190825000000',
 		] );
 
 		$sysOpsAuthority = new UltimateAuthority( $performer );
@@ -98,6 +98,7 @@ class AbuseLogPagerTest extends MediaWikiIntegrationTestCase {
 			$services->getLinkBatchFactory(),
 			$services->getPermissionManager(),
 			AbuseFilterServices::getPermissionManager( $services ),
+			AbuseFilterServices::getFilterLookup( $services ),
 			AbuseFilterServices::getVariablesBlobStore( $services ),
 			$this->page->getTitle(),
 			[]

@@ -10,6 +10,7 @@ namespace MediaWiki\Revision;
 
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageReference;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 /**
@@ -42,12 +43,12 @@ interface RevisionLookup {
 
 	/**
 	 * Load either the current, or a specified, revision
-	 * that's attached to a given link target. If not attached
-	 * to that link target, will return null.
+	 * that's attached to a given title. If not attached
+	 * to that title, will return null.
 	 *
 	 * MCR migration note: this replaced Revision::newFromTitle
 	 *
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param int $revId (optional)
 	 * @param int $flags bit field, see IDBAccessObject::READ_XXX
 	 * @return RevisionRecord|null
@@ -75,7 +76,7 @@ interface RevisionLookup {
 	 *
 	 * MCR migration note: this replaced Revision::loadFromTimestamp
 	 *
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param string $timestamp
 	 * @param int $flags Bitfield (optional) include:
 	 *      IDBAccessObject::READ_LATEST: Select the data from the primary DB
@@ -128,7 +129,7 @@ interface RevisionLookup {
 	public function getTimestampFromId( $id, $flags = 0 );
 
 	/**
-	 * Load a revision based on a known page ID and current revision ID from the DB
+	 * Load a revision based on a known page ID and latest revision ID from the DB
 	 *
 	 * This method allows for the use of caching, though accessing anything that normally
 	 * requires permission checks (aside from the text) will trigger a small DB lookup.
@@ -136,9 +137,17 @@ interface RevisionLookup {
 	 * MCR migration note: this replaced Revision::newKnownCurrent
 	 *
 	 * @param PageIdentity $page the associated page
-	 * @param int $revId current revision of this page
-	 *
+	 * @param int $revId Latest revision of this page
 	 * @return RevisionRecord|false Returns false if missing
+	 * @since 1.46
+	 */
+	public function getKnownLatestRevision( PageIdentity $page, $revId = 0 );
+
+	/**
+	 * @param PageIdentity $page the associated page
+	 * @param int $revId Latest revision of this page
+	 * @return RevisionRecord|false Returns false if missing
+	 * @deprecated Since 1.46; use getKnownLatestRevision()
 	 */
 	public function getKnownCurrentRevision( PageIdentity $page, $revId = 0 );
 
@@ -146,7 +155,7 @@ interface RevisionLookup {
 	 * Get the first revision of the page.
 	 *
 	 * @since 1.35
-	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param LinkTarget|PageReference $page Calling with LinkTarget is deprecated since 1.36
 	 * @param int $flags bit field, see IDBAccessObject::READ_* constants.
 	 * @return RevisionRecord|null
 	 */

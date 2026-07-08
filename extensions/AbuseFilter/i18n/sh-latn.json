@@ -353,7 +353,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "Normaliziraj HTML-jedinice u unicode znakove (sanitize)",
 	"abusefilter-edit-builder-group-vars": "Promjenjive",
 	"abusefilter-edit-builder-vars-timestamp": "Unix-datum i vreme promjene",
-	"abusefilter-edit-builder-vars-accountname": "Ime računa (u trenutku pravljenja)",
+	"abusefilter-edit-builder-vars-account-name": "Ime računa (u trenutku pravljenja)",
 	"abusefilter-edit-builder-vars-action": "Radnja",
 	"abusefilter-edit-builder-vars-addedlines": "Linije dodane u izmjeni",
 	"abusefilter-edit-builder-vars-delta": "Veličinska promjena s izmjenom",

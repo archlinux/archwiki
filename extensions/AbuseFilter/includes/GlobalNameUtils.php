@@ -35,8 +35,7 @@ class GlobalNameUtils {
 	 * This reverses self::buildGlobalName
 	 *
 	 * @param string|int $filter
-	 * @return array
-	 * @phan-return array{0:int,1:bool}
+	 * @return array{0:int,1:bool}
 	 * @throws InvalidArgumentException
 	 */
 	public static function splitGlobalName( $filter ): array {

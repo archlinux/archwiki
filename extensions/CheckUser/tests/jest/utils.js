@@ -63,6 +63,24 @@ function mockApiSaveOptions( shouldBeSuccessful, mockResponse, mockErrorCode ) {
 }
 
 /**
+ * Mocks mw.Api().get() and returns a jest.fn()
+ * that is used as the get() method. This can
+ * be used to expect that the get() method is
+ * called with the correct arguments.
+ *
+ * @param {*} returnValue
+ * @return {jest.fn}
+ */
+function mockApiGet( returnValue ) {
+	const apiGet = jest.fn();
+	apiGet.mockImplementation( () => returnValue );
+	jest.spyOn( mw, 'Api' ).mockImplementation( () => ( {
+		get: apiGet
+	} ) );
+	return apiGet;
+}
+
+/**
  * Waits for the return value of a given function to be true.
  * Will wait for a maximum of 1 second for the condition to be true.
  *
@@ -194,6 +212,7 @@ function mockByteLength() {
 module.exports = {
 	mockApiSaveOption,
 	mockApiSaveOptions,
+	mockApiGet,
 	mockByteLength,
 	waitFor,
 	mockJSConfig,

@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Geraki"
+		]
+	},
+	"oathauth-webauthn-module-label": "Κλειδί ασφαλείας",
+	"oathauth-webauthn-javascript-required": "Η JavaScript πρέπει να είναι ενεργοποιημένη στο πρόγραμμα περιήγησής σας για να χρησιμοποιήσετε ένα κλειδί ασφαλείας.",
+	"oathauth-webauthn-ui-login-prompt": "Χρησιμοποιήστε το κλειδί ασφαλείας σας ή ακολουθήστε τις οδηγίες του προγράμματος περιήγησης.",
+	"oathauth-webauthn-ui-add-key": "Προσθήκη κλειδιού",
+	"oathauth-webauthn-error-browser-unsupported": "Αυτό το πρόγραμμα περιήγησης δεν υποστηρίζει έλεγχο ταυτότητας με κλειδί ασφαλείας ή δεν είναι διαθέσιμος για αυτόν τον ιστότοπο. Δοκιμάστε με διαφορετικό πρόγραμμα περιήγησης. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Διαβάστε περισσότερα]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Αυτό το πρόγραμμα περιήγησης δεν υποστηρίζει τον έλεγχο ταυτότητας με κλειδί ασφαλείας ή δεν είναι διαθέσιμος για αυτόν τον ιστότοπο.",
+	"oathauth-webauthn-error-auth-generic": "Η διαδικασία ελέγχου ταυτότητας διακόπηκε. Ξεκινήστε ξανά τη διαδικασία ελέγχου ταυτότητας.",
+	"oathauth-webauthn-error-reg-generic": "Δεν ήταν δυνατή η επαλήθευση του κλειδιού σας. Ξεκινήστε ξανά τη διαδικασία εγγραφής.",
+	"oathauth-webauthn-registered-keys-section-name": "Καταχωρημένα κλειδιά",
+	"oathauth-webauthn-ui-remove-key": "Αφαίρεση",
+	"oathauth-webauthn-error-module-not-enabled": "Το module «$1» δεν είναι ενεργοποιημένο για {{GENDER:$2|τον χρήστη|την χρήστρια}} «$2».",
+	"oathauth-webauthn-error-verification-failed": "Η επαλήθευση WebAuthn απέτυχε.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Η επαλήθευση κλειδιού πρόσβασης απέτυχε.",
+	"oathauth-webauthn-error-credentials-missing": "Δεν στάλθηκαν διαπιστευτήρια WebAuthn.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Ο χρήστης|Η χρήστρια}} «$1» δεν μπορεί να καταχωρίσει νέα διαπιστευτήρια.",
+	"oathauth-webauthn-error-invalid-new-key": "Το νέο κλειδί που επιστρέφεται από το άρθρωμα δεν είναι του απαιτούμενου τύπου.",
+	"oathauth-webauthn-error-registration-failed": "Η εγγραφή νέου κλειδιού απέτυχε.",
+	"oathauth-webauthn-ui-key-register-help": "Επιλέξτε το ψευδώνυμο για το κλειδί σας:",
+	"oathauth-webauthn-error-cannot-remove-key": "Το κλειδί δεν μπορεί να αφαιρεθεί.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Δεν ήταν δυνατή η ανάκτηση των πληροφοριών ελέγχου ταυτότητας.",
+	"oathauth-webauthn-add-key-section-name": "Εγγραφή νέου κλειδιού ασφαλείας",
+	"oathauth-webauthn-error-get-reginfo-fail": "Δεν ήταν δυνατή η ανάκτηση των πληροφοριών εγγραφής.",
+	"oathauth-webauthn-module-description": "Το WebAuthn βρίσκεται σε πειραματική κατάσταση. Προς το παρόν δεν παρέχει επιλογή ανάκτησης για χαμένες ή κατεστραμμένες συσκευές ελέγχου ταυτότητας. \n\n[https://en.wikipedia.org/wiki/WebAuthn Μάθετε περισσότερα για το WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Επαναφόρτωση σελίδας",
+	"oathauth-webauthn-authentication-info-label": "Δεδομένα ελέγχου ταυτότητας",
+	"oathauth-webauthn-authentication-info-help": "Δεδομένα ελέγχου ταυτότητας που διαβιβάζονται στον πελάτη για ανάκτηση διαπιστευτηρίων",
+	"oathauth-webauthn-credential-label": "Διαπιστευτήρια χρήστη",
+	"oathauth-webauthn-credential-help": "Διαπιστευτήρια χρήστη με βάση δεδομένα ελέγχου ταυτότητας",
+	"oathauth-webauthn-add-security-key": "Προσθήκη κλειδιού ασφαλείας",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Χρησιμοποιήστε κλειδί ασφαλείας ή passkey"
+}

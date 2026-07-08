@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Stefan2255"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API-modul för att kommunicera mellan server och klient under registrerings-/autentiseringsprocessen.",
+	"apihelp-oathauth-webauthn-param-func": "Namnet på den efterfrågade funktion som ska verkställas."
+}

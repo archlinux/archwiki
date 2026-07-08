@@ -1,17 +1,19 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\GlobalContributions;
 
-use MediaWiki\CheckUser\CheckUserQueryInterface;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\GlobalContributions\ExternalPermissions;
-use MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPager;
+use MediaWiki\ChangeTags\ChangeTagsStore;
+use MediaWiki\ChangeTags\ChangeTagsStoreFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentFormatter\RevisionCommentBatch;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\GlobalContributions\ExternalPermissions;
+use MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPager;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
@@ -28,6 +30,7 @@ use MediaWiki\User\UserIdentityValue;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use stdClass;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -36,7 +39,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\GlobalContributionsPager
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\GlobalContributionsPager
  * @group CheckUser
  * @group Database
  */
@@ -103,7 +106,7 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $this->revisionStore );
 	}
 
-	private function getPagerWithOverrides( $overrides ) {
+	private function getPagerWithOverrides( array $overrides ): GlobalContributionsPager {
 		$services = $this->getServiceContainer();
 		return new GlobalContributionsPager(
 			$this->linkRenderer,
@@ -119,17 +122,20 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 			$overrides['GlobalContributionsLookup'] ?? $services->get( 'CheckUserGlobalContributionsLookup' ),
 			$overrides['PermissionManager'] ?? $services->getPermissionManager(),
 			$overrides['PreferencesFactory'] ?? $services->getPreferencesFactory(),
-			$overrides['LoadBalancerFactory'] ?? $services->getConnectionProvider(),
+			$overrides['ConnectionProvider'] ?? $services->getConnectionProvider(),
 			$overrides['JobQueueGroup'] ?? $services->getJobQueueGroup(),
 			$overrides['UserLinkRenderer'] ?? $this->userLinkRenderer,
 			$overrides['RevisionStoreFactory'] ?? $this->revisionStoreFactory,
+			$overrides['ChangeTagsStoreFactory'] ?? $services->getChangeTagsStoreFactory(),
+			$overrides['SiteLookup'] ?? $services->getSiteLookup(),
+			$overrides['ReadOnlyMode'] ?? $services->getReadOnlyMode(),
 			$overrides['Context'] ?? RequestContext::getMain(),
 			$overrides['options'] ?? [ 'revisionsOnly' => true ],
 			new UserIdentityValue( 0, $overrides['UserName'] ?? '127.0.0.1' )
 		);
 	}
 
-	private function getPager( $userName ): GlobalContributionsPager {
+	private function getPager( string $userName ): GlobalContributionsPager {
 		return $this->getServiceContainer()->get( 'CheckUserGlobalContributionsPagerFactory' )
 			->createPager(
 				RequestContext::getMain(),
@@ -138,17 +144,23 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 			);
 	}
 
-	private function getWrappedPager( string $userName, $pageTitle, $pageNamespace = 0 ) {
+	/**
+	 * @return GlobalContributionsPager
+	 */
+	private function getWrappedPager( string $userName, string $pageTitle, int $pageNamespace = NS_MAIN ) {
 		$pager = $this->wrapPager( $this->getPager( $userName ) );
 		$pager->currentPage = Title::makeTitle( $pageNamespace, $pageTitle );
 		return $pager;
 	}
 
+	/**
+	 * @return GlobalContributionsPager
+	 */
 	private function wrapPager( GlobalContributionsPager $pager ) {
 		return TestingAccessWrapper::newFromObject( $pager );
 	}
 
-	private function getRow( $options = [] ) {
+	private function getRow( array $options = [] ): stdClass {
 		return (object)( array_merge(
 			[
 				'rev_id' => '2',
@@ -161,7 +173,6 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 				'rev_deleted' => '0',
 				'rev_len' => '100',
 				'rev_parent_id' => '1',
-				'rev_sha1' => '',
 				'rev_comment_text' => '',
 				'rev_comment_data' => null,
 				'rev_comment_cid' => '1',
@@ -238,7 +249,7 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 		// We can't call populateAttributes directly because TestingAccessWrapper
 		// can't pass by reference: T287318
 		$formatted = $wrapper->formatRow( $row );
-		$this->assertStringNotContainsString( 'data-mw-revid', $formatted );
+		$this->assertStringContainsString( 'data-mw-revid', $formatted );
 	}
 
 	/**
@@ -353,7 +364,8 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 		$this->revisionRecord
 			->method( 'getComment' )
 			->with( RevisionRecord::RAW, $context->getAuthority() )
-			->willReturn( $row->rev_comment_text ?
+			->willReturn(
+				$row->rev_comment_text ?
 				new CommentStoreComment( null, $row->rev_comment_text ) :
 				null
 			);
@@ -506,7 +518,7 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $pager->formatComment( $row ) );
 	}
 
-	public function formatCommentDataProvider(): array {
+	public static function formatCommentDataProvider(): array {
 		$localWikIdProvider = static fn () => WikiMap::getCurrentWikiId();
 		$otherWikIdProvider = static fn () => 'otherwiki';
 		$summaryUnavailableMessage =
@@ -712,10 +724,13 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 				$services->get( 'CheckUserGlobalContributionsLookup' ),
 				$services->getPermissionManager(),
 				$services->getPreferencesFactory(),
-				$services->getDBLoadBalancerFactory(),
+				$services->getConnectionProvider(),
 				$services->getJobQueueGroup(),
 				$this->userLinkRenderer,
 				$this->revisionStoreFactory,
+				$services->getChangeTagsStoreFactory(),
+				$services->getSiteLookup(),
+				$services->getReadOnlyMode(),
 				$context,
 				[ 'revisionsOnly' => true ],
 				new UserIdentityValue( 0, '127.0.0.1' ),
@@ -1144,9 +1159,7 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 
 		// Since this pager calls out to other wikis, extension hooks should not be run
 		// because the extension may not be loaded on the external wiki (T385092).
-		$hookContainer = $this->createMock( HookContainer::class );
-		$hookContainer->expects( $this->never() )
-			->method( 'run' );
+		$hookContainer = $this->createNoOpMock( HookContainer::class );
 
 		// Object representing the current user
 		$authority = new SimpleAuthority(
@@ -1240,9 +1253,10 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 				$storeProxy
 					->expects( $this->atLeastOnce() )
 					->method( 'newSelectQueryBuilder' )
-					->willReturnCallback( static fn ( IReadableDatabase $db ) =>
+					->willReturnCallback(
+						static fn ( IReadableDatabase $db ) =>
 						$revisionStore->newSelectQueryBuilder( $db )
-				);
+					);
 			} else {
 				$storeProxy
 					->expects( $this->never() )
@@ -1251,7 +1265,8 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 
 			$storeProxy
 				->method( 'getRevisionSizes' )
-				->willReturnCallback( static fn ( array $revIds ) =>
+				->willReturnCallback(
+					static fn ( array $revIds ) =>
 					$revisionStore->getRevisionSizes( $revIds )
 				);
 
@@ -1275,16 +1290,21 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 				$revisionStoreProxies
 			);
 
+		$changeTagsStoreFactory = $this->createMock( ChangeTagsStoreFactory::class );
+		$changeTagsStoreFactory->method( 'getChangeTagsStore' )
+			->willReturn( $this->createMock( ChangeTagsStore::class ) );
+
 		// Initialize the subject under test
 		$pager = $this->getPagerWithOverrides( [
 			'CentralIdLookup' => $centralIdLookup,
 			'HookContainer' => $hookContainer,
-			'LoadBalancerFactory' => $dbProvider,
+			'ConnectionProvider' => $dbProvider,
 			'GlobalContributionsLookup' => $globalContributionsLookup,
 			'Context' => $context,
 			'CommentFormatter' => $commentFormatter,
 			'RevisionStore' => $localRevisionStore,
 			'RevisionStoreFactory' => $revisionStoreFactory,
+			'ChangeTagsStoreFactory' => $changeTagsStoreFactory,
 		] );
 		$pager->mIsBackwards = ( $paginationParams['dir'] ?? '' ) === 'prev';
 		$pager->setLimit( $paginationParams['limit'] );
@@ -1496,7 +1516,6 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 				'rev_deleted' => '0',
 				'rev_len' => '100',
 				'rev_parent_id' => $revId - 1,
-				'rev_sha1' => '',
 				'rev_comment_text' => '',
 				'rev_comment_data' => null,
 				'rev_comment_cid' => '1',
@@ -1521,12 +1540,11 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 		// Mock fetching the recently active wikis
 		$queryBuilder = $this->createMock( SelectQueryBuilder::class );
 		$queryBuilder
-			->method(
-				$this->logicalOr(
-					'select', 'from', 'distinct', 'where', 'andWhere',
-					'join', 'orderBy', 'limit', 'queryInfo', 'caller'
-				)
-			)->willReturnSelf();
+			->method( $this->logicalOr( ...array_map( $this->identicalTo( ... ), [
+				'select', 'from', 'distinct', 'where', 'andWhere',
+				'join', 'orderBy', 'limit', 'queryInfo', 'caller',
+			] ) ) )
+			->willReturnSelf();
 		$queryBuilder
 			->method( 'fetchFieldValues' )
 			->willReturn( [ $localWiki, $externalWiki ] );
@@ -1543,14 +1561,11 @@ class GlobalContributionsPagerTest extends MediaWikiIntegrationTestCase {
 
 		// Since this pager calls out to other wikis, extension hooks should not be run
 		// because the extension may not be loaded on the external wiki (T385092).
-		$hookContainer = $this->createMock( HookContainer::class );
-		$hookContainer
-			->expects( $this->never() )
-			->method( 'run' );
+		$hookContainer = $this->createNoOpMock( HookContainer::class );
 
 		$pager = $this->getPagerWithOverrides( [
 			'HookContainer' => $hookContainer,
-			'LoadBalancerFactory' => $dbProvider,
+			'ConnectionProvider' => $dbProvider,
 		] );
 
 		$pager = TestingAccessWrapper::newFromObject( $pager );

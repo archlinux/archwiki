@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Investigate;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Investigate;
 
 use CentralAuthTestUser;
-use MediaWiki\CheckUser\Investigate\Pagers\PreliminaryCheckPagerFactory;
-use MediaWiki\CheckUser\Investigate\Services\PreliminaryCheckService;
-use MediaWiki\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Extension\CheckUser\Investigate\Pagers\PreliminaryCheckPagerFactory;
+use MediaWiki\Extension\CheckUser\Investigate\Services\PreliminaryCheckService;
+use MediaWiki\Extension\CheckUser\Tests\Integration\SuggestedInvestigations\SuggestedInvestigationsTestTrait;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Registration\ExtensionRegistry;
@@ -23,10 +23,10 @@ use TestUser;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\Investigate\SpecialInvestigate
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\TimelinePager
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\ComparePager
- * @covers \MediaWiki\CheckUser\Investigate\Pagers\PreliminaryCheckPager
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\SpecialInvestigate
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\TimelinePager
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\ComparePager
+ * @covers \MediaWiki\Extension\CheckUser\Investigate\Pagers\PreliminaryCheckPager
  * @group CheckUser
  * @group Database
  */
@@ -75,14 +75,13 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 	 * @param string[] $excludeTargets Targets to exclude from the check
 	 * @param string $subPage The subpage
 	 * @param bool $filterTempAccounts Whether to filter out results for temporary accounts.
-	 * @return FauxRequest|WebRequest
 	 */
 	private function getValidRequest(
 		array $targets,
 		array $excludeTargets,
 		string $subPage,
 		bool $filterTempAccounts = false
-	) {
+	): WebRequest {
 		$request = RequestContext::getMain()->getRequest();
 		// Generate a valid token and set it in the request.
 		$token = $this->getServiceContainer()->get( 'CheckUserTokenQueryManager' )->updateToken(
@@ -156,9 +155,9 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$this->assertStringContainsString( '(checkuser-investigate-legend', $html );
 	}
 
-	private function commonTestViewTimelineTab( $target ) {
+	private function commonTestViewTimelineTab( $target, bool $filterTempAccounts = false ): string {
 		// Get the HTML for the timeline tab
-		$html = $this->getHtmlForTab( [ $target ], $this->getTabParam( 'timeline' ), true );
+		$html = $this->getHtmlForTab( [ $target ], $this->getTabParam( 'timeline' ), true, $filterTempAccounts );
 		// Verify that the HTML includes the form field to exclude a user from the timeline results.
 		$this->assertStringContainsString( '(checkuser-investigate-filters-exclude-targets-label', $html );
 		$this->assertStringContainsString( '(checkuser-investigate-filters-legend', $html );
@@ -186,10 +185,20 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 	}
 
 	public function testViewTimelineTabWithNoResults() {
+		$this->overrideConfigValue( 'CUDMaxAge', 7776000 );
 		// Load the special page with a target that has no results.
 		$html = $this->commonTestViewTimelineTab( '45.6.7.8' );
 		// Verify that the "No results" message is shown as no rows should have been found.
-		$this->assertStringContainsString( '(checkuser-investigate-timeline-notice-no-results', $html );
+		$this->assertStringContainsString( '(checkuser-investigate-timeline-notice-no-results: 90', $html );
+	}
+
+	public function testViewTimelineTabWithNoResultsButFilters() {
+		$html = $this->commonTestViewTimelineTab( '45.6.7.8', true );
+		$this->assertStringContainsString(
+			'(checkuser-investigate-timeline-notice-no-results-filters',
+			$html,
+			'No results message was not present'
+		);
 	}
 
 	private function commonTestViewCompareTab( $target, bool $filterTempAccounts = false ): string {
@@ -228,7 +237,9 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$blockStatus = $this->getServiceContainer()->getBlockUserFactory()
 			->newBlockUser(
 				$this->getServiceContainer()->getUserIdentityLookup()->getUserIdentityByName( 'InvestigateTestUser1' ),
-				self::$testSuppressor, 'infinity', 'block to hide the test user',
+				self::$testSuppressor,
+				'infinity',
+				'block to hide the test user',
 				[ 'isHideUser' => true ]
 			)->placeBlock();
 		$this->assertStatusGood( $blockStatus );
@@ -256,10 +267,20 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 	}
 
 	public function testViewCompareTabWithNoResults() {
+		$this->overrideConfigValue( 'CUDMaxAge', 7776000 );
 		// Load the special page for the compare tab with a target that has no results.
 		$html = $this->commonTestViewCompareTab( '45.6.7.8' );
 		// Verify that the "No results" message is shown as no rows should have been found.
-		$this->assertStringContainsString( '(checkuser-investigate-compare-notice-no-results', $html );
+		$this->assertStringContainsString( '(checkuser-investigate-compare-notice-no-results: 90', $html );
+	}
+
+	public function testViewCompareTabWithNoResultsButFilters() {
+		$html = $this->commonTestViewCompareTab( '45.6.7.8', true );
+		$this->assertStringContainsString(
+			'(checkuser-investigate-compare-notice-no-results-filters',
+			$html,
+			'No results message was not present'
+		);
 	}
 
 	public function testViewCompareTabWithResultsForTempUser(): void {
@@ -276,7 +297,7 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$this->assertStringNotContainsString( 'data-value="~2025-1"', $html );
 	}
 
-	private function commonTestViewAccountInformationTab( $target ) {
+	private function commonTestViewAccountInformationTab( string $target ): string {
 		// Get the HTML for the account information tab.
 		$html = $this->getHtmlForTab( [ $target ], $this->getTabParam( 'preliminary-check' ), true );
 		// Verify that the HTML does not include the form field to exclude a user from the preliminary check results,
@@ -328,23 +349,24 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 			} );
 		$this->setService(
 			'CheckUserPreliminaryCheckPagerFactory',
-			static function () use ( $services, $mockExtensionRegistry ) {
-				return new PreliminaryCheckPagerFactory(
-					$services->getLinkRenderer(), $services->getNamespaceInfo(),
-					$mockExtensionRegistry, $services->get( 'CheckUserTokenQueryManager' ),
-					$services->get( 'CheckUserPreliminaryCheckService' ), $services->getUserFactory()
-				);
-			}
+			static fn () => new PreliminaryCheckPagerFactory(
+				$services->getLinkRenderer(),
+				$services->getNamespaceInfo(),
+				$mockExtensionRegistry,
+				$services->get( 'CheckUserTokenQueryManager' ),
+				$services->get( 'CheckUserPreliminaryCheckService' ),
+				$services->getUserFactory()
+			)
 		);
 		$this->setService(
 			'CheckUserPreliminaryCheckService',
-			static function () use ( $services, $mockExtensionRegistry ) {
-				return new PreliminaryCheckService(
-					$services->getDBLoadBalancerFactory(), $mockExtensionRegistry,
-					$services->getUserGroupManagerFactory(), $services->getDatabaseBlockStoreFactory(),
-					WikiMap::getCurrentWikiDbDomain()->getId()
-				);
-			}
+			static fn () => new PreliminaryCheckService(
+				$services->getConnectionProvider(),
+				$mockExtensionRegistry,
+				$services->getUserGroupManagerFactory(),
+				$services->getDatabaseBlockStoreFactory(),
+				WikiMap::getCurrentWikiDbDomain()->getId()
+			)
 		);
 		// Load the special page for the compare tab with a target that has rows in the CheckUser result tables.
 		$html = $this->commonTestViewAccountInformationTab( self::$firstTestUser->getName() );
@@ -356,7 +378,11 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		$this->markTestSkippedIfExtensionNotLoaded( 'CentralAuth' );
 		// Create the test user in the central user DB.
 		$targetUser = new CentralAuthTestUser(
-			self::$firstTestUser->getName(), 'GUP@ssword', [], [ [ WikiMap::getCurrentWikiId(), 'primary' ] ], false
+			self::$firstTestUser->getName(),
+			'GUP@ssword',
+			[],
+			[ [ WikiMap::getCurrentWikiId(), 'primary' ] ],
+			false
 		);
 		$targetUser->save( $this->getDb() );
 		// Load the special page for the compare tab with a target that has rows in the CheckUser result tables.
@@ -396,7 +422,8 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		// Execute the special page and get the HTML output.
 		[ $html, $response ] = $this->executeSpecialPage( $subPage, $fauxRequest, null, $testCheckUser );
 		$this->assertSame(
-			'', $html,
+			'',
+			$html,
 			'The form should not be displayed after submitting the form using POST, as it causes a redirect.'
 		);
 		/** @var $response FauxResponse */
@@ -426,7 +453,8 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 		// Execute the special page and get the HTML output.
 		[ $html, $response ] = $this->executeSpecialPage( '', $fauxRequest, null, $testCheckUser );
 		$this->assertSame(
-			'', $html,
+			'',
+			$html,
 			'The form should not be displayed after submitting the form using POST, as it causes a redirect.'
 		);
 		/** @var $response FauxResponse */
@@ -438,7 +466,9 @@ class SpecialInvestigateTest extends FormSpecialPageTestCase {
 
 	/** @dataProvider provideLinkToSuggestedInvestigationsPresent */
 	public function testLinkToSuggestedInvestigationsPresent(
-		bool $enabled, bool $hidden, bool $linkExpected
+		bool $enabled,
+		bool $hidden,
+		bool $linkExpected
 	) {
 		if ( $enabled ) {
 			$this->enableSuggestedInvestigations();

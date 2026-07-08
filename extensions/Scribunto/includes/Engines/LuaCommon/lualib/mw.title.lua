@@ -47,6 +47,18 @@ local function lt( a, b )
 	return a.text < b.text
 end
 
+local function getFileInfo( file )
+	data = php.getFileInfo( file )
+	return setmetatable( data, {
+		__index = function( t, key )
+			if key == 'metadata' then
+				data.metadata = php.getFileMetadata( file )
+				return data.metadata
+			end
+		end
+	} )
+end
+
 local function makeTitleObject( data )
 	if not data then
 		return nil
@@ -277,7 +289,7 @@ local function makeTitleObject( data )
 			end
 			if k == 'file' then
 				if data.file == nil then
-					data.file = php.getFileInfo( data.prefixedText )
+					data.file = getFileInfo( data.prefixedText )
 				end
 				return data.file or nil
 			end

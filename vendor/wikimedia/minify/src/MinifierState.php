@@ -144,7 +144,7 @@ abstract class MinifierState {
 	 * @return $this
 	 */
 	public function ensureNewline() {
-		if ( $this->minifiedOutput !== '' && substr( $this->minifiedOutput, -1 ) !== "\n" ) {
+		if ( $this->minifiedOutput !== '' && !str_ends_with( $this->minifiedOutput, "\n" ) ) {
 			$this->addOutput( "\n" );
 		}
 		return $this;

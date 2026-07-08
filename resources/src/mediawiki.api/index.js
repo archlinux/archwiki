@@ -257,6 +257,13 @@
 
 			this.preprocessParameters( parameters, this.defaults.useUS );
 
+			// Add the 'action' query parameter to the request URL, and not just POST request body,
+			// for ease of use in debugging, analytics, and request routing or filtering. (T421288)
+			if ( ajaxOptions.type === 'POST' && parameters.action !== undefined ) {
+				ajaxOptions.url += ( ajaxOptions.url.includes( '?' ) ? '&' : '?' ) +
+					'action=' + encodeURIComponent( parameters.action );
+			}
+
 			// If multipart/form-data has been requested and emulation is possible, emulate it
 			if (
 				ajaxOptions.type === 'POST' &&
@@ -359,6 +366,21 @@
 					( details instanceof DOMException && details.name === 'AbortError' )
 				) ) {
 					mw.log( 'mw.Api error: ', code, details );
+
+					const inSample = Math.random() < require( './config.json' ).ApiClientErrorSampleRate;
+					if ( code === 'http' && details.xhr.status === 429 && inSample ) {
+						// Abbreviate the query parameters into something that can be logged publicly,
+						// but can still indicate which component is making too many API requests.
+						let logParameters = `action=${ parameters.action }`;
+						if ( parameters.action === 'query' ) {
+							for ( const param of [ 'prop', 'list', 'meta' ] ) {
+								if ( parameters[ param ] ) {
+									logParameters += `&${ param }=${ parameters[ param ] }`;
+								}
+							}
+						}
+						mw.errorLogger.logError( new Error( `HTTP 429 ${ logParameters }` ), 'error.mw-api' );
+					}
 				}
 			} );
 		},
@@ -451,7 +473,6 @@
 					if ( code === 'badtoken' ) {
 						this.badToken( tokenType );
 						// Try again, once
-						params.token = undefined;
 						return this.getToken( tokenType, assertParams ).then( ( t ) => {
 							params.token = t;
 							return this.post( params, ajaxOptions );
@@ -546,6 +567,13 @@
 		 * Given an API response indicating an error, get a jQuery object containing a human-readable
 		 * error message that you can display somewhere on the page.
 		 *
+		 * This method handles the different error formats returned by the action API itself, and some
+		 * error conditions that may occur at other layers, e.g. user losing their network connection,
+		 * server being down, rate limits enforced by a proxy in front of MediaWiki, etc.
+		 *
+		 * Error messages, particularly for editing pages, may consist of multiple paragraphs of text.
+		 * Your user interface should have enough space for that.
+		 *
 		 * For better quality of error messages, it's recommended to use the following options in your
 		 * API queries:
 		 *
@@ -554,9 +582,6 @@
 		 * errorlang: mw.config.get( 'wgUserLanguage' ),
 		 * errorsuselocal: true,
 		 * ```
-		 *
-		 * Error messages, particularly for editing pages, may consist of multiple paragraphs of text.
-		 * Your user interface should have enough space for that.
 		 *
 		 * @example
 		 * var api = new mw.Api();
@@ -602,6 +627,29 @@
 					// Server returned invalid JSON
 					// data.exception is probably a SyntaxError exception
 					return $( '<div>' ).append( mw.message( 'api-clientside-error-invalidresponse' ).parseDom() );
+				} else if ( data.xhr.status === 429 ) {
+					// Server HTTP error: 429 Too Many Requests
+					const retryAfter = data.xhr.getResponseHeader( 'Retry-After' );
+					if ( retryAfter ) {
+						// Simplified from Language::formatDuration()
+						const segments = [];
+						if ( Math.floor( retryAfter / 3600 ) > 0 ) {
+							segments.push( mw.msg( 'duration-hours', mw.language.convertNumber( Math.floor( retryAfter / 3600 ) ) ) );
+						}
+						if ( Math.floor( retryAfter % 3600 / 60 ) > 0 ) {
+							segments.push( mw.msg( 'duration-minutes', mw.language.convertNumber( Math.floor( retryAfter % 3600 / 60 ) ) ) );
+						}
+						if ( Math.floor( retryAfter % 60 ) > 0 ) {
+							segments.push( mw.msg( 'duration-seconds', mw.language.convertNumber( Math.floor( retryAfter % 60 ) ) ) );
+						}
+						if ( segments.length === 0 ) {
+							segments.push( mw.msg( 'duration-seconds', mw.language.convertNumber( 0 ) ) );
+						}
+						const formattedDuration = mw.language.listToText( segments );
+						return $( '<div>' ).append( mw.message( 'api-clientside-error-http-429-retry', formattedDuration ).parseDom() );
+					} else {
+						return $( '<div>' ).append( mw.message( 'api-clientside-error-http-429' ).parseDom() );
+					}
 				} else if ( data.xhr.status ) {
 					// Server HTTP error
 					// data.exception is probably the HTTP "reason phrase", e.g. "Internal Server Error"
@@ -684,3 +732,17 @@
 		};
 	}
 }() );
+
+require( './AbortablePromise.js' );
+require( './AbortController.js' );
+require( './rest.js' );
+require( './category.js' );
+require( './edit.js' );
+require( './login.js' );
+require( './messages.js' );
+require( './options.js' );
+require( './parse.js' );
+require( './rollback.js' );
+require( './upload.js' );
+require( './user.js' );
+require( './watch.js' );

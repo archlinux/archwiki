@@ -74,7 +74,7 @@ class CounterMetric implements MetricInterface {
 	 *
 	 * @internal
 	 * @param float|int|string $value
-	 * @return CounterMetric
+	 * @return $this
 	 */
 	public function setBucket( $value ) {
 		if ( $value == "+Inf" || ( is_float( $value ) || is_int( $value ) ) ) {

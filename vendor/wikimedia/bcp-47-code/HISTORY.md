@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.3 (2026-02-13)
+* Update dependencies.
+
+## 2.0.2 (2026-01-08)
+* Drop support for PHP < 8.1.
+* Update dependencies.
+
 ## 2.0.1 (2024-11-09)
 * Build system dependency bumps.
 

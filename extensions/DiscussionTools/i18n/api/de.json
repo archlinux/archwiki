@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Brettchenweber"
+		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Kommentar mit der ID „$1“ nicht gefunden.",
 	"apierror-discussiontools-commentname-ambiguous": "Mehrere Kommentare mit dem Namen „$1“ gefunden, <var>commentid</var> ist erforderlich.",
@@ -30,8 +32,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "Die zu verwendende Versionsnummer (Standardwert ist die letzte Version).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Zurückzugebende Eigenschaften:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Ausschluss von Benutzer-Signaturen aus den Kommentaren (bei Verwendung von <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Flags zur Änderung der Ausgabe bei Verwendung <var>von prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Darstellung der von der Seite geparsten Kommentar-Threads",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Von welchen anderen Seiten die Kommentare übernommen wurden",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Fügt zusätzliche Aktivitätsdaten über die ältesten und neuesten Antworten hinzu (bei Verwendung von <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Ausschluss von Benutzer-Signaturen aus den Kommentaren (bei Verwendung von <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Fügt nicht den gesamten Antwortbaum ein, sondern nur die Überschriften der obersten Ebene (bei Verwendung <var>von prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-summary": "Gibt Metadaten zurück, die zur Initialisierung der Diskussionswerkzeuge erforderlich sind.",
 	"apihelp-discussiontoolspreview-param-type": "Art der Nachricht zur Vorschau",
 	"apihelp-discussiontoolspreview-param-wikitext": "Inhalt zur Vorschau, als Wikitext.",
@@ -41,5 +47,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true zum Abonnieren, false zum Abbestellen",
 	"apihelp-discussiontoolssubscribe-summary": "Abonnieren (oder abbestellen), um Benachrichtigungen über ein Thema zu erhalten.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID des Kommentars, für den gedankt werden soll.",
-	"apihelp-discussiontoolsthank-summary": "Senden einer öffentliche Dankesbenachrichtigung für einen Kommentar."
+	"apihelp-discussiontoolsthank-summary": "Senden einer öffentliche Dankesbenachrichtigung für einen Kommentar.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Der Benutzer wird automatisch für alle neuen Diskussionsthemen abonniert, die durch die Bearbeitung erstellt werden. Mit „Ja“ oder „Nein“ kann die Benutzereinstellung (Standard) überschrieben werden."
 }

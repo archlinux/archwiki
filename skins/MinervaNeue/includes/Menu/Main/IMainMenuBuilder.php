@@ -30,9 +30,10 @@ interface IMainMenuBuilder {
 
 	/**
 	 * @param array $personalTools
+	 * @param bool $shouldShowAccountMenuItems
 	 * @return Group
 	 */
-	public function getPersonalToolsGroup( array $personalTools ): Group;
+	public function getPersonalToolsGroup( array $personalTools, bool $shouldShowAccountMenuItems ): Group;
 
 	/**
 	 * @return Group

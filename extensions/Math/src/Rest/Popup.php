@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\Math\Rest;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Extension\Math\MathWikibaseInfo;
 use MediaWiki\Html\Html;
-use MediaWiki\Languages\LanguageFactory;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageFactory;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Title\Title;
@@ -15,33 +15,15 @@ use Wikimedia\ParamValidator\ParamValidator;
 
 class Popup extends SimpleHandler {
 
-	/** @var MathWikibaseConnector */
-	private $wikibase;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
 	/** @var Title|null */
 	private $specialPageTitle;
 
-	/**
-	 * @param MathWikibaseConnector $wikibase
-	 * @param LanguageFactory $languageFactory
-	 * @param LanguageNameUtils $languageNameUtils
-	 * @param TitleFactory $titleFactory
-	 */
 	public function __construct(
-		MathWikibaseConnector $wikibase,
-		LanguageFactory $languageFactory,
-		LanguageNameUtils $languageNameUtils,
-		TitleFactory $titleFactory
+		private readonly MathWikibaseConnector $wikibase,
+		private readonly LanguageFactory $languageFactory,
+		private readonly LanguageNameUtils $languageNameUtils,
+		TitleFactory $titleFactory,
 	) {
-		$this->wikibase = $wikibase;
-		$this->languageFactory = $languageFactory;
-		$this->languageNameUtils = $languageNameUtils;
 		$this->specialPageTitle = $titleFactory->newFromText( 'Special:MathWikibase' );
 	}
 

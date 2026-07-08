@@ -28,7 +28,7 @@ class ReferencePreviewsContext {
 	/**
 	 * If the client-side code for Reference Previews should continue loading
 	 * (see isReferencePreviewsEnabled.js), incorporating decisions we can only make after the
-	 * ResourceLoader module was registered via {@see ReferencePreviewsHooks::onResourceLoaderRegisterModules}.
+	 * ResourceLoader module was registered via {@link ReferencePreviewsHooks::onResourceLoaderRegisterModules}.
 	 */
 	public function isReferencePreviewsEnabled( User $user, Skin $skin ): bool {
 		if (

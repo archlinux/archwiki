@@ -1,20 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\CheckUser\Widgets;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\CheckUser\Widgets;
 
-use MediaWiki\CheckUser\CheckUser\Widgets\CIDRCalculator;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUser\Widgets\CIDRCalculator;
 use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use OOUI\BlankTheme;
 use OOUI\Theme;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
  * @group CheckUser
- * @covers \MediaWiki\CheckUser\CheckUser\Widgets\CIDRCalculator
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Widgets\CIDRCalculator
  */
 class CIDRCalculatorTest extends MediaWikiIntegrationTestCase {
 

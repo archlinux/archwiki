@@ -14,8 +14,8 @@ use MediaWiki\Content\TextContent;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\ObjectCache\WANObjectCache;
+use Wikimedia\StringUtils\StringUtils;
 
 /**
  * @ingroup Extensions
@@ -362,20 +362,17 @@ class TitleBlacklist {
 	/**
 	 * Validate a new blacklist
 	 *
-	 * @suppress PhanParamSuspiciousOrder The preg_match() params are in the correct order
 	 * @param TitleBlacklistEntry[] $blacklist
 	 * @return string[] List of invalid entries; empty array means blacklist is valid
 	 */
 	public function validate( array $blacklist ) {
 		$badEntries = [];
 		foreach ( $blacklist as $e ) {
-			AtEase::suppressWarnings();
 			$regex = $e->getRegex();
 			// @phan-suppress-next-line SecurityCheck-ReDoS
-			if ( preg_match( "/{$regex}/u", '' ) === false ) {
+			if ( !StringUtils::isValidPCRERegex( "/{$regex}/u" ) ) {
 				$badEntries[] = $e->getRaw();
 			}
-			AtEase::restoreWarnings();
 		}
 		return $badEntries;
 	}

@@ -8,6 +8,7 @@
  */
 
 const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
+const MWReferenceKeyGenerator = require( './ve.dm.MWReferenceKeyGenerator.js' );
 const MWReferenceModel = require( './ve.dm.MWReferenceModel.js' );
 const MWReferenceResultWidget = require( './ve.ui.MWReferenceResultWidget.js' );
 
@@ -30,6 +31,7 @@ ve.ui.MWReferenceSearchWidget = function VeUiMWReferenceSearchWidget( config ) {
 	ve.ui.MWReferenceSearchWidget.super.call( this, config );
 
 	// Properties
+	this.internalList = null;
 	this.docRefs = null;
 	this.index = null;
 	this.wasUsedActively = false;
@@ -52,7 +54,7 @@ OO.inheritClass( ve.ui.MWReferenceSearchWidget, OO.ui.SearchWidget );
  * User chose a ref for reuse
  *
  * @event ve.ui.MWReferenceSearchWidget#reuse
- * @param {MWReferenceModel} ref
+ * @param {ve.dm.MWReferenceModel} ref
  */
 
 /* Methods */
@@ -62,13 +64,19 @@ ve.ui.MWReferenceSearchWidget.prototype.onQueryChange = function () {
 	ve.ui.MWReferenceSearchWidget.super.prototype.onQueryChange.call( this );
 
 	// Populate
-	this.getResults().addItems( this.buildSearchResults( this.getQuery().getValue() ) );
+	const results = this.getResults();
+	results.addItems( this.buildSearchResults( this.getQuery().getValue() ) );
+	// When there is only 1 search result anyway, highlight it right away
+	if ( results.getItemCount() === 1 ) {
+		results.highlightItem( results.findFirstSelectableItem() );
+	}
 };
 
 /**
  * @param {jQuery.Event} e Key down event
  */
 ve.ui.MWReferenceSearchWidget.prototype.onQueryKeydown = function ( e ) {
+	// When the user tries to tab into the list of search results, highlight the first
 	if ( e.which === OO.ui.Keys.TAB && !e.shiftKey &&
 		!this.results.isEmpty() &&
 		!this.results.findHighlightedItem()
@@ -108,22 +116,12 @@ ve.ui.MWReferenceSearchWidget.prototype.onChoose = function ( item ) {
 /**
  * Set the internal list and check if it contains any references
  *
- * @param {MWDocumentReferences} docRefs handle to all refs in the original document
- */
-ve.ui.MWReferenceSearchWidget.prototype.setDocumentRefs = function ( docRefs ) {
-	this.results.unselectItem();
-
-	this.docRefs = docRefs;
-};
-
-/**
- * Set the internal list and check if it contains any references
- *
- * @deprecated use #setDocumentRefs instead.
  * @param {ve.dm.InternalList} internalList
  */
 ve.ui.MWReferenceSearchWidget.prototype.setInternalList = function ( internalList ) {
-	this.setDocumentRefs( MWDocumentReferences.static.refsForDoc( internalList.getDocument() ) );
+	this.results.unselectItem();
+	this.internalList = internalList;
+	this.docRefs = MWDocumentReferences.static.refsForDoc( internalList.getDocument() );
 };
 
 /**
@@ -139,41 +137,32 @@ ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
  * @return {Object[]}
  */
 ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
-	const groupNames = this.docRefs.getAllGroupNames().sort();
-
-	// FIXME: Temporary hack, to be removed soon
-	// eslint-disable-next-line no-jquery/no-class-state
-	const filterExtends = this.$element.hasClass( 've-ui-citoidInspector-extends' );
+	const listGroups = this.docRefs.getListGroupNames().sort();
 
 	let index = [];
-	for ( let i = 0; i < groupNames.length; i++ ) {
-		const groupName = groupNames[ i ];
-		if ( !groupName.startsWith( 'mwReference/' ) ) {
-			// FIXME: Should be impossible to reach
-			continue;
-		}
-		const groupRefs = this.docRefs.getGroupRefs( groupName );
-		const flatNodes = groupRefs.getAllRefsInReflistOrder()
-			.filter( ( node ) => !filterExtends || !node.getAttribute( 'mainRefKey' ) );
+	for ( const listGroup of listGroups ) {
+		const nodeGroup = this.internalList.getNodeGroup( listGroup );
+		const reflistStructure = Object.values( new ve.dm.MWDataTransitionHelper().buildReflistNumbering( nodeGroup ) )
+			.sort( ve.dm.MWGroupReferences.static.compareAsRefInfos );
 
-		index = index.concat( flatNodes.map( ( node ) => {
-			const listKey = node.getAttribute( 'listKey' );
-			// remove `mwReference/` prefix
-			const group = groupName.slice( 12 );
-			const footnoteNumber = this.docRefs.getIndexLabel( group, listKey );
-			const footnoteLabel = ( group ? group + ' ' : '' ) + footnoteNumber;
+		// TODO: Why not use the original group attribute? Is that outdated after an edit?
+		// remove `mwReference/` prefix
+		const group = listGroup.slice( 12 );
 
-			// Use [\s\S]* instead of .* to catch esoteric whitespace (T263698)
-			const matches = listKey.match( /^literal\/([\s\S]*)$/ );
-			const name = matches && matches[ 1 ] || '';
+		index = index.concat( reflistStructure.map( ( refInfo ) => {
+			const footnoteLabel = ( group + ' ' + refInfo.label ).trim();
+
+			// TODO: Why not use the original name attribute? Is that outdated after an edit?
+			const name = MWReferenceKeyGenerator.extractNameFromListKey( refInfo.internalListKey );
 
 			let $refContent;
 			// Make visible text, footnoteLabel and reference name searchable
-			let refText = footnoteLabel + ' ' + name;
-			const itemNode = groupRefs.getInternalModelNode( listKey );
-			if ( itemNode.length ) {
+			let refText = ( '[' + footnoteLabel + '] ' + name ).trim();
+
+			const itemNode = this.internalList.getItemNode( refInfo.internalListIndex );
+			if ( itemNode && itemNode.getLength() ) {
 				$refContent = new ve.ui.MWPreviewElement( itemNode, { useView: true } ).$element;
-				refText = $refContent.text() + ' ' + refText;
+				refText += ' ' + $refContent.text();
 				// Make URLs searchable
 				$refContent.find( 'a[href]' ).each( ( _, element ) => {
 					refText += ' ' + element.getAttribute( 'href' );
@@ -184,11 +173,20 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchIndex = function () {
 					.text( ve.msg( 'cite-ve-referenceslist-missingref-in-list' ) );
 			}
 
+			const refNode = nodeGroup.getFirstNodeByListIndex( refInfo.internalListIndex );
+			const reference = refNode ?
+				MWReferenceModel.static.newFromReferenceNode( refNode ) :
+				MWReferenceModel.static.newFromMainNodeAttributes(
+					this.internalList.getDocument(),
+					listGroup,
+					refInfo.internalListKey,
+					refInfo.internalListIndex
+				);
+
 			return {
 				$refContent,
 				searchableText: refText.toLowerCase(),
-				// TODO: return a simple node
-				reference: MWReferenceModel.static.newFromReferenceNode( node ),
+				reference,
 				footnoteLabel,
 				name
 			};
@@ -218,9 +216,19 @@ ve.ui.MWReferenceSearchWidget.prototype.buildSearchResults = function ( query ) 
 		this.index = this.buildSearchIndex();
 	}
 
+	// Arbitraryly limits the prefix search to something between [1] and [9999]
+	let prefix = /^\S{1,4}$/.test( query ) ? '[' + query + ']' : null;
+
 	this.index.forEach( ( item ) => {
 		if ( item.searchableText.includes( query ) ) {
-			results.push( new MWReferenceResultWidget( { item } ) );
+			const result = new MWReferenceResultWidget( { item } );
+			// Push a perfect prefix match to the very top
+			if ( prefix && item.searchableText.startsWith( prefix ) ) {
+				results.unshift( result );
+				prefix = null;
+			} else {
+				results.push( result );
+			}
 		}
 	} );
 

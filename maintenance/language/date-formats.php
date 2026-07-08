@@ -29,8 +29,7 @@ class DateFormats extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP;
-		foreach ( glob( "$IP/languages/messages/Messages*.php" ) as $filename ) {
+		foreach ( glob( MW_INSTALL_PATH . '/languages/messages/Messages*.php' ) as $filename ) {
 			$base = basename( $filename );
 			$m = [];
 			if ( !preg_match( '/Messages(.*)\.php$/', $base, $m ) ) {

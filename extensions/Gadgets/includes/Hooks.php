@@ -28,7 +28,6 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\Gadgets\Special\SpecialGadgetUsage;
 use MediaWiki\Hook\DeleteUnknownPreferencesHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
-use MediaWiki\Hook\PreferencesGetLegendHook;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
@@ -41,6 +40,7 @@ use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\PreferencesGetLegendHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\Options\UserOptionsLookup;
@@ -53,6 +53,7 @@ use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\WrappedString;
+use Wikimedia\WrappedStringList;
 
 class Hooks implements
 	UserGetDefaultOptionsHook,
@@ -264,7 +265,7 @@ class Hooks implements
 		foreach ( $enabledLegacyGadgets as $id ) {
 			$strings[] = $this->makeLegacyWarning( $id );
 		}
-		$out->addHTML( WrappedString::join( "\n", $strings ) );
+		$out->addHTML( WrappedStringList::join( "\n", $strings ) );
 	}
 
 	/**

@@ -72,23 +72,31 @@ ve.ui.SidebarEditCheckDialog.prototype.onPosition = function () {
 		return;
 	}
 	const surfaceView = this.surface.getView();
-	const surfaceTop = surfaceView.$element.offset().top + 10;
+	const surfaceTop = surfaceView.$element.offset().top + 8;
 	this.currentActions.forEach( ( action ) => {
 		const widget = action.widget;
 		if ( widget ) {
 			let top = Infinity;
-			action.getHighlightSelections().forEach( ( selection ) => {
+			let isNativeCursor = false;
+			action.getHighlightSelections().forEach( ( selection, i ) => {
 				const selectionView = ve.ce.Selection.static.newFromModel( selection, surfaceView );
 				const rect = selectionView.getSelectionBoundingRect();
 				if ( !rect ) {
 					return;
+				}
+				if ( i === 0 && selectionView.isNativeCursor() ) {
+					isNativeCursor = true;
 				}
 				top = Math.min( top, rect.top );
 			} );
 			widget.$element.css( 'margin-top', '' );
 			widget.$element.css(
 				'margin-top',
-				Math.max( 0, top + surfaceTop - widget.$element.offset().top )
+				Math.max( 0,
+					top + surfaceTop - widget.$element.offset().top +
+					// Adjust alignment with text selection highlights
+					( isNativeCursor ? -2 : 0 )
+				)
 			);
 		}
 	} );

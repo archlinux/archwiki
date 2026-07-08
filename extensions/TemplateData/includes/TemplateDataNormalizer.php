@@ -26,6 +26,7 @@ class TemplateDataNormalizer {
 	 */
 	public function normalize( stdClass $data ): void {
 		$data->description ??= null;
+		$data->params ??= (object)[];
 		$data->sets ??= [];
 		$data->maps ??= (object)[];
 		$data->format ??= null;

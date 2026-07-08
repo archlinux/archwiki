@@ -328,7 +328,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		isset( $details['parent'] ) ? $rev->setParentId( $details['parent'] ) : null;
 		isset( $details['page'] ) ? $rev->setPageId( $details['page'] ) : null;
 		isset( $details['size'] ) ? $rev->setSize( $details['size'] ) : null;
-		isset( $details['sha1'] ) ? $rev->setSha1( $details['sha1'] ) : null;
 		isset( $details['comment'] ) ? $rev->setComment( $details['comment'] ) : null;
 		isset( $details['timestamp'] ) ? $rev->setTimestamp( $details['timestamp'] ) : null;
 		isset( $details['minor'] ) ? $rev->setMinorEdit( $details['minor'] ) : null;
@@ -562,16 +561,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 				'timestamp' => '20171117010101',
 				'user' => true,
 				'size' => 123456
-			],
-			new PreconditionException( 'T239717' )
-		];
-		yield 'sha1 mismatch' => [
-			[
-				'slot' => SlotRecord::newUnsaved( SlotRecord::MAIN, new WikitextContent( 'Chicken' ) ),
-				'comment' => self::getRandomCommentStoreComment(),
-				'timestamp' => '20171117010101',
-				'user' => true,
-				'sha1' => 'DEADBEEF',
 			],
 			new PreconditionException( 'T239717' )
 		];
@@ -846,7 +835,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideRevisionByTitle
+	 * @dataProvider provideRevisionByPageReference
 	 *
 	 * @param callable $getTitle
 	 */
@@ -878,6 +867,14 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 				return $testCase->getTestPageTitle()->toPageIdentity();
 			} ]
 		];
+	}
+
+	public static function provideRevisionByPageReference() {
+		$cases = self::provideRevisionByTitle();
+		$cases[] = [ static function ( self $testCase ) {
+			return $testCase->getTestPageTitle()->toPageReference();
+		} ];
+		return $cases;
 	}
 
 	private function executeWithForeignStore( string $dbDomain, callable $callback ) {
@@ -921,7 +918,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function testGetLatestKnownRevision_foreigh() {
+	public function testGetLatestKnownRevision_foreign() {
 		$page = $this->getTestPage();
 		$status = $this->editPage( $page, __METHOD__ );
 		$this->assertStatusGood( $status, 'edited a page' );
@@ -930,7 +927,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->executeWithForeignStore(
 			$dbDomain,
 			function ( RevisionStore $store ) use ( $page, $dbDomain, $revRecord ) {
-				$storeRecord = $store->getKnownCurrentRevision(
+				$storeRecord = $store->getKnownLatestRevision(
 					new PageIdentityValue( $page->getId(), $page->getNamespace(), $page->getDBkey(), $dbDomain )
 				);
 				$this->assertSame( $dbDomain, $storeRecord->getWikiId() );
@@ -993,7 +990,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideRevisionByTitle
+	 * @dataProvider provideRevisionByPageReference
 	 *
 	 * @param callable $getTitle
 	 */
@@ -1042,7 +1039,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			'rev_deleted' => (string)$revRecord->getVisibility(),
 			'rev_len' => (string)$revRecord->getSize(),
 			'rev_parent_id' => (string)$revRecord->getParentId(),
-			'rev_sha1' => (string)$revRecord->getSha1(),
 		];
 
 		if ( in_array( 'page', $options ) ) {
@@ -1370,7 +1366,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			'ar_deleted' => '0',
 			'ar_len' => '78',
 			'ar_parent_id' => '0',
-			'ar_sha1' => 'deadbeef',
 			'ar_comment_text' => 'whatever',
 			'ar_comment_data' => null,
 			'ar_comment_cid' => null,
@@ -1404,7 +1399,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			'ar_deleted' => '0',
 			'ar_len' => '78',
 			'ar_parent_id' => '0',
-			'ar_sha1' => 'deadbeef',
 			'ar_comment_text' => 'whatever',
 			'ar_comment_data' => null,
 			'ar_comment_cid' => null,
@@ -1449,7 +1443,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			'rev_deleted' => '0',
 			'rev_len' => '78',
 			'rev_parent_id' => '0',
-			'rev_sha1' => 'deadbeef',
 			'rev_comment_text' => 'whatever',
 			'rev_comment_data' => null,
 			'rev_comment_cid' => null,
@@ -1469,7 +1462,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $record->getId(), (int)$row->rev_id );
 		$this->assertSame( $record->getPageId(), $row->rev_page );
 		$this->assertSame( $record->getSize(), (int)$row->rev_len );
-		$this->assertSame( $record->getSha1(), $row->rev_sha1 );
 	}
 
 	/**
@@ -1489,7 +1481,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			'ar_deleted' => '0',
 			'ar_len' => '78',
 			'ar_parent_id' => '0',
-			'ar_sha1' => 'deadbeef',
 			'ar_comment_text' => 'whatever',
 			'ar_comment_data' => null,
 			'ar_comment_cid' => null,
@@ -1847,7 +1838,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			__METHOD__ . 'b'
 		)->getNewRevision();
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$storeRecord = $store->getKnownCurrentRevision(
+		$storeRecord = $store->getKnownLatestRevision(
 			$getPageIdentity( $this ),
 			$revRecord->getId()
 		);
@@ -1867,7 +1858,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$rev = $page->newPageUpdater( $user )
 			->setContent( SlotRecord::MAIN, new WikitextContent( __METHOD__ ) )
 			->saveRevision( $summary, EDIT_NEW );
-		return $store->getKnownCurrentRevision( $page->getTitle(), $rev->getId() );
+		return $store->getKnownLatestRevision( $page->getTitle(), $rev->getId() );
 	}
 
 	public function testGetKnownCurrentRevision_userNameChange() {
@@ -1894,7 +1885,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			->execute();
 
 		// Reload the revision and regrab the user name.
-		$revAfter = $store->getKnownCurrentRevision( $page->getTitle(), $rev->getId() );
+		$revAfter = $store->getKnownLatestRevision( $page->getTitle(), $rev->getId() );
 		$userNameAfter = $revAfter->getUser()->getName();
 
 		// The two user names should be different.
@@ -1914,7 +1905,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$title = $page->getTitle();
 		$title->resetArticleID( 886655 );
 
-		$result = $store->getKnownCurrentRevision( $title, $rev->getId() );
+		$result = $store->getKnownLatestRevision( $title, $rev->getId() );
 
 		$this->assertSame( $rev->getPageId(), $result->getPageId() );
 	}
@@ -1926,7 +1917,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 		// Get title of another page
 		$title = $this->getExistingTestPage( __FUNCTION__ )->getTitle();
-		$result = $store->getKnownCurrentRevision( $title, $rev->getId() );
+		$result = $store->getKnownLatestRevision( $title, $rev->getId() );
 
 		$this->assertSame( $rev->getPageId(), $result->getPageId() );
 		$this->assertTrue( $rev->getPage()->isSamePageAs( $result->getPage() ) );
@@ -1949,7 +1940,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			->execute();
 
 		// Reload the revision and regrab the visibility flag.
-		$revAfter = $store->getKnownCurrentRevision( $page->getTitle(), $rev->getId() );
+		$revAfter = $store->getKnownLatestRevision( $page->getTitle(), $rev->getId() );
 		$deletedAfter = $revAfter->getVisibility();
 
 		// The two deleted flags should be different.
@@ -2575,6 +2566,105 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$revisionStore->countRevisionsBetween( $page->getId(), $revisions[0],
 				$revisions[$NUM - 1], $MAX ),
 			'The $max is incremented to detect truncation' );
+	}
+
+	public function testCountRevisionsBetweenWithRevisionDeletion() {
+		// Set up database exactly once. This makes the test faster.
+		// Make page_id 1 and rev_id 1
+		$page = $this->getExistingTestPage();
+		$this->assertTrue( $page->exists(), 'Page should exist' );
+		$this->assertSame( 1, $page->getId(), 'Page ID should be 1' );
+		// Make rev_id 2, 3, 4, 5
+		for ( $i = 2; $i <= 5; $i++ ) {
+			$revision = $this->editPage( $page, "Revision " . $i, "Summary " . $i )->getNewRevision();
+			$this->assertSame( $i, $revision->getId(), 'Revision ID should be ' . $i );
+		}
+		// Revision delete rev_id 3
+		$deleteRevId = 3;
+		$revisionStore = $this->getServiceContainer()->getRevisionStore();
+		$revision = $revisionStore->getRevisionById( $deleteRevId );
+		$this->revisionDelete( $revision );
+		$revision = $revisionStore->getRevisionById( $deleteRevId );
+		$this->assertTrue( $revision->isDeleted( RevisionRecord::DELETED_TEXT ), 'Revision 3 is rev deleted' );
+
+		// Get test cases
+		$data = $this->provideCountRevisionsBetweenWithRevisionDeletion();
+
+		// Test
+		foreach ( $data as [ $options, $max, $expectedCount ] ) {
+			// countRevisionsBetween rev_id 1 and rev_id 5
+			$actualCount = $revisionStore->countRevisionsBetween(
+				$page->getId(),
+				$revisionStore->getRevisionById( 1 ), // oldest
+				$revisionStore->getRevisionById( 5 ), // newest
+				$max,
+				$options
+			);
+			$this->assertSame( $expectedCount, $actualCount, 'testCountRevisionsBetween count is correct' );
+		}
+	}
+
+	public static function provideCountRevisionsBetweenWithRevisionDeletion() {
+		// Assume there's page_id 1 and rev_ids 1, 2, 3, 4, 5 for that page.
+		// Rev_id 3 is revision deleted.
+		// TestCountRevisionsBetween counts revisions 1 through 5, with various
+		// options and maximums set below.
+		return [
+			// $options is an array
+			'Options array, empty options, no max' => [
+				[], null, 2
+			],
+			'Options array, include oldest, no max' => [
+				[ RevisionStore::INCLUDE_OLD ], null, 3
+			],
+			'Options array, include newest, no max' => [
+				[ RevisionStore::INCLUDE_NEW ], null, 3
+			],
+			'Options array, include oldest and newest, no max' => [
+				[ RevisionStore::INCLUDE_OLD, RevisionStore::INCLUDE_NEW ], null, 4
+			],
+			'Options array, include both, no max' => [
+				[ RevisionStore::INCLUDE_BOTH ], null, 4
+			],
+			'Options array, include both and revision deletions, no max' => [
+				[ RevisionStore::INCLUDE_BOTH, RevisionStore::INCLUDE_DELETED_REVISIONS ], null, 5
+			],
+			'Options array, include both, max 1' => [
+				[ RevisionStore::INCLUDE_BOTH ], 1, 2
+			],
+			'Options array, include both, max 2' => [
+				[ RevisionStore::INCLUDE_BOTH ], 2, 3
+			],
+			'Options array, include both, max 3' => [
+				[ RevisionStore::INCLUDE_BOTH ], 3, 4
+			],
+
+			// $options is a string
+			'Options string, empty options, no max' => [
+				'', null, 2
+			],
+			'Options string, include oldest, no max' => [
+				RevisionStore::INCLUDE_OLD, null, 3
+			],
+			'Options string, include newest, no max' => [
+				RevisionStore::INCLUDE_NEW, null, 3
+			],
+			'Options string, include both, no max' => [
+				RevisionStore::INCLUDE_BOTH, null, 4
+			],
+			'Options string, include both and revision deletions, no max' => [
+				RevisionStore::INCLUDE_DELETED_REVISIONS, null, 3
+			],
+			'Options string, include both, max 1' => [
+				RevisionStore::INCLUDE_BOTH, 1, 2
+			],
+			'Options string, include both, max 2' => [
+				RevisionStore::INCLUDE_BOTH, 2, 3
+			],
+			'Options string, include both, max 3' => [
+				RevisionStore::INCLUDE_BOTH, 3, 4
+			],
+		];
 	}
 
 	public function testAuthorsBetween() {

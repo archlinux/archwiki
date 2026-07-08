@@ -15,6 +15,5 @@
 	"oathauth-ui-no-module": "No se n’ha habilitat cap",
 	"oathauth-module-totp-label": "TOTP (testimoni d’un sol ús)",
 	"oathauth-ui-manage": "Gestiona",
-	"oathmanage": "Gestiona autenticació de doble factor",
-	"oathauth-ui-available-modules": "Mètodes disponibles"
+	"oathmanage": "Gestiona autenticació de doble factor"
 }

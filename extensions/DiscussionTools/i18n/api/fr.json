@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"DreZhsh",
+			"Escargot bleu",
 			"Gomoko",
 			"Graineahumus",
 			"Lofhi",
@@ -51,5 +52,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Vrai pour s’abonner, faux pour se désinscrire",
 	"apihelp-discussiontoolssubscribe-summary": "S’abonner (ou se désinscrire) pour recevoir des notifications sur un sujet.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID du commentaire à remercier.",
-	"apihelp-discussiontoolsthank-summary": "Envoyer publiquement une notification de remerciement pour un commentaire."
+	"apihelp-discussiontoolsthank-summary": "Envoyer publiquement une notification de remerciement pour un commentaire.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Inscrire automatiquement l'utilisateur à toutes les nouvelles discussions créées à la suite de la modification. Si vaut « yes » ou « no », ignore les préférences de l'utilisateur (utilisées par défaut)."
 }

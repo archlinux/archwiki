@@ -105,7 +105,7 @@ class DataAccess extends IDataAccess {
 	}
 
 	/** @inheritDoc */
-	public function getPageInfo( $pageConfigOrTitle, array $titles ): array {
+	public function getPageInfo( $pageConfigOrTitle, array $titles, bool $defaultLinkCaption = false ): array {
 		$contextTitle = $pageConfigOrTitle instanceof PageConfig ?
 			$pageConfigOrTitle->getLinkTarget() : $pageConfigOrTitle;
 
@@ -121,6 +121,7 @@ class DataAccess extends IDataAccess {
 				'prop' => 'info',
 				'inprop' => 'linkclasses',
 				'inlinkcontext' => $pageConfigTitle,
+				'indefaultlinkcaption' => $defaultLinkCaption,
 				'titles' => implode( '|', $batch ),
 			] )['query'];
 			$norm = [];
@@ -409,10 +410,12 @@ class DataAccess extends IDataAccess {
 			$params = [
 				'action' => 'query',
 				'prop' => 'revisions',
-				'rvprop' => 'content',
+				'rvprop' => 'content|ids',
 				'rvslots' => '*',
 				'titles' => $title,
 				'rvlimit' => 1,
+				'redirects' => 1,
+				'formatversion' => 2,
 			];
 
 			$data = $this->api->makeRequest( $params );
@@ -420,12 +423,17 @@ class DataAccess extends IDataAccess {
 			if ( isset( $pageData['missing'] ) ) {
 				return null;
 			} else {
-				$ret = $pageData['revisions'][0]['slots'];
-				// PORT-FIXME set the redirect field if needed
+				$ret = [
+					'data' => $pageData['revisions'][0]['slots'],
+					'revid' => $pageData['revisions'][0]['revid'],
+					'title' => Title::newFromText(
+						$pageData['title'], $this->siteConfig
+					),
+				];
 				$this->setCache( $key, $ret );
 			}
 		}
-		return new MockPageContent( $ret );
+		return new MockPageContent( $ret['data'], $ret['title'], $ret['revid'] );
 	}
 
 	/** @inheritDoc */

@@ -14,6 +14,7 @@ use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers \MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha
@@ -233,8 +234,11 @@ class SimpleCaptchaTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testForceShowCaptcha() {
-		$this->overrideConfigValue( 'CaptchaTriggers', [
-			'edit' => false,
+		$this->overrideConfigValues( [
+			'CaptchaAbuseFilterCaptchaConsequenceTTL' => 300,
+			'CaptchaTriggers' => [
+				'edit' => false,
+			],
 		] );
 		$testObject = new SimpleCaptcha();
 		$this->assertFalse(
@@ -265,12 +269,88 @@ class SimpleCaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideCanSkipCaptchaHook() {
+	public static function provideCanSkipCaptchaHook() {
 		return [
 			[ false, false, false ],
 			[ true, false, false ],
 			[ false, true, true ],
 			[ true, true, true ]
 		];
+	}
+
+	/**
+	 * @dataProvider storesForceShowCaptchaFlagInSessionDataProvider
+	 */
+	public function testStoresForceShowCaptchaFlagInSession(
+		int $expectedExpirationTimestamp,
+		int $currentTimestamp,
+		?int $ttl
+	): void {
+		ConvertibleTimestamp::setFakeTime( $currentTimestamp );
+		$this->overrideConfigValue(
+			'CaptchaAbuseFilterCaptchaConsequenceTTL',
+			$ttl
+		);
+
+		$session = RequestContext::getMain()->getRequest()->getSession();
+		$captcha = new SimpleCaptcha();
+
+		$captcha->setForceShowCaptcha( true );
+
+		$this->assertEquals(
+			$expectedExpirationTimestamp,
+			$session->get(
+				SimpleCaptcha::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY
+			),
+			'The session variable should hold the expiration timestamp'
+		);
+	}
+
+	public static function storesForceShowCaptchaFlagInSessionDataProvider(): array {
+		return [
+			'Configured with a TTL of 1 minute' => [
+				'expectedExpirationTimestamp' => 1750000060,
+				'currentTimestamp' => 1750000000,
+				'ttl' => 60,
+			],
+			'Configured with a TTL of 2 minutes' => [
+				'expectedExpirationTimestamp' => 1750000120,
+				'currentTimestamp' => 1750000000,
+				'ttl' => 120,
+			],
+			'Configured with a TTL of 5 minutes' => [
+				'expectedExpirationTimestamp' => 1750000300,
+				'currentTimestamp' => 1750000000,
+				'ttl' => 300,
+			],
+		];
+	}
+
+	public function testDisablingForceShowCaptchaRemovesSessionVar(): void {
+		ConvertibleTimestamp::setFakeTime( 1750000000 );
+		$this->overrideConfigValue(
+			'CaptchaAbuseFilterCaptchaConsequenceTTL',
+			60
+		);
+
+		$session = RequestContext::getMain()->getRequest()->getSession();
+		$captcha = new SimpleCaptcha();
+		$captcha->setForceShowCaptcha( true );
+
+		$this->assertEquals(
+			1750000060,
+			$session->get(
+				SimpleCaptcha::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY
+			),
+			'The session variable should hold the expiration timestamp'
+		);
+
+		$captcha->setForceShowCaptcha( false );
+		$this->assertFalse(
+			$session->exists(
+				SimpleCaptcha::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY
+			),
+			'The session variable should have been removed'
+		);
 	}
 }

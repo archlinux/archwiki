@@ -9,9 +9,9 @@
  * Abstract base class for dialogs that allow to insert and edit MediaWiki transclusions, i.e. a
  * sequence of one or more template invocations that strictly belong to each other (e.g. because
  * they are unbalanced), possibly mixed with raw wikitext snippets. Currently used for:
- * - {@see ve.ui.MWTransclusionDialog} for arbitrary transclusions. Registered via the name
+ * - {@link ve.ui.MWTransclusionDialog} for arbitrary transclusions. Registered via the name
  *   "transclusion".
- * - {@see ve.ui.MWCitationDialog} in the Cite extension for the predefined citation types from
+ * - {@link ve.ui.MWCitationDialog} in the Cite extension for the predefined citation types from
  *   [[MediaWiki:visualeditor-cite-tool-definition.json]]. These are strictly limited to a single
  *   template invocation. Registered via the name "cite".
  *
@@ -49,7 +49,7 @@ OO.inheritClass( ve.ui.MWTemplateDialog, ve.ui.NodeDialog );
 ve.ui.MWTemplateDialog.static.modelClasses = [ ve.dm.MWTransclusionNode ];
 
 /**
- * Configuration for the {@see ve.ui.MWTwoPaneTransclusionDialogLayout} used in this dialog.
+ * Configuration for the {@link ve.ui.MWTwoPaneTransclusionDialogLayout} used in this dialog.
  *
  * @static
  * @property {Object}
@@ -387,7 +387,7 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 				}
 				const parts = this.transclusionModel.getParts();
 				for ( let i = 0; i < parts.length; i++ ) {
-					// Only {@see ve.dm.MWTemplateModel} have a title
+					// Only {@link ve.dm.MWTemplateModel} have a title
 					const title = parts[ i ].getTitle && parts[ i ].getTitle();
 					if ( title ) {
 						templateEvent.template_names.push( title );
@@ -396,7 +396,7 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 				mw.track( 'event.VisualEditorTemplateDialogUse', templateEvent );
 
 				return modelPromise.then( () => {
-					this.close( { action: action } ).closed.always( this.popPending.bind( this ) );
+					this.close( { action } ).closed.always( this.popPending.bind( this ) );
 				} );
 			} ).always( deferred.resolve );
 

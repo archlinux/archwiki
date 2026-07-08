@@ -16,7 +16,7 @@ ve.ui.MWTransclusionOutlinePlaceholderWidget = function VeUiMWTransclusionOutlin
 	// Parent constructor
 	ve.ui.MWTransclusionOutlinePlaceholderWidget.super.call( this, placeholder, {
 		icon: 'puzzle',
-		label: label
+		label
 	} );
 
 	this.$element.addClass( 've-ui-mwTransclusionOutlinePlaceholderWidget' );

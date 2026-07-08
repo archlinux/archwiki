@@ -1,26 +1,25 @@
 <?php
 
-namespace MediaWiki\CheckUser\HookHandler;
+namespace MediaWiki\Extension\CheckUser\HookHandler;
 
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\Hook\AuthManagerLoginAuthenticateAuditHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\ClientHints\UserAgentClientHintsManagerHelperTrait;
-use MediaWiki\CheckUser\EncryptedData;
-use MediaWiki\CheckUser\Services\CheckUserInsert;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
-use MediaWiki\Hook\EmailUserHook;
-use MediaWiki\Hook\UserLogoutCompleteHook;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\ClientHints\UserAgentClientHintsManagerHelperTrait;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Specials\Hook\EmailUserHook;
+use MediaWiki\Specials\Hook\UserLogoutCompleteHook;
 use MediaWiki\User\Hook\User__mailPasswordInternalHook;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
@@ -47,38 +46,22 @@ class CheckUserPrivateEventsHandler implements
 
 	use UserAgentClientHintsManagerHelperTrait;
 
-	private CheckUserInsert $checkUserInsert;
-	private Config $config;
-	private UserIdentityLookup $userIdentityLookup;
-	private UserFactory $userFactory;
-	private ReadOnlyMode $readOnlyMode;
-	private UserAgentClientHintsManager $userAgentClientHintsManager;
-	private JobQueueGroup $jobQueueGroup;
-	private IConnectionProvider $dbProvider;
-	private LoggerInterface $logger;
+	private readonly LoggerInterface $logger;
 
 	/** @var string Used for tests. Falls back to MW_ENTRY_POINT */
 	private string $mediawikiEntryPoint;
 
 	public function __construct(
-		CheckUserInsert $checkUserInsert,
-		Config $config,
-		UserIdentityLookup $userIdentityLookup,
-		UserFactory $userFactory,
-		ReadOnlyMode $readOnlyMode,
-		UserAgentClientHintsManager $userAgentClientHintsManager,
-		JobQueueGroup $jobQueueGroup,
-		IConnectionProvider $dbProvider,
-		?string $mediawikiEntryPoint = null
+		private readonly CheckUserInsert $checkUserInsert,
+		private readonly Config $config,
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly UserFactory $userFactory,
+		private readonly ReadOnlyMode $readOnlyMode,
+		private readonly UserAgentClientHintsManager $userAgentClientHintsManager,
+		private readonly JobQueueGroup $jobQueueGroup,
+		private readonly IConnectionProvider $dbProvider,
+		?string $mediawikiEntryPoint = null,
 	) {
-		$this->checkUserInsert = $checkUserInsert;
-		$this->config = $config;
-		$this->userIdentityLookup = $userIdentityLookup;
-		$this->userFactory = $userFactory;
-		$this->readOnlyMode = $readOnlyMode;
-		$this->userAgentClientHintsManager = $userAgentClientHintsManager;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->dbProvider = $dbProvider;
 		$this->logger = LoggerFactory::getInstance( 'CheckUser' );
 		$this->mediawikiEntryPoint = $mediawikiEntryPoint ?? MW_ENTRY_POINT;
 	}
@@ -168,12 +151,16 @@ class CheckUserPrivateEventsHandler implements
 				'cupe_log_action' => $autocreated ? 'autocreate-account' : 'create-account',
 			],
 			__METHOD__,
-			$user
+			$user,
+			// T413929
+			silenceReplicaWarnings: true
 		);
 
 		if ( $this->config->get( 'CheckUserClientHintsEnabled' ) ) {
 			$this->storeClientHintsDataFromHeaders(
-				$insertedId, 'privatelog', RequestContext::getMain()->getRequest()
+				$insertedId,
+				'privatelog',
+				RequestContext::getMain()->getRequest()
 			);
 		}
 	}
@@ -189,12 +176,16 @@ class CheckUserPrivateEventsHandler implements
 		$this->checkUserInsert->insertIntoCuLogEventTable(
 			$logEntry,
 			__METHOD__,
-			$user
+			$user,
+			// T413929
+			silenceReplicaWarnings: true
 		);
 
 		if ( $this->config->get( 'CheckUserClientHintsEnabled' ) ) {
 			$this->storeClientHintsDataFromHeaders(
-				$logEntry->getId(), 'log', RequestContext::getMain()->getRequest()
+				$logEntry->getId(),
+				'log',
+				RequestContext::getMain()->getRequest()
 			);
 		}
 	}
@@ -222,16 +213,20 @@ class CheckUserPrivateEventsHandler implements
 
 		if ( $this->config->get( 'CheckUserClientHintsEnabled' ) ) {
 			RequestContext::getMain()->getOutput()->addJsConfigVars(
-				'wgCheckUserClientHintsPrivateEventId', $insertedId
+				'wgCheckUserClientHintsPrivateEventId',
+				$insertedId
+			);
+			$this->storeHeaderOnlyClientHintsData(
+				$insertedId,
+				'privatelog',
+				RequestContext::getMain()->getRequest()
 			);
 		}
 	}
 
 	/**
-	 * Creates a private checkuser event when an email is sent. This also stores:
-	 * * A hash of the recipient of the email
-	 * * If $wgCUPublicKey is valid, the "private" column will contain the recipient of the email
-	 *   in an encrypted form.
+	 * Creates a private checkuser event when an email is sent.
+	 * This also stores a hash of the recipient of the email
 	 *
 	 * Uses a deferred update to save the event, because emails can be sent from code paths
 	 * that don't open master connections.
@@ -244,7 +239,7 @@ class CheckUserPrivateEventsHandler implements
 	 * @inheritDoc
 	 */
 	public function onEmailUser( &$to, &$from, &$subject, &$text, &$error ) {
-		if ( !$this->config->get( 'SecretKey' ) || $from->name === $to->name ) {
+		if ( !$this->config->get( MainConfigNames::SecretKey ) || $from->name === $to->name ) {
 			return;
 		}
 
@@ -259,7 +254,7 @@ class CheckUserPrivateEventsHandler implements
 			return;
 		}
 
-		$hash = md5( $userTo->getEmail() . $userTo->getId() . $this->config->get( 'SecretKey' ) );
+		$hash = md5( $userTo->getEmail() . $userTo->getId() . $this->config->get( MainConfigNames::SecretKey ) );
 
 		// Define the title as the userpage of the user who sent the email. The user
 		// who receives the email is private information, so cannot be used.
@@ -269,16 +264,17 @@ class CheckUserPrivateEventsHandler implements
 			'cupe_log_action' => 'email-sent',
 			'cupe_params' => LogEntryBase::makeParamBlob( [ '4::hash' => $hash ] ),
 		];
-		if ( trim( $this->config->get( 'CUPublicKey' ) ) !== '' ) {
-			$privateData = $userTo->getEmail() . ":" . $userTo->getId();
-			$encryptedData = new EncryptedData( $privateData, $this->config->get( 'CUPublicKey' ) );
-			$cuPrivateRow['cupe_private'] = serialize( $encryptedData );
-		}
 		$insertedId = $this->checkUserInsert->insertIntoCuPrivateEventTable( $cuPrivateRow, __METHOD__, $userFrom );
 
 		if ( $this->config->get( 'CheckUserClientHintsEnabled' ) ) {
 			RequestContext::getMain()->getOutput()->addJsConfigVars(
-				'wgCheckUserClientHintsPrivateEventId', $insertedId
+				'wgCheckUserClientHintsPrivateEventId',
+				$insertedId
+			);
+			$this->storeHeaderOnlyClientHintsData(
+				$insertedId,
+				'privatelog',
+				RequestContext::getMain()->getRequest()
 			);
 		}
 	}
@@ -292,7 +288,7 @@ class CheckUserPrivateEventsHandler implements
 	 * @inheritDoc
 	 */
 	public function onAuthManagerLoginAuthenticateAudit( $ret, $user, $username, $extraData ) {
-		if ( !$this->config->get( 'CheckUserLogLogins' ) ) {
+		if ( !$this->config->get( 'CheckUserLogLogins' ) || $this->readOnlyMode->isReadOnly() ) {
 			return;
 		}
 
@@ -387,8 +383,10 @@ class CheckUserPrivateEventsHandler implements
 			// If the login attempt was not successful, then ask for client hints data via the API on the next
 			// page load as we can collect it easily as the Special:UserLogin page is loaded to show the error.
 			$context->getOutput()->addJsConfigVars(
-				'wgCheckUserClientHintsPrivateEventId', $insertedId
+				'wgCheckUserClientHintsPrivateEventId',
+				$insertedId
 			);
+			$this->storeHeaderOnlyClientHintsData( $insertedId, 'privatelog', $context->getRequest() );
 		} else {
 			// If the login attempt was a success, then we cannot use the API to collect the data due to redirects
 			// that are performed as part of the login process. Instead, we should settle with the data sent to us
@@ -437,6 +435,12 @@ class CheckUserPrivateEventsHandler implements
 				// Otherwise, we are here via a call to ApiLogout, most
 				// likely from a user click to a logout link in the personal tools menu
 				try {
+					$this->storeHeaderOnlyClientHintsData(
+						$insertedId,
+						'privatelog',
+						RequestContext::getMain()->getRequest()
+					);
+
 					$values = RequestContext::getMain()->getRequest()->getValues();
 					$data = json_decode( $values['checkuserclienthints'] ?? '', true );
 					if ( !is_array( $data ) ) {

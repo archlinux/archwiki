@@ -22,7 +22,7 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:MinervaNeue",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"config": {
 		"MinervaDonateBanner": {
@@ -73,6 +73,7 @@
 		"MinervaPersonalMenu": {
 			"value": {
 				"base": false,
+				"loggedin": true,
 				"amc": true
 			}
 		},
@@ -138,17 +139,18 @@
 				"NamespaceInfo",
 				"RevisionLookup",
 				"UserIdentityUtils",
-				"UserOptionsManager"
+				"UserOptionsManager",
+				"ExtensionRegistry"
 			],
 			"optional_services": [
-				"Vector.ConfigHelper"
+				"Vector.ConfigHelper",
+				"TestKitchen.ExperimentManager"
 			],
 			"args": [
 				{
 					"name": "minerva",
 					"templateDirectory": "includes/Skins",
 					"templateSectionLinks": "SectionLinks",
-					"tempUserBanner": true,
 					"wrapSiteNotice": true,
 					"scripts": [
 						"skins.minerva.scripts"
@@ -176,8 +178,14 @@
 						"skin-minerva-donate-banner-reduced-motion"
 					],
 					"menus": [
+						"actions",
+						"associated-pages",
+						"dock-bottom",
+						"languages",
 						"notifications",
-						"associated-pages"
+						"user-menu",
+						"variants",
+						"views"
 					],
 					"clientPrefEnabled": true,
 					"responsive": true,
@@ -331,9 +339,6 @@
 			],
 			"mobile.special.pagefeed.styles": [
 				"skinStyles/mobile.special.pagefeed.styles.less"
-			],
-			"+ext.CodeMirror.v6.visualEditor": [
-				"skinStyles/ext.visualEditor.codeMirror.less"
 			]
 		}
 	},
@@ -409,6 +414,7 @@
 				"userAvatarOutline",
 				"userTalk",
 				"userAvatar",
+				"userTemporary",
 				"userTemporaryLocation",
 				"userAdd",
 				"userGroup"

@@ -2,16 +2,17 @@
 
 namespace MediaWiki\Permissions;
 
-use MediaWiki\Cache\CacheKeyHelper;
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Deferred\LinksUpdate\ImageLinksTable;
+use MediaWiki\Deferred\LinksUpdate\LinksTable;
 use MediaWiki\Deferred\LinksUpdate\TemplateLinksTable;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\CacheKeyHelper;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
@@ -36,6 +37,7 @@ class RestrictionStore {
 		MainConfigNames::RestrictionLevels,
 		MainConfigNames::RestrictionTypes,
 		MainConfigNames::SemiprotectedRestrictionLevels,
+		MainConfigNames::VirtualDomainsMapping,
 	];
 
 	private ServiceOptions $options;
@@ -147,10 +149,10 @@ class RestrictionStore {
 	 *
 	 * @param PageIdentity $page Must be local
 	 * @return ?array Null if no restrictions. Otherwise an array with the following keys:
-	 *     - user: user id
-	 *     - expiry: 14-digit timestamp or 'infinity'
-	 *     - permission: string (pt_create_perm)
-	 *     - reason: string
+	 *   - user: user id
+	 *   - expiry: 14-digit timestamp or 'infinity'
+	 *   - permission: string (pt_create_perm)
+	 *   - reason: string
 	 */
 	public function getCreateProtection( PageIdentity $page ): ?array {
 		$page->assertWiki( PageIdentity::LOCAL );
@@ -263,7 +265,9 @@ class RestrictionStore {
 	public function isCascadeProtected( PageIdentity $page ): bool {
 		$page->assertWiki( PageIdentity::LOCAL );
 
-		return $this->getCascadeProtectionSourcesInternal( $page )[0] !== [];
+		return $this->shouldUseVirtualDomains()
+			? $this->getCascadeProtectionSourcesInternal( $page )[0] !== []
+			: $this->getCascadeProtectionSourcesInternalJoined( $page )[0] !== [];
 	}
 
 	/**
@@ -369,7 +373,7 @@ class RestrictionStore {
 					$rows = [];
 				} else {
 					$rows = $this->wanCache->getWithSetCallback(
-						// Page protections always leave a new null revision
+						// Page protections always leave a new dummy revision
 						$this->wanCache->makeKey( 'page-restrictions', 'v1', $id, $latestRev ),
 						$this->wanCache::TTL_DAY,
 						function ( $curValue, &$ttl, array &$setOpts ) use ( $loadRestrictionsFromDb ) {
@@ -521,18 +525,25 @@ class RestrictionStore {
 	 *   third and fourth elements of this array, which may be empty.
 	 *   Second is an array like that returned by getAllRestrictions().
 	 *   Third is an array of PageIdentity objects of the pages from
-	 *   which cascading restrictions have come, orginating via templatelinks, which may be empty.
+	 *   which cascading restrictions have come, originating via templatelinks, which may be empty.
 	 *   Fourth is an array of PageIdentity objects of the pages from
 	 *   which cascading restrictions have come, orginating via imagelinks, which may be empty.
 	 */
 	public function getCascadeProtectionSources( PageIdentity $page ): array {
 		$page->assertWiki( PageIdentity::LOCAL );
 
-		return $this->getCascadeProtectionSourcesInternal( $page );
+		return $this->shouldUseVirtualDomains()
+			? $this->getCascadeProtectionSourcesInternal( $page )
+			: $this->getCascadeProtectionSourcesInternalJoined( $page );
 	}
 
 	/**
-	 * Cascading protection: Get the source of any cascading restrictions on this page.
+	 * Cascading protection: Get the source of any cascading restrictions on this page
+	 * using separate queries for page restrictions and link lookups.
+	 *
+	 * This is used when virtual domains are in use (shouldUseVirtualDomains() returns true).
+	 * When virtual domains are not in use, getCascadeProtectionSourcesInternalJoined()
+	 * uses a single query with joins instead.
 	 *
 	 * @param PageIdentity $page Must be local
 	 * @return array[] Same as getCascadeProtectionSources().
@@ -551,6 +562,7 @@ class RestrictionStore {
 		}
 
 		$dbr = $this->loadBalancerFactory->getReplicaDatabase();
+		$now = wfTimestampNow();
 
 		$cascadeRestrictions = $dbr->newSelectQueryBuilder()
 			->select( [
@@ -571,41 +583,174 @@ class RestrictionStore {
 			return [ [], [], [], [] ];
 		}
 
-		$cascadePageIds = [];
-		$restrictionData = [];
+		$restrictionsByPage = [];
 		foreach ( $cascadeRestrictions as $row ) {
-			// We only set pr_cascade=1 if pr_type='edit'. There may be old rows with pr_cascade=1
-			// but a different pr_type. Ignore those so there's only one row per page (T409743).
-			if ( $row->pr_type !== 'edit' ) {
-				continue;
+			$expiry = $dbr->decodeExpiry( $row->pr_expiry );
+			if ( $expiry > $now ) {
+				if ( !isset( $restrictionsByPage[$row->pr_page] ) ) {
+					$restrictionsByPage[$row->pr_page] = [
+						'title' => PageIdentityValue::localIdentity(
+							(int)$row->pr_page,
+							(int)$row->page_namespace,
+							$row->page_title
+						),
+						'restrictions' => [
+							$row->pr_type => $row->pr_level
+						]
+					];
+				} else {
+					$restrictionsByPage[$row->pr_page]['restrictions'][$row->pr_type] = $row->pr_level;
+				}
 			}
-			$cascadePageIds[] = (int)$row->pr_page;
-			$restrictionData[$row->pr_page] = $row;
 		}
+
+		if ( $restrictionsByPage === [] ) {
+			return [ [], [], [], [] ];
+		}
+
+		$title = TitleValue::newFromPage( $page );
 
 		$templateLinksDb = $this->loadBalancerFactory->getReplicaDatabase( TemplateLinksTable::VIRTUAL_DOMAIN );
 		$templateLinks = $templateLinksDb->newSelectQueryBuilder()
 			->select( 'tl_from' )
 			->from( 'templatelinks' )
-			->where( [ 'tl_from' => $cascadePageIds ] )
-			->andWhere( $this->linksMigration->getLinksConditions( 'templatelinks', TitleValue::newFromPage( $page ) ) )
+			->where( [ 'tl_from' => array_keys( $restrictionsByPage ) ] )
+			->andWhere( $this->linksMigration->getLinksConditions( 'templatelinks', $title ) )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
 		$tlSources = [];
 		$ilSources = [];
 		$pageRestrictions = [];
-		$now = wfTimestampNow();
 
 		foreach ( $templateLinks as $link ) {
-			$row = $restrictionData[$link->tl_from];
-			$expiry = $templateLinksDb->decodeExpiry( $row->pr_expiry );
+			$pageData = $restrictionsByPage[$link->tl_from];
+			$tlSources[$link->tl_from] = $pageData['title'];
+			foreach ( $pageData['restrictions'] as $type => $level ) {
+				if ( !isset( $pageRestrictions[$type] ) ) {
+					$pageRestrictions[$type] = [];
+				}
+
+				if ( !in_array( $level, $pageRestrictions[$type] ) ) {
+					$pageRestrictions[$type][] = $level;
+				}
+			}
+		}
+
+		if ( $page->getNamespace() === NS_FILE ) {
+			$imageLinksDb = $this->loadBalancerFactory->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN );
+			$imageLinks = $imageLinksDb->newSelectQueryBuilder()
+				->select( 'il_from' )
+				->from( 'imagelinks' )
+				->where( [ 'il_from' => array_keys( $restrictionsByPage ) ] )
+				->andWhere( $this->linksMigration->getLinksConditions( 'imagelinks', $title ) )
+				->caller( __METHOD__ )
+				->fetchResultSet();
+
+			foreach ( $imageLinks as $link ) {
+				$pageData = $restrictionsByPage[$link->il_from];
+				$ilSources[$link->il_from] = $pageData['title'];
+				foreach ( $pageData['restrictions'] as $type => $level ) {
+					if ( !isset( $pageRestrictions[$type] ) ) {
+						$pageRestrictions[$type] = [];
+					}
+
+					if ( !in_array( $level, $pageRestrictions[$type] ) ) {
+						$pageRestrictions[$type][] = $level;
+					}
+				}
+			}
+		}
+
+		$sources = array_replace( $tlSources, $ilSources );
+
+		$cacheEntry['cascade_sources'] = [ $sources, $pageRestrictions, $tlSources, $ilSources ];
+
+		return $cacheEntry['cascade_sources'];
+	}
+
+	/**
+	 * Cascading protection: Get the source of any cascading restrictions on this page
+	 * using a single query with joins between page_restrictions and the link tables.
+	 *
+	 * This is used when virtual domains are not in use (shouldUseVirtualDomains() returns false).
+	 * When virtual domains are in use, getCascadeProtectionSourcesInternal() is used instead,
+	 * which performs separate queries.
+	 *
+	 * @param PageIdentity $page Must be local
+	 * @return array[] Same as getCascadeProtectionSources().
+	 */
+	private function getCascadeProtectionSourcesInternalJoined( PageIdentity $page ): array {
+		if ( !$page->canExist() ) {
+			return [ [], [], [], [] ];
+		}
+
+		$cacheEntry = &$this->cache[CacheKeyHelper::getKeyForPage( $page )];
+
+		if ( isset( $cacheEntry['cascade_sources'] ) ) {
+			return $cacheEntry['cascade_sources'];
+		}
+
+		$title = TitleValue::newFromPage( $page );
+
+		$dbr = $this->loadBalancerFactory->getReplicaDatabase();
+		$baseQuery = $dbr->newSelectQueryBuilder()
+			->select( [
+				'pr_expiry',
+				'pr_page',
+				'page_namespace',
+				'page_title',
+				'pr_type',
+				'pr_level'
+			] )
+			->from( 'page_restrictions' )
+			->join( 'page', null, 'page_id=pr_page' )
+			->where( [ 'pr_cascade' => 1 ] );
+
+		$templateQuery = clone $baseQuery;
+		$templateQuery->join( 'templatelinks', null, 'tl_from=pr_page' )
+			->fields( [ 'type' => $dbr->addQuotes( 'tl' ) ] )
+			->andWhere( $this->linksMigration->getLinksConditions( 'templatelinks', $title ) );
+
+		if ( $page->getNamespace() === NS_FILE ) {
+			$imageQuery = clone $baseQuery;
+			$imageQuery->join( 'imagelinks', null, 'il_from=pr_page' )
+				->fields( [ 'type' => $dbr->addQuotes( 'il' ) ] )
+				->andWhere( $this->linksMigration->getLinksConditions( 'imagelinks', $title ) );
+
+			$unionQuery = $dbr->newUnionQueryBuilder()
+				->add( $imageQuery )
+				->add( $templateQuery )
+				->all();
+			$res = $unionQuery->caller( __METHOD__ )->fetchResultSet();
+		} else {
+			$res = $templateQuery->caller( __METHOD__ )->fetchResultSet();
+		}
+
+		$tlSources = [];
+		$ilSources = [];
+		$pageRestrictions = [];
+		$now = wfTimestampNow();
+
+		foreach ( $res as $row ) {
+			$expiry = $dbr->decodeExpiry( $row->pr_expiry );
 			if ( $expiry > $now ) {
-				$tlSources[$row->pr_page] = PageIdentityValue::localIdentity(
-					(int)$row->pr_page,
-					(int)$row->page_namespace,
-					$row->page_title
-				);
+				if ( $row->type === 'il' ) {
+					$ilSources[$row->pr_page] = PageIdentityValue::localIdentity(
+						(int)$row->pr_page,
+						(int)$row->page_namespace,
+						$row->page_title
+					);
+				} elseif ( $row->type === 'tl' ) {
+					$tlSources[$row->pr_page] = PageIdentityValue::localIdentity(
+						(int)$row->pr_page,
+						(int)$row->page_namespace,
+						$row->page_title
+					);
+				}
+
+				// Add groups needed for each restriction type if its not already there
+				// Make sure this restriction type still exists
 
 				if ( !isset( $pageRestrictions[$row->pr_type] ) ) {
 					$pageRestrictions[$row->pr_type] = [];
@@ -617,43 +762,30 @@ class RestrictionStore {
 			}
 		}
 
-		if ( $page->getNamespace() === NS_FILE ) {
-			$imageLinksDb = $this->loadBalancerFactory->getReplicaDatabase( ImageLinksTable::VIRTUAL_DOMAIN );
-			$imageLinks = $imageLinksDb->newSelectQueryBuilder()
-				->select( 'il_from' )
-				->from( 'imagelinks' )
-				->where( [
-					'il_from' => $cascadePageIds,
-					'il_to' => $page->getDBkey()
-				] )
-				->caller( __METHOD__ )
-				->fetchResultSet();
-
-			foreach ( $imageLinks as $link ) {
-				$row = $restrictionData[$link->il_from];
-				$expiry = $imageLinksDb->decodeExpiry( $row->pr_expiry );
-				if ( $expiry > $now ) {
-					$ilSources[$row->pr_page] = PageIdentityValue::localIdentity(
-						(int)$row->pr_page,
-						(int)$row->page_namespace,
-						$row->page_title
-					);
-
-					if ( !isset( $pageRestrictions[$row->pr_type] ) ) {
-						$pageRestrictions[$row->pr_type] = [];
-					}
-					if ( !in_array( $row->pr_level, $pageRestrictions[$row->pr_type] ) ) {
-						$pageRestrictions[$row->pr_type][] = $row->pr_level;
-					}
-				}
-			}
-		}
-
 		$sources = array_replace( $tlSources, $ilSources );
 
 		$cacheEntry['cascade_sources'] = [ $sources, $pageRestrictions, $tlSources, $ilSources ];
 
 		return $cacheEntry['cascade_sources'];
+	}
+
+	/**
+	 * Determines if cascade protection checks should use virtual database domains.
+	 *
+	 * Virtual database domains allow separating templatelinks and imagelinks data
+	 * into different database clusters for scalability.
+	 *
+	 * When virtual domains are enabled, cascade protection queries will use
+	 * separate database connections for templatelinks and imagelinks lookups.
+	 * When disabled, a single query with joins is used instead.
+	 *
+	 * See T408801.
+	 *
+	 * @return bool True if virtual domains should be used
+	 */
+	private function shouldUseVirtualDomains(): bool {
+		$virtualDomains = $this->options->get( MainConfigNames::VirtualDomainsMapping );
+		return isset( $virtualDomains[LinksTable::VIRTUAL_DOMAIN] );
 	}
 
 	/**

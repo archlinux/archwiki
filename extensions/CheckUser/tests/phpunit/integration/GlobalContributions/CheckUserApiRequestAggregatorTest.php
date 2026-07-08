@@ -1,23 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\GlobalContributions;
 
 use LogicException;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Site\MediaWikiSite;
 use MediaWiki\Site\SiteLookup;
 use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\WikiMap\WikiMap;
 use MediaWikiIntegrationTestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Wikimedia\Http\MultiHttpClient;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserApiRequestAggregator
  * @group CheckUser
  * @group Database
  */
@@ -31,7 +31,9 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 		$this->externalWiki = 'otherwiki';
 	}
 
-	private function getMockHttpRequestFactory( int $authMode = CheckUserApiRequestAggregator::AUTHENTICATE_NONE ) {
+	private function getMockHttpRequestFactory(
+		int $authMode = CheckUserApiRequestAggregator::AUTHENTICATE_NONE
+	): HttpRequestFactory {
 		$multiHttpClient = $this->createMock( MultiHttpClient::class );
 		$multiHttpClient->method( 'runMulti' )
 			->willReturnCallback( function ( array $reqs ) use ( $authMode ): array {
@@ -73,7 +75,7 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 		return $httpRequestFactory;
 	}
 
-	private function getMockSiteLookup() {
+	private function getMockSiteLookup(): SiteLookup {
 		$site = $this->createMock( MediaWikiSite::class );
 		$site->method( 'getFileUrl' )
 			->willReturn( 'test' );
@@ -97,7 +99,7 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( CentralIdLookup::class ),
 			$this->getServiceContainer()->getExtensionRegistry(),
 			$this->getMockSiteLookup(),
-			$this->createMock( LoggerInterface::class )
+			new NullLogger()
 		);
 
 		$results = $apiRequestAggregator->execute(
@@ -130,7 +132,7 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getCentralIdLookup(),
 			$this->getServiceContainer()->getExtensionRegistry(),
 			$this->getMockSiteLookup(),
-			$this->createMock( LoggerInterface::class )
+			new NullLogger()
 		);
 
 		$results = $apiRequestAggregator->execute(
@@ -158,7 +160,7 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( CentralIdLookup::class ),
 			$this->getServiceContainer()->getExtensionRegistry(),
 			$this->getMockSiteLookup(),
-			$this->createMock( LoggerInterface::class )
+			new NullLogger()
 		);
 
 		$results = $apiRequestAggregator->execute(
@@ -186,7 +188,7 @@ class CheckUserApiRequestAggregatorTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( CentralIdLookup::class ),
 			$this->getServiceContainer()->getExtensionRegistry(),
 			$this->createMock( SiteLookup::class ),
-			$this->createMock( LoggerInterface::class )
+			new NullLogger()
 		);
 
 		$results = $apiRequestAggregator->execute(

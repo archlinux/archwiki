@@ -33,7 +33,7 @@ class TitleDefTest extends TypeDefIntegrationTestCase {
 	) {
 		if ( $this->dataName() === 'must exist (success)' ) {
 			$status = $this->editPage( Title::makeTitle( NS_MAIN, 'Exists' ), 'exists' );
-			$this->assertTrue( $status->isOK() );
+			$this->assertStatusOK( $status );
 		}
 		parent::testValidate( $value, $expect, $settings, $options, $expectConds );
 	}

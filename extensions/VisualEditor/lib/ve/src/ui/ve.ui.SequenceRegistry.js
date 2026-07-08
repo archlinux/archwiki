@@ -40,8 +40,7 @@ ve.ui.SequenceRegistry.prototype.register = function ( sequence ) {
 /**
  * Matching sequence and corresponding range
  *
- * @typedef {Object} Match
- * @memberof ve.ui.SequenceRegistry
+ * @typedef {Object} ve.ui.SequenceRegistry.Match
  * @property {ve.ui.Sequence} sequence
  * @property {ve.Range} range
  */
@@ -94,10 +93,7 @@ ve.ui.SequenceRegistry.prototype.findMatching = function ( data, offset, isPaste
 		}
 		const range = sequence.match( data, offset, plaintext );
 		if ( range !== null ) {
-			sequences.push( {
-				sequence: sequence,
-				range: range
-			} );
+			sequences.push( { sequence, range } );
 		}
 	}
 	return sequences;

@@ -1,7 +1,27 @@
-const ProgressIndicatorWidget = require( './ProgressIndicatorWidget.js' );
-const ErrorWidget = require( './ErrorWidget.js' );
-const wiki = mw.config.get( 'wgDBname' );
-const { loadHCaptcha, executeHCaptcha, mapErrorCodeToMessageKey } = require( './utils.js' );
+const utils = require( './utils.js' );
+
+/**
+ * If set, makes the next call to isSaveRequest() to return true unconditionally.
+ *
+ * This gets set when the Javascript configuration variable
+ * wgHCaptchaTriggerFormSubmission is set, so the user does not have to manually
+ * resubmit the form after an AbuseFilter consequence.
+ *
+ * @type {boolean}
+ */
+let editFormForceIsSaveRequest = false;
+
+/**
+ * Holds a Promise that resolves once the call to render the captcha resolves,
+ * or null if setupHCaptcha() has not been called yet.
+ *
+ * When this Promise resolves, hCaptcha is already set up and would intercept
+ * form submissions. Therefore, at that point it is safe to trigger a form
+ * submission programmatically.
+ *
+ * @type {?Promise<string>}
+ */
+let captchaIdPromise = null;
 
 /**
  * Load hCaptcha in Secure Enclave mode.
@@ -14,51 +34,67 @@ const { loadHCaptcha, executeHCaptcha, mapErrorCodeToMessageKey } = require( './
  * or after the first time the user attempts to submit the form and hCaptcha finishes running.
  */
 async function setupHCaptcha( $form, $hCaptchaField, win, interfaceName ) {
-	const loadingIndicator = new ProgressIndicatorWidget(
-		mw.msg( 'hcaptcha-loading-indicator-label' )
-	);
-	loadingIndicator.$element.addClass( 'ext-confirmEdit-hCaptchaLoadingIndicator' );
-	loadingIndicator.$element.hide();
-
-	const errorWidget = new ErrorWidget();
-
-	$hCaptchaField.after( loadingIndicator.$element, errorWidget.$element );
-
-	const hCaptchaLoaded = loadHCaptcha( win, interfaceName );
-
-	// Errors that can be recovered from by restarting the workflow.
-	const recoverableErrors = [
-		'challenge-closed',
-		'challenge-expired'
-	];
-
-	/**
-	 * Fires when a visible challenge is displayed.
-	 */
-	const onOpen = function () {
-		mw.track( 'stats.mediawiki_confirmedit_hcaptcha_open_callback_total', 1, {
-			wiki: wiki
-		} );
-		// Fire an event that can be used in WikimediaEvents for associating
-		// challenge opens with a user.
-		mw.track( 'confirmEdit.hCaptchaRenderCallback', 'open', interfaceName );
+	const setSubmitButtonDisabledProp = ( disabled ) => {
+		if ( interfaceName === 'edit' ) {
+			// On wikitext editor, use OOUI widget
+			const $wpSaveWidget = $form.find( '#wpSaveWidget' );
+			const saveButtonWidget = OO.ui.infuse( $wpSaveWidget );
+			saveButtonWidget.setDisabled( disabled );
+			return;
+		}
+		// For Special:CreateAccount use disabled attribute
+		$form.find( 'input[type="submit"], button[type="submit"]' ).prop( 'disabled', disabled );
 	};
 
-	const captchaIdPromise = hCaptchaLoaded.then( () => win.hcaptcha.render( 'h-captcha', {
-		'open-callback': onOpen,
-		'close-callback': () => {
-			mw.track( 'confirmEdit.hCaptchaRenderCallback', 'close', interfaceName );
-		},
-		'chalexpired-callback': () => {
-			mw.track( 'confirmEdit.hCaptchaRenderCallback', 'chalexpired', interfaceName );
-		},
-		'expired-callback': () => {
-			mw.track( 'confirmEdit.hCaptchaRenderCallback', 'expired', interfaceName );
-		},
-		'error-callback': () => {
-			mw.track( 'confirmEdit.hCaptchaRenderCallback', 'error', interfaceName );
+	// Errors that can be recovered from by restarting the workflow.
+	const recoverableErrors = utils.getRecoverableErrors( interfaceName );
+
+	captchaIdPromise = utils.loadAndRenderHCaptcha(
+		win,
+		interfaceName,
+		'h-captcha'
+	);
+
+	/**
+	 * Determines if the given form submission is a "save" request.
+	 *
+	 * For the form used for editing a page, the request is considered a
+	 * "save" request if was indeed sent for saving the edit (as opposed to
+	 * requesting a preview or a diff).
+	 *
+	 * Form submissions other than page edits are always considered "save"
+	 * requests.
+	 *
+	 * This is used to determine whether a captcha challenge is required.
+	 *
+	 * @param {Object} event The jQuery form submission event
+	 * @return {boolean}
+	 */
+	const isSaveRequest = ( event ) => {
+		if ( editFormForceIsSaveRequest ) {
+			editFormForceIsSaveRequest = false;
+
+			return true;
 		}
-	} ) );
+
+		let result = true;
+
+		if ( $form.attr( 'id' ) === 'editform' ) {
+			result = false;
+
+			let originalEvent = event;
+
+			if ( Object.hasOwnProperty.call( event, 'originalEvent' ) ) {
+				originalEvent = event.originalEvent;
+			}
+
+			if ( typeof originalEvent.submitter === 'object' ) {
+				result = ( originalEvent.submitter.id === 'wpSave' );
+			}
+		}
+
+		return result;
+	};
 
 	/**
 	 * Trigger a single hCaptcha workflow execution.
@@ -66,39 +102,27 @@ async function setupHCaptcha( $form, $hCaptchaField, win, interfaceName ) {
 	 * @return {Promise<void>} A promise that resolves if hCaptcha failed to initialize,
 	 * or after the first time the user attempts to submit the form and hCaptcha finishes running.
 	 */
-	const executeWorkflow = async function () {
+	const executeWorkflow = function () {
 		$form.off( 'submit.hCaptcha' );
 
 		const formSubmitted = new Promise( ( resolve ) => {
 			$form.on( 'submit.hCaptcha', function ( event ) {
-				event.preventDefault();
+				if ( isSaveRequest( event ) ) {
+					event.preventDefault();
 
-				resolve( this );
+					resolve( this );
+				}
 			} );
 		} );
 
-		/**
-		 * Displays an error returned by attempting to load or execute hCaptcha
-		 * in a user-friendly way
-		 *
-		 * @param {string} error The error as returned by `executeHCaptcha` or `loadHCaptcha`
-		 */
-		const displayErrorInErrorWidget = ( error ) => {
-			// Possible message keys used here:
-			// * hcaptcha-generic-error
-			// * hcaptcha-challenge-closed
-			// * hcaptcha-challenge-expired
-			errorWidget.show( mw.msg( mapErrorCodeToMessageKey( error ) ) );
-		};
-
 		return Promise.all( [ captchaIdPromise, formSubmitted ] )
 			.then( ( [ captchaId, form ] ) => {
-				loadingIndicator.$element.show();
+				utils.hideError( $hCaptchaField );
+				utils.showLoadingIndicator( $hCaptchaField );
+				setSubmitButtonDisabledProp( true );
 
-				return executeHCaptcha( win, captchaId, interfaceName )
+				return utils.executeHCaptcha( win, captchaId, interfaceName )
 					.then( ( response ) => {
-						// Clear out any errors from a previous workflow.
-						errorWidget.hide();
 						// Set the hCaptcha response input field, which does not yet exist
 						$form.append( $( '<input>' )
 							.attr( 'type', 'hidden' )
@@ -106,18 +130,19 @@ async function setupHCaptcha( $form, $hCaptchaField, win, interfaceName ) {
 							.attr( 'id', 'h-captcha-response' )
 							.val( response ) );
 
-						// Hide the loading indicator as we have finished hCaptcha
-						// and are submitting the form
-						loadingIndicator.$element.hide();
+						// Clear out any errors from a previous workflow
+						utils.hideError( $hCaptchaField );
+						utils.hideLoadingIndicator( $hCaptchaField );
+						setSubmitButtonDisabledProp( false );
 
 						mw.hook( 'confirmEdit.hCaptcha.executionSuccess' ).fire( response );
 
 						form.submit();
 					} )
 					.catch( ( error ) => {
-						loadingIndicator.$element.hide();
-
-						displayErrorInErrorWidget( error );
+						utils.showError( $hCaptchaField, error );
+						utils.hideLoadingIndicator( $hCaptchaField );
+						setSubmitButtonDisabledProp( false );
 
 						// Initiate a new workflow for recoverable errors
 						// (e.g. an expired or closed challenge).
@@ -127,7 +152,23 @@ async function setupHCaptcha( $form, $hCaptchaField, win, interfaceName ) {
 					} );
 			} )
 			.catch( ( error ) => {
-				displayErrorInErrorWidget( error );
+				mw.track(
+					'confirmEdit.hCaptchaRenderCallback',
+					'error',
+					interfaceName,
+					// "error" is an hCaptcha error code (for example,
+					// "rate-limited"). The full list of values can be found at
+					// https://docs.hcaptcha.com/configuration/#error-codes
+					error
+				);
+
+				// Note: If we end up reaching this point (caused by an error
+				// obtaining captchaId), the user won't be able to submit the
+				// form anymore since captchaIdPromise and formSubmitted have
+				// already been resolved.
+				utils.showError( $hCaptchaField, error );
+				utils.hideLoadingIndicator( $hCaptchaField );
+				setSubmitButtonDisabledProp( false );
 			} );
 	};
 
@@ -153,17 +194,17 @@ async function useSecureEnclave( win ) {
 		return;
 	}
 
-	// Work our what interface we are loading hCaptcha on, currently only used
-	// for instrumentation purposes
+	// Work out what interface we are loading hCaptcha on
 	let interfaceName = 'unknown';
 	if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'CreateAccount' ) {
 		interfaceName = 'createaccount';
 	}
-	if ( mw.config.get( 'wgAction' ) === 'edit' ) {
+	if ( mw.config.get( 'wgAction' ) === 'edit' || mw.config.get( 'wgAction' ) === 'submit' ) {
 		interfaceName = 'edit';
 	}
 
-	// Load hCaptcha the first time the user interacts with the form.
+	// Load hCaptcha the first time the user interacts with the form, or load it
+	// immediately if wgHCaptchaTriggerFormSubmission is set.
 	return new Promise( ( resolve ) => {
 		const $inputs = $form.find( 'input, textarea' );
 
@@ -183,6 +224,24 @@ async function useSecureEnclave( win ) {
 
 			resolve( setupHCaptcha( $form, $hCaptchaField, win, interfaceName ) );
 		} );
+
+		// If the backend requested to submit the form once the page is loaded,
+		// trigger the setup immediately, wait a bit so it has a chance to load
+		// the SDK, and then trigger the form submission programmatically.
+		if ( mw.config.get( 'wgHCaptchaTriggerFormSubmission' ) ) {
+			editFormForceIsSaveRequest = true;
+
+			// Note setupHCaptcha() is not awaited here since it won't resolve
+			// until the form is submitted, but the submission is triggered
+			// in the next line once loading hCaptcha completes.
+			setupHCaptcha( $form, $hCaptchaField, win, interfaceName );
+
+			// Note that although captchaIdPromise is initialized by the async
+			// function setupHCaptcha, that function does not await any promise
+			// before it does so and, therefore, it is guaranteed that a Promise
+			// is assigned to captchaIdPromise before we call .then() here.
+			captchaIdPromise.then( () => $form.trigger( 'submit' ) );
+		}
 	} );
 }
 

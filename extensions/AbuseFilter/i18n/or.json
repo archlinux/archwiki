@@ -202,7 +202,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "ବଦଳୁଥିବା ମୂଲ୍ୟ ବାଛିବେ (set_var)",
 	"abusefilter-edit-builder-group-vars": "ଚଳ",
 	"abusefilter-edit-builder-vars-timestamp": "Unix ବଦଳ ସମୟ ସନ୍ତକ",
-	"abusefilter-edit-builder-vars-accountname": "ଆକାଉଣ୍ଟ ନାମ",
+	"abusefilter-edit-builder-vars-account-name": "ଆକାଉଣ୍ଟ ନାମ",
 	"abusefilter-edit-builder-vars-action": "କାମ",
 	"abusefilter-edit-builder-vars-addedlines": "ବଦଳାଇବା ବେଳେ ଯୋଡାଯାଇଥିବା ଧାଡିଗୁଡିକ",
 	"abusefilter-edit-builder-vars-delta": "ବଦଳାଇବାରେ ସାଇଜରେ ପରିବର୍ତ୍ତନ୍",

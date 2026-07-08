@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Banjo",
+			"Toliño"
+		]
+	},
+	"oathauth-webauthn-module-label": "Chave de seguranza",
+	"oathauth-webauthn-javascript-required": "Cómpre activar o JavaScript no navegador para usar unha chave de seguranza.",
+	"oathauth-webauthn-ui-login-prompt": "Utiliza a túa chave de seguranza ou sigue as instrucións do navegador.",
+	"oathauth-webauthn-ui-add-key": "Engadir unha chave",
+	"oathauth-webauthn-error-browser-unsupported": "Este navegador non admite a autenticación por chave de seguranza ou non está dispoñible para este sitio web. Inténtao cun navegador diferente. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Máis información]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Este navegador non admite a autenticación por chave de seguranza ou non está dispoñible para este sitio web.",
+	"oathauth-webauthn-error-auth-generic": "Interrompeuse o proceso de autenticación. Inicia o proceso de autenticación de novo.",
+	"oathauth-webauthn-error-reg-generic": "Non se puido verificar a túa chave. Inicia o proceso de rexistro de novo.",
+	"oathauth-webauthn-registered-keys-section-name": "Chaves rexistradas",
+	"oathauth-webauthn-ui-remove-key": "Eliminar",
+	"oathauth-webauthn-error-module-not-enabled": "O módulo «$1» non está habilitado para {{GENDER:$2|o usuario|a usuaria}} «$2».",
+	"oathauth-webauthn-error-verification-failed": "Fallou a verificación de WebAuthn.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Fallou a verificación da chave de acceso.",
+	"oathauth-webauthn-error-credentials-missing": "Non se enviaron as credenciais de WebAuthn.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|O usuario|A usuaria}} «$1» non pode rexistrar unha nova credencial.",
+	"oathauth-webauthn-error-invalid-new-key": "A chave nova que devolveu o módulo non é do tipo necesario.",
+	"oathauth-webauthn-error-registration-failed": "Produciuse un erro ao rexistrar a chave nova.",
+	"oathauth-webauthn-ui-key-register-help": "Escolle un alcume para a túa chave:",
+	"oathauth-webauthn-error-cannot-remove-key": "Non se pode eliminar a chave.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Non se puido recuperar a información de autenticación.",
+	"oathauth-webauthn-add-key-section-name": "Rexistrar unha nova chave de seguranza",
+	"oathauth-webauthn-error-get-reginfo-fail": "Non se puido recuperar a información de rexistro.",
+	"oathauth-webauthn-module-description": "WebAuthn atópase nun estado experimental. Actualmente non ofrece ningunha opción de recuperación para dispositivos de autenticación perdidos ou danados.\n\n[https://en.wikipedia.org/wiki/WebAuthn Máis información sobre WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Recargar a páxina",
+	"oathauth-webauthn-authentication-info-label": "Datos de autenticación",
+	"oathauth-webauthn-authentication-info-help": "Os datos de autenticación pasaron ao cliente para a recuperación das credenciais",
+	"oathauth-webauthn-credential-label": "Credencial do usuario",
+	"oathauth-webauthn-credential-help": "Credencial do usuario baseada nos datos de autenticación",
+	"oathauth-webauthn-add-security-key": "Engadir unha chave de seguranza",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Usar a chave de seguranza ou a chave de acceso"
+}

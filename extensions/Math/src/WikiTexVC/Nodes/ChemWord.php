@@ -5,17 +5,16 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
 use MediaWiki\Extension\Math\WikiTexVC\MMLmappings\TexConstants\TexClass;
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLmtext;
 
 class ChemWord extends TexNode {
-	public TexNode $left;
-	public TexNode $right;
-
-	public function __construct( TexNode $left, TexNode $right ) {
+	public function __construct(
+		private readonly TexNode $left,
+		private readonly TexNode $right,
+	) {
 		parent::__construct( $left, $right );
-		$this->left = $left;
-		$this->right = $right;
 	}
 
 	public function getLeft(): TexNode {
@@ -32,7 +31,7 @@ class ChemWord extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+	public function toMMLTree( array $arguments = [], array &$state = [] ): MMLbase {
 		// If the right has an empty literal value, content is resolved as dash
 		$right = $this->getRight()->getArgs()[0] == ""
 			? "-"

@@ -40,17 +40,34 @@ OO.initClass( mw.editcheck.EditCheckGutterSectionWidget );
 
 /* Methods */
 
+/**
+ * Check if any of the actions in this section are focused
+ *
+ * @return {boolean}
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.isFocused = function () {
 	return this.actions.includes( this.controller.focusedAction );
 };
 
+/**
+ * Get the primary action for this section (the focused one, or the first one)
+ *
+ * @return {mw.editcheck.EditCheckAction}
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.getPrimaryAction = function () {
 	if ( this.controller.focusedAction && this.actions.includes( this.controller.focusedAction ) ) {
 		return this.controller.focusedAction;
 	}
+	const check = this.actions.find( ( action ) => !action.isSuggestion() );
+	if ( check ) {
+		return check;
+	}
 	return this.actions[ 0 ];
 };
 
+/**
+ * Update the rendering of the gutter section
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.update = function () {
 	const action = this.getPrimaryAction();
 
@@ -75,17 +92,18 @@ mw.editcheck.EditCheckGutterSectionWidget.prototype.update = function () {
 		this.actionButton.toggle( true );
 	} else {
 		this.icon.setIcon( mw.editcheck.EditCheckActionWidget.static.iconMap[ action.getType() ] || 'notice' );
+		this.icon.setFlags( action.getType() );
 		this.icon.toggle( true );
 		this.iconLabel.toggle( true );
 		this.actionButton.toggle( false );
-		if ( this.actions.includes( this.controller.focusedAction ) ) {
-			this.icon.setFlags( this.controller.focusedAction.getType() );
-		} else {
-			this.icon.clearFlags();
-		}
 	}
 };
 
+/**
+ * Set the position of the gutter section
+ *
+ * @param {DOMRect|Object} rect DOMRect or DOMRect-like object describing rectangle
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.setPosition = function ( rect ) {
 	this.$element.css( {
 		top: rect.top + 2,
@@ -95,16 +113,19 @@ mw.editcheck.EditCheckGutterSectionWidget.prototype.setPosition = function ( rec
 	this.update();
 };
 
+/**
+ * Handle click events
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.onClick = function () {
 	if ( this.acting ) {
 		return;
 	}
 	const action = this.getPrimaryAction();
-	this.controller.focusAction( action, true );
 	// Should we trigger the popup? By default yes, unless
 	// we're in the onBeforeSave mode where we can assume
 	// something else is handling it.
 	if ( this.controller.inBeforeSave ) {
+		this.controller.focusAction( action, true );
 		return;
 	}
 	// mid-edit
@@ -115,7 +136,7 @@ mw.editcheck.EditCheckGutterSectionWidget.prototype.onClick = function () {
 		const promise = action.check.act( action.gutterQuickAction, action, surface );
 		this.actionButton.setDisabled( true );
 		this.acting = true;
-		promise.then( () => {
+		( promise || ve.createDeferred().resolve().promise() ).always( () => {
 			this.actionButton.setDisabled( false );
 			this.acting = false;
 			controller.updatePositionsDebounced();
@@ -127,33 +148,68 @@ mw.editcheck.EditCheckGutterSectionWidget.prototype.onClick = function () {
 		return;
 	}
 	const currentWindow = surface.getToolbarDialogs( ve.ui.FixedEditCheckDialog.static.position ).getCurrentWindow();
-	if ( !currentWindow || currentWindow.constructor.static.name !== 'fixedEditCheckDialog' ) {
-		this.showDialogWithAction( action );
-	} else if ( this.actions.every( ( sact ) => currentWindow.hasAction( sact ) ) ) {
+	if (
+		currentWindow && currentWindow.constructor.static.name === 'fixedEditCheckDialog' &&
+		this.actions.every( ( sact ) => currentWindow.hasAction( sact ) )
+	) {
 		// Second click: defocus and close
-		return this.controller.closeDialog();
+		this.controller.focusAction( null );
+		this.controller.closeDialog( 'gutter-toggle' );
+		return;
 	} else {
+		this.showDialogWithAction( action );
+	}
+};
+
+/**
+ * Show the edit check dialog with this widget's actions and with a specific action focused
+ *
+ * @param {mw.editcheck.EditCheckAction} action Action to focus
+ * @param {boolean} [alignToTop] Align the selection to the top of the viewport
+ */
+mw.editcheck.EditCheckGutterSectionWidget.prototype.showDialogWithAction = function ( action, alignToTop ) {
+	const controller = this.controller;
+	const surface = controller.surface;
+	action.select( surface, false, false );
+	const currentWindow = surface.getToolbarDialogs( ve.ui.FixedEditCheckDialog.static.position ).getCurrentWindow();
+	if ( !currentWindow || currentWindow.constructor.static.name !== 'fixedEditCheckDialog' ) {
+		if ( alignToTop ) {
+			// Scroll immediately, because we don't need to wait for the padding to settle
+			controller.focusAction( action, true, alignToTop );
+		}
+		const windowAction = ve.ui.actionFactory.create( 'window', this.controller.surface, 'check' );
+		windowAction.open(
+			'fixedEditCheckDialog',
+			{
+				controller,
+				inBeforeSave: false,
+				actions: this.actions,
+				newActions: [ action ],
+				footer: this.actions.length !== 1,
+				// Just filter out any discarded actions from the allowed set
+				updateFilter: ( updatedActions, newActions, discardedActions, prevActions ) => prevActions.filter( ( a ) => !discardedActions.includes( a ) )
+			}
+		).then( () => {
+			if ( alignToTop ) {
+				// We already focused and scrolled because it was safe to do so
+				return;
+			}
+			// Wait for window to open and new surface padding to be applied
+			// before trying to focus and scroll.
+			setTimeout( () => {
+				controller.focusAction( action, true, alignToTop );
+			}, OO.ui.theme.getDialogTransitionDuration() );
+		} );
+	} else {
+		controller.focusAction( action, true, alignToTop );
 		currentWindow.showActions( this.actions, [ action ] );
 		currentWindow.footer.toggle( this.actions.length !== 1 );
 	}
 };
 
-mw.editcheck.EditCheckGutterSectionWidget.prototype.showDialogWithAction = function ( action ) {
-	const windowAction = ve.ui.actionFactory.create( 'window', this.controller.surface, 'check' );
-	windowAction.open(
-		'fixedEditCheckDialog',
-		{
-			controller: this.controller,
-			inBeforeSave: false,
-			actions: this.actions,
-			footer: this.actions.length !== 1,
-			// just filter out any discarded actions from the allowed set
-			updateFilter: ( updatedActions, newActions, discardedActions, prevActions ) => prevActions.filter( ( pact ) => !discardedActions.includes( pact ) )
-		}
-	);
-	this.controller.focusAction( action, true );
-};
-
+/**
+ * Teardown the widget
+ */
 mw.editcheck.EditCheckGutterSectionWidget.prototype.teardown = function () {
 	this.$element.remove();
 

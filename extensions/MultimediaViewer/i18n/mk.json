@@ -8,6 +8,7 @@
 	"multimediaviewer-current-image-number": "$1 ⁄ $2",
 	"multimediaviewer-desc": "Зголемување на минијатурите на цел екран",
 	"multimediaviewer-optin-pref": "Вклучи го <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Прегледувачот]</span>",
+	"multimediaviewer-disable-image-carousel-pref": "Оневозможи го сликовртот во мобилен преглед",
 	"multimediaviewer-file-page": "Оди на соодветната податотечна страница",
 	"multimediaviewer-repository-local": "Поподробно",
 	"multimediaviewer-datetime-created": "Создадено: $1",

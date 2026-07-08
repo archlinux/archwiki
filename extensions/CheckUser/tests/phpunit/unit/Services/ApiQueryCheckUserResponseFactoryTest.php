@@ -1,15 +1,15 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\Services;
 
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Services\ApiQueryCheckUserResponseFactory;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWikiUnitTestCase;
 use RuntimeException;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory
+ * @covers \MediaWiki\Extension\CheckUser\Services\ApiQueryCheckUserResponseFactory
  */
 class ApiQueryCheckUserResponseFactoryTest extends MediaWikiUnitTestCase {
 

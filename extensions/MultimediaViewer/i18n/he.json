@@ -12,6 +12,7 @@
 	},
 	"multimediaviewer-desc": "הגדלת תמונות ממוזערות במידות גדולות יותר למסך מלא",
 	"multimediaviewer-optin-pref": "הפעלת <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About מציג המדיה]</span>",
+	"multimediaviewer-disable-image-carousel-pref": "השבתת קרוסלת תמונות באתר הנייד",
 	"multimediaviewer-file-page": "מעבר אל דף הקובץ המתאים",
 	"multimediaviewer-repository-local": "פרטים נוספים",
 	"multimediaviewer-datetime-created": "נוצר: $1",

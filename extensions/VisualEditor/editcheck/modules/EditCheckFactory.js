@@ -100,35 +100,76 @@ mw.editcheck.EditCheckFactory.prototype.getNamesByListener = function ( listener
  * @param {string} listenerName Listener name
  * @param {ve.dm.Surface} surfaceModel Surface model
  * @param {boolean} [includeSuggestions=false]
+ * @param {function(mw.editcheck.EditCheckAction)} [onProgress]
  * @return {Promise} Promise that resolves with an updated list of Actions
  */
-mw.editcheck.EditCheckFactory.prototype.createAllActionsByListener = function ( controller, listenerName, surfaceModel, includeSuggestions ) {
+mw.editcheck.EditCheckFactory.prototype.createAllActionsByListener = function ( controller, listenerName, surfaceModel, includeSuggestions, onProgress ) {
+	const run = {};
 	const actionOrPromiseList = [];
 	this.getNamesByListener( listenerName ).forEach( ( checkName ) => {
 		const check = this.create( checkName, controller, {}, includeSuggestions );
-		if ( !check.canBeShown() ) {
+		let canBeShown;
+		try {
+			canBeShown = check.canBeShown( surfaceModel.getDocument(), includeSuggestions );
+		} catch ( e ) {
+			mw.log.error( `Error checking canBeShown for ${ checkName }`, e );
+			return;
+		}
+		if ( !canBeShown ) {
 			return;
 		}
 		const checkListener = check[ listenerName ];
-		let actionOrPromise;
+		let actionsOrPromises;
 		try {
-			actionOrPromise = checkListener.call( check, surfaceModel );
+			this.emit( 'beforeActionsGenerated', checkName, listenerName, includeSuggestions, run );
+			actionsOrPromises = checkListener.call( check, surfaceModel );
+			this.emit( 'afterActionsGeneratedSync', checkName, run );
+			// This will have returned either an array of EditCheckActions, an
+			// array of Promises which will each resolve to a single
+			// EditCheckAction, a single EditCheckAction, or a single Promise
+			// which could resolve to an array of EditCheckActions.
+			if ( !Array.isArray( actionsOrPromises ) ) {
+				actionsOrPromises = [ actionsOrPromises ];
+			}
+			mw.editcheck.allSettled( actionsOrPromises ).then( () => {
+				this.emit( 'afterActionsGeneratedAsync', checkName, run );
+			} );
 		} catch ( ex ) {
 			// HACK: ensure that synchronous exceptions are returned as rejected promises.
 			// TODO: Consider making all checks return promises. This would unify exception
 			// handling, at the cost of making debugging be async.
-			actionOrPromise = Promise.reject( ex );
+			actionsOrPromises = [ Promise.reject( ex ) ];
 		}
-		if ( actionOrPromise ) {
-			ve.batchPush( actionOrPromiseList, actionOrPromise );
+		if ( actionsOrPromises ) {
+			ve.batchPush( actionOrPromiseList, actionsOrPromises.map( ( actionOrPromise ) => (
+				Promise.resolve( actionOrPromise ).then( ( result ) => {
+					let actions = result;
+					if ( !Array.isArray( actions ) ) {
+						actions = [ actions ];
+					}
+					actions = actions.filter( ( action ) => action !== null );
+					for ( const action of actions ) {
+						action.suggestion = includeSuggestions;
+						if ( onProgress ) {
+							onProgress( action );
+						}
+					}
+					return actions;
+				}, ( reason ) => {
+					mw.log.warn( `Failed to check ${ checkName }`, reason );
+					if ( !mw.editcheck.erroredChecks[ checkName ] ) {
+						// Log this once per-session
+						ve.track( 'stats.mediawiki_editcheck_errors_total', 1, { kind: checkName } );
+						mw.editcheck.erroredChecks[ checkName ] = true;
+					}
+					throw reason;
+				} )
+			) ) );
 		}
 	} );
-	return Promise.all( actionOrPromiseList )
-		.then( ( actions ) => actions.filter( ( action ) => action !== null ) )
+	return mw.editcheck.allSettledFulfilledOnly( actionOrPromiseList )
 		.then( ( actions ) => {
-			actions.forEach( ( action ) => {
-				action.suggestion = includeSuggestions;
-			} );
+			actions = mw.editcheck.flattenArray( actions, Infinity );
 			actions.sort( mw.editcheck.EditCheckAction.static.compareStarts );
 			return actions;
 		} );

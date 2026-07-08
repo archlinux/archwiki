@@ -44,8 +44,14 @@
 				</p>
 			</cdx-radio>
 		</cdx-field>
+		<cdx-message
+			v-if="selectedStatus === 'invalid' && invalidStatusWarningMessage"
+			class="ext-checkuser-suggestedinvestigations-change-status-dialog-invalid-status-warning"
+			type="warning"
+		>
+			{{ invalidStatusWarningMessage }}
+		</cdx-message>
 		<cdx-field
-			v-if="showStatusReasonField"
 			class="ext-checkuser-suggestedinvestigations-change-status-dialog-status-reason"
 			:optional="true"
 		>
@@ -142,6 +148,13 @@ module.exports = exports = {
 		initialStatusReason: {
 			type: String,
 			required: true
+		},
+		/**
+		 * The signals associated with the case, represented by the database name of the signal.
+		 */
+		caseSignals: {
+			type: Array,
+			required: true
 		}
 	},
 	setup( props ) {
@@ -205,7 +218,25 @@ module.exports = exports = {
 			} );
 		}
 
-		const showStatusReasonField = computed( () => selectedStatus.value !== 'open' || hasStatusReasonHadText.value );
+		// Generate the invalid status warning message text, using the invalid status
+		// warning message for the first signal in this case that has this defined
+		const signals = mw.config.get( 'wgCheckUserSuggestedInvestigationsSignals' );
+		const signalToInvalidStatusMessage = signals.filter(
+			( signal ) => typeof signal !== 'string' && signal.invalidStatusWarningMessage
+		).reduce( ( reduced, signal ) => {
+			reduced[ signal.name ] = signal.invalidStatusWarningMessage;
+			return reduced;
+		}, {} );
+
+		const invalidStatusWarningMessage = computed( () => {
+			for ( const signal of props.caseSignals ) {
+				if ( signalToInvalidStatusMessage[ signal ] ) {
+					return signalToInvalidStatusMessage[ signal ];
+				}
+			}
+
+			return '';
+		} );
 
 		/**
 		 * Fired when any form fields have their value changed.
@@ -234,7 +265,9 @@ module.exports = exports = {
 
 			setCaseStatus( props.caseId, selectedStatus.value, statusReason.value )
 				.then( ( data ) => {
-					updateCaseStatusOnPage( props.caseId, data.status, data.reason );
+					updateCaseStatusOnPage(
+						props.caseId, data.status, data.reason, data.formattedReason
+					);
 
 					open.value = false;
 					formSubmissionInProgress.value = false;
@@ -268,12 +301,12 @@ module.exports = exports = {
 		return {
 			open,
 			selectedStatus,
-			showStatusReasonField,
 			statusReason,
 			statusReasonSubtitle,
 			statusReasonPlaceholder,
 			statusRadioOptions,
 			statusUpdateErrorMessage,
+			invalidStatusWarningMessage,
 			onFormFieldChange,
 			onCancelButtonClick,
 			onSubmitButtonClick

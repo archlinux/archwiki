@@ -117,10 +117,10 @@ class GetConfiguration extends Maintenance {
 			// Avoid fatal "Exception: Serialization of Closure is not allowed"
 			//
 			// * Exclude legacy singletons that are not configuration but
-			//   non-serializable objects, such as $wgUser.
+			//   non-serializable objects, such as $wgOut.
 			// * Exclude config arrays such as wgHooks which may contain closures
 			//   via LocalSettings.php.
-			$this->regex = '/^wm?g(?!User|Out|Request|Hooks).*$/';
+			$this->regex = '/^wm?g(?!Out|Request|Hooks).*$/';
 		}
 
 		# Filter out globals based on the regex

@@ -728,6 +728,12 @@ Template:Multi cell output
 n<sup>2</sup> || n<sup>3</sup> || style="background:#9F9;" class="table-yes" | Yes
 !! endarticle
 
+!! article
+Template:Multi cell output with empty cells
+!! text
+a |||| b
+!! endarticle
+
 !! test
 Template emitting multi-cell output as plain content should be reparsed as multiple cells
 !! wikitext
@@ -745,4 +751,115 @@ Template emitting multi-cell output as plain content should be reparsed as multi
 <table>
 <tbody><tr><td typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["| ",{"template":{"target":{"wt":"multi cell output","href":"./Template:Multi_cell_output"},"params":{},"i":0}}]}'>n<sup>2</sup></td><td about="#mwt1">n<sup>3</sup></td><td about="#mwt1" style="background:#9F9;" class="table-yes" data-parsoid='{"stx":"row"}'>Yes</td></tr>
 </tbody></table>
+!! end
+
+!! test
+Attribute-suppressing content should not prevent multi-cell output split
+!! wikitext
+{|
+| [[Main Page]] {{multi cell output}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> n<sup>2</sup></td>
+<td>n<sup>3</sup></td>
+<td style="background:#9F9;" class="table-yes">Yes
+</td></tr></tbody></table>
+!! html/parsoid
+<table>
+<tbody><tr><td typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["| [[Main Page]] ",{"template":{"target":{"wt":"multi cell output","href":"./Template:Multi_cell_output"},"params":{},"i":0}}]}'><a rel="mw:WikiLink" href="./Main_Page" title="Main Page">Main Page</a> n<sup>2</sup></td><td about="#mwt1">n<sup>3</sup></td><td about="#mwt1" style="background:#9F9;" class="table-yes" data-parsoid='{"stx":"row"}'>Yes</td></tr>
+</tbody></table>
+!! end
+
+!! test
+Empty cells should not prevent multi-cell output split
+!! wikitext
+{|
+| [[Main Page]] {{multi cell output with empty cells}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> a</td>
+<td></td>
+<td>b
+</td></tr></tbody></table>
+!! html/parsoid
+<table>
+<tbody><tr><td typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["| [[Main Page]] ",{"template":{"target":{"wt":"multi cell output with empty cells","href":"./Template:Multi_cell_output_with_empty_cells"},"params":{},"i":0}}]}'><a rel="mw:WikiLink" href="./Main_Page" title="Main Page">Main Page</a> a</td><td about="#mwt1"></td><td about="#mwt1" data-parsoid='{"stx":"row"}'>b</td></tr>
+</tbody></table>
+!! end
+
+!! test
+Cells using attribute syntax should prevent attribute-reparsing
+!! wikitext
+{|
+|x
+{{1x|1={{!}}class='x'{{!}} a{{!}}b}}
+{{1x|1={{!}}{{!}} a{{!}}b}}
+{{1x|1={{!}} {{!}} a{{!}}b}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td>x
+</td>
+<td class="x">a|b
+</td>
+<td>a|b
+</td>
+<td>a|b
+</td></tr></tbody></table>
+!! html/parsoid+integrated
+<table>
+<tbody><tr><td>x</td>
+<td class="x" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}}class=&apos;x&apos;{{!}} a{{!}}b"}},"i":0}}]}'>a|b</td>
+<td about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}}{{!}} a{{!}}b"}},"i":0}}]}'>a|b</td>
+<td about="#mwt3" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}} {{!}} a{{!}}b"}},"i":0}}]}'>a|b</td></tr>
+</tbody></table>
+!! end
+
+!! test
+Wikilink in template in table cell attribute position
+!! options
+parsoid=wt2html
+!! wikitext
+{|
+| [[Main Page]] | 123
+| {{1x|[[Main Page]]}} | 123
+| {{1x|[[Main Page]] {{!}}}} 123
+| {{1x|[[Main Page]]}} {{!}} 123
+| foo={{1x|[[Main Page]]}} | 123
+| {{1x|[[Main Page]]}} {{1x|1={{!}}{{!}}class='foo'}}| 123
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> | 123
+</td>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> | 123
+</td>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> | 123
+</td>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a> | 123
+</td>
+<td>foo=<a href="/wiki/Main_Page" title="Main Page">Main Page</a> | 123
+</td>
+<td><a href="/wiki/Main_Page" title="Main Page">Main Page</a></td>
+<td class="foo">123
+</td></tr></tbody></table>
+!! html/parsoid+integrated
+<table>
+<tbody>
+<tr>
+<td><a rel="mw:WikiLink" href="./Main_Page" title="Main Page">Main Page</a> | 123</td>
+<td><a rel="mw:WikiLink" href="./Main_Page" title="Main Page" about="#mwt1" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Main Page]]"}},"i":0}}]}'>Main Page</a> | 123</td>
+<td><a rel="mw:WikiLink" href="./Main_Page" title="Main Page" about="#mwt2" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Main Page]] {{!}}"}},"i":0}}]}'>Main Page</a><span> |</span> 123</td>
+<td><a rel="mw:WikiLink" href="./Main_Page" title="Main Page" about="#mwt3" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Main Page]]"}},"i":0}}]}'>Main Page</a> <span typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"!","function":"!"},"params":{},"i":0}}]}'>|</span> 123</td>
+<td>foo=<a rel="mw:WikiLink" href="./Main_Page" title="Main Page" about="#mwt4" typeof="mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Main Page]]"}},"i":0}}]}'>Main Page</a> | 123</td>
+<td about="#mwt5" typeof="mw:Transclusion" data-mw='{"parts":["| ",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"[[Main Page]]"}},"i":0}}," ",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"{{!}}{{!}}class=&apos;foo&apos;"}},"i":1}},"| 123"]}'><a rel="mw:WikiLink" href="./Main_Page" title="Main Page">Main Page</a></td><td about="#mwt5" class="foo" data-parsoid='{"stx":"row"}'>123</td>
+</tr>
+</tbody>
+</table>
 !! end

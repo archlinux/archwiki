@@ -75,5 +75,7 @@
 	"gadgets-validate-invaliddependencies": "Brakuje {{PLURAL:$2|następującej|następujących}} zależności: $1.",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Następująca zależność jest przestarzała|Następujące zależności są przestarzałe}}: $1.",
 	"gadgets-supports-urlload": "Ten gadżet obsługuje ładowanie przez adres URL z parametrem <code>?withgadget</code>.",
-	"gadgets-hidden": "Ten gadżet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], co oznacza, że nie będzie wyświetlany na stronie preferencji."
+	"gadgets-hidden": "Ten gadżet jest [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden ukryty], co oznacza, że nie będzie wyświetlany na stronie preferencji.",
+	"gadgets-subpage-invalid": "Nieprawidłowa podstrona „<nowiki>$1</nowiki>”",
+	"gadgets-subpage-toofewparams": "Za mało parametrów podstrony (nieprawidłowy link)."
 }

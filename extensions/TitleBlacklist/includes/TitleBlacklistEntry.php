@@ -14,7 +14,6 @@ use MediaWiki\Extension\AntiSpoof\AntiSpoof;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\CoreParserFunctions;
 use MediaWiki\Registration\ExtensionRegistry;
-use Wikimedia\AtEase\AtEase;
 
 /**
  * @ingroup Extensions
@@ -149,13 +148,12 @@ class TitleBlacklistEntry {
 			}
 		}
 
-		AtEase::suppressWarnings();
-		// @phan-suppress-next-line SecurityCheck-ReDoS
-		$match = preg_match(
+		// @phan-suppress-next-next-line SecurityCheck-ReDoS
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$match = @preg_match(
 			"/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ),
 			$title
 		);
-		AtEase::restoreWarnings();
 
 		return (bool)$match;
 	}

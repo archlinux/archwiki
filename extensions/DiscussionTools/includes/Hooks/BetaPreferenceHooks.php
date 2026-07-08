@@ -14,14 +14,12 @@ use MediaWiki\User\User;
  */
 class BetaPreferenceHooks implements GetBetaFeaturePreferencesHook {
 
-	private Config $coreConfig;
-	private Config $config;
+	private readonly Config $config;
 
 	public function __construct(
-		Config $coreConfig,
+		private readonly Config $coreConfig,
 		ConfigFactory $configFactory
 	) {
-		$this->coreConfig = $coreConfig;
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
 	}
 
@@ -32,7 +30,7 @@ class BetaPreferenceHooks implements GetBetaFeaturePreferencesHook {
 		if ( $this->config->get( 'DiscussionToolsBeta' ) ) {
 			// If all configurable features are marked as 'available', the
 			// beta fetaure enables nothing, so don't show it.
-			$allAvailable = $this->config->get( 'DiscussionToolsEnableThanks' );
+			$allAvailable = true;
 			foreach ( HookUtils::CONFIGS as $feature ) {
 				if ( $this->config->get( 'DiscussionTools_' . $feature ) !== 'available' ) {
 					$allAvailable = false;

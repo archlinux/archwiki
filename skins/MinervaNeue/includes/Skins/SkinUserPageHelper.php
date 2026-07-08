@@ -27,19 +27,15 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 
 class SkinUserPageHelper {
-	private UserFactory $userFactory;
-	private UserNameUtils $userNameUtils;
 	private IContextSource $context;
 	private ?Title $title;
 	private bool $fetchedData = false;
 	private ?User $pageUser = null;
 
 	public function __construct(
-		UserFactory $userFactory,
-		UserNameUtils $userNameUtils
+		private readonly UserFactory $userFactory,
+		private readonly UserNameUtils $userNameUtils,
 	) {
-		$this->userFactory = $userFactory;
-		$this->userNameUtils = $userNameUtils;
 	}
 
 	public function setContext( IContextSource $context ): self {

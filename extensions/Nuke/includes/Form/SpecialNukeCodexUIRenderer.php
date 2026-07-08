@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Nuke\Form;
 
 use Exception;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Exception\MWException;
 use MediaWiki\Extension\Nuke\NukeContext;
 use MediaWiki\Extension\Nuke\SpecialNuke;
 use MediaWiki\FileRepo\RepoGroup;
@@ -13,6 +14,7 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use Wikimedia\Codex\Utility\Codex;
 
 class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
@@ -32,6 +34,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 		private readonly LinkRenderer $linkRenderer,
 		private readonly NamespaceInfo $namespaceInfo,
 		private readonly RedirectLookup $redirectLookup,
+		private readonly TitleFormatter $titleFormatter,
 	) {
 		parent::__construct( $context );
 
@@ -45,7 +48,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setLabel(
 				$this->codex
 					->Label()
-					->setLabelText( $this->msg( 'nuke-userorip' ) )
+					->setLabelText( $this->msg( 'nuke-userorip' )->parse() )
 					->build()
 			)
 			->setFields( [
@@ -89,7 +92,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setId( "nuke-namespace" )
 			->setLabel( $this->codex
 				->Label()
-				->setLabelText( $this->msg( 'nuke-namespace' ) )
+				->setLabelText( $this->msg( 'nuke-namespace' )->parse() )
 				->build()
 			)
 			->setFields( [
@@ -123,7 +126,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->field()
 			->setLabel( $this->codex
 				->Label()
-				->setLabelText( $this->msg( 'nuke-maxpages' ) )
+				->setLabelText( $this->msg( 'nuke-maxpages' )->parse() )
 				->build()
 			)
 			->setFields( [
@@ -174,7 +177,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->field()
 			->setLabel( $this->codex
 				->label()
-				->setLabelText( $this->msg( 'nuke-date-from' ) )
+				->setLabelText( $this->msg( 'nuke-date-from' )->parse() )
 				->build()
 			)
 			->setFields( [
@@ -199,7 +202,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->field()
 			->setLabel( $this->codex
 				->label()
-				->setLabelText( $this->msg( 'nuke-date-to' ) )
+				->setLabelText( $this->msg( 'nuke-date-to' )->parse() )
 				->build()
 			)
 			->setFields( [
@@ -231,10 +234,10 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			)->parse()
 		);
 
-		return HTML::rawElement(
+		return Html::rawElement(
 			'div',
 			[],
-			HTML::rawElement(
+			Html::rawElement(
 				'div',
 				[
 					"class" => "ext-nuke-form-dateRange"
@@ -249,7 +252,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->field()
 			->setLabel( $this->codex
 				->label()
-				->setLabelText( $this->msg( 'nuke-minsize' ) )
+				->setLabelText( $this->msg( 'nuke-minsize' )->parse() )
 				->build()
 			)
 			->setFields( [
@@ -290,7 +293,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->build()
 			->getHtml();
 
-		return HTML::rawElement(
+		return Html::rawElement(
 			'div',
 			[
 				"class" => "ext-nuke-form-pageSizeRange"
@@ -352,7 +355,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 				'value' => SpecialNuke::ACTION_LIST
 			] )
 			->setType( "submit" )
-			->setLabel( $this->msg( 'nuke-submit-list' ) )
+			->setLabel( $this->msg( 'nuke-submit-list' )->parse() )
 			->setSize( "medium" )
 			->build()
 			->getHtml();
@@ -365,7 +368,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 				'value' => SpecialNuke::ACTION_CONFIRM
 			] )
 			->setType( "submit" )
-			->setLabel( $this->msg( 'nuke-submit-continue' ) )
+			->setLabel( $this->msg( 'nuke-submit-continue' )->parse() )
 			->setAction( "progressive" )
 			->setWeight( "primary" )
 			->setSize( "medium" )
@@ -403,7 +406,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setLabel(
 				$this->codex
 					->Label()
-					->setLabelText( $this->msg( 'nuke' ) )
+					->setLabelText( $this->msg( 'nuke' )->parse() )
 					->build()
 			)
 			->setFields( $fields )
@@ -421,7 +424,12 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 				$this->codex
 					->message()
 					->setType( "error" )
-					->setContentText( $validationResult )
+					->setContentHtml(
+						$this->codex
+							->htmlSnippet()
+							->setContent( $validationResult )
+							->build()
+					)
 					->setAttributes( [
 						'class' => 'ext-nuke-form-error'
 					] )
@@ -568,7 +576,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 	 * @param array{0:Title,1:string|false,2?:string,3?:Title} $pageActorTuple
 	 * @param bool $isAssociated Whether the page is associated with another page.
 	 * @return string
-	 * @throws \MWException
+	 * @throws MWException
 	 */
 	protected function getPageCheckbox( array $pageActorTuple, bool $isAssociated = false ): string {
 		[ $title, $userName ] = $pageActorTuple;
@@ -605,7 +613,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			$html .= ' <span class="mw-changeslist-separator"></span> ' .
 				$this->msg(
 					'nuke-redirectsto',
-					$redirect->getText()
+					$this->titleFormatter->getPrefixedText( $redirect )
 				)->parse();
 		}
 
@@ -662,7 +670,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setLabel(
 				$this->codex
 					->Label()
-					->setLabelText( $this->msg( 'deletecomment' ) )
+					->setLabelText( $this->msg( 'deletecomment' )->parse() )
 					->build()
 			)
 			->setFields( [
@@ -702,7 +710,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setLabel(
 				$this->codex
 					->Label()
-					->setLabelText( $this->msg( 'deleteotherreason' ) )
+					->setLabelText( $this->msg( 'deleteotherreason' )->parse() )
 					->build()
 			)
 			->setFields( [
@@ -730,7 +738,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 				'value' => SpecialNuke::ACTION_DELETE
 			] )
 			->setType( "submit" )
-			->setLabel( $this->msg( 'nuke-submit-delete' ) )
+			->setLabel( $this->msg( 'nuke-submit-delete' )->parse() )
 			->setAction( "destructive" )
 			->setWeight( "primary" )
 			->setSize( "medium" )
@@ -760,7 +768,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 			->setLabel(
 				$this->codex
 					->Label()
-					->setLabelText( $this->msg( 'nuke' ) )
+					->setLabelText( $this->msg( 'nuke' )->parse() )
 					->build()
 			)
 			->setFields( $fields )
@@ -895,7 +903,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 				],
 				$this->codex
 					->button()
-					->setLabel( $this->msg( 'nuke-deletemore' ) )
+					->setLabel( $this->msg( 'nuke-deletemore' )->parse() )
 					->setAction( "default" )
 					->setWeight( "normal" )
 					->setSize( "medium" )
@@ -943,7 +951,7 @@ class SpecialNukeCodexUIRenderer extends SpecialNukeUIRenderer {
 	 *
 	 * @param Title $title The title to render links of
 	 * @return string
-	 * @throws \MWException
+	 * @throws MWException
 	 */
 	protected function getPageLinksHtml( Title $title ): string {
 		$linkRenderer = $this->linkRenderer;

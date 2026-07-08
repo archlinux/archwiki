@@ -312,7 +312,7 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 			'Account creation' => [
 				[
 					'action' => 'createaccount',
-					'accountname' => 'XXX'
+					'account_name' => 'XXX'
 				]
 			],
 			'Has user_unnamed_ip when afl_ip_hex is empty' => [

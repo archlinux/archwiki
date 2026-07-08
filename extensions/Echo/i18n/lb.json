@@ -102,7 +102,7 @@
 	"echo-api-failure-cross-wiki": "Den Zougang op d'Remote-Domain gouf net erlaabt.",
 	"echo-notification-placeholder": "Et si keng Notifikatiounen do.",
 	"echo-notification-placeholder-filters": "Et gëtt keng Notifikatiounen, déi dëse Krittären entspriechen.",
-	"echo-notification-loginrequired": "Dir musst Iech alogge fir Är Notifikatiounen ze gesinn.",
+	"echo-notification-loginrequired": "Dir musst Iech aloggen, fir Är Notifikatiounen ze gesinn.",
 	"echo-notification-popup-loginrequired": "Loggt Iech wgl. a fir Är Notifikatiounen ze gesinn.",
 	"echo-notification-markasread": "Als gelies markéieren",
 	"echo-notification-markasunread": "Als net-gelies markéieren",
@@ -183,8 +183,8 @@
 	"notification-header-thank-you-100-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} honnertst Ännerung gemaach; villmools {{GENDER:$2|Merci}}!",
 	"notification-header-thank-you-1000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} dausendst Ännerung gemaach; villmools {{GENDER:$2|Merci}}, datt Dir e gudde Mataarbechter sidd!",
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} zéngdausendst Ännerung gemaach; villmools {{GENDER:$2|Merci}}!",
-	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Dir}} hutt elo grad  {{GENDER:$2|Är}} honnertdausendst Ännerung gemaach; villmools {{GENDER:$2|Merci}} fir Äre fantastesche Bäitrag!",
-	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} milliounst Ännerung gemaach; villmools {{GENDER:$2|Merci}} fir Ären erstaunleche Bäitrag!",
+	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} honnertdausendst Ännerung gemaach; villmools {{GENDER:$2|Merci}} fir Är fantastesche Bäiträg!",
+	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} milliounst Ännerung gemaach; villmools {{GENDER:$2|Merci}} fir Är erstaunlech Bäiträg!",
 	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|Dir}} hutt elo grad {{GENDER:$2|Är}} zéngmilliounst Ännerung gemaach; villmools {{GENDER:$2|Merci}} fir Äre brillanten Asaz!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Är}} Ännerung",
 	"notification-link-text-view-edit": "Ännerung weisen",
@@ -245,7 +245,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|Push-Abonement-Verwalter|Push-Abonement-Verwalterin}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push-Abonement-Verwalter",
 	"notification-subject-email-verify-email-reminder": "Confirméiert {{GENDER:$1|Är}} E-Mail-Adress",
-	"notification-header-verify-email-reminder": "<strong>Verifizéiert wgl. {{GENDER:$1|Är}} E-Mail-Adress</strong>, fir datt mir wëssen, datt d'E-Mail-Adress vun {{GENDER:$1|Ärem}} Kont {{GENDER:$1|Iech}} gehéiert.",
+	"notification-header-verify-email-reminder": "Moie(n) $2,\n<strong>verifizéiert wgl. {{GENDER:$1|Är}} E-Mail-Adress</strong>, fir datt mir wëssen, datt d'E-Mail-Adress vun {{GENDER:$1|Ärem}} Kont {{GENDER:$1|Iech}} gehéiert.",
 	"notification-link-text-verify-email-reminder": "E-Mail-Astellunge geréieren",
 	"notification-verify-email-reminder-link-label": "E-Mail-Adress confirméieren"
 }

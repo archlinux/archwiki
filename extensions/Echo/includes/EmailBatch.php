@@ -2,18 +2,18 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use BatchRowIterator;
 use MediaWiki\Extension\Notifications\Formatters\EchoHtmlDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoPlainTextDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Language\LanguageFactory;
 use MediaWiki\Mail\MailAddress;
 use MediaWiki\Mail\UserMailer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 use stdClass;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -144,6 +144,7 @@ class EmailBatch {
 			}
 
 			$bundler = new Bundler();
+			// @phan-suppress-next-line PhanTypeMismatchProperty Generic method
 			$this->events = $bundler->bundle( $this->events );
 
 			$this->sendEmail();

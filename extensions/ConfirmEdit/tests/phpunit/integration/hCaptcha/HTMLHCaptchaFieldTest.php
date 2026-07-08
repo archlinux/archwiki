@@ -3,8 +3,11 @@
 namespace MediaWiki\Extension\ConfirmEdit\Tests\Integration\hCaptcha;
 
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\hCaptcha\HTMLHCaptchaField;
 use MediaWiki\Extension\ConfirmEdit\hCaptcha\Services\HCaptchaOutput;
+use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
@@ -18,6 +21,30 @@ use MediaWikiIntegrationTestCase;
  * @group Database
  */
 class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		// Ensure HCaptcha instances are returned for common actions
+		$this->overrideConfigValue( 'CaptchaTriggers', [
+			'edit' => [
+				'trigger' => true,
+				'class' => 'HCaptcha',
+				'config' => []
+			],
+			'create' => [
+				'trigger' => true,
+				'class' => 'HCaptcha',
+				'config' => []
+			],
+			'createaccount' => [
+				'trigger' => true,
+				'class' => 'HCaptcha',
+				'config' => []
+			],
+		] );
+		Hooks::unsetInstanceForTests();
+	}
+
 	/**
 	 * @dataProvider provideOptions
 	 */
@@ -97,6 +124,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 	public static function provideOptions(): iterable {
 		$testApiUrl = 'https://hcaptcha.example.com/api';
 		$testSiteKey = 'foo';
+		$testAlwaysChallengeSiteKey = 'bar';
 		$testCspRules = [
 			'https://hcaptcha.example.com',
 			'https://hcaptcha-2.example.com'
@@ -108,6 +136,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => false,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => false,
 				'HCaptchaSecureEnclave' => false,
 			],
@@ -124,6 +153,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => true,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => false,
 				'HCaptchaSecureEnclave' => false,
 			],
@@ -144,6 +174,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => false,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => false,
 				'HCaptchaSecureEnclave' => false,
 			],
@@ -161,6 +192,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => true,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => false,
 				'HCaptchaSecureEnclave' => false,
 			],
@@ -182,6 +214,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => false,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => false,
 				'HCaptchaSecureEnclave' => true,
 			],
@@ -199,6 +232,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => false,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => true,
 				'HCaptchaSecureEnclave' => true,
 			],
@@ -216,6 +250,7 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'HCaptchaInvisibleMode' => true,
 				'HCaptchaCSPRules' => $testCspRules,
 				'HCaptchaSiteKey' => $testSiteKey,
+				'HCaptchaAlwaysChallengeSiteKey' => $testAlwaysChallengeSiteKey,
 				'HCaptchaEnterprise' => true,
 				'HCaptchaSecureEnclave' => true,
 			],
@@ -273,6 +308,49 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( '(hcaptcha-noscript)', $result );
 	}
 
+	public function testHiddenForceShowCaptchaField(): void {
+		$this->setUserLang( 'qqx' );
+
+		$simpleCaptcha = Hooks::getInstance( CaptchaTriggers::CREATE );
+		$simpleCaptcha->setForceShowCaptcha( true );
+		$outputPage = RequestContext::getMain()->getOutput();
+		$outputPage->setTitle( $this->getNonexistingTestPage()->getTitle() );
+		/** @var HCaptchaOutput $hCaptchaOutput */
+		$hCaptchaOutput = $this->getServiceContainer()->get( 'HCaptchaOutput' );
+		$result = $hCaptchaOutput->addHCaptchaToForm( $outputPage, false );
+
+		$this->assertStringContainsString( 'wgConfirmEditForceShowCaptcha', $result );
+	}
+
+	public function testModifiedSiteKeyForForceShowCaptcha(): void {
+		$requestContext = RequestContext::getMain();
+		$simpleCaptcha = Hooks::getInstance( CaptchaTriggers::CREATE );
+		$simpleCaptcha->setForceShowCaptcha( true );
+		$simpleCaptcha->setConfig( [
+			'HCaptchaSiteKey' => 'foo-site-key',
+			'HCaptchaAlwaysChallengeSiteKey' => 'bar-site-key',
+		] );
+
+		$outputPage = $requestContext->getOutput();
+		$outputPage->setTitle( $this->getNonexistingTestPage()->getTitle() );
+		/** @var HCaptchaOutput $hCaptchaOutput */
+		$hCaptchaOutput = $this->getServiceContainer()->get( 'HCaptchaOutput' );
+
+		$result = $hCaptchaOutput->addHCaptchaToForm( $outputPage, false );
+		$this->assertStringContainsString( 'bar-site-key', $result );
+
+		// Once the session storage is cleared and forceShowCaptcha is unset,
+		// the input will go back to using the standard site key.
+		$session = $requestContext->getRequest()->getSession();
+		$session->remove(
+			SimpleCaptcha::ABUSEFILTER_CAPTCHA_CONSEQUENCE_SESSION_KEY
+		);
+
+		$simpleCaptcha->setForceShowCaptcha( false );
+		$result = $hCaptchaOutput->addHCaptchaToForm( $outputPage, false );
+		$this->assertStringContainsString( 'foo-site-key', $result );
+	}
+
 	public function testSiteKeyOverriddenForAction(): void {
 		$this->overrideConfigValue( 'HCaptchaSiteKey', 'baz' );
 		$this->overrideConfigValue( 'CaptchaTriggers', [
@@ -286,12 +364,17 @@ class HTMLHCaptchaFieldTest extends MediaWikiIntegrationTestCase {
 				'class' => 'HCaptcha',
 				'config' => [ 'HCaptchaSiteKey' => 'bar' ]
 			],
+			'createaccount' => [
+				'trigger' => 'true',
+				'class' => 'HCaptcha',
+				'config' => []
+			],
 		] );
 
 		$outputPage = RequestContext::getMain()->getOutput();
 		$page = $this->getServiceContainer()->getSpecialPageFactory()->getPage( 'CreateAccount' );
 		$outputPage->setTitle( $page->getPageTitle() );
-		/** @var HCaptchaOutput $service */
+		/** @var HCaptchaOutput $hCaptchaOutput */
 		$hCaptchaOutput = $this->getServiceContainer()->get( 'HCaptchaOutput' );
 		$result = $hCaptchaOutput->addHCaptchaToForm( $outputPage, false );
 		$this->assertStringContainsString( 'data-sitekey="baz"', $result );

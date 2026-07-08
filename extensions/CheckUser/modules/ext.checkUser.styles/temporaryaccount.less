@@ -96,3 +96,60 @@ span.ext-checkuser-tempaccount-reveal-ip-button,
 		}
 	}
 }
+
+// collapsible list of temporary accounts. See SpecialContributionsHandler for implementation
+.ext-checkuser-related-tas-list {
+	list-style-type: none;
+	margin-left: 0;
+	margin-bottom: 0.5em;
+
+	// List is collapsed by default, show only 5 items max as defined by T417222
+	li:nth-child( n+6 ) {
+		display: none;
+	}
+
+	// If the list isn't collapsible, there's no need to show the toggle
+	&:not( .ext-checkuser-taslist-collapsible ) ~ .ext-checkuser-related-tas-toggle {
+		display: none;
+	}
+}
+
+// Style the visibility toggle to look like a link
+.ext-checkuser-related-tas-toggle {
+	.cdx-mixin-link-base();
+}
+
+// When checkbox is unchecked, list is collapsed so hide the "hide" label
+.ext-checkuser-related-tas-list-visibility-hidelabel {
+	display: none;
+}
+
+// Treat the id like a class, which keeps it at a low priority for the cascade
+[ id='ext-checkuser-related-tas-list-visibility' ] {
+	// Checkbox is hidden and interacted with via its label
+	display: none;
+
+	// When toggled, display entire list
+	&:checked {
+		& ~ .ext-checkuser-related-tas-list li {
+			display: list-item;
+		}
+
+		// Toggle text visibility based on checkbox state
+		& ~ .ext-checkuser-related-tas-toggle {
+			.ext-checkuser-related-tas-list-visibility-showlabel {
+				display: none;
+			}
+
+			.ext-checkuser-related-tas-list-visibility-hidelabel {
+				display: inline;
+			}
+		}
+	}
+}
+
+// nojs for clipboard functionality for the collapsible list of connected accounts.
+/* stylelint-disable-next-line selector-class-pattern */
+.client-nojs .ext-checkuser-related-tas-list-copy-button {
+	display: none;
+}

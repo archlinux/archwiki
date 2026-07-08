@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
 use GlobalPreferences\GlobalPreferencesFactory;
-use MediaWiki\CheckUser\HookHandler\Preferences;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\User\UserIdentity;
@@ -14,7 +14,7 @@ use MediaWikiIntegrationTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
- * @covers \MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup
  */
 class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
@@ -73,7 +73,9 @@ class CheckUserTemporaryAccountAutoRevealLookupTest extends MediaWikiIntegration
 
 	/** @dataProvider provideIsAutoRevealOn */
 	public function testIsAutoRevealOn(
-		bool $usesGlobalPreferencesFactory, bool $userHasAutoRevealRight, int|null $globalPreferenceValue,
+		bool $usesGlobalPreferencesFactory,
+		bool $userHasAutoRevealRight,
+		int|null $globalPreferenceValue,
 		bool $expectedReturnValue
 	) {
 		ConvertibleTimestamp::setFakeTime( 1234567 );

@@ -19,8 +19,7 @@ use MediaWiki\Message\Message;
  * @author Moritz Schubotz
  */
 class RestbaseChecker extends BaseChecker {
-	/** @var MathRestbaseInterface */
-	private $restbaseInterface;
+	private readonly MathRestbaseInterface $restbaseInterface;
 
 	/**
 	 * @param string $tex the TeX input string to be checked

@@ -5,57 +5,17 @@ namespace MediaWiki\Skins\Vector\Components;
  * VectorSearchBox component
  */
 class VectorComponentButton implements VectorComponent {
-	/** @var string */
-	private $label;
-	/** @var string|null */
-	private $icon;
-	/** @var string|null */
-	private $id;
-	/** @var string|null */
-	private $class;
-	/** @var array|null */
-	private $attributes;
-	/** @var string|null */
-	private $weight;
-	/** @var string|null */
-	private $action;
-	/** @var bool|null */
-	private $iconOnly;
-	/** @var string|null */
-	private $href;
-
-	/**
-	 * @param string $label
-	 * @param string|null $icon
-	 * @param string|null $id
-	 * @param string|null $class
-	 * @param array|null $attributes
-	 * @param string|null $weight
-	 * @param string|null $action
-	 * @param bool|null $iconOnly
-	 * @param string|null $href
-	 */
 	public function __construct(
-		string $label,
-		$icon = null,
-		$id = null,
-		$class = null,
-		$attributes = [],
-		$weight = 'normal',
-		$action = 'default',
-		$iconOnly = false,
-		$href = null
+		private readonly string $label,
+		private readonly ?string $icon = null,
+		private readonly ?string $id = null,
+		private readonly ?string $class = null,
+		private readonly ?array $attributes = [],
+		private ?string $weight = 'normal',
+		private ?string $action = 'default',
+		private readonly ?bool $iconOnly = false,
+		private readonly ?string $href = null,
 	) {
-		$this->label = $label;
-		$this->icon = $icon;
-		$this->id = $id;
-		$this->class = $class;
-		$this->attributes = $attributes;
-		$this->weight = $weight;
-		$this->action = $action;
-		$this->iconOnly = $iconOnly;
-		$this->href = $href;
-
 		// Weight can only be normal, primary, or quiet
 		if ( $this->weight !== 'primary' && $this->weight !== 'quiet' ) {
 			$this->weight = 'normal';

@@ -29,12 +29,8 @@ class LuaTitleBlacklistLibrary extends LibraryBase {
 		$this->checkTypeOptional( 'mw.ext.TitleBlacklist.test', 2, $title, 'string', '' );
 		$this->incrementExpensiveFunctionCount();
 		if ( $title == '' ) {
-			$page = $this->getParser()->getPage();
-			if ( !$page ) {
-				// Nothing to check
-				return [ null ];
-			}
-			$title = MediaWikiServices::getInstance()->getTitleFormatter()->getPrefixedText( $page );
+			$title = MediaWikiServices::getInstance()->getTitleFormatter()
+				->getPrefixedText( $this->getParser()->getPage() );
 		}
 		$entry = TitleBlacklist::singleton()->isBlacklisted( $title, $action );
 

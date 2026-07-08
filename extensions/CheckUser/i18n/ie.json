@@ -108,7 +108,7 @@
 	"checkuser-investigate-compare-toollinks-whois": "WHOIS",
 	"checkuser-investigate-compare-toollinks-ipcheck": "Verificar surogate",
 	"checkuser-investigate-compare-copy-message-label": "Vu vell desirar copiar ti information quam un tabelle textu wiki?",
-	"checkuser-investigate-compare-notice-no-results": "Hay nequant resultates: ta have esset nequant redactiones de tis usatores o IPs in li ultim 90 dies",
+	"checkuser-investigate-compare-notice-no-results": "Hay nequant resultates: ta have esset nequant redactiones de tis usatores o IPs in li ultim $1 dies",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Monstrar omni IPs de ti-ci usator",
 	"checkuser-investigate-compare-table-button-add-user-targets-label": "Monstrar omni usatores in ti-ci IP",
 	"checkuser-investigate-compare-table-button-add-user-targets-log-label": "Addir ti IP por investigation",

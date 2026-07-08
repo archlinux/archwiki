@@ -5,5 +5,7 @@
 		]
 	},
 	"editcheck-dialog-action-no": "Не",
-	"editcheck-dialog-action-yes": "Да"
+	"editcheck-dialog-action-yes": "Да",
+	"editcheck-preference-suggestions-label": "Режим на предложения",
+	"editcheck-preference-suggestions-description": "Предложения за редакции, конфигурирани от общността, за подобряване на статии. Налични във [[:mw:Special:MyLanguage/VisualEditor|визуалния редактор]]."
 }

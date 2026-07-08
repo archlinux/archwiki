@@ -2,6 +2,7 @@
 
 // Keep in sync with same script in Flow.
 
+use MediaWiki\Autoload\AutoloadGenerator;
 use MediaWiki\Maintenance\Maintenance;
 
 require_once getenv( 'MW_INSTALL_PATH' ) !== false

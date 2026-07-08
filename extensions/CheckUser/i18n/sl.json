@@ -195,7 +195,7 @@
 	"checkuser-investigate-preliminary-table-cell-wiki-nowiki": "Viki ni najden",
 	"checkuser-investigate-filters-legend": "Filtri",
 	"checkuser-investigate-filters-exclude-targets-label": "Skrij naslednje uporabnike ali IP-je",
-	"checkuser-investigate-timeline-notice-no-results": "Ni zadetkov: V zadnjih 90 dneh ni bila zabeležena nobena aktivnost teh uporabnikov ali IP-jev.",
+	"checkuser-investigate-timeline-notice-no-results": "Ni zadetkov: V zadnjih $1 dneh ni bila zabeležena nobena aktivnost teh uporabnikov ali IP-jev.",
 	"checkuser-investigate-timeline-notice-no-results-filters": "Ni zadetkov, ki bi ustrezali tem merilom filtriranja. Poskusite odstraniti nekaj filtrov, da razširite iskanje.",
 	"checkuser-investigate-compare-copy-button-label": "Pokaži vikibesedilo",
 	"checkuser-investigate-compare-copy-button-label-hide": "Skrij vikibesedilo",
@@ -203,7 +203,7 @@
 	"checkuser-investigate-compare-toollinks-ipcheck": "Preverjanje posrednika",
 	"checkuser-investigate-compare-copy-message-label": "Ali želite te podatke kopirati v obliki vikitabele?",
 	"checkuser-investigate-compare-notice-exceeded-limit": "Zaradi tehničnih omejitev smo dosegli število zapisov, ki jih je mogoče predstaviti. Podatki, vrnjeni za naslednje cilje, so nepopolni: $1. Poskusite uporabiti manj ciljev, krajše časovno okno ali ožje IP-razpone.",
-	"checkuser-investigate-compare-notice-no-results": "Ni zadetkov: V zadnjih 90 dneh ni bilo zabeleženo nobeno urejanje teh uporabnikov ali IP-jev.",
+	"checkuser-investigate-compare-notice-no-results": "Ni zadetkov: V zadnjih $1 dneh ni bilo zabeleženo nobeno urejanje teh uporabnikov ali IP-jev.",
 	"checkuser-investigate-compare-notice-no-results-filters": "Ni zadetkov, ki bi ustrezali tem merilom filtriranja. Poskusite odstraniti nekaj filtrov, da razširite iskanje.",
 	"checkuser-investigate-compare-table-button-add-ip-targets-label": "Prikaži vse IP-je tega uporabnika",
 	"checkuser-investigate-compare-table-button-add-user-targets-label": "Prikaži vse uporabnike s tem IP-jem",
@@ -285,5 +285,6 @@
 	"checkuser-userinfocard-global-groups": "<strong>Globalne skupine</strong>: $1",
 	"checkuser-suggestedinvestigations-change-status-dialog-text": "Izberite novo stanje za to preiskavo",
 	"checkuser-userinfocard-temporary-account-bucketcount": "Začasni računi z vseh povezanih IP-jev: $1",
-	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Skupno število vseh začasnih računov z vseh IP-naslovov, povezanih s tem računom"
+	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Skupno število vseh začasnih računov z vseh IP-naslovov, povezanih s tem računom",
+	"checkuser-contributions-temporary-account-bucketcount": "Začasni računi z vseh povezanih IP-jev: $1."
 }

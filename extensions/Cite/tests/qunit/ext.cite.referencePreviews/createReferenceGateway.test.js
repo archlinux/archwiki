@@ -46,7 +46,7 @@
 	const createStubTitle = ( fragment = null ) => ( { getFragment: () => fragment } );
 
 	QUnit.test( 'Reference preview gateway returns the correct data', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-1' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( ( result ) => {
@@ -64,7 +64,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway accepts alternative text node class name', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-2' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( ( result ) => {
@@ -82,7 +82,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway accepts duplicated types', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-3' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( ( result ) => {
@@ -100,7 +100,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway ignores conflicting types', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-4' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( ( result ) => {
@@ -118,7 +118,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway returns source element id', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-1' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( ( result ) => {
@@ -136,7 +136,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway rejects non-existing references', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'undefined' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( () => {
@@ -151,7 +151,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway rejects all-whitespace references', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-5' );
 
 		return gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] ).then( () => {
@@ -166,7 +166,7 @@
 	} );
 
 	QUnit.test( 'Reference preview gateway is abortable', function ( assert ) {
-		const gateway = require( 'ext.cite.referencePreviews' ).private.createReferenceGateway(),
+		const gateway = require( 'ext.cite.referencePreviews' ).test.createReferenceGateway(),
 			title = createStubTitle( 'cite note-1' ),
 			promise = gateway.fetchPreviewForTitle( title, this.$sourceElement[ 0 ] );
 

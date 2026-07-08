@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"McDutchie",
-			"Romaine"
+			"Romaine",
+			"Siebrand"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Reactie met ID ‘$1’ niet gevonden.",
@@ -33,8 +34,12 @@
 	"apihelp-discussiontoolspageinfo-param-oldid": "Het te gebruiken versienummer (standaard de laatste versie).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Welke eigenschappen op te vragen:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Gebruikershandtekeningen uitsluiten van de reacties (bij gebruik van <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Instellingen om de uitvoer te wijzigen bij gebruik van <var>prop=threaditemshtml</var> .",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Weergave van de commentaardraden die uit de pagina zijn samengesteld",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Van welke andere pagina's er reacties zijn overgenomen",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Extra activiteitsgegevens toevoegen over de oudste en meest recente reacties (bij gebruik van <var>prop=threaditemshtml</var> ).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Gebruikershandtekeningen uitsluiten van de reacties (bij gebruik van <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Niet de volledige antwoordstructuur toevoegen, maar alleen de kopjes op het hoogste niveau (wanneer u <var>prop=threaditemshtml</var> gebruikt).",
 	"apihelp-discussiontoolspageinfo-summary": "Retourneert metagegevens die nodig zijn om de discussiehulpmiddelen te initialiseren.",
 	"apihelp-discussiontoolspreview-param-type": "Type bericht waarvan u een voorbeeld wilt bekijken",
 	"apihelp-discussiontoolspreview-param-wikitext": "De inhoud waarvan u een voorbeeld wilt bekijken, als wikitekst.",
@@ -44,5 +49,6 @@
 	"apihelp-discussiontoolssubscribe-param-subscribe": "Waar om u te abonneren, onwaar om u af te melden",
 	"apihelp-discussiontoolssubscribe-summary": "Abonneer u (of meld u af) om meldingen over een onderwerp te ontvangen.",
 	"apihelp-discussiontoolsthank-param-commentid": "ID van de reactie waarvoor moet worden bedankt.",
-	"apihelp-discussiontoolsthank-summary": "Een openbaar bedankje sturen voor een reactie."
+	"apihelp-discussiontoolsthank-summary": "Een openbaar bedankje sturen voor een reactie.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "De gebruiker automatisch abonneren op al het nieuwe overleg dat door de bewerking worden aangemaakt. Gebruik 'yes' of 'no' om de voorkeur van de gebruiker (de standaardinstelling) te overschrijven."
 }

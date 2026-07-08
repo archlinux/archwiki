@@ -1,0 +1,42 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hzy980512",
+			"Marine-Blue",
+			"Omotecho",
+			"Shirayuki",
+			"Shulmj",
+			"Siglite3",
+			"Waki285",
+			"Tensama0415"
+		]
+	},
+	"oathauth-webauthn-module-label": "セキュリティキー",
+	"oathauth-webauthn-javascript-required": "セキュリティキーを使用するには、ブラウザで JavaScript を有効化する必要があります。",
+	"oathauth-webauthn-ui-login-prompt": "セキュリティキーを使用するか、ブラウザーの指示に従ってください。",
+	"oathauth-webauthn-ui-add-key": "キーを追加",
+	"oathauth-webauthn-error-browser-unsupported": "このブラウザーは WebAuthentication に対応していないか、このウェブサイトに対応していません。別のブラウザーで再試行してください。[https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support もっと詳しく]",
+	"oathauth-webauthn-error-browser-unsupported-console": "このブラウザーはセキュリティキー認証に対応していないか、このウェブサイトに対応していません。",
+	"oathauth-webauthn-error-auth-generic": "認証プロセスは中断されました。やり直してください。",
+	"oathauth-webauthn-error-reg-generic": "キーを登録できませんでした。登録の手順をやり直してください。",
+	"oathauth-webauthn-registered-keys-section-name": "登録済みのキー",
+	"oathauth-webauthn-ui-remove-key": "除去",
+	"oathauth-webauthn-error-module-not-enabled": "モジュール「$1」は{{GENDER:$2|利用者「$2」}}に対して有効化されていません。",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn 検証に失敗しました。",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn 認証情報が送信されませんでした。",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|利用者「$1」}}は新しい証明書を登録できません。",
+	"oathauth-webauthn-error-invalid-new-key": "モジュールが返した新しいキーは適切なタイプではありません。",
+	"oathauth-webauthn-error-registration-failed": "新しいキーの登録に失敗しました。",
+	"oathauth-webauthn-ui-key-register-help": "キーのニックネームを選択してください:",
+	"oathauth-webauthn-error-cannot-remove-key": "キーを除去できません。",
+	"oathauth-webauthn-error-get-authinfo-fail": "認証情報を取得できませんでした。",
+	"oathauth-webauthn-add-key-section-name": "新しいセキュリティキーを登録する",
+	"oathauth-webauthn-error-get-reginfo-fail": "登録情報を取得できませんでした。",
+	"oathauth-webauthn-module-description": "WebAuthnは実験段階です。現時点では認証デバイスを紛失、または破損した場合、復旧する方法は提供されていません。\n\n[https://ja.wikipedia.org/wiki/WebAuthn WebAuthnの詳細はこちら]",
+	"oathauth-webauthn-ui-reload-page-label": "ページを再読み込み",
+	"oathauth-webauthn-authentication-info-label": "認証データ",
+	"oathauth-webauthn-authentication-info-help": "資格情報取得のためにクライアントに渡される認証データ",
+	"oathauth-webauthn-credential-label": "利用者認証情報",
+	"oathauth-webauthn-credential-help": "認証データに基づく利用者認証情報",
+	"oathauth-webauthn-add-security-key": "セキュリティキーを追加"
+}

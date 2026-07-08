@@ -1,8 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\GlobalContributions;
 
 use MediaWiki\Block\DatabaseBlockStore;
+use MediaWiki\Html\Html;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\ContributionsRangeTrait;
 use MediaWiki\SpecialPage\ContributionsSpecialPage;
@@ -36,10 +37,6 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 
 	private const BASE_HELP_URL = 'https://www.mediawiki.org/wiki/Special:MyLanguage/Help:';
 
-	private CentralIdLookup $centralIdLookup;
-	private GlobalContributionsPagerFactory $pagerFactory;
-	private StatsFactory $statsFactory;
-
 	private ?GlobalContributionsPager $pager = null;
 
 	public function __construct(
@@ -53,9 +50,9 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 		UserIdentityLookup $userIdentityLookup,
 		DatabaseBlockStore $blockStore,
 		UserGroupAssignmentService $userGroupAssignmentService,
-		CentralIdLookup $centralIdLookup,
-		GlobalContributionsPagerFactory $pagerFactory,
-		StatsFactory $statsFactory
+		private readonly CentralIdLookup $centralIdLookup,
+		private readonly GlobalContributionsPagerFactory $pagerFactory,
+		private readonly StatsFactory $statsFactory,
 	) {
 		parent::__construct(
 			$permissionManager,
@@ -70,9 +67,6 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 			$userGroupAssignmentService,
 			'GlobalContributions'
 		);
-		$this->centralIdLookup = $centralIdLookup;
-		$this->pagerFactory = $pagerFactory;
-		$this->statsFactory = $statsFactory;
 	}
 
 	/**
@@ -240,6 +234,7 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 			$limitMsg = $this->msg( 'checkuser-global-contributions-subtitle-account' );
 		}
 
+		$contributionsSub .= Html::element( 'br' );
 		$contributionsSub .= $limitMsg
 			->numParams(
 				$this->getMaxAgeForMessage(),
@@ -247,10 +242,11 @@ class SpecialGlobalContributions extends ContributionsSpecialPage {
 			)->parse();
 
 		if ( $toolsMsg && !$toolsMsg->isDisabled() ) {
+			$contributionsSub .= Html::element( 'br' );
 			$contributionsSub .= $toolsMsg
 				->params( $userObj->getName() )
 				->numParams( $this->getMaxAgeForMessage() )
-				->parseAsBlock();
+				->parse();
 		}
 
 		return $contributionsSub;

@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountsByIPLookup;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\ActorStore;
@@ -20,8 +20,6 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  */
 class TemporaryAccountIPHandler extends AbstractTemporaryAccountIPHandler {
 
-	private CheckUserTemporaryAccountsByIPLookup $checkUserTemporaryAccountsByIPLookup;
-
 	public function __construct(
 		Config $config,
 		JobQueueGroup $jobQueueGroup,
@@ -31,15 +29,22 @@ class TemporaryAccountIPHandler extends AbstractTemporaryAccountIPHandler {
 		ActorStore $actorStore,
 		BlockManager $blockManager,
 		TempUserConfig $tempUserConfig,
-		CheckUserTemporaryAccountsByIPLookup $checkUserTemporaryAccountsByIPLookup,
+		private readonly CheckUserTemporaryAccountsByIPLookup $checkUserTemporaryAccountsByIPLookup,
 		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode
+		ReadOnlyMode $readOnlyMode,
 	) {
 		parent::__construct(
-			$config, $jobQueueGroup, $permissionManager, $userNameUtils, $dbProvider, $actorStore,
-			$blockManager, $tempUserConfig, $checkUserPermissionsManager, $readOnlyMode
+			$config,
+			$jobQueueGroup,
+			$permissionManager,
+			$userNameUtils,
+			$dbProvider,
+			$actorStore,
+			$blockManager,
+			$tempUserConfig,
+			$checkUserPermissionsManager,
+			$readOnlyMode
 		);
-		$this->checkUserTemporaryAccountsByIPLookup = $checkUserTemporaryAccountsByIPLookup;
 	}
 
 	/**

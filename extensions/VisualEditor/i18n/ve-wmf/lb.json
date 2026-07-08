@@ -12,6 +12,10 @@
 		]
 	},
 	"tag-editcheck-newreference-description": "Et gouf eng Referenz op d'Säit derbäigesat",
+	"tag-editsuggestion-seen": "Ännerungsvirschlag gesinn",
+	"tag-editsuggestion-seen-description": "Et gouf warscheinlech op d'mannst een Ännerungsvirschlag vum Benotzer gesinn",
+	"tag-editsuggestion-used": "Ännerungsvirschlag benotzt",
+	"tag-editsuggestion-used-description": "Et gouf op d'mannst een Ännerungsvirschlag vum Benotzer ëmgesat",
 	"tag-visualeditor": "Visuell Ännerung",
 	"tag-visualeditor-description": "Ännerung, déi mam [[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuellen Editeur]] gemaach gouf",
 	"tag-visualeditor-needcheck": "Visuell änneren: Nokucken",

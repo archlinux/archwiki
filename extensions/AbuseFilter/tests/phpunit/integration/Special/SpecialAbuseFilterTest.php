@@ -36,12 +36,12 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use SpecialPageTestBase;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList
@@ -130,8 +130,8 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			'rules' => 'user_name = "1.2.3.5"',
 			'name' => 'Filter to be converted',
 			'privacy' => Flags::FILTER_PUBLIC,
-			'userIdentity' => $performer,
-			'timestamp' => $this->getDb()->timestamp( '20190825000000' ),
+			'lastEditor' => $performer,
+			'lastEditTimestamp' => '20190825000000',
 		] );
 		$this->assertStatusGood( $filterStore->saveFilter(
 			$authority, null, $firstFilterRevision, MutableFilter::newDefault()
@@ -141,8 +141,8 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			'rules' => 'user_unnamed_ip = "1.2.3.5"',
 			'name' => 'Filter with protected variables',
 			'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
-			'userIdentity' => $performer,
-			'timestamp' => $this->getDb()->timestamp( '20190826000000' ),
+			'lastEditor' => $performer,
+			'lastEditTimestamp' => '20190826000000',
 		] );
 		$this->assertStatusGood( $filterStore->saveFilter(
 			$authority, 1, $secondFilterRevision, $firstFilterRevision
@@ -154,8 +154,8 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 				'rules' => 'user_unnamed_ip = "1.2.3.4"',
 				'name' => 'Filter with protected variables',
 				'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
-				'userIdentity' => $performer,
-				'timestamp' => $this->getDb()->timestamp( '20190827000000' ),
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20190827000000',
 				'hitCount' => 1,
 				'actions' => [ 'tags' => [ 'test' ] ]
 			] ),
@@ -170,8 +170,8 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 				'rules' => 'user_name = "1.2.3.4"',
 				'name' => 'Filter without protected variables',
 				'privacy' => Flags::FILTER_PUBLIC,
-				'userIdentity' => $performer,
-				'timestamp' => '20000101000000',
+				'lastEditor' => $performer,
+				'lastEditTimestamp' => '20000101000000',
 			] ),
 			MutableFilter::newDefault()
 		) );
@@ -291,6 +291,60 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		);
 	}
 
+	/**
+	 * @dataProvider provideViewEditMakePublic
+	 */
+	public function testViewEditMakePublic( int $isNewFilterHidden ) {
+		// Create a private filter
+		$performer = $this->getTestSysop();
+		$name = 'Hidden filter';
+		$rules = '1 = 0';
+		$this->assertStatusGood( AbuseFilterServices::getFilterStore()->saveFilter(
+			$performer->getAuthority(),
+			null,
+			$this->getFilterFromSpecs( [
+				// Use an ID that is not used in ::addDBDataOnce
+				'id' => '3',
+				'name' => $name,
+				'rules' => $rules,
+				'privacy' => Flags::FILTER_HIDDEN,
+			] ),
+			MutableFilter::newDefault()
+		) );
+
+		$request = new FauxRequest( [
+			// Avoid the abusefilter-edit-missingfields error (see FilterValidator::checkRequiredFields)
+			'wpFilterDescription' => $name,
+			'wpFilterRules' => $rules,
+		], true );
+		if ( $isNewFilterHidden ) {
+			// Checkbox checked: keep the filter private
+			$request->setVal( 'wpFilterHidden', 1 );
+		}
+
+		// Make sure wpEditToken is set, because wpMakePublic is evaluated after token mismatches
+		$context = RequestContext::getMain();
+		$context->setAuthority( $performer->getAuthority() );
+		$token = $context->getCsrfTokenSet()->getToken( [ 'abusefilter', '3' ] )->toString();
+		$request->setVal( 'wpEditToken', $token );
+
+		[ $html ] = $this->executeSpecialPage( '3', $request );
+
+		$msgFragment = $isNewFilterHidden ? 'shown unexpectedly' : 'not shown';
+		$this->assertSame(
+			!$isNewFilterHidden,
+			str_contains( $html, '(abusefilter-edit-makepublic)' ),
+			"The warning for making a private filter public was $msgFragment"
+		);
+	}
+
+	public static function provideViewEditMakePublic() {
+		return [
+			'Keeping a private filter private' => [ 1 ],
+			'Making a private filter public' => [ 0 ]
+		];
+	}
+
 	public function testViewEditUnrecoverableError() {
 		[ $html, ] = $this->executeSpecialPage(
 			'new',
@@ -358,10 +412,6 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 	}
 
 	public function testViewEditProtectedVarsCheckboxPresentForProtectedFilter() {
-		// Xml::buildForm uses the global wfMessage which means we need to set
-		// the language for the user globally too.
-		$this->setUserLang( 'qqx' );
-
 		[ $html, ] = $this->executeSpecialPage(
 			'1',
 			new FauxRequest(),
@@ -515,6 +565,33 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		$this->assertStringContainsString( '1.2.3.4', $html );
 	}
 
+	public function testViewTestBatchWhenSubmittedForProtectedFilterButReadOnlyEnabled(): void {
+		$this->addCustomProtectedVariableToGenericVars();
+		$this->clearHook( 'ChangesListInitRows' );
+
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+		[ $html, ] = $this->executeSpecialPage(
+			'test',
+			new FauxRequest( [
+				'wpFilterRules' => "custom_variable = 'custom_variable_value'",
+				'wpTestAction' => 0,
+				'wpTestUser' => '',
+				'wpTestPeriodStart'	=> '',
+				'wpTestPeriodEnd' => '',
+				'wpTestPage' => '',
+				'wpShowNegative' => 1,
+			], true ),
+			null,
+			$this->authorityCanUseProtectedVar
+		);
+
+		$this->assertStringContainsString(
+			'(readonlytext: test',
+			$html,
+			'Read only mode warning should be shown if in read only mode'
+		);
+	}
+
 	/**
 	 * @dataProvider provideIsLogSourceForRCAccessControl
 	 */
@@ -660,6 +737,42 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			false,
 			true
 		);
+	}
+
+	public function testViewTestBatchWhenSubmittedWithAllNullProtectedValues() {
+		$this->addCustomProtectedVariableToGenericVars( null );
+
+		// Assert that the user who can see protected variables can submit the form for a protected filter
+		// and that this submission causes protected variable access logs to be created
+		[ $html, ] = $this->executeSpecialPage(
+			'test',
+			new FauxRequest( [
+				'wpFilterRules' => "custom_variable = 'custom_variable_value'",
+				'wpTestAction' => 0,
+				'wpTestUser' => '',
+				'wpTestPeriodStart'	=> '',
+				'wpTestPeriodEnd' => '',
+				'wpTestPage' => '',
+				'wpShowNegative' => 1,
+			], true ),
+			null,
+			$this->authorityCanUseProtectedVar
+		);
+
+		$this->assertStringContainsString( 'custom_variable_value', $html );
+
+		// Verify that a protected variable access log was not created created
+		// as the value was null and so nothing was viewed that was protected
+		$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->join( 'actor', null, 'actor_id=log_actor' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
 	}
 
 	/**
@@ -1139,6 +1252,35 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		);
 	}
 
+	public function testViewExamineForLogEntryWhenProtectedVariablesUsedButReadOnly(): void {
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+
+		[ $html, ] = $this->executeSpecialPage(
+			'examine/log/1',
+			new FauxRequest(),
+			null,
+			$this->authorityCanUseProtectedVar
+		);
+		DeferredUpdates::doUpdates();
+
+		$this->assertStringContainsString(
+			'(readonlytext: test',
+			$html,
+			'A read only error should be displayed instead of showing protected variables'
+		);
+
+		// Assert no log is created (because the site is in read only mode)
+		$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
+	}
+
 	public function testViewExamineForLogEntryWhenUserCanSeeLog() {
 		[ $html, ] = $this->executeSpecialPage(
 			'examine/log/1',
@@ -1182,16 +1324,21 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		);
 	}
 
-	private function addCustomProtectedVariableToGenericVars() {
+	private function addCustomProtectedVariableToGenericVars(
+		?string $variableValue = 'custom_variable_value'
+	): void {
 		$this->setTemporaryHook( 'AbuseFilterCustomProtectedVariables', static function ( &$variables ) {
 			$variables[] = 'custom_variable';
 		} );
 		$this->setTemporaryHook( 'AbuseFilter-builder', static function ( array &$realValues ) {
 			$realValues['vars']['custom_variable'] = 'custom-variable-test';
 		} );
-		$this->setTemporaryHook( 'AbuseFilter-generateGenericVars', static function ( VariableHolder $vars ) {
-			$vars->setVar( 'custom_variable', 'custom_variable_value' );
-		} );
+		$this->setTemporaryHook(
+			'AbuseFilter-generateGenericVars',
+			static function ( VariableHolder $vars ) use ( $variableValue ) {
+				$vars->setVar( 'custom_variable', $variableValue );
+			}
+		);
 		$this->resetServices();
 	}
 
@@ -1265,6 +1412,33 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 			'The "custom_variable" variable was not unset, but it should ' .
 				'have been because the user cannot see it.'
 		);
+	}
+
+	public function testViewExamineForRecentChangeForProtectedVariablesButReadOnly(): void {
+		$this->addCustomProtectedVariableToGenericVars();
+
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+		[ $html, ] = $this->executeSpecialPage(
+			'examine/' . self::$recentChangeId, null, null, $this->authorityCanUseProtectedVar
+		);
+		DeferredUpdates::doUpdates();
+
+		$this->assertStringContainsString(
+			'(readonlytext: test',
+			$html,
+			'A read only error should be displayed instead of showing protected variables'
+		);
+
+		// Assert no log is created (because the site is in read only mode)
+		$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->where( [
+				'log_action' => 'view-protected-var-value',
+				'log_type' => ProtectedVarsAccessLogger::LOG_TYPE,
+			] )
+			->caller( __METHOD__ )
+			->assertEmptyResult();
 	}
 
 	public function testViewExamineForRecentChangeWhenUserCanSeeRecentChange() {

@@ -3,14 +3,14 @@
  */
 export class Cookies {
 
-	constructor() {
-		this.pairs = {};
+	constructor( defaultCookies = {} ) {
+		this.pairs = { ...defaultCookies };
 	}
 
 	/**
 	 * Add cookies from Set-Cookie header lines.
 	 *
-	 * @param {Iterable<string>} setCookies - Iterable of `Set-Cookie` header lines.
+	 * @param {string[]} setCookies `Set-Cookie` header lines.
 	 */
 	getCookiesFromHeaders( setCookies ) {
 		for ( const line of setCookies ) {

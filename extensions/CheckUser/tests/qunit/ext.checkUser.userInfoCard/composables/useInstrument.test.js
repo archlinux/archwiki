@@ -1,6 +1,6 @@
 'use strict';
 
-const useInstrument = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/composables/useInstrument.js' );
+const useInstrument = require( 'ext.checkUser.userInfoCard/composables/useInstrument.js' );
 
 // Store stubs for use in arrow functions
 let configStub, newInstrumentStub, submitInteractionStub, instrumentStub;

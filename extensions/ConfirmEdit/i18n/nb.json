@@ -39,5 +39,6 @@
 	"confirmedit-preview-valid": "gyldig",
 	"confirmedit-preview-invalid": "ugyldig",
 	"confirmedit-preview-description": "Følgende tabell viser listen over linjer på denne siden og hvorvidt det er en gyldig IP-adresse eller IP-blokk. Om linja er en gyldig IP-adresse eller IP-blokk vil det bli ekskludert fra CAPTCHA-sjekking, men ugyldige linjer vil ignoreres. Et eksempel på en gyldig IP-blokk vil være: 69.208.0.0/16, som går fra 69.208.0.0 til 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mer informasjon] om kalkulering av en IP-blokk.",
-	"abusefilter-edit-action-showcaptcha": "Krev at brukeren fullfører en CAPTCHA for å fortsette med handlingen. Brukere som har tillatelse til å hoppe over CAPTCHA trenger ikke å gjøre dette."
+	"abusefilter-edit-action-showcaptcha": "Krev en CAPTCHA-verifisering for å utføre handlingen",
+	"abusefilter-edit-action-showcaptcha-help": "Brukere som har tillatelse til å hoppe over CAPTCHA trenger ikke å gjøre dette."
 }

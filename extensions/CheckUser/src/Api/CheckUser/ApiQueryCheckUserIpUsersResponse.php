@@ -1,15 +1,16 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\CheckUser;
+namespace MediaWiki\Extension\CheckUser\Api\CheckUser;
 
 use MediaWiki\Api\ApiResult;
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Services\CheckUserLogService;
-use MediaWiki\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
+use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
-use MessageLocalizer;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -17,25 +18,25 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse {
 
-	private UserFactory $userFactory;
-	private MessageLocalizer $messageLocalizer;
-
 	public function __construct(
 		ApiQueryCheckUser $module,
 		IConnectionProvider $dbProvider,
 		Config $config,
-		MessageLocalizer $messageLocalizer,
+		private readonly MessageLocalizer $messageLocalizer,
 		CheckUserLogService $checkUserLogService,
 		UserNameUtils $userNameUtils,
 		CheckUserLookupUtils $checkUserLookupUtils,
-		UserFactory $userFactory
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct(
-			$module, $dbProvider, $config, $messageLocalizer, $checkUserLogService,
-			$userNameUtils, $checkUserLookupUtils
+			$module,
+			$dbProvider,
+			$config,
+			$messageLocalizer,
+			$checkUserLogService,
+			$userNameUtils,
+			$checkUserLookupUtils
 		);
-		$this->userFactory = $userFactory;
-		$this->messageLocalizer = $messageLocalizer;
 	}
 
 	/** @inheritDoc */
@@ -50,7 +51,7 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 		$users = [];
 		foreach ( $res as $row ) {
 			$user = $row->user_text;
-			$ip = $row->ip;
+			$ip = $row->ip_hex !== null ? IPUtils::formatHex( $row->ip_hex ) : null;
 			$agent = $row->agent;
 
 			// Use the IP as the $row->user_text if the actor ID is NULL and the IP is not NULL (T353953).
@@ -99,7 +100,11 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 			$logType .= '-xff';
 		}
 		$this->checkUserLogService->addLogEntry(
-			$this->module->getUser(), $logType, 'ip', $this->target, $this->reason
+			$this->module->getUser(),
+			$logType,
+			'ip',
+			$this->target,
+			$this->reason
 		);
 		return $resultUsers;
 	}
@@ -115,18 +120,18 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 
 	/** @inheritDoc */
 	protected function getPartialQueryBuilderForCuChanges(): SelectQueryBuilder {
-		$queryBuilder = $this->dbr->newSelectQueryBuilder()
+		return $this->dbr->newSelectQueryBuilder()
 			->select( [
 				'timestamp' => 'cuc_timestamp',
-				'ip' => 'cuc_ip',
-				'agent' => 'cuc_agent',
+				'ip_hex' => 'cuc_ip_hex',
 				'user_text' => 'actor_name',
 				'actor' => 'cuc_actor',
+				'agent' => 'cuua_text',
 			] )
 			->from( 'cu_changes' )
 			->join( 'actor', null, 'actor_id=cuc_actor' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cuc_agent_id' )
 			->where( $this->dbr->expr( 'cuc_timestamp', '>', $this->timeCutoff ) );
-		return $queryBuilder;
 	}
 
 	/** @inheritDoc */
@@ -134,13 +139,14 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 		return $this->dbr->newSelectQueryBuilder()
 			->select( [
 				'timestamp' => 'cule_timestamp',
-				'ip' => 'cule_ip',
-				'agent' => 'cule_agent',
+				'ip_hex' => 'cule_ip_hex',
 				'user_text' => 'actor_name',
 				'actor' => 'cule_actor',
+				'agent' => 'cuua_text',
 			] )
 			->from( 'cu_log_event' )
 			->join( 'actor', null, 'actor_id=cule_actor' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cule_agent_id' )
 			->where( $this->dbr->expr( 'cule_timestamp', '>', $this->timeCutoff ) );
 	}
 
@@ -149,13 +155,14 @@ class ApiQueryCheckUserIpUsersResponse extends ApiQueryCheckUserAbstractResponse
 		return $this->dbr->newSelectQueryBuilder()
 			->select( [
 				'timestamp' => 'cupe_timestamp',
-				'ip' => 'cupe_ip',
-				'agent' => 'cupe_agent',
+				'ip_hex' => 'cupe_ip_hex',
 				'user_text' => 'actor_name',
 				'actor' => 'cupe_actor',
+				'agent' => 'cuua_text',
 			] )
 			->from( 'cu_private_event' )
 			->leftJoin( 'actor', null, 'actor_id=cupe_actor' )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cupe_agent_id' )
 			->where( $this->dbr->expr( 'cupe_timestamp', '>', $this->timeCutoff ) );
 	}
 }

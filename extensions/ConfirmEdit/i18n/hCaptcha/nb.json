@@ -18,7 +18,12 @@
 	"hcaptcha-challenge-closed": "Du må fullføre CAPTCHA-en for å fortsette.",
 	"hcaptcha-challenge-expired": "Tidsfristen for å fullføre CAPTCHA-en har utløpt. Prøv igjen.",
 	"hcaptcha-generic-error": "En feil oppsto under lasting av skjemaet. Du må laste siden på nytt for å fortsette.",
+	"hcaptcha-internal-error": "En intern feil oppsto under innsending av skjemaet. Prøv igjen.",
+	"hcaptcha-network-error": "En nettverksfeil oppsto under innsendingen av skjemaet. Sjekk at du har internettforbindelse og prøv på nytt.",
+	"hcaptcha-rate-limited": "Det har vært for mange forsøk på å løse CAPTCHA-en. Vent litt før du prøver igjen.",
 	"hcaptcha-loading-indicator-label": "Vent mens vi laster inn skjemaet …",
 	"hcaptcha-missing-token": "Vi er ikke ferdige med å laste inn skjemaet. Vent noen sekunder og prøv igjen.",
-	"hcaptcha-noscript": "JavaScript er påkrevd for å fortsette. Skru på JavaScript i nettleserinnstillingene og last siden på nytt."
+	"hcaptcha-noscript": "JavaScript er påkrevd for å fortsette. Skru på JavaScript i nettleserinnstillingene og last siden på nytt.",
+	"hcaptcha-force-show-captcha-edit": "Send inn skjemaet på nytt og fullfør utfordringen for å lagre redigeringen din.",
+	"hcaptcha-visual-editor-error-handler-warning": "Send inn skjemaet på nytt for å lagre endringen din."
 }

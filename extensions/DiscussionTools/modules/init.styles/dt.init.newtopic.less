@@ -1,0 +1,152 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
+
+/* stylelint-disable no-descending-specificity */
+
+// Empty state
+.ext-discussiontools-emptystate { /* stylelint-disable-line plugin/no-unsupported-browser-features */
+	display: flex;
+	justify-content: space-between;
+	gap: 1em;
+	// Add space between this and any existing page content above,
+	// or page-actions-menu in Minerva for non-existing pages
+	margin-top: 1em;
+	clear: both;
+
+	&-text {
+		min-width: 0;
+	}
+
+	&-logo {
+		flex-shrink: 0;
+		width: 250px;
+		min-height: 166px;
+		background: url( images/emptystate.svg ) no-repeat;
+		background-size: contain;
+		// Align with top of h2 text in -text (0.25em margin + 0.5em padding * 1.2em font scaling)
+		margin-top: 0.9em;
+	}
+
+	&:not( :first-child ) {
+		// Separate from existing (non-discussion) content
+		margin-top: 2em;
+		padding-top: 1em;
+		border-top: @border-width-base @border-style-base @border-color-base;
+	}
+
+	// Mobile
+	@media ( max-width: 719px ) {
+		display: block;
+
+		.oo-ui-buttonElement {
+			display: block;
+			text-align: center;
+
+			> a {
+				width: 80%;
+			}
+		}
+
+		&-logo {
+			display: none;
+		}
+	}
+}
+
+.ext-discussiontools-init-replylink-open {
+	/* stylelint-disable selector-class-pattern */
+	.ext-discussiontools-emptystate,
+	.mw-body-content > .cdx-message--warning {
+		// Top level warnings, such as "User account --- is not registered" will re-apppear
+		// in the new topic tool, so we can hide the original. (T289354#7312789)
+		display: none;
+	}
+	/* stylelint-enable selector-class-pattern */
+}
+
+// Add topic button
+
+// HACK: Fake disabled styles for the .mw-ui-button in Vector sticky header (T307726)
+.ext-discussiontools-fake-disabled {
+	filter: saturate( 0 );
+	opacity: 0.8;
+	pointer-events: none;
+}
+
+// Mobile add topic button
+.minerva-footer-button() {
+	width: 100%;
+	padding: 1em;
+	box-sizing: content-box;
+	color: @color-progressive;
+	background: @background-color-interactive-subtle;
+	border-top: @border-width-base @border-style-base @border-color-muted;
+	text-align: center;
+	clear: both;
+
+	// Match Minerva styles
+	max-width: 993.3px;
+	margin-left: -16px !important;
+	margin-right: -16px !important;
+
+	// Avoid smooshing with content / empty state (T320755)
+	margin-top: 32px;
+	// (it's not redundant longhand, some margins are !important and some aren't)
+	// stylelint-disable-next-line declaration-block-no-redundant-longhand-properties
+	margin-bottom: -32px;
+
+	@media print {
+		display: none !important;
+	}
+}
+
+.ext-discussiontools-init-new-topic {
+	.minerva-footer-button();
+	position: sticky;
+	// Required for IntersectionObserver trick
+	bottom: -1px;
+	transition-property: transform, opacity;
+	transition-duration: @transition-duration-medium;
+	transform: translateY( 100% );
+	opacity: 0;
+
+	// No need to show it when the empty state banner is shown,
+	// as that already has a large button for starting a topic.
+	.mw-mf.ext-discussiontools-emptystate-shown & {
+		display: none;
+	}
+
+	.ext-discussiontools-init-new-topic-open &,
+	.ext-discussiontools-init-new-topic-opened &,
+	.client-nojs & {
+		transform: translateY( 0 );
+		opacity: 1;
+	}
+
+	.ext-discussiontools-init-new-topic-close & {
+		transform: translateY( 100% );
+		opacity: 0;
+	}
+
+	.ext-discussiontools-init-new-topic-closed &,
+	.ext-discussiontools-init-virtual-keyboard-open &,
+	&-pinned {
+		transform: translateY( 0 );
+		opacity: 1;
+		position: static;
+		transition: none;
+	}
+
+	.ext-discussiontools-init-replylink-open & {
+		.ext-discussiontools-fake-disabled();
+		transform: translateY( 0 );
+		opacity: 1;
+		position: static;
+	}
+}
+
+// Tweak to prevent our footer buttons from overlapping Minerva skin elements (T328452).
+.client-nojs .ext-discussiontools-init-new-topic,
+.ext-discussiontools-init-new-topic-pinned.ext-discussiontools-init-button-notFlush {
+	margin-bottom: 32px;
+}

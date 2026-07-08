@@ -246,7 +246,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Isaad ti sabsabali (set_var)",
 	"abusefilter-edit-builder-group-vars": "Sabsabali",
 	"abusefilter-edit-builder-vars-timestamp": "Unix a petsa ken oras iti binaliwan",
-	"abusefilter-edit-builder-vars-accountname": "Nagan ti pakabilangan (idi naaramid ti pakabilangan)",
+	"abusefilter-edit-builder-vars-account-name": "Nagan ti pakabilangan (idi naaramid ti pakabilangan)",
 	"abusefilter-edit-builder-vars-action": "Tignay",
 	"abusefilter-edit-builder-vars-addedlines": "Dagiti linia a naiyon iti inurnos",
 	"abusefilter-edit-builder-vars-delta": "Kadakkel a sukat iti inurnos",

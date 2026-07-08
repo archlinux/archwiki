@@ -1,11 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 
@@ -36,13 +37,13 @@ trait TemporaryAccountRevisionTrait {
 			// T327906: 'cuc_actor' and 'cuc_timestamp' are selected
 			// only to satisfy Postgres requirement where all ORDER BY
 			// fields must be present in SELECT list.
-			->select( [ 'cuc_this_oldid', 'cuc_ip', 'cuc_actor', 'cuc_timestamp' ] )
+			->select( [ 'cuc_this_oldid', 'cuc_ip_hex', 'cuc_actor', 'cuc_timestamp' ] )
 			->from( 'cu_changes' )
 			->where( [
 				'cuc_actor' => $actorId,
 				'cuc_this_oldid' => $revisionIds,
 			] )
-			->orderBy( [ 'cuc_actor', 'cuc_ip', 'cuc_timestamp' ] )
+			->orderBy( [ 'cuc_actor', 'cuc_ip_hex', 'cuc_timestamp' ] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
@@ -50,7 +51,11 @@ trait TemporaryAccountRevisionTrait {
 		foreach ( $rows as $row ) {
 			// In the unlikely case that there are rows with the same
 			// revision ID, the final array will contain the most recent
-			$ips[$row->cuc_this_oldid] = $row->cuc_ip;
+			// The IP hex can be null if CheckUser was just installed on a wiki
+			// and populateCheckUserTable.php is run.
+			if ( $row->cuc_ip_hex !== null ) {
+				$ips[$row->cuc_this_oldid] = IPUtils::formatHex( $row->cuc_ip_hex );
+			}
 		}
 
 		return $ips;
@@ -82,9 +87,7 @@ trait TemporaryAccountRevisionTrait {
 			// Find the IDs which were not found in the revision table so that we can check the archive table.
 			$missingIds = array_diff(
 				$ids,
-				array_map( static function ( $row ) {
-					return $row->rev_id;
-				}, iterator_to_array( $revisionRows ) )
+				array_map( static fn ( $row ) => $row->rev_id, iterator_to_array( $revisionRows ) )
 			);
 			if ( count( $missingIds ) ) {
 				// If IDs are missing, then they are probably in the archive table. If not they are not,
@@ -110,13 +113,13 @@ trait TemporaryAccountRevisionTrait {
 	 * Actually perform the filtering of revisions where the performer is
 	 * hidden from the authority.
 	 *
-	 * @param RevisionRecord[] $revisions
+	 * @param (RevisionRecord|null)[] $revisions
 	 * @return int[] The revision IDs the authority is allowed to see.
 	 */
 	private function filterOutHiddenRevisionsInternal( array $revisions ): array {
 		$filteredIds = [];
 		foreach ( $revisions as $revisionRecord ) {
-			if ( $revisionRecord->userCan( RevisionRecord::DELETED_USER, $this->getAuthority() ) ) {
+			if ( $revisionRecord && $revisionRecord->userCan( RevisionRecord::DELETED_USER, $this->getAuthority() ) ) {
 				$filteredIds[] = $revisionRecord->getId();
 			}
 		}

@@ -5,8 +5,10 @@ namespace Wikimedia\Parsoid\Ext\Gallery;
 
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Core\ContentMetadataCollectorStringSets as CMCSS;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Text;
@@ -19,8 +21,6 @@ use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\Utils;
 use Wikimedia\Parsoid\NodeData\DataMwBody;
-use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * Implements the php parser's `renderImageGallery` natively.
@@ -210,8 +210,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $content, array $args
 	): DocumentFragment {
-		$attrs = $extApi->extArgsToArray( $args );
-		$opts = new Opts( $extApi, $attrs );
+		$opts = new Opts( $extApi, $args );
 
 		$offset = $extApi->extTag->getOffsets()->innerStart();
 		$source = $extApi->extTag->getOffsets()->source;

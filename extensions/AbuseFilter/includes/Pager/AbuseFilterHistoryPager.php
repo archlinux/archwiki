@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Pager;
 
-use HtmlArmor;
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilter;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
@@ -14,66 +12,36 @@ use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\TablePager;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use UnexpectedValueException;
+use Wikimedia\HtmlArmor\HtmlArmor;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class AbuseFilterHistoryPager extends TablePager {
 
-	private LinkBatchFactory $linkBatchFactory;
-	private FilterLookup $filterLookup;
-	private SpecsFormatter $specsFormatter;
-	private AbuseFilterPermissionManager $afPermManager;
-
-	/** @var int|null The filter ID */
-	private $filter;
-
-	/** @var string|null The user whose changes we're looking up for */
-	private $user;
-
-	/** @var bool */
-	private $canViewPrivateFilters;
-
-	/**
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param FilterLookup $filterLookup
-	 * @param SpecsFormatter $specsFormatter
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param ?int $filter
-	 * @param ?string $user User name
-	 * @param bool $canViewPrivateFilters
-	 */
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory,
-		FilterLookup $filterLookup,
-		SpecsFormatter $specsFormatter,
-		AbuseFilterPermissionManager $afPermManager,
-		?int $filter,
-		?string $user,
-		bool $canViewPrivateFilters = false
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly FilterLookup $filterLookup,
+		private readonly SpecsFormatter $specsFormatter,
+		private readonly AbuseFilterPermissionManager $afPermManager,
+		private readonly ?int $filter,
+		private readonly ?string $user,
+		private readonly bool $canViewPrivateFilters = false,
+		private readonly bool $canViewSuppressedFilters = false
 	) {
-		// needed by parent's constructor call
-		$this->filter = $filter;
 		parent::__construct( $context, $linkRenderer );
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->filterLookup = $filterLookup;
-		$this->specsFormatter = $specsFormatter;
-		$this->afPermManager = $afPermManager;
-		$this->user = $user;
-		$this->canViewPrivateFilters = $canViewPrivateFilters;
 		$this->mDefaultDirection = true;
 	}
 
 	/**
 	 * Note: this method is called by parent::__construct
-	 * @return array
+	 * @return array<string,string>
 	 * @see MediaWiki\Pager\Pager::getFieldNames()
 	 */
 	public function getFieldNames() {
@@ -167,6 +135,7 @@ class AbuseFilterHistoryPager extends TablePager {
 					$filter = $this->filterLookup->filterFromHistoryRow( $row );
 					$userCanSeeFilterDiff = true;
 
+					// Protected variables permission check
 					if ( $filter->isProtected() ) {
 						$userCanSeeFilterDiff = $this->afPermManager
 							->canViewProtectedVariablesInFilter( $this->getAuthority(), $filter )
@@ -179,8 +148,17 @@ class AbuseFilterHistoryPager extends TablePager {
 							->isGood();
 					}
 
+					// Private filter visibility check
 					if ( !$this->canViewPrivateFilters && $userCanSeeFilterDiff ) {
 						$userCanSeeFilterDiff = !$filter->isHidden() && !$prevFilter->isHidden();
+					}
+
+					// Suppressed filter visibility check
+					if ( $userCanSeeFilterDiff && !$this->canViewSuppressedFilters ) {
+						// Use the filters' own suppressed state rather than parsing flags again
+						if ( $filter->isSuppressed() || $prevFilter->isSuppressed() ) {
+							$userCanSeeFilterDiff = false;
+						}
 					}
 
 					if ( $userCanSeeFilterDiff ) {
@@ -216,8 +194,11 @@ class AbuseFilterHistoryPager extends TablePager {
 			$queryBuilder->andWhere( [ 'afh_filter' => $this->filter ] );
 		}
 
+		// Hide data the user can't see.
+		if ( !$this->canViewSuppressedFilters ) {
+			$queryBuilder->andWhere( $this->mDb->bitAnd( 'af_hidden', Flags::FILTER_SUPPRESSED ) . ' = 0' );
+		}
 		if ( !$this->canViewPrivateFilters ) {
-			// Hide data the user can't see.
 			$queryBuilder->andWhere( $this->mDb->bitAnd( 'af_hidden', Flags::FILTER_HIDDEN ) . ' = 0' );
 		}
 

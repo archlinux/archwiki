@@ -77,7 +77,6 @@ class EngineFactory {
 			);
 		}
 
-		// @phan-suppress-next-line PhanAccessReadOnlyProperty False positive, related to phan#5062
 		if ( !isset( $this->engineConf[$this->defaultEngine] ) ) {
 			throw new ConfigException( 'Invalid scripting engine is specified in $wgScribuntoDefaultEngine' );
 		}

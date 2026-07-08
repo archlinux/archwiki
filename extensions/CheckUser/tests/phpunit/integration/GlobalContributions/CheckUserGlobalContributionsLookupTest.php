@@ -1,12 +1,12 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\GlobalContributions;
 
-use MediaWiki\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
-use MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
-use MediaWiki\CheckUser\Jobs\UpdateUserCentralIndexJob;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserApiRequestAggregator;
+use MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup;
+use MediaWiki\Extension\CheckUser\Jobs\UpdateUserCentralIndexJob;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionRecord;
@@ -19,7 +19,7 @@ use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\CheckUserGlobalContributionsLookup
  * @group CheckUser
  * @group Database
  */
@@ -74,27 +74,47 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiIntegrationTestCas
 		// Make edits from temp accounts 1 and 2 from the same IP
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.1' );
 		$this->editPage(
-			'Test page', 'Test Content 1', 'test', NS_MAIN, self::$tempUser1
+			'Test page',
+			'Test Content 1',
+			'test',
+			NS_MAIN,
+			self::$tempUser1
 		);
 		$this->editPage(
-			'Test page', 'Test Content 2', 'test', NS_MAIN, self::$tempUser2
+			'Test page',
+			'Test Content 2',
+			'test',
+			NS_MAIN,
+			self::$tempUser2
 		);
 
 		// From a new IP, make an edit from temp account 2
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.2' );
 		$this->editPage(
-			'Test page', 'Test Content 3', 'test', NS_MAIN, self::$tempUser2
+			'Test page',
+			'Test Content 3',
+			'test',
+			NS_MAIN,
+			self::$tempUser2
 		);
 
 		// Make an edit from temp account 3 and the registered user on a new IP
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.3' );
 		$this->editPage(
-			'Test page', 'Test Content 4', 'test', NS_MAIN, self::$tempUser3
+			'Test page',
+			'Test Content 4',
+			'test',
+			NS_MAIN,
+			self::$tempUser3
 		);
 
 		// Make an edit that will have its author hidden
 		$status = $this->editPage(
-			'Test page', 'Test Content 5', 'test', NS_MAIN, self::$tempUser4
+			'Test page',
+			'Test Content 5',
+			'test',
+			NS_MAIN,
+			self::$tempUser4
 		);
 		$revId = $status->getNewRevision()->getId();
 
@@ -123,13 +143,13 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiIntegrationTestCas
 	}
 
 	/** @dataProvider provideTestGetGlobalContributionCount */
-	public function testGetGlobalContributionCount( $targetProvider, $expectedCount ) {
+	public function testGetGlobalContributionCount( $target, $expectedCount ) {
 		$lookup = $this->getObjectUnderTest();
 		$authority = RequestContext::getMain()->getAuthority();
 
 		$this->assertSame(
 			$expectedCount,
-			$lookup->getGlobalContributionsCount( $targetProvider(), $authority )
+			$lookup->getGlobalContributionsCount( $target(), $authority )
 		);
 	}
 
@@ -348,8 +368,10 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiIntegrationTestCas
 			'99990101000000'
 		);
 		$this->assertArrayEquals(
-			[], $activeWikisRecent,
-			false, false,
+			[],
+			$activeWikisRecent,
+			false,
+			false,
 			'No wikis should be active for future cutoff'
 		);
 
@@ -359,8 +381,10 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiIntegrationTestCas
 			new FauxRequest()
 		);
 		$this->assertArrayEquals(
-			[], $activeWikisForHiddenAuthor,
-			false, false,
+			[],
+			$activeWikisForHiddenAuthor,
+			false,
+			false,
 			'Wiki with only rev-deleted author should not be included'
 		);
 
@@ -370,8 +394,10 @@ class CheckUserGlobalContributionsLookupTest extends MediaWikiIntegrationTestCas
 			new FauxRequest()
 		);
 		$this->assertArrayEquals(
-			[ WikiMap::getCurrentWikiId() ], $activeWikisForHiddenAuthorElevated,
-			false, false,
+			[ WikiMap::getCurrentWikiId() ],
+			$activeWikisForHiddenAuthorElevated,
+			false,
+			false,
 			'Wiki with only rev-deleted author should not be included'
 		);
 	}

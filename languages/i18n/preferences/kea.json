@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Quintino Lopes Castro Tavares",
-			"Waldyrious",
+			"GrogeXaKaba",
 			"Letra.berdi",
-			"GrogeXaKaba"
+			"Quintino Lopes Castro Tavares",
+			"Waldyrious"
 		]
 	},
 	"preferences": "Prifirénsas",
@@ -129,6 +129,8 @@
 	"prefs-description-watchlist": "Jiria i kustumiza lista di pájinas ki bu ta kunpanha.",
 	"prefs-editwatchlist": "Idita lista di pájinas biziadu",
 	"prefs-editwatchlist-label": "Idita antradas di bu lista di pájinas biziadu:",
+	"prefs-editwatchlistlabels-label": "Idita itikétas di lista di pájinas biziadu:",
+	"prefs-managewatchlistlabels": "Udja i jiria itikétas di bu lista di pájinas biziadu",
 	"prefs-editwatchlist-edit": "Udja i ramuve titlus di bu lista di pájinas biziadu",
 	"prefs-editwatchlist-raw": "Idita lista di pájinas biziadu na fórma di testu",
 	"prefs-editwatchlist-clear": "Sbazia bu lista di pájinas biziadu",

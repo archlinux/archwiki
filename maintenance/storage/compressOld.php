@@ -26,6 +26,7 @@
  * @file
  * @ingroup Maintenance ExternalStorage
  */
+
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
@@ -181,8 +182,7 @@ class CompressOld extends Maintenance {
 		# Store in external storage if required
 		if ( $extdb !== '' ) {
 			$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
-			/** @var ExternalStoreDB $storeObj */
-			$storeObj = $esFactory->getStore( 'DB' );
+			$storeObj = $esFactory->getDatabaseStore();
 			$compress = $storeObj->store( $extdb, $compress );
 			if ( $compress === false ) {
 				$this->error( "Unable to store object" );
@@ -227,8 +227,7 @@ class CompressOld extends Maintenance {
 		# Set up external storage
 		if ( $extdb != '' ) {
 			$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
-			/** @var ExternalStoreDB $storeObj */
-			$storeObj = $esFactory->getStore( 'DB' );
+			$storeObj = $esFactory->getDatabaseStore();
 		}
 
 		$blobStore = $this->getServiceContainer()
@@ -358,7 +357,7 @@ class CompressOld extends Maintenance {
 
 				$chunk = new ConcatenatedGzipHistoryBlob();
 				$stubs = [];
-				$this->beginTransaction( $dbw, __METHOD__ );
+				$this->beginTransactionRound( __METHOD__ );
 				$usedChunk = false;
 				$primaryOldid = $revs[$i]->old_id;
 
@@ -464,7 +463,7 @@ class CompressOld extends Maintenance {
 				}
 				# Done, next
 				$this->output( "/" );
-				$this->commitTransaction( $dbw, __METHOD__ );
+				$this->commitTransactionRound( __METHOD__ );
 				$i += $thisChunkSize;
 			}
 			$this->output( "\n" );

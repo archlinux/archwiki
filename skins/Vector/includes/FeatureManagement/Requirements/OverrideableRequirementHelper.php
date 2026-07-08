@@ -32,11 +32,7 @@ use MediaWiki\Request\WebRequest;
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
  */
 class OverrideableRequirementHelper {
-	private WebRequest $request;
-
-	private string $requirementName;
-
-	private string $overrideName;
+	private readonly string $overrideName;
 
 	/**
 	 * This constructor accepts all dependencies needed to determine whether
@@ -46,12 +42,10 @@ class OverrideableRequirementHelper {
 	 * @param string $requirementName The name of the requirement presented to FeatureManager.
 	 */
 	public function __construct(
-		WebRequest $request,
-		string $requirementName
+		private readonly WebRequest $request,
+		private readonly string $requirementName,
 	) {
-		$this->request = $request;
 		$this->overrideName = 'vector' . strtolower( $requirementName );
-		$this->requirementName = $requirementName;
 	}
 
 	/**

@@ -5,7 +5,9 @@ import {
 } from '../features/step_definitions/common_steps.js';
 import {
 	theWatchstarShouldBeSelected,
-	iClickTheWatchstar } from '../features/step_definitions/watch_steps.js';
+	iClickTheWatchstar,
+	iShouldSeeTheWatchstarPopupWithMessage
+} from '../features/step_definitions/watch_steps.js';
 
 // @chrome @smoke @test2.m.wikipedia.org @login @vagrant
 describe( 'Manage Watchlist', () => {
@@ -17,7 +19,10 @@ describe( 'Manage Watchlist', () => {
 	it( 'Add an article to the watchlist', async () => {
 		await iAmViewingAnUnwatchedPage();
 		await iClickTheWatchstar();
-		await iShouldSeeAToastNotificationWithMessage( 'added' );
+		// Either a popup or notification, depending on the core version.
+		if ( !await iShouldSeeTheWatchstarPopupWithMessage( 'added' ) ) {
+			await iShouldSeeAToastNotificationWithMessage( 'added' );
+		}
 		await theWatchstarShouldBeSelected();
 	} );
 } );

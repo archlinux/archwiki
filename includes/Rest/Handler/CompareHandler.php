@@ -6,6 +6,7 @@ use MediaWiki\Content\TextContent;
 use MediaWiki\Parser\ParserFactory;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Rest\StringStream;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionLookup;
@@ -190,7 +191,7 @@ class CompareHandler extends Handler {
 	}
 
 	protected function getResponseBodySchemaFileName( string $method ): ?string {
-		return 'includes/Rest/Handler/Schema/RevisionCompare.json';
+		return __DIR__ . '/Schema/RevisionCompare.json';
 	}
 
 	/** @inheritDoc */
@@ -209,5 +210,17 @@ class CompareHandler extends Handler {
 				Handler::PARAM_DESCRIPTION => new MessageValue( 'rest-param-desc-compare-to' ),
 			],
 		];
+	}
+
+	/** @inheritDoc */
+	public function getResponseHeaderSettings(): array {
+		return array_merge(
+			parent::getResponseHeaderSettings(),
+			[
+				ResponseHeaders::CONTENT_TYPE => ResponseHeaders::RESPONSE_HEADER_DEFINITIONS[
+					ResponseHeaders::CONTENT_TYPE
+				]
+			]
+		);
 	}
 }

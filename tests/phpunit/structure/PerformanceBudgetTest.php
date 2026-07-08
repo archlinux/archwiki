@@ -125,7 +125,7 @@ class PerformanceBudgetTest extends MediaWikiIntegrationTestCase {
 		$warning = "Total size of $moduleType modules is " . $sizeKb . "kB ( $sizeKbUncompressed kB uncompressed).\n" .
 			"If you are adding code on page load, please reduce $moduleType that you are loading on page load.\n" .
 			"Read https://www.mediawiki.org/wiki/Performance_budgeting for more context on this number.\n\n";
-		print( $warning );
+		$this->addEndOfRunTestWarning( $warning );
 	}
 
 	/**
@@ -184,7 +184,7 @@ class PerformanceBudgetTest extends MediaWikiIntegrationTestCase {
 		// This block can be removed when https://phabricator.wikimedia.org/T395698 is resolved.
 		$unexpectedModules = [];
 		foreach ( $undefinedModules as $moduleName ) {
-			$loadedByModules = $this->dependencyOf[ $moduleName ];
+			$loadedByModules = $this->dependencyOf[ $moduleName ] ?? [];
 			$unknownDependencies = array_filter(
 				$loadedByModules,
 				static function ( $moduleName ) use ( $undefinedModules ) {
@@ -202,11 +202,10 @@ class PerformanceBudgetTest extends MediaWikiIntegrationTestCase {
 				$unexpectedModules[] = $moduleName;
 			}
 		}
-		$dependencyGraph = $this->dependencyOf;
 		$undefinedModuleMessage = implode( "\n",
 			array_map(
-				static function ( $moduleName ) use ( $dependencyGraph ) {
-					$loadedBy = implode( ",", $dependencyGraph[ $moduleName ] );
+				function ( $moduleName ) {
+					$loadedBy = implode( ",", $this->dependencyOf[ $moduleName ] ?? [ 'unknown' ] );
 					return "$moduleName (loaded by $loadedBy )";
 				},
 				$unexpectedModules

@@ -240,12 +240,7 @@ class RateLimiterTest extends MediaWikiIntegrationTestCase {
 		$limiter->setStats( $statsFactory );
 
 		// Hook leaves $result false
-		$this->setTemporaryHook(
-			'PingLimiter',
-			static function ( &$user, $action, &$result, $incrBy ) {
-				return false;
-			}
-		);
+		$this->setTemporaryHook( 'PingLimiter', static fn () => false );
 		$this->assertFalse(
 			$limiter->limit( $user, 'edit' ),
 			'Hooks that just return false leave $result false'

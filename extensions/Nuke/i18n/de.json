@@ -50,6 +50,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Weitere Seiten löschen]]",
 	"nuke-deletemore": "Weitere Seiten löschen",
 	"nuke-pattern": "SQL-LIKE-Muster (z.&nbsp;B. %) für den Seitennamen:",
+	"nuke-pattern-leading-wildcard": "Das Muster darf nicht mit <code>%</code> beginnen. Bitte gib vor dem Platzhalter ein Präfix an (z. B. <code>Example%</code> statt <code>%Example</code>).",
 	"nuke-nolist": "Um fortzufahren, führe zuerst „{{int:nuke-submit-list}}“ aus und wähle dann die Seiten aus, die zum Löschen in die Warteschlange gestellt werden.",
 	"nuke-nopages-global": "Es stimmen keine Seiten mit der Suche überein.",
 	"nuke-searchnotice-minmorethanmax": "Die Mindestgröße in Bytes überschreitet die Maximalgröße in Bytes, daher ist es für keine Seite möglich, dieses Kriterium zu erfüllen.",

@@ -17,8 +17,8 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\SpecialPage\SpecialPage;
-use MessageLocalizer;
 
 final class LogInMenuEntry extends SingleMenuEntry {
 	public function __construct( MessageLocalizer $messageLocalizer, array $authLinksQuery ) {

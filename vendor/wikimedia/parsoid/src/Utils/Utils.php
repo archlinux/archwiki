@@ -32,34 +32,12 @@ class Utils {
 	public const COMMENT_OR_WS_REGEXP = '/^(\s|' . self::COMMENT_REGEXP_FRAGMENT . ')*$/D';
 
 	/**
-	 * Strip Parsoid id prefix from aboutID
-	 *
-	 * @param string $aboutId aboud ID string
-	 * @return string
-	 */
-	public static function stripParsoidIdPrefix( string $aboutId ): string {
-		// 'mwt' is the prefix used for new ids
-		return preg_replace( '/^#?mwt/', '', $aboutId );
-	}
-
-	/**
 	 * Strip PHP namespace from the fully qualified class name
 	 * @param string $className
 	 * @return string
 	 */
-	public static function stripNamespace( string $className ): string {
+	public static function stripPHPNamespace( string $className ): string {
 		return preg_replace( '/.*\\\\/', '', $className );
-	}
-
-	/**
-	 * Check for Parsoid id prefix in an aboutID string
-	 *
-	 * @param string $aboutId aboud ID string
-	 * @return bool
-	 */
-	public static function isParsoidObjectId( string $aboutId ): bool {
-		// 'mwt' is the prefix used for new ids
-		return str_starts_with( $aboutId, '#mwt' );
 	}
 
 	/**
@@ -85,51 +63,6 @@ class Utils {
 			},
 			$arr
 		);
-	}
-
-	/**
-	 * Deep clones by default.
-	 * @param object|array $obj arrays or plain objects
-	 *    Tokens or DOM nodes shouldn't be passed in.
-	 *
-	 *    CAVEAT: It looks like debugging methods pass in arrays
-	 *    that can have DOM nodes. So, for debugging purposes,
-	 *    we handle top-level DOM nodes or DOM nodes embedded in arrays
-	 *    But, this will miserably fail if an object embeds a DOM node.
-	 *
-	 * @param bool $deepClone
-	 * @param bool $debug
-	 * @return object|array
-	 * @deprecated since 0.21; use native PHP cloning and Utils::cloneArray when needed
-	 */
-	public static function clone( $obj, $deepClone = true, $debug = false ) {
-		PHPUtils::deprecated( __METHOD__, "0.21" );
-		if ( $debug ) {
-			if ( $obj instanceof \DOMNode ) {
-				return $obj->cloneNode( $deepClone );
-			}
-			if ( is_array( $obj ) ) {
-				if ( $deepClone ) {
-					return array_map(
-						static function ( $o ) {
-							// @phan-suppress-next-line PhanDeprecatedFunction
-							return Utils::clone( $o, true, true );
-						},
-						$obj
-					);
-				} else {
-					return $obj; // Copy-on-write cloning
-				}
-			}
-		}
-
-		if ( !$deepClone && is_object( $obj ) ) {
-			return clone $obj;
-		}
-
-		// FIXME, see T161647
-		// This will fail if $obj is (or embeds) a DOMNode
-		return unserialize( serialize( $obj ) );
 	}
 
 	/**

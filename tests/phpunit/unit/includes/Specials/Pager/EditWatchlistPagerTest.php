@@ -1,0 +1,346 @@
+<?php
+
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\Language;
+use MediaWiki\Navigation\CodexPagerNavigationBuilder;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Specials\Pager\EditWatchlistPager;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\Watchlist\WatchedItem;
+use MediaWiki\Watchlist\WatchedItemStore;
+use MediaWiki\Watchlist\WatchedItemStoreInterface;
+use MediaWiki\Watchlist\WatchlistLabel;
+use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IReadableDatabase;
+
+/**
+ * @covers \MediaWiki\Specials\Pager\EditWatchlistPager
+ */
+class EditWatchlistPagerTest extends MediaWikiUnitTestCase {
+
+	private static array $SUBJECT_NAMESPACES = [ 777, 888, 999 ];
+	private static int $USER_ID = 111;
+	private static int $ARBITRARY_TIMESTAMP = 197203021530;
+
+	private function instantiatePager( array $options = [] ): EditWatchlistPager {
+		$namespaceInfo = $this->createMock( NamespaceInfo::class );
+		$namespaceInfo->method( 'getSubjectNamespaces' )
+			->willReturn( self::$SUBJECT_NAMESPACES );
+		$user = $this->createMock( UserIdentity::class );
+		$user->method( 'getId' )->willReturn( self::$USER_ID );
+		$defaultOptions = [
+			'watchedItemStore' => $this->createMock( WatchedItemStore::class ),
+			'hookRunner' => $this->createMock( HookRunner::class ),
+			'linkBatchFactory' => $this->createMock( LinkBatchFactory::class ),
+			'namespaceInfo' => $namespaceInfo,
+			'user' => $user,
+			'request' => [ 'method' => 'GET', 'data' => [] ],
+			'dbType' => 'mysql',
+		];
+		$options = array_merge( $defaultOptions, $options );
+
+		$output = $this->createMock( OutputPage::class );
+		$output->method( 'addModuleStyles' );
+		$output->method( 'addModules' );
+		$title = $this->createMock( Title::class );
+		$language = $this->createMock( Language::class );
+		$language->method( 'formatDurationBetweenTimestamps' )
+			->willReturnCallback( static function ( $expiryTimestamp, $nowTimestamp, $precision ) {
+				return (string)$expiryTimestamp;
+			} );
+		$context = $this->createMock( RequestContext::class );
+		$context->method( 'getUser' )
+			->willReturn( $options['user'] );
+		$context->method( 'getTitle' )
+			->willReturn( $title );
+		$context->method( 'getOutput' )
+			->willReturn( $output );
+		$context->method( 'getLanguage' )
+			->willReturn( $language );
+		// need to mock the request because FauxRequest uses MediaWikiServices
+		$request = new class(
+			$options['request']['data'],
+			$options['request']['method'] === "POST"
+		) extends FauxRequest {
+			public function getText( $name, $default = '' ) {
+				return $this->data[ $name ] ?? $default;
+			}
+
+			public function getIntOrNull( $name ): ?int {
+				$val = $this->data[ $name ] ?? null;
+				return is_numeric( $val ) ? intval( $val ) : null;
+			}
+		};
+		$context->method( 'getRequest' )
+			->willReturn( $request );
+		$context->method( 'msg' )
+			->willReturnCallback( static function ( $key, ...$params ) {
+				return implode( '|', array_merge( [ $key ], $params ) );
+			} );
+
+		$db = $this->createMock( IReadableDatabase::class );
+		$db->method( 'buildComparison' )
+			->willReturnCallback( static function ( $op, $conds ) {
+				$sql = '';
+				foreach ( array_reverse( $conds ) as $field => $value ) {
+					// copied from SQLPlatform::buildComparison
+					if ( (int)$value == $value ) {
+						$encValue = $value;
+					} else {
+						$encValue = "'" . $value . "'";
+					}
+					if ( $sql === '' ) {
+						$sql = "$field $op $encValue";
+						// Change '>=' to '>' etc. for remaining fields, as the equality is handled separately
+						$op = rtrim( $op, '=' );
+					} else {
+						$sql = "$field $op $encValue OR ($field = $encValue AND ($sql))";
+					}
+				}
+				return $sql;
+			} );
+		$db->method( 'anyString' )
+			->willReturn( '%' );
+		$db->method( 'buildLike' )
+			->willReturnCallback( static function ( $param, ...$params ) {
+				return "LIKE '" . $param . implode( '', $params ) . "'";
+			} );
+		$db->method( 'getType' )
+			->willReturn( $options['dbType'] );
+		$db->method( 'addIdentifierQuotes' )
+			->willReturnCallback( static fn ( $field ) => '`' . $field . '`' );
+
+		// Parent class constructor uses MediaWikiServices singleton which is not available here, so work around it
+		$pager = new class(
+			$context, $title, $options['watchedItemStore'], $options['namespaceInfo'],
+			$options['linkBatchFactory'], $options['hookRunner']
+		) extends EditWatchlistPager {
+			public function __construct(
+				IContextSource $context, protected Title $title, protected WatchedItemStoreInterface $wis,
+				protected NamespaceInfo $namespaceInfo,
+				protected LinkBatchFactory $linkBatchFactory, protected HookRunner $hookRunner
+			) {
+				// copied from the parent, but without referring to MediawikiServices
+				$this->setContext( $context );
+				$this->mRequest = $this->getRequest();
+				$this->mOffset = $this->mRequest->getText( 'offset' );
+				$this->mDefaultLimit = 50;
+				$this->mLimit = $this->mRequest->getText( 'limit', $this->mDefaultLimit );
+				$this->mIsBackwards = ( $this->mRequest->getRawVal( 'dir' ) === 'prev' );
+				$this->mIndexField = $this->getIndexField()[0];
+				$this->mExtraSortFields = [];
+				$this->mDefaultDirection = self::QUERY_ASCENDING;
+			}
+		};
+		$pager->mDb = $db;
+		return $pager;
+	}
+
+	public function testGetQueryInfo() {
+		$pager = $this->instantiatePager();
+		$this->assertSame( [], $pager->getQueryInfo() );
+	}
+
+	public function testGetIndexField() {
+		$pager = $this->instantiatePager();
+		$expected = [
+			[ 'wl_namespace', 'wl_title' ],
+		];
+		$this->assertSame( $expected, $pager->getIndexField() );
+	}
+
+	/**
+	 * @param int $namespace
+	 * @param string $title
+	 * @param ?int $expiry
+	 * @param ?WatchlistLabel[] $labels
+	 *
+	 * @return WatchedItem
+	 */
+	private function createMockWatchedItem( int $namespace, string $title, ?int $expiry, ?array $labels = [] ): WatchedItem {
+		$target = $this->createMock( PageIdentity::class );
+		$target->method( 'getNamespace' )->willReturn( $namespace );
+		$target->method( 'getDBkey' )->willReturn( $title );
+		$watchedItem = $this->createMock( WatchedItem::class );
+		$watchedItem->method( 'getTarget' )->willReturn( $target );
+		$watchedItem->method( 'getExpiry' )->willReturn( $expiry );
+		$watchedItem->method( 'getLabels' )->willReturn( $labels );
+		return $watchedItem;
+	}
+
+	/**
+	 * * @dataProvider provideTestReallyDoQuery
+	 */
+	public function testReallyDoQuery(
+		array $request,
+		array $watchedItemsCallAndResponse,
+		FakeResultWrapper $expectedResult,
+		string $dbType = 'mysql'
+	) {
+		$mockUser = $this->createMock( UserIdentity::class );
+		$mockUser->method( 'getId' )->willReturn( self::$USER_ID );
+		$watchedItemStore = $this->createMock( WatchedItemStore::class );
+		$watchedItemStore->expects( $this->once() )
+			->method( 'getWatchedItemsForUser' )
+			->willReturnCallback(
+				function (
+					UserIdentity $user, array $options
+				) use ( $watchedItemsCallAndResponse, $mockUser ) {
+					$this->assertEquals( $user, $mockUser );
+					$this->assertEquals( $watchedItemsCallAndResponse['call'], $options );
+					return ( $watchedItemsCallAndResponse['response'] )( $this );
+				}
+			);
+		$pager = $this->instantiatePager( [
+			'request' => $request,
+			'watchedItemStore' => $watchedItemStore,
+			'user' => $mockUser,
+			'dbType' => $dbType,
+		] );
+		[ $offset, $limit, $order ] = $this->getReallyDoQueryArgsFromRequest( $pager->getRequest() );
+		$this->assertEquals( $expectedResult, $pager->reallyDoQuery(
+				$offset,
+				$limit,
+				$order,
+		) );
+	}
+
+	private function getReallyDoQueryArgsFromRequest( WebRequest $request ): array {
+		$offset = $request->getText( 'offset' ) ?? '';
+		$limit = $request->getIntOrNull( 'limit' ) ?? 50;
+		$order = $request->getText( 'dir' ) == 'prev'
+			? EditWatchlistPager::QUERY_DESCENDING
+			: EditWatchlistPager::QUERY_ASCENDING;
+		return [ $offset, $limit, $order ];
+	}
+
+	public static function provideTestReallyDoQuery(): array {
+		return [
+			// data set 0: request empty
+			[
+				'request' => [ 'method' => 'GET', 'data' => [] ],
+				'watchedItemsCallAndResponse' => [
+					'call' => [
+						'limit' => 50,
+						'sort' => WatchedItemStoreInterface::SORT_ASC,
+						'namespaces' => self::$SUBJECT_NAMESPACES,
+						'offsetConds' => [],
+						'forWrite' => false,
+					],
+					'response' => static fn ( $testCase ) => [
+						$testCase->createMockWatchedItem( 777, 'Page_1', 20250909180500 ),
+						$testCase->createMockWatchedItem( 999, 'Page_2', 20250909180530 ),
+						$testCase->createMockWatchedItem( 666, 'Page_X', null ),
+					]
+				],
+				'expectedResult' => new FakeResultWrapper( [
+					[ 'wl_namespace' => 777, 'wl_title' => 'Page_1',
+						'expiry' => 'watchlist-expires-in|20250909180500', 'labels' => [] ],
+					[ 'wl_namespace' => 999, 'wl_title' => 'Page_2',
+						'expiry' => 'watchlist-expires-in|20250909180530', 'labels' => [] ],
+					[ 'wl_namespace' => 666, 'wl_title' => 'Page_X',
+						'expiry' => 'watchlist-expires-never', 'labels' => [] ],
+				] ),
+			],
+			// data set 1: sort, offset, limit specified in request data
+			[
+				'request' => [
+					'method' => 'GET',
+					'data' => [
+						'dir' => 'prev',
+						'limit' => 20,
+						'offset' => '999|Page_2'
+					]
+				],
+				'watchedItemsCallAndResponse' => [
+					'call' => [
+						'limit' => 20,
+						'sort' => WatchedItemStoreInterface::SORT_DESC,
+						'namespaces' => self::$SUBJECT_NAMESPACES,
+						'offsetConds' => [ "wl_namespace < 999 OR (wl_namespace = 999 AND (wl_title < 'Page_2'))" ],
+						'forWrite' => false,
+					],
+					'response' => static fn ( $testCase ) => [
+						$testCase->createMockWatchedItem( 999, 'Page_2', 20250909180530 ),
+						$testCase->createMockWatchedItem(
+							777, 'Page_1', 20250909180500,
+							[ new WatchlistLabel( $testCase->createMock( UserIdentity::class ), 'foo', 1 ) ]
+						),
+					]
+				],
+				'expectedResult' => new FakeResultWrapper( [
+					[ 'wl_namespace' => 999, 'wl_title' => 'Page_2',
+						'expiry' => 'watchlist-expires-in|20250909180530', 'labels' => [] ],
+					[ 'wl_namespace' => 777, 'wl_title' => 'Page_1',
+						'expiry' => 'watchlist-expires-in|20250909180500',
+						'labels' => [ [ 'id' => 1, 'name' => 'foo' ] ]
+					],
+				] ),
+			],
+			// data set 2: search specified in request data
+			[
+				'request' => [
+					'method' => 'GET',
+					'data' => [
+						'search' => 'page 2',
+					]
+				],
+				'watchedItemsCallAndResponse' => [
+					'call' => [
+						'limit' => 50,
+						'sort' => WatchedItemStoreInterface::SORT_ASC,
+						'namespaces' => self::$SUBJECT_NAMESPACES,
+						'offsetConds' => [ "`wl_title` LIKE 'page_2%'" ],
+						'forWrite' => false,
+					],
+					'response' => static fn ( $testCase ) => [
+						$testCase->createMockWatchedItem( 999, 'Page_2', 20250909180530 ),
+					]
+				],
+				'expectedResult' => new FakeResultWrapper( [
+					[ 'wl_namespace' => 999, 'wl_title' => 'Page_2',
+						'expiry' => 'watchlist-expires-in|20250909180530', 'labels' => [] ],
+				] ),
+			],
+			// data set 3: search specified in request data for non-MySQL backend
+			[
+				'request' => [
+					'method' => 'GET',
+					'data' => [
+						'search' => 'page 2',
+					]
+				],
+				'watchedItemsCallAndResponse' => [
+					'call' => [
+						'limit' => 50,
+						'sort' => WatchedItemStoreInterface::SORT_ASC,
+						'namespaces' => self::$SUBJECT_NAMESPACES,
+						'offsetConds' => [ "`wl_title` LIKE 'page_2%'" ],
+						'forWrite' => false,
+					],
+					'response' => static fn ( $testCase ) => [
+						$testCase->createMockWatchedItem( 999, 'Page_2', 20250909180530 ),
+					]
+				],
+				'expectedResult' => new FakeResultWrapper( [
+					[ 'wl_namespace' => 999, 'wl_title' => 'Page_2',
+						'expiry' => 'watchlist-expires-in|20250909180530', 'labels' => [] ],
+				] ),
+				'dbType' => 'postgres',
+			],
+		];
+	}
+
+	public function testGetNavigationBuilder() {
+		$pager = $this->instantiatePager( [] );
+		$this->assertInstanceOf( CodexPagerNavigationBuilder::class, $pager->getNavigationBuilder() );
+	}
+}

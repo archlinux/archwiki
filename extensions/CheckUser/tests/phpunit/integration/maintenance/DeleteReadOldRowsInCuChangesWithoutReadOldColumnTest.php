@@ -1,20 +1,20 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Maintenance;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Maintenance;
 
-use MediaWiki\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserCommonTraitTest;
+use MediaWiki\Extension\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserCommonTestTrait;
 use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**
  * @group CheckUser
  * @group Database
- * @covers \MediaWiki\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges
+ * @covers \MediaWiki\Extension\CheckUser\Maintenance\DeleteReadOldRowsInCuChanges
  */
 class DeleteReadOldRowsInCuChangesWithoutReadOldColumnTest extends MaintenanceBaseTestCase {
 
-	use CheckUserCommonTraitTest;
+	use CheckUserCommonTestTrait;
 
 	/** @inheritDoc */
 	protected function getMaintenanceClass() {

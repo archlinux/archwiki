@@ -367,7 +367,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "HTML барлыкъланы юникод символлада нормализациясы ($1)",
 	"abusefilter-edit-builder-group-vars": "Тюрленнгенле",
 	"abusefilter-edit-builder-vars-timestamp": "Тюрлениуню Unix-заманы ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Хыйсаб къурауда хыйсабны аты ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Хыйсаб къурауда хыйсабны аты ($1)",
 	"abusefilter-edit-builder-vars-action": "Этиу ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Тюзетиуде къошулгъан скобкала ($1)",
 	"abusefilter-edit-builder-vars-delta": "Тюзетиуде ёлчем тюрлендириу ($1)",

@@ -187,6 +187,8 @@
 	"prefs-description-watchlist": "Upravljajte i prilagodite spisak praćenih stranica.",
 	"prefs-editwatchlist": "Uređivanje spiska praćenja",
 	"prefs-editwatchlist-label": "Uređivanje spiska:",
+	"prefs-editwatchlistlabels-label": "Uredi oznake za spisak praćenja:",
+	"prefs-managewatchlistlabels": "Prikaži i upravljaj oznake za spisak praćenja",
 	"prefs-editwatchlist-edit": "Prikaži i ukloni naslove sa spiska praćenja",
 	"prefs-editwatchlist-raw": "Uredi sirovi spisak praćenja",
 	"prefs-editwatchlist-clear": "Očisti spisak praćenja",

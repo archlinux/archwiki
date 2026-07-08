@@ -15,8 +15,9 @@
  * @param {Object} config
  * @param {Object} config.item An item from the search index in ve.ui.MWReferenceSearchWidget
  * @param {ve.dm.MWReferenceModel} config.item.reference
- * @param {string} config.item.name
- * @param {string} config.item.footnoteLabel e.g. "note 1"
+ * @param {jQuery} config.item.$refContent Rendered HTML preview
+ * @param {string} config.item.name Plain name as in the wikitext
+ * @param {string} config.item.footnoteLabel Formatted footnote marker, e.g. "note 1"
  */
 ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
 	// Parent constructor
@@ -27,7 +28,7 @@ ve.ui.MWReferenceResultWidget = function VeUiMWReferenceResultWidget( config ) {
 
 	this.$element
 		.addClass( 've-ui-mwReferenceResultWidget' );
-	if ( item.reference.mainRefKey ) {
+	if ( item.reference.isSubRef() ) {
 		this.$element.addClass( 've-ui-mwReferenceResultWidget-sub' );
 	}
 

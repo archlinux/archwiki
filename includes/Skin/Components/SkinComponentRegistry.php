@@ -1,0 +1,109 @@
+<?php
+/**
+ * @license GPL-2.0-or-later
+ */
+
+namespace MediaWiki\Skin\Components;
+
+use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\SpecialPage\SpecialPage;
+use RuntimeException;
+
+/**
+ * @internal for use inside Skin and SkinTemplate classes only
+ * @unstable
+ */
+class SkinComponentRegistry {
+	/** @var SkinComponent[]|null null if not initialized. */
+	private $components = null;
+
+	/** @var SkinComponentRegistryContext */
+	private $skinContext;
+
+	public function __construct( SkinComponentRegistryContext $skinContext ) {
+		$this->skinContext = $skinContext;
+	}
+
+	/**
+	 * Get a component. This method has side effects in that
+	 * if registered components have been not initialized they
+	 * will be registered as part of this method.
+	 *
+	 * @param string $name
+	 * @throws RuntimeException with unknown name
+	 * @return SkinComponent
+	 */
+	public function getComponent( string $name ): SkinComponent {
+		if ( $this->components === null ) {
+			$this->registerComponents();
+		}
+		$component = $this->components[$name] ?? null;
+		if ( !$component ) {
+			throw new RuntimeException( 'Unknown component: ' . $name );
+		}
+		return $component;
+	}
+
+	/**
+	 * Return all registered components.
+	 *
+	 * @since 1.38
+	 * @return SkinComponent[]
+	 */
+	public function getComponents() {
+		if ( $this->components === null ) {
+			$this->registerComponents();
+		}
+		return $this->components;
+	}
+
+	/**
+	 * Registers a component for use with the skin.
+	 * Private for now, but in future we may consider making this a
+	 * public method to allow skins to extend component definitions.
+	 *
+	 * @param string $name
+	 * @throws RuntimeException if given an unknown name
+	 */
+	private function registerComponent( string $name ) {
+		$skin = $this->skinContext;
+		$this->components[$name] = match ( $name ) {
+			'copyright' => new SkinComponentCopyright( $skin ),
+			'logos' => new SkinComponentLogo(
+				$skin->getConfig(),
+				$skin->getLanguage()
+			),
+			'search-box' => new SkinComponentSearch(
+				$skin->getConfig(),
+				$skin->getMessageLocalizer(),
+				SpecialPage::newSearchPage( $skin->getUser() )
+			),
+			'toc' => new SkinComponentTableOfContents( $skin->getOutput() ),
+			'last-modified' => new SkinComponentLastModified(
+				$skin,
+				$skin->getOutput()->getRevisionTimestamp()
+			),
+			'rendered-with' => new SkinComponentRenderedWith(
+				$skin->getMessageLocalizer(),
+				$skin->getOutput()->getOutputFlag( ParserOutputFlags::USE_PARSOID )
+			),
+			'footer' => new SkinComponentFooter( $skin ),
+			default => throw new RuntimeException( "Unknown component: $name" )
+		};
+	}
+
+	/**
+	 * Registers components used by skin.
+	 */
+	private function registerComponents() {
+		$this->registerComponent( 'copyright' );
+		$this->registerComponent( 'last-modified' );
+		$this->registerComponent( 'logos' );
+		$this->registerComponent( 'toc' );
+		$this->registerComponent( 'search-box' );
+		$this->registerComponent( 'footer' );
+	}
+}
+
+/** @deprecated class alias since 1.46 */
+class_alias( SkinComponentRegistry::class, 'MediaWiki\\Skin\\SkinComponentRegistry' );

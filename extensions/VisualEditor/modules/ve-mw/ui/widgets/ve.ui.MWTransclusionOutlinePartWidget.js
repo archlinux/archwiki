@@ -1,12 +1,12 @@
 /**
  * Common base class for top-level items (a.k.a. "parts") in the template editor sidebar. Subclasses
- * should exist for all subclasses of {@see ve.dm.MWTransclusionPartModel}:
- * - {@see ve.dm.MWTemplateModel}
- * - {@see ve.dm.MWTemplatePlaceholderModel}
- * - {@see ve.dm.MWTransclusionContentModel}
+ * should exist for all subclasses of {@link ve.dm.MWTransclusionPartModel}:
+ * - {@link ve.dm.MWTemplateModel}
+ * - {@link ve.dm.MWTemplatePlaceholderModel}
+ * - {@link ve.dm.MWTransclusionContentModel}
  *
- * This is inspired by and meant to replace {@see OO.ui.DecoratedOptionWidget} in the context of the
- * template dialog. Also see {@see OO.ui.ButtonWidget} for inspiration.
+ * This is inspired by and meant to replace {@link OO.ui.DecoratedOptionWidget} in the context of the
+ * template dialog. Also see {@link OO.ui.ButtonWidget} for inspiration.
  *
  * @abstract
  * @class
@@ -76,7 +76,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
  * "Soft" selection with space.
  *
  * @event ve.ui.MWTransclusionOutlinePartWidget#transclusionPartSoftSelected
- * @param {string} partId Unique id of the {@see ve.dm.MWTransclusionPartModel}, e.g. something like
+ * @param {string} partId Unique id of the {@link ve.dm.MWTransclusionPartModel}, e.g. something like
  *  "part_1".
  */
 
@@ -86,7 +86,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
  * already selected.
  *
  * @event ve.ui.MWTransclusionOutlinePartWidget#transclusionOutlineItemSelected
- * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
+ * @param {string} pageName Unique id of the {@link OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
  * @param {boolean} [soft] If true, focus should stay in the sidebar. Defaults to false.
  */
@@ -105,7 +105,7 @@ ve.ui.MWTransclusionOutlinePartWidget.prototype.onHeaderKeyPressed = function ( 
 };
 
 /**
- * Convenience method, modelled after {@see OO.ui.OptionWidget}, but this isn't one.
+ * Convenience method, modelled after {@link OO.ui.OptionWidget}, but this isn't one.
  *
  * @return {boolean}
  */
@@ -114,7 +114,7 @@ ve.ui.MWTransclusionOutlinePartWidget.prototype.isSelected = function () {
 };
 
 /**
- * Convenience method, modelled after {@see OO.ui.OptionWidget}, but this isn't one.
+ * Convenience method, modelled after {@link OO.ui.OptionWidget}, but this isn't one.
  *
  * @param {boolean} state
  */

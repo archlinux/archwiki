@@ -238,7 +238,6 @@ config-schema:
             This is an array which should have the following k/v pairs:
             All path values can be either absolute or relative URIs
             The `1x` key is a path to the 1x version of square logo (should be 135x135 pixels)
-            The `1.5x` key is a path to the 1.5x version of square logo
             The `2x` key is a path to the 2x version of square logo
             The `svg` key is a path to the svg version of square logo
             The `icon` key is a path to the version of the logo without wordmark and tagline
@@ -256,7 +255,6 @@ config-schema:
             @code
             $wgLogos = [
                '1x' => 'path/to/1x_version.png',
-               '1.5x' => 'path/to/1.5x_version.png',
                '2x' => 'path/to/2x_version.png',
                'svg' => 'path/to/svg_version.svg',
                'icon' => 'path/to/icon.png',
@@ -1116,11 +1114,9 @@ config-schema:
     SVGConverters:
         default:
             ImageMagick: '$path/convert -background "#ffffff00" -thumbnail $widthx$height\! $input PNG:$output'
-            sodipodi: '$path/sodipodi -z -w $width -f $input -e $output'
-            inkscape: '$path/inkscape -z -w $width -f $input -e $output'
+            inkscape: '$path/inkscape -w $width -o $output $input'
             batik: 'java -Djava.awt.headless=true -jar $path/batik-rasterizer.jar -w $width -d $output $input'
             rsvg: '$path/rsvg-convert -w $width -h $height -o $output $input'
-            imgserv: '$path/imgserv-wrapper -i svg -o png -w$width $input $output'
             ImagickExt: ['SvgHandler::rasterizeImagickExt']
         type: object
         description: |-
@@ -1145,14 +1141,14 @@ config-schema:
             Don't read SVG metadata beyond this point.
             Default is 5 MiB
     SVGNativeRendering:
-        default: false
+        default: true
         type:
             - string
             - boolean
         description: |-
             Whether native rendering by the browser agent is allowed
-            Default is false. Setting it to true disables all SVG conversion.
-            Setting to the string 'partial' will only allow native rendering
+            Default is true, which disables all SVG conversion.
+            Setting it to the string 'partial' will only allow native rendering
             when the filesize is below SVGNativeRenderingSizeLimit and if the
             file contains at most 1 language.
             @since 1.41
@@ -1381,8 +1377,10 @@ config-schema:
             - 150
             - 180
             - 200
+            - 220
             - 250
             - 300
+            - 400
         type: array
         description: |-
             Adjust thumbnails on image pages according to a user setting. In order to
@@ -1429,24 +1427,35 @@ config-schema:
             - array
             - 'null'
         description: |-
-            When defined, is an array of image widths used as buckets for thumbnail generation.
-            The goal is to save resources by generating thumbnails based on reference buckets instead of
-            always using the original. This will incur a speed gain but cause a quality loss.
-            The buckets generation is chained, with each bucket generated based on the above bucket
-            when possible. File handlers have to opt into using that feature. For now only BitmapHandler
-            supports it.
+            An array of image widths used as reference buckets for thumbnail generation.
+            Speed up thumbnail generation and save server-side CPU/memory resources by
+            generating thumbnails based on reference buckets, instead of always re-scaling
+            the original. This performance gain comes at a small loss in quality.
+            If more than one bucket is set, the buckets are chained, with smaller buckets
+            generated from a higher bucket when possible. It is recommended that buckets
+            are whole multiples of each other (e.g. pick powers-of-2 like 256px/1024px,
+            or starting elsewhere such as 320px/1280px) to minimize loss of sharpness
+            through chaining (T69525).
+            This feature is opt-in per media handler. By default, only JpegHandler enables this.
+            @see MediaWiki\Media\MediaHandler::supportsBucketing
+            @see MediaWiki\FileRepo\File\File::getThumbnailBucket
+            @see $wgThumbnailMinimumBucketDistance
+            @since 1.24
     ThumbnailMinimumBucketDistance:
         default: 50
         description: |-
-            When using thumbnail buckets as defined above, this sets the minimum distance to the bucket
-            above the requested size. The distance represents how many extra pixels of width the bucket
-            needs in order to be used as the reference for a given thumbnail. For example, with the
-            following buckets:
-            $wgThumbnailBuckets = [ 128, 256, 512 ];
-            and a distance of 50:
+            Minimum distance between requested width and a reference bucket.
+            When $wgThumbnailBuckets is enabled, this distance represents how many extra pixels of
+            width the bucket needs to qualify for use as a reference for a given thumbnail. This
+            distance minimizes loss of sharpness due to insufficient pixels to inform resizing.
+            For example, with the following buckets:
+            $wgThumbnailBuckets = [ 320, 1280, 2560 ];
+            It is recommended to generate a 300px thumbnail from the 1280px bucket and not
+            the 320px bucket. This is achieved by setting a distance of 50:
             $wgThumbnailMinimumBucketDistance = 50;
-            If we want to render a thumbnail of width 220px, the 512px bucket will be used,
-            because 220 + 50 = 270 and the closest bucket bigger than 270px is 512.
+            @see $wgThumbnailBuckets
+            @see MediaWiki\FileRepo\File\File::getThumbnailBucket
+            @since 1.24
     UploadThumbnailRenderMap:
         default: {  }
         type: object
@@ -1513,9 +1522,11 @@ config-schema:
     ResponsiveImages:
         default: true
         description: |-
-            Generate and use thumbnails suitable for screens with 1.5 and 2.0 pixel densities.
-            This means a 320x240 use of an image on the wiki will also generate 480x360 and 640x480
-            thumbnails, output via the srcset attribute.
+            Generate and use thumbnails suitable for High DPI screens with 2x pixel densities.
+            This means a 320x240 thumbnail on the wiki will also generate a 640x480
+            thumbnail, linked via the srcset attribute.
+            @see MediaWiki\Linker\Linker::processResponsiveImages
+            @see wfThumbIsStandard
     ImagePreconnect:
         default: false
         description: |-
@@ -1529,6 +1540,17 @@ config-schema:
             This may cause unneeded HTTP connections in browsers on wikis where a foreign repo is
             enabled but where a local repo is more commonly used.
             @since 1.35
+    TrackMediaRequestProvenance:
+        default: false
+        description: |-
+            Add tracking query parameters to URLs for media thumbnails and originals.
+            The values include the site requesting the image (e.g. 'www.mediawiki.org'),
+            the software component involved (e.g. 'parser' or 'imageinfo') and the
+            format of the requested image ('original', 'thumbnail' or 'thumbnail_unscaled').
+            These values are not used by MediaWiki, but they may be used by the server
+            hosting the files. The intended use case is applying different rate limits
+            depending on how and where the file is used.
+            @since 1.46
     DjvuUseBoxedCommand:
         default: false
         description: |-
@@ -1606,18 +1628,6 @@ config-schema:
         description: |-
             Set to true to enable user-to-user e-mail.
             This can potentially be abused, as it's hard to track.
-    EnableSpecialMute:
-        default: false
-        description: |-
-            Set to true to enable the Special Mute page. This allows users
-            to mute unwanted communications from other users, and is linked
-            to from emails originating from Special:Email.
-            @since 1.34
-    EnableUserEmailMuteList:
-        default: false
-        description: |-
-            Set to true to enable user-to-user e-mail mutelist.
-            @since 1.37; previously $wgEnableUserEmailBlacklist
     UserEmailUseReplyTo:
         default: true
         description: |-
@@ -1690,6 +1700,12 @@ config-schema:
             Require email authentication before sending mail to an email address.
             This is highly recommended. It prevents MediaWiki from being used as an open
             spam relay.
+    EmailConfirmationBanner:
+        default: false
+        type: boolean
+        description: |-
+            Whether to show a banner to logged-in users who have not yet confirmed their email address.
+            Requires {@link MainConfigSchema::EmailAuthentication} to be enabled.
     EnotifWatchlist:
         default: false
         description: 'Allow users to enable email notification ("enotif") on watchlist changes.'
@@ -1898,8 +1914,6 @@ config-schema:
                              If this is zero for any given server, no normal query traffic will be
                              sent to it. It will be excluded from lag checks in maintenance scripts.
                              The only way it can receive traffic is if groupLoads is used.
-              - groupLoads:  (optional) Array of load ratios, the key is the query group name. A query
-                             may belong to several groups, the most specific group defined here is used.
               - flags:       (optional) Bit field of properties:
                              - DBO_DEFAULT:    Transactional-ize web requests and use autocommit otherwise
                              - DBO_DEBUG:      Equivalent of $wgDebugDumpSql
@@ -2456,7 +2470,7 @@ config-schema:
     ObjectCaches:
         default:
             0: { class: Wikimedia\ObjectCache\EmptyBagOStuff, reportDupes: false }
-            1: { class: SqlBagOStuff, loggroup: SQLBagOStuff }
+            1: { class: MediaWiki\ObjectCache\SqlBagOStuff, loggroup: SQLBagOStuff }
             memcached-php: { class: Wikimedia\ObjectCache\MemcachedPhpBagOStuff, loggroup: memcached }
             memcached-pecl: { class: Wikimedia\ObjectCache\MemcachedPeclBagOStuff, loggroup: memcached }
             hash: { class: Wikimedia\ObjectCache\HashBagOStuff, reportDupes: false }
@@ -2610,7 +2624,9 @@ config-schema:
         type: object
         default:
             pcache: { default: { minCpuTime: 0 } }
+            postproc-pcache: { default: { minCpuTime: 9223372036854775807 } }
             parsoid-pcache: { default: { minCpuTime: 0 } }
+            postproc-parsoid-pcache: { default: { minCpuTime: 0 } }
         additionalProperties:
             type: object
             description: 'A map of namespace IDs to filter definitions.'
@@ -2701,6 +2717,12 @@ config-schema:
               appropriate $wgCookieDomain settings, enabling this will break session handling.
             @since 1.45
             @see SessionManager::getJwtData()
+    JwtSessionCookieIssuer:
+        default: null
+        description: |-
+            The wiki's URL that would create, sign and issue JWTs using the configured
+            private key. The entity is identified by the `iss` claim in the JWT payload.
+            @since 1.46
     MemCachedServers:
         default:
             - '127.0.0.1:11211'
@@ -2732,7 +2754,7 @@ config-schema:
             This option is probably only useful for translatewiki.net.
     LocalisationCacheConf:
         properties:
-            class: { type: string, default: LocalisationCache }
+            class: { type: string, default: MediaWiki\Language\LocalisationCache }
             store: { type: string, default: detect }
             storeClass: { type: [boolean, string], default: false }
             storeDirectory: { type: [boolean, string], default: false }
@@ -2996,7 +3018,7 @@ config-schema:
     LanguageCode:
         default: en
         description: |-
-            Site language code. See includes/languages/data/Names.php for languages
+            Site language code. See includes/Languages/Data/Names.php for languages
             supported by MediaWiki out of the box. Not all languages listed there have
             translations, see languages/messages/ for the list of languages with some
             localisation.
@@ -4036,6 +4058,15 @@ config-schema:
         description: |-
             Which namespaces should support subpages?
             See Language.php for a list of namespaces.
+    NamespacesWithoutAutoSummaries:
+        default: []
+        type: array
+        description: |-
+            Namespaces to have auto-summary disabled for edits.
+            See Language.php for a list of namespaces.
+            For example, namespaces with limited access can be added to avoid page contents
+            being leaked in edit summaries.
+            @since 1.45
     ContentNamespaces:
         default:
             - 0
@@ -4330,6 +4361,13 @@ config-schema:
         description: |-
             By default MediaWiki does not register links pointing to same server in
             externallinks dataset, use this value to override:
+    ExternalLinksIgnoreDomains:
+        default: []
+        type: array
+        description: |-
+            List of domains that will be ignored in being tracked into externallinks table.
+            Subdomains will be also ignored. So 'wikipedia.org' means 'fa.wikipedia.org'
+            will be also ignored.
     AllowDisplayTitle:
         default: true
         description: 'Allow DISPLAYTITLE to change title display'
@@ -4526,8 +4564,7 @@ config-schema:
             every check should have a corresponding passwordpolicies-policy-<check> message,
             and every settings field other than 'value' should have a corresponding
             passwordpolicies-policyflag-<flag> message (<check> and <flag> are in lowercase).
-            The check message receives the policy value as a parameter, the flag message
-            receives the flag value (or values if it's an array).
+            The check message receives the policy value as a parameter.
             @since 1.26
             @see \MediaWiki\Password\PasswordPolicyChecks
             @see \MediaWiki\User\User::checkPasswordValidity()
@@ -4869,6 +4906,10 @@ config-schema:
         default: []
         type: array
         description: 'An array of preferences to not show for the user'
+    UserJsPrefLimit:
+        default: 100
+        type: integer
+        description: 'Maximum number of userjs preferences allowed for each user'
     InvalidUsernameCharacters:
         default: '@:>='
         description: |-
@@ -5038,21 +5079,6 @@ config-schema:
         description: |-
             If this is false, the number of blocks of a given target is limited to only 1.
             @since 1.42
-    BlockTargetMigrationStage:
-        default: 768
-        type: integer
-        description: |4-
-             Ipblocks table schema migration stage, for normalizing ipb_address field and
-            	adding the block_target table.
-            Use the SCHEMA_COMPAT_XXX flags. Supported values:
-              - SCHEMA_COMPAT_OLD
-              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
-              - SCHEMA_COMPAT_NEW
-            History:
-              - 1.42: Added
-              - 1.43: Default changed from SCHEMA_COMPAT_OLD to SCHEMA_COMPAT_NEW
-              - 1.43: Deprecated, ignored, SCHEMA_COMPAT_NEW is implied
-            @deprecated since 1.43
     WhitelistRead:
         default: false
         description: |-
@@ -5109,7 +5135,7 @@ config-schema:
         mergeStrategy: array_plus_2d
         default:
             '*': { createaccount: true, read: true, edit: true, createpage: true, createtalk: true, viewmyprivateinfo: true, editmyprivateinfo: true, editmyoptions: true }
-            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, viewmywatchlist: true, editmywatchlist: true }
+            user: { move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, movefile: true, read: true, edit: true, createpage: true, createtalk: true, upload: true, reupload: true, reupload-shared: true, minoredit: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true, editmyuserjsredirect: true, sendemail: true, applychangetags: true, changetags: true, viewmywatchlist: true, editmywatchlist: true, createwithcontentmodel: true }
             autoconfirmed: { autoconfirmed: true, editsemiprotected: true }
             bot: { bot: true, autoconfirmed: true, editsemiprotected: true, nominornewtalk: true, autopatrol: true, suppressredirect: true, apihighlimits: true }
             sysop: { block: true, createaccount: true, delete: true, bigdelete: true, deletedhistory: true, deletedtext: true, undelete: true, editcontentmodel: true, editinterface: true, editsitejson: true, edituserjson: true, import: true, importupload: true, move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, patrol: true, autopatrol: true, protect: true, editprotected: true, rollback: true, upload: true, reupload: true, reupload-shared: true, unwatchedpages: true, autoconfirmed: true, editsemiprotected: true, ipblock-exempt: true, blockemail: true, markbotedits: true, apihighlimits: true, browsearchive: true, noratelimit: true, movefile: true, unblockself: true, suppressredirect: true, mergehistory: true, managechangetags: true, deletechangetags: true }
@@ -5206,6 +5232,38 @@ config-schema:
         default: {  }
         type: object
         description: '@see self::GroupsAddToSelf'
+    RestrictedGroups:
+        default: {  }
+        type: object
+        description: |-
+            A map of group names to the conditions under which the group can be granted.
+            The requirements are specified in the same way as for autopromotion.
+            If `canBeIgnored` is set to true, these restrictions can be bypassed by users
+            who have the `ignore-restricted-groups` permission.
+            If either of the `memberConditions` or `updaterConditions` keys are omitted,
+            they default to an empty array (i.e. no conditions). The default value for
+            `canBeIgnored` is false.
+            ```
+            $wgRestrictedGroups = [
+                'sysop' => [
+                    'memberConditions' => [ APCOND_EDITCOUNT, 1000 ],
+                    'updaterConditions' => [ !, APCOND_ISBOT ],
+                    'canBeIgnored' => false,
+                ]
+            ]
+            ```
+    UserRequirementsPrivateConditions:
+        default: []
+        type: array
+        description: |-
+            A list of user requirement conditions, which are considered private and therefore
+            shouldn't be used in computations before they are really needed. This helps to reduce
+            visibility of protected information about users.
+            Using this setting does not fully prevent other users from inferring what is the result
+            of condition computation. For instance, a user rights log entry can still reveal that
+            the restrictions for the relevant group must have been satisfied.
+            An example use of this setting is the Special:UserRights form, where all conditions
+            are evaluated on submission, but on viewing only the non-private ones are used.
     RestrictionTypes:
         default:
             - create
@@ -5739,13 +5797,13 @@ config-schema:
             basic: { autocreateaccount: true, autoconfirmed: true, autopatrol: true, editsemiprotected: true, ipblock-exempt: true, nominornewtalk: true, patrolmarks: true, read: true, unwatchedpages: true }
             highvolume: { bot: true, apihighlimits: true, noratelimit: true, markbotedits: true }
             import: { import: true, importupload: true }
-            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, pagelang: true }
-            editprotected: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editprotected: true }
-            editmycssjs: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true }
+            editpage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, pagelang: true }
+            editprotected: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editprotected: true }
+            editmycssjs: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editmyusercss: true, editmyuserjson: true, editmyuserjs: true }
             editmyoptions: { editmyoptions: true, editmyuserjson: true }
-            editinterface: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true }
-            editsiteconfig: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true, editusercss: true, edituserjs: true, editsitecss: true, editsitejs: true }
-            createeditmovepage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createpage: true, createtalk: true, delete-redirect: true, move: true, move-rootuserpages: true, move-subpages: true, move-categorypages: true, suppressredirect: true }
+            editinterface: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true }
+            editsiteconfig: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editinterface: true, edituserjson: true, editsitejson: true, editusercss: true, edituserjs: true, editsitecss: true, editsitejs: true }
+            createeditmovepage: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, createpage: true, createtalk: true, delete-redirect: true, move: true, move-rootuserpages: true, move-subpages: true, move-categorypages: true, suppressredirect: true }
             uploadfile: { upload: true, reupload-own: true }
             uploadeditmovefile: { upload: true, reupload-own: true, reupload: true, reupload-shared: true, upload_by_url: true, movefile: true, suppressredirect: true }
             patrol: { patrol: true }
@@ -5753,9 +5811,9 @@ config-schema:
             blockusers: { block: true, blockemail: true }
             viewdeleted: { browsearchive: true, deletedhistory: true, deletedtext: true }
             viewrestrictedlogs: { suppressionlog: true }
-            delete: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, browsearchive: true, deletedhistory: true, deletedtext: true, delete: true, bigdelete: true, deletelogentry: true, deleterevision: true, undelete: true }
+            delete: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, browsearchive: true, deletedhistory: true, deletedtext: true, delete: true, bigdelete: true, deletelogentry: true, deleterevision: true, undelete: true }
             oversight: { suppressrevision: true, viewsuppressed: true }
-            protect: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, editprotected: true, protect: true }
+            protect: { edit: true, minoredit: true, applychangetags: true, changetags: true, editcontentmodel: true, createwithcontentmodel: true, editprotected: true, protect: true }
             viewmywatchlist: { viewmywatchlist: true }
             editmywatchlist: { editmywatchlist: true }
             sendemail: { sendemail: true }
@@ -5873,6 +5931,12 @@ config-schema:
             "{$database}-{$prefix}".
             @since 1.27
             @deprecated since 1.42 Use $wgVirtualDomainsMapping instead.
+    BotPasswordsLimit:
+        default: 100
+        type: integer
+        description: |-
+            Maximum number of bot passwords a user can create.
+            @since 1.46
     SecretKey:
         default: false
         description: 'This should always be customised in LocalSettings.php'
@@ -6015,12 +6079,6 @@ config-schema:
             This should be set in LocalSettings.php, otherwise $wgSecretKey will
             be used.
             @since 1.27
-    EnableUnsafeXsltOption:
-        default: false
-        description: |-
-            Enable the deprecated xslt option in the Action API.
-            This is unsafe and allows users with the editinterface right to perform XSS.
-            @see https://phabricator.wikimedia.org/T401995
     CookieExpiration:
         default: 2592000
         description: 'Default cookie lifetime, in seconds. Setting to 0 makes all cookies session-only.'
@@ -6400,6 +6458,13 @@ config-schema:
             queries and other useful output.
             Will be ignored if $wgUseFileCache or $wgUseCdn is enabled.
             @since 1.19
+    ApiClientErrorSampleRate:
+        default: 1.0
+        description: |-
+            Fraction of HTTP errors received by mw.Api to log client-side using mw.errorLogger.logError().
+            Additional setup is required to record these logs somewhere.
+            Currently only logs HTTP 429 errors, but this may be extended in the future.
+            @since 1.46
     DisableTextSearch:
         default: false
         description: 'Set this to true to disable the full text search feature.'
@@ -6719,8 +6784,6 @@ config-schema:
             - 'omit_patrolled' -- Exclude patrolled edits from the feed. (default: false)
             FormattedRCFeed-specific options:
             - 'uri' -- [required] The address to which the messages are sent.
-              The uri scheme of this string will be looked up in $wgRCEngines
-              to determine which FormattedRCFeed class to use.
             - 'formatter' -- [required] The class (implementing RCFeedFormatter) which will
               produce the text to send. This can also be an object of the class.
               Formatters available by default: JSONRCFeedFormatter, XMLRCFeedFormatter,
@@ -6752,15 +6815,6 @@ config-schema:
                 'class' => ExampleRCFeed::class,
             ];
             ```
-            @since 1.22
-    RCEngines:
-        default:
-            redis: MediaWiki\RCFeed\RedisPubSubFeedEngine
-            udp: MediaWiki\RCFeed\UDPRCFeedEngine
-        type: object
-        description: |-
-            Used by RecentChange::getEngine to find the correct engine for a given URI scheme.
-            Keys are scheme names, values are names of FormattedRCFeed sub classes.
             @since 1.22
     RCWatchCategoryMembership:
         default: false
@@ -6894,6 +6948,8 @@ config-schema:
             mw-manual-revert: true
             mw-reverted: true
             mw-server-side-upload: true
+            mw-ipblock-appeal: true
+            mw-edited-other-users-js: true
         type: object
         additionalProperties:
             type: boolean
@@ -6913,6 +6969,7 @@ config-schema:
             @see \MediaWiki\ChangeTags\ChangeTags::TAG_MANUAL_REVERT
             @see \MediaWiki\ChangeTags\ChangeTags::TAG_REVERTED
             @see \MediaWiki\ChangeTags\ChangeTags::TAG_SERVER_SIDE_UPLOAD
+            @see \MediaWiki\ChangeTags\ChangeTags::TAG_IPBLOCK_APPEAL
     UnwatchedPageThreshold:
         default: false
         description: |-
@@ -6954,6 +7011,18 @@ config-schema:
         description: |-
             Whether to enable the watchlist expiry feature.
             @since 1.35
+    EnableWatchlistLabels:
+        default: false
+        type: boolean
+        description: |-
+            Whether to enable the watchlist labels feature.
+            @since 1.46
+    WatchlistLabelsMaxPerUser:
+        default: 100
+        type: integer
+        description: |-
+            Maximum number of labels a user can create for their watchlist.
+            @since 1.46
     WatchlistPurgeRate:
         default: 0.1
         type: number
@@ -6976,12 +7045,6 @@ config-schema:
             Only has effect if $wgWatchlistExpiry is true.
             Set to null to allow expiries of any duration.
             @since 1.35
-    EditWatchlistPaginate:
-        default: false
-        type: boolean
-        description: |-
-            Whether to enable pagination on Special:EditWatchlist (feature flag)
-            @since 1.45
     EnableChangesListQueryPartitioning:
         default: false
         type: boolean
@@ -7336,17 +7399,17 @@ config-schema:
             refreshLinksPrioritized: MediaWiki\JobQueue\Jobs\RefreshLinksJob
             refreshLinksDynamic: MediaWiki\JobQueue\Jobs\RefreshLinksJob
             activityUpdateJob: MediaWiki\Watchlist\ActivityUpdateJob
-            categoryMembershipChange: { class: MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob, services: [RecentChangeFactory] }
+            categoryMembershipChange: { class: MediaWiki\RecentChanges\CategoryMembershipChangeJob, services: [RecentChangeFactory] }
             CategoryCountUpdateJob: { class: MediaWiki\JobQueue\Jobs\CategoryCountUpdateJob, services: [ConnectionProvider, NamespaceInfo] }
             clearUserWatchlist: MediaWiki\Watchlist\ClearUserWatchlistJob
             watchlistExpiry: MediaWiki\Watchlist\WatchlistExpiryJob
             cdnPurge: MediaWiki\JobQueue\Jobs\CdnPurgeJob
-            userGroupExpiry: UserGroupExpiryJob
+            userGroupExpiry: MediaWiki\User\UserGroupExpiryJob
             clearWatchlistNotifications: MediaWiki\Watchlist\ClearWatchlistNotificationsJob
-            userOptionsUpdate: UserOptionsUpdateJob
+            userOptionsUpdate: MediaWiki\User\Options\UserOptionsUpdateJob
             revertedTagUpdate: MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob
             'null': MediaWiki\JobQueue\Jobs\NullJob
-            userEditCountInit: UserEditCountInitJob
+            userEditCountInit: MediaWiki\User\UserEditCountInitJob
             parsoidCachePrewarm: { class: MediaWiki\JobQueue\Jobs\ParsoidCachePrewarmJob, services: [ParserOutputAccess, PageStore, RevisionLookup, ParsoidSiteConfig], needsPage: false }
             renameUserTable: { class: MediaWiki\RenameUser\Job\RenameUserTableJob, services: [MainConfig, DBLoadBalancerFactory] }
             renameUserDerived: { class: MediaWiki\RenameUser\Job\RenameUserDerivedJob, services: [RenameUserFactory, UserFactory] }
@@ -7872,12 +7935,6 @@ config-schema:
             Maximum amount of DB lag on a majority of DB replica DBs to tolerate
             before forcing bots to retry any write requests via API errors.
             This should be lower than the 'max lag' value in $wgLBFactoryConf.
-    APIRequestLog:
-        default: false
-        deprecated: 'since 1.43; use api or api-request $wgDebugLogGroups channel'
-        description: |-
-            Log file or URL (TCP or UDP) to log API requests to, or false to disable
-            API request logging
     APICacheHelpTimeout:
         default: 3600
         description: 'Set the timeout for the API help text cache. If set to 0, caching disabled'
@@ -7940,6 +7997,27 @@ config-schema:
         description: |-
             Additional REST API Route files.
             A common usage is to enable development/experimental endpoints only on test wikis.
+    RestSandboxSpecs:
+        default: {  }
+        type: object
+        additionalProperties:
+            type: object
+            properties: { url: { type: string, format: url }, name: { type: string }, file: { type: string }, msg: { type: string, description: 'a message key' } }
+        description: |-
+            A list of OpenAPI specs to be made available for exploration on
+            Special:RestSandbox. If none are given, Special:RestSandbox is disabled.
+            This is an associative array, arbitrary spec IDs to spec descriptions.
+            Each spec description is an array with the following keys:
+            - url: the URL that will return the OpenAPI spec.
+            - name: the name of the API, to be shown on Special:RestSandbox.
+              Ignored if msg is given.
+            - msg: a message key for the name of the API, to be shown on
+              Special:RestSandbox.
+            - file: optional module definition file name. If supplied, information therein is used for
+              name and/or url. Info supplied directly in config (via url/name/msg) takes precedence.
+            @unstable Introduced in 1.43. We may want to rename or change this to
+            accommodate the need to list external APIs in a central discovery
+            document.
     MaxShellMemory:
         default: 307200
         description: 'Maximum amount of virtual memory available to shell processes under linux, in KiB.'
@@ -8091,6 +8169,14 @@ config-schema:
              - trace context provided by the incoming request via the `tracestate` and `traceparent`
             Set to `true` if the entity sitting in front of MediaWiki sanitises external requests.
             Default: `false`.
+    GenerateReqIDFormat:
+        default: rand24
+        type: string
+        description: |-
+            How to generate the request ID when MediaWiki generates it internally.
+            Must be one of: 'rand24', 'uuid4'
+            Default: 'rand24'
+            @since 1.46
     JobRunRate:
         default: 1
         description: |-
@@ -8308,6 +8394,13 @@ config-schema:
             ];
             @encdode
             @since 1.44
+    CloneArticleParserOutput:
+        default: true
+        type: boolean
+        description: |-
+            Whether Article should clone the ParserOutput before postprocessing.
+            @unstable Temporary feature flag, T410923
+            @since 1.45
     UseLeximorph:
         default: false
         type: boolean
@@ -8315,3 +8408,28 @@ config-schema:
             Whether parser functions should use Leximorph handlers instead of Language methods.
             @unstable Temporary feature flag, T389281
             @since 1.45
+    UsePostprocCacheLegacy:
+        default: false
+        type: boolean
+        description: |-
+            Whether to use the post-OutputTransform cache for legacy parses
+            @unstable Temporary feature flag, T348255
+            @since 1.46
+    UsePostprocCacheParsoid:
+        default: true
+        type: boolean
+        description: |-
+            Whether to use the post-OutputTransform cache for Parsoid parses
+            @unstable Temporary feature flag, T348255
+            @since 1.46
+    ParserOptionsLogUnsafeSampleRate:
+        default: 0
+        type: integer
+        description: |-
+            Sample rate for collecting statistics on unsafe key values in ParserCache.
+            Zero disables collection; 1000 means "1 in every 1000 parses will
+            be sampled".
+            @warning This is EXPERIMENTAL and will disappear once analysis is
+             complete.
+            @unstable temporary statistics gathering
+            @since 1.46

@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Services;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Services;
 
-use MediaWiki\CheckUser\Services\TokenManager;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
+use MediaWiki\Extension\CheckUser\Services\TokenManager;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Request\FauxRequest;
 use MediaWikiIntegrationTestCase;
 
@@ -12,7 +12,7 @@ use MediaWikiIntegrationTestCase;
  *
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\Services\TokenQueryManager
+ * @covers \MediaWiki\Extension\CheckUser\Services\TokenQueryManager
  */
 class TokenQueryManagerTest extends MediaWikiIntegrationTestCase {
 

@@ -26,6 +26,7 @@
 			"Weblars"
 		]
 	},
+	"collabpad-disabled": "CollabPad er ikke aktiveret på denne wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importeret fra $1",
 	"collabpad": "CollabPad",
@@ -247,6 +248,7 @@
 	"visualeditor-educationpopup-dismiss": "Ok, jeg forstår",
 	"visualeditor-expandable-less": "Mindre",
 	"visualeditor-expandable-more": "Mere",
+	"visualeditor-expandableerror-toggle": "Slå synlighed til/fra",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Sidetitel",
 	"visualeditor-formatdropdown-format-mw-heading2": "Overskrift",
@@ -254,6 +256,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Underoverskrift 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Underoverskrift 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Underoverskrift 4",
+	"visualeditor-fullpage-switch-label": "Redigér hele siden",
 	"visualeditor-generating-wikitext-progress": "Generering af wikitekst",
 	"visualeditor-includes-noinclude-start": "Start på indhold, der er udelukket fra uddrag",
 	"visualeditor-includes-noinclude-end": "Slut på indhold, der er ekskluderet fra uddrag",

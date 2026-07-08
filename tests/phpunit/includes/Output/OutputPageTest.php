@@ -8,8 +8,9 @@ use MediaWiki\Html\Html;
 use MediaWiki\Language\ILanguageConverter;
 use MediaWiki\Language\Language;
 use MediaWiki\Language\LanguageCode;
+use MediaWiki\Language\LanguageConverterFactory;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Language\RawMessage;
-use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageIdentity;
@@ -25,6 +26,7 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
+use MediaWiki\ResourceLoader\DependencyStore;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Skin\QuickTemplate;
@@ -36,9 +38,9 @@ use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use PHPUnit\Framework\MockObject\MockObject;
-use Wikimedia\DependencyStore\DependencyStore;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * @author Matthew Flaschen
@@ -656,7 +658,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				[ $lastModified, $lastModified, false, [ MainConfigNames::CachePages => false ] ],
 			'$wgCacheEpoch' =>
 				[ $lastModified, $lastModified, false,
-					[ MainConfigNames::CacheEpoch => wfTimestamp( TS_MW, $lastModified + 1 ) ] ],
+					[ MainConfigNames::CacheEpoch => wfTimestamp( TS::MW, $lastModified + 1 ) ] ],
 			'Recently-touched user' =>
 				[ $lastModified, $lastModified, false, [],
 				static function ( OutputPage $op, $testCase ) {
@@ -1207,7 +1209,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			},
 		] );
 		$op->addParserOutputMetadata( $pOut1 );
-		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
+		$this->assertSame( [ 'ar:G#y', 'he:F', 'pt:E' ], $op->getLanguageLinks() );
 
 		# Duplicates are removed in OutputPage (T26502)
 		$pOut2 = $this->createParserOutputStub( [
@@ -1222,7 +1224,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			},
 		] );
 		$op->addParserOutput( $pOut2, ParserOptions::newFromAnon() );
-		$this->assertSame( [ 'pt:E', 'he:F', 'ar:G#y' ], $op->getLanguageLinks() );
+		$this->assertSame( [ 'ar:G#y', 'he:F', 'pt:E' ], $op->getLanguageLinks() );
 	}
 
 	// @todo Are these category links tests too abstract and complicated for what they test?  Would
@@ -1340,6 +1342,43 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		} else {
 			$op->addParserOutput( $stubPO, ParserOptions::newFromAnon() );
 		}
+
+		$this->doCategoryAsserts( $op, $expectedNormal, $expectedHidden );
+		$this->doCategoryLinkAsserts( $op, $expectedNormal, $expectedHidden );
+	}
+
+	/**
+	 * @dataProvider provideGetCategories
+	 */
+	public function testCategoryLinkDeduplication(
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
+		array $expectedNormal, array $expectedHidden
+	) {
+		$expectedNormal = $this->extractExpectedCategories( $expectedNormal, 'dedup' );
+		$expectedHidden = $this->extractExpectedCategories( $expectedHidden, 'dedup' );
+
+		$op = $this->setupCategoryTests( $fakeResults, $variantLinkCallback );
+
+		$stubPO = $this->createParserOutputStub( [
+			'getCategoryMap' => $args,
+			'getLinkList' => static function ( $type ) use ( $args ) {
+				if ( $type !== ParserOutputLinkTypes::CATEGORY ) {
+					return [];
+				}
+				$result = [];
+				foreach ( $args as $cat => $sort ) {
+					$result[] = [
+						'link' => TitleValue::tryNew( NS_CATEGORY, $cat ),
+						'sort' => $sort,
+					];
+				}
+				return $result;
+			},
+		] );
+
+		// Add category links, then add parser output metadata which also adds the same category links
+		$op->addCategoryLinks( $args );
+		$op->addParserOutputMetadata( $stubPO );
 
 		$this->doCategoryAsserts( $op, $expectedNormal, $expectedHidden );
 		$this->doCategoryLinkAsserts( $op, $expectedNormal, $expectedHidden );
@@ -1497,9 +1536,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 						$title = Title::makeTitleSafe( NS_CATEGORY, $link );
 					}
 				},
-				// For adding one by one, the variant gets added as well as the original category,
-				// but if you add them all together the second time gets skipped.
-				[ 'onebyone' => [ 'Test', 'Test' ], 'default' => [ 'Test' ] ],
+				[ 'Test' ],
 				[],
 				[ 'tseT' ],
 			],
@@ -2947,9 +2984,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$queryData = $args['queryData'] ?? [];
 
 		$fauxRequest = new FauxRequest( $queryData, false );
-		$this->setRequest( $fauxRequest );
 
-		$actualReturn = OutputPage::transformCssMedia( $args['media'] );
+		$actualReturn = OutputPage::transformCssMedia( $args['media'], $fauxRequest );
 		$this->assertSame( $args['expectedReturn'], $actualReturn, $args['message'] );
 	}
 
@@ -3077,14 +3113,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					MainConfigNames::ResourceBasePath => '/w',
 					MainConfigNames::Logo => '/img/default.png',
 					MainConfigNames::Logos => [
-						'1.5x' => '/img/one-point-five.png',
 						'2x' => '/img/two-x.png',
 					],
 				],
 				'Link: </img/default.png>;rel=preload;as=image;media=' .
-				'not all and (min-resolution: 1.5dppx),' .
-				'</img/one-point-five.png>;rel=preload;as=image;media=' .
-				'(min-resolution: 1.5dppx) and (max-resolution: 1.999999dppx),' .
+				'not all and (min-resolution: 2dppx),' .
 				'</img/two-x.png>;rel=preload;as=image;media=(min-resolution: 2dppx)'
 			],
 			[
@@ -3431,17 +3464,39 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $op->userCanPreview() );
 	}
 
-	public static function providePermissionStatus() {
+	public static function provideFormatPermissionStatus() {
 		yield 'no errors' => [
 			PermissionStatus::newEmpty(),
 			'',
+			null
 		];
 
 		yield 'one message' => [
-			PermissionStatus::newEmpty()->fatal( 'badaccess-group0' ),
+			PermissionStatus::newEmpty()->fatal( 'nope' ),
 			'(permissionserrorstext: 1)
 
-<div class="permissions-errors"><div class="mw-permissionerror-badaccess-group0">(badaccess-group0)</div></div>',
+<div class="permissions-errors"><div class="mw-permissionerror-nope">(nope)</div></div>',
+			null
+		];
+
+		yield 'one message with action' => [
+			PermissionStatus::newEmpty()->fatal( 'nope' ),
+			'(permissionserrorstext-withaction: 1, (action-edit))
+
+<div class="permissions-errors"><div class="mw-permissionerror-nope">(nope)</div></div>',
+			'edit'
+		];
+
+		yield 'badaccess-group0' => [
+			PermissionStatus::newEmpty()->fatal( 'badaccess-group0' ),
+			'<div class="permissions-errors">(badaccess-group0)</div>',
+			null
+		];
+
+		yield 'badaccess-group0 with action' => [
+			PermissionStatus::newEmpty()->fatal( 'badaccess-group0' ),
+			'<div class="permissions-errors">(permissionserrorstext-withaction-noreason: (action-edit))</div>',
+			'edit'
 		];
 
 		yield 'two messages' => [
@@ -3449,26 +3504,25 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'(permissionserrorstext: 2)
 
 <ul class="permissions-errors"><li class="mw-permissionerror-badaccess-group0">(badaccess-group0)</li><li class="mw-permissionerror-foobar">(foobar)</li></ul>',
+			null
 		];
-	}
 
-	public static function provideFormatPermissionStatus() {
 		yield 'RawMessage' => [
 			PermissionStatus::newEmpty()->fatal( new RawMessage( 'Foo Bar' ) ),
 			'(permissionserrorstext: 1)
 
 <div class="permissions-errors"><div class="mw-permissionerror-rawmessage">Foo Bar</div></div>',
+			null
 		];
 	}
 
 	/**
-	 * @dataProvider providePermissionStatus
 	 * @dataProvider provideFormatPermissionStatus
 	 */
-	public function testFormatPermissionStatus( PermissionStatus $status, string $expected ) {
+	public function testFormatPermissionStatus( PermissionStatus $status, string $expected, ?string $action ) {
 		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'qqx' );
 
-		$actual = self::newInstance()->formatPermissionStatus( $status );
+		$actual = self::newInstance()->formatPermissionStatus( $status, $action );
 		$this->assertEquals( $expected, $actual );
 	}
 

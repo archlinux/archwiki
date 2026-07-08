@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -59,12 +59,8 @@
 		"ConfirmEditAlias": "ConfirmEdit.alias.php"
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\ConfirmEdit\\": "includes/"
-	},
-	"AutoloadClasses": {
-		"MediaWiki\\Extension\\ConfirmEdit\\Maintenance\\CountFancyCaptchas": "maintenance/CountFancyCaptchas.php",
-		"MediaWiki\\Extension\\ConfirmEdit\\Maintenance\\DeleteOldFancyCaptchas": "maintenance/DeleteOldFancyCaptchas.php",
-		"MediaWiki\\Extension\\ConfirmEdit\\Maintenance\\GenerateFancyCaptchas": "maintenance/GenerateFancyCaptchas.php"
+		"MediaWiki\\Extension\\ConfirmEdit\\": "includes/",
+		"MediaWiki\\Extension\\ConfirmEdit\\Maintenance\\": "maintenance/"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {
@@ -111,7 +107,8 @@
 		"MakeGlobalVariablesScriptHookHandler": {
 			"class": "MediaWiki\\Extension\\ConfirmEdit\\Hooks\\Handlers\\MakeGlobalVariablesScriptHookHandler",
 			"services": [
-				"ExtensionRegistry"
+				"ExtensionRegistry",
+				"MainConfig"
 			],
 			"optional_services": [
 				"VisualEditor.VisualEditorAvailabilityLookup",
@@ -153,10 +150,6 @@
 		"ConfirmEditLoadedCaptchas": {
 			"description": "Use this config to define captchas that could be loaded via the ConfirmEditCaptchaClass hook. These should be in the format as used to define the active captcha in $wgCaptchaClass. You should not need to extend this array if you have defined the captchas to use via $wgCaptchaClass or $wgCaptchaTriggers, as these are read to populate this list automatically.",
 			"value": []
-		},
-		"CaptchaWhitelistIP": {
-			"description": "DEPRECATED! Use CaptchaBypassIPs",
-			"value": false
 		},
 		"CaptchaBypassIPs": {
 			"description": "A list of IP addresses that can skip the captcha",
@@ -204,10 +197,6 @@
 			"description": "Number of bad login attempts (for a specific user account) before triggering the captcha. 0 means the captcha is presented on the first login. A captcha will also be triggered if the number of failed logins exceeds $wgCaptchaBadLoginPerUserAttempts * 30 in a period of $wgCaptchaBadLoginPerUserExpiration * 300.",
 			"value": 20
 		},
-		"CaptchaWhitelist": {
-			"description": "DEPRECATED: Use CaptchaIgnoredUrls.",
-			"value": false
-		},
 		"CaptchaIgnoredUrls": {
 			"description": "Urls that won't trigger a captcha.",
 			"value": false
@@ -215,6 +204,10 @@
 		"CaptchaRegexes": {
 			"description": "Additional regexes to check for. Use full regexes; can match things other than URLs such as junk edits. If the new version matches one and the old version doesn't, show the captcha screen.",
 			"value": []
+		},
+		"CaptchaAbuseFilterCaptchaConsequenceTTL": {
+			"description": "Used to customize the amount of time (in seconds) in which further user actions will require solving a captcha once an abuse filter triggers the showcaptcha consequence.",
+			"value": 120
 		},
 		"ConfirmEditEnabledAbuseFilterCustomActions": {
 			"description": "Feature flag to toggle list of available custom actions to enable in AbuseFilter. See AbuseFilterHooks::onAbuseFilterCustomActions.",
@@ -248,6 +241,10 @@
 			"description": "Whether the provided sitekey is for hCaptcha Enterprise features. See https://www.hcaptcha.com/#enterprise-features",
 			"value": false
 		},
+		"HCaptchaEnabledInMobileFrontend": {
+			"description": "Whether to enable HCaptcha for the MobileFrontend",
+			"value": false
+		},
 		"HCaptchaInvisibleMode": {
 			"description": "Enable this to make the hCaptcha checkbox invisible and only show a challenge if hCaptcha determines it is needed. This forces the inclusion of a message with the hCaptcha Privacy Policy and Terms of Service",
 			"value": false
@@ -278,6 +275,26 @@
 		"HCaptchaEnterpriseHealthCheckSiteVerifyErrorThreshold": {
 			"description": "Threshold to use for evaluating the number of failed SiteVerify calls to $wgHCaptchaVerifyUrl within a 1 minute period. If there are more errors accumulated than $wgHCaptchaEnterpriseHealthCheckSiteVerifyErrorThreshold in a 1 minute period, then the service is considered to be unhealthy and a failover mode is enabled.",
 			"value": 5
+		},
+		"HCaptchaEnterpriseHealthCheckApiUrlErrorThreshold": {
+			"description": "Threshold to use for evaluating the number of failed API URL checks within a rolling window. If there are more errors accumulated than $wgHCaptchaEnterpriseHealthCheckApiUrlErrorThreshold, then the service is considered to be unhealthy and a failover mode is enabled.",
+			"value": 3
+		},
+		"HCaptchaEnterpriseHealthCheckFailoverDuration": {
+			"description": "Duration in seconds that hCaptcha is considered unavailable after a health check failure. During this period, the fallback captcha is used and no further health checks are performed.",
+			"value": 600
+		},
+		"HCaptchaEnterpriseHealthCheckApiUrlRetryCount": {
+			"description": "Number of retries after the initial API URL health check attempt fails. Each retry is preceded by a delay of $wgHCaptchaEnterpriseHealthCheckApiUrlRetryDelayMs milliseconds. Set to 0 to disable retries.",
+			"value": 2
+		},
+		"HCaptchaEnterpriseHealthCheckApiUrlRetryDelayMs": {
+			"description": "Milliseconds to sleep before each retry of the API URL health check. This delay helps avoid false failures from sub-second network blips.",
+			"value": 200
+		},
+		"HCaptchaVisualEditorOnLoadIntegrationEnabled": {
+			"description": "Whether the VisualEditor 'onload' integration should be enabled. 'onload' means that hCaptcha is rendered as soon as the user opens the save dialog and not in response to an error indicating a missing captcha. This is a temporary configuration value for use while the integration is not fully ready to use.",
+			"value": false
 		}
 	},
 	"ServiceWiringFiles": [
@@ -305,6 +322,8 @@
 		"scripts": [
 			"secureEnclave.test.js",
 			"ErrorWidget.test.js",
+			"mobileFrontend/initMobileFrontend.test.js",
+			"mobileFrontend/mobileFrontendSecureEnclave.test.js",
 			"ProgressIndicatorWidget.test.js",
 			"utils.test.js",
 			"ve/ve.init.mw.HCaptchaSaveErrorHandler.test.js",

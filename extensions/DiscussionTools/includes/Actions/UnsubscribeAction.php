@@ -17,16 +17,14 @@ use MediaWiki\User\User;
 
 class UnsubscribeAction extends FormAction {
 
-	protected SubscriptionStore $subscriptionStore;
 	protected ?SubscriptionItem $subscriptionItem = null;
 
 	public function __construct(
 		Article $page,
 		IContextSource $context,
-		SubscriptionStore $subscriptionStore
+		protected readonly SubscriptionStore $subscriptionStore,
 	) {
 		parent::__construct( $page, $context );
-		$this->subscriptionStore = $subscriptionStore;
 	}
 
 	/**

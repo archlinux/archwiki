@@ -12,10 +12,10 @@
 namespace MediaWiki\Storage;
 
 use AppendIterator;
-use ExternalStoreAccess;
-use ExternalStoreException;
 use HistoryBlobUtils;
 use InvalidArgumentException;
+use MediaWiki\ExternalStore\ExternalStoreAccess;
+use MediaWiki\ExternalStore\ExternalStoreException;
 use StatusValue;
 use Wikimedia\Assert\Assert;
 use Wikimedia\ObjectCache\BagOStuff;
@@ -40,26 +40,6 @@ class SqlBlobStore implements BlobStore {
 
 	/** @internal */
 	public const DEFAULT_TTL = 7 * 24 * 3600; // 7 days
-
-	/**
-	 * @var ILoadBalancer
-	 */
-	private $dbLoadBalancer;
-
-	/**
-	 * @var ExternalStoreAccess
-	 */
-	private $extStoreAccess;
-
-	/**
-	 * @var WANObjectCache
-	 */
-	private $cache;
-
-	/**
-	 * @var string|bool DB domain ID of a wiki or false for the local one
-	 */
-	private $dbDomain;
 
 	/**
 	 * @var int
@@ -93,15 +73,11 @@ class SqlBlobStore implements BlobStore {
 	 * @param bool|string $dbDomain The ID of the target wiki database. Use false for the local wiki.
 	 */
 	public function __construct(
-		ILoadBalancer $dbLoadBalancer,
-		ExternalStoreAccess $extStoreAccess,
-		WANObjectCache $cache,
-		$dbDomain = false
+		private readonly ILoadBalancer $dbLoadBalancer,
+		private readonly ExternalStoreAccess $extStoreAccess,
+		private readonly WANObjectCache $cache,
+		private readonly bool|string $dbDomain = false,
 	) {
-		$this->dbLoadBalancer = $dbLoadBalancer;
-		$this->extStoreAccess = $extStoreAccess;
-		$this->cache = $cache;
-		$this->dbDomain = $dbDomain;
 	}
 
 	/**

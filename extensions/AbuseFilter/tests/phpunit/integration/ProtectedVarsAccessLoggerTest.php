@@ -9,7 +9,7 @@ use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @covers \MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger
@@ -205,7 +205,7 @@ class ProtectedVarsAccessLoggerTest extends MediaWikiIntegrationTestCase {
 			->willReturn( null );
 
 		$protectedVarsAccessLogger = new ProtectedVarsAccessLogger(
-			$this->createMock( LoggerInterface::class ),
+			new NullLogger(),
 			$this->getServiceContainer()->getConnectionProvider(),
 			$mockActorStore,
 			$this->getServiceContainer()->get( AbuseFilterHookRunner::SERVICE_NAME ),

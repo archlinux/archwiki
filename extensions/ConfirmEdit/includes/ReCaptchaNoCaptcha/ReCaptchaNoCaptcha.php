@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha;
 
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
@@ -29,8 +30,15 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
 
 	/** @inheritDoc */
 	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
-		global $wgReCaptchaSiteKey, $wgLang;
-		$lang = htmlspecialchars( urlencode( $wgLang->getCode() ) );
+		global $wgReCaptchaSiteKey;
+
+		if ( $out !== null ) {
+			$lang = $out->getLanguage();
+		} else {
+			// TODO Deprecate this after migrating callers to provide output page
+			$lang = RequestContext::getMain()->getLanguage();
+		}
+		$langCode = htmlspecialchars( urlencode( $lang->getCode() ) );
 
 		$output = Html::element( 'div', [
 			'class' => [
@@ -46,7 +54,7 @@ class ReCaptchaNoCaptcha extends SimpleCaptcha {
     <div style="width: 302px; height: 422px; position: relative;">
       <div style="width: 302px; height: 422px; position: absolute;">
         <iframe
-            src="https://www.recaptcha.net/recaptcha/api/fallback?k={$htmlUrlencoded}&hl={$lang}"
+            src="https://www.recaptcha.net/recaptcha/api/fallback?k={$htmlUrlencoded}&hl={$langCode}"
             frameborder="0" scrolling="no"
             style="width: 302px; height:422px; border-style: none;">
         </iframe>
@@ -70,7 +78,7 @@ HTML;
 				// Insert reCAPTCHA script, in display language, if available.
 				// Language falls back to the browser's display language.
 				// See https://developers.google.com/recaptcha/docs/faq
-				"<script src=\"https://www.recaptcha.net/recaptcha/api.js?hl={$lang}\" async defer></script>"
+				"<script src=\"https://www.recaptcha.net/recaptcha/api.js?hl={$langCode}\" async defer></script>"
 			]
 		];
 	}

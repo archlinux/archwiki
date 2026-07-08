@@ -9,8 +9,9 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\OATHAuth\Auth\SecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\Auth\TwoFactorModuleSelectAuthenticationRequest;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
-use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Extension\OATHAuth\Key\AuthKey;
+use MediaWiki\Extension\OATHAuth\Module\IModule;
+use MediaWiki\Extension\OATHAuth\OATHAuthLogger;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
@@ -46,33 +47,40 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 		$user->method( 'getRequest' )->willReturn( $request );
 
 		$keys = array_map( function ( $moduleName ) {
-			$key = $this->createNoOpAbstractMock( IAuthKey::class, [ 'getModule' ] );
+			$key = $this->createNoOpAbstractMock( AuthKey::class, [ 'getModule' ] );
 			$key->method( 'getModule' )->willReturn( $moduleName );
 			return $key;
 		}, $enabledModules );
-		$oathUser = $this->createNoOpMock( OATHUser::class, [ 'getKeys', 'isTwoFactorAuthEnabled' ] );
+		$oathUser = $this->createNoOpMock(
+			OATHUser::class,
+			[ 'getKeys', 'isTwoFactorAuthEnabled', 'getKeysForModule' ]
+		);
 		$oathUser->method( 'getKeys' )->willReturn( $keys );
 		$oathUser->method( 'isTwoFactorAuthEnabled' )->willReturn( (bool)$enabledModules );
+		$oathUser->method( 'getKeysForModule' )->willReturn( [] );
 		$oathUserRepository = $this->createNoOpMock( OATHUserRepository::class, [ 'findByUser' ] );
 		$oathUserRepository->expects( $this->atLeastOnce() )->method( 'findByUser' )
 			->willReturnCallback( function () use ( $user, $oathUser ) {
 				$this->assertSame( 'TestUser', $user->getName() );
 				return $oathUser;
 			} );
-		$this->setService( 'OATHUserRepository', $oathUserRepository );
+		$this->setService( 'OATHAuth.UserRepository', $oathUserRepository );
 
 		$moduleRegistry = $this->createNoOpMock( OATHAuthModuleRegistry::class, [ 'getModuleByKey' ] );
 		$moduleRegistry->method( 'getModuleByKey' )->willReturnCallback( function ( $moduleName ) {
 			return $this->getFakeModule( $moduleName );
 		} );
-		$this->setService( 'OATHAuthModuleRegistry', $moduleRegistry );
+		$this->setService( 'OATHAuth.ModuleRegistry', $moduleRegistry );
+		$this->setService( 'OATHAuth.Logger',
+			$this->createNoOpMock( OATHAuthLogger::class, [ 'logSuccessfulVerification' ] )
+		);
 
 		$provider = new SecondaryAuthenticationProvider();
 		$provider->init(
 			new NullLogger(),
-			$this->createNoOpMock( AuthManager::class ),
+			$this->createNoOpMock( AuthManager::class, [ 'getAuthenticationSessionData' ] ),
 			$this->createNoOpMock( HookContainer::class ),
-			new HashConfig( [ 'OATHPrioritizedModules' => [] ] ),
+			new HashConfig(),
 			$this->createNoOpMock( UserNameUtils::class )
 		);
 		$response = $provider->beginSecondaryAuthentication( $user, [] );
@@ -98,8 +106,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = false );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: false );
 						return [ new FakeModuleAuthenticationRequest( 'totp', true ) ];
 					},
 					static function ( self $test, AuthenticationResponse $response ) {
@@ -111,8 +119,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'recoverycodes' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'recoverycodes',
-							$hasSwitchRequest = false );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'recoverycodes',
+							hasSwitchRequest: false );
 						return [ new FakeModuleAuthenticationRequest( 'recoverycodes', true ) ];
 					},
 					static function ( self $test, AuthenticationResponse $response ) {
@@ -124,8 +132,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = false );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: false );
 						return [ new FakeModuleAuthenticationRequest( 'totp', false ) ];
 					},
 					static function ( self $test, AuthenticationResponse $response ) {
@@ -142,8 +150,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp', 'webauthn' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: true );
 						$switchReq = $response->neededRequests[1];
 						$test->assertSame( 'totp', $switchReq->currentModule );
 						$test->assertSame( [ 'totp', 'webauthn' ], array_keys( $switchReq->allowedModules ) );
@@ -158,8 +166,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp', 'webauthn' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: true );
 						return [
 							new FakeModuleAuthenticationRequest( 'totp', true ),
 							new TwoFactorModuleSelectAuthenticationRequest( 'totp', [
@@ -177,8 +185,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp', 'webauthn' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: true );
 						$switchReq = new TwoFactorModuleSelectAuthenticationRequest( 'totp', [
 							'totp' => $test->getMockMessage( 'mock-name-totp' ),
 							'webauthn' => $test->getMockMessage( 'mock-name-webauthn' ),
@@ -198,8 +206,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp', 'webauthn' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: true );
 						$switchReq = new TwoFactorModuleSelectAuthenticationRequest( 'totp', [
 							'totp' => $test->getMockMessage( 'mock-name-totp' ),
 							'webauthn' => $test->getMockMessage( 'mock-name-webauthn' ),
@@ -210,8 +218,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 						];
 					},
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'webauthn',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'webauthn',
+							hasSwitchRequest: true );
 						$switchReq = $response->neededRequests[1];
 						$test->assertSame( 'webauthn', $switchReq->currentModule );
 						$test->assertSame( [ 'totp', 'webauthn' ], array_keys( $switchReq->allowedModules ) );
@@ -230,8 +238,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'totp', 'webauthn' ],
 				'steps' => [
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'totp',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'totp',
+							hasSwitchRequest: true );
 						$switchReq = new TwoFactorModuleSelectAuthenticationRequest( 'totp', [
 							'totp' => $test->getMockMessage( 'mock-name-totp' ),
 							'webauthn' => $test->getMockMessage( 'mock-name-webauthn' ),
@@ -243,8 +251,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 						];
 					},
 					static function ( self $test, AuthenticationResponse $response ) {
-						$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'webauthn',
-							$hasSwitchRequest = true );
+						$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'webauthn',
+							hasSwitchRequest: true );
 						$switchReq = $response->neededRequests[1];
 						$test->assertSame( 'webauthn', $switchReq->currentModule );
 						$test->assertSame( [ 'totp', 'webauthn' ], array_keys( $switchReq->allowedModules ) );
@@ -262,8 +270,8 @@ class SecondaryAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
 				'enabledModules' => [ 'recoverycodes', 'totp', 'webauthn' ],
 					'steps' => [
 						static function ( self $test, AuthenticationResponse $response ) {
-							$test->assertUiResponse( $response, $message = '2fa-started', $moduleName = 'recoverycodes',
-								$hasSwitchRequest = true );
+							$test->assertUiResponse( $response, message: '2fa-started', moduleName: 'recoverycodes',
+								hasSwitchRequest: true );
 							$switchReq = $response->neededRequests[1];
 							$test->assertSame( 'recoverycodes', $switchReq->currentModule );
 							$test->assertSame(

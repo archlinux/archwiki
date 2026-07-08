@@ -44,7 +44,7 @@
 	//   (as the case when using `composer serve`), we normalize to trailing slash.
 	const SCRIPT_PATH_URL = new URL(
 		mw.config.get( 'wgScriptPath' ) + '/',
-		mw.config.get( 'wgServer' )
+		new URL( mw.config.get( 'wgServer' ), location.href )
 	).toString();
 
 	mw.loader.addSource( {

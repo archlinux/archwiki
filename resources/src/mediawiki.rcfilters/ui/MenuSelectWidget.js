@@ -62,7 +62,8 @@ const MenuSelectWidget = function MwRcfiltersUiMenuSelectWidget( controller, mod
 		this.model,
 		{
 			$overlay: this.$overlay,
-			isMobile: config.isMobile
+			isMobile: config.isMobile,
+			specialPage: config.widget.specialPage || ''
 		}
 	);
 
@@ -322,7 +323,6 @@ MenuSelectWidget.prototype.onDocumentKeyDown = function ( e ) {
 
 	// Call parent
 	MenuSelectWidget.super.prototype.onDocumentKeyDown.call( this, e );
-
 	// We want to select the item on arrow movement
 	// rather than just highlight it, like the menu
 	// does by default
@@ -342,7 +342,8 @@ MenuSelectWidget.prototype.onDocumentKeyDown = function ( e ) {
 
 		nextItem = nextItem && nextItem.constructor.static.selectable ?
 			nextItem : null;
-
+		// Clear previous selection before selecting next item
+		this.selectItem( null );
 		// Select the next item
 		this.selectItem( nextItem );
 	}

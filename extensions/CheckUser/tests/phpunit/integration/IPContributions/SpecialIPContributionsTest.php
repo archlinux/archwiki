@@ -1,25 +1,26 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\IPContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\IPContributions;
 
-use DOMDocument;
-use DOMXPath;
-use MediaWiki\CheckUser\Logging\TemporaryAccountLogger;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\ReadOnlyError;
 use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use SpecialPageTestBase;
 use Wikimedia\IPUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 
 /**
- * @covers \MediaWiki\CheckUser\IPContributions\SpecialIPContributions
- * @covers \MediaWiki\CheckUser\IPContributions\IPContributionsPager
+ * @covers \MediaWiki\Extension\CheckUser\IPContributions\SpecialIPContributions
+ * @covers \MediaWiki\Extension\CheckUser\IPContributions\IPContributionsPager
  * @group CheckUser
  * @group Database
  */
@@ -70,17 +71,33 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 		// Named user and 2 temp users edit from the first IP
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.1' );
 		$this->editPage(
-			'Test page', 'Test Content 1', 'test', NS_MAIN, self::$sysop
+			'Test page',
+			'Test Content 1',
+			'test',
+			NS_MAIN,
+			self::$sysop
 		);
 		$this->editPage(
-			'Test page', 'Test Content 2', 'test', NS_MAIN, $temp1
+			'Test page',
+			'Test Content 2',
+			'test',
+			NS_MAIN,
+			$temp1
 		);
 		$this->editPage(
-			'Test page', 'Test Content 3', 'test', NS_MAIN, $temp2
+			'Test page',
+			'Test Content 3',
+			'test',
+			NS_MAIN,
+			$temp2
 		);
 
 		$this->editPage(
-			'Test page for deletion', 'Test Content', 'test', NS_MAIN, $temp1
+			'Test page for deletion',
+			'Test Content',
+			'test',
+			NS_MAIN,
+			$temp1
 		);
 		$title = Title::newFromText( 'Test page for deletion' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
@@ -89,7 +106,11 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 		// Temp user edits again from a different IP
 		RequestContext::getMain()->getRequest()->setIP( '127.0.0.2' );
 		$this->editPage(
-			'Test page', 'Test Content 4', 'test', NS_MAIN, $temp1
+			'Test page',
+			'Test Content 4',
+			'test',
+			NS_MAIN,
+			$temp1
 		);
 	}
 
@@ -142,6 +163,18 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 		];
 	}
 
+	public function testExecuteWhenInReadOnlyMode(): void {
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'test' );
+
+		$this->expectException( ReadOnlyError::class );
+		$this->executeSpecialPage(
+			'127.0.0.1',
+			null,
+			null,
+			self::$checkuser
+		);
+	}
+
 	public function testExecuteWideRange() {
 		// Ensure the range restriction comes from $wgRangeContributionsCIDRLimit,
 		// not $wgCheckUserCIDRLimit
@@ -176,7 +209,9 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 		$this->assertSame( 0, substr_count( $html, 'data-mw-revid' ) );
 		$this->assertStringContainsString( 'checkuser-ip-contributions-target-error-no-ip-banner', $html );
 		$this->assertStringNotContainsString(
-			'sp-contributions-blocked', $html, 'No block log extract should be shown on an error page'
+			'sp-contributions-blocked',
+			$html,
+			'No block log extract should be shown on an error page'
 		);
 	}
 
@@ -271,17 +306,16 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 			true
 		);
 
-		$doc = new DOMDocument();
-		$doc->loadHTML( $html, LIBXML_NOERROR );
-		$entries = ( new DOMXpath( $doc ) )->query(
-			'//div[@id="mw-indicator-mw-helplink"]/a[@class="mw-helplink"]'
-		);
-
+		$doc = DOMUtils::parseHTML( $html );
+		$entries = iterator_to_array( DOMCompat::querySelectorAll(
+			$doc,
+			'div#mw-indicator-mw-helplink > a.mw-helplink'
+		) );
 		$this->assertNotEmpty( $entries );
 		$this->assertEquals(
 			"https://www.mediawiki.org/wiki/Special:MyLanguage/" .
 				"Help:Extension:CheckUser#Special:IPContributions_usage",
-			$entries[ 0 ]->getAttribute( 'href' )
+			DOMCompat::getAttribute( $entries[ 0 ], 'href' )
 		);
 	}
 }

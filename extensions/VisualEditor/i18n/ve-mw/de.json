@@ -30,6 +30,7 @@
 			"XanonymusX"
 		]
 	},
+	"collabpad-disabled": "CollabPad ist in diesem Wiki nicht aktiviert.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importiert von $1",
 	"collabpad": "CollabPad",
@@ -251,6 +252,7 @@
 	"visualeditor-educationpopup-dismiss": "Okay, verstanden.",
 	"visualeditor-expandable-less": "Weniger",
 	"visualeditor-expandable-more": "Mehr",
+	"visualeditor-expandableerror-toggle": "Sichtbarkeit umschalten",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Seitentitel",
 	"visualeditor-formatdropdown-format-mw-heading2": "Überschrift",
@@ -258,6 +260,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Unterüberschrift 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Unterüberschrift 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Unterüberschrift 4",
+	"visualeditor-fullpage-switch-label": "Ganze Seite bearbeiten",
 	"visualeditor-generating-wikitext-progress": "Erzeuge Wikitext",
 	"visualeditor-includes-noinclude-start": "Beginn des Inhalts, der nicht inkludiert wird",
 	"visualeditor-includes-noinclude-end": "Ende des Inhalts, der nicht inkludiert wird",

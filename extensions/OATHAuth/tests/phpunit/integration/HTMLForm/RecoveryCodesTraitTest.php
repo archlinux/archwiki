@@ -1,13 +1,12 @@
 <?php
 
-namespace MediaWiki\Extension\OATHAuth\Tests\Integration;
+namespace MediaWiki\Extension\OATHAuth\Tests\Integration\HTMLForm;
 
 use LogicException;
-use MediaWiki\Config\MultiConfig;
 use MediaWiki\Extension\OATHAuth\HTMLForm\RecoveryCodesTrait;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
-use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers \MediaWiki\Extension\OATHAuth\HTMLForm\RecoveryCodesTrait
@@ -27,12 +26,6 @@ class RecoveryCodesTraitTest extends MediaWikiIntegrationTestCase {
 		throw new LogicException( 'Should not be called' );
 	}
 
-	public function getConfig(): MultiConfig {
-		return OATHAuthServices::getInstance(
-			$this->getServiceContainer()
-		)->getConfig();
-	}
-
 	public function testGetRecoveryCodesForDisplay(): void {
 		$this->setMwGlobals( 'wgOATHRecoveryCodesCount', 1 );
 
@@ -44,7 +37,20 @@ class RecoveryCodesTraitTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $formatted1, $formatted2 );
 	}
 
-	public function provideTokenFormatterData(): array {
+	public function testGetRecoveryCodesForDisplaySkipsTemporary(): void {
+		ConvertibleTimestamp::setFakeTime( '20260101000000' );
+
+		$recCodeKeys = RecoveryCodeKeys::newFromArray( [ 'recoverycodekeys' => [
+			'ABCDEFGH',
+			[ 'IJKLMNOP', [ 'expiry' => '20300101000000' ] ],
+			[ 'QRSTUVWX', [ 'foo' => 'bar' ] ],
+		] ] );
+
+		$formatted = $this->getRecoveryCodesForDisplay( $recCodeKeys );
+		$this->assertSame( [ 'ABCD EFGH', 'QRST UVWX' ], $formatted );
+	}
+
+	public static function provideTokenFormatterData(): array {
 		return [
 			[ 'ABCDEFGHIJKLMNOP', 'ABCD EFGH IJKL MNOP' ],
 			[ '1234567891011121', '1234 5678 9101 1121' ],
@@ -60,7 +66,7 @@ class RecoveryCodesTraitTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $this->tokenFormatterFunction( $token1 ), $token2 );
 	}
 
-	public function provideCreateTextListData(): array {
+	public static function provideCreateTextListData(): array {
 		return [
 			[ [ 'Hey this is a test' ], "Hey this is a test" ],
 			[ [ 'token1', 'token2', 'token3' ], "* token1\n* token2\n* token3" ]

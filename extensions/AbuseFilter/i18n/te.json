@@ -329,7 +329,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "చరరాశిని సెట్ చెయ్యి (set_var)",
 	"abusefilter-edit-builder-group-vars": "చరరాశులు",
 	"abusefilter-edit-builder-vars-timestamp": "మార్పు యొక్క యూనిక్స్ కాలముద్ర",
-	"abusefilter-edit-builder-vars-accountname": "ఖాతా పేరు (ఖాతాని సృష్టించేప్పుడు)",
+	"abusefilter-edit-builder-vars-account-name": "ఖాతా పేరు (ఖాతాని సృష్టించేప్పుడు)",
 	"abusefilter-edit-builder-vars-action": "చర్య",
 	"abusefilter-edit-builder-vars-addedlines": "మార్పులో చేర్చిన పంక్తులు",
 	"abusefilter-edit-builder-vars-delta": "మార్పులో మారిన పరిమాణం",

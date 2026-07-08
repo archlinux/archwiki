@@ -17,7 +17,6 @@
 	"titleblacklist-forbidden-move": "Lehekülge \"$2\" ei saa teisaldada pealkirja \"$3\" alla, sest lehekülje loomine pealkirjaga \"$3\" on keelatud.\nSee vastab järgmisele keelatud pealkirjade nimekirja sissekandele: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Faili pealkirjaga \"$2\" on keelatud üles laadida.\nSee vastab järgmisele keelatud pealkirjade nimekirja sissekandele: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Kasutajat nimega \"$2\" on keelatud luua.\nSee vastab järgmisele keelatud pealkirjade nimekirja sissekandele: <code>$1</code>",
-	"titleblacklist-invalid": "{{PLURAL:$1|Järgmine|Järgmised}} keelatud pealkirjade nimekirja {{PLURAL:$1|rida on vigane|read on vigased}}.\nPalun paranda {{PLURAL:$1|see|need}} enne salvestamist:",
 	"titleblacklist-override": "Alista vasted keelatud pealkirjade nimekirjas",
 	"titleblacklist-override-help": "Vajalike õigustega kasutajad saavad selle valikuga eirata keelatud pealkirjade nimekirja kontrolle.",
 	"titleblacklist-warning": "<strong>Märkus: Seda lehekülge saavad redigeerida ainult administraatorid ja kasutajad õigusega <code>tboverride</code>, sest see vastab keelatud pealkirjade nimekirja järgmisele sissekandele:</strong><br /><code>$1</code>",

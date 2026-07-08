@@ -26,6 +26,7 @@
 			"Revi",
 			"Ryuch",
 			"SeoJeongHo",
+			"Tensama0415",
 			"Tyey",
 			"YeBoy371",
 			"Ykhwong",
@@ -34,10 +35,10 @@
 			"렌즈",
 			"밥풀떼기",
 			"아라",
-			"콩가루",
-			"Tensama0415"
+			"콩가루"
 		]
 	},
+	"collabpad-disabled": "이 위키에서는 CollabPad가 활성화되어 있지 않습니다.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "$1에서 가져옴",
 	"collabpad": "CollabPad",
@@ -259,6 +260,7 @@
 	"visualeditor-educationpopup-dismiss": "알겠습니다",
 	"visualeditor-expandable-less": "덜 보기",
 	"visualeditor-expandable-more": "더 보기",
+	"visualeditor-expandableerror-toggle": "표시/숨기기 전환",
 	"visualeditor-feedback-defaultmessage": "URL: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "문서 제목",
 	"visualeditor-formatdropdown-format-mw-heading2": "문단 제목",
@@ -266,6 +268,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "2단계 하위 문단 제목",
 	"visualeditor-formatdropdown-format-mw-heading5": "3단계 하위 문단 제목",
 	"visualeditor-formatdropdown-format-mw-heading6": "4단계 하위 문단 제목",
+	"visualeditor-fullpage-switch-label": "전체 문서 편집",
 	"visualeditor-generating-wikitext-progress": "위키텍스트를 만드는 중",
 	"visualeditor-includes-noinclude-start": "발췌로부터 제외된 내용의 시작",
 	"visualeditor-includes-noinclude-end": "발췌로부터 제외된 내용의 끝",

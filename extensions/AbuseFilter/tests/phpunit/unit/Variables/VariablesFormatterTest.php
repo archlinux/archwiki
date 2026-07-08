@@ -6,8 +6,8 @@ use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
+use MediaWiki\Language\MessageLocalizer;
 use MediaWikiUnitTestCase;
-use MessageLocalizer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -76,9 +76,7 @@ class VariablesFormatterTest extends MediaWikiUnitTestCase {
 
 	public function testBuildVarDumpTable_empty() {
 		$ml = $this->createMock( MessageLocalizer::class );
-		$ml->method( 'msg' )->willReturnCallback( function ( $key ) {
-			return $this->getMockMessage( $key );
-		} );
+		$ml->method( 'msg' )->willReturnCallback( $this->getMockMessage( ... ) );
 		$formatter = new VariablesFormatter(
 			$this->createMock( KeywordsManager::class ),
 			$this->createMock( VariablesManager::class ),
@@ -92,9 +90,7 @@ class VariablesFormatterTest extends MediaWikiUnitTestCase {
 
 	public function testBuildVarDumpTable() {
 		$ml = $this->createMock( MessageLocalizer::class );
-		$ml->method( 'msg' )->willReturnCallback( function ( $key ) {
-			return $this->getMockMessage( $key );
-		} );
+		$ml->method( 'msg' )->willReturnCallback( $this->getMockMessage( ... ) );
 		$kManager = $this->createMock( KeywordsManager::class );
 		$varMessage = 'Dummy variable message';
 		$varArray = [ 'foo' => true, 'bar' => 'foobar' ];

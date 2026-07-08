@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Extension\Math\MathNativeMML;
+use MediaWiki\Json\FormatJson;
 use MediaWiki\Maintenance\Maintenance;
 
 // @codeCoverageIgnoreStart
@@ -49,9 +50,8 @@ class FixNativeReferences extends Maintenance {
 				MathNativeMML::renderReferenceEntry( $entry, null, null, null, self::RNG_PATH );
 			$allEntries[] = $entry;
 		}
-
-		$jsonData = json_encode( $allEntries, JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE );
-		file_put_contents( self::REFERENCE_PATH, $jsonData );
+		file_put_contents( self::REFERENCE_PATH, FormatJson::encode( $allEntries, "\t", FormatJson::ALL_OK )
+			. "\n" );
 		if ( !$success ) {
 			$this->fatalError( "Some entries were skipped. Please investigate.\n" );
 		}

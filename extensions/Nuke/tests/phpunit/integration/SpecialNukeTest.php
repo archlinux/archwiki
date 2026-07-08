@@ -42,6 +42,7 @@ class SpecialNukeTest extends MediaWikiIntegrationTestCase {
 			$services->getContentLanguage(),
 			$services->getRedirectLookup(),
 			$withIPLookup ? $services->getService( 'NukeIPLookup' ) : null,
+			$services->getTitleFormatter(),
 		);
 	}
 

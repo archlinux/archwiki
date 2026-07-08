@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser;
+namespace MediaWiki\Extension\CheckUser;
 
 use MediaWiki\Config\Config;
 use MediaWiki\ResourceLoader\Context;

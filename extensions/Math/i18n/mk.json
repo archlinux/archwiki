@@ -114,5 +114,7 @@
 	"math-wikibase-special-form-button": "Побарај информации",
 	"math-wikibase-special-error-header": "Грешка",
 	"math-wikibase-special-error-invalid-argument": "Укажаниот предмет од Викибазата не постои.",
-	"math-wikibase-special-error-unknown": "Се јави непозната грешка при добивањето на податоците од Викибазата."
+	"math-wikibase-special-error-unknown": "Се јави непозната грешка при добивањето на податоците од Викибазата.",
+	"math-editpage-insert-inline": "Математичка формула (во ред)",
+	"math-editpage-insert-block": "Математичка формула (блок)"
 }

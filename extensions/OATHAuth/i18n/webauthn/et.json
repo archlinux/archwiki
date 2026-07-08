@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pikne"
+		]
+	},
+	"oathauth-webauthn-module-label": "Turbevõti",
+	"oathauth-webauthn-javascript-required": "Et turbevõtit kasutada, peab brauseris olema JavaScript lubatud.",
+	"oathauth-webauthn-ui-login-prompt": "Kasuta turbevõtit või järgi brauseris näidatud juhiseid.",
+	"oathauth-webauthn-ui-add-key": "Lisa võti",
+	"oathauth-webauthn-error-browser-unsupported": "See brauser ei toeta turbevõtmega autentimist või see pole selle saidi jaoks saadaval. Palun proovi teist brauserit. [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support Loe veel]",
+	"oathauth-webauthn-error-browser-unsupported-console": "See brauser ei toeta turbevõtmega autentimist või see pole selle saidi jaoks saadaval. Palun proovi teist brauserit.",
+	"oathauth-webauthn-error-auth-generic": "Autentimine katkestati. Palun alusta autentimist uuesti.",
+	"oathauth-webauthn-error-reg-generic": "Sinu võtit ei õnnestunud kinnitada. Palun alusta registreerimist uuesti.",
+	"oathauth-webauthn-registered-keys-section-name": "Registreeritud võtmed",
+	"oathauth-webauthn-ui-remove-key": "Eemalda",
+	"oathauth-webauthn-error-passkey-verification-failed": "Pääsuvõtit ei õnnestunud kinnitada.",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthni autentimisandmeid ei saadetud.",
+	"oathauth-webauthn-error-registration-failed": "Uue võtme registreerimine ebaõnnestus.",
+	"oathauth-webauthn-ui-key-register-help": "Vali võtmele lühinimi.",
+	"oathauth-webauthn-add-key-section-name": "Uue turbevõtme registreerimine",
+	"oathauth-webauthn-module-description": "WebAuthn on katsejärgus. Sellel puudub praegu taastevõimalus kadunud või kahjustatud seadmete jaoks.\n\n[https://en.wikipedia.org/wiki/WebAuthn Loe veel WebAuthni kohta].",
+	"oathauth-webauthn-ui-reload-page-label": "Laadi lehekülg uuesti",
+	"oathauth-webauthn-add-security-key": "Lisa turbevõti",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Kasuta turbe- või pääsuvõtit"
+}

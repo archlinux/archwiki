@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Uri;
 use MediaWiki\Settings\Cache\CacheableSource;
 use MediaWiki\Settings\SettingsBuilderException;
 use MediaWiki\Settings\Source\Format\JsonFormat;
+use Psr\Http\Message\UriInterface;
 use Stringable;
 use UnexpectedValueException;
 
@@ -46,7 +47,7 @@ class EtcdSource implements Stringable, CacheableSource {
 	/** @var Client */
 	private $client;
 
-	/** @var Uri */
+	/** @var UriInterface */
 	private $uri;
 
 	/** @var callable */
@@ -108,9 +109,7 @@ class EtcdSource implements Stringable, CacheableSource {
 			? 'etcd-client-ssl'
 			: 'etcd-client';
 
-		$this->mapper = $mapper ?? static function ( $settings ) {
-			return $settings;
-		};
+		$this->mapper = $mapper ?? static fn ( $settings ) => $settings;
 
 		$this->client = $client ?? new Client( [
 			'timeout' => self::TIMEOUT,

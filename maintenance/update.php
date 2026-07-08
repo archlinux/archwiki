@@ -21,6 +21,8 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\Installer\DatabaseInstaller;
 use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Installer;
+use MediaWiki\Language\LCStoreNull;
+use MediaWiki\Language\LocalisationCache;
 use MediaWiki\Maintenance\LoggedUpdateMaintenance;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Settings\SettingsBuilder;
@@ -57,6 +59,10 @@ class UpdateMediaWiki extends Maintenance {
 			'skip-config-validation',
 			'Skips checking whether the existing configuration is valid'
 		);
+		$this->addOption(
+			'log-applied',
+			'Output a message for each update that has already been applied before'
+		);
 	}
 
 	/** @inheritDoc */
@@ -66,9 +72,9 @@ class UpdateMediaWiki extends Maintenance {
 
 	public function setup() {
 		global $wgMessagesDirs;
-		// T206765: We need to load the installer i18n files as some of errors come installer/updater code
+		// T206765: We need to load the installer i18n files as some errors come from installer/updater code
 		// T310378: We have to ensure we do this before execute()
-		$wgMessagesDirs['MediaWikiInstaller'] = dirname( __DIR__ ) . '/includes/installer/i18n';
+		$wgMessagesDirs['MediaWikiInstaller'] = dirname( __DIR__ ) . '/includes/Installer/i18n';
 	}
 
 	public function execute() {
@@ -118,7 +124,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		// Check external dependencies are up to date
 		if ( !$this->hasOption( 'skip-external-dependencies' ) && !getenv( 'MW_SKIP_EXTERNAL_DEPENDENCIES' ) ) {
-			$composerLockUpToDate = $this->runChild( CheckComposerLockUpToDate::class );
+			$composerLockUpToDate = $this->createChild( CheckComposerLockUpToDate::class );
 			$composerLockUpToDate->execute();
 		} else {
 			$this->output(
@@ -170,26 +176,31 @@ class UpdateMediaWiki extends Maintenance {
 		}
 
 		$updater = DatabaseUpdater::newForDB( $db, $shared, $this );
+		$updater->logApplied = $this->hasOption( 'log-applied' );
 
-		// Avoid upgrading from versions older than 1.38
-		// Using an implicit marker (linktarget was introduced in 1.38)
+		// Avoid upgrading from versions older than 1.39
+		// Using an implicit marker (user_autocreate_serial was introduced in 1.39)
 		// TODO: Use an explicit marker
 		// See T259771
-		if ( !$updater->tableExists( 'linktarget' ) ) {
+		if ( !$updater->tableExists( 'user_autocreate_serial' ) ) {
 			$this->fatalError(
-				"Can not upgrade from versions older than 1.38, please upgrade to that version or later first."
+				"Can not upgrade from versions older than 1.39, please upgrade to that version or later first."
 			);
 		}
 
 		$updater->doUpdates( $updates );
 
 		foreach ( $updater->getPostDatabaseUpdateMaintenance() as $maint ) {
-			$child = $this->runChild( $maint );
+			$child = $this->createChild( $maint );
 
-			// LoggedUpdateMaintenance is checking the updatelog itself
 			$isLoggedUpdate = $child instanceof LoggedUpdateMaintenance;
 
 			if ( !$isLoggedUpdate && $updater->updateRowExists( $maint ) ) {
+				$updater->outputApplied( "...Update '{$maint}' already logged as completed.\n" );
+				continue;
+			}
+			if ( $child instanceof LoggedUpdateMaintenance && $child->isAlreadyCompleted() ) {
+				$updater->outputApplied( "..." . $child->updateSkippedMessage() . "\n" );
 				continue;
 			}
 
@@ -198,6 +209,7 @@ class UpdateMediaWiki extends Maintenance {
 				$updater->insertUpdateRow( $maint );
 			}
 		}
+		$updater->outputAppliedSummary();
 
 		$updater->setFileAccess();
 

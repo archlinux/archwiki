@@ -32,12 +32,6 @@ use MediaWiki\User\UserIdentityUtils;
  */
 final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 
-	private bool $showMobileOptions;
-	private bool $showDonateLink;
-	private User $user;
-	private Definitions $definitions;
-	private UserIdentityUtils $userIdentityUtils;
-
 	/**
 	 * Initialize the Default Main Menu builder
 	 *
@@ -46,19 +40,17 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	 * @param User $user The current user
 	 * @param Definitions $definitions A menu items definitions set
 	 * @param UserIdentityUtils $userIdentityUtils
+	 * @param bool $isPersonalModeEnabled whether the rendering of personal links (e.g. login)
+	 *  is handled outside this menu. This corresponds to $wgMinervaPersonalMenu feature value.
 	 */
 	public function __construct(
-		$showMobileOptions,
-		$showDonateLink,
-		User $user,
-		Definitions $definitions,
-		UserIdentityUtils $userIdentityUtils
+		private readonly bool $showMobileOptions,
+		private readonly bool $showDonateLink,
+		private readonly User $user,
+		private readonly Definitions $definitions,
+		private readonly UserIdentityUtils $userIdentityUtils,
+		private readonly bool $isPersonalModeEnabled,
 	) {
-		$this->showMobileOptions = $showMobileOptions;
-		$this->showDonateLink = $showDonateLink;
-		$this->user = $user;
-		$this->definitions = $definitions;
-		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**
@@ -98,7 +90,12 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 		$group = new Group( 'pt-preferences' );
 		// Show settings group for anon and temp users
 		$isTemp = $this->userIdentityUtils->isTemp( $this->user );
-		if ( $this->showMobileOptions && ( !$this->user->isRegistered() || $isTemp ) ) {
+
+		$settingsGroupNeeded = $this->isPersonalModeEnabled || (
+			( !$this->user->isRegistered() || $isTemp )
+		);
+
+		if ( $this->showMobileOptions && $settingsGroupNeeded ) {
 			$this->definitions->insertMobileOptionsItem( $group );
 		}
 		return $group;
@@ -111,21 +108,35 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	 *
 	 * @inheritDoc
 	 */
-	public function getPersonalToolsGroup( array $personalTools ): Group {
+	public function getPersonalToolsGroup( array $personalTools, bool $shouldShowAccountMenuItems ): Group {
 		$group = new Group( 'p-personal' );
 		$excludeKeyList = [ 'betafeatures', 'mytalk', 'sandbox' ];
 
-		// For anonymous users exclude all links except login.
-		if ( !$this->user->isRegistered() ) {
-			$excludeKeyList = array_diff(
-				array_keys( $personalTools ),
-				[ 'login', 'login-private' ]
-			);
+		// If personal tools are handled elsewhere, no need to output them in this menu.
+		if ( $this->isPersonalModeEnabled ) {
+			return $group;
 		}
 
 		$isTemp = $this->userIdentityUtils->isTemp( $this->user );
 		if ( $isTemp ) {
 			$excludeKeyList[] = 'mycontris';
+		}
+
+		if ( !$this->user->isRegistered() ) {
+			// For anonymous users exclude all links except login.
+			$keysToNotExclude = [ 'login', 'login-private' ];
+
+			// TODO remove after experiment concludes, T418053
+			// Display the Create Account button as well when
+			// a logged out user is in the we-1-8-mobile-account-menu treatment group
+			if ( $shouldShowAccountMenuItems ) {
+				$keysToNotExclude[] = 'createaccount';
+			}
+
+			$excludeKeyList = array_diff(
+				array_keys( $personalTools ),
+				$keysToNotExclude
+			);
 		}
 		foreach ( $personalTools as $key => $item ) {
 			// Default to EditWatchlist if $user has no edits
@@ -133,6 +144,12 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 			// [T88270].
 			if ( $key === 'watchlist' && $this->user->getEditCount() === 0 ) {
 				$item['href'] = Title::newFromText( 'Special:EditWatchlist' )->getLocalUrl();
+			}
+			// TODO remove after experiment concludes, T418053
+			// Display a different icon for the create account button when
+			// a logged out user is in the we-1-8-mobile-account-menu treatment group
+			if ( $key === 'createaccount' && $shouldShowAccountMenuItems ) {
+				$item['icon'] = 'userAvatar';
 			}
 			$href = $item['href'] ?? null;
 			if ( $href && !in_array( $key, $excludeKeyList ) ) {

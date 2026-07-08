@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Ats384",
 			"Guycn2",
 			"IKhitron",
 			"Matma Rex",
@@ -11,8 +12,7 @@
 			"לואיקה",
 			"מקף",
 			"עמד",
-			"שמזן",
-			"Ats384"
+			"שמזן"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|תקבל|תקבלי}} התראה כשמישהו כותב תגובה חדשה בדיון הזה. {{GENDER:|אתה יכול|את יכולה}} לכוונן את הגדרות ההתראות שלך בהעדפות.",

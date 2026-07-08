@@ -228,7 +228,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Stel veranderlike (set_var)",
 	"abusefilter-edit-builder-group-vars": "Veranderlikes",
 	"abusefilter-edit-builder-vars-timestamp": "Unix die datum en tyd van verandering",
-	"abusefilter-edit-builder-vars-accountname": "Gebruikersnaam (on account creation)",
+	"abusefilter-edit-builder-vars-account-name": "Gebruikersnaam (on account creation)",
 	"abusefilter-edit-builder-vars-action": "Aksie ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Lyne bygevoeg in wysiging ($1)",
 	"abusefilter-edit-builder-vars-delta": "Verandering van grootte in wysig",

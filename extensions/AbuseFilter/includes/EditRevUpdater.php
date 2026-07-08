@@ -13,41 +13,22 @@ use Wikimedia\Rdbms\LBFactory;
  * This service allows "linking" the edit filter hook and the page save hook
  */
 class EditRevUpdater {
-	public const SERVICE_NAME = 'AbuseFilterEditRevUpdater';
-
-	/** @var CentralDBManager */
-	private $centralDBManager;
-	/** @var RevisionLookup */
-	private $revisionLookup;
-	/** @var LBFactory */
-	private $lbFactory;
-	/** @var string */
-	private $wikiID;
+	public const SERVICE_NAME = ServiceNames::EditRevUpdater;
 
 	/** @var WikiPage|null */
 	private $wikiPage;
 	/**
-	 * @var int[][][] IDs of logged filters like [ page title => [ 'local' => [ids], 'global' => [ids] ] ].
-	 * @phan-var array<string,array{local:int[],global:int[]}>
+	 * @var array<string,array{local:int[],global:int[]}> IDs of logged filters
+	 * like [ page title => [ 'local' => [ids], 'global' => [ids] ] ].
 	 */
 	private $logIds = [];
 
-	/**
-	 * @param CentralDBManager $centralDBManager
-	 * @param RevisionLookup $revisionLookup
-	 * @param LBFactory $lbFactory
-	 * @param string $wikiID
-	 */
 	public function __construct(
-		CentralDBManager $centralDBManager,
-		RevisionLookup $revisionLookup,
-		LBFactory $lbFactory,
-		string $wikiID
+		private readonly CentralDBManager $centralDBManager,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly LBFactory $lbFactory,
+		private readonly string $wikiID
 	) {
-		$this->centralDBManager = $centralDBManager;
-		$this->revisionLookup = $revisionLookup;
-		$this->lbFactory = $lbFactory;
-		$this->wikiID = $wikiID;
 	}
 
 	/**
@@ -66,8 +47,7 @@ class EditRevUpdater {
 
 	/**
 	 * @param LinkTarget $target
-	 * @param int[][] $logIds
-	 * @phan-param array{local:int[],global:int[]} $logIds
+	 * @param array{local:int[],global:int[]} $logIds
 	 */
 	public function setLogIdsForTarget( LinkTarget $target, array $logIds ): void {
 		if ( count( $logIds ) !== 2 || array_diff( array_keys( $logIds ), [ 'local', 'global' ] ) ) {

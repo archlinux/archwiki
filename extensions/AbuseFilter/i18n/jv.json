@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bennylin",
 			"Diki Ananta",
 			"Fitoschido",
 			"N219",
 			"NoiX180",
 			"Sumbukompor",
-			"පසිඳු කාවින්ද",
-			"Bennylin"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"abusefilter-desc": "Patrapaké pamriksan heuristik otomatis ing besutan",
@@ -227,7 +227,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Pasang variabel (set_var)",
 	"abusefilter-edit-builder-group-vars": "Variabel",
 	"abusefilter-edit-builder-vars-timestamp": "Tandha pergantèn wektu Unix",
-	"abusefilter-edit-builder-vars-accountname": "Jeneng akun (utawa panggawéan akun)",
+	"abusefilter-edit-builder-vars-account-name": "Jeneng akun (utawa panggawéan akun)",
 	"abusefilter-edit-builder-vars-action": "Laku",
 	"abusefilter-edit-builder-vars-addedlines": "Larik kang diwuwuh ing besutan",
 	"abusefilter-edit-builder-vars-delta": "Owahaning ukuran ing besutan",

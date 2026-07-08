@@ -42,5 +42,3 @@ class PushNotifier {
 	}
 
 }
-
-class_alias( PushNotifier::class, 'EchoPush\\PushNotifier' );

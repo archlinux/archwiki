@@ -372,7 +372,7 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider generateEventsForRevisionDataProvider
 	 */
 	public function testGenerateEventsForRevision(
-		$newId, $oldId, $username, $lang, $pages, $title, $expected, $precondition = '',
+		$new, $old, $username, $lang, $pages, $title, $expected, $precondition = '',
 		$summary = ''
 	) {
 		if ( $precondition !== '' ) {
@@ -387,7 +387,7 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 		$this->setupAllTestUsers();
 
 		$revision = $this->setupTestRevisionsForEventGeneration(
-			$newId, $oldId, $username, $lang, $pages, $title, $summary
+			$new, $old, $username, $lang, $pages, $title, $summary
 		);
 		$events = [];
 		$this->setupEventCallbackForEventGeneration(
@@ -700,12 +700,12 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provider_generateEventsForRevision_mentionStatus
 	 */
 	public function testGenerateEventsForRevision_mentionStatus(
-		$newId, $oldId, $username, $lang, $pages, $title, $expected
+		$new, $old, $username, $lang, $pages, $title, $expected
 	) {
 		$this->setupAllTestUsers();
 
 		$revision = $this->setupTestRevisionsForEventGeneration(
-			$newId, $oldId, $username, $lang, $pages, $title
+			$new, $old, $username, $lang, $pages, $title
 		);
 		$events = [];
 		$this->setupEventCallbackForEventGeneration(
@@ -1041,14 +1041,9 @@ TEXT
 			$this->setupTestUser( $expectedUser[1] );
 		}
 
-		if ( !DiscussionParser::isSignedComment( $line ) ) {
-			$this->assertFalse( $expectedUser );
-			return;
-		}
-
 		$output = DiscussionParser::getUserFromLine( $line );
 
-		$this->assertEquals( $expectedUser, $output );
+		$this->assertSame( $expectedUser, $output );
 	}
 
 	public static function signingDetectionDataProvider() {

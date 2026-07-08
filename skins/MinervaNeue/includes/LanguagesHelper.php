@@ -19,7 +19,7 @@
  */
 namespace MediaWiki\Minerva;
 
-use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Language\LanguageConverterFactory;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 
@@ -29,12 +29,9 @@ use MediaWiki\Title\Title;
  */
 class LanguagesHelper {
 
-	private LanguageConverterFactory $languageConverterFactory;
-
 	public function __construct(
-		LanguageConverterFactory $languageConverterFactory
+		private readonly LanguageConverterFactory $languageConverterFactory,
 	) {
-		$this->languageConverterFactory = $languageConverterFactory;
 	}
 
 	/**

@@ -65,7 +65,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl(), '#' );
 
 	// Style based on link cache information
-	ve.init.platform.linkCache.styleElement( lookupTitle, $link, fragment, false );
+	linkCache.styleElement( lookupTitle, $link, fragment, false );
 	// Don't style as a self-link in the context menu (but do elsewhere)
 	$link.removeClass( 'mw-selflink' );
 

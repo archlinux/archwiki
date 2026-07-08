@@ -4,6 +4,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Api\RandomImageGenerator;
+use MediaWiki\Upload\UploadBase;
+use MediaWiki\Upload\UploadFromFile;
 use MediaWiki\User\User;
 
 /**
@@ -44,7 +46,9 @@ trait AbuseFilterUploadTestTrait {
 	protected function doUpload( User $user, string $fileName, string $pageText, string $summary ): array {
 		global $wgFileExtensions;
 
+		$this->overrideConfigValue( MainConfigNames::EnableUploads, true );
 		$this->overrideConfigValue( MainConfigNames::FileExtensions, [ ...$wgFileExtensions, 'svg' ] );
+
 		$imgGen = new RandomImageGenerator();
 		// Use SVG, since the ImageGenerator doesn't need anything special to create it
 		$format = 'svg';

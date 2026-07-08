@@ -10,10 +10,10 @@
 			"Namoroka",
 			"Priviet",
 			"SeoJeongHo",
+			"Tensama0415",
 			"Yearning",
 			"Ykhwong",
-			"아라",
-			"Tensama0415"
+			"아라"
 		]
 	},
 	"gadgets-desc": "각 사용자가 [[Special:Gadgets|CSS와 자바스크립트 소도구]]를 [[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]을 통해 사용할 수 있습니다",
@@ -77,5 +77,7 @@
 	"gadgets-validate-invaliddependencies": "다음의 {{PLURAL:$2|의존성이}} 없습니다: $1.",
 	"gadgets-validate-deprecateddependencies": "다음의 {{PLURAL:$2|의존성은}} 구식입니다: $1.",
 	"gadgets-supports-urlload": "이 소도구는 <code>?withgadget</code> 쿼리 매개변수 URL을 통해 불러오기를 지원합니다.",
-	"gadgets-hidden": "이 소도구는 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 숨겨져] 있으므로, 환경 설정 문서에 표시되지 않습니다."
+	"gadgets-hidden": "이 소도구는 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 숨겨져] 있으므로, 환경 설정 문서에 표시되지 않습니다.",
+	"gadgets-subpage-invalid": "\"<nowiki>$1</nowiki>\" 하위 문서가 잘못되었습니다.",
+	"gadgets-subpage-toofewparams": "하위 문서 매개변수가 충분하지 않습니다 (잘못된 링크)."
 }

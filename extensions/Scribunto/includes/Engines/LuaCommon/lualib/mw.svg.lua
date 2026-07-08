@@ -8,27 +8,7 @@ local checkType = util.checkType
 local svg_mt = {}
 svg_mt.__index = svg_mt
 
-local DEFAULT_NAMESPACE = 'http://www.w3.org/2000/svg'
-local ALLOWED_IMG_ATTRIBUTES = {
-    width = true,
-    height = true,
-    class = true,
-    id = true,
-    alt = true,
-    title = true,
-    style = true,
-}
-
--- Escape XML special characters
-local function escapeXml( value )
-    local escapes = {
-        ["<"] = "&lt;",
-        [">"] = "&gt;",
-        ["&"] = "&amp;",
-        ['"'] = "&quot;",
-    }
-    return value:gsub( '[<>&"]', escapes )
-end
+local ALLOWED_IMG_ATTRIBUTES
 
 local function makeSvgObject( data )
     data = data or {}
@@ -85,30 +65,15 @@ end
 
 -- Generate the SVG as a string
 function svg_mt:toString()
-    local output = '<svg'
-
-    -- Add default SVG namespace if not provided
-    if not self.attributes.xmlns then
-        self.attributes.xmlns = DEFAULT_NAMESPACE
-    end
-
-    for name, value in pairs( self.attributes ) do
-        output = output .. string.format( ' %s="%s"', name, escapeXml( value ) )
-    end
-
-    -- Add content and closing tag
-    output = output .. '>' .. self.content .. '</svg>'
-
-    return output
+    return php.createSvgString( self.content, self.attributes )
 end
 
 -- Convert to an image tag with data URL
 function svg_mt:toImage()
-    local svgString = self:toString()
-    return php.createImgTag( svgString, self.imgAttributes )
+    return php.createImgTag( self.content, self.attributes, self.imgAttributes )
 end
 
-function mwsvg.setupInterface()
+function mwsvg.setupInterface( opts )
     -- Boilerplate
     mwsvg.setupInterface = nil
     php = mw_interface
@@ -117,6 +82,9 @@ function mwsvg.setupInterface()
     -- Register this library in the "mw" global
     mw = mw or {}
     mw.svg = mwsvg
+
+    -- Register constants
+    ALLOWED_IMG_ATTRIBUTES = opts.ALLOWED_IMG_ATTRIBUTES
 
     package.loaded['mw.svg'] = mwsvg
 end

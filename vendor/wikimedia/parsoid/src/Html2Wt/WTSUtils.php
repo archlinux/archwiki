@@ -3,15 +3,15 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
-use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataMwAttrib;
+use Wikimedia\Parsoid\Utils\CounterType;
 use Wikimedia\Parsoid\Utils\DiffDOMUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -174,16 +174,14 @@ class WTSUtils {
 	}
 
 	public static function traceNodeName( Node $node ): string {
-		switch ( $node->nodeType ) {
-			case XML_ELEMENT_NODE:
-				return ( DiffUtils::isDiffMarker( $node ) ) ? 'DIFF_MARK' : 'NODE: ' . DOMUtils::nodeName( $node );
-			case XML_TEXT_NODE:
-				return 'TEXT: ' . PHPUtils::jsonEncode( $node->nodeValue );
-			case XML_COMMENT_NODE:
-				return 'CMT : ' . PHPUtils::jsonEncode( self::commentWT( $node->nodeValue ) );
-			default:
-				return DOMUtils::nodeName( $node );
-		}
+		return match ( $node->nodeType ) {
+			XML_ELEMENT_NODE => DiffUtils::isDiffMarker( $node ) ?
+				'DIFF_MARK' :
+				'NODE: ' . DOMUtils::nodeName( $node ),
+			XML_TEXT_NODE => 'TEXT: ' . PHPUtils::jsonEncode( $node->nodeValue ),
+			XML_COMMENT_NODE => 'CMT : ' . PHPUtils::jsonEncode( self::commentWT( $node->nodeValue ) ),
+			default => DOMUtils::nodeName( $node ),
+		};
 	}
 
 	/**
@@ -336,13 +334,7 @@ class WTSUtils {
 		$arr = $dataMw->attribs ?? [];
 		$i = false;
 		foreach ( $arr as $k => $a ) {
-			if ( is_string( $a->key ) ) {
-				$txt = $a->key;
-			} elseif ( is_array( $a->key ) ) {
-				$txt = $a->key['txt'] ?? null;
-			} else {
-				throw new UnreachableException( 'Control should never get here!' );
-			}
+			$txt = $a->getKeyString();
 			if ( $txt === $key ) {
 				$i = $k;
 				break;
@@ -376,7 +368,7 @@ class WTSUtils {
 			if (
 				!preg_match( '/^data-parsoid/', $k ) &&
 				( $k !== DOMDataUtils::DATA_OBJECT_ATTR_NAME ) &&
-				!( $k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $v ) )
+				!( $k === 'id' && CounterType::NODE_DATA_ID->matches( $v ) )
 			) {
 				return true;
 			}

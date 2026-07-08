@@ -22,10 +22,10 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use Throwable;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 use Wikimedia\Timestamp\TimestampException;
@@ -315,7 +315,6 @@ class CommentFormatter {
 
 		$url = $title->getCanonicalURL();
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
-		$enablePermalinksFrontend = $dtConfig->get( 'DiscussionToolsEnablePermalinksFrontend' );
 
 		// Iterate in reverse order, because adding the range markers for a thread item
 		// can invalidate the ranges of subsequent thread items (T298096)
@@ -379,19 +378,17 @@ class CommentFormatter {
 
 				CommentModifier::addReplyLink( $threadItem, $replyButtons );
 
-				if ( $enablePermalinksFrontend ) {
-					$timestampRanges = $threadItem->getTimestampRanges();
-					$lastTimestamp = end( $timestampRanges );
-					$existingLink = CommentUtils::closestElement( $lastTimestamp->startContainer, [ 'a' ] ) ??
-						CommentUtils::closestElement( $lastTimestamp->endContainer, [ 'a' ] );
+				$timestampRanges = $threadItem->getTimestampRanges();
+				$lastTimestamp = end( $timestampRanges );
+				$existingLink = CommentUtils::closestElement( $lastTimestamp->startContainer, [ 'a' ] ) ??
+					CommentUtils::closestElement( $lastTimestamp->endContainer, [ 'a' ] );
 
-					if ( !$existingLink ) {
-						$link = $doc->createElement( 'mw:dt-timestamplink' );
-						$link->setAttribute( 'href', $url . '#' . Sanitizer::escapeIdForLink( $threadItem->getId() ) );
-						$link->setAttribute( 'class', 'ext-discussiontools-init-timestamplink' );
-						$link->setAttribute( 'title', $threadItem->getTimestampString() );
-						$lastTimestamp->surroundContents( $link );
-					}
+				if ( !$existingLink ) {
+					$link = $doc->createElement( 'mw:dt-timestamplink' );
+					$link->setAttribute( 'href', $url . '#' . Sanitizer::escapeIdForLink( $threadItem->getId() ) );
+					$link->setAttribute( 'class', 'ext-discussiontools-init-timestamplink' );
+					$link->setAttribute( 'data-mw-timestamp', $threadItem->getTimestampString() );
+					$lastTimestamp->surroundContents( $link );
 				}
 				self::addOverflowMenuButton( $threadItem, $doc, $replyButtons );
 
@@ -680,8 +677,6 @@ class CommentFormatter {
 			static function ( SerializerNode $node ) use(
 				$doc, $replyLinkText, $replyButtonText, $isMobile, $useButtons, $lang
 			) {
-				$replyLinkButtons = $doc->createElement( 'span' );
-
 				if ( $useButtons ) {
 					// Visual enhancements button
 					$useIcon = $isMobile || static::isLanguageRequiringReplyIcon( $lang );
@@ -694,8 +689,10 @@ class CommentFormatter {
 						'infusable' => true,
 					] );
 
-					DOMCompat::setInnerHTML( $replyLinkButtons, $replyLinkButton->toString() );
+					return $replyLinkButton->toString();
 				} else {
+					$replyLinkButtons = $doc->createElement( 'span' );
+
 					// Reply link
 					$replyLink = $doc->createElement( 'a' );
 					$replyLink->setAttribute( 'class', 'ext-discussiontools-init-replylink-reply' );
@@ -715,9 +712,9 @@ class CommentFormatter {
 					$replyLinkButtons->appendChild( $bracketOpen );
 					$replyLinkButtons->appendChild( $replyLink );
 					$replyLinkButtons->appendChild( $bracketClose );
-				}
 
-				return DOMCompat::getInnerHTML( $replyLinkButtons );
+					return DOMCompat::getInnerHTML( $replyLinkButtons );
+				}
 			}
 		);
 	}
@@ -746,11 +743,13 @@ class CommentFormatter {
 			static function ( SerializerNode $node ) use ( $lang, $user ): SerializerNode {
 				$node->name = 'a';
 				$relativeTime = static::getSignatureRelativeTime(
-					new MWTimestamp( $node->attrs['title'] ),
+					// Check 'title' for back-compat (T419262)
+					new MWTimestamp( $node->attrs['data-mw-timestamp'] ?? $node->attrs['title'] ),
 					$lang,
 					$user
 				);
 				$node->attrs['title'] = $relativeTime;
+				unset( $node->attrs['data-mw-timestamp'] );
 				return $node;
 			}
 		);

@@ -281,7 +281,7 @@
 	"abusefilter-edit-builder-funcs-set_var": "Termeniñ ar varienn ($1)",
 	"abusefilter-edit-builder-group-vars": "Argemmennoù",
 	"abusefilter-edit-builder-vars-timestamp": "Merk amzer Unix eus ar c'hemm ($1)",
-	"abusefilter-edit-builder-vars-accountname": "Anv ar gont da vare krouadur ar gont ($1)",
+	"abusefilter-edit-builder-vars-account-name": "Anv ar gont da vare krouadur ar gont ($1)",
 	"abusefilter-edit-builder-vars-action": "Ober ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Linennoù ouzhpennet da-geñver ar c’hemm ($1)",
 	"abusefilter-edit-builder-vars-delta": "Kemm ment er c’hemm ($1)",

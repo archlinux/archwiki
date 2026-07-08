@@ -12,13 +12,14 @@
 require_once __DIR__ . '/../Maintenance.php';
 // @codeCoverageIgnoreEnd
 
-use MediaWiki\Cache\LinkCache;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Page\LinkCache;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Timestamp\TimestampFormat as TS;
 
 /**
  * Maintenance script to benchmark how long it takes to parse a given title at an optionally
@@ -62,7 +63,7 @@ class BenchmarkParse extends Maintenance {
 
 	public function execute() {
 		if ( $this->hasOption( 'tpl-time' ) ) {
-			$this->templateTimestamp = wfTimestamp( TS_MW, strtotime( $this->getOption( 'tpl-time' ) ) );
+			$this->templateTimestamp = wfTimestamp( TS::MW, strtotime( $this->getOption( 'tpl-time' ) ) );
 			$hookContainer = $this->getHookContainer();
 			$hookContainer->register( 'BeforeParserFetchTemplateRevisionRecord', [ $this, 'onFetchTemplate' ] );
 		}
@@ -78,7 +79,7 @@ class BenchmarkParse extends Maintenance {
 
 		$revLookup = $this->getServiceContainer()->getRevisionLookup();
 		if ( $this->hasOption( 'page-time' ) ) {
-			$pageTimestamp = wfTimestamp( TS_MW, strtotime( $this->getOption( 'page-time' ) ) );
+			$pageTimestamp = wfTimestamp( TS::MW, strtotime( $this->getOption( 'page-time' ) ) );
 			$id = $this->getRevIdForTime( $title, $pageTimestamp );
 			if ( !$id ) {
 				$this->fatalError( "The page did not exist at that time" );
@@ -163,6 +164,7 @@ class BenchmarkParse extends Maintenance {
 	 * @param bool &$skip
 	 * @param ?RevisionRecord &$revRecord
 	 * @return bool
+	 * @suppress PhanUnusedPrivateMethodParameter Used as callback with fix signature
 	 */
 	private function onFetchTemplate(
 		?LinkTarget $contextTitle,

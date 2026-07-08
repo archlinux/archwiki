@@ -6,7 +6,6 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 use MediaWiki\Title\Title;
 use MediaWikiLangTestCase;
-use PHPUnit\Framework\TestSuite;
 
 /**
  * This is the subclass for Lua library tests. It will automatically run all
@@ -20,20 +19,12 @@ use PHPUnit\Framework\TestSuite;
 abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 	use LuaEngineTestHelper;
 
-	/** @var string|null */
-	private static $staticEngineName = null;
-	/** @var string|null */
-	private $engineName = null;
 	/** @var LuaEngine|null */
 	private $engine = null;
 	/** @var LuaDataProvider|null */
 	private $luaDataProvider = null;
-
-	/**
-	 * Name to display instead of the default
-	 * @var string
-	 */
-	protected $luaTestName = null;
+	/** @var string|null */
+	protected $engineSkipMessage = null;
 
 	/**
 	 * Name of the module being tested
@@ -49,30 +40,33 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 
 	/**
 	 * Tests to skip. Associative array mapping test name to skip reason.
-	 * @var array
+	 * @var array<string,string>
 	 */
-	protected $skipTests = [];
+	protected array $skipTests = [];
 
 	/**
-	 * @param string|null $name
-	 * @param array $data
-	 * @param string $dataName
-	 * @param string|null $engineName Engine to test with
+	 * @return string Engine name ('LuaSandbox' or 'LuaStandalone')
 	 */
-	public function __construct(
-		$name = null, array $data = [], $dataName = '', $engineName = null
-	) {
-		$this->engineName = $engineName ?? self::$staticEngineName;
-		parent::__construct( $name, $data, $dataName );
+	protected function getEngineName(): string {
+		throw new \LogicException( static::class . ' must implement getEngineName()' );
 	}
 
-	/**
-	 * Create a PHPUnit test suite to run the test against all engines
-	 * @param string $className Test class name
-	 * @return TestSuite
-	 */
-	public static function suite( $className ) {
-		return self::makeSuite( $className );
+	protected function setUp(): void {
+		parent::setUp();
+		// Don't create the engine here. Child classes may need to configure
+		// services or settings (e.g. setContentLang) before the engine is created.
+	}
+
+	protected function assertPreConditions(): void {
+		parent::assertPreConditions();
+		if ( $this->engineSkipMessage !== null ) {
+			$this->markTestSkipped( $this->engineSkipMessage );
+		}
+		try {
+			$this->getEngine()->getInterpreter();
+		} catch ( \Throwable $e ) {
+			$this->markTestSkipped( "Engine not available: " . $e->getMessage() );
+		}
 	}
 
 	protected function tearDown(): void {
@@ -100,12 +94,6 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 		return $t;
 	}
 
-	public function toString(): string {
-		// When running tests written in Lua, return a nicer representation in
-		// the failure message.
-		return $this->engineName . ': ' . ( $this->luaTestName ?: parent::toString() );
-	}
-
 	/**
 	 * Modules that should exist
 	 * @return string[] Mapping module names to files
@@ -116,10 +104,31 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 		];
 	}
 
-	public function provideLuaData() {
-		if ( !$this->luaDataProvider ) {
+	public static function provideLuaData(): array {
+		try {
+			$instance = new static( 'provideLuaData' );
+			$engine = $instance->getEngine();
+			$engine->getInterpreter();
 			$class = static::$dataProviderClass;
-			$this->luaDataProvider = new $class ( $this->getEngine(), static::$moduleName );
+			$provider = new $class( $engine, static::$moduleName );
+			$data = iterator_to_array( $provider );
+			$provider->destroy();
+			$engine->destroy();
+			return $data;
+		} catch ( \Throwable $e ) {
+			return [];
+		}
+	}
+
+	protected function getLuaDataProvider(): ?LuaDataProvider {
+		if ( !$this->luaDataProvider ) {
+			try {
+				$this->getEngine()->getInterpreter();
+				$class = static::$dataProviderClass;
+				$this->luaDataProvider = new $class( $this->getEngine(), static::$moduleName );
+			} catch ( \Throwable $e ) {
+				return null;
+			}
 		}
 		return $this->luaDataProvider;
 	}
@@ -131,22 +140,23 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 	 * @param mixed $expected
 	 */
 	public function testLua( $key, $testName, $expected ) {
-		$this->luaTestName = static::$moduleName . "[$key]: $testName";
+		$msg = $this->getEngineName() . ': ' . static::$moduleName . "[$key]: $testName";
 		if ( isset( $this->skipTests[$testName] ) ) {
 			$this->markTestSkipped( $this->skipTests[$testName] );
 		} else {
+			$provider = $this->getLuaDataProvider();
+			if ( !$provider ) {
+				$this->markTestSkipped( 'Lua data provider not available' );
+			}
 			try {
-				$actual = $this->provideLuaData()->run( $key );
+				$actual = $provider->run( $key );
 			} catch ( LuaError $ex ) {
 				if ( str_starts_with( $ex->getLuaMessage(), 'SKIP: ' ) ) {
 					$this->markTestSkipped( substr( $ex->getLuaMessage(), 6 ) );
 				}
 				throw $ex;
 			}
-			$this->assertSame( $expected, $actual );
+			$this->assertSame( $expected, $actual, $msg );
 		}
-		$this->luaTestName = null;
 	}
 }
-
-class_alias( LuaEngineTestBase::class, 'Scribunto_LuaEngineTestBase' );

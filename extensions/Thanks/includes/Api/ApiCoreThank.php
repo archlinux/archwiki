@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Thanks\Api;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Extension\Notifications\DiscussionParser;
+use MediaWiki\Extension\Thanks\Hooks;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\InvalidLogType;
 use MediaWiki\Extension\Thanks\Storage\Exceptions\LogDeleted;
 use MediaWiki\Extension\Thanks\Storage\LogStore;
@@ -13,10 +14,10 @@ use MediaWiki\Logging\LogEntry;
 use MediaWiki\Notification\NotificationService;
 use MediaWiki\Notification\RecipientSet;
 use MediaWiki\Notification\Types\WikiNotification;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
-use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
@@ -50,7 +51,6 @@ class ApiCoreThank extends ApiThank {
 
 	/**
 	 * Perform the API request.
-	 * @suppress PhanTypeMismatchArgumentNullable T240141
 	 * @suppress PhanPossiblyUndeclaredVariable Phan get's confused by the badly arranged code
 	 */
 	public function execute() {
@@ -64,17 +64,16 @@ class ApiCoreThank extends ApiThank {
 		$this->requireOnlyOneParameter( $params, 'rev', 'log' );
 
 		// Extract type and ID from the parameters.
-		if ( isset( $params['rev'] ) && !isset( $params['log'] ) ) {
+		if ( $params['rev'] !== null ) {
 			$type = 'rev';
 			$id = $params['rev'];
-		} elseif ( !isset( $params['rev'] ) && isset( $params['log'] ) ) {
+		} elseif ( $params['log'] !== null ) {
 			$type = 'log';
 			$id = $params['log'];
 		} else {
-			$this->dieWithError( 'thanks-error-api-params', 'thanks-error-api-params' );
+			ApiBase::dieDebug( __METHOD__, 'Unhandled parameter' );
 		}
 
-		$recipientUsername = null;
 		// Determine thanks parameters.
 		if ( $type === 'log' ) {
 			$logEntry = $this->getLogEntryFromId( $id );
@@ -85,19 +84,18 @@ class ApiCoreThank extends ApiThank {
 			} else {
 				// If there's no associated revision, die if the user is sitewide blocked
 				$excerpt = '';
-				$title = $logEntry->getTarget();
+				$page = $logEntry->getTarget();
 				$recipient = $this->getUserFromLog( $logEntry );
-				$recipientUsername = $recipient->getName();
 			}
 		}
+		// Type may change from log to rev when associated revision exists
 		if ( $type === 'rev' ) {
 			$revision = $this->getRevisionFromId( $id );
 			$excerpt = DiscussionParser::getEditExcerpt( $revision, $this->getLanguage() );
-			$title = $this->getTitleFromRevision( $revision );
-			$this->dieOnUserBlockedFromTitle( $user, $title );
+			$page = $revision->getPage();
+			$this->dieOnUserBlockedFromPage( $user, $page );
 
 			$recipient = $this->getUserFromRevision( $revision );
-			$recipientUsername = $recipient->getName();
 
 			// If there is no parent revid of this revision, it's a page creation.
 			if ( !$this->revisionStore->getPreviousRevision( $revision ) ) {
@@ -107,7 +105,7 @@ class ApiCoreThank extends ApiThank {
 
 		// Send thanks.
 		if ( $this->userAlreadySentThanks( $user, $type, $id ) ) {
-			$this->markResultSuccess( $recipientUsername );
+			$this->markResultSuccess( $recipient->getName() );
 		} else {
 			$this->dieOnBadRecipient( $user, $recipient );
 			$this->sendThanks(
@@ -117,7 +115,7 @@ class ApiCoreThank extends ApiThank {
 				$excerpt,
 				$recipient,
 				$this->getSourceFromParams( $params ),
-				$title,
+				$page,
 				$revcreation
 			);
 		}
@@ -131,11 +129,7 @@ class ApiCoreThank extends ApiThank {
 	 * @return bool
 	 */
 	protected function userAlreadySentThanks( User $user, $type, $id ) {
-		if ( $type === 'rev' ) {
-			// For b/c with old-style keys
-			$type = '';
-		}
-		return (bool)$user->getRequest()->getSessionData( "thanks-thanked-$type$id" );
+		return (bool)$user->getRequest()->getSessionData( Hooks::getSessionKey( $type, $id ) );
 	}
 
 	private function getRevisionFromId( int $revId ): RevisionRecord {
@@ -147,7 +141,6 @@ class ApiCoreThank extends ApiThank {
 		} elseif ( $revision->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
 			$this->dieWithError( 'thanks-error-revdeleted', 'revdeleted' );
 		}
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable T240141
 		return $revision;
 	}
 
@@ -170,17 +163,7 @@ class ApiCoreThank extends ApiThank {
 		if ( !$logEntry ) {
 			$this->dieWithError( 'thanks-error-invalid-log-id', 'thanks-error-invalid-log-id' );
 		}
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable T240141
 		return $logEntry;
-	}
-
-	private function getTitleFromRevision( RevisionRecord $revision ): Title {
-		$title = Title::castFromPageIdentity( $revision->getPage() );
-		if ( !$title instanceof Title ) {
-			$this->dieWithError( 'thanks-error-notitle', 'notitle' );
-		}
-		// @phan-suppress-next-line PhanTypeMismatchReturnNullable T240141
-		return $title;
 	}
 
 	/**
@@ -205,7 +188,6 @@ class ApiCoreThank extends ApiThank {
 		if ( !$recipient ) {
 			$this->dieWithError( 'thanks-error-invalidrecipient', 'invalidrecipient' );
 		}
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 		return $this->userFactory->newFromUserIdentity( $recipient );
 	}
 
@@ -228,11 +210,11 @@ class ApiCoreThank extends ApiThank {
 	 * notification is displayed (in order to account for changing visibility in the meantime).
 	 * @param User $recipient The recipient of the thanks.
 	 * @param string $source Where the thanks was given.
-	 * @param Title $title The title of the page for which thanks is given.
+	 * @param PageIdentity $page The page for which thanks is given.
 	 * @param bool $revcreation True if the linked revision is a page creation.
 	 */
 	protected function sendThanks(
-		User $user, $type, $id, $excerpt, User $recipient, $source, Title $title, $revcreation
+		User $user, $type, $id, $excerpt, User $recipient, $source, PageIdentity $page, $revcreation
 	) {
 		$uniqueId = $type . '-' . $id;
 		// Do one last check to make sure we haven't sent Thanks before
@@ -244,7 +226,7 @@ class ApiCoreThank extends ApiThank {
 
 		// Create the notification
 		$this->notifications->notify(
-			new WikiNotification( 'edit-thank', $title, $user, [
+			new WikiNotification( 'edit-thank', $page, $user, [
 				$type . 'id' => $id,
 				'source' => $source,
 				'excerpt' => $excerpt,
@@ -253,8 +235,8 @@ class ApiCoreThank extends ApiThank {
 			new RecipientSet( $recipient )
 		);
 
-		// And mark the thank in session for a cheaper check to prevent duplicates (Phab:T48690).
-		$user->getRequest()->setSessionData( "thanks-thanked-$type$id", true );
+		// And mark the thank in session for a cheaper check to prevent duplicates (T48690).
+		$user->getRequest()->setSessionData( Hooks::getSessionKey( $type, $id ), true );
 		// Set success message
 		$this->markResultSuccess( $recipient->getName() );
 		$this->logThanks( $user, $recipient, $uniqueId );

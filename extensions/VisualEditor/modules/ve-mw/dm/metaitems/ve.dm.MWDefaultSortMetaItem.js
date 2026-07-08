@@ -41,19 +41,21 @@ ve.dm.MWDefaultSortMetaItem.static.matchFunction = function ( domElement ) {
 ve.dm.MWDefaultSortMetaItem.static.toDataElement = function ( domElements ) {
 	const mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {},
-		input = ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' );
-	let prefix, sortKey;
+		input = ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' ),
+		params = ve.getProp( mwData, 'parts', '0', 'template', 'params' );
+	let prefix, sortkey;
 	if ( input ) {
 		prefix = input.split( ':' )[ 0 ];
-		sortKey = input.slice( prefix.length + 1 );
+		sortkey = input.slice( prefix.length + 1 );
 	}
-	return {
+	const data = {
 		type: this.name,
-		attributes: {
-			prefix: prefix,
-			sortkey: sortKey
-		}
+		attributes: { prefix, sortkey }
 	};
+	if ( params ) {
+		data.attributes.params = params;
+	}
+	return data;
 };
 
 ve.dm.MWDefaultSortMetaItem.static.toDomElements = function ( dataElement, doc ) {
@@ -72,6 +74,10 @@ ve.dm.MWDefaultSortMetaItem.static.toDomElements = function ( dataElement, doc )
 				}
 			]
 		};
+
+	if ( dataElement.attributes.params ) {
+		mwData.parts[ 0 ].template.params = dataElement.attributes.params;
+	}
 
 	const span = doc.createElement( 'span' );
 	span.setAttribute( 'typeof', 'mw:Transclusion' );

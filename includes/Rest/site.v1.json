@@ -1,0 +1,46 @@
+{
+	"mwapi": "1.1.0",
+	"moduleId": "site/v1",
+	"info": {
+		"version": "1.0.0",
+		"title": "Site API",
+		"x-i18n-title": "rest-module-site.v1-title",
+		"x-i18n-description": "rest-module-site.v1-desc"
+	},
+	"paths": {
+		"/sitemap/{indexId}": {
+			"get": {
+				"x-i18n-description": "rest-endpoint-desc-get-sitemap-index",
+				"x-i18n-summary": "rest-endpoint-summ-get-sitemap-index",
+				"handler": {
+					"class": "MediaWiki\\Rest\\Handler\\SitemapIndexHandler",
+					"services": [
+						"MainConfig",
+						"LanguageConverterFactory",
+						"ContentLanguage",
+						"PermissionManager",
+						"ConnectionProvider"
+					]
+				}
+			}
+		},
+		"/sitemap/{indexId}/page/{pageId}": {
+			"get": {
+				"x-i18n-description": "rest-endpoint-desc-get-sitemap-page",
+				"x-i18n-summary": "rest-endpoint-summ-get-sitemap-page",
+				"handler": {
+					"class": "MediaWiki\\Rest\\Handler\\SitemapPageHandler",
+					"services": [
+						"MainConfig",
+						"LanguageConverterFactory",
+						"ContentLanguage",
+						"PermissionManager",
+						"ConnectionProvider",
+						"GenderCache",
+						"MainWANObjectCache"
+					]
+				}
+			}
+		}
+	}
+}

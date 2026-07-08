@@ -95,7 +95,6 @@ trait SpecBasedFactoryTrait {
 			'args' => $args,
 		];
 
-		/** @phan-suppress-next-line PhanTypeInvalidCallableArrayKey */
 		$instance = ObjectFactory::getObjectFromSpec( $objectSpec );
 
 		if ( !$instance instanceof $class ) {

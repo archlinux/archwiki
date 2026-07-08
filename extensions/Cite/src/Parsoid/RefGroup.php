@@ -5,13 +5,15 @@ namespace Cite\Parsoid;
 
 use Cite\MarkSymbolRenderer;
 use Countable;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\NodeData\DataMwError;
 
 /**
  * Helper class used by `<references>` implementation.
@@ -24,6 +26,12 @@ class RefGroup implements Countable {
 	/** @var array<string,RefGroupItem> Lookup map only for named refs */
 	private array $indexByName = [];
 
+	/** @var array<string,DataMwError[]> */
+	public array $inReferencesListErrors = [];
+
+	/** @var array<string,array<string,RefGroupItem>> Lookup for sub-references by details content and main reference name */
+	private array $subRefDetailsLookup = [];
+
 	/** @var int Counter to track order of ref appearance in article */
 	private int $nextIndex = 1;
 	/** @var array<string,int> Counter to provide subreference indexes */
@@ -34,15 +42,23 @@ class RefGroup implements Countable {
 	) {
 	}
 
-	public function push( RefGroupItem $ref ): void {
+	public function push( RefGroupItem $ref, ?string $details = null ): void {
 		$this->refs[] = $ref;
 		if ( $ref->name ) {
 			$this->indexByName[$ref->name] = $ref;
+		}
+
+		if ( $ref->mainRef && $details ) {
+			$this->subRefDetailsLookup[$ref->mainRef][$details] = $ref;
 		}
 	}
 
 	public function lookupRefByName( string $name ): ?RefGroupItem {
 		return $this->indexByName[$name] ?? null;
+	}
+
+	public function lookupSubRefByDetails( string $mainRefName, string $details ): ?RefGroupItem {
+		return $this->subRefDetailsLookup[$mainRefName][$details] ?? null;
 	}
 
 	public function count(): int {
@@ -67,7 +83,7 @@ class RefGroup implements Countable {
 		if ( $group ) {
 			$a->setAttribute( 'data-mw-group', $group );
 		}
-		$span->appendChild( $ownerDoc->createTextNode( $text . ' ' ) );
+		$span->appendChild( $ownerDoc->createTextNode( $text ) );
 		$a->appendChild( $span );
 		return $a;
 	}
@@ -116,7 +132,9 @@ class RefGroup implements Countable {
 			DOMCompat::remove( $sup );
 			$extApi->clearContentDOM( $refContentId );
 		} elseif ( $ref->externalFragment ) {
-			DOMUtils::migrateChildren( $ref->externalFragment, $reftextSpan );
+			$externalFragment = $ref->externalFragment;
+			'@phan-var Node $externalFragment'; /** @var Node $externalFragment */
+			DOMUtils::migrateChildren( $externalFragment, $reftextSpan );
 		}
 		$li->appendChild( $reftextSpan );
 
@@ -152,6 +170,9 @@ class RefGroup implements Countable {
 		} else {
 			DOMUtils::addRel( $linkbackSpan, 'mw:referencedBy' );
 			for ( $i = 1; $i <= $ref->visibleNodes; $i++ ) {
+				if ( $i > 1 ) {
+					$linkbackSpan->appendChild( $ownerDoc->createTextNode( ' ' ) );
+				}
 				$lb = ParsoidAnchorFormatter::getBacklinkIdentifier( $ref, $i );
 				$linkbackSpan->appendChild(
 					self::createLinkback( $extApi, $lb, $refGroup, (string)$i, $ownerDoc )
@@ -171,12 +192,12 @@ class RefGroup implements Countable {
 		$refsList->appendChild( $ownerDoc->createTextNode( "\n" ) );
 	}
 
-	/** @internal only for {@see ReferencesData} */
+	/** @internal only for {@link ReferencesData} */
 	public function getNextIndex(): int {
 		return $this->nextIndex++;
 	}
 
-	/** @internal only for {@see ReferencesData} */
+	/** @internal only for {@link ReferencesData} */
 	public function getNextSubrefSequence( string $parentName ): int {
 		$this->subRefCountByName[$parentName] ??= 0;
 		return ++$this->subRefCountByName[$parentName];

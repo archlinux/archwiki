@@ -8,7 +8,6 @@
 namespace MediaWiki\Tests\Unit;
 
 use InvalidArgumentException;
-use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentParser;
 use MediaWiki\CommentFormatter\CommentParserFactory;
@@ -18,9 +17,10 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Interwiki\Interwiki;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Language\Language;
-use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Language\LanguageNameUtils;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Page\CacheKeyHelper;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Tests\MockDatabase;
 use MediaWiki\Title\MalformedTitleException;
@@ -309,9 +309,9 @@ trait DummyServicesTrait {
 	 * detecting invalid titles.
 	 *
 	 * @param array $options Supported keys:
-	 *     - validInterwikis: array of interwiki info to pass to getDummyInterwikiLookup
-	 *     - throwMockExceptions: boolean, see above
-	 *     - any of the options passed to getDummyNamespaceInfo (the same $options is passed on)
+	 *   - validInterwikis: array of interwiki info to pass to getDummyInterwikiLookup
+	 *   - throwMockExceptions: boolean, see above
+	 *   - any of the options passed to getDummyNamespaceInfo (the same $options is passed on)
 	 * @return TitleParser
 	 */
 	private function getDummyTitleParser( array $options = [] ): TitleParser {
@@ -605,7 +605,11 @@ trait DummyServicesTrait {
 	private function getDummyCommentStore(): CommentStore {
 		$mockLang = $this->createNoOpMock( Language::class,
 			[ 'truncateForVisual', 'truncateForDatabase' ] );
-		$mockLang->method( $this->logicalOr( 'truncateForDatabase', 'truncateForVisual' ) )
+		$mockLang
+			->method( $this->logicalOr(
+				$this->identicalTo( 'truncateForDatabase' ),
+				$this->identicalTo( 'truncateForVisual' )
+			) )
 			->willReturnCallback(
 				static function ( string $text, int $limit ): string {
 					if ( strlen( $text ) > $limit - 3 ) {

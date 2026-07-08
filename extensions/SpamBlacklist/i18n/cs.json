@@ -16,7 +16,6 @@
 	"spam-blacklisted-email": "Zakázaná e-mailová adresa",
 	"spam-blacklisted-email-text": "Vaše e-mailová adresa má momentálně zakázáno posílat e-maily ostatním uživatelům.",
 	"spam-blacklisted-email-signup": "Uvedenou e-mailovou adresu je v současné době zakázáno používat.",
-	"spam-invalid-lines": "Na černé listině spamu {{PLURAL:$1|je následující řádka neplatný regulární výraz|jsou následující řádky neplatné regulární výrazy|jsou následující řádky regulární výrazy}} a je nutné {{PLURAL:$1|ji|je|je}} před uložením stránky opravit :",
 	"spam-blacklist-desc": "Antispamový nástroj na základě regulárních výrazů umožňující zakázat URL ve stránkách a e-mailových adresách registrovaných uživatelů",
 	"log-name-spamblacklist": "Kniha zakázaných domén",
 	"log-description-spamblacklist": "Tyto události sledují zásahy seznamu zakázaných domén.",

@@ -4,6 +4,8 @@
  * @copyright See AUTHORS.txt
  */
 
+@import '../../lib/codex-design-tokens/theme-wikimedia-ui.less';
+
 /* Demo */
 
 .ve-demo-logo {
@@ -30,10 +32,12 @@
 
 .ve-demo-surfaceWrapper {
 	border: 0;
-	box-shadow: 0 0 6px rgba( 0, 0, 0, 0.25 );
+	box-shadow: @box-shadow-medium, 0 0 0 1px @border-color-subtle;
 }
 
 .ve-demo-surfaceWrapper,
-.ve-ui-overlay-global-mobile {
+.ve-ui-overlay-global-mobile,
+/* Increase specificity over demo.wikimediaui.less rule */
+.ve-ce-surface .ve-ce-surface-interface {
 	font-size: 16px;
 }

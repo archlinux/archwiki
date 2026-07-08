@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\JsonCodec\JsonClassCodec;
 use Wikimedia\JsonCodec\JsonCodec;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -14,8 +15,6 @@ use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
  * Customized subclass of JsonCodec for serialization of rich attributes.
  */
 class DOMDataCodec extends JsonCodec {
-	public Document $ownerDoc;
-	public array $options = [];
 	private ?array $fragmentIndex = null;
 
 	public function setOptions( array $options ): array {
@@ -118,11 +117,10 @@ class DOMDataCodec extends JsonCodec {
 	 * @param Document $ownerDoc
 	 * @param array $options
 	 */
-	public function __construct( Document $ownerDoc, array $options ) {
+	public function __construct( public Document $ownerDoc, public array $options ) {
 		parent::__construct();
-		$this->ownerDoc = $ownerDoc;
-		$this->options = $options;
 		// Add codec for DocumentFragment
+		/** @implements JsonClassCodec<DocumentFragment> */
 		$this->addCodecFor( DocumentFragment::class, new class( $this ) implements JsonClassCodec {
 			private DOMDataCodec $codec;
 
@@ -197,8 +195,8 @@ class DOMDataCodec extends JsonCodec {
 				} else {
 					DOMUtils::setFragmentInnerHTML( $df, $json['_h'] );
 				}
-				DOMDataUtils::visitAndLoadDataAttribs( $df, $this->codec->options );
-				return $df; // @phan-suppress-current-line PhanTypeMismatchReturn
+				DOMDataUtils::visitAndLoadDataAttribs( $df );
+				return $df;
 			}
 
 			/** @inheritDoc */

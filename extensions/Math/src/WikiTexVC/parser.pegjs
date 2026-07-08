@@ -1,13 +1,36 @@
 /** PEGjs lexer/parser */
+{{
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Box;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Big;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\ChemFun2u;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\ChemWord;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Declh;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Dollar;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\DQ;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\FQ;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun1nb;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun2;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun2nb;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun2sq;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Fun4;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Infix;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Literal;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Lr;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\LengthSpec;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Matrix;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\Mhchem;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\UQ;
+use MediaWiki\Extension\Math\WikiTexVC\Nodes\TexArray;
+}}
 {
-$this->tu = TexUtil::getInstance();
-
-# get reference of the options for usage in functions.
-
-
-# get reference of the options for usage in functions.
-$this->options = ParserUtil::createOptions($options);
-
+private TexUtil $tu;
+private function initialize(): void
+{
+  $this->tu = TexUtil::getInstance();
+  # get reference of the options for usage in functions.
+  $this->options = ParserUtil::createOptions($this->options);
+}
 }
 // first rule is the start production.
 start
@@ -134,7 +157,7 @@ lit
        return $ast->first();
      } else {
           throw new SyntaxError("Deprecation: Alias no longer supported.", [], $this->text(), $this->offset(),
-            $this->line(), $this->column());
+            $this->line(), $this->column(), $this->location());
      }
    }
    / f:generic_func &{ return $this->tu->mediawiki_function_names($f); } _
@@ -192,9 +215,9 @@ lit
     { return $m->setTop( 'cases' ); }
   / "\\begin{" alpha+ "}" /* better error messages for unknown environments */
     { throw new SyntaxError("Illegal TeX function", [], $this->text(), $this->offset(),
-                            $this->line(), $this->column()); }
+                            $this->line(), $this->column(), $this->location()); }
   / f:generic_func &{ return !$this->tu->getAllFunctionsAt($f); }
-    { throw new SyntaxError("Illegal TeX function", [], $f, $this->offset(), $this->line(), $this->column()); }
+    { throw new SyntaxError("Illegal TeX function", [], $f, $this->offset(), $this->line(), $this->column(), $this->location()); }
 
 
 // "array" requires mandatory column specification
@@ -325,7 +348,9 @@ BOX
    { return new Box($b, join('', $cs)); }
 
 LITERAL
- = c:( literal_id / literal_mn / literal_uf_lt / "-" / literal_uf_op ) _
+ = ":=" _
+   { return ":="; }
+ / c:( literal_id / literal_mn / literal_uf_lt / "-" / literal_uf_op ) _
    { return $c; }
  / f:generic_func &{ return $this->tu->nullary_macro($f); } _ // from Texutil.find(...)
    { return $f . " "; }
@@ -352,7 +377,7 @@ LITERAL
     return "\\" . $c; /* escape dangerous chars */
     } else {
      throw new SyntaxError("Deprecation: % and $ need to be escaped.", [], $this->text(), $this->offset(),
-        $this->line(), $this->column());
+        $this->line(), $this->column(), $this->location());
     }}
 
 DELIMITER
@@ -502,7 +527,7 @@ FUN_AR1
         return $this->tu->other_fun_ar1($f);
      } else {
         throw new SyntaxError("Deprecation: \\Bbb and \\bold are not allowed in math mode.", [],
-            $this->text(), $this->offset(), $this->line(),$this->column());
+            $this->text(), $this->offset(), $this->line(), $this->column(), $this->location());
      }
    }
 

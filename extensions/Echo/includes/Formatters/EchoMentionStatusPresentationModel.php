@@ -161,5 +161,3 @@ class EchoMentionStatusPresentationModel extends EchoEventPresentationModel {
 		return $successCount > 0 && $failCount > 0;
 	}
 }
-
-class_alias( EchoMentionStatusPresentationModel::class, 'EchoMentionStatusPresentationModel' );

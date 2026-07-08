@@ -43,9 +43,7 @@ ve.dm.CommentNode.static.toDataElement = function ( domElements, converter ) {
 	return {
 		// Disallows comment nodes between table rows and such
 		type: converter.isValidChildNodeType( 'comment' ) && text !== '' ? 'comment' : 'commentMeta',
-		attributes: {
-			text: text
-		}
+		attributes: { text }
 	};
 };
 
@@ -60,7 +58,7 @@ ve.dm.CommentNode.static.toDomElements = function ( dataElement, doc, converter 
 	} else if ( converter.isForPreview() ) {
 		// isForPreview(), use CE rendering
 		const modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
-		modelNode.setDocument( converter.internalList.getDocument() );
+		modelNode.setDocument( converter.getInternalList().getDocument() );
 		const viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		viewNode.updateInvisibleIconSync( true );
 		viewNode.$element.attr( 'title', dataElement.attributes.text );

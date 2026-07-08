@@ -22,6 +22,7 @@
 			"Sou0012",
 			"Takot",
 			"Tar Lócesilion",
+			"Tensama0415",
 			"Tmv",
 			"Whym",
 			"Yaakiyu.jp",
@@ -30,8 +31,7 @@
 			"ひまり",
 			"春春眠眠",
 			"翻訳者a",
-			"青子守歌",
-			"Tensama0415"
+			"青子守歌"
 		]
 	},
 	"skinname-vector": "レガシー ベクター (2010年版)",
@@ -84,9 +84,6 @@
 	"vector-toc-label": "目次",
 	"vector-toc-beginning": "ページ先頭",
 	"vector-toc-toggle-button-label": "$1サブセクションを切り替えます",
-	"vector-anon-user-menu-pages": "ログアウトした編集者のページ",
-	"vector-anon-user-menu-pages-learn": "もっと詳しく",
-	"vector-anon-user-menu-pages-label": "編集の詳細",
 	"vector-main-menu-tooltip": "メインメニュー",
 	"vector-toc-menu-tooltip": "目次",
 	"vector-toc-collapsible-button-label": "目次の表示・非表示を切り替え",
@@ -109,8 +106,6 @@
 	"vector-page-tools-unpinned-popup": "ツールメニューはここに移動しました。",
 	"vector-main-menu-unpinned-popup": "メインメニューはここに移動しました。",
 	"vector-appearance-unpinned-popup": "外観メニューはこちらに移動しました。",
-	"vector-2022-beta-preview-label": "閲覧アクセス性の向上（2022年版ベクター）",
-	"vector-2022-beta-preview-description": "タイポグラフィの改善やダークモードなど、新しい閲覧アクセス性向上機能を早期にご活用いただけます。",
 	"vector-night-mode-gadget-warning": "この機能と干渉するダークモードガジェットを使用しています。ダークモードを使用するには[[Special:Preferences#mw-prefsection-gadgets|ガジェットを無効化]]してください。",
 	"vector-night-mode-issue-reporting-notice-tooltip": "ダークモードの色で読みにくくなっている場合に報告します。",
 	"vector-night-mode-issue-reporting-link-label": "ダークモードの問題を報告",

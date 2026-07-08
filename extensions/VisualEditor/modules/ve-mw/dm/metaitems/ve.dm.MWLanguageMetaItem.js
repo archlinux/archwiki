@@ -34,9 +34,7 @@ ve.dm.MWLanguageMetaItem.static.toDataElement = function ( domElements ) {
 	const href = domElements[ 0 ].getAttribute( 'href' );
 	return {
 		type: this.name,
-		attributes: {
-			href: href
-		}
+		attributes: { href }
 	};
 };
 

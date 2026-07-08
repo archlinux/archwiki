@@ -16,13 +16,13 @@
 			"NickK",
 			"Olvin",
 			"Piramidion",
+			"Repakr",
 			"SimondR",
 			"Steve.rusyn",
 			"SteveR",
 			"Vlad5250",
 			"Ата",
-			"Максим Підліснюк",
-			"Repakr"
+			"Максим Підліснюк"
 		]
 	},
 	"echo-desc": "Система сповіщення користувачів про події і повідомлення",
@@ -178,6 +178,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Ваші}} права користувача {{GENDER:$1|змінилися}}. Вас було додано до: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Ваші}} права користувача {{GENDER:$1|змінилися}}. Ви більше не належите до: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Ваші}} права користувача {{GENDER:$1|змінилися}}. Вас було додано до: $2. Ви більше не належите до: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|Ваше}} членство у {{PLURAL:$2|наступній групі|наступних групах}} завершилося автоматично: $1.",
 	"notification-header-user-rights-expiry-change": "Термін завершення {{GENDER:$4|Вашого}} членства у {{PLURAL:$3|поданій групі|поданих групах}} {{GENDER:$1|змінено}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Ласкаво просимо}} до {{GRAMMAR:genitive|{{SITENAME}}}}, $1! Ми раді бачити {{GENDER:$2|Вас}} тут.",
 	"notification-header-mention-summary": "$1 {{GENDER:$2|згадав|згадала}} {{GENDER:$3|Вас}} в описі редагування сторінки <strong>$4</strong>.",
@@ -214,6 +215,7 @@
 	"notification-reverted-email-subject2": "{{GENDER:$3|{{PLURAL:$4|1=Ваше редагування|Ваші редагування}}}} на сайті {{SITENAME}} було {{GENDER:$2|скасовано}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$2|згадав|згадала}} {{GENDER:$3|Вас}} на сайті {{SITENAME}}",
 	"notification-user-rights-email-subject": "{{GENDER:$3|Ваші}} права користувача на веб-сайті {{SITENAME}} було змінено",
+	"notification-user-rights-expiry-email-subject": "Дія {{GENDER:$3|Ваших}} прав користувача на сайті {{SITENAME}} закінчилася",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 с}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 хв}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 год}}",
@@ -267,7 +269,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|керівник|керівниця}} push-підписками",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Керівники push-підписками",
 	"notification-subject-email-verify-email-reminder": "Підтвердіть {{GENDER:$1|свою}} електронну пошту",
-	"notification-header-verify-email-reminder": "Будь ласка, <strong>підтвердіть свою адресу електронної пошти</strong>, щоб ми знали, що адреса електронної пошти у вашому обліковому записі належить {{GENDER:$1|вам}}.",
+	"notification-header-verify-email-reminder": "Привіт, $2!\n \nБудь ласка, <strong>перевірте {{GENDER:$1|вашу}} адресу електронної пошти</strong>, щоб ми знали, що адреса належить саме {{GENDER:$1|вам}}.",
 	"notification-link-text-verify-email-reminder": "Керування налаштуваннями",
 	"notification-verify-email-reminder-link-label": "Підтвердити адресу електронної пошти"
 }

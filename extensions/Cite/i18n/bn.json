@@ -34,6 +34,7 @@
 	"cite-reference-previews-journal": "সাময়িকীর তথ্যসূত্র",
 	"cite-reference-previews-news": "সংবাদের তথ্যসূত্র",
 	"cite-reference-previews-note": "টীকা",
+	"cite-reference-previews-map": "মানচিত্রের তথ্যসূত্র",
 	"cite-reference-previews-web": "ওয়েব তথ্যসূত্র",
 	"cite-reference-previews-collapsible-placeholder": "এই তথ্যসূত্রে একটি লেখচিত্র অন্তর্ভুক্ত রয়েছে যা প্রাকদর্শনে মানানসই নয়।",
 	"cite-reference-previews-gadget-conflict-info-navpopups": "আপনার [[$1|নেভিগেশন পপআপ]] গ্যাজেটটি সক্রিয় করা, তাই আপনি এই বৈশিষ্ট্যদ্বারা প্রদত্ত প্রাকদর্শন দেখতে পাবেন না। আপনার উইকির উপর নির্ভর করে, গ্যাজেটটির নাম কিছুটা ভিন্ন হতে পারে। আপনার যদি সমস্যাগুলি চলমান থাকে, তবে দয়া করে আপনার বৈশ্বিক স্ক্রিপ্টসহ আপনার গ্যাজেট এবং ব্যবহারকারী স্ক্রিপ্ট পর্যালোচনা করুন।",
@@ -52,9 +53,9 @@
 	"cite-wikieditor-help-content-showreferences-description": "তথ্যসূত্র প্রদর্শন করো",
 	"cite-wikieditor-help-content-reference-example-text1": "পাতার পাঠ্য।$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 লিঙ্কের পাঠ্য], অতিরিক্ত পাঠ্য।",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 লিঙ্কের পাঠ্য]",
+	"cite-wikieditor-help-content-reference-example-text3": "একটি বই",
 	"cite-wikieditor-help-content-reference-example-ref-id": "পরীক্ষা",
-	"cite-wikieditor-help-content-reference-example-extra-details": "অতিরিক্ত বিবরণ",
+	"cite-wikieditor-help-content-reference-example-extra-details": "পৃষ্ঠা ৭৬",
 	"communityconfiguration-cite-title": "উদ্ধৃতি",
 	"cite-configuration-submit": "পরিবর্তন সংরক্ষণ করুন"
 }

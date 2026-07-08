@@ -3,18 +3,18 @@
 namespace PageImages\Hooks;
 
 use Exception;
-use FormatMetadata;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\FileRepo\RepoGroup;
-use MediaWiki\Hook\ParserAfterTidyHook;
-use MediaWiki\Hook\ParserModifyImageHTMLHook;
 use MediaWiki\Hook\ParserTestGlobalsHook;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Media\FormatMetadata;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\Hook\ParserAfterTidyHook;
+use MediaWiki\Parser\Hook\ParserModifyImageHTMLHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\TitleFactory;
@@ -87,8 +87,7 @@ class ParserFileProcessingHookHandlers implements
 		array $params,
 		string &$html
 	): void {
-		$page = $parser->getPage();
-		if ( !$page || !$this->processThisTitle( $page ) ) {
+		if ( !$this->processThisTitle( $parser->getPage() ) ) {
 			return;
 		}
 
@@ -446,7 +445,7 @@ class ParserFileProcessingHookHandlers implements
 	private function getUrlDenylist( string $url ): array {
 		$list = [];
 		$text = $this->httpRequestFactory->get( $url, [ 'timeout' => 3 ], __METHOD__ );
-		$fileExtensions = $this->config->get( 'FileExtensions' );
+		$fileExtensions = $this->config->get( MainConfigNames::FileExtensions );
 		$regex = '/\[\[:([^|\#]*?\.(?:' . implode( '|', $fileExtensions ) . '))/i';
 
 		if ( $text && preg_match_all( $regex, $text, $matches ) ) {

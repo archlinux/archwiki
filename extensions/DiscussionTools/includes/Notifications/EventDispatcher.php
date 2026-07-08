@@ -35,11 +35,20 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Rdbms\IDBAccessObject;
 
 class EventDispatcher {
+	protected static string $autosubscribe = 'preferences';
+
+	/**
+	 * Set the autosubscribe preference from an API call
+	 */
+	public static function setAutosubscribe( string $autosubscribe ): void {
+		self::$autosubscribe = $autosubscribe;
+	}
+
 	private static function getParsedRevision( RevisionRecord $revRecord ): ContentThreadItemSet {
 		return HookUtils::parseRevisionParsoidHtml( $revRecord, __METHOD__ )->getValueOrThrow();
 	}
@@ -341,10 +350,13 @@ class EventDispatcher {
 	 */
 	protected static function addAutoSubscription( UserIdentity $user, Title $title, string $itemName ): void {
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
+		if ( $dtConfig->get( 'DiscussionToolsAutoTopicSubEditor' ) !== 'any' ) {
+			return;
+		}
 
 		if (
-			$dtConfig->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'any' &&
-			HookUtils::shouldAddAutoSubscription( $user, $title )
+			( self::$autosubscribe === 'preferences' && HookUtils::shouldAddAutoSubscription( $user, $title ) ) ||
+			self::$autosubscribe === 'yes'
 		) {
 			/** @var SubscriptionStore $subscriptionStore */
 			$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );

@@ -66,7 +66,7 @@ trait OOUIModule {
 	 * Return a map of skin names (in lowercase) to OOUI theme names, defining which theme a given
 	 * skin should use.
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function getSkinThemeMap() {
 		$themeMap = self::$builtinSkinThemeMap;
@@ -82,7 +82,7 @@ trait OOUIModule {
 	 *
 	 * Additionally, the string '{module}' in paths represents the name of the module to load.
 	 *
-	 * @return array
+	 * @return array<string,array<string,string|FilePath>>
 	 */
 	protected static function getThemePaths() {
 		$themePaths = self::$builtinThemePaths;

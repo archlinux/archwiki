@@ -11,30 +11,15 @@ use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 
 class AbuseFilterViewTools extends AbuseFilterView {
-
-	/**
-	 * @var EditBoxBuilderFactory
-	 */
-	private $boxBuilderFactory;
-
-	/**
-	 * @param AbuseFilterPermissionManager $afPermManager
-	 * @param EditBoxBuilderFactory $boxBuilderFactory
-	 * @param IContextSource $context
-	 * @param LinkRenderer $linkRenderer
-	 * @param string $basePageName
-	 * @param array $params
-	 */
 	public function __construct(
 		AbuseFilterPermissionManager $afPermManager,
-		EditBoxBuilderFactory $boxBuilderFactory,
+		private readonly EditBoxBuilderFactory $boxBuilderFactory,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName,
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
-		$this->boxBuilderFactory = $boxBuilderFactory;
 	}
 
 	/**

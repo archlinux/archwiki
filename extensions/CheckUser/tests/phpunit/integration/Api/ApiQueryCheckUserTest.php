@@ -1,17 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Api;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api;
 
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryTokens;
-use MediaWiki\CheckUser\Api\ApiQueryCheckUser;
-use MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
-use MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory;
-use MediaWiki\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser;
+use MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse;
+use MediaWiki\Extension\CheckUser\Services\ApiQueryCheckUserResponseFactory;
+use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Permissions\Authority;
@@ -30,12 +30,12 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @group medium
  * @group Database
  *
- * @covers \MediaWiki\CheckUser\Api\ApiQueryCheckUser
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserIpUsersResponse
- * @covers \MediaWiki\CheckUser\Api\CheckUser\ApiQueryCheckUserUserIpsResponse
- * @covers \MediaWiki\CheckUser\Services\ApiQueryCheckUserResponseFactory
+ * @covers \MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUser
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserAbstractResponse
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserActionsResponse
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserIpUsersResponse
+ * @covers \MediaWiki\Extension\CheckUser\Api\CheckUser\ApiQueryCheckUserUserIpsResponse
+ * @covers \MediaWiki\Extension\CheckUser\Services\ApiQueryCheckUserResponseFactory
  */
 class ApiQueryCheckUserTest extends ApiTestCase {
 
@@ -67,8 +67,11 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 	 * @inheritDoc
 	 */
 	public function doApiRequestWithToken(
-		array $params, ?array $session = null,
-		?Authority $performer = null, $tokenType = 'csrf', $paramPrefix = null
+		array $params,
+		?array $session = null,
+		?Authority $performer = null,
+		$tokenType = 'csrf',
+		$paramPrefix = null
 	) {
 		// From ApiTestCase::doApiRequest() but modified
 		$session = RequestContext::getMain()->getRequest()->getSessionArray();
@@ -113,7 +116,9 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		/** @var ApiQuery $query */
 		$query = $main->getModuleManager()->getModule( 'query' );
 		return TestingAccessWrapper::newFromObject( new ApiQueryCheckUser(
-			$query, $moduleName, $services->get( 'ApiQueryCheckUserResponseFactory' )
+			$query,
+			$moduleName,
+			$services->get( 'ApiQueryCheckUserResponseFactory' )
 		) );
 	}
 
@@ -223,7 +228,12 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 
 	/** @dataProvider provideExpectedApiResponses */
 	public function testResponseFromApi(
-		$requestType, $expectedRequestTypeInResponse, $target, $timeCond, $xff, $expectedData
+		string $requestType,
+		string $expectedRequestTypeInResponse,
+		string $target,
+		string $timeCond,
+		?bool $xff,
+		array $expectedData
 	) {
 		ConvertibleTimestamp::setFakeTime( '20230406060708' );
 		$result = $this->doCheckUserApiRequest(
@@ -243,7 +253,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		);
 	}
 
-	public static function provideExpectedApiResponses() {
+	public static function provideExpectedApiResponses(): array {
 		return [
 			'userips check on CheckUserAPITestUser1' => [
 				// The value provided as curequest
@@ -405,7 +415,11 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		$this->assertStatusGood( $blockStatus );
 		// Perform an 'actions' request and verify that the hidden user is not shown in the response.
 		$this->testResponseFromApi(
-			'actions', 'edits', '127.2.3.4', '-3 months', true,
+			'actions',
+			'edits',
+			'127.2.3.4',
+			'-3 months',
+			true,
 			[
 				[
 					'timestamp' => '2023-04-05T06:07:12Z',
@@ -444,7 +458,11 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 		$this->assertStatusGood( $blockStatus );
 		// Perform an 'ipusers' request and verify that the hidden user is not shown in the response.
 		$this->testResponseFromApi(
-			'ipusers', 'ipusers', '127.2.3.4', '-3 months', true,
+			'ipusers',
+			'ipusers',
+			'127.2.3.4',
+			'-3 months',
+			true,
 			[
 				[
 					'name' => wfMessage( 'rev-deleted-user' )->text(),
@@ -623,6 +641,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 
 	public function addDBDataOnce() {
 		$this->overrideConfigValue( 'CheckUserLogLogins', true );
+
 		// Add some testing entries to the CheckUser result tables to test the API
 		// Get two testing users with pre-defined usernames and a test page with a pre-defined name
 		// so that we can use them in the tests without having to store the name.

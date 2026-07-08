@@ -17,7 +17,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	private string $titlesPath = '/tmp/titles';
 
 	public function __construct() {
-		parent::__construct( false /* Doesn't actually require parsoid */ );
+		parent::__construct();
 		$this->addDescription(
 			"Validate round-trip testing results.\n" .
 			"Typical usage:\n" .
@@ -189,6 +189,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 		$this->dashes( "Checking out $commit on parsoidtest1001" );
 		$this->ssh( self::cmd(
+			'umask 0002', '&&',
 			$cdDir, '&&',
 			"git fetch", '&&',
 			'git checkout', [ $commit ], '&&',
@@ -200,6 +201,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 			# the --contentVersion option in most scenarios
 			$this->dashes( "Checking out $commit on testreduce1002" );
 			$this->ssh( self::cmd(
+				'umask 0002', '&&',
 				$cdDir, '&&',
 				"git fetch", '&&',
 				'git checkout', [ $commit ] ), 'testreduce1002.eqiad.wmnet' );
@@ -392,6 +394,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	private function updateSemanticErrorTitles( string $baseUrl, array &$titles ): void {
 		$url = $baseUrl;
 		$page = 0;
+		$overrideTooMany = false;
 		do {
 			$done = true;
 			$dom = DOMUtils::parseHTML( $this->makeCurlRequest( $url ) );
@@ -401,14 +404,27 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 			}
 			// Fetch more if necessary
 			if ( !DOMCompat::querySelectorAll( $dom, 'tr[status=skip]' ) ) {
+				echo( '.' ); // visual feedback about pages being fetched.
 				$done = false;
 				$page++;
 				$url = $baseUrl . "/$page";
-				if ( $page > 2 ) {
-					throw new \RuntimeException( "Too many regressions? Fetched $page pages of $baseUrl. Aborting." );
+				if ( $page > 2 && !$overrideTooMany ) {
+					echo( "\n" );
+					$a = readline( "Too many regressions? Fetched $page pages of $baseUrl. " .
+									"Expected to see these many? Press y/Y to continue. Will abort otherwise. " );
+					if ( strtolower( $a ) === 'y' ) {
+						$overrideTooMany = true;
+					} else {
+						// Exit!
+						exit();
+					}
 				}
 			}
 		} while ( !$done );
+		if ( $page > 0 ) {
+			echo( "\n" );
+		}
+		echo( "Processed " . ( $page + 1 ) . " pages. Total titles to test: " . count( $titles ) . "\n" );
 	}
 
 	/** @inheritDoc */
@@ -427,8 +443,11 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$rtSelserUrl = preg_replace( "#regressions/between/.*/(.*)$#", "rtselsererrors/$1", $baseUrl );
 			$titles = [];
 
+			echo( "-- Looking for wt2wt regressions --\n" );
 			$this->updateSemanticErrorTitles( $baseUrl, $titles );
+			echo( "-- Looking for selser regressions --\n" );
 			$this->updateSemanticErrorTitles( $rtSelserUrl, $titles );
+			echo( "\n" );
 			$localTitlesPath = "/tmp/titles";
 			file_put_contents( $localTitlesPath, implode( "\n", $titles ) );
 		} elseif ( $this->hasOption( 'titles' ) ) {

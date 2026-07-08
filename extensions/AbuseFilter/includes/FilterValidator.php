@@ -16,21 +16,12 @@ use Wikimedia\Message\ListType;
  * This class validates filters, e.g. before saving.
  */
 class FilterValidator {
-	public const SERVICE_NAME = 'AbuseFilterFilterValidator';
+	public const SERVICE_NAME = ServiceNames::FilterValidator;
 
 	public const CONSTRUCTOR_OPTIONS = [
 		'AbuseFilterValidGroups',
 		'AbuseFilterActionRestrictions',
 	];
-
-	/** @var ChangeTagValidator */
-	private $changeTagValidator;
-
-	/** @var RuleCheckerFactory */
-	private $ruleCheckerFactory;
-
-	/** @var AbuseFilterPermissionManager */
-	private $permManager;
 
 	/** @var string[] */
 	private $restrictedActions;
@@ -39,15 +30,12 @@ class FilterValidator {
 	private $validGroups;
 
 	public function __construct(
-		ChangeTagValidator $changeTagValidator,
-		RuleCheckerFactory $ruleCheckerFactory,
-		AbuseFilterPermissionManager $permManager,
+		private readonly ChangeTagValidator $changeTagValidator,
+		private readonly RuleCheckerFactory $ruleCheckerFactory,
+		private readonly AbuseFilterPermissionManager $permManager,
 		ServiceOptions $options
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->changeTagValidator = $changeTagValidator;
-		$this->ruleCheckerFactory = $ruleCheckerFactory;
-		$this->permManager = $permManager;
 		$this->restrictedActions = array_keys( array_filter( $options->get( 'AbuseFilterActionRestrictions' ) ) );
 		$this->validGroups = $options->get( 'AbuseFilterValidGroups' );
 	}
@@ -247,7 +235,6 @@ class FilterValidator {
 			foreach ( $throttleGroups as $group ) {
 				if ( str_contains( $group, ',' ) ) {
 					$subGroups = explode( ',', $group );
-					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 					if ( $subGroups !== array_unique( $subGroups ) ) {
 						$uniqueSubGroups = false;
 						break;

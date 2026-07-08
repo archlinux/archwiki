@@ -7,7 +7,6 @@
  * is loaded
  */
 module.exports = () => {
-	// Load these here so that in QUnit tests we have a chance to mock utils.js
 	const config = require( './../config.json' );
 
 	ve.init.mw.HCaptchaSaveErrorHandler = function () {};
@@ -18,6 +17,16 @@ module.exports = () => {
 
 	ve.init.mw.HCaptchaSaveErrorHandler.static.name = 'confirmEditHCaptcha';
 
+	ve.init.mw.HCaptchaSaveErrorHandler.static.window = window;
+
+	/**
+	 * Whether the save error handler has already automatically pressed "Save changes".
+	 * Used to avoid resubmitting hCaptcha automatically indefinitely.
+	 *
+	 * @type {boolean}
+	 */
+	ve.init.mw.HCaptchaSaveErrorHandler.static.hasAlreadyAutomaticallyResubmitted = false;
+
 	ve.init.mw.HCaptchaSaveErrorHandler.static.matchFunction = function ( data ) {
 		const captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
 
@@ -25,15 +34,34 @@ module.exports = () => {
 	};
 
 	ve.init.mw.HCaptchaSaveErrorHandler.static.process = function ( data, target ) {
-		const self = this,
-			siteKey = mw.config.get( 'wgConfirmEditHCaptchaSiteKey' ) || config.HCaptchaSiteKey,
+		// Destroy any existing hCaptcha widget from the onload handler or this handler
+		// as this widget needs to be used instead
+		let executeSaveAfterRender = false;
+		if ( ve.init.mw.HCaptchaOnLoadHandler ) {
+			ve.init.mw.HCaptchaOnLoadHandler.static.destroyWidget( target );
+			if ( ve.init.mw.HCaptchaOnLoadHandler.static.shouldRun() && !this.hasAlreadyAutomaticallyResubmitted ) {
+				this.hasAlreadyAutomaticallyResubmitted = true;
+				executeSaveAfterRender = true;
+			}
+		}
+
+		const $hCaptchaWidgetContainer = $( '<div>' ),
 			$container = $( '<div>' );
 
-		// Register extra fields
-		target.saveFields.wpCaptchaWord = function () {
-			// eslint-disable-next-line no-jquery/no-global-selector
-			return $( '[name=h-captcha-response]' ).val();
-		};
+		if ( config.HCaptchaInvisibleMode ) {
+			const $hCaptchaEditNotice = $( '<p>' );
+			$hCaptchaEditNotice.html( mw.message( 'hcaptcha-visual-editor-error-handler-warning' ).parse() );
+			$hCaptchaEditNotice.addClass(
+				've-ui-mwSaveDialog-license ext-confirmEdit-hcaptcha-visual-editor-error-handler-warning'
+			);
+			$container.append( $hCaptchaEditNotice );
+		}
+
+		this.renderHCaptchaPrivacyPolicyNotice( $container );
+
+		$hCaptchaWidgetContainer.addClass( 'ext-confirmEdit-visualEditor-hCaptchaWidgetContainer' );
+		$container.addClass( 'ext-confirmEdit-visualEditor-hCaptchaContainer' );
+		$container.append( $hCaptchaWidgetContainer );
 
 		this.getReadyPromise()
 			.then( () => {
@@ -44,19 +72,42 @@ module.exports = () => {
 				// ProcessDialog's error system isn't great for this yet.
 				target.saveDialog.clearMessage( 'api-save-error' );
 				target.saveDialog.showMessage( 'api-save-error', $container, { wrap: false } );
-				self.widgetId = window.hcaptcha.render( $container[ 0 ], {
-					sitekey: siteKey,
-					callback: function () {
-						target.saveDialog.executeAction( 'save' );
-					},
-					'expired-callback': function () {},
-					'error-callback': function () {}
-				} );
-				target.saveDialog.popPending();
-				target.saveDialog.updateSize();
 
+				let siteKey = null;
+				const captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
+				if ( captchaData && captchaData.type === 'hcaptcha' && captchaData.key ) {
+					if ( captchaData.error === 'forceshowcaptcha' ) {
+						target.saveFields.wgConfirmEditForceShowCaptcha = () => true;
+					}
+					siteKey = captchaData.key;
+				}
+
+				this.renderHCaptchaWidget(
+					this.window,
+					target,
+					$hCaptchaWidgetContainer,
+					siteKey
+				);
+
+				target.saveDialog.popPending();
 				target.emit( 'saveErrorCaptcha' );
+
+				if ( executeSaveAfterRender ) {
+					target.saveDialog.executeAction( 'save' );
+				}
 			} );
+	};
+
+	/**
+	 * When the save dialog is closed, we should reset the auto-resubmit code.
+	 *
+	 * @param {ve.init.Target} target
+	 * @return {void}
+	 */
+	ve.init.mw.HCaptchaSaveErrorHandler.static.onSaveWorkflowEnd = function ( target ) {
+		ve.init.mw.HCaptcha.static.onSaveWorkflowEnd.call( this, target );
+
+		this.hasAlreadyAutomaticallyResubmitted = false;
 	};
 
 	ve.init.mw.saveErrorHandlerFactory.register( ve.init.mw.HCaptchaSaveErrorHandler );

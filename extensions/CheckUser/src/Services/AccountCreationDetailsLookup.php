@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
@@ -25,35 +25,30 @@ class AccountCreationDetailsLookup {
 		MainConfigNames::NewUserLog,
 	];
 
-	private LoggerInterface $logger;
-	private ServiceOptions $options;
-
 	public function __construct(
-		LoggerInterface $logger,
-		ServiceOptions $options
+		private readonly LoggerInterface $logger,
+		private readonly ServiceOptions $options,
 	) {
-		$this->logger = $logger;
-		$this->options = $options;
+		$this->options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 	}
 
 	/**
-	 * Given a username as it appears in some other local wiki database or in the globaluser
-	 * table, and a db connection for the local wiki, return a row with the IP address
-	 * and user agent logged at the time the user was created on the local wiki, if
-	 * available, or an empty result set otherwise
+	 * Fetches the IP and user agent for the account creation where the user created
+	 * their own account, or an empty result set otherwise.
 	 *
-	 * @param string $username the name of the user as stored in a local or central database
+	 * @param string $username The name of the user that was created
 	 * @param IReadableDatabase $dbr
 	 * @return IResultWrapper
 	 */
-	public function getIPAndUserAgentFromDB( string $username, IReadableDatabase $dbr ) {
+	private function getIPAndUserAgentFromDB( string $username, IReadableDatabase $dbr ) {
 		// events will be logged in the private event table unless $wgNewUserLog is true,
 		// and config can be changed at any time, so we must check both there and the public
 		// log event table.
 		$result = $dbr->newSelectQueryBuilder()
-			->select( [ 'cupe_ip_hex', 'cupe_agent' ] )
+			->select( [ 'ip_hex' => 'cupe_ip_hex', 'agent' => 'cuua_text' ] )
 			->from( 'cu_private_event' )
 			->join( 'actor', null, [ 'cupe_actor = actor_id' ] )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cupe_agent_id' )
 			->where( $dbr->expr( 'cupe_log_action', '=', [ 'create-account', 'autocreate-account' ] ) )
 			->andWhere( $dbr->expr( 'actor_name', '=', $username ) )
 			->limit( 2 )
@@ -62,12 +57,14 @@ class AccountCreationDetailsLookup {
 		if ( $result->numRows() ) {
 			return $result;
 		}
+
 		return $dbr->newSelectQueryBuilder()
-			->select( [ 'cule_ip_hex', 'cule_agent' ] )
+			->select( [ 'ip_hex' => 'cule_ip_hex', 'agent' => 'cuua_text' ] )
 			->from( 'cu_log_event' )
 			->join( 'actor', null, [ 'cule_actor = actor_id' ] )
 			->join( 'logging', null, [ 'cule_log_id = log_id' ] )
-			->where( $dbr->expr( 'log_action', '=', 'create' ) )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cule_agent_id' )
+			->where( $dbr->expr( 'log_action', '=', [ 'create', 'autocreate' ] ) )
 			->andWhere( $dbr->expr( 'actor_name', '=', $username ) )
 			->limit( 2 )
 			->caller( __METHOD__ )
@@ -75,27 +72,26 @@ class AccountCreationDetailsLookup {
 	}
 
 	/**
-	 * Given a username as it appears in some other local wiki database or in the globaluser
-	 * users table, a db connection for the local wiki, and the id of the log entry for
-	 * the creation of this user on the local wiki by another user, return the IP address
-	 * and user agent of the performer if available, or an empty result set otherwise
+	 * Fetches the IP and user agent for an account creation performed
+	 * by an already logged in user, or an empty result set otherwise.
 	 *
-	 * @param string $username the name of the user as stored in a local or central database
+	 * @param string $username the name of the performer of the account creation
 	 * @param IReadableDatabase $dbr
 	 * @param int $logId the log_id value from the entry in the logging table for which we
 	 *   want the performer's ip and user agent
 	 * @return IResultWrapper
 	 */
-	public function getIPAndUserAgentForCreationByOtherUser( string $username, IReadableDatabase $dbr, int $logId ) {
+	private function getIPAndUserAgentForCreationByOtherUser( string $username, IReadableDatabase $dbr, int $logId ) {
 		// we want the ip and user agent for the performer ($username) that did the account
 		// creation recorded in the logging table with id log_id
 		// we cannot do this for events written only into the cu_private_event table, so we
 		// only look at cu_log_event.
 		return $dbr->newSelectQueryBuilder()
-			->select( [ 'cule_ip_hex', 'cule_agent' ] )
+			->select( [ 'ip_hex' => 'cule_ip_hex', 'agent' => 'cuua_text' ] )
 			->from( 'cu_log_event' )
 			->join( 'actor', null, [ 'cule_actor = actor_id' ] )
 			->join( 'logging', null, [ 'cule_log_id = log_id' ] )
+			->leftJoin( 'cu_useragent', null, 'cuua_id = cule_agent_id' )
 			->where( $dbr->expr( 'cule_log_id', '=', $logId ) )
 			->andWhere( $dbr->expr( 'actor_name', '=', $username ) )
 			->andWhere( $dbr->expr( 'log_action', '=', [ 'create2', 'byemail' ] ) )
@@ -156,36 +152,45 @@ class AccountCreationDetailsLookup {
 	}
 
 	/**
-	 * Returns the ip and user agent associated with the account creation for the given user,
-	 * or null if none can be found
+	 * Returns the IP and user agent associated with an account creation performed by
+	 * the given user, or null if this cannot be found
 	 *
 	 * @param string $username the name of the user as stored in a local or central database
 	 * @param IReadableDatabase $dbr
-	 * @param int|null $logId
+	 * @param int|null $logId If providing a log ID, this will search for creations performed
+	 *   by a user and $username should be the performer. Use {@link self::findPerformerAndLogId}
+	 *   to get this information.
 	 * @return array{ip: string, agent: string}|null
 	 */
 	public function getAccountCreationIPAndUserAgent(
-		string $username, IReadableDatabase $dbr, ?int $logId = null ) {
+		string $username,
+		IReadableDatabase $dbr,
+		?int $logId = null
+	): ?array {
 		if ( $logId ) {
 			$result = $this->getIPAndUserAgentForCreationByOtherUser( $username, $dbr, $logId );
 		} else {
 			$result = $this->getIPAndUserAgentFromDB( $username, $dbr );
 		}
 
-		if ( $result->numRows() == 0 ) {
-			# probably older than the checkuser keep timeframe
+		if ( $result->numRows() === 0 ) {
 			return null;
 		} elseif ( $result->numRows() > 1 ) {
-			# not sure what this could mean, dunno if worth logging
-			$this->logger->warning( "More than one account creation entry for user $username on a specific wiki" );
+			$this->logger->warning(
+				"More than one account creation entry for user {username} on a specific wiki",
+				[ 'username' => $username ]
+			);
 		}
-		foreach ( $result as $row ) {
-			if ( isset( $row->cupe_ip_hex ) ) {
-				return [ 'ip' => IPUtils::formatHex( $row->cupe_ip_hex ), 'agent' => $row->cupe_agent ];
-			} else {
-				return [ 'ip' => IPUtils::formatHex( $row->cule_ip_hex ), 'agent' => $row->cule_agent ];
-			}
-		}
+
+		$row = $result->fetchObject();
+		return [ 'ip' => IPUtils::formatHex( $row->ip_hex ), 'agent' => $row->agent ];
 	}
 
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias( AccountCreationDetailsLookup::class, 'MediaWiki\\CheckUser\\Services\\AccountCreationDetailsLookup' );
+// @codeCoverageIgnoreEnd

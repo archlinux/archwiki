@@ -19,34 +19,19 @@ class InputCheckFactory {
 	private $url;
 	/** @var int */
 	private $timeout;
-	/** @var WANObjectCache */
-	private $cache;
-	/** @var HttpRequestFactory */
-	private $httpFactory;
-	/** @var LoggerInterface */
-	private $logger;
 	/** @var string */
 	private $texVCmode;
 
-	/**
-	 * @param ServiceOptions $options
-	 * @param WANObjectCache $cache
-	 * @param HttpRequestFactory $httpFactory
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
 		ServiceOptions $options,
-		WANObjectCache $cache,
-		HttpRequestFactory $httpFactory,
-		LoggerInterface $logger
+		private readonly WANObjectCache $cache,
+		private readonly HttpRequestFactory $httpFactory,
+		private readonly LoggerInterface $logger,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->url = $options->get( 'MathMathMLUrl' );
 		$this->timeout = $options->get( 'MathLaTeXMLTimeout' );
 		$this->texVCmode = $options->get( 'MathTexVCService' );
-		$this->cache = $cache;
-		$this->httpFactory = $httpFactory;
-		$this->logger = $logger;
 	}
 
 	/**

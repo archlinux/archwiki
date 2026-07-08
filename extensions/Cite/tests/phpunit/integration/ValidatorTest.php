@@ -327,7 +327,7 @@ class ValidatorTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $validator->closestMatch( $input, $allowed ) );
 	}
 
-	public function provideClosestMatch() {
+	public static function provideClosestMatch() {
 		return [
 			[ 'gruop', 'group' ],
 			[ 'folow', 'follow' ],

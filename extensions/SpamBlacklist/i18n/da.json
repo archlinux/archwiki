@@ -11,6 +11,8 @@
 	"spam-blacklisted-email": "Forbudt e-mailadresse",
 	"spam-blacklisted-email-text": "Din e-mailadresse er i øjeblikket blokeret fra at sende e-mails til andre brugere.",
 	"spam-blacklisted-email-signup": "Den angivne e-mailadresse er i øjeblikket forbudt at bruge.",
+	"spam-blacklisted-email-change": "Den angivne e-mailadresse er i øjeblikket blokeret for at bruge.",
+	"spam-invalid-lines-error": "Følgende spam-blokeringsliste {{PLURAL:$1|linje er et|linjer er}} ugyldige regulære {{PLURAL:$1| udtryk|udtryk}} og {{PLURAL:$1|skal}} rettes, før siden gemmes:\n$2",
 	"spam-blacklist-desc": "Antispamværktøjet er baseret på regulære udtryk, der giver mulighed for at blokere URL'er i sider og e-mailadresser for registrerede brugere",
 	"log-name-spamblacklist": "Log over spamblokeringsliste",
 	"log-description-spamblacklist": "Disse hændelser sporer hits på spamblokeringslisten.",

@@ -329,7 +329,7 @@ class PluralTest extends TestCase {
 		yield 'Maltese Other 99' => [ 'mt', 99, [ 'one', 'few', 'many', 'other' ], 'other' ];
 		yield 'Maltese Other 100' => [ 'mt', 100, [ 'one', 'few', 'many', 'other' ], 'other' ];
 		yield 'Maltese Other 101' => [ 'mt', 101, [ 'one', 'few', 'many', 'other' ], 'other' ];
-		yield 'Maltese Few 102' => [ 'mt', 102, [ 'one', 'few', 'many', 'other' ], 'few' ];
+		yield 'Maltese Other 102' => [ 'mt', 102, [ 'one', 'few', 'many', 'other' ], 'other' ];
 		yield 'Maltese Few 110' => [ 'mt', 110, [ 'one', 'few', 'many', 'other' ], 'few' ];
 		yield 'Maltese Many 111' => [ 'mt', 111, [ 'one', 'few', 'many', 'other' ], 'many' ];
 		yield 'Maltese Many 119' => [ 'mt', 119, [ 'one', 'few', 'many', 'other' ], 'many' ];

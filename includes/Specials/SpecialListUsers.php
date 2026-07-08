@@ -1,0 +1,98 @@
+<?php
+/**
+ * Copyright © 2004 Brooke Vibber, lcrocker, Tim Starling,
+ * Domas Mituzas, Antoine Musso, Jens Frank, Zhengzhu,
+ * 2006 Rob Church <robchur@gmail.com>
+ *
+ * @license GPL-2.0-or-later
+ * @file
+ */
+
+namespace MediaWiki\Specials;
+
+use MediaWiki\Block\HideUserUtils;
+use MediaWiki\Html\Html;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\SpecialPage\IncludableSpecialPage;
+use MediaWiki\Specials\Pager\UsersPager;
+use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserIdentityLookup;
+use Wikimedia\Rdbms\IConnectionProvider;
+
+/**
+ * Implements Special:Listusers
+ *
+ * @ingroup SpecialPage
+ */
+class SpecialListUsers extends IncludableSpecialPage {
+
+	public function __construct(
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly IConnectionProvider $dbProvider,
+		private readonly UserGroupManager $userGroupManager,
+		private readonly UserIdentityLookup $userIdentityLookup,
+		private readonly HideUserUtils $hideUserUtils,
+		private readonly TempUserConfig $tempUserConfig,
+	) {
+		parent::__construct( 'Listusers' );
+	}
+
+	/**
+	 * @param string|null $par A group to list users from
+	 */
+	public function execute( $par ) {
+		$this->setHeaders();
+		$this->outputHeader();
+
+		$up = new UsersPager(
+			$this->getContext(),
+			$this->getHookContainer(),
+			$this->linkBatchFactory,
+			$this->dbProvider,
+			$this->userGroupManager,
+			$this->userIdentityLookup,
+			$this->hideUserUtils,
+			$this->tempUserConfig,
+			$par,
+			$this->including()
+		);
+
+		# getBody() first to check, if empty
+		$usersbody = $up->getBody();
+
+		$s = '';
+		if ( !$this->including() ) {
+			$s = $up->getPageHeader();
+		}
+
+		if ( $usersbody ) {
+			$s .= $up->getNavigationBar();
+			$s .= Html::rawElement( 'ul', [], $usersbody );
+			$s .= $up->getNavigationBar();
+		} else {
+			$s .= $this->msg( 'listusers-noresult' )->parseAsBlock();
+		}
+
+		$out = $this->getOutput();
+		$out->addHTML( $s );
+		$out->addModuleStyles( 'mediawiki.interface.helpers.styles' );
+	}
+
+	/**
+	 * Return an array of subpages that this special page will accept.
+	 *
+	 * @return string[] subpages
+	 */
+	public function getSubpagesForPrefixSearch() {
+		return $this->userGroupManager->listAllGroups();
+	}
+
+	/** @inheritDoc */
+	protected function getGroupName() {
+		return 'users';
+	}
+}
+
+/** @deprecated class alias since 1.41 */
+class_alias( SpecialListUsers::class, 'SpecialListUsers' );

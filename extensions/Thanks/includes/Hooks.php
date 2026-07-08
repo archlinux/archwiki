@@ -9,7 +9,9 @@
 
 namespace MediaWiki\Extension\Thanks;
 
-use DifferenceEngine;
+use MediaWiki\Actions\Hook\HistoryToolsHook;
+use MediaWiki\Actions\Hook\PageHistoryBeforeListHook;
+use MediaWiki\Actions\Hook\PageHistoryPager__doBatchLookupsHook;
 use MediaWiki\Api\ApiModuleManager;
 use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
@@ -19,29 +21,27 @@ use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Diff\DifferenceEngine;
 use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
 use MediaWiki\Diff\Hook\DiffToolsHook;
 use MediaWiki\Extension\Thanks\Api\ApiFlowThank;
-use MediaWiki\Hook\ChangesListInitRowsHook;
-use MediaWiki\Hook\GetLogTypesOnUserHook;
-use MediaWiki\Hook\HistoryToolsHook;
-use MediaWiki\Hook\LogEventsListLineEndingHook;
-use MediaWiki\Hook\PageHistoryBeforeListHook;
-use MediaWiki\Hook\PageHistoryPager__doBatchLookupsHook;
 use MediaWiki\Html\Html;
-use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logging\DatabaseLogEntry;
+use MediaWiki\Logging\Hook\LogEventsListLineEndingHook;
 use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Article;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\RecentChanges\Hook\ChangesListInitRowsHook;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\Hook\GetLogTypesOnUserHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
@@ -144,15 +144,12 @@ class Hooks implements
 		// Exclude temp users (T345679)
 		// Exclude users who are blocked.
 		// Check whether bots are allowed to receive thanks.
-		// Don't allow thanking for a diff that includes multiple revisions
-		// Check whether we have a revision id to link to
 		if ( $user->isNamed()
 			&& !$userIdentity->equals( $recipient )
-			&& !$this->isUserBlockedFromTitle( $user, $revisionRecord->getPageAsLinkTarget() )
+			&& !$this->isUserBlockedFromPage( $user, $revisionRecord->getPage() )
 			&& !self::isUserBlockedFromThanks( $user )
 			&& self::canReceiveThanks( $this->config, $this->userFactory, $recipient )
 			&& !$revisionRecord->isDeleted( RevisionRecord::DELETED_TEXT )
-			&& $revisionRecord->getId() !== 0
 		) {
 			$links[] = $this->generateThankElement(
 				$revisionRecord->getId(),
@@ -168,14 +165,14 @@ class Hooks implements
 	 * Check whether the user is blocked from the title associated with the revision.
 	 *
 	 * This queries the replicas for a block; if 'no block' is incorrectly reported, it
-	 * will be caught by ApiThank::dieOnUserBlockedFromTitle when the user attempts to thank.
+	 * will be caught by ApiThank::dieOnUserBlockedFromPage when the user attempts to thank.
 	 *
 	 * @param User $user
-	 * @param LinkTarget $title
+	 * @param PageIdentity $page
 	 * @return bool
 	 */
-	private function isUserBlockedFromTitle( User $user, LinkTarget $title ) {
-		return $this->permissionManager->isBlockedFrom( $user, $title, true );
+	private function isUserBlockedFromPage( User $user, PageIdentity $page ): bool {
+		return $this->permissionManager->isBlockedFrom( $user, $page, fromReplica: true );
 	}
 
 	/**
@@ -217,6 +214,22 @@ class Hooks implements
 	}
 
 	/**
+	 * Get session key for client-side duplicate thanks prevention
+	 *
+	 * @param string $type What kind of event is being thanked for.
+	 * Currently accepted values are 'rev' / 'revision' (equivalent) and 'log'.
+	 * @param string|int $id Identifier of the event (should be unique within its kind).
+	 */
+	public static function getSessionKey( string $type, $id ): string {
+		// ApiCoreThank and ::generateThankElement disagree
+		// on the correct type for revisions, accept both.
+		if ( $type === 'revision' ) {
+			$type = 'rev';
+		}
+		return "thanks-thanked-$type$id";
+	}
+
+	/**
 	 * Helper for self::insertThankLink
 	 * Creates either a thank link or thanked span based on users session
 	 * @param int $id Revision or log ID to generate the thank element for.
@@ -231,16 +244,15 @@ class Hooks implements
 		bool $isPrimaryButton = false
 	) {
 		$useCodex = RequestContext::getMain()->getSkin()->getSkinName() === 'minerva';
-		// Check if the user has already thanked for this revision or log entry.
-		// Session keys are backwards-compatible, and are also used in the ApiCoreThank class.
-		$sessionKey = ( $type === 'revision' ) ? $id : $type . $id;
 		$class = $useCodex ?
 			'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive' :
 			'';
 		if ( $isPrimaryButton && $useCodex ) {
 			$class .= ' cdx-button--weight-primary';
 		}
-		if ( $sender->getRequest()->getSessionData( "thanks-thanked-$sessionKey" ) ) {
+		// Check if the user has already thanked for this revision or log entry.
+		// Session keys are also used in the ApiCoreThank class.
+		if ( $sender->getRequest()->getSessionData( self::getSessionKey( $type, $id ) ) ) {
 			$class .= ' mw-thanks-thanked';
 
 			return Html::element(
@@ -288,7 +300,7 @@ class Hooks implements
 	 * @param IContextSource $context RequestContext object
 	 */
 	public function onPageHistoryBeforeList( $page, $context ) {
-		if ( $context->getUser()->isRegistered() ) {
+		if ( $context->getUser()->isNamed() ) {
 			$this->addThanksModule( $context->getOutput() );
 		}
 	}
@@ -327,7 +339,7 @@ class Hooks implements
 	 * @param DifferenceEngine $diff DifferenceEngine object that's calling.
 	 */
 	public function onDifferenceEngineViewHeader( $diff ) {
-		if ( $diff->getUser()->isRegistered() ) {
+		if ( $diff->getUser()->isNamed() ) {
 			$this->addThanksModule( $diff->getOutput() );
 		}
 	}
@@ -432,7 +444,7 @@ class Hooks implements
 		if (
 			!$user->isNamed()
 			|| $entry->isDeleted( LogPage::DELETED_USER )
-			|| $this->isUserBlockedFromTitle( $user, $entry->getTarget() )
+			|| $this->isUserBlockedFromPage( $user, $entry->getTarget() )
 			|| self::isUserBlockedFromThanks( $user )
 		) {
 			return;

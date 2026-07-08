@@ -1,15 +1,21 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Unit\CheckUser\Pagers;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\CheckUser\Pagers;
 
 use LogicException;
-use MediaWiki\Cache\LinkBatch;
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager;
+use MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUsernameResultInterface;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\SuggestedInvestigations\Services\SuggestedInvestigationsCaseLookupService;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\LinkBatch;
+use MediaWiki\Page\LinkBatchFactory;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -19,7 +25,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  *
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
+ * @covers \MediaWiki\Extension\CheckUser\CheckUser\Pagers\CheckUserGetUsersPager
  */
 class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 
@@ -142,7 +148,9 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 
 	/** @dataProvider providePreprocessResults */
 	public function testPreprocessResults(
-		$results, $expectedReferenceIdsForLookup, $expectedUserSets
+		$results,
+		$expectedReferenceIdsForLookup,
+		$expectedUserSets
 	) {
 		// Get the object to test with
 		$objectUnderTest = $this->getMockBuilder( CheckUserGetUsersPager::class )
@@ -188,6 +196,11 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 			->willReturn( $linkBatch );
 		$objectUnderTest->linkBatchFactory = $linkBatchFactory;
 
+		$mockSiCaseLookup = $this->createMock( SuggestedInvestigationsCaseLookupService::class );
+		$mockSiCaseLookup->method( 'areSuggestedInvestigationsEnabled' )
+			->willReturn( false );
+		$objectUnderTest->siCaseLookupService = $mockSiCaseLookup;
+
 		// Call the method under test.
 		$objectUnderTest->preprocessResults( $results );
 		// Assert that the userSets array contains the expected items.
@@ -218,6 +231,11 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 				'to the expected array.'
 			);
 		}
+	}
+
+	public function testImplementsCheckUsernameResultInterface(): void {
+		$pager = $this->createPartialMock( CheckUserGetUsersPager::class, [] );
+		$this->assertInstanceOf( CheckUsernameResultInterface::class, $pager );
 	}
 
 	public static function providePreprocessResults() {
@@ -252,7 +270,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => 'Test',
 						'user' => 1,
 						'actor' => 1,
-						'ip' => '127.0.0.1',
+						'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
 						'xff' => null,
 						'agent' => 'Testing user agent',
 						'timestamp' => $largestFakeTimestamp,
@@ -283,7 +301,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => 'Test',
 						'user' => 1,
 						'actor' => 1,
-						'ip' => '127.0.0.1',
+						'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
 						'xff' => '125.6.5.4',
 						'agent' => 'Testing user agent',
 						'timestamp' => $largestFakeTimestamp,
@@ -294,7 +312,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => 'Testing',
 						'user' => 2,
 						'actor' => 2,
-						'ip' => '127.0.0.2',
+						'ip_hex' => IPUtils::toHex( '127.0.0.2' ),
 						'xff' => null,
 						'agent' => 'Testing user agent',
 						'timestamp' => $middleFakeTimestamp,
@@ -305,7 +323,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => 'Test',
 						'user' => 1,
 						'actor' => 1,
-						'ip' => '127.0.0.2',
+						'ip_hex' => IPUtils::toHex( '127.0.0.2' ),
 						'xff' => null,
 						'agent' => 'Testing user agent1234',
 						'timestamp' => $middleFakeTimestamp,
@@ -316,7 +334,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => 'Test',
 						'user' => 1,
 						'actor' => 1,
-						'ip' => '127.0.0.1',
+						'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
 						'xff' => null,
 						'agent' => 'Testing user agent',
 						'timestamp' => $smallestFakeTimestamp,
@@ -328,7 +346,7 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 						'user_text' => null,
 						'user' => null,
 						'actor' => null,
-						'ip' => '127.0.0.1',
+						'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
 						'xff' => null,
 						'agent' => 'Testing user agent',
 						'timestamp' => $smallestFakeTimestamp,
@@ -385,5 +403,122 @@ class CheckUserGetUsersPagerTest extends CheckUserPagerUnitTestBase {
 				],
 			],
 		];
+	}
+
+	public function testPreprocessResultsBatchLookupsSiCases(): void {
+		$fakeTimestamp = ConvertibleTimestamp::now();
+
+		$results = new FakeResultWrapper( [
+			[
+				'user_text' => 'UserInCase',
+				'user' => 1,
+				'actor' => 1,
+				'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
+				'xff' => null,
+				'agent' => 'agent',
+				'timestamp' => $fakeTimestamp,
+				'client_hints_reference_id' => 0,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			],
+			[
+				'user_text' => 'UserNotInCase',
+				'user' => 2,
+				'actor' => 2,
+				'ip_hex' => IPUtils::toHex( '127.0.0.2' ),
+				'xff' => null,
+				'agent' => 'agent',
+				'timestamp' => $fakeTimestamp,
+				'client_hints_reference_id' => 0,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			],
+		] );
+
+		$objectUnderTest = $this->createMockPagerForPreprocessResults(
+			new UserIdentityValue( 100, 'CheckUserAdmin' ),
+			true
+		);
+
+		$mockSiCaseLookup = $this->createMock( SuggestedInvestigationsCaseLookupService::class );
+		$mockSiCaseLookup->method( 'areSuggestedInvestigationsEnabled' )->willReturn( true );
+		$mockSiCaseLookup->expects( $this->once() )
+			->method( 'getUserIdsWithCases' )
+			->with( [ 1, 2 ] )
+			->willReturn( [ 1 ] );
+		$objectUnderTest->siCaseLookupService = $mockSiCaseLookup;
+
+		$objectUnderTest->preprocessResults( $results );
+
+		$this->assertSame( [ 1 ], $objectUnderTest->usersInSiCases );
+	}
+
+	public function testPreprocessResultsSkipsSiLookupWithoutPermission(): void {
+		$fakeTimestamp = ConvertibleTimestamp::now();
+
+		$results = new FakeResultWrapper( [
+			[
+				'user_text' => 'SomeUser',
+				'user' => 1,
+				'actor' => 1,
+				'ip_hex' => IPUtils::toHex( '127.0.0.1' ),
+				'xff' => null,
+				'agent' => 'agent',
+				'timestamp' => $fakeTimestamp,
+				'client_hints_reference_id' => 0,
+				'client_hints_reference_type' => UserAgentClientHintsManager::IDENTIFIER_CU_CHANGES,
+			],
+		] );
+
+		$objectUnderTest = $this->createMockPagerForPreprocessResults(
+			new UserIdentityValue( 100, 'RegularUser' ),
+			false
+		);
+
+		$mockSiCaseLookup = $this->createMock( SuggestedInvestigationsCaseLookupService::class );
+		$mockSiCaseLookup->method( 'areSuggestedInvestigationsEnabled' )->willReturn( true );
+		$mockSiCaseLookup->expects( $this->never() )
+			->method( 'getUserIdsWithCases' );
+		$objectUnderTest->siCaseLookupService = $mockSiCaseLookup;
+
+		$objectUnderTest->preprocessResults( $results );
+
+		$this->assertSame( [], $objectUnderTest->usersInSiCases );
+	}
+
+	/**
+	 * Creates a mock CheckUserGetUsersPager with common setup for preprocessResults tests.
+	 *
+	 * @param UserIdentityValue $mockUser The user to return from ::getUser
+	 * @param bool $hasSiRight Whether the authority has the checkuser-suggested-investigations right
+	 * @return TestingAccessWrapper Wrapping the mock pager
+	 */
+	private function createMockPagerForPreprocessResults(
+		UserIdentityValue $mockUser,
+		bool $hasSiRight
+	): TestingAccessWrapper {
+		$objectUnderTest = $this->createPartialMock(
+			CheckUserGetUsersPager::class,
+			[ 'getUser', 'getAuthority', 'getOutput' ]
+		);
+		$objectUnderTest->method( 'getUser' )->willReturn( $mockUser );
+
+		$mockAuthority = $this->createMock( Authority::class );
+		$mockAuthority->method( 'isAllowed' )
+			->with( 'checkuser-suggested-investigations' )
+			->willReturn( $hasSiRight );
+		$objectUnderTest->method( 'getAuthority' )->willReturn( $mockAuthority );
+
+		$mockOutput = $this->createMock( OutputPage::class );
+		$objectUnderTest->method( 'getOutput' )->willReturn( $mockOutput );
+
+		$objectUnderTest = TestingAccessWrapper::newFromObject( $objectUnderTest );
+
+		$objectUnderTest->clientHintsLookup = $this->createMock( UserAgentClientHintsLookup::class );
+
+		$linkBatch = $this->createMock( LinkBatch::class );
+		$linkBatchFactory = $this->createMock( LinkBatchFactory::class );
+		$linkBatchFactory->method( 'newLinkBatch' )->willReturn( $linkBatch );
+		$objectUnderTest->linkBatchFactory = $linkBatchFactory;
+
+		return $objectUnderTest;
 	}
 }

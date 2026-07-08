@@ -2,30 +2,21 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\SpecialPage\SpecialPage;
 
 class SpecialTopicSubscriptions extends SpecialPage {
 
-	private LinkRenderer $linkRenderer;
-	private LinkBatchFactory $linkBatchFactory;
-	private ThreadItemStore $threadItemStore;
-	private ThreadItemFormatter $threadItemFormatter;
-
 	public function __construct(
-		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory,
-		ThreadItemStore $threadItemStore,
-		ThreadItemFormatter $threadItemFormatter
+		private readonly LinkRenderer $linkRenderer,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly ThreadItemStore $threadItemStore,
+		private readonly ThreadItemFormatter $threadItemFormatter,
 	) {
 		parent::__construct( 'TopicSubscriptions' );
-		$this->linkRenderer = $linkRenderer;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->threadItemStore = $threadItemStore;
-		$this->threadItemFormatter = $threadItemFormatter;
 	}
 
 	/**

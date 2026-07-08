@@ -1,28 +1,23 @@
 <?php
 
-namespace MediaWiki\CheckUser\Investigate\Pagers;
+namespace MediaWiki\Extension\CheckUser\Investigate\Pagers;
 
-use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\CheckUser\Hook\CheckUserFormatRowHook;
-use MediaWiki\CheckUser\Investigate\Services\TimelineService;
-use MediaWiki\CheckUser\Investigate\Utilities\DurationManager;
-use MediaWiki\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Context\IContextSource;
+use MediaWiki\Extension\CheckUser\Hook\CheckUserFormatRowHook;
+use MediaWiki\Extension\CheckUser\Investigate\Services\TimelineService;
+use MediaWiki\Extension\CheckUser\Investigate\Utilities\DurationManager;
+use MediaWiki\Extension\CheckUser\Services\TokenQueryManager;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Page\LinkBatchFactory;
 use MediaWiki\Pager\ReverseChronologicalPager;
 use MediaWiki\Parser\ParserOutput;
 use MediaWiki\User\UserIdentityValue;
 use Psr\Log\LoggerInterface;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 class TimelinePager extends ReverseChronologicalPager {
-	private CheckUserFormatRowHook $formatRowHookRunner;
-	private TimelineService $timelineService;
-	private TimelineRowFormatter $timelineRowFormatter;
-	private TokenQueryManager $tokenQueryManager;
-	private LinkBatchFactory $linkBatchFactory;
-
 	/** @var string */
 	private $start;
 
@@ -53,26 +48,18 @@ class TimelinePager extends ReverseChronologicalPager {
 	 */
 	private $filteredTargets;
 
-	private LoggerInterface $logger;
-
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
-		CheckUserFormatRowHook $formatRowHookRunner,
-		TokenQueryManager $tokenQueryManager,
+		private readonly CheckUserFormatRowHook $formatRowHookRunner,
+		private readonly TokenQueryManager $tokenQueryManager,
 		DurationManager $durationManager,
-		TimelineService $timelineService,
-		TimelineRowFormatter $timelineRowFormatter,
-		LinkBatchFactory $linkBatchFactory,
-		LoggerInterface $logger
+		private TimelineService $timelineService,
+		private TimelineRowFormatter $timelineRowFormatter,
+		private readonly LinkBatchFactory $linkBatchFactory,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct( $context, $linkRenderer );
-		$this->formatRowHookRunner = $formatRowHookRunner;
-		$this->timelineService = $timelineService;
-		$this->timelineRowFormatter = $timelineRowFormatter;
-		$this->tokenQueryManager = $tokenQueryManager;
-		$this->linkBatchFactory = $linkBatchFactory;
-		$this->logger = $logger;
 
 		$tokenData = $tokenQueryManager->getDataFromRequest( $context->getRequest() );
 		$this->mOffset = $tokenData['offset'] ?? '';
@@ -119,8 +106,14 @@ class TimelinePager extends ReverseChronologicalPager {
 		$lb->setCaller( __METHOD__ );
 
 		foreach ( $this->mResult as $row ) {
-			$lb->addUser( new UserIdentityValue( $row->user ?? 0, $row->user_text ?? $row->ip ) );
+			$username = $row->user_text;
+			if ( $username === null && $row->ip_hex !== null ) {
+				$username = IPUtils::formatHex( $row->ip_hex );
+			}
+			$lb->addUser( new UserIdentityValue( $row->user ?? 0, $username ?? '' ) );
 		}
+
+		$lb->execute();
 	}
 
 	/**
@@ -161,20 +154,11 @@ class TimelinePager extends ReverseChronologicalPager {
 			return '';
 		}
 
-		$formattedLinks = implode( ' ', array_filter(
-			$rowItems['links'],
-			static function ( $item ) {
-				return $item !== '';
-			} )
-		);
+		$formattedLinks = implode( ' ', array_filter( $rowItems['links'], 'strlen' ) );
 
-		$formatted = implode( ' . . ', array_filter(
-			array_merge(
-				[ $formattedLinks ],
-				$rowItems['info']
-			), static function ( $item ) {
-				return $item !== '';
-			} )
+		$formatted = implode(
+			' . . ',
+			array_filter( [ $formattedLinks, ...$rowItems['info'] ], 'strlen' )
 		);
 
 		$line .= Html::rawElement(
@@ -193,14 +177,13 @@ class TimelinePager extends ReverseChronologicalPager {
 	 */
 	public function getPagingQueries() {
 		return $this->tokenQueryManager->getPagingQueries(
-			$this->getRequest(), parent::getPagingQueries()
+			$this->getRequest(),
+			parent::getPagingQueries()
 		);
 	}
 
 	/**
 	 * Get the formatted result list, with navigation bars.
-	 *
-	 * @return ParserOutput
 	 */
 	public function getFullOutput(): ParserOutput {
 		return new ParserOutput(

@@ -115,5 +115,7 @@
 	"checkuser-userinfocard-last-edit-timestamp-label": "Posljednja izmjena: $1",
 	"checkuser-ipinfo-global-contributions-label": "Globalni doprinosi",
 	"checkuser-ipinfo-global-contributions-value": "{{PLURAL:$1|$1 globalna izmjena|$1 globalne izmjene|$1 globalnih izmjena|0=Nema globalnih izmjena}}",
-	"tooltip-t-global-contributions": "Spisak doprinosa sa svih wikija {{GENDER:$1|ovog korisnika|ove korisnice}}"
+	"tooltip-t-global-contributions": "Spisak doprinosa sa svih wikija {{GENDER:$1|ovog korisnika|ove korisnice}}",
+	"checkuser-contributions-temporary-account-bucketcount": "Ukupno privremenih računa sa svih povezanih IP-adresa: $1.",
+	"checkuser-contributions-temporary-accounts-on-ip": "Ukupno privremenih računa na ovoj IP-adresi: $1."
 }

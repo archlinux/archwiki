@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use HtmlArmor;
 use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Logging\LogFormatter;
@@ -12,13 +11,9 @@ use MediaWiki\RecentChanges\RecentChange;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 class AbuseFilterChangesList extends OldChangesList {
-
-	/**
-	 * @var string
-	 */
-	private $testFilter;
 
 	/**
 	 * @var array<int,bool> Maps RC IDs to a boolean indicating whether the RC would match a filter that is being tested
@@ -29,9 +24,8 @@ class AbuseFilterChangesList extends OldChangesList {
 	 * @param IContextSource $context
 	 * @param string $testFilter
 	 */
-	public function __construct( IContextSource $context, $testFilter ) {
+	public function __construct( IContextSource $context, private readonly string $testFilter ) {
 		parent::__construct( $context );
-		$this->testFilter = $testFilter;
 	}
 
 	/**
@@ -107,7 +101,7 @@ class AbuseFilterChangesList extends OldChangesList {
 				Linker::userToolLinks( $rc->getAttribute( 'rc_user' ), $rc->getAttribute( 'rc_user_text' ) );
 
 		if ( $this->isDeleted( $rc, RevisionRecord::DELETED_USER ) ) {
-			if ( $this->userCan( $rc, RevisionRecord::DELETED_USER ) ) {
+			if ( self::userCan( $rc, RevisionRecord::DELETED_USER, $this->getAuthority() ) ) {
 				$s .= ' <span class="history-deleted">' . $links . '</span>';
 			} else {
 				$s .= ' <span class="history-deleted">' .
@@ -125,7 +119,7 @@ class AbuseFilterChangesList extends OldChangesList {
 	 */
 	public function insertComment( $rc ) {
 		if ( $this->isDeleted( $rc, RevisionRecord::DELETED_COMMENT ) ) {
-			if ( $this->userCan( $rc, RevisionRecord::DELETED_COMMENT ) ) {
+			if ( self::userCan( $rc, RevisionRecord::DELETED_COMMENT, $this->getAuthority() ) ) {
 				return ' <span class="history-deleted">' .
 					MediaWikiServices::getInstance()->getCommentFormatter()
 						->formatBlock(

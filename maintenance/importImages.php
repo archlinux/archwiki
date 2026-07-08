@@ -25,10 +25,11 @@ require_once __DIR__ . '/Maintenance.php';
 use MediaWiki\ChangeTags\ChangeTags;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\Maintenance;
+use MediaWiki\Media\MediaHandler;
 use MediaWiki\Specials\SpecialUpload;
-use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\Utils\MWFileProps;
 use Wikimedia\FileBackend\FSFile\FSFile;
 
 class ImportImages extends Maintenance {
@@ -112,7 +113,7 @@ class ImportImages extends Maintenance {
 		$this->addOption( 'unprotect', 'Unprotects all uploaded images' );
 		$this->addOption( 'source-wiki-url',
 			'If specified, take User and Comment data for each imported file from this URL. '
-				. 'For example, --source-wiki-url="https://en.wikipedia.org/w/',
+				. 'For example, --source-wiki-url="https://en.wikipedia.org/w/"',
 			false,
 			true
 		);
@@ -167,7 +168,6 @@ class ImportImages extends Maintenance {
 			$user = User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] );
 		}
 		'@phan-var User $user';
-		StubGlobalUser::setUser( $user );
 
 		# Get block check. If a value is given, this specified how often the check is performed
 		$checkUserBlock = (int)$this->getOption( 'check-userblock' );
@@ -285,7 +285,6 @@ class ImportImages extends Maintenance {
 						);
 						continue;
 					}
-					StubGlobalUser::setUser( $realUser );
 					$user = $realUser;
 				}
 			} else {
@@ -352,7 +351,7 @@ class ImportImages extends Maintenance {
 					$summary,
 					$commentText,
 					$user,
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable,PhanPossiblyUndeclaredVariable
+					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 					$props,
 					$timestamp,
 					$tags

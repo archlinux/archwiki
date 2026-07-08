@@ -85,7 +85,7 @@ class MultipartUtils {
 			for ( $i = 0; $i < $length; $i++ ) {
 				$char = $input[$i];
 				$ord = ord( $char );
-				if ( strpos( $tspecials, $char ) !== false
+				if ( str_contains( $tspecials, $char )
 					|| $char === ' ' || $char === "\x7f" || $ord < 32
 				) {
 					throw new MultipartError( "Invalid unquoted string" );

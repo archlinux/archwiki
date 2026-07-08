@@ -28,20 +28,15 @@ class ApiDiscussionToolsThank extends ApiThank {
 	use ApiDiscussionToolsTrait;
 	use ApiParsoidTrait;
 
-	private RevisionLookup $revisionLookup;
-	private UserFactory $userFactory;
-
 	public function __construct(
 		ApiMain $main,
 		string $action,
 		PermissionManager $permissionManager,
 		LogStore $storage,
-		RevisionLookup $revisionLookup,
-		UserFactory $userFactory
+		private readonly RevisionLookup $revisionLookup,
+		private readonly UserFactory $userFactory,
 	) {
 		parent::__construct( $main, $action, $permissionManager, $storage );
-		$this->revisionLookup = $revisionLookup;
-		$this->userFactory = $userFactory;
 	}
 
 	/**

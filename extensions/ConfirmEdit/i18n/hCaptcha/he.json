@@ -16,7 +16,12 @@
 	"hcaptcha-challenge-closed": "כדי להמשיך, יש לפתור את ה־captcha.",
 	"hcaptcha-challenge-expired": "תם הזמן להשלמת ה־captcha. נא לנסות שוב.",
 	"hcaptcha-generic-error": "אירעה שגיאה בעת טעינת הטופס. כדי להמשיך, יש לרענן את הדף.",
+	"hcaptcha-internal-error": "אירעה שגיאה פנימית בעת שליחת הטופס. נא לנסות שוב.",
+	"hcaptcha-network-error": "אירעה שגיאת רשת בעת שליחת הטופס. נא לוודא שיש לך חיבור תקין ולנסות שוב.",
+	"hcaptcha-rate-limited": "נעשו יותר מדי ניסיונות לפתור את ה־captcha. נא להמתין רגע לפני ניסיון נוסף.",
 	"hcaptcha-loading-indicator-label": "נא להמתין עד טעינת הטופס...",
 	"hcaptcha-missing-token": "עדיין לא סיימנו לטעון את הטופס. נא להמתין כמה שניות ולאחר מכן לנסות שוב.",
-	"hcaptcha-noscript": "יש להשתמש ב־JavaScript כדי להמשיך. נא להפעיל את JavaScript בהגדרות הדפדפן שלך ולרענן את הדף."
+	"hcaptcha-noscript": "יש להשתמש ב־JavaScript כדי להמשיך. נא להפעיל את JavaScript בהגדרות הדפדפן שלך ולרענן את הדף.",
+	"hcaptcha-force-show-captcha-edit": "נא לשלוח מחדש את הטופס ולמלא את האתגר כדי לשמור את העריכה שלך.",
+	"hcaptcha-visual-editor-error-handler-warning": "נא לשלוח שוב את הטופס כדי לשמור את העריכה שלך."
 }

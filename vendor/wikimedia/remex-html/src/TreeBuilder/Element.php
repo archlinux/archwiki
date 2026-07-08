@@ -66,13 +66,13 @@ class Element implements FormattingElement {
 
 	/**
 	 * Internal to ActiveFormattingElements.
-	 * @var FormattingElement|null
+	 * @var Element|Marker|null
 	 */
 	public $prevAFE;
 
 	/**
 	 * Internal to ActiveFormattingElements.
-	 * @var FormattingElement|null
+	 * @var Element|Marker|null
 	 */
 	public $nextAFE;
 

@@ -3,11 +3,11 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aviator",
-			"Pizza1016",
-			"Tofeiku",
-			"Zamwan",
 			"Hakimi97",
-			"SNN95"
+			"Pizza1016",
+			"SNN95",
+			"Tofeiku",
+			"Zamwan"
 		]
 	},
 	"gadgets-desc": "Membolehkan pengguna memilih [[Special:Gadgets|gajet CSS dan JavaScript]] tempahan melalui [[Special:Preferences#mw-prefsection-gadgets|laman keutamaan]]",
@@ -71,5 +71,7 @@
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Kebergantungan}} berikut tidak wujud: $1 .",
 	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Kebergantungan}} berikut tidak lagi digunakan: $1.",
 	"gadgets-supports-urlload": "Gajet ini menyokong pemuatan melalui URL dengan parameter pertanyaan <code>?withgadget</code>.",
-	"gadgets-hidden": "Gajet ini [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden tersembunyi], bermakna ia tidak akan dipaparkan pada laman keutamaan."
+	"gadgets-hidden": "Gajet ini [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden tersembunyi], bermakna ia tidak akan dipaparkan pada laman keutamaan.",
+	"gadgets-subpage-invalid": "Sublaman tidak sah \"<nowiki>$1</nowiki>\"",
+	"gadgets-subpage-toofewparams": "Parameter sublaman tidak cukup (pautan tidak sah)."
 }

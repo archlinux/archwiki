@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\CheckUser\Hook;
+namespace MediaWiki\Extension\CheckUser\Hook;
 
 use MediaWiki\Context\IContextSource;
 
@@ -18,3 +18,13 @@ interface CheckUserSubtitleLinksHook {
 		array &$links
 	);
 }
+
+// @codeCoverageIgnoreStart
+/**
+ * @deprecated since 1.46
+ */
+class_alias(
+	CheckUserSubtitleLinksHook::class,
+	'MediaWiki\\CheckUser\\Hook\\CheckUserSubtitleLinksHook'
+);
+// @codeCoverageIgnoreEnd

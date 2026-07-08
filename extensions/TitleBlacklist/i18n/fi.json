@@ -26,7 +26,6 @@
 	"titleblacklist-forbidden-move": "Sivua ”$2” ei voi siirtää nimelle ”$3”, koska sivun ”$3” luonti on estetty. Se täsmää seuraavaan merkintään kiellettyjen nimien listassa: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Tiedoston ”$2” luonti on estetty, koska se täsmää seuraavaan merkintään kiellettyjen nimien listassa: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Käyttäjänimen ”$2” luonti on estetty.\nSe täsmää seuraavaan kiellettyjen nimien listan merkintään: <code>$1</code>",
-	"titleblacklist-invalid": "{{PLURAL:$1|Seuraava rivi kiellettyjen nimien listalla ei ole kelvollinen|Seuraavat rivit kiellettyjen nimien listalla eivät ole kelvollisia}}. Korjaa {{PLURAL:$1|se|ne}} ennen tallentamista:",
 	"titleblacklist-override": "Ohita kiellettyjen nimien lista, jos se täsmää",
 	"titleblacklist-warning": "<strong>Varoitus: Tätä sivua voivat muokata ainoastaan ylläpitäjät ja muut käyttäjät, joilla on <code>tboverride</code>-käyttöoikeus, koska se tästää seuraavaan kiellettyjen nimien listan merkintään:</strong> <code>$1</code>",
 	"right-tboverride": "Ohittaa kiellettyjen sivunimien tai käyttäjänimien lista",

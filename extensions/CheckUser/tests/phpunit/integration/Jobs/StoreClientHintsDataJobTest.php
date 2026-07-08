@@ -1,30 +1,32 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\Jobs;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\Jobs;
 
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
-use MediaWiki\CheckUser\Jobs\StoreClientHintsDataJob;
-use MediaWiki\CheckUser\Services\CheckUserInsert;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsLookup;
-use MediaWiki\CheckUser\Services\UserAgentClientHintsManager;
-use MediaWiki\CheckUser\Tests\CheckUserClientHintsCommonTraitTest;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
+use MediaWiki\Extension\CheckUser\Jobs\StoreClientHintsDataJob;
+use MediaWiki\Extension\CheckUser\Services\CheckUserInsert;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsLookup;
+use MediaWiki\Extension\CheckUser\Services\UserAgentClientHintsManager;
+use MediaWiki\Extension\CheckUser\Tests\CheckUserClientHintsCommonTestTrait;
 use MediaWikiIntegrationTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\Jobs\StoreClientHintsDataJob
+ * @covers \MediaWiki\Extension\CheckUser\Jobs\StoreClientHintsDataJob
  * @group CheckUser
  * @group Database
  */
 class StoreClientHintsDataJobTest extends MediaWikiIntegrationTestCase {
 
-	use CheckUserClientHintsCommonTraitTest;
+	use CheckUserClientHintsCommonTestTrait;
 
 	public function testShouldCreateValidSpecification() {
 		// Get a cu_private_event row ID for use in the test.
 		/** @var CheckUserInsert $checkUserInsert */
 		$checkUserInsert = $this->getServiceContainer()->get( 'CheckUserInsert' );
 		$insertedId = $checkUserInsert->insertIntoCuPrivateEventTable(
-			[], __METHOD__, $this->getTestUser()->getUser()
+			[],
+			__METHOD__,
+			$this->getTestUser()->getUser()
 		);
 		// Use the job to insert some testing Client Hints data for the event
 		$clientHintsData = $this->getExampleClientHintsDataObjectFromJsApi();
@@ -39,7 +41,8 @@ class StoreClientHintsDataJobTest extends MediaWikiIntegrationTestCase {
 		$referenceIds->addReferenceIds( $insertedId, UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT );
 		$clientHintsLookupResults = $clientHintsLookup->getClientHintsByReferenceIds( $referenceIds );
 		$clientHintsDataFromDb = $clientHintsLookupResults->getClientHintsDataForReferenceId(
-			$insertedId, UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT
+			$insertedId,
+			UserAgentClientHintsManager::IDENTIFIER_CU_PRIVATE_EVENT
 		);
 		$this->assertClientHintsDataObjectsEqual( $clientHintsData, $clientHintsDataFromDb, true );
 	}

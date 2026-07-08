@@ -6,7 +6,7 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.45"
+		"MediaWiki": ">= 1.46"
 	},
 	"APIPropModules": {
 		"pageimages": {
@@ -79,7 +79,8 @@
 			"class": "PageImages\\Job\\InitImageDataJob",
 			"services": [
 				"DBLoadBalancerFactory"
-			]
+			],
+			"needsPage": false
 		}
 	},
 	"ServiceWiringFiles": [
@@ -126,7 +127,6 @@
 		},
 		"PageImagesOpenGraph": {
 			"description": "Enable the OpenGraph meta tags",
-			"public": true,
 			"value": true
 		},
 		"PageImagesDenylistExpiry": {

@@ -9,10 +9,10 @@
 			"Moon0319",
 			"OmniBus",
 			"Roy17",
+			"Sun8908",
 			"Waihorace",
 			"Winston Sung",
-			"Yueman",
-			"Sun8908"
+			"Yueman"
 		]
 	},
 	"skinname-vector": "舊版Vector（2010）",
@@ -63,9 +63,6 @@
 	"vector-toc-label": "目錄",
 	"vector-toc-beginning": "文頭",
 	"vector-toc-toggle-button-label": "切換去 $1 細章節",
-	"vector-anon-user-menu-pages": "未簽到編者用嘅版面",
-	"vector-anon-user-menu-pages-learn": "知多啲",
-	"vector-anon-user-menu-pages-label": "知多啲有關改嘢",
 	"vector-main-menu-tooltip": "主目錄",
 	"vector-toc-menu-tooltip": "內容一覽",
 	"vector-toc-collapsible-button-label": "開/收內容一覽",
@@ -88,8 +85,6 @@
 	"vector-page-tools-unpinned-popup": "架撐目錄搬咗嚟呢度。",
 	"vector-main-menu-unpinned-popup": "主目錄搬咗嚟呢度。",
 	"vector-appearance-unpinned-popup": "外觀目錄搬咗嚟呢度。",
-	"vector-2022-beta-preview-label": "無障礙閱讀（Vector 2022）",
-	"vector-2022-beta-preview-description": "搶先去用新嘅無障礙閱讀功能，譬如改良排版同深色模式。",
 	"vector-night-mode-gadget-warning": "你用緊嘅深色模式架撐仔會干擾呢個功能。。[[Special:Preferences#mw-prefsection-gadgets|停用架撐仔]]去用深色模式。",
 	"vector-night-mode-issue-reporting-notice-tooltip": "報告深色模式嘅顏色令到難睇得清內容。",
 	"vector-night-mode-issue-reporting-link-label": "報告深色模式嘅問題",

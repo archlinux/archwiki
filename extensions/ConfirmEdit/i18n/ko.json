@@ -8,10 +8,10 @@
 			"Kwj2772",
 			"Priviet",
 			"Revi",
+			"Tensama0415",
 			"ToePeu",
 			"Ykhwong",
-			"아라",
-			"Tensama0415"
+			"아라"
 		]
 	},
 	"captcha-edit": "글을 편집하려면 아래의 문제를 해결한 다음 상자에 정답을 입력해 주세요 ([[Special:Captcha/help|자세한 정보]]):",
@@ -43,5 +43,6 @@
 	"confirmedit-preview-valid": "유효함",
 	"confirmedit-preview-invalid": "유효하지 않음",
 	"confirmedit-preview-description": "다음 표는 이 페이지의 각 줄과 해당 줄이 유효한 IP 주소 또는 IP 주소 범위인지 여부를 보여줍니다. 해당 줄이 유효한 IP 주소 또는 IP 주소 범위인 경우 CAPTCHA 검사에서 제외되지만, 유효하지 않은 줄은 무시됩니다. 유효한 IP 주소 범위의 예는: 69.208.0.0/16이며, 이는 69.208.0.0부터 69.208.255.255까지의 범위를 나타냅니다. IP 주소 범위 계산에 대한 [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 더 많은 정보]를 확인하세요.",
-	"abusefilter-edit-action-showcaptcha": "작업 진행을 위해 사용자에게 CAPTCHA를 완성할 것을 요구합니다. CAPTCHA를 건너뛸 수 있는 권한이 있는 사용자는 예외입니다."
+	"abusefilter-edit-action-showcaptcha": "작업을 진행을 위해 CAPTCHA 확인을 요구합니다",
+	"abusefilter-edit-action-showcaptcha-help": "CAPTCHA를 건너뛸 수 있는 권한이 있는 사용자는 예외입니다."
 }

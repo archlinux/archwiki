@@ -17,21 +17,13 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\Language\MessageLocalizer;
 use MediaWiki\Title\Title;
-use MessageLocalizer;
 
 /**
  * Model for a menu entry that represents a language selector for current title
  */
 class LanguageSelectorEntry implements IMenuEntry {
-
-	private MessageLocalizer $messageLocalizer;
-	private Title $title;
-	private bool $doesPageHaveLanguages;
-	/** @var string Associated icon name */
-	private string $icon;
-	/** @var string A translatable label used as text and title */
-	private string $label;
 
 	/**
 	 * @param Title $title Current Title
@@ -42,17 +34,12 @@ class LanguageSelectorEntry implements IMenuEntry {
 	 * @param string $label Menu entry label and title
 	 */
 	public function __construct(
-		Title $title,
-		$doesPageHaveLanguages,
-		MessageLocalizer $messageLocalizer,
+		private readonly Title $title,
+		private readonly bool $doesPageHaveLanguages,
+		private readonly MessageLocalizer $messageLocalizer,
 		$isButton = false,
-		$label = 'mobile-frontend-language-article-heading'
+		private readonly string $label = 'mobile-frontend-language-article-heading',
 	) {
-		$this->title = $title;
-		$this->doesPageHaveLanguages = $doesPageHaveLanguages;
-		$this->messageLocalizer = $messageLocalizer;
-		$this->icon = 'language';
-		$this->label = $label;
 	}
 
 	/**
@@ -89,9 +76,7 @@ class LanguageSelectorEntry implements IMenuEntry {
 				'isButton' => true,
 				'classes' => $switcherClasses,
 				'label' => $msg,
-				'data-icon' => [
-					'icon' => $this->icon,
-				],
+				'data-icon' => [ 'icon' => 'language' ],
 				'array-attributes' => [
 					[
 						'key' => 'href',

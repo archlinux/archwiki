@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"David1010",
-			"Otogi",
-			"Mehman97"
+			"Mehman97",
+			"Otogi"
 		]
 	},
 	"oathauth-account": "ორფაქტორიანი ანგარიშის სახელი:",
@@ -26,6 +26,5 @@
 	"oathmanage": "ორფაქტორიანი ავთენტიფიკაციის მართვა",
 	"accountsecurity": "ანგარიშის უსაფრთხოება",
 	"oathauth-enable-generic": "ჩართვა",
-	"oathauth-disable-generic": "გამორთვა",
-	"oathauth-ui-available-modules": "ხელმისაწვდომი მეთოდები"
+	"oathauth-disable-generic": "გამორთვა"
 }

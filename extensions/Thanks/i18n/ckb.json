@@ -19,7 +19,6 @@
 	"thanks-error-invalid-log-id": "بابەتی لۆگ نەدۆزرایەوە",
 	"thanks-error-invalidrevision": "پێداچوونەوەی پێناسە نادروستە.",
 	"thanks-error-revdeleted": "ناتوانرێ سپاس بنێردرێت چونکە پێداچوونەوەکە سڕاوەتەوە.",
-	"thanks-error-notitle": "نەتوانرا ناونیشانی پەڕە دەست بخرێت",
 	"thanks-error-invalidrecipient": "ھیچ وەرگرێکی دروست نەدۆزرایەوە",
 	"thanks-error-invalidrecipient-bot": "ناتوانرێ سپاسی بۆتەکان بکرێت",
 	"thanks-error-invalidrecipient-self": "ناتوانی سپاسی خۆت بکەیت",

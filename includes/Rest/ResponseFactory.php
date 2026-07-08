@@ -36,7 +36,7 @@ class ResponseFactory {
 	}
 
 	/**
-	 * Control whether web responses may include a exception messager and backtrace
+	 * Control whether web responses may include a exception messanger and backtrace
 	 *
 	 * @see $wgShowExceptionDetails
 	 * @since 1.39
@@ -328,6 +328,20 @@ class ResponseFactory {
 	}
 
 	/**
+	 * Returns an array of all language codes supported by this instance's text formatters,
+	 * in fallback order. Useful for constructing cache keys.
+	 *
+	 * @return string[]
+	 */
+	public function getLangCodes(): array {
+		$codes = [];
+		foreach ( $this->textFormatters as $formatter ) {
+			$codes[] = $formatter->getLangCode();
+		}
+		return $codes;
+	}
+
+	/**
 	 * Tries to return the formatted string(s) for a message value object using the
 	 * response factory's text formatters. The returned array will either be empty (if there are
 	 * no text formatters), or have exactly one key, "messageTranslations", whose value
@@ -406,27 +420,39 @@ class ResponseFactory {
 			],
 			'schemas' => [
 				'GenericErrorResponseModel' => [
-					'description' => 'Generic error response body',
+					'x-i18n-description' => 'rest-openapispec-genericerrorresponse-desc',
 					'required' => [ 'httpCode' ],
 					'properties' => [
 						'httpCode' => [
-							'type' => 'integer'
+							'type' => 'integer',
+							'x-i18n-description' => 'rest-openapispec-genericerrorresponse-property-desc-httpCode',
+							'example' => 500
 						],
 						'httpMessage' => [
-							'type' => 'string'
+							'type' => 'string',
+							'x-i18n-description' => 'rest-openapispec-genericerrorresponse-property-desc-httpMessage',
+							'example' => 'Internal Server Error'
 						],
 						'message' => [
-							'type' => 'string'
+							'type' => 'string',
+							'x-i18n-description' => 'rest-openapispec-genericerrorresponse-property-desc-message',
+							'example' => 'An unexpected error occurred'
 						],
 						'messageTranslations' => [
 							'type' => 'object',
 							'additionalProperties' => [
 								'type' => 'string'
+							],
+							// phpcs:ignore -- ignore the line being too long, for readability of the i18n key
+							'x-i18n-description' => 'rest-openapispec-genericerrorresponse-property-desc-messageTranslations',
+							'example' => [
+								'en' => 'An unexpected error occurred',
+								'es' => 'Ocurrió un error inesperado'
 							]
 						],
 					]
 				]
-			],
+			]
 		];
 	}
 

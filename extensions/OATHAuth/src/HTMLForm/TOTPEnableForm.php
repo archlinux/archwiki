@@ -7,29 +7,22 @@ use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\SvgWriter;
-use MediaWiki\Config\ConfigException;
-use MediaWiki\Extension\OATHAuth\IAuthKey;
 use MediaWiki\Extension\OATHAuth\Key\RecoveryCodeKeys;
 use MediaWiki\Extension\OATHAuth\Key\TOTPKey;
 use MediaWiki\Extension\OATHAuth\Module\RecoveryCodes;
-use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Status\Status;
 use OOUI\FieldLayout;
 use OOUI\HtmlSnippet;
 use OOUI\Widget;
-use UnexpectedValueException;
 
 class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 
 	use KeySessionStorageTrait;
 	use RecoveryCodesTrait;
 
-	/**
-	 * @param array|bool|Status|string $submitResult
-	 * @return string
-	 */
+	/** @inheritDoc */
 	public function getHTML( $submitResult ) {
 		$out = $this->getOutput();
 		$out->addModuleStyles( 'ext.oath.totpenable.styles' );
@@ -39,19 +32,15 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 	}
 
 	/**
-	 * Add content to output when operation was successful
+	 * Add content to output when the operation was successful
 	 */
-	public function onSuccess() {
+	public function onSuccess(): void {
 		$this->getOutput()->addWikiMsg( 'oathauth-validatedoath' );
 	}
 
-	/**
-	 * @return array
-	 */
-	protected function getDescriptors() {
+	protected function getDescriptors(): array {
 		/** @var TOTPKey $key */
 		$key = $this->setKeyDataInSession( 'TOTPKey' );
-		'@phan-var TOTPKey $key';
 		$secret = $key->getSecret();
 		$issuer = $this->oathUser->getIssuer();
 		$account = $this->oathUser->getAccount();
@@ -94,7 +83,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 				'default' =>
 					$this->msg( 'oathauth-step2-qrcode' )->escaped() . '<br/>'
 					. Html::element( 'img', [
-						'class' => 'mw-oauth-qrcode',
+						'class' => 'mw-oath-qrcode',
 						'src' => $qrCode->getDataUri(),
 						'alt' => $this->msg( 'oathauth-qrcode-alt' )->text(),
 						'width' => 256,
@@ -149,7 +138,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 		);
 	}
 
-	private function generateAltStep2Content( IAuthKey $key, string $label ): FieldLayout {
+	private function generateAltStep2Content( TOTPKey $key, string $label ): FieldLayout {
 		$snippet = new HtmlSnippet( '<p>'
 			. $this->msg( 'oathauth-step2alt' )->escaped() . '</p>'
 			. '<strong>' . $this->msg( 'oathauth-secret' )->escaped() . '</strong><br>'
@@ -164,23 +153,12 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 	 * Retrieve the current secret for display purposes
 	 *
 	 * The characters of the token are split in groups of 4
-	 *
-	 * @param IAuthKey $key
-	 * @return string
 	 */
-	protected function getSecretForDisplay( IAuthKey $key ) {
-		/** @var TOTPKey $key */
-		'@phan-var TOTPKey $key';
+	protected function getSecretForDisplay( TOTPKey $key ): string {
 		return $this->tokenFormatterFunction( $key->getSecret() );
 	}
 
-	/**
-	 * @param array $formData
-	 * @return array|bool
-	 * @throws ConfigException
-	 * @throws UnexpectedValueException
-	 */
-	public function onSubmit( array $formData ) {
+	public function onSubmit( array $formData ): Status|bool|array|string {
 		$keyData = $this->getKeyDataInSession( 'TOTPKey' );
 		$keyData['friendly_name'] = $formData["friendly_name"];
 		$TOTPkey = TOTPKey::newFromArray( $keyData );
@@ -198,7 +176,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			);
 			return [ 'oathauth-noscratchforvalidation' ];
 		}
-		if ( !$TOTPkey->verify( [ 'token' => $formData['token'] ], $this->oathUser ) ) {
+		if ( !$TOTPkey->verify( $this->oathUser, [ 'token' => $formData['token'] ] ) ) {
 			LoggerFactory::getInstance( 'authentication' )->info(
 				'OATHAuth {user} failed to provide a correct token while enabling 2FA from {clientip}', [
 					'user' => $this->getUser()->getName(),
@@ -208,35 +186,22 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm {
 			return [ 'oathauth-failedtovalidateoath' ];
 		}
 
-		$moduleDbKeys = $this->oathUser->getKeysForModule( RecoveryCodes::MODULE_NAME );
+		// Create recovery codes if needed, using the same codes that we displayed to the user
+		/** @var RecoveryCodes $recoveryCodesModule */
+		$recoveryCodesModule = $this->moduleRegistry->getModuleByKey( RecoveryCodes::MODULE_NAME );
+		'@phan-var RecoveryCodes $recoveryCodesModule';
+		$recoveryCodesModule->ensureExistence( $this->oathUser, $this->getKeyDataInSession( 'RecoveryCodeKeys' ) );
 
-		// only create the recovery code module entry if this is the first 2FA key a user is creating
-		if ( count( $moduleDbKeys ) > RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
-			throw new UnexpectedValueException(
-				$this->msg( 'oathauth-recoverycodes-too-many-instances' )->escaped()
-			);
-		}
-
-		if ( count( $moduleDbKeys ) < RecoveryCodeKeys::RECOVERY_CODE_MODULE_COUNT ) {
-			$keyData = $this->getKeyDataInSession( 'RecoveryCodeKeys' );
-			$recCodeKeys = RecoveryCodeKeys::newFromArray( $keyData );
-			$this->setKeyDataInSessionToNull( 'RecoveryCodeKeys' );
-			$moduleRegistry = OATHAuthServices::getInstance()->getModuleRegistry();
-			$this->oathRepo->createKey(
-				$this->oathUser,
-				$moduleRegistry->getModuleByKey( RecoveryCodes::MODULE_NAME ),
-				$recCodeKeys->jsonSerialize(),
-				$this->getRequest()->getIP()
-			);
-		}
-
-		$this->setKeyDataInSessionToNull( 'TOTPKey' );
+		// Store the new TOTP key
 		$this->oathRepo->createKey(
 			$this->oathUser,
 			$this->module,
 			$TOTPkey->jsonSerialize(),
 			$this->getRequest()->getIP()
 		);
+
+		$this->setKeyDataInSessionToNull( 'TOTPKey' );
+		$this->setKeyDataInSessionToNull( 'RecoveryCodeKeys' );
 
 		return true;
 	}

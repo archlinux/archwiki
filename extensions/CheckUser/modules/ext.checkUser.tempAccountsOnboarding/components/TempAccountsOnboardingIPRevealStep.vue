@@ -116,6 +116,7 @@ module.exports = exports = {
 		// Parse the message as would be for content in a page, such that two newlines creates a new
 		// paragraph block.
 		// Uses:
+		// * checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-base
 		// * checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content
 		// * checkuser-temporary-accounts-onboarding-dialog-ip-reveal-step-content-with-global-preferences
 		const paragraphs = mw.message( contentMessageKey ).parse().split( '\n\n' );
@@ -128,6 +129,9 @@ module.exports = exports = {
 		const checkboxes = [
 			{
 				checkedStatusStorageKey: 'mw-checkuser-ip-reveal-preference-checked-status',
+				// * checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text
+				// * checkuser-temporary-accounts-onboarding-dialog-ip-reveal-preference-checkbox-text-with-global-preferences
+				//     * uses: checkuser-tempaccount-reveal-ip-button-label
 				checkboxMessageKey: ipRevealCheckboxMessageKey,
 				initialIsChecked: initialIPRevealPreferenceValue,
 				name: 'checkuser-temporary-account-enable',

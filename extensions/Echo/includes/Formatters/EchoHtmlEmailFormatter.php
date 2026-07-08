@@ -44,8 +44,15 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 			$actions[] = $this->renderLink( $primaryLink, self::PRIMARY_LINK_STYLE );
 		}
 
+		$secondaryActions = [];
 		foreach ( array_filter( $model->getSecondaryLinks() ) as $secondaryLink ) {
-			$actions[] = $this->renderLink( $secondaryLink, self::SECONDARY_LINK_STYLE );
+			$secondaryActions[] = $this->renderLink( $secondaryLink, self::SECONDARY_LINK_STYLE );
+		}
+		if ( $secondaryActions ) {
+			$actions[] = implode(
+				'&nbsp;' . Html::rawElement( 'span', [ 'style' => self::SECONDARY_LINK_STYLE ], '&bull;' ) . ' ',
+				$secondaryActions
+			);
 		}
 
 		$iconUrl = MediaWikiServices::getInstance()->getUrlUtils()->expand(
@@ -57,7 +64,7 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 			$this->language,
 			$iconUrl,
 			$summary,
-			implode( "&nbsp;&nbsp;", $actions ),
+			implode( '&nbsp; ', $actions ),
 			$intro,
 			$this->getFooter()
 		);
@@ -109,14 +116,14 @@ class EchoHtmlEmailFormatter extends EchoEventFormatter {
 				<td bgcolor="#FFFFFF" align="{$alignStart}" style="font-family: Arial, Helvetica, sans-serif; line-height: 20px; font-weight: 600;">
 					<table cellspacing="0" cellpadding="0" border="0">
 						<tr>
-							<td bgcolor="#FFFFFF" align="{$alignStart}" style="font-family: Arial, Helvetica, sans-serif; padding-top: 8px; font-size:13px; font-weight: bold; color: #54595D;">
+							<td bgcolor="#FFFFFF" align="{$alignStart}" style="font-family: Arial, Helvetica, sans-serif; padding-top: 8px; font-size:13px; line-height:18px; font-weight: bold; color: #54595D;">
 								{$summary}
 							</td>
 						</tr>
 					</table>
 					<table cellspacing="0" cellpadding="0" border="0">
 						<tr>
-							<td bgcolor="#FFFFFF" align="{$alignStart}" style="font-family: Arial, Helvetica, sans-serif; font-size:14px; padding-top: 25px;">
+							<td bgcolor="#FFFFFF" align="{$alignStart}" style="font-family: Arial, Helvetica, sans-serif; font-size:14px; line-height:20px; color:#72777D; padding-top: 25px;">
 								{$action}
 							</td>
 						</tr>
@@ -156,7 +163,7 @@ EOF;
 
 		$preferenceLink = $this->renderLink(
 			[
-				'label' => $this->msg( 'echo-email-html-footer-preference-link-text', $this->user )
+				'label' => $this->msg( 'echo-email-html-footer-preference-link-text', $this->user->getName() )
 					->text(),
 				'url' => SpecialPage::getTitleFor( 'Preferences', false, 'mw-prefsection-echo' )
 					->getFullURL( '', false, PROTO_CANONICAL ),
@@ -166,7 +173,7 @@ EOF;
 
 		$footer = $this->msg( 'echo-email-html-footer-with-link' )
 			->rawParams( $preferenceLink )
-			->params( $this->user )
+			->params( $this->user->getName() )
 			->parse();
 
 		if ( $wgEchoEmailFooterAddress ) {

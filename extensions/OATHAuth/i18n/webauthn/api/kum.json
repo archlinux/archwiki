@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Кумнац"
+		]
+	},
+	"apierror-oathauth-webauthn-module-missing": "WebAuthn модулю ишлемей",
+	"apierror-oathauth-webauthn-missing-credential": "Таныв маълуматлар (credential data) берилмеди.",
+	"apierror-oathauth-webauthn-invalid-credential": "Таныв маълуматлар дурус тюгюл яда терс форматда берилген",
+	"apierror-oathauth-webauthn-reauthenticate": "Бу ишни этмек учун, алда «Special:OATHManage» бети аркъалы янгыдан таныв (reauthenticate) гетмеге герексиз",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Гьалиги къоллавчу учун янгы WebAuthn таныв маълуматын (credential) регистрация этмек.",
+	"apihelp-oathauth-webauthn-param-credential": "Браузерден гелген ва JSON форматда язылгъан WebAuthn таныв (credential) жавабы.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Енгил ат янгы сертификатгъа"
+}

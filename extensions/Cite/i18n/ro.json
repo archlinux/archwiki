@@ -32,7 +32,6 @@
 	"cite_error_empty_references_define": "Eticheta <code>&lt;ref&gt;</code> definită în <code>&lt;references&gt;</code> cu numele „$1” nu are conținut.",
 	"cite-tracking-category-cite-error": "Pagini cu erori de citare",
 	"cite-tracking-category-cite-error-desc": "Paginile din această categorie au erori în folosirea etichetelor de referințe.",
-	"cite-tracking-category-cite-diffing-error-desc": "Paginile din această categorie au erori în utilizarea etichetelor de referință, iar aceste erori nu sunt redate în același mod în analizatorul vechi și în Parsoid.",
 	"cite-reference-previews-reference": "Referință",
 	"cite-reference-previews-book": "Referință de carte",
 	"cite-reference-previews-journal": "Referință de revistă",

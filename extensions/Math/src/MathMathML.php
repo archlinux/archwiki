@@ -492,6 +492,9 @@ class MathMathML extends MathRenderer {
 				'class' => $mml_class,
 			];
 		}
+		if ( ( $this->params['class'] ?? '' ) === 'mathjax_ignore' ) {
+			$mml_attribs['class'] .= ' mathjax_ignore';
+		}
 		$output .= Html::rawElement( 'span', $mml_attribs, $mml );
 		if ( $svg ) {
 			$output .= $this->getFallbackImage();

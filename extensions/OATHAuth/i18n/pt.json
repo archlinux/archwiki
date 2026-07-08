@@ -6,8 +6,8 @@
 			"Hamilton Abreu",
 			"Mansil",
 			"Mansil alfalb",
-			"Vitorvicentevalente",
 			"Maria Manuela Silva",
+			"Vitorvicentevalente",
 			"Waldyrious"
 		]
 	},
@@ -67,8 +67,6 @@
 	"oathauth-describe-provider": "Autenticação de dois fatores (OATH).",
 	"grant-group-authentication": "Executar as ações de autenticação para si e para outros",
 	"grant-oath": "Aceder a informação da autenticação de dois fatores (OATH) do próprio e de outros",
-	"right-oathauth-api-all": "Consultar e validar informação OATH do próprio e de outros",
-	"action-oathauth-api-all": "verificar o estado OATH",
 	"oathauth-user-not-found": "Não foi encontrada nenhuma conta de utilizador com esse nome",
 	"oath-log-name": "Registo da autenticação de dois fatores",
 	"oath-log-header": "Estes eventos registam alterações do estado da autenticação de dois fatores dos utilizadores.",
@@ -81,16 +79,12 @@
 	"oathauth-module-totp-label": "Aplicação de autenticação",
 	"oathauth-ui-manage": "Gerir",
 	"oathmanage": "Gerir autenticação de dois fatores",
-	"oathauth-ui-not-enabled-modules": "Mudar para um método alternativo",
-	"oathauth-ui-enabled-module": "Método de autenticação ativado",
 	"oathauth-enable-generic": "Ativar",
 	"oathauth-disable-generic": "Desativar",
 	"oathauth-invalid-data-format": "O fornecedor de dados é inválido para criar uma chave para o método de autenticação selecionado",
 	"oathauth-disable-page-title": "Desativar $1",
 	"oathauth-enable-page-title": "Ativar $1",
 	"oathauth-action-exclusive-to-2fa": "Esta operação só pode ser executada por utilizadores que têm a autenticação de dois fatores ativada.",
-	"oathauth-ui-available-modules": "Métodos disponíveis",
-	"oathauth-ui-general-help": "A '''autenticação de vários fatores''' ('''MFA''') é um método de autenticação no qual o acesso é permitido ao utilizador de um computador apenas após este apresentar com êxito duas ou mais provas (ou fatores) a um mecanismo de autenticação: conhecimento (algo que o utilizador, e só ele, sabe), posse (algo que o utilizador, e sé ele, possui) e inerência (algo de que o utilizador, e só ele, está investido). [https://en.wikipedia.org/wiki/Multi-factor_authentication Ler mais]",
 	"oathauth-totp-description": "O algoritmo TOTP (Palavra-Passe de Uso Único com Base no Tempo) é uma extensão do algoritmo HOTP (Palavra-Passe de Uso Único com Base no HMAC), que gera uma palavra-passe de uso único adquirindo a sua unicidade na hora atual.",
 	"oathauth-disable-method-warning": "Se desativar o método de autenticação de dois fatores $1, deixará de poder usá-lo ao entrar e todos os dados associados a este método de autenticação serão eliminados.",
 	"oathauth-totp-disable-warning": "Deixará de poder usar o dispositivo de autenticação registado nesta conta. Todas os códigos de recuperação associados à conta serão invalidados.",
@@ -115,5 +109,7 @@
 	"oathauth-hint": "Não tem acesso ao seu dispositivo ou aplicação? Pode introduzir neste campo chaves de recuperação (apresentadas quando ativou a A2F).",
 	"oathauth-authenticator-delete-text": "remover",
 	"oathauth-delete-confirm-box": "Digite \"{{int:oathauth-authenticator-delete-text}}\" para continuar",
-	"oathauth-delete-warning-final": "Se remover este método irá desativar completamente a autenticação de dois fatores."
+	"oathauth-delete-warning-final": "Se remover este método irá desativar completamente a autenticação de dois fatores.",
+	"oathauth-passkeys-header": "Chaves passe",
+	"oathauth-passkeys-add": "Adicione uma chave passe"
 }

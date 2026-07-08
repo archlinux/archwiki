@@ -57,12 +57,6 @@ ve.dm.InternalList = function VeDmInternalList( doc ) {
 	 */
 	this.keyIndexes = {};
 
-	/**
-	 * @property {string[]} keys Array index is meaningful and identical to the numbers in the
-	 * `firstNodes` and `indexOrder` properties of {@link nodes} elements.
-	 */
-	this.keys = [];
-
 	// Event handlers
 	doc.connect( this, { transact: 'onTransact' } );
 };
@@ -106,10 +100,8 @@ ve.dm.InternalList.prototype.queueItemHtml = function ( groupName, key, html ) {
 		this.itemHtmlQueue[ index ] = html;
 		isNew = true;
 	}
-	return {
-		index: index,
-		isNew: isNew
-	};
+
+	return { index, isNew };
 };
 
 /**
@@ -129,13 +121,7 @@ ve.dm.InternalList.prototype.getDocument = function () {
 ve.dm.InternalList.prototype.getListNode = function () {
 	// Find listNode if not set, or unattached
 	if ( !this.listNode || !this.listNode.doc ) {
-		const nodes = this.getDocument().getDocumentNode().children;
-		for ( let i = nodes.length; i >= 0; i-- ) {
-			if ( nodes[ i ] instanceof ve.dm.InternalListNode ) {
-				this.listNode = nodes[ i ];
-				break;
-			}
-		}
+		this.listNode = this.getDocument().getNodesByType( 'internalList' )[ 0 ];
 	}
 	return this.listNode;
 };
@@ -152,7 +138,7 @@ ve.dm.InternalList.prototype.getItemNodeCount = function () {
 /**
  * Get the item node from a specific index.
  *
- * @param {number} index Item index, use {@link getKeyIndex} to map group and key to an index
+ * @param {number} index Item index, use {@link #getKeyIndex} to map group and key to an index
  * @return {ve.dm.InternalItemNode|undefined}
  */
 ve.dm.InternalList.prototype.getItemNode = function ( index ) {
@@ -176,13 +162,6 @@ ve.dm.InternalList.prototype.getNodeGroups = function () {
  */
 ve.dm.InternalList.prototype.getNodeGroup = function ( groupName ) {
 	return this.nodes[ groupName ];
-};
-
-/**
- * @deprecated please use `.getNodeGroup( … ).getUniqueListKey( … )` instead
- */
-ve.dm.InternalList.prototype.getUniqueListKey = function ( groupName, oldListKey, prefix ) {
-	return this.getNodeGroup( groupName ).getUniqueListKey( oldListKey, prefix );
 };
 
 /**
@@ -214,23 +193,23 @@ ve.dm.InternalList.prototype.convertToData = function ( converter, doc ) {
 
 	const list = [];
 	list.push( { type: 'internalList' } );
-	for ( let i = 0, length = itemHtmlQueue.length; i < length; i++ ) {
-		if ( itemHtmlQueue[ i ] !== '' ) {
+	itemHtmlQueue.forEach( ( html ) => {
+		if ( html !== '' ) {
 			const div = doc.createElement( 'div' );
-			div.innerHTML = itemHtmlQueue[ i ];
+			div.innerHTML = html;
 			const itemData = [
 				{ type: 'internalItem' },
 				...converter.getDataFromDomSubtree( div ),
 				{ type: '/internalItem' }
 			];
 			if ( !converter.isFromClipboard() ) {
-				itemData[ 0 ].attributes = { originalHtml: itemHtmlQueue[ i ] };
+				itemData[ 0 ].attributes = { originalHtml: html };
 			}
 			ve.batchPush( list, itemData );
 		} else {
 			list.push( { type: 'internalItem' }, { type: '/internalItem' } );
 		}
-	}
+	} );
 	list.push( { type: '/internalList' } );
 	// After conversion we no longer need the HTML
 	this.itemHtmlQueue = [];
@@ -294,7 +273,6 @@ ve.dm.InternalList.prototype.addNode = function ( groupName, key, index, node ) 
 		group = this.nodes[ groupName ] = new ve.dm.InternalListNodeGroup();
 	}
 
-	this.keys[ index ] = key;
 	if ( node.getDocument().buildingNodeTree ) {
 		// If the document is building the original node tree
 		// then every item is being added in order, so we don't
@@ -382,6 +360,11 @@ ve.dm.InternalList.prototype.merge = function ( list, commonLength ) {
 		mapping = {};
 	let nextIndex = this.getItemNodeCount();
 
+	if ( list.keyIndexes && list.keyIndexes.length ) {
+		// Looking for potentinally dead code here T416558
+		ve.error( 'T416558 ve.dm.InternalList.merge() list.keyIndexes not empty' );
+	}
+
 	for ( let i = 0; i < commonLength; i++ ) {
 		mapping[ i ] = i;
 	}
@@ -411,8 +394,5 @@ ve.dm.InternalList.prototype.merge = function ( list, commonLength ) {
 			newItemRanges.push( list.getItemNode( i ).getOuterRange() );
 		}
 	}
-	return {
-		mapping: mapping,
-		newItemRanges: newItemRanges
-	};
+	return { mapping, newItemRanges };
 };

@@ -113,6 +113,19 @@ trait TabIndexedElement {
 	}
 
 	/**
+	 * Set the element with the given ID as a label for this widget.
+	 *
+	 * @param string|null $id
+	 */
+	public function setLabelledBy( $id ) {
+		if ( $id ) {
+			$this->tabIndexed->setAttributes( [ 'aria-labelledby' => $id ] );
+		} else {
+			$this->tabIndexed->removeAttributes( [ 'aria-labelledby' ] );
+		}
+	}
+
+	/**
 	 * Whether the node is 'labelable' according to the HTML spec
 	 * (i.e., whether it can be interacted with through a `<label for="…">`).
 	 * See: <https://html.spec.whatwg.org/multipage/forms.html#category-label>.

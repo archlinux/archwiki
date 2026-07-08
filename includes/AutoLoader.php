@@ -17,127 +17,26 @@ require_once __DIR__ . '/../autoload.php';
  */
 
 /**
- * This initializes autoloading for MediaWiki core, extensions, and vendored libs.
+ * This initializes autoloading for MediaWiki core, extensions, and vendored
+ * libraries. Namespaces must follow the PSR-4 standard for autoloading.
+ *
+ * MediaWiki core does not use PSR-4 autoloading due to performance issues
+ * but enforces the mapping to be maintained for future use. Instead of using
+ * PSR-0, a class map stored in autoload.php generated via a script:
+ * php maintenance/run.php generateAutoload
+ *
+ * @see <https://www.php-fig.org/psr/psr-4/>
+ * @see <https://techblog.wikimedia.org/2024/01/16/web-perf-hero-mate-szabo/>
  *
  * NOTE: This file sets up the PHP autoloader and so its stable contract is not this
  * class, but the act of initializing spl_autoload_register and vendor.
  * This file is widely referenced (akin to includes/Defines.php) and is therefore
- * not renamed or moved to /includes/autoload.
+ * not renamed or moved to /includes/Autoload.
  *
  * @since 1.7
  * @ingroup Autoload
  */
 class AutoLoader {
-
-	/**
-	 * A mapping of namespace => file path for MediaWiki core.
-	 * The namespaces must follow the PSR-4 standard for autoloading.
-	 *
-	 * MediaWiki core does not use PSR-4 autoloading due to performance issues,
-	 * but enforce the mapping to be maintained for future use.
-	 * Instead using PSR-0, class map stored in autoload.php generated via script:
-	 * php maintenance/run.php generateLocalAutoload
-	 *
-	 * @see <https://www.php-fig.org/psr/psr-4/>
-	 * @see <https://techblog.wikimedia.org/2024/01/16/web-perf-hero-mate-szabo/>
-	 * @internal Only public for usage in AutoloadGenerator/AutoLoaderTest
-	 * @phpcs-require-sorted-array
-	 */
-	public const CORE_NAMESPACES = [
-		'MediaWiki\\' => __DIR__ . '/',
-		'MediaWiki\\Actions\\' => __DIR__ . '/actions/',
-		'MediaWiki\\Api\\' => __DIR__ . '/api/',
-		'MediaWiki\\Auth\\' => __DIR__ . '/auth/',
-		'MediaWiki\\Block\\' => __DIR__ . '/block/',
-		'MediaWiki\\Cache\\' => __DIR__ . '/cache/',
-		'MediaWiki\\ChangeTags\\' => __DIR__ . '/changetags/',
-		'MediaWiki\\Collation\\' => __DIR__ . '/collation/',
-		'MediaWiki\\Composer\\' => __DIR__ . '/composer/',
-		'MediaWiki\\Config\\' => __DIR__ . '/config/',
-		'MediaWiki\\Content\\' => __DIR__ . '/content/',
-		'MediaWiki\\Context\\' => __DIR__ . '/context/',
-		'MediaWiki\\DAO\\' => __DIR__ . '/dao/',
-		'MediaWiki\\DB\\' => __DIR__ . '/db/',
-		'MediaWiki\\Debug\\' => __DIR__ . '/debug/',
-		'MediaWiki\\Deferred\\' => __DIR__ . '/deferred/',
-		'MediaWiki\\Deferred\\LinksUpdate\\' => __DIR__ . '/deferred/LinksUpdate/',
-		'MediaWiki\\Diff\\' => __DIR__ . '/diff/',
-		'MediaWiki\\EditPage\\' => __DIR__ . '/editpage/',
-		'MediaWiki\\Edit\\' => __DIR__ . '/edit/',
-		'MediaWiki\\Exception\\' => __DIR__ . '/exception/',
-		'MediaWiki\\Export\\' => __DIR__ . '/export/',
-		'MediaWiki\\FileBackend\\' => __DIR__ . '/filebackend/',
-		'MediaWiki\\FileBackend\\FSFile\\' => __DIR__ . '/libs/filebackend/fsfile/',
-		'MediaWiki\\FileBackend\\LockManager\\' => __DIR__ . '/filebackend/lockmanager/',
-		'MediaWiki\\FileRepo\\' => __DIR__ . '/filerepo/',
-		'MediaWiki\\FileRepo\\File\\' => __DIR__ . '/filerepo/file/',
-		'MediaWiki\\HTMLForm\\' => __DIR__ . '/htmlform/',
-		'MediaWiki\\HTMLForm\\Field\\' => __DIR__ . '/htmlform/fields/',
-		'MediaWiki\\Http\\' => __DIR__ . '/http/',
-		'MediaWiki\\Installer\\' => __DIR__ . '/installer/',
-		'MediaWiki\\Interwiki\\' => __DIR__ . '/interwiki/',
-		'MediaWiki\\JobQueue\\' => __DIR__ . '/jobqueue/',
-		'MediaWiki\\JobQueue\\Exceptions\\' => __DIR__ . '/jobqueue/exception/',
-		'MediaWiki\\JobQueue\\Jobs\\' => __DIR__ . '/jobqueue/jobs/',
-		'MediaWiki\\JobQueue\\Utils\\' => __DIR__ . '/jobqueue/utils/',
-		'MediaWiki\\Json\\' => __DIR__ . '/json/',
-		'MediaWiki\\Languages\\Data\\' => __DIR__ . '/languages/data/',
-		'MediaWiki\\Language\\' => __DIR__ . '/language/',
-		'MediaWiki\\LinkedData\\' => __DIR__ . '/linkeddata/',
-		'MediaWiki\\Linker\\' => __DIR__ . '/linker/',
-		'MediaWiki\\Logger\\' => __DIR__ . '/debug/logger/',
-		'MediaWiki\\Logger\\Monolog\\' => __DIR__ . '/debug/logger/monolog/',
-		'MediaWiki\\Logging\\' => __DIR__ . '/logging/',
-		'MediaWiki\\Mail\\' => __DIR__ . '/mail/',
-		'MediaWiki\\Maintenance\\' => __DIR__ . '/../maintenance/includes/',
-		'MediaWiki\\Page\\' => __DIR__ . '/page/',
-		'MediaWiki\\Parser\\' => __DIR__ . '/parser/',
-		'MediaWiki\\Password\\' => __DIR__ . '/password/',
-		'MediaWiki\\PoolCounter\\' => __DIR__ . '/poolcounter/',
-		'MediaWiki\\Preferences\\' => __DIR__ . '/preferences/',
-		'MediaWiki\\Profiler\\' => __DIR__ . '/profiler/',
-		'MediaWiki\\RCFeed\\' => __DIR__ . '/recentchanges/RCFeed/',
-		'MediaWiki\\RecentChanges\\' => __DIR__ . '/recentchanges/',
-		'MediaWiki\\Registration\\' => __DIR__ . '/registration/',
-		'MediaWiki\\RevisionList\\' => __DIR__ . '/revisionlist/',
-		'MediaWiki\\Search\\' => __DIR__ . '/search/',
-		'MediaWiki\\Search\\SearchWidgets\\' => __DIR__ . '/search/searchwidgets/',
-		'MediaWiki\\Session\\' => __DIR__ . '/session/',
-		'MediaWiki\\Shell\\' => __DIR__ . '/shell/',
-		'MediaWiki\\Site\\' => __DIR__ . '/site/',
-		'MediaWiki\\Skin\\' => __DIR__ . '/skins/',
-		'MediaWiki\\Sparql\\' => __DIR__ . '/sparql/',
-		'MediaWiki\\SpecialPage\\' => __DIR__ . '/specialpage/',
-		'MediaWiki\\Specials\\' => __DIR__ . '/specials/',
-		'MediaWiki\\Specials\\Contribute\\' => __DIR__ . '/specials/Contribute/',
-		'MediaWiki\\Specials\\Redirects\\' => __DIR__ . '/specials/redirects/',
-		'MediaWiki\\Telemetry\\' => __DIR__ . '/telemetry/',
-		'MediaWiki\\Tidy\\' => __DIR__ . '/tidy/',
-		'MediaWiki\\Title\\' => __DIR__ . '/title/',
-		'MediaWiki\\User\\' => __DIR__ . '/user/',
-		'MediaWiki\\Utils\\' => __DIR__ . '/utils/',
-		'MediaWiki\\Watchlist\\' => __DIR__ . '/watchlist/',
-		'MediaWiki\\Widget\\' => __DIR__ . '/widget/',
-		'MediaWiki\\Xml\\' => __DIR__ . '/xml/',
-		'Wikimedia\\' => __DIR__ . '/libs/',
-		'Wikimedia\\Composer\\' => __DIR__ . '/libs/composer/',
-		'Wikimedia\\DependencyStore\\' => __DIR__ . '/ResourceLoader/dependencystore/',
-		'Wikimedia\\EventRelayer\\' => __DIR__ . '/libs/eventrelayer/',
-		'Wikimedia\\FileBackend\\' => __DIR__ . '/libs/filebackend/',
-		'Wikimedia\\FileBackend\\FileIteration\\' => __DIR__ . '/libs/filebackend/fileiteration/',
-		'Wikimedia\\FileBackend\\FileOpHandle\\' => __DIR__ . '/libs/filebackend/fileophandle/',
-		'Wikimedia\\FileBackend\\FileOps\\' => __DIR__ . '/libs/filebackend/fileop/',
-		'Wikimedia\\FileBackend\\FSFile\\' => __DIR__ . '/libs/filebackend/fsfile/',
-		'Wikimedia\\Http\\' => __DIR__ . '/libs/http/',
-		'Wikimedia\\LightweightObjectStore\\' => __DIR__ . '/libs/objectcache/utils/',
-		'Wikimedia\\Mime\\' => __DIR__ . '/libs/mime/',
-		'Wikimedia\\ObjectCache\\' => __DIR__ . '/libs/objectcache/',
-		'Wikimedia\\Rdbms\\Database\\' => __DIR__ . '/libs/rdbms/database/',
-		'Wikimedia\\Rdbms\\Platform\\' => __DIR__ . '/libs/rdbms/platform/',
-		'Wikimedia\\Rdbms\\Replication\\' => __DIR__ . '/libs/rdbms/database/replication/',
-		'Wikimedia\\Telemetry\\' => __DIR__ . '/libs/telemetry/',
-		'Wikimedia\\UUID\\' => __DIR__ . '/libs/uuid/',
-	];
 
 	/**
 	 * @var string[] Namespace (ends with \) => Path (ends with /)
@@ -341,7 +240,7 @@ class AutoLoader {
 
 }
 
-spl_autoload_register( [ 'AutoLoader', 'autoload' ] );
+spl_autoload_register( AutoLoader::autoload( ... ) );
 
 // Load composer's autoloader if present
 if ( is_readable( __DIR__ . '/../vendor/autoload.php' ) ) {

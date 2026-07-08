@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Message\Message;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\User;
 
@@ -17,8 +18,18 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		return 'user-rights';
 	}
 
+	private function isAutomaticExpiryEvent(): bool {
+		// Automatic expirations are system-generated and don't have an agent.
+		return (bool)$this->event->getExtraParam( 'automatic' );
+	}
+
 	/** @inheritDoc */
 	public function getHeaderMessage() {
+		// For automatic rights expirations, use a header without an agent.
+		if ( $this->isAutomaticExpiryEvent() ) {
+			return $this->getHeaderMessageForExpiration();
+		}
+
 		[ $formattedName, $genderName ] = $this->getAgentForOutput();
 		$viewingUser = $this->getViewingUserForGender();
 		$add = array_map(
@@ -66,6 +77,31 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		}
 	}
 
+	/**
+	 * header message for automatic user rights expiry
+	 *
+	 * @return Message
+	 */
+	private function getHeaderMessageForExpiration(): Message {
+		$viewingUser = $this->getViewingUserForGender();
+
+		$groupNames = $this->getLocalizedGroupNames(
+			$this->event->getExtraParam( 'remove', [] ),
+			$viewingUser
+		);
+
+		$remove = [];
+		foreach ( $groupNames as $name ) {
+			$remove[] = $this->language->embedBidi( $name );
+		}
+
+		$msg = $this->msg( 'notification-header-user-rights-expiry' );
+		$msg->params( $this->language->commaList( $remove ) );
+		$msg->params( count( $remove ) );
+		$msg->params( $viewingUser );
+		return $msg;
+	}
+
 	/** @inheritDoc */
 	public function getBodyMessage() {
 		$reason = $this->event->getExtraParam( 'reason' );
@@ -107,6 +143,10 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 
 	/** @inheritDoc */
 	public function getSecondaryLinks() {
+		if ( $this->isAutomaticExpiryEvent() ) {
+			return [ $this->getLogLink() ];
+		}
+
 		return [ $this->getAgentLink(), $this->getLogLink() ];
 	}
 
@@ -115,8 +155,10 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 		$query = [
 			'type' => 'rights',
 			'page' => $affectedUserPage->getPrefixedText(),
-			'user' => $this->event->getAgent()->getName(),
 		];
+		if ( !$this->isAutomaticExpiryEvent() ) {
+			$query['user'] = $this->event->getAgent()->getName();
+		}
 		return [
 			'label' => $this->msg( 'echo-log' )->text(),
 			'url' => SpecialPage::getTitleFor( 'Log' )->getFullURL( $query ),
@@ -128,6 +170,8 @@ class EchoUserRightsPresentationModel extends EchoEventPresentationModel {
 
 	/** @inheritDoc */
 	protected function getSubjectMessageKey() {
-		return 'notification-user-rights-email-subject';
+		return $this->isAutomaticExpiryEvent()
+			? 'notification-user-rights-expiry-email-subject'
+			: 'notification-user-rights-email-subject';
 	}
 }

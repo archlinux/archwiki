@@ -6,6 +6,7 @@
 			"AhmedG612"
 		]
 	},
+	"collabpad-disabled": "CollabPad kuma shaqaynayo wiki-gan.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Laga soo dhoofiyay $1",
 	"collabpad": "CollabPad",
@@ -227,6 +228,7 @@
 	"visualeditor-educationpopup-dismiss": "Hagaag, waan fahmay",
 	"visualeditor-expandable-less": "Ka yar",
 	"visualeditor-expandable-more": "Dheeraad",
+	"visualeditor-expandableerror-toggle": "Beddel muuqaalka",
 	"visualeditor-feedback-defaultmessage": "URL-ka: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Cinwaanka bogga",
 	"visualeditor-formatdropdown-format-mw-heading2": "Cinwaan",
@@ -234,6 +236,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Cinwaan-hoosaad 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Cinwaan-hoosaad 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Cinwaan-hoosaad 4",
+	"visualeditor-fullpage-switch-label": "Tafatir bogga oo dhan",
 	"visualeditor-generating-wikitext-progress": "Wikitext ayaa la soo saaraya",
 	"visualeditor-includes-noinclude-start": "Bilowga waxyaabaha laga reebay xigashooyinka",
 	"visualeditor-includes-noinclude-end": "Dhammaadka waxyaabaha laga reebay soo koobidda",

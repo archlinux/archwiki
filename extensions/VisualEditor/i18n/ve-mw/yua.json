@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"26agcp",
 			"Azul25",
 			"Cohuoucan",
 			"Elsa Flores",
@@ -11,10 +12,10 @@
 			"Miguelos1976",
 			"Tunichmay",
 			"ValentinaTec",
-			"VicenteCancheM",
-			"26agcp"
+			"VicenteCancheM"
 		]
 	},
+	"collabpad-disabled": "CollabPad ma' táan u meyaj te' wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importado de $1",
 	"collabpad": "Plataforma u múul meyaj",

@@ -1,5 +1,19 @@
 # Release History
 
+## 0.10.3
+* Check string type before running `preg_match()` (Umherirrender)
+* Raise wikimedia/timestamp to 5.1, use `TS::…` instead of global constants (James D. Forrester)
+
+* build: Allow psr/log ^3.0.0 (Reedy)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.20.0 (libraryupgrader)
+* build: Upgrade colinodell/psr-testlogger from 1.3.0 to 1.3.1 (James D. Forrester)
+* build: Upgrade mediawiki-phan-config for PHP 8.5 support (James D. Forrester)
+* build: Upgrade mediawiki/mediawiki-phan-config from 0.17.0 to 0.18.0 (James D. Forrester)
+* build: Upgrade PHPUnit from 10.5.58 to 10.5.63 to unblock CI (James D. Forrester)
+* code: Update copy of GPL license and licensing headers in files (James D. Forrester)
+* code: Declare strict types on all PHP files (Umherirrender)
+
 ## 0.10.2
 * build: Updating ockcyp/covers-validator to 1.7.0 (libraryupgrader)
 * build: Update phpunit/phpunit to 10.5.58 (Umherirrender)

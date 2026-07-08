@@ -4,20 +4,16 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\WikiTexVC\Nodes;
 
+use MediaWiki\Extension\Math\WikiTexVC\MMLnodes\MMLbase;
+
 class Fun2 extends TexNode {
 
-	/** @var string */
-	protected $fname;
-	/** @var TexNode */
-	protected $arg1;
-	/** @var TexNode */
-	protected $arg2;
-
-	public function __construct( string $fname, TexNode $arg1, TexNode $arg2 ) {
+	public function __construct(
+		protected readonly string $fname,
+		protected readonly TexNode $arg1,
+		protected readonly TexNode $arg2,
+	) {
 		parent::__construct( $fname, $arg1, $arg2 );
-		$this->fname = $fname;
-		$this->arg1 = $arg1;
-		$this->arg2 = $arg2;
 	}
 
 	public function getFname(): string {
@@ -43,7 +39,7 @@ class Fun2 extends TexNode {
 	}
 
 	/** @inheritDoc */
-	public function toMMLTree( array $arguments = [], array &$state = [] ) {
+	public function toMMLTree( array $arguments = [], array &$state = [] ): MMLbase {
 		return $this->parseToMML( $this->fname, $arguments, $state );
 	}
 

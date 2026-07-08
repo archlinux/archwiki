@@ -10,6 +10,7 @@ use MediaWiki\Api\ApiResult;
 use MediaWiki\Content\TextContent;
 use MediaWiki\Extension\TemplateData\TemplateDataBlob;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -112,9 +113,11 @@ class ApiTemplateData extends ApiBase {
 				$status = $tdb->getStatus();
 
 				if ( !$status->isOK() ) {
-					$this->dieWithError(
-						[ 'apierror-templatedata-corrupt', intval( $row->pp_page ), $status->getMessage() ]
-					);
+					$this->dieWithError( [
+						'apierror-templatedata-corrupt',
+						intval( $row->pp_page ),
+						Status::wrap( $status )->getMessage()
+					] );
 				}
 
 				if ( $langCode !== false ) {
@@ -160,6 +163,9 @@ class ApiTemplateData extends ApiBase {
 				}
 
 				$content = $wikiPageFactory->newFromTitle( $pageInfo['title'] )->getContent();
+				if ( !$content ) {
+					continue;
+				}
 				$text = $content instanceof TextContent
 					? $content->getText()
 					: $content->getTextForSearchIndex();

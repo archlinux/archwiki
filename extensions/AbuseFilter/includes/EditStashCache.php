@@ -17,46 +17,14 @@ class EditStashCache {
 
 	private const CACHE_VERSION = 'v5';
 
-	/** @var BagOStuff */
-	private $cache;
-
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
-
-	/** @var VariablesManager */
-	private $variablesManager;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var LinkTarget */
-	private $target;
-
-	/** @var string */
-	private $group;
-
-	/**
-	 * @param BagOStuff $cache
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
-	 * @param VariablesManager $variablesManager
-	 * @param LoggerInterface $logger
-	 * @param LinkTarget $target
-	 * @param string $group
-	 */
 	public function __construct(
-		BagOStuff $cache,
-		IBufferingStatsdDataFactory $statsdDataFactory,
-		VariablesManager $variablesManager,
-		LoggerInterface $logger,
-		LinkTarget $target,
-		string $group
+		private readonly BagOStuff $cache,
+		private readonly IBufferingStatsdDataFactory $statsdDataFactory,
+		private readonly VariablesManager $variablesManager,
+		private readonly LoggerInterface $logger,
+		private readonly LinkTarget $target,
+		private readonly string $group
 	) {
-		$this->cache = $cache;
-		$this->statsdDataFactory = $statsdDataFactory;
-		$this->variablesManager = $variablesManager;
-		$this->logger = $logger;
-		$this->target = $target;
-		$this->group = $group;
 	}
 
 	/**

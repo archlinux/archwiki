@@ -12,6 +12,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
@@ -44,6 +45,8 @@ use Wikimedia\Parsoid\Wikitext\Consts;
  * This includes both global configuration and wiki-level configuration.
  */
 abstract class SiteConfig {
+	use LoggerAwareTrait;
+
 	/**
 	 * FIXME: not private so that ParserTests can reset these variables
 	 * since they reuse site config and other objects between tests for
@@ -210,9 +213,6 @@ abstract class SiteConfig {
 		return array_values( $this->extModules );
 	}
 
-	/** @var LoggerInterface|null */
-	protected $logger = null;
-
 	/** @var int */
 	protected $iwMatcherBatchSize = 4096;
 
@@ -282,14 +282,6 @@ abstract class SiteConfig {
 			$this->logger = new NullLogger;
 		}
 		return $this->logger;
-	}
-
-	/**
-	 * Set the log channel, for debugging
-	 * @param ?LoggerInterface $logger
-	 */
-	public function setLogger( ?LoggerInterface $logger ): void {
-		$this->logger = $logger;
 	}
 
 	/**
@@ -416,16 +408,19 @@ abstract class SiteConfig {
 	}
 
 	/**
-	 * Regex matching all double-underscore magic words
+	 * Regex matching mw:PageProp followed by the magic word key for all
+	 * double-underscore behavior switches.
 	 * @return string
 	 */
 	public function bswPagePropRegexp(): string {
 		static $bswPagePropRegexp = null;
 		if ( $bswPagePropRegexp === null ) {
-			$bswRegexp = $this->bswRegexp();
 			$bswPagePropRegexp =
 				'@(?:^|\\s)mw:PageProp/(?:' .
-				PHPUtils::reStrip( $bswRegexp, '@' ) .
+				implode( '|', array_map(
+					static fn ( $s ) => preg_quote( $s, '@' ),
+					$this->getDoubleUnderscoreIDs()
+				) ) .
 				')(?=$|\\s)@uDS';
 		}
 		return $bswPagePropRegexp;
@@ -910,14 +905,6 @@ abstract class SiteConfig {
 	abstract public function categoryRegexp(): string;
 
 	/**
-	 * A regexp matching localized behavior switches for this wiki.
-	 * The regexp should be delimited, but should not have boundary anchors
-	 * or capture groups.
-	 * @return string
-	 */
-	abstract public function bswRegexp(): string;
-
-	/**
 	 * A regex matching a line containing just whitespace, comments, and
 	 * sol transparent links and behavior switches.
 	 * @return string
@@ -929,7 +916,9 @@ abstract class SiteConfig {
 		if ( $solTransparentWikitextRegexp === null ) {
 			$redirect = PHPUtils::reStrip( $this->redirectRegexp(), '@' );
 			$category = PHPUtils::reStrip( $this->categoryRegexp(), '@' );
-			$bswRegexp = PHPUtils::reStrip( $this->bswRegexp(), '@' );
+			$bswRegexp = PHPUtils::reStrip(
+				$this->mwaToRegex( $this->getDoubleUnderscoreIDs() ), '@'
+			);
 			$comment = PHPUtils::reStrip( Utils::COMMENT_REGEXP, '@' );
 			$solTransparentWikitextRegexp = '@' .
 				'^[ \t\n\r\0\x0b]*' .
@@ -939,7 +928,7 @@ abstract class SiteConfig {
 				')?' .
 				'(?:' .
 				'\[\[' . $category . '\:[^\]]*?\]\]|' .
-				'__(?:' . $bswRegexp . ')__|' .
+				'(?:' . $bswRegexp . ')|' .
 				$comment . '|' .
 				'[ \t\n\r\0\x0b]' .
 				')*$@';
@@ -963,7 +952,9 @@ abstract class SiteConfig {
 		if ( $solTransparentWikitextNoWsRegexp === null ) {
 			$redirect = PHPUtils::reStrip( $this->redirectRegexp(), '@' );
 			$category = PHPUtils::reStrip( $this->categoryRegexp(), '@' );
-			$bswRegexp = PHPUtils::reStrip( $this->bswRegexp(), '@' );
+			$bswRegexp = PHPUtils::reStrip(
+				$this->mwaToRegex( $this->getDoubleUnderscoreIDs() ), '@'
+			);
 			$comment = PHPUtils::reStrip( Utils::COMMENT_REGEXP, '@' );
 			$solTransparentWikitextNoWsRegexp = '@' .
 				'((?:' .
@@ -972,7 +963,7 @@ abstract class SiteConfig {
 				')?' .
 				'(?:' .
 				'\[\[' . $category . '\:[^\]]*?\]\]|' .
-				'__(?:' . $bswRegexp . ')__|' .
+				'(?:' . $bswRegexp . ')|' .
 				$comment .
 				// FIXME(SSS): What about onlyinclude and noinclude?
 				( $addIncludes ? '|<includeonly>[\S\s]*?</includeonly>' : '' ) .
@@ -1003,7 +994,18 @@ abstract class SiteConfig {
 	 */
 	abstract public function widthOption(): int;
 
+	/**
+	 * Return list of magic word IDs used for magic variables
+	 * (memoized zero-argument parser functions).
+	 * @return list<string>
+	 */
 	abstract protected function getVariableIDs(): array;
+
+	/**
+	 * Return list of magic word IDs used for behavior switches.
+	 * @return list<string>
+	 */
+	abstract protected function getDoubleUnderscoreIDs(): array;
 
 	abstract protected function getMagicWords(): array;
 
@@ -1061,12 +1063,14 @@ abstract class SiteConfig {
 		}
 
 		$this->mwAliases = $this->behaviorSwitches = $this->variables = $this->mediaOptions = [];
+		$doubleUnderscoreMap = PHPUtils::makeSet( $this->getDoubleUnderscoreIDs() );
 		$variablesMap = PHPUtils::makeSet( $this->getVariableIDs() );
 		$this->functionSynonyms = $this->getFunctionSynonyms();
 		$haveSynonyms = $this->haveComputedFunctionSynonyms();
 		foreach ( $this->getMagicWords() as $magicword => $aliases ) {
 			$caseSensitive = array_shift( $aliases );
 			$isVariable = isset( $variablesMap[$magicword] );
+			$isBehaviorSwitch = isset( $doubleUnderscoreMap[$magicword] );
 			$isMediaOption = preg_match( '/^(img|timedmedia)_/', $magicword );
 			foreach ( $aliases as $alias ) {
 				$this->mwAliases[$magicword][] = $alias;
@@ -1075,13 +1079,11 @@ abstract class SiteConfig {
 					$alias = mb_strtolower( $alias );
 					$this->mwAliases[$magicword][] = $alias;
 				}
-				if ( str_starts_with( $alias, '__' ) || str_starts_with( $alias, '＿＿' ) ) {
-					// T407290: this should use the list from
-					// MagicWordFactory::getDoubleUnderscoreArray()
+				if ( $isBehaviorSwitch ) {
 					$this->behaviorSwitches[$alias] = [ $caseSensitive, $magicword ];
 				}
 				if ( $isVariable ) {
-					$this->variables[$alias] = $magicword;
+					$this->variables[$alias] = [ $caseSensitive, $magicword ];
 				}
 				if ( $isMediaOption ) {
 					$this->mediaOptions[$alias] = [ $caseSensitive, $magicword ];
@@ -1091,6 +1093,29 @@ abstract class SiteConfig {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Convert a list of magic word IDs to a regexp matching their localized
+	 * aliases.
+	 * @param list<string> $ids
+	 * @return string
+	 */
+	private function mwaToRegex( array $ids ): string {
+		$magicWordMap = $this->getMagicWords();
+		$pieces = array_map( static function ( $id ) use ( $magicWordMap ) {
+			$aliases = $magicWordMap[$id];
+			$caseSensitive = array_shift( $aliases );
+			$re = implode(
+				'|',
+				array_map( static fn ( $s )=>preg_quote( $s, '/' ), $aliases )
+			);
+			if ( !$caseSensitive ) {
+				$re = "(?i:$re)";
+			}
+			return $re;
+		}, $ids );
+		return '/' . implode( '|', $pieces ) . '/';
 	}
 
 	/**
@@ -1144,7 +1169,7 @@ abstract class SiteConfig {
 	 */
 	public function getMagicWordForVariable( string $str ): ?string {
 		$this->populateMagicWords();
-		return $this->variables[$str] ?? null;
+		return self::getMagicWordCanonicalName( $this->variables, $str );
 	}
 
 	private static function getMagicWordCanonicalName( array $mws, string $word ): ?string {
@@ -1173,16 +1198,6 @@ abstract class SiteConfig {
 	public function getMagicWordForBehaviorSwitch( string $word ): ?string {
 		$this->populateMagicWords();
 		return self::getMagicWordCanonicalName( $this->behaviorSwitches, $word );
-	}
-
-	/**
-	 * Check if a string is a recognized behavior switch.
-	 *
-	 * @param string $word
-	 * @return bool
-	 */
-	public function isBehaviorSwitch( string $word ): bool {
-		return $this->getMagicWordForBehaviorSwitch( $word ) !== null;
 	}
 
 	/**
@@ -1662,7 +1677,15 @@ abstract class SiteConfig {
 					if ( !isset( $pFragmentHandler['options']['nohash'] ) ) {
 						$pfAlias = '#' . $pfAlias;
 					}
+					# Some legacy parser functions have the colon included
+					# as part of the magic word alias
+					$pfAlias = preg_replace( '/(:|：)$/', '', $pfAlias );
 					$this->pFragmentHandlerFuncSynonyms[$caseSensitive][$pfAlias] = $key;
+					if ( str_starts_with( $pfAlias, '#' ) ) {
+						# support Japanese double-wide hash (T415405)
+						$pfAlias = '＃' . substr( $pfAlias, 1 );
+						$this->pFragmentHandlerFuncSynonyms[$caseSensitive][$pfAlias] = $key;
+					}
 				}
 				// TODO (T390342): ['options']['extensionTag'] can also be set,
 				// and we would register this PFragment handler as a

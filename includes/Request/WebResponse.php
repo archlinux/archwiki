@@ -150,9 +150,7 @@ class WebResponse {
 		$cookieSecure = $mainConfig->get( MainConfigNames::CookieSecure );
 		$cookieExpiration = $mainConfig->get( MainConfigNames::CookieExpiration );
 		$cookieHttpOnly = $mainConfig->get( MainConfigNames::CookieHttpOnly );
-		$options = array_filter( $options, static function ( $a ) {
-			return $a !== null;
-		} ) + [
+		$options = array_filter( $options, static fn ( $a ) => $a !== null ) + [
 			'prefix' => $cookiePrefix,
 			'domain' => $cookieDomain,
 			'path' => $cookiePath,

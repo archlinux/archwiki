@@ -16,6 +16,7 @@
 	},
 	"multimediaviewer-desc": "Expandir miniaturas em tamanho maior numa interface em tela cheia",
 	"multimediaviewer-optin-pref": "Ativar <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visualizador de mídia]</span>",
+	"multimediaviewer-disable-image-carousel-pref": "Desativar carrossel de imagens no site móvel",
 	"multimediaviewer-file-page": "Ir para a página do arquivo correspondente",
 	"multimediaviewer-repository-local": "Mais detalhes",
 	"multimediaviewer-datetime-created": "Criado: $1",

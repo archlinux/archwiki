@@ -244,7 +244,7 @@ body {
 	}
 }
 
-#p-namespaces {
+#p-associated-pages {
 	float: left;
 
 	li {
@@ -519,8 +519,7 @@ pre,
 	h3,
 	h4,
 	h5,
-	h6,
-	dt {
+	h6 {
 		font-weight: normal;
 		font-family: @fonts-secondary;
 		line-height: 1.125;
@@ -530,17 +529,23 @@ pre,
 	dt {
 		font-weight: bold;
 		font-family: @fonts-sans;
-		margin-top: 1em;
-		margin-bottom: 0.1em;
+		line-height: 1.125;
 	}
 
-	dl {
-		margin-top: 0.2em;
-		margin-bottom: 0.5em;
-	}
+	// IPInfo widget has padding in its own styling (T409195)
+	:not ( .ext-ipinfo-widget-property ) {
+		dt {
+			margin: 1em 0 0.1em;
+		}
 
-	dd {
-		margin-bottom: 1em;
+		dl {
+			margin-top: 0.2em;
+			margin-bottom: 0.5em;
+		}
+
+		dd {
+			margin-bottom: 1em;
+		}
 	}
 
 	form dt {
@@ -888,7 +893,7 @@ body :not( :checked ) > .toctogglespan::after {
 
 /* Hidden stuff */
 
-#p-namespaces h3,
+#p-associated-pages h3,
 #p-views h3,
 #p-more h3,
 #p-search h3 {

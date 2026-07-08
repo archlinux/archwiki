@@ -9,7 +9,6 @@ use PageImages\PageImageCandidate;
 
 /**
  * @covers \PageImages\PageImageCandidate
- * @package MediaWiki\Tests\PageImages
  */
 class PageImageCandidateTest extends MediaWikiUnitTestCase {
 

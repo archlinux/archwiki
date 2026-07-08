@@ -121,7 +121,7 @@ class PurgeChangedPages extends Maintenance {
 			}
 
 			// Send batch of purge requests out to CDN servers
-			$hcu = $this->getServiceContainer()->getHtmlCacheUpdater();
+			$hcu = $this->getServiceContainer()->getHTMLCacheUpdater();
 			$hcu->purgeUrls( $urls, $hcu::PURGE_NAIVE );
 
 			if ( $this->hasOption( 'sleep-per-batch' ) ) {
@@ -165,11 +165,10 @@ class PurgeChangedPages extends Maintenance {
 			return [ $rows, $lastValue ];
 		}
 
-		for ( $i = count( $rows ) - 1; $i >= 0; --$i ) {
+		for ( $i = count( $rows ); $i--; ) {
 			if ( $rows[$i]->$column !== $lastValue ) {
 				break;
 			}
-
 			unset( $rows[$i] );
 		}
 

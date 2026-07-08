@@ -202,7 +202,7 @@
 	"notification-header-thank-you-100-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej setnej edycji; bardzo Ci dziękujemy!",
 	"notification-header-thank-you-1000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej tysięcznej edycji; dziękujemy Ci za bycie świetnym współpracownikiem!",
 	"notification-header-thank-you-10000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej dziesięciotysięcznej edycji; jesteśmy Ci ogromnie wdzięczni!",
-	"notification-header-thank-you-100000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej stutysięcznej edycji; dziękujemy Ci za niesamowity wkład!",
+	"notification-header-thank-you-100000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej stutysięcznej edycji; dziękujemy Ci za Twój niesamowity wkład!",
 	"notification-header-thank-you-1000000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej milionowej edycji; dziękujemy Ci za Twój zadziwiający wkład!",
 	"notification-header-thank-you-10000000-edit": "Właśnie {{GENDER:$2|dokonałeś|dokonałaś|dokonałeś(-aś)}} swojej dziesięciomilionowej edycji; dziękujemy Ci za Twoje zadziwiające poświęcenie!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Twoja}} edycja",

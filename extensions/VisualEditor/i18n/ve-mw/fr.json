@@ -63,6 +63,7 @@
 			"Zetud"
 		]
 	},
+	"collabpad-disabled": "CollabPad n'est pas activé sur ce wiki.",
 	"collabpad-doctitle": "CollabPad : $1",
 	"collabpad-import-subtitle": "Importé depuis $1",
 	"collabpad": "CollabPad",
@@ -285,6 +286,7 @@
 	"visualeditor-educationpopup-dismiss": "C’est bon, allons-y",
 	"visualeditor-expandable-less": "Moins",
 	"visualeditor-expandable-more": "Plus",
+	"visualeditor-expandableerror-toggle": "Modifier la visibilité",
 	"visualeditor-feedback-defaultmessage": "URL : $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "Titre de la page",
 	"visualeditor-formatdropdown-format-mw-heading2": "Titre de section",
@@ -292,6 +294,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Sous-titre 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Sous-titre 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Sous-titre 4",
+	"visualeditor-fullpage-switch-label": "Modifier toute la page",
 	"visualeditor-generating-wikitext-progress": "Génération du code wiki",
 	"visualeditor-includes-noinclude-start": "Début du contenu exclu des extraits",
 	"visualeditor-includes-noinclude-end": "Fin du contenu exclu des extraits",

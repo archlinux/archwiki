@@ -16,7 +16,7 @@ QUnit.module( 've.ui.FragmentInspector (MW)', ve.test.utils.newMwEnvironment( {
 
 QUnit.test( 'Wikitext link inspector', ( assert ) => {
 	const
-		done = assert.async(),
+		testsDone = assert.async(),
 		html = '<p>Foo [[bar]] [[Quux|baz]]  x</p>' +
 			'<p>wh]]ee</p>',
 		caseDefaults = {
@@ -76,7 +76,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Link insertion',
 				range: new ve.Range( 26 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 				},
 				expectedRange: new ve.Range( 34 ),
@@ -88,7 +89,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				msg: 'Link insertion with label (mobile)',
 				range: new ve.Range( 26 ),
 				isMobile: true,
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 					this.labelInput.setValue( 'whee' );
 				},
@@ -100,7 +102,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Link insertion to file page',
 				range: new ve.Range( 26 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'File:foo.jpg' );
 				},
 				expectedRange: new ve.Range( 43 ),
@@ -117,7 +120,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Link target modified',
 				range: new ve.Range( 5, 12 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 				},
 				expectedRange: new ve.Range( 5, 17 ),
@@ -129,7 +133,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				msg: 'Link target and label modified (mobile)',
 				range: new ve.Range( 5, 12 ),
 				isMobile: true,
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 					this.labelInput.setValue( 'whee' );
 				},
@@ -142,7 +147,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				msg: 'Link target modified and label cleared (mobile)',
 				range: new ve.Range( 5, 12 ),
 				isMobile: true,
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 					this.labelInput.setValue( '' );
 				},
@@ -155,8 +161,9 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 				msg: 'Link label modified (mobile)',
 				range: new ve.Range( 16 ),
 				isMobile: true,
-				input: function () {
+				input: function ( done ) {
 					this.labelInput.setValue( 'whee' );
+					done();
 				},
 				expectedRange: new ve.Range( 13, 26 ),
 				expectedData: ( data ) => {
@@ -166,7 +173,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Link target modified with initial selection including whitespace',
 				range: new ve.Range( 4, 13 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'quux' );
 				},
 				expectedRange: new ve.Range( 5, 17 ),
@@ -177,7 +185,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Target of labeled link modified',
 				range: new ve.Range( 16 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'whee' );
 				},
 				expectedRange: new ve.Range( 13, 25 ),
@@ -188,7 +197,8 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			{
 				msg: 'Wikitext in link label is escaped',
 				range: new ve.Range( 30, 36 ),
-				input: function () {
+				input: function ( done ) {
+					this.annotationInput.once( 'change', done );
 					this.annotationInput.getTextInputWidget().setValue( 'foo' );
 				},
 				expectedRange: new ve.Range( 30, 61 ),
@@ -199,5 +209,5 @@ QUnit.test( 'Wikitext link inspector', ( assert ) => {
 			// Skips clear annotation test, not implement yet
 		].map( ( testCase ) => Object.assign( {}, caseDefaults, testCase ) );
 
-	ve.test.utils.runFragmentInspectorTests( assert, cases ).finally( () => done() );
+	ve.test.utils.runFragmentInspectorTests( assert, cases ).finally( () => testsDone() );
 } );

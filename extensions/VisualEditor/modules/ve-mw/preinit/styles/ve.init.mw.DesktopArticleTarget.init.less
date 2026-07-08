@@ -107,6 +107,10 @@
 }
 
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder {
+	-webkit-position: sticky;
+	position: sticky;
+	top: 0;
+	z-index: 2;
 	overflow: hidden;
 	transition: height 250ms ease;
 	height: 0;
@@ -115,24 +119,13 @@
 	/* Shadow is styled in theme files */
 
 	&-bar {
+		background: @background-color-base;
 		transform: translateY( -100% );
 		transition: transform 250ms ease;
 	}
 
 	&-open .ve-init-mw-desktopArticleTarget-toolbarPlaceholder-bar {
 		transform: translateY( 0 );
-	}
-
-	&-floating {
-		// No height transition required when toolbar starts off floating
-		transition: none;
-
-		.ve-init-mw-desktopArticleTarget-toolbarPlaceholder-bar {
-			position: fixed;
-			top: 0;
-			z-index: 1;
-			background: @background-color-base;
-		}
 	}
 }
 

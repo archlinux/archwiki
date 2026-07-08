@@ -7,7 +7,7 @@
 </template>
 
 <script>
-const { CdxProgressIndicator } = require( '@wikimedia/codex' );
+const { CdxProgressIndicator } = require( '../codex.js' );
 
 // @vue/component
 module.exports = exports = {

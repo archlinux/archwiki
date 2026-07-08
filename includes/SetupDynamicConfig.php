@@ -13,7 +13,8 @@ use MediaWiki\Logging\NewUsersLogFormatter;
 use MediaWiki\Logging\PageLangLogFormatter;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Title\NamespaceInfo;
-use Wikimedia\AtEase\AtEase;
+use Wikimedia\LockManager\FSLockManager;
+use Wikimedia\LockManager\NullLockManager;
 
 // For backwards compatibility, the value of wgLogos is copied to wgLogo.
 // This is because some extensions/skins may be using $config->get('Logo')
@@ -32,11 +33,6 @@ if ( isset( $wgMimeTypeBlacklist ) ) {
 	$wgMimeTypeExclusions = array_merge( $wgMimeTypeExclusions, $wgMimeTypeBlacklist );
 } else {
 	$wgMimeTypeBlacklist = $wgMimeTypeExclusions;
-}
-if ( isset( $wgEnableUserEmailBlacklist ) ) {
-	$wgEnableUserEmailMuteList = $wgEnableUserEmailBlacklist;
-} else {
-	$wgEnableUserEmailBlacklist = $wgEnableUserEmailMuteList;
 }
 if ( isset( $wgShortPagesNamespaceBlacklist ) ) {
 	$wgShortPagesNamespaceExclusions = $wgShortPagesNamespaceBlacklist;
@@ -65,7 +61,6 @@ if ( isset( $wgRateLimits['changetag'] ) ) {
 }
 
 // Prohibited file extensions shouldn't appear on the "allowed" list
-// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal False positive
 $wgFileExtensions = array_values( array_diff( $wgFileExtensions, $wgProhibitedFileExtensions ) );
 
 // Fix path to icon images after they were moved in 1.24
@@ -327,9 +322,8 @@ if ( isset( $wgSlaveLagCritical ) ) {
 }
 
 if ( $wgInvalidateCacheOnLocalSettingsChange && defined( 'MW_CONFIG_FILE' ) ) {
-	AtEase::suppressWarnings();
-	$wgCacheEpoch = max( $wgCacheEpoch, gmdate( 'YmdHis', filemtime( MW_CONFIG_FILE ) ) );
-	AtEase::restoreWarnings();
+	// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+	$wgCacheEpoch = max( $wgCacheEpoch, gmdate( 'YmdHis', @filemtime( MW_CONFIG_FILE ) ) );
 }
 
 if ( $wgNewUserLog ) {

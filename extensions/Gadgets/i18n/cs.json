@@ -62,5 +62,7 @@
 	"gadgets-validate-invaliddependencies": "Chybí následující {{PLURAL:$2|závislost|závislosti}}: $1.",
 	"gadgets-validate-deprecateddependencies": "Následující {{PLURAL:$2|závislost je zavržená|závislosti jsou zavržené}}: $1.",
 	"gadgets-supports-urlload": "Toto udělátko podporuje načítání prostřednictví URL pomocí parametru <code>?withgadget</code>.",
-	"gadgets-hidden": "Toto udělátko je [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skryté], což znamená, že se nezobrazuje na stránce nastavení."
+	"gadgets-hidden": "Toto udělátko je [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden skryté], což znamená, že se nezobrazuje na stránce nastavení.",
+	"gadgets-subpage-invalid": "Neplatná podstránka „<nowiki>$1</nowiki>“",
+	"gadgets-subpage-toofewparams": "Nedostatek parametrů pro podstránku (neplatný odkaz)."
 }

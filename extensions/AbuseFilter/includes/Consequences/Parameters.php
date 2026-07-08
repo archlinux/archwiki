@@ -11,14 +11,6 @@ use MediaWiki\User\UserIdentity;
  * Immutable value object that provides "base" parameters to Consequence objects
  */
 class Parameters {
-	/** @var ExistingFilter */
-	private $filter;
-
-	/** @var bool */
-	private $isGlobalFilter;
-
-	/** @var ActionSpecifier */
-	private $specifier;
 
 	/**
 	 * @param ExistingFilter $filter
@@ -26,13 +18,10 @@ class Parameters {
 	 * @param ActionSpecifier $specifier
 	 */
 	public function __construct(
-		ExistingFilter $filter,
-		bool $isGlobalFilter,
-		ActionSpecifier $specifier
+		private readonly ExistingFilter $filter,
+		private readonly bool $isGlobalFilter,
+		private readonly ActionSpecifier $specifier
 	) {
-		$this->filter = $filter;
-		$this->isGlobalFilter = $isGlobalFilter;
-		$this->specifier = $specifier;
 	}
 
 	public function getFilter(): ExistingFilter {

@@ -43,6 +43,18 @@ class MetadataPanel extends UiElement {
 	}
 
 	/**
+	 * Check whether the image has geolocation data.
+	 *
+	 * @param {ImageModel} imageData
+	 * @return {boolean}
+	 */
+	static hasCoords( imageData ) {
+		// TODO: Confirm null check is impossible and remove
+		return imageData.latitude !== undefined && imageData.latitude !== null &&
+			imageData.longitude !== undefined && imageData.longitude !== null;
+	}
+
+	/**
 	 * FIXME this should be in the jquery.fullscreen plugin.
 	 *
 	 * @return {boolean}
@@ -640,7 +652,7 @@ class MetadataPanel extends UiElement {
 	 * @param {ImageModel} imageData
 	 */
 	setLocationData( imageData ) {
-		if ( !imageData.hasCoords() ) {
+		if ( !MetadataPanel.hasCoords( imageData ) ) {
 			return;
 		}
 
@@ -747,7 +759,7 @@ class MetadataPanel extends UiElement {
 	 * @param {string} error error message
 	 */
 	showError( title, error ) {
-		this.$credit.text( mw.msg( 'multimediaviewer-metadata-error', error ) );
+		this.creditField.set( mw.msg( 'multimediaviewer-metadata-error', error ) );
 		this.$title.html( title );
 	}
 

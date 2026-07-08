@@ -15,24 +15,25 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { ImageModel, License } = require( 'mmv' );
+const { ImageModel } = require( 'mmv' );
+const { fixtures } = require( '../mmv.testhelpers.js' );
 
 QUnit.module( 'mmv.model.Image', QUnit.newMwEnvironment() );
 
-QUnit.test( 'Image model constructor sense check', ( assert ) => {
-	const title = mw.Title.newFromText( 'File:Foobar.jpg' );
-	const name = 'Foo bar';
+QUnit.test( 'newFromImageInfo', ( assert ) => {
+	const title = mw.Title.newFromText( 'File:Foo bar.jpg' );
+
+	const pageID = 42;
+	const repo = 'wikimediacommons';
+
 	const size = 100;
 	const width = 10;
 	const height = 15;
 	const mime = 'image/jpeg';
 	const url = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
-	const pageID = 42;
-	const descurl = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
-	const descShortUrl = '';
-	const repo = 'wikimediacommons';
+	const descriptionurl = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
+	const descriptionshorturl = '';
 	const datetime = '2011-07-04T23:31:14Z';
-	const anondatetime = '20110704000000';
 	const origdatetime = '2010-07-04T23:31:14Z';
 	const description = 'This is a test file.';
 	const source = 'WMF';
@@ -40,61 +41,75 @@ QUnit.test( 'Image model constructor sense check', ( assert ) => {
 	const authorCount = 1;
 	const permission = 'only use for good, not evil';
 	const deletionReason = 'poor quality';
-	const license = new License( 'cc0' );
 	const attribution = 'Created by my cats on a winter morning';
-	const latitude = 39.12381283;
-	const longitude = 100.983829;
-	const restrictions = [ 'trademarked' ];
-	const imageData = new ImageModel(
-		title, name, size, width, height, mime, url,
-		descurl, descShortUrl, pageID, repo, datetime, anondatetime, origdatetime,
-		description, source, author, authorCount, license, permission, attribution,
-		deletionReason, latitude, longitude, restrictions );
 
-	assert.strictEqual( imageData.title, title, 'Title is set correctly' );
-	assert.strictEqual( imageData.name, name, 'Name is set correctly' );
-	assert.strictEqual( imageData.size, size, 'Size is set correctly' );
-	assert.strictEqual( imageData.width, width, 'Width is set correctly' );
-	assert.strictEqual( imageData.height, height, 'Height is set correctly' );
-	assert.strictEqual( imageData.mimeType, mime, 'MIME type is set correctly' );
-	assert.strictEqual( imageData.url, url, 'URL for original image is set correctly' );
-	assert.strictEqual( imageData.descriptionUrl, descurl, 'URL for image description page is set correctly' );
-	assert.strictEqual( imageData.pageID, pageID, 'Page ID of image description is set correctly' );
-	assert.strictEqual( imageData.repo, repo, 'Repository name is set correctly' );
-	assert.strictEqual( imageData.uploadDateTime, datetime, 'Date and time of last upload is set correctly' );
-	assert.strictEqual( imageData.anonymizedUploadDateTime, anondatetime, 'Anonymized date and time of last upload is set correctly' );
-	assert.strictEqual( imageData.creationDateTime, origdatetime, 'Date and time of original upload is set correctly' );
-	assert.strictEqual( imageData.description, description, 'Description is set correctly' );
-	assert.strictEqual( imageData.source, source, 'Source is set correctly' );
-	assert.strictEqual( imageData.author, author, 'Author is set correctly' );
-	assert.strictEqual( imageData.authorCount, authorCount, 'Author is set correctly' );
-	assert.strictEqual( imageData.license, license, 'License is set correctly' );
-	assert.strictEqual( imageData.permission, permission, 'Permission is set correctly' );
-	assert.strictEqual( imageData.attribution, attribution, 'Attribution is set correctly' );
-	assert.strictEqual( imageData.deletionReason, deletionReason, 'Deletion reason is set correctly' );
-	assert.strictEqual( imageData.latitude, latitude, 'Latitude is set correctly' );
-	assert.strictEqual( imageData.longitude, longitude, 'Longitude is set correctly' );
-	assert.deepEqual( imageData.restrictions, restrictions, 'Restrictions is set correctly' );
+	const imageData = ImageModel.newFromImageInfo(
+		title,
+		{
+			...fixtures.imageinfoApi.makeBasic( {
+				size,
+				width,
+				height,
+				mime,
+				url,
+				descriptionurl,
+				descriptionshorturl,
+				extmetadata: {
+					DateTime: { value: datetime },
+					DateTimeOriginal: { value: origdatetime },
+					ImageDescription: { value: description },
+					Credit: { value: source },
+					Artist: { value: author },
+					AuthorCount: { value: authorCount },
+					LicenseShortName: { value: 'cc0' },
+					UsageTerms: { value: 'Creative Commons Zero' },
+					AttributionRequired: { value: 'false' },
+					Permission: { value: permission },
+					Attribution: { value: attribution },
+					DeletionReason: { value: deletionReason },
+					GPSLatitude: { value: '39.12381283' },
+					GPSLongitude: { value: '100.983829' },
+					Restrictions: { value: 'trademarked' }
+				}
+			} ),
+			pageid: pageID,
+			imagerepository: repo
+		}
+	);
+
+	assert.strictEqual( imageData.title, title, 'Title' );
+	assert.propContains( imageData, {
+		name: 'Foo bar',
+		size,
+		width,
+		height,
+		mimeType: mime,
+		url,
+		descriptionUrl: descriptionurl,
+		descriptionShortUrl: descriptionshorturl,
+		pageID,
+		repo,
+		uploadDateTime: datetime,
+		anonymizedUploadDateTime: '20110704000000',
+		creationDateTime: origdatetime,
+		description,
+		source,
+		author,
+		authorCount,
+		permission,
+		attribution,
+		deletionReason,
+		latitude: 39.12381283,
+		longitude: 100.983829,
+		restrictions: [ 'trademarked' ]
+	}, 'ImageModel object' );
+
+	assert.propContains( imageData.license, {
+		shortName: 'cc0',
+		longName: 'Creative Commons Zero',
+		attributionRequired: false
+	}, 'License object' );
 	assert.true( $.isPlainObject( imageData.thumbUrls ), 'Thumb URL cache is set up properly' );
-} );
-
-QUnit.test( 'hasCoords()', ( assert ) => {
-	const firstImageData = new ImageModel(
-		mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
-		10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
-		'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
-		'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat'
-	);
-	const secondImageData = new ImageModel(
-		mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
-		10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
-		'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
-		'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat',
-		undefined, '39.91820938', '78.09812938'
-	);
-
-	assert.strictEqual( firstImageData.hasCoords(), false, 'No coordinates present means hasCoords returns false.' );
-	assert.strictEqual( secondImageData.hasCoords(), true, 'Coordinates present means hasCoords returns true.' );
 } );
 
 QUnit.test( 'parseExtmeta()', ( assert ) => {

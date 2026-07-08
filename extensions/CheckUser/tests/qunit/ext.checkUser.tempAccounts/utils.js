@@ -4,13 +4,20 @@
  * Return a temporary user link with the correct class and text.
  *
  * @param {string} username The temporary user's name
+ * @param {string} [wikiUrl] URL pattern for an external temporary user link
  * @return {jQuery}
  */
-function makeTempUserLink( username ) {
-	return $( '<a>' )
+function makeTempUserLink( username, wikiUrl ) {
+	const $userLink = $( '<a>' )
 		.addClass( 'mw-tempuserlink' )
 		.text( username )
 		.attr( 'data-mw-target', username );
+
+	if ( wikiUrl ) {
+		$userLink.attr( 'data-wiki-url', wikiUrl );
+	}
+
+	return $userLink;
 }
 
 /**

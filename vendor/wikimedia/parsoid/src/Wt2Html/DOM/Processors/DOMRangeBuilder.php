@@ -3,15 +3,12 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\DOM\Processors;
 
-/**
- * @phan-file-suppress PhanTypeMismatchArgumentSuperType
- */
-
 use Error;
 use SplObjectStorage;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\ElementRange;
 use Wikimedia\Parsoid\DOM\Comment;
@@ -22,8 +19,8 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMTraverser;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -108,53 +105,7 @@ class DOMRangeBuilder {
 	 * Get the DSR of the end of a DOMRange
 	 */
 	private static function getRangeEndDSR( DOMRangeInfo $range ): ?DomSourceRange {
-		$endNode = $range->end;
-		if ( $endNode instanceof Element ) {
-			return DOMDataUtils::getDataParsoid( $endNode )->dsr ?? null;
-		} else {
-			// In the rare scenario where the last element of a range is not an ELEMENT,
-			// extrapolate based on DSR of first leftmost sibling that is an ELEMENT.
-			// We don't try any harder than this for now.
-			$offset = 0;
-			$n = $endNode->previousSibling;
-			while ( $n && !( $n instanceof Element ) ) {
-				if ( $n instanceof Text ) {
-					$offset += strlen( $n->nodeValue );
-				} else {
-					// A comment
-					// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
-					$offset += WTUtils::decodedCommentLength( $n );
-				}
-				$n = $n->previousSibling;
-			}
-
-			$dsr = null;
-			if ( $n ) {
-				/**
-				 * The point of the above loop is to ensure we're working
-				 * with a Element if there is an $n.
-				 */
-				'@phan-var Element $n'; // @var Element $n
-				$dsr = DOMDataUtils::getDataParsoid( $n )->dsr ?? null;
-			}
-
-			if ( $dsr && is_int( $dsr->end ?? null ) ) {
-				$len = $endNode instanceof Text
-					? strlen( $endNode->nodeValue )
-					// A comment
-					// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
-					: WTUtils::decodedCommentLength( $endNode );
-				$dsr = new DomSourceRange(
-					$dsr->end + $offset,
-					$dsr->end + $offset + $len,
-					null,
-					null,
-					source: $dsr->source
-				);
-			}
-
-			return $dsr;
-		}
+		return DOMDataUtils::getDataParsoid( $range->end )->dsr ?? null;
 	}
 
 	/**
@@ -196,10 +147,8 @@ class DOMRangeBuilder {
 			// *after* the DOM has been built which is why they can show up in
 			// fosterable positions in the DOM.
 		} elseif ( $startsInFosterablePosn &&
-			( !( $range->start instanceof Element ) ||
-				( WTUtils::isTplMarkerMeta( $range->start ) &&
-					( !( $next instanceof Element ) || WTUtils::isTplMarkerMeta( $next ) ) )
-			)
+			WTUtils::isTplMarkerMeta( $range->start ) &&
+			( !( $next instanceof Element ) || WTUtils::isTplMarkerMeta( $next ) )
 		) {
 			$rangeStartParent = $range->start->parentNode;
 
@@ -208,16 +157,14 @@ class DOMRangeBuilder {
 			// the first table content node.
 			$noWS = true;
 			$nodesToMigrate = [];
-			$newStart = $range->start;
-			$n = $range->start instanceof Element ? $next : $range->start;
-			while ( !( $n instanceof Element ) ) {
-				if ( $n instanceof Text ) {
+			while ( !( $next instanceof Element ) ) {
+				if ( $next instanceof Text ) {
 					$noWS = false;
 				}
-				$nodesToMigrate[] = $n;
-				$n = $n->nextSibling;
-				$newStart = $n;
+				$nodesToMigrate[] = $next;
+				$next = $next->nextSibling;
 			}
+			$newStart = $next;
 
 			// As long as $newStart is a tr/tbody or we don't have whitespace
 			// migrate $nodesToMigrate into $newStart. Pushing whitespace into
@@ -241,16 +188,6 @@ class DOMRangeBuilder {
 				// If not, we are forced to expand the template range.
 				$range->start = $range->end = $rangeStartParent;
 			}
-		}
-
-		// Ensure range->start is an element node since we want to
-		// add/update the data-parsoid attribute to it.
-		if ( !( $range->start instanceof Element ) ) {
-			$span = $this->document->createElement( 'span' );
-			$range->start->parentNode->insertBefore( $span, $range->start );
-			$span->appendChild( $range->start );
-			$range->start = $span;
-			$this->updateDSRForFirstRangeNode( $range->start, $range->startElem );
 		}
 
 		$range->start = $this->getStartConsideringFosteredContent( $range->start );
@@ -301,7 +238,7 @@ class DOMRangeBuilder {
 	 * Returns the current node if it's not just after fostered content, the first node
 	 * of fostered content otherwise.
 	 */
-	protected function getStartConsideringFosteredContent( Node $node ): Node {
+	protected function getStartConsideringFosteredContent( Element $node ): Element {
 		if ( DOMUtils::nodeName( $node ) === 'table' ) {
 			// If we have any fostered content, include it as well.
 			for ( $previousSibling = $node->previousSibling;
@@ -380,7 +317,10 @@ class DOMRangeBuilder {
 			$pi->srcOffsets = null;
 		}
 		$tplArray[] = new CompoundTemplateInfo(
-			$dsr, $templateInfo, DOMUtils::hasTypeOf( $range->startElem, 'mw:Param' )
+			dsr: $dsr,
+			info: $templateInfo,
+			isParam: DOMUtils::hasTypeOf( $range->startElem, 'mw:Param' ),
+			colon: $dp->colon ?? null,
 		);
 	}
 
@@ -757,8 +697,10 @@ class DOMRangeBuilder {
 	/**
 	 * Encapsulation requires adding about attributes on the top-level
 	 * nodes of the range. This requires them to all be Elements.
+	 * Since start/end are always Elements, this only needs to examine
+	 * and update intermediate nodes between them.
 	 */
-	private function ensureElementsInRange( DOMRangeInfo $range ): void {
+	private function ensureElementsInRangeAndAddAboutIds( DOMRangeInfo $range ): void {
 		$n = $range->start;
 		$e = $range->end;
 		$about = DOMCompat::getAttribute( $range->startElem, 'about' );
@@ -829,7 +771,7 @@ class DOMRangeBuilder {
 			// Remove about attribute
 			'@phan-var Element $elt';  /** @var Element $elt */
 			$next = $elt->nextSibling;
-			if ( DOMUtils::nodeName( $elt ) === 'span' ) {
+			if ( !( $elt instanceof Element ) || DOMUtils::nodeName( $elt ) === 'span' ) {
 				// Drop the newline span!
 				// Alternatively, we could migrate all the newlines as follows:
 				// DOMUtils::migrateChildren( $elt, $migrationTarget, $insertPosition );
@@ -844,76 +786,6 @@ class DOMRangeBuilder {
 
 	private function isNewlineWrappingSpan( Node $elt ): bool {
 		return DOMUtils::nodeName( $elt ) === 'span' && preg_match( "/^\n+$/", $elt->textContent );
-	}
-
-	/**
-	 * This code exists to handle T370751 and T378906. This support is known to not be
-	 * perfect and exists to making the vast majority of existing templates & CSS work
-	 * (primarily navbox styling).
-	 *
-	 * We can get rid of this code if editors amend their templates and/or CSS to either
-	 * make their next-sibling selectors work (by moving newlines & categories from leading
-	 * and trailing positions in templates) OR amending their CSS to account for Parsoid's
-	 * span-newline-wrapping and category link tags.
-	 */
-	private function handleRenderingTransparentEltsAtBoundary( DOMRangeInfo $range ): void {
-		// Except for 'p', other block tags are not suitable.
-		//
-		// We could include 'p' here, but the primary use case
-		// for doing this are navboxes which are always 'div' tags.
-		static $allowedMigrationTargets = [ 'div' ];
-
-		if ( $range->start === $range->end ) {
-			return;
-		}
-
-		$elt = $range->start;
-		while ( $elt !== $range->end && (
-			WTUtils::isRenderingTransparentNode( $elt ) || $this->isNewlineWrappingSpan( $elt )
-		) ) {
-			$elt = $elt->nextSibling;
-		}
-
-		if ( $elt !== $range->start &&
-			in_array( DOMUtils::nodeName( $elt ), $allowedMigrationTargets, true ) &&
-			DOMDataUtils::getNodeData( $elt )->mw === null // Conservative but safe
-		) {
-			// Migrate all nodes from $range->start till $elt into $elt
-			$rangeStart = $range->start;
-			$newRangeStart = $elt;
-
-			DOMUtils::removeTypeOf( $rangeStart, 'mw:Transclusion' );
-			$rangeDmw = DOMDataUtils::getDataMw( $rangeStart );
-			$rangeDp = DOMDataUtils::getDataParsoid( $rangeStart );
-
-			$this->migrateElements( $elt, $rangeStart, $elt, $elt->firstChild );
-			$range->start = $newRangeStart;
-
-			DOMUtils::addTypeOf( $newRangeStart, 'mw:Transclusion' );
-			$newRangeDmw = DOMDataUtils::getDataMw( $newRangeStart );
-			$newRangeDmw->parts = $rangeDmw->parts;
-			unset( $rangeDmw->parts );
-			$newRangeDp = DOMDataUtils::getDataParsoid( $newRangeStart );
-			$newRangeDp->pi = $rangeDp->pi;
-			unset( $rangeDp->pi );
-			$newRangeDp->dsr = $rangeDp->dsr;
-			unset( $rangeDp->dsr );
-		}
-
-		$elt = $range->end;
-		while ( $elt !== $range->start && (
-			WTUtils::isRenderingTransparentNode( $elt ) || $this->isNewlineWrappingSpan( $elt )
-		) ) {
-			$elt = $elt->previousSibling;
-		}
-
-		if ( $elt !== $range->end &&
-			in_array( DOMUtils::nodeName( $elt ), $allowedMigrationTargets, true )
-		) {
-			// Migrate all nodes from $elt->nextSibling till $range->end into $elt
-			$this->migrateElements( $elt, $elt->nextSibling, $range->end->nextSibling, null );
-			$range->end = $elt;
-		}
 	}
 
 	/**
@@ -942,11 +814,11 @@ class DOMRangeBuilder {
 			// {{1x|<table>}}
 			// {{1x|<div>}}
 			//
-			// Here, #mwt1 leaves a table open and the end meta from #mwt2 is
-			// fostered, since it gets closed into the div.  The range for #mwt1
-			// is the entire table, which thankfully contains #mwt2, so we still
+			// Here, range-1 leaves a table open and the end meta from range-2 is
+			// fostered, since it gets closed into the div.  The range for range-1
+			// is the entire table, which thankfully contains range-2, so we still
 			// have the expected entire nesting.  Any tricks to extend the range
-			// of #mwt2 beyond the table (so that we have an overlapping range) will
+			// of range-2 beyond the table (so that we have an overlapping range) will
 			// inevitably result in the end meta not being fostered, and we avoid
 			// this situation altogether.
 			//
@@ -962,7 +834,7 @@ class DOMRangeBuilder {
 
 			// FIXME: The code below needs to be aware of flipped ranges.
 
-			$this->ensureElementsInRange( $range );
+			$this->ensureElementsInRangeAndAddAboutIds( $range );
 
 			$tplArray = $this->compoundTpls[$range->id] ?? null;
 			Assert::invariant( (bool)$tplArray, 'No parts for template range!' );
@@ -1088,15 +960,23 @@ class DOMRangeBuilder {
 							$a->info->type = 'template';
 						}
 						$parts[] = $a->info;
-						// FIXME: we throw away the array keys and rebuild them
-						// again in WikitextSerializer
-						$pi[] = array_values( $a->info->paramInfos );
+						// FIXME: Except for v3 parser functions, we
+						// throw away parameter order and rebuild it
+						// again in WikitextSerializer.  We could add
+						// 'order' and 'eq' keys to everything.
+						// T404772
+						$pi[] = $a->info->paramInfos;
 					}
 				}
 
 				if ( !is_string( $parts[0] ) && $parts[0]->type === 'parserfunction' ) {
 					$key = $parts[0]->func;
 					DOMUtils::addTypeOf( $encapTgt, 'mw:ParserFunction/' . $key, false );
+				}
+				if ( ( $firstTplInfo->colon ?? ':' ) !== ':' ) {
+					// We only preserve the colon information from the
+					// first encapsulated item.
+					$encapDP->colon = $firstTplInfo->colon;
 				}
 
 				// Set up dsr->start, dsr->end, and data-mw on the target node
@@ -1179,7 +1059,7 @@ class DOMRangeBuilder {
 			}
 			$range->endElem->parentNode->removeChild( $range->endElem );
 
-			$this->handleRenderingTransparentEltsAtBoundary( $range );
+			$this->handleRenderingTransparentEltsBetweenBlocks( $range );
 		}
 	}
 
@@ -1398,13 +1278,15 @@ class DOMRangeBuilder {
 		Element $startMeta, Element $endMeta, ?Element $endElem = null
 	): DOMRangeInfo {
 		$range = new DOMRangeInfo(
-			Utils::stripParsoidIdPrefix( $this->getRangeId( $startMeta ) ),
+			$this->getRangeId( $startMeta ),
 			DOMDataUtils::getDataParsoid( $startMeta )->tsr->start,
 			$startMeta,
 			$endMeta
 		);
 
 		// Find common ancestor of startMeta and endElem
+		// NOTE: $startMeta is an Element and all its ancestors
+		// will be Elements. So, all array entries are Elements.
 		$startAncestors = DOMUtils::pathToRoot( $startMeta );
 		$elem = $endElem ?? $endMeta;
 		$parentNode = $elem->parentNode;
@@ -1415,6 +1297,7 @@ class DOMRangeBuilder {
 					'The startMeta cannot be the common ancestor.'
 				);
 			} elseif ( $i > 0 ) {
+				// @phan-suppress-next-line PhanTypeMismatchPropertyReal
 				$range->start = $startAncestors[$i - 1];
 				$range->end = $elem;
 				break;
@@ -1424,5 +1307,194 @@ class DOMRangeBuilder {
 		}
 
 		return $range;
+	}
+
+	/**
+	 * This code exists to handle T370751 and T378906. This support is known to not be
+	 * perfect and exists to making the vast majority of existing templates & CSS work
+	 * (primarily navbox styling).
+	 * It wraps rendering transparent tags that have chance of ending up between two divs
+	 * or table into a span, thus giving the option to select them with a CSS that needs to
+	 * account for at most two of these spans (with the class mw-empty-elt).
+	 */
+	private function handleRenderingTransparentEltsBetweenBlocks( DOMRangeInfo $range ): void {
+		$traverser = new DOMTraverser( false, false );
+		$traverser->addHandler( null, fn ( $node ) => $this->handleFirstRenderingTransparentNode( $node, $range ) );
+
+		$elt = $range->start;
+		$end = $range->end->nextSibling;
+		while ( $elt && $elt !== $end ) {
+			if ( WTUtils::isRenderingTransparentNode( $elt ) ||
+				$this->isNewlineWrappingSpan( $elt ) ||
+				DOMUtils::nodeName( $elt ) === 'style'
+			) {
+				$res = $this->handleFirstRenderingTransparentNode( $elt, $range );
+				if ( $res instanceof Element ) {
+					$elt = $res;
+					continue;
+				}
+			} else {
+				$traverser->traverse( null, $elt );
+			}
+			$elt = $elt->nextSibling;
+		}
+	}
+
+	private function canSwallowRenderingTransparentNodes( ?Element $node, Element $wrapper ): bool {
+		return $node !== null && DOMUtils::nodeName( $node ) === 'div' &&
+			DOMCompat::getAttribute( $node, 'about' ) == DOMCompat::getAttribute( $wrapper, 'about' ) &&
+			(
+				// data-mw will not be transferred to $node if $wrapper has mw:Transclusion
+				!DOMUtils::hasTypeOf( $wrapper, 'mw:Transclusion' ) ||
+				// data-mw will be transferred to $node here. Conservatively
+				// require no existing data-mw $node to guarantee we won't clobber it.
+				DOMDataUtils::getNodeData( $node )->mw === null
+			);
+	}
+
+	/**
+	 * Processes a contiguous range of stashable nodes (category links and newline wrapping spans)
+	 * to put them in a mw-empty-elt wrapping span.
+	 *
+	 * For all sequence of contiguous (up to white space) sol-transparent links
+	 * and empty-line wrapping spans that come from the same transclusion range,
+	 * and that are either at the boundary of a transclusion or between two
+	 * elements of type table or div:
+	 * - if they have a valid div before or after that can contain them (and
+	 *   that is part of that same transclusion range), we stash them there
+	 * - if not, we create a wrapping span with class mw-empty-elt where
+	 *   they are and stash them there.
+	 * We actually drop empty-line spans and non-element nodes.
+	 *
+	 * Empty spans get deleted in Wt2Html/DOM/Handlers/CleanUp, unless
+	 * it's containing the template wrapping information (which may have been
+	 * transferred from one of the stashed nodes). This can lead to some
+	 * differences in the generated HTML, for instance:
+	 * - a template that starts with a single empty-line span will be replaced
+	 *   by a span that contains the template information, but not the new line
+	 * - empty lines spans between divs/tables, or empty line spans at the end
+	 *   of a transclusion, will disappear
+	 *
+	 * Additionally, if there's a sequence of sol-transparent links that
+	 * contain both non-transcluded and transcluded elements, the transcluded
+	 * ones will be added to a wrapping span, but the non-transcluded ones
+	 * won't, which may look odd in the resulting HTML.
+	 *
+	 * Traverser used by @see DOMTraverser
+	 *
+	 * @return \DOMNode|true|null
+	 */
+	public function handleFirstRenderingTransparentNode( Node $node, DOMRangeInfo $range ) {
+		if ( !$node instanceof Element || !$this->isStashableNode( $node ) ) {
+			return true;
+		}
+
+		$start = $last = $node;
+		$rangeExitSentinel = DOMCompat::getNextElementSibling( $range->end );
+		$next = DOMCompat::getNextElementSibling( $start );
+		// $next is past the last element of the template, so let's not consider it
+		if ( $next === $rangeExitSentinel ) {
+			$next = null;
+		}
+		while ( $next !== null && $next !== $rangeExitSentinel && $this->isStashableNode( $next ) ) {
+			$last = $next;
+			$next = DOMCompat::getNextElementSibling( $next );
+		}
+
+		$prev = DOMCompat::getPreviousElementSibling( $start );
+		if ( !$this->shouldStashRenderingTransparentNodes( $prev, $next, $start ) ) {
+			return true;
+		}
+
+		if ( $this->canSwallowRenderingTransparentNodes( $prev, $start ) ) {
+			$target = $prev;
+			$before = null;
+		} elseif ( $this->canSwallowRenderingTransparentNodes( $next, $start ) ) {
+			$target = $next;
+			$before = $target->firstChild;
+		} else {
+			$target = $start->ownerDocument->createElement( 'span' );
+			$target->setAttribute( 'class', 'mw-empty-elt' );
+			$targetDp = DOMDataUtils::getDataParsoid( $target );
+			$targetDp->autoInsertedStart = true;
+			$targetDp->autoInsertedEnd = true;
+			$before = null;
+			$start->parentNode->insertBefore( $target, $start );
+			if ( $start->hasAttribute( 'about' ) ) {
+				$target->setAttribute( 'about', DOMCompat::getAttribute( $start, 'about' ) );
+			}
+		}
+
+		if ( DOMUtils::hasTypeOf( $start, 'mw:Transclusion' ) ) {
+			$newRangeStart = $target;
+
+			DOMUtils::removeTypeOf( $start, 'mw:Transclusion' );
+			$rangeDmw = DOMDataUtils::getDataMw( $start );
+			$rangeDp = DOMDataUtils::getDataParsoid( $start );
+
+			$this->migrateElements( $target, $start, $last->nextSibling, $before );
+			if ( $range->start === $start ) {
+				$range->start = $newRangeStart;
+			}
+
+			DOMUtils::addTypeOf( $newRangeStart, 'mw:Transclusion' );
+
+			$pfkey = WTUtils::getPFragmentHandlerKey( $start );
+			if ( $pfkey ) {
+				DOMUtils::addTypeOf( $newRangeStart, "mw:ParserFunction/$pfkey" );
+				DOMUtils::removeTypeOf( $start, "mw:ParserFunction/$pfkey" );
+			}
+
+			$newRangeDmw = DOMDataUtils::getDataMw( $newRangeStart );
+			$newRangeDmw->parts = $rangeDmw->parts;
+			unset( $rangeDmw->parts );
+			$newRangeDp = DOMDataUtils::getDataParsoid( $newRangeStart );
+			$newRangeDp->pi = $rangeDp->pi;
+			unset( $rangeDp->pi );
+			$newRangeDp->dsr = $rangeDp->dsr;
+			unset( $rangeDp->dsr );
+		} else {
+			$this->migrateElements( $target, $start, $last->nextSibling, $before );
+			if ( $range->end === $last ) {
+				$range->end = $target;
+			}
+		}
+		return $target->nextSibling;
+	}
+
+	private function shouldStashRenderingTransparentNodes( ?Element $prev, ?Element $next, Element $node ): bool {
+		return (
+				// start of a template
+				$prev === null ||
+				WTUtils::isTplStartMarkerMeta( $prev ) ||
+				WTUtils::isFirstEncapsulationWrapperNode( $node ) ||
+				// or after a div or a table
+				in_array( DOMUtils::nodeName( $prev ), [ 'div', 'table' ], true )
+			) &&
+			(
+				// end of a template (or start of a new one)
+				$next === null ||
+				WTUtils::isTplMarkerMeta( $next ) ||
+				// or before a div or a table
+				in_array( DOMUtils::nodeName( $next ), [ 'div', 'table' ], true )
+			 );
+	}
+
+	private function isStashableNode( Node $node ): bool {
+		return (
+			(
+				WTUtils::isRenderingTransparentNode( $node ) &&
+				// These metas count as rendering transparent, but let's not touch them
+				// They're probably irrelevant for our case, and require fiddling with
+				// pre handling more than necessary.
+				!DOMUtils::hasTypeOf( $node, 'mw:IndentPreWS' )
+			) ||
+			$this->isNewlineWrappingSpan( $node ) ||
+			DOMUtils::nodeName( $node ) === 'style'
+		) &&
+		// This is conservative because we could restrict it to just
+		// <style> tags above, but this broader check is easier to
+		// reason about and verify that there aren't edge cases.
+		!DOMUtils::isFosterablePosition( $node );
 	}
 }

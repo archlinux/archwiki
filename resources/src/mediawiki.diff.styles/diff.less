@@ -40,7 +40,7 @@
 
 		div {
 			/* Force-wrap very long lines such as URLs or page-widening char strings */
-			word-wrap: break-word;
+			overflow-wrap: break-word;
 		}
 	}
 
@@ -78,6 +78,7 @@
 		padding: 0.3em 1px;
 		text-decoration: none;
 		white-space: break-spaces;
+		unicode-bidi: isolate;
 		// When JS is enabled, deleted and added content will show a popup explaining what the colors mean.
 		// Show a cursor pointer to make it clear it's clickable.
 		.client-js & {

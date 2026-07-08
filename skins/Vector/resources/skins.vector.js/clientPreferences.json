@@ -1,4 +1,10 @@
 {
+	"wp25eastereggs-enable": {
+		"options": [ "0", "1" ],
+		"linkLabelMessage": "wp25eastereggs-enable-learn-more-link-label",
+		"linkLabelUrl": "wp25eastereggs-enable-learn-more-link-url",
+		"preferenceKey": "wp25eastereggs-enable"
+	},
 	"vector-feature-custom-font-size": {
 		"options": [ "0", "1", "2" ],
 		"preferenceKey": "vector-font-size"
@@ -11,7 +17,10 @@
 		"options": [ "os", "day", "night" ],
 		"preferenceKey": "vector-theme",
 		"betaMessage": "vector-night-mode-beta-tag",
+		"linkLabelLoggedInOnly": true,
 		"linkLabelMessage": "vector-night-mode-issue-reporting-link-label",
-		"linkLabelUrl": "vector-night-mode-issue-reporting-notice-url"
+		"linkLabelTooltip": "vector-night-mode-issue-reporting-notice-tooltip",
+		"linkLabelUrl": "vector-night-mode-issue-reporting-notice-url",
+		"linkLabelUrlParameter": "vector-night-mode-issue-reporting-preload-title"
 	}
 }

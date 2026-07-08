@@ -15,6 +15,7 @@
  */
 
 use MediaWiki\Content\WikitextContent;
+use MediaWiki\Import\WikiRevision;
 use MediaWiki\Parser\ParserOptions;
 use MediaWiki\User\User;
 use Wikimedia\Diff\Diff;

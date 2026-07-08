@@ -221,6 +221,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|您的}}用户权限已{{GENDER:$1|更改}}。您已被添加至：$2。",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|您的}}用户权限已{{GENDER:$1|更改}}。您不再属于用户组：$2。",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|您的}}用户权限已{{GENDER:$1|更改}}。您已被添加至：$2。您不再属于用户组：$4。",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|您}}属于以下{{PLURAL:$2|用户组}}的成员身份已自动过期：$1。",
 	"notification-header-user-rights-expiry-change": "{{GENDER:$4|您}}在以下{{PLURAL:$3|用户组}}的成员身份到期时间已{{GENDER:$1|更改}}：$2。",
 	"notification-header-welcome": "{{GENDER:$2|欢迎}}来到{{SITENAME}}，$1！我们很高兴{{GENDER:$2|您}}能来这里。",
 	"notification-header-mention-summary": "$1在<strong>$4</strong>的编辑摘要{{GENDER:$2|提及了}}{{GENDER:$3|您}}。",
@@ -257,6 +258,7 @@
 	"notification-reverted-email-subject2": "{{GENDER:$3|您}}在{{SITENAME}}的{{PLURAL:$4|编辑}}被{{GENDER:$2|复原为了}}旧版本",
 	"notification-mention-email-subject": "$1在{{SITENAME}}{{GENDER:$2|提及了}}{{GENDER:$3|您}}",
 	"notification-user-rights-email-subject": "{{GENDER:$3|您}}在{{SITENAME}}的用户权限已更改",
+	"notification-user-rights-expiry-email-subject": "{{GENDER:$3|您}}在{{SITENAME}}的用户权限已过期",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1秒}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1分钟}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1小时}}",
@@ -310,7 +312,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|推送订阅管理员}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:推送订阅管理员",
 	"notification-subject-email-verify-email-reminder": "验证{{GENDER:$1|您}}的电子邮件地址",
-	"notification-header-verify-email-reminder": "请<strong>验证{{GENDER:$1|您的}}电子邮件地址</strong>，以便我们确认{{GENDER:$1|您}}账号中的邮件地址确实属于{{GENDER:$1|您}}。",
+	"notification-header-verify-email-reminder": "您好$2，请<strong>验证{{GENDER:$1|您的}}电子邮件地址</strong>，以便我们确认{{GENDER:$1|您}}账号中的邮件地址确实属于{{GENDER:$1|您}}。",
 	"notification-link-text-verify-email-reminder": "管理电子邮件设置",
 	"notification-verify-email-reminder-link-label": "确认电子邮件地址"
 }

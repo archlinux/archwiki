@@ -9,12 +9,12 @@ use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
  * Consequence that simply disallows the ongoing action.
  */
 class Disallow extends Consequence implements HookAborterConsequence {
-	/** @var string */
-	private $message;
 
-	public function __construct( Parameters $parameters, string $message ) {
+	public function __construct(
+		Parameters $parameters,
+		private readonly string $message
+	) {
 		parent::__construct( $parameters );
-		$this->message = $message;
 	}
 
 	/**

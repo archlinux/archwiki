@@ -48,6 +48,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Borrar máis páxinas]]",
 	"nuke-deletemore": "Borrar máis páxinas",
 	"nuke-pattern": "Patrón LIKE de SQL (por exemplo, %) para o nome de páxina:",
+	"nuke-pattern-leading-wildcard": "O patrón non pode comezar por <code>%</code>. Introduce un prefixo antes do comodín (por exemplo, <code>Exemplo%</code> en lugar de <code>%Exemplo</code>).",
 	"nuke-nolist": "Para continuar, primeiro dálle a \"{{int:nuke-submit-list}}\" e, a continuación, selecciona as páxinas que se porán en cola para a súa eliminación.",
 	"nuke-nopages-global": "Ningunha páxina coincide coa procura.",
 	"nuke-searchnotice-minmorethanmax": "O tamaño mínimo en bytes supera o tamaño máximo en bytes, polo que ningunha páxina cumpra estes criterios.",

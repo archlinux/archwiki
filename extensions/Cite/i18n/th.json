@@ -34,8 +34,6 @@
 	"cite_error_empty_references_define": "ป้ายระบุ <code>&lt;ref&gt;</code> ด้วยชื่อ \"$1\" ที่นิยามในกลุ่ม <code>&lt;references&gt;</code> ไม่มีเนื้อหา $2",
 	"cite-tracking-category-cite-error": "หน้าที่มีข้อผิดพลาดการอ้างอิง",
 	"cite-tracking-category-cite-error-desc": "หน้าในหมวดหมู่นี้มีข้อผิดพลาดในการใช้ป้ายระบุอ้างอิง",
-	"cite-tracking-category-cite-diffing-error": "หน้าที่มีข้อผิดพลาดในการอ้างอิงที่ส่งผลต่อการแสดงผลต่างทางภาพ",
-	"cite-tracking-category-cite-diffing-error-desc": "หน้าในหมวดหมู่นี้มีข้อผิดพลาดในการใช้แท็กการอ้างอิง และข้อผิดพลาดเหล่านี้ไม่สามารถนำไปแสดงผลให้อยู่ในรูปแบบเดียวกันทั้งในตัวแจงส่วนเดิมและในพาร์ซอยด์",
 	"cite-tracking-category-ref-details": "หน้าที่ใช้การอ้างอิงย่อย",
 	"cite-tracking-category-ref-details-desc": "หน้าในหมวดหมู่นี้ใช้แอตทริบิวต์ \"details\" ของแท็ก &lt;ref>",
 	"cite-reference-previews-reference": "อ้างอิง",

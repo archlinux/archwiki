@@ -3,7 +3,7 @@
 const {
 	processEditCountByDay,
 	parseMediaWikiTimestamp
-} = require( 'ext.checkUser.userInfoCard/modules/ext.checkUser.userInfoCard/util.js' );
+} = require( 'ext.checkUser.userInfoCard/util.js' );
 
 QUnit.module( 'ext.checkUser.userInfoCard.util', QUnit.newMwEnvironment() );
 

@@ -229,13 +229,11 @@ class AFPData {
 	 * @return self
 	 */
 	public function unaryMinus() {
-		if ( $this->type === self::DUNDEFINED ) {
-			return new self( self::DUNDEFINED );
-		} elseif ( $this->type === self::DINT ) {
-			return new self( $this->type, -$this->toInt() );
-		} else {
-			return new self( $this->type, -$this->toFloat() );
-		}
+		return match ( $this->type ) {
+			self::DUNDEFINED => new self( self::DUNDEFINED ),
+			self::DINT => new self( $this->type, -$this->toInt() ),
+			default => new self( $this->type, -$this->toFloat() ),
+		};
 	}
 
 	/**
@@ -248,17 +246,15 @@ class AFPData {
 		$a = $this->type === self::DUNDEFINED ? false : $this->toBool();
 		$b = $b->type === self::DUNDEFINED ? false : $b->toBool();
 
-		if ( $op === '|' ) {
-			return new self( self::DBOOL, $a || $b );
-		} elseif ( $op === '&' ) {
-			return new self( self::DBOOL, $a && $b );
-		} elseif ( $op === '^' ) {
-			return new self( self::DBOOL, $a xor $b );
-		}
-		// Should never happen.
-		// @codeCoverageIgnoreStart
-		throw new InternalException( "Invalid boolean operation: {$op}" );
-		// @codeCoverageIgnoreEnd
+		return match ( $op ) {
+			'|' => new self( self::DBOOL, $a || $b ),
+			'&' => new self( self::DBOOL, $a && $b ),
+			'^' => new self( self::DBOOL, $a xor $b ),
+			// Should never happen.
+			// @codeCoverageIgnoreStart
+			default => throw new InternalException( "Invalid boolean operation: {$op}" ),
+			// @codeCoverageIgnoreEnd
+		};
 	}
 
 	/**
@@ -283,19 +279,16 @@ class AFPData {
 
 		$a = $this->toString();
 		$b = $b->toString();
-		if ( $op === '>' ) {
-			return new self( self::DBOOL, $a > $b );
-		} elseif ( $op === '<' ) {
-			return new self( self::DBOOL, $a < $b );
-		} elseif ( $op === '>=' ) {
-			return new self( self::DBOOL, $a >= $b );
-		} elseif ( $op === '<=' ) {
-			return new self( self::DBOOL, $a <= $b );
-		}
-		// Should never happen
-		// @codeCoverageIgnoreStart
-		throw new InternalException( "Invalid comparison operation: {$op}" );
-		// @codeCoverageIgnoreEnd
+		return match ( $op ) {
+			'>' => new self( self::DBOOL, $a > $b ),
+			'<' => new self( self::DBOOL, $a < $b ),
+			'>=' => new self( self::DBOOL, $a >= $b ),
+			'<=' => new self( self::DBOOL, $a <= $b ),
+			// Should never happen
+			// @codeCoverageIgnoreStart
+			default => throw new InternalException( "Invalid comparison operation: $op" )
+			// @codeCoverageIgnoreEnd
+		};
 	}
 
 	/**

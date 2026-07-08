@@ -7,11 +7,11 @@
 			"Eduardo.mps",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
+			"Fúlvio",
 			"Giro720",
 			"He7d3r",
 			"Helder.wiki",
-			"Jesielt",
-			"Fúlvio"
+			"Jesielt"
 		]
 	},
 	"captcha-edit": "Para editar esta página, por favor, resolva a seguinte tarefa abaixo e insira a resposta na caixa ([[Special:Captcha/help|mais informações]]):",
@@ -42,5 +42,6 @@
 	"confirmedit-preview-valid": "válido",
 	"confirmedit-preview-invalid": "inválido",
 	"confirmedit-preview-description": "A tabela a seguir mostra a lista de linhas nesta página e se é um endereço IP válido ou um intervalo de endereço IP. Se a linha for um endereço IP válido ou um intervalo de endereço IP, ele será listado na lista branca de CAPTCHA, mas as linhas inválidas serão ignoradas. Um exemplo de um intervalo de endereço IP válido seria: 69.208.0.0/16 que vai de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mais informações] sobre o cálculo de um intervalo de endereços IP.",
-	"abusefilter-edit-action-showcaptcha": "Exigir que o usuário complete um CAPTCHA para prosseguir com a ação. Usuários com permissão para ignorar o CAPTCHA estão isentos."
+	"abusefilter-edit-action-showcaptcha": "Exigir verificação por CAPTCHA para realizar a ação",
+	"abusefilter-edit-action-showcaptcha-help": "Usuários com a permissão de pular CAPTCHAs estão isentos."
 }

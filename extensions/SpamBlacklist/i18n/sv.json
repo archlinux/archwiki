@@ -8,8 +8,8 @@
 			"Lokal Profil",
 			"NH",
 			"Skalman",
-			"WikiPhoenix",
-			"Stefan2255"
+			"Stefan2255",
+			"WikiPhoenix"
 		]
 	},
 	"spam-blacklist": " #<!-- ändra inte den här raden --> <pre>\n# Externa URL:er som matchar den här listan kommer att blockeras när de läggs till på en sida.\n# Den här listan påverkar endast denna wiki; se även den globala blockeringslistan.\n# För dokumentation, se https://www.mediawiki.org/wiki/Extension:SpamBlacklist/sv\n#\n# Syntaxen är följande:\n#   * All text från ett #-tecken till radens slut är en kommentar\n#   * Alla icke-tomma rader är ett regex-fragment som bara matchar värdar inuti URL:er\n\n\n #</pre> <!-- ändra inte den här raden -->",
@@ -19,7 +19,7 @@
 	"spam-blacklisted-email": "Svartlistad e-postadress",
 	"spam-blacklisted-email-text": "Din e-postadress är för närvarande svartlistad från att skicka e-post till andra användare.",
 	"spam-blacklisted-email-signup": "Den angivna e-postadressen är förnärvarande svartlistad från användning.",
-	"spam-invalid-lines": "Följande spamblockeringslista {{PLURAL:$1|rad är ett|rader är}} ogiltiga reguljära {{PLURAL:$1|uttryck}} och {{PLURAL:$1|behöver}} korrigeras innan sidan sparas:",
+	"spam-blacklisted-email-change": "Den angivna e-postadressen är förnärvarande svartlistad från användning.",
 	"spam-blacklist-desc": "Regex-baserat antispamverktyg som gör det möjligt att blockera webbadresser (URL:er) på sidor och e-postadresser för registrerade användare",
 	"log-name-spamblacklist": "Logg för spamfiltret",
 	"log-description-spamblacklist": "Här visas händelser som utlöst spamfiltret",

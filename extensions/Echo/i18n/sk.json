@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"KormiSK",
 			"Luky001",
 			"Macofe",
 			"Martin Urbanec",
@@ -9,7 +10,6 @@
 			"TomášPolonec",
 			"Urbanecm",
 			"Vlad5250",
-			"KormiSK",
 			"Wizzard"
 		]
 	},
@@ -158,8 +158,8 @@
 	"notification-header-thank-you-100-edit": "Práve ste {{GENDER:$2|vykonali}} svoju stú úpravu. Veľká vďaka!",
 	"notification-header-thank-you-1000-edit": "Práve ste vykonali svoju tisícu úpravu. Vďaka, ste {{GENDER:$2|skvelý prispievateľ|skvelá prispievateľka}}!",
 	"notification-header-thank-you-10000-edit": "Práve ste {{GENDER:$2|vykonali}} svoju desaťtisícu úpravu. Obrovská vďaka!",
-	"notification-header-thank-you-100000-edit": "Práve ste {{GENDER:$2|vykonali}} svoju stotisícu úpravu. Vďaka za váš vynikajúci príspevok!",
-	"notification-header-thank-you-1000000-edit": "Práve ste {{GENDER:$2|vykonali}} svoju milióntu úpravu. Vďaka za váš ohromujúci príspevok!",
+	"notification-header-thank-you-100000-edit": "Práve ste {{GENDER:$2|vykonali}} svoju stotisícu úpravu. Ďakujeme za vaše úžasné príspevky!",
+	"notification-header-thank-you-1000000-edit": "Práve ste {{GENDER:$2|vykonali}} svoju milióntu úpravu. Ďakujeme za vaše ohromujúce príspevky!",
 	"notification-link-thank-you-edit": "{{GENDER:$1|Vaša}} úprava",
 	"notification-link-text-view-edit": "Zobraziť úpravu",
 	"notification-link-article-reminder": "Zobraziť stránku",

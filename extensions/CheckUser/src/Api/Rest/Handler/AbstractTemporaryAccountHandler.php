@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\CheckUser\Api\Rest\Handler;
+namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 
 use MediaWiki\Block\BlockManager;
-use MediaWiki\CheckUser\Jobs\LogTemporaryAccountAccessJob;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -24,36 +24,17 @@ abstract class AbstractTemporaryAccountHandler extends SimpleHandler {
 
 	use TokenAwareHandlerTrait;
 
-	protected Config $config;
-	protected JobQueueGroup $jobQueueGroup;
-	protected PermissionManager $permissionManager;
-	protected UserNameUtils $userNameUtils;
-	protected IConnectionProvider $dbProvider;
-	protected ActorStore $actorStore;
-	protected BlockManager $blockManager;
-	private CheckUserPermissionManager $checkUserPermissionsManager;
-	private ReadOnlyMode $readOnlyMode;
-
 	public function __construct(
-		Config $config,
-		JobQueueGroup $jobQueueGroup,
-		PermissionManager $permissionManager,
-		UserNameUtils $userNameUtils,
-		IConnectionProvider $dbProvider,
-		ActorStore $actorStore,
-		BlockManager $blockManager,
-		CheckUserPermissionManager $checkUserPermissionsManager,
-		ReadOnlyMode $readOnlyMode
+		protected readonly Config $config,
+		protected readonly JobQueueGroup $jobQueueGroup,
+		protected readonly PermissionManager $permissionManager,
+		protected readonly UserNameUtils $userNameUtils,
+		protected readonly IConnectionProvider $dbProvider,
+		protected readonly ActorStore $actorStore,
+		protected readonly BlockManager $blockManager,
+		private readonly CheckUserPermissionManager $checkUserPermissionsManager,
+		private readonly ReadOnlyMode $readOnlyMode,
 	) {
-		$this->config = $config;
-		$this->jobQueueGroup = $jobQueueGroup;
-		$this->permissionManager = $permissionManager;
-		$this->userNameUtils = $userNameUtils;
-		$this->dbProvider = $dbProvider;
-		$this->actorStore = $actorStore;
-		$this->blockManager = $blockManager;
-		$this->checkUserPermissionsManager = $checkUserPermissionsManager;
-		$this->readOnlyMode = $readOnlyMode;
 	}
 
 	/**

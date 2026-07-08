@@ -1,11 +1,9 @@
-'use strict';
-
-const Page = require( 'wdio-mediawiki/Page' );
+import Page from 'wdio-mediawiki/Page';
 
 class ViewEditPage extends Page {
 	// Here we avoid things depending on the config, e.g. group and global
 	get filterId() {
-		return $( '#mw-abusefilter-edit-id .mw-input' );
+		return $( '#mw-abusefilter-edit-id .oo-ui-labelWidget' );
 	}
 
 	get name() {
@@ -77,16 +75,24 @@ class ViewEditPage extends Page {
 	}
 
 	async setWarningMessage( msg ) {
-		await $( 'select[name="wpFilterWarnMessage"]' ).selectByAttribute( 'value', 'other' );
+		// Upgrading to wdio 8 we did this hack when switching to Chromedriver
+		await browser.execute( () => {
+			// eslint-disable-next-line no-undef
+			document.querySelector( 'select[name="wpFilterWarnMessage"]' ).value = 'other';
+		} );
 		await this.warnOtherMessage.setValue( msg );
 	}
 
 	async invalidateToken() {
-		await $( '#mw-abusefilter-editing-form input[name="wpEditToken"]' ).setValue( '' );
+		// Upgrading to wdio 8 we did this hack when switching to Chromedriver
+		await browser.execute( () => {
+			// eslint-disable-next-line no-undef
+			document.querySelector( '#mw-abusefilter-editing-form input[name="wpEditToken"]' ).value = '';
+		} );
 	}
 
 	async open( subpage ) {
 		await super.openTitle( 'Special:AbuseFilter/' + subpage );
 	}
 }
-module.exports = new ViewEditPage();
+export const viewEditPage = new ViewEditPage();

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\ConfirmEdit\Turnstile;
 
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Auth\AuthenticationRequest;
+use Mediawiki\Context\RequestContext;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
@@ -29,8 +30,15 @@ class Turnstile extends SimpleCaptcha {
 
 	/** @inheritDoc */
 	public function getFormInformation( $tabIndex = 1, ?OutputPage $out = null ) {
-		global $wgTurnstileSiteKey, $wgLang;
-		$lang = htmlspecialchars( urlencode( $wgLang->getCode() ) );
+		global $wgTurnstileSiteKey;
+
+		if ( $out !== null ) {
+			$lang = $out->getLanguage();
+		} else {
+			// TODO Deprecate this after migrating callers to provide output page
+			$lang = RequestContext::getMain()->getLanguage();
+		}
+		$langCode = htmlspecialchars( urlencode( $lang->getCode() ) );
 
 		$output = Html::element( 'div', [
 			'class' => [
@@ -45,7 +53,7 @@ class Turnstile extends SimpleCaptcha {
 				// Insert the Turnstile script, in display language, if available.
 				// Language falls back to the browser's display language.
 				// See https://developers.cloudflare.com/turnstile/reference/supported-languages/
-				"<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js?language={$lang}\" async defer>
+				"<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js?language={$langCode}\" async defer>
 				</script>"
 			]
 		];

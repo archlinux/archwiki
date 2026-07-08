@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saurmandal"
+		]
+	},
+	"oathauth-webauthn-module-label": "सुरक्षा कुँजी",
+	"oathauth-webauthn-javascript-required": "सुरक्षा कुँजी का उपयोग करने के लिए आपके ब्राउज़र में जावास्क्रिप्ट सक्षम होना आवश्यक है।",
+	"oathauth-webauthn-ui-login-prompt": "अपनी सुरक्षा कुँजी का उपयोग करें या फिर अपने ब्राउज़र में दिए गए निर्देशों का पालन करें।",
+	"oathauth-webauthn-ui-add-key": "कुँजी जोड़ें",
+	"oathauth-webauthn-error-browser-unsupported": "यह ब्राउज़र सुरक्षा कुँजी प्रमाणीकरण समर्थित नहीं करता है, या फिर यह इस वेबसाइट के लिए उपलब्ध नहीं है। कृपया किसी दूसरे ब्राउज़र से प्रयास करें। [https://www.mediawiki.org/wiki/Extension:WebAuthn#Browser_support अधिक जानें]",
+	"oathauth-webauthn-error-browser-unsupported-console": "यह ब्राउज़र सुरक्षा कुँजी प्रमाणीकरण समर्थित नहीं करता है, या फिर यह इस वेबसाइट के लिए उपलब्ध नहीं है।",
+	"oathauth-webauthn-error-auth-generic": "प्रमाणीकरण प्रक्रिया बाधित हो गई है। कृपया प्रमाणीकरण प्रक्रिया पुनः प्रारंभ करें।",
+	"oathauth-webauthn-error-reg-generic": "आपकी कुँजी सत्यापित नहीं की जा सकी। कृपया पंजीकरण प्रक्रिया पुनः प्रारंभ करें।",
+	"oathauth-webauthn-registered-keys-section-name": "पंजीकृत कुँजियाँ",
+	"oathauth-webauthn-ui-remove-key": "हटाएँ",
+	"oathauth-webauthn-error-module-not-enabled": "मॉड्यूल \"$1\" {{GENDER:$2|सदस्य \"$2\"}} के लिए सक्षम नहीं है।",
+	"oathauth-webauthn-error-verification-failed": "WebAuthn सत्यापन विफल रहा।",
+	"oathauth-webauthn-error-passkey-verification-failed": "पासकुँजी सत्यापन विफल रहा।",
+	"oathauth-webauthn-error-credentials-missing": "WebAuthn क्रेडेंशियल्स नहीं भेजे गए।",
+	"oathauth-webauthn-error-cannot-register": "सदस्य \"$1\" को नया क्रेडेंशियल पंजीकृत करने की अनुमति नहीं है।",
+	"oathauth-webauthn-error-invalid-new-key": "मॉड्यूल द्वारा लौटाई गई नई कुँजी अपेक्षित प्रकार की नहीं है।",
+	"oathauth-webauthn-error-registration-failed": "नई कुँजी का पंजीकरण विफल रहा।",
+	"oathauth-webauthn-ui-key-register-help": "अपनी कुँजी के लिए उपनाम चुनें:",
+	"oathauth-webauthn-error-cannot-remove-key": "कुँजी हटाई नहीं जा सकती।",
+	"oathauth-webauthn-error-get-authinfo-fail": "प्रमाणीकरण की जानकारी प्राप्त नहीं की जा सकी।",
+	"oathauth-webauthn-add-key-section-name": "नई सुरक्षा कुँजी पंजीकृत करें",
+	"oathauth-webauthn-error-get-reginfo-fail": "पंजीकरण की जानकारी प्राप्त नहीं की जा सकी।",
+	"oathauth-webauthn-module-description": "WebAuthn अभी प्रायोगिक अवस्था में है। यह वर्तमान में खोए हुए या क्षतिग्रस्त प्रमाणीकरण की डिवाइसों की पुनर्प्राप्ति के लिए कोई विकल्प प्रदान नहीं करता है।\n\n[https://en.wikipedia.org/wiki/WebAuthn WebAuthn के बारे में अधिक जानें]",
+	"oathauth-webauthn-ui-reload-page-label": "पृष्ठ को पुनः लोड करें",
+	"oathauth-webauthn-authentication-info-label": "प्रमाणीकरण डेटा",
+	"oathauth-webauthn-authentication-info-help": "क्रेडेंशियल प्राप्ति के लिए क्लाइंट को प्रमाणीकरण डेटा भेजी गई।",
+	"oathauth-webauthn-credential-label": "सदस्य क्रेडेंशियल",
+	"oathauth-webauthn-credential-help": "प्रमाणीकरण डेटा के आधार पर सदस्य क्रेडेंशियल",
+	"oathauth-webauthn-add-security-key": "सुरक्षा कुँजी जोड़ें",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "सुरक्षा कुँजी या फिर पासकुँजी का प्रयोग करें"
+}

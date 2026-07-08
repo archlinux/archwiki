@@ -27,7 +27,6 @@ require( './mmv.Config.test.js' );
 require( './mmv.HtmlUtils.test.js' );
 require( './logging/mmv.logging.ViewLogger.test.js' );
 require( './model/mmv.model.test.js' );
-require( './model/mmv.model.TaskQueue.test.js' );
 require( './model/mmv.model.License.test.js' );
 require( './model/mmv.model.Image.test.js' );
 require( './provider/mmv.provider.Api.test.js' );

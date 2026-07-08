@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.ce.ContentBranchNode (MW)' );
+QUnit.module( 've.ce.ContentBranchNode (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

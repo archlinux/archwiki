@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kallichore",
 			"Metalhead64"
 		]
 	},
@@ -15,6 +16,6 @@
 	"notification-loginnotify-login-success-email-subject": "Anmeldung bei {{SITENAME}} als $1 von einem Gerät, das {{GENDER:$1|du}} nicht kürzlich verwendet hast.",
 	"notification-header-login-success": "Jemand (vermutlich {{GENDER:$1|du}} selbst) hat sich mit einem neuen Gerät bei deinem Benutzerkonto angemeldet. Falls dies du warst, kannst du diese Nachricht ignorieren. Falls nicht, empfehlen wir dir, dein Passwort zu ändern und die Aktivität deines Benutzerkontos zu prüfen.",
 	"notification-new-bundled-header-login-fail": "Seit deiner letzten Anmeldung gab es von einem neuen Gerät {{PLURAL:$1|'''einen fehlgeschlagenen Anmeldeversuch'''|'''$1 fehlgeschlagene Anmeldeversuche'''}} bei deinem Benutzerkonto. Falls dies nicht du warst, stelle bitte sicher, dass dein Benutzerkonto ein sicheres Passwort besitzt.",
-	"notification-known-header-login-fail": "Seit {{#FORMAL:deiner|Ihrer}} letzten Anmeldung gab es {{PLURAL:$1|'''einen fehlgeschlagenen Anmeldeversuch'''|'''$1 fehlgeschlagene Anmeldeversuche'''}} bei {{#FORMAL:deinem|Ihrem}} Benutzerkonto. Falls dies nicht {{#FORMAL:du warst|Sie waren}}, {{#FORAL:stelle|stellen Sie}} bitte sicher, dass {{#FORMAL:dein|Ihr}} Benutzerkonto ein sicheres Passwort besitzt.",
+	"notification-known-header-login-fail": "Seit {{#FORMAL:deiner|Ihrer}} letzten Anmeldung gab es {{PLURAL:$1|'''einen fehlgeschlagenen Anmeldeversuch'''|'''$1 fehlgeschlagene Anmeldeversuche'''}} bei {{#FORMAL:deinem|Ihrem}} Benutzerkonto. Falls dies nicht {{#FORMAL:du warst|Sie waren}}, {{#FORMAL:stelle|stellen Sie}} bitte sicher, dass {{#FORMAL:dein|Ihr}} Benutzerkonto ein sicheres Passwort besitzt.",
 	"notification-new-unbundled-header-login-fail": "Es gab von einem neuen Gerät {{PLURAL:$1|'''einen fehlgeschlagenen Anmeldeversuch'''|'''mehrere fehlgeschlagene Anmeldeversuche'''}} bei deinem Benutzerkonto. Bitte stelle sicher, dass dein Benutzerkonto ein sicheres Passwort besitzt."
 }

@@ -43,8 +43,6 @@ class MwSql extends Maintenance {
 	}
 
 	public function execute() {
-		global $IP;
-
 		// We want to allow "" for the wikidb, meaning don't call select_db()
 		$wiki = $this->hasOption( 'wikidb' ) ? $this->getOption( 'wikidb' ) : false;
 		// Get the appropriate load balancer (for this wiki)
@@ -67,7 +65,6 @@ class MwSql extends Maintenance {
 					break;
 				}
 			}
-			// @phan-suppress-next-line PhanSuspiciousValueComparison
 			if ( $index === null || $index === ServerInfo::WRITER_INDEX ) {
 				$this->fatalError( "No replica DB server configured with the name '$replicaDB'." );
 			}
@@ -113,8 +110,9 @@ class MwSql extends Maintenance {
 			Maintenance::posix_isatty( 0 /*STDIN*/ )
 		) {
 			$home = getenv( 'HOME' );
-			$historyFile = $home ?
-				"$home/.mwsql_history" : "$IP/maintenance/.mwsql_history";
+			$historyFile = $home
+				? "$home/.mwsql_history"
+				: MW_INSTALL_PATH . '/maintenance/.mwsql_history';
 			readline_read_history( $historyFile );
 		} else {
 			$historyFile = null;

@@ -40,6 +40,7 @@ ve.ui.DebugBar = function VeUiDebugBar( surface, config = {} ) {
 	this.testSquasherToggle = new OO.ui.ToggleButtonWidget( { label: ve.msg( 'visualeditor-debugbar-testsquasher' ) } );
 	this.inputDebuggingToggle = new OO.ui.ToggleButtonWidget( { label: ve.msg( 'visualeditor-debugbar-inputdebug' ) } ).setValue( ve.inputDebug );
 	this.filibusterToggle = new OO.ui.ToggleButtonWidget( { label: ve.msg( 'visualeditor-debugbar-startfilibuster' ) } );
+	this.buildTestButton = new OO.ui.ButtonWidget( { label: ve.msg( 'visualeditor-debugbar-buildtest' ) } );
 
 	this.$dump =
 		$( '<div>' ).addClass( 've-ui-debugBar-dump' ).append(
@@ -58,6 +59,8 @@ ve.ui.DebugBar = function VeUiDebugBar( surface, config = {} ) {
 			)
 		).addClass( 'oo-ui-element-hidden' );
 
+	this.$testCase = $( '<div>' ).addClass( 've-ui-debugBar-testCase oo-ui-element-hidden' );
+
 	this.$transactions = $( '<div>' ).addClass( 've-ui-debugBar-transactions' );
 
 	this.$filibuster = $( '<div>' ).addClass( [ 've-ui-debugBar-filibuster', 'oo-ui-element-hidden' ] );
@@ -70,6 +73,7 @@ ve.ui.DebugBar = function VeUiDebugBar( surface, config = {} ) {
 	this.filibusterToggle.on( 'click', this.onFilibusterToggleClick.bind( this ) );
 	this.transactionsToggle.on( 'change', this.onTransactionsToggleChange.bind( this ) );
 	this.testSquasherToggle.on( 'change', this.onTestSquasherToggleChange.bind( this ) );
+	this.buildTestButton.on( 'click', this.onBuildTestButtonClick.bind( this ) );
 	closeButton.on( 'click', this.$element.remove.bind( this.$element ) );
 
 	this.onHistoryDebounced = ve.debounce( this.onHistory.bind( this ) );
@@ -91,10 +95,12 @@ ve.ui.DebugBar = function VeUiDebugBar( surface, config = {} ) {
 			this.filibusterToggle.$element,
 			this.transactionsToggle.$element,
 			this.testSquasherToggle.$element,
+			this.buildTestButton.$element,
 			$( this.constructor.static.dividerTemplate ),
 			closeButton.$element
 		),
 		this.$dump,
+		this.$testCase,
 		this.$transactions,
 		this.$filibuster
 	);
@@ -229,17 +235,12 @@ ve.ui.DebugBar.prototype.generateListFromLinearData = function ( linearData ) {
 		} else {
 			// End current chunk, if any.
 			if ( $chunk ) {
-				if ( $annotations ) {
-					$chunk.append( $annotations );
-				}
-				$ol.append( $chunk );
-				$chunk = null;
+				$ol.append( $chunk.append( $annotations ) );
 				$annotations = null;
 			}
 
 			// Begin a new chunk
-			$chunk = $( '<li>' ).attr( 'value', i );
-			$chunk.append( $label );
+			$chunk = $( '<li>' ).attr( 'value', i ).append( $label );
 			if ( annotations || attributes ) {
 				$annotations = $( '<span>' ).addClass( 've-ui-debugBar-dump-note' ).text(
 					( annotations ?
@@ -247,8 +248,31 @@ ve.ui.DebugBar.prototype.generateListFromLinearData = function ( linearData ) {
 							this.getSurface().getModel().getDocument().getStore().values( annotations )
 								.map( ( ann ) => ann.getComparableObject() )
 						) : '' ) +
-					( attributes ?
-						JSON.stringify( attributes ) : '' )
+					( attributes ? JSON.stringify( attributes ) : '' )
+				);
+			}
+
+			if ( element.type === 'internalList' ) {
+				const internalList = this.getSurface().getModel().getDocument().internalList;
+
+				$chunk.append(
+					$( '<span>' ).addClass( 've-ui-debugBar-dump-note' ).text(
+						' keyIndexes: ' + JSON.stringify( internalList.keyIndexes )
+					)
+				);
+			}
+
+			if ( element.type === 'internalItem' ) {
+				const index = this.getSurface()
+					.getModel()
+					.getDocument()
+					.internalList
+					.listNode
+					.children
+					.findIndex( ( node ) => node.element === element );
+
+				$chunk.append(
+					$( '<span>' ).addClass( 've-ui-debugBar-dump-note' ).text( ' index: ' + index + ' ' )
 				);
 			}
 		}
@@ -259,10 +283,7 @@ ve.ui.DebugBar.prototype.generateListFromLinearData = function ( linearData ) {
 
 	// End current chunk, if any.
 	if ( $chunk ) {
-		if ( $annotations ) {
-			$chunk.append( $annotations );
-		}
-		$ol.append( $chunk );
+		$ol.append( $chunk.append( $annotations ) );
 	}
 
 	return $ol;
@@ -278,21 +299,17 @@ ve.ui.DebugBar.prototype.generateListFromNode = function ( node ) {
 	const $ol = $( '<ol>' ).attr( 'start', '0' );
 
 	node.children.forEach( ( child ) => {
-		const $li = $( '<li>' );
-		const $label = $( '<span>' ).addClass( 've-ui-debugBar-dump-element' );
-		const $note = $( '<span>' ).addClass( 've-ui-debugBar-dump-note' );
+		const $li = $( '<li>' ).append( $( '<span>' ).addClass( 've-ui-debugBar-dump-element' )
+			.text( child.type ) );
+
 		if ( child.length !== undefined ) {
-			$li.append(
-				$label.text( child.type ),
-				$note.text( '(' + child.length + ')' )
-			);
-		} else {
-			$li.append( $label.text( child.type ) );
+			$li.append( $( '<span>' ).addClass( 've-ui-debugBar-dump-note' )
+				.text( '(' + child.length + ')' ) );
 		}
 
 		if ( child.children ) {
-			const $sublist = this.generateListFromNode( child );
-			$li.append( $sublist );
+			// eslint-disable-next-line no-jquery/no-append-html
+			$li.append( this.generateListFromNode( child ) );
 		}
 
 		$ol.append( $li );
@@ -367,9 +384,7 @@ ve.ui.DebugBar.prototype.onFilibusterToggleClick = function () {
 				$li.toggleClass( 've-filibuster-frame-expanded' );
 			} else if ( $li.children( 'ul' ).length ) {
 				// eslint-disable-next-line no-jquery/no-class-state
-				$li.toggleClass( 've-filibuster-frame-collapsed' );
-				// eslint-disable-next-line no-jquery/no-class-state
-				$li.toggleClass( 've-filibuster-frame-expanded' );
+				$li.toggleClass( 've-filibuster-frame-collapsed ve-filibuster-frame-expanded' );
 			}
 		} );
 		this.filibusterToggle.setLabel( ve.msg( 'visualeditor-debugbar-startfilibuster' ) );
@@ -402,6 +417,138 @@ ve.ui.DebugBar.prototype.onTestSquasherToggleChange = function ( value ) {
 	} else {
 		doc.disconnect( this, { transact: 'testSquasher' } );
 	}
+};
+
+/**
+ * Handle click events on the build test button
+ *
+ * @param {jQuery.Event} e
+ */
+ve.ui.DebugBar.prototype.onBuildTestButtonClick = function () {
+	this.$testCase
+		.empty()
+		.append( $( '<h2>' ).text( 'Test case' ) )
+		.append( $( '<pre>' ).text( this.generateTestCase() ) );
+	this.$testCase.removeClass( 'oo-ui-element-hidden' );
+};
+
+ve.ui.DebugBar.prototype.generateTestCase = function () {
+	const surfaceModel = this.getSurface().getModel();
+	const currentDocument = surfaceModel.getDocument();
+	const transactions = surfaceModel.getHistory()
+		.map( ( item ) => item.transactions )
+		.reduce( ( acc, txs ) => acc.concat( txs ), [] );
+
+	const originalHtml = currentDocument.htmlDocument.body.innerHTML;
+	// FIXME: This all results in slightly different data than after the
+	// original MW Target load, which may cause transactions to line up
+	// incorrectly.
+	const originalDocument = ve.createDocumentFromHtml( originalHtml );
+	// Adapted from mw.libs.ve.unwrapParsoidSections
+	const unwrapSections = ( doc ) => {
+		Array.prototype.forEach.call( doc.querySelectorAll( 'section' ), ( section ) => {
+			const parent = section.parentNode;
+			while ( section.firstChild ) {
+				parent.insertBefore( section.firstChild, section );
+			}
+			parent.removeChild( section );
+		} );
+	};
+	unwrapSections( originalDocument );
+	const serializeToJson = ( data ) => JSON.stringify( data, null, '\t' );
+	const getBodyContent = ( htmlDocument ) => htmlDocument.body.innerHTML;
+	const wrapHtmlLiteral = ( htmlString ) => JSON.stringify( htmlString );
+	const indentLines = ( indentation, text ) => text.replace( /^.*$/gm, indentation + '$&' );
+	const repairAllUndefined = ( sub ) => sub.replace( /\bnull\b/g, 'undefined' );
+	const repairWhitespaceUndefined =
+		( text ) => text.replace( /whitespace([[:"{,\s]|\\.|null)+/gi, repairAllUndefined );
+
+	const serializeTransactionBuilder = ( txs ) => {
+		if ( txs.length === 0 ) {
+			return undefined;
+		}
+		const serializeTransaction = ( tx ) => 'model.commit( ve.dm.Transaction.static.deserialize( ' +
+				JSON.stringify( tx ) +
+			' ) );';
+		const txStatements = txs.map( serializeTransaction );
+		return '( model ) => {\n' +
+			indentLines( '\t', txStatements.join( '\n' ) ) +
+			'\n\t}';
+	};
+
+	const serializeStoreBuilder = ( store ) => {
+		const serializeDomElement = ( el ) => {
+			if ( Array.isArray( el ) ) {
+				const html = el.map( ( n ) => n.outerHTML );
+				return '// eslint-disable-next-line no-jquery/no-parse-html-literal\n' +
+					'$.parseHTML( ' + wrapHtmlLiteral( html ) + ' )';
+			} else if ( typeof el === 'object' ) {
+				return null;
+			}
+		};
+		const storeStatements = store.serialize( serializeDomElement ).hashStore;
+		return '{\n' +
+			indentLines( '\t', Object.entries( storeStatements )
+				.filter( ( [ /* key */, value ] ) => value !== null )
+				.map( ( [ key, value ] ) => `"${ key }":\n${ indentLines( '\t', value ) }` )
+				.join( ',\n' ) ) +
+			'\n}';
+	};
+
+	// Adapted from ve.test.utils: we want to run methods such as i18n message
+	// translation in the dummy context to match the way the test will eventually
+	// be run.
+	const swapDummyPlatform = ( next ) => {
+		const DummyPlatform = function DummyPlatform() {
+			DummyPlatform.super.apply( this, arguments );
+		};
+		OO.inheritClass( DummyPlatform, ve.init.platform.constructor );
+		DummyPlatform.prototype.getMessage = ( ...args ) => args.join( ',' );
+
+		const activePlatform = ve.init.platform;
+		ve.init.platform = new DummyPlatform();
+		try {
+			return next();
+		} finally {
+			ve.init.platform = activePlatform;
+			OO.ui.msg = ve.init.platform.getMessage.bind( ve.init.platform );
+		}
+	};
+
+	const testCaseData = {
+		data: repairWhitespaceUndefined( serializeToJson(
+			ve.dm.converter.getModelFromDom( originalDocument ).getFullData( undefined, 'roundTrip' ) ) ),
+		modify: serializeTransactionBuilder( transactions ),
+		// Original document as DOM from Parsoid.
+		body: wrapHtmlLiteral( getBodyContent( originalDocument ) ),
+		// Current document rendered to DOM in parser mode.
+		fromDataBody: wrapHtmlLiteral( getBodyContent(
+			ve.dm.converter.getDomFromModel( currentDocument ) ) ),
+		// Current document rendered including stored incoming HTML.
+		normalizedBody: wrapHtmlLiteral( getBodyContent(
+			ve.dm.converter.getDomFromModel( surfaceModel.getDocument() ) ) ),
+		// Current document rendered to DOM in clipboard mode.
+		clipboardBody: wrapHtmlLiteral( getBodyContent(
+			swapDummyPlatform(
+				() => ve.dm.converter.getDomFromModel( currentDocument, ve.dm.Converter.static.CLIPBOARD_MODE )
+			) ) ),
+		// Current document rendered to DOM in preview mode.
+		previewBody: wrapHtmlLiteral( getBodyContent(
+			swapDummyPlatform(
+				() => ve.dm.converter.getDomFromModel( currentDocument, ve.dm.Converter.static.PREVIEW_MODE )
+			) ) ),
+		innerWhitespace: repairAllUndefined( serializeToJson(
+			currentDocument.getInnerWhitespace() ) ),
+		preserveAnnotationDomElements: 'true',
+		storeItems: serializeStoreBuilder( currentDocument.getStore() )
+	};
+	return '{\n' +
+		indentLines( '\t',
+			Object.entries( testCaseData )
+				.filter( ( [ , value ] ) => value )
+				.map( ( [ key, value ] ) => key + ':\n' + indentLines( '\t', value ) )
+				.join( ',\n' )
+		) + '\n}';
 };
 
 /**

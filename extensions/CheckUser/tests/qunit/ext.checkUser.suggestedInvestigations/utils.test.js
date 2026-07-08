@@ -85,24 +85,33 @@ const generateStatusReasonElement = ( caseId, statusReasonText ) => {
 
 QUnit.test.each( 'Test updateCaseStatusOnPage', {
 	'status goes from open to resolved': [
-		'open', '', 'resolved', 'testingabc'
+		'open', '', 'resolved', 'testingabc', 'testingabc'
 	],
 	'status goes from resolved to open': [
-		'resolved', 'testingabc', 'open', 'testingabc'
+		'resolved', 'testingabc', 'open', 'testingabc', 'testingabc'
 	],
 	'status goes from open to invalid with a reason provided': [
-		'open', '', 'invalid', 'testing'
+		'open', '', 'invalid', 'testing', 'testing'
 	],
 	'status goes from open to invalid with no reason provided': [
-		'open', '', 'invalid', ''
+		'open', '', 'invalid', '', '(checkuser-suggestedinvestigations-status-reason-default-invalid)'
 	],
 	'status goes from invalid to resolved': [
-		'invalid', 'false positive', 'resolved', 'case resolved'
+		'invalid', 'false positive', 'resolved', 'case resolved', 'case resolved'
 	],
 	'no change in status, but change in reason': [
-		'resolved', 'testingabc', 'resolved', 'testingabcdef'
+		'resolved', 'testingabc', 'resolved', 'testingabcdef', 'testingabcdef'
+	],
+	'no change in status, but change in reason with wikitext': [
+		'resolved', 'testingabc', 'resolved', '[[test]]', '<a>test</a>'
 	]
-}, ( assert, [ initialStatus, initialStatusReason, newStatus, newStatusReason ] ) => {
+}, ( assert, [
+	initialStatus,
+	initialStatusReason,
+	newStatus,
+	newStatusReason,
+	newFormattedStatusReason
+] ) => {
 	// eslint-disable-next-line no-jquery/no-global-selector
 	const $qunitFixture = $( '#qunit-fixture' );
 	const statusElement = generateStatusElement( 123, initialStatus );
@@ -114,7 +123,7 @@ QUnit.test.each( 'Test updateCaseStatusOnPage', {
 	);
 	$qunitFixture.append( changeStatusButton );
 
-	utils.updateCaseStatusOnPage( 123, newStatus, newStatusReason );
+	utils.updateCaseStatusOnPage( 123, newStatus, newStatusReason, newFormattedStatusReason );
 
 	assert.strictEqual(
 		changeStatusButton.getAttribute( 'data-case-status' ),
@@ -127,19 +136,11 @@ QUnit.test.each( 'Test updateCaseStatusOnPage', {
 		'New status reason in data attribute is correct'
 	);
 
-	if ( newStatus === 'invalid' && newStatusReason === '' ) {
-		assert.strictEqual(
-			statusReasonElement.textContent,
-			'(checkuser-suggestedinvestigations-status-reason-default-invalid)',
-			'New status reason should use the default for the invalid status'
-		);
-	} else {
-		assert.strictEqual(
-			statusReasonElement.textContent,
-			newStatusReason,
-			'New status reason is correct'
-		);
-	}
+	assert.strictEqual(
+		statusReasonElement.innerHTML,
+		newFormattedStatusReason,
+		'New status reason is correct'
+	);
 	assert.strictEqual(
 		statusElement.querySelector( '.cdx-info-chip--text' ).textContent,
 		'(checkuser-suggestedinvestigations-status-' + newStatus + ')',
@@ -149,5 +150,29 @@ QUnit.test.each( 'Test updateCaseStatusOnPage', {
 		statusElement.querySelector( '.cdx-info-chip' ).getAttribute( 'class' ),
 		'cdx-info-chip ' + mapStatusToChipType( newStatus ),
 		'New status reason is correct'
+	);
+} );
+
+QUnit.test( 'updateFiltersOnPage correctly reloads the page with the applied filters', ( assert ) => {
+	mw.config.set( 'wgServer', 'https://example.com' );
+	mw.config.set( 'wgPageName', 'Special:SuggestedInvestigations' );
+
+	let actualUrl = '';
+	const mockWindow = {
+		location: {
+			replace: function ( providedUrl ) {
+				actualUrl = providedUrl;
+			}
+		}
+	};
+
+	const filters = { status: [ 'open' ], username: 'abc' };
+
+	utils.updateFiltersOnPage( filters, mockWindow );
+
+	assert.strictEqual(
+		'https://example.com' + mw.util.getUrl( 'Special:SuggestedInvestigations', filters ),
+		actualUrl,
+		'URL redirected to is as expected'
 	);
 } );

@@ -31,12 +31,36 @@
 	unicode-bidi: embed;
 }
 
+@tempuserlink-color: .solid-to-minimum-opacity( #eaecf0 )[ @result ];
+@tempuserlink-color-dark-mode: .solid-to-minimum-opacity( #27292d, #000 )[ @result ];
+
 /** Class is added by UserLinkRenderer::userLink */
 .mw-tempuserlink {
-	background-color: @background-color-interactive;
-	outline: 2px solid @background-color-interactive;
+	// Color is calculated to match @background-color-interactive.
+	// Transparency is needed for T400577.
+	background-color: @tempuserlink-color;
+	outline: @border-width-thick @border-style-base @tempuserlink-color;
 	border-radius: @border-radius-base;
 	white-space: nowrap;
+
+	.darkmode-override( {
+		// Color is calculated to match @background-color-interactive in dark-mode.
+		// The passed-in background color is @background-color-inverted.
+		// Transparency is needed for T400577.
+		background-color: @tempuserlink-color-dark-mode;
+		outline-color: @tempuserlink-color-dark-mode;
+	} );
+}
+
+// Need to override !important rule for .plainlinks a.external
+a.mw-tempuserlink.mw-userlink.external {
+	/* stylelint-disable-next-line declaration-no-important */
+	background-color: @tempuserlink-color !important;
+
+	.darkmode-override( {
+		/* stylelint-disable-next-line declaration-no-important */
+		background-color: @tempuserlink-color-dark-mode !important;
+	} );
 }
 
 /** Class is added by UserLinkRenderer::userLink */
@@ -73,7 +97,6 @@ span.comment {
 	font-style: italic;
 	unicode-bidi: isolate;
 	// Covering several contexts for breaking up long comments, see T158725.
-	word-wrap: break-word;
 	overflow-wrap: break-word;
 	word-break: break-word;
 }

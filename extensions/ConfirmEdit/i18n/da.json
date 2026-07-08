@@ -39,5 +39,7 @@
 	"confirmedit-preview-validity": "Gyldighed",
 	"confirmedit-preview-valid": "gyldig",
 	"confirmedit-preview-invalid": "ugyldig",
-	"confirmedit-preview-description": "Følgende tabel viser listen over linjer på denne side, og om det er en gyldig IP-adresse eller et gyldigt IP-adresseinterval. Hvis linjen er en gyldig IP-adresse eller et gyldigt IP-adresseinterval, vil den blive udelukket fra CAPTCHA-kontroller, men ugyldige linjer vil blive ignoreret. Et eksempel på et gyldigt IP-adresseinterval ville være: 69.208.0.0/16, som går fra 69.208.0.0 til 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mere information] om beregning af et IP-adresseinterval."
+	"confirmedit-preview-description": "Følgende tabel viser listen over linjer på denne side, og om det er en gyldig IP-adresse eller et gyldigt IP-adresseinterval. Hvis linjen er en gyldig IP-adresse eller et gyldigt IP-adresseinterval, vil den blive udelukket fra CAPTCHA-kontroller, men ugyldige linjer vil blive ignoreret. Et eksempel på et gyldigt IP-adresseinterval ville være: 69.208.0.0/16, som går fra 69.208.0.0 til 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mere information] om beregning af et IP-adresseinterval.",
+	"abusefilter-edit-action-showcaptcha": "Kræv CAPTCHA-bekræftelse for at udføre handlingen",
+	"abusefilter-edit-action-showcaptcha-help": "Brugere med tilladelse til at springe en CAPTCHA over er undtaget."
 }

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Language\MessageCache;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 
 /**

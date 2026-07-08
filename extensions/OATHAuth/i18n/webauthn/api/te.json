@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chaduvari"
+		]
+	},
+	"apierror-oathauth-webauthn-module-missing": "WebAuthn మాడ్యూల్ అందుబాటులో లేదు."
+}

@@ -58,5 +58,6 @@
 	"gadgets-validate-duplicate": "Друга дефиниција справице $1 је детектована и биће игнорисана",
 	"gadgets-validate-nopage": "Страница „$1” не постоји.",
 	"gadgets-validate-invaliddependencies": "{{PLURAL:$2|Следећа зависност недостаје|Следеће зависности недостају}}: $1.",
-	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Следећа зависност је застарела|Следеће зависности су застареле}}: $1."
+	"gadgets-validate-deprecateddependencies": "{{PLURAL:$2|Следећа зависност је застарела|Следеће зависности су застареле}}: $1.",
+	"gadgets-subpage-invalid": "Непостојећа подстраница „<nowiki>$1</nowiki>”"
 }

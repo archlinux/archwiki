@@ -876,6 +876,12 @@ class MainConfigNames {
 	public const ImagePreconnect = 'ImagePreconnect';
 
 	/**
+	 * Name constant for the TrackMediaRequestProvenance setting, for use with Config::get()
+	 * @see MainConfigSchema::TrackMediaRequestProvenance
+	 */
+	public const TrackMediaRequestProvenance = 'TrackMediaRequestProvenance';
+
+	/**
 	 * Name constant for the DjvuUseBoxedCommand setting, for use with Config::get()
 	 * @see MainConfigSchema::DjvuUseBoxedCommand
 	 */
@@ -942,18 +948,6 @@ class MainConfigNames {
 	public const EnableUserEmail = 'EnableUserEmail';
 
 	/**
-	 * Name constant for the EnableSpecialMute setting, for use with Config::get()
-	 * @see MainConfigSchema::EnableSpecialMute
-	 */
-	public const EnableSpecialMute = 'EnableSpecialMute';
-
-	/**
-	 * Name constant for the EnableUserEmailMuteList setting, for use with Config::get()
-	 * @see MainConfigSchema::EnableUserEmailMuteList
-	 */
-	public const EnableUserEmailMuteList = 'EnableUserEmailMuteList';
-
-	/**
 	 * Name constant for the UserEmailUseReplyTo setting, for use with Config::get()
 	 * @see MainConfigSchema::UserEmailUseReplyTo
 	 */
@@ -1018,6 +1012,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::EmailAuthentication
 	 */
 	public const EmailAuthentication = 'EmailAuthentication';
+
+	/**
+	 * Name constant for the EmailConfirmationBanner setting, for use with Config::get()
+	 * @see MainConfigSchema::EmailConfirmationBanner
+	 */
+	public const EmailConfirmationBanner = 'EmailConfirmationBanner';
 
 	/**
 	 * Name constant for the EnotifWatchlist setting, for use with Config::get()
@@ -1590,6 +1590,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::UseSessionCookieJwt
 	 */
 	public const UseSessionCookieJwt = 'UseSessionCookieJwt';
+
+	/**
+	 * Name constant for the JwtSessionCookieIssuer setting, for use with Config::get()
+	 * @see MainConfigSchema::JwtSessionCookieIssuer
+	 */
+	public const JwtSessionCookieIssuer = 'JwtSessionCookieIssuer';
 
 	/**
 	 * Name constant for the MemCachedServers setting, for use with Config::get()
@@ -2229,6 +2235,12 @@ class MainConfigNames {
 	public const NamespacesWithSubpages = 'NamespacesWithSubpages';
 
 	/**
+	 * Name constant for the NamespacesWithoutAutoSummaries setting, for use with Config::get()
+	 * @see MainConfigSchema::NamespacesWithoutAutoSummaries
+	 */
+	public const NamespacesWithoutAutoSummaries = 'NamespacesWithoutAutoSummaries';
+
+	/**
 	 * Name constant for the ContentNamespaces setting, for use with Config::get()
 	 * @see MainConfigSchema::ContentNamespaces
 	 */
@@ -2419,6 +2431,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RegisterInternalExternals
 	 */
 	public const RegisterInternalExternals = 'RegisterInternalExternals';
+
+	/**
+	 * Name constant for the ExternalLinksIgnoreDomains setting, for use with Config::get()
+	 * @see MainConfigSchema::ExternalLinksIgnoreDomains
+	 */
+	public const ExternalLinksIgnoreDomains = 'ExternalLinksIgnoreDomains';
 
 	/**
 	 * Name constant for the AllowDisplayTitle setting, for use with Config::get()
@@ -2655,6 +2673,12 @@ class MainConfigNames {
 	public const HiddenPrefs = 'HiddenPrefs';
 
 	/**
+	 * Name constant for the UserJsPrefLimit setting, for use with Config::get()
+	 * @see MainConfigSchema::UserJsPrefLimit
+	 */
+	public const UserJsPrefLimit = 'UserJsPrefLimit';
+
+	/**
 	 * Name constant for the InvalidUsernameCharacters setting, for use with Config::get()
 	 * @see MainConfigSchema::InvalidUsernameCharacters
 	 */
@@ -2727,12 +2751,6 @@ class MainConfigNames {
 	public const EnableMultiBlocks = 'EnableMultiBlocks';
 
 	/**
-	 * Name constant for the BlockTargetMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::BlockTargetMigrationStage
-	 */
-	public const BlockTargetMigrationStage = 'BlockTargetMigrationStage';
-
-	/**
 	 * Name constant for the WhitelistRead setting, for use with Config::get()
 	 * @see MainConfigSchema::WhitelistRead
 	 */
@@ -2797,6 +2815,18 @@ class MainConfigNames {
 	 * @see MainConfigSchema::GroupsRemoveFromSelf
 	 */
 	public const GroupsRemoveFromSelf = 'GroupsRemoveFromSelf';
+
+	/**
+	 * Name constant for the RestrictedGroups setting, for use with Config::get()
+	 * @see MainConfigSchema::RestrictedGroups
+	 */
+	public const RestrictedGroups = 'RestrictedGroups';
+
+	/**
+	 * Name constant for the UserRequirementsPrivateConditions setting, for use with Config::get()
+	 * @see MainConfigSchema::UserRequirementsPrivateConditions
+	 */
+	public const UserRequirementsPrivateConditions = 'UserRequirementsPrivateConditions';
 
 	/**
 	 * Name constant for the RestrictionTypes setting, for use with Config::get()
@@ -3051,6 +3081,12 @@ class MainConfigNames {
 	public const BotPasswordsDatabase = 'BotPasswordsDatabase';
 
 	/**
+	 * Name constant for the BotPasswordsLimit setting, for use with Config::get()
+	 * @see MainConfigSchema::BotPasswordsLimit
+	 */
+	public const BotPasswordsLimit = 'BotPasswordsLimit';
+
+	/**
 	 * Name constant for the SecretKey setting, for use with Config::get()
 	 * @see MainConfigSchema::SecretKey
 	 */
@@ -3151,12 +3187,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SessionSecret
 	 */
 	public const SessionSecret = 'SessionSecret';
-
-	/**
-	 * Name constant for the EnableUnsafeXsltOption setting, for use with Config::get()
-	 * @see MainConfigSchema::EnableUnsafeXsltOption
-	 */
-	public const EnableUnsafeXsltOption = 'EnableUnsafeXsltOption';
 
 	/**
 	 * Name constant for the CookieExpiration setting, for use with Config::get()
@@ -3411,6 +3441,12 @@ class MainConfigNames {
 	public const DebugToolbar = 'DebugToolbar';
 
 	/**
+	 * Name constant for the ApiClientErrorSampleRate setting, for use with Config::get()
+	 * @see MainConfigSchema::ApiClientErrorSampleRate
+	 */
+	public const ApiClientErrorSampleRate = 'ApiClientErrorSampleRate';
+
+	/**
 	 * Name constant for the DisableTextSearch setting, for use with Config::get()
 	 * @see MainConfigSchema::DisableTextSearch
 	 */
@@ -3634,12 +3670,6 @@ class MainConfigNames {
 	public const RCFeeds = 'RCFeeds';
 
 	/**
-	 * Name constant for the RCEngines setting, for use with Config::get()
-	 * @see MainConfigSchema::RCEngines
-	 */
-	public const RCEngines = 'RCEngines';
-
-	/**
 	 * Name constant for the RCWatchCategoryMembership setting, for use with Config::get()
 	 * @see MainConfigSchema::RCWatchCategoryMembership
 	 */
@@ -3772,6 +3802,18 @@ class MainConfigNames {
 	public const WatchlistExpiry = 'WatchlistExpiry';
 
 	/**
+	 * Name constant for the EnableWatchlistLabels setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableWatchlistLabels
+	 */
+	public const EnableWatchlistLabels = 'EnableWatchlistLabels';
+
+	/**
+	 * Name constant for the WatchlistLabelsMaxPerUser setting, for use with Config::get()
+	 * @see MainConfigSchema::WatchlistLabelsMaxPerUser
+	 */
+	public const WatchlistLabelsMaxPerUser = 'WatchlistLabelsMaxPerUser';
+
+	/**
 	 * Name constant for the WatchlistPurgeRate setting, for use with Config::get()
 	 * @see MainConfigSchema::WatchlistPurgeRate
 	 */
@@ -3782,12 +3824,6 @@ class MainConfigNames {
 	 * @see MainConfigSchema::WatchlistExpiryMaxDuration
 	 */
 	public const WatchlistExpiryMaxDuration = 'WatchlistExpiryMaxDuration';
-
-	/**
-	 * Name constant for the EditWatchlistPaginate setting, for use with Config::get()
-	 * @see MainConfigSchema::EditWatchlistPaginate
-	 */
-	public const EditWatchlistPaginate = 'EditWatchlistPaginate';
 
 	/**
 	 * Name constant for the EnableChangesListQueryPartitioning setting, for use with Config::get()
@@ -4236,13 +4272,6 @@ class MainConfigNames {
 	public const APIMaxLagThreshold = 'APIMaxLagThreshold';
 
 	/**
-	 * Name constant for the APIRequestLog setting, for use with Config::get()
-	 * @see MainConfigSchema::APIRequestLog
-	 * @deprecated since 1.43; use api or api-request $wgDebugLogGroups channel
-	 */
-	public const APIRequestLog = 'APIRequestLog';
-
-	/**
 	 * Name constant for the APICacheHelpTimeout setting, for use with Config::get()
 	 * @see MainConfigSchema::APICacheHelpTimeout
 	 */
@@ -4283,6 +4312,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::RestAPIAdditionalRouteFiles
 	 */
 	public const RestAPIAdditionalRouteFiles = 'RestAPIAdditionalRouteFiles';
+
+	/**
+	 * Name constant for the RestSandboxSpecs setting, for use with Config::get()
+	 * @see MainConfigSchema::RestSandboxSpecs
+	 */
+	public const RestSandboxSpecs = 'RestSandboxSpecs';
 
 	/**
 	 * Name constant for the MaxShellMemory setting, for use with Config::get()
@@ -4403,6 +4438,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::AllowExternalReqID
 	 */
 	public const AllowExternalReqID = 'AllowExternalReqID';
+
+	/**
+	 * Name constant for the GenerateReqIDFormat setting, for use with Config::get()
+	 * @see MainConfigSchema::GenerateReqIDFormat
+	 */
+	public const GenerateReqIDFormat = 'GenerateReqIDFormat';
 
 	/**
 	 * Name constant for the JobRunRate setting, for use with Config::get()
@@ -4537,9 +4578,33 @@ class MainConfigNames {
 	public const FeatureShutdown = 'FeatureShutdown';
 
 	/**
+	 * Name constant for the CloneArticleParserOutput setting, for use with Config::get()
+	 * @see MainConfigSchema::CloneArticleParserOutput
+	 */
+	public const CloneArticleParserOutput = 'CloneArticleParserOutput';
+
+	/**
 	 * Name constant for the UseLeximorph setting, for use with Config::get()
 	 * @see MainConfigSchema::UseLeximorph
 	 */
 	public const UseLeximorph = 'UseLeximorph';
+
+	/**
+	 * Name constant for the UsePostprocCacheLegacy setting, for use with Config::get()
+	 * @see MainConfigSchema::UsePostprocCacheLegacy
+	 */
+	public const UsePostprocCacheLegacy = 'UsePostprocCacheLegacy';
+
+	/**
+	 * Name constant for the UsePostprocCacheParsoid setting, for use with Config::get()
+	 * @see MainConfigSchema::UsePostprocCacheParsoid
+	 */
+	public const UsePostprocCacheParsoid = 'UsePostprocCacheParsoid';
+
+	/**
+	 * Name constant for the ParserOptionsLogUnsafeSampleRate setting, for use with Config::get()
+	 * @see MainConfigSchema::ParserOptionsLogUnsafeSampleRate
+	 */
+	public const ParserOptionsLogUnsafeSampleRate = 'ParserOptionsLogUnsafeSampleRate';
 
 }

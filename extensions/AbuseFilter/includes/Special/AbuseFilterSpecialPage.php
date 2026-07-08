@@ -2,32 +2,25 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Special;
 
-use HtmlArmor;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Html\Html;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\TitleValue;
+use Wikimedia\HtmlArmor\HtmlArmor;
 
 /**
  * Parent class for AbuseFilter special pages.
  */
 abstract class AbuseFilterSpecialPage extends SpecialPage {
-
-	/** @var AbuseFilterPermissionManager */
-	protected $afPermissionManager;
-
 	/**
 	 * @param string $name
-	 * @param string $restriction
 	 * @param AbuseFilterPermissionManager $afPermissionManager
 	 */
 	public function __construct(
 		$name,
-		$restriction,
-		AbuseFilterPermissionManager $afPermissionManager
+		protected readonly AbuseFilterPermissionManager $afPermissionManager
 	) {
-		parent::__construct( $name, $restriction );
-		$this->afPermissionManager = $afPermissionManager;
+		parent::__construct( $name );
 	}
 
 	/**

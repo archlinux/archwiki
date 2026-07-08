@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Parser;
 
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
+use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Language\Language;
@@ -12,60 +13,18 @@ use Wikimedia\ObjectCache\BagOStuff;
 use Wikimedia\Stats\IBufferingStatsdDataFactory;
 
 class RuleCheckerFactory {
-	public const SERVICE_NAME = 'AbuseFilterRuleCheckerFactory';
+	public const SERVICE_NAME = ServiceNames::RuleCheckerFactory;
 
-	/** @var Language */
-	private $contLang;
-
-	/** @var BagOStuff */
-	private $cache;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var KeywordsManager */
-	private $keywordsManager;
-
-	/** @var VariablesManager */
-	private $varManager;
-
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
-
-	/** @var Equivset */
-	private $equivset;
-
-	/** @var int */
-	private $conditionsLimit;
-
-	/**
-	 * @param Language $contLang
-	 * @param BagOStuff $cache
-	 * @param LoggerInterface $logger
-	 * @param KeywordsManager $keywordsManager
-	 * @param VariablesManager $varManager
-	 * @param IBufferingStatsdDataFactory $statsdDataFactory
-	 * @param Equivset $equivset
-	 * @param int $conditionsLimit
-	 */
 	public function __construct(
-		Language $contLang,
-		BagOStuff $cache,
-		LoggerInterface $logger,
-		KeywordsManager $keywordsManager,
-		VariablesManager $varManager,
-		IBufferingStatsdDataFactory $statsdDataFactory,
-		Equivset $equivset,
-		int $conditionsLimit
+		private readonly Language $contLang,
+		private readonly BagOStuff $cache,
+		private readonly LoggerInterface $logger,
+		private readonly KeywordsManager $keywordsManager,
+		private readonly VariablesManager $varManager,
+		private readonly IBufferingStatsdDataFactory $statsdDataFactory,
+		private readonly Equivset $equivset,
+		private readonly int $conditionsLimit
 	) {
-		$this->contLang = $contLang;
-		$this->cache = $cache;
-		$this->logger = $logger;
-		$this->keywordsManager = $keywordsManager;
-		$this->varManager = $varManager;
-		$this->statsdDataFactory = $statsdDataFactory;
-		$this->equivset = $equivset;
-		$this->conditionsLimit = $conditionsLimit;
 	}
 
 	/**

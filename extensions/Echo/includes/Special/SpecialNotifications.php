@@ -18,7 +18,12 @@ class SpecialNotifications extends SpecialPage {
 	private const DISPLAY_NUM = 20;
 
 	public function __construct() {
-		parent::__construct( 'Notifications', 'echo-read-notifications' );
+		parent::__construct( 'Notifications' );
+	}
+
+	/** @inheritDoc */
+	public function getRestriction(): string {
+		return 'echo-read-notifications';
 	}
 
 	/**
@@ -54,6 +59,10 @@ class SpecialNotifications extends SpecialPage {
 		$pager->setLimit( $this->getRequest()->getInt( 'limit', self::DISPLAY_NUM ) );
 		$notifications = $pager->getNotifications();
 
+		$jsDiv = new OOUI\Tag();
+		$jsDiv->addClasses( [ 'mw-echo-special-js', 'oo-ui-pendingElement-pending' ] );
+		$out->addHTML( (string)$jsDiv );
+
 		$noJSDiv = new OOUI\Tag();
 		$noJSDiv->addClasses( [ 'mw-echo-special-nojs' ] );
 
@@ -63,7 +72,7 @@ class SpecialNotifications extends SpecialPage {
 			$noJSDiv->appendContent(
 				new OOUI\LabelWidget( [ 'label' => $this->msg( 'echo-none' )->text() ] )
 			);
-			$out->addHTML( $noJSDiv );
+			$out->addHTML( (string)$noJSDiv );
 			$out->addModules( [ 'ext.echo.special' ] );
 			return;
 		}
@@ -232,7 +241,7 @@ class SpecialNotifications extends SpecialPage {
 		// Wrap with nojs div
 		$noJSDiv->appendContent( $container );
 
-		$out->addHTML( $noJSDiv );
+		$out->addHTML( (string)$noJSDiv );
 
 		$out->addModules( [ 'ext.echo.special' ] );
 

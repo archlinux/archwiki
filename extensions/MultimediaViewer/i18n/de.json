@@ -16,6 +16,7 @@
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle.",
 	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Medienbetrachter]</span> aktivieren",
+	"multimediaviewer-disable-image-carousel-pref": "Bildkarussell auf der mobilen Website deaktivieren",
 	"multimediaviewer-file-page": "Gehe zur zugehörigen Dateiseite",
 	"multimediaviewer-repository-local": "Weitere Einzelheiten",
 	"multimediaviewer-datetime-created": "Erstellt: $1",

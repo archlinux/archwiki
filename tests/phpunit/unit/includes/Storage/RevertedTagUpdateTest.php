@@ -86,15 +86,15 @@ class RevertedTagUpdateTest extends MediaWikiUnitTestCase {
 		string $timestamp = '20100101202020',
 		?string $sha1 = null
 	) {
-		$revisionRecord = new MutableRevisionRecord(
-			$this->makeMockTitle( __METHOD__, [ 'id' => $pageId ] )
+		$revisionRecord = new TestMutableRevisionRecord(
+			$this->makeMockTitle( __METHOD__, [ 'id' => $pageId ] ),
+			TestMutableRevisionRecord::LOCAL,
+			$sha1 ?? strval( $revisionId )
 		);
 		$revisionRecord->setId( $revisionId );
 		$revisionRecord->setTimestamp( $timestamp );
 		$revisionRecord->setPageId( $pageId );
-		// Not a valid SHA-1, but enough to make these revisions appear like they have
-		// different contents.
-		$revisionRecord->setSha1( $sha1 ?? strval( $revisionId ) );
+
 		return $revisionRecord;
 	}
 
@@ -549,7 +549,7 @@ class RevertedTagUpdateTest extends MediaWikiUnitTestCase {
 	/**
 	 * Test marking multiple revisions as reverted.
 	 *
-	 * Also ensures that null revisions (e.g. move and protection entries) are not
+	 * Also ensures that dummy revisions (e.g. move and protection entries) are not
 	 * marked as 'reverted', see: T265312
 	 */
 	public function testMultipleRevertedRevisions() {

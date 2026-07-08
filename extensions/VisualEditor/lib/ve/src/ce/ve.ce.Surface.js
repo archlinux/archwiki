@@ -238,8 +238,8 @@ OO.mixinClass( ve.ce.Surface, OO.EventEmitter );
  *
  * @event ve.ce.Surface#paste
  * @param {Object} details
- * @param {string|null} details.source Paste source if known, per
- *  ve.ce.ClipboardHandler.static.pasteSourceDetectors
+ * @param {Object|null} details.source Paste source data if known, per
+ *  ve.ce.PasteSourceDetector#getData
  * @param {ve.dm.SurfaceFragment} details.fragment Fragment covering the
  *  pasted content
  */
@@ -1671,63 +1671,63 @@ ve.ce.Surface.prototype.handleDataTransfer = function ( dataTransfer, isPaste, t
 	//  - HTML generated from some clients has an image fallback(!) that is a screenshot of the HTML snippet (e.g. LibreOffice Calc)
 	if ( !htmlStringData ) {
 		if ( dataTransfer.items ) {
-			for ( let i = 0, l = dataTransfer.items.length; i < l; i++ ) {
-				if ( dataTransfer.items[ i ].kind !== 'string' ) {
-					items.push( ve.ui.DataTransferItem.static.newFromItem( dataTransfer.items[ i ], htmlStringData ) );
+			Array.prototype.forEach.call( dataTransfer.items, ( item ) => {
+				if ( item.kind !== 'string' ) {
+					items.push( ve.ui.DataTransferItem.static.newFromItem( item, htmlStringData ) );
 				}
-			}
+			} );
 		} else if ( dataTransfer.files && dataTransfer.files.length ) {
-			for ( let i = 0, l = dataTransfer.files.length; i < l; i++ ) {
-				items.push( ve.ui.DataTransferItem.static.newFromBlob( dataTransfer.files[ i ], htmlStringData ) );
-			}
+			Array.prototype.forEach.call( dataTransfer.files, ( file ) => {
+				items.push( ve.ui.DataTransferItem.static.newFromBlob( file, htmlStringData ) );
+			} );
 		}
 	} else if ( dataTransfer.files && dataTransfer.files.length ) {
 		const htmlPreParse = $.parseHTML( htmlStringData );
 
 		let imgCount = 0;
 		let hasContent = false;
-		for ( let i = 0; i < htmlPreParse.length; i++ ) {
+		htmlPreParse.forEach( ( node ) => {
 			// Count images in root nodes
-			if ( htmlPreParse[ i ].nodeName === 'IMG' ) {
+			if ( node.nodeName === 'IMG' ) {
 				imgCount++;
 			} else if (
-				( htmlPreParse[ i ].nodeType === 1 || htmlPreParse[ i ].nodeType === 3 ) &&
-				htmlPreParse[ i ].textContent &&
-				htmlPreParse[ i ].textContent.trim() !== ''
+				( node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE ) &&
+				node.textContent &&
+				node.textContent.trim() !== ''
 			) {
-				// Only count element nodes (type 1) or text nodes (type 3)
+				// Only count element nodes or text nodes
 				// that have non empty text content.
 				hasContent = true;
 			}
 
 			// Count images in children
-			if ( typeof htmlPreParse[ i ].querySelectorAll === 'function' ) {
-				imgCount += htmlPreParse[ i ].querySelectorAll( 'img' ).length;
+			if ( typeof node.querySelectorAll === 'function' ) {
+				imgCount += node.querySelectorAll( 'img' ).length;
 			}
-		}
+		} );
 
 		if ( !hasContent && imgCount === dataTransfer.files.length ) {
-			for ( let i = 0, l = dataTransfer.files.length; i < l; i++ ) {
+			Array.prototype.forEach.call( dataTransfer.files, ( file ) => {
 				// TODO: should we use image node outerHTML instead of htmlStringData?
-				items.push( ve.ui.DataTransferItem.static.newFromBlob( dataTransfer.files[ i ], htmlStringData ) );
-			}
+				items.push( ve.ui.DataTransferItem.static.newFromBlob( file, htmlStringData ) );
+			} );
 		}
 	}
 
 	if ( dataTransfer.items ) {
 		// Extract "string" types.
-		for ( let i = 0, l = dataTransfer.items.length; i < l; i++ ) {
+		Array.prototype.forEach.call( dataTransfer.items, ( item ) => {
 			if (
-				dataTransfer.items[ i ].kind === 'string' &&
-				dataTransfer.items[ i ].type.startsWith( 'text/' )
+				item.kind === 'string' &&
+				item.type.startsWith( 'text/' )
 			) {
 				items.push( ve.ui.DataTransferItem.static.newFromString(
-					dataTransfer.getData( dataTransfer.items[ i ].type ),
-					dataTransfer.items[ i ].type,
+					dataTransfer.getData( item.type ),
+					item.type,
 					htmlStringData
 				) );
 			}
-		}
+		} );
 	}
 
 	// We care a little bit about the order of items, as the first one matched
@@ -1736,7 +1736,7 @@ ve.ce.Surface.prototype.handleDataTransfer = function ( dataTransfer, isPaste, t
 	// we want to text/html and text/plain to be at the end of the list, as
 	// they tend to show up as common fallbacks.
 	const pushItemToBack = function ( array, type ) {
-		for ( let j = 0, jlen = array.length; j < jlen; j++ ) {
+		for ( let j = 0; j < array.length; j++ ) {
 			if ( array[ j ].type === type ) {
 				return array.push( array.splice( j, 1 )[ 0 ] );
 			}
@@ -1786,8 +1786,7 @@ ve.ce.Surface.prototype.handleDataTransferItems = function ( items, isPaste, tar
 
 	const dataTransferHandlerFactory = this.getSurface().dataTransferHandlerFactory;
 	let handled = false;
-	for ( let i = 0, l = items.length; i < l; i++ ) {
-		const item = items[ i ];
+	for ( const item of items ) {
 		const name = dataTransferHandlerFactory.getHandlerNameForItem( item, isPaste, this.clipboardHandler.isPasteSpecial() );
 		if ( name ) {
 			dataTransferHandlerFactory.create( name, this.surface, item )
@@ -1824,9 +1823,14 @@ ve.ce.Surface.prototype.selectAll = function () {
 		}
 		this.noScrollSelecting = true;
 		this.getModel().setLinearSelection( range );
+		// Wait a bit before clearing as there are two paths that could
+		// trigger a scroll:
+		// * The selection change (always happens)
+		// * A debounced context resize event (happens when a context
+		//   was visible before selectAll, and then hidden)
 		setTimeout( () => {
 			this.noScrollSelecting = false;
-		} );
+		}, 500 );
 	} else if ( selection instanceof ve.dm.TableSelection ) {
 		const matrix = selection.getTableNode( dmDoc ).getMatrix();
 		this.getModel().setSelection(
@@ -2463,7 +2467,7 @@ ve.ce.Surface.prototype.createSlug = function ( element ) {
 			padding: targetPadding,
 			'min-height': $slug.css( 'line-height' )
 		} );
-		$slug.one( 'transitionend', () => {
+		ve.waitForTransition( $slug, () => {
 			this.emit( 'position' );
 			// Animation finished, cleanup
 			$slug
@@ -2517,7 +2521,7 @@ ve.ce.Surface.prototype.fixupCursorPosition = function ( direction, extend ) {
 	}
 	// Between nails: cross the one in the specified direction
 	let fixedPosition = ve.adjacentDomPosition(
-		{ node: node, offset: offset },
+		{ node, offset },
 		direction,
 		{ stop: ve.isHardCursorStep }
 	);
@@ -2598,22 +2602,22 @@ ve.ce.Surface.prototype.findAndExecuteDelayedSequences = function () {
 		matchingSequences = this.findMatchingSequences();
 	}
 	const matchingByName = {};
-	let i;
-	for ( i = 0; i < matchingSequences.length; i++ ) {
-		matchingByName[ matchingSequences[ i ].sequence.getName() ] = matchingSequences[ i ];
-	}
 
-	for ( i = 0; i < this.delayedSequences.length; i++ ) {
-		const matchingSeq = matchingByName[ this.delayedSequences[ i ].sequence.getName() ];
+	matchingSequences.forEach( ( matchingSequence ) => {
+		matchingByName[ matchingSequence.sequence.getName() ] = matchingSequence;
+	} );
+
+	this.delayedSequences.forEach( ( delayedSequence ) => {
+		const matchingSeq = matchingByName[ delayedSequence.sequence.getName() ];
 		if (
 			!matchingSeq ||
-			matchingSeq.range.start !== this.delayedSequences[ i ].range.start
+			matchingSeq.range.start !== delayedSequence.range.start
 		) {
 			// This sequence stopped matching; execute it with the previously saved range
-			this.delayedSequences[ i ].wasDelayed = true;
-			sequences.push( this.delayedSequences[ i ] );
+			delayedSequence.wasDelayed = true;
+			sequences.push( delayedSequence );
 		}
-	}
+	} );
 	// Discard any delayed sequences; they will be checked for again when the user starts typing
 	this.delayedSequences = [];
 
@@ -2626,20 +2630,19 @@ ve.ce.Surface.prototype.checkDelayedSequences = ve.ce.Surface.prototype.findAndE
 /**
  * Execute matched sequences
  *
- * @param {ve.ui.SequenceRegistry.Match[]} sequences
+ * @param {ve.ui.SequenceRegistry.Match[]} sequenceMatches
  */
-ve.ce.Surface.prototype.executeSequences = function ( sequences ) {
+ve.ce.Surface.prototype.executeSequences = function ( sequenceMatches ) {
 	let executed = false;
 
-	// sequences.length will likely be 0 or 1 so don't cache
-	for ( let i = 0; i < sequences.length; i++ ) {
-		if ( sequences[ i ].sequence.delayed && !sequences[ i ].wasDelayed ) {
+	sequenceMatches.forEach( ( sequenceMatch ) => {
+		if ( sequenceMatch.sequence.delayed && !sequenceMatch.wasDelayed ) {
 			// Save the sequence and match range for execution later
-			this.delayedSequences.push( sequences[ i ] );
+			this.delayedSequences.push( sequenceMatch );
 		} else {
-			executed = sequences[ i ].sequence.execute( this.surface, sequences[ i ].range ) || executed;
+			executed = sequenceMatch.sequence.execute( this.surface, sequenceMatch.range ) || executed;
 		}
-	}
+	} );
 	if ( executed ) {
 		this.delayedSequences = [];
 		this.showModelSelection();
@@ -2687,13 +2690,6 @@ ve.ce.Surface.prototype.maybeSetBreakpoint = function () {
  */
 ve.ce.Surface.prototype.onWindowResize = function () {
 	this.emit( 'position' );
-	if ( OO.ui.isMobile() && !ve.init.platform.constructor.static.isIos() ) {
-		// A resize event on mobile is probably a keyboard open/close (or rotate).
-		// Either way, ensure the cursor is still visible (T204388).
-		// On iOS, window is resized whenever you start scrolling down and the "address bar" is
-		// minimized. So don't scroll back up…
-		this.getSurface().scrollSelectionIntoView();
-	}
 };
 
 /**
@@ -3019,7 +3015,7 @@ ve.ce.Surface.prototype.handleInsertion = function () {
 };
 
 /**
- * Place the selection at the next content offset which is selectable.
+ * Get the next content offset which is selectable.
  *
  * For the purposes of this method, offsets within ve.ce.ActiveNode's
  * are not considered selectable when they are not active.
@@ -3468,9 +3464,7 @@ ve.ce.Surface.prototype.showSelectionState = function ( selection ) {
  * @fires ve.dm.Surface#contextChange
  */
 ve.ce.Surface.prototype.updateActiveAnnotations = function ( fromModelOrNode ) {
-	const canBeActive = function ( view ) {
-		return view.canBeActive();
-	};
+	const canBeActive = ( view ) => view.canBeActive();
 
 	let activeAnnotations;
 	if ( fromModelOrNode === true ) {
@@ -3948,9 +3942,9 @@ ve.ce.Surface.prototype.afterMutations = function ( mutationRecords ) {
 			}
 		} );
 	} );
-	const removals = removedNodes.map( ( node ) => ( { node: node, range: node.getOuterRange() } ) );
+	const removals = removedNodes.map( ( node ) => ( { node, range: node.getOuterRange() } ) );
 	removals.sort( ( x, y ) => x.range.start - y.range.start );
-	for ( let i = 0, iLen = removals.length; i < iLen; i++ ) {
+	for ( let i = 0; i < removals.length; i++ ) {
 		// Remove any overlapped range (which in a tree must be a nested range)
 		if ( i > 0 && removals[ i ].range.start < removals[ i - 1 ].range.end ) {
 			removals.splice( i, 1 );

@@ -31,6 +31,7 @@ use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestInterface;
 use MediaWiki\Rest\Response;
+use MediaWiki\Rest\ResponseHeaders;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionLookup;
@@ -252,7 +253,9 @@ abstract class ParsoidHandler extends Handler {
 		$acceptLanguage = null;
 		if ( $opts['accept-language'] !== null ) {
 			$acceptLanguage = LanguageCode::normalizeNonstandardCodeAndWarn(
-				$opts['accept-language']
+				HtmlOutputRendererHelper::getAcceptedTargetLanguage(
+					$opts['accept-language']
+				)
 			);
 		}
 
@@ -274,6 +277,7 @@ abstract class ParsoidHandler extends Handler {
 			'cookie' => $request->getHeaderLine( 'Cookie' ),
 			'reqId' => $request->getHeaderLine( 'X-Request-Id' ),
 			'userAgent' => $request->getHeaderLine( 'User-Agent' ),
+			// Used in pb2pb variant updates and wtLint
 			'htmlVariantLanguage' => $acceptLanguage,
 			// Semver::satisfies checks below expect a valid outputContentVersion value.
 			// Better to set it here instead of adding the default value at every check.
@@ -430,7 +434,10 @@ abstract class ParsoidHandler extends Handler {
 		$request = $this->getRequest();
 		$format = $attribs['opts']['format'];
 
-		if ( $format === ParsoidFormatHelper::FORMAT_WIKITEXT ) {
+		if (
+			$format === ParsoidFormatHelper::FORMAT_WIKITEXT ||
+			$format === ParsoidFormatHelper::FORMAT_LINT
+		) {
 			return true;
 		}
 
@@ -529,6 +536,12 @@ abstract class ParsoidHandler extends Handler {
 		$hasOldId = ( $revId !== null );
 		$ensureAccessibleContent = !$html2WtMode || $hasOldId;
 
+		// When transforming for lint, we aren't going to go through a ParserOutputAccess
+		// to checkPreconditions
+		$checkAuthority = (
+			( $attribs['opts']['format'] ?? '' ) === ParsoidFormatHelper::FORMAT_LINT
+		);
+
 		try {
 			// Note: Parsoid by design isn't supposed to use the user
 			// context right now, and all user state is expected to be
@@ -541,7 +554,8 @@ abstract class ParsoidHandler extends Handler {
 				$title,
 				$revisionRecord ?? $revId,
 				$pagelanguageOverride,
-				$ensureAccessibleContent
+				$ensureAccessibleContent,
+				$checkAuthority
 			);
 		} catch ( SuppressedDataException $e ) {
 			throw new LocalizedHttpException(
@@ -802,7 +816,7 @@ abstract class ParsoidHandler extends Handler {
 
 				// NOTE: This is slightly misleading since there are fixed costs
 				// for generating output like the <head> section and should be factored in,
-				// but this is good enough for now as a useful first degree of approxmation.
+				// but this is good enough for now as a useful first degree of approximation.
 				$timePerKB = $parseTime * 1024 / $outSize;
 				if ( $timePerKB > 500 ) {
 					// At 100ms/KB, even a 100KB page which isn't that large will take 10s.
@@ -822,13 +836,13 @@ abstract class ParsoidHandler extends Handler {
 			// Don't cache requests when wt is set in case somebody uses
 			// GET for wikitext parsing
 			// XXX: can we just refuse to do wikitext parsing in a GET request?
-			$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+			$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'private,no-cache,s-maxage=0' );
 		} elseif ( $oldid !== null ) {
-			// XXX: can this go away? Parsoid's PageContent class doesn't expose supressed revision content.
+			// XXX: can this go away? Parsoid's PageContent class doesn't expose suppressed revision content.
 			if ( $request->getHeaderLine( 'Cookie' ) ||
 				$request->getHeaderLine( 'Authorization' ) ) {
 				// Don't cache requests with a session.
-				$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+				$response->setHeader( ResponseHeaders::CACHE_CONTROL, 'private,no-cache,s-maxage=0' );
 			}
 		}
 		return $response;
@@ -939,13 +953,14 @@ abstract class ParsoidHandler extends Handler {
 			$attribs['envOptions']['outputContentVersion']
 		);
 		if ( $downgrade ) {
-			$pb = new HtmlPageBundle(
-				$revision['html']['body'],
-				$revision['data-parsoid']['body'] ?? null,
-				$revision['data-mw']['body'] ?? null
-			);
+			$pb = HtmlPageBundle::newFromJsonArray( [
+				'html' => $revision['html']['body'],
+				'parsoid' => $revision['data-parsoid']['body'] ?? null,
+				'mw' => $revision['data-mw']['body'] ?? null,
+				'counters' => $revision['counters']['body'] ?? null,
+			] );
 			$this->validatePb( $pb, $attribs['envOptions']['inputContentVersion'] );
-			Parsoid::downgrade( $downgrade, $pb );
+			Parsoid::downgrade( $downgrade, $pb, $this->siteConfig );
 
 			if ( !empty( $attribs['body_only'] ) ) {
 				$doc = $this->parseHTML( $pb->html );
@@ -981,14 +996,15 @@ abstract class ParsoidHandler extends Handler {
 	) {
 		$parsoid = $this->newParsoid();
 
-		$pb = new HtmlPageBundle(
-			$revision['html']['body'],
-			$revision['data-parsoid']['body'] ?? null,
-			$revision['data-mw']['body'] ?? null,
-			$attribs['envOptions']['inputContentVersion'],
-			$revision['html']['headers'] ?? null,
-			$revision['contentmodel'] ?? null
-		);
+		$pb = HtmlPageBundle::newFromJsonArray( [
+			'html' => $revision['html']['body'],
+			'parsoid' => $revision['data-parsoid']['body'] ?? null,
+			'mw' => $revision['data-mw']['body'] ?? null,
+			'counters' => $revision['counters']['body'] ?? null,
+			'version' => $attribs['envOptions']['inputContentVersion'],
+			'headers' => $revision['html']['headers'] ?? null,
+			'contentmodel' => $revision['contentmodel'] ?? null,
+		] );
 
 		$out = $parsoid->pb2pb( $pageConfig, 'redlinks', $pb, [] );
 
@@ -1026,14 +1042,15 @@ abstract class ParsoidHandler extends Handler {
 
 		$pageIdentity = $this->tryToCreatePageIdentity( $attribs );
 
-		$pb = new HtmlPageBundle(
-			$revision['html']['body'],
-			$revision['data-parsoid']['body'] ?? null,
-			$revision['data-mw']['body'] ?? null,
-			$attribs['envOptions']['inputContentVersion'],
-			$revision['html']['headers'] ?? null,
-			$revision['contentmodel'] ?? null
-		);
+		$pb = HtmlPageBundle::newFromJsonArray( [
+			'html' => $revision['html']['body'],
+			'parsoid' => $revision['data-parsoid']['body'] ?? null,
+			'mw' => $revision['data-mw']['body'] ?? null,
+			'counters' => $revision['counters']['body'] ?? null,
+			'version' => $attribs['envOptions']['inputContentVersion'],
+			'headers' => $revision['html']['headers'] ?? null,
+			'contentmodel' => $revision['contentmodel'] ?? null,
+		] );
 
 		// XXX: DI should inject HtmlTransformFactory
 		$languageVariantConverter = MediaWikiServices::getInstance()
@@ -1105,5 +1122,4 @@ abstract class ParsoidHandler extends Handler {
 
 		return $page;
 	}
-
 }

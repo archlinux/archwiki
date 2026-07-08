@@ -132,7 +132,7 @@
 	"echo-api-failure-cross-wiki": "رُفض الوصول إلى النطاق البعيد.",
 	"echo-notification-placeholder": "لا توجد أية إخطارات.",
 	"echo-notification-placeholder-filters": "لا توجد إشعارات تنطبق عليها الخيارات المحددة.",
-	"echo-notification-loginrequired": "يجب عليك تسجيل الدخول للاطلاع على إشعاراتك.",
+	"echo-notification-loginrequired": "يجب عليك تسجيل الدخول لرؤية إشعاراتك.",
 	"echo-notification-popup-loginrequired": "من فضلك سجل الدخول لعرض إشعاراتك.",
 	"echo-notification-markasread": "علّم كمقروءة",
 	"echo-notification-markasunread": "أبقها غير مقروءة",
@@ -192,6 +192,7 @@
 	"notification-header-user-rights-add-only": "صلاحيات المستخدم الخاصة {{GENDER:$4|بك}} تم {{GENDER:$1|تغييرها}}. تمت إضافتك إلى: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|صلاحياتك}} تم {{GENDER:$1|تغييرها}}. أنت لم تعد عضوا في: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|غُيَّرت}} {{GENDER:$1|صلاحياتك}}. أُضيفت إلى: $2. لم تعد عضوًا في: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|انتهت عضويتك}} في {{PLURAL:$2|المجموعة التالية}} تلقائيًا: $1.",
 	"notification-header-user-rights-expiry-change": "تاريخ انتهاء {{GENDER:$4|عضويتك}} في {{PLURAL:$3|المجموعة|المجموعات}} التالية تم {{GENDER:$1|تغييرها}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|مرحبًا بك|مرحبًا بكِ}} في {{SITENAME}}، $1! نحن سعداءُ {{GENDER:$2|بتواجدك|بتواجدكِ}} هنا.",
 	"notification-header-mention-summary": "{{GENDER:$2|ذكر|ذكرت}}{{GENDER:$3|ك}} $1 في ملخص تعديل في <strong>$4</strong>.",
@@ -228,6 +229,7 @@
 	"notification-reverted-email-subject2": "{{GENDER:$2|ألغي{{PLURAL:$4||ت}}}} {{PLURAL:$4|تعديلك|تعديلاتك}} في {{SITENAME}}",
 	"notification-mention-email-subject": "{{GENDER:$2|أشار|أشارت}} $1 {{GENDER:$3|إليك}} في {{SITENAME}}",
 	"notification-user-rights-email-subject": "غُيِّرت {{GENDER:$3|صلاحياتك}} في {{SITENAME}}",
+	"notification-user-rights-expiry-email-subject": "انتهت صلاحية حقوق المستخدم الخاصة {{GENDER:$3|بك}} على {{SITENAME}}",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|لا ثانية|ثانية واحدة|ثانيتين|$1 ثوان|$1 ثانية}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|لا دقيقة|دقيقة واحدة|دقيقتين|$1 دقائق|$1 دقيقة}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|لا ساعة|ساعة واحدة|ساعتين|$1 ساعات|$1 ساعة}}",
@@ -279,7 +281,7 @@
 	"group-push-subscription-manager-member": "{{GENDER:$1|إداري مصادقات التسليم}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:إداريو مصادقات التسليم",
 	"notification-subject-email-verify-email-reminder": "التحقق من {{GENDER:$1|بريدك}} الإلكتروني",
-	"notification-header-verify-email-reminder": "يرجى <strong>التحقق من عنوان {{GENDER:$1|بريدك الإلكتروني}}</strong> حتى نتمكن من معرفة أن عنوان البريد الإلكتروني في {{GENDER:$1| حسابك}} ينتمي {{GENDER:$1|إليك}}.",
+	"notification-header-verify-email-reminder": "مرحباً $2 ، \n يرجى <strong>التحقق من عنوان بريدك الإلكتروني {{GENDER:$1| your}}</strong> حتى نعرف أن عنوان البريد الإلكتروني الموجود على حساب {{GENDER:$1| your}} يخصك {{GENDER:$1| you}}.",
 	"notification-link-text-verify-email-reminder": "إدارة تفضيلات البريد الإلكتروني",
 	"notification-verify-email-reminder-link-label": "تأكيد عنوان البريد الإلكتروني"
 }

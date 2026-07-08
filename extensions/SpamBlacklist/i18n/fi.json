@@ -22,7 +22,7 @@
 	"spam-blacklisted-email": "Kielletty sähköpostiosoite",
 	"spam-blacklisted-email-text": "Sähköpostiosoitteesi on estetty lähettämästä sähköpostia muille käyttäjille.",
 	"spam-blacklisted-email-signup": "Annetun sähköpostiosoitteen käyttö on tällä hetkellä kielletty.",
-	"spam-invalid-lines": "{{PLURAL:$1|Seuraavalla|Seuraavilla}} roskalinkkien torjuntalistan {{PLURAL:$1|rivillä|riveillä}} on {{PLURAL:$1|virheellinen säännöllinen lauseke, joka|virheelliset säännölliset lausekkeet, jotka}} on korjattava ennen tallentamista:",
+	"spam-blacklisted-email-change": "Annetun sähköpostiosoitteen käyttäminen on tällä hetkellä estetty.",
 	"spam-blacklist-desc": "Säännöllisiä lausekkeita (reg-ex) tukeva roskalinkkejä torjuva työkalu, jonka avulla internet-osoitteita (URL) sivuilla ja rekisteröityneiden käyttäjien sähköpostiosoitteissa voidaan kieltää",
 	"log-name-spamblacklist": "Roskalinkkien torjuntalistan loki",
 	"log-description-spamblacklist": "Nämä tapahtumat ovat osumia roskalinkkien torjuntalistalla.",

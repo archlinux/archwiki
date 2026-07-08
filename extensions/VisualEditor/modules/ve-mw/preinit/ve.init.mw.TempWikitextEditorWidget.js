@@ -38,10 +38,7 @@ mw.libs.ve.MWTempWikitextEditorWidget = function VeUiMwTempWikitextEditorWidget(
 		// * mw-content-ltr
 		// * mw-content-rtl
 		.addClass( 'mw-content-' + dir )
-		.attr( {
-			lang: lang,
-			dir: dir
-		} )
+		.attr( { lang, dir } )
 		.val( config.value );
 };
 

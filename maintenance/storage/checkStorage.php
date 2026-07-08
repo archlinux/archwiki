@@ -7,6 +7,9 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+use MediaWiki\ExternalStore\ExternalStoreDB;
+use MediaWiki\Import\ImportStreamSource;
+use MediaWiki\Import\WikiRevision;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Shell\Shell;
@@ -218,7 +221,7 @@ class CheckStorage extends Maintenance {
 			if ( count( $externalNormalBlobs ) ) {
 				if ( $this->dbStore === null ) {
 					$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
-					$this->dbStore = $esFactory->getStore( 'DB' );
+					$this->dbStore = $esFactory->getDatabaseStore();
 				}
 				foreach ( $externalConcatBlobs as $cluster => $xBlobIds ) {
 					$blobIds = array_keys( $xBlobIds );
@@ -421,7 +424,7 @@ class CheckStorage extends Maintenance {
 
 		if ( $this->dbStore === null ) {
 			$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
-			$this->dbStore = $esFactory->getStore( 'DB' );
+			$this->dbStore = $esFactory->getDatabaseStore();
 		}
 
 		foreach ( $externalConcatBlobs as $cluster => $oldIds ) {
@@ -553,17 +556,18 @@ class CheckStorage extends Maintenance {
 
 		// Find text row again
 		$dbr = $this->getReplicaDB();
-		$res = $dbr->newSelectQueryBuilder()
-			->select( [ 'content_address' ] )
+		$address = $dbr->newSelectQueryBuilder()
+			->select( 'content_address' )
 			->from( 'slots' )
 			->join( 'content', null, 'content_id = slot_content_id' )
 			->where( [ 'slot_revision_id' => $id ] )
-			->caller( __METHOD__ )->fetchRow();
+			->caller( __METHOD__ )
+			->fetchField();
 
 		$blobStore = $this->getServiceContainer()
 			->getBlobStoreFactory()
 			->newSqlBlobStore();
-		$oldId = $blobStore->getTextIdFromAddress( $res->content_address );
+		$oldId = $blobStore->getTextIdFromAddress( $address );
 
 		if ( !$oldId ) {
 			echo "Missing revision row for rev_id $id\n";

@@ -130,5 +130,3 @@ class EchoEditUserTalkPresentationModel extends EchoEventPresentationModel {
 		return 'notification-edit-talk-page-email-subject2';
 	}
 }
-
-class_alias( EchoEditUserTalkPresentationModel::class, 'EchoEditUserTalkPresentationModel' );

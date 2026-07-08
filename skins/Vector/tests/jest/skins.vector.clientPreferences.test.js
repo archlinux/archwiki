@@ -28,6 +28,7 @@ describe( 'clientPreferences', () => {
 		} );
 		mw.message = jest.fn( ( key ) => ( {
 			text: () => `msg:${ key }`,
+			parse: () => `msg:${ key }`,
 			exists: () => true
 		} ) );
 	} );
@@ -51,6 +52,7 @@ describe( 'clientPreferences', () => {
 	test( 'doesnt render exclusion notice if the msg key doesnt exist', () => {
 		mw.message = jest.fn( ( key ) => ( {
 			text: () => `msg:${ key }`,
+			parse: () => `msg:${ key }`,
 			exists: () => key !== 'vector-feature-limited-width-exclusion-notice'
 		} ) );
 		document.documentElement.setAttribute( 'class', 'vector-feature-limited-width-clientpref-0' );

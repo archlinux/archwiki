@@ -23,7 +23,7 @@
 	"cdx-table-pager-button-last-page": "Poslědnja stranica",
 	"cdx-table-pager-button-next-page": "Slědujuča stranica",
 	"cdx-table-pager-button-prev-page": "Prědhodeča stranica",
-	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 redok|$1 redky|$1 redkov}}",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|$1 element|$1 elementy|$1 elementov}}",
 	"cdx-table-pager-items-per-page-default": "Rezultaty na stranicu",
 	"cdx-table-pagination-status-message-determinate-long": "Pokazanje rezultatov $1–$2 iz $3",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 iz $3",

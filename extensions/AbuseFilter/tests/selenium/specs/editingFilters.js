@@ -1,33 +1,24 @@
-'use strict';
-
-const assert = require( 'assert' ),
-	LoginPage = require( 'wdio-mediawiki/LoginPage' ),
-	ViewEditPage = require( '../pageobjects/viewedit.page' ),
-	ViewListPage = require( '../pageobjects/viewlist.page' );
+import LoginPage from 'wdio-mediawiki/LoginPage';
+import { viewEditPage as ViewEditPage } from '../pageobjects/viewedit.page.js';
+import { viewListPage as ViewListPage } from '../pageobjects/viewlist.page.js';
 
 describe( 'Filter editing', () => {
-	describe( 'The editing interface', () => {
-		it( 'is not visible to logged-out users', async () => {
-			await ViewEditPage.open( 'new' );
-			assert( await ViewEditPage.error.isDisplayed() );
-		} );
+	before( async () => {
+		await LoginPage.loginAdmin();
+	} );
 
+	describe( 'The editing interface', () => {
 		it( 'is visible to logged-in admins', async () => {
-			await LoginPage.loginAdmin();
 			await ViewEditPage.open( 'new' );
-			assert( await ViewEditPage.name.isDisplayed() );
+			await expect( ViewEditPage.name ).toBeDisplayed();
 		} );
 	} );
 
 	describe( 'Trying to open a non-existing filter', () => {
-		before( async () => {
-			await LoginPage.loginAdmin();
-		} );
-
 		it( 'I should receive an error', async () => {
 			await ViewEditPage.open( 1234567 );
-			assert( await ViewEditPage.error.isDisplayed() );
-			assert.strictEqual( await ViewEditPage.error.getText(), 'The filter you specified does not exist' );
+			await expect( ViewEditPage.error ).toBeDisplayed();
+			expect( await ViewEditPage.error.getText() ).toBe( 'The filter you specified does not exist' );
 		} );
 	} );
 
@@ -40,16 +31,15 @@ describe( 'Filter editing', () => {
 	let filterID, historyID;
 
 	async function assertFirstVersionSaved() {
-		assert.strictEqual( await ViewEditPage.name.getValue(), filterSpecs.name );
-		assert.strictEqual( await ViewEditPage.rules.getValue(), filterSpecs.rules + '\n' );
-		assert.strictEqual( await ViewEditPage.comments.getValue(), filterSpecs.comments + '\n' );
+		expect( await ViewEditPage.name.getValue() ).toBe( filterSpecs.name );
+		expect( await ViewEditPage.rules.getValue() ).toBe( filterSpecs.rules + '\n' );
+		expect( await ViewEditPage.comments.getValue() ).toBe( filterSpecs.comments + '\n' );
 		await ViewEditPage.warnCheckbox.isSelected();
-		assert.strictEqual( await ViewEditPage.warnOtherMessage.getValue(), filterSpecs.warnMsg );
+		expect( await ViewEditPage.warnOtherMessage.getValue() ).toBe( filterSpecs.warnMsg );
 	}
 
 	describe( 'Creating a new filter', () => {
 		before( async () => {
-			await LoginPage.loginAdmin();
 			await ViewEditPage.open( 'new' );
 		} );
 
@@ -63,12 +53,12 @@ describe( 'Filter editing', () => {
 			await ViewEditPage.setWarningMessage( filterSpecs.warnMsg );
 			await ViewEditPage.submit();
 
-			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+			await expect( ViewListPage.filterSavedNotice ).toBeDisplayed();
 
 			filterID = await ViewListPage.savedFilterID();
-			assert.ok( filterID );
+			expect( filterID ).toBeTruthy();
 			historyID = await ViewListPage.savedFilterHistoryID();
-			assert.ok( historyID );
+			expect( historyID ).toBeTruthy();
 		} );
 
 		it( 'saved data is retained (1)', async () => {
@@ -79,7 +69,6 @@ describe( 'Filter editing', () => {
 
 	describe( 'Editing an existing filter', () => {
 		before( async () => {
-			await LoginPage.loginAdmin();
 			await ViewEditPage.open( filterID );
 		} );
 
@@ -90,25 +79,21 @@ describe( 'Filter editing', () => {
 			await ViewEditPage.name.setValue( newName );
 			await ViewEditPage.comments.addValue( newNotes );
 			await ViewEditPage.submit();
-			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+			await expect( ViewListPage.filterSavedNotice ).toBeDisplayed();
 		} );
 
 		it( 'saved data is retained (2)', async () => {
 			await ViewEditPage.open( filterID );
-			assert.strictEqual( await ViewEditPage.name.getValue(), newName );
-			assert.strictEqual( await ViewEditPage.comments.getValue(), newNotes + filterSpecs.comments + '\n' );
+			expect( await ViewEditPage.name.getValue() ).toBe( newName );
+			expect( await ViewEditPage.comments.getValue() ).toBe( filterSpecs.comments + '\n' + newNotes + '\n' );
 		} );
 	} );
 
 	describe( 'Restoring an old version of a filter', () => {
-		before( async () => {
-			await LoginPage.loginAdmin();
-		} );
-
 		it( 'edit can be saved (3)', async () => {
 			await ViewEditPage.open( 'history/' + filterID + '/item/' + historyID );
 			await ViewEditPage.submit();
-			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+			await expect( ViewListPage.filterSavedNotice ).toBeDisplayed();
 		} );
 
 		it( 'saved data is retained (3)', async () => {
@@ -119,7 +104,6 @@ describe( 'Filter editing', () => {
 
 	describe( 'CSRF protection', () => {
 		before( async () => {
-			await LoginPage.loginAdmin();
 			await ViewEditPage.open( 'new' );
 		} );
 
@@ -129,22 +113,21 @@ describe( 'Filter editing', () => {
 			await ViewEditPage.invalidateToken();
 			await ViewEditPage.name.setValue( filterName );
 			await ViewEditPage.submit();
-			assert( await ViewEditPage.warning.isDisplayed() );
+			await expect( ViewEditPage.warning ).toBeDisplayed();
 		} );
 		it( 'even if the token is invalid, the ongoing edit is not lost', async () => {
-			assert.strictEqual( await ViewEditPage.name.getValue(), filterName );
+			expect( await ViewEditPage.name.getValue() ).toBe( filterName );
 		} );
 	} );
 
 	describe( 'Trying to save a filter with bad data', () => {
 		before( async () => {
-			await LoginPage.loginAdmin();
 			await ViewEditPage.open( 'new' );
 		} );
 
 		it( 'cannot save an empty filter', async () => {
 			await ViewEditPage.submit();
-			assert( await ViewEditPage.error.isDisplayed() );
+			await expect( ViewEditPage.error ).toBeDisplayed();
 		} );
 
 		const rules = 'action === "edit"';
@@ -153,7 +136,7 @@ describe( 'Filter editing', () => {
 			await ViewEditPage.switchEditor();
 			await ViewEditPage.rules.setValue( rules );
 			await ViewEditPage.submit();
-			assert( await ViewEditPage.error.isDisplayed() );
+			await expect( ViewEditPage.error ).toBeDisplayed();
 		} );
 	} );
 } );

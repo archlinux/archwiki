@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mirzali"
+		]
+	},
+	"oathauth-webauthn-registered-keys-section-name": "Kılitê qeydıni",
+	"oathauth-webauthn-ui-remove-key": "Wedare",
+	"oathauth-webauthn-ui-reload-page-label": "Pele reyna bar ke"
+}

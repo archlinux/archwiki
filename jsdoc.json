@@ -25,7 +25,8 @@
 			"resources/src/"
 		],
 		"exclude": [
-			"resources/src/mediawiki.skinning.typeaheadSearch"
+			"resources/src/mediawiki.skinning.typeaheadSearch",
+			"resources/src/mediawiki.languageselector"
 		]
 	},
 	"templates": {
@@ -41,11 +42,8 @@
 			"hideSections": [ "Classes", "Events" ],
 			"repository": "https://gerrit.wikimedia.org/g/mediawiki/core/",
 			"linkMap": {
-				"boolean": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
 				"jQuery.fn": "https://api.jquery.com/jQuery/",
-				"JSON.parse": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse",
-				"number": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number",
-				"string": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String"
+				"JSON.parse": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"
 			}
 		}
 	}

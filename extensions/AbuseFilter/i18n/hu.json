@@ -351,7 +351,7 @@
 	"abusefilter-edit-builder-funcs-sanitize": "HTML-entitások szabványosítása Unicode-karakterekké ($1)",
 	"abusefilter-edit-builder-group-vars": "Változók",
 	"abusefilter-edit-builder-vars-timestamp": "a változás Unix-időbélyege ($1)",
-	"abusefilter-edit-builder-vars-accountname": "szerkesztői fiók neve a fiók létrehozásakor ($1)",
+	"abusefilter-edit-builder-vars-account-name": "szerkesztői fiók neve a fiók létrehozásakor ($1)",
 	"abusefilter-edit-builder-vars-action": "művelet ($1)",
 	"abusefilter-edit-builder-vars-addedlines": "Szerkesztés során hozzáadott sorok ($1)",
 	"abusefilter-edit-builder-vars-delta": "a szerkesztés során történt méretváltozás ($1)",

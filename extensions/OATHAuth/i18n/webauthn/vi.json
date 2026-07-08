@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Minh Nguyen",
+			"NguoiDungKhongDinhDanh",
+			"Nvdtn19",
+			"Phungminh141",
+			"Vinhtantran"
+		]
+	},
+	"oathauth-webauthn-module-label": "Khóa bảo mật",
+	"oathauth-webauthn-javascript-required": "Bạn cần bật JavaScript trong trình duyệt để sử dụng khóa bảo mật.",
+	"oathauth-webauthn-ui-login-prompt": "Vui lòng sử dụng khóa bảo mật của bạn hoặc làm theo hướng dẫn trên trình duyệt.",
+	"oathauth-webauthn-ui-add-key": "Thêm chìa khóa",
+	"oathauth-webauthn-error-browser-unsupported": "Trình duyệt này không hỗ trợ xác thực bằng khóa bảo mật, hoặc tính năng này không khả dụng trên trang web này. Vui lòng thử bằng một trình duyệt khác. [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:WebAuthn#Browser_support Tìm hiểu thêm]",
+	"oathauth-webauthn-error-browser-unsupported-console": "Trình duyệt này không hỗ trợ xác thực bằng khóa bảo mật, hoặc tính năng này không khả dụng trên trang web này.",
+	"oathauth-webauthn-error-auth-generic": "Quá trình xác thực đã bị gián đoạn. Vui lòng bắt đầu lại quá trình xác thực.",
+	"oathauth-webauthn-error-reg-generic": "Không thể xác minh chìa khóa của bạn. Xin hãy bắt đầu lại quá trình tạo.",
+	"oathauth-webauthn-registered-keys-section-name": "Chìa khóa đã tạo",
+	"oathauth-webauthn-ui-remove-key": "Xóa",
+	"oathauth-webauthn-error-module-not-enabled": "Mô đun “$1” chưa được bật cho thành viên “$2”",
+	"oathauth-webauthn-error-verification-failed": "Xác minh WebAuthn không thành công.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Không thể xác minh khóa truy cập.",
+	"oathauth-webauthn-error-credentials-missing": "Thông tin xác thực WebAuthn chưa được gửi.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Người dùng \"$1\"}} không thể tạo thông tin xác thực mới.",
+	"oathauth-webauthn-error-invalid-new-key": "Khóa mới do mô đun trả về không thuộc kiểu bắt buộc.",
+	"oathauth-webauthn-error-registration-failed": "Không thể tạo khóa mới.",
+	"oathauth-webauthn-ui-key-register-help": "Chọn biệt danh cho chìa khóa của bạn:",
+	"oathauth-webauthn-error-cannot-remove-key": "Không thể xóa chìa khóa.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Không thể truy xuất thông tin xác thực.",
+	"oathauth-webauthn-add-key-section-name": "Tạo một khóa bảo mật mới",
+	"oathauth-webauthn-error-get-reginfo-fail": "Không thể truy xuất thông tin xác thực.",
+	"oathauth-webauthn-module-description": "WebAuthn đang trong giai đoạn thử nghiệm. Hiện tại không có tùy chọn khôi phục thiết bị xác thực bị mất hoặc bị hỏng cho phương pháp này. \n\n[https://en.wikipedia.org/wiki/WebAuthn Tìm hiểu thêm về WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Tải lại trang",
+	"oathauth-webauthn-authentication-info-label": "Dữ liệu xác thực",
+	"oathauth-webauthn-authentication-info-help": "Dữ liệu xác thực được chuyển đến máy khách để truy xuất thông tin xác thực",
+	"oathauth-webauthn-credential-label": "Thông tin người dùng",
+	"oathauth-webauthn-credential-help": "Thông tin xác thực của người dùng dựa trên dữ liệu xác thực",
+	"oathauth-webauthn-add-security-key": "Thêm khóa bảo mật",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Sử dụng khóa bảo mật hoặc khóa truy cập"
+}

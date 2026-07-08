@@ -2,19 +2,17 @@
 
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
-use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotFoundError;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaStandalone\LuaStandaloneEngine;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\CoreMagicVariables;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
-use PHPUnit\Framework\DataProviderTestSuite;
 use PHPUnit\Framework\TestSuite;
-use PHPUnit\Framework\WarningTestCase;
-use PHPUnit\Util\Test;
-use ReflectionClass;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * Trait that helps LuaEngineTestBase and LuaEngineUnitTestBase
@@ -28,6 +26,7 @@ trait LuaEngineTestHelper {
 			'cpuLimit' => 30,
 			'allowEnvFuncs' => true,
 			'maxLangCacheSize' => 30,
+			'shareInvocationEnv' => false,
 		],
 		'LuaStandalone' => [
 			'class' => LuaStandaloneEngine::class,
@@ -37,6 +36,7 @@ trait LuaEngineTestHelper {
 			'cpuLimit' => 30,
 			'allowEnvFuncs' => true,
 			'maxLangCacheSize' => 30,
+			'shareInvocationEnv' => false,
 		],
 	];
 	/** @var int[] */
@@ -45,96 +45,16 @@ trait LuaEngineTestHelper {
 	protected $extraModules = [];
 
 	/**
-	 * Create a PHPUnit test suite to run the test against all engines
+	 * Create a PHPUnit test suite to run the test against all engines.
+	 *
+	 * @deprecated since 1.46. Override getEngineName() in separate subclasses instead.
 	 * @param string $className Test class name
 	 * @param string|null $group Engine to run with, or null to run all engines
 	 * @return TestSuite
 	 */
 	protected static function makeSuite( $className, $group = null ) {
-		$suite = new TestSuite;
+		$suite = new TestSuite();
 		$suite->setName( $className );
-
-		$class = new ReflectionClass( $className );
-
-		foreach ( self::$engineConfigurations as $engineName => $opts ) {
-			if ( $group !== null && $group !== $engineName ) {
-				continue;
-			}
-
-			try {
-				$parser = MediaWikiServices::getInstance()->getParserFactory()->create();
-				$parser->startExternalParse(
-					Title::newMainPage(),
-					ParserOptions::newFromAnon(),
-					Parser::OT_HTML,
-					true
-				);
-				$engineClass = $opts['class'];
-				$engine = new $engineClass(
-					self::$engineConfigurations[$engineName] + [ 'parser' => $parser, 'title' => $parser->getTitle() ]
-				);
-				$engine->getInterpreter();
-			} catch ( LuaInterpreterNotFoundError $e ) {
-				$suite->addTest(
-					new LuaEngineTestSkip(
-						$className, "interpreter for $engineName is not available"
-					), [ 'Lua', $engineName ]
-				);
-				continue;
-			}
-
-			// Work around PHPUnit breakage: the only straightforward way to
-			// get the data provider is to call Test::getProvidedData, but that
-			// instantiates the class without passing any parameters to the
-			// constructor. But we *need* that engine name.
-			self::$staticEngineName = $engineName;
-
-			$engineSuite = new DataProviderTestSuite;
-			$engineSuite->setName( "$engineName: $className" );
-
-			foreach ( $class->getMethods() as $method ) {
-				if ( Test::isTestMethod( $method ) && $method->isPublic() ) {
-					$name = $method->getName();
-					$groups = Test::getGroups( $className, $name );
-					$groups[] = 'Lua';
-					$groups[] = $engineName;
-					// Only run tests locally if the engine isn't the MW sandbox T125050
-					if ( $engineName !== 'LuaSandbox' ) {
-						$groups[] = 'Standalone';
-					}
-					$groups = array_unique( $groups );
-
-					$data = Test::getProvidedData( $className, $name );
-					if ( is_iterable( $data ) ) {
-						// with @dataProvider
-						$dataSuite = new DataProviderTestSuite(
-							$className . '::' . $name
-						);
-						foreach ( $data as $k => $v ) {
-							$dataSuite->addTest(
-								new $className( $name, $v, $k, $engineName ),
-								$groups
-							);
-						}
-						$engineSuite->addTest( $dataSuite );
-					} elseif ( $data === false ) {
-						// invalid @dataProvider
-						$engineSuite->addTest( new WarningTestCase(
-							"The data provider specified for {$className}::$name is invalid."
-						) );
-					} else {
-						// no @dataProvider
-						$engineSuite->addTest(
-							new $className( $name, [], '', $engineName ),
-							$groups
-						);
-					}
-				}
-			}
-
-			$suite->addTest( $engineSuite );
-		}
-
 		return $suite;
 	}
 
@@ -143,6 +63,7 @@ trait LuaEngineTestHelper {
 	 */
 	protected function getEngine() {
 		if ( !$this->engine ) {
+			$engineName = $this->getEngineName();
 			$services = MediaWikiServices::getInstance();
 			$parser = $services->getParserFactory()->create();
 			$options = ParserOptions::newFromAnon();
@@ -150,15 +71,14 @@ trait LuaEngineTestHelper {
 			$options->setTargetLanguage( $services->getLanguageFactory()->getLanguage( 'en' ) );
 			$parser->startExternalParse( $this->getTestTitle(), $options, Parser::OT_HTML, true );
 
-			// HACK
-			if ( $this->engineName === 'LuaSandbox' ) {
+			if ( $engineName === 'LuaSandbox' ) {
 				$class = LuaSandboxEngine::class;
-			} elseif ( $this->engineName === 'LuaStandalone' ) {
+			} elseif ( $engineName === 'LuaStandalone' ) {
 				$class = LuaStandaloneEngine::class;
 			}
 
 			$this->engine = new $class(
-				self::$engineConfigurations[$this->engineName] + [ 'parser' => $parser, 'title' => $parser->getTitle() ]
+				self::$engineConfigurations[$engineName] + [ 'parser' => $parser, 'title' => $parser->getTitle() ]
 			);
 		}
 		return $this->engine;
@@ -212,4 +132,56 @@ trait LuaEngineTestHelper {
 		$this->engine = null;
 	}
 
+	public function assertTtl( ?int $ttl, ParserOutput $parserOutput, string $msg ) {
+		if ( $ttl === null ) {
+			$this->assertFalse( $parserOutput->hasReducedExpiry(), $msg );
+			return;
+		}
+		// TTLs have some stagger, so verify that the cache expirty from the
+		// ParserOutput is within the expected range.
+		$fudge = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'DEADLINE_TTL_CLOCK_FUDGE'
+		);
+		$stagger = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'DEADLINE_TTL_STAGGER_MAX'
+		);
+		$min = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'MIN_DEADLINE_TTL'
+		);
+		$actual = $parserOutput->getCacheExpiry();
+		$this->assertLessThan( max( $ttl, $min ) + $fudge + $stagger, $actual, $msg );
+		$this->assertGreaterThanOrEqual( max( $ttl, $min ) + $fudge, $actual, $msg );
+	}
+
+	public function assertTtlLessThan( int $ttl, ParserOutput $parserOutput, string $msg ) {
+		// TTLs have some stagger, so verify that the cache expirty from the
+		// ParserOutput is within the expected range.
+		$fudge = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'DEADLINE_TTL_CLOCK_FUDGE'
+		);
+		$stagger = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'DEADLINE_TTL_STAGGER_MAX'
+		);
+		$min = TestingAccessWrapper::constant(
+			CoreMagicVariables::class, 'MIN_DEADLINE_TTL'
+		);
+		$actual = $parserOutput->getCacheExpiry();
+		$this->assertLessThan( max( $ttl, $min ) + $fudge + $stagger, $actual, $msg );
+	}
+
+	public function assertSameCacheExpiry(
+		ParserOutput $a,
+		ParserOutput $b,
+		string $msg,
+		int $maxDelta = 10
+	) {
+		$this->assertSame( $a->hasReducedExpiry(), $b->hasReducedExpiry(), $msg );
+		if ( $a->hasReducedExpiry() ) {
+			$this->assertLessThanOrEqual(
+				$maxDelta,
+				abs( $a->getCacheExpiry() - $b->getCacheExpiry() ),
+				$msg
+			);
+		}
+	}
 }

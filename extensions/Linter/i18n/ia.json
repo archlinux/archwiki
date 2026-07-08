@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Errores de Lint",
+	"linttemplateerrors": "Transclusiones que contine errores de lint",
 	"linter-category-bogus-image-options": "Optiones de file invalide",
 	"linter-category-bogus-image-options-desc": "Iste paginas ha files con optiones invalide.",
 	"linter-category-large-tables": "Grande tabellas difficile a visualisar sur mobile",
@@ -15,6 +16,8 @@
 	"linter-category-duplicate-ids-desc": "Iste paginas ha elementos con attributos ‘id’ duplicate.",
 	"linter-category-empty-heading": "Titulos vacue",
 	"linter-category-empty-heading-desc": "Iste pagina ha titulos de section vacue.",
+	"linter-category-template-arg-in-extension-tag": "Etiquetta de extension con parametro de patrono",
+	"linter-category-template-arg-in-extension-tag-desc": "Iste paginas contine un etiquetta de extension que contine un parametro de patrono, lo que non se transcluderea correctemente.",
 	"linter-category-fostered": "Contento mal placiate",
 	"linter-category-fostered-desc": "Iste paginas ha contento mal placiate.",
 	"linter-category-fostered-transparent": "Contento invisibile e mal positionate in tabella",
@@ -57,6 +60,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Iste paginas ha wikiligamines in ligamines externe que poterea esser reparate",
 	"linter-desc": "Tracia errores de analyse Lint desde un servicio externe e monstrar los al usatores",
 	"linter-lints-prefix-search-page-desc": "Cercar paginas con errores de analyse Lint per prefixo de titulo de pagina o per titulo complete",
+	"linter-invalid-category": "Categoria non trovate o mal formate",
 	"linter-invalid-title": "Spatio de nomines e/o nomine de pagina non trovate o mal formate",
 	"linter-form-exact-match": "Cercar un titulo de pagina specific",
 	"linter-form-prefix-match": "Cercar tote le paginas que corresponde al prefixo de titulo",
@@ -107,10 +111,16 @@
 	"linter-pager-title-header": "Titulo del pagina",
 	"linter-pager-unclosed-quotes-in-heading-details": "Virgula non claudite que disborda ex le tabula de contento",
 	"linter-pager-wikilink-in-extlink-details": "Ligamines in ligamines",
+	"linter-pager-template-arg-in-extension-tag-details": "Nomine de etiquetta de extension que debe esser actualisate (e parametros de patrono usate intra illo)",
 	"linter-prefix-search-subpage": "Paginas con errores de analyse Lint que corresponde a un prefixo de titulo o al titulo complete: $1",
 	"linterrors-subpage": "Errores de analyse Lint: $1",
 	"linterrors-summary": "<strong>Nota:</strong> Le numeros de categorias non es exacte, ma basate sur estimationes.",
 	"multi-part-template-block": "Resultato generate per plus de un patrono",
+	"parser-function": "Sortita de un function del analysator syntactic",
 	"pageinfo-linter": "Errores de analyse Lint",
-	"pageinfo-linter-moreinfo": "Vider informationes detaliate sur le errores de lint."
+	"pageinfo-linter-moreinfo": "Vider informationes detaliate sur le errores de lint.",
+	"category-by-template": "Transclusiones que contine errores de lint: $1",
+	"category-by-template-view": "Vider le transclusiones que contine iste errores de lint.",
+	"category-by-template-desc": "Le transclusiones de iste pagina contine '''[[Special:LintErrors/$1|$1]]''' errores de lint.  ''Nota ben que alcun transclusiones pote figurar in iste lista a causa del argumentos passate al transclusion e non a causa del fonte del transclusion.''",
+	"linter-template-errors-index-desc": "Istes es listas de transclusiones de paginas que contine errores de lint. ''Nota ben que alcun transclusiones pote figurar in iste listas a causa del argumentos passate al transclusion e non a causa del fonte del transclusion.''"
 }

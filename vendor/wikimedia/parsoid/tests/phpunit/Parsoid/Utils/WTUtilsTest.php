@@ -4,9 +4,9 @@ declare( strict_types = 1 );
 namespace Test\Parsoid\Utils;
 
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\NodeData\I18nInfo;
 use Wikimedia\Parsoid\Utils\ContentUtils;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
@@ -120,11 +120,12 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		$doc = ContentUtils::createAndLoadDocument(
 			"<html><body><span>hello</span></body></html>"
 		);
-		$span = DOMCompat::getBody( $doc )->firstChild;
+		$body = DOMCompat::getBody( $doc );
+		$span = $body->firstChild;
 		WTUtils::addPageContentI18nAttribute( $span, '0', 'key1' );
 		WTUtils::addInterfaceI18nAttribute( $span, '1', 'key2', [ 'Foo' ] );
 		DOMDataUtils::visitAndStoreDataAttribs( $doc, [ 'discardDataParsoid' => true ] );
-		$actualHtml = DOMCompat::getInnerHTML( DOMCompat::getBody( $doc ) );
+		$actualHtml = DOMCompat::getInnerHTML( $body );
 		$expectedHtml = '<span typeof="mw:LocalizedAttrs" ' .
 			'data-mw-i18n=\'{' .
 			'"0":{"lang":"x-page","key":"key1"},' .
@@ -134,8 +135,8 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 			'}\'>hello</span>';
 		self::assertEquals( $expectedHtml, $actualHtml );
 
-		DOMDataUtils::visitAndLoadDataAttribs( $doc );
-		$span = DOMCompat::getBody( $doc )->firstChild;
+		DOMDataUtils::visitAndLoadDataAttribs( $body );
+		$span = $body->firstChild;
 		$attrI18n = DOMDataUtils::getDataAttrI18n( $span, '0' );
 		self::assertNotNull( $attrI18n );
 		$attrI18n = DOMDataUtils::getDataAttrI18n( $span, '1' );
@@ -190,9 +191,11 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @covers ::fromExtensionContent
+	 * @covers ::fromTemplatedContent
+	 * @covers ::fromEncapsulatedContent
 	 */
-	public function testFromExtensionContent() {
-		$html = "<span typeof='mw:Extension/foo' data-mw='{}'>bar</span>";
+	public function testContentTypes(): void {
+		$html = "<span about='#mwt5' typeof='mw:Extension/foo' data-mw='{}'>bar</span>";
 		$doc = ContentUtils::createAndLoadDocument( $html );
 		$body = DOMCompat::getBody( $doc );
 
@@ -200,10 +203,48 @@ class WTUtilsTest extends \PHPUnit\Framework\TestCase {
 		self::assertTrue( WTUtils::fromExtensionContent( $node ) );
 		self::assertTrue( WTUtils::fromExtensionContent( $node, "foo" ) );
 		self::assertFalse( WTUtils::fromExtensionContent( $node, "poem" ) );
+		self::assertFalse( WTUtils::fromTemplatedContent( $node ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $node ) );
 
 		$node = $node->firstChild; // "bar" text node
 		self::assertTrue( WTUtils::fromExtensionContent( $node ) );
 		self::assertTrue( WTUtils::fromExtensionContent( $node, "foo" ) );
 		self::assertFalse( WTUtils::fromExtensionContent( $node, "poem" ) );
+		self::assertFalse( WTUtils::fromTemplatedContent( $node ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $node ) );
+
+		// We don't care about id schema as long as typeof matches
+		// We might change aboud id schema in the future
+		$html = "<span about='abcd' typeof='mw:Extension/foo' data-mw='{}'>bar</span>";
+		$doc = ContentUtils::createAndLoadDocument( $html );
+		$body = DOMCompat::getBody( $doc );
+		self::assertTrue( WTUtils::fromExtensionContent( $node, "foo" ) );
+		self::assertFalse( WTUtils::fromTemplatedContent( $node ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $node ) );
+
+		// Didn't bother filling about data-mw here
+		$html = "<span about='#mwt1' typeof='mw:Transclusion' data-mw='{}'>bar</span>";
+		$doc = ContentUtils::createAndLoadDocument( $html );
+		$node = DOMCompat::getBody( $doc )->firstChild; // span wrapper
+		self::assertFalse( WTUtils::fromExtensionContent( $node ) );
+		self::assertTrue( WTUtils::fromTemplatedContent( $node ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $node ) );
+
+		$html = "<span about='#mwt1' typeof='mw:Transclusion' data-mw='{}'>bar</span><span about='#mwt1'>baz</span>";
+		$doc = ContentUtils::createAndLoadDocument( $html );
+		$firstSpan = DOMCompat::getBody( $doc )->firstChild; // span wrapper
+		$secondSpan = $firstSpan->nextSibling;
+		self::assertFalse( WTUtils::fromExtensionContent( $firstSpan ) );
+		self::assertTrue( WTUtils::fromTemplatedContent( $firstSpan ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $firstSpan ) );
+		self::assertTrue( WTUtils::fromTemplatedContent( $secondSpan ) );
+		self::assertTrue( WTUtils::fromEncapsulatedContent( $secondSpan ) );
+
+		$html = "<div about='#mwa1' typeof='mw:ExtendedAnnRange' data-mw='{}'>bar</div>";
+		$doc = ContentUtils::createAndLoadDocument( $html );
+		$firstSpan = DOMCompat::getBody( $doc )->firstChild; // span wrapper
+		self::assertFalse( WTUtils::fromExtensionContent( $firstSpan ) );
+		self::assertFalse( WTUtils::fromTemplatedContent( $firstSpan ) );
+		self::assertFalse( WTUtils::fromEncapsulatedContent( $firstSpan ) );
 	}
 }

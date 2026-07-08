@@ -4,16 +4,16 @@ declare( strict_types = 1 );
 
 namespace Cite\Parsoid;
 
-use Closure;
 use Exception;
 use MediaWiki\Config\Config;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataUtils as DOMDataUtilsInternal;
 
 /**
  * Simple token transform version of the Ref extension tag.
@@ -64,12 +64,16 @@ class RefTagHandler extends ExtensionTagHandler {
 	}
 
 	/** @inheritDoc */
-	public function processAttributeEmbeddedHTML(
-		ParsoidExtensionAPI $extApi, Element $elt, Closure $proc
+	public function processAttributeEmbeddedDom(
+		ParsoidExtensionAPI $extApi, Element $elt, callable $proc
 	): void {
 		$dataMw = DOMDataUtils::getDataMw( $elt );
-		if ( isset( $dataMw->body->html ) ) {
-			$dataMw->body->html = $proc( $dataMw->body->html );
+		if ( isset( $dataMw->body ) && $dataMw->body->hasHtml() ) {
+			$df = $dataMw->body->getHtml( $extApi );
+			$changed = $proc( $df );
+			if ( $changed ) {
+				$dataMw->body->setHtml( $extApi, $df );
+			}
 		}
 	}
 
@@ -81,12 +85,11 @@ class RefTagHandler extends ExtensionTagHandler {
 
 		// Only lint content pointed at by the id.  Content embedded in
 		// data-mw will be traversed by linter when
-		// processAttributeEmbeddedHTML is called
+		// processAttributeEmbeddedDom is called
 		if ( !isset( $dataMw->body->id ) ) {
 			return true;
 		}
 
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 		$bodyElt = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->body->id );
 		if ( !$bodyElt ) {
 			return true;
@@ -148,14 +151,12 @@ class RefTagHandler extends ExtensionTagHandler {
 			'inPHPBlock' => true
 		];
 
-		if ( isset( $dataMw->body->html ) ) {
-			// First look for the extension's content in data-mw.body.html
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-			$src = $extApi->htmlToWikitext( $html2wtOpts, $dataMw->body->html );
+		if ( isset( $dataMw->body ) && $dataMw->body->hasHtml() ) {
+			// First look for the extension's content in data-mw->body->html
+			$src = $extApi->domToWikitext( $html2wtOpts, $dataMw->body->getHtml( $extApi ) );
 		} elseif ( isset( $dataMw->body->id ) ) {
-			// If the body isn't contained in data-mw.body.html, look if
+			// If the body isn't contained in data-mw->body->html, look if
 			// there's an element pointed to by body->id.
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 			$bodyElt = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->body->id );
 
 			// So far, this is specified for Cite and relies on the "id"
@@ -200,7 +201,7 @@ class RefTagHandler extends ExtensionTagHandler {
 					$hasRefName &&
 					DOMCompat::querySelector( $bodyElt, "span[typeof~='mw:Cite/Follow']" )
 				) {
-					$bodyElt = DOMDataUtils::cloneNode( $bodyElt, true );
+					$bodyElt = DOMDataUtilsInternal::cloneElement( $bodyElt, true );
 					foreach ( DOMUtils::childNodes( $bodyElt ) as $child ) {
 						if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
 							// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
@@ -216,7 +217,6 @@ class RefTagHandler extends ExtensionTagHandler {
 		}
 
 		if ( $this->isSubreferenceSupported &&
-			 $dataMw->getExtAttrib( 'details' ) !== null &&
 			 isset( $dataMw->mainRef )
 		) {
 			// TODO: maintain original order of attributes
@@ -224,7 +224,7 @@ class RefTagHandler extends ExtensionTagHandler {
 			// TODO: escape wikitext for attribute
 			$dataMw->setExtAttrib( 'details', $src );
 
-			if ( isset( $dataMw->isSubRefWithMainBody ) ) {
+			if ( isset( $dataMw->mainBody ) ) {
 				$mainElt = DOMCompat::getElementById( $extApi->getTopLevelDoc(), $dataMw->mainBody );
 				if ( $mainElt ) {
 					$src = $extApi->domToWikitext( $html2wtOpts, $mainElt, true );
@@ -252,9 +252,7 @@ class RefTagHandler extends ExtensionTagHandler {
 
 		// FIXME: This compares the rendered bodies, the source elements should be
 		// compared instead.
-		if ( isset( $origDataMw->mainBody ) && isset( $editedDataMw->mainBody ) &&
-			isset( $origDataMw->isSubRefWithMainBody ) && isset( $editedDataMw->isSubRefWithMainBody )
-		) {
+		if ( isset( $origDataMw->mainBody ) && isset( $editedDataMw->mainBody ) ) {
 			$origMainHtml = DOMCompat::getElementById( $origNode->ownerDocument, $origDataMw->mainBody );
 			$editedMainHtml = DOMCompat::getElementById( $editedNode->ownerDocument, $editedDataMw->mainBody );
 
@@ -263,17 +261,10 @@ class RefTagHandler extends ExtensionTagHandler {
 			}
 		}
 
-		if ( isset( $origDataMw->body->html ) && isset( $editedDataMw->body->html ) ) {
-			$origFragment = $extApi->htmlToDom(
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-				$origDataMw->body->html, $origNode->ownerDocument,
-				[ 'markNew' => true ]
-			);
-			$editedFragment = $extApi->htmlToDom(
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
-				$editedDataMw->body->html, $editedNode->ownerDocument,
-				[ 'markNew' => true ]
-			);
+		if ( isset( $origDataMw->body ) && $origDataMw->body->hasHtml() &&
+			 isset( $editedDataMw->body ) && $editedDataMw->body->hasHtml() ) {
+			$origFragment = $origDataMw->body->getHtml( $extApi );
+			$editedFragment = $editedDataMw->body->getHtml( $extApi );
 			return $domDiff( $origFragment, $editedFragment );
 		} elseif ( isset( $origDataMw->body->id ) && isset( $editedDataMw->body->id ) ) {
 			$origId = $origDataMw->body->id;
@@ -286,9 +277,7 @@ class RefTagHandler extends ExtensionTagHandler {
 			// FIXME: This doesn't work if the <references> section
 			// itself is in embedded content, since we aren't traversing
 			// in there.
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 			$origHtml = DOMCompat::getElementById( $origNode->ownerDocument, $origId );
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable False positive
 			$editedHtml = DOMCompat::getElementById( $editedNode->ownerDocument, $editedId );
 
 			if ( $origHtml && $editedHtml ) {

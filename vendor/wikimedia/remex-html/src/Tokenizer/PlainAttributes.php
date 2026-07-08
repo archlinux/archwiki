@@ -21,6 +21,7 @@ class PlainAttributes implements Attributes {
 	/** @inheritDoc */
 	public function merge( Attributes $other ) {
 		foreach ( $other as $name => $value ) {
+			// @phan-suppress-next-line PhanRedundantConditionInLoop https://github.com/phan/phan/issues/5441
 			if ( !isset( $this[$name] ) ) {
 				$this[$name] = $value;
 			}

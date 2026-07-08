@@ -18,13 +18,13 @@
  * @file
  */
 
-namespace MediaWiki\CheckUser\Tests\Unit\GlobalContributions;
+namespace MediaWiki\Extension\CheckUser\Tests\Unit\GlobalContributions;
 
-use MediaWiki\CheckUser\GlobalContributions\ExternalPermissions;
+use MediaWiki\Extension\CheckUser\GlobalContributions\ExternalPermissions;
 use MediaWikiUnitTestCase;
 
 /**
- * @covers \MediaWiki\CheckUser\GlobalContributions\ExternalPermissions
+ * @covers \MediaWiki\Extension\CheckUser\GlobalContributions\ExternalPermissions
  */
 class ExternalPermissionsTest extends MediaWikiUnitTestCase {
 

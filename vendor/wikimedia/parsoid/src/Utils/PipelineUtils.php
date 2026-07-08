@@ -6,8 +6,10 @@ namespace Wikimedia\Parsoid\Utils;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\DOMCompat;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Source;
+use Wikimedia\Parsoid\Core\SourceRange;
 use Wikimedia\Parsoid\Core\SourceString;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
@@ -27,7 +29,6 @@ use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
-use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wt2Html\Frame;
@@ -397,18 +398,22 @@ class PipelineUtils {
 	 * @param array $v
 	 *    The value to process.
 	 *    The value is expected to be an associative array with a "html" property.
-	 *    The html property is expanded to DOM only if it is an array (of tokens).
-	 *    Non-arrays are passed back unexpanded.
+	 *    The html property is expanded to DOM only if it is an array (of tokens)
+	 *    or a (wikitext) string.
+	 *    Non-array/non-strings are passed back unexpanded.
 	 * @param bool $expandTemplates
 	 *    Should any templates encountered here be expanded
 	 *    (usually false for nested templates since they are never directly editable).
 	 * @param bool $inTemplate
 	 *    Unexpanded templates can occur in the content of extension tags.
-	 * @return array
+	 * @return array{html:DocumentFragment}
 	 */
 	public static function expandAttrValueToDOM(
 		Env $env, Frame $frame, array $v, bool $expandTemplates, bool $inTemplate
 	): array {
+		if ( is_string( $v['html'] ?? null ) ) {
+			$v['html'] = [ $v['html'] ];
+		}
 		if ( is_array( $v['html'] ?? null ) ) {
 			$attrCache = null;
 			$cacheKey = null;
@@ -442,11 +447,12 @@ class PipelineUtils {
 			if ( $isCacheable ) {
 				$cachedOutput = $attrCache->lookup( $cacheKey );
 				if ( $cachedOutput !== null ) {
-					$offset = $tsrStart - $cachedOutput['start'];
-					$domFragment = $cachedOutput['fragment'];
+					$offset = $tsrStart - $cachedOutput['value']['start'];
+					$domFragment = $cachedOutput['value']['fragment'];
 					ContentUtils::shiftDSR(
 						$env, $domFragment,
-						static function ( DomSourceRange $dsr ) use ( $offset ) {
+						static function ( DomSourceRange $dsr ) use ( $offset, $frame ) {
+							$dsr->source = $frame->getSource();
 							return $dsr->offset( $offset );
 						}
 					);
@@ -471,19 +477,21 @@ class PipelineUtils {
 					]
 				);
 				if ( $isCacheable ) {
-					$attrCache->cache( $cacheKey, [
-						'start' => $tsrStart,
-						'fragment' => $domFragment
-					] );
+					$attrCache->cache(
+						$cacheKey,
+						[
+							'start' => $tsrStart,
+							'fragment' => $domFragment
+						],
+						$frame->getSource()
+					);
 				}
 			}
 
 			// Since we aren't at the top level, data attrs
 			// were not applied in cleanup.  However, tmp
 			// was stripped.
-			$v['html'] = ContentUtils::ppToXML(
-				$domFragment, [ 'innerXML' => true, 'fragment' => true ]
-			);
+			$v['html'] = $domFragment;
 		}
 		// Remove srcOffsets after value is expanded, so they don't show
 		// up in the output data-mw attribute
@@ -508,7 +516,7 @@ class PipelineUtils {
 	 * @param bool $inTemplate
 	 *    Unexpanded templates can occur in the content of extension tags.
 	 *
-	 * @return list<array>
+	 * @return list<array{html:DocumentFragment}>
 	 */
 	public static function expandAttrValuesToDOM(
 		Env $env, $frame, array $vals, bool $expandTemplates, bool $inTemplate
@@ -599,7 +607,7 @@ class PipelineUtils {
 	 *
 	 * @param DocumentFragment $domFragment List of DOM nodes that need to be tunneled through.
 	 * @param array $opts
-	 * @see encapsulateExpansionHTML's doc. for more info about these options.
+	 * @see tunnelDOMThroughTokens's doc. for more info about these options.
 	 * @return array<Token|string> List of token representatives.
 	 */
 	private static function getWrapperTokens(
@@ -791,7 +799,6 @@ class PipelineUtils {
 	 *            whether the DSR from the placeholder node is transferred
 	 *            over to the unpacked DOM or not.
 	 *            For example: Cite, reused transclusions.
-	 *    - bool  fromCache
 	 *    - array pipelineOpts
 	 *    - bool  unpackOutput
 	 *    - string wrapperName
@@ -821,12 +828,6 @@ class PipelineUtils {
 		if ( !empty( $opts['setDSR'] ) ) {
 			$firstWrapperToken->dataParsoid->setTempFlag(
 				TempData::SET_DSR, $opts['setDSR'] );
-		}
-
-		// Pass through fromCache flag
-		if ( !empty( $opts['fromCache'] ) ) {
-			$firstWrapperToken->dataParsoid->setTempFlag(
-				TempData::FROM_CACHE, $opts['fromCache'] );
 		}
 
 		// Transfer the tsr.

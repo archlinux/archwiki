@@ -49,9 +49,6 @@
 	"vector-toc-label": "Тупмалли",
 	"vector-toc-beginning": "Пуҫламӑш",
 	"vector-toc-toggle-button-label": "$1 айри пая Курӑмлатас/Пытарас",
-	"vector-anon-user-menu-pages": "Системӑна кӗменнисем валли хатӗрленӗ страницӑсем",
-	"vector-anon-user-menu-pages-learn": "ытларах пӗл",
-	"vector-anon-user-menu-pages-label": "Тӳрлетесси пирки тӗплӗнрех",
 	"vector-main-menu-tooltip": "Тӗп меню",
 	"vector-toc-menu-tooltip": "Тупмалли",
 	"vector-toc-collapsible-button-label": "Контента Курӑмлатас/Пытарас",
@@ -72,7 +69,5 @@
 	"vector-toc-unpinned-popup": "Контента кунта куҫарнӑ.",
 	"vector-page-tools-unpinned-popup": "Хатӗр-хӗтӗрсен менюне ку вырӑна куҫарнӑ.",
 	"vector-main-menu-unpinned-popup": "Тӗп меню вырӑнне кунта куҫарнӑ.",
-	"vector-appearance-unpinned-popup": "Калӑплав менюне кунта куҫарнӑ.",
-	"vector-2022-beta-preview-label": "Паллашма пулать (Vector 2022)",
-	"vector-2022-beta-preview-description": "Вулава ҫӑмӑллатакан ҫӗнӗ функцисемпе, калӑпӑр, лайӑхлатнӑ типографикӑпа тата каҫхи режимпа, ыттисенчен малтан паллашӑр."
+	"vector-appearance-unpinned-popup": "Калӑплав менюне кунта куҫарнӑ."
 }

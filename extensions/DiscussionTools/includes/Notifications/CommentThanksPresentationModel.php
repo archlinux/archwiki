@@ -22,10 +22,7 @@ class CommentThanksPresentationModel extends EchoEventPresentationModel {
 
 	use DiscussionToolsEventTrait;
 
-	/**
-	 * @var EchoPresentationModelSection
-	 */
-	private $section;
+	private readonly EchoPresentationModelSection $section;
 
 	/**
 	 * @inheritDoc

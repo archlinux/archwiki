@@ -16,7 +16,12 @@
 	"hcaptcha-challenge-closed": "Davam etmək üçün captcha-nı tamamlamalısınız.",
 	"hcaptcha-challenge-expired": "Captcha-nı tamamlamaq üçün vaxt limiti başa çatıb. Yenidən cəhd edin.",
 	"hcaptcha-generic-error": "Formanı yükləyərkən xəta baş verdi. Davam etmək üçün səhifəni yenidən yükləməlisiniz.",
+	"hcaptcha-internal-error": "Forma göndərilərkən daxili xəta baş verdi. Zəhmət olmasa, yenidən cəhd edin.",
+	"hcaptcha-network-error": "Forma göndərilərkən şəbəkə xətası baş verdi. Zəhmət olmasa, işlək bağlantınız olduğundan əmin olun və yenidən cəhd edin.",
+	"hcaptcha-rate-limited": "Sualı həll etmək üçün çox cəhd edilib. Yenidən cəhd etməzdən əvvəl bir az gözləyin.",
 	"hcaptcha-loading-indicator-label": "Formanı yükləməyi tamamlayana qədər gözləyin...",
 	"hcaptcha-missing-token": "Formanı yükləməyi tamamlamamışıq. Bir neçə saniyə gözləyin, sonra yenidən cəhd edin.",
-	"hcaptcha-noscript": "Davam etmək üçün JavaScript tələb olunur. Brauzerinizin parametrlərində JavaScript-i aktivləşdirin və səhifəni yeniləyin."
+	"hcaptcha-noscript": "Davam etmək üçün JavaScript tələb olunur. Brauzerinizin parametrlərində JavaScript-i aktivləşdirin və səhifəni yeniləyin.",
+	"hcaptcha-force-show-captcha-edit": "Zəhmət olmasa, formanı yenidən göndərin və redaktənizi yadda saxlamaq üçün tapşırığı tamamlayın.",
+	"hcaptcha-visual-editor-error-handler-warning": "Zəhmət olmasa, redaktənizi yadda saxlamaq üçün formanı yenidən göndərin."
 }

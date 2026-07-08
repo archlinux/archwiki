@@ -15,7 +15,7 @@ function reloadThankedState() {
 		if ( mw.thanks.thanked.contains( $thankLink.closest( '.flow-post' ).attr( attrName ), cookieName ) ) {
 			const author = findPostAuthorFromThankLink( $thankLink );
 			mw.thanks.getUserGender( author )
-				.done( ( recipientGender ) => {
+				.then( ( recipientGender ) => {
 					$thankLink.before(
 						$thankedLabel
 							.clone()

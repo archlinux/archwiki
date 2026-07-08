@@ -13,7 +13,6 @@
 	"spam-blacklisted-email": "Prepovedan e-poštni naslov",
 	"spam-blacklisted-email-text": "Vašemu e-poštnemu naslovu je trenutno prepovedano pošiljanje pošte drugim uporabnikom.",
 	"spam-blacklisted-email-signup": "Uporaba navedenega e-poštnega naslova je trenutno prepovedana.",
-	"spam-invalid-lines": "{{PLURAL:$1|Naslednja vrstica|Naslednji vrstici|Naslednje vrstice}} seznama blokiranja smetja {{PLURAL:$1|je neveljavni regularni izraz in ga|sta neveljavna regularna izraza in ju|so neveljavni regularni izrazi in jih}} je pred shranjevanjem strani treba popraviti:",
 	"spam-blacklist-desc": "Orodje proti smetju, temelječe na regularnih izrazih, ki omogoča blokiranje seznama spletnih naslovov na straneh in v e-poštnih naslovih za registrirane uporabnike",
 	"log-name-spamblacklist": "Dnevnik seznama blokiranja smetja",
 	"log-description-spamblacklist": "Ti dogodki sledijo zadetke seznama blokiranja smetja.",

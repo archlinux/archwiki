@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Dejan Savuljesku <savuljesku@hallowelt.com>"
+		]
+	},
+	"oathauth-webauthn-module-label": "Description for the 'security key' (WebAuthn) type of two-factor authentication method on Special:AccountSecurity",
+	"oathauth-webauthn-javascript-required": "Warning message shown in various forms when JavaScript is not enabled.",
+	"oathauth-webauthn-ui-login-prompt": "Message explaining user-required actions on login",
+	"oathauth-webauthn-ui-add-key": "Button label for adding new WebAuthn keys",
+	"oathauth-webauthn-error-browser-unsupported": "Error message when WebAuthn API is not supported by the browser",
+	"oathauth-webauthn-error-browser-unsupported-console": "Error shown to users in the console if their device is unsupported",
+	"oathauth-webauthn-error-auth-generic": "Generic error message for authentication process failing",
+	"oathauth-webauthn-error-reg-generic": "Generic error message for registration process failing",
+	"oathauth-webauthn-registered-keys-section-name": "Label for the section for registered keys",
+	"oathauth-webauthn-ui-remove-key": "Button label to remove a single WebAuthn key",
+	"oathauth-webauthn-error-module-not-enabled": "Error message when authentication/registration is attempted with module not enabled for the user. \n$1 - module name\n$2 - user",
+	"oathauth-webauthn-error-verification-failed": "Error message when verification of the WebAuthn key was not successful",
+	"oathauth-webauthn-error-passkey-verification-failed": "Error message when verification of a passkey was not successful during passwordless login",
+	"oathauth-webauthn-error-credentials-missing": "Error message when the WebAuthn key was not sent by the user",
+	"oathauth-webauthn-error-cannot-register": "Error message when user cannot register new key.\n$1 - username",
+	"oathauth-webauthn-error-invalid-new-key": "Error message when created instance of WebAuthn is not of appropriate type",
+	"oathauth-webauthn-error-registration-failed": "Error message when registering a new key failed, for reasons other than verification failed",
+	"oathauth-webauthn-ui-key-register-help": "Help message for UI field for the nickname of a key",
+	"oathauth-webauthn-error-cannot-remove-key": "Error message for error occurring during key removal process",
+	"oathauth-webauthn-error-get-authinfo-fail": "Error message when authentication info failed to be retrieved",
+	"oathauth-webauthn-add-key-section-name": "Section header for section that allows registering new WebAuthn keys",
+	"oathauth-webauthn-error-get-reginfo-fail": "Error message when registration info failed to be retrieved",
+	"oathauth-webauthn-module-description": "Description of WebAuthn module used on Special:OATHManage",
+	"oathauth-webauthn-ui-reload-page-label": "Button label for generic page reload action",
+	"oathauth-webauthn-authentication-info-label": "WebAuthn authentication information label",
+	"oathauth-webauthn-authentication-info-help": "Help message for authentication information",
+	"oathauth-webauthn-credential-label": "WebAuthn user credential label",
+	"oathauth-webauthn-credential-help": "Help message for WebAuthn user credential",
+	"oathauth-webauthn-add-security-key": "Button label for adding a new WebAuthn key",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Label for the 2FA method switcher button on login if passkeys are available"
+}

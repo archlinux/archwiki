@@ -680,6 +680,14 @@ return testframework.getTestProvider( {
 		args = { 'abc', 'b', function () return function () end end },
 		expect = 'invalid replacement value (a function)'
 	},
+	{ name = 'gsub: literal percent followed by non-capture char', func = mw.ustring.gsub,
+		args = { 'foo', 'foo', 'x%yz' },
+		expect = { 'x%yz', 1 }
+	},
+	{ name = 'gsub: replacement ending with lone %', func = mw.ustring.gsub,
+		args = { 'foo', 'foo', 'bar%' },
+		expect = { 'bar%', 1 }
+	},
 
 	{ name = 'gcodepoint: basic test', func = mw.ustring.gcodepoint,
 		args = { str1 },

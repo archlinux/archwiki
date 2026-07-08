@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\Notifications\Test\Integration\Push;
 
 use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\Http\MWHttpRequest;
 use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
-use MWHttpRequest;
 use Wikimedia\TestingAccessWrapper;
 
 /** @covers \MediaWiki\Extension\Notifications\Push\NotificationServiceClient */

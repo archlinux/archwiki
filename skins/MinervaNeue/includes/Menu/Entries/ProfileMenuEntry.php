@@ -17,6 +17,7 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
@@ -24,8 +25,6 @@ use MediaWiki\User\UserIdentity;
  * Note this is used by Extension:GrowthExperiments
  */
 final class ProfileMenuEntry implements IProfileMenuEntry {
-	private UserIdentity $user;
-
 	/**
 	 * Code used to track clicks on the link to profile page
 	 * @var string|null
@@ -47,8 +46,9 @@ final class ProfileMenuEntry implements IProfileMenuEntry {
 	/**
 	 * @param UserIdentity $user Currently logged in user/anon
 	 */
-	public function __construct( UserIdentity $user ) {
-		$this->user = $user;
+	public function __construct(
+		private readonly UserIdentity $user,
+	) {
 	}
 
 	/**
@@ -84,7 +84,8 @@ final class ProfileMenuEntry implements IProfileMenuEntry {
 		$username = $this->user->getName();
 		return [ [
 			'data-icon' => [
-				'icon' => 'userAvatar',
+				'icon' => MediaWikiServices::getInstance()->getUserNameUtils()->isTemp( $username ) ?
+					'userTemporary' : 'userAvatar',
 			],
 			'label' => $this->customProfileLabel ?? $username,
 			'array-attributes' => [

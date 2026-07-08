@@ -1,19 +1,17 @@
 <?php
 
-namespace MediaWiki\CheckUser\Services;
+namespace MediaWiki\Extension\CheckUser\Services;
 
 use LogicException;
-use MediaWiki\CheckUser\ClientHints\ClientHintsData;
-use MediaWiki\CheckUser\ClientHints\ClientHintsReferenceIds;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsData;
+use MediaWiki\Extension\CheckUser\ClientHints\ClientHintsReferenceIds;
 use MediaWiki\Logging\DatabaseLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionLookup;
 use Psr\Log\LoggerInterface;
 use StatusValue;
 use Wikimedia\Rdbms\IConnectionProvider;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -52,24 +50,21 @@ class UserAgentClientHintsManager {
 		self::IDENTIFIER_CU_LOG_EVENT => 'cule_log_id',
 		self::IDENTIFIER_CU_PRIVATE_EVENT => 'cupe_id',
 	];
-	private IDatabase $dbw;
-	private IReadableDatabase $dbr;
-	private RevisionLookup $revisionLookup;
-	private ServiceOptions $options;
-	private LoggerInterface $logger;
+
+	/** @var string[] Client Hints data which can only be set via the HTTP headers */
+	public const HEADER_ONLY_CLIENT_HINTS_DATA = [
+		'isBrowser',
+		'ja3n',
+		'ja4h',
+	];
 
 	public function __construct(
-		IConnectionProvider $connectionProvider,
-		RevisionLookup $revisionLookup,
-		ServiceOptions $options,
-		LoggerInterface $logger
+		private readonly IConnectionProvider $dbProvider,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly ServiceOptions $options,
+		private readonly LoggerInterface $logger,
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
-		$this->options = $options;
-		$this->dbw = $connectionProvider->getPrimaryDatabase();
-		$this->dbr = $connectionProvider->getReplicaDatabase();
-		$this->revisionLookup = $revisionLookup;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -85,7 +80,10 @@ class UserAgentClientHintsManager {
 	 * @return StatusValue
 	 */
 	public function insertClientHintValues(
-		ClientHintsData $clientHintsData, int $referenceId, string $type, bool $usePrimary = false
+		ClientHintsData $clientHintsData,
+		int $referenceId,
+		string $type,
+		bool $usePrimary = false
 	): StatusValue {
 		// Check if there are rows to insert to the map table.
 		$rows = $clientHintsData->toDatabaseRows();
@@ -97,19 +95,25 @@ class UserAgentClientHintsManager {
 			return StatusValue::newGood();
 		}
 
-		// Check for existing entry.
-		$existingRecord = $this->dbr->newSelectQueryBuilder()
+		// Check for existing entry of specifically HTTP Client Hints, returning early if so.
+		// Other browser headers (such as x-is-browser) are ignored by this check, as they cannot
+		// be stored by an API request and we need to allow API requests to still set other data
+		$dbr = $this->dbProvider->getReplicaDatabase();
+		$existingRecord = $dbr->newSelectQueryBuilder()
 			->table( 'cu_useragent_clienthints_map' )
+			->join( 'cu_useragent_clienthints', null, 'uachm_uach_id = uach_id' )
 			->where( [
 				'uachm_reference_type' => $this->getMapIdByType( $type ),
 				'uachm_reference_id' => $referenceId,
+				$dbr->expr( 'uach_name', '!=', self::HEADER_ONLY_CLIENT_HINTS_DATA ),
 			] )
 			->caller( __METHOD__ )
 			->fetchRowCount();
 		if ( $existingRecord ) {
 			return StatusValue::newFatal(
 				'checkuser-api-useragent-clienthints-mappings-exist',
-				[ $type, $referenceId ]
+				$type,
+				$referenceId
 			);
 		}
 
@@ -149,7 +153,9 @@ class UserAgentClientHintsManager {
 	 * @see insertClientHintValues, which invokes this method.
 	 */
 	private function insertMappingRows(
-		array $clientHintMapping, int $foreignId, string $type
+		array $clientHintMapping,
+		int $foreignId,
+		string $type
 	): StatusValue {
 		// TINYINT reference to cu_changes, cu_log_event or cu_private_event.
 		$idType = $this->getMapIdByType( $type );
@@ -163,7 +169,7 @@ class UserAgentClientHintsManager {
 		}
 
 		if ( count( $mapRows ) ) {
-			$this->dbw->newInsertQueryBuilder()
+			$this->dbProvider->getPrimaryDatabase()->newInsertQueryBuilder()
 				->insertInto( 'cu_useragent_clienthints_map' )
 				->ignore()
 				->rows( $mapRows )
@@ -181,6 +187,8 @@ class UserAgentClientHintsManager {
 	 * @return int The number of mapping rows deleted.
 	 */
 	public function deleteMappingRows( ClientHintsReferenceIds $clientHintsReferenceIds ): int {
+		$dbw = $this->dbProvider->getPrimaryDatabase();
+
 		// Keep a track of the number of mapping rows that are deleted.
 		$mappingRowsDeleted = 0;
 		foreach ( $clientHintsReferenceIds->getReferenceIds() as $mapId => $referenceIds ) {
@@ -191,7 +199,7 @@ class UserAgentClientHintsManager {
 			do {
 				// Fetch a batch of rows to delete from the DB (the primary key is all rows in the table,
 				// so we need to fetch all of them).
-				$batchToDelete = $this->dbw->newSelectQueryBuilder()
+				$batchToDelete = $dbw->newSelectQueryBuilder()
 					->select( [ 'uachm_uach_id', 'uachm_reference_type', 'uachm_reference_id' ] )
 					->from( 'cu_useragent_clienthints_map' )
 					->where( [
@@ -207,28 +215,20 @@ class UserAgentClientHintsManager {
 				// Construct a list of WHERE conditions which would delete all the rows for this batch.
 				$batchDeleteConds = [];
 				foreach ( $batchToDelete as $row ) {
-					$batchDeleteConds[] = $this->dbw->andExpr( [
+					$batchDeleteConds[] = $dbw->andExpr( [
 						'uachm_uach_id' => $row->uachm_uach_id,
 						'uachm_reference_type' => $row->uachm_reference_type,
 						'uachm_reference_id' => $row->uachm_reference_id,
 					] );
 				}
 				// Perform the deletion for this batch
-				$this->dbw->newDeleteQueryBuilder()
+				$dbw->newDeleteQueryBuilder()
 					->deleteFrom( 'cu_useragent_clienthints_map' )
-					->where( $this->dbw->orExpr( $batchDeleteConds ) )
+					->where( $dbw->orExpr( $batchDeleteConds ) )
 					->caller( __METHOD__ )
 					->execute();
-				$mappingRowsDeleted += $this->dbw->affectedRows();
+				$mappingRowsDeleted += $dbw->affectedRows();
 			} while ( $batchToDelete->count() );
-		}
-		if ( !$mappingRowsDeleted ) {
-			$this->logger->info( "No mapping rows deleted." );
-		} else {
-			$this->logger->debug(
-				"Deleted {mapping_rows_deleted} mapping rows.",
-				[ 'mapping_rows_deleted' => $mappingRowsDeleted ]
-			);
 		}
 		return $mappingRowsDeleted;
 	}
@@ -249,11 +249,14 @@ class UserAgentClientHintsManager {
 	 * @return int The number of orphaned map rows deleted.
 	 */
 	public function deleteOrphanedMapRows(): int {
+		$dbw = $this->dbProvider->getPrimaryDatabase();
+		$dbr = $this->dbProvider->getReplicaDatabase();
+
 		// Keep a track of the number of mapping rows that are deleted.
 		$mappingRowsDeleted = 0;
 		foreach ( self::IDENTIFIER_TO_TABLE_NAME_MAP as $mappingId => $table ) {
 			// Get 100 rows with the given mapping ID
-			$resultSet = $this->dbr->newSelectQueryBuilder()
+			$resultSet = $dbr->newSelectQueryBuilder()
 				->select( 'uachm_reference_id' )
 				->table( 'cu_useragent_clienthints_map' )
 				->where( [ 'uachm_reference_type' => $mappingId ] )
@@ -270,7 +273,7 @@ class UserAgentClientHintsManager {
 				if ( $mapRowIsOrphaned ) {
 					// If the map row is orphaned, then perform the deletion
 					// and add the affected rows count to the return count.
-					$this->dbw->newDeleteQueryBuilder()
+					$dbw->newDeleteQueryBuilder()
 						->deleteFrom( 'cu_useragent_clienthints_map' )
 						->where( [
 							'uachm_reference_id' => $referenceId,
@@ -278,19 +281,13 @@ class UserAgentClientHintsManager {
 						] )
 						->caller( __METHOD__ )
 						->execute();
-					$mappingRowsDeleted += $this->dbw->affectedRows();
+					$mappingRowsDeleted += $dbw->affectedRows();
 				} else {
 					// If the map row is probably not orphaned, then just stop processing
 					// the rows in this table.
 					break;
 				}
 			}
-		}
-		if ( $mappingRowsDeleted ) {
-			$this->logger->info(
-				"Deleted {mapping_rows_deleted} orphaned mapping rows.",
-				[ 'mapping_rows_deleted' => $mappingRowsDeleted ]
-			);
 		}
 		return $mappingRowsDeleted;
 	}
@@ -307,11 +304,14 @@ class UserAgentClientHintsManager {
 		if ( !array_key_exists( $mappingId, self::IDENTIFIER_TO_TABLE_NAME_MAP ) ) {
 			throw new LogicException( "Unrecognised map ID '$mappingId'" );
 		}
+
+		$dbr = $this->dbProvider->getReplicaDatabase();
+
 		if ( !in_array( $mappingId, [ self::IDENTIFIER_CU_LOG_EVENT, self::IDENTIFIER_CU_CHANGES ] ) ) {
 			// If the mapping ID is not for cu_changes or cu_log_event,
 			// query the table directly to check if the associated reference ID
 			// exists in the table.
-			return !$this->dbr->newSelectQueryBuilder()
+			return !$dbr->newSelectQueryBuilder()
 				->field( '1' )
 				->table( self::IDENTIFIER_TO_TABLE_NAME_MAP[$mappingId] )
 				->where( [ self::IDENTIFIER_TO_COLUMN_NAME_MAP[$mappingId] => $referenceId ] )
@@ -322,19 +322,15 @@ class UserAgentClientHintsManager {
 		// then query the revision table or logging table respectively
 		// for the associated timestamp to determine if the map
 		// row should have already been deleted.
-		$associatedTimestamp = false;
+		$associatedTimestamp = null;
 		if ( $mappingId === self::IDENTIFIER_CU_CHANGES ) {
 			// Get the timestamp from the revision lookup service
-			$revisionRecord = $this->revisionLookup->getRevisionById( $referenceId );
-			if ( $revisionRecord ) {
-				$associatedTimestamp = $revisionRecord->getTimestamp();
-			}
+			$associatedTimestamp = $this->revisionLookup->getRevisionById( $referenceId )
+				?->getTimestamp();
 		} elseif ( $mappingId === self::IDENTIFIER_CU_LOG_EVENT ) {
 			// Get the timestamp from using DatabaseLogEntry::newFromId
-			$logObject = DatabaseLogEntry::newFromId( $referenceId, $this->dbr );
-			if ( $logObject ) {
-				$associatedTimestamp = $logObject->getTimestamp();
-			}
+			$associatedTimestamp = DatabaseLogEntry::newFromId( $referenceId, $dbr )
+				?->getTimestamp();
 		}
 		// The map rows are considered orphaned if of the following any apply:
 		// * There is no timestamp for the revision or log event (should be generally impossible for this
@@ -368,7 +364,7 @@ class UserAgentClientHintsManager {
 	 * @return int[]|false
 	 */
 	private function selectClientHintMappings( array $rows, bool $usePrimary, bool $insertMissingData ) {
-		$db = $usePrimary ? $this->dbw : $this->dbr;
+		$db = $usePrimary ? $this->dbProvider->getPrimaryDatabase() : $this->dbProvider->getReplicaDatabase();
 
 		$orExpr = [];
 		$rowsToInsert = [];
@@ -392,7 +388,7 @@ class UserAgentClientHintsManager {
 
 		if ( count( $rowsToInsert ) ) {
 			if ( $insertMissingData ) {
-				$this->dbw->newInsertQueryBuilder()
+				$this->dbProvider->getPrimaryDatabase()->newInsertQueryBuilder()
 					->insertInto( 'cu_useragent_clienthints' )
 					->ignore()
 					->rows( array_values( $rowsToInsert ) )

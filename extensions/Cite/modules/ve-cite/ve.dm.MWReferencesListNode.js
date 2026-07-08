@@ -7,7 +7,8 @@
  * @license MIT
  */
 
-const MWDocumentReferences = require( './ve.dm.MWDocumentReferences.js' );
+const MWDataTransitionHelper = require( './ve.dm.MWDataTransitionHelper.js' );
+const MWReferenceKeyGenerator = require( './ve.dm.MWReferenceKeyGenerator.js' );
 
 /**
  * DataModel MediaWiki references list node.
@@ -165,6 +166,8 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 	}
 
 	const updatedMw = ve.dm.MWReferencesListNode.static.updatedMwForDom( data, doc, converter );
+	const nodeGroup = converter.getInternalList().getNodeGroup( dataElement.attributes.listGroup );
+	const groupHasSubRefs = nodeGroup && nodeGroup.getFirstNodesInIndexOrder().some( ( node ) => node.isSubRef() );
 
 	let domElements = [ doc.createElement( 'div' ) ];
 	if ( !converter.isForParser() ) {
@@ -182,7 +185,10 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 	} else if (
 		dataElement.originalDomElementsHash !== undefined &&
 		// don't get originalDamElements when there are changes, needed to update synthetic refs
-		!updatedMw
+		// FIXME with the line below this is obsolete I think
+		!updatedMw &&
+		// for subRefs we need to render a fresh references list for changes in main content
+		!groupHasSubRefs
 	) {
 		// If there's more than 1 element, preserve entire array, not just first element
 		domElements = ve.copyDomElements(
@@ -191,7 +197,7 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 	} else {
 		domElements[ 0 ].appendChild(
 			ve.dm.MWReferencesListNode.static.listToDomElement(
-				dataElement.attributes.refGroup || '',
+				nodeGroup,
 				doc,
 				converter
 			)
@@ -212,6 +218,7 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 /***
  * Prepare mwData for conversion to DOM and check for changes
  *
+ * @private
  * @static
  * @param {Object} data
  * @param {Document} doc
@@ -269,7 +276,6 @@ ve.dm.MWReferencesListNode.static.updatedMwForDom = function ( data, doc, conver
 		originalHtmlWrapper.innerHTML = ve.getProp( mwData, 'body', 'html' ) || '';
 
 		// Only set body.html if contentsHtml and originalHtml are actually different
-		// FIXME?: Synthetic refs from main+details always seem to have different bodyHtml here
 		if ( !originalHtmlWrapper.isEqualNode( currentHtmlWrapper ) ) {
 			ve.setProp( mwData, 'body', 'html', currentHtmlWrapper.innerHTML );
 		}
@@ -281,6 +287,7 @@ ve.dm.MWReferencesListNode.static.updatedMwForDom = function ( data, doc, conver
 /***
  * Check the reflist is the last element in the DM
  *
+ * @private
  * @static
  * @param {Array} documentData
  * @param {Object} data
@@ -304,23 +311,17 @@ ve.dm.MWReferencesListNode.static.isReflistLastElement = function ( documentData
  * Create references list HTML DOM for Parsoid
  *
  * @static
- * @param {string} refGroup
+ * @param {ve.dm.InternalListNodeGroup} nodeGroup
  * @param {HTMLDocument} doc
- * @param {ve.dm.Converter} converter
+ * @param {ve.dm.DomFromModelConverter} converter
  * @return {HTMLElement} <ol> element for the references list
  * */
-ve.dm.MWReferencesListNode.static.listToDomElement = function ( refGroup, doc, converter ) {
-	// Render all group refs
-	const docRefs = MWDocumentReferences.static.refsForDoc(
-		converter.internalList.document
-	);
-	const groupRefs = docRefs.getGroupRefs( refGroup );
-
+ve.dm.MWReferencesListNode.static.listToDomElement = function ( nodeGroup, doc, converter ) {
 	const $wrapper = $( '<ol>', doc );
 	$wrapper.append(
-		groupRefs.getTopLevelKeysInReflistOrder()
-			.map( ( listKey ) => ve.dm.MWReferencesListNode.static.listItemToDomElement(
-				groupRefs, listKey, doc, converter
+		new MWDataTransitionHelper().buildReflistStructure( nodeGroup )
+			.map( ( refInfo ) => ve.dm.MWReferencesListNode.static.listItemToDomElement(
+				nodeGroup, refInfo, doc, converter
 			) )
 	);
 
@@ -330,36 +331,39 @@ ve.dm.MWReferencesListNode.static.listToDomElement = function ( refGroup, doc, c
 /***
  * Create references list item HTML DOM for Parsoid
  *
+ * @private
  * @static
- * @param {ve.dm.MWGroupReferences} groupRefs
- * @param {string} listKey
+ * @param {ve.dm.InternalListNodeGroup} nodeGroup
+ * @param {ve.dm.MWDataTransitionHelper.RefInfo} refInfo
  * @param {HTMLDocument} doc
- * @param {ve.dm.Converter} converter
+ * @param {ve.dm.DomFromModelConverter} converter
  * @return {jQuery} <li> element for the references listitem
  * */
 ve.dm.MWReferencesListNode.static.listItemToDomElement = function (
-	groupRefs,
-	listKey,
+	nodeGroup,
+	refInfo,
 	doc,
 	converter
 ) {
-	const internalItem = groupRefs.getInternalModelNode( listKey );
-	const subrefs = groupRefs.getSubrefs( listKey );
+	const internalItem = converter.getInternalList().getItemNode( refInfo.internalListIndex );
 	const $li = $( '<li>', doc );
 
-	if ( internalItem && internalItem.length ) {
+	if ( internalItem && internalItem.getLength() ) {
 		// make sure to find the node holding the refListItemId
-		const refListNode = groupRefs.nodeGroup.getAllReuses( listKey )
-			.find( ( node ) => node.getAttribute( 'refListItemId' ) );
+		const refListNodes = nodeGroup.getAllReusesByListIndex( refInfo.internalListIndex ) || [];
+		const refListNode = refListNodes.find( ( node ) => node.getAttribute( 'refListItemId' ) );
 		const htmlWrapper = doc.createElement( 'span' );
 		converter.getDomSubtreeFromData(
 			internalItem.getDocument().getFullData( internalItem.getRange(), 'roundTrip' ),
 			htmlWrapper
 		);
+
+		const refListItemId = ( refListNode && refListNode.getAttribute( 'refListItemId' ) ) ||
+			MWReferenceKeyGenerator.makeRefListItemId( refInfo.internalListIndex );
 		$li.append(
 			$( htmlWrapper )
 				.attr( 'typeof', 'mw:Extension/ref' )
-				.attr( 'id', refListNode && refListNode.getAttribute( 'refListItemId' ) )
+				.attr( 'id', refListItemId )
 		);
 	} else {
 		// TODO: What to do here?
@@ -368,11 +372,11 @@ ve.dm.MWReferencesListNode.static.listItemToDomElement = function (
 		).addClass( 've-ce-mwReferencesListNode-missingRef' );
 	}
 
-	if ( subrefs.length ) {
+	if ( refInfo.subrefs && refInfo.subrefs.length ) {
 		$li.append(
 			$( '<ol>', doc ).append(
-				subrefs.map( ( subNode ) => ve.dm.MWReferencesListNode.static.listItemToDomElement(
-					groupRefs, subNode.getAttribute( 'listKey' ), doc, converter
+				refInfo.subrefs.map( ( subRefInfo ) => ve.dm.MWReferencesListNode.static.listItemToDomElement(
+					nodeGroup, subRefInfo, doc, converter
 				) )
 			)
 		);

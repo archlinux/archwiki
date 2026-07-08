@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Srđan"
+		]
+	},
+	"oathauth-webauthn-module-label": "Veb-autentifikacija (WebAuthn)",
+	"oathauth-webauthn-ui-login-prompt": "Upotrijebite sigurnosni ključ ili pratite uputstva preglednika.",
+	"oathauth-webauthn-add-security-key": "Dodaj sigurnosni ključ"
+}

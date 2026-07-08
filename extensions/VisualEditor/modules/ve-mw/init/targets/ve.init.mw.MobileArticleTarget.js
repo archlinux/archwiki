@@ -318,13 +318,12 @@ ve.init.mw.MobileArticleTarget.prototype.getSurfaceClasses = function () {
 ve.init.mw.MobileArticleTarget.prototype.setSurface = function ( surface ) {
 	const changed = surface !== this.surface;
 
-	// Parent method
-	// FIXME This actually skips ve.init.mw.Target.prototype.setSurface. Why?
-	ve.init.mw.Target.super.prototype.setSurface.apply( this, arguments );
-
 	if ( changed ) {
 		this.$overlaySurface.append( surface.$element );
 	}
+
+	// Parent method
+	ve.init.mw.MobileArticleTarget.super.prototype.setSurface.apply( this, arguments );
 };
 
 /**
@@ -344,8 +343,12 @@ ve.init.mw.MobileArticleTarget.prototype.surfaceReady = function () {
 	// Parent method
 	ve.init.mw.MobileArticleTarget.super.prototype.surfaceReady.apply( this, arguments );
 
-	// If no selection has been set yet, set it to the start of the document.
-	if ( this.getSurface().getModel().getSelection().isNull() ) {
+	// In section editing mode, if no selection has been set yet,
+	// set it to the start of the visible document.
+	if (
+		this.enableVisualSectionEditing &&
+		this.getSurface().getModel().getSelection().isNull()
+	) {
 		this.getSurface().getView().selectFirstSelectableContentOffset();
 	}
 
@@ -378,8 +381,7 @@ ve.init.mw.MobileArticleTarget.prototype.adjustContentPadding = function () {
 		surfaceView = surface.getView(),
 		paddingTop = surface.getPadding().top;
 
-	surfaceView.$attachedRootNode.css( 'padding-top', paddingTop );
-	surface.$placeholder.css( 'padding-top', paddingTop );
+	this.$overlaySurface.css( 'padding-top', paddingTop );
 	surfaceView.emit( 'position' );
 	surface.scrollSelectionIntoView();
 };

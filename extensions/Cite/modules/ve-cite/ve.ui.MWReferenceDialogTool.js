@@ -25,7 +25,7 @@ OO.inheritClass( ve.ui.MWReferenceDialogTool, ve.ui.FragmentWindowTool );
 
 ve.ui.MWReferenceDialogTool.static.name = 'reference';
 
-ve.ui.MWReferenceDialogTool.static.group = 'object';
+ve.ui.MWReferenceDialogTool.static.group = 'cite';
 
 ve.ui.MWReferenceDialogTool.static.icon = 'reference';
 

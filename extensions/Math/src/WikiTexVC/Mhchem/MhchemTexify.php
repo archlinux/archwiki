@@ -22,16 +22,14 @@ use RuntimeException;
  */
 class MhchemTexify {
 
-	/** @var bool optimize the output TeX for WikiTexVC */
-	private bool $optimizeForTexVC;
-
 	/**
 	 * Takes MhchemParser output and convert it to TeX
 	 * @param bool $optimizeForTexVC optimizes the output for WikiTexVC grammar by
 	 * wrapping dimensions for some TeX commands in curly brackets.
 	 */
-	public function __construct( bool $optimizeForTexVC = false ) {
-		$this->optimizeForTexVC = $optimizeForTexVC;
+	public function __construct(
+		private readonly bool $optimizeForTexVC = false,
+	) {
 	}
 
 	/**

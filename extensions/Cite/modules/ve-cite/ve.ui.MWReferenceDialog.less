@@ -23,6 +23,11 @@
 .ve-ui-mwReference-details-preview-panel {
 	border-bottom: @border-style-base @border-color-divider @border-width-base;
 
+	// Reset OOUI's slightly larger font size for the header
+	.ve-ui-mwReferenceDialog-referencePreview-fieldset .oo-ui-fieldsetLayout-header .oo-ui-labelElement-label {
+		font-size: inherit;
+	}
+
 	.ve-ui-mwReference-details-preview-item {
 		margin-top: @spacing-50;
 		margin-left: @spacing-200;

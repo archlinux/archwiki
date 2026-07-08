@@ -77,6 +77,10 @@ class ArticlePage extends MinervaPage {
 		return $( '.mw-notification-area .mw-notification' );
 	}
 
+	get watchstar_popup() {
+		return $( '#mw-watchstar-WatchlistPopup' );
+	}
+
 	get overlay_heading_element() {
 		return $( '.overlay-title h2' );
 	}

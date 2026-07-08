@@ -9,6 +9,7 @@ use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\User\User;
+use MediaWiki\Utils\BatchRowIterator;
 
 // @codeCoverageIgnoreStart
 require_once getenv( 'MW_INSTALL_PATH' ) !== false

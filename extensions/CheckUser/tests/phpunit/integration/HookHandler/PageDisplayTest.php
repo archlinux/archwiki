@@ -1,17 +1,16 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use ArrayUtils;
 use GlobalPreferences\GlobalPreferencesFactory;
 use MediaWiki\Block\Block;
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
-use MediaWiki\CheckUser\HookHandler\PageDisplay;
-use MediaWiki\CheckUser\HookHandler\Preferences;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Context\DerivativeContext;
 use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\HookHandler\PageDisplay;
+use MediaWiki\Extension\CheckUser\HookHandler\Preferences;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
 use MediaWiki\IPInfo\HookHandler\AbstractPreferencesHandler;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Skin\Skin;
@@ -22,10 +21,11 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\StaticUserOptionsLookup;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\ArrayUtils\ArrayUtils;
 
 /**
- * @covers \MediaWiki\CheckUser\HookHandler\PageDisplay
- * @covers \MediaWiki\CheckUser\Services\CheckUserIPRevealManager
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\PageDisplay
+ * @covers \MediaWiki\Extension\CheckUser\Services\CheckUserIPRevealManager
  */
 class PageDisplayTest extends MediaWikiIntegrationTestCase {
 
@@ -139,14 +139,10 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 
 		$extensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$extensionRegistry->method( 'isLoaded' )
-			->willReturnCallback( static function ( $name ) use ( $isIpInfoAvailable, $isGlobalPreferencesAvailable ) {
-				if ( $name === 'IPInfo' ) {
-					return $isIpInfoAvailable;
-				}
-				if ( $name === 'GlobalPreferences' ) {
-					return $isGlobalPreferencesAvailable;
-				}
-				return false;
+			->willReturnCallback( static fn ( $name ) => match ( $name ) {
+				'IPInfo' => $isIpInfoAvailable,
+				'GlobalPreferences' => $isGlobalPreferencesAvailable,
+				default => false
 			} );
 
 		$pageDisplayHookHandler = new PageDisplay(
@@ -166,7 +162,8 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$pageDisplayHookHandler->onBeforePageDisplay(
-			$output, $this->createMock( Skin::class )
+			$output,
+			$this->createMock( Skin::class )
 		);
 
 		$expectedModules = [];
@@ -174,11 +171,12 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		$expectedConfigVars = [];
 
 		// Temporary account-related configuration and modules should only be added to the output
-		// only on special pages and selected action pages, and only if temporary accounts
+		// only on special pages and selected action pages (incl. default), and only if temporary accounts
 		// are known on this wiki and the acting user has appropriate permissions.
+		// Action 'render' serves here as an example of action where we don't want IP Reveal
 		if (
 			$tempAccountsKnown &&
-			( $specialPageName || $actionName ) &&
+			$actionName !== 'render' &&
 			$specialPageName !== 'BlockList' &&
 			$hasIpRevealPermission
 		) {
@@ -229,7 +227,7 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 			// special pages
 			[ 'Watchlist', 'Block', 'BlockList', null ],
 			// actions
-			[ 'info', 'history', null ],
+			[ 'info', 'history', 'render', null ],
 			// whether temporary accounts are known
 			[ true, false ],
 			// whether the user has seen the onboarding dialog
@@ -315,6 +313,35 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
+	public static function provideTestOnBeforePageDisplayLoadSpecialContributionsStyles() {
+		return [
+			'canAccessTemporaryAccountIPAddresses true, valid page' => [
+				'canAccessTemporaryAccountIPAddresses' => true,
+				'pageTitle' => 'Contributions',
+				'targetUser' => '~2026-1',
+				'isLoaded' => true,
+			],
+			'invalid page' => [
+				'canAccessTemporaryAccountIPAddresses' => true,
+				'pageTitle' => 'Recentchanges',
+				'targetUser' => '~2026-1',
+				'isLoaded' => false,
+			],
+			'invalid user' => [
+				'canAccessTemporaryAccountIPAddresses' => true,
+				'pageTitle' => 'Contributions',
+				'targetUser' => 'Foo',
+				'isLoaded' => false,
+			],
+			'canAccessTemporaryAccountIPAddresses false' => [
+				'canAccessTemporaryAccountIPAddresses' => false,
+				'pageTitle' => 'Contributions',
+				'targetUser' => '~2026-1',
+				'isLoaded' => false,
+			],
+		];
+	}
+
 	/** @dataProvider provideOnBeforePageDisplayForUserInfoCard */
 	public function testOnBeforePageDisplayForUserInfoCard(
 		bool $isEnabled,
@@ -335,7 +362,9 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'UserOptionsLookup', new StaticUserOptionsLookup( [], $options ) );
 
 		$pageDisplayHookHandler = new PageDisplay(
-			new HashConfig(),
+			new HashConfig( [
+				'CheckUserSuggestedInvestigationsEnabled' => false,
+			] ),
 			$this->getServiceContainer()->get( 'CheckUserPermissionManager' ),
 			$this->getServiceContainer()->get( 'CheckUserIPRevealManager' ),
 			$this->getServiceContainer()->getTempUserConfig(),
@@ -345,7 +374,8 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getPreferencesFactory()
 		);
 		$pageDisplayHookHandler->onBeforePageDisplay(
-			$output, $this->createMock( Skin::class )
+			$output,
+			$this->createMock( Skin::class )
 		);
 
 		$this->assertArrayEquals(
@@ -366,6 +396,7 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 					'wgCheckUserCanBlock' => true,
 					'wgCheckUserCanPerformCheckUser' => true,
 					'wgCheckUserCanViewCheckUserLog' => true,
+					'wgCheckUserCanViewSuggestedInvestigations' => false,
 				],
 			],
 			'UserInfoCard is enabled, performer is a temp user' => [
@@ -379,6 +410,45 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 				'expected' => [],
 			],
 		];
+	}
+
+	public function testOnBeforePageDisplayForUserInfoCardWithSuggestedInvestigationsEnabled() {
+		$context = RequestContext::getMain();
+		$context->setTitle( $this->createMock( Title::class ) );
+		$performer = $this->mockRegisteredUltimateAuthority();
+		$context->setAuthority( $performer );
+		$output = $context->getOutput();
+		$output->setContext( $context );
+
+		$options = [ Preferences::ENABLE_USER_INFO_CARD => 1 ];
+		$this->setService( 'UserOptionsLookup', new StaticUserOptionsLookup( [], $options ) );
+
+		$pageDisplayHookHandler = new PageDisplay(
+			new HashConfig( [
+				'CheckUserSuggestedInvestigationsEnabled' => true,
+				'CheckUserTemporaryAccountMaxAge' => 1234,
+				'CheckUserSpecialPagesWithoutIPRevealButtons' => [],
+				'CheckUserAutoRevealMaximumExpiry' => 1,
+			] ),
+			$this->getServiceContainer()->get( 'CheckUserPermissionManager' ),
+			$this->getServiceContainer()->get( 'CheckUserIPRevealManager' ),
+			$this->getServiceContainer()->getTempUserConfig(),
+			$this->getServiceContainer()->getUserOptionsLookup(),
+			$this->getServiceContainer()->getExtensionRegistry(),
+			$this->getServiceContainer()->getUserIdentityUtils(),
+			$this->getServiceContainer()->getPreferencesFactory()
+		);
+		$pageDisplayHookHandler->onBeforePageDisplay(
+			$output,
+			$this->createMock( Skin::class )
+		);
+
+		$configVars = $output->getJsConfigVars();
+		$this->assertArrayHasKey( 'wgCheckUserCanViewSuggestedInvestigations', $configVars );
+		$this->assertTrue(
+			$configVars['wgCheckUserCanViewSuggestedInvestigations'],
+			'wgCheckUserCanViewSuggestedInvestigations is true when feature is enabled and performer has permission'
+		);
 	}
 
 	/** @dataProvider provideOnBeforePageDisplayForIPInfoHookCases */
@@ -437,7 +507,8 @@ class PageDisplayTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$pageDisplayHookHandler->onBeforePageDisplay(
-			$output, $skin
+			$output,
+			$skin
 		);
 
 		// Assert that the module is loaded as necessary

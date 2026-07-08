@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nvdtn19"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Mô-đun API để giao tiếp giữa máy chủ và máy khách trong quá trình đăng ký/xác thực.",
+	"apihelp-oathauth-webauthn-param-func": "Tên của hàm được yêu cầu thực thi.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Thông tin xác thực.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Thông tin đăng ký."
+}

@@ -20,4 +20,9 @@ abstract class MMLleaf extends MMLbase {
 	public function getText(): string {
 		return $this->text;
 	}
+
+	public function setText( string $text ): MMLleaf {
+		$this->text = $text;
+		return $this;
+	}
 }

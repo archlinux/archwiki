@@ -1,16 +1,19 @@
 <?php
 
-namespace MediaWiki\CheckUser\Tests\Integration\HookHandler;
+namespace MediaWiki\Extension\CheckUser\Tests\Integration\HookHandler;
 
-use MediaWiki\CheckUser\CheckUserPermissionStatus;
-use MediaWiki\CheckUser\HookHandler\SidebarLinksHandler;
-use MediaWiki\CheckUser\Services\CheckUserPermissionManager;
-use MediaWiki\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
-use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Extension\CheckUser\CheckUserPermissionStatus;
+use MediaWiki\Extension\CheckUser\HookHandler\SidebarLinksHandler;
+use MediaWiki\Extension\CheckUser\Services\CheckUserPermissionManager;
+use MediaWiki\Extension\CheckUser\Services\CheckUserTemporaryAccountAutoRevealLookup;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Skin\Skin;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -18,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * @group CheckUser
  *
- * @covers \MediaWiki\CheckUser\HookHandler\SidebarLinksHandler
+ * @covers \MediaWiki\Extension\CheckUser\HookHandler\SidebarLinksHandler
  */
 class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	/** @var (Authority&MockObject) */
@@ -27,8 +30,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	/** @var (Skin&MockObject) */
 	private Skin $skin;
 
-	/** @var (Config&MockObject) */
-	private Config $config;
+	private HashConfig $config;
 
 	/** @var (CheckUserPermissionManager&MockObject) */
 	private CheckUserPermissionManager $permissionManager;
@@ -38,6 +40,9 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 
 	/** (CheckUserTemporaryAccountAutoRevealLookup&MockObject) */
 	private CheckUserTemporaryAccountAutoRevealLookup $autoRevealLookup;
+
+	/** (TempUserConfig&MockObject) */
+	private TempUserConfig $tempUserConfig;
 
 	/** @var (UserIdentity&MockObject) */
 	private UserIdentity $relevantUser;
@@ -50,7 +55,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->authority = $this->createMock( Authority::class );
 		$this->skin = $this->createMock( Skin::class );
 
-		$this->config = $this->createMock( Config::class );
+		$this->config = new HashConfig();
 
 		$this->permissionStatus = $this->createMock(
 			CheckUserPermissionStatus::class
@@ -64,20 +69,109 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->relevantUser = $this->createMock(
 			UserIdentity::class
 		);
+		$this->tempUserConfig = $this->createMock(
+			TempUserConfig::class
+		);
 
 		$this->sut = new SidebarLinksHandler(
 			$this->config,
 			$this->permissionManager,
-			$this->autoRevealLookup
+			$this->autoRevealLookup,
+			$this->tempUserConfig,
 		);
 	}
 
-	private function mockSkinMessages() {
+	private function mockSkinMessages(): void {
 		$this->skin
 			->method( 'msg' )
 			->willReturnCallback( static function ( $key ): Message {
 				return new Message( $key );
 			} );
+	}
+
+	public function testGlobalContributionsLinkIPRangeSupport(): void {
+		$this->setUserLang( 'qqx' );
+
+		$this->skin
+			->method( 'getRelevantUser' )
+			->willReturn( null );
+		$this->skin
+			->method( 'getAuthority' )
+			->willReturn( $this->authority );
+		$this->mockSkinMessages();
+		$this->skin
+			->method( 'getPageTarget' )
+			->willReturn( '1.2.3.4/16' );
+		$this->config->set( MainConfigNames::RangeContributionsCIDRLimit, [
+			'IPv4' => 16,
+			'IPv6' => 32,
+		] );
+
+		$this->permissionStatus
+			->method( 'isGood' )
+			->willReturn( true );
+		$this->permissionManager
+			->expects( $this->once() )
+			->method( 'canAccessUserGlobalContributions' )
+			->with( $this->authority, '1.2.3.4/16' )
+			->willReturn( $this->permissionStatus );
+
+		$sidebar = [
+			'navigation' => [],
+			'TOOLBOX' => [],
+			'LANGUAGES' => [],
+		];
+		$this->sut->onSidebarBeforeOutput( $this->skin, $sidebar );
+		$this->assertEquals( [
+			'navigation' => [],
+			'TOOLBOX' => [
+				'global-contributions' => [
+					'id' => 't-global-contributions',
+					'text' => '(checkuser-global-contributions-link-sidebar)',
+					'href' => '/wiki/Special:GlobalContributions/1.2.3.4/16',
+					'tooltip-params' => [ '1.2.3.4/16' ],
+				],
+			],
+			'LANGUAGES' => [],
+		], $sidebar );
+	}
+
+	public function testGlobalContributionsLinkIPRangeSupportOutOfRange(): void {
+		$this->setUserLang( 'qqx' );
+
+		$this->skin
+			->method( 'getRelevantUser' )
+			->willReturn( null );
+		$this->skin
+			->method( 'getAuthority' )
+			->willReturn( $this->authority );
+		$this->mockSkinMessages();
+		$this->skin
+			->method( 'getPageTarget' )
+			->willReturn( '1.2.3.4/16' );
+		$this->config->set( MainConfigNames::RangeContributionsCIDRLimit, [
+			'IPv4' => 32,
+			'IPv6' => 32,
+		] );
+
+		$this->permissionStatus
+			->method( 'isGood' )
+			->willReturn( true );
+		$this->permissionManager
+			->expects( $this->never() )
+			->method( 'canAccessUserGlobalContributions' );
+
+		$sidebar = [
+			'navigation' => [],
+			'TOOLBOX' => [],
+			'LANGUAGES' => [],
+		];
+		$this->sut->onSidebarBeforeOutput( $this->skin, $sidebar );
+		$this->assertEquals( [
+			'navigation' => [],
+			'TOOLBOX' => [],
+			'LANGUAGES' => [],
+		], $sidebar );
 	}
 
 	/**
@@ -86,30 +180,29 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testWhenTheLinkShouldNotBeAdded(
 		array $expected,
 		array $sidebar,
-		bool $hasRelevantUser,
+		bool $hasPageTarget,
 		bool $hasAccess
 	): void {
 		$this->setUserLang( 'qqx' );
 
 		$this->skin
-			->method( 'getRelevantUser' )
-			->willReturn( $hasRelevantUser ? $this->relevantUser : null );
-		$this->skin
 			->method( 'getAuthority' )
 			->willReturn( $this->authority );
 		$this->mockSkinMessages();
 
-		if ( $hasRelevantUser ) {
-			$this->relevantUser
-				->method( 'getName' )
-				->willReturn( 'Relevant User name' );
-
+		if ( $hasPageTarget ) {
+			$this->skin
+				->method( 'getPageTarget' )
+				->willReturn( 'Page target' );
 			$this->permissionManager
 				->expects( $this->once() )
 				->method( 'canAccessUserGlobalContributions' )
-				->with( $this->authority, 'Relevant User name' )
+				->with( $this->authority, 'Page target' )
 				->willReturn( $this->permissionStatus );
 		} else {
+			$this->skin
+				->method( 'getPageTarget' )
+				->willReturn( '' );
 			$this->permissionManager
 				->expects( $this->never() )
 				->method( 'canAccessUserGlobalContributions' );
@@ -138,7 +231,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					'TOOLBOX' => [ 'TOOLBOX array' ],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
-				'hasRelevantUser' => false,
+				'hasPageTarget' => false,
 				'hasAccess' => false,
 			],
 			'When the accessing user lacks access' => [
@@ -152,7 +245,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					'TOOLBOX' => [ 'TOOLBOX array' ],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
-				'hasRelevantUser' => true,
+				'hasPageTarget' => true,
 				'hasAccess' => false,
 			],
 			'When access is not granted and the sidebar is empty' => [
@@ -160,7 +253,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 				// (i.e. "Undefined array key 'TOOLBOX'" errors)
 				'expected' => [],
 				'sidebar' => [],
-				'hasRelevantUser' => false,
+				'hasPageTarget' => false,
 				'hasAccess' => false,
 			],
 			// Cases when the link is added
@@ -173,13 +266,13 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
-							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
-							'tooltip-params' => [ 'Relevant User name' ],
+							'href' => '/wiki/Special:GlobalContributions/Page_target',
+							'tooltip-params' => [ 'Page target' ],
 						],
 					],
 				],
 				'sidebar' => [],
-				'hasRelevantUser' => true,
+				'hasPageTarget' => true,
 				'hasAccess' => true,
 			],
 			'When access is granted and the "contributions" link is the first one' => [
@@ -193,8 +286,8 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
-							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
-							'tooltip-params' => [ 'Relevant User name' ],
+							'href' => '/wiki/Special:GlobalContributions/Page_target',
+							'tooltip-params' => [ 'Page target' ],
 						],
 						'whatlinkshere' => [
 							'id' => 't-whatlinkshere',
@@ -217,7 +310,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
-				'hasRelevantUser' => true,
+				'hasPageTarget' => true,
 				'hasAccess' => true,
 			],
 			'When preconditions are met and the "contributions" link is between others' => [
@@ -235,8 +328,8 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
-							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
-							'tooltip-params' => [ 'Relevant User name' ],
+							'href' => '/wiki/Special:GlobalContributions/Page_target',
+							'tooltip-params' => [ 'Page target' ],
 						],
 						'something-else' => [
 							'id' => 't-something-else',
@@ -263,7 +356,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
-				'hasRelevantUser' => true,
+				'hasPageTarget' => true,
 				'hasAccess' => true,
 			],
 			'When preconditions are met and the "contributions" link is the last one' => [
@@ -281,8 +374,8 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						'global-contributions' => [
 							'id' => 't-global-contributions',
 							'text' => '(checkuser-global-contributions-link-sidebar)',
-							'href' => '/wiki/Special:GlobalContributions/Relevant_User_name',
-							'tooltip-params' => [ 'Relevant User name' ],
+							'href' => '/wiki/Special:GlobalContributions/Page_target',
+							'tooltip-params' => [ 'Page target' ],
 						],
 					],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
@@ -301,7 +394,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 					],
 					'LANGUAGES' => [ 'LANGUAGES array' ],
 				],
-				'hasRelevantUser' => true,
+				'hasPageTarget' => true,
 				'hasAccess' => true,
 			],
 		];
@@ -310,12 +403,14 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 	/** @dataProvider provideIpAutoRevealLink */
 	public function testIpAutoRevealLink(
 		array $sidebar,
+		bool $hasTempUsers,
 		bool $canAutoReveal,
 		bool $globalPreferencesIsLoaded,
 		bool $autoRevealIsOn,
 		array $expected
 	): void {
 		$this->setUserLang( 'qqx' );
+		$this->config->set( 'CheckUserAutoRevealMaximumExpiry', 1 );
 
 		$this->permissionStatus
 			->method( 'isGood' )
@@ -333,12 +428,21 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			->method( 'isAutoRevealAvailable' )
 			->willReturn( $globalPreferencesIsLoaded );
 
+		$this->tempUserConfig
+			->method( 'isKnown' )
+			->willReturn( $hasTempUsers );
+
 		$this->skin
 			->method( 'getAuthority' )
 			->willReturn( $this->authority );
 		$this->skin
 			->method( 'getOutput' )
 			->willReturn( $this->createMock( OutputPage::class ) );
+		$mockRequest = $this->createMock( WebRequest::class );
+		$mockRequest->method( 'getText' )->willReturn( 'Foo' );
+		$this->skin
+			->method( 'getRequest' )
+			->willReturn( $mockRequest );
 		$this->mockSkinMessages();
 
 		$this->sut->onSidebarBeforeOutput( $this->skin, $sidebar );
@@ -349,6 +453,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 		return [
 			'Not added if user cannot auto-reveal' => [
 				'sidebar' => [],
+				'hasTempUsers' => true,
 				'canAutoReveal' => false,
 				'globalPreferencesIsLoaded' => true,
 				'autoRevealIsOn' => false,
@@ -356,8 +461,17 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			],
 			'Not added if GlobalPreferences is not loaded' => [
 				'sidebar' => [],
+				'hasTempUsers' => true,
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => false,
+				'autoRevealIsOn' => false,
+				'expected' => [],
+			],
+			'Not added if temp user is unknown' => [
+				'sidebar' => [],
+				'hasTempUsers' => false,
+				'canAutoReveal' => true,
+				'globalPreferencesIsLoaded' => true,
 				'autoRevealIsOn' => false,
 				'expected' => [],
 			],
@@ -370,6 +484,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						],
 					],
 				],
+				'hasTempUsers' => true,
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => true,
 				'autoRevealIsOn' => false,
@@ -398,6 +513,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 						],
 					],
 				],
+				'hasTempUsers' => true,
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => true,
 				'autoRevealIsOn' => true,
@@ -419,6 +535,7 @@ class SidebarLinksHandlerTest extends MediaWikiIntegrationTestCase {
 			],
 			'Added to sidebar without existing toolbox, auto-reveal is off' => [
 				'sidebar' => [],
+				'hasTempUsers' => true,
 				'canAutoReveal' => true,
 				'globalPreferencesIsLoaded' => true,
 				'autoRevealIsOn' => false,

@@ -7,13 +7,13 @@ use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\Extension\Nuke\NukeConfigNames;
 use MediaWiki\Extension\Nuke\SpecialNuke;
-use MediaWiki\Extension\Nuke\Test\NukeIntegrationTest;
+use MediaWiki\Extension\Nuke\Test\NukeIntegrationTestTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
-use SpecialPageTestBase;
 use Wikimedia\IPUtils;
 
 /**
@@ -27,7 +27,7 @@ use Wikimedia\IPUtils;
  */
 class SpecialNukeHTMLFormTest extends SpecialPageTestBase {
 
-	use NukeIntegrationTest;
+	use NukeIntegrationTestTrait;
 	use TempUserTestTrait;
 
 	/**
@@ -52,7 +52,8 @@ class SpecialNukeHTMLFormTest extends SpecialPageTestBase {
 			$services->getNamespaceInfo(),
 			$services->getContentLanguage(),
 			$services->getRedirectLookup(),
-			$services->getService( 'NukeIPLookup' )
+			$services->getService( 'NukeIPLookup' ),
+			$services->getTitleFormatter()
 		);
 	}
 
@@ -471,6 +472,45 @@ class SpecialNukeHTMLFormTest extends SpecialPageTestBase {
 
 		$this->assertStringContainsString( 'PositiveNukeTest123', $html );
 		$this->assertStringNotContainsString( 'NegativeNukeTest123', $html );
+	}
+
+	/**
+	 * Ensure that patterns starting with a '%' wildcard are rejected, as they produce
+	 * LIKE queries with leading wildcards that cannot use database indexes.
+	 *
+	 * @return void
+	 */
+	public function testListPatternLeadingWildcard() {
+		$admin = $this->getTestSysop()->getUser();
+		$request = new FauxRequest( [
+			'action' => SpecialNuke::ACTION_LIST,
+			'pattern' => '%SomePage'
+		], true );
+		$performer = new UltimateAuthority( $admin );
+
+		[ $html ] = $this->executeSpecialPage( '', $request, 'qqx', $performer );
+		$this->checkForValidationMessages( $html, [ 'nuke-pattern-leading-wildcard' ] );
+	}
+
+	/**
+	 * Ensure that patterns starting with an escaped '%' (literal percent) are allowed.
+	 *
+	 * @return void
+	 */
+	public function testListPatternEscapedLeadingPercent() {
+		$this->editPage( '%TestPage', 'test' );
+
+		$admin = $this->getTestSysop()->getUser();
+		$request = new FauxRequest( [
+			'action' => SpecialNuke::ACTION_LIST,
+			'pattern' => '\\%TestPage%'
+		], true );
+		$performer = new UltimateAuthority( $admin );
+
+		[ $html ] = $this->executeSpecialPage( '', $request, 'qqx', $performer );
+		$this->checkForValidationMessages( $html );
+
+		$this->assertStringContainsString( '%TestPage', $html );
 	}
 
 	public function testListNamespaces() {
@@ -2394,7 +2434,8 @@ class SpecialNukeHTMLFormTest extends SpecialPageTestBase {
 			"nuke-associated-limited",
 			"nuke-searchnotice-minmorethanmax",
 			"nuke-searchnotice-negmin",
-			"nuke-searchnotice-negmax"
+			"nuke-searchnotice-negmax",
+			"nuke-pattern-leading-wildcard"
 		];
 
 		$shouldBeFound = $messages;
