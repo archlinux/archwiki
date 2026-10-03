@@ -1,8 +1,10 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Tests\Unit\HtmlAssertionHelperTrait;
 use PHPUnit\Framework\ExpectationFailedException;
 use Wikimedia\ObjectCache\HashBagOStuff;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Services\NoSuchServiceException;
 
 /**
@@ -12,6 +14,7 @@ use Wikimedia\Services\NoSuchServiceException;
  * @covers \MediaWikiTestCaseTrait
  */
 class MediaWikiUnitTestCaseTest extends MediaWikiUnitTestCase {
+	use HtmlAssertionHelperTrait;
 
 	public function testServiceContainer() {
 		$config = new HashConfig();
@@ -213,5 +216,64 @@ class MediaWikiUnitTestCaseTest extends MediaWikiUnitTestCase {
 	public function testArrayContainsFail( $expected, $actual ) {
 		$this->expectException( ExpectationFailedException::class );
 		$this->assertArrayContains( $expected, $actual );
+	}
+
+	/**
+	 * @dataProvider provideHTMLAssertionHelperTrait
+	 */
+	public function testHTMLAssertionHelperTrait_WithHtml(
+		string $html,
+		string $selector,
+		string|null $expectedException,
+		?string $expectedHtml = null
+	) {
+		if ( $expectedException !== null ) {
+			$this->expectException( $expectedException );
+		}
+		$foundHtml = $this->assertSelectorMatchesOneElement( $html, $selector );
+		$this->assertSame( $expectedHtml, $foundHtml );
+	}
+
+	/**
+	 * @dataProvider provideHTMLAssertionHelperTrait
+	 */
+	public function testHTMLAssertionHelperTrait_WithNodes(
+		string $html,
+		string $selector,
+		string|null $expectedException,
+		?string $expectedHtml = null
+	) {
+		$document = DOMUtils::parseHTML( $html );
+		if ( $expectedException !== null ) {
+			$this->expectException( $expectedException );
+		}
+		$foundHtml = $this->assertSelectorMatchesOneElementInNode( $document, $selector, true );
+		$this->assertSame( $expectedHtml, $foundHtml );
+	}
+
+	public function provideHTMLAssertionHelperTrait() {
+		return [
+			'no selector in HTML' => [
+				'html' => '<div><p>Test</p></div>',
+				'selector' => 'span',
+				'expectedException' => ExpectationFailedException::class,
+			],
+			'one selector in HTML' => [
+				'html' => '<div><p>Test</p></div>',
+				'selector' => 'p',
+				'expectedException' => null,
+				'expectedHtml' => '<p>Test</p>',
+			],
+			'two selectors in HTML' => [
+				'html' => '<div><p>Test</p><p>Test 2</p></div>',
+				'selector' => 'p',
+				'expectedException' => ExpectationFailedException::class,
+			],
+			'invalid selector' => [
+				'html' => '<div><p>Test</p></div>',
+				'selector' => 'p >',
+				'expectedException' => InvalidArgumentException::class,
+			],
+		];
 	}
 }

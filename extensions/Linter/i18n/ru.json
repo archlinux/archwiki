@@ -16,7 +16,8 @@
 			"Stjn",
 			"Sunpriat",
 			"Vlad5250",
-			"Shabe"
+			"Shabe",
+			"Daisy40"
 		]
 	},
 	"linterrors": "Ошибки статического анализатора",
@@ -28,10 +29,12 @@
 	"linter-category-deletable-table-tag-desc": "На этих страницах есть теги таблицы, которые следует удалить.",
 	"linter-category-duplicate-ids": "Дублированные ID",
 	"linter-category-duplicate-ids-desc": "Эти страницы содержат элементы с дублированными ID-атрибутами.",
+	"linter-category-empty-heading": "Пустые заголовки",
+	"linter-category-empty-heading-desc": "Эти страницы содержат пустые заголовки.",
 	"linter-category-template-arg-in-extension-tag": "Тег расширения с параметром шаблона",
 	"linter-category-template-arg-in-extension-tag-desc": "Эти страницы содержат тег расширения с параметром шаблона, который не будет корректно внедрён.",
-	"linter-category-fostered": "Присвоенное содержимое",
-	"linter-category-fostered-desc": "На этих страницах находится присвоенное содержимое.",
+	"linter-category-fostered": "Вытесненное содержимое",
+	"linter-category-fostered-desc": "На этих страницах находится вытесненное содержимое.",
 	"linter-category-html5-misnesting": "Некорректно вложенный тег, который по-разному отображается в HTML5 и HTML4",
 	"linter-category-html5-misnesting-desc": "Эти некорректно вложенные теги имеют различное поведение в HTML5 и HTML4.",
 	"linter-category-night-mode-unaware-background-color": "Указанный вручную в стилях цвет фона присутствует без соответствующего цвета текста",
@@ -96,6 +99,8 @@
 	"linter-pager-deletable-table-tag-details": "Тег таблицы, который следует удалить",
 	"linter-pager-details-header": "Дополнительная информация",
 	"linter-pager-duplicate-ids-details": "Дублированные ID",
+	"linter-pager-empty-heading-details": "Пустые заголовки",
+	"linter-pager-fostered-details": "Вытесненное содержимое",
 	"linter-pager-html5-misnesting-details": "Некорректная вложенность (не работает)",
 	"linter-pager-inline-media-caption-details": "Невидимая подпись",
 	"linter-pager-large-tables-details": "Слишком большая для мобильного устройства таблица",

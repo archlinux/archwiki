@@ -9,7 +9,9 @@
 	"mobile-frontend-home-button": "Ихадоу",
 	"mobile-frontend-language-article-heading": "Абызшәа",
 	"mobile-frontend-main-menu-login": "Иҭалатәуп",
+	"mobile-frontend-main-menu-nearby": "Ааигәа",
 	"mobile-frontend-main-menu-settings": "Архиарақәа",
 	"mobile-frontend-placeholder": "Асаит {{SITENAME}} аҟны аԥшаара",
-	"mobile-frontend-random-button": "Машәырны"
+	"mobile-frontend-random-button": "Машәырны",
+	"minerva-page-actions-overflow": "Еиҭа"
 }

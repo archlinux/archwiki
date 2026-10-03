@@ -33,7 +33,7 @@
 	"right-checkuser-temporary-account-no-preference": "Müvəqqəti hesablar tərəfindən istifadə edilən IP ünvanlarına nizamlamaları aktivləşdirmədən baxmaq",
 	"right-checkuser-temporary-account-log": "Müvəqqəti hesablar tərəfindən istifadə olunan IP ünvanlarının jurnalına baxmaq",
 	"right-checkuser-temporary-account-auto-reveal": "Müvəqqəti hesablar tərəfindən istifadə edilən IP ünvanlarını avtomatik göstərmək",
-	"right-checkuser-suggested-investigations": "təftişçilərə [[Special:SuggestedInvestigations|təklif olunan araşdırmaları]] işləmək",
+	"right-checkuser-suggested-investigations": "Təftişçilərə [[Special:SuggestedInvestigations|təklif olunan araşdırmaları]] işləmək",
 	"grant-checkuser": "Təftişçi datasına giriş",
 	"grant-checkuser-temporary-account": "Müvəqqəti hesablar üçün təftişçi datalarına giriş",
 	"action-checkuser": "istifadəçilərin IP-ünvanını və daha çox məlumatı yoxlamaq",

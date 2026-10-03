@@ -2,12 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Saederup92",
-			"Weblars"
+			"Weblars",
+			"Steenth"
 		]
 	},
+	"loginnotify-desc": "Giv brugerne besked om mistænkelige logins fra ukendte enheder og/eller IP-adresser",
 	"echo-category-title-login-fail": "Mislykkede forsøg på indlogning",
 	"echo-pref-tooltip-login-fail": "Giv mig besked, når der har været mislykkede forsøg på at logge ind på min brugerkonto.",
 	"echo-category-title-login-success": "Logind fra en ukendt enhed",
 	"echo-pref-tooltip-login-success": "Giv mig besked, når nogen logger sig ind på min konto fra en ukendt enhed og IP-adresse.",
-	"loginnotify-primary-link": "Hjælp"
+	"loginnotify-primary-link": "Hjælp",
+	"loginnotify-unknown-ip": "Du har forsøgt at logge ind fra en ukendt IP-adresse, og {{SITENAME}} er i øjeblikket konfigureret til at forhindre logins fra ukendte IP-adresser.",
+	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Mislykket forsøg|Flere mislykkede forsøg}} på at logge ind på {{SITENAME}} som $1",
+	"notification-loginnotify-login-success-email-subject": "Log ind på {{SITENAME}} som $1 fra en enhed som {{GENDER:$1|du}} ikke har brugt for nylig",
+	"notification-header-login-success": "Nogen (sandsynligvis {{GENDER:$1|dig}}) har for nylig logget ind på din konto fra en ny enhed. Hvis det var dig, kan du ignorere denne besked. Hvis det ikke var dig, anbefales det, at du ændrer din adgangskode og tjekker din kontoaktivitet.",
+	"notification-new-bundled-header-login-fail": "Der har været {{PLURAL:$1|'''et mislykket forsøg'''|'''$1 mislykket forsøg'''}} på at logge ind på din konto fra en ny enhed $1 siden du sidst loggede ind. Hvis det ikke var dig, skal du sørge for, din konto har en stærk adgangskode.",
+	"notification-known-header-login-fail": "Der har været {{PLURAL:$1|'''et mislykket forsøg'''|'''$1 mislykket forsøg'''}} på at logge ind på din konto siden sidste gang du loggede ind. Hvis det ikke var dig, skal du sørge for at din konto har en stærk adgangskode.",
+	"notification-new-unbundled-header-login-fail": "Der har været  {{PLURAL:$1|'''et mislykket forsøg'''|'''flere mislykkede forsøg'''}} på at logge ind på din konto fra en ny enhed. Sørg for, at din konto har en stærk adgangskode."
 }

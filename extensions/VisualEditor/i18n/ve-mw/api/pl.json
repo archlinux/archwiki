@@ -9,12 +9,13 @@
 			"Sutan",
 			"Tar Lócesilion",
 			"The Polish",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nie znaleziono seryjnej pamięci podręcznej dla tego klucza",
 	"apierror-visualeditor-difffailed": "Porównywanie nie powiodło się",
-	"apihelp-visualeditor-param-basetimestamp": "Podczas zapisywania, ustaw na znacznik czasu edytowanej wersji. Służy to do wykrywania konfliktów edycji.",
+	"apihelp-visualeditor-param-basetimestamp": "Podczas zapisywania ustaw na znacznik czasu edytowanej wersji. Służy to do wykrywania konfliktów edycji.",
 	"apihelp-visualeditor-param-badetag": "Jeśli zapytanie do RESTBase zwróciło ETag wyglądający na nieprawidłowy, podaj go tutaj w celu logowania problemu.",
 	"apihelp-visualeditor-param-cachekey": "Dla serializacji lub porównywania użyj wyniku poprzedniego żądania serializeforcache z tym kluczem. Zastępuje $1html.",
 	"apihelp-visualeditor-param-editintro": "Edytuj intro, aby dodać do powiadomień.",
@@ -26,7 +27,7 @@
 	"apihelp-visualeditor-param-page": "Strona, na której wykonuje się działania.",
 	"apihelp-visualeditor-param-preload": "Strona, z której treści można korzystać, jeśli pobrana strona nie zawiera jeszcze żadnej treści.",
 	"apihelp-visualeditor-param-preloadparams": "Parametry do zastąpienia na stronie wstępnego ładowania, jeśli są obecne.",
-	"apihelp-visualeditor-param-pst": "Wstępna transformacja wikitekstu przed zapisem, zanim zostanie wysłany do Parsoida (paction=parsefragment).",
+	"apihelp-visualeditor-param-pst": "Wstępna transformacja wikikodu przed zapisem, zanim zostanie wysłany do Parsoida (paction=parsefragment).",
 	"apihelp-visualeditor-param-section": "Sekcja, na której działać.",
 	"apihelp-visualeditor-param-starttimestamp": "Podczas zapisywania, ustaw znacznik czasu, kiedy strona została załadowana. Służy to do wykrywania konfliktów edycji.",
 	"apihelp-visualeditor-param-stash": "Podczas zapisywania ustaw tę wartość na true, jeśli chcesz korzystać z interfejsu API do przechowywania.",
@@ -50,6 +51,6 @@
 	"apihelp-visualeditoredit-param-starttimestamp": "Podczas zapisywania, ustaw znacznik czasu, kiedy strona została załadowana. Służy to do wykrywania konfliktów edycji.",
 	"apihelp-visualeditoredit-param-summary": "Opis zmian.",
 	"apihelp-visualeditoredit-param-tags": "Znaczniki zmian do zastosowania w tej edycji.",
-	"apihelp-visualeditoredit-param-wikitext": "The wikitext do działania.",
+	"apihelp-visualeditoredit-param-wikitext": "Wikikod do działania.",
 	"apihelp-visualeditoredit-summary": "Zapisz stronę HTML5 w MediaWiki (konwertowana na wikikod przez usługę Parsoid)."
 }

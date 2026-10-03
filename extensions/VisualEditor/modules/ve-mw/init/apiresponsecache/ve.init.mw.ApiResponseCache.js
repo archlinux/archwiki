@@ -176,14 +176,18 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 				if ( processedPage !== undefined ) {
 					processed[ page.title ] = processedPage;
 				}
+				// Locate the title in mapped titles, if any. Do not stop at the first match.
+				// More than one title can map to the same page, e.g. two redirects to the
+				// same template.
 				for ( let i = 0; i < mappedTitles.length; i++ ) {
-					// Locate the title in mapped titles, if any.
 					if ( mappedTitles[ i ].to === page.title ) {
-						const from = mappedTitles[ i ].fromencoded === '' ?
+						// formatversion=1 sends this flag as an empty string, or omits it.
+						// formatversion=2 sends a boolean.
+						const fromencoded = mappedTitles[ i ].fromencoded;
+						const from = fromencoded === '' || fromencoded === true ?
 							decodeURIComponent( mappedTitles[ i ].from ) :
 							mappedTitles[ i ].from;
 						processed[ from ] = processedPage;
-						break;
 					}
 				}
 			}

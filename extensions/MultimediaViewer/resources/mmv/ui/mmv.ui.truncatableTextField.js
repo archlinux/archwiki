@@ -51,24 +51,44 @@ class TruncatableTextField extends UiElement {
 	constructor( $container, $element, options ) {
 		super( $container );
 
-		/** @property {jQuery} $element The DOM element that holds text for this element. */
+		/**
+		 * The DOM element that holds text for this element.
+		 *
+		 * @type {jQuery}
+		 */
 		this.$element = $element;
 
-		/** @property {Object} options - */
+		/** @type {Object} */
 		this.options = Object.assign( {
 			styles: [ 'mw-mmv-ttf-small', 'mw-mmv-ttf-smaller', 'mw-mmv-ttf-smallest' ]
 		}, options );
 
-		/** @property {boolean} expanded true if the text is long enough to be truncated but the full text is shown */
+		/**
+		 * true if the text is long enough to be truncated but the full text is shown
+		 *
+		 * @type {boolean}
+		 */
 		this.expanded = false;
 
-		/** @property {jQuery} ellipsis the element which marks that the text was truncated */
+		/**
+		 * the element which marks that the text was truncated
+		 *
+		 * @type {jQuery}
+		 */
 		this.$ellipsis = null;
 
-		/** @property {string} normalTitle title attribute to show when the text is not truncated */
+		/**
+		 * title attribute to show when the text is not truncated
+		 *
+		 * @type {string}
+		 */
 		this.normalTitle = null;
 
-		/** @property {string} truncatedTitle title attribute to show when the text is not truncated */
+		/**
+		 * title attribute to show when the text is not truncated
+		 *
+		 * @type {string}
+		 */
 		this.truncatedTitle = null;
 
 		this.init();

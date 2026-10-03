@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Máté",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Dj"
 		]
 	},
+	"renocaptcha-desc": "reCAPTCHA NoCAPTCHA modul a ConfirmEdit kiterjesztéshez",
 	"renocaptcha-edit": "Az automatizált spamek megelőzése miatt kérjük, oldd meg a következő CAPTCHA-t:",
 	"renocaptcha-addurl": "A szerkesztésed új külső hivatkozásokat tartalmaz. Az automatizált spamek megelőzése miatt kérjük, oldd meg a következő CAPTCHA-t:",
 	"renocaptcha-badlogin": "Hogy az automatizált jelszófeltörési kísérleteket megelőzzük, kérjük, oldd meg a következő CAPTCHA-t:",

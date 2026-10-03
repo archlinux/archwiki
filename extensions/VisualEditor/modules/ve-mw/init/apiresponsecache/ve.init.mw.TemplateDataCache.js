@@ -28,6 +28,13 @@ OO.inheritClass( ve.init.mw.TemplateDataCache, ve.init.mw.ApiResponseCache );
  * @inheritdoc
  */
 ve.init.mw.TemplateDataCache.static.processPage = function ( page ) {
+	if ( page.missing ) {
+		// Record missing templates in the link cache. The transclusion dialog reads it to tell
+		// the user that the template does not exist (T162694).
+		const missingTitle = {};
+		missingTitle[ page.title ] = { missing: true };
+		ve.init.platform.linkCache.setMissing( missingTitle );
+	}
 	return page;
 };
 
@@ -37,11 +44,24 @@ ve.init.mw.TemplateDataCache.static.processPage = function ( page ) {
  * @inheritdoc
  */
 ve.init.mw.TemplateDataCache.prototype.getRequestPromise = function ( subqueue ) {
-	return this.api.get( {
+	const xhr = this.api.get( {
 		action: 'templatedata',
+		// ve.dm.MWTemplatePageMetadata expects a formatversion=2 response
+		formatversion: 2,
 		lang: mw.config.get( 'wgUserLanguage' ),
 		includeMissingTitles: '1',
 		redirects: '1',
 		titles: subqueue
 	} );
+	// This API keys the pages by page id. Copy the id into each page, because
+	// ve.ui.MWTemplatePage needs it for the TemplateDiscovery favorite button. A missing
+	// page has no usable id.
+	return xhr.then( ( data ) => {
+		for ( const pageId in data.pages ) {
+			if ( !data.pages[ pageId ].missing ) {
+				data.pages[ pageId ].pageId = pageId;
+			}
+		}
+		return data;
+	} ).promise( { abort: xhr.abort } );
 };

@@ -20,7 +20,7 @@ function reloadThankedState() {
 						$thankedLabel
 							.clone()
 							.append(
-								mw.msg( 'thanks-button-thanked', mw.user, recipientGender )
+								mw.message( 'thanks-button-thanked', mw.user, recipientGender ).escaped()
 							)
 					);
 					$thankLink.remove();
@@ -55,7 +55,7 @@ function sendFlowThanks( $thankLink ) {
 		.then( ( recipientGender ) => {
 			const $thankUserLabel = $thankedLabel.clone();
 			$thankUserLabel.append(
-				mw.msg( 'thanks-button-thanked', mw.user, recipientGender )
+				mw.message( 'thanks-button-thanked', mw.user, recipientGender ).escaped()
 			);
 			mw.thanks.thanked.push( $thankLink.closest( '.flow-post' ).attr( attrName ), cookieName );
 			$thankLink.before( $thankUserLabel );

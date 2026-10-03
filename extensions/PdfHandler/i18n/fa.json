@@ -7,7 +7,8 @@
 			"Reza1615",
 			"Sahim",
 			"Wayiran",
-			"Yoosef Pooranvary"
+			"Yoosef Pooranvary",
+			"LProfo"
 		]
 	},
 	"pdf-desc": "گرداننده‌ای برای مشاهدهٔ پرونده‌های پی‌دی‌اف در حالت تصویر",
@@ -19,6 +20,6 @@
 	"pdf_page_error": "شماره صفحه در محدوده نیست",
 	"exif-pdf-producer": "برنامهٔ مبدل",
 	"exif-pdf-version": "نسخهٔ قالب پی‌دی‌اف",
-	"exif-pdf-encrypted": "رمز شده",
+	"exif-pdf-encrypted": "رمزگذاری‌شده",
 	"exif-pdf-pagesize": "حجم صفحه"
 }

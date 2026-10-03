@@ -5,7 +5,8 @@
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
 			"Baloch Khan",
-			"شاه زمان پټان"
+			"شاه زمان پټان",
+			"باران"
 		]
 	},
 	"minerva-last-modified-date": "وروستی سمون په $1 نېټه په $2 بجو شوی",
@@ -20,7 +21,7 @@
 	"mobile-frontend-home-button": "کور",
 	"mobile-frontend-language-article-heading": "ژبه",
 	"mobile-frontend-languages-not-available": "دا مخ په نورو ژبو کې د لاسرسی وړ نه دی.",
-	"mobile-frontend-main-menu-button-tooltip": "ارنۍ غورنۍ پرانيستل",
+	"mobile-frontend-main-menu-button-tooltip": "ارنۍ غوره‌نۍ پرانېستل",
 	"mobile-frontend-main-menu-contributions": "ونډې",
 	"mobile-frontend-main-menu-login": "ننوتل",
 	"mobile-frontend-main-menu-logout": "وتل",
@@ -43,7 +44,7 @@
 	"mobile-frontend-user-page-contributions": "ونډې",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|يوځای شوی}} $1",
 	"mobile-frontend-user-page-talk": "خبرې اترې",
-	"minerva-user-menu-button": "کارن غورنۍ",
+	"minerva-user-menu-button": "کارن غوره‌نۍ",
 	"minerva-user-navigation": "کارن چلند",
 	"minerva-page-actions-editfull": "بشپړ مخ سمول",
 	"minerva-page-actions-overflow": "نور",

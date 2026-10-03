@@ -12,5 +12,7 @@
 	"hcaptcha-createaccount-fail": "داسې برېښې چې تاسو اېچ‌کپچا اواره کړې نه ده.",
 	"hcaptcha-create": "د خپلکاره مخ جوړونې څخه د ويکي ژغورنې په موخه موږ له تاسو په درنښت غوښتنه کوو چې لاندې اېچ‌کپچا اواره کړئ:",
 	"hcaptcha-help": "مهرباني وکړئ اېچ‌کپچا ننگونه اواره کړئ او ځوابي ارزښت يې د کپچاويوکي په توگه راوباسئ.",
-	"hcaptcha-privacy-policy": "دا وېبپاڼه د اېچ‌کپچا له خوا ژغورل شوی  او د هغې [https://www.hcaptcha.com/privacy پټنتيا تگلار] او [https://www.hcaptcha.com/terms د چوپړ منښتونه] پکې پلې کېږي."
+	"hcaptcha-privacy-policy": "دا وېبپاڼه د اېچ‌کپچا له خوا ژغورل شوی  او د هغې [https://www.hcaptcha.com/privacy پټنتيا تگلار] او [https://www.hcaptcha.com/terms د چوپړ منښتونه] پکې پلې کېږي.",
+	"hcaptcha-challenge-closed": "د دوام ورکولو لپاره تاسو بايد کپچا بشپړه کړئ.",
+	"hcaptcha-challenge-expired": "د کپچا بشپړولو لپاره ټاکلی وخت پای ته رسېدلی دی. مهرباني وکړئ بيا هڅه وکړئ."
 }

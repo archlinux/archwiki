@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fulup",
-			"Huñvreüs"
+			"Huñvreüs",
+			"Ar choler"
 		]
 	},
 	"hcaptcha-desc": "Modulenn [https://www.hcaptcha.com/ hCaptcha] evit Confirm Edit",
@@ -12,5 +13,9 @@
 	"hcaptcha-createaccount": "Evit gwareziñ ar wiki a-enep d'ar c'hrouiñ kontoù emgefre e c'houlennomp diganeoc'h diskoulmañ ar c'hCaptcha da-heul :",
 	"hcaptcha-createaccount-fail": "Evit doare n'oc'h ket deuet a-benn eus ar c'hCAPTCHA",
 	"hcaptcha-create": "Evit gwareziñ ar wiki a-enep d'ar c'hrouiñ pajennoù emgefre e c'houlennomp diganeoc'h diskoulmañ ar c'hCaptcha da-heul :",
-	"hcaptcha-help": "Diskoulmit ur goulenn Captcha hag adkasit talvoud ar respont evit captchaWord."
+	"hcaptcha-help": "Diskoulmit ur goulenn Captcha hag adkasit talvoud ar respont evit captchaWord.",
+	"hcaptcha-privacy-policy": "Gwarezet eo al lec'hienn-mañ gant hCaptcha ha talvezout a ra e [https://www.hcaptcha.com/privacy Bolitikerezh Prevezded] hag e [https://www.hcaptcha.com/terms Dermenoù Servij].",
+	"hcaptcha-challenge-closed": "Evit kenderc'hel e rankit diskoulmañ ar captcha.",
+	"hcaptcha-challenge-expired": "Aet eo an amzer da ziskoulmañ ar c’haptcha da dermen. Klaskit en-dro mar plij.",
+	"hcaptcha-force-show-captcha-edit": "Adkasit ar furmskrid ha diskoulmit an dae evit enrollañ ho kemm."
 }

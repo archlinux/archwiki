@@ -23,7 +23,8 @@
 			"Omidh",
 			"Reza1615",
 			"ZxxZxxZ",
-			"درفش کاویانی"
+			"درفش کاویانی",
+			"Jeeputer"
 		]
 	},
 	"thanks-desc": "پیوندی برای تشکر از کاربران بابت ویرایش‌ها، نظرات و غیره اضافه می‌کند.",
@@ -73,5 +74,5 @@
 	"notification-header-flow-thank": "$1 از {{GENDER:$5|شما}} به خاطر نظرتان در «<strong>$3</strong>» {{GENDER:$2|تشکر کرد}}.",
 	"notification-compact-header-flow-thank": "$1 از {{GENDER:$3|شما}} {{GENDER:$2|تشکر کرد}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|یک نفر|$1 نفر|100=بیش از ۹۹ نفر}} از شما برای نظرتان در «<strong>$2</strong>» {{GENDER:$3|تشکر}} {{PLURAL:$1|کرد|کردند}}.",
-	"ipb-action-thanks": "در حال فرستادن تشکر"
+	"ipb-action-thanks": "فرستادن تشکر"
 }

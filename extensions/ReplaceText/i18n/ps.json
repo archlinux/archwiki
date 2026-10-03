@@ -18,5 +18,7 @@
 	"replacetext_watchmovedpages": "همدا مخونه کتل",
 	"replacetext_invertselections": "ټاکنې سرچپه کول",
 	"replacetext_replace": "ځايناستول",
-	"replacetext_editsummary": "له \"$1\" نه \"$2\" ته - ليک ځايناستول"
+	"replacetext_editsummary": "له \"$1\" نه \"$2\" ته - ليک ځايناستول",
+	"right-replacetext": "ټوله ويکي کې د لړۍ ځايناستول",
+	"action-replacetext": "ټوله ويکي کې د لړۍ ځايناستول"
 }

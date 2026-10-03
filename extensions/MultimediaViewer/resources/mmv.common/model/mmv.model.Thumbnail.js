@@ -29,13 +29,25 @@ class Thumbnail {
 			throw new Error( 'All parameters are required and cannot be empty or zero' );
 		}
 
-		/** @property {string} url The URL to the thumbnail */
+		/**
+		 * The URL to the thumbnail
+		 *
+		 * @type {string}
+		 */
 		this.url = url;
 
-		/** @property {number} width The width of the thumbnail in pixels */
+		/**
+		 * The width of the thumbnail in pixels
+		 *
+		 * @type {number}
+		 */
 		this.width = width;
 
-		/** @property {number} height The height of the thumbnail in pixels */
+		/**
+		 * The height of the thumbnail in pixels
+		 *
+		 * @type {number}
+		 */
 		this.height = height;
 	}
 }

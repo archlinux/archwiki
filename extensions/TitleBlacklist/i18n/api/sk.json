@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-titleblacklist-summary": "Overiť názov stránky, názov súboru alebo používateľské meno voči rozšíreniu TitleBlacklist.",
+	"apihelp-titleblacklist-param-title": "Reťazec, ktorý sa má overiť voči zoznamu blokovaných.",
+	"apihelp-titleblacklist-param-action": "Akcia, ktorá sa má skontrolovať.",
+	"apihelp-titleblacklist-param-nooverride": "Nepokúšať sa obísť zoznam blokovaných názvov.",
+	"apihelp-titleblacklist-example-1": "Skontrolovať, či je [[Foo]] na zozname nepovolených názvov",
+	"apihelp-titleblacklist-example-2": "Skontrolovať, či je [[Príklad]] na zozname nepovolených názvov pre úpravy",
+	"apihelp-createaccount-param-ignoretitleblacklist": "Ignorovať kontroly zámeny znakov (vyžaduje jedno z týchto oprávnení: <code>tboverride</code>, <code>tboverride-account</code>)."
+}

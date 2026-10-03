@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-query+mathwbextracts-example-1": "Vyžiada súhrn matematických položiek Wikibase.",
+	"apihelp-query+mathwbextracts-summary": "Vráti súhrn matematickej položky Wikibase v HTML.",
+	"apihelp-query+mathwbextracts-param-qid": "QID požadovanej položky Wikibase.",
+	"apihelp-query+mathwbextracts-param-uselang": "Jazyk, v ktorom sa má položka Wikibase vyžiadať. Predvolenou hodnotou je angličtina."
+}

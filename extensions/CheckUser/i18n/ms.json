@@ -283,7 +283,7 @@
 	"checkuser-ip-contributions-target-error-no-ip": "Masukkan alamat IP atau julat IP yang sah",
 	"checkuser-ip-contributions-target-error-no-ip-banner": "Carian anda tidak dapat diselesaikan. Sila masukkan alamat IP atau julat IP yang sah. [[Special:Contributions/$1|Atau cari mengikut nama pengguna]].",
 	"checkuser-ip-contributions-tab-label-contributions": "Sumbangan",
-	"checkuser-ip-contributions-tab-label-archive-contributions": "Sumbangan yang dihapuskan",
+	"checkuser-ip-contributions-tab-label-archive-contributions": "Sumbangan terhapus",
 	"checkuser-ip-contributions-search-form-wrapper": "Cari sumbangan IP",
 	"checkuser-ip-contributions-results-title": "Sumbangan IP pengguna sementara untuk $1",
 	"checkuser-global-contributions-no-results-no-central-user": "<strong>Tiada hasil yang berpadanan dengan pertanyaan</strong>. Pengguna \"$1\" tidak berdaftar.",

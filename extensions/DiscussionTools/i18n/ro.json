@@ -10,7 +10,8 @@
 			"Paloi Sciurala",
 			"Strainu",
 			"Turbojet",
-			"Woytecr"
+			"Woytecr",
+			"Vellion Eagle"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|Veți}} primi o notificare când cineva publică un nou comentariu în această discuție. Vă puteți ajusta setările de notificări în preferințe.",
@@ -193,7 +194,7 @@
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Arhivări}} ale paginilor de discuție",
 	"echo-pref-tooltip-dt-subscription": "Notifică-mă când cineva publică un nou comentariu într-un subiect la care sunt {{GENDER:|abonat|abonată}}.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Notifică-mă atunci când un subiect la care sunt {{GENDER:|abonat|abonată}} este arhivat sau eliminat dintr-o pagină, sau dacă notificări despre noi comentarii publicate în acel subiect nu pot fi trimise din diverse motive.",
-	"discussiontools-comments-before-first-heading-category-desc": "Pagina de discuție conține comentarii în introducere (înainte de primul antet). Acest lucru poate duce la afișarea incorectă a introducerii sau a comentariilor, mai ales în versiunea mobilă și în aplicațiile mobile.",
+	"discussiontools-comments-before-first-heading-category-desc": "Pagina de discuție conține comentarii în introducere (înainte de primul antet). Acest lucru poate duce la afișarea incorectă a introducerii sau a comentariilor, mai ales pe versiunea pentru mobil și pe aplicațiile pentru mobil.",
 	"tag-discussiontools-added-comment-description": "Un comentariu de pagină de discuție a fost adăugat în această editare",
 	"tag-discussiontools-description": "Editare făcută utilizând Unelte de discuție",
 	"tag-discussiontools-edit": "Comentariu editat",

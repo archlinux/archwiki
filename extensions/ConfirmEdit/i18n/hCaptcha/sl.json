@@ -11,5 +11,6 @@
 	"hcaptcha-createaccount": "Za zaščito vikija pred samodejnim ustvarjanjem računov vas prijazno prosimo, da rešite naslednji hCaptcha:",
 	"hcaptcha-createaccount-fail": "Zdi se, da niste rešili hCAPTCHA.",
 	"hcaptcha-create": "Za zaščito vikija pred samodejnim ustvarjanjem strani vas prijazno prosimo, da rešite naslednji hCaptcha:",
-	"hcaptcha-help": "Rešite izziv hCAPTCHA in vrnite vrednost odgovora kot captchaWord."
+	"hcaptcha-help": "Rešite izziv hCAPTCHA in vrnite vrednost odgovora kot captchaWord.",
+	"hcaptcha-privacy-policy": "To spletno mesto je zaščiteno s hCaptcha in zanj veljajo [https://www.hcaptcha.com/privacy Pravilnik o zasebnosti] in [https://www.hcaptcha.com/terms Pogoji storitve]"
 }

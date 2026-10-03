@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kuvaly"
+			"Kuvaly",
+			"Terrus38"
 		]
 	},
 	"wikieditor-toolbar-tool-bold": "Grëbi",
@@ -12,7 +13,7 @@
 	"wikieditor-toolbar-tool-link": "Lënka",
 	"wikieditor-toolbar-tool-link-title": "Wstôwi lënka",
 	"wikieditor-toolbar-tool-link-insert": "Wstôwi lënka",
-	"wikieditor-toolbar-tool-link-cancel": "Anulujë",
+	"wikieditor-toolbar-tool-link-cancel": "Anuluj",
 	"wikieditor-toolbar-section-advanced": "Awansowóné",
 	"wikieditor-toolbar-tool-heading-1": "Równiô 1",
 	"wikieditor-toolbar-tool-heading-2": "Równiô 2",
@@ -27,7 +28,7 @@
 	"wikieditor-toolbar-tool-table-example": "Przëmiôr",
 	"wikieditor-toolbar-tool-table-preview": "Pòdzérk",
 	"wikieditor-toolbar-tool-table-insert": "Wstôwi",
-	"wikieditor-toolbar-tool-table-cancel": "Anulujë",
+	"wikieditor-toolbar-tool-table-cancel": "Anuluj",
 	"wikieditor-toolbar-tool-replace-button-findnext": "Nalezë pòstãpné",
 	"wikieditor-toolbar-tool-replace-close": "Zamkni",
 	"wikieditor-toolbar-section-characters": "Specjalnë céchów",

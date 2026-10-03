@@ -16,7 +16,8 @@
 			"TomášPolonec",
 			"Vegetator",
 			"Yardom78",
-			"Wizzard"
+			"Wizzard",
+			"KormiSK"
 		]
 	},
 	"tooltip-ca-ve-edit": "Upraviť túto stránku",
@@ -43,6 +44,7 @@
 	"visualeditor-desc": "Vizuálny editor pre MediaWiki",
 	"visualeditor-descriptionpagelink": "Project:Vizuálny editor",
 	"visualeditor-dialog-extension-abandonedit": "Naozaj chcete zatvoriť toto dialógové okno bez uloženia zmien?",
+	"visualeditor-dialog-media-alttext-checkbox": "Použiť popis ako alternatívny text",
 	"visualeditor-dialog-media-alttext-section": "Alternatívny text",
 	"visualeditor-dialog-media-alttext-section-help": "Toto môžete použiť na zadanie textového popisu pre ľudí, ktorí položku neuvidia. Popis by mal byť postačujúci na pochopenie účelu a informácie, ktorú táto multimediálna položka poskytuje. Toto je podstatné pre nevidiacich používateľov a iných ľudí, ktorý používajú čítačky obrazoviek alebo čisto textové prehliadače.",
 	"visualeditor-dialog-media-change-image": "Vybrať iný obrázok",

@@ -19,10 +19,10 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 2.9.7 of composer via `composer --version`.
+1. Ensure you're using version 2.10.2 of composer via `composer --version`.
    Everyone using the same version means that diffs from the autoloader are
    minimal and so easier to validate and manually rebase. You can typically
-   do this by running `composer self-update 2.9.7` (possibly with sudo).
+   do this by running `composer self-update 2.10.2` (possibly with sudo).
 2. Edit the composer.json file to add/update the libraries you want to change.
    It is recommended that you use `composer require <package> <version>
    --no-update` to do so as composer will then automatically sort the
@@ -31,7 +31,7 @@ Adding or updating libraries
    We strongly recommend you this through Docker, both to avoid running
    untrusted code, and to exactly align with continous integration, via:
    ```
-   docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD/.git:/src/.git:ro" -v "$PWD:/src" -w /src docker-registry.wikimedia.org/releng/composer-php83:8.3.31 update --no-dev
+   docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD/.git:/src/.git:ro" -v "$PWD:/src" -w /src docker-registry.wikimedia.org/releng/composer-php83:8.3.31-s1 update --no-dev
    ```
 4. Add all the new dependencies that got installed to composer.json as well,
    so that everything has their version pinned. You can look at the changes

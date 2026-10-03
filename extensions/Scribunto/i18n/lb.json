@@ -33,6 +33,7 @@
 	"scribunto-lua-error-location": "Lua-Feeler $1: $2.",
 	"scribunto-lua-error": "Lua-Feeler: $2.",
 	"scribunto-lua-warning": "Skriptwarnung: $1",
+	"scribunto-luastandalone-decode-error": "Lua-Feeler: Interne Feeler: De Message konnt net decodéiert ginn.",
 	"scribunto-module-with-errors-category": "Scirbunto-Moduler mat Feeler",
 	"scribunto-module-with-errors-category-desc": "Am Modul komme Feeler vir.",
 	"scribunto-limitreport-timeusage": "Lua-Zäitnotzung",

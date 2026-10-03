@@ -22,7 +22,8 @@
 			"Silviubogan",
 			"Stelistcristi",
 			"Strainu",
-			"WebSourceContentRO"
+			"WebSourceContentRO",
+			"Vellion Eagle"
 		]
 	},
 	"abusefilter-desc": "Aplică euristici automate modificărilor.",
@@ -39,7 +40,7 @@
 	"abusefilter-blockreason": "Blocare automată efectuată de filtrul de abuz.\nDescrierea regulii aplicate: $1",
 	"abusefilter-degroupreason": "Drepturi automat suspendate de către filtrul de abuz.\nDescrierea regulii: $1",
 	"abusefilter-accountreserved": "Acest nume de cont este rezervat pentru a fi folosit de către filtrul abuz.",
-	"right-abusefilter-modify": "Crează sau modifică filtrele de abuz",
+	"right-abusefilter-modify": "Creează sau modifică filtrele de abuz",
 	"right-abusefilter-view": "Vizualizează filtrele de abuz",
 	"right-abusefilter-log": "Vizualizează jurnalul de abuzuri",
 	"right-abusefilter-log-detail": "Vizualizează intrări detaliate în jurnalul de abuzuri",

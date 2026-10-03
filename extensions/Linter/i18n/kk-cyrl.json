@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Casserium"
+		]
+	},
+	"linterrors": "Линтер қателері",
+	"linttemplateerrors": "Линтер қателері кездесетін трансклюзиялар",
+	"linter-category-bogus-image-options": "Жалған файл параметрлері",
+	"linter-category-self-closed-tag": "Өздігінен жабылатын тегтер",
+	"linter-category-self-closed-tag-desc": "Бұл беттерде өздігінен жабылатын тегтер бар",
+	"linter-form-tag-option-all": "Сүзгі жоқ",
+	"linter-form-template-option-all": "Сүзгі жоқ",
+	"pageinfo-linter-moreinfo": "Линтер қателері туралы толық ақпаратты қараңыз."
+}

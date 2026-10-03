@@ -33,7 +33,11 @@ class DownloadPane extends UiElement {
 		this.createDownloadSection( this.$container );
 		this.createAttributionButton( this.$container );
 
-		/** @property {ImageModel|null} Image the download button currently points to. */
+		/**
+		 * Image the download button currently points to.
+		 *
+		 * @type {ImageModel|null}
+		 */
 		this.image = null;
 	}
 

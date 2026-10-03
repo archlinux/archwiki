@@ -10,7 +10,8 @@
 			"Schniggendiller",
 			"The Evil IP address",
 			"Tkarcher",
-			"Umherirrender"
+			"Umherirrender",
+			"XanonymusX"
 		]
 	},
 	"skinname-vector": "Vector (2010)",
@@ -43,7 +44,7 @@
 	"vector-jumptocontent": "Zum Inhalt springen",
 	"vector-more-actions": "Mehr",
 	"vector-appearance-label": "Erscheinungsbild",
-	"vector-appearance-tooltip": "Änderung des Aussehens der Schriftgröße, -breite und -farbe der Seite",
+	"vector-appearance-tooltip": "Änderung der Schriftgröße, der Breite und der Farbe der Seite",
 	"vector-personal-tools-tooltip": "Persönliche Einstellungen",
 	"vector-feature-limited-width-name": "Breite",
 	"vector-feature-limited-width-0-label": "Breit",

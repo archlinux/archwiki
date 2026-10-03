@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Vlad5250",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
 	"hcaptcha-desc": "Модуль [https://www.hcaptcha.com/ hCaptcha] для підтвердження редагування",

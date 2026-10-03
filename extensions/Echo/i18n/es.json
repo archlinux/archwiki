@@ -44,7 +44,8 @@
 			"The Anonymouse",
 			"TheBITLINK",
 			"Themasterriot",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"Danielyepezgarces"
 		]
 	},
 	"echo-desc": "Sistema para notificar a los usuarios sobre eventos y mensajes",
@@ -96,6 +97,7 @@
 	"echo-category-title-watchlist": "Edición en página vigilada",
 	"echo-category-title-minor-watchlist": "Edición menor en página vigilada",
 	"echo-category-title-api-triggered": "Notificaciones activadas por API",
+	"echo-category-title-verify-email-reminder": "Recordatorios de confirmación por correo electrónico",
 	"echo-pref-tooltip-article-linked": "Notificarme cuando alguien enlace a una página creada a partir de otra página.",
 	"echo-pref-tooltip-reverted": "Notificarme cuando alguien revierta una edición mía mediante las herramientas de deshacer o revertir.",
 	"echo-pref-tooltip-mention": "Notificarme cuando alguien enlace mi página de {{GENDER:|usuario|usuaria}}.",

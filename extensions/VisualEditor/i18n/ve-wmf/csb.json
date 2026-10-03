@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kirsan"
+			"Kirsan",
+			"Orbitminis"
 		]
 	},
 	"tag-visualeditor": "Wizualny editora",
@@ -11,5 +12,5 @@
 	"visualeditor-welcomedialog-content": "Kòżdi mòże editowac i kòżdô edicjô rozwijô kaszëbską Wikipediã.",
 	"visualeditor-welcomedialog-content-thanks": "Dzãkùjemë, że pòmôgôsz swiatu òdkrëwac wiédzã!",
 	"visualeditor-welcomedialog-switch-ve": "Przełączë na wizualny editor",
-	"visualeditor-welcomedialog-title": "Witôj w Wikipedie"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Witôj}} w {{GRAMMAR:MS.lp|$2}}"
 }

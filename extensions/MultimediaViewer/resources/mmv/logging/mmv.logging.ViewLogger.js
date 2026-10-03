@@ -28,35 +28,35 @@ class ViewLogger {
 		/**
 		 * Was the last image view logged or was logging skipped?
 		 *
-		 * @property {boolean}
+		 * @type {boolean}
 		 */
 		this.wasLastViewLogged = false;
 
 		/**
 		 * Record when the user started looking at the current image
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.viewStartTime = 0;
 
 		/**
 		 * How long the user has been looking at the current image
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.viewDuration = 0;
 
 		/**
 		 * The image URL to record a virtual view for
 		 *
-		 * @property {string}
+		 * @type {string}
 		 */
 		this.url = '';
 
 		/**
 		 * Browser window
 		 *
-		 * @property {Object}
+		 * @type {Object}
 		 */
 		this.window = windowObject;
 	}

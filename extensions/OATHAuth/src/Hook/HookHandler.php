@@ -118,6 +118,10 @@ class HookHandler implements
 				$formDescriptor["newModule_$moduleName"] = [
 					'type' => 'submit',
 					'name' => 'newModule',
+					// Set and explicit id, as HTMLFormField assigns autogenerates ids based on the name field.
+					// As all buttons share the same name="newModule" field, all would get the same id otherwise
+					// Duplicate IDs confuse VoiceOver, making it announce all buttons with the same label.
+					'id' => "mw-input-newModule_$moduleName",
 					'default' => $moduleName,
 					'buttonlabel' => $buttonMessage->text(),
 					// Make sure these buttons appear after the loginattempt button

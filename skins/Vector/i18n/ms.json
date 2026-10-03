@@ -10,12 +10,12 @@
 			"Tofeiku"
 		]
 	},
-	"skinname-vector": "Legasi Vektor (2010)",
+	"skinname-vector": "Vektor Legasi (2010)",
 	"skinname-vector-2022": "Vektor (2022)",
 	"vector-specialversion-name": "Vektor",
-	"vector-skin-desc": "Menyediakan 2 kulit Vektor:\n* 2011 - Versi Moden MonoBook dengan wajah baru dan banyak penambahbaikan kebolehgunaan.\n* 2022 - Vektor terbina sebahagian daripada projek [https\n://www.mediawiki.org/wiki/Desktop_Improvements Penambahbaikan Atas Meja] Yayasan Wikimedia.",
+	"vector-skin-desc": "Menyediakan 2 kulit Vektor:\n* 2011 - Versi Moden MonoBook dengan wajah baru dan banyak penambahbaikan kebolehgunaan.\n* 2022 - Vektor yang terbina sebagai sebahagian daripada projek [https://www.mediawiki.org/wiki/Desktop_Improvements Penambahbaikan Atas Meja] Yayasan Wikimedia.",
 	"prefs-vector-enable-vector-1-label": "Gunakan Vektor Legasi",
-	"prefs-vector-enable-vector-1-help": "Dalam beberapa tahun akan datang, kami akan mengemas kini kulit Vektor secara beransur-ansur. Vector Legasi akan membolehkan anda melihat versi lama Vector (setakat Disember 2019). Untuk mengetahui lebih lanjut mengenai kemas kini berkaitan, sila kunjungi [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements laman projek].",
+	"prefs-vector-enable-vector-1-help": "Dalam beberapa tahun akan datang, kami akan mengemas kini kulit Vektor secara beransur-ansur. Vektor Legasi akan membolehkan anda melihat versi lama Vektor (setakat Disember 2019). Untuk mengetahui lebih lanjut mengenai kemas kini berkaitan, sila kunjungi [https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements laman projek].",
 	"vector.css": "/* Semua CSS di sini akan dimuatkan untuk pengguna kulit Vektor */",
 	"vector.js": "/ * Semua JavaScript di sini akan dimuatkan untuk pengguna-pengguna kulit Vektor * /",
 	"vector-action-toggle-sidebar": "Togol batang sisi",

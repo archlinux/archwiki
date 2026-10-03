@@ -5,10 +5,10 @@
 			"Winston Sung"
 		]
 	},
-	"apihelp-flowthank-summary": "Pošaljite javnu obavijest o zahvali za komentar Ustrojnih raspravica.",
-	"apihelp-flowthank-param-postid": "UUID objave za koju zahvaljujete.",
-	"apihelp-flowthank-example-1": "Pošalji zahvalu za komentar s <kbd>UUID xyz789</kbd>",
+	"apihelp-flowthank-summary": "Pošaljite javnu obavijest o zahvali za Flow komentar.",
+	"apihelp-flowthank-param-postid": "UUID objave na kojoj zahvaljujete.",
+	"apihelp-flowthank-example-1": "Zahvali na komentaru s identifikatorom <kbd>UUID xyz789</kbd>",
 	"apihelp-thank-summary": "Pošalji obavijest o zahvali uređivaču.",
-	"apihelp-thank-param-rev": "ID izmjene za koju zahvaljujete. Mora da bude ukazano ovo ili \"log\".",
+	"apihelp-thank-param-rev": "ID izmjene na kojoj zahvaljujete. Mora biti navedeno ovo ili 'log'.",
 	"apihelp-thank-param-log": "ID dnevničke stavke na kojoj zahvaljujete. Mora biti navedeno ovo ili \"rev\"."
 }

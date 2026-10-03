@@ -10,6 +10,7 @@
 			"Wizzard"
 		]
 	},
+	"content-model-scribunto": "Modul Scribunto",
 	"scribunto-desc": "Umožňuje vkladať do stránok MediaWiki skriptovacie jazyky",
 	"scribunto-line": "na riadku $1",
 	"scribunto-module-line": "v module $1 na riadku $2",
@@ -50,6 +51,9 @@
 	"scribunto-luastandalone-decode-error": "Chyba Lua: Interná chyba: Správu nie je možné dekódovať.",
 	"scribunto-luastandalone-write-error": "Chyba Lua: Interná chyba: Chyba zápisu do potrubia.",
 	"scribunto-luastandalone-read-error": "Chyba Lua: Interná chyba: Chyba čítania z potrubia.",
+	"scribunto-luastandalone-gone": "Chyba Lua: Interná chyba: Interpret už skončil.",
+	"scribunto-luastandalone-signal": "Chyba Lua: Interná chyba: Interpret bol ukončený signálom „$2“.",
+	"scribunto-luastandalone-exited": "Chyba Lua: Interná chyba: Interpret skončil so stavom $2.",
 	"scribunto-module-with-errors-category": "Moduly Scribunto obsahujúce chyby",
 	"scribunto-module-with-errors-category-desc": "Modul obsahuje chybu.",
 	"scribunto-limitreport-timeusage": "Využitie času Lua",
@@ -65,5 +69,7 @@
 	"scribunto-limitreport-profile-percent": "$1 %",
 	"scribunto-limitreport-logs": "Protokoly Lua",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Zobraziť stránku modulu"
+	"tooltip-ca-nstab-module": "Zobraziť stránku modulu",
+	"namespaceinfo-description-ns828": "Menný priestor pre moduly kódu Lua, ktoré možno volať z wiki stránok, a pre ich stránky dokumentácie",
+	"namespaceinfo-description-ns829": "Diskusné stránky k modulom a dokumentácii"
 }

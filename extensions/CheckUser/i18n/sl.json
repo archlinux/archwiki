@@ -18,6 +18,7 @@
 	"checkuser-contribs-log-initiator": "pregledi, ki jih je opravil ta uporabnik",
 	"group-checkuser": "Preverjevalci uporabnikov",
 	"group-checkuser-member": "{{GENDER:$1|preverjevalec|preverjevalka|preverjevalec_ka}} uporabnikov",
+	"group-temporary-account-viewer": "Pregledovalci začasnih računov IP-jev",
 	"right-checkuser": "Preverjanje uporabnikovih IP-naslovov in drugih podatkov",
 	"right-checkuser-log": "Dostop do dnevnika preverjanj uporabnikov",
 	"right-checkuser-temporary-account": "Ogledovanje IP-naslovov, ki jih uporabljajo začasni računi",

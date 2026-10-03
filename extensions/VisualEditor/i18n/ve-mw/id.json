@@ -30,7 +30,8 @@
 			"Veracious",
 			"William Surya Permana",
 			"WillsonEP09",
-			"AhmedG612"
+			"AhmedG612",
+			"Hidayatsrf"
 		]
 	},
 	"collabpad-disabled": "CollabPad tidak diaktifkan di wiki ini.",
@@ -327,6 +328,7 @@
 	"visualeditor-mwpredialog-title": "Teks polos terpraformat",
 	"visualeditor-mwsignature-tool": "Tanda tangan Anda",
 	"visualeditor-preference-newwikitexteditor-enable": "Gunakan mode teks wiki di dalam penyunting visual daripada penyunting teks wiki yang berbeda.",
+	"visualeditor-preference-newwikitexteditor-help": "Ini terkadang disebut 'penyunting teks wiki 2017'.",
 	"visualeditor-preference-tabs": "Mode penyuntingan:",
 	"visualeditor-preference-tabs-multi-tab": "Tampilkan kedua tab penyunting",
 	"visualeditor-preference-tabs-prefer-ve": "Selalu tampilkan penyunting visual bila dimungkinkan.",

@@ -33,13 +33,13 @@ class Canvas extends UiElement {
 		super( $container );
 
 		/**
-		 * @property {boolean}
+		 * @type {boolean}
 		 * @private
 		 */
 		this.dialogOpen = false;
 
 		/**
-		 * @property {ThumbnailWidthCalculator}
+		 * @type {ThumbnailWidthCalculator}
 		 * @private
 		 */
 		this.thumbnailWidthCalculator = new ThumbnailWidthCalculator();
@@ -47,7 +47,7 @@ class Canvas extends UiElement {
 		/**
 		 * Contains image.
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$imageDiv = $( '<div>' )
 			.addClass( 'mw-mmv-image' );
@@ -57,7 +57,7 @@ class Canvas extends UiElement {
 		/**
 		 * Container of canvas and controls, needed for canvas size calculations.
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 * @private
 		 */
 		this.$imageWrapper = $imageWrapper;
@@ -65,7 +65,7 @@ class Canvas extends UiElement {
 		/**
 		 * Main container of image and metadata, needed to propagate events.
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 * @private
 		 */
 		this.$mainWrapper = $mainWrapper;
@@ -73,7 +73,7 @@ class Canvas extends UiElement {
 		/**
 		 * Raw metadata of current image, needed for canvas size calculations.
 		 *
-		 * @property {LightboxImage}
+		 * @type {LightboxImage}
 		 * @private
 		 */
 		this.imageRawMetadata = null;
@@ -342,7 +342,7 @@ class Canvas extends UiElement {
 /**
  * Maximum blowup factor tolerated
  *
- * @property {number} MAX_BLOWUP_FACTOR
+ * @type {number}
  * @static
  */
 Canvas.MAX_BLOWUP_FACTOR = 11;

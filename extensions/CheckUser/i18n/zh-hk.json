@@ -7,7 +7,8 @@
 			"LuciferianThomas",
 			"Xiplus",
 			"捍粵者",
-			"星海"
+			"星海",
+			"LNDDYL"
 		]
 	},
 	"checkuser": "查核用戶",
@@ -20,5 +21,7 @@
 	"checkuser-target": "IP位址或用戶名：",
 	"checkuser-users": "查詢用戶",
 	"checkuser-ipeditcount": "~於全部用戶中 $1",
+	"checkuser-userinfocard-active-wikis-label": "活躍的計劃",
+	"checkuser-userinfocard-menu-view-contributions": "檢視{{GENDER:$1|用戶}}貢獻",
 	"tooltip-t-global-contributions": "檢視{{GENDER:$1|該用戶}}的全域貢獻清單"
 }

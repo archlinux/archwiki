@@ -103,5 +103,10 @@
 	"templatedata-modal-title-templateformat": "Ieteiktas vikiteksta noformējums",
 	"templatedata-modal-title-templateformatstring": "Pielāgots formāta šablons",
 	"templatedata-modal-title-templateparam-details": "Parametra detaļas: $1",
-	"templatedata-modal-title-templateparams": "Veidnes parametri"
+	"templatedata-modal-title-templateparams": "Veidnes parametri",
+	"templatedata-category-browser-header": "Kategorijas",
+	"templatedata-category-switch-label": "Augstākā līmeņa kategorija:",
+	"templatedata-category-rootcat": "Veidnes",
+	"templatedata-category-switch-button": "Pārlūkot",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Nosaukumi"
 }

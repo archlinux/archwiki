@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Kazu89",
-			"Terfili"
+			"Terfili",
+			"Albinfo"
 		]
 	},
 	"fancycaptcha-captcha": "Controlla da segirezza",
 	"fancycaptcha-accountcreate": "Per impedir la creaziun automatica da contos d'utilisader, endatescha per plaschair ils bustabs che vegnan mussads sutvart ([[Special:Captcha/help|dapli infos]]):",
-	"fancycaptcha-imgcaptcha-ph": "Endatescha il text che vesas en il maletg"
+	"fancycaptcha-imgcaptcha-ph": "Endatescha il text che vesas en il maletg",
+	"fancycaptcha-reload-text": "Actualisar"
 }

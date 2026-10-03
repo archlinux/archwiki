@@ -14,7 +14,8 @@
 			"OTAVIO1981",
 			"Opraco",
 			"Teles",
-			"TheEduGobi"
+			"TheEduGobi",
+			"NenhumaFênix"
 		]
 	},
 	"thanks-desc": "Adiciona ligações para agradecer usuários por suas edições, comentários, etc.",
@@ -33,7 +34,7 @@
 	"thanks-error-invalidrecipient-self": "Você não pode agradecer a si mesmo",
 	"thanks-error-notloggedin": "Usuários anônimos não podem enviar agradecimentos",
 	"thanks-error-ratelimited": "{{GENDER:$1|Você}} excedeu seu limite. Aguarde um pouco e tente novamente.",
-	"thanks-thank-tooltip": "{{GENDER:$1|Enviar}} uma notificação de agradecimento a {{GENDER:$2|este usuário|esta usuária}}",
+	"thanks-thank-tooltip": "{{GENDER:$1|Enviar}} uma notificação de agradecimento a {{GENDER:$2|este usuário|esta usuária|este(a) usuário(a)}}",
 	"thanks-thank-tooltip-no": "{{GENDER:$1|Cancelar}} a notificação de agradecimento",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Enviar}} a notificação de agradecimento",
 	"thanks-confirmation2": "{{GENDER:$1|Enviar}} um agradecimento que será público?",
@@ -60,7 +61,7 @@
 	"notification-link-text-view-logentry": "Ver entrada do registo",
 	"thanks-error-invalidpostid": "ID de postagem inválido.",
 	"flow-thanks-confirmation-special": "Deseja enviar um agradecimento publicamente por este comentário?",
-	"flow-thanks-thanked-notice": "{{GENDER: $3|Você}} agradeceu $1 pelo comentário {{GENDER: $2|dele|dela}}.",
+	"flow-thanks-thanked-notice": "{{GENDER: $3|Você}} agradeceu $1 pelo comentário {{GENDER: $2|dele|dela|dele(a)}}.",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|agradeceu}} {{GENDER:$5|você}} por seu comentário em <strong>$3</strong>.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|agradeceu}} {{GENDER:$3|você}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Uma pessoa agradeceu|$1 pessoas agradeceram|100=99+ pessoas agradeceram}} {{GENDER:$3|você}} por seu comentário em <strong>$2</strong>.",

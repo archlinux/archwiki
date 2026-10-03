@@ -10,7 +10,8 @@
 			"Pere prlpz",
 			"QuimGil",
 			"Ssola",
-			"Vriullop"
+			"Vriullop",
+			"Leptictidium"
 		]
 	},
 	"thanks-desc": "Afegeix enllaços per agrair als editors les edicions, els comentaris, etc.",
@@ -39,7 +40,7 @@
 	"echo-pref-subscription-edit-thank": "Agraeix la meva edició",
 	"echo-pref-tooltip-edit-thank": "Notifica'm quan algú agraeix una edició que he fet.",
 	"echo-category-title-edit-thank": "Agraïments",
-	"notification-header-rev-thank": "$1 {{GENDER:$4|us}} ha {{GENDER:$2|agraït}} la vostra edició a <strong>$3</strong>.",
+	"notification-header-rev-thank": "$1 {{GENDER:$4|us}} ha {{GENDER:$2|agraït}} l'edició a <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$4|us}} {{GENDER:$2|ha agraït}} la creació de <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$4|us}} {{GENDER:$2|ha agraït}} l'acció relacionada amb <strong>$3</strong>.",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$3|us}} {{GENDER:$2|ha agraït}}.",

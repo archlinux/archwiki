@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-titleblacklist-summary": "د مخ سرليک، دوتنې‌نوم، يا کا‌رن‌نوم د سرليک‌تورلړ په وړاندې تاييد کړئ.",
+	"apihelp-titleblacklist-param-title": "هغه لړۍ چې بايد د تورلړ پر وړاندې تاييد شي.",
+	"apihelp-titleblacklist-param-action": "هغه چاره چې سم‌کتنه يې بايد وشي.",
+	"apihelp-titleblacklist-param-nooverride": "د سرليک‌تورلړ بدلولو هڅه مه کوئ.",
+	"apihelp-titleblacklist-example-1": "وگورئ چې  [[Foo]] تورلړشوی دی",
+	"apihelp-titleblacklist-example-2": "د دې سم‌کتنه چې ايا [[Bar]] د سمون کولو تورلړ کې دی",
+	"apihelp-createaccount-param-ignoretitleblacklist": "د جعلي چکونو څخه ډډه وکړئ ( د لاندې رښتو څخه يوه يې اړينه ده:<code>tboverride</code>, <code>tboverride-account</code>)."
+}

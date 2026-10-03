@@ -304,7 +304,7 @@
 	"group-push-subscription-manager-member": "gestionnaire{{GENDER:$1|}} de demande de poussée",
 	"grouppage-push-subscription-manager": "{{ns:project}}:Push subscription managers",
 	"notification-subject-email-verify-email-reminder": "Vérifiez {{GENDER:$1|votre}} courriel",
-	"notification-header-verify-email-reminder": "Veuillez <strong>vérifier {{GENDER:$1|votre}} adresse courriel</strong> afin que nous sachions que l'adresse courriel figurant sur votre compte vous appartient.",
+	"notification-header-verify-email-reminder": "Bonjour $2,\nVeuillez <strong>vérifier {{GENDER:$1|votre}} adresse courriel</strong> afin que nous sachions que l'adresse courriel figurant sur votre compte vous appartient.",
 	"notification-link-text-verify-email-reminder": "Gérer les préférences courriel",
 	"notification-verify-email-reminder-link-label": "Confirmez l’adresse de courriel"
 }

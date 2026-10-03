@@ -79,7 +79,8 @@
 			"Сrower",
 			"Туллук",
 			"Умар",
-			"Shabe"
+			"Shabe",
+			"Well very well"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять к правкам автоматические эвристические фильтры",
@@ -690,7 +691,7 @@
 	"abusefilter-noreason": "Предупреждение. Чтобы просмотреть личные данные этого журнала, вы должны указать причину.",
 	"abusefilter-log-ip-not-available": "Недоступно",
 	"abusefilter-tag-reserved": "Метка <code>abusefilter-condition-limit</code> зарезервирована для использования фильтром злоупотреблений.",
-	"tag-abusefilter-condition-limit": "предел условия достигнут",
+	"tag-abusefilter-condition-limit": "предел условий достигнут",
 	"tag-abusefilter-condition-limit-description": "Правки или другие действия, которые не могут быть проверены всеми активными [[Special:AbuseFilter|фильтрами злоупотреблений]] ([https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Conditions справка]).",
 	"notification-header-throttle-filter": "Фильтр злоупотреблений $2, который {{GENDER:$1|вы}} недавно редактировали, был ограничен.",
 	"notification-header-throttle-filter-actions": "Фильтр злоупотреблений $2 недавно отредактированный {{GENDER:$1|вами}} имел высокий процент совпадений, а {{PLURAL:$4|следующее действие было|следующие действия были}} автоматически отключены: $3.",

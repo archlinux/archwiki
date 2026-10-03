@@ -16,7 +16,8 @@
 			"Rezonansowy",
 			"Sp5uhe",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"nuke": "Masowe usuwanie",
@@ -30,8 +31,8 @@
 	"nuke-tools-prompt": "Po wylistowaniu stron wybierz strony do usunięcia, a następnie kliknij „{{int:nuke-submit-continue}}”. Przekierowania są wyświetlane kursywą.",
 	"nuke-tools-prompt-restricted": "Możesz nadal użyć tego narzędzia, aby wylistować strony, ale ich usuwanie nie będzie możliwe.",
 	"nuke-tools-notice-error": "Podczas sprawdzania twoich uprawnień do masowego usuwania stron wystąpił błąd. Nie możesz kontynuować.",
-	"nuke-tools-notice-noperm": "Nie posiadasz usprawnień do masowego usuwania stron.",
-	"nuke-tools-notice-blocked": "Aktywna blokada wpływa na twoją możliwość masowego usuwania stron.",
+	"nuke-tools-notice-noperm": "Nie masz uprawnień do masowego usuwania stron.",
+	"nuke-tools-notice-blocked": "Aktywna blokada wpływa na Twoją możliwość masowego usuwania stron.",
 	"nuke-tools-confirm": "{{PLURAL:$1|Następująca strona została wybrana|Następujące $1 strony zostały wybrane|Następujące $1 stron zostało wybranych}} do usunięcia. Podaj powód usunięcia i kliknij „{{int:nuke-submit-delete}}”, aby rozpocząć proces masowego usuwania.",
 	"nuke-submit-list": "Lista stron",
 	"nuke-submit-continue": "Kontynuuj",

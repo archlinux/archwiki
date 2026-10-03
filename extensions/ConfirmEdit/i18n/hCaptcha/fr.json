@@ -29,5 +29,6 @@
 	"hcaptcha-loading-indicator-label": "Veuillez patienter : initialisation du formulaire en cours…",
 	"hcaptcha-missing-token": "Le formulaire est toujours en cours de chargement. Attendez quelques secondes avant de réessayer.",
 	"hcaptcha-noscript": "JavaScript est obligatoire pour continuer. Activez JavaScript dans les paramètres de votre navigateur et actualisez la page.",
-	"hcaptcha-force-show-captcha-edit": "Veuillez soumettre le formulaire à nouveau et résoudre le puzzle pour enregistrer votre modification."
+	"hcaptcha-force-show-captcha-edit": "Veuillez soumettre le formulaire à nouveau et résoudre le puzzle pour enregistrer votre modification.",
+	"hcaptcha-visual-editor-error-handler-warning": "Veuillez soumettre à nouveau votre formulaire pour enregistrer les modifications."
 }

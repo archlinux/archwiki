@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-templatedata-summary": "Získať údaje uložené rozšírením TemplateData.",
+	"apihelp-templatedata-example-1": "Vrátiť TemplateData pre [[Template:Foobar]], s výsledkami aj v prípade, že šablóna neexistuje alebo existuje, ale nemá TemplateData",
+	"apihelp-templatedata-example-2": "Vrátiť TemplateData pre [[Template:Phabricator]], bez výsledkov v prípade, že šablóna neexistuje alebo existuje, ale nemá TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Vrátiť údaje o názvoch aj vtedy, ak chýbajú alebo nemajú TemplateData. Predvolene sa názvy vracajú, len ak existujú a majú TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Vrátiť údaje o názvoch aj vtedy, ak chýbajú alebo nemajú TemplateData. Predvolene (kvôli spätnej kompatibilite) sa názvy vracajú, len ak existujú a majú TemplateData.",
+	"apihelp-templatedata-param-lang": "Vrátiť lokalizované hodnoty v tomto jazyku. Predvolene sa vracajú všetky dostupné preklady.",
+	"apierror-templatedata-corrupt": "TemplateData stránky č. $1 obsahuje neplatné údaje: $2",
+	"apiwarn-templatedata-deprecation-format": "Predvolený formát výstupu sa v budúcnosti zmení na <kbd>jsonfm</kbd>. Zadajte, prosím, výslovne <kbd>format=json</kbd>."
+}

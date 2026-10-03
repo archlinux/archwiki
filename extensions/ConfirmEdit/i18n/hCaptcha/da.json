@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Steenth"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] modul til bekræfte redigering",
+	"hcaptcha-privacy-policy": "Dette websted er beskyttet af hCaptcha, og dets [https://www.hcaptcha.com/privacy privatlivspolitik] og [https://www.hcaptcha.com/terms servicevilkår] gælder.",
+	"hcaptcha-challenge-closed": "For at fortsætte skal du udfylde CAPTCHA-en.",
+	"hcaptcha-challenge-expired": "Tidsfristen for at udfylde CAPTCHA-en er udløbet. Prøv igen.",
+	"hcaptcha-generic-error": "Der opstod en fejl under indlæsning af formularen. Du skal genindlæse siden for at fortsætte.",
+	"hcaptcha-internal-error": "Der opstod en intern fejl under afsendelse af formularen. Prøv igen.",
+	"hcaptcha-network-error": "Der opstod en netværksfejl under afsendelse af formularen. Sørg for, at du har en fungerende forbindelse, og prøv igen.",
+	"hcaptcha-loading-indicator-label": "Vent venligst, mens vi indlæser formularen...",
+	"hcaptcha-missing-token": "Vi er ikke helt færdige med at indlæse formularen. Vent et par sekunder, og prøv derefter igen.",
+	"hcaptcha-noscript": "JavaScript er påkrævet for at fortsætte. Aktiver JavaScript i dine browserindstillinger, og opdater siden.",
+	"hcaptcha-force-show-captcha-edit": "Send venligst formularen igen, og fuldfør udfordringen for at gemme din redigering.",
+	"hcaptcha-visual-editor-error-handler-warning": "Send venligst formularen igen for at gemme din redigering."
+}

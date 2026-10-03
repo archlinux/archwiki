@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hakimi97"
+		]
+	},
+	"oathauth-webauthn-module-label": "Kunci keselamatan",
+	"oathauth-webauthn-javascript-required": "JavaScript mesti didayakan dalam pelayar anda untuk menggunakan kunci keselamatan.",
+	"oathauth-webauthn-ui-login-prompt": "Gunakan kunci keselamatan anda atau ikut arahan pelayar anda.",
+	"oathauth-webauthn-ui-add-key": "Tambah kunci",
+	"oathauth-webauthn-error-browser-unsupported-console": "Pelayar ini tidak menyokong pengesahihan kunci keselamatan atau ia tidak tersedia untuk laman web ini.",
+	"oathauth-webauthn-error-auth-generic": "Proses pengesahihan telah terganggu. Sila mulakan proses pengesahihan sekali lagi.",
+	"oathauth-webauthn-error-reg-generic": "Tidak dapat mengesahkan kunci anda. Sila mulakan proses pendaftaran sekali lagi.",
+	"oathauth-webauthn-registered-keys-section-name": "Kunci berdaftar",
+	"oathauth-webauthn-ui-remove-key": "Buang",
+	"oathauth-webauthn-error-module-not-enabled": "Modul \"$1\" tidak didayakan untuk {{GENDER:$2|pengguna \"$2\"}}.",
+	"oathauth-webauthn-error-verification-failed": "Pengesahan WebAuthn gagal.",
+	"oathauth-webauthn-error-passkey-verification-failed": "Pengesahan kunci laluan gagal.",
+	"oathauth-webauthn-error-credentials-missing": "Bukti kelayakan WebAuthn tidak dihantar.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|Pengguna \"$1\"}} tidak boleh mendaftarkan bukti kelayakan baharu.",
+	"oathauth-webauthn-error-invalid-new-key": "Kunci baharu yang dikembalikan oleh modul bukan daripada jenis yang diperlukan.",
+	"oathauth-webauthn-error-registration-failed": "Pendaftaran kunci baharu gagal.",
+	"oathauth-webauthn-ui-key-register-help": "Pilih nama panggilan untuk kunci anda:",
+	"oathauth-webauthn-error-cannot-remove-key": "Kunci tidak boleh dibuang.",
+	"oathauth-webauthn-error-get-authinfo-fail": "Maklumat pengesahihan tidak dapat diambil.",
+	"oathauth-webauthn-add-key-section-name": "Daftar kunci keselamatan baharu",
+	"oathauth-webauthn-error-get-reginfo-fail": "Maklumat pendaftaran tidak dapat diperoleh.",
+	"oathauth-webauthn-module-description": "WebAuthn berada dalam keadaan percubaan. Ia pada masa ini tidak menyediakan pilihan pemulihan untuk peranti pengesahihan yang hilang atau rosak. \n\n[https://en.wikipedia.org/wiki/WebAuthn Ketahui lebih lanjut tentang WebAuthn]",
+	"oathauth-webauthn-ui-reload-page-label": "Muat semula laman",
+	"oathauth-webauthn-authentication-info-label": "Data pengesahihan",
+	"oathauth-webauthn-authentication-info-help": "Data pengesahihan dihantar kepada pelanggan untuk pengambilan kelayakan",
+	"oathauth-webauthn-credential-label": "Bukti kelayakan pengguna",
+	"oathauth-webauthn-credential-help": "Bukti kelayakan pengguna berdasarkan data pengesahihan",
+	"oathauth-webauthn-add-security-key": "Tambah kunci keselamatan",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Gunakan kunci keselamatan atau kunci laluan"
+}

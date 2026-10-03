@@ -64,11 +64,12 @@
 			"Verdy p",
 			"Wladek92",
 			"Wyz",
-			"Zetud"
+			"Zetud",
+			"Framawiki"
 		]
 	},
 	"abusefilter-desc": "Applique des heuristiques automatiques aux modifications",
-	"abusefilter": "Gestion du filtre anti-abus",
+	"abusefilter": "Gestion des filtres anti-abus",
 	"abuselog": "Journal des déclenchements du filtre anti-abus",
 	"abusefilter-intro": "Bienvenue dans l’interface de gestion des filtres anti-abus.\nLes filtres anti-abus sont un mécanisme logiciel automatisé qui permet d’appliquer des heuristiques prédéfinies à toutes les actions.\nCette interface présente une liste des filtres définis et donne la possibilité de les modifier.",
 	"abusefilter-mustviewprivateoredit": "Pour des raisons de sécurité, seuls les utilisateurs avec le droit de voir les filtres d’abus privés ou de modifier les filtres peuvent utiliser cette interface.",

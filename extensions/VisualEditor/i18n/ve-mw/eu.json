@@ -114,7 +114,7 @@
 	"visualeditor-dialog-meta-settings-notitleconvert-label": "Ez bihurtu izenburua hizkuntza aldaeren artean",
 	"visualeditor-dialog-meta-settings-redirect-label": "Birzuzendu orri hau",
 	"visualeditor-dialog-meta-settings-redirect-placeholder": "Helburu den birzuzenketa orria",
-	"visualeditor-dialog-meta-settings-redirect-staticlabel": "Ez utzi birzuzenketa eguneratzen helburu den orria mugitzen denean.",
+	"visualeditor-dialog-meta-settings-redirect-staticlabel": "Ez utzi birzuzenketa eguneratzen, helburu den orria mugitzen denean.",
 	"visualeditor-dialog-meta-settings-section": "Orrialde-konfigurazioa",
 	"visualeditor-dialog-meta-settings-toc-default": "Behar balitz",
 	"visualeditor-dialog-meta-settings-toc-disable": "Inoiz ez",

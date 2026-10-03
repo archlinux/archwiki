@@ -5,8 +5,14 @@
 		]
 	},
 	"templatestyles": "کينډۍ‌ښودبڼې",
-	"templatestyles-desc": "هرې کينډۍ لپاره بېلې ښودبڼې لارښو شوني کوي",
+	"templatestyles-desc": "هرې کينډۍ لپاره بېلې ښودبڼې لارښود شوني کوي",
 	"templatestyles-missing-src": "کينډۍ‌ښودبڼې <code>src</code> بايد تش نه وي.",
 	"templatestyles-invalid-src": "کينډۍ‌ښودبڼې لپاره ناسم سرليک<code>src</code> ځانگړی‌کونگ.",
-	"content-model-sanitized-css": "رغول شوی سي‌اېس‌اېس"
+	"templatestyles-bad-src-missing": "[[:$1|$2]] مخ کې هېڅ منځپانگه نشته.",
+	"templatestyles-bad-src": "[[:$1|$2]] مخ بايد د کينډۍ‌ښودبڼو لپاره منځپانگيزه رغبېلگه \"{{int:content-model-sanitized-css}}\" ولري (اوسنۍ رغبېلگه \"$3\" ده).",
+	"content-model-sanitized-css": "رغول شوی سي‌اېس‌اېس",
+	"templatestyles-stylesheet-error-category": "کينډۍ‌ښودبڼې ښودبڼې‌پاڼې تېروتنو سره",
+	"templatestyles-stylesheet-error-category-desc": "د کينډۍ‌ښودبڼې د ښودبڼې‌پاڼه يوه تېروتنه لري.",
+	"templatestyles-page-error-category": "هغه مخونه چې کينډۍ‌ښودبڼې تېروتنې لري",
+	"templatestyles-page-error-category-desc": "په مخ کې د code><nowiki><templatestyles/></nowiki></code> نښلن پروسس کولو پرمهال يوه تېروتنه رامنځته شوه."
 }

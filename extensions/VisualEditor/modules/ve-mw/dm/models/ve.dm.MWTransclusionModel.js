@@ -333,11 +333,14 @@
 	 * @private
 	 * @param {string[]} titles
 	 * @param {ve.dm.MWTransclusionPartInstruction[]} queue
-	 * @return {jQuery.Promise}
+	 * @return {Promise}
 	 */
 	ve.dm.MWTransclusionModel.prototype.callTemplateDataApi = function ( titles, queue ) {
-		return Promise.all( titles.map( ( title ) => ve.init.platform.templateDataCache.get( title ) ) )
-			.then( this.resolveChangeQueue.bind( this, queue ) );
+		// Ignore rejections. A title the API does not answer must not hold back the rest
+		// of the batch.
+		return Promise.all( titles.map(
+			( title ) => ve.init.platform.templateDataCache.get( title ).catch( () => {} )
+		) ).then( this.resolveChangeQueue.bind( this, queue ) );
 	};
 
 	/**
@@ -529,11 +532,11 @@
 	ve.dm.MWTransclusionModel.prototype.reset = function () {
 		this.parts = [];
 		this.uid = 0;
-		this.templateDataApiRequests = [];
 		this.changeQueue = [];
 	};
 
-	mw.log.deprecate( ve.dm.MWTransclusionModel.prototype, 'abortAllApiRequests', () => {}, 'This method is not longer necessary' );
-	mw.log.deprecate( ve.dm.MWTransclusionModel.prototype, 'markRequestAsDone', () => {}, 'This method is not longer necessary' );
+	// The requests are no longer abortable. Both of these methods do nothing.
+	mw.log.deprecate( ve.dm.MWTransclusionModel.prototype, 'abortAllApiRequests', () => {}, 'This method is no longer necessary.' );
+	mw.log.deprecate( ve.dm.MWTransclusionModel.prototype, 'abortRequests', () => {}, 'This method is no longer necessary.' );
 
 }() );

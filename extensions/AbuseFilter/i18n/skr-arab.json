@@ -5,8 +5,8 @@
 			"Saraiki"
 		]
 	},
-	"abuselog": "غلط چھاݨاں لاگ",
-	"abusefilter-blocker": "غلط چھاݨاں",
+	"abuselog": "بدزبانی دا چھاݨاں لاگ",
+	"abusefilter-blocker": "بدزبانی دا چھاݨاں",
 	"right-abusefilter-view": "غلط چھاݨے ݙیکھو",
 	"right-abusefilter-log": "غلط لاگ ݙیکھو",
 	"action-abusefilter-modify": "غلط چھاݨے دی تجدید کرو",
@@ -185,7 +185,7 @@
 	"abusefilter-topnav-home": "مکھ پناں",
 	"abusefilter-topnav-recentchanges": "حالیہ چھاݨاں تبدیلیاں",
 	"abusefilter-topnav-log": "غلط لاگ",
-	"abusefilter-log-name": "غلط چھاݨاں لاگ",
+	"abusefilter-log-name": "بدزبانی دا چھاݨاں لاگ",
 	"abusefilter-log-noresults": "کوئی نتیجہ کائنی",
 	"abusefilter-diff-title": "ورژناں دے درمیان فرق",
 	"abusefilter-diff-item": "آئٹم",

@@ -5,13 +5,14 @@
 			"Fulup",
 			"Gwendal",
 			"Huñvreüs",
-			"Y-M D"
+			"Y-M D",
+			"Ar choler"
 		]
 	},
 	"gadgets-desc": "Leuskel a ra an implijerien da bersonelaat [[Special:Gadgets|bitrakoù CSS ha JavaScript]] en o [[Special:Preferences#mw-prefsection-gadgets|fenndibaboù]]",
 	"prefs-gadgets": "Bitrakoù",
 	"prefs-description-gadgets": "Gweredekaat muioc’h a arc’hweladurioù evit ho kont.",
-	"gadgets-prefstext": "A-is ez eus ur roll eus ar bitrakoù a c'hallit gweredekaat evit ho kont.\nEvit ar pep brasañ eo diazezet ar bitrakoù-se war JavaScript, setu ma rank JavaScript bezañ gweredekaet war ho merdeer evit ma'z afent en-dro.\nNotennit mat ne vo efed ebet gant ar bitrakoù-se war ar bajenn penndibaboù-mañ.\n\nNotennit ivez n'eus ket eus ar bitrakoù-se tammoù eus meziant MediaWiki; peurliesañ ez int diorroet ha trezalc'het gant implijerien war ho wiki lec'hel.\nGallout a ra ar verourien lec'hel degas cheñchamantoù er bitrakoù en ur ober gant an [[MediaWiki:Gadgets-definition|termenadurioù]] hag an [[Special:Gadgets|deskrivadurioù]].",
+	"gadgets-prefstext": "A-is ez eus ur roll eus ar bitrakoù a c'hallit gweredekaat evit ho kont.\nEvit ar pep brasañ eo diazezet ar bitrakoù-se war JavaScript, setu e rank JavaScript bezañ gweredekaet en ho merdeer evit ma'z afent en-dro.\nNotennit mat ne vo efed ebet gant ar bitrakoù-se war ar bajennad penndibaboù-mañ.\n\nNotennit ivez n'eo ket ar bitrakoù-se tammoù eus meziant MediaWiki, gant implijerien war ho wiki lec'hel e vezont diorroet ha trezalc'het peurliesañ.\nGallout a ra merourien lec'hel an etrefas kemmañ [[MediaWiki:Gadgets-definition|termenadurioù]] ar bitrakoù a c'heller implijout, hag ar verourien lec'hel a c'hall kemmañ o [[Special:Gadgets|deskrivadurioù]], ma c'hallit gwelet kod mammenn pep bitrak. E [[Special:GadgetUsage|Gadget usage statistics]] e kavot listenn an niver a implijerien evit pep bitrak.",
 	"special-gadgets": "Bitrakoù",
 	"gadgetusage-usercount": "Niver a implijerien",
 	"gadgets-title": "Bitrakoù",

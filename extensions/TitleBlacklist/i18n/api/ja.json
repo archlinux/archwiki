@@ -4,7 +4,8 @@
 			"2nd-player",
 			"Kkairri",
 			"Otokoume",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Tensama0415"
 		]
 	},
 	"apihelp-titleblacklist-summary": "TitleBllacklist に対してページ名、ファイル名、利用者名を検証します。",
@@ -12,5 +13,6 @@
 	"apihelp-titleblacklist-param-action": "確認対象の操作",
 	"apihelp-titleblacklist-param-nooverride": "titleblacklistを上書きしようとしないでください。",
 	"apihelp-titleblacklist-example-1": "[[Foo]]がブラックリストに載っているかどうかを確認する",
+	"apihelp-titleblacklist-example-2": "[[Bar]]が編集禁止リストに登録されているかどうかをチェック",
 	"apihelp-createaccount-param-ignoretitleblacklist": "なりすましチェックを無視する (<code>tboverride</code> または <code>tboverride-account</code> の権限が必要)。"
 }

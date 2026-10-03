@@ -13,7 +13,7 @@
 		"composer/installers": ">=1.0.1"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "50.0.0",
+		"mediawiki/mediawiki-codesniffer": "51.0.1",
 		"mediawiki/mediawiki-phan-config": "0.20.0",
 		"mediawiki/minus-x": "2.0.1",
 		"php-parallel-lint/php-console-highlighter": "1.0.0",
@@ -36,6 +36,9 @@
 		"allow-plugins": {
 			"composer/installers": true,
 			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"audit": {
+			"block-insecure": false
 		}
 	}
 }

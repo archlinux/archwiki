@@ -63,5 +63,6 @@
 	"checkuser-global-contributions-link-sidebar": "გლობალური წვლილი",
 	"checkuser-global-contributions-results-title": "მომხმარებლის $1 გლობალური წვლილი",
 	"checkuser-ip-auto-reveal-link-sidebar": "IP ავტომატური ჩვენება",
+	"checkuser-ip-auto-reveal-link-sidebar-on": "IP ავტო-ჩვენება (ჩართულია)",
 	"checkuser-tempaccount-reveal-ip-button-label": "IP-ის ჩვენება"
 }

@@ -203,6 +203,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Ваши}} права пользователя были {{GENDER:$1|изменены}}. Вы добавлены в группу: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Ваши}} права пользователя были {{GENDER:$1|изменены}}. Вы больше не входите в группу: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Ваши}} права участника были {{GENDER:$1|изменены}}. Вы были добавлены в: $2. Вы больше не входите в: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|Ваше}} членство в {{PLURAL:$2|следующей группе|следующих группах}} автоматически истекло: $1.",
 	"notification-header-user-rights-expiry-change": "Время истечения {{GENDER:$4|вашего}} членства в {{PLURAL:$3|следующей группе|следующих группах}} {{GENDER:$1|изменено}}: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Добро пожаловать}} на сайт {{SITENAME}}, $1! Рады {{GENDER:$2|вас}} здесь видеть.",
 	"notification-header-mention-summary": "$1 упомянул{{GENDER:$2||а}} {{GENDER:$3|вас}} в описании правки на странице <strong>$4</strong>.",

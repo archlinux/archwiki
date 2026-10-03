@@ -5,9 +5,9 @@
 			"Zakaria Tunsung"
 		]
 	},
-	"vector-languages": "Kɔkɔɛ",
-	"vector-language-button-label": "{{PLURAL:$1|$1 kɔkɔre|$1 kɔkɔɛ}}",
-	"vector-no-language-button-label": "Paahi kɔkɔɛ",
+	"vector-languages": "Tɩɛ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 tɩrɩ|$1 tɩɛ}}",
+	"vector-no-language-button-label": "Paahɩ tɩɛ",
 	"vector-action-addsection": "Paahi yeliju",
 	"vector-action-delete": "Ihi bahi",
 	"vector-action-move": "Gaa",

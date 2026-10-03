@@ -35,7 +35,8 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"وهراني"
+			"وهراني",
+			"Gerges"
 		]
 	},
 	"abusefilter-desc": "يطبق قواعد آلية على التعديلات.",
@@ -608,7 +609,7 @@
 	"abusefilter-examine-error-protected": "لا يمكنك عرض هذا السجل لأنه يستخدم متغيرات محمية ومخفي عن العرض العام. $1",
 	"abusefilter-examine-error-protected-due-to-permission": "لا يمكنك عرض هذا السجل لأنه ليس لديك إذن $1.",
 	"abusefilter-topnav": "'''تصفح مرشح الإساءة'''",
-	"abusefilter-topnav-home": "الرئيسية",
+	"abusefilter-topnav-home": "الرئيسة",
 	"abusefilter-topnav-recentchanges": "أحدث تغييرات المرشحات",
 	"abusefilter-topnav-test": "اختبار الباتش",
 	"abusefilter-topnav-examine": "افحص التعديلات الماضية",

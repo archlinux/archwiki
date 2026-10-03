@@ -1,9 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
+	"apihelp-query+gadgetcategories-summary": "Gëtt eng Lëscht vu Gadgetsabschnitter zeréck.",
+	"apihelp-query+gadgetcategories-paramvalue-prop-members": "Zuel vu Gadgeten am Abschnitt.",
+	"apihelp-query+gadgets-summary": "Gëtt eng Lëscht vu Gadgeten, déi op dëser Wiki benotzt ginn zeréck.",
+	"apihelp-query+gadgets-paramvalue-prop-id": "Intern Gadgets-ID.",
+	"apihelp-query+gadgets-param-ids": "IDe vu Gadgete fir ofzeruffen.",
 	"apihelp-query+gadgets-param-allowedonly": "Nëmme Gadgeten opzielen déi fir den aktuelle Benotzer erlaabt sinn.",
+	"apihelp-query+gadgets-param-enabledonly": "Nëmme Gadgeten opzielen, déi vum aktuelle Benotzer aktivéiert goufen.",
 	"apihelp-query+gadgets-example-5": "D'Lëscht vun de Gadgete kréien déi den aktuelle Benotzer aktivéiert huet"
 }

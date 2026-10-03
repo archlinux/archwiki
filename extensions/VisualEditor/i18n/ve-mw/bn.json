@@ -23,7 +23,8 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Bodhisattwa"
 		]
 	},
 	"collabpad-doctitle": "কোলাবপ্যাড: $1",
@@ -80,7 +81,7 @@
 	"visualeditor-dialog-media-info-moreinfo": "আরও তথ্য",
 	"visualeditor-dialog-media-info-readmore": "আরও পড়ুন",
 	"visualeditor-dialog-media-info-uploaded": "আপলোড হয়েছে: $1",
-	"visualeditor-dialog-media-page-advanced": "উচ্চতর",
+	"visualeditor-dialog-media-page-advanced": "উন্নত",
 	"visualeditor-dialog-media-page-general": "সাধারণ",
 	"visualeditor-dialog-media-position-checkbox": "এই আইটেমটির চারপাশে লেখা মোড়ান",
 	"visualeditor-dialog-media-position-checkbox-help": "আপনি এই মিডিয়া আইটেমটিকে ভাসমান অবস্থায় থাকার পরিবর্তে লাইনের মধ্যে এই পাতার লেখার সঙ্গে দেখাতে পারেন। তবে অতি প্রয়োজন ছাড়া এটি ব্যবহার করবেন না, কারণ আপনি যদি বাক্সটিতে টিকচিহ্ন না দেন তাহলে এটি লেখার প্রবাহকে ভেঙ্গে ফেলবে।",
@@ -121,7 +122,7 @@
 	"visualeditor-dialog-meta-languages-label": "ভাষাসমূহ",
 	"visualeditor-dialog-meta-languages-link-label": "সংযুক্ত নিবন্ধ",
 	"visualeditor-dialog-meta-languages-name-label": "ভাষা",
-	"visualeditor-dialog-meta-languages-readonlynote": "এটি অন্য ভাষায় পাতার তালিকা যা এই পাতার সাথে সংযুক্ত রয়েছে। এখনকার জন্য এটি শুধুমাত্র উৎস মোডে বা উইকিউপাত্তে সম্পাদনা করা যাবে।",
+	"visualeditor-dialog-meta-languages-readonlynote": "এটি অন্য ভাষায় পাতার তালিকা যা এই পাতার সাথে সংযুক্ত রয়েছে। এখনকার জন্য এটি শুধু উৎস মোডে বা উইকিউপাত্তে সম্পাদনা করা যাবে।",
 	"visualeditor-dialog-meta-languages-section": "ভাষাসমূহ",
 	"visualeditor-dialog-meta-settings-displaytitle": "শিরোনাম প্রদর্শন",
 	"visualeditor-dialog-meta-settings-displaytitle-help": "আপনি একটি ভিন্ন লেবেল নির্ধারণ করে এই পাতার প্রদর্শনের শিরোনাম প্রতিস্থাপন করতে পারেন।",
@@ -243,6 +244,7 @@
 	"visualeditor-fullpage-switch-label": "সম্পূর্ণ পাতা সম্পাদনা করুন",
 	"visualeditor-generating-wikitext-progress": "উইকিপাঠ্য উৎপন্ন হচ্ছে",
 	"visualeditor-languages-tool": "ভাষাসমূহ",
+	"visualeditor-linkcontext-uneditable": "দুঃখিত, এই লিঙ্কটি কেবল উৎস মোডে সম্পাদনা করা যাবে।",
 	"visualeditor-linkinspector-button-link-external": "বহিঃস্থ সাইট",
 	"visualeditor-linkinspector-button-link-internal": "অভ্যন্তরীণ পাতায় অনুসন্ধান করুন",
 	"visualeditor-linkinspector-convert-link-isbn": "ISBN লিঙ্কে রুপান্তর করুন",

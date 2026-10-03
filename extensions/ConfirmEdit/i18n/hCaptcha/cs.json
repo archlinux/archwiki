@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mormegil"
+		]
+	},
+	"hcaptcha-privacy-policy": "Ochranu tomuto serveru poskytuje hCaptcha a platí její [https://www.hcaptcha.com/privacy Pravidla ochrany osobních údajů] a [https://www.hcaptcha.com/terms Podmínky užití].",
+	"hcaptcha-challenge-closed": "Pro pokračování musíte dokončit test captcha."
+}

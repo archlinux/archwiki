@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bachounda"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "ردّ",
+	"discussiontools-newtopic-missing-title": "من فضلك، اكتب عنوان لموضوع النقاش {{GENDER:|نتاعك}}.",
+	"discussiontools-newtopic-placeholder-title": "موضوع",
+	"discussiontools-replylink": "{{GENDER:|رد}}",
+	"discussiontools-replywidget-advanced": "تفتاش متقدم",
+	"discussiontools-replywidget-cancel": "بطّل",
+	"discussiontools-replywidget-mode-source": "مصدر",
+	"discussiontools-replywidget-mode-visual": "بصري",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|إضافة}} موضوع",
+	"discussiontools-replywidget-placeholder-newtopic": "توصيفه",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|رد}} على {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "شوفه-قبلي",
+	"discussiontools-replywidget-reply": "{{GENDER:|رد}}",
+	"discussiontools-replywidget-summary": "ملخص",
+	"discussiontools-replywidget-watchthis": "زيد هاذ الصفحه ل[[Special:Watchlist|قايمت العسه نتاعك]].",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|عبد|عباد}} في النقاش",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|تعليق|تعليقات}}",
+	"discussiontools-topicheader-latestcomment": "آخر تعليق: $1",
+	"discussiontools-topicsubscription-button-subscribe": "اشترك",
+	"discussiontools-topicsubscription-button-subscribe-label": "اشترك",
+	"discussiontools-topicsubscription-button-unsubscribe": "نحي الاشتراك",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "نحي الاشتراك",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|غادي}} يوصلوك إشعارات على التعليقات الجديدة فهاد الموضوع.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|انت}} راك اشتركت!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ما غاديش}} تجيك إشعارات نتاع التعليقات الجديدة على هاذ الموضوع.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|انت}} لغيت الاشتراك."
+}

@@ -5,11 +5,13 @@
 			"Incelemeelemani",
 			"MuratTheTurkish",
 			"SaldırganSincap",
-			"Sezgin İbiş"
+			"Sezgin İbiş",
+			"Leo"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Lint hatalarının bir listesini alın",
 	"apihelp-query+linterrors-param-categories": "Lint hatalarının kategorileri",
+	"apihelp-query+linterrors-param-invisible-categories": "Görünmeyen lint hatası kategorileri",
 	"apihelp-query+linterrors-param-limit": "Sorgulanacak sonuç sayısı",
 	"apihelp-query+linterrors-param-from": "Sorgulamaya başlamak için Lint kimliği",
 	"apihelp-query+linterrors-param-namespace": "Yalnızca belirtilen ad alanlarından lint hataları ekle",

@@ -92,5 +92,7 @@
 	"math-wikibase-special-form-header": "Navedite naslov formule:",
 	"math-wikibase-special-form-placeholder": "Naslov formule",
 	"math-wikibase-special-form-button": "Zatraži informacije",
-	"math-wikibase-special-error-header": "Pogreška"
+	"math-wikibase-special-error-header": "Pogreška",
+	"math-editpage-insert-inline": "Matematička formula (u retku)",
+	"math-editpage-insert-block": "Matematička formula (blok)"
 }

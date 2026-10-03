@@ -21,9 +21,11 @@
 			"Toghrul Rahimli",
 			"Tucvbif",
 			"Wizardist",
-			"Yurina Tatiana"
+			"Yurina Tatiana",
+			"Shabe"
 		]
 	},
+	"multimediaviewer-current-image-number": "$1 ⁄ $2",
 	"multimediaviewer-desc": "Раскрывает эскизы в большие изображения на весь экран.",
 	"multimediaviewer-optin-pref": "Включить <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиа-просмотрщик]</span>»",
 	"multimediaviewer-file-page": "Перейти на страницу соответствующего файла",

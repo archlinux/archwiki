@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Revi",
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
 	},
 	"templatestyles": "틀스타일",
@@ -15,7 +16,7 @@
 	"templatestyles-errorcomment": "스타일시트 [[:$1]] ($2 판) 처리 오류:\n$3",
 	"templatestyles-size-exceeded": "스타일시트가 $2 단위의 최대 크기 보다 더 큽니다.",
 	"templatestyles-tag-injection": "제공된 스타일시트에는 허용되지 않는 HTML 태그처럼 보이는 내용이 포함되어 있습니다.",
-	"content-model-sanitized-css": "세니타이즈드 CSS",
+	"content-model-sanitized-css": "새니타이즈드 CSS",
 	"templatestyles-stylesheet-error-category": "오류가 있는 TemplateStyles 스타일시트",
 	"templatestyles-stylesheet-error-category-desc": "TemplateStyles 스타일시트에 오류가 있습니다.",
 	"templatestyles-page-error-category": "TemplateStyles 오류가 있는 문서",

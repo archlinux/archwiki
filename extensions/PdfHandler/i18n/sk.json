@@ -1,10 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Helix84"
+			"Helix84",
+			"Wizzard"
 		]
 	},
 	"pdf-desc": "Obsluha zobrazovania PDF súborov v režime obrázkov",
+	"pdf-file-page-warning": "PDF je zložitý formát, ktorý môže v niektorých prípadoch odhaliť časť vašich súkromných informácií. Nastavte si, prosím, svoj prehliadač PDF bezpečným spôsobom.",
+	"pdf-file-page-warning-header": "Otázky súkromia",
+	"pdf-file-page-warning-footer": "Nejde o problém špecifický pre tento konkrétny súbor, ale o všeobecný problém formátu PDF.",
+	"pdf-file-page-warning-info": "Zistite viac o tomto probléme.",
 	"pdf_no_metadata": "nie je možné získať metadáta z PDF",
-	"pdf_page_error": "Číslo stránky nie je v intervale"
+	"pdf_page_error": "Číslo stránky nie je v intervale",
+	"exif-pdf-producer": "Konverzný program",
+	"exif-pdf-version": "Verzia formátu PDF",
+	"exif-pdf-encrypted": "Šifrované",
+	"exif-pdf-pagesize": "Veľkosť strany"
 }

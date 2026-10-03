@@ -6,6 +6,7 @@
 			"Casserium"
 		]
 	},
+	"tag-editcheck-paste-shown": "Өңдеу Тексеру (қою) көрсетілген",
 	"tag-visualeditor": "VisualEditor",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] арқылы жасалған өңдеме",
 	"tag-visualeditor-needcheck": "VisualEditor: Тексеру",

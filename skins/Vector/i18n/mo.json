@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Cybernenea11",
-			"TheChampionMan1234"
+			"TheChampionMan1234",
+			"Orbitminis"
 		]
 	},
 	"vector-action-delete": "Штерӂере",
 	"vector-action-move": "Реденумире",
 	"vector-action-protect": "Протежаре",
-	"vector-view-create": "Креаре",
+	"vector-view-create": "Кряре",
 	"vector-view-edit": "Едитязэ",
 	"vector-view-history": "Историк",
 	"vector-view-view": "Лектурэ",

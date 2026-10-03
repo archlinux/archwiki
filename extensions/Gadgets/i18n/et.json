@@ -9,7 +9,7 @@
 	"prefs-gadgets": "Tööriistad",
 	"prefs-description-gadgets": "Luba lisafunktsioonid.",
 	"gadgets-prefstext": "Allpool on nimekiri eririistadest, mida kasutajad saavad oma konto jaoks sisse lülitada.\nEnamasti põhinevad need riistad JavaScriptil. Seega, et need töötaks, peab olema sinu brauseris JavaScript lubatud.\nPane tähele, et need riistad ei mõjuta kuidagi seda eelistuste lehekülge.\n\nSamuti pane tähele, et need eririistad ei ole osa MediaWiki tarkvarast ja on tavaliselt arendatud ja ülalpeetud sinu kohalikus vikis.\nKohalikud liidese administraatorid saavad muuta tööriistade [[MediaWiki:Gadgets-definition|määratlusi]], nende [[Special:Gadgets|kirjeldusi]] saavad muuta ka kohalikud administraatorid ning kõik kasutajad näevad iga tööriista lähtekoodi. Iga tööriista kasutajate arv selles vikis on ära toodud [[Special:GadgetUsage|tööriistade kasutuse arvandmestikus]].",
-	"gadgets-prefstext-safemode": "Tööriistad pole praegu saadaval, kuna kasutad turvalist režiimi. Palun [[#mw-input-wpforcesafemode|keela turvaline režiim]], et tööriistu kasutada.",
+	"gadgets-prefstext-safemode": "Tööriistad pole praegu saadaval, kuna kasutad  ohutusrežiimi. Palun [[#mw-input-wpforcesafemode|keela  ohutusrežiim]], et tööriistu kasutada.",
 	"special-gadgets": "Tööriistad",
 	"gadgetusage": "Tööriistade kasutuse arvandmestik",
 	"gadgetusage-gadget": "Tööriist",

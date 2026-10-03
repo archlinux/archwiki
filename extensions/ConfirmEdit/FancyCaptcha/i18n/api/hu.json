@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Dj"
 		]
 	},
+	"apihelp-fancycaptchareload-summary": "Új FancyCaptcha lekérése.",
 	"apihelp-fancycaptchareload-example-1": "Új FancyCaptcha kérése"
 }

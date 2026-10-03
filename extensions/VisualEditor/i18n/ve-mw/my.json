@@ -180,5 +180,6 @@
 	"visualeditor-settings-tool": "စာမျက်နှာ အပြင်အဆင်များ",
 	"visualeditor-special-characters-group-other": "မကြာခဏ အသုံးပြု",
 	"visualeditor-templatesused-tool": "တမ်းပလိတ်များ သုံးထားသည်",
+	"visualeditor-toload": "အယ်ဒီတာ ယခု တင်ပါလိမ့်မည်။ စက္ကန့်အနည်းငယ်ကြာပြီးနောက် ဤမက်ဆေ့ချ်ကို သင်မြင်နေရဆဲဖြစ်ပါက [ $1 စာမျက်နှာကို refresh လုပ်ပါ]။",
 	"visualeditor-version-label": "ဗားရှင်း"
 }

@@ -5,7 +5,8 @@
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
 			"Baloch Khan",
-			"شاه زمان پټان"
+			"شاه زمان پټان",
+			"باران"
 		]
 	},
 	"wikieditor": "پرمختللي ويکي‌ليک د سمون مخبڼه",
@@ -49,7 +50,7 @@
 	"wikieditor-toolbar-file-float": "پېيل:",
 	"wikieditor-toolbar-file-default": "(تلواليز)",
 	"wikieditor-toolbar-file-format": "بڼه:",
-	"wikieditor-toolbar-file-format-none": "هيڅ",
+	"wikieditor-toolbar-file-format-none": "هېڅ",
 	"wikieditor-toolbar-tool-file-insert": "ورټومبل",
 	"wikieditor-toolbar-tool-file-cancel": "ناگارل",
 	"wikieditor-toolbar-tool-file-upload": "راپورته‌کول",
@@ -127,7 +128,7 @@
 	"wikieditor-toolbar-help-page-heading": "سرليکونه",
 	"wikieditor-toolbar-help-page-list": "لړليکونه",
 	"wikieditor-toolbar-help-page-file": "دوتنې",
-	"wikieditor-toolbar-help-page-discussion": "خبرې اترې",
+	"wikieditor-toolbar-help-page-discussion": "شننه",
 	"wikieditor-toolbar-help-content-italic-description": "رېوند",
 	"wikieditor-toolbar-help-content-italic-example": "د رېوندليک ليک",
 	"wikieditor-toolbar-help-content-bold-description": "زغرد",

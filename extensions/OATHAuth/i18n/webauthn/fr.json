@@ -9,7 +9,8 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Pamputt"
 		]
 	},
 	"oathauth-webauthn-module-label": "Clé de sécurité",
@@ -39,5 +40,6 @@
 	"oathauth-webauthn-authentication-info-help": "Données d’authentification passées au client pour la récupération des références",
 	"oathauth-webauthn-credential-label": "Références de l’utilisateur",
 	"oathauth-webauthn-credential-help": "Références de l’utilisateur basées sur les données d’authentification",
-	"oathauth-webauthn-add-security-key": "Ajouter une clé de sécurité"
+	"oathauth-webauthn-add-security-key": "Ajouter une clé de sécurité",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Utiliser une clé de sécurité ou une clé de passe"
 }

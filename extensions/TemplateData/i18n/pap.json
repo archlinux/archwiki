@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"templatedata-doc-param-type": "Tipo",
+	"templatedata-doc-param-type-wiki-file-name": "Fail",
+	"templatedata-doc-param-type-wiki-template-name": "Malchi",
+	"templatedata-doc-param-type-wiki-user-name": "Usadó",
+	"templatedata-doc-params": "Parameter di malchi",
+	"templatedata-editbutton": "Editá dato di malchi",
+	"templatedata-helplink": "Informashon tokante dato di malchi",
+	"templatedata-modal-button-add-language": "Añadí idioma",
+	"templatedata-modal-button-addparam": "Añadí parameter",
+	"templatedata-modal-button-apply": "Apliká",
+	"templatedata-modal-button-back": "Bèk",
+	"templatedata-modal-button-cancel": "Kanselá",
+	"templatedata-modal-button-changelang": "Kambia idioma",
+	"templatedata-modal-button-done": "Kla",
+	"templatedata-modal-table-param-required": "Rekerí",
+	"templatedata-modal-table-param-suggested": "Sugerí",
+	"templatedata-modal-table-param-suggestedvalues": "Balor sugerí",
+	"templatedata-modal-table-param-type": "Tipo",
+	"templatedata-modal-title-addparam": "Añadí parameter nobo"
+}

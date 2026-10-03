@@ -39,7 +39,8 @@
 			"Wayiran",
 			"ZxxZxxZ",
 			"جواد",
-			"درفش کاویانی"
+			"درفش کاویانی",
+			"LProfo"
 		]
 	},
 	"abusefilter-desc": "اکتشافات خودکاری را بر روی ویرایش‌های انجام می‌دهد.",
@@ -142,8 +143,8 @@
 	"abusefilter-log-cannot-see-details": "برای مشاهده جزئیات این مورد دسترسی ندارید.",
 	"abusefilter-log-cannot-see-privatedetails": "شما اجازهٔ دیدن جزئیات خصوصی این مورد را ندارید.",
 	"abusefilter-log-nonexistent": "ورودی‌ای با شناسهٔ ارائه‌شده وجود ندارد.",
-	"abusefilter-log-details-hidden": "شما نمی‌توانید جزئیات این مورد را ببینید چون از دید عموم مخفی شده است.",
-	"abusefilter-log-details-hidden-implicit": "شما نمی‌توانید جزئیات این مورد را ببینید چون از دید عموم مخفی شده است.",
+	"abusefilter-log-details-hidden": "شما نمی‌توانید جزئیات این مدخل را ببینید چون از دید عموم پنهان شده است.",
+	"abusefilter-log-details-hidden-implicit": "شما نمی‌توانید جزئیات این مدخل را ببینید زیرا ویرایش مرتبط با آن از دید عموم پنهان است.",
 	"abusefilter-log-private-not-included": "یک یا چند مورد از شناسه‌های پالایه‌ای که انتخاب کرده‌اید خصوصی هستند. به این دلیل که شما مجاز به دیدن جزئیات پالایه‌های خصوصی نیستند، این فیلترها جستجو نشدند.",
 	"abusefilter-log-protected-not-included": "یک یا چند مورد از شناسه‌های پالایه‌ای که ارائه کرده‌اید، محافظت شده‌اند. از آنجا که شما مجاز به مشاهدهٔ جزئیات پالایه‌های محافظت‌شده نیستید یا این که پالایه‌های محافظت‌شده از متغییرهایی استفاده می‌کنند که شما نمی‌توانید به آن‌ها دسترسی داشته باشید، جستجوی شما این پالایه‌ها را شامل نشده است.",
 	"abusefilter-log-hide-no-selected": "موردی انتخاب نشده است",
@@ -159,8 +160,8 @@
 	"abusefilter-log-hide-done": "پیدایی به‌روز شد: $1 {{PLURAL:$1|مورد|مورد}} $2.",
 	"abusefilter-log-hide-done-hide": "{{PLURAL:$1|hidden}}",
 	"abusefilter-log-hide-done-show": "{{PLURAL:$1|unhidden}}",
-	"abusefilter-log-entry-suppress": "$1 $3 را {{GENDER:$2|مخفی کرد}}",
-	"abusefilter-log-entry-unsuppress": "$1 $3 را {{GENDER:$2|از حالت مخفی درآورد}}",
+	"abusefilter-log-entry-suppress": "$1 $3 را {{GENDER:$2|پنهان کرد}}",
+	"abusefilter-log-entry-unsuppress": "$1 $3 را {{GENDER:$2|از پنهانی درآورد}}",
 	"logentry-abusefilter-hit": "$1 در حال انجام {{GENDER:$2|دادن}} عمل «$5» در  $3 $4 را فعال {{GENDER:$2|کرد}}. اقدامات صورت‌گرفته:  $6 ($7)",
 	"log-action-filter-abusefilter": "نوع تغییر پالایه",
 	"log-action-filter-abusefilter-create": "ایجاد پالایهٔ جدید",

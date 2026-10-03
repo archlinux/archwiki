@@ -1,8 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Oldstoneage"
+			"Oldstoneage",
+			"Bachounda"
 		]
 	},
-	"inputbox-tryexact": "فتّش على مطابقة سواسوا"
+	"inputbox-desc": "اسمح بإدماج نماذج HTML محددة مسبقاً.",
+	"inputbox-error-no-type": "ما حددتيش نوع صندوق الإدخال اللي حابب تنشئ.",
+	"inputbox-error-bad-type": "نوع صندوق الإدخال \"$1\" غير معروف.\nمن فضلك حدد \"create\"، \"comment\"، \"search\"، \"search2\" أو \"fulltext\".",
+	"inputbox-tryexact": "فتّش على مطابقة سواسوا",
+	"inputbox-searchfulltext": "ابحث في النص الكامل",
+	"inputbox-createarticle": "أنشئ صفحه",
+	"inputbox-movearticle": "تحويل الصفحه",
+	"inputbox-postcomment": "قسم جديد",
+	"inputbox-postcommenttitle": "قسم جديد",
+	"inputbox-ns-main": "رئيسي"
 }

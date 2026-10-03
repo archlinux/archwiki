@@ -6,6 +6,8 @@
 		]
 	},
 	"inputbox-desc": "د پخوا څخه د HTML څرگند شويو فورمو کارولو اجازه ورکوي",
+	"inputbox-error-no-type": "تاسو د جوړېدونکي ننوت‌بکس ډول نه دی مشخص کړی.",
+	"inputbox-error-bad-type": "د \"$1\" ننوت‌بکس ډول ونه پېژندل شو.\nمهرباني وکړئ  \"create\", \"comment\", \"search\", \"search2\" or \"fulltext\" مشخص کړئ.",
 	"inputbox-tryexact": "کټ مټ انډول يې وازمويه",
 	"inputbox-searchfulltext": "بشپړ متن پلټل",
 	"inputbox-createarticle": "نوې ليکنه پيلول",

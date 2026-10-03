@@ -13,11 +13,12 @@
 			"優枰",
 			"捍粵者",
 			"沈澄心",
-			"蘭斯特"
+			"蘭斯特",
+			"LowensteinYang"
 		]
 	},
 	"linterrors": "Lint錯誤",
-	"linttemplateerrors": "模板產生 lint 錯誤",
+	"linttemplateerrors": "嵌入的內容含有語法檢查錯誤",
 	"linter-category-bogus-image-options": "不正確的檔案選項",
 	"linter-category-bogus-image-options-desc": "這些頁面有些圖片或檔案含有錯誤的選項。",
 	"linter-category-large-tables": "難以在行動裝置上檢視的巨大表格",
@@ -130,6 +131,6 @@
 	"multi-part-template-block": "輸出並非來自單一個模板",
 	"pageinfo-linter": "Lint 錯誤",
 	"pageinfo-linter-moreinfo": "查看 lint 錯誤的詳細資訊。",
-	"category-by-template-view": "查看會產生這些 lint 錯誤的模板。",
-	"category-by-template-desc": "這些模板會產生 '''$1''' lint 錯誤。"
+	"category-by-template-view": "查看那些含有語法檢查錯誤的嵌入。",
+	"category-by-template-desc": "這些頁面的嵌入內容包含'''[[Special:LintErrors/$1|$1]]'''語法檢查錯誤。''請注意，某些嵌入內容可能會出現在此清單中，這是因為傳入嵌入參數所致，而非嵌入來源本身。''"
 }

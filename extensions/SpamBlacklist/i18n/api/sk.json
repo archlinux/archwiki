@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "Skontrolovať dve URL voči zoznamu blokovaných",
+	"apihelp-spamblacklist-param-url": "URL, ktoré sa majú overiť voči zoznamu blokovaných.",
+	"apihelp-spamblacklist-summary": "Overiť jednu alebo viac URL voči zoznamu blokovaných spamových adries."
+}

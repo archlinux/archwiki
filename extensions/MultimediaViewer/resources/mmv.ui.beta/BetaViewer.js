@@ -15,28 +15,56 @@ const { getLargerThumbnailUrl } = require( './thumbnailGuessing.js' );
  */
 class BetaViewer {
 	constructor() {
-		/** @property {boolean} */
+		/** @type {boolean} */
 		this.isOpen = false;
 
-		/** @property {boolean} Set by bootstrap during hash-driven navigation */
+		/**
+		 * Set by bootstrap during hash-driven navigation
+		 *
+		 * @type {boolean}
+		 */
 		this.comingFromHashChange = false;
 
-		/** @property {string} Original document title, restored on close */
+		/**
+		 * Original document title, restored on close
+		 *
+		 * @type {string}
+		 */
 		this.documentTitle = document.title;
 
-		/** @property {LightboxImage[]} LightboxImage objects for the current page */
+		/**
+		 * LightboxImage objects for the current page
+		 *
+		 * @type {LightboxImage[]}
+		 */
 		this.thumbs = [];
 
-		/** @property {LightboxImage|null} The currently displayed LightboxImage */
+		/**
+		 * The currently displayed LightboxImage
+		 *
+		 * @type {LightboxImage|null}
+		 */
 		this.currentImage = null;
 
-		/** @property {Object|null} The mounted Vue application instance */
+		/**
+		 * The mounted Vue application instance
+		 *
+		 * @type {Object|null}
+		 */
 		this.app = null;
 
-		/** @property {HTMLElement|null} The mount point element */
+		/**
+		 * The mount point element
+		 *
+		 * @type {HTMLElement|null}
+		 */
 		this.mountEl = null;
 
-		/** @property {ImageInfo|null} Lazily created provider (caches responses) */
+		/**
+		 * Lazily created provider (caches responses)
+		 *
+		 * @type {ImageInfo|null}
+		 */
 		this.imageInfoProvider = null;
 
 		// Reactive state shared with the Vue app via provide/inject.

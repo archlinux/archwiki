@@ -2,11 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Abdullahi",
-			"Abshirdheere"
+			"Abshirdheere",
+			"AhmedG612"
 		]
 	},
+	"fancycaptcha-desc": "Soo saare CAPTCHA qurux badan oo loogu talagalay Xaqiijinta Tafatirka",
+	"fancycaptcha-addurl": "Tafatirkaagu wuxuu ka kooban yahay xiriirro dibadeed oo cusub.\nSi aan uga ilaalinno wikiga farriimaha xayaysiiska ee otomaatiga ah, fadlan geli erayada hoos ka muuqda sanduuqa ([[Special:Captcha/help|macluumaad dheeraad ah]]):",
+	"fancycaptcha-badlogin": "Si aan uga ilaalinno wikiga isku dayada otomaatiga ah ee jebinta furayaasha sirta ah, fadlan geli erayada hoos ka muuqda sanduuqa ([[Special:Captcha/help|macluumaad dheeraad ah]]):",
 	"fancycaptcha-captcha": "Hubin amni",
 	"fancycaptcha-accountcreate": "Si looga ilaaliyo wiki  abuurka akoonka otomaatiga ah, waxaan si naxariis leh kaaga codsaneynaa inaad geliso ereyada ka muuqda sanduuqa hoose ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-create": "Si aad u abuurto bogga, fadlan geli erayada hoos ka muuqda sanduuqa ([[Special:Captcha/help|macluumaad dheeraad ah]]):",
+	"fancycaptcha-edit": "Si aad u tafatirto boggan, fadlan geli erayada hoos ka muuqda sanduuqa ([[Special:Captcha/help|macluumaad dheeraad ah]]):",
 	"fancycaptcha-imgcaptcha-ph": "Gali qoraalka aad ku aragtid sawirka",
+	"fancycaptcha-sendemail": "Si aan uga ilaalinno wikiga farriimaha xayaysiiska ee otomaatiga ah, fadlan geli erayada hoos ka muuqda sanduuqa ([[Special:Captcha/help|macluumaad dheeraad ah]]):",
 	"fancycaptcha-reload-text": "cusbooneysii"
 }

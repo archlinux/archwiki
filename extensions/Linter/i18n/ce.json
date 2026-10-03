@@ -31,7 +31,7 @@
 	"linter-category-missing-end-tag": "ДӀакъовлуш йолу тег йац",
 	"linter-category-missing-end-tag-desc": "ХӀокху агӀонашкахь тоьуш йац дӀакъовлуш йолу тегаш.",
 	"linter-category-missing-end-tag-in-heading": "Коьртехь йац чаккхенан тег",
-	"linter-category-missing-end-tag-in-heading-desc": "ХӀокху агӀонашна тӀехь дӀакъовларан хьаьркаш йац церан цӀерашца.",
+	"linter-category-missing-end-tag-in-heading-desc": "ХӀокху агӀонашна тӀехь дӀакъовларан символаш йац церан цӀерашца.",
 	"linter-category-missing-image-alt-text": "(alt) суьртан куьйган текст йац",
 	"linter-category-missing-image-alt-text-desc": "ХӀокху агӀонаш тӀехь суьрташ ду, альтернативан текст йоцуш.",
 	"linter-category-multi-colon-escape": "Дукхазза экраняр ши тӀадамца",

@@ -3,9 +3,22 @@
 		"authors": [
 			"Liuxinyu970226",
 			"StephDC",
-			"WAN233"
+			"WAN233",
+			"XiaoAnIsMe"
 		]
 	},
+	"templatedata-doc-param-default": "默認",
+	"templatedata-doc-param-example": "例",
+	"templatedata-doc-param-desc": "述",
+	"templatedata-doc-param-desc-empty": "無述",
+	"templatedata-doc-param-status": "狀",
+	"templatedata-doc-param-status-deprecated": "停用",
+	"templatedata-doc-param-status-optional": "選",
+	"templatedata-doc-param-status-required": "必填",
+	"templatedata-doc-param-status-suggested": "薦",
 	"templatedata-doc-param-type-unknown": "未知",
-	"templatedata-doc-param-type-wiki-user-name": "用戶"
+	"templatedata-doc-param-type-wiki-user-name": "用戶",
+	"templatedata-modal-button-add-language": "增語",
+	"templatedata-modal-button-addparam": "增參",
+	"templatedata-modal-button-addmap": "增新輿圖"
 }

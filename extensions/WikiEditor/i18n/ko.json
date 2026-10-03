@@ -18,7 +18,8 @@
 			"Tensama0415",
 			"Ykhwong",
 			"관인생략",
-			"아라"
+			"아라",
+			"YeBoy371"
 		]
 	},
 	"wikieditor": "확장된 위키텍스트 편집 인터페이스",
@@ -148,9 +149,9 @@
 	"wikieditor-toolbar-help-content-bolditalic-description": "굵은 글씨와 기울인 글씨",
 	"wikieditor-toolbar-help-content-bolditalic-example": "굵고 기울인 글씨",
 	"wikieditor-toolbar-help-content-ilink-description": "내부 링크",
-	"wikieditor-toolbar-help-content-ilink-example": "[[문서 이름]]\n[[문서 이름|링크 이름]]",
+	"wikieditor-toolbar-help-content-ilink-example": "[[문서 이름]]\n[[문서 이름|링크 레이블]]",
 	"wikieditor-toolbar-help-content-xlink-description": "외부 링크",
-	"wikieditor-toolbar-help-content-xlink-example-label": "링크 라벨",
+	"wikieditor-toolbar-help-content-xlink-example-label": "링크 레이블",
 	"wikieditor-toolbar-help-content-heading2-description": "2단계 제목",
 	"wikieditor-toolbar-help-content-heading2-example": "제목",
 	"wikieditor-toolbar-help-content-heading3-description": "3단계 제목",
@@ -167,7 +168,7 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-file-caption": "캡션 텍스트",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "서명 및 시각",
-	"wikieditor-toolbar-help-content-signaturetimestamp-example": "--[[$1:$3|$3]] ([[$2:$3|토론]]) 15:54, 29 6월 2023 (UTC)",
+	"wikieditor-toolbar-help-content-signaturetimestamp-example": "--[[$1:$3|$3]] ([[$2:$3|토론]]) 2023년 6월 29일 (목) 15:54 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "서명",
 	"wikieditor-toolbar-help-content-signature-example": "[[$1:$3|$3]] ([[$2:$3|토론]])",
 	"wikieditor-toolbar-help-content-signature-username": "사용자 이름",

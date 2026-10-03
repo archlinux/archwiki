@@ -35,6 +35,7 @@
 			"Tuliouel"
 		]
 	},
+	"collabpad-disabled": "O CollabPad não está ativado nesta wiki.",
 	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importado de $1",
 	"collabpad": "CollabPad",

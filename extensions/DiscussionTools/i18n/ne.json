@@ -123,7 +123,7 @@
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}लाई {{GENDER:|जवाफ}} दिनुहोस्",
 	"discussiontools-replywidget-preferences": "मेरो अभिरुचिहरू",
 	"discussiontools-replywidget-preview": "पूर्वावलोकन",
-	"discussiontools-replywidget-reply": "{{GENDER:|जवाफ}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|उत्तर}}",
 	"discussiontools-replywidget-return-to-newtopic": "नयाँ विषय मा फर्कनुहोस्",
 	"discussiontools-replywidget-return-to-reply": "जवाफ मा फर्कनुहोस्",
 	"discussiontools-replywidget-signature-body": "$1 तपाईंको हस्ताक्षरमा रूपान्तरण गरिएको छ। यसलाई पूर्ववत गर्न, \"$2\" यो लेख्नुहोस्। नोट गर्नुहोस् कि तपाईंले यस उपकरणको साथ टिप्पणीहरूमा हस्ताक्षर गर्न आवश्यक छैन। तपाईंको हस्ताक्षर स्वचालित रूपमा थपिनेछ।",

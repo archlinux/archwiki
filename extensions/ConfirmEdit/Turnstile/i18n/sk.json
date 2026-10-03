@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"turnstile-desc": "Pridáva do rozšírenia ConfirmEdit podporu služby Cloudflare Turnstile",
+	"turnstile-edit": "Na ochranu wiki pred automatickým spamom v úpravách vyriešte, prosím, nasledujúce captcha:",
+	"turnstile-addurl": "Vaša úprava obsahuje nové externé odkazy. Na ochranu wiki pred automatickým spamom vyriešte, prosím, nasledujúce captcha:",
+	"turnstile-badlogin": "Na ochranu wiki pred automatickým lámaním hesiel vyriešte, prosím, nasledujúce captcha:",
+	"turnstile-createaccount": "Na ochranu wiki pred automatickým vytváraním účtov vyriešte, prosím, nasledujúce captcha:",
+	"turnstile-createaccount-fail": "Zdá sa, že ste captcha nevyriešili.",
+	"turnstile-create": "Na ochranu wiki pred automatickým vytváraním stránok vyriešte, prosím, nasledujúce captcha:",
+	"turnstile-help": "Vyriešte, prosím, výzvu Turnstile a vráťte hodnotu odpovede ako captchaWord."
+}

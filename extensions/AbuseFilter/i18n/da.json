@@ -607,7 +607,7 @@
 	"abusefilter-log-invalid-filter": "Nogle af de angivne filter-ID'er er ugyldige.",
 	"abusefilter-log-noresults": "Ingen resultater",
 	"abusefilter-diff-title": "Forskelle mellem versioner",
-	"abusefilter-diff-item": "Element",
+	"abusefilter-diff-item": "Emne",
 	"abusefilter-diff-version": "Version fra $1 {{GENDER:$3|af}} $2",
 	"abusefilter-diff-info": "Grundlæggende information",
 	"abusefilter-diff-pattern": "Filterregler",

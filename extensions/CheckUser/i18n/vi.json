@@ -15,7 +15,8 @@
 			"Nguyễn Mạnh An",
 			"Noeruchan",
 			"Nvdtn19",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Veritas Sapientiae"
 		]
 	},
 	"checkuser-summary": "Công cụ này sẽ quét các thay đổi gần đây để xuất ra các địa chỉ IP của thành viên hoặc hiển thị dữ liệu sửa đổi/tài khoản của một IP. Các tài khoản và sửa đổi của một IP có thể được trích ra từ tiêu đề XFF bằng cách thêm cụm “/xff” vào cuối địa chỉ IP. IPv4 (CIDR $1-32) và IPv6 (CIDR $2-128) đều được hỗ trợ. \nKhông quá $3 sửa đổi sẽ được trả về vì lý do hiệu suất. Hãy dùng công cụ này theo đúng quy định.",
@@ -72,9 +73,9 @@
 	"checkuser-all": "tất cả",
 	"checkuser-filter-title": "Bộ lọc",
 	"checkuser-filter-hide-temporary-accounts": "Ẩn tài khoản tạm thời",
-	"checkuser-cidr-label": "Tìm dãy phổ biến và các địa chỉ bị ảnh hưởng của danh sách IP",
+	"checkuser-cidr-label": "Tìm dải IP chung và các địa chỉ IP bị ảnh hưởng cho một danh sách địa chỉ IP",
 	"checkuser-cidr-res": "CIDR thông thường:",
-	"checkuser-cidr-affected-ips": "Các địa chỉ IP ảnh hưởng:",
+	"checkuser-cidr-affected-ips": "Các địa chỉ IP bị ảnh hưởng:",
 	"checkuser-cidr-too-small": "Dải IP quá rộng",
 	"checkuser-cidr-tool-links-checkuser": "Kiểm tra dải IP này",
 	"checkuser-cidr-tool-links-checkuserlog": "Các lần kiểm tra trước đó trên dải này",
@@ -385,6 +386,7 @@
 	"checkuser-userinfocard-thanks": "Cảm ơn đã nhận: $1 (đã trao: $2)",
 	"checkuser-userinfocard-checks": "Kiểm tra: $1 (lần kiểm tra cuối: $2)",
 	"checkuser-userinfocard-checks-empty": "Kiểm tra: $1",
+	"checkuser-userinfocard-suggested-investigations": "Vụ điều tra được gợi ý: $1",
 	"checkuser-userinfocard-global-restrictions-locked": "[[$2|{{GENDER:$1|}}Đã bị khóa toàn cục]] từ $3",
 	"checkuser-userinfocard-global-restrictions-locked-no-date": "[[$2|{{GENDER:$1|}}Bị khóa toàn cục]]",
 	"checkuser-userinfocard-global-restrictions-blocked": "[[$2|{{GENDER:$1|}}Bị cấm toàn cục]]  từ $3",
@@ -402,7 +404,7 @@
 	"checkuser-userinfocard-error-title": "Đã xảy ra lỗi",
 	"checkuser-userinfocard-error-no-data": "Không thể truy xuất thông tin của người dùng này. Xin vui lòng thử lại sau.",
 	"checkuser-userinfocard-error-generic": "Đã xảy ra lỗi. Xin vui lòng thử lại sau.",
-	"checkuser-userinfocard-enable-preference-description": "Bật [[mw:Special:MyLanguage/Trust_and_Safety_Product/Anti-abuse_signals/User_Info|thẻ thông tin người dùng]]",
+	"checkuser-userinfocard-enable-preference-description": "Bật [[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|thẻ thông tin người dùng]]",
 	"checkuser-userinfocard-enable-preference-help": "Hiển thị nút bên cạnh tên người dùng để hiện một popup chứa thông tin về tài khoản.",
 	"checkuser-userinfocard-activity-chart-label": "Thống kê hoạt động trong vòng 60 ngày qua ({{PLURAL:$1|$1 sửa đổi|0=không có sửa đổi}})",
 	"checkuser-userinfocard-last-edit-timestamp-label": "Lần sửa đổi gần nhất: $1",
@@ -417,8 +419,8 @@
 	"checkuser-userinfocard-ip-revealed-count": "Lần hiển thị IP: $1 (lần kiểm tra cuối: $2)",
 	"checkuser-userinfocard-ip-revealed-never": "Lần hiển thị IP: $1",
 	"checkuser-suggestedinvestigations": "Kiểm tra được gợi ý",
-	"checkuser-suggestedinvestigations-summary": "Trang này chứa các tài khoản được tự động đánh dấu là đáng ngờ để các kiểm định viên có thể kiểm tra.",
-	"checkuser-suggestedinvestigations-table-caption": "Bảng liệt kê các điều tra được gợi ý",
+	"checkuser-suggestedinvestigations-summary": "Trang này chứa các tài khoản được tự động đánh dấu là có thể khả nghi để các kiểm định viên điều tra.",
+	"checkuser-suggestedinvestigations-table-caption": "Các tài khoản được tự động đánh dấu là khả nghi",
 	"checkuser-suggestedinvestigations-header-users": "Tài khoản",
 	"checkuser-suggestedinvestigations-header-signals": "Các tín hiệu rủi ro",
 	"checkuser-suggestedinvestigations-header-status": "Trạng thái",
@@ -443,5 +445,6 @@
 	"checkuser-contributions-temporary-accounts-related-list-copy-button": "Sao chép danh sách tài khoản",
 	"checkuser-contributions-temporary-accounts-related-list-copy-copied": "Danh sách tài khoản đã được sao chép vào khay nhớ tạm",
 	"checkuser-contributions-temporary-accounts-related-list-copy-error": "Không thể sao chép danh sách tài khoản",
-	"checkuser-related-tas-specialblock-checkbox-label": "Cấm tất cả các tài khoản tạm thời liên quan"
+	"checkuser-related-tas-specialblock-checkbox-label": "Cấm tất cả các tài khoản tạm thời liên quan",
+	"checkuser-related-tas-specialblock-contribs-link": "[{{fullurl:Special:Contributions/$1|showRelatedTemporaryAccounts=1}} Xem tất cả đóng góp từ các tài khoản này]"
 }

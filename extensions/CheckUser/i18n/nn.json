@@ -59,5 +59,6 @@
 	"checkuser-temporary-accounts-onboarding-dialog-ip-info-step-title": "Vising av IP-informasjon",
 	"checkuser-investigate-preliminary-table-header-editcount": "Endringar",
 	"prefs-checkuser-tempaccount": "Vising av IP-adressa til mellombels kontoar",
-	"checkuser-userinfocard-temporary-account-bucketcount": "Mellombels kontoar frå alle tilknytte IP-adresser: $1"
+	"checkuser-userinfocard-temporary-account-bucketcount": "Mellombelskontoar frå alle tilknytte IP-adresser: $1",
+	"checkuser-contributions-temporary-account-bucketcount": "Mellombelskontoar frå alle tilknytte IP-adresser: $1."
 }

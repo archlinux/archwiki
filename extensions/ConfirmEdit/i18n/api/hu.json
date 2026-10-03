@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Dj"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Válasz a CAPTCHA-ra",
-	"captcha-apihelp-param-captchaid": "CAPTCHA-azonosító az előző kérésből"
+	"captcha-apihelp-param-captchaid": "CAPTCHA-azonosító az előző kérésből",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Azt jelzi, hogy a megjelenített hCaptcha CAPTCHA megjelenítése kényszerített volt-e, például a Vandálszűrő kiterjesztés egyik következménye miatt (és ezért szigorúbb sitekey használatával). Akkor állítsd be, ha az azonos nevű JavaScript-konfigurációs változó értéke igaz, vagy ha az API használatának első kísérlete egy megadott sitekey mellett „forcecaptcha” hibát adott vissza."
 }

@@ -13,7 +13,7 @@
 	"apierror-visualeditor-difffailed": "차이 생성 실패",
 	"apihelp-visualeditor-param-basetimestamp": "저장할 때, 편집한 판의 시간스탬프로 설정합니다. 편집 충돌을 감지하는 데 사용합니다.",
 	"apihelp-visualeditor-param-badetag": "RESTBase 쿼리가 유효하지 않아 보이는 ETag를 반환하는 경우, 로깅을 위해 해당 ETag를 여기에 전달하세요.",
-	"apihelp-visualeditor-param-cachekey": "serialize 또는 diff를 위해, 이 키로 이전의 serializeforcache 요청 결과를 사용합니다. $1html을 재정의합니다.",
+	"apihelp-visualeditor-param-cachekey": "직렬화 또는 차이를 위해, 이 키로 이전의 serializeforcache 요청 결과를 사용합니다. $1html을 재정의합니다.",
 	"apihelp-visualeditor-param-editintro": "알림에 추가할 편집 설명입니다.",
 	"apihelp-visualeditor-param-etag": "보낼 ETag.",
 	"apihelp-visualeditor-param-format": "출력값의 형식입니다.",

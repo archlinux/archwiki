@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"oathauth-webauthn-module-label": "Biztonsági kulcs",
+	"oathauth-webauthn-javascript-required": "A biztonsági kulcs használatához engedélyezned kell a JavaScriptet a böngésződben.",
+	"oathauth-webauthn-ui-login-prompt": "Használd a biztonsági kulcsodat, vagy kövesd a böngésződ utasításait.",
+	"oathauth-webauthn-ui-add-key": "Kulcs hozzáadása",
+	"oathauth-webauthn-error-browser-unsupported-console": "Ez a böngésző nem támogatja a biztonsági kulccsal történő hitelesítést, vagy az nem érhető el ezen a webhelyen.",
+	"oathauth-webauthn-error-auth-generic": "A hitelesítési folyamat megszakadt. Indítsd újra a hitelesítési folyamatot.",
+	"oathauth-webauthn-error-reg-generic": "Nem sikerült ellenőrizni a biztonsági kulcsodat. Indítsd újra a regisztrációs folyamatot.",
+	"oathauth-webauthn-registered-keys-section-name": "Regisztrált kulcsok",
+	"oathauth-webauthn-ui-remove-key": "Eltávolítás",
+	"oathauth-webauthn-error-module-not-enabled": "A(z) „$1” modul nincs engedélyezve {{GENDER:$2|„$2” felhasználó számára}}.",
+	"oathauth-webauthn-error-verification-failed": "A WebAuthn-ellenőrzés sikertelen.",
+	"oathauth-webauthn-error-passkey-verification-failed": "A jelkulcs ellenőrzése sikertelen.",
+	"oathauth-webauthn-error-credentials-missing": "A WebAuthn hitelesítő adatai nem lettek elküldve.",
+	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|„$1” felhasználó}} nem regisztrálhat új hitelesítő adatot.",
+	"oathauth-webauthn-error-invalid-new-key": "A modul által visszaadott új kulcs nem a szükséges típusú.",
+	"oathauth-webauthn-error-registration-failed": "Az új kulcs regisztrálása sikertelen.",
+	"oathauth-webauthn-ui-key-register-help": "Válassz nevet a kulcsodnak:",
+	"oathauth-webauthn-error-cannot-remove-key": "A kulcs nem távolítható el.",
+	"oathauth-webauthn-error-get-authinfo-fail": "A hitelesítési adatok nem kérhetők le.",
+	"oathauth-webauthn-add-key-section-name": "Új biztonsági kulcs regisztrálása",
+	"oathauth-webauthn-error-get-reginfo-fail": "A regisztrációs adatok nem kérhetők le.",
+	"oathauth-webauthn-module-description": "A WebAuthn kísérleti állapotban van. Jelenleg nincs helyreállítási lehetőség az elveszett vagy sérült hitelesítő eszközök esetén.\n[https://en.wikipedia.org/wiki/WebAuthn További információ a WebAuthnról]",
+	"oathauth-webauthn-ui-reload-page-label": "Oldal újratöltése",
+	"oathauth-webauthn-authentication-info-label": "Hitelesítési adatok",
+	"oathauth-webauthn-authentication-info-help": "A kliensnek a hitelesítő adatok lekéréséhez átadott hitelesítési adatok",
+	"oathauth-webauthn-credential-label": "Felhasználói hitelesítő adat",
+	"oathauth-webauthn-credential-help": "Hitelesítési adatokon alapuló felhasználói hitelesítő adat",
+	"oathauth-webauthn-add-security-key": "Biztonsági kulcs hozzáadása",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "Biztonsági kulcs vagy jelkulcs használata"
+}

@@ -7,7 +7,8 @@
 			"Shirayuki",
 			"W.CC",
 			"Waki285",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Dragoniez"
 		]
 	},
 	"apihelp-query+checkuser-summary": "指定した利用者名の利用者が使用した IPアドレス や、指定した IPアドレス を使用した利用者名を調査します。",
@@ -42,5 +43,7 @@
 	"checkuser-api-useragent-clienthints-called-too-late": "$1 $2 が古すぎるためクライアントヒント・データを記録できません",
 	"checkuser-api-useragent-clienthints-nonexistent-id": "$1 のID $2 は存在しません",
 	"checkuser-api-useragent-clienthints-explanation": "{{SITENAME}} ではユーザーエージェントのクライアントヒントのデータを取得、不正行為と荒らしの仲裁を補助します。詳細は、https://www.mediawiki.org/wiki/Extension:CheckUser/Client_Hints を参照してください。",
-	"apihelp-logout-param-checkuserclienthints": "ApiLogout のリクエストとともに提供されるクライアントのヒント データ。内部使用限定。"
+	"apihelp-logout-param-checkuserclienthints": "ApiLogout のリクエストとともに提供されるクライアントのヒント データ。内部使用限定。",
+	"checkuser-suggestedinvestigations-case-update-case-not-found": "指定されたケース ID は存在しません",
+	"checkuser-suggestedinvestigations-case-update-feature-not-enabled": "推奨調査の機能が有効化されていません"
 }

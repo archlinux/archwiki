@@ -8,12 +8,22 @@
 			"Weblars"
 		]
 	},
-	"syntaxhighlight-desc": "Giver syntaksfremhævning <code>&lt;syntaxhighlight&gt;</code> ved brug af [http://pygments.org/ GeSHi - Generic Syntax Highlighter]",
+	"syntaxhighlight-desc": "Giver syntaksfremhævning <code>&lt;syntaxhighlight&gt;</code> ved brug af [http://pygments.org/ Pygments - Python syntax highlighter]",
 	"syntaxhighlight-error-category": "Sider med fejl i syntaks-fremhævning",
+	"syntaxhighlight-error-category-desc": "Der opstod en fejl under forsøget på at fremhæve koden på siden.",
 	"syntaxhighlight-enclose-category": "Sider som bruger udgået enclose-attributter",
+	"syntaxhighlight-enclose-category-desc": "Syntaksfremhævningen på siden bruger forældet enclosure-syntaks.",
 	"syntaxhighlight-source-category": "Sider med forældet source tags",
+	"syntaxhighlight-source-category-desc": "Syntaksfremhævningen på siden bruger forældede kildekoder.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kode",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Sprog",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ingen)",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Vis linjenumre",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Første linjenumre",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Kodeblok",
-	"syntaxhighlight-error-unknown-language": "Ukendt sprog \"$1\""
+	"syntaxhighlight-error-pygments-invocation-failure": "Kunne ikke aktivere Pygments",
+	"syntaxhighlight-error-unknown-language": "Ukendt sprog \"$1\"",
+	"syntaxhighlight-error-exceeds-size-limit": "Kodestørrelsen på $1 {{PLURAL:$1|bytes}} overstiger det tilladte maksimum på $2 {{PLURAL:$2|bytes}}",
+	"syntaxhighlight-button-copy": "Kopiér",
+	"syntaxhighlight-button-copied": "Kopieret!"
 }

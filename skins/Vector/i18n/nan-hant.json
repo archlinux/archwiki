@@ -6,6 +6,7 @@
 		]
 	},
 	"vector-languages": "語言",
+	"vector-language-button-label": "{{PLURAL:$1|$1種語言}}",
 	"vector-action-move": "徙去",
 	"vector-action-protect": "保護",
 	"vector-view-history": "看歷史",

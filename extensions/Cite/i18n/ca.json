@@ -9,14 +9,17 @@
 			"Pere prlpz",
 			"SMP",
 			"Vriullop",
-			"Paucabot"
+			"Paucabot",
+			"KRLS"
 		]
 	},
 	"cite-desc": "Afegiu les etiquetes <code>&lt;ref&gt;</code> i <code>&lt;references&gt;</code> per a cites",
 	"cite_error": "Error de citació: $1",
+	"cite_error_details_missing_parent": "Una etiqueta <code>&lt;ref></code> amb detalls ha de contenir contingut o apuntar a una referència principal mitjançant el seu nom.",
 	"cite_error_ref_invalid_dir": "L’etiqueta <code>dir=\"$1\"</code> no és vàlida, ha de ser <code>ltr</code> o bé <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida;\nel nom no pot ser un simple nombre sencer. Empreu un títol descriptiu",
 	"cite_error_ref_no_key": "L’etiqueta d’obertura <code>&lt;ref&gt;</code> s’ha formatat incorrectament o té un nom no permès",
+	"cite_error_ref_with_details_no_name": "Etiqueta <code>&lt;ref></code> no vàlida; manca l'atribut «name». Cal proporcionar un atribut «name» juntament amb un atribut «details».",
 	"cite_error_ref_too_many_keys": "Paràmetre «$1» no vàlid a l'etiqueta <code>&lt;ref></code>. Els paràmetres admesos són: $2.",
 	"cite_error_ref_no_input": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; \nles referències sense nom han de tenir contingut",
 	"cite_error_references_duplicate_key": "Etiqueta <code>&lt;ref&gt;</code> no vàlida; el nom «$1» està definit diverses vegades amb contingut diferent.",
@@ -30,6 +33,8 @@
 	"cite_error_empty_references_define": "L'etiqueta <code>&lt;ref&gt;</code> definida a <code>&lt;references&gt;</code> amb el nom \"$1\" no té contingut.",
 	"cite-tracking-category-cite-error": "Pàgines amb errors a les referències",
 	"cite-tracking-category-cite-error-desc": "Les pàgines en aquesta categoria tenen errors d’ús de les etiquetes de referències.",
+	"cite-tracking-category-ref-details": "Pàgines que usen subreferències",
+	"cite-tracking-category-ref-details-desc": "Les pàgines d'aquesta categoria utilitzen l'atribut «details» de l'etiqueta &lt;ref>.",
 	"cite-reference-previews-reference": "Referència",
 	"cite-reference-previews-note": "Nota",
 	"cite-reference-previews-preference-label": "Activar la previsualització de referències (veure una previsualització ràpida d'una referència mentre es llegeix una pàgina)",
@@ -39,5 +44,8 @@
 	"cite-wikieditor-help-content-reference-description": "Referències",
 	"cite-wikieditor-help-content-named-reference-description": "Referència anomenada",
 	"cite-wikieditor-help-content-rereference-description": "Ús addicional de la mateixa referència",
-	"cite-wikieditor-help-content-showreferences-description": "Mostra les referències"
+	"cite-wikieditor-help-content-sub-reference-description": "Reutilització de la mateixa referència, amb «details» addicionals",
+	"cite-wikieditor-help-content-showreferences-description": "Mostra les referències",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Pàgina 76",
+	"cite-configuration-submit": "Desa els canvis"
 }

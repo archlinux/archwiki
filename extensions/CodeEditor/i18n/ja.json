@@ -8,7 +8,8 @@
 			"Shirayuki",
 			"Siglite3",
 			"Waki285",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Tensama0415"
 		]
 	},
 	"codeeditor-desc": "[https://ace.c9.io/ Ace editor]を用いた、JavaScript/CSS の構文ハイライト機能付きのページ編集",
@@ -22,7 +23,7 @@
 	"codeeditor-gotoline-placeholder": "行番号[:列番号]",
 	"codeeditor-gotoline-prompt": "行番号を入力してください",
 	"codeeditor-indent": "インデント",
-	"codeeditor-outdent": "インデントを戻す",
+	"codeeditor-outdent": "アウトデント",
 	"codeeditor-error-title": "依存関係が失敗しました",
 	"codeeditor-error-message": "CodeEditorはWikiEditorを読み込む必要があります。"
 }

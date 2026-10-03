@@ -4,6 +4,17 @@
 			"Hakimi97"
 		]
 	},
+	"loginnotify-desc": "Maklumkan pengguna berkenaan usaha log masuk yang mencurigakan daripada peranti dan/atau alamat IP yang tidak dikenali",
 	"echo-category-title-login-fail": "Percubaan log masuk gagal",
-	"echo-category-title-login-success": "Log masuk daripada peranti yang tidak dikenali"
+	"echo-pref-tooltip-login-fail": "Beritahu saya apabila terdapat percubaan yang gagal untuk log masuk ke akaun saya.",
+	"echo-category-title-login-success": "Log masuk daripada peranti yang tidak dikenali",
+	"echo-pref-tooltip-login-success": "Beritahu saya setiap kali seseorang log masuk ke dalam akaun saya daripada peranti dan alamat IP yang tidak dikenali.",
+	"loginnotify-primary-link": "Bantuan",
+	"loginnotify-unknown-ip": "Anda telah cuba log masuk daripada alamat IP yang tidak dikenali, dan {{SITENAME}} kini dikonfigurasikan untuk menghalang log masuk daripada alamat IP yang tidak dikenali.",
+	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Percubaan gagal|Pelbagai percubaan gagal}} untuk log masuk ke {{SITENAME}} sebagai $1",
+	"notification-loginnotify-login-success-email-subject": "Log masuk ke {{SITENAME}} sebagai $1 daripada peranti {{GENDER:$1|yang anda}} belum gunakan baru-baru ini",
+	"notification-header-login-success": "Seseorang (mungkin {{GENDER:$1|anda}}) baru-baru ini log masuk ke dalam akaun anda daripada peranti baharu. Jika tindakan ini dilakukan anda, anda boleh mengabaikan mesej ini. Jika bukan anda, maka disyorkan agar anda menukar kata laluan anda dan menyemak aktiviti akaun anda.",
+	"notification-new-bundled-header-login-fail": "Terdapat {{PLURAL:$1|'''satu percubaan gagal'''|'''$1 percubaan gagal'''}} untuk log masuk ke dalam akaun anda daripada peranti baharu sejak kali terakhir anda log masuk. Jika bukan anda, sila pastikan akaun anda mempunyai kata laluan yang kukuh.",
+	"notification-known-header-login-fail": "Terdapat {{PLURAL:$1|'''satu percubaan gagal'''|'''$1 percubaan gagal'''}} untuk log masuk ke dalam akaun anda sejak kali terakhir anda log masuk. Jika bukan anda, sila pastikan akaun anda mempunyai kata laluan yang kukuh.",
+	"notification-new-unbundled-header-login-fail": "Terdapat {{PLURAL:$1|'''satu percubaan gagal'''|'''berbilang percubaan gagal'''}} untuk log masuk ke dalam akaun anda daripada peranti baharu. Sila pastikan akaun anda mempunyai kata laluan yang kukuh."
 }

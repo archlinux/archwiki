@@ -27,5 +27,6 @@
 	"hcaptcha-loading-indicator-label": "正在加载表单，请稍候…",
 	"hcaptcha-missing-token": "表单尚未加载完毕。请等待几秒，然后重试。",
 	"hcaptcha-noscript": "需要JavaScript才能继续。请在您的浏览器设置中激活JavaScript，然后刷新页面。",
-	"hcaptcha-force-show-captcha-edit": "请重新提交表格，并完成问题以保存您的编辑内容。"
+	"hcaptcha-force-show-captcha-edit": "请重新提交表格，并完成问题以保存您的编辑内容。",
+	"hcaptcha-visual-editor-error-handler-warning": "请重新提交表单以保存您的编辑。"
 }

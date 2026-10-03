@@ -2,13 +2,34 @@
 	"@metadata": {
 		"authors": [
 			"Orbitminis",
-			"Iketsi"
+			"Iketsi",
+			"Terrus38"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Òdpòwiésc",
+	"discussiontools-newtopic-missing-title": "Dodôj titel dlô wątkù w diskùsje.",
 	"discussiontools-newtopic-placeholder-title": "Téma",
 	"discussiontools-replylink": "{{GENDER:|òdpòwiedz}}",
-	"discussiontools-replywidget-cancel": "Anulëje",
+	"discussiontools-replywidget-advanced": "Zaawansowóné",
+	"discussiontools-replywidget-cancel": "Anuluj",
 	"discussiontools-replywidget-mode-source": "Zdrój",
+	"discussiontools-replywidget-mode-visual": "Wizualno",
+	"discussiontools-replywidget-newtopic": "Dodôj wątk",
 	"discussiontools-replywidget-placeholder-newtopic": "Òpisënk",
-	"discussiontools-replywidget-reply": "Òdpòwiedz"
+	"discussiontools-replywidget-placeholder-reply": "Òdpòwiedzë na kòmentôrz {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Pòdzérk",
+	"discussiontools-replywidget-reply": "Òdpòwiedz",
+	"discussiontools-replywidget-summary": "Pòdrechòwanié",
+	"discussiontools-replywidget-watchthis": "Dodôj nã starnã do [[Special:Watchlist|lëstë szlachòwónëch]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|òsoba bierze|òsobë bierzą|òsób bierze}} ùdzél w diskùsje",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kòmentôrz|kòmentarze|kòmentarzów}}",
+	"discussiontools-topicheader-latestcomment": "Nônowszi kòmentôrz: $1",
+	"discussiontools-topicsubscription-button-subscribe": "subskribùj",
+	"discussiontools-topicsubscription-button-subscribe-label": "Subskribùj",
+	"discussiontools-topicsubscription-button-unsubscribe": "òdsubskribùj",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Òdsubskribùj",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Të mdzesz òtrzëmac òdkôzë ò nowëch kòmentarach w nym wątkù.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Të môsz zasubskribòwóné.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Të ju nie mdzesz òtrzëmac òdkazów ò nowëch kòmentarach w nym wątkù.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Të môsz òdsubskribòwóné."
 }

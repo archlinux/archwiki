@@ -1,9 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
+	"syntaxhighlight-desc": "د [http://pygments.org/ Pygments - Python syntax highlighter] کارولو سره د غونډل‌پوهې روښانه‌کول <code>&lt;syntaxhighlight&gt;</code> چمتو کوي",
+	"syntaxhighlight-error-category": "هغه مخونه چې د غونډلپوهنې د روښانه کولو تېروتنې لري",
+	"syntaxhighlight-error-category-desc": "مخ کې د رانغاړل شوي کوډ د روښانولو هڅه کې يوه تېروتنه وشوه.",
+	"syntaxhighlight-enclose-category": "هغه مخونه چې د نه‌کارول شويو تړلو ځانگړي‌کونگونو څخه کار اخلي",
+	"syntaxhighlight-enclose-category-desc": "مخ کې د غونډل‌پوهې‌روښانول د ورانې شوې تړلې غوڼډلپوهې څخه کار اخلي.",
+	"syntaxhighlight-source-category": "هغه مخونه چې د رد شوې سرچينې نښلنونه کاروي",
+	"syntaxhighlight-source-category-desc": "مخ کې د غونډل‌پوهې‌روښانول د ورانې شوې تړلې سرچينې نښلنونه کاروي.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "کوډ",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "ژبه",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(هېڅ)",

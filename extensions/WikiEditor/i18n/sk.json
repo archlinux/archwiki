@@ -147,5 +147,8 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Príklad.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Podpis s časom",
 	"wikieditor-toolbar-help-content-signature-description": "Podpis",
-	"wikieditor-toolbar-help-content-indent-description": "Odsadenie"
+	"wikieditor-toolbar-help-content-indent-description": "Odsadenie",
+	"wikieditor-realtimepreview-preview": "Náhľad",
+	"wikieditor-realtimepreview-error": "Náhľad sa nenačítava",
+	"wikieditor-realtimepreview-reload": "Obnoviť"
 }

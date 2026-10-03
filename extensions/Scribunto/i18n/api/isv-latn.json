@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Polda18"
+		]
+	},
+	"apihelp-scribunto-console-summary": "Interny modul dlja upravy XHR trěbovanja iz konsoly Skribunto.",
+	"apihelp-scribunto-console-param-title": "Nazva modula dlja testovanja.",
+	"apihelp-scribunto-console-param-content": "Novy obseg modula.",
+	"apihelp-scribunto-console-param-session": "Token sesije.",
+	"apihelp-scribunto-console-param-question": "Vslědny redok dlja evaluacije kako skripta.",
+	"apihelp-scribunto-console-param-clear": "Nastaviti dlja izčištěnja tutčasnogo statusa sesije."
+}

@@ -1,16 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tumbuka Arch"
+			"Tumbuka Arch",
+			"Anthonymunthali44"
 		]
 	},
-	"mobile-frontend-history": "Kuona mbili ya jani lino",
-	"mobile-frontend-home-button": "Menyu",
+	"mobile-frontend-history": "Bekani mbiri ya kalembelo ka hamba lino",
+	"mobile-frontend-home-button": "Pakaya",
 	"mobile-frontend-language-article-heading": "Chiyowoyelo",
 	"mobile-frontend-main-menu-login": "Njila",
 	"mobile-frontend-main-menu-nearby": "Pafupi",
 	"mobile-frontend-main-menu-settings": "Kunozga",
-	"mobile-frontend-placeholder": "Fufuza {{SITENAME}}",
-	"mobile-frontend-random-button": "Chisawawa",
+	"mobile-frontend-placeholder": "Fufuza mu {{SITENAME}}",
+	"mobile-frontend-random-button": "Bwekabweka",
 	"minerva-page-actions-overflow": "Vinandi"
 }

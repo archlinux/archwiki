@@ -11,7 +11,9 @@
 			"McDutchie",
 			"Nivit",
 			"Ruthven",
-			"Sannita"
+			"Sannita",
+			"Valepert",
+			"Candalua"
 		]
 	},
 	"templatedata-desc": "Implementa la memorizzazione dei dati per i parametri dei template (utilizzando JSON)",
@@ -123,8 +125,10 @@
 	"templatedata-modal-title-templateparams": "Parametri template",
 	"templatedata-search-description": "Cerca un template",
 	"templatedata-search-placeholder": "Inserisci il nome del template",
+	"templatedata-search-placeholder-cirrussearch": "Inserisci il nome del template o parole chiave",
 	"templatedata-search-list-header": "Preferiti",
 	"templatedata-search-list-empty": "I template che contrassegni come favoriti appariranno qui",
+	"templatedata-search-list-empty-anon": "Effettua l'accesso per contrassegnare i template come preferiti",
 	"templatedata-template-discovery-disabled": "Template preferiti è disabilitato su questa wiki.",
 	"templatediscovery": "Template preferiti",
 	"templatedata-favorite-disabled": "Devi aver effettuato l'accesso per aggiungere un template ai preferiti",
@@ -136,8 +140,23 @@
 	"templatedata-favorite-maximum-reached": "Hai raggiunto il numero massimo ($1) di modelli preferiti. Per favore, rimuovine alcuni dall'elenco prima di aggiungerne altri.",
 	"templatedata-category-browser-header": "Categorie",
 	"templatedata-category-switch-label": "Categoria di primo livello:",
+	"templatedata-category-rootcat": "Template",
+	"templatedata-category-switch-button": "Sfoglia",
+	"templatedata-category-column-empty": "Nessun template o sottocategoria trovato in [[$1]]",
+	"templatedata-category-browser-loadmore": "…carica altro",
 	"templatedata-category-column-error": "Si è verificato un errore",
+	"templatedata-category-use-template": "Usa questo template",
 	"templatedata-category-categories": "Altre categorie",
 	"templatedata-category-no-cats": "Nessuno.",
-	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Titoli"
+	"templatedata-featured-list-header": "In evidenza",
+	"templatedata-featured-list-empty": "I template in evidenza sono modelli che sono stati contrassegnati come utili dalla comunità. Al momento non è stato ancora impostato alcun template in evidenza.",
+	"communityconfiguration-templatedata-featuredtemplates-title": "Template in evidenza",
+	"communityconfiguration-templatedata-featuredtemplates-description": "I template in evidenza sono modelli che sono stati contrassegnati come utili dalla comunità. Sono disponibili per l'utilizzo nello strumento di ricerca dei template.",
+	"communityconfiguration-templatedata-featuredtemplates-info-text": "I template elencati qui sono disponibili per l'utilizzo nello strumento di ricerca dei template.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-label": "Template in evidenza",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Titoli",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-description": "Elenca i titoli dei template (incluso il prefisso del namespace \"Template:\").",
+	"templatedata-featured-list-config-link": "Modifica la lista dei template in evidenza",
+	"templatedata-featured-list-help": "I template in evidenza sono modelli che sono stati contrassegnati come utili dalla comunità.",
+	"templatedata-favorite-count": "Hai $1 template preferiti (su $2 massimo)"
 }

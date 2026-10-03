@@ -115,7 +115,7 @@
 	"visualeditor-dialogbutton-template-tooltip": "Template",
 	"visualeditor-editconflict": "Yer chynges coudna be hained cause o aen eedit conflict. Woud {{GENDER:|ye}} like tae resolve the conflict manuallie?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|notice|notices}}",
-	"visualeditor-editnotices-tooltip": "Eidit notices",
+	"visualeditor-editnotices-tooltip": "Edit notices",
 	"visualeditor-editsummary": "Describe whit ye chynged",
 	"visualeditor-formatdropdown-format-mw-heading1": "Page title",
 	"visualeditor-formatdropdown-format-mw-heading2": "Heidin",

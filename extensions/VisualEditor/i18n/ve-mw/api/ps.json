@@ -1,11 +1,25 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"شاه زمان پټان"
 		]
 	},
+	"apierror-visualeditor-difffailed": "توپير نابرياله شو",
+	"apihelp-visualeditor-param-editintro": "خبرتياوو کې د ورگډولو لپقد پېژندون سمول.",
+	"apihelp-visualeditor-param-format": "د زېږندې بڼه.",
 	"apihelp-visualeditor-param-paction": "د ترسره کولو کړنه.",
 	"apihelp-visualeditor-param-page": "هغه مخ چې کړنې پرې ترسره کېږي.",
+	"apihelp-visualeditor-param-section": "هغه برخه چې چاره پرې ترسره کېږي.",
+	"apihelp-visualeditoredit-param-captchaid": "کيپچا پېژند (کله چې د کيپچا غبرگون سره خوندې کېږي).",
+	"apihelp-visualeditoredit-param-captchaword": "کيپچا ته ځواب ورکول (کله چې کيپچا ځواب سره خوندي کېږي).",
+	"apihelp-visualeditoredit-param-nocontent": "ځواب کې د نوې بياليدنې اېچ‌ټي‌اېم‌اېل منځپانگه ړنگه کړئ.",
 	"apihelp-visualeditoredit-param-minor": "د وړوکي سمون رپی.",
-	"apihelp-visualeditoredit-param-summary": "لنډيز سمول."
+	"apihelp-visualeditoredit-param-paction": "چاره چې بايد ترسره شي.",
+	"apihelp-visualeditoredit-param-page": "هغه مخ چې چارې پرې ترسره کېږي.",
+	"apihelp-visualeditoredit-param-section": "هغه برخه چې چاره پرې ترسره کېږي.",
+	"apihelp-visualeditoredit-param-sectiontitle": "نوې برخې لپاره سرليک.",
+	"apihelp-visualeditoredit-param-summary": "لنډيز سمول.",
+	"apihelp-visualeditoredit-param-tags": "بدلون نښلنونه چې سمون باندې پلې کېږي.",
+	"apihelp-visualeditoredit-param-wikitext": "ويکي‌ليک چې چاره ورسره کېږي."
 }

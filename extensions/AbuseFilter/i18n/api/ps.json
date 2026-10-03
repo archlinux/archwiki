@@ -5,5 +5,6 @@
 		]
 	},
 	"apihelp-query+abuselog-example-1": "وروستۍ يادښت ننوتنې ښودل",
+	"apierror-abusefilter-canttest": "تاسو د ناوړه گټه اخيستنې چاڼگرونو ازمويلو اجازه نلرئ.",
 	"apierror-abusefilter-badsyntax": "چاڼگر ناسمه غونډلپوهه لري."
 }

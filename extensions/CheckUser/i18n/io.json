@@ -7,8 +7,12 @@
 		]
 	},
 	"checkuser": "Kontrolero di adresi IP",
+	"checkuserlog": "Registro por kontrolo di uzeri",
+	"checkuser-contribs": "verifikar IP-adresi dil uzero",
+	"checkuser-contribs-log": "verifikar uzeri",
 	"group-checkuser": "Kontroleri dil uzeri",
 	"group-checkuser-member": "{{GENDER:$1|kontrolero di IP-adresi}}",
+	"group-temporary-account-viewer": "Personi qui povas vidar IP de tempala konti",
 	"grant-checkuser": "Acesar informi por verifikar uzeri",
 	"grouppage-checkuser": "{{ns:project}}:Kontrolero di IP-adresi",
 	"checkuser-clienthints-value-is-browser-likely-bot": "Posible roboto (''bot'')",

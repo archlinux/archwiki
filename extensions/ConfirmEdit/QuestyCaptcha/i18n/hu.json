@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Glanthor Reviol",
-			"Tacsipacsi"
+			"Tacsipacsi",
+			"Dj"
 		]
 	},
+	"questycaptcha-desc": "Questy CAPTCHA-generátor a ConfirmEdit kiterjesztéshez",
 	"questycaptcha-addurl": "A szerkesztésed új külső hivatkozásokat tartalmaz.\nAz automatizált spamek megelőzése miatt kérjük, válaszolj az alábbi kérdésre ([[Special:Captcha/help|további segítség]]):",
 	"questycaptcha-badlogin": "Hogy az automatizált jelszófeltörési kísérleteket megelőzzük, kérjük, válaszolj az alábbi kérdésre ([[Special:Captcha/help|további segítség]]):",
 	"questycaptcha-createaccount": "A felhasználói fiókok automatizált létrehozásának elkerülésére kérjük, válaszolj az alábbi kérdésre ([[Special:Captcha/help|segítség]]):",

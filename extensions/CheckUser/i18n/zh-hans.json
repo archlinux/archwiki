@@ -62,7 +62,8 @@
 			"范",
 			"铁桶",
 			"Hamish",
-			"Peterxy"
+			"Peterxy",
+			"郭佳昌"
 		]
 	},
 	"checkuser-summary": "本工具会从最近更改中获取某个用户使用过的IP地址，或者显示某个IP地址下的编辑/用户。\n可在IP地址后方附加“/xff”以使用XFF头信息来获取同一客户端IP地址下的用户和编辑。支持IPv4（CIDR $1-32）和IPv6（CIDR $2-128）。\n由于性能问题，本工具最多返回$3笔最近编辑信息。\n请确保您的操作符合方针。",
@@ -89,7 +90,7 @@
 	"action-checkuser-log": "查看用户查核日志",
 	"action-checkuser-temporary-account": "查看临时账号使用的IP地址",
 	"action-checkuser-temporary-account-no-preference": "查看临时账号使用的IP地址",
-	"action-checkuser-temporary-account-log": "查看临时账户使用IP地址的日志",
+	"action-checkuser-temporary-account-log": "查看临时账号使用IP地址的日志",
 	"action-checkuser-temporary-account-auto-reveal": "自动显示临时账号使用的IP地址",
 	"action-checkuser-suggested-investigations": "执行用户查核所建议的调查",
 	"grouppage-checkuser": "{{ns:project}}:用户查核员",
@@ -479,7 +480,7 @@
 	"checkuser-suggestedinvestigations": "调查建议",
 	"checkuser-suggestedinvestigations-autoclose-reason": "由于所有账号均已被封禁或锁定，已自动关闭。",
 	"checkuser-suggestedinvestigations-detail-view": "{{int:checkuser-suggestedinvestigations}}：案例#$1",
-	"checkuser-suggestedinvestigations-detail-view-not-found": "{{int:checkuser-suggestedinvestigations}}：未找到案件",
+	"checkuser-suggestedinvestigations-detail-view-not-found": "{{int:checkuser-suggestedinvestigations}}：未找到案例",
 	"checkuser-suggestedinvestigations-detail-view-not-found-page-text": "无法找到包含URL标识符“$1”的案例。",
 	"checkuser-suggestedinvestigations-subpage-not-found": "{{int:checkuser-suggestedinvestigations}}：未找到子页面",
 	"checkuser-suggestedinvestigations-subpage-not-found-page-text": "指定的子页面不存在。",
@@ -542,8 +543,8 @@
 	"checkuser-suggestedinvestigations-risk-signals-popover-body-intro": "这些信号表明可能有不当行为用户活动。",
 	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "关闭",
 	"checkuser-suggestedinvestigations-risk-signals-popover-open-label": "在弹出窗口中阅读有关风险信号的更多信息",
-	"checkuser-suggestedinvestigations-detail-view-edits-header": "{{PLURAL:$2|编辑}} 由 $1（$2）标记",
-	"checkuser-suggestedinvestigations-detail-view-logs-header": "日志{{PLURAL:$2|事项}}由$1（$2）标记",
+	"checkuser-suggestedinvestigations-detail-view-edits-header": "由$1标记的{{PLURAL:$2|编辑}}（$2个）",
+	"checkuser-suggestedinvestigations-detail-view-logs-header": "由$1标记的日志{{PLURAL:$2|项}}（$2条）",
 	"checkuser-suggestedinvestigations-contributions-tool-link": "SI案例",
 	"checkuser-suggestedinvestigations-invalid-status-warning-for-account-based-signal": "将此案例标记为无效后，将不再为此账号创建新案例。",
 	"checkuser-userinfocard-temporary-account-bucketcount": "所有关联IP地址的临时账号：$1",

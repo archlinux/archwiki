@@ -227,6 +227,26 @@ class HCaptcha extends SimpleCaptcha {
 			$data['remoteip'] = $webRequest->getIP();
 		}
 
+		// Non-enterprise hCaptcha users do not get the sitekey back in the siteverify response. A compromise
+		// solution is to send the sitekey for verification if one sitekey is valid, but this will not work
+		// when there is more than one sitekey defined.
+		if ( !$this->hCaptchaConfig->get( 'HCaptchaEnterprise' ) ) {
+			$validKeys = $this->getAllowedSiteKeysForCurrentAction();
+			// On the always-challenge resubmission the client states which widget it rendered,
+			// but ::shouldForceShowCaptcha is not set yet on this pass, so narrow to the
+			// always-challenge sitekey here and let hCaptcha confirm the claim.
+			$alwaysChallengeSiteKey = $this->getConfig()['HCaptchaAlwaysChallengeSiteKey'] ?? null;
+			if (
+				$alwaysChallengeSiteKey &&
+				$webRequest->getVal( 'wgConfirmEditForceShowCaptcha' ) !== null
+			) {
+				$validKeys = [ $alwaysChallengeSiteKey ];
+			}
+			if ( count( $validKeys ) === 1 ) {
+				$data['sitekey'] = $validKeys[0];
+			}
+		}
+
 		$options = [
 			'method' => 'POST',
 			'postData' => $data,
@@ -296,12 +316,18 @@ class HCaptcha extends SimpleCaptcha {
 
 		// Verify that the sitekey is among those allowed in order to prevent
 		// client-side tampering (T410024, T410657).
-		$siteKeyUsed = $json['sitekey'] ?? null;
+		//
+		// The sitekey is only returned in the API response for enterprise users. Non-enterprise
+		// users have no way to verify this check, so we skip it; the sitekey is instead enforced
+		// by sending it in the siteverify request above, where possible.
+		if ( $this->hCaptchaConfig->get( 'HCaptchaEnterprise' ) ) {
+			$siteKeyUsed = $json['sitekey'] ?? null;
 
-		if ( !in_array( $siteKeyUsed, $this->getAllowedSiteKeysForCurrentAction() ) ) {
-			$this->error = 'sitekey-mismatch';
-			$this->logCheckError( $this->error, $user, $token );
-			return false;
+			if ( !in_array( $siteKeyUsed, $this->getAllowedSiteKeysForCurrentAction() ) ) {
+				$this->error = 'sitekey-mismatch';
+				$this->logCheckError( $this->error, $user, $token );
+				return false;
+			}
 		}
 
 		$debugLogContext = [

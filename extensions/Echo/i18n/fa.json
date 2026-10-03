@@ -35,7 +35,8 @@
 			"Saeidpourbabak",
 			"درفش کاویانی",
 			"شاه زمان پټان",
-			"فلورانس"
+			"فلورانس",
+			"LProfo"
 		]
 	},
 	"echo-desc": "سامانهٔ آگاه‌سازی کاربران از رویدادها و پیام‌ها",
@@ -190,6 +191,7 @@
 	"notification-header-user-rights-add-only": "اختیارات کاربری {{GENDER:$4|شما}} تغییر {{GENDER:$1|کرده است}}. اضافه شدید به: $2.",
 	"notification-header-user-rights-remove-only": "اختیارات کاربری {{GENDER:$4|شما}} تغییر {{GENDER:$1|کرده است}}. دیگر در $2 عضو نیستید.",
 	"notification-header-user-rights-add-and-remove": "امتیاز {{GENDER:$6|شما}} تغییر {{GENDER:$1|کرده است}}. اضافه شدید به: $2. دیگر در $4 عضو نیستید.",
+	"notification-header-user-rights-expiry": "عضویت {{GENDER:$3|شما}} در این {{PLURAL:$2|گروه|گروه‌ها}} به‌طور خودکار منقضی شده است: $1.",
 	"notification-header-user-rights-expiry-change": "انقضای عضویت {{GENDER:$4|شما}} در این {{PLURAL:$3|گروه|گروه‌ها}}  تغییر {{GENDER:$1|یافته است}}: $2",
 	"notification-header-welcome": "$1، به {{SITENAME}} {{GENDER:$2|خوش آمدید}}. خوشحالیم که {{GENDER:$2|شما}} اینجایید.",
 	"notification-header-mention-summary": "$1 {{GENDER:$3|به شما}}  در خلاصه ویرایش  <strong>$4</strong> {{GENDER:$2|اشاره کرد}}.",
@@ -226,6 +228,7 @@
 	"notification-reverted-email-subject2": "{{PLURAL:$4|ویرایش|ویرایش‌های}} {{GENDER:$3|شما}} در {{SITENAME}} {{GENDER:$2|واگردانی شده است}}",
 	"notification-mention-email-subject": "$1 {{GENDER:$3|شما}} را در {{SITENAME}} {{GENDER:$2|ذکر کرده است}}",
 	"notification-user-rights-email-subject": "اختیارات {{GENDER:$3|شما}} در {{SITENAME}} تغییر یافته است",
+	"notification-user-rights-expiry-email-subject": "اختیارات کاربری {{GENDER:$3|شما}} در {{SITENAME}} منقضی شده است",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 ثانیه}}",
 	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 دقیقه}}",
 	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 ساعت}}",
@@ -266,15 +269,18 @@
 	"notification-header-foreign-alert": "هشدارهای بیشتر از {{PLURAL:$5|و ویکی دیگر|و $5 ویکی دیگر}}",
 	"notification-header-foreign-notice": "آگاهی‌های بیشتر از {{PLURAL:$5|ویکی دیگر|$5 ویکی دیگر}}",
 	"notification-header-foreign-all": "آگاه‌سازی‌های بیشتر از $5 ویکی دیگر",
+	"grant-echo-read-notifications": "خواندن آگاه‌سازی‌های من",
 	"right-echo-create": "ارسال آگاه‌سازی برای دیگران",
 	"action-echo-create": "ارسال آگاه‌سازی برای دیگران",
+	"right-echo-read-notifications": "خواندن آگاه‌سازی‌های من",
+	"action-echo-read-notifications": "خواندن آگاه‌سازی‌های من",
 	"right-manage-all-push-subscriptions": "مدیریت تمام اشتراکات فشاری",
 	"action-manage-all-push-subscriptions": "مدیریت تمام اشتراکات فشاری",
 	"group-push-subscription-manager": "مدیران اشتراک فشاری",
 	"group-push-subscription-manager-member": "{{GENDER:$1|مدیر اشتراک فشاری}}",
 	"grouppage-push-subscription-manager": "{{ns:project}}:مدیران اشتراک فشاری",
 	"notification-subject-email-verify-email-reminder": "نشانی رایانامهٔ {{GENDER:$1|خود}} را تأیید کنید",
-	"notification-header-verify-email-reminder": "لطفاً <strong>نشانی رایانامهٔ {{GENDER:$1|خود}} را تأیید کنید</strong> تا ما مطمئن شویم که نشانی رایانامه‌ای که در حساب کاربری {{GENDER:$1|شما}} ثبت شده است، متعلق به {{GENDER:$1|خودتان}} است.",
+	"notification-header-verify-email-reminder": "سلام $2،\nلطفاً <strong>نشانی رایانامهٔ {{GENDER:$1|خود}} را تأیید کنید</strong> تا ما مطمئن شویم که نشانی رایانامه‌ای که در حساب کاربری {{GENDER:$1|شما}} ثبت شده است، متعلق به {{GENDER:$1|خودتان}} است.",
 	"notification-link-text-verify-email-reminder": "مدیریت ترجیحات رایانامه",
 	"notification-verify-email-reminder-link-label": "تأیید رایانامه"
 }

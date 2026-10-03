@@ -4,7 +4,8 @@
 			"Af420",
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
-			"شاه زمان پټان"
+			"شاه زمان پټان",
+			"باران"
 		]
 	},
 	"skinname-vector": "وېکټور ورېشون (۲۰۱۰)",
@@ -12,7 +13,7 @@
 	"vector-specialversion-name": "وېکتور",
 	"vector-skin-desc": "۲ وېکتور پوښۍ وړاندې کوي:\n* ۲۰۱۱ - مونوبوک هم‎مهالې بل‌بڼه له نوي ليد او د کارونې له ډېرو ښېگڼو سره.\n* ۲۰۲۲ - وېکتور د ويکيمېډيا بنسټ  [https://www.mediawiki.org/wiki/Desktop_Improvements Desktop Improvements] د پروژې يوې برخې په توگه جوړ شوی.",
 	"prefs-vector-enable-vector-1-label": "ورېشون وېکتور وکاروئ",
-	"prefs-vector-enable-vector-1-help": "پهٔ راتلونکو څو کلونو کې به موږ ورو ورو وېکتور پوښۍ تازه کړو.ورېشون وېکتور به تاسو ته دا اختيار درکړي چې زړهٔ وېکتور بڼه (د دېسمبر ۲۰۱۹ په څېر) وگورئ.د تازه کولو اړوند لازيات پوهېدو لپاره[https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements project page] وگورئ.",
+	"prefs-vector-enable-vector-1-help": "په راتلونکو څو کلونو کې به موږ ورو ورو وېکتور پوښۍ تازه کړو.ورېشون وېکتور به تاسو ته دا اختيار درکړي چې زړه وېکتور بڼه (د دېسمبر ۲۰۱۹ په څېر) وگورئ.د تازه کولو اړوند لازيات پوهېدو لپاره[https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements project page] وگورئ.",
 	"vector.css": "/* د CSS هره بڼه چې دلته ځای پر ځای کېږي هغه به د وېکټور پوښۍ ټولو کارنانو لپاره بار شي */",
 	"vector.js": "/* د جاوا ټول سکرېپټ چې دلته ځای پر ځای کېږي هغه به د وېکټور پوښۍ ټولو کارنانو لپاره بار شي */",
 	"vector-action-toggle-sidebar": "څنگپټه بدلول",
@@ -48,7 +49,7 @@
 	"vector-feature-custom-font-size-1-label": "کره",
 	"vector-feature-custom-font-size-2-label": "لوی",
 	"skin-theme-name": "رنگ",
-	"skin-theme-description": "[ازمايښتي بڼه، د ستونزو ازمايلو لوړه شونتيا] خپرېدونکې رڼا د وسيلې سکرينونو په انډول کموي.",
+	"skin-theme-description": "[ازمايښتي بلبڼه، د ستونزو ازمايلو لوړه شونتيا] خپرېدونکې رڼا د وسيلې سکرينونو په انډول کموي.",
 	"skin-theme-day-label": "روڼ",
 	"skin-theme-night-label": "تياره",
 	"skin-theme-os-label": "خپلکاره",

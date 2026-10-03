@@ -47,6 +47,7 @@
 	"cite-ve-dialog-subreference-help-dialog-content": "Чыганакны кабат кулланганда сез, чыганакны тулысынча кабатламыйча, аның аерым өлешләре — мәсәлән, бит номеры — турында өстәмә мәгълүмат калдыра аласыз. <p><b>Шундый мәгълүмат куллану мисаллары:</b></p><ul><li>Китапның төрле битләрен яки бүлекләрен цитаталау</li><li>подкастның цитаталау өчен махсус вакыт тамгасын билгеләү</li><li>Чыганактан тиешле өзекне китерү</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "Чыганакка сылтамага өстәмә мәгълүмат өстәү турында күбрәк белегез",
 	"cite-ve-dialog-subreference-change-all-checkbox-label": "Бу мәгълүматларның барлык куллануларын ($1) үзгәрт.",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "Әлеге мәгълүматны тулырак аңлатмасы булмаган әлеге искәрмәнең барлык ($1) кулланылышына да өстәргә.",
 	"cite-ve-dialog-reference-title-details": "Тулырак",
 	"cite-ve-dialog-reference-useexisting-tool": "Яңадан куллану",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Гомуми сылтамалар исемлеге",

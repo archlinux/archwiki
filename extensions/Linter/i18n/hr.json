@@ -10,7 +10,9 @@
 		]
 	},
 	"linterrors": "Sintaksne pogreške",
-	"linter-category-bogus-image-options": "Pogrješke mogućnosti prikaza datoteka",
+	"linttemplateerrors": "Transkluzije koje sadrže sintaksne pogreške",
+	"linter-category-bogus-image-options": "Pogreške parametara u pozivima datoteka",
+	"linter-category-bogus-image-options-desc": "Ove stranice sadrže pozive datoteka s lažnim opcijama.",
 	"linter-category-misnested-tag": "Nepravilno ugniježđene oznake",
 	"linter-category-missing-end-tag": "Nedostaje zatvarajuća oznaka",
 	"linter-category-missing-end-tag-desc": "Na sljedećim stranicama nedostaju zatvarajuće HTML oznake.",
@@ -41,9 +43,9 @@
 	"linter-pager-template-header": "Preko predloška?",
 	"linter-pager-tidy-font-bug-details": "Oznaka font pokušava promijeniti boju poveznice",
 	"linter-pager-title-header": "Ime stranice",
-	"linterrors-subpage": "Pročišćivač pogrješčica: $1",
+	"linterrors-subpage": "Sintaksne pogreške: $1",
 	"linterrors-summary": "<strong>Napomena:</strong> Brojevi pogrešaka po kategorijama samo su procijenjeni i nisu potpuno točni.",
 	"multi-part-template-block": "Proizlazi iz više od jednog predloška",
-	"pageinfo-linter": "Pročišćivač pogrješčica",
+	"pageinfo-linter": "Sintaksne pogreške",
 	"pageinfo-linter-moreinfo": "Detaljnije o linterskim greškama"
 }

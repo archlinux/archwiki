@@ -5,7 +5,8 @@
 			"BrennodAloisi",
 			"Cedric31",
 			"Dreamy Jazz",
-			"Quentí"
+			"Quentí",
+			"COMISSIONTOPOC"
 		]
 	},
 	"checkuser-summary": "Aquesta aisina passa en revista los cambiaments recents per recercar l'IPS emplegada per un utilizaire, mostrar totas las edicions faitas per una IP, o per enumerar los utilizaires qu'an emplegat las IPs. Los utilizaires e las modificacions pòdon èsser trobats amb una IP XFF se s'acaba amb « /xff ». IPv4 (CIDR $1-32) e IPv6(CIDR $2-128) son suportats. Emplegatz aquò segon las cadenas de caractèrs.",

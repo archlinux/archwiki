@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tumbuka Arch"
+			"Tumbuka Arch",
+			"Anthonymunthali44"
 		]
 	},
 	"vector-languages": "Viyowoyelo",
@@ -28,11 +29,11 @@
 	"skin-theme-day-label": "Kuŵala",
 	"skin-theme-night-label": "Ufipa",
 	"skin-theme-os-label": "Mwakujisintha sintha",
-	"skin-theme-exclusion-notice": "Pa jani ili pali ungweru nyengo zose.",
+	"skin-theme-exclusion-notice": "Pa hamba ili pali ungweru nyengo zose.",
 	"vector-toc-label": "Vyamukati",
 	"vector-toc-beginning": "Kumayambililo",
 	"vector-main-menu-label": "Menyu yikuru",
-	"vector-feature-custom-font-size-exclusion-notice": "Jani ili likugwiliska ntchito malemba ghachoko ghachoko nyengo zose",
+	"vector-feature-custom-font-size-exclusion-notice": "Hamba ili likugwiliska ntchito malemba ghachoko ghachoko nyengo zose",
 	"vector-page-tools-label": "Vilwelo",
 	"vector-page-tools-general-label": "Vya masiku ghose",
 	"vector-page-tools-actions-label": "Vyakuchita",

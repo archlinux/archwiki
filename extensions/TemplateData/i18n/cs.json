@@ -135,5 +135,6 @@
 	"templatedata-category-switch-button": "Procházet",
 	"templatedata-featured-list-header": "Doporučené",
 	"communityconfiguration-templatedata-featuredtemplates-title": "Doporučené šablony",
+	"communityconfiguration-templatedata-featuredtemplates-description": "Doporučené šablony jsou šablony, které komunita označila za užitečné. Jsou dostupné z nástroje pro objevování šablon.",
 	"templatedata-featured-list-config-link": "Upravit seznam doporučených"
 }

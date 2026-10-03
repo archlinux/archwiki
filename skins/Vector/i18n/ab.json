@@ -18,5 +18,18 @@
 	"vector-view-view": "Аԥхьара",
 	"vector-view-viewsource": "Ахәаԥшра",
 	"vector-more-actions": "Еиҭа",
-	"vector-feature-custom-font-size-name": "Атекст"
+	"vector-appearance-label": "Адәныҟатәи асахьа",
+	"vector-feature-custom-font-size-name": "Атекст",
+	"vector-feature-custom-font-size-0-label": "Асса",
+	"vector-feature-custom-font-size-1-label": "Истандарту",
+	"vector-feature-custom-font-size-2-label": "Аду",
+	"skin-theme-name": "Аԥштәы",
+	"skin-theme-day-label": "Илашоу",
+	"skin-theme-night-label": "Алашьца",
+	"skin-theme-os-label": "Автоматикатә",
+	"vector-toc-beginning": "Алагамҭа",
+	"vector-main-menu-label": "Амениу хада",
+	"vector-page-tools-label": "Амаругақәа",
+	"vector-page-tools-general-label": "Азеиԥш",
+	"vector-unpin-element-label": "иҵәахтәуп"
 }

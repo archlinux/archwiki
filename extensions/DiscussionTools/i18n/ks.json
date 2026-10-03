@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Ayaat123"
+		]
 	},
 	"discussiontools": "کَتھ باتھ اَوزار",
 	"discussiontools-autotopicsubpopup-dismiss": "ٹھیٖکھ چھُ.",
@@ -36,7 +38,7 @@
 	"discussiontools-replywidget-placeholder-newtopic": "تَفصیٖل",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} دِیو جَوآب",
 	"discussiontools-replywidget-preferences": "ترجِیحات",
-	"discussiontools-replywidget-preview": "نُمٲئش",
+	"discussiontools-replywidget-preview": "نُمٲیِش",
 	"discussiontools-replywidget-reply": "{{GENDER:|جواب دِیِو}}",
 	"discussiontools-replywidget-summary": "خُلاصہٕ",
 	"discussiontools-replywidget-watchthis": "یہِ صَفہٕ تھٲوِو [[Special:Watchlist|نَظرِ تَل]]",

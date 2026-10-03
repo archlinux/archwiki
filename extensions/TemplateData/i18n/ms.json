@@ -144,6 +144,10 @@
 	"templatedata-featured-list-empty": "Templat pilihan merupakan templat yang telah ditandakan sebagai berguna oleh komuniti tempatan. Belum ada templat pilihan yang ditetapkan lagi.",
 	"communityconfiguration-templatedata-featuredtemplates-title": "Templat pilihan",
 	"communityconfiguration-templatedata-featuredtemplates-description": "Templat pilihan merupakan templat yang telah ditandakan sebagai berguna oleh komuniti tempatan. Templat tersebut telahpun tersedia untuk digunakan melalui alat penemuan templat.",
+	"communityconfiguration-templatedata-featuredtemplates-info-text": "Templat yang tersenarai di sini sedia untuk digunakan dalam alat penemuan templat.",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-label": "Templat pilihan",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-label": "Tajuk",
+	"communityconfiguration-templatedata-featuredtemplates-featuredtemplates-titles-description": "Senaraikan tajuk templat (termasuklah awalan ruang nama 'Templat:')",
 	"templatedata-featured-list-config-link": "Sunting senarai templat pilihan",
 	"templatedata-featured-list-help": "Templat pilihan merupakan templat yang telah ditanda sebagai berguna oleh komuniti tempatan.",
 	"templatedata-favorite-count": "Anda mempunyai $1/$2 templat kegemaran"

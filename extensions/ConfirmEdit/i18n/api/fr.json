@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Orlodrim"
+			"Orlodrim",
+			"Escargot bleu"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Réponse au CAPTCHA",
-	"captcha-apihelp-param-captchaid": "Identifiant de CAPTCHA de la requête précédente"
+	"captcha-apihelp-param-captchaid": "Identifiant de CAPTCHA de la requête précédente",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Indique si l'affichage du CAPTCHA hCaptcha a été forcé, par exemple à la suite de l'application d'un filtre anti-abus (et a donc utilisé une clé de site plus restrictive). Utilisez ce paramètre si la variable de configuration JS du même nom est true ou si la première tentative d'utilisation de cette API a renvoyé une erreur « forcecaptcha » avec une clé de site spécifiée."
 }

@@ -25,7 +25,8 @@
 			"고기랑",
 			"렌즈",
 			"아라",
-			"콩가루"
+			"콩가루",
+			"Namoroka"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "책",
@@ -56,7 +57,7 @@
 	"cite-ve-dialog-reference-missing-parent-ref": "이 세부사항들은 존재하지 않는 각주에 연결되어 있습니다. 문서에서 제거하거나 원본 모드에서 문제를 해결하세요.",
 	"cite-ve-dialog-reference-options-group-label": "이 그룹 사용",
 	"cite-ve-dialog-reference-options-group-placeholder": "일반 각주",
-	"cite-ve-dialog-reference-options-responsive-label": "반응형 컬럼 레이아웃 사용",
+	"cite-ve-dialog-reference-options-responsive-label": "반응형 열 레이아웃 사용",
 	"cite-ve-dialog-reference-options-section": "선택 사항",
 	"cite-ve-dialog-reference-placeholder": "각주를 여기에 입력하거나 붙여넣거나, 인용 틀을 추가하십시오.",
 	"cite-ve-dialog-reference-title": "각주",
@@ -66,7 +67,7 @@
 	"cite-ve-dialog-subreference-help-dialog-content": "각주를 재사용할 때 이제 전체 각주를 반복하지 않고 쪽 번호 또는 인용 등 다양한 세부사항을 추가할 수 있습니다.<p><b>다음과 같은 경우에 사용하세요:</b></p><ul><li>책의 다른 쪽이나 권수를 인용</li><li>인용된 팟캐스트의 특정 타임스탬프를 지정</li><li>출처에서 관련 인용구를 추가하는 것</li></ul>",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "각주에 세부사항을 추가하는 방법에 대해 더 알아보기",
 	"cite-ve-dialog-subreference-change-all-checkbox-label": "이 세부사항이 쓰이는 모든 ($1) 곳을 편집합니다.",
-	"cite-ve-dialog-reference-convert-all-checkbox-label": "이 각주가 쓰이는 모든 ($1) 곳 중, 아직 세부사항이 없는 각주에 이 세부사항들을 추가합니다.",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "이 각주가 쓰이는 모든 ($1) 곳 중, 아직 세부사항이 없는 각주에 이 세부사항을 추가합니다.",
 	"cite-ve-dialog-reference-title-details": "세부사항",
 	"cite-ve-dialog-reference-useexisting-tool": "재사용",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "일반 각주 목록",

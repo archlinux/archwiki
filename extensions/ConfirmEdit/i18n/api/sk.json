@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"captcha-apihelp-param-captchaword": "Odpoveď na CAPTCHA",
+	"captcha-apihelp-param-captchaid": "ID CAPTCHA z predchádzajúcej požiadavky",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Či sa zobrazené CAPTCHA hCaptcha zobrazilo vynútene, napríklad ako dôsledok rozšírenia AbuseFilter (a teda použilo prísnejší kľúč sitekey). Nastavte to, ak je rovnomenná konfiguračná premenná JS nastavená na true alebo ak prvý pokus o použitie tohto API vrátil chybu „forcecaptcha“ so zadaným kľúčom sitekey."
+}

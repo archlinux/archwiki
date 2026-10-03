@@ -5,6 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Antjwaord",
+	"discussiontools-newtopic-missing-title": "Gaef 'nen titel op veur {{GENDER:|dien}} óngerwerp.",
 	"discussiontools-newtopic-placeholder-title": "Óngerwerp",
 	"discussiontools-replylink": "{{GENDER:|antjwaord}}",
 	"discussiontools-replywidget-advanced": "Oetgebreid",
@@ -12,6 +13,7 @@
 	"discussiontools-replywidget-mode-source": "Brón",
 	"discussiontools-replywidget-mode-visual": "Visueel",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|Veug}} óngerwerp toe",
+	"discussiontools-replywidget-placeholder-newtopic": "Besjrieving",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Antjwaord}} op {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Veurbesjouwing",
 	"discussiontools-replywidget-reply": "{{GENDER:|Reageer}}",
@@ -25,5 +27,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "sjrief oet",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Sjrief oet",
 	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Doe}} kriegs meljinge van nuuj antjwäörd op dit köpke.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Doe}} höbs dich geabonneerd!"
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Doe}} höbs dich geabonneerd!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Doe}} zals gèn meljinge mieë kriegen euver nuuj opmirkingen in dit óngerwerp.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Doe}} höbs de meljingen oetgezatj."
 }

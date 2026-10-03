@@ -2,11 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Oldstoneage",
-			"ⵕⴰⵊⵉ"
+			"ⵕⴰⵊⵉ",
+			"Bachounda"
 		]
 	},
+	"fancycaptcha-desc": "مولد CAPTCHA متطور لـ Confirm Edit",
+	"fancycaptcha-addurl": "تعديلك يحتوي على روابط خارجية جديدة.\nباش نحميو الويكي من السبام الأوتوماتيكي، نطلبوك تكتب الكلمات اللي تظهر تحت في الخانة ([[Special:Captcha/help|مزيد من المعلومات]]):",
+	"fancycaptcha-badlogin": "باش نحميو الويكي من تكسير كلمات المرور الأوتوماتيكي، نطلبوك تكتب الكلمات اللي تظهر تحت في الخانة ([[Special:Captcha/help|مزيد من المعلومات]]):",
 	"fancycaptcha-captcha": "تحقق أمني",
 	"fancycaptcha-accountcreate": "باش نحافظو على الويكي من الحسابات الّي ينخلقو من عند نواضم داتيّة، نطلبو منّك باش تنقل فل قبيسة هنا، الكلمة المكتوبة لتحت. ([[Special:Captcha/help|زيد شوف شي معلومات]]):",
-	"fancycaptcha-imgcaptcha-ph": "دخّل النصّ الّي راك تشوفهُ فلفوطو",
-	"fancycaptcha-reload-text": "عاود شارجي الصفحة"
+	"fancycaptcha-create": "باش تنشئ الصفحة، من فضلك اكتب الكلمات اللي تظهر تحت في الخانة ([[Special:Captcha/help|مزيد من المعلومات]]):",
+	"fancycaptcha-edit": "باش تعدل هاد الصفحة، من فضلك اكتب الكلمات اللي تظهر تحت في الخانة ([[Special:Captcha/help|مزيد من المعلومات]]):",
+	"fancycaptcha-imgcaptcha-ph": "دخّل النصّ الّي راك تشوفهُ فالصورة",
+	"fancycaptcha-sendemail": "باش نحميو الويكي من السبام الأوتوماتيكي، نطلبوك تكتب الكلمات اللي تظهر تحت في الخانة ([[Special:Captcha/help|مزيد من المعلومات]]):",
+	"fancycaptcha-reload-text": "عاود طلّع الصفحه"
 }

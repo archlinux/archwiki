@@ -17,13 +17,14 @@
 			"PhiLiP",
 			"Simon Shek",
 			"Winston Sung",
-			"烈羽"
+			"烈羽",
+			"LowensteinYang"
 		]
 	},
 	"math-desc": "在 <code>&lt;math&gt;</code>...<code>&lt;/math&gt;</code> 標籤之間呈現數學公式",
 	"popups-settings-option-math": "數學",
-	"popups-settings-option-math-description": "解釋數學公式。",
-	"popups-settings-option-math-tooltip": "在游標懸停解釋數學公式。",
+	"popups-settings-option-math-description": "解釋數學式。",
+	"popups-settings-option-math-tooltip": "在游標懸停之處解釋數學式。",
 	"math-visualeditor-mwchemdialog-title": "化學式",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "快速編輯",
 	"math-visualeditor-mwlatexdialog-card-formula": "公式",
@@ -31,10 +32,10 @@
 	"math-visualeditor-mwlatexinspector-display": "顯示",
 	"math-visualeditor-mwlatexinspector-display-block": "區塊",
 	"math-visualeditor-mwlatexinspector-display-default": "預設",
-	"math-visualeditor-mwlatexinspector-display-inline": "行內",
+	"math-visualeditor-mwlatexinspector-display-inline": "內嵌",
 	"math-visualeditor-mwlatexinspector-id": "連結 ID（非必填）",
-	"math-visualeditor-mwlatexinspector-qid": "Wikibase ID（帶有 Q 前綴）",
-	"math-visualeditor-mwmathdialog-title": "數學公式",
+	"math-visualeditor-mwlatexinspector-qid": "維基數據 ID（帶有 Q 前綴）",
+	"math-visualeditor-mwmathdialog-title": "數學式",
 	"math-visualeditor-symbol-group-chem-addition": "加合物",
 	"math-visualeditor-symbol-group-chem-aggregation": "聚合狀況",
 	"math-visualeditor-symbol-group-chem-arrows": "反應箭頭",
@@ -130,5 +131,7 @@
 	"math-wikibase-special-form-button": "請求資訊",
 	"math-wikibase-special-error-header": "錯誤",
 	"math-wikibase-special-error-invalid-argument": "您指定的 Wikibase 項目 ID 不存在。",
-	"math-wikibase-special-error-unknown": "在索取來自 Wikibase 的資料時發生未知錯誤。"
+	"math-wikibase-special-error-unknown": "在索取來自 Wikibase 的資料時發生未知錯誤。",
+	"math-editpage-insert-inline": "數學公式（內嵌）",
+	"math-editpage-insert-block": "數學公式（區塊）"
 }

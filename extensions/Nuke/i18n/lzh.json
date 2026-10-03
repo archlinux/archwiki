@@ -2,13 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Davidzdh",
-			"Itsmine"
+			"Itsmine",
+			"Above mountain"
 		]
 	},
 	"nuke": "量刪",
+	"action-nuke": "量刪諸頁",
 	"nuke-defaultreason": "量刪由$1所建之頁",
 	"nuke-tools": "斯具，可盡刪某載簿文士之所創，或自某網際位址之所立。\n告以文士之名號，或網際之位址，以列當刪之頁；若置空，則遍索全簿。",
-	"nuke-submit-list": "往",
+	"nuke-tools-prompt": "既列諸頁，請擇欲刪者，然後押「{{int:nuke-submit-continue}}」。渡頁則以斜體示之。",
+	"nuke-tools-prompt-restricted": "尚可藉此具列頁，惟無從刪削。",
+	"nuke-tools-notice-noperm": "子權未逮，無從量刪。",
+	"nuke-tools-confirm": "{{PLURAL:$1|頁|$1頁}}見擇，具列如次，以備刪削。請具纂摘，而後押「{{int:nuke-submit-delete}}」，以始刪事。",
+	"nuke-submit-list": "具列諸頁",
 	"nuke-submit-delete": "刪已擇",
-	"right-nuke": "量刪頁"
+	"right-nuke": "量刪頁",
+	"nuke-associated": "兼削關聯之頁：",
+	"nuke-associated-redirect": "渡"
 }

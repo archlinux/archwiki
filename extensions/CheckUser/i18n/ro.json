@@ -14,7 +14,8 @@
 			"Paloi Sciurala",
 			"SalinaTheTranslator",
 			"Trotinel Iftode",
-			"Valentin JJ."
+			"Valentin JJ.",
+			"Vellion Eagle"
 		]
 	},
 	"checkuser-summary": "Acestă unealtă scanează schimbările recente pentru a prelua adresele IP folosite de un utilizator sau arată modificările/datele utilizatorul pentru o anumită adresă IP.\nUtilizatorii și modificările efectuate de un client IP pot fi regăsite prin antetele XFF atașând adresa IP prin intermediul „/xff”. IPv4 (CIDR $1-32) și IPv6 (CIDR $2-128) sunt acceptate.\nNu mai mult de $3 modificări vor fi returnate din motive de performanță.\nUtilizați unealta în concordanță cu politica proiectului.",
@@ -124,5 +125,6 @@
 	"checkuser-userinfocard-global-groups": "<strong>Grupuri globale</strong>: $1",
 	"checkuser-userinfocard-chart-tooltip-label": "$1 ({{PLURAL:$2|$2 modificare|$2 modificări|0=Nicio modificare}})",
 	"checkuser-userinfocard-temporary-account-viewer-opted-in": "A ales să vadă IP-urile conturilor temporare",
-	"checkuser-userinfocard-temporary-account-bucketcount": "Conturi temporare de pe toate IP-urile asociate: $1"
+	"checkuser-userinfocard-temporary-account-bucketcount": "Conturi temporare de pe toate IP-urile asociate: $1",
+	"checkuser-contributions-temporary-account-bucketcount": "Conturi temporare de pe toate IP-urile asociate: $1"
 }

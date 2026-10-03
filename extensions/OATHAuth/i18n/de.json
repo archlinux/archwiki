@@ -14,7 +14,8 @@
 			"Sushi",
 			"Tacsipacsi",
 			"Umherirrender",
-			"Wnme"
+			"Wnme",
+			"Kallichore"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern und dem WebAuthn-Protokoll",

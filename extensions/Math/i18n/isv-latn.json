@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"popups-settings-option-math": "Matematika",
+	"popups-settings-option-math-description": "Objasnjenje matematičnyh formul.",
+	"math-visualeditor-mwchemdialog-title": "Hemična formula",
+	"math-visualeditor-mwlatexcontextitem-quickedit": "Bystra pravka",
+	"math-visualeditor-mwlatexdialog-card-formula": "Formula",
+	"math-visualeditor-mwlatexdialog-card-options": "Opcije",
+	"math-visualeditor-mwlatexinspector-display": "Izobraziti",
+	"math-visualeditor-mwlatexinspector-display-default": "Standardno",
+	"mathwikibase": "Informacije o matematičnyh formulah",
+	"math-wikibase-formula-information": "Informacije o matematičnyh formulah"
+}

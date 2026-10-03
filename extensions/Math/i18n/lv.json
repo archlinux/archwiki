@@ -38,6 +38,7 @@
 	"math-visualeditor-symbol-group-math-symbols": "Simboli un konstantes",
 	"math-visualeditor-symbol-group-math-unsorted": "Nesakārtoti",
 	"math_failure": "Parsēšanas kļūda",
+	"math_other_error": "Cita kļūda: $1",
 	"math_syntax_error": "sintakses kļūda",
 	"math_unknown_error": "nezināma kļūda",
 	"math_unknown_function": "nezināma funkcija '$1'",

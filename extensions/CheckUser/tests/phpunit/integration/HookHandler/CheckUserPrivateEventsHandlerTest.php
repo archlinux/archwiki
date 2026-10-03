@@ -476,6 +476,7 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testOnEmailUserLogParams() {
 		// Also use this test to check that Client Hints are only attempted to be collected if the feature is enabled.
 		$this->overrideConfigValue( 'CheckUserClientHintsEnabled', false );
+		$this->overrideConfigValue( MainConfigNames::SecretKey, 'secret-key' );
 		// Verify that the log params for the email event contains a hash.
 		$userTo = $this->getTestUser()->getUser();
 		$userFrom = $this->getTestSysop()->getUserIdentity();
@@ -483,11 +484,9 @@ class CheckUserPrivateEventsHandlerTest extends MediaWikiIntegrationTestCase {
 			new MailAddress( 'test@test.com', $userTo->getName() ),
 			new MailAddress( 'testing@test.com', $userFrom->getName() ),
 			[
-				$this->getDb()->expr( 'cupe_params', IExpression::LIKE, new LikeValue(
-					$this->getDb()->anyString(),
-					'4::hash',
-					$this->getDb()->anyString()
-				) ),
+				'cupe_params' => LogEntryBase::makeParamBlob( [
+					'4::hash' => hash( 'sha256', $userTo->getEmail() . $userTo->getId() . 'secret-key' ),
+				] ),
 			],
 			false
 		);
