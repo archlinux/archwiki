@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Luky001",
-			"Teslaton"
+			"Teslaton",
+			"Wizzard"
 		]
 	},
 	"loginnotify-desc": "Informuje používateľov o podozrivých prihláseniach z neznámych zariadení alebo IP adries",
@@ -10,6 +11,12 @@
 	"echo-pref-tooltip-login-fail": "Upozornite ma, keď dôjde k neúspešným pokusom o prihlásenie k môjmu účtu.",
 	"echo-category-title-login-success": "prihlásenie z neznámeho zariadenia",
 	"echo-pref-tooltip-login-success": "Upozornite ma, keď sa niekto k môjmu účtu prihlási z neznámeho zariadenia a IP adresy.",
+	"loginnotify-primary-link": "Pomocník",
+	"loginnotify-unknown-ip": "Pokúsili ste sa prihlásiť z neznámej IP adresy a {{SITENAME}} je momentálne nastavená tak, aby prihlásenia z neznámych IP adries neumožňovala.",
+	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Neúspešný pokus|Viacero neúspešných pokusov}} o prihlásenie do {{GRAMMAR:genitív|{{SITENAME}}}} pod menom $1",
 	"notification-loginnotify-login-success-email-subject": "Prihlásenie na {{grammar:akuzatív|{{SITENAME}}}} ako {{GENDER:$1|$1}} z bežne nepoužívaného zariadenia",
-	"notification-header-login-success": "Niekto (pravdepodobne Vy) sa nedávno prihlásil na Váš účet z nového zariadenia. Ak ste to {{GENDER:$1|bol|bola|bol/a/}} Vy, môžete túto správu ignorovať. Ak ste to {{GENDER:$1|nebol|nebola|nebol/a/}} Vy, odporúčame, aby ste si {{GENDER:$1|zmenil|zmenila|zmenil/a/}} heslo a {{GENDER:$1|skontroloval|skontrolovala|skontroloval/a/}} aktivitu na svojom účte."
+	"notification-header-login-success": "Niekto (pravdepodobne Vy) sa nedávno prihlásil na Váš účet z nového zariadenia. Ak ste to {{GENDER:$1|bol|bola|bol/a/}} Vy, môžete túto správu ignorovať. Ak ste to {{GENDER:$1|nebol|nebola|nebol/a/}} Vy, odporúčame, aby ste si {{GENDER:$1|zmenil|zmenila|zmenil/a/}} heslo a {{GENDER:$1|skontroloval|skontrolovala|skontroloval/a/}} aktivitu na svojom účte.",
+	"notification-new-bundled-header-login-fail": "Od vášho posledného prihlásenia {{PLURAL:$1|došlo k '''neúspešnému pokusu'''|došlo k '''$1 neúspešným pokusom'''}} o prihlásenie do vášho účtu z nového zariadenia. Ak ste to neboli vy, uistite sa, prosím, že má váš účet silné heslo.",
+	"notification-known-header-login-fail": "Od vášho posledného prihlásenia {{PLURAL:$1|došlo k '''neúspešnému pokusu'''|došlo k '''$1 neúspešným pokusom'''}} o prihlásenie do vášho účtu. Ak ste to neboli vy, uistite sa, prosím, že má váš účet silné heslo.",
+	"notification-new-unbundled-header-login-fail": "{{PLURAL:$1|Došlo k '''neúspešnému pokusu'''|Došlo k '''viacerým neúspešným pokusom'''}} o prihlásenie do vášho účtu z nového zariadenia. Uistite sa, prosím, že má váš účet silné heslo."
 }

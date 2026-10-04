@@ -54,7 +54,8 @@
 			"Verdy p",
 			"Warudo",
 			"Yekrats",
-			"Ильгиз"
+			"Ильгиз",
+			"Ookap"
 		]
 	},
 	"abusefilter-desc": "{{desc|name=Abuse Filter|url=https://www.mediawiki.org/wiki/Extension:AbuseFilter}}",
@@ -581,7 +582,7 @@
 	"abusefilter-action-disallow": "{{doc-abusefilter-action}}\n\nTo '''disallow''' actions means that actions matching the filter will be '''prevented''', and a descriptive error message will be shown. Additional information: https://www.mediawiki.org/wiki/Extension:AbuseFilter/Actions",
 	"abusefilter-revert-title": "Used as page title of [[Special:AbuseFilter/revert/1]] (go to [[Special:AbuseFilter]], open a filter, click \"Revert actions taken by this filter\").\n\nParameters:\n* $1 - filter ID",
 	"abusefilter-revert-intro": "Parameters:\n* $1 - filter",
-	"abusefilter-revert-preview-item": "Parameters:\n* $1 is a localised time and date\n* $2 is the linked user that made a change\n* $3 is the action (one of block, blockautopromote or degroup)\n* $4 is the page title of the page that was changed\n* $5 is a (localised) comma-separated list of actions\n* $6 is link to the log details with {{msg-mw|abusefilter-log-detailslink}} as link description.\n* $7 is a raw username, which can be used for GENDER.",
+	"abusefilter-revert-preview-item": "Parameters:\n* $1 - a localised time and date\n* $2 - the linked user that made a change\n* $3 - the action (one of block, blockautopromote or degroup)\n* $4 - the page title of the page that was changed\n* $5 - a (localised) comma-separated list of actions\n* $6 - a link to the log details with {{msg-mw|abusefilter-log-detailslink}} as the link description.\n* $7 - a raw username, which can be used for GENDER.",
 	"abusefilter-revert-search-legend": "Used as label on [[Special:AbuseFilter/revert]]",
 	"abusefilter-revert-periodstart": "Used as label on [[Special:AbuseFilter/revert]]",
 	"abusefilter-revert-periodend": "Used as label on [[Special:AbuseFilter/revert]]",
@@ -641,7 +642,7 @@
 	"abusefilter-topnav-examine": "Used as link text in the navigation toolbar.\n\nThe link points to [[Special:AbuseFilter/examine]].",
 	"abusefilter-topnav-log": "Used as link text in the navigation toolbar.\n\nThe link points to [[Special:AbuseFilter/history]].\n{{Identical|Abuse log}}",
 	"abusefilter-topnav-tools": "Used as link text in the navigation toolbar.",
-	"abusefilter-log-name": "{{doc-logpage}}",
+	"abusefilter-log-name": "{{doc-logpage}}\n\nlipu ni li toki e ni: jan li ante seme e ilo pi weka jaki. lipu \"weka jaki la pini\" li toki e ni: pali seme la ilo pi weka jaki li lukin e jaki.",
 	"abusefilter-log-header": "Used as description on [[Special:Log/abusefilter]]",
 	"abusefilter-logentry-create": "Parameters:\n* $1 - a link to a user page with a username as link text, followed by a series of related links\n* $2 - raw username, for GENDER support\n* $3 - (unused)\n* $4 - text {{msg-mw|abusefilter-log-detailedentry-local}} linked to the filter created\n* $5 - text {{msg-mw|abusefilter-log-detailslink}} linked to the filter change details\n{{Identical|Created}}",
 	"abusefilter-logentry-modify": "Parameters:\n* $1 - a link to a user page with a username as link text, followed by a series of related links\n* $2 - raw username, for GENDER support\n* $3 - (unused)\n* $4 - text {{msg-mw|abusefilter-log-detailedentry-local}} linked to the modified filter\n* $5 - text {{msg-mw|abusefilter-log-detailslink}} linked to the filter change details",

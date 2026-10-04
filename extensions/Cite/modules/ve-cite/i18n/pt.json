@@ -20,7 +20,8 @@
 			"Opraco",
 			"SandroHc",
 			"Toliño",
-			"Vitorvicentevalente"
+			"Vitorvicentevalente",
+			"Vickvvy"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Livro",
@@ -58,6 +59,7 @@
 	"cite-ve-dialog-subreference-help-dialog-title": "Detalhes",
 	"cite-ve-dialog-subreference-help-dialog-head": "Novo: Adicionar um detalhe a uma referência reutilizada",
 	"cite-ve-dialog-subreference-help-dialog-link-label": "Saiba mais sobre como adicionar detalhes a uma referência",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "Editar todos os usos ($1) desses detalhes.",
 	"cite-ve-dialog-reference-title-details": "Detalhes",
 	"cite-ve-dialog-reference-useexisting-tool": "Reutilizar",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista de referências gerais",

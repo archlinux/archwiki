@@ -5,7 +5,8 @@
 			"Ans",
 			"Horus",
 			"Nullzero",
-			"Octahedron80"
+			"Octahedron80",
+			"Patsagorn Y."
 		]
 	},
 	"scribunto-desc": "กรอบงานสำหรับฝังภาษาสคริปต์ลงในหน้าของมีเดียวิกิ",
@@ -40,6 +41,7 @@
 	"scribunto-lua-error-location": "ข้อผิดพลาด Lua $1: $2",
 	"scribunto-lua-error": "ข้อผิดพลาด Lua: $2",
 	"scribunto-lua-notarrayreturn": "ข้อผิดพลาดสคริปต์: มอดูลคืนค่าเป็น $2 ซึ่งควรจะคืนค่าเป็นตารางส่งออก",
+	"scribunto-lua-warning": "คำเตือนสคริปต์: $1",
 	"scribunto-luastandalone-proc-error": "ข้อผิดพลาด Lua: ไม่สามารถสร้างกระบวนการได้",
 	"scribunto-luastandalone-proc-error-msg": "ข้อผิดพลาด Lua: ไม่สามารถสร้างกระบวนการได้: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "ข้อผิดพลาด Lua: ไม่สามารถสร้างกระบวนการได้: proc_open ไม่มีให้ใช้ ให้ตรวจสอบตัวชี้แนะการตั้งค่า \"disable_functions\" ของ PHP",

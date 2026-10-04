@@ -294,6 +294,7 @@
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\AbuseFilterPermissionManagerTestTrait": "tests/phpunit/integration/AbuseFilterPermissionManagerTestTrait.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\FilterFromSpecsTestTrait": "tests/phpunit/integration/FilterFromSpecsTestTrait.php",
 		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\Api\\AbuseFilterApiTestTrait": "tests/phpunit/integration/Api/AbuseFilterApiTestTrait.php",
+		"MediaWiki\\Extension\\AbuseFilter\\Tests\\Integration\\ProtectedVarsTestTrait": "tests/phpunit/integration/ProtectedVarsTestTrait.php",
 		"AbuseFilterUploadTestTrait": "tests/phpunit/AbuseFilterUploadTestTrait.php",
 		"AbuseFilterCreateAccountTestTrait": "tests/phpunit/AbuseFilterCreateAccountTestTrait.php",
 		"AbuseFilterRowsAndFiltersTestTrait": "tests/phpunit/AbuseFilterRowsAndFiltersTestTrait.php",

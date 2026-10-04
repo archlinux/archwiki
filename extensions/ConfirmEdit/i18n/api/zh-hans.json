@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"GuoPC"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "回答验证码",
-	"captcha-apihelp-param-captchaid": "之前请求的验证码ID"
+	"captcha-apihelp-param-captchaid": "之前请求的验证码ID",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "显示的hCaptha验证码是否为强制显示，例如由滥用过滤器扩展强制显示（并因此使用了更严格的网站密钥）。如果同名JS配置变量为true，或者首次尝试使用此API时返回了带有指定网站密钥的“forcecaptcha”错误，请设置此参数。"
 }

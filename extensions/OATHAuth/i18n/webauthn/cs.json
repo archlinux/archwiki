@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Henryk Siuda"
+		]
+	},
+	"oathauth-webauthn-ui-add-key": "Přidat klíč",
+	"oathauth-webauthn-add-security-key": "Přidat bezpečnostní klíč (security key)"
+}

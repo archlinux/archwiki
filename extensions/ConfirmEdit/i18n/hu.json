@@ -27,5 +27,13 @@
 	"captchahelp-cookies-needed": "Engedélyezned kell a böngésződben a sütiket.",
 	"captchahelp-text": "Az olyan weboldalakat, amelyekre bárki írhat, gyakran támadják meg spammerek olyan eszközök felhasználásával, amelyek képesek automatikusan, emberi felügyelet nélkül elhelyezni egy linket sok különböző oldalon.\n\nAz ilyen linkek kézi eltávolítása rengeteg energiát emésztene fel, ezért néha, különösen ha egy külső linket teszel egy cikkbe, a wiki egy valamilyen módon eltorzított szöveget (captcha-t) jelenít meg, és arra kér, hogy gépeld be azt. Mivel ezt automatikusan nagyon nehéz megtenni, a valódi szerkesztők így könnyen megkülönböztethetőek a spammerek robotjaitól.\n\nSajnos ez komoly kényelmetlenséget jelenthet azoknak a felhasználóknak, akik gyengén látnak, vagy szöveges/hangalapú böngészőt használnak. Jelenleg nem tudunk hangalapú alternatívával szolgálni; ha a captcha megakadályoz abban, hogy szerkeszd a wikit, vedd fel a kapcsolatot az [[{{int:grouppage-sysop}}|adminisztrátorokkal]].\n\nHa a captcha megoldása helyett inkább visszatérnél a szöveg szerkesztéséhez, használd a böngésződ „vissza” gombját.",
 	"captcha-addurl-whitelist": " #<!-- ezt a sort hagyd pontosan így --> <pre>\n# A szintaktika a következő:\n#  * Minden „#” karakterrel kezdődő sor megjegyzés\n#  * Minden nem üres sor egy reguláris kifejezés darabja, amely csak az URL-ekben található kiszolgálókra keres\n  #</pre> <!-- ezt a sort hagyd pontosan így -->",
-	"right-skipcaptcha": "captcha átugrása"
+	"right-skipcaptcha": "captcha átugrása",
+	"action-skipcaptcha": "CAPTCHA-t kiváltó műveletek végrehajtása a CAPTCHA kitöltése nélkül",
+	"confirmedit-preview-line": "Sorszám",
+	"confirmedit-preview-content": "Tartalom",
+	"confirmedit-preview-validity": "Érvényesség",
+	"confirmedit-preview-valid": "érvényes",
+	"confirmedit-preview-invalid": "érvénytelen",
+	"confirmedit-preview-description": "A következő táblázat az ezen a lapon szereplő sorok listáját mutatja, valamint azt, hogy az egyes sorok érvényes IP-címet vagy IP-címtartományt tartalmaznak-e. Ha egy sor érvényes IP-címet vagy IP-címtartományt tartalmaz, akkor az ki lesz zárva a CAPTCHA-ellenőrzésekből; az érvénytelen sorokat a rendszer figyelmen kívül hagyja. Érvényes IP-címtartomány például a 69.208.0.0/16, amely a 69.208.0.0 és 69.208.255.255 közötti címeket foglalja magában. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix További információ] az IP-címtartományok kiszámításáról.",
+	"abusefilter-edit-action-showcaptcha": "CAPTCHA-ellenőrzés megkövetelése a művelet végrehajtásához"
 }

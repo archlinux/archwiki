@@ -20,7 +20,7 @@
 	"categorytree-mode-categories": "nëmme Kategorien",
 	"categorytree-mode-pages": "Säiten ausser Fichieren",
 	"categorytree-mode-all": "all Säiten",
-	"categorytree-collapse": "Verstoppen",
+	"categorytree-collapse": "zouklappen",
 	"categorytree-expand": "Opklappen",
 	"categorytree-member-counts": "besteet aus {{PLURAL:$1|1 Ënnerkategorie|$1 Ënnerkategorien}}, {{PLURAL:$2|1 Säit|$1 Säiten}}, an {{PLURAL:$3|1 Fichier|$3 Fichieren}}",
 	"categorytree-num-categories": "$1 K",

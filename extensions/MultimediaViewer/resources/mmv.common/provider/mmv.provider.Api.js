@@ -31,7 +31,7 @@ class Api {
 		/**
 		 * API object for dependency injection.
 		 *
-		 * @property {mw.Api}
+		 * @type {mw.Api}
 		 */
 		this.api = api;
 
@@ -39,14 +39,14 @@ class Api {
 		 * Options object; the exact format and meaning is unspecified and could be different
 		 * from subclass to subclass.
 		 *
-		 * @property {Object}
+		 * @type {Object}
 		 */
 		this.options = options || {};
 
 		/**
 		 * API call cache.
 		 *
-		 * @property {Object.<string, jQuery.Promise>} cache
+		 * @type {Object.<string, jQuery.Promise>}
 		 * @protected
 		 */
 		this.cache = {};

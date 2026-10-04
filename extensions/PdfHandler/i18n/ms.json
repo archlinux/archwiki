@@ -1,10 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Anakmalaysia"
+			"Anakmalaysia",
+			"Hakimi97"
 		]
 	},
 	"pdf-desc": "Pengendali untuk melihat fail PDF dalam mod imej",
+	"pdf-file-page-warning": "PDF ialah format kompleks yang mungkin mendedahkan sebahagian maklumat peribadi anda dalam beberapa kes. Pastikan anda mengkonfigurasi pemapar PDF anda dengan cara yang selamat.",
+	"pdf-file-page-warning-header": "Pertimbangan privasi",
+	"pdf-file-page-warning-footer": "Isu ini bukan khusus untuk fail tertentu ini, tetapi isu umum dengan format PDF.",
+	"pdf-file-page-warning-info": "Ketahui lebih lanjut mengenai laman ini",
 	"pdf_no_metadata": "Metadata tidak boleh diperoleh dari PDF",
 	"pdf_page_error": "Nombor halaman tiada dalam julat",
 	"exif-pdf-producer": "Program penukaran",

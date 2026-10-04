@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj",
+			"Bencemac"
+		]
+	},
+	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] modul a ConfirmEdit kiterjesztéshez",
+	"hcaptcha-privacy-policy": "Ezt a webhelyet a hCaptcha védi. A szolgáltatás [https://www.hcaptcha.com/privacy adatvédelmi irányelvei] és [https://www.hcaptcha.com/terms szolgáltatási feltételei] érvényesek.",
+	"hcaptcha-challenge-closed": "A folytatáshoz meg kell oldanod a CAPTCHA-feladatot.",
+	"hcaptcha-challenge-expired": "Lejárt a CAPTCHA-feladat megoldására rendelkezésre álló idő. Próbáld újra.",
+	"hcaptcha-generic-error": "Hiba történt az űrlap betöltése közben. A folytatáshoz újra kell töltened a lapot.",
+	"hcaptcha-internal-error": "Belső hiba történt az űrlap elküldése közben. Próbáld újra.",
+	"hcaptcha-network-error": "Hálózati hiba történt az űrlap elküldése közben. Ellenőrizd, hogy működik-e az internetkapcsolatod, majd próbáld újra.",
+	"hcaptcha-loading-indicator-label": "Várj, amíg befejeződik az űrlap betöltése…",
+	"hcaptcha-missing-token": "Az űrlap betöltése még nem fejeződött be. Várj néhány másodpercet, majd próbáld újra.",
+	"hcaptcha-noscript": "A folytatáshoz JavaScript szükséges. Engedélyezd a JavaScriptet a böngésződ beállításaiban, majd frissítsd a lapot.",
+	"hcaptcha-force-show-captcha-edit": "Küldd el újra az űrlapot, és a szerkesztésed mentéséhez oldd meg a feladatot.",
+	"hcaptcha-visual-editor-error-handler-warning": "Küldd el újra az űrlapot a szerkesztésed mentéséhez."
+}

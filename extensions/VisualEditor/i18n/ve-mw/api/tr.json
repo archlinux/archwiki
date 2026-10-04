@@ -8,7 +8,8 @@
 			"McAang",
 			"Mim.saitkilic",
 			"MuratTheTurkish",
-			"SaldırganSincap"
+			"SaldırganSincap",
+			"Leo"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Bu anahtarla önbelleğe alınmış serileştirme bulunamadı",
@@ -35,6 +36,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "Bu tuş ile bir önceki serializeforcache bir isteğin sonucu kullanın. $1html geçersiz kılar.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha kimliği (captcha cevabı ile kaydederken).",
 	"apihelp-visualeditoredit-param-captchaword": "Captcha'ya cevap (captcha cevabı ile kaydederken).",
+	"apihelp-visualeditoredit-param-nocontent": "Yanıtta yeni revizyonun HTML içeriğini atlayın.",
 	"apihelp-visualeditoredit-param-plugins": "API isteğiyle ilişkili eklentiler.",
 	"apihelp-visualeditoredit-param-data-{plugin}": "API isteği ile bir eklenti tarafından gönderilen keyfi veriler.",
 	"apihelp-visualeditoredit-param-etag": "Gönderilecek ETag.",

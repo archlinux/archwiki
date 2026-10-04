@@ -12,6 +12,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Sprooch",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Keng)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Nummere vun den Zeile weisen",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Code-Block",
 	"syntaxhighlight-error-unknown-language": "Onbekannt Sprooch \"$1\"",
 	"syntaxhighlight-button-copy": "Kopéieren",
 	"syntaxhighlight-button-copied": "Kopéiert!"

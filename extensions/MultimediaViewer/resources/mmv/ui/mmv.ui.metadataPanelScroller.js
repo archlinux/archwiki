@@ -30,7 +30,11 @@ class MetadataPanelScroller extends UiElement {
 
 		this.$aboveFold = $aboveFold;
 
-		/** @property {boolean} panelWasOpen state flag which will be used to detect open <-> closed transitions */
+		/**
+		 * state flag which will be used to detect open <-> closed transitions
+		 *
+		 * @type {boolean}
+		 */
 		this.panelWasOpen = null;
 
 		/**
@@ -44,7 +48,7 @@ class MetadataPanelScroller extends UiElement {
 		/**
 		 * Whether we've already fired an animation for the metadata div in this lightbox session.
 		 *
-		 * @property {boolean}
+		 * @type {boolean}
 		 * @private
 		 */
 		this.hasAnimatedMetadata = false;

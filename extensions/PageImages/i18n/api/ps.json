@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-query+pageimages-summary": "مخ کې د انځورونو په اړه مالومات، لکه د بټنوک او انځورونو شتون راستنوي.",
+	"apihelp-query+pageimages-example-1": "په <kbd>البېرټ اينسټاين</kbd> مخ کې د يو انځور نوم او <kbd>۱۰۰</kbd> پيکسله بټنوک ترلاسه کول.",
+	"apihelp-query+pageimages-param-prop": "کوم مالومات بايد بېرته راوگرځول شي:",
+	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "مخ سره تړلي بټنوک انځور وېبتړ او اړخونه، که وي.",
+	"apihelp-query+pageimages-paramvalue-prop-original": "د مخ اړوند انځور وېبتړ او ار اړخونه، که وي.",
+	"apihelp-query+pageimages-paramvalue-prop-name": "انځور سرليک.",
+	"apihelp-query+pageimages-param-thumbsize": "د بټنوک انځورونو په پيکسلو ډېر پراخوالی.",
+	"apihelp-query+pageimages-param-langcode": "د څوژبيزه ملاتړ په صورت کې د هغه ژبې کوډ چې انځور به پکې وړاندې شي",
+	"apihelp-query+pageimages-param-limit": "د ټولو هغه مخونو ځانتياوې چې بېرته راگرځول کېږي.",
+	"apihelp-query+pageimages-param-license": "د مخ انځورونه د منښتليک يو ځانگړي ډول پورې محدودول:",
+	"apihelp-query+pageimages-paramvalue-license-free": "يوازې وړيا انځورونه.",
+	"apihelp-query+pageimages-paramvalue-license-any": "غوره انځور، که وړيا وي يا ناوړيا."
+}

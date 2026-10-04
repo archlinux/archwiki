@@ -4,13 +4,14 @@
 			"Dani",
 			"KossuthRad",
 			"Tacsipacsi",
-			"Tgr"
+			"Tgr",
+			"Dj"
 		]
 	},
 	"imagemap_desc": "Lehetővé teszi kliensoldali imagemapek létrehozását az <code>&lt;imagemap&gt;</code> címke segítségével",
 	"imagemap_no_image": "Hiba: kell egy előírt kép az első sorban",
 	"imagemap_invalid_image": "Hiba: érvénytelen vagy nem létező kép",
-	"imagemap_bad_image": "Hiba: a kép feketelistán van ezen az oldalon",
+	"imagemap_bad_image": "Hiba: A kép nem engedélyezett ezen a oldalon.",
 	"imagemap_no_link": "Hiba: nincs érvényes link a(z) $1. sor végén",
 	"imagemap_invalid_title": "Hiba: érvénytelen cím a linkben a(z) $1. sorban",
 	"imagemap_missing_coord": "Hiba: nincs elég koordináta az alakzathoz a(z) $1. sorban",

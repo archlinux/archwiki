@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hakimi97"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Modul API untuk berkomunikasi antara pelayan dan pelanggan semasa proses pendaftaran/pengesahihan.",
+	"apihelp-oathauth-webauthn-param-func": "Nama fungsi yang diminta untuk dilaksanakan.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Maklumat pengesahihan.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Maklumat pendaftaran.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Sama ada kunci yang didaftarkan berada dalam mod kunci laluan. (Hanya untuk getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "Modul WebAuthn tidak tersedia.",
+	"apierror-oathauth-webauthn-missing-credential": "Tiada data bukti kelayakan diberikan.",
+	"apierror-oathauth-webauthn-invalid-credential": "Data bukti kelayakan tidak sah atau salah bentuk.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Daftarkan bukti kelayakan WebAuthn baharu untuk pengguna semasa.",
+	"apihelp-oathauth-webauthn-param-credential": "Respons bukti kelayakan WebAuthn yang dikodkan JSON daripada pelayar.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Nama mesra untuk bukti kelayakan baharu."
+}

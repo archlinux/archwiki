@@ -33,7 +33,7 @@ class Embed extends UiElement {
 		/**
 		 * Formatter converting image data into formats needed for output
 		 *
-		 * @property {EmbedFileFormatter}
+		 * @type {EmbedFileFormatter}
 		 */
 		this.formatter = new EmbedFileFormatter();
 
@@ -317,13 +317,17 @@ class Embed extends UiElement {
 }
 
 /**
- * @property {number} Width threshold at which an image is to be considered "large"
+ * Width threshold at which an image is to be considered "large"
+ *
+ * @type {number}
  * @static
  */
 Embed.LARGE_IMAGE_WIDTH_THRESHOLD = 1200;
 
 /**
- * @property {number} Height threshold at which an image is to be considered "large"
+ * Height threshold at which an image is to be considered "large"
+ *
+ * @type {number}
  * @static
  */
 Embed.LARGE_IMAGE_HEIGHT_THRESHOLD = 900;

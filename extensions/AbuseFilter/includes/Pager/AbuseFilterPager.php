@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use LogicException;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\FilterUtils;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
@@ -44,7 +45,7 @@ class AbuseFilterPager extends TablePager {
 		private readonly AbuseFilterPermissionManager $afPermManager,
 		protected readonly SpecsFormatter $specsFormatter,
 		private readonly FilterLookup $filterLookup,
-		private readonly array $conds,
+		private array $conds,
 		private readonly ?string $searchPattern,
 		private readonly ?string $searchMode
 	) {
@@ -55,7 +56,31 @@ class AbuseFilterPager extends TablePager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
-		return $this->filterLookup->getAbuseFilterQueryBuilder( $this->getDatabase() )
+		$dbr = $this->getDatabase();
+
+		// If sorting by hit count, exclude filters the user cannot see (T434372)
+		if ( $this->mSort === 'af_hit_count' ) {
+			$disallowedBitMask = 0;
+			$performer = $this->getAuthority();
+
+			// Keep these permission checks in sync with ::canSeeLogDetailsForFilter()
+			// in AbuseFilterPermissionManager
+			if ( !$this->afPermManager->canViewPrivateFilters( $performer ) ) {
+				$disallowedBitMask |= Flags::FILTER_HIDDEN;
+			}
+			if ( !$this->afPermManager->canViewProtectedVariables( $performer, [] )->isGood() ) {
+				$disallowedBitMask |= Flags::FILTER_USES_PROTECTED_VARS;
+			}
+			if ( !$this->afPermManager->canViewSuppressed( $performer ) ) {
+				$disallowedBitMask |= Flags::FILTER_SUPPRESSED;
+			}
+
+			if ( $disallowedBitMask !== 0 ) {
+				$this->conds[] = $dbr->bitAnd( 'af_hidden', $disallowedBitMask ) . ' = 0';
+			}
+		}
+
+		return $this->filterLookup->getAbuseFilterQueryBuilder( $dbr )
 			->andWhere( $this->conds )
 			->getQueryInfo();
 	}
@@ -116,19 +141,12 @@ class AbuseFilterPager extends TablePager {
 			}
 
 			if ( $this->matchesPattern( $filter->getRules() ) ) {
-				$filtered[$filter->getID()] = $row;
+				$filtered[] = $row;
 			}
 		}
 
-		// sort results and enforce limit like ContribsPager
-		if ( $order === self::QUERY_ASCENDING ) {
-			ksort( $filtered );
-		} else {
-			krsort( $filtered );
-		}
+		// enforce limit like ContribsPager
 		$filtered = array_slice( $filtered, 0, $limit );
-		// FakeResultWrapper requires sequential indexes starting at 0
-		$filtered = array_values( $filtered );
 		return new FakeResultWrapper( $filtered );
 	}
 

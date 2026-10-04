@@ -52,7 +52,7 @@ class ThumbnailWidthCalculator {
 		/**
 		 * List of thumbnail width bucket sizes, in pixels.
 		 *
-		 * @property {number[]}
+		 * @type {number[]}
 		 */
 		this.widthBuckets = options.widthBuckets;
 		this.widthBuckets.sort( ( a, b ) => a - b );
@@ -60,7 +60,7 @@ class ThumbnailWidthCalculator {
 		/**
 		 * Screen pixel count per CSS pixel.
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.devicePixelRatio = options.devicePixelRatio;
 	}

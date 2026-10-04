@@ -5,9 +5,18 @@
 			"DDPAT",
 			"Ice bulldog",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"Movses"
 		]
 	},
+	"apihelp-echocreateevent-summary": "Вручну активувати сповіщення для користувача",
+	"apihelp-echocreateevent-example": "Надіслати сповіщення",
+	"apihelp-echocreateevent-param-user": "Кому надіслати сповіщення",
+	"apihelp-echocreateevent-param-header": "Вміст заголовка сповіщення",
+	"apihelp-echocreateevent-param-content": "Вміст основного тексту сповіщення",
+	"apihelp-echocreateevent-param-page": "Сторінка для посилання в сповіщенні",
+	"apihelp-echocreateevent-param-section": "Розділ, куди буде доставлено сповіщення",
+	"apihelp-echocreateevent-param-email": "Чи також надсилати електронного листа",
 	"apihelp-echomarkread-summary": "Позначити сповіщення як прочитані для поточного користувача.",
 	"apihelp-echomarkread-param-list": "Список ідентифікаторів сповіщень, які позначити як прочитані.",
 	"apihelp-echomarkread-param-unreadlist": "Список ідентифікаторів сповіщень, які треба позначити як непрочитані",

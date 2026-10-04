@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Renessaince"
+		]
+	},
+	"apierror-discussiontools-commentname-ambiguous": "Знойдзена некалькі камэнтароў з назваю „$1“, патрэбны <var>commentid</var>."
+}

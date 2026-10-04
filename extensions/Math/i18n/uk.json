@@ -16,10 +16,12 @@
 			"Vlad5250",
 			"Ypryima",
 			"Ата",
-			"Тест"
+			"Тест",
+			"Repakr"
 		]
 	},
 	"math-desc": "Відображає математичні формули у тегах <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math": "Математика",
 	"popups-settings-option-math-description": "Пояснення математичних формул.",
 	"popups-settings-option-math-tooltip": "Пояснювати математичні формули при наведенні",
 	"math-visualeditor-mwchemdialog-title": "Хімічна формула",
@@ -27,9 +29,9 @@
 	"math-visualeditor-mwlatexdialog-card-formula": "Формула",
 	"math-visualeditor-mwlatexdialog-card-options": "Параметри",
 	"math-visualeditor-mwlatexinspector-display": "Показати",
-	"math-visualeditor-mwlatexinspector-display-block": "Блок",
+	"math-visualeditor-mwlatexinspector-display-block": "Блокова",
 	"math-visualeditor-mwlatexinspector-display-default": "Стандартно",
-	"math-visualeditor-mwlatexinspector-display-inline": "Вбудовано",
+	"math-visualeditor-mwlatexinspector-display-inline": "Рядкова",
 	"math-visualeditor-mwlatexinspector-id": "Ідентифікатор посилання (необов'язково)",
 	"math-visualeditor-mwlatexinspector-qid": "Ідентифікатор Wikibase (з префіксом Q)",
 	"math-visualeditor-mwmathdialog-title": "Математична формула",
@@ -72,11 +74,18 @@
 	"math-visualeditor-symbol-group-math-typefaces": "Гарнітури",
 	"math-visualeditor-symbol-group-math-unsorted": "Інше",
 	"math-form-tex-label": "Користувацький ввід TeX",
+	"math-form-tex-help": "Протестуйте із Вашими власними вхідними даними TeX. Див. [[{{int:math-helppage}}|сторінку довідки щодо математичних формул]] щодо додаткової інформації.",
+	"math-form-type-label": "Тип вхідних даних",
+	"math-form-type-tex": "tex (звичайні вхідні дані)",
+	"math-form-type-chem": "chem (вхідні дані з підтримкою хімічних формул; наприклад, <code dir=\"ltr\">\\ce{H2O}</code> для води)",
+	"math-form-display-label": "Режим відображення Math",
+	"math-helppage": "Help:Математичні формули та спецсимволи",
 	"math_failure": "Неможливо розібрати вираз",
 	"math_invalidjson": "$1 відповідь сервера є недійсним JSON.",
 	"math_invalidresponse": "$1: Недійсна відповідь («$3») від сервера «$2»:",
 	"math_invalidxml": "MathML чи SVG є невірним XML.",
 	"math_mathoid_error": "Помилка перетворення. Сервер (\"$1\") повідомив: \"$2\"",
+	"math_other_error": "Інша помилка: $1",
 	"math-status-introduction": "Ця сторінка показує інформацію про {{PLURAL:$1|увімкнений режим|увімкнені режими}} візуалізації формул.\n\nУвімкнено {{PLURAL:$1|такий режим|такі режими}} візуалізації:",
 	"math_syntax_error": "синтаксична помилка",
 	"math_timeout": "$1 перевищив час очікування від «$2»",
@@ -121,5 +130,7 @@
 	"math-wikibase-special-form-button": "Запит на інформацію",
 	"math-wikibase-special-error-header": "Помилка",
 	"math-wikibase-special-error-invalid-argument": "Вказаний вами ID елемента Вікібази не існує.",
-	"math-wikibase-special-error-unknown": "Сталася невідома помилка під час отримання даних з Вікібази."
+	"math-wikibase-special-error-unknown": "Сталася невідома помилка під час отримання даних з Вікібази.",
+	"math-editpage-insert-inline": "Математична формула (рядкова)",
+	"math-editpage-insert-block": "Математична формула (блокова)"
 }

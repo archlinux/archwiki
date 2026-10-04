@@ -7,7 +7,7 @@
 		]
 	},
 	"imagemap_desc": "Erlaabt et Biller ze benotzen, déi een uklicke ka mat Hëllef vum Tag <code>&lt;imagemap&gt;</code>.",
-	"imagemap_no_image": "Feeler: Dir musst an der éischter Linn e Bild uginn",
+	"imagemap_no_image": "Feeler: Dir musst an der éischter Zeil e Bild uginn.",
 	"imagemap_invalid_image": "Feeler: d'Bild ass ongëltig oder net do",
 	"imagemap_bad_image": "Feeler: D'Bild ass op dëser Säit net erlaabt.",
 	"imagemap_no_link": "Feeler: Um Enn vun der Zeil $1 gouf kee gëltege Link fonnt",
@@ -18,5 +18,5 @@
 	"imagemap_invalid_desc": "Feeler: Ongültegen „desc“-Parameter, méiglech sinn: <code>$1</code>.",
 	"imagemap_description": "Iwwer dëst Bild",
 	"imagemap_desc_types": "uewe-riets, ënne-riets, ënne-lénks, uewe-lénks, keen",
-	"imagemap_poly_odd": "Feeler: e Polygon mat enger ongerueder Zuel vu Koordinate gouf an der Linn $1 fonnt"
+	"imagemap_poly_odd": "Feeler: E Polygon mat enger ongerueder Zuel vu Koordinate an der Zeil $1 fonnt"
 }

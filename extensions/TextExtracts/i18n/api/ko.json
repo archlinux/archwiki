@@ -5,7 +5,7 @@
 			"Ykhwong"
 		]
 	},
-	"apihelp-query+extracts-summary": "주어진 문서의 플레인 텍스트 또는 제한된 HTML 추출 정보를 반환합니다.",
+	"apihelp-query+extracts-summary": "주어진 문서의 평문 또는 제한된 HTML 추출 정보를 반환합니다.",
 	"apihelp-query+extracts-param-chars": "반환할 문자 수. 실제 반환되는 텍스트는 약간 더 길 수 있습니다.",
 	"apihelp-query+extracts-param-sentences": "반환할 문장 수.",
 	"apihelp-query+extracts-param-limit": "반환할 추출 결과 수 (exintro가 참으로 설정된 경우에만 복수의 추출 결과가 반환될 수 있음.)",

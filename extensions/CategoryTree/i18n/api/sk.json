@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-categorytree-summary": "Interný modul rozšírenia CategoryTree.",
+	"apihelp-categorytree-param-category": "Názov v mennom priestore kategórií; ak je predpona uvedená, bude ignorovaná.",
+	"apihelp-categorytree-param-options": "Možnosti konštruktora CategoryTree ako objekt JSON. Predvolená hodnota možnosti <var>depth</var> je <kbd>1</kbd>.",
+	"apierror-categorytree-invalidjson": "Možnosti musia byť platný objekt JSON.",
+	"apierror-categorytree-invalidjson-option": "Možnosť „$1“ obsahuje neplatnú hodnotu."
+}

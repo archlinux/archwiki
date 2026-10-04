@@ -839,7 +839,7 @@ class MetadataPanel extends UiElement {
 /**
  * Maximum number of restriction icons before default icon is used
  *
- * @property {number} MAX_RESTRICT
+ * @type {number}
  * @static
  */
 MetadataPanel.MAX_RESTRICT = 4;

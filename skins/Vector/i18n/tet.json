@@ -1,12 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
-			"MF-Warburg"
+			"MF-Warburg",
+			"Robertsky"
 		]
 	},
+	"vector-action-addsection": "Hatama tópiku",
+	"vector-action-delete": "Apaga",
+	"vector-action-move": "Muda",
 	"vector-action-protect": "Proteje",
+	"vector-action-undelete": "Restaura",
+	"vector-action-unprotect": "Muda protesaun",
 	"vector-view-create": "Kria",
 	"vector-view-edit": "Edita",
 	"vector-view-history": "Haree istória",
-	"vector-view-view": "Lee"
+	"vector-view-view": "Lee",
+	"vector-view-viewsource": "Haree fonte",
+	"vector-jumptonavigation": "Bá navigasaun",
+	"vector-jumptosearch": "Bá peskiza",
+	"vector-jumptocontent": "Bá konteúdu",
+	"vector-more-actions": "Liután",
+	"vector-page-tools-actions-label": "Aksaun sira",
+	"vector-unpin-element-label": "subar",
+	"vector-2022-prefs-talkpage": "[https://www.mediawiki.org/wiki/Talk:Reading/Web/Desktop_Improvements Discussion]"
 }

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-fancycaptchareload-summary": "Získať nový FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Získať nový FancyCaptcha"
+}

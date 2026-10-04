@@ -28,7 +28,8 @@
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
 			"Withoutaname",
-			"Đỗ Thảo"
+			"Đỗ Thảo",
+			"Veritas Sapientiae"
 		]
 	},
 	"abusefilter-desc": "Áp dụng thuật toán tự động vào các sửa đổi",
@@ -242,6 +243,7 @@
 	"abusefilter-edit-flags": "Cờ:",
 	"abusefilter-edit-enabled": "Kích hoạt bộ lọc này",
 	"abusefilter-edit-deleted": "Đánh dấu đã xóa",
+	"abusefilter-edit-suppressed": "Ẩn để chỉ cho giám sát viên được xem bộ lọc này và nhật trình của nó",
 	"abusefilter-edit-hidden": "Ẩn các chi tiết của bộ lọc này khỏi chế độ xem công khai",
 	"abusefilter-edit-protected": "<strong>Kích hoạt sử dụng [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:AbuseFilter/Rules_format#Protected_variables biến bị khóa] cho bộ lọc này</strong>",
 	"abusefilter-edit-protected-variable-already-protected": "Chi tiết của bộ lọc này đã bị ẩn khỏi những người dùng không có quyền xem các dữ liệu liên quan đến bị khóa",

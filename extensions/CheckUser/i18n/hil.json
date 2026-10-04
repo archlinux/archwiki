@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jose77"
+			"Jose77",
+			"Exec8"
 		]
 	},
 	"checkuser-reason": "Rason:",
-	"checkuser-search": "Pangita-a",
+	"checkuser-search": "Pangitaa tan-awa ang mga entry sa log sang user",
 	"checkuser-search-submit": "Pangita-a"
 }

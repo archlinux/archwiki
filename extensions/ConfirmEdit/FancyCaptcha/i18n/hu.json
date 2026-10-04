@@ -8,6 +8,7 @@
 			"Tacsipacsi"
 		]
 	},
+	"fancycaptcha-desc": "Látványos CAPTCHA-generátor a ConfirmEdit kiterjesztéshez",
 	"fancycaptcha-addurl": "A szerkesztésed új külső hivatkozásokat tartalmaz.\nAz automatizált spamek megelőzése miatt kérjük, hogy add meg a lenti keretben olvasható szavakat ([[Special:Captcha/help|további segítség]]):",
 	"fancycaptcha-badlogin": "Hogy az automatizált jelszófeltörési kísérleteket megelőzzük, kérjük, hogy add meg a lenti keretben olvasható szavakat ([[Special:Captcha/help|további segítség]]):",
 	"fancycaptcha-captcha": "Biztonsági ellenőrzés",

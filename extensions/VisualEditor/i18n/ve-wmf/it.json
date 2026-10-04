@@ -23,10 +23,16 @@
 			"Pierpao",
 			"Raoli",
 			"Una giornata uggiosa '94",
-			"아라"
+			"아라",
+			"Valepert"
 		]
 	},
 	"tag-editcheck-references-activated": "Edit Check (citazioni) attivato",
+	"tag-editcheck-references-shown": "Controllo di modifiche (fonti) mostrato",
+	"tag-editcheck-tone-shown": "Controllo di modifiche (tono) mostrato",
+	"tag-editcheck-paste-shown": "Controllo di modifiche (copia) mostrato",
+	"tag-editsuggestion-seen": "Suggerimento di modifica visualizzato",
+	"tag-editsuggestion-used": "Suggerimento di modifica utilizzato",
 	"tag-visualeditor": "Modifica visuale",
 	"tag-visualeditor-description": "Modifica eseguita usando l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visuale]]",
 	"tag-visualeditor-needcheck": "Modifica visuale: controllare",

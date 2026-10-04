@@ -18,7 +18,7 @@
 	"discussiontools-replywidget-cancel": "ವಜಾ ಮಲ್ಪುಲೆ",
 	"discussiontools-replywidget-mode-source": "ಮೂಲೊ",
 	"discussiontools-replywidget-mode-visual": "ತೋಜುನವು",
-	"discussiontools-replywidget-newtopic": "ಇಸಯೊ",
+	"discussiontools-replywidget-newtopic": "ಇಸಯೊ {{GENDER:|ಸೇರಾಲೆ}}",
 	"discussiontools-replywidget-placeholder-newtopic": "ಇವರೊ",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|ಉತ್ತರೊ}} ಮುಟ್ಟ {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "ಮುನ್ನೋಟೊ",

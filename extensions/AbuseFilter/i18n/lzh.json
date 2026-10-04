@@ -3,7 +3,8 @@
 		"authors": [
 			"Jason924tw",
 			"LNDDYL",
-			"WAN233"
+			"WAN233",
+			"Above mountain"
 		]
 	},
 	"abusefilter-log-search": "尋濫誌",
@@ -14,5 +15,6 @@
 	"abusefilter-history-user": "用戶",
 	"abusefilter-history-select-user": "用戶:",
 	"abusefilter-action-tag": "標",
-	"abusefilter-examine-submit": "尋"
+	"abusefilter-examine-submit": "尋",
+	"abusefilter-log-noresults": "無所獲"
 }

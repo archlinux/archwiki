@@ -6,7 +6,8 @@
 			"Fulup",
 			"Gwenn-Ael",
 			"Huñvreüs",
-			"Y-M D"
+			"Y-M D",
+			"Ar choler"
 		]
 	},
 	"tag-editcheck-newcontent-description": "Hervez EditCheck ez eus bet ouzhpennet endalc’h nevez d’a bajenn",
@@ -21,6 +22,10 @@
 	"tag-editcheck-tone-shown-description": "Hervez EditCheck ez eus ezhomm da gemmañ an ton en endalc'hadoù zo, ha diskouezet eo bet an etrefas implijer",
 	"tag-editcheck-paste-shown": "Edit Check (pegañ) diskouezet",
 	"tag-editcheck-paste-shown-description": "EditCheck en deus goulennet ouzh an aozer displegañ an endalc'had peget gantañ, a zo bet tennet pe kadarnaet evel aotreet",
+	"tag-editsuggestion-seen": "Gwelet eo bet ar c'hinnig kemmañ",
+	"tag-editsuggestion-seen-description": "Ur c'hinnig kemmañ d'an nebeutañ zo bet gwelet gant an implijer moarvat",
+	"tag-editsuggestion-used": "Kinnig kemmañ implijet",
+	"tag-editsuggestion-used-description": "Ur c'hinnig kemmañ d'an nebeutañ zo bet kemeret e kont gant an implijer",
 	"tag-visualeditor": "Gwelaozer",
 	"tag-visualeditor-description": "Kemm graet gant ar [[{{MediaWiki:visualeditor-descriptionpagelink}}|gwelaozer]]",
 	"tag-visualeditor-needcheck": "Gwelaozer: Da wiriañ",

@@ -23,6 +23,7 @@
 	"oathauth-webauthn-ui-remove-key": "除去",
 	"oathauth-webauthn-error-module-not-enabled": "モジュール「$1」は{{GENDER:$2|利用者「$2」}}に対して有効化されていません。",
 	"oathauth-webauthn-error-verification-failed": "WebAuthn 検証に失敗しました。",
+	"oathauth-webauthn-error-passkey-verification-failed": "パスキー認証に失敗しました。",
 	"oathauth-webauthn-error-credentials-missing": "WebAuthn 認証情報が送信されませんでした。",
 	"oathauth-webauthn-error-cannot-register": "{{GENDER:$1|利用者「$1」}}は新しい証明書を登録できません。",
 	"oathauth-webauthn-error-invalid-new-key": "モジュールが返した新しいキーは適切なタイプではありません。",
@@ -38,5 +39,6 @@
 	"oathauth-webauthn-authentication-info-help": "資格情報取得のためにクライアントに渡される認証データ",
 	"oathauth-webauthn-credential-label": "利用者認証情報",
 	"oathauth-webauthn-credential-help": "認証データに基づく利用者認証情報",
-	"oathauth-webauthn-add-security-key": "セキュリティキーを追加"
+	"oathauth-webauthn-add-security-key": "セキュリティキーを追加",
+	"oathauth-webauthn-auth-switch-module-label-passkey": "セキュリティキーまたはパスキーを使用してください"
 }

@@ -27,6 +27,7 @@
 	"notification-header-edit-user-page": "$1 {{GENDER:$2|воа̄еһтҍ}} <strong>{{GENDER:$3|то̄н}} оаннӭй лыст</strong>.",
 	"notification-header-edit-user-talk": "$1 {{GENDER:$2|кӯдӭ}} соа̄г <strong>{{GENDER:$3|то̄н}} соа̄рнънэмлыстэсьт</strong>.",
 	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2|кӯдӭ}} соа̄г <strong>{{GENDER:$3|то̄н}} соа̄рнънэмлыстэсьт</strong> па̄ҋкэсьт «<strong>$4</strong>».",
+	"notification-link-text-what-links-here": "Пугк уж тэнн лысста",
 	"notification-header-user-rights-add-only": "{{GENDER:$4|То̄н}} оаннӭй вуэйймуж {{GENDER:$1|воа̄йхуввенҍ}}. То̄нн ля̄йй лажьха группая: $2.",
 	"notification-header-welcome": "{{GENDER:$2|Пӯррь пуэдӓнт}} {{SITENAME}} са̄ййта, $1! Роа̄мм лӣ {{GENDER:$2|то̄н}} тэста уййнэ.",
 	"notification-welcome-linktext": "Пӯресь пуэдтҍмушш!",

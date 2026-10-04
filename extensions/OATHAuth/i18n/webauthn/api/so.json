@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"AhmedG612"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Module API-ga ee isgaarsiinta u dhexeysa adeegaha iyo macmiilka inta lagu jiro habka diiwaangelinta/xaqiijinta.",
+	"apihelp-oathauth-webauthn-param-func": "Magaca shaqada la codsaday in la fuliyo.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Macluumaadka xaqiijinta.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Macluumaadka diiwaangelinta.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "In furaha la diiwaangelinayo uu ku jiro habka passkey-ga. (Kaliya getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "Module WebAuthn lama heli karo.",
+	"apierror-oathauth-webauthn-missing-credential": "Wax xog aqoonsi ah lama bixin.",
+	"apierror-oathauth-webauthn-invalid-credential": "Xogta aqoonsigu waa mid aan ansax ahayn ama qaab dhismeedkeedu khaldan yahay.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Diiwaangeli aqoonsi WebAuthn cusub oo loogu talagalay isticmaalaha hadda jira.",
+	"apihelp-oathauth-webauthn-param-credential": "Jawaabta aqoonsiga WebAuthn ee biraawsarka soo diray oo lagu habeeyay JSON.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Magac saaxiibtinimo oo loogu talagalay aqoonsiga cusub."
+}

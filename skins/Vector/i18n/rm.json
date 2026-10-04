@@ -2,9 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Gion-andri",
-			"Terfili"
+			"Terfili",
+			"Albinfo",
+			"Bild-Sprache"
 		]
 	},
+	"vector-languages": "Linguas",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 linguas}}",
+	"vector-no-language-button-label": "Agiuntar linguas",
 	"vector-action-addsection": "Agiuntar chapitel",
 	"vector-action-delete": "Stizzar",
 	"vector-action-move": "Spustar",
@@ -16,5 +21,26 @@
 	"vector-view-history": "Cronologia",
 	"vector-view-view": "Leger",
 	"vector-view-viewsource": "Mussar il code",
-	"vector-more-actions": "dapli"
+	"vector-more-actions": "dapli",
+	"vector-appearance-label": "Cumparsa",
+	"vector-feature-limited-width-name": "Largezza",
+	"vector-feature-limited-width-0-label": "Lad",
+	"vector-feature-limited-width-1-label": "Standard",
+	"vector-feature-custom-font-size-name": "Text",
+	"vector-feature-custom-font-size-0-label": "Pitschen",
+	"vector-feature-custom-font-size-1-label": "Standard",
+	"vector-feature-custom-font-size-2-label": "Grond",
+	"skin-theme-name": "Colur",
+	"skin-theme-day-label": "Cler",
+	"skin-theme-night-label": "Stgir",
+	"skin-theme-os-label": "Automatic",
+	"skin-theme-exclusion-notice": "Questa pagina è adina en modus cler.",
+	"vector-toc-label": "Cuntegn",
+	"vector-toc-beginning": "Entschatta",
+	"vector-main-menu-label": "Menu principal",
+	"vector-feature-custom-font-size-exclusion-notice": "Questa pagina utilisescha adina ina grondezza da scrittira pitschna",
+	"vector-page-tools-label": "Utensils",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Acziuns",
+	"vector-unpin-element-label": "zuppar"
 }

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"apihelp-query+mathwbextracts-example-1": "A matematikai Wikibase-elemek összefoglalóját kéri le.",
+	"apihelp-query+mathwbextracts-summary": "Egy matematikai Wikibase-elem összefoglalóját adja vissza HTML-formátumban.",
+	"apihelp-query+mathwbextracts-param-qid": "A lekérendő Wikibase-elem QID-je.",
+	"apihelp-query+mathwbextracts-param-uselang": "A Wikibase-elem lekéréséhez használandó nyelv. Az alapértelmezett érték az angol."
+}

@@ -56,5 +56,20 @@
 	"logentry-checkuser-private-event-autocreate-account": "digawé sacara otomatis",
 	"logentry-checkuser-private-event-create-account": "digawé",
 	"checkuser-global-contributions-link": "pasumbang global",
-	"checkuser-global-contributions-link-sidebar": "Pasumbang global"
+	"checkuser-global-contributions-link-sidebar": "Pasumbang global",
+	"checkuser-ip-auto-reveal-link-sidebar": "Otomatis inceng IP",
+	"checkuser-ip-auto-reveal-link-sidebar-on": "Otomatis inceng IP (murub)",
+	"checkuser-ip-auto-reveal-notification-on": "<strong>Otomatis inceng IP murub</strong>",
+	"checkuser-ip-auto-reveal-notification-off": "<strong>Otomatis inceng IP mati</strong>",
+	"checkuser-ip-auto-reveal-on-dialog-title": "Urubaké otomatis inceng IP",
+	"checkuser-ip-auto-reveal-on-dialog-text": "Kanthi ngurubaké fitur iki, otomatis kowé bakal nginceng sakabèhing IP Sauntara ing wektu kang winates. [https://www.mediawiki.org/wiki/Special:MyLanguage/Trust_and_Safety_Product/Temporary_Accounts/Access_to_IP#Automatically_showing_IPs_for_temporary_accounts Sinaoni luwih jangkep]",
+	"checkuser-ip-auto-reveal-on-dialog-error-enable": "Ana masalah. Modhe otomatis inceng IP ora murub. Tulung mengko jajal manèh.",
+	"checkuser-ip-auto-reveal-on-dialog-default-action": "Wurung",
+	"checkuser-ip-auto-reveal-on-dialog-primary-action": "Urubaké",
+	"checkuser-ip-auto-reveal-on-dialog-select-label": "Suwé:",
+	"checkuser-ip-auto-reveal-on-dialog-select-default": "Pilih wektu",
+	"checkuser-ip-auto-reveal-off-dialog-title": "Otomatis inceng IP murub",
+	"checkuser-ip-auto-reveal-off-dialog-text-expiry": "Wektuné kari: <strong>$2 {{PLURAL:$2|dina}}, $1</strong>",
+	"checkuser-ip-auto-reveal-off-dialog-off-action": "Patèni",
+	"checkuser-tempaccount-reveal-ip-button-label": "Bukak IP"
 }

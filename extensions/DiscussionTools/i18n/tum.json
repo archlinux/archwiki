@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Tumbuka Arch",
-			"Woytecr"
+			"Woytecr",
+			"Anthonymunthali44"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Mupokelenge chimanyisko usange munyake wapelekapo maganizo ghake pa nkhani ino. Mungasintha kuma malungisilo.",
@@ -46,7 +47,7 @@
 	"discussiontools-replywidget-abandontopic-keep": "Pitilizga kulemba",
 	"discussiontools-replywidget-advanced": "Mwakulutilila",
 	"discussiontools-replywidget-anon-warning": "<strong>Mundanjile.</strong> Kuti muoneske zina linu pa ivo mukulemba mmalo mwa IP address,munga [$1 njila] panji [$2 kupanga akaunti iphya].",
-	"discussiontools-replywidget-cancel": "Leka",
+	"discussiontools-replywidget-cancel": "Koma",
 	"discussiontools-replywidget-feedback": "Pelekanipo maganizo gha chinthu ichi",
 	"discussiontools-replywidget-loading": "Lindingani...",
 	"discussiontools-replywidget-mention-tool-header": "Fufuza mgwiliski: $1",
@@ -63,7 +64,7 @@
 	"discussiontools-replywidget-summary": "Mwakudumula",
 	"discussiontools-replywidget-terms-click": "Pala mwadofya \"$1\", mukuzomelezga za kagwiliskilo kawemi ntchito ka wiki yino.",
 	"discussiontools-replywidget-transcluded": "Maganizo ghinu ghasungikenge pa [[$1]].",
-	"discussiontools-replywidget-watchthis": "Sazga jani ili pa [[Special:Watchlist|kuonelela]] kwane",
+	"discussiontools-replywidget-watchthis": "Sazga hamba ili pa [[Special:Watchlist|kuonelela]] kwane",
 	"discussiontools-target-comment-missing": "Ganizo ili lindasangike. Likwenela kufufutika panji kusezgeka.",
 	"discussiontools-target-comments-missing": "Maganizo ghaphya ghandasangike.Ghakwenela kufufutika panji kusezgeka.",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|munthu $1 |ŵanthu $1 }} mu kudumbizgana",

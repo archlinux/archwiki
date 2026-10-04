@@ -5,7 +5,8 @@
 			"Canaan9801",
 			"Fitoschido",
 			"Jackiezelaya",
-			"MarcoAurelio"
+			"MarcoAurelio",
+			"Dgstranz"
 		]
 	},
 	"oathauth-webauthn-module-label": "Autenticación web (WebAuthn)",
@@ -29,5 +30,6 @@
 	"oathauth-webauthn-add-key-section-name": "Registrar nueva clave de seguridad",
 	"oathauth-webauthn-error-get-reginfo-fail": "No se pudo recuperar la información de registro.",
 	"oathauth-webauthn-module-description": "WebAuthn se encuentra en fase experimental. Actualmente no ofrece opciones de recuperación para dispositivos de autenticación perdidos o dañados. \n\n[https://en.wikipedia.org/wiki/WebAuthn Más información sobre WebAuthn]",
-	"oathauth-webauthn-ui-reload-page-label": "Recargar página"
+	"oathauth-webauthn-ui-reload-page-label": "Recargar página",
+	"oathauth-webauthn-add-security-key": "Añade una clave de seguridad"
 }

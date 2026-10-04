@@ -16,7 +16,8 @@
 			"Vuh",
 			"WTM",
 			"Wiochman",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"templatedata-desc": "Dodaje możliwość przechowywania parametrów szablonu (poprzez JSON)",
@@ -44,7 +45,7 @@
 	"templatedata-doc-param-type-line": "Linia",
 	"templatedata-doc-param-type-number": "Liczba",
 	"templatedata-doc-param-type-string": "Ciąg znaków",
-	"templatedata-doc-param-type-unbalanced-wikitext": "Niezbalansowany wikitekst",
+	"templatedata-doc-param-type-unbalanced-wikitext": "Niezbalansowany wikikod",
 	"templatedata-doc-param-type-unknown": "Nieznany",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "Plik",
@@ -96,7 +97,7 @@
 	"templatedata-modal-notice-import-numparams": "Zaimportowano {{PLURAL:$1|$1 nowy parametr|$1 nowe parametry|$1 nowych parametrów}}: $2",
 	"templatedata-modal-placeholder-add-new-map-input": "Dodawanie mapy…",
 	"templatedata-modal-placeholder-paramkey": "Nazwa parametru",
-	"templatedata-modal-placeholder-mapinfo": "Ten szablon nie posiada obiektu mapy",
+	"templatedata-modal-placeholder-mapinfo": "Ten szablon nie ma obiektu mapy",
 	"templatedata-modal-placeholder-prompt-map-name": "Wprowadź nazwę mapy",
 	"templatedata-modal-search-input-placeholder": "Szukaj według nazwy języka lub jego kodu",
 	"templatedata-modal-table-param-aliases": "Aliasy",
@@ -122,7 +123,7 @@
 	"templatedata-modal-title-language": "Język",
 	"templatedata-modal-title-paramorder": "Kolejność parametrów",
 	"templatedata-modal-title-templatedesc": "Opis szablonu ($1)",
-	"templatedata-modal-title-templateformat": "Sugerowane formatowanie wikitekstu",
+	"templatedata-modal-title-templateformat": "Sugerowane formatowanie wikikodu",
 	"templatedata-modal-title-templateformatstring": "Własny format ciągu znaków",
 	"templatedata-modal-title-templateparam-details": "Szczegóły parametrów: $1",
 	"templatedata-modal-title-templateparams": "Parametry szablonu",

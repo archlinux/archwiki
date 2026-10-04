@@ -2,13 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kirsan"
+			"Kirsan",
+			"Terrus38",
+			"Orbitminis"
 		]
 	},
 	"tooltip-ca-ve-edit": "Editëjë nã starnã.",
-	"visualeditor-ca-createlocaldescriptionsource": "Ùsôdzë zdrojowi kòd lokalnegò òpisënka",
+	"visualeditor-ca-createlocaldescriptionsource": "Ùsôdzë zdrojowi kòd môlowégò òpisënkù",
 	"visualeditor-ca-createsource": "Ùsôdzë zdrojowi kòd",
-	"visualeditor-ca-editsource": "Editëjë zdrojowi kòd",
-	"visualeditor-ca-editsource-section": "editëjë zdrój",
+	"visualeditor-ca-editsource": "Edituj zdrojowi kòd",
+	"visualeditor-ca-editsource-section": "edituj kòd",
 	"visualeditor-descriptionpagelink": "Project:Wizualny Editora"
 }

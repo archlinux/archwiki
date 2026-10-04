@@ -10,6 +10,7 @@
 		]
 	},
 	"linterrors": "Chyby nalezené Lintem",
+	"linttemplateerrors": "Vložení obsahující chyby nalezené Lintem",
 	"linter-category-bogus-image-options": "Chybné parametry souboru",
 	"linter-category-bogus-image-options-desc": "Tyto stránky obsahují soubory s chybnými parametry.",
 	"linter-category-large-tables": "Velké tabulky, které se těžko prohlížejí na mobilu",
@@ -20,6 +21,8 @@
 	"linter-category-duplicate-ids-desc": "Tyto stránky obsahují prvky s duplicitními atributy id.",
 	"linter-category-empty-heading": "Prázdné nadpisy",
 	"linter-category-empty-heading-desc": "Tyto stránky obsahují prázdné nadpisy.",
+	"linter-category-template-arg-in-extension-tag": "Rozšiřující značka s parametrem šablony",
+	"linter-category-template-arg-in-extension-tag-desc": "Tyto stránky obsahují rozšiřující značku, ve které je parametr šablony, což se nevloží správně.",
 	"linter-category-fostered": "Chybně vnořený obsah",
 	"linter-category-fostered-desc": "Tyto stránky obsahují chybně vložený obsah do tabulky.",
 	"linter-category-fostered-transparent": "Chybně vnořený neviditelný obsah",
@@ -62,6 +65,7 @@
 	"linter-category-wikilink-in-extlink-desc": "Tyto stránky obsahují wikiodkazy uvnitř externích odkazů, které lze opravit",
 	"linter-desc": "Sleduje chyby nalezené externím Lintem a zobrazuje je uživatelům",
 	"linter-lints-prefix-search-page-desc": "Hledání stránek s chybami Lintu podle začátku nebo celého názvu",
+	"linter-invalid-category": "Nenalezená či chybná kategorie",
 	"linter-invalid-title": "Jmenný prostor nebo název stránky nebyly nalezeny nebo mají chybný tvar",
 	"linter-form-exact-match": "Hledat konkrétní název stránky",
 	"linter-form-prefix-match": "Hledat všechny stránky podle začátku názvu",
@@ -117,6 +121,11 @@
 	"linterrors-subpage": "Chyby nalezené Lintem: $1",
 	"linterrors-summary": "<strong>Poznámka:</strong> Počty u kategorií nejsou přesné, jsou založeny na odhadech.",
 	"multi-part-template-block": "Výstup není z jedné šablony",
+	"parser-function": "Výstup funkce parseru",
 	"pageinfo-linter": "Chyby nalezené Lintem",
-	"pageinfo-linter-moreinfo": "Zobrazit podrobnosti k chybám nalezeným Lintem."
+	"pageinfo-linter-moreinfo": "Zobrazit podrobnosti k chybám nalezeným Lintem.",
+	"category-by-template": "Vložení obsahující chyby nalezené Lintem: $1",
+	"category-by-template-view": "Prohlédnout vložení obsahující tyto chyby Lintu.",
+	"category-by-template-desc": "Vložení těchto stránek obsahují chyby Lintu '''[[Special:LintErrors/$1|$1]]'''. ''Uvědomte si, že některá vložení se na těchto seznamech mohou objevit kvůli argumentům předaným do transkluze a nikoli kvůli vkládanému zdroji.''",
+	"linter-template-errors-index-desc": "Toto jsou seznamy vložení stránek, které obsahují chyby nalezené Lintem. ''Uvědomte si, že některá vložení se na těchto seznamech mohou objevit kvůli argumentům předaným do transkluze a nikoli kvůli vkládanému zdroji.''"
 }

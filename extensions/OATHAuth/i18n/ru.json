@@ -29,7 +29,8 @@
 			"Vlad5250",
 			"Stjn",
 			"Well very well",
-			"LuckyBlock13fa"
+			"LuckyBlock13fa",
+			"Colt browning"
 		]
 	},
 	"oathauth-desc": "Обеспечивает поддержку проверки подлинности с помощью HMAC на основе одноразовых паролей и протокола WebAuthn",

@@ -31,63 +31,63 @@ class LightboxImage {
 		/**
 		 * Link to the file - generally a thumb URL
 		 *
-		 * @member {string}
+		 * @type {string}
 		 */
 		this.src = fileLink;
 
 		/**
 		 * Title of the image's file page
 		 *
-		 * @member {mw.Title}
+		 * @type {mw.Title}
 		 */
 		this.filePageTitle = fileTitle;
 
 		/**
 		 * What number this image is in the array of indexed images
 		 *
-		 * @member {number}
+		 * @type {number}
 		 */
 		this.index = index;
 
 		/**
 		 * The relative position of this image to others with same file
 		 *
-		 * @member {number}
+		 * @type {number}
 		 */
 		this.position = position;
 
 		/**
 		 * The <img> element that holds the already-loaded thumbnail of the image
 		 *
-		 * @member {HTMLImageElement}
+		 * @type {HTMLImageElement}
 		 */
 		this.thumbnail = thumb;
 
 		/**
 		 * The caption of the image, if any
 		 *
-		 * @member {string}
+		 * @type {string}
 		 */
 		this.caption = caption;
 
 		/**
 		 * The alt text of the image
 		 *
-		 * @member {string}
+		 * @type {string}
 		 */
 		this.alt = $( thumb ).attr( 'alt' );
 
 		/**
 		 * Width of the full-sized file (read from HTML data attribute, might be missing)
 		 *
-		 * @member {number}
+		 * @type {number}
 		 */
 		this.originalWidth = parseInt( $( thumb ).attr( 'data-file-width' ), 10 );
 
 		/**
 		 * Height of the full-sized file (read from HTML data attribute, might be missing)
 		 *
-		 * @member {number}
+		 * @type {number}
 		 */
 		this.originalHeight = parseInt( $( thumb ).attr( 'data-file-height' ), 10 );
 	}

@@ -84,7 +84,7 @@
 	"checkuser-all": "kaikki",
 	"checkuser-filter-title": "Suodattimet",
 	"checkuser-filter-hide-temporary-accounts": "Piilota tilapäiset tunnukset",
-	"checkuser-cidr-label": "Etsi yleinen osoiteavaruus annetulle IP-luettelolle",
+	"checkuser-cidr-label": "Etsi yhteinen IP-osoiteavaruus annetulle IP-listalle",
 	"checkuser-cidr-res": "Yleinen CIDR:",
 	"checkuser-cidr-affected-ips": "Alaisia IP-osoitteita:",
 	"checkuser-cidr-too-small": "Alue on liian suuri",
@@ -513,5 +513,7 @@
 	"checkuser-contributions-temporary-accounts-related-list-copy-error": "Tunnuslistan kopiointi epäonnistui",
 	"checkuser-related-tas-specialblock-checkbox-label": "Estä kaikki liittyvät tilapäiset tunnukset",
 	"checkuser-related-tas-specialblock-accounts-list": "Tunnistettu $1 {{PLURAL:$1|tilapäinen tunnus, joka käytti|tilapäistä tunnusta, jotka käyttivät}} $2 tunnukseen $3 liittyvää IP-osoitetta viimeisen $4 päivän aikana: $5",
-	"checkuser-related-tas-specialblock-contribs-link": "[{{fullurl:Special:Contributions/$1|showRelatedTemporaryAccounts=1}} Katso näiden kaikkien tunnusten muokkaukset]"
+	"checkuser-related-tas-specialblock-contribs-link": "[{{fullurl:Special:Contributions/$1|showRelatedTemporaryAccounts=1}} Katso näiden kaikkien tunnusten muokkaukset]",
+	"checkuser-related-tas-specialblock-accounts-list-error": "Tapahtui virhe yritettäessä tunnistaa tilapäiseen tunnukseen $1 liittyviä IP-osoitteita käyttäneitä tilapäisiä tunnuksia. {{GENDER:$2|Voit}} estää tunnuksen $1 tai yrittää uudelleen mahdollisten liittyvien tunnusten hakua.",
+	"checkuser-related-tas-specialblock-limit-exceeded-error": "Liian monta liittyvää tilapäistä tunnusta estettäväksi. Enintään $1 {{PLURAL:$1|tunnus|tunnusta}} voidaan estää kerralla."
 }

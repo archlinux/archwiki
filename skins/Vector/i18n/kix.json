@@ -1,0 +1,37 @@
+{
+	"@metadata": {
+		"authors": [
+			"Array shimmer"
+		]
+	},
+	"vector-languages": "Nyūhói",
+	"vector-no-language-button-label": "Nyū āmō nǘ āthíu",
+	"vector-action-addsection": "Nyūthāng nǖ āthíu",
+	"vector-action-delete": "Ākāhvâ",
+	"vector-action-move": "Ātōuhkhúa",
+	"vector-action-protect": "Ājūshá",
+	"vector-view-create": "Āhìeshā",
+	"vector-view-history": "Ālīevā nǖ āthàp",
+	"vector-more-actions": "Tǖshîmkò",
+	"vector-appearance-label": "Nyūphòuh shìsǖlīng",
+	"vector-feature-limited-width-name": "Āpúa",
+	"vector-feature-limited-width-0-label": "Āpúa lèh",
+	"vector-feature-limited-width-1-label": "Āpúa Āvâu nò",
+	"vector-feature-custom-font-size-name": "Nyūpēm āshōng āhà sīnglòuh",
+	"vector-feature-custom-font-size-0-label": "Nyūpēm āhà",
+	"vector-feature-custom-font-size-1-label": "Nyūpēm āvâu nò",
+	"vector-feature-custom-font-size-2-label": "Nyūpēm āshōng",
+	"skin-theme-name": "līng",
+	"skin-theme-day-label": "ā-âuwā",
+	"skin-theme-night-label": "Ānyaūkhèm",
+	"skin-theme-os-label": "Āpǖ chítîo kǜ līklì ē",
+	"skin-theme-exclusion-notice": "Nòng chāmlùap nǜ kòu āshái tā ā-âuwā līng nǖ tèu ē.",
+	"vector-toc-label": "Nyūkhèu",
+	"vector-toc-beginning": "Āyôlòuh",
+	"vector-main-menu-label": "Ātīng nyūphòuh",
+	"vector-feature-custom-font-size-exclusion-notice": "Nòng chāmlùap nǜ kòu āshái tā nyūpēm āhà nǜ kàkèi ē.",
+	"vector-page-tools-label": "Tūohói",
+	"vector-page-tools-general-label": "Āpèm nyūphòuh",
+	"vector-page-tools-actions-label": "Āchí á",
+	"vector-unpin-element-label": "Ātsāngvâ"
+}

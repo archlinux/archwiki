@@ -45,5 +45,5 @@
 	"scribunto-luastandalone-gone": "Памылка Lua: Унутраная памылка: інтэрпрэтатар ужо скончыў працу.",
 	"scribunto-luastandalone-signal": "Памылка Lua: Унутраная памылка: інтэрпрэтатар быў спынены з сыгналам «$2».",
 	"scribunto-luastandalone-exited": "Памылка Lua: Унутраная памылка: інтэрпрэтатар завяршыў працу з статусам $2.",
-	"scribunto-module-with-errors-category-desc": "Модуль утрымлівае памылку."
+	"scribunto-module-with-errors-category-desc": "Модуль мае памылку."
 }

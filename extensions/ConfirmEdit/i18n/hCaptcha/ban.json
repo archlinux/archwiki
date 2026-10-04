@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chinamoonroll"
+		]
+	},
+	"hcaptcha-desc": "Modul [https://www.hcaptcha.com/ hCaptcha] antuk Confirm Edit",
+	"hcaptcha-privacy-policy": "Situs puniki kasaibin olih hCaptcha miwah kacumpuin majeng [https://www.hcaptcha.com/privacy Parikrama Privasi] miwah [https://www.hcaptcha.com/terms Katentuan Ayahan].",
+	"hcaptcha-challenge-closed": "Mangda prasida nglanturang, ragané patut muputang captcha.",
+	"hcaptcha-challenge-expired": "Wates galah antuk muputang captcha sampun kadaluwarsa. Durus indayang malih.",
+	"hcaptcha-generic-error": "Wenten iwang rikala ngunggahang formulir. Mangda prasida nglanturang, ragané patut muat ulang kaca.",
+	"hcaptcha-internal-error": "Wenten iwang internal rikala ngirim formulir. Durus indayang malih.",
+	"hcaptcha-network-error": "Wénten iwang jaringan ri tatkala ngirim formulir. Durus pastika ragané konéksi mamargi becik miwah indayang malih.",
+	"hcaptcha-loading-indicator-label": "Durus jantos rikala iraga ngamuat formulir...",
+	"hcaptcha-missing-token": "Iraga dereng puput ngamuat formulir. Durus jantos malih akidik, raris indayang malih.",
+	"hcaptcha-noscript": "JavaScript kabuatang mangda prasida nglanturang. Idupang JavaScript ring setélan pramban miwah segerang kaca.",
+	"hcaptcha-force-show-captcha-edit": "Durus kirim ulang form miwah puputang tantangan antuk nyineb pauahan ragané.",
+	"hcaptcha-visual-editor-error-handler-warning": "Durus kirim ulang form antuk nyineb uahan ragané."
+}

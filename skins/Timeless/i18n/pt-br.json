@@ -4,7 +4,8 @@
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
-			"Jaideraf"
+			"Jaideraf",
+			"NenhumaFênix"
 		]
 	},
 	"skinname-timeless": "Timeless",
@@ -12,8 +13,8 @@
 	"timeless-anonymous": "Anônimo",
 	"timeless-loggedinas": "Autenticado como '''$1'''",
 	"timeless-notloggedin": "Você não está autenticado",
-	"timeless-userpage": "Página de {{GENDER:$1|usuário}}",
-	"timeless-talkpage": "{{GENDER:$1|Usuário}} discussão",
+	"timeless-userpage": "Página de {{GENDER:$1|usuário|usuária|usuário(a)}}",
+	"timeless-talkpage": "{{GENDER:$1|Usuário|Usuária|Usuário(a)}} discussão",
 	"timeless-pagelog": "Registos da página",
 	"timeless-more": "Mais",
 	"timeless-sitetools": "Ferramentas da wiki",

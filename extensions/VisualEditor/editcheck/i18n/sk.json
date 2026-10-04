@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"KormiSK"
+			"KormiSK",
+			"TomášPolonec"
 		]
 	},
 	"editcheck-dialog-action-replace": "Nahradiť",
 	"editcheck-dialog-scroll-into-view": "Zobraziť návrhy",
+	"editcheck-dialog-title": "Pred publikovaním",
 	"editcheck-textmatch-replace": "Nahradiť „$1“ za „$2“?",
 	"editcheck-suggestionfeedback-label-about": "O návrhoch",
 	"editcheck-suggestionfeedback-label-report": "Nahlásiť problém"

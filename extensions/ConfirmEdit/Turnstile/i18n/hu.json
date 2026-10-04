@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"turnstile-desc": "Cloudflare Turnstile-támogatást ad a ConfirmEdit kiterjesztéshez",
+	"turnstile-edit": "A wiki automatizált szerkesztési spamekkel szembeni védelme érdekében oldd meg a következő CAPTCHA-t:",
+	"turnstile-addurl": "A szerkesztésed új külső hivatkozásokat tartalmaz. A wiki automatizált spamekkel szembeni védelme érdekében oldd meg a következő CAPTCHA-t:",
+	"turnstile-badlogin": "A wiki automatizált jelszófeltöréssel szembeni védelme érdekében oldd meg a következő CAPTCHA-t:",
+	"turnstile-createaccount": "A wiki automatizált fióklétrehozással szembeni védelme érdekében oldd meg a következő CAPTCHA-t:",
+	"turnstile-createaccount-fail": "Úgy tűnik, nem oldottad meg a CAPTCHA-t.",
+	"turnstile-create": "A wiki automatizált laplétrehozással szembeni védelme érdekében oldd meg a következő CAPTCHA-t:",
+	"turnstile-help": "Oldj meg egy Turnstile-feladatot, és a válasz értékét add vissza captchaWord néven."
+}

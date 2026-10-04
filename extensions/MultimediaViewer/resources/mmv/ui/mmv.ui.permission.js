@@ -36,7 +36,7 @@ class Permission extends UiElement {
 		/**
 		 * Contains everything else.
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$box = $( '<div>' )
 			.addClass( 'mw-mmv-permission-box mw-mmv-info-box empty' )
@@ -45,7 +45,7 @@ class Permission extends UiElement {
 		/**
 		 * Box title
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$title = $( '<h3>' )
 			.text( mw.msg( 'multimediaviewer-permission-title' ) )
@@ -56,7 +56,7 @@ class Permission extends UiElement {
 		 * This is just the text parsed out from the original markup, it might not make much sense
 		 * (e.g. if the original is a HTML table)
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$text = $( '<div>' )
 			.addClass( 'mw-mmv-permission-text' )
@@ -70,7 +70,7 @@ class Permission extends UiElement {
 		/**
 		 * A helper element to fade off text
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$fader = $( '<div>' )
 			.addClass( 'mw-mmv-permission-text-fader' )
@@ -85,7 +85,7 @@ class Permission extends UiElement {
 		 * Original (HTML) version of the author's message
 		 * This can be scary sometimes (huge tables, black text on dark purple background etc).
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$html = $( '<div>' )
 			.addClass( 'mw-mmv-permission-html' )
@@ -94,7 +94,7 @@ class Permission extends UiElement {
 		/**
 		 * "Close" button (does not actually close the box, just makes it smaller).
 		 *
-		 * @property {jQuery}
+		 * @type {jQuery}
 		 */
 		this.$close = $( '<button>' )
 			.addClass( 'mw-mmv-permission-close' )
@@ -106,7 +106,7 @@ class Permission extends UiElement {
 		/**
 		 * Panel scroller from the metadata panel object.
 		 *
-		 * @property {MetadataPanelScroller}
+		 * @type {MetadataPanelScroller}
 		 */
 		this.scroller = scroller;
 	}

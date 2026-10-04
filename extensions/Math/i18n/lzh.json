@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"物灵"
+		]
 	},
 	"math_failure": "譯不成",
 	"math_syntax_error": "語法有誤",

@@ -5,7 +5,8 @@
 			"Fitoschido",
 			"Guilhelma",
 			"Lhanars",
-			"Quentí"
+			"Quentí",
+			"Diabétos"
 		]
 	},
 	"minerva-watchlist-cta": "Seguissètz aquesta pagina e totes los cambiaments aponduts.",
@@ -30,5 +31,6 @@
 	"mobile-frontend-redirected-from": "Redirigit dempuèi «[[$1]]»",
 	"mobile-frontend-user-newmessages": "Avètz de messatges novèls sus vòstra pagina de discussion",
 	"minerva-user-menu-button": "Menut d'utilizator",
-	"minerva-page-actions-editfull": "Modificar tota la pagina"
+	"minerva-page-actions-editfull": "Modificar tota la pagina",
+	"minerva-page-actions-overflow": "Mai"
 }

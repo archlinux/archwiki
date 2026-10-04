@@ -8,7 +8,8 @@
 			"Sabelöga",
 			"Skalman",
 			"Stefan2255",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Boivie"
 		]
 	},
 	"oathauth-desc": "Ger autentiseringsstöd med HMAC-baserade engångslösenord och WebAuthn-protokollet",
@@ -87,6 +88,7 @@
 	"log-action-filter-oath": "Typ av tvåfaktorsautentiserings-operation:",
 	"log-action-filter-oath-verify": "Kontrollerar om tvåfaktorsautentisering är aktiverad",
 	"log-action-filter-oath-disable-other": "Inaktivera tvåfaktorsautentisering för en annan användare",
+	"log-action-filter-oath-recover": "Generera nya återställningskoder för en annan användare",
 	"oathauth-ui-no-module": "Ingen aktiverad",
 	"oathauth-module-totp-label": "Autentiseringsapp",
 	"oathauth-module-recoverycodes-label": "Återställningskoder",

@@ -13,5 +13,8 @@
 	"right-abusefilter-view": "Prěgledanje filtrov zloupotrěbjenij",
 	"right-abusefilter-modify-global": "Tvorjenje ili izměnjanje globalnyh filtrov zloupotrěbjenij",
 	"action-abusefilter-modify": "Izměnjenje filtrov zloupotrěbjenij",
-	"action-abusefilter-view": "Prěgledanje filtrov zloupotrěbjenij"
+	"action-abusefilter-view": "Prěgledanje filtrov zloupotrěbjenij",
+	"blockedexternaldomains": "Zablokovane vněšnje domeny",
+	"abusefilter-blocked-domains-title": "Zablokovane vněšnje domeny",
+	"communityconfiguration-blockeddomain-title": "Zablokovane vněšnje domeny"
 }

@@ -37,7 +37,7 @@
 	"tag-editcheck-tone-shown": "编辑检查（语气）已显示",
 	"tag-editcheck-tone-shown-description": "编辑检查认为部分内容的语气可能需要调整，并显示了UI",
 	"tag-editcheck-paste-shown": "编辑检查（粘贴）已显示",
-	"tag-editcheck-paste-shown-description": "编辑检查要求编辑者澄清其粘贴的内容，然后移除或确认允许该内容",
+	"tag-editcheck-paste-shown-description": "编辑检查要求编者澄清其所粘贴的内容，然后移除或确认允许该内容",
 	"tag-editsuggestion-seen": "已查看编辑建议",
 	"tag-editsuggestion-seen-description": "用户可能至少看到了一次编辑建议。",
 	"tag-editsuggestion-used": "已使用编辑建议",

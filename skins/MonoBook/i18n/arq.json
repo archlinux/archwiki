@@ -5,6 +5,15 @@
 		]
 	},
 	"monobook-desc": "The classic MediaWiki skin since 2004, named after the black-and-white photo of a book in the page background",
+	"monobook-jumptotop": "رجّع للفوق",
+	"monobook-jumptopersonal": "أدوات المستخدم",
+	"monobook-jumptonavigation": "أقفز للتصفح",
+	"monobook-jumptosearch": "أقفز للبحث",
+	"monobook-more-actions": "زيادة",
+	"cactions-mobile": "أكثر خيارات",
+	"monobook-cactions-label": "أكثر خيارات",
+	"monobook-notifications-link": "إشعارات ($1)",
+	"monobook-notifications-link-none": "تنباهات",
 	"monobook-view-history": "تاريخ",
 	"monobook-action-undelete": "رجّع {{PLURAL:$1||تعديل واحد|$1 تعديل}}"
 }

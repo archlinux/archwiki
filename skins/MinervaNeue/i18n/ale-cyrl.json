@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Тмаӽтаӽ"
+			"Тмаӽтаӽ",
+			"Thothsum"
 		]
 	},
 	"mobile-frontend-home-button": "Ихчил",
+	"mobile-frontend-language-article-heading": "Тунуӽ",
 	"mobile-frontend-main-menu-login": "Ӄаӈул",
 	"mobile-frontend-main-menu-nearby": "Аӈамиӈ",
 	"mobile-frontend-main-menu-settings": "Атхаӷайа̄сис",

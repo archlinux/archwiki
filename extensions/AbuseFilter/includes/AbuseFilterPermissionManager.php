@@ -321,6 +321,7 @@ class AbuseFilterPermissionManager {
 			return false;
 		}
 
+		// Keep these permission checks in sync with AbuseFilterPager::getQueryInfo()
 		if ( $filter->isSuppressed() && !$this->canViewSuppressed( $performer ) ) {
 			return false;
 		}

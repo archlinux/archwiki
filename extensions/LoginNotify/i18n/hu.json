@@ -5,7 +5,8 @@
 			"Bináris",
 			"Tacsipacsi",
 			"Tgr",
-			"Urbalazs"
+			"Urbalazs",
+			"Dj"
 		]
 	},
 	"loginnotify-desc": "Értesíti a felhasználókat az ismeretlen eszközről és/vagy IP-címről érkező gyanús bejelentkezési kísérletekről",
@@ -14,6 +15,7 @@
 	"echo-category-title-login-success": "Bejelentkezés ismeretlen eszközről",
 	"echo-pref-tooltip-login-success": "Értesítést kérek, ha valaki bejelentkezik a fiókomba egy ismeretlen eszközről és IP-címről.",
 	"loginnotify-primary-link": "Súgó",
+	"loginnotify-unknown-ip": "Korábban nem használt IP-címről próbáltál bejelentkezni, a(z) {{SITENAME}} jelenlegi beállításai pedig nem engedélyezik az ilyen IP-címekről történő bejelentkezést.",
 	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Sikertelen kísérlet|Többszöri sikertelen kísérlet}} a(z) {{SITENAME}} wikire való bejelentkezésre $1 néven",
 	"notification-loginnotify-login-success-email-subject": "Bejelentkezés a(z) {{SITENAME}} wikire $1 néven egy közelmúltban nem használt eszközről",
 	"notification-header-login-success": "Valaki (valószínűleg {{GENDER:$1|te}}) nemrég bejelentkezett a fiókodba egy új eszközről. Ha ez te voltál, figyelmen kívül hagyhatod ezt az üzenetet. Ha nem te voltál, ajánlott megváltoztatnod a jelszavadat és ellenőrizned a fiókod aktivitását.",

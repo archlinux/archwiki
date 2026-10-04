@@ -55,7 +55,9 @@
 			"Zhxy 519",
 			"捍粵者",
 			"臺灣象象",
-			"逆襲的天邪鬼"
+			"逆襲的天邪鬼",
+			"LowensteinYang",
+			"Addonian1123"
 		]
 	},
 	"abusefilter-desc": "自動條件判定編輯行為",
@@ -63,7 +65,7 @@
 	"abuselog": "防濫用過濾器日誌",
 	"abusefilter-intro": "歡迎使用防濫用過濾器管理介面。防濫用過濾器是針對所有編輯動作進行自動化判斷的軟體機制。本介面包含了現有的過濾器清單並允許修改。",
 	"abusefilter-mustviewprivateoredit": "基於安全性考量，僅擁有檢視非公開防濫用過濾器或修改過濾器權限的使用者可使用本介面。",
-	"abusefilter-warning": "'''警告：'''此操作已被自動識別為有害。沒有建設性的操作將會被快速還原，嚴重或重複的非建設性的編輯將導致您的帳號或IP位址被封鎖。如果您認為您的操作是有建設性的，您可以再送出一次以確認。與您的操作符合的防濫用規則描述為：$1",
+	"abusefilter-warning": "'''警告：'''此操作已被自動識別為有害操作。\n沒有建設性的操作將會被快速還原，嚴重或重複的非建設性的編輯將導致您的帳號或IP位址被封鎖。\n如果您認為您的操作具有建設性，請再次提交以確認。\n與您的操作符合的防濫用規則描述如下：$1",
 	"abusefilter-disallowed": "此操作已被自動識別為有害並被禁止。如果您認為您的操作是有建設性的，請與管理員聯絡，並告知您剛才嘗試進行的事。與您的操作符合的防濫用規則描述為：$1",
 	"abusefilter-blocked-display": "此操作已被自動識別為有害，已阻止您執行此操作。為了保護{{SITENAME}}，您的帳號及所有相關的IP位址皆已被禁止編輯。如果這是誤判，請聯絡管理員。與您的操作符合的防濫用規則描述為：$1",
 	"abusefilter-degrouped": "此操作已被自動識別為有害，因此已阻止此操作。另外，由於您的帳號疑似遭到盜用，您的所有權限均已被剝奪。如果您認為這是誤判，請附上此操作的解釋並聯繫行政員，這樣或許能取回權限。與您的操作符合的防濫用規則描述為：$1",
@@ -350,7 +352,7 @@
 	"abusefilter-edit-history": "歷史：",
 	"abusefilter-edit-check": "語法檢查",
 	"abusefilter-edit-badfilter": "您指定的過濾器並不存在",
-	"abusefilter-edit-revert": "還原此過濾器做的動作",
+	"abusefilter-edit-revert": "還原此過濾器採取的操作",
 	"abusefilter-edit-tools": "工具：",
 	"abusefilter-edit-test-link": "使用最近的編輯測試此過濾器",
 	"abusefilter-edit-export": "匯出此過濾器至其他 Wiki",
@@ -573,7 +575,7 @@
 	"abusefilter-action-disallow": "禁止",
 	"abusefilter-revert-title": "還原所有由過濾器 $1 所做的變更",
 	"abusefilter-revert-intro": "此表單允許您還原所有由防濫用過濾器 $1 所做的變更。\n使用此工具時請小心謹慎。",
-	"abusefilter-revert-preview-item": "$1：$2於$4{{GENDER:$7|製作了}}$3。\n要還原的動作：$5（$6）",
+	"abusefilter-revert-preview-item": "$1：$2在$4{{GENDER:$7|執行了}}操作「$3」。\n要還原的動作：$5（$6）",
 	"abusefilter-revert-search-legend": "請選擇要還原的防濫用過濾器動作",
 	"abusefilter-revert-periodstart": "開始時間：",
 	"abusefilter-revert-periodend": "結束時間：",

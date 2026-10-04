@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kirsan"
+			"Kirsan",
+			"Orbitminis"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|pòdzãkùje}}}}",
-	"thanks-thanked": "môsz pòdzãkòwóné",
-	"thanks-button-thanked": "Môsz pòdzãkòwóné",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|pòdzãkùj}}}}",
+	"thanks-thanked": "{{GENDER:$2|{{GENDER:$1|Môsz pòdzãkòwóné!|Môsz pòdzãkòwónô!|Môsz pòdzãkòwóno!}}}}",
+	"thanks-button-thanked": "{{GENDER:$2|{{GENDER:$1|Môsz pòdzãkòwóné!|Môsz pòdzãkòwónô!|Môsz pòdzãkòwóno!}}}}",
 	"thanks-thank-tooltip": "{{GENDER:$1|Sélôj}} pòdzãka do {{GENDER:$2|tégò brëkòwnika|ti brëkòwniczczi}}",
-	"thanks-confirmation2": "Wësłac pùbliczną pòdzãkã za tã edicjã?"
+	"thanks-confirmation2": "Chcesz {{GENDER:$1|Pòdzëkòwac}} pùbliczno?"
 }

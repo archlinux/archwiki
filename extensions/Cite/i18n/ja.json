@@ -20,7 +20,9 @@
 			"Shirayuki",
 			"Sujiniku",
 			"Yusuke1109",
-			"春春眠眠"
+			"春春眠眠",
+			"Cookie4782",
+			"Likibp"
 		]
 	},
 	"cite-desc": "引用のためのタグ <code>&lt;ref&gt;</code> および <code>&lt;references/&gt;</code> を追加する",
@@ -46,12 +48,13 @@
 	"cite-tracking-category-cite-error": "参照エラーのあるページ",
 	"cite-tracking-category-cite-error-desc": "このカテゴリにあるページは、参照タグの使用にエラーがあります。",
 	"cite-tracking-category-ref-details": "補参照を使用しているページ",
-	"cite-tracking-category-ref-details-desc": "&lt;ref&gt;タグの\"details\"属性により、補参照（脚注の入れ子）を使用しているページ",
+	"cite-tracking-category-ref-details-desc": "このカテゴリに含まれるページでは、&lt;ref>タグの「details」属性が使用されています。",
 	"cite-reference-previews-reference": "参考資料",
 	"cite-reference-previews-book": "書籍の出典",
 	"cite-reference-previews-journal": "定期刊行物の出典",
 	"cite-reference-previews-news": "新聞の出典",
 	"cite-reference-previews-note": "注釈",
+	"cite-reference-previews-map": "地図の出典",
 	"cite-reference-previews-web": "ウェブサイトの出典",
 	"cite-reference-previews-collapsible-placeholder": "この参照には、プレビューに収まらない図が含まれています。",
 	"cite-reference-previews-gadget-conflict-info-navpopups": "[[$1|ナビゲーションポップアップ]]ガジェットが有効になっているため、この機能によって提供されるプレビューは表示されません。ウィキによっては、ガジェットの名前が少し異なる場合があります。引き続き問題が発生する場合は、グローバルなものを含め、ガジェットと利用者スクリプトを確認してください。",
@@ -68,7 +71,7 @@
 	"cite-wikieditor-help-content-reference-description": "注釈",
 	"cite-wikieditor-help-content-named-reference-description": "名前付き注釈",
 	"cite-wikieditor-help-content-rereference-description": "同じ注釈の追加利用",
-	"cite-wikieditor-help-content-sub-reference-description": "同じ参照を補参照を追加して再利用する",
+	"cite-wikieditor-help-content-sub-reference-description": "追加の詳細情報付きで同じ参照を再利用",
 	"cite-wikieditor-help-content-showreferences-description": "脚注の表示",
 	"cite-wikieditor-help-content-reference-example-text1": "ページ本文$1。",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 リンクタイトル]、追加テキスト",
@@ -84,5 +87,6 @@
 	"cite-configuration-backlink-alpha-suggestion": "サイトはウィキの言語のアルファベットを検出しました。これをバックリンクのマーカーとして使用する場合は、以下にテキストをコピー・ペーストして下さい。順序を編集したり再編したりできます。",
 	"cite-configuration-backlink-marker-label": "バックリンクの記号を設定",
 	"cite-configuration-backlink-marker-description": "以下の文字は、ウィキのバックリンクに使用されます。",
+	"cite-configuration-backlink-marker-help": "カスタム文字セットを、各文字の間にスペースを入れて入力してください。入力する文字は全部でXX個にしてください",
 	"cite-configuration-submit": "変更を保存"
 }

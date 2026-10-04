@@ -15,7 +15,8 @@
 			"Stelistcristi",
 			"Strainu",
 			"TMg",
-			"Wintereu"
+			"Wintereu",
+			"Vellion Eagle"
 		]
 	},
 	"collabpad-import-subtitle": "Importat de pe $1",
@@ -280,8 +281,9 @@
 	"visualeditor-rebase-client-title-help": "Veți putea revizui schimbări înainte de a salva.",
 	"visualeditor-recreate": "Pagina a fost ștearsă de la momentul în care ați început s-o modificați. Apăsați „$1” pentru a o recrea.",
 	"visualeditor-redirect-description": "Redirecționează către $1",
-	"visualeditor-savedialog-identify-anon": "Doriți, în schimb, să salvați această pagină ca anonim? Adresa dumneavoastră IP va fi înregistrată în istoricul paginii.",
-	"visualeditor-savedialog-identify-user": "Acum sunteți autentificat ca [[User:$1|$1]]. Dacă o salvați, modificarea dumneavoastră va fi asociată acestui cont.",
+	"visualeditor-savedialog-identify-anon": "Nu mai sunteți autentificat. Dacă continuați, <strong>adresa dvs. IP va fi înregistrată</strong> în istoricul modificărilor acestei pagini.",
+	"visualeditor-savedialog-identify-temp": "Acum folosiți numele de utilizator temporar <strong>$1</strong>. Dacă continuați, modificarea dvs. va fi asociată cu acest nume de utilizator.",
+	"visualeditor-savedialog-identify-user": "Acum sunteți {{GENDER:$1|autentificat|autentificată}} ca <strong>[[User:$1|$1]]</strong>. Dacă continuați, modificarea dvs. va fi asociată cu acest cont.",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "Puteți apăsa $1 pentru a vă salva modificare.",
 	"visualeditor-savedialog-label-publish-short": "Publică",
 	"visualeditor-savedialog-label-publish-short-start": "Publică...",

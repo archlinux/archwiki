@@ -61,7 +61,8 @@
 			"Синкретик",
 			"Туллук",
 			"Умар",
-			"Ядерный Трамвай"
+			"Ядерный Трамвай",
+			"Shabe"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -258,7 +259,7 @@
 	"visualeditor-dialog-transclusion-required-parameter": "Обязательное поле",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Это обязательное поле.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Назад",
-	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Все равно продолжить",
+	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Всё равно продолжить",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Требуемое поле отсутствует|Требуемые поля отсутствуют}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Вы уверены, что хотите продолжить без заполнения {{PLURAL:$2|поля|полей}} $1?",
 	"visualeditor-dialog-transclusion-see-template": "Шаблоны создаются пользователями и могут не содержать полных описаний. На этой [[$2|странице шаблона]] может быть дополнительная информация.",
@@ -333,7 +334,7 @@
 	"visualeditor-mweditmodeve-popup-body": "В любой момент вы можете переключиться обратно в режим визуального редактирования, щёлкнув по этому значку.",
 	"visualeditor-mweditmodeve-popup-title": "Вы переключились в редактирование исходного текста",
 	"visualeditor-mweditmodeve-progress": "Переход к визуальному редактированию…",
-	"visualeditor-mweditmodeve-showagain": "Не показывать это сообщение повторно",
+	"visualeditor-mweditmodeve-showagain": "Не показывать это сообщение снова",
 	"visualeditor-mweditmodeve-tool-current": "Визуальное редактирование",
 	"visualeditor-mweditmodeve-tool-unavailable": "Визуальное редактирование недоступно",
 	"visualeditor-mweditmodewt-popup-body": "В любое время вы можете переключиться обратно в редактирование исходного текста, щёлкнув по этому значку.",

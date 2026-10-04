@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Cybernenea11",
-			"TheChampionMan1234"
+			"TheChampionMan1234",
+			"Orbitminis"
 		]
 	},
 	"tooltip-ca-ve-edit": "Модификаць ачастэ паӂинэ",
 	"visualeditor-ca-editsource": "Модификаре сурсэ",
-	"visualeditor-ca-editsource-section": "редактаря сурсей",
+	"visualeditor-ca-editsource-section": "модификаре сурсэ",
 	"visualeditor-descriptionpagelink": "Project:РедакторВизуал"
 }

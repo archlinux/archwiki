@@ -5,6 +5,7 @@
 		]
 	},
 	"linterrors": "Pogrěšky v sintaksě koda",
+	"linttemplateerrors": "Vključenja sodrživajuče pogrěšky v sintaksě koda",
 	"linter-category-bogus-image-options": "Ložne opcije fajla",
 	"linter-category-bogus-image-options-desc": "Tute stranice sodrživajut fajly s ložnymi opcijami.",
 	"linter-category-large-tables": "Velike tabely, ktore težko prěgledajut se na mobilnyh telefonah",

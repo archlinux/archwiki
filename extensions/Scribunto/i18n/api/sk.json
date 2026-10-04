@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-scribunto-console-summary": "Interný modul na obsluhu XHR požiadaviek z konzoly rozšírenia Scribunto.",
+	"apihelp-scribunto-console-param-title": "Názov modulu, ktorý sa má otestovať.",
+	"apihelp-scribunto-console-param-content": "Nový obsah modulu.",
+	"apihelp-scribunto-console-param-session": "Token relácie.",
+	"apihelp-scribunto-console-param-question": "Ďalší riadok, ktorý sa má vyhodnotiť ako skript.",
+	"apihelp-scribunto-console-param-clear": "Nastavte, ak sa má vymazať aktuálny stav relácie."
+}

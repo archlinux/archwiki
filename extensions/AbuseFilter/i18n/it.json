@@ -197,7 +197,7 @@
 	"abusefilter-list-options-scope-global": "Solo regole globali",
 	"abusefilter-list-options-scope-all": "Regole locali e globali",
 	"abusefilter-list-options-further-options": "Ulteriori opzioni:",
-	"abusefilter-list-options-hidesuppressed": "Nascondi filtri soppressi",
+	"abusefilter-list-options-hidesuppressed": "Nascondi i filtri soppressi",
 	"abusefilter-list-options-hidedisabled": "Nascondi i filtri disattivati",
 	"abusefilter-list-options-hideprivate": "Nascondi i filtri privati",
 	"abusefilter-list-options-searchfield": "Cerca tra le regole:",

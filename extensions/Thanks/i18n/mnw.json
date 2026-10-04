@@ -1,9 +1,35 @@
 {
 	"@metadata": {
 		"authors": [
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|တင်ဂုန်}}}}",
-	"thanks-thank-tooltip": "{{GENDER:$1|ပလံင်}} တင်မကဵုသမ္တီ ဂလာန်တင်ဂုန် ကု {{GENDER:$2|ညးမသုင်စောဲ}}"
+	"thanks-desc": "ဗပေၚ်လေန်သွက်ပရေၚ်မတၚ်ဂုန်ညးလွပ်သွက်မပလေဝ်ဒါန်၊ တၚ်လညာတ်၊ ဥပမာသာ်ဂှ်။",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်တုဲယျအဴ}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်}}}}",
+	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|မတၚ်လဝ်ဂုန်}}}}",
+	"thanks-error-undefined": "ပရေၚ်တၚ်ဂုန်ဟွံတုဲဒှ်ဏီရ (ကုဒ်ပရေၚ်မဗၠေတ်: $1)။ သ္ပဂုန်တုဲထပ်စမ်မွဲဝါပၠန်ညိအဴ။",
+	"thanks-error-invalid-log-id": "ဟွံဆဵုစရၚ်ပရေၚ်စၟတ်သမ္တီလဝ်",
+	"thanks-error-invalidrevision": "ဂၞန်အာဲဒဳအဇာဂကူဟွံဒးကီုရ။",
+	"thanks-error-revdeleted": "မပလံၚ်ကဵုပရေၚ်တၚ်ဂုန်ဟွံဂွံမာန်ဟိုတ်နူဂကူအဇာသမ္တီလဝ်ဂှ်ဒဒုၚ်ပလီုထောံဟေၚ်ရ။",
+	"thanks-error-invalidrecipient": "ဟွံဆဵုညးမဒုၚ်ကေတ်မဒးရးဟေၚ်ရ",
+	"thanks-error-invalidrecipient-bot": "ဗတ်တံဝွံပရေၚ်တၚ်ဂုန်ဟွံဒုၚ်ကေတ်မာန်ရ",
+	"thanks-error-invalidrecipient-self": "ပရေၚ်တၚ်ဂုန်နကဵုဇကုဇကုဟွံဂွံမာန်",
+	"thanks-error-notloggedin": "ညးလွပ်ဟွံတီယၟုဂမၠိုၚ်တံဂှ်ပလံၚ်ကဵုပရေၚ်တၚ်ဂုန်ဟွံမာန်ရ",
+	"thanks-thank-tooltip": "{{GENDER:$1|ပလံင်}} တင်မကဵုသမ္တီ ဂလာန်တင်ဂုန် ကု {{GENDER:$2|ညးမသုင်စောဲ}}",
+	"thanks-confirmation2": "{{GENDER:$1|ပလံၚ်}} ပရေၚ်တၚ်ဂုန်နကဵုညးဂမၠိုၚ်ဆဵုမာန်ဟာ?",
+	"thanks-thanked-notice": "{{GENDER:$3|ဇကု}} မတၚ်လဝ်ဂုန် {{GENDER:$2|$1}}ရအဴ။",
+	"thanks": "ပလံၚ်ပရေၚ်တၚ်ဂုန်ညိအဴ",
+	"thanks-submit": "ပလံၚ်ပရေၚ်တၚ်ဂုန်ညိအဴ",
+	"echo-pref-subscription-edit-thank": "မတၚ်ဂုန်အဲသွက်အဲမပလေဝ်ဒါန်",
+	"echo-pref-tooltip-edit-thank": "ကဵုသတိအဲကာလညးမွဲမွဲမတၚ်ဂုန်အဲသွက်အဲပရေၚ်ကၠောန်ပွမပလေဝ်ဒါန်။",
+	"echo-category-title-edit-thank": "တၚ်ဂုန်ဂမၠိုၚ်",
+	"log-name-thanks": "စၟတ်သမ္တီပရေၚ်မတၚ်ဂုန်",
+	"log-description-thanks": "စရၚ်ဗွဲသၟဝ်ဏံဝွံဆေၚ်စပ်ကဵုမတၚ်ဂုန်လဝ်ညးလွပ်နူကဵုညးလွပ်တၞဟ်ဂမၠိုၚ်။",
+	"logentry-thanks-thank": "$1 {{GENDER:$2|မတၚ်ဂုန်လဝ်}} {{GENDER:$4|$3}}",
+	"logeventslist-thanks-log": "စၟတ်သမ္တီပရေၚ်မတၚ်ဂုန်",
+	"notification-link-text-view-post": "မဗဵုပရေၚ်တၚ်လညာတ်",
+	"ipb-action-thanks": "ပွမပလံၚ်ပရေၚ်တၚ်ဂုန်ဂမၠိုၚ်"
 }

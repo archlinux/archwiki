@@ -6,7 +6,7 @@
 		]
 	},
 	"vector-languages": "Baso",
-	"vector-language-button-label": "{{PLURAL:$1|$1 baso|$1 baso}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 bahaso|$1 bahaso}}",
 	"vector-no-language-button-label": "Tamboi baso",
 	"vector-action-addsection": "Bagian baru",
 	"vector-action-delete": "Apus",

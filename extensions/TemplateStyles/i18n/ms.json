@@ -18,5 +18,7 @@
 	"templatestyles-stylesheet-error-category-desc": "Lembaran gaya TemplateStyles mempunyai ralat.",
 	"templatestyles-page-error-category": "Laman dengan ralat TemplateStyles",
 	"templatestyles-page-error-category-desc": "Terdapat ralat semasa memproses a<code><nowiki><templatestyles/></nowiki></code> tag pada laman tersebut.",
-	"templatestyles-error-at-rule-block-not-allowed": "Sekatan tidak dibenarkan untuk <code>@$3</code> pada baris $1 aksara $2."
+	"templatestyles-error-at-rule-block-not-allowed": "Sekatan tidak dibenarkan untuk <code>@$3</code> pada baris $1 aksara $2.",
+	"templatestyles-error-at-rule-block-required": "Blok diperlukan untuk <code>@ $3</code> pada baris $1 aksara $2.",
+	"templatestyles-error-bad-character-in-url": "Aksara tidak sah dalam URL pada baris $1 aksara $2."
 }

@@ -79,9 +79,18 @@ update version:
 
 	version={{version}}
 	branch=${version%.*}
+	url=https://releases.wikimedia.org/mediawiki/${branch}/mediawiki-${version}.tar.gz
+	wget_options=(
+		--user-agent='ArchWikiUpdate/1.0 (https://gitlab.archlinux.org/archlinux/archwiki)'
+		--retry-on-http-error=429
+		--waitretry=30
+		--tries=10
+	)
 
 	pushd $TMPDIR >/dev/null
-	wget https://releases.wikimedia.org/mediawiki/${branch}/mediawiki-{{version}}.tar.gz{,.sig}
+	wget "${wget_options[@]}" "${url}.sig"
+	sleep 5
+	wget "${wget_options[@]}" "${url}"
 	gpg --verify-files mediawiki-{{version}}.tar.gz.sig
 	popd >/dev/null
 

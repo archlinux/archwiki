@@ -6,7 +6,8 @@
 			"FL2226",
 			"McDutchie",
 			"Pierpao",
-			"Valepert"
+			"Valepert",
+			"Matroz"
 		]
 	},
 	"editchecks": "Controlli di modifica",
@@ -73,6 +74,7 @@
 	"editcheck-image-caption-title": "Aggiungi didascalia immagine",
 	"editcheck-image-caption-description": "Questa immagine non ha una didascalia. Aiuta i lettori a capire perché l'immagine è rilevante aggiungendo una [{{int:editcheck-image-caption-descriptionlink}} breve didascalia].",
 	"editcheck-review-title": "Rivedi modifiche",
+	"editcheck-specialeditchecks-info": "Le configurazioni relative ai controlli di modifica si trovano su [[MediaWiki:Editcheck-config.json]]. Consultare per la documentazione [https://www.mediawiki.org/wiki/Edit_check/Configuration Edit check/Configuration].",
 	"editcheck-specialeditchecks-disabled": "Su questa wiki non sono abilitati i controlli di modifica.",
 	"editcheck-specialeditchecks-header-base": "Configurazione di base",
 	"editcheck-specialeditchecks-header-betafeatures": "Funzionalità sperimentali",

@@ -25,7 +25,8 @@
 			"人间百态",
 			"星海",
 			"沈澄心",
-			"范"
+			"范",
+			"Kelly Hsueh"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -103,7 +104,7 @@
 	"templatedata-modal-format-placeholder": "模板参数格式字符串",
 	"templatedata-modal-json-error-replace": "替换",
 	"templatedata-modal-notice-import-numparams": "$1个新参数已导入：$2",
-	"templatedata-modal-placeholder-add-new-map-input": "正在添加新映射...",
+	"templatedata-modal-placeholder-add-new-map-input": "正在添加新映射…",
 	"templatedata-modal-placeholder-paramkey": "参数名称",
 	"templatedata-modal-placeholder-mapinfo": "此模板没有映射对象",
 	"templatedata-modal-placeholder-prompt-map-name": "输入映射名称",

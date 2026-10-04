@@ -31,7 +31,8 @@
 			"علاء",
 			"محمد أحمد عبد الفتاح",
 			"مشعل الحربي",
-			"وهراني"
+			"وهراني",
+			";Hiba;1"
 		]
 	},
 	"userrights": "صلاحيات المستخدم",
@@ -134,6 +135,7 @@
 	"right-blockemail": "منع أو إلغاء منع المستخدم من إرسال البريد الإلكتروني",
 	"right-hideuser": "حظر أو إلغاء حظر اسم مستخدم ، وإخفائه أو عدم إخفائه عن العامة",
 	"right-ipblock-exempt": "تفادي عمليات منع الأيبي، المنع التلقائي ومنع النطاق",
+	"right-logentryimport": "إدخالات سجل الاستيراد",
 	"right-unblockself": "رفع المنع عن أنفسهم",
 	"right-protect": "تغيير مستويات الحماية وتعديل الصفحات المحمية",
 	"right-editprotected": "تعديل الصفحات التي حمايتها \"{{int:restriction-level-sysop}}\"",
@@ -293,6 +295,7 @@
 	"action-viewsuppressed": "عرض المراجعات المخفية بواسطة أي مستخدم",
 	"action-hideuser": "منع أو رفع منع اسم مستخدم، وإخفائه أو عدم إخفائه عن العامة",
 	"action-ipblock-exempt": "تفادي عمليات منع الأيبي والمنع التلقائي ومنع النطاق",
+	"action-logentryimport": "استيراد سجلات الإدخالات",
 	"action-unblockself": "رفع المنع عن أنفسهم",
 	"action-noratelimit": "غير متأثر بحدود المعدل",
 	"action-reupload-own": "الكتابة على ملف موجود تم رفعه بواسطة نفس المستخدم",
@@ -323,7 +326,7 @@
 	"listgrouprights-removegroup-self-all": "يمكنه إزالة كل المجموعات من حسابه الخاص",
 	"listgrouprights-restrictedgroups-header": "قيود عضوية المجموعة",
 	"listgrouprights-restrictedgroups-config": "تكوين القيود",
-	"listgrouprights-restrictedgroups-memberconditions": "الشروط للعضاء:",
+	"listgrouprights-restrictedgroups-memberconditions": "شروط العضوية:",
 	"listgrouprights-restrictedgroups-updaterconditions": "الشروط للمستخدمين الذين يمنحون هذه المجموعة:",
 	"listgrouprights-restrictedgroups-bypassable": "يمكن للمستخدمين الذين لديهم الحق في \"$1\" ($2) منح هذه المجموعة دون تجاوز الشروط المذكورة أعلاه.",
 	"listgrouprights-restrictedgroups-autodemotion": "المستخدمين الذين لم يعدوا يلبون الشروط المذكورة أعلاه سيتم إزالتهم تلقائيا من هذه المجموعة.",

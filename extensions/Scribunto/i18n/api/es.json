@@ -5,12 +5,14 @@
 			"Fitoschido",
 			"Lemondoge",
 			"Macofe",
-			"Ryo567"
+			"Ryo567",
+			"Raos10"
 		]
 	},
+	"apihelp-scribunto-console-summary": "Módulo interno para gestionar las solicitudes XHR desde la consola de Scribunto.",
 	"apihelp-scribunto-console-param-title": "El título del módulo que probar.",
 	"apihelp-scribunto-console-param-content": "El nuevo contenido del módulo.",
 	"apihelp-scribunto-console-param-session": "Ficha de sesión.",
-	"apihelp-scribunto-console-param-question": "El próximo renglón que evaluar como secuencia de órdenes.",
+	"apihelp-scribunto-console-param-question": "La siguiente línea a evaluar como una secuencia de órdenes.",
 	"apihelp-scribunto-console-param-clear": "Marcar para borrar el estado de la sesión actual."
 }

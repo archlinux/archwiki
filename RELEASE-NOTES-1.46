@@ -3,13 +3,66 @@
 PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
 PHP 8.4 workboard: https://phabricator.wikimedia.org/tag/php_8.4_support/
 PHP 8.5 workboard: https://phabricator.wikimedia.org/tag/php_8.5_support/
+PHP 8.6 workboard: https://phabricator.wikimedia.org/tag/php_8.6_support/
 
-== MediaWiki 1.46.0-PRERELEASE ==
+== MediaWiki 1.46.2 ==
 
-THIS IS NOT A RELEASE YET
+This is a maintenance release of the MediaWiki 1.46 branch.
 
-MediaWiki 1.46 is a pre-release testing branch, and is not recommended
-for use in production.
+=== Changes since 1.46.1 ===
+* Localisation updates.
+* Fix minor backport issues.
+
+== MediaWiki 1.46.1 ==
+
+This is a security and maintenance release of the MediaWiki 1.46 branch.
+
+=== Changes since 1.46.0 ===
+* Localisation updates.
+* (T429616) PNGHandler: Guard against missing frameCount in metadata.
+* (T425988, T425740, T425782, T431182) Fix MediaHandler caching to not preserve
+  language.
+* (T429559, T431099) MediaWiki Docker: Upgrade base images to ones with PHP
+  8.3.32.
+* (T432165, T432723, T433969) Upgrade guzzlehttp/guzzle from 7.12.3 to 7.15.2.
+* (T419563) api: Fetch additional rows in ApiQueryCategories to have enough
+  results.
+* Setup: Move SessionManager::shutdown() out of PHPSessionHandler code.
+* (T433922) Api: Use correct query when continue prop=categories.
+* (T250395, T434627) SkinFallback: name the valid key for a loaded skin instead
+  of suggesting wfLoadSkin.
+* Logger: Update oversize UDP payload truncation for macOS.
+* (T434982) Revert epub addition.
+* (T435907) UserGroupsSpecialPage: Check in_array in strict mode.
+* (T431583) ResourceLoader: Vary E-Tag if response contains errors.
+* (T423519) Blank userlogout-temp-moreinfo message.
+* (T420341) File: Ensure blob storage addresses are written to filerevision.
+* (T428406) OldLocalFile: Set fr_archive_name when recording old upload.
+* (T438928) PhpUnitSplitter: Wait longer for the PHPUnit results cache.
+* (T427349, T426684) tests: make CleanupWatchlistLabelMemberTest run-order
+  independent.
+* (T422686) http: Add contact URL to default HttpRequestFactory::getUserAgent.
+* (T432551, CVE-2026-102966) SECURITY: Fix deleted edit summary leak in page
+  history feeds.
+* (T431819, CVE-2026-102967) SECURITY: SpecialUpload: Prevent Open Redirect
+  using wpDestUrl.
+* (T431819, CVE-2026-102968) SECURITY: NoLocalSettings: Fixes a potential path
+  traversal.
+* (T434189, CVE-2026-102969) SECURITY: Check the authority of selser data when
+  html is supplied.
+* (T434278, CVE-2026-102970) SECURITY: APIComparePages should preserve revision
+  visibility.
+* (T434521, CVE-2026-102971) SECURITY: PageContentHelper: Respect visibility of
+  user_id in output.
+* (T120386, CVE-2026-102972) SECURITY: Disallow raw action for Special:MyPage.
+* (T435022, CVE-2026-102973) SECURITY: ApiEmailUser: Check authorizeSend()
+  instead of canSend() before sending an email.
+* (T435457, CVE-2026-102974) SECURITY: Run ImageRedirectConstraint with
+  post-PST content.
+* (T435026, CVE-2026-102975) SECURITY: ApiRevisionDelete: Check permissions
+  when unsuppressing.
+
+== MediaWiki 1.46.0 ==
 
 === Changes since MediaWiki 1.46.0-rc.0 ===
 * Localisation updates.
@@ -78,6 +131,16 @@ For notes on 1.45.x and older releases, see HISTORY.
   be disabled. This avoids users who have access to recent changes but no
   access to a particular namespace from reading contents of limited pages
   from edit summaries.
+* $wgRestrictedGroups - (T406544) Allows administrators to define conditions
+  that must be met before a user can be added to specific user groups. A new
+  permission, ignore-restricted-groups, allows users with this right to bypass
+  these restrictions.
+
+  If a user no longer meets the conditions for a restricted group (e.g. their
+  edit count drops below the threshold), their membership in that group is
+  automatically disabled. Administrators can see which groups are currently
+  disabled for a user in the user rights interface.
+
 
 ==== Changed configuration ====
 
@@ -102,6 +165,29 @@ For notes on 1.45.x and older releases, see HISTORY.
 
 === New user-facing features in 1.46 ===
 
+* (T411596) Special:EditWatchlist has been redesigned to use a table view, with
+  filtering options, pagination, and support for the new watchlist labels
+  feature.
+* (T157524) Undoing multiple revisions generates an automatic edit summary.
+* (T396155) Email confirmation emails have been redesigned to use HTML email
+  with the wiki logo and a streamlined message (in plain text email as well).
+* (T410267) Dropdown menus to select a language used in various places (e.g.
+  preferences) have been replaced by a new widget with more convenient
+  autocompletion.
+* (T284927) Special:UserLogin and Special:CreateAccount while already logged in
+  now have a primary button to continue as the current user, rather than
+  promoting logging in as another user, to help people who land on these pages
+  unintentionally.
+* (T24029, T155097, T62744) Wikitext editor now preserves certain query
+  parameters (such as `useskin`, `uselang` and `section`) on preview. This
+  allows previewing edits with temporary skin or language changes without
+  altering user preferences, and fixes browser session restore corrupting
+  section edits.
+* (T6055) Interwiki user rights changes are now logged on both the source and
+  target wikis.
+* (b57a58e411fa) Added the format="wikitext" attribute to the <pre> tag, which
+  allows wikitext inside the tag to be parsed and rendered rather than
+  displayed as literal text.
 * (T413375) A new parser function has been added, {{#isbn}}, which replaces
   the ISBN "magic link" functionality for those wikis which have chosen to
   disable it.
@@ -118,6 +204,9 @@ For notes on 1.45.x and older releases, see HISTORY.
 * (T413867) Special:Mute is always unconditionally enabled.
 * (T381455) Special:NamespaceInfo will now display aliases defined through
   $wgNamespaceAliases.
+* (a53243bb25c) Special:Version now includes links to GitHub commit pages for
+  repositories hosted on GitHub.
+* (T363726) action=info now includes a collapsible table of contents.
 
 === New features for sysadmins in 1.46 ===
 
@@ -144,6 +233,10 @@ For notes on 1.45.x and older releases, see HISTORY.
 * The LinkerMakeExternalLinkWithContext hook has been added as an improved and
   slightly modernized version of the LinkerMakeExternalLink hook.  Developers
   are encouraged to migrate to the new hook.
+* (T416542) Logging functions (`ManualLogEntry::insert()` and
+  `DatabaseLogEntry::newFromRow()`) now support interacting with log entries
+  from other wikis in a multi-wiki environment. Previously, this could fail or
+  incorrectly corrupt the local actor store.
 
 === External library changes in 1.46 ===
 
@@ -829,11 +922,13 @@ because of Phabricator reports.
   - MediaWiki\Specials\Exception
     - SpecialUploadStashTooLargeException
   - MediaWiki\Specials\FormFields
+    - EditWatchlistCheckboxSeriesField
     - Licenses
+    - UploadSourceField
   - MediaWiki\Specials\Forms
-    - MediaWiki\Specials\Forms\EditWatchlistNormalHTMLForm
-    - MediaWiki\Specials\Forms\PreferencesFormOOUI
-    - MediaWiki\Specials\Forms\UploadForm
+    - EditWatchlistNormalHTMLForm
+    - PreferencesFormOOUI
+    - UploadForm
   - MediaWiki\Specials\Helpers
     - License
     - LoginHelper

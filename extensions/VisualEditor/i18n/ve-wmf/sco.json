@@ -4,7 +4,8 @@
 			"Foxj",
 			"Jdforrester",
 			"John Reid",
-			"아라"
+			"아라",
+			"CiphriusKane"
 		]
 	},
 	"tag-visualeditor": "Veesual eedit",
@@ -12,7 +13,7 @@
 	"tag-visualeditor-needcheck": "Veesual eedit: Check",
 	"tag-visualeditor-needcheck-description": "Eedit dun uisin the [[{{MediaWiki:visualeditor-descriptionpagelink}}|VeesualEediter]] whaur the system detectit the wikitex possiblie haein on-ettled-fer chynges.",
 	"tag-visualeditor-switched": "VeesualEiditer: Switched",
-	"tag-visualeditor-switched-description": "Uiser stairted tae eidit uising VeesualEditer than chynged til the wikitex eiditer.",
+	"tag-visualeditor-switched-description": "Uiser stairtit tae edit uisin the visual editor, then chynged tae the wikitex editor.",
 	"visualeditor-feedback-link": "Project:VeesualEediter/Feedback",
 	"visualeditor-feedback-tool": "Gie feedback aboot this softwar",
 	"visualeditor-help-label": "Read the uiser guide"

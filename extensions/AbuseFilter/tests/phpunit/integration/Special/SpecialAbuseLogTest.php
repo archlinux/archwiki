@@ -28,8 +28,6 @@ use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\UserIdentity;
 use stdClass;
-use Wikimedia\Parsoid\Core\DOMCompat;
-use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -332,21 +330,6 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * Calls DOMCompat::getElementById, expects that it returns a valid Element object and then returns
-	 * the HTML of that Element.
-	 *
-	 * @param string $html The HTML to search through
-	 * @param string $id The ID to search for, excluding the "#" character
-	 * @return string
-	 */
-	private function assertAndGetByElementId( string $html, string $id ): string {
-		$specialPageDocument = DOMUtils::parseHTML( $html );
-		$element = DOMCompat::getElementById( $specialPageDocument, $id );
-		$this->assertNotNull( $element, "Could not find element with ID $id in $html" );
-		return DOMCompat::getInnerHTML( $element );
-	}
-
-	/**
 	 * Verifies that the search form is present and that it contains
 	 * the expected form fields.
 	 *
@@ -354,7 +337,7 @@ class SpecialAbuseLogTest extends SpecialPageTestBase {
 	 * @param Authority $authority The Authority that was used to generate the HTML of the special page
 	 */
 	private function verifySearchFormFieldsValid( string $html, Authority $authority ) {
-		$formHtml = $this->assertAndGetByElementId( $html, 'abusefilter-log-search' );
+		$formHtml = $this->assertSelectorMatchesOneElement( $html, '#abusefilter-log-search' );
 
 		$formFields = [
 			'abusefilter-log-search-user',

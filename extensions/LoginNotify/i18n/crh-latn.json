@@ -7,5 +7,8 @@
 	"echo-category-title-login-fail": "Muvafaqiyetsiz kirişler",
 	"echo-pref-tooltip-login-fail": "Birisi qullanıcı esabımda kirip olamağanda maña bildir.",
 	"echo-category-title-login-success": "Tanış olmağan bir cihazdan kiriş",
-	"echo-pref-tooltip-login-success": "Birisi esabıma evelleri qullanılmağan bir cihaz ve ya IP adresinden kirgende maña bildir."
+	"echo-pref-tooltip-login-success": "Birisi esabıma evelleri qullanılmağan bir cihaz ve ya IP adresinden kirgende maña bildir.",
+	"notification-loginnotify-login-success-email-subject": "{{SITENAME}} saytına daa evel qullanılmağan bir cihazdan $1 olaraq kiriş yapıldı",
+	"notification-header-login-success": "Birisi (belki {{GENDER:$1|siz}}) keçenlerde qullanıcı esabıñızğa yañı bir cihazdan kirdi. Eger bu areketni yapqan olsañız bu mektüpke qulaq asmañız. Lâkin bu areketni yapqan siz olmasañız, paroliñizni deñiştirmek ve esap faalligini teşkermek tevsiye etile.",
+	"notification-new-bundled-header-login-fail": "Soñki kirgeniñizden berli birisi esabıñızğa yañı bir cihazdan  {{PLURAL:$1|'''kirmege tırışıp kiralmadı'''|'''$1 kere kirmege tırışıp kiralmadı'''}}. Eger kirmege tırışqan kişi siz olmasañız, lütfen esabıñıznıñ küçlü bir paroli olğanından emin oluñız."
 }

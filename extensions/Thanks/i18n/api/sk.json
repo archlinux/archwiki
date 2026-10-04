@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-flowthank-summary": "Odoslať verejné upozornenie s poďakovaním za komentár vo Flow.",
+	"apihelp-flowthank-param-postid": "UUID príspevku, za ktorý sa má poďakovať.",
+	"apihelp-flowthank-example-1": "Odoslať poďakovanie za komentár s <kbd>UUID xyz789</kbd>",
+	"apihelp-thank-summary": "Odoslať redaktorovi upozornenie s poďakovaním.",
+	"apihelp-thank-param-rev": "ID revízie, za ktorú sa má niekomu poďakovať. Musí byť zadané toto alebo „log“.",
+	"apihelp-thank-param-log": "ID záznamu, za ktorý sa má niekomu poďakovať. Musí byť zadané toto alebo „rev“.",
+	"apihelp-thank-param-source": "Krátky reťazec opisujúci zdroj požiadavky, napríklad <kbd>diff</kbd> alebo <kbd>history</kbd>.",
+	"apihelp-thank-example-1": "Odoslať poďakovanie za revíziu s <kbd>ID 456</kbd>, pričom zdrojom je stránka s rozdielmi"
+}

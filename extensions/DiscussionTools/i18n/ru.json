@@ -31,7 +31,8 @@
 			"WindEwriX",
 			"Woytecr",
 			"Умар",
-			"Merrahtar"
+			"Merrahtar",
+			"Shabe"
 		]
 	},
 	"discussiontools": "Инструменты обсуждений",
@@ -177,7 +178,7 @@
 	"discussiontools-replywidget-watchthis": "Добавить эту страницу в ваш [[Special:Watchlist|список наблюдения]]",
 	"discussiontools-target-comment-missing": "Сообщение не найдено. Возможно, оно было удалено или перемещено.",
 	"discussiontools-target-comments-missing": "Новые сообщения не найдены. Возможно, они были удалены или перемещены.",
-	"discussiontools-target-heading-missing": "Невозможно найти эту тему. Она могла быть перемещена или переименована.",
+	"discussiontools-target-heading-missing": "Не удалось найти эту тему. Возможно, её удалили, перенесли или переименовали.",
 	"discussiontools-target-comment-found-moved": "Невозможно найти этот комментарий на этой странице, но он находится на {{PLURAL:$1|следующей странице|следующих страницах}}:",
 	"discussiontools-target-heading-found-moved": "Невозможно найти эту тему на этой странице, но она есть на {{PLURAL:$1|следующей странице|следующих страницах}}:",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|человек|человека|человек}} в обсуждении",

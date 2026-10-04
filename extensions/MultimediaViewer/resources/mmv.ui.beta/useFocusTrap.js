@@ -46,9 +46,9 @@ function focusFirstFocusable( container, sentinelClass, reverse ) {
 
 /**
  * @typedef {Object} FocusTrapOptions
- * @property {string} [sentinelClass='mmv-focus-sentinel'] CSS class applied to the sentinel
+ * @type {string} [sentinelClass='mmv-focus-sentinel'] CSS class applied to the sentinel
  *   elements, used to exclude them when searching for focusable children.
- * @property {import('vue').Ref<HTMLElement|null>} [holderRef] Template ref for a
+ * @type {import('vue').Ref<HTMLElement|null>} [holderRef] Template ref for a
  *   `tabindex="-1"` element inside the container. When provided, initial focus
  *   is placed on this holder instead of a real focusable. This avoids a race
  *   condition that happens when interactive elements inside the container are

@@ -372,7 +372,7 @@ QUnit.test( 'Validate new LightboxImage object has sensible constructor paramete
 	const done = assert.async();
 	bootstrap.loadViewer().then( () => {
 		assert.strictEqual( bootstrap.thumbs.length, 1, 'One thumbnail' );
-		/** @property {LightboxImage} */
+		/** @type {LightboxImage} */
 		const thumb = bootstrap.thumbs[ 0 ];
 		assert.true( new RegExp( imgSrc + '$' ).test( thumb.src ), 'Thumbnail URL used in creating new image object' );
 		assert.strictEqual( thumb.filePageTitle.title, fname, 'Filename is correct when passed into new image constructor' );

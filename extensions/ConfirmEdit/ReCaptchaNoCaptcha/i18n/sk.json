@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"renocaptcha-desc": "Modul reCAPTCHA NoCAPTCHA pre rozšírenie Confirm Edit",
+	"renocaptcha-edit": "Na ochranu wiki pred automatickým spamom v úpravách vás láskavo žiadame o vyriešenie nasledujúceho CAPTCHA:",
+	"renocaptcha-addurl": "Vaša úprava obsahuje nové externé odkazy. Na ochranu wiki pred automatickým spamom vás láskavo žiadame o vyriešenie nasledujúceho CAPTCHA:",
+	"renocaptcha-badlogin": "Na ochranu wiki pred automatickým lámaním hesiel vás láskavo žiadame o vyriešenie nasledujúceho CAPTCHA:",
+	"renocaptcha-createaccount": "Na ochranu wiki pred automatickým vytváraním účtov vás láskavo žiadame o vyriešenie nasledujúceho CAPTCHA:",
+	"renocaptcha-createaccount-fail": "Zdá sa, že ste CAPTCHA nevyriešili.",
+	"renocaptcha-create": "Na ochranu wiki pred automatickým vytváraním stránok vás láskavo žiadame o vyriešenie nasledujúceho CAPTCHA:",
+	"renocaptcha-noscript": "Bohužiaľ máte vypnutý JavaScript, takže nedokážeme automaticky rozpoznať, či ste človek. Vyriešte, prosím, CAPTCHA vyššie a výsledný text skopírujte do nasledujúceho textového poľa:",
+	"renocaptcha-help": "Vyriešte, prosím, výzvu ReCaptcha NoCaptcha a vráťte hodnotu odpovede ako captchaWord."
+}

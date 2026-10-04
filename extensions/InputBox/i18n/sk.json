@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Helix84",
-			"Teslaton"
+			"Teslaton",
+			"Wizzard"
 		]
 	},
 	"inputbox-desc": "Umožňuje vloženie preddefinovaných HTML formulárov",
@@ -11,5 +12,8 @@
 	"inputbox-tryexact": "Skúste presné vyhľadávanie",
 	"inputbox-searchfulltext": "Fulltextové vyhľadávanie",
 	"inputbox-createarticle": "Vytvoriť stránku",
+	"inputbox-movearticle": "Presunúť stránku",
+	"inputbox-postcomment": "Nová sekcia",
+	"inputbox-postcommenttitle": "Nová sekcia",
 	"inputbox-ns-main": "Hlavný"
 }

@@ -44,7 +44,9 @@
 	"math-visualeditor-symbol-group-math-symbols": "Symboler a Konstanten",
 	"math-visualeditor-symbol-group-math-typefaces": "Schrëftaarten",
 	"math-visualeditor-symbol-group-math-unsorted": "Net zortéiert",
+	"math-form-type-label": "Typ vum Input",
 	"math_failure": "Parser-Feeler",
+	"math_invalidresponse": "$1: Ongülteg Äntwert („$3“) vum Server „$2“:",
 	"math_invalidxml": "MathML oder SVG ass net valabelen XML.",
 	"math_other_error": "Anere Feeler: $1",
 	"math_syntax_error": "Syntaxfeeler",
@@ -52,6 +54,10 @@
 	"math-test-fail": "Den Test ''$1'' huet net funktionéiert.",
 	"math-test-success": "Den Test ''$1'' huet funktionéiert.",
 	"math-tracking-category-error": "Säite mat Math-Feeler",
+	"math-tracking-category-mhchem-deprecation": "Säiten, déi e vereelzt Format fir de chem-Tag benotzen",
+	"math-tracking-category-mhchem-deprecation-desc": "Säiten an dëser Kategorie benotzen e vereelzt Format fir de chem-Tag",
+	"math-tracking-category-texvc-deprecation": "Säiten, déi e vereelzt Format fir de math-Tag benotzen",
+	"math-tracking-category-texvc-deprecation-desc": "Säiten an dëser Kategorie benotzen e vereelzt Format fir de math-Tag",
 	"math-tracking-category-render-error": "Säite mat Math-Renderfeeler",
 	"math_unknown_error": "Onbekannte Feeler",
 	"math_unknown_function": "Onbekannte Funktioun '$1'",
@@ -74,5 +80,7 @@
 	"math-wikibase-special-form-placeholder": "Titel vun der Formel",
 	"math-wikibase-special-form-button": "Informatiounen ufroen",
 	"math-wikibase-special-error-header": "Feeler",
-	"math-wikibase-special-error-invalid-argument": "Dir hutt eng Wikibase-Element-ID uginn, déi et net gëtt."
+	"math-wikibase-special-error-invalid-argument": "Dir hutt eng Wikibase-Element-ID uginn, déi et net gëtt.",
+	"math-editpage-insert-inline": "Mathematesch Formel (''inline'')",
+	"math-editpage-insert-block": "Mathematesch Formel (''block'')"
 }

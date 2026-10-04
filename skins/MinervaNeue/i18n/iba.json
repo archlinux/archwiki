@@ -4,13 +4,16 @@
 			"Song GK"
 		]
 	},
+	"minerva-download": "Undan turun PDF",
 	"mobile-frontend-history": "Peda sejarah edit ba lambar tu",
 	"mobile-frontend-home-button": "Lambar keterubah",
 	"mobile-frontend-language-article-heading": "Jaku",
+	"mobile-frontend-languages-not-available": "Lambar tu bedau bisi dalam jaku ke bukai.",
 	"mobile-frontend-main-menu-login": "Log tama",
 	"mobile-frontend-main-menu-nearby": "Dedamping",
 	"mobile-frontend-main-menu-settings": "Atur",
 	"mobile-frontend-placeholder": "Giga ba {{SITENAME}}",
 	"mobile-frontend-random-button": "Seneka",
-	"minerva-page-actions-overflow": "Mayuh agi"
+	"minerva-page-actions-overflow": "Mayuh agi",
+	"minerva-page-actions-language-switcher": "Jaku"
 }

@@ -15,11 +15,12 @@
 			"Peter Bowman",
 			"Qwrop",
 			"Ryo567",
-			"Vfrico"
+			"Vfrico",
+			"Raos10"
 		]
 	},
 	"content-model-scribunto": "Módulo Scribunto",
-	"scribunto-desc": "Marco para la incorporación de lenguajes de script en páginas de MediaWiki",
+	"scribunto-desc": "Marco para la incorporación de lenguajes de secuencias de órdenes (''scripts'') en páginas de MediaWiki",
 	"scribunto-line": "en la línea $1",
 	"scribunto-module-line": "en $1 en la línea $2",
 	"scribunto-parser-dialog-title": "Error en la secuencia de órdenes",
@@ -41,7 +42,7 @@
 	"scribunto-common-nofunction": "Error de secuencia de órdenes: se debe especificar una función a la que llamar.",
 	"scribunto-common-nosuchfunction": "Error en la secuencia de órdenes: la función «$2» no existe.",
 	"scribunto-common-notafunction": "Error en la secuencia de órdenes: «$2» no es una función.",
-	"scribunto-common-timeout": "Ha caducado el tiempo asignado para ejecutar secuencias de comandos (scripts).",
+	"scribunto-common-timeout": "Ha caducado el tiempo asignado para ejecutar secuencias de órdenes (''scripts'').",
 	"scribunto-common-oom": "Se superó la cantidad de memoria permitida para ejecutar secuencias de órdenes.",
 	"scribunto-common-backtrace": "Traza inversa:",
 	"scribunto-common-no-details": "No hay detalles disponibles sobre la posición del código.",
@@ -50,8 +51,8 @@
 	"scribunto-lua-in-function-at": "en la función en $1: $2",
 	"scribunto-lua-error-location": "Error de Lua $1: $2.",
 	"scribunto-lua-error": "Error de Lua: $2.",
-	"scribunto-lua-notarrayreturn": "Error de secuencia de comandos: el módulo devolvió un valor $2. Debería devolver una tabla de exportación.",
-	"scribunto-lua-warning": "Advertencia de script: $1",
+	"scribunto-lua-notarrayreturn": "Error en la secuencia de órdenes: el módulo devolvió un valor $2. Debería devolver una tabla de exportación.",
+	"scribunto-lua-warning": "Advertencia en la secuencia de órdenes: $1",
 	"scribunto-luastandalone-proc-error": "Error de Lua: No se puede crear el proceso.",
 	"scribunto-luastandalone-proc-error-msg": "Error de Lua: no se puede crear el proceso: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Error de Lua: No se puede crear el proceso: proc_open no está disponible. Comprueba la directiva de configuración de PHP «disable_functions».",
@@ -68,10 +69,14 @@
 	"scribunto-limitreport-virtmemusage": "Tamaño virtual de Lua",
 	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|byte|bytes}}",
 	"scribunto-limitreport-estmemusage": "Uso estimado de memoria de Lua",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|byte|bytes}}",
 	"scribunto-limitreport-memusage": "Uso de memoria de Lua",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|byte|bytes}}",
 	"scribunto-limitreport-profile": "Perfil de Lua",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Registros de Lua",
 	"nstab-module": "Módulo",
-	"tooltip-ca-nstab-module": "Ver la página del módulo"
+	"tooltip-ca-nstab-module": "Ver la página del módulo",
+	"namespaceinfo-description-ns828": "Espacio de nombres para módulos de código Lua, que se pueden invocar desde páginas wiki y sus páginas de documentación.",
+	"namespaceinfo-description-ns829": "Páginas de discusión para los módulos y la documentación."
 }

@@ -9,7 +9,7 @@
 	},
 	"thanks-desc": "Lasiha liŋkkaid, maiguin lea vejolaš giitit geaveheddjiid sin rievdadusaid, kommentáraid jna. ovddas.",
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|giitte}}}}",
-	"thanks-thanked": "Don {{GENDER:$1|{{GENDER:$2|giitet}}}} dan geavaheaddji",
+	"thanks-thanked": "Don {{GENDER:$1|{{GENDER:$2|giitet}}}} dán geavaheaddji",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Giitte}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Giitet}}}}",
 	"thanks-error-undefined": "Giitin ii lihkostuvvan (meattáhuskoda: $1). Geahččal giitit fas.",

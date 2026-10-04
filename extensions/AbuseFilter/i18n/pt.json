@@ -34,7 +34,8 @@
 			"Vinickw",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"Vickvvy"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas às edições",
@@ -48,7 +49,7 @@
 	"abusefilter-degrouped": "Esta operação foi identificada automaticamente como prejudicial.\nEm consequência, foi bloqueada, e, já que se suspeita que a sua conta esteja comprometida, todas as permissões foram removidas.\nSe crê que esta ação é incorreta, por favor contacte um burocrata indicando uma justificação para a operação, e as suas permissões poderão ser repostas.\nSegue-se uma breve descrição da regra de prevenção de abusos que detetou a sua ação: $1",
 	"abusefilter-autopromote-blocked": "Esta ação foi identificada automaticamente como prejudicial, e foi bloqueada.\nAlém disso, como medida de segurança, alguns privilégios automaticamente concedidos a contas estabelecidas foram temporariamente removidos da sua conta.\nSegue-se uma breve descrição da regra de prevenção de abusos que detetou a sua ação: $1",
 	"abusefilter-blocker": "Filtro de abusos",
-	"abusefilter-blockreason": "Automaticamente bloqueado pelo filtro de abusos.\nDescrição da regra que detetou a sua ação: $1",
+	"abusefilter-blockreason": "Automaticamente bloqueado pelo filtro de abusos. \nDescrição da regra que detetou a sua ação: $1",
 	"abusefilter-degroupreason": "Direitos automaticamente retirados pelo filtro de abusos. Descrição da regra: $1",
 	"abusefilter-blockautopromotereason": "Promoção automática atrasada automaticamente pelo filtro de abusos. Descrição da regra: $1",
 	"abusefilter-accountreserved": "Este nome de conta está reservado para uso pelo filtro de abusos.",

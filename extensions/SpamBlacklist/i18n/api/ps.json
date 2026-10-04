@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"apihelp-spamblacklist-example-1": "د تورلړ په وړاندې د دوه وېبتړونو سم‌کتل",
+	"apihelp-spamblacklist-param-url": "د تورلړ پر وړاندې د وېبتړونو تاييدول.",
+	"apihelp-spamblacklist-summary": "د چټل‌ليک تورلړ پر وړاندې د یو یا څو وېبتړونو تاییدول."
+}

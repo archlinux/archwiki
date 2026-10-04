@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dj"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "API-modul a kiszolgáló és a kliens közötti kommunikációhoz a regisztrációs/hitelesítési folyamat során.",
+	"apihelp-oathauth-webauthn-param-func": "A végrehajtandó függvény neve.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Hitelesítési információk.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Regisztrációs információk.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "A regisztrált kulcs jelkulcs módban van-e. (Csak a getRegisterInfo esetén.)",
+	"apierror-oathauth-webauthn-module-missing": "A WebAuthn modul nem érhető el.",
+	"apierror-oathauth-webauthn-missing-credential": "Nem adtak meg hitelesítő adatokat.",
+	"apierror-oathauth-webauthn-invalid-credential": "A hitelesítő adat érvénytelen vagy hibás formátumú.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Új WebAuthn-hitelesítő adat regisztrálása az aktuális felhasználó számára.",
+	"apihelp-oathauth-webauthn-param-credential": "A böngésző JSON-kódolású WebAuthn-hitelesítőadat-válasza.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Az új hitelesítő adat megjelenítési neve."
+}

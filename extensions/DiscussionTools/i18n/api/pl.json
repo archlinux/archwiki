@@ -4,7 +4,8 @@
 			"Matma Rex",
 			"Nux",
 			"Rail",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Nie odnaleziono komentarza z ID „$1”.",
@@ -22,7 +23,7 @@
 	"apihelp-discussiontoolsedit-param-html": "Treść do dodania, jako HTML. Nie może być użyte wraz z <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Parametr używany tylko wtedy, gdy wartość <var>paction</var> to <var>addtopic</var>.",
 	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Zezwól na umieszczenie nowej sekcji bez tytułu.",
-	"apihelp-discussiontoolsedit-param-wikitext": "Treść do dodania, jako wikitekst. Nie może być użyte wraz z <var>html</var>.",
+	"apihelp-discussiontoolsedit-param-wikitext": "Treść do dodania jako wikikod. Nie może być użyte wraz z <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Dodaj nowy komentarz jako odpowiedź do istniejącego komentarza.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Dodaj nową sekcję dyskusji i pierwszy komentarz w niej.",
 	"apihelp-discussiontoolsedit-summary": "Wyślij wiadomość na stronie dyskusji.",
@@ -36,7 +37,7 @@
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Skąd zostały transkludowane komentarze",
 	"apihelp-discussiontoolspageinfo-summary": "Zwraca metadane niezbędne do zainicjowania narzędzi dyskusji.",
 	"apihelp-discussiontoolspreview-param-type": "Typ komentarza, którego podgląd chcesz zobaczyć",
-	"apihelp-discussiontoolspreview-param-wikitext": "Treść, której podgląd chcesz zobaczyć, jako wikitekst",
+	"apihelp-discussiontoolspreview-param-wikitext": "Treść do podglądu jako wikikod",
 	"apihelp-discussiontoolspreview-summary": "Zobacz podgląd wiadomości na stronie dyskusji.",
 	"apihelp-discussiontoolssubscribe-param-commentname": "Nazwa tematu do zasubskrybowania (lub anulowania subskrypcji)",
 	"apihelp-discussiontoolssubscribe-param-page": "Tytuł strony, gdzie widoczny jest temat",

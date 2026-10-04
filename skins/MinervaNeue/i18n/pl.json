@@ -12,12 +12,13 @@
 			"Tar Lócesilion",
 			"Tsca",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"minerva-last-modified-date": "Ostatnio edytowano $1 o $2",
 	"minerva-watchlist-cta": "Obserwuj tę stronę i wszystkie zmiany na niej wprowadzane.",
-	"mobile-frontend-cookies-required": "Pliki cookies są niezbędne do przełączania trybu wyświetlania. Włącz je i spróbuj ponownie.",
+	"mobile-frontend-cookies-required": "Ciasteczka są niezbędne do przełączania trybu wyświetlania. Włącz je i spróbuj ponownie.",
 	"mobile-frontend-editor-edit": "Edytuj",
 	"minerva-download": "Pobierz jako PDF",
 	"mobile-frontend-editor-redlink-create": "Utwórz stronę",
@@ -30,7 +31,7 @@
 	"mobile-frontend-main-menu-button-tooltip": "Otwórz menu główne",
 	"mobile-frontend-main-menu-contributions": "Wkład",
 	"mobile-frontend-main-menu-login": "Zaloguj się",
-	"mobile-frontend-main-menu-logout": "Wyloguj",
+	"mobile-frontend-main-menu-logout": "Wyloguj się",
 	"mobile-frontend-main-menu-nearby": "W pobliżu",
 	"mobile-frontend-main-menu-settings": "Ustawienia",
 	"mobile-frontend-main-menu-watchlist": "Obserwowane",
@@ -48,7 +49,7 @@
 	"mobile-frontend-user-button-tooltip": "Pokaż powiadomienia",
 	"mobile-frontend-user-newmessages": "Masz nowe wiadomości na stronie dyskusji",
 	"mobile-frontend-user-page-contributions": "Edycje",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Dołączył|Dołączyła}} $1",
+	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Dołączył|Dołączyła|Dołączył(a)}} $1",
 	"mobile-frontend-user-page-talk": "Dyskusja",
 	"minerva-user-menu-button": "Menu użytkownika",
 	"minerva-user-navigation": "Nawigacja użytkownika",

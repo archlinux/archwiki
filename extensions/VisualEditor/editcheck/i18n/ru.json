@@ -8,12 +8,13 @@
 			"Stjn",
 			"Vlad5250",
 			"Vonavy",
-			"Well very well"
+			"Well very well",
+			"Le Loi"
 		]
 	},
 	"editchecks": "Проверка правок",
 	"editcheck-toolbar-suggestions-title": "Показать предложения",
-	"editcheck-suggestions-turned-on": "Режим предложения включен",
+	"editcheck-suggestions-turned-on": "Режим предложений включён",
 	"editcheck-suggestions-turned-off": "Режим предложений отключен",
 	"editcheck-suggestions-more-available": "Теперь доступно больше предложений",
 	"editcheck-suggestions-none-left": "Предложений больше не осталось",
@@ -49,7 +50,7 @@
 	"editcheck-copyvio-keep-notify": "Спасибо, что поделились причиной, по которой решили сохранить скопированный текст!",
 	"editcheck-copyvio-remove-notify": "Спасибо за помощь в сохранении свободного доступа к знаниям!",
 	"editcheck-double-bold-title": "Избыточное выделение жирным шрифтом",
-	"editcheck-double-bold-description": "Жирный шрифт уже автоматически применяется к подзаголовкам, терминам в списках определений и заголовкам таблиц. Помогите читателям — удалите [{{int:editcheck-double-bold-descriptionlink}} лишнее выделение жирным] из этих элементов.",
+	"editcheck-double-bold-description": "Жирный шрифт уже автоматически применяется к заголовкам таблиц. Удалите [{{int:editcheck-double-bold-descriptionlink}} лишнее выделение жирным] здесь.",
 	"editcheck-double-bold-action-remove": "Удалить жирный шрифт",
 	"editcheck-preference-suggestions-label": "Режим предложений",
 	"editcheck-preference-suggestions-description": "Гаджет советов по улучшению статей. Доступен в [[:mw:Special:MyLanguage/VisualEditor|визуальном редакторе]].",
@@ -103,9 +104,10 @@
 	"editcheck-specialeditchecks-config-default": "Настройки по умолчанию",
 	"editcheck-specialeditchecks-config-onwiki": "Настройки в данной вики",
 	"editcheck-specialeditchecks-config-matchitem": "Настройки работы с текстом",
-	"editcheck-suggestionfeedback-label-about": "О гаджете",
+	"editcheck-suggestionfeedback-label-about": "О предложениях",
 	"editcheck-suggestionfeedback-label-report": "Сообщить о проблеме",
 	"tag-editcheck-reference-decline-common-knowledge": "Проверка правок (источники) отклонена (общеизвестно)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "Источник EditCheck был отклонён как общеизвестный факт",
 	"tag-editcheck-reference-decline-irrelevant": "Проверка правок (источники) отклонена (неуместно)",
 	"tag-editcheck-reference-decline-other": "Проверка правок (источники) отклонена (другое)",
 	"tag-editcheck-reference-decline-uncertain": "Проверка правок (источники) отклонена (неясно)"

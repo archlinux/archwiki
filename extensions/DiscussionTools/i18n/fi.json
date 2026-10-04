@@ -12,7 +12,8 @@
 			"Pyscowicz",
 			"Samoasambia",
 			"Stryn",
-			"Taavi"
+			"Taavi",
+			"Jack Phoenix"
 		]
 	},
 	"discussiontools": "Keskustelutyökalut",
@@ -115,7 +116,7 @@
 	"discussiontools-preference-newtopictool-createpage-newtopictool": "Tarjoa uuden aiheen lisäämistä",
 	"discussiontools-preference-newtopictool-help": "Näyttää lomakkeen, jolla voit lisätä uusia keskusteluita.",
 	"discussiontools-preference-replytool": "Ota käyttöön nopea vastaaminen",
-	"discussiontools-preference-replytool-help": "Näyttää linkin, jota klikkaamalla voit vastata kommentteihin keskustelusivuilla.",
+	"discussiontools-preference-replytool-help": "Näyttää linkin, jota napsauttamalla voit vastata kommentteihin keskustelusivuilla.",
 	"discussiontools-preference-sourcemodetoolbar": "Ota muokkaustyökalut käyttöön wikitekstitilassa",
 	"discussiontools-preference-sourcemodetoolbar-help": "Tämä lisää nopea vastaus- ja nopea aiheen lisäys -toimintoihin wikitekstitilassa työkalupalkin, joka sisältää pikakuvakkeet pingaukselle ja linkkien lisäämiselle.",
 	"discussiontools-preference-summary": "Voit lukea lisää näistä ominaisuuksista sivulta [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary Talk pages project (feature summary)].",
@@ -156,7 +157,7 @@
 	"discussiontools-replywidget-signature-body": "$1 on muutettu allekirjoitukseksesi. Voit kumota tämän painamalla $2. Huomaa, että sinun ei tarvitse allekirjoittaa tällä työkalulla tehtyjä kommentteja, vaan allekirjoituksesi lisätään automaattisesti.",
 	"discussiontools-replywidget-signature-title": "Allekirjoituksen koodi tunnistettu",
 	"discussiontools-replywidget-summary": "Yhteenveto",
-	"discussiontools-replywidget-terms-click": "Klikkaamalla ”$1” {{GENDER:|hyväksyt}} tämän wikin käyttöehdot.",
+	"discussiontools-replywidget-terms-click": "Napsauttamalla ”$1” {{GENDER:|hyväksyt}} tämän wikin käyttöehdot.",
 	"discussiontools-replywidget-transcluded": "Kommenttisi tallennetaan sivulle [[$1]].",
 	"discussiontools-replywidget-watchthis": "Lisää tämä sivu [[Special:Watchlist|tarkkailulistallesi]]",
 	"discussiontools-target-comment-missing": "Tätä kommentia ei löytynyt. Se on voitu poistaa tai siirtää.",

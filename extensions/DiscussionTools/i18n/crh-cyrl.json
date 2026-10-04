@@ -1,10 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Don Alessandro"
+			"Don Alessandro",
+			"Хтосьці"
 		]
 	},
+	"discussiontools-defaultsummary-reply": "Джевап",
 	"discussiontools-replywidget-advanced": "Даа чокъ",
+	"discussiontools-replywidget-cancel": "Лягъу",
+	"discussiontools-replywidget-mode-source": "Менба",
+	"discussiontools-replywidget-newtopic": "Мевзуны {{GENDER:|экле}}",
+	"discussiontools-replywidget-reply": "{{GENDER:|Джевап}}",
 	"discussiontools-topicheader-authorcount": "музакереде $1 киши",
 	"discussiontools-topicsubscription-button-subscribe": "абуне ол",
 	"discussiontools-topicsubscription-button-subscribe-label": "Абуне ол",

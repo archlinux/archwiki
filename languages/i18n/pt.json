@@ -101,7 +101,8 @@
 			"Yves Marques Junqueira",
 			"Önni",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"Vickvvy"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Categoria|Categorias}}",
@@ -222,7 +223,7 @@
 	"currentevents": "Eventos atuais",
 	"currentevents-url": "Project: Eventos atuais",
 	"disclaimers": "Isenções de responsabilidade",
-	"disclaimerpage": "Project:Isenção de responsabilidade geral",
+	"disclaimerpage": "Project:Aviso geral",
 	"edithelp": "Ajuda de edição",
 	"helppage-top-gethelp": "Ajuda",
 	"mainpage": "Página principal",
@@ -1011,7 +1012,7 @@
 	"search-thumbnail-alt": "Miniatura para $1",
 	"searchrelated": "relacionados",
 	"searchall": "todos",
-	"showingresultsinrange": "Mostrando abaixo até <strong>$1</strong> {{PLURAL:$1| resultado|resultados}} no intervalo # <strong>$2</strong> a # <strong>$3</strong> .",
+	"showingresultsinrange": "Mostrando abaixo até <strong>$1</strong> {{PLURAL:$1| resultado|resultados}} no intervalo # <strong>$2</strong> a # <strong>$3</strong>.",
 	"search-showingresults": "{{PLURAL:$4|1=Resultado <strong>$1</strong> de <strong>$3</strong>|Resultados <strong>$1 - $2</strong> de <strong>$3</strong>}}",
 	"search-showingresults-approximate": "{{PLURAL:$4|1=Resultado <strong>$1</strong> de pelo menos <strong>$3</strong>|Resultados <strong>$1 – $2</strong> de pelo menos <strong>$3</strong>}}",
 	"search-nonefound": "A pesquisa não produziu resultados.",
@@ -3844,7 +3845,6 @@
 	"userlogout-submit": "Terminar sessão",
 	"userlogout-continue": "Quer sair?",
 	"userlogout-temp": "Se está a editar num dispositivo partilhado, como uma biblioteca ou computador escolar, pode sair desta sessão para evitar que as pessoas utilizem esta conta temporária.",
-	"userlogout-temp-moreinfo": "Por favor, tenha em atenção que editar com múltiplas contas temporárias pode infringir as regras desta wiki e poderá ser bloqueado se tal acontecer com frequência.",
 	"userlogout-temp-messagebox-title": "Tem a certeza que deseja sair da sessão e terminar a sessão?",
 	"userlogout-temp-messagebox-body": "Assim que terminar a sessão, não poderá mais aceder a esta conta temporária.",
 	"temp-user-logout-confirm-title": "Sair da sessão",

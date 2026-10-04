@@ -161,5 +161,9 @@
 	"checkuser-ip-contributions-tab-label-contributions": "Kontribusi",
 	"checkuser-ip-contributions-tab-label-archive-contributions": "Kontribusi yang dihapus",
 	"checkuser-global-contributions-link": "kontribusi global",
-	"checkuser-global-contributions-link-sidebar": "Kontribusi global"
+	"checkuser-global-contributions-link-sidebar": "Kontribusi global",
+	"prefs-checkuser-tempaccount": "Pengungkapan IP akun sementara",
+	"checkuser-tempaccount-enable-preference": "Aktifkan kemampuan untuk menampilkan alamat IP akun sementara.",
+	"checkuser-userinfocard-enable-preference-description": "Aktifkan [[mw:Trust_and_Safety_Product/Anti-abuse_signals/User_Info|kartu info pengguna]]",
+	"checkuser-userinfocard-enable-preference-help": "Tampilkan tombol di samping nama pengguna untuk membuka jendela pop-up dengan informasi tentang akun tersebut."
 }

@@ -11,7 +11,7 @@
 		]
 	},
 	"linterrors": "Błędy składniowe",
-	"linttemplateerrors": "Transkluzje zawierające błędy lintowania",
+	"linttemplateerrors": "Transkluzje zawierające błędy składniowe (błędy lintera)",
 	"linter-category-bogus-image-options": "Nieprawidłowe opcje pliku",
 	"linter-category-bogus-image-options-desc": "Te strony odwołują się do plików z podaniem nieistniejących opcji.",
 	"linter-category-large-tables": "Duże tabele, które trudno się czyta na urządzeniach mobilnych",

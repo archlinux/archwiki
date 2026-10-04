@@ -3,7 +3,8 @@
 		"authors": [
 			"Kaffi",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"citethispage": "Dës Säit zitéieren",
@@ -12,5 +13,5 @@
 	"tooltip-citethispage": "Informatioune wéi een dës Säit zitéiere kann",
 	"citethispage-change-submit": "Zitéieren",
 	"citethispage-change-target": "Säit:",
-	"citethispage-badrevision": "Feeler: Et gouf keng Versioun fir d'Säit \"$1\" mat der Versiounsnummer (ID) $2 fonnt."
+	"citethispage-badrevision": "Feeler: Et gouf keng Versioun fir d'Säit „$1“ mat der Versiouns-ID $2 fonnt."
 }

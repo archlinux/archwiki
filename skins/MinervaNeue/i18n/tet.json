@@ -2,12 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Diamantino Soares",
-			"MF-Warburg"
+			"MF-Warburg",
+			"Binsar",
+			"Robertsky"
 		]
 	},
 	"mobile-frontend-editor-edit": "Edita",
-	"mobile-frontend-language-article-heading": "Lee iha lia seluk",
+	"mobile-frontend-home-button": "Uma",
+	"mobile-frontend-language-article-heading": "Le'e iha lian seluk",
 	"mobile-frontend-main-menu-login": "Tama",
 	"mobile-frontend-main-menu-nearby": "Besik",
-	"mobile-frontend-main-menu-settings": "Konfigurasaun"
+	"mobile-frontend-main-menu-settings": "Konfigurasaun",
+	"mobile-frontend-placeholder": "Buka iha {{SITENAME}}",
+	"mobile-frontend-random-button": "Aleatóriu",
+	"minerva-page-actions-overflow": "Liután"
 }

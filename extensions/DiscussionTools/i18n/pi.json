@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"咽頭べさ"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "पटिवचनं देहि",
+	"discussiontools-newtopic-missing-title": "{{GENDER:|तव}} सम्भासावत्थुस्स सीसकं देहि॥",
+	"discussiontools-newtopic-placeholder-title": "वत्थु",
+	"discussiontools-replylink": "{{GENDER:|पटिवचनं देहि}}",
+	"discussiontools-replywidget-advanced": "अधिमत्त",
+	"discussiontools-replywidget-cancel": "निवत्तेतु",
+	"discussiontools-replywidget-mode-source": "मूलं निद्दिसतु",
+	"discussiontools-replywidget-mode-visual": "दस्सन",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|वत्थुं वड्ढेहि}}",
+	"discussiontools-replywidget-placeholder-newtopic": "निद्देस",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} अस्स {{GENDER:|पटिवचनं देहि}}",
+	"discussiontools-replywidget-preview": "पुब्बपलोकन",
+	"discussiontools-replywidget-reply": "{{GENDER:|पटिवचनं देहि}}",
+	"discussiontools-replywidget-summary": "सारत्थ",
+	"discussiontools-replywidget-watchthis": "एमं पिट्ठं तव [[Special:Watchlist|अवलोकनसूचिया]] वड्ढेहि",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|पुग्गलो|पुग्गला}} सम्भासायं",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|वाचाकरणं|वाचाकरणानि}}",
+	"discussiontools-topicheader-latestcomment": "अन्तिमो वाचाकरणं: $1",
+	"discussiontools-topicsubscription-button-subscribe": "अनुपविस",
+	"discussiontools-topicsubscription-button-subscribe-label": "अनुपविस",
+	"discussiontools-topicsubscription-button-unsubscribe": "अनुपवेसना निवत्त",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "अनुपवेसना निवत्त",
+	"discussiontools-topicsubscription-notify-subscribed-body": "एतस्मिं वत्थुस्मिं नव विज्जमानानं वाचानं अवेदनानि {{GENDER:|त्वं}} लभिस्ससि॥",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|त्वं}} अनुपवेसितो असि!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "एतस्मिं वत्थुस्मिं नव विज्जमानानं वाचानं अवेदनानि {{GENDER:|त्वं}} न पुन लभिस्ससि॥",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|त्वं}} अनुपवेसना निवत्तितो असि॥"
+}

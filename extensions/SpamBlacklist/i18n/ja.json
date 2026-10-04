@@ -20,6 +20,8 @@
 	"spam-blacklisted-email": "禁止されたメールアドレス",
 	"spam-blacklisted-email-text": "あなたのメールアドレスは現在、他の利用者へのメール送信を禁止されています。",
 	"spam-blacklisted-email-signup": "指定されたメールアドレスは現在使用を禁止されています。",
+	"spam-blacklisted-email-change": "指定されたメールアドレスは現在使用を禁止されています。",
+	"spam-invalid-lines-error": "以下のスパムブロックリストの{{PLURAL:$1|行は}}無効な正規{{PLURAL:$1|表現}}であり、ページを保存する前に修正する{{PLURAL:$1|必要があります}}。\n$2",
 	"spam-blacklist-desc": "ページ内の URL や登録利用者のメールアドレスをブロックできるようにする、正規表現に基づいたスパム対策ツール",
 	"log-name-spamblacklist": "スパムブロックリスト記録",
 	"log-description-spamblacklist": "これらのイベントはスパムブロックリストとの一致を追跡します。",

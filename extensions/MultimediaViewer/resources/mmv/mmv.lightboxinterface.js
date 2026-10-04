@@ -109,13 +109,13 @@ class LightboxInterface extends UiElement {
 		this.buttons = new CanvasButtons( this.$preDiv, this.$closeButton, this.$fullscreenButton );
 		this.canvas = new Canvas( this.$innerWrapper, this.$imageWrapper, this.$wrapper );
 
-		/** @property {DialogProxy|ReuseDialog} */
+		/** @type {DialogProxy|ReuseDialog} */
 		this.fileReuse = new DialogProxy( 'mmv-reuse-open', ( req ) => {
 			const { ReuseDialog } = req( 'mmv.ui.reuse' );
 			this.fileReuse = new ReuseDialog( this.$preDiv, this.buttons.$download );
 			return this.fileReuse;
 		} );
-		/** @property {DialogProxy|DownloadDialog} */
+		/** @type {DialogProxy|DownloadDialog} */
 		this.downloadDialog = new DialogProxy( 'mmv-download-open', ( req ) => {
 			const { DownloadDialog } = req( 'mmv.ui.reuse' );
 			this.downloadDialog = new DownloadDialog( this.$preDiv, this.buttons.$download );

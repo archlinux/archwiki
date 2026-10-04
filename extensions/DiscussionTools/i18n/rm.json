@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Albinfo",
+			"Bild-Sprache"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Resposta",
+	"discussiontools-newtopic-missing-title": "Endatar in titel per il tema da discussiun.",
+	"discussiontools-newtopic-placeholder-title": "Object",
+	"discussiontools-replylink": "{{GENDER:|respunder}}",
+	"discussiontools-replywidget-advanced": "Avanzà",
+	"discussiontools-replywidget-cancel": "Interrumper",
+	"discussiontools-replywidget-mode-source": "Funtauna",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-newtopic": "Agiuntar chapitel",
+	"discussiontools-replywidget-placeholder-newtopic": "Descripziun",
+	"discussiontools-replywidget-placeholder-reply": "Resposta a {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Prevista",
+	"discussiontools-replywidget-reply": "{{GENDER:|Respunder}}",
+	"discussiontools-replywidget-summary": "Resumaziun",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persuna participada|persunas participadas}} a la discussiun",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|commentari|commentaris}}",
+	"discussiontools-topicheader-latestcomment": "Davos commentari: $1",
+	"discussiontools-topicsubscription-button-subscribe": "abunar",
+	"discussiontools-topicsubscription-button-subscribe-label": "Abunar",
+	"discussiontools-topicsubscription-button-unsubscribe": "deconnectar",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Deconnectar"
+}

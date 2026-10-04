@@ -17,7 +17,8 @@
 			"Veracious",
 			"William Surya Permana",
 			"WongKentir",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Hidayatsrf"
 		]
 	},
 	"echo-desc": "Sistem pemberitahuan ke pengguna tentang pesan dan peristiwa",
@@ -52,6 +53,7 @@
 	"echo-log": "Catatan publik",
 	"echo-new-messages": "Anda memiliki pesan baru di halaman Pembicaraan",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Suntingan}} di halaman pembicaraan saya",
+	"echo-category-title-edit-user-page": "Suntingan ke halaman pengguna saya",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Pranala}} halaman",
 	"echo-category-title-reverted": "{{PLURAL:$1|Pengembalian}} suntingan",
 	"echo-category-title-mention": "{{PLURAL:$1|Sebutan}}",

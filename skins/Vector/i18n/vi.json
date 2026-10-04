@@ -22,7 +22,9 @@
 			"Tryvix1509",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Withoutaname"
+			"Withoutaname",
+			"SussyRed2000",
+			"Veritas Sapientiae"
 		]
 	},
 	"skinname-vector": "Vectơ cũ (2010)",
@@ -36,7 +38,7 @@
 	"vector-action-toggle-sidebar": "Bật/tắt thanh bên",
 	"vector-languages": "Ngôn ngữ",
 	"vector-language-button-aria-label": "Xem bài viết trong ngôn ngữ khác. Bài có sẵn trong {{PLURAL:$1}}$1 ngôn ngữ",
-	"vector-language-button-label": "{{PLURAL:$1}}$1 ngôn ngữ",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ngôn ngữ}}",
 	"vector-no-language-button-label": "Thêm ngôn ngữ",
 	"vector-no-language-button-aria-label": "Hiện bài viết chỉ có sẵn trong ngôn ngữ này. Hãy thêm bài viết cho các ngôn ngữ khác",
 	"vector-language-variant-switcher-label": "Thay đổi biến thể ngôn ngữ",

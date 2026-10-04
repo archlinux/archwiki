@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Le Loi"
+		]
+	},
+	"editchecks": "Проверки правок",
+	"editcheck-toolbar-suggestions-title": "Переключатель Проверок правок",
+	"editcheck-suggestions-turned-on": "Проверки правок включены",
+	"editcheck-suggestions-turned-off": "Проверки правок выключены",
+	"editcheck-dialog-action-no": "Нет",
+	"editcheck-dialog-action-yes": "Да"
+}

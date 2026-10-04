@@ -27,10 +27,18 @@ class UiElement {
 	constructor( $container ) {
 		OO.EventEmitter.call( this );
 
-		/** @property {jQuery} $container The element that contains the UI element. */
+		/**
+		 * The element that contains the UI element.
+		 *
+		 * @type {jQuery}
+		 */
 		this.$container = $container;
 
-		/** @property {Object.<string, string[]>} eventsRegistered Events that this element has registered with the DOM. */
+		/**
+		 * Events that this element has registered with the DOM.
+		 *
+		 * @type {Object.<string, string[]>}
+		 */
 		this.eventsRegistered = {};
 	}
 

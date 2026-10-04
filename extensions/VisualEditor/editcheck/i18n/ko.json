@@ -35,7 +35,7 @@
 	"editcheck-dialog-addref-title": "인용 추가",
 	"editcheck-dialog-title": "게시하기 전에",
 	"editcheck-copyvio-title": "붙여넣은 내용",
-	"editcheck-copyvio-description": "다른 출처의 텍스트를 복사하는 것은 (바꾸어 설명하거나 인용하는 경우에도) 절대 하지 마십시오. 이는 [{{int:editcheck-copyvio-descriptionlink}} 저작권 침해 또는 표절]로 간주될 수 있으며, 내용 삭제 또는 계정 차단으로 이어질 수 있습니다.",
+	"editcheck-copyvio-description": "다른 출처의 텍스트를 복사하는 것은 (바꾸어 설명하거나 인용하는 경우에도) 절대 하지 마십시오. 이는 [{{int:editcheck-copyvio-descriptionlink}} 저작권 침해 또는 표절]로 간주될 수 있으며, 내용 제거 또는 계정 차단으로 이어질 수 있습니다.",
 	"editcheck-copyvio-prompt": "이 글을 직접 쓰셨나요?",
 	"editcheck-copyvio-action-keep": "네, 유지해 주세요",
 	"editcheck-copyvio-action-remove": "아니요, 제거해 주세요",

@@ -39,7 +39,7 @@ class ThumbnailWidth {
 		 * Width of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
 		 * into UI code like $element.width(x).
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.cssWidth = cssWidth;
 
@@ -47,7 +47,7 @@ class ThumbnailWidth {
 		 * Height of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
 		 * into UI code like $element.height(x).
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.cssHeight = cssHeight;
 
@@ -58,7 +58,7 @@ class ThumbnailWidth {
 		 *
 		 * This value is mostly used internally; for most purposes you will need one of the others.
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.screen = screen;
 
@@ -71,7 +71,7 @@ class ThumbnailWidth {
 		 * image is just positioned to the center of the intended area and the space around it is
 		 * left empty.)
 		 *
-		 * @property {number}
+		 * @type {number}
 		 */
 		this.real = real;
 	}

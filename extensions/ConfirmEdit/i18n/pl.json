@@ -13,7 +13,8 @@
 			"Railfail536",
 			"Sp5uhe",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"PanWor"
 		]
 	},
 	"captcha-edit": "Aby edytować tę stronę, najpierw musisz rozwiązać poniższe zadanie i wpisać odpowiedź do pola tekstowego ([[Special:Captcha/help|więcej informacji]]):",
@@ -23,7 +24,7 @@
 	"captcha-info-help": "Opis CAPTCHA.",
 	"captcha-id-label": "Identyfikator CAPTCHA",
 	"captcha-id-help": "Ta wartość powinna zostać wysyłana z powrotem bez zmiany.",
-	"captcha-addurl": "Twoje zmiany zawierają nowe linki zewnętrzne.\nW celu ochrony wiki przed zautomatyzowanym spamowaniem prosimy o rozwiązanie poniższego zadania, aby zapisać twoją edycję ([[Special:Captcha/help|więcej informacji]]):",
+	"captcha-addurl": "Twoje zmiany zawierają nowe linki zewnętrzne.\nW celu ochrony wiki przed zautomatyzowanym spamowaniem prosimy o rozwiązanie poniższego zadania, aby zapisać Twoją edycję ([[Special:Captcha/help|więcej informacji]]):",
 	"captcha-badlogin": "W celu ochrony wiki przed zautomatyzowanym łamaniem haseł prosimy o rozwiązanie poniższego zadania i wpisanie odpowiedzi poniżej ([[Special:Captcha/help|więcej informacji]]):",
 	"captcha-createaccount": "W celu ochrony wiki przed zautomatyzowanym tworzeniem kont prosimy o rozwiązanie poniższego zadania i wpisanie odpowiedzi poniżej ([[Special:Captcha/help|więcej informacji]]):",
 	"captcha-createaccount-fail": "Nieprawidłowy kod lub brak kodu potwierdzającego.",

@@ -37,7 +37,7 @@ class MultimediaViewerBootstrap {
 		/**
 		 * This flag is set to true when we were unable to load the viewer.
 		 *
-		 * @property {boolean}
+		 * @type {boolean}
 		 */
 		this.viewerIsBroken = false;
 
@@ -45,7 +45,7 @@ class MultimediaViewerBootstrap {
 
 		this.thumbsReadyDeferred = $.Deferred();
 		/**
-		 * @property {LightboxImage[]}
+		 * @type {LightboxImage[]}
 		 */
 		this.thumbs = [];
 		this.$thumbs = null; // will be set by processThumbs
@@ -598,7 +598,11 @@ class MultimediaViewerBootstrap {
 	 * Listens to events on the window/document
 	 */
 	setupEventHandlers() {
-		/** @property {boolean} eventHandlersHaveBeenSetUp tracks domready event handler state */
+		/**
+		 * tracks domready event handler state
+		 *
+		 * @type {boolean}
+		 */
 		this.eventHandlersHaveBeenSetUp = true;
 
 		// Interpret any hash that might already be in the url

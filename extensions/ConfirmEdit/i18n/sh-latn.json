@@ -31,5 +31,6 @@
 	"confirmedit-preview-line": "Broj reda",
 	"confirmedit-preview-content": "Sadržaj",
 	"confirmedit-preview-valid": "važeća",
-	"confirmedit-preview-invalid": "neispravna"
+	"confirmedit-preview-invalid": "neispravna",
+	"abusefilter-edit-action-showcaptcha": "Zahtijevaj CAPTCHA potvrdu za izvršenje radnje"
 }

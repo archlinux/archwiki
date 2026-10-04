@@ -27,6 +27,8 @@
 	"cite_error_empty_references_define": "Таг <code><ref></code> с име „$1“, дефиниран в <code><references></code> в група „$2“, няма съдържание.",
 	"cite-tracking-category-cite-error": "Страници с грешка в източник",
 	"cite-tracking-category-cite-error-desc": "Страниците в тази категория имат грешки при използването на таговете за източници.",
+	"cite-tracking-category-ref-details": "Страници, които използват подцитирания",
+	"cite-tracking-category-ref-details-desc": "Страниците в тази категория използват атрибута ''details'' на  &lt;ref> тага.",
 	"cite-reference-previews-reference": "Източник",
 	"cite-reference-previews-book": "Източник от книга",
 	"cite-reference-previews-journal": "Източник от периодичен печат",

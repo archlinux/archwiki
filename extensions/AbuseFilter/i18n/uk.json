@@ -270,7 +270,7 @@
 	"abusefilter-edit-action-degroup": "Виключити користувача з усіх привілейованих груп",
 	"abusefilter-edit-action-block": "Заблокувати користувача та/або IP-адресу",
 	"abusefilter-edit-action-blocktalk": "Заблокувати користувачеві та/або IP-адресі можливість редагувати власну сторінку обговорення",
-	"abusefilter-edit-action-throttle": "Уживати заходи тільки тільки тоді, коли користувач переходить межу",
+	"abusefilter-edit-action-throttle": "Уживати заходи тільки тоді, коли користувач переходить межу",
 	"abusefilter-edit-action-rangeblock": "Заблокувати відповідний IP-діапазон, з якого працює користувач",
 	"abusefilter-edit-action-tag": "Позначити зміну для подальшої перевірки",
 	"abusefilter-edit-throttle-count": "Кількість дозволених дій:",

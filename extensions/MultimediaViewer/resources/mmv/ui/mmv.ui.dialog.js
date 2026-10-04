@@ -28,24 +28,40 @@ class Dialog extends UiElement {
 	constructor( $container, $openButton ) {
 		super( $container );
 
-		/** @property {boolean} isOpen Whether or not the dialog is open. */
+		/**
+		 * Whether or not the dialog is open.
+		 *
+		 * @type {boolean}
+		 */
 		this.isOpen = false;
 
 		/**
-		 * @property {string} eventPrefix Prefix specific to the class to be applied to events.
+		 * Prefix specific to the class to be applied to events.
+		 *
+		 * @type {string}
 		 */
 		this.eventPrefix = '';
 
-		/** @property {jQuery} $openButton The click target which opens the dialog. */
+		/**
+		 * The click target which opens the dialog.
+		 *
+		 * @type {jQuery}
+		 */
 		this.$openButton = $openButton;
 
-		/** @property {jQuery} $dialog The main dialog container */
+		/**
+		 * The main dialog container
+		 *
+		 * @type {jQuery}
+		 */
 		this.$dialog = $( '<div>' )
 			.addClass( 'mw-mmv-dialog' );
 
 		/**
-		 * @property {jQuery} $downArrow Tip of the dialog pointing to $openButton. Called
+		 * Tip of the dialog pointing to $openButton. Called
 		 * downArrow for historical reasons although it does not point down anymore.
+		 *
+		 * @type {jQuery}
 		 */
 		this.$downArrow = $( '<div>' )
 			.addClass( 'mw-mmv-dialog-down-arrow' )

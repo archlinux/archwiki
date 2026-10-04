@@ -12,6 +12,10 @@
 		]
 	},
 	"tag-editcheck-newreference-description": "Et gouf eng Referenz op d'Säit derbäigesat",
+	"tag-editcheck-references-activated": "Ännerungsiwwerpréiwung (Referenzen) aktivéiert",
+	"tag-editcheck-references-shown": "Ännerungsiwwerpréiwung (Referenzen) ugewisen",
+	"tag-editcheck-tone-shown": "Ännerungsiwwerpréiwung (Tounfall) ugewisen",
+	"tag-editcheck-paste-shown": "Ännerungsiwwerpréiwung (Asetzen) ugewisen",
 	"tag-editsuggestion-seen": "Ännerungsvirschlag gesinn",
 	"tag-editsuggestion-seen-description": "Et gouf warscheinlech op d'mannst een Ännerungsvirschlag vum Benotzer gesinn",
 	"tag-editsuggestion-used": "Ännerungsvirschlag benotzt",
