@@ -9,6 +9,9 @@
 	"editcheck-dialog-scroll-into-view": "Zobraziť návrhy",
 	"editcheck-dialog-title": "Pred publikovaním",
 	"editcheck-textmatch-replace": "Nahradiť „$1“ za „$2“?",
+	"editcheck-external-link-description": "Tento odkaz vedie na [{{int:editcheck-external-link-descriptionlink}} externú stránku]. Pomôžte čitateľom sústrediť sa na obsah tým, že tento odkaz odeberiete, presuniete ho do sekcie „Externé odkazy“ alebo ho premeníte na [{{int:editcheck-external-link-convertlink}} referenciu], ak je to vhodné.",
+	"editcheck-disambiguation-description": "Tento odkaz vedie na [{{int:editcheck-disambiguation-descriptionlink}} rozlišovaciu stránku]. Pomôžte čitateľom nájsť správnu tému tým, že pridáte odkaz na konkrétnejšiu stránku.",
+	"editcheck-convertreference-description": "Tejto referencii chýbajú podrobnosti. Pomôžte čitateľom pochopiť, odkiaľ pochádzajú informácie, prevedením tejto [{{int:editcheck-convertreference-descriptionlink}} referencie] na naformátovanú referenciu. Po jej prevedení skontrolujte presnosť podrobností, ktoré nástroj pridal, a odstráňte všetky podrobnosti, ktoré sú nesprávne alebo matúce.",
 	"editcheck-suggestionfeedback-label-about": "O návrhoch",
 	"editcheck-suggestionfeedback-label-report": "Nahlásiť problém"
 }

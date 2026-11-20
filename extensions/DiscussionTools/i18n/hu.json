@@ -147,7 +147,7 @@
 	"discussiontools-replywidget-watchthis": "A lap hozzáadása a [[Special:Watchlist|figyelőlistádhoz]]",
 	"discussiontools-target-comment-missing": "Ez a hozzászólás nem található. Elképzelhető, hogy törölték vagy áthelyezték.",
 	"discussiontools-target-comments-missing": "Nem találhatóak új hozzászólások. Elképzelhető, hogy törölték vagy áthelyezték őket.",
-	"discussiontools-target-heading-missing": "Ez a téma nem található. Elképzelhető, hogy törölték vagy áthelyezték.",
+	"discussiontools-target-heading-missing": "Ez a téma nem található. Elképzelhető, hogy törölték, áthelyezték vagy átnevezték.",
 	"discussiontools-target-comment-found-moved": "Ez a hozzászólás nem található a jelenlegi lapon, de a következő {{PLURAL:$1|lapon|lapokon}} létezik:",
 	"discussiontools-target-heading-found-moved": "Ez a téma nem található a jelenlegi lapon, de a következő {{PLURAL:$1|lapon|lapokon}} létezik:",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|résztvevő}}",

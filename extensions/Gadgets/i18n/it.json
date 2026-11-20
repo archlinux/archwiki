@@ -15,7 +15,8 @@
 			"Nemo bis",
 			"Pierpao",
 			"Ricordisamoa",
-			"Statix64"
+			"Statix64",
+			"ZandDev"
 		]
 	},
 	"gadgets-desc": "Consente agli utenti di selezionare [[Special:Gadgets|accessori CSS e JavaScript]] nelle proprie [[Special:Preferences#mw-prefsection-gadgets|preferenze]]",
@@ -39,7 +40,7 @@
 	"gadgets-uses": "Usa",
 	"gadgets-required-rights": "Richiede {{PLURAL:$2|il seguente diritto|i seguenti diritti}}: $1.",
 	"gadgets-required-skins": "Disponibile per {{PLURAL:$2|il tema $1|i seguenti temi: $1}}.",
-	"gadgets-required-actions": "Limitato {{PLURAL:$2|all'azione di pagina \"$1\"|alle seguenti azioni di pagina: $1}}.",
+	"gadgets-required-actions": "Limitato {{PLURAL:$2|all'azione di pagina $1|alle seguenti azioni di pagina: $1}}.",
 	"gadgets-required-namespaces": "Limitato {{PLURAL:$2|al namespace $1|ai namespace $1}}.",
 	"gadgets-required-categories": "Limitato {{PLURAL:$2|alla categoria $1|alle seguenti categorie: $1}}.",
 	"gadgets-required-contentmodels": "Limitato {{PLURAL:$2|al modello di contenuto $1|ai seguenti modelli di contenuto: $1}}.",

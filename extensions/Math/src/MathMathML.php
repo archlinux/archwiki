@@ -466,7 +466,7 @@ class MathMathML extends MathRenderer {
 			$attribs['id'] = $this->getID();
 		}
 		$hyperlink = null;
-		if ( isset( $this->params['qid'] ) && preg_match( '/Q\d+/', $this->params['qid'] ) ) {
+		if ( isset( $this->params['qid'] ) && preg_match( '/^Q\d+$/D', $this->params['qid'] ) ) {
 			$attribs['data-qid'] = $this->params['qid'];
 			$titleObj = SpecialPage::getTitleFor( 'MathWikibase' );
 			$hyperlink = $titleObj->getLocalURL( [ 'qid' => $this->params['qid'] ] );

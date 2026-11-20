@@ -96,20 +96,31 @@ class RecoveryCodes implements IModule {
 		return true;
 	}
 
+	public function getInstance( OATHUser $user ): ?RecoveryCodeKeys {
+		/** @var RecoveryCodeKeys[] $rcKeys */
+		$rcKeys = $user->getKeysForModule( self::MODULE_NAME );
+		'@phan-var RecoveryCodeKeys[] $rcKeys';
+		if ( count( $rcKeys ) > self::RECOVERY_CODE_MODULE_COUNT ) {
+			throw new UnexpectedValueException( wfMessage( 'oathauth-recoverycodes-too-many-instances' )->text() );
+		}
+		return $rcKeys[ 0 ] ?? null;
+	}
+
 	/**
 	 * Ensure that a RecoveryCodeKeys key exists for the given user, creating a new one if needed.
+	 *
+	 * Since this could create new recovery codes, it must not be called in response to a GET request
+	 * in a context where we aren't about to modify recovery codes and/or add other 2FA keys.
+	 * If you need to obtain the user's recovery codes without forcibly creating them if they don't
+	 * exist, use getInstance() instead.
 	 *
 	 * @param OATHUser $user
 	 * @param ?array $recoveryCodesData Use this data to create the new RecoveryCodesKey if needed
 	 * @return RecoveryCodeKeys Pre-existing or newly created RecoveryCodeKeys key
 	 */
 	public function ensureExistence( OATHUser $user, ?array $recoveryCodesData = null ): RecoveryCodeKeys {
-		$rcKeys = $user->getKeysForModule( self::MODULE_NAME );
-		if ( count( $rcKeys ) > self::RECOVERY_CODE_MODULE_COUNT ) {
-			throw new UnexpectedValueException( wfMessage( 'oathauth-recoverycodes-too-many-instances' ) );
-		}
-		$recoveryCodeKey = $rcKeys[ 0 ] ?? null;
-		if ( $recoveryCodeKey instanceof RecoveryCodeKeys ) {
+		$recoveryCodeKey = $this->getInstance( $user );
+		if ( $recoveryCodeKey ) {
 			// User already has recovery codes, nothing to do
 			return $recoveryCodeKey;
 		}

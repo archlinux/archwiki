@@ -51,7 +51,7 @@ function replaceButton( $element, ip, success, source ) {
 				.addClass( 'ext-checkuser-tempaccount-reveal-ip64-anchor' )
 				.text( '/64' );
 			$span.append(
-				mw.msg( 'pipe-separator' ),
+				document.createTextNode( mw.msg( 'pipe-separator' ) ),
 				$link64
 			);
 		}

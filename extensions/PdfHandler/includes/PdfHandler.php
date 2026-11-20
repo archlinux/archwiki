@@ -408,7 +408,15 @@ class PdfHandler extends ImageHandler {
 				$cache::TTL_MONTH,
 				static function () use ( $file ) {
 					$data = $file->getMetadataItems( PdfImage::ITEMS_FOR_PAGE_SIZE );
-					if ( !$data || !isset( $data['Pages'] ) ) {
+					// Pages (uppercase P) is the integer count of number of pages
+					// pages (lowercase p) is an array of size info per page
+					if (
+						!$data ||
+						!isset( $data['Pages'] ) ||
+						// The pages list is stored separately in external storage.
+						// Be sure not to cache any transient failures retrieving them.
+						( !isset( $data['pages'] ) && !isset( $data['Page size'] ) )
+					) {
 						return false;
 					}
 

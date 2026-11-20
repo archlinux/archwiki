@@ -8,8 +8,8 @@ use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogFormatter;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
@@ -348,7 +348,7 @@ class TimelineRowFormatterTest extends MediaWikiIntegrationTestCase {
 	public function testLogEntryHidden() {
 		$deleteLogEntry = new ManualLogEntry( 'delete', 'delete' );
 		$deleteLogEntry->setPerformer( UserIdentityValue::newAnonymous( '127.0.0.1' ) );
-		$deleteLogEntry->setTarget( Title::newFromText( 'Testing page' ) );
+		$deleteLogEntry->setTarget( PageReferenceValue::localReference( NS_MAIN, 'Testing page' ) );
 		// Use the maximum level of log_deleted so that we can test the hiding code all at once.
 		$deleteLogEntry->setDeleted(
 			LogPage::DELETED_USER | LogPage::DELETED_COMMENT | LogPage::DELETED_ACTION | LogPage::DELETED_RESTRICTED

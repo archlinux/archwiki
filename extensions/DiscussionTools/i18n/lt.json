@@ -7,7 +7,8 @@
 			"Nokeoo",
 			"Pavel1513",
 			"Tomasdd",
-			"Woytecr"
+			"Woytecr",
+			"Babellini"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Kai kas nors šiame aptarime paskelbs naują komentarą, {{GENDER:|jūs}} gausite pranešimą. Pranešimų parametrus galite pakoreguoti nustatymų puslapyje.",
@@ -110,7 +111,7 @@
 	"discussiontools-replywidget-anon-warning": "<strong>Jūs neprisijungę.</strong> Jei norite gauti pranešimą, kai kas nors atsakys, ir gauti priskyrimą su jūsų vardu, o ne su jūsų IP adresu, galite [$1 prisijungti] arba [$2 sukurti paskyrą].",
 	"discussiontools-replywidget-cancel": "Atšaukti",
 	"discussiontools-replywidget-feedback": "{{GENDER:|Pateikite atsiliepimą}} apie šią funkciją",
-	"discussiontools-replywidget-loading": "Kraunasi...",
+	"discussiontools-replywidget-loading": "Įkeliama...",
 	"discussiontools-replywidget-mention-tool-header": "Rasti naudotoją: $1",
 	"discussiontools-replywidget-mention-tool-title": "Paminėti naudotoją",
 	"discussiontools-replywidget-mode-source": "Šaltinis",

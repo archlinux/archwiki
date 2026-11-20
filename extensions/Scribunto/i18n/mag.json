@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"ऐक्टिवेटेड्"
+		]
+	},
+	"content-model-scribunto": "स्क्रिबुन्तो घटक",
+	"scribunto-line": "$1 पङ्क्ति पर",
+	"scribunto-module-line": "$1 मे $2 पङ्क्ति पर",
+	"scribunto-parser-dialog-title": "स्क्रिप्ट त्रुटि",
+	"scribunto-error-short": "स्क्रिप्ट त्रुटि: $1",
+	"scribunto-error-long": "स्क्रिप्ट त्रुटि:\n\n$1",
+	"scribunto-doc-page-name": "Module:$1/प्रलेख",
+	"scribunto-doc-page-does-not-exist": "''एह घटक लागि प्रलेख [[$1]] पर बनावल जा सक है''",
+	"scribunto-doc-page-header": "'''एह [[$1]] लागि प्रलेख पन्ना हे'''",
+	"scribunto-console-clear": "खाली करथिन"
+}

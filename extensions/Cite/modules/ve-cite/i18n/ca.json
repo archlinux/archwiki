@@ -22,7 +22,8 @@
 			"Vfc",
 			"Vriullop",
 			"KRLS",
-			"Paucabot"
+			"Paucabot",
+			"Qllach"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Llibre",
@@ -78,7 +79,7 @@
 	"cite-ve-referenceslist-isempty-default": "No hi ha cap referència en aquesta pàgina que es pugui incloure en la llista.",
 	"cite-ve-referenceslist-missingref": "Aquesta referència està creada a través d'una plantilla o d'algun altre tipus de generador de bloc. Per desgràcia, de moment només pot modificar-se amb l'editor de codi font.",
 	"cite-ve-referenceslist-missingref-in-list": "Aquesta referència està definida en una plantilla o en un altre bloc generat. Per això, per ara només pot previsualitzar-se en mode codi.",
-	"cite-ve-referenceslist-missingreflist": "Aquesta llista de referències ha estat generada per una plantilla i, per ara, només es pot modificar en mode de codi font.",
+	"cite-ve-referenceslist-missingreflist": "Aquesta llista de referències ha estat generada per una plantilla.",
 	"cite-ve-toolbar-group-label": "Referència",
 	"cite-ve-othergroup-item": "referència $1"
 }

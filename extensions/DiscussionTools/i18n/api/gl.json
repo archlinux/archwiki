@@ -30,7 +30,7 @@
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Nomes dos fíos a comprobar",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obter os estados de subscrición dos fíos indicados.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "O número de revisión a utilizar (por defecto, a última revisión).",
-	"apihelp-discussiontoolspageinfo-param-prop": "Que propiedades obter:",
+	"apihelp-discussiontoolspageinfo-param-prop": "Que propiedades recuperar:",
 	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Excluír as sinaturas dos usuarios dos comentarios (ao utilizar <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Indicadores para alterar a saída ao usar <var>prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Representación dos fíos de comentario analizados da páxina",

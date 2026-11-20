@@ -145,6 +145,8 @@
 	"oathauth-notifications-enable-primary": "Проверете си ги поставките за двочинителска заверка",
 	"notification-header-oathauth-recoverycodes-count": "Ќе треба да повторно да {{GENDER:$2|ја пријавите}} {{GENDER:$2|вашата сметка}} за двочинителска заверка.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|Ви}} {{PLURAL:$3|преостанува $3 код за повраток|преостануваат $3 кодови за повраток}}. Можеби треба да создадете $4 {{PLURAL:$4|нов код за повраток|нови кодови за повраток}} за во иднина.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Вашите повратни кодови се создадени.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Создадовте}} нови повратни кодови. Старите повеќе не работат.",
 	"oathauth-notifications-recoverycodesleft-help": "Помош",
 	"oathauth-notifications-recoverycodesleft-primary": "Проверете си ги поставките за двочинителска заверка",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "{{PLURAL:$3|Создаден {{GENDER:|ви}} е дополнителен код|Создадени {{GENDER:|ви}} се дополнителни кодови}}",

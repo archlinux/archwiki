@@ -6,7 +6,7 @@
 		]
 	},
 	"thanks-desc": "ဗပေၚ်လေန်သွက်ပရေၚ်မတၚ်ဂုန်ညးလွပ်သွက်မပလေဝ်ဒါန်၊ တၚ်လညာတ်၊ ဥပမာသာ်ဂှ်။",
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်}}}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|တင်ဂုန်}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်တုဲယျအဴ}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|တၚ်ဂုန်}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|မတၚ်လဝ်ဂုန်}}}}",

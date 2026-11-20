@@ -374,7 +374,7 @@
 	"viewsource-title": "Brontekst bekijken van $1",
 	"actionthrottled": "Handeling tegengehouden",
 	"actionthrottledtext": "Als maatregel tegen misbruik is het aantal keren dat u in korte tijd deze handeling kunt verrichten beperkt. Die grens hebt u overschreden.\nProbeer het over enkele minuten opnieuw.",
-	"protectedpagetext": "Deze pagina is beveiligd. Bewerken en andere handelingen is niet mogelijk.",
+	"protectedpagetext": "Deze pagina is beveiligd. Bewerken en andere handelingen zijn niet mogelijk.",
 	"viewsourcetext": "U kunt de brontekst van deze pagina bekijken en kopiëren.",
 	"viewyourtext": "U kunt <strong>uw bewerkingen</strong> aan de brontekst van deze pagina bekijken en kopiëren.",
 	"protectedinterface": "Deze pagina bevat tekst voor berichten van de software op deze wiki en is beveiligd om misbruik te voorkomen.\nGebruik [https://translatewiki.net/ translatewiki.net], het vertaalproject voor MediaWiki, om vertalingen voor alle wiki's toe te voegen of te wijzigen.",
@@ -702,7 +702,7 @@
 	"blocked-notice-logextract-multi": "Deze gebruik{{GENDER:$1||st}}er is momenteel $2 {{PLURAL:$2|keer}} geblokkeerd.\nDe laatste actieve regel uit het blokkeerlogboek wordt hieronder ter referentie weergegeven:",
 	"blocked-notice-logextract-anon-multi": "Dit IP-adres is momenteel $2 {{PLURAL:$2|keer}} geblokkeerd.\nDe meest relevante actieve regel uit het blokkeerlogboek wordt hieronder ter referentie weergegeven:",
 	"blocked-notice-list-link": "Blokkeerlijst bekijken",
-	"clearyourcache": "<strong>Opmerking:</strong> na het publiceren {{#FORMAL:is het wellicht nodig uw browsercache te|moet je misschien je browsercache}} legen om de veranderingen te zien.\n* <strong>Firefox / Safari:</strong> houd <em>Shift</em> ingedrukt terwijl {{#FORMAL:u:je}} op <em>Vernieuwen</em> klikt of druk op <em>Ctrl-F5</em> of <em>Ctrl-R</em> (<em>⌘-Shift-R</em> op een Mac)\n* <strong>Google Chrome:</strong> druk op <em>Ctrl-Shift-R</em> (<em>⌘-Shift-R</em> op een Mac)\n* <strong>Edge:</strong> houd <em>Ctrl</em> ingedrukt terwijl {{#FORMAL:u:je}} op <em>Vernieuwen</em> klikt of druk op <em>Ctrl-F5</em>.",
+	"clearyourcache": "<strong>Opmerking:</strong> na het publiceren {{#FORMAL:is het wellicht nodig uw browsercache te|moet je misschien je browsercache}} legen om de wijzigingen te zien.\n* <strong>Firefox / Safari:</strong> houd <em>Shift</em> ingedrukt terwijl {{#FORMAL:u|je}} op <em>Vernieuwen</em> klikt of druk op <em>Ctrl-F5</em> of <em>Ctrl-R</em> (<em>⌘-Shift-R</em> op een Mac)\n* <strong>Google Chrome:</strong> druk op <em>Ctrl-Shift-R</em> (<em>⌘-Shift-R</em> op een Mac)\n* <strong>Edge:</strong> houd <em>Ctrl</em> ingedrukt terwijl {{#FORMAL:u|je}} op <em>Vernieuwen</em> klikt of druk op <em>Ctrl-F5</em>.",
 	"usercssyoucanpreview": "<strong>Tip:</strong> gebruik de knop \"{{int:showpreview}}\" om uw nieuwe CSS te testen alvorens te publiceren.",
 	"userjsonyoucanpreview": "<strong>Tip:</strong> gebruik de knop \"{{int:showpreview}}\" om uw nieuwe JSON te testen alvorens te publiceren.",
 	"userjsyoucanpreview": "<strong>Tip:</strong>  gebruik de knop \"{{int:showpreview}}\" om uw nieuwe JavaScript te testen alvorens te publiceren.",
@@ -4011,5 +4011,6 @@
 	"table-of-contents-hide-button-aria-label": "Inhoudsopgave verbergen",
 	"diff-usergroups": "$1 {{PLURAL:$1|gebruikersgroep|gebruikersgroepen}}",
 	"languageselector-no-results": "Geen resultaten gevonden.",
-	"languageselector-invalid-input": "“$1” is geen juiste taal."
+	"languageselector-invalid-input": "“$1” is geen juiste taal.",
+	"mypage-disallowed-action": "Om veiligheidsredenen kan de handeling \"$1\" niet worden gebruikt op de pagina Special:MyPage."
 }

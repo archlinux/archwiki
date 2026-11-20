@@ -61,6 +61,11 @@ class SpecialSuggestedInvestigationsTest extends SpecialPageTestBase {
 		$this->executeSpecialPage();
 	}
 
+	public function testLoadSpecialSubPageWhenMissingRequiredRight() {
+		$this->expectException( PermissionsError::class );
+		$this->executeSpecialPage( 'foo' );
+	}
+
 	/** @dataProvider provideLoadSpecialPageWithRequiredRight */
 	public function testLoadSpecialPageWithRequiredRight( bool $hasUserSeenPrivateDataWarning ): void {
 		$checkuser = $this->getTestUser( [ 'checkuser' ] )->getUser();

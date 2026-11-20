@@ -5,7 +5,8 @@
 			"Eduardoaddad",
 			"Fúlvio",
 			"Gustavo.moraes",
-			"YuriNikolai"
+			"YuriNikolai",
+			"NenhumaFênix"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Comentário com o ID '$1' não encontrado.",
@@ -22,7 +23,7 @@
 	"apihelp-discussiontoolsedit-param-formtoken": "Um identificador opcional único gerado no cliente para evitar duplas publicações.",
 	"apihelp-discussiontoolsedit-param-html": "Conteúdo para postar, como HTML. Não pode ser usado junto com <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Só usado quando <var>paction</var> é <var>addtopic</var>.",
-	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Permitir publicar uma nova secção sem título.",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Permitir publicar uma nova seção sem título.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Conteúdo para postar, como wikitexto. Não pode ser usado junto com <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Adicione um novo comentário como resposta a um comentário existente.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Adicione uma nova seção de discussão e o primeiro comentário nela.",

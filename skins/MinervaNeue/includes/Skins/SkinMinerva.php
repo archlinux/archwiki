@@ -304,7 +304,7 @@ class SkinMinerva extends SkinMustache {
 			)['items'],
 			// Refer to https://phabricator.wikimedia.org/T388036#10608151 for the following line:
 			'data-donation-banner' => $this->skinOptions->get( SkinOptions::SHOW_DONATE_BANNER ) &&
-				$this->getUser()->isAnon(),
+				$this->getUser()->isAnon() ? $this->getDonateBannerData() : null,
 			'html-minerva-tagline' => $this->getTaglineHtml(),
 			'html-minerva-user-menu' => $this->getPersonalToolsMenu( $navUserMenu ),
 			'data-minerva-notifications' => $notifications ? [
@@ -771,6 +771,35 @@ class SkinMinerva extends SkinMustache {
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Build the donate banner links from interface messages, and reject unsafe values.
+	 *
+	 * @return array
+	 */
+	private function getDonateBannerData(): array {
+		$gifSrc = $this->getLocalImagePathFromMessage( 'skin-minerva-donate-banner-gif' );
+		$reducedMotionSrc = $this->getLocalImagePathFromMessage( 'skin-minerva-donate-banner-reduced-motion' );
+
+		return [
+			'href' => self::makeInternalOrExternalUrl( $this->msg( 'skin-minerva-donate-banner-url' )->text() ),
+			// Require both images so a missing reduced-motion image cannot fall back to the animation.
+			'data-image' => $gifSrc !== '' && $reducedMotionSrc !== '' ? [
+				'gif-src' => $gifSrc,
+				'reduced-motion-srcset' => $reducedMotionSrc,
+			] : null,
+		];
+	}
+
+	/**
+	 * @param string $key Message key that holds an image path
+	 * @return string The path, or an empty string if it is not a plain path on this site
+	 */
+	private function getLocalImagePathFromMessage( string $key ): string {
+		$path = $this->msg( $key )->text();
+		// Only allow paths on this site, so the browser does not load images from other hosts.
+		return preg_match( '!^/[\w-][\w./-]*$!D', $path ) ? $path : '';
 	}
 
 	/**

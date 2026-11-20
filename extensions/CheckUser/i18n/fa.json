@@ -167,7 +167,7 @@
 	"logentry-checkuser-private-event-user-logout": "با استفاده از API یا {{#special:logout}} با موفقیت {{GENDER:$2|از سامانه خارج شد}}",
 	"logentry-checkuser-private-event-password-reset-email-sent": "یک ایمیل بازنشانی گذرواژه برای {{GENDER:$5|کاربر}} $4 {{GENDER:$2|فرستاد}}",
 	"logentry-checkuser-private-event-email-sent": "یک ایمیل برای کاربر «$4» {{GENDER:$2|فرستاد}}",
-	"logentry-checkuser-private-event-autocreate-account": "به طور خودکار ساخته شد",
+	"logentry-checkuser-private-event-autocreate-account": "به‌طور خودکار ساخته شد",
 	"logentry-checkuser-private-event-create-account": "ایجاد شد",
 	"checkuser-temporary-accounts-onboarding-dialog-title": "معرفی حساب‌های موقت",
 	"checkuser-temporary-accounts-onboarding-dialog-skip-all": "رد کردن همه",

@@ -103,5 +103,6 @@
 	"linterrors-subpage": "خطاهای نحوی پنهان: $1",
 	"linterrors-summary": "<strong>توجه</strong>: تعداد موارد موجود در رده‌ها دقیق نیست و بر اساس تخمین است.",
 	"multi-part-template-block": "خروجی که فقط از یک الگو نیست",
-	"pageinfo-linter": "خطاهای نحوی پنهان"
+	"pageinfo-linter": "خطاهای نحوی پنهان",
+	"pageinfo-linter-moreinfo": "مشاهدهٔ اطلاعات مفصل در مورد خطاهای نگارشی در ویکی‌کد"
 }

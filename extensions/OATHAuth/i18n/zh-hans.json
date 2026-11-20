@@ -182,6 +182,8 @@
 	"oathauth-notifications-enable-primary": "检查您的双重认证设置",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|您}}应为{{GENDER:$2|您的账号}}重新注册双重认证功能。",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|您}}仅剩下$3个恢复{{PLURAL:$3|代码}}可用。您可能需要重新生成恢复{{PLURAL:$4|代码}}以供将来使用。",
+	"notification-header-oathauth-recoverycodes-regenerated": "您的恢复代码已重新生成。",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|您}}已生成一组新的恢复代码。之前的恢复代码将不再有效。",
 	"oathauth-notifications-recoverycodesleft-help": "帮助",
 	"oathauth-notifications-recoverycodesleft-primary": "检查您的双重认证设置",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "已为{{GENDER:|您}}生成额外的恢复{{PLURAL:$3|代码}}",

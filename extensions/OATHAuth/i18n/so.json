@@ -141,6 +141,8 @@
 	"oathauth-notifications-enable-primary": "Hubi dejimaha xaqiijinta laba-tallaabo",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|Adigu}} waa inaad dib ugu diiwaangelisaa {{GENDER:$2|xisaabtaada}} xaqiijinta laba-tallaabo.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|Adigu}} waxaad haysataa $3 koodh {{PLURAL:$3|soo kabasho|soo kabashada}} ah oo haray. Waxaa laga yaabaa inaad rabto inaad dib u soo saarto $4 koodh {{PLURAL:$4|cusub oo soo kabasho|cusub oo soo kabashada}} ah si aad mustaqbalka u isticmaasho.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Summadahaaga soo-kabashada dib ayaa loo soo saaray.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Waxaad}} abuurtay summado cusub oo soo-kabasho. Summadihii hore hadda ma shaqayn doonaan.",
 	"oathauth-notifications-recoverycodesleft-help": "Caawin",
 	"oathauth-notifications-recoverycodesleft-primary": "Hubi dejimaha xaqiijinta laba-tallaabo",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "Koodh dheeraad ah oo soo kabasho {{PLURAL:$3|waa la sameeyay}} ayaa loo sameeyay {{GENDER:|adiga}}",

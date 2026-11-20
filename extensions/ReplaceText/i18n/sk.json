@@ -17,6 +17,7 @@
 	"replacetext_optionalfilters": "Nepovinné filtre:",
 	"replacetext_categorysearch": "Nahradiť iba v kategórii:",
 	"replacetext_prefixsearch": "Nahradiť iba v stránkach s predponou:",
+	"replacetext_pagelimit": "Najväčší počet stránok, ktoré má vyhľadávanie vrátiť:",
 	"replacetext_editpages": "Nahradiť text v obsahu stránok",
 	"replacetext_movepages": "Nahradiť text v názvoch stránok, keď je to možné",
 	"replacetext_givetarget": "Musíte zadať reťazec, ktorý sa má nahradiť.",
@@ -25,6 +26,7 @@
 	"replacetext_choosepagesforedit": "Prosím, vyberte {{PLURAL:$3|stránku, na ktorej|stránky, na ktorých}} chcete nahradiť „$1“ za „$2“:",
 	"replacetext_choosepagesformove": "Nahradiť text „$1“ textom „$2“ v {{PLURAL:$3|názve nasledovnej stránky|názvoch nasledovných stránok}}:",
 	"replacetext_cannotmove": "{{PLURAL:$1|Nasledovnú stránku|Nasledovné stránky}} nemožno presunúť:",
+	"replacetext_cannotedit": "{{PLURAL:$1|Nasledujúcu stránku|Nasledujúce $1 stránky|Nasledujúcich $1 stránok}} nemožno upraviť:",
 	"replacetext_formovedpages": "Pri presunutých stránkach:",
 	"replacetext_savemovedpages": "Ukladať staré názvy ako presmerovania na nové názvy",
 	"replacetext_watchmovedpages": "Sledovať tieto stránky",
@@ -38,6 +40,15 @@
 	"replacetext_warning": "'''Upozornenie:''' $1 {{PLURAL:$1|stránka|stránky|stránok}} už obsahuje text „$2”, ktorým chcete pôvodný text nahradiť. Ak budete pokračovať a text nahradíte, nebudete môcť odlíšiť vaše nahradenia od existujúceho textu, ktorý tento reťazec už obsahuje.",
 	"replacetext_blankwarning": "Pretože text, ktorým text chcete nahradiť je prázdny, operácia bude nevratná. Pokračovať?",
 	"replacetext_continue": "Pokračovať",
+	"replacetext_botedit": "Označiť zmeny ako úpravy robota",
 	"replacetext_editsummary": "Nahradenie textu „$1” textom „$2”",
-	"right-replacetext": "Vykonať náhradu reťazcov na celej wiki"
+	"replacetext_reminder": "Ak chcete upraviť aj odkazy na túto stránku na iných stránkach, prejdite na $1.",
+	"replacetext_cfg_error": "Chyba konfigurácie ReplaceText",
+	"replacetext_no_compress": "Vaša wiki nebude s ReplaceText fungovať: nahradenia textu nemožno spustiť, ak je $wgCompressRevisions nastavené na true.",
+	"replacetext_no_external_stores": "Vaša wiki nebude s ReplaceText fungovať: nahradenia textu nemožno spustiť, ak $wgExternalStores nie je prázdne.",
+	"right-replacetext": "Vykonať náhradu reťazcov na celej wiki",
+	"action-replacetext": "nahrádzať reťazce na celej wiki",
+	"replacetext-summary-label": "Zhrnutie úprav s nahradením (nechajte prázdne pre predvolené zhrnutie)",
+	"tag-replacetext": "[[Special:ReplaceText|ReplaceText]]",
+	"tag-replacetext-description": "Automatické úpravy vykonané cez [[{{#Special:ReplaceText}}]]."
 }

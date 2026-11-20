@@ -147,7 +147,11 @@ ve.ui.MWLanguageVariantInspector.prototype.createTextTarget = function ( placeho
  * @return {ve.dm.Document} The document model now backing the widget.
  */
 ve.ui.MWLanguageVariantInspector.prototype.setupTextTargetDoc = function ( textTarget, htmlString ) {
-	const doc = this.variantNode.getDocument().newFromHtml( htmlString );
+	// The HTML may not have come from Parsoid (e.g. when pasted), and
+	// unrecognized elements are rendered as-is as alien nodes, so sanitize it.
+	// It is only written back to the model if the user applies the inspector. (T441027)
+	// TODO: This is temporary, see ve.dm.MWLanguageVariantNode.static.insertPreviewElements
+	const doc = this.variantNode.getDocument().newFromHtml( ve.sanitizeHtmlToDocument( htmlString || '' ) );
 	textTarget.setDocument( doc );
 	return doc;
 };

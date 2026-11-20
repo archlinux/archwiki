@@ -2065,7 +2065,7 @@
 	"deleteprotected": "Siz bu səhifəni silə bilməzsiniz, çünki o mühafizə edilib.",
 	"deleting-backlinks-warning": "<strong>Xəbərdarlıq:</strong> Silmək istədiyiniz səhifəyə [[Special:WhatLinksHere/{{FULLPAGENAME}}|başqa səhifələr]]dən keçid verilib.",
 	"deleting-subpages-warning": "<strong>Xəbərdarlıq:</strong> Silmək üzrə olduğunuz səhifənin  [[Special:PrefixIndex/{{FULLPAGENAME}}/|{{PLURAL:$1|1 altsəhifəsi|$1 altsəhifəsi|51=50-dən çox altsəhifəsi}}]] var.",
-	"deleting-talkpage-subpages-warning": "<strong>Xəbərdarlıq:</strong> Silmək istədiyiniz səhifənin müzakirə səhifəsinin [[Special:PrefixIndex/{{TALKPAGENAME}}/|{{PLURAL:$1|alt səhifəsi|$1 alt səhifəsi|51=50-dən artıq alt səhifəsi}}]] var.",
+	"deleting-talkpage-subpages-warning": "<strong>Xəbərdarlıq:</strong> Silmək istədiyiniz səhifənin müzakirə səhifəsinin [[Special:PrefixIndex/{{TALKPAGENAME}}/|{{PLURAL:$1|altsəhifəsi|$1 altsəhifəsi|51=50-dən artıq altsəhifəsi}}]] var.",
 	"rollback": "Redaktələri geri qaytar",
 	"rollback-confirmation-confirm": "Zəhmət olmasa, təsdiqləyin:",
 	"rollback-confirmation-yes": "Əvvəlki halına qaytar",
@@ -2690,7 +2690,7 @@
 	"import-options-wrong": "Səhv {{PLURAL:$2|seçim|seçimlər}}:\n$1",
 	"import-rootpage-invalid": "Verilmiş kök səhifə yanlış başlıqdır.",
 	"import-rootpage-nosubpage": "Kök səhifənin \"$1\" ad fəzası alt səhifələrə icazə vermir.",
-	"importlogpage": "Çıxarılma gündəliyi",
+	"importlogpage": "İdxal gündəliyi",
 	"importlogpagetext": "Səhifələrin inzibatçılar tərəfindən digər vikilərdən dəyişiklik tarixçəsi ilə birlikdə köçürülməsi",
 	"import-logentry-upload-detail": "$1 {{PLURAL:$1|dəyişiklik}} idxal edildi.",
 	"import-logentry-interwiki-detail": "$2 vikidən $1 {{PLURAL:$1|dəyişiklik}} idxal edildi",
@@ -3329,7 +3329,7 @@
 	"namespaceinfo": "Ad fəzası məlumatı",
 	"namespaceinfo-summary": "Sayt ad fəzaları haqqında məlumatlara baxın.",
 	"namespaceinfo-heading-id": "Nömrəsi",
-	"namespaceinfo-heading-canonical": "Bilinən adı",
+	"namespaceinfo-heading-canonical": "İlkin adı",
 	"namespaceinfo-heading-local": "Lokal adı",
 	"namespaceinfo-heading-info": "Açıqlaması və parametrləri",
 	"namespaceinfo-heading-aliases": "Digər adları",
@@ -3937,5 +3937,6 @@
 	"table-of-contents-hide-button-aria-label": "Mündəricatı gizlət",
 	"diff-usergroups": "$1 {{PLURAL:$1|istifadəçi qrupu}}",
 	"languageselector-no-results": "Heç bir nəticə tapılmadı.",
-	"languageselector-invalid-input": "\"$1\" etibarlı dil deyil."
+	"languageselector-invalid-input": "\"$1\" etibarlı dil deyil.",
+	"mypage-disallowed-action": "Təhlükəsizlik səbəblərinə görə, \"$1\" əməliyyatı Special:MyPage səhifəsində istifadə edilə bilməz."
 }

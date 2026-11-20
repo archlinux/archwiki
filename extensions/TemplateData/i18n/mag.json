@@ -1,0 +1,38 @@
+{
+	"@metadata": {
+		"authors": [
+			"ऐक्टिवेटेड्"
+		]
+	},
+	"templatedata-doc-desc-empty": "कौनो विवरण न ।",
+	"templatedata-doc-param-default": "पूर्वनिर्धारित",
+	"templatedata-doc-param-example": "उदाहरण",
+	"templatedata-doc-param-desc": "विवरण",
+	"templatedata-doc-param-desc-empty": "कौनो विवरण न",
+	"templatedata-doc-param-name": "प्राचल",
+	"templatedata-doc-param-status": "स्थिति",
+	"templatedata-doc-param-status-deprecated": "कालग्रस्त",
+	"templatedata-doc-param-status-optional": "वैकल्पिक",
+	"templatedata-doc-param-status-required": "आवश्यक",
+	"templatedata-doc-param-status-suggested": "सुझावित",
+	"templatedata-doc-param-suggestedvalues": "सुझावित मान",
+	"templatedata-modal-button-add-language": "भाषा जोड़थिन",
+	"templatedata-modal-button-addparam": "प्राचल जोड़थिन",
+	"templatedata-modal-button-addmap": "नया मानचित्र जोड़थिन",
+	"templatedata-modal-button-apply": "लागू करथिन",
+	"templatedata-modal-button-back": "पाछे",
+	"templatedata-modal-button-cancel": "निरस्त करथिन",
+	"templatedata-modal-button-changelang": "भाषा बदलथिन",
+	"templatedata-modal-button-delparam": "प्राचल जानकारी हटैथिन",
+	"templatedata-modal-button-done": "हो गेलै",
+	"templatedata-modal-button-map": "मानचित्र सम्पादित करथिन",
+	"templatedata-modal-button-importParams": "प्राचल आयात करथिन",
+	"templatedata-modal-button-removemap": "मानचित्र हटैथिन",
+	"templatedata-modal-button-saveparam": "सहेजथिन",
+	"templatedata-modal-confirmcancel": "का अपने निश्चित हथिन जे अपने अपन परिवर्तन त्यागल चाह हथिन ?",
+	"templatedata-modal-button-discard": "त्यागथिन",
+	"templatedata-modal-current-language": "वर्तमान भाषा: $1",
+	"templatedata-modal-format-custom": "स्वनिर्धारित",
+	"templatedata-modal-format-inline": "रैखिक",
+	"templatedata-modal-format-null": "अनिर्दिष्ट"
+}

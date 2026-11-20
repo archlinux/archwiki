@@ -2,12 +2,37 @@
 	"@metadata": {
 		"authors": [
 			"Kandar",
-			"RXerself"
+			"RXerself",
+			"Rafka Aditia"
 		]
 	},
+	"content-model-scribunto": "Modul Scribunto",
+	"scribunto-desc": "Karangka kerja pikeun nyematkeun basa skrip kana kaca MédiaWiki",
+	"scribunto-line": "dina baris $1",
+	"scribunto-module-line": "di $1 dina baris $2",
+	"scribunto-parser-dialog-title": "Kasalahan skrip",
+	"scribunto-error-short": "Kasalahan skrip: $1",
+	"scribunto-error-long": "Kasalahan skrip:\n\n $1",
+	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''Dokuméntasi pikeun modul ieu tiasa dijieun dina kaca [[$1]].''",
-	"scribunto-doc-page-header": "Kaca ieu téh dokuméntasi ti kaca [[$1]].''",
+	"scribunto-doc-page-header": "Kaca ieu téh dokuméntasi pikeun kaca [[$1]].''",
+	"scribunto-console-clear": "Bersihan",
 	"scribunto-lua-error": "Galat Lua: $2.",
+	"scribunto-module-with-errors-category": "Modul Scribunto kalawan kasalahan",
+	"scribunto-module-with-errors-category-desc": "Modul éta ngabogaan kasalahan.",
+	"scribunto-limitreport-timeusage": "Pamakéan waktu Lua",
+	"scribunto-limitreport-timeusage-value": "$1/$2 detik",
+	"scribunto-limitreport-virtmemusage": "Ukuran virtual Lua",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|bita}}",
+	"scribunto-limitreport-estmemusage": "Kira-kira pamakéan mémori Lua",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|bita}}",
+	"scribunto-limitreport-memusage": "Pamakéan mémori Lua",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bita}}",
+	"scribunto-limitreport-profile": "Profil Lua",
+	"scribunto-limitreport-profile-ms": "$1 md",
+	"scribunto-limitreport-profile-percent": "$1%",
+	"scribunto-limitreport-logs": "Catetan Lua",
 	"nstab-module": "Modul",
-	"tooltip-ca-nstab-module": "Témbongkeun kaca modul"
+	"tooltip-ca-nstab-module": "Témbongkeun kaca modul",
+	"namespaceinfo-description-ns829": "Kaca sawala pikeun modul jeung dokuméntasi."
 }

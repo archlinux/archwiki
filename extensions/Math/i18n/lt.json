@@ -7,7 +7,8 @@
 			"Manvydasz",
 			"Nokeoo",
 			"Perkunas",
-			"Tomasdd"
+			"Tomasdd",
+			"Mindaur"
 		]
 	},
 	"math-desc": "Atvaizduoti matematines formules tarp <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> žymių",
@@ -74,7 +75,7 @@
 	"mw-math-latexml": "LaTeXML (eksperimentinis; naudoja MathML)",
 	"mw-math-mathml": "SVG (MathML gali būti įjungtas per naršyklės įskiepį)",
 	"mw-math-native": "MathML (eksperimentinis; be vaizdų)",
-	"mw-math-source": "LaTeX išeities kodas (teksto naršyklėms)",
+	"mw-math-source": "LaTeX pirminis programos tekstas (teksto naršyklėms)",
 	"prefs-math": "Matematika",
 	"mathstatus": "Matematinių formulių statusas",
 	"mathwikibase": "Matematinės formulės informacija",

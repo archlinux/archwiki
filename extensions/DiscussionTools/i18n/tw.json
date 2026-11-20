@@ -23,7 +23,7 @@
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|Kasa biaeɛ]] yɛ babia nnipa totoa adwene wɔ kwan a wɔbtumi ayɛ biaeɛ {{SITENAME}} ɛyɛ papa. Hyɛ adwenkyerɛ foforɔ a ɛbua kwan na ɛde nkabom {{GENDER:{{PAGENAME}}|with}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Deɛ wobɛka wɔ ha bɛda adi ama amansan ahunu.",
 	"discussiontools-emptystate-desc-user-anon": "[[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|Kasa biaeɛ]] yɛ biaeɛ nnipa bɛtumi atoatoa adwene a wobɛyɛ biaeɛ {{SITENAME}} ɛbɛ yɛ papa paa. Fa saa biaeɛ hyɛ adwenkyere a ɛba ma w'atumi asesa nnoɔma a ɛwɔ IP akwankyeremu. Deɛ wo beka wɔ ha beda adi ama amansan ahunu. Dodoɔ IP akwankyerɛ sesa meretiamu mu, na mpɛn pii no afoforɔ kyɛ.",
 	"discussiontools-emptystate-title": "Hyɛ adwenkyerɛ a ɛfa {{SUBJECTPAGENAME}}",
-	"discussiontools-emptystate-title-self": "Akwaaba wɔ wo kasa bia",
+	"discussiontools-emptystate-title-self": "{{GENDER:|Akwaaba}} wɔ wo kasa bia",
 	"discussiontools-emptystate-title-self-anon": "Akwaaba wɔ kasa bia ha",
 	"discussiontools-emptystate-title-user": "Hyɛ adwenkyerɛ{{GENDER:{{PAGENAME}}|with}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "Akwaaba wɔ kasa bia ha",

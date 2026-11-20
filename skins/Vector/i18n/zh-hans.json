@@ -43,7 +43,8 @@
 			"沈澄心",
 			"落花有意12138",
 			"魔琴",
-			"郭佳昌"
+			"郭佳昌",
+			"Srapoj"
 		]
 	},
 	"skinname-vector": "旧版Vector（2010）",
@@ -86,7 +87,7 @@
 	"vector-feature-custom-font-size-1-label": "标准",
 	"vector-feature-custom-font-size-2-label": "大",
 	"skin-theme-name": "颜色",
-	"skin-theme-description": "[实验版本，遇到问题的可能性较高] 减少设备屏幕发出的光线。",
+	"skin-theme-description": "&#91;实验版本，遇到问题的可能性较高&#93; 减少设备屏幕发出的光线。",
 	"skin-theme-day-label": "浅色",
 	"skin-theme-night-label": "深色",
 	"skin-theme-os-label": "自动",

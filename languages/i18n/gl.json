@@ -415,7 +415,7 @@
 	"userlogin-authpopup-loggingin-body-link": "Formulario alternativo",
 	"userlogin-authpopup-retry": "Intentar de novo",
 	"userlogin-authpopup-cancel": "Cancelar",
-	"userlogin-authpopup-closeme": "Se ves esta mensaxe, podes pechar esta ventá.",
+	"userlogin-authpopup-closeme": "Se ves esta mensaxe, podes pechar a xanela.",
 	"loginsuccesstitle": "Accediches ao sistema",
 	"loginsuccess": "<strong>Accediches a {{SITENAME}} como «$1».</strong>",
 	"nosuchuser": "Non existe ningún usuario chamado «$1».\nOs nomes de usuario distinguen entre maiúsculas e minúsculas.\nVerifica ortografía ou [[Special:CreateAccount|crea unha nova conta]].",
@@ -1566,7 +1566,7 @@
 	"unusedtemplateswlh": "outras ligazóns",
 	"randompage": "Páxina ao chou",
 	"randompage-nopages": "Non hai páxinas {{PLURAL:$2|no seguinte espazo de nomes|nos seguintes espazos de nomes}}: $1.",
-	"randompage-disallowed-action": "Por razóns de seguridade, non se pode efectuar a acción «$1» na páxina «Special:Random».",
+	"randompage-disallowed-action": "Por motivos de seguridade, non se pode efectuar a acción «$1» na páxina «Special:Random».",
 	"randomincategory": "Páxina aleatoria na categoría",
 	"randomincategory-invalidcategory": "«$1» non é un nome de categoría válido.",
 	"randomincategory-nopages": "Non hai páxinas na [[:Category:$1]].",
@@ -3109,7 +3109,7 @@
 	"version-ext-colheader-license": "Licenza",
 	"version-ext-colheader-description": "Descrición",
 	"version-ext-colheader-credits": "Autores",
-	"version-license-title": "Licenza para $1",
+	"version-license-title": "Licenza de $1",
 	"version-license-not-found": "Non se atopou información detallada de licenza para esta extensión.",
 	"version-credits-title": "Recoñecemento para $1",
 	"version-credits-not-found": "Non se atopou información detallada de recoñecemento para esta extensión.",
@@ -3954,5 +3954,6 @@
 	"table-of-contents-hide-button-aria-label": "Agochar a táboa de contidos",
 	"diff-usergroups": "$1 {{PLURAL:$1|grupo|grupos}} de usuario",
 	"languageselector-no-results": "Non se atopou ningún resultado.",
-	"languageselector-invalid-input": "«$1» non é unha lingua válida."
+	"languageselector-invalid-input": "«$1» non é unha lingua válida.",
+	"mypage-disallowed-action": "Por motivos de seguridade, non se pode efectuar a acción «$1» na páxina «Special:MyPage»."
 }

@@ -33,7 +33,7 @@
 	"cite-ve-dialog-reference-editing-add-details": "Добавяте подробности към този източник:",
 	"cite-ve-dialog-reference-editing-edit-details": "Редактирате подробностите за този източник:",
 	"cite-ve-dialog-reference-editing-add-details-placeholder": "Напишете или поставете тук Вашите допълнителни подробности, например конкретен номер на страница или цитат.",
-	"cite-ve-dialog-reference-editing-reused-short": "Използвано {{PLURAL:$1| веднъж|2=два пъти|$1 пъти}}",
+	"cite-ve-dialog-reference-editing-reused-short": "Използвано {{PLURAL:$1|веднъж|2=два пъти|$1 пъти}}",
 	"cite-ve-dialog-reference-editing-reused": "Тази препратка се използва на страницата {{PLURAL:$1|само веднъж|$1 пъти}}.",
 	"cite-ve-dialog-reference-editing-reused-long": "Този източник е използван {{PLURAL:$1|веднъж|2=два пъти|$1 пъти}} на страницата. Направените тук промени ще се приложат на всички места, на които се използва източника.",
 	"cite-ve-dialog-reference-editing-details-placeholder": "Съдържанието, добавено към полето, ще се покаже тук.",

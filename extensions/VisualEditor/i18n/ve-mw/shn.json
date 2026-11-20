@@ -6,15 +6,23 @@
 		]
 	},
 	"tooltip-ca-ve-edit": "မႄးထတ်း ၼႃႈလိၵ်ႈၼႆႉ",
+	"visualeditor-advancedsettings-tool": "ၵၢၼ်တင်ႈၸၼ်ႉသုင်",
 	"visualeditor-backbutton-tooltip": "ၵႂႃႇၽၢႆႇလင်",
 	"visualeditor-ca-createlocaldescriptionsource": "ထႅမ်သႂ်ႇ ၶေႃႈသပ်းလႅင်းလူဝ်ႇၵႄႇ",
 	"visualeditor-ca-createsource": "ၵေႃႇသၢင်ႈငဝ်ႈငႃႇ",
 	"visualeditor-ca-editsource": "မႄးထတ်းငဝ်ႈငႃႇ",
 	"visualeditor-ca-editsource-section": "မႄးထတ်းငဝ်ႈငႃႇ",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-dialog-meta-advancedsettings-label": "ၵၢၼ်တင်ႈၸၼ်ႉသုင်",
+	"visualeditor-dialog-meta-advancedsettings-section": "ၵၢၼ်တင်ႈၸၼ်ႉသုင်",
 	"visualeditor-dialog-meta-categories-addcategory-label": "ထႅမ်ပိူင်ထၢၼ်ႈ သႂ်ႇၸူး ၼႃႈလိၵ်ႈဢၼ်ၼႆႉ",
+	"visualeditor-dialog-meta-categories-defaultsort-label": "ၶပ်ႉၼႃးလိၵ်ႈၼႆႉ ၸွမ်းၼင်ႇပိူင်ၵႅဝ်ႈမၼ်း",
 	"visualeditor-dialog-meta-categories-input-movecategorylabel": "ၶၢႆႉပိူင်ထၢၼ်ႈၸူးတီႈၼႆႈ",
 	"visualeditor-dialog-meta-categories-input-placeholder": "ထႅမ်သႂ်ႇ ပိူင်ထၢၼ်ႈ",
+	"visualeditor-dialog-meta-categories-sortkey-label": "ၶပ်ႉၼႃႈလိၵ်ႈၼႆႉ ၸွမ်းၼင်ႇၸိုဝ်ႈမၼ်း",
+	"visualeditor-dialog-meta-settings-label": "ၵၢၼ်တင်ႈၼႃႈလိၵ်ႈ",
+	"visualeditor-dialog-meta-settings-redirect-label": "ပိၼ်ႇတၢင်းၼႃႈလိၵ်ႈၼႆႉၵႂႃႇတီႈ",
+	"visualeditor-dialog-meta-settings-section": "ၵၢၼ်တင်ႈၼႃႈလိၵ်ႈ",
 	"visualeditor-editsummary": "သပ်းလႅင်း ၸိူဝ်းၸဝ်ႈၵဝ်ႇ လႅၵ်ႈလၢႆႈမႃး",
 	"visualeditor-fullpage-switch-label": "မႄးထတ်း တင်းၼႃႈလိၵ်ႈ",
 	"visualeditor-linkinspector-educationpopup-title": "လိင်ႉၶ်",
@@ -26,5 +34,6 @@
 	"visualeditor-savedialog-label-review": "ထတ်းသၢင်ႈ လွင်ႈလႅၵ်ႈလၢႆႈၸဝ်ႈၵဝ်ႇ",
 	"visualeditor-savedialog-label-save-short": "သိမ်း",
 	"visualeditor-savedialog-title-preview": "တူၺ်ႈလူင်ႈၼႃႈ လွင်ႈလႅင်ႈလၢႆႈၸဝ်ႈၵဝ်ႇ",
-	"visualeditor-savedialog-title-save": "သိမ်း လွင်ႈလႅၵ်ႈလၢႆႈ ၸဝ်ႈၵဝ်ႇ"
+	"visualeditor-savedialog-title-save": "သိမ်း လွင်ႈလႅၵ်ႈလၢႆႈ ၸဝ်ႈၵဝ်ႇ",
+	"visualeditor-settings-tool": "ၵၢၼ်တင်ႈၼႃႈလိၵ်ႈ"
 }

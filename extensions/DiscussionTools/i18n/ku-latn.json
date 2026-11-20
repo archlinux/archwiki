@@ -106,7 +106,7 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Bibe abone",
 	"discussiontools-topicsubscription-button-unsubscribe": "ji abonetiyê derkeve",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Ji abonetiyê derkeve",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Tu yê danezanên di derbarê şîroveyên nû yên di vê mijarê de werbigirî.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Tu}} yê danezanên di derbarê şîroveyên nû yên di vê mijarê de wergirî.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Tu}} bûyî abone!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Tu yê êdî danezanên di derbarê şîroveyên nû yên vê mijarê de nebînî.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Tu}} ji abonetiyê derketî.",

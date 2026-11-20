@@ -81,7 +81,7 @@
 	"discussiontools-ledesection-button": "En savoir plus sur cette page",
 	"discussiontools-ledesection-title": "À propos de cette page de discussion",
 	"discussiontools-limitreport-errorreqid": "Identifiant de requête de l’erreur des Outils de discussion",
-	"discussiontools-limitreport-timeusage": "Utilisation du temps des Outils de discussion",
+	"discussiontools-limitreport-timeusage": "Temps d’utilisation des Outils de discussion",
 	"discussiontools-limitreport-timeusage-value": "$1 seconde{{PLURAL:$1||s}}",
 	"discussiontools-newtopic-missing-title": "Veuillez fournir un titre pour {{GENDER:|votre}} sujet de discussion.",
 	"discussiontools-newtopic-missing-title-prompt": "{{GENDER:|}}Vous n'avez pas mis de titre à {{GENDER:|}}votre sujet de discussion. Êtes-{{GENDER:|}}vous sûr de vouloir ajouter ce sujet sans un titre ?",

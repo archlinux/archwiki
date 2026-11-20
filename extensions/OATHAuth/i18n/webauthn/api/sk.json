@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-oathauth-webauthn-summary": "Modul API na komunikáciu medzi serverom a klientom počas registrácie a overovania.",
+	"apihelp-oathauth-webauthn-param-func": "Názov požadovanej funkcie, ktorá sa má vykonať.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getauthinfo": "Informácie o overení.",
+	"apihelp-oathauth-webauthn-paramvalue-func-getregisterinfo": "Informácie o registrácii.",
+	"apihelp-oathauth-webauthn-param-passkeymode": "Či je registrovaný kľúč v režime prístupového kľúča (passkey). (Iba pre getRegisterInfo.)",
+	"apierror-oathauth-webauthn-module-missing": "Modul WebAuthn nie je dostupný.",
+	"apierror-oathauth-webauthn-missing-credential": "Neboli poskytnuté žiadne údaje poverenia.",
+	"apierror-oathauth-webauthn-invalid-credential": "Údaje poverenia sú neplatné alebo poškodené.",
+	"apihelp-oathauth-webauthn-paramvalue-func-register": "Zaregistrovať nové poverenie WebAuthn pre aktuálneho používateľa.",
+	"apihelp-oathauth-webauthn-param-credential": "Odpoveď poverenia WebAuthn z prehliadača zakódovaná v JSON.",
+	"apihelp-oathauth-webauthn-param-friendlyname": "Zrozumiteľný názov nového poverenia."
+}

@@ -16,7 +16,8 @@
 			"Sonic Speedy",
 			"Veracious",
 			"WillsonEP09",
-			"Woytecr"
+			"Woytecr",
+			"Exploraz"
 		]
 	},
 	"discussiontools": "Perkakas diskusi",
@@ -161,7 +162,7 @@
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Anda}} tidak akan menerima lagi pemberitahuan tentang komentar baru di topik ini.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Anda}} telah berhenti berlangganan",
 	"discussiontools-topicsubscription-pager-actions": "Tindakan",
-	"discussiontools-topicsubscription-pager-created": "Yang pertama {{GENDER:|berlangganan}}",
+	"discussiontools-topicsubscription-pager-created": "Pertama kali {{GENDER:|berlangganan}}",
 	"discussiontools-topicsubscription-pager-newtopics-label": "Topik baru",
 	"discussiontools-topicsubscription-pager-notified": "Pemberitahuan terbaru",
 	"discussiontools-topicsubscription-pager-notified-never": "jangan pernah",

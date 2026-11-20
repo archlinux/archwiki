@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ladsgroup"
+			"Ladsgroup",
+			"LProfo"
 		]
 	},
 	"apihelp-scribunto-console-param-title": "عنوان پودمان برای تست",
-	"apihelp-scribunto-console-param-session": "بلیط سشن."
+	"apihelp-scribunto-console-param-session": "توکن نشست."
 }

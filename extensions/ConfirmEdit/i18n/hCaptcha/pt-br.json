@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Leonardo9387"
+			"Leonardo9387",
+			"Fúlvio"
 		]
 	},
 	"hcaptcha-desc": "[https://www.hcaptcha.com/ hCaptcha] módulo para Confirmação de Edição",

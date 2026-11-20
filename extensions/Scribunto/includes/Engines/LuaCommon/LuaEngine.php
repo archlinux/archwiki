@@ -743,11 +743,13 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * Handler for frameExists()
 	 *
 	 * @internal
-	 * @param string $frameId
+	 * @param string|null $frameId
 	 * @return array
 	 */
 	public function frameExists( $frameId ) {
-		return [ $frameId === 'empty' || isset( $this->currentFrames[$frameId] ) ];
+		$exists = is_string( $frameId ) &&
+			( $frameId === 'empty' || isset( $this->currentFrames[$frameId] ) );
+		return [ $exists ];
 	}
 
 	/**
@@ -814,8 +816,6 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @return array
 	 */
 	public function getExpandedArgument( $frameId, $name ) {
-		$this->checkString( 'getExpandedArgument', [ $frameId ], 0 );
-
 		$frame = $this->getFrameById( $frameId );
 		$this->getInterpreter()->pauseUsageTimer();
 		$result = $frame->getArgument( $name );
@@ -978,8 +978,6 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @throws LuaError
 	 */
 	public function preprocess( $frameId, $text ) {
-		$this->checkString( 'preprocess', [ $frameId ], 0 );
-
 		$frame = $this->getFrameById( $frameId );
 
 		if ( !$frame ) {

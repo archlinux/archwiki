@@ -21,13 +21,13 @@ function buildUserElement( userName, userData ) {
 	// No link can be used if the username is hidden.
 	if ( !userData.linkUserPage ) {
 		userElement = document.createElement( 'span' );
-		userElement.innerHTML = userName;
+		userElement.textContent = userName;
 
 		return userElement;
 	}
 
 	const bdiElement = document.createElement( 'bdi' );
-	bdiElement.innerHTML = userName;
+	bdiElement.textContent = userName;
 
 	userElement = document.createElement( 'a' );
 	userElement.setAttribute(
@@ -64,7 +64,7 @@ function getTooltip() {
 		'cdx-tooltip mw-tempuserlink-expired--tooltip'
 	);
 
-	tooltip.innerHTML = getTooltipMessage();
+	tooltip.textContent = getTooltipMessage();
 
 	return tooltip;
 }
@@ -73,7 +73,7 @@ function getTooltip() {
  * @return {string}
  */
 function getTooltipMessage() {
-	return mw.message( 'tempuser-expired-link-tooltip' ).escaped();
+	return mw.message( 'tempuser-expired-link-tooltip' ).text();
 }
 
 module.exports = buildUserElement;

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kaszeba",
-			"Kirsan"
+			"Kirsan",
+			"Iketsi"
 		]
 	},
 	"categorytree": "Drzéwiã kategòrëji",
@@ -19,7 +20,7 @@
 	"categorytree-mode-all": "wszëtczé starnë",
 	"categorytree-collapse": "zwinie",
 	"categorytree-expand": "rozwinie",
-	"categorytree-member-counts": "Zamëkô w se{{PLURAL:$1|1 pòdkategòrëjã|$1 pòdkategòrëje|$1 pòdkategòrëjów}}, {{PLURAL:$2|1 starnã|$2 starnë|$2 starnów}} i {{PLURAL:$3|1 lopk|$3 lopczii|$3 lopków}}",
+	"categorytree-member-counts": "Zamëkô w se {{PLURAL:$1|1 pòdkategòrëjã|$1 pòdkategòrëje|$1 pòdkategòrëjów}}, {{PLURAL:$2|1 starnã|$2 starnë|$2 starnów}} i {{PLURAL:$3|1 lopk|$3 lopczii|$3 lopków}}",
 	"categorytree-num-categories": "$1 kat.",
 	"categorytree-num-pages": "$1 str.",
 	"categorytree-num-files": "$1 kat.",

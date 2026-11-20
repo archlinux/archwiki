@@ -102,6 +102,12 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 			[ 'blocktalk', '1 day', '1 week' ],
 			"$baseBlock,abusefilter-block-talk"
 		];
+		yield 'new block with HTML in expiry strings (T439859)' => [
+			'block',
+			[ 'blocktalk', '<img src=x onerror=alert(document.cookie)>', '<img src=x onerror=alert(document.cookie)>' ],
+			"abusefilter-block-anon{$colon}expiry-&lt;img src=x onerror=alert(document.cookie)&gt;,abusefilter-block" .
+				"-user{$colon}expiry-&lt;img src=x onerror=alert(document.cookie)&gt;,abusefilter-block-talk"
+		];
 		yield 'throttle' => [
 			'throttle',
 			[ 'ignored', '42,163', 'ip,user', 'site' ],

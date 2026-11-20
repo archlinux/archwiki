@@ -9,6 +9,24 @@
 		}
 	},
 	{
+		"msg": "A user with linkUserPage=false and markup in the username",
+		"expected": "<span>&lt;b&gt;Markup&lt;/b&gt;</span>",
+		"userName": "<b>Markup</b>",
+		"userData": {
+			"linkUserPage": false,
+			"classes": ""
+		}
+	},
+	{
+		"msg": "A user with linkUserPage=true and markup in the username",
+		"expected": "<a href=\"/wiki/Special:Contributions/%3Cb%3EMarkup%3C/b%3E\"><bdi>&lt;b&gt;Markup&lt;/b&gt;</bdi></a>",
+		"userName": "<b>Markup</b>",
+		"userData": {
+			"linkUserPage": true,
+			"classes": ""
+		}
+	},
+	{
 		"msg": "A user with an empty list of classes to apply",
 		"expected": "<a href=\"/wiki/Special:Contributions/User_with_no_classes\"><bdi>User with no classes</bdi></a>",
 		"userName": "User with no classes",

@@ -281,7 +281,7 @@
 	"checkuser-investigate-compare-table-header-ip": "IP",
 	"checkuser-investigate-compare-table-header-useragent": "उपयोगकर्ता एजेंट",
 	"checkuser-contributions-filters-related-temporary-accounts": "संबंधित अस्थायी खातों से योगदान दिखाएँ",
-	"checkuser-ip-contributions": "IP योगदानकर्ताएँ खोजें",
+	"checkuser-ip-contributions": "IP योगदान खोजें",
 	"checkuser-ip-contributions-permission-error-title": "अनुमति त्रुटि",
 	"checkuser-ip-contributions-permission-error-description": "किसी IP के लिए अस्थायी खातों के योगदान देखने के लिए कृपया [[Special:Preferences|अपनी वरीयताओं]] में समझौते को स्वीकार करें।",
 	"checkuser-ip-contributions-subtitle": "पिछले $1 {{PLURAL:$1|दिन|दिनों}} से परिणाम दर्शाए जा रहे हैं",

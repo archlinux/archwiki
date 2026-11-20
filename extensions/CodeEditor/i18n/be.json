@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Чаховіч Уладзіслаў"
+		]
+	},
+	"codeeditor-desc": "Падсвятка сінтаксісу пры рэдагаванні JavaScript- і CSS-старонак з дапамогай [https://ace.c9.io/ рэдактара Ace]",
+	"codeeditor-next-annotation": "Перайсці да наступнай анатацыі",
+	"codeeditor-toolbar-toggle": "Уключыць/выключыць рэдактар кода",
+	"codeeditor-save-with-errors": "Дакумент змяшчае памылкі. Вы сапраўды хочаце яго апублікаваць?",
+	"codeeditor-invisibleChars-toggle": "Паказваць/хаваць нябачныя сімвалы",
+	"codeeditor-lineWrapping-toggle": "Уключыць/выключыць перанос радкоў",
+	"codeeditor-searchReplace-toggle": "Адкрыць/закрыць дыялог пошуку і замены",
+	"codeeditor-gotoline": "Перайсці да радка нумар...",
+	"codeeditor-gotoline-placeholder": "радок[:слупок]",
+	"codeeditor-gotoline-prompt": "Увядзіце нумар радка",
+	"codeeditor-indent": "Павялічыць водступ",
+	"codeeditor-outdent": "Паменшыць водступ",
+	"codeeditor-error-title": "Збой залежнасці",
+	"codeeditor-error-message": "Для работы CodeEditor неабходна, каб быў загружаны WikiEditor."
+}

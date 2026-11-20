@@ -22,5 +22,10 @@
 	"cite-wikieditor-help-content-named-reference-description": "नामित सन्दर्भ",
 	"cite-wikieditor-help-content-rereference-description": "एकहे सन्दर्भके एकाधिक बेर प्रयोग",
 	"cite-wikieditor-help-content-showreferences-description": "सन्दर्भ देखावथिन",
-	"cite-wikieditor-help-content-reference-example-text1": "पन्नापाठ ।$1"
+	"cite-wikieditor-help-content-reference-example-text1": "पन्नापाठ ।$1",
+	"cite-wikieditor-help-content-reference-example-text3": "एगो पुस्तक",
+	"cite-wikieditor-help-content-reference-example-extra-details": "पन्ना ७६",
+	"communityconfiguration-cite-title": "उद्धरण",
+	"communityconfiguration-cite-description": "सन्दर्भके प्रारूप आउ स्वरूप अनुकूलित करथिन ।",
+	"cite-configuration-title": "उद्धरण विन्यास"
 }

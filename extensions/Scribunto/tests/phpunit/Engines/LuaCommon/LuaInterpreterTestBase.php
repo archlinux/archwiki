@@ -133,8 +133,8 @@ abstract class LuaInterpreterTestBase extends TestCase {
 				$chunk,
 				// Arbitrary large quantity of work for the loop
 				1e9,
-				// Early termination condition: 1 second CPU limit plus 1 second "fudge factor"
-				2
+				// Early termination condition: 1 second CPU limit plus 4 second "fudge factor"
+				5
 			);
 			$this->fail( "Expected ScribuntoException was not thrown" );
 		} catch ( ScribuntoException $ex ) {

@@ -434,6 +434,7 @@
 	"checkuser-suggestedinvestigations-subpage-not-found-page-text": "דף המשנה הנתון אינו קיים.",
 	"checkuser-suggestedinvestigations-summary": "הדף הזה מכיל חשבונות שסומנו אוטומטית בתור כאלה שיכולים להיות חשודים לצורך בדיקה של משתמשים.",
 	"checkuser-suggestedinvestigations-summary-detail-view": "הדף הזה מכיל מידע מפורט לבודקי משתמשים בלבד על '''אירוע מס' $1'''.",
+	"checkuser-suggestedinvestigations-private-data-warning": "המידע הזה מיועד למשתמשים בעלי הרשאת בודק בלבד. אין לשתף ספירת אירועים או מידע על סוגי אותות עם משתמשים שאינם בודקים.",
 	"checkuser-suggestedinvestigations-filter-too-many-results-filtered-in-php": "המסננים שהחלת רחבים מדי, נא לצמצם את החיפוש לקבלת תוצאות טובות יותר.",
 	"checkuser-suggestedinvestigations-filter-button": "מסנן",
 	"checkuser-suggestedinvestigations-filter-dialog-title": "מסננים",

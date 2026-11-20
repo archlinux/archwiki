@@ -40,6 +40,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Benotzer",
 	"templatedata-doc-params": "Parametere vun der Schabloun",
 	"templatedata-editbutton": "Schablounendonnéeën änneren",
+	"templatedata-errormsg-jsonbadformat": "Feelerhaft JSON-Format. Dir kënnt de Virgang ofbriechen, fir et ze verbesseren oder ewechzehuelen, oder Dir kënnt déi aktuell Schablounendonnéeën duerch neier ersetzen.",
 	"templatedata-errormsg-insertblank": "Sidd Dir sécher, datt Dir Schablounendonnéeën ouni Informatiounen drasetze wëllt?",
 	"templatedata-exists-on-related-page": "Opgepasst: Et gëtt schonn e Block mat Schablounendonnéeën op der zougehéiereger Säit „[[$1]]“.",
 	"templatedata-helplink": "Informatiounen iwwer Schablounendonnéeën",

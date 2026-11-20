@@ -166,7 +166,10 @@
 			"아라",
 			"Kanato Hinokuma",
 			"Ska101~translate",
-			"Beta empire"
+			"Beta empire",
+			"Honoka55",
+			"Lakejason0",
+			"Niishiki"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|カテゴリ}}",
@@ -2139,7 +2142,7 @@
 	"enotif_body_intro_changed": "{{SITENAME}}のページ「$1」が$PAGEEDITDATEに、$2 によって{{GENDER:$2|変更}}されました。現在の版は $3 で閲覧できます。",
 	"enotif_lastvisited": "最終訪問以降のすべての変更は $1 をご覧ください。",
 	"enotif_lastdiff": "この変更内容を表示するには、 $1 をご覧ください。",
-	"enotif_pagelog": "このページの記録を表示するには、 $1を参照してください。",
+	"enotif_pagelog": "このページの記録を表示するには、 $1 を参照してください。",
 	"enotif_anon_editor": "匿名利用者 $1",
 	"enotif_temp_editor": "仮利用者$1",
 	"enotif_body": "$WATCHINGUSERNAMEさん\n\n$PAGEINTRO $NEWPAGE $PAGELOG\n\n編集内容の要約: $PAGESUMMARY ($PAGEMINOREDIT)\n\n投稿者の連絡先:\nメール: $PAGEEDITOR_EMAIL\nウィキ: $PAGEEDITOR_WIKI\n\nログインした状態でこのページを訪れない限り、これ以上の活動に対する通知は送信されません。ウォッチリスト内のすべてのページについて、通知を再設定することもできます。\n\n{{SITENAME}}通知システム\n\n--\nメール通知の設定は、以下のページで変更してください:\n{{canonicalurl:{{#special:Preferences}}}}\n\nウォッチリストの設定は、以下のページで変更してください:\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nこのページは、以下のページでウォッチリストから削除できます:\n$UNWATCHURL\n\nご意見、お問い合わせ:\n$HELPPAGE",
@@ -3184,7 +3187,7 @@
 	"lag-warn-high": "データベースサーバーの大幅な遅延のため、この一覧には $1 {{PLURAL:$1|秒}}前以降の変更内容が表示されていないおそれがあります。",
 	"watchlistedit-normal-title": "ウォッチリストの編集",
 	"watchlistedit-normal-check-all": "すべてチェック",
-	"watchlistedit-normal-done": "ウォッチリストから {{PLURAL:$1|$1 件のページ}}を除去しました:あなたのウォッチリストから{{PLURAL:$1|1ページが|$1ページが}}削除されました:",
+	"watchlistedit-normal-done": "ウォッチリストから {{PLURAL:$1|$1 件のページ}}を除去しました:",
 	"watchlistedit-search-label": "検索:",
 	"watchlistedit-search-placeholder": "ウォッチリストに登録されているページを検索",
 	"watchlistedit-raw-title": "ウォッチリストをテキストで編集",
@@ -3207,7 +3210,7 @@
 	"watchlistedit-table-title-pages": "ページ名",
 	"watchlistedit-table-title-expiry": "有効期限",
 	"watchlistedit-table-remove-selected": "{{PLURAL:$1|ページ}}を除去",
-	"watchlistedit-table-remove-selected-error": "ページを削除できませんでした。",
+	"watchlistedit-table-remove-selected-error": "ページを除去できませんでした",
 	"watchlistedit-unwatch-confirmation": "「$1」をウォッチリストから{{PLURAL:$2|除去}}しますか？",
 	"watchlistedit-unwatch-confirmation-empty": "ウォッチリストから除去するページを選択してください。",
 	"watchlistedit-unwatch-confirmation-accept": "除去",
@@ -4104,5 +4107,6 @@
 	"table-of-contents-hide-button-aria-label": "目次の非表示",
 	"diff-usergroups": "$1 {{PLURAL:$1|利用者グループ}}",
 	"languageselector-no-results": "見つかりませんでした。",
-	"languageselector-invalid-input": "「$1」は有効な言語ではありません。"
+	"languageselector-invalid-input": "「$1」は有効な言語ではありません。",
+	"mypage-disallowed-action": "セキュリティ上の理由から、ページ Special:MyPage ではアクション「 $1 」を使用できません。"
 }

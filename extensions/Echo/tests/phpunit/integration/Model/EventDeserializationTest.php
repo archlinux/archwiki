@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Test\Integration;
 
+use __PHP_Incomplete_Class;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Title\TitleValue;
 use MediaWikiIntegrationTestCase;
 use TestLogger;
 
@@ -153,6 +155,17 @@ class EventDeserializationTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( Event::newFromRow( (object)$legacyCorruptedRow ) );
 
 		$this->assertCount( 2, $testLogger->getBuffer() );
+	}
+
+	/**
+	 * @covers ::deserializeExtra
+	 */
+	public function testDeserializeLegacyObjectsOnlyFromRow() {
+		$extra = [ 'title' => new TitleValue( NS_MAIN, 'Test' ) ];
+		$row = $this->buildRow( 1, 'test', serialize( $extra ) );
+
+		$this->assertInstanceOf( TitleValue::class, Event::newFromRow( (object)$row )->getExtra()['title'] );
+		$this->assertInstanceOf( __PHP_Incomplete_Class::class, Event::newFromArray( $row )->getExtra()['title'] );
 	}
 
 }

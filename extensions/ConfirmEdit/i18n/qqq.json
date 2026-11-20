@@ -27,7 +27,7 @@
 	"captcha-info-help": "API help text for the description.",
 	"captcha-id-label": "Label for the CAPTCHA id (only shown in the API).",
 	"captcha-id-help": "API help text for the CAPTCHA id.",
-	"captcha-ip-whitelist": "{{Notranslate}} This message is used for storing a list of IP addresses and IP address ranges whitelisted from CAPTCHA on the wiki. New entries should be separated by newlines and the line should contain only a valid IP address or IP address range. Leading and trailing whitespace is allowed but if there is any other character, that line will be ignored.",
+	"captcha-ip-whitelist": "{{Notranslate}} This message is used for storing a list of IP addresses and IP address ranges exempt from CAPTCHA on the wiki. New entries should be separated by newlines and the line should contain only a valid IP address or IP address range. Leading and trailing whitespace is allowed but if there is any other character, that line will be ignored.",
 	"captcha-addurl": "The explanation of CAPTCHA shown to users trying to add new external links.\n{{Related|ConfirmEdit-addurl}}",
 	"captcha-badlogin": "The explanation of CAPTCHA shown to users failed three times to type in correct password.\n{{Related|ConfirmEdit-badlogin}}",
 	"captcha-createaccount": "The explanation of CAPTCHA shown to users trying to create a new account.\n{{Related|ConfirmEdit-createaccount}}",

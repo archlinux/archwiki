@@ -25,13 +25,14 @@ class RecoveryCodesRemoveTemporaryForm extends OATHAuthOOUIHTMLForm {
 		IContextSource $context,
 		OATHAuthModuleRegistry $moduleRegistry
 	) {
-		$key = $module->ensureExistence( $oathUser );
-
-		foreach ( $key->getRecoveryCodes() as $code ) {
-			if ( $code->isPermanent() ) {
-				$this->permanentCodesCount++;
-			} else {
-				$this->temporaryCodesCount++;
+		$key = $module->getInstance( $oathUser );
+		if ( $key ) {
+			foreach ( $key->getRecoveryCodes() as $code ) {
+				if ( $code->isPermanent() ) {
+					$this->permanentCodesCount++;
+				} else {
+					$this->temporaryCodesCount++;
+				}
 			}
 		}
 
@@ -83,7 +84,10 @@ class RecoveryCodesRemoveTemporaryForm extends OATHAuthOOUIHTMLForm {
 	}
 
 	public function onSubmit( array $formData ): Status|bool|array|string {
-		$key = $this->module->ensureExistence( $this->oathUser );
+		$key = $this->module->getInstance( $this->oathUser );
+		if ( !$key ) {
+			return false;
+		}
 		$key->removeTemporaryCodes();
 		$this->oathRepo->updateKey( $this->oathUser, $key );
 

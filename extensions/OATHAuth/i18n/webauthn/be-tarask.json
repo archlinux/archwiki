@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ucukor"
+		]
+	},
+	"oathauth-webauthn-module-label": "Вэб-аўтэнтыфікацыя (WebAuthn)",
+	"oathauth-webauthn-ui-remove-key": "Прыбраць",
+	"oathauth-webauthn-module-description": "WebAuthn (вэб-аўтэнтыфікацыя) — гэта вэб-стандарт, выдадзены Кансорцыюмам сусьветнага павуціньня (W3C). WebAuthn — ключавы складнік праекту FIDO2 пад кіраўніцтвам Альянсу FIDO. Мэтай праекту — стандартызацыя інтэрфэйсу аўтэфікацыі карыстальнікаў вэб-праграмаў і службаў з дапамогай шыфраваньня адкрытымі ключамі. [https://en.wikipedia.org/wiki/WebAuthn Даведацца болей]"
+}

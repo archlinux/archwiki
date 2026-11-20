@@ -6,8 +6,8 @@ use MediaWiki\Extension\CheckUser\CheckUserQueryInterface;
 use MediaWiki\Extension\CheckUser\Services\CheckUserLookupUtils;
 use MediaWiki\Logging\LogEntryBase;
 use MediaWiki\Logging\LogPage;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Revision\RevisionArchiveRecord;
-use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
@@ -354,7 +354,7 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetRevisionRecordForDeletedRevision() {
-		$title = Title::newFromText( 'Testing' );
+		$title = PageReferenceValue::localReference( NS_MAIN, 'Testing' );
 		// Create a page and get the revision ID associated with the edit that created the page.
 		$editStatus = $this->editPage( $title, 'Testing', 0 );
 		$this->assertStatusGood( $editStatus );
@@ -375,7 +375,7 @@ class CheckUserLookupUtilsTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetRevisionRecordForRevision() {
-		$title = Title::newFromText( 'Testing' );
+		$title = PageReferenceValue::localReference( NS_MAIN, 'Testing' );
 		// Create a page and get the revision ID associated with the edit that created the page.
 		$editStatus = $this->editPage( $title, 'Testing', 0 );
 		$this->assertStatusGood( $editStatus );

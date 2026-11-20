@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kjeanclaude"
+			"Kjeanclaude",
+			"Mahuton"
 		]
 	},
 	"mobile-frontend-history": "Nian floua boué nga i katchilè moun bé si'n sa.",
@@ -10,5 +11,6 @@
 	"mobile-frontend-main-menu-login": "Wlou noun",
 	"mobile-frontend-main-menu-settings": "Liké siésiélè moun",
 	"mobile-frontend-placeholder": "Kounndè {{SITENAME}} i noun",
-	"mobile-frontend-random-button": "Kpèkoungba"
+	"mobile-frontend-random-button": "Kpèkoungba",
+	"minerva-page-actions-overflow": "Ekoun"
 }

@@ -16,6 +16,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|još jedan autor|još $1 autora}}",
 	"multimediaviewer-multiple-authors-combine": "$1 i $2",
 	"multimediaviewer-metadata-error": "Nije bilo moguće učitavanje pojedinosti slike (pogreška: $1)",
+	"multimediaviewer-file-not-found-error": "Žao nam je, datoteka $1 ne može se prikazati jer ne postoji na trenutačnoj stranici.",
 	"multimediaviewer-thumbnail-error": "Žao nam je, datoteku nije moguće prikazati",
 	"multimediaviewer-thumbnail-error-description": "Čini se da je došlo do tehničke poteškoće. Možete $1 ako se opet pojavi. Pogreška: $2",
 	"multimediaviewer-thumbnail-error-retry": "ponoviti",

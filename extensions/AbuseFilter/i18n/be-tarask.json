@@ -589,6 +589,8 @@
 	"abusefilter-invalid-request-noid": "Няправільны запыт! Вы павінны атрымаць доступ да асабістых зьвестак журналу праз форму на старонцы зьвестак пра журнал злоўжываньняў і пазначыць прычыну.",
 	"blockedexternaldomains": "Заблякаваныя вонкавыя дамэны",
 	"abusefilter-blocked-domains-title": "Заблякаваныя вонкавыя дамэны",
+	"abusefilter-blocked-domains-remove": "прыбраць",
+	"abusefilter-blocked-domains-remove-submit": "Прыбраць",
 	"log-description-abusefilterprivatedetails": "Гэты журнал паказвае сьпіс выпадкаў, калі карыстальнік зьвяртаўся да асабістых зьвестак журналу злоўжываньняў.",
 	"abusefilter-noreason": "Папярэджаньне: каб праглядзець прыватныя зьвесткі гэтага журналу, вы мусіце падаць прычыну.",
 	"abusefilter-log-ip-not-available": "Недаступна",

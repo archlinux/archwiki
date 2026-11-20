@@ -22,7 +22,7 @@
 	"nuke-tools-notice-noperm": "تاسو د مخونو ډله‌ييز ړنگولو اجازه نه لرئ.",
 	"nuke-tools-notice-blocked": "يو کارنده بنديز ستاسو د مخونو د ډله‌ييز ړنگولو وړتيا اغېزمنوي.",
 	"nuke-tools-confirm": "لاندې {{PLURAL:$1|مخ ړنگېدو لپاره غوره شوی و|$1 مخونه ړنگېدو لپاره غوره شوي وو}}. د مخ لنډيز چمتو کړئ او د مخ ړنگولو لپاره په '{{int:nuke-submit-delete}}' کليک وکړئ.",
-	"nuke-submit-list": "د مخونو لړليک کښل",
+	"nuke-submit-list": "مخونه لړليکول",
 	"nuke-submit-continue": "دوام ورکول",
 	"nuke-submit-delete": "ړنگول",
 	"right-nuke": "د ډله‌ييز ړنگون مخونه",

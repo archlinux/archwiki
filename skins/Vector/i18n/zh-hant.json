@@ -24,7 +24,8 @@
 			"Xiplus",
 			"捍粵者",
 			"魔琴",
-			"Peterxy"
+			"Peterxy",
+			"Srapoj"
 		]
 	},
 	"skinname-vector": "舊版Vector（2010）",
@@ -67,7 +68,7 @@
 	"vector-feature-custom-font-size-1-label": "標準",
 	"vector-feature-custom-font-size-2-label": "大",
 	"skin-theme-name": "顏色",
-	"skin-theme-description": "[實驗版本，遇到問題的可能性高] 減少裝置螢幕散發出的光線。",
+	"skin-theme-description": "&#91;實驗版本，遇到問題的可能性高&#93; 減少裝置螢幕散發出的光線。",
 	"skin-theme-day-label": "淺色",
 	"skin-theme-night-label": "深色",
 	"skin-theme-os-label": "自動",

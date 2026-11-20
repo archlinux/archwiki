@@ -58,7 +58,9 @@
 			"Zetud",
 			"Alkmen-Alesia",
 			"Jules88!!",
-			"Network traveller"
+			"Network traveller",
+			"Allylly",
+			"NClara"
 		]
 	},
 	"apihelp-main-param-action": "Action à effectuer. Ce paramètre doit être envoyé comme partie de l'URL de la requête (et non dans le corps du POST) pour en faciliter l'utilisation lors du débogage, l'analyse, ou pour le routage ou le filtrage des requêtes.",
@@ -928,6 +930,7 @@
 	"apihelp-query+imageinfo-paramvalue-prop-sha1": "Ajoute le code de hachage SHA-1 du fichier. Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",
 	"apihelp-query+imageinfo-paramvalue-prop-mime": "Ajoute le type MIME du fichier. Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",
 	"apihelp-query+imageinfo-paramvalue-prop-thumbmime": "Ajoute le type MIME de la vignette de l’image (nécessite l’URL et le paramètre $1urlwidth). Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",
+	"apihelp-query+imageinfo-paramvalue-prop-thumburls": "Ajoute les URL des vignettes du fichier. Si la version du fichier a été supprimée, une propriété <samp>filehidden</samp> sera renvoyée.",
 	"apihelp-query+imageinfo-paramvalue-prop-mediatype": "Ajoute le type de média du fichier. Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",
 	"apihelp-query+imageinfo-paramvalue-prop-metadata": "Liste les métadonnées Exif de la version du fichier. Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",
 	"apihelp-query+imageinfo-paramvalue-prop-commonmetadata": "Liste les métadonnées génériques du format du fichier pour la version du fichier. Si le fichier a été supprimé d’une version, une propriété <samp>filehidden</samp> sera renvoyée.",

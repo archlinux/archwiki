@@ -51,7 +51,7 @@ class StatusReasonFormatter {
 			if ( $html !== '' ) {
 				$template = $localizer->msg(
 					'checkuser-suggestedinvestigations-status-reason-with-performer'
-				)->plain();
+				)->parse();
 				$html = strtr( $template, [ '$1' => $html, '$2' => $performerLink ] );
 			} else {
 				$html = $performerLink;

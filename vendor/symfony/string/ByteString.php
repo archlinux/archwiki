@@ -109,8 +109,10 @@ class ByteString extends AbstractString
     {
         $str = clone $this;
 
-        $parts = explode(' ', trim(ucwords(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $this->string))));
-        $parts[0] = 1 !== \strlen($parts[0]) && ctype_upper($parts[0]) ? $parts[0] : lcfirst($parts[0]);
+        $words = trim(preg_replace('/[^a-zA-Z0-9\x7f-\xff]++/', ' ', $this->string));
+        $parts = explode(' ', ucwords($words));
+        // a leading uppercase letter followed by another one is kept, as in AbstractUnicodeString::camel()
+        $parts[0] = preg_match('/^[A-Z]{2}/', $words) || (1 !== \strlen($parts[0]) && ctype_upper($parts[0])) ? $parts[0] : lcfirst($parts[0]);
         $str->string = implode('', $parts);
 
         return $str;
@@ -183,7 +185,11 @@ class ByteString extends AbstractString
             return null;
         }
 
-        $i = $this->ignoreCase ? stripos($this->string, $needle, $offset) : strpos($this->string, $needle, $offset);
+        try {
+            $i = $this->ignoreCase ? stripos($this->string, $needle, $offset) : strpos($this->string, $needle, $offset);
+        } catch (\ValueError) {
+            return null;
+        }
 
         return false === $i ? null : $i;
     }
@@ -200,7 +206,11 @@ class ByteString extends AbstractString
             return null;
         }
 
-        $i = $this->ignoreCase ? strripos($this->string, $needle, $offset) : strrpos($this->string, $needle, $offset);
+        try {
+            $i = $this->ignoreCase ? strripos($this->string, $needle, $offset) : strrpos($this->string, $needle, $offset);
+        } catch (\ValueError) {
+            return null;
+        }
 
         return false === $i ? null : $i;
     }

@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\CheckUser\Api\Rest\Handler;
 use MediaWiki\Block\BlockManager;
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Extension\CheckUser\Jobs\LogTemporaryAccountAccessJob;
 use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLoggerFactory;
@@ -30,6 +31,13 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	use TemporaryAccountNameTrait;
 	use TemporaryAccountRevisionTrait;
 	use TemporaryAccountLogTrait;
+
+	/**
+	 * Users that IP data was looked up for. The keys are the canonical names.
+	 *
+	 * @var array<string,true>
+	 */
+	private array $revealedUsers = [];
 
 	public function __construct(
 		Config $config,
@@ -71,13 +79,11 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	 * @inheritDoc
 	 */
 	public function makeLog( $identifier ) {
-		$users = $this->getValidatedBody()['users'] ?? [];
-
 		if ( $this->autoRevealLookup->isAutoRevealOn( $this->getAuthority() ) ) {
 			$logger = $this->loggerFactory->getLogger();
 			$performerName = $this->getAuthority()->getUser()->getName();
 
-			foreach ( $users as $username => $params ) {
+			foreach ( array_keys( $this->revealedUsers ) as $username ) {
 				$logger->logViewIPsWithAutoReveal(
 					$performerName,
 					$username
@@ -86,7 +92,7 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 			return;
 		}
 
-		foreach ( $users as $username => $params ) {
+		foreach ( array_keys( $this->revealedUsers ) as $username ) {
 			$this->jobQueueGroup->push(
 				LogTemporaryAccountAccessJob::newSpec(
 					$this->getAuthority()->getUser(),
@@ -127,6 +133,10 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 			if ( $this->extensionRegistry->isLoaded( 'Abuse Filter' ) ) {
 				$identifier['abuseLogIds'] = $params['abuseLogIds'] ?? [];
 			}
+			if ( $this->hasRequestedIdentifiers( $identifier ) ) {
+				$canonicalName = $this->userNameUtils->getCanonical( (string)$username );
+				$this->revealedUsers[$canonicalName] = true;
+			}
 			$results[$username] = $this->getData( $identifier, $dbr );
 		}
 
@@ -137,6 +147,18 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Returns whether any IP data was looked up for the given identifiers.
+	 *
+	 * @param array<string,mixed> $identifier Lists of IDs, as built by {@link self::getResults}.
+	 */
+	private function hasRequestedIdentifiers( array $identifier ): bool {
+		return $identifier['lastUsedIp'] ||
+			count( $identifier['revIds'] ) > 0 ||
+			count( $identifier['logIds'] ) > 0 ||
+			count( $identifier['abuseLogIds'] ?? [] ) > 0;
 	}
 
 	/**
@@ -261,6 +283,8 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 	 * This is done to ensure that the IP reveal logs correctly indicate all the users that were revealed.
 	 * Otherwise a user could specify an afl_id for a different temporary account and avoid creating a log.
 	 *
+	 * Also removes afl_id values of abuse_filter_log rows that the authority cannot see.
+	 *
 	 * @param array $body The data returned by {@link self::getValidatedBody}
 	 * @return array The data to use as the value of {@link self::getValidatedBody} from now on
 	 */
@@ -271,10 +295,15 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 		}
 
 		if ( count( $abuseLogIds ) !== 0 ) {
-			$abuseFilterPrivateLogDetailsLookup = AbuseFilterServices::getLogDetailsLookup();
-			$groupedAbuseFilterLogIds = $abuseFilterPrivateLogDetailsLookup->groupAbuseFilterLogIdsByPerformer(
-				$abuseLogIds
-			);
+			$abuseLogIds = $this->filterOutHiddenAbuseLogIds( $abuseLogIds );
+
+			$groupedAbuseFilterLogIds = [];
+			if ( count( $abuseLogIds ) !== 0 ) {
+				$abuseFilterPrivateLogDetailsLookup = AbuseFilterServices::getLogDetailsLookup();
+				$groupedAbuseFilterLogIds = $abuseFilterPrivateLogDetailsLookup->groupAbuseFilterLogIdsByPerformer(
+					$abuseLogIds
+				);
+			}
 
 			foreach ( $body['users'] as $username => &$params ) {
 				$params['abuseLogIds'] = $groupedAbuseFilterLogIds[$username] ?? [];
@@ -282,6 +311,41 @@ class BatchTemporaryAccountHandler extends AbstractTemporaryAccountHandler {
 		}
 
 		return $body;
+	}
+
+	/**
+	 * Filter out afl_id values of abuse_filter_log rows that the authority cannot see.
+	 *
+	 * A row is not visible if its filter is suppressed, if the row is hidden, or if
+	 * the associated revision is deleted, and the authority does not have the
+	 * rights to see it.
+	 *
+	 * @param array<int|string> $ids
+	 * @return array<int|string>
+	 */
+	private function filterOutHiddenAbuseLogIds( array $ids ): array {
+		$authority = $this->getAuthority();
+		$afPermissionManager = AbuseFilterServices::getPermissionManager();
+
+		// TODO: This should be ideally exposed by some service in AbuseFilter
+		$rows = $this->getConnectionProvider()->getReplicaDatabase()->newSelectQueryBuilder()
+			->select( [ 'afl_id', 'afl_filter_id', 'afl_global', 'afl_deleted', 'afl_rev_id' ] )
+			->from( 'abuse_filter_log' )
+			->where( [ 'afl_id' => $ids ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
+
+		// Keep these checks in sync with SpecialAbuseLog::getEntryVisibilityForUser()
+		$visibleIds = [];
+		foreach ( $rows as $row ) {
+			$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $authority, $afPermissionManager );
+			if ( $visibility !== SpecialAbuseLog::VISIBILITY_VISIBLE ) {
+				continue;
+			}
+			$visibleIds[] = $row->afl_id;
+		}
+
+		return $visibleIds;
 	}
 
 	/**

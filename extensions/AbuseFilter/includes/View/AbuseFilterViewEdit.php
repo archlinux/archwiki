@@ -195,22 +195,6 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	}
 
 	/**
-	 * @param string|\Wikimedia\Message\MessageSpecifier $msg
-	 */
-	private function showUnrecoverableError( $msg ): void {
-		$out = $this->getOutput();
-
-		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
-		$out->addHTML( Html::errorBox( $this->msg( $msg )->parseAsBlock() ) );
-		$href = $this->getTitle()->getFullURL();
-		$btn = new OOUI\ButtonWidget( [
-			'label' => $this->msg( 'abusefilter-return' )->text(),
-			'href' => $href
-		] );
-		$out->addHTML( (string)$btn );
-	}
-
-	/**
 	 * Builds the full form for edit filters, adding it to the OutputPage. This method can be called in 5 different
 	 * situations, for a total of 5 different data sources for $filterObj and $actions:
 	 *  1 - View the result of importing a filter

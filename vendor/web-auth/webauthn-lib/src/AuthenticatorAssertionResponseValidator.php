@@ -38,6 +38,10 @@ class AuthenticatorAssertionResponseValidator implements CanLogData, CanDispatch
     }
 
     /**
+     * The backup eligibility of the credential record is never overwritten: the BE flag cannot change during the life
+     * of a credential, and CheckBackupEligibilityIsUnchanged rejects an assertion that claims another value. It is only
+     * recorded here when the credential record has none yet, as stored before the flag was tracked.
+     *
      * @see https://www.w3.org/TR/webauthn/#verifying-assertion
      */
     public function check(
@@ -77,11 +81,11 @@ class AuthenticatorAssertionResponseValidator implements CanLogData, CanDispatch
             $previousBackupEligible = $credentialRecord->backupEligible;
             $previousBackupStatus = $credentialRecord->backupStatus;
 
-            $credentialRecord->counter = $authenticatorAssertionResponse->authenticatorData->signCount; //26.1.
-            $credentialRecord->backupEligible = $authenticatorAssertionResponse->authenticatorData->isBackupEligible(); //26.2.
-            $credentialRecord->backupStatus = $authenticatorAssertionResponse->authenticatorData->isBackedUp(); //26.2.
+            $credentialRecord->counter = $authenticatorAssertionResponse->authenticatorData->signCount; // 26.1.
+            $credentialRecord->backupEligible ??= $authenticatorAssertionResponse->authenticatorData->isBackupEligible();
+            $credentialRecord->backupStatus = $authenticatorAssertionResponse->authenticatorData->isBackedUp(); // 26.2.
             if ($credentialRecord->uvInitialized === false) {
-                $credentialRecord->uvInitialized = $authenticatorAssertionResponse->authenticatorData->isUserVerified(); //26.3.
+                $credentialRecord->uvInitialized = $authenticatorAssertionResponse->authenticatorData->isUserVerified(); // 26.3.
             }
 
             // Dispatch events if backup state changed
@@ -108,7 +112,7 @@ class AuthenticatorAssertionResponseValidator implements CanLogData, CanDispatch
              * OPTIONALLY, if response.attestationObject is present, update credentialRecord.attestationObject to the value of response.attestationObject and update credentialRecord.attestationClientDataJSON to the value of response.clientDataJSON.
              */
 
-            //All good. We can continue.
+            // All good. We can continue.
             $this->logger->info('The assertion is valid');
             $this->logger->debug('Credential Record', [
                 'credentialRecord' => $credentialRecord,

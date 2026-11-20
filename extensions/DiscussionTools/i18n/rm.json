@@ -8,6 +8,8 @@
 	"discussiontools-defaultsummary-reply": "Resposta",
 	"discussiontools-newtopic-missing-title": "Endatar in titel per il tema da discussiun.",
 	"discussiontools-newtopic-placeholder-title": "Object",
+	"discussiontools-newtopicssubscription-button-subscribe-label": "Abunar",
+	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Deconnectar",
 	"discussiontools-replylink": "{{GENDER:|respunder}}",
 	"discussiontools-replywidget-advanced": "Avanzà",
 	"discussiontools-replywidget-cancel": "Interrumper",
@@ -19,11 +21,17 @@
 	"discussiontools-replywidget-preview": "Prevista",
 	"discussiontools-replywidget-reply": "{{GENDER:|Respunder}}",
 	"discussiontools-replywidget-summary": "Resumaziun",
+	"discussiontools-replywidget-watchthis": "{{#FORMAL:Agiunta|Agiunschai}} questa pagina a {{#FORMAL:tia|sia}} [[Special:Watchlist|glista d'observaziun]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persuna participada|persunas participadas}} a la discussiun",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|commentari|commentaris}}",
 	"discussiontools-topicheader-latestcomment": "Davos commentari: $1",
+	"discussiontools-topicsubscription-action-subscribe-button": "Abunar",
 	"discussiontools-topicsubscription-button-subscribe": "abunar",
 	"discussiontools-topicsubscription-button-subscribe-label": "Abunar",
 	"discussiontools-topicsubscription-button-unsubscribe": "deconnectar",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Deconnectar"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Deconnectar",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{#FORMAL:Ti vegns|Vus vegnis}} avisà davart novs commentaris davart quest tema.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{#FORMAL:{{GENDER:|Ti}} has|Vus avais}} abonnà!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{#FORMAL:Ti na survegns|Vus na survegnis}} nagins avis pli davart novs commentaris davårt quest tema.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{#FORMAL:{{GENDER:|Ti}} t'hast|Vus avais}} avisà."
 }

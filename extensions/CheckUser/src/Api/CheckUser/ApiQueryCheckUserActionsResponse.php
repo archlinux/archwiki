@@ -111,18 +111,33 @@ class ApiQueryCheckUserActionsResponse extends ApiQueryCheckUserAbstractResponse
 				$action['user'] = $this->messageLocalizer->msg( 'rev-deleted-user' )->text();
 			}
 
-			// If the title is a user page and the username in this user page link is hidden from the current authority,
-			// then replace the title with the 'rev-deleted-user' message.
+			// If the title is hidden from the current user, or if the title is a userpage for the user the user
+			// cannot see, then hide the title and namespace from the response.
+			$titleHiddenMessageKey = null;
+			if (
+				$logEntry !== null &&
+				!LogEventsList::userCanBitfield(
+					$logEntry->getDeleted(),
+					LogPage::DELETED_ACTION,
+					$this->module->getAuthority()
+				)
+			) {
+				$titleHiddenMessageKey = 'rev-deleted-event';
+			}
 			$title = Title::makeTitle( $row->namespace, $row->title );
-			if ( $title->getNamespace() === NS_USER ) {
+			if ( $titleHiddenMessageKey === null && $title->getNamespace() === NS_USER ) {
 				$titleUser = $this->userFactory->newFromName( $title->getBaseText() );
 				if (
 					$titleUser &&
 					$titleUser->isHidden() &&
 					!$this->module->getUser()->isAllowed( 'hideuser' )
 				) {
-					$action['title'] = $this->messageLocalizer->msg( 'rev-deleted-user' )->text();
+					$titleHiddenMessageKey = 'rev-deleted-user';
 				}
+			}
+			if ( $titleHiddenMessageKey !== null ) {
+				$action['ns'] = null;
+				$action['title'] = $this->messageLocalizer->msg( $titleHiddenMessageKey )->text();
 			}
 
 			$summary = $this->getSummary( $row, $revRecord, $logEntry );

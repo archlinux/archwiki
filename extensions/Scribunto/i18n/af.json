@@ -3,7 +3,8 @@
 		"authors": [
 			"Arnobarnard",
 			"Fwolff",
-			"Naudefj"
+			"Naudefj",
+			"Pyn3tv"
 		]
 	},
 	"scribunto-line": "op reël $1",
@@ -20,5 +21,6 @@
 	"scribunto-lua-in-main": "in die hoofgedeelte",
 	"scribunto-lua-in-function-at": "in die funksie op $1:$2",
 	"scribunto-lua-error-location": "Luafout $1: $2",
-	"scribunto-lua-error": "Lua-fout: $2"
+	"scribunto-lua-error": "Lua-fout: $2",
+	"scribunto-lua-warning": "Skripwaarskuwing: $1"
 }

@@ -5,8 +5,8 @@
 		]
 	},
 	"templatestyles": "کينډۍ‌ښودبڼې",
-	"templatestyles-desc": "هرې کينډۍ لپاره بېلې ښودبڼې لارښود شوني کوي",
-	"templatestyles-missing-src": "کينډۍ‌ښودبڼې <code>src</code> بايد تش نه وي.",
+	"templatestyles-desc": "هرې کينډۍ لپاره بېلې ښودبڼې لارښود شونی کوي",
+	"templatestyles-missing-src": "کينډۍ‌ښودبڼې <code>src</code> بايد تشې نه وي.",
 	"templatestyles-invalid-src": "کينډۍ‌ښودبڼې لپاره ناسم سرليک<code>src</code> ځانگړی‌کونگ.",
 	"templatestyles-bad-src-missing": "[[:$1|$2]] مخ کې هېڅ منځپانگه نشته.",
 	"templatestyles-bad-src": "[[:$1|$2]] مخ بايد د کينډۍ‌ښودبڼو لپاره منځپانگيزه رغبېلگه \"{{int:content-model-sanitized-css}}\" ولري (اوسنۍ رغبېلگه \"$3\" ده).",

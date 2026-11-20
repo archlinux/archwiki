@@ -185,7 +185,9 @@ class WebAuthnAuthenticator {
 			return Status::newGood( $user );
 		}
 		$this->logger->warning(
-			"Webauthn login failed for user {$user->getUser()->getName()}"
+			'WebAuthn login failed for user {user}', [
+				'user' => $user->getUser()->getName(),
+			]
 		);
 
 		$this->oathLogger->logFailedVerification( $user->getUser() );

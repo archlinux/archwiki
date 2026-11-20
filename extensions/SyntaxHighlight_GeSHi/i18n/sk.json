@@ -4,13 +4,26 @@
 			"Helix84",
 			"Luky001",
 			"TomášPolonec",
-			"Teslaton"
+			"Teslaton",
+			"Wizzard"
 		]
 	},
 	"syntaxhighlight-desc": "Poskytuje zvýrazňovanie syntaxe <code>&lt;syntaxhighlight&gt;</code> pomocou [http://pygments.org/ Pygments – zvýrazňovača syntaxe v Pythone]",
+	"syntaxhighlight-error-category": "Stránky s chybami zvýrazňovania syntaxe",
+	"syntaxhighlight-error-category-desc": "Pri pokuse zvýrazniť kód na stránke sa vyskytla chyba.",
+	"syntaxhighlight-enclose-category": "Stránky používajúce zastarané atribúty enclose",
+	"syntaxhighlight-enclose-category-desc": "Zvýrazňovanie syntaxe na stránke používa zastaranú syntax enclose.",
+	"syntaxhighlight-source-category": "Stránky používajúce zastarané značky source",
+	"syntaxhighlight-source-category-desc": "Zvýrazňovanie syntaxe na stránke používa zastarané značky source.",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kód",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jazyk",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(žiadny)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Zobraziť čísla riadkov",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Počítať od čísla",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kódu",
+	"syntaxhighlight-error-pygments-invocation-failure": "Nepodarilo sa spustiť Pygments",
+	"syntaxhighlight-error-unknown-language": "Neznámy jazyk „$1“",
+	"syntaxhighlight-error-exceeds-size-limit": "Veľkosť kódu $1 {{PLURAL:$1|bajt|bajty|bajtov}} presahuje povolené maximum $2 {{PLURAL:$2|bajt|bajty|bajtov}}",
 	"syntaxhighlight-button-copy": "Skopírovať",
 	"syntaxhighlight-button-copied": "Skopírované!"
 }

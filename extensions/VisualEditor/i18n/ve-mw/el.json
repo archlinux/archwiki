@@ -23,7 +23,8 @@
 			"Tifa93",
 			"UnchartedViolator",
 			"Αντιγόνη",
-			"Ανώνυμος Βικιπαιδιστής"
+			"Ανώνυμος Βικιπαιδιστής",
+			"Warudo"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -320,6 +321,7 @@
 	"visualeditor-mwpredialog-title": "Προμορφοποιημένο σκέτο κείμενο",
 	"visualeditor-mwsignature-tool": "Η υπογραφή σας",
 	"visualeditor-preference-newwikitexteditor-enable": "Χρήση της λειτουργίας κώδικα wiki εντός του οπτικού επεξεργαστή, αντί ενός διαφορετικού επεξεργαστή κώδικα wiki.",
+	"visualeditor-preference-newwikitexteditor-help": "Αυτή ορισμένες φορές καλείται «2017 wikitext editor» (επεξεργαστής κώδικα wiki 2017).",
 	"visualeditor-preference-tabs": "Λειτουργία επεξεργασίας:",
 	"visualeditor-preference-tabs-multi-tab": "Δείξε μου και τις δύο καρτέλες επεξεργασίας",
 	"visualeditor-preference-tabs-prefer-ve": "Πάντα με τον οπτικό επεξεργαστή, αν είναι δυνατόν",

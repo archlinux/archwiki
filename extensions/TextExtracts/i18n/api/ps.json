@@ -1,9 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"شاه زمان پټان"
+			"شاه زمان پټان",
+			"باران"
 		]
 	},
+	"apihelp-query+extracts-param-chars": "څومره لوښې بايد بېرته راوگرځول شي. ار ليک چې بېرته راستون شوی، ښايي يو څه اوږد وي.",
+	"apihelp-query+extracts-param-sentences": "څو جملې بايد بېرته راوگرځول شي.",
+	"apihelp-query+extracts-param-limit": "څومره راويستنې بايد راوگرځول شي. ( ډېری راويستنې يوازې هغه وخت راگرځول کېدی شي، کله چې exintro، true ټاکل شوی وي.)",
 	"apihelp-query+extracts-paramvalue-sectionformat-plain": "هېڅ بڼه نشته.",
-	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "د ويکي‌ليک ښودبڼه بڼل (==لکه دا==)."
+	"apihelp-query+extracts-paramvalue-sectionformat-wiki": "د ويکي‌ليک ښودبڼه بڼل (==لکه دا==).",
+	"apihelp-query+extracts-example-1": "د ۱۷۵ لوښو يوه راويسته ترلاسه کړئ",
+	"apiwarn-textextracts-limit": "د ټولې ليکنې د راويستنې غوښتنې لپاره <var>exlimit</var> ډېر لوی و، $1 ته راټيټ شو."
 }

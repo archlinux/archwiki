@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aue Nai",
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
 	"categorytree": "တၞဆု ကဏ္ဍ",
@@ -20,7 +21,7 @@
 	"categorytree-num-categories": "$1 ကဏ္ဍ",
 	"categorytree-num-pages": "$1 မုက်လိက်",
 	"categorytree-num-files": "$1 ဝှာင်",
-	"categorytree-num-empty": "မုဟွံမွဲ",
+	"categorytree-num-empty": "မူဟၟဲ",
 	"categorytree-load": "ပတိုန်",
 	"categorytree-loading": "ပတိုန်ဒၟံၚ်...",
 	"categorytree-nothing-found": "မုမွဲမှဟွံဆဵု",

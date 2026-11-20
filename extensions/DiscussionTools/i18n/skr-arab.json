@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Saraiki"
+			"Saraiki",
+			"Tauqeerkhansurani"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "ٹھیک ہے، سمجھ گھدے",
@@ -17,6 +18,7 @@
 	"discussiontools-findcomment-title": "تبصرہ لبھو",
 	"discussiontools-ledesection-button": "ایں ورقے بارے ٻیا ڄاݨو",
 	"discussiontools-ledesection-title": "ایں ڳالھ مہاڑ ورقے بارے",
+	"discussiontools-newtopic-missing-title": "براہ کرم {{GENDER:|تہاݙے}} ڳالھ مہاڑ دے موضوع کیتے ہک سرخی ݙیو۔",
 	"discussiontools-newtopic-placeholder-title": "موضوع",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "سبسکرائب کرو",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "اݨ سبسکرائب کرو",
@@ -38,12 +40,15 @@
 	"discussiontools-replywidget-mode-visual": "بصری",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|نواں}} موضوع",
 	"discussiontools-replywidget-placeholder-newtopic": "تفصیل",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|جواب ݙیو}} {{BIDI:$1}} کوں",
 	"discussiontools-replywidget-preferences": "ترجیحاں",
 	"discussiontools-replywidget-preview": "پیشگی ݙکھالا",
 	"discussiontools-replywidget-reply": "{{GENDER:|جواب}}",
 	"discussiontools-replywidget-return-to-newtopic": "نویں عنوان تے واپس ون٘ڄو",
 	"discussiontools-replywidget-return-to-reply": "جواب تے واپس ون٘ڄو",
 	"discussiontools-replywidget-summary": "خلاصہ",
+	"discussiontools-replywidget-watchthis": "ایں ورقے کوں تہاݙی [[Special:Watchlist|زیرنظر فہرست]] وچ شامل کرو۔",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|بندا|بندے}} ڳالھ مہاڑ وچ",
 	"discussiontools-topicheader-commentcount": "$1 {{plural:$1|تبصرہ|تبصرے}}",
 	"discussiontools-topicheader-latestcomment": "تازہ ترین تبصرہ: $1",
 	"discussiontools-topicsubscription-action-subscribe-button": "سبسکرائب کرو",
@@ -53,6 +58,10 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "اݨ سبسکرائب کرو",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "اݨ سبسکرائب کرو",
 	"discussiontools-topicsubscription-error-not-found-title": "سبسکرپشن کائنی لبھی",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|تساں}} کوں ایں موضوع وچ نوے تبصریاں بارے نوٹیفکیشن ملݨ گے۔",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|تساں}} سبسکرائب کر گھدا ہے!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|تساں}} کوں ایں موضوع وچ نوے تبصریاں بارے ٻیا نوٹیفکیشن نہ ملݨ گے۔",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|تساں}} انسبسکرائب کر گھدا ہے!",
 	"discussiontools-topicsubscription-pager-actions": "عمل",
 	"discussiontools-topicsubscription-pager-newtopics-label": "نویں عنوان",
 	"discussiontools-topicsubscription-pager-notified": "تازہ ترین اطلاع نامہ",

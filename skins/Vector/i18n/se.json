@@ -13,7 +13,7 @@
 		]
 	},
 	"skinname-vector": "Vector (2010)",
-	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [[mw:Desktop Improvements|Desktop Improvements]] -prošeavtta áigge.",
+	"vector-skin-desc": "Addá 2 Vector hámi:\n* 2011 - Ođđaáigásaš veršuvdna Monobookas, ođđa hápmi ja ollu buoriduvvon bealit.\n* 2022 - Vector mii lea WMFas huksejuvvon [https://www.mediawiki.org/wiki/Desktop_Improvement Desktop Improvements] -prošeavtta áigge.",
 	"prefs-vector-enable-vector-1-label": "Ane klassihkalaš Vectora",
 	"prefs-vector-enable-vector-1-help": "Daid boahttevaš jagiid mii áigot ceahkkálaga ođasmahttit Vector hámi. Klassihkalaš Vector čájeha dutnje dan boares Vector veršuvnna (juovlamánnu 2019) Deaddil [[mw:Reading/Web/Desktop_Improvements|project page]] vai oahpat eambbo.",
 	"vector-action-toggle-sidebar": "Čájet/čiega siidofealta",
@@ -49,6 +49,7 @@
 	"skin-theme-name": "Ivdni",
 	"skin-theme-description": "[Geahččalanveršuvdna, hui sihkkarit leat váttisvuođat] Unnit čuovgga mii boahtá ovttadaga šearpmas.",
 	"skin-theme-day-label": "Čuvges fárda",
+	"skin-theme-night-label": "Sevdnjes fárda",
 	"skin-theme-os-label": "Automáhtalaš",
 	"skin-theme-exclusion-notice": "Dát siidu lea álo beaivemodusis.",
 	"vector-intro-page": "Help:Oahpisdeapmi",

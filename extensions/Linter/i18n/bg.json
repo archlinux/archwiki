@@ -9,6 +9,7 @@
 		]
 	},
 	"linterrors": "Грешки в статичния код",
+	"linttemplateerrors": "Включвания, съдържащи грешки в статичния код",
 	"linter-category-bogus-image-options": "Неправилни параметри на файлове",
 	"linter-category-bogus-image-options-desc": "Следните страници съдържат файлове с неправилни параметри.",
 	"linter-category-large-tables": "Големи таблици, трудни за преглед на мобилни устройства",
@@ -19,6 +20,7 @@
 	"linter-category-duplicate-ids-desc": "Тези страници имат елементи с повтарящ се id атрибут.",
 	"linter-category-empty-heading": "Празни заглавия",
 	"linter-category-empty-heading-desc": "Тези страници имат празни заглавия.",
+	"linter-category-template-arg-in-extension-tag": "Таг на разширение с параметър на шаблон",
 	"linter-category-fostered": "Грешно разположено съдържание",
 	"linter-category-fostered-desc": "Тези страници съдържат грешно разположено съдържание.",
 	"linter-category-fostered-transparent": "Грешно разположено невидимо съдържание",

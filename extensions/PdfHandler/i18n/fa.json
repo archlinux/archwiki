@@ -17,7 +17,7 @@
 	"pdf-file-page-warning-footer": "این مسأله مختص به این فایل نیست بلکه قالب پی‌دی‌اف کلاً دچار آن است.",
 	"pdf-file-page-warning-info": "دربارهٔ این ویژگی بیشتر مطالعه کنید",
 	"pdf_no_metadata": "نمی‌توان فراداده‌ها را از پی‌دی‌اف گرفت",
-	"pdf_page_error": "شماره صفحه در محدوده نیست",
+	"pdf_page_error": "شمارهٔ صفحه در بازه نیست",
 	"exif-pdf-producer": "برنامهٔ مبدل",
 	"exif-pdf-version": "نسخهٔ قالب پی‌دی‌اف",
 	"exif-pdf-encrypted": "رمزگذاری‌شده",

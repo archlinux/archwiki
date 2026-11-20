@@ -158,6 +158,8 @@
 	"oathauth-notifications-enable-primary": "Uw instellingen voor tweetrapsauthenticatie controleren",
 	"notification-header-oathauth-recoverycodes-count": "U moet uw account opnieuw inschrijven voor tweetrapsauthenticatie.{{GENDER:$2|}}",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|U}} heeft $3 {{PLURAL:$3|herstelcode|herstelcodes}} over. U kunt overwegen om $4 nieuwe  {{PLURAL:$4|herstelcode|herstelcodes}} te laten maken voor toekomstig gebruik.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Uw herstelcodes zijn opnieuw aangemaakt.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|U}} heeft een nieuwe set herstelcodes aan laten maken. Uw oude codes werken niet meer.",
 	"oathauth-notifications-recoverycodesleft-help": "Hulp",
 	"oathauth-notifications-recoverycodesleft-primary": "Uw instellingen voor tweetrapsauthenticatie controleren",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "Er {{PLURAL:$3|is een extra herstelcode|zijn extra herstelcodes}} gemaakt voor {{GENDER:|u}}",

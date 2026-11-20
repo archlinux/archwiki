@@ -67,6 +67,12 @@ class SpecialSuggestedInvestigations extends SpecialPage {
 
 	/** @inheritDoc */
 	public function execute( $subPage ) {
+		// Short-circuit if the user is unable to access this page; parent will handle error messaging
+		if ( !$this->userCanExecute( $this->getOutput()->getUser() ) ) {
+			parent::execute( $subPage );
+			return;
+		}
+
 		$subPageIsValid = $this->parseSubPage( $subPage );
 		if ( !$subPageIsValid ) {
 			return;

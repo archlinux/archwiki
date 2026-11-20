@@ -5,6 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Zaabi",
+	"discussiontools-newtopic-missing-title": "Maa dam {{GENDER:|war}} fillaa se.",
 	"discussiontools-newtopic-placeholder-title": "Dalil",
 	"discussiontools-replylink": "{{GENDER:|zaabi}}",
 	"discussiontools-replywidget-advanced": "Koyjinante",
@@ -23,5 +24,7 @@
 	"discussiontools-topicsubscription-button-subscribe": "maa hantum",
 	"discussiontools-topicsubscription-button-subscribe-label": "Maa hantum",
 	"discussiontools-topicsubscription-button-unsubscribe": "maa kaa",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Maa ka"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Maa ka",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|War}} hantumandi!",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|War}} si hantumandi koyne."
 }

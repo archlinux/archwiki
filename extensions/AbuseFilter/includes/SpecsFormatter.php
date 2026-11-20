@@ -49,7 +49,7 @@ class SpecsFormatter {
 	 * @param string $action
 	 * @param string[] $parameters
 	 * @param Language $lang
-	 * @return string
+	 * @return string HTML
 	 */
 	public function formatAction( string $action, array $parameters, Language $lang ): string {
 		if ( count( $parameters ) === 0 || ( $action === 'block' && count( $parameters ) !== 3 ) ) {
@@ -59,10 +59,10 @@ class SpecsFormatter {
 			$messages = [
 				$this->messageLocalizer->msg( 'abusefilter-block-anon' )->escaped() .
 				$this->messageLocalizer->msg( 'colon-separator' )->escaped() .
-				$lang->translateBlockExpiry( $parameters[1] ),
+				htmlspecialchars( $lang->translateBlockExpiry( $parameters[1] ) ),
 				$this->messageLocalizer->msg( 'abusefilter-block-user' )->escaped() .
 				$this->messageLocalizer->msg( 'colon-separator' )->escaped() .
-				$lang->translateBlockExpiry( $parameters[2] )
+				htmlspecialchars( $lang->translateBlockExpiry( $parameters[2] ) )
 			];
 			if ( $parameters[0] === 'blocktalk' ) {
 				$messages[] = $this->messageLocalizer->msg( 'abusefilter-block-talk' )->escaped();

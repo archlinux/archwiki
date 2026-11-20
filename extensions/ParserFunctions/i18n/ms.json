@@ -13,6 +13,7 @@
 	"pfunc_time_too_long": "Ralat: terlalu banyak panggilan #time",
 	"pfunc_time_too_big": "Ralat: #time hanya menyokong tahun sehingga 9999",
 	"pfunc_time_too_small": "Ralat: #time hanya menyokong tahun-tahun mulai 0.",
+	"pfunc_timef_bad_format": "Ralat: format tidak sah untuk #timef",
 	"pfunc_rel2abs_invalid_depth": "Ralat: Kedalaman tidak sah dalam laluan: \"$1\" (cubaan mencapai nod di atas nod induk)",
 	"pfunc_expr_stack_exhausted": "Ralat ungkapan: Tindanan tuntas",
 	"pfunc_expr_unexpected_number": "Ralat ungkapan: Nombor tidak dijangka",

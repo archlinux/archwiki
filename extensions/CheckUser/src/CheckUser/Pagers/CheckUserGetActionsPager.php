@@ -314,29 +314,37 @@ class CheckUserGetActionsPager extends AbstractCheckUserPager implements CheckUs
 					)
 				);
 			}
-			// Hide the 'logs' link if the page is a username and the current authority does not have permission to see
-			// the username in question (T361479).
-			$hidden = false;
-			if ( $title->getNamespace() === NS_USER ) {
+
+			// Hide the 'logs' link if the user cannot see the log target, or if the target is a userpage for a
+			// user the viewing user cannot see in (either via the log author being hidden or in general)
+			$logsLinkHidden = false;
+			if ( $logEntry !== null ) {
+				$logsLinkHidden = !LogEventsList::userCanBitfield(
+					$logEntry->getDeleted(),
+					LogPage::DELETED_ACTION,
+					$this->getContext()->getAuthority()
+				);
+			}
+			if ( !$logsLinkHidden && $title->getNamespace() === NS_USER ) {
 				$user = $this->userFactory->newFromName( $title->getBaseText() );
 				if ( $logEntry !== null && $performer->getName() === $title->getText() ) {
 					// If the username of the performer is the same as the title, we can also check whether the
 					// performer of the log entry is hidden.
-					$hidden = !LogEventsList::userCanBitfield(
+					$logsLinkHidden = !LogEventsList::userCanBitfield(
 						$logEntry->getDeleted(),
 						LogPage::DELETED_USER,
 						$this->getContext()->getAuthority()
 					);
 				}
-				if ( $user !== null && !$hidden ) {
+				if ( $user !== null && !$logsLinkHidden ) {
 					// If LogEventsList::userCanBitfield said the log entry isn't hidden, then also check if the user
 					// is hidden in general (via a block with 'hideuser' set).
 					// LogEventsList::userCanBitfield can return false while this is true for events from
 					// cu_private_event, as log_deleted is always 0 for those rows (as they cannot be revision deleted).
-					$hidden = $user->isHidden() && !$this->getAuthority()->isAllowed( 'hideuser' );
+					$logsLinkHidden = $user->isHidden() && !$this->getAuthority()->isAllowed( 'hideuser' );
 				}
 			}
-			if ( !$hidden ) {
+			if ( !$logsLinkHidden ) {
 				$links['log'] .= Html::rawElement(
 					'span',
 					[],
@@ -348,6 +356,7 @@ class CheckUserGetActionsPager extends AbstractCheckUserPager implements CheckUs
 					)
 				);
 			}
+
 			// Only add the log related links if we have any to add. There may be none for cu_private_event rows when
 			// the username listed as the title is blocked with 'hideuser' enabled.
 			if ( $links['log'] !== '' ) {

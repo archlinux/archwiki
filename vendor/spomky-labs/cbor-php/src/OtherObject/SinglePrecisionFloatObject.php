@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace CBOR\OtherObject;
 
-use Brick\Math\BigInteger;
+use CBOR\Normalizable;
 use CBOR\OtherObject as Base;
-use CBOR\Utils;
 use InvalidArgumentException;
 use function strlen;
-use const INF;
-use const NAN;
 
-final class SinglePrecisionFloatObject extends Base
+final class SinglePrecisionFloatObject extends Base implements Normalizable
 {
+    use FloatBitsTrait;
+
     public static function supportedAdditionalInformation(): array
     {
         return [self::OBJECT_SINGLE_PRECISION_FLOAT];
@@ -22,10 +21,10 @@ final class SinglePrecisionFloatObject extends Base
     public static function createFromFloat(float $number): self
     {
         $value = match (true) {
-            is_nan($number) => hex2bin('7FC00000'),
-            is_infinite($number) && $number > 0 => hex2bin('7F800000'),
-            is_infinite($number) && $number < 0 => hex2bin('FF800000'),
-            default => (fn (): string => unpack('S', "\x01\x00")[1] === 1 ? strrev(pack('f', $number)) : pack(
+            is_nan($number) => self::hex2binSafe('7FC00000'),
+            is_infinite($number) && $number > 0 => self::hex2binSafe('7F800000'),
+            is_infinite($number) && $number < 0 => self::hex2binSafe('FF800000'),
+            default => (static fn (): string => unpack('S', "\x01\x00")[1] === 1 ? strrev(pack('f', $number)) : pack(
                 'f',
                 $number
             ))(),
@@ -48,45 +47,32 @@ final class SinglePrecisionFloatObject extends Base
         return new self(self::OBJECT_SINGLE_PRECISION_FLOAT, $value);
     }
 
-    public function normalize(): float|int
+    public function normalize(): float
     {
-        $exponent = $this->getExponent();
-        $mantissa = $this->getMantissa();
-        $sign = $this->getSign();
-
-        if ($exponent === 0) {
-            $val = $mantissa * 2 ** (-(126 + 23));
-        } elseif ($exponent !== 0b11111111) {
-            $val = ($mantissa + (1 << 23)) * 2 ** ($exponent - (127 + 23));
-        } else {
-            $val = $mantissa === 0 ? INF : NAN;
-        }
-
-        return $sign * $val;
+        return $this->value('G');
     }
 
     public function getExponent(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-
-        return Utils::binToBigInteger($data)->shiftedRight(23)->and(Utils::hexToBigInteger('ff'))->toInt();
+        return $this->bits('N') >> 23 & 0b11111111;
     }
 
     public function getMantissa(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-
-        return Utils::binToBigInteger($data)->and(Utils::hexToBigInteger('7fffff'))->toInt();
+        return $this->bits('N') & 0x7FFFFF;
     }
 
     public function getSign(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-        $sign = Utils::binToBigInteger($data)->shiftedRight(31);
+        return ($this->bits('N') >> 31 & 1) === 1 ? -1 : 1;
+    }
 
-        return $sign->isEqualTo(BigInteger::one()) ? -1 : 1;
+    private static function hex2binSafe(string $hex): string
+    {
+        $result = hex2bin($hex);
+        if ($result === false) {
+            throw new InvalidArgumentException('Invalid hex string');
+        }
+        return $result;
     }
 }

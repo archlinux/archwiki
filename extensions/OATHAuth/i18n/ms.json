@@ -144,6 +144,8 @@
 	"oathauth-notifications-enable-primary": "Periksa tetapan pengesahihan dwifaktor anda",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|Anda}} sepatutnya masukkan semula {{GENDER:$2|akaun anda}} untuk pengesahihan dwifaktor.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|Anda}} hanya tinggal $3 {{PLURAL:$3|kod}} pemulihan. Anda mungkin perlu menjana semula $4 {{PLURAL:$4|kod}} pemulihan baharu untuk kegunaan masa hadapan.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Kod pemulihan anda telah dijana semula.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Anda}} telah menjana satu set kod pemulihan baharu. Kod lama anda tidak lagi akan berfungsi.",
 	"oathauth-notifications-recoverycodesleft-help": "Bantuan",
 	"oathauth-notifications-recoverycodesleft-primary": "Periksa tetapan pengesahihan dwifaktor anda",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "{{PLURAL:$3|Kod|Kod-kod}} pemulihan tambahan telah dijana untuk {{GENDER:|anda}}",

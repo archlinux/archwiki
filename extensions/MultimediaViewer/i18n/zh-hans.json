@@ -27,9 +27,11 @@
 			"沈澄心",
 			"神樂坂秀吉",
 			"飞舞回堂前",
-			"MFossati (WMF)"
+			"MFossati (WMF)",
+			"Honoka55"
 		]
 	},
+	"multimediaviewer-current-image-number": "第$1张，共$2张",
 	"multimediaviewer-desc": "在全屏界面中以更大尺寸展开缩略图",
 	"multimediaviewer-optin-pref": "启用<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About 媒体文件查看器]</span>",
 	"multimediaviewer-file-page": "前往对应的文件页面",

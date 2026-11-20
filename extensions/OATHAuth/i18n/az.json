@@ -150,6 +150,8 @@
 	"oathauth-notifications-enable-primary": "İki faktorlu autentifikasiya parametrlərinizi yoxlayın",
 	"notification-header-oathauth-recoverycodes-count": "İki faktorlu autentifikasiya üçün {{GENDER:$2|hesabınızı}} yenidən qeydiyyatdan keçirtməlisiniz.",
 	"notification-body-oathauth-recoverycodesleft": "$3 bərpa {{PLURAL:$3|kodunuz}} {{GENDER:$2|qalıb}}. Gələcəkdə istifadə etmək üçün $4 yeni kod yaratmaq istəyə bilərsiniz.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Bərpa kodlarınız yenidən yaradıldı.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Siz}} yeni bərpa kodları toplusu yaratdınız. Köhnə kodlarınız artıq işləməyəcək.",
 	"oathauth-notifications-recoverycodesleft-help": "Kömək",
 	"oathauth-notifications-recoverycodesleft-primary": "İki faktorlu autentifikasiya parametrlərinizi yoxlayın",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "{{GENDER:|Sizin}} üçün əlavə bərpa {{PLURAL:$3|kodu|kodları}} yaradılıb",

@@ -31,7 +31,8 @@
 			"William Surya Permana",
 			"WillsonEP09",
 			"AhmedG612",
-			"Hidayatsrf"
+			"Hidayatsrf",
+			"Exploraz"
 		]
 	},
 	"collabpad-disabled": "CollabPad tidak diaktifkan di wiki ini.",
@@ -327,7 +328,8 @@
 	"visualeditor-mwpredialog-convert": "Izinkan gaya teks",
 	"visualeditor-mwpredialog-title": "Teks polos terpraformat",
 	"visualeditor-mwsignature-tool": "Tanda tangan Anda",
-	"visualeditor-preference-newwikitexteditor-enable": "Gunakan mode teks wiki di dalam penyunting visual daripada penyunting teks wiki yang berbeda.",
+	"visualeditor-preference-visualeditor": "Aktifkan penyunting visual",
+	"visualeditor-preference-newwikitexteditor-enable": "Gunakan mode teks wiki di dalam penyunting visual daripada penyunting teks wiki yang berbeda",
 	"visualeditor-preference-newwikitexteditor-help": "Ini terkadang disebut 'penyunting teks wiki 2017'.",
 	"visualeditor-preference-tabs": "Mode penyuntingan:",
 	"visualeditor-preference-tabs-multi-tab": "Tampilkan kedua tab penyunting",

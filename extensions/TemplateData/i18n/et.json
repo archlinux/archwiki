@@ -118,6 +118,7 @@
 	"templatedata-search-placeholder-cirrussearch": "Sisesta malli nimi või võtmesõnad",
 	"templatedata-search-list-header": "Lemmikud",
 	"templatedata-search-list-empty": "Siia ilmuvad mallid, mille märgid lemmikuks.",
+	"templatedata-search-list-empty-anon": "Palun logi sisse, et märkida malle lemmikuteks.",
 	"templatedata-favorite-disabled": "Pead olema sisse loginud, et mall lemmikuks märkida",
 	"templatedata-favorite-add": "Lisa mall lemmikuks",
 	"templatedata-favorite-added": "Mall lisatud lemmikutesse.",
@@ -134,6 +135,7 @@
 	"templatedata-category-categories": "Teised kategooriad",
 	"templatedata-category-no-cats": "puuduvad",
 	"templatedata-featured-list-header": "Esile tõstetud",
+	"templatedata-featured-list-empty": "Esile tõstetud mallid on mallid, mille kogukond on märkinud kasulikuks. Ühtegi malli ei ole veel esiletõstetuks märgitud.",
 	"templatedata-featured-list-config-link": "Muuda esiletõstmise loendit",
-	"templatedata-favorite-count": "Sul on $1 lemmikmalli $2 võimalikust."
+	"templatedata-favorite-count": "Sul on $1 {{PLURAL:$1|lemmikmall|lemmikmalli}} $2 võimalikust."
 }

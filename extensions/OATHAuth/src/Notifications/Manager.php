@@ -67,6 +67,23 @@ class Manager {
 	}
 
 	/**
+	 * Send a notification that the user's recovery codes have been regenerated
+	 */
+	public static function notifyRecoveryCodesRegenerated( OATHUser $oUser ): void {
+		if ( !self::isEnabled() ) {
+			// @codeCoverageIgnoreStart
+			return;
+			// @codeCoverageIgnoreEnd
+		}
+		Event::create( [
+			// message used: notification-header-oathauth-recoverycodes-regenerated
+			'type' => 'oathauth-recoverycodes-regenerated',
+			'title' => SpecialPage::getTitleFor( 'OATHManage' ),
+			'agent' => $oUser->getUser(),
+		] );
+	}
+
+	/**
 	 * Send a notification that the user has $tokenCount recovery tokens left
 	 */
 	public static function notifyRecoveryTokensRemaining(

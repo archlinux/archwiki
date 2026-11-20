@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Villager-bloc-h"
+		]
+	},
+	"fancycaptcha-captcha": "安全检查",
+	"fancycaptcha-accountcreate": "为防止自动程序创建账户，请你把下面显示个词填进框里（[[Special:Captcha/help|更多信息]]）：",
+	"fancycaptcha-imgcaptcha-ph": "输入您在图里头看见个那个字",
+	"fancycaptcha-reload-text": "刷新"
+}

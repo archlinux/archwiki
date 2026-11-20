@@ -1,13 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kandar"
+			"Kandar",
+			"Rafka Aditia"
 		]
 	},
 	"cite-desc": "Nambahkeun tag <code>&lt;ref[ name=id]&gt;</code> jeung <code>&lt;references/&gt;</code>, pikeun cutatan",
-	"cite_error": "Salah ngutip: $1",
+	"cite_error": "Salah nyutat: $1",
+	"cite-reference-previews-map": "Réferénsi peta",
+	"cite-reference-previews-web": "Réferénsi loka",
+	"cite-reference-previews-collapsible-placeholder": "Réferénsi ieu ngawengku bagan nu teu bisa diasupkeun kana sawangan.",
 	"cite-wikieditor-tool-reference": "Rujukan",
-	"cite-wikieditor-help-page-references": "Rujukan",
-	"cite-wikieditor-help-content-reference-description": "Rujukan",
-	"cite-wikieditor-help-content-showreferences-description": "Témbongkeun rujukan"
+	"cite-wikieditor-help-page-references": "Réferénsi",
+	"cite-wikieditor-help-content-reference-description": "Réferénsi",
+	"cite-wikieditor-help-content-named-reference-description": "Réferénsi nu dingaranan",
+	"cite-wikieditor-help-content-rereference-description": "Pamakéan deui réferénsi nu sarua",
+	"cite-wikieditor-help-content-sub-reference-description": "Pamakéan tambahan tina réferénsi nu sarua, kalawan rincian tambahan.",
+	"cite-wikieditor-help-content-showreferences-description": "Témbongkeun réferénsi",
+	"cite-wikieditor-help-content-reference-example-text1": "Téks kaca.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Téks tumbu], téks tambahan.",
+	"cite-wikieditor-help-content-reference-example-text3": "Hiji buku",
+	"cite-wikieditor-help-content-reference-example-extra-details": "Kaca 76",
+	"communityconfiguration-cite-title": "Cutat",
+	"communityconfiguration-cite-description": "Sesuaikeun format jeung tampilan tina réferénsi.",
+	"cite-configuration-title": "Konfigurasi cutatan",
+	"cite-configuration-submit": "Simpen parobahan"
 }

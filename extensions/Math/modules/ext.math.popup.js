@@ -19,7 +19,7 @@ const bracketedDevicePixelRatio = function () {
 	return 1;
 };
 const fetch = function ( qid ) {
-	return restApi.get( '/math/v0/popup/html/' + qid, {}, {
+	return restApi.get( '/math/v0/popup/html/' + encodeURIComponent( qid ), {}, {
 		Accept: 'application/json; charset=utf-8',
 		'Accept-Language': mw.config.language
 	} );
@@ -81,7 +81,7 @@ const fetchPreviewForTitle = function ( title, el ) {
 	const deferred = $.Deferred();
 	let qidstr = getQidForElement( el );
 	// Preview for MathML
-	if ( !qidstr || ( qidstr.match( /Q\d+/g ) === null ) ) {
+	if ( !qidstr || !/^Q\d+$/.test( qidstr ) ) {
 		fetchPagePreview( title ).then( ( data ) => {
 			const page = extractPageFromResponse( data );
 			if ( !page || page.missing ) {

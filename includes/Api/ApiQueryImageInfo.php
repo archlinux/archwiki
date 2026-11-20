@@ -80,6 +80,18 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 
+		// File metadata rarely changes. If a file is reuploaded with different
+		// dimensions, then downstream consumers of this API may display the image
+		// incorrectly until the cache expires. Note that generally, consumers of
+		// this API have their own cache as well, e.g.
+		// ForeignAPIRepo::apiMetadataExpiry defaults to 4 hours, and
+		// and $wgParserCacheExpireTime defaults to 24 hours, so the thumb URL and
+		// thumb dimensions are already cached longer than this either way.
+		//
+		// The value is chosen for parity with ViewAction/ActionEntryPoint::performAction
+		// where non-canonical/unpurged URLs default to 1 hour.
+		$this->getMain()->setCacheMaxAge( 3600 );
+
 		/** @var array<string,true> $prop */
 		$prop = array_fill_keys( $params['prop'], true );
 
@@ -146,6 +158,11 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				$start = $title === $fromTitle ? $fromTimestamp : $params['start'];
 
 				if ( !isset( $images[$title] ) ) {
+					// Shorten CDN cache to 1min if a file doesn't exist, so that if a user
+					// accesses this API during an upload, or uploads it in response to seeing
+					// a missing thumbnail, they will shortly see it work.
+					$this->getMain()->setCacheMaxAge( 60 );
+
 					if ( isset( $prop['uploadwarning'] ) || isset( $prop['badfile'] ) ) {
 						// uploadwarning and badfile need info about non-existing files
 						$images[$title] = $this->repoGroup->getLocalRepo()->newFile( $title );
@@ -342,6 +359,16 @@ class ApiQueryImageInfo extends ApiQueryBase {
 		}
 
 		$paramList = $h->parseParamString( $otherParams );
+		if ( !$paramList ) {
+			// Handlers require a trailing "-<n>px" width (e.g. "langde-40px").
+			// Synthesise the default thumbnail size so width-less variants parse;
+			// it is discarded again per-size for thumburls.
+			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+			$thumbKey = $userOptionsLookup->getDefaultOption( 'thumbsize' ) ?: 0;
+			$thumbWidth = $this->getConfig()->get( MainConfigNames::ThumbLimits )[ $thumbKey ];
+			$width = $thumbParams['width'] ?? $thumbWidth;
+			$paramList = $h->parseParamString( $otherParams . "-{$width}px" );
+		}
 		if ( !$paramList ) {
 			// Just set a warning (instead of dieWithError), as in many cases
 			// we could still render the image using width and height parameters,
@@ -609,6 +636,57 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			}
 		}
 
+		if ( $exists && isset( $prop['thumburls'] ) ) {
+			$urlUtils = $services->getUrlUtils();
+			$config = $services->getMainConfig();
+			$thumbnailSteps = $config->get( MainConfigNames::ThumbnailSteps );
+			$sizes = [];
+			if ( is_array( $thumbnailSteps ) ) {
+				// When $wgThumbnailSteps is enabled
+				foreach ( $thumbnailSteps as $width ) {
+					$sizes[] = [ 'width' => $width ];
+				}
+			} else {
+				// Default to union of the default thumbnail size and $wgImageLimits
+				$userOptionsLookup = $services->getUserOptionsLookup();
+				$thumbKey = $userOptionsLookup->getDefaultOption( 'thumbsize' ) ?: 0;
+				$thumbWidth = $config->get( MainConfigNames::ThumbLimits )[ $thumbKey ];
+				$sizes[] = [ 'width' => $thumbWidth ];
+				if ( $config->get( MainConfigNames::ResponsiveImages ) ) {
+					$sizes[] = [ 'width' => $thumbWidth * 2 ];
+				}
+				foreach ( $config->get( MainConfigNames::ImageLimits ) as [ $width, $height ] ) {
+					$sizes[] = [ 'width' => $width, 'height' => $height ];
+				}
+			}
+			// Carry handler params (e.g. SVG "lang", PDF "page") into every
+			// suggested URL so they share the variant; only width/height vary.
+			$handlerParams = $thumbParams ? array_diff_key(
+				$thumbParams,
+				[ 'width' => true, 'height' => true, 'requestProvenance' => true ]
+			) : [];
+			$vals['thumburls'] = [];
+			foreach ( $sizes as $size ) {
+				$size += $handlerParams;
+				$size['requestProvenance'] = 'imageinfo';
+				$size['usePhysicalSize'] = true;
+				$mto = $file->transform( $size );
+				if ( !$mto || $mto->isError() ) {
+					continue;
+				}
+				if ( isset( $vals['thumburls'][$mto->getWidth()] ) ) {
+					continue;
+				}
+				self::$transformCount++;
+				$thumburl = (string)$urlUtils->expand( $mto->getUrl(), PROTO_CURRENT );
+				$vals['thumburls'][$mto->getWidth()] = [
+					'url' => $thumburl,
+					'width' => $mto->getWidth(),
+					'height' => $mto->getHeight(),
+				];
+			}
+		}
+
 		if ( !$exists ) {
 			$vals['filemissing'] = true;
 		}
@@ -676,6 +754,13 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 */
 	protected static function getTransformCount() {
 		return self::$transformCount;
+	}
+
+	/**
+	 * Reset the count of image transformations performed. Solely used for phpunit.
+	 */
+	public static function resetTransformCountForUnitTest() {
+		self::$transformCount = 0;
 	}
 
 	/**
@@ -821,6 +906,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				'sha1' => 'apihelp-query+imageinfo-paramvalue-prop-sha1',
 				'mime' => 'apihelp-query+imageinfo-paramvalue-prop-mime',
 				'thumbmime' => 'apihelp-query+imageinfo-paramvalue-prop-thumbmime',
+				'thumburls' => 'apihelp-query+imageinfo-paramvalue-prop-thumburls',
 				'mediatype' => 'apihelp-query+imageinfo-paramvalue-prop-mediatype',
 				'metadata' => 'apihelp-query+imageinfo-paramvalue-prop-metadata',
 				'commonmetadata' => 'apihelp-query+imageinfo-paramvalue-prop-commonmetadata',

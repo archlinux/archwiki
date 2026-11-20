@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kallmemel"
+		]
+	},
+	"oathauth-enable": "Aktivá outentifikashon di dos faktor",
+	"oathauth-auth-token-label": "Kódigo di outentifikashon",
+	"oathauth-auth-token-help-ui": "Introdusí kódigo di 6 sifra for di bo app di outentifikashon.",
+	"oathauth-auth-recovery-code-label": "Kódigo di rekuperashon",
+	"oathauth-auth-use-recovery-code": "Usa kódigo di rekuperashon",
+	"oathauth-auth-recovery-code-help": "Introdusí un di bo kódigonan di rekuperashon.",
+	"oathauth-auth-switch-module-label": "Usa app di outentifikashon"
+}

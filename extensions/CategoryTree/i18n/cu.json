@@ -1,15 +1,36 @@
 {
 	"@metadata": {
 		"authors": [
-			"ОйЛ"
+			"ОйЛ",
+			"Qamen"
 		]
 	},
-	"categorytree": "катигорїи дрѣво",
+	"categorytree": "дрѣво катигорїи",
 	"categorytree-portlet": "катигорїѩ",
+	"categorytree-legend": "Ꙗви дрѣво катигорїи",
+	"categorytree-desc": "Орѫдиѥ исканиꙗ по [[Special:CategoryTree|чиноу катигорїи]]",
+	"categorytree-header": "Въпиши имѧ катигорїѩ · да видиши ѥѩ листи и подъкатигорїѩ ꙗко дрѣво (сего ради потрѣбьнъ ѥстъ JavaScript) ⁙",
 	"categorytree-category": "катигорїꙗ :",
-	"categorytree-mode-all": "вьсѩ страницѧ",
+	"categorytree-go": "Ꙗви дрѣво",
+	"categorytree-parents": "Вꙑшьнѧ катигорїѩ",
+	"categorytree-mode-label": "Съставъ:",
+	"categorytree-mode-categories": "тъкъмо катигорїѩ",
+	"categorytree-mode-pages": "катигорїѩ и листи бєꙁ дѣлъ",
+	"categorytree-mode-all": "вьси листи",
+	"categorytree-collapse": "затвори",
 	"categorytree-expand": "отврьꙁи",
-	"categorytree-num-categories": "$1 К҃",
-	"categorytree-num-pages": "$1 С҃",
-	"categorytree-num-files": "$1 Д҃"
+	"categorytree-member-counts": "Въ сєи катигорїи сѫтъ подъкатигорїѩ: $1{{PLURAL:$1|}} · листи: $2{{PLURAL:$2|}} · дѣла: $3{{PLURAL:$3|}}",
+	"categorytree-num-categories": "подъкатигорїѩ: $1",
+	"categorytree-num-pages": "листи: $1",
+	"categorytree-num-files": "дѣла: $1",
+	"categorytree-num-empty": "поуста",
+	"categorytree-load": "приими",
+	"categorytree-loading": "приѥмлѥниѥ…",
+	"categorytree-nothing-found": "нѣсть ничєсожє",
+	"categorytree-no-subcategories": "нѣсть подъкатигорїи",
+	"categorytree-no-parent-categories": "нѣсть вꙑшьнихъ катигорїи",
+	"categorytree-no-pages": "нѣсть листъ нижє подъкатигорїи",
+	"categorytree-not-found": "катигорїꙗ <i>$1</i> нє обрѣтєна",
+	"categorytree-error": "Погрѣшєниѥ ⁙ свѣдѣниꙗ нє приѧта сѫтъ ⁙",
+	"categorytree-retry": "Пожди мало и пакꙑ дрьꙁаи ⁙"
 }

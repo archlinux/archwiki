@@ -50,7 +50,6 @@ class ImageInfo extends Api {
 			'url',
 			'size',
 			'mime',
-			'mediatype', // TODO: Remove me, unused
 			'extmetadata'
 		];
 	}

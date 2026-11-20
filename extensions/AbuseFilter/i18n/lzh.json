@@ -4,9 +4,11 @@
 			"Jason924tw",
 			"LNDDYL",
 			"WAN233",
-			"Above mountain"
+			"Above mountain",
+			"Davidzdh"
 		]
 	},
+	"abusefilter-disallowed": "機杼自動而鑑別，以此舉為有害，爰止之。\n若自謂所為有益，宜言諸有秩，具陳所欲為之事。\n所觸之則，其略曰：$1",
 	"abusefilter-log-search": "尋濫誌",
 	"abusefilter-log-search-user": "用戶:",
 	"abusefilter-log-search-submit": "尋",

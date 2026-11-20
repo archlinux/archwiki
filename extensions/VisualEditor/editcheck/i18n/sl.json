@@ -27,7 +27,7 @@
 	"editcheck-dialog-addref-reject-uncertain": "Nisem prepričan_a, kateri sklic dodati",
 	"editcheck-dialog-addref-reject-other": "Drugo",
 	"editcheck-dialog-addref-success-notify": "Hvala za dodani sklic!",
-	"editcheck-dialog-addref-title": "Dodajte sklic",
+	"editcheck-dialog-addref-title": "Dodaj sklic",
 	"editcheck-dialog-title": "Pred objavo",
 	"editcheck-copyvio-title": "Prilepljena vsebina",
 	"editcheck-copyvio-description": "Izogibajte se kopiranju besedila iz drugih virov, tudi če je preoblikovano ali citirano. To bi lahko štelo za [{{int:editcheck-copyvio-descriptionlink}} kršitev avtorskih pravic ali plagiatorstvo] in lahko povzroči odstranitev vaše vsebine ali blokado vašega računa.",

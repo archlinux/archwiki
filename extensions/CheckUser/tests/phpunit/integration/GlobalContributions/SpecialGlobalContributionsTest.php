@@ -13,6 +13,7 @@ use MediaWiki\Extension\CheckUser\Jobs\UpdateUserCentralIndexJob;
 use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\ContributionsRangeTrait;
 use MediaWiki\Tests\Specials\SpecialPageTestBase;
@@ -148,7 +149,7 @@ class SpecialGlobalContributionsTest extends SpecialPageTestBase {
 			NS_MAIN,
 			self::$tempUser1
 		);
-		$title = Title::newFromText( 'Test page for deletion' );
+		$title = PageReferenceValue::localReference( NS_MAIN, 'Test page for deletion' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$this->deletePage( $page );
 

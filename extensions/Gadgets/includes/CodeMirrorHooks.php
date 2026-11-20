@@ -15,7 +15,7 @@ class CodeMirrorHooks implements CodeMirrorGetModeHook {
 	private readonly bool $useCodeMirror;
 
 	public function __construct( Config $config ) {
-		$this->useCodeMirror = $config->get( 'ScribuntoUseCodeMirror' );
+		$this->useCodeMirror = $config->get( 'GadgetsDefinitionsUseCodeMirror' );
 	}
 
 	/**

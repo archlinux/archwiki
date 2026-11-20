@@ -5,20 +5,25 @@
 			"شاه زمان پټان"
 		]
 	},
-	"replacetext": "متن ځايناستول",
+	"replacetext": "ليک ځايناستول",
 	"replacetext_originaltext": "آرنی متن:",
 	"replacetext_replacementtext": "د متن ځايناستوب:",
+	"replacetext_useregex": "دوديز څرگندون وکاروئ",
 	"replacetext_categorysearch": "يوازې په وېشنيزه کې ځايناستول:",
 	"replacetext_prefixsearch": "يوازې په مختاړي لرونکيو مخونو کې ځايناستول:",
 	"replacetext_editpages": "د مخ په مېنځپانگه کې متن ځايناستول",
-	"replacetext_movepages": "د شونتيا په وخت کې، د مخ د سرليک متن ځايناستول",
+	"replacetext_movepages": "د شونتيا په وخت کې، د مخ د سرليک ليک ځايناستول",
 	"replacetext_nonamespace": "تاسې بايد لږ تر لږه يو نوم-تشيال وټاکۍ.",
 	"replacetext_cannotmove": "دا {{PLURAL:$1|لاندې مخ|لانديني مخونه}} د لېږدولو وړ نه دي:",
 	"replacetext_formovedpages": "د لېږدل شويو مخونو لپاره:",
 	"replacetext_watchmovedpages": "همدا مخونه کتل",
 	"replacetext_invertselections": "ټاکنې سرچپه کول",
 	"replacetext_replace": "ځايناستول",
+	"replacetext_return": "بېرته فورم ته راستنېدل.",
+	"replacetext_continue": "دوام ورکول",
 	"replacetext_editsummary": "له \"$1\" نه \"$2\" ته - ليک ځايناستول",
 	"right-replacetext": "ټوله ويکي کې د لړۍ ځايناستول",
-	"action-replacetext": "ټوله ويکي کې د لړۍ ځايناستول"
+	"action-replacetext": "ټوله ويکي کې د لړۍ ځايناستول",
+	"tag-replacetext": "[[Special:ReplaceText|ليک‌ځايناستول]]",
+	"tag-replacetext-description": "د [[{{#Special:ReplaceText}}]] له لارې ترسره شوي خپلکاره سمونونه"
 }

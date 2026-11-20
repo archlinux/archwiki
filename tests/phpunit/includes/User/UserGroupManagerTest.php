@@ -356,20 +356,22 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 			],
 		] );
 		$user = $this->getTestUser( [ 'sysop' ] )->getUser();
+		$userIdentity = UserIdentityValue::newRegistered( $user->getId(), $user->getName() );
 
 		$userFactoryMock = $this->createMock( UserFactory::class );
-		$userFactoryMock->method( 'newFromUserIdentity' )
-			->willReturnCallback( function ( UserIdentity $userIdentity ) {
+		$userFactoryMock->method( 'newFromName' )
+			->willReturnCallback( function ( string $name ) use ( $user ) {
 				$userMock = $this->createMock( User::class );
 				$userMock->method( 'isSystemUser' )->willReturn( true );
 				$userMock->method( 'isRegistered' )->willReturn( true );
-				$userMock->method( 'getId' )->willReturn( $userIdentity->getId() );
+				$userMock->method( 'getId' )->willReturn( $user->getId() );
+				$userMock->method( 'getName' )->willReturn( $user->getName() );
 				return $userMock;
 			} );
 		$this->setService( 'UserFactory', $userFactoryMock );
 
 		$manager = $this->getManager();
-		$this->assertCount( 0, $manager->getUserDisabledGroups( $user ) );
+		$this->assertCount( 0, $manager->getUserDisabledGroups( $userIdentity ) );
 	}
 
 	public function testAddUserToGroup() {
@@ -1102,6 +1104,25 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::Autopromote => [ 'test_autoconfirmed' => [ 999, 'ARGUMENT' ] ]
 		] );
 		$this->assertArrayEquals( [ 'test_autoconfirmed' ], $manager->getUserAutopromoteGroups( $user ) );
+	}
+
+	public function testGetAutopromoteGroupsForRemoteUser() {
+		$siteConfig = new SiteConfiguration();
+		$siteConfig->wikis = [ 'otherwiki' ];
+		$this->setMwGlobals( 'wgConf', $siteConfig );
+
+		$this->overrideConfigValue( MainConfigNames::LocalDatabases, [ 'otherwiki' ] );
+
+		$this->overrideConfigValue(
+			MainConfigNames::Autopromote,
+			[ 'test_autoconfirmed' => [ APCOND_EDITCOUNT, 0 ] ]
+		);
+		$manager = $this->getServiceContainer()
+			->getUserGroupManagerFactory()
+			->getUserGroupManager( 'otherwiki' );
+
+		$remoteUser = UserIdentityValue::newRegistered( 1, 'User', 'otherwiki' );
+		$this->assertSame( [], $manager->getUserAutopromoteGroups( $remoteUser ) );
 	}
 
 	public static function provideGetUserAutopromoteOnce() {

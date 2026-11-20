@@ -16,7 +16,7 @@
 	"fancycaptcha-desc": "Fancy CAPTCHA -kehitin Confirm Edit-laajennukselle",
 	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä ulkoisille sivustoilla. \nAutomatisoidun roskapostin estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
-	"fancycaptcha-captcha": "Turvallisuustarkistus",
+	"fancycaptcha-captcha": "Turvatarkistus",
 	"fancycaptcha-accountcreate": "Automaattisten käyttäjätunnusten luonnin estämiseksi pyydämme kirjoittamaan kuvassa näkyvät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoa]]):",
 	"fancycaptcha-create": "Luodaksesi sivun kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",
 	"fancycaptcha-edit": "Muokataksesi sivua kirjoita kuvan sisältämät sanat alla olevaan tekstikenttään ([[Special:Captcha/help|lisätietoja]]):",

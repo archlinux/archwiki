@@ -148,6 +148,8 @@
 	"oathauth-notifications-enable-primary": "Check your two-factor authentication settings",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|You}} should re-enroll {{GENDER:$2|your account}} for two-factor authentication.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|You}} have $3 recovery {{PLURAL:$3|code|codes}} left. You may want to regenerate $4 new recovery {{PLURAL:$4|code|codes}} to use in future.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Your recovery codes have been regenerated.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|You}} generated a new set of recovery codes. Your old codes will no longer work.",
 	"oathauth-notifications-recoverycodesleft-help": "Help",
 	"oathauth-notifications-recoverycodesleft-helplink": "mw:Special:MyLanguage/Help:Two-factor authentication",
 	"oathauth-notifications-recoverycodesleft-primary": "Check your two-factor authentication settings",

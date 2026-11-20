@@ -148,6 +148,8 @@
 	"oathauth-notifications-enable-primary": "Tjek dine indstillinger for tofaktorgodkendelse",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|Du}} bør tilmelde {{GENDER:$2|din konto}} igen til tofaktorgodkendelse.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|Du}} har $3 {{PLURAL:$3|gendannelseskode|gendannelseskoder}} tilbage. Du kan eventuelt generere $4 nye {{PLURAL:$4|gendannelseskode|gendannelseskoder}} til fremtidig brug.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Dine gendannelseskoder er blevet genereret igen.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Du}} genererede et nyt sæt gendannelseskoder. Dine gamle koder vil ikke længere virke.",
 	"oathauth-notifications-recoverycodesleft-help": "Hjælp",
 	"oathauth-notifications-recoverycodesleft-primary": "Tjek dine indstillinger for tofaktorgodkendelse",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "Flere {{PLURAL:$3|gendannelseskode|gendannelseskoder}} er blevet genereret for dig",

@@ -25,6 +25,7 @@ use MediaWiki\Message\Message;
 use MediaWiki\Minerva\Menu\Entries\AuthMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Skin\Skin;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
@@ -281,7 +282,7 @@ final class Definitions {
 		// Add term field to allow distinguishing from other sidebars.
 		// https://www.mediawiki.org/wiki/Wikimedia_Product/Analytics_Infrastructure/Schema_fragments#Campaign_Attribution
 		$url = wfAppendQuery(
-			$urlMsg->text(),
+			Skin::makeInternalOrExternalUrl( $urlMsg->text() ),
 			[ 'wmf_key' => 'minerva' ]
 		);
 		$entry = $this->buildMenuEntry(

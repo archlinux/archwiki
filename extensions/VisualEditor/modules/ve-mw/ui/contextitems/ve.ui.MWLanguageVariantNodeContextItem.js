@@ -132,11 +132,9 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 				) );
 
 			variantInfo.oneway.forEach( ( item ) => {
-				// Safe HTML from the parser
-				// eslint-disable-next-line no-jquery/no-html
-				const $fromText = $( '<td>' ).html( item.f ),
-					// eslint-disable-next-line no-jquery/no-html
-					$toText = $( '<td>' ).html( item.t ),
+				// Sanitize, as for ve.dm.MWLanguageVariantNode.static.insertPreviewElements
+				const $fromText = $( '<td>' ).append( $( ve.sanitizeHtml( item.f ) ) ),
+					$toText = $( '<td>' ).append( $( ve.sanitizeHtml( item.t ) ) ),
 					code = item.l,
 					name = languageNameIfKnown( code.toLowerCase() );
 				$table
@@ -165,8 +163,8 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 			variantInfo.twoway.forEach( ( item ) => {
 				const code = item.l,
 					name = languageNameIfKnown( code.toLowerCase() ),
-					// eslint-disable-next-line no-jquery/no-html
-					$text = $( '<td>' ).html( item.t );
+					// Sanitize, as for ve.dm.MWLanguageVariantNode.static.insertPreviewElements
+					$text = $( '<td>' ).append( $( ve.sanitizeHtml( item.t ) ) );
 				ve.dm.MWLanguageVariantNode.static.processVariants(
 					$text[ 0 ], { showHidden: true }
 				);

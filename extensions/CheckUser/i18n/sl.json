@@ -250,6 +250,7 @@
 	"checkuser-tempaccount-reveal-ip-button-label": "Pokaži IP",
 	"checkuser-tempaccount-reveal-ip-missing": "ni na voljo",
 	"checkuser-tempaccount-reveal-ip-error": "napaka",
+	"checkuser-tempaccount-reveal-ip-tooltip-latest": "Nazadnje uporabljeni IP",
 	"checkuser-tempaccount-specialblock-ips": "To je začasni uporabnik, ki uporablja naslednje {{PLURAL:$1|IP|IP-je}}: $2",
 	"checkuser-temporary-account-log-name": "Dnevnik začasnih računov CheckUser",
 	"checkuser-temporary-account-log-header": "To je dnevnik:\n# ogledov IP-naslovov, ki jih uporablja začasni račun; \n# ogledov začasnihv računov, povezanih z IP-naslovom ali razponom IP-naslovov; in\n# sprememb ravni uporabniškega dostopa za ogled IP-naslovov, ki jih uporabljajo začasni računi.",
@@ -287,5 +288,6 @@
 	"checkuser-suggestedinvestigations-change-status-dialog-text": "Izberite novo stanje za to preiskavo",
 	"checkuser-userinfocard-temporary-account-bucketcount": "Začasni računi z vseh povezanih IP-jev: $1",
 	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Skupno število vseh začasnih računov z vseh IP-naslovov, povezanih s tem računom",
-	"checkuser-contributions-temporary-account-bucketcount": "Začasni računi z vseh povezanih IP-jev: $1."
+	"checkuser-contributions-temporary-account-bucketcount": "Začasni računi z vseh povezanih IP-jev: $1.",
+	"checkuser-contributions-temporary-accounts-related-list-toggle-hide": "Skrij"
 }

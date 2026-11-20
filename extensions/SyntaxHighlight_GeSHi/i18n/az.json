@@ -5,7 +5,8 @@
 			"Nemoralis",
 			"Serkanland",
 			"Wertuose",
-			"Əkrəm Cəfər"
+			"Əkrəm Cəfər",
+			"Əkrəm"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python syntax highlighter] istifadə edərək <code>&lt;syntaxhighlight&gt;</code> kodu ilə sintaksis vurğulanması təqdim edir",
@@ -25,5 +26,5 @@
 	"syntaxhighlight-error-unknown-language": "Naməlum \"$1\" dili",
 	"syntaxhighlight-error-exceeds-size-limit": "$1 {{PLURAL:$1|bayt}} olan cari kod ölçüsü maksimum limit olan $2 {{PLURAL:$2|bayt}}ı keçir",
 	"syntaxhighlight-button-copy": "Kopiyala",
-	"syntaxhighlight-button-copied": "Kopyalandı!"
+	"syntaxhighlight-button-copied": "Kopiyalandı"
 }

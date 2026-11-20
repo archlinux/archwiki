@@ -3,5 +3,7 @@
 		"authors": [
 			"Vishwanatha Badikana"
 		]
-	}
+	},
+	"notification-header-oathauth-recoverycodes-regenerated": "ನಿಮ್ಮ ಮರುಪಡೆಯುವಿಕೆ ಕೋಡ್‌ಗಳನ್ನು ಮರುಸೃಷ್ಟಿಸಲಾಗಿದೆ.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2| ನೀವು}} ಹೊಸ ಮರುಪಡೆಯುವಿಕೆ ಕೋಡ್‌ಗಳ ಗುಂಪನ್ನು ರಚಿಸಿದ್ದೀರಿ. ನಿಮ್ಮ ಹಳೆಯ ಕೋಡ್‌ಗಳು ಇನ್ನು ಮುಂದೆ ಕಾರ್ಯನಿರ್ವಹಿಸುವುದಿಲ್ಲ."
 }

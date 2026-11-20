@@ -163,18 +163,22 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         return $attestationStatement;
     }
 
-    // https://www.w3.org/TR/webauthn-3/#sctn-packed-attestation-cert-requirements
-    private function checkCertificate(string $attestnCert, AuthenticatorData $authenticatorData): void
+    /**
+     * Returns the certificate that has been checked, so that the signature is verified with its public key.
+     *
+     * @see https://www.w3.org/TR/webauthn-3/#sctn-packed-attestation-cert-requirements
+     */
+    private function checkCertificate(string $attestnCert, AuthenticatorData $authenticatorData): Certificate
     {
         $certificate = Certificate::fromPEM(PEM::fromString($attestnCert));
         $tbsCertificate = $certificate->tbsCertificate();
 
-        //Check version (X.509 version 3 is encoded as 2)
+        // Check version (X.509 version 3 is encoded as 2)
         $tbsCertificate->version() === TBSCertificate::VERSION_3 || throw AttestationStatementVerificationException::create(
             'Invalid certificate version'
         );
 
-        //Check subject field
+        // Check subject field
         $subject = $tbsCertificate->subject();
         $subject->countOfType(
             AttributeType::OID_COUNTRY_NAME
@@ -194,10 +198,10 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
             'Invalid certificate name. The Subject Organization Unit must be "Authenticator Attestation"'
         );
 
-        //Check extensions
+        // Check extensions
         $extensions = $tbsCertificate->extensions();
 
-        //Check certificate is not a CA cert
+        // Check certificate is not a CA cert
         $extensions->hasBasicConstraints() || throw AttestationStatementVerificationException::create(
             'The Basic Constraints extension must have the CA component set to false'
         );
@@ -232,8 +236,14 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
                 'The value of the "aaguid" does not match with the certificate extension ' . self::OID_FIDO_GEN_CE_AAGUID
             );
         }
+
+        return $certificate;
     }
 
+    /**
+     * The signature is verified with the public key of the certificate checked by checkCertificate(), which is also
+     * the one the certificate chain validator reads, never with the text of the trust path itself.
+     */
     private function processWithCertificate(
         string $clientDataJSONHash,
         AttestationStatement $attestationStatement,
@@ -243,7 +253,7 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         $certificates = $trustPath->certificates;
 
         // Check leaf certificate
-        $this->checkCertificate($certificates[0], $authenticatorData);
+        $certificate = $this->checkCertificate($certificates[0], $authenticatorData);
 
         // Get the COSE algorithm identifier and the corresponding OpenSSL one
         /** @var int|string $algRaw */
@@ -255,7 +265,15 @@ final class PackedAttestationStatementSupport implements AttestationStatementSup
         $signedData = $authenticatorData->authData . $clientDataJSONHash;
         /** @var string $sig */
         $sig = $attestationStatement->get('sig');
-        $result = openssl_verify($signedData, $sig, $certificates[0], $opensslAlgorithmIdentifier);
+        $result = openssl_verify(
+            $signedData,
+            $sig,
+            $certificate->tbsCertificate()
+                ->subjectPublicKeyInfo()
+                ->toPEM()
+                ->string(),
+            $opensslAlgorithmIdentifier
+        );
 
         return $result === 1;
     }

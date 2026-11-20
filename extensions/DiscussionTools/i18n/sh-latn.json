@@ -38,7 +38,7 @@
 	"discussiontools-findcomment-results-transcluded": "(transkludirano s druge stranice)",
 	"discussiontools-ledesection-button": "Više o ovoj stranici",
 	"discussiontools-ledesection-title": "O ovoj stranici za razgovor",
-	"discussiontools-newtopic-missing-title": "Naslov teme nije unesen.",
+	"discussiontools-newtopic-missing-title": "Naslov {{GENDER:|teme}} nije unesen.",
 	"discussiontools-newtopic-placeholder-title": "Naslov teme",
 	"discussiontools-notification-removed-topic-header": "Tema \"<strong>$4</strong>\" je arhivirana ili uklonjena sa stranice $3.",
 	"discussiontools-notification-removed-topic-view": "Prikaži stranicu",

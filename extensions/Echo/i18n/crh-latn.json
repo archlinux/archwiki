@@ -82,7 +82,7 @@
 	"echo-notification-alert-text-only": "Tenbiler",
 	"echo-mark-all-as-read": "{{PLURAL:$1|Episini}} oqulğan olaraq belgile",
 	"notification-bundle-header-edit-user-page": "<strong>Qullanıcı {{GENDER:$2|saifeñizde}}</strong> {{PLURAL:$1|bir yañı deñiştirme|$1 yañı deñiştirme|100=99+ yañı deñiştirme}}.",
-	"notification-bundle-header-edit-user-talk-v2": "{{PLURAL:$1|Yañı bir beyanat|$1 yañı beyanat|100=99+ yañı beyanat}} <strong>{{GENDER:$3|sizin}} muzakere saifeñizde tapıla</strong>.",
+	"notification-bundle-header-edit-user-talk-v2": "<strong>Muzakere {{GENDER:$3|saifeñizde}}</strong> {{PLURAL:$1|yañı bir mesaj|$1 yañı mesaj}} bar.",
 	"echo-email-batch-link-text-view-all-notifications": "Bildirmelerniñ episini köster",
 	"notification-header-foreign-alert": "{{PLURAL:$5|$5 başqa viki leyhasında}} tenbileriñiz bar",
 	"notification-header-foreign-all": "{{PLURAL:$5|Başqa bir|$5 başqa}} vikiden bildirmeler"

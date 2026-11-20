@@ -938,7 +938,10 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function getRecoveryCodesHTML( RecoveryCodes $module ): void {
-		$key = $module->ensureExistence( $this->oathUser );
+		$key = $module->getInstance( $this->oathUser );
+		if ( !$key ) {
+			return;
+		}
 
 		$this->getOutput()->addModuleStyles( 'ext.oath.recovery.styles' );
 		$this->getOutput()->addModules( 'ext.oath.recovery' );

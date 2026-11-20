@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rafka Aditia"
+		]
+	},
+	"syntaxhighlight-desc": "Nyadiakeun sorotan rumpaka <code>&lt;syntaxhighlight&gt;</code> migunakeun [http://pygments.org/ Pygments]",
+	"syntaxhighlight-enclose-category": "Kaca nu maké atribut enclose nu teu dipaké deui"
+}

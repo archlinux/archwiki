@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace CBOR\OtherObject;
 
-use InvalidArgumentException;
 use function array_key_exists;
+use InvalidArgumentException;
 
 final class OtherObjectManager implements OtherObjectManagerInterface
 {
     /**
+     * @var array<int, class-string<OtherObjectInterface>>
+     */
+    private array $classes = [];
+
+    /**
      * @param  class-string<OtherObjectInterface>[] $classes
      */
-    public function __construct(
-        private array $classes = [],
-    ) {
+    public function __construct(array $classes = [])
+    {
+        foreach ($classes as $class) {
+            $this->add($class);
+        }
     }
 
     /**

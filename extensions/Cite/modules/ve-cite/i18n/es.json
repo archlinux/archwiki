@@ -32,7 +32,8 @@
 			"Thehelpfulone",
 			"Themasterriot",
 			"Vikytinta",
-			"Wifidel"
+			"Wifidel",
+			"Diegodlh"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
@@ -69,6 +70,10 @@
 	"cite-ve-dialog-reference-title": "Referencia",
 	"cite-ve-dialog-reference-add-details-button": "Añadir detalles",
 	"cite-ve-dialog-subreference-help-dialog-title": "Detalles",
+	"cite-ve-dialog-subreference-help-dialog-head": "Nuevo: añadir un detalle a una referencia reutilizada",
+	"cite-ve-dialog-subreference-help-dialog-link-label": "Aprender más sobre añadir detalles a una referencia",
+	"cite-ve-dialog-subreference-change-all-checkbox-label": "Editar todos ($1) los usos con estos detalles.",
+	"cite-ve-dialog-reference-convert-all-checkbox-label": "Añadir estos detalles a todos los usos ($1) de esta referencia que aún no tienen detalles.",
 	"cite-ve-dialog-reference-title-details": "Detalles",
 	"cite-ve-dialog-reference-useexisting-tool": "Reusar",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Lista de referencias generales",

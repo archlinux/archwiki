@@ -4,5 +4,24 @@
 			"شاه زمان پټان"
 		]
 	},
-	"apihelp-query+checkuser-summary": "وگورئ چې کومې وېبپتې د ورکړل شوي کارن‌نوم له خوا کارول شوي يا کوم کارن‌نومونه د ورکړل‌شوې وېبپتې له خوا کارول شوي."
+	"apihelp-query+checkuser-summary": "وگورئ چې کومې وېبپتې د ورکړل شوي کارن‌نوم له خوا کارول شوي يا کوم کارن‌نومونه د ورکړل‌شوې وېبپتې له خوا کارول شوي.",
+	"apihelp-query+checkuser-param-request": "د سم‌کتونکي‌کارن غوښتنې ډولونه:",
+	"apihelp-query+checkuser-paramvalue-request-userips": "د موخې وړ کارن وېبپته ترلاسه کړئ.",
+	"apihelp-query+checkuser-paramvalue-request-actions": "د موخې وړ وېب‌پتې يا لړۍ له‌خوا ترسره شوې چارې ترلاسه کړئ.",
+	"apihelp-query+checkuser-paramvalue-request-ipusers": "د موخې وړ وېب‌پتې يا لړۍ څخه کارنان ترلاسه کړئ.",
+	"apihelp-query+checkuser-param-target": "سم‌کتنې لپاره کارن‌نوم، وېب پتې، يا سي‌آی‌ډي‌ار بريد.",
+	"apihelp-query+checkuser-param-reason": "د سم‌کتنې لامل.",
+	"apihelp-query+checkuser-param-limit": "د کتارونو بريد.",
+	"apihelp-query+checkuser-param-timecond": "د کارن اومتوک د وخت محدوديت (لکه \"-2 weeks\" يا \"2 weeks ago\").",
+	"apihelp-query+checkuser-param-xff": "د وېب‌پتې پرځای اېکس‌اېف‌اېف اومتوک وکاروئ.",
+	"apihelp-query+checkuser-example-1": "[[User:Example]] لپاره وېب‌پتې ترلاسه کړئ",
+	"apihelp-query+checkuser-example-2": "د 192.0.2.0/24 له‌خوا ترسره شوې چارې ترلاسه کړئ.",
+	"apihelp-query+checkuserlog-summary": "د سم‌کتونکي‌کارن يادښت څخه ننوتنې ترلاسه کړئ.",
+	"apihelp-query+checkuserlog-param-user": "د سم‌کتونکي‌کارن کارن‌نوم.",
+	"apihelp-query+checkuserlog-param-target": "سم‌کتل‌شوی کارن، وېب پته، يا سي‌آی‌ډي‌ار بريد.",
+	"apihelp-query+checkuserlog-param-reason": "د سم‌کتنې لپاره ورکړل شوی لامل.",
+	"apihelp-query+checkuserlog-param-limit": "د کتارونو بريد.",
+	"apihelp-query+checkuserlog-param-from": "د شمېرنې پيلولو وخت‌ټاپه.",
+	"apihelp-query+checkuserlog-param-to": "د شمېرنې پای ته رسولو وخت‌ټاپه.",
+	"apihelp-query+checkuserlog-example-1": "د [[User:Example]] سم‌کتنې ښودل"
 }

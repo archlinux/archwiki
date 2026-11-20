@@ -93,7 +93,7 @@ class ToolLinksHandler implements
 
 	/** @inheritDoc */
 	public function onHtmlPageLinkRendererEnd( $linkRenderer, $target, $isKnown, &$text, &$attribs, &$ret ) {
-		if ( str_contains( $attribs['class'], 'mw-abusefilter-log-missinguserlink' ) ) {
+		if ( str_contains( $attribs['class'] ?? '', 'mw-abusefilter-log-missinguserlink' ) ) {
 			$attribs['title'] = wfMessage(
 				'abusefilter-log-missinguserlink-title',
 				Title::newFromLinkTarget( $target )->getPrefixedText()

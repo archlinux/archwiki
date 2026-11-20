@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Miilehti"
 		]
 	},
 	"vector-languages": "Ǩiõl",
@@ -34,7 +35,9 @@
 	"vector-toc-menu-tooltip": "Siiskâžlooǥǥtõs",
 	"vector-site-nav-label": "Seiddõs",
 	"vector-main-menu-label": "Väʹlddvaʹlljõk",
+	"vector-feature-custom-font-size-exclusion-notice": "Tän seeidast lij pâi uʹcc fontt.",
 	"vector-page-tools-label": "Neävv",
+	"vector-page-tools-actions-label": "Tååim",
 	"vector-unpin-element-label": "čiõǥǥ",
 	"vector-2022-prefs-talkpage": "[https://www.mediawiki.org/wiki/Talk:Reading/Web/Desktop_Improvements Saǥstõõllmõš]"
 }

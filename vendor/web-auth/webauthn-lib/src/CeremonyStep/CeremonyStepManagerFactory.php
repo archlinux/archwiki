@@ -137,6 +137,7 @@ final class CeremonyStepManagerFactory
             new CheckBackupBitsAreConsistent(),
             new CheckExtensions($this->extensionOutputCheckerHandler),
             new CheckSignature($this->algorithmManager),
+            new CheckBackupEligibilityIsUnchanged(),
             new CheckCounter($this->counterChecker),
         ]);
     }
@@ -188,7 +189,7 @@ final class CeremonyStepManagerFactory
             new CheckTopOrigin($this->topOriginValidator),
             new CheckRelyingPartyIdIdHash(),
             new CheckUserWasPresent($requireUserPresence),
-            new CheckUserVerification(),
+            new CheckUserVerification($requireUserPresence),
             new CheckBackupBitsAreConsistent(),
             new CheckAlgorithm(),
             new CheckExtensions($this->extensionOutputCheckerHandler),

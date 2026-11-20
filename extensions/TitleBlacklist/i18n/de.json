@@ -29,7 +29,7 @@
 	"titleblacklist-forbidden-move": "Die Seite „$2“ kann nicht nach „$3“ verschoben werden.\nDer Titel kollidiert mit diesem Sperrbegriff: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Eine Datei mit dem Namen „$2“ kann nicht hochgeladen werden.\nDer Titel kollidiert mit diesem Sperrbegriff: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "Die Registrierung des Benutzernamens „$2“ ist nicht erwünscht.\nFolgender Eintrag aus der Liste unerwünschter Benutzernamen führte zur Ablehnung: <code>$1</code>",
-	"titleblacklist-invalid": "Die {{PLURAL:$1|folgende Zeile|folgenden Zeilen}} in der Sperrliste {{PLURAL:$1|ist|sind}} ungültig; bitte {{#FORMAL:korrigiere|korrigieren Sie}} diese vor dem Speichern:",
+	"titleblacklist-invalid-error": "Die {{PLURAL:$1|folgende Zeile|folgenden Zeilen}} in der Sperrliste {{PLURAL:$1|ist|sind}} ungültig; bitte {{#FORMAL:korrigiere|korrigieren Sie}} diese vor dem Speichern:\n$2",
 	"titleblacklist-override": "Die Titel-Negativliste bei Treffern umgehen",
 	"titleblacklist-override-help": "Benutzer mit ausreichenden Rechten können dies setzen, um die Titel-Negativliste-Prüfungen zu ignorieren.",
 	"titleblacklist-warning": "<strong>Warnung: Diese Seite kann nur von Administratoren und anderen Benutzern mit dem <code>tboverride</code>-Recht bearbeitet werden, da sie mit dem folgenden Eintrag in der Titel-Negativliste übereinstimmt:</strong><br /><code>$1</code>",

@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"ऐक्टिवेटेड्"
+		]
+	},
+	"timeless-anonymous": "अनाम",
+	"timeless-loggedinas": "'''$1''' के रूपमे प्रवेश कैल",
+	"timeless-notloggedin": "सम्प्रवेशित नै",
+	"timeless-userpage": "{{GENDER:$1|प्रयोगकर्ता}} पन्ना",
+	"timeless-talkpage": "{{GENDER:$1|प्रयोगकर्ता}} वार्ता",
+	"timeless-pagelog": "पन्ना सूचिका",
+	"timeless-more": "आउ",
+	"timeless-sitetools": "विकि उपकरण",
+	"timeless-pageactions": "पन्ना उपकरण",
+	"timeless-userpagetools": "प्रयोगकर्ता पन्ना उपकरण",
+	"timeless-action-addsection": "नया विषय",
+	"timeless-view-view": "पढ़थिन",
+	"timeless-pagemisc": "अधिक",
+	"timeless-namespaces": "नामस्थान",
+	"timeless-pagetools": "पन्ना क्रिया",
+	"timeless-languages": "भाषा",
+	"timeless-projects": "अन्य परियोजना",
+	"timeless-view-history": "इतिहास",
+	"timeless-action-undelete": "{{PLURAL:$1|एगो हटावल|$1 हटावल}} परिवर्तन वापिस लौथिन"
+}

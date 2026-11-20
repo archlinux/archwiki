@@ -1,15 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Thakurji"
+			"Thakurji",
+			"Girmitya"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Jawaab do",
+	"discussiontools-newtopic-missing-title": "Meharbaani kar ke  {{GENDER:|aapan}} discussion topic ke khaatir ek title deo.",
+	"discussiontools-newtopic-placeholder-title": "Visay:",
 	"discussiontools-replylink": "{{GENDER:|jawaab do}}",
 	"discussiontools-replywidget-advanced": "Anbhawi",
 	"discussiontools-replywidget-cancel": "Cancel karo",
 	"discussiontools-replywidget-mode-source": "Source",
 	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-newtopic": "{{GENDER:|Add}} topic",
+	"discussiontools-replywidget-placeholder-newtopic": "Baare me",
 	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Jawaab do}} {{BIDI:$1}} ke",
 	"discussiontools-replywidget-preview": "Jhalak dekhao",
 	"discussiontools-replywidget-reply": "{{GENDER:|Jawaab do}}",

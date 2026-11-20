@@ -422,5 +422,6 @@
 	"checkuser-suggestedinvestigations-risk-signals-popover-close-label": "ДӀачӀагӀа",
 	"checkuser-suggestedinvestigations-risk-signals-popover-open-label": "Кхерамечу сигналех лаьцна кхин а хаамаш каро йиш йу информацин корехь.",
 	"checkuser-userinfocard-temporary-account-bucketcount": "Массо а цунах йоьзна йолчу IP-х ханна йолу аккаунташ: $1",
-	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Оцу аккаунтаца йоьзна йолчу массо а IP-адресашкара массо а ханна лерина аккаунтан дерриг дукхалла"
+	"checkuser-userinfocard-temporary-account-bucketcount-tooltip": "Оцу аккаунтаца йоьзна йолчу массо а IP-адресашкара массо а ханна лерина аккаунтан дерриг дукхалла",
+	"checkuser-contributions-temporary-account-bucketcount": "Массо а цунах йоьзна йолчу IP-х ханна йолу аккаунташ: $1."
 }

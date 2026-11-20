@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kluntjekniiper"
+			"Kluntjekniiper",
+			"VanModers"
 		]
 	},
 	"discussiontools-autotopicsubpopup-title": "Duu hest 'n abonnement ofslooten",
@@ -13,7 +14,7 @@
 	"discussiontools-newtopicssubscription-notify-subscribed-body": "Duu kriğst benóórichtigens, doo näej teemen up disser siid anfangen wordent.",
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Duu hest abonnäärt!",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|anterde}} tau „<strong>$4</strong>“.",
-	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|'N näej antern|$1 näej anterns|100=Oover 99 näej anterns}} in „<strong>$3</strong>“.",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|'N näj antern|$1 näej anterns|100=Oover 99 näej anterns}} in „<strong>$3</strong>“.",
 	"discussiontools-notification-subscribed-new-comment-view": "Kummentaar wiisen",
 	"discussiontools-preference-autotopicsub": "Aautomóótsk ofsnidsabonnement",
 	"discussiontools-preference-topicsubscription-help": "Fermöögelkt dii dat, benóórichtigens oover näej kummentaaren tau enkeld ofsneeden t' ferkriigen.",

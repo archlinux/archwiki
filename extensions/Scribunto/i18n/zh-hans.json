@@ -48,7 +48,7 @@
 	"scribunto-lua-in-main": "在主块中",
 	"scribunto-lua-in-function-at": "在函数$1:$2内",
 	"scribunto-lua-backtrace-line": "$1：$2",
-	"scribunto-lua-error-location": "$1Lua错误：$2",
+	"scribunto-lua-error-location": "$1Lua错误：$2。",
 	"scribunto-lua-error": "Lua错误：$2。",
 	"scribunto-lua-notarrayreturn": "脚本错误：模块返回了$2值。它应该返回导出表。",
 	"scribunto-lua-warning": "脚本警告：$1",

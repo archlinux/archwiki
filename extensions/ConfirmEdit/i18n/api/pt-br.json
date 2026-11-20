@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Felipe L. Ewald"
+			"Felipe L. Ewald",
+			"Fúlvio"
 		]
 	},
 	"captcha-apihelp-param-captchaword": "Responder ao CAPTCHA",
-	"captcha-apihelp-param-captchaid": "CAPTCHA ID do pedido anterior"
+	"captcha-apihelp-param-captchaid": "ID do CAPTCHA do pedido anterior",
+	"confirmedit-hcaptcha-apihelp-param-forceshowcaptcha": "Indica se o CAPTCHA hCaptcha exibido foi forçado, por exemplo, devido a uma consequência da extensão AbuseFilter (e, portanto, usou uma chave de site mais restritiva). Defina este parâmetro se a variável de configuração JS com o mesmo nome for verdadeira ou se a primeira tentativa de usar esta API retornou um erro 'forcecaptcha' com uma chave de site específica."
 }

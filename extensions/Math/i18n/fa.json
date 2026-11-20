@@ -75,13 +75,19 @@
 	"math-visualeditor-symbol-group-math-symbols": "نمادها و ثابت‌ها",
 	"math-visualeditor-symbol-group-math-typefaces": "شکل قلم",
 	"math-visualeditor-symbol-group-math-unsorted": "نامرتب",
+	"math-form-tex-label": "ورودی تکس سفارشی",
+	"math-form-tex-help": "با ورودی TeX خودتان آزمایش کنید. برای راهنمایی بیشتر، [[{{int:math-helppage}}|صفحهٔ راهنمای فرمول‌های ریاضی]] را ببینید.",
 	"math-form-type-label": "نوع ورودی",
+	"math-form-type-tex": "تکس (ورودی معمولی)",
+	"math-form-type-chem": "شیمی (ورودی با پشتیبانی شیمی؛ برای مثال <code dir=\"ltr\">\\ce{H2O}</code> برای آب)",
+	"math-form-display-label": "حالت نمایش ریاضی",
 	"math-helppage": "Help:فرمول‌نویسی",
 	"math_failure": "شکست در تجزیه",
 	"math_invalidjson": "پاسخ سرور $1 جی‌سن نامعتبر است.",
 	"math_invalidresponse": "پاسخ نامعتبر $1 (\"$3\") از سرور \"$2\":",
 	"math_invalidxml": "MathML یا SVG اکس‌ام‌ال نامعتبر است.",
 	"math_mathoid_error": "خطای تبدیل. سرور («$1») گزارش داد: «$2»",
+	"math_other_error": "خطای دیگر: $1",
 	"math-status-introduction": "این صفحه اطلاعاتی را پیرامون {{PLURAL:$1|حالت|حالت‌های}} فعال رندر کردن ریاضی را نشان می‌دهد.\n\n{{PLURAL:$1|حالت|حالت‌های}} رندر کردن زیر فعال {{PLURAL:$1|است|هستند}}:",
 	"math_syntax_error": "خطای نحوی",
 	"math_timeout": "$1 زمان از دست رفتن از «$2»",
@@ -118,5 +124,7 @@
 	"math-wikibase-special-form-button": "درخواست اطلاعات",
 	"math-wikibase-special-error-header": "خطا",
 	"math-wikibase-special-error-invalid-argument": "شناسه‌ای که برای مورد ویکی‌پایگاه مشخص کردید موجود نیست.",
-	"math-wikibase-special-error-unknown": "خطای ناشناخته‌ای در زمان واکشی داده از ویکی‌پایگاه رخ داد."
+	"math-wikibase-special-error-unknown": "خطای ناشناخته‌ای در زمان واکشی داده از ویکی‌پایگاه رخ داد.",
+	"math-editpage-insert-inline": "فرمول ریاضی (درخط)",
+	"math-editpage-insert-block": "فرمول ریاضی (بلوک)"
 }

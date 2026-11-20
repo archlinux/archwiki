@@ -107,6 +107,10 @@ final class PhpStanTypeHelper
                     // It's safer to fall back to other extractors here, as resolving const types correctly is not easy at the moment
                     return [];
                 }
+                if ($type instanceof IdentifierTypeNode && 'mixed' === $type->name) {
+                    // a union that contains "mixed" is equivalent to "mixed", so it accepts any value
+                    return [];
+                }
                 foreach ($this->extractTypes($type, $typeContext) as $subType) {
                     $types[] = $subType;
                 }
@@ -188,9 +192,9 @@ final class PhpStanTypeHelper
                 'non-empty-list' => [new Type(Type::BUILTIN_TYPE_ARRAY, false, null, true, new Type(Type::BUILTIN_TYPE_INT))],
                 'non-empty-array' => [new Type(Type::BUILTIN_TYPE_ARRAY, false, null, true)],
                 'mixed' => [], // mixed seems to be ignored in all other extractors
-                'parent' => [new Type(Type::BUILTIN_TYPE_OBJECT, false, $node->name)],
-                'static',
-                'self' => [new Type(Type::BUILTIN_TYPE_OBJECT, false, $typeContext->getCalledClass())],
+                'parent' => [new Type(Type::BUILTIN_TYPE_OBJECT, false, get_parent_class($typeContext->getDeclaringClass()) ?: $node->name)],
+                'static' => [new Type(Type::BUILTIN_TYPE_OBJECT, false, $typeContext->getCalledClass())],
+                'self' => [new Type(Type::BUILTIN_TYPE_OBJECT, false, $typeContext->getDeclaringClass())],
                 'class-string',
                 'html-escaped-string',
                 'lowercase-string',

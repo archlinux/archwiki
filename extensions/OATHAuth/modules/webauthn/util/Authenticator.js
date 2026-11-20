@@ -91,7 +91,7 @@ mw.ext.webauthn.Authenticator.prototype.formatCredential = function ( assertion 
 			clientDataJSON: mw.ext.webauthn.util.byteArrayToBase64(
 				new Uint8Array( assertion.response.clientDataJSON ), 'base64url', 'unpadded' ),
 			signature: mw.ext.webauthn.util.byteArrayToBase64(
-				new Uint8Array( assertion.response.signature ), 'base64', 'padded' ),
+				new Uint8Array( assertion.response.signature ), 'base64url', 'unpadded' ),
 			userHandle: assertion.response.userHandle ?
 				mw.ext.webauthn.util.byteArrayToBase64(
 					new Uint8Array( assertion.response.userHandle ),

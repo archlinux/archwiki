@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kjeanclaude"
+			"Kjeanclaude",
+			"Mahuton"
 		]
 	},
 	"vector-languages": "Aniein moun",
@@ -18,5 +19,6 @@
 	"vector-more-actions": "Ouflè ékun",
 	"vector-page-tools-label": "Liké moun",
 	"vector-page-tools-general-label": "Lika ngba (liké kounndèlè)",
+	"vector-page-tools-actions-label": "Aeliè moun",
 	"vector-unpin-element-label": "fa fia"
 }

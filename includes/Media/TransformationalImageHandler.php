@@ -178,17 +178,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 
 		if ( $flags & self::TRANSFORM_LATER ) {
 			wfDebug( __METHOD__ . ": Transforming later per flags." );
-			$newParams = [
-				'width' => $scalerParams['clientWidth'],
-				'height' => $scalerParams['clientHeight']
-			];
-			if ( isset( $params['quality'] ) ) {
-				$newParams['quality'] = $params['quality'];
-			}
-			if ( isset( $params['page'] ) && $params['page'] ) {
-				$newParams['page'] = $params['page'];
-			}
-			return new ThumbnailImage( $image, $dstUrl, false, $newParams );
+			return new ThumbnailImage( $image, $dstUrl, false, $params );
 		}
 
 		# Try to make a target path for the thumbnail
@@ -282,17 +272,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			return $mto;
 		}
 
-		$newParams = [
-			'width' => $scalerParams['clientWidth'],
-			'height' => $scalerParams['clientHeight']
-		];
-		if ( isset( $params['quality'] ) ) {
-			$newParams['quality'] = $params['quality'];
-		}
-		if ( isset( $params['page'] ) && $params['page'] ) {
-			$newParams['page'] = $params['page'];
-		}
-		return new ThumbnailImage( $image, $dstUrl, $dstPath, $newParams );
+		return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
 	}
 
 	/**

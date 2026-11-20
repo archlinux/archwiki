@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace CBOR\OtherObject;
 
-use Brick\Math\BigInteger;
 use CBOR\Normalizable;
 use CBOR\OtherObject as Base;
-use CBOR\Utils;
 use InvalidArgumentException;
 use function strlen;
-use const INF;
-use const NAN;
 
 final class DoublePrecisionFloatObject extends Base implements Normalizable
 {
+    use FloatBitsTrait;
+
     public static function supportedAdditionalInformation(): array
     {
         return [self::OBJECT_DOUBLE_PRECISION_FLOAT];
@@ -23,10 +21,10 @@ final class DoublePrecisionFloatObject extends Base implements Normalizable
     public static function createFromFloat(float $number): self
     {
         $value = match (true) {
-            is_nan($number) => hex2bin('7FF8000000000000'),
-            is_infinite($number) && $number > 0 => hex2bin('7FF0000000000000'),
-            is_infinite($number) && $number < 0 => hex2bin('FFF0000000000000'),
-            default => (fn (): string => unpack('S', "\x01\x00")[1] === 1 ? strrev(pack('d', $number)) : pack(
+            is_nan($number) => self::hex2binSafe('7FF8000000000000'),
+            is_infinite($number) && $number > 0 => self::hex2binSafe('7FF0000000000000'),
+            is_infinite($number) && $number < 0 => self::hex2binSafe('FFF0000000000000'),
+            default => (static fn (): string => unpack('S', "\x01\x00")[1] === 1 ? strrev(pack('d', $number)) : pack(
                 'd',
                 $number
             ))(),
@@ -49,45 +47,33 @@ final class DoublePrecisionFloatObject extends Base implements Normalizable
         return new self(self::OBJECT_DOUBLE_PRECISION_FLOAT, $value);
     }
 
-    public function normalize(): float|int
+    public function normalize(): float
     {
-        $exponent = $this->getExponent();
-        $mantissa = $this->getMantissa();
-        $sign = $this->getSign();
-
-        if ($exponent === 0) {
-            $val = $mantissa * 2 ** (-(1022 + 52));
-        } elseif ($exponent !== 0b11111111111) {
-            $val = ($mantissa + (1 << 52)) * 2 ** ($exponent - (1023 + 52));
-        } else {
-            $val = $mantissa === 0 ? INF : NAN;
-        }
-
-        return $sign * $val;
+        return $this->value('E');
     }
 
     public function getExponent(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-
-        return Utils::binToBigInteger($data)->shiftedRight(52)->and(Utils::hexToBigInteger('7ff'))->toInt();
+        return $this->bits('J') >> 52 & 0b11111111111;
     }
 
     public function getMantissa(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-
-        return Utils::binToBigInteger($data)->and(Utils::hexToBigInteger('fffffffffffff'))->toInt();
+        return $this->bits('J') & 0xFFFFFFFFFFFFF;
     }
 
     public function getSign(): int
     {
-        $data = $this->data;
-        Utils::assertString($data, 'Invalid data');
-        $sign = Utils::binToBigInteger($data)->shiftedRight(63);
+        // "J" is unpacked signed, so the sign bit of the binary64 payload is the sign of the PHP integer.
+        return $this->bits('J') < 0 ? -1 : 1;
+    }
 
-        return $sign->isEqualTo(BigInteger::one()) ? -1 : 1;
+    private static function hex2binSafe(string $hex): string
+    {
+        $result = hex2bin($hex);
+        if ($result === false) {
+            throw new InvalidArgumentException('Invalid hex string');
+        }
+        return $result;
     }
 }

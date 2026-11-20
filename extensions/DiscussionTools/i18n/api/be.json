@@ -3,12 +3,14 @@
 		"authors": [
 			"Maksim L.",
 			"Plaga med",
-			"Tomato Cream"
+			"Tomato Cream",
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Каментар з ідэнтыфікатарам «$1» не знойдзены.",
 	"apierror-discussiontools-commentname-ambiguous": "Знойдзена некалькі каментароў з назвай «$1», патрабуецца <var>commentid</var> каментара.",
 	"apierror-discussiontools-commentname-notfound": "Каментар з назвай «$1» не знойдзены.",
+	"apierror-discussiontools-findcomment-pagenevertalk": "Старонка ніколі не змяшчала ніякіх абмеркаванняў.",
 	"apierror-discussiontools-formtoken-used": "Каментар ужо апублікаваны. Перазагрузіце старонку, каб убачыць яго.",
 	"apierror-discussiontools-subscription-failed-add": "Не атрымалася падпісацца на гэтую тэму.",
 	"apierror-discussiontools-subscription-failed-remove": "Не атрымалася адпісацца ад гэтай тэмы.",
@@ -18,16 +20,26 @@
 	"apihelp-discussiontoolsedit-param-formtoken": "Неабавязковы ўнікальны ідэнтыфікатар, створаны ў кліенце для прадухілення падвойнай публікацыі.",
 	"apihelp-discussiontoolsedit-param-html": "Кантэнт для публікацыі як HTML. Нельга выкарыстоўваць разам з <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Выкарыстоўваецца толькі калі <var>paction</var> — <var>addtopic</var>.",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Дазволіць публікацыю новага раздзела без загалоўка.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Кантэнт для публікацыі як вікі-тэкст. Нельга выкарыстоўваць разам з <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Дадаць новы каментар як адказ на існы каментар.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Дадаць новы раздзел размовы і першы каментар у ім.",
 	"apihelp-discussiontoolsedit-summary": "Апублікаваць паведамленне на старонцы размовы.",
+	"apihelp-discussiontoolsfindcomment-summary": "Знайсці каментарый паводле яго ID альбо назвы.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "ID альбо назва каментарыя",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Хэш-фрагмент загалоўка",
+	"apihelp-discussiontoolsfindcomment-param-page": "Старонка, на якой раней існаваў хэш-фрагмент загалоўка",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Назвы тэмаў для праверкі",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Атрымаць станы падпіскі на зададзеныя тэмы.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Нумар версіі для выкарыстання (прадвызначана — апошняя версія).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Якія ўласцівасці атрымаць:",
+	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Выключыць подпісы ўдзельнікаў з каментарыяў (пры выкарыстанні <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-param-threaditemsflags": "Сцяжкі для змянення вываду пры выкарыстанні <var>prop=threaditemshtml</var>.",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Прадстаўленне каментарыяў, разабраных са старонкі",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "З якіх іншых старонак былі ўключаны каментары",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-activity": "Уключыць дадатковыя звесткі пра актыўнасць для найстарэйшых і апошніх адказаў (пры выкарыстанні <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-excludesignatures": "Выключыць подпісы ўдзельнікаў з каментарыяў (пры выкарыстанні <var>prop=threaditemshtml</var>).",
+	"apihelp-discussiontoolspageinfo-paramvalue-threaditemsflags-noreplies": "Не ўключаць поўнае дрэва адказаў, а падаць толькі загалоўкі верхняга ўзроўню (пры выкарыстанні <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-summary": "Вяртае метададзеныя, неабходныя для ініцыялізацыі інструментаў размоў.",
 	"apihelp-discussiontoolspreview-param-type": "Тып паведамлення для перадпрагляду",
 	"apihelp-discussiontoolspreview-param-wikitext": "Перадпрагляд зместу як вікіразметкі.",
@@ -35,5 +47,8 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "Назва тэмы, на якую трэба падпісацца (або адпісацца)",
 	"apihelp-discussiontoolssubscribe-param-page": "Старонка, на якой знаходзіцца тэма",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "True для падпіскі, false для адпіскі",
-	"apihelp-discussiontoolssubscribe-summary": "Падпісацца (або адпісацца), каб атрымліваць апавяшчэнні па тэме."
+	"apihelp-discussiontoolssubscribe-summary": "Падпісацца (або адпісацца), каб атрымліваць апавяшчэнні па тэме.",
+	"apihelp-discussiontoolsthank-param-commentid": "ID каментарыя, за які трэба падзякаваць.",
+	"apihelp-discussiontoolsthank-summary": "Адправіць публічнае апавяшчэнне з падзякай за каментарый.",
+	"apihelp-edit-param-discussiontoolsautosubscribe": "Аўтаматычна падпісваць удзельніка на любыя новыя галіны размоў, створаныя гэтай праўкай. Выкарыстоўвайце «yes» альбо «no», каб перавызначыць налады ўдзельніка (па змаўчанні)."
 }

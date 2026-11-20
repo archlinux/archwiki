@@ -8,7 +8,8 @@
 			"Shirayuki",
 			"Shulmj",
 			"YeBoy371",
-			"Waki285"
+			"Waki285",
+			"TAKAHASHI Shuuji"
 		]
 	},
 	"editchecks": "編集チェック",
@@ -70,7 +71,7 @@
 	"editcheck-action-remove-link": "リンクを除去する",
 	"editcheck-action-dismiss": "閉じる",
 	"editcheck-action-add-caption": "キャプションを追加する",
-	"editcheck-action-add-citation": "脚注を追加する",
+	"editcheck-action-add-citation": "出典を追加する",
 	"editcheck-action-convert-reference": "変換",
 	"editcheck-external-link-title": "外部リンクを除去しましょう",
 	"editcheck-external-link-description": "このリンクは[{{int:editcheck-external-link-descriptionlink}} 外部ウェブサイト]を指しています。読者がコンテンツに集中できるよう、このリンクを除去するか、「外部リンク」節に移動するか、必要に応じて[{{int:editcheck-external-link-convertlink}} 脚注]に変換してください。",

@@ -253,7 +253,8 @@ class Event extends AbstractEntity implements Bundleable {
 			$obj->id = $data['event_id'];
 		}
 		$obj->type = $data['event_type'];
-		$obj->extra = $data['event_extra'] ? self::deserializeExtra( $data['event_extra'] ) : [];
+		// Job data is JSON. Do not let unserialize() create objects from it.
+		$obj->extra = $data['event_extra'] ? self::deserializeExtra( $data['event_extra'], false ) : [];
 		if ( isset( $data['event_page_id'] ) ) {
 			$obj->pageId = $data['event_page_id'];
 		}
@@ -498,14 +499,15 @@ class Event extends AbstractEntity implements Bundleable {
 	 * deserialization in both formats - JSON, and the legacy php unserialize
 	 *
 	 * @param string $serialized
+	 * @param bool $allowClasses Let unserialize() create objects
 	 * @return array
 	 */
-	private static function deserializeExtra( string $serialized ) {
+	private static function deserializeExtra( string $serialized, bool $allowClasses = true ) {
 		if ( str_starts_with( $serialized, '{' ) || str_starts_with( $serialized, '[' ) ) {
 			$codec = MediaWikiServices::getInstance()->getJsonCodec();
 			return $codec->deserialize( $serialized );
 		}
-		return $serialized ? unserialize( $serialized ) : [];
+		return $serialized ? unserialize( $serialized, [ 'allowed_classes' => $allowClasses ] ) : [];
 	}
 
 	/**

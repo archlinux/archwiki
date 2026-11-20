@@ -178,6 +178,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|Käyttöoikeuksiasi}} on {{GENDER:$1|muutettu}}. Sinut on lisätty {{PLURAL:$3|ryhmään|ryhmiin}}: $2.",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|Käyttöoikeuksiasi}} on {{GENDER:$1|muutettu}}. Sinut on poistettu {{PLURAL:$3|ryhmästä|ryhmistä}}: $2.",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|Käyttöoikeuksiasi}} on {{GENDER:$1|muutettu}}. Sinut on lisätty {{PLURAL:$3|ryhmään|ryhmiin}}: $2. Sinut on poistettu {{PLURAL:$5|ryhmästä|ryhmistä}}: $4.",
+	"notification-header-user-rights-expiry": "{{GENDER:$3|Jäsenyytesi}} on päättynyt automaattisesti {{PLURAL:$2|seuraavassa käyttäjäryhmässä|seuraavissa käyttäjäryhmissä}}: $1.",
 	"notification-header-user-rights-expiry-change": "{{GENDER:$4|Jäsenyytesi}} päättymisajankohtaa {{PLURAL:$3|seuraavassa ryhmässä|seuraavissa ryhmissä}} on {{GENDER:$1|muutettu}}: $2",
 	"notification-header-welcome": "{{GENDER:$2|Tervetuloa}} {{GRAMMAR:illative|{{SITENAME}}}}, $1! Olemme iloisia, että {{GENDER:$2|olet}} täällä.",
 	"notification-header-mention-summary": "$1 {{GENDER:$2|mainitsi}} {{GENDER:$3|sinut}} muokkausyhteenvedossa sivulla <strong>$4</strong>.",

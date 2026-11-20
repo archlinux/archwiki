@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Saraiki"
+			"Saraiki",
+			"Tauqeerkhansurani"
 		]
 	},
 	"vector-languages": "زباناں",
@@ -32,6 +33,7 @@
 	"skin-theme-day-label": "سوجھل",
 	"skin-theme-night-label": "کالا شوخ",
 	"skin-theme-os-label": "خودکار",
+	"skin-theme-exclusion-notice": "ایہ ورقہ ہمیشاں ہلکے موڈ وچ ہوندے۔",
 	"vector-intro-page": "Help:تعارف",
 	"vector-toc-label": "شامل حصے",
 	"vector-toc-beginning": "ٻوہݨی",

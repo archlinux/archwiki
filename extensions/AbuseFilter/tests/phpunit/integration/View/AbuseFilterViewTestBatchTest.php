@@ -2,6 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration\View;
 
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\AbuseFilter\Filter\Flags;
+use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Extension\AbuseFilter\ProtectedVarsAccessLogger;
 use MediaWiki\Extension\AbuseFilter\ServiceNames;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
@@ -13,6 +16,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Specials\SpecialPageTestBase;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 
 /**
  * @group Database
@@ -25,6 +29,7 @@ use MediaWiki\Tests\Specials\SpecialPageTestBase;
  */
 class AbuseFilterViewTestBatchTest extends SpecialPageTestBase {
 	use AbuseFilterPermissionManagerTestTrait;
+	use MockAuthorityTrait;
 	use ProtectedVarsTestTrait;
 
 	private Authority $authorityCannotUseProtectedVar;
@@ -83,11 +88,102 @@ class AbuseFilterViewTestBatchTest extends SpecialPageTestBase {
 			->fetchField();
 		$this->assertNotFalse( $recentChangeId );
 		self::$userWhoHitFilter = $userWhoHitFilter->getName();
+
+		// Create a third filter which is suppressed
+		$this->assertStatusGood( AbuseFilterServices::getFilterStore()->saveFilter(
+			$this->mockRegisteredUltimateAuthority(),
+			null,
+			$this->getFilterFromSpecs( [
+				'id' => '3',
+				'rules' => '1 = 0 /* SUPPRESSED FILTER RULES */',
+				'name' => 'Suppressed filter',
+				'privacy' => Flags::FILTER_SUPPRESSED,
+			] ),
+			MutableFilter::newDefault()
+		) );
+
+		// Create a fourth filter which is protected but does not contain protected variables
+		$this->assertStatusGood( AbuseFilterServices::getFilterStore()->saveFilter(
+			$this->mockRegisteredUltimateAuthority(),
+			null,
+			$this->getFilterFromSpecs( [
+				'id' => '4',
+				'rules' => '1 = 0 /* PROTECTED FILTER RULES */',
+				'name' => 'Protected filter without protected variables',
+				'privacy' => Flags::FILTER_USES_PROTECTED_VARS,
+			] ),
+			MutableFilter::newDefault()
+		) );
 	}
 
 	protected function tearDown(): void {
 		parent::tearDown();
 		$this->dropProtectedVarAccessLogs();
+	}
+
+	/**
+	 * @dataProvider providePreloadTestPatternFromRestrictedFilter
+	 */
+	public function testPreloadTestPatternFromRestrictedFilter(
+		int $filterId,
+		?string $additionalPerm,
+		bool $shouldPreload,
+	): void {
+		$perms = [ 'abusefilter-modify' ];
+		if ( $additionalPerm !== null ) {
+			$perms[] = $additionalPerm;
+		}
+
+		[ $html ] = $this->executeSpecialPage(
+			"test/$filterId",
+			performer: $this->mockRegisteredAuthorityWithPermissions( $perms )
+		);
+
+		$rules = AbuseFilterServices::getFilterLookup()->getFilter( $filterId, false )->getRules();
+		$errorMsg = "(abusefilter-test-loadfilter-restricted: $filterId)";
+
+		if ( $shouldPreload ) {
+			$this->assertStringContainsString( $rules, $html );
+			$this->assertStringNotContainsString( $errorMsg, $html );
+		} else {
+			$this->assertStringNotContainsString( $rules, $html );
+			$this->assertStringContainsString( $errorMsg, $html );
+		}
+	}
+
+	public static function providePreloadTestPatternFromRestrictedFilter(): array {
+		return [
+			'suppressor preloading a suppressed filter' => [
+				'filterId' => 3,
+				'additionalPerm' => 'viewsuppressed',
+				'shouldPreload' => true,
+			],
+			'non-suppressor preloading a suppressed filter' => [
+				'filterId' => 3,
+				'additionalPerm' => null,
+				'shouldPreload' => false,
+			],
+			'authorized user preloading a protected filter with protected variables' => [
+				'filterId' => 1,
+				'additionalPerm' => 'abusefilter-access-protected-vars',
+				'shouldPreload' => true,
+			],
+			'unauthorized user preloading a protected filter with protected variables' => [
+				'filterId' => 1,
+				'additionalPerm' => null,
+				'shouldPreload' => false,
+			],
+			'authorized user preloading a protected filter without protected variables' => [
+				'filterId' => 4,
+				'additionalPerm' => 'abusefilter-access-protected-vars',
+				'shouldPreload' => true,
+			],
+			'unauthorized user preloading a protected filter without protected variables' => [
+				'filterId' => 4,
+				'additionalPerm' => null,
+				'shouldPreload' => false,
+			],
+		];
 	}
 
 	public function testViewTestBatchProtectedVarsFilterVisibility() {

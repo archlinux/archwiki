@@ -147,6 +147,8 @@
 	"oathauth-notifications-enable-primary": "Comproba a túa configuración de autenticación de dous factores",
 	"notification-header-oathauth-recoverycodes-count": "{{GENDER:$2|Debes}} volver inscribir {{GENDER:$2|a túa conta}} para a autenticación de dous factores.",
 	"notification-body-oathauth-recoverycodesleft": "{{GENDER:$2|{{PLURAL:$3|Quédache|Quédanche}}}} {{PLURAL:$3|un código|$3 códigos}} de recuperación. Se cadra queres rexenerar {{PLURAL:$4|un código|$4 códigos}} de recuperación {{PLURAL:$4|novo|novos}} para o futuro.",
+	"notification-header-oathauth-recoverycodes-regenerated": "Rexeneráronse os teus códigos de recuperación.",
+	"notification-body-oathauth-recoverycodes-regenerated": "{{GENDER:$2|Xeraches}} un novo conxunto de códigos de recuperación. Os teus códigos antigos xa non funcionarán.",
 	"oathauth-notifications-recoverycodesleft-help": "Axuda",
 	"oathauth-notifications-recoverycodesleft-primary": "Comproba a túa configuración de autenticación de dous factores",
 	"notification-header-oathauth-recoverycodes-generated-for-user": "{{PLURAL:$3|Xerouse un código|Xeráronse varios códigos}} de recuperación {{PLURAL:$3|adicional|adicionais}} para ti",

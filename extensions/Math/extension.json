@@ -227,10 +227,11 @@
 		]
 	},
 	"QUnitTestModule": {
-		"localBasePath": "modules/ve-math/tests",
-		"remoteExtPath": "Math/modules/tests",
+		"localBasePath": "",
+		"remoteExtPath": "Math",
 		"scripts": [
-			"ve.dm.Autocomplete.test.js"
+			"tests/qunit/ext.math.popup.test.js",
+			"modules/ve-math/tests/ve.dm.Autocomplete.test.js"
 		],
 		"dependencies": [
 			"ext.math.visualEditor",

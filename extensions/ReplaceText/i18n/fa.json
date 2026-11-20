@@ -12,7 +12,8 @@
 			"LordProfo",
 			"Omidh",
 			"Reza1615",
-			"Wayiran"
+			"Wayiran",
+			"LProfo"
 		]
 	},
 	"replacetext": "جایگزینی متن",
@@ -34,7 +35,7 @@
 	"replacetext_choosepagesformove": "جایگزینی «$1» با «$2» در {{PLURAL:$3|عنوان صفحهٔ زیر|عنوان‌های $3 صفحهٔ زیر}}",
 	"replacetext_cannotmove": "{{PLURAL:$1|صفحهٔ|$1 صفحهٔ}} نمی‌تواند منتقل شود:",
 	"replacetext_formovedpages": "برای صفحه‌های منتقل‌شده:",
-	"replacetext_savemovedpages": "ذخیره‌سازی عنوان‌های قدیمی به صورت تغییر مسیرهایی به عنوان‌های جدید",
+	"replacetext_savemovedpages": "ذخیره‌سازی عنوان‌های قدیمی به‌صورت تغییرمسیرهایی به عنوان‌های جدید",
 	"replacetext_watchmovedpages": "پیگیری این صفحه‌ها",
 	"replacetext_invertselections": "وارونه‌کردن انتخاب‌ها",
 	"replacetext_replace": "جایگزین کن",

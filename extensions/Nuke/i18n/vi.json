@@ -46,6 +46,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Xóa thêm trang]]",
 	"nuke-deletemore": "Xóa thêm trang",
 	"nuke-pattern": "Mẫu SQL LIKE (ví dụ %) cho tên trang:",
+	"nuke-pattern-leading-wildcard": "Mẫu không thể bắt đầu bằng <code>%</code>. Vui lòng cung cấp tiền tố trước ký tự đại diện (ví dụ: <code>Example%</code> thay vì <code>%Example</code>).",
 	"nuke-nolist": "Để tiếp tục, hãy nhấp vào '{{int:nuke-submit-list}}' rồi chọn các trang cần được đưa vào hàng đợi xóa.",
 	"nuke-nopages-global": "Không có trang nào khớp với kết quả tìm kiếm.",
 	"nuke-searchnotice-minmorethanmax": "Kích thước tối thiểu bằng byte vượt quá kích thước tối đa, vì vậy không có trang nào đáp ứng được tiêu chí này.",

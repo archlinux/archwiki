@@ -202,7 +202,7 @@ local function frameExists( frameId )
         -- Optimization: don't call into PHP to check if frame 'empty' or 'current' exist: 'empty'
         -- always exists, and 'current' will have been set up by the engine already before calling
         -- into Lua code.
-	return frameId == 'empty' or frameId == 'current' or php.frameExists( frameId )
+	return frameId == 'empty' or frameId == 'current' or ( frameId ~= nil and php.frameExists( frameId ) )
 end
 
 local function newFrame( frameId, ... )

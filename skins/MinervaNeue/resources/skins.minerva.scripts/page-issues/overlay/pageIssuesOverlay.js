@@ -25,7 +25,7 @@ function pageIssuesOverlay( issues, section, namespaceID ) {
 
 	return Overlay.make( {
 		className: 'overlay overlay-issues',
-		heading: `<strong>${ headingText }</strong>`
+		heading: `<strong>${ mw.html.escape( headingText ) }</strong>`
 	}, issueList( issues ) );
 }
 

@@ -6,8 +6,10 @@
 		]
 	},
 	"hcaptcha-createaccount-fail": "Et schéngt wéi wann Dir den hCAPTCHA net geléist hätt.",
+	"hcaptcha-privacy-policy": "Dëse Site ass mat hCaptcha geschützt an et gëllen déi entspriechend [https://www.hcaptcha.com/privacy Dateschutzrichtlinnen] a [https://www.hcaptcha.com/terms Benotzungsbedingungen].",
 	"hcaptcha-challenge-closed": "Fir virunzefuere musst Dir de Captcha léisen.",
 	"hcaptcha-challenge-expired": "D'Zäitlimitt fir de Captcha ze léisen ass ofgelaf. Probéiert wgl. nach eng Kéier.",
 	"hcaptcha-generic-error": "Et gouf e Feeler beim Luede vum Formulaire. Fir virunzefuere musst Dir d'Säit nei lueden.",
-	"hcaptcha-missing-token": "De Formulaire ass nach net fäerdeg gelueden. Waart wgl. e puer Sekonnen a probéiert dann nach eng Kéier."
+	"hcaptcha-missing-token": "De Formulaire ass nach net fäerdeg gelueden. Waart wgl. e puer Sekonnen a probéiert dann nach eng Kéier.",
+	"hcaptcha-visual-editor-error-handler-warning": "Schéckt de Formulaire wgl. nach eng Kéier of, fir Är Ännerung ze späicheren."
 }

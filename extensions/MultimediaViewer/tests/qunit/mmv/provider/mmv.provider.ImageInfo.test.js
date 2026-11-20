@@ -98,14 +98,11 @@ QUnit.test( 'ImageInfo get test', ( assert ) => {
 						imageinfo: [
 							{
 								timestamp: '2013-08-25T14:41:02Z',
-								userid: '3053121',
 								size: 346684,
 								width: 720,
 								height: 1412,
-								comment: 'User created page with UploadWizard',
 								url: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Stuff.jpg',
 								descriptionurl: 'https://commons.wikimedia.org/wiki/File:Stuff.jpg',
-								sha1: 'a1ba23d471f4dad208b71c143e2e105a0e3032db',
 								metadata: [],
 								extmetadata: {
 									ObjectName: {
@@ -187,8 +184,7 @@ QUnit.test( 'ImageInfo get test', ( assert ) => {
 										source: 'commons-desc-page'
 									}
 								},
-								mime: 'image/jpeg',
-								mediatype: 'BITMAP'
+								mime: 'image/jpeg'
 							}
 						]
 					}

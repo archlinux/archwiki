@@ -139,6 +139,8 @@
 	"notification-dynamic-actions-unmute-page-linked-confirmation": "ページ「$1」に対する「ページリンク」通知は有効になりました",
 	"notification-dynamic-actions-unmute-page-linked-confirmation-description": "{{GENDER:$2|あなた}}は、[$1 設定]からいつでもミュートしたページを管理できます。",
 	"notification-dynamic-actions-unwatch-confirmation-description": "{{GENDER:$3|あなた}}はいつでも[$2 このページ]を閲覧できます。",
+	"notification-dynamic-actions-watch-confirmation": "{{GENDER:$3|あなた}}は現在ページ「$1」をウォッチしています",
+	"notification-dynamic-actions-watch-confirmation-description": "{{GENDER:$3|いつ}}でも[$2 このページ]のウォッチを停止できます。",
 	"notification-link-text-expand-all": "展開",
 	"notification-link-text-expand-alert-count": "{{PLURAL:$1|$1件のアラート}}を表示",
 	"notification-link-text-expand-notice-count": "{{PLURAL:$1|$1件の通知}}を見る",

@@ -15,7 +15,8 @@
 			"Wbxshiori",
 			"Winston Sung",
 			"Xiplus",
-			"乌拉跨氪"
+			"乌拉跨氪",
+			"Srapoj"
 		]
 	},
 	"cite-desc": "加入用於參考資料的 <code>&lt;ref&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤",
@@ -76,7 +77,7 @@
 	"communityconfiguration-cite-title": "Cite",
 	"communityconfiguration-cite-description": "自定義參考資料的格式與外觀",
 	"cite-configuration-title": "Cite 組態",
-	"cite-configuration-info": "這些設定會影響所有使用到 Cite 的頁面。只有管​​理員才能修改這些設定。",
+	"cite-configuration-info": "這些設定會影響所有使用到 Cite 的頁面。只有管理員才能修改這些設定。",
 	"cite-configuration-backlink-title": "反向連結設定",
 	"cite-configuration-backlink-description": "反向連結會出現在參考資料清單中，並指向頁面中的腳註。當一個參考資料被多次使用時，其反向連結會以編號呈現。組態允許使用自訂字母表來作為編號。",
 	"cite-configuration-backlink-alpha-suggestion": "Cite 已偵測到您 wiki 語言的字母表。如果您想使用它，請複製並貼上以下文字作為反向連結標記的基準。您可以隨意編輯或重新排列順序。",

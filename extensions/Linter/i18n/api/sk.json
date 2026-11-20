@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-query+linterrors-summary": "Získať zoznam chýb lintera",
+	"apihelp-query+linterrors-param-categories": "Kategórie chýb lintera",
+	"apihelp-query+linterrors-param-invisible-categories": "Neviditeľné kategórie chýb lintera",
+	"apihelp-query+linterrors-param-limit": "Počet výsledkov dopytu",
+	"apihelp-query+linterrors-param-from": "ID chyby lintera, od ktorej sa má začať dopyt",
+	"apihelp-query+linterrors-param-namespace": "Zahrnúť iba chyby lintera zo zadaných menných priestorov",
+	"apihelp-query+linterrors-param-pageid": "Zahrnúť iba chyby lintera zo stránok so zadanými ID",
+	"apihelp-query+linterrors-param-title": "Zahrnúť iba chyby lintera zo stránky so zadaným názvom",
+	"apihelp-query+linterrors-example-1": "Získať všetky chyby lintera z kategórie obsolete-tag",
+	"apihelp-query+linterstats-summary": "Získať počet chýb lintera v každej kategórii",
+	"apihelp-query+linterstats-example-1": "Získať počet chýb lintera v každej kategórii"
+}

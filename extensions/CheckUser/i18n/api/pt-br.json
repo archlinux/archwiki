@@ -6,10 +6,12 @@
 			"Felipe L. Ewald",
 			"Macofe",
 			"NenhumaFênix",
-			"User3412"
+			"User3412",
+			"Fúlvio"
 		]
 	},
 	"apihelp-query+checkuser-summary": "Verifique quais endereços IP são utilizados por um determinado nome de usuário ou quais nomes de usuários são utilizados por um determinado endereço IP.",
+	"apihelp-query+checkuser-summary-api-disabled": "'''Esta API foi desativada pelos administradores do site. As consultas à API não retornarão nenhum resultado.''' {{int:apihelp-query+checkuser-summary}}",
 	"apihelp-query+checkuser-param-request": "Tipo de pedido CheckUser:\n;userips:Obter endereço IP do usuário-alvo.\n;edits:Obter alterações de endereço IP de destino ou intervalo.\n;ipusers:Obter usuários de endereço IP de destino ou intervalo.",
 	"apihelp-query+checkuser-param-target": "Nome de usuário, endereço IP ou intervalo CIDR para verificar.",
 	"apihelp-query+checkuser-param-reason": "Motivo para verificar.",

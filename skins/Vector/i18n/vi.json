@@ -24,7 +24,8 @@
 			"Vinhtantran",
 			"Withoutaname",
 			"SussyRed2000",
-			"Veritas Sapientiae"
+			"Veritas Sapientiae",
+			"HungKhanh0106"
 		]
 	},
 	"skinname-vector": "Vectơ cũ (2010)",
@@ -63,9 +64,9 @@
 	"vector-feature-limited-width-name": "Chiều rộng",
 	"vector-feature-limited-width-0-label": "Rộng",
 	"vector-feature-limited-width-1-label": "Tiêu chuẩn",
-	"vector-feature-custom-font-size-name": "Văn bản",
+	"vector-feature-custom-font-size-name": "Cỡ chữ",
 	"vector-feature-custom-font-size-0-label": "Nhỏ",
-	"vector-feature-custom-font-size-1-label": "Tiêu chuẩn",
+	"vector-feature-custom-font-size-1-label": "Mặc định",
 	"vector-feature-custom-font-size-2-label": "Lớn",
 	"skin-theme-name": "Màu",
 	"skin-theme-description": "[Phiên bản thử nghiệm, khả năng gặp sự cố cao] Giảm lượng ánh sáng phát ra từ màn hình thiết bị.",
@@ -74,8 +75,8 @@
 	"skin-theme-os-label": "Tự động",
 	"skin-theme-exclusion-notice": "Trang này mặc định luôn ở chế độ sáng.",
 	"vector-intro-page": "Help:Giới thiệu",
-	"vector-toc-label": "Nội dung",
-	"vector-toc-beginning": "Đầu",
+	"vector-toc-label": "Mục lục",
+	"vector-toc-beginning": "Mở đầu",
 	"vector-toc-toggle-button-label": "Hiện/ẩn mục $1",
 	"vector-main-menu-tooltip": "Bảng chọn chính",
 	"vector-toc-menu-tooltip": "Mục lục",
@@ -105,5 +106,5 @@
 	"vector-night-mode-issue-reporting-link-notification": "Đã gửi báo cáo!",
 	"vector-night-mode-issue-reporting-preload-title": "Lỗi chế độ tối tại $1",
 	"vector-night-mode-issue-reporting-preload-content": "<!--\nHướng dẫn:\nVui lòng mô tả lý do chế độ tối khiến Wikipedia khó đọc.\nVui lòng ghi rõ bài viết mà bạn gặp phải vấn đề. \n--> \n'''Mô tả sự cố'''",
-	"vector-night-mode-beta-tag": "(thử nghiệm)"
+	"vector-night-mode-beta-tag": "(beta)"
 }

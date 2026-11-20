@@ -237,7 +237,10 @@
 			"AhmedG612",
 			"Crowwhailord",
 			"Maxime2024",
-			"NClara"
+			"NClara",
+			"Disturbingthepeaaaaace",
+			"Allylly",
+			"Antguy1213"
 		]
 	},
 	"pagecategories": "{{PLURAL:$1|Catégorie|Catégories}}",
@@ -3707,7 +3710,7 @@
 	"logentry-rights-rights-granted": "{{GENDER:$2|}}Ajout de $1",
 	"logentry-rights-rights-revoked": "{{GENDER:$2|}}retrait de $1",
 	"logentry-rights-rights-expiry-changed": "{{GENDER:$2|}}Expiration des droits $1",
-	"logentry-rights-rights-kept": "{{GENDER:$2|Mantien}} de $1",
+	"logentry-rights-rights-kept": "{{GENDER:$2|Maintien}} de $1",
 	"logentry-rights-rights-legacy": "$1{{GENDER:$2|}} a modifié l’appartenance aux groupes pour $3",
 	"logentry-rights-autopromote": "Les groupes de $1 ont été {{GENDER:$2|}}mis à jour automatiquement : $7",
 	"logentry-rights-autopromote-granted": "{{GENDER:$2|}}Droit obtenu $1",
@@ -3770,7 +3773,7 @@
 	"api-error-unknownerror": "Erreur inconnue : « $1 ».",
 	"rotate-comment": "Image pivotée de $1 degré{{PLURAL:$1||s}} dans le sens des aiguilles d'une montre",
 	"limitreport-title": "Données d’optimisation de l’analyseur :",
-	"limitreport-cputime": "Temps d‘utilisation du processeur",
+	"limitreport-cputime": "Temps d’utilisation du processeur",
 	"limitreport-cputime-value": "$1 {{PLURAL:$1|seconde|secondes}}",
 	"limitreport-walltime": "Temps réel d’utilisation",
 	"limitreport-walltime-value": "$1 {{PLURAL:$1|seconde|secondes}}",
@@ -4188,5 +4191,6 @@
 	"table-of-contents-hide-button-aria-label": "Masquer la table des matières",
 	"diff-usergroups": "$1 {{PLURAL:$1|groupe d'utilisateurs|groupes d'utilisateurs}}",
 	"languageselector-no-results": "Aucun résultat trouvé.",
-	"languageselector-invalid-input": "« $1 » n’est pas une langue valide."
+	"languageselector-invalid-input": "« $1 » n’est pas une langue valide.",
+	"mypage-disallowed-action": "Pour des raisons de sécurité, l'action « $1 » ne peut pas être utilisé sur la page Special:MyPage"
 }

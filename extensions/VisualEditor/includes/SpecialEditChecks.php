@@ -636,16 +636,16 @@ class SpecialEditChecks extends SpecialPage {
 	}
 
 	/**
-	 * Attempt to convert a JS object literal to valid JSON for display.
-	 * Returns pretty-printed JSON string or null on failure.
+	 * Attempt to convert a JS object literal to a table for display.
+	 * If it can't be parsed, returns the escaped source in a <pre> instead.
 	 *
 	 * @param string $js JS object literal
-	 * @return string
+	 * @return string HTML
 	 */
 	private function jsonTableFromObjectString( string $js ): string {
 		$data = $this->tryJsonDecodeObjectString( $js );
 
-		return $data === null ? $js : $this->jsonTable( $data );
+		return $data === null ? Html::element( 'pre', [], $js ) : $this->jsonTable( $data );
 	}
 
 	/**

@@ -14,6 +14,8 @@
 	"captcha-edit": "Để sửa đổi trang này, xin hãy giải phép toán dưới đây và gõ câu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",
 	"captcha-edit-fail": "CAPTCHA bị thiếu hoặc không chính xác.",
 	"captcha-desc": "Chống spam và sự đoán mật khẩu dùng CAPTCHA",
+	"captcha-label": "CAPTCHA",
+	"captcha-help": "Giải mã CAPTCHA.",
 	"captcha-info-help": "Mô tả về CAPTCHA.",
 	"captcha-id-label": "ID CAPTCHA",
 	"captcha-id-help": "Giá trị này phải được gửi lại không thay đổi.",
@@ -28,13 +30,15 @@
 	"captcha-error": "Thất bại khi xác minh CAPTCHA vì lỗi nội bộ: $1",
 	"captchahelp-title": "Trợ giúp Captcha",
 	"captchahelp-cookies-needed": "Bạn cần phải bật cookie trong trình duyệt để chức năng này hoạt động được.",
-	"captchahelp-text": "Những website cho phép bất kỳ ai cũng có thể gửi thông tin, như wiki này, thường bị các tay spam dùng công cụ tự động để gửi các liên kết của họ tới rất nhiều trang.\nTuy chúng ta có thể xóa các liên kết này khỏi trang, chúng vẫn gây nhiều phiền toái.\n\nĐôi khi, nhất là khi bạn bổ sung liên kết mới vào trang, wiki có thể hiển thị một hình có chữ dạng màu mè và méo mó rồi yêu cầu bạn gõ lại các chữ trong hình này.\nDo các phần mềm tự động khó đọc những hình này, nên mọi người bình thường có thể tiếp tục gửi thông tin, mà vẫn chặn được các spam và robot phá hoại.\n\nTuy vậy, tính năng này có thể bất tiện đối với những độc giả có thị giác yếu hay đang sử dụng trình duyệt bằng văn bản thuần hay trình duyệt bằng tiếng nói.\nHiện tại chúng tôi chưa có chức năng phát âm thay thế.\nXin hãy liên lạc với [[{{int:grouppage-sysop}}|người quản trị trang web]] để được trợ giúp nếu điều này vô tình ngăn cản bạn đóng góp nội dung tốt.\n\nNhấn chuột vào nút “Back” của trình duyệt để trở lại trang soạn thảo.",
+	"captchahelp-text": "Những trang web cho phép mọi người tự do đóng góp nội dung như wiki này thường bị kẻ xấu dùng công cụ tự động để rải liên kết rác khắp nơi.\nDù có thể dọn dẹp các liên kết này, chúng vẫn gây ra không ít phiền toái.\n\nĐôi khi, nhất là khi bạn thêm liên kết web mới vào một trang, hệ thống có thể hiển thị một hình ảnh chứa dòng chữ có màu hoặc bị làm biến dạng và yêu cầu bạn nhập lại các từ nhìn thấy.\nVì máy móc rất khó tự động xử lý việc này, cơ chế trên sẽ giúp người dùng thực đăng bài bình thường mà vẫn chặn được hầu hết spam và các công cụ tấn công tự động.\n\nRất tiếc là điều này có thể gây bất tiện cho người khiếm thị hoặc những ai dùng trình duyệt dạng văn bản hay trình đọc bằng giọng nói.\nHiện tại, chúng tôi chưa có phương án xác thực thay thế bằng âm thanh. Vui lòng liên hệ với [[{{int:grouppage-sysop}}|các bảo quản viên]] để được hỗ trợ nếu việc này vô tình cản trở bạn thực hiện các thao tác hợp lệ.\n\nHãy nhấn nút \"Quay lại\" (Back) trên trình duyệt để trở về giao diện soạn thảo trang.",
 	"captcha-addurl-whitelist": " #<!-- xin để dòng này đừng thay đổi --> <pre>\n# Cú pháp như sau:\n#   * Mọi thứ bắt đầu bằng ký tự “#” là lời chú thích\n#   * Mọi hàng không trắng là một đoạn biểu thức chính quy (regex) sẽ chỉ được so trùng với tên máy chủ trong URL\n  #</pre> <!-- xin để dòng này đừng thay đổi -->",
-	"right-skipcaptcha": "Cho phép bỏ qua các hình CAPTCHA",
+	"right-skipcaptcha": "Thực hiện các thao tác yêu cầu CAPTCHA mà không cần phải xác minh CAPTCHA",
+	"action-skipcaptcha": "thực hiện các thao tác yêu cầu CAPTCHA mà không cần phải xác minh CAPTCHA",
 	"confirmedit-preview-line": "Số dòng",
 	"confirmedit-preview-content": "Nội dung",
 	"confirmedit-preview-validity": "Tính hợp lệ",
 	"confirmedit-preview-valid": "hợp lệ",
 	"confirmedit-preview-invalid": "không hợp lệ",
-	"abusefilter-edit-action-showcaptcha": "Yêu cầu người dùng xác minh CAPTCHA để tiếp tục hành động (thành viên tự xác nhận sẽ không cần phải xác minh)"
+	"confirmedit-preview-description": "Bảng dưới đây liệt kê các dòng trên trang này và cho biết đó có phải là địa chỉ IP hoặc dải địa chỉ IP hợp lệ hay không. Nếu là địa chỉ hoặc dải địa chỉ IP hợp lệ, dòng đó sẽ được miễn kiểm tra CAPTCHA, còn các dòng không hợp lệ sẽ bị bỏ qua. Ví dụ về một dải địa chỉ IP hợp lệ: 69.208.0.0/16, bao gồm từ 69.208.0.0 đến 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Thông tin thêm] về cách tính dải địa chỉ IP.",
+	"abusefilter-edit-action-showcaptcha": "Yêu cầu người dùng xác minh CAPTCHA để thực hiện tác vụ"
 }

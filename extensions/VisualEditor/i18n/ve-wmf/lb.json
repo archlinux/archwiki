@@ -31,9 +31,9 @@
 	"visualeditor-feedback-link": "Project:VisualEditor/Feedback",
 	"visualeditor-feedback-tool": "Feedback zu dëser Software ginn",
 	"visualeditor-help-label": "Liest de Benotzerguide",
-	"visualeditor-welcomedialog-action": "Ufänke mat änneren",
-	"visualeditor-welcomedialog-content": "Jidderee kann änneren an all Verbesserung hëlleft.",
-	"visualeditor-welcomedialog-content-thanks": "Merci fir Är Hëllef fir méi vun der Welt z'entdecken!",
+	"visualeditor-welcomedialog-action": "Ufänke mat Änneren",
+	"visualeditor-welcomedialog-content": "Jidderee kann Ännerunge maachen an all Verbesserung hëlleft.",
+	"visualeditor-welcomedialog-content-thanks": "Merci, datt Dir der Welt hëlleft, fir méi z'entdecken!",
 	"visualeditor-welcomedialog-switch": "Op de Quelltext-Editeur wiesselen",
 	"visualeditor-welcomedialog-switch-ve": "Op de visuellen Editeur wiesselen",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Wëllkomm}} op $2"

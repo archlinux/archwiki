@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Samoasambia"
+			"Samoasambia",
+			"Wikipeedikko"
 		]
 	},
 	"apierror-checkuser-nosuchuser": "Tämän nimistä käyttäjää ei ole",

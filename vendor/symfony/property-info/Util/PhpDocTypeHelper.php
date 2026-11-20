@@ -20,7 +20,9 @@ use phpDocumentor\Reflection\Type as DocType;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Collection;
 use phpDocumentor\Reflection\Types\Compound;
+use phpDocumentor\Reflection\Types\Expression;
 use phpDocumentor\Reflection\Types\Integer;
+use phpDocumentor\Reflection\Types\Intersection;
 use phpDocumentor\Reflection\Types\Mixed_;
 use phpDocumentor\Reflection\Types\Null_;
 use phpDocumentor\Reflection\Types\Nullable;
@@ -65,6 +67,11 @@ final class PhpDocTypeHelper
         if ($varType instanceof Nullable) {
             $nullable = true;
             $varType = $varType->getActualType();
+        }
+
+        if ($this->isIntersection($varType)) {
+            // It's safer to fall back to other extractors here, as resolving intersection types correctly is not easy at the moment
+            return [];
         }
 
         if ($varType instanceof LegacyScalar || $varType instanceof Scalar) {
@@ -113,6 +120,10 @@ final class PhpDocTypeHelper
                 $type = $type->getActualType();
             }
 
+            if ($this->isIntersection($type)) {
+                return [];
+            }
+
             $varTypes[] = $type;
         }
 
@@ -143,6 +154,11 @@ final class PhpDocTypeHelper
             $varType = $varType->getActualType();
         }
 
+        if ($this->isIntersection($varType)) {
+            // It's safer to fall back to other extractors here, as resolving intersection types correctly is not easy at the moment
+            return null;
+        }
+
         if (!$varType instanceof Compound) {
             if ($varType instanceof Null_) {
                 $nullable = true;
@@ -171,6 +187,10 @@ final class PhpDocTypeHelper
             if ($type instanceof Nullable) {
                 $nullable = true;
                 $type = $type->getActualType();
+            }
+
+            if ($this->isIntersection($type)) {
+                return null;
             }
 
             $varTypes[] = $type;
@@ -253,10 +273,9 @@ final class PhpDocTypeHelper
         }
 
         if (str_ends_with($docType, '[]') && $type instanceof Array_) {
-            $collectionKeyTypes = new LegacyType(LegacyType::BUILTIN_TYPE_INT);
             $collectionValueTypes = $this->getTypes($type->getValueType());
 
-            return new LegacyType(LegacyType::BUILTIN_TYPE_ARRAY, $nullable, null, true, $collectionKeyTypes, $collectionValueTypes);
+            return new LegacyType(LegacyType::BUILTIN_TYPE_ARRAY, $nullable, null, true, null, $collectionValueTypes);
         }
 
         if ((str_starts_with($docType, 'list<') || str_starts_with($docType, 'array<')) && $type instanceof Array_) {
@@ -374,11 +393,11 @@ final class PhpDocTypeHelper
         }
 
         if ($docType instanceof Array_ && $this->hasNoExplicitKeyType($docType) && str_starts_with($docTypeString, 'array<')) {
-            return Type::list($this->getType($docType->getValueType()));
+            return Type::array($this->getType($docType->getValueType()));
         }
 
         if (str_ends_with($docTypeString, '[]') && $docType instanceof Array_) {
-            return Type::list($this->getType($docType->getValueType()));
+            return Type::array($this->getType($docType->getValueType()));
         }
 
         if (str_starts_with($docTypeString, 'list<') && $docType instanceof Array_) {
@@ -388,7 +407,7 @@ final class PhpDocTypeHelper
         }
 
         if (str_starts_with($docTypeString, 'array<') && $docType instanceof Array_) {
-            // array<value> is converted to x[] which is handled above
+            // array<value> is handled above
             // so it's only necessary to handle array<key, value> here
             $collectionKeyType = $this->getType($docType->getKeyType());
             $collectionValueType = $this->getType($docType->getValueType());
@@ -471,5 +490,10 @@ final class PhpDocTypeHelper
         }
 
         return ['object', ltrim($docType, '\\')];
+    }
+
+    private function isIntersection(DocType $type): bool
+    {
+        return $type instanceof Intersection || ($type instanceof Expression && $type->getValueType() instanceof Intersection);
     }
 }

@@ -19,6 +19,7 @@ use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Rest\RequestData;
@@ -61,11 +62,15 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 	use TempUserTestTrait;
 
 	private static UserIdentity $tempUser;
+	private static UserIdentity $tempUser2;
 	private static int $pageCreationLogId;
 	private static int $expiredLogId;
 	private static int $standardAFLogId;
 	private static int $expiredAFLogId = -1;
 	private static int $unavailableAFLogId = -1;
+	private static int $hiddenAFLogId = -1;
+	private static int $suppressedFilterAFLogId = -1;
+	private static int $revDeletedAFLogId = -1;
 	private static array $logIdsForPerformLogsLookupTest;
 
 	/**
@@ -240,7 +245,8 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function testExecuteSkipsNonExistentUsers() {
+	/** @dataProvider provideAutoRevealEnabled */
+	public function testExecuteSkipsNonExistentUsers( bool $autoRevealEnabled ) {
 		$this->enableAutoCreateTempUser();
 
 		$checkUserPermissionManager = $this->createMock( CheckUserPermissionManager::class );
@@ -251,11 +257,11 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$actorStore = $this->createMock( ActorStore::class );
 		$actorStore->method( 'findActorIdByName' )
 			->willReturnCallback( static function ( $name ) {
-				return $name === '~12345' ? 12345 : null;
+				return trim( $name ) === '~12345' ? 12345 : null;
 			} );
 		$actorStore->method( 'getUserIdentityByName' )
 			->willReturnCallback( static function ( $name ) {
-				return $name === '~12345'
+				return trim( $name ) === '~12345'
 					? new UserIdentityValue( 12345, '~12345' )
 					: null;
 			} );
@@ -263,14 +269,28 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$autoRevealLookup = $this->createMock(
 			CheckUserTemporaryAccountAutoRevealLookup::class
 		);
+		$autoRevealLookup->method( 'isAutoRevealOn' )
+			->willReturn( $autoRevealEnabled );
 
 		$extensionRegistry = $this->createMock( ExtensionRegistry::class );
 		$extensionRegistry->method( 'isLoaded' )
 			->willReturn( false );
 
+		$loggedTargets = [];
 		$jobQueueGroup = $this->createMock( JobQueueGroup::class );
+		$jobQueueGroup->method( 'push' )
+			->willReturnCallback( static function ( $job ) use ( &$loggedTargets ) {
+				$loggedTargets[] = $job->getParams()['target'];
+			} );
 
-		$this->setLogger( 'CheckUser', $this->createNoOpMock( LoggerInterface::class ) );
+		$logger = $this->createMock( LoggerInterface::class );
+		$logger->method( 'info' )
+			->willReturnCallback( static function ( $message, $context ) use ( &$loggedTargets ) {
+				if ( isset( $context['target'] ) ) {
+					$loggedTargets[] = $context['target'];
+				}
+			} );
+		$this->setLogger( 'CheckUser', $logger );
 		$this->resetServices();
 
 		$services = $this->getServiceContainer();
@@ -321,17 +341,38 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 						'logIds' => [ 2 ],
 						'lastUsedIp' => true,
 					],
+					'NamedUser' => [
+						'revIds' => [ 3 ],
+						'logIds' => [ 3 ],
+						'lastUsedIp' => true,
+					],
+					// Another form of the name ~12345
+					'~12345 ' => [
+						'lastUsedIp' => true,
+					],
 				],
 			],
 			$this->getTestUser()->getAuthority()
 		);
 
-		// ~99999 should be silently skipped, only ~12345 should be in the result
+		// ~99999 (no such account) and NamedUser (not a temporary account) should both
+		// be silently skipped
 		$this->assertArrayHasKey( '~12345', $data );
 		$this->assertArrayNotHasKey( '~99999', $data );
+		$this->assertArrayNotHasKey( 'NamedUser', $data );
 		$this->assertSame( [ 1 => '1.2.3.4' ], $data['~12345']['revIps'] );
 		$this->assertSame( [ 1 => '5.6.7.8' ], $data['~12345']['logIps'] );
 		$this->assertSame( '9.8.7.6', $data['~12345']['lastUsedIp'] );
+
+		// Only the lookup for the existing user should be logged, once
+		$this->assertSame( [ '~12345' ], $loggedTargets );
+	}
+
+	public static function provideAutoRevealEnabled() {
+		return [
+			'auto-reveal disabled' => [ false ],
+			'auto-reveal enabled' => [ true ],
+		];
 	}
 
 	/** @dataProvider provideExecuteForSpecificTypeOfIds */
@@ -561,6 +602,142 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 					'abusefilter-log-private',
 				],
 			],
+			'AbuseFilter log (visible and hidden IDs, no right to see hidden entries)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$hiddenAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [ 1 => '1.2.3.4' ],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+				],
+			],
+			'AbuseFilter log (only hidden ID, no right to see hidden entries)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ self::$hiddenAFLogId ],
+				'expectedResponseCallback' => static fn () => [],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+				],
+			],
+			'AbuseFilter log (visible and suppressed filter IDs, no right to see suppressed filters)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$suppressedFilterAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [ 1 => '1.2.3.4' ],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+				],
+			],
+			'AbuseFilter log (visible and suppressed filter IDs, right to see suppressed filters)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$suppressedFilterAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [
+						1 => '1.2.3.4',
+						self::$suppressedFilterAFLogId => '1.2.3.4',
+					],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+					'viewsuppressed',
+				],
+			],
+			'AbuseFilter log (visible and deleted revision IDs, no right to see deleted revisions)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$revDeletedAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [ 1 => '1.2.3.4' ],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+				],
+			],
+			'AbuseFilter log (visible and deleted revision IDs, right to see deleted revisions)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$revDeletedAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [
+						1 => '1.2.3.4',
+						self::$revDeletedAFLogId => '1.2.3.4',
+					],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+					'deletedhistory',
+				],
+			],
+			'AbuseFilter log (visible and hidden IDs, right to see hidden entries)' => [
+				'revIdsCallback' => static fn () => [],
+				'logIdsCallback' => static fn () => [],
+				'abuseLogIdsCallback' => static fn () => [ 1, self::$hiddenAFLogId ],
+				'expectedResponseCallback' => static fn () => [
+					'abuseLogIps' => [
+						1 => '1.2.3.4',
+						self::$hiddenAFLogId => '1.2.3.4',
+					],
+				],
+				'permissions' => [
+					'abusefilter-log-detail',
+					'abusefilter-log-private',
+					'abusefilter-hidden-log',
+				],
+			],
+		];
+	}
+
+	/** @dataProvider provideHiddenAbuseLogIds */
+	public function testExecuteDoesNotDisclosePerformerOfHiddenAbuseLogEntry( callable $abuseLogIdCallback ) {
+		$this->markTestSkippedIfExtensionNotLoaded( 'Abuse Filter' );
+		$abuseLogId = $abuseLogIdCallback();
+
+		$authority = $this->mockRegisteredAuthorityWithPermissions( [
+			'abusefilter-log-detail',
+			'abusefilter-log-private',
+		] );
+
+		$data = $this->executeHandlerAndGetBodyData(
+			$this->mockHandler(),
+			new RequestData(),
+			[],
+			[],
+			[],
+			[
+				'users' => [
+					self::$tempUser->getName() => [
+						'abuseLogIds' => [ $abuseLogId ],
+					],
+					self::$tempUser2->getName() => [
+						'abuseLogIds' => [ $abuseLogId ],
+					],
+				],
+			],
+			$authority
+		);
+
+		// The entry is performed by $tempUser, so a non-null value here discloses the performer
+		$this->assertNull( $data[self::$tempUser->getName()]['abuseLogIps'] );
+		$this->assertNull( $data[self::$tempUser2->getName()]['abuseLogIps'] );
+	}
+
+	public static function provideHiddenAbuseLogIds(): array {
+		return [
+			'Hidden entry' => [ static fn () => self::$hiddenAFLogId ],
+			'Entry for a suppressed filter' => [ static fn () => self::$suppressedFilterAFLogId ],
+			'Entry for a revision with a deleted username' => [ static fn () => self::$revDeletedAFLogId ],
 		];
 	}
 
@@ -596,6 +773,8 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$userNameUtils = $this->createMock( UserNameUtils::class );
 		$userNameUtils->method( 'isTemp' )
 			->willReturn( true );
+		$userNameUtils->method( 'getCanonical' )
+			->willReturnArgument( 0 );
 
 		$actorStore = $this->createMock( ActorStore::class );
 		$actorStore->method( 'findActorIdByName' )
@@ -805,6 +984,7 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 			->getUser();
 
 		self::$tempUser = $tempUser1;
+		self::$tempUser2 = $tempUser2;
 
 		$this->addDBDataForAbuseLog( $tempUser1, $tempUser2 );
 		$this->addDBDataForLogs( $tempUser1 );
@@ -1010,6 +1190,81 @@ class BatchTemporaryAccountHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 1, $dbw->affectedRows() );
 		self::$unavailableAFLogId = $dbw->insertId();
 		$this->assertGreaterThan( 0, self::$unavailableAFLogId );
+
+		// Hidden entry with full data
+		$dbw->newInsertQueryBuilder()
+			->caller( __METHOD__ )
+			->table( 'abuse_filter_log' )
+			->row(
+				array_merge( $template, [
+					'afl_deleted' => 1,
+					'afl_timestamp' => $dbw->timestamp( ConvertibleTimestamp::now() ),
+				] )
+			)
+			->execute();
+
+		$this->assertSame( 1, $dbw->affectedRows() );
+		self::$hiddenAFLogId = $dbw->insertId();
+		$this->assertGreaterThan( 0, self::$hiddenAFLogId );
+
+		// Entry with full data for a suppressed filter
+		$status = $filterStore->saveFilter(
+			new UltimateAuthority( $performer ),
+			null,
+			$this->getFilterFactoryProxy()->getFilter( [
+				'id' => '2',
+				'name' => 'Suppressed test filter',
+				'privacy' => Flags::FILTER_SUPPRESSED,
+				'rules' => 'old_wikitext = "def"',
+			] ),
+			MutableFilter::newDefault()
+		);
+		$this->assertStatusGood( $status );
+
+		$dbw->newInsertQueryBuilder()
+			->caller( __METHOD__ )
+			->table( 'abuse_filter_log' )
+			->row(
+				array_merge( $template, [
+					'afl_filter_id' => $status->value[ 0 ],
+					'afl_timestamp' => $dbw->timestamp( ConvertibleTimestamp::now() ),
+				] )
+			)
+			->execute();
+
+		$this->assertSame( 1, $dbw->affectedRows() );
+		self::$suppressedFilterAFLogId = $dbw->insertId();
+		$this->assertGreaterThan( 0, self::$suppressedFilterAFLogId );
+
+		// Entry with full data for a revision with a deleted username
+		$revId = $this->editPage(
+			$this->getNonexistingTestPage(),
+			'testing',
+			'',
+			NS_MAIN,
+			$this->getTestUser()->getUser()
+		)->getNewRevision()->getId();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'revision' )
+			->set( [ 'rev_deleted' => RevisionRecord::DELETED_USER ] )
+			->where( [ 'rev_id' => $revId ] )
+			->caller( __METHOD__ )
+			->execute();
+
+		$dbw->newInsertQueryBuilder()
+			->caller( __METHOD__ )
+			->table( 'abuse_filter_log' )
+			->row(
+				array_merge( $template, [
+					'afl_rev_id' => $revId,
+					'afl_timestamp' => $dbw->timestamp( ConvertibleTimestamp::now() ),
+				] )
+			)
+			->execute();
+
+		$this->assertSame( 1, $dbw->affectedRows() );
+		self::$revDeletedAFLogId = $dbw->insertId();
+		$this->assertGreaterThan( 0, self::$revDeletedAFLogId );
 	}
 
 	private function addDBDataForCuChanges(): void {

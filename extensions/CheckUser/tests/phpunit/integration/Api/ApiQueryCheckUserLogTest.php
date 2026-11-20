@@ -5,11 +5,14 @@ namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiUsageException;
+use MediaWiki\Block\Block;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUserLog;
 use MediaWiki\Extension\CheckUser\Services\CheckUserLogService;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -21,6 +24,8 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @covers \MediaWiki\Extension\CheckUser\Api\ApiQueryCheckUserLog
  */
 class ApiQueryCheckUserLogTest extends ApiTestCase {
+
+	use MockAuthorityTrait;
 
 	private const INITIAL_API_PARAMS = [
 		'action' => 'query',
@@ -106,6 +111,35 @@ class ApiQueryCheckUserLogTest extends ApiTestCase {
 		return [
 			'No user groups' => [ '', false ],
 			'checkuser-log right only' => [ 'checkuser-log', true ],
+		];
+	}
+
+	/** @dataProvider provideSitewideBlockStates */
+	public function testOnlySitewideBlockedUserHasNoAccess( bool $isBlockSitewide ): void {
+		$mockBlock = $this->createMock( Block::class );
+		$mockBlock->method( 'isSitewide' )
+			->willReturn( $isBlockSitewide );
+		$mockBlock->method( 'getReasonComment' )
+			->willReturn( CommentStoreComment::newUnsavedComment( 'Test' ) );
+
+		if ( $isBlockSitewide ) {
+			$this->expectApiErrorCode( 'blocked' );
+		}
+		$result = $this->doCheckUserLogApiRequest( performer: $this->mockUserAuthorityWithBlock(
+			$this->getTestUser()->getUserIdentity(),
+			$mockBlock,
+			[ 'checkuser-log' ]
+		) );
+
+		// Should only reach here if $isBlockSitewide is false, just check the result looks valid
+		// (as block errors will throw an exception)
+		$this->assertNotNull( $result );
+	}
+
+	public static function provideSitewideBlockStates(): array {
+		return [
+			'Block is sitewide' => [ true ],
+			'Block is not sitewide' => [ false ],
 		];
 	}
 

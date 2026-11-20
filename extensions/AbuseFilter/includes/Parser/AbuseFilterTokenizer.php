@@ -10,7 +10,7 @@ use Wikimedia\ObjectCache\BagOStuff;
  */
 class AbuseFilterTokenizer {
 	/** @var int Tokenizer cache version. Increment this when changing the syntax. */
-	public const CACHE_VERSION = 4;
+	public const CACHE_VERSION = 5;
 	private const COMMENT_START_RE = '/\s*\/\*/A';
 	private const ID_SYMBOL_RE = '/[0-9A-Za-z_]+/A';
 	public const OPERATOR_RE =
@@ -84,7 +84,7 @@ class AbuseFilterTokenizer {
 	 */
 	public function getCacheKey( $code ) {
 		return $this->cache->makeGlobalKey( 'abusefilter-tokens',
-			__CLASS__, self::CACHE_VERSION, crc32( $code )
+			__CLASS__, self::CACHE_VERSION, hash( 'sha256', $code )
 		);
 	}
 

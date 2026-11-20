@@ -548,6 +548,7 @@
 	"abusefilter-test-options-section": "Search options",
 	"abusefilter-test-legend": "Filter testing",
 	"abusefilter-test-load-filter": "Load filter ID:",
+	"abusefilter-test-loadfilter-restricted": "Filter $1 is restricted and its content cannot be loaded.",
 	"abusefilter-test-submit": "Test",
 	"abusefilter-test-load": "Load",
 	"abusefilter-test-user": "Changes by user:",

@@ -147,7 +147,7 @@ class SpecialMathWikibase extends SpecialPage {
 		// FIXME: There are other reasons to have a colon in an Item's description, e.g.
 		// https://www.wikidata.org/wiki/Special:MathWikibase?qid=Q6203
 		if ( preg_match( '/(.*):\s*(.*)/', $info->getDescription() ?? '', $matches ) ) {
-			$output->setSubtitle( $matches[1] );
+			$output->setSubtitle( htmlspecialchars( $matches[1] ) );
 		}
 
 		// add formula information
@@ -165,30 +165,27 @@ class SpecialMathWikibase extends SpecialPage {
 			$output->addHTML( Html::rawElement( "p", [], $formulaInfo->inContentLanguage()->parse() ) );
 		}
 
-		$labelName = $this->msg(
-			'math-wikibase-formula-header-format',
-			$this->msg( 'math-wikibase-formula-name' )->inContentLanguage(),
-			$info->getLabel()
-		)->inContentLanguage()->parse();
+		$labelName = $this->msg( 'math-wikibase-formula-header-format' )
+			->params( $this->msg( 'math-wikibase-formula-name' )->inContentLanguage() )
+			->plaintextParams( $info->getLabel() )
+			->inContentLanguage()->parse();
 		$output->addHTML( Html::rawElement( "p", [], $labelName ) );
 
 		if ( isset( $matches[2] ) ) {
-			$labelType = $this->msg(
-				'math-wikibase-formula-header-format',
-				$this->msg( 'math-wikibase-formula-type' )->inContentLanguage(),
-				$matches[1]
-			)->inContentLanguage()->parse();
+			$labelType = $this->msg( 'math-wikibase-formula-header-format' )
+				->params( $this->msg( 'math-wikibase-formula-type' )->inContentLanguage() )
+				->plaintextParams( $matches[1] )
+				->inContentLanguage()->parse();
 			$output->addHTML( Html::rawElement( "p", [], $labelType ) );
 
 			$description = $matches[2];
 		} else {
 			$description = $info->getDescription() ?? '';
 		}
-		$labelDesc = $this->msg(
-			'math-wikibase-formula-header-format',
-			$this->msg( 'math-wikibase-formula-description' )->inContentLanguage(),
-			$description
-		)->inContentLanguage()->parse();
+		$labelDesc = $this->msg( 'math-wikibase-formula-header-format' )
+			->params( $this->msg( 'math-wikibase-formula-description' )->inContentLanguage() )
+			->plaintextParams( $description )
+			->inContentLanguage()->parse();
 		$output->addHTML( Html::rawElement( "p", [], $labelDesc ) );
 
 		// add parts of formula

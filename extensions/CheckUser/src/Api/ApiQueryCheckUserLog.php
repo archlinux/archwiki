@@ -31,6 +31,12 @@ class ApiQueryCheckUserLog extends ApiQueryBase {
 		$params = $this->extractRequestParams();
 		$this->checkUserRightsAny( 'checkuser-log' );
 
+		// Deny sitewide blocked users access (T157883)
+		$block = $this->getAuthority()->getBlock();
+		if ( $block && $block->isSitewide() ) {
+			$this->dieBlocked( $block );
+		}
+
 		$limit = $params['limit'];
 		$continue = $params['continue'];
 		$dir = $params['dir'];

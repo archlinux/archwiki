@@ -3,7 +3,8 @@
 		"authors": [
 			"Brahim-essaidi",
 			"Lhoussine AIT TAYFST",
-			"ⵕⴰⵊⵉ"
+			"ⵕⴰⵊⵉ",
+			"Daoudsfouli"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ⵔⴰⵔ",
@@ -12,7 +13,7 @@
 	"discussiontools-replylink": "{{GENDER:|ⵔⴰⵔ}}",
 	"discussiontools-replywidget-advanced": "ⵓⵜⵜⵉⵢ",
 	"discussiontools-replywidget-cancel": "ⴼⴼⵖ",
-	"discussiontools-replywidget-mode-source": "ⴰⵖⴱⴰⵍⵓ",
+	"discussiontools-replywidget-mode-source": "ⴰⵙⴰⴳⵎ",
 	"discussiontools-replywidget-mode-visual": "ⵉⵎⵥⵕⵉ",
 	"discussiontools-replywidget-newtopic": "{{GENDER:|ⵔⵏⵓ}} ⵉⵎⵔⵙⵉ",
 	"discussiontools-replywidget-placeholder-newtopic": "ⴰⴳⵍⴰⵎ",

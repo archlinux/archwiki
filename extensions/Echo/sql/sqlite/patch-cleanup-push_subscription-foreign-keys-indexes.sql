@@ -2,7 +2,7 @@
 
 DROP TABLE IF EXISTS /*_*/echo_push_subscription_tmp;
 CREATE TABLE /*_*/echo_push_subscription_tmp (
-	eps_id INT UNSIGNED NOT NULL PRIMARY KEY auto_increment,
+	eps_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 	eps_user INT UNSIGNED NOT NULL,
 	eps_token BLOB NOT NULL,
 	eps_token_sha256 CHAR(64) NOT NULL,
@@ -24,4 +24,4 @@ CREATE UNIQUE INDEX /*i*/eps_token_sha256 ON /*_*/echo_push_subscription (eps_to
 CREATE INDEX /*i*/eps_provider ON /*_*/echo_push_subscription (eps_provider);
 CREATE INDEX /*i*/eps_topic ON /*_*/echo_push_subscription (eps_topic);
 CREATE INDEX /*i*/eps_user ON /*_*/echo_push_subscription (eps_user);
-CREATE INDEX /*i*/eps_token ON /*_*/echo_push_subscription (eps_token(10));
+CREATE INDEX /*i*/eps_token ON /*_*/echo_push_subscription (eps_token);

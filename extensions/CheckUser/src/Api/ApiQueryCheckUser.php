@@ -31,6 +31,11 @@ class ApiQueryCheckUser extends ApiQueryBase {
 			$this->dieWithError( 'apierror-checkuser-disabled', 'disabled' );
 		}
 
+		$block = $this->getAuthority()->getBlock();
+		if ( $block && $block->isSitewide() ) {
+			$this->dieBlocked( $block );
+		}
+
 		$response = $this->responseFactory->newFromRequest( $this );
 		$result = $this->getResult();
 

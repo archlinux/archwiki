@@ -94,7 +94,7 @@
 	"abusefilter-log-details-ip": "IP helbide sortzailea",
 	"abusefilter-log-details-checkuser": "Erabiltzailea aztertu",
 	"abusefilter-log-noactions": "bat ere ez",
-	"abusefilter-log-noactions-filter": "Ezer",
+	"abusefilter-log-noactions-filter": "Bat ere ez",
 	"abusefilter-log-details-diff": "Aldaketan egindako aldaketak",
 	"abusefilter-log-linkoncontribs": "gehiegikerien erregistroa",
 	"abusefilter-log-linkoncontribs-text": "{{GENDER:$1|erabiltzaile honentzako}} gehiegikerien erregistroa",

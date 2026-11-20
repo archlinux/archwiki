@@ -10,6 +10,7 @@ use MediaWiki\Exception\UserBlockedError;
 use MediaWiki\Extension\CheckUser\Logging\TemporaryAccountLogger;
 use MediaWiki\Extension\CheckUser\Tests\Integration\CheckUserTempUserTestTrait;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Specials\SpecialPageTestBase;
 use MediaWiki\Title\Title;
@@ -99,7 +100,7 @@ class SpecialIPContributionsTest extends SpecialPageTestBase {
 			NS_MAIN,
 			$temp1
 		);
-		$title = Title::newFromText( 'Test page for deletion' );
+		$title = PageReferenceValue::localReference( NS_MAIN, 'Test page for deletion' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$this->deletePage( $page );
 

@@ -8,7 +8,8 @@
 			"McDutchie",
 			"Thibaut120094",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Orlodrim"
 		]
 	},
 	"hcaptcha-desc": "Module [https://www.hcaptcha.com/ hCaptcha] pour la confirmation humaine des modifications",
@@ -19,7 +20,7 @@
 	"hcaptcha-createaccount-fail": "Il semble que vous n’ayez pas résolu le hCAPTCHA.",
 	"hcaptcha-create": "Afin de protéger le wiki contre la création automatisée de pages, nous vous demandons de bien vouloir résoudre le hCaptcha suivant :",
 	"hcaptcha-help": "Veuillez résoudre un défi hCaptcha et renvoyer la valeur de la réponse comme captchaWord.",
-	"hcaptcha-privacy-policy": "Ce site est protégé par hCaptcha et sa [https://www.hcaptcha.com/privacy politique de confidentialité], ses [https://www.hcaptcha.com/terms conditions d'utilisation] s'appliquent.",
+	"hcaptcha-privacy-policy": "Ce site est protégé par hCaptcha, dont la [https://www.hcaptcha.com/privacy politique de confidentialité] et les [https://www.hcaptcha.com/terms conditions d’utilisation] s’appliquent.",
 	"hcaptcha-challenge-closed": "Pour continuer, veuillez compléter le captcha.",
 	"hcaptcha-challenge-expired": "Le délai pour résoudre le hCaptcha est expiré. Veuillez réessayer.",
 	"hcaptcha-generic-error": "Une erreur est survenue lors du chargement du formulaire. Rechargez la page pour continuer.",

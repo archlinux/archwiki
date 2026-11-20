@@ -28,6 +28,7 @@
 	"cite_error_empty_references_define": "Značka <code>&lt;ref&gt;</code> z imenom »$1«, določena v <code>&lt;references&gt;</code> skupine »$2«, nima vsebine.",
 	"cite-tracking-category-cite-error": "Strani z napakami sklicev",
 	"cite-tracking-category-cite-error-desc": "Strani v tej kategoriji vsebujejo napačno zapisane značke sklicev.",
+	"cite-tracking-category-ref-details": "Strani, ki uporabljajo podsklice",
 	"cite-reference-previews-reference": "Sklic",
 	"cite-reference-previews-book": "Sklic na knjigo",
 	"cite-reference-previews-journal": "Sklic na revijo",

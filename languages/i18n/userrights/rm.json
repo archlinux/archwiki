@@ -4,15 +4,17 @@
 			"Gion",
 			"Gion-andri",
 			"Kazu89",
-			"Vlad5250"
+			"Vlad5250",
+			"Albinfo"
 		]
 	},
-	"userrights": "Administraziun da dretgs d'utilisaders",
+	"userrights": "Dretgs d'utilisaders",
 	"userrights-lookup-user": "Administrar gruppas d'utilisaders",
 	"userrights-user-editname": "Inditgescha in num d'utilisader:",
 	"editusergroup": "Modifitgar las gruppas d'utilisaders",
 	"editinguser": "Midar ils dretgs da l'utilisader '''[[User:$1|$1]]''' $2",
 	"userrights-editusergroup": "Modifitgar las gruppas d'utilisaders",
+	"userrights-viewusergroup": "Mussar dretgs d'{{GENDER:$1|utilisaders}}",
 	"saveusergroups": "Memorisar questas gruppas d'utilisaders",
 	"userrights-groupsmember": "Commember da:",
 	"userrights-groupsmember-auto": "Commember implicit da:",

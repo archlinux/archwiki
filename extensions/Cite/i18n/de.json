@@ -29,7 +29,7 @@
 	"cite_error_ref_no_key": "Das öffnende <code>&lt;ref></code>-Element ist unvollständig oder hat einen ungültigen Namen.",
 	"cite_error_ref_with_details_no_name": "Ungültiges <code>&lt;ref></code>-Element; fehlendes Namens-Attribut. Das Details-Attribut kann nur zusammen mit einem Namens-Attribut verwendet werden.",
 	"cite_error_ref_too_many_keys": "Unbekannter Parameter „$1“ im <code>&lt;ref></code>-Element. Die unterstützten Parameter sind: $2.",
-	"cite_error_ref_parameter_suggestion": "Unzulässiger Parameter „$1“ im <code>&lt;ref></code>-Tag. Meinst du „$2“?",
+	"cite_error_ref_parameter_suggestion": "Unbekannter Parameter „$1“ im <code>&lt;ref></code>-Element. {{#FORMAL:Meinst du|Meinten Sie}} „$2“?",
 	"cite_error_ref_follow_conflicts": "Ein <code>&lt;ref follow=\"…\"></code>-Element, das die Fortsetzung eines vorherigen ist, kann weder einzeln benannt werden noch Details enthalten.",
 	"cite_error_ref_no_input": "Ungültige Verwendung von <code>&lt;ref></code>: Einzelnachweise ohne Namen müssen eigenen Inhalt haben.",
 	"cite_error_references_duplicate_key": "Fehlerhaftes <code>&lt;ref></code>-Element: Der Einzelnachweis mit dem Namen „$1“ wurde mehrere Male mit unterschiedlichen Inhalten definiert.",

@@ -27,7 +27,7 @@
 	"tag-editcheck-references-description": "يعتقد (إديت تشيك) أنّه قد يكون هناك حاجة إلى مرجع",
 	"tag-editcheck-references-activated": "فحص التحرير (أداة التحقق) مفعلّة",
 	"tag-editcheck-references-activated-description": "يعتقد EditCheck أنه ربما كان هناك حاجة إلى مرجع، وتم عرض واجهة المستخدم",
-	"tag-editcheck-references-shown": "تم عرض التحقق من التحرير (المراجع)",
+	"tag-editcheck-references-shown": "عرض التحقق من التعديلات (المراجع)",
 	"tag-editcheck-references-shown-description": "يعتقد EditCheck أنه قد يكون هناك حاجة إلى مرجع، وقد تم عرض واجهة المستخدم",
 	"tag-editcheck-tone-description": "اكتشف EditCheck وجود مشكلة محتملة في نغمة بعض المحتوى المضاف",
 	"tag-editcheck-tone-shown": "تم عرض علامة التحرير (النغمة)",

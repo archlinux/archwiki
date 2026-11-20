@@ -44,7 +44,7 @@
 	"apihelp-query+abuselog-param-filter": "Amosar só as entradas que foron detectadas polos identificadores de filtros fornecidos. Separar con barras verticais, prefixar con \"$1\" para os filtros globais.",
 	"apihelp-query+abuselog-param-filter-central": "Amosar só as entradas que foron detectadas polos identificadores de filtros fornecidos. Separar con barras verticais.",
 	"apihelp-query+abuselog-param-limit": "Número máximo de entradas a listar.",
-	"apihelp-query+abuselog-param-prop": "Que propiedades obter.",
+	"apihelp-query+abuselog-param-prop": "Que propiedades recuperar.",
 	"apihelp-query+abuselog-param-wiki": "A wiki da cal amosa as visitas.",
 	"apihelp-query+abuselog-example-1": "Amosar entradas recentes do rexistro",
 	"apihelp-query+abuselog-example-2": "Amosar entradas recentes do rexistro para [[API]]",

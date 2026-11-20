@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Некто участник",
-			"ОйЛ"
+			"ОйЛ",
+			"Oujon"
 		]
 	},
 	"mobile-frontend-editor-edit": "исправлѥниѥ",
@@ -16,5 +17,6 @@
 	"mobile-frontend-main-menu-watchlist": "блюдєниꙗ",
 	"mobile-frontend-meta-data-issues-header": "страницѧ отѧжєниꙗ",
 	"mobile-frontend-placeholder": "{{SITENAME}} : исканиѥ",
-	"mobile-frontend-random-button": "въ нєꙁаапѫ"
+	"mobile-frontend-random-button": "въ нєꙁаапѫ",
+	"minerva-page-actions-overflow": "вѧщє"
 }

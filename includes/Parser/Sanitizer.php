@@ -566,15 +566,13 @@ class Sanitizer {
 			# Allow any attribute beginning with "data-"
 			# However:
 			# * Disallow data attributes used by MediaWiki code
-			# * Ensure that the attribute is not namespaced by banning
-			#   colons.
-			# * Ensure attribute name will be accepted by the HTML
-			#   parser; see
-			#   https://github.com/whatwg/dom/issues/849#issuecomment-1007541209
+			# * Ensure that the attribute is not namespaced by banning colons.
+			# * Ensure attribute name will be accepted by the HTML parser;
+			#   see https://github.com/whatwg/dom/issues/849#issuecomment-1007541209
 			# * Underscore and double-wide underscore (U+FF3F) is disallowed
 			#   here (but not in Parsoid): T407131
 			if ( (
-				!preg_match( '|^data-[^:= \t\r\n/>\0_＿]*$|i', $attribute ) &&
+				!preg_match( '|^data-[^:= \t\r\f\n/>\0_＿]*$|Di', $attribute ) &&
 				!array_key_exists( $attribute, $allowed )
 			) || self::isReservedDataAttribute( $attribute ) ) {
 				continue;
@@ -777,7 +775,7 @@ class Sanitizer {
 		if ( preg_match( '/[\000-\010\013\016-\037\177]/', $value ) ||
 			str_contains( $value, \UtfNormal\Constants::UTF8_REPLACEMENT ) ) {
 			return '/* invalid control char */';
-		} elseif ( preg_match( self::INSECURE_RE, $value ) ) {
+		} elseif ( preg_match( self::INSECURE_RE, $value ) || preg_last_error() !== PREG_NO_ERROR ) {
 			return '/* insecure input */';
 		}
 		return $value;

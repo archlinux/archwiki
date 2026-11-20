@@ -5,7 +5,8 @@
 			"Ebraminio",
 			"Huji",
 			"Reza1615",
-			"Wayiran"
+			"Wayiran",
+			"LProfo"
 		]
 	},
 	"pfunc_desc": "به تجزیه‌گر، دستورهای منطقی می‌افزاید",
@@ -17,7 +18,7 @@
 	"pfunc_expr_stack_exhausted": "خطای عبارت: پشته از دست رفته",
 	"pfunc_expr_unexpected_number": "خطای عبارت: عدد دور از انتظار",
 	"pfunc_expr_preg_match_failure": "خطای عبارت: خطای preg_match دور از انتظار",
-	"pfunc_expr_unrecognised_word": "خطای عبارت: کلمه ناشناخته «$1»",
+	"pfunc_expr_unrecognised_word": "خطای عبارت: واژهٔ ناشناخته «$1».",
 	"pfunc_expr_unexpected_operator": "خطای عبارت: عملگر $1 دور از انتظار",
 	"pfunc_expr_missing_operand": "خطای عبارت: عملگر گمشده برای $1",
 	"pfunc_expr_unexpected_closing_bracket": "خطای عبارت: پرانتز بسته اضافی",

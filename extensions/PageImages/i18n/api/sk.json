@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wizzard"
+		]
+	},
+	"apihelp-query+pageimages-summary": "Vráti informácie o obrázkoch na stránke, napríklad náhľad a prítomnosť fotografií.",
+	"apihelp-query+pageimages-example-1": "Získať názov a <kbd>100</kbd>-pixelový náhľad obrázka na stránke <kbd>Albert Einstein</kbd>.",
+	"apihelp-query+pageimages-param-prop": "Aké informácie vrátiť:",
+	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "URL a rozmery náhľadu obrázka spojeného so stránkou, ak existuje.",
+	"apihelp-query+pageimages-paramvalue-prop-original": "URL a pôvodné rozmery obrázka spojeného so stránkou, ak existuje.",
+	"apihelp-query+pageimages-paramvalue-prop-name": "Názov obrázka.",
+	"apihelp-query+pageimages-param-thumbsize": "Najväčšia šírka náhľadov obrázkov v pixeloch.",
+	"apihelp-query+pageimages-param-langcode": "Kód jazyka, v ktorom sa obrázok vykreslí, ak je podporovaných viac jazykov",
+	"apihelp-query+pageimages-param-limit": "Pre koľko stránok vrátiť vlastnosti.",
+	"apihelp-query+pageimages-param-license": "Obmedziť obrázky stránok na určitý typ licencie:",
+	"apihelp-query+pageimages-paramvalue-license-free": "Iba slobodné obrázky.",
+	"apihelp-query+pageimages-paramvalue-license-any": "Najlepší obrázok, slobodný aj neslobodný."
+}

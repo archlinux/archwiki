@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\CheckUser\Tests\Integration\Api;
 use MediaWiki\Api\ApiMain;
 use MediaWiki\Api\ApiQuery;
 use MediaWiki\Api\ApiQueryTokens;
+use MediaWiki\Block\Block;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Content\WikitextContent;
 use MediaWiki\Context\RequestContext;
@@ -18,6 +19,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -40,6 +42,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 class ApiQueryCheckUserTest extends ApiTestCase {
 
 	use CheckUserTempUserTestTrait;
+	use MockAuthorityTrait;
 
 	private const INITIAL_API_PARAMS = [
 		'action' => 'query',
@@ -224,6 +227,36 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 			null,
 			$this->getTestUser( [ 'checkuser' ] )->getAuthority()
 		);
+	}
+
+	/** @dataProvider provideSitewideBlockedStatuses */
+	public function testWhenUserIsBlocked( bool $blockIsSitewide ): void {
+		$mockBlock = $this->createMock( Block::class );
+		$mockBlock->method( 'isSitewide' )
+			->willReturn( $blockIsSitewide );
+		$mockBlock->method( 'getReasonComment' )
+			->willReturn( CommentStoreComment::newUnsavedComment( 'test' ) );
+
+		if ( $blockIsSitewide ) {
+			$this->expectApiErrorCode( 'blocked' );
+		}
+		$result = $this->doCheckUserApiRequest(
+			[ 'curequest' => 'userips', 'cutarget' => 'CheckUserAPITestUser1', 'cutimecond' => '-3 months' ],
+			performer: $this->mockUserAuthorityWithBlock(
+				$this->getTestUser()->getUserIdentity(),
+				$mockBlock,
+				[ 'checkuser' ]
+			)
+		);
+
+		$this->assertNotNull( $result );
+	}
+
+	public static function provideSitewideBlockedStatuses(): array {
+		return [
+			'User is sitewide blocked' => [ 'blockIsSitewide' => true ],
+			'User is not sitewide blocked' => [ 'blockIsSitewide' => false ],
+		];
 	}
 
 	/** @dataProvider provideExpectedApiResponses */
@@ -423,7 +456,7 @@ class ApiQueryCheckUserTest extends ApiTestCase {
 			[
 				[
 					'timestamp' => '2023-04-05T06:07:12Z',
-					'ns' => 2,
+					'ns' => null,
 					'title' => wfMessage( 'rev-deleted-user' )->text(),
 					'user' => wfMessage( 'rev-deleted-user' )->text(),
 					'ip' => '1.2.3.4',

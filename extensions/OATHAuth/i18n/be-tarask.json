@@ -87,5 +87,7 @@
 	"oathauth-verify-disabled": "У {{GENDER:$1|$1}} ня ўключаная двухфактарная аўтэнтыфікацыя.",
 	"oathauth-prefs-disabledgroups": "Адключан{{PLURAL:$1|1=ая група|ыя групы}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Вашае сяброўства}} ў {{PLURAL:$1|гэтай групе|гэтых групах}} спыненае, пакуль вы ня ўключыце [[Special:Manage Two-factor authentication|двухфактарную аўтэнтыфікацыю]].",
-	"oathauth-qrcode-alt": "Сканавальны QR-код з сакрэтным ключом."
+	"oathauth-qrcode-alt": "Сканавальны QR-код з сакрэтным ключом.",
+	"oathauth-authenticator-delete": "Прыбраць",
+	"oathauth-authenticator-delete-text": "прыбраць"
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Jeblad",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
 		]
 	},
 	"content-model-scribunto": "Scribunto-modula",
@@ -11,6 +12,7 @@
 	"scribunto-error-short": "Skriptameattáhus: $1",
 	"scribunto-error-long": "Skriptameattáhusat:\n\n$1",
 	"scribunto-doc-page-name": "Module:$1/veahkki",
+	"scribunto-doc-page-does-not-exist": "''Dán modula rávvagiid sáhttá ráhkadit siidui [[$1]]''",
 	"scribunto-console-clear": "Gurre",
 	"scribunto-common-error-category": "Siiddut, main leat skriptameattáhusat",
 	"scribunto-common-nosuchmodule": "Skriptameattáhus: Modula \"$2\" ii gávdno.",

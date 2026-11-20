@@ -156,6 +156,7 @@
 	"notification-header-user-rights-add-only": "{{GENDER:$4|अपनेके}} प्रयोगकर्ता अधिकार {{GENDER:$1|बदलल गेलै हे}} । अपनेके $2 मे जोड़ देल गेलै हे ।",
 	"notification-header-user-rights-remove-only": "{{GENDER:$4|अपनेके}} प्रयोगकर्ता अधिकार {{GENDER:$1|बदलल गेलै हे}} । अपने अखनि $2 के सदस्य न रहलथिन ।",
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|अपनेके}} प्रयोगकर्ता अधिकार {{GENDER:$1|बदलल गेलै हे}} । अपनेके $2 मे जोड़ देल गेलै हे । अपने अखनि $4 के सदस्य न रहलथिन ।",
+	"notification-header-user-rights-expiry": "{{PLURAL:$2|निम्न समूह}}मे {{GENDER:$3|अपनेके}} सदस्यता स्वतः समाप्त हो गेलै: $1 ।",
 	"notification-header-user-rights-expiry-change": "{{PLURAL:$3|ई समूह|ईसभ समूहमे}} {{GENDER:$4|अपनेके}} सदस्यताके समाप्ति {{GENDER:$1|बदल देल गेलै हे}}: $2 ।",
 	"notification-header-welcome": "अपनेके {{SITENAME}} पर {{GENDER:$2|स्वागत हे}}, $1 जी ! हमनीके प्रसन्नता हे जे {{GENDER:$2|अपने}} हियाँ हथिन ।",
 	"notification-header-mention-summary": "$1 <strong>$4</strong> पर एगो सम्पादन सारांशमे {{GENDER:$3|अपनेके}} {{GENDER:$2|उल्लेख कैलन}} ।",

@@ -50,7 +50,7 @@
 	"notification-bundle-header-log-thank": "{{PLURAL:$1|Jedna osoba|$1 osoby|100=99+ osób}} podziękowało {{GENDER:$3|Ci}} za czynność związaną ze stroną <strong>$2</strong>.",
 	"log-name-thanks": "Rejestr podziękowań",
 	"log-description-thanks": "Poniżej znajduje się lista użytkowników, którym podziękowali inni.",
-	"logentry-thanks-thank": "$1 {{GENDER:$2|podziękował|podziękowała|podziękował(a)}}{{GENDER:$4| użytkownikowi| użytkowniczce|}} $3",
+	"logentry-thanks-thank": "$1 {{GENDER:$2|podziękował|podziękowała|podziękował(a)}} {{GENDER:$4|użytkownikowi|użytkowniczce}} $3",
 	"logeventslist-thanks-log": "Rejestr podziękowań",
 	"thanks-error-no-id-specified": "Musisz określić wersję strony lub identyfikator wpisu rejestru, aby wysłać podziękowanie.",
 	"thanks-confirmation-special-log": "Czy chcesz wysłać publiczne podziękowanie za tę akcję?",

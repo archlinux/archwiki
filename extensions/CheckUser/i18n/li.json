@@ -60,5 +60,7 @@
 	"checkuser-token-fail": "Sessie mislök. Perbeer 't oppernuuj.",
 	"logentry-checkuser-private-event-autocreate-account": "is autematisch aangemaak",
 	"logentry-checkuser-private-event-create-account": "is aangemaak",
-	"checkuser-investigateblock-warning-confirmaction": "Wèts se zeker det se dit wils doon? Sillekteer den 't silleksjevekske \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" hie-ónger."
+	"checkuser-investigateblock-warning-confirmaction": "Wèts se zeker det se dit wils doon? Sillekteer den 't silleksjevekske \"{{int:checkuser-investigateblock-confirm-blocks-label}}\" hie-ónger.",
+	"checkuser-ip-auto-reveal-link-sidebar": "Autematisse IP-ónthölling",
+	"checkuser-ip-auto-reveal-link-sidebar-on": "Autematisse IP-ónthölling (aan)"
 }

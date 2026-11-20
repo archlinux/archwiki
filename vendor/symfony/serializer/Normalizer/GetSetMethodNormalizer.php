@@ -61,7 +61,7 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
      */
     private function supports(string $class, bool $readAttributes): bool
     {
-        if ($this->classDiscriminatorResolver?->getMappingForClass($class)) {
+        if ($this->classDiscriminatorResolver?->getMappingForMappedObject($class)) {
             return true;
         }
 
@@ -70,6 +70,11 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
         }
 
         $reflection = self::$reflectionCache[$class];
+
+        // Denormalization can also populate an object through its constructor, even when it exposes no setters (immutable value objects).
+        if (!$readAttributes && ($constructor = $reflection->getConstructor()) && $constructor->isPublic() && $constructor->getNumberOfParameters() > 0) {
+            return true;
+        }
 
         foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
             if ($readAttributes ? $this->isGetMethod($reflectionMethod) : $this->isSetMethod($reflectionMethod)) {
@@ -183,7 +188,7 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
 
         $class = \is_object($classOrObject) ? $classOrObject::class : $classOrObject;
 
-        if ($this->classDiscriminatorResolver?->getMappingForMappedObject($classOrObject)?->getTypeProperty() === $attribute) {
+        if ($this->isDiscriminatorTypeProperty($classOrObject, $attribute)) {
             return true;
         }
 
@@ -207,6 +212,12 @@ final class GetSetMethodNormalizer extends AbstractObjectNormalizer
 
         $setter = 'set'.$attribute;
         if ($reflection->hasMethod($setter) && $this->isSetMethod($reflection->getMethod($setter))) {
+            foreach ($context[self::IGNORED_ATTRIBUTES] ?? $this->defaultContext[self::IGNORED_ATTRIBUTES] as $ignoredAttribute) {
+                if (!strcasecmp($attribute, $ignoredAttribute)) {
+                    return false;
+                }
+            }
+
             return true;
         }
 

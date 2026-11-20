@@ -41,6 +41,8 @@
 	"gadgets-pagetext": "以下は、利用者が[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で有効化できるガジェットの一覧です。これらは[[MediaWiki:Gadgets-definition|定義ページ]]で定義されています。\nこの概要ページでは、各ガジェットの説明やプログラム コードを定義しているシステム メッセージ ページへの簡単なアクセスを提供します。",
 	"gadgets-editdescription": "説明を編集",
 	"gadgets-viewdescription": "説明を表示する",
+	"gadgets-editsectiontitle": "節タイトルを編集",
+	"gadgets-viewsectiontitle": "節タイトルを表示",
 	"gadgets-uses": "使用するファイル",
 	"gadgets-required-rights": "以下の{{PLURAL:$2|権限}}が必要です: $1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1外装で利用できます|以下の外装で利用できます: $1}}。",
@@ -60,6 +62,7 @@
 	"gadgets-validate-notset": "プロパティ <code>$1</code> が設定されていません。",
 	"gadgets-validate-wrongtype": "プロパティ<code>$1</code>は<code>$2</code>型でなければなりません。",
 	"gadgets-validate-json": "JSONファイルが指定されていますが使用されていません。JSONファイルはパッケージ化されたガジェットでのみ有効です。",
+	"gadgets-validate-icons": "Codexアイコンは、パッケージ化されたガジェットにのみ含めることができます。",
 	"gadgets-validate-es6default": "ES6 を要求するガジェットは既定で有効化できません。",
 	"gadgets-validate-noentrypoint": "スクリプトファイルが指定されていないため、パッケージフラグが無視されています。",
 	"gadgets-validate-noscripts": "このガジェットは<code>type=styles</code>を指定しているため、スクリプトが無視されています。",
@@ -82,5 +85,7 @@
 	"gadgets-validate-invaliddependencies": "次の{{PLURAL:$2|依存関係が}}ありません: $1 。",
 	"gadgets-validate-deprecateddependencies": "次の{{PLURAL:$2|依存関係は}}非推奨です: $1 。",
 	"gadgets-supports-urlload": "このガジェットは、<code>?withgadget</code> のクエリパラメーターを使用して URL から読み込めます。",
-	"gadgets-hidden": "このガジェットは[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 非表示]であるため、個人設定ページに表示されません。"
+	"gadgets-hidden": "このガジェットは[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Gadgets#hidden 非表示]であるため、個人設定ページに表示されません。",
+	"gadgets-subpage-invalid": "無効な下位ページ <nowiki>$1</nowiki>",
+	"gadgets-subpage-toofewparams": "下位ページ引数が足りません (リンクが無効です)。"
 }

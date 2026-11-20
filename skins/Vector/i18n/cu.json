@@ -3,7 +3,8 @@
 		"authors": [
 			"NR Deblocked",
 			"Некто участник",
-			"ОйЛ"
+			"ОйЛ",
+			"Oujon"
 		]
 	},
 	"vector-languages": "Ѩꙁꙑци",
@@ -20,13 +21,25 @@
 	"vector-view-viewsource": "страницѧ источьнъ обраꙁъ",
 	"vector-more-actions": "вѧщє",
 	"vector-appearance-label": "Видъ",
+	"vector-feature-limited-width-name": "широта",
+	"vector-feature-limited-width-0-label": "съкрꙑи",
+	"vector-feature-limited-width-1-label": "обычьнъ",
 	"vector-feature-custom-font-size-name": "Текстъ",
 	"vector-feature-custom-font-size-0-label": "малъ",
+	"vector-feature-custom-font-size-1-label": "обычьнъ",
+	"vector-feature-custom-font-size-2-label": "великъ",
 	"skin-theme-name": "Цвѣтъ",
+	"skin-theme-day-label": "свѣтьлъ",
+	"skin-theme-night-label": "тьмьнъ",
+	"skin-theme-os-label": "самодѣ́льнъ",
+	"skin-theme-exclusion-notice": "Сиꙗ страница всегда въ свѣтьлѣмъ образѣ",
+	"vector-toc-beginning": "начѧло",
 	"vector-main-menu-tooltip": "​Главное​ ​меню​",
 	"vector-main-menu-label": "Главьно меню",
 	"vector-feature-custom-font-size-exclusion-notice": "Сь члѣнъ малымъ боукомъ пьсан",
 	"vector-page-tools-label": "орѫдиꙗ",
+	"vector-page-tools-general-label": "обьще",
+	"vector-page-tools-actions-label": "дѣиства",
 	"vector-unpin-element-label": "съкрꙑи",
 	"tooltip-vector-anon-user-menu-title": "Бо́льше ѻпцїй"
 }

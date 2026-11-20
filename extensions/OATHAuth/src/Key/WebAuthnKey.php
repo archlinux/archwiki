@@ -347,7 +347,13 @@ class WebAuthnKey extends AuthKey {
 				return false;
 			}
 
-			$pubKeySource = $this->findOneByCredentialId( $user, $publicKeyCredential->rawId );
+			$pubKeySource = $this->findOneByCredentialId(
+				$user,
+				$publicKeyCredential->rawId,
+				// If User Verification was required, only consider keys that support UV
+				$publicKeyCredentialRequestOptions->userVerification ===
+					PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_REQUIRED
+			);
 			if ( $pubKeySource === null ) {
 				return false;
 			}
@@ -373,13 +379,17 @@ class WebAuthnKey extends AuthKey {
 			$authenticatorAssertionResponseValidator->setLogger( $this->logger );
 
 			// Check the response against the attestation request
-			$authenticatorAssertionResponseValidator->check(
+			$res = $authenticatorAssertionResponseValidator->check(
 				$pubKeySource,
 				$publicKeyCredential->response,
 				$publicKeyCredentialRequestOptions,
 				$this->getHost( $this->context->getRequest() ),
 				$this->userHandle,
 			);
+
+			$key = $this->findKeyByCredentialId( $user, $publicKeyCredential->rawId );
+			$key->setSignCounter( $res->counter );
+
 			return true;
 		} catch ( Throwable $ex ) {
 			$this->logger->warning( 'WebAuthn authentication failed due to: {message}', [
@@ -397,24 +407,43 @@ class WebAuthnKey extends AuthKey {
 
 	private function findOneByCredentialId(
 		OATHUser $user,
-		string $publicKeyCredentialId
+		string $publicKeyCredentialId,
+		bool $userVerificationRequired
 	): ?CredentialRecord {
+		$key = $this->findKeyByCredentialId( $user, $publicKeyCredentialId, $userVerificationRequired );
+
+		if ( $key === null ) {
+			return null;
+		}
+
+		return CredentialRecord::create(
+			publicKeyCredentialId: $key->getAttestedCredentialData()->credentialId,
+			type: $key->getType(),
+			transports: $key->getTransports(),
+			attestationType: $key->getAttestationType(),
+			trustPath: $key->getTrustPath(),
+			aaguid: $key->getAttestedCredentialData()->aaguid,
+			credentialPublicKey: (string)$key->getAttestedCredentialData()->credentialPublicKey,
+			userHandle: $key->getUserHandle(),
+			counter: $key->getSignCounter(),
+		);
+	}
+
+	private function findKeyByCredentialId(
+		OATHUser $user,
+		string $publicKeyCredentialId,
+		bool $userVerificationRequired = false
+	): ?WebAuthnKey {
 		foreach ( WebAuthn::getWebAuthnKeys( $user ) as $key ) {
 			if ( $key->getAttestedCredentialData()->credentialId !== $publicKeyCredentialId ) {
 				continue;
 			}
 
-			return CredentialRecord::create(
-				publicKeyCredentialId: $key->getAttestedCredentialData()->credentialId,
-				type: $key->getType(),
-				transports: $key->getTransports(),
-				attestationType: $key->getAttestationType(),
-				trustPath: $key->getTrustPath(),
-				aaguid: $key->getAttestedCredentialData()->aaguid,
-				credentialPublicKey: (string)$key->getAttestedCredentialData()->credentialPublicKey,
-				userHandle: $key->getUserHandle(),
-				counter: $key->getSignCounter(),
-			);
+			if ( $userVerificationRequired && !$key->supportsPasswordlessLogin() ) {
+				continue;
+			}
+
+			return $key;
 		}
 
 		return null;

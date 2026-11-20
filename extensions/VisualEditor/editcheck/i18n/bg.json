@@ -4,6 +4,7 @@
 			"StanProg"
 		]
 	},
+	"editchecks": "Проверки на редакции",
 	"editcheck-dialog-action-no": "Не",
 	"editcheck-dialog-action-yes": "Да",
 	"editcheck-preference-suggestions-label": "Режим на предложения",

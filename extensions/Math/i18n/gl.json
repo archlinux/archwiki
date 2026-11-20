@@ -105,7 +105,7 @@
 	"mathwikibase": "Información sobre as fórmulas matemáticas",
 	"datatypes-type-math": "Expresión matemática",
 	"wikibase-listdatatypes-math-head": "Expresión matemática",
-	"wikibase-listdatatypes-math-body": "Campo de dato literal para expresións matemáticas, fórmulas, ecuacións e similares, expresadas nunha variante de LaTeX.",
+	"wikibase-listdatatypes-math-body": "Campo de datos literal para as expresións matemáticas, as fórmulas, as ecuacións e similares, expresadas nunha variante de LaTeX.",
 	"math-wikibase-header": "Información dos elementos matemáticos",
 	"math-wikibase-formula": "Fórmula",
 	"math-wikibase-formula-name": "Nome",

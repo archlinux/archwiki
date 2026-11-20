@@ -16,6 +16,7 @@ use MediaWiki\Title\Title;
 use OOUI;
 use UnexpectedValueException;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Message\MessageSpecifier;
 use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
@@ -176,6 +177,24 @@ abstract class AbuseFilterView extends ContextSource {
 			$this->getTitle( "history/$id/diff/prev/cur" ),
 			$text
 		);
+	}
+
+	/**
+	 * Adds an unrecoverable error message and a button to return to the current page.
+	 *
+	 * @param string|string[]|MessageSpecifier $key See `ContextSource::msg()`
+	 */
+	protected function showUnrecoverableError( string|array|MessageSpecifier $key ): void {
+		$out = $this->getOutput();
+		$out->enableOOUI();
+		$out->addModuleStyles( 'mediawiki.codex.messagebox.styles' );
+		$out->addHTML( Html::errorBox( $this->msg( $key )->parseAsBlock() ) );
+		$href = $this->getTitle()->getFullURL();
+		$btn = new OOUI\ButtonWidget( [
+			'label' => $this->msg( 'abusefilter-return' )->text(),
+			'href' => $href
+		] );
+		$out->addHTML( (string)$btn );
 	}
 
 }
